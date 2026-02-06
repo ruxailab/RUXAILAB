@@ -99,14 +99,19 @@
       "status": "ステータス",
       "sessionDate": "セッション日",
       "participants": "参加者",
-      "created": "作成日"
+      "created": "作成日",
+      "noSearchResults": "条件に一致する結果が見つかりませんでした",
+      "tryAdjustingSearch": "検索条件またはフィルターを調整してみてください"
     },
     "hidden": "非表示",
     "proceed": "続行",
     "all": "すべて",
     "actions": "アクション",
+    "confirm_deletion": "削除を確定する",
+    "action_cannot_be_undone": "この操作は元に戻せません",
     "user": "ユーザー",
-    "id": "ID"
+    "id": "ID",
+    "itemsPerPage": "ページごとの項目数："
   },
   "storage": {
     "pageTitle": "ストレージ",
@@ -182,6 +187,12 @@
       "accessibilityManual": "手動アクセシビリティ評価",
       "accessibilityAutomatic": "自動アクセシビリティ評価"
     }
+  },
+  "acceptInvitation": {
+    "title": "協力の招待",
+    "message": "この招待を承認しますか？",
+    "reject": "拒否",
+    "accept": "承認"
   },
   "notificationsPage": {
     "subtitle": "活動とコラボレーションの最新情報を確認",
@@ -456,6 +467,20 @@
       "paused": "一時停止",
       "finished": "完了",
       "unknown": "不明"
+    },
+    "officeHours": {
+      "title": "月例オフィスアワー",
+      "description": "11月から、プロジェクトの更新情報の議論、質問への回答、コミュニティとの交流のために、月例オフィスアワーを開催します。",
+      "nextSessionDate": "2025年11月",
+      "frequency": "毎月"
+    },
+    "webinar": {
+      "ended": "終了",
+      "live": "ライブ",
+      "today": "今日",
+      "joinNow": "今すぐ参加",
+      "webinarEnded": "ウェビナー終了",
+      "startingToday": "今日開始"
     },
     "cards": {
       "recentActivity": "最近の活動",
@@ -789,7 +814,8 @@
       "cancel_invitation": "{email}の招待を取り消してもよろしいですか？",
       "change_role": "{email}の役割を{old}から{new}に変更してもよろしいですか？",
       "message_title_hint": "メッセージのタイトルを入力",
-      "message_content_hint": "メッセージの内容を入力"
+      "message_content_hint": "メッセージの内容を入力",
+      "invite_message": "テスト {testTitle} への参加に招待されました"
     }
   },
   "UserTestTable": {
@@ -805,8 +831,8 @@
       "noTasks": "タスクがありません。続行するにはタスクを作成してください。",
       "noVariables": "変数がまだ追加されていません。下をクリックして新しい変数を作成してください。",
       "noOptions": "オプションが追加されていません。",
-      "confirm_delete_task":"タスク削除の確認",
-      "sure_to_delete_task":"本当にタスク : {taskName} を削除しますか？この操作は元に戻せません"
+      "confirm_delete_task": "タスク削除の確認",
+      "sure_to_delete_task": "本当にタスク : {taskName} を削除しますか？この操作は元に戻せません"
     },
     "inputs": {
       "consent": "同意",
@@ -961,6 +987,29 @@
         "camera": "カメラ",
         "audio": "オーディオ"
       }
+    },
+    "answerTypePreview": {
+      "taskCompleted": "タスク完了！追加のフィードバックは必要ありません。",
+      "participantsFeedbackHere": "参加者はここでフィードバックを提供します...",
+      "submitFeedback": "フィードバックを送信",
+      "postTaskQuestions": "タスク後の質問",
+      "rateTaskDifficulty": "1. このタスクの難易度をどう評価しますか？",
+      "additionalComments": "2. 追加のコメントはありますか？",
+      "optionalFeedback": "オプションのフィードバック...",
+      "externalFormTitle": "外部フォーム",
+      "externalFormDescription": "参加者はタスク後に外部フォームに入力するようリダイレクトされます。",
+      "openExternalForm": "外部フォームを開く",
+      "nasaTlxTitle": "NASAタスク負荷指数",
+      "mentalDemand": "精神的要求",
+      "physicalDemand": "身体的要求",
+      "lowHigh": "低 - 高",
+      "moreDimensions": "+ 4つの追加次元",
+      "susTitle": "システム使用性尺度",
+      "susStatement1": "1. このシステムを頻繁に使いたいと思います。",
+      "stronglyDisagree": "強く反対",
+      "stronglyAgree": "強く賛成",
+      "moreStatements": "+ 9つの追加ステートメント",
+      "sartTitle": "状況認識評価技法"
     }
   },
   "UserTestView": {
@@ -1225,6 +1274,7 @@
         "allStudies": "すべての研究",
         "myStudies": "私の研究",
         "whereICollaborate": "コラボレーション中",
+        "allMethods": "すべての方法",
         "lessThan10": "< 10名の参加者",
         "between10And50": "10 – 50名の参加者",
         "moreThan50": "> 50名の参加者"
@@ -1312,8 +1362,6 @@
       "select_end_date": "終了日を選択",
       "quick_actions": "クイックアクション",
       "perform_common_tasks": "一般的なタスクを即時に実行",
-      "confirm_deletion": "削除を確認",
-      "action_cannot_be_undone": "この操作は元に戻せません",
       "delete_warning": "関連するすべてのデータ、結果、設定が完全に失われます。",
       "delete_forever": "完全に削除"
     },
@@ -1331,12 +1379,14 @@
     "noCopy": "コピーに失敗しました",
     "deleteTemplate": "このテンプレートを削除してもよろしいですか？この操作は元に戻せません！",
     "deleteTest": "このテストを削除してもよろしいですか？",
+    "deleteQuestion": "この質問を削除してもよろしいですか: ",
+    "deleteDescription": "この説明を削除してもよろしいですか: ",
     "addDescription": "説明を追加してください",
     "errorOccurred": "エラーが発生しました",
     "leave": "本当に離れますか？",
     "sureLeave": "本当に離れますか？すべての変更が破棄されます。",
     "imageURL": "画像のURLを入力してください：",
-    "deleteHeuristic": "ヒューリスティックを削除してもよろしいですか？",
+    "deleteHeuristic": "このヒューリスティックを削除してもよろしいですか: ",
     "deleteAccount": "アカウントを削除してもよろしいですか？この操作は元に戻せません。",
     "genericSuccess": "操作が成功しました",
     "savedChanges": "変更が保存されました",

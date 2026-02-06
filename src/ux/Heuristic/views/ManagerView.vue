@@ -129,7 +129,6 @@ import FinalReportStatus from '@/ux/Heuristic/components/manager/FinalReportStat
 // Stores
 const store = useStore()
 const route = useRoute()
-const { t } = useI18n()
 
 // Computed
 const user = computed(() => store.getters.user)
@@ -180,9 +179,7 @@ const navigator = computed(() => {
 })
 
 // Methods para los componentes adicionales
-const viewAllActivity = () => {
-  console.log('View all activity')
-}
+const viewAllActivity = () => {}
 
 // Lifecycle
 onMounted(async () => {

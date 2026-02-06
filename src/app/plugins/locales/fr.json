@@ -99,14 +99,19 @@
       "status": "Statut",
       "sessionDate": "Date de session",
       "participants": "Participants",
-      "created": "Créé"
+      "created": "Créé",
+      "noSearchResults": "Aucun résultat ne correspond à vos critères",
+      "tryAdjustingSearch": "Essayez d'ajuster votre recherche ou vos filtres pour trouver ce que vous cherchez"
     },
     "hidden": "Caché",
     "proceed": "procéder",
     "all": "Tout",
     "actions": "Actions",
+    "confirm_deletion": "Confirmer la suppression",
+    "action_cannot_be_undone": "Cette action ne peut pas être annulée",
     "user": "Utilisateur",
-    "id": "ID"
+    "id": "ID",
+    "itemsPerPage": "Éléments par page :"
   },
   "storage": {
     "pageTitle": "Stockage",
@@ -182,6 +187,12 @@
       "accessibilityManual": "Évaluation d'accessibilité manuelle",
       "accessibilityAutomatic": "Évaluation d'accessibilité automatique"
     }
+  },
+  "acceptInvitation": {
+    "title": "Invitation à la coopération",
+    "message": "Voulez-vous accepter cette invitation ?",
+    "reject": "Refuser",
+    "accept": "Accepter"
   },
   "notificationsPage": {
     "subtitle": "Restez informé de vos activités et collaborations",
@@ -456,6 +467,20 @@
       "paused": "En pause",
       "finished": "Terminé",
       "unknown": "Inconnu"
+    },
+    "officeHours": {
+      "title": "Heures de Bureau Mensuelles",
+      "description": "À partir de novembre, nous organiserons des heures de bureau mensuelles pour discuter des mises à jour du projet, répondre aux questions et échanger avec notre communauté.",
+      "nextSessionDate": "Nov 2025",
+      "frequency": "Mensuel"
+    },
+    "webinar": {
+      "ended": "Terminé",
+      "live": "En direct",
+      "today": "Aujourd'hui",
+      "joinNow": "Rejoindre maintenant",
+      "webinarEnded": "Webinaire terminé",
+      "startingToday": "Commence aujourd'hui"
     },
     "cards": {
       "recentActivity": "Activité récente",
@@ -789,7 +814,8 @@
       "cancel_invitation": "Êtes-vous sûr de vouloir annuler {email} des collaborateurs ?",
       "change_role": "Êtes-vous sûr de vouloir changer le rôle de {email} de {old} à {new} ?",
       "message_title_hint": "Tapez un titre pour votre message",
-      "message_content_hint": "Tapez le contenu de votre message"
+      "message_content_hint": "Tapez le contenu de votre message",
+      "invite_message": "Vous avez été invité à participer au test {testTitle}"
     }
   },
   "UserTestTable": {
@@ -805,8 +831,8 @@
       "noTasks": "Vous n'avez aucune tâche, créez-en une pour continuer.",
       "noVariables": "Aucune variable ajoutée. Cliquez ci-dessous pour créer une nouvelle variable.",
       "noOptions": "Aucune option ajoutée.",
-      "confirm_delete_task":"Confirmer la suppression de la tâche",
-      "sure_to_delete_task":"Êtes-vous sûr de vouloir supprimer la tâche : {taskName} ? Cette action ne peut pas être annulée"
+      "confirm_delete_task": "Confirmer la suppression de la tâche",
+      "sure_to_delete_task": "Êtes-vous sûr de vouloir supprimer la tâche : {taskName} ? Cette action ne peut pas être annulée"
     },
     "inputs": {
       "consent": "Consentement",
@@ -961,6 +987,29 @@
         "camera": "Caméra",
         "audio": "Audio"
       }
+    },
+    "answerTypePreview": {
+      "taskCompleted": "Tâche terminée ! Aucun retour supplémentaire requis.",
+      "participantsFeedbackHere": "Les participants fourniront leurs commentaires ici...",
+      "submitFeedback": "Soumettre les Commentaires",
+      "postTaskQuestions": "Questions Post-Tâche",
+      "rateTaskDifficulty": "1. Comment évalueriez-vous la difficulté de cette tâche ?",
+      "additionalComments": "2. Des commentaires supplémentaires ?",
+      "optionalFeedback": "Commentaires optionnels...",
+      "externalFormTitle": "Formulaire Externe",
+      "externalFormDescription": "Les participants seront redirigés pour remplir un formulaire externe après la tâche.",
+      "openExternalForm": "Ouvrir le Formulaire Externe",
+      "nasaTlxTitle": "Indice de Charge de Travail NASA",
+      "mentalDemand": "Demande Mentale",
+      "physicalDemand": "Demande Physique",
+      "lowHigh": "Faible - Élevé",
+      "moreDimensions": "+ 4 dimensions supplémentaires",
+      "susTitle": "Échelle d'Utilisabilité du Système",
+      "susStatement1": "1. Je pense que j'aimerais utiliser ce système fréquemment.",
+      "stronglyDisagree": "Fortement en Désaccord",
+      "stronglyAgree": "Fortement d'Accord",
+      "moreStatements": "+ 9 déclarations supplémentaires",
+      "sartTitle": "Technique d'Évaluation de la Conscience Situationnelle"
     }
   },
   "UserTestView": {
@@ -1225,6 +1274,7 @@
         "allStudies": "Toutes les études",
         "myStudies": "Mes études",
         "whereICollaborate": "Où je collabore",
+        "allMethods": "Toutes les méthodes",
         "lessThan10": "< 10 participants",
         "between10And50": "10 – 50 participants",
         "moreThan50": "> 50 participants"
@@ -1312,8 +1362,6 @@
       "select_end_date": "Sélectionner la date de fin",
       "quick_actions": "Actions rapides",
       "perform_common_tasks": "Effectuez des tâches courantes instantanément",
-      "confirm_deletion": "Confirmation de suppression",
-      "action_cannot_be_undone": "Cette action ne peut pas être annulée",
       "delete_warning": "Toutes les données, résultats et configurations associés seront perdus à jamais.",
       "delete_forever": "Supprimer définitivement"
     },
@@ -1331,12 +1379,14 @@
     "noCopy": "Copie échouée",
     "deleteTemplate": "Êtes-vous sûr de vouloir supprimer ce modèle ? Cette action ne peut pas être annulée !",
     "deleteTest": "Êtes-vous sûr de vouloir supprimer ce test ?",
+    "deleteQuestion": "Êtes-vous sûr de vouloir supprimer la question : ",
+    "deleteDescription": "Êtes-vous sûr de vouloir supprimer la description : ",
     "addDescription": "Veuillez ajouter une description",
     "errorOccurred": "Une erreur s'est produite",
     "leave": "Êtes-vous sûr de vouloir partir ?",
     "sureLeave": "Êtes-vous sûr de vouloir partir ? Toutes vos modifications seront annulées.",
     "imageURL": "Tapez l'URL de l'image :",
-    "deleteHeuristic": "Êtes-vous sûr de vouloir supprimer l'heuristique ",
+    "deleteHeuristic": "Êtes-vous sûr de vouloir supprimer l'heuristique : ",
     "deleteAccount": "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action ne peut pas être annulée.",
     "genericSuccess": "Opération réussie",
     "savedChanges": "Modifications enregistrées avec succès",

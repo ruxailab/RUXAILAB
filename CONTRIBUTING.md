@@ -1,245 +1,299 @@
-# Contributing to UX Remote LAB
+# Contributing to RUXAILAB
 
-Thank you for your interest in contributing to UX Remote LAB! 🎉 This guide will help you get started.
+Thank you for your interest in contributing to RUXAILAB! This document provides guidelines and instructions for contributing to this open-source usability testing platform.
 
 ## Table of Contents
 
+- [Code of Conduct](#code-of-conduct)
+- [Getting Started](#getting-started)
 - [Development Setup](#development-setup)
-- [Code Style & Conventions](#code-style--conventions)
-- [Pull Request Process](#pull-request-process)
-- [Issue Labels](#issue-labels)
+- [Contribution Workflow](#contribution-workflow)
+- [Code Standards](#code-standards)
+- [Testing](#testing)
+- [Reporting Issues](#reporting-issues)
 
----
+## Code of Conduct
+
+We are committed to providing a welcoming and inclusive environment for all contributors. Please be respectful and constructive in all interactions.
+
+## Getting Started
+
+RUXAILAB is a Vue.js-based platform for usability testing and heuristic evaluation. Before contributing, familiarize yourself with:
+
+- [Vue.js 3.x](https://vuejs.org/)
+- [Vuetify 3.x](https://vuetifyjs.com/)
+- [Firebase](https://firebase.google.com/)
 
 ## Development Setup
 
 ### Prerequisites
 
-| Tool    | Version   |
-| ------- | --------- |
-| Node.js | ≤ 24.12.0 |
-| Python  | 3.11.8    |
-| Vue CLI | 5.0.8     |
+- **Node.js** ≤ 24.12.0
+- **Python** 3.11.8
+- **npm** (comes with Node.js)
+- **Docker** (optional, for Firebase Emulators)
 
-### Installation
+### Option 1: Docker with Firebase Emulators (Recommended for Local Development)
 
-1. **Fork and clone the repository**
+This approach runs the entire application with Firebase emulators in Docker containers.
+
+1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/<your-username>/remote-usability-lab.git
+   git clone https://github.com/uramakilab/remote-usability-lab.git
    cd remote-usability-lab
    ```
 
-2. **Install dependencies**
+2. **Set up environment variables**
 
    ```bash
-   npm install
-   pip install -r requirements.txt  # if applicable
+   cp .env.example .env
    ```
 
-3. **Set up Firebase**
-   - Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com)
-   - Enable Realtime Database in your project
-   - Copy your Firebase config from Project Settings
-
-4. **Configure environment variables**
-
-   Create a `.env` file in the project root (use `.env.example` as reference):
+   Update `.env` with the following for local emulator development:
 
    ```ini
-   VUE_APP_FIREBASE_API_KEY="your-api-key"
-   VUE_APP_FIREBASE_AUTH_DOMAIN="your-project.firebaseapp.com"
-   VUE_APP_FIREBASE_DB_URL="https://your-project.firebaseio.com"
-   VUE_APP_FIREBASE_PROJECT_ID="your-project-id"
-   VUE_APP_FIREBASE_STORAGE_BUCKET="your-project.appspot.com"
-   VUE_APP_FIREBASE_MESSAGING_SENDER_ID="your-sender-id"
-   VUE_APP_FIREBASE_APP_ID="your-app-id"
+   DEBUG=true
+   PORT=8000
 
-   VUE_APP_I18N_LOCALE="en"
-   VUE_APP_I18N_FALLBACK_LOCALE="en"
+   VUE_APP_FIREBASE_API_KEY=YOUR_API_KEY
+   VUE_APP_FIREBASE_AUTH_DOMAIN=YOUR_PROJECT_ID.firebaseapp.com
+   VUE_APP_FIREBASE_STORAGE_BUCKET=YOUR_PROJECT_ID.appspot.com
+   VUE_APP_FIREBASE_DB_URL=http://localhost:9000
+   VUE_APP_FIREBASE_PROJECT_ID=YOUR_PROJECT_ID
+   VUE_APP_FIREBASE_MESSAGING_SENDER_ID=YOUR_SENDER_ID
+   VUE_APP_FIREBASE_APP_ID=YOUR_APP_ID
+   VUE_APP_I18N_LOCALE=en
+   VUE_APP_I18N_FALLBACK_LOCALE=en
    ```
 
-5. **Run the development server**
+3. **Build and run with Docker**
 
+   ```bash
+   docker compose build
+   docker compose up
+   ```
+
+4. **Access the application**
+   - Application: http://localhost:8080
+   - Firebase Emulator UI: http://localhost:4000
+
+### Option 2: Production Firebase Setup
+
+For development with a real Firebase project:
+
+1. **Clone and install dependencies**
+
+   ```bash
+   git clone https://github.com/uramakilab/remote-usability-lab.git
+   cd remote-usability-lab
+   npm install
+   ```
+
+2. **Create Firebase project**
+   - Go to [Firebase Console](https://console.firebase.google.com/)
+   - Create a new project
+   - Enable Realtime Database, Firestore, Authentication, and Storage
+
+3. **Configure environment**
+   - Get your Firebase config from Project Settings
+   - Copy `.env.example` to `.env`
+   - Fill in your Firebase credentials
+
+4. **Run development server**
    ```bash
    npm run serve
    ```
 
-### Using Firebase Emulators (Optional)
+## Contribution Workflow
 
-For local development without connecting to a live Firebase project:
+### 1. Fork and Clone
 
-```bash
-firebase use <your-project>
-firebase emulators:start
-```
-
-See the [README](./README.md#running-with-firebase-emulators) for full emulator setup instructions.
-
----
-
-## Code Style & Conventions
-
-We use automated tools to maintain consistent code style. **Your code will be automatically formatted on commit.**
-
-### Tools
-
-| Tool                    | Purpose                                                    |
-| ----------------------- | ---------------------------------------------------------- |
-| **ESLint 9**            | JavaScript/Vue linting with Vue, Vuetify, and i18n plugins |
-| **Prettier**            | Code formatting                                            |
-| **EditorConfig**        | Editor settings consistency                                |
-| **Husky + lint-staged** | Pre-commit hooks                                           |
-
-### Prettier Configuration
-
-```json
-{
-  "singleQuote": true,
-  "trailingComma": "all",
-  "semi": false,
-  "arrowParens": "always"
-}
-```
-
-### Editor Settings
-
-- **Indent**: 2 spaces
-- **Charset**: UTF-8
-- **Line endings**: LF
-- **Recommended extension**: Prettier - Code formatter
-
-### Available Commands
+Fork the repository and clone your fork:
 
 ```bash
-npm run lint        # Check for linting issues
-npm run lint:fix    # Auto-fix linting issues
-npm test            # Run unit tests
+git clone https://github.com/YOUR_USERNAME/remote-usability-lab.git
+cd remote-usability-lab
 ```
 
-### Pre-commit Hook
+### 2. Create a Feature Branch
 
-When you commit, the following runs automatically on staged files:
-
-1. `eslint --fix` - Fixes linting issues
-2. `prettier --write` - Formats code
-
----
-
-## Pull Request Process
-
-### 1. Create a Branch
+Branch from `develop`:
 
 ```bash
-git checkout -b feat/your-feature-name
-# or
-git checkout -b fix/issue-description
+git checkout develop
+git pull origin develop
+git checkout -b feature/your-feature-name
 ```
 
-### 2. Make Your Changes
+**Branch naming conventions:**
 
-- Write clean, well-documented code
-- Add tests if applicable
-- Ensure all tests pass: `npm test`
-- Ensure linting passes: `npm run lint`
+- `feature/` - New features
+- `fix/` - Bug fixes
+- `docs/` - Documentation updates
+- `refactor/` - Code refactoring
+- `test/` - Adding or updating tests
 
-### 3. Commit with Conventional Commits
+### 3. Make Your Changes
 
-Use conventional commit prefixes in your PR title:
+- Write clean, readable code
+- Follow the existing code style
+- Add tests for new functionality
+- Update documentation as needed
 
-| Prefix      | Description                     |
-| ----------- | ------------------------------- |
-| `feat:`     | New feature                     |
-| `fix:`      | Bug fix                         |
-| `docs:`     | Documentation changes           |
-| `style:`    | Code style changes (formatting) |
-| `refactor:` | Code refactoring                |
-| `test:`     | Adding/updating tests           |
-| `chore:`    | Maintenance tasks               |
-| `ci:`       | CI/CD changes                   |
-| `perf:`     | Performance improvements        |
+### 4. Commit Your Changes
 
-**Example**: `feat: add user profile settings page`
+Use clear, descriptive commit messages:
 
-### 4. Submit a Pull Request
+```bash
+git add .
+git commit -m "feat: add user profile customization"
+```
 
-- **Target branch**: `develop` (for features) or `main` (for hotfixes)
-- **Description requirements**:
-  - Minimum 20 characters
-  - Must reference an issue (e.g., `Fixes #123`)
-- **CI checks must pass**:
-  - ESLint linting
-  - Unit tests
+**Commit message format:**
 
-### 5. Code Review
+- `feat:` - New feature
+- `fix:` - Bug fix
+- `docs:` - Documentation changes
+- `style:` - Formatting, missing semicolons, etc.
+- `refactor:` - Code restructuring
+- `test:` - Adding tests
+- `chore:` - Maintenance tasks
 
-A maintainer will review your PR. You may be asked to make changes before merging.
+### 5. Push and Create Pull Request
 
----
+```bash
+git push origin feature/your-feature-name
+```
 
-## Issue Labels
+Then create a Pull Request on GitHub:
 
-Labels are automatically applied to issues and PRs. Here's what they mean:
+- Target the `develop` branch
+- Provide a clear description of your changes
+- Reference any related issues
+- Wait for review and address any feedback
 
-### Issue Type Labels
+## Code Standards
 
-| Label         | Description       |
-| ------------- | ----------------- |
-| `Bug`         | Bug report        |
-| `Enhancement` | Feature request   |
-| `help`        | Help is requested |
+### Formatting
 
-### Source Labels
+We use **Prettier** for code formatting. Configuration is in `.prettierrc`.
 
-| Label              | Description                     |
-| ------------------ | ------------------------------- |
-| `maintainer-issue` | Created by a project maintainer |
-| `community-issue`  | Created by a community member   |
+```bash
+# Format all files
+npm run format
 
-### PR Size Labels
+# Check formatting
+npm run format:check
+```
 
-| Label     | Lines Changed |
-| --------- | ------------- |
-| `size/XS` | < 10          |
-| `size/S`  | 10-99         |
-| `size/M`  | 100-499       |
-| `size/L`  | 500-999       |
-| `size/XL` | 1000+         |
+### Linting
 
-### PR Complexity Labels
+We use **ESLint** for code quality. Configuration is in `eslint.config.mjs`.
 
-| Label               | Files Changed |
-| ------------------- | ------------- |
-| `low-complexity`    | < 5 files     |
-| `medium-complexity` | 5-10 files    |
-| `high-complexity`   | > 10 files    |
+```bash
+# Run linter
+npm run lint
 
-### Component Labels
+# Auto-fix issues
+npm run lint:fix
+```
 
-| Label           | Description                        |
-| --------------- | ---------------------------------- |
-| `ui/ux`         | Vue components or frontend changes |
-| `backend`       | Cloud functions changes            |
-| `testing`       | Test file changes                  |
-| `documentation` | Documentation changes              |
-| `ci/cd`         | GitHub workflow changes            |
-| `assets`        | Image/asset changes                |
+### Vue.js Best Practices
 
-### Feature Labels
+- Use Composition API for new components
+- Follow Vue 3 style guide
+- Use Vuetify components consistently
+- Keep components small and focused
+- Use proper prop validation
 
-| Label           | Description                  |
-| --------------- | ---------------------------- |
-| `accessibility` | Accessibility module changes |
-| `card-sorting`  | Card sorting feature changes |
-| `heuristic`     | Heuristic evaluation changes |
-| `user-test`     | User testing feature changes |
+### File Organization
 
----
+```
+src/
+├── app/
+│   ├── components/    # Reusable components
+│   ├── plugins/       # Vue plugins (Firebase, etc.)
+│   ├── router/        # Vue Router configuration
+│   └── views/         # Page components
+├── features/          # Feature-specific modules
+├── shared/            # Shared utilities and constants
+└── store/             # State management
+```
 
-## Need Help?
+## Testing
 
-- 🐛 [Report a Bug](https://github.com/uramakilab/remote-usability-lab/issues/new)
-- 🚀 [Request a Feature](https://github.com/uramakilab/remote-usability-lab/issues/new)
-- 🤗 [Ask a Question](https://github.com/uramakilab/remote-usability-lab/discussions)
+### Unit Tests (Jest)
 
-Thank you for contributing! 🙌
+```bash
+# Run all tests
+npm run test:unit
+
+# Run tests in watch mode
+npm run test:unit:watch
+
+# Run with coverage
+npm run test:unit:coverage
+```
+
+### End-to-End Tests (Playwright)
+
+```bash
+# Run E2E tests
+npm run test:e2e
+
+# Run in headed mode (see browser)
+npm run test:e2e:headed
+```
+
+### Writing Tests
+
+- Write unit tests for utility functions and components
+- Write E2E tests for critical user flows
+- Aim for good coverage without over-testing
+- Keep tests maintainable and readable
+
+## Reporting Issues
+
+### Bug Reports
+
+When reporting bugs, please include:
+
+- **Clear title** describing the issue
+- **Steps to reproduce** the bug
+- **Expected behavior** vs actual behavior
+- **Environment details** (OS, browser, Node version)
+- **Screenshots** if applicable
+- **Error messages** or console logs
+
+Use the [Bug Report template](https://github.com/uramakilab/remote-usability-lab/issues/new)
+
+### Feature Requests
+
+For feature requests, include:
+
+- **Use case** - Why is this feature needed?
+- **Proposed solution** - How should it work?
+- **Alternatives considered** - Other approaches you've thought about
+
+Use the [Feature Request template](https://github.com/uramakilab/remote-usability-lab/issues/new)
+
+### Questions and Discussions
+
+For questions or general discussion, use [GitHub Discussions](https://github.com/uramakilab/remote-usability-lab/discussions).
+
+## Additional Resources
+
+- [README.md](README.md) - Project overview and setup
+- [Vue.js Documentation](https://vuejs.org/)
+- [Vuetify Documentation](https://vuetifyjs.com/)
+- [Firebase Documentation](https://firebase.google.com/docs)
+- [Video Tutorial](https://youtu.be/dAf4LRxITCc) - Running RUXAILAB with Firebase Emulators
+
+## Getting Help
+
+- **General Questions**: [GitHub Discussions](https://github.com/uramakilab/remote-usability-lab/discussions)
+- **Bug Reports**: [GitHub Issues](https://github.com/uramakilab/remote-usability-lab/issues)
+- **Security Issues**: Contact the maintainers privately
+
+Thank you for contributing to RUXAILAB! 🎉

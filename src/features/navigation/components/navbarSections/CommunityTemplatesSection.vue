@@ -168,15 +168,15 @@ const methodOptions = computed(() => [
     value: METHOD_DEFINITIONS.HEURISTICS.id,
   },
   {
-    title: t('community.method.userStudyUnmoderated'),
+    title: t('community.method.unmoderatedUserTest'),
     value: METHOD_DEFINITIONS.USER_UNMODERATED.id,
   },
   {
-    title: t('community.method.userStudyModerated'),
+    title: t('community.method.moderatedUserTest'),
     value: METHOD_DEFINITIONS.USER_MODERATED.id,
   },
-  { title: t('community.method.manualAccessibility'), value: 'MANUAL' },
-  { title: t('community.method.automaticAccessibility'), value: 'AUTOMATIC' },
+  { title: t('community.method.accessibilityManual'), value: 'MANUAL' },
+  { title: t('community.method.accessibilityAutomatic'), value: 'AUTOMATIC' },
 ])
 
 // ===== Filter logic =====
