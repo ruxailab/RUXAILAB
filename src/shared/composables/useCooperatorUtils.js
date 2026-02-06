@@ -13,13 +13,34 @@ import { useI18n } from 'vue-i18n'
 export function useCooperatorUtils() {
   const { t } = useI18n()
 
+  // Role configuration mapping
+  const ROLE_CONFIG = {
+    0: { key: 'administrator', color: 'primary', icon: 'mdi-crown' },
+    1: { key: 'evaluator', color: 'success', icon: 'mdi-account-check' },
+    2: { key: 'guest', color: 'warning', icon: 'mdi-account' },
+    3: { key: 'observator', color: 'info', icon: 'mdi-eye' },
+  }
+
+  // Helper to normalize role value
+  const normalizeRole = (role) => {
+    const val = typeof role === 'object' ? role.value : role
+    // If it's a string, try to find the numeric ID
+    if (typeof val === 'string') {
+      const entry = Object.entries(ROLE_CONFIG).find(
+        ([_, config]) => config.key === val.toLowerCase(),
+      )
+      return entry ? Number(entry[0]) : val
+    }
+    return val
+  }
+
   // Role options definition
-  const roleOptions = computed(() => [
-    { title: t('HeuristicsCooperators.roles.administrator'), value: 0 },
-    { title: t('HeuristicsCooperators.roles.evaluator'), value: 1 },
-    { title: t('HeuristicsCooperators.roles.guest'), value: 2 },
-    { title: t('HeuristicsCooperators.roles.observator'), value: 3 },
-  ])
+  const roleOptions = computed(() =>
+    Object.entries(ROLE_CONFIG).map(([id, config]) => ({
+      title: t(`HeuristicsCooperators.roles.${config.key}`),
+      value: Number(id),
+    })),
+  )
 
   // Status filter options
   const statusFilterOptions = computed(() => [
@@ -34,59 +55,13 @@ export function useCooperatorUtils() {
   }
 
   const getRoleColor = (role) => {
-    // Handle numeric value or string
-    const roleValue = typeof role === 'object' ? role.value : role
-    if (
-      roleValue === 0 ||
-      (typeof roleValue === 'string' &&
-        roleValue.toLowerCase() === 'administrator')
-    )
-      return 'primary'
-    if (
-      roleValue === 1 ||
-      (typeof roleValue === 'string' && roleValue.toLowerCase() === 'evaluator')
-    )
-      return 'success'
-    if (
-      roleValue === 2 ||
-      (typeof roleValue === 'string' && roleValue.toLowerCase() === 'guest')
-    )
-      return 'warning'
-    if (
-      roleValue === 3 ||
-      (typeof roleValue === 'string' &&
-        roleValue.toLowerCase() === 'observator')
-    )
-      return 'info'
-    return 'grey'
+    const roleId = normalizeRole(role)
+    return ROLE_CONFIG[roleId]?.color || 'grey'
   }
 
   const getRoleIcon = (role) => {
-    // Handle numeric value or string
-    const roleValue = typeof role === 'object' ? role.value : role
-    if (
-      roleValue === 0 ||
-      (typeof roleValue === 'string' &&
-        roleValue.toLowerCase() === 'administrator')
-    )
-      return 'mdi-crown'
-    if (
-      roleValue === 1 ||
-      (typeof roleValue === 'string' && roleValue.toLowerCase() === 'evaluator')
-    )
-      return 'mdi-account-check'
-    if (
-      roleValue === 2 ||
-      (typeof roleValue === 'string' && roleValue.toLowerCase() === 'guest')
-    )
-      return 'mdi-account'
-    if (
-      roleValue === 3 ||
-      (typeof roleValue === 'string' &&
-        roleValue.toLowerCase() === 'observator')
-    )
-      return 'mdi-eye'
-    return 'mdi-account'
+    const roleId = normalizeRole(role)
+    return ROLE_CONFIG[roleId]?.icon || 'mdi-account'
   }
 
   const getStatusText = (status) => {

@@ -368,13 +368,13 @@ const filteredCooperators = computed(() => {
   }
 
   if (filters.value.status) {
-    if (filters.value.status === 'invited') {
-      result = result.filter((coop) => coop.invited && !coop.accepted)
-    } else if (filters.value.status === 'accepted') {
-      result = result.filter((coop) => coop.accepted)
-    } else if (filters.value.status === 'pending') {
-      result = result.filter((coop) => coop.invited && !coop.accepted)
-    }
+    const { status } = filters.value
+    result = result.filter((coop) => {
+      if (status === 'accepted') return coop.accepted
+      if (status === 'invited' || status === 'pending')
+        return coop.invited && !coop.accepted
+      return true
+    })
   }
 
   if (filters.value.search) {
