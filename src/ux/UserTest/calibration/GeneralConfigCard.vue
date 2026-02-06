@@ -116,7 +116,9 @@
               >
                 <template #label>
                   <div class="d-inline-flex align-center">
-                    <span class="text-no-wrap">Milliseconds Per Point Capture</span>
+                    <span class="text-no-wrap"
+                      >Milliseconds Per Point Capture</span
+                    >
                     <v-tooltip
                       content-class="modern-tooltip"
                       location="top"

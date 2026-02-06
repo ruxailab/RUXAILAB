@@ -34,8 +34,54 @@
       </v-card>
     </v-dialog>
 
-    <Loading />
-
+    <!-- Persistent Save Status Indicator (Right Side) -->
+    <div
+      v-if="!start && !currentUserTestAnswer?.submitted"
+      class="save-status-indicator"
+      :class="{ 'status-mini': mini }"
+    >
+      <v-card
+        elevation="2"
+        class="status-card"
+        :color="saveStatusColor"
+        density="compact"
+      >
+        <v-card-text class="pa-2">
+          <div class="d-flex align-center justify-space-between">
+            <div class="d-flex align-center">
+              <v-icon size="small" class="mr-2">
+                {{ saveStatusIcon }}
+              </v-icon>
+              <span class="text-caption font-weight-medium">
+                {{ saveStatusMessage }}
+              </span>
+            </div>
+            <v-progress-circular
+              v-if="autoSaveInProgress"
+              indeterminate
+              size="16"
+              width="2"
+              color="white"
+              class="ml-2"
+            />
+            <v-icon
+              v-else-if="lastSaveTime && saveStatusType === 'success'"
+              size="small"
+              class="ml-2"
+            >
+              mdi-clock-outline
+            </v-icon>
+          </div>
+          <!-- Last save time -->
+          <div
+            v-if="lastSaveTime && saveStatusType === 'success'"
+            class="text-caption text-white text-right mt-1"
+          >
+            {{ formatLastSaveTime() }}
+          </div>
+        </v-card-text>
+      </v-card>
+    </div>
     <v-dialog
       :model-value="fromlink && !noExistUser && !logined"
       width="500"
@@ -75,7 +121,11 @@
       </v-card>
     </v-dialog>
 
-    <v-container v-if="test && start" class="start-container" fluid>
+    <v-container
+      v-if="test && start && !testAlreadyStarted"
+      class="start-container"
+      fluid
+    >
       <v-row class="start-row fill-height" align="center" justify="center">
         <v-col
           cols="12"
@@ -142,13 +192,13 @@
                 <v-col cols="4" class="d-flex justify-end">
                   <v-progress-circular
                     rotate="-90"
-                    :model-value="calculatedProgress"
+                    :model-value="isValidProgress ? calculatedProgress : 0"
                     color="forth"
                     :size="50"
                     :width="5"
                   >
                     <div class="text-caption text-white">
-                      {{ calculatedProgress }}%
+                      {{ isValidProgress ? calculatedProgress : 0 }}%
                     </div>
                   </v-progress-circular>
                 </v-col>
@@ -347,6 +397,9 @@
                       @update-comment="
                         (comment) => updateComment(comment, heurisIndex, i)
                       "
+                      @update-image="
+                        (imageUrl) => updateImageUrl(imageUrl, heurisIndex, i)
+                      "
                     >
                       <template #answer>
                         <v-select
@@ -372,7 +425,11 @@
                           variant="outlined"
                           density="compact"
                           :disabled="currentUserTestAnswer?.submitted"
-                          @update:model-value="calculateProgress()"
+                          placeholder="Select an answer..."
+                          clearable
+                          @update:model-value="
+                            handleAnswerChange(heurisIndex, i)
+                          "
                         />
                         <v-alert v-else type="error" class="mt-4">
                           {{
@@ -472,7 +529,7 @@
               icon
               size="small"
               color="secondary"
-              @click="saveAnswer"
+              @click="manualSaveAnswer"
             >
               <v-icon>mdi-content-save</v-icon>
             </v-btn>
@@ -501,16 +558,16 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onBeforeMount } from 'vue'
+import { ref, computed, watch, onBeforeMount, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { debounce } from 'lodash'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import AddCommentBtn from '@/ux/Heuristic/components/AddCommentBtn.vue'
 import HelpBtn from '@/ux/Heuristic/components/QuestionHelpBtn.vue'
 import TextClamp from 'vue3-text-clamp'
 import Snackbar from '@/shared/components/Snackbar'
-import Loading from '@/shared/components/Loading.vue'
 import HeuristicQuestionAnswer from '@/ux/Heuristic/models/HeuristicQuestionAnswer'
 import Heuristic from '@/ux/Heuristic/models/Heuristic'
 import { showSuccess, showError } from '@/shared/utils/toast'
@@ -540,7 +597,25 @@ const calculatedProgress = ref(0)
 const review = ref(true)
 const rightView = ref(null)
 
+// Auto-save status variables
+const autoSaveInProgress = ref(false)
+const lastSaveTime = ref(null)
+
+// Save status variables
+const saveStatusMessage = ref('All changes saved')
+const saveStatusType = ref('default') // default, saving, success, error
+const saveStatusIcon = ref('mdi-check-circle')
+const saveStatusColor = ref('primary')
+
 const test = computed(() => store.getters.test)
+
+const testAlreadyStarted = computed(() => {
+  return (
+    currentUserTestAnswer.value?.testStarted ||
+    calculatedProgress.value > 0 ||
+    hasSavedAnswers()
+  )
+})
 
 const heuristics = computed(() => {
   // Prefer heuristics from test.testStructure if available
@@ -573,6 +648,53 @@ const isUserTestAdmin = computed(() => {
 
 const loading = computed(() => store.getters.loading)
 
+const isValidProgress = computed(() => {
+  return calculatedProgress.value >= 0 && calculatedProgress.value <= 100
+})
+
+// Status management functions
+const updateSaveStatus = (message, type = 'default') => {
+  saveStatusMessage.value = message
+  saveStatusType.value = type
+
+  switch (type) {
+    case 'saving':
+      saveStatusIcon.value = 'mdi-content-save'
+      saveStatusColor.value = 'warning'
+      break
+    case 'success':
+      saveStatusIcon.value = 'mdi-check-circle'
+      saveStatusColor.value = 'success'
+      break
+    case 'error':
+      saveStatusIcon.value = 'mdi-alert-circle'
+      saveStatusColor.value = 'error'
+      break
+    default:
+      saveStatusIcon.value = 'mdi-check-circle'
+      saveStatusColor.value = 'primary'
+  }
+}
+
+const formatLastSaveTime = () => {
+  if (!lastSaveTime.value) return ''
+
+  const now = new Date()
+  const saveTime = new Date(lastSaveTime.value)
+  const diffMs = now - saveTime
+  const diffMins = Math.floor(diffMs / 60000)
+
+  if (diffMins < 1) return 'Just now'
+  if (diffMins === 1) return '1 min ago'
+  if (diffMins < 60) return `${diffMins} mins ago`
+
+  const diffHours = Math.floor(diffMins / 60)
+  if (diffHours === 1) return '1 hour ago'
+  if (diffHours < 24) return `${diffHours} hours ago`
+
+  return saveTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+}
+
 const startTest = async () => {
   if (heuristics.value.length === 0) {
     store.commit('setError', {
@@ -590,25 +712,128 @@ const startTest = async () => {
   }
 
   start.value = false
+
+  // Mark test as started
+  if (currentUserTestAnswer.value) {
+    currentUserTestAnswer.value.testStarted = true
+    currentUserTestAnswer.value.lastViewedHeuristicIndex = heurisIndex.value
+    // Auto-save when test starts
+    debouncedAutoSave()
+  }
 }
 
-const updateComment = (comment, heurisIndex, answerIndex) => {
+const updateComment = (_comment, _heurisIndex, _answerIndex) => {
   if (
-    !currentUserTestAnswer.value.heuristicQuestions?.[heurisIndex]
-      ?.heuristicQuestions?.[answerIndex]
+    !currentUserTestAnswer.value.heuristicQuestions?.[_heurisIndex]
+      ?.heuristicQuestions?.[_answerIndex]
   ) {
     return
   }
   const question =
-    currentUserTestAnswer.value.heuristicQuestions[heurisIndex]
-      .heuristicQuestions[answerIndex]
-  if (comment !== '' && comment !== undefined) {
-    question.heuristicComment = comment
+    currentUserTestAnswer.value.heuristicQuestions[_heurisIndex]
+      .heuristicQuestions[_answerIndex]
+  question.heuristicComment = _comment || ''
+  // Show saving status immediately
+  updateSaveStatus('Saving changes...', 'saving')
+  // Trigger auto-save on comment change
+  debouncedAutoSave()
+}
+
+const updateImageUrl = (_imageUrl, _heurisIndex, _answerIndex) => {
+  if (
+    !currentUserTestAnswer.value.heuristicQuestions?.[_heurisIndex]
+      ?.heuristicQuestions?.[_answerIndex]
+  ) {
+    return
+  }
+  const question =
+    currentUserTestAnswer.value.heuristicQuestions[_heurisIndex]
+      .heuristicQuestions[_answerIndex]
+  question.answerImageUrl = _imageUrl || ''
+  // Show saving status immediately
+  updateSaveStatus('Saving changes...', 'saving')
+  // Trigger auto-save on image upload
+  debouncedAutoSave()
+}
+
+const handleAnswerChange = (_heurisIndex, _answerIndex) => {
+  if (
+    !currentUserTestAnswer.value.heuristicQuestions?.[_heurisIndex]
+      ?.heuristicQuestions?.[_answerIndex]
+  ) {
+    return
   }
 
-  if (store.state.Heuristic.currentImageUrl) {
-    question.answerImageUrl = store.state.Heuristic.currentImageUrl
+  const question =
+    currentUserTestAnswer.value.heuristicQuestions[_heurisIndex]
+      .heuristicQuestions[_answerIndex]
+
+  // Check if the answer is actually empty/not selected
+  if (
+    question.heuristicAnswer &&
+    typeof question.heuristicAnswer === 'object'
+  ) {
+    // Check if it's an empty answer object
+    const isEmptyAnswer = isAnswerEmpty(question.heuristicAnswer)
+
+    if (isEmptyAnswer) {
+      question.heuristicAnswer = null
+    }
   }
+
+  calculateProgress()
+  // Show saving status immediately
+  updateSaveStatus('Saving changes...', 'saving')
+  // Trigger auto-save on answer change
+  debouncedAutoSave()
+}
+
+// Helper function to check if an answer is empty
+const isAnswerEmpty = (answer) => {
+  if (!answer || answer === '' || answer === null) {
+    return true
+  }
+
+  if (typeof answer === 'object') {
+    if (Object.keys(answer).length === 0) {
+      return true
+    }
+
+    // Check for your specific answer structure
+    if (answer.text !== undefined && answer.value !== undefined) {
+      const isTextEmpty =
+        answer.text === '' || answer.text === null || answer.text === undefined
+
+      let isValueEmpty = false
+      if (answer.value === null || answer.value === undefined) {
+        isValueEmpty = true
+      } else if (typeof answer.value === 'object') {
+        if (Object.keys(answer.value).length === 0) {
+          isValueEmpty = true
+        } else if (
+          answer.value.value !== undefined &&
+          answer.value.text !== undefined
+        ) {
+          // Nested structure like {value: {}, text: ""}
+          const isNestedTextEmpty =
+            answer.value.text === '' ||
+            answer.value.text === null ||
+            answer.value.text === undefined
+          const isNestedValueEmpty =
+            !answer.value.value ||
+            (typeof answer.value.value === 'object' &&
+              Object.keys(answer.value.value).length === 0)
+          isValueEmpty = isNestedTextEmpty && isNestedValueEmpty
+        }
+      } else if (answer.value === '') {
+        isValueEmpty = true
+      }
+
+      return isTextEmpty && isValueEmpty
+    }
+  }
+
+  return false
 }
 
 const mappingSteps = () => {
@@ -641,26 +866,37 @@ const calculateProgress = () => {
   }
   const total = currentUserTestAnswer.value.total || 0
   let answered = 0
+
   currentUserTestAnswer.value.heuristicQuestions.forEach((heuQ) => {
     if (heuQ?.heuristicQuestions) {
       heuQ.heuristicQuestions.forEach((question) => {
-        if (
-          question.heuristicAnswer !== '' &&
-          question.heuristicAnswer !== null &&
-          Object.values(question.heuristicAnswer).length > 0
-        ) {
+        // Check for valid answer content, not just object existence
+        const hasValidAnswer = isAnswerValid(question.heuristicAnswer)
+
+        if (hasValidAnswer) {
           answered++
         }
       })
     }
   })
+
   const percent = total > 0 ? ((100 * answered) / total).toFixed(1) : 0
-  calculatedProgress.value = percent
+  calculatedProgress.value = parseFloat(percent)
+
   if (isNaN(calculatedProgress.value)) {
     calculatedProgress.value = 0
   }
 }
 
+// Helper function: Check if an answer is actually valid
+const isAnswerValid = (answer) => {
+  // Use the isAnswerEmpty function to check
+  const isEmpty = isAnswerEmpty(answer)
+  // Valid if NOT empty
+  return !isEmpty
+}
+
+// Function called from the template
 const perHeuristicProgress = (item) => {
   if (
     !item ||
@@ -670,32 +906,100 @@ const perHeuristicProgress = (item) => {
     return 0
   }
   const total = item.heuristicTotal || 0
-  const answered = item.heuristicQuestions.filter(
-    (q) =>
-      q.heuristicAnswer !== '' &&
-      q.heuristicAnswer !== null &&
-      Object.values(q.heuristicAnswer).length > 0,
+
+  const answered = item.heuristicQuestions.filter((q) =>
+    isAnswerValid(q.heuristicAnswer),
   ).length
+
   return total > 0 ? ((answered * 100) / total).toFixed(1) : 0
 }
 
-const saveAnswer = async () => {
-  if (!currentUserTestAnswer.value) {
-    showError('HeuristicsTestView.errors.noAnswerData')
+const autoSaveAnswer = async () => {
+  if (!currentUserTestAnswer.value || currentUserTestAnswer.value.submitted) {
     return
   }
+
+  // Update progress and metadata
   currentUserTestAnswer.value.progress = calculatedProgress.value
+  currentUserTestAnswer.value.lastViewedHeuristicIndex = heurisIndex.value
+  currentUserTestAnswer.value.lastSaveTime = new Date().toISOString()
+
+  if (
+    !currentUserTestAnswer.value.testStarted &&
+    calculatedProgress.value > 0
+  ) {
+    currentUserTestAnswer.value.testStarted = true
+  }
+
+  autoSaveInProgress.value = true
+
   try {
     await store.dispatch('saveTestAnswer', {
       data: currentUserTestAnswer.value,
       answersDocId: test.value.answersDocId,
       testType: test.value.testType,
+      // No success message for auto-save
     })
-    showSuccess('HeuristicsTestView.messages.answerSaved')
-  } catch {
-    showError('HeuristicsTestView.errors.failedToSaveAnswer')
+    lastSaveTime.value = new Date()
+    updateSaveStatus('All changes saved', 'success')
+  } catch (error) {
+    updateSaveStatus('Failed to save', 'error')
+    // Revert to default after 5 seconds
+    setTimeout(() => {
+      if (saveStatusType.value === 'error') {
+        updateSaveStatus('All changes saved', 'default')
+      }
+    }, 5000)
+  } finally {
+    autoSaveInProgress.value = false
   }
 }
+
+// Manual save function (with toast)
+const manualSaveAnswer = async () => {
+  if (!currentUserTestAnswer.value) {
+    showError('HeuristicsTestView.errors.noAnswerData')
+    return
+  }
+
+  // Update progress and metadata
+  currentUserTestAnswer.value.progress = calculatedProgress.value
+  currentUserTestAnswer.value.lastViewedHeuristicIndex = heurisIndex.value
+  currentUserTestAnswer.value.lastSaveTime = new Date().toISOString()
+
+  if (
+    !currentUserTestAnswer.value.testStarted &&
+    calculatedProgress.value > 0
+  ) {
+    currentUserTestAnswer.value.testStarted = true
+  }
+
+  autoSaveInProgress.value = true
+  updateSaveStatus('Saving...', 'saving')
+
+  try {
+    await store.dispatch('saveTestAnswer', {
+      data: currentUserTestAnswer.value,
+      answersDocId: test.value.answersDocId,
+      testType: test.value.testType,
+      successMessage: t('alerts.savedChanges'),
+      errorMessage: t('Error saving progress'),
+    })
+    lastSaveTime.value = new Date()
+    updateSaveStatus('Progress saved', 'success')
+
+    // Show manual save success toast
+    showSuccess('HeuristicsTestView.messages.answerSaved')
+  } catch (error) {
+    updateSaveStatus('Save failed', 'error')
+    showError('HeuristicsTestView.errors.failedToSaveAnswer')
+  } finally {
+    autoSaveInProgress.value = false
+  }
+}
+
+// Debounced version for auto-save
+const debouncedAutoSave = debounce(autoSaveAnswer, 1500)
 
 const submitAnswer = async () => {
   if (!currentUserTestAnswer.value) {
@@ -703,12 +1007,26 @@ const submitAnswer = async () => {
     return
   }
   currentUserTestAnswer.value.submitted = true
+  autoSaveInProgress.value = true
+  updateSaveStatus('Submitting...', 'saving')
   try {
-    await saveAnswer()
+    currentUserTestAnswer.value.progress = calculatedProgress.value
+    currentUserTestAnswer.value.lastSaveTime = new Date().toISOString()
+    await store.dispatch('saveTestAnswer', {
+      data: currentUserTestAnswer.value,
+      answersDocId: test.value.answersDocId,
+      testType: test.value.testType,
+    })
     showSuccess('alerts.genericSuccess')
-    router.push('/admin')
-  } catch {
+    setTimeout(() => {
+      router.push('/admin')
+    }, 1500)
+  } catch (error) {
+    currentUserTestAnswer.value.submitted = false
     showError('HeuristicsTestView.errors.failedToSubmitAnswer')
+    updateSaveStatus('Submission failed', 'error')
+  } finally {
+    autoSaveInProgress.value = false
   }
 }
 
@@ -726,7 +1044,13 @@ const populateWithHeuristicQuestions = () => {
   if (!heuristics.value || !test.value) {
     return
   }
-  if (!currentUserTestAnswer.value.heuristicQuestions?.length) {
+
+  // Check if we need to initialize or just update the structure
+  const needsInitialization =
+    !currentUserTestAnswer.value.heuristicQuestions?.length
+
+  if (needsInitialization) {
+    // Initialize with empty questions if no data exists
     let totalQuestions = 0
     const heuristicQuestions = heuristics.value.map((heu) => {
       const questions =
@@ -749,6 +1073,128 @@ const populateWithHeuristicQuestions = () => {
     })
     currentUserTestAnswer.value.heuristicQuestions = heuristicQuestions
     currentUserTestAnswer.value.total = totalQuestions
+  } else {
+    // We have existing data, but need to ensure structure matches current heuristics
+    let totalQuestions = 0
+
+    // Create a DEEP COPY of existing questions to prevent reference issues
+    const existingHeuristics = JSON.parse(
+      JSON.stringify(currentUserTestAnswer.value.heuristicQuestions || []),
+    )
+
+    currentUserTestAnswer.value.heuristicQuestions = heuristics.value.map(
+      (heu, index) => {
+        // Get existing heuristic questions for this index, if any
+        const existingHeuristic = existingHeuristics[index] || {}
+        const existingQuestions = existingHeuristic.heuristicQuestions || []
+
+        // Create or update questions
+        const questions =
+          heu.questions?.map((h, qIndex) => {
+            // Try to find existing answer for this question by heuristicId
+            let existingQuestion = existingQuestions.find(
+              (q) => q.heuristicId === h.id,
+            )
+
+            // If not found by id, try by index
+            if (!existingQuestion && existingQuestions[qIndex]) {
+              existingQuestion = existingQuestions[qIndex]
+            }
+
+            if (existingQuestion) {
+              // Check if the saved answer is actually empty
+              let restoredAnswer = existingQuestion.heuristicAnswer
+              if (restoredAnswer && isAnswerEmpty(restoredAnswer)) {
+                restoredAnswer = null
+              } else if (restoredAnswer) {
+                // Create a copy to avoid reference issues
+                restoredAnswer = JSON.parse(JSON.stringify(restoredAnswer))
+              }
+
+              // Return existing question with saved data
+              return new HeuristicQuestionAnswer({
+                heuristicId: h.id,
+                heuristicAnswer: restoredAnswer,
+                heuristicComment: existingQuestion.heuristicComment || '',
+                answerImageUrl: existingQuestion.answerImageUrl || '',
+              })
+            } else {
+              // Create new question
+              return new HeuristicQuestionAnswer({
+                heuristicId: h.id,
+                heuristicAnswer: null,
+                heuristicComment: '',
+                answerImageUrl: '',
+              })
+            }
+          }) || []
+
+        totalQuestions += questions.length
+
+        return new Heuristic({
+          heuristicTitle: heu.title || 'Unknown Heuristic',
+          heuristicId: heu.id,
+          heuristicQuestions: questions,
+          heuristicTotal: questions.length,
+        })
+      },
+    )
+
+    currentUserTestAnswer.value.total = totalQuestions
+  }
+}
+
+const hasSavedAnswers = () => {
+  if (!currentUserTestAnswer.value?.heuristicQuestions?.length) {
+    return false
+  }
+
+  // Check if any question has an answer, comment, or image
+  for (const heuristic of currentUserTestAnswer.value.heuristicQuestions) {
+    if (heuristic?.heuristicQuestions) {
+      for (const question of heuristic.heuristicQuestions) {
+        const hasAnswer = isAnswerValid(question.heuristicAnswer)
+        const hasComment =
+          question.heuristicComment && question.heuristicComment.trim() !== ''
+        const hasImage =
+          question.answerImageUrl && question.answerImageUrl.trim() !== ''
+
+        if (hasAnswer || hasComment || hasImage) {
+          return true
+        }
+      }
+    }
+  }
+  return false
+}
+
+const restoreProgress = () => {
+  if (hasSavedAnswers() || currentUserTestAnswer.value?.testStarted) {
+    // User has saved progress or test was started
+    start.value = false
+    review.value = true
+
+    // Calculate progress from saved data
+    calculateProgress()
+
+    // Restore the last viewed heuristic if available
+    if (currentUserTestAnswer.value.lastViewedHeuristicIndex !== undefined) {
+      heurisIndex.value = currentUserTestAnswer.value.lastViewedHeuristicIndex
+    }
+
+    // Set test as started
+    currentUserTestAnswer.value.testStarted = true
+
+    // Update status indicator
+    updateSaveStatus('Progress restored', 'success')
+    setTimeout(() => {
+      updateSaveStatus('All changes saved', 'default')
+    }, 3000)
+  } else {
+    // No saved progress, start fresh
+    start.value = true
+    review.value = true
+    calculatedProgress.value = 0
   }
 }
 
@@ -756,15 +1202,35 @@ const setTest = async () => {
   logined.value = true
   await store.dispatch('getCurrentTestAnswerDoc')
   populateWithHeuristicQuestions()
+  restoreProgress()
 }
 
 const setReviewTrue = () => {
   review.value = true
+  // Update last viewed heuristic when user navigates
+  currentUserTestAnswer.value.lastViewedHeuristicIndex = heurisIndex.value
+  updateSaveStatus('Saving changes...', 'saving')
+  debouncedAutoSave()
 }
 
 const handleHeurisClick = (i) => {
   heurisIndex.value = i
   setReviewTrue()
+}
+
+// Setup auto-save on page unload
+const setupAutoSaveOnUnload = () => {
+  window.addEventListener('beforeunload', (_event) => {
+    if (
+      calculatedProgress.value > 0 &&
+      !currentUserTestAnswer.value?.submitted
+    ) {
+      // Update status before unload
+      updateSaveStatus('Saving before exit...', 'saving')
+      // Save synchronously before page unload
+      autoSaveAnswer().catch(() => {})
+    }
+  })
 }
 
 watch(
@@ -792,6 +1258,12 @@ watch(heurisIndex, () => {
   if (rightView.value) {
     rightView.value.scrollTop = 0
   }
+  // Auto-save when navigating between heuristics
+  if (!start.value) {
+    currentUserTestAnswer.value.lastViewedHeuristicIndex = heurisIndex.value
+    updateSaveStatus('Saving changes...', 'saving')
+    debouncedAutoSave()
+  }
 })
 
 watch(
@@ -809,14 +1281,28 @@ onBeforeMount(async () => {
   if (route.params.token) {
     fromlink.value = true
   }
+
+  // Load test data first
   await store.dispatch('getStudy', { id: props.id })
+
+  // Then load user's answers
   await store.dispatch('getCurrentTestAnswerDoc')
+
   populateWithHeuristicQuestions()
-  if (
-    currentUserTestAnswer.value?.heuristicQuestions &&
-    Array.isArray(currentUserTestAnswer.value.heuristicQuestions)
-  ) {
-    calculateProgress()
+  // calculate progress before checking restore
+  calculateProgress()
+
+  // Check and restore progress
+  restoreProgress()
+
+  // Setup auto-save on unload
+  setupAutoSaveOnUnload()
+})
+
+onUnmounted(() => {
+  // Save progress when component is destroyed
+  if (calculatedProgress.value > 0 && !currentUserTestAnswer.value?.submitted) {
+    autoSaveAnswer().catch(() => {})
   }
 })
 </script>
@@ -854,5 +1340,76 @@ onBeforeMount(async () => {
 }
 .nav-list::-webkit-scrollbar-thumb:hover {
   background: #5c6bc0;
+}
+
+/* Persistent Save Status Indicator */
+.save-status-indicator {
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  z-index: 999;
+  width: 220px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.save-status-indicator.status-mini {
+  right: 80px;
+}
+
+.status-card {
+  background: linear-gradient(
+    135deg,
+    var(--v-success-base) 0%,
+    var(--v-success-darken-1) 100%
+  );
+  color: white !important;
+}
+
+.status-card[color='warning'] {
+  background: linear-gradient(
+    135deg,
+    var(--v-warning-base) 0%,
+    var(--v-warning-darken-1) 100%
+  );
+}
+
+.status-card[color='error'] {
+  background: linear-gradient(
+    135deg,
+    var(--v-error-base) 0%,
+    var(--v-error-darken-1) 100%
+  );
+}
+
+.status-card[color='primary'] {
+  background: linear-gradient(
+    135deg,
+    var(--v-primary-base) 0%,
+    var(--v-primary-darken-1) 100%
+  );
+}
+
+.status-card .text-caption {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.status-card .v-icon {
+  color: white !important;
+}
+
+/* Animation for status changes */
+.status-card {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0.8;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

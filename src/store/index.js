@@ -26,12 +26,12 @@ export default createStore({
   },
   mutations: {
     SET_TOAST(state, { message, type }) {
-      state.toastMessage = message;
-      state.toastType = type || 'info';
+      state.toastMessage = message
+      state.toastType = type || 'info'
     },
     RESET_TOAST(state) {
-      state.toastMessage = '';
-      state.toastType = 'info';
+      state.toastMessage = ''
+      state.toastType = 'info'
     },
     setLoading(state, payload) {
       state.loading = payload
@@ -90,5 +90,5 @@ export default createStore({
     UserStudy,
     CardStudy,
     notification,
-  }
+  },
 })
