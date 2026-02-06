@@ -1402,8 +1402,8 @@
     "profile": "个人资料",
     "returnToConsole": "返回控制台",
     "tip": "提示",
-    "cancel": "取消",
-    "create": "创建",
+    "cancel": "Cancel",
+    "create": "Create",
     "close": "关闭",
     "save": "保存",
     "stay": "留下",
@@ -1413,10 +1413,15 @@
     "delete": "删除",
     "deleteAccount": "删除账户",
     "back": "返回",
-    "duplicateTest": "复制测试",
+    "duplicateTest": "Duplicate Test",
     "submit": "提交",
     "couldNotFinish": "无法完成",
-    "addNewTask": "添加新任务"
+    "addNewTask": "添加新任务",
+    "saveChanges": "Save Changes",
+    "createTemplate": "Create Template",
+    "deleteTest": "Delete Test",
+    "deleteForever": "Delete Forever",
+    "startTest": "Start Test"
   },
   "switches": {
     "noAnswer": "无答案",
@@ -1859,7 +1864,10 @@
     "deleteOptionConfirm": {
       "title": "删除选项",
       "message": "您确定要删除此选项吗？此操作无法撤销。"
-    }
+    },
+    "confirmDeletion": "Confirm Deletion",
+    "actionCannotBeUndone": "This action cannot be undone",
+    "allAssociatedDataLost": "All associated data, results, and configurations will be lost forever."
   },
   "tags": {
     "active": "有效",
@@ -1891,5 +1899,15 @@
       "ACCESSIBILITY_AUTOMATIC": "自动评估",
       "WCAG_AUDIT": "WCAG 审核"
     }
+  },
+  "testSettings": {
+    "testInformation": "Test Information",
+    "basicTestSettings": "Basic test settings and description",
+    "advancedSettings": "Advanced Settings",
+    "quickActions": "Quick Actions",
+    "performCommonTasks": "Perform common tasks instantly"
+  },
+  "cooperator": {
+    "goToSession": "Go to session"
   }
 }
