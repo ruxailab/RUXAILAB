@@ -169,6 +169,7 @@ const localProfileData = ref({
   profileImage: '',
 })
 
+
 watch(
   () => props.modelValue,
   (open) => {
@@ -197,6 +198,7 @@ const contactRules = computed(() => [
   (v) => !!v || t('profile.contactNumberRequired'),
   (v) => /^\d{9,15}$/.test(v) || t('profile.enterValidPhoneNumber'),
 ])
+
 
 const hasChanges = computed(() => {
   if (!props.profileData) return false
@@ -229,6 +231,7 @@ const validateImageFile = (file) => {
   return null
 }
 
+
 const processImageFile = (file) => {
   const error = validateImageFile(file)
   if (error) {
@@ -236,9 +239,15 @@ const processImageFile = (file) => {
     return false
   }
 
-  // Clean up previous preview if exists
+
   if (pendingImagePreview.value) {
     URL.revokeObjectURL(pendingImagePreview.value)
+  }
+
+ 
+  if (localProfileData.value.profileImage && 
+      localProfileData.value.profileImage.startsWith('blob:')) {
+    URL.revokeObjectURL(localProfileData.value.profileImage)
   }
 
   // Create preview URL
@@ -302,6 +311,7 @@ const handleCameraCapture = (file) => {
   }
 }
 
+
 const handleSave = async () => {
   try {
     if (!formRef.value) return
@@ -310,10 +320,9 @@ const handleSave = async () => {
 
     isSaving.value = true
 
-   
     const result = await props.onSave({
-      data: localProfileData.value,
-      image: pendingImageFile.value ?? null
+      ...localProfileData.value,
+      pendingImageFile: pendingImageFile.value
     })
 
     if (result) {
