@@ -25,15 +25,7 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-
-      - name: Install Python Dependencies
-        run: pip install -r weight_function/test-requirements.txt
-
+            
       - name: Install Dependencies
         run: npm ci
 
