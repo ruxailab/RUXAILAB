@@ -225,7 +225,7 @@ const handleSendMessage = async ({ user, title, content }) => {
         type: 'Message',
       })
       showSuccess('HeuristicsCooperators.messages.message_sent_success')
-    } catch (error) {
+    } catch {
       showError('HeuristicsCooperators.messages.message_sent_error')
     }
   } else {
@@ -385,59 +385,14 @@ const sendMenssages = async (guest) => {
     // Email is optional - don't let it block the notification
     try {
       await handleSendEmail(guest)
-    } catch (emailError) {
-      console.warn(
-        'Email sending failed (may be missing VUE_APP_CLOUD_FUNCTIONS_URL):',
-        emailError.message,
-      )
+    } catch {
+      // console.warn('Email sending failed (may be missing VUE_APP_CLOUD_FUNCTIONS_URL):', emailError.message)
     }
     showSuccess('pages.cooperators.invitationSent')
-  } catch (error) {
-    console.error('sendMenssages error:', error)
+  } catch {
+    // console.error('sendMenssages error:', error)
     showError('errors.sendError')
     return error
-  }
-}
-
-const notifyCooperatorAccessibility = async (guest) => {
-  if (test.value) {
-    let path = ''
-    let title = t('HeuristicsCooperators.actions.send_invitation')
-    let description = t('HeuristicsCooperators.messages.invite_message', {
-      testTitle: test.value.testTitle || t('common.test'),
-    })
-
-    if (test.value.testType === 'MANUAL') {
-      path = `accessibility/manual/preview/${test.value.id}`
-      title =
-        t('studyCreation.methods.accessibility.manual_testing.name') +
-        ' ' +
-        t('HeuristicsCooperators.actions.send_invitation')
-      description = t('HeuristicsCooperators.messages.invite_message', {
-        testTitle: test.value.testTitle || t('common.test'),
-      })
-    } else if (test.value.testType === 'AUTOMATIC') {
-      path = `accessibility/automatic/preview/${test.value.id}`
-      title =
-        t('studyCreation.methods.accessibility.automatic_testing.name') +
-        ' ' +
-        t('HeuristicsCooperators.actions.send_invitation')
-      description = t('HeuristicsCooperators.messages.invite_message', {
-        testTitle: test.value.testTitle || t('common.test'),
-      })
-    }
-
-    if (guest.userDocId && path) {
-      const author = test.value.testAdmin.email
-      await sendNotification(
-        guest.userDocId,
-        title,
-        description,
-        path,
-        test.value.id,
-        author,
-      )
-    }
   }
 }
 
