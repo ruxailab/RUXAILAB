@@ -40,7 +40,7 @@
         :headers="headers"
         :items="files"
         :search="search"
-        :items-per-page-text="t('common.itemsPerPage')"
+        :items-per-page-text="t('common.table.itemsPerPage')"
         hover
       >
         <!-- File Type Icon -->
@@ -88,7 +88,18 @@
 
         <!-- Empty State -->
         <template #no-data>
-          <div class="pa-8 text-center text-medium-emphasis">
+          <div v-if="search" class="pa-8 text-center text-medium-emphasis">
+            <v-icon size="48" color="grey-lighten-1" class="mb-2">
+              mdi-magnify-remove-outline
+            </v-icon>
+            <div class="text-h6 mt-2">
+              {{ t('common.table.noSearchResults') }}
+            </div>
+            <div class="text-body-2">
+              {{ t('common.table.tryAdjustingSearch') }}
+            </div>
+          </div>
+          <div v-else class="pa-8 text-center text-medium-emphasis">
             <v-icon size="48" color="grey-lighten-1" class="mb-2"
               >mdi-database-off</v-icon
             >

@@ -120,17 +120,54 @@ const startRecording = async () => {
   }
 
   try {
-    mediaRecorder.value.onstop = () => {
-      const blob = new Blob(recordedChunks.value, { type: 'video/webm' })
+    mediaRecorder.value.onstop = async () => {
+      emit('showLoading')
+      const videoBlob = new Blob(recordedChunks.value, {
+        type: 'video/webm',
+      })
+      const storage = getStorage()
+      const correctTaskIndex = recordingTaskIndex.value
+      const storageReference = storageRef(
+        storage,
+        `tests/${props.testId}/${props.userDocId}/task_${correctTaskIndex}/video/${recordedVideo.value}`,
+      )
+      await uploadBytes(storageReference, videoBlob)
 
-      store.commit('mediaRecorder/SET_MEDIA_BLOB', {
-        taskIndex: recordingTaskIndex.value,
-        mediaType: 'webcam',
-        blob,
+      recordedVideo.value = await getDownloadURL(storageReference)
+      console.log('webcam url =>', correctTaskIndex, recordedVideo.value)
+      console.log('Tasks array:', currentUserTestAnswer.value.tasks)
+      console.log('Tasks length:', currentUserTestAnswer.value.tasks?.length)
+      console.log(
+        'Task at index:',
+        currentUserTestAnswer.value.tasks?.[correctTaskIndex],
+      )
+
+      await store.dispatch('updateTaskMediaUrl', {
+        taskIndex: correctTaskIndex,
+        mediaType: MEDIA_FIELD_MAP.webcam,
+        url: recordedVideo.value,
       })
 
-      videoStream.value.getTracks().forEach((t) => t.stop())
+      // Add safety check before setting the property
+      if (
+        currentUserTestAnswer.value.tasks &&
+        currentUserTestAnswer.value.tasks[correctTaskIndex]
+      ) {
+        currentUserTestAnswer.value.tasks[correctTaskIndex].webcamRecordURL =
+          recordedVideo.value
+      } else {
+        console.error(
+          'Task not found at index:',
+          correctTaskIndex,
+          'Available tasks:',
+          currentUserTestAnswer.value.tasks?.length,
+        )
+      }
+
+      videoStream.value.getTracks().forEach((track) => track.stop())
       recording.value = false
+
+      emit('stopShowLoading')
     }
 
     mediaRecorder.value.start()

@@ -1,0 +1,205 @@
+name: Dependency Health Check
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'
+  pull_request:
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  dependency-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      # 1. Security Audit
+      - name: Security Vulnerability Scan
+        id: audit
+        run: |
+          echo "Scanning root dependencies..."
+          npm audit --json > audit-root.json || true
+
+          # Check for critical/high vulnerabilities
+          CRITICAL=$(cat audit-root.json | jq '.metadata.vulnerabilities.critical // 0')
+          HIGH=$(cat audit-root.json | jq '.metadata.vulnerabilities.high // 0')
+
+          echo "critical=$CRITICAL" >> $GITHUB_OUTPUT
+          echo "high=$HIGH" >> $GITHUB_OUTPUT
+
+          if [ "$CRITICAL" -gt 0 ] || [ "$HIGH" -gt 0 ]; then
+            echo "found_issues=true" >> $GITHUB_OUTPUT
+            echo "::warning::Found $CRITICAL critical and $HIGH high vulnerabilities"
+            echo ""
+            echo "# Critical and High Severity Vulnerabilities Only"
+            echo ""
+            
+            # Filter and display only critical and high vulnerabilities
+            cat audit-root.json | jq -r '
+              .vulnerabilities | 
+              to_entries[] | 
+              select(.value.severity == "critical" or .value.severity == "high") |
+              "## \(.key)\n**Severity:** \(.value.severity)\n**Via:** \(.value.via | map(if type == "string" then . else .title end) | join(", "))\n**Range:** \(.value.range)\n**Fix Available:** \(.value.fixAvailable // false)\n"
+            '
+          else
+            echo "found_issues=false" >> $GITHUB_OUTPUT
+            echo "No critical or high vulnerabilities found"
+          fi
+
+      # 2. Check if NEW dependencies introduce vulnerabilities (PR only)
+      - name: Check New Dependency Vulnerabilities
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "Checking if new changes introduce vulnerabilities..."
+
+          # Get base branch audit
+          git checkout ${{ github.event.pull_request.base.sha }}
+          npm audit --json > audit-base.json || true
+          BASE_CRITICAL=$(cat audit-base.json | jq '.metadata.vulnerabilities.critical // 0')
+          BASE_HIGH=$(cat audit-base.json | jq '.metadata.vulnerabilities.high // 0')
+
+          # Return to PR branch
+          git checkout ${{ github.sha }}
+
+          CURRENT_CRITICAL=${{ steps.audit.outputs.critical }}
+          CURRENT_HIGH=${{ steps.audit.outputs.high }}
+
+          echo "Base branch: $BASE_CRITICAL critical, $BASE_HIGH high"
+          echo "PR branch: $CURRENT_CRITICAL critical, $CURRENT_HIGH high"
+
+          # Only fail if NEW vulnerabilities were introduced
+          if [ "$CURRENT_CRITICAL" -gt "$BASE_CRITICAL" ] || [ "$CURRENT_HIGH" -gt "$BASE_HIGH" ]; then
+            NEW_CRITICAL=$((CURRENT_CRITICAL - BASE_CRITICAL))
+            NEW_HIGH=$((CURRENT_HIGH - BASE_HIGH))
+            echo "::error::This PR introduces $NEW_CRITICAL new critical and $NEW_HIGH new high vulnerabilities"
+            exit 1
+          else
+            echo "No new critical or high vulnerabilities introduced by this PR"
+          fi
+
+      # 3. Fail scheduled/manual runs if vulnerabilities exist
+      - name: Fail on Existing Vulnerabilities (Scheduled/Manual)
+        if: (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && steps.audit.outputs.found_issues == 'true'
+        run: |
+          echo "::error::Found ${{ steps.audit.outputs.critical }} critical and ${{ steps.audit.outputs.high }} high vulnerabilities"
+          echo ""
+          echo "# Critical and High Severity Vulnerabilities Only"
+          echo ""
+
+          # Display the detailed vulnerability list again
+          cat audit-root.json | jq -r '
+            .vulnerabilities | 
+            to_entries[] | 
+            select(.value.severity == "critical" or .value.severity == "high") |
+            "## \(.key)\n**Severity:** \(.value.severity)\n**Via:** \(.value.via | map(if type == "string" then . else .title end) | join(", "))\n**Range:** \(.value.range)\n**Fix Available:** \(.value.fixAvailable // false)\n"
+          '
+
+          exit 1
+
+      # 4. Auto-test Dependabot PRs
+      - name: Test Dependency Updates
+        if: github.actor == 'dependabot[bot]'
+        run: |
+          npm ci
+          npm run lint
+          npm test -- --maxWorkers=2
+          npm run build
+
+      # 5. License Compliance (only when deps change)
+      - name: License Compliance Check
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "Installing dependencies (quiet mode)..."
+          # Using --loglevel error to hide deprecation warnings
+          npm ci --ignore-scripts --no-audit --no-fund --loglevel error
+
+          echo "Checking for prohibited or unknown licenses..."
+          # Running npx with loglevel error to hide install noise of the checker itself
+          npx --loglevel error license-checker \
+            --production \
+            --onlyAllow "MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;ISC;0BSD;CC0-1.0;Unlicense;Python-2.0;CC-BY-3.0;CC-BY-4.0;BlueOak-1.0.0" \
+            --summary
+
+      # 6. Lockfile Validation
+      - name: Validate Lockfiles
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "Validating root lockfile..."
+          npm ci --dry-run
+          git diff --exit-code package-lock.json || {
+            echo "::error::package-lock.json is out of sync"
+            exit 1
+          }
+
+      # 7. Create issue for security vulnerabilities (only on scheduled runs)
+      - name: Create Security Issue
+        if: failure() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Check if issue already exists
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'security,dependencies',
+              state: 'open'
+            });
+
+            const existingIssue = issues.data.find(issue => 
+              issue.title.includes('Security Vulnerabilities Detected')
+            );
+
+            if (existingIssue) {
+              // Update existing issue
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existingIssue.number,
+                body: `## Updated Security Scan - ${new Date().toISOString().split('T')[0]}
+                
+                Vulnerabilities still present in dependencies.
+                
+                **Critical:** ${{ steps.audit.outputs.critical }}  
+                **High:** ${{ steps.audit.outputs.high }}
+                
+                [View Latest CI Run](${context.payload.repository.html_url}/actions/runs/${context.runId})`
+              });
+            } else {
+              // Create new issue
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Security Vulnerabilities Detected',
+                labels: ['security', 'dependencies', 'priority-high'],
+                body: `## Security Scan Failed
+                
+                Critical or high severity vulnerabilities detected in dependencies.
+                
+                **Critical:** ${{ steps.audit.outputs.critical }}  
+                **High:** ${{ steps.audit.outputs.high }}
+                
+                **Action Required:** Review and patch immediately.
+                
+                Run locally to see only critical/high:
+                \`\`\`bash
+                npm audit --json | jq '.vulnerabilities | to_entries[] | select(.value.severity == "critical" or .value.severity == "high")'
+                \`\`\`
+                
+                [View CI Run](${context.payload.repository.html_url}/actions/runs/${context.runId})`
+              });
+            }
