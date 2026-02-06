@@ -1,5 +1,6 @@
 import unittest
 import numpy as np
+import pandas as pd
 import sys
 from pathlib import Path
 from unittest.mock import  MagicMock
@@ -87,8 +88,6 @@ class TestInitializeAhpMatrix(unittest.TestCase):
 
     def test_initialize_ahp_matrix_shape(self):
         """Test that AHP matrix has correct shape"""
-        import pandas as pd
-        
         df = pd.DataFrame({
             'criteria': ['Cost', 'Quality', 'Time']
         })
@@ -100,8 +99,6 @@ class TestInitializeAhpMatrix(unittest.TestCase):
 
     def test_initialize_ahp_matrix_initialization(self):
         """Test that AHP matrix is initialized with zeros"""
-        import pandas as pd
-        
         df = pd.DataFrame({
             'criteria': ['A', 'B']
         })
@@ -113,8 +110,6 @@ class TestInitializeAhpMatrix(unittest.TestCase):
 
     def test_initialize_ahp_matrix_labels(self):
         """Test that AHP matrix has correct row and column labels"""
-        import pandas as pd
-        
         categories = ['Cost', 'Quality', 'Time']
         df = pd.DataFrame({
             'criteria': categories
