@@ -215,6 +215,16 @@
     "daysAgo": "il y a {count}j",
     "newNotification": "Vous avez une nouvelle notification."
   },
+  "notifications": {
+    "errors": {
+      "acceptCollaborationFailed": "Échec de l'acceptation de la collaboration. Veuillez réessayer.",
+      "invalidCollaboration": "Cette invitation de collaboration est invalide ou a expiré."
+    }
+  },
+  "cooperators": {
+    "updatedRole": "Rôle mis à jour en {role} pour : {users}",
+    "inviteSent": "Invitation envoyée à : {users}"
+  },
   "navigation": {
     "dashboard": "Tableau de bord",
     "studies": "Études",
@@ -815,7 +825,10 @@
       "change_role": "Êtes-vous sûr de vouloir changer le rôle de {email} de {old} à {new} ?",
       "message_title_hint": "Tapez un titre pour votre message",
       "message_content_hint": "Tapez le contenu de votre message",
-      "invite_message": "Vous avez été invité à participer au test {testTitle}"
+      "invite_message": "Vous avez été invité à collaborer sur '{testTitle}'",
+      "message_sent_success": "Message envoyé avec succès",
+      "message_sent_error": "Échec de l'envoi du message",
+      "user_not_registered": "Cet utilisateur n'a pas encore accepté l'invitation ou n'est pas enregistré."
     }
   },
   "UserTestTable": {

@@ -215,6 +215,16 @@
     "daysAgo": "há {count}d",
     "newNotification": "Você tem uma nova notificação."
   },
+  "notifications": {
+    "errors": {
+      "acceptCollaborationFailed": "Falha ao aceitar colaboração. Por favor, tente novamente.",
+      "invalidCollaboration": "Este convite de colaboração é inválido ou expirou."
+    }
+  },
+  "cooperators": {
+    "updatedRole": "Função atualizada para {role} para: {users}",
+    "inviteSent": "Convite enviado para: {users}"
+  },
   "navigation": {
     "dashboard": "Painel",
     "studies": "Estudos",
@@ -815,7 +825,10 @@
       "change_role": "Tem certeza de que deseja alterar a função de {email} de {old} para {new}?",
       "message_title_hint": "Digite um título para sua mensagem",
       "message_content_hint": "Digite o conteúdo da sua mensagem",
-      "invite_message": "Você foi convidado a participar do teste {testTitle}"
+      "invite_message": "Você foi convidado para colaborar em '{testTitle}'",
+      "message_sent_success": "Mensagem enviada com sucesso",
+      "message_sent_error": "Falha ao enviar a mensagem",
+      "user_not_registered": "Este usuário ainda não aceitou o convite ou não está registrado."
     }
   },
   "UserTestTable": {
@@ -1306,11 +1319,11 @@
       "filters": {
         "allStatuses": "Todos os status",
         "today": "Hoje",
-        "upcoming": "Próximas",
+        "upcoming": "Em breve",
         "completed": "Concluído",
         "allStudies": "Todos os estudos",
         "myStudies": "Meus estudos",
-        "whereICollaborate": "Onde eu colaboro"
+        "whereICollaborate": "Onde colaboro"
       }
     },
     "templates": {

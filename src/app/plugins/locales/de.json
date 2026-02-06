@@ -215,6 +215,16 @@
     "daysAgo": "vor {count}T",
     "newNotification": "Sie haben eine neue Benachrichtigung."
   },
+  "notifications": {
+    "errors": {
+      "acceptCollaborationFailed": "Zusammenarbeit konnte nicht akzeptiert werden. Bitte versuchen Sie es erneut.",
+      "invalidCollaboration": "Diese Einladung zur Zusammenarbeit ist ungültig oder abgelaufen."
+    }
+  },
+  "cooperators": {
+    "updatedRole": "Rolle auf {role} aktualisiert für: {users}",
+    "inviteSent": "Einladung gesendet an: {users}"
+  },
   "navigation": {
     "dashboard": "Dashboard",
     "studies": "Studien",
@@ -818,7 +828,10 @@
       "change_role": "Sind Sie sicher, dass Sie die Rolle von {email} von {old} zu {new} ändern möchten?",
       "message_title_hint": "Geben Sie einen Titel für Ihre Nachricht ein",
       "message_content_hint": "Geben Sie den Inhalt Ihrer Nachricht ein",
-      "invite_message": "Sie wurden eingeladen, am Test {testTitle} teilzunehmen"
+      "invite_message": "Sie wurden eingeladen, an '{testTitle}' mitzuarbeiten",
+      "message_sent_success": "Nachricht erfolgreich gesendet",
+      "message_sent_error": "Nachricht konnte nicht gesendet werden",
+      "user_not_registered": "Dieser Benutzer hat die Einladung noch nicht angenommen oder ist nicht registriert."
     }
   },
   "UserTestTable": {
@@ -1303,13 +1316,13 @@
       "sessionDate": "Sitzungsdatum",
       "selectRange": "Bereich auswählen",
       "statusLabel": "Status",
-      "ownership": "Eigentum",
+      "ownership": "Besitz",
       "evaluator": "Bewerter",
       "noActiveSessions": "Sie haben keine aktiven Sitzungen",
       "filters": {
         "allStatuses": "Alle Status",
         "today": "Heute",
-        "upcoming": "Bevorstehend",
+        "upcoming": "Demnächst",
         "completed": "Abgeschlossen",
         "allStudies": "Alle Studien",
         "myStudies": "Meine Studien",
