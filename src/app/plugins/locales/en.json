@@ -92,6 +92,7 @@
     "sentBy": "Sent by",
     "new": "NEW",
     "test": "a Study",
+    "of": "of",
     "actions": "Actions",
     "confirm_deletion": "Confirm Deletion",
     "action_cannot_be_undone": "This action cannot be undone",
@@ -1561,8 +1562,18 @@
     "createNewVariableTitle": "Create New Variable"
   },
   "CardSorting": {
-    "noCategory": "No category",
-    "noCards": "No cards found"
+    "noCategory": "No categories found",
+    "noCards": "No cards found",
+    "cards": "Cards",
+    "categories": "Categories",
+    "currentCards": "Current Cards",
+    "currentCategories": "Current Categories",
+    "addNewCard": "Add New Card",
+    "addNewCategory": "Add New Category",
+    "settings": "Settings",
+    "configureCards": "Configure how cards will be displayed",
+    "configureCategories": "Configure how categories will be displayed",
+    "newTask": "New task"
   },
   "analytics": {
     "searchByName": "Search by name",
