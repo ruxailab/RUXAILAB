@@ -22,8 +22,13 @@
                 <div class="text-body-2 text-grey-darken-1 mb-2">
                   {{ $t('CreateTask.preview.description') }}
                 </div>
-                <div class="description-content" v-html="(task && task.taskDescription) || $t('CreateTask.preview.noDescription')">
-                </div>
+                <div
+                  class="description-content"
+                  v-html="
+                    (task && task.taskDescription) ||
+                    $t('CreateTask.preview.noDescription')
+                  "
+                ></div>
               </div>
 
               <div v-if="task && task.taskTip" class="task-tip mb-4">
