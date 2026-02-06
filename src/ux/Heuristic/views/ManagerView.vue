@@ -1,5 +1,10 @@
 <template>
-  <div>
+  <!-- Loading overlay to prevent FOUC -->
+  <v-overlay v-if="isLoading" :model-value="true" class="d-flex align-center justify-center">
+    <v-progress-circular indeterminate color="primary" size="64" />
+  </v-overlay>
+
+  <div v-else>
     <!-- ManagerView genérica mantenida -->
     <ManagerView
       :navigator="navigator"
@@ -110,6 +115,7 @@ import {
   getTopCardsDefualt,
 } from '@/shared/utils/managerDefault'
 import ManagerView from '@/shared/views/template/ManagerView.vue'
+import { useStudyAccess } from '@/shared/composables/useStudyAccess'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
@@ -131,26 +137,14 @@ const store = useStore()
 const route = useRoute()
 const { t } = useI18n()
 
+// Access control - blocks Observer, allows Admin/Evaluator/Guest
+const { test, accessLevel, watchAccessAndRedirect, isLoading } = useStudyAccess({
+  routeType: 'manager',
+  redirectPath: '/',
+})
+
 // Computed
 const user = computed(() => store.getters.user)
-const test = computed(() => store.getters.test)
-
-const accessLevel = computed(() => {
-  const currentUser = user.value
-  const currentTest = test.value
-
-  if (!currentUser) return ACCESS_LEVEL.GUEST
-  if (currentUser.accessLevel === 0) return ACCESS_LEVEL.ADMIN
-  if (currentTest?.testAdmin?.userDocId === currentUser.id)
-    return ACCESS_LEVEL.ADMIN
-
-  const coop = currentTest?.cooperators?.find(
-    (c) => c.userDocId === currentUser.id,
-  )
-  if (coop) return coop.accessLevel
-
-  return currentTest?.isPublic ? ACCESS_LEVEL.EVALUATOR : ACCESS_LEVEL.GUEST
-})
 
 const topCards = computed(() => {
   if (!test.value) return []
@@ -186,6 +180,7 @@ const viewAllActivity = () => {
 
 // Lifecycle
 onMounted(async () => {
+  watchAccessAndRedirect()
   await store.dispatch('getStudy', { id: route.params.id })
   await store.dispatch('getCurrentTestAnswerDoc')
 })

@@ -1,5 +1,10 @@
 <template>
-  <PageWrapper :title="$t('HeuristicsEditTest.pageTitle')" :side-gap="true">
+  <!-- Loading overlay to prevent FOUC -->
+  <v-overlay v-if="isLoading" :model-value="true" class="d-flex align-center justify-center">
+    <v-progress-circular indeterminate color="primary" size="64" />
+  </v-overlay>
+
+  <PageWrapper v-else :title="$t('HeuristicsEditTest.pageTitle')" :side-gap="true">
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
         {{ $t('HeuristicsEditTest.pageSubtitle') }}
@@ -65,9 +70,16 @@ import HeuristicsSettings from '../components/HeuristicsSettings.vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
+import { useStudyAccess } from '@/shared/composables/useStudyAccess'
 
 const store = useStore()
 const route = useRoute()
+
+// Access control - Admin only can edit
+const { watchAccessAndRedirect, isLoading } = useStudyAccess({
+  routeType: 'edit',
+  redirectPath: '/',
+})
 
 const index = ref(0)
 const change = ref(false)
@@ -90,6 +102,7 @@ const handleResize = () => {
 }
 
 onMounted(() => {
+  watchAccessAndRedirect()
   window.addEventListener('resize', handleResize)
 })
 
