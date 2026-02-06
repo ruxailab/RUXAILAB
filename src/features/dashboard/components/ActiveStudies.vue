@@ -351,51 +351,6 @@ const viewAllStudies = () => {
   )
 }
 
-// Default studies if none provided
-const defaultStudies = [
-  {
-    id: 1,
-    title: 'Mobile Banking UX Study',
-    description:
-      'Evaluating user experience and accessibility of mobile banking features',
-    status: 'active',
-    progress: 75,
-    participants: 24,
-    daysLeft: 5,
-    typeIcon: 'mdi-cellphone',
-  },
-  {
-    id: 2,
-    title: 'E-commerce Card Sorting',
-    description: 'Understanding user mental models for product categorization',
-    status: 'recruiting',
-    progress: 45,
-    participants: 18,
-    daysLeft: 12,
-    typeIcon: 'mdi-sort-variant',
-  },
-  {
-    id: 3,
-    title: 'Voice Interface Testing',
-    description: 'Usability testing for voice-controlled smart home devices',
-    status: 'active',
-    progress: 90,
-    participants: 32,
-    daysLeft: 2,
-    typeIcon: 'mdi-microphone',
-  },
-  {
-    id: 4,
-    title: 'Accessibility Audit',
-    description: 'Comprehensive accessibility evaluation of web application',
-    status: 'paused',
-    progress: 30,
-    participants: 12,
-    daysLeft: 20,
-    typeIcon: 'mdi-wheelchair-accessibility',
-  },
-]
-
 const createNewStudy = () => {
   router.push({ name: 'study-create-step1' })
 }

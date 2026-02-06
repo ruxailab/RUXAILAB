@@ -40,7 +40,7 @@
         :headers="headers"
         :items="files"
         :search="search"
-        :items-per-page-text="t('common.itemsPerPage')"
+        :items-per-page-text="t('common.table.itemsPerPage')"
         hover
       >
         <!-- File Type Icon -->
