@@ -15,12 +15,12 @@
       />
     </div>
 
-    <!-- <v-overlay v-model="isLoading" class="text-center">
-      <v-progress-circular indeterminate color="#fca326" size="50" />
-      <div class="white-text mt-3">
-        Saving...
+    <v-overlay v-model="isLoading" class="d-flex align-center justify-center">
+      <div class="text-center">
+        <v-progress-circular indeterminate color="#fca326" size="50" />
+        <div style="color: white" class="mt-3">loading...</div>
       </div>
-    </v-overlay> -->
+    </v-overlay>
 
     <Snackbar />
 
@@ -740,6 +740,7 @@ const saveAnswer = async () => {
 
 const submitAnswer = async () => {
   try {
+    isLoading.value = true
     localTestAnswer.submitted = true
     await saveAnswer()
   } catch {
