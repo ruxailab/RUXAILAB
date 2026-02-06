@@ -69,8 +69,6 @@ export default class AnswerController extends Controller {
           payload.toFirestore()
       }
     }
-    console.log('fieldToUpdate ->', fieldToUpdate)
-
     await super.update(COLLECTION, answersDocId, fieldToUpdate)
   }
 
@@ -80,7 +78,6 @@ export default class AnswerController extends Controller {
       ...payload,
       lastUpdate: Date.now(),
     })
-    console.log('data:', data)
     await super.update(COLLECTION, answersDocId, {
       [fieldPath]: data.toFirestore(),
     })

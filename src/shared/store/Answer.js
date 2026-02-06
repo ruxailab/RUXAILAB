@@ -185,17 +185,15 @@ export default {
     async getCurrentTestAnswerDoc({ commit, rootState }) {
       const currentTest = rootState.Tests.Test
       if (!currentTest || !currentTest.answersDocId) {
-        return console.log('No current test or answersDocId')
+        return
       }
       const currentAnswersDocId = currentTest.answersDocId
       commit('setLoading', true)
       try {
-        const answerDoc = await answerController.getAnswerById(
-          currentAnswersDocId,
-        )
+        const answerDoc =
+          await answerController.getAnswerById(currentAnswersDocId)
         commit('SET_ANSWER_DOCUMENT', answerDoc)
-      } catch (e) {
-        console.error('Error in getCurrentTestAnswerDoc', e)
+      } catch {
         // commit("setError", true);
       } finally {
         commit('setLoading', false)
@@ -205,8 +203,7 @@ export default {
       commit('setLoading', true)
       try {
         await answerController.updateUserAnswer(payload)
-      } catch (e) {
-        console.error('Error in updateTest', e)
+      } catch {
         // commit("setError", true);
       } finally {
         commit('setLoading', false)
@@ -243,8 +240,7 @@ export default {
       commit('setLoading', true)
       try {
         await answerController.updateTaskAnswer(payload, answersDocId)
-      } catch (e) {
-        console.error('Error in save test answer', e)
+      } catch {
       } finally {
         commit('setLoading', false)
       }
