@@ -305,7 +305,10 @@
     "fileTooLarge": "File size exceeds 5MB. Please choose a smaller image.",
     "imageProcessingError": "Failed to process image. Please try again.",
     "saveError": "Failed to save profile. Please try again.",
-    "formNotReady": "Form is not ready. Please try again."
+    "formNotReady": "Form is not ready. Please try again.",
+    "formInvalid": "Please fix the validation errors",
+    "noChanges": "No changes to save",
+
   },
   "titles": {
     "manager": "Manager",
