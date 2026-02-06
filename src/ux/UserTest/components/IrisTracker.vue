@@ -48,21 +48,16 @@ const mediaStream = ref(null)
 const model = ref(null)
 let trackingLoop = null
 
-onMounted(async () => {
-  const loaded = await loadDependencies(store)
-  if (!loaded) return
-
-  await tf.setBackend('webgl')
-  await tf.ready()
-  await initWebcam()
-  await waitForVideoReady()
-  await loadModel()
-  if (props.isRunning) startTracking()
-})
-
 watch(
   () => props.isRunning,
-  (val) => (val ? startTracking() : stopTracking()),
+  async (val) => {
+    if (val) {
+      await startIrisTracking()
+    } else {
+      stopTracking()
+      stopWebcam()
+    }
+  },
 )
 
 onBeforeUnmount(() => {
@@ -70,6 +65,22 @@ onBeforeUnmount(() => {
   if (mediaStream.value)
     mediaStream.value.getTracks().forEach((track) => track.stop())
 })
+
+const startIrisTracking = async () => {
+  if (model.value || mediaStream.value) return
+
+  const loaded = await loadDependencies(store)
+  if (!loaded) return
+
+  await tf.setBackend('webgl')
+  await tf.ready()
+
+  await initWebcam()
+  await waitForVideoReady()
+  await loadModel()
+
+  startTracking()
+}
 
 const initWebcam = async () => {
   mediaStream.value = await navigator.mediaDevices.getUserMedia({
@@ -130,6 +141,13 @@ const stopTracking = () => {
   if (trackingLoop) {
     clearTimeout(trackingLoop)
     trackingLoop = null
+  }
+}
+
+const stopWebcam = () => {
+  if (mediaStream.value) {
+    mediaStream.value.getTracks().forEach((t) => t.stop())
+    mediaStream.value = null
   }
 }
 </script>

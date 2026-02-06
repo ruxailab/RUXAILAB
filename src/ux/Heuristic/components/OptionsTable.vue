@@ -211,7 +211,9 @@
             <span class="text-caption text-grey">
               {{ optionsWithFormattedValue.length }}
               {{
-                optionsWithFormattedValue.length === 1 ? 'option' : 'options'
+                optionsWithFormattedValue.length === 1
+                  ? $t('HeuristicsOptionsTable.count.option')
+                  : $t('HeuristicsOptionsTable.count.options')
               }}
             </span>
           </div>
@@ -303,8 +305,8 @@ const optionsWithFormattedValue = computed(() => {
   return source.map((opt) => ({
     ...opt,
     value: opt.value === null ? '-' : opt.value,
-  }))
-})
+  })),
+)
 
 const testAnswerDocLength = computed(() => {
   const testAnswerDocument = store.getters.testAnswerDocument

@@ -15,12 +15,12 @@
       />
     </div>
 
-    <!-- <v-overlay v-model="isLoading" class="text-center">
-      <v-progress-circular indeterminate color="#fca326" size="50" />
-      <div class="white-text mt-3">
-        Saving...
+    <v-overlay v-model="isLoading" class="d-flex align-center justify-center">
+      <div class="text-center">
+        <v-progress-circular indeterminate color="#fca326" size="50" />
+        <div style="color: white" class="mt-3">loading...</div>
       </div>
-    </v-overlay> -->
+    </v-overlay>
 
     <Snackbar />
 
@@ -296,8 +296,8 @@
                         taskIndex > idx
                           ? 'success'
                           : taskIndex === idx
-                          ? 'primary'
-                          : 'grey'
+                            ? 'primary'
+                            : 'grey'
                       "
                       complete-icon="mdi-check"
                     />
@@ -357,7 +357,6 @@
               () => {
                 taskIndex = 0
                 globalIndex = hasEyeTracking ? 5 : 4
-                saveIrisDataIntoTask()
               }
             "
           />
@@ -405,12 +404,24 @@
                 localTestAnswer.tasks[taskIndex].sartAnswers = { ...val }
               }
             "
-            @done="() => handleTaskFinish(true)"
+            @done="
+              () => {
+                handleTaskFinish(true)
+                toggleTracking(false)
+              }
+            "
             @could-not-finish="() => handleTaskFinish(false)"
             @show-loading="isLoading = true"
             @stop-show-loading="isLoading = false"
             @recording-started="isVisualizerVisible = $event"
             @timer-stopped="handleTimerStopped"
+            @start-task="
+              () => {
+                if (test.testStructure.userTasks[taskIndex]?.hasEye) {
+                  toggleTracking(true)
+                }
+              }
+            "
           />
 
           <PostTestStep
@@ -676,19 +687,8 @@ function toggleTracking(value) {
   isRecording.value = value
 }
 
-function saveIrisDataIntoTask() {
-  const task = test.value.testStructure.userTasks[taskIndex.value]
-
-  if (task?.hasEye === true && globalIndex.value >= 5) {
-    toggleTracking(true)
-  } else {
-    toggleTracking(false)
-  }
-}
-
-const saveAnswer = async () => {
+const savePartialAnswer = async () => {
   try {
-    attachMediaToTasks(localTestAnswer, mediaUrls.value)
     localTestAnswer.progress = calculateProgress()
     localTestAnswer.fullName = fullName.value
 
@@ -727,7 +727,15 @@ const saveAnswer = async () => {
         testType: test.value.testType,
       })
     }
+  } catch (e) {
+    console.error('[SAVE PARTIAL] error', e)
+  }
+}
 
+const saveAnswer = async () => {
+  try {
+    attachMediaToTasks(localTestAnswer, mediaUrls.value)
+    await savePartialAnswer()
     router.push('/admin')
   } catch {
     store.commit('SET_TOAST', {
@@ -739,6 +747,7 @@ const saveAnswer = async () => {
 
 const submitAnswer = async () => {
   try {
+    isLoading.value = true
     localTestAnswer.submitted = true
     await saveAnswer()
   } catch {
@@ -769,7 +778,13 @@ const handleSubmit = () => {
 }
 
 const attachMediaToTasks = (answer, mediaUrls) => {
-  if (!answer?.tasks?.length) return
+  if (!answer?.tasks) return
+
+  const taskEntries = Array.isArray(answer.tasks)
+    ? answer.tasks.map((task, index) => [index, task])
+    : Object.entries(answer.tasks)
+
+  if (!taskEntries.length) return
 
   for (const [taskIndex, medias] of Object.entries(mediaUrls)) {
     const task = answer.tasks[taskIndex]
@@ -821,9 +836,28 @@ const callTimerSave = () => {
   }
 }
 
-function handleTaskFinish(userCompleted) {
-  completeStep(taskIndex.value, 'tasks', userCompleted)
+async function handleTaskFinish(userCompleted) {
   callTimerSave()
+
+  await nextTick()
+
+  if (isLoading.value) {
+    const unwatch = watch(
+      () => isLoading.value,
+      async (val) => {
+        if (!val) {
+          unwatch()
+          completeStep(taskIndex.value, 'tasks', userCompleted)
+          attachMediaToTasks(localTestAnswer, mediaUrls.value)
+          await savePartialAnswer()
+        }
+      },
+    )
+  } else {
+    completeStep(taskIndex.value, 'tasks', userCompleted)
+    attachMediaToTasks(localTestAnswer, mediaUrls.value)
+    await savePartialAnswer()
+  }
 }
 
 const startTimer = () => {
@@ -865,11 +899,13 @@ const completeStep = (id, type, userCompleted = true) => {
     if (type === 'consent') {
       localTestAnswer.consentCompleted = true
       globalIndex.value = 2 // PreTest
+      savePartialAnswer()
     }
 
     if (type === 'preTest') {
       localTestAnswer.preTestCompleted = true
       globalIndex.value = hasEyeTracking.value ? 3 : 3 // se tiver, vai pro PreCalibration
+      savePartialAnswer()
     }
 
     if (type === 'eyeCalibration') {
@@ -923,9 +959,9 @@ const completeStep = (id, type, userCompleted = true) => {
       localTestAnswer.postTestCompleted = true
       // items.value[2].icon = 'mdi-check-circle-outline';
       globalIndex.value = hasEyeTracking.value ? 7 : 6 // Finish
+      savePartialAnswer()
     }
 
-    saveIrisDataIntoTask()
     calculateProgress()
   } catch {
     store.commit('SET_TOAST', {
@@ -1002,7 +1038,10 @@ const calculateProgress = () => {
       localTestAnswer.tasks.length > 0
     ) {
       for (let i = 0; i < localTestAnswer.tasks.length; i++) {
-        if (localTestAnswer.tasks[i]?.completed) {
+        if (
+          localTestAnswer.tasks[i]?.completed ||
+          localTestAnswer.tasks[i]?.attempted
+        ) {
           tasksCompleted++
         }
       }
@@ -1265,7 +1304,9 @@ onMounted(async () => {
 
     if (data.calibrationId) {
       calibrationCompleted.value = true
-      calibrationPopup.value.close()
+      if (calibrationPopup.value) {
+        calibrationPopup.value.close()
+      }
     }
   })
 })
@@ -1354,7 +1395,8 @@ onBeforeUnmount(() => {
   --v-stepper-header-title-color: #fff !important;
   --v-stepper-item-title-color: #fff !important;
   --v-stepper-item-color: #fff !important;
-  transition: background 1s cubic-bezier(0.4, 0, 0.2, 1),
+  transition:
+    background 1s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

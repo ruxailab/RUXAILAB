@@ -62,13 +62,7 @@
     <!-- Results -->
     <v-row v-else>
       <!-- Summary Metrics -->
-      <v-col
-        v-for="metric in summaryMetrics"
-        :key="metric.label"
-        cols="12"
-        sm="6"
-        md="6"
-      >
+      <v-col v-for="metric in summaryMetrics" :key="metric.label" cols="12">
         <v-card class="pa-4" elevation="2" rounded="xl">
           <div class="d-flex justify-space-between align-center mb-1">
             <span class="font-weight-medium text-grey-darken-1">{{
@@ -215,7 +209,6 @@ const predictedData = ref(null)
 const isAnalyzing = ref(true)
 const hasError = ref(false)
 
-const accuracy = ref(0)
 const totalPredictions = ref(0)
 const insights = ref([])
 const summaryMetrics = ref([])
@@ -224,25 +217,41 @@ watch(selectedView, (value) => emit('view-changed', value))
 
 onMounted(async () => {
   try {
+    console.log(calibrationConfig)
+
     const res = await axios.post(
       process.env.VUE_APP_EYE_LAB_BACKEND_URL + '/api/session/batch_predict',
       {
         k: calibrationConfig.value.pointNumber,
         screen_height: 1080,
-        screen_width: 2560,
+        screen_width: 1920,
         iris_tracking_data: props.irisData,
         calib_id: props.userId,
       },
       { headers: { 'Content-Type': 'application/json' } },
     )
 
-    const data = res.data
-    predictedData.value = JSON.stringify(data, null, 2)
+    let data = res.data
 
-    processAnalytics(data)
-    emit('predictions-ready', data)
-  } catch {
-    predictedData.value = 'Error loading predictions.'
+    // FIX 1: Handle string responses by parsing JSON
+    if (typeof data === 'string') {
+      try {
+        data = JSON.parse(data)
+      } catch (parseErr) {
+        console.error('❌ Failed to parse JSON response:', parseErr)
+        hasError.value = true
+        isAnalyzing.value = false
+        return
+      }
+    }
+
+    predictedData.value = data
+
+    processAnalytics(predictedData.value)
+    emit('predictions-ready', predictedData.value)
+  } catch (err) {
+    console.error('❌ Eye tracking error:', err)
+    predictedData.value = null
     hasError.value = true
   } finally {
     isAnalyzing.value = false
@@ -250,99 +259,24 @@ onMounted(async () => {
 })
 
 function processAnalytics(data) {
-  // Calcula métricas básicas
-  const predictions = Array.isArray(data?.predictions)
-    ? data.predictions
-    : Object.values(data || {})
+  const predictions = Array.isArray(data) ? data : []
 
-  totalPredictions.value = predictions.length || 0
+  if (predictions.length === 0) {
+    console.warn('No predictions data available')
+    hasError.value = true
+    return
+  }
 
-  const accuracies = predictions.map((p) => p.accuracy || 0)
-  accuracy.value = accuracies.length
-    ? Number(
-        (
-          (accuracies.reduce((a, b) => a + b, 0) / accuracies.length) *
-          10
-        ).toFixed(1),
-      )
-    : 0
+  totalPredictions.value = predictions.length
 
-  // Atualiza métricas
   summaryMetrics.value = [
-    {
-      label: 'Average Accuracy',
-      value: `${accuracy.value}%`,
-      progress: accuracy.value,
-      color:
-        accuracy.value > 85
-          ? 'light-green-darken-2'
-          : accuracy.value > 60
-          ? 'amber-darken-2'
-          : 'red-darken-2',
-      icon:
-        accuracy.value > 85
-          ? 'mdi-check-circle'
-          : accuracy.value > 60
-          ? 'mdi-alert-circle'
-          : 'mdi-close-circle',
-    },
     {
       label: 'Total Predictions',
       value: totalPredictions.value,
-      progress: Math.min(totalPredictions.value / 10, 100), // escala simbólica
+      progress: Math.min(totalPredictions.value, 300),
       color: 'indigo-darken-2',
       icon: 'mdi-eye-outline',
     },
   ]
-
-  generateInsights(accuracy.value, totalPredictions.value)
-}
-
-function generateInsights(acc, total) {
-  insights.value = []
-
-  if (acc > 90)
-    insights.value.push({
-      text: `Exceptional tracking accuracy (${acc}%), indicating very stable gaze estimation.`,
-      color: 'light-green-darken-2',
-      icon: 'mdi-target',
-      type: 'success',
-    })
-  else if (acc > 70)
-    insights.value.push({
-      text: `Good overall precision (${acc}%), with minor deviations detected.`,
-      color: 'amber-darken-2',
-      icon: 'mdi-crosshairs',
-      type: 'warning',
-    })
-  else
-    insights.value.push({
-      text: `Low tracking accuracy (${acc}%) suggests possible calibration or lighting issues.`,
-      color: 'red-darken-2',
-      icon: 'mdi-alert',
-      type: 'error',
-    })
-
-  if (total > 200)
-    insights.value.push({
-      text: `High number of gaze predictions (${total}), ensuring detailed tracking granularity.`,
-      color: 'indigo-darken-2',
-      icon: 'mdi-chart-timeline-variant',
-      type: 'info',
-    })
-  else if (total < 50)
-    insights.value.push({
-      text: `Few predictions (${total}) detected — user might have looked away or low sampling occurred.`,
-      color: 'blue-grey-darken-1',
-      icon: 'mdi-eye-off-outline',
-      type: 'info',
-    })
-  else
-    insights.value.push({
-      text: `${total} predictions collected — optimal tracking density for analysis.`,
-      color: 'blue-darken-1',
-      icon: 'mdi-eye-outline',
-      type: 'info',
-    })
 }
 </script>

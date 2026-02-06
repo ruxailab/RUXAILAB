@@ -1,8 +1,8 @@
 <template>
-  <PageWrapper title="Edit Test" :side-gap="true">
+  <PageWrapper :title="$t('HeuristicsEditTest.pageTitle')" :side-gap="true">
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
-        Customize the settings and preferences of your test
+        {{ $t('HeuristicsEditTest.pageSubtitle') }}
       </p>
     </template>
 
