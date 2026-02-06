@@ -26,7 +26,7 @@
           <v-btn
             class="bg-error text-white ml-1"
             variant="text"
-            @click="submitAnswer(), (dialog = false)"
+            @click="(submitAnswer(), (dialog = false))"
           >
             {{ $t('HeuristicsTestView.actions.submit') }}
           </v-btn>
@@ -525,7 +525,6 @@ const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 const logined = ref(null)
-const selected = ref(true)
 const fromlink = ref(null)
 const drawer = ref(true)
 const start = ref(true)
@@ -535,9 +534,7 @@ const noExistUser = ref(true)
 const heurisIndex = ref(0)
 const preTestIndex = ref(null)
 const items = ref([])
-const idx = ref(0)
 const fab = ref(false)
-const res = ref(0)
 const dialog = ref(false)
 const calculatedProgress = ref(0)
 const review = ref(true)
@@ -695,8 +692,7 @@ const saveAnswer = async () => {
       testType: test.value.testType,
     })
     showSuccess('HeuristicsTestView.messages.answerSaved')
-  } catch (error) {
-    console.error('Error saving answer:', error)
+  } catch {
     showError('HeuristicsTestView.errors.failedToSaveAnswer')
   }
 }
@@ -711,8 +707,7 @@ const submitAnswer = async () => {
     await saveAnswer()
     showSuccess('alerts.genericSuccess')
     router.push('/admin')
-  } catch (error) {
-    console.error('Error submitting answer:', error)
+  } catch {
     showError('HeuristicsTestView.errors.failedToSubmitAnswer')
   }
 }

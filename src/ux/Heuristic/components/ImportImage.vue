@@ -54,10 +54,8 @@ const emit = defineEmits(['imageUploaded'])
 const store = useStore()
 
 const url = ref('')
-const object = ref({})
 const imageUploaded = ref(false)
 
-const test = computed(() => store.state.Tests.Test)
 const currentUserTestAnswer = computed(
   () => store.getters.currentUserTestAnswer,
 )
