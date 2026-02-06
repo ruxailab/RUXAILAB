@@ -305,8 +305,8 @@ const optionsWithFormattedValue = computed(() => {
   return source.map((opt) => ({
     ...opt,
     value: opt.value === null ? '-' : opt.value,
-  })),
-)
+  }))
+})
 
 const testAnswerDocLength = computed(() => {
   const testAnswerDocument = store.getters.testAnswerDocument
