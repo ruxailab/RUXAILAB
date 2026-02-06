@@ -44,10 +44,22 @@ jest.mock('axios')
 
 describe('AuthController', () => {
   let authController
+  let consoleErrorSpy
+  let consoleWarnSpy
 
   beforeEach(() => {
     jest.clearAllMocks()
     authController = new AuthController()
+
+    // Suppress expected console output during tests
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+  })
+
+  afterEach(() => {
+    // Restore console methods
+    consoleErrorSpy.mockRestore()
+    consoleWarnSpy.mockRestore()
   })
 
   describe('signUp', () => {
