@@ -215,6 +215,16 @@
     "daysAgo": "منذ {count} يوم",
     "newNotification": "لديك إشعار جديد."
   },
+  "notifications": {
+    "errors": {
+      "acceptCollaborationFailed": "فشل في قبول التعاون. يرجى المحاولة مرة أخرى.",
+      "invalidCollaboration": "دعوة التعاون هذه غير صالحة أو انتهت صلاحيتها."
+    }
+  },
+  "cooperators": {
+    "updatedRole": "تم تحديث الدور إلى {role} لـ: {users}",
+    "inviteSent": "تم إرسال الدعوة إلى: {users}"
+  },
   "navigation": {
     "dashboard": "لوحة التحكم",
     "studies": "الدراسات",
@@ -817,7 +827,10 @@
       "change_role": "هل أنت متأكد أنك تريد تغيير دور {email} من {old} إلى {new}؟",
       "message_title_hint": "اكتب عنوانًا لرسالتك",
       "message_content_hint": "اكتب محتوى رسالتك",
-      "invite_message": "لقد تم دعوتك للمشاركة في الاختبار {testTitle}"
+      "invite_message": "لقد تمت دعوتك للتعاون في '{testTitle}'",
+      "message_sent_success": "تم إرسال الرسالة بنجاح",
+      "message_sent_error": "فشل في إرسال الرسالة",
+      "user_not_registered": "هذا المستخدم لم يقبل الدعوة بعد أو غير مسجل."
     }
   },
   "UserTestTable": {
@@ -1300,7 +1313,7 @@
       "showFilters": "عرض الفلاتر",
       "hideFilters": "إخفاء الفلاتر",
       "sessionDate": "تاريخ الجلسة",
-      "selectRange": "اختر النطاق",
+      "selectRange": "تحديد النطاق",
       "statusLabel": "الحالة",
       "ownership": "الملكية",
       "evaluator": "المقيم",

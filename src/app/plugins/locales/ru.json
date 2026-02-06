@@ -215,6 +215,16 @@
     "daysAgo": "{count} д назад",
     "newNotification": "У вас новое уведомление."
   },
+  "notifications": {
+    "errors": {
+      "acceptCollaborationFailed": "Не удалось принять сотрудничество. Пожалуйста, попробуйте снова.",
+      "invalidCollaboration": "Это приглашение к сотрудничеству недействительно или истекло."
+    }
+  },
+  "cooperators": {
+    "updatedRole": "Роль обновлена на {role} для: {users}",
+    "inviteSent": "Приглашение отправлено: {users}"
+  },
   "navigation": {
     "dashboard": "Панель управления",
     "studies": "Исследования",
@@ -815,7 +825,10 @@
       "change_role": "Вы уверены, что хотите изменить роль {email} с {old} на {new}?",
       "message_title_hint": "Введите заголовок для вашего сообщения",
       "message_content_hint": "Введите содержание вашего сообщения",
-      "invite_message": "Вы были приглашены к участию в тесте {testTitle}"
+      "invite_message": "Вы приглашены для сотрудничества над '{testTitle}'",
+      "message_sent_success": "Сообщение успешно отправлено",
+      "message_sent_error": "Не удалось отправить сообщение",
+      "user_not_registered": "Этот пользователь еще не принял приглашение или не зарегистрирован."
     }
   },
   "UserTestTable": {
@@ -1307,7 +1320,7 @@
         "allStatuses": "Все статусы",
         "today": "Сегодня",
         "upcoming": "Предстоящие",
-        "completed": "Завершенный",
+        "completed": "Завершено",
         "allStudies": "Все исследования",
         "myStudies": "Мои исследования",
         "whereICollaborate": "Где я сотрудничаю"
