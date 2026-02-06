@@ -82,11 +82,6 @@
         </v-card-text>
       </v-card>
     </div>
-
-    <v-overlay v-model="loading">
-      <v-progress-circular indeterminate size="64" />
-    </v-overlay>
-
     <v-dialog
       :model-value="fromlink && !noExistUser && !logined"
       width="500"
@@ -573,7 +568,6 @@ import AddCommentBtn from '@/ux/Heuristic/components/AddCommentBtn.vue'
 import HelpBtn from '@/ux/Heuristic/components/QuestionHelpBtn.vue'
 import TextClamp from 'vue3-text-clamp'
 import Snackbar from '@/shared/components/Snackbar'
-import Loading from '@/shared/components/Loading.vue'
 import HeuristicQuestionAnswer from '@/ux/Heuristic/models/HeuristicQuestionAnswer'
 import Heuristic from '@/ux/Heuristic/models/Heuristic'
 import { showSuccess, showError } from '@/shared/utils/toast'
