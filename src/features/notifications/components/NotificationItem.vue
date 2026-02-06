@@ -35,7 +35,7 @@
         </div>
 
         <div class="meta">
-          {{ $t('common.sentBy') }}: {{ notification.author }}
+          {{ $t('common.sentBy') }} {{ notification.author }}
         </div>
       </div>
 
@@ -89,7 +89,9 @@ const relativeTime = (date) => {
   border-radius: 12px;
   padding: 12px;
   cursor: pointer;
-  transition: background 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .notification-item:hover {

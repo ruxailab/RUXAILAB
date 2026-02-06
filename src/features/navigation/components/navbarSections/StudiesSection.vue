@@ -195,7 +195,7 @@ import {
 // ===== Setup =====
 const store = useStore()
 const router = useRouter()
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const search = ref('')
 
 // ===== Filter state =====
