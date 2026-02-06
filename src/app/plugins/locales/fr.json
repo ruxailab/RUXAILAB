@@ -1402,8 +1402,8 @@
     "profile": "Profil",
     "returnToConsole": "Retour à la console",
     "tip": "Astuce",
-    "cancel": "Annuler",
-    "create": "Créer",
+    "cancel": "Cancel",
+    "create": "Create",
     "close": "Fermer",
     "save": "Enregistrer",
     "stay": "Rester",
@@ -1413,10 +1413,15 @@
     "delete": "Supprimer",
     "deleteAccount": "Supprimer le compte",
     "back": "Retour",
-    "duplicateTest": "Dupliquer le test",
+    "duplicateTest": "Duplicate Test",
     "submit": "Soumettre",
     "couldNotFinish": "Impossible de terminer",
-    "addNewTask": "Ajouter une nouvelle tâche"
+    "addNewTask": "Ajouter une nouvelle tâche",
+    "saveChanges": "Save Changes",
+    "createTemplate": "Create Template",
+    "deleteTest": "Delete Test",
+    "deleteForever": "Delete Forever",
+    "startTest": "Start Test"
   },
   "switches": {
     "noAnswer": "Pas de réponse",
@@ -1859,7 +1864,10 @@
     "deleteOptionConfirm": {
       "title": "Supprimer l'option",
       "message": "Êtes-vous sûr de vouloir supprimer cette option ? Cette action est irréversible."
-    }
+    },
+    "confirmDeletion": "Confirm Deletion",
+    "actionCannotBeUndone": "This action cannot be undone",
+    "allAssociatedDataLost": "All associated data, results, and configurations will be lost forever."
   },
   "tags": {
     "active": "Actif",
@@ -1891,5 +1899,15 @@
       "ACCESSIBILITY_AUTOMATIC": "Évaluation automatique",
       "WCAG_AUDIT": "Audit WCAG"
     }
+  },
+  "testSettings": {
+    "testInformation": "Test Information",
+    "basicTestSettings": "Basic test settings and description",
+    "advancedSettings": "Advanced Settings",
+    "quickActions": "Quick Actions",
+    "performCommonTasks": "Perform common tasks instantly"
+  },
+  "cooperator": {
+    "goToSession": "Go to session"
   }
 }
