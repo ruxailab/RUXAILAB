@@ -128,7 +128,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['open-invite-dialog'])
+defineEmits(['open-invite-dialog'])
 
 const store = useStore()
 const route = useRoute()
@@ -312,8 +312,8 @@ const submit = async () => {
       store.dispatch('getStudy', { id: test.value.id }),
       ...newCooperators.map((guest) => sendMenssages(guest)),
     ])
-  } catch (error) {
-    console.error('Error updating study:', error)
+  } catch {
+    // console.error('Error updating study:', error)
   }
 }
 
@@ -325,48 +325,6 @@ const sendMenssages = async (guest) => {
   } catch (error) {
     return error
     showError('errors.sendError')
-  }
-}
-
-const notifyCooperatorAccessibility = async (guest) => {
-  if (test.value) {
-    let path = ''
-    let title = t('HeuristicsCooperators.actions.send_invitation')
-    let description = t('HeuristicsCooperators.messages.invite_message', {
-      testTitle: test.value.testTitle || t('common.test'),
-    })
-
-    if (test.value.testType === 'MANUAL') {
-      path = `accessibility/manual/preview/${test.value.id}`
-      title =
-        t('studyCreation.methods.accessibility.manual_testing.name') +
-        ' ' +
-        t('HeuristicsCooperators.actions.send_invitation')
-      description = t('HeuristicsCooperators.messages.invite_message', {
-        testTitle: test.value.testTitle || t('common.test'),
-      })
-    } else if (test.value.testType === 'AUTOMATIC') {
-      path = `accessibility/automatic/preview/${test.value.id}`
-      title =
-        t('studyCreation.methods.accessibility.automatic_testing.name') +
-        ' ' +
-        t('HeuristicsCooperators.actions.send_invitation')
-      description = t('HeuristicsCooperators.messages.invite_message', {
-        testTitle: test.value.testTitle || t('common.test'),
-      })
-    }
-
-    if (guest.userDocId && path) {
-      const author = test.value.testAdmin.email
-      await sendNotification(
-        guest.userDocId,
-        title,
-        description,
-        path,
-        test.value.id,
-        author,
-      )
-    }
   }
 }
 
