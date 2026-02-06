@@ -792,6 +792,23 @@ const attachMediaToTasks = (answer, mediaUrls) => {
     if (!task) continue
 
     for (const type in medias) {
+      if (type === 'sizes') {
+        const sizes = medias[type]
+        console.log(`Found sizes for Task ${taskIndex}:`, sizes)
+        if (sizes.screenRecordURL) {
+          task.screenSize = sizes.screenRecordURL
+          console.log('Set screenSize:', task.screenSize)
+        }
+        if (sizes.audioRecordURL) {
+          task.audioSize = sizes.audioRecordURL
+          console.log('Set audioSize:', task.audioSize)
+        }
+        if (sizes.webcamRecordURL) {
+          task.webcamSize = sizes.webcamRecordURL
+          console.log('Set webcamSize:', task.webcamSize)
+        }
+        continue
+      }
       const field = MEDIA_FIELD_MAP?.[type] || type
       const url = medias[type]
       if (url != null) task[field] = url
