@@ -1,0 +1,88 @@
+# CodeRabbit Configuration File
+# Language settings
+language: en-US
+
+# Review settings
+reviews:
+  # Enable/disable automatic reviews
+  auto_review:
+    enabled: true
+    drafts: false
+  
+  # Review profile
+  profile: chill
+  
+  # Request changes workflow
+  request_changes_workflow: false
+  
+  # High level summary
+  high_level_summary: true
+  
+  # Poem generation
+  poem: false
+  
+  # Review status
+  review_status: true
+  
+  # Collapse walkthrough
+  collapse_walkthrough: false
+  
+  # Path filters - files to include/exclude from reviews
+  path_filters:
+    - "!node_modules/**"
+    - "!dist/**"
+    - "!build/**"
+    - "!coverage/**"
+    - "!*.min.js"
+    - "!package-lock.json"
+    - "!firebase-emulator/**"
+    - "!.git/**"
+
+# Chat settings
+chat:
+  auto_reply: true
+
+# Knowledge base settings
+knowledge_base:
+  # Learnings from previous reviews
+  learnings: true
+  
+  # Opt-in to share learnings
+  opt_in: true
+
+# Tone settings
+tone_instructions: |
+  - Be concise and constructive
+  - Focus on code quality, security, and best practices
+  - Provide actionable suggestions
+  - Be respectful and professional
+
+# Early access features
+early_access: false
+
+# Enable/disable specific checks
+checks:
+  # Security vulnerabilities
+  security: true
+  
+  # Performance issues
+  performance: true
+  
+  # Code style and formatting
+  style: true
+  
+  # Best practices
+  best_practices: true
+  
+  # Documentation
+  documentation: true
+
+# Custom instructions for your Vue.js/Firebase project
+custom_instructions: |
+  - Pay special attention to Vue.js component best practices
+  - Review Firebase security rules carefully
+  - Check for proper error handling in async operations
+  - Ensure accessibility compliance in Vue components
+  - Verify proper state management patterns
+  - Check for proper i18n implementation
+  - Validate proper use of composables and Vue 3 patterns
