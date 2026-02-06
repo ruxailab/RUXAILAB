@@ -1417,7 +1417,12 @@
     "duplicateTest": "Duplicate Test",
     "submit": "Submit",
     "couldNotFinish": "Could not finish",
-    "addNewTask": "Add New Task"
+    "addNewTask": "Add New Task",
+    "saveChanges": "Save Changes",
+    "createTemplate": "Create Template",
+    "deleteTest": "Delete Test",
+    "deleteForever": "Delete Forever",
+    "startTest": "Start Test"
   },
   "switches": {
     "noAnswer": "No answer",
@@ -1839,7 +1844,10 @@
     "deleteOptionConfirm": {
       "title": "Delete Option",
       "message": "Are you sure you want to delete this option? This action cannot be undone."
-    }
+    },
+    "confirmDeletion": "Confirm Deletion",
+    "actionCannotBeUndone": "This action cannot be undone",
+    "allAssociatedDataLost": "All associated data, results, and configurations will be lost forever."
   },
   "tags": {
     "active": "Active",
@@ -1871,5 +1879,15 @@
       "ACCESSIBILITY_AUTOMATIC": "Automatic Evaluation",
       "WCAG_AUDIT": "WCAG Audit"
     }
+  },
+  "testSettings": {
+    "testInformation": "Test Information",
+    "basicTestSettings": "Basic test settings and description",
+    "advancedSettings": "Advanced Settings",
+    "quickActions": "Quick Actions",
+    "performCommonTasks": "Perform common tasks instantly"
+  },
+  "cooperator": {
+    "goToSession": "Go to session"
   }
 }
