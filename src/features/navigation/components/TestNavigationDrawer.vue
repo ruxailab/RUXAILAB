@@ -105,7 +105,7 @@
           prepend-icon="mdi-arrow-left"
           @click="goBack"
         >
-          Previous Step
+          {{ $t('navigation.previousStep') }}
         </v-btn>
 
         <v-btn
@@ -116,7 +116,7 @@
           append-icon="mdi-arrow-right"
           @click="goNext"
         >
-          Next Step
+          {{ $t('navigation.nextStep') }}
         </v-btn>
 
         <v-btn
@@ -126,7 +126,7 @@
           prepend-icon="mdi-check"
           @click="finishTest"
         >
-          Finish Test
+          {{ $t('navigation.finishTest') }}
         </v-btn>
       </div>
     </div>
