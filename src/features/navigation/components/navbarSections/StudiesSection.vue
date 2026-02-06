@@ -261,26 +261,14 @@ const hasActiveFilters = computed(
     ),
 )
 
-// Helper to map method IDs to i18n keys
-const getMethodKey = (methodId) => {
-  const mapping = {
-    HEURISTICS: 'heuristicEvaluation',
-    USER_UNMODERATED: 'userStudyUnmoderated',
-    USER_MODERATED: 'userStudyModerated',
-    MANUAL: 'manualAccessibility',
-    AUTOMATIC: 'automaticAccessibility',
-  }
-  return mapping[methodId] || methodId
-}
-
 // ===== Method options =====
 const methodOptions = computed(() => {
   const options = getMethodOptions(t.value, METHOD_STATUSES.AVAILABLE.id)
   return [
-    { value: 'all', text: t('Dashboard.studiesPage.filters.allMethods') },
+    { value: 'all', text: t('pages.studies.filters.allMethods') },
     ...options.map((opt) => ({
       ...opt,
-      text: t(`common.method.${getMethodKey(opt.value)}`),
+      text: t(`methods.definitions.${opt.value}`),
     })),
   ]
 })

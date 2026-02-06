@@ -97,6 +97,7 @@
     "action_cannot_be_undone": "This action cannot be undone",
     "user": "User",
     "id": "ID",
+    "itemsPerPage": "Items per page:",
     "table": {
       "itemsPerPage": "Items per page:",
       "type": "Type",
@@ -186,6 +187,12 @@
       "accessibilityManual": "Accessibility Manual Evaluation",
       "accessibilityAutomatic": "Accessibility Automatic Evaluation"
     }
+  },
+  "acceptInvitation": {
+    "title": "Cooperation Invite",
+    "message": "Do you want to accept this invitation?",
+    "reject": "Reject",
+    "accept": "Accept"
   },
   "notificationsPage": {
     "subtitle": "Stay updated with your activities and collaborations",
@@ -807,7 +814,8 @@
       "cancel_invitation": "Are you sure you want to cancel {email} from the cooperators?",
       "change_role": "Are you sure you want to change {email}'s role from {old} to {new}?",
       "message_title_hint": "Type a title for your message",
-      "message_content_hint": "Type the content of your message"
+      "message_content_hint": "Type the content of your message",
+      "invite_message": "You have been invited to participate in the test {testTitle}"
     }
   },
   "UserTestTable": {
@@ -823,8 +831,8 @@
       "noTasks": "You don't have any task, create one to proceed.",
       "noVariables": "No variables added yet. Click below to create a new variable.",
       "noOptions": "No options added.",
-      "confirm_delete_task":"Confirm Delete Task",
-      "sure_to_delete_task":"Are you sure you want to delete Task : {taskName}? This action cannot be undone"
+      "confirm_delete_task": "Confirm Delete Task",
+      "sure_to_delete_task": "Are you sure you want to delete Task : {taskName}? This action cannot be undone"
     },
     "inputs": {
       "consent": "Consent",
@@ -1266,6 +1274,7 @@
         "allStudies": "All Studies",
         "myStudies": "My Studies",
         "whereICollaborate": "Where I Collaborate",
+        "allMethods": "All Methods",
         "lessThan10": "< 10 participants",
         "between10And50": "10 – 50 participants",
         "moreThan50": "> 50 participants"
@@ -1314,6 +1323,7 @@
       "method": "Method",
       "filters": {
         "allMethods": "All Methods",
+        "all": "All",
         "heuristicEvaluation": "Heuristic Evaluation",
         "userUnmoderated": "User Unmoderated",
         "userModerated": "User Moderated",

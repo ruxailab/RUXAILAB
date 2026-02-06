@@ -110,7 +110,8 @@
     "confirm_deletion": "确认删除",
     "action_cannot_be_undone": "此操作无法撤销",
     "user": "用户",
-    "id": "ID"
+    "id": "ID",
+    "itemsPerPage": "每页项目数："
   },
   "storage": {
     "pageTitle": "存储",
@@ -186,6 +187,12 @@
       "accessibilityManual": "手动无障碍评估",
       "accessibilityAutomatic": "自动无障碍评估"
     }
+  },
+  "acceptInvitation": {
+    "title": "协作邀请",
+    "message": "您要接受此邀请吗？",
+    "reject": "拒绝",
+    "accept": "接受"
   },
   "notificationsPage": {
     "subtitle": "随时了解您的活动和协作",
@@ -807,7 +814,8 @@
       "cancel_invitation": "您确定要取消 {email} 的合作者邀请吗？",
       "change_role": "您确定要将 {email} 的角色从 {old} 更改为 {new} 吗？",
       "message_title_hint": "输入您的消息标题",
-      "message_content_hint": "输入您的消息内容"
+      "message_content_hint": "输入您的消息内容",
+      "invite_message": "您已被邀请参加测试 {testTitle}"
     }
   },
   "UserTestTable": {
@@ -823,8 +831,8 @@
       "noTasks": "您没有任何任务，请创建一个以继续。",
       "noVariables": "尚未添加任何变量。点击下方创建新变量。",
       "noOptions": "没有添加选项。",
-      "confirm_delete_task":"确认删除任务",
-      "sure_to_delete_task":"您确定要删除任务 : {taskName} 吗？此操作无法撤消"
+      "confirm_delete_task": "确认删除任务",
+      "sure_to_delete_task": "您确定要删除任务 : {taskName} 吗？此操作无法撤消"
     },
     "inputs": {
       "consent": "同意",
@@ -1266,6 +1274,7 @@
         "allStudies": "所有研究",
         "myStudies": "我的研究",
         "whereICollaborate": "我参与协作的",
+        "allMethods": "所有方法",
         "lessThan10": "< 10名参与者",
         "between10And50": "10 – 50名参与者",
         "moreThan50": "> 50名参与者"
