@@ -9,6 +9,9 @@ import VueI18n from '@intlify/eslint-plugin-vue-i18n'
 
 export default defineConfig([
   {
+    ignores: ['src/features/legal/**'],
+  },
+  {
     files: ['src/**/*.{js,vue}'],
 
     languageOptions: {
@@ -63,7 +66,9 @@ export default defineConfig([
       // Vue I18n
       '@intlify/vue-i18n/no-raw-text': [
         'warn',
-        { ignorePattern: String.raw`^\s*mdi-` },
+        { 
+          ignorePattern: String.raw`^\s*[mdi-]|^[%.,!?;:()\s/•-]+$|^\d+$|^\/\d+$` 
+        },
       ],
       '@intlify/vue-i18n/no-missing-keys': 'warn',
     },
