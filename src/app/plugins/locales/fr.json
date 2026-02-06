@@ -1595,7 +1595,21 @@
   },
   "CardSorting": {
     "noCategory": "Aucune catégorie",
-    "noCards": "Aucune carte trouvée"
+    "noCards": "Aucune carte trouvée",
+    "of": "de",
+    "cards": "Cartes",
+    "cards_low": "cartes",
+    "currentCards": "Cartes actuelles",
+    "addNewCard": "Ajouter une nouvelle carte",
+    "settings": "Paramètres",
+    "configureCards": "Configurer l'affichage des cartes",
+    "currentCategories": "Catégories actuelles",
+    "addNewTask": "Ajouter une nouvelle tâche",
+    "configureCategories": "Configurer l'affichage des catégories",
+    "newTask": "Nouvelle tâche",
+    "customizeSettings": "Personnalisez les paramètres et les préférences de votre test",
+    "test": "Test",
+    "categories": "Catégories"
   },
   "analytics": {
     "searchByName": "Rechercher par nom",

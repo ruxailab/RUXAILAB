@@ -306,8 +306,6 @@
     "back": "Zurück",
     "deleteForever": "Endgültig löschen",
     "superAdmin": "Super-Admin",
-    "uploadProfilePicture": "Profilbild hochladen",
-    "removeProfilePicture": "Profilbild entfernen",
     "currentPassword": "Aktuelles Passwort",
     "currentPasswordRequired": "Aktuelles Passwort ist erforderlich",
     "wrongCurrentPassword": "Das aktuelle Passwort ist falsch",
@@ -1598,7 +1596,21 @@
   },
   "CardSorting": {
     "noCategory": "Keine Kategorie",
-    "noCards": "Keine Karten gefunden"
+    "noCards": "Keine Karten gefunden",
+    "of": "von",
+    "cards": "Karten",
+    "cards_low": "karten",
+    "currentCards": "Aktuelle Karten",
+    "addNewCard": "Neue Karte hinzufügen",
+    "settings": "Einstellungen",
+    "configureCards": "Konfigurieren Sie, wie Karten angezeigt werden",
+    "currentCategories": "Aktuelle Kategorien",
+    "addNewTask": "Neue Aufgabe hinzufügen",
+    "configureCategories": "Konfigurieren Sie, wie Kategorien angezeigt werden",
+    "newTask": "Neue Aufgabe",
+    "customizeSettings": "Passen Sie die Einstellungen und Vorlieben Ihres Tests an",
+    "test": "Test",
+    "categories": "Kategorien"
   },
   "analytics": {
     "searchByName": "Nach Namen suchen",

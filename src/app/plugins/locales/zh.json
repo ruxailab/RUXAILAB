@@ -1595,7 +1595,21 @@
   },
   "CardSorting": {
     "noCategory": "无类别",
-    "noCards": "未找到卡片"
+    "noCards": "未找到卡片",
+    "of": "的",
+    "cards": "卡片",
+    "cards_low": "卡片",
+    "currentCards": "当前卡片",
+    "addNewCard": "添加新卡片",
+    "settings": "设置",
+    "configureCards": "配置卡片显示方式",
+    "currentCategories": "当前类别",
+    "addNewTask": "添加新任务",
+    "configureCategories": "配置类别显示方式",
+    "newTask": "新任务",
+    "customizeSettings": "自定义测试的设置和偏好",
+    "test": "测试",
+    "categories": "类别"
   },
   "analytics": {
     "searchByName": "按名称搜索",
