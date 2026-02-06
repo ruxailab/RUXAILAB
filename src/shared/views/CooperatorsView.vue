@@ -143,7 +143,7 @@ const slots = useSlots()
 const { t } = useI18n()
 
 // Access control - only Admin can manage cooperators
-const { watchAccessAndRedirect, isAdmin, isLoading } = useStudyAccess({
+const { watchAccessAndRedirect, isAdmin, isLoading, hasAccess } = useStudyAccess({
   routeType: 'cooperators',
   redirectPath: '/',
 })
@@ -215,14 +215,14 @@ const handleSendMessage = async ({ user, title, content }) => {
   messageModel.value = false
   if (user.userDocId && test.value) {
     const author = test.value.testAdmin.email
-    await sendNotification(
-      user.userDocId,
+    await sendNotification({
+      userId: user.userDocId,
       title,
+      description: content,
+      redirectsTo: '/',
+      testId: test.value.id,
       author,
-      content,
-      '/',
-      test.value.id,
-    )
+    })
   }
 }
 
@@ -336,7 +336,6 @@ const sendMenssages = async (guest) => {
     await handleSendEmail(guest)
     showSuccess('pages.cooperators.invitationSent')
   } catch (error) {
-    return error
     showError('errors.sendError')
   }
 }
@@ -371,14 +370,14 @@ const notifyCooperatorAccessibility = async (guest) => {
 
     if (guest.userDocId && path) {
       const author = test.value.testAdmin.email
-      await sendNotification(
-        guest.userDocId,
+      await sendNotification({
+        userId: guest.userDocId,
         title,
         description,
-        path,
-        test.value.id,
+        redirectsTo: path,
+        testId: test.value.id,
         author,
-      )
+      })
     }
   }
 }
@@ -464,19 +463,27 @@ watch(loading, (newVal) => {
 })
 
 onMounted(async () => {
+  // watchAccessAndRedirect MUST be called BEFORE getStudy
+  // so watchEffect can react to test.value changing from null → data (or staying null)
   watchAccessAndRedirect()
-  store.dispatch('getAllUsers')
 
   const testId = props.id || route.params.id
-
   if (testId) {
     try {
       await store.dispatch('getStudy', { id: testId })
     } catch (error) {
-      return error
+      // Error handled silently
     }
   }
 })
+
+// SECURITY: Only fetch user list AFTER access is confirmed
+// getStudy is NOT gated because it's required for the access check itself
+watch(hasAccess, (hasAccessNow) => {
+  if (hasAccessNow) {
+    store.dispatch('getAllUsers')
+  }
+}, { immediate: true })
 </script>
 
 <style scoped>

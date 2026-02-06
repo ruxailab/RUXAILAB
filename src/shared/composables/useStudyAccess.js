@@ -145,7 +145,8 @@ export function useStudyAccess(options = {}) {
     return false
   })
 
-  const isAdmin = computed(() => accessLevel.value === ACCESS_LEVEL.ADMIN)
+  // SUPER_ADMIN = -1, ADMIN = 0. Using <= 0 includes both.
+  const isAdmin = computed(() => accessLevel.value !== null && accessLevel.value <= ACCESS_LEVEL.ADMIN)
   const isEvaluator = computed(() => accessLevel.value === ACCESS_LEVEL.EVALUATOR)
   const isGuest = computed(() => accessLevel.value === ACCESS_LEVEL.GUEST)
   const isObservator = computed(() => accessLevel.value === ACCESS_LEVEL.OBSERVATOR)
@@ -156,26 +157,44 @@ export function useStudyAccess(options = {}) {
    */
   function watchAccessAndRedirect() {
     let hasRedirected = false
+    const loading = computed(() => store.getters.loading)
+
     const stop = watchEffect(() => {
       // Prevent double redirects within this watcher and globally
       if (hasRedirected || globalRedirectInProgress) return
-      if (user.value !== null && test.value !== null) {
-        if (!hasAccess.value) {
-          hasRedirected = true
-          globalRedirectInProgress = true
-          const isPrivate = isPrivateStudyWithNoAccess.value
-          const messageKey = getAccessDeniedMessage(routeType, isPrivate)
-          showError(t(messageKey))
-          router.push(redirectPath)
-          // Stop watching after redirect - use nextTick to ensure stop is assigned
-          Promise.resolve().then(() => {
-            stop()
-            // Reset global flag after navigation completes
-            setTimeout(() => {
-              globalRedirectInProgress = false
-            }, 100)
-          })
-        }
+
+      // Wait for user to be loaded first
+      if (user.value === null) return
+
+      // Case 1: test is null after loading completed = study not found
+      if (test.value === null && !loading.value) {
+        hasRedirected = true
+        globalRedirectInProgress = true
+        showError(t('accessControl.errors.studyNotFound'))
+        router.push(redirectPath)
+        Promise.resolve().then(() => {
+          stop()
+          setTimeout(() => {
+            globalRedirectInProgress = false
+          }, 100)
+        })
+        return
+      }
+
+      // Case 2: test loaded but user has no access
+      if (test.value !== null && !hasAccess.value) {
+        hasRedirected = true
+        globalRedirectInProgress = true
+        const isPrivate = isPrivateStudyWithNoAccess.value
+        const messageKey = getAccessDeniedMessage(routeType, isPrivate)
+        showError(t(messageKey))
+        router.push(redirectPath)
+        Promise.resolve().then(() => {
+          stop()
+          setTimeout(() => {
+            globalRedirectInProgress = false
+          }, 100)
+        })
       }
     })
   }

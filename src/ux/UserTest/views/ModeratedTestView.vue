@@ -1203,6 +1203,7 @@ watchEffect(() => {
       return true
     }
     testDisabledReason.value = null
+    isStartTestDisabled.value = false
     return false // Admin can proceed
   }
   const now = new Date()

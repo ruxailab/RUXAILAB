@@ -136,9 +136,8 @@ import {
 } from '@/shared/utils/managerDefault'
 import ManagerView from '@/shared/views/template/ManagerView.vue'
 import { useStudyAccess } from '@/shared/composables/useStudyAccess'
-import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
-import { computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { computed, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 
 // Manager components
@@ -152,7 +151,7 @@ const store = useStore()
 const route = useRoute()
 
 // Access control - blocks Observer, allows Admin/Evaluator/Guest
-const { test, accessLevel, watchAccessAndRedirect, isLoading } = useStudyAccess({
+const { test, accessLevel, watchAccessAndRedirect, isLoading, hasAccess } = useStudyAccess({
   routeType: 'manager',
   redirectPath: '/',
 })
@@ -208,10 +207,20 @@ const getStatusIcon = (status) => {
 
 // Lifecycle
 onMounted(async () => {
+  // watchAccessAndRedirect MUST be called BEFORE getStudy
+  // so watchEffect can react to test.value changes
+  // ALWAYS call it - parent is rendered for ALL child routes too
   watchAccessAndRedirect()
   await store.dispatch('getStudy', { id: route.params.id })
-  await store.dispatch('getCurrentTestAnswerDoc')
 })
+
+// SECURITY: Only fetch sensitive answer data AFTER access is confirmed
+// getStudy is NOT gated because it's required for the access check itself
+watch(hasAccess, async (hasAccessNow) => {
+  if (hasAccessNow) {
+    await store.dispatch('getCurrentTestAnswerDoc')
+  }
+}, { immediate: true })
 </script>
 
 <style scoped>

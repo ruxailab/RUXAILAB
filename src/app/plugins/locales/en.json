@@ -384,6 +384,7 @@
       "settingsNotAllowed": "Only administrators can access settings.",
       "managerNotAllowed": "Only evaluators and above can access the manager dashboard.",
       "genericNotAllowed": "You don't have permission to access this page.",
+      "studyNotFound": "Study not found or you don't have permission to view it.",
       "cannotInvite": "Only administrators can invite cooperators."
     }
   },

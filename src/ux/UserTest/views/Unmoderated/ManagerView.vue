@@ -1,5 +1,10 @@
 <template>
-  <div>
+  <!-- Loading overlay to prevent FOUC -->
+  <v-overlay v-if="isLoading" :model-value="true" class="d-flex align-center justify-center">
+    <v-progress-circular indeterminate color="primary" size="64" />
+  </v-overlay>
+
+  <div v-else>
     <!-- ManagerView genérica mantenida -->
     <ManagerView
       :navigator="navigator"
@@ -127,10 +132,10 @@
 
 <script setup>
 import ManagerView from '@/shared/views/template/ManagerView.vue'
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
-import { getStatusColor, getStatusIcon } from '@/shared/utils/statusUtils'
+import { getStatusIcon } from '@/shared/utils/statusUtils'
 import { useI18n } from 'vue-i18n'
 import {
   getBottomCardsDefualt,
@@ -151,7 +156,7 @@ const route = useRoute()
 const { t } = useI18n()
 
 // Access control - blocks Observer, allows Admin/Evaluator/Guest
-const { test, accessLevel, watchAccessAndRedirect } = useStudyAccess({
+const { test, accessLevel, watchAccessAndRedirect, isLoading, hasAccess } = useStudyAccess({
   routeType: 'manager',
   redirectPath: '/',
 })
@@ -184,14 +189,20 @@ const navigator = computed(() => {
 
 // Lifecycle
 onMounted(async () => {
+  // watchAccessAndRedirect MUST be called BEFORE getStudy
+  // so watchEffect can react to test.value changes
+  // ALWAYS call it - parent is rendered for ALL child routes too
+  watchAccessAndRedirect()
   await store.dispatch('getStudy', { id: route.params.id })
-  await store.dispatch('getCurrentTestAnswerDoc')
-  // Only check access for the manager route itself, not child routes
-  // Child routes (edit, report, settings, etc.) have their own access checks
-  if (route.name === 'UserUnmoderatedManagerView') {
-    watchAccessAndRedirect()
-  }
 })
+
+// SECURITY: Only fetch sensitive answer data AFTER access is confirmed
+// getStudy is NOT gated because it's required for the access check itself
+watch(hasAccess, async (hasAccessNow) => {
+  if (hasAccessNow) {
+    await store.dispatch('getCurrentTestAnswerDoc')
+  }
+}, { immediate: true })
 </script>
 
 <style scoped>

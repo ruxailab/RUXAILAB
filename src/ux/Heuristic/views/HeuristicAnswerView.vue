@@ -23,13 +23,11 @@ import HeuristicsTestAnswer from '@/ux/Heuristic/components/HeuristicsTestAnswer
 import { computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
-import { useI18n } from 'vue-i18n'
 import { useStudyAccess } from '@/shared/composables/useStudyAccess'
 
 const store = useStore()
-const { t } = useI18n()
 
-// Access control - Admin and Evaluator can view answers
+// Access control - Admin, Evaluator, and Owner can view answers
 const { watchAccessAndRedirect, isLoading } = useStudyAccess({
   routeType: 'answer',
   redirectPath: '/',

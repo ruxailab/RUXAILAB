@@ -1,5 +1,10 @@
 <template>
-  <PageWrapper :title="hasAnswers ? $t('titles.answers') : ''" :side-gap="true">
+  <!-- Loading overlay to prevent FOUC -->
+  <v-overlay v-if="isLoading" :model-value="true" class="d-flex align-center justify-center">
+    <v-progress-circular indeterminate color="primary" size="64" />
+  </v-overlay>
+
+  <PageWrapper v-else :title="hasAnswers ? $t('titles.answers') : ''" :side-gap="true">
     <!-- Subtitle Slot -->
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
@@ -21,8 +26,8 @@ import { useStudyAccess } from '@/shared/composables/useStudyAccess'
 
 const store = useStore()
 
-// Access control - only Admin and Evaluator can access answers
-const { watchAccessAndRedirect } = useStudyAccess({
+// Access control - Admin, Evaluator, and Owner can access answers
+const { watchAccessAndRedirect, isLoading } = useStudyAccess({
   routeType: 'answer',
   redirectPath: '/',
 })
