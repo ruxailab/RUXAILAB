@@ -244,6 +244,7 @@ const retakePhoto = async () => {
   await startCamera()
 }
 
+
 const confirmPhoto = () => {
   if (capturedBlob.value) {
     // Create a File object from the blob
@@ -252,18 +253,17 @@ const confirmPhoto = () => {
       lastModified: Date.now(),
     })
 
-    // Transfer ownership of the preview URL to the parent component
-    // The parent is now responsible for revoking it
-    const previewUrl = capturedImage.value
+   
+    if (capturedImage.value) {
+      URL.revokeObjectURL(capturedImage.value)
+    }
 
-    // Clear our ref WITHOUT revoking (parent owns it now)
+    // Reset state
     capturedImage.value = null
     capturedBlob.value = null
 
-    emit('photo-captured', {
-      file: file,
-      previewUrl: previewUrl,
-    })
+   
+    emit('photo-captured', file)
 
     emit('update:modelValue', false)
   }

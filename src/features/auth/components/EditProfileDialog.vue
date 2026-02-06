@@ -170,16 +170,29 @@ const localProfileData = ref({
 })
 
 
+const cleanupPreviews = () => {
+  if (pendingImagePreview.value) {
+    URL.revokeObjectURL(pendingImagePreview.value)
+    pendingImagePreview.value = null
+  }
+  if (localProfileData.value.profileImage && 
+      localProfileData.value.profileImage.startsWith('blob:')) {
+    URL.revokeObjectURL(localProfileData.value.profileImage)
+  }
+  pendingImageFile.value = null
+}
+
+
 watch(
   () => props.modelValue,
   (open) => {
     if (open && props.profileData) {
+      // Dialog opening - cleanup any previous state and initialize
+      cleanupPreviews()
       localProfileData.value = { ...props.profileData }
-      pendingImageFile.value = null
-      if (pendingImagePreview.value) {
-        URL.revokeObjectURL(pendingImagePreview.value)
-        pendingImagePreview.value = null
-      }
+    } else if (!open) {
+      // Dialog closing - cleanup blob URLs
+      cleanupPreviews()
     }
   }
 )
@@ -244,7 +257,7 @@ const processImageFile = (file) => {
     URL.revokeObjectURL(pendingImagePreview.value)
   }
 
- 
+
   if (localProfileData.value.profileImage && 
       localProfileData.value.profileImage.startsWith('blob:')) {
     URL.revokeObjectURL(localProfileData.value.profileImage)
@@ -343,11 +356,7 @@ const handleSave = async () => {
 }
 
 const handleCancel = () => {
-  if (pendingImagePreview.value) {
-    URL.revokeObjectURL(pendingImagePreview.value)
-    pendingImagePreview.value = null
-  }
-  pendingImageFile.value = null
+  cleanupPreviews()
   emit('update:modelValue', false)
 }
 
