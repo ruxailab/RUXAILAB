@@ -64,6 +64,7 @@
           >
             <div class="video-container">
               <video
+                v-if="isRemoteCameraEnabled(userId)"
                 :srcObject="stream"
                 autoplay
                 playsinline
@@ -1323,6 +1324,31 @@ function toggleMicrophone() {
     isMicrophoneEnabled.value = track.enabled
     updateMyParticipantState({ hasMicrophone: isMicrophoneEnabled.value })
   }
+}
+
+async function updateParticipantStatus() {
+  if (!props.user?.id || !props.roomId) return
+  try {
+    const participantRef = dbRef(
+      database,
+      `calls/${props.roomId}/participants/${props.user.id}`,
+    )
+    await update(participantRef, {
+      cameraEnabled: isCameraEnabled.value,
+      microphoneEnabled: isMicrophoneEnabled.value,
+      updatedAt: Date.now(),
+    })
+  } catch (error) {
+    console.error('Error updating participant status:', error) // eslint-disable-line no-console
+  }
+}
+
+function isRemoteCameraEnabled(userId) {
+  return participants.value[userId]?.cameraEnabled !== false
+}
+
+function isRemoteMicrophoneEnabled(userId) {
+  return participants.value[userId]?.microphoneEnabled !== false
 }
 
 function toggleSidePanel() {
