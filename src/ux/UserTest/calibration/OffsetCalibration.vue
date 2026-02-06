@@ -16,8 +16,9 @@
             thumb-label
           />
         </template>
-      </v-tooltip>
+      </v-slider>
     </v-col>
+
     <v-col
       cols="4"
       style="
@@ -38,6 +39,9 @@ import { useStore } from 'vuex'
 import EyeCalibrationSettings from '../models/EyeCalibrationSettings'
 
 const store = useStore()
+const offCanvas = ref(null)
+
+// --- Computed Properties: Synced with Vuex Store ---
 
 const offset = computed({
   get: () => store.getters.test?.calibrationConfig?.offset ?? 100,
@@ -76,8 +80,11 @@ const backgroundColor = computed({
   },
 })
 
-const offCanvas = ref(null)
+// --- Logic & Helper Functions ---
 
+/**
+ * Initializes calibration configuration from the store.
+ */
 const getCalibrationConfig = () => {
   const calibrationConfig =
     store.getters.test.calibrationConfig instanceof EyeCalibrationSettings
@@ -91,17 +98,25 @@ const getCalibrationConfig = () => {
   backgroundColor.value = calibrationConfig.backgroundColor ?? '#FFFFFFFF'
 }
 
-const updateCalibrationConfig = () => {
+/**
+ * Updates the global store and includes the calculated point pattern.
+ */
+const updateCalibrationConfig = (pattern = null) => {
   const calibrationConfig = new EyeCalibrationSettings({
     ...store.getters.test.calibrationConfig,
     offset: offset.value,
     pointNumber: pointNumber.value,
     backgroundColor: backgroundColor.value,
+    ...(pattern && { pattern }),
   })
 
   store.commit('SET_CALIBRATION_CONFIG', calibrationConfig)
 }
 
+/**
+ * Math Logic: Generates X,Y coordinates for calibration targets based on point count.
+ * Matches specific patterns (2, 3, 4, 5, 6, 7, 8, 9 points).
+ */
 const generatePoints = (offsetX, offsetY, width, height, pointNum) => {
   const possiblePatterns = [
     [
@@ -168,6 +183,10 @@ const generatePoints = (offsetX, offsetY, width, height, pointNum) => {
   return possiblePatterns.find((p) => p.length === pointNum) || []
 }
 
+/**
+ * Rendering Logic:
+ * Scales the true screen coordinates to fit the small preview canvas.
+ */
 const drawOffset = () => {
   if (!offCanvas.value) return
 
@@ -177,12 +196,14 @@ const drawOffset = () => {
   canvas.width = canvas.clientWidth
   canvas.height = canvas.clientHeight
 
+  // Calculate scaling factors relative to user's screen size
   const xFac = canvas.width / window.innerWidth
   const yFac = canvas.height / window.innerHeight
 
   const trueOffsetX = offset.value * xFac
   const trueOffsetY = offset.value * yFac
 
+  // Points for local preview canvas
   const canvasCalib = generatePoints(
     trueOffsetX,
     trueOffsetY,
@@ -191,6 +212,18 @@ const drawOffset = () => {
     pointNumber.value,
   )
 
+  // Points for actual calibration (full screen)
+  const trueCalib = generatePoints(
+    offset.value,
+    offset.value,
+    window.innerWidth,
+    window.innerHeight,
+    pointNumber.value,
+  )
+
+  updateCalibrationConfig(trueCalib)
+
+  // Drawing
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   ctx.fillStyle = backgroundColor.value
   ctx.fillRect(0, 0, canvas.width, canvas.height)
@@ -204,7 +237,8 @@ const drawOffset = () => {
   })
 }
 
-// watchers
+// --- Watchers & Lifecycle ---
+
 watch([offset, pointNumber, backgroundColor], () => {
   drawOffset()
 })

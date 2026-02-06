@@ -31,10 +31,18 @@ import { useStore } from 'vuex'
 import EyeCalibrationSettings from '../models/EyeCalibrationSettings'
 
 const store = useStore()
+
+// --- UI References ---
 const radCanvas = ref(null)
 
+// --- State Management ---
 const radius = ref(20)
 
+/**
+ * Computed Property: Point Color
+ * Syncs the calibration point color with the global store.
+ * Updates the canvas preview immediately upon color change.
+ */
 const pointColor = computed({
   get: () => store.getters.test?.calibrationConfig?.pointColor ?? '#000000FF',
   set: (value) => {
@@ -56,10 +64,17 @@ watch(radius, (newRadius) => {
   drawBall(newRadius, pointColor.value)
 })
 
+// Watch for Color changes to re-draw the canvas
 watch(pointColor, () => {
   drawBall(radius.value, pointColor.value)
 })
 
+/**
+ * Canvas Rendering Logic:
+ * Draws a dual-circle target on the canvas to represent the calibration point.
+ * @param {number} r - The radius of the outer circle.
+ * @param {string} color - The fill color for the outer circle.
+ */
 const drawBall = (r, color) => {
   if (!radCanvas.value) return
   const canvas = radCanvas.value
@@ -86,6 +101,7 @@ const drawBall = (r, color) => {
   ctx.closePath()
 }
 
+// --- Lifecycle ---
 onMounted(() => {
   radius.value = store.getters.test?.calibrationConfig?.radius ?? 20
   drawBall(radius.value, pointColor.value)
