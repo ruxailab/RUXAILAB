@@ -384,6 +384,20 @@
     "sendError": "招待の送信に失敗しました。再試行してください",
     "missingVariableTitles": "保存できません：いくつかの変数にタイトルがありません"
   },
+  "accessControl": {
+    "errors": {
+      "privateStudyNoAccess": "この非公開スタディへのアクセス権がありません。招待をリクエストしてください。",
+      "editNotAllowed": "管理者のみがこのスタディを編集できます。",
+      "reportNotAllowed": "管理者のみがレポートを表示できます。",
+      "answerNotAllowed": "評価者以上のみが回答にアクセスできます。",
+      "cooperatorsNotAllowed": "管理者のみが協力者を管理できます。",
+      "settingsNotAllowed": "管理者のみが設定にアクセスできます。",
+      "managerNotAllowed": "評価者以上のみが管理者ダッシュボードにアクセスできます。",
+      "genericNotAllowed": "このページにアクセスする権限がありません。",
+      "studyNotFound": "スタディが見つからないか、表示する権限がありません。",
+      "cannotInvite": "管理者のみが協力者を招待できます。"
+    }
+  },
   "Introduction": {
     "title": "UXリモートラボ",
     "subtitle": "リモートでユーザビリティテストを行うのはどうですか？",

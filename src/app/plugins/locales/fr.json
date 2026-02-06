@@ -384,6 +384,20 @@
     "sendError": "Échec de l'envoi de l'invitation. Veuillez réessayer",
     "missingVariableTitles": "Impossible d'enregistrer : Certaines variables manquent de titres"
   },
+  "accessControl": {
+    "errors": {
+      "privateStudyNoAccess": "Vous n'avez pas accès à cette étude privée. Veuillez demander une invitation.",
+      "editNotAllowed": "Seuls les administrateurs peuvent modifier cette étude.",
+      "reportNotAllowed": "Seuls les administrateurs peuvent voir les rapports.",
+      "answerNotAllowed": "Seuls les évaluateurs et plus peuvent accéder aux réponses.",
+      "cooperatorsNotAllowed": "Seuls les administrateurs peuvent gérer les collaborateurs.",
+      "settingsNotAllowed": "Seuls les administrateurs peuvent accéder aux paramètres.",
+      "managerNotAllowed": "Seuls les évaluateurs et plus peuvent accéder au tableau de bord du gestionnaire.",
+      "genericNotAllowed": "Vous n'avez pas la permission d'accéder à cette page.",
+      "studyNotFound": "Étude non trouvée ou vous n'avez pas la permission de la voir.",
+      "cannotInvite": "Seuls les administrateurs peuvent inviter des collaborateurs."
+    }
+  },
   "Introduction": {
     "title": "UX Remote LAB",
     "subtitle": "Et si vous faisiez des tests d'utilisabilité à distance ?",

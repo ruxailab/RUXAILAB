@@ -384,6 +384,20 @@
     "sendError": "发送邀请失败，请重试",
     "missingVariableTitles": "无法保存：一些变量缺少标题"
   },
+  "accessControl": {
+    "errors": {
+      "privateStudyNoAccess": "您没有权限访问此私有研究。请请求邀请。",
+      "editNotAllowed": "只有管理员可以编辑此研究。",
+      "reportNotAllowed": "只有管理员可以查看报告。",
+      "answerNotAllowed": "只有评估员及以上角色可以访问回答。",
+      "cooperatorsNotAllowed": "只有管理员可以管理合作者。",
+      "settingsNotAllowed": "只有管理员可以访问设置。",
+      "managerNotAllowed": "只有评估员及以上角色可以访问管理面板。",
+      "genericNotAllowed": "您没有权限访问此页面。",
+      "studyNotFound": "未找到研究或您没有权限查看。",
+      "cannotInvite": "只有管理员可以邀请合作者。"
+    }
+  },
   "Introduction": {
     "title": "UX远程实验室",
     "subtitle": "远程进行可用性测试怎么样？",

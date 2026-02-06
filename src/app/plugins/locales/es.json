@@ -307,8 +307,6 @@
     "yourPassword": "Tu contraseña",
     "back": "Volver",
     "deleteForever": "Eliminar permanentemente",
-    "uploadProfilePicture": "Subir foto de perfil",
-    "removeProfilePicture": "Eliminar foto de perfil",
     "currentPassword": "Contraseña actual",
     "currentPasswordRequired": "Se requiere la contraseña actual",
     "wrongCurrentPassword": "La contraseña actual es incorrecta",
@@ -385,6 +383,20 @@
     "globalError": "Ha ocurrido un error, disculpa las molestias.",
     "sendError": "No se pudo enviar la invitación. Por favor, intenta de nuevo.",
     "missingVariableTitles": "No se puede guardar: Algunas variables no tienen título"
+  },
+  "accessControl": {
+    "errors": {
+      "privateStudyNoAccess": "No tienes acceso a este estudio privado. Por favor, solicita una invitación.",
+      "editNotAllowed": "Solo los administradores pueden editar este estudio.",
+      "reportNotAllowed": "Solo los administradores pueden ver los informes.",
+      "answerNotAllowed": "Solo los evaluadores y superiores pueden acceder a las respuestas.",
+      "cooperatorsNotAllowed": "Solo los administradores pueden gestionar colaboradores.",
+      "settingsNotAllowed": "Solo los administradores pueden acceder a la configuración.",
+      "managerNotAllowed": "Solo los evaluadores y superiores pueden acceder al panel del administrador.",
+      "genericNotAllowed": "No tienes permiso para acceder a esta página.",
+      "studyNotFound": "Estudio no encontrado o no tienes permiso para verlo.",
+      "cannotInvite": "Solo los administradores pueden invitar colaboradores."
+    }
   },
   "Introduction": {
     "title": "UX LAB Remoto",

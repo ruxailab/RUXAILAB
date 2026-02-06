@@ -384,6 +384,20 @@
     "sendError": "Não foi possível enviar o convite. Por favor, tente novamente",
     "missingVariableTitles": "Não é possível salvar: Algumas variáveis estão sem títulos"
   },
+  "accessControl": {
+    "errors": {
+      "privateStudyNoAccess": "Você não tem acesso a este estudo privado. Por favor, solicite um convite.",
+      "editNotAllowed": "Apenas administradores podem editar este estudo.",
+      "reportNotAllowed": "Apenas administradores podem ver relatórios.",
+      "answerNotAllowed": "Apenas avaliadores e superiores podem acessar respostas.",
+      "cooperatorsNotAllowed": "Apenas administradores podem gerenciar colaboradores.",
+      "settingsNotAllowed": "Apenas administradores podem acessar configurações.",
+      "managerNotAllowed": "Apenas avaliadores e superiores podem acessar o painel do gerente.",
+      "genericNotAllowed": "Você não tem permissão para acessar esta página.",
+      "studyNotFound": "Estudo não encontrado ou você não tem permissão para vê-lo.",
+      "cannotInvite": "Apenas administradores podem convidar colaboradores."
+    }
+  },
   "Introduction": {
     "title": "UX LAB Remoto",
     "subtitle": "Que tal realizar testes de usabilidade remotamente?",

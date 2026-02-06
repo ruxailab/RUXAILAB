@@ -306,8 +306,6 @@
     "back": "Zurück",
     "deleteForever": "Endgültig löschen",
     "superAdmin": "Super-Admin",
-    "uploadProfilePicture": "Profilbild hochladen",
-    "removeProfilePicture": "Profilbild entfernen",
     "currentPassword": "Aktuelles Passwort",
     "currentPasswordRequired": "Aktuelles Passwort ist erforderlich",
     "wrongCurrentPassword": "Das aktuelle Passwort ist falsch",
@@ -385,6 +383,20 @@
     "globalError": "Ein Fehler ist aufgetreten, entschuldigen Sie die Unannehmlichkeiten.",
     "sendError": "Einladung konnte nicht gesendet werden. Bitte versuchen Sie es erneut",
     "missingVariableTitles": "Kann nicht speichern: Einige Variablen fehlen Titel"
+  },
+  "accessControl": {
+    "errors": {
+      "privateStudyNoAccess": "Sie haben keinen Zugriff auf diese private Studie. Bitte fordern Sie eine Einladung an.",
+      "editNotAllowed": "Nur Administratoren können diese Studie bearbeiten.",
+      "reportNotAllowed": "Nur Administratoren können Berichte anzeigen.",
+      "answerNotAllowed": "Nur Evaluatoren und höher können auf Antworten zugreifen.",
+      "cooperatorsNotAllowed": "Nur Administratoren können Kooperationspartner verwalten.",
+      "settingsNotAllowed": "Nur Administratoren können auf Einstellungen zugreifen.",
+      "managerNotAllowed": "Nur Evaluatoren und höher können auf das Manager-Dashboard zugreifen.",
+      "genericNotAllowed": "Sie haben keine Berechtigung, auf diese Seite zuzugreifen.",
+      "studyNotFound": "Studie nicht gefunden oder Sie haben keine Berechtigung, sie anzuzeigen.",
+      "cannotInvite": "Nur Administratoren können Kooperationspartner einladen."
+    }
   },
   "Introduction": {
     "title": "UX Remote LAB",
