@@ -418,10 +418,14 @@
                 block
                 variant="flat"
                 class="ml-2"
-                :disabled="shouldDisableFinishButton || isWaitingForUploadToFinish"
+                :disabled="
+                  shouldDisableFinishButton || isWaitingForUploadToFinish
+                "
                 @click="attemptFinish()"
               >
-                {{ isWaitingForUploadToFinish ? 'Uploading...' : 'Finish task' }}
+                {{
+                  isWaitingForUploadToFinish ? 'Uploading...' : 'Finish task'
+                }}
               </v-btn>
             </v-col>
           </v-row>
@@ -516,6 +520,7 @@ const emit = defineEmits([
   'update:nasaTlxAnswers',
   'update:tamAnswers',
   'update:sartAnswers',
+  'startTask',
 ])
 
 onBeforeUnmount(() => {
@@ -523,11 +528,11 @@ onBeforeUnmount(() => {
     clearInterval(timerInterval)
     timerInterval = null
   }
-   if (finishTimeout) {
+  if (finishTimeout) {
     clearTimeout(finishTimeout)
     finishTimeout = null
   }
-   forceStopAllMedia()
+  forceStopAllMedia()
 
   uploadingCount.value = 0
   isWaitingForUploadToFinish.value = false
@@ -683,6 +688,8 @@ function updateElapsedTime() {
 }
 
 async function startTask() {
+  emit('show-loading')
+  emit('startTask')
   await startMediaRecorders()
   stage.value = 2
   taskStartTime = Date.now()
@@ -701,6 +708,7 @@ async function startTask() {
       if (timer && timer.startTimer) timer.startTimer()
     }, 100)
   })
+  emit('stop-show-loading')
 }
 
 function reopenTool() {
