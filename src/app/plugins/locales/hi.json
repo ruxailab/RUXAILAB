@@ -215,6 +215,16 @@
     "daysAgo": "{count} दिन पहले",
     "newNotification": "आपके पास एक नई सूचना है।"
   },
+  "notifications": {
+    "errors": {
+      "acceptCollaborationFailed": "सहयोग स्वीकार करने में विफल। कृपया पुनः प्रयास करें।",
+      "invalidCollaboration": "यह सहयोग निमंत्रण अमान्य है या समाप्त हो गया है।"
+    }
+  },
+  "cooperators": {
+    "updatedRole": "{users} के लिए भूमिका को {role} में अपडेट किया गया",
+    "inviteSent": "निमंत्रण भेजा गया: {users}"
+  },
   "navigation": {
     "dashboard": "डैशबोर्ड",
     "studies": "अध्ययन",
@@ -813,9 +823,12 @@
       "remove_cooperator": "क्या आप वाकई {email} को सहयोगियों से हटाना चाहते हैं?",
       "cancel_invitation": "क्या आप वाकई {email} का आमंत्रण रद्द करना चाहते हैं?",
       "change_role": "क्या आप वाकई {email} की भूमिका {old} से {new} में बदलना चाहते हैं?",
-      "message_title_hint": "अपने संदेश के लिए एक शीर्षक लिखें",
-      "message_content_hint": "अपने संदेश की सामग्री लिखें",
-      "invite_message": "आपको परीक्षण {testTitle} में भाग लेने के लिए आमंत्रित किया गया है"
+      "message_title_hint": "संदेश का शीर्षक दर्ज करें",
+      "message_content_hint": "संदेश की सामग्री दर्ज करें",
+      "invite_message": "आपको '{testTitle}' पर सहयोग के लिए आमंत्रित किया गया है",
+      "message_sent_success": "संदेश सफलतापूर्वक भेजा गया",
+      "message_sent_error": "संदेश भेजने में विफल",
+      "user_not_registered": "इस उपयोगकर्ता ने अभी तक आमंत्रण स्वीकार नहीं किया है या वह पंजीकृत नहीं है।"
     }
   },
   "UserTestTable": {
@@ -1294,20 +1307,20 @@
     },
     "sessions": {
       "searchPlaceholder": "सत्र खोजें...",
-      "reset": "रीसेट",
+      "reset": "रीसेट करें",
       "showFilters": "फ़िल्टर दिखाएं",
       "hideFilters": "फ़िल्टर छिपाएं",
-      "sessionDate": "सत्र तिथि",
-      "selectRange": "सीमा चुनें",
+      "sessionDate": "सत्र की तारीख",
+      "selectRange": "श्रेणी चुनें",
       "statusLabel": "स्थिति",
       "ownership": "स्वामित्व",
       "evaluator": "मूल्यांकनकर्ता",
       "noActiveSessions": "आपके पास कोई सक्रिय सत्र नहीं है",
       "filters": {
-        "allStatuses": "सभी स्थितियाँ",
+        "allStatuses": "सभी स्थितियां",
         "today": "आज",
         "upcoming": "आगामी",
-        "completed": "पूर्ण",
+        "completed": "पूरा हुआ",
         "allStudies": "सभी अध्ययन",
         "myStudies": "मेरे अध्ययन",
         "whereICollaborate": "जहाँ मैं सहयोग करता हूँ"
