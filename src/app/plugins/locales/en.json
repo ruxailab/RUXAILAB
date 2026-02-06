@@ -52,6 +52,7 @@
       "gb": "GB"
     },
     "hidden": "Hidden",
+    "visible": "Visible",
     "loading": "Loading Test",
     "continueAs": "Continue as",
     "notUser": "Not {userEmail}?",
@@ -1352,6 +1353,7 @@
       "loading_settings": "Loading Settings",
       "manage_test_settings": "Manage your test settings and preferences with advanced controls",
       "basic_information": "Basic Information",
+      "confirm_deletion": "Confirm Deletion",
       "configure_test_details": "Configure the fundamental details of your test",
       "advanced_settings": "Advanced Settings",
       "fine_tune_configuration": "Fine-tune your test configuration",
@@ -1870,6 +1872,115 @@
       "ACCESSIBILITY_MANUAL": "Manual Evaluation",
       "ACCESSIBILITY_AUTOMATIC": "Automatic Evaluation",
       "WCAG_AUDIT": "WCAG Audit"
+    }
+  },
+  "privacyPolicy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last Updated: April 15, 2025",
+    "sections": {
+      "introduction": {
+        "title": "1. Introduction",
+        "content": "Ruxailab is an open-source project committed to protecting your privacy. This Privacy Policy explains how we collect, use, and protect any information you provide when using the Project."
+      },
+      "informationCollected": {
+        "title": "2. Information We Collect",
+        "content": "As an open-source project, we typically do not collect personal information directly. However, if you interact with our website or services (e.g., signing up for an account or submitting a contact form), we may collect:",
+        "items": {
+          "email": "Email addresses (e.g., for account creation or newsletters)",
+          "usage": "Usage data (e.g., analytics on how the website is accessed)",
+          "contributions": "Contributions (e.g., your GitHub username if you contribute to the Project)"
+        }
+      },
+      "usage": {
+        "title": "3. How We Use Your Information",
+        "content": "We may use the information we collect to:",
+        "items": {
+          "improve": "Provide and improve the Project and its services",
+          "communicate": "Communicate with you (e.g., respond to inquiries or notify you of updates)",
+          "analyze": "Analyze usage to improve user experience"
+        }
+      },
+      "sharing": {
+        "title": "4. Data Sharing",
+        "content": "We do not sell or share your personal information with third parties, except as required by law or to protect the Project (e.g., in the case of abuse or fraud)."
+      },
+      "cookies": {
+        "title": "5. Cookies",
+        "content": "Our website may use cookies to enhance your experience (e.g., to remember your preferences). You can disable cookies in your browser settings, but this may affect the functionality of the website."
+      },
+      "security": {
+        "title": "6. Data Security",
+        "content": "We take reasonable measures to protect any data we collect, but no method of transmission over the internet is 100% secure. We cannot guarantee the absolute security of your information."
+      },
+      "rights": {
+        "title": "7. Your Rights",
+        "content": "Depending on your location, you may have the right to access, correct, or delete any personal information we hold about you. Please contact us to exercise these rights."
+      },
+      "changes": {
+        "title": "8. Changes to This Policy",
+        "content": "We may update this Privacy Policy from time to time. We will notify users of significant changes by posting a notice on the Project's website or repository."
+      },
+      "contact": {
+        "title": "9. Contact Us",
+        "content": "If you have any questions about this Privacy Policy, please contact us."
+      }
+    }
+  },
+  "pageNotFound": {
+    "title": "Page Not Found",
+    "description": "We weren't able to find the page you were looking for.",
+    "goBack": "Go Back"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions (FAQs)",
+    "subtitle": "Find answers to common questions about Ruxailab.",
+    "questions": {
+      "q1": {
+        "question": "1. What is Ruxailab?",
+        "answer": "Ruxailab is an open-source platform designed to collect usability feedback from users. It allows you to gather user reviews, analyze them, and create comprehensive reports to better understand your application's usability. Additionally, it offers heuristic tests, enabling experts to evaluate your application's compliance with usability principles. It is maintained by a community of contributors and licensed under the MIT License."
+      },
+      "q2": {
+        "question": "2. How do I get started with the Project?",
+        "answer_part1": "To get started, visit our",
+        "link_text": "GitHub Repository",
+        "answer_part2": "to download the source code. Check out the documentation for installation instructions and examples. You can also visit our",
+        "help_link": "Help",
+        "answer_part3": "page for more resources."
+      },
+      "q3": {
+        "question": "3. Can I contribute to the Project?",
+        "answer": "Absolutely! We welcome contributions from the community. Please read our contribution guidelines in the repository and submit a pull request with your changes."
+      },
+      "q4": {
+        "question": "4. What license does the Project use?",
+        "answer": "The Project is licensed under the MIT License. This means you can use, modify, and distribute the Project freely, as long as you include the license and copyright notice."
+      },
+      "q5": {
+        "question": "5. How do I report a bug or request a feature?",
+        "answer": "You can report bugs or request features by opening an issue on our",
+        "link_text": "GitHub Issues",
+        "answer_part2": ". Please provide as much detail as possible to help us address your request."
+      },
+      "q6": {
+        "question": "6. Is there a community for Ruxailab?",
+        "answer": "Yes! Join our community on",
+        "link_text": "GitHub",
+        "answer_part2": "to connect with other users and contributors, ask questions, and share ideas."
+      },
+      "q7": {
+        "question": "7. How is my data handled?",
+        "answer": "We take your privacy seriously. Please see our",
+        "link_text": "Privacy Policy",
+        "answer_part2": "for details on how we collect and use your information."
+      },
+      "q8": {
+        "question": "8. Who maintains the Project?",
+        "answer": "The Project is maintained by a team of volunteers and contributors. You can find more information about the maintainers in the Project's repository."
+      },
+      "q9": {
+        "question": "9. Still have questions?",
+        "answer": "If you have additional questions, please contact us."
+      }
     }
   }
 }
