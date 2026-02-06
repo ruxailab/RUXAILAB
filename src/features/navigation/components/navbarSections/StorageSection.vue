@@ -291,7 +291,7 @@ const files = computed(() => {
             ...baseFile,
             type: 'video',
             url: task.videoRecordURL,
-            size: 50 * 1024 * 1024,
+            size: task.webcamSize || 50 * 1024 * 1024,
           })
         }
         // Check for Audio
@@ -300,7 +300,7 @@ const files = computed(() => {
             ...baseFile,
             type: 'audio',
             url: task.audioRecordURL,
-            size: 10 * 1024 * 1024,
+            size: task.audioSize || 10 * 1024 * 1024,
           })
         }
         // Check for Screen Recording
@@ -309,7 +309,7 @@ const files = computed(() => {
             ...baseFile,
             type: 'screen',
             url: task.screenRecordURL,
-            size: 100 * 1024 * 1024,
+            size: task.screenSize || 100 * 1024 * 1024,
           })
         }
         // Check for Webcam (Fix for missing icons)
@@ -318,7 +318,7 @@ const files = computed(() => {
             ...baseFile,
             type: 'webcam',
             url: task.webcamRecordURL,
-            size: 50 * 1024 * 1024,
+            size: task.webcamSize || 50 * 1024 * 1024,
           })
         }
       })
