@@ -34,8 +34,8 @@ export const calculateProgress = (localTestAnswer) => {
     const progressPercentage = (completedSteps / totalSteps) * 100
     localTestAnswer.progress = progressPercentage
     return progressPercentage
-  } catch (error) {
-    console.error('Error calculating progress:', error)
+  } catch {
+    // console.error('Error calculating progress:', error)
     return 0
   }
 }
