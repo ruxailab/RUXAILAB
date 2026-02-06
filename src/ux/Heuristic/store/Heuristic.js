@@ -39,14 +39,12 @@ export default {
     SETUP_HEURISTIC_QUESTION_DESCRIPTION(state, payload) {
       const { heuristic, question, description, editIndex } = payload
       if (!state.heuristics || !state.heuristics[heuristic]) {
-        console.warn('Heuristic index not found in heuristics:', heuristic)
         return
       }
       if (
         !state.heuristics[heuristic].questions ||
         !state.heuristics[heuristic].questions[question]
       ) {
-        console.warn('Question index not found in heuristics:', question)
         return
       }
       let targetQuestion = state.heuristics[heuristic].questions[question]
@@ -70,21 +68,21 @@ export default {
     async setHeuristics({ commit }, payload) {
       try {
         commit('SET_HEURISTICS', payload)
-      } catch (e) {
+      } catch {
         commit('setError', true)
       }
     },
     async setTestWeights({ commit }, payload) {
       try {
         commit('SET_TEST_WEIGHTS', payload)
-      } catch (e) {
+      } catch {
         commit('setError', true)
       }
     },
     setScoresPercentage({ commit }, payload) {
       try {
         commit('SET_SCORES_PERCENTAGE', payload)
-      } catch (e) {
+      } catch {
         commit('setError', true)
       }
     },

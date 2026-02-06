@@ -11,11 +11,7 @@
       @change="uploadFile"
     />
     <!-- Add the image field to display the inputted image -->
-    <v-row
-      v-if="hasSavedImage || imageUploaded"
-      justify="center"
-      class="mt-2"
-    >
+    <v-row v-if="hasSavedImage || imageUploaded" justify="center" class="mt-2">
       <v-img
         :src="displayedImageUrl"
         max-height="225"
@@ -23,12 +19,7 @@
         cover
         class="mb-2"
       />
-      <v-chip
-        v-if="hasSavedImage"
-        color="primary"
-        size="small"
-        class="ma-2"
-      >
+      <v-chip v-if="hasSavedImage" color="primary" size="small" class="ma-2">
         <v-icon start size="small">mdi-image</v-icon>
         {{ $t('HeuristicsSettings.actions.update') }}
       </v-chip>
@@ -76,89 +67,98 @@ const store = useStore()
 const url = ref('')
 const imageUploaded = ref(false)
 
-const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer)
+const currentUserTestAnswer = computed(
+  () => store.getters.currentUserTestAnswer,
+)
 
 const findImageUrl = () => {
   if (!currentUserTestAnswer.value?.heuristicQuestions?.length) {
-    return null;
+    return null
   }
-  
+
   // Convert heuristicId to number for comparison
-  const targetHeuristicId = parseInt(props.heuristicId);
-  const targetQuestionId = props.questionId;
-  
+  const targetHeuristicId = parseInt(props.heuristicId)
+  const targetQuestionId = props.questionId
+
   // Search through all heuristics
   for (const heuristic of currentUserTestAnswer.value.heuristicQuestions) {
-    if (heuristic?.heuristicQuestions && Array.isArray(heuristic.heuristicQuestions)) {
+    if (
+      heuristic?.heuristicQuestions &&
+      Array.isArray(heuristic.heuristicQuestions)
+    ) {
       // Check if this heuristic matches
       if (heuristic.heuristicId === targetHeuristicId) {
         // Search through all questions in this heuristic
         for (const question of heuristic.heuristicQuestions) {
           // Check if this question matches our questionId
           if (question.heuristicId === targetQuestionId) {
-            return question.answerImageUrl || null;
+            return question.answerImageUrl || null
           }
         }
       }
     }
   }
-  
-  return null;
+
+  return null
 }
 
 const hasSavedImage = computed(() => {
-  const imageUrl = findImageUrl();
-  return imageUrl && imageUrl !== '';
-});
-
-const displayedImageUrl = computed(()=> {
-  if(url.value) return url.value;
-  return findImageUrl() || '';
+  const imageUrl = findImageUrl()
+  return imageUrl && imageUrl !== ''
 })
 
-watch(()=> currentUserTestAnswer.value, ()=> {
-  const imageUrl = findImageUrl();
-  if(imageUrl){
-    url.value = imageUrl;
-    imageUploaded.value = true;
-  }
-}, {deep: true});
+const displayedImageUrl = computed(() => {
+  if (url.value) return url.value
+  return findImageUrl() || ''
+})
+
+watch(
+  () => currentUserTestAnswer.value,
+  () => {
+    const imageUrl = findImageUrl()
+    if (imageUrl) {
+      url.value = imageUrl
+      imageUploaded.value = true
+    }
+  },
+  { deep: true },
+)
 
 onMounted(() => {
-  const imageUrl = findImageUrl();
+  const imageUrl = findImageUrl()
   if (imageUrl) {
-    url.value = imageUrl;
-    imageUploaded.value = true;
+    url.value = imageUrl
+    imageUploaded.value = true
   }
 })
 
 const uploadFile = async () => {
   try {
     const fileInput = document.getElementById(
-      `${props.heuristicId}${props.questionId}`
+      `${props.heuristicId}${props.questionId}`,
     )
-    
+
     if (!fileInput) {
-      return;
+      return
     }
-    const file = fileInput.files?.[0];
+    const file = fileInput.files?.[0]
     if (!file) {
-      return;
+      return
     }
-    const storage = getStorage();
+    const storage = getStorage()
     const storageReference = storageRef(
       storage,
-      `tests/${props.testId}/heuristic_${props.heuristicId}/${props.questionId}/${file.name}`
-    );
-    await uploadBytes(storageReference, file);
-    url.value = await getDownloadURL(storageReference);
-    store.dispatch('setCurrentImageUrl', url.value);
-    imageUploaded.value = true;
-    emit('imageUploaded', url.value);
+      `tests/${props.testId}/heuristic_${props.heuristicId}/${props.questionId}/${file.name}`,
+    )
+    await uploadBytes(storageReference, file)
+    url.value = await getDownloadURL(storageReference)
+    store.dispatch('setCurrentImageUrl', url.value)
+    imageUploaded.value = true
+    emit('imageUploaded', url.value)
   } catch (error) {
-    emit('imageUploaded', null, error);
+    emit('imageUploaded', null, error)
   }
-};
+}
 </script>
 
 <style>

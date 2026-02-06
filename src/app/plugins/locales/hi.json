@@ -46,6 +46,7 @@
     }
   },
   "common": {
+    "enterTextHere": "यहाँ टेक्स्ट दर्ज करें...",
     "units": {
       "mb": "MB",
       "gb": "GB"
@@ -99,13 +100,18 @@
       "status": "स्थिति",
       "sessionDate": "सत्र तिथि",
       "participants": "प्रतिभागी",
-      "created": "बनाया गया"
+      "created": "बनाया गया",
+      "noSearchResults": "आपकी कसौटी से मेल खाते कोई परिणाम नहीं मिले",
+      "tryAdjustingSearch": "अपनी खोज या फ़िल्टर को समायोजित करने का प्रयास करें"
     },
     "hidden": "छिपा हुआ",
     "proceed": "आगे बढ़ें",
     "actions": "क्रियाएँ",
+    "confirm_deletion": "हटाने की पुष्टि करें",
+    "action_cannot_be_undone": "यह क्रिया पूर्ववत नहीं की जा सकती",
     "user": "उपयोगकर्ता",
-    "id": "आईडी"
+    "id": "आईडी",
+    "itemsPerPage": "प्रति पृष्ठ आइटम:"
   },
   "storage": {
     "pageTitle": "संग्रहण",
@@ -181,6 +187,12 @@
       "accessibilityManual": "एक्सेसिबिलिटी मैन्युअल मूल्यांकन",
       "accessibilityAutomatic": "एक्सेसिबिलिटी स्वचालित मूल्यांकन"
     }
+  },
+  "acceptInvitation": {
+    "title": "सहयोग आमंत्रण",
+    "message": "क्या आप इस आमंत्रण को स्वीकार करना चाहते हैं?",
+    "reject": "अस्वीकार करें",
+    "accept": "स्वीकार करें"
   },
   "notificationsPage": {
     "subtitle": "अपनी गतिविधियों और सहयोग से अपडेट रहें",
@@ -269,6 +281,10 @@
     "profileImageUploadFailed": "प्रोफ़ाइल छवि अपलोड करने में विफल",
     "uploadProfilePicture": "प्रोफ़ाइल चित्र अपलोड करें",
     "removeProfilePicture": "प्रोफ़ाइल चित्र हटाएं",
+    "takePhoto": "फ़ोटो लें",
+    "cameraCaptureTitle": "प्रोफ़ाइल फ़ोटो कैप्चर करें",
+    "cameraNotAvailable": "इस डिवाइस पर कैमरा उपलब्ध नहीं है",
+    "cameraPermissionDenied": "कैमरा अनुमति अस्वीकृत। कृपया अपने ब्राउज़र सेटिंग्स में कैमरा एक्सेस की अनुमति दें।",
     "noUserSignedIn": "कोई उपयोगकर्ता साइन इन नहीं है",
     "profileLoadFailed": "प्रोफ़ाइल लोड करने में विफल",
     "profileUpdatedSuccess": "प्रोफ़ाइल सफलतापूर्वक अपडेट की गई",
@@ -451,6 +467,20 @@
       "paused": "रोका गया",
       "finished": "पूर्ण",
       "unknown": "अज्ञात"
+    },
+    "officeHours": {
+      "title": "मासिक ऑफिस आवर्स",
+      "description": "नवंबर से शुरू करते हुए, हम परियोजना अपडेट पर चर्चा करने, सवालों के जवाब देने और अपने समुदाय से जुड़ने के लिए मासिक ऑफिस आवर्स आयोजित करेंगे।",
+      "nextSessionDate": "नव 2025",
+      "frequency": "मासिक"
+    },
+    "webinar": {
+      "ended": "समाप्त",
+      "live": "लाइव",
+      "today": "आज",
+      "joinNow": "अभी शामिल हों",
+      "webinarEnded": "वेबिनार समाप्त",
+      "startingToday": "आज शुरू हो रहा है"
     },
     "cards": {
       "recentActivity": "हाल की गतिविधि",
@@ -783,8 +813,9 @@
       "remove_cooperator": "क्या आप वाकई {email} को सहयोगियों से हटाना चाहते हैं?",
       "cancel_invitation": "क्या आप वाकई {email} का आमंत्रण रद्द करना चाहते हैं?",
       "change_role": "क्या आप वाकई {email} की भूमिका {old} से {new} में बदलना चाहते हैं?",
-      "message_title_hint": "संदेश का शीर्षक दर्ज करें",
-      "message_content_hint": "संदेश की सामग्री दर्ज करें"
+      "message_title_hint": "अपने संदेश के लिए एक शीर्षक लिखें",
+      "message_content_hint": "अपने संदेश की सामग्री लिखें",
+      "invite_message": "आपको परीक्षण {testTitle} में भाग लेने के लिए आमंत्रित किया गया है"
     }
   },
   "UserTestTable": {
@@ -799,7 +830,9 @@
     "messages": {
       "noTasks": "आपके पास कोई कार्य नहीं है, आगे बढ़ने के लिए एक बनाएं।",
       "noVariables": "कोई वेरिएबल अभी तक जोड़े नहीं गए। नया वेरिएबल बनाने के लिए नीचे क्लिक करें।",
-      "noOptions": "कोई विकल्प जोड़े नहीं गए।"
+      "noOptions": "कोई विकल्प जोड़े नहीं गए।",
+      "confirm_delete_task": "कार्य हटाने की पुष्टि करें",
+      "sure_to_delete_task": "क्या आप वाकई कार्य : {taskName} हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती"
     },
     "inputs": {
       "consent": "सहमति",
@@ -954,6 +987,29 @@
         "camera": "कैमरा",
         "audio": "ऑडियो"
       }
+    },
+    "answerTypePreview": {
+      "taskCompleted": "कार्य पूर्ण! कोई अतिरिक्त प्रतिक्रिया आवश्यक नहीं है।",
+      "participantsFeedbackHere": "प्रतिभागी यहाँ अपनी प्रतिक्रिया देंगे...",
+      "submitFeedback": "प्रतिक्रिया सबमिट करें",
+      "postTaskQuestions": "कार्य के बाद के प्रश्न",
+      "rateTaskDifficulty": "1. इस कार्य की कठिनाई को आप कैसे रेट करेंगे?",
+      "additionalComments": "2. कोई अतिरिक्त टिप्पणी?",
+      "optionalFeedback": "वैकल्पिक प्रतिक्रिया...",
+      "externalFormTitle": "बाहरी फॉर्म",
+      "externalFormDescription": "कार्य के बाद प्रतिभागियों को एक बाहरी फॉर्म भरने के लिए रीडायरेक्ट किया जाएगा।",
+      "openExternalForm": "बाहरी फॉर्म खोलें",
+      "nasaTlxTitle": "NASA टास्क लोड इंडेक्स",
+      "mentalDemand": "मानसिक मांग",
+      "physicalDemand": "शारीरिक मांग",
+      "lowHigh": "कम - अधिक",
+      "moreDimensions": "+ 4 और आयाम",
+      "susTitle": "सिस्टम प्रयोगशीलता स्केल",
+      "susStatement1": "1. मुझे लगता है कि मैं इस सिस्टम को बार-बार उपयोग करना चाहूंगा।",
+      "stronglyDisagree": "पूर्णतः असहमत",
+      "stronglyAgree": "पूर्णतः सहमत",
+      "moreStatements": "+ 9 और कथन",
+      "sartTitle": "स्थिति जागरूकता रेटिंग तकनीक"
     }
   },
   "UserTestView": {
@@ -1218,6 +1274,7 @@
         "allStudies": "सभी अध्ययन",
         "myStudies": "मेरे अध्ययन",
         "whereICollaborate": "जहाँ मैं सहयोग करता हूँ",
+        "allMethods": "सभी विधियाँ",
         "lessThan10": "< 10 प्रतिभागी",
         "between10And50": "10 – 50 प्रतिभागी",
         "moreThan50": "> 50 प्रतिभागी"
@@ -1305,8 +1362,6 @@
       "select_end_date": "समाप्ति तिथि चुनें",
       "quick_actions": "त्वरित क्रियाएं",
       "perform_common_tasks": "सामान्य कार्य तुरंत करें",
-      "confirm_deletion": "हटाने की पुष्टि करें",
-      "action_cannot_be_undone": "यह क्रिया पूर्ववत नहीं की जा सकती",
       "delete_warning": "संबंधित सभी डेटा, परिणाम और कॉन्फ़िगरेशन स्थायी रूप से खो जाएंगे।",
       "delete_forever": "हमेशा के लिए हटाएँ"
     },
@@ -1324,12 +1379,14 @@
     "noCopy": "कॉपी असफल",
     "deleteTemplate": "क्या आप वाकई इस टेम्पलेट को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती!",
     "deleteTest": "क्या आप वाकई इस परीक्षण को हटाना चाहते हैं?",
+    "deleteQuestion": "क्या आप वाकई प्रश्न को हटाना चाहते हैं: ",
+    "deleteDescription": "क्या आप वाकई विवरण को हटाना चाहते हैं: ",
     "addDescription": "कृपया एक विवरण जोड़ें",
     "errorOccurred": "एक त्रुटि हुई है",
     "leave": "क्या आप वाकई छोड़ना चाहते हैं?",
     "sureLeave": "क्या आप वाकई छोड़ना चाहते हैं? आपके सभी परिवर्तन त्याग दिए जाएंगे",
     "imageURL": "छवि का URL दर्ज करें:",
-    "deleteHeuristic": "क्या आप वाकई {heuristic} हीयुरिस्टिक हटाना चाहते हैं?",
+    "deleteHeuristic": "क्या आप वाकई हीयुरिस्टिक को हटाना चाहते हैं: ",
     "deleteAccount": "क्या आप वाकई अपना खाता हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।",
     "genericSuccess": "ऑपरेशन सफल रहा",
     "savedChanges": "परिवर्तनों को सफलतापूर्वक सहेजा गया",
@@ -1712,7 +1769,8 @@
       "active": "सक्रिय",
       "draft": "ड्राफ्ट",
       "completed": "पूर्ण",
-      "archived": "संग्रहीत"
+      "archived": "संग्रहीत",
+      "moderatedDescription": "अपने मॉडरेटेड उपयोगकर्ता परीक्षण अध्ययन का प्रबंधन करें, प्रतिभागी की प्रगति को ट्रैक करें, और अपने व्यापक डैशबोर्ड से परिणामों का विश्लेषण करें।"
     },
     "studyOverview": {
       "totalParticipants": "कुल प्रतिभागी",
@@ -1778,8 +1836,39 @@
       "message": "क्या आप वाकई इस वेरिएबल को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।"
     },
     "deleteOptionConfirm": {
-      "title": "विकल्प हटाएं",
+      "title": "कल्प हटाएं",
       "message": "क्या आप वाकई इस विकल्प को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।"
+    }
+  },
+  "tags": {
+    "active": "सक्रिय",
+    "draft": "ड्राफ्ट",
+    "completed": "पूर्ण",
+    "archived": "अभिलेखागार",
+    "public": "सार्वजनिक",
+    "private": "निजी",
+    "fromTemplate": "टेम्पलेट से",
+    "withCollaborators": "सहयोगियों के साथ"
+  },
+  "methods": {
+    "categories": {
+      "test": "उपयोगकर्ता परीक्षण",
+      "inquiry": "उपयोगकर्ता अनुसंधान",
+      "inspection": "विशेषज्ञ निरीक्षण",
+      "accessibility": "पहुंच",
+      "other": "अन्य"
+    },
+    "definitions": {
+      "HEURISTICS": "हेयुरिस्टिक मूल्यांकन",
+      "USER_MODERATED": "मोडरेटेड उपयोगकर्ता परीक्षण",
+      "USER_UNMODERATED": "अनमोडरेटेड उपयोगकर्ता परीक्षण",
+      "SURVEY": "सर्वेक्षण",
+      "INTERVIEW": "साक्षात्कार",
+      "CARD_SORTING": "कार्ड सॉर्टिंग",
+      "COGNITIVE_WALKTHROUGH": "संज्ञानात्मक पूर्वाभ्यास",
+      "ACCESSIBILITY_MANUAL": "मैन्युअल मूल्यांकन",
+      "ACCESSIBILITY_AUTOMATIC": "स्वचालित मूल्यांकन",
+      "WCAG_AUDIT": "WCAG ऑडिट"
     }
   }
 }

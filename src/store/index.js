@@ -13,7 +13,6 @@ import automaticReport from '@/ux/accessibility/store/automaticReport'
 import UserStudy from '@/ux/UserTest/store/UserStudy'
 import notification from '@/features/notifications/store/notification'
 import CardStudy from '@/ux/CardSorting/stores/CardStudy'
-import mediaRecorder from '../shared/store/mediaRecorder'
 
 export default createStore({
   state: {
@@ -91,6 +90,5 @@ export default createStore({
     UserStudy,
     CardStudy,
     notification,
-    mediaRecorder,
   },
 })
