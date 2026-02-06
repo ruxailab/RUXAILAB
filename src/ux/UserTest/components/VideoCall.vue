@@ -72,7 +72,10 @@
               ></video>
 
               <!-- Camera disabled overlay for remote peer -->
-              <div v-if="!isRemoteCameraEnabled(userId)" class="camera-disabled-overlay">
+              <div
+                v-if="!isRemoteCameraEnabled(userId)"
+                class="camera-disabled-overlay"
+              >
                 <v-icon size="64" color="white" class="mb-2"
                   >mdi-video-off</v-icon
                 >
@@ -80,7 +83,10 @@
               </div>
 
               <!-- Microphone muted indicator for remote peer -->
-              <div v-if="!isRemoteMicrophoneEnabled(userId)" class="mic-muted-indicator">
+              <div
+                v-if="!isRemoteMicrophoneEnabled(userId)"
+                class="mic-muted-indicator"
+              >
                 <v-icon size="24" color="white">mdi-microphone-off</v-icon>
               </div>
 
@@ -439,16 +445,16 @@
                 participant.role === 'moderator'
                   ? 'blue'
                   : participant.role === 'observator'
-                  ? 'orange'
-                  : 'green'
+                    ? 'orange'
+                    : 'green'
               "
             >
               <v-icon color="white">{{
                 participant.role === 'moderator'
                   ? 'mdi-account-star'
                   : participant.role === 'observator'
-                  ? 'mdi-eye'
-                  : 'mdi-account'
+                    ? 'mdi-eye'
+                    : 'mdi-account'
               }}</v-icon>
             </v-avatar>
             <div class="participant-info">
@@ -688,16 +694,16 @@
                             item.raw.index < currentTaskIndex
                               ? 'success'
                               : item.raw.index === currentTaskIndex
-                              ? 'primary'
-                              : 'grey'
+                                ? 'primary'
+                                : 'grey'
                           "
                         >
                           {{
                             item.raw.index < currentTaskIndex
                               ? 'mdi-check-circle'
                               : item.raw.index === currentTaskIndex
-                              ? 'mdi-play-circle'
-                              : 'mdi-circle-outline'
+                                ? 'mdi-play-circle'
+                                : 'mdi-circle-outline'
                           }}
                         </v-icon>
                       </template>
@@ -896,8 +902,8 @@ const participantsList = computed(() => {
     role: isObservator.value
       ? 'observator'
       : props.isModerator
-      ? 'moderator'
-      : 'participant',
+        ? 'moderator'
+        : 'participant',
     connected: true,
     hasCamera: !isObservator.value && isCameraEnabled.value,
     hasMicrophone: !isObservator.value && isMicrophoneEnabled.value,

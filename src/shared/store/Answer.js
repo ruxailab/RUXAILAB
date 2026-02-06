@@ -80,14 +80,27 @@ export default {
       if (state.testAnswerDocument.type === STUDY_TYPES.HEURISTIC) {
         const heuristicAnswers = state.testAnswerDocument.heuristicAnswers || {}
 
-        return heuristicAnswers[rootState.user.id]
-          ? HeuristicAnswer.toHeuristicAnswer(
-              heuristicAnswers[rootState.user.id],
-              rootState.test.testOptions,
-            )
-          : new HeuristicAnswer({
-              userDocId: rootState.user.id,
-            })
+        const userAnswer = heuristicAnswers[rootState.user.id]
+        if (userAnswer) {
+          const transformedAnswer = HeuristicAnswer.toHeuristicAnswer(
+            userAnswer,
+            rootState.test.testOptions,
+          )
+          // Ensure the answer has testStarted flag
+          if (
+            !transformedAnswer.testStarted &&
+            (transformedAnswer.progress > 0 ||
+              transformedAnswer.lastViewedHeuristicIndex !== undefined)
+          ) {
+            transformedAnswer.testStarted = true
+          }
+          return transformedAnswer
+        } else {
+          return new HeuristicAnswer({
+            userDocId: rootState.user.id,
+            testStarted: false,
+          })
+        }
       }
 
       if (state.testAnswerDocument.type === STUDY_TYPES.USER) {
@@ -180,6 +193,10 @@ export default {
       if (!state.mediaUrls[taskIndex]) state.mediaUrls[taskIndex] = {}
       state.mediaUrls[taskIndex][mediaType] = url
     },
+    SET_TOAST(state, payload) {
+      if (!state.toast) state.toast = {}
+      state.toast = payload
+    },
   },
   actions: {
     async getCurrentTestAnswerDoc({ commit, rootState }) {
@@ -222,7 +239,7 @@ export default {
         commit('setLoading', false)
       }
     },
-    async saveTestAnswer({ commit }, payload) {
+    async saveTestAnswer({ commit, state, rootState }, payload) {
       commit('setLoading', true)
       try {
         await answerController.saveTestAnswer(
@@ -230,8 +247,41 @@ export default {
           payload.answersDocId,
           payload.testType,
         )
+
+        // Update the local state to reflect saved changes
+        if (state.testAnswerDocument && rootState.user) {
+          const userId = rootState.user.id
+          if (payload.testType === STUDY_TYPES.HEURISTIC) {
+            if (!state.testAnswerDocument.heuristicAnswers) {
+              state.testAnswerDocument.heuristicAnswers = {}
+            }
+            state.testAnswerDocument.heuristicAnswers[userId] = payload.data
+          } else if (payload.testType === STUDY_TYPES.USER) {
+            if (!state.testAnswerDocument.taskAnswers) {
+              state.testAnswerDocument.taskAnswers = {}
+            }
+            state.testAnswerDocument.taskAnswers[userId] = payload.data
+          }
+        }
+
+        // Show success toast if message provided
+        if (payload.successMessage) {
+          commit('SET_TOAST', {
+            type: 'success',
+            message: payload.successMessage,
+            show: true,
+          })
+        }
       } catch (e) {
-        return e // commit("setError", true);
+        console.error('Error in save test answer', e)
+        // commit("setError", true);
+        if (payload.errorMessage) {
+          commit('SET_TOAST', {
+            type: 'error',
+            message: payload.errorMessage,
+            show: true,
+          })
+        }
       } finally {
         commit('setLoading', false)
       }
