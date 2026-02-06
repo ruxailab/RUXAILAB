@@ -190,8 +190,8 @@
                       stepperValue == 1
                         ? 'warning'
                         : stepperValue < 1
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -204,8 +204,8 @@
                       stepperValue == 2
                         ? 'warning'
                         : stepperValue < 1
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -218,8 +218,8 @@
                       stepperValue == 3
                         ? 'warning'
                         : stepperValue < 3
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -232,8 +232,8 @@
                       stepperValue == 4
                         ? 'warning'
                         : stepperValue < 4
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -246,8 +246,8 @@
                       stepperValue == 5
                         ? 'warning'
                         : stepperValue < 5
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -285,8 +285,8 @@
                         taskIndex == index
                           ? 'warning'
                           : taskIndex < index
-                          ? 'primary'
-                          : 'success'
+                            ? 'primary'
+                            : 'success'
                       "
                       complete-icon="mdi-check"
                     />
@@ -302,11 +302,11 @@
           <!-- Observator Notes Drawer -->
           <v-navigation-drawer
             v-if="isObservator"
+            v-model="notesDrawerOpen"
             location="right"
             persistent
             width="400"
             elevation="3"
-            v-model="notesDrawerOpen"
             style="
               position: fixed;
               top: 0;
@@ -332,7 +332,6 @@
             color="primary"
             elevation="4"
             class="notes-toggle-btn"
-            @click="notesDrawerOpen = !notesDrawerOpen"
             :style="{
               position: 'fixed',
               top: '80px',
@@ -340,6 +339,7 @@
               zIndex: 1006,
               transition: 'right 0.3s ease',
             }"
+            @click="notesDrawerOpen = !notesDrawerOpen"
           >
             <v-badge
               :content="localTestAnswer.sessionNotes?.length || 0"
@@ -357,7 +357,7 @@
           <!-- Video Call Component -->
           <div v-show="displayVideoCallComponent">
             <VideoCall
-              :roomId="roomId"
+              :room-id="roomId"
               :is-moderator="isUserTestAdmin"
               :user="user"
               :access-level="currentUserAccessLevel"
@@ -572,15 +572,7 @@ import {
   onDisconnect,
 } from 'firebase/database'
 import { database } from '@/app/plugins/firebase/index'
-import {
-  ref,
-  computed,
-  watch,
-  onMounted,
-  reactive,
-  watchEffect,
-  onUnmounted,
-} from 'vue'
+import { ref, computed, watch, onMounted, reactive, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -781,7 +773,7 @@ const handleSubmit = async () => {
     localTestAnswer.submitted = true
     await saveAnswer()
     await router.push({ name: 'Admin' })
-  } catch (error) {
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSubmitAnswer'),
@@ -987,10 +979,7 @@ const completeStep = async (id, type, userCompleted = true) => {
     }
     if (type === 'tasks') {
       if (!Array.isArray(localTestAnswer.tasks)) {
-        console.error(
-          'localTestAnswer.tasks is not an array:',
-          localTestAnswer.tasks,
-        )
+        showWarning('Task data is invalid. Please refresh and try again.')
         return
       }
       localTestAnswer.tasks[id].completed = userCompleted
@@ -1410,7 +1399,8 @@ onBeforeUnmount(async () => {
   --v-stepper-header-title-color: #fff !important;
   --v-stepper-item-title-color: #fff !important;
   --v-stepper-item-color: #fff !important;
-  transition: background 1s cubic-bezier(0.4, 0, 0.2, 1),
+  transition:
+    background 1s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
