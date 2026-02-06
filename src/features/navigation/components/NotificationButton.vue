@@ -28,12 +28,7 @@
           </v-btn>
         </v-badge>
 
-        <v-btn
-          v-else
-          icon
-          size="small"
-          v-bind="props"
-        >
+        <v-btn v-else icon size="small" v-bind="props">
           <v-icon>mdi-bell-outline</v-icon>
         </v-btn>
       </template>
@@ -52,7 +47,7 @@
               color="primary"
               @click="markAllAsRead"
             >
-              Mark all as read
+              {{ $t('common.markAllAsRead') }}
             </v-btn>
 
             <v-btn
@@ -84,8 +79,10 @@
           <!-- Empty -->
           <div v-else class="empty-state">
             <v-icon size="40" color="grey">mdi-bell-check</v-icon>
-            <div class="empty-title">You're all caught up</div>
-            <div class="empty-subtitle">No new notifications</div>
+            <div class="empty-title">{{ $t('common.caughtUp') }}</div>
+            <div class="empty-subtitle">
+              {{ $t('common.noNewNotifications') }}
+            </div>
           </div>
         </div>
       </v-card>
@@ -118,13 +115,13 @@ const user = computed(() => store.getters.user)
 
 const unreadNotifications = computed(() =>
   [...user.value.notifications]
-    .filter(n => !n.read)
+    .filter((n) => !n.read)
     .sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate))
-    .slice(0, 6)
+    .slice(0, 6),
 )
 
-const unreadCount = computed(() =>
-  user.value.notifications.filter(n => !n.read).length
+const unreadCount = computed(
+  () => user.value.notifications.filter((n) => !n.read).length,
 )
 
 /* Dialog  */
@@ -143,7 +140,7 @@ const onReject = () => {
 
 const showAcceptDialog = () => {
   dialogVisible.value = true
-  return new Promise(resolve => (resolveDialog = resolve))
+  return new Promise((resolve) => (resolveDialog = resolve))
 }
 
 /* actions */
@@ -151,22 +148,33 @@ const goToNotificationRedirect = async (notification) => {
   const accepted = await showAcceptDialog()
 
   if (!accepted) {
-    await store.dispatch('markNotificationAsRead', { notification, user: user.value })
+    await store.dispatch('markNotificationAsRead', {
+      notification,
+      user: user.value,
+    })
     return
   }
 
   if (notification.testId) {
-    const study = await new StudyController().getStudy({ id: notification.testId })
+    const study = await new StudyController().getStudy({
+      id: notification.testId,
+    })
     await store.dispatch('acceptStudyCollaboration', {
       test: study,
       cooperator: user.value,
     })
   }
 
-  await store.dispatch('markNotificationAsRead', { notification, user: user.value })
+  await store.dispatch('markNotificationAsRead', {
+    notification,
+    user: user.value,
+  })
 
   if (notification.redirectsTo) {
-    globalThis.open(globalThis.location.origin + notification.redirectsTo, '_blank')
+    globalThis.open(
+      globalThis.location.origin + notification.redirectsTo,
+      '_blank',
+    )
   } else {
     goToNotificationPage()
   }
@@ -175,12 +183,10 @@ const goToNotificationRedirect = async (notification) => {
 }
 
 const markAllAsRead = async () => {
-  const unread = user.value.notifications.filter(n => !n.read)
-  await Promise.all(
-    unread.map(n =>
-      store.dispatch('markNotificationAsRead', { notification: n, user: user.value })
-    )
-  )
+  const unread = user.value.notifications.filter((n) => !n.read)
+  if (unread.length === 0) return
+
+  await store.dispatch('markAllNotificationsAsRead', user.value)
 }
 
 const goToNotificationPage = () => {
@@ -192,7 +198,11 @@ const goToNotificationPage = () => {
 const handleKey = (e) => {
   if (!menuOpen.value) return
 
-  if (e.key === 'j') activeIndex.value = Math.min(activeIndex.value + 1, unreadNotifications.value.length - 1)
+  if (e.key === 'j')
+    activeIndex.value = Math.min(
+      activeIndex.value + 1,
+      unreadNotifications.value.length - 1,
+    )
   if (e.key === 'k') activeIndex.value = Math.max(activeIndex.value - 1, 0)
   if (e.key === 'Enter' && unreadNotifications.value[activeIndex.value]) {
     goToNotificationRedirect(unreadNotifications.value[activeIndex.value])
@@ -228,8 +238,14 @@ watch(menuOpen, (open) => {
 }
 
 @keyframes pulse {
-  0% { transform: scale(1.0); opacity: 1; }
-  100% { transform: scale(1.8); opacity: 0; }
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
 }
 
 /* Dropdown */

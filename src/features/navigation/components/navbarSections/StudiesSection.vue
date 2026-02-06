@@ -9,7 +9,7 @@
         density="compact"
         hide-details
         variant="outlined"
-        placeholder="Search studies..."
+        :placeholder="$t('pages.studies.searchPlaceholder')"
         class="flex-grow-1"
       />
       <v-btn
@@ -19,7 +19,7 @@
         :disabled="!hasActiveFilters"
         @click="clearFilters"
       >
-        Reset
+        {{ $t('pages.studies.reset') }}
       </v-btn>
 
       <v-btn
@@ -27,7 +27,11 @@
         variant="tonal"
         icon
         size="small"
-        :title="showFilters ? 'Hide filters' : 'Show filters'"
+        :title="
+          showFilters
+            ? $t('pages.studies.hideFilters')
+            : $t('pages.studies.showFilters')
+        "
         @click="toggleFilters"
       >
         <v-icon>{{
@@ -42,7 +46,9 @@
         <v-row dense>
           <!-- 📅 Creation date -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Creation date</div>
+            <div class="filter-label">
+              {{ $t('pages.studies.creationDate') }}
+            </div>
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
@@ -63,8 +69,9 @@
                         ).toLocaleDateString()} - ${new Date(
                           creationDateRange[creationDateRange.length - 1],
                         ).toLocaleDateString()}`
-                      : 'Select range'
+                      : $t('pages.studies.selectRange')
                   "
+                  prepend-inner-icon="mdi-calendar"
                   :model-value="
                     creationDateRange.length > 1
                       ? `${new Date(
@@ -74,7 +81,6 @@
                         ).toLocaleDateString()}`
                       : ''
                   "
-                  prepend-inner-icon="mdi-calendar"
                 />
               </template>
               <v-date-picker v-model="creationDateRange" multiple="range" />
@@ -83,7 +89,9 @@
 
           <!-- ⚙️ Status -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Status</div>
+            <div class="filter-label">
+              {{ $t('pages.studies.statusLabel') }}
+            </div>
             <v-select
               v-model="selectedStatusFilter"
               :items="statusOptions"
@@ -99,7 +107,7 @@
 
           <!-- 🔓 Visibility -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Visibility</div>
+            <div class="filter-label">{{ $t('pages.studies.visibility') }}</div>
             <v-select
               v-model="selectedVisibilityFilter"
               :items="visibilityOptions"
@@ -113,7 +121,7 @@
 
           <!-- 🧭 Method -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Method</div>
+            <div class="filter-label">{{ $t('pages.studies.method') }}</div>
             <v-select
               v-model="selectedMethodFilter"
               :items="methodOptions"
@@ -127,7 +135,7 @@
 
           <!-- 👥 Ownership -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Ownership</div>
+            <div class="filter-label">{{ $t('pages.studies.ownership') }}</div>
             <v-select
               v-model="selectedOwnershipFilter"
               :items="ownershipOptions"
@@ -141,7 +149,9 @@
 
           <!-- 👤 Participants -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Participants</div>
+            <div class="filter-label">
+              {{ $t('pages.studies.participants') }}
+            </div>
             <v-select
               v-model="selectedParticipantsFilter"
               :items="participantsOptions"
@@ -158,7 +168,12 @@
   </v-card>
 
   <!-- 📋 Study list -->
-  <List :items="filteredTests" type="myTests" @clicked="goTo" />
+  <List
+    :items="filteredTests"
+    type="myTests"
+    :is-filtered="hasActiveFilters"
+    @clicked="goTo"
+  />
 </template>
 
 <script setup>
@@ -166,6 +181,7 @@
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import List from '@/shared/components/tables/ListComponent.vue'
 import {
   getMethodManagerView,
@@ -179,6 +195,7 @@ import {
 // ===== Setup =====
 const store = useStore()
 const router = useRouter()
+const { t } = useI18n()
 const search = ref('')
 
 // ===== Filter state =====
@@ -193,31 +210,31 @@ const showFilters = ref(false)
 const toggleFilters = () => (showFilters.value = !showFilters.value)
 
 // ===== Filter options =====
-const statusOptions = [
-  { value: 'all', text: 'All Statuses' },
-  { value: 'active', text: 'Active' },
-  { value: 'draft', text: 'Draft' },
-  { value: 'completed', text: 'Completed' },
-]
+const statusOptions = computed(() => [
+  { value: 'all', text: t('pages.studies.filters.allStatuses') },
+  { value: 'active', text: t('pages.studies.filters.active') },
+  { value: 'draft', text: t('pages.studies.filters.draft') },
+  { value: 'completed', text: t('pages.studies.filters.completed') },
+])
 
-const visibilityOptions = [
-  { value: 'all', text: 'All Visibility' },
-  { value: 'public', text: 'Public' },
-  { value: 'private', text: 'Private' },
-]
+const visibilityOptions = computed(() => [
+  { value: 'all', text: t('pages.studies.filters.allVisibility') },
+  { value: 'public', text: t('pages.studies.filters.public') },
+  { value: 'private', text: t('pages.studies.filters.private') },
+])
 
-const ownershipOptions = [
-  { value: 'all', text: 'All Studies' },
-  { value: 'mine', text: 'My Studies' },
-  { value: 'cooperator', text: 'Where I Collaborate' },
-]
+const ownershipOptions = computed(() => [
+  { value: 'all', text: t('pages.studies.filters.allStudies') },
+  { value: 'mine', text: t('pages.studies.filters.myStudies') },
+  { value: 'cooperator', text: t('pages.studies.filters.whereICollaborate') },
+])
 
-const participantsOptions = [
-  { text: 'All', value: 'all' },
-  { text: '< 10 participants', value: 'lt10' },
-  { text: '10 – 50 participants', value: 'btw10_50' },
-  { text: '> 50 participants', value: 'gt50' },
-]
+const participantsOptions = computed(() => [
+  { text: t('common.all'), value: 'all' },
+  { text: t('pages.studies.filters.lessThan10'), value: 'lt10' },
+  { text: t('pages.studies.filters.between10And50'), value: 'btw10_50' },
+  { text: t('pages.studies.filters.moreThan50'), value: 'gt50' },
+])
 
 // ===== Helpers =====
 const clearFilters = () => {
@@ -246,8 +263,14 @@ const hasActiveFilters = computed(
 
 // ===== Method options =====
 const methodOptions = computed(() => {
-  const options = getMethodOptions('en', METHOD_STATUSES.AVAILABLE.id)
-  return [{ value: 'all', text: 'All Methods' }, ...options]
+  const options = getMethodOptions(t.value, METHOD_STATUSES.AVAILABLE.id)
+  return [
+    { value: 'all', text: t('pages.studies.filters.allMethods') },
+    ...options.map((opt) => ({
+      ...opt,
+      text: t(`methods.definitions.${opt.value}`),
+    })),
+  ]
 })
 
 // ===== Filtered list =====

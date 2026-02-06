@@ -7,30 +7,20 @@
       size="small"
       :disabled="testAnswerDocLength > 0"
       :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
-      @click="dialog = true; resetIndex()"
+      @click=";(dialog = true), resetIndex()"
     >
       {{ $t('HeuristicsTable.titles.addNewDescription') }}
     </v-btn>
 
-    <v-dialog
-      v-model="dialog"
-      width="700"
-      persistent
-    >
+    <v-dialog v-model="dialog" width="700" persistent>
       <v-card class="dataCard">
         <p class="subtitleView ma-3 pt-3 mb-0 pa-2">
           {{ $t('HeuristicsTable.titles.addNewDescription') }}
         </p>
         <v-divider />
-        <v-row
-          justify="center"
-          class="ma-0"
-        >
+        <v-row justify="center" class="ma-0">
           <v-col cols="11">
-            <v-form
-              ref="form"
-              @submit.prevent="validate"
-            >
+            <v-form ref="form" @submit.prevent="validate">
               <v-row justify="center">
                 <v-col cols="12">
                   <v-text-field
@@ -122,8 +112,9 @@ const form = ref(null)
 const rules = ref([(v) => !!v || t('errors.fieldRequired')])
 
 const question = computed(() => {
-  return store.state.Tests.Test.testStructure[props.heuristicIndex]
-    .questions[props.questionIndex]
+  return store.state.Tests.Test.testStructure[props.heuristicIndex].questions[
+    props.questionIndex
+  ]
 })
 
 const testAnswerDocLength = computed(() => {
@@ -195,7 +186,7 @@ const submitEdit = async () => {
 }
 
 defineExpose({
-  editSetup
+  editSetup,
 })
 </script>
 
@@ -216,7 +207,7 @@ defineExpose({
   padding-bottom: 2px;
 }
 .dataCard {
-  box-shadow: 0px 4px 4px_RGBA(0, 0, 0, 0.25);
+  box-shadow: 0px 4px 4px_RGBA (0, 0, 0, 0.25);
   border-radius: 4px;
 }
 </style>

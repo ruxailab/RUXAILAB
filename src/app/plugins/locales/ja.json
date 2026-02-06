@@ -1,6 +1,29 @@
 {
   "language": "言語",
   "auth": {
+    "signupSuccess": "サインアップに成功しました",
+    "logoutSuccess": "ログアウトに成功しました",
+    "resetPasswordSuccess": "パスワードリセット用のメールを送信しました",
+    "deleteSuccess": "アカウントが正常に削除されました",
+    "loginSuccess": "ログインに成功しました",
+    "SIGNIN": {
+      "sign-in": "ログイン",
+      "sign-in-title": "お帰りなさい",
+      "sign-in-subtitle": "続行するにはアカウントにサインインしてください",
+      "email": "メールアドレス",
+      "username": "ユーザー名",
+      "password": "パスワード",
+      "signupSubtitle": "開始するために情報を入力してください",
+      "dont-have-account": "アカウントをお持ちでないですか？登録",
+      "forgot-password": "パスワードをお忘れですか？",
+      "sign-up": "登録",
+      "contact": "連絡先番号",
+      "confirmPassword": "パスワードを確認",
+      "alreadyHaveAnAccount": "すでにアカウントをお持ちですか？ログイン",
+      "continueWithGoogle": "Googleで続行",
+      "rememberMe": "ログイン情報を保持する",
+      "or": "または"
+    },
     "FORGOT_PASSWORD": {
       "reset_password": "パスワードをリセット",
       "email": "メールアドレス",
@@ -11,9 +34,23 @@
       "reset_link_sent": "パスワードリセットリンクを送信しました：",
       "no_email": "メールが届いていませんか？",
       "try_again": "もう一度試す"
+    },
+    "passwordStrength": "パスワード強度",
+    "number": "番号",
+    "strength": {
+      "veryWeak": "非常に弱い",
+      "weak": "弱い",
+      "fair": "普通",
+      "good": "良い",
+      "strong": "強い"
     }
   },
   "common": {
+    "enterTextHere": "ここにテキストを入力...",
+    "units": {
+      "mb": "MB",
+      "gb": "GB"
+    },
     "loading": "テストを読み込み中",
     "continueAs": "として続行",
     "notUser": "{userEmail}ではありませんか？",
@@ -35,6 +72,9 @@
     "type": "タイプ",
     "noNotifications": "まだ通知はありません",
     "notifications": "通知",
+    "markAllAsRead": "すべて既読にする",
+    "caughtUp": "最新の状態です",
+    "noNewNotifications": "新しい通知はありません",
     "unread": "未読",
     "inbox": "受信トレイ",
     "timeAgo": {
@@ -59,8 +99,19 @@
       "status": "ステータス",
       "sessionDate": "セッション日",
       "participants": "参加者",
-      "created": "作成日"
-    }
+      "created": "作成日",
+      "noSearchResults": "条件に一致する結果が見つかりませんでした",
+      "tryAdjustingSearch": "検索条件またはフィルターを調整してみてください"
+    },
+    "hidden": "非表示",
+    "proceed": "続行",
+    "all": "すべて",
+    "actions": "アクション",
+    "confirm_deletion": "削除を確定する",
+    "action_cannot_be_undone": "この操作は元に戻せません",
+    "user": "ユーザー",
+    "id": "ID",
+    "itemsPerPage": "ページごとの項目数："
   },
   "storage": {
     "pageTitle": "ストレージ",
@@ -83,7 +134,11 @@
       "evaluator": "評価者",
       "status": "ステータス",
       "sessionDate": "セッション日",
-      "itemsPerPage": "ページあたりの項目数:"
+      "itemsPerPage": "ページあたりの項目数:",
+      "studyName": "研究名",
+      "date": "日付",
+      "size": "サイズ",
+      "actions": "操作"
     }
   },
   "community": {
@@ -127,11 +182,17 @@
       "allMethods": "すべての方法",
       "all": "すべて",
       "heuristicEvaluation": "ヒューリスティック評価",
-      "userStudyUnmoderated": "ユーザー調査（非モデレート）",
-      "userStudyModerated": "ユーザー調査（モデレート）",
-      "manualAccessibility": "手動アクセシビリティ",
-      "automaticAccessibility": "自動アクセシビリティ"
+      "moderatedUserTest": "モデレートユーザーテスト",
+      "unmoderatedUserTest": "非モデレートユーザーテスト",
+      "accessibilityManual": "手動アクセシビリティ評価",
+      "accessibilityAutomatic": "自動アクセシビリティ評価"
     }
+  },
+  "acceptInvitation": {
+    "title": "協力の招待",
+    "message": "この招待を承認しますか？",
+    "reject": "拒否",
+    "accept": "承認"
   },
   "notificationsPage": {
     "subtitle": "活動とコラボレーションの最新情報を確認",
@@ -160,8 +221,23 @@
     "sessions": "セッション",
     "templates": "テンプレート",
     "storage": "ストレージ",
+    "community": "コミュニティ",
     "communityStudies": "コミュニティ研究",
-    "communityTemplates": "コミュニティテンプレート"
+    "communityTemplates": "コミュニティテンプレート",
+    "visibility": "公開範囲",
+    "public": "公開",
+    "private": "非公開",
+    "allVisibility": "すべての公開範囲",
+    "subtitles": {
+      "manageStudies": "研究調査の管理",
+      "accessTemplates": "保存したテンプレートへのアクセス",
+      "stayUpdated": "アクティビティやコラボレーションの最新情報を確認",
+      "overviewSessions": "セッションの概要",
+      "manageStorage": "保存されたメディアファイルの管理",
+      "viewEditProfile": "プロファイル情報の表示と編集",
+      "exploreCommunityStudies": "RUXAIコミュニティで共有されている調査を探索",
+      "browseCommunityTemplates": "RUXAIコミュニティが提供するテンプレートを閲覧"
+    }
   },
   "profile": {
     "title": "プロフィール",
@@ -194,7 +270,37 @@
     "passwordUppercase": "大文字を1文字含める必要があります",
     "passwordSymbol": "記号を1つ含める必要があります",
     "confirmPasswordRequired": "パスワード確認は必須です",
-    "passwordsMatch": "パスワードが一致する必要があります"
+    "passwordsMatch": "パスワードが一致する必要があります",
+    "superAdmin": "スーパー管理者",
+    "usernameRequired": "ユーザー名は必須です",
+    "usernameMinLength": "ユーザー名は3文字以上である必要があります",
+    "countryRequired": "国は必須です",
+    "contactNumberRequired": "連絡先番号は必須です",
+    "enterValidPhoneNumber": "有効な電話番号を入力してください（9〜15桁のみ）",
+    "profileImageUpdatedSuccess": "プロフィール画像が正常に更新されました",
+    "profileImageUploadFailed": "プロフィール画像のアップロードに失敗しました",
+    "uploadProfilePicture": "プロフィール画像をアップロード",
+    "removeProfilePicture": "プロフィール画像を削除",
+    "takePhoto": "写真を撮る",
+    "cameraCaptureTitle": "プロフィール写真を撮影",
+    "cameraNotAvailable": "このデバイスではカメラを利用できません",
+    "cameraPermissionDenied": "カメラへのアクセスが拒否されました。ブラウザの設定でカメラへのアクセスを許可してください。",
+    "noUserSignedIn": "ユーザーがサインインしていません",
+    "profileLoadFailed": "プロフィールの読み込みに失敗しました",
+    "profileUpdatedSuccess": "プロフィールが正常に更新されました",
+    "profileUpdateFailed": "プロフィールの更新に失敗しました",
+    "currentPassword": "現在のパスワード",
+    "currentPasswordRequired": "現在のパスワードは必須です",
+    "wrongCurrentPassword": "現在のパスワードが正しくありません",
+    "recentLoginRequired": "パスワードを変更する前に、一度ログアウトして再度ログインしてください",
+    "googleUserPasswordInfo": "Googleでサインインしました。下のボタンをクリックしてGoogleで確認し、アカウントのパスワードを設定してください。",
+    "passwordChangedSuccess": "パスワードが正常に変更されました",
+    "passwordChangeFailed": "パスワードの変更に失敗しました",
+    "accountDeletionFailed": "アカウントの削除に失敗しました",
+    "accountDeletedSuccess": "アカウントが正常に削除されました",
+    "yourPassword": "あなたのパスワード",
+    "back": "戻る",
+    "deleteForever": "完全に削除"
   },
   "titles": {
     "manager": "マネージャー",
@@ -207,6 +313,10 @@
     "template": "テンプレート",
     "finalReport": "最終レポート",
     "answerType": "回答タイプ：",
+    "users": "ユーザー",
+    "studies": "研究",
+    "accessLevel": "アクセスレベル",
+    "actions": "アクション",
     "drawer": {
       "Manager": "マネージャー",
       "Test": "テスト",
@@ -218,7 +328,10 @@
       "Template": "テンプレート",
       "Final Report": "最終レポート",
       "Answer Test": "テストに回答",
-      "Settings": "設定"
+      "Settings": "設定",
+      "name": "名前",
+      "studiesCount": "研究数",
+      "mediaSize": "メディアサイズ"
     },
     "heuristic": "ユーザビリティ ヒューリスティック評価"
   },
@@ -238,11 +351,10 @@
       "start": "始めましょう！",
       "edit": "研究ニーズに合わせてタスクとヒューリスティックを作成およびカスタマイズします。",
       "finalReport": "含めたい項目を選択して、ヒューリスティック評価の最終レポートを準備します。"
-    }
-  },
-  "storage": {
-    "noMediaFiles": "メディアファイルが見つかりません",
-    "mediaFiles": "メディアファイル"
+    },
+    "overallAnalyticsDescription": "テストの集計分析を表示します。",
+    "individualAnalytics": "個別分析",
+    "nasaTlxAnalytics": "NASA-TLX分析"
   },
   "errors": {
     "invalidInvitation": "無効な招待です",
@@ -286,6 +398,15 @@
       "createNewStudy": "新しい研究を作成",
       "emptyStateMessage": "まだ研究がありません。最初の研究を作成して、貴重なユーザーインサイトの収集を始めましょう。"
     },
+    "studyStatus": {
+      "finished": "完了",
+      "expiredDaysAgo": "{days}日前に期限切れ",
+      "endsToday": "本日終了",
+      "endsTodayStarted": "本日終了 · 開始済み",
+      "readyToSubmit": "提出準備完了",
+      "endsTodayReady": "本日終了 · 提出準備完了",
+      "notStarted": "未開始"
+    },
     "activeStudiesOverview": "アクティブな研究の概要",
     "viewAll": "すべて表示",
     "showMore": "もっと見る",
@@ -296,6 +417,33 @@
     "daysLeft": "残り日数",
     "dayLeft": "残り1日",
     "studies": "研究",
+    "studiesPage": {
+      "searchPlaceholder": "調査を検索...",
+      "reset": "リセット",
+      "showFilters": "フィルターを表示",
+      "hideFilters": "フィルターを非表示",
+      "filters": {
+        "creationDate": "作成日",
+        "status": "ステータス",
+        "visibility": "公開範囲",
+        "method": "手法",
+        "ownership": "所有者",
+        "participants": "参加者",
+        "selectRange": "期間を選択",
+        "allStatuses": "すべてのステータス",
+        "allVisibility": "すべての公開範囲",
+        "public": "公開",
+        "private": "非公開",
+        "allMethods": "すべての手法",
+        "allStudies": "すべての調査",
+        "myStudies": "自分の調査",
+        "whereICollaborate": "コラボレーション中",
+        "all": "すべて",
+        "lt10": "10人未満",
+        "btw10_50": "10～50人",
+        "gt50": "50人超"
+      }
+    },
     "storage": "ストレージ",
     "free": "無料",
     "plan": "プラン",
@@ -319,6 +467,77 @@
       "paused": "一時停止",
       "finished": "完了",
       "unknown": "不明"
+    },
+    "officeHours": {
+      "title": "月例オフィスアワー",
+      "description": "11月から、プロジェクトの更新情報の議論、質問への回答、コミュニティとの交流のために、月例オフィスアワーを開催します。",
+      "nextSessionDate": "2025年11月",
+      "frequency": "毎月"
+    },
+    "webinar": {
+      "ended": "終了",
+      "live": "ライブ",
+      "today": "今日",
+      "joinNow": "今すぐ参加",
+      "webinarEnded": "ウェビナー終了",
+      "startingToday": "今日開始"
+    },
+    "cards": {
+      "recentActivity": "最近の活動",
+      "activities7Days": "アクティビティ（合計7日間）",
+      "lastActivity": "最後の活動",
+      "noActivity": "活動なし",
+      "edit": "編集",
+      "heuristics": "ヒューリスティック",
+      "questions": "質問",
+      "totalOptions": "総オプション数",
+      "qualitative": "定性的",
+      "quantitative": "定量的",
+      "weights": "重み付け",
+      "on": "オン",
+      "off": "オフ",
+      "cooperators": "協力者",
+      "totalInvited": "招待合計",
+      "accepted": "承認済み",
+      "pending": "保留中",
+      "storage": "ストレージ",
+      "currentStorage": "ストレージ（現在）",
+      "limitAvailable": "利用可能制限",
+      "results": "結果",
+      "generalUsability": "一般的なユーザビリティ",
+      "finalReport": "最終レポート",
+      "generatePDF": "PDFを生成",
+      "download": "ダウンロード",
+      "generated": "生成日:",
+      "generateReport": "レポートを生成",
+      "reportAvailable": "レポート利用可能",
+      "noReport": "レポート未生成",
+      "readyForDownload": "最終レポートのダウンロード準備ができました",
+      "waitingForParticipants": "参加者を待機中",
+      "evaluationsCompleted": "評価完了",
+      "readyToGenerate": "レポートの生成準備完了",
+      "excellentUsability": "優れたユーザビリティ",
+      "acceptableUsability": "許容できるユーザビリティ",
+      "needsImprovement": "改善が必要",
+      "basedOn": "基づく",
+      "evaluations": "評価",
+      "evaluationUpdated": "評価が更新されました",
+      "updatedProgress": "進捗を更新しました",
+      "invitationSentTitle": "招待送信済み",
+      "invitationPendingDesc": "招待保留中:",
+      "pendingStatus": "保留中"
+    },
+    "managerView": {
+      "heuristicStudy": "ヒューリスティック評価",
+      "freePlan": "無料プラン",
+      "generalStatistics": "一般統計",
+      "modules": "モジュール"
+    },
+    "stats": {
+      "participants": "参加者",
+      "completion": "完了",
+      "daysActive": "活動日数",
+      "heuristics": "ヒューリスティック"
     }
   },
   "HeuristicsTable": {
@@ -387,6 +606,10 @@
       "failedToLoadEditForm": "編集フォームの読み込みに失敗しました。もう一度お試しください。",
       "invalidHeuristic": "無効なヒューリスティック選択です",
       "invalidQuestion": "無効な質問選択です"
+    },
+    "count": {
+      "question": "質問",
+      "questions": "質問"
     }
   },
   "HeuristicsOptionsTable": {
@@ -394,9 +617,15 @@
       "options": "オプション",
       "noOptions": "オプションなし"
     },
-    "messages": {},
+    "messages": {
+      "startAddingOptions": "ヒューリスティックな質問へのオプションの追加を開始してください"
+    },
     "placeHolders": {},
-    "actions": {}
+    "actions": {},
+    "count": {
+      "option": "オプション",
+      "options": "オプション"
+    }
   },
   "HeuristicsWeightsTable": {
     "titles": {
@@ -412,7 +641,8 @@
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "設定"
+      "settings": "設定",
+      "confirmUpload": "アップロードの確認"
     },
     "messages": {
       "acceptCsv": "同意すると、現在のヒューリスティックはCSVファイルの内容で置き換えられます。",
@@ -430,7 +660,21 @@
     "messages": {
       "submitTest": "このテストを提出してもよろしいですか？",
       "submitOnce": "このテストを提出してもよろしいですか？提出は一度だけです。",
-      "noHeuristics": "このテストにはヒューリスティックがありません"
+      "noHeuristics": "このテストにはヒューリスティックがありません",
+      "noHeuristicsConfigured": "設定エラー：このテストにはヒューリスティックが構成されていません。続行するにはヒューリスティックを追加してください。",
+      "answerSaved": "回答が正常に保存されました"
+    },
+    "errors": {
+      "questionNotLoaded": "質問を読み込めませんでした",
+      "noAnswerData": "回答データが見つかりません",
+      "failedToSaveAnswer": "回答の保存に失敗しました。もう一度お試しください。",
+      "failedToSubmitAnswer": "回答の提出に失敗しました。もう一度お試しください。"
+    },
+    "unknownHeuristic": "不明なヒューリスティック",
+    "unknownQuestion": "不明な質問",
+    "selectAnOption": "オプションを選択してください",
+    "headers": {
+      "heuristics": "ヒューリスティック"
     },
     "actions": {
       "cancel": "キャンセル",
@@ -443,6 +687,8 @@
     }
   },
   "HeuristicsEditTest": {
+    "pageTitle": "テストを編集",
+    "pageSubtitle": "テストの設定と環境設定をカスタマイズ",
     "titles": {
       "heuristics": "ヒューリスティック",
       "options": "オプション",
@@ -568,7 +814,8 @@
       "cancel_invitation": "{email}の招待を取り消してもよろしいですか？",
       "change_role": "{email}の役割を{old}から{new}に変更してもよろしいですか？",
       "message_title_hint": "メッセージのタイトルを入力",
-      "message_content_hint": "メッセージの内容を入力"
+      "message_content_hint": "メッセージの内容を入力",
+      "invite_message": "テスト {testTitle} への参加に招待されました"
     }
   },
   "UserTestTable": {
@@ -583,7 +830,9 @@
     "messages": {
       "noTasks": "タスクがありません。続行するにはタスクを作成してください。",
       "noVariables": "変数がまだ追加されていません。下をクリックして新しい変数を作成してください。",
-      "noOptions": "オプションが追加されていません。"
+      "noOptions": "オプションが追加されていません。",
+      "confirm_delete_task": "タスク削除の確認",
+      "sure_to_delete_task": "本当にタスク : {taskName} を削除しますか？この操作は元に戻せません"
     },
     "inputs": {
       "consent": "同意",
@@ -620,6 +869,149 @@
       "untitledVariable": "無題の変数"
     }
   },
+  "CreateTask": {
+    "dialog": {
+      "title": "新しいタスクを作成",
+      "subtitle": "ステップバイステップでタスクを設定"
+    },
+    "stepper": {
+      "basicInfo": "基本情報",
+      "configuration": "設定",
+      "advanced": "詳細",
+      "preview": "プレビュー"
+    },
+    "selectItems": {
+      "noAnswer": "回答なし",
+      "shortAnswer": "短い回答",
+      "paragraphAnswer": "段落回答",
+      "googleFormsLink": "Google フォームリンク",
+      "nasaTlx": "NASA TLX",
+      "sus": "システム使用性尺度",
+      "tam1": "TAM-1 – 基本受容",
+      "tam2": "TAM-2 – 拡張受容",
+      "tam3": "TAM-3 – 高度受容",
+      "sart": "状況認識評価技法"
+    },
+    "validation": {
+      "fieldRequired": "フィールドは必須です",
+      "validUrl": "http:// または https:// で始まる有効なURLである必要があります",
+      "positiveNumber": "正の数である必要があります"
+    },
+    "basicInfo": {
+      "stepTitle": "ステップ1: タスク基本情報",
+      "stepDescription": "参加者がこのタスクで何をするかを定義します。これはユーザーテストの基盤です - 目標と期待について明確かつ具体的にしてください。",
+      "taskTitle": "タスクタイトル",
+      "taskTitleHint": "参加者が達成する必要があることを説明する、明確で簡潔な名前をタスクに付けてください",
+      "taskTitlePlaceholder": "例: '製品情報を見つける'、'チェックアウトプロセスを完了する'",
+      "taskDescription": "タスクの説明",
+      "taskDescriptionHint": "参加者に詳細な指示を提供します。目標、コンテキスト、および特定のステップを含めてください。",
+      "taskDescriptionPlaceholder": "タスクを詳しく説明してください。参加者は何をすべきですか？",
+      "tipLabel": "ヒント",
+      "tipHint": "タスク中に参加者を助けるオプションのガイダンスやヒント",
+      "tipPlaceholder": "例: 'メインナビゲーションに集中してください'、'ゆっくり探索してください'"
+    },
+    "configuration": {
+      "stepTitle": "ステップ2: タスク設定",
+      "stepDescription": "タスクが行われる場所と、参加者がどのように回答を提供するかを設定します。",
+      "taskLink": "タスクリンク (URL)",
+      "taskLinkHint": "参加者がタスクを実行するウェブサイトまたはアプリケーションのURL",
+      "taskLinkPlaceholder": "https://example.com",
+      "estimatedTime": "推定時間（分）",
+      "estimatedTimeHint": "参加者がこのタスクを完了するのに必要な推定時間",
+      "estimatedTimePlaceholder": "例: 10",
+      "answerTypeHint": "タスク完了後に参加者がフィードバックを提供する方法を選択",
+      "answerTypePreview": "回答タイプのプレビュー",
+      "postTestHint": "タスク完了後に参加者に尋ねる具体的な質問を入力してください",
+      "postTestPlaceholder": "例: '製品情報を見つけるのはどのくらい簡単でしたか？'",
+      "postFormHint": "タスク後に参加者が記入する外部フォームのURL",
+      "postFormPlaceholder": "https://forms.google.com/d/your-form-id"
+    },
+    "configurationDescriptions": {
+      "noAnswer": "参加者はフィードバックを提供せずにタスクを完了します",
+      "textArea": "参加者はタスク後に書面でフィードバックを提供します",
+      "postTest": "参加者はタスク後に特定の質問に回答します",
+      "postForm": "参加者はタスク後に外部フォームに記入します",
+      "nasaTlx": "NASAタスクロードインデックス - 作業負荷を測定",
+      "sus": "システム使用性尺度 - 使いやすさを測定",
+      "tam1": "TAM-1（基本受容）- 知覚された有用性と使いやすさを測定",
+      "tam2": "TAM-2（拡張）- 外部影響と結果の実証可能性を追加",
+      "tam3": "TAM-3（包括的）- 不安、楽しさ、客観的な使いやすさを含む",
+      "sart": "状況認識評価技法 - 状況認識を測定"
+    },
+    "advanced": {
+      "stepTitle": "ステップ3: 詳細オプション",
+      "stepDescription": "より深い洞察を得るための追加のデータ収集方法を有効にします。",
+      "eyeTrackingDesc": "タスク中に参加者がどこを見ているかを追跡します。",
+      "screenRecordDesc": "参加者の画面アクティビティを記録します。",
+      "cameraDesc": "参加者の表情と反応を記録します。",
+      "audioDesc": "参加者の口頭フィードバックを記録します。",
+      "privacyNotice": "プライバシーに関する通知",
+      "privacyText": "録画機能には参加者の明示的な同意が必要です。",
+      "privacyItem1": "データ収集について参加者に明確に通知する",
+      "privacyItem2": "テスト開始前に適切な同意を得る",
+      "privacyItem3": "データ保護規制（GDPR等）に従う",
+      "privacyItem4": "記録データの安全な保管と取り扱い"
+    },
+    "preview": {
+      "taskSummary": "タスクの概要",
+      "untitledTask": "無題のタスク",
+      "description": "説明：",
+      "noDescription": "説明がありません",
+      "participantTip": "参加者へのヒント：",
+      "taskUrl": "タスクURL：",
+      "answerType": "回答タイプ：",
+      "recordingFeatures": "録画機能：",
+      "postTaskQuestion": "タスク後の質問：",
+      "postTaskForm": "タスク後のフォーム：",
+      "externalForm": "外部フォーム",
+      "taskReady": "タスク準備完了！",
+      "reviewRequired": "レビューが必要",
+      "taskReadyMessage": "タスクは正しく設定され、研究で使用する準備ができています。",
+      "reviewRequiredMessage": "すべての必須フィールドが入力されていることを確認するため、前のステップを確認してください。",
+      "noTypeSelected": "タイプが選択されていません",
+      "answerTypes": {
+        "noAnswer": "回答不要",
+        "textArea": "テキストエリア",
+        "postTest": "テスト後の質問",
+        "postForm": "外部フォーム",
+        "nasaTlx": "NASA-TLX",
+        "sus": "システム使用性尺度",
+        "tam1": "TAM-1（基本）",
+        "tam2": "TAM-2（拡張）",
+        "tam3": "TAM-3（包括的）",
+        "sart": "SART"
+      },
+      "recordingLabels": {
+        "eyeTracking": "アイトラッキング",
+        "screenRecording": "画面録画",
+        "camera": "カメラ",
+        "audio": "オーディオ"
+      }
+    },
+    "answerTypePreview": {
+      "taskCompleted": "タスク完了！追加のフィードバックは必要ありません。",
+      "participantsFeedbackHere": "参加者はここでフィードバックを提供します...",
+      "submitFeedback": "フィードバックを送信",
+      "postTaskQuestions": "タスク後の質問",
+      "rateTaskDifficulty": "1. このタスクの難易度をどう評価しますか？",
+      "additionalComments": "2. 追加のコメントはありますか？",
+      "optionalFeedback": "オプションのフィードバック...",
+      "externalFormTitle": "外部フォーム",
+      "externalFormDescription": "参加者はタスク後に外部フォームに入力するようリダイレクトされます。",
+      "openExternalForm": "外部フォームを開く",
+      "nasaTlxTitle": "NASAタスク負荷指数",
+      "mentalDemand": "精神的要求",
+      "physicalDemand": "身体的要求",
+      "lowHigh": "低 - 高",
+      "moreDimensions": "+ 4つの追加次元",
+      "susTitle": "システム使用性尺度",
+      "susStatement1": "1. このシステムを頻繁に使いたいと思います。",
+      "stronglyDisagree": "強く反対",
+      "stronglyAgree": "強く賛成",
+      "moreStatements": "+ 9つの追加ステートメント",
+      "sartTitle": "状況認識評価技法"
+    }
+  },
   "UserTestView": {
     "titles": {
       "preTestConsent": "事前テスト - 同意",
@@ -628,8 +1020,120 @@
       "postTest": "事後テスト",
       "eyeTrackingCalibration": "アイトラッキングのキャリブレーション"
     },
+    "actions": {
+      "welcomeBack": "お帰りなさい！",
+      "continueAs": "{userEmail}として続行",
+      "notYou": "ご本人ではありませんか？",
+      "changeAccount": "アカウントを変更",
+      "startTest": "テストを開始"
+    },
+    "alerts": {
+      "testAlreadyCompleted": "テストは既に完了しています",
+      "testAlreadyCompletedMessage": "このテストは既に完了し、提出されています。ご協力ありがとうございました！",
+      "testExpired": "テストの期限が切れています",
+      "testExpiredMessage": "このテストは終了日を過ぎたため、現在はご利用いただけません。",
+      "testNotActive": "テストがアクティブではありません",
+      "testNotActiveMessage": "このテストは現在アクティブではありません。管理者にお問い合わせください。",
+      "testConfigError": "テスト設定エラー",
+      "testConfigErrorMessage": "このテストにはタスクが設定されていません。管理者にお問い合わせください。",
+      "consentDecline": "同意が得られなかったため、テストを終了しました。お時間をいただきありがとうございました。",
+      "sessionTooFar": "セッションが遠すぎます",
+      "sessionTooFarMessage": "予定されているセッションは24時間以上先です。セッション日が近づいてから戻ってきてください。"
+    },
+    "stepper": {
+      "consent": "同意",
+      "preTest": "事前テスト",
+      "calibration": "キャリブレーション",
+      "tasks": "タスク",
+      "postTest": "事後テスト",
+      "completion": "完了",
+      "taskX": "タスク {num}"
+    },
+    "TaskStep": {
+      "preview": "タスクのプレビュー",
+      "recordingInfo": "このタスクでは、操作中に以下のデータが記録されます：",
+      "screenRecord": "画面記録",
+      "screenRecordDesc": "ユーザーの行動を分析するために、クリック、スクロール、操作をキャプチャします。",
+      "camera": "カメラ",
+      "cameraDesc": "ユーザーの感情を理解するために、表情や反応を記録します。",
+      "audioRecord": "音声記録",
+      "audioRecordDesc": "タスク中の音声フィードバックや思考発話（think-aloud）をキャプチャします。",
+      "eyeTracker": "アイトラッカー",
+      "eyeTrackerDesc": "タスク中の視線パターンの注意や注視行動を追跡します。",
+      "newWindow": "新しいウィンドウが開きます",
+      "newWindowDesc": "タスクを開始すると、使用するツールの新しいウィンドウが開きます。",
+      "tip": "ヒント",
+      "tipDesc": "タブを切り替えたり、新しいウィンドウをいつでも閉じたりできます。記録はタスクを完了するまで継続されます。",
+      "internalInterface": "このタスクは現在のインターフェース内で完了します。",
+      "startTask": "タスクを開始",
+      "description": "タスクの説明",
+      "needHelp": "お困りですか？",
+      "needHelpDesc": "タスクの進行に問題がありますか？完了するためのガイダンスを確認できます。",
+      "externalTool": "外部ツール",
+      "reopenDesc": "誤って構成ウィンドウを閉じましたか？ここで再度開くことができます。",
+      "reopenTool": "ツールを再度開く",
+      "answerLabel": "回答",
+      "observationLabel": "所感（任意）",
+      "cannotFinish": "タスクを完了できません",
+      "completed": "タスク完了",
+      "noQuestionnaire": "このタスクタイプでは、タスク後のアンケートは不要です。",
+      "validationError": "続行する前にすべての質問に回答してください。",
+      "finishTask": "タスクを終了"
+    },
+    "ConsentStep": {
+      "fullName": "氏名",
+      "nameRequired": "氏名は必須です",
+      "acceptTerms": "同意事項に同意します",
+      "declineTerms": "同意事項に同意しません",
+      "continue": "続行",
+      "declinedTitle": "同意が拒否されました",
+      "declinedMessage1": "この調査の同意事項に同意しないことを選択されました。",
+      "declinedMessage2": "この操作を確定すると、テストは直ちに終了します。参加には明示的な同意が必要です。データが収集または保存されることはありません。",
+      "declinedConfirm": "参加せずにテストを終了してもよろしいですか？",
+      "goBack": "戻る",
+      "endTest": "はい、テストを終了します"
+    },
+    "PreTestStep": {
+      "title": "事前テスト"
+    },
+    "PostTestStep": {
+      "title": "事後テスト"
+    },
     "buttons": {
       "done": "完了"
+    },
+    "messages": {
+      "noTasks": "このテストにはタスクがありません。",
+      "answerSaved": "回答が正常に保存されました。"
+    },
+    "errors": {
+      "noAnswerData": "回答データが見つかりません。",
+      "failedToSaveAnswer": "回答の保存に失敗しました。もう一度お試しください。",
+      "failedToSubmitAnswer": "回答の提出に失敗しました。もう一度お試しください。",
+      "noTestData": "テストデータなし",
+      "noTestDataMessage": "テスト情報をロードできませんでした。後でもう一度お試しください。"
+    },
+    "CalibrationInProgressModal": {
+      "completed": "キャリブレーション完了！",
+      "waiting": "キャリブレーションを待機中...",
+      "calibrating": "キャリブレーション中、少々お待ちください...",
+      "notOpened": "キャリブレーションが開きませんでしたか？",
+      "clickHere": "ここをクリック",
+      "success": "キャリブレーションに成功しました！",
+      "continue": "テストを続行する！"
+    },
+    "ModeratorWelcomeStep": {
+      "badge": "モデレーター表示",
+      "welcome": "モデレートテストセッションへようこそ",
+      "description": "モデレーターとして、ビデオ通話で参加者のインタラクションを観察しながら、テストプロセスを通じて参加者を案内します。",
+      "instructionsTitle": "モデレーターの指示",
+      "instruction1": "ビデオ通話ルームを開くことから始めます",
+      "instruction2": "干渉せずに参加者のインタラクションを観察します",
+      "instruction3": "ステップナビゲーターを使用してテストフェーズ間を移動します",
+      "instruction4": "必要な場合にのみガイダンスを提供します",
+      "remember": "注意：",
+      "note": "あなたの役割は進行のサポートと観察です。参加者が特に助けを求めない限り、タスクは参加者自身で完了させてください。",
+      "startSession": "モデレートセッションを開始"
     },
     "WelcomeStep": {
       "welcome": "RUXAILABへようこそ！",
@@ -660,6 +1164,15 @@
       "audioRecording": "音声",
       "eyeTracking": "アイトラッキング",
       "recordingNote": "いかなる記録も始まる前に通知されます。すべてのデータは研究目的のみで収集され、プライバシーガイドラインに従って扱われます。"
+    },
+    "CalibrationStep": {
+      "title": "アイトラッキングキャリブレーション",
+      "heading": "キャリブレーションを開始する前に",
+      "description": "デバイスを<strong>目の動きを記録する</strong>準備をします。これにより、テスト中に画面をどのように移動するかを理解できます。",
+      "process": "キャリブレーションには、画面に表示されるポイントを目で追うことが含まれます。明るい場所にいて、快適に座り、頭を安定させることが重要です。",
+      "instruction": "準備ができたら、ボタンを押してキャリブレーションを開始してください。",
+      "startButton": "キャリブレーションを開始",
+      "inProgress": "進行中..."
     }
   },
   "eyeTracking": {
@@ -678,25 +1191,6 @@
     "goHome": "ホームに戻る"
   },
   "pages": {
-    "sessions": {
-      "noActiveSessions": "アクティブなセッションが見つかりません",
-      "selectRange": "範囲を選択",
-      "reset": "リセット",
-      "searchPlaceholder": "研究を検索...",
-      "filters": {
-        "allStudies": "すべての研究",
-        "myStudies": "私の研究",
-        "whereICollaborate": "コラボレーション中",
-        "allStatuses": "すべてのステータス",
-        "today": "今日",
-        "upcoming": "今後",
-        "completed": "完了"
-      },
-      "ownership": "所有権",
-      "evaluator": "評価者",
-      "sessionDate": "セッション日",
-      "statusLabel": "ステータス"
-    },
     "intros": {
       "click": "ここをクリック！",
       "learnMore": "詳しく知る",
@@ -741,7 +1235,62 @@
       "updated": "最終更新日",
       "version": "バージョン：",
       "noTests": "テストが見つかりません",
-      "noTemplates": "テンプレートが見つかりません"
+      "noTemplates": "テンプレートが見つかりません",
+      "noSessions": "セッションが見つかりません"
+    },
+    "navigation": {
+      "dashboard": "ダッシュボード",
+      "studies": "研究",
+      "sessions": "セッション",
+      "templates": "テンプレート",
+      "storage": "ストレージ",
+      "notifications": "通知",
+      "profile": "プロフィール",
+      "communityStudies": "コミュニティ研究",
+      "communityTemplates": "コミュニティテンプレート",
+      "studiesSubtitle": "研究を管理する",
+      "templatesSubtitle": "保存したテンプレートにアクセス"
+    },
+    "studies": {
+      "searchPlaceholder": "研究を検索...",
+      "reset": "リセット",
+      "showFilters": "フィルターを表示",
+      "hideFilters": "フィルターを非表示",
+      "creationDate": "作成日",
+      "selectRange": "範囲を選択",
+      "statusLabel": "ステータス",
+      "visibility": "可視性",
+      "method": "方法",
+      "ownership": "所有権",
+      "participants": "参加者",
+      "filters": {
+        "allStatuses": "すべてのステータス",
+        "active": "アクティブ",
+        "draft": "下書き",
+        "completed": "完了",
+        "allVisibility": "すべての可視性",
+        "public": "公開",
+        "private": "非公開",
+        "allStudies": "すべての研究",
+        "myStudies": "私の研究",
+        "whereICollaborate": "コラボレーション中",
+        "allMethods": "すべての方法",
+        "lessThan10": "< 10名の参加者",
+        "between10And50": "10 – 50名の参加者",
+        "moreThan50": "> 50名の参加者"
+      },
+      "table": {
+        "type": "タイプ",
+        "name": "名前",
+        "tags": "タグ",
+        "owner": "オーナー",
+        "evaluator": "評価者",
+        "status": "ステータス",
+        "sessionDate": "セッション日",
+        "participants": "参加者",
+        "created": "作成日",
+        "itemsPerPage": "ページあたりのアイテム数:"
+      }
     },
     "sessions": {
       "searchPlaceholder": "セッションを検索...",
@@ -813,8 +1362,6 @@
       "select_end_date": "終了日を選択",
       "quick_actions": "クイックアクション",
       "perform_common_tasks": "一般的なタスクを即時に実行",
-      "confirm_deletion": "削除を確認",
-      "action_cannot_be_undone": "この操作は元に戻せません",
       "delete_warning": "関連するすべてのデータ、結果、設定が完全に失われます。",
       "delete_forever": "完全に削除"
     },
@@ -832,15 +1379,18 @@
     "noCopy": "コピーに失敗しました",
     "deleteTemplate": "このテンプレートを削除してもよろしいですか？この操作は元に戻せません！",
     "deleteTest": "このテストを削除してもよろしいですか？",
+    "deleteQuestion": "この質問を削除してもよろしいですか: ",
+    "deleteDescription": "この説明を削除してもよろしいですか: ",
     "addDescription": "説明を追加してください",
     "errorOccurred": "エラーが発生しました",
     "leave": "本当に離れますか？",
     "sureLeave": "本当に離れますか？すべての変更が破棄されます。",
     "imageURL": "画像のURLを入力してください：",
-    "deleteHeuristic": "ヒューリスティックを削除してもよろしいですか？",
+    "deleteHeuristic": "このヒューリスティックを削除してもよろしいですか: ",
     "deleteAccount": "アカウントを削除してもよろしいですか？この操作は元に戻せません。",
     "genericSuccess": "操作が成功しました",
-    "savedChanges": "変更が保存されました"
+    "savedChanges": "変更が保存されました",
+    "deleteUser": "このユーザーを削除してもよろしいですか？この操作は元に戻せません。"
   },
   "buttons": {
     "next": "次へ",
@@ -878,7 +1428,8 @@
     "eyeTracker": "アイトラッカー",
     "audioRecord": "音声録音",
     "postForm": "事後フォーム",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sart": "SART"
   },
   "inputs": {
     "consentForm": "同意フォーム",
@@ -908,7 +1459,11 @@
       "SelfTest": {
         "title": "セルフテスト",
         "type": "非モデレート",
-        "text": ["自分の時間に回答", "高度な回答分析", "タスクのカスタマイズ"]
+        "text": [
+          "自分の時間に回答",
+          "高度な回答分析",
+          "タスクのカスタマイズ"
+        ]
       },
       "LiveTest": {
         "title": "ライブテスト",
@@ -926,7 +1481,12 @@
     "sub-heading": "テストの名前を入力してください！",
     "test-name": "テスト名",
     "test-description": "テスト説明",
-    "test-label": "すべてのユーザーに公開するテスト"
+    "test-label": "すべてのユーザーに公開するテスト",
+    "template": {
+      "title": "テンプレートのタイトルを入力してください",
+      "description": "テンプレートの説明を入力してください",
+      "public": "テンプレートをすべてのユーザーに公開する"
+    }
   },
   "finishTest": {
     "title": "テストを終了",
@@ -1079,7 +1639,9 @@
     "user": "ユーザー",
     "invite": "招待",
     "actions": "操作",
-    "no": "いいえ"
+    "no": "いいえ",
+    "downloadResume": "履歴書PDFをダウンロード",
+    "sartAnalytics": "SART分析"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "評価カテゴリを選択",
@@ -1169,7 +1731,11 @@
       "blank": {
         "title": "空白の研究から開始",
         "description": "完全なカスタマイズでゼロから研究を作成します",
-        "features": ["完全なカスタマイズ", "ゼロから構築", "設定を完全に制御"]
+        "features": [
+          "完全なカスタマイズ",
+          "ゼロから構築",
+          "設定を完全に制御"
+        ]
       },
       "template": {
         "title": "テンプレートから作成",
@@ -1224,7 +1790,8 @@
       "active": "アクティブ",
       "draft": "下書き",
       "completed": "完了",
-      "archived": "アーカイブ済み"
+      "archived": "アーカイブ済み",
+      "moderatedDescription": "モデレートされたユーザーテスト調査を管理し、参加者の進捗状況を追跡し、包括的なダッシュボードから結果を分析します。"
     },
     "studyOverview": {
       "totalParticipants": "参加者総数",
@@ -1278,6 +1845,51 @@
       "responsesData": "レスポンスデータ",
       "analyticsData": "分析データ",
       "manageStorage": "ストレージ管理"
+    }
+  },
+  "taskCreation": {
+    "taskDescription": "タスクの説明",
+    "taskDescriptionHelper": "従うべき具体的な手順を提供してください。"
+  },
+  "dialogs": {
+    "deleteVariableConfirm": {
+      "title": "変数を削除",
+      "message": "この変数を削除してもよろしいですか？この操作は元に戻せません。"
+    },
+    "deleteOptionConfirm": {
+      "title": "オプションを削除",
+      "message": "このオプションを削除してもよろしいですか？この操作は取り消せません。"
+    }
+  },
+  "tags": {
+    "active": "アクティブ",
+    "draft": "下書き",
+    "completed": "完了",
+    "archived": "アーカイブ済み",
+    "public": "公開",
+    "private": "非公開",
+    "fromTemplate": "テンプレートから",
+    "withCollaborators": "共同作業者あり"
+  },
+  "methods": {
+    "categories": {
+      "test": "ユーザーテスト",
+      "inquiry": "ユーザー調査",
+      "inspection": "専門家評価",
+      "accessibility": "アクセシビリティ",
+      "other": "その他"
+    },
+    "definitions": {
+      "HEURISTICS": "ヒューリスティック評価",
+      "USER_MODERATED": "モデレートありのユーザビリティテスト",
+      "USER_UNMODERATED": "モデレートなしのユーザビリティテスト",
+      "SURVEY": "アンケート",
+      "INTERVIEW": "インタビュー",
+      "CARD_SORTING": "カードソーティング",
+      "COGNITIVE_WALKTHROUGH": "認知的ウォークスルー",
+      "ACCESSIBILITY_MANUAL": "マニュアル評価",
+      "ACCESSIBILITY_AUTOMATIC": "自動評価",
+      "WCAG_AUDIT": "WCAG監査"
     }
   }
 }

@@ -60,9 +60,7 @@
                 :label="$t('common.title')"
                 :rules="titleRequired"
                 counter="200"
-                 maxlength="200"
-                          :error="websiteDetails.siteURL?.length === 200"
-                          :error-messages="websiteDetails.siteURL?.length === 200 ? $t('studyCreation.details.validation.max200Characters') : []"
+                maxlength="200"
                 variant="outlined"
                 density="comfortable"
                 :placeholder="$t('TestDialog.template.title')"
@@ -538,9 +536,11 @@ const createObjectFromTest = (testData) => {
 watch(
   test,
   (newTest) => {
-    if (newTest !== null && newTest !== undefined) {
+    if (newTest) {
       const mappedObject = createObjectFromTest(newTest)
-      object.value = mappedObject
+      if (mappedObject) {
+        object.value = mappedObject
+      }
     }
   },
   { immediate: true },

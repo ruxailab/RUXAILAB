@@ -5,7 +5,7 @@
         <!-- STAGE 1: Show title and description -->
         <template v-if="stage === 1">
           <div
-            class="rich-text mb-4"
+            class="rich-text mb-4 task-description"
             v-html="task?.taskDescription || taskDescription"
           />
 
@@ -176,7 +176,7 @@
                     </span>
                   </div>
                   <div
-                    class="rich-text text-body-1"
+                    class="rich-text text-body-1 task-description"
                     v-html="task?.taskDescription || taskDescription"
                   />
                 </v-col>
@@ -304,13 +304,20 @@
                 color="error"
                 block
                 variant="outlined"
+                class="mr-2"
+                :disabled="isWaitingForUploadToFinish"
                 :class="{
                   'mb-3': $vuetify.display.xs,
                   'mr-2': $vuetify.display.smAndUp,
                 }"
                 @click="handleShowPostForm(false)"
               >
-                I can not finish the task
+                {{
+                  isWaitingForUploadToFinish &&
+                  showPostForm.userCompleted === false
+                    ? 'Uploading...'
+                    : 'I can not finish the task'
+                }}
               </v-btn>
             </v-col>
             <v-col cols="12" sm="6">
@@ -318,10 +325,17 @@
                 color="primary"
                 block
                 variant="flat"
+                class="ml-2"
+                :disabled="isWaitingForUploadToFinish"
                 :class="{ 'ml-2': $vuetify.display.smAndUp }"
                 @click="handleShowPostForm(true)"
               >
-                Task completed
+                {{
+                  isWaitingForUploadToFinish &&
+                  showPostForm.userCompleted === true
+                    ? 'Uploading...'
+                    : 'Task completed'
+                }}
               </v-btn>
             </v-col>
           </v-row>
@@ -350,17 +364,51 @@
             <sartForm :sart="sartAnswers" @update:sart="onUpdateSart" />
           </div>
 
+          <!-- TAM-1 Form -->
+          <div v-else-if="task?.taskType === 'tam-1'">
+            <TamForm1
+              v-model="localTamAnswers"
+              :task-index="taskIndex"
+              @update:model-value="(val) => emit('update:tamAnswers', val)"
+            />
+          </div>
+
+          <!-- TAM-2 Form -->
+          <div v-else-if="task?.taskType === 'tam-2'">
+            <TamForm2
+              v-model="localTamAnswers"
+              :task-index="taskIndex"
+              @update:model-value="(val) => emit('update:tamAnswers', val)"
+            />
+          </div>
+
+          <!-- TAM-3 Form -->
+          <div v-else-if="task?.taskType === 'tam-3'">
+            <TamForm3
+              v-model="localTamAnswers"
+              :task-index="taskIndex"
+              @update:model-value="(val) => emit('update:tamAnswers', val)"
+            />
+          </div>
+
           <!-- Other task types -->
           <div v-else>
             <v-alert type="info" variant="tonal" class="mb-4">
               No post-task questionnaire required for this task type.
             </v-alert>
           </div>
-
           <v-row justify="end">
             <v-col cols="12">
               <p
-                v-if="task?.taskType === 'sus' && doneTaskDisabled"
+                v-if="
+                  (task?.taskType === 'sus' ||
+                    task?.taskType === 'tam-1' ||
+                    task?.taskType === 'tam-2' ||
+                    task?.taskType === 'tam-3' ||
+                    task?.taskType === 'sart' ||
+                    task?.taskType === 'nasa-tlx') &&
+                  doneTaskDisabled
+                "
                 class="text-error mb-4"
               >
                 Please answer all questions before continuing.
@@ -370,10 +418,14 @@
                 block
                 variant="flat"
                 class="ml-2"
-                :disabled="shouldDisableFinishButton"
-                @click="emitDoneOrCouldNotFinish()"
+                :disabled="
+                  shouldDisableFinishButton || isWaitingForUploadToFinish
+                "
+                @click="attemptFinish()"
               >
-                Finish task
+                {{
+                  isWaitingForUploadToFinish ? 'Uploading...' : 'Finish task'
+                }}
               </v-btn>
             </v-col>
           </v-row>
@@ -388,8 +440,8 @@
         :task-index="taskIndex"
         :remote-stream="remoteStream"
         :should-record-moderator="shouldRecordModerator"
-        @show-loading="$emit('show-loading')"
-        @stop-show-loading="$emit('stop-show-loading')"
+        @show-loading="onShowLoading"
+        @stop-show-loading="onStopShowLoading"
         @recording-started="$emit('recording-started', $event)"
       />
 
@@ -398,8 +450,8 @@
         ref="screenRecorder"
         :test-id="testId"
         :task-index="taskIndex"
-        @show-loading="$emit('show-loading')"
-        @stop-show-loading="$emit('stop-show-loading')"
+        @show-loading="onShowLoading"
+        @stop-show-loading="onStopShowLoading"
       />
 
       <VideoRecorder
@@ -408,8 +460,8 @@
         :test-id="testId"
         :user-doc-id="userDocId"
         :task-index="taskIndex"
-        @show-loading="$emit('show-loading')"
-        @stop-show-loading="$emit('stop-show-loading')"
+        @show-loading="onShowLoading"
+        @stop-show-loading="onStopShowLoading"
       />
     </template>
   </ShowInfo>
@@ -426,6 +478,9 @@ import ScreenRecorder from '@/ux/UserTest/components/ScreenRecorder.vue'
 import Timer from '@/ux/UserTest/components/Timer.vue'
 import SusForm from '@/ux/UserTest/SusForm.vue'
 import nasaTlxForm from '@/ux/UserTest/components/nasaTlxForm.vue'
+import TamForm1 from '@/ux/UserTest/components/TamForm1.vue'
+import TamForm2 from '@/ux/UserTest/components/TamForm2.vue'
+import TamForm3 from '@/ux/UserTest/components/TamForm3.vue'
 import sartForm from '@/ux/UserTest/components/sartForm.vue'
 
 const props = defineProps({
@@ -440,6 +495,7 @@ const props = defineProps({
   taskObservations: String,
   susAnswers: Array,
   nasaTlxAnswers: Object,
+  tamAnswers: Object,
   sartAnswers: Object,
   testId: String,
   userDocId: String,
@@ -462,7 +518,9 @@ const emit = defineEmits([
   'timer-stopped',
   'update:susAnswers',
   'update:nasaTlxAnswers',
+  'update:tamAnswers',
   'update:sartAnswers',
+  'startTask',
 ])
 
 onBeforeUnmount(() => {
@@ -470,6 +528,15 @@ onBeforeUnmount(() => {
     clearInterval(timerInterval)
     timerInterval = null
   }
+  if (finishTimeout) {
+    clearTimeout(finishTimeout)
+    finishTimeout = null
+  }
+  forceStopAllMedia()
+
+  uploadingCount.value = 0
+  isWaitingForUploadToFinish.value = false
+  pendingFinalTime.value = null
 })
 
 const localSusAnswers = computed({
@@ -477,13 +544,71 @@ const localSusAnswers = computed({
   set: (val) => emit('update:susAnswers', val),
 })
 
-const VALIDATION_REQUIRED_TYPES = ['sus'] // Only SUS requires validation for now
+const getTamInitialStructure = () => {
+  const taskType = props.task?.taskType
+
+  if (taskType === 'tam-1') {
+    return {
+      perceivedUsefulness: new Array(10).fill(undefined),
+      perceivedEaseOfUse: new Array(10).fill(undefined),
+      attitudeTowardUsing: new Array(5).fill(undefined),
+      actualSystemUse: new Array(2).fill(undefined),
+    }
+  } else if (taskType === 'tam-2') {
+    return {
+      intentionToUse: new Array(2).fill(undefined),
+      perceivedUsefulness: new Array(4).fill(undefined),
+      perceivedEaseOfUse: new Array(4).fill(undefined),
+      subjectiveNorm: new Array(2).fill(undefined),
+      voluntariness: new Array(3).fill(undefined),
+      image: new Array(3).fill(undefined),
+      jobRelevance: new Array(2).fill(undefined),
+      outputQuality: new Array(2).fill(undefined),
+      resultDemonstrability: new Array(4).fill(undefined),
+    }
+  } else if (taskType === 'tam-3') {
+    return {
+      perceivedUsefulness: new Array(3).fill(undefined),
+      perceivedEaseOfUse: new Array(3).fill(undefined),
+      behavioralIntention: new Array(2).fill(undefined),
+      usePatterns: new Array(2).fill(undefined),
+      subjectiveNorm: new Array(3).fill(undefined),
+      image: new Array(2).fill(undefined),
+      jobRelevance: new Array(3).fill(undefined),
+      outputQuality: new Array(3).fill(undefined),
+      resultDemonstrability: new Array(2).fill(undefined),
+      computerSelfEfficacy: new Array(3).fill(undefined),
+      perceptionsOfExternalControl: new Array(3).fill(undefined),
+      computerAnxiety: new Array(2).fill(undefined),
+      computerPlayfulness: new Array(2).fill(undefined),
+      perceivedEnjoyment: new Array(3).fill(undefined),
+      objectiveUsability: new Array(2).fill(undefined),
+      experience: new Array(2).fill(undefined),
+      voluntariness: new Array(2).fill(undefined),
+    }
+  }
+  return {}
+}
+
+const localTamAnswers = computed({
+  get: () => props.tamAnswers || getTamInitialStructure(),
+  set: (val) => emit('update:tamAnswers', val),
+})
+
+const VALIDATION_REQUIRED_TYPES = new Set([
+  'sus',
+  'tam-1',
+  'tam-2',
+  'tam-3',
+  'sart',
+  'nasa-tlx',
+])
 
 const shouldDisableFinishButton = computed(() => {
   const taskType = props.task?.taskType
 
   // If this task type requires validation, use doneTaskDisabled
-  if (VALIDATION_REQUIRED_TYPES.includes(taskType)) {
+  if (VALIDATION_REQUIRED_TYPES.has(taskType)) {
     return props.doneTaskDisabled
   }
 
@@ -497,12 +622,6 @@ function onUpdateSart(val) {
   localSartAnswers.value = val
   emit('update:sartAnswers', val)
 }
-
-const rawLink = computed(() => props.task?.taskLink || props.taskLink)
-const normalizedLink = computed(() => {
-  const link = rawLink.value || ''
-  return link.match(/^https?:\/\//i) ? link : `https://${link}`
-})
 
 const hasAnyRecording = computed(() => {
   return (
@@ -518,8 +637,47 @@ const audioRecorder = ref(null)
 const videoRecorder = ref(null)
 const screenRecorder = ref(null)
 const elapsedTimeDisplay = ref('0:00')
+const uploadingCount = ref(0)
+const isWaitingForUploadToFinish = ref(false)
+const pendingFinalTime = ref(null)
+
 let taskStartTime = null
 let timerInterval = null
+let finishTimeout = null
+
+function onShowLoading() {
+  uploadingCount.value++
+  emit('show-loading')
+}
+
+function onStopShowLoading() {
+  uploadingCount.value--
+  if (uploadingCount.value < 0) uploadingCount.value = 0
+  emit('stop-show-loading')
+
+  if (uploadingCount.value === 0 && isWaitingForUploadToFinish.value) {
+    emitDoneOrCouldNotFinish(pendingFinalTime.value)
+  }
+}
+
+function attemptFinish() {
+  if (uploadingCount.value > 0) {
+    isWaitingForUploadToFinish.value = true
+  } else {
+    // Check for where uploads have not started yet
+    if (stage.value !== 3 && hasAnyRecording.value) {
+      isWaitingForUploadToFinish.value = true
+      // Short timeout to alllow recorders to emit show-loading
+      finishTimeout = setTimeout(() => {
+        if (uploadingCount.value === 0 && isWaitingForUploadToFinish.value) {
+          emitDoneOrCouldNotFinish(pendingFinalTime.value)
+        }
+      }, 500)
+    } else {
+      emitDoneOrCouldNotFinish(pendingFinalTime.value)
+    }
+  }
+}
 
 function updateElapsedTime() {
   if (!taskStartTime) return
@@ -530,6 +688,8 @@ function updateElapsedTime() {
 }
 
 async function startTask() {
+  emit('show-loading')
+  emit('startTask')
   await startMediaRecorders()
   stage.value = 2
   taskStartTime = Date.now()
@@ -548,6 +708,7 @@ async function startTask() {
       if (timer && timer.startTimer) timer.startTimer()
     }, 100)
   })
+  emit('stop-show-loading')
 }
 
 function reopenTool() {
@@ -582,8 +743,9 @@ function forceStopAllMedia() {
 }
 
 function handleShowPostForm(userCompleted) {
+  if (isWaitingForUploadToFinish.value) return
+
   forceStopAllMedia()
-  console.log('Stopping media recorders...')
 
   if (timerInterval) {
     clearInterval(timerInterval)
@@ -593,16 +755,29 @@ function handleShowPostForm(userCompleted) {
   let finalTime = null
   if (taskStartTime) {
     finalTime = Math.round(Date.now() - taskStartTime)
+    pendingFinalTime.value = finalTime
+    console.log('Tiempo detenido en:', finalTime, 'segundos')
     emit('timer-stopped', finalTime, props.taskIndex)
   }
 
   showPostForm.value.userCompleted = userCompleted
 
-  // Only show post-task form for specific task types
-  if (['sus', 'nasa-tlx', 'sart'].includes(props.task?.taskType)) {
+  if (props.task?.taskType === 'post-form' && props.task?.postForm) {
+    const link = props.task?.postForm
+    if (link) {
+      const url =
+        link.startsWith('http://') || link.startsWith('https://')
+          ? link
+          : `https://${link}`
+      window.open(url, '_blank')
+    }
+  }
+
+  // Show post-task form for all validated task types
+  if (VALIDATION_REQUIRED_TYPES.has(props.task?.taskType)) {
     stage.value = 3
   } else {
-    emitDoneOrCouldNotFinish(finalTime)
+    attemptFinish()
   }
 }
 
@@ -614,6 +789,8 @@ function emitDoneOrCouldNotFinish(savedTime) {
   }
 
   // Reset state for next task
+  isWaitingForUploadToFinish.value = false
+  uploadingCount.value = 0
   showPostForm.value = { userCompleted: undefined }
   taskStartTime = null
   elapsedTimeDisplay.value = '0:00'
@@ -652,6 +829,10 @@ watch(
 watch(
   () => props.taskIndex,
   () => {
+    if (finishTimeout) {
+      clearTimeout(finishTimeout)
+      finishTimeout = null
+    }
     forceStopAllMedia()
     stage.value = 1
     taskStartTime = null
@@ -677,6 +858,10 @@ function onTimerStopped(elapsedTime) {
 </script>
 
 <style scoped>
+.task-description {
+  white-space: pre-line;
+}
+
 .recording-features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));

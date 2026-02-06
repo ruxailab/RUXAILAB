@@ -5,7 +5,6 @@
     loading-text="Loading WCAG Data..."
     :side-gap="false"
   >
-
     <v-alert
       v-if="error"
       type="error"
@@ -25,8 +24,10 @@
       prepend-icon="mdi-eye"
     >
       <v-alert-title>Viewing Mode</v-alert-title>
-      You are viewing assessment data for user ID: <strong>{{ viewingUserId }}</strong>.
-      This is read-only mode - you cannot save changes to another user's assessment.
+      You are viewing assessment data for user ID:
+      <strong>{{ viewingUserId }}</strong
+      >. This is read-only mode - you cannot save changes to another user's
+      assessment.
     </v-alert>
 
     <!-- Debug Panel (only show if there are issues) -->
@@ -43,41 +44,46 @@
         <div><strong>User Role:</strong> {{ currentUserRole }}</div>
         <div><strong>Can Save:</strong> {{ canSaveAssessments }}</div>
         <div><strong>Compliance Level:</strong> {{ complianceLevel }}</div>
-        <div><strong>Principles Available:</strong> {{ principles.length }}</div>
-        <div><strong>Selected Guidelines:</strong> {{ configuration.selectedGuidelines?.length || 0 }}</div>
-        <div><strong>Raw WCAG Data Available:</strong> {{ store.state.Assessment?.wcagData?.principles?.length || 0 }}</div>
-        <div><strong>Filtered WCAG Data Available:</strong> {{ store.state.Assessment?.filteredWcagData?.principles?.length || 0 }}</div>
-        <div><strong>Configuration:</strong> {{ JSON.stringify(configuration, null, 2) }}</div>
+        <div>
+          <strong>Principles Available:</strong> {{ principles.length }}
+        </div>
+        <div>
+          <strong>Selected Guidelines:</strong>
+          {{ configuration.selectedGuidelines?.length || 0 }}
+        </div>
+        <div>
+          <strong>Raw WCAG Data Available:</strong>
+          {{ store.state.Assessment?.wcagData?.principles?.length || 0 }}
+        </div>
+        <div>
+          <strong>Filtered WCAG Data Available:</strong>
+          {{
+            store.state.Assessment?.filteredWcagData?.principles?.length || 0
+          }}
+        </div>
+        <div>
+          <strong>Configuration:</strong>
+          {{ JSON.stringify(configuration, null, 2) }}
+        </div>
       </div>
     </v-alert>
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
-        Evaluate the accessibility of your project based on selected WCAG guidelines
+        Evaluate the accessibility of your project based on selected WCAG
+        guidelines
       </p>
     </template>
     <!-- Full width container without padding -->
-    <v-container
-      fluid
-      class="pa-0 ma-0 fill-height"
-    >
-      <v-row
-        no-gutters
-        class="fill-height"
-      >
+    <v-container fluid class="pa-0 ma-0 fill-height">
+      <v-row no-gutters class="fill-height">
         <!-- Left Sidebar Navigation - Reduced width -->
         <div class="v-col v-col-2 sidebar fill-height">
-          <div
-            class="h-100"
-            style="background-color: #f5f5f5"
-          >
+          <div class="h-100" style="background-color: #f5f5f5">
             <div class="text-subtitle-1 pa-3 font-weight-bold">
               WCAG Principles
             </div>
 
-            <div
-              v-if="principles.length > 0"
-              class="pa-0"
-            >
+            <div v-if="principles.length > 0" class="pa-0">
               <div
                 v-for="(principle, pIdx) in principles"
                 :key="principle.id || pIdx"
@@ -118,10 +124,7 @@
               </div>
             </div>
 
-            <div
-              v-else
-              class="pa-4"
-            >
+            <div v-else class="pa-4">
               <div class="text-grey text-body-2">
                 {{ isLoading ? 'Loading...' : 'No principles available' }}
               </div>
@@ -129,10 +132,7 @@
           </div>
         </div>
         <!-- Main Content Area - Optimized for laptop -->
-        <v-col
-          cols="7"
-          class="main-content fill-height"
-        >
+        <v-col cols="7" class="main-content fill-height">
           <v-card
             v-if="currentRule.title"
             flat
@@ -145,10 +145,7 @@
               density="compact"
             >
               <template #divider>
-                <v-icon
-                  icon="mdi-chevron-right"
-                  size="small"
-                />
+                <v-icon icon="mdi-chevron-right" size="small" />
               </template>
             </v-breadcrumbs>
 
@@ -191,26 +188,16 @@
             </div>
 
             <!-- Compact Guideline Box -->
-            <v-alert
-              variant="tonal"
-              color="info"
-              class="mb-4 pa-3"
-            >
+            <v-alert variant="tonal" color="info" class="mb-4 pa-3">
               <div class="d-flex align-start">
-                <v-icon
-                  class="mr-2 mt-1"
-                  size="small"
-                >
+                <v-icon class="mr-2 mt-1" size="small">
                   mdi-information-outline
                 </v-icon>
                 <div>
                   <div class="font-weight-medium mb-1 text-body-2">
                     {{ currentGuideline?.title || 'No guideline selected' }}
                   </div>
-                  <div
-                    v-if="currentGuideline"
-                    class="text-caption"
-                  >
+                  <div v-if="currentGuideline" class="text-caption">
                     {{
                       currentGuideline.description || 'No description available'
                     }}
@@ -221,9 +208,7 @@
 
             <!-- Compact Success Criterion Section -->
             <div class="mb-4">
-              <h2 class="text-h6 font-weight-bold mb-2">
-                Success Criterion
-              </h2>
+              <h2 class="text-h6 font-weight-bold mb-2">Success Criterion</h2>
               <v-card
                 variant="outlined"
                 class="mb-2"
@@ -236,10 +221,7 @@
                   >
                     No success criteria available for this rule.
                   </div>
-                  <ul
-                    v-else
-                    class="criteria-list pl-3 mb-0"
-                  >
+                  <ul v-else class="criteria-list pl-3 mb-0">
                     <li
                       v-for="(crit, cIdx) in currentRule.criteria"
                       :key="cIdx"
@@ -252,7 +234,8 @@
                           font-family: inherit;
                           line-height: 1.4;
                         "
-                      >{{ crit }}</pre>
+                        >{{ crit }}</pre
+                      >
                     </li>
                   </ul>
                 </v-card-text>
@@ -261,9 +244,7 @@
 
             <!-- Compact Appraiser Notes Section -->
             <div class="my-4">
-              <h2 class="text-h6 font-weight-bold mb-2">
-                Appraiser Notes
-              </h2>
+              <h2 class="text-h6 font-weight-bold mb-2">Appraiser Notes</h2>
               <v-tabs
                 v-model="activeNoteTab"
                 class="mb-2"
@@ -291,9 +272,7 @@
                   class="add-note-tab"
                   @click.stop="addNote"
                 >
-                  <v-icon size="small">
-                    mdi-plus
-                  </v-icon>
+                  <v-icon size="small"> mdi-plus </v-icon>
                 </v-tab>
               </v-tabs>
               <v-window v-model="activeNoteTab">
@@ -336,7 +315,7 @@
                           max-height: 60px;
                           border-radius: 4px;
                         "
-                      >
+                      />
                       <v-btn
                         icon="mdi-close"
                         size="x-small"
@@ -353,9 +332,7 @@
             <!-- Compact Assessment Section -->
             <v-row class="mb-4">
               <v-col cols="6">
-                <h2 class="text-h6 font-weight-bold mb-2">
-                  Severity
-                </h2>
+                <h2 class="text-h6 font-weight-bold mb-2">Severity</h2>
                 <v-radio-group
                   v-model="severity"
                   density="compact"
@@ -382,14 +359,8 @@
                 </v-radio-group>
               </v-col>
               <v-col cols="6">
-                <h2 class="text-h6 font-weight-bold mb-2">
-                  Status
-                </h2>
-                <v-radio-group
-                  v-model="status"
-                  density="compact"
-                  class="mt-0"
-                >
+                <h2 class="text-h6 font-weight-bold mb-2">Status</h2>
+                <v-radio-group v-model="status" density="compact" class="mt-0">
                   <v-radio
                     label="Pass"
                     value="pass"
@@ -460,12 +431,10 @@
               </div>
             </v-card>
           </v-card>
-          <v-card
-            v-else
-            flat
-            class="h-100"
-          >
-            <div class="d-flex flex-column align-center justify-center h-100 text-center fill-height pa-4">
+          <v-card v-else flat class="h-100">
+            <div
+              class="d-flex flex-column align-center justify-center h-100 text-center fill-height pa-4"
+            >
               <v-icon
                 icon="mdi-information-outline"
                 color="blue-lighten-2"
@@ -486,27 +455,14 @@
         </v-col>
 
         <!-- Right Sidebar - Compact Table of Contents -->
-        <v-col
-          cols="3"
-          class="toc-sidebar fill-height"
-        >
-          <v-card
-            flat
-            class="h-100"
-            color="grey-lighten-5"
-          >
+        <v-col cols="3" class="toc-sidebar fill-height">
+          <v-card flat class="h-100" color="grey-lighten-5">
             <v-card-title class="text-subtitle-1 pa-3 font-weight-bold">
               Rules
             </v-card-title>
-            <v-list
-              density="compact"
-              class="pa-1"
-            >
+            <v-list density="compact" class="pa-1">
               <template v-if="guidelines.length > 0">
-                <template
-                  v-for="(rule, rIdx) in rules"
-                  :key="rule.id || rIdx"
-                >
+                <template v-for="(rule, rIdx) in rules" :key="rule.id || rIdx">
                   <v-list-item
                     prepend-icon="mdi-circle-outline"
                     :title="(rule?.id || '') + ' ' + (rule?.title || '')"
@@ -558,19 +514,11 @@
     </v-tooltip>
 
     <!-- Compact Assessment Data Dialog -->
-    <v-dialog
-      v-model="showAssessmentDialog"
-      max-width="1000"
-      max-height="700"
-    >
+    <v-dialog v-model="showAssessmentDialog" max-width="1000" max-height="700">
       <v-card>
         <v-card-title class="d-flex justify-space-between align-center pa-3">
           <span class="text-h6">Assessment Data</span>
-          <v-btn
-            icon
-            size="small"
-            @click="showAssessmentDialog = false"
-          >
+          <v-btn icon size="small" @click="showAssessmentDialog = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
@@ -592,19 +540,10 @@
             density="compact"
           >
             <template #item.notes="{ item }">
-              <v-tooltip
-                location="bottom"
-                max-width="400"
-              >
+              <v-tooltip location="bottom" max-width="400">
                 <template #activator="{ props }">
-                  <v-btn
-                    icon
-                    size="small"
-                    v-bind="props"
-                  >
-                    <v-icon size="small">
-                      mdi-note-text
-                    </v-icon>
+                  <v-btn icon size="small" v-bind="props">
+                    <v-icon size="small"> mdi-note-text </v-icon>
                   </v-btn>
                 </template>
                 <div>
@@ -615,20 +554,9 @@
                   >
                     <strong>Note {{ index + 1 }}:</strong>
                     <div>{{ note.text }}</div>
-                    <div
-                      v-if="note.imageName"
-                      class="mt-1"
-                    >
-                      <v-chip
-                        size="small"
-                        color="grey-lighten-2"
-                      >
-                        <v-icon
-                          start
-                          size="small"
-                        >
-                          mdi-image
-                        </v-icon>
+                    <div v-if="note.imageName" class="mt-1">
+                      <v-chip size="small" color="grey-lighten-2">
+                        <v-icon start size="small"> mdi-image </v-icon>
                         {{ note.imageName }}
                       </v-chip>
                     </div>
@@ -640,20 +568,11 @@
         </v-card-text>
         <v-card-actions class="pa-3">
           <v-spacer />
-          <v-btn
-            color="primary"
-            @click="showAssessmentDialog = false"
-          >
+          <v-btn color="primary" @click="showAssessmentDialog = false">
             Close
           </v-btn>
-          <v-btn
-            color="primary"
-            variant="text"
-            @click="downloadAssessmentData"
-          >
-            <v-icon start>
-              mdi-download
-            </v-icon>
+          <v-btn color="primary" variant="text" @click="downloadAssessmentData">
+            <v-icon start> mdi-download </v-icon>
             Export JSON
           </v-btn>
         </v-card-actions>
@@ -667,11 +586,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
-import {
-  showSuccess,
-  showError,
-} from '@/shared/utils/toast'
-
+import { showSuccess, showError } from '@/shared/utils/toast'
 
 const store = useStore()
 const route = useRoute()
@@ -681,12 +596,6 @@ const user = computed(() => store.getters.user)
 const test = computed(() => store.getters.test)
 // Computed properties from store
 const isLoading = computed(() => store.getters.loading || false)
-
-// Check if user has access to this test - Proper role-based access control
-const hasAccess = computed(() => {
-  // Always allow access for preview mode
-  return true
-})
 
 // Check if user has admin privileges
 const isAdmin = computed(() => {
@@ -704,16 +613,23 @@ const isAdmin = computed(() => {
   // Check if user has admin role in collaborators
   const collaborators = currentTest.collaborators || {}
   const userCollaborator = collaborators[currentUser.id]
-  if (userCollaborator === 'admin' || (userCollaborator && userCollaborator.role === 'admin')) {
+  if (
+    userCollaborator === 'admin' ||
+    (userCollaborator && userCollaborator.role === 'admin')
+  ) {
     return true
   }
 
   // Check if user has admin role in cooperators
   const cooperators = currentTest.cooperators || []
-  const userCooperator = cooperators.find(coop =>
-    coop.userDocId === currentUser.id || coop.email === currentUser.email
+  const userCooperator = cooperators.find(
+    (coop) =>
+      coop.userDocId === currentUser.id || coop.email === currentUser.email,
   )
-  if (userCooperator && (userCooperator.role === 'admin' || userCooperator.accessLevel >= 999)) {
+  if (
+    userCooperator &&
+    (userCooperator.role === 'admin' || userCooperator.accessLevel >= 999)
+  ) {
     return true
   }
 
@@ -727,7 +643,10 @@ const isOwner = computed(() => {
 
   if (!currentUser || !currentTest) return false
 
-  return currentTest.userId === currentUser.id || currentTest.testAdmin?.userDocId === currentUser.id
+  return (
+    currentTest.userId === currentUser.id ||
+    currentTest.testAdmin?.userDocId === currentUser.id
+  )
 })
 
 // Get current user role for debugging
@@ -742,21 +661,23 @@ const currentUserRole = computed(() => {
 
   // Check cooperators
   const cooperators = currentTest.cooperators || []
-  const userCooperator = cooperators.find(coop =>
-    coop.userDocId === currentUser.id || coop.email === currentUser.email
+  const userCooperator = cooperators.find(
+    (coop) =>
+      coop.userDocId === currentUser.id || coop.email === currentUser.email,
   )
   if (userCooperator) return `cooperator (${userCooperator.role || 'default'})`
 
   // Check legacy collaborators
   const collaborators = currentTest.collaborators || {}
-  if (collaborators[currentUser.id]) return `collaborator (${collaborators[currentUser.id]})`
+  if (collaborators[currentUser.id])
+    return `collaborator (${collaborators[currentUser.id]})`
 
   return 'no-access'
 })
 
 // Use filteredWcagData so only selected guidelines/rules are shown
 const principles = computed(
-  () => store.state.Assessment?.filteredWcagData?.principles || []
+  () => store.state.Assessment?.filteredWcagData?.principles || [],
 )
 const selectedPrincipleIdx = computed({
   get: () => store.state.Assessment.selectedPrincipleIdx,
@@ -794,15 +715,14 @@ const activeNoteTab = ref(0)
 const severity = ref('')
 const status = ref('')
 
-// Get current assessment data
-const currentAssessment = computed(() => {
-  const ruleId = currentRule.value?.id
-  return ruleId ? store.getters['Assessment/getRuleAssessment'](ruleId) : {}
-})
-
 // Add a computed property to track which user's data we're viewing
 const viewingUserId = computed(() => {
-  return route.params.userId || route.query.userId || user.value?.id || 'current-user'
+  return (
+    route.params.userId ||
+    route.query.userId ||
+    user.value?.id ||
+    'current-user'
+  )
 })
 
 const viewingUserType = computed(() => {
@@ -814,11 +734,15 @@ const viewingUserType = computed(() => {
 })
 
 // Add a computed property to fetch configuration data from Vuex
-const configuration = computed(() => store.getters['Assessment/getConfiguration'])
+const configuration = computed(
+  () => store.getters['Assessment/getConfiguration'],
+)
 
 // Example usage: Replace or augment logic to use configuration data
 // For instance, if you need to use complianceLevel from the configuration:
-const complianceLevel = computed(() => configuration.value.complianceLevel || 'AA')
+const complianceLevel = computed(
+  () => configuration.value.complianceLevel || 'AA',
+)
 
 // Check if user can save assessments
 const canSaveAssessments = computed(() => {
@@ -840,8 +764,9 @@ const canSaveAssessments = computed(() => {
 
   // Check if user is in cooperators list (any cooperator can save assessments)
   const cooperators = currentTest.cooperators || []
-  const userCooperator = cooperators.find(coop =>
-    coop.userDocId === currentUser.id || coop.email === currentUser.email
+  const userCooperator = cooperators.find(
+    (coop) =>
+      coop.userDocId === currentUser.id || coop.email === currentUser.email,
   )
   if (userCooperator) return true
 
@@ -871,20 +796,6 @@ function restoreNotesFromAssessment(assessment) {
   activeNoteTab.value = 0
 }
 
-// Helper function to get principle icon
-const getPrincipleIcon = (index) => {
-  switch (index) {
-    case 0:
-      return 'mdi-eye'
-    case 1:
-      return 'mdi-mouse'
-    case 2:
-      return 'mdi-brain'
-    default:
-      return 'mdi-shield-check'
-  }
-}
-
 // Helper functions for initialization
 const getTestId = () => {
   const testId = route.params.testId || route.params.id
@@ -900,8 +811,7 @@ const getTargetUserId = () => {
 
 const loadTestData = async (testId) => {
   await store.dispatch('getStudy', { id: testId })
-  await new Promise(resolve => setTimeout(resolve, 100))
-  console.log('AccessibilityPreviewTest: Test data loaded, proceeding with initialization')
+  await new Promise((resolve) => setTimeout(resolve, 100))
   const testData = store.getters.test
   if (!testData) {
     throw new Error('Failed to load test data')
@@ -921,18 +831,16 @@ const handleAuthentication = async () => {
       await store.dispatch('autoSignIn')
       authUser = store.state.Auth.user
     }
-  } catch (authError) {
-    console.warn('Authentication not available, proceeding without user context:', authError)
+  } catch {
+    // Authentication not available, proceeding without user context
   }
   return authUser
 }
 
 const determineUserIdToLoad = (targetUserId, authUser) => {
   if (targetUserId) {
-    console.log('Loading assessment data for target user:', targetUserId)
     return targetUserId
   } else if (authUser && authUser.id) {
-    console.log('Loading assessment data for current user:', authUser.id)
     return authUser.id
   }
   return null
@@ -940,7 +848,6 @@ const determineUserIdToLoad = (targetUserId, authUser) => {
 
 const loadAssessmentData = async (userIdToLoad, testId) => {
   if (!userIdToLoad) {
-    console.log('No user ID available, proceeding with read-only access')
     return
   }
   try {
@@ -948,11 +855,11 @@ const loadAssessmentData = async (userIdToLoad, testId) => {
       userId: userIdToLoad,
       testId,
     })
-    console.log('Loaded assessment data:', loadedAssessment)
     if (loadedAssessment && loadedAssessment.assessmentData) {
       const currentRuleId = currentRule.value?.id
       if (currentRuleId) {
-        const assessment = store.getters['Assessment/getRuleAssessment'](currentRuleId)
+        const assessment =
+          store.getters['Assessment/getRuleAssessment'](currentRuleId)
         if (assessment) {
           severity.value = assessment.severity || ''
           status.value = assessment.status || ''
@@ -960,8 +867,8 @@ const loadAssessmentData = async (userIdToLoad, testId) => {
         }
       }
     }
-  } catch (assessmentError) {
-    console.warn('Could not load user assessment data:', assessmentError)
+  } catch {
+    // Could not load user assessment data
   }
 }
 
@@ -972,24 +879,9 @@ const setupConfiguration = async (testData, testId) => {
     showExperimentalRules: false,
     enableAutomaticSave: true,
     selectedGuidelines: [],
-    selectedRulesByGuideline: {}
+    selectedRulesByGuideline: {},
   }
   await store.dispatch('Assessment/updateConfiguration', { configData, testId })
-  console.log('AccessibilityPreviewTest: Configuration applied and WCAG data filtered')
-  console.log('Current configuration:', configData)
-  console.log('Available principles after filtering:', store.state.Assessment?.filteredWcagData?.principles?.length || 0)
-  console.log('Raw WCAG data available:', store.state.Assessment?.wcagData?.principles?.length || 0)
-  console.log('Current user role:', currentUserRole.value)
-  console.log('Can save assessments:', canSaveAssessments.value)
-  console.log('Test data:', {
-    id: testData.id,
-    title: testData.title,
-    testAdmin: testData.testAdmin,
-    userId: testData.userId,
-    cooperators: testData.cooperators,
-    collaborators: testData.collaborators,
-    configData: testData.configData
-  })
 }
 
 // Initialize the assessment when component mounts
@@ -999,16 +891,15 @@ onMounted(async () => {
     error.value = ''
     const testId = getTestId()
     const targetUserId = getTargetUserId()
-    console.log('Target user ID from route:', targetUserId)
     const testData = await loadTestData(testId)
     await initializeAssessment()
     const authUser = await handleAuthentication()
     const userIdToLoad = determineUserIdToLoad(targetUserId, authUser)
     await loadAssessmentData(userIdToLoad, testId)
     await setupConfiguration(testData, testId)
-  } catch (err) {
-    console.error('Failed to initialize assessment:', err)
-    error.value = 'Failed to load assessment data. Please try refreshing the page.'
+  } catch {
+    error.value =
+      'Failed to load assessment data. Please try refreshing the page.'
   } finally {
     isLoading.value = false
   }
@@ -1033,13 +924,10 @@ watch(
 // Watch for changes in filtered WCAG data to debug
 watch(
   () => store.state.Assessment?.filteredWcagData?.principles,
-  (newPrinciples) => {
-    console.log('Filtered WCAG data updated:', {
-      principlesCount: newPrinciples?.length || 0,
-      principles: newPrinciples?.map(p => ({ id: p.id, title: p.title, guidelinesCount: p.Guidelines?.length || 0 })) || []
-    })
+  () => {
+    // Filtered WCAG data updated
   },
-  { immediate: true, deep: true }
+  { immediate: true, deep: true },
 )
 
 // Breadcrumb items
@@ -1254,8 +1142,9 @@ const downloadAssessmentData = () => {
     const dataUri =
       'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr)
 
-    const exportFileDefaultName = `assessment-data-${new Date().toISOString().split('T')[0]
-      }.json`
+    const exportFileDefaultName = `assessment-data-${
+      new Date().toISOString().split('T')[0]
+    }.json`
 
     const linkElement = document.createElement('a')
     linkElement.setAttribute('href', dataUri)
@@ -1263,8 +1152,7 @@ const downloadAssessmentData = () => {
     linkElement.click()
 
     showSuccess('Assessment data exported successfully')
-  } catch (error) {
-    console.error('Error exporting assessment data:', error)
+  } catch {
     showError('Failed to export assessment data')
   }
 }
@@ -1282,8 +1170,7 @@ const viewAssessmentDocument = () => {
 
     // Show the dialog
     showAssessmentDialog.value = true
-  } catch (error) {
-    console.error('Error fetching assessment data:', error)
+  } catch {
     showError('Failed to load assessment data')
   }
 }
@@ -1301,7 +1188,9 @@ const saveAssessment = async () => {
     // Check if we're viewing another user's data (read-only mode)
     const targetUserId = route.params.userId || route.query.userId
     if (targetUserId && targetUserId !== currentUser.id) {
-      showError('Cannot save changes when viewing another user\'s assessment data')
+      showError(
+        "Cannot save changes when viewing another user's assessment data",
+      )
       return
     }
 
@@ -1357,20 +1246,8 @@ const saveAssessment = async () => {
 
     showSuccess('Assessment saved successfully')
   } catch (err) {
-    console.error('Failed to save assessment:', err)
     error.value = err.message || 'Failed to save assessment. Please try again.'
     showError(error.value)
-  }
-}
-
-// Reset assessment
-const resetAssessment = () => {
-  if (
-    confirm(
-      'Are you sure you want to reset all assessment progress? This cannot be undone.',
-    )
-  ) {
-    store.dispatch('Assessment/resetAssessment')
   }
 }
 </script>

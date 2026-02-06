@@ -15,12 +15,12 @@
       />
     </div>
 
-    <!-- <v-overlay v-model="isLoading" class="text-center">
-      <v-progress-circular indeterminate color="#fca326" size="50" />
-      <div class="white-text mt-3">
-        Saving...
+    <v-overlay v-model="isLoading" class="d-flex align-center justify-center">
+      <div class="text-center">
+        <v-progress-circular indeterminate color="#fca326" size="50" />
+        <div style="color: white" class="mt-3">loading...</div>
       </div>
-    </v-overlay> -->
+    </v-overlay>
 
     <Snackbar />
 
@@ -46,7 +46,7 @@
           </v-avatar>
         </v-row>
         <v-card-title class="text-center text-h6 font-weight-bold mt-4">
-          Welcome back!
+          {{ $t('UserTestView.actions.welcomeBack') }}
         </v-card-title>
         <v-card-text class="text-center text-body-1">
           <p class="font-weight-medium">
@@ -61,15 +61,17 @@
             class="my-2"
             @click="setTest"
           >
-            Continue as {{ user.email }}
+            {{
+              $t('UserTestView.actions.continueAs', { userEmail: user.email })
+            }}
           </v-btn>
           <p class="text-caption mt-2">
-            Not you?
+            {{ $t('UserTestView.actions.notYou') }}
             <a
               href="#"
               class="text-primary font-weight-medium"
               @click.prevent="signOut"
-              >Change account</a
+              >{{ $t('UserTestView.actions.changeAccount') }}</a
             >
           </p>
         </v-card-actions>
@@ -103,7 +105,7 @@
             :disabled="isStartTestDisabled"
             @click="startTest"
           >
-            Start Test
+            {{ $t('UserTestView.actions.startTest') }}
           </v-btn>
 
           <!-- Messages when test is disabled -->
@@ -122,9 +124,11 @@
               <v-icon color="white"> mdi-check-circle </v-icon>
             </template>
             <span class="text-white">
-              <strong>Test Already Completed</strong><br />
-              You have already completed and submitted this test. Thank you for
-              your participation!
+              <strong>{{
+                $t('UserTestView.alerts.testAlreadyCompleted')
+              }}</strong
+              ><br />
+              {{ $t('UserTestView.alerts.testAlreadyCompletedMessage') }}
             </span>
           </v-alert>
 
@@ -143,8 +147,9 @@
               <v-icon color="white"> mdi-clock-alert </v-icon>
             </template>
             <span class="text-white">
-              <strong>Test Expired</strong><br />
-              This test is no longer available as it has passed its end date.
+              <strong>{{ $t('UserTestView.alerts.testExpired') }}</strong
+              ><br />
+              {{ $t('UserTestView.alerts.testExpiredMessage') }}
             </span>
           </v-alert>
 
@@ -163,9 +168,9 @@
               <v-icon color="white"> mdi-pause-circle </v-icon>
             </template>
             <span class="text-white">
-              <strong>Test Not Active</strong><br />
-              This test is currently not active. Please contact the
-              administrator.
+              <strong>{{ $t('UserTestView.alerts.testNotActive') }}</strong
+              ><br />
+              {{ $t('UserTestView.alerts.testNotActiveMessage') }}
             </span>
           </v-alert>
 
@@ -184,9 +189,9 @@
               <v-icon color="white"> mdi-alert-circle </v-icon>
             </template>
             <span class="text-white">
-              <strong>Test Configuration Error</strong><br />
-              This test has no tasks configured. Please contact the
-              administrator.
+              <strong>{{ $t('UserTestView.alerts.testConfigError') }}</strong
+              ><br />
+              {{ $t('UserTestView.alerts.testConfigErrorMessage') }}
             </span>
           </v-alert>
         </v-col>
@@ -209,7 +214,7 @@
                 <v-stepper-header>
                   <v-stepper-item
                     value="1"
-                    title="Consent"
+                    :title="$t('UserTestView.stepper.consent')"
                     :complete="stepperValue >= 1"
                     color="white"
                     complete-icon="mdi-check"
@@ -217,7 +222,7 @@
                   <v-divider />
                   <v-stepper-item
                     value="2"
-                    title="Pre-test"
+                    :title="$t('UserTestView.stepper.preTest')"
                     :complete="stepperValue >= 2"
                     color="white"
                     complete-icon="mdi-check"
@@ -227,7 +232,7 @@
                   <v-stepper-item
                     v-if="hasEyeTracking"
                     value="3"
-                    title="Calibration"
+                    :title="$t('UserTestView.stepper.calibration')"
                     :complete="stepperValue >= 3"
                     color="white"
                     complete-icon="mdi-check"
@@ -236,7 +241,7 @@
 
                   <v-stepper-item
                     :value="hasEyeTracking ? 4 : 3"
-                    title="Tasks"
+                    :title="$t('UserTestView.stepper.tasks')"
                     :complete="stepperValue >= (hasEyeTracking ? 4 : 3)"
                     color="white"
                     complete-icon="mdi-check"
@@ -244,7 +249,7 @@
                   <v-divider />
                   <v-stepper-item
                     :value="hasEyeTracking ? 5 : 4"
-                    title="Post-test"
+                    :title="$t('UserTestView.stepper.postTest')"
                     :complete="stepperValue >= (hasEyeTracking ? 5 : 4)"
                     color="white"
                     complete-icon="mdi-check"
@@ -252,7 +257,7 @@
                   <v-divider />
                   <v-stepper-item
                     :value="hasEyeTracking ? 6 : 5"
-                    title="Completion"
+                    :title="$t('UserTestView.stepper.completion')"
                     :complete="stepperValue === (hasEyeTracking ? 6 : 5)"
                     color="white"
                     complete-icon="mdi-check"
@@ -283,14 +288,16 @@
                   >
                     <v-stepper-item
                       :value="idx + 1"
-                      :title="`Task ${idx + 1}`"
+                      :title="
+                        $t('UserTestView.stepper.taskX', { num: idx + 1 })
+                      "
                       :complete="taskIndex > idx"
                       :color="
                         taskIndex > idx
                           ? 'success'
                           : taskIndex === idx
-                          ? 'primary'
-                          : 'grey'
+                            ? 'primary'
+                            : 'grey'
                       "
                       complete-icon="mdi-check"
                     />
@@ -350,7 +357,6 @@
               () => {
                 taskIndex = 0
                 globalIndex = hasEyeTracking ? 5 : 4
-                saveIrisDataIntoTask()
               }
             "
           />
@@ -372,6 +378,8 @@
             :user-doc-id="user?.id || anonymousUserDocId"
             :sus-answers="localTestAnswer.tasks[taskIndex].susAnswers"
             :nasa-tlx-answers="localTestAnswer.tasks[taskIndex].nasaTlxAnswers"
+            :tam-answers="localTestAnswer.tasks[taskIndex].tamAnswers"
+            :sart-answers="localTestAnswer.tasks[taskIndex].sartAnswers"
             :submitted="localTestAnswer.submitted"
             :done-task-disabled="doneTaskDisabled"
             @update:sus-answers="
@@ -386,17 +394,34 @@
                 localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val }
               }
             "
+            @update:tam-answers="
+              (val) => {
+                localTestAnswer.tasks[taskIndex].tamAnswers = { ...val }
+              }
+            "
             @update:sart-answers="
               (val) => {
                 localTestAnswer.tasks[taskIndex].sartAnswers = { ...val }
               }
             "
-            @done="() => handleTaskFinish(true)"
+            @done="
+              () => {
+                handleTaskFinish(true)
+                toggleTracking(false)
+              }
+            "
             @could-not-finish="() => handleTaskFinish(false)"
             @show-loading="isLoading = true"
             @stop-show-loading="isLoading = false"
             @recording-started="isVisualizerVisible = $event"
             @timer-stopped="handleTimerStopped"
+            @start-task="
+              () => {
+                if (test.testStructure.userTasks[taskIndex]?.hasEye) {
+                  toggleTracking(true)
+                }
+              }
+            "
           />
 
           <PostTestStep
@@ -484,6 +509,7 @@ import {
 } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import Snackbar from '@/shared/components/Snackbar'
 import { nanoid } from 'nanoid'
 import WelcomeStep from '@/ux/UserTest/components/steps/WelcomeStep.vue'
@@ -540,6 +566,7 @@ const localTestAnswer = reactive(new UserStudyEvaluatorAnswer())
 
 const store = useStore()
 const router = useRouter()
+const { t } = useI18n()
 
 const mediaUrls = computed(() => store.getters.mediaUrls)
 const test = computed(() => store.getters.test)
@@ -656,26 +683,12 @@ const closeCalibration = () => {
 }
 
 function toggleTracking(value) {
-  console.log('toggleTracking', value)
-
   isTracking.value = value
   isRecording.value = value
 }
 
-function saveIrisDataIntoTask() {
-  const task = test.value.testStructure.userTasks[taskIndex.value]
-
-  if (task?.hasEye === true && globalIndex.value >= 5) {
-    toggleTracking(true)
-  } else {
-    toggleTracking(false)
-  }
-}
-
-const saveAnswer = async () => {
+const savePartialAnswer = async () => {
   try {
-    console.log('Saving answer...')
-    attachMediaToTasks(localTestAnswer, mediaUrls.value)
     localTestAnswer.progress = calculateProgress()
     localTestAnswer.fullName = fullName.value
 
@@ -684,10 +697,8 @@ const saveAnswer = async () => {
       localTestAnswer.invited = true
     } else if (!user.value && anonymousUserDocId.value) {
       localTestAnswer.userDocId = anonymousUserDocId.value
-      console.log('Using stored anonymousUserDocId:', anonymousUserDocId.value)
     }
 
-    console.log('Saving answer to Firestore...')
     if (!user.value) {
       await store.dispatch('saveTestAnswer', {
         data: localTestAnswer,
@@ -699,6 +710,7 @@ const saveAnswer = async () => {
         ...currentUserTestAnswer.value,
         fullName: localTestAnswer.fullName,
         progress: localTestAnswer.progress,
+        submitted: localTestAnswer.submitted,
         preTestAnswer: localTestAnswer.preTestAnswer,
         postTestAnswer: localTestAnswer.postTestAnswer,
         tasks: {
@@ -715,26 +727,33 @@ const saveAnswer = async () => {
         testType: test.value.testType,
       })
     }
+  } catch (e) {
+    console.error('[SAVE PARTIAL] error', e)
+  }
+}
 
+const saveAnswer = async () => {
+  try {
+    attachMediaToTasks(localTestAnswer, mediaUrls.value)
+    await savePartialAnswer()
     router.push('/admin')
-  } catch (error) {
-    console.error('Error saving answer:', error)
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
-      message: 'Failed to save the answer. Please try again.',
+      message: t('UserTestView.errors.failedToSaveAnswer'),
     })
   }
 }
 
 const submitAnswer = async () => {
   try {
+    isLoading.value = true
     localTestAnswer.submitted = true
     await saveAnswer()
-  } catch (error) {
-    console.error('Error submitting answer:', error.message)
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
-      message: 'Failed to submit the answer. Please try again.',
+      message: t('UserTestView.errors.failedToSubmitAnswer'),
     })
   }
 }
@@ -743,7 +762,7 @@ const handleConsentDecline = () => {
   // User declined consent, end the test
   store.commit('SET_TOAST', {
     type: 'info',
-    message: 'Test ended due to consent decline. Thank you for your time.',
+    message: t('UserTestView.alerts.consentDecline'),
     timeout: 5000,
   })
 
@@ -759,7 +778,13 @@ const handleSubmit = () => {
 }
 
 const attachMediaToTasks = (answer, mediaUrls) => {
-  if (!answer?.tasks?.length) return
+  if (!answer?.tasks) return
+
+  const taskEntries = Array.isArray(answer.tasks)
+    ? answer.tasks.map((task, index) => [index, task])
+    : Object.entries(answer.tasks)
+
+  if (!taskEntries.length) return
 
   for (const [taskIndex, medias] of Object.entries(mediaUrls)) {
     const task = answer.tasks[taskIndex]
@@ -777,7 +802,7 @@ const startTest = async () => {
   if (!test.value.testStructure || test.value.testStructure.length === 0) {
     store.commit('SET_TOAST', {
       type: 'info',
-      message: "This test doesn't have any tasks.",
+      message: t('UserTestView.messages.noTasks'),
     })
     router.push(`/missions/${test.value.id}`)
     return
@@ -811,13 +836,28 @@ const callTimerSave = () => {
   }
 }
 
-function handleTaskFinish(userCompleted) {
-  const currentTask = localTestAnswer.tasks[taskIndex.value]
-  if (currentTask) {
-    console.log('Estado actual de la tarea antes de finalizar:', currentTask)
-  }
-  completeStep(taskIndex.value, 'tasks', userCompleted)
+async function handleTaskFinish(userCompleted) {
   callTimerSave()
+
+  await nextTick()
+
+  if (isLoading.value) {
+    const unwatch = watch(
+      () => isLoading.value,
+      async (val) => {
+        if (!val) {
+          unwatch()
+          completeStep(taskIndex.value, 'tasks', userCompleted)
+          attachMediaToTasks(localTestAnswer, mediaUrls.value)
+          await savePartialAnswer()
+        }
+      },
+    )
+  } else {
+    completeStep(taskIndex.value, 'tasks', userCompleted)
+    attachMediaToTasks(localTestAnswer, mediaUrls.value)
+    await savePartialAnswer()
+  }
 }
 
 const startTimer = () => {
@@ -831,15 +871,12 @@ const startTimer = () => {
 
 const handleTimerStopped = (elapsedTime, idx) => {
   // idx is passed from TaskStep, always use it
-  console.log('handleTimerStopped llamado con:', { elapsedTime, idx })
 
   if (!localTestAnswer.tasks) {
-    console.error('localTestAnswer.tasks no está definido')
     return
   }
 
   if (idx === undefined || idx === null) {
-    console.error('Índice de tarea no válido:', idx)
     return
   }
 
@@ -862,11 +899,13 @@ const completeStep = (id, type, userCompleted = true) => {
     if (type === 'consent') {
       localTestAnswer.consentCompleted = true
       globalIndex.value = 2 // PreTest
+      savePartialAnswer()
     }
 
     if (type === 'preTest') {
       localTestAnswer.preTestCompleted = true
       globalIndex.value = hasEyeTracking.value ? 3 : 3 // se tiver, vai pro PreCalibration
+      savePartialAnswer()
     }
 
     if (type === 'eyeCalibration') {
@@ -877,10 +916,6 @@ const completeStep = (id, type, userCompleted = true) => {
 
     if (type === 'tasks') {
       if (!Array.isArray(localTestAnswer.tasks)) {
-        console.error(
-          'localTestAnswer.tasks is not an array:',
-          localTestAnswer.tasks,
-        )
         return
       }
       localTestAnswer.tasks[id].completed = userCompleted
@@ -902,13 +937,10 @@ const completeStep = (id, type, userCompleted = true) => {
         taskIndex.value = id + 1
         startTimer()
       } else {
-        console.log('All tasks attempted:', allTasksCompleted.value)
         if (allTasksCompleted.value) {
-          console.log('All tasks completed, moving to post-test')
           taskIndex.value = id + 1 // to help saving methods
           globalIndex.value = hasEyeTracking.value ? 6 : 5 // PostTest
         } else {
-          console.log('Última task finalizada, mas ainda há tasks incompletas.')
         }
       }
       //TODO: Show proper toast not the following one
@@ -927,12 +959,11 @@ const completeStep = (id, type, userCompleted = true) => {
       localTestAnswer.postTestCompleted = true
       // items.value[2].icon = 'mdi-check-circle-outline';
       globalIndex.value = hasEyeTracking.value ? 7 : 6 // Finish
+      savePartialAnswer()
     }
 
-    saveIrisDataIntoTask()
     calculateProgress()
-  } catch (error) {
-    console.error('Error in completeStep:', error)
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: 'Failed to complete step. Please try again.',
@@ -1007,7 +1038,10 @@ const calculateProgress = () => {
       localTestAnswer.tasks.length > 0
     ) {
       for (let i = 0; i < localTestAnswer.tasks.length; i++) {
-        if (localTestAnswer.tasks[i]?.completed) {
+        if (
+          localTestAnswer.tasks[i]?.completed ||
+          localTestAnswer.tasks[i]?.attempted
+        ) {
           tasksCompleted++
         }
       }
@@ -1021,8 +1055,7 @@ const calculateProgress = () => {
     const progressPercentage = (completedSteps / totalSteps) * 100
     localTestAnswer.progress = progressPercentage
     return progressPercentage
-  } catch (error) {
-    console.error('Error in calculateProgress:', error)
+  } catch {
     return 0
   }
 }
@@ -1030,7 +1063,6 @@ const calculateProgress = () => {
 const initializeAnonymousUser = () => {
   if (!user.value && !anonymousUserDocId.value) {
     anonymousUserDocId.value = nanoid(16)
-    console.log('Generated anonymousUserDocId:', anonymousUserDocId.value)
   }
 }
 
@@ -1072,8 +1104,7 @@ const setTest = async () => {
     await autoComplete()
     localTestAnswer.progress = calculateProgress()
     initializeAnonymousUser()
-  } catch (error) {
-    console.error('Error setting test:', error.message)
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: 'Failed to load test data. Please try again.',
@@ -1148,8 +1179,9 @@ const mappingSteps = async () => {
               attempted: false, // Track whether task has been attempted
               susAnswers: [],
               nasaTlxAnswers: {},
+              tamAnswers: {},
+              sartAnswers: {},
             })
-            console.log('Nueva tarea creada:', i, newTask)
             return newTask
           },
         )
@@ -1175,8 +1207,7 @@ const mappingSteps = async () => {
         )
       }
     }
-  } catch (error) {
-    console.error('Error mapping steps:', error.message)
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: 'Failed to initialize test data. Please try again.',
@@ -1273,7 +1304,9 @@ onMounted(async () => {
 
     if (data.calibrationId) {
       calibrationCompleted.value = true
-      calibrationPopup.value.close()
+      if (calibrationPopup.value) {
+        calibrationPopup.value.close()
+      }
     }
   })
 })
@@ -1362,7 +1395,8 @@ onBeforeUnmount(() => {
   --v-stepper-header-title-color: #fff !important;
   --v-stepper-item-title-color: #fff !important;
   --v-stepper-item-color: #fff !important;
-  transition: background 1s cubic-bezier(0.4, 0, 0.2, 1),
+  transition:
+    background 1s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
