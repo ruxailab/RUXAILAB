@@ -49,7 +49,7 @@
           <!-- Team members if exists -->
           <div v-if="activity.teamMembers" class="mt-2">
             <span class="text-caption text-medium-emphasis">
-              {{ activity.teamMembers.length }} team members:
+              {{ activity.teamMembers.length }}
               {{ activity.teamMembers.map((m) => m.name).join(', ') }}
             </span>
           </div>

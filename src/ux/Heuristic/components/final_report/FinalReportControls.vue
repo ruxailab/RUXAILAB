@@ -41,11 +41,6 @@ import { showError, showInfo } from '@/shared/utils/toast'
 // Initialize i18n
 const { t } = useI18n()
 
-// Initialize toast
-// Reactive state
-const title = ref('Enter your text here:')
-const inputText = ref('')
-
 // Methods
 const makeBold = () => {
   document.execCommand('bold', false, null)

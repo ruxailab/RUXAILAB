@@ -215,6 +215,16 @@
     "daysAgo": "hace {count}d",
     "newNotification": "Tienes una nueva notificación."
   },
+  "notifications": {
+    "errors": {
+      "acceptCollaborationFailed": "Error al aceptar la colaboración. Por favor, inténtalo de nuevo.",
+      "invalidCollaboration": "Esta invitación de colaboración no es válida o ha caducado."
+    }
+  },
+  "cooperators": {
+    "updatedRole": "Rol actualizado a {role} para: {users}",
+    "inviteSent": "Invitación enviada a: {users}"
+  },
   "navigation": {
     "dashboard": "Panel",
     "studies": "Estudios",
@@ -818,7 +828,10 @@
       "change_role_title": "Cambiar rol",
       "message_title_hint": "Escribe un título para tu mensaje",
       "message_content_hint": "Escribe el contenido de tu mensaje",
-      "invite_message": "Has sido invitado a participar en la prueba {testTitle}"
+      "invite_message": "Has sido invitado a colaborar en '{testTitle}'",
+      "message_sent_success": "Mensaje enviado con éxito",
+      "message_sent_error": "Error al enviar el mensaje",
+      "user_not_registered": "Este usuario aún no ha aceptado la invitación o no está registrado."
     }
   },
   "UserTestTable": {
@@ -1309,11 +1322,11 @@
       "filters": {
         "allStatuses": "Todos los estados",
         "today": "Hoy",
-        "upcoming": "Próximas",
+        "upcoming": "Próximamente",
         "completed": "Completado",
         "allStudies": "Todos los estudios",
         "myStudies": "Mis estudios",
-        "whereICollaborate": "Donده colaboro"
+        "whereICollaborate": "Donde colaboro"
       }
     },
     "templates": {

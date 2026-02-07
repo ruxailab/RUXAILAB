@@ -80,14 +80,27 @@ export default {
       if (state.testAnswerDocument.type === STUDY_TYPES.HEURISTIC) {
         const heuristicAnswers = state.testAnswerDocument.heuristicAnswers || {}
 
-        return heuristicAnswers[rootState.user.id]
-          ? HeuristicAnswer.toHeuristicAnswer(
-              heuristicAnswers[rootState.user.id],
-              rootState.test.testOptions,
-            )
-          : new HeuristicAnswer({
-              userDocId: rootState.user.id,
-            })
+        const userAnswer = heuristicAnswers[rootState.user.id]
+        if (userAnswer) {
+          const transformedAnswer = HeuristicAnswer.toHeuristicAnswer(
+            userAnswer,
+            rootState.test.testOptions,
+          )
+          // Ensure the answer has testStarted flag
+          if (
+            !transformedAnswer.testStarted &&
+            (transformedAnswer.progress > 0 ||
+              transformedAnswer.lastViewedHeuristicIndex !== undefined)
+          ) {
+            transformedAnswer.testStarted = true
+          }
+          return transformedAnswer
+        } else {
+          return new HeuristicAnswer({
+            userDocId: rootState.user.id,
+            testStarted: false,
+          })
+        }
       }
 
       if (state.testAnswerDocument.type === STUDY_TYPES.USER) {
@@ -176,26 +189,58 @@ export default {
           value
       }
     },
-    SET_TASK_MEDIA_URL(state, { taskIndex, mediaType, url }) {
-      if (!state.mediaUrls[taskIndex]) state.mediaUrls[taskIndex] = {}
-      state.mediaUrls[taskIndex][mediaType] = url
+    SET_TASK_MEDIA_URL(state, { taskIndex, mediaType, url, size, userId }) {
+      const currentTaskMedia = state.mediaUrls[taskIndex] || {}
+
+      // Update media URL
+      const updatedTaskMedia = {
+        ...currentTaskMedia,
+        [mediaType]: url,
+      }
+
+      if (size) {
+        if (!updatedTaskMedia.sizes) updatedTaskMedia.sizes = {}
+        updatedTaskMedia.sizes[mediaType] = size
+
+        if (
+          userId &&
+          state.testAnswerDocument?.taskAnswers?.[userId]?.tasks?.[taskIndex]
+        ) {
+          const task =
+            state.testAnswerDocument.taskAnswers[userId].tasks[taskIndex]
+
+          if (mediaType === 'screenRecordURL') {
+            task.screenSize = size
+          } else if (mediaType === 'audioRecordURL') {
+            task.audioSize = size
+          } else if (mediaType === 'webcamRecordURL') task.webcamSize = size
+        } else {
+          console.warn(
+            '[Mutation] Could not find task document to update size',
+            { userId, taskIndex },
+          )
+        }
+      }
+      state.mediaUrls[taskIndex] = updatedTaskMedia
+    },
+    SET_TOAST(state, payload) {
+      if (!state.toast) state.toast = {}
+      state.toast = payload
     },
   },
   actions: {
     async getCurrentTestAnswerDoc({ commit, rootState }) {
       const currentTest = rootState.Tests.Test
       if (!currentTest || !currentTest.answersDocId) {
-        return console.log('No current test or answersDocId')
+        return
       }
       const currentAnswersDocId = currentTest.answersDocId
       commit('setLoading', true)
       try {
-        const answerDoc = await answerController.getAnswerById(
-          currentAnswersDocId,
-        )
+        const answerDoc =
+          await answerController.getAnswerById(currentAnswersDocId)
         commit('SET_ANSWER_DOCUMENT', answerDoc)
-      } catch (e) {
-        console.error('Error in getCurrentTestAnswerDoc', e)
+      } catch {
         // commit("setError", true);
       } finally {
         commit('setLoading', false)
@@ -205,8 +250,7 @@ export default {
       commit('setLoading', true)
       try {
         await answerController.updateUserAnswer(payload)
-      } catch (e) {
-        console.error('Error in updateTest', e)
+      } catch {
         // commit("setError", true);
       } finally {
         commit('setLoading', false)
@@ -225,7 +269,7 @@ export default {
         commit('setLoading', false)
       }
     },
-    async saveTestAnswer({ commit }, payload) {
+    async saveTestAnswer({ commit, state, rootState }, payload) {
       commit('setLoading', true)
       try {
         await answerController.saveTestAnswer(
@@ -233,8 +277,41 @@ export default {
           payload.answersDocId,
           payload.testType,
         )
+
+        // Update the local state to reflect saved changes
+        if (state.testAnswerDocument && rootState.user) {
+          const userId = rootState.user.id
+          if (payload.testType === STUDY_TYPES.HEURISTIC) {
+            if (!state.testAnswerDocument.heuristicAnswers) {
+              state.testAnswerDocument.heuristicAnswers = {}
+            }
+            state.testAnswerDocument.heuristicAnswers[userId] = payload.data
+          } else if (payload.testType === STUDY_TYPES.USER) {
+            if (!state.testAnswerDocument.taskAnswers) {
+              state.testAnswerDocument.taskAnswers = {}
+            }
+            state.testAnswerDocument.taskAnswers[userId] = payload.data
+          }
+        }
+
+        // Show success toast if message provided
+        if (payload.successMessage) {
+          commit('SET_TOAST', {
+            type: 'success',
+            message: payload.successMessage,
+            show: true,
+          })
+        }
       } catch (e) {
-        return e // commit("setError", true);
+        console.error('Error in save test answer', e)
+        // commit("setError", true);
+        if (payload.errorMessage) {
+          commit('SET_TOAST', {
+            type: 'error',
+            message: payload.errorMessage,
+            show: true,
+          })
+        }
       } finally {
         commit('setLoading', false)
       }
@@ -243,8 +320,7 @@ export default {
       commit('setLoading', true)
       try {
         await answerController.updateTaskAnswer(payload, answersDocId)
-      } catch (e) {
-        console.error('Error in save test answer', e)
+      } catch {
       } finally {
         commit('setLoading', false)
       }
@@ -317,8 +393,18 @@ export default {
       commit('SET_EVALUATOR_STATISTICS', table)
     },
 
-    async updateTaskMediaUrl({ commit }, { taskIndex, mediaType, url }) {
-      await commit('SET_TASK_MEDIA_URL', { taskIndex, mediaType, url })
+    async updateTaskMediaUrl(
+      { commit, rootState },
+      { taskIndex, mediaType, url, size },
+    ) {
+      const userId = rootState.user?.id
+      await commit('SET_TASK_MEDIA_URL', {
+        taskIndex,
+        mediaType,
+        url,
+        size,
+        userId,
+      })
     },
   },
 }

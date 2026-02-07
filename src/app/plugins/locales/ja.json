@@ -215,6 +215,16 @@
     "daysAgo": "{count}日前",
     "newNotification": "新しい通知があります。"
   },
+  "notifications": {
+    "errors": {
+      "acceptCollaborationFailed": "コラボレーションの承諾に失敗しました。もう一度お試しください。",
+      "invalidCollaboration": "このコラボレーション招待は無効または期限切れです。"
+    }
+  },
+  "cooperators": {
+    "updatedRole": "{users} の役割を {role} に更新しました",
+    "inviteSent": "{users} に招待を送信しました"
+  },
   "navigation": {
     "dashboard": "ダッシュボード",
     "studies": "研究",
@@ -816,7 +826,10 @@
       "change_role_title": "役割を変更",
       "message_title_hint": "メッセージのタイトルを入力",
       "message_content_hint": "メッセージの内容を入力",
-      "invite_message": "テスト {testTitle} への参加に招待されました"
+      "invite_message": "'{testTitle}' への共同作業に招待されました",
+      "message_sent_success": "メッセージが正常に送信されました",
+      "message_sent_error": "メッセージの送信に失敗しました",
+      "user_not_registered": "このユーザーはまだ招待を承諾していないか、登録されていません。"
     }
   },
   "UserTestTable": {
@@ -1303,15 +1316,15 @@
       "statusLabel": "ステータス",
       "ownership": "所有権",
       "evaluator": "評価者",
-      "noActiveSessions": "アクティブなセッションがありません",
+      "noActiveSessions": "アクティブなセッションはありません",
       "filters": {
         "allStatuses": "すべてのステータス",
         "today": "今日",
-        "upcoming": "今後",
+        "upcoming": "今後の予定",
         "completed": "完了",
-        "allStudies": "すべての研究",
-        "myStudies": "私の研究",
-        "whereICollaborate": "コラボレーション中"
+        "allStudies": "すべてのスタディ",
+        "myStudies": "マイスタディ",
+        "whereICollaborate": "共同作業中"
       }
     },
     "templates": {
