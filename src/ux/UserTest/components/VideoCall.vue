@@ -992,11 +992,14 @@ watch([localVideo, localStream], ([videoEl, stream]) => {
 })
 
 onMounted(async () => {
+  console.log('VideoCall mounted. roomId:', props.roomId, 'isModerator:', props.isModerator)
   // Moderator gets media preview but doesn't join room yet
   if (props.isModerator) {
     // Just get local media for preview
     if (!isObservator.value) {
+      console.log('Initializing local media for moderator...')
       await initLocalMedia()
+      console.log('Local media initialized.')
     }
   } else {
     // Participants and observators wait for room to be opened by moderator
@@ -1034,20 +1037,34 @@ const joinRoom = async () => {
   if (!isObservator.value && !localStream.value) {
     await initLocalMedia()
   }
-
   // 2. Register self in participants list
   const myRef = dbRef(
     database,
     `calls/${props.roomId}/participants/${props.user.id}`,
   )
-  await set(myRef, {
+  
+  // Restore media settings from DB if available (persistence)
+  const snapshot = await get(myRef)
+  const existingData = snapshot.val()
+  if (existingData && existingData.media) {
+     isCameraEnabled.value = existingData.media.cameraEnabled
+     isMicrophoneEnabled.value = existingData.media.microphoneEnabled
+  }
+
+
+  await update(myRef, {
     email: props.user.email,
-    name: props.user.email?.split('@')[0], // Simple name
+    name: props.user.email?.split('@')[0],
     joinedAt: Date.now(),
-    cameraEnabled: isCameraEnabled.value,
-    microphoneEnabled: isMicrophoneEnabled.value,
+    connected: true,
+    media: {
+      cameraEnabled: isCameraEnabled.value,
+      microphoneEnabled: isMicrophoneEnabled.value
+    }
   })
-  onDisconnect(myRef).remove() // Auto-remove on closing tab
+  
+  // Mark as disconnected on close tab, but do NOT remove (to persist media settings)
+  onDisconnect(myRef).update({ connected: false })
 
   // 3. Listen to participants to initiate connections
   const participantsRef = dbRef(database, `calls/${props.roomId}/participants`)
@@ -1058,6 +1075,14 @@ const joinRoom = async () => {
     // Check for new peers to connect to
     Object.keys(val).forEach((userId) => {
       if (userId === props.user.id) return
+      
+      // Only connect if they are actually connected
+      const pData = val[userId]
+      if (!pData || !pData.connected) {
+         if (peers[userId]) closePeerConnection(userId)
+         return
+      }
+
       if (!peers[userId]) {
         // Found a peer we look not connected to.
         // Rule: Initiator is the one with lexicographically smaller ID (or simply: if I am newer? No, consistent sort is better)
@@ -1066,7 +1091,7 @@ const joinRoom = async () => {
         // When I join, I see existing users -> I offer.
         // They see me -> They wait for offer.
         // How to distinguish? 'joinedAt' timestamp.
-        const otherJoinedAt = val[userId].joinedAt
+        const otherJoinedAt = pData.joinedAt
         const myJoinedAt = val[props.user.id]?.joinedAt
 
         // If I joined AFTER them, I initiate.
@@ -1079,9 +1104,9 @@ const joinRoom = async () => {
       }
     })
 
-    // Cleanup left peers
+    // Cleanup left peers (if removed from DB or marked disconnected)
     Object.keys(peers).forEach((userId) => {
-      if (!val[userId]) {
+      if (!val[userId] || !val[userId].connected) {
         closePeerConnection(userId)
       }
     })
@@ -1163,22 +1188,27 @@ const leaveRoom = () => {
   }
   // Close all connections
   Object.values(peers).forEach((p) => p.connection.close())
-  // Remove self
-  remove(dbRef(database, `calls/${props.roomId}/participants/${props.user.id}`))
+  // Remove self (mark as disconnected)
+  const myRef = dbRef(database, `calls/${props.roomId}/participants/${props.user.id}`)
+  update(myRef, { connected: false })
+  
   remove(dbRef(database, `calls/${props.roomId}/signals/${props.user.id}`)) // Clean my inbox
 }
 
 const initLocalMedia = async () => {
+  console.log('initLocalMedia called')
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
       video: true,
       audio: true,
     })
+    console.log('getUserMedia success', stream)
     localStream.value = stream
     if (localVideo.value) localVideo.value.srcObject = stream
     isCameraEnabled.value = true
     isMicrophoneEnabled.value = true
-  } catch {
+  } catch (error) {
+    console.error('getUserMedia failed', error)
     isCameraEnabled.value = false
   }
 }
@@ -1294,8 +1324,10 @@ async function updateParticipantStatus() {
       `calls/${props.roomId}/participants/${props.user.id}`,
     )
     await update(participantRef, {
-      cameraEnabled: isCameraEnabled.value,
-      microphoneEnabled: isMicrophoneEnabled.value,
+      media: {
+        cameraEnabled: isCameraEnabled.value,
+        microphoneEnabled: isMicrophoneEnabled.value,
+      },
       updatedAt: Date.now(),
     })
   } catch (error) {
@@ -1304,11 +1336,16 @@ async function updateParticipantStatus() {
 }
 
 function isRemoteCameraEnabled(userId) {
-  return participants.value[userId]?.cameraEnabled !== false
+  // Check new media structure fallback to old
+  const p = participants.value[userId]
+  if (p?.media) return p.media.cameraEnabled
+  return p?.cameraEnabled !== false
 }
 
 function isRemoteMicrophoneEnabled(userId) {
-  return participants.value[userId]?.microphoneEnabled !== false
+  const p = participants.value[userId]
+  if (p?.media) return p.media.microphoneEnabled
+  return p?.microphoneEnabled !== false
 }
 
 function toggleSidePanel() {

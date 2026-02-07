@@ -5,3 +5,4 @@ admin.initializeApp()
 export * from './src/https/index.js'
 export * from './src/triggers/index.js'
 export * from './src/helpers/index.js'
+export * from './src/scheduled/index.js'

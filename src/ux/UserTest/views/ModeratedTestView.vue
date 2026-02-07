@@ -159,6 +159,26 @@
               {{ $t('UserTestView.errors.noTestDataMessage') }}
             </span>
           </v-alert>
+
+          <v-alert
+            v-if="moderatorInactive"
+            type="warning"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="
+              background-color: rgba(255, 255, 255, 0.1);
+              border-color: white;
+            "
+          >
+            <template #prepend>
+              <v-icon color="white"> mdi-wifi-off </v-icon>
+            </template>
+            <span class="text-white">
+              <strong>Moderator Disconnected</strong><br />
+              The moderator seems to be offline. Please wait or contact support.
+            </span>
+          </v-alert>
         </v-col>
       </v-row>
 
@@ -569,6 +589,7 @@ import {
   off,
   update,
   set,
+  get,
   onDisconnect,
 } from 'firebase/database'
 import { database } from '@/app/plugins/firebase/index'
@@ -627,6 +648,8 @@ const taskStepComponent = ref(null)
 const allTasksCompleted = ref(false)
 const submitDialog = ref(false)
 const notesDrawerOpen = ref(true)
+const heartbeatInterval = ref(null)
+const moderatorInactive = ref(false)
 
 // From video call to be used by recorders
 const remoteStream = ref(null)
@@ -639,7 +662,7 @@ const user = computed(() => {
   return store.getters.user
 })
 const isUserTestAdmin = computed(() => {
-  return test.value.testAdmin.userDocId === user.value?.id
+  return test.value?.testAdmin?.userDocId === user.value?.id
 })
 
 const currentUserAccessLevel = computed(() => {
@@ -684,8 +707,9 @@ watch(user, async () => {
 })
 
 watch(
-  () => [globalIndex.value, taskIndex.value],
-  () => {
+  () => [globalIndex.value, taskIndex.value, displayVideoCallComponent.value, isUserTestAdmin.value],
+  ([gi, ti, dvc, admin]) => {
+    console.log('State Update:', { globalIndex: gi, taskIndex: ti, showVideo: dvc, isAdmin: admin })
     scrollToTop()
   },
 )
@@ -877,17 +901,27 @@ const startTest = async () => {
   // listen for changes
   const roomRef = dbRef(database, `rooms/${roomId.value}`)
 
-  onDisconnect(roomRef).set(null)
+  // Ensure only moderator can set this, and only on explicit end, NOT using onDisconnect
+  // onDisconnect(roomRef).set(null)
 
   onValue(roomRef, (snapshot) => {
     const data = snapshot.val()
     if (!data) return
 
-    globalIndex.value = data.globalIndex
-    taskIndex.value = data.taskIndex
+    globalIndex.value = data.globalIndex !== undefined ? data.globalIndex : 0
+    taskIndex.value = data.taskIndex !== undefined ? data.taskIndex : 0
 
     if (!isUserTestAdmin.value) {
       displayVideoCallComponent.value = data.showVideoCall
+
+      // Check Moderator Heartbeat (allow 2 minutes grace)
+      if (data.lastHeartbeat) {
+        const diff = Date.now() - data.lastHeartbeat
+        moderatorInactive.value = diff > 2 * 60 * 1000
+      } else {
+         // If no heartbeat present yet, assume active or assume legacy session
+         moderatorInactive.value = false
+      }
     }
   })
 
@@ -895,6 +929,31 @@ const startTest = async () => {
   setTimeout(() => {
     start.value = false
   }, 1000)
+
+  // Initialize Heartbeat for Moderator and ensure Room defaults
+  if (isUserTestAdmin.value) {
+     // Check if valid data exists, otherwise init defaults
+     const snapshot = await get(roomRef)
+     const currentData = snapshot.val() || {}
+     
+     const updates = {
+       status: 'active',
+       lastHeartbeat: Date.now(),
+     }
+
+     if (currentData.globalIndex === undefined) updates.globalIndex = 0
+     if (currentData.taskIndex === undefined) updates.taskIndex = 0
+     if (currentData.showVideoCall === undefined) updates.showVideoCall = false
+
+     update(roomRef, updates)
+     
+     if (heartbeatInterval.value) clearInterval(heartbeatInterval.value)
+     heartbeatInterval.value = setInterval(() => {
+       update(roomRef, {
+         lastHeartbeat: Date.now()
+       })
+     }, 60000) 
+  }
 }
 
 // Scroll to top of the page when step changes
@@ -1168,21 +1227,19 @@ watchEffect(() => {
   if (isUserTestAdmin.value) {
     if (localTestAnswer.submitted) {
       testDisabledReason.value = 'test-already-completed'
-      return true
-    }
-    if (test.value.status !== 'active') {
-      testDisabledReason.value = 'test-not-active'
-      return true
-    }
-    if (
+      isStartTestDisabled.value = true
+      isStartTestDisabled.value = true
+    } else if (
       !test.value.testStructure ||
       Object.keys(test.value.testStructure).length === 0
     ) {
       testDisabledReason.value = 'test-no-tasks-configured'
-      return true
+      isStartTestDisabled.value = true
+    } else {
+      testDisabledReason.value = null
+      isStartTestDisabled.value = false
     }
-    testDisabledReason.value = null
-    return false // Admin can proceed
+    return
   }
   const now = new Date()
   const userSessions = test.value.cooperators.filter(
@@ -1311,7 +1368,14 @@ onMounted(async () => {
 onBeforeUnmount(async () => {
   const roomRef = dbRef(database, `rooms/${roomId.value}`)
   off(roomRef)
-  await set(roomRef, null)
+  // Do NOT delete the room on unmount (refresh/navigate away). Only explicit end should delete.
+  // await set(roomRef, null)
+
+  // Clear heartbeat interval if it exists
+  if (heartbeatInterval.value) {
+    clearInterval(heartbeatInterval.value)
+    heartbeatInterval.value = null
+  }
 })
 </script>
 
