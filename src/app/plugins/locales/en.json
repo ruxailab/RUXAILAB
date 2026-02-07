@@ -1185,7 +1185,8 @@
       "process": "Calibration involves following points that will appear on the screen with your eyes. It is important that you are in a well-lit place, sit comfortably, and keep your head stable.",
       "instruction": "When you are ready, press the button to start calibration.",
       "startButton": "Start calibration",
-      "inProgress": "In progress..."
+      "inProgress": "In progress...",
+      "reuseSkipButton":"Reuse/Skip Calibration"
     }
   },
   "eyeTracking": {

@@ -1185,7 +1185,8 @@
       "process": "A calibração envolve acompanhar com os olhos os pontos que aparecerão na tela. É importante que você esteja em um local bem iluminado, sente-se confortavelmente e mantenha a cabeça estável.",
       "instruction": "Quando estiver pronto, pressione o botão para iniciar a calibração.",
       "startButton": "Iniciar calibração",
-      "inProgress": "Em andamento..."
+      "inProgress": "Em andamento...",
+      "reuseSkipButton": "Reutilizar/Pular calibração"
     }
   },
   "eyeTracking": {

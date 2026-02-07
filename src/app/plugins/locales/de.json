@@ -1188,7 +1188,8 @@
       "process": "Die Kalibrierung beinhaltet das Verfolgen von Punkten, die auf dem Bildschirm erscheinen, mit Ihren Augen. Es ist wichtig, dass Sie sich an einem gut beleuchteten Ort befinden, bequem sitzen und Ihren Kopf ruhig halten.",
       "instruction": "Wenn Sie bereit sind, drücken Sie die Taste, um die Kalibrierung zu starten.",
       "startButton": "Kalibrierung starten",
-      "inProgress": "In Bearbeitung..."
+      "inProgress": "In Bearbeitung...",
+      "reuseSkipButton": "Kalibrierung wiederverwenden/überspringen"
     }
   },
   "eyeTracking": {

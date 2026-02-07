@@ -1185,7 +1185,8 @@
       "process": "Le calibrage consiste à suivre des points qui apparaîtront sur l'écran avec vos yeux. Il est important que vous soyez dans un endroit bien éclairé, assis confortablement et que vous gardiez la tête stable.",
       "instruction": "Lorsque vous êtes prêt, appuyez sur le bouton pour commencer le calibrage.",
       "startButton": "Commencer le calibrage",
-      "inProgress": "En cours..."
+      "inProgress": "En cours...",
+      "reuseSkipButton": "Réutiliser/Sauter la calibration"
     }
   },
   "eyeTracking": {

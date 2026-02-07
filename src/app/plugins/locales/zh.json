@@ -1185,7 +1185,8 @@
       "process": "校准包括用眼睛跟随屏幕上出现的点。重要的是要在光线充足的地方，坐得舒服，保持头部稳定。",
       "instruction": "准备好后，按按钮开始校准。",
       "startButton": "开始校准",
-      "inProgress": "进行中..."
+      "inProgress": "进行中...",
+      "reuseSkipButton": "复用/跳过校准"
     }
   },
   "eyeTracking": {
