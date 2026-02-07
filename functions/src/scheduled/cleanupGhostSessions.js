@@ -22,13 +22,6 @@ export const cleanupGhostSessions = onSchedule('every 6 hours', async (event) =>
       const roomId = child.key
       const roomData = child.val()
 
-      // Check if room is stale
-      // 1. If it has a createdAt timestamp, check that.
-      // 2. If it has a lastHeartbeat timestamp, check that.
-      // 3. Fallback: If no timestamp, we might be risky deleting it, but ghost sessions usually have no recent activity.
-      // Let's assume we add createdAt/lastHeartbeat to all sessions going forward.
-      // For legacy sessions without timestamps, we might skip them or use a different heuristic.
-      
       const createdAt = roomData.createdAt || 0
       const lastHeartbeat = roomData.lastHeartbeat || 0
       const lastActive = Math.max(createdAt, lastHeartbeat)
@@ -39,9 +32,10 @@ export const cleanupGhostSessions = onSchedule('every 6 hours', async (event) =>
         updates[`calls/${roomId}`] = null
         deletedCount++
       } else if (lastActive === 0) {
-          // If no timestamp, check if it's empty or clearly abandoned.
-          // For safety, we only delete if we have a timestamp.
-          // TO-DO: Ensure creation sets createdAt.
+        // No timestamps, consider it stale
+        updates[`rooms/${roomId}`] = null
+        updates[`calls/${roomId}`] = null
+        deletedCount++
       }
     })
 

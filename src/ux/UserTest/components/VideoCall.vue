@@ -992,7 +992,12 @@ watch([localVideo, localStream], ([videoEl, stream]) => {
 })
 
 onMounted(async () => {
-  console.log('VideoCall mounted. roomId:', props.roomId, 'isModerator:', props.isModerator)
+  console.log(
+    'VideoCall mounted. roomId:',
+    props.roomId,
+    'isModerator:',
+    props.isModerator,
+  )
   // Moderator gets media preview but doesn't join room yet
   if (props.isModerator) {
     // Just get local media for preview
@@ -1042,27 +1047,37 @@ const joinRoom = async () => {
     database,
     `calls/${props.roomId}/participants/${props.user.id}`,
   )
-  
+
   // Restore media settings from DB if available (persistence)
   const snapshot = await get(myRef)
   const existingData = snapshot.val()
   if (existingData && existingData.media) {
-     isCameraEnabled.value = existingData.media.cameraEnabled
-     isMicrophoneEnabled.value = existingData.media.microphoneEnabled
+    isCameraEnabled.value = existingData.media.cameraEnabled
+    isMicrophoneEnabled.value = existingData.media.microphoneEnabled
   }
 
+  // Enforce restored state on tracks
+  if (localStream.value) {
+    const vTrack = localStream.value.getVideoTracks()[0]
+    if (vTrack) vTrack.enabled = isCameraEnabled.value
+
+    const aTrack = localStream.value.getAudioTracks()[0]
+    if (aTrack) aTrack.enabled = isMicrophoneEnabled.value
+  }
 
   await update(myRef, {
     email: props.user.email,
     name: props.user.email?.split('@')[0],
     joinedAt: Date.now(),
     connected: true,
+    isModerator: props.isModerator,
+    taskIndex: props.isModerator ? 0 : props.currentTaskIndex,
     media: {
       cameraEnabled: isCameraEnabled.value,
-      microphoneEnabled: isMicrophoneEnabled.value
-    }
+      microphoneEnabled: isMicrophoneEnabled.value,
+    },
   })
-  
+
   // Mark as disconnected on close tab, but do NOT remove (to persist media settings)
   onDisconnect(myRef).update({ connected: false })
 
@@ -1075,12 +1090,12 @@ const joinRoom = async () => {
     // Check for new peers to connect to
     Object.keys(val).forEach((userId) => {
       if (userId === props.user.id) return
-      
+
       // Only connect if they are actually connected
       const pData = val[userId]
       if (!pData || !pData.connected) {
-         if (peers[userId]) closePeerConnection(userId)
-         return
+        if (peers[userId]) closePeerConnection(userId)
+        return
       }
 
       if (!peers[userId]) {
@@ -1140,8 +1155,21 @@ const joinRoom = async () => {
         const answer = await pc.createAnswer()
         await pc.setLocalDescription(answer)
         sendSignal(senderId, { type: 'answer', sdp: answer.sdp })
-      } catch {
-        // Error handling offer
+      } catch (err) {
+        console.error('Error handling offer logic:', err)
+      }
+
+      // Process pending candidates
+      if (peers[senderId].pendingCandidates.length > 0) {
+        console.log(
+          `Processing ${peers[senderId].pendingCandidates.length} buffered candidates for ${senderId}`,
+        )
+        peers[senderId].pendingCandidates.forEach((c) => {
+          pc.addIceCandidate(new RTCIceCandidate(c)).catch((e) =>
+            console.error('Error adding buffered candidate:', e),
+          )
+        })
+        peers[senderId].pendingCandidates = []
       }
     } else if (signal.type === 'answer') {
       // Only set answer if we're waiting for one (have-local-offer state)
@@ -1150,15 +1178,25 @@ const joinRoom = async () => {
           await pc.setRemoteDescription(
             new RTCSessionDescription({ type: 'answer', sdp: signal.sdp }),
           )
-        } catch {
-          // Error setting remote answer
+        } catch (err) {
+          console.error('Error setting remote answer:', err)
         }
       }
     } else if (signal.candidate) {
-      try {
-        await pc.addIceCandidate(new RTCIceCandidate(signal.candidate))
-      } catch {
-        // Error adding candidate
+      if (pc.remoteDescription) {
+        try {
+          await pc.addIceCandidate(new RTCIceCandidate(signal.candidate))
+        } catch (err) {
+          console.error('Error adding ICE candidate:', err)
+        }
+      } else {
+        // Buffer candidate
+        console.log(
+          `Buffering candidate for ${senderId} (pending remote description)`,
+        )
+        if (peers[senderId]) {
+          peers[senderId].pendingCandidates.push(signal.candidate)
+        }
       }
     }
 
@@ -1189,9 +1227,12 @@ const leaveRoom = () => {
   // Close all connections
   Object.values(peers).forEach((p) => p.connection.close())
   // Remove self (mark as disconnected)
-  const myRef = dbRef(database, `calls/${props.roomId}/participants/${props.user.id}`)
+  const myRef = dbRef(
+    database,
+    `calls/${props.roomId}/participants/${props.user.id}`,
+  )
   update(myRef, { connected: false })
-  
+
   remove(dbRef(database, `calls/${props.roomId}/signals/${props.user.id}`)) // Clean my inbox
 }
 
@@ -1223,6 +1264,7 @@ const createPeerConnection = (targetUserId, isInitiator) => {
   peers[targetUserId] = {
     connection: pc,
     stream: null,
+    pendingCandidates: [],
   }
 
   // Add local tracks ONLY if not an observator
@@ -1436,6 +1478,7 @@ const endCall = async () => {
     } catch {
       // Failed to update rooms showVideoCall
     }
+    emit('call-ended')
     leaveRoom()
   } else {
     // Non-moderator: can just leave locally

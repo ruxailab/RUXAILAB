@@ -375,7 +375,7 @@
           </v-btn>
 
           <!-- Video Call Component -->
-          <div v-show="displayVideoCallComponent">
+          <div v-show="displayVideoCallComponent" v-if="test">
             <VideoCall
               :room-id="roomId"
               :is-moderator="isUserTestAdmin"
@@ -388,6 +388,7 @@
               @set-remote-stream="remoteStream = $event"
               @proceed-to-next-step="proceedToNextStep"
               @step-selected="handleStepSelected"
+              @call-ended="displayVideoCallComponent = false"
             />
           </div>
 
@@ -707,9 +708,13 @@ watch(user, async () => {
 })
 
 watch(
-  () => [globalIndex.value, taskIndex.value, displayVideoCallComponent.value, isUserTestAdmin.value],
+  () => [
+    globalIndex.value,
+    taskIndex.value,
+    displayVideoCallComponent.value,
+    isUserTestAdmin.value,
+  ],
   ([gi, ti, dvc, admin]) => {
-    console.log('State Update:', { globalIndex: gi, taskIndex: ti, showVideo: dvc, isAdmin: admin })
     scrollToTop()
   },
 )
@@ -721,6 +726,16 @@ watchEffect(() => {
   const task = Array.isArray(taskList) ? taskList[index] : undefined
 
   const answers = localTestAnswer?.tasks?.[index]?.susAnswers
+
+  if (isUserTestAdmin.value) {
+    doneTaskDisabled.value = false
+    return
+  }
+
+  if (isUserTestAdmin.value) {
+    doneTaskDisabled.value = false
+    return
+  }
 
   if (task?.taskType === 'sus') {
     const validCount = answers?.filter((v) => typeof v === 'number').length ?? 0
@@ -919,8 +934,8 @@ const startTest = async () => {
         const diff = Date.now() - data.lastHeartbeat
         moderatorInactive.value = diff > 2 * 60 * 1000
       } else {
-         // If no heartbeat present yet, assume active or assume legacy session
-         moderatorInactive.value = false
+        // If no heartbeat present yet, assume active or assume legacy session
+        moderatorInactive.value = false
       }
     }
   })
@@ -932,27 +947,28 @@ const startTest = async () => {
 
   // Initialize Heartbeat for Moderator and ensure Room defaults
   if (isUserTestAdmin.value) {
-     // Check if valid data exists, otherwise init defaults
-     const snapshot = await get(roomRef)
-     const currentData = snapshot.val() || {}
-     
-     const updates = {
-       status: 'active',
-       lastHeartbeat: Date.now(),
-     }
+    // Check if valid data exists, otherwise init defaults
+    const snapshot = await get(roomRef)
+    const currentData = snapshot.val() || {}
 
-     if (currentData.globalIndex === undefined) updates.globalIndex = 0
-     if (currentData.taskIndex === undefined) updates.taskIndex = 0
-     if (currentData.showVideoCall === undefined) updates.showVideoCall = false
+    const updates = {
+      status: 'active',
+      lastHeartbeat: Date.now(),
+    }
 
-     update(roomRef, updates)
-     
-     if (heartbeatInterval.value) clearInterval(heartbeatInterval.value)
-     heartbeatInterval.value = setInterval(() => {
-       update(roomRef, {
-         lastHeartbeat: Date.now()
-       })
-     }, 60000) 
+    if (currentData.globalIndex === undefined) updates.globalIndex = 0
+    if (currentData.taskIndex === undefined) updates.taskIndex = 0
+    if (currentData.showVideoCall === undefined) updates.showVideoCall = false
+    if (currentData.createdAt === undefined) updates.createdAt = Date.now()
+
+    update(roomRef, updates)
+
+    if (heartbeatInterval.value) clearInterval(heartbeatInterval.value)
+    heartbeatInterval.value = setInterval(() => {
+      update(roomRef, {
+        lastHeartbeat: Date.now(),
+      })
+    }, 60000)
   }
 }
 
@@ -1047,10 +1063,6 @@ const completeStep = async (id, type, userCompleted = true) => {
     }
     if (type === 'tasks') {
       if (!Array.isArray(localTestAnswer.tasks)) {
-        console.error(
-          'localTestAnswer.tasks is not an array:',
-          localTestAnswer.tasks,
-        )
         return
       }
       localTestAnswer.tasks[id].completed = userCompleted
@@ -1097,6 +1109,20 @@ const completeStep = async (id, type, userCompleted = true) => {
       taskIndex: taskIndex.value,
       showVideoCall: true,
     })
+
+    // Update individual participant taskIndex (for tracking)
+    if (!isUserTestAdmin.value && user.value?.id) {
+      const participantRef = dbRef(
+        database,
+        `calls/${roomId.value}/participants/${user.value.id}`,
+      )
+      // We can just update taskIndex.
+      // Note: 'taskIndex' variable here is the NEXT index (already updated above if type=='tasks')
+      // validation: type === 'tasks' ? id + 1 : taskIndex.value
+      await update(participantRef, {
+        taskIndex: taskIndex.value,
+      })
+    }
 
     calculateProgress(localTestAnswer)
     await saveAnswer()
@@ -1364,6 +1390,26 @@ onMounted(async () => {
 
   await mappingSteps()
 })
+
+// Auto-join if refresh happens during active call
+watch(
+  isUserTestAdmin,
+  async (newValue) => {
+    if (newValue && roomId.value) {
+      const roomRef = dbRef(database, `rooms/${roomId.value}`)
+      const snapshot = await get(roomRef)
+      if (snapshot.exists()) {
+        const val = snapshot.val()
+        if (val.showVideoCall) {
+          displayVideoCallComponent.value = true
+          start.value = false // Ensure we hide the start screen if it's there
+          await startTest()
+        }
+      }
+    }
+  },
+  { immediate: true },
+)
 
 onBeforeUnmount(async () => {
   const roomRef = dbRef(database, `rooms/${roomId.value}`)
