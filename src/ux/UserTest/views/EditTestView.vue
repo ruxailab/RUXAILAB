@@ -27,7 +27,7 @@
             {{ $t('ModeratedTest.postTest') }}
           </v-tab>
           <v-tab v-if="hasEyeTracking" @click="index = 5">
-            Eye Tracking Configurations
+            {{ $t('ModeratedTest.eyeTrackingConfig') }}
           </v-tab>
         </v-tabs>
 
@@ -189,7 +189,7 @@ const save = async () => {
     const study = instantiateStudyByType(rawData.testType, rawData)
     await store.dispatch('updateStudy', study)
     showSuccess('pages.editTest.updatedTest')
-  } catch (error) {
+  } catch {
     showError('errors.globalError')
   }
 }

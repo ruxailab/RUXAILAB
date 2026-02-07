@@ -18,7 +18,7 @@
     <v-overlay v-model="isLoading" class="d-flex align-center justify-center">
       <div class="text-center">
         <v-progress-circular indeterminate color="#fca326" size="50" />
-        <div style="color: white" class="mt-3">loading...</div>
+        <div style="color: white" class="mt-3">{{ $t('common.loading') }}</div>
       </div>
     </v-overlay>
 
@@ -296,8 +296,8 @@
                         taskIndex > idx
                           ? 'success'
                           : taskIndex === idx
-                            ? 'primary'
-                            : 'grey'
+                          ? 'primary'
+                          : 'grey'
                       "
                       complete-icon="mdi-check"
                     />
@@ -729,7 +729,8 @@ const savePartialAnswer = async () => {
       })
     }
   } catch (e) {
-    console.error('[SAVE PARTIAL] error', e)
+    // Error saving partial answer - will retry on next save
+    throw e
   }
 }
 
@@ -794,18 +795,15 @@ const attachMediaToTasks = (answer, mediaUrls) => {
     for (const type in medias) {
       if (type === 'sizes') {
         const sizes = medias[type]
-        console.log(`Found sizes for Task ${taskIndex}:`, sizes)
+        // Process media sizes
         if (sizes.screenRecordURL) {
           task.screenSize = sizes.screenRecordURL
-          console.log('Set screenSize:', task.screenSize)
         }
         if (sizes.audioRecordURL) {
           task.audioSize = sizes.audioRecordURL
-          console.log('Set audioSize:', task.audioSize)
         }
         if (sizes.webcamRecordURL) {
           task.webcamSize = sizes.webcamRecordURL
-          console.log('Set webcamSize:', task.webcamSize)
         }
         continue
       }
@@ -1040,7 +1038,6 @@ const autoComplete = async () => {
     items.value[2].icon = 'mdi-check-bold'
   }
 }
-
 
 const initializeAnonymousUser = () => {
   if (!user.value && !anonymousUserDocId.value) {
@@ -1377,8 +1374,7 @@ onBeforeUnmount(() => {
   --v-stepper-header-title-color: #fff !important;
   --v-stepper-item-title-color: #fff !important;
   --v-stepper-item-color: #fff !important;
-  transition:
-    background 1s cubic-bezier(0.4, 0, 0.2, 1),
+  transition: background 1s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

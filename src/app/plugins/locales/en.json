@@ -1547,6 +1547,7 @@
     "preTest": "PRE-TEST",
     "tasks": "TASKS",
     "postTest": "POST-TEST",
+    "eyeTrackingConfig": "Eye Tracking Configurations",
     "consentForm": "Consent Form",
     "consentFormSubtitle": "Edit the consent text for the test. Changes are saved when you click the Save button.",
     "consentDescription": "This is a Consent Checkbox with a text to confirm consent.",
