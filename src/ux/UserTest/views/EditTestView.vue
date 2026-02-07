@@ -100,7 +100,7 @@ import ButtonSave from '@/shared/components/buttons/ButtonSave.vue'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
 import { useI18n } from 'vue-i18n'
 import { showSuccess, showError } from '@/shared/utils/toast'
-import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
+import { ACCESS_LEVEL, calculateAccessLevel } from '@/shared/utils/accessLevel'
 
 // Controller
 const studyController = new StudyController()
@@ -118,28 +118,11 @@ const consent = ref('')
 const index = ref(0)
 const route = useRoute()
 let unsubscribe = null
+
 // Computed
 const test = computed(() => store.getters.test)
 const user = computed(() => store.getters.user)
-
-// Check access level - prevent observators from accessing this view
-const accessLevel = computed(() => {
-  const currentUser = user.value
-  const currentTest = test.value
-
-  if (!currentUser) return ACCESS_LEVEL.GUEST
-  if (currentUser.accessLevel === 0) return ACCESS_LEVEL.ADMIN
-
-  if (currentTest?.testAdmin?.userDocId === currentUser.id)
-    return ACCESS_LEVEL.ADMIN
-
-  const coop = currentTest?.cooperators?.find(
-    (c) => c.userDocId === currentUser.id,
-  )
-  if (coop) return coop.accessLevel
-
-  return currentTest?.isPublic ? ACCESS_LEVEL.EVALUATOR : ACCESS_LEVEL.GUEST
-})
+const accessLevel = computed(() => calculateAccessLevel(user.value, test.value))
 
 const getWelcome = () => {
   welcomeMessage.value = test.value.testStructure.welcomeMessage || ''
