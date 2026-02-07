@@ -35,9 +35,20 @@ router.beforeEach(async (to, from, next) => {
     return next() // Allow immediate access without any checks
   }
 
+  // Allow access to public pages even if user is logged in but email not verified
+  const publicPages = ['/signin', '/signup', '/verify-email', '/forgot-password']
+  if (publicPages.includes(to.path)) {
+    return next()
+  }
+
   if (!user) {
-    await store.dispatch('autoSignIn')
+    const authUser = await store.dispatch('autoSignIn')
     user = store.state.Auth.user
+    
+    // If user is logged in but email not verified, redirect to verify-email
+    if (authUser && authUser.emailVerified === false && !publicPages.includes(to.path)) {
+      return next('/verify-email')
+    }
   }
 
   if (to.path === '/') return next(redirect())

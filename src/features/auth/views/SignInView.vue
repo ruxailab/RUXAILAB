@@ -148,6 +148,10 @@ const onSignIn = async () => {
     })
     await router.push('/admin')
   } catch (error) {
+    if (error.message === 'EMAIL_NOT_VERIFIED') {
+      await router.push('/verify-email')
+      return
+    }
     return error
   } finally {
     loadingType.value = ''
@@ -173,8 +177,17 @@ const onGoogleSignInStart = () => {
 }
 
 const onGoogleSignInSuccess = async () => {
-  if (store.getters.user) router.push('/admin')
-  store.commit('setLoading', false)
+  try {
+    if (store.getters.user) router.push('/admin')
+  } catch (error) {
+    if (error.message === 'EMAIL_NOT_VERIFIED') {
+      await router.push('/verify-email')
+      return
+    }
+    throw error
+  } finally {
+    store.commit('setLoading', false)
+  }
 }
 
 const onGoogleSignInError = (error) => {

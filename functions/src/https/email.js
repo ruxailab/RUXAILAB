@@ -2,11 +2,11 @@ import { admin, functions } from "../f.firebase.js";
 import nodemailer from "nodemailer";
 import * as fs from "fs";
 import * as path from "path";
-import logger from "../utils/logger.js";
 
 export const sendEmail = functions.onCall({
   handler: async (data) => {
-    const content = data.data;
+    // Firebase callable passes the argument directly  
+    const content = data.data || data;
 
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
@@ -42,9 +42,22 @@ export const sendEmail = functions.onCall({
       htmlTemplate = htmlTemplate
         .replace("{{resetLink}}", link);
     }
+    else if (content.template === 'emailVerification') {
+      const actionCodeSettings = {
+        url: `${process.env.SITE_URL}/verify-email`,
+        handleCodeInApp: true,
+      }
+
+      const link = await admin.auth().generateEmailVerificationLink(content.to, actionCodeSettings);
+      const templatePath = path.join(process.cwd(), "src/templates/mails/emailVerification.html");
+      htmlTemplate = fs.readFileSync(templatePath, "utf-8");
+      htmlTemplate = htmlTemplate
+        .replace("{{verificationLink}}", link)
+        .replace("{{userName}}", content.data.userName || 'User');
+    }
 
     const mail = {
-      from: 'no-reply@ruxailab.com',
+      from: process.env.SMTP_USER || 'no-reply@ruxailab.com',
       to: content.to,
       subject: content.subject,
       html: htmlTemplate,
@@ -53,8 +66,8 @@ export const sendEmail = functions.onCall({
 
     try {
       await transporter.sendMail(mail);
-      logger.info('Email sent successfully to', { to: content.to });
-      return 'Email sent successfully.';
+       logger.info('Email sent successfully to', { to: content.to });
+       return 'Email sent successfully.';
     } catch (err) {
       logger.error('Error sending email:', { error: err });
       return err;
