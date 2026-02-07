@@ -1380,7 +1380,8 @@
       "quick_actions": "Schnelle Aktionen",
       "perform_common_tasks": "Führen Sie häufige Aufgaben sofort aus",
       "delete_warning": "Alle zugehörigen Daten, Ergebnisse und Konfigurationen gehen für immer verloren.",
-      "delete_forever": "Endgültig löschen"
+      "delete_forever": "Endgültig löschen",
+      "action_cannot_be_undone": "Diese Aktion kann nicht rückgängig gemacht werden"
     },
     "editTest": {
       "title": "Test bearbeiten",

@@ -1377,7 +1377,8 @@
       "quick_actions": "Actions rapides",
       "perform_common_tasks": "Effectuez des tâches courantes instantanément",
       "delete_warning": "Toutes les données, résultats et configurations associés seront perdus à jamais.",
-      "delete_forever": "Supprimer définitivement"
+      "delete_forever": "Supprimer définitivement",
+      "action_cannot_be_undone": "Cette action ne peut pas être annulée"
     },
     "editTest": {
       "title": "Modifier le test",
