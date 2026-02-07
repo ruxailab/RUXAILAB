@@ -170,8 +170,6 @@ const emit = defineEmits(['update:modelValue', 'validate'])
 
 const localTask = ref({ ...props.modelValue })
 
-const { t } = useI18n()
-
 const linkRules = [
   (v) => !v || /^https?:\/\/.+/.test(v) || t('CreateTask.validation.validUrl'),
 ]
