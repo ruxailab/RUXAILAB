@@ -1377,7 +1377,8 @@
       "quick_actions": "クイックアクション",
       "perform_common_tasks": "一般的なタスクを即時に実行",
       "delete_warning": "関連するすべてのデータ、結果、設定が完全に失われます。",
-      "delete_forever": "完全に削除"
+      "delete_forever": "完全に削除",
+      "action_cannot_be_undone": "この操作は元に戻せません"
     },
     "editTest": {
       "title": "テストを編集",

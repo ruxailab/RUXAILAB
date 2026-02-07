@@ -1378,7 +1378,8 @@
       "quick_actions": "Quick Actions",
       "perform_common_tasks": "Perform common tasks instantly",
       "delete_warning": "All associated data, results, and configurations will be lost forever.",
-      "delete_forever": "Delete Forever"
+      "delete_forever": "Delete Forever",
+      "action_cannot_be_undone": "This action cannot be undone"
     },
     "editTest": {
       "title": "Edit test",

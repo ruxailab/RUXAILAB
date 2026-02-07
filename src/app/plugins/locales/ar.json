@@ -1379,7 +1379,8 @@
       "quick_actions": "إجراءات سريعة",
       "perform_common_tasks": "قم بإجراء المهام الشائعة على الفور",
       "delete_warning": "سيتم فقدان جميع البيانات المرتبطة والنتائج والتكوينات إلى الأبد.",
-      "delete_forever": "حذف إلى الأبد"
+      "delete_forever": "حذف إلى الأبد",
+      "action_cannot_be_undone": "لا يمكن التراجع عن هذا الإجراء"
     },
     "editTest": {
       "title": "تحرير الاختبار",

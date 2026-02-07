@@ -1377,7 +1377,8 @@
       "quick_actions": "快捷操作",
       "perform_common_tasks": "立即执行常见任务",
       "delete_warning": "所有相关数据、结果和配置将永久丢失。",
-      "delete_forever": "永久删除"
+      "delete_forever": "永久删除",
+      "action_cannot_be_undone": "此操作无法撤销"
     },
     "editTest": {
       "title": "编辑测试",

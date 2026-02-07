@@ -826,8 +826,7 @@
       "change_role_title": "भूमिका बदलें",
       "message_title_hint": "अपने संदेश के लिए एक शीर्षक लिखें",
       "message_content_hint": "अपने संदेश की सामग्री लिखें",
-      "invite_message": "आपको परीक्षण {testTitle} में भाग लेने के लिए आमंत्रित किया गया है"
-      "message_sent_success": "संदेश सफलतापूर्वक भेजा गया",
+      "invite_message": "आपको परीक्षण {testTitle} में भाग लेने के लिए आमंत्रित किया गया है""message_sent_success": "संदेश सफलतापूर्वक भेजा गया",
       "message_sent_error": "संदेश भेजने में विफल",
       "user_not_registered": "इस उपयोगकर्ता ने अभी तक आमंत्रण स्वीकार नहीं किया है या वह पंजीकृत नहीं है।"
     }
@@ -1377,7 +1376,8 @@
       "quick_actions": "त्वरित क्रियाएं",
       "perform_common_tasks": "सामान्य कार्य तुरंत करें",
       "delete_warning": "संबंधित सभी डेटा, परिणाम और कॉन्फ़िगरेशन स्थायी रूप से खो जाएंगे।",
-      "delete_forever": "हमेशा के लिए हटाएँ"
+      "delete_forever": "हमेशा के लिए हटाएँ",
+      "action_cannot_be_undone": "यह क्रिया पूर्ववत नहीं की जा सकती"
     },
     "editTest": {
       "title": "परीक्षण संपादित करें",
