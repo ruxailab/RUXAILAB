@@ -75,14 +75,14 @@ export function useItemFormatting(type) {
           item.status === 'active'
             ? 'green'
             : item.status === 'draft'
-            ? 'orange'
-            : 'grey',
+              ? 'orange'
+              : 'grey',
         icon:
           item.status === 'active'
             ? 'mdi-check-circle'
             : item.status === 'draft'
-            ? 'mdi-pencil'
-            : 'mdi-clock-outline',
+              ? 'mdi-pencil'
+              : 'mdi-clock-outline',
       })
     }
 
