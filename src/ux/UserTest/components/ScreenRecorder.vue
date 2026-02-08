@@ -17,7 +17,7 @@
               <v-icon>mdi-monitor-screenshot</v-icon>
             </v-btn>
           </template>
-          <span>Capture Screen</span>
+          <span>{{ $t('ModeratedTest.screenRecorder.captureScreen') }}</span>
         </v-tooltip>
         <v-tooltip
           v-if="isCapturing"

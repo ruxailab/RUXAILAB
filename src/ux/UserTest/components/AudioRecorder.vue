@@ -17,7 +17,7 @@
               <v-icon>mdi-microphone</v-icon>
             </v-btn>
           </template>
-          <span>Start Audio Record</span>
+          <span>{{ $t('ModeratedTest.audioRecorder.startRecording') }}</span>
         </v-tooltip>
         <v-tooltip
           v-if="recordingAudio"
@@ -35,7 +35,7 @@
               <v-icon>mdi-stop</v-icon>
             </v-btn>
           </template>
-          <span>Stop Audio Record</span>
+          <span>{{ $t('ModeratedTest.audioRecorder.stopRecording') }}</span>
         </v-tooltip>
       </v-row>
     </v-col> -->

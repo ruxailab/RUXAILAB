@@ -17,8 +17,10 @@
         <v-icon size="48" class="mb-2 opacity-50"
           >mdi-text-box-plus-outline</v-icon
         >
-        <p>No notes taken yet.</p>
-        <p class="text-caption">Start typing below to record observations.</p>
+        <p>{{ $t('ModeratedTest.observatorNotes.noNotes') }}</p>
+        <p class="text-caption">
+          {{ $t('ModeratedTest.observatorNotes.startTyping') }}
+        </p>
       </div>
 
       <div

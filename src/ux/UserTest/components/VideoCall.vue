@@ -19,7 +19,9 @@
             playsinline
             class="video-element"
           ></video>
-          <div class="video-label">Compartilhando tela</div>
+          <div class="video-label">
+            {{ $t('ModeratedTest.videoCall.sharingScreen') }}
+          </div>
         </div>
       </v-col>
 
@@ -42,7 +44,9 @@
                 <v-icon size="64" color="white" class="mb-2"
                   >mdi-video-off</v-icon
                 >
-                <p class="text-white">Camera is off</p>
+                <p class="text-white">
+                  {{ $t('ModeratedTest.videoCall.cameraOff') }}
+                </p>
               </div>
 
               <!-- Microphone muted indicator -->
@@ -51,7 +55,9 @@
               </div>
 
               <div class="video-label">
-                Tu video ({{ user?.email?.split('@')[0] }})
+                {{ $t('ModeratedTest.videoCall.yourVideo') }} ({{
+                  user?.email?.split('@')[0]
+                }})
               </div>
             </div>
           </div>
@@ -79,7 +85,9 @@
                 <v-icon size="64" color="white" class="mb-2"
                   >mdi-video-off</v-icon
                 >
-                <p class="text-white">Camera is off</p>
+                <p class="text-white">
+                  {{ $t('ModeratedTest.videoCall.cameraOff') }}
+                </p>
               </div>
 
               <!-- Microphone muted indicator for remote peer -->
@@ -100,7 +108,9 @@
             class="d-flex align-center justify-center pa-4 text-grey"
           >
             <v-icon class="mr-2">mdi-account-clock</v-icon>
-            <span>Waiting for participants...</span>
+            <span>{{
+              $t('ModeratedTest.videoCall.waitingForParticipants')
+            }}</span>
           </div>
         </div>
       </v-col>
@@ -126,7 +136,9 @@
                 <v-icon size="64" color="white" class="mb-2"
                   >mdi-video-off</v-icon
                 >
-                <p class="text-white">Camera is off</p>
+                <p class="text-white">
+                  {{ $t('ModeratedTest.videoCall.cameraOff') }}
+                </p>
               </div>
 
               <!-- Microphone muted indicator -->
@@ -135,7 +147,9 @@
               </div>
 
               <div class="video-label">
-                Your preview ({{ user?.email?.split('@')[0] }})
+                {{ $t('ModeratedTest.videoCall.yourPreview') }} ({{
+                  user?.email?.split('@')[0]
+                }})
               </div>
             </div>
           </div>
@@ -150,13 +164,14 @@
       >
         <div class="observator-notice">
           <v-icon size="64" color="primary" class="mb-4">mdi-eye</v-icon>
-          <h3 class="text-h5 mb-2">Observator Mode</h3>
+          <h3 class="text-h5 mb-2">
+            {{ $t('ModeratedTest.videoCall.observatorMode') }}
+          </h3>
           <p class="text-body-1">
-            Waiting for moderator to start the session...
+            {{ $t('ModeratedTest.videoCall.waitingForModerator') }}
           </p>
           <p class="text-body-2 text-grey mt-2">
-            You will be able to observe all video feeds without sending your
-            own.
+            {{ $t('ModeratedTest.videoCall.observatorDescription') }}
           </p>
         </div>
       </v-col>
@@ -178,10 +193,11 @@
             color="primary"
             class="mb-4"
           ></v-progress-circular>
-          <h3 class="text-h6 mb-2">Waiting for moderator...</h3>
+          <h3 class="text-h6 mb-2">
+            {{ $t('ModeratedTest.videoCall.waitingForModeratorTitle') }}
+          </h3>
           <p class="text-body-2 text-grey">
-            The video call will start automatically when the moderator opens the
-            room.
+            {{ $t('ModeratedTest.videoCall.waitingForModeratorMessage') }}
           </p>
         </div>
       </v-col>
@@ -284,7 +300,7 @@
                 Open Room
               </v-btn>
             </template>
-            <span>Start the video call session</span>
+            <span>{{ $t('ModeratedTest.videoCall.startSession') }}</span>
           </v-tooltip>
 
           <!-- End Call button (for moderator when call is active) -->
@@ -301,7 +317,7 @@
                 End Call
               </v-btn>
             </template>
-            <span>End the video call session</span>
+            <span>{{ $t('ModeratedTest.videoCall.endSession') }}</span>
           </v-tooltip>
 
           <!-- End Call button (for participant when call is active) -->
@@ -318,7 +334,7 @@
                 Leave Call
               </v-btn>
             </template>
-            <span>Leave the video call session</span>
+            <span>{{ $t('ModeratedTest.videoCall.leaveSession') }}</span>
           </v-tooltip>
 
           <!-- Stepper menu button -->
@@ -367,7 +383,7 @@
     <!-- Side Panel -->
     <div class="side-panel" :class="{ 'side-panel-open': showSidePanel }">
       <div class="side-panel-header">
-        <h3>Panel de Herramientas</h3>
+        <h3>{{ $t('ModeratedTest.videoCall.toolsPanel') }}</h3>
         <v-btn
           icon
           size="small"
@@ -382,7 +398,7 @@
       <div class="side-panel-content">
         <!-- Session Controls Section -->
         <div class="panel-section">
-          <h4>Control de Sesión</h4>
+          <h4>{{ $t('ModeratedTest.videoCall.sessionControl') }}</h4>
 
           <!-- Connection controls when call is not started -->
           <div v-if="!callStarted" class="session-controls">
@@ -433,7 +449,7 @@
         </div>
 
         <div class="panel-section">
-          <h4>Participantes</h4>
+          <h4>{{ $t('ModeratedTest.videoCall.participants') }}</h4>
           <div
             v-for="participant in participantsList"
             :key="participant.id"
@@ -567,7 +583,7 @@
       :class="{ 'stepper-panel-open': showStepperPanel }"
     >
       <div class="stepper-panel-header">
-        <h3>Test Progress</h3>
+        <h3>{{ $t('ModeratedTest.videoCall.testProgress') }}</h3>
         <v-btn
           icon
           size="small"
@@ -610,8 +626,12 @@
               <div v-if="currentStepperValue >= 1" class="step-line"></div>
             </div>
             <div class="step-content">
-              <h4 class="step-title">Consent</h4>
-              <p class="step-description">User consent and agreement</p>
+              <h4 class="step-title">
+                {{ $t('ModeratedTest.videoCall.consent') }}
+              </h4>
+              <p class="step-description">
+                {{ $t('ModeratedTest.videoCall.consentDescription') }}
+              </p>
             </div>
           </div>
 
@@ -635,8 +655,10 @@
               <div v-if="currentStepperValue >= 2" class="step-line"></div>
             </div>
             <div class="step-content">
-              <h4 class="step-title">Pre-test</h4>
-              <p class="step-description">Initial questionnaire</p>
+              <h4 class="step-title">{{ $t('ModeratedTest.preTest') }}</h4>
+              <p class="step-description">
+                {{ $t('ModeratedTest.videoCall.preTestDescription') }}
+              </p>
             </div>
           </div>
 
@@ -660,8 +682,10 @@
               <div v-if="currentStepperValue >= 3" class="step-line"></div>
             </div>
             <div class="step-content">
-              <h4 class="step-title">Tasks</h4>
-              <p class="step-description">User testing tasks</p>
+              <h4 class="step-title">{{ $t('ModeratedTest.tasks') }}</h4>
+              <p class="step-description">
+                {{ $t('ModeratedTest.videoCall.tasksDescription') }}
+              </p>
 
               <!-- Task dropdown when active and moderator -->
               <div
@@ -734,8 +758,10 @@
               <div v-if="currentStepperValue >= 4" class="step-line"></div>
             </div>
             <div class="step-content">
-              <h4 class="step-title">Post-test</h4>
-              <p class="step-description">Final questionnaire</p>
+              <h4 class="step-title">{{ $t('ModeratedTest.postTest') }}</h4>
+              <p class="step-description">
+                {{ $t('ModeratedTest.videoCall.postTestDescription') }}
+              </p>
             </div>
           </div>
 
@@ -758,8 +784,12 @@
               </div>
             </div>
             <div class="step-content">
-              <h4 class="step-title">Completion</h4>
-              <p class="step-description">Test finished</p>
+              <h4 class="step-title">
+                {{ $t('ModeratedTest.videoCall.completion') }}
+              </h4>
+              <p class="step-description">
+                {{ $t('ModeratedTest.videoCall.completionDescription') }}
+              </p>
             </div>
           </div>
         </div>

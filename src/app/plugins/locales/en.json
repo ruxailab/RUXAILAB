@@ -1547,6 +1547,7 @@
     "preTest": "PRE-TEST",
     "tasks": "TASKS",
     "postTest": "POST-TEST",
+    "eyeTrackingConfig": "Eye Tracking Configurations",
     "consentForm": "Consent Form",
     "consentFormSubtitle": "Edit the consent text for the test. Changes are saved when you click the Save button.",
     "consentDescription": "This is a Consent Checkbox with a text to confirm consent.",
@@ -1571,7 +1572,58 @@
     "preTestVariables": "Pre-Test Variables",
     "postTestVariables": "Post-Test Variables",
     "configureVariables": "Configure the variables for the {type} section. Add, edit, or remove variables as needed.",
-    "createNewVariableTitle": "Create New Variable"
+    "createNewVariableTitle": "Create New Variable",
+    "videoCall": {
+      "sharingScreen": "Sharing screen",
+      "cameraOff": "Camera is off",
+      "yourVideo": "Your video",
+      "waitingForParticipants": "Waiting for participants...",
+      "yourPreview": "Your preview",
+      "observatorMode": "Observator Mode",
+      "waitingForModerator": "Waiting for moderator to start the session...",
+      "observatorDescription": "You will be able to observe all video feeds without sending your own.",
+      "waitingForModeratorTitle": "Waiting for moderator...",
+      "waitingForModeratorMessage": "The video call will start automatically when the moderator opens the room.",
+      "startSession": "Start the video call session",
+      "endSession": "End the video call session",
+      "leaveSession": "Leave the video call session",
+      "toolsPanel": "Tools Panel",
+      "sessionControl": "Session Control",
+      "participants": "Participants",
+      "testProgress": "Test Progress",
+      "consent": "Consent",
+      "consentDescription": "User consent and agreement",
+      "preTestDescription": "Initial questionnaire",
+      "tasksDescription": "User testing tasks",
+      "postTestDescription": "Final questionnaire",
+      "completion": "Completion",
+      "completionDescription": "Test finished"
+    },
+    "videoRecorder": {
+      "startRecording": "Start Recording",
+      "stopRecording": "Stop Recording"
+    },
+    "audioRecorder": {
+      "startRecording": "Start Audio Record",
+      "stopRecording": "Stop Audio Record"
+    },
+    "screenRecorder": {
+      "captureScreen": "Capture Screen"
+    },
+    "observatorNotes": {
+      "noNotes": "No notes taken yet.",
+      "startTyping": "Start typing below to record observations."
+    },
+    "sessionAnalytics": {
+      "evaluators": "Evaluators",
+      "tasksForUser": "Tasks for User {userId}",
+      "selectParticipant": "Select a participant to view their tasks."
+    },
+    "stepSelector": {
+      "testSteps": "Test Steps",
+      "currentStep": "Current Step",
+      "allSteps": "All Steps"
+    }
   },
   "CardSorting": {
     "noCategory": "No category",

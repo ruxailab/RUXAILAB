@@ -17,7 +17,7 @@
               <v-icon>mdi-camera</v-icon>
             </v-btn>
           </template>
-<span>Start Recording</span>
+<span>{{ $t('ModeratedTest.videoRecorder.startRecording') }}</span>
 </v-tooltip>
 <v-tooltip v-if="recording" location="bottom">
   <template #activator="{ props }">
@@ -33,7 +33,7 @@
               </v-icon>
             </v-btn>
           </template>
-  <span>Stop Recording</span>
+  <span>{{ $t('ModeratedTest.videoRecorder.stopRecording') }}</span>
 </v-tooltip>
 </v-row>
 </v-col> -->
