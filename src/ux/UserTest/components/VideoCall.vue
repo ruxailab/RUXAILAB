@@ -305,7 +305,10 @@
           </v-tooltip>
 
           <!-- End Call button (for participant when call is active) -->
-          <v-tooltip v-if="!caller && callStarted" location="top">
+          <v-tooltip
+            v-if="!caller && callStarted && !isObservator"
+            location="top"
+          >
             <template #activator="{ props }">
               <v-btn
                 v-bind="props"
@@ -412,6 +415,7 @@
 
             <!-- End call button -->
             <v-btn
+              v-if="!isObservator"
               color="error"
               size="large"
               block
