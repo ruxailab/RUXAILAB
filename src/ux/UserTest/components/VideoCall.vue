@@ -822,6 +822,7 @@
 
 <script setup>
 import { ref, computed, reactive, onMounted, onBeforeUnmount, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { database } from '@/app/plugins/firebase/index'
 import {
   ref as dbRef,
@@ -1464,25 +1465,25 @@ const startCall = async () => {
     // Failed to open room
   }
 }
+const router = useRouter() // Ensure router is available
+
 const endCall = async () => {
   if (caller.value) {
     try {
+      // Remove both the call interactions and the room state
       await remove(dbRef(database, `calls/${props.roomId}`))
-    } catch {
-      // Failed to remove calls node
-    }
-    try {
-      await update(dbRef(database, `rooms/${props.roomId}`), {
-        showVideoCall: false,
-      })
-    } catch {
-      // Failed to update rooms showVideoCall
+      // Also remove the room to clean up global state (taskIndex, etc.)
+      await remove(dbRef(database, `rooms/${props.roomId}`))
+    } catch (error) {
+      console.error('Error ending call:', error) // eslint-disable-line no-console
     }
     emit('call-ended')
     leaveRoom()
+    router.push('/admin')
   } else {
     // Non-moderator: can just leave locally
     leaveRoom()
+    router.push('/admin')
   }
 }
 
