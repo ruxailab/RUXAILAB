@@ -6,7 +6,6 @@ import { admin } from '../f.firebase.js'
 export const cleanupGhostSessions = onSchedule('every 6 hours', async (event) => {
   const db = admin.database()
   const roomsRef = db.ref('rooms')
-  const callsRef = db.ref('calls')
 
   const now = Date.now()
   const cutoffTime = now - 6 * 60 * 60 * 1000 // 6 hours ago

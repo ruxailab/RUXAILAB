@@ -921,13 +921,27 @@ const startTest = async () => {
 
   onValue(roomRef, (snapshot) => {
     const data = snapshot.val()
-    if (!data) return
+
+    // If data is null, the room has been deleted (e.g. by moderator ending call)
+    if (!data) {
+      if (!isUserTestAdmin.value && displayVideoCallComponent.value) {
+        // displayVideoCallComponent.value = false // Avoid updating state before redirect to prevent unmount error
+        // Optionally show start screen or just return to test flow
+        // start.value = true
+        showInfo('The moderator has ended the session')
+        router.push('/admin')
+      }
+      return
+    }
 
     globalIndex.value = data.globalIndex !== undefined ? data.globalIndex : 0
     taskIndex.value = data.taskIndex !== undefined ? data.taskIndex : 0
 
     if (!isUserTestAdmin.value) {
-      displayVideoCallComponent.value = data.showVideoCall
+      // sync video call state
+      if (data.showVideoCall !== undefined) {
+        displayVideoCallComponent.value = data.showVideoCall
+      }
 
       // Check Moderator Heartbeat (allow 2 minutes grace)
       if (data.lastHeartbeat) {
