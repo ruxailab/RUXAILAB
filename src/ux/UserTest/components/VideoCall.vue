@@ -507,7 +507,7 @@
           </div>
         </div>
 
-        <div class="panel-section">
+        <div v-if="!isObservator" class="panel-section">
           <h4>Configuración</h4>
           <v-list density="compact">
             <v-list-item @click="toggleCamera">
