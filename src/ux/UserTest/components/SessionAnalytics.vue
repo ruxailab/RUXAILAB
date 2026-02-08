@@ -5,7 +5,7 @@
       <v-col cols="12" class="text-center">
         <h1 class="text-h4 font-weight-bold d-flex align-center justify-center">
           <v-icon class="mr-2" color="success">mdi-video-account</v-icon>
-          Session Analytics
+          {{ $t('ModeratedTest.sessionAnalytics.sessionAnalytics') }}
         </h1>
       </v-col>
     </v-row>
@@ -77,18 +77,14 @@
     {{ snackbar.text }}
     <template #actions>
       <v-btn color="white" variant="text" @click="snackbar.visible = false">
-        Close
+        {{ $t('ModeratedTest.sessionAnalytics.close') }}
       </v-btn>
     </template>
   </v-snackbar>
 </template>
 
 <script>
-import SessionAnalyticsDialog from './dialogs/SessionAnalyticsDialog.vue'
 export default {
-  components: {
-    SessionAnalyticsDialog,
-  },
   data() {
     return {
       selectedUserId: null,
@@ -126,16 +122,16 @@ export default {
       currentTime: 0,
       videoDuration: 100,
       isPlaying: false,
-      _timelineInterval: null,
+      timelineInterval: null,
     }
   },
   mounted() {
-    this._timelineInterval = setInterval(() => {
+    this.timelineInterval = setInterval(() => {
       this.updateTimeline()
     }, 200)
   },
   beforeUnmount() {
-    clearInterval(this._timelineInterval)
+    clearInterval(this.timelineInterval)
   },
   methods: {
     emitTimelineUpdate() {
@@ -187,9 +183,6 @@ export default {
       v1.currentTime = time
       v2.currentTime = time
       this.currentTime = time // Actualiza el estado para el slider
-    },
-    watch: {
-      currentTime(newVal) {},
     },
     updateTimeline() {
       if (this.$refs.mainVideo1 && !this.$refs.mainVideo1.paused) {

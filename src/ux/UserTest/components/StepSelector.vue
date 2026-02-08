@@ -17,7 +17,11 @@
           <v-icon size="28">mdi-view-list</v-icon>
         </v-btn>
       </template>
-      <span>{{ showStepPanel ? 'Hide steps' : 'Show steps' }}</span>
+      <span>{{
+        showStepPanel
+          ? $t('ModeratedTest.stepSelector.hideSteps')
+          : $t('ModeratedTest.stepSelector.showSteps')
+      }}</span>
     </v-tooltip>
 
     <!-- Step Selection Panel -->
@@ -40,7 +44,8 @@
           <h4>{{ $t('ModeratedTest.stepSelector.currentStep') }}</h4>
           <v-chip color="primary" size="large" class="mb-3">
             <v-icon start>mdi-play-circle</v-icon>
-            Step {{ currentStep }} of {{ totalSteps }}
+            {{ $t('ModeratedTest.stepSelector.step') }} {{ currentStep }}
+            {{ $t('ModeratedTest.stepSelector.of') }} {{ totalSteps }}
           </v-chip>
           <p class="step-description">{{ getCurrentStepDescription() }}</p>
         </div>
@@ -80,7 +85,9 @@
               </div>
 
               <div class="step-item-content">
-                <div class="step-item-title">Step {{ index + 1 }}</div>
+                <div class="step-item-title">
+                  {{ $t('ModeratedTest.stepSelector.step') }} {{ index + 1 }}
+                </div>
                 <div class="step-item-description">
                   {{ step.title }}
                 </div>
@@ -93,7 +100,11 @@
                   color="primary"
                   @click.stop="selectStep(index + 1)"
                 >
-                  {{ index + 1 < currentStep ? 'Revisit' : 'Go to' }}
+                  {{
+                    index + 1 < currentStep
+                      ? $t('ModeratedTest.stepSelector.revisit')
+                      : $t('ModeratedTest.stepSelector.goTo')
+                  }}
                 </v-btn>
               </div>
             </div>
@@ -112,8 +123,10 @@
             <v-icon start>mdi-arrow-right</v-icon>
             {{
               currentStep >= totalSteps
-                ? 'Test Complete'
-                : `Proceed to Step ${currentStep + 1}`
+                ? $t('ModeratedTest.stepSelector.testComplete')
+                : $t('ModeratedTest.stepSelector.proceedToStep', {
+                    step: currentStep + 1,
+                  })
             }}
           </v-btn>
 
@@ -126,7 +139,7 @@
             @click="resetToFirstStep"
           >
             <v-icon start>mdi-restart</v-icon>
-            Restart Test
+            {{ $t('ModeratedTest.stepSelector.restartTest') }}
           </v-btn>
         </div>
       </div>

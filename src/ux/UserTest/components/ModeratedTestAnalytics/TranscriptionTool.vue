@@ -85,9 +85,15 @@
                 class="mb-3"
                 grow
               >
-                <v-tab value="timeline">Timeline</v-tab>
-                <v-tab value="transcriptions">Transcriptions</v-tab>
-                <v-tab value="export">Export Data</v-tab>
+                <v-tab value="timeline">{{
+                  $t('ModeratedTest.transcriptionTool.timeline')
+                }}</v-tab>
+                <v-tab value="transcriptions">{{
+                  $t('ModeratedTest.transcriptionTool.transcriptions')
+                }}</v-tab>
+                <v-tab value="export">{{
+                  $t('ModeratedTest.transcriptionTool.exportData')
+                }}</v-tab>
               </v-tabs>
 
               <div class="panel-shell">

@@ -41,6 +41,7 @@
 </template>
 
 <script setup>
+/* eslint-disable no-console */
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
@@ -68,7 +69,7 @@ const props = defineProps({
 const emit = defineEmits(['showLoading', 'stopShowLoading'])
 
 const store = useStore()
-const { t } = useI18n()
+const { t } = useI18n() // eslint-disable-line no-unused-vars
 const currentUserTestAnswer = computed(
   () => store.getters.currentUserTestAnswer,
 )

@@ -5,10 +5,11 @@
     >
       <h3 class="text-h6 font-weight-bold display-flex align-center">
         <v-icon class="mr-2">mdi-notebook-edit-outline</v-icon>
-        Session Notes
+        {{ $t('ModeratedTest.observatorNotes.sessionNotes') }}
       </h3>
       <v-chip size="small" color="primary" variant="outlined"
-        >{{ notes.length }} notes</v-chip
+        >{{ notes.length }}
+        {{ $t('ModeratedTest.observatorNotes.notes') }}</v-chip
       >
     </div>
 

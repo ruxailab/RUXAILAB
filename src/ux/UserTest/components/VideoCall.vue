@@ -231,7 +231,9 @@
               </v-btn>
             </template>
             <span>{{
-              isCameraEnabled ? 'Turn off camera' : 'Turn on camera'
+              isCameraEnabled
+                ? $t('ModeratedTest.videoCall.turnOffCamera')
+                : $t('ModeratedTest.videoCall.turnOnCamera')
             }}</span>
           </v-tooltip>
 
@@ -255,7 +257,9 @@
               </v-btn>
             </template>
             <span>{{
-              isMicrophoneEnabled ? 'Mute microphone' : 'Unmute microphone'
+              isMicrophoneEnabled
+                ? $t('ModeratedTest.videoCall.muteMicrophone')
+                : $t('ModeratedTest.videoCall.unmuteMicrophone')
             }}</span>
           </v-tooltip>
 
@@ -279,7 +283,9 @@
               </v-btn>
             </template>
             <span>{{
-              isSharingScreen ? 'Stop sharing screen' : 'Share screen'
+              isSharingScreen
+                ? $t('ModeratedTest.videoCall.stopSharingScreen')
+                : $t('ModeratedTest.videoCall.shareScreen')
             }}</span>
           </v-tooltip>
         </div>
@@ -297,7 +303,7 @@
                 @click="startCall"
               >
                 <v-icon start size="20">mdi-video-plus</v-icon>
-                Open Room
+                {{ $t('ModeratedTest.videoCall.openRoom') }}
               </v-btn>
             </template>
             <span>{{ $t('ModeratedTest.videoCall.startSession') }}</span>
@@ -314,7 +320,7 @@
                 @click="endCall"
               >
                 <v-icon start size="20">mdi-phone-hangup</v-icon>
-                End Call
+                {{ $t('ModeratedTest.videoCall.endCall') }}
               </v-btn>
             </template>
             <span>{{ $t('ModeratedTest.videoCall.endSession') }}</span>
@@ -331,7 +337,7 @@
                 @click="endCall"
               >
                 <v-icon start size="20">mdi-phone-hangup</v-icon>
-                Leave Call
+                {{ $t('ModeratedTest.videoCall.leaveCall') }}
               </v-btn>
             </template>
             <span>{{ $t('ModeratedTest.videoCall.leaveSession') }}</span>
@@ -354,7 +360,11 @@
                 <v-icon size="28">mdi-format-list-numbered</v-icon>
               </v-btn>
             </template>
-            <span>{{ showStepperPanel ? 'Hide steps' : 'Show steps' }}</span>
+            <span>{{
+              showStepperPanel
+                ? $t('ModeratedTest.videoCall.hideSteps')
+                : $t('ModeratedTest.videoCall.showSteps')
+            }}</span>
           </v-tooltip>
 
           <!-- Side panel toggle button -->
@@ -374,7 +384,11 @@
                 <v-icon size="28">mdi-account-group</v-icon>
               </v-btn>
             </template>
-            <span>{{ showSidePanel ? 'Hide panel' : 'Show panel' }}</span>
+            <span>{{
+              showSidePanel
+                ? $t('ModeratedTest.videoCall.hidePanel')
+                : $t('ModeratedTest.videoCall.showPanel')
+            }}</span>
           </v-tooltip>
         </div>
       </div>
@@ -406,7 +420,7 @@
             <div v-if="!caller" class="participant-info">
               <p class="text-body-2 mb-0">
                 <v-icon start size="16">mdi-information</v-icon>
-                Join room controls are now in the main interface above
+                {{ $t('ModeratedTest.videoCall.joinRoomInfo') }}
               </p>
             </div>
           </div>
@@ -423,7 +437,7 @@
               @click="proceedToNextStep"
             >
               <v-icon start>mdi-arrow-right</v-icon>
-              Proceed to Next Step
+              {{ $t('ModeratedTest.videoCall.proceedToNextStep') }}
             </v-btn>
 
             <!-- End call button -->
@@ -435,14 +449,14 @@
               @click="endCall"
             >
               <v-icon start>mdi-phone-hangup</v-icon>
-              End Call
+              {{ $t('ModeratedTest.videoCall.endCall') }}
             </v-btn>
 
             <!-- Call status -->
             <div class="status-message">
               <v-chip color="green" size="small" class="mb-2">
                 <v-icon start size="16">mdi-phone</v-icon>
-                Llamada activa
+                {{ $t('ModeratedTest.videoCall.callActive') }}
               </v-chip>
             </div>
           </div>
@@ -475,14 +489,19 @@
             </v-avatar>
             <div class="participant-info">
               <span class="participant-name">
-                {{ participant.name }}{{ participant.isSelf ? ' (Tú)' : '' }}
+                {{ participant.name
+                }}{{
+                  participant.isSelf
+                    ? ` (${$t('ModeratedTest.videoCall.you')})`
+                    : '' /* eslint-disable-line @intlify/vue-i18n/no-raw-text */
+                }}
                 <v-chip
                   v-if="participant.role === 'observator'"
                   size="x-small"
                   color="orange"
                   class="ml-1"
                 >
-                  Observador
+                  {{ $t('ModeratedTest.videoCall.observator') }}
                 </v-chip>
                 <v-chip
                   v-else-if="participant.role === 'moderator'"
@@ -490,7 +509,7 @@
                   color="blue"
                   class="ml-1"
                 >
-                  Moderador
+                  {{ $t('ModeratedTest.videoCall.moderator') }}
                 </v-chip>
               </span>
               <div class="participant-status">
@@ -498,7 +517,11 @@
                   size="x-small"
                   :color="participant.connected ? 'green' : 'grey'"
                 >
-                  {{ participant.connected ? 'Conectado' : 'Desconectado' }}
+                  {{
+                    participant.connected
+                      ? $t('ModeratedTest.videoCall.connected')
+                      : $t('ModeratedTest.videoCall.disconnected')
+                  }}
                 </v-chip>
                 <v-chip
                   v-if="participant.isSelf && !isObservator"
@@ -506,7 +529,11 @@
                   :color="participant.hasCamera ? 'green' : 'red'"
                   class="ml-1"
                 >
-                  {{ participant.hasCamera ? 'Cámara' : 'Sin cámara' }}
+                  {{
+                    participant.hasCamera
+                      ? $t('ModeratedTest.videoCall.camera')
+                      : $t('ModeratedTest.videoCall.noCamera')
+                  }}
                 </v-chip>
                 <v-chip
                   v-if="participant.isSelf && !isObservator"
@@ -515,7 +542,9 @@
                   class="ml-1"
                 >
                   {{
-                    participant.hasMicrophone ? 'Micrófono' : 'Sin micrófono'
+                    participant.hasMicrophone
+                      ? $t('ModeratedTest.videoCall.microphone')
+                      : $t('ModeratedTest.videoCall.noMicrophone')
                   }}
                 </v-chip>
               </div>
@@ -524,7 +553,7 @@
         </div>
 
         <div class="panel-section">
-          <h4>Configuración</h4>
+          <h4>{{ $t('ModeratedTest.videoCall.settings') }}</h4>
           <v-list density="compact">
             <v-list-item @click="toggleCamera">
               <template #prepend>
@@ -533,7 +562,11 @@
                 </v-icon>
               </template>
               <v-list-item-title>
-                {{ isCameraEnabled ? 'Desactivar cámara' : 'Activar cámara' }}
+                {{
+                  isCameraEnabled
+                    ? $t('ModeratedTest.videoCall.disableCamera')
+                    : $t('ModeratedTest.videoCall.enableCamera')
+                }}
               </v-list-item-title>
             </v-list-item>
             <v-list-item @click="toggleMicrophone">
@@ -549,8 +582,8 @@
               <v-list-item-title>
                 {{
                   isMicrophoneEnabled
-                    ? 'Silenciar micrófono'
-                    : 'Activar micrófono'
+                    ? $t('ModeratedTest.videoCall.muteMicrophoneAction')
+                    : $t('ModeratedTest.videoCall.unmuteMicrophoneAction')
                 }}
               </v-list-item-title>
             </v-list-item>
@@ -567,8 +600,8 @@
               <v-list-item-title>
                 {{
                   isSharingScreen
-                    ? 'Detener compartir pantalla'
-                    : 'Compartir pantalla'
+                    ? $t('ModeratedTest.videoCall.stopSharingScreenAction')
+                    : $t('ModeratedTest.videoCall.shareScreenAction')
                 }}
               </v-list-item-title>
             </v-list-item>
@@ -600,7 +633,7 @@
         <div v-if="!caller" class="moderator-notice">
           <v-chip size="small" color="orange" class="mb-4">
             <v-icon start size="16">mdi-information</v-icon>
-            Solo el moderador puede cambiar los pasos
+            {{ $t('ModeratedTest.videoCall.onlyModeratorCanChangeSteps') }}
           </v-chip>
         </div>
 
@@ -816,11 +849,11 @@
         </v-avatar>
 
         <v-card-title class="text-h6 font-weight-bold mb-2">
-          Video Call Started
+          {{ $t('ModeratedTest.videoCall.videoCallStarted') }}
         </v-card-title>
 
         <v-card-text class="text-body-1 mb-4">
-          The moderator has started the video call. Would you like to join now?
+          {{ $t('ModeratedTest.videoCall.videoCallStartedMessage') }}
         </v-card-text>
 
         <v-card-actions class="d-flex flex-column pa-0">
@@ -833,7 +866,7 @@
             @click="joinRoomFromDialog"
           >
             <v-icon start>mdi-video</v-icon>
-            Join Video Call
+            {{ $t('ModeratedTest.videoCall.joinVideoCall') }}
           </v-btn>
 
           <v-btn
@@ -842,7 +875,7 @@
             variant="text"
             @click="dismissJoinDialog"
           >
-            Maybe later
+            {{ $t('ModeratedTest.videoCall.maybeLater') }}
           </v-btn>
         </v-card-actions>
       </v-card>

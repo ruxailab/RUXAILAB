@@ -43,6 +43,7 @@
 </template>
 
 <script setup>
+/* eslint-disable no-console */
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import {
