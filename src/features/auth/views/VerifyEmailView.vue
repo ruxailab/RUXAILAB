@@ -149,7 +149,9 @@ export default {
     }
   },
   computed: {
-    ...mapState('Auth', ['currentUser']),
+    ...mapState({
+      currentUser: state => state.user,
+    }),
   },
   methods: {
     ...mapActions(['sendVerificationEmail', 'logout']),
