@@ -7,7 +7,6 @@ import HeuristicRoutes from '@/ux/Heuristic/router.js'
 import accessibilityRoutes from '@/ux/accessibility/router.js'
 import UserTestRoutes from '@/ux/UserTest/router.js'
 import store from '@/store'
-import { getAccessibilityPreviewAccess } from '@/app/router/accessibilityPreviewGuard.js'
 
 const routes = [
   ...Public,
@@ -28,10 +27,6 @@ router.beforeEach(async (to, from, next) => {
   const { authorize = [] } = to.meta || {}
   let user = store.state.Auth.user
 
-  const accessibilityPreviewAccess = getAccessibilityPreviewAccess(to)
-  if (accessibilityPreviewAccess === 'allow') return next()
-  if (accessibilityPreviewAccess === 'redirect') return next(redirect())
-
   if (!user) {
     await store.dispatch('autoSignIn')
     user = store.state.Auth.user
@@ -39,7 +34,11 @@ router.beforeEach(async (to, from, next) => {
 
   if (to.path === '/') return next(redirect())
 
-  if (authorize.length && to.path !== '/signin' && !to.params.token) {
+  if (
+    authorize.length &&
+    to.path !== '/signin' &&
+    !(to.params?.token || to.query?.token)
+  ) {
     if (!user || !authorize.includes(user.accessLevel)) {
       return next(redirect())
     }
