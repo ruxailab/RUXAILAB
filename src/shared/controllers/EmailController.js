@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { fbFunctions } from '@/app/plugins/firebase'
 import { httpsCallable } from 'firebase/functions'
 
