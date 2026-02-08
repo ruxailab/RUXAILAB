@@ -130,14 +130,10 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import { auth } from '@/app/plugins/firebase'
-import { onAuthStateChanged, signOut, updateEmail } from 'firebase/auth'
-import Snackbar from '@/shared/components/Snackbar'
+import { onAuthStateChanged, updateEmail } from 'firebase/auth'
 
 export default {
   name: 'VerifyEmailView',
-  components: {
-    Snackbar,
-  },
   data() {
     return {
       userEmail: '',
