@@ -45,7 +45,7 @@ export const sendEmail = functions.onCall({
     else if (content.template === 'emailVerification') {
       const actionCodeSettings = {
         url: `${process.env.SITE_URL}/verify-email`,
-        handleCodeInApp: true,
+        handleCodeInApp: false,
       }
 
       const link = await admin.auth().generateEmailVerificationLink(content.to, actionCodeSettings);
