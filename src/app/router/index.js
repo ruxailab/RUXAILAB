@@ -35,20 +35,38 @@ router.beforeEach(async (to, from, next) => {
     return next() // Allow immediate access without any checks
   }
 
-  // Allow access to public pages even if user is logged in but email not verified
-  const publicPages = ['/signin', '/signup', '/verify-email', '/forgot-password']
-  if (publicPages.includes(to.path)) {
-    return next()
-  }
-
+  // Always restore user session first
   if (!user) {
     const authUser = await store.dispatch('autoSignIn')
     user = store.state.Auth.user
-    
-    // If user is logged in but email not verified, redirect to verify-email
-    if (authUser && authUser.emailVerified === false && !publicPages.includes(to.path)) {
-      return next('/verify-email')
+  }
+
+  // Redirect unverified users to verify-email (unless already there or on unauthenticated pages)
+  if (
+    user &&
+    user.emailVerified === false &&
+    to.path !== '/verify-email' &&
+    !['/signin', '/signup', '/forgot-password'].includes(to.path)
+  ) {
+    return next('/verify-email')
+  }
+
+  // Allow access to unauthenticated pages
+  const unauthenticatedPages = ['/signin', '/signup', '/forgot-password']
+  if (unauthenticatedPages.includes(to.path)) {
+    // But redirect already-authenticated users away
+    if (user && ['/signin', '/signup'].includes(to.path)) {
+      return next(redirect())
     }
+    return next()
+  }
+
+  // Special case: /verify-email only accessible if user email not verified
+  if (to.path === '/verify-email') {
+    if (!user || (user && user.emailVerified === true)) {
+      return next(redirect())
+    }
+    return next()
   }
 
   if (to.path === '/') return next(redirect())
@@ -57,10 +75,6 @@ router.beforeEach(async (to, from, next) => {
     if (!user || !authorize.includes(user.accessLevel)) {
       return next(redirect())
     }
-  }
-
-  if (user && ['/signin', '/signup'].includes(to.path)) {
-    return next(redirect())
   }
 
   next()
