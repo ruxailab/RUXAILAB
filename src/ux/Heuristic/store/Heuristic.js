@@ -74,33 +74,17 @@ export default {
     },
   },
   actions: {
-    async setHeuristics({ commit }, payload) {
-      try {
-        commit('SET_HEURISTICS', payload)
-      } catch (e) {
-        commit('setError', true)
-      }
+    setHeuristics({ commit }, payload) {
+      commit('SET_HEURISTICS', payload)
     },
-    async setTestWeights({ commit }, payload) {
-      try {
-        commit('SET_TEST_WEIGHTS', payload)
-      } catch (e) {
-        commit('setError', true)
-      }
+    setTestWeights({ commit }, payload) {
+      commit('SET_TEST_WEIGHTS', payload)
     },
-    async setTestOptions({ commit }, payload) {
-      try {
-        commit('SET_TEST_OPTIONS', payload)
-      } catch (e) {
-        commit('setError', true)
-      }
+    setTestOptions({ commit }, payload) {
+      commit('SET_TEST_OPTIONS', payload)
     },
     setScoresPercentage({ commit }, payload) {
-      try {
-        commit('SET_SCORES_PERCENTAGE', payload)
-      } catch (e) {
-        commit('setError', true)
-      }
+      commit('SET_SCORES_PERCENTAGE', payload)
     },
     setCurrentImageUrl({ commit }, payload) {
       commit('SET_CURRENT_IMAGE_URL', payload)
