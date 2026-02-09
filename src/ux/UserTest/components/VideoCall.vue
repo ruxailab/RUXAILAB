@@ -305,10 +305,7 @@
           </v-tooltip>
 
           <!-- End Call button (for participant when call is active) -->
-          <v-tooltip
-            v-if="!caller && callStarted && !isObservator"
-            location="top"
-          >
+          <v-tooltip v-if="!caller && callStarted" location="top">
             <template #activator="{ props }">
               <v-btn
                 v-bind="props"
@@ -997,36 +994,31 @@ watch([localVideo, localStream], ([videoEl, stream]) => {
 })
 
 onMounted(async () => {
-  console.log(
-    'VideoCall mounted. roomId:',
-    props.roomId,
-    'isModerator:',
-    props.isModerator,
-  )
   // Moderator gets media preview but doesn't join room yet
   if (props.isModerator) {
     // Just get local media for preview
     if (!isObservator.value) {
-      console.log('Initializing local media for moderator...')
       await initLocalMedia()
-      console.log('Local media initialized.')
     }
   } else {
     // Participants and observators wait for room to be opened by moderator
-    const roomRef = dbRef(database, `rooms/${props.roomId}`)
+    const showVideoCallRef = dbRef(
+      database,
+      `rooms/${props.roomId}/showVideoCall`,
+    )
 
     // Check initial value first
-    const initialSnapshot = await get(roomRef)
-    const initialData = initialSnapshot.val()
-    if (initialData?.showVideoCall && !roomReady.value) {
+    const initialSnapshot = await get(showVideoCallRef)
+    const shouldShow = initialSnapshot.val()
+    if (shouldShow && !roomReady.value) {
       roomReady.value = true
       await joinRoom()
     }
 
     // Then listen for changes
-    onValue(roomRef, (snapshot) => {
-      const roomData = snapshot.val()
-      if (roomData?.showVideoCall) {
+    onValue(showVideoCallRef, (snapshot) => {
+      const shouldShow = snapshot.val()
+      if (shouldShow) {
         if (!roomReady.value) {
           roomReady.value = true
           joinRoom()
@@ -1160,19 +1152,16 @@ const joinRoom = async () => {
         const answer = await pc.createAnswer()
         await pc.setLocalDescription(answer)
         sendSignal(senderId, { type: 'answer', sdp: answer.sdp })
-      } catch (err) {
-        console.error('Error handling offer logic:', err)
+      } catch {
+        // console.error('Error handling offer logic:', err)
       }
 
       // Process pending candidates
       if (peers[senderId].pendingCandidates.length > 0) {
-        console.log(
-          `Processing ${peers[senderId].pendingCandidates.length} buffered candidates for ${senderId}`,
-        )
         peers[senderId].pendingCandidates.forEach((c) => {
-          pc.addIceCandidate(new RTCIceCandidate(c)).catch((e) =>
-            console.error('Error adding buffered candidate:', e),
-          )
+          pc.addIceCandidate(new RTCIceCandidate(c)).catch((e) => {
+            // console.error('Error adding buffered candidate:', e)
+          })
         })
         peers[senderId].pendingCandidates = []
       }

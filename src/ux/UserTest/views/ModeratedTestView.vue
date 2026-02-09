@@ -185,6 +185,23 @@
       <!--Answer Test Screen-->
       <v-row v-else class="main-test-interface pa-0 ma-0">
         <v-col ref="rightView" class="right-view pa-6">
+          <v-alert
+            v-if="moderatorInactive"
+            density="compact"
+            type="warning"
+            variant="tonal"
+            class="mb-4 rounded-xl"
+            closable
+          >
+            <template #prepend>
+              <v-icon size="small">mdi-wifi-off</v-icon>
+            </template>
+            <div class="text-caption">
+              <strong>Moderator Disconnected:</strong>
+              The moderator seems to be offline. Please wait.
+            </div>
+          </v-alert>
+
           <!--Sticky Stepper to follow Progress-->
           <v-row
             v-if="globalIndex >= 1 || displayVideoCallComponent"
@@ -630,6 +647,12 @@ const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 // Data variables
+
+onBeforeUnmount(() => {
+  if (heartbeatInterval.value) clearInterval(heartbeatInterval.value)
+  if (checkInterval.value) clearInterval(checkInterval.value)
+})
+
 const testDisabledReason = ref(null)
 const isStartTestDisabled = ref(true)
 const loggedIn = ref(null)
@@ -650,7 +673,9 @@ const allTasksCompleted = ref(false)
 const submitDialog = ref(false)
 const notesDrawerOpen = ref(true)
 const heartbeatInterval = ref(null)
+const checkInterval = ref(null) // Local check for evaluator
 const moderatorInactive = ref(false)
+const lastHeartbeatTimestamp = ref(Date.now())
 
 // From video call to be used by recorders
 const remoteStream = ref(null)
@@ -943,13 +968,12 @@ const startTest = async () => {
         displayVideoCallComponent.value = data.showVideoCall
       }
 
-      // Check Moderator Heartbeat (allow 2 minutes grace)
+      // Check Moderator Heartbeat (timestamp sync)
       if (data.lastHeartbeat) {
-        const diff = Date.now() - data.lastHeartbeat
-        moderatorInactive.value = diff > 2 * 60 * 1000
+        lastHeartbeatTimestamp.value = data.lastHeartbeat
       } else {
-        // If no heartbeat present yet, assume active or assume legacy session
-        moderatorInactive.value = false
+        // If no heartbeat present yet, assume active (grace period start)
+        lastHeartbeatTimestamp.value = Date.now()
       }
     }
   })
@@ -982,7 +1006,15 @@ const startTest = async () => {
       update(roomRef, {
         lastHeartbeat: Date.now(),
       })
-    }, 60000)
+    }, 120000) // 2 minutes
+  } else {
+    // Start local interval for evaluator to check moderator status
+    if (checkInterval.value) clearInterval(checkInterval.value)
+    checkInterval.value = setInterval(() => {
+      const diff = Date.now() - lastHeartbeatTimestamp.value
+      // 5 minutes grace period
+      moderatorInactive.value = diff > 1 * 60 * 1000
+    }, 10000) // Check every 10 seconds locally
   }
 }
 
