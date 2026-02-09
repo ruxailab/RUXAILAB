@@ -299,11 +299,68 @@
             </v-col>
           </v-row>
 
+          <!-- Observator Notes Drawer -->
+          <v-navigation-drawer
+            v-if="isObservator"
+            location="right"
+            persistent
+            width="400"
+            elevation="3"
+            v-model="notesDrawerOpen"
+            style="
+              position: fixed;
+              top: 0;
+              right: 0;
+              height: 100%;
+              z-index: 1005;
+            "
+          >
+            <ObservatorNotes
+              v-if="localTestAnswer"
+              v-model="localTestAnswer.sessionNotes"
+              :current-task-index="taskIndex"
+              :test="test"
+              @save="saveAnswer"
+            />
+          </v-navigation-drawer>
+
+          <!-- Notes Toggle Button (for Observators) -->
+          <v-btn
+            v-if="isObservator"
+            icon
+            size="large"
+            color="primary"
+            elevation="4"
+            class="notes-toggle-btn"
+            @click="notesDrawerOpen = !notesDrawerOpen"
+            :style="{
+              position: 'fixed',
+              top: '80px',
+              right: notesDrawerOpen ? '420px' : '20px',
+              zIndex: 1006,
+              transition: 'right 0.3s ease',
+            }"
+          >
+            <v-badge
+              :content="localTestAnswer.sessionNotes?.length || 0"
+              :model-value="(localTestAnswer.sessionNotes?.length || 0) > 0"
+              color="error"
+            >
+              <v-icon>
+                {{
+                  notesDrawerOpen ? 'mdi-notebook-edit' : 'mdi-notebook-outline'
+                }}
+              </v-icon>
+            </v-badge>
+          </v-btn>
+
           <!-- Video Call Component -->
           <div v-show="displayVideoCallComponent">
             <VideoCall
-              :room-id="roomId"
-              :caller="isUserTestAdmin"
+              :roomId="roomId"
+              :is-moderator="isUserTestAdmin"
+              :user="user"
+              :access-level="currentUserAccessLevel"
               :current-global-index="globalIndex"
               :current-task-index="taskIndex"
               :test="test"
@@ -538,6 +595,7 @@ import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue'
 import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue'
 import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue'
 import VideoCall from '@/ux/UserTest/components/VideoCall.vue'
+import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
@@ -567,6 +625,7 @@ const preTestIndex = ref(null)
 const taskStepComponent = ref(null)
 const allTasksCompleted = ref(false)
 const submitDialog = ref(false)
+const notesDrawerOpen = ref(true)
 
 // From video call to be used by recorders
 const remoteStream = ref(null)
@@ -581,6 +640,16 @@ const user = computed(() => {
 const isUserTestAdmin = computed(() => {
   return test.value.testAdmin.userDocId === user.value?.id
 })
+
+const currentUserAccessLevel = computed(() => {
+  if (isUserTestAdmin.value) return 0 // Admin implicit
+  const cooperator = test.value.cooperators?.find(
+    (c) => c.userDocId === user.value?.id,
+  )
+  return cooperator?.accessLevel ?? 2 // Default to Guest/Participant (2) if not found, but typically should be found
+})
+
+const isObservator = computed(() => currentUserAccessLevel.value === 3)
 
 const timerComponent = computed(() => {
   // Get timer ref from TaskStep
@@ -713,7 +782,6 @@ const handleSubmit = async () => {
     await saveAnswer()
     await router.push({ name: 'Admin' })
   } catch (error) {
-    console.error('Error submitting answer:', error.message) // eslint-disable-line no-console
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSubmitAnswer'),
@@ -738,8 +806,7 @@ const saveAnswer = async () => {
       answersDocId: test.value.answersDocId,
       testType: test.value.testType,
     })
-  } catch (error) {
-    console.error('Error saving answer:', error.message)
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSaveAnswer'),
@@ -774,7 +841,10 @@ const signOut = async () => {
 
 const startTest = async () => {
   // Check if the test has no tasks
-  if (!test.value.testStructure || test.value.testStructure.length === 0) {
+  if (
+    !test.value.testStructure ||
+    Object.keys(test.value.testStructure).length === 0
+  ) {
     store.commit('SET_TOAST', {
       type: 'info',
       message: t('UserTestView.messages.noTasks'),
@@ -788,6 +858,13 @@ const startTest = async () => {
       test: test.value,
       cooperator: user.value,
     })
+  }
+
+  if (isObservator.value) {
+    // Hidin start screen and mount VideoCall component
+    start.value = false
+    displayVideoCallComponent.value = true
+    return
   }
 
   // First, add the class for the exit animation
@@ -911,23 +988,24 @@ const completeStep = async (id, type, userCompleted = true) => {
     if (type === 'tasks') {
       if (!Array.isArray(localTestAnswer.tasks)) {
         console.error(
-          // eslint-disable-line no-console
           'localTestAnswer.tasks is not an array:',
           localTestAnswer.tasks,
         )
         return
       }
       localTestAnswer.tasks[id].completed = userCompleted
-      items.value[1].value[id].icon = 'mdi-check-circle-outline'
+      if (items.value[1]?.value?.[id]) {
+        items.value[1].value[id].icon = 'mdi-check-circle-outline'
+      }
       allTasksCompleted.value = true
 
-      for (let i = 0; i < items.value[1].value.length; i++) {
+      for (let i = 0; i < items.value[1]?.value?.length || 0; i++) {
         if (!localTestAnswer.tasks[i]?.completed) {
           allTasksCompleted.value = false
           break
         }
       }
-      if (allTasksCompleted.value) {
+      if (allTasksCompleted.value && items.value[1]) {
         items.value[1].icon = 'mdi-check-circle-outline'
       }
       if (id < localTestAnswer.tasks.length - 1) {
@@ -1108,12 +1186,41 @@ watchEffect(() => {
     isStartTestDisabled.value = true
     return
   }
-
+  if (isUserTestAdmin.value) {
+    if (localTestAnswer.submitted) {
+      testDisabledReason.value = 'test-already-completed'
+      return true
+    }
+    if (test.value.status !== 'active') {
+      testDisabledReason.value = 'test-not-active'
+      return true
+    }
+    if (
+      !test.value.testStructure ||
+      Object.keys(test.value.testStructure).length === 0
+    ) {
+      testDisabledReason.value = 'test-no-tasks-configured'
+      return true
+    }
+    testDisabledReason.value = null
+    return false // Admin can proceed
+  }
   const now = new Date()
-  const cooperator = test.value.cooperators.find(
+  const userSessions = test.value.cooperators.filter(
     (u) => u.userDocId === route.params.token,
   )
-  const sessionDate = cooperator.testDate ? new Date(cooperator.testDate) : null
+
+  const cooperator = userSessions
+    .filter((s) => {
+      const sessionDate = new Date(s.testDate)
+      const diffHours = (sessionDate - now) / (1000 * 60 * 60)
+      return diffHours >= 0 && diffHours <= 24
+    })
+    .sort((a, b) => new Date(a.testDate) - new Date(b.testDate))[0]
+
+  const sessionDate = cooperator?.testDate
+    ? new Date(cooperator.testDate)
+    : null
 
   // 🧩 Test already completed
   if (localTestAnswer.submitted) {
@@ -1154,6 +1261,8 @@ watchEffect(() => {
       isStartTestDisabled.value = true
       return
     }
+    testDisabledReason.value = null
+    return false
   }
 
   // 🧩 Test expired (fallback endDate)
@@ -1166,7 +1275,6 @@ watchEffect(() => {
     }
   }
 
-  // ✅ All good
   testDisabledReason.value = null
   isStartTestDisabled.value = false
 })
@@ -1200,13 +1308,11 @@ onMounted(async () => {
         testDate.value = sessionCooperator.value.testDate
       } else {
         showWarning("Your session doesn't have a scheduled date")
-        router.push('/managerview/' + test.value.id)
         return
       }
     }
   } else {
     showInfo('Use a session link to access the test')
-    router.push('/managerview/' + test.value.id)
     return
   }
 

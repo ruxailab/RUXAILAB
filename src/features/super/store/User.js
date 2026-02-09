@@ -58,5 +58,21 @@ export default {
         commit('setLoading', false)
       }
     },
+
+    async deleteUser({ commit }, user) {
+      commit('setLoading', true)
+      try {
+        const { default: AuthController } =
+          await import('@/features/auth/controllers/AuthController')
+        const authController = new AuthController()
+
+        await authController.deleteUserData(user.id)
+        commit('REMOVE_USER', user.id)
+      } catch (e) {
+        throw e
+      } finally {
+        commit('setLoading', false)
+      }
+    },
   },
 }

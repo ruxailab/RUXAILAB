@@ -51,8 +51,6 @@ h1 {
   padding-bottom: 2px;
 }
 
-
-
 .v-sheet.v-card:not(.v-sheet--outlined) {
   box-shadow: none !important;
 }

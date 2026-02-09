@@ -29,7 +29,11 @@
       "email": "E-Mail",
       "instructions": "Geben Sie Ihre E-Mail ein und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.",
       "reset_button": "Reset-Link senden",
-      "back_to_signin": "Zurück zur Anmeldung"
+      "back_to_signin": "Zurück zur Anmeldung",
+      "check_your_email": "Überprüfen Sie Ihre E-Mail",
+      "reset_link_sent": "Wir haben einen Link zum Zurücksetzen des Passworts gesendet an",
+      "no_email": "Keine E-Mail erhalten?",
+      "try_again": "Erneut versuchen"
     },
     "passwordStrength": "Passwortstärke",
     "number": "Nummer",
@@ -42,6 +46,11 @@
     }
   },
   "common": {
+    "enterTextHere": "Text hier eingeben...",
+    "units": {
+      "mb": "MB",
+      "gb": "GB"
+    },
     "loading": "Test laden",
     "continueAs": "Fortfahren als",
     "notUser": "Nicht {userEmail}?",
@@ -90,8 +99,19 @@
       "status": "Status",
       "sessionDate": "Sitzungsdatum",
       "participants": "Teilnehmer",
-      "created": "Erstellt"
-    }
+      "created": "Erstellt",
+      "noSearchResults": "Keine Ergebnisse gefunden, die Ihren Kriterien entsprechen",
+      "tryAdjustingSearch": "Versuchen Sie, Ihre Suche oder Filter anzupassen, um das Gewünschte zu finden"
+    },
+    "hidden": "Versteckt",
+    "proceed": "fortfahren",
+    "all": "Alle",
+    "actions": "Aktionen",
+    "confirm_deletion": "Löschung bestätigen",
+    "action_cannot_be_undone": "Diese Aktion kann nicht rückgängig gemacht werden",
+    "user": "Benutzer",
+    "id": "ID",
+    "itemsPerPage": "Elemente pro Seite:"
   },
   "storage": {
     "pageTitle": "Speicher",
@@ -162,11 +182,17 @@
       "allMethods": "Alle Methoden",
       "all": "Alle",
       "heuristicEvaluation": "Heuristische Bewertung",
-      "userStudyUnmoderated": "Benutzerstudie (Unmoderiert)",
-      "userStudyModerated": "Benutzerstudie (Moderiert)",
-      "manualAccessibility": "Manuelle Barrierefreiheit",
-      "automaticAccessibility": "Automatische Barrierefreiheit"
+      "moderatedUserTest": "Moderierter Benutzertest",
+      "unmoderatedUserTest": "Unmoderierter Benutzertest",
+      "accessibilityManual": "Manuelle Barrierefreiheitsprüfung",
+      "accessibilityAutomatic": "Automatische Barrierefreiheitsprüfung"
     }
+  },
+  "acceptInvitation": {
+    "title": "Kooperationseinladung",
+    "message": "Möchten Sie diese Einladung annehmen?",
+    "reject": "Ablehnen",
+    "accept": "Annehmen"
   },
   "notificationsPage": {
     "subtitle": "Bleiben Sie über Ihre Aktivitäten und Kollaborationen auf dem Laufenden",
@@ -252,6 +278,12 @@
     "enterValidPhoneNumber": "Bitte geben Sie eine gültige Telefonnummer ein (nur 9-15 Ziffern)",
     "profileImageUpdatedSuccess": "Profilbild erfolgreich aktualisiert",
     "profileImageUploadFailed": "Profilbild-Upload fehlgeschlagen",
+    "uploadProfilePicture": "Profilbild hochladen",
+    "removeProfilePicture": "Profilbild entfernen",
+    "takePhoto": "Foto aufnehmen",
+    "cameraCaptureTitle": "Profilbild aufnehmen",
+    "cameraNotAvailable": "Kamera ist auf diesem Gerät nicht verfügbar",
+    "cameraPermissionDenied": "Kamerazugriff verweigert. Bitte erlauben Sie den Kamerazugriff in Ihren Browsereinstellungen.",
     "noUserSignedIn": "Kein Benutzer angemeldet",
     "profileLoadFailed": "Profil konnte nicht geladen werden",
     "profileUpdatedSuccess": "Profil erfolgreich aktualisiert",
@@ -262,7 +294,15 @@
     "accountDeletedSuccess": "Konto erfolgreich gelöscht",
     "yourPassword": "Ihr Passwort",
     "back": "Zurück",
-    "deleteForever": "Endgültig löschen"
+    "deleteForever": "Endgültig löschen",
+    "superAdmin": "Super-Admin",
+    "uploadProfilePicture": "Profilbild hochladen",
+    "removeProfilePicture": "Profilbild entfernen",
+    "currentPassword": "Aktuelles Passwort",
+    "currentPasswordRequired": "Aktuelles Passwort ist erforderlich",
+    "wrongCurrentPassword": "Das aktuelle Passwort ist falsch",
+    "recentLoginRequired": "Bitte melden Sie sich ab und wieder an, bevor Sie Ihr Passwort ändern",
+    "googleUserPasswordInfo": "Sie haben sich mit Google angemeldet. Klicken Sie auf die Schaltfläche unten, um sich bei Google zu verifizieren und ein Passwort für Ihr Konto festzulegen."
   },
   "titles": {
     "manager": "Manager",
@@ -275,6 +315,10 @@
     "template": "Vorlage",
     "finalReport": "Abschlussbericht",
     "answerType": "Antworttyp:",
+    "users": "Benutzer",
+    "studies": "Studien",
+    "accessLevel": "Zugriffsebene",
+    "actions": "Aktionen",
     "drawer": {
       "Manager": "Manager",
       "Test": "Test",
@@ -286,7 +330,10 @@
       "Template": "Vorlage",
       "Final Report": "Abschlussbericht",
       "Answer Test": "Test beantworten",
-      "Settings": "Einstellungen"
+      "Settings": "Einstellungen",
+      "name": "Name",
+      "studiesCount": "Studienanzahl",
+      "mediaSize": "Mediengröße"
     },
     "heuristic": "Usability-Heuristik-Evaluation"
   },
@@ -306,7 +353,10 @@
       "start": "Loslegen!",
       "edit": "Erstellen und passen Sie Ihre Aufgaben und Heuristiken für Ihre Forschungsbedürfnisse an.",
       "finalReport": "Bereiten Sie den Abschlussbericht für Ihre Heuristik-Evaluation vor, indem Sie die Elemente auswählen, die Sie einbeziehen möchten."
-    }
+    },
+    "overallAnalyticsDescription": "Sehen Sie sich die aggregierten Analysen für Ihren Test an.",
+    "individualAnalytics": "Individuelle Analysen",
+    "nasaTlxAnalytics": "NASA-TLX Analysen"
   },
   "errors": {
     "invalidInvitation": "Ungültige Einladung",
@@ -349,6 +399,15 @@
       "noActiveStudies": "Keine Aktiven Studien",
       "createNewStudy": "Neue Studie Erstellen",
       "emptyStateMessage": "Sie haben noch keine Studien. Erstellen Sie Ihre erste Studie, um wertvolle Benutzererkenntnisse zu sammeln."
+    },
+    "studyStatus": {
+      "finished": "Abgeschlossen",
+      "expiredDaysAgo": "Abgelaufen vor {days} Tagen",
+      "endsToday": "Endet heute",
+      "endsTodayStarted": "Endet heute · Gestartet",
+      "readyToSubmit": "Bereit zur Einreichung",
+      "endsTodayReady": "Endet heute · Bereit",
+      "notStarted": "Nicht gestartet"
     },
     "activeStudiesOverview": "Übersicht über aktive Studien",
     "viewAll": "Alle anzeigen",
@@ -410,6 +469,77 @@
       "paused": "Pausiert",
       "finished": "Abgeschlossen",
       "unknown": "Unbekannt"
+    },
+    "officeHours": {
+      "title": "Monatliche Sprechstunden",
+      "description": "Ab November veranstalten wir monatliche Sprechstunden, um Projektaktualisierungen zu besprechen, Fragen zu beantworten und uns mit unserer Community auszutauschen.",
+      "nextSessionDate": "Nov 2025",
+      "frequency": "Monatlich"
+    },
+    "webinar": {
+      "ended": "Beendet",
+      "live": "Live",
+      "today": "Heute",
+      "joinNow": "Jetzt beitreten",
+      "webinarEnded": "Webinar beendet",
+      "startingToday": "Beginnt heute"
+    },
+    "cards": {
+      "recentActivity": "Letzte Aktivitäten",
+      "activities7Days": "Aktivitäten (insgesamt 7 Tage)",
+      "lastActivity": "Letzte Aktivität",
+      "noActivity": "Keine Aktivität",
+      "edit": "Bearbeiten",
+      "heuristics": "Heuristiken",
+      "questions": "Fragen",
+      "totalOptions": "Gesamtoptionen",
+      "qualitative": "Qualitativ",
+      "quantitative": "Quantitativ",
+      "weights": "Gewichtungen",
+      "on": "AN",
+      "off": "AUS",
+      "cooperators": "Mitarbeiter",
+      "totalInvited": "Insgesamt eingeladen",
+      "accepted": "Akzeptiert",
+      "pending": "Ausstehend",
+      "storage": "Speicher",
+      "currentStorage": "Speicher (aktuell)",
+      "limitAvailable": "Verfügbares Limit",
+      "results": "Ergebnisse",
+      "generalUsability": "Allgemeine Benutzerfreundlichkeit",
+      "finalReport": "Abschlussbericht",
+      "generatePDF": "PDF generieren",
+      "download": "Herunterladen",
+      "generated": "Generiert:",
+      "generateReport": "Bericht generieren",
+      "reportAvailable": "Bericht verfügbar",
+      "noReport": "Kein Bericht generiert",
+      "readyForDownload": "Abschlussbericht bereit zum Herunterladen",
+      "waitingForParticipants": "Warten auf Teilnehmer",
+      "evaluationsCompleted": "Bewertungen abgeschlossen",
+      "readyToGenerate": "Bereit zum Generieren des Berichts",
+      "excellentUsability": "Hervorragende Benutzerfreundlichkeit",
+      "acceptableUsability": "Akzeptable Benutzerfreundlichkeit",
+      "needsImprovement": "Verbesserungsbedürftig",
+      "basedOn": "Basierend auf",
+      "evaluations": "Bewertungen",
+      "evaluationUpdated": "Bewertung aktualisiert",
+      "updatedProgress": "hat seinen Fortschritt aktualisiert",
+      "invitationSentTitle": "Einladung gesendet",
+      "invitationPendingDesc": "Einladung ausstehend für",
+      "pendingStatus": "Ausstehend"
+    },
+    "managerView": {
+      "heuristicStudy": "Heuristische Studie",
+      "freePlan": "Kostenloser Plan",
+      "generalStatistics": "Allgemeine Statistiken",
+      "modules": "Module"
+    },
+    "stats": {
+      "participants": "Teilnehmer",
+      "completion": "Abschluss",
+      "daysActive": "Tage aktiv",
+      "heuristics": "Heuristiken"
     }
   },
   "HeuristicsTable": {
@@ -478,6 +608,10 @@
       "failedToLoadEditForm": "Fehler beim Laden des Bearbeitungsformulars. Bitte versuchen Sie es erneut.",
       "invalidHeuristic": "Ungültige Heuristikauswahl",
       "invalidQuestion": "Ungültige Frageauswahl"
+    },
+    "count": {
+      "question": "Frage",
+      "questions": "Fragen"
     }
   },
   "HeuristicsOptionsTable": {
@@ -485,9 +619,15 @@
       "options": "Optionen",
       "noOptions": "Keine Optionen"
     },
-    "messages": {},
+    "messages": {
+      "startAddingOptions": "Beginnen Sie mit dem Hinzufügen von Optionen zu Ihren heuristischen Fragen"
+    },
     "placeHolders": {},
-    "actions": {}
+    "actions": {},
+    "count": {
+      "option": "Option",
+      "options": "Optionen"
+    }
   },
   "HeuristicsWeightsTable": {
     "titles": {
@@ -503,7 +643,8 @@
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "Einstellungen"
+      "settings": "Einstellungen",
+      "confirmUpload": "Upload bestätigen"
     },
     "messages": {
       "acceptCsv": "Wenn Sie akzeptieren, werden alle Ihre vorhandenen Heuristiken durch die in der .csv-Datei ersetzt.",
@@ -521,7 +662,21 @@
     "messages": {
       "submitTest": "Sind Sie sicher, dass Sie diesen Test einreichen möchten?",
       "submitOnce": "Sind Sie sicher, dass Sie Ihren Test einreichen möchten? Sie können dies nur einmal tun.",
-      "noHeuristics": "Dieser Test hat keine Heuristiken"
+      "noHeuristics": "Dieser Test hat keine Heuristiken",
+      "noHeuristicsConfigured": "Konfigurationsfehler: Dieser Test hat keine konfigurierten Heuristiken. Bitte Heuristiken hinzufügen, um fortzufahren.",
+      "answerSaved": "Antwort erfolgreich gespeichert"
+    },
+    "errors": {
+      "questionNotLoaded": "Frage konnte nicht geladen werden",
+      "noAnswerData": "Keine Antwortdaten gefunden",
+      "failedToSaveAnswer": "Fehler beim Speichern der Antwort. Bitte versuchen Sie es erneut.",
+      "failedToSubmitAnswer": "Fehler beim Einreichen der Antwort. Bitte versuchen Sie es erneut."
+    },
+    "unknownHeuristic": "Unbekannte Heuristik",
+    "unknownQuestion": "Unbekannte Frage",
+    "selectAnOption": "Wählen Sie eine Option",
+    "headers": {
+      "heuristics": "HEURISTIKEN"
     },
     "actions": {
       "cancel": "Abbrechen",
@@ -534,6 +689,8 @@
     }
   },
   "HeuristicsEditTest": {
+    "pageTitle": "Test bearbeiten",
+    "pageSubtitle": "Passen Sie die Einstellungen und Präferenzen Ihres Tests an",
     "titles": {
       "heuristics": "Heuristiken",
       "options": "Optionen",
@@ -645,7 +802,8 @@
       "cancel_invitation": "Einladung stornieren",
       "cancel": "Abbrechen",
       "send": "Senden",
-      "select_cooperator": "Mitarbeiter auswählen"
+      "select_cooperator": "Mitarbeiter auswählen",
+      "reinvite": "Erneut einladen"
     },
     "roles": {
       "administrator": "Administrator",
@@ -659,7 +817,8 @@
       "cancel_invitation": "Sind Sie sicher, dass Sie {email} aus den Mitarbeitern stornieren möchten?",
       "change_role": "Sind Sie sicher, dass Sie die Rolle von {email} von {old} zu {new} ändern möchten?",
       "message_title_hint": "Geben Sie einen Titel für Ihre Nachricht ein",
-      "message_content_hint": "Geben Sie den Inhalt Ihrer Nachricht ein"
+      "message_content_hint": "Geben Sie den Inhalt Ihrer Nachricht ein",
+      "invite_message": "Sie wurden eingeladen, am Test {testTitle} teilzunehmen"
     }
   },
   "UserTestTable": {
@@ -674,7 +833,9 @@
     "messages": {
       "noTasks": "Sie haben keine Aufgabe, erstellen Sie eine, um fortzufahren.",
       "noVariables": "Noch keine Variablen hinzugefügt. Klicken Sie unten, um eine neue Variable zu erstellen.",
-      "noOptions": "Keine Optionen hinzugefügt."
+      "noOptions": "Keine Optionen hinzugefügt.",
+      "confirm_delete_task": "Aufgabe löschen bestätigen",
+      "sure_to_delete_task": "Sind Sie sicher, dass Sie die Aufgabe : {taskName} löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden"
     },
     "inputs": {
       "consent": "Einverständnis",
@@ -711,6 +872,149 @@
       "untitledVariable": "Unbenannte Variable"
     }
   },
+  "CreateTask": {
+    "dialog": {
+      "title": "Neue Aufgabe Erstellen",
+      "subtitle": "Konfigurieren Sie Ihre Aufgabe Schritt für Schritt"
+    },
+    "stepper": {
+      "basicInfo": "Grundinfo",
+      "configuration": "Konfiguration",
+      "advanced": "Erweitert",
+      "preview": "Vorschau"
+    },
+    "selectItems": {
+      "noAnswer": "Keine Antwort",
+      "shortAnswer": "Kurzantwort",
+      "paragraphAnswer": "Absatzantwort",
+      "googleFormsLink": "Google Forms Link",
+      "nasaTlx": "NASA TLX",
+      "sus": "System Usability Scale",
+      "tam1": "TAM-1 – Grundakzeptanz",
+      "tam2": "TAM-2 – Erweiterte Akzeptanz",
+      "tam3": "TAM-3 – Fortgeschrittene Akzeptanz",
+      "sart": "Situationsbewusstsein-Bewertungstechnik"
+    },
+    "validation": {
+      "fieldRequired": "Feld Erforderlich",
+      "validUrl": "Muss eine gültige URL sein, die mit http:// oder https:// beginnt",
+      "positiveNumber": "Muss eine positive Zahl sein"
+    },
+    "basicInfo": {
+      "stepTitle": "Schritt 1: Grundlegende Aufgabeninformationen",
+      "stepDescription": "Definieren Sie, was die Teilnehmer in dieser Aufgabe tun werden. Dies ist die Grundlage Ihres Benutzertests - seien Sie klar und spezifisch über die Ziele und Erwartungen.",
+      "taskTitle": "Aufgabentitel",
+      "taskTitleHint": "Geben Sie Ihrer Aufgabe einen klaren, prägnanten Namen, der beschreibt, was die Teilnehmer erreichen müssen",
+      "taskTitlePlaceholder": "z.B., 'Produktinformationen finden', 'Checkout-Prozess abschließen'",
+      "taskDescription": "Aufgabenbeschreibung",
+      "taskDescriptionHint": "Geben Sie detaillierte Anweisungen für die Teilnehmer. Fügen Sie das Ziel, den Kontext und alle spezifischen Schritte hinzu.",
+      "taskDescriptionPlaceholder": "Beschreiben Sie die Aufgabe im Detail. Was soll der Teilnehmer tun?",
+      "tipLabel": "Tipp",
+      "tipHint": "Optionale Hinweise oder Tipps, um den Teilnehmern während der Aufgabe zu helfen",
+      "tipPlaceholder": "z.B., 'Konzentrieren Sie sich auf die Hauptnavigation', 'Nehmen Sie sich Zeit zum Erkunden'"
+    },
+    "configuration": {
+      "stepTitle": "Schritt 2: Aufgabenkonfiguration",
+      "stepDescription": "Konfigurieren Sie, wo die Aufgabe stattfindet und wie die Teilnehmer ihre Antworten geben werden.",
+      "taskLink": "Aufgabenlink (URL)",
+      "taskLinkHint": "Die Website- oder Anwendungs-URL, unter der die Teilnehmer die Aufgabe ausführen werden",
+      "taskLinkPlaceholder": "https://beispiel.de",
+      "estimatedTime": "Geschätzte Zeit (Minuten)",
+      "estimatedTimeHint": "Die geschätzte Zeit, die die Teilnehmer zum Abschließen dieser Aufgabe benötigen",
+      "estimatedTimePlaceholder": "z.B. 10",
+      "answerTypeHint": "Wählen Sie, wie die Teilnehmer nach Abschluss der Aufgabe Feedback geben werden",
+      "answerTypePreview": "Vorschau des Antworttyps",
+      "postTestHint": "Geben Sie die spezifische Frage ein, die Sie den Teilnehmern nach Abschluss der Aufgabe stellen möchten",
+      "postTestPlaceholder": "z.B., 'Wie einfach war es, die Produktinformationen zu finden?'",
+      "postFormHint": "URL zu einem externen Formular, das die Teilnehmer nach der Aufgabe ausfüllen werden",
+      "postFormPlaceholder": "https://forms.google.com/d/ihre-formular-id"
+    },
+    "configurationDescriptions": {
+      "noAnswer": "Teilnehmer schließen die Aufgabe ab, ohne Feedback zu geben",
+      "textArea": "Teilnehmer geben schriftliches Feedback nach der Aufgabe",
+      "postTest": "Teilnehmer beantworten spezifische Fragen nach der Aufgabe",
+      "postForm": "Teilnehmer füllen ein externes Formular nach der Aufgabe aus",
+      "nasaTlx": "NASA Task Load Index - misst die Arbeitsbelastung",
+      "sus": "System Usability Scale - misst die Benutzerfreundlichkeit",
+      "tam1": "TAM-1 (Grundakzeptanz) - misst wahrgenommene Nützlichkeit und Benutzerfreundlichkeit",
+      "tam2": "TAM-2 (Erweitert) - fügt externe Einflüsse und Ergebnis-Demonstrierbarkeit hinzu",
+      "tam3": "TAM-3 (Umfassend) - umfasst Angst, Spielfreude und objektive Benutzerfreundlichkeit",
+      "sart": "Situationsbewusstsein-Bewertungstechnik - misst das situative Bewusstsein"
+    },
+    "advanced": {
+      "stepTitle": "Schritt 3: Erweiterte Optionen",
+      "stepDescription": "Aktivieren Sie zusätzliche Datenerfassungsmethoden, um tiefere Einblicke zu gewinnen.",
+      "eyeTrackingDesc": "Verfolgen Sie, wohin die Teilnehmer während der Aufgabe schauen.",
+      "screenRecordDesc": "Zeichnen Sie die Bildschirmaktivität des Teilnehmers auf.",
+      "cameraDesc": "Zeichnen Sie Gesichtsausdrücke und Reaktionen des Teilnehmers auf.",
+      "audioDesc": "Zeichnen Sie verbales Feedback des Teilnehmers auf.",
+      "privacyNotice": "Datenschutzhinweis",
+      "privacyText": "Aufnahmefunktionen erfordern die ausdrückliche Zustimmung der Teilnehmer.",
+      "privacyItem1": "Informieren Sie die Teilnehmer klar über die Datenerfassung",
+      "privacyItem2": "Holen Sie vor Beginn des Tests eine ordnungsgemäße Zustimmung ein",
+      "privacyItem3": "Befolgen Sie die Datenschutzbestimmungen (DSGVO usw.)",
+      "privacyItem4": "Sichere Speicherung und Handhabung aufgezeichneter Daten"
+    },
+    "preview": {
+      "taskSummary": "Aufgabenzusammenfassung",
+      "untitledTask": "Unbenannte Aufgabe",
+      "description": "Beschreibung:",
+      "noDescription": "Keine Beschreibung angegeben",
+      "participantTip": "Teilnehmerhinweis:",
+      "taskUrl": "Aufgaben-URL:",
+      "answerType": "Antworttyp:",
+      "recordingFeatures": "Aufnahmefunktionen:",
+      "postTaskQuestion": "Frage nach der Aufgabe:",
+      "postTaskForm": "Formular nach der Aufgabe:",
+      "externalForm": "Externes Formular",
+      "taskReady": "Aufgabe Bereit!",
+      "reviewRequired": "Überprüfung Erforderlich",
+      "taskReadyMessage": "Ihre Aufgabe ist richtig konfiguriert und bereit für die Verwendung in Ihrer Studie.",
+      "reviewRequiredMessage": "Bitte überprüfen Sie die vorherigen Schritte, um sicherzustellen, dass alle erforderlichen Felder ausgefüllt sind.",
+      "noTypeSelected": "Kein Typ Ausgewählt",
+      "answerTypes": {
+        "noAnswer": "Keine Antwort Erforderlich",
+        "textArea": "Textbereich",
+        "postTest": "Fragen nach dem Test",
+        "postForm": "Externes Formular",
+        "nasaTlx": "NASA-TLX",
+        "sus": "System Usability Scale",
+        "tam1": "TAM-1 (Grund)",
+        "tam2": "TAM-2 (Erweitert)",
+        "tam3": "TAM-3 (Umfassend)",
+        "sart": "SART"
+      },
+      "recordingLabels": {
+        "eyeTracking": "Eye-Tracking",
+        "screenRecording": "Bildschirmaufnahme",
+        "camera": "Kamera",
+        "audio": "Audio"
+      }
+    },
+    "answerTypePreview": {
+      "taskCompleted": "Aufgabe abgeschlossen! Kein zusätzliches Feedback erforderlich.",
+      "participantsFeedbackHere": "Teilnehmer geben hier ihr Feedback ab...",
+      "submitFeedback": "Feedback Absenden",
+      "postTaskQuestions": "Post-Aufgaben-Fragen",
+      "rateTaskDifficulty": "1. Wie würden Sie die Schwierigkeit dieser Aufgabe bewerten?",
+      "additionalComments": "2. Zusätzliche Kommentare?",
+      "optionalFeedback": "Optionales Feedback...",
+      "externalFormTitle": "Externes Formular",
+      "externalFormDescription": "Teilnehmer werden nach der Aufgabe zu einem externen Formular weitergeleitet.",
+      "openExternalForm": "Externes Formular Öffnen",
+      "nasaTlxTitle": "NASA-Aufgabenlast-Index",
+      "mentalDemand": "Mentale Anforderung",
+      "physicalDemand": "Physische Anforderung",
+      "lowHigh": "Niedrig - Hoch",
+      "moreDimensions": "+ 4 weitere Dimensionen",
+      "susTitle": "System-Usability-Skala",
+      "susStatement1": "1. Ich denke, dass ich dieses System häufig verwenden möchte.",
+      "stronglyDisagree": "Stimme Überhaupt Nicht Zu",
+      "stronglyAgree": "Stimme Voll Zu",
+      "moreStatements": "+ 9 weitere Aussagen",
+      "sartTitle": "Situationsbewusstseins-Bewertungstechnik"
+    }
+  },
   "UserTestView": {
     "titles": {
       "preTestConsent": "Vortest - Einverständnis",
@@ -735,7 +1039,9 @@
       "testNotActiveMessage": "Dieser Test ist derzeit nicht aktiv. Bitte kontaktieren Sie den Administrator.",
       "testConfigError": "Test-Konfigurationsfehler",
       "testConfigErrorMessage": "Dieser Test hat keine konfigurierten Aufgaben. Bitte kontaktieren Sie den Administrator.",
-      "consentDecline": "Test aufgrund von Ablehnung der Einverständniserklärung beendet. Vielen Dank für Ihre Zeit."
+      "consentDecline": "Test aufgrund von Ablehnung der Einverständniserklärung beendet. Vielen Dank für Ihre Zeit.",
+      "sessionTooFar": "Sitzung zu weit entfernt",
+      "sessionTooFarMessage": "Die geplante Sitzung liegt mehr als 24 Stunden in der Zukunft. Bitte kommen Sie näher zum Sitzungstermin zurück."
     },
     "stepper": {
       "consent": "Einverständnis",
@@ -861,6 +1167,15 @@
       "audioRecording": "Audio",
       "eyeTracking": "Eye-Tracking",
       "recordingNote": "Sie werden vor Beginn jeder Aufzeichnung benachrichtigt. Alle Daten werden ausschließlich für Forschungszwecke gesammelt und gemäß den Datenschutzrichtlinien behandelt."
+    },
+    "CalibrationStep": {
+      "title": "Eye-Tracking-Kalibrierung",
+      "heading": "Vor Beginn der Kalibrierung",
+      "description": "Wir werden Ihr Gerät vorbereiten, um <strong>Ihre Augenbewegungen aufzuzeichnen</strong>. Dies ermöglicht uns zu verstehen, wie Sie während des Tests auf dem Bildschirm navigieren.",
+      "process": "Die Kalibrierung beinhaltet das Verfolgen von Punkten, die auf dem Bildschirm erscheinen, mit Ihren Augen. Es ist wichtig, dass Sie sich an einem gut beleuchteten Ort befinden, bequem sitzen und Ihren Kopf ruhig halten.",
+      "instruction": "Wenn Sie bereit sind, drücken Sie die Taste, um die Kalibrierung zu starten.",
+      "startButton": "Kalibrierung starten",
+      "inProgress": "In Bearbeitung..."
     }
   },
   "eyeTracking": {
@@ -962,6 +1277,7 @@
         "allStudies": "Alle Studien",
         "myStudies": "Meine Studien",
         "whereICollaborate": "Wo ich mitarbeite",
+        "allMethods": "Alle Methoden",
         "lessThan10": "< 10 Teilnehmer",
         "between10And50": "10 – 50 Teilnehmer",
         "moreThan50": "> 50 Teilnehmer"
@@ -1049,8 +1365,6 @@
       "select_end_date": "Enddatum auswählen",
       "quick_actions": "Schnelle Aktionen",
       "perform_common_tasks": "Führen Sie häufige Aufgaben sofort aus",
-      "confirm_deletion": "Löschung bestätigen",
-      "action_cannot_be_undone": "Diese Aktion kann nicht rückgängig gemacht werden",
       "delete_warning": "Alle zugehörigen Daten, Ergebnisse und Konfigurationen gehen für immer verloren.",
       "delete_forever": "Endgültig löschen"
     },
@@ -1068,15 +1382,18 @@
     "noCopy": "Kopieren nicht erfolgreich",
     "deleteTemplate": "Sind Sie sicher, dass Sie diese Vorlage löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden!",
     "deleteTest": "Sind Sie sicher, dass Sie diesen Test löschen möchten?",
+    "deleteQuestion": "Sind Sie sicher, dass Sie die Frage löschen möchten: ",
+    "deleteDescription": "Sind Sie sicher, dass Sie die Beschreibung löschen möchten: ",
     "addDescription": "Bitte fügen Sie eine Beschreibung hinzu",
     "errorOccurred": "Ein Fehler ist aufgetreten",
     "leave": "Sind Sie sicher, dass Sie gehen möchten?",
     "sureLeave": "Sind Sie sicher, dass Sie gehen möchten? Alle Ihre Änderungen werden verworfen.",
     "imageURL": "Geben Sie die Bild-URL ein:",
-    "deleteHeuristic": "Sind Sie sicher, dass Sie die Heuristik löschen möchten ",
+    "deleteHeuristic": "Sind Sie sicher, dass Sie die Heuristik löschen möchten: ",
     "deleteAccount": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
     "genericSuccess": "Vorgang erfolgreich",
-    "savedChanges": "Änderungen erfolgreich gespeichert"
+    "savedChanges": "Änderungen erfolgreich gespeichert",
+    "deleteUser": "Sind Sie sicher, dass Sie diesen Benutzer löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
   },
   "buttons": {
     "next": "Weiter",
@@ -1114,7 +1431,8 @@
     "eyeTracker": "Eye-Tracker",
     "audioRecord": "Audioaufnahme",
     "postForm": "Nachtest-Formular",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sart": "SART"
   },
   "inputs": {
     "consentForm": "Einverständniserklärung",
@@ -1324,7 +1642,9 @@
     "user": "Benutzer",
     "invite": "Einladen",
     "actions": "Aktionen",
-    "no": "Nein"
+    "no": "Nein",
+    "downloadResume": "Lebenslauf PDF herunterladen",
+    "sartAnalytics": "SART Analysen"
   },
   "studyCreation": {
     "chooseEvaluationCategory": "Evaluationskategorie wählen",
@@ -1473,7 +1793,8 @@
       "active": "Aktiv",
       "draft": "Entwurf",
       "completed": "Abgeschlossen",
-      "archived": "Archiviert"
+      "archived": "Archiviert",
+      "moderatedDescription": "Verwalten Sie Ihre moderierte Benutzerteststudie, verfolgen Sie den Fortschritt der Teilnehmer und analysieren Sie die Ergebnisse über Ihr umfassendes Dashboard."
     },
     "studyOverview": {
       "totalParticipants": "Gesamtteilnehmer",
@@ -1532,5 +1853,46 @@
   "taskCreation": {
     "taskDescription": "Aufgabenbeschreibung",
     "taskDescriptionHelper": "Geben Sie spezifische Schritte an, die sie befolgen sollen."
+  },
+  "dialogs": {
+    "deleteVariableConfirm": {
+      "title": "Variable löschen",
+      "message": "Sind Sie sicher, dass Sie diese Variable löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+    },
+    "deleteOptionConfirm": {
+      "title": "Option löschen",
+      "message": "Sind Sie sicher, dass Sie diese Option löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+    }
+  },
+  "tags": {
+    "active": "Aktiv",
+    "draft": "Entwurf",
+    "completed": "Abgeschlossen",
+    "archived": "Archiviert",
+    "public": "Öffentlich",
+    "private": "Privat",
+    "fromTemplate": "Aus Vorlage",
+    "withCollaborators": "Mit Mitwirkenden"
+  },
+  "methods": {
+    "categories": {
+      "test": "Benutzertests",
+      "inquiry": "Benutzerforschung",
+      "inspection": "Expertenprüfung",
+      "accessibility": "Barrierefreiheit",
+      "other": "Sonstiges"
+    },
+    "definitions": {
+      "HEURISTICS": "Heuristische Bewertung",
+      "USER_MODERATED": "Moderierter Usability-Test",
+      "USER_UNMODERATED": "Unmoderierter Usability-Test",
+      "SURVEY": "Umfrage",
+      "INTERVIEW": "Interview",
+      "CARD_SORTING": "Card Sorting",
+      "COGNITIVE_WALKTHROUGH": "Cognitive Walkthrough",
+      "ACCESSIBILITY_MANUAL": "Manuelle Bewertung",
+      "ACCESSIBILITY_AUTOMATIC": "Automatische Bewertung",
+      "WCAG_AUDIT": "WCAG-Audit"
+    }
   }
 }

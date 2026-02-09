@@ -1,33 +1,17 @@
 <template>
   <div class="bg-grey-lighten-4">
-    <v-card
-      height="260"
-      elevation="0"
-      rounded="0"
-      class="mb-6"
-    >
+    <v-card height="260" elevation="0" rounded="0" class="mb-6">
       <v-img
         src="https://theme.zdassets.com/theme_assets/717481/e805a01ba4ee2b0b1d0aa58dca3eb97f54c31e95.png"
         height="260"
         cover
       >
         <v-container class="fill-height d-flex align-center justify-center">
-          <v-row
-            justify="center"
-            align="center"
-            class="text-center"
-          >
-            <v-col
-              cols="12"
-              xs="12"
-              sm="10"
-              md="8"
-              lg="7"
-              xl="6"
-            >
+          <v-row justify="center" align="center" class="text-center">
+            <v-col cols="12" xs="12" sm="10" md="8" lg="7" xl="6">
               <h2
                 class="text-h4 font-weight-medium text-white mb-6"
-                style="text-shadow: 0 2px 4px rgba(0,0,0,0.2)"
+                style="text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2)"
               >
                 {{ $t('help.howCanWeHelp') }}
               </h2>
@@ -38,25 +22,13 @@
     </v-card>
     <v-container class="mt-4">
       <v-row>
-        <v-col
-          cols="12"
-          md="4"
-          lg="3"
-        >
-          <div
-            class="sticky-top"
-            style="top: 24px;"
-          >
-            <v-card
-              rounded="lg"
-              elevation="2"
-            >
-              <v-list
-                nav
-                rounded
-                color="black"
-              >
-                <v-list-subheader class="text-subtitle-2 font-weight-bold text-amber-darken-2">
+        <v-col cols="12" md="4" lg="3">
+          <div class="sticky-top" style="top: 24px">
+            <v-card rounded="lg" elevation="2">
+              <v-list nav rounded color="black">
+                <v-list-subheader
+                  class="text-subtitle-2 font-weight-bold text-amber-darken-2"
+                >
                   {{ $t('help.categories') }}
                 </v-list-subheader>
                 <v-list-item
@@ -69,9 +41,10 @@
                 >
                   <template #prepend>
                     <v-icon
-                      :color="selectedCategory === category.id
-                        ? 'black'
-                        : 'grey darken-1'
+                      :color="
+                        selectedCategory === category.id
+                          ? 'black'
+                          : 'grey darken-1'
                       "
                     >
                       {{ category.icon }}
@@ -91,7 +64,11 @@
                       color="amber-darken-2"
                       class="text-white"
                     >
-                      {{ items.filter(item => item && item.category === category.id).length }}
+                      {{
+                        items.filter(
+                          (item) => item && item.category === category.id,
+                        ).length
+                      }}
                     </v-chip>
                   </v-list-item-title>
                 </v-list-item>
@@ -103,7 +80,8 @@
                 >
                   <template #prepend>
                     <v-icon
-                      :color="selectedCategory === null ? 'black' : 'grey darken-1'
+                      :color="
+                        selectedCategory === null ? 'black' : 'grey darken-1'
                       "
                     >
                       mdi-view-grid
@@ -122,11 +100,7 @@
             </v-card>
           </div>
         </v-col>
-        <v-col
-          cols="12"
-          md="8"
-          lg="9"
-        >
+        <v-col cols="12" md="8" lg="9">
           <div v-if="filteredItems.length > 0">
             <div
               v-for="(category, catIndex) in displayedCategories"
@@ -137,13 +111,10 @@
                 v-if="getItemsByCategory(category.id).length > 0"
                 flat
                 class="mb-4 rounded-lg"
-                style="border-left: 4px solid rgb(249, 168, 38);"
+                style="border-left: 4px solid rgb(249, 168, 38)"
               >
                 <v-card-title class="py-3 text-black font-weight-medium">
-                  <v-icon
-                    start
-                    color="black"
-                  >
+                  <v-icon start color="black">
                     {{ category.icon }}
                   </v-icon>
                   {{ $t(category.nameKey) }}
@@ -154,9 +125,11 @@
                   v-for="(item, index) in getItemsByCategory(category.id)"
                   :key="'item-' + index"
                   class="mb-3 rounded-lg"
-                  style="border: 1px solid rgba(0,0,0,0.08);"
+                  style="border: 1px solid rgba(0, 0, 0, 0.08)"
                 >
-                  <v-expansion-panel-title class="py-3 text-subtitle-1 text-grey-darken-3 font-weight-medium">
+                  <v-expansion-panel-title
+                    class="py-3 text-subtitle-1 text-grey-darken-3 font-weight-medium"
+                  >
                     {{ item.title }}
                   </v-expansion-panel-title>
                   <v-expansion-panel-text class="bg-grey-lighten-5">
@@ -174,7 +147,10 @@
                         preload="metadata"
                         muted
                         :aria-label="$t('help.videoAltText')"
-                        style="border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 16px rgba(0,0,0,0.08);"
+                        style="
+                          border: 1px solid rgba(0, 0, 0, 0.08);
+                          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+                        "
                       />
                     </div>
                   </v-expansion-panel-text>
@@ -185,14 +161,10 @@
           <v-card
             v-if="filteredItems.length === 0"
             class="pa-6 rounded-lg text-center bg-grey-lighten-5"
-            style="border: 1px dashed rgba(0,0,0,0.15);"
+            style="border: 1px dashed rgba(0, 0, 0, 0.15)"
           >
             <v-card-text>
-              <v-icon
-                size="64"
-                color="grey-lighten-1"
-                class="mb-4"
-              >
+              <v-icon size="64" color="grey-lighten-1" class="mb-4">
                 mdi-help-circle-outline
               </v-icon>
               <h3 class="mb-3">
@@ -204,17 +176,14 @@
 
               <v-btn
                 color="black"
-                style="color: white;"
+                style="color: white"
                 @click="filterByCategory(null)"
               >
                 {{ $t('help.viewAllArticles') }}
               </v-btn>
             </v-card-text>
           </v-card>
-          <div
-            v-if="pageCount > 1"
-            class="text-center mt-8"
-          >
+          <div v-if="pageCount > 1" class="text-center mt-8">
             <v-pagination
               v-model="page"
               :length="pageCount"
@@ -231,7 +200,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from 'vue';
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
@@ -239,21 +208,29 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-});
+})
 
-const { t } = useI18n();
+const { t } = useI18n()
 
-const selectedCategory = ref(null);
-const page = ref(1);
-const itemsPerPage = ref(5);
+const selectedCategory = ref(null)
+const page = ref(1)
+const itemsPerPage = ref(5)
 
 // Categories
 const categories = ref([
-  { id: 'test-creation', nameKey: 'help.testCreation', icon: 'mdi-file-document-edit' },
-  { id: 'templates', nameKey: 'help.templates', icon: 'mdi-file-table-outline' },
+  {
+    id: 'test-creation',
+    nameKey: 'help.testCreation',
+    icon: 'mdi-file-document-edit',
+  },
+  {
+    id: 'templates',
+    nameKey: 'help.templates',
+    icon: 'mdi-file-table-outline',
+  },
   { id: 'cooperators', nameKey: 'help.cooperators', icon: 'mdi-account-group' },
   { id: 'analytics', nameKey: 'help.analytics', icon: 'mdi-chart-bar' },
-]);
+])
 
 // FAQ Items
 const generateFaqItems = () => {
@@ -264,17 +241,16 @@ const generateFaqItems = () => {
         content: t(`help.${keyPrefix}answer`) || 'Content not available',
         gif: `${gif}.mp4`,
         category,
-      };
-    } catch (error) {
-      console.warn(`Failed to create FAQ item for ${keyPrefix}:`, error);
+      }
+    } catch {
       return {
         title: `FAQ ${keyPrefix}`,
         content: 'Content not available',
         gif: `${gif}.mp4`,
         category,
-      };
+      }
     }
-  };
+  }
 
   return [
     createFaqItem('createtest', 'test-creation', 'create_test'),
@@ -287,83 +263,88 @@ const generateFaqItems = () => {
     createFaqItem('invitecooperators', 'cooperators', 'sendinvite'),
     createFaqItem('analyseresults', 'analytics', 'analytics'),
     createFaqItem('sendmessage', 'cooperators', 'send_message'),
-  ];
-};
+  ]
+}
 
-const items = ref([]);
+const items = ref([])
 
 const filteredItems = computed(() => {
   if (!items.value || !Array.isArray(items.value)) {
-    return [];
+    return []
   }
 
-  let filtered = items.value;
+  let filtered = items.value
 
   if (selectedCategory.value) {
-    filtered = filtered.filter((item) => item && item.category === selectedCategory.value);
+    filtered = filtered.filter(
+      (item) => item && item.category === selectedCategory.value,
+    )
   }
 
   return filtered.sort((a, b) => {
-    const indexA = categories.value.findIndex(cat => cat.id === a.category);
-    const indexB = categories.value.findIndex(cat => cat.id === b.category);
-    
-    return indexA - indexB;
-  });
-});
+    const indexA = categories.value.findIndex((cat) => cat.id === a.category)
+    const indexB = categories.value.findIndex((cat) => cat.id === b.category)
+
+    return indexA - indexB
+  })
+})
 
 const pageCount = computed(() => {
-  const itemsLength = filteredItems.value?.length || 0;
-  const perPage = itemsPerPage.value || 5;
-  return Math.ceil(itemsLength / perPage);
-});
+  const itemsLength = filteredItems.value?.length || 0
+  const perPage = itemsPerPage.value || 5
+  return Math.ceil(itemsLength / perPage)
+})
 
 const paginatedItems = computed(() => {
   if (!filteredItems.value || !Array.isArray(filteredItems.value)) {
-    return [];
+    return []
   }
 
-  const start = (page.value - 1) * itemsPerPage.value;
-  const end = start + itemsPerPage.value;
-  return filteredItems.value.slice(start, end);
-});
+  const start = (page.value - 1) * itemsPerPage.value
+  const end = start + itemsPerPage.value
+  return filteredItems.value.slice(start, end)
+})
 
 const displayedCategories = computed(() => {
   if (!categories.value || !Array.isArray(categories.value)) {
-    return [];
+    return []
   }
 
   if (selectedCategory.value) {
-    return categories.value.filter((cat) => cat && cat.id === selectedCategory.value);
+    return categories.value.filter(
+      (cat) => cat && cat.id === selectedCategory.value,
+    )
   }
-  return categories.value;
-});
+  return categories.value
+})
 
 const filterByCategory = (categoryId) => {
-  selectedCategory.value = categoryId;
-  page.value = 1;
-};
+  selectedCategory.value = categoryId
+  page.value = 1
+}
 
 const getItemsByCategory = (categoryId) => {
   if (!paginatedItems.value || !Array.isArray(paginatedItems.value)) {
-    return [];
+    return []
   }
 
-  if (!categoryId) return paginatedItems.value;
-  return paginatedItems.value.filter((item) => item && item.category === categoryId);
-};
+  if (!categoryId) return paginatedItems.value
+  return paginatedItems.value.filter(
+    (item) => item && item.category === categoryId,
+  )
+}
 
 onMounted(() => {
   try {
-    items.value = generateFaqItems();
-  } catch (error) {
-    console.error('Failed to generate FAQ items:', error);
-    items.value = [];
+    items.value = generateFaqItems()
+  } catch {
+    items.value = []
   }
 
   if (props.showAllOnLoad) {
     nextTick(() => {
-      selectedCategory.value = null;
-    });
+      selectedCategory.value = null
+    })
   }
-});
+})
 </script>

@@ -64,13 +64,21 @@
                   hide-details
                   :placeholder="
                     creationDateRange.length > 1
-                      ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
+                      ? `${new Date(
+                          creationDateRange[0],
+                        ).toLocaleDateString()} - ${new Date(
+                          creationDateRange[creationDateRange.length - 1],
+                        ).toLocaleDateString()}`
                       : $t('pages.studies.selectRange')
                   "
                   prepend-inner-icon="mdi-calendar"
                   :model-value="
                     creationDateRange.length > 1
-                      ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
+                      ? `${new Date(
+                          creationDateRange[0],
+                        ).toLocaleDateString()} - ${new Date(
+                          creationDateRange[creationDateRange.length - 1],
+                        ).toLocaleDateString()}`
                       : ''
                   "
                 />
@@ -160,7 +168,12 @@
   </v-card>
 
   <!-- 📋 Study list -->
-  <List :items="filteredTests" type="myTests" @clicked="goTo" />
+  <List
+    :items="filteredTests"
+    type="myTests"
+    :is-filtered="hasActiveFilters"
+    @clicked="goTo"
+  />
 </template>
 
 <script setup>
@@ -248,26 +261,14 @@ const hasActiveFilters = computed(
     ),
 )
 
-// Helper to map method IDs to i18n keys
-const getMethodKey = (methodId) => {
-  const mapping = {
-    HEURISTICS: 'heuristicEvaluation',
-    USER_UNMODERATED: 'userStudyUnmoderated',
-    USER_MODERATED: 'userStudyModerated',
-    MANUAL: 'manualAccessibility',
-    AUTOMATIC: 'automaticAccessibility',
-  }
-  return mapping[methodId] || methodId
-}
-
 // ===== Method options =====
 const methodOptions = computed(() => {
-  const options = getMethodOptions(locale.value, METHOD_STATUSES.AVAILABLE.id)
+  const options = getMethodOptions(t.value, METHOD_STATUSES.AVAILABLE.id)
   return [
-    { value: 'all', text: t('Dashboard.studiesPage.filters.allMethods') },
+    { value: 'all', text: t('pages.studies.filters.allMethods') },
     ...options.map((opt) => ({
       ...opt,
-      text: t(`common.method.${getMethodKey(opt.value)}`),
+      text: t(`methods.definitions.${opt.value}`),
     })),
   ]
 })

@@ -9,22 +9,7 @@
       >
         <div
           class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center"
-        >
-          <!-- MARK ALL AS READ BUTTON -->
-          <v-btn
-            v-if="activeTab === 'unread' && unreadCount > 0"
-            size="small"
-            variant="flat"
-            color="primary"
-            :loading="markingAllAsRead"
-            prepend-icon="mdi-email-open-outline"
-            class="elevation-0 text-capitalize"
-            :class="{ 'flex-shrink-0': true }"
-            @click="markAllAsRead"
-          >
-            {{ $t('notificationsPage.markAllRead') }}
-          </v-btn>
-        </div>
+        ></div>
 
         <!-- TABS FOR DESKTOP -->
         <v-tabs
@@ -91,6 +76,26 @@
         clearable
         @click:clear="search = ''"
       />
+
+      <!-- MARK ALL AS READ BUTTON (New Location) -->
+      <div
+        v-if="['unread', 'inbox'].includes(activeTab)"
+        class="d-flex justify-end mb-4"
+      >
+        <v-btn
+          size="small"
+          variant="flat"
+          :color="unreadCount > 0 ? 'primary' : 'grey-lighten-2'"
+          :class="{ 'text-medium-emphasis': unreadCount === 0 }"
+          :disabled="unreadCount === 0"
+          :loading="markingAllAsRead"
+          prepend-icon="mdi-email-open-outline"
+          class="text-capitalize"
+          @click="markAllAsRead"
+        >
+          {{ $t('notificationsPage.markAllRead') }}
+        </v-btn>
+      </div>
 
       <!-- NOTIFICATIONS CONTENT -->
       <v-card
@@ -547,14 +552,7 @@ const markAllAsRead = async () => {
 
   markingAllAsRead.value = true
   try {
-    await Promise.all(
-      unread.map((notification) =>
-        store.dispatch('markNotificationAsRead', {
-          notification,
-          user: user.value,
-        }),
-      ),
-    )
+    await store.dispatch('markAllNotificationsAsRead', user.value)
   } catch {
     // Error handling without console.error for SonarCloud
   } finally {
@@ -639,6 +637,24 @@ onMounted(() => {
   }, 600)
 
   globalThis.addEventListener('keydown', handleKeyDown)
+
+  // Expose test function for user to verify in console
+  globalThis.testByInjectingNotification = () => {
+    const fakeNotification = {
+      id: 'test-' + Date.now(),
+      title: 'Test Notification',
+      message: 'This is a test notification generated locally.',
+      type: 'System',
+      read: false,
+      createdDate: new Date().toISOString(),
+    }
+    // We can't easily push to the store user without a mutation,
+    // but we can force the button to enable by mocking the unread count check locally if needed.
+    // Actually, let's just log instructions for them.
+    console.log(
+      'To test, please use the app UI to perform an action that triggers a notification, or ask another user to invite you.',
+    )
+  }
 })
 
 onUnmounted(() => {

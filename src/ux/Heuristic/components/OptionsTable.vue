@@ -211,7 +211,9 @@
             <span class="text-caption text-grey">
               {{ optionsWithFormattedValue.length }}
               {{
-                optionsWithFormattedValue.length === 1 ? 'option' : 'options'
+                optionsWithFormattedValue.length === 1
+                  ? $t('HeuristicsOptionsTable.count.option')
+                  : $t('HeuristicsOptionsTable.count.options')
               }}
             </span>
           </div>
@@ -296,9 +298,10 @@ const hasValue = ref(true)
 
 const optionsWithFormattedValue = computed(() => {
   // Follow heuristics pattern: try Heuristic store first, fallback to Study store
-  const source = store.getters.testOptions?.length
-    ? store.getters.testOptions
-    : store.state.Tests?.Test.testOptions || []
+  const source =
+    store.getters.testOptions !== undefined && store.getters.testOptions !== null
+      ? store.getters.testOptions
+      : store.state.Tests?.Test.testOptions || []
 
   return source.map((opt) => ({
     ...opt,
