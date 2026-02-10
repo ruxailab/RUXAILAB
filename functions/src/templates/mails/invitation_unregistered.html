@@ -37,10 +37,11 @@
         padding: 18px 40px;
         background: linear-gradient(135deg, #059669 0%, #10b981 100%);
         color: #ffffff;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); 
+        font-weight: 700; 
         text-decoration: none;
         border-radius: 8px;
         font-size: 17px;
-        font-weight: 600;
         box-shadow: 0 4px 6px -1px rgba(5, 150, 105, 0.3);
         transition: all 0.3s ease;
         cursor: pointer;
@@ -113,7 +114,7 @@
       <div style="padding:0 30px 30px 30px; text-align:center;">
         <a href="{{site}}/accept-invitation?token={{invitationToken}}&email={{email}}"
            class="invitation-button"
-           aria-label="Accept Invitation and Create Account - Click to create your account and join the study"
+           aria-label="Accept Invitation & Create Account"
            onkeydown="if(event.key === 'Enter' || event.key === ' ') { window.location.href = '{{site}}/accept-invitation?token={{invitationToken}}&email={{email}}'; }"
            tabindex="0">
            Accept Invitation & Create Account
