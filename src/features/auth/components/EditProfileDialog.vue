@@ -1,4 +1,18 @@
 <template>
+  <v-snackbar
+    v-model="showError"
+    :timeout="4000"
+    color="error"
+    location="top"
+  >
+    {{ errorMessage }}
+    <template #actions>
+      <v-btn variant="text" @click="showError = false">
+        {{ $t('common.close') || 'Close' }}
+      </v-btn>
+    </template>
+  </v-snackbar>
+
   <v-dialog
     :model-value="modelValue"
     max-width="600px"
@@ -180,6 +194,8 @@ const isValid = ref(false)
 const isSaving = ref(false)
 const isProcessingImage = ref(false)
 const hasChanges = ref(false)
+const showError = ref(false)
+const errorMessage = ref('')
 
 // Store pending image file
 const pendingImageFile = ref(null)
@@ -217,10 +233,15 @@ watch(
     const hasFormChanges =
       newVal.username !== props.profileData.username ||
       newVal.contactNo !== props.profileData.contactNo ||
-      newVal.country !== props.profileData.country ||
-      newVal.profileImage !== props.profileData.profileImage
+      newVal.country !== props.profileData.country
 
-    hasChanges.value = hasFormChanges || pendingImageFile.value !== null
+    // Detect image changes without comparing blob: preview URLs
+    // against persisted remote URLs
+    const hasImageChange =
+      pendingImageFile.value !== null ||
+      (newVal.profileImage === '' && props.profileData.profileImage !== '')
+
+    hasChanges.value = hasFormChanges || hasImageChange
   },
   { deep: true },
 )
@@ -252,12 +273,29 @@ const handleImageSelect = async (event) => {
 
   // Validate file type
   if (!file.type.startsWith('image/')) {
+    errorMessage.value =
+      t('profile.invalidFileType') ||
+      'Invalid file type. Please upload an image file (JPEG, PNG, GIF, etc.).'
+    showError.value = true
+    // Reset file input so user can retry
+    if (fileInput.value) {
+      fileInput.value.value = ''
+    }
     return
   }
 
-  // Warn if file is very large (over 5MB)
+  // Reject files over 5MB with user feedback
   const maxSize = 5 * 1024 * 1024 // 5MB
   if (file.size > maxSize) {
+    errorMessage.value =
+      t('profile.fileTooLarge') ||
+      'File is too large. Please upload an image smaller than 5MB.'
+    showError.value = true
+    // Reset file input so user can retry
+    if (fileInput.value) {
+      fileInput.value.value = ''
+    }
+    return
   }
 
   try {
