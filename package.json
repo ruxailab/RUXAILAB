@@ -44,7 +44,7 @@
     "crypto-browserify": "^3.12.1",
     "date-fns": "^4.1.0",
     "firebase": "^9.23.0",
-    "firebase-admin": "^13.6.0",
+    "firebase-admin": "^13.6.1",
     "firebase-functions": "^6.6.0",
     "jsdoc-vuex-plugin": "^1.0.0",
     "jspdf": "^3.0.3",
