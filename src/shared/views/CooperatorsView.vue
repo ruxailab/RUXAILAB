@@ -266,62 +266,89 @@ const handleSendInvitations = async (invitationData) => {
 
   inviteMessages.value = inviteMessage
   cooperatorsUpdate.value = [...cooperatorsEdit.value]
+  
+  // Track new invites for feedback
+  const newInvites = []
+  const updatedRoles = [] // Track role updates for existing users
 
   selectedCoops.forEach((coop) => {
     const token = uidgen.generateSync()
     
-    // if this is an unregistered user 
-    const isUnregistered = coop.isUnregistered === true
+    // Check if user already exists in cooperators
+    const existingCooperatorIndex = cooperatorsEdit.value.findIndex(
+      c => c.email === coop.email || (coop.id && c.userDocId === coop.id)
+    )
     
-    if (isUnregistered) {
-      // unregistered user create cooperator with invitation details
-      const newCooperator = new Cooperators({
-        userDocId: null,
-        email: coop.email,
-        invited: true,
-        accepted: false,
+    if (existingCooperatorIndex !== -1) {
+      // Update existing cooperator's role
+      const existingCoop = cooperatorsEdit.value[existingCooperatorIndex]
+      const oldRole = roleOptions.value.find(r => r.value === existingCoop.accessLevel)?.title || 'Unknown'
+      const newRole = roleOptions.value[selectedRole].title
+      
+      cooperatorsEdit.value[existingCooperatorIndex] = {
+        ...existingCoop,
         accessLevel: roleOptions.value[selectedRole].value,
-        token: token,
-        progress: 0,
-        updateDate: new Date().toISOString(),
-        testAuthorEmail: test.value.testAdmin.email,
-        isUnregistered: true,
-        invitationToken: coop.invitationToken || token,
-        invitationSentAt: Date.now(),
-        invitationExpires: Date.now() + (7 * 24 * 60 * 60 * 1000), // 7 days
-        inviteMessage: inviteMessage
-      })
-      cooperatorsEdit.value.push(newCooperator)
-    } else if (typeof coop === 'string' || !coop.id) {
-      // string email (registered user not found in combobox)
-      const existingUser = users.value.find(user => user.email === coop)
-      cooperatorsEdit.value.push({
-        userDocId: existingUser ? existingUser.id : null,
-        email: coop,
-        invited: true,
-        accepted: false,
-        accessLevel: roleOptions.value[selectedRole].value,
-        token: token,
-        progress: 0,
-        updateDate: new Date().toISOString(),
-        testAuthorEmail: test.value.testAdmin.email,
-        isUnregistered: false,
-        inviteMessage: inviteMessage
-      })
+        updateDate: new Date().toISOString()
+      }
+      
+      updatedRoles.push(`${coop.email} (${oldRole} → ${newRole})`)
     } else {
-      cooperatorsEdit.value.push({
-        userDocId: coop.id,
-        email: coop.email,
-        invited: true,
-        accepted: false,
-        accessLevel: roleOptions.value[selectedRole].value,
-        token: token,
-        progress: 0,
-        updateDate: new Date().toISOString(),
-        testAuthorEmail: test.value.testAdmin.email,
-        isUnregistered: false,
-        inviteMessage: inviteMessage
-      })
+      // New invitation
+      newInvites.push(coop.email)
+      
+      // if this is an unregistered user 
+      const isUnregistered = coop.isUnregistered === true
+      
+      if (isUnregistered) {
+        // unregistered user create cooperator with invitation details
+        const newCooperator = new Cooperators({
+          userDocId: null,
+          email: coop.email,
+          invited: true,
+          accepted: false,
+          accessLevel: roleOptions.value[selectedRole].value,
+          token: token,
+          progress: 0,
+          updateDate: new Date().toISOString(),
+          testAuthorEmail: test.value.testAdmin.email,
+          isUnregistered: true,
+          invitationToken: coop.invitationToken || token,
+          invitationSentAt: Date.now(),
+          invitationExpires: Date.now() + (7 * 24 * 60 * 60 * 1000), // 7 days
+          inviteMessage: inviteMessage
+        })
+        cooperatorsEdit.value.push(newCooperator)
+      } else if (typeof coop === 'string' || !coop.id) {
+        // string email (registered user not found in combobox)
+        const existingUser = users.value.find(user => user.email === coop)
+        cooperatorsEdit.value.push({
+          userDocId: existingUser ? existingUser.id : null,
+          email: coop,
+          invited: true,
+          accepted: false,
+          accessLevel: roleOptions.value[selectedRole].value,
+          token: token,
+          progress: 0,
+          updateDate: new Date().toISOString(),
+          testAuthorEmail: test.value.testAdmin.email,
+          isUnregistered: false,
+          inviteMessage: inviteMessage
+        })
+      } else {
+        cooperatorsEdit.value.push({
+          userDocId: coop.id,
+          email: coop.email,
+          invited: true,
+          accepted: false,
+          accessLevel: roleOptions.value[selectedRole].value,
+          token: token,
+          progress: 0,
+          updateDate: new Date().toISOString(),
+          testAuthorEmail: test.value.testAdmin.email,
+          isUnregistered: false,
+          inviteMessage: inviteMessage
+        })
+      }
     }
   })
 
@@ -399,7 +426,6 @@ const sendMenssages = async (guest) => {
       await notifyCooperator(guest)
     }
     
-    showSuccess(`Invitation sent to ${guest.email}`)
     return { success: true, email: guest.email }
   } catch (error) {
     console.error('Error sending invitation to', guest.email, error)
