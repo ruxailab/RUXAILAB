@@ -730,7 +730,7 @@ const savePartialAnswer = async () => {
     }
   } catch (e) {
     // Error saving partial answer - will retry on next save
-    throw e
+    // Intentionally not rethrowing to avoid unhandled promise rejections
   }
 }
 
