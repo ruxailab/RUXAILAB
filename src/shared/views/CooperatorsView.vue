@@ -104,7 +104,7 @@ import { useRouter, useRoute } from 'vue-router'
 import Notification from '@/shared/models/Notification'
 import EmailController from '../controllers/EmailController'
 import { useI18n } from 'vue-i18n'
-import { showSuccess, showError } from '@/shared/utils/toast'
+import { showSuccess, showError, showWarning } from '@/shared/utils/toast'
 
 const uidgen = new UIDGenerator()
 const router = useRouter()
@@ -146,18 +146,30 @@ const {
 const sendNotification = async ({
   userId,
   title,
+  titleTemplate,
+  titleParams,
   description,
+  descriptionTemplate,
+  descriptionParams,
   redirectsTo = '/',
   testId = null,
   author,
+  type,
+  accessLevel,
 } = {}) => {
   const notification = new Notification({
     title,
+    titleTemplate,
+    titleParams,
     description,
+    descriptionTemplate,
+    descriptionParams,
     redirectsTo,
     author,
     read: false,
     testId,
+    type,
+    accessLevel,
   })
 
   try {
@@ -201,15 +213,23 @@ const openMessageDialog = (item) => {
 const handleSendMessage = async ({ user, title, content }) => {
   messageModel.value = false
   if (user.userDocId && test.value) {
-    const author = test.value.testAdmin.email
-    await sendNotification(
-      user.userDocId,
-      title,
-      author,
-      content,
-      '/',
-      test.value.id,
-    )
+    const author = userAuth.value.email
+    try {
+      await sendNotification({
+        userId: user.userDocId,
+        title: title,
+        author: author,
+        description: content,
+        redirectsTo: null,
+        testId: test.value.id,
+        type: 'Message',
+      })
+      showSuccess('HeuristicsCooperators.messages.message_sent_success')
+    } catch (error) {
+      showError('HeuristicsCooperators.messages.message_sent_error')
+    }
+  } else {
+    showWarning('HeuristicsCooperators.messages.user_not_registered')
   }
 }
 
@@ -307,6 +327,17 @@ const handleSendInvitations = async (invitationData) => {
 
   await submit()
   showInviteDialog.value = false
+
+  // Show appropriate feedback
+  if (updatedRoles.length > 0) {
+    showSuccess(t('cooperators.updatedRole', { 
+      role: roleOptions.value[selectedRole].title, 
+      users: updatedRoles.join(', ') 
+    }))
+  }
+  if (newInvites.length > 0) {
+    showSuccess(t('cooperators.inviteSent', { users: newInvites.join(', ') }))
+  }
 }
 
 const changeRole = async (item, newValue) => {

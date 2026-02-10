@@ -7,8 +7,12 @@
       <v-col cols="1" class="mb-6 py-0">
         <v-tooltip v-if="!show" location="bottom">
           <template #activator="{ props }">
-            <v-btn icon v-bind="props" @click="show = !show">
-              <v-icon :color="answerHeu.heuristicComment ? '#F9A826' : ''">
+            <v-btn
+              icon
+              v-bind="props"
+              @click="show = !show"
+            >
+              <v-icon :color="answerHeu?.heuristicComment ? '#F9A826' : ''">
                 mdi-comment-plus-outline
               </v-icon>
             </v-btn>
@@ -42,12 +46,13 @@
           :label="$t('common.comment')"
           :disabled="disable"
           @update:model-value="updateComment"
+          @blur="handleCommentBlur"
         />
         <ImageImport
           v-if="show"
-          :heuristic-id="test.testStructure[heurisIndex]"
-          :question-id="answerHeu.heuristicId"
-          :test-id="store.getters.test.id"
+          :heuristic-id="heuristicIdForImage"
+          :question-id="questionIdForImage"
+          :test-id="testIdForImage"
           :disable="disable"
           @image-uploaded="handleImageUploaded"
         />
@@ -57,7 +62,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import ImageImport from '@/ux/Heuristic/components/ImportImage.vue'
 
@@ -78,63 +83,88 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['updateComment'])
+const emit = defineEmits(['updateComment', 'updateImage'])
 
 const store = useStore()
 
 const show = ref(false)
 const localComment = ref('')
 
-const test = computed(() => store.getters.test)
+const test = computed(() => store.getters.test || {})
 const hasContent = computed(
-  () => props.answerHeu.heuristicComment || props.answerHeu.answerImageUrl,
+  () => props.answerHeu?.heuristicComment || props.answerHeu?.answerImageUrl
 )
+
+const heuristicIdForImage = computed(() => {
+  const index = props.heurisIndex ?? '0';
+  return index.toString();
+})
+
+const questionIdForImage = computed(() => {
+  const id = props.answerHeu?.heuristicId ?? '0';
+  return id.toString();
+})
+
+const testIdForImage = computed(() => {
+  return test.value?.id || '';
+})
+
+const initializeLocalComment = () => {
+  if (props.answerHeu?.heuristicComment) {
+    localComment.value = props.answerHeu.heuristicComment;
+  }
+}
+
+const handleCommentBlur = () => {
+  // Trigger update when user leaves the comment field
+  emit('updateComment', localComment.value);
+}
 
 watch(
   () => props.heurisIndex,
   () => {
     show.value = false
-    localComment.value = props.answerHeu.heuristicComment || ''
-  },
+    initializeLocalComment();
+  }
 )
 
 watch(
-  () => props.answerHeu.heuristicComment,
+  () => props.answerHeu,
   (newVal) => {
-    localComment.value = newVal || ''
-    if (newVal && !show.value) {
-      show.value = true
+    if (newVal?.heuristicComment !== undefined) {
+      localComment.value = newVal.heuristicComment || '';
+    }
+    // Show the comment area if there's content
+    if (hasContent.value && !show.value) {
+      show.value = true;
     }
   },
-)
-
-watch(
-  () => props.answerHeu.answerImageUrl,
-  (newVal) => {
-    if (newVal && !show.value) {
-      show.value = true
-    }
-  },
+  { deep: true, immediate: true }
 )
 
 onMounted(() => {
+  initializeLocalComment();
   if (hasContent.value) {
     show.value = true
   }
+  nextTick(() => {
+    if(props.answerHeu?.heuristicComment){
+      emit('updateComment', props.answerHeu.heuristicComment);
+    }
+  });
 })
 
 const updateComment = (input) => {
-  emit('updateComment', input)
+  localComment.value = input || '';
+  emit('updateComment', input || '');
 }
 
 const handleImageUploaded = (imageUrl) => {
   if (imageUrl) {
-    emit(
-      'updateComment',
-      localComment.value,
-      props.heurisIndex,
-      props.answerHeu.heuristicId,
-    )
+    localComment.value = ''; 
+    emit('updateComment', '');
+    emit('updateImage', imageUrl);
+    show.value = true;
   }
 }
 </script>

@@ -2,6 +2,7 @@ import { admin, functions } from "../f.firebase.js";
 import nodemailer from "nodemailer";
 import * as fs from "fs";
 import * as path from "path";
+import logger from "../utils/logger.js";
 
 export const sendEmail = functions.onCall({
   handler: async (data) => {
@@ -81,10 +82,10 @@ export const sendEmail = functions.onCall({
 
     try {
       await transporter.sendMail(mail);
-      console.log('Email sent successfully to', content.to);
+      logger.info('Email sent successfully to', { to: content.to });
       return 'Email sent successfully.';
     } catch (err) {
-      console.error('Error sending email:', err);
+      logger.error('Error sending email:', { error: err });
       return err;
     }
   }

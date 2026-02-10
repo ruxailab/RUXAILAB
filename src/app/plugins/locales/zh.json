@@ -215,6 +215,16 @@
     "daysAgo": "{count}天前",
     "newNotification": "您有一条新通知。"
   },
+  "notifications": {
+    "errors": {
+      "acceptCollaborationFailed": "接受协作失败。请重试。",
+      "invalidCollaboration": "此协作邀请无效或已过期。"
+    }
+  },
+  "cooperators": {
+    "updatedRole": "已将 {users} 的角色更新为 {role}",
+    "inviteSent": "邀请已发送至：{users}"
+  },
   "navigation": {
     "dashboard": "仪表盘",
     "studies": "研究",
@@ -815,7 +825,10 @@
       "change_role": "您确定要将 {email} 的角色从 {old} 更改为 {new} 吗？",
       "message_title_hint": "输入您的消息标题",
       "message_content_hint": "输入您的消息内容",
-      "invite_message": "您已被邀请参加测试 {testTitle}"
+      "invite_message": "您已被邀请参与 '{testTitle}' 的协作",
+      "message_sent_success": "消息发送成功",
+      "message_sent_error": "消息发送失败",
+      "user_not_registered": "该用户尚未接受邀请或未注册。"
     }
   },
   "UserTestTable": {
@@ -1302,7 +1315,7 @@
       "statusLabel": "状态",
       "ownership": "所有权",
       "evaluator": "评估者",
-      "noActiveSessions": "您没有活跃的会话",
+      "noActiveSessions": "您没有活动的会话",
       "filters": {
         "allStatuses": "所有状态",
         "today": "今天",

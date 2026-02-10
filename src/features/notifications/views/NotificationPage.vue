@@ -77,7 +77,7 @@
         @click:clear="search = ''"
       />
 
-      <!-- MARK ALL AS READ BUTTON (New Location) -->
+      <!-- MARK ALL AS READ BUTTON (Below search, visible on unread and inbox) -->
       <div
         v-if="['unread', 'inbox'].includes(activeTab)"
         class="d-flex justify-end mb-4"
@@ -146,7 +146,7 @@
               }"
               @click="handleNotificationClick(n)"
             >
-              <div class="d-flex align-start gap-3">
+              <div class="d-flex align-start ga-4">
                 <!-- AVATAR/ICON -->
                 <div class="position-relative">
                   <v-avatar
@@ -168,7 +168,7 @@
                   >
                     <div class="d-flex align-center flex-wrap gap-2">
                       <span class="font-weight-medium text-body-1">{{
-                        n.title || $t('notificationsPage.notification')
+                        n.title || (n.titleTemplate ? $t(n.titleTemplate, n.titleParams || {}) : $t('notificationsPage.notification'))
                       }}</span>
                       <v-chip
                         v-if="n.type"
@@ -177,7 +177,7 @@
                         :color="getTypeIcon(n.type).color"
                         variant="flat"
                         density="compact"
-                        class="text-capitalize"
+                        class="text-capitalize ml-2"
                       >
                         {{ n.type }}
                       </v-chip>
@@ -225,15 +225,17 @@
                       </v-btn>
                     </div>
                   </div>
-                  <p class="text-body-2 text-grey-darken-1 mb-2 line-clamp-2">
-                    {{ n.message || $t('notificationsPage.newNotification') }}
-                  </p>
                   <div
-                    v-if="n.senderName"
+                    class="text-body-2 text-grey-darken-1 mb-2 notification-description line-clamp-2"
+                  >
+                    {{ n.description || (n.descriptionTemplate ? $t(n.descriptionTemplate, n.descriptionParams || {}) : $t('notificationsPage.newNotification')) }}
+                  </div>
+                  <div
+                    v-if="n.author"
                     class="text-caption text-grey-darken-2"
                   >
                     <v-icon size="small">mdi-account-outline</v-icon>
-                    {{ n.senderName }}
+                    {{ n.author }}
                   </div>
                 </div>
               </div>
@@ -354,8 +356,8 @@ const filteredNotifications = computed(() => {
     list = list.filter(
       (n) =>
         (n.title || '').toLowerCase().includes(query) ||
-        (n.message || '').toLowerCase().includes(query) ||
-        (n.senderName || '').toLowerCase().includes(query),
+        (n.description || '').toLowerCase().includes(query) ||
+        (n.author || '').toLowerCase().includes(query),
     )
   }
 
@@ -478,7 +480,7 @@ const handleNotificationClick = async (notification) => {
 const goToNotificationRedirect = async (notification) => {
   if (!notification?.redirectsTo) return
 
-  // For collaboration invitations, show dialog
+  // For collaboration invitations, show dialog (check both type and action)
   if (
     notification.type === 'Collaboration' ||
     notification.action === 'invitation'
@@ -504,7 +506,6 @@ const goToNotificationRedirect = async (notification) => {
       }
     } catch {
       // Error handling without console.error for SonarCloud
-      // In production, you might want to log this differently
     }
   }
 
@@ -552,7 +553,14 @@ const markAllAsRead = async () => {
 
   markingAllAsRead.value = true
   try {
-    await store.dispatch('markAllNotificationsAsRead', user.value)
+    await Promise.all(
+      unread.map((notification) =>
+        store.dispatch('markNotificationAsRead', {
+          notification,
+          user: user.value,
+        }),
+      ),
+    )
   } catch {
     // Error handling without console.error for SonarCloud
   } finally {
@@ -637,24 +645,6 @@ onMounted(() => {
   }, 600)
 
   globalThis.addEventListener('keydown', handleKeyDown)
-
-  // Expose test function for user to verify in console
-  globalThis.testByInjectingNotification = () => {
-    const fakeNotification = {
-      id: 'test-' + Date.now(),
-      title: 'Test Notification',
-      message: 'This is a test notification generated locally.',
-      type: 'System',
-      read: false,
-      createdDate: new Date().toISOString(),
-    }
-    // We can't easily push to the store user without a mutation,
-    // but we can force the button to enable by mocking the unread count check locally if needed.
-    // Actually, let's just log instructions for them.
-    console.log(
-      'To test, please use the app UI to perform an action that triggers a notification, or ask another user to invite you.',
-    )
-  }
 })
 
 onUnmounted(() => {
@@ -663,6 +653,10 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.notification-description {
+  white-space: pre-line;
+}
+
 /* 💅 Basic styles for layout and filters */
 .button-bar {
   gap: 14px;
@@ -673,7 +667,7 @@ onUnmounted(() => {
   height: 40px;
   font-weight: bold;
   letter-spacing: 0.3px;
-  background-color: #768898 !important; /* Add custom background */
+  background-color: #768898 !important;
   color: white !important;
 }
 
