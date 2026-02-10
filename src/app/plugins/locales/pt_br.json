@@ -1060,7 +1060,8 @@
       "tasks": "Tarefas",
       "postTest": "Pós-teste",
       "completion": "Conclusão",
-      "taskX": "Tarefa {num}"
+      "taskX": "Tarefa {num}",
+      "form": "Formulário"
     },
     "TaskStep": {
       "preview": "Visualização da tarefa",
@@ -1117,14 +1118,20 @@
     },
     "messages": {
       "noTasks": "Este teste não possui tarefas.",
-      "answerSaved": "Resposta salva com sucesso."
+      "answerSaved": "Resposta salva com sucesso.",
+      "taskCompletedSuccess": "Tarefa \"{taskName}\" concluída com sucesso!",
+      "useSessionLinkModerated": "Use um link de sessão para acessar seu teste moderado!",
+      "useSessionLink": "Use um link de sessão para acessar o teste"
     },
     "errors": {
       "noAnswerData": "Nenhum dado de resposta encontrado.",
       "failedToSaveAnswer": "Falha ao salvar resposta. Tente novamente.",
       "failedToSubmitAnswer": "Falha ao enviar resposta. Tente novamente.",
       "noTestData": "Sem dados de teste",
-      "noTestDataMessage": "As informações do teste não puderam ser carregadas. Tente novamente mais tarde."
+      "noTestDataMessage": "As informações do teste não puderam ser carregadas. Tente novamente mais tarde.",
+      "failedToCompleteStep": "Falha ao completar etapa. Tente novamente.",
+      "failedToInitializeTestData": "Falha ao inicializar dados do teste. Tente novamente.",
+      "loginRequired": "Faça login primeiro na sua conta do RUXAILAB para acessar o teste!"
     },
     "CalibrationInProgressModal": {
       "completed": "Calibração concluída!",
@@ -1186,6 +1193,9 @@
       "instruction": "Quando estiver pronto, pressione o botão para iniciar a calibração.",
       "startButton": "Iniciar calibração",
       "inProgress": "Em andamento..."
+    },
+    "warnings": {
+      "sessionNotScheduled": "Esta sessão ainda não possui uma data agendada"
     }
   },
   "eyeTracking": {

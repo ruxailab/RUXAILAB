@@ -1060,7 +1060,8 @@
       "tasks": "Tâches",
       "postTest": "Post-test",
       "completion": "Fin du test",
-      "taskX": "Tâche {num}"
+      "taskX": "Tâche {num}",
+      "form": "Formulaire"
     },
     "TaskStep": {
       "preview": "Aperçu de la tâche",
@@ -1117,14 +1118,20 @@
     },
     "messages": {
       "noTasks": "Ce test n'a aucune tâche.",
-      "answerSaved": "Réponse enregistrée avec succès."
+      "answerSaved": "Réponse enregistrée avec succès.",
+      "taskCompletedSuccess": "Tâche \"{taskName}\" terminée avec succès !",
+      "useSessionLinkModerated": "Utilisez un lien de session pour accéder à votre test modéré !",
+      "useSessionLink": "Utilisez un lien de session pour accéder au test"
     },
     "errors": {
       "noAnswerData": "Aucune donnée de réponse trouvée.",
       "failedToSaveAnswer": "Échec de l'enregistrement de la réponse. Veuillez réessayer.",
       "failedToSubmitAnswer": "Échec de la soumission de la réponse. Veuillez réessayer.",
       "noTestData": "Aucune donnée de test",
-      "noTestDataMessage": "Les informations sur le test n'ont pas pu être chargées. Veuillez réessayer plus tard."
+      "noTestDataMessage": "Les informations sur le test n'ont pas pu être chargées. Veuillez réessayer plus tard.",
+      "failedToCompleteStep": "Échec de la complétion de l'étape. Veuillez réessayer.",
+      "failedToInitializeTestData": "Échec de l'initialisation des données de test. Veuillez réessayer.",
+      "loginRequired": "Veuillez d’abord vous connecter à votre compte RUXAILAB pour accéder au test !"
     },
     "CalibrationInProgressModal": {
       "completed": "Calibrage terminé !",
@@ -1186,6 +1193,9 @@
       "instruction": "Lorsque vous êtes prêt, appuyez sur le bouton pour commencer le calibrage.",
       "startButton": "Commencer le calibrage",
       "inProgress": "En cours..."
+    },
+    "warnings": {
+      "sessionNotScheduled": "Cette session n’a pas encore de date programmée"
     }
   },
   "eyeTracking": {
