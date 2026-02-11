@@ -46,6 +46,7 @@
     }
   },
   "common": {
+    "enterTextHere": "Digite o texto aqui...",
     "units": {
       "mb": "MB",
       "gb": "GB"
@@ -99,13 +100,18 @@
       "status": "Status",
       "sessionDate": "Data da sessão",
       "participants": "Participantes",
-      "created": "Criado"
+      "created": "Criado",
+      "noSearchResults": "Nenhum resultado encontrado para os seus critérios",
+      "tryAdjustingSearch": "Tente ajustar sua pesquisa ou filtros"
     },
     "proceed": "prosseguir",
     "all": "Todos",
     "actions": "Ações",
+    "confirm_deletion": "Confirmar exclusão",
+    "action_cannot_be_undone": "Esta ação não pode ser desfeita",
     "user": "Usuário",
-    "id": "ID"
+    "id": "ID",
+    "itemsPerPage": "Itens por página:"
   },
   "storage": {
     "pageTitle": "Armazenamento",
@@ -182,6 +188,12 @@
       "accessibilityAutomatic": "Avaliação de acessibilidade automática"
     }
   },
+  "acceptInvitation": {
+    "title": "Convite de cooperação",
+    "message": "Deseja aceitar este convite?",
+    "reject": "Rejeitar",
+    "accept": "Aceitar"
+  },
   "notificationsPage": {
     "subtitle": "Mantenha-se atualizado com suas atividades e colaborações",
     "markAllRead": "Marcar tudo como lido",
@@ -202,6 +214,16 @@
     "hoursAgo": "há {count}h",
     "daysAgo": "há {count}d",
     "newNotification": "Você tem uma nova notificação."
+  },
+  "notifications": {
+    "errors": {
+      "acceptCollaborationFailed": "Falha ao aceitar colaboração. Por favor, tente novamente.",
+      "invalidCollaboration": "Este convite de colaboração é inválido ou expirou."
+    }
+  },
+  "cooperators": {
+    "updatedRole": "Função atualizada para {role} para: {users}",
+    "inviteSent": "Convite enviado para: {users}"
   },
   "navigation": {
     "dashboard": "Painel",
@@ -284,8 +306,6 @@
     "yourPassword": "Sua senha",
     "back": "Voltar",
     "deleteForever": "Excluir permanentemente",
-    "uploadProfilePicture": "Enviar foto de perfil",
-    "removeProfilePicture": "Remover foto de perfil",
     "currentPassword": "Senha atual",
     "currentPasswordRequired": "A senha atual é obrigatória",
     "wrongCurrentPassword": "A senha atual está incorreta",
@@ -457,6 +477,20 @@
       "paused": "Pausado",
       "finished": "Finalizado",
       "unknown": "Desconhecido"
+    },
+    "officeHours": {
+      "title": "Horário Comercial Mensal",
+      "description": "Começando em novembro, realizaremos horários de atendimento mensais para discutir atualizações do projeto, responder perguntas e conectar com nossa comunidade.",
+      "nextSessionDate": "Nov 2025",
+      "frequency": "Mensal"
+    },
+    "webinar": {
+      "ended": "Encerrado",
+      "live": "Ao vivo",
+      "today": "Hoje",
+      "joinNow": "Entrar agora",
+      "webinarEnded": "Webinar encerrado",
+      "startingToday": "Começa hoje"
     },
     "cards": {
       "recentActivity": "Atividade Recente",
@@ -790,7 +824,11 @@
       "cancel_invitation": "Tem certeza de que deseja cancelar o convite de {email}?",
       "change_role": "Tem certeza de que deseja alterar a função de {email} de {old} para {new}?",
       "message_title_hint": "Digite um título para sua mensagem",
-      "message_content_hint": "Digite o conteúdo da sua mensagem"
+      "message_content_hint": "Digite o conteúdo da sua mensagem",
+      "invite_message": "Você foi convidado para colaborar em '{testTitle}'",
+      "message_sent_success": "Mensagem enviada com sucesso",
+      "message_sent_error": "Falha ao enviar a mensagem",
+      "user_not_registered": "Este usuário ainda não aceitou o convite ou não está registrado."
     }
   },
   "UserTestTable": {
@@ -805,7 +843,9 @@
     "messages": {
       "noTasks": "Você não tem nenhuma tarefa, crie uma para continuar.",
       "noVariables": "Nenhuma variável adicionada ainda. Clique abaixo para criar uma nova variável.",
-      "noOptions": "Nenhuma opção adicionada."
+      "noOptions": "Nenhuma opção adicionada.",
+      "confirm_delete_task": "Confirmar Exclusão de Tarefa",
+      "sure_to_delete_task": "Tem certeza de que deseja excluir a Tarefa : {taskName}? Esta ação não pode ser desfeita"
     },
     "inputs": {
       "consent": "Consentimento",
@@ -960,6 +1000,29 @@
         "camera": "Câmera",
         "audio": "Áudio"
       }
+    },
+    "answerTypePreview": {
+      "taskCompleted": "Tarefa concluída! Nenhum feedback adicional necessário.",
+      "participantsFeedbackHere": "Os participantes fornecerão seu feedback aqui...",
+      "submitFeedback": "Enviar Feedback",
+      "postTaskQuestions": "Perguntas Pós-Tarefa",
+      "rateTaskDifficulty": "1. Como você avaliaria a dificuldade desta tarefa?",
+      "additionalComments": "2. Comentários adicionais?",
+      "optionalFeedback": "Feedback opcional...",
+      "externalFormTitle": "Formulário Externo",
+      "externalFormDescription": "Os participantes serão redirecionados para preencher um formulário externo após a tarefa.",
+      "openExternalForm": "Abrir Formulário Externo",
+      "nasaTlxTitle": "Índice de Carga de Tarefas NASA",
+      "mentalDemand": "Demanda Mental",
+      "physicalDemand": "Demanda Física",
+      "lowHigh": "Baixo - Alto",
+      "moreDimensions": "+ 4 dimensões adicionais",
+      "susTitle": "Escala de Usabilidade do Sistema",
+      "susStatement1": "1. Acho que gostaria de usar este sistema com frequência.",
+      "stronglyDisagree": "Discordo Totalmente",
+      "stronglyAgree": "Concordo Totalmente",
+      "moreStatements": "+ 9 declarações adicionais",
+      "sartTitle": "Técnica de Avaliação de Consciência Situacional"
     }
   },
   "UserTestView": {
@@ -1224,6 +1287,7 @@
         "allStudies": "Todos os estudos",
         "myStudies": "Meus estudos",
         "whereICollaborate": "Onde eu colaboro",
+        "allMethods": "Todos os métodos",
         "lessThan10": "< 10 participantes",
         "between10And50": "10 – 50 participantes",
         "moreThan50": "> 50 participantes"
@@ -1255,11 +1319,11 @@
       "filters": {
         "allStatuses": "Todos os status",
         "today": "Hoje",
-        "upcoming": "Próximas",
+        "upcoming": "Em breve",
         "completed": "Concluído",
         "allStudies": "Todos os estudos",
         "myStudies": "Meus estudos",
-        "whereICollaborate": "Onde eu colaboro"
+        "whereICollaborate": "Onde colaboro"
       }
     },
     "templates": {
@@ -1311,8 +1375,6 @@
       "select_end_date": "Selecionar data de término",
       "quick_actions": "Ações rápidas",
       "perform_common_tasks": "Execute tarefas comuns instantaneamente",
-      "confirm_deletion": "Confirmar exclusão",
-      "action_cannot_be_undone": "Esta ação não pode ser desfeita",
       "delete_warning": "Todos os dados, resultados e configurações associados serão perdidos para sempre.",
       "delete_forever": "Excluir para sempre"
     },
@@ -1330,12 +1392,14 @@
     "noCopy": "Cópia mal-sucedida",
     "deleteTemplate": "Tem certeza de que deseja excluir este modelo? Esta ação não pode ser desfeita!",
     "deleteTest": "Tem certeza de que deseja excluir este teste?",
+    "deleteQuestion": "Tem certeza de que deseja excluir a pergunta: ",
+    "deleteDescription": "Tem certeza de que deseja excluir a descrição: ",
     "addDescription": "Por favor, adicione uma descrição",
     "errorOccurred": "Ocorreu um erro",
     "leave": "Tem certeza de que deseja sair?",
     "sureLeave": "Tem certeza de que deseja sair? Todas as suas alterações serão descartadas",
     "imageURL": "Digite o URL da imagem:",
-    "deleteHeuristic": "Tem certeza de que deseja excluir a heurística ",
+    "deleteHeuristic": "Tem certeza de que deseja excluir a heurística: ",
     "deleteAccount": "Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita.",
     "genericSuccess": "Operação bem-sucedida",
     "savedChanges": "Alterações salvas com sucesso",
@@ -1719,7 +1783,8 @@
       "active": "Ativo",
       "draft": "Rascunho",
       "completed": "Concluído",
-      "archived": "Arquivado"
+      "archived": "Arquivado",
+      "moderatedDescription": "Gerencie seu estudo moderado de teste de usuário, acompanhe o progresso dos participantes e analise os resultados a partir do seu painel abrangente."
     },
     "studyOverview": {
       "totalParticipants": "Total de Participantes",
@@ -1785,8 +1850,39 @@
       "message": "Tem certeza de que deseja excluir esta variável? Esta ação não pode ser desfeita."
     },
     "deleteOptionConfirm": {
-      "title": "Excluir Opção",
+      "title": "Excluir opção",
       "message": "Tem certeza de que deseja excluir esta opção? Esta ação não pode ser desfeita."
+    }
+  },
+  "tags": {
+    "active": "Ativo",
+    "draft": "Rascunho",
+    "completed": "Concluído",
+    "archived": "Arquivado",
+    "public": "Público",
+    "private": "Privado",
+    "fromTemplate": "A partir de modelo",
+    "withCollaborators": "Com colaboradores"
+  },
+  "methods": {
+    "categories": {
+      "test": "Testes de usuário",
+      "inquiry": "Pesquisa de usuário",
+      "inspection": "Inspeção de especialistas",
+      "accessibility": "Acessibilidade",
+      "other": "Outros"
+    },
+    "definitions": {
+      "HEURISTICS": "Avaliação Heurística",
+      "USER_MODERATED": "Teste de Usabilidade Moderado",
+      "USER_UNMODERATED": "Teste de Usabilidade Não Moderado",
+      "SURVEY": "Pesquisa",
+      "INTERVIEW": "Entrevista",
+      "CARD_SORTING": "Card Sorting",
+      "COGNITIVE_WALKTHROUGH": "Percurso Cognitivo",
+      "ACCESSIBILITY_MANUAL": "Avaliação Manual",
+      "ACCESSIBILITY_AUTOMATIC": "Avaliação Automática",
+      "WCAG_AUDIT": "Auditoria WCAG"
     }
   }
 }

@@ -622,31 +622,33 @@ const submit = async () => {
 const notifyCooperator = async (guest) => {
   if (!guest) return
 
+  // For registered users with userDocId
   if (guest.userDocId) {
     const path = '/testview'
     try {
       await store.dispatch('addNotification', {
         userId: guest.userDocId,
         notification: new Notification({
-          // use guest's access level when available (keeps behavior consistent)
           accessLevel: guest.accessLevel || 2,
           title: `You have been invited to test ${test.value.testTitle}!`,
           description: inviteMessage.value,
           redirectsTo: `${path}/${test.value.id}/${guest.userDocId}`,
           author: test.value.testAdmin?.email,
+          type: 'Collaboration',
           read: false,
           testId: test.value.id,
-          
           testDate: guest.testDate,
         }),
       })
+      showSuccess('Notification sent successfully')
     } catch (err) {
       console.error('addNotification failed:', err)
+      showError('Failed to send notification')
     }
     return
   }
 
-  // For external (typed) emails, send via EmailController -> Cloud Function
+  // For external (typed) emails, send via EmailController
   try {
     const emailController = new EmailController()
     await emailController.send({
@@ -666,8 +668,10 @@ const notifyCooperator = async (guest) => {
         token: guest.token || null,
       },
     })
+    showSuccess('Email invitation sent')
   } catch (err) {
     console.error('External email send failed:', err)
+    showError('Failed to send email invitation')
   }
 }
 </script>

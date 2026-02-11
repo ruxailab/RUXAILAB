@@ -35,9 +35,8 @@ export function useProfile() {
           }
         }
       }
-    } catch (error) {
+    } catch {
       showError(t('profile.profileLoadFailed'))
-      return error
     } finally {
       loading.value = false
     }
