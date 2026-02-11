@@ -281,8 +281,11 @@ const validate = async () => {
 
     const methodView = getMethodManagerView(rawData.testType, rawData.subType)
     await router.push({ name: methodView, params: { id: testId } })
-  } catch {
-    // Handle error silently or with a user-friendly message
+  } catch (e) {
+    store.commit('SET_TOAST', {
+      type: 'error',
+      message: 'Failed to create test from template. Please try again.',
+    })
   }
 }
 
