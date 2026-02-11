@@ -248,7 +248,7 @@ const setLink = () => {
   let link = prompt('Link: ')
   if (link) {
     if (!link.startsWith('http://') && !link.startsWith('https://')) {
-      link = 'http://' + link
+      link = 'https://' + link
     }
     editor.value.chain().focus().setLink({ href: link }).run()
   }
