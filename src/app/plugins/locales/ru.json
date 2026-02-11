@@ -1415,8 +1415,8 @@
     "profile": "Профиль",
     "returnToConsole": "Вернуться в консоль",
     "tip": "Совет",
-    "cancel": "Отмена",
-    "create": "Создать",
+    "cancel": "Cancel",
+    "create": "Create",
     "close": "Закрыть",
     "save": "Сохранить",
     "stay": "Остаться",
@@ -1426,10 +1426,15 @@
     "delete": "Удалить",
     "deleteAccount": "Удалить аккаунт",
     "back": "Назад",
-    "duplicateTest": "Дублировать тест",
+    "duplicateTest": "Duplicate Test",
     "submit": "Отправить",
     "couldNotFinish": "Не удалось завершить",
-    "addNewTask": "Добавить новую задачу"
+    "addNewTask": "Добавить новую задачу",
+    "saveChanges": "Save Changes",
+    "createTemplate": "Create Template",
+    "deleteTest": "Delete Test",
+    "deleteForever": "Delete Forever",
+    "startTest": "Start Test"
   },
   "switches": {
     "noAnswer": "Нет ответа",
@@ -1595,7 +1600,21 @@
   },
   "CardSorting": {
     "noCategory": "Нет категории",
-    "noCards": "Карточки не найдены"
+    "noCards": "Карточки не найдены",
+    "of": "из",
+    "cards": "Карточки",
+    "cards_low": "карточки",
+    "currentCards": "Текущие карточки",
+    "addNewCard": "Добавить новую карточку",
+    "settings": "Настройки",
+    "configureCards": "Настройте отображение карточек",
+    "currentCategories": "Текущие категории",
+    "addNewTask": "Добавить новую задачу",
+    "configureCategories": "Настройте отображение категорий",
+    "newTask": "Новая задача",
+    "customizeSettings": "Настройте параметры и предпочтения вашего теста",
+    "test": "Тест",
+    "categories": "Категории"
   },
   "analytics": {
     "searchByName": "Поиск по имени",
@@ -1872,7 +1891,10 @@
     "deleteOptionConfirm": {
       "title": "Удалить опцию",
       "message": "Вы уверены, что хотите удалить эту опцию? Это действие нельзя отменить."
-    }
+    },
+    "confirmDeletion": "Confirm Deletion",
+    "actionCannotBeUndone": "This action cannot be undone",
+    "allAssociatedDataLost": "All associated data, results, and configurations will be lost forever."
   },
   "tags": {
     "active": "Активный",
@@ -1904,5 +1926,15 @@
       "ACCESSIBILITY_AUTOMATIC": "Автоматическая оценка",
       "WCAG_AUDIT": "Аудит WCAG"
     }
+  },
+  "testSettings": {
+    "testInformation": "Test Information",
+    "basicTestSettings": "Basic test settings and description",
+    "advancedSettings": "Advanced Settings",
+    "quickActions": "Quick Actions",
+    "performCommonTasks": "Perform common tasks instantly"
+  },
+  "cooperator": {
+    "goToSession": "Go to session"
   }
 }
