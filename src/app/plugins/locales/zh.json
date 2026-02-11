@@ -1061,7 +1061,8 @@
       "tasks": "任务",
       "postTest": "后测",
       "completion": "完成",
-      "taskX": "任务 {num}"
+      "taskX": "任务 {num}",
+      "form": "表单"
     },
     "TaskStep": {
       "preview": "任务预览",
@@ -1118,14 +1119,20 @@
     },
     "messages": {
       "noTasks": "此测试没有任务。",
-      "answerSaved": "答案保存成功。"
+      "answerSaved": "答案保存成功。",
+      "taskCompletedSuccess": "任务\"{taskName}\"已成功完成！",
+      "useSessionLinkModerated": "使用会话链接访问您的主持测试！",
+      "useSessionLink": "使用会话链接访问测试"
     },
     "errors": {
       "noAnswerData": "未找到答案数据。",
       "failedToSaveAnswer": "保存答案失败。请重试。",
       "failedToSubmitAnswer": "提交答案失败。请重试。",
       "noTestData": "无测试数据",
-      "noTestDataMessage": "无法加载测试信息。请稍后再试。"
+      "noTestDataMessage": "无法加载测试信息。请稍后再试。",
+      "failedToCompleteStep": "完成步骤失败。请重试。",
+      "failedToInitializeTestData": "初始化测试数据失败。请重试。",
+      "loginRequired": "请先登录您的 RUXAILAB 账户以访问测试！"
     },
     "CalibrationInProgressModal": {
       "completed": "校准完成！",
@@ -1187,6 +1194,9 @@
       "instruction": "准备好后，按按钮开始校准。",
       "startButton": "开始校准",
       "inProgress": "进行中..."
+    },
+    "warnings": {
+      "sessionNotScheduled": "该会话尚未安排日期"
     }
   },
   "eyeTracking": {

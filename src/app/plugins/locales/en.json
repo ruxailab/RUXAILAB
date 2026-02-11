@@ -1074,7 +1074,8 @@
       "tasks": "Tasks",
       "postTest": "Post-test",
       "completion": "Completion",
-      "taskX": "Task {num}"
+      "taskX": "Task {num}",
+      "form": "Form"
     },
     "TaskStep": {
       "preview": "Task Preview",
@@ -1153,14 +1154,20 @@
     },
     "messages": {
       "noTasks": "This test doesn't have any tasks.",
-      "answerSaved": "Answer saved successfully."
+      "answerSaved": "Answer saved successfully.",
+      "taskCompletedSuccess": "Task \"{taskName}\" completed successfully!",
+      "useSessionLinkModerated": "Use a session link to access your moderated test!",
+      "useSessionLink": "Use a session link to access the test"
     },
     "errors": {
       "noAnswerData": "No answer data found.",
       "failedToSaveAnswer": "Failed to save the answer. Please try again.",
       "failedToSubmitAnswer": "Failed to submit the answer. Please try again.",
       "noTestData": "No Test Data",
-      "noTestDataMessage": "Test information could not be loaded. Please try again later."
+      "noTestDataMessage": "Test information could not be loaded. Please try again later.",
+      "failedToCompleteStep": "Failed to complete step. Please try again.",
+      "failedToInitializeTestData": "Failed to initialize test data. Please try again.",
+      "loginRequired": "Login to your RUXAILAB account first to access the test!"
     },
     "WelcomeStep": {
       "welcome": "Welcome to RUXAILAB!",
@@ -1200,6 +1207,9 @@
       "instruction": "When you are ready, press the button to start calibration.",
       "startButton": "Start calibration",
       "inProgress": "In progress..."
+    },
+    "warnings": {
+      "sessionNotScheduled": "Your session doesn't have a scheduled date"
     }
   },
   "eyeTracking": {
