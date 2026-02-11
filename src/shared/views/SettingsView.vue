@@ -447,8 +447,6 @@ const test = computed({
 })
 const user = computed(() => store.getters.user)
 const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
-// const reports = computed(() => store.getters.reports || []);
-// const cooperators = computed(() => store.getters.cooperators || {});
 const dialogText = computed(() => {
   if (test.value) {
     return t('alerts.deleteTest', { testTitle: test.value.testTitle })
@@ -624,10 +622,6 @@ const preventNav = (event) => {
   event.returnValue = ''
 }
 
-// function logCurrentState() {
-//   // This function can be used for debugging if needed
-// }
-
 const deleteStudy = async (item) => {
   loading.value = true
   try {
@@ -705,7 +699,6 @@ const updateObject = (newObject) => {
 }
 
 const onDateChange = (_date) => {
-  // console.log('Date picker changed to:', date);
   dateMenu.value = false
 }
 
