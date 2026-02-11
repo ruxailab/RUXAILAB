@@ -38,20 +38,20 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
-import { useStore } from 'vuex';
-import UserProfileCard from '../components/UserProfileCard.vue';
-import EditProfileDialog from '../components/EditProfileDialog.vue';
-import ChangePasswordForm from '../components/ChangePasswordForm.vue';
-import DeleteAccountSection from '../components/DeleteAccountSection.vue';
-import { useProfile } from '../composables/useProfile';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { useStore } from 'vuex'
+import UserProfileCard from '../components/UserProfileCard.vue'
+import EditProfileDialog from '../components/EditProfileDialog.vue'
+import ChangePasswordForm from '../components/ChangePasswordForm.vue'
+import DeleteAccountSection from '../components/DeleteAccountSection.vue'
+import { useProfile } from '../composables/useProfile'
 
-const store = useStore();
-const user = computed(() => store.getters.user || { email: '' });
-const profile = useProfile();
+const store = useStore()
+const user = computed(() => store.getters.user || { email: '' })
+const profile = useProfile()
 
-const editProfileDialog = ref(false);
-const isSmallScreen = ref(false);
+const editProfileDialog = ref(false)
+const isSmallScreen = ref(false)
 
 const checkScreenSize = () => {
   isSmallScreen.value = window.innerWidth < 960
@@ -60,18 +60,17 @@ const checkScreenSize = () => {
 // Refetch profile when dialog closes
 watch(editProfileDialog, (newVal, oldVal) => {
   if (oldVal === true && newVal === false) {
-    profile.fetchUserProfile();
+    profile.fetchUserProfile()
   }
-});
+})
 
 onMounted(() => {
-  profile.fetchUserProfile();
-  checkScreenSize();
-  window.addEventListener('resize', checkScreenSize);
-});
+  profile.fetchUserProfile()
+  checkScreenSize()
+  window.addEventListener('resize', checkScreenSize)
+})
 
 onUnmounted(() => {
-  window.removeEventListener('resize', checkScreenSize);
-  profile.cleanup();
-});
+  window.removeEventListener('resize', checkScreenSize)
+})
 </script>

@@ -52,8 +52,7 @@
 
             <p class="text-body-1 mb-4">
               {{ $t('auth.FORGOT_PASSWORD.reset_link_sent') }}
-              <strong>{{ email }}</strong
-              >.
+              <strong>{{ email }}</strong>
             </p>
 
             <p class="text-body-2 text-medium-emphasis">

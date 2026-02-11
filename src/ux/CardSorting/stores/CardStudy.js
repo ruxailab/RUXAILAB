@@ -30,21 +30,21 @@ export default {
     setTasks({ commit }, payload) {
       try {
         commit('SET_TASKS', payload)
-      } catch (e) {
+      } catch {
         commit('setError', true)
       }
     },
     setPostTest({ commit }, payload) {
       try {
         commit('SET_POST_TEST', payload)
-      } catch (e) {
+      } catch {
         commit('setError', true)
       }
     },
     setPreTest({ commit }, payload) {
       try {
         commit('SET_PRE_TEST', payload)
-      } catch (e) {
+      } catch {
         commit('setError', true)
       }
     },

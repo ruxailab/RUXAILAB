@@ -46,6 +46,7 @@
     }
   },
   "common": {
+    "enterTextHere": "Введите текст здесь...",
     "units": {
       "mb": "МБ",
       "gb": "ГБ"
@@ -98,14 +99,20 @@
       "status": "Статус",
       "sessionDate": "Дата сессии",
       "participants": "Участники",
-      "created": "Создано"
+      "created": "Создано",
+      "noSearchResults": "По вашему запросу ничего не найдено",
+      "tryAdjustingSearch": "Попробуйте изменить параметры поиска или фильтры"
     },
     "hidden": "Скрыто",
     "proceed": "продолжить",
     "all": "Все",
     "actions": "Действия",
+    "confirm_deletion": "Подтвердите удаление",
+    "action_cannot_be_undone": "Это действие нельзя отменить",
     "user": "Пользователь",
-    "id": "ID"
+    "id": "ID",
+    "itemsPerPage": "Элементов на странице:",
+    "visible": "Visible"
   },
   "storage": {
     "pageTitle": "Хранилище",
@@ -182,6 +189,12 @@
       "accessibilityAutomatic": "Автоматическая оценка доступности"
     }
   },
+  "acceptInvitation": {
+    "title": "Приглашение к сотрудничеству",
+    "message": "Вы хотите принять это приглашение?",
+    "reject": "Отклонить",
+    "accept": "Принять"
+  },
   "notificationsPage": {
     "subtitle": "Будьте в курсе своих действий и совместной работы",
     "markAllRead": "Отметить все как прочитанные",
@@ -202,6 +215,16 @@
     "hoursAgo": "{count} ч назад",
     "daysAgo": "{count} д назад",
     "newNotification": "У вас новое уведомление."
+  },
+  "notifications": {
+    "errors": {
+      "acceptCollaborationFailed": "Не удалось принять сотрудничество. Пожалуйста, попробуйте снова.",
+      "invalidCollaboration": "Это приглашение к сотрудничеству недействительно или истекло."
+    }
+  },
+  "cooperators": {
+    "updatedRole": "Роль обновлена на {role} для: {users}",
+    "inviteSent": "Приглашение отправлено: {users}"
   },
   "navigation": {
     "dashboard": "Панель управления",
@@ -266,6 +289,12 @@
     "enterValidPhoneNumber": "Пожалуйста, введите действительный номер телефона (только 9-15 цифр)",
     "profileImageUpdatedSuccess": "Изображение профиля успешно обновлено",
     "profileImageUploadFailed": "Не удалось загрузить изображение профиля",
+    "uploadProfilePicture": "Загрузить фото профиля",
+    "removeProfilePicture": "Удалить фото профиля",
+    "takePhoto": "Сделать фото",
+    "cameraCaptureTitle": "Сделать фото профиля",
+    "cameraNotAvailable": "Камера недоступна на этом устройстве",
+    "cameraPermissionDenied": "Доступ к камере запрещён. Пожалуйста, разрешите доступ в настройках браузера.",
     "noUserSignedIn": "Пользователь не авторизован",
     "profileLoadFailed": "Не удалось загрузить профиль",
     "profileUpdatedSuccess": "Профиль успешно обновлен",
@@ -278,8 +307,6 @@
     "back": "Назад",
     "deleteForever": "Удалить навсегда",
     "superAdmin": "Суперадмин",
-    "uploadProfilePicture": "Загрузить фото профиля",
-    "removeProfilePicture": "Удалить фото профиля",
     "currentPassword": "Текущий пароль",
     "currentPasswordRequired": "Требуется текущий пароль",
     "wrongCurrentPassword": "Текущий пароль неверен",
@@ -451,6 +478,20 @@
       "paused": "Приостановлен",
       "finished": "Завершен",
       "unknown": "Неизвестно"
+    },
+    "officeHours": {
+      "title": "Ежемесячные консультации",
+      "description": "Начиная с ноября, мы будем проводить ежемесячные часы приема для обсуждения обновлений проекта, ответов на вопросы и общения с нашим сообществом.",
+      "nextSessionDate": "Ноя 2025",
+      "frequency": "Ежемесячно"
+    },
+    "webinar": {
+      "ended": "Завершено",
+      "live": "В эфире",
+      "today": "Сегодня",
+      "joinNow": "Присоединиться",
+      "webinarEnded": "Вебинар завершен",
+      "startingToday": "Начинается сегодня"
     },
     "cards": {
       "recentActivity": "Последняя активность",
@@ -784,7 +825,11 @@
       "cancel_invitation": "Вы уверены, что хотите отменить {email} из сотрудников?",
       "change_role": "Вы уверены, что хотите изменить роль {email} с {old} на {new}?",
       "message_title_hint": "Введите заголовок для вашего сообщения",
-      "message_content_hint": "Введите содержание вашего сообщения"
+      "message_content_hint": "Введите содержание вашего сообщения",
+      "invite_message": "Вы приглашены для сотрудничества над '{testTitle}'",
+      "message_sent_success": "Сообщение успешно отправлено",
+      "message_sent_error": "Не удалось отправить сообщение",
+      "user_not_registered": "Этот пользователь еще не принял приглашение или не зарегистрирован."
     }
   },
   "UserTestTable": {
@@ -799,7 +844,9 @@
     "messages": {
       "noTasks": "У вас нет задач, создайте одну, чтобы продолжить.",
       "noVariables": "Переменные еще не добавлены. Нажмите ниже, чтобы создать новую переменную.",
-      "noOptions": "Варианты не добавлены."
+      "noOptions": "Варианты не добавлены.",
+      "confirm_delete_task": "Подтвердить удаление задачи",
+      "sure_to_delete_task": "Вы уверены, что хотите удалить задачу : {taskName}? Это действие нельзя отменить"
     },
     "inputs": {
       "consent": "Согласие",
@@ -954,6 +1001,29 @@
         "camera": "Камера",
         "audio": "Аудио"
       }
+    },
+    "answerTypePreview": {
+      "taskCompleted": "Задача выполнена! Дополнительная обратная связь не требуется.",
+      "participantsFeedbackHere": "Участники предоставят свой отзыв здесь...",
+      "submitFeedback": "Отправить отзыв",
+      "postTaskQuestions": "Вопросы после задачи",
+      "rateTaskDifficulty": "1. Как бы вы оценили сложность этой задачи?",
+      "additionalComments": "2. Дополнительные комментарии?",
+      "optionalFeedback": "Необязательный отзыв...",
+      "externalFormTitle": "Внешняя форма",
+      "externalFormDescription": "Участники будут перенаправлены для заполнения внешней формы после задачи.",
+      "openExternalForm": "Открыть внешнюю форму",
+      "nasaTlxTitle": "Индекс нагрузки задач NASA",
+      "mentalDemand": "Умственная нагрузка",
+      "physicalDemand": "Физическая нагрузка",
+      "lowHigh": "Низкий - Высокий",
+      "moreDimensions": "+ еще 4 измерения",
+      "susTitle": "Шкала юзабилити системы",
+      "susStatement1": "1. Я думаю, что хотел бы часто использовать эту систему.",
+      "stronglyDisagree": "Полностью не согласен",
+      "stronglyAgree": "Полностью согласен",
+      "moreStatements": "+ еще 9 утверждений",
+      "sartTitle": "Техника оценки ситуационной осведомленности"
     }
   },
   "UserTestView": {
@@ -991,7 +1061,8 @@
       "tasks": "Задачи",
       "postTest": "После теста",
       "completion": "Завершение",
-      "taskX": "Задача {num}"
+      "taskX": "Задача {num}",
+      "form": "Форма"
     },
     "TaskStep": {
       "preview": "Предпросмотр задачи",
@@ -1048,14 +1119,20 @@
     },
     "messages": {
       "noTasks": "В этом тесте нет задач.",
-      "answerSaved": "Ответ успешно сохранен."
+      "answerSaved": "Ответ успешно сохранен.",
+      "taskCompletedSuccess": "Задача \"{taskName}\" успешно завершена!",
+      "useSessionLinkModerated": "Используйте ссылку на сессию, чтобы получить доступ к модерируемому тесту!",
+      "useSessionLink": "Используйте ссылку на сессию, чтобы получить доступ к тесту"
     },
     "errors": {
       "noAnswerData": "Данные ответа не найдены.",
       "failedToSaveAnswer": "Не удалось сохранить ответ. Пожалуйста, попробуйте еще раз.",
       "failedToSubmitAnswer": "Не удалось отправить ответ. Пожалуйста, попробуйте еще раз.",
       "noTestData": "Нет данных теста",
-      "noTestDataMessage": "Не удалось загрузить информацию о тесте. Пожалуйста, попробуйте еще раз позже."
+      "noTestDataMessage": "Не удалось загрузить информацию о тесте. Пожалуйста, попробуйте еще раз позже.",
+      "failedToCompleteStep": "Не удалось завершить шаг. Пожалуйста, попробуйте еще раз.",
+      "failedToInitializeTestData": "Не удалось инициализировать данные теста. Пожалуйста, попробуйте еще раз.",
+      "loginRequired": "Пожалуйста, сначала войдите в свою учетную запись RUXAILAB, чтобы получить доступ к тесту!"
     },
     "CalibrationInProgressModal": {
       "completed": "Калибровка завершена!",
@@ -1117,6 +1194,9 @@
       "instruction": "Когда будете готовы, нажмите кнопку, чтобы начать калибровку.",
       "startButton": "Начать калибровку",
       "inProgress": "В процессе..."
+    },
+    "warnings": {
+      "sessionNotScheduled": "Для этой сессии дата еще не назначена"
     }
   },
   "eyeTracking": {
@@ -1218,6 +1298,7 @@
         "allStudies": "Все исследования",
         "myStudies": "Мои исследования",
         "whereICollaborate": "Где я сотрудничаю",
+        "allMethods": "Все методы",
         "lessThan10": "< 10 участников",
         "between10And50": "10 – 50 участников",
         "moreThan50": "> 50 участников"
@@ -1250,7 +1331,7 @@
         "allStatuses": "Все статусы",
         "today": "Сегодня",
         "upcoming": "Предстоящие",
-        "completed": "Завершенный",
+        "completed": "Завершено",
         "allStudies": "Все исследования",
         "myStudies": "Мои исследования",
         "whereICollaborate": "Где я сотрудничаю"
@@ -1270,7 +1351,8 @@
         "userUnmoderated": "Немодерируемый пользователь",
         "userModerated": "Модерируемый пользователь",
         "manualAccessibility": "Ручная доступность",
-        "automaticAccessibility": "Автоматическая доступность"
+        "automaticAccessibility": "Автоматическая доступность",
+        "all": "All"
       }
     },
     "createTest": {
@@ -1305,10 +1387,9 @@
       "select_end_date": "Выбрать дату окончания",
       "quick_actions": "Быстрые действия",
       "perform_common_tasks": "Выполняйте общие задачи мгновенно",
-      "confirm_deletion": "Подтвердить удаление",
-      "action_cannot_be_undone": "Это действие нельзя отменить",
       "delete_warning": "Все связанные данные, результаты и конфигурации будут потеряны навсегда.",
-      "delete_forever": "Удалить навсегда"
+      "delete_forever": "Удалить навсегда",
+      "confirm_deletion": "Confirm Deletion"
     },
     "editTest": {
       "title": "Редактировать тест",
@@ -1324,12 +1405,14 @@
     "noCopy": "Копирование не удалось",
     "deleteTemplate": "Вы уверены, что хотите удалить этот шаблон? Это действие нельзя отменить!",
     "deleteTest": "Вы уверены, что хотите удалить этот тест?",
+    "deleteQuestion": "Вы уверены, что хотите удалить вопрос: ",
+    "deleteDescription": "Вы уверены, что хотите удалить описание: ",
     "addDescription": "Пожалуйста, добавьте описание",
     "errorOccurred": "Произошла ошибка",
     "leave": "Вы уверены, что хотите уйти?",
     "sureLeave": "Вы уверены, что хотите уйти? Все ваши изменения будут отменены.",
     "imageURL": "Введите URL изображения:",
-    "deleteHeuristic": "Вы уверены, что хотите удалить эвристику",
+    "deleteHeuristic": "Вы уверены, что хотите удалить эвристику: ",
     "deleteAccount": "Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя отменить.",
     "genericSuccess": "Операция выполнена успешно",
     "savedChanges": "Изменения успешно сохранены",
@@ -1345,8 +1428,8 @@
     "profile": "Профиль",
     "returnToConsole": "Вернуться в консоль",
     "tip": "Совет",
-    "cancel": "Отмена",
-    "create": "Создать",
+    "cancel": "Cancel",
+    "create": "Create",
     "close": "Закрыть",
     "save": "Сохранить",
     "stay": "Остаться",
@@ -1356,10 +1439,15 @@
     "delete": "Удалить",
     "deleteAccount": "Удалить аккаунт",
     "back": "Назад",
-    "duplicateTest": "Дублировать тест",
+    "duplicateTest": "Duplicate Test",
     "submit": "Отправить",
     "couldNotFinish": "Не удалось завершить",
-    "addNewTask": "Добавить новую задачу"
+    "addNewTask": "Добавить новую задачу",
+    "saveChanges": "Save Changes",
+    "createTemplate": "Create Template",
+    "deleteTest": "Delete Test",
+    "deleteForever": "Delete Forever",
+    "startTest": "Start Test"
   },
   "switches": {
     "noAnswer": "Нет ответа",
@@ -1525,7 +1613,21 @@
   },
   "CardSorting": {
     "noCategory": "Нет категории",
-    "noCards": "Карточки не найдены"
+    "noCards": "Карточки не найдены",
+    "of": "из",
+    "cards": "Карточки",
+    "cards_low": "карточки",
+    "currentCards": "Текущие карточки",
+    "addNewCard": "Добавить новую карточку",
+    "settings": "Настройки",
+    "configureCards": "Настройте отображение карточек",
+    "currentCategories": "Текущие категории",
+    "addNewTask": "Добавить новую задачу",
+    "configureCategories": "Настройте отображение категорий",
+    "newTask": "Новая задача",
+    "customizeSettings": "Настройте параметры и предпочтения вашего теста",
+    "test": "Тест",
+    "categories": "Категории"
   },
   "analytics": {
     "searchByName": "Поиск по имени",
@@ -1733,7 +1835,8 @@
       "active": "Активно",
       "draft": "Черновик",
       "completed": "Завершено",
-      "archived": "Архивировано"
+      "archived": "Архивировано",
+      "moderatedDescription": "Управляйте своим модерируемым исследованием пользовательского тестирования, отслеживайте прогресс участников и анализируйте результаты на своей комплексной приборной панели."
     },
     "studyOverview": {
       "totalParticipants": "Всего участников",
@@ -1801,6 +1904,325 @@
     "deleteOptionConfirm": {
       "title": "Удалить опцию",
       "message": "Вы уверены, что хотите удалить эту опцию? Это действие нельзя отменить."
+    },
+    "confirmDeletion": "Confirm Deletion",
+    "actionCannotBeUndone": "This action cannot be undone",
+    "allAssociatedDataLost": "All associated data, results, and configurations will be lost forever."
+  },
+  "tags": {
+    "active": "Активный",
+    "draft": "Черновик",
+    "completed": "Завершено",
+    "archived": "Архивировано",
+    "public": "Публичный",
+    "private": "Приватный",
+    "fromTemplate": "Из шаблона",
+    "withCollaborators": "С соавторами"
+  },
+  "methods": {
+    "categories": {
+      "test": "Тестирование пользователей",
+      "inquiry": "Исследование пользователей",
+      "inspection": "Экспертная оценка",
+      "accessibility": "Доступность",
+      "other": "Другое"
+    },
+    "definitions": {
+      "HEURISTICS": "Эвристическая оценка",
+      "USER_MODERATED": "Модерируемое юзабилити-тестирование",
+      "USER_UNMODERATED": "Немодерируемое юзабилити-тестирование",
+      "SURVEY": "Опрос",
+      "INTERVIEW": "Интервью",
+      "CARD_SORTING": "Карточная сортировка",
+      "COGNITIVE_WALKTHROUGH": "Когнитивный проход",
+      "ACCESSIBILITY_MANUAL": "Ручная оценка",
+      "ACCESSIBILITY_AUTOMATIC": "Автоматическая оценка",
+      "WCAG_AUDIT": "Аудит WCAG"
     }
+  },
+  "testSettings": {
+    "testInformation": "Test Information",
+    "basicTestSettings": "Basic test settings and description",
+    "advancedSettings": "Advanced Settings",
+    "quickActions": "Quick Actions",
+    "performCommonTasks": "Perform common tasks instantly"
+  },
+  "cooperator": {
+    "goToSession": "Go to session"
+  },
+  "Accessibility": {
+    "access": "Access:",
+    "accessibilityAssessmentResults": "Accessibility Assessment Results",
+    "accessibilityConfiguration": "Accessibility Configuration",
+    "accessibilityIssues": "Accessibility Issues",
+    "accessibilityManager": "Accessibility Manager",
+    "accessibilityReport": "Accessibility Report",
+    "accessibilityScore": "Accessibility Score",
+    "addNewPage": "Add New Page",
+    "addNewWebpageAssessment": "Add New Webpage for Assessment",
+    "addWebpageStartAssessment": "Add Webpage & Start Assessment",
+    "all": "All",
+    "analyzeWebsiteCompliance": "Analyze your website's accessibility compliance and get actionable insights",
+    "analyzingAccessibility": "Analyzing Accessibility",
+    "appraiserNotes": "Appraiser Notes",
+    "assessmentAvailable": "Assessment Available",
+    "assessmentData": "Assessment Data",
+    "assessmentNotes": "Assessment Notes",
+    "assessmentProgress": "Assessment Progress",
+    "back": "Back",
+    "backToUserSelection": "Back to User Selection",
+    "browseAccessibilityTools": "Browse accessibility tools and actions",
+    "canSave": "Can Save:",
+    "cancel": "Cancel",
+    "checkRequiresAuth": "Check if the website requires authentication",
+    "checkingAccessPermissions": "Checking access permissions",
+    "choosePrincipleGuideline": "Choose a principle and guideline from the left sidebar to view its associated rules and their issues",
+    "close": "Close",
+    "code": "Code",
+    "color": "Color:",
+    "commonIssuesSolutions": "Common Issues & Solutions",
+    "compliance": "compliance",
+    "complianceLevel": "Compliance Level:",
+    "configuration": "Configuration:",
+    "context": "Context",
+    "continue": "Continue",
+    "cssSelector": "CSS Selector",
+    "dashboard": "Dashboard",
+    "description": "Evaluate the accessibility of your web content based on WCAG guidelines",
+    "descriptionOptional": "Description (Optional)",
+    "descriptionPlaceholder": "Brief description of the page or specific scenario being tested.",
+    "dismiss": "Dismiss",
+    "ensurePubliclyAccessible": "Make sure the website is publicly accessible",
+    "enterWebsiteUrl": "Enter a website URL to run an automated accessibility test and get a detailed report.",
+    "errors": "Errors",
+    "evaluateAccessibility": "Evaluate the accessibility of your project based on selected WCAG guidelines",
+    "exportJson": "Export JSON",
+    "failed": "Failed",
+    "fetchingParticipants": "Fetching assessment participants...",
+    "fillWebpageDetails": "Fill in the details of the webpage you want to assess for accessibility.",
+    "filteredWcagDataAvailable": "Filtered WCAG Data Available:",
+    "foundUserIds": "Found User IDs:",
+    "guideline": "Guideline",
+    "guidelinesSelected": "guideline(s) selected",
+    "guidelinesSelection": "Guidelines Selection",
+    "information": "Information",
+    "issueDetails": "Issue Details",
+    "issues": "Issues",
+    "issuesFound": "Issues Found",
+    "level": "Level",
+    "loading": "Loading...",
+    "loadingAccessibilityReport": "Loading accessibility report...",
+    "loadingMore": "Loading more...",
+    "loadingReport": "Loading report...",
+    "loadingTestData": "Loading test data...",
+    "loadingUsers": "Loading Users",
+    "message": "Message",
+    "next": "Next",
+    "noAssessmentAvailable": "No Assessment Available for this Test",
+    "noDescriptionProvided": "No description provided.",
+    "noIssuesFound": "No Issues Found",
+    "noNotesForRule": "No notes available for this rule.",
+    "noNotesProvided": "No notes provided",
+    "noPrinciplesAvailable": "No principles available",
+    "noReportAvailable": "No Report Available",
+    "noReportData": "No report data available.",
+    "noRulesAvailable": "No rules available",
+    "noSpecificCriteria": "No specific criteria defined for this rule.",
+    "noSuccessCriteria": "No success criteria available for this rule.",
+    "noTestRunYet": "No accessibility test has been run for this test ID yet.",
+    "noUsersFound": "No users found for this assessment test.",
+    "notApplicable": "Not Applicable",
+    "notEvaluated": "Not Evaluated",
+    "note": "Note",
+    "notesFor": "Notes for",
+    "notices": "Notices",
+    "of": "of",
+    "opacity": "Opacity",
+    "passed": "Passed",
+    "pleaseFixFollowing": "Please fix the following issues:",
+    "previous": "Previous",
+    "principle": "Principle",
+    "principlesAvailable": "Principles Available:",
+    "radius": "Radius",
+    "rawWcagDataAvailable": "Raw WCAG Data Available:",
+    "readOnlyMode": "This is read-only mode - you cannot save changes to another user's assessment.",
+    "readyToEvaluate": "Ready to Evaluate",
+    "remove": "Remove",
+    "report": "Report",
+    "reset": "Reset",
+    "reviewDetailedAssessment": "Review the detailed accessibility assessment results for the selected user",
+    "reviewDetailedIssues": "Review detailed accessibility issues and success criteria based on WCAG guidelines",
+    "rule": "Rule",
+    "rulePassedAllChecks": "This rule passed all accessibility checks for the tested page.",
+    "rules": "Rules",
+    "rulesFor": "rules for",
+    "runAccessibilityTest": "Run Accessibility Test",
+    "runTest": "Run Test",
+    "runningComprehensiveTests": "Running comprehensive tests on your website...",
+    "saveAssessment": "Save Assessment",
+    "saveConfig": "Save Config",
+    "selectComplianceLevel": "Select the WCAG compliance level for your accessibility requirements.",
+    "selectGuidelinesByPrinciple": "Select guidelines for your assessment. Filter by principle using tabs.",
+    "selectPrincipleInfo": "Select a principle from the list to view its guidelines and rules.",
+    "selectRuleToView": "Select a Rule to View Details",
+    "selectSpecificRules": "Select specific rules (required)",
+    "selectUserToView": "Select a user to view their accessibility assessment results",
+    "selectUserToViewResults": "Select a User to View Assessment Results",
+    "selected": "Selected",
+    "selectedGuidelines": "Selected Guidelines:",
+    "selector": "Selector",
+    "setupTestParameters": "Set up and customize your accessibility test parameters",
+    "severity": "Severity",
+    "signInToSave": "Sign In to Save",
+    "status": "Status",
+    "step": "Step",
+    "successCriterion": "Success Criterion",
+    "testFailed": "Test Failed",
+    "testing": "Testing...",
+    "totalIssues": "Total Issues",
+    "totalRules": "Total rules",
+    "troubleshootingTips": "Troubleshooting Tips",
+    "tryAgain": "Try Again",
+    "tryDifferentPage": "Try testing a different page on the same domain",
+    "type": "Type",
+    "url": "URL",
+    "urlHelp": "The full URL of the webpage.",
+    "urlPlaceholder": "https://example.com",
+    "userDetails": "User Details:",
+    "userRole": "User Role:",
+    "usersLoaded": "users loaded",
+    "verifyUrlCorrect": "Verify the URL is correct and complete",
+    "version": "v",
+    "viewAssessment": "View Assessment",
+    "viewDetailedIssues": "View detailed accessibility issues and recommendations to improve your web content.",
+    "viewInPreview": "View in Preview",
+    "viewInPreviewMode": "View in Preview Mode",
+    "viewResults": "View Results",
+    "viewWcagGuidelines": "View WCAG Guidelines",
+    "viewingAssessmentData": "You are viewing assessment data for user ID:",
+    "viewingMode": "Viewing Mode",
+    "viewingModeLabel": "Viewing Mode:",
+    "viewingUserId": "Viewing User ID:",
+    "warnings": "Warnings",
+    "wcag": "WCAG",
+    "wcagComplianceLevel": "WCAG Compliance Level",
+    "wcagComplianceLevelHelp": "The target WCAG conformance level for this assessment.",
+    "wcagLevelFilter": "WCAG Level Filter:",
+    "wcagPrinciples": "WCAG Principles",
+    "wcagReference": "WCAG Reference",
+    "webpageName": "Webpage Name",
+    "webpageNameHelp": "A descriptive name for the webpage you are testing.",
+    "webpageNamePlaceholder": "e.g., My Company Homepage",
+    "webpagePreview": "Webpage Preview",
+    "websiteAccessibilityTester": "Website Accessibility Tester"
+  },
+  "faq": {
+    "questions": {
+      "q1": {
+        "answer": "Ruxailab is an open-source platform designed to collect usability feedback from users. It allows you to gather user reviews, analyze them, and create comprehensive reports to better understand your application's usability. Additionally, it offers heuristic tests, enabling experts to evaluate your application's compliance with usability principles. It is maintained by a community of contributors and licensed under the MIT License.",
+        "question": "1. What is Ruxailab?"
+      },
+      "q2": {
+        "answer_part1": "To get started, visit our",
+        "answer_part2": "to download the source code. Check out the documentation for installation instructions and examples. You can also visit our",
+        "answer_part3": "page for more resources.",
+        "help_link": "Help",
+        "link_text": "GitHub Repository",
+        "question": "2. How do I get started with the Project?"
+      },
+      "q3": {
+        "answer": "Absolutely! We welcome contributions from the community. Please read our contribution guidelines in the repository and submit a pull request with your changes.",
+        "question": "3. Can I contribute to the Project?"
+      },
+      "q4": {
+        "answer": "The Project is licensed under the MIT License. This means you can use, modify, and distribute the Project freely, as long as you include the license and copyright notice.",
+        "question": "4. What license does the Project use?"
+      },
+      "q5": {
+        "answer": "You can report bugs or request features by opening an issue on our",
+        "answer_part2": ". Please provide as much detail as possible to help us address your request.",
+        "link_text": "GitHub Issues",
+        "question": "5. How do I report a bug or request a feature?"
+      },
+      "q6": {
+        "answer": "Yes! Join our community on",
+        "answer_part2": "to connect with other users and contributors, ask questions, and share ideas.",
+        "link_text": "GitHub",
+        "question": "6. Is there a community for Ruxailab?"
+      },
+      "q7": {
+        "answer": "We take your privacy seriously. Please see our",
+        "answer_part2": "for details on how we collect and use your information.",
+        "link_text": "Privacy Policy",
+        "question": "7. How is my data handled?"
+      },
+      "q8": {
+        "answer": "The Project is maintained by a team of volunteers and contributors. You can find more information about the maintainers in the Project's repository.",
+        "question": "8. Who maintains the Project?"
+      },
+      "q9": {
+        "answer": "If you have additional questions, please contact us.",
+        "question": "9. Still have questions?"
+      }
+    },
+    "subtitle": "Find answers to common questions about Ruxailab.",
+    "title": "Frequently Asked Questions (FAQs)"
+  },
+  "pageNotFound": {
+    "description": "We weren't able to find the page you were looking for.",
+    "goBack": "Go Back",
+    "title": "Page Not Found"
+  },
+  "privacyPolicy": {
+    "lastUpdated": "Last Updated: April 15, 2025",
+    "sections": {
+      "changes": {
+        "content": "We may update this Privacy Policy from time to time. We will notify users of significant changes by posting a notice on the Project's website or repository.",
+        "title": "8. Changes to This Policy"
+      },
+      "contact": {
+        "content": "If you have any questions about this Privacy Policy, please contact us.",
+        "title": "9. Contact Us"
+      },
+      "cookies": {
+        "content": "Our website may use cookies to enhance your experience (e.g., to remember your preferences). You can disable cookies in your browser settings, but this may affect the functionality of the website.",
+        "title": "5. Cookies"
+      },
+      "informationCollected": {
+        "content": "As an open-source project, we typically do not collect personal information directly. However, if you interact with our website or services (e.g., signing up for an account or submitting a contact form), we may collect:",
+        "items": {
+          "contributions": "Contributions (e.g., your GitHub username if you contribute to the Project)",
+          "email": "Email addresses (e.g., for account creation or newsletters)",
+          "usage": "Usage data (e.g., analytics on how the website is accessed)"
+        },
+        "title": "2. Information We Collect"
+      },
+      "introduction": {
+        "content": "Ruxailab is an open-source project committed to protecting your privacy. This Privacy Policy explains how we collect, use, and protect any information you provide when using the Project.",
+        "title": "1. Introduction"
+      },
+      "rights": {
+        "content": "Depending on your location, you may have the right to access, correct, or delete any personal information we hold about you. Please contact us to exercise these rights.",
+        "title": "7. Your Rights"
+      },
+      "security": {
+        "content": "We take reasonable measures to protect any data we collect, but no method of transmission over the internet is 100% secure. We cannot guarantee the absolute security of your information.",
+        "title": "6. Data Security"
+      },
+      "sharing": {
+        "content": "We do not sell or share your personal information with third parties, except as required by law or to protect the Project (e.g., in the case of abuse or fraud).",
+        "title": "4. Data Sharing"
+      },
+      "usage": {
+        "content": "We may use the information we collect to:",
+        "items": {
+          "analyze": "Analyze usage to improve user experience",
+          "communicate": "Communicate with you (e.g., respond to inquiries or notify you of updates)",
+          "improve": "Provide and improve the Project and its services"
+        },
+        "title": "3. How We Use Your Information"
+      }
+    },
+    "title": "Privacy Policy"
   }
 }
