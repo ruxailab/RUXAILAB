@@ -1062,7 +1062,8 @@
       "tasks": "Aufgaben",
       "postTest": "Nachtest",
       "completion": "Abschluss",
-      "taskX": "Aufgabe {num}"
+      "taskX": "Aufgabe {num}",
+      "form": "Formular"
     },
     "TaskStep": {
       "preview": "Aufgabenvorschau",
@@ -1119,14 +1120,20 @@
     },
     "messages": {
       "noTasks": "Dieser Test hat keine Aufgaben.",
-      "answerSaved": "Antwort erfolgreich gespeichert."
+      "answerSaved": "Antwort erfolgreich gespeichert.",
+      "taskCompletedSuccess": "Aufgabe \"{taskName}\" erfolgreich abgeschlossen!",
+      "useSessionLinkModerated": "Verwenden Sie einen Sitzungslink, um auf Ihren moderierten Test zuzugreifen!",
+      "useSessionLink": "Verwenden Sie einen Sitzungslink, um auf den Test zuzugreifen"
     },
     "errors": {
       "noAnswerData": "Keine Antwortdaten gefunden.",
       "failedToSaveAnswer": "Fehler beim Speichern der Antwort. Bitte versuchen Sie es erneut.",
       "failedToSubmitAnswer": "Fehler beim Einreichen der Antwort. Bitte versuchen Sie es erneut.",
       "noTestData": "Keine Testdaten",
-      "noTestDataMessage": "Testinformationen konnten nicht geladen werden. Bitte versuchen Sie es später erneut."
+      "noTestDataMessage": "Testinformationen konnten nicht geladen werden. Bitte versuchen Sie es später erneut.",
+      "failedToCompleteStep": "Fehler beim Abschließen des Schritts. Bitte versuchen Sie es erneut.",
+      "failedToInitializeTestData": "Fehler beim Initialisieren der Testdaten. Bitte versuchen Sie es erneut.",
+      "loginRequired": "Bitte melden Sie sich zuerst bei Ihrem RUXAILAB-Konto an, um auf den Test zuzugreifen!"
     },
     "CalibrationInProgressModal": {
       "completed": "Kalibrierung abgeschlossen!",
@@ -1188,6 +1195,9 @@
       "instruction": "Wenn Sie bereit sind, drücken Sie die Taste, um die Kalibrierung zu starten.",
       "startButton": "Kalibrierung starten",
       "inProgress": "In Bearbeitung..."
+    },
+    "warnings": {
+      "sessionNotScheduled": "Für diese Sitzung ist noch kein Termin geplant"
     }
   },
   "eyeTracking": {

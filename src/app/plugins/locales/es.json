@@ -1061,7 +1061,8 @@
       "tasks": "Tareas",
       "postTest": "Prueba posterior",
       "completion": "Finalización",
-      "taskX": "Tarea {num}"
+      "taskX": "Tarea {num}",
+      "form": "Formulario"
     },
     "TaskStep": {
       "preview": "Vista previa de la tarea",
@@ -1118,14 +1119,20 @@
     },
     "messages": {
       "noTasks": "Esta prueba no tiene ninguna tarea.",
-      "answerSaved": "Respuesta guardada con éxito."
+      "answerSaved": "Respuesta guardada con éxito.",
+      "taskCompletedSuccess": "¡Tarea \"{taskName}\" completada exitosamente!",
+      "useSessionLinkModerated": "Usa un enlace de sesión para acceder a tu prueba moderada.",
+      "useSessionLink": "Usa un enlace de sesión para acceder a la prueba"
     },
     "errors": {
       "noAnswerData": "No se encontraron datos de respuesta.",
       "failedToSaveAnswer": "Error al guardar la respuesta. Por favor, inténtalo de nuevo.",
       "failedToSubmitAnswer": "Error al enviar la respuesta. Por favor, inténtalo de nuevo.",
       "noTestData": "Sin datos de prueba",
-      "noTestDataMessage": "No se pudo cargar la información de la prueba. Por favor, inténtalo de nuevo más tarde."
+      "noTestDataMessage": "No se pudo cargar la información de la prueba. Por favor, inténtalo de nuevo más tarde.",
+      "failedToCompleteStep": "Error al completar el paso. Por favor, inténtalo de nuevo.",
+      "failedToInitializeTestData": "Error al inicializar los datos de la prueba. Por favor, inténtalo de nuevo.",
+      "loginRequired": "Inicia sesión primero en tu cuenta de RUXAILAB para acceder a la prueba."
     },
     "CalibrationInProgressModal": {
       "completed": "¡Calibración completada!",
@@ -1187,6 +1194,9 @@
       "instruction": "Cuando estés listo o lista, pulsa el botón para empezar la calibración.",
       "startButton": "Comenzar calibración",
       "inProgress": "En progreso..."
+    },
+    "warnings": {
+      "sessionNotScheduled": "Esta sesión aún no tiene una fecha programada"
     }
   },
   "eyeTracking": {

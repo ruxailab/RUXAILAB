@@ -1061,7 +1061,8 @@
       "tasks": "المهام",
       "postTest": "ما بعد الاختبار",
       "completion": "الإكمال",
-      "taskX": "المهمة {num}"
+      "taskX": "المهمة {num}",
+      "form": "نموذج"
     },
     "TaskStep": {
       "preview": "معاينة المهمة",
@@ -1118,14 +1119,20 @@
     },
     "messages": {
       "noTasks": "هذا الاختبار ليس لديه أي مهام.",
-      "answerSaved": "تم حفظ الإجابة بنجاح."
+      "answerSaved": "تم حفظ الإجابة بنجاح.",
+      "taskCompletedSuccess": "تم إكمال المهمة \"{taskName}\" بنجاح!",
+      "useSessionLinkModerated": "استخدم رابط الجلسة للوصول إلى الاختبار المُدار!",
+      "useSessionLink": "استخدم رابط الجلسة للوصول إلى الاختبار"
     },
     "errors": {
       "noAnswerData": "لم يتم العثور على بيانات إجابة.",
       "failedToSaveAnswer": "فشل في حفظ الإجابة. يرجى المحاولة مرة أخرى.",
       "failedToSubmitAnswer": "فشل في تقديم الإجابة. يرجى المحاولة مرة أخرى.",
       "noTestData": "لا توجد بيانات اختبار",
-      "noTestDataMessage": "تعذر تحميل معلومات الاختبار. يرجى المحاولة مرة أخرى لاحقًا."
+      "noTestDataMessage": "تعذر تحميل معلومات الاختبار. يرجى المحاولة مرة أخرى لاحقًا.",
+      "failedToCompleteStep": "فشل في إكمال الخطوة. يرجى المحاولة مرة أخرى.",
+      "failedToInitializeTestData": "فشل في تهيئة بيانات الاختبار. يرجى المحاولة مرة أخرى.",
+      "loginRequired": "يرجى تسجيل الدخول إلى حساب RUXAILAB الخاص بك أولاً للوصول إلى الاختبار!"
     },
     "CalibrationInProgressModal": {
       "completed": "اكتملت المعايرة!",
@@ -1187,6 +1194,9 @@
       "instruction": "عندما تكون جاهزًا، اضغط على الزر لبدء المعايرة.",
       "startButton": "بدء المعايرة",
       "inProgress": "جارٍ العمل..."
+    },
+    "warnings": {
+      "sessionNotScheduled": "لم يتم تحديد موعد لهذه الجلسة بعد"
     }
   },
   "eyeTracking": {

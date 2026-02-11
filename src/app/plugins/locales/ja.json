@@ -1061,7 +1061,8 @@
       "tasks": "タスク",
       "postTest": "事後テスト",
       "completion": "完了",
-      "taskX": "タスク {num}"
+      "taskX": "タスク {num}",
+      "form": "フォーム"
     },
     "TaskStep": {
       "preview": "タスクのプレビュー",
@@ -1118,14 +1119,20 @@
     },
     "messages": {
       "noTasks": "このテストにはタスクがありません。",
-      "answerSaved": "回答が正常に保存されました。"
+      "answerSaved": "回答が正常に保存されました。",
+      "taskCompletedSuccess": "タスク「{taskName}」が正常に完了しました！",
+      "useSessionLinkModerated": "セッションリンクを使用して、モデレートされたテストにアクセスしてください。",
+      "useSessionLink": "セッションリンクを使用してテストにアクセスしてください"
     },
     "errors": {
       "noAnswerData": "回答データが見つかりません。",
       "failedToSaveAnswer": "回答の保存に失敗しました。もう一度お試しください。",
       "failedToSubmitAnswer": "回答の提出に失敗しました。もう一度お試しください。",
       "noTestData": "テストデータなし",
-      "noTestDataMessage": "テスト情報をロードできませんでした。後でもう一度お試しください。"
+      "noTestDataMessage": "テスト情報をロードできませんでした。後でもう一度お試しください。",
+      "failedToCompleteStep": "ステップの完了に失敗しました。もう一度お試しください。",
+      "failedToInitializeTestData": "テストデータの初期化に失敗しました。もう一度お試しください。",
+      "loginRequired": "テストにアクセスするには、まずRUXAILABアカウントにログインしてください。"
     },
     "CalibrationInProgressModal": {
       "completed": "キャリブレーション完了！",
@@ -1187,6 +1194,9 @@
       "instruction": "準備ができたら、ボタンを押してキャリブレーションを開始してください。",
       "startButton": "キャリブレーションを開始",
       "inProgress": "進行中..."
+    },
+    "warnings": {
+      "sessionNotScheduled": "このセッションにはまだ予定された日付がありません"
     }
   },
   "eyeTracking": {
