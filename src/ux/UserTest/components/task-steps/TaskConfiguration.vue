@@ -170,19 +170,19 @@ const emit = defineEmits(['update:modelValue', 'validate'])
 
 const localTask = ref({ ...props.modelValue })
 
-const linkRules = [
+const linkRules = computed(() => [
   (v) => !v || /^https?:\/\/.+/.test(v) || t('CreateTask.validation.validUrl'),
-]
+])
 
-const urlRules = [
+const urlRules = computed(() => [
   (v) => !!v || t('CreateTask.validation.fieldRequired'),
   (v) => /^https?:\/\/.+/.test(v) || t('CreateTask.validation.validUrl'),
-]
+])
 
-const timeRules = [
+const timeRules = computed(() => [
   (v) => !!v || t('CreateTask.validation.fieldRequired'),
   (v) => (v && v > 0) || t('CreateTask.validation.positiveNumber'),
-]
+])
 
 const isValid = computed(() => {
   const hasTaskType = !!localTask.value.taskType

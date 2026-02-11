@@ -240,11 +240,11 @@
         <!-- Dimension 1 -->
         <div class="tam-dimension mb-4">
           <div class="text-body-2 font-weight-600 mb-2">
-            {{ $t('CreateTask.previews.tam.pu') }} (5 items)
+            {{ $t('CreateTask.previews.tam.pu') }}
           </div>
           <div class="tam-item mb-2">
             <div class="text-body-2 mb-2">
-              1. Using the system improves my job performance.
+              {{ $t('CreateTask.previews.tam.q1') }}
             </div>
             <v-radio-group
               readonly
@@ -266,10 +266,12 @@
         <!-- Dimension 2 -->
         <div class="tam-dimension">
           <div class="text-body-2 font-weight-600 mb-2">
-            {{ $t('CreateTask.previews.tam.eu') }} (5 items)
+            {{ $t('CreateTask.previews.tam.eu') }}
           </div>
           <div class="tam-item">
-            <div class="text-body-2 mb-2">6. The system is easy to use.</div>
+            <div class="text-body-2 mb-2">
+              {{ $t('CreateTask.previews.tam.q6') }}
+            </div>
             <v-radio-group
               readonly
               inline

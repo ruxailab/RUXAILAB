@@ -940,54 +940,54 @@
     },
     "previews": {
       "noAnswer": {
-        "message": "Task completed! No additional feedback required."
+        "message": "Задание выполнено! Дополнительная обратная связь не требуется."
       },
       "textArea": {
-        "placeholder": "Participants will provide their feedback here...",
-        "submitButton": "Submit Feedback"
+        "placeholder": "Участники предоставят свои отзывы здесь...",
+        "submitButton": "Отправить отзыв"
       },
       "postTest": {
-        "title": "Post-Task Questions",
-        "q1": "1. How would you rate the difficulty of this task?",
-        "q2": "2. Any additional comments?",
-        "feedbackPlaceholder": "Optional feedback..."
+        "title": "Вопросы после задания",
+        "q1": "1. Как бы вы оценили сложность этого задания?",
+        "q2": "2. Есть дополнительные комментарии?",
+        "feedbackPlaceholder": "Необязательный отзыв..."
       },
       "postForm": {
-        "title": "External Form",
-        "notice": "Participants will be redirected to complete an external form after the task.",
-        "button": "Open External Form"
+        "title": "Внешняя форма",
+        "notice": "Участники будут перенаправлены для заполнения внешней формы после задания.",
+        "button": "Открыть внешнюю форму"
       },
       "nasaTlx": {
-        "title": "NASA Task Load Index",
-        "mental": "Mental Demand",
-        "physical": "Physical Demand",
-        "range": "Low - High",
-        "moreDimensions": "+ 4 more dimensions"
+        "title": "Индекс нагрузки задачи NASA",
+        "mental": "Умственная нагрузка",
+        "physical": "Физическая нагрузка",
+        "range": "Низкий - Высокий",
+        "moreDimensions": "+ еще 4 измерения"
       },
       "sus": {
-        "title": "System Usability Scale",
-        "q1": "1. I think that I would like to use this system frequently.",
-        "disagree": "Strongly Disagree",
-        "agree": "Strongly Agree",
-        "moreStatements": "+ 9 more statements"
+        "title": "Шкала удобства использования системы",
+        "q1": "1. Я думаю, что мне хотелось бы использовать эту систему часто.",
+        "disagree": "Категорически не согласен",
+        "agree": "Полностью согласен",
+        "moreStatements": "+ еще 9 утверждений"
       },
       "sart": {
-        "title": "Situation Awareness Rating Technique",
-        "instability": "Instability of Situation",
-        "complexity": "Complexity of Situation",
-        "stable": "Very Stable",
-        "unstable": "Very Unstable",
-        "simple": "Very Simple",
-        "complex": "Very Complex",
-        "moreDimensions": "+ 8 more SART dimensions"
+        "title": "Техника оценки ситуационной осведомленности",
+        "instability": "Нестабильность ситуации",
+        "complexity": "Сложность ситуации",
+        "stable": "Очень стабильно",
+        "unstable": "Очень нестабильно",
+        "simple": "Очень просто",
+        "complex": "Очень сложно",
+        "moreDimensions": "+ еще 8 измерений SART"
       },
       "tam": {
-        "tam1": "TAM-1: Technology Acceptance Model (Basic)",
-        "tam2": "TAM-2: Technology Acceptance Model (Extended)",
-        "tam3": "TAM-3: Technology Acceptance Model (Comprehensive)",
-        "items2": "10 items across 2 dimensions",
-        "items7": "25 items across 7 dimensions",
-        "items13": "39 items across 13 dimensions",
+        "tam1": "TAM-1: Модель принятия технологий (базовая)",
+        "tam2": "TAM-2: Модель принятия технологий (расширенная)",
+        "tam3": "TAM-3: Модель принятия технологий (комплексная)",
+        "items2": "10 пунктов по 2 измерениям",
+        "items7": "25 пунктов по 7 измерениям",
+        "items13": "39 пунктов по 13 измерениям",
         "pu": "Воспринимаемая Полезность",
         "eu": "Воспринимаемая Легкость Использования",
         "sn": "Субъективная Норма",
@@ -1005,7 +1005,7 @@
         "q6": "6. Системой легко пользоваться.",
         "likertNote": "Участники оценивают {count} утверждений по 5-балльной шкале Лайкерта"
       },
-      "selectionPrompt": "Select an answer type to see preview"
+      "selectionPrompt": "Выберите тип ответа для просмотра предварительного показа"
     },
     "advanced": {
       "stepTitle": "Шаг 3: Расширенные опции",
