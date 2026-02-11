@@ -151,7 +151,7 @@
                 <v-icon>mdi-file-document-arrow-right</v-icon>
               </v-btn>
             </template>
-            <span>Go to session</span>
+            <span>{{ $t('cooperator.goToSession') }}</span>
           </v-tooltip>
         </template>
 

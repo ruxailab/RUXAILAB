@@ -7,7 +7,7 @@
           :style="backgroundImage"
           elevation="3"
           rounded="lg"
-          @click="$emit('click', item.path)"
+          @click="emit('click', item.path)"
         >
           <div class="d-flex justify-center align-center pa-2">
             <v-img
@@ -44,7 +44,7 @@
 <script setup>
 import { computed } from 'vue'
 
-const props = defineProps({
+defineProps({
   cards: {
     type: Array,
     default: () => [],
@@ -63,6 +63,8 @@ const props = defineProps({
     required: false,
   },
 })
+
+const emit = defineEmits(['click'])
 
 const backgroundImage = computed(() => {
   // Softer gradient: blend colors more gradually
