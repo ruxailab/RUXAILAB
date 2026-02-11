@@ -24,20 +24,20 @@ export default class Notification {
     readAt,
     type,
   } = {}) {
-    this.title = title ?? null;
-    this.titleTemplate = titleTemplate ?? null;
-    this.titleParams = titleParams ?? null;
-    this.description = description ?? null;
-    this.descriptionTemplate = descriptionTemplate ?? null;
-    this.descriptionParams = descriptionParams ?? null;
-    this.redirectsTo = redirectsTo;
-    this.createdDate = Date.now();
-    this.author = author;
-    this.read = read;
-    this.testId = testId;
-    this.accessLevel = accessLevel ?? null;
-    this.readAt = readAt ?? null;
-    this.type = type ?? null;
+    this.title = title ?? null
+    this.titleTemplate = titleTemplate ?? null
+    this.titleParams = titleParams ?? null
+    this.description = description ?? null
+    this.descriptionTemplate = descriptionTemplate ?? null
+    this.descriptionParams = descriptionParams ?? null
+    this.redirectsTo = redirectsTo
+    this.createdDate = Date.now()
+    this.author = author
+    this.read = read
+    this.testId = testId
+    this.accessLevel = accessLevel ?? null
+    this.readAt = readAt ?? null
+    this.type = type ?? null
   }
 
   static toNotification(data) {

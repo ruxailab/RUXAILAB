@@ -111,7 +111,8 @@
     "action_cannot_be_undone": "Esta acción no se puede deshacer",
     "user": "Usuario",
     "id": "ID",
-    "itemsPerPage": "Elementos por página:"
+    "itemsPerPage": "Elementos por página:",
+    "visible": "Visible"
   },
   "storage": {
     "pageTitle": "Almacenamiento",
@@ -1340,7 +1341,8 @@
         "userUnmoderated": "Usuario no moderado",
         "userModerated": "Usuario moderado",
         "manualAccessibility": "Accesibilidad manual",
-        "automaticAccessibility": "Accesibilidad automática"
+        "automaticAccessibility": "Accesibilidad automática",
+        "all": "All"
       }
     },
     "createTest": {
@@ -1376,7 +1378,8 @@
       "quick_actions": "Acciones Rápidas",
       "perform_common_tasks": "Realiza tareas comunes al instante",
       "delete_warning": "Todos los datos asociados, resultados y configuraciones se perderán para siempre.",
-      "delete_forever": "Eliminar para Siempre"
+      "delete_forever": "Eliminar para Siempre",
+      "confirm_deletion": "Confirm Deletion"
     },
     "editTest": {
       "title": "Editar prueba",
@@ -1915,6 +1918,6 @@
     "performCommonTasks": "Realizar tareas comunes al instante"
   },
   "cooperator": {
-    "goToSession": "Ir a la sesión"
+    "goToSession": "Go to session"
   }
 }
