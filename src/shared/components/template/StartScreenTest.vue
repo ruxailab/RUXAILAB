@@ -21,7 +21,7 @@
           size="x-large"
           @click="startTest"
         >
-          Start Test
+          {{ $t('buttons.startTest') }}
         </v-btn>
       </v-col>
     </v-row>

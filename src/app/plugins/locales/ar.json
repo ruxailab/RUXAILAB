@@ -288,7 +288,7 @@
     "enterValidPhoneNumber": "الرجاء إدخال رقم هاتف صالح (9-15 رقمًا فقط)",
     "profileImageUpdatedSuccess": "تم تحديث صورة الملف الشخصي بنجاح",
     "profileImageUploadFailed": "فشل تحميل صورة الملف الشخصي",
-    "uploadProfilePicture": "رفع صورة الملف الشخصي",
+    "uploadProfilePicture": "تحميل صورة الملف الشخصي",
     "removeProfilePicture": "إزالة صورة الملف الشخصي",
     "takePhoto": "التقاط صورة",
     "cameraCaptureTitle": "التقاط صورة الملف الشخصي",
@@ -1415,8 +1415,8 @@
     "profile": "الملف الشخصي",
     "returnToConsole": "العودة إلى وحدة التحكم",
     "tip": "نصيحة",
-    "cancel": "إلغاء",
-    "create": "إنشاء",
+    "cancel": "Cancel",
+    "create": "Create",
     "close": "إغلاق",
     "save": "حفظ",
     "stay": "البقاء",
@@ -1426,10 +1426,15 @@
     "delete": "حذف",
     "deleteAccount": "حذف الحساب",
     "back": "عودة",
-    "duplicateTest": "تكرار الاختبار",
+    "duplicateTest": "Duplicate Test",
     "submit": "تقديم",
     "couldNotFinish": "لا يمكن إنهاء",
-    "addNewTask": "إضافة مهمة جديدة"
+    "addNewTask": "إضافة مهمة جديدة",
+    "saveChanges": "Save Changes",
+    "createTemplate": "Create Template",
+    "deleteTest": "Delete Test",
+    "deleteForever": "Delete Forever",
+    "startTest": "Start Test"
   },
   "switches": {
     "noAnswer": "لا توجد إجابة",
@@ -1886,7 +1891,10 @@
     "deleteOptionConfirm": {
       "title": "حذف الخيار",
       "message": "هل أنت متأكد أنك تريد حذف هذا الخيار؟ لا يمكن التراجع عن هذا الإجراء."
-    }
+    },
+    "confirmDeletion": "Confirm Deletion",
+    "actionCannotBeUndone": "This action cannot be undone",
+    "allAssociatedDataLost": "All associated data, results, and configurations will be lost forever."
   },
   "tags": {
     "active": "نشط",
@@ -1918,5 +1926,15 @@
       "ACCESSIBILITY_AUTOMATIC": "تقييم آلي",
       "WCAG_AUDIT": "تدقيق WCAG"
     }
+  },
+  "testSettings": {
+    "testInformation": "Test Information",
+    "basicTestSettings": "Basic test settings and description",
+    "advancedSettings": "Advanced Settings",
+    "quickActions": "Quick Actions",
+    "performCommonTasks": "Perform common tasks instantly"
+  },
+  "cooperator": {
+    "goToSession": "Go to session"
   }
 }
