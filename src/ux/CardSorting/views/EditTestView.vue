@@ -38,13 +38,9 @@
               :welcome="welcomeMessage"
               :final-message="finalMessage"
               @update:welcome-message="
-                welcomeMessage = $event
-                change = true
+                ((welcomeMessage = $event), (change = true))
               "
-              @update:final-message="
-                finalMessage = $event
-                change = true
-              "
+              @update:final-message="((finalMessage = $event), (change = true))"
             />
           </div>
 
@@ -54,10 +50,7 @@
               v-model="consent"
               :title="$t('ModeratedTest.consentForm')"
               :subtitle="$t('ModeratedTest.consentFormSubtitle')"
-              @update:value="
-                consent = $event
-                change = true
-              "
+              @update:value="((consent = $event), (change = true))"
             />
           </div>
 

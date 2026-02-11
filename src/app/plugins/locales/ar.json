@@ -1415,8 +1415,8 @@
     "profile": "الملف الشخصي",
     "returnToConsole": "العودة إلى وحدة التحكم",
     "tip": "نصيحة",
-    "cancel": "Cancel",
-    "create": "Create",
+    "cancel": "إلغاء",
+    "create": "إنشاء",
     "close": "إغلاق",
     "save": "حفظ",
     "stay": "البقاء",
@@ -1430,11 +1430,11 @@
     "submit": "تقديم",
     "couldNotFinish": "لا يمكن إنهاء",
     "addNewTask": "إضافة مهمة جديدة",
-    "saveChanges": "Save Changes",
-    "createTemplate": "Create Template",
-    "deleteTest": "Delete Test",
-    "deleteForever": "Delete Forever",
-    "startTest": "Start Test"
+    "saveChanges": "حفظ التغييرات",
+    "createTemplate": "إنشاء نموذج",
+    "deleteTest": "حذف الاختبار",
+    "deleteForever": "حذف إلى الأبد",
+    "startTest": "بدء الاختبار"
   },
   "switches": {
     "noAnswer": "لا توجد إجابة",
@@ -1477,11 +1477,7 @@
       "SelfTest": {
         "title": "اختبار ذاتي",
         "type": "غير مشرف عليه",
-        "text": [
-          "الإجابة في وقت فراغ",
-          "تحليل متقدم للإجابات",
-          "تخصيص المهمة"
-        ]
+        "text": ["الإجابة في وقت فراغ", "تحليل متقدم للإجابات", "تخصيص المهمة"]
       },
       "LiveTest": {
         "title": "اختبار مباشر",
@@ -1892,9 +1888,9 @@
       "title": "حذف الخيار",
       "message": "هل أنت متأكد أنك تريد حذف هذا الخيار؟ لا يمكن التراجع عن هذا الإجراء."
     },
-    "confirmDeletion": "Confirm Deletion",
-    "actionCannotBeUndone": "This action cannot be undone",
-    "allAssociatedDataLost": "All associated data, results, and configurations will be lost forever."
+    "confirmDeletion": "تأكيد الحذف",
+    "actionCannotBeUndone": "لا يمكن التراجع عن هذا الإجراء",
+    "allAssociatedDataLost": "سيتم فقد جميع البيانات المرتبطة والنتائج والتكوينات إلى الأبد."
   },
   "tags": {
     "active": "نشط",
@@ -1928,13 +1924,13 @@
     }
   },
   "testSettings": {
-    "testInformation": "Test Information",
-    "basicTestSettings": "Basic test settings and description",
-    "advancedSettings": "Advanced Settings",
-    "quickActions": "Quick Actions",
-    "performCommonTasks": "Perform common tasks instantly"
+    "testInformation": "معلومات الاختبار",
+    "basicTestSettings": "إعدادات الاختبار الأساسية والوصف",
+    "advancedSettings": "الإعدادات المتقدمة",
+    "quickActions": "إجراءات سريعة",
+    "performCommonTasks": "تنفيذ المهام الشائعة فوراً"
   },
   "cooperator": {
-    "goToSession": "Go to session"
+    "goToSession": "الذهاب إلى الجلسة"
   }
 }
