@@ -128,7 +128,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['open-invite-dialog'])
+defineEmits(['open-invite-dialog'])
 
 const store = useStore()
 const route = useRoute()
@@ -225,7 +225,7 @@ const handleSendMessage = async ({ user, title, content }) => {
         type: 'Message',
       })
       showSuccess('HeuristicsCooperators.messages.message_sent_success')
-    } catch (error) {
+    } catch {
       showError('HeuristicsCooperators.messages.message_sent_error')
     }
   } else {
@@ -263,10 +263,10 @@ const handleSendInvitations = async (invitationData) => {
 
   selectedCoops.forEach((coop) => {
     const coopEmail = coop.email || coop // Handle both object and string formats
-    
+
     // Check if this email already exists in cooperators list
     const existingIndex = cooperatorsEdit.value.findIndex(
-      (c) => c.email === coopEmail
+      (c) => c.email === coopEmail,
     )
 
     if (existingIndex === -1) {
@@ -303,7 +303,7 @@ const handleSendInvitations = async (invitationData) => {
       // Email already exists - update their role instead of creating duplicate
       const existing = cooperatorsEdit.value[existingIndex]
       const newRole = roleOptions.value[selectedRole].value
-      
+
       if (existing.accessLevel !== newRole) {
         // Update the existing entry's role
         cooperatorsEdit.value[existingIndex] = {
@@ -323,10 +323,12 @@ const handleSendInvitations = async (invitationData) => {
 
   // Show appropriate feedback
   if (updatedRoles.length > 0) {
-    showSuccess(t('cooperators.updatedRole', { 
-      role: roleOptions.value[selectedRole].title, 
-      users: updatedRoles.join(', ') 
-    }))
+    showSuccess(
+      t('cooperators.updatedRole', {
+        role: roleOptions.value[selectedRole].title,
+        users: updatedRoles.join(', '),
+      }),
+    )
   }
   if (newInvites.length > 0) {
     showSuccess(t('cooperators.inviteSent', { users: newInvites.join(', ') }))
@@ -372,8 +374,8 @@ const submit = async () => {
       store.dispatch('getStudy', { id: test.value.id }),
       ...newCooperators.map((guest) => sendMenssages(guest)),
     ])
-  } catch (error) {
-    console.error('Error updating study:', error)
+  } catch {
+    // console.error('Error updating study:', error)
   }
 }
 
@@ -383,42 +385,14 @@ const sendMenssages = async (guest) => {
     // Email is optional - don't let it block the notification
     try {
       await handleSendEmail(guest)
-    } catch (emailError) {
-      console.warn('Email sending failed (may be missing VUE_APP_CLOUD_FUNCTIONS_URL):', emailError.message)
+    } catch {
+      // console.warn('Email sending failed (may be missing VUE_APP_CLOUD_FUNCTIONS_URL):', emailError.message)
     }
     showSuccess('pages.cooperators.invitationSent')
-  } catch (error) {
-    console.error('sendMenssages error:', error)
+  } catch {
+    // console.error('sendMenssages error:', error)
     showError('errors.sendError')
     return error
-  }
-}
-
-const notifyCooperatorAccessibility = async (guest) => {
-  if (test.value) {
-    const isManual = test.value.testType === 'MANUAL'
-    const methodPath = isManual ? 'manual' : 'automatic'
-    const methodLabel = isManual ? 'manual_testing' : 'automatic_testing'
-    
-    const path = `accessibility/${methodPath}/preview/${test.value.id}`
-    const author = test.value.testAdmin.email
-
-    const payload = {
-      userId: guest.userDocId,
-      author,
-      redirectsTo: path,
-      testId: test.value.id,
-      titleTemplate: 'HeuristicsCooperators.actions.send_invitation',
-    }
-
-    if (inviteMessages.value) {
-      payload.description = inviteMessages.value
-    } else {
-      payload.descriptionTemplate = 'HeuristicsCooperators.messages.invite_message'
-      payload.descriptionParams = { testTitle: test.value.testTitle || 'Test' }
-    }
-
-    await sendNotification(payload)
   }
 }
 
@@ -451,14 +425,16 @@ const notifyCooperator = async (guest) => {
       testId: test.value.id,
       redirectsTo: path,
       type: 'Collaboration',
-      accessLevel: roleOptions.value.find((r) => r.value === guest.accessLevel)?.value,
+      accessLevel: roleOptions.value.find((r) => r.value === guest.accessLevel)
+        ?.value,
       titleTemplate: 'HeuristicsCooperators.actions.send_invitation',
     }
 
     if (inviteMessages.value) {
       payload.description = inviteMessages.value
     } else {
-      payload.descriptionTemplate = 'HeuristicsCooperators.messages.invite_message'
+      payload.descriptionTemplate =
+        'HeuristicsCooperators.messages.invite_message'
       payload.descriptionParams = { testTitle: test.value.testTitle || 'Test' }
     }
 
