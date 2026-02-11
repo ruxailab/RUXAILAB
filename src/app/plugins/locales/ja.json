@@ -1415,8 +1415,8 @@
     "profile": "プロフィール",
     "returnToConsole": "コンソールに戻る",
     "tip": "ヒント",
-    "cancel": "Cancel",
-    "create": "Create",
+    "cancel": "キャンセル",
+    "create": "作成",
     "close": "閉じる",
     "save": "保存",
     "stay": "そのまま",
@@ -1426,15 +1426,15 @@
     "delete": "削除",
     "deleteAccount": "アカウントを削除",
     "back": "戻る",
-    "duplicateTest": "Duplicate Test",
+    "duplicateTest": "テストを複製",
     "submit": "送信",
     "couldNotFinish": "完了できませんでした",
     "addNewTask": "新しいタスクを追加",
-    "saveChanges": "Save Changes",
-    "createTemplate": "Create Template",
-    "deleteTest": "Delete Test",
-    "deleteForever": "Delete Forever",
-    "startTest": "Start Test"
+    "saveChanges": "変更を保存",
+    "createTemplate": "テンプレートを作成",
+    "deleteTest": "テストを削除",
+    "deleteForever": "完全に削除",
+    "startTest": "テストを開始"
   },
   "switches": {
     "noAnswer": "回答なし",
@@ -1892,9 +1892,9 @@
       "title": "オプションを削除",
       "message": "このオプションを削除してもよろしいですか？この操作は取り消せません。"
     },
-    "confirmDeletion": "Confirm Deletion",
-    "actionCannotBeUndone": "This action cannot be undone",
-    "allAssociatedDataLost": "All associated data, results, and configurations will be lost forever."
+    "confirmDeletion": "削除の確認",
+    "actionCannotBeUndone": "この操作は元に戻せません",
+    "allAssociatedDataLost": "関連するすべてのデータ、結果、および構成が永久に失われます。"
   },
   "tags": {
     "active": "アクティブ",
@@ -1928,13 +1928,13 @@
     }
   },
   "testSettings": {
-    "testInformation": "Test Information",
-    "basicTestSettings": "Basic test settings and description",
-    "advancedSettings": "Advanced Settings",
-    "quickActions": "Quick Actions",
-    "performCommonTasks": "Perform common tasks instantly"
+    "testInformation": "テスト情報",
+    "basicTestSettings": "基本的なテスト設定と説明",
+    "advancedSettings": "詳細設定",
+    "quickActions": "クイックアクション",
+    "performCommonTasks": "一般的なタスクを即座に実行"
   },
   "cooperator": {
-    "goToSession": "Go to session"
+    "goToSession": "セッションへ移動"
   }
 }

@@ -1415,8 +1415,8 @@
     "profile": "Perfil",
     "returnToConsole": "Volver a la consola",
     "tip": "Consejo",
-    "cancel": "Cancel",
-    "create": "Create",
+    "cancel": "Cancelar",
+    "create": "Crear",
     "close": "Cerrar",
     "save": "Guardar",
     "stay": "Quedarse",
@@ -1426,15 +1426,15 @@
     "delete": "Eliminar",
     "deleteAccount": "Eliminar cuenta",
     "back": "Volver",
-    "duplicateTest": "Duplicate Test",
+    "duplicateTest": "Duplicar prueba",
     "submit": "Enviar",
     "couldNotFinish": "No se pudo completar",
     "addNewTask": "Agregar nueva tarea",
-    "saveChanges": "Save Changes",
-    "createTemplate": "Create Template",
-    "deleteTest": "Delete Test",
-    "deleteForever": "Delete Forever",
-    "startTest": "Start Test"
+    "saveChanges": "Guardar cambios",
+    "createTemplate": "Crear plantilla",
+    "deleteTest": "Eliminar prueba",
+    "deleteForever": "Eliminar definitivamente",
+    "startTest": "Iniciar prueba"
   },
   "switches": {
     "noAnswer": "Sin respuesta",
@@ -1872,9 +1872,9 @@
       "title": "Eliminar Opción",
       "message": "¿Está seguro de que desea eliminar esta opción? Esta acción no se puede deshacer."
     },
-    "confirmDeletion": "Confirm Deletion",
-    "actionCannotBeUndone": "This action cannot be undone",
-    "allAssociatedDataLost": "All associated data, results, and configurations will be lost forever."
+    "confirmDeletion": "Confirmar eliminación",
+    "actionCannotBeUndone": "Esta acción no se puede deshacer",
+    "allAssociatedDataLost": "Todos los datos, resultados y configuraciones asociados se perderán para siempre."
   },
   "tags": {
     "active": "Activo",
@@ -1908,13 +1908,13 @@
     }
   },
   "testSettings": {
-    "testInformation": "Test Information",
-    "basicTestSettings": "Basic test settings and description",
-    "advancedSettings": "Advanced Settings",
-    "quickActions": "Quick Actions",
-    "performCommonTasks": "Perform common tasks instantly"
+    "testInformation": "Información de la prueba",
+    "basicTestSettings": "Configuración básica y descripción de la prueba",
+    "advancedSettings": "Configuración avanzada",
+    "quickActions": "Acciones rápidas",
+    "performCommonTasks": "Realizar tareas comunes al instante"
   },
   "cooperator": {
-    "goToSession": "Go to session"
+    "goToSession": "Ir a la sesión"
   }
 }

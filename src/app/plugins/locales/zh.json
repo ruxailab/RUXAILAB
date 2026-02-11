@@ -1415,8 +1415,8 @@
     "profile": "个人资料",
     "returnToConsole": "返回控制台",
     "tip": "提示",
-    "cancel": "Cancel",
-    "create": "Create",
+    "cancel": "取消",
+    "create": "创建",
     "close": "关闭",
     "save": "保存",
     "stay": "留下",
@@ -1426,15 +1426,15 @@
     "delete": "删除",
     "deleteAccount": "删除账户",
     "back": "返回",
-    "duplicateTest": "Duplicate Test",
+    "duplicateTest": "复制测试",
     "submit": "提交",
     "couldNotFinish": "无法完成",
     "addNewTask": "添加新任务",
-    "saveChanges": "Save Changes",
-    "createTemplate": "Create Template",
-    "deleteTest": "Delete Test",
-    "deleteForever": "Delete Forever",
-    "startTest": "Start Test"
+    "saveChanges": "保存更改",
+    "createTemplate": "创建模板",
+    "deleteTest": "删除测试",
+    "deleteForever": "永久删除",
+    "startTest": "开始测试"
   },
   "switches": {
     "noAnswer": "无答案",
@@ -1892,9 +1892,9 @@
       "title": "删除选项",
       "message": "您确定要删除此选项吗？此操作无法撤销。"
     },
-    "confirmDeletion": "Confirm Deletion",
-    "actionCannotBeUndone": "This action cannot be undone",
-    "allAssociatedDataLost": "All associated data, results, and configurations will be lost forever."
+    "confirmDeletion": "确认删除",
+    "actionCannotBeUndone": "此操作无法撤销",
+    "allAssociatedDataLost": "所有相关数据、结果和配置将永久丢失。"
   },
   "tags": {
     "active": "有效",
@@ -1928,13 +1928,13 @@
     }
   },
   "testSettings": {
-    "testInformation": "Test Information",
-    "basicTestSettings": "Basic test settings and description",
-    "advancedSettings": "Advanced Settings",
-    "quickActions": "Quick Actions",
-    "performCommonTasks": "Perform common tasks instantly"
+    "testInformation": "测试信息",
+    "basicTestSettings": "基本测试设置和描述",
+    "advancedSettings": "高级设置",
+    "quickActions": "快速操作",
+    "performCommonTasks": "立即执行常用任务"
   },
   "cooperator": {
-    "goToSession": "Go to session"
+    "goToSession": "进入会话"
   }
 }

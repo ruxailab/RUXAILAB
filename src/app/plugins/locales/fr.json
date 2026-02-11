@@ -1415,26 +1415,26 @@
     "profile": "Profil",
     "returnToConsole": "Retour à la console",
     "tip": "Astuce",
-    "cancel": "Cancel",
-    "create": "Create",
+    "cancel": "Annuler",
+    "create": "Créer",
     "close": "Fermer",
     "save": "Enregistrer",
     "stay": "Rester",
-    "leave": "Partir",
+    "leave": "Quitter",
     "saveandleave": "Enregistrer et quitter",
     "help": "Aide",
     "delete": "Supprimer",
     "deleteAccount": "Supprimer le compte",
     "back": "Retour",
-    "duplicateTest": "Duplicate Test",
+    "duplicateTest": "Dupliquer le test",
     "submit": "Soumettre",
     "couldNotFinish": "Impossible de terminer",
     "addNewTask": "Ajouter une nouvelle tâche",
-    "saveChanges": "Save Changes",
-    "createTemplate": "Create Template",
-    "deleteTest": "Delete Test",
-    "deleteForever": "Delete Forever",
-    "startTest": "Start Test"
+    "saveChanges": "Enregistrer les modifications",
+    "createTemplate": "Créer un modèle",
+    "deleteTest": "Supprimer le test",
+    "deleteForever": "Supprimer définitivement",
+    "startTest": "Démarrer le test"
   },
   "switches": {
     "noAnswer": "Pas de réponse",
@@ -1892,9 +1892,9 @@
       "title": "Supprimer l'option",
       "message": "Êtes-vous sûr de vouloir supprimer cette option ? Cette action est irréversible."
     },
-    "confirmDeletion": "Confirm Deletion",
-    "actionCannotBeUndone": "This action cannot be undone",
-    "allAssociatedDataLost": "All associated data, results, and configurations will be lost forever."
+    "confirmDeletion": "Confirmer la suppression",
+    "actionCannotBeUndone": "Cette action est irréversible",
+    "allAssociatedDataLost": "Toutes les données, résultats et configurations associés seront perdus à jamais."
   },
   "tags": {
     "active": "Actif",
@@ -1928,13 +1928,13 @@
     }
   },
   "testSettings": {
-    "testInformation": "Test Information",
-    "basicTestSettings": "Basic test settings and description",
-    "advancedSettings": "Advanced Settings",
-    "quickActions": "Quick Actions",
-    "performCommonTasks": "Perform common tasks instantly"
+    "testInformation": "Informations sur le test",
+    "basicTestSettings": "Paramètres de base et description du test",
+    "advancedSettings": "Paramètres avancés",
+    "quickActions": "Actions rapides",
+    "performCommonTasks": "Effectuer des tâches courantes instantanément"
   },
   "cooperator": {
-    "goToSession": "Go to session"
+    "goToSession": "Aller à la session"
   }
 }
