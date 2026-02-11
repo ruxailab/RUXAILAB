@@ -7,8 +7,7 @@
   >
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
-        Review detailed accessibility issues and success criteria based on WCAG
-        guidelines.
+        {{ $t('Accessibility.reviewDetailedIssues') }}
       </p>
     </template>
     <v-alert
@@ -28,7 +27,7 @@
         <div class="v-col v-col-2 sidebar fill-height">
           <div class="h-100" style="background-color: #f5f5f5">
             <div class="text-subtitle-1 pa-3 font-weight-bold">
-              WCAG Principles
+              {{ $t('Accessibility.wcagPrinciples') }}
             </div>
 
             <div v-if="principles.length > 0" class="pa-0">
@@ -85,7 +84,11 @@
 
             <div v-else class="pa-4">
               <div class="text-grey text-body-2">
-                {{ isLoading ? 'Loading...' : 'No principles available' }}
+                {{
+                  isLoading
+                    ? $t('Accessibility.loading')
+                    : $t('Accessibility.noPrinciplesAvailable')
+                }}
               </div>
             </div>
           </div>
@@ -107,7 +110,7 @@
                 color="primary"
                 size="20"
               />
-              Accessibility Report
+              {{ $t('Accessibility.accessibilityReport') }}
             </v-card-title>
             <v-card-text class="py-1">
               <v-row class="ma-0" dense>
@@ -166,7 +169,7 @@
                   variant="outlined"
                   class="text-caption"
                 >
-                  Level {{ currentRule?.level }}
+                  {{ $t('Accessibility.level') }} {{ currentRule?.level }}
                 </v-chip>
                 <v-chip
                   size="small"
@@ -174,7 +177,7 @@
                   variant="outlined"
                   class="text-caption"
                 >
-                  WCAG {{ currentRule?.version }}
+                  {{ $t('Accessibility.wcag') }} {{ currentRule?.version }}
                 </v-chip>
                 <v-chip
                   size="small"
@@ -204,7 +207,9 @@
 
             <!-- Success Criterion Section -->
             <div class="mb-4">
-              <h2 class="text-h6 font-weight-bold mb-2">Success Criterion</h2>
+              <h2 class="text-h6 font-weight-bold mb-2">
+                {{ $t('Accessibility.successCriterion') }}
+              </h2>
               <v-card
                 variant="outlined"
                 class="mb-2"
@@ -214,7 +219,9 @@
                   <div
                     class="text-subtitle-2 font-weight-bold mb-2 text-success"
                   >
-                    {{ currentRule?.id }} {{ currentRule?.title }} (Level
+                    {{ currentRule?.id }} {{ currentRule?.title }} ({{
+                      $t('Accessibility.level')
+                    }}
                     {{ currentRule?.level }})
                   </div>
                   <div
@@ -233,7 +240,7 @@
                     </ul>
                   </div>
                   <div v-else class="text-body-2 text-grey-darken-1">
-                    No specific criteria defined for this rule.
+                    {{ $t('Accessibility.noSpecificCriteria') }}
                   </div>
                 </v-card-text>
               </v-card>
@@ -243,15 +250,15 @@
             <div class="mb-4">
               <h2 class="text-h6 font-weight-bold mb-2 d-flex align-center">
                 <v-icon icon="mdi-alert-circle" class="mr-2" size="small" />
-                Accessibility Issues
+                {{ $t('Accessibility.accessibilityIssues') }}
                 <v-chip
                   v-if="currentRuleIssueCounts.total > 0"
                   :color="
                     currentRuleIssueCounts.errors > 0
                       ? 'error'
                       : currentRuleIssueCounts.warnings > 0
-                      ? 'warning'
-                      : 'info'
+                        ? 'warning'
+                        : 'info'
                   "
                   size="small"
                   class="ml-2"
@@ -280,7 +287,9 @@
                       <div class="text-h6 font-weight-bold mb-0">
                         {{ currentRuleIssueCounts.errors }}
                       </div>
-                      <div class="text-caption">Errors</div>
+                      <div class="text-caption">
+                        {{ $t('Accessibility.errors') }}
+                      </div>
                     </v-card-text>
                   </v-card>
                 </v-col>
@@ -302,7 +311,9 @@
                       <div class="text-h6 font-weight-bold mb-0">
                         {{ currentRuleIssueCounts.warnings }}
                       </div>
-                      <div class="text-caption">Warnings</div>
+                      <div class="text-caption">
+                        {{ $t('Accessibility.warnings') }}
+                      </div>
                     </v-card-text>
                   </v-card>
                 </v-col>
@@ -324,7 +335,9 @@
                       <div class="text-h6 font-weight-bold mb-0">
                         {{ currentRuleIssueCounts.notices }}
                       </div>
-                      <div class="text-caption">Notices</div>
+                      <div class="text-caption">
+                        {{ $t('Accessibility.notices') }}
+                      </div>
                     </v-card-text>
                   </v-card>
                 </v-col>
@@ -337,7 +350,9 @@
                 class="mb-2"
               >
                 <v-card-title class="py-2 px-3 text-body-2">
-                  Issues Found ({{ currentRuleIssues.length }})
+                  {{ $t('Accessibility.issuesFound') }} ({{
+                    currentRuleIssues.length
+                  }})
                 </v-card-title>
                 <v-card-text class="py-1 px-2">
                   <v-list density="compact">
@@ -395,11 +410,10 @@
                   <div
                     class="text-subtitle-2 font-weight-bold text-success mb-1"
                   >
-                    No Issues Found
+                    {{ $t('Accessibility.noIssuesFound') }}
                   </div>
                   <div class="text-body-2 text-grey-darken-1">
-                    This rule passed all accessibility checks for the tested
-                    page.
+                    {{ $t('Accessibility.rulePassedAllChecks') }}
                   </div>
                 </v-card-text>
               </v-card>
@@ -408,7 +422,9 @@
               <v-card v-else-if="reportLoading" variant="outlined" class="mb-2">
                 <v-card-text class="text-center pa-4">
                   <v-progress-circular indeterminate size="32" class="mb-2" />
-                  <div class="text-body-2">Loading accessibility report...</div>
+                  <div class="text-body-2">
+                    {{ $t('Accessibility.loadingAccessibilityReport') }}
+                  </div>
                 </v-card-text>
               </v-card>
 
@@ -422,10 +438,10 @@
                     class="mb-2"
                   />
                   <div class="text-subtitle-2 font-weight-bold text-info mb-1">
-                    No Report Available
+                    {{ $t('Accessibility.noReportAvailable') }}
                   </div>
                   <div class="text-body-2 text-grey-darken-1">
-                    No accessibility test has been run for this test ID yet.
+                    {{ $t('Accessibility.noTestRunYet') }}
                   </div>
                 </v-card-text>
               </v-card>
@@ -436,13 +452,15 @@
               v-if="selectedIssue !== null && currentRuleIssues[selectedIssue]"
               class="mb-4"
             >
-              <h2 class="text-h6 font-weight-bold mb-2">Issue Details</h2>
+              <h2 class="text-h6 font-weight-bold mb-2">
+                {{ $t('Accessibility.issueDetails') }}
+              </h2>
               <v-card variant="outlined" class="mb-2">
                 <v-card-text class="pa-3">
                   <v-list density="compact">
                     <v-list-item>
                       <v-list-item-title class="text-caption font-weight-bold">
-                        Type
+                        {{ $t('Accessibility.type') }}
                       </v-list-item-title>
                       <v-list-item-subtitle>
                         <v-chip
@@ -457,7 +475,7 @@
                     </v-list-item>
                     <v-list-item>
                       <v-list-item-title class="text-caption font-weight-bold">
-                        Code
+                        {{ $t('Accessibility.code') }}
                       </v-list-item-title>
                       <v-list-item-subtitle>
                         <code
@@ -469,7 +487,7 @@
                     </v-list-item>
                     <v-list-item>
                       <v-list-item-title class="text-caption font-weight-bold">
-                        Message
+                        {{ $t('Accessibility.message') }}
                       </v-list-item-title>
                       <v-list-item-subtitle class="mt-1 text-caption">
                         {{ currentRuleIssues[selectedIssue].message }}
@@ -479,7 +497,7 @@
                       v-if="currentRuleIssues[selectedIssue].context"
                     >
                       <v-list-item-title class="text-caption font-weight-bold">
-                        Context
+                        {{ $t('Accessibility.context') }}
                       </v-list-item-title>
                       <v-list-item-subtitle class="mt-1">
                         <v-sheet color="grey-lighten-5" class="pa-2 rounded">
@@ -493,7 +511,7 @@
                       v-if="currentRuleIssues[selectedIssue].selector"
                     >
                       <v-list-item-title class="text-caption font-weight-bold">
-                        CSS Selector
+                        {{ $t('Accessibility.cssSelector') }}
                       </v-list-item-title>
                       <v-list-item-subtitle>
                         <code
@@ -510,7 +528,7 @@
                       "
                     >
                       <v-list-item-title class="text-caption font-weight-bold">
-                        WCAG Reference
+                        {{ $t('Accessibility.wcagReference') }}
                       </v-list-item-title>
                       <v-list-item-subtitle>
                         <v-btn
@@ -523,7 +541,7 @@
                           size="small"
                           prepend-icon="mdi-open-in-new"
                         >
-                          View WCAG Guidelines
+                          {{ $t('Accessibility.viewWcagGuidelines') }}
                         </v-btn>
                       </v-list-item-subtitle>
                     </v-list-item>
@@ -547,10 +565,11 @@
                   :disabled="!hasPrevRule"
                   @click="prevRule"
                 >
-                  Previous
+                  {{ $t('Accessibility.previous') }}
                 </v-btn>
                 <div class="text-caption text-grey-darken-1">
-                  Rule {{ currentRuleIndex + 1 }} of {{ totalRules }}
+                  {{ $t('Accessibility.rule') }} {{ currentRuleIndex + 1 }}
+                  {{ $t('Accessibility.of') }} {{ totalRules }}
                 </div>
                 <v-btn
                   variant="outlined"
@@ -559,7 +578,7 @@
                   :disabled="!hasNextRule"
                   @click="nextRule"
                 >
-                  Next
+                  {{ $t('Accessibility.next') }}
                 </v-btn>
               </div>
             </v-card>
@@ -577,12 +596,11 @@
               />
 
               <h2 class="text-h6 font-weight-regular text-grey-darken-2 mb-1">
-                Select a Rule to View Details
+                {{ $t('Accessibility.selectRuleToView') }}
               </h2>
 
               <p class="text-body-2 text-medium-emphasis">
-                Choose a principle and guideline from the left sidebar to view
-                the success criteria.
+                {{ $t('Accessibility.choosePrincipleGuideline') }}
               </p>
             </div>
           </v-card>
@@ -592,14 +610,14 @@
         <v-col cols="3" class="toc-sidebar fill-height">
           <v-card flat class="h-100" color="grey-lighten-5">
             <v-card-title class="text-subtitle-1 pa-3 font-weight-bold">
-              Rules
+              {{ $t('Accessibility.rules') }}
               <v-chip
                 v-if="report && allIssues.length > 0"
                 size="small"
                 color="primary"
                 class="ml-2"
               >
-                {{ allIssues.length }} total issues
+                {{ allIssues.length }} {{ $t('Accessibility.totalIssues') }}
               </v-chip>
             </v-card-title>
             <v-list density="compact" class="pa-1">
@@ -636,8 +654,8 @@
                         getRuleIssueCount(rule.id, 'error') > 0
                           ? 'error'
                           : getRuleIssueCount(rule.id, 'warning') > 0
-                          ? 'warning'
-                          : 'info'
+                            ? 'warning'
+                            : 'info'
                       "
                       size="x-small"
                       class="ml-1"
@@ -649,7 +667,7 @@
               </template>
               <v-list-item v-else>
                 <v-list-item-title class="text-caption text-grey">
-                  No rules available
+                  {{ $t('Accessibility.noRulesAvailable') }}
                 </v-list-item-title>
               </v-list-item>
             </v-list>
@@ -1191,7 +1209,9 @@ onMounted(async () => {
 .guideline-item {
   cursor: pointer;
   border-left: 3px solid transparent;
-  transition: background-color 0.2s ease-in-out, border-left-color 0.2s ease;
+  transition:
+    background-color 0.2s ease-in-out,
+    border-left-color 0.2s ease;
 }
 
 /* Hover Effect */

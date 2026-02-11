@@ -111,7 +111,8 @@
     "action_cannot_be_undone": "Это действие нельзя отменить",
     "user": "Пользователь",
     "id": "ID",
-    "itemsPerPage": "Элементов на странице:"
+    "itemsPerPage": "Элементов на странице:",
+    "visible": "Visible"
   },
   "storage": {
     "pageTitle": "Хранилище",
@@ -1340,7 +1341,8 @@
         "userUnmoderated": "Немодерируемый пользователь",
         "userModerated": "Модерируемый пользователь",
         "manualAccessibility": "Ручная доступность",
-        "automaticAccessibility": "Автоматическая доступность"
+        "automaticAccessibility": "Автоматическая доступность",
+        "all": "All"
       }
     },
     "createTest": {
@@ -1376,7 +1378,8 @@
       "quick_actions": "Быстрые действия",
       "perform_common_tasks": "Выполняйте общие задачи мгновенно",
       "delete_warning": "Все связанные данные, результаты и конфигурации будут потеряны навсегда.",
-      "delete_forever": "Удалить навсегда"
+      "delete_forever": "Удалить навсегда",
+      "confirm_deletion": "Confirm Deletion"
     },
     "editTest": {
       "title": "Редактировать тест",
@@ -1936,5 +1939,280 @@
   },
   "cooperator": {
     "goToSession": "Go to session"
+  },
+  "Accessibility": {
+    "access": "Access:",
+    "accessibilityAssessmentResults": "Accessibility Assessment Results",
+    "accessibilityConfiguration": "Accessibility Configuration",
+    "accessibilityIssues": "Accessibility Issues",
+    "accessibilityManager": "Accessibility Manager",
+    "accessibilityReport": "Accessibility Report",
+    "accessibilityScore": "Accessibility Score",
+    "addNewPage": "Add New Page",
+    "addNewWebpageAssessment": "Add New Webpage for Assessment",
+    "addWebpageStartAssessment": "Add Webpage & Start Assessment",
+    "all": "All",
+    "analyzeWebsiteCompliance": "Analyze your website's accessibility compliance and get actionable insights",
+    "analyzingAccessibility": "Analyzing Accessibility",
+    "appraiserNotes": "Appraiser Notes",
+    "assessmentAvailable": "Assessment Available",
+    "assessmentData": "Assessment Data",
+    "assessmentNotes": "Assessment Notes",
+    "assessmentProgress": "Assessment Progress",
+    "back": "Back",
+    "backToUserSelection": "Back to User Selection",
+    "browseAccessibilityTools": "Browse accessibility tools and actions",
+    "canSave": "Can Save:",
+    "cancel": "Cancel",
+    "checkRequiresAuth": "Check if the website requires authentication",
+    "checkingAccessPermissions": "Checking access permissions",
+    "choosePrincipleGuideline": "Choose a principle and guideline from the left sidebar to view its associated rules and their issues",
+    "close": "Close",
+    "code": "Code",
+    "color": "Color:",
+    "commonIssuesSolutions": "Common Issues & Solutions",
+    "compliance": "compliance",
+    "complianceLevel": "Compliance Level:",
+    "configuration": "Configuration:",
+    "context": "Context",
+    "continue": "Continue",
+    "cssSelector": "CSS Selector",
+    "dashboard": "Dashboard",
+    "description": "Evaluate the accessibility of your web content based on WCAG guidelines",
+    "descriptionOptional": "Description (Optional)",
+    "descriptionPlaceholder": "Brief description of the page or specific scenario being tested.",
+    "dismiss": "Dismiss",
+    "ensurePubliclyAccessible": "Make sure the website is publicly accessible",
+    "enterWebsiteUrl": "Enter a website URL to run an automated accessibility test and get a detailed report.",
+    "errors": "Errors",
+    "evaluateAccessibility": "Evaluate the accessibility of your project based on selected WCAG guidelines",
+    "exportJson": "Export JSON",
+    "failed": "Failed",
+    "fetchingParticipants": "Fetching assessment participants...",
+    "fillWebpageDetails": "Fill in the details of the webpage you want to assess for accessibility.",
+    "filteredWcagDataAvailable": "Filtered WCAG Data Available:",
+    "foundUserIds": "Found User IDs:",
+    "guideline": "Guideline",
+    "guidelinesSelected": "guideline(s) selected",
+    "guidelinesSelection": "Guidelines Selection",
+    "information": "Information",
+    "issueDetails": "Issue Details",
+    "issues": "Issues",
+    "issuesFound": "Issues Found",
+    "level": "Level",
+    "loading": "Loading...",
+    "loadingAccessibilityReport": "Loading accessibility report...",
+    "loadingMore": "Loading more...",
+    "loadingReport": "Loading report...",
+    "loadingTestData": "Loading test data...",
+    "loadingUsers": "Loading Users",
+    "message": "Message",
+    "next": "Next",
+    "noAssessmentAvailable": "No Assessment Available for this Test",
+    "noDescriptionProvided": "No description provided.",
+    "noIssuesFound": "No Issues Found",
+    "noNotesForRule": "No notes available for this rule.",
+    "noNotesProvided": "No notes provided",
+    "noPrinciplesAvailable": "No principles available",
+    "noReportAvailable": "No Report Available",
+    "noReportData": "No report data available.",
+    "noRulesAvailable": "No rules available",
+    "noSpecificCriteria": "No specific criteria defined for this rule.",
+    "noSuccessCriteria": "No success criteria available for this rule.",
+    "noTestRunYet": "No accessibility test has been run for this test ID yet.",
+    "noUsersFound": "No users found for this assessment test.",
+    "notApplicable": "Not Applicable",
+    "notEvaluated": "Not Evaluated",
+    "note": "Note",
+    "notesFor": "Notes for",
+    "notices": "Notices",
+    "of": "of",
+    "opacity": "Opacity",
+    "passed": "Passed",
+    "pleaseFixFollowing": "Please fix the following issues:",
+    "previous": "Previous",
+    "principle": "Principle",
+    "principlesAvailable": "Principles Available:",
+    "radius": "Radius",
+    "rawWcagDataAvailable": "Raw WCAG Data Available:",
+    "readOnlyMode": "This is read-only mode - you cannot save changes to another user's assessment.",
+    "readyToEvaluate": "Ready to Evaluate",
+    "remove": "Remove",
+    "report": "Report",
+    "reset": "Reset",
+    "reviewDetailedAssessment": "Review the detailed accessibility assessment results for the selected user",
+    "reviewDetailedIssues": "Review detailed accessibility issues and success criteria based on WCAG guidelines",
+    "rule": "Rule",
+    "rulePassedAllChecks": "This rule passed all accessibility checks for the tested page.",
+    "rules": "Rules",
+    "rulesFor": "rules for",
+    "runAccessibilityTest": "Run Accessibility Test",
+    "runTest": "Run Test",
+    "runningComprehensiveTests": "Running comprehensive tests on your website...",
+    "saveAssessment": "Save Assessment",
+    "saveConfig": "Save Config",
+    "selectComplianceLevel": "Select the WCAG compliance level for your accessibility requirements.",
+    "selectGuidelinesByPrinciple": "Select guidelines for your assessment. Filter by principle using tabs.",
+    "selectPrincipleInfo": "Select a principle from the list to view its guidelines and rules.",
+    "selectRuleToView": "Select a Rule to View Details",
+    "selectSpecificRules": "Select specific rules (required)",
+    "selectUserToView": "Select a user to view their accessibility assessment results",
+    "selectUserToViewResults": "Select a User to View Assessment Results",
+    "selected": "Selected",
+    "selectedGuidelines": "Selected Guidelines:",
+    "selector": "Selector",
+    "setupTestParameters": "Set up and customize your accessibility test parameters",
+    "severity": "Severity",
+    "signInToSave": "Sign In to Save",
+    "status": "Status",
+    "step": "Step",
+    "successCriterion": "Success Criterion",
+    "testFailed": "Test Failed",
+    "testing": "Testing...",
+    "totalIssues": "Total Issues",
+    "totalRules": "Total rules",
+    "troubleshootingTips": "Troubleshooting Tips",
+    "tryAgain": "Try Again",
+    "tryDifferentPage": "Try testing a different page on the same domain",
+    "type": "Type",
+    "url": "URL",
+    "urlHelp": "The full URL of the webpage.",
+    "urlPlaceholder": "https://example.com",
+    "userDetails": "User Details:",
+    "userRole": "User Role:",
+    "usersLoaded": "users loaded",
+    "verifyUrlCorrect": "Verify the URL is correct and complete",
+    "version": "v",
+    "viewAssessment": "View Assessment",
+    "viewDetailedIssues": "View detailed accessibility issues and recommendations to improve your web content.",
+    "viewInPreview": "View in Preview",
+    "viewInPreviewMode": "View in Preview Mode",
+    "viewResults": "View Results",
+    "viewWcagGuidelines": "View WCAG Guidelines",
+    "viewingAssessmentData": "You are viewing assessment data for user ID:",
+    "viewingMode": "Viewing Mode",
+    "viewingModeLabel": "Viewing Mode:",
+    "viewingUserId": "Viewing User ID:",
+    "warnings": "Warnings",
+    "wcag": "WCAG",
+    "wcagComplianceLevel": "WCAG Compliance Level",
+    "wcagComplianceLevelHelp": "The target WCAG conformance level for this assessment.",
+    "wcagLevelFilter": "WCAG Level Filter:",
+    "wcagPrinciples": "WCAG Principles",
+    "wcagReference": "WCAG Reference",
+    "webpageName": "Webpage Name",
+    "webpageNameHelp": "A descriptive name for the webpage you are testing.",
+    "webpageNamePlaceholder": "e.g., My Company Homepage",
+    "webpagePreview": "Webpage Preview",
+    "websiteAccessibilityTester": "Website Accessibility Tester"
+  },
+  "faq": {
+    "questions": {
+      "q1": {
+        "answer": "Ruxailab is an open-source platform designed to collect usability feedback from users. It allows you to gather user reviews, analyze them, and create comprehensive reports to better understand your application's usability. Additionally, it offers heuristic tests, enabling experts to evaluate your application's compliance with usability principles. It is maintained by a community of contributors and licensed under the MIT License.",
+        "question": "1. What is Ruxailab?"
+      },
+      "q2": {
+        "answer_part1": "To get started, visit our",
+        "answer_part2": "to download the source code. Check out the documentation for installation instructions and examples. You can also visit our",
+        "answer_part3": "page for more resources.",
+        "help_link": "Help",
+        "link_text": "GitHub Repository",
+        "question": "2. How do I get started with the Project?"
+      },
+      "q3": {
+        "answer": "Absolutely! We welcome contributions from the community. Please read our contribution guidelines in the repository and submit a pull request with your changes.",
+        "question": "3. Can I contribute to the Project?"
+      },
+      "q4": {
+        "answer": "The Project is licensed under the MIT License. This means you can use, modify, and distribute the Project freely, as long as you include the license and copyright notice.",
+        "question": "4. What license does the Project use?"
+      },
+      "q5": {
+        "answer": "You can report bugs or request features by opening an issue on our",
+        "answer_part2": ". Please provide as much detail as possible to help us address your request.",
+        "link_text": "GitHub Issues",
+        "question": "5. How do I report a bug or request a feature?"
+      },
+      "q6": {
+        "answer": "Yes! Join our community on",
+        "answer_part2": "to connect with other users and contributors, ask questions, and share ideas.",
+        "link_text": "GitHub",
+        "question": "6. Is there a community for Ruxailab?"
+      },
+      "q7": {
+        "answer": "We take your privacy seriously. Please see our",
+        "answer_part2": "for details on how we collect and use your information.",
+        "link_text": "Privacy Policy",
+        "question": "7. How is my data handled?"
+      },
+      "q8": {
+        "answer": "The Project is maintained by a team of volunteers and contributors. You can find more information about the maintainers in the Project's repository.",
+        "question": "8. Who maintains the Project?"
+      },
+      "q9": {
+        "answer": "If you have additional questions, please contact us.",
+        "question": "9. Still have questions?"
+      }
+    },
+    "subtitle": "Find answers to common questions about Ruxailab.",
+    "title": "Frequently Asked Questions (FAQs)"
+  },
+  "pageNotFound": {
+    "description": "We weren't able to find the page you were looking for.",
+    "goBack": "Go Back",
+    "title": "Page Not Found"
+  },
+  "privacyPolicy": {
+    "lastUpdated": "Last Updated: April 15, 2025",
+    "sections": {
+      "changes": {
+        "content": "We may update this Privacy Policy from time to time. We will notify users of significant changes by posting a notice on the Project's website or repository.",
+        "title": "8. Changes to This Policy"
+      },
+      "contact": {
+        "content": "If you have any questions about this Privacy Policy, please contact us.",
+        "title": "9. Contact Us"
+      },
+      "cookies": {
+        "content": "Our website may use cookies to enhance your experience (e.g., to remember your preferences). You can disable cookies in your browser settings, but this may affect the functionality of the website.",
+        "title": "5. Cookies"
+      },
+      "informationCollected": {
+        "content": "As an open-source project, we typically do not collect personal information directly. However, if you interact with our website or services (e.g., signing up for an account or submitting a contact form), we may collect:",
+        "items": {
+          "contributions": "Contributions (e.g., your GitHub username if you contribute to the Project)",
+          "email": "Email addresses (e.g., for account creation or newsletters)",
+          "usage": "Usage data (e.g., analytics on how the website is accessed)"
+        },
+        "title": "2. Information We Collect"
+      },
+      "introduction": {
+        "content": "Ruxailab is an open-source project committed to protecting your privacy. This Privacy Policy explains how we collect, use, and protect any information you provide when using the Project.",
+        "title": "1. Introduction"
+      },
+      "rights": {
+        "content": "Depending on your location, you may have the right to access, correct, or delete any personal information we hold about you. Please contact us to exercise these rights.",
+        "title": "7. Your Rights"
+      },
+      "security": {
+        "content": "We take reasonable measures to protect any data we collect, but no method of transmission over the internet is 100% secure. We cannot guarantee the absolute security of your information.",
+        "title": "6. Data Security"
+      },
+      "sharing": {
+        "content": "We do not sell or share your personal information with third parties, except as required by law or to protect the Project (e.g., in the case of abuse or fraud).",
+        "title": "4. Data Sharing"
+      },
+      "usage": {
+        "content": "We may use the information we collect to:",
+        "items": {
+          "analyze": "Analyze usage to improve user experience",
+          "communicate": "Communicate with you (e.g., respond to inquiries or notify you of updates)",
+          "improve": "Provide and improve the Project and its services"
+        },
+        "title": "3. How We Use Your Information"
+      }
+    },
+    "title": "Privacy Policy"
   }
 }
