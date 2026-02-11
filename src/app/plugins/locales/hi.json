@@ -1574,7 +1574,21 @@
   },
   "CardSorting": {
     "noCategory": "कोई श्रेणी नहीं",
-    "noCards": "कोई कार्ड नहीं मिला"
+    "noCards": "कोई कार्ड नहीं मिला",
+    "of": "का",
+    "cards": "कार्ड",
+    "cards_low": "कार्ड",
+    "currentCards": "मौजूदा कार्ड",
+    "addNewCard": "नया कार्ड जोड़ें",
+    "settings": "सेटिंग्स",
+    "configureCards": "कार्ड कैसे प्रदर्शित होंगे, इसे कॉन्फ़िगर करें",
+    "currentCategories": "वर्तमान श्रेणियां",
+    "addNewTask": "नया कार्य जोड़ें",
+    "configureCategories": "श्रेणियां कैसे प्रदर्शित होंगी, इसे कॉन्फ़िगर करें",
+    "newTask": "नया कार्य",
+    "customizeSettings": "अपने परीक्षण की सेटिंग्स और प्राथमिकताओं को कस्टमाइज़ करें",
+    "test": "टेस्ट",
+    "categories": "श्रेणियां"
   },
   "analytics": {
     "searchByName": "नाम से खोजें",

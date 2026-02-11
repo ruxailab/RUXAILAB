@@ -1575,7 +1575,21 @@
   },
   "CardSorting": {
     "noCategory": "No category",
-    "noCards": "No cards found"
+    "noCards": "No cards found",
+    "of": "of",
+    "cards": "Cards",
+    "cards_low": "cards",
+    "currentCards": "Current Cards",
+    "addNewCard": "Add New Card",
+    "settings": "Settings",
+    "configureCards": "Configure how cards will be displayed",
+    "currentCategories": "Current Categories",
+    "addNewTask": "Add New Task",
+    "configureCategories": "Configure how categories will be displayed",
+    "newTask": "New task",
+    "customizeSettings": "Customize the settings and preferences of your test",
+    "test": "Test",
+    "categories": "Categories"
   },
   "analytics": {
     "searchByName": "Search by name",

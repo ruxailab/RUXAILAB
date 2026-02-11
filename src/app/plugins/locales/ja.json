@@ -1595,7 +1595,21 @@
   },
   "CardSorting": {
     "noCategory": "カテゴリがありません",
-    "noCards": "カードが見つかりません"
+    "noCards": "カードが見つかりません",
+    "of": "の",
+    "cards": "カード",
+    "cards_low": "カード",
+    "currentCards": "現在のカード",
+    "addNewCard": "新しいカードを追加",
+    "settings": "設定",
+    "configureCards": "カードの表示方法を設定",
+    "currentCategories": "現在のカテゴリー",
+    "addNewTask": "新しいタスクを追加",
+    "configureCategories": "カテゴリーの表示方法を設定",
+    "newTask": "新しいタスク",
+    "customizeSettings": "テストの設定と環境設定をカスタマイズ",
+    "test": "テスト",
+    "categories": "カテゴリー"
   },
   "analytics": {
     "searchByName": "名前で検索",
