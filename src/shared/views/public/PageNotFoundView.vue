@@ -4,10 +4,10 @@
       <v-col cols="12" md="5">
         <v-img :src="require('@/assets/pageNotFound.svg')" />
         <div class="text-center" style="font-size: 50px; color: grey">
-          Page Not Found
+          {{ $t('pageNotFound.title') }}
         </div>
         <div class="text-center" style="font-size: 15px; color: grey">
-          We weren't able to find the page you were looking for.
+          {{ $t('pageNotFound.description') }}
         </div>
         <v-row justify="center" class="mt-4">
           <v-btn
@@ -16,7 +16,7 @@
             rounded
             @click="sendHome"
           >
-            Go Back
+            {{ $t('pageNotFound.goBack') }}
           </v-btn>
         </v-row>
       </v-col>
