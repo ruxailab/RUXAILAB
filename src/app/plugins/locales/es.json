@@ -307,8 +307,6 @@
     "yourPassword": "Tu contraseña",
     "back": "Volver",
     "deleteForever": "Eliminar permanentemente",
-    "uploadProfilePicture": "Subir foto de perfil",
-    "removeProfilePicture": "Eliminar foto de perfil",
     "currentPassword": "Contraseña actual",
     "currentPasswordRequired": "Se requiere la contraseña actual",
     "wrongCurrentPassword": "La contraseña actual es incorrecta",
@@ -1577,7 +1575,21 @@
   },
   "CardSorting": {
     "noCategory": "Sin categoría",
-    "noCards": "No se encontraron tarjetas"
+    "noCards": "No se encontraron tarjetas",
+    "of": "de",
+    "cards": "Tarjetas",
+    "cards_low": "tarjetas",
+    "currentCards": "Tarjetas actuales",
+    "addNewCard": "Agregar nueva tarjeta",
+    "settings": "Configuración",
+    "configureCards": "Configura cómo se mostrarán las tarjetas",
+    "currentCategories": "Categorías actuales",
+    "addNewTask": "Agregar nueva tarea",
+    "configureCategories": "Configura cómo se mostrarán las categorías",
+    "newTask": "Nueva tarea",
+    "customizeSettings": "Personaliza los ajustes y preferencias de tu prueba",
+    "test": "Prueba",
+    "categories": "Categorías"
   },
   "analytics": {
     "searchByName": "Buscar por nombre",
