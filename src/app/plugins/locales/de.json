@@ -1416,8 +1416,8 @@
     "profile": "Profil",
     "returnToConsole": "Zurück zur Konsole",
     "tip": "Tipp",
-    "cancel": "Cancel",
-    "create": "Create",
+    "cancel": "Abbrechen",
+    "create": "Erstellen",
     "close": "Schließen",
     "save": "Speichern",
     "stay": "Bleiben",
@@ -1427,15 +1427,15 @@
     "delete": "Löschen",
     "deleteAccount": "Konto löschen",
     "back": "Zurück",
-    "duplicateTest": "Duplicate Test",
+    "duplicateTest": "Test duplizieren",
     "submit": "Einreichen",
     "couldNotFinish": "Konnte nicht beenden",
     "addNewTask": "Neue Aufgabe hinzufügen",
-    "saveChanges": "Save Changes",
-    "createTemplate": "Create Template",
-    "deleteTest": "Delete Test",
-    "deleteForever": "Delete Forever",
-    "startTest": "Start Test"
+    "saveChanges": "Änderungen speichern",
+    "createTemplate": "Vorlage erstellen",
+    "deleteTest": "Test löschen",
+    "deleteForever": "Endgültig löschen",
+    "startTest": "Test starten"
   },
   "switches": {
     "noAnswer": "Keine Antwort",
@@ -1893,9 +1893,9 @@
       "title": "Option löschen",
       "message": "Sind Sie sicher, dass Sie diese Option löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
     },
-    "confirmDeletion": "Confirm Deletion",
-    "actionCannotBeUndone": "This action cannot be undone",
-    "allAssociatedDataLost": "All associated data, results, and configurations will be lost forever."
+    "confirmDeletion": "Löschen bestätigen",
+    "actionCannotBeUndone": "Diese Aktion kann nicht rückgängig gemacht werden",
+    "allAssociatedDataLost": "Alle zugehörigen Daten, Ergebnisse und Konfigurationen gehen dauerhaft verloren."
   },
   "tags": {
     "active": "Aktiv",
@@ -1929,13 +1929,13 @@
     }
   },
   "testSettings": {
-    "testInformation": "Test Information",
-    "basicTestSettings": "Basic test settings and description",
-    "advancedSettings": "Advanced Settings",
-    "quickActions": "Quick Actions",
-    "performCommonTasks": "Perform common tasks instantly"
+    "testInformation": "Testinformationen",
+    "basicTestSettings": "Grundlegende Testeinstellungen und Beschreibung",
+    "advancedSettings": "Erweiterte Einstellungen",
+    "quickActions": "Schnellaktionen",
+    "performCommonTasks": "Häufige Aufgaben sofort ausführen"
   },
   "cooperator": {
-    "goToSession": "Go to session"
+    "goToSession": "Zur Sitzung gehen"
   }
 }

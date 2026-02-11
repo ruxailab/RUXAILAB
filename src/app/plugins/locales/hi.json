@@ -1415,8 +1415,8 @@
     "profile": "प्रोफ़ाइल",
     "returnToConsole": "कंसोल पर लौटें",
     "tip": "टिप",
-    "create": "Create",
-    "cancel": "Cancel",
+    "create": "बनाएं",
+    "cancel": "रद्द करें",
     "close": "बंद करें",
     "save": "सहेजें",
     "stay": "रहें",
@@ -1426,15 +1426,15 @@
     "delete": "हटाएं",
     "deleteAccount": "खाता हटाएँ",
     "back": "वापस",
-    "duplicateTest": "Duplicate Test",
+    "duplicateTest": "परीक्षण डुप्लिकेट करें",
     "submit": "जमा करें",
     "couldNotFinish": "पूरा नहीं कर सका",
     "addNewTask": "नया कार्य जोड़ें",
-    "saveChanges": "Save Changes",
-    "createTemplate": "Create Template",
-    "deleteTest": "Delete Test",
-    "deleteForever": "Delete Forever",
-    "startTest": "Start Test"
+    "saveChanges": "परिवर्तन सहेजें",
+    "createTemplate": "टेम्पलेट बनाएं",
+    "deleteTest": "परीक्षण हटाएं",
+    "deleteForever": "हमेशा के लिए हटाएं",
+    "startTest": "परीक्षण शुरू करें"
   },
   "switches": {
     "noAnswer": "कोई उत्तर नहीं",
@@ -1871,9 +1871,9 @@
       "title": "कल्प हटाएं",
       "message": "क्या आप वाकई इस विकल्प को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।"
     },
-    "confirmDeletion": "Confirm Deletion",
-    "actionCannotBeUndone": "This action cannot be undone",
-    "allAssociatedDataLost": "All associated data, results, and configurations will be lost forever."
+    "confirmDeletion": "हटाने की पुष्टि करें",
+    "actionCannotBeUndone": "यह कार्रवाई पूर्ववत नहीं की जा सकती",
+    "allAssociatedDataLost": "सभी संबंधित डेटा, परिणाम और कॉन्फ़िगरेशन हमेशा के लिए खो जाएंगे।"
   },
   "tags": {
     "active": "सक्रिय",
@@ -1907,13 +1907,13 @@
     }
   },
   "testSettings": {
-    "testInformation": "Test Information",
-    "basicTestSettings": "Basic test settings and description",
-    "advancedSettings": "Advanced Settings",
-    "quickActions": "Quick Actions",
-    "performCommonTasks": "Perform common tasks instantly"
+    "testInformation": "परीक्षण जानकारी",
+    "basicTestSettings": "बुनियादी परीक्षण सेटिंग्स और विवरण",
+    "advancedSettings": "उन्नत सेटिंग्स",
+    "quickActions": "त्वरित क्रियाएं",
+    "performCommonTasks": "सामान्य कार्य तुरंत करें"
   },
   "cooperator": {
-    "goToSession": "Go to session"
+    "goToSession": "सत्र पर जाएं"
   }
 }

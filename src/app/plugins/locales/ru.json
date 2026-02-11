@@ -1415,26 +1415,26 @@
     "profile": "Профиль",
     "returnToConsole": "Вернуться в консоль",
     "tip": "Совет",
-    "cancel": "Cancel",
-    "create": "Create",
+    "cancel": "Отмена",
+    "create": "Создать",
     "close": "Закрыть",
     "save": "Сохранить",
     "stay": "Остаться",
-    "leave": "Уйти",
+    "leave": "Покинуть",
     "saveandleave": "Сохранить и выйти",
     "help": "Помощь",
     "delete": "Удалить",
     "deleteAccount": "Удалить аккаунт",
     "back": "Назад",
-    "duplicateTest": "Duplicate Test",
+    "duplicateTest": "Дублировать тест",
     "submit": "Отправить",
     "couldNotFinish": "Не удалось завершить",
     "addNewTask": "Добавить новую задачу",
-    "saveChanges": "Save Changes",
-    "createTemplate": "Create Template",
-    "deleteTest": "Delete Test",
-    "deleteForever": "Delete Forever",
-    "startTest": "Start Test"
+    "saveChanges": "Сохранить изменения",
+    "createTemplate": "Создать шаблон",
+    "deleteTest": "Удалить тест",
+    "deleteForever": "Удалить навсегда",
+    "startTest": "Начать тест"
   },
   "switches": {
     "noAnswer": "Нет ответа",
@@ -1892,9 +1892,9 @@
       "title": "Удалить опцию",
       "message": "Вы уверены, что хотите удалить эту опцию? Это действие нельзя отменить."
     },
-    "confirmDeletion": "Confirm Deletion",
-    "actionCannotBeUndone": "This action cannot be undone",
-    "allAssociatedDataLost": "All associated data, results, and configurations will be lost forever."
+    "confirmDeletion": "Подтвердите удаление",
+    "actionCannotBeUndone": "Это действие нельзя отменить",
+    "allAssociatedDataLost": "Все связанные данные, результаты и конфигурации будут утеряны навсегда."
   },
   "tags": {
     "active": "Активный",
@@ -1928,13 +1928,13 @@
     }
   },
   "testSettings": {
-    "testInformation": "Test Information",
-    "basicTestSettings": "Basic test settings and description",
-    "advancedSettings": "Advanced Settings",
-    "quickActions": "Quick Actions",
-    "performCommonTasks": "Perform common tasks instantly"
+    "testInformation": "Информация о тесте",
+    "basicTestSettings": "Основные настройки и описание теста",
+    "advancedSettings": "Расширенные настройки",
+    "quickActions": "Быстрые действия",
+    "performCommonTasks": "Выполнять общие задачи мгновенно"
   },
   "cooperator": {
-    "goToSession": "Go to session"
+    "goToSession": "Перейти к сессии"
   }
 }
