@@ -1415,8 +1415,8 @@
     "profile": "Profil",
     "returnToConsole": "Retour à la console",
     "tip": "Astuce",
-    "cancel": "Annuler",
-    "create": "Créer",
+    "cancel": "Cancel",
+    "create": "Create",
     "close": "Fermer",
     "save": "Enregistrer",
     "stay": "Rester",
@@ -1426,10 +1426,15 @@
     "delete": "Supprimer",
     "deleteAccount": "Supprimer le compte",
     "back": "Retour",
-    "duplicateTest": "Dupliquer le test",
+    "duplicateTest": "Duplicate Test",
     "submit": "Soumettre",
     "couldNotFinish": "Impossible de terminer",
-    "addNewTask": "Ajouter une nouvelle tâche"
+    "addNewTask": "Ajouter une nouvelle tâche",
+    "saveChanges": "Save Changes",
+    "createTemplate": "Create Template",
+    "deleteTest": "Delete Test",
+    "deleteForever": "Delete Forever",
+    "startTest": "Start Test"
   },
   "switches": {
     "noAnswer": "Pas de réponse",
@@ -1595,7 +1600,21 @@
   },
   "CardSorting": {
     "noCategory": "Aucune catégorie",
-    "noCards": "Aucune carte trouvée"
+    "noCards": "Aucune carte trouvée",
+    "of": "de",
+    "cards": "Cartes",
+    "cards_low": "cartes",
+    "currentCards": "Cartes actuelles",
+    "addNewCard": "Ajouter une nouvelle carte",
+    "settings": "Paramètres",
+    "configureCards": "Configurer l'affichage des cartes",
+    "currentCategories": "Catégories actuelles",
+    "addNewTask": "Ajouter une nouvelle tâche",
+    "configureCategories": "Configurer l'affichage des catégories",
+    "newTask": "Nouvelle tâche",
+    "customizeSettings": "Personnalisez les paramètres et les préférences de votre test",
+    "test": "Test",
+    "categories": "Catégories"
   },
   "analytics": {
     "searchByName": "Rechercher par nom",
@@ -1872,7 +1891,10 @@
     "deleteOptionConfirm": {
       "title": "Supprimer l'option",
       "message": "Êtes-vous sûr de vouloir supprimer cette option ? Cette action est irréversible."
-    }
+    },
+    "confirmDeletion": "Confirm Deletion",
+    "actionCannotBeUndone": "This action cannot be undone",
+    "allAssociatedDataLost": "All associated data, results, and configurations will be lost forever."
   },
   "tags": {
     "active": "Actif",
@@ -1904,5 +1926,15 @@
       "ACCESSIBILITY_AUTOMATIC": "Évaluation automatique",
       "WCAG_AUDIT": "Audit WCAG"
     }
+  },
+  "testSettings": {
+    "testInformation": "Test Information",
+    "basicTestSettings": "Basic test settings and description",
+    "advancedSettings": "Advanced Settings",
+    "quickActions": "Quick Actions",
+    "performCommonTasks": "Perform common tasks instantly"
+  },
+  "cooperator": {
+    "goToSession": "Go to session"
   }
 }

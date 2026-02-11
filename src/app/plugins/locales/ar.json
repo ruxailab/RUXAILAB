@@ -288,7 +288,7 @@
     "enterValidPhoneNumber": "الرجاء إدخال رقم هاتف صالح (9-15 رقمًا فقط)",
     "profileImageUpdatedSuccess": "تم تحديث صورة الملف الشخصي بنجاح",
     "profileImageUploadFailed": "فشل تحميل صورة الملف الشخصي",
-    "uploadProfilePicture": "رفع صورة الملف الشخصي",
+    "uploadProfilePicture": "تحميل صورة الملف الشخصي",
     "removeProfilePicture": "إزالة صورة الملف الشخصي",
     "takePhoto": "التقاط صورة",
     "cameraCaptureTitle": "التقاط صورة الملف الشخصي",
@@ -306,8 +306,6 @@
     "back": "عودة",
     "deleteForever": "حذف نهائي",
     "superAdmin": "مشرف فائق",
-    "uploadProfilePicture": "تحميل صورة الملف الشخصي",
-    "removeProfilePicture": "إزالة صورة الملف الشخصي",
     "currentPassword": "كلمة المرور الحالية",
     "currentPasswordRequired": "كلمة المرور الحالية مطلوبة",
     "wrongCurrentPassword": "كلمة المرور الحالية غير صحيحة",
@@ -1428,10 +1426,15 @@
     "delete": "حذف",
     "deleteAccount": "حذف الحساب",
     "back": "عودة",
-    "duplicateTest": "تكرار الاختبار",
+    "duplicateTest": "Duplicate Test",
     "submit": "تقديم",
     "couldNotFinish": "لا يمكن إنهاء",
-    "addNewTask": "إضافة مهمة جديدة"
+    "addNewTask": "إضافة مهمة جديدة",
+    "saveChanges": "حفظ التغييرات",
+    "createTemplate": "إنشاء نموذج",
+    "deleteTest": "حذف الاختبار",
+    "deleteForever": "حذف إلى الأبد",
+    "startTest": "بدء الاختبار"
   },
   "switches": {
     "noAnswer": "لا توجد إجابة",
@@ -1474,11 +1477,7 @@
       "SelfTest": {
         "title": "اختبار ذاتي",
         "type": "غير مشرف عليه",
-        "text": [
-          "الإجابة في وقت فراغ",
-          "تحليل متقدم للإجابات",
-          "تخصيص المهمة"
-        ]
+        "text": ["الإجابة في وقت فراغ", "تحليل متقدم للإجابات", "تخصيص المهمة"]
       },
       "LiveTest": {
         "title": "اختبار مباشر",
@@ -1597,7 +1596,21 @@
   },
   "CardSorting": {
     "noCategory": "لا توجد فئة",
-    "noCards": "لم يتم العثور على بطاقات"
+    "noCards": "لم يتم العثور على بطاقات",
+    "of": "من",
+    "cards": "بطاقات",
+    "cards_low": "بطاقات",
+    "currentCards": "البطاقات الحالية",
+    "addNewCard": "إضافة بطاقة جديدة",
+    "settings": "الإعدادات",
+    "configureCards": "تكوين كيفية عرض البطاقات",
+    "currentCategories": "الفئات الحالية",
+    "addNewTask": "إضافة مهمة جديدة",
+    "configureCategories": "تكوين كيفية عرض الفئات",
+    "newTask": "مهمة جديدة",
+    "customizeSettings": "تخصيص إعدادات وتفضيلات الاختبار الخاص بك",
+    "test": "اختبار",
+    "categories": "الفئات"
   },
   "analytics": {
     "searchByName": "البحث بالاسم",
@@ -1874,7 +1887,10 @@
     "deleteOptionConfirm": {
       "title": "حذف الخيار",
       "message": "هل أنت متأكد أنك تريد حذف هذا الخيار؟ لا يمكن التراجع عن هذا الإجراء."
-    }
+    },
+    "confirmDeletion": "تأكيد الحذف",
+    "actionCannotBeUndone": "لا يمكن التراجع عن هذا الإجراء",
+    "allAssociatedDataLost": "سيتم فقد جميع البيانات المرتبطة والنتائج والتكوينات إلى الأبد."
   },
   "tags": {
     "active": "نشط",
@@ -1906,5 +1922,15 @@
       "ACCESSIBILITY_AUTOMATIC": "تقييم آلي",
       "WCAG_AUDIT": "تدقيق WCAG"
     }
+  },
+  "testSettings": {
+    "testInformation": "معلومات الاختبار",
+    "basicTestSettings": "إعدادات الاختبار الأساسية والوصف",
+    "advancedSettings": "الإعدادات المتقدمة",
+    "quickActions": "إجراءات سريعة",
+    "performCommonTasks": "تنفيذ المهام الشائعة فوراً"
+  },
+  "cooperator": {
+    "goToSession": "الذهاب إلى الجلسة"
   }
 }
