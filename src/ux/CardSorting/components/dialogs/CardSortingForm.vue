@@ -41,10 +41,7 @@
         <v-btn
           color="red-lighten-1"
           variant="text"
-          @click="
-            $emit('update:dialog', false)
-            reset()
-          "
+          @click="($emit('update:dialog', false), reset())"
         >
           {{ $t('buttons.cancel') }}
         </v-btn>
