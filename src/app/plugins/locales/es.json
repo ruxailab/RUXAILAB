@@ -942,54 +942,54 @@
     },
     "previews": {
       "noAnswer": {
-        "message": "Task completed! No additional feedback required."
+        "message": "¡Tarea completada! No se requiere retroalimentación adicional."
       },
       "textArea": {
-        "placeholder": "Participants will provide their feedback here...",
-        "submitButton": "Submit Feedback"
+        "placeholder": "Los participantes proporcionarán sus comentarios aquí...",
+        "submitButton": "Enviar Comentarios"
       },
       "postTest": {
-        "title": "Post-Task Questions",
-        "q1": "1. How would you rate the difficulty of this task?",
-        "q2": "2. Any additional comments?",
-        "feedbackPlaceholder": "Optional feedback..."
+        "title": "Preguntas Post-Tarea",
+        "q1": "1. ¿Cómo calificaría la dificultad de esta tarea?",
+        "q2": "2. ¿Algún comentario adicional?",
+        "feedbackPlaceholder": "Comentarios opcionales..."
       },
       "postForm": {
-        "title": "External Form",
-        "notice": "Participants will be redirected to complete an external form after the task.",
-        "button": "Open External Form"
+        "title": "Formulario Externo",
+        "notice": "Los participantes serán redirigidos para completar un formulario externo después de la tarea.",
+        "button": "Abrir Formulario Externo"
       },
       "nasaTlx": {
-        "title": "NASA Task Load Index",
-        "mental": "Mental Demand",
-        "physical": "Physical Demand",
-        "range": "Low - High",
-        "moreDimensions": "+ 4 more dimensions"
+        "title": "Índice de Carga de Trabajo NASA",
+        "mental": "Demanda Mental",
+        "physical": "Demanda Física",
+        "range": "Bajo - Alto",
+        "moreDimensions": "+ 4 dimensiones más"
       },
       "sus": {
-        "title": "System Usability Scale",
-        "q1": "1. I think that I would like to use this system frequently.",
-        "disagree": "Strongly Disagree",
-        "agree": "Strongly Agree",
-        "moreStatements": "+ 9 more statements"
+        "title": "Escala de Usabilidad del Sistema",
+        "q1": "1. Creo que me gustaría usar este sistema con frecuencia.",
+        "disagree": "Muy en Desacuerdo",
+        "agree": "Muy de Acuerdo",
+        "moreStatements": "+ 9 declaraciones más"
       },
       "sart": {
-        "title": "Situation Awareness Rating Technique",
-        "instability": "Instability of Situation",
-        "complexity": "Complexity of Situation",
-        "stable": "Very Stable",
-        "unstable": "Very Unstable",
-        "simple": "Very Simple",
-        "complex": "Very Complex",
-        "moreDimensions": "+ 8 more SART dimensions"
+        "title": "Técnica de Calificación de Conciencia Situacional",
+        "instability": "Inestabilidad de la Situación",
+        "complexity": "Complejidad de la Situación",
+        "stable": "Muy Estable",
+        "unstable": "Muy Inestable",
+        "simple": "Muy Simple",
+        "complex": "Muy Complejo",
+        "moreDimensions": "+ 8 dimensiones SART adicionales"
       },
       "tam": {
-        "tam1": "TAM-1: Technology Acceptance Model (Basic)",
-        "tam2": "TAM-2: Technology Acceptance Model (Extended)",
-        "tam3": "TAM-3: Technology Acceptance Model (Comprehensive)",
-        "items2": "10 items across 2 dimensions",
-        "items7": "25 items across 7 dimensions",
-        "items13": "39 items across 13 dimensions",
+        "tam1": "TAM-1: Modelo de Aceptación de Tecnología (Básico)",
+        "tam2": "TAM-2: Modelo de Aceptación de Tecnología (Extendido)",
+        "tam3": "TAM-3: Modelo de Aceptación de Tecnología (Integral)",
+        "items2": "10 elementos en 2 dimensiones",
+        "items7": "25 elementos en 7 dimensiones",
+        "items13": "39 elementos en 13 dimensiones",
         "pu": "Utilidad Percibida",
         "eu": "Facilidad de Uso Percibida",
         "sn": "Norma Subjetiva",
@@ -1007,7 +1007,7 @@
         "q6": "6. El sistema es fácil de usar.",
         "likertNote": "Los participantes califican {count} afirmaciones en una escala Likert de 5 puntos"
       },
-      "selectionPrompt": "Select an answer type to see preview"
+      "selectionPrompt": "Seleccione un tipo de respuesta para ver la vista previa"
     },
     "advanced": {
       "stepTitle": "Paso 3: Opciones Avanzadas",

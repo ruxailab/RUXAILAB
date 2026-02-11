@@ -943,72 +943,72 @@
     },
     "previews": {
       "noAnswer": {
-        "message": "Task completed! No additional feedback required."
+        "message": "Aufgabe abgeschlossen! Kein zusätzliches Feedback erforderlich."
       },
       "textArea": {
-        "placeholder": "Participants will provide their feedback here...",
-        "submitButton": "Submit Feedback"
+        "placeholder": "Teilnehmer geben hier ihr Feedback ab...",
+        "submitButton": "Feedback absenden"
       },
       "postTest": {
-        "title": "Post-Task Questions",
-        "q1": "1. How would you rate the difficulty of this task?",
-        "q2": "2. Any additional comments?",
-        "feedbackPlaceholder": "Optional feedback..."
+        "title": "Fragen nach der Aufgabe",
+        "q1": "1. Wie würden Sie den Schwierigkeitsgrad dieser Aufgabe bewerten?",
+        "q2": "2. Weitere Kommentare?",
+        "feedbackPlaceholder": "Optionales Feedback..."
       },
       "postForm": {
-        "title": "External Form",
-        "notice": "Participants will be redirected to complete an external form after the task.",
-        "button": "Open External Form"
+        "title": "Externes Formular",
+        "notice": "Teilnehmer werden nach der Aufgabe zur Ausfüllung eines externen Formulars weitergeleitet.",
+        "button": "Externes Formular öffnen"
       },
       "nasaTlx": {
-        "title": "NASA Task Load Index",
-        "mental": "Mental Demand",
-        "physical": "Physical Demand",
-        "range": "Low - High",
-        "moreDimensions": "+ 4 more dimensions"
+        "title": "NASA-Aufgabenbelastungsindex",
+        "mental": "Geistige Anforderung",
+        "physical": "Körperliche Anforderung",
+        "range": "Niedrig - Hoch",
+        "moreDimensions": "+ 4 weitere Dimensionen"
       },
       "sus": {
-        "title": "System Usability Scale",
-        "q1": "1. I think that I would like to use this system frequently.",
-        "disagree": "Strongly Disagree",
-        "agree": "Strongly Agree",
-        "moreStatements": "+ 9 more statements"
+        "title": "System-Usability-Skala",
+        "q1": "1. Ich denke, dass ich dieses System häufig verwenden möchte.",
+        "disagree": "Stimme Überhaupt Nicht Zu",
+        "agree": "Stimme Voll Zu",
+        "moreStatements": "+ 9 weitere Aussagen"
       },
       "sart": {
-        "title": "Situation Awareness Rating Technique",
-        "instability": "Instability of Situation",
-        "complexity": "Complexity of Situation",
-        "stable": "Very Stable",
-        "unstable": "Very Unstable",
-        "simple": "Very Simple",
-        "complex": "Very Complex",
-        "moreDimensions": "+ 8 more SART dimensions"
+        "title": "Situationsbewusstseins-Bewertungstechnik",
+        "instability": "Instabilität der Situation",
+        "complexity": "Komplexität der Situation",
+        "stable": "Sehr Stabil",
+        "unstable": "Sehr Instabil",
+        "simple": "Sehr Einfach",
+        "complex": "Sehr Komplex",
+        "moreDimensions": "+ 8 weitere SART-Dimensionen"
       },
       "tam": {
-        "tam1": "TAM-1: Technology Acceptance Model (Basic)",
-        "tam2": "TAM-2: Technology Acceptance Model (Extended)",
-        "tam3": "TAM-3: Technology Acceptance Model (Comprehensive)",
-        "items2": "10 items across 2 dimensions",
-        "items7": "25 items across 7 dimensions",
-        "items13": "39 items across 13 dimensions",
-        "pu": "Perceived Usefulness",
-        "eu": "Perceived Ease of Use",
-        "sn": "Subjective Norm",
+        "tam1": "TAM-1: Akzeptanzmodell für Technologie (Basis)",
+        "tam2": "TAM-2: Akzeptanzmodell für Technologie (Erweitert)",
+        "tam3": "TAM-3: Akzeptanzmodell für Technologie (Umfassend)",
+        "items2": "10 Items in 2 Dimensionen",
+        "items7": "25 Items in 7 Dimensionen",
+        "items13": "39 Items in 13 Dimensionen",
+        "pu": "Wahrgenommene Nützlichkeit",
+        "eu": "Wahrgenommene Benutzerfreundlichkeit",
+        "sn": "Subjektive Norm",
         "image": "Image",
-        "jr": "Job Relevance",
-        "oq": "Output Quality",
-        "rd": "Result Demonstrability",
-        "se": "Computer Self-Efficacy",
-        "ec": "External Control",
-        "anxiety": "Anxiety",
-        "play": "Playfulness",
-        "enjoy": "Enjoyment",
-        "ou": "Objective Usability",
+        "jr": "Job-Relevanz",
+        "oq": "Output-Qualität",
+        "rd": "Ergebnis-Demonstrierbarkeit",
+        "se": "Computer-Selbstwirksamkeit",
+        "ec": "Externe Kontrolle",
+        "anxiety": "Angst",
+        "play": "Spielfreude",
+        "enjoy": "Vergnügen",
+        "ou": "Objektive Benutzerfreundlichkeit",
         "q1": "1. Die Nutzung des Systems verbessert meine Arbeitsleistung.",
         "q6": "6. Das System ist einfach zu bedienen.",
         "likertNote": "Teilnehmer bewerten {count} Aussagen auf einer 5-Punkte-Likert-Skala"
       },
-      "selectionPrompt": "Select an answer type to see preview"
+      "selectionPrompt": "Wählen Sie einen Antworttyp aus, um die Vorschau anzuzeigen"
     },
     "advanced": {
       "stepTitle": "Schritt 3: Erweiterte Optionen",

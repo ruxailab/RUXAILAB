@@ -940,54 +940,54 @@
     },
     "previews": {
       "noAnswer": {
-        "message": "Task completed! No additional feedback required."
+        "message": "Tâche terminée ! Aucun retour supplémentaire requis."
       },
       "textArea": {
-        "placeholder": "Participants will provide their feedback here...",
-        "submitButton": "Submit Feedback"
+        "placeholder": "Les participants fourniront leurs commentaires ici...",
+        "submitButton": "Soumettre les Commentaires"
       },
       "postTest": {
-        "title": "Post-Task Questions",
-        "q1": "1. How would you rate the difficulty of this task?",
-        "q2": "2. Any additional comments?",
-        "feedbackPlaceholder": "Optional feedback..."
+        "title": "Questions Post-Tâche",
+        "q1": "1. Comment évalueriez-vous la difficulté de cette tâche ?",
+        "q2": "2. Des commentaires supplémentaires ?",
+        "feedbackPlaceholder": "Commentaires optionnels..."
       },
       "postForm": {
-        "title": "External Form",
-        "notice": "Participants will be redirected to complete an external form after the task.",
-        "button": "Open External Form"
+        "title": "Formulaire Externe",
+        "notice": "Les participants seront redirigés pour remplir un formulaire externe après la tâche.",
+        "button": "Ouvrir le Formulaire Externe"
       },
       "nasaTlx": {
-        "title": "NASA Task Load Index",
-        "mental": "Mental Demand",
-        "physical": "Physical Demand",
-        "range": "Low - High",
-        "moreDimensions": "+ 4 more dimensions"
+        "title": "Indice de Charge de Travail NASA",
+        "mental": "Exigence Mentale",
+        "physical": "Exigence Physique",
+        "range": "Faible - Élevé",
+        "moreDimensions": "+ 4 dimensions supplémentaires"
       },
       "sus": {
-        "title": "System Usability Scale",
-        "q1": "1. I think that I would like to use this system frequently.",
-        "disagree": "Strongly Disagree",
-        "agree": "Strongly Agree",
-        "moreStatements": "+ 9 more statements"
+        "title": "Échelle d'Utilisabilité du Système",
+        "q1": "1. Je pense que j'aimerais utiliser ce système fréquemment.",
+        "disagree": "Pas du Tout d'Accord",
+        "agree": "Tout à Fait d'Accord",
+        "moreStatements": "+ 9 déclarations supplémentaires"
       },
       "sart": {
-        "title": "Situation Awareness Rating Technique",
-        "instability": "Instability of Situation",
-        "complexity": "Complexity of Situation",
-        "stable": "Very Stable",
-        "unstable": "Very Unstable",
-        "simple": "Very Simple",
-        "complex": "Very Complex",
-        "moreDimensions": "+ 8 more SART dimensions"
+        "title": "Technique d'Évaluation de la Conscience Situationnelle",
+        "instability": "Instabilité de la Situation",
+        "complexity": "Complexité de la Situation",
+        "stable": "Très Stable",
+        "unstable": "Très Instable",
+        "simple": "Très Simple",
+        "complex": "Très Complexe",
+        "moreDimensions": "+ 8 dimensions SART supplémentaires"
       },
       "tam": {
-        "tam1": "TAM-1: Technology Acceptance Model (Basic)",
-        "tam2": "TAM-2: Technology Acceptance Model (Extended)",
-        "tam3": "TAM-3: Technology Acceptance Model (Comprehensive)",
-        "items2": "10 items across 2 dimensions",
-        "items7": "25 items across 7 dimensions",
-        "items13": "39 items across 13 dimensions",
+        "tam1": "TAM-1 : Modèle d'Acceptation de la Technologie (Basique)",
+        "tam2": "TAM-2 : Modèle d'Acceptation de la Technologie (Étendu)",
+        "tam3": "TAM-3 : Modèle d'Acceptation de la Technologie (Complet)",
+        "items2": "10 éléments sur 2 dimensions",
+        "items7": "25 éléments sur 7 dimensions",
+        "items13": "39 éléments sur 13 dimensions",
         "pu": "Utilité Perçue",
         "eu": "Facilité d'Utilisation Perçue",
         "sn": "Norme Subjective",
@@ -1005,7 +1005,7 @@
         "q6": "6. Le système est facile à utiliser.",
         "likertNote": "Les participants évaluent {count} affirmations sur une échelle de Likert en 5 points"
       },
-      "selectionPrompt": "Select an answer type to see preview"
+      "selectionPrompt": "Sélectionnez un type de réponse pour voir l'aperçu"
     },
     "advanced": {
       "stepTitle": "Étape 3 : Options Avancées",

@@ -940,54 +940,54 @@
     },
     "previews": {
       "noAnswer": {
-        "message": "Task completed! No additional feedback required."
+        "message": "任务完成！无需额外反馈。"
       },
       "textArea": {
-        "placeholder": "Participants will provide their feedback here...",
-        "submitButton": "Submit Feedback"
+        "placeholder": "参与者将在此处提供反馈...",
+        "submitButton": "提交反馈"
       },
       "postTest": {
-        "title": "Post-Task Questions",
-        "q1": "1. How would you rate the difficulty of this task?",
-        "q2": "2. Any additional comments?",
-        "feedbackPlaceholder": "Optional feedback..."
+        "title": "任务后问题",
+        "q1": "1. 您如何评价此任务的难度？",
+        "q2": "2. 有其他补充意见吗？",
+        "feedbackPlaceholder": "可选反馈..."
       },
       "postForm": {
-        "title": "External Form",
-        "notice": "Participants will be redirected to complete an external form after the task.",
-        "button": "Open External Form"
+        "title": "外部表单",
+        "notice": "参与者将在任务后被重定向以填写外部表单。",
+        "button": "打开外部表单"
       },
       "nasaTlx": {
-        "title": "NASA Task Load Index",
-        "mental": "Mental Demand",
-        "physical": "Physical Demand",
-        "range": "Low - High",
-        "moreDimensions": "+ 4 more dimensions"
+        "title": "NASA任务负荷指数",
+        "mental": "脑力需求",
+        "physical": "体力需求",
+        "range": "低 - 高",
+        "moreDimensions": "+ 另外4个维度"
       },
       "sus": {
-        "title": "System Usability Scale",
-        "q1": "1. I think that I would like to use this system frequently.",
-        "disagree": "Strongly Disagree",
-        "agree": "Strongly Agree",
-        "moreStatements": "+ 9 more statements"
+        "title": "系统可用性量表",
+        "q1": "1. 我认为我会经常使用这个系统。",
+        "disagree": "非常不同意",
+        "agree": "非常同意",
+        "moreStatements": "+ 另外9条陈述"
       },
       "sart": {
-        "title": "Situation Awareness Rating Technique",
-        "instability": "Instability of Situation",
-        "complexity": "Complexity of Situation",
-        "stable": "Very Stable",
-        "unstable": "Very Unstable",
-        "simple": "Very Simple",
-        "complex": "Very Complex",
-        "moreDimensions": "+ 8 more SART dimensions"
+        "title": "情境感知评估技术",
+        "instability": "情境不稳定性",
+        "complexity": "情境复杂性",
+        "stable": "非常稳定",
+        "unstable": "非常不稳定",
+        "simple": "非常简单",
+        "complex": "非常复杂",
+        "moreDimensions": "+ 另外8个SART维度"
       },
       "tam": {
-        "tam1": "TAM-1: Technology Acceptance Model (Basic)",
-        "tam2": "TAM-2: Technology Acceptance Model (Extended)",
-        "tam3": "TAM-3: Technology Acceptance Model (Comprehensive)",
-        "items2": "10 items across 2 dimensions",
-        "items7": "25 items across 7 dimensions",
-        "items13": "39 items across 13 dimensions",
+        "tam1": "TAM-1：技术接受模型（基础）",
+        "tam2": "TAM-2：技术接受模型（扩展）",
+        "tam3": "TAM-3：技术接受模型（综合）",
+        "items2": "2个维度共10个项目",
+        "items7": "7个维度共25个项目",
+        "items13": "13个维度共39个项目",
         "pu": "感知有用性",
         "eu": "感知易用性",
         "sn": "主观规范",
@@ -1005,7 +1005,7 @@
         "q6": "6. 该系统易于使用。",
         "likertNote": "参与者在 5 点李克特量表上对 {count} 个陈述进行评分"
       },
-      "selectionPrompt": "Select an answer type to see preview"
+      "selectionPrompt": "选择答案类型以查看预览"
     },
     "advanced": {
       "stepTitle": "步骤 3：高级选项",
