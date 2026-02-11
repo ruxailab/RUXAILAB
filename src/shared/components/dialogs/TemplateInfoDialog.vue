@@ -232,8 +232,12 @@ const deleteTemplate = async () => {
   try {
     await store.dispatch('deleteTemplate', props.template.id)
     reset()
-  } catch {
-    // Handle error silently or with a user-friendly message
+  } catch (e) {
+  store.commit('SET_TOAST', {
+    type: 'error',
+    message: 'Failed to delete template. Please try again.',
+  })
+}
   }
 }
 
