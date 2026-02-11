@@ -1415,8 +1415,8 @@
     "profile": "プロフィール",
     "returnToConsole": "コンソールに戻る",
     "tip": "ヒント",
-    "cancel": "キャンセル",
-    "create": "作成",
+    "cancel": "Cancel",
+    "create": "Create",
     "close": "閉じる",
     "save": "保存",
     "stay": "そのまま",
@@ -1426,10 +1426,15 @@
     "delete": "削除",
     "deleteAccount": "アカウントを削除",
     "back": "戻る",
-    "duplicateTest": "テストを複製",
+    "duplicateTest": "Duplicate Test",
     "submit": "送信",
     "couldNotFinish": "完了できませんでした",
-    "addNewTask": "新しいタスクを追加"
+    "addNewTask": "新しいタスクを追加",
+    "saveChanges": "Save Changes",
+    "createTemplate": "Create Template",
+    "deleteTest": "Delete Test",
+    "deleteForever": "Delete Forever",
+    "startTest": "Start Test"
   },
   "switches": {
     "noAnswer": "回答なし",
@@ -1595,7 +1600,21 @@
   },
   "CardSorting": {
     "noCategory": "カテゴリがありません",
-    "noCards": "カードが見つかりません"
+    "noCards": "カードが見つかりません",
+    "of": "の",
+    "cards": "カード",
+    "cards_low": "カード",
+    "currentCards": "現在のカード",
+    "addNewCard": "新しいカードを追加",
+    "settings": "設定",
+    "configureCards": "カードの表示方法を設定",
+    "currentCategories": "現在のカテゴリー",
+    "addNewTask": "新しいタスクを追加",
+    "configureCategories": "カテゴリーの表示方法を設定",
+    "newTask": "新しいタスク",
+    "customizeSettings": "テストの設定と環境設定をカスタマイズ",
+    "test": "テスト",
+    "categories": "カテゴリー"
   },
   "analytics": {
     "searchByName": "名前で検索",
@@ -1872,7 +1891,10 @@
     "deleteOptionConfirm": {
       "title": "オプションを削除",
       "message": "このオプションを削除してもよろしいですか？この操作は取り消せません。"
-    }
+    },
+    "confirmDeletion": "Confirm Deletion",
+    "actionCannotBeUndone": "This action cannot be undone",
+    "allAssociatedDataLost": "All associated data, results, and configurations will be lost forever."
   },
   "tags": {
     "active": "アクティブ",
@@ -1904,5 +1926,15 @@
       "ACCESSIBILITY_AUTOMATIC": "自動評価",
       "WCAG_AUDIT": "WCAG監査"
     }
+  },
+  "testSettings": {
+    "testInformation": "Test Information",
+    "basicTestSettings": "Basic test settings and description",
+    "advancedSettings": "Advanced Settings",
+    "quickActions": "Quick Actions",
+    "performCommonTasks": "Perform common tasks instantly"
+  },
+  "cooperator": {
+    "goToSession": "Go to session"
   }
 }
