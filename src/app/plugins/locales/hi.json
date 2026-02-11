@@ -1415,8 +1415,8 @@
     "profile": "प्रोफ़ाइल",
     "returnToConsole": "कंसोल पर लौटें",
     "tip": "टिप",
-    "create": "बनाएं",
-    "cancel": "रद्द करें",
+    "create": "Create",
+    "cancel": "Cancel",
     "close": "बंद करें",
     "save": "सहेजें",
     "stay": "रहें",
@@ -1426,10 +1426,15 @@
     "delete": "हटाएं",
     "deleteAccount": "खाता हटाएँ",
     "back": "वापस",
-    "duplicateTest": "परीक्षण डुप्लिकेट करें",
+    "duplicateTest": "Duplicate Test",
     "submit": "जमा करें",
     "couldNotFinish": "पूरा नहीं कर सका",
-    "addNewTask": "नया कार्य जोड़ें"
+    "addNewTask": "नया कार्य जोड़ें",
+    "saveChanges": "Save Changes",
+    "createTemplate": "Create Template",
+    "deleteTest": "Delete Test",
+    "deleteForever": "Delete Forever",
+    "startTest": "Start Test"
   },
   "switches": {
     "noAnswer": "कोई उत्तर नहीं",
@@ -1574,7 +1579,21 @@
   },
   "CardSorting": {
     "noCategory": "कोई श्रेणी नहीं",
-    "noCards": "कोई कार्ड नहीं मिला"
+    "noCards": "कोई कार्ड नहीं मिला",
+    "of": "का",
+    "cards": "कार्ड",
+    "cards_low": "कार्ड",
+    "currentCards": "मौजूदा कार्ड",
+    "addNewCard": "नया कार्ड जोड़ें",
+    "settings": "सेटिंग्स",
+    "configureCards": "कार्ड कैसे प्रदर्शित होंगे, इसे कॉन्फ़िगर करें",
+    "currentCategories": "वर्तमान श्रेणियां",
+    "addNewTask": "नया कार्य जोड़ें",
+    "configureCategories": "श्रेणियां कैसे प्रदर्शित होंगी, इसे कॉन्फ़िगर करें",
+    "newTask": "नया कार्य",
+    "customizeSettings": "अपने परीक्षण की सेटिंग्स और प्राथमिकताओं को कस्टमाइज़ करें",
+    "test": "टेस्ट",
+    "categories": "श्रेणियां"
   },
   "analytics": {
     "searchByName": "नाम से खोजें",
@@ -1851,7 +1870,10 @@
     "deleteOptionConfirm": {
       "title": "कल्प हटाएं",
       "message": "क्या आप वाकई इस विकल्प को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।"
-    }
+    },
+    "confirmDeletion": "Confirm Deletion",
+    "actionCannotBeUndone": "This action cannot be undone",
+    "allAssociatedDataLost": "All associated data, results, and configurations will be lost forever."
   },
   "tags": {
     "active": "सक्रिय",
@@ -1883,5 +1905,15 @@
       "ACCESSIBILITY_AUTOMATIC": "स्वचालित मूल्यांकन",
       "WCAG_AUDIT": "WCAG ऑडिट"
     }
+  },
+  "testSettings": {
+    "testInformation": "Test Information",
+    "basicTestSettings": "Basic test settings and description",
+    "advancedSettings": "Advanced Settings",
+    "quickActions": "Quick Actions",
+    "performCommonTasks": "Perform common tasks instantly"
+  },
+  "cooperator": {
+    "goToSession": "Go to session"
   }
 }

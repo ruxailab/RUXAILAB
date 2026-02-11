@@ -307,8 +307,6 @@
     "yourPassword": "Tu contraseña",
     "back": "Volver",
     "deleteForever": "Eliminar permanentemente",
-    "uploadProfilePicture": "Subir foto de perfil",
-    "removeProfilePicture": "Eliminar foto de perfil",
     "currentPassword": "Contraseña actual",
     "currentPasswordRequired": "Se requiere la contraseña actual",
     "wrongCurrentPassword": "La contraseña actual es incorrecta",
@@ -1417,8 +1415,8 @@
     "profile": "Perfil",
     "returnToConsole": "Volver a la consola",
     "tip": "Consejo",
-    "cancel": "Cancelar",
-    "create": "Crear",
+    "cancel": "Cancel",
+    "create": "Create",
     "close": "Cerrar",
     "save": "Guardar",
     "stay": "Quedarse",
@@ -1428,10 +1426,15 @@
     "delete": "Eliminar",
     "deleteAccount": "Eliminar cuenta",
     "back": "Volver",
-    "duplicateTest": "Duplicar prueba",
+    "duplicateTest": "Duplicate Test",
     "submit": "Enviar",
     "couldNotFinish": "No se pudo completar",
-    "addNewTask": "Agregar nueva tarea"
+    "addNewTask": "Agregar nueva tarea",
+    "saveChanges": "Save Changes",
+    "createTemplate": "Create Template",
+    "deleteTest": "Delete Test",
+    "deleteForever": "Delete Forever",
+    "startTest": "Start Test"
   },
   "switches": {
     "noAnswer": "Sin respuesta",
@@ -1577,7 +1580,21 @@
   },
   "CardSorting": {
     "noCategory": "Sin categoría",
-    "noCards": "No se encontraron tarjetas"
+    "noCards": "No se encontraron tarjetas",
+    "of": "de",
+    "cards": "Tarjetas",
+    "cards_low": "tarjetas",
+    "currentCards": "Tarjetas actuales",
+    "addNewCard": "Agregar nueva tarjeta",
+    "settings": "Configuración",
+    "configureCards": "Configura cómo se mostrarán las tarjetas",
+    "currentCategories": "Categorías actuales",
+    "addNewTask": "Agregar nueva tarea",
+    "configureCategories": "Configura cómo se mostrarán las categorías",
+    "newTask": "Nueva tarea",
+    "customizeSettings": "Personaliza los ajustes y preferencias de tu prueba",
+    "test": "Prueba",
+    "categories": "Categorías"
   },
   "analytics": {
     "searchByName": "Buscar por nombre",
@@ -1854,7 +1871,10 @@
     "deleteOptionConfirm": {
       "title": "Eliminar Opción",
       "message": "¿Está seguro de que desea eliminar esta opción? Esta acción no se puede deshacer."
-    }
+    },
+    "confirmDeletion": "Confirm Deletion",
+    "actionCannotBeUndone": "This action cannot be undone",
+    "allAssociatedDataLost": "All associated data, results, and configurations will be lost forever."
   },
   "tags": {
     "active": "Activo",
@@ -1886,5 +1906,15 @@
       "ACCESSIBILITY_AUTOMATIC": "Evaluación Automática",
       "WCAG_AUDIT": "Auditoría WCAG"
     }
+  },
+  "testSettings": {
+    "testInformation": "Test Information",
+    "basicTestSettings": "Basic test settings and description",
+    "advancedSettings": "Advanced Settings",
+    "quickActions": "Quick Actions",
+    "performCommonTasks": "Perform common tasks instantly"
+  },
+  "cooperator": {
+    "goToSession": "Go to session"
   }
 }

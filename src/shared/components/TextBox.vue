@@ -258,10 +258,6 @@ const getJson = () => {
   return json.value
 }
 
-const getHtml = () => {
-  return html.value
-}
-
 const setContent = (text) => {
   if (editor.value) {
     editor.value.commands.setContent(text)

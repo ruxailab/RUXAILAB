@@ -1415,8 +1415,8 @@
     "profile": "Perfil",
     "returnToConsole": "Retornar ao console",
     "tip": "Dica",
-    "cancel": "Cancelar",
-    "create": "Criar",
+    "cancel": "Cancel",
+    "create": "Create",
     "close": "Fechar",
     "save": "Salvar",
     "stay": "Ficar",
@@ -1426,10 +1426,15 @@
     "delete": "Excluir",
     "deleteAccount": "Excluir conta",
     "back": "Voltar",
-    "duplicateTest": "Duplicar teste",
+    "duplicateTest": "Duplicate Test",
     "submit": "Enviar",
     "couldNotFinish": "Não consegui concluir",
-    "addNewTask": "Adicionar nova tarefa"
+    "addNewTask": "Adicionar nova tarefa",
+    "saveChanges": "Save Changes",
+    "createTemplate": "Create Template",
+    "deleteTest": "Delete Test",
+    "deleteForever": "Delete Forever",
+    "startTest": "Start Test"
   },
   "switches": {
     "noAnswer": "Sem resposta",
@@ -1575,7 +1580,21 @@
   },
   "CardSorting": {
     "noCategory": "Sem categoria",
-    "noCards": "Nenhuma cartão encontrado"
+    "noCards": "Nenhuma cartão encontrado",
+    "of": "de",
+    "cards": "Cartões",
+    "cards_low": "cartões",
+    "currentCards": "Cartões atuais",
+    "addNewCard": "Adicionar novo cartão",
+    "settings": "Configurações",
+    "configureCards": "Configure como os cartões serão exibidos",
+    "currentCategories": "Categorias atuais",
+    "addNewTask": "Adicionar nova tarefa",
+    "configureCategories": "Configure como as categorias serão exibidas",
+    "newTask": "Nova tarefa",
+    "customizeSettings": "Personalize as configurações e preferências do seu teste",
+    "test": "Teste",
+    "categories": "Categorias"
   },
   "analytics": {
     "searchByName": "Pesquisar por nome",
@@ -1852,7 +1871,10 @@
     "deleteOptionConfirm": {
       "title": "Excluir opção",
       "message": "Tem certeza de que deseja excluir esta opção? Esta ação não pode ser desfeita."
-    }
+    },
+    "confirmDeletion": "Confirm Deletion",
+    "actionCannotBeUndone": "This action cannot be undone",
+    "allAssociatedDataLost": "All associated data, results, and configurations will be lost forever."
   },
   "tags": {
     "active": "Ativo",
@@ -1884,5 +1906,15 @@
       "ACCESSIBILITY_AUTOMATIC": "Avaliação Automática",
       "WCAG_AUDIT": "Auditoria WCAG"
     }
+  },
+  "testSettings": {
+    "testInformation": "Test Information",
+    "basicTestSettings": "Basic test settings and description",
+    "advancedSettings": "Advanced Settings",
+    "quickActions": "Quick Actions",
+    "performCommonTasks": "Perform common tasks instantly"
+  },
+  "cooperator": {
+    "goToSession": "Go to session"
   }
 }
