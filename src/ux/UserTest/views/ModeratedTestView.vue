@@ -572,15 +572,7 @@ import {
   onDisconnect,
 } from 'firebase/database'
 import { database } from '@/app/plugins/firebase/index'
-import {
-  ref,
-  computed,
-  watch,
-  onMounted,
-  reactive,
-  watchEffect,
-  onUnmounted,
-} from 'vue'
+import { ref, computed, watch, onMounted, reactive, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -782,7 +774,7 @@ const handleSubmit = async () => {
     localTestAnswer.submitted = true
     await saveAnswer()
     await router.push({ name: 'Admin' })
-  } catch (error) {
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSubmitAnswer'),
@@ -988,10 +980,7 @@ const completeStep = async (id, type, userCompleted = true) => {
     }
     if (type === 'tasks') {
       if (!Array.isArray(localTestAnswer.tasks)) {
-        console.error(
-          'localTestAnswer.tasks is not an array:',
-          localTestAnswer.tasks,
-        )
+        showWarning('Task data is invalid. Please refresh and try again.')
         return
       }
       localTestAnswer.tasks[id].completed = userCompleted
