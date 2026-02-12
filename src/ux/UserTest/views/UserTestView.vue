@@ -729,8 +729,9 @@ const savePartialAnswer = async () => {
         testType: test.value.testType,
       })
     }
-  } catch {
-    // Intentionally swallow errors here to avoid blocking the flow.
+  } catch (error) {
+    // Propagate the error so callers can handle it (e.g., show toasts, prevent navigation).
+    throw error
   }
 }
 
