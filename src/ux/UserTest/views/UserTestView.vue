@@ -18,7 +18,9 @@
     <v-overlay v-model="isLoading" class="d-flex align-center justify-center">
       <div class="text-center">
         <v-progress-circular indeterminate color="#fca326" size="50" />
-        <div style="color: white" class="mt-3">loading...</div>
+        <div style="color: white" class="mt-3">
+          {{ $t('UserTestView.loading') }}
+        </div>
       </div>
     </v-overlay>
 
@@ -728,8 +730,9 @@ const savePartialAnswer = async () => {
         testType: test.value.testType,
       })
     }
-  } catch (e) {
-    console.error('[SAVE PARTIAL] error', e)
+  } catch (error) {
+    // Propagate the error so callers can handle it (e.g., show toasts, prevent navigation).
+    throw error
   }
 }
 
