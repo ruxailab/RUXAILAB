@@ -953,6 +953,75 @@
       "tam3": "TAM-3 (Umfassend) - umfasst Angst, Spielfreude und objektive Benutzerfreundlichkeit",
       "sart": "Situationsbewusstsein-Bewertungstechnik - misst das situative Bewusstsein"
     },
+    "answerTypePreview": {
+      "noAnswer": {
+        "message": "Aufgabe abgeschlossen! Kein zusätzliches Feedback erforderlich."
+      },
+      "textArea": {
+        "placeholder": "Teilnehmer geben hier ihr Feedback ab...",
+        "submitButton": "Feedback absenden"
+      },
+      "postTest": {
+        "title": "Fragen nach der Aufgabe",
+        "q1": "1. Wie würden Sie den Schwierigkeitsgrad dieser Aufgabe bewerten?",
+        "q2": "2. Weitere Kommentare?",
+        "feedbackPlaceholder": "Optionales Feedback..."
+      },
+      "postForm": {
+        "title": "Externes Formular",
+        "notice": "Teilnehmer werden nach der Aufgabe zur Ausfüllung eines externen Formulars weitergeleitet.",
+        "button": "Externes Formular öffnen"
+      },
+      "nasaTlx": {
+        "title": "NASA-Aufgabenbelastungsindex",
+        "mental": "Geistige Anforderung",
+        "physical": "Körperliche Anforderung",
+        "range": "Niedrig - Hoch",
+        "moreDimensions": "+ 4 weitere Dimensionen"
+      },
+      "sus": {
+        "title": "System-Usability-Skala",
+        "q1": "1. Ich denke, dass ich dieses System häufig verwenden möchte.",
+        "disagree": "Stimme Überhaupt Nicht Zu",
+        "agree": "Stimme Voll Zu",
+        "moreStatements": "+ 9 weitere Aussagen"
+      },
+      "sart": {
+        "title": "Situationsbewusstseins-Bewertungstechnik",
+        "instability": "Instabilität der Situation",
+        "complexity": "Komplexität der Situation",
+        "stable": "Sehr Stabil",
+        "unstable": "Sehr Instabil",
+        "simple": "Sehr Einfach",
+        "complex": "Sehr Komplex",
+        "moreDimensions": "+ 8 weitere SART-Dimensionen"
+      },
+      "tam": {
+        "tam1": "TAM-1: Akzeptanzmodell für Technologie (Basis)",
+        "tam2": "TAM-2: Akzeptanzmodell für Technologie (Erweitert)",
+        "tam3": "TAM-3: Akzeptanzmodell für Technologie (Umfassend)",
+        "items2": "10 Items in 2 Dimensionen",
+        "items7": "25 Items in 7 Dimensionen",
+        "items13": "39 Items in 13 Dimensionen",
+        "pu": "Wahrgenommene Nützlichkeit",
+        "eu": "Wahrgenommene Benutzerfreundlichkeit",
+        "sn": "Subjektive Norm",
+        "image": "Image",
+        "jr": "Job-Relevanz",
+        "oq": "Output-Qualität",
+        "rd": "Ergebnis-Demonstrierbarkeit",
+        "se": "Computer-Selbstwirksamkeit",
+        "ec": "Externe Kontrolle",
+        "anxiety": "Angst",
+        "play": "Spielfreude",
+        "enjoy": "Vergnügen",
+        "ou": "Objektive Benutzerfreundlichkeit",
+        "q1": "1. Die Nutzung des Systems verbessert meine Arbeitsleistung.",
+        "q6": "6. Das System ist einfach zu bedienen.",
+        "likertNote": "Teilnehmer bewerten {count} Aussagen auf einer 5-Punkte-Likert-Skala"
+      },
+      "selectionPrompt": "Wählen Sie einen Antworttyp aus, um die Vorschau anzuzeigen"
+    },
     "advanced": {
       "stepTitle": "Schritt 3: Erweiterte Optionen",
       "stepDescription": "Aktivieren Sie zusätzliche Datenerfassungsmethoden, um tiefere Einblicke zu gewinnen.",
@@ -1002,29 +1071,6 @@
         "camera": "Kamera",
         "audio": "Audio"
       }
-    },
-    "answerTypePreview": {
-      "taskCompleted": "Aufgabe abgeschlossen! Kein zusätzliches Feedback erforderlich.",
-      "participantsFeedbackHere": "Teilnehmer geben hier ihr Feedback ab...",
-      "submitFeedback": "Feedback Absenden",
-      "postTaskQuestions": "Post-Aufgaben-Fragen",
-      "rateTaskDifficulty": "1. Wie würden Sie die Schwierigkeit dieser Aufgabe bewerten?",
-      "additionalComments": "2. Zusätzliche Kommentare?",
-      "optionalFeedback": "Optionales Feedback...",
-      "externalFormTitle": "Externes Formular",
-      "externalFormDescription": "Teilnehmer werden nach der Aufgabe zu einem externen Formular weitergeleitet.",
-      "openExternalForm": "Externes Formular Öffnen",
-      "nasaTlxTitle": "NASA-Aufgabenlast-Index",
-      "mentalDemand": "Mentale Anforderung",
-      "physicalDemand": "Physische Anforderung",
-      "lowHigh": "Niedrig - Hoch",
-      "moreDimensions": "+ 4 weitere Dimensionen",
-      "susTitle": "System-Usability-Skala",
-      "susStatement1": "1. Ich denke, dass ich dieses System häufig verwenden möchte.",
-      "stronglyDisagree": "Stimme Überhaupt Nicht Zu",
-      "stronglyAgree": "Stimme Voll Zu",
-      "moreStatements": "+ 9 weitere Aussagen",
-      "sartTitle": "Situationsbewusstseins-Bewertungstechnik"
     }
   },
   "UserTestView": {

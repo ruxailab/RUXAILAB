@@ -965,6 +965,75 @@
       "tam3": "TAM-3 (Comprehensive) - includes anxiety, playfulness, and objective usability",
       "sart": "Situation Awareness Rating Technique - measures situational awareness"
     },
+    "answerTypePreview": {
+      "noAnswer": {
+        "message": "Task completed! No additional feedback required."
+      },
+      "textArea": {
+        "placeholder": "Participants will provide their feedback here...",
+        "submitButton": "Submit Feedback"
+      },
+      "postTest": {
+        "title": "Post-Task Questions",
+        "q1": "1. How would you rate the difficulty of this task?",
+        "q2": "2. Any additional comments?",
+        "feedbackPlaceholder": "Optional feedback..."
+      },
+      "postForm": {
+        "title": "External Form",
+        "notice": "Participants will be redirected to complete an external form after the task.",
+        "button": "Open External Form"
+      },
+      "nasaTlx": {
+        "title": "NASA Task Load Index",
+        "mental": "Mental Demand",
+        "physical": "Physical Demand",
+        "range": "Low - High",
+        "moreDimensions": "+ 4 more dimensions"
+      },
+      "sus": {
+        "title": "System Usability Scale",
+        "q1": "1. I think that I would like to use this system frequently.",
+        "disagree": "Strongly Disagree",
+        "agree": "Strongly Agree",
+        "moreStatements": "+ 9 more statements"
+      },
+      "sart": {
+        "title": "Situation Awareness Rating Technique",
+        "instability": "Instability of Situation",
+        "complexity": "Complexity of Situation",
+        "stable": "Very Stable",
+        "unstable": "Very Unstable",
+        "simple": "Very Simple",
+        "complex": "Very Complex",
+        "moreDimensions": "+ 8 more SART dimensions"
+      },
+      "tam": {
+        "tam1": "TAM-1: Technology Acceptance Model (Basic)",
+        "tam2": "TAM-2: Technology Acceptance Model (Extended)",
+        "tam3": "TAM-3: Technology Acceptance Model (Comprehensive)",
+        "items2": "10 items across 2 dimensions",
+        "items7": "25 items across 7 dimensions",
+        "items13": "39 items across 13 dimensions",
+        "pu": "Perceived Usefulness",
+        "eu": "Perceived Ease of Use",
+        "sn": "Subjective Norm",
+        "image": "Image",
+        "jr": "Job Relevance",
+        "oq": "Output Quality",
+        "rd": "Result Demonstrability",
+        "se": "Computer Self-Efficacy",
+        "ec": "External Control",
+        "anxiety": "Anxiety",
+        "play": "Playfulness",
+        "enjoy": "Enjoyment",
+        "ou": "Objective Usability",
+        "q1": "1. Using the system improves my job performance.",
+        "q6": "6. The system is easy to use.",
+        "likertNote": "Participants rate {count} statements on a 5-point Likert scale"
+      },
+      "selectionPrompt": "Select an answer type to see preview"
+    },
     "advanced": {
       "stepTitle": "Step 3: Advanced Options",
       "stepDescription": "Enable additional data collection methods to gather deeper insights. All options are optional but can provide valuable behavioral data and user feedback.",
@@ -1014,29 +1083,6 @@
         "camera": "Camera",
         "audio": "Audio"
       }
-    },
-    "answerTypePreview": {
-      "taskCompleted": "Task completed! No additional feedback required.",
-      "participantsFeedbackHere": "Participants will provide their feedback here...",
-      "submitFeedback": "Submit Feedback",
-      "postTaskQuestions": "Post-Task Questions",
-      "rateTaskDifficulty": "1. How would you rate the difficulty of this task?",
-      "additionalComments": "2. Any additional comments?",
-      "optionalFeedback": "Optional feedback...",
-      "externalFormTitle": "External Form",
-      "externalFormDescription": "Participants will be redirected to complete an external form after the task.",
-      "openExternalForm": "Open External Form",
-      "nasaTlxTitle": "NASA Task Load Index",
-      "mentalDemand": "Mental Demand",
-      "physicalDemand": "Physical Demand",
-      "lowHigh": "Low - High",
-      "moreDimensions": "+ 4 more dimensions",
-      "susTitle": "System Usability Scale",
-      "susStatement1": "1. I think that I would like to use this system frequently.",
-      "stronglyDisagree": "Strongly Disagree",
-      "stronglyAgree": "Strongly Agree",
-      "moreStatements": "+ 9 more statements",
-      "sartTitle": "Situation Awareness Rating Technique"
     }
   },
   "UserTestView": {
