@@ -941,7 +941,7 @@
       "tam3": "TAM-3 (Umfassend) - umfasst Angst, Spielfreude und objektive Benutzerfreundlichkeit",
       "sart": "Situationsbewusstsein-Bewertungstechnik - misst das situative Bewusstsein"
     },
-    "previews": {
+    "answerTypePreview": {
       "noAnswer": {
         "message": "Aufgabe abgeschlossen! Kein zusätzliches Feedback erforderlich."
       },
@@ -1059,29 +1059,6 @@
         "camera": "Kamera",
         "audio": "Audio"
       }
-    },
-    "answerTypePreview": {
-      "taskCompleted": "Aufgabe abgeschlossen! Kein zusätzliches Feedback erforderlich.",
-      "participantsFeedbackHere": "Teilnehmer geben hier ihr Feedback ab...",
-      "submitFeedback": "Feedback Absenden",
-      "postTaskQuestions": "Post-Aufgaben-Fragen",
-      "rateTaskDifficulty": "1. Wie würden Sie die Schwierigkeit dieser Aufgabe bewerten?",
-      "additionalComments": "2. Zusätzliche Kommentare?",
-      "optionalFeedback": "Optionales Feedback...",
-      "externalFormTitle": "Externes Formular",
-      "externalFormDescription": "Teilnehmer werden nach der Aufgabe zu einem externen Formular weitergeleitet.",
-      "openExternalForm": "Externes Formular Öffnen",
-      "nasaTlxTitle": "NASA-Aufgabenlast-Index",
-      "mentalDemand": "Mentale Anforderung",
-      "physicalDemand": "Physische Anforderung",
-      "lowHigh": "Niedrig - Hoch",
-      "moreDimensions": "+ 4 weitere Dimensionen",
-      "susTitle": "System-Usability-Skala",
-      "susStatement1": "1. Ich denke, dass ich dieses System häufig verwenden möchte.",
-      "stronglyDisagree": "Stimme Überhaupt Nicht Zu",
-      "stronglyAgree": "Stimme Voll Zu",
-      "moreStatements": "+ 9 weitere Aussagen",
-      "sartTitle": "Situationsbewusstseins-Bewertungstechnik"
     }
   },
   "UserTestView": {

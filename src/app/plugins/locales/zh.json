@@ -938,7 +938,7 @@
       "tam3": "TAM-3（综合）- 包括焦虑、趣味性和客观可用性",
       "sart": "情境意识评估技术 - 测量情境意识"
     },
-    "previews": {
+    "answerTypePreview": {
       "noAnswer": {
         "message": "任务完成！无需额外反馈。"
       },
@@ -1056,29 +1056,6 @@
         "camera": "摄像头",
         "audio": "音频"
       }
-    },
-    "answerTypePreview": {
-      "taskCompleted": "任务完成！无需额外反馈。",
-      "participantsFeedbackHere": "参与者将在此处提供反馈...",
-      "submitFeedback": "提交反馈",
-      "postTaskQuestions": "任务后问题",
-      "rateTaskDifficulty": "1. 您如何评价此任务的难度？",
-      "additionalComments": "2. 有其他评论吗？",
-      "optionalFeedback": "可选反馈...",
-      "externalFormTitle": "外部表单",
-      "externalFormDescription": "参与者将在任务后被重定向填写外部表单。",
-      "openExternalForm": "打开外部表单",
-      "nasaTlxTitle": "NASA任务负荷指数",
-      "mentalDemand": "心理需求",
-      "physicalDemand": "体力需求",
-      "lowHigh": "低 - 高",
-      "moreDimensions": "+ 另外4个维度",
-      "susTitle": "系统可用性量表",
-      "susStatement1": "1. 我认为我会经常使用这个系统。",
-      "stronglyDisagree": "强烈不同意",
-      "stronglyAgree": "强烈同意",
-      "moreStatements": "+ 另外9条陈述",
-      "sartTitle": "情境意识评估技术"
     }
   },
   "UserTestView": {
