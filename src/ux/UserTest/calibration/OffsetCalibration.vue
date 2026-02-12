@@ -16,7 +16,7 @@
             thumb-label
           />
         </template>
-      </v-slider>
+      </v-tooltip>
     </v-col>
 
     <v-col

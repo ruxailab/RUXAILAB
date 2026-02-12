@@ -279,7 +279,6 @@ onMounted(() => {
 .config-item:last-child {
   margin-bottom: 0;
 }
-</style>
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
