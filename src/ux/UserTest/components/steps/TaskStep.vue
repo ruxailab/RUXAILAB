@@ -1,3 +1,4 @@
+TaskStep.vue:
 <template>
   <ShowInfo :title="task?.taskName || taskName">
     <template #content>
@@ -690,7 +691,11 @@ function updateElapsedTime() {
 async function startTask() {
   emit('show-loading')
   emit('startTask')
-  await startMediaRecorders()
+  const mediaStarted = await startMediaRecorders()
+  if (!mediaStarted) {
+    emit('stop-show-loading')
+    return
+  }
   stage.value = 2
   taskStartTime = Date.now()
   timerInterval = setInterval(updateElapsedTime, 1000)
@@ -729,11 +734,15 @@ async function startMediaRecorders() {
     await audioRecorder.value.startAudioRecording()
   }
   if (props.task?.hasCamRecord && videoRecorder.value) {
-    await videoRecorder.value.startRecording()
+    const videoStarted = await videoRecorder.value.startRecording()
+    if(!videoStarted){
+      return false
+    }
   }
   if (props.task?.hasScreenRecord && screenRecorder.value) {
     await screenRecorder.value.captureScreen()
   }
+  return true
 }
 
 function forceStopAllMedia() {
