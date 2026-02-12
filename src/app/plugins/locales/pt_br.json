@@ -382,6 +382,7 @@
     "incorrectPassword": "Senha incorreta",
     "incorrectCredential": "Usuário ou senha incorretos.",
     "globalError": "Ocorreu um erro, desculpe-nos pelo transtorno.",
+    "cameraPermissionRequired": "O acesso à câmera é necessário para continuar. Por favor, permita o acesso à câmera nas configurações do navegador.",
     "sendError": "Não foi possível enviar o convite. Por favor, tente novamente",
     "missingVariableTitles": "Não é possível salvar: Algumas variáveis estão sem títulos"
   },
