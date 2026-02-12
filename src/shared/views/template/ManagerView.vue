@@ -51,7 +51,7 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import CardsManager from '@/shared/components/CardsManager.vue'
 
-const props = defineProps({
+defineProps({
   navigator: {
     type: Array,
     required: true,

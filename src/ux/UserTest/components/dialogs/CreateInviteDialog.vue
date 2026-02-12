@@ -47,7 +47,7 @@
                       :key="role.value"
                       :value="role.value"
                     >
-                      <template v-slot:label>
+                      <template #label>
                         <div>
                           <div class="font-weight-medium">{{ role.label }}</div>
                           <div class="text-caption text-grey">
@@ -96,10 +96,21 @@
                       >
                         <v-avatar start>
                           <span class="text-caption">
-                            {{ (typeof item.raw === 'object' ? item.raw.email : item.raw).charAt(0).toUpperCase() }}
+                            {{
+                              (typeof item.raw === 'object'
+                                ? item.raw.email
+                                : item.raw
+                              )
+                                .charAt(0)
+                                .toUpperCase()
+                            }}
                           </span>
                         </v-avatar>
-                        {{ typeof item.raw === 'object' ? item.raw.email : item.raw }}
+                        {{
+                          typeof item.raw === 'object'
+                            ? item.raw.email
+                            : item.raw
+                        }}
                       </v-chip>
                     </template>
                     <template #item="{ props, item }">
@@ -274,7 +285,7 @@
                   >
                   <h3 class="text-h6 font-weight-bold">Invitation Preview</h3>
                 </div>
-                
+
                 <v-card class="invitation-preview elevation-2" border>
                   <v-card-title class="bg-grey-lighten-4 py-3">
                     <v-icon class="mr-2" color="primary"
@@ -297,7 +308,9 @@
                           >
                             {{ typeof item === 'object' ? item.email : item }}
                           </v-chip>
-                          <span v-if="!comboboxModel.length">No participant selected</span>
+                          <span v-if="!comboboxModel.length"
+                            >No participant selected</span
+                          >
                         </v-chip-group>
                       </p>
                       <p class="text-body-2 mb-3">
@@ -369,8 +382,8 @@ import EmailController from '@/shared/controllers/EmailController'
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { ACCESS_LEVEL } from '../../../../shared/utils/accessLevel'
-import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'    
-import {showError, showSuccess} from '@/shared/utils/toast'
+import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
+import { showError, showSuccess } from '@/shared/utils/toast'
 
 // Props
 const props = defineProps({
@@ -466,7 +479,6 @@ const filteredUsers = computed(() => {
     })
 })
 
-
 const formattedDateTime = computed(() => {
   if (!date.value || !hour.value) return ''
 
@@ -501,7 +513,7 @@ const isParticipantAlreadyInvited = (userId) => {
 
 const isEmailAlreadySelected = (email) =>
   comboboxModel.value.some(
-    item => (typeof item === 'object' ? item.email : item) === email
+    (item) => (typeof item === 'object' ? item.email : item) === email,
   )
 
 const validateEmailInput = () => {
@@ -557,14 +569,14 @@ const saveInvitation = async () => {
 
     const timestamp = dateTime.toISOString()
     // Loopin through all selected emails/users
-    comboboxModel.value.forEach(item => {
+    comboboxModel.value.forEach((item) => {
       const email = typeof item === 'object' ? item.email : item
       const userDocId = typeof item === 'object' ? item.id : null
 
       // Prevnt duplicate invites
       if (
         !cooperatorsEdit.value.some(
-          c => c.email === email && c.testDate === timestamp
+          (c) => c.email === email && c.testDate === timestamp,
         )
       ) {
         cooperatorsEdit.value.push(
@@ -578,10 +590,10 @@ const saveInvitation = async () => {
             inviteMessage: inviteMessage.value,
             updateDate: test.value.updateDate,
             testAuthorEmail: test.value.testAdmin.email,
-        }),
-    )
-    }
-})
+          }),
+        )
+      }
+    })
     await submit()
   } catch (error) {
     console.error('Error saving invitation:', error)
@@ -622,31 +634,33 @@ const submit = async () => {
 const notifyCooperator = async (guest) => {
   if (!guest) return
 
+  // For registered users with userDocId
   if (guest.userDocId) {
     const path = '/testview'
     try {
       await store.dispatch('addNotification', {
         userId: guest.userDocId,
         notification: new Notification({
-          // use guest's access level when available (keeps behavior consistent)
           accessLevel: guest.accessLevel || 2,
           title: `You have been invited to test ${test.value.testTitle}!`,
           description: inviteMessage.value,
           redirectsTo: `${path}/${test.value.id}/${guest.userDocId}`,
           author: test.value.testAdmin?.email,
+          type: 'Collaboration',
           read: false,
           testId: test.value.id,
-          
           testDate: guest.testDate,
         }),
       })
+      showSuccess('Notification sent successfully')
     } catch (err) {
       console.error('addNotification failed:', err)
+      showError('Failed to send notification')
     }
     return
   }
 
-  // For external (typed) emails, send via EmailController -> Cloud Function
+  // For external (typed) emails, send via EmailController
   try {
     const emailController = new EmailController()
     await emailController.send({
@@ -666,8 +680,10 @@ const notifyCooperator = async (guest) => {
         token: guest.token || null,
       },
     })
+    showSuccess('Email invitation sent')
   } catch (err) {
     console.error('External email send failed:', err)
+    showError('Failed to send email invitation')
   }
 }
 </script>
@@ -770,7 +786,9 @@ const notifyCooperator = async (guest) => {
 }
 
 .invitation-preview {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .invitation-preview:hover {
