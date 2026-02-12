@@ -40,8 +40,8 @@ function getDiff() {
   }
 
   return (
-    gitDiff(['diff', 'HEAD~1...HEAD']) ||
     gitDiff(['diff', '--cached']) ||
+    gitDiff(['diff', 'HEAD~1...HEAD']) ||
     gitDiff(['diff']) ||
     ''
   )
