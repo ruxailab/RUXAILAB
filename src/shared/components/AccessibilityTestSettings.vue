@@ -17,7 +17,7 @@
         @click="submit()"
       >
         <v-icon start size="18"> mdi-check </v-icon>
-        Save Changes
+        {{ $t('buttons.saveChanges') }}
       </v-btn>
     </template>
 
@@ -40,7 +40,7 @@
             mdi-file-document-plus-outline
           </v-icon>
           <h3 class="text-h5 font-weight-bold text-grey-darken-4">
-            Create Template
+            {{ $t('buttons.createTemplate') }}
           </h3>
           <v-spacer />
           <v-btn
@@ -95,7 +95,7 @@
               height="44"
               @click="closeDialog()"
             >
-              Cancel
+              {{ $t('buttons.cancel') }}
             </v-btn>
             <v-btn
               variant="flat"
@@ -105,7 +105,7 @@
               class="text-none rounded-lg ml-3"
               @click="createTemplate()"
             >
-              Create
+              {{ $t('buttons.create') }}
             </v-btn>
           </v-card-actions>
         </v-form>
@@ -126,10 +126,10 @@
               </div>
               <div>
                 <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">
-                  Test Information
+                  {{ $t('testSettings.testInformation') }}
                 </h3>
                 <p class="text-caption text-grey-darken-1">
-                  Basic test settings and description
+                  {{ $t('testSettings.basicTestSettings') }}
                 </p>
               </div>
             </div>
@@ -174,7 +174,7 @@
               </div>
               <div>
                 <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">
-                  Advanced Settings
+                  {{ $t('testSettings.advancedSettings') }}
                 </h3>
                 <p class="text-caption text-grey-darken-1">
                   {{ advancedDescription }}
@@ -249,10 +249,10 @@
           </div>
           <div>
             <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">
-              Quick Actions
+              {{ $t('testSettings.quickActions') }}
             </h3>
             <p class="text-caption text-grey-darken-1">
-              Perform common tasks instantly
+              {{ $t('testSettings.performCommonTasks') }}
             </p>
           </div>
         </div>
@@ -267,7 +267,7 @@
               @click="tempDialog = true"
             >
               <v-icon start size="18"> mdi-file-document-plus-outline </v-icon>
-              Create Template
+              {{ $t('buttons.createTemplate') }}
             </v-btn>
             <v-btn
               color="orange-darken-1"
@@ -278,7 +278,7 @@
               @click="duplicateTest()"
             >
               <v-icon start size="18"> mdi-content-copy </v-icon>
-              Duplicate Test
+              {{ $t('buttons.duplicateTest') }}
             </v-btn>
             <v-btn
               color="error"
@@ -289,7 +289,7 @@
               @click="dialogDel = true"
             >
               <v-icon start size="18"> mdi-delete </v-icon>
-              Delete Test
+              {{ $t('buttons.deleteTest') }}
             </v-btn>
           </div>
         </v-card-text>
@@ -307,17 +307,16 @@
           </div>
           <div>
             <h3 class="text-h5 font-weight-bold text-grey-darken-4 mb-1">
-              Confirm Deletion
+              {{ $t('dialogs.confirmDeletion') }}
             </h3>
             <p class="text-subtitle-2 text-grey-darken-1">
-              This action cannot be undone
+              {{ $t('dialogs.actionCannotBeUndone') }}
             </p>
           </div>
         </v-card-title>
         <v-card-text class="py-4 px-6">
           <p class="text-body-2 text-grey-darken-1">
-            {{ dialogText }} All associated data, results, and configurations
-            will be lost forever.
+            {{ dialogText }} {{ $t('dialogs.allAssociatedDataLost') }}
           </p>
         </v-card-text>
         <v-card-actions class="px-6 pb-6 pt-0 d-flex justify-end ga-3">
@@ -329,7 +328,7 @@
             height="44"
             @click="dialogDel = false"
           >
-            Cancel
+            {{ $t('buttons.cancel') }}
           </v-btn>
           <v-btn
             color="error"
@@ -340,7 +339,7 @@
             @click="deleteTest(object)"
           >
             <v-icon start size="16"> mdi-delete </v-icon>
-            Delete Forever
+            {{ $t('buttons.deleteForever') }}
           </v-btn>
         </v-card-actions>
       </v-card>

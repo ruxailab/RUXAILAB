@@ -32,13 +32,11 @@
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 
 const emit = defineEmits(['submit'])
 
 const store = useStore()
 const router = useRouter()
-const { t } = useI18n()
 
 const dialogLeaveStatus = computed(() => store.getters.getDialogLeaveStatus)
 

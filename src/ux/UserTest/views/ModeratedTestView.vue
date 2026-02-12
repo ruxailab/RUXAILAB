@@ -593,6 +593,7 @@ import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAns
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { showError, showInfo, showWarning } from '@/shared/utils/toast'
+import { calculateProgress } from '../utils/testProgress'
 
 const store = useStore()
 const router = useRouter()
@@ -1007,7 +1008,9 @@ const completeStep = async (id, type, userCompleted = true) => {
       if (userCompleted) {
         store.commit('SET_TOAST', {
           type: 'success',
-          message: `Task "${test.value.testStructure.userTasks[id].taskName}" completed successfully!`,
+          message: t('UserTestView.messages.taskCompletedSuccess', {
+            taskName: test.value.testStructure.userTasks[id].taskName,
+          }),
           timeout: 3000,
         })
       }
@@ -1027,13 +1030,13 @@ const completeStep = async (id, type, userCompleted = true) => {
       showVideoCall: true,
     })
 
-    calculateProgress()
+    calculateProgress(localTestAnswer)
     await saveAnswer()
   } catch (error) {
     console.error('Error in completeStep:', error) // eslint-disable-line no-console
     store.commit('SET_TOAST', {
       type: 'error',
-      message: 'Failed to complete step. Please try again.',
+      message: t('UserTestView.errors.failedToCompleteStep'),
     })
   }
 }
@@ -1045,16 +1048,16 @@ const mappingSteps = async () => {
     // PreTest
     if (validate(test.value?.testStructure?.preTest)) {
       items.value.push({
-        title: 'Pre-test',
+        title: t('UserTestView.stepper.preTest'),
         icon: 'mdi-check-bold',
         value: [
           {
-            title: 'Consent',
+            title: t('UserTestView.stepper.consent'),
             icon: 'mdi-check-bold',
             id: 0,
           },
           {
-            title: 'Form',
+            title: t('UserTestView.stepper.form'),
             icon: 'mdi-check-bold',
             id: 1,
           },
@@ -1076,7 +1079,7 @@ const mappingSteps = async () => {
     // Tasks
     if (validate(test.value?.testStructure?.userTasks)) {
       items.value.push({
-        title: 'Tasks',
+        title: t('UserTestView.stepper.tasks'),
         icon: 'mdi-check-bold',
         value: test.value.testStructure.userTasks.map((task, index) => ({
           title: task.taskName,
@@ -1110,7 +1113,7 @@ const mappingSteps = async () => {
     // PostTest
     if (validate(test.value?.testStructure?.postTest)) {
       items.value.push({
-        title: 'Post Test',
+        title: t('UserTestView.stepper.postTest'),
         icon: 'mdi-check-bold',
         value: test.value.testStructure.postTest,
         id: 2,
@@ -1130,7 +1133,7 @@ const mappingSteps = async () => {
     console.error('Error mapping steps:', error.message) // eslint-disable-line no-console
     store.commit('SET_TOAST', {
       type: 'error',
-      message: 'Failed to initialize test data. Please try again.',
+      message: t('UserTestView.errors.failedToInitializeTestData'),
     })
   }
 }
@@ -1145,28 +1148,6 @@ const validate = (object) => {
   )
 }
 
-const calculateProgress = () => {
-  try {
-    const totalSteps = test.value?.testStructure?.userTasks?.length || 0
-    if (totalSteps === 0) return 0
-
-    let completedSteps = 0
-    if (localTestAnswer.consentCompleted) completedSteps += 1
-    if (localTestAnswer.preTestCompleted) completedSteps += 1
-    if (localTestAnswer.postTestCompleted) completedSteps += 1
-
-    if (Array.isArray(localTestAnswer.tasks)) {
-      completedSteps += localTestAnswer.tasks.filter((t) => t.completed).length
-    }
-
-    const progressPercentage = (completedSteps / totalSteps) * 100
-    localTestAnswer.progress = progressPercentage
-    return progressPercentage
-  } catch (error) {
-    console.error('Error in calculateProgress:', error) // eslint-disable-line no-console
-    return 0
-  }
-}
 // testDisabledReason is already declared at line 544
 
 watchEffect(() => {
@@ -1271,14 +1252,14 @@ watchEffect(() => {
 // Lifecycle hooks
 onMounted(async () => {
   if (!user.value) {
-    showError('Login to your RUXAILAB account first to access the test!')
+    showError(t('UserTestView.errors.loginRequired'))
     router.push('/signin')
     return
   }
 
   if (route.params.token) {
     if (route.params.token === test.value.id) {
-      showInfo('Use a session link to access your moderated test!')
+      showInfo(t('UserTestView.messages.useSessionLinkModerated'))
       router.push('/managerview/' + test.value.id)
       return
     }
@@ -1296,12 +1277,12 @@ onMounted(async () => {
       if (sessionCooperator.value?.testDate) {
         testDate.value = sessionCooperator.value.testDate
       } else {
-        showWarning("Your session doesn't have a scheduled date")
+        showWarning(t('UserTestView.warnings.sessionNotScheduled'))
         return
       }
     }
   } else {
-    showInfo('Use a session link to access the test')
+    showInfo(t('UserTestView.messages.useSessionLink'))
     return
   }
 
