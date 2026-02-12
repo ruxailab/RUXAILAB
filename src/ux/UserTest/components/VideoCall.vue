@@ -853,6 +853,7 @@ const emit = defineEmits([
   'setRemoteStream',
   'proceedToNextStep',
   'stepSelected',
+  'moderatorStatusChange',
 ])
 
 // Local State
@@ -874,6 +875,23 @@ const showJoinDialog = ref(false) // Legacy support, maybe unused in Mesh
 // Mesh State
 const peers = reactive({}) // userId -> { connection: RTCPeerConnection, stream: MediaStream }
 const participants = ref({}) // userId -> user info (name, etc)
+
+// Watch for moderator connected status changes and emit to parent
+watch(
+  () => {
+    const allParts = participants.value
+    for (const [userId, data] of Object.entries(allParts)) {
+      if (data.isModerator && userId !== props.user.id) {
+        return data.connected
+      }
+    }
+    return null
+  },
+  (connected, oldConnected) => {
+    if (connected === null || oldConnected === null) return
+    emit('moderatorStatusChange', connected)
+  },
+)
 
 // Computed
 const isObservator = computed(

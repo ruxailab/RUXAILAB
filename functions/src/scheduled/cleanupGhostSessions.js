@@ -23,8 +23,8 @@ export const cleanupGhostSessions = onSchedule('every 6 hours', async (event) =>
         const roomData = child.val()
 
         const createdAt = roomData.createdAt || 0
-        const lastHeartbeat = roomData.lastHeartbeat || 0
-        const lastActive = Math.max(createdAt, lastHeartbeat)
+        const lastUpdate = roomData.lastUpdate || 0
+        const lastActive = Math.max(createdAt, lastUpdate)
 
         // Check if room is stale
         if (
