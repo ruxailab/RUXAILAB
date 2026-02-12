@@ -952,6 +952,75 @@
       "tam3": "TAM-3 (Complet) - inclut l'anxiété, le ludisme et l'utilisabilité objective",
       "sart": "Technique d'Évaluation de la Conscience Situationnelle - mesure la conscience situationnelle"
     },
+    "answerTypePreview": {
+      "noAnswer": {
+        "message": "Tâche terminée ! Aucun retour supplémentaire requis."
+      },
+      "textArea": {
+        "placeholder": "Les participants fourniront leurs commentaires ici...",
+        "submitButton": "Soumettre les Commentaires"
+      },
+      "postTest": {
+        "title": "Questions Post-Tâche",
+        "q1": "1. Comment évalueriez-vous la difficulté de cette tâche ?",
+        "q2": "2. Des commentaires supplémentaires ?",
+        "feedbackPlaceholder": "Commentaires optionnels..."
+      },
+      "postForm": {
+        "title": "Formulaire Externe",
+        "notice": "Les participants seront redirigés pour remplir un formulaire externe après la tâche.",
+        "button": "Ouvrir le Formulaire Externe"
+      },
+      "nasaTlx": {
+        "title": "Indice de Charge de Travail NASA",
+        "mental": "Exigence Mentale",
+        "physical": "Exigence Physique",
+        "range": "Faible - Élevé",
+        "moreDimensions": "+ 4 dimensions supplémentaires"
+      },
+      "sus": {
+        "title": "Échelle d'Utilisabilité du Système",
+        "q1": "1. Je pense que j'aimerais utiliser ce système fréquemment.",
+        "disagree": "Pas du Tout d'Accord",
+        "agree": "Tout à Fait d'Accord",
+        "moreStatements": "+ 9 déclarations supplémentaires"
+      },
+      "sart": {
+        "title": "Technique d'Évaluation de la Conscience Situationnelle",
+        "instability": "Instabilité de la Situation",
+        "complexity": "Complexité de la Situation",
+        "stable": "Très Stable",
+        "unstable": "Très Instable",
+        "simple": "Très Simple",
+        "complex": "Très Complexe",
+        "moreDimensions": "+ 8 dimensions SART supplémentaires"
+      },
+      "tam": {
+        "tam1": "TAM-1 : Modèle d'Acceptation de la Technologie (Basique)",
+        "tam2": "TAM-2 : Modèle d'Acceptation de la Technologie (Étendu)",
+        "tam3": "TAM-3 : Modèle d'Acceptation de la Technologie (Complet)",
+        "items2": "10 éléments sur 2 dimensions",
+        "items7": "25 éléments sur 7 dimensions",
+        "items13": "39 éléments sur 13 dimensions",
+        "pu": "Utilité Perçue",
+        "eu": "Facilité d'Utilisation Perçue",
+        "sn": "Norme Subjective",
+        "image": "Image",
+        "jr": "Pertinence pour le Poste",
+        "oq": "Qualité des Résultats",
+        "rd": "Démonstrabilité des Résultats",
+        "se": "Auto-efficacité Informatique",
+        "ec": "Contrôle Externe",
+        "anxiety": "Anxiété",
+        "play": "Ludisme",
+        "enjoy": "Plaisir",
+        "ou": "Utilisabilité Objective",
+        "q1": "1. L'utilisation du système améliore mes performances au travail.",
+        "q6": "6. Le système est facile à utiliser.",
+        "likertNote": "Les participants évaluent {count} affirmations sur une échelle de Likert en 5 points"
+      },
+      "selectionPrompt": "Sélectionnez un type de réponse pour voir l'aperçu"
+    },
     "advanced": {
       "stepTitle": "Étape 3 : Options Avancées",
       "stepDescription": "Activez des méthodes de collecte de données supplémentaires pour obtenir des informations plus approfondies.",
@@ -1001,29 +1070,6 @@
         "camera": "Caméra",
         "audio": "Audio"
       }
-    },
-    "answerTypePreview": {
-      "taskCompleted": "Tâche terminée ! Aucun retour supplémentaire requis.",
-      "participantsFeedbackHere": "Les participants fourniront leurs commentaires ici...",
-      "submitFeedback": "Soumettre les Commentaires",
-      "postTaskQuestions": "Questions Post-Tâche",
-      "rateTaskDifficulty": "1. Comment évalueriez-vous la difficulté de cette tâche ?",
-      "additionalComments": "2. Des commentaires supplémentaires ?",
-      "optionalFeedback": "Commentaires optionnels...",
-      "externalFormTitle": "Formulaire Externe",
-      "externalFormDescription": "Les participants seront redirigés pour remplir un formulaire externe après la tâche.",
-      "openExternalForm": "Ouvrir le Formulaire Externe",
-      "nasaTlxTitle": "Indice de Charge de Travail NASA",
-      "mentalDemand": "Demande Mentale",
-      "physicalDemand": "Demande Physique",
-      "lowHigh": "Faible - Élevé",
-      "moreDimensions": "+ 4 dimensions supplémentaires",
-      "susTitle": "Échelle d'Utilisabilité du Système",
-      "susStatement1": "1. Je pense que j'aimerais utiliser ce système fréquemment.",
-      "stronglyDisagree": "Fortement en Désaccord",
-      "stronglyAgree": "Fortement d'Accord",
-      "moreStatements": "+ 9 déclarations supplémentaires",
-      "sartTitle": "Technique d'Évaluation de la Conscience Situationnelle"
     }
   },
   "UserTestView": {

@@ -952,6 +952,75 @@
       "tam3": "TAM-3 (Abrangente) - inclui ansiedade, diversão e usabilidade objetiva",
       "sart": "Técnica de Avaliação de Consciência Situacional - mede a consciência situacional"
     },
+    "answerTypePreview": {
+      "noAnswer": {
+        "message": "Tarefa concluída! Nenhum feedback adicional é necessário."
+      },
+      "textArea": {
+        "placeholder": "Os participantes fornecerão seus comentários aqui...",
+        "submitButton": "Enviar Feedback"
+      },
+      "postTest": {
+        "title": "Perguntas Pós-Tarefa",
+        "q1": "1. Como você avaliaria a dificuldade desta tarefa?",
+        "q2": "2. Algum comentário adicional?",
+        "feedbackPlaceholder": "Feedback opcional..."
+      },
+      "postForm": {
+        "title": "Formulário Externo",
+        "notice": "Os participantes serão redirecionados para preencher um formulário externo após a tarefa.",
+        "button": "Abrir Formulário Externo"
+      },
+      "nasaTlx": {
+        "title": "Índice de Carga de Trabalho NASA",
+        "mental": "Demanda Mental",
+        "physical": "Demanda Física",
+        "range": "Baixo - Alto",
+        "moreDimensions": "+ 4 dimensões adicionais"
+      },
+      "sus": {
+        "title": "Escala de Usabilidade do Sistema",
+        "q1": "1. Acho que gostaria de usar este sistema com frequência.",
+        "disagree": "Discordo Totalmente",
+        "agree": "Concordo Totalmente",
+        "moreStatements": "+ 9 declarações adicionais"
+      },
+      "sart": {
+        "title": "Técnica de Avaliação de Consciência Situacional",
+        "instability": "Instabilidade da Situação",
+        "complexity": "Complexidade da Situação",
+        "stable": "Muito Estável",
+        "unstable": "Muito Instável",
+        "simple": "Muito Simples",
+        "complex": "Muito Complexo",
+        "moreDimensions": "+ 8 dimensões SART adicionais"
+      },
+      "tam": {
+        "tam1": "TAM-1: Modelo de Aceitação de Tecnologia (Básico)",
+        "tam2": "TAM-2: Modelo de Aceitação de Tecnologia (Estendido)",
+        "tam3": "TAM-3: Modelo de Aceitação de Tecnologia (Abrangente)",
+        "items2": "10 itens em 2 dimensões",
+        "items7": "25 itens em 7 dimensões",
+        "items13": "39 itens em 13 dimensões",
+        "pu": "Utilidade Percebida",
+        "eu": "Facilidade de Uso Percebida",
+        "sn": "Norma Subjetiva",
+        "image": "Imagem",
+        "jr": "Relevância no Trabalho",
+        "oq": "Qualidade da Saída",
+        "rd": "Demonstrabilidade do Resultado",
+        "se": "Autoeficácia Computacional",
+        "ec": "Controle Externo",
+        "anxiety": "Ansiedade",
+        "play": "Ludicidade/Diversão",
+        "enjoy": "Prazer",
+        "ou": "Usabilidade Objetiva",
+        "q1": "1. O uso do sistema melhora meu desempenho no trabalho.",
+        "q6": "6. O sistema é fácil de usar.",
+        "likertNote": "Os participantes avaliam {count} afirmações em uma escala Likert de 5 pontos"
+      },
+      "selectionPrompt": "Selecione um tipo de resposta para ver a pré-visualização"
+    },
     "advanced": {
       "stepTitle": "Passo 3: Opções Avançadas",
       "stepDescription": "Habilite métodos adicionais de coleta de dados para obter insights mais profundos.",
@@ -1001,29 +1070,6 @@
         "camera": "Câmera",
         "audio": "Áudio"
       }
-    },
-    "answerTypePreview": {
-      "taskCompleted": "Tarefa concluída! Nenhum feedback adicional necessário.",
-      "participantsFeedbackHere": "Os participantes fornecerão seu feedback aqui...",
-      "submitFeedback": "Enviar Feedback",
-      "postTaskQuestions": "Perguntas Pós-Tarefa",
-      "rateTaskDifficulty": "1. Como você avaliaria a dificuldade desta tarefa?",
-      "additionalComments": "2. Comentários adicionais?",
-      "optionalFeedback": "Feedback opcional...",
-      "externalFormTitle": "Formulário Externo",
-      "externalFormDescription": "Os participantes serão redirecionados para preencher um formulário externo após a tarefa.",
-      "openExternalForm": "Abrir Formulário Externo",
-      "nasaTlxTitle": "Índice de Carga de Tarefas NASA",
-      "mentalDemand": "Demanda Mental",
-      "physicalDemand": "Demanda Física",
-      "lowHigh": "Baixo - Alto",
-      "moreDimensions": "+ 4 dimensões adicionais",
-      "susTitle": "Escala de Usabilidade do Sistema",
-      "susStatement1": "1. Acho que gostaria de usar este sistema com frequência.",
-      "stronglyDisagree": "Discordo Totalmente",
-      "stronglyAgree": "Concordo Totalmente",
-      "moreStatements": "+ 9 declarações adicionais",
-      "sartTitle": "Técnica de Avaliação de Consciência Situacional"
     }
   },
   "UserTestView": {
