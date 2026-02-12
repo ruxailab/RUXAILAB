@@ -643,7 +643,8 @@ const { t } = useI18n()
 // Data variables
 
 onBeforeUnmount(() => {
-  if (moderatorDisconnectTimeout.value) clearTimeout(moderatorDisconnectTimeout.value)
+  if (moderatorDisconnectTimeout.value)
+    clearTimeout(moderatorDisconnectTimeout.value)
 })
 
 const testDisabledReason = ref(null)
@@ -785,6 +786,10 @@ watch(
 // Methods
 const proceedToNextStep = async () => {
   if (!isUserTestAdmin.value) return
+
+  // Increment globalIndex before updating Firebase
+  globalIndex.value = globalIndex.value + 1
+
   const roomRef = dbRef(database, `rooms/${roomId.value}`)
   await update(roomRef, {
     globalIndex: globalIndex.value,
@@ -958,6 +963,9 @@ const startTest = async () => {
       if (data.showVideoCall !== undefined) {
         displayVideoCallComponent.value = data.showVideoCall
       }
+    } else {
+      // Admin always stays in video call during session
+      displayVideoCallComponent.value = true
     }
   })
 
@@ -996,7 +1004,8 @@ const handleModeratorStatusChange = (connected) => {
 
   if (!connected) {
     // Moderator disconnected — start 5-min timeout
-    if (moderatorDisconnectTimeout.value) clearTimeout(moderatorDisconnectTimeout.value)
+    if (moderatorDisconnectTimeout.value)
+      clearTimeout(moderatorDisconnectTimeout.value)
     moderatorDisconnectTimeout.value = setTimeout(() => {
       moderatorInactive.value = true
     }, MODERATOR_DISCONNECT_TIMEOUT_MS)
