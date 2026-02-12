@@ -111,7 +111,8 @@
     "action_cannot_be_undone": "Cette action ne peut pas être annulée",
     "user": "Utilisateur",
     "id": "ID",
-    "itemsPerPage": "Éléments par page :"
+    "itemsPerPage": "Éléments par page :",
+    "visible": "Visible"
   },
   "storage": {
     "pageTitle": "Stockage",
@@ -214,6 +215,16 @@
     "hoursAgo": "il y a {count}h",
     "daysAgo": "il y a {count}j",
     "newNotification": "Vous avez une nouvelle notification."
+  },
+  "notifications": {
+    "errors": {
+      "acceptCollaborationFailed": "Échec de l'acceptation de la collaboration. Veuillez réessayer.",
+      "invalidCollaboration": "Cette invitation de collaboration est invalide ou a expiré."
+    }
+  },
+  "cooperators": {
+    "updatedRole": "Rôle mis à jour en {role} pour : {users}",
+    "inviteSent": "Invitation envoyée à : {users}"
   },
   "navigation": {
     "dashboard": "Tableau de bord",
@@ -815,7 +826,10 @@
       "change_role": "Êtes-vous sûr de vouloir changer le rôle de {email} de {old} à {new} ?",
       "message_title_hint": "Tapez un titre pour votre message",
       "message_content_hint": "Tapez le contenu de votre message",
-      "invite_message": "Vous avez été invité à participer au test {testTitle}"
+      "invite_message": "Vous avez été invité à collaborer sur '{testTitle}'",
+      "message_sent_success": "Message envoyé avec succès",
+      "message_sent_error": "Échec de l'envoi du message",
+      "user_not_registered": "Cet utilisateur n'a pas encore accepté l'invitation ou n'est pas enregistré."
     }
   },
   "UserTestTable": {
@@ -938,6 +952,75 @@
       "tam3": "TAM-3 (Complet) - inclut l'anxiété, le ludisme et l'utilisabilité objective",
       "sart": "Technique d'Évaluation de la Conscience Situationnelle - mesure la conscience situationnelle"
     },
+    "answerTypePreview": {
+      "noAnswer": {
+        "message": "Tâche terminée ! Aucun retour supplémentaire requis."
+      },
+      "textArea": {
+        "placeholder": "Les participants fourniront leurs commentaires ici...",
+        "submitButton": "Soumettre les Commentaires"
+      },
+      "postTest": {
+        "title": "Questions Post-Tâche",
+        "q1": "1. Comment évalueriez-vous la difficulté de cette tâche ?",
+        "q2": "2. Des commentaires supplémentaires ?",
+        "feedbackPlaceholder": "Commentaires optionnels..."
+      },
+      "postForm": {
+        "title": "Formulaire Externe",
+        "notice": "Les participants seront redirigés pour remplir un formulaire externe après la tâche.",
+        "button": "Ouvrir le Formulaire Externe"
+      },
+      "nasaTlx": {
+        "title": "Indice de Charge de Travail NASA",
+        "mental": "Exigence Mentale",
+        "physical": "Exigence Physique",
+        "range": "Faible - Élevé",
+        "moreDimensions": "+ 4 dimensions supplémentaires"
+      },
+      "sus": {
+        "title": "Échelle d'Utilisabilité du Système",
+        "q1": "1. Je pense que j'aimerais utiliser ce système fréquemment.",
+        "disagree": "Pas du Tout d'Accord",
+        "agree": "Tout à Fait d'Accord",
+        "moreStatements": "+ 9 déclarations supplémentaires"
+      },
+      "sart": {
+        "title": "Technique d'Évaluation de la Conscience Situationnelle",
+        "instability": "Instabilité de la Situation",
+        "complexity": "Complexité de la Situation",
+        "stable": "Très Stable",
+        "unstable": "Très Instable",
+        "simple": "Très Simple",
+        "complex": "Très Complexe",
+        "moreDimensions": "+ 8 dimensions SART supplémentaires"
+      },
+      "tam": {
+        "tam1": "TAM-1 : Modèle d'Acceptation de la Technologie (Basique)",
+        "tam2": "TAM-2 : Modèle d'Acceptation de la Technologie (Étendu)",
+        "tam3": "TAM-3 : Modèle d'Acceptation de la Technologie (Complet)",
+        "items2": "10 éléments sur 2 dimensions",
+        "items7": "25 éléments sur 7 dimensions",
+        "items13": "39 éléments sur 13 dimensions",
+        "pu": "Utilité Perçue",
+        "eu": "Facilité d'Utilisation Perçue",
+        "sn": "Norme Subjective",
+        "image": "Image",
+        "jr": "Pertinence pour le Poste",
+        "oq": "Qualité des Résultats",
+        "rd": "Démonstrabilité des Résultats",
+        "se": "Auto-efficacité Informatique",
+        "ec": "Contrôle Externe",
+        "anxiety": "Anxiété",
+        "play": "Ludisme",
+        "enjoy": "Plaisir",
+        "ou": "Utilisabilité Objective",
+        "q1": "1. L'utilisation du système améliore mes performances au travail.",
+        "q6": "6. Le système est facile à utiliser.",
+        "likertNote": "Les participants évaluent {count} affirmations sur une échelle de Likert en 5 points"
+      },
+      "selectionPrompt": "Sélectionnez un type de réponse pour voir l'aperçu"
+    },
     "advanced": {
       "stepTitle": "Étape 3 : Options Avancées",
       "stepDescription": "Activez des méthodes de collecte de données supplémentaires pour obtenir des informations plus approfondies.",
@@ -987,29 +1070,6 @@
         "camera": "Caméra",
         "audio": "Audio"
       }
-    },
-    "answerTypePreview": {
-      "taskCompleted": "Tâche terminée ! Aucun retour supplémentaire requis.",
-      "participantsFeedbackHere": "Les participants fourniront leurs commentaires ici...",
-      "submitFeedback": "Soumettre les Commentaires",
-      "postTaskQuestions": "Questions Post-Tâche",
-      "rateTaskDifficulty": "1. Comment évalueriez-vous la difficulté de cette tâche ?",
-      "additionalComments": "2. Des commentaires supplémentaires ?",
-      "optionalFeedback": "Commentaires optionnels...",
-      "externalFormTitle": "Formulaire Externe",
-      "externalFormDescription": "Les participants seront redirigés pour remplir un formulaire externe après la tâche.",
-      "openExternalForm": "Ouvrir le Formulaire Externe",
-      "nasaTlxTitle": "Indice de Charge de Travail NASA",
-      "mentalDemand": "Demande Mentale",
-      "physicalDemand": "Demande Physique",
-      "lowHigh": "Faible - Élevé",
-      "moreDimensions": "+ 4 dimensions supplémentaires",
-      "susTitle": "Échelle d'Utilisabilité du Système",
-      "susStatement1": "1. Je pense que j'aimerais utiliser ce système fréquemment.",
-      "stronglyDisagree": "Fortement en Désaccord",
-      "stronglyAgree": "Fortement d'Accord",
-      "moreStatements": "+ 9 déclarations supplémentaires",
-      "sartTitle": "Technique d'Évaluation de la Conscience Situationnelle"
     }
   },
   "UserTestView": {
@@ -1047,7 +1107,8 @@
       "tasks": "Tâches",
       "postTest": "Post-test",
       "completion": "Fin du test",
-      "taskX": "Tâche {num}"
+      "taskX": "Tâche {num}",
+      "form": "Formulaire"
     },
     "TaskStep": {
       "preview": "Aperçu de la tâche",
@@ -1104,14 +1165,20 @@
     },
     "messages": {
       "noTasks": "Ce test n'a aucune tâche.",
-      "answerSaved": "Réponse enregistrée avec succès."
+      "answerSaved": "Réponse enregistrée avec succès.",
+      "taskCompletedSuccess": "Tâche \"{taskName}\" terminée avec succès !",
+      "useSessionLinkModerated": "Utilisez un lien de session pour accéder à votre test modéré !",
+      "useSessionLink": "Utilisez un lien de session pour accéder au test"
     },
     "errors": {
       "noAnswerData": "Aucune donnée de réponse trouvée.",
       "failedToSaveAnswer": "Échec de l'enregistrement de la réponse. Veuillez réessayer.",
       "failedToSubmitAnswer": "Échec de la soumission de la réponse. Veuillez réessayer.",
       "noTestData": "Aucune donnée de test",
-      "noTestDataMessage": "Les informations sur le test n'ont pas pu être chargées. Veuillez réessayer plus tard."
+      "noTestDataMessage": "Les informations sur le test n'ont pas pu être chargées. Veuillez réessayer plus tard.",
+      "failedToCompleteStep": "Échec de la complétion de l'étape. Veuillez réessayer.",
+      "failedToInitializeTestData": "Échec de l'initialisation des données de test. Veuillez réessayer.",
+      "loginRequired": "Veuillez d’abord vous connecter à votre compte RUXAILAB pour accéder au test !"
     },
     "CalibrationInProgressModal": {
       "completed": "Calibrage terminé !",
@@ -1173,6 +1240,9 @@
       "instruction": "Lorsque vous êtes prêt, appuyez sur le bouton pour commencer le calibrage.",
       "startButton": "Commencer le calibrage",
       "inProgress": "En cours..."
+    },
+    "warnings": {
+      "sessionNotScheduled": "Cette session n’a pas encore de date programmée"
     }
   },
   "eyeTracking": {
@@ -1367,7 +1437,8 @@
         "userUnmoderated": "Utilisateur non modéré",
         "userModerated": "Utilisateur modéré",
         "manualAccessibility": "Accessibilité manuelle",
-        "automaticAccessibility": "Accessibilité automatique"
+        "automaticAccessibility": "Accessibilité automatique",
+        "all": "Tous"
       }
     },
     "createTest": {
@@ -1403,7 +1474,8 @@
       "quick_actions": "Actions rapides",
       "perform_common_tasks": "Effectuez des tâches courantes instantanément",
       "delete_warning": "Toutes les données, résultats et configurations associés seront perdus à jamais.",
-      "delete_forever": "Supprimer définitivement"
+      "delete_forever": "Supprimer définitivement",
+      "confirm_deletion": "Confirmer la suppression"
     },
     "editTest": {
       "title": "Modifier le test",
@@ -1447,7 +1519,7 @@
     "close": "Fermer",
     "save": "Enregistrer",
     "stay": "Rester",
-    "leave": "Partir",
+    "leave": "Quitter",
     "saveandleave": "Enregistrer et quitter",
     "help": "Aide",
     "delete": "Supprimer",
@@ -1456,7 +1528,12 @@
     "duplicateTest": "Dupliquer le test",
     "submit": "Soumettre",
     "couldNotFinish": "Impossible de terminer",
-    "addNewTask": "Ajouter une nouvelle tâche"
+    "addNewTask": "Ajouter une nouvelle tâche",
+    "saveChanges": "Enregistrer les modifications",
+    "createTemplate": "Créer un modèle",
+    "deleteTest": "Supprimer le test",
+    "deleteForever": "Supprimer définitivement",
+    "startTest": "Démarrer le test"
   },
   "switches": {
     "noAnswer": "Pas de réponse",
@@ -1622,7 +1699,21 @@
   },
   "CardSorting": {
     "noCategory": "Aucune catégorie",
-    "noCards": "Aucune carte trouvée"
+    "noCards": "Aucune carte trouvée",
+    "of": "de",
+    "cards": "Cartes",
+    "cards_low": "cartes",
+    "currentCards": "Cartes actuelles",
+    "addNewCard": "Ajouter une nouvelle carte",
+    "settings": "Paramètres",
+    "configureCards": "Configurer l'affichage des cartes",
+    "currentCategories": "Catégories actuelles",
+    "addNewTask": "Ajouter une nouvelle tâche",
+    "configureCategories": "Configurer l'affichage des catégories",
+    "newTask": "Nouvelle tâche",
+    "customizeSettings": "Personnalisez les paramètres et les préférences de votre test",
+    "test": "Test",
+    "categories": "Catégories"
   },
   "analytics": {
     "searchByName": "Rechercher par nom",
@@ -1899,7 +1990,10 @@
     "deleteOptionConfirm": {
       "title": "Supprimer l'option",
       "message": "Êtes-vous sûr de vouloir supprimer cette option ? Cette action est irréversible."
-    }
+    },
+    "confirmDeletion": "Confirmer la suppression",
+    "actionCannotBeUndone": "Cette action est irréversible",
+    "allAssociatedDataLost": "Toutes les données, résultats et configurations associés seront perdus à jamais."
   },
   "tags": {
     "active": "Actif",
@@ -1931,5 +2025,291 @@
       "ACCESSIBILITY_AUTOMATIC": "Évaluation automatique",
       "WCAG_AUDIT": "Audit WCAG"
     }
+  },
+  "testSettings": {
+    "testInformation": "Informations sur le test",
+    "basicTestSettings": "Paramètres de base et description du test",
+    "advancedSettings": "Paramètres avancés",
+    "quickActions": "Actions rapides",
+    "performCommonTasks": "Effectuer des tâches courantes instantanément"
+  },
+  "cooperator": {
+    "goToSession": "Go to session"
+  },
+  "Accessibility": {
+    "access": "Accès :",
+    "accessibilityAssessmentResults": "Résultats de l’évaluation de l’accessibilité",
+    "accessibilityConfiguration": "Configuration de l’accessibilité",
+    "accessibilityIssues": "Problèmes d’accessibilité",
+    "accessibilityManager": "Gestionnaire d’accessibilité",
+    "accessibilityReport": "Rapport d’accessibilité",
+    "accessibilityScore": "Score d’accessibilité",
+    "addNewPage": "Ajouter une nouvelle page",
+    "addNewWebpageAssessment": "Ajouter une nouvelle page web pour évaluation",
+    "addWebpageStartAssessment": "Ajouter une page web et démarrer l’évaluation",
+    "all": "Tous",
+    "analyzeWebsiteCompliance": "Analysez la conformité de votre site en matière d’accessibilité et obtenez des recommandations exploitables",
+    "analyzingAccessibility": "Analyse de l’accessibilité en cours",
+    "appraiserNotes": "Notes de l’évaluateur",
+    "assessmentAvailable": "Évaluation disponible",
+    "assessmentData": "Données de l’évaluation",
+    "assessmentNotes": "Notes d’évaluation",
+    "assessmentProgress": "Progression de l’évaluation",
+    "back": "Retour",
+    "backToUserSelection": "Retour à la sélection de l’utilisateur",
+    "browseAccessibilityTools": "Parcourir les outils et actions d’accessibilité",
+    "canSave": "Peut enregistrer :",
+    "cancel": "Annuler",
+    "checkRequiresAuth": "Vérifier si le site nécessite une authentification",
+    "checkingAccessPermissions": "Vérification des autorisations d’accès",
+    "choosePrincipleGuideline": "Choisissez un principe et une directive dans la barre latérale gauche pour voir les règles associées et leurs problèmes",
+    "close": "Fermer",
+    "code": "Code",
+    "color": "Couleur :",
+    "commonIssuesSolutions": "Problèmes courants et solutions",
+    "compliance": "conformité",
+    "complianceLevel": "Niveau de conformité :",
+    "configuration": "Configuration :",
+    "context": "Contexte",
+    "continue": "Continuer",
+    "cssSelector": "Sélecteur CSS",
+    "dashboard": "Tableau de bord",
+    "description": "Évaluez l’accessibilité de votre contenu web selon les directives WCAG",
+    "descriptionOptional": "Description (optionnelle)",
+    "descriptionPlaceholder": "Brève description de la page ou du scénario testé.",
+    "dismiss": "Ignorer",
+    "ensurePubliclyAccessible": "Assurez-vous que le site est accessible publiquement",
+    "enterWebsiteUrl": "Entrez l’URL d’un site web pour lancer un test automatisé d’accessibilité et obtenir un rapport détaillé.",
+    "errors": "Erreurs",
+    "evaluateAccessibility": "Évaluez l’accessibilité de votre projet selon les directives WCAG sélectionnées",
+    "exportJson": "Exporter en JSON",
+    "failed": "Échec",
+    "fetchingParticipants": "Récupération des participants à l’évaluation...",
+    "fillWebpageDetails": "Renseignez les détails de la page web que vous souhaitez évaluer pour l’accessibilité.",
+    "filteredWcagDataAvailable": "Données WCAG filtrées disponibles :",
+    "foundUserIds": "Identifiants d’utilisateurs trouvés :",
+    "guideline": "Directive",
+    "guidelinesSelected": "directive(s) sélectionnée(s)",
+    "guidelinesSelection": "Sélection des directives",
+    "information": "Information",
+    "issueDetails": "Détails du problème",
+    "issues": "Problèmes",
+    "issuesFound": "Problèmes détectés",
+    "level": "Niveau",
+    "loading": "Chargement...",
+    "loadingAccessibilityReport": "Chargement du rapport d’accessibilité...",
+    "loadingMore": "Chargement de plus...",
+    "loadingReport": "Chargement du rapport...",
+    "loadingTestData": "Chargement des données de test...",
+    "loadingUsers": "Chargement des utilisateurs",
+    "message": "Message",
+    "next": "Suivant",
+    "noAssessmentAvailable": "Aucune évaluation disponible pour ce test",
+    "noDescriptionProvided": "Aucune description fournie.",
+    "noIssuesFound": "Aucun problème détecté",
+    "noNotesForRule": "Aucune note disponible pour cette règle.",
+    "noNotesProvided": "Aucune note fournie",
+    "noPrinciplesAvailable": "Aucun principe disponible",
+    "noReportAvailable": "Aucun rapport disponible",
+    "noReportData": "Aucune donnée de rapport disponible.",
+    "noRulesAvailable": "Aucune règle disponible",
+    "noSpecificCriteria": "Aucun critère spécifique défini pour cette règle.",
+    "noSuccessCriteria": "Aucun critère de réussite disponible pour cette règle.",
+    "noTestRunYet": "Aucun test d’accessibilité n’a encore été exécuté pour cet identifiant.",
+    "noUsersFound": "Aucun utilisateur trouvé pour ce test d’évaluation.",
+    "notApplicable": "Non applicable",
+    "notEvaluated": "Non évalué",
+    "note": "Note",
+    "notesFor": "Notes pour",
+    "notices": "Notifications",
+    "of": "de",
+    "opacity": "Opacité",
+    "passed": "Réussi",
+    "pleaseFixFollowing": "Veuillez corriger les problèmes suivants :",
+    "previous": "Précédent",
+    "principle": "Principe",
+    "principlesAvailable": "Principes disponibles :",
+    "radius": "Rayon",
+    "rawWcagDataAvailable": "Données WCAG brutes disponibles :",
+    "readOnlyMode": "Mode lecture seule – vous ne pouvez pas enregistrer les modifications sur l’évaluation d’un autre utilisateur.",
+    "readyToEvaluate": "Prêt à évaluer",
+    "remove": "Supprimer",
+    "report": "Rapport",
+    "reset": "Réinitialiser",
+    "reviewDetailedAssessment": "Consultez les résultats détaillés de l’évaluation d’accessibilité pour l’utilisateur sélectionné",
+    "reviewDetailedIssues": "Consultez les problèmes d’accessibilité détaillés et les critères de réussite selon les directives WCAG",
+    "rule": "Règle",
+    "rulePassedAllChecks": "Cette règle a réussi tous les contrôles d’accessibilité pour la page testée.",
+    "rules": "Règles",
+    "rulesFor": "règles pour",
+    "runAccessibilityTest": "Lancer le test d’accessibilité",
+    "runTest": "Lancer le test",
+    "runningComprehensiveTests": "Exécution de tests complets sur votre site...",
+    "saveAssessment": "Enregistrer l’évaluation",
+    "saveConfig": "Enregistrer la configuration",
+    "selectComplianceLevel": "Sélectionnez le niveau de conformité WCAG pour vos exigences en matière d’accessibilité.",
+    "selectGuidelinesByPrinciple": "Sélectionnez les directives pour votre évaluation. Filtrez par principe à l’aide des onglets.",
+    "selectPrincipleInfo": "Sélectionnez un principe dans la liste pour voir ses directives et règles.",
+    "selectRuleToView": "Sélectionnez une règle pour voir les détails",
+    "selectSpecificRules": "Sélectionnez des règles spécifiques (obligatoire)",
+    "selectUserToView": "Sélectionnez un utilisateur pour voir les résultats de son évaluation d’accessibilité",
+    "selectUserToViewResults": "Sélectionnez un utilisateur pour voir les résultats de l’évaluation",
+    "selected": "Sélectionné",
+    "selectedGuidelines": "Directives sélectionnées :",
+    "selector": "Sélecteur",
+    "setupTestParameters": "Configurer et personnaliser les paramètres de votre test d’accessibilité",
+    "severity": "Gravité",
+    "signInToSave": "Se connecter pour enregistrer",
+    "status": "Statut",
+    "step": "Étape",
+    "successCriterion": "Critère de réussite",
+    "testFailed": "Test échoué",
+    "testing": "Test en cours...",
+    "totalIssues": "Nombre total de problèmes",
+    "totalRules": "Nombre total de règles",
+    "troubleshootingTips": "Conseils de dépannage",
+    "tryAgain": "Réessayer",
+    "tryDifferentPage": "Essayez de tester une autre page du même domaine",
+    "type": "Type",
+    "url": "URL",
+    "urlHelp": "L’URL complète de la page web.",
+    "urlPlaceholder": "https://example.com",
+    "userDetails": "Détails de l’utilisateur :",
+    "userRole": "Rôle de l’utilisateur :",
+    "usersLoaded": "utilisateurs chargés",
+    "verifyUrlCorrect": "Vérifiez que l’URL est correcte et complète",
+    "version": "v",
+    "viewAssessment": "Voir l’évaluation",
+    "viewDetailedIssues": "Voir les problèmes d’accessibilité détaillés et les recommandations pour améliorer votre contenu web.",
+    "viewInPreview": "Voir en aperçu",
+    "viewInPreviewMode": "Voir en mode aperçu",
+    "viewResults": "Voir les résultats",
+    "viewWcagGuidelines": "Voir les directives WCAG",
+    "viewingAssessmentData": "Vous consultez les données d’évaluation pour l’identifiant utilisateur :",
+    "viewingMode": "Mode d’affichage",
+    "viewingModeLabel": "Mode d’affichage :",
+    "viewingUserId": "Affichage de l’identifiant utilisateur :",
+    "warnings": "Avertissements",
+    "wcag": "WCAG",
+    "wcagComplianceLevel": "Niveau de conformité WCAG",
+    "wcagComplianceLevelHelp": "Le niveau de conformité WCAG cible pour cette évaluation.",
+    "wcagLevelFilter": "Filtre de niveau WCAG :",
+    "wcagPrinciples": "Principes WCAG",
+    "wcagReference": "Référence WCAG",
+    "webpageName": "Nom de la page web",
+    "webpageNameHelp": "Un nom descriptif pour la page web que vous testez.",
+    "webpageNamePlaceholder": "ex. : Page d’accueil de mon entreprise",
+    "webpagePreview": "Aperçu de la page web",
+    "websiteAccessibilityTester": "Testeur d’accessibilité de site web"
+  },
+  "faq": {
+    "questions": {
+      "q1": {
+        "answer": "Ruxailab est une plateforme open source conçue pour collecter des retours sur l’utilisabilité auprès des utilisateurs. Elle vous permet de recueillir des avis, de les analyser et de créer des rapports complets afin de mieux comprendre l’utilisabilité de votre application. Elle propose également des tests heuristiques permettant aux experts d’évaluer la conformité de votre application aux principes d’utilisabilité. Le projet est maintenu par une communauté de contributeurs et est distribué sous licence MIT.",
+        "question": "1. Qu’est-ce que Ruxailab ?"
+      },
+      "q2": {
+        "answer_part1": "Pour commencer, consultez notre",
+        "answer_part2": "pour télécharger le code source. Consultez la documentation pour les instructions d’installation et des exemples. Vous pouvez également visiter notre",
+        "answer_part3": "page pour plus de ressources.",
+        "help_link": "Aide",
+        "link_text": "Dépôt GitHub",
+        "question": "2. Comment démarrer avec le projet ?"
+      },
+      "q3": {
+        "answer": "Absolument ! Nous accueillons volontiers les contributions de la communauté. Veuillez lire nos directives de contribution dans le dépôt et soumettre une pull request avec vos modifications.",
+        "question": "3. Puis-je contribuer au projet ?"
+      },
+      "q4": {
+        "answer": "Le projet est distribué sous licence MIT. Cela signifie que vous pouvez utiliser, modifier et distribuer le projet librement, à condition d’inclure la licence et la mention de droit d’auteur.",
+        "question": "4. Quelle licence utilise le projet ?"
+      },
+      "q5": {
+        "answer": "Vous pouvez signaler des bugs ou demander de nouvelles fonctionnalités en ouvrant une issue sur notre",
+        "answer_part2": ". Veuillez fournir autant de détails que possible pour nous aider à traiter votre demande.",
+        "link_text": "Issues GitHub",
+        "question": "5. Comment signaler un bug ou demander une fonctionnalité ?"
+      },
+      "q6": {
+        "answer": "Oui ! Rejoignez notre communauté sur",
+        "answer_part2": "pour échanger avec d’autres utilisateurs et contributeurs, poser des questions et partager des idées.",
+        "link_text": "GitHub",
+        "question": "6. Existe-t-il une communauté pour Ruxailab ?"
+      },
+      "q7": {
+        "answer": "Nous prenons votre vie privée au sérieux. Veuillez consulter notre",
+        "answer_part2": "pour plus de détails sur la manière dont nous collectons et utilisons vos informations.",
+        "link_text": "Politique de confidentialité",
+        "question": "7. Comment mes données sont-elles traitées ?"
+      },
+      "q8": {
+        "answer": "Le projet est maintenu par une équipe de bénévoles et de contributeurs. Vous trouverez plus d’informations sur les mainteneurs dans le dépôt du projet.",
+        "question": "8. Qui maintient le projet ?"
+      },
+      "q9": {
+        "answer": "Si vous avez d’autres questions, veuillez nous contacter.",
+        "question": "9. Vous avez encore des questions ?"
+      }
+    },
+    "subtitle": "Trouvez des réponses aux questions fréquentes concernant Ruxailab.",
+    "title": "Foire aux questions (FAQ)"
+  },
+  "pageNotFound": {
+    "description": "Nous n’avons pas pu trouver la page que vous recherchiez.",
+    "goBack": "Retour",
+    "title": "Page non trouvée"
+  },
+  "privacyPolicy": {
+    "lastUpdated": "Dernière mise à jour : 15 avril 2025",
+    "sections": {
+      "changes": {
+        "content": "Nous pouvons mettre à jour cette politique de confidentialité de temps à autre. Nous informerons les utilisateurs des changements importants en publiant un avis sur le site web ou le dépôt du projet.",
+        "title": "8. Modifications de cette politique"
+      },
+      "contact": {
+        "content": "Si vous avez des questions concernant cette politique de confidentialité, veuillez nous contacter.",
+        "title": "9. Contact"
+      },
+      "cookies": {
+        "content": "Notre site web peut utiliser des cookies pour améliorer votre expérience (par exemple, pour mémoriser vos préférences). Vous pouvez désactiver les cookies dans les paramètres de votre navigateur, mais cela peut affecter le fonctionnement du site.",
+        "title": "5. Cookies"
+      },
+      "informationCollected": {
+        "content": "En tant que projet open source, nous ne collectons généralement pas directement d’informations personnelles. Toutefois, si vous interagissez avec notre site ou nos services (par exemple en créant un compte ou en envoyant un formulaire de contact), nous pouvons collecter :",
+        "items": {
+          "contributions": "Contributions (par exemple, votre nom d’utilisateur GitHub si vous contribuez au projet)",
+          "email": "Adresses e-mail (par exemple, pour la création de compte ou les newsletters)",
+          "usage": "Données d’utilisation (par exemple, des analyses sur la manière dont le site est consulté)"
+        },
+        "title": "2. Informations que nous collectons"
+      },
+      "introduction": {
+        "content": "Ruxailab est un projet open source engagé à protéger votre vie privée. Cette politique de confidentialité explique comment nous collectons, utilisons et protégeons les informations que vous fournissez lors de l’utilisation du projet.",
+        "title": "1. Introduction"
+      },
+      "rights": {
+        "content": "Selon votre lieu de résidence, vous pouvez avoir le droit d’accéder à vos informations personnelles, de les corriger ou de les supprimer. Veuillez nous contacter pour exercer ces droits.",
+        "title": "7. Vos droits"
+      },
+      "security": {
+        "content": "Nous prenons des mesures raisonnables pour protéger les données que nous collectons, mais aucun mode de transmission sur Internet n’est sûr à 100 %. Nous ne pouvons pas garantir la sécurité absolue de vos informations.",
+        "title": "6. Sécurité des données"
+      },
+      "sharing": {
+        "content": "Nous ne vendons ni ne partageons vos informations personnelles avec des tiers, sauf si la loi l’exige ou pour protéger le projet (par exemple en cas d’abus ou de fraude).",
+        "title": "4. Partage des données"
+      },
+      "usage": {
+        "content": "Nous pouvons utiliser les informations collectées pour :",
+        "items": {
+          "analyze": "Analyser l’utilisation afin d’améliorer l’expérience utilisateur",
+          "communicate": "Communiquer avec vous (par exemple, répondre à vos demandes ou vous informer des mises à jour)",
+          "improve": "Fournir et améliorer le projet et ses services"
+        },
+        "title": "3. Utilisation de vos informations"
+      }
+    },
+    "title": "Politique de confidentialité"
   }
 }
+

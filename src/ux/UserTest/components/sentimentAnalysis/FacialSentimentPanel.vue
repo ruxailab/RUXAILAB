@@ -13,11 +13,18 @@
           Emotion insights based on facial expressions
         </div>
       </v-col>
+      <v-spacer />
+      <v-col cols="auto">
+        <v-btn variant="outlined" :disabled="isAnalyzing" @click="analyzeVideo">
+          <span class="sr-only">Re-analyze Video</span>
+          <v-icon>mdi-refresh</v-icon>
+        </v-btn>
+      </v-col>
       <v-col cols="auto">
         <v-chip
           :color="isAnalyzing ? 'grey' : 'primary'"
           variant="flat"
-          prepend-icon="mdi-face-recognition"
+          append-icon="mdi-face-recognition"
         >
           {{ isAnalyzing ? 'Analyzing...' : 'Analysis Complete' }}
         </v-chip>
