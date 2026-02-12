@@ -42,7 +42,7 @@
           />
           <div class="info-content">
             <div class="info-value">{{ getStudyType(nextSession) }}</div>
-            <div>Tipo de Estudio</div>
+            <div>{{ $t('Dashboard.studyType') }}</div>
           </div>
         </div>
         <div class="info-item">

@@ -23,11 +23,10 @@
       class="ma-2 mb-4"
       prepend-icon="mdi-eye"
     >
-      <v-alert-title>Viewing Mode</v-alert-title>
-      You are viewing assessment data for user ID:
+      <v-alert-title>{{ $t('Accessibility.viewingMode') }}</v-alert-title>
+      {{ $t('Accessibility.viewingAssessmentData') }}
       <strong>{{ viewingUserId }}</strong
-      >. This is read-only mode - you cannot save changes to another user's
-      assessment.
+      >. {{ $t('Accessibility.readOnlyMode') }}
     </v-alert>
 
     <!-- Debug Panel (only show if there are issues) -->
@@ -37,40 +36,57 @@
       class="ma-2"
       variant="outlined"
     >
-      <div class="text-subtitle-2 font-weight-bold mb-2">Information</div>
+      <div class="text-subtitle-2 font-weight-bold mb-2">
+        {{ $t('Accessibility.information') }}
+      </div>
       <div class="text-caption">
-        <div><strong>Viewing User ID:</strong> {{ viewingUserId }}</div>
-        <div><strong>Viewing Mode:</strong> {{ viewingUserType }}</div>
-        <div><strong>User Role:</strong> {{ currentUserRole }}</div>
-        <div><strong>Can Save:</strong> {{ canSaveAssessments }}</div>
-        <div><strong>Compliance Level:</strong> {{ complianceLevel }}</div>
         <div>
-          <strong>Principles Available:</strong> {{ principles.length }}
+          <strong>{{ $t('Accessibility.viewingUserId') }}</strong>
+          {{ viewingUserId }}
         </div>
         <div>
-          <strong>Selected Guidelines:</strong>
+          <strong>{{ $t('Accessibility.viewingModeLabel') }}</strong>
+          {{ viewingUserType }}
+        </div>
+        <div>
+          <strong>{{ $t('Accessibility.userRole') }}</strong>
+          {{ currentUserRole }}
+        </div>
+        <div>
+          <strong>{{ $t('Accessibility.canSave') }}</strong>
+          {{ canSaveAssessments }}
+        </div>
+        <div>
+          <strong>{{ $t('Accessibility.complianceLevel') }}</strong>
+          {{ complianceLevel }}
+        </div>
+        <div>
+          <strong>{{ $t('Accessibility.principlesAvailable') }}</strong>
+          {{ principles.length }}
+        </div>
+        <div>
+          <strong>{{ $t('Accessibility.selectedGuidelines') }}</strong>
           {{ configuration.selectedGuidelines?.length || 0 }}
         </div>
         <div>
-          <strong>Raw WCAG Data Available:</strong>
+          <strong>{{ $t('Accessibility.rawWcagDataAvailable') }}</strong>
           {{ store.state.Assessment?.wcagData?.principles?.length || 0 }}
         </div>
         <div>
-          <strong>Filtered WCAG Data Available:</strong>
+          <strong>{{ $t('Accessibility.filteredWcagDataAvailable') }}</strong>
           {{
             store.state.Assessment?.filteredWcagData?.principles?.length || 0
           }}
         </div>
         <div>
-          <strong>Configuration:</strong>
+          <strong>{{ $t('Accessibility.configuration') }}</strong>
           {{ JSON.stringify(configuration, null, 2) }}
         </div>
       </div>
     </v-alert>
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
-        Evaluate the accessibility of your project based on selected WCAG
-        guidelines
+        {{ $t('Accessibility.evaluateAccessibility') }}
       </p>
     </template>
     <!-- Full width container without padding -->
@@ -80,7 +96,7 @@
         <div class="v-col v-col-2 sidebar fill-height">
           <div class="h-100" style="background-color: #f5f5f5">
             <div class="text-subtitle-1 pa-3 font-weight-bold">
-              WCAG Principles
+              {{ $t('Accessibility.wcagPrinciples') }}
             </div>
 
             <div v-if="principles.length > 0" class="pa-0">
@@ -126,7 +142,11 @@
 
             <div v-else class="pa-4">
               <div class="text-grey text-body-2">
-                {{ isLoading ? 'Loading...' : 'No principles available' }}
+                {{
+                  isLoading
+                    ? $t('Accessibility.loading')
+                    : $t('Accessibility.noPrinciplesAvailable')
+                }}
               </div>
             </div>
           </div>
@@ -163,7 +183,8 @@
                   prepend-icon="mdi-numeric"
                   class="text-caption"
                 >
-                  Level {{ currentRule?.level || 'N/A' }}
+                  {{ $t('Accessibility.level') }}
+                  {{ currentRule?.level || 'N/A' }}
                 </v-chip>
                 <v-chip
                   color="secondary"
@@ -172,7 +193,8 @@
                   prepend-icon="mdi-tag"
                   class="text-caption"
                 >
-                  v{{ currentRule?.version || 'N/A' }}
+                  {{ $t('Accessibility.version')
+                  }}{{ currentRule?.version || 'N/A' }}
                 </v-chip>
                 <v-chip
                   v-if="currentRule?.conformanceLevel"
@@ -208,7 +230,9 @@
 
             <!-- Compact Success Criterion Section -->
             <div class="mb-4">
-              <h2 class="text-h6 font-weight-bold mb-2">Success Criterion</h2>
+              <h2 class="text-h6 font-weight-bold mb-2">
+                {{ $t('Accessibility.successCriterion') }}
+              </h2>
               <v-card
                 variant="outlined"
                 class="mb-2"
@@ -219,7 +243,7 @@
                     v-if="!currentRule?.criteria?.length"
                     class="text-caption text-grey"
                   >
-                    No success criteria available for this rule.
+                    {{ $t('Accessibility.noSuccessCriteria') }}
                   </div>
                   <ul v-else class="criteria-list pl-3 mb-0">
                     <li
@@ -244,7 +268,9 @@
 
             <!-- Compact Appraiser Notes Section -->
             <div class="my-4">
-              <h2 class="text-h6 font-weight-bold mb-2">Appraiser Notes</h2>
+              <h2 class="text-h6 font-weight-bold mb-2">
+                {{ $t('Accessibility.appraiserNotes') }}
+              </h2>
               <v-tabs
                 v-model="activeNoteTab"
                 class="mb-2"
@@ -257,7 +283,7 @@
                   :value="idx"
                   class="text-caption"
                 >
-                  Note {{ idx + 1 }}
+                  {{ $t('Accessibility.note') }} {{ idx + 1 }}
                   <v-btn
                     v-if="notes.length > 1"
                     icon="mdi-close"
@@ -332,7 +358,9 @@
             <!-- Compact Assessment Section -->
             <v-row class="mb-4">
               <v-col cols="6">
-                <h2 class="text-h6 font-weight-bold mb-2">Severity</h2>
+                <h2 class="text-h6 font-weight-bold mb-2">
+                  {{ $t('Accessibility.severity') }}
+                </h2>
                 <v-radio-group
                   v-model="severity"
                   density="compact"
@@ -359,7 +387,9 @@
                 </v-radio-group>
               </v-col>
               <v-col cols="6">
-                <h2 class="text-h6 font-weight-bold mb-2">Status</h2>
+                <h2 class="text-h6 font-weight-bold mb-2">
+                  {{ $t('Accessibility.status') }}
+                </h2>
                 <v-radio-group v-model="status" density="compact" class="mt-0">
                   <v-radio
                     label="Pass"
@@ -394,7 +424,11 @@
                 variant="flat"
                 @click="saveAssessment"
               >
-                {{ canSaveAssessments ? 'Save Assessment' : 'Sign In to Save' }}
+                {{
+                  canSaveAssessments
+                    ? $t('Accessibility.saveAssessment')
+                    : $t('Accessibility.signInToSave')
+                }}
               </v-btn>
             </div>
 
@@ -413,7 +447,7 @@
                   size="small"
                   @click="prevRule"
                 >
-                  Previous
+                  {{ $t('Accessibility.previous') }}
                 </v-btn>
                 <div class="text-body-2 text-grey-darken-1">
                   {{ selectedRuleIdx + 1 }} / {{ rules?.length || 0 }}
@@ -426,7 +460,7 @@
                   size="small"
                   @click="nextRule"
                 >
-                  Next
+                  {{ $t('Accessibility.next') }}
                 </v-btn>
               </div>
             </v-card>
@@ -443,12 +477,11 @@
               />
 
               <h2 class="text-h6 font-weight-regular text-grey-darken-2 mb-1">
-                Ready to Evaluate
+                {{ $t('Accessibility.readyToEvaluate') }}
               </h2>
 
               <p class="text-body-2 text-medium-emphasis">
-                Select a principle from the list to view its guidelines and
-                rules.
+                {{ $t('Accessibility.selectPrincipleInfo') }}
               </p>
             </div>
           </v-card>
@@ -458,7 +491,7 @@
         <v-col cols="3" class="toc-sidebar fill-height">
           <v-card flat class="h-100" color="grey-lighten-5">
             <v-card-title class="text-subtitle-1 pa-3 font-weight-bold">
-              Rules
+              {{ $t('Accessibility.rules') }}
             </v-card-title>
             <v-list density="compact" class="pa-1">
               <template v-if="guidelines.length > 0">
@@ -481,7 +514,7 @@
               </template>
               <v-list-item v-else>
                 <v-list-item-title class="text-grey text-caption">
-                  No rules available
+                  {{ $t('Accessibility.noRulesAvailable') }}
                 </v-list-item-title>
               </v-list-item>
             </v-list>
@@ -510,14 +543,14 @@
           <v-icon>mdi-eye</v-icon>
         </v-btn>
       </template>
-      <span>View Assessment</span>
+      <span>{{ $t('Accessibility.viewAssessment') }}</span>
     </v-tooltip>
 
     <!-- Compact Assessment Data Dialog -->
     <v-dialog v-model="showAssessmentDialog" max-width="1000" max-height="700">
       <v-card>
         <v-card-title class="d-flex justify-space-between align-center pa-3">
-          <span class="text-h6">Assessment Data</span>
+          <span class="text-h6">{{ $t('Accessibility.assessmentData') }}</span>
           <v-btn icon size="small" @click="showAssessmentDialog = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
@@ -552,7 +585,9 @@
                     :key="index"
                     class="mb-2"
                   >
-                    <strong>Note {{ index + 1 }}:</strong>
+                    <strong
+                      >{{ $t('Accessibility.note') }} {{ index + 1 }}:</strong
+                    >
                     <div>{{ note.text }}</div>
                     <div v-if="note.imageName" class="mt-1">
                       <v-chip size="small" color="grey-lighten-2">
@@ -569,11 +604,11 @@
         <v-card-actions class="pa-3">
           <v-spacer />
           <v-btn color="primary" @click="showAssessmentDialog = false">
-            Close
+            {{ $t('Accessibility.close') }}
           </v-btn>
           <v-btn color="primary" variant="text" @click="downloadAssessmentData">
             <v-icon start> mdi-download </v-icon>
-            Export JSON
+            {{ $t('Accessibility.exportJson') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -1257,7 +1292,9 @@ const saveAssessment = async () => {
 .guideline-item {
   cursor: pointer;
   border-left: 3px solid transparent;
-  transition: background-color 0.2s ease-in-out, border-left-color 0.2s ease;
+  transition:
+    background-color 0.2s ease-in-out,
+    border-left-color 0.2s ease;
 }
 
 /* Hover Effect */

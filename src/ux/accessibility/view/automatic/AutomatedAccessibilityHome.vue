@@ -5,7 +5,7 @@
   </div>
   <v-container class="card-container pt-6 pb-10">
     <p class="presentation-text text-center text-md-left mb-4">
-      Browse accessibility tools and actions
+      {{ $t('Accessibility.browseAccessibilityTools') }}
     </p>
     <CardsManager
       :cards="managerCards"
