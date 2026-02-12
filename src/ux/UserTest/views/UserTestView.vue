@@ -1041,7 +1041,6 @@ const autoComplete = async () => {
   }
 }
 
-
 const initializeAnonymousUser = () => {
   if (!user.value && !anonymousUserDocId.value) {
     anonymousUserDocId.value = nanoid(16)

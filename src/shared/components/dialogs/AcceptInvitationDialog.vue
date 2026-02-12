@@ -35,5 +35,5 @@ defineProps({
   submitLabel: { type: String, default: '' },
 })
 
-const emit = defineEmits(['update:modelValue', 'cancel', 'submit'])
+defineEmits(['update:modelValue', 'cancel', 'submit'])
 </script>
