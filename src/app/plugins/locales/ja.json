@@ -938,7 +938,7 @@
       "tam3": "TAM-3（包括的）- 不安、楽しさ、客観的な使いやすさを含む",
       "sart": "状況認識評価技法 - 状況認識を測定"
     },
-    "previews": {
+    "answerTypePreview": {
       "noAnswer": {
         "message": "タスク完了！追加のフィードバックは不要です。"
       },
@@ -1056,29 +1056,6 @@
         "camera": "カメラ",
         "audio": "オーディオ"
       }
-    },
-    "answerTypePreview": {
-      "taskCompleted": "タスク完了！追加のフィードバックは必要ありません。",
-      "participantsFeedbackHere": "参加者はここでフィードバックを提供します...",
-      "submitFeedback": "フィードバックを送信",
-      "postTaskQuestions": "タスク後の質問",
-      "rateTaskDifficulty": "1. このタスクの難易度をどう評価しますか？",
-      "additionalComments": "2. 追加のコメントはありますか？",
-      "optionalFeedback": "オプションのフィードバック...",
-      "externalFormTitle": "外部フォーム",
-      "externalFormDescription": "参加者はタスク後に外部フォームに入力するようリダイレクトされます。",
-      "openExternalForm": "外部フォームを開く",
-      "nasaTlxTitle": "NASAタスク負荷指数",
-      "mentalDemand": "精神的要求",
-      "physicalDemand": "身体的要求",
-      "lowHigh": "低 - 高",
-      "moreDimensions": "+ 4つの追加次元",
-      "susTitle": "システム使用性尺度",
-      "susStatement1": "1. このシステムを頻繁に使いたいと思います。",
-      "stronglyDisagree": "強く反対",
-      "stronglyAgree": "強く賛成",
-      "moreStatements": "+ 9つの追加ステートメント",
-      "sartTitle": "状況認識評価技法"
     }
   },
   "UserTestView": {

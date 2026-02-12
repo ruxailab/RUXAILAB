@@ -938,7 +938,7 @@
       "tam3": "TAM-3 (Comprehensive) - includes anxiety, playfulness, and objective usability",
       "sart": "Situation Awareness Rating Technique - measures situational awareness"
     },
-    "previews": {
+    "answerTypePreview": {
       "noAnswer": {
         "message": "Task completed! No additional feedback required."
       },
@@ -1056,29 +1056,6 @@
         "camera": "Camera",
         "audio": "Audio"
       }
-    },
-    "answerTypePreview": {
-      "taskCompleted": "Task completed! No additional feedback required.",
-      "participantsFeedbackHere": "Participants will provide their feedback here...",
-      "submitFeedback": "Submit Feedback",
-      "postTaskQuestions": "Post-Task Questions",
-      "rateTaskDifficulty": "1. How would you rate the difficulty of this task?",
-      "additionalComments": "2. Any additional comments?",
-      "optionalFeedback": "Optional feedback...",
-      "externalFormTitle": "External Form",
-      "externalFormDescription": "Participants will be redirected to complete an external form after the task.",
-      "openExternalForm": "Open External Form",
-      "nasaTlxTitle": "NASA Task Load Index",
-      "mentalDemand": "Mental Demand",
-      "physicalDemand": "Physical Demand",
-      "lowHigh": "Low - High",
-      "moreDimensions": "+ 4 more dimensions",
-      "susTitle": "System Usability Scale",
-      "susStatement1": "1. I think that I would like to use this system frequently.",
-      "stronglyDisagree": "Strongly Disagree",
-      "stronglyAgree": "Strongly Agree",
-      "moreStatements": "+ 9 more statements",
-      "sartTitle": "Situation Awareness Rating Technique"
     }
   },
   "UserTestView": {

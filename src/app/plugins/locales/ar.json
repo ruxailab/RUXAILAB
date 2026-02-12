@@ -940,7 +940,7 @@
       "tam3": "TAM-3 (الشامل) - يشمل القلق والمرح وقابلية الاستخدام الموضوعية",
       "sart": "تقنية تقييم الوعي الظرفي - يقيس الوعي الظرفي"
     },
-    "previews": {
+    "answerTypePreview": {
       "noAnswer": {
         "message": "تم إكمال المهمة! لا حاجة لملاحظات إضافية."
       },
@@ -1058,29 +1058,6 @@
         "camera": "الكاميرا",
         "audio": "الصوت"
       }
-    },
-    "answerTypePreview": {
-      "taskCompleted": "اكتملت المهمة! لا توجد ملاحظات إضافية مطلوبة.",
-      "participantsFeedbackHere": "سيقدم المشاركون ملاحظاتهم هنا...",
-      "submitFeedback": "إرسال الملاحظات",
-      "postTaskQuestions": "أسئلة ما بعد المهمة",
-      "rateTaskDifficulty": "1. كيف تقيم صعوبة هذه المهمة؟",
-      "additionalComments": "2. أي تعليقات إضافية؟",
-      "optionalFeedback": "ملاحظات اختيارية...",
-      "externalFormTitle": "نموذج خارجي",
-      "externalFormDescription": "سيتم توجيه المشاركين لملء نموذج خارجي بعد المهمة.",
-      "openExternalForm": "فتح النموذج الخارجي",
-      "nasaTlxTitle": "مؤشر حمل المهام ناسا",
-      "mentalDemand": "المتطلبات الذهنية",
-      "physicalDemand": "المتطلبات الجسدية",
-      "lowHigh": "منخفض - مرتفع",
-      "moreDimensions": "+ 4 أبعاد أخرى",
-      "susTitle": "مقياس قابلية استخدام النظام",
-      "susStatement1": "1. أعتقد أنني أود استخدام هذا النظام بشكل متكرر.",
-      "stronglyDisagree": "أعارض بشدة",
-      "stronglyAgree": "أوافق بشدة",
-      "moreStatements": "+ 9 عبارات أخرى",
-      "sartTitle": "تقنية تقييم الوعي الظرفي"
     }
   },
   "UserTestView": {

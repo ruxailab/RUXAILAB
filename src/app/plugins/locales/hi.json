@@ -938,7 +938,7 @@
       "tam3": "TAM-3 (व्यापक) - चिंता, चंचलता और वस्तुनिष्ठ उपयोगिता शामिल है",
       "sart": "स्थिति जागरूकता रेटिंग तकनीक - स्थितिजन्य जागरूकता मापती है"
     },
-    "previews": {
+    "answerTypePreview": {
       "noAnswer": {
         "message": "कार्य पूरा हुआ! किसी अतिरिक्त फीडबैक की आवश्यकता नहीं है।"
       },
@@ -1056,29 +1056,6 @@
         "camera": "कैमरा",
         "audio": "ऑडियो"
       }
-    },
-    "answerTypePreview": {
-      "taskCompleted": "कार्य पूर्ण! कोई अतिरिक्त प्रतिक्रिया आवश्यक नहीं है।",
-      "participantsFeedbackHere": "प्रतिभागी यहाँ अपनी प्रतिक्रिया देंगे...",
-      "submitFeedback": "प्रतिक्रिया सबमिट करें",
-      "postTaskQuestions": "कार्य के बाद के प्रश्न",
-      "rateTaskDifficulty": "1. इस कार्य की कठिनाई को आप कैसे रेट करेंगे?",
-      "additionalComments": "2. कोई अतिरिक्त टिप्पणी?",
-      "optionalFeedback": "वैकल्पिक प्रतिक्रिया...",
-      "externalFormTitle": "बाहरी फॉर्म",
-      "externalFormDescription": "कार्य के बाद प्रतिभागियों को एक बाहरी फॉर्म भरने के लिए रीडायरेक्ट किया जाएगा।",
-      "openExternalForm": "बाहरी फॉर्म खोलें",
-      "nasaTlxTitle": "NASA टास्क लोड इंडेक्स",
-      "mentalDemand": "मानसिक मांग",
-      "physicalDemand": "शारीरिक मांग",
-      "lowHigh": "कम - अधिक",
-      "moreDimensions": "+ 4 और आयाम",
-      "susTitle": "सिस्टम प्रयोगशीलता स्केल",
-      "susStatement1": "1. मुझे लगता है कि मैं इस सिस्टम को बार-बार उपयोग करना चाहूंगा।",
-      "stronglyDisagree": "पूर्णतः असहमत",
-      "stronglyAgree": "पूर्णतः सहमत",
-      "moreStatements": "+ 9 और कथन",
-      "sartTitle": "स्थिति जागरूकता रेटिंग तकनीक"
     }
   },
   "UserTestView": {
