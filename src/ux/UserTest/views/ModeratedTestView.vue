@@ -406,6 +406,7 @@
               @proceed-to-next-step="proceedToNextStep"
               @step-selected="handleStepSelected"
               @call-ended="displayVideoCallComponent = false"
+              @moderator-status-change="handleModeratorStatusChange"
             />
           </div>
 
@@ -609,6 +610,7 @@ import {
   set,
   get,
   onDisconnect,
+  serverTimestamp,
 } from 'firebase/database'
 import { database } from '@/app/plugins/firebase/index'
 import { ref, computed, watch, onMounted, reactive, watchEffect } from 'vue'
@@ -641,8 +643,7 @@ const { t } = useI18n()
 // Data variables
 
 onBeforeUnmount(() => {
-  if (heartbeatInterval.value) clearInterval(heartbeatInterval.value)
-  if (checkInterval.value) clearInterval(checkInterval.value)
+  if (moderatorDisconnectTimeout.value) clearTimeout(moderatorDisconnectTimeout.value)
 })
 
 const testDisabledReason = ref(null)
@@ -664,10 +665,8 @@ const taskStepComponent = ref(null)
 const allTasksCompleted = ref(false)
 const submitDialog = ref(false)
 const notesDrawerOpen = ref(true)
-const heartbeatInterval = ref(null)
-const checkInterval = ref(null) // Local check for evaluator
 const moderatorInactive = ref(false)
-const lastHeartbeatTimestamp = ref(Date.now())
+const moderatorDisconnectTimeout = ref(null)
 
 // From video call to be used by recorders
 const remoteStream = ref(null)
@@ -959,14 +958,6 @@ const startTest = async () => {
       if (data.showVideoCall !== undefined) {
         displayVideoCallComponent.value = data.showVideoCall
       }
-
-      // Check Moderator Heartbeat (timestamp sync)
-      if (data.lastHeartbeat) {
-        lastHeartbeatTimestamp.value = data.lastHeartbeat
-      } else {
-        // If no heartbeat present yet, assume active (grace period start)
-        lastHeartbeatTimestamp.value = Date.now()
-      }
     }
   })
 
@@ -975,7 +966,7 @@ const startTest = async () => {
     start.value = false
   }, 1000)
 
-  // Initialize Heartbeat for Moderator and ensure Room defaults
+  // Initialize Room defaults for Moderator
   if (isUserTestAdmin.value) {
     // Check if valid data exists, otherwise init defaults
     const snapshot = await get(roomRef)
@@ -983,7 +974,7 @@ const startTest = async () => {
 
     const updates = {
       status: 'active',
-      lastHeartbeat: Date.now(),
+      lastUpdate: Date.now(),
     }
 
     if (currentData.globalIndex === undefined) updates.globalIndex = 0
@@ -991,22 +982,31 @@ const startTest = async () => {
     if (currentData.showVideoCall === undefined) updates.showVideoCall = false
     if (currentData.createdAt === undefined) updates.createdAt = Date.now()
 
-    update(roomRef, updates)
+    await update(roomRef, updates)
 
-    if (heartbeatInterval.value) clearInterval(heartbeatInterval.value)
-    heartbeatInterval.value = setInterval(() => {
-      update(roomRef, {
-        lastHeartbeat: Date.now(),
-      })
-    }, 120000) // 2 minutes
+    // Write lastUpdate timestamp when moderator disconnects (server-side timestamp)
+    onDisconnect(roomRef).update({ lastUpdate: serverTimestamp() })
+  }
+}
+
+const MODERATOR_DISCONNECT_TIMEOUT_MS = 5 * 60 * 1000 // 5 minutes
+
+const handleModeratorStatusChange = (connected) => {
+  if (isUserTestAdmin.value) return // Moderator does not need this
+
+  if (!connected) {
+    // Moderator disconnected — start 5-min timeout
+    if (moderatorDisconnectTimeout.value) clearTimeout(moderatorDisconnectTimeout.value)
+    moderatorDisconnectTimeout.value = setTimeout(() => {
+      moderatorInactive.value = true
+    }, MODERATOR_DISCONNECT_TIMEOUT_MS)
   } else {
-    // Start local interval for evaluator to check moderator status
-    if (checkInterval.value) clearInterval(checkInterval.value)
-    checkInterval.value = setInterval(() => {
-      const diff = Date.now() - lastHeartbeatTimestamp.value
-      // 5 minutes grace period
-      moderatorInactive.value = diff > 1 * 60 * 1000
-    }, 10000) // Check every 10 seconds locally
+    // Moderator reconnected — clear timeout and dismiss alert instantly
+    if (moderatorDisconnectTimeout.value) {
+      clearTimeout(moderatorDisconnectTimeout.value)
+      moderatorDisconnectTimeout.value = null
+    }
+    moderatorInactive.value = false
   }
 }
 
@@ -1458,10 +1458,14 @@ onBeforeUnmount(async () => {
   // Do NOT delete the room on unmount (refresh/navigate away). Only explicit end should delete.
   // await set(roomRef, null)
 
-  // Clear heartbeat interval if it exists
-  if (heartbeatInterval.value) {
-    clearInterval(heartbeatInterval.value)
-    heartbeatInterval.value = null
+  // Moderator: explicitly stamp lastUpdate on leave (covers SPA navigation)
+  if (isUserTestAdmin.value) {
+    await update(roomRef, { lastUpdate: serverTimestamp() })
+  }
+
+  if (moderatorDisconnectTimeout.value) {
+    clearTimeout(moderatorDisconnectTimeout.value)
+    moderatorDisconnectTimeout.value = null
   }
 })
 </script>
