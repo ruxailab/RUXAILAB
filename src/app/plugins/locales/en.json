@@ -852,7 +852,8 @@
       "currentTasks": "Current Tasks",
       "postForm": "Post Form",
       "writeNewPost": "Write a new post question",
-      "testConfiguration": "Test Configuration"
+      "testConfiguration": "Test Configuration",
+      "eyeTrackingConfigurations": "Eye Tracking Configurations"
     },
     "messages": {
       "noTasks": "You don't have any task, create one to proceed.",
@@ -1086,6 +1087,7 @@
     }
   },
   "UserTestView": {
+    "loading": "Loading...",
     "titles": {
       "preTestConsent": "Pre Test - Consent",
       "preTestForm": "Pre Test - Form",
