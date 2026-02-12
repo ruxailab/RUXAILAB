@@ -1175,7 +1175,8 @@
     "PreTasksStep": {
       "title": "Tâches",
       "heading": "Commençons la phase des tâches",
-      "description": "Vous allez compléter <strong>{numTasks}</strong> tâches liées à l'utilisation de l'outil. Il n'y a pas de réponses correctes ou incorrectes : ce qui compte, c'est comment vous interagissez.",
+      "description": "Vous allez effectuer",
+      "tasksSuffix": "des tâches liées à l'utilisation de l'outil. Il n'y a pas de bonnes ou de mauvaises réponses : ce qui compte, c'est la manière dont vous interagissez.",
       "instruction": "Lorsque vous êtes prêt, cliquez sur le bouton pour commencer.",
       "startButton": "Commencer les tâches",
       "recordingTitle": "Informations d'enregistrement",
