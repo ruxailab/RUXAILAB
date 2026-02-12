@@ -19,7 +19,12 @@
       <div class="content">
         <div class="title-row">
           <div class="text-subtitle-1 font-weight-medium">
-            {{ notification.title || (notification.titleTemplate ? $t(notification.titleTemplate, notification.titleParams || {}) : 'Notification') }}
+            {{
+              notification.title ||
+              (notification.titleTemplate
+                ? $t(notification.titleTemplate, notification.titleParams || {})
+                : 'Notification')
+            }}
           </div>
 
           <span class="time">
@@ -28,7 +33,15 @@
         </div>
 
         <div class="description line-clamp-2">
-          {{ notification.description || (notification.descriptionTemplate ? $t(notification.descriptionTemplate, notification.descriptionParams || {}) : '') }}
+          {{
+            notification.description ||
+            (notification.descriptionTemplate
+              ? $t(
+                  notification.descriptionTemplate,
+                  notification.descriptionParams || {},
+                )
+              : '')
+          }}
         </div>
 
         <div class="meta">
@@ -69,7 +82,6 @@ const emit = defineEmits(['go-to-redirect', 'mark-as-read'])
 const { t } = useI18n()
 
 const onClick = () => emit('go-to-redirect', props.notification)
-
 
 const getTestIcon = (type) =>
   METHOD_DEFINITIONS?.[type]?.icon || 'mdi-bell-outline'

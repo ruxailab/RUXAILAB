@@ -8,8 +8,7 @@
     <!-- if the data not available  -->
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
-        View detailed accessibility issues and recommendations to improve your
-        web content.
+        {{ $t('Accessibility.viewDetailedIssues') }}
       </p>
     </template>
     <v-alert
@@ -21,8 +20,12 @@
     >
       <div class="d-flex flex-column align-center justify-center">
         <v-icon color="info" size="48" class="mb-2"> mdi-info-circle </v-icon>
-        <span class="text-h6 font-weight-bold mb-1">Infomation</span>
-        <span class="text-body-1">No Assessment Available for this Test</span>
+        <span class="text-h6 font-weight-bold mb-1">{{
+          $t('Accessibility.information')
+        }}</span>
+        <span class="text-body-1">{{
+          $t('Accessibility.noAssessmentAvailable')
+        }}</span>
       </div>
     </v-alert>
 
@@ -32,7 +35,7 @@
       <v-card class="mb-2" density="compact">
         <v-card-title class="text-body-1 py-2">
           <v-icon icon="mdi-web-check" class="me-2" color="primary" size="20" />
-          Accessibility Report
+          {{ $t('Accessibility.accessibilityReport') }}
         </v-card-title>
         <v-card-text class="py-1">
           <v-row class="ma-0" dense>
@@ -106,7 +109,9 @@
                       >
                         {{ getIssueCounts().errors }}
                       </div>
-                      <div class="text-caption">Errors</div>
+                      <div class="text-caption">
+                        {{ $t('Accessibility.errors') }}
+                      </div>
                     </v-card-text>
                   </v-card>
                 </v-col>
@@ -129,7 +134,9 @@
                       >
                         {{ getIssueCounts().warnings }}
                       </div>
-                      <div class="text-caption">Warnings</div>
+                      <div class="text-caption">
+                        {{ $t('Accessibility.warnings') }}
+                      </div>
                     </v-card-text>
                   </v-card>
                 </v-col>
@@ -150,7 +157,9 @@
                       >
                         {{ getIssueCounts().notices }}
                       </div>
-                      <div class="text-caption">Notices</div>
+                      <div class="text-caption">
+                        {{ $t('Accessibility.notices') }}
+                      </div>
                     </v-card-text>
                   </v-card>
                 </v-col>
@@ -160,7 +169,7 @@
               <v-card density="compact">
                 <v-card-title class="py-2 px-3 text-body-2">
                   <v-icon icon="mdi-alert-circle" class="me-1" size="18" />
-                  Issues
+                  {{ $t('Accessibility.issues') }}
                 </v-card-title>
                 <v-card-text class="py-1 px-2">
                   <v-list density="compact">
@@ -223,7 +232,7 @@
                 >
                   <v-card-title class="py-2 px-3 text-body-2">
                     <v-icon icon="mdi-alert-circle" class="me-1" size="18" />
-                    Issues
+                    {{ $t('Accessibility.issues') }}
                   </v-card-title>
                   <v-card-text
                     class="flex-grow-1 overflow-y-auto py-1 px-2"
@@ -275,7 +284,7 @@
                       "
                       class="text-center py-2 text-caption grey-text"
                     >
-                      Loading more...
+                      {{ $t('Accessibility.loadingMore') }}
                     </div>
                   </v-card-text>
                 </v-card>
@@ -289,7 +298,7 @@
                 >
                   <v-card-title class="py-2 px-3 text-body-2">
                     <v-icon icon="mdi-web" class="me-1" size="18" />
-                    Webpage Preview
+                    {{ $t('Accessibility.webpagePreview') }}
                   </v-card-title>
                   <v-card-text
                     v-if="report.ReportModifiedHtml"
@@ -334,7 +343,7 @@
                 >
                   <v-card-title class="py-2 px-3 text-body-2">
                     <v-icon icon="mdi-alert-circle" class="me-1" size="18" />
-                    Issues
+                    {{ $t('Accessibility.issues') }}
                   </v-card-title>
                   <v-card-text
                     class="flex-grow-1 overflow-y-auto py-1 px-2"
@@ -387,7 +396,7 @@
                       "
                       class="text-center py-2 text-caption grey-text"
                     >
-                      Loading more...
+                      {{ $t('Accessibility.loadingMore') }}
                     </div>
                   </v-card-text>
                 </v-card>
@@ -401,7 +410,7 @@
                 >
                   <v-card-title class="py-2 px-3 text-body-2">
                     <v-icon icon="mdi-information" class="me-1" size="18" />
-                    Issue Details
+                    {{ $t('Accessibility.issueDetails') }}
                   </v-card-title>
                   <v-card-text class="flex-grow-1 overflow-y-auto py-1 px-2">
                     <div v-if="selectedIssue !== null">
@@ -410,7 +419,7 @@
                           <v-list-item-title
                             class="text-caption font-weight-bold"
                           >
-                            Type
+                            {{ $t('Accessibility.type') }}
                           </v-list-item-title>
                           <v-list-item-subtitle>
                             <v-chip
@@ -429,7 +438,7 @@
                           <v-list-item-title
                             class="text-caption font-weight-bold"
                           >
-                            Code
+                            {{ $t('Accessibility.code') }}
                           </v-list-item-title>
                           <v-list-item-subtitle>
                             <code
@@ -444,7 +453,7 @@
                           <v-list-item-title
                             class="text-caption font-weight-bold"
                           >
-                            Message
+                            {{ $t('Accessibility.message') }}
                           </v-list-item-title>
                           <v-list-item-subtitle class="mt-1 text-caption">
                             {{ report.ReportIssues[selectedIssue].message }}
@@ -454,7 +463,7 @@
                           <v-list-item-title
                             class="text-caption font-weight-bold"
                           >
-                            Context
+                            {{ $t('Accessibility.context') }}
                           </v-list-item-title>
                           <v-list-item-subtitle class="mt-1">
                             <v-sheet
@@ -476,7 +485,7 @@
                           <v-list-item-title
                             class="text-caption font-weight-bold"
                           >
-                            Selector
+                            {{ $t('Accessibility.selector') }}
                           </v-list-item-title>
                           <v-list-item-subtitle>
                             <code
@@ -493,7 +502,7 @@
                           <v-list-item-title
                             class="text-caption font-weight-bold"
                           >
-                            WCAG Reference
+                            {{ $t('Accessibility.wcagReference') }}
                           </v-list-item-title>
                           <v-list-item-subtitle>
                             <v-btn
@@ -506,7 +515,7 @@
                               size="x-small"
                               prepend-icon="mdi-open-in-new"
                             >
-                              View WCAG Guidelines
+                              {{ $t('Accessibility.viewWcagGuidelines') }}
                             </v-btn>
                           </v-list-item-subtitle>
                         </v-list-item>
@@ -529,7 +538,7 @@
     </div>
     <div v-else>
       <v-alert type="info" variant="tonal" class="mb-2 text-body-2 pa-2">
-        No report data available.
+        {{ $t('Accessibility.noReportData') }}
       </v-alert>
     </div>
   </PageWrapper>
