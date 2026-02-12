@@ -5,8 +5,7 @@
   >
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
-        Enter a website URL to run an automated accessibility test and get a
-        detailed report.
+        {{ $t('Accessibility.enterWebsiteUrl') }}
       </p>
     </template>
     <v-row justify="center" class="min-height-screen">
@@ -19,10 +18,11 @@
                 mdi-web-check
               </v-icon>
             </div>
-            <h1 class="main-title mb-4">Website Accessibility Tester</h1>
+            <h1 class="main-title mb-4">
+              {{ $t('Accessibility.websiteAccessibilityTester') }}
+            </h1>
             <p class="subtitle">
-              Analyze your website's accessibility compliance and get actionable
-              insights
+              {{ $t('Accessibility.analyzeWebsiteCompliance') }}
             </p>
           </v-card-text>
         </v-card>
@@ -59,7 +59,11 @@
                 <template #prepend>
                   <v-icon v-if="!isLoading"> mdi-play </v-icon>
                 </template>
-                {{ isLoading ? 'Testing...' : 'Run Accessibility Test' }}
+                {{
+                  isLoading
+                    ? $t('Accessibility.testing')
+                    : $t('Accessibility.runAccessibilityTest')
+                }}
               </v-btn>
             </v-form>
           </v-card-text>
@@ -81,9 +85,11 @@
               class="mb-4"
             />
 
-            <h3 class="loading-title mb-2">Analyzing Accessibility</h3>
+            <h3 class="loading-title mb-2">
+              {{ $t('Accessibility.analyzingAccessibility') }}
+            </h3>
             <p class="loading-text mb-6">
-              Running comprehensive tests on your website...
+              {{ $t('Accessibility.runningComprehensiveTests') }}
             </p>
 
             <div class="loading-steps">
@@ -125,7 +131,7 @@
               <v-icon size="32" color="error" class="me-3">
                 mdi-alert-circle
               </v-icon>
-              <h3 class="error-title">Test Failed</h3>
+              <h3 class="error-title">{{ $t('Accessibility.testFailed') }}</h3>
             </div>
 
             <div class="error-content mb-6">
@@ -137,7 +143,7 @@
                 <v-expansion-panel>
                   <v-expansion-panel-title>
                     <v-icon class="me-2"> mdi-information </v-icon>
-                    Common Issues & Solutions
+                    {{ $t('Accessibility.commonIssuesSolutions') }}
                   </v-expansion-panel-title>
                   <v-expansion-panel-text>
                     <v-list class="bg-transparent">
@@ -169,12 +175,14 @@
                 icon="mdi-lightbulb"
                 class="mb-4"
               >
-                <div class="font-weight-medium mb-2">Troubleshooting Tips:</div>
+                <div class="font-weight-medium mb-2">
+                  {{ $t('Accessibility.troubleshootingTips') }}:
+                </div>
                 <ul class="ma-0 pa-0 ms-4">
-                  <li>Make sure the website is publicly accessible</li>
-                  <li>Try testing a different page on the same domain</li>
-                  <li>Check if the website requires authentication</li>
-                  <li>Verify the URL is correct and complete</li>
+                  <li>{{ $t('Accessibility.ensurePubliclyAccessible') }}</li>
+                  <li>{{ $t('Accessibility.tryDifferentPage') }}</li>
+                  <li>{{ $t('Accessibility.checkRequiresAuth') }}</li>
+                  <li>{{ $t('Accessibility.verifyUrlCorrect') }}</li>
                 </ul>
               </v-alert>
             </div>
@@ -189,13 +197,13 @@
                 <template #prepend>
                   <v-icon>mdi-close</v-icon>
                 </template>
-                Dismiss
+                {{ $t('Accessibility.dismiss') }}
               </v-btn>
               <v-btn color="primary" variant="elevated" @click="retryTest">
                 <template #prepend>
                   <v-icon>mdi-refresh</v-icon>
                 </template>
-                Try Again
+                {{ $t('Accessibility.tryAgain') }}
               </v-btn>
             </div>
           </v-card-text>

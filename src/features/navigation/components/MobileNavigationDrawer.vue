@@ -1,20 +1,38 @@
 <template>
-  <v-navigation-drawer v-model="isOpen" temporary location="left" width="300" elevation="4" class="mobile-drawer">
+  <v-navigation-drawer
+    v-model="isOpen"
+    temporary
+    location="left"
+    width="300"
+    elevation="4"
+    class="mobile-drawer"
+  >
     <!-- Header -->
     <div class="drawer-header pa-4">
       <div class="d-flex align-center justify-space-between">
         <div class="d-flex align-center">
-          <img src="@/assets/logo_full.png" alt="RUXAILAB" height="32" class="mr-3">
+          <img
+            src="@/assets/logo_full.png"
+            alt="RUXAILAB"
+            height="32"
+            class="mr-3"
+          />
           <div>
             <h4 class="text-primary font-weight-bold">
-              RUXAILAB
+              {{ $t('navigation.appName') }}
             </h4>
             <p class="text-caption text-medium-emphasis ma-0">
-              UX Research Platform
+              {{ $t('navigation.tagline') }}
             </p>
           </div>
         </div>
-        <v-btn icon="mdi-close" variant="text" size="small" color="primary" @click="closeDrawer" />
+        <v-btn
+          icon="mdi-close"
+          variant="text"
+          size="small"
+          color="primary"
+          @click="closeDrawer"
+        />
       </div>
     </div>
 
@@ -48,17 +66,30 @@
       <div v-if="isInTest" class="test-context pa-4">
         <div class="context-header mb-3">
           <v-icon :icon="testIcon" color="primary" size="20" class="mr-2" />
-          <span class="text-body-2 font-weight-bold text-primary">{{ testTitle }}</span>
+          <span class="text-body-2 font-weight-bold text-primary">{{
+            testTitle
+          }}</span>
         </div>
 
         <!-- Test Navigation Items -->
         <v-list class="test-nav-list" nav>
           <v-list-item
-v-for="item in filteredTestItems" :key="item.id" :title="item.title" :prepend-icon="item.icon"
-            :active="activeStep === item.id" :disabled="item.disabled" class="nav-item" rounded="lg"
-            @click="navigateToStep(item)">
+            v-for="item in filteredTestItems"
+            :key="item.id"
+            :title="item.title"
+            :prepend-icon="item.icon"
+            :active="activeStep === item.id"
+            :disabled="item.disabled"
+            class="nav-item"
+            rounded="lg"
+            @click="navigateToStep(item)"
+          >
             <template v-if="item.status" #append>
-              <v-icon :icon="getStatusIcon(item.status)" :color="getStatusColor(item.status)" size="16" />
+              <v-icon
+                :icon="getStatusIcon(item.status)"
+                :color="getStatusColor(item.status)"
+                size="16"
+              />
             </template>
           </v-list-item>
         </v-list>
@@ -68,22 +99,33 @@ v-for="item in filteredTestItems" :key="item.id" :title="item.title" :prepend-ic
       <div class="global-context pa-4">
         <div v-if="isInTest" class="context-header mb-3">
           <v-icon icon="mdi-apps" color="primary" size="20" class="mr-2" />
-          <span class="text-body-2 font-weight-bold text-primary">App Navigation</span>
+          <span class="text-body-2 font-weight-bold text-primary">{{
+            $t('navigation.appNavigation')
+          }}</span>
         </div>
 
         <v-list class="global-nav-list" nav>
           <template v-for="item in globalNavigationItems" :key="item.id">
             <!-- Section Headers -->
             <div v-if="item.type === 'header'" class="section-header">
-              <p class="text-caption text-medium-emphasis font-weight-bold px-2 py-1 ma-0">
+              <p
+                class="text-caption text-medium-emphasis font-weight-bold px-2 py-1 ma-0"
+              >
                 {{ item.title }}
               </p>
             </div>
 
             <!-- Navigation Items -->
             <v-list-item
-v-else :title="item.title" :subtitle="item.subtitle" :prepend-icon="item.icon"
-              :active="activeSection === item.id" class="nav-item" rounded="lg" @click="navigateToSection(item)">
+              v-else
+              :title="item.title"
+              :subtitle="item.subtitle"
+              :prepend-icon="item.icon"
+              :active="activeSection === item.id"
+              class="nav-item"
+              rounded="lg"
+              @click="navigateToSection(item)"
+            >
               <template v-if="item.badge" #append>
                 <v-chip :color="item.badge.color" size="x-small" variant="flat">
                   {{ item.badge.text }}
@@ -97,19 +139,41 @@ v-else :title="item.title" :subtitle="item.subtitle" :prepend-icon="item.icon"
       <!-- Action Buttons -->
       <div class="action-section pa-4 mt-auto">
         <v-btn
-v-if="!isInTest" color="primary" block size="large" prepend-icon="mdi-plus" rounded="lg"
-          class="create-button mb-3" @click="createStudy">
-          Create New Study
+          v-if="!isInTest"
+          color="primary"
+          block
+          size="large"
+          prepend-icon="mdi-plus"
+          rounded="lg"
+          class="create-button mb-3"
+          @click="createStudy"
+        >
+          {{ $t('navigation.createNewStudy') }}
         </v-btn>
 
         <v-btn
-v-if="isInTest" variant="outlined" color="primary" block prepend-icon="mdi-arrow-left" rounded="lg"
-          class="mb-3" @click="exitTest">
-          Exit Test
+          v-if="isInTest"
+          variant="outlined"
+          color="primary"
+          block
+          prepend-icon="mdi-arrow-left"
+          rounded="lg"
+          class="mb-3"
+          @click="exitTest"
+        >
+          {{ $t('navigation.exitTest') }}
         </v-btn>
 
-        <v-btn v-if="user" variant="text" color="error" block prepend-icon="mdi-logout" rounded="lg" @click="signOut">
-          Sign Out
+        <v-btn
+          v-if="user"
+          variant="text"
+          color="error"
+          block
+          prepend-icon="mdi-logout"
+          rounded="lg"
+          @click="signOut"
+        >
+          {{ $t('navigation.signOut') }}
         </v-btn>
       </div>
     </div>
@@ -117,43 +181,43 @@ v-if="isInTest" variant="outlined" color="primary" block prepend-icon="mdi-arrow
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed } from 'vue'
 
 // Props
 const props = defineProps({
   modelValue: {
     type: Boolean,
-    default: false
+    default: false,
   },
   user: {
     type: Object,
-    default: null
+    default: null,
   },
   userAccessLevel: {
     type: String,
-    default: 'basic'
+    default: 'basic',
   },
   activeSection: {
     type: String,
-    default: null
+    default: null,
   },
   activeStep: {
     type: String,
-    default: null
+    default: null,
   },
   isInTest: {
     type: Boolean,
-    default: false
+    default: false,
   },
   testType: {
     type: String,
-    default: null
+    default: null,
   },
   testTitle: {
     type: String,
-    default: 'Test'
-  }
-});
+    default: 'Test',
+  },
+})
 
 // Emits
 const emit = defineEmits([
@@ -163,14 +227,14 @@ const emit = defineEmits([
   'create-test',
   'exit-test',
   'sign-out',
-  'close'
-]);
+  'close',
+])
 
 // Computed
 const isOpen = computed({
   get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
-});
+  set: (value) => emit('update:modelValue', value),
+})
 
 const testIcon = computed(() => {
   const typeIcons = {
@@ -179,77 +243,77 @@ const testIcon = computed(() => {
     tree: 'mdi-file-tree',
     'card-sorting': 'mdi-card-multiple',
     'first-click': 'mdi-cursor-default-click',
-    'five-second': 'mdi-timer-5'
-  };
-  return typeIcons[props.testType] || 'mdi-test-tube';
-});
+    'five-second': 'mdi-timer-5',
+  }
+  return typeIcons[props.testType] || 'mdi-test-tube'
+})
 
 const filteredTestItems = computed(() => {
-  if (!props.isInTest || !props.testType) return [];
-  return getFilteredTestItems(props.testType, props.userAccessLevel);
-});
+  if (!props.isInTest || !props.testType) return []
+  return getFilteredTestItems(props.testType, props.userAccessLevel)
+})
 
 // Methods
 const closeDrawer = () => {
-  emit('close');
-  isOpen.value = false;
-};
+  emit('close')
+  isOpen.value = false
+}
 
 const navigateToSection = (item) => {
-  emit('navigate-section', item);
-  closeDrawer();
-};
+  emit('navigate-section', item)
+  closeDrawer()
+}
 
 const navigateToStep = (item) => {
   if (!item.disabled) {
-    emit('navigate-step', item);
-    closeDrawer();
+    emit('navigate-step', item)
+    closeDrawer()
   }
-};
+}
 
 const createStudy = () => {
-  emit('create-test');
-  closeDrawer();
-};
+  emit('create-test')
+  closeDrawer()
+}
 
 const exitTest = () => {
-  emit('exit-test');
-  closeDrawer();
-};
+  emit('exit-test')
+  closeDrawer()
+}
 
 const signOut = () => {
-  emit('sign-out');
-  closeDrawer();
-};
+  emit('sign-out')
+  closeDrawer()
+}
 
 const getAccessLevelText = (level) => {
   const levelTexts = {
     basic: 'Basic User',
     premium: 'Premium User',
-    admin: 'Administrator'
-  };
-  return levelTexts[level] || 'User';
-};
+    admin: 'Administrator',
+  }
+  return levelTexts[level] || 'User'
+}
 
 const getStatusIcon = (status) => {
   const statusIcons = {
     completed: 'mdi-check-circle',
     current: 'mdi-play-circle',
     pending: 'mdi-clock-outline',
-    error: 'mdi-alert-circle'
-  };
-  return statusIcons[status] || 'mdi-circle-outline';
-};
+    error: 'mdi-alert-circle',
+  }
+  return statusIcons[status] || 'mdi-circle-outline'
+}
 
 const getStatusColor = (status) => {
   const statusColors = {
     completed: 'success',
     current: 'primary',
     pending: 'grey',
-    error: 'error'
-  };
-  return statusColors[status] || 'grey';
-};
+    error: 'error',
+  }
+  return statusColors[status] || 'grey'
+}
 </script>
 
 <style scoped>
@@ -292,15 +356,15 @@ const getStatusColor = (status) => {
 .nav-item {
   transition: all 0.2s ease-in-out;
   margin-bottom: 4px;
-  color: var(--v-primary-base, #00213F) !important;
+  color: var(--v-primary-base, #00213f) !important;
 }
 
 .nav-item .v-list-item__prepend .v-icon {
-  color: var(--v-primary-base, #00213F) !important;
+  color: var(--v-primary-base, #00213f) !important;
 }
 
 .nav-item .v-list-item-title {
-  color: var(--v-primary-base, #00213F) !important;
+  color: var(--v-primary-base, #00213f) !important;
 }
 
 .nav-item.v-list-item--active {

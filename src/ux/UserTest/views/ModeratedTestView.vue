@@ -611,15 +611,7 @@ import {
   onDisconnect,
 } from 'firebase/database'
 import { database } from '@/app/plugins/firebase/index'
-import {
-  ref,
-  computed,
-  watch,
-  onMounted,
-  reactive,
-  watchEffect,
-  onUnmounted,
-} from 'vue'
+import { ref, computed, watch, onMounted, reactive, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -846,7 +838,7 @@ const handleSubmit = async () => {
     localTestAnswer.submitted = true
     await saveAnswer()
     await router.push({ name: 'Admin' })
-  } catch (error) {
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSubmitAnswer'),
@@ -1109,6 +1101,7 @@ const completeStep = async (id, type, userCompleted = true) => {
     }
     if (type === 'tasks') {
       if (!Array.isArray(localTestAnswer.tasks)) {
+        showWarning('Task data is invalid. Please refresh and try again.')
         return
       }
       localTestAnswer.tasks[id].completed = userCompleted
@@ -1136,7 +1129,9 @@ const completeStep = async (id, type, userCompleted = true) => {
       if (userCompleted) {
         store.commit('SET_TOAST', {
           type: 'success',
-          message: `Task "${test.value.testStructure.userTasks[id].taskName}" completed successfully!`,
+          message: t('UserTestView.messages.taskCompletedSuccess', {
+            taskName: test.value.testStructure.userTasks[id].taskName,
+          }),
           timeout: 3000,
         })
       }
@@ -1176,7 +1171,7 @@ const completeStep = async (id, type, userCompleted = true) => {
     console.error('Error in completeStep:', error) // eslint-disable-line no-console
     store.commit('SET_TOAST', {
       type: 'error',
-      message: 'Failed to complete step. Please try again.',
+      message: t('UserTestView.errors.failedToCompleteStep'),
     })
   }
 }
@@ -1188,16 +1183,16 @@ const mappingSteps = async () => {
     // PreTest
     if (validate(test.value?.testStructure?.preTest)) {
       items.value.push({
-        title: 'Pre-test',
+        title: t('UserTestView.stepper.preTest'),
         icon: 'mdi-check-bold',
         value: [
           {
-            title: 'Consent',
+            title: t('UserTestView.stepper.consent'),
             icon: 'mdi-check-bold',
             id: 0,
           },
           {
-            title: 'Form',
+            title: t('UserTestView.stepper.form'),
             icon: 'mdi-check-bold',
             id: 1,
           },
@@ -1219,7 +1214,7 @@ const mappingSteps = async () => {
     // Tasks
     if (validate(test.value?.testStructure?.userTasks)) {
       items.value.push({
-        title: 'Tasks',
+        title: t('UserTestView.stepper.tasks'),
         icon: 'mdi-check-bold',
         value: test.value.testStructure.userTasks.map((task, index) => ({
           title: task.taskName,
@@ -1253,7 +1248,7 @@ const mappingSteps = async () => {
     // PostTest
     if (validate(test.value?.testStructure?.postTest)) {
       items.value.push({
-        title: 'Post Test',
+        title: t('UserTestView.stepper.postTest'),
         icon: 'mdi-check-bold',
         value: test.value.testStructure.postTest,
         id: 2,
@@ -1273,7 +1268,7 @@ const mappingSteps = async () => {
     console.error('Error mapping steps:', error.message) // eslint-disable-line no-console
     store.commit('SET_TOAST', {
       type: 'error',
-      message: 'Failed to initialize test data. Please try again.',
+      message: t('UserTestView.errors.failedToInitializeTestData'),
     })
   }
 }
@@ -1390,14 +1385,14 @@ watchEffect(() => {
 // Lifecycle hooks
 onMounted(async () => {
   if (!user.value) {
-    showError('Login to your RUXAILAB account first to access the test!')
+    showError(t('UserTestView.errors.loginRequired'))
     router.push('/signin')
     return
   }
 
   if (route.params.token) {
     if (route.params.token === test.value.id) {
-      showInfo('Use a session link to access your moderated test!')
+      showInfo(t('UserTestView.messages.useSessionLinkModerated'))
       router.push('/managerview/' + test.value.id)
       return
     }
@@ -1415,12 +1410,12 @@ onMounted(async () => {
       if (sessionCooperator.value?.testDate) {
         testDate.value = sessionCooperator.value.testDate
       } else {
-        showWarning("Your session doesn't have a scheduled date")
+        showWarning(t('UserTestView.warnings.sessionNotScheduled'))
         return
       }
     }
   } else {
-    showInfo('Use a session link to access the test')
+    showInfo(t('UserTestView.messages.useSessionLink'))
     return
   }
 
