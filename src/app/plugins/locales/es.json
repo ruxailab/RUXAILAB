@@ -382,6 +382,7 @@
     "incorrectPassword": "Contraseña incorrecta",
     "incorrectCredential": "Nombre de usuario o contraseña incorrectos.",
     "globalError": "Ha ocurrido un error, disculpa las molestias.",
+    "cameraPermissionRequired": "Se requiere acceso a la cámara para continuar. Por favor, permita el acceso a la cámara en la configuración de su navegador.",
     "sendError": "No se pudo enviar la invitación. Por favor, intenta de nuevo.",
     "missingVariableTitles": "No se puede guardar: Algunas variables no tienen título"
   },
