@@ -44,7 +44,7 @@ const accessibilityRoutes = [
         path: '/accessibility/manual/preview/:id/:userId?/:token?',
         name: 'AccessibilityPreviewTest',
         props: true,
-        meta: { authorize: [0, 1] },
+        meta: { authorize: [0, 1], publicWithToken: true },
         component: AccessibilityPreviewTest,
       },
       {
@@ -75,7 +75,7 @@ const accessibilityRoutes = [
     path: '/accessibility/manual/cooperator/:id/:userId?/:token?',
     name: 'AccessibilityCooperatorTest',
     props: true,
-    meta: { authorize: [0, 1] },
+    meta: { authorize: [0, 1], publicWithToken: true },
     component: AccessibilityPreviewTest,
   },
   // Automatic Accessibility Routes
@@ -111,7 +111,7 @@ const accessibilityRoutes = [
         path: '/accessibility/automatic/reports/:id/:token?',
         name: 'AccessibilityReport',
         props: true,
-        meta: { authorize: [0, 1] },
+        meta: { authorize: [0, 1], publicWithToken: true },
         component: AccessibilityReport,
       },
       {
@@ -135,7 +135,7 @@ const accessibilityRoutes = [
     path: '/accessibility/automatic/cooperator/:id/:token',
     name: 'AccessibilityAutomaticCooperatorTest',
     props: true,
-    meta: { authorize: [0, 1] },
+    meta: { authorize: [0, 1], publicWithToken: true },
     component: AccessibilityReport,
   },
 ]

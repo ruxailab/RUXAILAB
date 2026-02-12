@@ -34,11 +34,11 @@ router.beforeEach(async (to, from, next) => {
 
   if (to.path === '/') return next(redirect())
 
-  if (
-    authorize.length &&
-    to.path !== '/signin' &&
-    !(to.params?.token || to.query?.token)
-  ) {
+  // Only allow token to bypass authorize on routes that opt in (preview/cooperator/share links)
+  const hasToken = !!(to.params?.token || to.query?.token)
+  const tokenBypassAllowed = to.meta.publicWithToken === true && hasToken
+
+  if (authorize.length && to.path !== '/signin' && !tokenBypassAllowed) {
     if (!user || !authorize.includes(user.accessLevel)) {
       return next(redirect())
     }
