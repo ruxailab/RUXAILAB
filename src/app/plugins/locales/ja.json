@@ -1175,7 +1175,8 @@
     "PreTasksStep": {
       "title": "タスク",
       "heading": "タスクフェーズを始めましょう",
-      "description": "ツールの使用に関連する<strong>{numTasks}</strong>件のタスクを完了していただきます。正解や不正解はありません：重要なのはあなたの操作方法です。",
+      "description": "これから",
+      "tasksSuffix": "ツールの使用に関連するタスクを実行します。正解や不正解はありません。重要なのは、どのように操作するかです。",
       "instruction": "準備ができたら、開始ボタンをクリックしてください。",
       "startButton": "タスクを開始",
       "recordingTitle": "記録に関する情報",

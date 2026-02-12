@@ -1175,7 +1175,8 @@
     "PreTasksStep": {
       "title": "任务",
       "heading": "让我们开始任务阶段",
-      "description": "您将完成与工具使用相关的<strong>{numTasks}</strong>个任务。没有正确或错误的答案：重要的是您如何互动。",
+      "description": "您将完成",
+      "tasksSuffix": "与使用该工具相关的任务。没有正确或错误的答案，重要的是您的交互方式。",
       "instruction": "当您准备好后，点击按钮开始。",
       "startButton": "开始任务",
       "recordingTitle": "录制信息",
