@@ -61,6 +61,8 @@
     "errorUpdatingEmail": "Error updating email",
     "success": "Success",
     "invalidEmail": "Invalid email address",
+    "emailNotVerified": "Email not verified",
+    "errorSendingVerification": "Error sending verification email",
     "strength": {
       "veryWeak": "Very Weak",
       "weak": "Weak",
