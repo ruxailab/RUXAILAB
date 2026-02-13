@@ -1,4 +1,3 @@
-TaskStep.vue:
 <template>
   <ShowInfo :title="task?.taskName || taskName">
     <template #content>
