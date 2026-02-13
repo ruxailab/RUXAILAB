@@ -96,7 +96,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Snackbar from '@/shared/components/Snackbar'
 import Loading from '../../../shared/components/Loading.vue'
@@ -117,7 +117,9 @@ const loading = computed(() => store.getters.loading)
 
 const store = useStore()
 const router = useRouter()
+const route = useRoute()
 const { t } = useI18n()
+const redirectUrl = ref(route.query.redirect || '/admin')
 
 const emailRules = createEmailRules(t)
 
@@ -143,7 +145,7 @@ const onSignUp = async () => {
         email: email.value,
         password: password.value,
       })
-      await router.push('/admin')
+      await router.push(decodeURIComponent(redirectUrl.value))
     } catch (error) {
       return error
     } finally {
@@ -153,7 +155,7 @@ const onSignUp = async () => {
 }
 
 const redirectToSignin = () => {
-  router.push('/signin')
+  router.push(`/signin?redirect=${encodeURIComponent(redirectUrl.value)}`)
 }
 
 const onGoogleSignInStart = () => {
@@ -162,7 +164,7 @@ const onGoogleSignInStart = () => {
 }
 
 const onGoogleSignInSuccess = async () => {
-  await router.push('/admin')
+  await router.push(decodeURIComponent(redirectUrl.value))
   store.commit('setLoading', false)
 }
 const onGoogleSignInError = (error) => {

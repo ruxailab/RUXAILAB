@@ -108,7 +108,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import GoogleSignInButton from '@/features/auth/components/GoogleSignInButton'
 import { createEmailRules } from '@/shared/utils/validators'
@@ -116,6 +116,7 @@ import { createEmailRules } from '@/shared/utils/validators'
 const { t } = useI18n()
 const store = useStore()
 const router = useRouter()
+const route = useRoute()
 
 const form = ref(null)
 const showPassword = ref(false)
@@ -123,6 +124,7 @@ const email = ref('')
 const password = ref('')
 const rememberMe = ref(false)
 const loadingType = ref('')
+const redirectUrl = ref(route.query.redirect || '/admin')
 
 const loading = computed(() => store.getters.loading)
 
@@ -146,7 +148,7 @@ const onSignIn = async () => {
       password: password.value,
       rememberMe: rememberMe.value,
     })
-    await router.push('/admin')
+    await router.push(decodeURIComponent(redirectUrl.value))
   } catch (error) {
     return error
   } finally {
@@ -160,7 +162,7 @@ const toggleShowPassword = () => {
 }
 
 const redirectToSignup = () => {
-  router.push('/signup')
+  router.push(`/signup?redirect=${encodeURIComponent(redirectUrl.value)}`)
 }
 
 const redirectToForgotPassword = () => {
@@ -173,7 +175,8 @@ const onGoogleSignInStart = () => {
 }
 
 const onGoogleSignInSuccess = async () => {
-  if (store.getters.user) router.push('/admin')
+  if (store.getters.user) 
+    await router.push(decodeURIComponent(redirectUrl.value))
   store.commit('setLoading', false)
 }
 
