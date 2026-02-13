@@ -111,7 +111,8 @@
     "action_cannot_be_undone": "この操作は元に戻せません",
     "user": "ユーザー",
     "id": "ID",
-    "itemsPerPage": "ページごとの項目数："
+    "itemsPerPage": "ページごとの項目数：",
+    "visible": "表示"
   },
   "storage": {
     "pageTitle": "ストレージ",
@@ -214,6 +215,16 @@
     "hoursAgo": "{count}時間前",
     "daysAgo": "{count}日前",
     "newNotification": "新しい通知があります。"
+  },
+  "notifications": {
+    "errors": {
+      "acceptCollaborationFailed": "コラボレーションの承諾に失敗しました。もう一度お試しください。",
+      "invalidCollaboration": "このコラボレーション招待は無効または期限切れです。"
+    }
+  },
+  "cooperators": {
+    "updatedRole": "{users} の役割を {role} に更新しました",
+    "inviteSent": "{users} に招待を送信しました"
   },
   "navigation": {
     "dashboard": "ダッシュボード",
@@ -813,9 +824,13 @@
       "remove_cooperator": "{email}を協力者から削除してもよろしいですか？",
       "cancel_invitation": "{email}の招待を取り消してもよろしいですか？",
       "change_role": "{email}の役割を{old}から{new}に変更してもよろしいですか？",
+      "change_role_title": "役割を変更",
       "message_title_hint": "メッセージのタイトルを入力",
       "message_content_hint": "メッセージの内容を入力",
-      "invite_message": "テスト {testTitle} への参加に招待されました"
+      "invite_message": "'{testTitle}' への共同作業に招待されました",
+      "message_sent_success": "メッセージが正常に送信されました",
+      "message_sent_error": "メッセージの送信に失敗しました",
+      "user_not_registered": "このユーザーはまだ招待を承諾していないか、登録されていません。"
     }
   },
   "UserTestTable": {
@@ -937,6 +952,75 @@
       "tam2": "TAM-2（拡張）- 外部影響と結果の実証可能性を追加",
       "tam3": "TAM-3（包括的）- 不安、楽しさ、客観的な使いやすさを含む",
       "sart": "状況認識評価技法 - 状況認識を測定"
+    },
+    "answerTypePreview": {
+      "noAnswer": {
+        "message": "タスク完了！追加のフィードバックは不要です。"
+      },
+      "textArea": {
+        "placeholder": "参加者はここにフィードバックを入力します...",
+        "submitButton": "フィードバックを送信"
+      },
+      "postTest": {
+        "title": "タスク後の質問",
+        "q1": "1. このタスクの難易度をどう評価しますか？",
+        "q2": "2. 追加のコメントはありますか？",
+        "feedbackPlaceholder": "任意のフィードバック..."
+      },
+      "postForm": {
+        "title": "外部フォーム",
+        "notice": "参加者はタスク後に外部フォームに記入するようリダイレクトされます。",
+        "button": "外部フォームを開く"
+      },
+      "nasaTlx": {
+        "title": "NASAタスクロードインデックス",
+        "mental": "精神的要求",
+        "physical": "身体的要求",
+        "range": "低 - 高",
+        "moreDimensions": "+ 他4つの次元"
+      },
+      "sus": {
+        "title": "システムユーザビリティスケール",
+        "q1": "1. このシステムを頻繁に使いたいと思う。",
+        "disagree": "強く反対",
+        "agree": "強く賛成",
+        "moreStatements": "+ 9つの追加ステートメント"
+      },
+      "sart": {
+        "title": "状況認識評価技法 (SART)",
+        "instability": "状況の不安定性",
+        "complexity": "状況の複雑性",
+        "stable": "非常に安定",
+        "unstable": "非常に不安定",
+        "simple": "非常に単純",
+        "complex": "非常に複雑",
+        "moreDimensions": "+ 8つの追加SART次元"
+      },
+      "tam": {
+        "tam1": "TAM-1: 技術受容モデル (基本)",
+        "tam2": "TAM-2: 技術受容モデル (拡張)",
+        "tam3": "TAM-3: 技術受容モデル (包括的)",
+        "items2": "2次元にわたる10項目",
+        "items7": "7次元にわたる25項目",
+        "items13": "13次元にわたる39項目",
+        "pu": "知覚された有用性",
+        "eu": "知覚された使いやすさ",
+        "sn": "主観的規範",
+        "image": "イメージ",
+        "jr": "仕事への関連性",
+        "oq": "出力の質",
+        "rd": "結果の実証可能性",
+        "se": "コンピュータ自己効力感",
+        "ec": "外部制御",
+        "anxiety": "不安",
+        "play": "遊び心",
+        "enjoy": "楽しさ",
+        "ou": "客観的な使いやすさ",
+        "q1": "1. システムを使用することで、仕事のパフォーマンスが向上する。",
+        "q6": "6. システムは使いやすい。",
+        "likertNote": "参加者は5段階のリッカート尺度で{count}個の記述を評価します"
+      },
+      "selectionPrompt": "プレビューを表示するには回答タイプを選択してください"
     },
     "advanced": {
       "stepTitle": "ステップ3: 詳細オプション",
@@ -1080,7 +1164,8 @@
       "tasks": "タスク",
       "postTest": "事後テスト",
       "completion": "完了",
-      "taskX": "タスク {num}"
+      "taskX": "タスク {num}",
+      "form": "フォーム"
     },
     "TaskStep": {
       "preview": "タスクのプレビュー",
@@ -1137,14 +1222,20 @@
     },
     "messages": {
       "noTasks": "このテストにはタスクがありません。",
-      "answerSaved": "回答が正常に保存されました。"
+      "answerSaved": "回答が正常に保存されました。",
+      "taskCompletedSuccess": "タスク「{taskName}」が正常に完了しました！",
+      "useSessionLinkModerated": "セッションリンクを使用して、モデレートされたテストにアクセスしてください。",
+      "useSessionLink": "セッションリンクを使用してテストにアクセスしてください"
     },
     "errors": {
       "noAnswerData": "回答データが見つかりません。",
       "failedToSaveAnswer": "回答の保存に失敗しました。もう一度お試しください。",
       "failedToSubmitAnswer": "回答の提出に失敗しました。もう一度お試しください。",
       "noTestData": "テストデータなし",
-      "noTestDataMessage": "テスト情報をロードできませんでした。後でもう一度お試しください。"
+      "noTestDataMessage": "テスト情報をロードできませんでした。後でもう一度お試しください。",
+      "failedToCompleteStep": "ステップの完了に失敗しました。もう一度お試しください。",
+      "failedToInitializeTestData": "テストデータの初期化に失敗しました。もう一度お試しください。",
+      "loginRequired": "テストにアクセスするには、まずRUXAILABアカウントにログインしてください。"
     },
     "CalibrationInProgressModal": {
       "completed": "キャリブレーション完了！",
@@ -1206,6 +1297,9 @@
       "instruction": "準備ができたら、ボタンを押してキャリブレーションを開始してください。",
       "startButton": "キャリブレーションを開始",
       "inProgress": "進行中..."
+    },
+    "warnings": {
+      "sessionNotScheduled": "このセッションにはまだ予定された日付がありません"
     }
   },
   "eyeTracking": {
@@ -1217,6 +1311,46 @@
     "inProgress": "キャリブレーション中...",
     "completed": "キャリブレーション完了！",
     "continue": "テストを続行"
+  },
+  "EyeTrackingConfig": {
+    "titles": {
+      "main": "アイトラッキング設定",
+      "general": "基本設定",
+      "miscellaneous": "その他の設定"
+    },
+    "labels": {
+      "pointNumber": "ポイント数",
+      "samplesPerPoint": "ポイントごとのサンプル数",
+      "msPerPoint": "ポイントキャプチャのミリ秒",
+      "threshold": "ポイント距離のしきい値",
+      "radius": "半径",
+      "offset": "オフセット",
+      "control": "コントロール:",
+      "useCustomColors": "カスタム色を使用する",
+      "backgroundColor": "背景色:",
+      "pointColor": "ポイントの色:",
+      "modelSelection": "モデルの選択:",
+      "selectModel": "モデルを選択",
+      "note": "注意:",
+      "noteText": "選択したモデルはキャリブレーションプロセスに使用されます。デフォルトのモデルは線形回帰です。一部のモデルは他のモデルよりもトレーニングに時間がかかる場合があります。しばらくお待ちください。"
+    },
+    "tooltips": {
+      "pointNumber": "画面に表示されるキャリブレーションポイントの数（ポイントが多いほど精度が高くなります）。",
+      "samplesPerPoint": "キャリブレーションポイントごとに収集される視線サンプルの数。値が高いほど精度は向上しますが、所要時間が長くなります。",
+      "msPerPoint": "ポイントごとのデータキャプチャ時間（ミリ秒単位）。ユーザーが各ターゲットを注視し続ける時間を定義します。",
+      "threshold": "キャリブレーションサンプル間で許容される最大距離（ピクセル単位）。これを超えるとサンプルは破棄されます。空間的許容範囲を制御します。",
+      "radius": "キャリブレーションポイントの半径を調整します。値を大きくするとポイントが大きくなります。",
+      "offset": "キャリブレーション領域の位置を調整するオフセット（ピクセル単位）。"
+    },
+    "models": {
+      "linear": "線形回帰",
+      "ridge": "リッジ回帰",
+      "lasso": "ラッソ回帰",
+      "elastic": "Elastic Net",
+      "bayesian": "ベイズリッジ",
+      "sgd": "SGD Regressor",
+      "svr": "Support Vector Regressor"
+    }
   },
   "AccessNotAllowed": {
     "notAllowed": "アクセスが許可されていません",
@@ -1335,15 +1469,15 @@
       "statusLabel": "ステータス",
       "ownership": "所有権",
       "evaluator": "評価者",
-      "noActiveSessions": "アクティブなセッションがありません",
+      "noActiveSessions": "アクティブなセッションはありません",
       "filters": {
         "allStatuses": "すべてのステータス",
         "today": "今日",
-        "upcoming": "今後",
+        "upcoming": "今後の予定",
         "completed": "完了",
-        "allStudies": "すべての研究",
-        "myStudies": "私の研究",
-        "whereICollaborate": "コラボレーション中"
+        "allStudies": "すべてのスタディ",
+        "myStudies": "マイスタディ",
+        "whereICollaborate": "共同作業中"
       }
     },
     "templates": {
@@ -1360,7 +1494,8 @@
         "userUnmoderated": "ユーザー非モデレート",
         "userModerated": "ユーザーモデレート",
         "manualAccessibility": "手動アクセシビリティー",
-        "automaticAccessibility": "自動アクセシビリティー"
+        "automaticAccessibility": "自動アクセシビリティー",
+        "all": "すべて"
       }
     },
     "createTest": {
@@ -1396,7 +1531,9 @@
       "quick_actions": "クイックアクション",
       "perform_common_tasks": "一般的なタスクを即時に実行",
       "delete_warning": "関連するすべてのデータ、結果、設定が完全に失われます。",
-      "delete_forever": "完全に削除"
+      "delete_forever": "完全に削除",
+      "action_cannot_be_undone": "この操作は元に戻せません",
+      "confirm_deletion": "削除の確認"
     },
     "editTest": {
       "title": "テストを編集",
@@ -1449,7 +1586,12 @@
     "duplicateTest": "テストを複製",
     "submit": "送信",
     "couldNotFinish": "完了できませんでした",
-    "addNewTask": "新しいタスクを追加"
+    "addNewTask": "新しいタスクを追加",
+    "saveChanges": "変更を保存",
+    "createTemplate": "テンプレートを作成",
+    "deleteTest": "テストを削除",
+    "deleteForever": "完全に削除",
+    "startTest": "テストを開始"
   },
   "switches": {
     "noAnswer": "回答なし",
@@ -1492,11 +1634,7 @@
       "SelfTest": {
         "title": "セルフテスト",
         "type": "非モデレート",
-        "text": [
-          "自分の時間に回答",
-          "高度な回答分析",
-          "タスクのカスタマイズ"
-        ]
+        "text": ["自分の時間に回答", "高度な回答分析", "タスクのカスタマイズ"]
       },
       "LiveTest": {
         "title": "ライブテスト",
@@ -1615,7 +1753,21 @@
   },
   "CardSorting": {
     "noCategory": "カテゴリがありません",
-    "noCards": "カードが見つかりません"
+    "noCards": "カードが見つかりません",
+    "of": "の",
+    "cards": "カード",
+    "cards_low": "カード",
+    "currentCards": "現在のカード",
+    "addNewCard": "新しいカードを追加",
+    "settings": "設定",
+    "configureCards": "カードの表示方法を設定",
+    "currentCategories": "現在のカテゴリー",
+    "addNewTask": "新しいタスクを追加",
+    "configureCategories": "カテゴリーの表示方法を設定",
+    "newTask": "新しいタスク",
+    "customizeSettings": "テストの設定と環境設定をカスタマイズ",
+    "test": "テスト",
+    "categories": "カテゴリー"
   },
   "analytics": {
     "searchByName": "名前で検索",
@@ -1764,11 +1916,7 @@
       "blank": {
         "title": "空白の研究から開始",
         "description": "完全なカスタマイズでゼロから研究を作成します",
-        "features": [
-          "完全なカスタマイズ",
-          "ゼロから構築",
-          "設定を完全に制御"
-        ]
+        "features": ["完全なカスタマイズ", "ゼロから構築", "設定を完全に制御"]
       },
       "template": {
         "title": "テンプレートから作成",
@@ -1892,7 +2040,10 @@
     "deleteOptionConfirm": {
       "title": "オプションを削除",
       "message": "このオプションを削除してもよろしいですか？この操作は取り消せません。"
-    }
+    },
+    "confirmDeletion": "削除の確認",
+    "actionCannotBeUndone": "この操作は元に戻せません",
+    "allAssociatedDataLost": "関連するすべてのデータ、結果、および構成が永久に失われます。"
   },
   "tags": {
     "active": "アクティブ",
@@ -1924,5 +2075,290 @@
       "ACCESSIBILITY_AUTOMATIC": "自動評価",
       "WCAG_AUDIT": "WCAG監査"
     }
+  },
+  "testSettings": {
+    "testInformation": "テスト情報",
+    "basicTestSettings": "基本的なテスト設定と説明",
+    "advancedSettings": "詳細設定",
+    "quickActions": "クイックアクション",
+    "performCommonTasks": "一般的なタスクを即座に実行"
+  },
+  "cooperator": {
+    "goToSession": "Go to session"
+  },
+  "Accessibility": {
+    "access": "アクセス:",
+    "accessibilityAssessmentResults": "アクセシビリティ評価結果",
+    "accessibilityConfiguration": "アクセシビリティ設定",
+    "accessibilityIssues": "アクセシビリティの問題",
+    "accessibilityManager": "アクセシビリティ管理者",
+    "accessibilityReport": "アクセシビリティレポート",
+    "accessibilityScore": "アクセシビリティスコア",
+    "addNewPage": "新しいページを追加",
+    "addNewWebpageAssessment": "評価用の新しいウェブページを追加",
+    "addWebpageStartAssessment": "ウェブページを追加して評価を開始",
+    "all": "すべて",
+    "analyzeWebsiteCompliance": "ウェブサイトのアクセシビリティ準拠状況を分析し、実用的なインサイトを取得",
+    "analyzingAccessibility": "アクセシビリティを分析中",
+    "appraiserNotes": "評価者のメモ",
+    "assessmentAvailable": "評価利用可能",
+    "assessmentData": "評価データ",
+    "assessmentNotes": "評価メモ",
+    "assessmentProgress": "評価の進行状況",
+    "back": "戻る",
+    "backToUserSelection": "ユーザー選択に戻る",
+    "browseAccessibilityTools": "アクセシビリティツールとアクションを参照",
+    "canSave": "保存可能:",
+    "cancel": "キャンセル",
+    "checkRequiresAuth": "ウェブサイトに認証が必要か確認",
+    "checkingAccessPermissions": "アクセス権限を確認中",
+    "choosePrincipleGuideline": "左側のサイドバーから原則とガイドラインを選択して、関連するルールと問題を表示",
+    "close": "閉じる",
+    "code": "コード",
+    "color": "色:",
+    "commonIssuesSolutions": "一般的な問題と解決策",
+    "compliance": "準拠",
+    "complianceLevel": "準拠レベル:",
+    "configuration": "設定:",
+    "context": "コンテキスト",
+    "continue": "続行",
+    "cssSelector": "CSSセレクター",
+    "dashboard": "ダッシュボード",
+    "description": "WCAGガイドラインに基づいてウェブコンテンツのアクセシビリティを評価",
+    "descriptionOptional": "説明（任意）",
+    "descriptionPlaceholder": "テスト中のページやシナリオの簡単な説明。",
+    "dismiss": "閉じる",
+    "ensurePubliclyAccessible": "ウェブサイトが一般公開されていることを確認",
+    "enterWebsiteUrl": "自動アクセシビリティテストを実行し、詳細レポートを取得するためにURLを入力してください。",
+    "errors": "エラー",
+    "evaluateAccessibility": "選択したWCAGガイドラインに基づいてプロジェクトのアクセシビリティを評価",
+    "exportJson": "JSONをエクスポート",
+    "failed": "失敗",
+    "fetchingParticipants": "評価参加者を取得中...",
+    "fillWebpageDetails": "評価したいウェブページの詳細を入力してください。",
+    "filteredWcagDataAvailable": "フィルタリングされたWCAGデータが利用可能:",
+    "foundUserIds": "ユーザーIDが見つかりました:",
+    "guideline": "ガイドライン",
+    "guidelinesSelected": "選択されたガイドライン",
+    "guidelinesSelection": "ガイドライン選択",
+    "information": "情報",
+    "issueDetails": "問題の詳細",
+    "issues": "問題",
+    "issuesFound": "検出された問題",
+    "level": "レベル",
+    "loading": "読み込み中...",
+    "loadingAccessibilityReport": "アクセシビリティレポートを読み込み中...",
+    "loadingMore": "さらに読み込み中...",
+    "loadingReport": "レポートを読み込み中...",
+    "loadingTestData": "テストデータを読み込み中...",
+    "loadingUsers": "ユーザーを読み込み中",
+    "message": "メッセージ",
+    "next": "次へ",
+    "noAssessmentAvailable": "このテストには評価がありません",
+    "noDescriptionProvided": "説明がありません。",
+    "noIssuesFound": "問題は見つかりませんでした",
+    "noNotesForRule": "このルールのメモはありません。",
+    "noNotesProvided": "メモはありません",
+    "noPrinciplesAvailable": "利用可能な原則はありません",
+    "noReportAvailable": "利用可能なレポートはありません",
+    "noReportData": "レポートデータはありません。",
+    "noRulesAvailable": "利用可能なルールはありません",
+    "noSpecificCriteria": "このルールに特定の基準は定義されていません。",
+    "noSuccessCriteria": "このルールに成功基準はありません。",
+    "noTestRunYet": "このテストIDではまだアクセシビリティテストが実行されていません。",
+    "noUsersFound": "この評価テストのユーザーは見つかりませんでした。",
+    "notApplicable": "該当なし",
+    "notEvaluated": "未評価",
+    "note": "メモ",
+    "notesFor": "メモ:",
+    "notices": "通知",
+    "of": "の",
+    "opacity": "不透明度",
+    "passed": "合格",
+    "pleaseFixFollowing": "以下の問題を修正してください:",
+    "previous": "前へ",
+    "principle": "原則",
+    "principlesAvailable": "利用可能な原則:",
+    "radius": "半径",
+    "rawWcagDataAvailable": "未加工のWCAGデータが利用可能:",
+    "readOnlyMode": "読み取り専用モード - 他のユーザーの評価は保存できません。",
+    "readyToEvaluate": "評価の準備完了",
+    "remove": "削除",
+    "report": "レポート",
+    "reset": "リセット",
+    "reviewDetailedAssessment": "選択したユーザーの詳細なアクセシビリティ評価結果を確認",
+    "reviewDetailedIssues": "WCAGガイドラインに基づく詳細な問題と成功基準を確認",
+    "rule": "ルール",
+    "rulePassedAllChecks": "このルールはテストページのすべてのアクセシビリティチェックに合格しました。",
+    "rules": "ルール",
+    "rulesFor": "のルール",
+    "runAccessibilityTest": "アクセシビリティテストを実行",
+    "runTest": "テストを実行",
+    "runningComprehensiveTests": "ウェブサイトで包括的なテストを実行中...",
+    "saveAssessment": "評価を保存",
+    "saveConfig": "設定を保存",
+    "selectComplianceLevel": "アクセシビリティ要件に応じたWCAG準拠レベルを選択してください。",
+    "selectGuidelinesByPrinciple": "評価のためのガイドラインを選択してください。タブで原則ごとにフィルタできます。",
+    "selectPrincipleInfo": "リストから原則を選択して、そのガイドラインとルールを表示します。",
+    "selectRuleToView": "詳細を見るにはルールを選択",
+    "selectSpecificRules": "特定のルールを選択（必須）",
+    "selectUserToView": "ユーザーを選択してアクセシビリティ評価結果を表示",
+    "selectUserToViewResults": "ユーザーを選択して評価結果を表示",
+    "selected": "選択済み",
+    "selectedGuidelines": "選択されたガイドライン:",
+    "selector": "セレクター",
+    "setupTestParameters": "アクセシビリティテストのパラメータを設定・カスタマイズ",
+    "severity": "重大度",
+    "signInToSave": "保存するにはサインイン",
+    "status": "ステータス",
+    "step": "ステップ",
+    "successCriterion": "成功基準",
+    "testFailed": "テスト失敗",
+    "testing": "テスト中...",
+    "totalIssues": "問題の合計",
+    "totalRules": "ルールの合計",
+    "troubleshootingTips": "トラブルシューティングのヒント",
+    "tryAgain": "再試行",
+    "tryDifferentPage": "同じドメインの別のページをテストしてください",
+    "type": "タイプ",
+    "url": "URL",
+    "urlHelp": "ウェブページの完全なURL。",
+    "urlPlaceholder": "https://example.com",
+    "userDetails": "ユーザー詳細:",
+    "userRole": "ユーザーロール:",
+    "usersLoaded": "ユーザーが読み込まれました",
+    "verifyUrlCorrect": "URLが正しく完全であることを確認してください",
+    "version": "バージョン",
+    "viewAssessment": "評価を表示",
+    "viewDetailedIssues": "ウェブコンテンツ改善のための詳細な問題と推奨事項を表示。",
+    "viewInPreview": "プレビューで表示",
+    "viewInPreviewMode": "プレビューモードで表示",
+    "viewResults": "結果を表示",
+    "viewWcagGuidelines": "WCAGガイドラインを表示",
+    "viewingAssessmentData": "ユーザーIDの評価データを表示中:",
+    "viewingMode": "表示モード",
+    "viewingModeLabel": "表示モード:",
+    "viewingUserId": "表示中のユーザーID:",
+    "warnings": "警告",
+    "wcag": "WCAG",
+    "wcagComplianceLevel": "WCAG準拠レベル",
+    "wcagComplianceLevelHelp": "この評価の目標WCAG準拠レベル。",
+    "wcagLevelFilter": "WCAGレベルフィルター:",
+    "wcagPrinciples": "WCAG原則",
+    "wcagReference": "WCAGリファレンス",
+    "webpageName": "ウェブページ名",
+    "webpageNameHelp": "テストしているウェブページの説明的な名前。",
+    "webpageNamePlaceholder": "例: 会社のホームページ",
+    "webpagePreview": "ウェブページプレビュー",
+    "websiteAccessibilityTester": "ウェブサイトアクセシビリティテスター"
+  },
+  "faq": {
+    "questions": {
+      "q1": {
+        "answer": "Ruxailab は、ユーザーからユーザビリティに関するフィードバックを収集するために設計されたオープンソースプラットフォームです。ユーザーレビューを収集・分析し、包括的なレポートを作成することで、アプリケーションのユーザビリティをより深く理解できます。さらに、ヒューリスティックテストを提供しており、専門家がアプリケーションのユーザビリティ原則への準拠を評価できます。本プロジェクトはコミュニティの貢献者によって維持され、MITライセンスの下で公開されています。",
+        "question": "1. Ruxailabとは何ですか？"
+      },
+      "q2": {
+        "answer_part1": "開始するには、当社の",
+        "answer_part2": "にアクセスしてソースコードをダウンロードしてください。インストール手順や例についてはドキュメントをご確認ください。また、追加のリソースについては当社の",
+        "answer_part3": "ページもご覧いただけます。",
+        "help_link": "ヘルプ",
+        "link_text": "GitHubリポジトリ",
+        "question": "2. プロジェクトを始めるにはどうすればよいですか？"
+      },
+      "q3": {
+        "answer": "もちろんです！コミュニティからの貢献を歓迎しています。リポジトリ内の貢献ガイドラインをご確認のうえ、変更内容を含むプルリクエストを送信してください。",
+        "question": "3. プロジェクトに貢献できますか？"
+      },
+      "q4": {
+        "answer": "本プロジェクトはMITライセンスの下で公開されています。これは、ライセンスおよび著作権表示を含める限り、自由に使用、変更、再配布できることを意味します。",
+        "question": "4. プロジェクトはどのライセンスを使用していますか？"
+      },
+      "q5": {
+        "answer": "バグの報告や機能のリクエストは、当社の",
+        "answer_part2": "でIssueを作成してください。できるだけ詳細な情報をご提供ください。",
+        "link_text": "GitHub Issues",
+        "question": "5. バグの報告や機能リクエストはどのように行いますか？"
+      },
+      "q6": {
+        "answer": "はい！当社のコミュニティに",
+        "answer_part2": "で参加し、他のユーザーや貢献者と交流したり、質問やアイデアを共有したりできます。",
+        "link_text": "GitHub",
+        "question": "6. Ruxailabのコミュニティはありますか？"
+      },
+      "q7": {
+        "answer": "私たちはあなたのプライバシーを重視しています。情報の収集および利用方法については、当社の",
+        "answer_part2": "をご覧ください。",
+        "link_text": "プライバシーポリシー",
+        "question": "7. 私のデータはどのように扱われますか？"
+      },
+      "q8": {
+        "answer": "本プロジェクトはボランティアおよび貢献者のチームによって維持されています。メンテナーに関する詳細は、プロジェクトのリポジトリをご確認ください。",
+        "question": "8. プロジェクトは誰が管理していますか？"
+      },
+      "q9": {
+        "answer": "追加のご質問がある場合は、お問い合わせください。",
+        "question": "9. まだ質問がありますか？"
+      }
+    },
+    "subtitle": "Ruxailabに関するよくある質問への回答をご覧ください。",
+    "title": "よくある質問（FAQ）"
+  },
+  "pageNotFound": {
+    "description": "お探しのページが見つかりませんでした。",
+    "goBack": "戻る",
+    "title": "ページが見つかりません"
+  },
+  "privacyPolicy": {
+    "lastUpdated": "最終更新日：2025年4月15日",
+    "sections": {
+      "changes": {
+        "content": "本プライバシーポリシーは随時更新される場合があります。重要な変更がある場合は、プロジェクトのウェブサイトまたはリポジトリに通知を掲載します。",
+        "title": "8. 本ポリシーの変更"
+      },
+      "contact": {
+        "content": "本プライバシーポリシーに関するご質問がある場合は、お問い合わせください。",
+        "title": "9. お問い合わせ"
+      },
+      "cookies": {
+        "content": "当社のウェブサイトでは、ユーザー体験向上のためにCookieを使用する場合があります（例：設定の保存）。ブラウザ設定でCookieを無効にできますが、その場合、一部機能が正常に動作しない可能性があります。",
+        "title": "5. Cookie"
+      },
+      "informationCollected": {
+        "content": "オープンソースプロジェクトとして、通常は直接個人情報を収集しません。ただし、アカウント登録やお問い合わせフォームの送信など、当社のウェブサイトやサービスをご利用いただく場合、以下の情報を収集することがあります：",
+        "items": {
+          "contributions": "貢献情報（例：プロジェクトに貢献した場合のGitHubユーザー名）",
+          "email": "メールアドレス（例：アカウント作成やニュースレター登録）",
+          "usage": "利用データ（例：ウェブサイトのアクセス解析情報）"
+        },
+        "title": "2. 収集する情報"
+      },
+      "introduction": {
+        "content": "Ruxailabは、ユーザーのプライバシー保護に取り組むオープンソースプロジェクトです。本プライバシーポリシーでは、プロジェクト利用時に提供される情報の収集、利用、保護方法について説明します。",
+        "title": "1. はじめに"
+      },
+      "rights": {
+        "content": "お住まいの地域によっては、個人情報へのアクセス、訂正、削除を求める権利を有する場合があります。これらの権利を行使するにはお問い合わせください。",
+        "title": "7. あなたの権利"
+      },
+      "security": {
+        "content": "当社は収集したデータを保護するため合理的な対策を講じていますが、インターネット上の送信方法は100％安全ではありません。情報の完全な安全性を保証することはできません。",
+        "title": "6. データセキュリティ"
+      },
+      "sharing": {
+        "content": "法令に基づく場合やプロジェクト保護のため（例：不正行為や詐欺の場合）を除き、個人情報を第三者に販売または共有することはありません。",
+        "title": "4. データ共有"
+      },
+      "usage": {
+        "content": "収集した情報は以下の目的で使用される場合があります：",
+        "items": {
+          "analyze": "利用状況を分析し、ユーザー体験を向上させるため",
+          "communicate": "お問い合わせへの対応や更新情報の通知など、ユーザーとの連絡のため",
+          "improve": "プロジェクトおよびサービスの提供と改善のため"
+        },
+        "title": "3. 情報の利用方法"
+      }
+    },
+    "title": "プライバシーポリシー"
   }
 }

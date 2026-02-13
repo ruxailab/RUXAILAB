@@ -707,7 +707,6 @@ const goToDataHeuristic = (item) => {
       .push(`/analyticsview/${props.id}/${selectHeuristic}`)
       .catch((err) => {
         if (err.name !== 'NavigationDuplicated') {
-          console.error('Navigation error:', err)
         }
       })
   }
@@ -751,9 +750,7 @@ const pythonFunction = async () => {
     tabelacompleta.value = data.tabelacompleta
     relative.value = data.relative
     usability_total.value = data.usability_total
-  } catch (error) {
-    console.error('Error calling Cloud Function:', error)
-  }
+  } catch {}
 }
 
 const DownloadEvaluatorCsv = () => {

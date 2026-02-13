@@ -51,7 +51,7 @@ import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { useDisplay } from 'vuetify'
 
-const props = defineProps({
+defineProps({
   items: {
     type: Array,
     default: () => [],

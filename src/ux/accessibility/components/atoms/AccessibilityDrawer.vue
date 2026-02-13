@@ -7,7 +7,9 @@
   >
     <!-- nav header -->
     <v-list-item v-if="!mini" class="mb-2 mt-15" bg-color="#343344">
-      <v-list-item-title>Accessibility Manager</v-list-item-title>
+      <v-list-item-title>{{
+        $t('Accessibility.accessibilityManager')
+      }}</v-list-item-title>
     </v-list-item>
     <v-divider v-if="!mini" />
     <!-- Navigation options -->
