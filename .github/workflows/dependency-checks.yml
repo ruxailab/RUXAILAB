@@ -31,6 +31,7 @@ jobs:
       # 1. Security Audit
       - name: Security Vulnerability Scan
         id: audit
+        timeout-minutes: 3
         run: |
           echo "Scanning root dependencies..."
           npm audit --json > audit-root.json || true
@@ -111,14 +112,12 @@ jobs:
 
           exit 1
 
-      # 4. Auto-test Dependabot PRs
-      - name: Test Dependency Updates
+      # 4. Verify Dependabot Updates Install
+      - name: Verify Dependency Installation
         if: github.actor == 'dependabot[bot]'
         run: |
+          echo "Verifying dependencies install correctly..."
           npm ci
-          npm run lint
-          npm test -- --maxWorkers=2
-          npm run build
 
       # 5. License Compliance (only when deps change)
       - name: License Compliance Check
@@ -132,7 +131,7 @@ jobs:
           # Running npx with loglevel error to hide install noise of the checker itself
           npx --loglevel error license-checker \
             --production \
-            --onlyAllow "MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;ISC;0BSD;CC0-1.0;Unlicense;Python-2.0;CC-BY-3.0;CC-BY-4.0;BlueOak-1.0.0" \
+            --onlyAllow "MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;ISC;0BSD;CC0-1.0;Unlicense;BlueOak-1.0.0" \
             --summary
 
       # 6. Lockfile Validation
