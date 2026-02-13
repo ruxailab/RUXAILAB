@@ -132,6 +132,7 @@ jobs:
           npx --loglevel error license-checker \
             --production \
             --onlyAllow "MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;ISC;0BSD;CC0-1.0;Unlicense;BlueOak-1.0.0" \
+            --excludePackages "ruxailab@0.1.0" \
             --summary
 
       # 6. Lockfile Validation

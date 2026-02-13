@@ -1,55 +1,44 @@
-name: test🧪
+name: Test Suite
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: '20'
+          cache: 'npm'
 
-      - name: Cache node modules
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-      - name: Install Dependencies
+      - name: Install dependencies
         run: npm ci
 
-      - name: Test
-        run: npm test
+      - name: Run tests
+        run: npm test -- --maxWorkers=2
 
-      - name: Comment to PR
+      - name: Comment on PR (failures only)
         if: failure() && github.event_name == 'pull_request'
-        uses: thollander/actions-comment-pull-request@v2
+        uses: actions/github-script@v7
         with:
-          message: "⚠️ The tests have failed, @${{ github.actor }} Please review the proposed changes."
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Send message to Discord
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-        if: failure() && github.event_name == 'pull_request'
-        uses: Ilshidur/action-discord@master
-        with:
-          args: |
-            ⚠️ The GitHub event `${{ github.event_name }}` has failed.
-            **Repository**: `${{ github.repository }}`
-            **Workflow**: `${{ github.workflow }}`
-            **Actor**: `${{ github.actor }}`
-            **Pull Request**: [Link](${{ github.event.pull_request.html_url }})
-            **Action URL**: [View Details](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            Please review the proposed changes.
-            
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `❌ **Tests failed** - @${{ github.actor }}, please review the failures.\n\n[View Details](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})`
+            });

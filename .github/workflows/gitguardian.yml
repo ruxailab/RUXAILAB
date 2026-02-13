@@ -1,19 +1,27 @@
 name: GitGuardian scan
 
 on:
-  pull_request_target:
+  pull_request:
+    types: [opened, synchronize, reopened]
   push:
     branches:
       - main
       - develop
 
+permissions:
+  contents: read
+  pull-requests: write
+  security-events: write
+
 jobs:
   scanning:
     name: GitGuardian scan
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0 # fetch all history so multiple commits can be scanned
       - name: GitGuardian scan
