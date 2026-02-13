@@ -16,8 +16,8 @@
       <p class="text-body-1 text-grey-darken-1">
         {{
           currentPage === 'userSelection'
-            ? 'Select a user to view their accessibility assessment results'
-            : 'Review the detailed accessibility assessment results for the selected user'
+            ? $t('Accessibility.selectUserToView')
+            : $t('Accessibility.reviewDetailedAssessment')
         }}
       </p>
     </template>
@@ -29,7 +29,7 @@
             <v-icon start class="mr-3" color="primary">
               mdi-account-multiple
             </v-icon>
-            Select a User to View Assessment Results
+            {{ $t('Accessibility.selectUserToViewResults') }}
           </v-card-title>
           <v-card-text class="pa-6">
             <!-- Debug Information -->
@@ -39,14 +39,16 @@
               variant="outlined"
               class="mb-4"
             >
-              <div class="text-subtitle-2 mb-2">Information</div>
+              <div class="text-subtitle-2 mb-2">
+                {{ $t('Accessibility.information') }}
+              </div>
               <div>
-                <strong>Found User IDs:</strong>
+                <strong>{{ $t('Accessibility.foundUserIds') }}</strong>
                 {{ userIds.join(', ') || 'None' }}
               </div>
               <div>
-                <strong>User Details:</strong> {{ userDetails.length }} users
-                loaded
+                <strong>{{ $t('Accessibility.userDetails') }}</strong>
+                {{ userDetails.length }} {{ $t('Accessibility.usersLoaded') }}
               </div>
             </v-alert>
             <!-- Loading overlay while fetching users -->
@@ -57,9 +59,11 @@
                 size="48"
                 class="mb-4"
               />
-              <div class="text-h6 mb-2">Loading Users</div>
+              <div class="text-h6 mb-2">
+                {{ $t('Accessibility.loadingUsers') }}
+              </div>
               <div class="text-body-2 text-grey">
-                Fetching assessment participants...
+                {{ $t('Accessibility.fetchingParticipants') }}
               </div>
             </div>
 
@@ -100,7 +104,7 @@
                 <template #item.status>
                   <v-chip color="success" size="small" variant="tonal">
                     <v-icon start size="16"> mdi-check-circle </v-icon>
-                    Assessment Available
+                    {{ $t('Accessibility.assessmentAvailable') }}
                   </v-chip>
                 </template>
 
@@ -114,7 +118,7 @@
                       prepend-icon="mdi-eye"
                       @click="selectUser(item)"
                     >
-                      View Results
+                      {{ $t('Accessibility.viewResults') }}
                     </v-btn>
                     <v-btn
                       color="secondary"
@@ -123,7 +127,7 @@
                       prepend-icon="mdi-test-tube"
                       @click="viewUserInPreview(item)"
                     >
-                      View in Preview
+                      {{ $t('Accessibility.viewInPreview') }}
                     </v-btn>
                   </div>
                 </template>
@@ -135,7 +139,7 @@
               type="info"
               class="mt-4"
             >
-              No users found for this assessment test.
+              {{ $t('Accessibility.noUsersFound') }}
             </v-alert>
           </v-card-text>
         </v-card>
@@ -156,7 +160,7 @@
                 class="mr-4"
                 @click="goBackToUserSelection"
               >
-                Back to User Selection
+                {{ $t('Accessibility.backToUserSelection') }}
               </v-btn>
               <div>
                 <div class="text-h6">
@@ -174,7 +178,7 @@
                 prepend-icon="mdi-test-tube"
                 @click="viewUserInPreview(selectedUser)"
               >
-                View in Preview Mode
+                {{ $t('Accessibility.viewInPreviewMode') }}
               </v-btn>
               <v-avatar color="primary" size="40">
                 <v-icon color="white"> mdi-account </v-icon>
@@ -185,24 +189,26 @@
 
         <v-card>
           <v-card-title>
-            <span>Accessibility Assessment Results</span>
+            <span>{{
+              $t('Accessibility.accessibilityAssessmentResults')
+            }}</span>
           </v-card-title>
 
           <!-- Level Filter -->
           <v-card-subtitle class="pb-2">
             <v-row align="center" class="ma-0">
               <v-col cols="auto" class="pa-0">
-                <span class="text-subtitle-2 font-weight-medium"
-                  >WCAG Level Filter:</span
-                >
+                <span class="text-subtitle-2 font-weight-medium">{{
+                  $t('Accessibility.wcagLevelFilter')
+                }}</span>
               </v-col>
               <v-col cols="auto" class="pa-0 ml-3">
+                <!-- eslint-disable @intlify/vue-i18n/no-raw-text -->
                 <v-btn-toggle
                   v-model="selectedLevel"
                   mandatory
                   color="primary"
                   variant="outlined"
-                  divided
                   density="compact"
                 >
                   <v-btn
@@ -227,6 +233,7 @@
                     AAA
                   </v-btn>
                 </v-btn-toggle>
+                <!-- eslint-enable @intlify/vue-i18n/no-raw-text -->
               </v-col>
               <v-col cols="auto" class="pa-0 ml-3">
                 <v-chip
@@ -334,7 +341,7 @@
       <v-card>
         <v-card-title class="d-flex justify-space-between align-center">
           <span
-            >Notes for {{ notesDialog.ruleId }} -
+            >{{ $t('Accessibility.notesFor') }} {{ notesDialog.ruleId }} -
             {{ notesDialog.ruleTitle }}</span
           >
           <v-btn icon @click="notesDialog.show = false">
@@ -354,7 +361,7 @@
                 </v-avatar>
               </template>
               <v-list-item-title class="text-h6 mb-2">
-                Note {{ index + 1 }}
+                {{ $t('Accessibility.note') }} {{ index + 1 }}
               </v-list-item-title>
               <v-list-item-subtitle class="text-body-1 mb-2">
                 {{ note.text }}
@@ -380,7 +387,7 @@
               v-if="!notesDialog.notes || notesDialog.notes.length === 0"
             >
               <v-list-item-title class="text-grey">
-                No notes available for this rule.
+                {{ $t('Accessibility.noNotesForRule') }}
               </v-list-item-title>
             </v-list-item>
           </v-list>
@@ -388,7 +395,7 @@
         <v-card-actions>
           <v-spacer />
           <v-btn color="primary" @click="notesDialog.show = false">
-            Close
+            {{ $t('Accessibility.close') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -754,9 +761,8 @@ const loadWcagData = async () => {
 // Fetch all user IDs for the given testId
 const fetchUserIdsForTest = async () => {
   try {
-    const { query, where, getDocs, collection } = await import(
-      'firebase/firestore'
-    )
+    const { query, where, getDocs, collection } =
+      await import('firebase/firestore')
     const { db } = await import('@/app/plugins/firebase')
 
     const testId = route.params.id

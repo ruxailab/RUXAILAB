@@ -67,6 +67,7 @@
     "ui": {
       "enabled": true
     },
+    "firestore": { "port": 8081 },
     "singleProjectMode": true,
     "storage": {
       "port": 9199

@@ -1,59 +1,69 @@
 <template>
   <div class="privacy-policy container">
-    <h1>Privacy Policy</h1>
-    <p><strong>Last Updated:</strong> April 15, 2025</p>
-
-    <h2>1. Introduction</h2>
+    <h1>{{ $t('privacyPolicy.title') }}</h1>
     <p>
-      Ruxailab is an open-source project committed to protecting your privacy. This Privacy Policy explains how we collect, use, and protect any information you provide when using the Project.
+      <strong>{{ $t('privacyPolicy.lastUpdated') }}</strong>
     </p>
 
-    <h2>2. Information We Collect</h2>
+    <h2>{{ $t('privacyPolicy.sections.introduction.title') }}</h2>
     <p>
-      As an open-source project, we typically do not collect personal information directly. However, if you interact with our website or services (e.g., signing up for an account or submitting a contact form), we may collect:
+      {{ $t('privacyPolicy.sections.introduction.content') }}
+    </p>
+
+    <h2>{{ $t('privacyPolicy.sections.informationCollected.title') }}</h2>
+    <p>
+      {{ $t('privacyPolicy.sections.informationCollected.content') }}
     </p>
     <ul>
-      <li>Email addresses (e.g., for account creation or newsletters)</li>
-      <li>Usage data (e.g., analytics on how the website is accessed)</li>
-      <li>Contributions (e.g., your GitHub username if you contribute to the Project)</li>
+      <li>
+        {{ $t('privacyPolicy.sections.informationCollected.items.email') }}
+      </li>
+      <li>
+        {{ $t('privacyPolicy.sections.informationCollected.items.usage') }}
+      </li>
+      <li>
+        {{
+          $t('privacyPolicy.sections.informationCollected.items.contributions')
+        }}
+      </li>
     </ul>
 
-    <h2>3. How We Use Your Information</h2>
-    <p>We may use the information we collect to:</p>
+    <h2>{{ $t('privacyPolicy.sections.usage.title') }}</h2>
+    <p>{{ $t('privacyPolicy.sections.usage.content') }}</p>
     <ul>
-      <li>Provide and improve the Project and its services</li>
-      <li>Communicate with you (e.g., respond to inquiries or notify you of updates)</li>
-      <li>Analyze usage to improve user experience</li>
+      <li>{{ $t('privacyPolicy.sections.usage.items.improve') }}</li>
+      <li>{{ $t('privacyPolicy.sections.usage.items.communicate') }}</li>
+      <li>{{ $t('privacyPolicy.sections.usage.items.analyze') }}</li>
     </ul>
 
-    <h2>4. Data Sharing</h2>
+    <h2>{{ $t('privacyPolicy.sections.sharing.title') }}</h2>
     <p>
-      We do not sell or share your personal information with third parties, except as required by law or to protect the Project (e.g., in the case of abuse or fraud).
+      {{ $t('privacyPolicy.sections.sharing.content') }}
     </p>
 
-    <h2>5. Cookies</h2>
+    <h2>{{ $t('privacyPolicy.sections.cookies.title') }}</h2>
     <p>
-      Our website may use cookies to enhance your experience (e.g., to remember your preferences). You can disable cookies in your browser settings, but this may affect the functionality of the website.
+      {{ $t('privacyPolicy.sections.cookies.content') }}
     </p>
 
-    <h2>6. Data Security</h2>
+    <h2>{{ $t('privacyPolicy.sections.security.title') }}</h2>
     <p>
-      We take reasonable measures to protect any data we collect, but no method of transmission over the internet is 100% secure. We cannot guarantee the absolute security of your information.
+      {{ $t('privacyPolicy.sections.security.content') }}
     </p>
 
-    <h2>7. Your Rights</h2>
+    <h2>{{ $t('privacyPolicy.sections.rights.title') }}</h2>
     <p>
-      Depending on your location, you may have the right to access, correct, or delete any personal information we hold about you. Please contact us to exercise these rights.
+      {{ $t('privacyPolicy.sections.rights.content') }}
     </p>
 
-    <h2>8. Changes to This Policy</h2>
+    <h2>{{ $t('privacyPolicy.sections.changes.title') }}</h2>
     <p>
-      We may update this Privacy Policy from time to time. We will notify users of significant changes by posting a notice on the Project's website or repository.
+      {{ $t('privacyPolicy.sections.changes.content') }}
     </p>
 
-    <h2>9. Contact Us</h2>
+    <h2>{{ $t('privacyPolicy.sections.contact.title') }}</h2>
     <p>
-      If you have any questions about this Privacy Policy, please contact us.
+      {{ $t('privacyPolicy.sections.contact.content') }}
     </p>
   </div>
 </template>

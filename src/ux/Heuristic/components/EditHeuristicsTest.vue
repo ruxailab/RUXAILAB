@@ -59,8 +59,6 @@ defineProps({
 
 const emit = defineEmits(['tabClicked', 'change'])
 
-const store = useStore()
-
 const tabClicked = (index) => {
   emit('tabClicked', index)
 }
