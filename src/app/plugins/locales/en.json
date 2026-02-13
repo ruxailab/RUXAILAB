@@ -835,8 +835,9 @@
       "cooperators_loading": "Loading Cooperators",
       "no_users": "There are no users registered with that email, press enter to select anyways.",
       "remove_cooperator": "Are you sure you want to remove {email} from the cooperators?",
-      "cancel_invitation": "Are you sure you want to cancel {email} from the cooperators?",
+      "cancel_invitation": "Are you sure you want to cancel {email}'s invitation?",
       "change_role": "Are you sure you want to change {email}'s role from {old} to {new}?",
+      "change_role_title": "Change Role",
       "message_title_hint": "Type a title for your message",
       "message_content_hint": "Type the content of your message",
       "invite_message": "You have been invited to collaborate on '{testTitle}'",
@@ -1450,7 +1451,8 @@
       "quick_actions": "Quick Actions",
       "perform_common_tasks": "Perform common tasks instantly",
       "delete_warning": "All associated data, results, and configurations will be lost forever.",
-      "delete_forever": "Delete Forever"
+      "delete_forever": "Delete Forever",
+      "action_cannot_be_undone": "This action cannot be undone"
     },
     "editTest": {
       "title": "Edit test",

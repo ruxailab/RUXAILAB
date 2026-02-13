@@ -824,6 +824,7 @@
       "remove_cooperator": "您确定要删除 {email} 的合作者吗？",
       "cancel_invitation": "您确定要取消 {email} 的合作者邀请吗？",
       "change_role": "您确定要将 {email} 的角色从 {old} 更改为 {new} 吗？",
+      "change_role_title": "更改角色",
       "message_title_hint": "输入您的消息标题",
       "message_content_hint": "输入您的消息内容",
       "invite_message": "您已被邀请参与 '{testTitle}' 的协作",
@@ -1435,6 +1436,7 @@
       "perform_common_tasks": "立即执行常见任务",
       "delete_warning": "所有相关数据、结果和配置将永久丢失。",
       "delete_forever": "永久删除",
+      "action_cannot_be_undone": "此操作无法撤销",
       "confirm_deletion": "确认删除"
     },
     "editTest": {
@@ -1518,11 +1520,7 @@
     "test": "测试",
     "testType_1": {
       "testTitle": "可用性启发式",
-      "text": [
-        "可用性百分比",
-        "最终报告PDF",
-        "邀请专家评估您的应用程序"
-      ]
+      "text": ["可用性百分比", "最终报告PDF", "邀请专家评估您的应用程序"]
     },
     "testType_2": {
       "testTitle": "用户可用性",
@@ -1536,20 +1534,12 @@
       "SelfTest": {
         "title": "自主测试",
         "type": "无主持",
-        "text": [
-          "在空闲时间回答",
-          "增强的答案分析",
-          "任务自定义"
-        ]
+        "text": ["在空闲时间回答", "增强的答案分析", "任务自定义"]
       },
       "LiveTest": {
         "title": "实时测试",
         "type": "有主持",
-        "text": [
-          "摄像头、音频和屏幕录制",
-          "增强的答案分析",
-          "有主持的实时测试"
-        ]
+        "text": ["摄像头、音频和屏幕录制", "增强的答案分析", "有主持的实时测试"]
       }
     }
   },
@@ -1822,20 +1812,12 @@
       "blank": {
         "title": "从空白研究开始",
         "description": "从头开始创建研究，完全可定制",
-        "features": [
-          "完全可定制",
-          "从头构建",
-          "对设置的完全控制"
-        ]
+        "features": ["完全可定制", "从头构建", "对设置的完全控制"]
       },
       "template": {
         "title": "从模板创建",
         "description": "使用预构建的模板快速开始",
-        "features": [
-          "快速设置",
-          "预配置设置",
-          "包含最佳实践"
-        ]
+        "features": ["快速设置", "预配置设置", "包含最佳实践"]
       }
     },
     "details": {
