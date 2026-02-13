@@ -6,7 +6,11 @@ const toast = useToast()
 function resolveMessage(message) {
   if (!message) return ''
 
-  if (typeof message === 'string' && message.includes('.') && i18n.global.te(message)) {
+  if (
+    typeof message === 'string' &&
+    message.includes('.') &&
+    i18n.global.te(message)
+  ) {
     return i18n.global.t(message)
   }
 
