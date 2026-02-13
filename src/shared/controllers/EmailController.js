@@ -18,7 +18,7 @@ export default class EmailController {
       // Use Firebase SDK callable function instead of HTTP
       // Firebase callable wraps the argument automatically, so pass payload directly
       const sendEmailFunction = httpsCallable(fbFunctions, 'sendEmail')
-      const response = await sendEmailFunction(payload)
+      await sendEmailFunction(payload)
       return { success: true, message: 'Email sent successfully.' }
     } catch (error) {
       return { success: false, message: error.message }

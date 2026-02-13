@@ -22,12 +22,12 @@
         {{ $t('auth.verifyingEmail') }}
       </div>
 
-      <div v-if="isVerified" class="status-message success">
+      <div v-if="isVerified" class="status-message status-success">
         <i class="fas fa-check-circle"></i>
         {{ $t('auth.emailVerified') }}
       </div>
 
-      <div v-if="error" class="status-message error">
+      <div v-if="error" class="status-message status-error">
         <i class="fas fa-exclamation-circle"></i>
         {{ error }}
       </div>
@@ -46,18 +46,18 @@
       <!-- Actions -->
       <div v-if="!isVerified" class="actions">
         <button 
-          @click="resendVerificationEmail" 
           :disabled="isResending || isVerifying"
           class="btn btn-secondary"
+          @click="resendVerificationEmail" 
         >
           <i class="fas fa-redo"></i>
           {{ isResending ? $t('auth.resending') : $t('auth.resendEmail') }}
         </button>
 
         <button 
-          @click="changeEmail" 
           :disabled="isVerifying"
           class="btn btn-tertiary"
+          @click="changeEmail" 
         >
           <i class="fas fa-edit"></i>
           {{ $t('auth.changeEmail') }}
@@ -67,8 +67,8 @@
       <!-- Verified Actions -->
       <div v-if="isVerified" class="actions">
         <button 
-          @click="goToDashboard" 
           class="btn btn-primary"
+          @click="goToDashboard" 
         >
           <i class="fas fa-arrow-right"></i>
           {{ $t('auth.continueToDashboard') }}
@@ -77,7 +77,7 @@
 
       <!-- Sign Out Link -->
       <div class="sign-out-link">
-        <button @click="logout" class="link-btn">
+        <button class="link-btn" @click="logout">
           {{ $t('auth.signOut') }}
         </button>
       </div>
@@ -88,7 +88,7 @@
       <div class="modal-content" @click.stop>
         <div class="modal-header">
           <h2>{{ $t('auth.changeEmail') }}</h2>
-          <button @click="showChangeEmailModal = false" class="close-btn">
+          <button class="close-btn" @click="showChangeEmailModal = false">
             <i class="fas fa-times"></i>
           </button>
         </div>
@@ -109,15 +109,15 @@
 
         <div class="modal-footer">
           <button 
-            @click="showChangeEmailModal = false" 
             class="btn btn-outline"
+            @click="showChangeEmailModal = false" 
           >
             {{ $t('common.cancel') }}
           </button>
           <button 
-            @click="updateEmail" 
             :disabled="isUpdatingEmail || !newEmail"
             class="btn btn-primary"
+            @click="updateEmail" 
           >
             {{ isUpdatingEmail ? $t('common.saving') : $t('common.save') }}
           </button>
@@ -153,6 +153,23 @@ export default {
       currentUser: state => state.user,
     }),
   },
+  mounted() {
+    // Ensure user is logged in
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        this.$router.push('/signin')
+        return
+      }
+      this.initializeVerification()
+    })
+  },
+
+  beforeUnmount() {
+    if (this.verificationCheckInterval) {
+      clearInterval(this.verificationCheckInterval)
+    }
+  },
+
   methods: {
     ...mapActions(['sendVerificationEmail', 'logout']),
 
@@ -172,7 +189,6 @@ export default {
           }, 2000)
         }
       } catch (err) {
-        console.error('Error checking verification status:', err)
         this.error = this.$t('auth.errorCheckingVerification')
       } finally {
         this.isVerifying = false
@@ -267,23 +283,6 @@ export default {
         }
       }
     },
-  },
-
-  mounted() {
-    // Ensure user is logged in
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        this.$router.push('/signin')
-        return
-      }
-      this.initializeVerification()
-    })
-  },
-
-  beforeUnmount() {
-    if (this.verificationCheckInterval) {
-      clearInterval(this.verificationCheckInterval)
-    }
   },
 }
 </script>
@@ -384,7 +383,19 @@ export default {
   border-left: 4px solid #388e3c;
 }
 
+.status-message.status-success {
+  background: #e8f5e9;
+  color: #388e3c;
+  border-left: 4px solid #388e3c;
+}
+
 .status-message.error {
+  background: #ffebee;
+  color: #c62828;
+  border-left: 4px solid #c62828;
+}
+
+.status-message.status-error {
   background: #ffebee;
   color: #c62828;
   border-left: 4px solid #c62828;
