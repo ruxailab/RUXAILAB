@@ -303,22 +303,17 @@
 
         <div class="tam-dimensions-grid">
           <div
-            v-for="(dim, idx) in [
-              $t('CreateTask.answerTypePreview.tam.pu'),
-              $t('CreateTask.answerTypePreview.tam.eu'),
-              $t('CreateTask.answerTypePreview.tam.sn'),
-              $t('CreateTask.answerTypePreview.tam.image'),
-              $t('CreateTask.answerTypePreview.tam.jr'),
-              $t('CreateTask.answerTypePreview.tam.oq'),
-              $t('CreateTask.answerTypePreview.tam.rd'),
-            ]"
+            v-for="(dim, idx) in tam2Dimensions"
             :key="idx"
             class="tam-dimension-badge"
           >
-            <v-chip size="small" variant="outlined">{{ dim }}</v-chip>
+            <v-chip size="small" variant="outlined">{{
+              $t(`CreateTask.answerTypePreview.${dim}`)
+            }}</v-chip>
           </div>
         </div>
         <div class="text-caption text-grey-darken-1 mt-3">
+          {{ $t('CreateTask.answerTypePreview.tam2Description') }}
           {{ $t('CreateTask.answerTypePreview.tam.likertNote', { count: 25 }) }}
         </div>
       </div>
@@ -328,37 +323,25 @@
     <div v-else-if="taskType === 'tam-3'" class="preview-content">
       <div class="preview-mockup">
         <div class="text-subtitle-2 mb-3">
-          {{ $t('CreateTask.answerTypePreview.tam.tam3') }}
+          {{ $t('CreateTask.answerTypePreview.tam3Title') }}
         </div>
         <div class="text-body-2 text-grey-darken-1 mb-3">
-          {{ $t('CreateTask.answerTypePreview.tam.items13') }}
+          {{ $t('CreateTask.answerTypePreview.tam3Subtitle') }}
         </div>
 
         <div class="tam-dimensions-grid">
           <div
-            v-for="(dim, idx) in [
-              $t('CreateTask.answerTypePreview.tam.pu'),
-              $t('CreateTask.answerTypePreview.tam.eu'),
-              $t('CreateTask.answerTypePreview.tam.sn'),
-              $t('CreateTask.answerTypePreview.tam.image'),
-              $t('CreateTask.answerTypePreview.tam.jr'),
-              $t('CreateTask.answerTypePreview.tam.oq'),
-              $t('CreateTask.answerTypePreview.tam.rd'),
-              $t('CreateTask.answerTypePreview.tam.se'),
-              $t('CreateTask.answerTypePreview.tam.ec'),
-              $t('CreateTask.answerTypePreview.tam.anxiety'),
-              $t('CreateTask.answerTypePreview.tam.play'),
-              $t('CreateTask.answerTypePreview.tam.enjoy'),
-              $t('CreateTask.answerTypePreview.tam.ou'),
-            ]"
+            v-for="(dim, idx) in tam3Dimensions"
             :key="idx"
             class="tam-dimension-badge"
           >
-            <v-chip size="small" variant="outlined">{{ dim }}</v-chip>
+            <v-chip size="small" variant="outlined">{{
+              $t(`CreateTask.answerTypePreview.${dim}`)
+            }}</v-chip>
           </div>
         </div>
         <div class="text-caption text-grey-darken-1 mt-3">
-          {{ $t('CreateTask.answerTypePreview.tam.likertNote', { count: 39 }) }}
+          {{ $t('CreateTask.answerTypePreview.tam3Description') }}
         </div>
       </div>
     </div>
@@ -389,6 +372,26 @@ defineProps({
 
 // Mock data for previews
 const mockRating = ref(4)
+
+const tam2Dimensions = [
+  'perceivedUsefulnessShort',
+  'perceivedEaseOfUseShort',
+  'subjectiveNorm',
+  'image',
+  'jobRelevance',
+  'outputQuality',
+  'resultDemonstrability',
+]
+
+const tam3Dimensions = [
+  ...tam2Dimensions,
+  'computerSelfEfficacy',
+  'externalControl',
+  'anxiety',
+  'playfulness',
+  'enjoyment',
+  'objectiveUsability',
+]
 </script>
 
 <style scoped>
