@@ -27,7 +27,7 @@
             {{ $t('ModeratedTest.postTest') }}
           </v-tab>
           <v-tab v-if="hasEyeTracking" @click="index = 5">
-            {{ $t('UserTestTable.titles.eyeTrackingConfigurations') }}
+            {{ $t('EyeTrackingConfig.titles.main') }}
           </v-tab>
         </v-tabs>
 

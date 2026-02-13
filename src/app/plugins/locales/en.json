@@ -1264,12 +1264,52 @@
   "eyeTracking": {
     "title": "Eye Tracking Calibration",
     "beforeStart": "Before starting calibration",
-    "description1": "We will prepare your device to record your eye movements.",
+    "description1": "We will provide your device to record your eye movements.",
     "description2": "Follow the points that appear on the screen.",
     "start": "Start calibration",
     "inProgress": "Calibration in progress...",
     "completed": "Calibration completed!",
     "continue": "Continue to the test"
+  },
+  "EyeTrackingConfig": {
+    "titles": {
+      "main": "Eye Tracking Configurations",
+      "general": "General Configuration",
+      "miscellaneous": "Miscellaneous Configuration"
+    },
+    "labels": {
+      "pointNumber": "Point Number",
+      "samplesPerPoint": "Samples Per Point",
+      "msPerPoint": "Milliseconds Per Point Capture",
+      "threshold": "Points Distance Threshold",
+      "radius": "Radius",
+      "offset": "Offset",
+      "control": "Control:",
+      "useCustomColors": "Use Custom Colors",
+      "backgroundColor": "Background Color:",
+      "pointColor": "Point Color:",
+      "modelSelection": "Model Selection:",
+      "selectModel": "Select Model",
+      "note": "Note:",
+      "noteText": "The selected model will be used for the calibration process. The default model is Linear Regression. Some models may take longer to train than others. So please be patient."
+    },
+    "tooltips": {
+      "pointNumber": "Number of calibration points shown on the screen (more points = higher accuracy).",
+      "samplesPerPoint": "How many gaze samples are collected per calibration point. Higher values improve precision but increase duration.",
+      "msPerPoint": "Duration (in milliseconds) to capture data per point. Defines how long the user must look at each target.",
+      "threshold": "Maximum distance (in pixels) allowed between calibration samples before they are discarded. Controls spatial tolerance.",
+      "radius": "Adjust the radius of the calibration point. Larger values make the point bigger.",
+      "offset": "Offset (in pixels) to adjust the calibration area position."
+    },
+    "models": {
+      "linear": "Linear Regression",
+      "ridge": "Ridge Regression",
+      "lasso": "Lasso Regression",
+      "elastic": "Elastic Net",
+      "bayesian": "Bayesian Ridge",
+      "sgd": "SGD Regressor",
+      "svr": "Support Vector Regressor"
+    }
   },
   "AccessNotAllowed": {
     "notAllowed": "Access not allowed",

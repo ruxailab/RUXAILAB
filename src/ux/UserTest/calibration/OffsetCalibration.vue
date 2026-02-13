@@ -1,29 +1,22 @@
 <template>
   <v-row class="d-flex align-center">
     <v-col cols="8">
-      <v-slider v-model="offset" :min="100" :max="300" step="5" thumb-label>
-        <template #label>
-          <div class="d-flex align-center">
-            Offset
-            <v-tooltip
-              content-class="modern-tooltip"
-              location="top"
-              max-width="300"
-              text="Defines the inner margin (in pixels) of the calibration area relative to the screen edges. This prevents targets from being rendered in non-trackable peripheral zones."
-            >
-              <template #activator="{ props }">
-                <v-icon
-                  v-bind="props"
-                  size="x-small"
-                  color="primary"
-                  icon="mdi-information-outline"
-                  class="ml-2"
-                ></v-icon>
-              </template>
-            </v-tooltip>
-          </div>
+      <v-tooltip
+        :text="$t('EyeTrackingConfig.tooltips.offset')"
+        location="bottom"
+      >
+        <template #activator="{ props }">
+          <v-slider
+            v-bind="props"
+            v-model="offset"
+            :min="100"
+            :max="300"
+            step="5"
+            :label="$t('EyeTrackingConfig.labels.offset')"
+            thumb-label
+          />
         </template>
-      </v-slider>
+      </v-tooltip>
     </v-col>
 
     <v-col
