@@ -1256,6 +1256,46 @@
     "completed": "キャリブレーション完了！",
     "continue": "テストを続行"
   },
+  "EyeTrackingConfig": {
+    "titles": {
+      "main": "アイトラッキング設定",
+      "general": "基本設定",
+      "miscellaneous": "その他の設定"
+    },
+    "labels": {
+      "pointNumber": "ポイント数",
+      "samplesPerPoint": "ポイントごとのサンプル数",
+      "msPerPoint": "ポイントキャプチャのミリ秒",
+      "threshold": "ポイント距離のしきい値",
+      "radius": "半径",
+      "offset": "オフセット",
+      "control": "コントロール:",
+      "useCustomColors": "カスタム色を使用する",
+      "backgroundColor": "背景色:",
+      "pointColor": "ポイントの色:",
+      "modelSelection": "モデルの選択:",
+      "selectModel": "モデルを選択",
+      "note": "注意:",
+      "noteText": "選択したモデルはキャリブレーションプロセスに使用されます。デフォルトのモデルは線形回帰です。一部のモデルは他のモデルよりもトレーニングに時間がかかる場合があります。しばらくお待ちください。"
+    },
+    "tooltips": {
+      "pointNumber": "画面に表示されるキャリブレーションポイントの数（ポイントが多いほど精度が高くなります）。",
+      "samplesPerPoint": "キャリブレーションポイントごとに収集される視線サンプルの数。値が高いほど精度は向上しますが、所要時間が長くなります。",
+      "msPerPoint": "ポイントごとのデータキャプチャ時間（ミリ秒単位）。ユーザーが各ターゲットを注視し続ける時間を定義します。",
+      "threshold": "キャリブレーションサンプル間で許容される最大距離（ピクセル単位）。これを超えるとサンプルは破棄されます。空間的許容範囲を制御します。",
+      "radius": "キャリブレーションポイントの半径を調整します。値を大きくするとポイントが大きくなります。",
+      "offset": "キャリブレーション領域の位置を調整するオフセット（ピクセル単位）。"
+    },
+    "models": {
+      "linear": "線形回帰",
+      "ridge": "リッジ回帰",
+      "lasso": "ラッソ回帰",
+      "elastic": "Elastic Net",
+      "bayesian": "ベイズリッジ",
+      "sgd": "SGD Regressor",
+      "svr": "Support Vector Regressor"
+    }
+  },
   "AccessNotAllowed": {
     "notAllowed": "アクセスが許可されていません",
     "noAccess": "アクセスしようとしているページにアクセスする権限がありません。",
