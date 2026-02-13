@@ -1257,6 +1257,46 @@
     "completed": "Kalibrierung abgeschlossen!",
     "continue": "Zum Test fortfahren"
   },
+  "EyeTrackingConfig": {
+    "titles": {
+      "main": "Blickverfolgungs-Konfigurationen",
+      "general": "Allgemeine Konfiguration",
+      "miscellaneous": "Verschiedene Konfigurationen"
+    },
+    "labels": {
+      "pointNumber": "Punktanzahl",
+      "samplesPerPoint": "Proben pro Punkt",
+      "msPerPoint": "Millisekunden pro Punktaufnahme",
+      "threshold": "Punktabstandsschwelle",
+      "radius": "Radius",
+      "offset": "Offset",
+      "control": "Steuerung:",
+      "useCustomColors": "Benutzerdefinierte Farben verwenden",
+      "backgroundColor": "Hintergrundfarbe:",
+      "pointColor": "Punktfarbe:",
+      "modelSelection": "Modellauswahl:",
+      "selectModel": "Modell auswählen",
+      "note": "Hinweis:",
+      "noteText": "Das ausgewählte Modell wird für den Kalibrierungsprozess verwendet. Das Standardmodell ist die lineare Regression. Einige Modelle benötigen möglicherweise länger zum Trainieren als andere. Bitte haben Sie Geduld."
+    },
+    "tooltips": {
+      "pointNumber": "Anzahl der auf dem Bildschirm angezeigten Kalibrierungspunkte (mehr Punkte = höhere Genauigkeit).",
+      "samplesPerPoint": "Wie viele Blickproben pro Kalibrierungspunkt gesammelt werden. Höhere Werte verbessern die Präzision, erhöhen aber die Dauer.",
+      "msPerPoint": "Dauer (in Millisekunden) zur Erfassung der Daten pro Punkt. Legt fest, wie lange der Benutzer auf jedes Ziel schauen muss.",
+      "threshold": "Maximal zulässiger Abstand (in Pixeln) zwischen Kalibrierungsproben, bevor diese verworfen werden. Steuert die räumliche Toleranz.",
+      "radius": "Passen Sie den Radius des Kalibrierungspunkts an. Größere Werte machen den Punkt größer.",
+      "offset": "Offset (in Pixeln) zur Anpassung der Position des Kalibrierungsbereichs."
+    },
+    "models": {
+      "linear": "Lineare Regression",
+      "ridge": "Ridge-Regression",
+      "lasso": "Lasso-Regression",
+      "elastic": "Elastic Net",
+      "bayesian": "Bayesian Ridge",
+      "sgd": "SGD-Regressor",
+      "svr": "Support Vector Regressor"
+    }
+  },
   "AccessNotAllowed": {
     "notAllowed": "Zugriff nicht erlaubt",
     "noAccess": "Sie haben keinen Zugriff auf die Seite, die Sie aufrufen möchten.",
