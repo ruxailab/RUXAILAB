@@ -382,6 +382,7 @@
     "incorrectPassword": "パスワードが正しくありません",
     "incorrectCredential": "ユーザー名またはパスワードが正しくありません。",
     "globalError": "エラーが発生しました。ご不便をおかけして申し訳ありません。",
+    "cameraPermissionDenied": "カメラへのアクセスが拒否されました。ブラウザの設定でカメラへのアクセスを許可してください。",
     "sendError": "招待の送信に失敗しました。再試行してください",
     "missingVariableTitles": "保存できません：いくつかの変数にタイトルがありません"
   },
