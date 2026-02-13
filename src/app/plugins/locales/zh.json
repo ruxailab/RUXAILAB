@@ -382,7 +382,7 @@
     "incorrectPassword": "密码错误",
     "incorrectCredential": "用户名或密码错误。",
     "globalError": "发生错误，给您带来不便，敬请谅解。",
-    "cameraPermissionRequired": "继续操作需要访问摄像头。请在浏览器设置中允许摄像头访问。",
+    "cameraPermissionDenied": "继续操作需要访问摄像头。请在浏览器设置中允许摄像头访问。",
     "sendError": "发送邀请失败，请重试",
     "missingVariableTitles": "无法保存：一些变量缺少标题"
   },
