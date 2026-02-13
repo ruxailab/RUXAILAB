@@ -1256,6 +1256,46 @@
     "completed": "校准完成！",
     "continue": "继续测试"
   },
+  "EyeTrackingConfig": {
+    "titles": {
+      "main": "视线追踪配置",
+      "general": "常规配置",
+      "miscellaneous": "杂项配置"
+    },
+    "labels": {
+      "pointNumber": "点数",
+      "samplesPerPoint": "每个点的样本数",
+      "msPerPoint": "每个点的捕捉毫秒数",
+      "threshold": "点距离阈值",
+      "radius": "半径",
+      "offset": "偏移量",
+      "control": "控制：",
+      "useCustomColors": "使用自定义颜色",
+      "backgroundColor": "背景颜色：",
+      "pointColor": "点颜色：",
+      "modelSelection": "模型选择：",
+      "selectModel": "选择模型",
+      "note": "注意：",
+      "noteText": "所选模型将用于校准过程。默认模型为线性回归。某些模型的训练时间可能比其他模型长，请耐心等待。"
+    },
+    "tooltips": {
+      "pointNumber": "屏幕上显示的校准点数量（点越多 = 精度越高）。",
+      "samplesPerPoint": "每个校准点收集的注视样本数量。较高的值可提高精度，但会增加持续时间。",
+      "msPerPoint": "捕捉每个点数据的时间（以毫秒为单位）。定义用户注视每个目标的时间。",
+      "threshold": "校准样本之间允许的最大距离（以像素为单位），超过该距离将被丢弃。控制空间容差。",
+      "radius": "调整校准点的半径。值越大，点越大。",
+      "offset": "用于调整校准区域位置的偏移量（以像素为单位）。"
+    },
+    "models": {
+      "linear": "线性回归",
+      "ridge": "岭回归",
+      "lasso": "Lasso回归",
+      "elastic": "弹性网络",
+      "bayesian": "贝叶斯岭回归",
+      "sgd": "SGD回归器",
+      "svr": "支持向量回归器"
+    }
+  },
   "AccessNotAllowed": {
     "notAllowed": "访问被拒绝",
     "noAccess": "您无权访问您尝试访问的页面。",
