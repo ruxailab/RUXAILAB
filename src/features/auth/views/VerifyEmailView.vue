@@ -46,6 +46,15 @@
       <!-- Actions -->
       <div v-if="!isVerified" class="actions">
         <button 
+          :disabled="isVerifying"
+          class="btn btn-primary"
+          @click="checkEmailVerificationStatus" 
+        >
+          <i class="fas fa-check"></i>
+          {{ isVerifying ? $t('auth.verifyingEmail') : 'Already Verified?' }}
+        </button>
+
+        <button 
           :disabled="isResending || isVerifying"
           class="btn btn-secondary"
           @click="resendVerificationEmail" 
@@ -156,10 +165,6 @@ export default {
   mounted() {
     // Ensure user is logged in
     onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        this.$router.push('/signin')
-        return
-      }
       this.initializeVerification()
     })
   },
@@ -176,20 +181,35 @@ export default {
     async checkEmailVerificationStatus() {
       try {
         this.isVerifying = true
-        // Reload user to get updated verification status
+        this.error = null
+        
+        // Reload user to get latest email verification status
         await auth.currentUser.reload()
         
         if (auth.currentUser.emailVerified) {
           this.isVerified = true
-          this.isVerifying = false
-          // Clear interval and redirect after 2 seconds
-          clearInterval(this.verificationCheckInterval)
+          this.$store.commit('SET_TOAST', {
+            message: this.$t('auth.emailVerified'),
+            type: 'success',
+          })
+          // Redirect after 1.5 seconds
           setTimeout(() => {
             this.$router.push('/admin')
-          }, 2000)
+          }, 1500)
+        } else {
+          this.error = this.$t('auth.emailNotVerified')
+          this.$store.commit('SET_TOAST', {
+            message: this.$t('auth.emailNotVerified'),
+            type: 'warning',
+          })
         }
       } catch (err) {
+        console.error('Error checking email verification:', err)
         this.error = this.$t('auth.errorCheckingVerification')
+        this.$store.commit('SET_TOAST', {
+          message: this.$t('auth.errorCheckingVerification'),
+          type: 'error',
+        })
       } finally {
         this.isVerifying = false
       }
@@ -275,11 +295,10 @@ export default {
         this.userEmail = user.email
         if (user.emailVerified) {
           this.isVerified = true
-        } else {
-          // Check verification status every 3 seconds
-          this.verificationCheckInterval = setInterval(() => {
-            this.checkEmailVerificationStatus()
-          }, 3000)
+          // Auto-redirect to dashboard after 1.5 seconds
+          setTimeout(() => {
+            this.$router.push('/admin')
+          }, 1500)
         }
       }
     },
@@ -308,7 +327,7 @@ export default {
 }
 
 .verify-header {
-  background: #1e3a8a;
+  background: #00213F;
   color: white;
   padding: 40px 30px;
   text-align: center;
@@ -373,8 +392,8 @@ export default {
 
 .status-message.loading {
   background: #eff6ff;
-  color: #1e3a8a;
-  border-left: 4px solid #1e3a8a;
+  color: #00213F;
+  border-left: 4px solid #00213F;
 }
 
 .status-message.success {
@@ -456,13 +475,13 @@ export default {
 }
 
 .btn-primary {
-  background: #1e3a8a;
+  background: #00213F;
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(30, 58, 138, 0.4);
+  box-shadow: 0 5px 15px rgba(0, 33, 63, 0.4);
 }
 
 .btn-secondary {
@@ -477,8 +496,8 @@ export default {
 
 .btn-tertiary {
   background: white;
-  color: #1e3a8a;
-  border: 2px solid #1e3a8a;
+  color: #00213F;
+  border: 2px solid #00213F;
 }
 
 .btn-tertiary:hover:not(:disabled) {
