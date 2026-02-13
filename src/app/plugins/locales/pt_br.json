@@ -824,6 +824,7 @@
       "remove_cooperator": "Tem certeza de que deseja remover {email} dos colaboradores?",
       "cancel_invitation": "Tem certeza de que deseja cancelar o convite de {email}?",
       "change_role": "Tem certeza de que deseja alterar a função de {email} de {old} para {new}?",
+      "change_role_title": "Alterar função",
       "message_title_hint": "Digite um título para sua mensagem",
       "message_content_hint": "Digite o conteúdo da sua mensagem",
       "invite_message": "Você foi convidado para colaborar em '{testTitle}'",
@@ -1435,6 +1436,7 @@
       "perform_common_tasks": "Execute tarefas comuns instantaneamente",
       "delete_warning": "Todos os dados, resultados e configurações associados serão perdidos para sempre.",
       "delete_forever": "Excluir para sempre",
+      "action_cannot_be_undone": "Esta ação não pode ser desfeita",
       "confirm_deletion": "Confirmar exclusão"
     },
     "editTest": {

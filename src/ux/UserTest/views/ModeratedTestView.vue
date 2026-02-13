@@ -643,7 +643,8 @@ const { t } = useI18n()
 // Data variables
 
 onBeforeUnmount(() => {
-  if (moderatorDisconnectTimeout.value) clearTimeout(moderatorDisconnectTimeout.value)
+  if (moderatorDisconnectTimeout.value)
+    clearTimeout(moderatorDisconnectTimeout.value)
 })
 
 const testDisabledReason = ref(null)
@@ -996,7 +997,8 @@ const handleModeratorStatusChange = (connected) => {
 
   if (!connected) {
     // Moderator disconnected — start 5-min timeout
-    if (moderatorDisconnectTimeout.value) clearTimeout(moderatorDisconnectTimeout.value)
+    if (moderatorDisconnectTimeout.value)
+      clearTimeout(moderatorDisconnectTimeout.value)
     moderatorDisconnectTimeout.value = setTimeout(() => {
       moderatorInactive.value = true
     }, MODERATOR_DISCONNECT_TIMEOUT_MS)

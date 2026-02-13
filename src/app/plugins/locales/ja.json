@@ -824,6 +824,7 @@
       "remove_cooperator": "{email}を協力者から削除してもよろしいですか？",
       "cancel_invitation": "{email}の招待を取り消してもよろしいですか？",
       "change_role": "{email}の役割を{old}から{new}に変更してもよろしいですか？",
+      "change_role_title": "役割を変更",
       "message_title_hint": "メッセージのタイトルを入力",
       "message_content_hint": "メッセージの内容を入力",
       "invite_message": "'{testTitle}' への共同作業に招待されました",
@@ -1435,6 +1436,7 @@
       "perform_common_tasks": "一般的なタスクを即時に実行",
       "delete_warning": "関連するすべてのデータ、結果、設定が完全に失われます。",
       "delete_forever": "完全に削除",
+      "action_cannot_be_undone": "この操作は元に戻せません",
       "confirm_deletion": "削除の確認"
     },
     "editTest": {
@@ -1536,11 +1538,7 @@
       "SelfTest": {
         "title": "セルフテスト",
         "type": "非モデレート",
-        "text": [
-          "自分の時間に回答",
-          "高度な回答分析",
-          "タスクのカスタマイズ"
-        ]
+        "text": ["自分の時間に回答", "高度な回答分析", "タスクのカスタマイズ"]
       },
       "LiveTest": {
         "title": "ライブテスト",
@@ -1822,11 +1820,7 @@
       "blank": {
         "title": "空白の研究から開始",
         "description": "完全なカスタマイズでゼロから研究を作成します",
-        "features": [
-          "完全なカスタマイズ",
-          "ゼロから構築",
-          "設定を完全に制御"
-        ]
+        "features": ["完全なカスタマイズ", "ゼロから構築", "設定を完全に制御"]
       },
       "template": {
         "title": "テンプレートから作成",
@@ -2272,4 +2266,3 @@
     "title": "プライバシーポリシー"
   }
 }
-

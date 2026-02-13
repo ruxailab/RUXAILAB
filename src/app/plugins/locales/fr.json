@@ -824,6 +824,7 @@
       "remove_cooperator": "Êtes-vous sûr de vouloir supprimer {email} des collaborateurs ?",
       "cancel_invitation": "Êtes-vous sûr de vouloir annuler {email} des collaborateurs ?",
       "change_role": "Êtes-vous sûr de vouloir changer le rôle de {email} de {old} à {new} ?",
+      "change_role_title": "Changer le rôle",
       "message_title_hint": "Tapez un titre pour votre message",
       "message_content_hint": "Tapez le contenu de votre message",
       "invite_message": "Vous avez été invité à collaborer sur '{testTitle}'",
@@ -1435,6 +1436,7 @@
       "perform_common_tasks": "Effectuez des tâches courantes instantanément",
       "delete_warning": "Toutes les données, résultats et configurations associés seront perdus à jamais.",
       "delete_forever": "Supprimer définitivement",
+      "action_cannot_be_undone": "Cette action ne peut pas être annulée",
       "confirm_deletion": "Confirmer la suppression"
     },
     "editTest": {
@@ -2272,4 +2274,3 @@
     "title": "Politique de confidentialité"
   }
 }
-
