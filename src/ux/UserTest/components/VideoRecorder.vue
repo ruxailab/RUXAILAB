@@ -1,4 +1,3 @@
-VideoRecorder.vue:
 <template>
   <div>
     <!-- <v-col>
