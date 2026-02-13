@@ -168,7 +168,10 @@
                   >
                     <div class="d-flex align-center flex-wrap gap-2">
                       <span class="font-weight-medium text-body-1">{{
-                        n.title || (n.titleTemplate ? $t(n.titleTemplate, n.titleParams || {}) : $t('notificationsPage.notification'))
+                        n.title ||
+                        (n.titleTemplate
+                          ? $t(n.titleTemplate, n.titleParams || {})
+                          : $t('notificationsPage.notification'))
                       }}</span>
                       <v-chip
                         v-if="n.type"
@@ -228,12 +231,14 @@
                   <div
                     class="text-body-2 text-grey-darken-1 mb-2 notification-description line-clamp-2"
                   >
-                    {{ n.description || (n.descriptionTemplate ? $t(n.descriptionTemplate, n.descriptionParams || {}) : $t('notificationsPage.newNotification')) }}
+                    {{
+                      n.description ||
+                      (n.descriptionTemplate
+                        ? $t(n.descriptionTemplate, n.descriptionParams || {})
+                        : $t('notificationsPage.newNotification'))
+                    }}
                   </div>
-                  <div
-                    v-if="n.author"
-                    class="text-caption text-grey-darken-2"
-                  >
+                  <div v-if="n.author" class="text-caption text-grey-darken-2">
                     <v-icon size="small">mdi-account-outline</v-icon>
                     {{ n.author }}
                   </div>

@@ -27,7 +27,7 @@
             {{ $t('ModeratedTest.postTest') }}
           </v-tab>
           <v-tab v-if="hasEyeTracking" @click="index = 5">
-            Eye Tracking Configurations
+            {{ $t('UserTestTable.titles.eyeTrackingConfigurations') }}
           </v-tab>
         </v-tabs>
 
@@ -38,9 +38,11 @@
               :welcome="welcomeMessage"
               :final-message="finalMessage"
               @update:welcome-message="
-                ;(welcomeMessage = $event), (change = true)
+                ;((welcomeMessage = $event), (change = true))
               "
-              @update:final-message=";(finalMessage = $event), (change = true)"
+              @update:final-message="
+                ;((finalMessage = $event), (change = true))
+              "
             />
           </div>
 
@@ -189,7 +191,7 @@ const save = async () => {
     const study = instantiateStudyByType(rawData.testType, rawData)
     await store.dispatch('updateStudy', study)
     showSuccess('pages.editTest.updatedTest')
-  } catch (error) {
+  } catch {
     showError('errors.globalError')
   }
 }
