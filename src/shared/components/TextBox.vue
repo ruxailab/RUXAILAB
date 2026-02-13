@@ -248,7 +248,7 @@ const setLink = () => {
   let link = prompt('Link: ')
   if (link) {
     if (!link.startsWith('http://') && !link.startsWith('https://')) {
-      link = 'http://' + link
+      link = 'https://' + link
     }
     editor.value.chain().focus().setLink({ href: link }).run()
   }
@@ -256,10 +256,6 @@ const setLink = () => {
 
 const getJson = () => {
   return json.value
-}
-
-const getHtml = () => {
-  return html.value
 }
 
 const setContent = (text) => {

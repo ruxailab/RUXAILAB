@@ -22,7 +22,6 @@ import {
 // Stores
 const store = useStore()
 const route = useRoute()
-const router = useRouter()
 
 // Computed
 const user = computed(() => store.getters.user)

@@ -7,11 +7,7 @@
       <v-col cols="1" class="mb-6 py-0">
         <v-tooltip v-if="!show" location="bottom">
           <template #activator="{ props }">
-            <v-btn
-              icon
-              v-bind="props"
-              @click="show = !show"
-            >
+            <v-btn icon v-bind="props" @click="show = !show">
               <v-icon :color="answerHeu?.heuristicComment ? '#F9A826' : ''">
                 mdi-comment-plus-outline
               </v-icon>
@@ -92,79 +88,79 @@ const localComment = ref('')
 
 const test = computed(() => store.getters.test || {})
 const hasContent = computed(
-  () => props.answerHeu?.heuristicComment || props.answerHeu?.answerImageUrl
+  () => props.answerHeu?.heuristicComment || props.answerHeu?.answerImageUrl,
 )
 
 const heuristicIdForImage = computed(() => {
-  const index = props.heurisIndex ?? '0';
-  return index.toString();
+  const index = props.heurisIndex ?? '0'
+  return index.toString()
 })
 
 const questionIdForImage = computed(() => {
-  const id = props.answerHeu?.heuristicId ?? '0';
-  return id.toString();
+  const id = props.answerHeu?.heuristicId ?? '0'
+  return id.toString()
 })
 
 const testIdForImage = computed(() => {
-  return test.value?.id || '';
+  return test.value?.id || ''
 })
 
 const initializeLocalComment = () => {
   if (props.answerHeu?.heuristicComment) {
-    localComment.value = props.answerHeu.heuristicComment;
+    localComment.value = props.answerHeu.heuristicComment
   }
 }
 
 const handleCommentBlur = () => {
   // Trigger update when user leaves the comment field
-  emit('updateComment', localComment.value);
+  emit('updateComment', localComment.value)
 }
 
 watch(
   () => props.heurisIndex,
   () => {
     show.value = false
-    initializeLocalComment();
-  }
+    initializeLocalComment()
+  },
 )
 
 watch(
   () => props.answerHeu,
   (newVal) => {
     if (newVal?.heuristicComment !== undefined) {
-      localComment.value = newVal.heuristicComment || '';
+      localComment.value = newVal.heuristicComment || ''
     }
     // Show the comment area if there's content
     if (hasContent.value && !show.value) {
-      show.value = true;
+      show.value = true
     }
   },
-  { deep: true, immediate: true }
+  { deep: true, immediate: true },
 )
 
 onMounted(() => {
-  initializeLocalComment();
+  initializeLocalComment()
   if (hasContent.value) {
     show.value = true
   }
   nextTick(() => {
-    if(props.answerHeu?.heuristicComment){
-      emit('updateComment', props.answerHeu.heuristicComment);
+    if (props.answerHeu?.heuristicComment) {
+      emit('updateComment', props.answerHeu.heuristicComment)
     }
-  });
+  })
 })
 
 const updateComment = (input) => {
-  localComment.value = input || '';
-  emit('updateComment', input || '');
+  localComment.value = input || ''
+  emit('updateComment', input || '')
 }
 
 const handleImageUploaded = (imageUrl) => {
   if (imageUrl) {
-    localComment.value = ''; 
-    emit('updateComment', '');
-    emit('updateImage', imageUrl);
-    show.value = true;
+    localComment.value = ''
+    emit('updateComment', '')
+    emit('updateImage', imageUrl)
+    show.value = true
   }
 }
 </script>
