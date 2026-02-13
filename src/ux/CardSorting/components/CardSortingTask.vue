@@ -116,8 +116,11 @@ const pendingAllocationCount = computed(() => {
 
 // Lifecycle Hooks
 onMounted(async () => {
-  categories.value = [...props.test.testStructure.cardSorting.categories] || []
-  cards.value = [...props.test.testStructure.cardSorting.cards] || []
+  const cardSorting = props.test?.testStructure?.cardSorting
+  categories.value = Array.isArray(cardSorting?.categories)
+    ? [...cardSorting.categories]
+    : []
+  cards.value = Array.isArray(cardSorting?.cards) ? [...cardSorting.cards] : []
 
   localTestAnswer.value.tasks = categories.value.reduce((acc, card) => {
     acc[card.title] = []
