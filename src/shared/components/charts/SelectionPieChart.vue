@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import { onMounted, watch, nextTick, ref } from 'vue'
+import { onMounted, watch, nextTick } from 'vue'
 
 const props = defineProps({
   questionTitle: String,

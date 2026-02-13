@@ -132,7 +132,7 @@ import {
 import ManagerView from '@/shared/views/template/ManagerView.vue'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import { computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 
 // Manager components

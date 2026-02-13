@@ -28,13 +28,13 @@
           <v-row align="center" justify="space-around" class="g-4">
             <v-col cols="12" sm="4" class="text-center">
               <label>
-                Color:
+                {{ $t('Accessibility.color') }}
                 <input v-model="circleColor" type="color" />
               </label>
             </v-col>
 
             <v-col cols="12" sm="4" class="text-center">
-              <v-label class="mb-1">Radius</v-label>
+              <v-label class="mb-1">{{ $t('Accessibility.radius') }}</v-label>
               <v-slider
                 v-model="circleRadius"
                 min="5"
@@ -48,7 +48,7 @@
             </v-col>
 
             <v-col cols="12" sm="4" class="text-center">
-              <v-label class="mb-1">Opacity</v-label>
+              <v-label class="mb-1">{{ $t('Accessibility.opacity') }}</v-label>
               <v-slider
                 v-model="circleOpacity"
                 min="0.01"

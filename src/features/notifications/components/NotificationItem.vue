@@ -18,11 +18,13 @@
       <!-- Content -->
       <div class="content">
         <div class="title-row">
-          <div class="text-h6">
-            {{ notification.title || 'Notification' }}
-            <span v-if="notification.type" class="type-badge">
-              {{ notification.type }}
-            </span>
+          <div class="text-subtitle-1 font-weight-medium">
+            {{
+              notification.title ||
+              (notification.titleTemplate
+                ? $t(notification.titleTemplate, notification.titleParams || {})
+                : 'Notification')
+            }}
           </div>
 
           <span class="time">
@@ -30,12 +32,20 @@
           </span>
         </div>
 
-        <div class="description">
-          {{ notification.description }}
+        <div class="description line-clamp-2">
+          {{
+            notification.description ||
+            (notification.descriptionTemplate
+              ? $t(
+                  notification.descriptionTemplate,
+                  notification.descriptionParams || {},
+                )
+              : '')
+          }}
         </div>
 
         <div class="meta">
-          {{ $t('common.sentBy') }}: {{ notification.author }}
+          {{ $t('common.sentBy') }} {{ notification.author }}
         </div>
       </div>
 
@@ -58,6 +68,7 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n'
 import { METHOD_DEFINITIONS } from '@/shared/constants/methodDefinitions.js'
 
 const props = defineProps({
@@ -68,6 +79,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['go-to-redirect', 'mark-as-read'])
+const { t } = useI18n()
 
 const onClick = () => emit('go-to-redirect', props.notification)
 
@@ -89,7 +101,9 @@ const relativeTime = (date) => {
   border-radius: 12px;
   padding: 12px;
   cursor: pointer;
-  transition: background 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .notification-item:hover {

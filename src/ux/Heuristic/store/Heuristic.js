@@ -46,14 +46,12 @@ export default {
     SETUP_HEURISTIC_QUESTION_DESCRIPTION(state, payload) {
       const { heuristic, question, description, editIndex } = payload
       if (!state.heuristics || !state.heuristics[heuristic]) {
-        console.warn('Heuristic index not found in heuristics:', heuristic)
         return
       }
       if (
         !state.heuristics[heuristic].questions ||
         !state.heuristics[heuristic].questions[question]
       ) {
-        console.warn('Question index not found in heuristics:', question)
         return
       }
       let targetQuestion = state.heuristics[heuristic].questions[question]
@@ -74,17 +72,26 @@ export default {
     },
   },
   actions: {
-    setHeuristics({ commit }, payload) {
-      commit('SET_HEURISTICS', payload)
+    async setHeuristics({ commit }, payload) {
+      try {
+        commit('SET_HEURISTICS', payload)
+      } catch {
+        commit('setError', true)
+      }
     },
-    setTestWeights({ commit }, payload) {
-      commit('SET_TEST_WEIGHTS', payload)
-    },
-    setTestOptions({ commit }, payload) {
-      commit('SET_TEST_OPTIONS', payload)
+    async setTestWeights({ commit }, payload) {
+      try {
+        commit('SET_TEST_WEIGHTS', payload)
+      } catch {
+        commit('setError', true)
+      }
     },
     setScoresPercentage({ commit }, payload) {
-      commit('SET_SCORES_PERCENTAGE', payload)
+      try {
+        commit('SET_SCORES_PERCENTAGE', payload)
+      } catch {
+        commit('setError', true)
+      }
     },
     setCurrentImageUrl({ commit }, payload) {
       commit('SET_CURRENT_IMAGE_URL', payload)

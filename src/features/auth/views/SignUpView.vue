@@ -55,12 +55,7 @@
             @click:append-inner="showConfirmPassword = !showConfirmPassword"
           />
 
-          <v-btn
-            type="submit"
-            color="primary"
-            block
-            min-height="44"
-          >
+          <v-btn type="submit" color="primary" block min-height="44">
             {{ $t('auth.SIGNIN.sign-up') }}
           </v-btn>
         </v-form>
