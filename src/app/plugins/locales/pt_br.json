@@ -137,7 +137,8 @@
     "action_cannot_be_undone": "Esta ação não pode ser desfeita",
     "user": "Usuário",
     "id": "ID",
-    "itemsPerPage": "Itens por página:"
+    "itemsPerPage": "Itens por página:",
+    "saving": "Salvando..."
   },
   "storage": {
     "pageTitle": "Armazenamento",

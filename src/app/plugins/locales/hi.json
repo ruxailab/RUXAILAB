@@ -137,7 +137,8 @@
     "action_cannot_be_undone": "यह क्रिया पूर्ववत नहीं की जा सकती",
     "user": "उपयोगकर्ता",
     "id": "आईडी",
-    "itemsPerPage": "प्रति पृष्ठ आइटम:"
+    "itemsPerPage": "प्रति पृष्ठ आइटम:",
+    "saving": "सहेजा जा रहा है..."
   },
   "storage": {
     "pageTitle": "संग्रहण",

@@ -137,7 +137,8 @@
     "action_cannot_be_undone": "لا يمكن التراجع عن هذا الإجراء",
     "user": "مستخدم",
     "id": "ID",
-    "itemsPerPage": "عدد العناصر في الصفحة:"
+    "itemsPerPage": "عدد العناصر في الصفحة:",
+    "saving": "جاري الحفظ..."
   },
   "storage": {
     "pageTitle": "التخزين",

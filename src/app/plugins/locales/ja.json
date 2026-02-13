@@ -137,7 +137,8 @@
     "action_cannot_be_undone": "この操作は元に戻せません",
     "user": "ユーザー",
     "id": "ID",
-    "itemsPerPage": "ページごとの項目数："
+    "itemsPerPage": "ページごとの項目数：",
+    "saving": "保存中..."
   },
   "storage": {
     "pageTitle": "ストレージ",

@@ -137,7 +137,8 @@
     "action_cannot_be_undone": "此操作无法撤销",
     "user": "用户",
     "id": "ID",
-    "itemsPerPage": "每页项目数："
+    "itemsPerPage": "每页项目数：",
+    "saving": "保存中..."
   },
   "storage": {
     "pageTitle": "存储",
