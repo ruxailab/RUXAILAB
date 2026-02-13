@@ -137,7 +137,8 @@
     "action_cannot_be_undone": "Cette action ne peut pas être annulée",
     "user": "Utilisateur",
     "id": "ID",
-    "itemsPerPage": "Éléments par page :"
+    "itemsPerPage": "Éléments par page :",
+    "saving": "Enregistrement..."
   },
   "storage": {
     "pageTitle": "Stockage",

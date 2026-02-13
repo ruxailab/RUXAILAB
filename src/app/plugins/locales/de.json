@@ -137,7 +137,8 @@
     "action_cannot_be_undone": "Diese Aktion kann nicht rückgängig gemacht werden",
     "user": "Benutzer",
     "id": "ID",
-    "itemsPerPage": "Elemente pro Seite:"
+    "itemsPerPage": "Elemente pro Seite:",
+    "saving": "Wird gespeichert..."
   },
   "storage": {
     "pageTitle": "Speicher",

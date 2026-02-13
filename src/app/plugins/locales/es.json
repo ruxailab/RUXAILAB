@@ -137,7 +137,8 @@
     "action_cannot_be_undone": "Esta acción no se puede deshacer",
     "user": "Usuario",
     "id": "ID",
-    "itemsPerPage": "Elementos por página:"
+    "itemsPerPage": "Elementos por página:",
+    "saving": "Guardando..."
   },
   "storage": {
     "pageTitle": "Almacenamiento",

@@ -137,7 +137,8 @@
     "action_cannot_be_undone": "Это действие нельзя отменить",
     "user": "Пользователь",
     "id": "ID",
-    "itemsPerPage": "Элементов на странице:"
+    "itemsPerPage": "Элементов на странице:",
+    "saving": "Сохранение..."
   },
   "storage": {
     "pageTitle": "Хранилище",
