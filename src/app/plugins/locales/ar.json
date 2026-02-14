@@ -112,15 +112,7 @@
     "user": "مستخدم",
     "id": "ID",
     "itemsPerPage": "عدد العناصر في الصفحة:",
-    "visible": "مرئي",
-    "schedule": {
-      "title": "Schedule Test",
-      "description": "Set a date and time for your test to notify participants",
-      "date": "Date",
-      "time": "Time",
-      "notifyBefore": "Notify me before",
-      "notes": "Notes / Instructions"
-    }
+    "visible": "مرئي"
   },
   "storage": {
     "pageTitle": "التخزين",
@@ -1478,7 +1470,15 @@
       "delete_warning": "سيتم فقدان جميع البيانات المرتبطة والنتائج والتكوينات إلى الأبد.",
       "delete_forever": "حذف إلى الأبد",
       "action_cannot_be_undone": "لا يمكن التراجع عن هذا الإجراء",
-      "confirm_deletion": "تأكيد الحذف"
+      "confirm_deletion": "تأكيد الحذف",
+      "schedule": {
+        "title": "Schedule Test",
+        "description": "Set a date and time for your test to notify participants",
+        "date": "Date",
+        "time": "Time",
+        "notifyBefore": "Notify me before",
+        "notes": "Notes / Instructions"
+      }
     },
     "editTest": {
       "title": "تحرير الاختبار",

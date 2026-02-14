@@ -112,15 +112,7 @@
     "user": "ユーザー",
     "id": "ID",
     "itemsPerPage": "ページごとの項目数：",
-    "visible": "表示",
-    "schedule": {
-      "title": "Schedule Test",
-      "description": "Set a date and time for your test to notify participants",
-      "date": "Date",
-      "time": "Time",
-      "notifyBefore": "Notify me before",
-      "notes": "Notes / Instructions"
-    }
+    "visible": "表示"
   },
   "storage": {
     "pageTitle": "ストレージ",
@@ -1478,7 +1470,15 @@
       "delete_warning": "関連するすべてのデータ、結果、設定が完全に失われます。",
       "delete_forever": "完全に削除",
       "action_cannot_be_undone": "この操作は元に戻せません",
-      "confirm_deletion": "削除の確認"
+      "confirm_deletion": "削除の確認",
+      "schedule": {
+        "title": "Schedule Test",
+        "description": "Set a date and time for your test to notify participants",
+        "date": "Date",
+        "time": "Time",
+        "notifyBefore": "Notify me before",
+        "notes": "Notes / Instructions"
+      }
     },
     "editTest": {
       "title": "テストを編集",

@@ -112,15 +112,7 @@
     "user": "Пользователь",
     "id": "ID",
     "itemsPerPage": "Элементов на странице:",
-    "visible": "Видимый",
-    "schedule": {
-      "title": "Schedule Test",
-      "description": "Set a date and time for your test to notify participants",
-      "date": "Date",
-      "time": "Time",
-      "notifyBefore": "Notify me before",
-      "notes": "Notes / Instructions"
-    }
+    "visible": "Видимый"
   },
   "storage": {
     "pageTitle": "Хранилище",
@@ -1478,7 +1470,15 @@
       "delete_warning": "Все связанные данные, результаты и конфигурации будут потеряны навсегда.",
       "delete_forever": "Удалить навсегда",
       "action_cannot_be_undone": "Это действие нельзя отменить",
-      "confirm_deletion": "Подтвердите удаление"
+      "confirm_deletion": "Подтвердите удаление",
+      "schedule": {
+        "title": "Schedule Test",
+        "description": "Set a date and time for your test to notify participants",
+        "date": "Date",
+        "time": "Time",
+        "notifyBefore": "Notify me before",
+        "notes": "Notes / Instructions"
+      }
     },
     "editTest": {
       "title": "Редактировать тест",

@@ -112,15 +112,7 @@
     "user": "Usuario",
     "id": "ID",
     "itemsPerPage": "Elementos por página:",
-    "visible": "Visible",
-    "schedule": {
-      "title": "Schedule Test",
-      "description": "Set a date and time for your test to notify participants",
-      "date": "Date",
-      "time": "Time",
-      "notifyBefore": "Notify me before",
-      "notes": "Notes / Instructions"
-    }
+    "visible": "Visible"
   },
   "storage": {
     "pageTitle": "Almacenamiento",
@@ -1478,7 +1470,15 @@
       "delete_warning": "Todos los datos asociados, resultados y configuraciones se perderán para siempre.",
       "delete_forever": "Eliminar para Siempre",
       "action_cannot_be_undone": "Esta acción no se puede deshacer",
-      "confirm_deletion": "Confirmar eliminación"
+      "confirm_deletion": "Confirmar eliminación",
+      "schedule": {
+        "title": "Schedule Test",
+        "description": "Set a date and time for your test to notify participants",
+        "date": "Date",
+        "time": "Time",
+        "notifyBefore": "Notify me before",
+        "notes": "Notes / Instructions"
+      }
     },
     "editTest": {
       "title": "Editar prueba",

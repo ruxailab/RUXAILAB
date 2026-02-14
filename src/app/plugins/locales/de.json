@@ -112,15 +112,7 @@
     "user": "Benutzer",
     "id": "ID",
     "itemsPerPage": "Elemente pro Seite:",
-    "visible": "Sichtbar",
-    "schedule": {
-      "title": "Schedule Test",
-      "description": "Set a date and time for your test to notify participants",
-      "date": "Date",
-      "time": "Time",
-      "notifyBefore": "Notify me before",
-      "notes": "Notes / Instructions"
-    }
+    "visible": "Sichtbar"
   },
   "storage": {
     "pageTitle": "Speicher",
@@ -1479,7 +1471,15 @@
       "delete_warning": "Alle zugehörigen Daten, Ergebnisse und Konfigurationen gehen für immer verloren.",
       "delete_forever": "Endgültig löschen",
       "action_cannot_be_undone": "Diese Aktion kann nicht rückgängig gemacht werden",
-      "confirm_deletion": "Löschen bestätigen"
+      "confirm_deletion": "Löschen bestätigen",
+      "schedule": {
+        "title": "Schedule Test",
+        "description": "Set a date and time for your test to notify participants",
+        "date": "Date",
+        "time": "Time",
+        "notifyBefore": "Notify me before",
+        "notes": "Notes / Instructions"
+      }
     },
     "editTest": {
       "title": "Test bearbeiten",

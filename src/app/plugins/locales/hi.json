@@ -112,15 +112,7 @@
     "user": "उपयोगकर्ता",
     "id": "आईडी",
     "itemsPerPage": "प्रति पृष्ठ आइटम:",
-    "visible": "दृश्य",
-    "schedule": {
-      "title": "Schedule Test",
-      "description": "Set a date and time for your test to notify participants",
-      "date": "Date",
-      "time": "Time",
-      "notifyBefore": "Notify me before",
-      "notes": "Notes / Instructions"
-    }
+    "visible": "दृश्य"
   },
   "storage": {
     "pageTitle": "संग्रहण",
@@ -1478,7 +1470,15 @@
       "delete_warning": "संबंधित सभी डेटा, परिणाम और कॉन्फ़िगरेशन स्थायी रूप से खो जाएंगे।",
       "delete_forever": "हमेशा के लिए हटाएँ",
       "action_cannot_be_undone": "यह क्रिया पूर्ववत नहीं की जा सकती",
-      "confirm_deletion": "हटाने की पुष्टि करें"
+      "confirm_deletion": "हटाने की पुष्टि करें",
+      "schedule": {
+        "title": "Schedule Test",
+        "description": "Set a date and time for your test to notify participants",
+        "date": "Date",
+        "time": "Time",
+        "notifyBefore": "Notify me before",
+        "notes": "Notes / Instructions"
+      }
     },
     "editTest": {
       "title": "परीक्षण संपादित करें",

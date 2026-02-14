@@ -73,14 +73,6 @@
     "save": "Save",
     "editDelete": "Edit/Delete",
     "type": "Type",
-    "schedule": {
-      "title": "Schedule Test",
-      "description": "Set a date and time for your test to notify participants",
-      "date": "Date",
-      "time": "Time",
-      "notifyBefore": "Notify me before",
-      "notes": "Notes / Instructions"
-    },
     "manage_test_settings": "Manage your test settings here",
     "notifications": "Notifications",
     "markAllAsRead": "Mark all as read",
@@ -982,125 +974,6 @@
       "sart": "Situation Awareness Rating Technique - measures situational awareness"
     },
     "answerTypePreview": {
-      "noAnswer": {
-        "message": "Task completed! No additional feedback required."
-      },
-      "textArea": {
-        "placeholder": "Participants will provide their feedback here...",
-        "submitButton": "Submit Feedback"
-      },
-      "postTest": {
-        "title": "Post-Task Questions",
-        "q1": "1. How would you rate the difficulty of this task?",
-        "q2": "2. Any additional comments?",
-        "feedbackPlaceholder": "Optional feedback..."
-      },
-      "postForm": {
-        "title": "External Form",
-        "notice": "Participants will be redirected to complete an external form after the task.",
-        "button": "Open External Form"
-      },
-      "nasaTlx": {
-        "title": "NASA Task Load Index",
-        "mental": "Mental Demand",
-        "physical": "Physical Demand",
-        "range": "Low - High",
-        "moreDimensions": "+ 4 more dimensions"
-      },
-      "sus": {
-        "title": "System Usability Scale",
-        "q1": "1. I think that I would like to use this system frequently.",
-        "disagree": "Strongly Disagree",
-        "agree": "Strongly Agree",
-        "moreStatements": "+ 9 more statements"
-      },
-      "sart": {
-        "title": "Situation Awareness Rating Technique",
-        "instability": "Instability of Situation",
-        "complexity": "Complexity of Situation",
-        "stable": "Very Stable",
-        "unstable": "Very Unstable",
-        "simple": "Very Simple",
-        "complex": "Very Complex",
-        "moreDimensions": "+ 8 more SART dimensions"
-      },
-      "tam": {
-        "tam1": "TAM-1: Technology Acceptance Model (Basic)",
-        "tam2": "TAM-2: Technology Acceptance Model (Extended)",
-        "tam3": "TAM-3: Technology Acceptance Model (Comprehensive)",
-        "items2": "10 items across 2 dimensions",
-        "items7": "25 items across 7 dimensions",
-        "items13": "39 items across 13 dimensions",
-        "pu": "Perceived Usefulness",
-        "eu": "Perceived Ease of Use",
-        "sn": "Subjective Norm",
-        "image": "Image",
-        "jr": "Job Relevance",
-        "oq": "Output Quality",
-        "rd": "Result Demonstrability",
-        "se": "Computer Self-Efficacy",
-        "ec": "External Control",
-        "anxiety": "Anxiety",
-        "play": "Playfulness",
-        "enjoy": "Enjoyment",
-        "ou": "Objective Usability",
-        "q1": "1. Using the system improves my job performance.",
-        "q6": "6. The system is easy to use.",
-        "likertNote": "Participants rate {count} statements on a 5-point Likert scale"
-      },
-      "selectionPrompt": "Select an answer type to see preview"
-    },
-    "advanced": {
-      "stepTitle": "Step 3: Advanced Options",
-      "stepDescription": "Enable additional data collection methods to gather deeper insights. All options are optional but can provide valuable behavioral data and user feedback.",
-      "eyeTrackingDesc": "Track where participants look during the task. Provides heatmaps and gaze patterns to understand visual attention and navigation behavior.",
-      "screenRecordDesc": "Record the participant's screen activity. Captures clicks, scrolling, and interactions to analyze user behavior and identify pain points.",
-      "cameraDesc": "Record participant's facial expressions and reactions. Captures emotions, confusion, and satisfaction to understand user experience beyond interactions.",
-      "audioDesc": "Record participant's verbal feedback and comments. Captures think-aloud protocols, frustrations, and insights that reveal thought processes.",
-      "privacyNotice": "Privacy Notice",
-      "privacyText": "Recording features require explicit consent from participants. Make sure to:",
-      "privacyItem1": "Clearly inform participants about data collection",
-      "privacyItem2": "Obtain proper consent before starting the test",
-      "privacyItem3": "Follow data protection regulations (GDPR, etc.)",
-      "privacyItem4": "Secure storage and handling of recorded data"
-    },
-    "preview": {
-      "taskSummary": "Task Summary",
-      "untitledTask": "Untitled Task",
-      "description": "Description:",
-      "noDescription": "No description provided",
-      "participantTip": "Participant Tip:",
-      "taskUrl": "Task URL:",
-      "answerType": "Answer Type:",
-      "recordingFeatures": "Recording Features:",
-      "postTaskQuestion": "Post-Task Question:",
-      "postTaskForm": "Post-Task Form:",
-      "externalForm": "External Form",
-      "taskReady": "Task Ready!",
-      "reviewRequired": "Review Required",
-      "taskReadyMessage": "Your task is properly configured and ready to be used in your study.",
-      "reviewRequiredMessage": "Please review the previous steps to ensure all required fields are completed.",
-      "noTypeSelected": "No Type Selected",
-      "answerTypes": {
-        "noAnswer": "No Answer Required",
-        "textArea": "Text Area",
-        "postTest": "Post-Test Questions",
-        "postForm": "External Form",
-        "nasaTlx": "NASA-TLX",
-        "sus": "System Usability Scale",
-        "tam1": "TAM-1 (Basic)",
-        "tam2": "TAM-2 (Extended)",
-        "tam3": "TAM-3 (Comprehensive)",
-        "sart": "SART"
-      },
-      "recordingLabels": {
-        "eyeTracking": "Eye Tracking",
-        "screenRecording": "Screen Recording",
-        "camera": "Camera",
-        "audio": "Audio"
-      }
-    },
-    "answerTypePreview": {
       "taskCompleted": "Task completed! No additional feedback required.",
       "participantsFeedbackHere": "Participants will provide their feedback here...",
       "submitFeedback": "Submit Feedback",
@@ -1155,6 +1028,56 @@
       "playfulness": "Playfulness",
       "enjoyment": "Enjoyment",
       "objectiveUsability": "Objective Usability"
+    },
+    "advanced": {
+      "stepTitle": "Step 3: Advanced Options",
+      "stepDescription": "Enable additional data collection methods to gather deeper insights. All options are optional but can provide valuable behavioral data and user feedback.",
+      "eyeTrackingDesc": "Track where participants look during the task. Provides heatmaps and gaze patterns to understand visual attention and navigation behavior.",
+      "screenRecordDesc": "Record the participant's screen activity. Captures clicks, scrolling, and interactions to analyze user behavior and identify pain points.",
+      "cameraDesc": "Record participant's facial expressions and reactions. Captures emotions, confusion, and satisfaction to understand user experience beyond interactions.",
+      "audioDesc": "Record participant's verbal feedback and comments. Captures think-aloud protocols, frustrations, and insights that reveal thought processes.",
+      "privacyNotice": "Privacy Notice",
+      "privacyText": "Recording features require explicit consent from participants. Make sure to:",
+      "privacyItem1": "Clearly inform participants about data collection",
+      "privacyItem2": "Obtain proper consent before starting the test",
+      "privacyItem3": "Follow data protection regulations (GDPR, etc.)",
+      "privacyItem4": "Secure storage and handling of recorded data"
+    },
+    "preview": {
+      "taskSummary": "Task Summary",
+      "untitledTask": "Untitled Task",
+      "description": "Description:",
+      "noDescription": "No description provided",
+      "participantTip": "Participant Tip:",
+      "taskUrl": "Task URL:",
+      "answerType": "Answer Type:",
+      "recordingFeatures": "Recording Features:",
+      "postTaskQuestion": "Post-Task Question:",
+      "postTaskForm": "Post-Task Form:",
+      "externalForm": "External Form",
+      "taskReady": "Task Ready!",
+      "reviewRequired": "Review Required",
+      "taskReadyMessage": "Your task is properly configured and ready to be used in your study.",
+      "reviewRequiredMessage": "Please review the previous steps to ensure all required fields are completed.",
+      "noTypeSelected": "No Type Selected",
+      "answerTypes": {
+        "noAnswer": "No Answer Required",
+        "textArea": "Text Area",
+        "postTest": "Post-Test Questions",
+        "postForm": "External Form",
+        "nasaTlx": "NASA-TLX",
+        "sus": "System Usability Scale",
+        "tam1": "TAM-1 (Basic)",
+        "tam2": "TAM-2 (Extended)",
+        "tam3": "TAM-3 (Comprehensive)",
+        "sart": "SART"
+      },
+      "recordingLabels": {
+        "eyeTracking": "Eye Tracking",
+        "screenRecording": "Screen Recording",
+        "camera": "Camera",
+        "audio": "Audio"
+      }
     }
   },
   "UserTestView": {
@@ -1562,7 +1485,15 @@
       "perform_common_tasks": "Perform common tasks instantly",
       "delete_warning": "All associated data, results, and configurations will be lost forever.",
       "delete_forever": "Delete Forever",
-      "action_cannot_be_undone": "This action cannot be undone"
+      "action_cannot_be_undone": "This action cannot be undone",
+      "schedule": {
+        "title": "Schedule Test",
+        "description": "Set a date and time for your test to notify participants",
+        "date": "Date",
+        "time": "Time",
+        "notifyBefore": "Notify me before",
+        "notes": "Notes / Instructions"
+      }
     },
     "editTest": {
       "title": "Edit test",
