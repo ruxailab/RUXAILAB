@@ -27,6 +27,29 @@ export default class UserController extends Controller {
     return super.set(COLLECTION, payload.id, user)
   }
 
+  async addStudyToUser(userId, studyId, studyData) {
+    const userDoc = await super.readOne(COLLECTION, userId)
+    if (userDoc.exists()) {
+      const userData = userDoc.data()
+      const myTests = userData.myTests || {}
+
+      myTests[studyId] = {
+        id: studyId,
+        testTitle: studyData.testTitle,
+        testType: studyData.testType,
+        subType: studyData.subType,
+        testDescription: studyData.testDescription,
+        testAdmin: studyData.testAdmin?.toFirestore
+          ? studyData.testAdmin.toFirestore()
+          : studyData.testAdmin,
+        creationDate: studyData.creationDate,
+        lastUpdate: Date.now(),
+      }
+
+      await super.update(COLLECTION, userId, { myTests })
+    }
+  }
+
   async update(docId, payload) {
     return super.update(COLLECTION, docId, payload)
   }
@@ -156,10 +179,7 @@ export default class UserController extends Controller {
       userToUpdate.notifications[notificationIndex].readAt = Date.now()
 
       // Save updated user data to Firestore
-      await this.update(
-        userToUpdate.id,
-        userToUpdate.toFirestore(),
-      )
+      await this.update(userToUpdate.id, userToUpdate.toFirestore())
       return userToUpdate
     } else {
       // Notification was not found in the array
@@ -181,10 +201,7 @@ export default class UserController extends Controller {
 
     if (!hasUnread) return userToUpdate
 
-    await this.update(
-      userToUpdate.id,
-      userToUpdate.toFirestore(),
-    )
+    await this.update(userToUpdate.id, userToUpdate.toFirestore())
     // Return the updated user object (in memory) so the store can commit it immediately
     return userToUpdate
   }

@@ -24,6 +24,10 @@ export default class Study {
     status, // transformar em um ENUM
     endDate,
     creationDate,
+    scheduledDate,
+    scheduledTime,
+    scheduledNotes,
+    scheduledNotifyBefore,
   } = {}) {
     /**
      * Defines the test id.
@@ -143,6 +147,29 @@ export default class Study {
      * @type {number}
      */
     this.endDate = endDate ?? null
+    /**
+     * Defines the scheduled date for the test.
+     * @type {string}
+     */
+    this.scheduledDate = scheduledDate ?? null
+
+    /**
+     * Defines the scheduled time for the test.
+     * @type {string}
+     */
+    this.scheduledTime = scheduledTime ?? null
+
+    /**
+     * Defines notes for the scheduled test.
+     * @type {string}
+     */
+    this.scheduledNotes = scheduledNotes ?? null
+
+    /**
+     * Defines notification time before the test (in minutes).
+     * @type {number}
+     */
+    this.scheduledNotifyBefore = scheduledNotifyBefore ?? null
   }
 
   /**
@@ -168,6 +195,10 @@ export default class Study {
       status: this.status,
       endDate: this.endDate,
       subType: this.subType,
+      scheduledDate: this.scheduledDate,
+      scheduledTime: this.scheduledTime,
+      scheduledNotes: this.scheduledNotes,
+      scheduledNotifyBefore: this.scheduledNotifyBefore,
     }
   }
 }

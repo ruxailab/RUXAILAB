@@ -60,9 +60,13 @@
                 :label="$t('common.title')"
                 :rules="titleRequired"
                 counter="200"
-                 maxlength="200"
-                          :error="websiteDetails.siteURL?.length === 200"
-                          :error-messages="websiteDetails.siteURL?.length === 200 ? $t('studyCreation.details.validation.max200Characters') : []"
+                maxlength="200"
+                :error="websiteDetails.siteURL?.length === 200"
+                :error-messages="
+                  websiteDetails.siteURL?.length === 200
+                    ? $t('studyCreation.details.validation.max200Characters')
+                    : []
+                "
                 variant="outlined"
                 density="comfortable"
                 :placeholder="$t('TestDialog.template.title')"
@@ -148,6 +152,96 @@
         </div>
 
         <div class="right-column">
+          <v-card class="advanced-card mb-6" elevation="0">
+            <div class="d-flex align-start ga-3 pa-6 pb-0">
+              <div
+                class="header-icon bg-purple-lighten-5 rounded-lg d-flex align-center justify-center"
+              >
+                <v-icon color="purple" size="24">mdi-calendar-clock</v-icon>
+              </div>
+              <div>
+                <h3 class="text-h6 font-weight-bold text-grey-darken-4">
+                  {{ $t('pages.settings.schedule.title') }}
+                </h3>
+                <p class="text-caption text-grey-darken-1">
+                  {{ $t('pages.settings.schedule.description') }}
+                </p>
+              </div>
+            </div>
+
+            <v-card-text class="py-6">
+              <div class="d-flex flex-column ga-5">
+                <v-row>
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                      v-model="object.scheduledDate"
+                      type="date"
+                      :label="$t('pages.settings.schedule.date')"
+                      variant="outlined"
+                      density="comfortable"
+                      hide-details="auto"
+                      @update:model-value="
+                        store.commit('SET_LOCAL_CHANGES', true)
+                      "
+                    />
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                      v-model="object.scheduledTime"
+                      type="time"
+                      :label="$t('pages.settings.schedule.time')"
+                      variant="outlined"
+                      density="comfortable"
+                      hide-details="auto"
+                      @update:model-value="
+                        () => {
+                          // Combine date and time if needed, or store separate
+                          // For now assuming object.scheduledDate stores ISO string,
+                          // but UI needs separate inputs. We might need a watcher/computer
+                          // to handle binding. For simplicity let's assume we bind to
+                          // temporary fields and merge on save, or use v-model directly if supported.
+                          store.commit('SET_LOCAL_CHANGES', true)
+                        }
+                      "
+                    />
+                  </v-col>
+                  <v-col cols="12">
+                    <v-select
+                      v-model="object.scheduledNotifyBefore"
+                      :items="[
+                        { title: '15 minutes before', value: 15 },
+                        { title: '30 minutes before', value: 30 },
+                        { title: '1 hour before', value: 60 },
+                        { title: '1 day before', value: 1440 },
+                      ]"
+                      :label="$t('pages.settings.schedule.notifyBefore')"
+                      variant="outlined"
+                      density="comfortable"
+                      hide-details
+                      @update:model-value="
+                        store.commit('SET_LOCAL_CHANGES', true)
+                      "
+                    />
+                  </v-col>
+                  <v-col cols="12">
+                    <v-textarea
+                      v-model="object.scheduledNotes"
+                      :label="$t('pages.settings.schedule.notes')"
+                      variant="outlined"
+                      density="comfortable"
+                      hide-details
+                      rows="3"
+                      auto-grow
+                      @update:model-value="
+                        store.commit('SET_LOCAL_CHANGES', true)
+                      "
+                    />
+                  </v-col>
+                </v-row>
+              </div>
+            </v-card-text>
+          </v-card>
+
           <v-card class="advanced-card" elevation="0">
             <div class="d-flex align-start ga-3 pa-6 pb-0">
               <div

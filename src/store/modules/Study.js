@@ -106,6 +106,11 @@ export default {
         const res = await studyController.createStudy(payload)
         payload.id = res.id
         commit('SET_TEST', payload)
+
+        // Add to tests list so it appears in dashboard immediately
+        const currentTests = state.tests || []
+        commit('SET_TESTS', [payload, ...currentTests])
+
         return res.id
       } catch (err) {
         commit('setError', {

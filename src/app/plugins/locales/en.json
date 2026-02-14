@@ -67,7 +67,15 @@
     "save": "Save",
     "editDelete": "Edit/Delete",
     "type": "Type",
-    "noNotifications": "You don't have notifications yet",
+    "schedule": {
+      "title": "Schedule Test",
+      "description": "Set a date and time for your test to notify participants",
+      "date": "Date",
+      "time": "Time",
+      "notifyBefore": "Notify me before",
+      "notes": "Notes / Instructions"
+    },
+    "manage_test_settings": "Manage your test settings here",
     "notifications": "Notifications",
     "markAllAsRead": "Mark all as read",
     "caughtUp": "You're all caught up",
@@ -419,6 +427,11 @@
     "nextSession": "Next Session",
     "noSessionsScheduled": "No sessions scheduled",
     "nextSessionWillAppear": "Your next session will appear here",
+    "scheduledTests": {
+      "title": "Scheduled Tests",
+      "noTests": "No tests scheduled",
+      "scheduleHint": "Schedule a test in Study Settings to see it here"
+    },
     "latestBlogPosts": "Latest Blog Posts",
     "viewBlog": "View Blog",
     "date": "Date",

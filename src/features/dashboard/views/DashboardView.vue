@@ -40,7 +40,7 @@
         <TopMethods :methods-data="topMethodsData" />
       </v-col>
       <v-col cols="12" lg="4">
-        <NextSession :next-session="nextSession" />
+        <ScheduledTests :scheduled-studies="scheduledStudies" />
       </v-col>
     </v-row>
 
@@ -63,7 +63,7 @@ import ActiveStudies from '@/features/dashboard/components/ActiveStudies.vue'
 import BlogPosts from '@/features/dashboard/components/BlogPosts.vue'
 import UpcomingWebinar from '@/features/dashboard/components/UpcomingWebinar.vue'
 import TopMethods from '@/features/dashboard/components/TopMethods.vue'
-import NextSession from '@/features/dashboard/components/NextSession.vue'
+import ScheduledTests from '@/features/dashboard/components/ScheduledTests.vue'
 import { getMethodDefinition } from '@/shared/constants/methodDefinitions'
 
 const props = defineProps({
@@ -82,7 +82,6 @@ const props = defineProps({
 const store = useStore()
 
 const usedStorage = ref(0)
-const nextSession = ref(null)
 
 const userDisplayName = computed(() => {
   const user = store.getters.user
@@ -144,27 +143,26 @@ const topMethodsData = computed(() => {
     }))
 })
 
-watch(
-  () => props.sessions,
-  (sessions) => {
-    if (!sessions?.length) {
-      nextSession.value = null
-      return
-    }
+const scheduledStudies = computed(() => {
+  if (!userStudies.value.length) return []
 
-    const now = new Date()
-    const futureSessions = sessions.filter((s) => new Date(s.testDate) > now)
+  const now = new Date()
+  return userStudies.value
+    .filter((s) => {
+      if (!s.scheduledDate) return false
 
-    if (!futureSessions.length) {
-      nextSession.value = null
-      return
-    }
+      const dateStr = s.scheduledDate // YYYY-MM-DD
+      const timeStr = s.scheduledTime || '00:00'
+      const dateTime = new Date(`${dateStr}T${timeStr}`)
 
-    futureSessions.sort((a, b) => new Date(a.testDate) - new Date(b.testDate))
-    nextSession.value = futureSessions[0]
-  },
-  { immediate: true, deep: true },
-)
+      return dateTime > now
+    })
+    .sort((a, b) => {
+      const dateA = new Date(`${a.scheduledDate}T${a.scheduledTime || '00:00'}`)
+      const dateB = new Date(`${b.scheduledDate}T${b.scheduledTime || '00:00'}`)
+      return dateA - dateB
+    })
+})
 
 watch(
   () => userStorageUsage.value,
