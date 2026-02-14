@@ -1,14 +1,8 @@
 <template>
   <div>
     <!-- Filters Slot -->
-    <v-row
-      align="center"
-      class="mb-4"
-    >
-      <v-col
-        cols="12"
-        md="5"
-      >
+    <v-row align="center" class="mb-4">
+      <v-col cols="12" md="5">
         <v-text-field
           v-model="filters.search"
           label="Search cooperators"
@@ -19,10 +13,7 @@
           clearable
         />
       </v-col>
-      <v-col
-        cols="12"
-        md="4"
-      >
+      <v-col cols="12" md="4">
         <v-select
           v-model="filters.role"
           :items="roleOptions"
@@ -35,10 +26,7 @@
           clearable
         />
       </v-col>
-      <v-col
-        cols="12"
-        md="3"
-      >
+      <v-col cols="12" md="3">
         <v-select
           v-model="filters.status"
           :items="statusFilterOptions"
@@ -54,10 +42,7 @@
     </v-row>
 
     <!-- Main Table -->
-    <v-card
-      elevation="2"
-      height="100%"
-    >
+    <v-card elevation="2" height="100%">
       <v-data-table
         v-model="selectedCooperators"
         :headers="computedHeaders"
@@ -76,15 +61,8 @@
               size="40"
               class="me-3"
             >
-              <v-img
-                v-if="item.avatar"
-                :src="item.avatar"
-                :alt="item.email"
-              />
-              <span
-                v-else
-                class="text-white font-weight-medium"
-              >
+              <v-img v-if="item.avatar" :src="item.avatar" :alt="item.email" />
+              <span v-else class="text-white font-weight-medium">
                 {{ getInitials(item.email) }}
               </span>
             </v-avatar>
@@ -117,10 +95,7 @@
                 size="small"
                 variant="flat"
               >
-                <v-icon
-                  start
-                  size="16"
-                >
+                <v-icon start size="16">
                   {{ getRoleIcon(selectedItem.title) }}
                 </v-icon>
                 {{ selectedItem.title }}
@@ -130,18 +105,12 @@
         </template>
 
         <!-- Test Date (only for accessibility tests) -->
-        <template
-          v-if="showDateColumns"
-          #item.testDate="{ item }"
-        >
+        <template v-if="showDateColumns" #item.testDate="{ item }">
           <div>{{ formatDate(item.testDate) }}</div>
         </template>
 
         <!-- Starts at (only for accessibility tests) -->
-        <template
-          v-if="showDateColumns"
-          #item.testHour="{ item }"
-        >
+        <template v-if="showDateColumns" #item.testHour="{ item }">
           <div>{{ formatTime(item.testDate) }}</div>
         </template>
 
@@ -171,28 +140,29 @@
         <template #item.session="{ item }">
           <v-tooltip location="bottom">
             <template #activator="{ props }">
-              <v-btn v-if="item" v-bind="props" variant="text" class="ml-1" icon @click="goToSession(item.userDocId)">
+              <v-btn
+                v-if="item"
+                v-bind="props"
+                variant="text"
+                class="ml-1"
+                icon
+                @click="goToSession(item.userDocId)"
+              >
                 <v-icon>mdi-file-document-arrow-right</v-icon>
               </v-btn>
             </template>
-            <span>Go to session</span>
-           </v-tooltip>
+            <span>{{ $t('cooperator.goToSession') }}</span>
+          </v-tooltip>
         </template>
 
         <!-- Actions Column -->
         <template #item.actions="{ item }">
           <v-menu>
             <template #activator="{ props }">
-              <v-icon
-                icon="mdi-dots-vertical"
-                v-bind="props"
-              />
+              <v-icon icon="mdi-dots-vertical" v-bind="props" />
             </template>
             <v-list>
-              <v-list-item
-                link
-                @click="onSendMessage(item)"
-              >
+              <v-list-item link @click="onSendMessage(item)">
                 <v-list-item-title>
                   {{ messageText || 'Send a message' }}
                 </v-list-item-title>
@@ -231,209 +201,208 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
-import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils';
-import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
+import { ref, computed, watch } from 'vue'
+import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
-const router = useRouter();
-const store = useStore();
+const router = useRouter()
+const store = useStore()
 
 const props = defineProps({
-    cooperators: {
-        type: Array,
-        default: () => []
-    },
-    loading: {
-        type: Boolean,
-        default: false
-    },
-    showDateColumns: {
-        type: Boolean,
-        default: false
-    },
-    showSessionColumn: {
-        type: Boolean,
-        default: false
-    },
-    baseHeaders: {
-        type: Array,
-        default: () => []
-    },
-    // Text customization props
-    messageText: {
-        type: String,
-        default: 'Send a message'
-    },
-    reinviteText: {
-        type: String,
-        default: 'Re-invite'
-    },
-    removeText: {
-        type: String,
-        default: 'Remove cooperator'
-    },
-    cancelText: {
-        type: String,
-        default: 'Cancel invitation'
-    },
-    hasRoleColumn: {
-        type: Boolean,
-        default: true
-    }
-});
+  cooperators: {
+    type: Array,
+    default: () => [],
+  },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+  showDateColumns: {
+    type: Boolean,
+    default: false,
+  },
+  showSessionColumn: {
+    type: Boolean,
+    default: false,
+  },
+  baseHeaders: {
+    type: Array,
+    default: () => [],
+  },
+  // Text customization props
+  messageText: {
+    type: String,
+    default: 'Send a message',
+  },
+  reinviteText: {
+    type: String,
+    default: 'Re-invite',
+  },
+  removeText: {
+    type: String,
+    default: 'Remove cooperator',
+  },
+  cancelText: {
+    type: String,
+    default: 'Cancel invitation',
+  },
+  hasRoleColumn: {
+    type: Boolean,
+    default: true,
+  },
+})
 
 const emit = defineEmits([
-    'role-change',
-    'send-message',
-    'reinvite',
-    'remove-cooperator',
-    'cancel-invitation',
-    'update:selected-cooperators'
-]);
+  'role-change',
+  'send-message',
+  'reinvite',
+  'remove-cooperator',
+  'cancel-invitation',
+  'update:selected-cooperators',
+])
 
 // Use composables
 const {
-    roleOptions,
-    statusFilterOptions,
-    getInitials,
-    getRoleColor,
-    getRoleIcon,
-    getStatusColor,
-    getStatusText,
-    formatDate,
-    formatTime
-} = useCooperatorUtils();
+  roleOptions,
+  statusFilterOptions,
+  getInitials,
+  getRoleColor,
+  getRoleIcon,
+  getStatusColor,
+  getStatusText,
+  formatDate,
+  formatTime,
+} = useCooperatorUtils()
 
 // Local state
-const dataTableKey = ref(0);
-const itemsPerPage = ref(10);
-const selectedCooperators = ref([]);
+const dataTableKey = ref(0)
+const itemsPerPage = ref(10)
+const selectedCooperators = ref([])
 
 const filters = ref({
-    search: '',
-    role: null,
-    status: null
-});
+  search: '',
+  role: null,
+  status: null,
+})
 
 // Computed properties
-const study = computed(() => store.getters.test);
+const study = computed(() => store.getters.test)
 
 const computedHeaders = computed(() => {
-    const defaultHeaders = [
-        { title: 'Email', key: 'email', sortable: true },
-    ];
+  const defaultHeaders = [{ title: 'Email', key: 'email', sortable: true }]
 
-    if (props.hasRoleColumn) {
-      defaultHeaders.push(
-        { title: 'Role', key: 'accessLevel', sortable: true }
-      )
-    }
+  if (props.hasRoleColumn) {
+    defaultHeaders.push({ title: 'Role', key: 'accessLevel', sortable: true })
+  }
 
-    if (props.showDateColumns) {
-        defaultHeaders.push(
-            { title: 'Test Date', key: 'testDate', sortable: true },
-            { title: 'Starts at', key: 'testHour', sortable: true }
-        );
-    }
-
-    if (props.showSessionColumn) {
-        defaultHeaders.push(
-            { title: 'Session', key: 'session', sortable: false },
-        );
-    }
-
+  if (props.showDateColumns) {
     defaultHeaders.push(
-        { title: 'Invited', key: 'invited', sortable: true },
-        { title: 'Status', key: 'accepted', sortable: true },
-        { title: 'Actions', key: 'actions', sortable: false }
-    );
+      { title: 'Test Date', key: 'testDate', sortable: true },
+      { title: 'Starts at', key: 'testHour', sortable: true },
+    )
+  }
 
-    return props.baseHeaders.length > 0 ? props.baseHeaders : defaultHeaders;
-});
+  if (props.showSessionColumn) {
+    defaultHeaders.push({ title: 'Session', key: 'session', sortable: false })
+  }
+
+  defaultHeaders.push(
+    { title: 'Invited', key: 'invited', sortable: true },
+    { title: 'Status', key: 'accepted', sortable: true },
+    { title: 'Actions', key: 'actions', sortable: false },
+  )
+
+  return props.baseHeaders.length > 0 ? props.baseHeaders : defaultHeaders
+})
 
 const filteredCooperators = computed(() => {
-    let result = [...props.cooperators];
+  let result = [...props.cooperators]
 
-    if (filters.value.role) {
-        result = result.filter(coop =>
-            roleOptions.value.find(r => r.value === coop.accessLevel)?.title === filters.value.role
-        );
+  if (filters.value.role) {
+    result = result.filter(
+      (coop) =>
+        roleOptions.value.find((r) => r.value === coop.accessLevel)?.title ===
+        filters.value.role,
+    )
+  }
+
+  if (filters.value.status) {
+    if (filters.value.status === 'invited') {
+      result = result.filter((coop) => coop.invited && !coop.accepted)
+    } else if (filters.value.status === 'accepted') {
+      result = result.filter((coop) => coop.accepted)
+    } else if (filters.value.status === 'pending') {
+      result = result.filter((coop) => coop.invited && !coop.accepted)
     }
+  }
 
-    if (filters.value.status) {
-        if (filters.value.status === 'invited') {
-            result = result.filter(coop => coop.invited && !coop.accepted);
-        } else if (filters.value.status === 'accepted') {
-            result = result.filter(coop => coop.accepted);
-        } else if (filters.value.status === 'pending') {
-            result = result.filter(coop => coop.invited && !coop.accepted);
-        }
-    }
+  if (filters.value.search) {
+    result = result.filter((coop) =>
+      coop.email.toLowerCase().includes(filters.value.search.toLowerCase()),
+    )
+  }
 
-    if (filters.value.search) {
-        result = result.filter(coop =>
-            coop.email.toLowerCase().includes(filters.value.search.toLowerCase())
-        );
-    }
-
-    return result;
-});
+  return result
+})
 
 // Event handlers
 const onRoleChange = (item, newValue) => {
-    emit('role-change', item, newValue);
-    dataTableKey.value++;
-};
+  emit('role-change', item, newValue)
+  dataTableKey.value++
+}
 
 const onSendMessage = (item) => {
-    emit('send-message', item);
-};
+  emit('send-message', item)
+}
 
 const onReinvite = (item) => {
-    emit('reinvite', item);
-};
+  emit('reinvite', item)
+}
 
 const onRemoveCooperator = (item) => {
-    emit('remove-cooperator', item);
-};
+  emit('remove-cooperator', item)
+}
 
 const onCancelInvitation = (item) => {
-    emit('cancel-invitation', item);
-};
+  emit('cancel-invitation', item)
+}
 
 // Watch for selected cooperators changes
-watch(selectedCooperators, (newVal) => {
-    emit('update:selected-cooperators', newVal);
-}, { deep: true });
+watch(
+  selectedCooperators,
+  (newVal) => {
+    emit('update:selected-cooperators', newVal)
+  },
+  { deep: true },
+)
 
 // Methods
 const goToSession = (coopId) => {
-  router.push(`/testview/${study.value.id}/${coopId}`);
-};
-
+  router.push(`/testview/${study.value.id}/${coopId}`)
+}
 </script>
 
 <style scoped>
 .cooperators-table :deep(.v-data-table__wrapper) {
-    border-radius: 12px;
+  border-radius: 12px;
 }
 
 .cooperators-table :deep(.v-data-table-header) {
-    background-color: rgb(var(--v-theme-grey-50));
+  background-color: rgb(var(--v-theme-grey-50));
 }
 
 .cooperators-table :deep(.v-data-table-header th) {
-    font-weight: 600;
-    color: rgb(var(--v-theme-on-surface));
-    border-bottom: 2px solid rgb(var(--v-theme-grey-200));
+  font-weight: 600;
+  color: rgb(var(--v-theme-on-surface));
+  border-bottom: 2px solid rgb(var(--v-theme-grey-200));
 }
 
 .cooperators-table :deep(.v-data-table__tr:hover) {
-    background-color: rgba(var(--v-theme-primary), 0.04);
+  background-color: rgba(var(--v-theme-primary), 0.04);
 }
 
 .cooperators-table :deep(.v-selection-control) {
-    justify-content: center;
+  justify-content: center;
 }
 </style>

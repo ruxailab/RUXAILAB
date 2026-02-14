@@ -40,7 +40,7 @@
         :headers="headers"
         :items="files"
         :search="search"
-        :items-per-page-text="t('common.itemsPerPage')"
+        :items-per-page-text="t('common.table.itemsPerPage')"
         hover
       >
         <!-- File Type Icon -->
@@ -88,7 +88,18 @@
 
         <!-- Empty State -->
         <template #no-data>
-          <div class="pa-8 text-center text-medium-emphasis">
+          <div v-if="search" class="pa-8 text-center text-medium-emphasis">
+            <v-icon size="48" color="grey-lighten-1" class="mb-2">
+              mdi-magnify-remove-outline
+            </v-icon>
+            <div class="text-h6 mt-2">
+              {{ t('common.table.noSearchResults') }}
+            </div>
+            <div class="text-body-2">
+              {{ t('common.table.tryAdjustingSearch') }}
+            </div>
+          </div>
+          <div v-else class="pa-8 text-center text-medium-emphasis">
             <v-icon size="48" color="grey-lighten-1" class="mb-2"
               >mdi-database-off</v-icon
             >
@@ -280,7 +291,7 @@ const files = computed(() => {
             ...baseFile,
             type: 'video',
             url: task.videoRecordURL,
-            size: 50 * 1024 * 1024,
+            size: task.webcamSize || 50 * 1024 * 1024,
           })
         }
         // Check for Audio
@@ -289,7 +300,7 @@ const files = computed(() => {
             ...baseFile,
             type: 'audio',
             url: task.audioRecordURL,
-            size: 10 * 1024 * 1024,
+            size: task.audioSize || 10 * 1024 * 1024,
           })
         }
         // Check for Screen Recording
@@ -298,7 +309,7 @@ const files = computed(() => {
             ...baseFile,
             type: 'screen',
             url: task.screenRecordURL,
-            size: 100 * 1024 * 1024,
+            size: task.screenSize || 100 * 1024 * 1024,
           })
         }
         // Check for Webcam (Fix for missing icons)
@@ -307,7 +318,7 @@ const files = computed(() => {
             ...baseFile,
             type: 'webcam',
             url: task.webcamRecordURL,
-            size: 50 * 1024 * 1024,
+            size: task.webcamSize || 50 * 1024 * 1024,
           })
         }
       })

@@ -3,7 +3,7 @@
     <!-- Header with User Welcome -->
     <div class="dashboard-header mb-6">
       <h1 class="text-h4 font-weight-bold text-grey-darken-4 mb-2">
-        {{ $t('Dashboard.welcomeBack', { name: userDisplayName }) }} 👋
+        {{ $t('Dashboard.welcomeBack', { name: userDisplayName }) }}
       </h1>
       <p class="text-subtitle-1 text-grey-darken-1">
         {{ $t('Dashboard.subtitle') }}
@@ -200,5 +200,8 @@ onMounted(() => {
 .component-height :deep(.v-card-text) {
   flex: 1;
   overflow-y: auto;
+}
+:deep(.v-row) {
+  margin: -14px !important;
 }
 </style>

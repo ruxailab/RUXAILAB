@@ -28,25 +28,41 @@
               mdi-account-circle
             </v-icon>
           </v-avatar>
-          <div class="mt-2">
+          <div class="mt-2 d-flex justify-center gap-1">
             <v-btn
               icon
               size="small"
               :disabled="isProcessingImage"
               @click="selectImage"
             >
+              <v-icon>mdi-image-plus</v-icon>
+              <v-tooltip activator="parent" location="bottom">
+                {{ $t('profile.uploadProfilePicture') }}
+              </v-tooltip>
+            </v-btn>
+            <v-btn
+              icon
+              size="small"
+              :disabled="isProcessingImage"
+              @click="showCameraDialog = true"
+            >
               <v-icon>mdi-camera</v-icon>
+              <v-tooltip activator="parent" location="bottom">
+                {{ $t('profile.takePhoto') }}
+              </v-tooltip>
             </v-btn>
             <v-btn
               v-if="localProfileData.profileImage"
               icon
               size="small"
-              class="ml-2"
               color="error"
               :disabled="isProcessingImage"
               @click="removeImage"
             >
               <v-icon>mdi-delete</v-icon>
+              <v-tooltip activator="parent" location="bottom">
+                {{ $t('profile.removeProfilePicture') }}
+              </v-tooltip>
             </v-btn>
           </div>
           <input
@@ -55,6 +71,12 @@
             accept="image/*"
             style="display: none"
             @change="handleImageSelect"
+          />
+
+          <!-- Camera Capture Dialog -->
+          <CameraCaptureDialog
+            v-model="showCameraDialog"
+            @photo-captured="handleCameraCapture"
           />
         </div>
         <v-form ref="formRef" v-model="isValid">
@@ -131,6 +153,7 @@
 import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { countries } from '@/shared/constants/countries'
+import CameraCaptureDialog from './CameraCaptureDialog.vue'
 
 const props = defineProps({
   modelValue: {
@@ -161,6 +184,7 @@ const hasChanges = ref(false)
 // Store pending image file
 const pendingImageFile = ref(null)
 const pendingImagePreview = ref(null)
+const showCameraDialog = ref(false)
 
 const localProfileData = ref({
   username: '',
@@ -276,9 +300,23 @@ const removeImage = () => {
   hasChanges.value = true
 }
 
+const handleCameraCapture = ({ file, previewUrl }) => {
+  // Clean up previous preview if exists
+  if (pendingImagePreview.value) {
+    URL.revokeObjectURL(pendingImagePreview.value)
+  }
+
+  // Store the file and preview (same as handleImageSelect)
+  pendingImageFile.value = file
+  pendingImagePreview.value = previewUrl
+  localProfileData.value.profileImage = previewUrl
+  hasChanges.value = true
+}
+
 const handleSave = async () => {
   try {
-    const { valid } = await formRef.value?.validate()
+    if (!formRef.value) return
+    const { valid } = await formRef.value.validate()
     if (!valid) return
 
     isSaving.value = true

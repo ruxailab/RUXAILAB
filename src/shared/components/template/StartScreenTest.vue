@@ -2,15 +2,26 @@
   <div>
     <v-row class="start-screen pa-0 ma-0" align="center">
       <v-col md="8" class="ma-5 pa-5">
-        <img src="@/assets/logo_full_white.png" alt="RUXAILAB" class="mb-10" style="max-width: 300px;">
+        <img
+          src="@/assets/logo_full_white.png"
+          alt="RUXAILAB"
+          class="mb-10"
+          style="max-width: 300px"
+        />
         <h1 class="text-h2 font-weight-bold text-white">
           {{ test.testTitle }}
         </h1>
         <p class="text-body-1 mb-5 text-white text-justify">
           {{ test.testDescription }}
         </p>
-        <v-btn color="white" variant="outlined" rounded size="x-large" @click="startTest">
-          Start Test
+        <v-btn
+          color="white"
+          variant="outlined"
+          rounded
+          size="x-large"
+          @click="startTest"
+        >
+          {{ $t('buttons.startTest') }}
         </v-btn>
       </v-col>
     </v-row>
@@ -22,12 +33,12 @@
 defineProps({
   test: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 })
 
 // Emits
-defineEmits(['start']);
+defineEmits(['start'])
 </script>
 
 <style scoped>
@@ -38,15 +49,17 @@ defineEmits(['start']);
   overflow: hidden;
   background-size: 200% 200%;
   animation: subtleGradient 20s ease-in-out infinite;
-  background-image: linear-gradient(160deg,
-      #00213F 0%,
-      #1a2f4f 35%,
-      #303f9f 100%);
+  background-image: linear-gradient(
+    160deg,
+    #00213f 0%,
+    #1a2f4f 35%,
+    #303f9f 100%
+  );
   transition: opacity 8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .start-screen.leaving,
-.start-screen.leaving>*,
+.start-screen.leaving > *,
 .start-screen.leaving::before {
   opacity: 0;
   transition-duration: 1.2s;

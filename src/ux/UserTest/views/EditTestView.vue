@@ -27,7 +27,7 @@
             {{ $t('ModeratedTest.postTest') }}
           </v-tab>
           <v-tab v-if="hasEyeTracking" @click="index = 5">
-            Eye Tracking Configurations
+            {{ $t('EyeTrackingConfig.titles.main') }}
           </v-tab>
         </v-tabs>
 
@@ -38,9 +38,11 @@
               :welcome="welcomeMessage"
               :final-message="finalMessage"
               @update:welcome-message="
-                ;(welcomeMessage = $event), (change = true)
+                ;((welcomeMessage = $event), (change = true))
               "
-              @update:final-message=";(finalMessage = $event), (change = true)"
+              @update:final-message="
+                ;((finalMessage = $event), (change = true))
+              "
             />
           </div>
 
@@ -59,7 +61,7 @@
             <UserVariables
               type="pre-test"
               @change="change = true"
-              @update="store.dispatch('setPreTest', $event)"
+              @update="store.dispatch('UserStudy/setPreTest', $event)"
             />
           </div>
 
@@ -72,7 +74,7 @@
             <UserVariables
               type="post-test"
               @change="change = true"
-              @update="store.dispatch('setPostTest', $event)"
+              @update="store.dispatch('UserStudy/setPostTest', $event)"
             />
           </div>
 
@@ -132,18 +134,18 @@ const getConsent = () => {
 }
 
 const getTasks = () => {
-  store.dispatch('UserStudy/setTasks', test.value.testStructure.userTasks || [])
+  const tasksData = test.value.testStructure.userTasks || []
+  store.dispatch('UserStudy/setTasks', structuredClone(tasksData))
 }
 
 const getPreTest = () => {
-  store.dispatch('UserStudy/setPreTest', test.value.testStructure.preTest || [])
+  const preTestData = test.value.testStructure.preTest || []
+  store.dispatch('UserStudy/setPreTest', structuredClone(preTestData))
 }
 
 const getPostTest = () => {
-  store.dispatch(
-    'UserStudy/setPostTest',
-    test.value.testStructure.postTest || [],
-  )
+  const postTestData = test.value.testStructure.postTest || []
+  store.dispatch('UserStudy/setPostTest', structuredClone(postTestData))
 }
 
 const hasEyeTracking = computed(() => {
@@ -179,9 +181,9 @@ const save = async () => {
     const testStructure = {
       welcomeMessage: welcomeMessage.value,
       finalMessage: finalMessage.value,
-      preTest: store.getters['UserStudy/preTest'],
-      userTasks: store.getters['UserStudy/tasks'],
-      postTest: store.getters['UserStudy/postTest'],
+      preTest: structuredClone(store.getters['UserStudy/preTest']),
+      userTasks: structuredClone(store.getters['UserStudy/tasks']),
+      postTest: structuredClone(store.getters['UserStudy/postTest']),
       consent: consent.value,
     }
 
@@ -189,7 +191,7 @@ const save = async () => {
     const study = instantiateStudyByType(rawData.testType, rawData)
     await store.dispatch('updateStudy', study)
     showSuccess('pages.editTest.updatedTest')
-  } catch (error) {
+  } catch {
     showError('errors.globalError')
   }
 }

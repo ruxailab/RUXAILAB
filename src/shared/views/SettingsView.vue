@@ -61,12 +61,6 @@
                 :rules="titleRequired"
                 counter="200"
                 maxlength="200"
-                :error="websiteDetails.siteURL?.length === 200"
-                :error-messages="
-                  websiteDetails.siteURL?.length === 200
-                    ? $t('studyCreation.details.validation.max200Characters')
-                    : []
-                "
                 variant="outlined"
                 density="comfortable"
                 :placeholder="$t('TestDialog.template.title')"
@@ -418,7 +412,7 @@
               {{ $t('pages.settings.confirm_deletion') }}
             </h3>
             <p class="text-subtitle-2 text-grey-darken-1">
-              {{ $t('pages.settings.action_cannot_be_undone') }}
+              {{ $t('common.action_cannot_be_undone') }}
             </p>
           </div>
         </v-card-title>
@@ -542,9 +536,7 @@ const test = computed({
   set: (val) => store.commit('SET_TEST', val),
 })
 const user = computed(() => store.getters.user)
-// const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument);
-// const reports = computed(() => store.getters.reports || []);
-// const cooperators = computed(() => store.getters.cooperators || {});
+const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
 const dialogText = computed(() => {
   if (test.value) {
     return t('alerts.deleteTest', { testTitle: test.value.testTitle })
@@ -632,9 +624,11 @@ const createObjectFromTest = (testData) => {
 watch(
   test,
   (newTest) => {
-    if (newTest !== null && newTest !== undefined) {
+    if (newTest) {
       const mappedObject = createObjectFromTest(newTest)
-      object.value = mappedObject
+      if (mappedObject) {
+        object.value = mappedObject
+      }
     }
   },
   { immediate: true },
@@ -700,9 +694,8 @@ const submit = async () => {
       await store.dispatch('getStudy', { id: props.id })
       store.commit('SET_LOCAL_CHANGES', false)
       showSuccess('alerts.savedChanges')
-    } catch (error) {
+    } catch {
       showError('errors.globalError')
-      console.error('Error saving test:', error)
     } finally {
       loading.value = false
     }
@@ -719,10 +712,6 @@ const preventNav = (event) => {
   event.returnValue = ''
 }
 
-// function logCurrentState() {
-//   // This function can be used for debugging if needed
-// }
-
 const deleteStudy = async (item) => {
   loading.value = true
   try {
@@ -732,7 +721,7 @@ const deleteStudy = async (item) => {
     await store.dispatch('deleteStudy', item)
     showSuccess('alerts.genericSuccess')
     router.push({ name: 'Admin' })
-  } catch (error) {
+  } catch {
     showError('errors.globalError')
   } finally {
     loading.value = false
@@ -799,8 +788,7 @@ const updateObject = (newObject) => {
   store.commit('SET_LOCAL_CHANGES', true)
 }
 
-const onDateChange = (date) => {
-  // console.log('Date picker changed to:', date);
+const onDateChange = (_date) => {
   dateMenu.value = false
 }
 
@@ -840,7 +828,7 @@ const duplicateStudy = async () => {
     })
     showSuccess('alerts.genericSuccess')
     router.push('/admin')
-  } catch (error) {
+  } catch {
     showError('errors.globalError')
   } finally {
     loading.value = false

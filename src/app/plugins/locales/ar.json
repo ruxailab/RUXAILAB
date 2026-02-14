@@ -46,6 +46,11 @@
     }
   },
   "common": {
+    "enterTextHere": "أدخل النص هنا...",
+    "units": {
+      "mb": "ميجابايت",
+      "gb": "جيجابايت"
+    },
     "loading": "جاري التحميل",
     "continueAs": "المتابعة كـ",
     "notUser": "لست {userEmail}؟",
@@ -94,12 +99,20 @@
       "status": "الحالة",
       "sessionDate": "تاريخ الجلسة",
       "participants": "المشاركون",
-      "created": "تم الإنشاء"
+      "created": "تم الإنشاء",
+      "noSearchResults": "لا توجد نتائج تطابق معايير البحث الخاصة بك",
+      "tryAdjustingSearch": "حاول تعديل البحث أو الفلاتر للعثور على ما تبحث عنه"
     },
     "hidden": "مخفي",
     "proceed": "متابعة",
     "all": "الكل",
-    "actions": "إجراءات"
+    "actions": "إجراءات",
+    "confirm_deletion": "تأكيد الحذف",
+    "action_cannot_be_undone": "لا يمكن التراجع عن هذا الإجراء",
+    "user": "مستخدم",
+    "id": "ID",
+    "itemsPerPage": "عدد العناصر في الصفحة:",
+    "visible": "مرئي"
   },
   "storage": {
     "pageTitle": "التخزين",
@@ -170,11 +183,17 @@
       "allMethods": "جميع الطرق",
       "all": "الكل",
       "heuristicEvaluation": "التقييم الإرشادي",
-      "userStudyUnmoderated": "دراسة المستخدم (غير مراقبة)",
-      "userStudyModerated": "دراسة المستخدم (مراقبة)",
-      "manualAccessibility": "إمكانية الوصول اليدوية",
-      "automaticAccessibility": "إمكانية الوصول التلقائية"
+      "moderatedUserTest": "اختبار المستخدم المراقب",
+      "unmoderatedUserTest": "اختبار المستخدم غير المراقب",
+      "accessibilityManual": "تقييم إمكانية الوصول اليدوي",
+      "accessibilityAutomatic": "تقييم إمكانية الوصول التلقائي"
     }
+  },
+  "acceptInvitation": {
+    "title": "دعوة تعاون",
+    "message": "هل تريد قبول هذه الدعوة؟",
+    "reject": "رفض",
+    "accept": "قبول"
   },
   "notificationsPage": {
     "subtitle": "ابق على اطلاع بأنشطتك وتعاوناتك",
@@ -196,6 +215,16 @@
     "hoursAgo": "منذ {count} ساعة",
     "daysAgo": "منذ {count} يوم",
     "newNotification": "لديك إشعار جديد."
+  },
+  "notifications": {
+    "errors": {
+      "acceptCollaborationFailed": "فشل في قبول التعاون. يرجى المحاولة مرة أخرى.",
+      "invalidCollaboration": "دعوة التعاون هذه غير صالحة أو انتهت صلاحيتها."
+    }
+  },
+  "cooperators": {
+    "updatedRole": "تم تحديث الدور إلى {role} لـ: {users}",
+    "inviteSent": "تم إرسال الدعوة إلى: {users}"
   },
   "navigation": {
     "dashboard": "لوحة التحكم",
@@ -260,6 +289,12 @@
     "enterValidPhoneNumber": "الرجاء إدخال رقم هاتف صالح (9-15 رقمًا فقط)",
     "profileImageUpdatedSuccess": "تم تحديث صورة الملف الشخصي بنجاح",
     "profileImageUploadFailed": "فشل تحميل صورة الملف الشخصي",
+    "uploadProfilePicture": "تحميل صورة الملف الشخصي",
+    "removeProfilePicture": "إزالة صورة الملف الشخصي",
+    "takePhoto": "التقاط صورة",
+    "cameraCaptureTitle": "التقاط صورة الملف الشخصي",
+    "cameraNotAvailable": "الكاميرا غير متوفرة على هذا الجهاز",
+    "cameraPermissionDenied": "تم رفض إذن الكاميرا. يرجى السماح بالوصول إلى الكاميرا في إعدادات المتصفح.",
     "noUserSignedIn": "لا يوجد مستخدم مسجل الدخول",
     "profileLoadFailed": "فشل تحميل الملف الشخصي",
     "profileUpdatedSuccess": "تم تحديث الملف الشخصي بنجاح",
@@ -272,8 +307,6 @@
     "back": "عودة",
     "deleteForever": "حذف نهائي",
     "superAdmin": "مشرف فائق",
-    "uploadProfilePicture": "تحميل صورة الملف الشخصي",
-    "removeProfilePicture": "إزالة صورة الملف الشخصي",
     "currentPassword": "كلمة المرور الحالية",
     "currentPasswordRequired": "كلمة المرور الحالية مطلوبة",
     "wrongCurrentPassword": "كلمة المرور الحالية غير صحيحة",
@@ -291,6 +324,10 @@
     "template": "النموذج",
     "finalReport": "التقرير النهائي",
     "answerType": "نوع الإجابة:",
+    "users": "المستخدمون",
+    "studies": "الدراسات",
+    "accessLevel": "مستوى الوصول",
+    "actions": "الإجراءات",
     "drawer": {
       "Manager": "المدير",
       "Test": "الاختبار",
@@ -302,7 +339,10 @@
       "Template": "النموذج",
       "Final Report": "التقرير النهائي",
       "Answer Test": "الإجابة على الاختبار",
-      "Settings": "الإعدادات"
+      "Settings": "الإعدادات",
+      "name": "الاسم",
+      "studiesCount": "عدد الدراسات",
+      "mediaSize": "حجم الوسائط"
     },
     "heuristic": "تقييم الاستدلالات الخاصة بالاستخدام"
   },
@@ -342,6 +382,7 @@
     "incorrectPassword": "كلمة مرور غير صحيحة",
     "incorrectCredential": "اسم المستخدم أو كلمة المرور غير صحيحة.",
     "globalError": "حدث خطأ، نعتذر عن الإزعاج.",
+    "cameraPermissionDenied": "يتطلب المتابعة السماح بالوصول إلى الكاميرا. يرجى تفعيل إذن الكاميرا في إعدادات المتصفح.",
     "sendError": "فشل إرسال الدعوة. يرجى المحاولة مرة أخرى",
     "missingVariableTitles": "لا يمكن الحفظ: بعض المتغيرات تفتقد العناوين"
   },
@@ -368,6 +409,15 @@
       "noActiveStudies": "لا توجد دراسات نشطة",
       "createNewStudy": "إنشاء دراسة جديدة",
       "emptyStateMessage": "ليس لديك أي دراسات حتى الآن. أنشئ دراستك الأولى لبدء جمع رؤى قيمة من المستخدمين."
+    },
+    "studyStatus": {
+      "finished": "منتهي",
+      "expiredDaysAgo": "انتهت منذ {days} يوم",
+      "endsToday": "تنتهي اليوم",
+      "endsTodayStarted": "تنتهي اليوم · بدأ",
+      "readyToSubmit": "جاهز للإرسال",
+      "endsTodayReady": "تنتهي اليوم · جاهز",
+      "notStarted": "لم يبدأ"
     },
     "activeStudiesOverview": "نظرة عامة على الدراسات النشطة",
     "viewAll": "عرض الكل",
@@ -430,6 +480,20 @@
       "finished": "منتهي",
       "unknown": "غير معروف"
     },
+    "officeHours": {
+      "title": "ساعات العمل الإضافية الشهرية",
+      "description": "بدءًا من نوفمبر، سننظم ساعات عمل شهرية لمناقشة تحديثات المشروع والإجابة على الأسئلة والتواصل مع مجتمعنا.",
+      "nextSessionDate": "نوفمبر 2025",
+      "frequency": "شهرياً"
+    },
+    "webinar": {
+      "ended": "انتهى",
+      "live": "مباشر",
+      "today": "اليوم",
+      "joinNow": "انضم الآن",
+      "webinarEnded": "انتهى الويبينار",
+      "startingToday": "يبدأ اليوم"
+    },
     "cards": {
       "recentActivity": "النشاط الأخير",
       "activities7Days": "الأنشطة (إجمالي 7 أيام)",
@@ -437,8 +501,8 @@
       "noActivity": "لا يوجد نشاط",
       "edit": "تعديل",
       "heuristics": "الاستدلالات",
-      "questions": "أسئلة",
-      "totalOptions": "مجموع الخيارات",
+      "questions": "الأسئلة",
+      "totalOptions": "إجمالي الخيارات",
       "qualitative": "نوعي",
       "quantitative": "كمي",
       "weights": "الأوزان",
@@ -446,46 +510,46 @@
       "off": "إيقاف",
       "cooperators": "المتعاونون",
       "totalInvited": "إجمالي المدعوين",
-      "accepted": "مقبول",
+      "accepted": "تم القبول",
       "pending": "قيد الانتظار",
-      "storage": "تخزين",
+      "storage": "التخزين",
       "currentStorage": "التخزين (الحالي)",
       "limitAvailable": "الحد المتاح",
       "results": "النتائج",
-      "generalUsability": "قابلية الاستخدام العامة",
+      "generalUsability": "سهولة الاستخدام العامة",
       "finalReport": "التقرير النهائي",
       "generatePDF": "إنشاء PDF",
-      "download": "تحميل",
-      "generated": "تم الإنشاء:",
-      "generateReport": "إنشاء تقرير",
+      "download": "تنزيل",
+      "generated": "تم إنشاؤه:",
+      "generateReport": "إنشاء التقرير",
       "reportAvailable": "التقرير متاح",
       "noReport": "لم يتم إنشاء تقرير",
       "readyForDownload": "التقرير النهائي جاهز للتنزيل",
       "waitingForParticipants": "في انتظار المشاركين",
       "evaluationsCompleted": "التقييمات المكتملة",
       "readyToGenerate": "جاهز لإنشاء التقرير",
-      "excellentUsability": "قابلية استخدام ممتازة",
-      "acceptableUsability": "قابلية استخدام مقبولة",
-      "needsImprovement": "يحتاج التحسين",
-      "basedOn": "على أساس",
+      "excellentUsability": "سهولة استخدام ممتازة",
+      "acceptableUsability": "سهولة استخدام مقبولة",
+      "needsImprovement": "يحتاج إلى تحسين",
+      "basedOn": "بناءً على",
       "evaluations": "التقييمات",
       "evaluationUpdated": "تم تحديث التقييم",
-      "updatedProgress": "تم تحديث التقدم",
+      "updatedProgress": "قام بتحديث تقدمه",
       "invitationSentTitle": "تم إرسال الدعوة",
       "invitationPendingDesc": "الدعوة معلقة لـ",
       "pendingStatus": "قيد الانتظار"
     },
     "managerView": {
-      "heuristicStudy": "دراسة إرشادية",
+      "heuristicStudy": "دراسة استدلالية",
       "freePlan": "خطة مجانية",
-      "generalStatistics": "إحصائيات عامة",
-      "modules": "وحدات"
+      "generalStatistics": "الإحصائيات العامة",
+      "modules": "الوحدات"
     },
     "stats": {
-      "participants": "مشاركين",
-      "completion": "إكمال",
-      "daysActive": "أيام نشطة",
-      "heuristics": "المعرفات"
+      "participants": "المشاركون",
+      "completion": "الإكمال",
+      "daysActive": "أيام النشاط",
+      "heuristics": "الاستدلالات"
     }
   },
   "HeuristicsTable": {
@@ -554,6 +618,10 @@
       "failedToLoadEditForm": "فشل تحميل نموذج التحرير. يرجى المحاولة مرة أخرى.",
       "invalidHeuristic": "اختيار استدلال غير صالح",
       "invalidQuestion": "اختيار سؤال غير صالح"
+    },
+    "count": {
+      "question": "سؤال",
+      "questions": "أسئلة"
     }
   },
   "HeuristicsOptionsTable": {
@@ -565,7 +633,11 @@
       "startAddingOptions": "ابدأ بإضافة خيارات لأسئلتك التجريبية"
     },
     "placeHolders": {},
-    "actions": {}
+    "actions": {},
+    "count": {
+      "option": "خيار",
+      "options": "خيارات"
+    }
   },
   "HeuristicsWeightsTable": {
     "titles": {
@@ -600,7 +672,18 @@
     "messages": {
       "submitTest": "هل أنت متأكد أنك تريد تقديم هذا الاختبار؟",
       "submitOnce": "هل أنت متأكد أنك تريد تقديم اختبارك؟ يمكنك القيام بذلك مرة واحدة فقط.",
-      "noHeuristics": "هذا الاختبار ليس لديه أي استدلالات"
+      "noHeuristics": "هذا الاختبار ليس لديه أي استدلالات",
+      "noHeuristicsConfigured": "لم يتم تكوين أي استدلالات",
+      "answerSaved": "تم حفظ الإجابة بنجاح"
+    },
+    "unknownHeuristic": "استدلال غير معروف",
+    "unknownQuestion": "سؤال غير معروف",
+    "selectAnOption": "يرجى تحديد خيار",
+    "errors": {
+      "questionNotLoaded": "تعذر تحميل السؤال",
+      "noAnswerData": "لم يتم العثور على بيانات الإجابة",
+      "failedToSaveAnswer": "فشل في حفظ الإجابة. يرجى المحاولة مرة أخرى.",
+      "failedToSubmitAnswer": "فشل في تقديم الإجابة. يرجى المحاولة مرة أخرى."
     },
     "actions": {
       "cancel": "إلغاء",
@@ -610,9 +693,14 @@
       "notMail": "ليس {userEmail}؟",
       "changeAccount": "تغيير الحساب",
       "startTest": "بدء الاختبار"
+    },
+    "headers": {
+      "heuristics": "الاستدلالات"
     }
   },
   "HeuristicsEditTest": {
+    "pageTitle": "تحرير الاختبار",
+    "pageSubtitle": "خصص إعدادات وتفضيلات اختبارك",
     "titles": {
       "heuristics": "الاستدلالات",
       "options": "الخيارات",
@@ -737,8 +825,13 @@
       "remove_cooperator": "هل أنت متأكد أنك تريد إزالة {email} من المتعاونين؟",
       "cancel_invitation": "هل أنت متأكد أنك تريد إلغاء {email} من المتعاونين؟",
       "change_role": "هل أنت متأكد أنك تريد تغيير دور {email} من {old} إلى {new}؟",
+      "change_role_title": "تغيير الدور",
       "message_title_hint": "اكتب عنوانًا لرسالتك",
-      "message_content_hint": "اكتب محتوى رسالتك"
+      "message_content_hint": "اكتب محتوى رسالتك",
+      "invite_message": "لقد تمت دعوتك للتعاون في '{testTitle}'",
+      "message_sent_success": "تم إرسال الرسالة بنجاح",
+      "message_sent_error": "فشل في إرسال الرسالة",
+      "user_not_registered": "هذا المستخدم لم يقبل الدعوة بعد أو غير مسجل."
     }
   },
   "UserTestTable": {
@@ -753,7 +846,9 @@
     "messages": {
       "noTasks": "ليس لديك أي مهمة، قم بإنشاء واحدة للمتابعة.",
       "noVariables": "لم تتم إضافة متغيرات بعد. انقر أدناه لإنشاء متغير جديد.",
-      "noOptions": "لم تتم إضافة خيارات."
+      "noOptions": "لم تتم إضافة خيارات.",
+      "confirm_delete_task": "تأكيد حذف المهمة",
+      "sure_to_delete_task": "هل أنت متأكد أنك تريد حذف المهمة : {taskName}؟ لا يمكن التراجع عن هذا الإجراء"
     },
     "inputs": {
       "consent": "الموافقة",
@@ -788,6 +883,251 @@
     },
     "fallbacks": {
       "untitledVariable": "متغير غير مسمى"
+    }
+  },
+  "CreateTask": {
+    "dialog": {
+      "title": "إنشاء مهمة جديدة",
+      "subtitle": "قم بتكوين مهمتك خطوة بخطوة"
+    },
+    "stepper": {
+      "basicInfo": "المعلومات الأساسية",
+      "configuration": "التكوين",
+      "advanced": "متقدم",
+      "preview": "معاينة"
+    },
+    "selectItems": {
+      "noAnswer": "بدون إجابة",
+      "shortAnswer": "إجابة قصيرة",
+      "paragraphAnswer": "إجابة فقرة",
+      "googleFormsLink": "رابط نماذج Google",
+      "nasaTlx": "NASA TLX",
+      "sus": "مقياس قابلية استخدام النظام",
+      "tam1": "TAM-1 – القبول الأساسي",
+      "tam2": "TAM-2 – القبول الموسع",
+      "tam3": "TAM-3 – القبول المتقدم",
+      "sart": "تقنية تقييم الوعي الظرفي"
+    },
+    "validation": {
+      "fieldRequired": "الحقل مطلوب",
+      "validUrl": "يجب أن يكون عنوان URL صالحًا يبدأ بـ http:// أو https://",
+      "positiveNumber": "يجب أن يكون رقمًا موجبًا"
+    },
+    "basicInfo": {
+      "stepTitle": "الخطوة 1: معلومات المهمة الأساسية",
+      "stepDescription": "حدد ما سيفعله المشاركون في هذه المهمة. هذا هو أساس اختبار المستخدم الخاص بك - كن واضحًا ومحددًا بشأن الأهداف والتوقعات.",
+      "taskTitle": "عنوان المهمة",
+      "taskTitleHint": "أعط مهمتك اسمًا واضحًا وموجزًا يصف ما يحتاج المشاركون لإنجازه",
+      "taskTitlePlaceholder": "مثال، 'العثور على معلومات المنتج'، 'إكمال عملية الدفع'",
+      "taskDescription": "وصف المهمة",
+      "taskDescriptionHint": "قدم تعليمات مفصلة للمشاركين. قم بتضمين الهدف والسياق وأي خطوات محددة.",
+      "taskDescriptionPlaceholder": "صف المهمة بالتفصيل. ماذا يجب أن يفعل المشارك؟",
+      "tipLabel": "تلميح",
+      "tipHint": "إرشادات اختيارية أو تلميحات لمساعدة المشاركين أثناء المهمة",
+      "tipPlaceholder": "مثال، 'ركز على التنقل الرئيسي'، 'خذ وقتك للاستكشاف'"
+    },
+    "configuration": {
+      "stepTitle": "الخطوة 2: تكوين المهمة",
+      "stepDescription": "قم بتكوين مكان حدوث المهمة وكيف سيقدم المشاركون ردودهم.",
+      "taskLink": "رابط المهمة (URL)",
+      "taskLinkHint": "عنوان URL للموقع أو التطبيق حيث سيؤدي المشاركون المهمة",
+      "taskLinkPlaceholder": "https://example.com",
+      "estimatedTime": "الوقت المقدر (بالدقائق)",
+      "estimatedTimeHint": "الوقت المقدر الذي سيحتاجه المشاركون لإكمال هذه المهمة",
+      "estimatedTimePlaceholder": "مثال 10",
+      "answerTypeHint": "اختر كيف سيقدم المشاركون ملاحظاتهم بعد إكمال المهمة",
+      "answerTypePreview": "معاينة نوع الإجابة",
+      "postTestHint": "أدخل السؤال المحدد الذي تريد طرحه على المشاركين بعد إكمالهم للمهمة",
+      "postTestPlaceholder": "مثال، 'ما مدى سهولة العثور على معلومات المنتج؟'",
+      "postFormHint": "عنوان URL لنموذج خارجي سيملأه المشاركون بعد المهمة",
+      "postFormPlaceholder": "https://forms.google.com/d/your-form-id"
+    },
+    "configurationDescriptions": {
+      "noAnswer": "يكمل المشاركون المهمة دون تقديم ملاحظات",
+      "textArea": "يقدم المشاركون ملاحظات مكتوبة بعد المهمة",
+      "postTest": "يجيب المشاركون على أسئلة محددة بعد المهمة",
+      "postForm": "يملأ المشاركون نموذجًا خارجيًا بعد المهمة",
+      "nasaTlx": "مؤشر حمل مهمة NASA - يقيس عبء العمل",
+      "sus": "مقياس قابلية استخدام النظام - يقيس قابلية الاستخدام",
+      "tam1": "TAM-1 (القبول الأساسي) - يقيس الفائدة المدركة وسهولة الاستخدام",
+      "tam2": "TAM-2 (الموسع) - يضيف التأثيرات الخارجية وإثبات النتائج",
+      "tam3": "TAM-3 (الشامل) - يشمل القلق والمرح وقابلية الاستخدام الموضوعية",
+      "sart": "تقنية تقييم الوعي الظرفي - يقيس الوعي الظرفي"
+    },
+    "answerTypePreview": {
+      "noAnswer": {
+        "message": "تم إكمال المهمة! لا حاجة لملاحظات إضافية."
+      },
+      "textArea": {
+        "placeholder": "سيقدم المشاركون ملاحظاتهم هنا...",
+        "submitButton": "إرسال الملاحظات"
+      },
+      "postTest": {
+        "title": "أسئلة ما بعد المهمة",
+        "q1": "1. كيف تقيم صعوبة هذه المهمة؟",
+        "q2": "2. أي تعليقات إضافية؟",
+        "feedbackPlaceholder": "ملاحظات اختيارية..."
+      },
+      "postForm": {
+        "title": "نموذج خارجي",
+        "notice": "سيتم إعادة توجيه المشاركين لإكمال نموذج خارجي بعد المهمة.",
+        "button": "فتح النموذج الخارجي"
+      },
+      "nasaTlx": {
+        "title": "مؤشر حمل العمل ناسا",
+        "mental": "الطلب الذهني",
+        "physical": "الطلب البدني",
+        "range": "منخفض - مرتفع",
+        "moreDimensions": "+ 4 أبعاد أخرى"
+      },
+      "sus": {
+        "title": "مقياس قابلية استخدام النظام",
+        "q1": "1. أعتقد أنني أود استخدام هذا النظام بشكل متكرر.",
+        "disagree": "أعارض بشدة",
+        "agree": "أوافق بشدة",
+        "moreStatements": "+ 9 عبارات أخرى"
+      },
+      "sart": {
+        "title": "تقنية تقييم الوعي الظرفي",
+        "instability": "عدم استقرار الوضع",
+        "complexity": "تعقيد الوضع",
+        "stable": "مستقر جداً",
+        "unstable": "غير مستقر جداً",
+        "simple": "بسيط جداً",
+        "complex": "معقد جداً",
+        "moreDimensions": "+ 8 أبعاد أخرى لـ SART"
+      },
+      "tam": {
+        "tam1": "TAM-1: نموذج قبول التكنولوجيا (أساسي)",
+        "tam2": "TAM-2: نموذج قبول التكنولوجيا (موسع)",
+        "tam3": "TAM-3: نموذج قبول التكنولوجيا (شامل)",
+        "items2": "10 بنود عبر بُعدين",
+        "items7": "25 بنداً عبر 7 أبعاد",
+        "items13": "39 بنداً عبر 13 بُعداً",
+        "pu": "الفائدة المتصورة",
+        "eu": "سهولة الاستخدام المتصورة",
+        "sn": "المعيار الذاتي",
+        "image": "الصورة",
+        "jr": "الصلة بالوظيفة",
+        "oq": "جودة المخرجات",
+        "rd": "وضوح النتائج",
+        "se": "الكفاءة الذاتية الحاسوبية",
+        "ec": "التحكم الخارجي",
+        "anxiety": "القلق",
+        "play": "المرح",
+        "enjoy": "الاستمتاع",
+        "ou": "قابلية الاستخدام الموضوعية",
+        "q1": "1. يؤدي استخدام النظام إلى تحسين أداء عملي.",
+        "q6": "6. النظام سهل الاستخدام.",
+        "likertNote": "يقيم المشاركون {count} عبارة على مقياس ليكرت الخماسي"
+      },
+      "selectionPrompt": "حدد نوع الإجابة لمشاهدة المعاينة"
+    },
+    "advanced": {
+      "stepTitle": "الخطوة 3: الخيارات المتقدمة",
+      "stepDescription": "قم بتمكين طرق جمع البيانات الإضافية للحصول على رؤى أعمق.",
+      "eyeTrackingDesc": "تتبع أين ينظر المشاركون أثناء المهمة.",
+      "screenRecordDesc": "سجل نشاط شاشة المشارك.",
+      "cameraDesc": "سجل تعبيرات وجه المشارك ورد فعله.",
+      "audioDesc": "سجل ملاحظات المشارك الشفهية.",
+      "privacyNotice": "إشعار الخصوصية",
+      "privacyText": "تتطلب ميزات التسجيل موافقة صريحة من المشاركين.",
+      "privacyItem1": "أبلغ المشاركين بوضوح عن جمع البيانات",
+      "privacyItem2": "احصل على موافقة مناسبة قبل بدء الاختبار",
+      "privacyItem3": "اتبع لوائح حماية البيانات (GDPR، إلخ)",
+      "privacyItem4": "التخزين والتعامل الآمن مع البيانات المسجلة"
+    },
+    "preview": {
+      "taskSummary": "ملخص المهمة",
+      "untitledTask": "مهمة بدون عنوان",
+      "description": "الوصف:",
+      "noDescription": "لم يتم تقديم وصف",
+      "participantTip": "تلميح للمشارك:",
+      "taskUrl": "عنوان URL للمهمة:",
+      "answerType": "نوع الإجابة:",
+      "recordingFeatures": "ميزات التسجيل:",
+      "postTaskQuestion": "سؤال ما بعد المهمة:",
+      "postTaskForm": "نموذج ما بعد المهمة:",
+      "externalForm": "نموذج خارجي",
+      "taskReady": "المهمة جاهزة!",
+      "reviewRequired": "المراجعة مطلوبة",
+      "taskReadyMessage": "تم تكوين مهمتك بشكل صحيح وهي جاهزة للاستخدام في دراستك.",
+      "reviewRequiredMessage": "يرجى مراجعة الخطوات السابقة للتأكد من اكتمال جميع الحقول المطلوبة.",
+      "noTypeSelected": "لم يتم تحديد أي نوع",
+      "answerTypes": {
+        "noAnswer": "لا توجد إجابة مطلوبة",
+        "textArea": "منطقة نصية",
+        "postTest": "أسئلة ما بعد الاختبار",
+        "postForm": "نموذج خارجي",
+        "nasaTlx": "NASA-TLX",
+        "sus": "مقياس قابلية استخدام النظام",
+        "tam1": "TAM-1 (أساسي)",
+        "tam2": "TAM-2 (موسع)",
+        "tam3": "TAM-3 (شامل)",
+        "sart": "SART"
+      },
+      "recordingLabels": {
+        "eyeTracking": "تتبع العين",
+        "screenRecording": "تسجيل الشاشة",
+        "camera": "الكاميرا",
+        "audio": "الصوت"
+      }
+    },
+    "answerTypePreview": {
+      "taskCompleted": "اكتملت المهمة! لا توجد ملاحظات إضافية مطلوبة.",
+      "participantsFeedbackHere": "سيقدم المشاركون ملاحظاتهم هنا...",
+      "submitFeedback": "إرسال الملاحظات",
+      "postTaskQuestions": "أسئلة ما بعد المهمة",
+      "rateTaskDifficulty": "1. كيف تقيم صعوبة هذه المهمة؟",
+      "additionalComments": "2. أي تعليقات إضافية؟",
+      "optionalFeedback": "ملاحظات اختيارية...",
+      "externalFormTitle": "نموذج خارجي",
+      "externalFormDescription": "سيتم توجيه المشاركين لملء نموذج خارجي بعد المهمة.",
+      "openExternalForm": "فتح النموذج الخارجي",
+      "nasaTlxTitle": "مؤشر حمل المهام ناسا",
+      "mentalDemand": "المتطلبات الذهنية",
+      "physicalDemand": "المتطلبات الجسدية",
+      "lowHigh": "منخفض - مرتفع",
+      "moreDimensions": "+ 4 أبعاد أخرى",
+      "susTitle": "مقياس قابلية استخدام النظام",
+      "susStatement1": "1. أعتقد أنني أود استخدام هذا النظام بشكل متكرر.",
+      "stronglyDisagree": "أعارض بشدة",
+      "stronglyAgree": "أوافق بشدة",
+      "moreStatements": "+ 9 عبارات أخرى",
+      "sartTitle": "تقنية تقييم الوعي الظرفي",
+      "instability": "عدم استقرار الوضع",
+      "complexity": "تعقيد الوضع",
+      "veryStable": "مستقر جداً",
+      "veryUnstable": "غير مستقر جداً",
+      "verySimple": "بسيط جداً",
+      "veryComplex": "معقد جداً",
+      "moreSartDimensions": "+ 8 أبعاد أخرى لـ SART",
+      "tam1Title": "TAM-1: نموذج قبول التكنولوجيا (أساسي)",
+      "tam1Subtitle": "10 بنود عبر بُعدين",
+      "perceivedUsefulness": "الفائدة المتصورة (5 بنود)",
+      "perceivedEaseOfUse": "سهولة الاستخدام المتصورة (5 بنود)",
+      "tam1Statement1": "1. استخدام النظام يحسن أدائي في العمل.",
+      "tam1Statement6": "6. النظام سهل الاستخدام.",
+      "tam2Title": "TAM-2: نموذج قبول التكنولوجيا (موسع)",
+      "tam2Subtitle": "25 بنداً عبر 7 أبعاد",
+      "tam2Description": "يقيم المشاركون 25 عبارة على مقياس ليكرت الخماسي (أعارض بشدة - أوافق بشدة)",
+      "tam3Title": "TAM-3: نموذج قبول التكنولوجيا (شامل)",
+      "tam3Subtitle": "39 بنداً عبر 13 بُعداً",
+      "tam3Description": "تقييم شامل يتضمن 39 عبارة عبر 13 بُعداً على مقياس ليكرت الخماسي",
+      "selectType": "حدد نوع الإجابة لمشاهدة المعاينة",
+      "perceivedUsefulnessShort": "الفائدة المتصورة",
+      "perceivedEaseOfUseShort": "سهولة الاستخدام المتصورة",
+      "subjectiveNorm": "المعيار الذاتي",
+      "image": "الصورة",
+      "jobRelevance": "الصلة بالوظيفة",
+      "outputQuality": "جودة المخرجات",
+      "resultDemonstrability": "وضوح النتائج",
+      "computerSelfEfficacy": "الكفاءة الذاتية الحاسوبية",
+      "externalControl": "التحكم الخارجي",
+      "anxiety": "القلق",
+      "playfulness": "المرح",
+      "enjoyment": "الاستمتاع",
+      "objectiveUsability": "قابلية الاستخدام الموضوعية"
     }
   },
   "UserTestView": {
@@ -825,7 +1165,8 @@
       "tasks": "المهام",
       "postTest": "ما بعد الاختبار",
       "completion": "الإكمال",
-      "taskX": "المهمة {num}"
+      "taskX": "المهمة {num}",
+      "form": "نموذج"
     },
     "TaskStep": {
       "preview": "معاينة المهمة",
@@ -882,14 +1223,20 @@
     },
     "messages": {
       "noTasks": "هذا الاختبار ليس لديه أي مهام.",
-      "answerSaved": "تم حفظ الإجابة بنجاح."
+      "answerSaved": "تم حفظ الإجابة بنجاح.",
+      "taskCompletedSuccess": "تم إكمال المهمة \"{taskName}\" بنجاح!",
+      "useSessionLinkModerated": "استخدم رابط الجلسة للوصول إلى الاختبار المُدار!",
+      "useSessionLink": "استخدم رابط الجلسة للوصول إلى الاختبار"
     },
     "errors": {
       "noAnswerData": "لم يتم العثور على بيانات إجابة.",
       "failedToSaveAnswer": "فشل في حفظ الإجابة. يرجى المحاولة مرة أخرى.",
       "failedToSubmitAnswer": "فشل في تقديم الإجابة. يرجى المحاولة مرة أخرى.",
       "noTestData": "لا توجد بيانات اختبار",
-      "noTestDataMessage": "تعذر تحميل معلومات الاختبار. يرجى المحاولة مرة أخرى لاحقًا."
+      "noTestDataMessage": "تعذر تحميل معلومات الاختبار. يرجى المحاولة مرة أخرى لاحقًا.",
+      "failedToCompleteStep": "فشل في إكمال الخطوة. يرجى المحاولة مرة أخرى.",
+      "failedToInitializeTestData": "فشل في تهيئة بيانات الاختبار. يرجى المحاولة مرة أخرى.",
+      "loginRequired": "يرجى تسجيل الدخول إلى حساب RUXAILAB الخاص بك أولاً للوصول إلى الاختبار!"
     },
     "CalibrationInProgressModal": {
       "completed": "اكتملت المعايرة!",
@@ -951,6 +1298,9 @@
       "instruction": "عندما تكون جاهزًا، اضغط على الزر لبدء المعايرة.",
       "startButton": "بدء المعايرة",
       "inProgress": "جارٍ العمل..."
+    },
+    "warnings": {
+      "sessionNotScheduled": "لم يتم تحديد موعد لهذه الجلسة بعد"
     }
   },
   "eyeTracking": {
@@ -962,6 +1312,46 @@
     "inProgress": "جاري المعايرة...",
     "completed": "اكتملت المعايرة!",
     "continue": "المتابعة إلى الاختبار"
+  },
+  "EyeTrackingConfig": {
+    "titles": {
+      "main": "تكوينات تتبع العين",
+      "general": "التكوين العام",
+      "miscellaneous": "تكوينات متنوعة"
+    },
+    "labels": {
+      "pointNumber": "عدد النقاط",
+      "samplesPerPoint": "عينات لكل نقطة",
+      "msPerPoint": "مللي ثانية لالتقاط النقطة",
+      "threshold": "حد المسافة بين النقاط",
+      "radius": "نصف القطر",
+      "offset": "الإزاحة",
+      "control": "التحكم:",
+      "useCustomColors": "استخدام ألوان مخصصة",
+      "backgroundColor": "لون الخلفية:",
+      "pointColor": "لون النقطة:",
+      "modelSelection": "اختيار النموذج:",
+      "selectModel": "اختر النموذج",
+      "note": "ملاحظة:",
+      "noteText": "سيتم استخدام النموذج المختار لعملية المعايرة. النموذج الافتراضي هو الانحدار الخطي. قد تستغرق بعض النماذج وقتًا أطول للتدريب من غيرها. لذا يرجى التحلي بالصبر."
+    },
+    "tooltips": {
+      "pointNumber": "عدد نقاط المعايرة التي تظهر على الشاشة (المزيد من النقاط = دقة أعلى).",
+      "samplesPerPoint": "كم عدد عينات النظرات التي يتم جمعها لكل نقطة معايرة. القيم الأعلى تحسن الدقة ولكنها تزيد المدة.",
+      "msPerPoint": "المدة (بالمللي ثانية) لالتقاط البيانات لكل نقطة. تحدد المدة التي يجب أن ينظر فيها المستخدم إلى كل هدف.",
+      "threshold": "الحد الأقصى للمسافة (بالبكسل) المسموح بها بين عينات المعايرة قبل التخلص منها. يتحكم في التسامح المكاني.",
+      "radius": "ضبط نصف قطر نقطة المعايرة. القيم الأكبر تجعل النقطة أكبر.",
+      "offset": "الإزاحة (بالبكسل) لضبط موضع منطقة المعايرة."
+    },
+    "models": {
+      "linear": "الانحدار الخطي",
+      "ridge": "انحدار ريدج",
+      "lasso": "انحدار لاسو",
+      "elastic": "الشبكة المرنة",
+      "bayesian": "بايزي ريدج",
+      "sgd": "مُنحدر التدرج العشوائي",
+      "svr": "انحدار متجه الدعم"
+    }
   },
   "AccessNotAllowed": {
     "notAllowed": "الوصول غير مسموح",
@@ -1052,6 +1442,7 @@
         "allStudies": "جميع الدراسات",
         "myStudies": "دراساتي",
         "whereICollaborate": "حيث أتعاون",
+        "allMethods": "جميع الطرق",
         "lessThan10": "< 10 مشاركين",
         "between10And50": "10 – 50 مشارك",
         "moreThan50": "> 50 مشارك"
@@ -1075,7 +1466,7 @@
       "showFilters": "عرض الفلاتر",
       "hideFilters": "إخفاء الفلاتر",
       "sessionDate": "تاريخ الجلسة",
-      "selectRange": "اختر النطاق",
+      "selectRange": "تحديد النطاق",
       "statusLabel": "الحالة",
       "ownership": "الملكية",
       "evaluator": "المقيم",
@@ -1104,7 +1495,8 @@
         "userUnmoderated": "مستخدم غير مدار",
         "userModerated": "مستخدم مدار",
         "manualAccessibility": "إمكانية الوصول اليدوية",
-        "automaticAccessibility": "إمكانية الوصول الآلية"
+        "automaticAccessibility": "إمكانية الوصول الآلية",
+        "all": "الكل"
       }
     },
     "createTest": {
@@ -1139,10 +1531,10 @@
       "select_end_date": "اختر تاريخ الانتهاء",
       "quick_actions": "إجراءات سريعة",
       "perform_common_tasks": "قم بإجراء المهام الشائعة على الفور",
-      "confirm_deletion": "تأكيد الحذف",
-      "action_cannot_be_undone": "لا يمكن التراجع عن هذا الإجراء",
       "delete_warning": "سيتم فقدان جميع البيانات المرتبطة والنتائج والتكوينات إلى الأبد.",
-      "delete_forever": "حذف إلى الأبد"
+      "delete_forever": "حذف إلى الأبد",
+      "action_cannot_be_undone": "لا يمكن التراجع عن هذا الإجراء",
+      "confirm_deletion": "تأكيد الحذف"
     },
     "editTest": {
       "title": "تحرير الاختبار",
@@ -1158,15 +1550,18 @@
     "noCopy": "فشل النسخ",
     "deleteTemplate": "هل أنت متأكد أنك تريد حذف هذا النموذج؟ لا يمكن التراجع عن هذا الإجراء!",
     "deleteTest": "هل أنت متأكد أنك تريد حذف هذا الاختبار؟",
+    "deleteQuestion": "هل أنت متأكد من أنك تريد حذف السؤال: ",
+    "deleteDescription": "هل أنت متأكد من أنك تريد حذف الوصف: ",
     "addDescription": "يرجى إضافة وصف",
     "errorOccurred": "حدث خطأ",
     "leave": "هل أنت متأكد أنك تريد المغادرة؟",
     "sureLeave": "هل أنت متأكد أنك تريد المغادرة؟ سيتم تجاهل جميع التغييرات.",
     "imageURL": "أدخل رابط الصورة:",
-    "deleteHeuristic": "هل أنت متأكد أنك تريد حذف الاستدلال؟",
+    "deleteHeuristic": "هل أنت متأكد من أنك تريد حذف الاستدلال: ",
     "deleteAccount": "هل أنت متأكد أنك تريد حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء.",
     "genericSuccess": "تمت العملية بنجاح",
-    "savedChanges": "تم حفظ التغييرات بنجاح"
+    "savedChanges": "تم حفظ التغييرات بنجاح",
+    "deleteUser": "هل أنت متأكد من أنك تريد حذف هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء."
   },
   "buttons": {
     "next": "التالي",
@@ -1192,7 +1587,12 @@
     "duplicateTest": "تكرار الاختبار",
     "submit": "تقديم",
     "couldNotFinish": "لا يمكن إنهاء",
-    "addNewTask": "إضافة مهمة جديدة"
+    "addNewTask": "إضافة مهمة جديدة",
+    "saveChanges": "حفظ التغييرات",
+    "createTemplate": "إنشاء نموذج",
+    "deleteTest": "حذف الاختبار",
+    "deleteForever": "حذف إلى الأبد",
+    "startTest": "بدء الاختبار"
   },
   "switches": {
     "noAnswer": "لا توجد إجابة",
@@ -1235,11 +1635,7 @@
       "SelfTest": {
         "title": "اختبار ذاتي",
         "type": "غير مشرف عليه",
-        "text": [
-          "الإجابة في وقت فراغ",
-          "تحليل متقدم للإجابات",
-          "تخصيص المهمة"
-        ]
+        "text": ["الإجابة في وقت فراغ", "تحليل متقدم للإجابات", "تخصيص المهمة"]
       },
       "LiveTest": {
         "title": "اختبار مباشر",
@@ -1358,7 +1754,21 @@
   },
   "CardSorting": {
     "noCategory": "لا توجد فئة",
-    "noCards": "لم يتم العثور على بطاقات"
+    "noCards": "لم يتم العثور على بطاقات",
+    "of": "من",
+    "cards": "بطاقات",
+    "cards_low": "بطاقات",
+    "currentCards": "البطاقات الحالية",
+    "addNewCard": "إضافة بطاقة جديدة",
+    "settings": "الإعدادات",
+    "configureCards": "تكوين كيفية عرض البطاقات",
+    "currentCategories": "الفئات الحالية",
+    "addNewTask": "إضافة مهمة جديدة",
+    "configureCategories": "تكوين كيفية عرض الفئات",
+    "newTask": "مهمة جديدة",
+    "customizeSettings": "تخصيص إعدادات وتفضيلات الاختبار الخاص بك",
+    "test": "اختبار",
+    "categories": "الفئات"
   },
   "analytics": {
     "searchByName": "البحث بالاسم",
@@ -1566,7 +1976,8 @@
       "active": "نشط",
       "draft": "مسودة",
       "completed": "مكتمل",
-      "archived": "مؤرشف"
+      "archived": "مؤرشف",
+      "moderatedDescription": "قم بإدارة دراسة اختبار المستخدم الخاضعة للإشراف، وتتبع تقدم المشاركين، وقم بتحليل النتائج من لوحة القيادة الشاملة الخاصة بك."
     },
     "studyOverview": {
       "totalParticipants": "إجمالي المشاركين",
@@ -1625,5 +2036,334 @@
   "taskCreation": {
     "taskDescription": "وصف المهمة",
     "taskDescriptionHelper": "قدم خطوات محددة يجب عليهم اتباعها."
+  },
+  "dialogs": {
+    "deleteVariableConfirm": {
+      "title": "حذف المتغير",
+      "message": "هل أنت متأكد أنك تريد حذف هذا المتغير؟ لا يمكن التراجع عن هذا الإجراء."
+    },
+    "deleteOptionConfirm": {
+      "title": "حذف الخيار",
+      "message": "هل أنت متأكد أنك تريد حذف هذا الخيار؟ لا يمكن التراجع عن هذا الإجراء."
+    },
+    "confirmDeletion": "تأكيد الحذف",
+    "actionCannotBeUndone": "لا يمكن التراجع عن هذا الإجراء",
+    "allAssociatedDataLost": "سيتم فقد جميع البيانات المرتبطة والنتائج والتكوينات إلى الأبد."
+  },
+  "tags": {
+    "active": "نشط",
+    "draft": "مسودة",
+    "completed": "مكتمل",
+    "archived": "مؤرشف",
+    "public": "عام",
+    "private": "خاص",
+    "fromTemplate": "من قالب",
+    "withCollaborators": "مع المتعاونين"
+  },
+  "methods": {
+    "categories": {
+      "test": "اختبار المستخدم",
+      "inquiry": "بحث المستخدم",
+      "inspection": "فحص الخبراء",
+      "accessibility": "إمكانية الوصول",
+      "other": "آخر"
+    },
+    "definitions": {
+      "HEURISTICS": "التقييم الاستكشافي",
+      "USER_MODERATED": "اختبار قابلية الاستخدام المدار",
+      "USER_UNMODERATED": "اختبار قابلية الاستخدام غير المدار",
+      "SURVEY": "استطلاع",
+      "INTERVIEW": "مقابلة",
+      "CARD_SORTING": "تصنيف البطاقات",
+      "COGNITIVE_WALKTHROUGH": "التنفيذ المعرفي",
+      "ACCESSIBILITY_MANUAL": "تقييم يدوي",
+      "ACCESSIBILITY_AUTOMATIC": "تقييم آلي",
+      "WCAG_AUDIT": "تدقيق WCAG"
+    }
+  },
+  "testSettings": {
+    "testInformation": "معلومات الاختبار",
+    "basicTestSettings": "إعدادات الاختبار الأساسية والوصف",
+    "advancedSettings": "الإعدادات المتقدمة",
+    "quickActions": "إجراءات سريعة",
+    "performCommonTasks": "تنفيذ المهام الشائعة فوراً"
+  },
+  "cooperator": {
+    "goToSession": "الذهاب إلى الجلسة"
+  },
+  "Accessibility": {
+    "access": "الوصول:",
+    "accessibilityAssessmentResults": "نتائج تقييم إمكانية الوصول",
+    "accessibilityConfiguration": "إعدادات إمكانية الوصول",
+    "accessibilityIssues": "مشكلات إمكانية الوصول",
+    "accessibilityManager": "مدير إمكانية الوصول",
+    "accessibilityReport": "تقرير إمكانية الوصول",
+    "accessibilityScore": "درجة إمكانية الوصول",
+    "addNewPage": "إضافة صفحة جديدة",
+    "addNewWebpageAssessment": "إضافة صفحة ويب جديدة للتقييم",
+    "addWebpageStartAssessment": "إضافة صفحة ويب وبدء التقييم",
+    "all": "الكل",
+    "analyzeWebsiteCompliance": "تحليل مدى توافق موقعك مع معايير إمكانية الوصول والحصول على رؤى قابلة للتنفيذ",
+    "analyzingAccessibility": "جارٍ تحليل إمكانية الوصول",
+    "appraiserNotes": "ملاحظات المُقيِّم",
+    "assessmentAvailable": "التقييم متاح",
+    "assessmentData": "بيانات التقييم",
+    "assessmentNotes": "ملاحظات التقييم",
+    "assessmentProgress": "تقدم التقييم",
+    "back": "رجوع",
+    "backToUserSelection": "العودة إلى اختيار المستخدم",
+    "browseAccessibilityTools": "استعراض أدوات وإجراءات إمكانية الوصول",
+    "canSave": "يمكن الحفظ:",
+    "cancel": "إلغاء",
+    "checkRequiresAuth": "التحقق مما إذا كان الموقع يتطلب مصادقة",
+    "checkingAccessPermissions": "جارٍ التحقق من أذونات الوصول",
+    "choosePrincipleGuideline": "اختر مبدأً وإرشادًا من الشريط الجانبي الأيسر لعرض القواعد والمشكلات المرتبطة بهما",
+    "close": "إغلاق",
+    "code": "الكود",
+    "color": "اللون:",
+    "commonIssuesSolutions": "المشكلات الشائعة والحلول",
+    "compliance": "التوافق",
+    "complianceLevel": "مستوى التوافق:",
+    "configuration": "الإعدادات:",
+    "context": "السياق",
+    "continue": "متابعة",
+    "cssSelector": "محدد CSS",
+    "dashboard": "لوحة التحكم",
+    "description": "تقييم إمكانية الوصول لمحتوى الويب الخاص بك بناءً على إرشادات WCAG",
+    "descriptionOptional": "الوصف (اختياري)",
+    "descriptionPlaceholder": "وصف موجز للصفحة أو السيناريو الذي يتم اختباره.",
+    "dismiss": "تجاهل",
+    "ensurePubliclyAccessible": "تأكد من أن الموقع متاح للعامة",
+    "enterWebsiteUrl": "أدخل رابط موقع لإجراء اختبار تلقائي لإمكانية الوصول والحصول على تقرير مفصل.",
+    "errors": "أخطاء",
+    "evaluateAccessibility": "تقييم إمكانية الوصول لمشروعك بناءً على إرشادات WCAG المحددة",
+    "exportJson": "تصدير JSON",
+    "failed": "فشل",
+    "fetchingParticipants": "جارٍ جلب المشاركين في التقييم...",
+    "fillWebpageDetails": "أدخل تفاصيل صفحة الويب التي تريد تقييمها من حيث إمكانية الوصول.",
+    "filteredWcagDataAvailable": "بيانات WCAG المُفلترة متاحة:",
+    "foundUserIds": "تم العثور على معرفات المستخدمين:",
+    "guideline": "إرشاد",
+    "guidelinesSelected": "تم تحديد إرشاد/إرشادات",
+    "guidelinesSelection": "اختيار الإرشادات",
+    "information": "معلومات",
+    "issueDetails": "تفاصيل المشكلة",
+    "issues": "المشكلات",
+    "issuesFound": "تم العثور على مشكلات",
+    "level": "المستوى",
+    "loading": "جارٍ التحميل...",
+    "loadingAccessibilityReport": "جارٍ تحميل تقرير إمكانية الوصول...",
+    "loadingMore": "جارٍ تحميل المزيد...",
+    "loadingReport": "جارٍ تحميل التقرير...",
+    "loadingTestData": "جارٍ تحميل بيانات الاختبار...",
+    "loadingUsers": "جارٍ تحميل المستخدمين",
+    "message": "رسالة",
+    "next": "التالي",
+    "noAssessmentAvailable": "لا يوجد تقييم متاح لهذا الاختبار",
+    "noDescriptionProvided": "لم يتم تقديم وصف.",
+    "noIssuesFound": "لم يتم العثور على مشكلات",
+    "noNotesForRule": "لا توجد ملاحظات متاحة لهذه القاعدة.",
+    "noNotesProvided": "لم يتم تقديم ملاحظات",
+    "noPrinciplesAvailable": "لا توجد مبادئ متاحة",
+    "noReportAvailable": "لا يوجد تقرير متاح",
+    "noReportData": "لا توجد بيانات تقرير متاحة.",
+    "noRulesAvailable": "لا توجد قواعد متاحة",
+    "noSpecificCriteria": "لا توجد معايير محددة لهذه القاعدة.",
+    "noSuccessCriteria": "لا توجد معايير نجاح متاحة لهذه القاعدة.",
+    "noTestRunYet": "لم يتم تشغيل أي اختبار لإمكانية الوصول لهذا المعرّف بعد.",
+    "noUsersFound": "لم يتم العثور على مستخدمين لهذا الاختبار.",
+    "notApplicable": "غير قابل للتطبيق",
+    "notEvaluated": "غير مُقيَّم",
+    "note": "ملاحظة",
+    "notesFor": "ملاحظات لـ",
+    "notices": "تنبيهات",
+    "of": "من",
+    "opacity": "الشفافية",
+    "passed": "ناجح",
+    "pleaseFixFollowing": "يرجى إصلاح المشكلات التالية:",
+    "previous": "السابق",
+    "principle": "المبدأ",
+    "principlesAvailable": "المبادئ المتاحة:",
+    "radius": "نصف القطر",
+    "rawWcagDataAvailable": "بيانات WCAG الخام متاحة:",
+    "readOnlyMode": "وضع القراءة فقط - لا يمكنك حفظ التغييرات على تقييم مستخدم آخر.",
+    "readyToEvaluate": "جاهز للتقييم",
+    "remove": "إزالة",
+    "report": "تقرير",
+    "reset": "إعادة تعيين",
+    "reviewDetailedAssessment": "مراجعة نتائج تقييم إمكانية الوصول التفصيلية للمستخدم المحدد",
+    "reviewDetailedIssues": "مراجعة مشكلات إمكانية الوصول التفصيلية ومعايير النجاح وفقًا لإرشادات WCAG",
+    "rule": "قاعدة",
+    "rulePassedAllChecks": "اجتازت هذه القاعدة جميع فحوصات إمكانية الوصول للصفحة المختبرة.",
+    "rules": "القواعد",
+    "rulesFor": "قواعد لـ",
+    "runAccessibilityTest": "تشغيل اختبار إمكانية الوصول",
+    "runTest": "تشغيل الاختبار",
+    "runningComprehensiveTests": "جارٍ تشغيل اختبارات شاملة على موقعك...",
+    "saveAssessment": "حفظ التقييم",
+    "saveConfig": "حفظ الإعدادات",
+    "selectComplianceLevel": "اختر مستوى توافق WCAG لمتطلبات إمكانية الوصول الخاصة بك.",
+    "selectGuidelinesByPrinciple": "اختر الإرشادات لتقييمك. قم بالتصفية حسب المبدأ باستخدام علامات التبويب.",
+    "selectPrincipleInfo": "اختر مبدأً من القائمة لعرض إرشاداته وقواعده.",
+    "selectRuleToView": "اختر قاعدة لعرض التفاصيل",
+    "selectSpecificRules": "اختر قواعد محددة (إلزامي)",
+    "selectUserToView": "اختر مستخدمًا لعرض نتائج تقييم إمكانية الوصول الخاصة به",
+    "selectUserToViewResults": "اختر مستخدمًا لعرض نتائج التقييم",
+    "selected": "محدد",
+    "selectedGuidelines": "الإرشادات المحددة:",
+    "selector": "المحدد",
+    "setupTestParameters": "إعداد وتخصيص معلمات اختبار إمكانية الوصول",
+    "severity": "درجة الخطورة",
+    "signInToSave": "تسجيل الدخول للحفظ",
+    "status": "الحالة",
+    "step": "الخطوة",
+    "successCriterion": "معيار النجاح",
+    "testFailed": "فشل الاختبار",
+    "testing": "جارٍ الاختبار...",
+    "totalIssues": "إجمالي المشكلات",
+    "totalRules": "إجمالي القواعد",
+    "troubleshootingTips": "نصائح استكشاف الأخطاء وإصلاحها",
+    "tryAgain": "حاول مرة أخرى",
+    "tryDifferentPage": "حاول اختبار صفحة مختلفة على نفس النطاق",
+    "type": "النوع",
+    "url": "الرابط",
+    "urlHelp": "الرابط الكامل لصفحة الويب.",
+    "urlPlaceholder": "https://example.com",
+    "userDetails": "تفاصيل المستخدم:",
+    "userRole": "دور المستخدم:",
+    "usersLoaded": "تم تحميل المستخدمين",
+    "verifyUrlCorrect": "تحقق من أن الرابط صحيح وكامل",
+    "version": "الإصدار",
+    "viewAssessment": "عرض التقييم",
+    "viewDetailedIssues": "عرض مشكلات إمكانية الوصول التفصيلية والتوصيات لتحسين محتوى الويب الخاص بك.",
+    "viewInPreview": "عرض في المعاينة",
+    "viewInPreviewMode": "عرض في وضع المعاينة",
+    "viewResults": "عرض النتائج",
+    "viewWcagGuidelines": "عرض إرشادات WCAG",
+    "viewingAssessmentData": "أنت تعرض بيانات التقييم لمعرف المستخدم:",
+    "viewingMode": "وضع العرض",
+    "viewingModeLabel": "وضع العرض:",
+    "viewingUserId": "عرض معرف المستخدم:",
+    "warnings": "تحذيرات",
+    "wcag": "WCAG",
+    "wcagComplianceLevel": "مستوى توافق WCAG",
+    "wcagComplianceLevelHelp": "مستوى التوافق المستهدف وفقًا لـ WCAG لهذا التقييم.",
+    "wcagLevelFilter": "تصفية مستوى WCAG:",
+    "wcagPrinciples": "مبادئ WCAG",
+    "wcagReference": "مرجع WCAG",
+    "webpageName": "اسم صفحة الويب",
+    "webpageNameHelp": "اسم وصفي لصفحة الويب التي تقوم باختبارها.",
+    "webpageNamePlaceholder": "مثال: الصفحة الرئيسية لشركتي",
+    "webpagePreview": "معاينة صفحة الويب",
+    "websiteAccessibilityTester": "أداة اختبار إمكانية الوصول للمواقع"
+  },
+  "faq": {
+    "questions": {
+      "q1": {
+        "answer": "Ruxailab هي منصة مفتوحة المصدر مصممة لجمع ملاحظات سهولة الاستخدام من المستخدمين. تتيح لك جمع آراء المستخدمين وتحليلها وإنشاء تقارير شاملة لفهم سهولة استخدام تطبيقك بشكل أفضل. كما توفر اختبارات إرشادية تُمكّن الخبراء من تقييم مدى توافق تطبيقك مع مبادئ سهولة الاستخدام. تتم صيانتها بواسطة مجتمع من المساهمين وهي مرخّصة بموجب رخصة MIT.",
+        "question": "1. ما هو Ruxailab؟"
+      },
+      "q2": {
+        "answer_part1": "للبدء، قم بزيارة",
+        "answer_part2": "لتنزيل الشفرة المصدرية. اطلع على الوثائق للحصول على تعليمات التثبيت والأمثلة. يمكنك أيضًا زيارة",
+        "answer_part3": "لمزيد من الموارد.",
+        "help_link": "المساعدة",
+        "link_text": "مستودع GitHub",
+        "question": "2. كيف أبدأ باستخدام المشروع؟"
+      },
+      "q3": {
+        "answer": "بالتأكيد! نرحب بمساهمات المجتمع. يرجى قراءة إرشادات المساهمة في المستودع وإرسال طلب سحب (Pull Request) يتضمن تغييراتك.",
+        "question": "3. هل يمكنني المساهمة في المشروع؟"
+      },
+      "q4": {
+        "answer": "المشروع مرخّص بموجب رخصة MIT. هذا يعني أنه يمكنك استخدام المشروع وتعديله وتوزيعه بحرية، طالما قمت بتضمين الرخصة وإشعار حقوق النشر.",
+        "question": "4. ما هي الرخصة التي يستخدمها المشروع؟"
+      },
+      "q5": {
+        "answer": "يمكنك الإبلاغ عن الأخطاء أو طلب ميزات جديدة من خلال فتح مشكلة (Issue) في",
+        "answer_part2": ". يرجى تقديم أكبر قدر ممكن من التفاصيل لمساعدتنا في معالجة طلبك.",
+        "link_text": "مشكلات GitHub",
+        "question": "5. كيف يمكنني الإبلاغ عن خطأ أو طلب ميزة؟"
+      },
+      "q6": {
+        "answer": "نعم! انضم إلى مجتمعنا على",
+        "answer_part2": "للتواصل مع المستخدمين والمساهمين الآخرين، وطرح الأسئلة، ومشاركة الأفكار.",
+        "link_text": "GitHub",
+        "question": "6. هل يوجد مجتمع لـ Ruxailab؟"
+      },
+      "q7": {
+        "answer": "نحن نأخذ خصوصيتك على محمل الجد. يرجى الاطلاع على",
+        "answer_part2": "لمعرفة تفاصيل حول كيفية جمع معلوماتك واستخدامها.",
+        "link_text": "سياسة الخصوصية",
+        "question": "7. كيف يتم التعامل مع بياناتي؟"
+      },
+      "q8": {
+        "answer": "يتم صيانة المشروع بواسطة فريق من المتطوعين والمساهمين. يمكنك العثور على مزيد من المعلومات حول المشرفين في مستودع المشروع.",
+        "question": "8. من الذي يقوم بصيانة المشروع؟"
+      },
+      "q9": {
+        "answer": "إذا كانت لديك أسئلة إضافية، يرجى التواصل معنا.",
+        "question": "9. هل لا تزال لديك أسئلة؟"
+      }
+    },
+    "subtitle": "اعثر على إجابات للأسئلة الشائعة حول Ruxailab.",
+    "title": "الأسئلة الشائعة"
+  },
+  "pageNotFound": {
+    "description": "لم نتمكن من العثور على الصفحة التي تبحث عنها.",
+    "goBack": "العودة",
+    "title": "الصفحة غير موجودة"
+  },
+  "privacyPolicy": {
+    "lastUpdated": "آخر تحديث: 15 أبريل 2025",
+    "sections": {
+      "changes": {
+        "content": "قد نقوم بتحديث سياسة الخصوصية هذه من وقت لآخر. سنقوم بإخطار المستخدمين بالتغييرات الجوهرية من خلال نشر إشعار على موقع المشروع أو مستودعه.",
+        "title": "8. التغييرات على هذه السياسة"
+      },
+      "contact": {
+        "content": "إذا كانت لديك أي أسئلة حول سياسة الخصوصية هذه، يرجى التواصل معنا.",
+        "title": "9. تواصل معنا"
+      },
+      "cookies": {
+        "content": "قد يستخدم موقعنا ملفات تعريف الارتباط لتحسين تجربتك (على سبيل المثال، لتذكر تفضيلاتك). يمكنك تعطيل ملفات تعريف الارتباط من إعدادات المتصفح، ولكن قد يؤثر ذلك على وظائف الموقع.",
+        "title": "5. ملفات تعريف الارتباط"
+      },
+      "informationCollected": {
+        "content": "كمشروع مفتوح المصدر، نحن عادةً لا نجمع معلومات شخصية بشكل مباشر. ومع ذلك، إذا تفاعلت مع موقعنا أو خدماتنا (مثل إنشاء حساب أو إرسال نموذج اتصال)، فقد نجمع:",
+        "items": {
+          "contributions": "المساهمات (مثل اسم مستخدم GitHub الخاص بك إذا ساهمت في المشروع)",
+          "email": "عناوين البريد الإلكتروني (مثل إنشاء الحساب أو الاشتراك في النشرات)",
+          "usage": "بيانات الاستخدام (مثل تحليلات حول كيفية الوصول إلى الموقع)"
+        },
+        "title": "2. المعلومات التي نجمعها"
+      },
+      "introduction": {
+        "content": "Ruxailab هو مشروع مفتوح المصدر ملتزم بحماية خصوصيتك. توضح سياسة الخصوصية هذه كيفية جمع واستخدام وحماية أي معلومات تقدمها عند استخدام المشروع.",
+        "title": "1. المقدمة"
+      },
+      "rights": {
+        "content": "اعتمادًا على موقعك، قد يكون لديك الحق في الوصول إلى معلوماتك الشخصية أو تصحيحها أو حذفها. يرجى التواصل معنا لممارسة هذه الحقوق.",
+        "title": "7. حقوقك"
+      },
+      "security": {
+        "content": "نتخذ تدابير معقولة لحماية أي بيانات نجمعها، ولكن لا توجد طريقة نقل عبر الإنترنت آمنة بنسبة 100%. لا يمكننا ضمان الأمان المطلق لمعلوماتك.",
+        "title": "6. أمان البيانات"
+      },
+      "sharing": {
+        "content": "لا نقوم ببيع أو مشاركة معلوماتك الشخصية مع أطراف ثالثة، إلا إذا كان ذلك مطلوبًا بموجب القانون أو لحماية المشروع (مثل حالات إساءة الاستخدام أو الاحتيال).",
+        "title": "4. مشاركة البيانات"
+      },
+      "usage": {
+        "content": "قد نستخدم المعلومات التي نجمعها من أجل:",
+        "items": {
+          "analyze": "تحليل الاستخدام لتحسين تجربة المستخدم",
+          "communicate": "التواصل معك (مثل الرد على الاستفسارات أو إخطارك بالتحديثات)",
+          "improve": "تقديم المشروع وخدماته وتحسينها"
+        },
+        "title": "3. كيفية استخدام معلوماتك"
+      }
+    },
+    "title": "سياسة الخصوصية"
   }
 }

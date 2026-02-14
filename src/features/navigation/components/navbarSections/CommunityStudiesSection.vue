@@ -27,7 +27,11 @@
         variant="tonal"
         icon
         size="small"
-        :title="showFilters ? $t('community.hideFilters') : $t('community.showFilters')"
+        :title="
+          showFilters
+            ? $t('community.hideFilters')
+            : $t('community.showFilters')
+        "
         @click="toggleFilters"
       >
         <v-icon>{{
@@ -42,7 +46,9 @@
         <v-row dense>
           <!-- 📅 Creation date -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">{{ $t('community.filters.creationDate') }}</div>
+            <div class="filter-label">
+              {{ $t('community.filters.creationDate') }}
+            </div>
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
@@ -113,7 +119,9 @@
 
           <!-- 👥 Ownership filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">{{ $t('community.filters.ownership') }}</div>
+            <div class="filter-label">
+              {{ $t('community.filters.ownership') }}
+            </div>
             <v-select
               v-model="selectedOwnershipFilter"
               :items="ownershipOptions"
@@ -127,7 +135,9 @@
 
           <!-- 👤 Participants filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">{{ $t('community.filters.participants') }}</div>
+            <div class="filter-label">
+              {{ $t('community.filters.participants') }}
+            </div>
             <v-select
               v-model="selectedParticipantsFilter"
               :items="participantsOptions"
@@ -155,9 +165,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import List from '@/shared/components/tables/ListComponent.vue'
 import {
-  getMethodOptions,
   METHOD_DEFINITIONS,
-  METHOD_STATUSES,
   STUDY_TYPES,
   USER_STUDY_SUBTYPES,
 } from '@/shared/constants/methodDefinitions'
@@ -226,13 +234,29 @@ const hasActiveFilters = computed(() => {
 })
 
 // ===== Method options =====
-const methodOptions = computed(() => {
-  const options = getMethodOptions('es', METHOD_STATUSES.AVAILABLE.id)
-  return [
-    { value: 'all', text: t('community.method.allMethods') },
-    ...options.map((option) => ({ value: option.value, text: option.text })),
-  ]
-})
+const methodOptions = computed(() => [
+  { value: 'all', text: t('community.method.allMethods') },
+  {
+    value: METHOD_DEFINITIONS.HEURISTICS.id,
+    text: t('community.method.heuristicEvaluation'),
+  },
+  {
+    value: METHOD_DEFINITIONS.USER_MODERATED.id,
+    text: t('community.method.moderatedUserTest'),
+  },
+  {
+    value: METHOD_DEFINITIONS.USER_UNMODERATED.id,
+    text: t('community.method.unmoderatedUserTest'),
+  },
+  {
+    value: METHOD_DEFINITIONS.ACCESSIBILITY_MANUAL.id,
+    text: t('community.method.accessibilityManual'),
+  },
+  {
+    value: METHOD_DEFINITIONS.ACCESSIBILITY_AUTOMATIC.id,
+    text: t('community.method.accessibilityAutomatic'),
+  },
+])
 
 // ===== Data and filtering logic =====
 const tests = computed(() => store.getters.publicTests || [])
