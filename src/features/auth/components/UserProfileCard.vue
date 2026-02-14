@@ -27,7 +27,8 @@
             <v-divider class="my-4" />
 
             <v-list density="compact">
-                <v-list-item v-for="(item, index) in profileItems" :key="index"
+                <v-list-item
+v-for="(item, index) in profileItems" :key="index"
                     class="rounded-lg pa-2 list-item-transition">
                     <v-list-item-subtitle class="text-caption text-uppercase text-grey-darken-1">
                         <v-icon size="small" color="grey-darken-1">
@@ -35,7 +36,8 @@
                         </v-icon>
                         {{ item.label }}:
                     </v-list-item-subtitle>
-                    <v-list-item-title v-if="!loading" :class="{
+                    <v-list-item-title
+v-if="!loading" :class="{
                         'font-italic text-error': !item.value,
                         'font-weight-medium': item.value,
                     }">

@@ -37,7 +37,6 @@
                 v-if="run.id === latestTranscriptionId"
                 size="x-small"
                 color="success"
-                text-color="white"
                 >Latest</v-chip
               >
             </div>
@@ -74,7 +73,7 @@
           <!-- full transcription list for this run -->
           <TranscriptionList
             v-if="segmentsFor(run).length"
-            :transcriptSegments="segmentsFor(run)"
+            :transcript-segments="segmentsFor(run)"
           />
           <div v-else class="text-medium-emphasis text-caption">
             No segments in this run.
@@ -147,8 +146,6 @@ const hasRuns = computed(
 import TranscriptionController from '@/ai/transcriptions/TranscriptionController'
 const transcriptionController = new TranscriptionController()
 
-import AnswerController from '@/shared/controllers/AnswerController'
-const answerController = new AnswerController()
 watch(
   () => [props.answersDocId, props.userDocId, props.taskId],
   async () => {
@@ -175,8 +172,7 @@ async function fetchSelectedTaskTranscriptions() {
     transcriptionsArray.value = Array.isArray(transcriptions)
       ? transcriptions
       : []
-  } catch (error) {
-    console.error('Error fetching transcriptions:', error)
+  } catch {
     transcriptionsArray.value = [] // ✅ fallback
   } finally {
     loading.value = false
@@ -199,21 +195,22 @@ async function confirmDelete() {
     // refetch to get the new list
     await fetchSelectedTaskTranscriptions()
 
-    // TODO: ADD THIS LATER
-    // // recompute meta from refreshed list
-    // const newCount = transcriptionsArray.value.length
-    // const newLatestId = transcriptionsArray.value[0]?.id ?? null // we already sort desc in controller
+    // refetch to get the new list
+    await fetchSelectedTaskTranscriptions()
 
-    // // update task meta on the Answer doc
-    // await answerController.setTaskTranscriptionMeta({
-    //   answersDocId: props.answersDocId,
-    //   userDocId: props.userDocId,
-    //   taskId: String(props.taskId),
-    //   latestTranscriptionDocId: newLatestId,
-    //   transcriptionsCount: newCount,
-    // })
-  } catch (e) {
-    console.error('Failed to delete transcription:', e)
+    // recompute meta from refreshed list
+    const newCount = transcriptionsArray.value.length
+    const newLatestId = transcriptionsArray.value[0]?.id ?? null // we already sort desc in controller
+
+    // update task meta on the Answer doc
+    await answerController.setTaskTranscriptionMeta({
+      answersDocId: props.answersDocId,
+      userDocId: props.userDocId,
+      taskId: String(props.taskId),
+      latestTranscriptionDocId: newLatestId,
+      transcriptionsCount: newCount,
+    })
+  } catch {
   } finally {
     confirmOpen.value = false
     deletingId.value = null

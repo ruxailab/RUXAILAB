@@ -9,9 +9,9 @@
         {{ props.element.title }}
       </div>
 
-      <div class="d-flex ml-auto align-center" v-if="props.options.card_tooltip && props.element.tooltip">
+      <div v-if="props.options.card_tooltip && props.element.tooltip" class="d-flex ml-auto align-center">
         <v-tooltip :text="element.tooltip">
-          <template v-slot:activator="{ props }">
+          <template #activator="{ props }">
             <v-icon v-bind="props">
               mdi-information-slab-circle-outline
             </v-icon>

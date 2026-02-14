@@ -1,28 +1,22 @@
 <template>
-  <PageWrapper
-    title="Edit Test"
-    :side-gap="true"
-  >
+  <PageWrapper :title="$t('HeuristicsEditTest.pageTitle')" :side-gap="true">
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
-        Customize the settings and preferences of your test
+        {{ $t('HeuristicsEditTest.pageSubtitle') }}
       </p>
     </template>
 
     <v-container>
-      <ButtonSave
-        :visible="change"
-        @click="save"
-      />
+      <ButtonSave :visible="change" @click="save" />
 
       <div>
         <!-- Desktop Tabs -->
         <v-tabs
           v-if="!isMobile"
+          v-model="index"
           bg-color="transparent"
           color="#FCA326"
           class="pb-0 mb-0"
-          v-model="index"
         >
           <v-tab>{{ $t('HeuristicsEditTest.titles.heuristics') }}</v-tab>
           <v-tab>{{ $t('HeuristicsEditTest.titles.options') }}</v-tab>
@@ -50,14 +44,8 @@
         </v-select>
 
         <div class="mt-4">
-          <HeuristicsTable
-            v-if="index == 0"
-            @change="change = true"
-          />
-          <OptionsTable
-            v-if="index == 1"
-            @change="change = true"
-          />
+          <HeuristicsTable v-if="index == 0" @change="change = true" />
+          <OptionsTable v-if="index == 1" @change="change = true" />
           <WeightTable v-if="index == 2" />
           <HeuristicsSettings v-if="index == 3" />
         </div>
@@ -67,23 +55,23 @@
 </template>
 
 <script setup>
-import ButtonSave from '@/shared/components/buttons/ButtonSave.vue';
-import PageWrapper from '@/shared/views/template/PageWrapper.vue';
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
-import HeuristicsTable from '../components/HeuristicsTable.vue';
-import OptionsTable from '../components/OptionsTable.vue';
-import WeightTable from '../components/weights_evaluation/WeightTable.vue';
-import HeuristicsSettings from '../components/HeuristicsSettings.vue';
-import { useStore } from 'vuex';
-import { useRoute } from 'vue-router';
-import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
+import ButtonSave from '@/shared/components/buttons/ButtonSave.vue'
+import PageWrapper from '@/shared/views/template/PageWrapper.vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import HeuristicsTable from '../components/HeuristicsTable.vue'
+import OptionsTable from '../components/OptionsTable.vue'
+import WeightTable from '../components/weights_evaluation/WeightTable.vue'
+import HeuristicsSettings from '../components/HeuristicsSettings.vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
 
-const store = useStore();
-const route = useRoute();
+const store = useStore()
+const route = useRoute()
 
-const index = ref(0);
-const change = ref(false);
-const windowWidth = ref(window.innerWidth);
+const index = ref(0)
+const change = ref(false)
+const windowWidth = ref(window.innerWidth)
 
 // Tab items for mobile dropdown
 const tabItems = computed(() => [
@@ -91,36 +79,36 @@ const tabItems = computed(() => [
   { title: 'OPTIONS', value: 1 },
   { title: 'WEIGHTS', value: 2 },
   { title: 'SETTINGS', value: 3 },
-]);
+])
 
 // Check if mobile
-const isMobile = computed(() => windowWidth.value < 960);
+const isMobile = computed(() => windowWidth.value < 960)
 
 // Handle window resize
 const handleResize = () => {
-  windowWidth.value = window.innerWidth;
-};
+  windowWidth.value = window.innerWidth
+}
 
 onMounted(() => {
-  window.addEventListener('resize', handleResize);
-});
+  window.addEventListener('resize', handleResize)
+})
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', handleResize);
-});
+  window.removeEventListener('resize', handleResize)
+})
 
 const save = async () => {
-  change.value = false;
+  change.value = false
 
   const rawData = {
     ...store.getters.test,
     testStructure: store.getters.heuristics,
     testOptions: store.state.Tests.Test.testOptions,
-    testWeights: store.getters.testWeights
-  };
+    testWeights: store.getters.testWeights,
+  }
 
-  const study = instantiateStudyByType(rawData.testType, rawData);
-  await store.dispatch('updateStudy', study);
+  const study = instantiateStudyByType(rawData.testType, rawData)
+  await store.dispatch('updateStudy', study)
   await store.dispatch('getStudy', { id: route.params.id })
 }
 </script>

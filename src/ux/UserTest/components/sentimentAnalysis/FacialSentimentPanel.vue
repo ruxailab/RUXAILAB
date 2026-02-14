@@ -13,11 +13,18 @@
           Emotion insights based on facial expressions
         </div>
       </v-col>
+      <v-spacer />
+      <v-col cols="auto">
+        <v-btn variant="outlined" :disabled="isAnalyzing" @click="analyzeVideo">
+          <span class="sr-only">Re-analyze Video</span>
+          <v-icon>mdi-refresh</v-icon>
+        </v-btn>
+      </v-col>
       <v-col cols="auto">
         <v-chip
           :color="isAnalyzing ? 'grey' : 'primary'"
           variant="flat"
-          prepend-icon="mdi-face-recognition"
+          append-icon="mdi-face-recognition"
         >
           {{ isAnalyzing ? 'Analyzing...' : 'Analysis Complete' }}
         </v-chip>
@@ -105,7 +112,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
 import { Radar } from 'vue-chartjs'
 import {
   Chart as ChartJS,
@@ -117,6 +124,8 @@ import {
   LineElement,
 } from 'chart.js'
 import axios from 'axios'
+import { useStore } from 'vuex'
+import UserStudyEvaluatorAnswer from '../../models/UserStudyEvaluatorAnswer'
 
 ChartJS.register(
   Title,
@@ -127,9 +136,12 @@ ChartJS.register(
   LineElement,
 )
 
+const store = useStore()
 const props = defineProps({
   videoElement: { type: HTMLVideoElement, default: null },
   webcamVideoUrl: { type: String, default: null },
+  testAnswer: { type: Object, default: null },
+  selectedTask: { type: Number, default: 0 },
 })
 
 const isAnalyzing = ref(true)
@@ -172,6 +184,12 @@ const radarOptions = ref({
   },
 })
 
+const test = computed(() => store.getters.test)
+
+onMounted(() => {
+  checkExistingResults()
+})
+
 watch(
   () => radarData.value.datasets[0].data,
   (newData) => {
@@ -179,6 +197,20 @@ watch(
     radarOptions.value.scales.r.max = maxValue
   },
 )
+
+function checkExistingResults() {
+  const existingResults =
+    props.testAnswer?.tasks?.[props.selectedTask]?.facialSentimentResults
+  if (existingResults) {
+    updateUI(existingResults)
+    isAnalyzing.value = false // Stop analyzing if results already exist
+  } else {
+    const videoPath = extractVideoNameFromUrl(props.webcamVideoUrl)
+    if (videoPath) {
+      analyzeVideo(videoPath)
+    }
+  }
+}
 
 function extractVideoNameFromUrl(url) {
   try {
@@ -199,10 +231,23 @@ const analyzeVideo = async (videoPath) => {
         video_name: videoPath,
       },
     )
-    console.log('[✅ Facial Sentiment API]', res.data)
 
     const data = res.data.emotions
     updateUI(data)
+
+    // clone the full testAnswer and insert sentiment for the selected task
+    const clonedTestAnswer = JSON.parse(JSON.stringify(props.testAnswer || {}))
+    clonedTestAnswer.tasks = clonedTestAnswer.tasks || []
+    clonedTestAnswer.tasks[props.selectedTask] =
+      clonedTestAnswer.tasks[props.selectedTask] || {}
+    clonedTestAnswer.tasks[props.selectedTask].facialSentimentResults = data
+
+    await store.dispatch('saveTestAnswer', {
+      data: new UserStudyEvaluatorAnswer(clonedTestAnswer),
+      answersDocId: test.value.answersDocId,
+      testType: test.value.testType,
+    })
+    await store.dispatch('getCurrentTestAnswerDoc')
   } catch (err) {
     console.error('❌ Erro ao enviar caminho do vídeo:', err.message || err)
   } finally {
@@ -383,18 +428,6 @@ function getEmotionType(emotion) {
   }
   return types[emotion] || 'info'
 }
-
-watch(
-  () => props.videoElement,
-  (val) => {
-    if (!val || !props.webcamVideoUrl) return
-    const videoPath = extractVideoNameFromUrl(props.webcamVideoUrl)
-    if (videoPath) {
-      val.addEventListener('loadeddata', () => analyzeVideo(videoPath))
-    }
-  },
-  { immediate: true },
-)
 </script>
 
 <style scoped>

@@ -103,6 +103,7 @@ export default {
         })
       } catch (err) {
         showError('errors.incorrectCredential')
+        return err
       } finally {
         commit('setLoading', false)
       }
@@ -125,7 +126,7 @@ export default {
           dbUser = await userController.getById(user.uid)
         } catch (error) {
           // User doesn't exist in DB, will be created below
-          console.log('User not found in database, creating new profile')
+          return error
         }
 
         // Create user if they don't exist yet
@@ -155,20 +156,25 @@ export default {
       }
     },
 
-    async logout({ commit }) {
+    async logout({ commit }, { silent = false } = {}) {
       try {
         await authController.signOut()
         commit('SET_USER', null)
-        commit('SET_TOAST', {
-          message: i18n.global.t('auth.logoutSuccess'),
-          type: 'success',
-        })
+
+        if (!silent) {
+          commit('SET_TOAST', {
+            message: i18n.global.t('auth.logoutSuccess'),
+            type: 'success',
+          })
+        }
       } catch (err) {
-        console.error(err)
-        commit('SET_TOAST', {
-          message: i18n.global.t('errors.globalError'),
-          type: 'error',
-        })
+        if (!silent) {
+          commit('SET_TOAST', {
+            message: i18n.global.t('errors.globalError'),
+            type: 'error',
+          })
+        }
+        return err
       } finally {
         commit('setLoading', false)
       }
@@ -182,11 +188,11 @@ export default {
         const dbUser = await userController.getById(user.uid)
         commit('SET_USER', dbUser)
       } catch (e) {
-        console.error(e)
         commit('SET_TOAST', {
           message: i18n.global.t('errors.globalError'),
           type: 'error',
         })
+        return e
       }
     },
 
@@ -216,17 +222,11 @@ export default {
       commit('setLoading', true)
       try {
         await authController.deleteAuth(payload)
+        // Store handles state management
+        await authController.signOut()
         commit('SET_USER', null)
-        commit('SET_TOAST', {
-          message: i18n.global.t('auth.deleteSuccess'),
-          type: 'success',
-        })
       } catch (err) {
-        console.error('Error deleting user:', err)
-        commit('SET_TOAST', {
-          message: i18n.global.t('errors.globalError'),
-          type: 'error',
-        })
+        throw err
       } finally {
         commit('setLoading', false)
       }

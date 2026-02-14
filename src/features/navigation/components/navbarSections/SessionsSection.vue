@@ -9,7 +9,7 @@
         density="compact"
         hide-details
         variant="outlined"
-        placeholder="Search sessions..."
+        :placeholder="t('pages.sessions.searchPlaceholder')"
         class="flex-grow-1"
       />
 
@@ -29,7 +29,7 @@
           }
         "
       >
-        Reset
+        {{ t('pages.sessions.reset') }}
       </v-btn>
 
       <!-- Toggle filters visibility -->
@@ -52,7 +52,7 @@
         <v-row dense>
           <!-- 👤 Ownership filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Ownership</div>
+            <div class="filter-label">{{ t('pages.sessions.ownership') }}</div>
             <v-select
               v-model="selectedSessionOwnershipFilter"
               :items="ownershipOptions"
@@ -66,7 +66,7 @@
 
           <!-- 👥 Evaluator filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Evaluator</div>
+            <div class="filter-label">{{ t('pages.sessions.evaluator') }}</div>
             <v-select
               v-model="selectedSessionEvaluatorFilter"
               :items="evaluatorOptions"
@@ -80,7 +80,9 @@
 
           <!-- 📅 Session date range filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Session date</div>
+            <div class="filter-label">
+              {{ t('pages.sessions.sessionDate') }}
+            </div>
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
@@ -103,7 +105,7 @@
                             selectedSessionDateRange.length - 1
                           ],
                         ).toLocaleDateString()}`
-                      : 'Select range'
+                      : t('pages.sessions.selectRange')
                   "
                   prepend-inner-icon="mdi-calendar"
                 />
@@ -118,7 +120,9 @@
 
           <!-- ⚙️ Status filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Status</div>
+            <div class="filter-label">
+              {{ t('pages.sessions.statusLabel') }}
+            </div>
             <v-select
               v-model="selectedSessionStatusFilter"
               :items="sessionStatusOptions"
@@ -147,13 +151,25 @@
 
   <!-- 🕓 Empty state (no sessions found) -->
   <div v-else class="empty-state">
-    <v-icon
-      icon="mdi-clock-remove-outline"
-      size="48"
-      color="grey-lighten-1"
-      class="mb-2"
-    />
-    <p class="text-h6">You don't have active sessions</p>
+    <div v-if="hasActiveSessionFilters">
+      <v-icon
+        icon="mdi-magnify-remove-outline"
+        size="48"
+        color="grey-lighten-1"
+        class="mb-2"
+      />
+      <div class="text-h6 mt-2">{{ t('common.table.noSearchResults') }}</div>
+      <div class="text-body-2">{{ t('common.table.tryAdjustingSearch') }}</div>
+    </div>
+    <div v-else>
+      <v-icon
+        icon="mdi-clock-remove-outline"
+        size="48"
+        color="grey-lighten-1"
+        class="mb-2"
+      />
+      <p class="text-h6">{{ t('pages.sessions.noActiveSessions') }}</p>
+    </div>
   </div>
 </template>
 
@@ -162,12 +178,15 @@
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import List from '@/shared/components/tables/ListComponent.vue'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import {
   getSessionStatus,
   SESSION_STATUSES,
 } from '@/shared/utils/sessionsUtils'
+
+const { t } = useI18n()
 
 const props = defineProps({
   sessions: {
@@ -184,11 +203,11 @@ const activeSection = ref('dashboard')
 // ===== Filter options =====
 
 // Ownership dropdown options
-const ownershipOptions = [
-  { value: 'all', text: 'All Studies' },
-  { value: 'mine', text: 'My Studies' },
-  { value: 'cooperator', text: 'Where I Collaborate' },
-]
+const ownershipOptions = computed(() => [
+  { value: 'all', text: t('pages.sessions.filters.allStudies') },
+  { value: 'mine', text: t('pages.sessions.filters.myStudies') },
+  { value: 'cooperator', text: t('pages.sessions.filters.whereICollaborate') },
+])
 
 // Filter visibility toggle
 const showFilters = ref(false)
@@ -206,18 +225,18 @@ const evaluatorOptions = computed(() => {
   const evaluatorsSet = new Set()
   props.sessions.forEach((s) => evaluatorsSet.add(s.evaluator))
   return [
-    { text: 'All', value: 'all' },
+    { text: t('common.all'), value: 'all' },
     ...Array.from(evaluatorsSet).map((ev) => ({ text: ev, value: ev })),
   ]
 })
 
 // Session status options
-const sessionStatusOptions = [
-  { value: 'all', text: 'All Statuses' },
-  { value: 'today', text: 'Today' },
-  { value: 'upcoming', text: 'Upcoming' },
-  { value: 'completed', text: 'Completed' },
-]
+const sessionStatusOptions = computed(() => [
+  { value: 'all', text: t('pages.sessions.filters.allStatuses') },
+  { value: 'today', text: t('pages.sessions.filters.today') },
+  { value: 'upcoming', text: t('pages.sessions.filters.upcoming') },
+  { value: 'completed', text: t('pages.sessions.filters.completed') },
+])
 
 // Whether filters are currently active (to enable/disable reset button)
 const hasActiveSessionFilters = computed(() => {

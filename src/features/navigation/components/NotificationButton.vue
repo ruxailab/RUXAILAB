@@ -28,12 +28,7 @@
           </v-btn>
         </v-badge>
 
-        <v-btn
-          v-else
-          icon
-          size="small"
-          v-bind="props"
-        >
+        <v-btn v-else icon size="small" v-bind="props">
           <v-icon>mdi-bell-outline</v-icon>
         </v-btn>
       </template>
@@ -42,7 +37,7 @@
       <v-card class="notification-dropdown" elevation="6">
         <!-- Header -->
         <div class="dropdown-header">
-          <span class="title">{{ $t('common.notifications') }}</span>
+          <span class="text-h6">{{ $t('common.notifications') }}</span>
 
           <div class="actions">
             <v-btn
@@ -52,7 +47,7 @@
               color="primary"
               @click="markAllAsRead"
             >
-              Mark all as read
+              {{ $t('common.markAllAsRead') }}
             </v-btn>
 
             <v-btn
@@ -84,8 +79,10 @@
           <!-- Empty -->
           <div v-else class="empty-state">
             <v-icon size="40" color="grey">mdi-bell-check</v-icon>
-            <div class="empty-title">You're all caught up</div>
-            <div class="empty-subtitle">No new notifications</div>
+            <div class="empty-title">{{ $t('common.caughtUp') }}</div>
+            <div class="empty-subtitle">
+              {{ $t('common.noNewNotifications') }}
+            </div>
           </div>
         </div>
       </v-card>
@@ -107,6 +104,7 @@ import { useRouter } from 'vue-router'
 import NotificationItem from '@/features/notifications/components/NotificationItem.vue'
 import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue'
 import StudyController from '@/controllers/StudyController'
+import { showError } from '@/shared/utils/toast'
 
 const store = useStore()
 const router = useRouter()
@@ -118,13 +116,13 @@ const user = computed(() => store.getters.user)
 
 const unreadNotifications = computed(() =>
   [...user.value.notifications]
-    .filter(n => !n.read)
+    .filter((n) => !n.read)
     .sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate))
-    .slice(0, 6)
+    .slice(0, 6),
 )
 
-const unreadCount = computed(() =>
-  user.value.notifications.filter(n => !n.read).length
+const unreadCount = computed(
+  () => user.value.notifications.filter((n) => !n.read).length,
 )
 
 /* Dialog  */
@@ -143,44 +141,63 @@ const onReject = () => {
 
 const showAcceptDialog = () => {
   dialogVisible.value = true
-  return new Promise(resolve => (resolveDialog = resolve))
+  return new Promise((resolve) => (resolveDialog = resolve))
 }
 
 /* actions */
 const goToNotificationRedirect = async (notification) => {
-  const accepted = await showAcceptDialog()
+  // Only show dialog for Collaboration type invitations
+  if (notification.type === 'Collaboration') {
+    const accepted = await showAcceptDialog()
 
-  if (!accepted) {
-    await store.dispatch('markNotificationAsRead', { notification, user: user.value })
-    return
+    if (!accepted) {
+      await store.dispatch('markNotificationAsRead', {
+        notification,
+        user: user.value,
+      })
+      return
+    }
+
+    if (notification.testId) {
+      try {
+        const study = await new StudyController().getStudy({
+          id: notification.testId,
+        })
+        await store.dispatch('acceptStudyCollaboration', {
+          test: study,
+          cooperator: user.value,
+        })
+      } catch {
+        showError('notifications.errors.acceptCollaborationFailed')
+        return
+      }
+    } else {
+      // Missing testId - cannot process collaboration
+      showError('notifications.errors.invalidCollaboration')
+      return
+    }
   }
 
-  if (notification.testId) {
-    const study = await new StudyController().getStudy({ id: notification.testId })
-    await store.dispatch('acceptStudyCollaboration', {
-      test: study,
-      cooperator: user.value,
-    })
-  }
+  await store.dispatch('markNotificationAsRead', {
+    notification,
+    user: user.value,
+  })
 
-  await store.dispatch('markNotificationAsRead', { notification, user: user.value })
-
-  if (notification.redirectsTo) {
-    globalThis.open(globalThis.location.origin + notification.redirectsTo, '_blank')
-  } else {
-    goToNotificationPage()
+  if (notification.redirectsTo && notification.redirectsTo !== '/') {
+    globalThis.open(
+      globalThis.location.origin + notification.redirectsTo,
+      '_blank',
+    )
   }
 
   menuOpen.value = false
 }
 
 const markAllAsRead = async () => {
-  const unread = user.value.notifications.filter(n => !n.read)
-  await Promise.all(
-    unread.map(n =>
-      store.dispatch('markNotificationAsRead', { notification: n, user: user.value })
-    )
-  )
+  const unread = user.value.notifications.filter((n) => !n.read)
+  if (unread.length === 0) return
+
+  await store.dispatch('markAllNotificationsAsRead', user.value)
 }
 
 const goToNotificationPage = () => {
@@ -192,7 +209,11 @@ const goToNotificationPage = () => {
 const handleKey = (e) => {
   if (!menuOpen.value) return
 
-  if (e.key === 'j') activeIndex.value = Math.min(activeIndex.value + 1, unreadNotifications.value.length - 1)
+  if (e.key === 'j')
+    activeIndex.value = Math.min(
+      activeIndex.value + 1,
+      unreadNotifications.value.length - 1,
+    )
   if (e.key === 'k') activeIndex.value = Math.max(activeIndex.value - 1, 0)
   if (e.key === 'Enter' && unreadNotifications.value[activeIndex.value]) {
     goToNotificationRedirect(unreadNotifications.value[activeIndex.value])
@@ -214,20 +235,28 @@ watch(menuOpen, (open) => {
 /* Pulse animation */
 .notification-bell.pulse {
   position: relative;
+  z-index: 1;
 }
 
 .notification-bell.pulse::after {
   content: '';
   position: absolute;
-  inset: -6px;
+  inset: 0;
   border-radius: 50%;
   border: 2px solid rgba(255, 0, 0, 0.5);
   animation: pulse 1.5s infinite;
+  pointer-events: none;
 }
 
 @keyframes pulse {
-  0% { transform: scale(0.9); opacity: 1; }
-  100% { transform: scale(1.4); opacity: 0; }
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
 }
 
 /* Dropdown */

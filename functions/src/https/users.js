@@ -1,4 +1,5 @@
 import { admin, functions } from '../f.firebase.js'
+import logger from "../utils/logger.js";
 
 export const deleteAuth = functions.onCall({
   handler: async (data) => {
@@ -28,7 +29,7 @@ export const deleteAuth = functions.onCall({
       await admin.auth().deleteUser(data.data.userId)
       return 'User deleted successfully.'
     } catch (err) {
-      console.error('Error deleting user:', err)
+      logger.error('Error deleting user:', { error: err });
       return err
     }
   }
@@ -39,7 +40,7 @@ const deleteFolderFiles = async (testId) => {
   const [files] = await admin.storage().bucket().getFiles({ prefix: folderPath });
 
   if (files.length > 0) {
-    console.log(`Deletando ${files.length} arquivos da pasta ${folderPath}`);
+    logger.info(`Deletando ${files.length} arquivos da pasta ${folderPath}`);
     await Promise.all(files.map(file => file.delete()));
   }
 }

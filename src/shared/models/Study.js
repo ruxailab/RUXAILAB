@@ -1,5 +1,3 @@
-import Cooperators from './Cooperators'
-
 /** Class representing a Study. */
 
 export default class Study {
@@ -61,10 +59,10 @@ export default class Study {
     this.testType = testType ?? null
 
     /**
-    * Defines the test subtype.
-    *
-    * @type {string}
-    */
+     * Defines the test subtype.
+     *
+     * @type {string}
+     */
     this.subType = subType ?? null
 
     /**
@@ -132,7 +130,7 @@ export default class Study {
 
     /**
      * Defines the test status.
-     * 
+     *
      * @type {string}
      */
 
@@ -143,7 +141,6 @@ export default class Study {
      * @type {number}
      */
     this.endDate = endDate ?? null
-
   }
 
   /**

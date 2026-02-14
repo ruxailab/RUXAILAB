@@ -9,7 +9,7 @@
         density="compact"
         hide-details
         variant="outlined"
-        placeholder="Search studies..."
+        :placeholder="$t('community.studies.searchPlaceholder')"
         class="flex-grow-1"
       />
       <v-btn
@@ -19,7 +19,7 @@
         :disabled="!hasActiveFilters"
         @click="clearFilters"
       >
-        Reset
+        {{ $t('community.reset') }}
       </v-btn>
 
       <v-btn
@@ -27,7 +27,11 @@
         variant="tonal"
         icon
         size="small"
-        :title="showFilters ? 'Hide filters' : 'Show filters'"
+        :title="
+          showFilters
+            ? $t('community.hideFilters')
+            : $t('community.showFilters')
+        "
         @click="toggleFilters"
       >
         <v-icon>{{
@@ -42,7 +46,9 @@
         <v-row dense>
           <!-- 📅 Creation date -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Creation date</div>
+            <div class="filter-label">
+              {{ $t('community.filters.creationDate') }}
+            </div>
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
@@ -63,7 +69,7 @@
                         ).toLocaleDateString()} - ${new Date(
                           creationDateRange[creationDateRange.length - 1],
                         ).toLocaleDateString()}`
-                      : 'Select range'
+                      : $t('community.selectRange')
                   "
                   :model-value="
                     creationDateRange.length > 1
@@ -83,7 +89,7 @@
 
           <!-- ⚙️ Status filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Status</div>
+            <div class="filter-label">{{ $t('community.filters.status') }}</div>
             <v-select
               v-model="selectedStatusFilter"
               :items="statusOptions"
@@ -99,7 +105,7 @@
 
           <!-- 🔹 Method filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Method</div>
+            <div class="filter-label">{{ $t('community.filters.method') }}</div>
             <v-select
               v-model="selectedMethodFilter"
               :items="methodOptions"
@@ -113,7 +119,9 @@
 
           <!-- 👥 Ownership filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Ownership</div>
+            <div class="filter-label">
+              {{ $t('community.filters.ownership') }}
+            </div>
             <v-select
               v-model="selectedOwnershipFilter"
               :items="ownershipOptions"
@@ -127,7 +135,9 @@
 
           <!-- 👤 Participants filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Participants</div>
+            <div class="filter-label">
+              {{ $t('community.filters.participants') }}
+            </div>
             <v-select
               v-model="selectedParticipantsFilter"
               :items="participantsOptions"
@@ -152,17 +162,17 @@
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import List from '@/shared/components/tables/ListComponent.vue'
 import {
-  getMethodOptions,
   METHOD_DEFINITIONS,
-  METHOD_STATUSES,
   STUDY_TYPES,
   USER_STUDY_SUBTYPES,
 } from '@/shared/constants/methodDefinitions'
 
 const store = useStore()
 const router = useRouter()
+const { t } = useI18n()
 
 // ===== Reactive state =====
 const search = ref('')
@@ -177,25 +187,25 @@ const selectedOwnershipFilter = ref('all')
 const selectedParticipantsFilter = ref(['all'])
 
 // ===== Filter options =====
-const statusOptions = [
-  { value: 'all', text: 'All Statuses' },
-  { value: 'active', text: 'Active' },
-  { value: 'draft', text: 'Draft' },
-  { value: 'completed', text: 'Completed' },
-]
+const statusOptions = computed(() => [
+  { value: 'all', text: t('community.status.allStatuses') },
+  { value: 'active', text: t('community.status.active') },
+  { value: 'draft', text: t('community.status.draft') },
+  { value: 'completed', text: t('community.status.completed') },
+])
 
-const ownershipOptions = [
-  { value: 'all', text: 'All Studies' },
-  { value: 'mine', text: 'My Studies' },
-  { value: 'cooperator', text: 'Where I Collaborate' },
-]
+const ownershipOptions = computed(() => [
+  { value: 'all', text: t('community.ownership.allStudies') },
+  { value: 'mine', text: t('community.ownership.myStudies') },
+  { value: 'cooperator', text: t('community.ownership.whereICollaborate') },
+])
 
-const participantsOptions = [
-  { text: 'All', value: 'all' },
-  { text: '< 10 participants', value: 'lt10' },
-  { text: '10 – 50 participants', value: 'btw10_50' },
-  { text: '> 50 participants', value: 'gt50' },
-]
+const participantsOptions = computed(() => [
+  { text: t('community.participants.all'), value: 'all' },
+  { text: t('community.participants.lessThan10'), value: 'lt10' },
+  { text: t('community.participants.between10And50'), value: 'btw10_50' },
+  { text: t('community.participants.moreThan50'), value: 'gt50' },
+])
 
 // ===== UI actions =====
 const toggleFilters = () => (showFilters.value = !showFilters.value)
@@ -224,13 +234,29 @@ const hasActiveFilters = computed(() => {
 })
 
 // ===== Method options =====
-const methodOptions = computed(() => {
-  const options = getMethodOptions('es', METHOD_STATUSES.AVAILABLE.id)
-  return [
-    { value: 'all', text: 'All Methods' },
-    ...options.map((option) => ({ value: option.value, text: option.text })),
-  ]
-})
+const methodOptions = computed(() => [
+  { value: 'all', text: t('community.method.allMethods') },
+  {
+    value: METHOD_DEFINITIONS.HEURISTICS.id,
+    text: t('community.method.heuristicEvaluation'),
+  },
+  {
+    value: METHOD_DEFINITIONS.USER_MODERATED.id,
+    text: t('community.method.moderatedUserTest'),
+  },
+  {
+    value: METHOD_DEFINITIONS.USER_UNMODERATED.id,
+    text: t('community.method.unmoderatedUserTest'),
+  },
+  {
+    value: METHOD_DEFINITIONS.ACCESSIBILITY_MANUAL.id,
+    text: t('community.method.accessibilityManual'),
+  },
+  {
+    value: METHOD_DEFINITIONS.ACCESSIBILITY_AUTOMATIC.id,
+    text: t('community.method.accessibilityAutomatic'),
+  },
+])
 
 // ===== Data and filtering logic =====
 const tests = computed(() => store.getters.publicTests || [])

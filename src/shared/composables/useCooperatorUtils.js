@@ -1,4 +1,7 @@
 import { computed } from 'vue'
+import { getStatusColor, getStatusText } from '@/shared/utils/statusUtils'
+import { formatDate, formatTime } from '@/shared/utils/dateUtils'
+import { formatInitials } from '@/shared/utils/formatUtils'
 
 /**
  * Composable for common cooperator utilities
@@ -9,6 +12,7 @@ export function useCooperatorUtils() {
     { title: 'Admin', value: 0 },
     { title: 'Evaluator', value: 1 },
     { title: 'Guest', value: 2 },
+    { title: 'Observator', value: 3 },
   ])
 
   // Status filter options
@@ -20,7 +24,7 @@ export function useCooperatorUtils() {
 
   // Utility functions
   const getInitials = (email) => {
-    return email.split('@')[0].slice(0, 2).toUpperCase()
+    return formatInitials(email)
   }
 
   const getRoleColor = (role) => {
@@ -29,6 +33,8 @@ export function useCooperatorUtils() {
         return 'primary'
       case 'evaluator':
         return 'success'
+      case 'observator':
+        return 'info'
       case 'guest':
         return 'warning'
       default:
@@ -44,37 +50,11 @@ export function useCooperatorUtils() {
         return 'mdi-account-check'
       case 'guest':
         return 'mdi-account'
+      case 'observator':
+        return 'info'
       default:
         return 'mdi-account'
     }
-  }
-
-  const getStatusColor = (status) => {
-    if (status === true) return 'success'
-    if (status === false) return 'error'
-    return 'warning'
-  }
-
-  const getStatusText = (status) => {
-    if (status === true) return 'accepted'
-    return 'pending'
-  }
-
-  const formatDate = (timestamp) => {
-    if (!timestamp) return ''
-    const date = new Date(timestamp)
-    const day = date.getDate()
-    const month = date.getMonth() + 1
-    const year = date.getFullYear()
-    return `${day}/${month}/${year}`
-  }
-
-  const formatTime = (timestamp) => {
-    if (!timestamp) return ''
-    const date = new Date(timestamp)
-    const hours = date.getHours()
-    const minutes = date.getMinutes()
-    return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`
   }
 
   const validateEmail = (email) => {

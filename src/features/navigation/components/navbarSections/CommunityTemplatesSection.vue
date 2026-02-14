@@ -9,7 +9,7 @@
         density="compact"
         hide-details
         variant="outlined"
-        placeholder="Search templates..."
+        :placeholder="$t('community.templates.searchPlaceholder')"
         class="flex-grow-1"
       />
 
@@ -21,7 +21,7 @@
         :disabled="!hasActiveFilters"
         @click="clearFilters"
       >
-        Reset
+        {{ $t('community.reset') }}
       </v-btn>
 
       <!-- 🎛️ Toggle filter visibility button -->
@@ -30,10 +30,16 @@
         variant="tonal"
         icon
         size="small"
-        :title="showFilters ? 'Hide filters' : 'Show filters'"
+        :title="
+          showFilters
+            ? $t('community.hideFilters')
+            : $t('community.showFilters')
+        "
         @click="toggleFilters"
       >
-        <v-icon>{{ showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant' }}</v-icon>
+        <v-icon>{{
+          showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant'
+        }}</v-icon>
       </v-btn>
     </div>
 
@@ -43,11 +49,12 @@
         <v-row dense>
           <!-- 📅 Filter by creation date range -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Creation date</div>
+            <div class="filter-label">
+              {{ $t('community.filters.creationDate') }}
+            </div>
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
-              offset-y
               max-width="290px"
               min-width="290px"
             >
@@ -59,12 +66,24 @@
                   variant="outlined"
                   density="compact"
                   hide-details
-                  :placeholder="creationDateRange.length > 1
-                    ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
-                    : 'Select range'"
-                  :model-value="creationDateRange.length > 1
-                    ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
-                    : ''"
+                  :placeholder="
+                    creationDateRange.length > 1
+                      ? `${new Date(
+                          creationDateRange[0],
+                        ).toLocaleDateString()} - ${new Date(
+                          creationDateRange[creationDateRange.length - 1],
+                        ).toLocaleDateString()}`
+                      : $t('community.selectRange')
+                  "
+                  :model-value="
+                    creationDateRange.length > 1
+                      ? `${new Date(
+                          creationDateRange[0],
+                        ).toLocaleDateString()} - ${new Date(
+                          creationDateRange[creationDateRange.length - 1],
+                        ).toLocaleDateString()}`
+                      : ''
+                  "
                   prepend-inner-icon="mdi-calendar"
                 />
               </template>
@@ -75,7 +94,7 @@
 
           <!-- 🧭 Filter by method -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">Method</div>
+            <div class="filter-label">{{ $t('community.filters.method') }}</div>
             <v-select
               v-model="selectedMethodFilter"
               :items="methodOptions"
@@ -93,7 +112,11 @@
 
   <!-- 📋 Template list table -->
   <ListComponent
-    :items="filteredTemplates.sort((a, b) => (b.header.creationDate || 0) - (a.header.creationDate || 0))"
+    :items="
+      filteredTemplates.sort(
+        (a, b) => (b.header.creationDate || 0) - (a.header.creationDate || 0),
+      )
+    "
     type="publicTemplates"
     @clicked="setupTempDialog"
   />
@@ -112,69 +135,86 @@
  * This component displays a list of public templates with
  * a search bar, filter controls, and a dialog for viewing template details.
  */
-import { ref, computed, onMounted } from 'vue';
-import { useStore } from 'vuex';
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
 import {
   METHOD_DEFINITIONS,
   STUDY_TYPES,
-  USER_STUDY_SUBTYPES
-} from '@/shared/constants/methodDefinitions';
-import ListComponent from '@/shared/components/tables/ListComponent.vue';
-import TemplateInfoDialog from '@/shared/components/dialogs/TemplateInfoDialog.vue';
+  USER_STUDY_SUBTYPES,
+} from '@/shared/constants/methodDefinitions'
+import ListComponent from '@/shared/components/tables/ListComponent.vue'
+import TemplateInfoDialog from '@/shared/components/dialogs/TemplateInfoDialog.vue'
+import { useI18n } from 'vue-i18n'
 
-const store = useStore();
+const store = useStore()
+const { t } = useI18n()
 
 // ===== State =====
-const temp = ref({}); // Current selected template
-const tempDialog = ref(false); // Controls dialog visibility
-const templates = computed(() => store.state.Templates.templates || []); // All templates from Vuex
+const temp = ref({}) // Current selected template
+const tempDialog = ref(false) // Controls dialog visibility
+const templates = computed(() => store.state.Templates.templates || []) // All templates from Vuex
 
 // ===== Filter controls =====
-const search = ref('');
-const showFilters = ref(false);
-const selectedMethodFilter = ref('all');
-const creationDateRange = ref([]);
+const search = ref('')
+const showFilters = ref(false)
+const selectedMethodFilter = ref('all')
+const creationDateRange = ref([])
 
 // Available filtering options for method types
-const methodOptions = [
-  { title: 'All', value: 'all' },
-  { title: 'Heuristic Evaluation', value: METHOD_DEFINITIONS.HEURISTICS.id },
-  { title: 'User Study (Unmoderated)', value: METHOD_DEFINITIONS.USER_UNMODERATED.id },
-  { title: 'User Study (Moderated)', value: METHOD_DEFINITIONS.USER_MODERATED.id },
-  { title: 'Manual Accessibility', value: 'MANUAL' },
-  { title: 'Automatic Accessibility', value: 'AUTOMATIC' },
-];
+const methodOptions = computed(() => [
+  { title: t('community.method.all'), value: 'all' },
+  {
+    title: t('community.method.heuristicEvaluation'),
+    value: METHOD_DEFINITIONS.HEURISTICS.id,
+  },
+  {
+    title: t('community.method.unmoderatedUserTest'),
+    value: METHOD_DEFINITIONS.USER_UNMODERATED.id,
+  },
+  {
+    title: t('community.method.moderatedUserTest'),
+    value: METHOD_DEFINITIONS.USER_MODERATED.id,
+  },
+  { title: t('community.method.accessibilityManual'), value: 'MANUAL' },
+  { title: t('community.method.accessibilityAutomatic'), value: 'AUTOMATIC' },
+])
 
 // ===== Filter logic =====
-const toggleFilters = () => (showFilters.value = !showFilters.value);
+const toggleFilters = () => (showFilters.value = !showFilters.value)
 
 const clearFilters = () => {
-  search.value = '';
-  selectedMethodFilter.value = 'all';
-  creationDateRange.value = [];
-};
+  search.value = ''
+  selectedMethodFilter.value = 'all'
+  creationDateRange.value = []
+}
 
 // Determines whether there are any active filters
-const hasActiveFilters = computed(() =>
-  !!(search.value || selectedMethodFilter.value !== 'all' || creationDateRange.value.length)
-);
+const hasActiveFilters = computed(
+  () =>
+    !!(
+      search.value ||
+      selectedMethodFilter.value !== 'all' ||
+      creationDateRange.value.length
+    ),
+)
 
 // ===== Template filtering =====
 const filteredTemplates = computed(() =>
-  templates.value?.filter(temp => {
+  templates.value?.filter((temp) => {
     // 🔍 Text search filter
     const matchesSearch = temp.header.templateTitle
       .toLowerCase()
-      .includes(search.value.toLowerCase());
+      .includes(search.value.toLowerCase())
 
     // 🎛️ Method filter
-    const method = selectedMethodFilter.value;
-    const testType = temp.header.templateType;
-    const subType = temp.header.templateSubType;
+    const method = selectedMethodFilter.value
+    const testType = temp.header.templateType
+    const subType = temp.header.templateSubType
 
     const matchesMethod =
       method === 'all' ||
-      (method === METHOD_DEFINITIONS.HEURISTICS.id && testType === STUDY_TYPES.HEURISTIC) ||
+      (method === METHOD_DEFINITIONS.HEURISTICS.id &&
+        testType === STUDY_TYPES.HEURISTIC) ||
       (method === METHOD_DEFINITIONS.USER_UNMODERATED.id &&
         testType === STUDY_TYPES.USER &&
         subType === USER_STUDY_SUBTYPES.UNMODERATED) ||
@@ -182,36 +222,38 @@ const filteredTemplates = computed(() =>
         testType === STUDY_TYPES.USER &&
         subType === USER_STUDY_SUBTYPES.MODERATED) ||
       (method === 'MANUAL' && testType === 'MANUAL') ||
-      (method === 'AUTOMATIC' && testType === 'AUTOMATIC');
+      (method === 'AUTOMATIC' && testType === 'AUTOMATIC')
 
     // 📅 Date range filter
-    const creationDate = temp.header?.creationDate;
-    let inDateRange = true;
+    const creationDate = temp.header?.creationDate
+    let inDateRange = true
     if (creationDateRange.value.length > 1 && creationDate) {
-      const date = new Date(creationDate);
-      const start = new Date(creationDateRange.value[0]);
-      const end = new Date(creationDateRange.value[creationDateRange.value.length - 1]);
-      inDateRange = date >= start && date <= end;
+      const date = new Date(creationDate)
+      const start = new Date(creationDateRange.value[0])
+      const end = new Date(
+        creationDateRange.value[creationDateRange.value.length - 1],
+      )
+      inDateRange = date >= start && date <= end
     }
 
-    return matchesSearch && matchesMethod && inDateRange;
-  })
-);
+    return matchesSearch && matchesMethod && inDateRange
+  }),
+)
 
 // ===== Dialog handling =====
 const setupTempDialog = (template) => {
-  if (!template?.header || !template?.body) return;
-  temp.value = { ...template };
-  tempDialog.value = true;
-};
+  if (!template?.header || !template?.body) return
+  temp.value = { ...template }
+  tempDialog.value = true
+}
 
 // ===== Data fetching =====
-const getPublicTemplates = () => store.dispatch('getPublicTemplates');
+const getPublicTemplates = () => store.dispatch('getPublicTemplates')
 
 const reloadMyTemplates = async () => {
-  tempDialog.value = false;
-  await getPublicTemplates();
-};
+  tempDialog.value = false
+  await getPublicTemplates()
+}
 </script>
 
 <style scoped>

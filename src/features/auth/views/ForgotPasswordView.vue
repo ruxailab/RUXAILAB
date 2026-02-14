@@ -2,21 +2,9 @@
   <div class="background-grey">
     <Snackbar />
 
-    <v-row
-      justify="center"
-      align="center"
-      style="height: 100%;"
-    >
-      <v-col
-        cols="12"
-        md="6"
-        lg="5"
-      >
-        <v-card
-          class="mx-auto pa-6"
-          max-width="480"
-          elevation="8"
-        >
+    <v-row justify="center" align="center" style="height: 100%">
+      <v-col cols="12" md="6" lg="5">
+        <v-card class="mx-auto pa-6" max-width="480" elevation="8">
           <template v-if="!isSubmitted">
             <v-card-title class="text-h4 font-weight-bold mb-2">
               {{ $t('auth.FORGOT_PASSWORD.reset_password') }}
@@ -26,11 +14,7 @@
               {{ $t('auth.FORGOT_PASSWORD.instructions') }}
             </v-card-subtitle>
 
-            <v-form
-              ref="form"
-              v-model="valid"
-              @submit.prevent="onResetRequest"
-            >
+            <v-form ref="form" v-model="valid" @submit.prevent="onResetRequest">
               <v-text-field
                 v-model="email"
                 :label="$t('auth.FORGOT_PASSWORD.email')"
@@ -54,10 +38,7 @@
             </v-form>
           </template>
 
-          <v-card-text
-            v-else
-            class="text-center pa-4"
-          >
+          <v-card-text v-else class="text-center pa-4">
             <v-icon
               icon="mdi-check-circle"
               color="success"
@@ -71,7 +52,7 @@
 
             <p class="text-body-1 mb-4">
               {{ $t('auth.FORGOT_PASSWORD.reset_link_sent') }}
-              <strong>{{ email }}</strong>.
+              <strong>{{ email }}</strong>
             </p>
 
             <p class="text-body-2 text-medium-emphasis">
@@ -87,10 +68,7 @@
             </p>
           </v-card-text>
 
-          <div
-            class="text-center"
-            :class="{ 'mt-6': !isSubmitted }"
-          >
+          <div class="text-center" :class="{ 'mt-6': !isSubmitted }">
             <v-btn
               variant="text"
               color="primary"
@@ -111,7 +89,7 @@
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import Snackbar from '@/shared/components/Snackbar';
+import Snackbar from '@/shared/components/Snackbar'
 import { useI18n } from 'vue-i18n'
 
 const store = useStore()
@@ -140,7 +118,7 @@ const onResetRequest = async () => {
     await store.dispatch('resetPassword', { email: email.value })
     isSubmitted.value = true
   } catch (error) {
-    console.error('Password reset error:', error)
+    return error
   }
 }
 

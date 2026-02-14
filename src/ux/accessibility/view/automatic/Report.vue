@@ -5,9 +5,9 @@
     loading-text="Loading WCAG Data..."
     :side-gap="false"
   >
-  <template #subtitle>
+    <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
-        Review detailed accessibility issues and success criteria based on WCAG guidelines.
+        {{ $t('Accessibility.reviewDetailedIssues') }}
       </p>
     </template>
     <v-alert
@@ -21,28 +21,16 @@
     </v-alert>
 
     <!-- Full width container without padding -->
-    <v-container
-      fluid
-      class="pa-0 ma-0 fill-height"
-    >
-      <v-row
-        no-gutters
-        class="fill-height"
-      >
+    <v-container fluid class="pa-0 ma-0 fill-height">
+      <v-row no-gutters class="fill-height">
         <!-- Left Sidebar Navigation -->
         <div class="v-col v-col-2 sidebar fill-height">
-          <div
-            class="h-100"
-            style="background-color: #f5f5f5"
-          >
+          <div class="h-100" style="background-color: #f5f5f5">
             <div class="text-subtitle-1 pa-3 font-weight-bold">
-              WCAG Principles
+              {{ $t('Accessibility.wcagPrinciples') }}
             </div>
 
-            <div
-              v-if="principles.length > 0"
-              class="pa-0"
-            >
+            <div v-if="principles.length > 0" class="pa-0">
               <div
                 v-for="(principle, pIdx) in principles"
                 :key="principle.id || pIdx"
@@ -79,7 +67,11 @@
                     v-for="(guideline, gIdx) in principle.Guidelines"
                     :key="guideline.id"
                     class="guideline-item pa-2 pl-8"
-                    :class="{ 'active-guideline': selectedPrincipleIdx === pIdx && selectedGuidelineIdx === gIdx }"
+                    :class="{
+                      'active-guideline':
+                        selectedPrincipleIdx === pIdx &&
+                        selectedGuidelineIdx === gIdx,
+                    }"
                     @click.stop="selectGuideline(gIdx, pIdx)"
                   >
                     <span class="text-caption">
@@ -90,22 +82,20 @@
               </div>
             </div>
 
-            <div
-              v-else
-              class="pa-4"
-            >
+            <div v-else class="pa-4">
               <div class="text-grey text-body-2">
-                {{ isLoading ? 'Loading...' : 'No principles available' }}
+                {{
+                  isLoading
+                    ? $t('Accessibility.loading')
+                    : $t('Accessibility.noPrinciplesAvailable')
+                }}
               </div>
             </div>
           </div>
         </div>
 
         <!-- Main Content Area -->
-        <v-col
-          cols="7"
-          class="main-content fill-height"
-        >
+        <v-col cols="7" class="main-content fill-height">
           <!-- Report Header (when report is available) -->
           <v-card
             v-if="report && !reportLoading"
@@ -120,7 +110,7 @@
                 color="primary"
                 size="20"
               />
-              Accessibility Report
+              {{ $t('Accessibility.accessibilityReport') }}
             </v-card-title>
             <v-card-text class="py-1">
               <v-row class="ma-0" dense>
@@ -162,10 +152,7 @@
               density="compact"
             >
               <template #divider>
-                <v-icon
-                  icon="mdi-chevron-right"
-                  size="small"
-                />
+                <v-icon icon="mdi-chevron-right" size="small" />
               </template>
             </v-breadcrumbs>
 
@@ -182,7 +169,7 @@
                   variant="outlined"
                   class="text-caption"
                 >
-                  Level {{ currentRule?.level }}
+                  {{ $t('Accessibility.level') }} {{ currentRule?.level }}
                 </v-chip>
                 <v-chip
                   size="small"
@@ -190,7 +177,7 @@
                   variant="outlined"
                   class="text-caption"
                 >
-                  WCAG {{ currentRule?.version }}
+                  {{ $t('Accessibility.wcag') }} {{ currentRule?.version }}
                 </v-chip>
                 <v-chip
                   size="small"
@@ -204,17 +191,9 @@
             </div>
 
             <!-- Guideline Box -->
-            <v-alert
-              variant="tonal"
-              color="info"
-              class="mb-4 pa-3"
-            >
+            <v-alert variant="tonal" color="info" class="mb-4 pa-3">
               <div class="d-flex align-start">
-                <v-icon
-                  icon="mdi-information"
-                  size="small"
-                  class="mr-2 mt-1"
-                />
+                <v-icon icon="mdi-information" size="small" class="mr-2 mt-1" />
                 <div>
                   <div class="font-weight-bold mb-1">
                     {{ currentGuideline?.id }} {{ currentGuideline?.title }}
@@ -229,7 +208,7 @@
             <!-- Success Criterion Section -->
             <div class="mb-4">
               <h2 class="text-h6 font-weight-bold mb-2">
-                Success Criterion
+                {{ $t('Accessibility.successCriterion') }}
               </h2>
               <v-card
                 variant="outlined"
@@ -237,10 +216,19 @@
                 style="border: 2px solid #4caf50"
               >
                 <v-card-text class="pa-3">
-                  <div class="text-subtitle-2 font-weight-bold mb-2 text-success">
-                    {{ currentRule?.id }} {{ currentRule?.title }} (Level {{ currentRule?.level }})
+                  <div
+                    class="text-subtitle-2 font-weight-bold mb-2 text-success"
+                  >
+                    {{ currentRule?.id }} {{ currentRule?.title }} ({{
+                      $t('Accessibility.level')
+                    }}
+                    {{ currentRule?.level }})
                   </div>
-                  <div v-if="currentRule?.criteria && currentRule.criteria.length > 0">
+                  <div
+                    v-if="
+                      currentRule?.criteria && currentRule.criteria.length > 0
+                    "
+                  >
                     <ul class="criteria-list">
                       <li
                         v-for="(criterion, idx) in currentRule.criteria"
@@ -252,7 +240,7 @@
                     </ul>
                   </div>
                   <div v-else class="text-body-2 text-grey-darken-1">
-                    No specific criteria defined for this rule.
+                    {{ $t('Accessibility.noSpecificCriteria') }}
                   </div>
                 </v-card-text>
               </v-card>
@@ -262,11 +250,16 @@
             <div class="mb-4">
               <h2 class="text-h6 font-weight-bold mb-2 d-flex align-center">
                 <v-icon icon="mdi-alert-circle" class="mr-2" size="small" />
-                Accessibility Issues
+                {{ $t('Accessibility.accessibilityIssues') }}
                 <v-chip
                   v-if="currentRuleIssueCounts.total > 0"
-                  :color="currentRuleIssueCounts.errors > 0 ? 'error' :
-                          currentRuleIssueCounts.warnings > 0 ? 'warning' : 'info'"
+                  :color="
+                    currentRuleIssueCounts.errors > 0
+                      ? 'error'
+                      : currentRuleIssueCounts.warnings > 0
+                        ? 'warning'
+                        : 'info'
+                  "
                   size="small"
                   class="ml-2"
                 >
@@ -275,46 +268,76 @@
               </h2>
 
               <!-- Issue Summary Cards -->
-              <v-row class="mb-3" dense v-if="currentRuleIssueCounts.total > 0">
+              <v-row v-if="currentRuleIssueCounts.total > 0" class="mb-3" dense>
                 <v-col cols="4" class="py-1">
                   <v-card
-                    :color="currentRuleIssueCounts.errors > 0 ? 'error' : 'grey-lighten-3'"
-                    :variant="currentRuleIssueCounts.errors > 0 ? 'elevated' : 'outlined'"
+                    :color="
+                      currentRuleIssueCounts.errors > 0
+                        ? 'error'
+                        : 'grey-lighten-3'
+                    "
+                    :variant="
+                      currentRuleIssueCounts.errors > 0
+                        ? 'elevated'
+                        : 'outlined'
+                    "
                     density="compact"
                   >
                     <v-card-text class="text-center py-2 px-1">
                       <div class="text-h6 font-weight-bold mb-0">
                         {{ currentRuleIssueCounts.errors }}
                       </div>
-                      <div class="text-caption">Errors</div>
+                      <div class="text-caption">
+                        {{ $t('Accessibility.errors') }}
+                      </div>
                     </v-card-text>
                   </v-card>
                 </v-col>
                 <v-col cols="4" class="py-1">
                   <v-card
-                    :color="currentRuleIssueCounts.warnings > 0 ? 'warning' : 'grey-lighten-3'"
-                    :variant="currentRuleIssueCounts.warnings > 0 ? 'elevated' : 'outlined'"
+                    :color="
+                      currentRuleIssueCounts.warnings > 0
+                        ? 'warning'
+                        : 'grey-lighten-3'
+                    "
+                    :variant="
+                      currentRuleIssueCounts.warnings > 0
+                        ? 'elevated'
+                        : 'outlined'
+                    "
                     density="compact"
                   >
                     <v-card-text class="text-center py-2 px-1">
                       <div class="text-h6 font-weight-bold mb-0">
                         {{ currentRuleIssueCounts.warnings }}
                       </div>
-                      <div class="text-caption">Warnings</div>
+                      <div class="text-caption">
+                        {{ $t('Accessibility.warnings') }}
+                      </div>
                     </v-card-text>
                   </v-card>
                 </v-col>
                 <v-col cols="4" class="py-1">
                   <v-card
-                    :color="currentRuleIssueCounts.notices > 0 ? 'info' : 'grey-lighten-3'"
-                    :variant="currentRuleIssueCounts.notices > 0 ? 'elevated' : 'outlined'"
+                    :color="
+                      currentRuleIssueCounts.notices > 0
+                        ? 'info'
+                        : 'grey-lighten-3'
+                    "
+                    :variant="
+                      currentRuleIssueCounts.notices > 0
+                        ? 'elevated'
+                        : 'outlined'
+                    "
                     density="compact"
                   >
                     <v-card-text class="text-center py-2 px-1">
                       <div class="text-h6 font-weight-bold mb-0">
                         {{ currentRuleIssueCounts.notices }}
                       </div>
-                      <div class="text-caption">Notices</div>
+                      <div class="text-caption">
+                        {{ $t('Accessibility.notices') }}
+                      </div>
                     </v-card-text>
                   </v-card>
                 </v-col>
@@ -327,7 +350,9 @@
                 class="mb-2"
               >
                 <v-card-title class="py-2 px-3 text-body-2">
-                  Issues Found ({{ currentRuleIssues.length }})
+                  {{ $t('Accessibility.issuesFound') }} ({{
+                    currentRuleIssues.length
+                  }})
                 </v-card-title>
                 <v-card-text class="py-1 px-2">
                   <v-list density="compact">
@@ -356,11 +381,7 @@
                         >
                           {{ issue.type }}
                         </v-chip>
-                        <v-chip
-                          variant="outlined"
-                          size="x-small"
-                          class="me-1"
-                        >
+                        <v-chip variant="outlined" size="x-small" class="me-1">
                           {{ issue.code }}
                         </v-chip>
                       </v-list-item-title>
@@ -386,38 +407,29 @@
                     color="success"
                     class="mb-2"
                   />
-                  <div class="text-subtitle-2 font-weight-bold text-success mb-1">
-                    No Issues Found
+                  <div
+                    class="text-subtitle-2 font-weight-bold text-success mb-1"
+                  >
+                    {{ $t('Accessibility.noIssuesFound') }}
                   </div>
                   <div class="text-body-2 text-grey-darken-1">
-                    This rule passed all accessibility checks for the tested page.
+                    {{ $t('Accessibility.rulePassedAllChecks') }}
                   </div>
                 </v-card-text>
               </v-card>
 
               <!-- Loading State -->
-              <v-card
-                v-else-if="reportLoading"
-                variant="outlined"
-                class="mb-2"
-              >
+              <v-card v-else-if="reportLoading" variant="outlined" class="mb-2">
                 <v-card-text class="text-center pa-4">
-                  <v-progress-circular
-                    indeterminate
-                    size="32"
-                    class="mb-2"
-                  />
-                  <div class="text-body-2">Loading accessibility report...</div>
+                  <v-progress-circular indeterminate size="32" class="mb-2" />
+                  <div class="text-body-2">
+                    {{ $t('Accessibility.loadingAccessibilityReport') }}
+                  </div>
                 </v-card-text>
               </v-card>
 
               <!-- No Report Available -->
-              <v-card
-                v-else
-                variant="outlined"
-                class="mb-2"
-                color="info"
-              >
+              <v-card v-else variant="outlined" class="mb-2" color="info">
                 <v-card-text class="text-center pa-4">
                   <v-icon
                     icon="mdi-information"
@@ -426,30 +438,35 @@
                     class="mb-2"
                   />
                   <div class="text-subtitle-2 font-weight-bold text-info mb-1">
-                    No Report Available
+                    {{ $t('Accessibility.noReportAvailable') }}
                   </div>
                   <div class="text-body-2 text-grey-darken-1">
-                    No accessibility test has been run for this test ID yet.
+                    {{ $t('Accessibility.noTestRunYet') }}
                   </div>
                 </v-card-text>
               </v-card>
             </div>
 
             <!-- Issue Details Section -->
-            <div v-if="selectedIssue !== null && currentRuleIssues[selectedIssue]" class="mb-4">
+            <div
+              v-if="selectedIssue !== null && currentRuleIssues[selectedIssue]"
+              class="mb-4"
+            >
               <h2 class="text-h6 font-weight-bold mb-2">
-                Issue Details
+                {{ $t('Accessibility.issueDetails') }}
               </h2>
               <v-card variant="outlined" class="mb-2">
                 <v-card-text class="pa-3">
                   <v-list density="compact">
                     <v-list-item>
                       <v-list-item-title class="text-caption font-weight-bold">
-                        Type
+                        {{ $t('Accessibility.type') }}
                       </v-list-item-title>
                       <v-list-item-subtitle>
                         <v-chip
-                          :color="getIssueColor(currentRuleIssues[selectedIssue].type)"
+                          :color="
+                            getIssueColor(currentRuleIssues[selectedIssue].type)
+                          "
                           size="small"
                         >
                           {{ currentRuleIssues[selectedIssue].type }}
@@ -458,58 +475,73 @@
                     </v-list-item>
                     <v-list-item>
                       <v-list-item-title class="text-caption font-weight-bold">
-                        Code
+                        {{ $t('Accessibility.code') }}
                       </v-list-item-title>
                       <v-list-item-subtitle>
-                        <code class="bg-grey-lighten-4 pa-1 rounded text-caption">
+                        <code
+                          class="bg-grey-lighten-4 pa-1 rounded text-caption"
+                        >
                           {{ currentRuleIssues[selectedIssue].code }}
                         </code>
                       </v-list-item-subtitle>
                     </v-list-item>
                     <v-list-item>
                       <v-list-item-title class="text-caption font-weight-bold">
-                        Message
+                        {{ $t('Accessibility.message') }}
                       </v-list-item-title>
                       <v-list-item-subtitle class="mt-1 text-caption">
                         {{ currentRuleIssues[selectedIssue].message }}
                       </v-list-item-subtitle>
                     </v-list-item>
-                    <v-list-item v-if="currentRuleIssues[selectedIssue].context">
+                    <v-list-item
+                      v-if="currentRuleIssues[selectedIssue].context"
+                    >
                       <v-list-item-title class="text-caption font-weight-bold">
-                        Context
+                        {{ $t('Accessibility.context') }}
                       </v-list-item-title>
                       <v-list-item-subtitle class="mt-1">
-                        <v-sheet
-                          color="grey-lighten-5"
-                          class="pa-2 rounded"
-                        >
-                          <pre class="text-caption">{{ currentRuleIssues[selectedIssue].context }}</pre>
+                        <v-sheet color="grey-lighten-5" class="pa-2 rounded">
+                          <pre class="text-caption">{{
+                            currentRuleIssues[selectedIssue].context
+                          }}</pre>
                         </v-sheet>
                       </v-list-item-subtitle>
                     </v-list-item>
-                    <v-list-item v-if="currentRuleIssues[selectedIssue].selector">
+                    <v-list-item
+                      v-if="currentRuleIssues[selectedIssue].selector"
+                    >
                       <v-list-item-title class="text-caption font-weight-bold">
-                        CSS Selector
+                        {{ $t('Accessibility.cssSelector') }}
                       </v-list-item-title>
                       <v-list-item-subtitle>
-                        <code class="bg-grey-lighten-4 pa-1 rounded text-caption">
+                        <code
+                          class="bg-grey-lighten-4 pa-1 rounded text-caption"
+                        >
                           {{ currentRuleIssues[selectedIssue].selector }}
                         </code>
                       </v-list-item-subtitle>
                     </v-list-item>
-                    <v-list-item v-if="currentRuleIssues[selectedIssue].runnerExtras?.wcagReference">
+                    <v-list-item
+                      v-if="
+                        currentRuleIssues[selectedIssue].runnerExtras
+                          ?.wcagReference
+                      "
+                    >
                       <v-list-item-title class="text-caption font-weight-bold">
-                        WCAG Reference
+                        {{ $t('Accessibility.wcagReference') }}
                       </v-list-item-title>
                       <v-list-item-subtitle>
                         <v-btn
-                          :href="currentRuleIssues[selectedIssue].runnerExtras.wcagReference"
+                          :href="
+                            currentRuleIssues[selectedIssue].runnerExtras
+                              .wcagReference
+                          "
                           target="_blank"
                           variant="outlined"
                           size="small"
                           prepend-icon="mdi-open-in-new"
                         >
-                          View WCAG Guidelines
+                          {{ $t('Accessibility.viewWcagGuidelines') }}
                         </v-btn>
                       </v-list-item-subtitle>
                     </v-list-item>
@@ -530,33 +562,32 @@
                   variant="outlined"
                   size="small"
                   prepend-icon="mdi-chevron-left"
-                  @click="prevRule"
                   :disabled="!hasPrevRule"
+                  @click="prevRule"
                 >
-                  Previous
+                  {{ $t('Accessibility.previous') }}
                 </v-btn>
                 <div class="text-caption text-grey-darken-1">
-                  Rule {{ currentRuleIndex + 1 }} of {{ totalRules }}
+                  {{ $t('Accessibility.rule') }} {{ currentRuleIndex + 1 }}
+                  {{ $t('Accessibility.of') }} {{ totalRules }}
                 </div>
                 <v-btn
                   variant="outlined"
                   size="small"
                   append-icon="mdi-chevron-right"
-                  @click="nextRule"
                   :disabled="!hasNextRule"
+                  @click="nextRule"
                 >
-                  Next
+                  {{ $t('Accessibility.next') }}
                 </v-btn>
               </div>
             </v-card>
           </v-card>
 
-          <v-card
-            v-else
-            flat
-            class="h-100"
-          >
-            <div class="d-flex flex-column align-center justify-center h-100 text-center fill-height pa-4">
+          <v-card v-else flat class="h-100">
+            <div
+              class="d-flex flex-column align-center justify-center h-100 text-center fill-height pa-4"
+            >
               <v-icon
                 icon="mdi-file-document-outline"
                 size="64"
@@ -565,42 +596,36 @@
               />
 
               <h2 class="text-h6 font-weight-regular text-grey-darken-2 mb-1">
-                Select a Rule to View Details
+                {{ $t('Accessibility.selectRuleToView') }}
               </h2>
 
               <p class="text-body-2 text-medium-emphasis">
-                Choose a principle and guideline from the left sidebar to view the success criteria.
+                {{ $t('Accessibility.choosePrincipleGuideline') }}
               </p>
             </div>
           </v-card>
         </v-col>
 
         <!-- Right Sidebar - Table of Contents -->
-        <v-col
-          cols="3"
-          class="toc-sidebar fill-height"
-        >
-          <v-card
-            flat
-            class="h-100"
-            color="grey-lighten-5"
-          >
+        <v-col cols="3" class="toc-sidebar fill-height">
+          <v-card flat class="h-100" color="grey-lighten-5">
             <v-card-title class="text-subtitle-1 pa-3 font-weight-bold">
-              Rules
+              {{ $t('Accessibility.rules') }}
               <v-chip
                 v-if="report && allIssues.length > 0"
                 size="small"
                 color="primary"
                 class="ml-2"
               >
-                {{ allIssues.length }} total issues
+                {{ allIssues.length }} {{ $t('Accessibility.totalIssues') }}
               </v-chip>
             </v-card-title>
-            <v-list
-              density="compact"
-              class="pa-1"
-            >
-              <template v-if="currentGuideline?.Rules && currentGuideline.Rules.length > 0">
+            <v-list density="compact" class="pa-1">
+              <template
+                v-if="
+                  currentGuideline?.Rules && currentGuideline.Rules.length > 0
+                "
+              >
                 <v-list-item
                   v-for="(rule, rIdx) in currentGuideline.Rules"
                   :key="rule.id"
@@ -625,8 +650,13 @@
                   <template #append>
                     <v-chip
                       v-if="getRuleIssueCount(rule.id) > 0"
-                      :color="getRuleIssueCount(rule.id, 'error') > 0 ? 'error' :
-                             getRuleIssueCount(rule.id, 'warning') > 0 ? 'warning' : 'info'"
+                      :color="
+                        getRuleIssueCount(rule.id, 'error') > 0
+                          ? 'error'
+                          : getRuleIssueCount(rule.id, 'warning') > 0
+                            ? 'warning'
+                            : 'info'
+                      "
                       size="x-small"
                       class="ml-1"
                     >
@@ -637,7 +667,7 @@
               </template>
               <v-list-item v-else>
                 <v-list-item-title class="text-caption text-grey">
-                  No rules available
+                  {{ $t('Accessibility.noRulesAvailable') }}
                 </v-list-item-title>
               </v-list-item>
             </v-list>
@@ -674,14 +704,13 @@ const testId = computed(() => route.params.testId || route.params.id)
 // Computed properties from store
 const report = computed(() => store.getters['automaticReport/report'])
 const reportLoading = computed(() => store.getters.loading)
-const reportError = computed(() => store.getters.getError)
 
 // Pa11y issues
 const allIssues = computed(() => report.value?.ReportIssues || [])
 
 // Transform the data structure to match the expected format
 const transformWcagData = (data) => {
-  return data.map((item, index) => {
+  return data.map((item) => {
     const principleKey = Object.keys(item)[0]
     const principleData = item[principleKey]
 
@@ -689,10 +718,10 @@ const transformWcagData = (data) => {
       id: principleKey,
       title: principleData.title,
       description: principleData.description,
-      Guidelines: principleData.Guidelines.map(guideline => ({
+      Guidelines: principleData.Guidelines.map((guideline) => ({
         ...guideline,
-        Rules: guideline.Rules || []
-      }))
+        Rules: guideline.Rules || [],
+      })),
     }
   })
 }
@@ -707,7 +736,8 @@ const currentPrinciple = computed(() => {
 })
 
 const currentGuideline = computed(() => {
-  return selectedGuidelineIdx.value !== null && currentPrinciple.value?.Guidelines
+  return selectedGuidelineIdx.value !== null &&
+    currentPrinciple.value?.Guidelines
     ? currentPrinciple.value.Guidelines[selectedGuidelineIdx.value]
     : {}
 })
@@ -725,7 +755,7 @@ const currentRuleIssues = computed(() => {
   const ruleId = currentRule.value.id
 
   // Try to match pa11y issues with WCAG rules
-  return allIssues.value.filter(issue => {
+  return allIssues.value.filter((issue) => {
     // Direct WCAG reference match
     if (issue.runnerExtras?.wcagReference) {
       return issue.runnerExtras.wcagReference.includes(ruleId)
@@ -870,7 +900,8 @@ const matchIssueToWcagRule = (issue, wcagRuleId) => {
     'WCAG2AA.Principle3.Guideline3_3.3_3_3.G177': '3.3.3',
 
     // 3.3.4 Error Prevention (Legal, Financial, Data)
-    'WCAG2AA.Principle3.Guideline3_3.3_3_4.G98,G99,G155,G164,G168.LegalForms': '3.3.4',
+    'WCAG2AA.Principle3.Guideline3_3.3_3_4.G98,G99,G155,G164,G168.LegalForms':
+      '3.3.4',
 
     // 4.1.1 Parsing
     'WCAG2AA.Principle4.Guideline4_1.4_1_1.F77': '4.1.1',
@@ -910,10 +941,10 @@ const matchIssueToWcagRule = (issue, wcagRuleId) => {
 const currentRuleIssueCounts = computed(() => {
   const issues = currentRuleIssues.value
   return {
-    errors: issues.filter(issue => issue.type === 'error').length,
-    warnings: issues.filter(issue => issue.type === 'warning').length,
-    notices: issues.filter(issue => issue.type === 'notice').length,
-    total: issues.length
+    errors: issues.filter((issue) => issue.type === 'error').length,
+    warnings: issues.filter((issue) => issue.type === 'warning').length,
+    notices: issues.filter((issue) => issue.type === 'notice').length,
+    total: issues.length,
   }
 })
 
@@ -925,9 +956,11 @@ const currentRuleIndex = computed(() => {
     for (let gIdx = 0; gIdx < (principle.Guidelines || []).length; gIdx++) {
       const guideline = principle.Guidelines[gIdx]
       for (let rIdx = 0; rIdx < (guideline.Rules || []).length; rIdx++) {
-        if (pIdx === selectedPrincipleIdx.value &&
-            gIdx === selectedGuidelineIdx.value &&
-            rIdx === selectedRuleIdx.value) {
+        if (
+          pIdx === selectedPrincipleIdx.value &&
+          gIdx === selectedGuidelineIdx.value &&
+          rIdx === selectedRuleIdx.value
+        ) {
           return index
         }
         index++
@@ -939,15 +972,17 @@ const currentRuleIndex = computed(() => {
 
 const totalRules = computed(() => {
   let total = 0
-  principles.value.forEach(principle => {
-    principle.Guidelines?.forEach(guideline => {
+  principles.value.forEach((principle) => {
+    principle.Guidelines?.forEach((guideline) => {
       total += guideline.Rules?.length || 0
     })
   })
   return total
 })
 
-const hasNextRule = computed(() => currentRuleIndex.value < totalRules.value - 1)
+const hasNextRule = computed(
+  () => currentRuleIndex.value < totalRules.value - 1,
+)
 const hasPrevRule = computed(() => currentRuleIndex.value > 0)
 
 // Breadcrumb items
@@ -1016,7 +1051,7 @@ const getIssueColor = (type) => {
 const getRuleIssueCount = (ruleId, issueType = null) => {
   if (!allIssues.value.length) return 0
 
-  const ruleIssues = allIssues.value.filter(issue => {
+  const ruleIssues = allIssues.value.filter((issue) => {
     // Direct WCAG reference match
     if (issue.runnerExtras?.wcagReference) {
       return issue.runnerExtras.wcagReference.includes(ruleId)
@@ -1027,7 +1062,7 @@ const getRuleIssueCount = (ruleId, issueType = null) => {
   })
 
   if (issueType) {
-    return ruleIssues.filter(issue => issue.type === issueType).length
+    return ruleIssues.filter((issue) => issue.type === issueType).length
   }
 
   return ruleIssues.length
@@ -1131,7 +1166,7 @@ watch(
   () => currentRule.value?.id,
   () => {
     selectedIssue.value = null
-  }
+  },
 )
 
 // Initialize component
@@ -1161,8 +1196,7 @@ onMounted(async () => {
         }
       }
     }
-  } catch (err) {
-    console.error('Failed to load data:', err)
+  } catch {
     error.value = 'Failed to load data. Please try refreshing the page.'
   } finally {
     isLoading.value = false
@@ -1175,7 +1209,9 @@ onMounted(async () => {
 .guideline-item {
   cursor: pointer;
   border-left: 3px solid transparent;
-  transition: background-color 0.2s ease-in-out, border-left-color 0.2s ease;
+  transition:
+    background-color 0.2s ease-in-out,
+    border-left-color 0.2s ease;
 }
 
 /* Hover Effect */

@@ -29,6 +29,7 @@ export default {
           errorCode: 'Error',
           message: 'createTemplate failed',
         })
+        return e
       } finally {
         commit('setLoading', false)
       }
@@ -39,7 +40,7 @@ export default {
         const res = await templateController.getPublicTemplates()
         commit('SET_TEMPLATES', res)
       } catch (e) {
-        console.error(e)
+        return e
       } finally {
         commit('setLoading', false)
       }
@@ -52,7 +53,7 @@ export default {
         )
         commit('SET_TEMPLATES', res)
       } catch (e) {
-        console.error(e)
+        return e
       } finally {
         commit('setLoading', false)
       }
@@ -62,7 +63,7 @@ export default {
         commit('setLoading', true)
         await templateController.deleteTemplate(payload)
       } catch (e) {
-        console.error(e)
+        return e
       } finally {
         commit('setLoading', false)
       }

@@ -493,6 +493,7 @@
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+import { formatTimeDetailedFromMs } from '@/shared/utils/timeUtils'
 import UxMetricCard from '../answers/UxMetricCard.vue'
 import CommentListCard from '../answers/CommentListCard.vue'
 import SelectionPieChart from '../answers/SelectionPieChart.vue'
@@ -525,7 +526,7 @@ const chartColors = [
 ]
 
 // Encuentra todas las preguntas de selección
-const selectionQuestions = computed(() => {
+computed(() => {
   if (!taskAnswers.value.length || !taskAnswers.value[0].postTestAnswer)
     return []
   return taskAnswers.value[0].postTestAnswer.filter(
@@ -562,7 +563,6 @@ function getSelectionCounts(questionIdx) {
 
 function getPreSelectionCounts(questionIdx) {
   const counts = {}
-  const q = filteredSessions.value[0]?.preTestAnswer?.[questionIdx]
   if (!testStructure.value?.preTest?.[questionIdx]?.selectionFields)
     return counts
   const options = testStructure.value.preTest[questionIdx].selectionFields
@@ -595,7 +595,7 @@ function getPreTextAnswers(questionIdx) {
 }
 
 const store = useStore()
-const { t } = useI18n()
+useI18n()
 
 const test = computed(() => store.getters.test)
 const testStructure = computed(() => store.state.Tests.Test.testStructure)
@@ -613,7 +613,7 @@ const { filterDefinitions } = useFilterDefinitions({
 
 // Check if there are active filters
 const hasActiveFilters = computed(() => {
-  const someFilters = Object.entries(selectedFilters.value).some(([k, v]) => {
+  const someFilters = Object.entries(selectedFilters.value).some(([_k, v]) => {
     if (Array.isArray(v)) return v.length && !v.includes(ALL_VALUE)
     return !!v // texto
   })
@@ -674,6 +674,7 @@ const downloadPdfResume = async () => {
       {
         payload: {
           title: test.value.testTitle || '',
+          description: test.value.testDescription || '',
           type: test.value.testType || '',
           taskAnswers: answers.value,
         },
@@ -691,28 +692,14 @@ const downloadPdfResume = async () => {
     link.download = `${test.value.testTitle || 'resume'}.pdf`
     link.click()
     window.URL.revokeObjectURL(url)
-  } catch (error) {
-    console.error('Error generating PDF:', error)
-  }
-}
-
-const formatTime = (time) => {
-  const seconds = Math.floor(time / 1000)
-  const minutes = Math.floor(seconds / 60)
-  const remainingSeconds = seconds % 60
-
-  return {
-    formatedTime: `${minutes} min ${
-      remainingSeconds < 10 ? '0' : ''
-    }${remainingSeconds} s`,
-    seconds: remainingSeconds,
-    minutes: minutes,
+  } catch {
+    // Error generating PDF
   }
 }
 
 const findLongestTask = () => {
   if (!filteredSessions.value.length) {
-    return { taskName: 'Task', averageTime: formatTime(0) }
+    return { taskName: 'Task', averageTime: formatTimeDetailedFromMs(0) }
   }
 
   const taskAverages = {}
@@ -755,12 +742,12 @@ const findLongestTask = () => {
 
   return {
     taskName: taskMap[longestTask]?.taskName || 'Task',
-    averageTime: formatTime(longestAverageTime),
+    averageTime: formatTimeDetailedFromMs(longestAverageTime),
   }
 }
 
 const calculateAverageTime = () => {
-  return formatTime(averageTimePerTask.value)
+  return formatTimeDetailedFromMs(averageTimePerTask.value)
 }
 
 const getConclusionAverage = () => {
@@ -930,7 +917,7 @@ const calculateEfficiency = () => {
     })
   })
 
-  const avgTimeFormatted = formatTime(
+  const avgTimeFormatted = formatTimeDetailedFromMs(
     totalSuccessfulTaskTime / Math.max(1, totalSuccessfulTasks),
   )
 
@@ -956,12 +943,13 @@ const calculateEfficiency = () => {
     avgTime: avgTimeFormatted.formatedTime,
     tasksPerMinute: efficiencyRatio.toFixed(2),
     totalTasks: totalSuccessfulTasks,
-    totalSuccessfulTime: formatTime(totalSuccessfulTaskTime).formatedTime,
-    totalTime: formatTime(totalTimeSpent).formatedTime,
+    totalSuccessfulTime: formatTimeDetailedFromMs(totalSuccessfulTaskTime)
+      .formatedTime,
+    totalTime: formatTimeDetailedFromMs(totalTimeSpent).formatedTime,
   }
 }
 
-const calculateSatisfaction = () => {
+() => {
   if (!filteredSessions.value.length) return 0
 
   let totalSatisfaction = 0
@@ -1247,7 +1235,7 @@ const onRefreshTimeline = async () => {
           await store.dispatch(act)
           dispatched = true
           break
-        } catch (e) {
+        } catch {
           // Ignore and try next
         }
       }
@@ -1266,8 +1254,8 @@ const onRefreshTimeline = async () => {
         : []
     await nextTick()
     setTimeout(() => createTaskCharts(), 300)
-  } catch (err) {
-    console.error('Refresh timeline failed:', err)
+  } catch {
+    // Refresh timeline failed
   }
 }
 

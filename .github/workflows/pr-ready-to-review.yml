@@ -1,7 +1,7 @@
 name: PR Ready to Review
 
 on:
-  pull_request:
+  pull_request_target:
     types:
       - synchronize
 
@@ -18,6 +18,7 @@ jobs:
       - name: Check and update PR labels
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const pr = context.payload.pull_request;
             const labels = pr.labels.map(l => l.name);

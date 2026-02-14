@@ -5,7 +5,6 @@
     @click="onClick"
   >
     <div class="notification-inner">
-
       <!-- Unread Dot -->
       <div v-if="!notification.read" class="unread-dot" />
 
@@ -19,14 +18,13 @@
       <!-- Content -->
       <div class="content">
         <div class="title-row">
-          <div class="title">
-            {{ notification.title || 'Notification' }}
-            <span
-              v-if="notification.type"
-              class="type-badge"
-            >
-              {{ notification.type }}
-            </span>
+          <div class="text-subtitle-1 font-weight-medium">
+            {{
+              notification.title ||
+              (notification.titleTemplate
+                ? $t(notification.titleTemplate, notification.titleParams || {})
+                : 'Notification')
+            }}
           </div>
 
           <span class="time">
@@ -34,13 +32,20 @@
           </span>
         </div>
 
-        <div
-          class="description"
-          v-html="formatMultiline(notification.description)"
-        />
+        <div class="description line-clamp-2">
+          {{
+            notification.description ||
+            (notification.descriptionTemplate
+              ? $t(
+                  notification.descriptionTemplate,
+                  notification.descriptionParams || {},
+                )
+              : '')
+          }}
+        </div>
 
         <div class="meta">
-          {{ $t('common.sentBy') }}: {{ notification.author }}
+          {{ $t('common.sentBy') }} {{ notification.author }}
         </div>
       </div>
 
@@ -53,43 +58,41 @@
         @click.stop="emit('mark-as-read', notification)"
       >
         <v-icon size="16">
-          {{ notification.read ? 'mdi-email-outline' : 'mdi-email-open-outline' }}
+          {{
+            notification.read ? 'mdi-email-outline' : 'mdi-email-open-outline'
+          }}
         </v-icon>
       </v-btn>
-
     </div>
   </div>
 </template>
 
 <script setup>
-import { useI18n } from 'vue-i18n';
-import { METHOD_DEFINITIONS } from '@/shared/constants/methodDefinitions.js';
+import { useI18n } from 'vue-i18n'
+import { METHOD_DEFINITIONS } from '@/shared/constants/methodDefinitions.js'
 
 const props = defineProps({
   notification: {
     type: Object,
     required: true,
   },
-});
+})
 
-const emit = defineEmits(['go-to-redirect', 'mark-as-read']);
-const { t } = useI18n();
+const emit = defineEmits(['go-to-redirect', 'mark-as-read'])
+const { t } = useI18n()
 
-const onClick = () => emit('go-to-redirect', props.notification);
-
-const formatMultiline = (text = '') =>
-  text.replaceAll('\n', '<br>');
+const onClick = () => emit('go-to-redirect', props.notification)
 
 const getTestIcon = (type) =>
-  METHOD_DEFINITIONS?.[type]?.icon || 'mdi-bell-outline';
+  METHOD_DEFINITIONS?.[type]?.icon || 'mdi-bell-outline'
 
 const relativeTime = (date) => {
-  const diff = (Date.now() - new Date(date)) / 1000;
-  if (diff < 60) return 'Just now';
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  return `${Math.floor(diff / 86400)}d ago`;
-};
+  const diff = (Date.now() - new Date(date)) / 1000
+  if (diff < 60) return 'Just now'
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
+  return `${Math.floor(diff / 86400)}d ago`
+}
 </script>
 
 <style scoped>
@@ -98,7 +101,9 @@ const relativeTime = (date) => {
   border-radius: 12px;
   padding: 12px;
   cursor: pointer;
-  transition: background 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .notification-item:hover {
@@ -160,6 +165,7 @@ const relativeTime = (date) => {
   font-size: 13px;
   color: #555;
   margin: 4px 0;
+  white-space: pre-line;
 }
 
 .meta {

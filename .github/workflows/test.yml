@@ -9,6 +9,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+
       - name: Cache node modules
         uses: actions/cache@v4
         env:
@@ -20,9 +25,8 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
-
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
 
       - name: Test
         run: npm test
@@ -48,4 +52,4 @@ jobs:
             **Pull Request**: [Link](${{ github.event.pull_request.html_url }})
             **Action URL**: [View Details](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
             Please review the proposed changes.
-
+            

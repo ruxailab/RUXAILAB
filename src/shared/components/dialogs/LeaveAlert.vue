@@ -1,14 +1,7 @@
 <template>
-  <v-dialog
-    v-model="dialogLeaveStatus"
-    width="600"
-    persistent
-  >
+  <v-dialog v-model="dialogLeaveStatus" width="600" persistent>
     <v-card>
-      <v-card-title
-        class="text-h5 bg-red text-white"
-        primary-title
-      >
+      <v-card-title class="text-h5 bg-red text-white" primary-title>
         {{ $t('alerts.leave') }}
       </v-card-title>
       <v-card-text>
@@ -17,11 +10,7 @@
       <v-divider />
       <v-card-actions>
         <v-spacer />
-        <v-btn
-          class="bg-grey-lighten-3"
-          variant="text"
-          @click="setDialog"
-        >
+        <v-btn class="bg-grey-lighten-3" variant="text" @click="setDialog">
           {{ $t('buttons.stay') }}
         </v-btn>
         <v-btn
@@ -31,11 +20,7 @@
         >
           {{ $t('buttons.leave') }}
         </v-btn>
-        <v-btn
-          class="bg-green text-white ml-1"
-          variant="text"
-          @click="submit"
-        >
+        <v-btn class="bg-green text-white ml-1" variant="text" @click="submit">
           {{ $t('buttons.saveandleave') }}
         </v-btn>
       </v-card-actions>
@@ -44,34 +29,31 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
-import { useI18n } from 'vue-i18n';
+import { computed } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 
-const emit = defineEmits(['submit']);
+const emit = defineEmits(['submit'])
 
-const store = useStore();
-const router = useRouter();
-const { t } = useI18n();
+const store = useStore()
+const router = useRouter()
 
-const dialogLeaveStatus = computed(() => store.getters.getDialogLeaveStatus);
+const dialogLeaveStatus = computed(() => store.getters.getDialogLeaveStatus)
 
 const setDialog = () => {
-  store.commit('SET_DIALOG_LEAVE', false);
-};
+  store.commit('SET_DIALOG_LEAVE', false)
+}
 
 const discardChanges = () => {
-  store.commit('SET_LOCAL_CHANGES', false);
-  console.log(store.state.pathTo);
-};
+  store.commit('SET_LOCAL_CHANGES', false)
+}
 
 const handleLeave = () => {
-  discardChanges();
-  router.push({ name: store.state.pathTo });
-};
+  discardChanges()
+  router.push({ name: store.state.pathTo })
+}
 
 const submit = () => {
-  emit('submit');
-};
+  emit('submit')
+}
 </script>

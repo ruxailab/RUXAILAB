@@ -1,15 +1,29 @@
 <template>
   <div>
-    <Radar
-      :chart-data="chartData"
-      :options="chartOptions"
-    />
+    <Radar :data="chartData" :options="chartOptions" />
   </div>
 </template>
 
 <script setup>
 import { Radar } from 'vue-chartjs'
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+} from 'chart.js'
+ChartJS.register(
+  Title,
+  Tooltip,
+  Legend,
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+)
 
 const props = defineProps({
   labels: {
@@ -49,11 +63,6 @@ const chartOptions = ref({
 })
 
 const chartInstance = ref(null)
-
-const getChartInstance = (chart) => {
-  chartInstance.value = chart
-}
-
 watch(
   () => props.data,
   () => {
@@ -61,7 +70,7 @@ watch(
       chartInstance.value.update()
     }
   },
-  { deep: true }
+  { deep: true },
 )
 
 // onMounted(() => {

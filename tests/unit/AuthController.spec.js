@@ -5,8 +5,12 @@ import {
     setPersistence,
     signInWithEmailAndPassword,
     signInWithPopup,
-    signOut
+    signOut,
+    reauthenticateWithPopup,
+    reauthenticateWithCredential,
+    EmailAuthProvider
 } from 'firebase/auth'
+import { mockUserCredentials } from './helpers/testUtils'
 
 jest.mock('firebase/auth', () => ({
     createUserWithEmailAndPassword: jest.fn(),
@@ -14,11 +18,16 @@ jest.mock('firebase/auth', () => ({
     signOut: jest.fn(),
     onAuthStateChanged: jest.fn(),
     signInWithPopup: jest.fn(),
-    GoogleAuthProvider: jest.fn(),
-    sendPasswordResetEmail: jest.fn(),
     setPersistence: jest.fn(),
     browserLocalPersistence: 'local',
-    browserSessionPersistence: 'session'
+    browserSessionPersistence: 'session',
+    GoogleAuthProvider: jest.fn(),
+    reauthenticateWithPopup: jest.fn(),
+    reauthenticateWithCredential: jest.fn(),
+    EmailAuthProvider: {
+        credential: jest.fn()
+    },
+    sendPasswordResetEmail: jest.fn()
 }))
 
 jest.mock('@/app/plugins/firebase', () => ({
@@ -114,6 +123,25 @@ describe('AuthController', () => {
             expect(signInWithPopup).toHaveBeenCalled()
             expect(result).toEqual(mockCredential)
         })
+
+        it('should set session persistence when rememberMe is false', async () => {
+            setPersistence.mockResolvedValue()
+            signInWithPopup.mockResolvedValue({ user: {} })
+
+             await authController.signInWithGoogle(false)
+
+            expect(setPersistence).toHaveBeenCalledWith(expect.anything(), 'session')
+         })
+
+
+        it('should throw error when Google sign-in fails', async () => {
+            const mockError = new Error('Popup closed')
+            setPersistence.mockResolvedValue()
+            signInWithPopup.mockRejectedValue(mockError)
+
+            await expect(authController.signInWithGoogle(true))
+                .rejects.toThrow('Popup closed')
+        })
     })
 
     describe('signOut', () => {
@@ -139,6 +167,15 @@ describe('AuthController', () => {
 
             expect(result).toEqual({ uid: 'test-uid', email: 'test@example.com' })
         })
+
+        it('should return null when no current user exists', async () => {
+            const firebase = require('@/app/plugins/firebase')
+            firebase.auth.currentUser = null
+
+            const result = await authController.getCurrentUser()
+
+            expect(result).toBeNull()
+        })
     })
 
     describe('autoSignIn', () => {
@@ -153,6 +190,118 @@ describe('AuthController', () => {
             const result = await authController.autoSignIn()
 
             expect(onAuthStateChanged).toHaveBeenCalled()
+        })
+
+    })
+
+    describe('deleteAuth', () => {
+        it('should delete Google user account with reauthentication', async () => {
+            const mockUser = {
+                uid: 'google-user-id',
+                email: 'google@example.com',
+                providerData: [{ providerId: 'google.com' }],
+                delete: jest.fn().mockResolvedValue()
+            }
+
+            reauthenticateWithPopup.mockResolvedValue()
+
+            const axios = require('axios')
+            axios.post.mockResolvedValue({ data: { success: true } })
+
+            await authController.deleteAuth({ user: mockUser })
+
+            expect(reauthenticateWithPopup).toHaveBeenCalledWith(
+                mockUser,
+                expect.anything()
+            )
+            expect(mockUser.delete).toHaveBeenCalled()
+            expect(axios.post).toHaveBeenCalled()
+        })
+
+        it('should delete email/password user with credential reauthentication', async () => {
+            const mockUser = {
+                uid: 'email-user-id',
+                email: 'email@example.com',
+                providerData: [{ providerId: 'password' }],
+                delete: jest.fn().mockResolvedValue()
+            }
+
+            reauthenticateWithCredential.mockResolvedValue()
+            EmailAuthProvider.credential.mockReturnValue({})
+
+            const axios = require('axios')
+            axios.post.mockResolvedValue({ data: { success: true } })
+
+            await authController.deleteAuth({
+                user: mockUser,
+                password: mockUserCredentials.secret
+            })
+
+            expect(EmailAuthProvider.credential).toHaveBeenCalledWith(
+                mockUser.email,
+                mockUserCredentials.secret
+            )
+            expect(reauthenticateWithCredential).toHaveBeenCalled()
+            expect(mockUser.delete).toHaveBeenCalled()
+        })
+
+        it('should throw error when password is missing for email user', async () => {
+            const mockUser = {
+                uid: 'email-user-id',
+                email: 'email@example.com',
+                providerData: [{ providerId: 'password' }]
+            }
+
+            await expect(authController.deleteAuth({ user: mockUser }))
+                .rejects.toThrow('Password required')
+        })
+
+        it('should not delete user if reauthentication fails', async () => {
+            const mockUser = {
+                uid: 'email-user-id',
+                email: 'email@example.com',
+                providerData: [{ providerId: 'password' }],
+                delete: jest.fn().mockResolvedValue()
+            }
+
+            EmailAuthProvider.credential.mockReturnValue({})
+            reauthenticateWithCredential.mockRejectedValue(new Error('Wrong password'))
+
+            const axios = require('axios')
+
+            await expect(
+                authController.deleteAuth({
+                    user: mockUser,
+                    password: mockUserCredentials.secret
+                })
+            ).rejects.toThrow('Wrong password')
+
+            expect(mockUser.delete).not.toHaveBeenCalled()
+            expect(axios.post).not.toHaveBeenCalled()
+        })
+
+        it('should throw and not call backend if user.delete fails', async () => {
+            const mockUser = {
+                uid: 'email-user-id',
+                email: 'email@example.com',
+                providerData: [{ providerId: 'password' }],
+                delete: jest.fn().mockRejectedValue(new Error('Delete failed'))
+            }
+
+            EmailAuthProvider.credential.mockReturnValue({})
+            reauthenticateWithCredential.mockResolvedValue()
+
+            const axios = require('axios')
+            axios.post.mockResolvedValue({ data: { success: true } })
+
+            await expect(
+                authController.deleteAuth({
+                    user: mockUser,
+                    password: mockUserCredentials.secret
+                })
+            ).rejects.toThrow('Delete failed')
+
+            expect(axios.post).not.toHaveBeenCalled()
         })
     })
 })

@@ -1,18 +1,35 @@
 <template>
-  <v-card elevation="2" rounded="lg" class="upcoming-webinar-card position-relative">
+  <v-card
+    elevation="2"
+    rounded="lg"
+    class="upcoming-webinar-card position-relative"
+  >
     <!-- Status Overlay -->
     <div v-if="webinarStatus.show" class="coming-soon-overlay">
-      <v-chip :color="webinarStatus.color" variant="elevated" size="small" class="coming-soon-chip"
-        :class="{ 'pulse-animation': webinarStatus.text === 'Live' }">
-        <v-icon v-if="webinarStatus.icon" :icon="webinarStatus.icon" size="16" class="mr-1" />
+      <v-chip
+        :color="webinarStatus.color"
+        variant="elevated"
+        size="small"
+        class="coming-soon-chip"
+        :class="{ 'pulse-animation': webinarStatus.text === 'Live' }"
+      >
+        <v-icon
+          v-if="webinarStatus.icon"
+          :icon="webinarStatus.icon"
+          size="16"
+          class="mr-1"
+        />
         {{ webinarStatus.text }}
       </v-chip>
     </div>
 
     <!-- Hero Image Section -->
-    <v-img class="align-end text-white" height="200" :src="officeHoursImage" cover>
-    </v-img>
-
+    <v-img
+      class="align-end text-white"
+      height="200"
+      :src="officeHoursImage"
+      cover
+    />
 
     <v-card-text class="pa-6">
       <!-- Webinar Title -->
@@ -26,7 +43,7 @@
       </p>
 
       <!-- Date and Duration Info -->
-      <v-row class="info-row mb-4" no-gutters>
+      <v-row class="info-row mb-2" no-gutters>
         <v-col cols="6" class="pr-2">
           <div class="info-item">
             <div class="info-icon-wrapper">
@@ -36,11 +53,12 @@
               <div class="info-value">
                 {{ webinar.date }}
               </div>
-              <div>Date</div>
+              <div>{{ $t('Dashboard.date') }}</div>
             </div>
           </div>
         </v-col>
-        <v-col cols="6" class="">
+
+        <v-col cols="6">
           <div class="info-item">
             <div class="info-icon-wrapper">
               <v-icon icon="mdi-clock-outline" size="24" color="primary" />
@@ -49,36 +67,49 @@
               <div class="info-value">
                 {{ webinar.duration }}
               </div>
-              <div>Time</div>
+              <div>{{ $t('Dashboard.time') }}</div>
             </div>
           </div>
         </v-col>
       </v-row>
+    </v-card-text>
 
-      <!-- Join Button -->
-      <v-btn :color="buttonConfig.color" variant="flat" size="large" block rounded="lg" class="join-button"
-        :prepend-icon="buttonConfig.icon" :disabled="buttonConfig.disabled" @click="buttonConfig.action">
+    <!-- Join Button -->
+    <v-card-actions class="pa-6 pt-0">
+      <v-btn
+        :color="buttonConfig.color"
+        variant="flat"
+        size="large"
+        block
+        rounded="lg"
+        class="join-button"
+        :prepend-icon="buttonConfig.icon"
+        :disabled="buttonConfig.disabled"
+        @click="buttonConfig.action"
+      >
         {{ buttonConfig.text }}
       </v-btn>
-    </v-card-text>
+    </v-card-actions>
   </v-card>
 </template>
 
 <script setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import officeHoursImage from '@/assets/office_banner_gray.png'
+
+const { t } = useI18n()
 
 const props = defineProps({
   webinarData: {
     type: Object,
-    default: () => ({})
-  }
+    default: () => ({}),
+  },
 })
 
 const webinar = computed(() => {
   if (Object.keys(props.webinarData).length > 0) {
     const data = { ...props.webinarData }
-    console.log(data)
     // Timestamp to Date
     if (data.date && typeof data.date.toDate === 'function') {
       const dateObj = data.date.toDate()
@@ -92,7 +123,7 @@ const webinar = computed(() => {
       data.duration = dateObj.toLocaleTimeString('en-US', {
         hour: 'numeric',
         minute: '2-digit',
-        hour12: true
+        hour12: true,
       })
     }
     return data
@@ -100,16 +131,21 @@ const webinar = computed(() => {
 
   // Default webinar data
   return {
-    title: 'Monthly Office Hours',
-    description: 'Starting in November, we will host monthly office hours to discuss project updates, answer questions, and connect with our community.',
-    date: 'Nov 2025',
-    duration: 'Monthly'
+    title: t('Dashboard.officeHours.title'),
+    description: t('Dashboard.officeHours.description'),
+    date: t('Dashboard.officeHours.nextSessionDate'),
+    duration: t('Dashboard.officeHours.frequency'),
   }
 })
 
 const webinarStatus = computed(() => {
   if (!webinar.value.dateObj) {
-    return { show: true, text: 'Coming Soon', color: 'primary', icon: 'mdi-clock-outline' }
+    return {
+      show: true,
+      text: t('Dashboard.comingSoon'),
+      color: 'primary',
+      icon: 'mdi-clock-outline',
+    }
   }
 
   const now = new Date()
@@ -120,22 +156,42 @@ const webinarStatus = computed(() => {
 
   // If webinar has ended (more than 1 hour after start)
   if (diffHours < -1) {
-    return { show: true, text: 'Ended', color: 'grey', icon: 'mdi-check-circle' }
+    return {
+      show: true,
+      text: t('Dashboard.webinar.ended'),
+      color: 'grey',
+      icon: 'mdi-check-circle',
+    }
   }
 
   // If webinar is happening now (within 1 hour after start)
   if (diffHours <= 0 && diffHours >= -1) {
-    return { show: true, text: 'Live', color: 'error', icon: 'mdi-access-point' }
+    return {
+      show: true,
+      text: t('Dashboard.webinar.live'),
+      color: 'error',
+      icon: 'mdi-access-point',
+    }
   }
 
   // If less than 24 hours
   if (diffHours > 0 && diffHours < 24) {
-    return { show: true, text: 'Today', color: 'warning', icon: 'mdi-calendar-today' }
+    return {
+      show: true,
+      text: t('Dashboard.webinar.today'),
+      color: 'warning',
+      icon: 'mdi-calendar-today',
+    }
   }
 
   // If less than a week (7 days)
   if (diffDays >= 1 && diffDays < 7) {
-    return { show: true, text: 'Coming Soon', color: 'primary', icon: 'mdi-clock-outline' }
+    return {
+      show: true,
+      text: t('Dashboard.comingSoon'),
+      color: 'primary',
+      icon: 'mdi-clock-outline',
+    }
   }
 
   // Don't show chip if more than a week away
@@ -144,44 +200,47 @@ const webinarStatus = computed(() => {
 
 const buttonConfig = computed(() => {
   const status = webinarStatus.value.text
-  const link = webinar.value.link || webinar.value.url || 'https://discord.com/channels/1209902463239593984/1451552153251348592'
+  const link =
+    webinar.value.link ||
+    webinar.value.url ||
+    'https://discord.com/channels/1209902463239593984/1451552153251348592'
 
   if (status === 'Live') {
     return {
-      text: 'Join Now',
+      text: t('Dashboard.webinar.joinNow'),
       icon: 'mdi-video',
       color: 'error',
       disabled: false,
-      action: () => window.open(link, '_blank')
+      action: () => window.open(link, '_blank'),
     }
   }
 
   if (status === 'Ended') {
     return {
-      text: 'Webinar Ended',
+      text: t('Dashboard.webinar.webinarEnded'),
       icon: 'mdi-check-circle',
       color: 'grey',
       disabled: true,
-      action: () => { }
+      action: () => {},
     }
   }
 
   if (status === 'Today') {
     return {
-      text: 'Starting Today',
+      text: t('Dashboard.webinar.startingToday'),
       icon: 'mdi-calendar-clock',
       color: 'warning',
       disabled: true,
-      action: () => { }
+      action: () => {},
     }
   }
 
   return {
-    text: 'Coming Soon',
+    text: t('Dashboard.comingSoon'),
     icon: 'mdi-calendar-clock',
     color: 'primary',
     disabled: true,
-    action: () => { }
+    action: () => {},
   }
 })
 </script>
@@ -209,7 +268,6 @@ const buttonConfig = computed(() => {
 }
 
 @keyframes pulse {
-
   0%,
   100% {
     opacity: 1;
@@ -229,8 +287,6 @@ const buttonConfig = computed(() => {
   justify-content: center;
   padding: 24px;
 }
-
-
 
 .info-item {
   display: flex;

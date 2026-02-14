@@ -1,612 +1,634 @@
 <template>
+  <v-card elevation="2" class="pa-6">
+    <!-- Header Section -->
+    <div class="d-flex align-center justify-space-between mb-8 mobile-header">
+      <div>
+        <h1 class="text-h4 font-weight-bold text-on-surface">
+          {{ $t('HeuristicsTable.titles.currentHeuristics') }}
+        </h1>
+      </div>
 
-      <v-card
-        elevation="2"
-        class="pa-6"
+      <v-btn
+        color="primary"
+        prepend-icon="mdi-plus"
+        variant="elevated"
+        size="large"
+        :disabled="testAnswerDocLength > 0"
+        class="text-none add-heuristic-btn"
+        @click="dialogHeuris = true"
       >
-        <!-- Header Section -->
-        <div class="d-flex align-center justify-space-between mb-8 mobile-header">
-          <div>
-            <h1 class="text-h4 font-weight-bold text-on-surface">
-              {{ $t('HeuristicsTable.titles.currentHeuristics') }}
-            </h1>
-          </div>
-          
-          <v-btn
-            color="primary"
-            prepend-icon="mdi-plus"
-            variant="elevated"
-            size="large"
-            :disabled="testAnswerDocLength > 0"
-            class="text-none add-heuristic-btn"
-            @click="dialogHeuris = true"
-          >
-            {{ $t('HeuristicsTable.titles.addNewHeuristic') }}
-          </v-btn>
-        </div>
+        {{ $t('HeuristicsTable.titles.addNewHeuristic') }}
+      </v-btn>
+    </div>
 
-        <!-- Search Row -->
-        <v-row>
-          <v-col cols="12">
-            <v-text-field
-              v-model="search"
-              prepend-inner-icon="mdi-magnify"
-              :label="$t('HeuristicsTable.titles.searchHeuristics')"
-              variant="outlined"
-              density="comfortable"
-              hide-details
-              clearable
-              class="search-field"
+    <!-- Search Row -->
+    <v-row>
+      <v-col cols="12">
+        <v-text-field
+          v-model="search"
+          prepend-inner-icon="mdi-magnify"
+          :label="$t('HeuristicsTable.titles.searchHeuristics')"
+          variant="outlined"
+          density="comfortable"
+          hide-details
+          clearable
+          class="search-field"
+        />
+      </v-col>
+    </v-row>
+
+    <!-- Heuristics Cards -->
+    <v-row>
+      <v-col
+        v-for="(heuristic, index) in filteredHeuristics"
+        :key="heuristic.id"
+        cols="12"
+      >
+        <v-card
+          elevation="2"
+          class="heuristic-card"
+          :class="{ expanded: itemSelect === index }"
+        >
+          <!-- Heuristic Header -->
+          <v-card-title class="d-flex align-center pa-4 heuristic-header">
+            <v-btn
+              :icon="
+                itemSelect === index ? 'mdi-chevron-up' : 'mdi-chevron-down'
+              "
+              variant="text"
+              size="small"
+              class="me-3 toggle-btn"
+              @click="toggleHeuristic(index)"
             />
-          </v-col>
-        </v-row>
 
-        <!-- Heuristics Cards -->
-        <v-row>
-          <v-col
-            v-for="(heuristic, index) in filteredHeuristics"
-            :key="heuristic.id"
-            cols="12"
-          >
-            <v-card
-              elevation="2"
-              class="heuristic-card"
-              :class="{ 'expanded': itemSelect === index }"
-            >
-              <!-- Heuristic Header -->
-              <v-card-title class="d-flex align-center pa-4 heuristic-header">
+            <div class="flex-grow-1 heuristic-info">
+              <h3
+                class="text-h6 font-weight-medium text-on-surface heuristic-title"
+              >
+                {{ heuristic.id + 1 }} - {{ heuristic.title }}
+              </h3>
+              <p class="text-body-2 text-ternary ma-0 mt-1 question-count">
+                {{ heuristic.questions.length }}
+                {{ $t('HeuristicsTable.titles.questions') }}
+              </p>
+            </div>
+
+            <div class="d-flex gap-2 heuristic-actions">
+              <v-btn
+                icon="mdi-arrow-up"
+                variant="text"
+                size="small"
+                color="accent"
+                :disabled="index === 0 || testAnswerDocLength > 0"
+                class="action-btn"
+                @click="moveItemUp(index)"
+              >
+                <v-icon>mdi-arrow-up</v-icon>
+                <v-tooltip activator="parent" location="top">
+                  {{ $t('HeuristicsTable.titles.moveUp') }}
+                </v-tooltip>
+              </v-btn>
+              <v-btn
+                icon="mdi-arrow-down"
+                variant="text"
+                size="small"
+                color="accent"
+                :disabled="
+                  index === filteredHeuristics.length - 1 ||
+                  testAnswerDocLength > 0
+                "
+                class="action-btn"
+                @click="moveItemDown(index)"
+              >
+                <v-icon>mdi-arrow-down</v-icon>
+                <v-tooltip activator="parent" location="top">
+                  {{ $t('HeuristicsTable.titles.moveDown') }}
+                </v-tooltip>
+              </v-btn>
+              <v-btn
+                icon="mdi-plus"
+                variant="text"
+                size="small"
+                color="accent"
+                :disabled="testAnswerDocLength > 0"
+                class="action-btn"
+                @click="setupQuestion(index)"
+              >
+                <v-icon>mdi-plus</v-icon>
+                <v-tooltip activator="parent" location="top">
+                  {{ $t('HeuristicsTable.titles.addNewQuestion') }}
+                </v-tooltip>
+              </v-btn>
+              <span>
                 <v-btn
-                  :icon="itemSelect === index ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+                  icon="mdi-pencil"
                   variant="text"
                   size="small"
-                  class="me-3 toggle-btn"
-                  @click="toggleHeuristic(index)"
-                />
-                
-                <div class="flex-grow-1 heuristic-info">
-                  <h3 class="text-h6 font-weight-medium text-on-surface heuristic-title">
-                    {{ heuristic.id + 1 }} - {{ heuristic.title }}
-                  </h3>
-                  <p class="text-body-2 text-ternary ma-0 mt-1 question-count">
-                    {{ heuristic.questions.length }} {{ $t('HeuristicsTable.titles.questions') }}
-                  </p>
+                  color="primary"
+                  :disabled="testAnswerDocLength > 0"
+                  class="action-btn"
+                  @click="editHeuris(heuristic)"
+                >
+                  <v-icon>mdi-pencil</v-icon>
+                </v-btn>
+                <v-tooltip activator="parent" location="top">
+                  <template v-if="testAnswerDocLength > 0">
+                    This study has answers
+                  </template>
+                  <template v-else>
+                    {{ $t('HeuristicsTable.titles.editHeuristic') }}
+                  </template>
+                </v-tooltip>
+              </span>
+              <span>
+                <v-btn
+                  icon="mdi-delete"
+                  variant="text"
+                  size="small"
+                  color="error"
+                  :disabled="testAnswerDocLength > 0"
+                  class="action-btn"
+                  @click="deleteHeuristic(index)"
+                >
+                  <v-icon>mdi-delete</v-icon>
+                </v-btn>
+                <v-tooltip activator="parent" location="top">
+                  <template v-if="testAnswerDocLength > 0">
+                    This study has answers
+                  </template>
+                  <template v-else>
+                    {{ $t('HeuristicsTable.titles.deleteHeuristic') }}
+                  </template>
+                </v-tooltip>
+              </span>
+            </div>
+          </v-card-title>
+
+          <!-- Expanded Content -->
+          <v-expand-transition>
+            <div v-if="itemSelect === index">
+              <v-divider />
+              <v-card-text class="pa-4">
+                <!-- Updated Questions Header - Matches heuristic header style -->
+                <div class="d-flex align-center mb-4 questions-header">
+                  <div class="flex-grow-1">
+                    <h4 class="text-h6 font-weight-medium text-on-surface">
+                      {{ $t('HeuristicsTable.titles.questions') }}
+                    </h4>
+                  </div>
+                  <v-chip
+                    :color="
+                      heuristic.questions.length > 0 ? 'success' : 'warning'
+                    "
+                    variant="tonal"
+                    size="small"
+                    class="ms-2"
+                  >
+                    {{ heuristic.questions.length }}
+                    {{
+                      heuristic.questions.length === 1
+                        ? $t('HeuristicsTable.count.question')
+                        : $t('HeuristicsTable.count.questions')
+                    }}
+                  </v-chip>
                 </div>
 
-                <div class="d-flex gap-2 heuristic-actions">
-                  <v-btn
-                    icon="mdi-arrow-up"
-                    variant="text"
-                    size="small"
-                    color="accent"
-                    :disabled="index === 0 || testAnswerDocLength > 0"
-                    @click="moveItemUp(index)"
-                    class="action-btn"
+                <!-- Questions Grid - UPDATED STRUCTURE -->
+                <div
+                  v-if="heuristic.questions.length > 0"
+                  class="questions-list"
+                >
+                  <v-card
+                    v-for="(question, qIndex) in heuristic.questions"
+                    :key="question.id"
+                    variant="outlined"
+                    class="question-card mb-3"
+                    @click="questionSelect = qIndex"
                   >
-                    <v-icon>mdi-arrow-up</v-icon>
-                    <v-tooltip
-                      activator="parent"
-                      location="top"
-                    >
-                      {{ $t('HeuristicsTable.titles.moveUp') }}
-                    </v-tooltip>
-                  </v-btn>
-                  <v-btn
-                    icon="mdi-arrow-down"
-                    variant="text"
-                    size="small"
-                    color="accent"
-                    :disabled="index === filteredHeuristics.length - 1 || testAnswerDocLength > 0"
-                    @click="moveItemDown(index)"
-                    class="action-btn"
-                  >
-                    <v-icon>mdi-arrow-down</v-icon>
-                    <v-tooltip
-                      activator="parent"
-                      location="top"
-                    >
-                      {{ $t('HeuristicsTable.titles.moveDown') }}
-                    </v-tooltip>
-                  </v-btn>
-                  <v-btn
-                    icon="mdi-plus"
-                    variant="text"
-                    size="small"
-                    color="accent"
-                    :disabled="testAnswerDocLength > 0"
-                    @click="setupQuestion(index)"
-                    class="action-btn"
-                  >
-                    <v-icon>mdi-plus</v-icon>
-                    <v-tooltip
-                      activator="parent"
-                      location="top"
-                    >
-                      {{ $t('HeuristicsTable.titles.addNewQuestion') }}
-                    </v-tooltip>
-                  </v-btn>
-                <span>
-                  <v-btn
-                    icon="mdi-pencil"
-                    variant="text"
-                    size="small"
-                    color="primary"
-                    :disabled="testAnswerDocLength > 0"
-                    @click="editHeuris(heuristic)"
-                    class="action-btn"
-                  >
-                    <v-icon>mdi-pencil</v-icon>
-                  </v-btn>
-                  <v-tooltip
-                    activator="parent"
-                    location="top"
-                  >
-                    <template v-if="testAnswerDocLength > 0">
-                      This study has answers
-                    </template>
-                    <template v-else>
-                      {{ $t('HeuristicsTable.titles.editHeuristic') }}
-                    </template>
-                  </v-tooltip>
-                </span>
-                <span>
-                  <v-btn
-                    icon="mdi-delete"
-                    variant="text"
-                    size="small"
-                    color="error"
-                    :disabled="testAnswerDocLength > 0"
-                    @click="deleteHeuristic(index)"
-                    class="action-btn"
-                  >
-                    <v-icon>mdi-delete</v-icon>
-                        </v-btn>
-                    <v-tooltip
-                    activator="parent"
-                    location="top"
-                  >
-                    <template v-if="testAnswerDocLength > 0">
-                      This study has answers
-                    </template>
-                    <template v-else>
-                      {{ $t('HeuristicsTable.titles.deleteHeuristic') }}
-                    </template>
-                  </v-tooltip>
-
-
-            
-                  </span>
-                </div>
-              </v-card-title>
-
-              <!-- Expanded Content -->
-              <v-expand-transition>
-                <div v-if="itemSelect === index">
-                  <v-divider />
-                  <v-card-text class="pa-4">
-                    <!-- Updated Questions Header - Matches heuristic header style -->
-                    <div class="d-flex align-center mb-4 questions-header">
-                      <div class="flex-grow-1">
-                        <h4 class="text-h6 font-weight-medium text-on-surface">
-                          {{ $t('HeuristicsTable.titles.questions') }}
-                        </h4>
-                      </div>
-                      <v-chip
-                        :color="heuristic.questions.length > 0 ? 'success' : 'warning'"
-                        variant="tonal"
-                        size="small"
-                        class="ms-2"
+                    <!-- Question Header - EXACTLY LIKE HEURISTIC HEADER -->
+                    <div class="d-flex align-center pa-3 question-header">
+                      <div
+                        class="d-flex align-center flex-grow-1 question-info"
                       >
-                        {{ heuristic.questions.length }} {{ heuristic.questions.length === 1 ? $t('Question') : $t('Questions') }}
-                      </v-chip>
-                    </div>
-
-                    <!-- Questions Grid - UPDATED STRUCTURE -->
-                    <div
-                      v-if="heuristic.questions.length > 0"
-                      class="questions-list"
-                    >
-                      <v-card
-                        v-for="(question, qIndex) in heuristic.questions"
-                        :key="question.id"
-                        variant="outlined"
-                        class="question-card mb-3"
-                        @click="questionSelect = qIndex"
-                      >
-                        <!-- Question Header - EXACTLY LIKE HEURISTIC HEADER -->
-                        <div class="d-flex align-center pa-3 question-header">
-                          <div class="d-flex align-center flex-grow-1 question-info">
-                            <v-chip
-                              color="primary"
-                              variant="tonal"
-                              size="small"
-                              class="me-3 question-chip"
-                            >
-                              Q{{ qIndex + 1 }}
-                            </v-chip>
-                            <div>
-                              <h5 class="text-subtitle-1 font-weight-medium text-on-surface question-title mb-0">
-                                {{ question.title }}
-                              </h5>
-                              <!-- Optional: Add question description/subtitle if needed -->
-                              <!-- <p class="text-body-2 text-ternary ma-0 mt-1 question-desc">
+                        <v-chip
+                          color="primary"
+                          variant="tonal"
+                          size="small"
+                          class="me-3 question-chip"
+                        >
+                          Q{{ qIndex + 1 }}
+                        </v-chip>
+                        <div>
+                          <h5
+                            class="text-subtitle-1 font-weight-medium text-on-surface question-title mb-0"
+                          >
+                            {{ question.title }}
+                          </h5>
+                          <!-- Optional: Add question description/subtitle if needed -->
+                          <!-- <p class="text-body-2 text-ternary ma-0 mt-1 question-desc">
                                 {{ question.description || 'No description' }}
                               </p> -->
-                            </div>
-                          </div>
-
-                          <div class="d-flex gap-1 question-actions">
-                            <v-btn
-                              icon="mdi-pencil"
-                              variant="text"
-                              size="small"
-                              color="primary"
-                              @click.stop="editQuestions(question)"
-                              class="action-btn"
-                            />
-                            <v-btn
-                              icon="mdi-delete"
-                              variant="text"
-                              size="small"
-                              color="error"
-                              :disabled="testAnswerDocLength > 0"
-                              @click.stop="deleteQuestion(qIndex)"
-                              class="action-btn"
-                            />
-                          </div>
                         </div>
+                      </div>
 
-                        <!-- Question Expanded Content (for descriptions) -->
-                        <v-expand-transition>
-                          <div v-if="questionSelect === qIndex">
-                            <v-divider />
-                            <!-- Descriptions Section - UPDATED FOR RESPONSIVENESS -->
-                            <v-card
-                              class="mt-3 mx-3 mb-2 description-card"
-                            >
-                              <v-card-text class="pa-3">
-                                <div class="d-flex align-center justify-space-between mb-3 description-header">
-                                  <h4 class="text-h6 text-on-surface mb-0">
-                                    {{ $t('HeuristicsTable.titles.descriptions') }}
-                                  </h4>
-                                  <!-- Updated Add Description Button -->
-                                  <AddDescBtn
-                                    :ref="el => descBtn[index] = el"
-                                    :question-index="questionSelect"
-                                    :heuristic-index="itemSelect"
-                                    @update-description="updateDescription"
-                                    class="add-desc-btn"
-                                  />
-                                </div>
-                                
-                                <!-- Responsive Data Table -->
-                                <div class="responsive-table-wrapper">
-                                  <v-data-table
-                                    :headers="headers"
-                                    :items="Array.isArray(heuristic.questions[questionSelect]?.descriptions)
-                                    ? heuristic.questions[questionSelect].descriptions
-                                    : Object.values(heuristic.questions[questionSelect]?.descriptions || {})"
-                                    :items-per-page="5"
-                                    class="elevation-0 description-table"
-                                    hide-default-footer
-                                  >
-                                    <template #item.title="{ item }">
-                                      <div class="description-title">
-                                        {{ item.title || 'No title' }}
-                                      </div>
-                                    </template>
-                                    <template #item.actions="{ item }">
-                                      <div class="description-actions">
-                                        <v-btn
-                                          icon
-                                          size="small"
-                                          variant="text"
-                                          color="primary"
-                                          @click="editDescription(item)"
-                                          class="table-action-btn"
-                                        >
-                                          <v-icon size="small">
-                                            mdi-pencil
-                                          </v-icon>
-                                        </v-btn>
-                                        <v-btn
-                                          icon
-                                          size="small"
-                                          variant="text"
-                                          color="error"
-                                          @click="deleteItem(item)"
-                                          class="table-action-btn"
-                                        >
-                                          <v-icon size="small">
-                                            mdi-delete
-                                          </v-icon>
-                                        </v-btn>
-                                      </div>
-                                    </template>
-                                    <template #no-data>
-                                      <div class="text-center py-4 no-data-message">
-                                        <v-icon
-                                          icon="mdi-text-box-remove-outline"
-                                          size="48"
-                                          color="grey-lighten-1"
-                                          class="mb-2"
-                                        />
-                                        <p class="text-body-2 text-grey">
-                                          {{ $t('HeuristicsTable.messages.noDescriptions') }}
-                                        </p>
-                                      </div>
-                                    </template>
-                                  </v-data-table>
-                                  
-                                  <!-- Custom Pagination for better mobile control -->
-                                  <div v-if="heuristic.questions[questionSelect]?.descriptions?.length > 0" class="custom-pagination">
-                                    <div class="d-flex align-center justify-space-between flex-wrap gap-2 pa-2">
-                                      <div class="d-flex align-center items-per-page">
-                                        <span class="text-caption text-grey mr-2">
-                                          {{ $t('common.itemsPerPage') }}
-                                        </span>
-                                        <v-select
-                                          :items="[3, 5, 10, 20]"
-                                          :model-value="5"
-                                          density="compact"
-                                          variant="outlined"
-                                          hide-details
-                                          class="items-select"
-                                          @update:model-value="handleItemsPerPage"
-                                        />
-                                      </div>
-                                      <div class="pagination-info text-caption text-grey">
-                                        {{ getPaginationInfo(heuristic.questions[questionSelect]?.descriptions?.length || 0) }}
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </v-card-text>
-                            </v-card>
-                          </div>
-                        </v-expand-transition>
-                      </v-card>
+                      <div class="d-flex gap-1 question-actions">
+                        <v-btn
+                          icon="mdi-pencil"
+                          variant="text"
+                          size="small"
+                          color="primary"
+                          class="action-btn"
+                          @click.stop="editQuestions(question)"
+                        />
+                        <v-btn
+                          icon="mdi-delete"
+                          variant="text"
+                          size="small"
+                          color="error"
+                          :disabled="testAnswerDocLength > 0"
+                          class="action-btn"
+                          @click.stop="deleteQuestion(qIndex)"
+                        />
+                      </div>
                     </div>
 
-                    <!-- Empty State for Questions -->
-                    <v-card
-                      v-else
-                      variant="outlined"
-                      class="text-center pa-8 empty-questions"
-                      style="border-style: dashed;"
-                    >
-                      <v-icon
-                        icon="mdi-help-circle-outline"
-                        size="48"
-                        color="secondary"
-                        class="mb-4"
-                      />
-                      <h4 class="text-h6 text-secondary mb-2">
-                        {{ $t('HeuristicsTable.titles.noQuestions') }}
-                      </h4>
-                      <p class="text-body-2 text-secondary mb-4 empty-state-text">
-                        {{ $t('HeuristicsTable.messages.startAddingQuestions') }}
-                      </p>
-                      <v-btn
-                        color="primary"
-                        variant="outlined"
-                        prepend-icon="mdi-plus"
-                        :disabled="testAnswerDocLength > 0"
-                        @click="setupQuestion(index)"
-                      >
-                        {{ $t('HeuristicsTable.titles.addNewQuestion') }}
-                      </v-btn>
-                    </v-card>
-                  </v-card-text>
+                    <!-- Question Expanded Content (for descriptions) -->
+                    <v-expand-transition>
+                      <div v-if="questionSelect === qIndex">
+                        <v-divider />
+                        <!-- Descriptions Section - UPDATED FOR RESPONSIVENESS -->
+                        <v-card class="mt-3 mx-3 mb-2 description-card">
+                          <v-card-text class="pa-3">
+                            <div
+                              class="d-flex align-center justify-space-between mb-3 description-header"
+                            >
+                              <h4 class="text-h6 text-on-surface mb-0">
+                                {{ $t('HeuristicsTable.titles.descriptions') }}
+                              </h4>
+                              <!-- Updated Add Description Button -->
+                              <AddDescBtn
+                                :ref="(el) => (descBtn[index] = el)"
+                                :question-index="questionSelect"
+                                :heuristic-index="itemSelect"
+                                class="add-desc-btn"
+                                @update-description="updateDescription"
+                              />
+                            </div>
+
+                            <!-- Responsive Data Table -->
+                            <div class="responsive-table-wrapper">
+                              <v-data-table
+                                :headers="headers"
+                                :items="
+                                  Array.isArray(
+                                    heuristic.questions[questionSelect]
+                                      ?.descriptions,
+                                  )
+                                    ? heuristic.questions[questionSelect]
+                                        .descriptions
+                                    : Object.values(
+                                        heuristic.questions[questionSelect]
+                                          ?.descriptions || {},
+                                      )
+                                "
+                                :items-per-page="5"
+                                class="elevation-0 description-table"
+                                hide-default-footer
+                              >
+                                <template #item.title="{ item }">
+                                  <div class="description-title">
+                                    {{ item.title || 'No title' }}
+                                  </div>
+                                </template>
+                                <template #item.actions="{ item }">
+                                  <div class="description-actions">
+                                    <v-btn
+                                      icon
+                                      size="small"
+                                      variant="text"
+                                      color="primary"
+                                      class="table-action-btn"
+                                      @click="editDescription(item)"
+                                    >
+                                      <v-icon size="small"> mdi-pencil </v-icon>
+                                    </v-btn>
+                                    <v-btn
+                                      icon
+                                      size="small"
+                                      variant="text"
+                                      color="error"
+                                      class="table-action-btn"
+                                      @click="deleteItem(item)"
+                                    >
+                                      <v-icon size="small"> mdi-delete </v-icon>
+                                    </v-btn>
+                                  </div>
+                                </template>
+                                <template #no-data>
+                                  <div class="text-center py-4 no-data-message">
+                                    <v-icon
+                                      icon="mdi-text-box-remove-outline"
+                                      size="48"
+                                      color="grey-lighten-1"
+                                      class="mb-2"
+                                    />
+                                    <p class="text-body-2 text-grey">
+                                      {{
+                                        $t(
+                                          'HeuristicsTable.messages.noDescriptions',
+                                        )
+                                      }}
+                                    </p>
+                                  </div>
+                                </template>
+                              </v-data-table>
+
+                              <!-- Custom Pagination for better mobile control -->
+                              <div
+                                v-if="
+                                  heuristic.questions[questionSelect]
+                                    ?.descriptions?.length > 0
+                                "
+                                class="custom-pagination"
+                              >
+                                <div
+                                  class="d-flex align-center justify-space-between flex-wrap gap-2 pa-2"
+                                >
+                                  <div
+                                    class="d-flex align-center items-per-page"
+                                  >
+                                    <span class="text-caption text-grey mr-2">
+                                      {{ $t('common.itemsPerPage') }}
+                                    </span>
+                                    <v-select
+                                      :items="[3, 5, 10, 20]"
+                                      :model-value="5"
+                                      density="compact"
+                                      variant="outlined"
+                                      hide-details
+                                      class="items-select"
+                                      @update:model-value="handleItemsPerPage"
+                                    />
+                                  </div>
+                                  <div
+                                    class="pagination-info text-caption text-grey"
+                                  >
+                                    {{
+                                      getPaginationInfo(
+                                        heuristic.questions[questionSelect]
+                                          ?.descriptions?.length || 0,
+                                      )
+                                    }}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </v-card-text>
+                        </v-card>
+                      </div>
+                    </v-expand-transition>
+                  </v-card>
                 </div>
-              </v-expand-transition>
-            </v-card>
-          </v-col>
-        </v-row>
 
-        <!-- Empty State for No Heuristics -->
-        <v-row v-if="filteredHeuristics.length === 0">
-          <v-col cols="12">
-            <v-card
-              class="text-center pa-8 empty-heuristics"
-              variant="outlined"
-            >
-              <v-icon
-                icon="mdi-file-remove"
-                size="64"
-                color="primary"
-                class="mb-4"
-              />
-              <h3 class="text-h5 text-ternary mb-2">
-                {{ $t('HeuristicsTable.titles.noHeuristicsFound') }}
-              </h3>
-              <p class="text-body-1 text-ternary empty-state-text">
-                {{ $t('HeuristicsTable.messages.noHeuristics') }}
-              </p>
-              <v-btn
-                color="primary"
-                variant="outlined"
-                prepend-icon="mdi-plus"
-                :disabled="testAnswerDocLength > 0"
-                @click="dialogHeuris = true"
-              >
-                {{ $t('HeuristicsTable.titles.addNewHeuristic') }}
-              </v-btn>
-            </v-card>
-          </v-col>
-        </v-row>
-
-        <!-- Add/Edit Heuristic Dialog -->
-        <v-dialog
-          v-model="dialogHeuris"
-          max-width="600"
-          persistent
-        >
-          <v-card>
-            <v-card-title
-              class="text-h5 pa-6"
-              style="background-color: #00213F; color: white;"
-            >
-              {{ $t('HeuristicsTable.titles.creatingHeuristic') }}
-            </v-card-title>
-            <v-card-text class="pa-6">
-              <v-form
-                ref="formHeurisRef"
-                @keyup.enter="addHeuris"
-              >
-                <v-text-field
-                  v-model="heuristicForm.title"
-                  :label="$t('HeuristicsTable.placeholders.titleYourHeuristic')"
+                <!-- Empty State for Questions -->
+                <v-card
+                  v-else
                   variant="outlined"
-                  density="comfortable"
-                  :rules="nameRequired"
-                  class="mb-4"
-                  autofocus
-                />
-                <v-text-field
-                  v-model="heuristicForm.questions[0].title"
-                  :label="$t('HeuristicsTable.placeholders.titleYourQuestion')"
-                  variant="outlined"
-                  density="comfortable"
-                  :rules="questionRequired"
-                />
-              </v-form>
-            </v-card-text>
-            <v-card-actions class="pa-6 pt-0">
-              <v-spacer />
-              <v-btn
-                variant="text"
-                @click="closeDialog('dialogHeuris')"
-              >
-                {{ $t('HeuristicsTable.titles.cancel') }}
-              </v-btn>
-              <v-btn
-                color="primary"
-                variant="elevated"
-                @click="addHeuris"
-              >
-                {{ $t('HeuristicsTable.titles.add') }}
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-
-        <!-- Add Question Dialog -->
-        <v-dialog
-          v-model="dialogQuestion"
-          max-width="600"
-          persistent
-        >
-          <v-card>
-            <v-card-title
-              class="text-h5 pa-6"
-              style="background-color: #fca326; color: white;"
-            >
-              {{ $t('HeuristicsTable.titles.newQuestion') }}
-            </v-card-title>
-            <v-card-text class="pa-6 pt-0">
-              <v-form
-                ref="formQuestionRef"
-                @submit.prevent="addQuestion"
-              >
-                <v-text-field
-                  v-if="newQuestion"
-                  v-model="newQuestion.title"
-                  :label="$t('HeuristicsTable.placeholders.titleNewQuestion')"
-                  variant="outlined"
-                  density="comfortable"
-                  :rules="questionRequired"
-                  autofocus
-                />
-                <v-alert v-else type="error" class="mt-4">
-                  {{ $t('HeuristicsTable.errors.failedToLoadQuestionForm') }}
-                </v-alert>
-              </v-form>
-            </v-card-text>
-            <v-card-actions class="pa-6 pt-0">
-              <v-spacer />
-              <v-btn
-                variant="text"
-                @click="closeDialog('dialogQuestion')"
-              >
-                {{ $t('HeuristicsTable.titles.cancel') }}
-              </v-btn>
-              <v-btn color="primary" variant="elevated" :disabled="!newQuestion" @click="addQuestion">
-                {{ $t('HeuristicsTable.titles.add') }}
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-
-        <!-- Edit Heuristic/Question Dialog -->
-        <v-dialog
-          v-model="dialogEdit"
-          max-width="600"
-          persistent
-        >
-          <v-card>
-            <v-card-title
-              class="text-h5 pa-6"
-              style="background-color: #fca326; color: white;"
-            >
-              {{ itemEdit && !isDialogClosing ? itemEdit.title : $t('HeuristicsTable.titles.loading') }}
-            </v-card-title>
-            <v-card-text class="pa-6 pt-0">
-              <v-form
-                ref="formEditRef"
-                @submit.prevent="validateEdit"
-              >
-                <v-text-field
-                  v-if="itemEdit && !isDialogClosing"
-                  v-model="itemEdit.titleEdit"
-                  :label="
-                    itemEdit && itemEdit.title === $t('HeuristicsTable.titles.editHeuristic')
-                      ? $t('HeuristicsTable.placeholders.titleHeuristic')
-                      : $t('HeuristicsTable.placeholders.titleQuestion')
-                  "
-                  variant="outlined"
-                  density="comfortable"
-                  :rules="itemEdit ? itemEdit.rule : []"
-                  autofocus
-                />
-                <v-alert
-                  v-else-if="dialogEdit"
-                  type="error"
-                  class="mt-4"
+                  class="text-center pa-8 empty-questions"
+                  style="border-style: dashed"
                 >
-                  {{ $t('HeuristicsTable.errors.failedToLoadEditForm') }}
-                </v-alert>
-              </v-form>
-            </v-card-text>
-            <v-card-actions class="pa-6 pt-0">
-              <v-spacer />
-              <v-btn
-                variant="text"
-                @click="closeDialog('dialogEdit')"
-                :disabled="isProcessing"
-              >
-                {{ $t('HeuristicsTable.titles.cancel') }}
-              </v-btn>
-              <v-btn
-                color="primary"
-                variant="elevated"
-                @click="validateEdit"
-                :disabled="isProcessing || !itemEdit || isDialogClosing"
-              >
-                {{ $t('HeuristicsTable.titles.ok') }}
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+                  <v-icon
+                    icon="mdi-help-circle-outline"
+                    size="48"
+                    color="secondary"
+                    class="mb-4"
+                  />
+                  <h4 class="text-h6 text-secondary mb-2">
+                    {{ $t('HeuristicsTable.titles.noQuestions') }}
+                  </h4>
+                  <p class="text-body-2 text-secondary mb-4 empty-state-text">
+                    {{ $t('HeuristicsTable.messages.startAddingQuestions') }}
+                  </p>
+                  <v-btn
+                    color="primary"
+                    variant="outlined"
+                    prepend-icon="mdi-plus"
+                    :disabled="testAnswerDocLength > 0"
+                    @click="setupQuestion(index)"
+                  >
+                    {{ $t('HeuristicsTable.titles.addNewQuestion') }}
+                  </v-btn>
+                </v-card>
+              </v-card-text>
+            </div>
+          </v-expand-transition>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- Empty State for No Heuristics -->
+    <v-row v-if="filteredHeuristics.length === 0">
+      <v-col cols="12">
+        <v-card class="text-center py-16 empty-heuristics" variant="outlined">
+          <v-icon
+            icon="mdi-clipboard-text-outline"
+            size="64"
+            color="grey-darken-1"
+            class="mb-4"
+          />
+          <h3 class="text-h5 font-weight-bold text-grey-darken-3 mb-2">
+            {{ $t('HeuristicsTable.titles.noHeuristicsFound') }}
+          </h3>
+          <p class="text-body-1 text-grey-darken-1">
+            {{ $t('HeuristicsTable.messages.noHeuristics') }}
+          </p>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- Add/Edit Heuristic Dialog -->
+    <v-dialog v-model="dialogHeuris" max-width="600" persistent>
+      <v-card>
+        <v-card-title
+          class="text-h5 pa-6"
+          style="background-color: #00213f; color: white"
+        >
+          {{ $t('HeuristicsTable.titles.creatingHeuristic') }}
+        </v-card-title>
+        <v-card-text class="pa-6">
+          <v-form ref="formHeurisRef" @keyup.enter="addHeuris">
+            <v-text-field
+              v-model="heuristicForm.title"
+              :label="$t('HeuristicsTable.placeholders.titleYourHeuristic')"
+              variant="outlined"
+              density="comfortable"
+              :rules="nameRequired"
+              class="mb-4"
+              autofocus
+            />
+            <v-text-field
+              v-model="heuristicForm.questions[0].title"
+              :label="$t('HeuristicsTable.placeholders.titleYourQuestion')"
+              variant="outlined"
+              density="comfortable"
+              :rules="questionRequired"
+            />
+          </v-form>
+        </v-card-text>
+        <v-card-actions class="pa-6 pt-0">
+          <v-spacer />
+          <v-btn variant="text" @click="closeDialog('dialogHeuris')">
+            {{ $t('HeuristicsTable.titles.cancel') }}
+          </v-btn>
+          <v-btn color="primary" variant="elevated" @click="addHeuris">
+            {{ $t('HeuristicsTable.titles.add') }}
+          </v-btn>
+        </v-card-actions>
       </v-card>
+    </v-dialog>
+
+    <!-- Add Question Dialog -->
+    <v-dialog v-model="dialogQuestion" max-width="600" persistent>
+      <v-card>
+        <v-card-title
+          class="text-h5 pa-6"
+          style="background-color: #fca326; color: white"
+        >
+          {{ $t('HeuristicsTable.titles.newQuestion') }}
+        </v-card-title>
+        <v-card-text class="pa-6 pt-0">
+          <v-form ref="formQuestionRef" @submit.prevent="addQuestion">
+            <v-text-field
+              v-if="dialogQuestion && newQuestion"
+              v-model="newQuestion.title"
+              :label="$t('HeuristicsTable.placeholders.titleNewQuestion')"
+              variant="outlined"
+              density="comfortable"
+              :rules="questionRequired"
+              autofocus
+            />
+            <v-alert v-else-if="dialogQuestion" type="error" class="mt-4">
+              {{ $t('HeuristicsTable.errors.failedToLoadQuestionForm') }}
+            </v-alert>
+          </v-form>
+        </v-card-text>
+        <v-card-actions class="pa-6 pt-0">
+          <v-spacer />
+          <v-btn variant="text" @click="closeDialog('dialogQuestion')">
+            {{ $t('HeuristicsTable.titles.cancel') }}
+          </v-btn>
+          <v-btn
+            color="primary"
+            variant="elevated"
+            :disabled="!newQuestion"
+            @click="addQuestion"
+          >
+            {{ $t('HeuristicsTable.titles.add') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Edit Heuristic/Question Dialog -->
+    <v-dialog v-model="dialogEdit" max-width="600" persistent>
+      <v-card>
+        <v-card-title
+          class="text-h5 pa-6"
+          style="background-color: #fca326; color: white"
+        >
+          {{
+            itemEdit && !isDialogClosing
+              ? itemEdit.title
+              : $t('HeuristicsTable.titles.loading')
+          }}
+        </v-card-title>
+        <v-card-text class="pa-6 pt-0">
+          <v-form ref="formEditRef" @submit.prevent="validateEdit">
+            <v-text-field
+              v-if="itemEdit && !isDialogClosing"
+              v-model="itemEdit.titleEdit"
+              :label="
+                itemEdit &&
+                itemEdit.title === $t('HeuristicsTable.titles.editHeuristic')
+                  ? $t('HeuristicsTable.placeholders.titleHeuristic')
+                  : $t('HeuristicsTable.placeholders.titleQuestion')
+              "
+              variant="outlined"
+              density="comfortable"
+              :rules="itemEdit ? itemEdit.rule : []"
+              autofocus
+            />
+            <v-alert v-else-if="dialogEdit" type="error" class="mt-4">
+              {{ $t('HeuristicsTable.errors.failedToLoadEditForm') }}
+            </v-alert>
+          </v-form>
+        </v-card-text>
+        <v-card-actions class="pa-6 pt-0">
+          <v-spacer />
+          <v-btn
+            variant="text"
+            :disabled="isProcessing"
+            @click="closeDialog('dialogEdit')"
+          >
+            {{ $t('HeuristicsTable.titles.cancel') }}
+          </v-btn>
+          <v-btn
+            color="primary"
+            variant="elevated"
+            :disabled="isProcessing || !itemEdit || isDialogClosing"
+            @click="validateEdit"
+          >
+            {{ $t('HeuristicsTable.titles.ok') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- Custom confirmation dialog -->
+    <v-dialog v-model="dialogDelete" max-width="500px" persistent>
+      <v-card class="pa-4 rounded-lg">
+        <v-card-title class="text-h5 d-flex align-center">
+          <v-icon color="warning" class="me-3" size="32"
+            >mdi-alert-circle</v-icon
+          >
+          {{ $t('common.confirm_deletion') }}
+        </v-card-title>
+        <v-card-text class="text-body-1 pt-4 pb-6">
+          {{ deleteMessage }}
+          <div class="mt-4 text-body-2 text-ternary" style="opacity: 0.8">
+            {{ $t('common.action_cannot_be_undone') }}
+          </div>
+        </v-card-text>
+        <v-card-actions class="pa-4 pt-0">
+          <v-spacer />
+          <v-btn
+            variant="text"
+            rounded="lg"
+            class="text-none px-6"
+            @click="dialogDelete = false"
+          >
+            {{ $t('HeuristicsTable.titles.cancel') }}
+          </v-btn>
+          <v-btn
+            color="error"
+            variant="elevated"
+            rounded="lg"
+            class="text-none px-6 shadow-sm"
+            @click="confirmDeleteAction"
+          >
+            {{ $t('HeuristicsTable.titles.ok') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-card>
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, nextTick } from 'vue';
-import { useStore } from 'vuex';
-import { useI18n } from 'vue-i18n';
-import AddDescBtn from '@/ux/Heuristic/components/AddDescBtn.vue';
+import { ref, computed, watch, onMounted, nextTick } from 'vue'
+import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
+import AddDescBtn from '@/ux/Heuristic/components/AddDescBtn.vue'
 import { showError, showWarning } from '@/shared/utils/toast'
-
 
 const emit = defineEmits(['change'])
 const store = useStore()
@@ -628,29 +650,48 @@ const descBtn = ref([])
 const isProcessing = ref(false)
 const questionHeuristicIndex = ref(null)
 const itemsPerPage = ref(5)
+const isDialogClosing = ref(false)
+
+// Delete confirmation dialog state
+const dialogDelete = ref(false)
+const deleteAction = ref(null)
+const deleteMessage = ref('')
 
 const headers = ref([
-  { title: t('HeuristicsTable.titles.titles'), align: 'start', value: 'title', width: '70%' },
-  { title: t('HeuristicsTable.titles.actions'), value: 'actions', align: 'end', sortable: false, width: '30%' },
+  {
+    title: t('HeuristicsTable.titles.titles'),
+    align: 'start',
+    value: 'title',
+    width: '70%',
+  },
+  {
+    title: t('HeuristicsTable.titles.actions'),
+    value: 'actions',
+    align: 'end',
+    sortable: false,
+    width: '30%',
+  },
 ])
 
-const nameRequired = ref([(v) => !!v || t('HeuristicsTable.validation.nameRequired')]);
-const questionRequired = ref([(v) => !!v || t('HeuristicsTable.validation.questionRequired')]);
+const nameRequired = ref([
+  (v) => !!v || t('HeuristicsTable.validation.nameRequired'),
+])
+const questionRequired = ref([
+  (v) => !!v || t('HeuristicsTable.validation.questionRequired'),
+])
 
-const test = computed(() => store.getters.test);
-
+const test = computed(() => store.getters.test)
 
 const heuristics = computed(() => {
-  const source =
-    store.getters.heuristics?.length
-      ? store.getters.heuristics
-      : store.state.Tests?.Test.testStructure || [];
+  const source = store.getters.heuristics?.length
+    ? store.getters.heuristics
+    : store.state.Tests?.Test.testStructure || []
 
   return Array.isArray(source)
-    ? source.map(h => ({
+    ? source.map((h) => ({
         ...h,
         questions: Array.isArray(h.questions)
-          ? h.questions.map(q => ({
+          ? h.questions.map((q) => ({
               ...q,
               descriptions: Array.isArray(q.descriptions)
                 ? q.descriptions
@@ -658,8 +699,8 @@ const heuristics = computed(() => {
             }))
           : [],
       }))
-    : [];
-});
+    : []
+})
 
 const filteredHeuristics = computed(() => {
   const searchLower = search.value.toLowerCase()
@@ -674,18 +715,19 @@ const filteredHeuristics = computed(() => {
 })
 
 const testAnswerDocLength = computed(() => {
-  return Object.keys(store.getters.testAnswerDocument?.heuristicAnswers ?? {}).length;
-});
+  return Object.keys(store.getters.testAnswerDocument?.heuristicAnswers ?? {})
+    .length
+})
 const getPaginationInfo = (totalItems) => {
-  const page = 1;
-  const start = (page - 1) * itemsPerPage.value + 1;
-  const end = Math.min(page * itemsPerPage.value, totalItems);
-  return `${start}-${end} of ${totalItems}`;
-};
+  const page = 1
+  const start = (page - 1) * itemsPerPage.value + 1
+  const end = Math.min(page * itemsPerPage.value, totalItems)
+  return `${start}-${end} of ${totalItems}`
+}
 
 const handleItemsPerPage = (value) => {
-  itemsPerPage.value = value;
-};
+  itemsPerPage.value = value
+}
 
 watch(dialogHeuris, (newVal) => {
   if (!newVal && heuristics.value.length > 0 && !itemEdit.value) {
@@ -694,8 +736,8 @@ watch(dialogHeuris, (newVal) => {
       title: '',
       total: 0,
       questions: [{ id: 0, title: '', comparison: [], descriptions: [] }],
-    };
-    heuristicForm.value.total = heuristicForm.value.questions.length;
+    }
+    heuristicForm.value.total = heuristicForm.value.questions.length
   }
   if (newVal && formHeurisRef.value) {
     formHeurisRef.value.resetValidation()
@@ -705,20 +747,22 @@ watch(dialogHeuris, (newVal) => {
 
 watch(itemSelect, (newVal) => {
   if (newVal !== null) {
-    questionSelect.value = null;
+    questionSelect.value = null
   }
-});
+})
 
 onMounted(() => {
   heuristicForm.value = {
-    id: heuristics.value.length ? heuristics.value[heuristics.value.length - 1].id + 1 : 0,
+    id: heuristics.value.length
+      ? heuristics.value[heuristics.value.length - 1].id + 1
+      : 0,
     total: 0,
     title: '',
     questions: [{ id: 0, title: '', descriptions: [], comparison: [] }],
-  };
-  store.commit("SET_HEURISTICS", heuristics.value)
-  heuristicForm.value.total = heuristicForm.value.questions.length;
-});
+  }
+  store.commit('SET_HEURISTICS', heuristics.value)
+  heuristicForm.value.total = heuristicForm.value.questions.length
+})
 
 const toggleHeuristic = (index) => {
   itemSelect.value = itemSelect.value === index ? null : index
@@ -726,73 +770,85 @@ const toggleHeuristic = (index) => {
 
 const moveItemUp = (index) => {
   if (index > 0) {
-    const newHeuristics = [...heuristics.value];
-    const itemToMove = newHeuristics[index];
-    const itemAbove = newHeuristics[index - 1];
+    const newHeuristics = [...heuristics.value]
+    const itemToMove = newHeuristics[index]
+    const itemAbove = newHeuristics[index - 1]
 
-    newHeuristics[index] = itemAbove;
-    newHeuristics[index - 1] = itemToMove;
+    newHeuristics[index] = itemAbove
+    newHeuristics[index - 1] = itemToMove
 
-    itemToMove.id = index - 1;
-    itemAbove.id = index;
+    itemToMove.id = index - 1
+    itemAbove.id = index
 
-    store.dispatch('setHeuristics', newHeuristics);
-    showWarning('HeuristicsTable.messages.changeWeights');
-    emit('change');
+    store.dispatch('setHeuristics', newHeuristics)
+    showWarning('HeuristicsTable.messages.changeWeights')
+    emit('change')
   }
 }
 
 const moveItemDown = (index) => {
   if (index < filteredHeuristics.value.length - 1) {
-    const newHeuristics = [...heuristics.value];
-    const itemToMove = newHeuristics[index];
-    const itemBelow = newHeuristics[index + 1];
+    const newHeuristics = [...heuristics.value]
+    const itemToMove = newHeuristics[index]
+    const itemBelow = newHeuristics[index + 1]
 
-    newHeuristics[index] = itemBelow;
-    newHeuristics[index + 1] = itemToMove;
+    newHeuristics[index] = itemBelow
+    newHeuristics[index + 1] = itemToMove
 
-    itemToMove.id = index + 1;
-    itemBelow.id = index;
+    itemToMove.id = index + 1
+    itemBelow.id = index
 
-    store.dispatch('setHeuristics', newHeuristics);
-    showWarning('HeuristicsTable.messages.changeWeights');
-    emit('change');
+    store.dispatch('setHeuristics', newHeuristics)
+    showWarning('HeuristicsTable.messages.changeWeights')
+    emit('change')
   }
-};
+}
 
 const deleteHeuristic = (index) => {
-  const config = confirm(`${t('alerts.deleteHeuristic')} ${heuristics.value[index].title}?`);
-  if (config) {
-    store.commit('REMOVE_HEURISTIC', index);
-    itemSelect.value = null;
-    questionSelect.value = null;
-    emit('change');
+  deleteMessage.value = `${t('alerts.deleteHeuristic')} "${
+    heuristics.value[index].title
+  }"?`
+  deleteAction.value = () => {
+    store.commit('REMOVE_HEURISTIC', index)
+    itemSelect.value = null
+    questionSelect.value = null
+    emit('change')
   }
-};
+  dialogDelete.value = true
+}
 
 const deleteQuestion = (qIndex) => {
   if (heuristics.value[itemSelect.value].questions.length > 1) {
-    const config = confirm(
-      `${t('alerts.deleteQuestion')} ${heuristics.value[itemSelect.value].questions[qIndex].title}?`
-    );
-    if (config) {
-      const newHeuristics = [...heuristics.value];
-      newHeuristics[itemSelect.value].questions.splice(qIndex, 1);
-      newHeuristics[itemSelect.value].total = newHeuristics[itemSelect.value].questions.length;
-      store.dispatch('setHeuristics', newHeuristics);
-      questionSelect.value = null;
-      emit('change');
+    deleteMessage.value = `${t('alerts.deleteQuestion')} "${
+      heuristics.value[itemSelect.value].questions[qIndex].title
+    }"?`
+    deleteAction.value = () => {
+      const newHeuristics = [...heuristics.value]
+      newHeuristics[itemSelect.value].questions.splice(qIndex, 1)
+      newHeuristics[itemSelect.value].total =
+        newHeuristics[itemSelect.value].questions.length
+      store.dispatch('setHeuristics', newHeuristics)
+      questionSelect.value = null
+      emit('change')
     }
+    dialogDelete.value = true
   } else {
     showWarning('HeuristicsTable.messages.cantDeleteAllQuestions')
   }
 }
 
+const confirmDeleteAction = () => {
+  if (deleteAction.value) {
+    deleteAction.value()
+  }
+  dialogDelete.value = false
+  deleteAction.value = null
+}
+
 const editHeuris = (item) => {
-  const heuristicIndex = heuristics.value.findIndex(h => h.id === item.id)
+  const heuristicIndex = heuristics.value.findIndex((h) => h.id === item.id)
   if (heuristicIndex === -1) {
-    console.warn('Heuristic not found:', item);
-    showError(t('HeuristicsTable.errors.invalidHeuristic'));
+    showError(t('HeuristicsTable.errors.invalidHeuristic'))
     return
   }
   itemEdit.value = {
@@ -807,26 +863,27 @@ const editHeuris = (item) => {
 
 const editQuestions = (item) => {
   if (itemSelect.value == null || !heuristics.value[itemSelect.value]) {
-    console.warn('Invalid heuristic for question edit, itemSelect:', itemSelect.value);
-    showError('HeuristicsTable.errors.invalidHeuristic');
-    return;
+    showError('HeuristicsTable.errors.invalidHeuristic')
+    return
   }
   itemEdit.value = {
     title: t('HeuristicsTable.titles.editQuestion'),
     titleEdit: item.title || '',
     rule: questionRequired.value,
     id: item.id,
-  };
-  dialogEdit.value = true;
-};
+  }
+  dialogEdit.value = true
+}
 
 const editDescription = (desc) => {
-  const ind = heuristics.value[itemSelect.value].questions[questionSelect.value].descriptions.indexOf(desc)
+  const ind =
+    heuristics.value[itemSelect.value].questions[
+      questionSelect.value
+    ].descriptions.indexOf(desc)
   const btn = descBtn.value[itemSelect.value]
   if (btn && typeof btn.editSetup === 'function') {
     btn.editSetup(ind)
   } else {
-    console.warn('AddDescBtn ref not ready or missing editSetup method')
   }
 }
 
@@ -835,9 +892,10 @@ const setupQuestion = (heuristicIndex) => {
     showError('HeuristicsTable.errors.invalidHeuristic')
     return
   }
-  questionHeuristicIndex.value = heuristicIndex  // remember index
+  questionHeuristicIndex.value = heuristicIndex // remember index
   const questions = heuristics.value[heuristicIndex].questions || []
-  const lastQuestionId = questions.length > 0 ? questions[questions.length - 1].id : -1
+  const lastQuestionId =
+    questions.length > 0 ? questions[questions.length - 1].id : -1
   newQuestion.value = {
     id: lastQuestionId + 1,
     title: '',
@@ -848,45 +906,65 @@ const setupQuestion = (heuristicIndex) => {
 }
 
 const deleteItem = (item) => {
-  const newHeuristics = [...heuristics.value];
-  newHeuristics[itemSelect.value].questions[questionSelect.value].descriptions.splice(
-    newHeuristics[itemSelect.value].questions[questionSelect.value].descriptions.indexOf(item),
-    1
-  );
-  store.dispatch('setHeuristics', newHeuristics);
-  emit('change');
-};
+  deleteMessage.value = `${t('alerts.deleteDescription')} "${
+    item.title || 'this description'
+  }"?`
+  deleteAction.value = () => {
+    const newHeuristics = [...heuristics.value]
+    const questions =
+      newHeuristics[itemSelect.value].questions[questionSelect.value]
+    const index = questions.descriptions.indexOf(item)
+    if (index !== -1) {
+      questions.descriptions.splice(index, 1)
+      store.dispatch('setHeuristics', newHeuristics)
+      emit('change')
+    }
+  }
+  dialogDelete.value = true
+}
 
 const addHeuris = () => {
   if (formHeurisRef.value.validate()) {
-    dialogHeuris.value = false;
-    const newHeuristics = [...heuristics.value, { ...heuristicForm.value }];
-    store.dispatch('setHeuristics', newHeuristics);
-    itemSelect.value = newHeuristics.length - 1;
-    formHeurisRef.value.resetValidation();
-    emit('change');
+    dialogHeuris.value = false
+    const newHeuristics = [...heuristics.value, { ...heuristicForm.value }]
+    store.dispatch('setHeuristics', newHeuristics)
+    itemSelect.value = newHeuristics.length - 1
+    formHeurisRef.value.resetValidation()
+    emit('change')
   }
-};
+}
 
 const closeDialog = (dialogName) => {
-  if (isProcessing.value) return;
-  if (dialogName === 'dialogHeuris' && formHeurisRef.value) {
-    formHeurisRef.value.resetValidation()
-    formHeurisRef.value.reset()
+  if (isProcessing.value) return
+  if (dialogName === 'dialogHeuris') {
+    if (formHeurisRef.value) {
+      formHeurisRef.value.resetValidation()
+      formHeurisRef.value.reset()
+    }
+    dialogHeuris.value = false
+  } else if (dialogName === 'dialogQuestion') {
+    dialogQuestion.value = false
+    setTimeout(() => {
+      if (formQuestionRef.value) {
+        formQuestionRef.value.resetValidation()
+        formQuestionRef.value.reset()
+      }
+      newQuestion.value = null
+      questionHeuristicIndex.value = null
+    }, 150)
+  } else if (dialogName === 'dialogEdit') {
+    isDialogClosing.value = true
+    if (formEditRef.value) {
+      formEditRef.value.resetValidation()
+      formEditRef.value.reset()
+    }
+    dialogEdit.value = false
+    setTimeout(() => {
+      isDialogClosing.value = false
+      itemEdit.value = null
+    }, 300)
   }
-  if (dialogName === 'dialogQuestion' && formQuestionRef.value) {
-    formQuestionRef.value.resetValidation();
-    formQuestionRef.value.reset();
-  }
-  if (dialogName === 'dialogEdit' && formEditRef.value) {
-    formEditRef.value.resetValidation()
-    formEditRef.value.reset()
-  }
-
-  if (dialogName === 'dialogHeuris') dialogHeuris.value = false;
-  else if (dialogName === 'dialogQuestion') dialogQuestion.value = false;
-  else if (dialogName === 'dialogEdit') dialogEdit.value = false;
-};
+}
 
 const addQuestion = () => {
   if (!newQuestion.value || questionHeuristicIndex.value === null) {
@@ -894,67 +972,67 @@ const addQuestion = () => {
     return
   }
   if (formQuestionRef.value.validate()) {
-    dialogQuestion.value = false
-    const newHeuristics = [...heuristics.value]
-    newHeuristics[questionHeuristicIndex.value].questions.push({ ...newQuestion.value })
-    newHeuristics[questionHeuristicIndex.value].total =
-      newHeuristics[questionHeuristicIndex.value].questions.length
-    store.dispatch('setHeuristics', newHeuristics)
-    newQuestion.value = null
-    questionHeuristicIndex.value = null
-    formQuestionRef.value.resetValidation()
-    emit('change')
+    try {
+      const newHeuristics = [...heuristics.value]
+      newHeuristics[questionHeuristicIndex.value].questions.push({
+        ...newQuestion.value,
+      })
+      newHeuristics[questionHeuristicIndex.value].total =
+        newHeuristics[questionHeuristicIndex.value].questions.length
+      store.dispatch('setHeuristics', newHeuristics)
+      closeDialog('dialogQuestion')
+      emit('change')
+    } catch {
+      showError('HeuristicsTable.errors.failedToLoadQuestionForm')
+    }
   }
 }
 
 const validateEdit = () => {
   if (isProcessing.value) {
-    console.warn('Validation in progress, aborting');
-    return;
+    return
   }
   if (!itemEdit.value) {
-    console.warn('itemEdit is null, aborting validation');
-    dialogEdit.value = false;
-    return;
+    dialogEdit.value = false
+    return
   }
   if (itemSelect.value == null || !heuristics.value[itemSelect.value]) {
-    console.warn('Invalid itemSelect or heuristic not found:', itemSelect.value);
-    dialogEdit.value = false;
-    showError('HeuristicsTable.errors.invalidHeuristic');
-    return;
+    dialogEdit.value = false
+    showError('HeuristicsTable.errors.invalidHeuristic')
+    return
   }
-  isProcessing.value = true;
+  isProcessing.value = true
 
   if (formEditRef.value.validate()) {
-    const newHeuristics = [...heuristics.value];
+    const newHeuristics = [...heuristics.value]
     if (itemEdit.value.title === t('HeuristicsTable.titles.editHeuristic')) {
-      newHeuristics[itemSelect.value].title = itemEdit.value.titleEdit;
+      newHeuristics[itemSelect.value].title = itemEdit.value.titleEdit
     } else {
       const questionIndex = newHeuristics[itemSelect.value].questions.findIndex(
-        (q) => q.id === itemEdit.value.id
-      );
+        (q) => q.id === itemEdit.value.id,
+      )
       if (questionIndex !== -1) {
-        newHeuristics[itemSelect.value].questions[questionIndex].title = itemEdit.value.titleEdit;
+        newHeuristics[itemSelect.value].questions[questionIndex].title =
+          itemEdit.value.titleEdit
       } else {
-        console.warn('Question not found for id:', itemEdit.value.id);
         showError('HeuristicsTable.errors.invalidQuestion')
       }
     }
-    store.dispatch('setHeuristics', newHeuristics);
-    emit('change');
-    dialogEdit.value = false;
+    store.dispatch('setHeuristics', newHeuristics)
+    emit('change')
+    dialogEdit.value = false
     nextTick(() => {
       dialogEdit.value = false
       isProcessing.value = false
-    });
+    })
   } else {
-    isProcessing.value = false;
+    isProcessing.value = false
   }
-};
+}
 
 const updateDescription = () => {
-  emit('change');
-};
+  emit('change')
+}
 </script>
 
 <style scoped>
@@ -1255,7 +1333,7 @@ const updateDescription = () => {
   .heuristic-header {
     flex-wrap: wrap;
   }
-  
+
   .heuristic-actions {
     margin-top: 8px;
     width: 100%;
@@ -1275,31 +1353,31 @@ const updateDescription = () => {
   .v-card.pa-6 {
     padding: 12px !important;
   }
-  
+
   /* Adjust card title padding */
   .v-card-title.pa-4 {
     padding: 12px !important;
   }
-  
+
   /* Make title even smaller on very small screens */
   .text-h4.font-weight-bold.text-on-surface {
     font-size: 1.5rem !important;
   }
-  
+
   /* Adjust toggle button */
   .toggle-btn {
     min-width: 32px !important;
     width: 32px !important;
     height: 32px !important;
   }
-  
+
   /* Better text wrapping for very small screens */
   .empty-state-text {
     font-size: 13px !important; /* Smaller for iPhone */
     line-height: 1.5;
     margin-bottom: 10px !important;
   }
-  
+
   .empty-heuristics h3.text-h5 {
     font-size: 1.25rem !important;
     margin-bottom: 12px !important;
@@ -1424,12 +1502,12 @@ const updateDescription = () => {
     line-height: 1.4;
     margin-bottom: 8px !important;
   }
-  
+
   .empty-heuristics h3.text-h5 {
     font-size: 1rem !important;
     margin-bottom: 10px !important;
   }
-  
+
   /* ULTRA COMPACT button for very small screens */
   .empty-heuristics .v-btn {
     font-size: 11px !important;
@@ -1526,8 +1604,9 @@ const updateDescription = () => {
   .description-table :deep(th:first-child .v-data-table-header__content) {
     font-size: 0;
   }
-  
-  .description-table :deep(th:first-child .v-data-table-header__content::after) {
+
+  .description-table
+    :deep(th:first-child .v-data-table-header__content::after) {
     content: 'Title';
     font-size: 0.75rem;
   }

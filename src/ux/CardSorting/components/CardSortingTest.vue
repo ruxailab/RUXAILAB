@@ -2,17 +2,31 @@
   <div>
     <VRow class="pa-0 ma-0" dense>
       <!-- Navigation Drawer -->
-      <v-navigation-drawer v-model="drawer" :rail="mini" permanent color="#3F3D56">
+      <v-navigation-drawer
+        v-model="drawer"
+        :rail="mini"
+        permanent
+        color="#3F3D56"
+      >
         <!-- Navigation Header -->
         <div v-if="!mini" class="header">
           <v-list-item>
             <v-row dense align="center" justify="space-around">
               <v-col class="pa-0 ma-0" cols="8">
-                <text-clamp class="titleText" :text="test.testTitle" :max-lines="2" />
+                <text-clamp
+                  class="titleText"
+                  :text="test.testTitle"
+                  :max-lines="2"
+                />
               </v-col>
               <v-col>
-                <v-progress-circular rotate="-90" :model-value="calculateProgress()" color="#fca326" :size="50"
-                  class="mt-2">
+                <v-progress-circular
+                  rotate="-90"
+                  :model-value="calculateProgress()"
+                  color="#fca326"
+                  :size="50"
+                  class="mt-2"
+                >
                   {{ calculateProgress() }}%
                 </v-progress-circular>
               </v-col>
@@ -21,8 +35,12 @@
         </div>
 
         <!-- Navigation Body -->
-        <v-list class="nav-list" density="compact" max-height="85%"
-          style="overflow-y: auto; overflow-x: hidden; padding-bottom: 100px">
+        <v-list
+          class="nav-list"
+          density="compact"
+          max-height="85%"
+          style="overflow-y: auto; overflow-x: hidden; padding-bottom: 100px"
+        >
           <div v-for="item in items" :key="item.id">
             <!-- Pre Test -->
             <!-- <v-list-group v-if="item.id === 0"
@@ -182,40 +200,36 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue';
-import { useStore } from 'vuex';
-import CardSortingTask from '../components/CardSortingTask.vue';
-import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';
+import { onMounted, reactive, ref } from 'vue'
+import { useStore } from 'vuex'
+import CardSortingTask from '../components/CardSortingTask.vue'
+import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 
-// Props
-const props = defineProps({
+defineProps({
   test: {
     type: Object,
-    required: true
+    required: true,
   },
 })
 
 // Stores
-const store = useStore();
+const store = useStore()
 
 // Variables
-const drawer = ref(true);
-const mini = ref(false);
+const drawer = ref(true)
+const mini = ref(false)
 
-const rightView = ref(null);
-const index = ref(1);
-const taskIndex = ref(null);
-const fullName = ref('');
-const items = ref([]);
+const rightView = ref(null)
+const index = ref(1)
+const items = ref([])
 
-const localTestAnswer = reactive(new UserStudyEvaluatorAnswer());
+const localTestAnswer = reactive(new UserStudyEvaluatorAnswer())
 
 // Methods
-const completeStep = (id, type, userCompleted = true) => { }
 
 const mappingSteps = async () => {
   try {
-    items.value = [];
+    items.value = []
 
     items.value.push({
       title: 'Tasks',
@@ -226,23 +240,14 @@ const mappingSteps = async () => {
         id: 0,
       },
       id: 1,
-    });
-
-  } catch (error) {
-    console.error('Error mapping steps:', error.message);
-    store.commit('SET_TOAST', { type: 'error', message: 'Failed to initialize test data. Please try again.' });
+    })
+  } catch {
+    store.commit('SET_TOAST', {
+      type: 'error',
+      message: 'Failed to initialize test data. Please try again.',
+    })
   }
 }
-
-const isTaskDisabled = (taskIndex) => {
-  if (!Array.isArray(localTestAnswer.tasks)) return true;
-  for (let i = 0; i < taskIndex; i++) {
-    if (!localTestAnswer.tasks[i]?.completed) {
-      return true;
-    }
-  }
-  return false;
-};
 
 const calculateProgress = () => {
   try {
@@ -257,7 +262,7 @@ const calculateProgress = () => {
     if (items.value[1]?.value && Array.isArray(localTestAnswer.tasks)) {
       for (let i = 0; i < items.value[1].value.length; i++) {
         if (localTestAnswer.tasks[i]?.completed) {
-          tasksCompleted++;
+          tasksCompleted++
         }
       }
       if (tasksCompleted === items.value[1].value.length) {
@@ -270,20 +275,14 @@ const calculateProgress = () => {
     const progressPercentage = (completedSteps / totalSteps) * 100
     localTestAnswer.progress = progressPercentage
     return progressPercentage
-  } catch (error) {
-    console.error('Error in calculateProgress:', error)
+  } catch {
     return 0
   }
-};
-
-const isPreTestTaskDisabled = (taskIndex) => {
-  if (taskIndex === 0) return localTestAnswer.consentCompleted && localTestAnswer.preTestCompleted && !localTestAnswer.submitted;
-  return !localTestAnswer.consentCompleted || (localTestAnswer.preTestCompleted && !localTestAnswer.submitted);
-};
+}
 
 // Lifecycle Hooks
 onMounted(async () => {
-  await mappingSteps();
+  await mappingSteps()
 })
 </script>
 

@@ -368,6 +368,7 @@ const detailsModal = ref(false)
 const selectedResponse = ref(null)
 const selectedRatingFilter = ref(null)
 const scoreRange = ref([0, 100])
+const dialogMaxWidth = 800
 
 const tableHeaders = [
   { title: 'User', key: 'user', sortable: true },

@@ -1,4 +1,5 @@
 import { admin, functions } from "../f.firebase.js";
+import logger from "../utils/logger.js";
 
 /**
  * Cloud Function triggered on Firebase Storage file write (create/update/delete).
@@ -11,6 +12,7 @@ export const onStorageUpdate = functions.onStorageTrigger({
       const filePath = object.name;
       const match = filePath.match(/^tests\/([^\/]+)/);
       if (!match) {
+        logger.info("File path does not match expected pattern:", { filePath });
         return null;
       }
       const testId = match[1];
@@ -22,6 +24,7 @@ export const onStorageUpdate = functions.onStorageTrigger({
         .get();
 
       if (querySnapshot.empty) {
+        logger.info(`No users found with testId: ${testId}`);
         return null;
       }
 
@@ -50,8 +53,9 @@ export const onStorageUpdate = functions.onStorageTrigger({
       }
 
       await batch.commit();
+      logger.info(`Updated storage usage for testId: ${testId}`);
     } catch (error) {
-      console.error("Error updating storage usage:", error);
+      logger.error("Error updating storage usage:", { error });
     }
   }
 });
@@ -87,12 +91,14 @@ export const calculateStorageUsage = functions.https.onCall(async (data) => {
       totalBytes += testBytes;
     }
 
+    logger.info("results", { results });
+
     return {
       totalSizeMB: (totalBytes / (1024 * 1024)).toFixed(2),
       perTest: results,
     };
   } catch (error) {
-    console.error("Error calculating storage usage:", error);
+    logger.error("Error calculating storage usage:", { error });
     throw new functions.https.HttpsError("internal", error.message);
   }
 });

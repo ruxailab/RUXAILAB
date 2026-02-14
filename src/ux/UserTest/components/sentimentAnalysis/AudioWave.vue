@@ -21,8 +21,15 @@
 
       <v-col cols="auto" class="volume-col">
         <v-icon>mdi-volume-high</v-icon>
-        <v-slider v-model="volume" min="0" max="1" step="0.01" hide-details class="volume-slider"
-          @update:model-value="setVolume" />
+        <v-slider
+          v-model="volume"
+          min="0"
+          max="1"
+          step="0.01"
+          hide-details
+          class="volume-slider"
+          @update:model-value="setVolume"
+        />
       </v-col>
     </v-row>
   </div>
@@ -156,7 +163,9 @@ const initializeRegions = () => {
 // ▶️ Controles
 const playPause = () => {
   if (!wave_surfer.value) return
-  wave_surfer.value.isPlaying() ? wave_surfer.value.pause() : wave_surfer.value.play()
+  wave_surfer.value.isPlaying()
+    ? wave_surfer.value.pause()
+    : wave_surfer.value.play()
 }
 
 function playSegment(start, end) {
@@ -193,7 +202,7 @@ onMounted(async () => {
     () => props.file,
     async () => {
       if (wave_surfer.value) await loadAudioFile()
-    }
+    },
   )
 
   watch(
@@ -201,7 +210,7 @@ onMounted(async () => {
     () => {
       if (wave_surfer.value) initializeRegions()
     },
-    { deep: true }
+    { deep: true },
   )
 })
 
@@ -211,9 +220,8 @@ onUnmounted(() => {
 })
 
 defineExpose({
-  playSegment
+  playSegment,
 })
-
 </script>
 
 <style scoped>

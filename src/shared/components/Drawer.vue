@@ -15,15 +15,8 @@
     </div>
 -->
     <!-- Navigation options -->
-    <v-list
-      v-if="items"
-      density="compact"
-    >
-      <v-list-item
-        v-for="(item, n) in items"
-        :key="n"
-        @click="go(item)"
-      >
+    <v-list v-if="items" density="compact">
+      <v-list-item v-for="(item, n) in items" :key="n" @click="go(item)">
         <template #prepend>
           <v-icon :color="$route.path == item.path ? '#fca326' : '#bababa'">
             {{ item.icon }}
@@ -53,59 +46,58 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useStore } from 'vuex';
-import { useRouter, useRoute } from 'vue-router';
-import { useDisplay } from 'vuetify';
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter, useRoute } from 'vue-router'
+import { useDisplay } from 'vuetify'
 
-const props = defineProps({
+defineProps({
   items: {
     type: Array,
     default: () => [],
   },
-});
+})
 
-const store = useStore();
-const router = useRouter();
-const route = useRoute();
-const { mdAndUp, mobile } = useDisplay();
+const store = useStore()
+const router = useRouter()
+const route = useRoute()
+const { mdAndUp, mobile } = useDisplay()
 
-const drawerOpen = ref(false);
-const miniMode = ref(false);
-const test = computed(() => store.state.Tests.Test);
+const drawerOpen = ref(false)
+const miniMode = ref(false)
+const test = computed(() => store.state.Tests.Test)
 
 const initialDrawerState = computed(() => {
- return mdAndUp.value;
-});
+  return mdAndUp.value
+})
 
 onMounted(() => {
-  drawerOpen.value = initialDrawerState.value;
-});
+  drawerOpen.value = initialDrawerState.value
+})
 
 const go = (item) => {
-  if (route.path === item.path) return;
-  if (item.path === `/testview/${test.value.id}`) return window.open(item.path);
-  router.push(item.path);
+  if (route.path === item.path) return
+  if (item.path === `/testview/${test.value.id}`) return window.open(item.path)
+  router.push(item.path)
   if (mobile.value) {
-    drawerOpen.value = false;
+    drawerOpen.value = false
   }
-};
+}
 
 const toggleDrawer = () => {
-  drawerOpen.value = !drawerOpen.value;
-};
+  drawerOpen.value = !drawerOpen.value
+}
 const toggleMiniMode = () => {
-  miniMode.value = !miniMode.value;
-};
+  miniMode.value = !miniMode.value
+}
 
 onMounted(() => {
-  globalThis.addEventListener('toggle-dashboard-drawer', toggleDrawer);
-});
+  globalThis.addEventListener('toggle-dashboard-drawer', toggleDrawer)
+})
 
 onUnmounted(() => {
-  globalThis.removeEventListener('toggle-dashboard-drawer', toggleDrawer);
-});
-
+  globalThis.removeEventListener('toggle-dashboard-drawer', toggleDrawer)
+})
 </script>
 
 <style scoped>

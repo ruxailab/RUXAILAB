@@ -1,4 +1,5 @@
 import { admin, functions } from '../f.firebase.js'
+import logger from "../utils/logger.js";
 
 export const receiveCalibration = functions.onRequest({
     handler: async (req, res) => {
@@ -46,10 +47,10 @@ export const receiveCalibration = functions.onRequest({
                 });
             }
 
-            return res.status(200).json({ message: "Calibration saved and user updated successfully" })
+            return res.status(200).json({ message: "Calibration saved and user updated successfully" });
 
         } catch (error) {
-            console.error("Error saving calibration:", error);
+            logger.error("Error saving calibration:", { error });
             return res.status(500).json({ error: error.message });
         }
     }
@@ -94,8 +95,8 @@ export const getCalibrationConfig = functions.onRequest({
             });
 
         } catch (error) {
-            console.error("Error getting calibration config:", error);
+            logger.error("Error getting calibration config:", { error });
             return res.status(500).json({ error: error.message });
         }
     }
-});;
+});

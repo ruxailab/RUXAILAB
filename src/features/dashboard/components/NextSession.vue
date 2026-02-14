@@ -1,25 +1,20 @@
 <template>
-  <v-card
-    elevation="2"
-    rounded="lg"
-    class="next-session-card"
-  >
+  <v-card elevation="2" rounded="lg" class="next-session-card">
     <v-card-title class="d-flex align-center justify-space-between py-4">
       <div class="d-flex align-center">
         <v-icon
           icon="mdi-clock-fast"
           class="me-2"
           color="primary"
-          style="padding:1.5rem"
+          style="padding: 1.5rem"
         />
-        <span class="text-h6 font-weight-bold">Next Session</span>
+        <span class="text-h6 font-weight-bold">{{
+          $t('Dashboard.nextSession')
+        }}</span>
       </div>
     </v-card-title>
 
-    <v-card-text
-      v-if="nextSession"
-      class="pa-6"
-    >
+    <v-card-text v-if="nextSession" class="pa-6">
       <!-- Session Header -->
       <div class="session-header mb-4 text-center">
         <h3 class="session-title mb-2">{{ nextSession.testTitle }}</h3>
@@ -39,38 +34,67 @@
       <!-- Info Items -->
       <div class="info-items">
         <div class="info-item">
-          <v-icon icon="mdi-microscope" size="24" color="primary" class="info-icon" />
+          <v-icon
+            icon="mdi-microscope"
+            size="24"
+            color="primary"
+            class="info-icon"
+          />
           <div class="info-content">
             <div class="info-value">{{ getStudyType(nextSession) }}</div>
-            <div>Tipo de Estudio</div>
+            <div>{{ $t('Dashboard.studyType') }}</div>
           </div>
         </div>
         <div class="info-item">
-          <v-icon icon="mdi-account" size="24" color="primary" class="info-icon" />
+          <v-icon
+            icon="mdi-account"
+            size="24"
+            color="primary"
+            class="info-icon"
+          />
           <div class="info-content">
-            <div class="info-value">{{ nextSession.testAdmin?.email || 'Unknown' }}</div>
-            <div>Owner</div>
-          </div>
-        </div>
-         <div class="info-item">
-          <v-icon icon="mdi-account" size="24" color="primary" class="info-icon" />
-          <div class="info-content">
-            <div class="info-value">{{ nextSession.evaluator|| 'Unknown' }}</div>
-            <div>Evaluator</div>
+            <div class="info-value">
+              {{ nextSession.testAdmin?.email || 'Unknown' }}
+            </div>
+            <div>{{ $t('common.table.owner') }}</div>
           </div>
         </div>
         <div class="info-item">
-          <v-icon icon="mdi-calendar" size="24" color="primary" class="info-icon" />
+          <v-icon
+            icon="mdi-account"
+            size="24"
+            color="primary"
+            class="info-icon"
+          />
+          <div class="info-content">
+            <div class="info-value">
+              {{ nextSession.evaluator || 'Unknown' }}
+            </div>
+            <div>{{ $t('pages.sessions.evaluator') }}</div>
+          </div>
+        </div>
+        <div class="info-item">
+          <v-icon
+            icon="mdi-calendar"
+            size="24"
+            color="primary"
+            class="info-icon"
+          />
           <div class="info-content">
             <div class="info-value">{{ formatDate(nextSession.testDate) }}</div>
-            <div>Fecha</div>
+            <div>{{ $t('Dashboard.date') }}</div>
           </div>
         </div>
         <div class="info-item">
-          <v-icon icon="mdi-clock-outline" size="24" color="primary" class="info-icon" />
+          <v-icon
+            icon="mdi-clock-outline"
+            size="24"
+            color="primary"
+            class="info-icon"
+          />
           <div class="info-content">
             <div class="info-value">{{ formatTime(nextSession.testDate) }}</div>
-            <div>Horario</div>
+            <div>{{ $t('Dashboard.time') }}</div>
           </div>
         </div>
       </div>
@@ -83,19 +107,20 @@
         block
         rounded="lg"
         prepend-icon="mdi-play-circle"
-        :disabled=" getStatus(nextSession) === SESSION_STATUSES.COMPLETED"
-        @click="goto(nextSession)"
+        :disabled="getStatus(nextSession) === SESSION_STATUSES.COMPLETED"
         class="action-button mt-6"
+        @click="goto(nextSession)"
       >
-        {{ getStatus(nextSession) !== SESSION_STATUSES.COMPLETED ? 'Join Now' : 'Completed' }}
+        {{
+          getStatus(nextSession) !== SESSION_STATUSES.COMPLETED
+            ? $t('Dashboard.webinar.startSession')
+            : $t('analytics.completed')
+        }}
       </v-btn>
     </v-card-text>
 
     <!-- Empty State -->
-    <v-card-text
-      v-else
-      class="pa-6 text-center"
-    >
+    <v-card-text v-else class="pa-6 text-center">
       <div class="empty-state">
         <v-icon
           icon="mdi-calendar-blank"
@@ -104,10 +129,10 @@
           class="mb-4"
         />
         <h4 class="text-h6 mb-2">
-          No sessions scheduled
+          {{ $t('Dashboard.noSessionsScheduled') }}
         </h4>
         <p class="text-body-2 text-grey">
-          Your next session will appear here
+          {{ $t('Dashboard.nextSessionWillAppear') }}
         </p>
       </div>
     </v-card-text>
@@ -115,14 +140,21 @@
 </template>
 
 <script setup>
-import { getMethodName, STUDY_TYPES, USER_STUDY_SUBTYPES } from "@/shared/constants/methodDefinitions"
+import {
+  getMethodName,
+  STUDY_TYPES,
+  USER_STUDY_SUBTYPES,
+} from '@/shared/constants/methodDefinitions'
 import { useRouter } from 'vue-router'
-import { getSessionStatus, SESSION_STATUSES } from '@/shared/utils/sessionsUtils'
+import {
+  getSessionStatus,
+  SESSION_STATUSES,
+} from '@/shared/utils/sessionsUtils'
 
 const props = defineProps({
   nextSession: {
-    type:Object,
-  }
+    type: Object,
+  },
 })
 
 const router = useRouter()
@@ -134,20 +166,31 @@ const getStatus = () => {
 const formatDate = (dateStr) => {
   if (!dateStr) return 'N/A'
   const date = new Date(dateStr)
-  return date.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' })
+  return date.toLocaleDateString('en-US', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  })
 }
 
 const formatTime = (dateStr) => {
   if (!dateStr) return 'N/A'
   const date = new Date(dateStr)
-  return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })
+  return date.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  })
 }
 
 function getStudyType(data) {
   const testType = (data.testType || '').toUpperCase()
   const subType = (data.subType || '').toUpperCase()
 
-  if (testType === STUDY_TYPES.USER && subType === USER_STUDY_SUBTYPES.MODERATED) {
+  if (
+    testType === STUDY_TYPES.USER &&
+    subType === USER_STUDY_SUBTYPES.MODERATED
+  ) {
     return getMethodName(data)
   }
   return 'N/A'
