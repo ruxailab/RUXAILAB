@@ -1,6 +1,8 @@
-
 import { onSchedule } from 'firebase-functions/v2/scheduler'
 import { admin } from '../f.firebase.js'
+import { createLogger } from '../utils/logger.js'
+
+const logger = createLogger('cleanupGhostSessions')
 
 // Run every 6 hours
 export const cleanupGhostSessions = onSchedule('every 6 hours', async (event) => {
@@ -55,11 +57,17 @@ export const cleanupGhostSessions = onSchedule('every 6 hours', async (event) =>
       })
     }
 
-    if (deletedCount > 0) {
-      await db.ref().update(changes)
-      console.log(`Cleaned up ${deletedCount} items (ghost sessions/calls).`)
+    if (deletedCount === 0) {
+      logger.info('No ghost sessions found')
+      return
     }
+
+    await db.ref().update(changes)
+    logger.info('Ghost session cleanup completed', { deletedCount })
   } catch (error) {
-    console.error('Error cleaning up ghost sessions:', error)
+    logger.error('Error cleaning up ghost sessions', {
+      error: error.message,
+      stack: error.stack,
+    })
   }
 })
