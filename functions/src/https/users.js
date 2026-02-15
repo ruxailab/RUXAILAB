@@ -41,7 +41,7 @@ const deleteFolderFiles = async (testId) => {
   const [files] = await admin.storage().bucket().getFiles({ prefix: folderPath });
 
   if (files.length > 0) {
-    logger.info(`Deletando ${files.length} arquivos da pasta ${folderPath}`);
+    logger.info(`Deleting ${files.length} files from folder ${folderPath}`, { fileCount: files.length, folderPath });
     await Promise.all(files.map(file => file.delete()));
   }
 }
