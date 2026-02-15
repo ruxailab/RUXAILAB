@@ -2,7 +2,8 @@ import { admin, functions } from "../f.firebase.js";
 import nodemailer from "nodemailer";
 import * as fs from "fs";
 import * as path from "path";
-import logger from "../utils/logger.js";
+import { createLogger } from "../utils/logger.js";
+const logger = createLogger('sendEmail');
 
 export const sendEmail = functions.onCall({
   handler: async (data) => {

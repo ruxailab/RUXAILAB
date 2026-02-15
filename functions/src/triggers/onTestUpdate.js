@@ -1,6 +1,7 @@
 import { functions } from '../f.firebase.js'
 import UserRepository from '../repositories/UserRepository.js'
-import logger from "../utils/logger.js";
+import { createLogger } from "../utils/logger.js";
+const logger = createLogger('onTestUpdate');
 
 export const onTestUpdate = functions.onTrigger({
   path: 'tests/{docId}',

@@ -1,4 +1,6 @@
 import { admin, functions } from "../f.firebase.js";
+import { createLogger } from "../utils/logger.js";
+const logger = createLogger('addSubTypeInUser');
 
 export const addSubTypeInUser = functions.onRequest({
   handler: async (req, res) => {
@@ -6,7 +8,7 @@ export const addSubTypeInUser = functions.onRequest({
 
     const snap = await db.collection('users').get()
     const docs = snap.docs
-    console.log(`Users Encontrados: ${snap.size}`)
+    logger.info(`Found ${snap.size} users`, { userCount: snap.size })
 
     for (let i = 0; i < docs.length; i += 500) {
       const slice = docs.slice(i, i + 500)
@@ -31,7 +33,7 @@ export const addSubTypeInUser = functions.onRequest({
       results.filter(Boolean).forEach(r => batch.update(r.ref, r.updatePayload));
       await batch.commit();
 
-      console.log(`Batch commit: ${Math.min(i + 500, docs.length)} / ${docs.length}`)
+      logger.info(`Batch commit: ${Math.min(i + 500, docs.length)} / ${docs.length}`, { processed: Math.min(i + 500, docs.length), total: docs.length })
     }
     return res.status(200).send()
   }

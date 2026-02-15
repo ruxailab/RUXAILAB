@@ -1,5 +1,6 @@
 import { admin, functions } from '../f.firebase.js'
-import logger from "../utils/logger.js";
+import { createLogger } from "../utils/logger.js";
+const logger = createLogger('deleteAuth');
 
 export const deleteAuth = functions.onCall({
   handler: async (data) => {
