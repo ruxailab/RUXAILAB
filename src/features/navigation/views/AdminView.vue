@@ -305,14 +305,13 @@ onMounted(async () => {
   window.addEventListener('toggle-dashboard-drawer', handleToggleDrawer)
 
   // Change section event listener
-  globalThis.addEventListener('change-section', (event) => {
-    activeSection.value = event.detail
-  })
+  window.addEventListener('change-section', handleChangeSection)
 })
 
 onUnmounted(() => {
   if (unsubscribeTests) unsubscribeTests()
   window.removeEventListener('toggle-dashboard-drawer', handleToggleDrawer)
+  window.removeEventListener('change-section', handleChangeSection)
 })
 
 /**
@@ -320,6 +319,10 @@ onUnmounted(() => {
  */
 const handleToggleDrawer = () => {
   drawerOpen.value = !drawerOpen.value
+}
+
+const handleChangeSection = (event) => {
+  activeSection.value = event.detail
 }
 
 // Reacts to route query changes for section/subsection
