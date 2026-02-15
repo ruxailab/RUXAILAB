@@ -1,23 +1,29 @@
 import { FieldValue } from 'firebase-admin/firestore'
 import { admin, functions } from '../f.firebase.js'
+import { createLogger } from '../utils/logger.js'
+const logger = createLogger('consertUserTestTypeToSubType')
 
 export const consertUserTestTypeToSubType = functions.onRequest({
   handler: async (req, res) => {
     const db = admin.firestore()
 
-    await updateUserTestTypeInTest(db)
-
-    await updateUserTestTypeInUser(db)
-
-    await updateUserTestTypeInAnswer(db)
-
-    await updateUserTestTypeInTempleate(db)
-    return res.status(200).send()
+    try {
+      await updateUserTestTypeInTest(db)
+      await updateUserTestTypeInUser(db)
+      await updateUserTestTypeInAnswer(db)
+      await updateUserTestTypeInTempleate(db)
+      logger.info('All subType migrations completed successfully')
+      return res.status(200).send()
+    } catch (error) {
+      logger.error('SubType migration failed', { error })
+      return res.status(500).send('Migration failed')
+    }
   },
 })
 
 async function updateUserTestTypeInTest(db) {
   const snap = await db.collection('tests').get()
+  logger.info(`Migrating ${snap.size} test documents`, { collection: 'tests', count: snap.size })
   const docs = snap.docs
 
   for (let i = 0; i < docs.length; i += 500) {
@@ -67,6 +73,7 @@ async function updateUserTestTypeInTest(db) {
 
 async function updateUserTestTypeInUser(db) {
   const snap = await db.collection('users').get()
+  logger.info(`Migrating ${snap.size} user documents`, { collection: 'users', count: snap.size })
 
   const docs = snap.docs
 
@@ -128,6 +135,7 @@ async function updateUserTestTypeInUser(db) {
 
 async function updateUserTestTypeInTempleate(db) {
   const snap = await db.collection('templates').get()
+  logger.info(`Migrating ${snap.size} template documents`, { collection: 'templates', count: snap.size })
   const docs = snap.docs
 
   for (let i = 0; i < docs.length; i += 500) {
@@ -154,6 +162,7 @@ async function updateUserTestTypeInTempleate(db) {
 
 async function updateUserTestTypeInAnswer(db) {
   const snap = await db.collection('answers').get()
+  logger.info(`Migrating ${snap.size} answer documents`, { collection: 'answers', count: snap.size })
   const docs = snap.docs
 
   for (let i = 0; i < docs.length; i += 500) {
