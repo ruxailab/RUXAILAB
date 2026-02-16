@@ -2349,5 +2349,66 @@
       }
     },
     "title": "Política de Privacidade"
+  },
+  "invitation": {
+    "title": "Aceitar convite",
+    "subtitle": "Crie sua conta para participar do estudo",
+    "validating": "Validando convite...",
+    "invalidTitle": "Convite inválido",
+    "invalidMessage": "Este link de convite é inválido ou expirou.",
+    "invalidLink": "Link de convite inválido. Por favor, verifique a URL.",
+    "invalidInvitation": "Convite inválido",
+    "accountExists": "Já existe uma conta com este e-mail. Por favor, faça login.",
+    "expiredInvitation": "Este convite expirou. Entre em contato com o administrador do estudo.",
+    "validationFailed": "Falha ao validar o convite. Tente novamente.",
+    "invitationDetails": "Detalhes do convite",
+    "invitedBy": "Convidado por",
+    "study": "Estudo",
+    "invitedEmail": "E-mail convidado",
+    "expires": "Expira em",
+    "createAndAccept": "Criar conta e aceitar convite",
+    "agreeTo": "Eu concordo com os",
+    "termsRequired": "Você deve aceitar os termos para continuar",
+    "signInInstead": "Fazer login",
+    "successTitle": "Conta criada com sucesso!",
+    "successMessage": "Você foi adicionado ao estudo:",
+    "chooseOption": "Escolha para onde deseja ir:",
+    "goToStudy": "Ir para o estudo",
+    "goToDashboard": "Ir para o painel",
+    "goToHomepage": "Ir para a página inicial",
+    "accountCreated": "Conta criada com sucesso! Você foi adicionado ao estudo.",
+    "accountCreationFailed": "Falha ao criar conta. Tente novamente.",
+    "googleSignInFailed": "Falha no login com Google. Tente novamente.",
+    "auth": {
+      "SIGNIN": {
+        "sign-up": "Cadastrar",
+        "signupSubtitle": "Crie sua conta para começar",
+        "email": "E-mail",
+        "password": "Senha",
+        "confirmPassword": "Confirmar senha",
+        "name": "Nome completo",
+        "or": "ou",
+        "continueWithGoogle": "Continuar com Google",
+        "alreadyHaveAnAccount": "Já tem uma conta?",
+        "sign-in": "Entrar"
+      }
+    },
+    "errors": {
+      "nameRequired": "Nome é obrigatório",
+      "nameMinLength": "Nome deve ter pelo menos 2 caracteres",
+      "passwordRequired": "Senha é obrigatória",
+      "passwordValidate": "Senha deve ter pelo menos 8 caracteres",
+      "passwordUppercase": "Senha deve conter pelo menos uma letra maiúscula",
+      "passwordSymbol": "Senha deve conter pelo menos um caractere especial",
+      "differentPasswords": "As senhas não coincidem"
+    },
+    "common": {
+      "and": "e",
+      "locale": "pt-BR"
+    },
+    "footer": {
+      "termsOfService": "Termos de Serviço",
+      "privacyPolicy": "Política de Privacidade"
+    }
   }
 }
