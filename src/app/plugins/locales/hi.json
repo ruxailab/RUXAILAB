@@ -2348,5 +2348,66 @@
       }
     },
     "title": "गोपनीयता नीति"
+  },
+  "invitation": {
+    "title": "निमंत्रण स्वीकार करें",
+    "subtitle": "अध्ययन में शामिल होने के लिए अपना खाता बनाएं",
+    "validating": "निमंत्रण सत्यापित किया जा रहा है...",
+    "invalidTitle": "अमान्य निमंत्रण",
+    "invalidMessage": "यह निमंत्रण लिंक अमान्य है या समाप्त हो गया है।",
+    "invalidLink": "अमान्य निमंत्रण लिंक। कृपया URL जांचें।",
+    "invalidInvitation": "अमान्य निमंत्रण",
+    "accountExists": "इस ईमेल के साथ एक खाता पहले से मौजूद है। कृपया साइन इन करें।",
+    "expiredInvitation": "यह निमंत्रण समाप्त हो गया है। कृपया अध्ययन प्रशासक से संपर्क करें।",
+    "validationFailed": "निमंत्रण सत्यापन विफल। कृपया पुनः प्रयास करें।",
+    "invitationDetails": "निमंत्रण विवरण",
+    "invitedBy": "द्वारा आमंत्रित",
+    "study": "अध्ययन",
+    "invitedEmail": "आमंत्रित ईमेल",
+    "expires": "समाप्ति तिथि",
+    "createAndAccept": "खाता बनाएं और निमंत्रण स्वीकार करें",
+    "agreeTo": "मैं सहमत हूं",
+    "termsRequired": "जारी रखने के लिए आपको शर्तें स्वीकार करनी होंगी",
+    "signInInstead": "इसके बजाय साइन इन करें",
+    "successTitle": "खाता सफलतापूर्वक बनाया गया!",
+    "successMessage": "आपको अध्ययन में जोड़ दिया गया है:",
+    "chooseOption": "चुनें कि आप कहाँ जाना चाहते हैं:",
+    "goToStudy": "अध्ययन पर जाएं",
+    "goToDashboard": "डैशबोर्ड पर जाएं",
+    "goToHomepage": "होमपेज पर जाएं",
+    "accountCreated": "खाता सफलतापूर्वक बनाया गया! आपको अध्ययन में जोड़ दिया गया है।",
+    "accountCreationFailed": "खाता निर्माण विफल। कृपया पुनः प्रयास करें।",
+    "googleSignInFailed": "Google साइन इन विफल। कृपया पुनः प्रयास करें।",
+    "auth": {
+      "SIGNIN": {
+        "sign-up": "साइन अप करें",
+        "signupSubtitle": "आरंभ करने के लिए अपना खाता बनाएं",
+        "email": "ईमेल",
+        "password": "पासवर्ड",
+        "confirmPassword": "पासवर्ड की पुष्टि करें",
+        "name": "पूरा नाम",
+        "or": "या",
+        "continueWithGoogle": "Google के साथ जारी रखें",
+        "alreadyHaveAnAccount": "पहले से ही एक खाता है?",
+        "sign-in": "साइन इन करें"
+      }
+    },
+    "errors": {
+      "nameRequired": "नाम आवश्यक है",
+      "nameMinLength": "नाम कम से कम 2 अक्षरों का होना चाहिए",
+      "passwordRequired": "पासवर्ड आवश्यक है",
+      "passwordValidate": "पासवर्ड कम से कम 8 अक्षरों का होना चाहिए",
+      "passwordUppercase": "पासवर्ड में कम से कम एक बड़ा अक्षर होना चाहिए",
+      "passwordSymbol": "पासवर्ड में कम से कम एक विशेष वर्ण होना चाहिए",
+      "differentPasswords": "पासवर्ड मेल नहीं खाते"
+    },
+    "common": {
+      "and": "और",
+      "locale": "hi-IN"
+    },
+    "footer": {
+      "termsOfService": "सेवा की शर्तें",
+      "privacyPolicy": "गोपनीयता नीति"
+    }
   }
 }
