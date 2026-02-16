@@ -2363,5 +2363,66 @@
     "selectedGuidelines": "Selected Guidelines:",
     "rawWcagDataAvailable": "Raw WCAG Data Available:",
     "filteredWcagDataAvailable": "Filtered WCAG Data Available:"
+  },
+  "invitation": {
+    "title": "Accept Invitation",
+    "subtitle": "Create your account to join the study",
+    "validating": "Validating invitation...",
+    "invalidTitle": "Invalid Invitation",
+    "invalidMessage": "This invitation link is invalid or has expired.",
+    "invalidLink": "Invalid invitation link. Please check the URL.",
+    "invalidInvitation": "Invalid invitation",
+    "accountExists": "An account already exists with this email. Please sign in instead.",
+    "expiredInvitation": "This invitation has expired. Please contact the study administrator.",
+    "validationFailed": "Failed to validate invitation. Please try again.",
+    "invitationDetails": "Invitation Details",
+    "invitedBy": "Invited by",
+    "study": "Study",
+    "invitedEmail": "Invited Email",
+    "expires": "Expires",
+    "createAndAccept": "Create Account & Accept Invitation",
+    "agreeTo": "I agree to the",
+    "termsRequired": "You must accept the terms to continue",
+    "signInInstead": "Sign in instead",
+    "successTitle": "Account Created Successfully!",
+    "successMessage": "You have been added to the study:",
+    "chooseOption": "Choose where you'd like to go:",
+    "goToStudy": "Go to Study",
+    "goToDashboard": "Go to Dashboard",
+    "goToHomepage": "Go to Homepage",
+    "accountCreated": "Account created successfully! You have been added to the study.",
+    "accountCreationFailed": "Failed to create account. Please try again.",
+    "googleSignInFailed": "Google sign-in failed. Please try again.",
+    "auth": {
+      "SIGNIN": {
+        "sign-up": "Sign Up",
+        "signupSubtitle": "Create your account to get started",
+        "email": "Email",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "name": "Full Name",
+        "or": "or",
+        "continueWithGoogle": "Continue with Google",
+        "alreadyHaveAnAccount": "Already have an account?",
+        "sign-in": "Sign In"
+      }
+    },
+    "errors": {
+      "nameRequired": "Name is required",
+      "nameMinLength": "Name must be at least 2 characters",
+      "passwordRequired": "Password is required",
+      "passwordValidate": "Password must be at least 8 characters",
+      "passwordUppercase": "Password must contain at least one uppercase letter",
+      "passwordSymbol": "Password must contain at least one special character",
+      "differentPasswords": "Passwords do not match"
+    },
+    "common": {
+      "and": "and",
+      "locale": "en-US"
+    },
+    "footer": {
+      "termsOfService": "Terms of Service",
+      "privacyPolicy": "Privacy Policy"
+    }
   }
 }
