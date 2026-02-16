@@ -12,7 +12,10 @@ export const getFunctionLogs = functions.onCall({
   handler: async (data) => {
     const { pageToken } = data.data ?? {};
 
-    const filter = 'resource.type="cloud_function" OR resource.type="cloud_run_revision"';
+    const filter = [
+      '(resource.type="cloud_function" OR resource.type="cloud_run_revision")',
+      'jsonPayload:*',
+    ].join(' AND ');
 
     const options = {
       filter,
@@ -27,24 +30,30 @@ export const getFunctionLogs = functions.onCall({
     try {
       const [entries, , response] = await logging.getEntries(options);
 
-      const logs = entries.map((entry) => ({
-        timestamp: entry.metadata.timestamp,
-        severity: entry.metadata.severity,
-        functionName: entry.metadata.resource?.labels?.function_name
-          ?? entry.metadata.resource?.labels?.service_name
-          ?? null,
-        message: typeof entry.data === 'string'
-          ? entry.data
-          : entry.data?.message ?? entry.data ?? null,
-        level: entry.data?.level ?? null,
-        context: typeof entry.data === 'object'
-          ? (() => {
-              const { message, level, functionName, timestamp, severity, ...rest } = entry.data;
-              return Object.keys(rest).length > 0 ? rest : null;
-            })()
-          : null,
-        insertId: entry.metadata.insertId,
-      }));
+      const logs = entries.map((entry) => {
+        const ts = entry.metadata.timestamp;
+        const timestamp = (ts && typeof ts.toISOString === 'function')
+          ? ts.toISOString()
+          : (ts?.seconds != null)
+            ? new Date(Number(ts.seconds) * 1000).toISOString()
+            : ts ?? null;
+
+        return {
+          timestamp,
+          severity: entry.metadata.severity ?? null,
+          functionName: entry.metadata.resource?.labels?.function_name
+            ?? entry.metadata.resource?.labels?.service_name
+            ?? null,
+          message: entry.data?.message ?? null,
+          level: entry.data?.level ?? null,
+          context: (() => {
+            if (typeof entry.data !== 'object' || entry.data === null) return null;
+            const { message, level, functionName, timestamp: _ts, severity, ...rest } = entry.data;
+            return Object.keys(rest).length > 0 ? rest : null;
+          })(),
+          insertId: entry.metadata.insertId,
+        };
+      });
 
       const nextPageToken = response?.nextPageToken ?? null;
 
