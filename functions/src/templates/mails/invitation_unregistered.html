@@ -20,7 +20,7 @@
       }
       /* Accessibility improvements */
       a:focus {
-        outline: 2px solid #059669 !important;
+        outline: 2px solid #00213F !important;
         outline-offset: 2px !important;
       }
       /* Better contrast for low vision users */
@@ -35,14 +35,14 @@
         display: inline-block;
         margin: 10px;
         padding: 18px 40px;
-        background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-        color: #ffffff;
+        background: linear-gradient(135deg, #00213F 0%, #1a3a5f 100%);
+        color: #ffffff !important;
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); 
         font-weight: 700; 
         text-decoration: none;
         border-radius: 8px;
         font-size: 17px;
-        box-shadow: 0 4px 6px -1px rgba(5, 150, 105, 0.3);
+        box-shadow: 0 4px 6px -1px rgba(0, 33, 63, 0.3);
         transition: all 0.3s ease;
         cursor: pointer;
         border: none;
@@ -50,18 +50,19 @@
       }
       .invitation-button:hover,
       .invitation-button:focus {
+        color: #ffffff !important;
         opacity: 0.9;
         transform: translateY(-2px);
-        box-shadow: 0 6px 8px -1px rgba(5, 150, 105, 0.4);
+        box-shadow: 0 6px 8px -1px rgba(0, 33, 63, 0.4);
       }
     </style>
   </head>
   <body style="margin:0; padding:0; font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background:#f8fafc;">
     <!-- Use semantic main element -->
     <main style="max-width:600px; margin:0 auto; background:#ffffff; border-radius:12px; overflow:hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);" class="email-container">
-      <!-- Use semantic header element -->
-      <header style="text-align:center; padding:30px 20px; background:linear-gradient(135deg, #059669 0%, #10b981 100%);">
-        <img src="../../../../src/assets/logo_full.png"
+      <!-- Header with RUXAILAB blue -->
+      <header style="text-align:center; padding:30px 20px; background:linear-gradient(135deg, #00213F 0%, #1a3a5f 100%);">
+        <img src="https://raw.githubusercontent.com/ruxailab/RUXAILAB/refs/heads/develop/src/assets/logo_full_white.png"
              alt="RUXAILAB Logo"
              width="200"
              height="auto"
@@ -77,10 +78,10 @@
           {{message}}
         </p>
         
-        <!-- Use semantic section element -->
-        <section style="background:#f0fdf4; padding:25px; border-radius:8px; margin:25px 0; border:1px solid #bbf7d0;" aria-label="Study Invitation Details">
-          <h2 style="margin:0 0 15px 0; font-weight:600; color:#065f46; display:flex; align-items:center; font-size:16px;">
-            <svg style="margin-right:8px;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <!-- Study Details Section with RUXAILAB blue accent -->
+        <section style="background:#f3f4f6; padding:25px; border-radius:8px; margin:25px 0; border-left:4px solid #00213F;" aria-label="Study Invitation Details">
+          <h2 style="margin:0 0 15px 0; font-weight:600; color:#00213F; display:flex; align-items:center; font-size:16px;">
+            <svg style="margin-right:8px;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00213F" stroke-width="2" aria-hidden="true">
               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
               <polyline points="22 4 12 14.01 9 11.01"></polyline>
             </svg>
@@ -89,20 +90,20 @@
           <h3 style="margin:0 0 10px 0; font-size:18px; font-weight:600; color:#111827;" class="high-contrast-text">{{testTitle}}</h3>
           <p style="margin:0; color:#4b5563;" class="medium-contrast-text">{{testDescription}}</p>
           <p style="margin:15px 0 0 0; font-size:14px; color:#6b7280;">
-            Invited by: <strong style="color:#111827;">{{adminName}}</strong> ({{adminEmail}})
+            Invited by: <strong style="color:#00213F;">{{adminName}}</strong> ({{adminEmail}})
           </p>
         </section>
 
-        <!-- Use semantic section element -->
-        <section style="background:#fef3c7; padding:20px; border-radius:8px; margin:30px 0; border:1px solid #fbbf24;" aria-label="Getting Started Steps">
-          <h2 style="margin:0 0 15px 0; font-weight:600; color:#92400e; display:flex; align-items:center; font-size:16px;">
-            <svg style="margin-right:8px;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <!-- Getting Started Steps with RUXAILAB blue accent -->
+        <section style="background:#f3f4f6; padding:20px; border-radius:8px; margin:30px 0; border-left:4px solid #00213F;" aria-label="Getting Started Steps">
+          <h2 style="margin:0 0 15px 0; font-weight:600; color:#00213F; display:flex; align-items:center; font-size:16px;">
+            <svg style="margin-right:8px;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00213F" stroke-width="2" aria-hidden="true">
               <circle cx="12" cy="12" r="10"></circle>
               <polyline points="12 6 12 12 16 14"></polyline>
             </svg>
             To Get Started:
           </h2>
-          <ol style="margin:0; padding-left:20px; color:#78350f;" class="medium-contrast-text">
+          <ol style="margin:0; padding-left:20px; color:#374151;" class="medium-contrast-text">
             <li style="margin-bottom:8px;">Create your RUXAILAB account using this invitation link</li>
             <li style="margin-bottom:8px;">You'll automatically be added to the study</li>
             <li>Begin your participation immediately</li>
@@ -121,23 +122,14 @@
         </a>
       </div>
 
-      <!-- Security & Info -->
+      <!-- Security & Info Section - REMOVED as per feedback -->
+
+      <!-- Alternative Link -->
       <div style="padding:0 30px 25px 30px; text-align:center;">
-        <div style="background:#f3f4f6; padding:15px; border-radius:6px;" role="note" aria-label="Security Information">
-          <p style="margin:0; font-size:13px; color:#4b5563;" class="medium-contrast-text">
-            <strong style="color:#111827;">🔒 Security Note:</strong> This invitation link:
-            <br>
-            • Expires in 7 days
-            <br>
-            • Can only be used once
-            <br>
-            • Is unique to your email address
-          </p>
-        </div>
-        <p style="margin:15px 0 0 0; font-size:13px; color:#6b7280;">
+        <p style="margin:0 0 15px 0; font-size:13px; color:#6b7280;">
           If the button doesn't work, use this link:<br>
           <a href="{{site}}/accept-invitation?token={{invitationToken}}&email={{email}}"
-             style="color:#059669; word-break: break-all; text-decoration:underline;"
+             style="color:#00213F; word-break: break-all; text-decoration:underline;"
              onkeydown="if(event.key === 'Enter') { window.location.href = '{{site}}/accept-invitation?token={{invitationToken}}&email={{email}}'; }"
              tabindex="0">
              {{site}}/accept-invitation?token={{invitationToken}}&email={{email}}
@@ -151,7 +143,7 @@
           <p style="margin:0 0 8px 0; font-weight:500; color:#374151;" class="medium-contrast-text">Need Assistance?</p>
           <p style="margin:0;">
             Contact the study organizer:<br>
-            <a href="mailto:{{adminEmail}}" style="color:#059669; text-decoration:none; font-weight:500;"
+            <a href="mailto:{{adminEmail}}" style="color:#00213F; text-decoration:none; font-weight:500;"
                onkeydown="if(event.key === 'Enter') { window.location.href = 'mailto:{{adminEmail}}'; }"
                tabindex="0">
                {{adminEmail}}
