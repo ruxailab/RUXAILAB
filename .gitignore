@@ -36,6 +36,7 @@ ui-debug.log
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+/coverage/
 
 # Ignore the playwright test screenshots and video
 /playwright/output

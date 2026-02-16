@@ -9,4 +9,7 @@ module.exports = {
   setupFilesAfterEnv: ['./tests/mocks/firebase.js'],
   resetMocks: true,
   clearMocks: true,
+  collectCoverage: true,
+  coverageDirectory: 'coverage',
+  coverageReporters: ['text', 'lcov', 'clover'],
 }
