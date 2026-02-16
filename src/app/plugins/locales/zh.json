@@ -2349,5 +2349,66 @@
       }
     },
     "title": "隐私政策"
+  },
+  "invitation": {
+    "title": "接受邀请",
+    "subtitle": "创建您的帐户以加入研究",
+    "validating": "验证邀请中...",
+    "invalidTitle": "无效邀请",
+    "invalidMessage": "此邀请链接无效或已过期。",
+    "invalidLink": "无效的邀请链接。请检查URL。",
+    "invalidInvitation": "无效邀请",
+    "accountExists": "此邮箱已存在账户。请登录。",
+    "expiredInvitation": "此邀请已过期。请联系研究管理员。",
+    "validationFailed": "邀请验证失败。请重试。",
+    "invitationDetails": "邀请详情",
+    "invitedBy": "邀请人",
+    "study": "研究",
+    "invitedEmail": "受邀邮箱",
+    "expires": "过期时间",
+    "createAndAccept": "创建账户并接受邀请",
+    "agreeTo": "我同意",
+    "termsRequired": "您必须接受条款才能继续",
+    "signInInstead": "改为登录",
+    "successTitle": "账户创建成功！",
+    "successMessage": "您已添加到研究：",
+    "chooseOption": "选择您要去的地方：",
+    "goToStudy": "前往研究",
+    "goToDashboard": "前往仪表板",
+    "goToHomepage": "前往主页",
+    "accountCreated": "账户创建成功！您已添加到研究。",
+    "accountCreationFailed": "账户创建失败。请重试。",
+    "googleSignInFailed": "Google登录失败。请重试。",
+    "auth": {
+      "SIGNIN": {
+        "sign-up": "注册",
+        "signupSubtitle": "创建您的帐户以开始使用",
+        "email": "邮箱",
+        "password": "密码",
+        "confirmPassword": "确认密码",
+        "name": "全名",
+        "or": "或",
+        "continueWithGoogle": "继续使用Google",
+        "alreadyHaveAnAccount": "已有账户？",
+        "sign-in": "登录"
+      }
+    },
+    "errors": {
+      "nameRequired": "姓名是必填项",
+      "nameMinLength": "姓名至少需要2个字符",
+      "passwordRequired": "密码是必填项",
+      "passwordValidate": "密码至少需要8个字符",
+      "passwordUppercase": "密码必须包含至少一个大写字母",
+      "passwordSymbol": "密码必须包含至少一个特殊字符",
+      "differentPasswords": "密码不匹配"
+    },
+    "common": {
+      "and": "和",
+      "locale": "zh-CN"
+    },
+    "footer": {
+      "termsOfService": "服务条款",
+      "privacyPolicy": "隐私政策"
+    }
   }
 }
