@@ -2370,5 +2370,66 @@
       }
     },
     "title": "Datenschutzerklärung"
+  },
+  "invitation": {
+    "title": "Einladung annehmen",
+    "subtitle": "Erstellen Sie Ihr Konto, um an der Studie teilzunehmen",
+    "validating": "Einladung wird überprüft...",
+    "invalidTitle": "Ungültige Einladung",
+    "invalidMessage": "Dieser Einladungslink ist ungültig oder abgelaufen.",
+    "invalidLink": "Ungültiger Einladungslink. Bitte überprüfen Sie die URL.",
+    "invalidInvitation": "Ungültige Einladung",
+    "accountExists": "Ein Konto mit dieser E-Mail existiert bereits. Bitte melden Sie sich stattdessen an.",
+    "expiredInvitation": "Diese Einladung ist abgelaufen. Bitte kontaktieren Sie den Studienadministrator.",
+    "validationFailed": "Einladungsüberprüfung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "invitationDetails": "Einladungsdetails",
+    "invitedBy": "Eingeladen von",
+    "study": "Studie",
+    "invitedEmail": "Eingeladene E-Mail",
+    "expires": "Läuft ab am",
+    "createAndAccept": "Konto erstellen & Einladung annehmen",
+    "agreeTo": "Ich stimme zu",
+    "termsRequired": "Sie müssen die Bedingungen akzeptieren, um fortzufahren",
+    "signInInstead": "Stattdessen anmelden",
+    "successTitle": "Konto erfolgreich erstellt!",
+    "successMessage": "Sie wurden zur Studie hinzugefügt:",
+    "chooseOption": "Wählen Sie, wohin Sie gehen möchten:",
+    "goToStudy": "Zur Studie gehen",
+    "goToDashboard": "Zum Dashboard gehen",
+    "goToHomepage": "Zur Startseite gehen",
+    "accountCreated": "Konto erfolgreich erstellt! Sie wurden zur Studie hinzugefügt.",
+    "accountCreationFailed": "Kontoerstellung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "googleSignInFailed": "Google-Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "auth": {
+      "SIGNIN": {
+        "sign-up": "Registrieren",
+        "signupSubtitle": "Erstellen Sie Ihr Konto, um zu beginnen",
+        "email": "E-Mail",
+        "password": "Passwort",
+        "confirmPassword": "Passwort bestätigen",
+        "name": "Vollständiger Name",
+        "or": "oder",
+        "continueWithGoogle": "Mit Google fortfahren",
+        "alreadyHaveAnAccount": "Bereits ein Konto?",
+        "sign-in": "Anmelden"
+      }
+    },
+    "errors": {
+      "nameRequired": "Name ist erforderlich",
+      "nameMinLength": "Name muss mindestens 2 Zeichen lang sein",
+      "passwordRequired": "Passwort ist erforderlich",
+      "passwordValidate": "Passwort muss mindestens 8 Zeichen lang sein",
+      "passwordUppercase": "Passwort muss mindestens einen Großbuchstaben enthalten",
+      "passwordSymbol": "Passwort muss mindestens ein Sonderzeichen enthalten",
+      "differentPasswords": "Passwörter stimmen nicht überein"
+    },
+    "common": {
+      "and": "und",
+      "locale": "de-DE"
+    },
+    "footer": {
+      "termsOfService": "Nutzungsbedingungen",
+      "privacyPolicy": "Datenschutzerklärung"
+    }
   }
 }
