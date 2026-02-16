@@ -2369,5 +2369,66 @@
       }
     },
     "title": "Politique de confidentialité"
+  },
+  "invitation": {
+    "title": "Accepter l'invitation",
+    "subtitle": "Créez votre compte pour rejoindre l'étude",
+    "validating": "Validation de l'invitation...",
+    "invalidTitle": "Invitation invalide",
+    "invalidMessage": "Ce lien d'invitation est invalide ou a expiré.",
+    "invalidLink": "Lien d'invitation invalide. Veuillez vérifier l'URL.",
+    "invalidInvitation": "Invitation invalide",
+    "accountExists": "Un compte avec cet email existe déjà. Veuillez vous connecter.",
+    "expiredInvitation": "Cette invitation a expiré. Veuillez contacter l'administrateur de l'étude.",
+    "validationFailed": "Échec de la validation de l'invitation. Veuillez réessayer.",
+    "invitationDetails": "Détails de l'invitation",
+    "invitedBy": "Invité par",
+    "study": "Étude",
+    "invitedEmail": "Email invité",
+    "expires": "Expire le",
+    "createAndAccept": "Créer un compte et accepter l'invitation",
+    "agreeTo": "J'accepte les",
+    "termsRequired": "Vous devez accepter les conditions pour continuer",
+    "signInInstead": "Se connecter",
+    "successTitle": "Compte créé avec succès !",
+    "successMessage": "Vous avez été ajouté à l'étude :",
+    "chooseOption": "Choisissez où vous souhaitez aller :",
+    "goToStudy": "Aller à l'étude",
+    "goToDashboard": "Aller au tableau de bord",
+    "goToHomepage": "Aller à la page d'accueil",
+    "accountCreated": "Compte créé avec succès ! Vous avez été ajouté à l'étude.",
+    "accountCreationFailed": "Échec de la création du compte. Veuillez réessayer.",
+    "googleSignInFailed": "Échec de la connexion avec Google. Veuillez réessayer.",
+    "auth": {
+      "SIGNIN": {
+        "sign-up": "S'inscrire",
+        "signupSubtitle": "Créez votre compte pour commencer",
+        "email": "Email",
+        "password": "Mot de passe",
+        "confirmPassword": "Confirmer le mot de passe",
+        "name": "Nom complet",
+        "or": "ou",
+        "continueWithGoogle": "Continuer avec Google",
+        "alreadyHaveAnAccount": "Vous avez déjà un compte ?",
+        "sign-in": "Se connecter"
+      }
+    },
+    "errors": {
+      "nameRequired": "Le nom est requis",
+      "nameMinLength": "Le nom doit contenir au moins 2 caractères",
+      "passwordRequired": "Le mot de passe est requis",
+      "passwordValidate": "Le mot de passe doit contenir au moins 8 caractères",
+      "passwordUppercase": "Le mot de passe doit contenir au moins une lettre majuscule",
+      "passwordSymbol": "Le mot de passe doit contenir au moins un caractère spécial",
+      "differentPasswords": "Les mots de passe ne correspondent pas"
+    },
+    "common": {
+      "and": "et",
+      "locale": "fr-FR"
+    },
+    "footer": {
+      "termsOfService": "Conditions d'utilisation",
+      "privacyPolicy": "Politique de confidentialité"
+    }
   }
 }
