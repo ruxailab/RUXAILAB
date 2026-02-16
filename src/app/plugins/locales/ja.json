@@ -2361,5 +2361,66 @@
       }
     },
     "title": "プライバシーポリシー"
+  },
+  "invitation": {
+    "title": "招待を承諾",
+    "subtitle": "研究に参加するためのアカウントを作成",
+    "validating": "招待を検証中...",
+    "invalidTitle": "無効な招待",
+    "invalidMessage": "この招待リンクは無効か期限切れです。",
+    "invalidLink": "無効な招待リンクです。URLを確認してください。",
+    "invalidInvitation": "無効な招待",
+    "accountExists": "このメールアドレスのアカウントは既に存在します。サインインしてください。",
+    "expiredInvitation": "この招待は期限切れです。研究管理者に連絡してください。",
+    "validationFailed": "招待の検証に失敗しました。もう一度お試しください。",
+    "invitationDetails": "招待詳細",
+    "invitedBy": "招待者",
+    "study": "研究",
+    "invitedEmail": "招待メール",
+    "expires": "期限",
+    "createAndAccept": "アカウント作成して招待を承諾",
+    "agreeTo": "同意する",
+    "termsRequired": "続行するには利用規約に同意する必要があります",
+    "signInInstead": "代わりにサインイン",
+    "successTitle": "アカウントが正常に作成されました！",
+    "successMessage": "研究に追加されました：",
+    "chooseOption": "移動先を選択：",
+    "goToStudy": "研究へ",
+    "goToDashboard": "ダッシュボードへ",
+    "goToHomepage": "ホームページへ",
+    "accountCreated": "アカウントが正常に作成されました！研究に追加されました。",
+    "accountCreationFailed": "アカウントの作成に失敗しました。もう一度お試しください。",
+    "googleSignInFailed": "Googleサインインに失敗しました。もう一度お試しください。",
+    "auth": {
+      "SIGNIN": {
+        "sign-up": "サインアップ",
+        "signupSubtitle": "始めるためのアカウントを作成",
+        "email": "メールアドレス",
+        "password": "パスワード",
+        "confirmPassword": "パスワード確認",
+        "name": "氏名",
+        "or": "または",
+        "continueWithGoogle": "Googleで続ける",
+        "alreadyHaveAnAccount": "すでにアカウントをお持ちですか？",
+        "sign-in": "サインイン"
+      }
+    },
+    "errors": {
+      "nameRequired": "名前は必須です",
+      "nameMinLength": "名前は2文字以上である必要があります",
+      "passwordRequired": "パスワードは必須です",
+      "passwordValidate": "パスワードは8文字以上である必要があります",
+      "passwordUppercase": "パスワードには少なくとも1つの大文字を含める必要があります",
+      "passwordSymbol": "パスワードには少なくとも1つの特殊文字を含める必要があります",
+      "differentPasswords": "パスワードが一致しません"
+    },
+    "common": {
+      "and": "と",
+      "locale": "ja-JP"
+    },
+    "footer": {
+      "termsOfService": "利用規約",
+      "privacyPolicy": "プライバシーポリシー"
+    }
   }
 }
