@@ -16,7 +16,7 @@
       }
       /* Accessibility improvements */
       a:focus {
-        outline: 2px solid #4f46e5 !important;
+        outline: 2px solid #00213F !important;
         outline-offset: 2px !important;
       }
       /* Style for button links */
@@ -24,19 +24,20 @@
         display: inline-block;
         margin: 10px;
         padding: 16px 32px;
-        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-        color: #ffffff;
-        text-decoration: none;
+        background: linear-gradient(135deg, #00213F 0%, #1a3a5f 100%);
+        color: #ffffff !important;
+        text-decoration: none !important;
         border-radius: 8px;
         font-size: 16px;
         font-weight: 600;
-        box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
+        box-shadow: 0 4px 6px -1px rgba(0, 33, 63, 0.3);
         transition: all 0.3s ease;
         border: none;
         cursor: pointer;
         font-family: inherit;
       }
       .button-link:hover {
+        color: #ffffff !important;
         opacity: 0.9;
       }
     </style>
@@ -44,9 +45,9 @@
   <body style="margin:0; padding:0; font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background:#f8fafc;">
     <!-- Main container -->
     <main style="max-width:600px; margin:0 auto; background:#ffffff; border-radius:12px; overflow:hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);" class="email-container">
-      <!-- Header -->
-      <header style="text-align:center; padding:30px 20px; background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-        <img src="https://raw.githubusercontent.com/ruxailab/RUXAILAB/refs/heads/develop/src/assets/ruxailab-long-crop-white.png"
+      <!-- Header with RUXAILAB blue -->
+      <header style="text-align:center; padding:30px 20px; background:linear-gradient(135deg, #00213F 0%, #1a3a5f 100%);">
+        <img src="https://raw.githubusercontent.com/ruxailab/RUXAILAB/refs/heads/develop/src/assets/logo_full_white.png"
              alt="RUXAILAB Logo"
              width="200"
              height="auto"
@@ -62,7 +63,7 @@
           {{message}}
         </p>
         
-        <section style="background:#f3f4f6; padding:20px; border-radius:8px; margin:25px 0; border-left:4px solid #4f46e5;" aria-label="Study Details">
+        <section style="background:#f3f4f6; padding:20px; border-radius:8px; margin:25px 0; border-left:4px solid #00213F;" aria-label="Study Details">
           <h2 style="margin:0 0 10px 0; font-weight:600; color:#1f2937; font-size:16px;">Study Details:</h2>
           <p style="margin:0; color:#4b5563;">
             <strong style="color:#111827;">{{testTitle}}</strong>
@@ -72,9 +73,9 @@
         </section>
         
         <p style="margin:0 0 15px 0; font-size:15px; color:#6b7280;">
-          Organized by: <strong style="color:#4f46e5;">{{adminName}}</strong>
+          Organized by: <strong style="color:#00213F;">{{adminName}}</strong>
           <br>
-          Contact: <a href="mailto:{{adminEmail}}" style="color:#4f46e5; text-decoration:none;">{{adminEmail}}</a>
+          Contact: <a href="mailto:{{adminEmail}}" style="color:#00213F; text-decoration:none;">{{adminEmail}}</a>
         </p>
 
         <p style="margin:25px 0 20px 0; font-size:15px; color:#6b7280;">
@@ -92,7 +93,7 @@
         </a>
         <p style="margin:15px 0 0 0; font-size:13px; color:#6b7280;">
           If the button doesn't work, copy and paste this link:<br>
-          <a href="{{site}}" style="color:#4f46e5; word-break: break-all; text-decoration:underline;">
+          <a href="{{site}}" style="color:#00213F; word-break: break-all; text-decoration:underline;">
             {{site}}
           </a>
         </p>
@@ -102,7 +103,7 @@
       <footer style="background:#f9fafb; padding:25px; text-align:center; font-size:13px; color:#6b7280; line-height:1.5; border-top:1px solid #e5e7eb;">
         <p style="margin:0 0 10px 0;">
           Need help or have questions?<br>
-          Contact: <a href="mailto:{{adminEmail}}" style="color:#4f46e5; text-decoration:none; font-weight:500;">{{adminEmail}}</a>
+          Contact: <a href="mailto:{{adminEmail}}" style="color:#00213F; text-decoration:none; font-weight:500;">{{adminEmail}}</a>
         </p>
         <p style="margin:15px 0 0 0; font-size:12px; color:#9ca3af;">
           © 2025 RUXAILAB - User Experience Research Platform. All rights reserved.
