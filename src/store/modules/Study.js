@@ -258,15 +258,14 @@ export default {
       commit('setLoading', true)
       try {
         const decodedEmail = decodeURIComponent(email)
-        if (!db) {
-          throw new Error('Database connection error')
-        }
+        
         const { collection, getDocs, query, where } = await import('firebase/firestore')
         const testsRef = collection(db, 'tests')
         const allTestsQuery = await getDocs(testsRef)
         let foundTest = null
         let foundCooperator = null
-        // search all the tests
+        
+        // Search all the tests
         for (const docSnap of allTestsQuery.docs) {
           const test = {
             id: docSnap.id,
@@ -288,7 +287,7 @@ export default {
           throw new Error('Invitation not found or has expired')
         }
 
-        // check invitation is expired or nott
+        // Check invitation is expired or not
         if (
           foundCooperator.invitationExpires &&
           new Date(foundCooperator.invitationExpires) < new Date()
@@ -296,20 +295,16 @@ export default {
           throw new Error('Invitation has expired')
         }
 
-        // check already accepted or not
+        // Check already accepted or not
         if (foundCooperator.accepted) {
           throw new Error('Invitation already accepted')
         }
 
-        // check user already exists or not
+        // Check if user exists in Firestore only
         const usersRef = collection(db, 'users')
         const userQuery = query(usersRef, where('email', '==', decodedEmail))
         const userSnapshot = await getDocs(userQuery)
-        const userExists = !userSnapshot.empty
-
-        if (userExists) {
-          throw new Error('User already exists. Please sign in instead.')
-        }
+        const userExistsInFirestore = !userSnapshot.empty
 
         return {
           valid: true,
@@ -322,9 +317,9 @@ export default {
           accessLevel: foundCooperator.accessLevel,
           invitationExpires: foundCooperator.invitationExpires,
           invitationMessage: foundCooperator.inviteMessage,
+          userExistsInFirestore: userExistsInFirestore,
         }
       } catch (error) {
-        console.error('Error validating invitation:', error)
         return {
           valid: false,
           error: error.message,
@@ -340,30 +335,40 @@ export default {
     async acceptInvitation({ commit, dispatch }, { token, email, name, password }) {
       commit('setLoading', true)
       try {
-        const decodedEmail = decodeURIComponent(email)        
+        const decodedEmail = decodeURIComponent(email)
+        
         const validationResult = await dispatch('validateInvitation', { 
           token, 
           email: decodedEmail 
         })
+        
         if (!validationResult.valid) {
           throw new Error(validationResult.error || 'Invalid invitation')
         }
-        const { createUserWithEmailAndPassword } = await import('firebase/auth')        
+        
+        if (validationResult.userExistsInFirestore) {
+          throw new Error('An account with this email already exists. Please sign in instead.')
+        }
+        
+        const { createUserWithEmailAndPassword, updateProfile } = await import('firebase/auth')
+        const { auth } = await import('../../app/plugins/firebase/index')
+        
         let userCredential
         try {
           userCredential = await createUserWithEmailAndPassword(auth, decodedEmail, password)
         } catch (authError) {
           if (authError.code === 'auth/email-already-in-use') {
-            throw new Error('Email already in use. Please sign in instead.')
+            throw new Error('An account with this email already exists. Please sign in instead.')
           }
-          throw authError
+          throw new Error(`Authentication failed: ${authError.message}`)
         }
+        
         if (name && userCredential.user) {
-          const { updateProfile } = await import('firebase/auth')
           await updateProfile(userCredential.user, {
             displayName: name
           })
         }
+        
         // Create user document in Firestore
         const userData = {
           email: decodedEmail,
@@ -376,9 +381,12 @@ export default {
           notifications: [],
           storageUsageMB: 0,
         }
+        
         const { doc, setDoc, getDoc, updateDoc } = await import('firebase/firestore')
+        
         await setDoc(doc(db, 'users', userCredential.user.uid), userData)
-        // update cooperator record in the test document
+        
+        // Update cooperator record in the test document
         const testRef = doc(db, 'tests', validationResult.testId)
         const testDoc = await getDoc(testRef)
         const testData = testDoc.data()
@@ -387,9 +395,11 @@ export default {
           throw new Error('Test not found')
         }
         
-        // find and update the specific cooperator
+        // Find and update the specific cooperator
+        let found = false
         const updatedCooperators = testData.cooperators.map(coop => {
           if (coop.invitationToken === token && coop.email === decodedEmail) {
+            found = true
             return {
               ...coop,
               userDocId: userCredential.user.uid,
@@ -403,13 +413,18 @@ export default {
           }
           return coop
         })
-        // update the test document with modified cooperators
+        
+        if (!found) {
+          throw new Error('Could not find matching invitation record')
+        }
+        
+        // Update the test document with modified cooperators
         await updateDoc(testRef, {
           cooperators: updatedCooperators,
           updateDate: new Date().toISOString()
         })
         
-        // auto login the user
+        // Auto login the user
         await dispatch('signin', {
           email: decodedEmail,
           password: password
@@ -424,7 +439,99 @@ export default {
         }
         
       } catch (error) {
-        console.error('Error accepting invitation:', error)
+        throw error
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+
+    /**
+     * Accept invitation with existing Google account
+     */
+    async acceptInvitationWithGoogle({ commit, dispatch }, { token, email, userId, name }) {
+      commit('setLoading', true)
+      try {
+        const decodedEmail = decodeURIComponent(email)
+        
+        // Validate invitation first
+        const validationResult = await dispatch('validateInvitation', { 
+          token, 
+          email: decodedEmail 
+        })
+        
+        if (!validationResult.valid) {
+          throw new Error(validationResult.error || 'Invalid invitation')
+        }
+        
+        // Check if user document exists in Firestore
+        const { doc, getDoc, updateDoc, setDoc } = await import('firebase/firestore')
+        
+        const userRef = doc(db, 'users', userId)
+        const userDoc = await getDoc(userRef)
+        
+        if (!userDoc.exists()) {
+          // Create user document if it doesn't exist
+          const userData = {
+            email: decodedEmail,
+            name: name || decodedEmail.split('@')[0],
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            accessLevel: 1,
+            myTests: {},
+            myAnswers: {},
+            notifications: [],
+            storageUsageMB: 0,
+          }
+          await setDoc(userRef, userData)
+        }
+        
+        // Update cooperator record in the test document
+        const testRef = doc(db, 'tests', validationResult.testId)
+        const testDoc = await getDoc(testRef)
+        const testData = testDoc.data()
+        
+        if (!testData) {
+          throw new Error('Test not found')
+        }
+        
+        // Find and update the specific cooperator
+        let found = false
+        const updatedCooperators = testData.cooperators.map(coop => {
+          if (coop.invitationToken === token && coop.email === decodedEmail) {
+            found = true
+            return {
+              ...coop,
+              userDocId: userId,
+              accepted: true,
+              isUnregistered: false,
+              invitationToken: null,
+              invitationExpires: null,
+              acceptedAt: new Date().toISOString(),
+              updateDate: new Date().toISOString(),
+            }
+          }
+          return coop
+        })
+        
+        if (!found) {
+          throw new Error('Invitation not found')
+        }
+        
+        // Update the test document with modified cooperators
+        await updateDoc(testRef, {
+          cooperators: updatedCooperators,
+          updateDate: new Date().toISOString()
+        })
+        
+        return {
+          success: true,
+          userId: userId,
+          testId: validationResult.testId,
+          testTitle: validationResult.testTitle,
+          accessLevel: validationResult.accessLevel,
+        }
+        
+      } catch (error) {
         throw error
       } finally {
         commit('setLoading', false)
