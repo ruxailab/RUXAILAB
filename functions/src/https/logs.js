@@ -4,13 +4,19 @@ import { createLogger } from '../utils/logger.js';
 
 const logger = createLogger('getFunctionLogs');
 
-const PAGE_SIZE = 100;
+const DEFAULT_PAGE_SIZE = 100;
+const MAX_PAGE_SIZE = 500;
 
 const logging = new Logging();
 
 export const getFunctionLogs = functions.onCall({
   handler: async (data) => {
-    const { pageToken } = data.data ?? {};
+    const { pageToken, pageSize: rawPageSize } = data.data ?? {};
+
+    const pageSize = Math.min(
+      Math.max(Number.isInteger(rawPageSize) && rawPageSize > 0 ? rawPageSize : DEFAULT_PAGE_SIZE, 1),
+      MAX_PAGE_SIZE,
+    );
 
     const filter = [
       '(resource.type="cloud_function" OR resource.type="cloud_run_revision")',
@@ -19,7 +25,7 @@ export const getFunctionLogs = functions.onCall({
 
     const options = {
       filter,
-      pageSize: PAGE_SIZE,
+      pageSize,
       orderBy: 'timestamp desc',
     };
 
