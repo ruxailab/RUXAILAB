@@ -2365,5 +2365,66 @@
       }
     },
     "title": "سياسة الخصوصية"
+  },
+  "invitation": {
+    "title": "قبول الدعوة",
+    "subtitle": "أنشئ حسابك للانضمام إلى الدراسة",
+    "validating": "جاري التحقق من صحة الدعوة...",
+    "invalidTitle": "دعوة غير صالحة",
+    "invalidMessage": "رابط الدعوة غير صالح أو منتهي الصلاحية.",
+    "invalidLink": "رابط دعوة غير صالح. يرجى التحقق من الرابط.",
+    "invalidInvitation": "دعوة غير صالحة",
+    "accountExists": "يوجد حساب بالفعل بهذا البريد الإلكتروني. يرجى تسجيل الدخول بدلاً من ذلك.",
+    "expiredInvitation": "انتهت صلاحية هذه الدعوة. يرجى الاتصال بمسؤول الدراسة.",
+    "validationFailed": "فشل التحقق من صحة الدعوة. يرجى المحاولة مرة أخرى.",
+    "invitationDetails": "تفاصيل الدعوة",
+    "invitedBy": "تمت الدعوة بواسطة",
+    "study": "الدراسة",
+    "invitedEmail": "البريد الإلكتروني المدعو",
+    "expires": "تنتهي في",
+    "createAndAccept": "إنشاء حساب وقبول الدعوة",
+    "agreeTo": "أوافق على",
+    "termsRequired": "يجب عليك قبول الشروط للمتابعة",
+    "signInInstead": "تسجيل الدخول بدلاً من ذلك",
+    "successTitle": "تم إنشاء الحساب بنجاح!",
+    "successMessage": "تمت إضافتك إلى الدراسة:",
+    "chooseOption": "اختر أين تريد الذهاب:",
+    "goToStudy": "الذهاب إلى الدراسة",
+    "goToDashboard": "الذهاب إلى لوحة التحكم",
+    "goToHomepage": "الذهاب إلى الصفحة الرئيسية",
+    "accountCreated": "تم إنشاء الحساب بنجاح! تمت إضافتك إلى الدراسة.",
+    "accountCreationFailed": "فشل إنشاء الحساب. يرجى المحاولة مرة أخرى.",
+    "googleSignInFailed": "فشل تسجيل الدخول عبر Google. يرجى المحاولة مرة أخرى.",
+    "auth": {
+      "SIGNIN": {
+        "sign-up": "إنشاء حساب",
+        "signupSubtitle": "أنشئ حسابك للبدء",
+        "email": "البريد الإلكتروني",
+        "password": "كلمة المرور",
+        "confirmPassword": "تأكيد كلمة المرور",
+        "name": "الاسم الكامل",
+        "or": "أو",
+        "continueWithGoogle": "المتابعة مع Google",
+        "alreadyHaveAnAccount": "لديك حساب بالفعل؟",
+        "sign-in": "تسجيل الدخول"
+      }
+    },
+    "errors": {
+      "nameRequired": "الاسم مطلوب",
+      "nameMinLength": "يجب أن يتكون الاسم من حرفين على الأقل",
+      "passwordRequired": "كلمة المرور مطلوبة",
+      "passwordValidate": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل",
+      "passwordUppercase": "يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل",
+      "passwordSymbol": "يجب أن تحتوي كلمة المرور على رمز خاص واحد على الأقل",
+      "differentPasswords": "كلمات المرور غير متطابقة"
+    },
+    "common": {
+      "and": "و",
+      "locale": "ar-SA"
+    },
+    "footer": {
+      "termsOfService": "شروط الخدمة",
+      "privacyPolicy": "سياسة الخصوصية"
+    }
   }
 }
