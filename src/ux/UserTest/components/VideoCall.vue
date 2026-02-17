@@ -424,16 +424,16 @@
                 participant.role === 'moderator'
                   ? 'blue'
                   : participant.role === 'observator'
-                  ? 'orange'
-                  : 'green'
+                    ? 'orange'
+                    : 'green'
               "
             >
               <v-icon color="white">{{
                 participant.role === 'moderator'
                   ? 'mdi-account-star'
                   : participant.role === 'observator'
-                  ? 'mdi-eye'
-                  : 'mdi-account'
+                    ? 'mdi-eye'
+                    : 'mdi-account'
               }}</v-icon>
             </v-avatar>
             <div class="participant-info">
@@ -673,16 +673,16 @@
                             item.raw.index < currentTaskIndex
                               ? 'success'
                               : item.raw.index === currentTaskIndex
-                              ? 'primary'
-                              : 'grey'
+                                ? 'primary'
+                                : 'grey'
                           "
                         >
                           {{
                             item.raw.index < currentTaskIndex
                               ? 'mdi-check-circle'
                               : item.raw.index === currentTaskIndex
-                              ? 'mdi-play-circle'
-                              : 'mdi-circle-outline'
+                                ? 'mdi-play-circle'
+                                : 'mdi-circle-outline'
                           }}
                         </v-icon>
                       </template>
@@ -818,6 +818,7 @@ import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 const props = defineProps({
   roomId: String,
   isModerator: Boolean,
+  shouldInitMedia: Boolean,
   user: Object,
   accessLevel: Number,
   currentGlobalIndex: Number,
@@ -881,8 +882,8 @@ const participantsList = computed(() => {
     role: isObservator.value
       ? 'observator'
       : props.isModerator
-      ? 'moderator'
-      : 'participant',
+        ? 'moderator'
+        : 'participant',
     connected: true,
     hasCamera: !isObservator.value && isCameraEnabled.value,
     hasMicrophone: !isObservator.value && isMicrophoneEnabled.value,
@@ -971,13 +972,7 @@ watch([localVideo, localStream], ([videoEl, stream]) => {
 })
 
 onMounted(async () => {
-  // Moderator gets media preview but doesn't join room yet
-  if (props.isModerator) {
-    // Just get local media for preview
-    if (!isObservator.value) {
-      await initLocalMedia()
-    }
-  } else {
+  if (!props.isModerator) {
     // Participants and observators wait for room to be opened by moderator
     const roomRef = dbRef(database, `rooms/${props.roomId}`)
 
@@ -1001,6 +996,22 @@ onMounted(async () => {
     })
   }
 })
+
+// Delay media init until parent signals it's time (moderator clicks "Start moderator session")
+watch(
+  () => props.shouldInitMedia,
+  async (shouldInit) => {
+    if (
+      shouldInit &&
+      props.isModerator &&
+      !isObservator.value &&
+      !localStream.value
+    ) {
+      await initLocalMedia()
+    }
+  },
+  { immediate: true },
+)
 
 onBeforeUnmount(() => {
   leaveRoom()

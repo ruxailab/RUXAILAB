@@ -355,10 +355,11 @@
           </v-btn>
 
           <!-- Video Call Component -->
-          <div v-if="displayVideoCallComponent">
+          <div v-show="displayVideoCallComponent">
             <VideoCall
               :room-id="roomId"
               :is-moderator="isUserTestAdmin"
+              :should-init-media="displayVideoCallComponent"
               :user="user"
               :access-level="currentUserAccessLevel"
               :current-global-index="globalIndex"
