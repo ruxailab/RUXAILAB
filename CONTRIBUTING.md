@@ -180,7 +180,7 @@ Then create a Pull Request on GitHub:
 We use **Prettier** for code formatting. Configuration is in `.prettierrc`.
 
 ```bash
-# Format all files
+# Format source files
 npm run format
 
 # Check formatting
@@ -227,23 +227,23 @@ src/
 
 ```bash
 # Run all tests
-npm run test:unit
+npm run test
 
 # Run tests in watch mode
-npm run test:unit:watch
+npm run test -- --watch
 
 # Run with coverage
-npm run test:unit:coverage
+npm run test -- --coverage
 ```
 
 ### End-to-End Tests (Playwright)
 
 ```bash
 # Run E2E tests
-npm run test:e2e
+npm run test-playwright
 
 # Run in headed mode (see browser)
-npm run test:e2e:headed
+npm run test-playwright -- --headed
 ```
 
 ### Writing Tests
