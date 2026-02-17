@@ -2363,5 +2363,13 @@
     "selectedGuidelines": "Selected Guidelines:",
     "rawWcagDataAvailable": "Raw WCAG Data Available:",
     "filteredWcagDataAvailable": "Filtered WCAG Data Available:"
+  },
+  "relativeTime": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "daysAgo": "{count} days ago",
+    "weeksAgo": "{count} weeks ago",
+    "monthsAgo": "{count} months ago",
+    "yearsAgo": "{count} years ago"
   }
 }

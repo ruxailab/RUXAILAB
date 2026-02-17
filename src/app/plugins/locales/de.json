@@ -2370,5 +2370,13 @@
       }
     },
     "title": "Datenschutzerklärung"
+  },
+  "relativeTime": {
+    "today": "Heute",
+    "yesterday": "Gestern",
+    "daysAgo": "Vor {count} Tagen",
+    "weeksAgo": "Vor {count} Wochen",
+    "monthsAgo": "Vor {count} Monaten",
+    "yearsAgo": "Vor {count} Jahren"
   }
 }

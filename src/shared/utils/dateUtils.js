@@ -1,3 +1,5 @@
+import i18n from '@/app/plugins/i18n'
+
 /**
  * Formatted date to long format (e.g., "10 January 2024")
  * @param {string|Date} date - The date to format
@@ -22,12 +24,12 @@ export const formatDateLong = (date, locale = 'en') => {
 }
 
 /**
- * Formatea una fecha al formato corto "15/08/2024"
- * @param {string|Date} date - La fecha a formatear
- * @param {string} locale - El locale para el formato
- * @returns {string} - Fecha formateada o '-' si no hay fecha
+ * Format date to short format "15/08/2024"
+ * @param {string|Date} date - The date to format
+ * @param {string} locale - The locale for formatting
+ * @returns {string} - Formatted date or '-' if invalid
  */
-export const formatDateShort = (date, locale = 'en-GB') => {
+export const formatDateShort = (date, locale = 'en') => {
   if (!date) return '-'
 
   try {
@@ -41,12 +43,12 @@ export const formatDateShort = (date, locale = 'en-GB') => {
 }
 
 /**
- * Formatea una fecha con hora completa
- * @param {string|Date} date - La fecha a formatear
- * @param {string} locale - El locale para el formato
- * @returns {string} - Fecha y hora formateada
+ * Format date with full time
+ * @param {string|Date} date - The date to format
+ * @param {string} locale - The locale for formatting
+ * @returns {string} - Formatted date and time
  */
-export const formatDateTime = (date, locale = 'es-ES') => {
+export const formatDateTime = (date, locale = 'en') => {
   if (!date) return '-'
 
   try {
@@ -66,9 +68,9 @@ export const formatDateTime = (date, locale = 'es-ES') => {
 }
 
 /**
- * Calcula el tiempo relativo (hace 2 días, hace 1 semana, etc.)
- * @param {string|Date} date - La fecha a comparar
- * @returns {string} - Tiempo relativo
+ * Calculate relative time (2 days ago, 1 week ago, etc.)
+ * @param {string|Date} date - The date to compare
+ * @returns {string} - Relative time string
  */
 export const formatRelativeTime = (date) => {
   if (!date) return '-'
@@ -77,17 +79,26 @@ export const formatRelativeTime = (date) => {
     const d = new Date(date)
     if (isNaN(d.getTime())) return '-'
 
+    const t = i18n.global.t
     const now = new Date()
     const diffMs = now - d
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
 
-    if (diffDays === 0) return 'Hoy'
-    if (diffDays === 1) return 'Ayer'
-    if (diffDays < 7) return `Hace ${diffDays} días`
-    if (diffDays < 30) return `Hace ${Math.floor(diffDays / 7)} semanas`
-    if (diffDays < 365) return `Hace ${Math.floor(diffDays / 30)} meses`
+    if (diffDays === 0) return t('relativeTime.today')
+    if (diffDays === 1) return t('relativeTime.yesterday')
+    if (diffDays < 7) return t('relativeTime.daysAgo', { count: diffDays })
+    if (diffDays < 30)
+      return t('relativeTime.weeksAgo', {
+        count: Math.floor(diffDays / 7),
+      })
+    if (diffDays < 365)
+      return t('relativeTime.monthsAgo', {
+        count: Math.floor(diffDays / 30),
+      })
 
-    return `Hace ${Math.floor(diffDays / 365)} años`
+    return t('relativeTime.yearsAgo', {
+      count: Math.floor(diffDays / 365),
+    })
   } catch {
     return '-'
   }

@@ -2349,5 +2349,13 @@
       }
     },
     "title": "隐私政策"
+  },
+  "relativeTime": {
+    "today": "今天",
+    "yesterday": "昨天",
+    "daysAgo": "{count}天前",
+    "weeksAgo": "{count}周前",
+    "monthsAgo": "{count}个月前",
+    "yearsAgo": "{count}年前"
   }
 }

@@ -2348,5 +2348,13 @@
       }
     },
     "title": "गोपनीयता नीति"
+  },
+  "relativeTime": {
+    "today": "आज",
+    "yesterday": "कल",
+    "daysAgo": "{count} दिन पहले",
+    "weeksAgo": "{count} सप्ताह पहले",
+    "monthsAgo": "{count} महीने पहले",
+    "yearsAgo": "{count} साल पहले"
   }
 }

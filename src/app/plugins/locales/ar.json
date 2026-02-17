@@ -2365,5 +2365,13 @@
       }
     },
     "title": "سياسة الخصوصية"
+  },
+  "relativeTime": {
+    "today": "اليوم",
+    "yesterday": "أمس",
+    "daysAgo": "منذ {count} أيام",
+    "weeksAgo": "منذ {count} أسابيع",
+    "monthsAgo": "منذ {count} أشهر",
+    "yearsAgo": "منذ {count} سنوات"
   }
 }

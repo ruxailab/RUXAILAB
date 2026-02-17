@@ -2369,5 +2369,13 @@
       }
     },
     "title": "Политика конфиденциальности"
+  },
+  "relativeTime": {
+    "today": "Сегодня",
+    "yesterday": "Вчера",
+    "daysAgo": "{count} дней назад",
+    "weeksAgo": "{count} недель назад",
+    "monthsAgo": "{count} месяцев назад",
+    "yearsAgo": "{count} лет назад"
   }
 }

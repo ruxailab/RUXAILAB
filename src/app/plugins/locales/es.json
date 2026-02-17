@@ -2349,5 +2349,13 @@
       }
     },
     "title": "Política de Privacidad"
+  },
+  "relativeTime": {
+    "today": "Hoy",
+    "yesterday": "Ayer",
+    "daysAgo": "Hace {count} días",
+    "weeksAgo": "Hace {count} semanas",
+    "monthsAgo": "Hace {count} meses",
+    "yearsAgo": "Hace {count} años"
   }
 }
