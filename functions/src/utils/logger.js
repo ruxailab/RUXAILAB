@@ -20,9 +20,8 @@ const LOG_LEVELS = Object.freeze({
  * @returns {{ info, warn, error, critical }} Scoped logger methods.
  */
 const createLogger = (functionName = 'unknown') => {
-  const log = (level, message, context = {}) => {
+  const log = (level, message = {}) => {
     const payload = {
-      ...context,
       message,
       level,
       functionName,
@@ -46,10 +45,10 @@ const createLogger = (functionName = 'unknown') => {
   };
 
   return {
-    info: (message, context) => log(LOG_LEVELS.INFO, message, context),
-    warn: (message, context) => log(LOG_LEVELS.WARN, message, context),
-    error: (message, context) => log(LOG_LEVELS.ERROR, message, context),
-    critical: (message, context) => log(LOG_LEVELS.CRITICAL, message, context),
+    info: (message) => log(LOG_LEVELS.INFO, message),
+    warn: (message) => log(LOG_LEVELS.WARN, message),
+    error: (message) => log(LOG_LEVELS.ERROR, message),
+    critical: (message) => log(LOG_LEVELS.CRITICAL, message),
   };
 };
 

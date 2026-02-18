@@ -75,11 +75,6 @@ export const getFunctionLogs = functions.onCall({
             null,
           message: entry.data?.message ?? null,
           level: entry.data?.level ?? null,
-          context: (() => {
-            if (typeof entry.data !== 'object' || entry.data === null) return null;
-            const { message, level, functionName, timestamp: _ts, severity, ...rest } = entry.data;
-            return Object.keys(rest).length > 0 ? rest : null;
-          })(),
           insertId: entry.metadata.insertId,
         };
       });
