@@ -1264,7 +1264,7 @@
   "eyeTracking": {
     "title": "Eye Tracking Calibration",
     "beforeStart": "Before starting calibration",
-    "description1": "We will provide your device to record your eye movements.",
+    "description1": "We will prepare your device to record your eye movements.",
     "description2": "Follow the points that appear on the screen.",
     "start": "Start calibration",
     "inProgress": "Calibration in progress...",
