@@ -5,9 +5,14 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -28,8 +33,25 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Test
-        run: npm test
+      - name: Test with Coverage
+        run: npm run test:coverage
+
+      - name: Upload coverage to Codecov
+        if: always()
+        uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: jest-coverage
+          fail_ci_if_error: false
+
+      - name: SonarCloud Scan
+        if: env.SONAR_TOKEN != ''
+        uses: SonarSource/sonarqube-scan-action@a31c9398be7ace6bbfaf30c0bd5d415f843d45e9 # v7.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Comment to PR
         if: failure() && github.event_name == 'pull_request'
@@ -52,4 +74,3 @@ jobs:
             **Pull Request**: [Link](${{ github.event.pull_request.html_url }})
             **Action URL**: [View Details](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
             Please review the proposed changes.
-            
