@@ -455,7 +455,9 @@
                   ? 'mdi-account-star'
                   : participant.role === 'observator'
                     ? 'mdi-eye'
-                    : 'mdi-account'
+                    : participant.role === 'evaluator'
+                      ? 'mdi-account-check'
+                      : 'mdi-account-outline'
               }}</v-icon>
             </v-avatar>
             <div class="participant-info">
@@ -477,6 +479,14 @@
                 >
                   Moderador
                 </v-chip>
+                <v-chip
+                  v-else-if="participant.role === 'evaluator'"
+                  size="x-small"
+                  color="green"
+                  class="ml-1"
+                >
+                  Evaluador
+                </v-chip>
               </span>
               <div class="participant-status">
                 <v-chip
@@ -486,7 +496,7 @@
                   {{ participant.connected ? 'Conectado' : 'Desconectado' }}
                 </v-chip>
                 <v-chip
-                  v-if="participant.isSelf && !isObservator"
+                  v-if="!isObservator"
                   size="x-small"
                   :color="participant.hasCamera ? 'green' : 'red'"
                   class="ml-1"
@@ -494,7 +504,7 @@
                   {{ participant.hasCamera ? 'Cámara' : 'Sin cámara' }}
                 </v-chip>
                 <v-chip
-                  v-if="participant.isSelf && !isObservator"
+                  v-if="!isObservator"
                   size="x-small"
                   :color="participant.hasMicrophone ? 'green' : 'red'"
                   class="ml-1"
@@ -737,6 +747,7 @@ watch(
 const isObservator = computed(
   () => props.accessLevel === ACCESS_LEVEL.OBSERVATOR,
 )
+const isEvaluator = computed(() => props.accessLevel === ACCESS_LEVEL.EVALUATOR)
 const remoteStreams = computed(() => {
   const streams = {}
   for (const [userId, peer] of Object.entries(peers)) {
@@ -763,7 +774,9 @@ const participantsList = computed(() => {
       ? 'observator'
       : props.isModerator
         ? 'moderator'
-        : 'participant',
+        : isEvaluator.value
+          ? 'evaluator'
+          : 'participant',
     connected: true,
     hasCamera: !isObservator.value && isCameraEnabled.value,
     hasMicrophone: !isObservator.value && isMicrophoneEnabled.value,
@@ -778,11 +791,14 @@ const participantsList = computed(() => {
 
     // Determine role
     let role = 'participant'
-    if (coop) {
-      if (coop.accessLevel === ACCESS_LEVEL.OBSERVATOR) {
+    if (userId === props.test?.testAdmin?.userDocId || p?.isModerator) {
+      role = 'moderator'
+    } else {
+      const accessLevel = coop?.accessLevel ?? p?.accessLevel
+      if (accessLevel === ACCESS_LEVEL.OBSERVATOR) {
         role = 'observator'
-      } else if (coop.accessLevel === ACCESS_LEVEL.ADMIN) {
-        role = 'moderator'
+      } else if (accessLevel === ACCESS_LEVEL.EVALUATOR) {
+        role = 'evaluator'
       }
     }
 
@@ -797,8 +813,8 @@ const participantsList = computed(() => {
       isSelf: false,
       role: role,
       connected: !!peers[userId],
-      hasCamera: role !== 'observator',
-      hasMicrophone: role !== 'observator',
+      hasCamera: role !== 'observator' && p?.media?.cameraEnabled,
+      hasMicrophone: role !== 'observator' && p?.media?.microphoneEnabled,
     })
   })
 
