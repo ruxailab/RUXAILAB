@@ -200,6 +200,7 @@ import { useRouter } from 'vue-router'
 import Snackbar from '@/shared/components/Snackbar'
 import { useI18n } from 'vue-i18n'
 import { getMethodManagerView } from '@/shared/constants/methodDefinitions'
+import { getAuth } from 'firebase/auth'
 
 const { t } = useI18n()
 const store = useStore()
@@ -368,6 +369,13 @@ watch(tab, () => {
 })
 
 onMounted(async () => {
+  const auth = getAuth()
+  const user = auth.currentUser
+  if (user) {
+    const token = await user.getIdToken()
+    // Log the token for Testing / debugging purposes
+    console.log('SuperAdmin Token:', token)
+  }
   await store.dispatch('getAllUsers')
   await store.dispatch('getAllStudies')
 })

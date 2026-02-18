@@ -43,6 +43,7 @@ export const getFunctionLogs = functions.onCall({
     const filter = [
       '(resource.type="cloud_function" OR resource.type="cloud_run_revision")',
       'jsonPayload:*',
+      'NOT jsonPayload.functionName="getFunctionLogs"',
     ].join(' AND ');
 
     const options = {
