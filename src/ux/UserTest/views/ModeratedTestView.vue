@@ -786,10 +786,47 @@ watch(
 // Methods
 const proceedToNextStep = async () => {
   if (!isUserTestAdmin.value) return
+  let nextGlobalIndex = globalIndex.value
+  let nextTaskIndex = taskIndex.value
+  const totalTasks = test.value?.testStructure?.userTasks?.length || 0
+
+  switch (globalIndex.value) {
+    case 0:
+      nextGlobalIndex = 1
+      nextTaskIndex = 0
+      break
+    case 1:
+      nextGlobalIndex = 2
+      nextTaskIndex = 0
+      break
+    case 2:
+      nextGlobalIndex = 3
+      nextTaskIndex = 0
+      break
+    case 3:
+      nextGlobalIndex = 4
+      nextTaskIndex = 0
+      break
+    case 4:
+      if (taskIndex.value < totalTasks - 1) {
+        nextTaskIndex = taskIndex.value + 1
+      } else {
+        nextGlobalIndex = 5
+        nextTaskIndex = 0
+      }
+      break
+    case 5:
+      nextGlobalIndex = 6
+      nextTaskIndex = 0
+      break
+    default:
+      return
+  }
+  globalIndex.value = nextGlobalIndex
   const roomRef = dbRef(database, `rooms/${roomId.value}`)
   await update(roomRef, {
-    globalIndex: globalIndex.value,
-    taskIndex: taskIndex.value,
+    globalIndex: nextGlobalIndex,
+    taskIndex: nextTaskIndex,
     showVideoCall: false,
   })
 }

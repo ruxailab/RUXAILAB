@@ -562,7 +562,7 @@
       </div>
     </div>
 
-    <!-- Stepper Panel -->
+    <!-- Stepper Panel Using StepSelector -->
     <div
       class="stepper-panel"
       :class="{ 'stepper-panel-open': showStepperPanel }"
@@ -581,7 +581,7 @@
       </div>
 
       <div class="stepper-panel-content">
-        <!-- Moderator indicator -->
+        <!-- Non-moderator notice -->
         <div v-if="!caller" class="moderator-notice">
           <v-chip size="small" color="orange" class="mb-4">
             <v-icon start size="16">mdi-information</v-icon>
@@ -589,184 +589,23 @@
           </v-chip>
         </div>
 
-        <!-- Custom Stepper -->
-        <div class="custom-stepper">
-          <!-- Consent Step -->
-          <div
-            class="step-item"
-            :class="{
-              'step-active': currentStepperValue === 0,
-              'step-completed': currentStepperValue >= 1,
-              'step-clickable': caller,
-            }"
-            @click="caller && goToStep('consent')"
-          >
-            <div class="step-indicator">
-              <div class="step-number">
-                <v-icon v-if="currentStepperValue >= 1" color="white" size="16"
-                  >mdi-check</v-icon
-                >
-                <span v-else>1</span>
-              </div>
-              <div v-if="currentStepperValue >= 1" class="step-line"></div>
-            </div>
-            <div class="step-content">
-              <h4 class="step-title">Consent</h4>
-              <p class="step-description">User consent and agreement</p>
-            </div>
-          </div>
-
-          <!-- Pre-test Step -->
-          <div
-            class="step-item"
-            :class="{
-              'step-active': currentStepperValue === 1,
-              'step-completed': currentStepperValue >= 2,
-              'step-clickable': caller,
-            }"
-            @click="caller && goToStep('pretest')"
-          >
-            <div class="step-indicator">
-              <div class="step-number">
-                <v-icon v-if="currentStepperValue >= 2" color="white" size="16"
-                  >mdi-check</v-icon
-                >
-                <span v-else>2</span>
-              </div>
-              <div v-if="currentStepperValue >= 2" class="step-line"></div>
-            </div>
-            <div class="step-content">
-              <h4 class="step-title">Pre-test</h4>
-              <p class="step-description">Initial questionnaire</p>
-            </div>
-          </div>
-
-          <!-- Tasks Step -->
-          <div
-            class="step-item"
-            :class="{
-              'step-active': currentStepperValue === 2,
-              'step-completed': currentStepperValue >= 3,
-              'step-clickable': caller,
-            }"
-            @click="caller && goToStep('tasks')"
-          >
-            <div class="step-indicator">
-              <div class="step-number">
-                <v-icon v-if="currentStepperValue >= 3" color="white" size="16"
-                  >mdi-check</v-icon
-                >
-                <span v-else>3</span>
-              </div>
-              <div v-if="currentStepperValue >= 3" class="step-line"></div>
-            </div>
-            <div class="step-content">
-              <h4 class="step-title">Tasks</h4>
-              <p class="step-description">User testing tasks</p>
-
-              <!-- Task dropdown when active and moderator -->
-              <div
-                v-if="
-                  currentStepperValue === 2 &&
-                  caller &&
-                  test?.testStructure?.userTasks
-                "
-                class="tasks-dropdown mt-3"
-              >
-                <v-select
-                  :items="taskDropdownItems"
-                  :model-value="currentTaskIndex"
-                  item-title="title"
-                  item-value="index"
-                  variant="outlined"
-                  density="compact"
-                  hide-details
-                  class="task-selector"
-                  placeholder="Select a task"
-                  prepend-inner-icon="mdi-format-list-bulleted"
-                  @update:model-value="goToSpecificTask"
-                >
-                  <template #item="{ props, item }">
-                    <v-list-item v-bind="props" :title="item.raw.title">
-                      <template #prepend>
-                        <v-icon
-                          size="20"
-                          :color="
-                            item.raw.index < currentTaskIndex
-                              ? 'success'
-                              : item.raw.index === currentTaskIndex
-                                ? 'primary'
-                                : 'grey'
-                          "
-                        >
-                          {{
-                            item.raw.index < currentTaskIndex
-                              ? 'mdi-check-circle'
-                              : item.raw.index === currentTaskIndex
-                                ? 'mdi-play-circle'
-                                : 'mdi-circle-outline'
-                          }}
-                        </v-icon>
-                      </template>
-                    </v-list-item>
-                  </template>
-                </v-select>
-              </div>
-            </div>
-          </div>
-
-          <!-- Post-test Step -->
-          <div
-            class="step-item"
-            :class="{
-              'step-active': currentStepperValue === 3,
-              'step-completed': currentStepperValue >= 4,
-              'step-clickable': caller,
-            }"
-            @click="caller && goToStep('posttest')"
-          >
-            <div class="step-indicator">
-              <div class="step-number">
-                <v-icon v-if="currentStepperValue >= 4" color="white" size="16"
-                  >mdi-check</v-icon
-                >
-                <span v-else>4</span>
-              </div>
-              <div v-if="currentStepperValue >= 4" class="step-line"></div>
-            </div>
-            <div class="step-content">
-              <h4 class="step-title">Post-test</h4>
-              <p class="step-description">Final questionnaire</p>
-            </div>
-          </div>
-
-          <!-- Completion Step -->
-          <div
-            class="step-item"
-            :class="{
-              'step-active': currentStepperValue === 4,
-              'step-completed': currentStepperValue === 5,
-              'step-clickable': caller,
-            }"
-            @click="caller && goToStep('completion')"
-          >
-            <div class="step-indicator">
-              <div class="step-number">
-                <v-icon v-if="currentStepperValue === 5" color="white" size="16"
-                  >mdi-check</v-icon
-                >
-                <span v-else>5</span>
-              </div>
-            </div>
-            <div class="step-content">
-              <h4 class="step-title">Completion</h4>
-              <p class="step-description">Test finished</p>
-            </div>
-          </div>
-        </div>
+        <!-- StepSelector handles everything -->
+        <StepSelector
+          embedded
+          :current-step="props.currentGlobalIndex + 1"
+          :steps="stepsList"
+          :is-moderator="caller"
+          :task-items="taskDropdownItems"
+          :current-task-index="normalizedCurrentTaskIndex"
+          :show-task-selector="props.currentGlobalIndex === 4"
+          :task-selector-disabled="!caller"
+          @proceed-to-next-step="proceedToNextStep"
+          @step-selected="handleStepSelectorStep"
+          @task-selected="goToSpecificTask"
+          @reset-test="resetToWelcome"
+        />
       </div>
     </div>
-
     <!-- Overlay for panels (mobile) -->
     <div
       v-if="showSidePanel || showStepperPanel"
@@ -837,6 +676,7 @@ import {
   onChildAdded,
 } from 'firebase/database'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
+import StepSelector from '@/ux/UserTest/components/StepSelector.vue'
 
 const props = defineProps({
   roomId: String,
@@ -987,18 +827,23 @@ const taskDropdownItems = computed(() => {
   }))
 })
 
-const currentStepperValue = computed(() => {
-  const globalIndex = props.currentGlobalIndex
-  const taskIndex = props.currentTaskIndex || 0
-  if (globalIndex === 0) return -1
-  if (globalIndex === 1 && taskIndex === 0) return 0
-  if (globalIndex === 2 && taskIndex === 0) return 1
-  if (globalIndex === 3 && taskIndex === 0) return 2
-  if (globalIndex === 4 && taskIndex >= 0) return 2
-  if (globalIndex === 5) return 3
-  if (globalIndex === 6) return 4
-  return 0
+const normalizedCurrentTaskIndex = computed(() => {
+  const total = taskDropdownItems.value.length
+  if (!total) return 0
+  const parsed = Number(props.currentTaskIndex)
+  const safe = Number.isFinite(parsed) ? Math.trunc(parsed) : 0
+  return Math.min(Math.max(safe, 0), total - 1)
 })
+
+const stepsList = computed(() => [
+  { title: 'Welcome', description: 'Introduction to the test' },
+  { title: 'Consent', description: 'User consent and agreement' },
+  { title: 'Pre-Test', description: 'Initial questionnaire' },
+  { title: 'Pre-Tasks', description: 'Task instructions' },
+  { title: 'Tasks', description: 'User testing tasks' },
+  { title: 'Post-Test', description: 'Final questionnaire' },
+  { title: 'Completion', description: 'Test finished' },
+])
 
 // --- Initialization ---
 
@@ -1417,13 +1262,22 @@ function goToStep(stepType) {
   if (!props.isModerator) return
   let globalIndex = 0
   let taskIndex = 0
+
   switch (stepType) {
+    case 'welcome':
+      globalIndex = 0
+      taskIndex = 0
+      break
     case 'consent':
       globalIndex = 1
       taskIndex = 0
       break
     case 'pretest':
       globalIndex = 2
+      taskIndex = 0
+      break
+    case 'pretasks':
+      globalIndex = 3
       taskIndex = 0
       break
     case 'tasks':
@@ -1438,8 +1292,28 @@ function goToStep(stepType) {
       globalIndex = 6
       taskIndex = 0
       break
+    default:
+      return
   }
   emit('stepSelected', { globalIndex, taskIndex, stepType })
+}
+
+function handleStepSelectorStep(stepNum) {
+  const stepMap = {
+    1: 'welcome',
+    2: 'consent',
+    3: 'pretest',
+    4: 'pretasks',
+    5: 'tasks',
+    6: 'posttest',
+    7: 'completion',
+  }
+  goToStep(stepMap[Number(stepNum)])
+}
+
+function resetToWelcome() {
+  if (!props.isModerator) return
+  emit('stepSelected', { globalIndex: 0, taskIndex: 0 })
 }
 
 function goToSpecificTask(taskIndex) {
@@ -2131,26 +2005,6 @@ watch(
 .moderator-notice {
   text-align: center;
   margin-bottom: 16px;
-}
-
-.tasks-dropdown {
-  margin-top: 12px;
-}
-
-.task-selector {
-  font-size: 0.875rem;
-}
-
-.task-selector :deep(.v-field) {
-  border-radius: 8px;
-  background-color: rgba(var(--v-theme-surface), 0.8);
-}
-
-.task-selector :deep(.v-field__input) {
-  font-size: 0.875rem;
-  min-height: 36px;
-  padding-top: 8px;
-  padding-bottom: 8px;
 }
 
 .panel-section {
