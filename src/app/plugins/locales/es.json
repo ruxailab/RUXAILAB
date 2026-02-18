@@ -1283,7 +1283,7 @@
       "samplesPerPoint": "Cuántas muestras de mirada se recopilan por punto de calibración. Los valores más altos mejoran la precisión pero aumentan la duración.",
       "msPerPoint": "Duración (en milisegundos) para capturar datos por punto. Define cuánto tiempo debe mirar el usuario a cada objetivo.",
       "threshold": "Distancia máxima (en píxeles) permitida entre las muestras de calibración antes de que se descarten. Controla la tolerancia espacial.",
-      "radius": "Ajusta el radio del punto de calibración. Los valores más grabdes hacen que el punto sea más grande.",
+      "radius": "Ajusta el radio del punto de calibración. Los valores más grandes hacen que el punto sea más grande.",
       "offset": "Desplazamiento (en píxeles) para ajustar la posición del área de calibración."
     },
     "models": {
