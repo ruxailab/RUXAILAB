@@ -297,14 +297,13 @@ const editIndex = ref(-1)
 const hasValue = ref(true)
 
 const optionsWithFormattedValue = computed(() => {
-  // Follow heuristics pattern: try Heuristic store first (when it has items), fallback to Study store
+  // Follow heuristics pattern: prefer Heuristic store when available, fallback to Study store otherwise
   const heuristicOptions = store.getters.testOptions
   const studyOptions = store.state.Tests?.Test?.testOptions || []
 
-  const source =
-    Array.isArray(heuristicOptions) && heuristicOptions.length > 0
-      ? heuristicOptions
-      : studyOptions
+  const source = Array.isArray(heuristicOptions)
+    ? heuristicOptions
+    : studyOptions
 
   return source.map((opt) => ({
     ...opt,
