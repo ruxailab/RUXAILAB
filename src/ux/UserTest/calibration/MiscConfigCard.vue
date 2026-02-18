@@ -6,122 +6,77 @@
           class="text-h5 font-weight-bold mb-4"
           :style="{ color: $vuetify.theme.current.colors['on-surface'] }"
         >
-          Miscellaneous Configuration
+          {{ $t('EyeTrackingConfig.titles.miscellaneous') }}
         </v-card-title>
-
         <div class="custom-outline">
-          <div class="d-flex align-center">
-            <span class="mr-2">Control:</span>
-            <v-tooltip
-              location="top"
-              text="Enable to override default theme colors with specific background and stimulus point colors."
-            >
-              <template #activator="{ props }">
-                <v-icon
-                  v-bind="props"
-                  size="x-small"
-                  color="primary"
-                  icon="mdi-information-outline"
-                ></v-icon>
-              </template>
-            </v-tooltip>
-          </div>
+          {{ $t('EyeTrackingConfig.labels.control') }}
           <v-checkbox
             v-model="customColors"
-            label="Use Custom Colors"
-            color="primary"
-            hide-details
+            :label="$t('EyeTrackingConfig.labels.useCustomColors')"
+            color="black"
           ></v-checkbox>
         </div>
-
-        <v-expand-transition>
-          <div v-if="customColors" class="d-flex flex-wrap">
-            <div class="custom-outline flex-grow-1">
-              <p class="text-subtitle-2 mb-2">Background Color</p>
-              <v-color-picker
-                v-model="backgroundColor"
-                hide-inputs
-                show-swatches
-              ></v-color-picker>
-            </div>
-            <div class="custom-outline flex-grow-1">
-              <p class="text-subtitle-2 mb-2">Point Color</p>
-              <v-color-picker
-                v-model="pointColor"
-                hide-inputs
-                show-swatches
-              ></v-color-picker>
-            </div>
+        <div v-if="customColors">
+          <div class="custom-outline">
+            {{ $t('EyeTrackingConfig.labels.backgroundColor') }}
+            <v-color-picker
+              v-model="backgroundColor"
+              hide-inputs
+            ></v-color-picker>
           </div>
-        </v-expand-transition>
-
+          <div class="custom-outline">
+            {{ $t('EyeTrackingConfig.labels.pointColor') }}
+            <v-color-picker v-model="pointColor" hide-inputs></v-color-picker>
+          </div>
+        </div>
         <div class="custom-outline">
-          <div class="d-flex align-center mb-2">
-            <span class="mr-2">Model Selection:</span>
-            <v-tooltip
-              location="top"
-              max-width="300"
-              text="Select the mathematical regression model used to map raw eye-tracking data to screen coordinates."
-            >
-              <template #activator="{ props }">
-                <v-icon
-                  v-bind="props"
-                  size="x-small"
-                  color="primary"
-                  icon="mdi-information-outline"
-                ></v-icon>
-              </template>
-            </v-tooltip>
-          </div>
+          {{ $t('EyeTrackingConfig.labels.modelSelection') }}
           <v-select
             v-model="selectedModel"
             :items="availableModels"
             variant="outlined"
-            density="compact"
-            placeholder="Select Regression Model"
-          ></v-select>
+            item-title="title"
+            item-value="value"
+            :placeholder="$t('EyeTrackingConfig.labels.selectModel')"
+          />
         </div>
-
-        <div class="custom-outline bg-grey-lighten-4">
-          <v-icon
-            icon="mdi-alert-circle-outline"
-            size="small"
-            class="mr-1"
-          ></v-icon>
-          <span class="text-caption">
-            <strong>Note:</strong> The selected regression model directly
-            impacts the computational overhead during calibration. Default is
-            <strong>Linear Regression</strong>. High-complexity models may
-            increase training latency.
-          </span>
+        <div class="custom-outline">
+          <b>{{ $t('EyeTrackingConfig.labels.note') }}</b>
+          {{ $t('EyeTrackingConfig.labels.noteText') }}
         </div>
       </v-card>
     </v-col>
   </v-container>
 </template>
+
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 import EyeCalibrationSettings from '../models/EyeCalibrationSettings'
+
+const { t } = useI18n()
 
 const store = useStore()
 
-// --- State Management: Miscellaneous Refs ---
+// refs locais
 const backgroundColor = ref('#FFFFFFFF')
 const pointColor = ref('#000000FF')
 const customColors = ref(false)
 const selectedModel = ref('Linear Regression')
 
-// List of supported mathematical models for gaze mapping
-const availableModels = [
-  'Linear Regression',
-  'Ridge Regression',
-  'Lasso Regression',
-  'Elastic Net',
-  'Bayesian Ridge',
-  'SGD Regressor',
-  'Support Vector Regressor',
-]
+const availableModels = computed(() => [
+  { title: t('EyeTrackingConfig.models.linear'), value: 'Linear Regression' },
+  { title: t('EyeTrackingConfig.models.ridge'), value: 'Ridge Regression' },
+  { title: t('EyeTrackingConfig.models.lasso'), value: 'Lasso Regression' },
+  { title: t('EyeTrackingConfig.models.elastic'), value: 'Elastic Net' },
+  { title: t('EyeTrackingConfig.models.bayesian'), value: 'Bayesian Ridge' },
+  { title: t('EyeTrackingConfig.models.sgd'), value: 'SGD Regressor' },
+  {
+    title: t('EyeTrackingConfig.models.svr'),
+    value: 'Support Vector Regressor',
+  },
+])
 
 /**
  * Data Ingestion: Loads configuration from Vuex store.
@@ -155,7 +110,7 @@ const updateCalibrationConfig = () => {
   store.commit('SET_CALIBRATION_CONFIG', calibrationConfig)
 }
 
-// Auto-sync watcher
+// watchers para atualizar store ao mudar qualquer valor
 watch([backgroundColor, pointColor, customColors, selectedModel], () => {
   updateCalibrationConfig()
 })
@@ -167,15 +122,9 @@ onMounted(() => {
 
 <style scoped>
 .custom-outline {
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  padding: 15px;
-  border-radius: 10px;
+  border: 1px solid #000;
+  padding: 10px;
+  border-radius: 5px;
   margin: 10px;
-  background-color: #fff;
-}
-
-.bg-grey-lighten-4 {
-  background-color: #f5f5f5 !important;
-  border-left: 4px solid #1976d2 !important;
 }
 </style>

@@ -79,6 +79,7 @@ const recordedChunks = ref([])
 const mediaRecorder = ref(null)
 const recordedVideo = ref('')
 const recordingTaskIndex = ref(null) // Store the task index when recording starts
+const cameraPermissionDenied = ref(false)
 
 async function hasCamera() {
   try {
@@ -90,7 +91,25 @@ async function hasCamera() {
   }
 }
 
+const requestCameraPermission = async () => {
+  try {
+    await navigator.mediaDevices.getUserMedia({ video: true })
+    cameraPermissionDenied.value = false
+    return true
+  } catch {
+    cameraPermissionDenied.value = true
+    return false
+  }
+}
+
 const startRecording = async () => {
+  if(cameraPermissionDenied.value) {
+    const permissionGranted = await requestCameraPermission()
+    if (!permissionGranted) {
+      showError(t('errors.cameraPermissionDenied'))
+      return false
+    }
+  }
   try {
     const cameraAvailable = await hasCamera()
     if (!cameraAvailable) return
@@ -115,8 +134,14 @@ const startRecording = async () => {
     }
   } catch (e) {
     recording.value = false
-    console.error(e)
+    if(e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
+      cameraPermissionDenied.value = true
+      showError(t('errors.cameraPermissionDenied'))
+      return false
+    }
+    console.error("Unexpected error while starting video recording:", e)
     showError('errors.globalError')
+    return false
   }
 
   try {
@@ -177,7 +202,9 @@ const startRecording = async () => {
 
     if (mediaRecorder.value) {
       mediaRecorder.value.start()
+      return true
     }
+    return false
   } catch (e) {
     console.error(e)
     showError('errors.globalError')

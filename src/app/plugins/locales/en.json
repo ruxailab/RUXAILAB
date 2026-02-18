@@ -52,6 +52,7 @@
       "gb": "GB"
     },
     "hidden": "Hidden",
+    "visible": "Visible",
     "loading": "Loading Test",
     "continueAs": "Continue as",
     "notUser": "Not {userEmail}?",
@@ -247,7 +248,16 @@
       "viewEditProfile": "View and edit your profile information",
       "exploreCommunityStudies": "Explore studies shared by the RUXAI community",
       "browseCommunityTemplates": "Browse templates contributed by the RUXAI community"
-    }
+    },
+    "appName": "RUXAILAB",
+    "tagline": "UX Research Platform",
+    "appNavigation": "App Navigation",
+    "createNewStudy": "Create New Study",
+    "exitTest": "Exit Test",
+    "signOut": "Sign Out",
+    "previousStep": "Previous Step",
+    "nextStep": "Next Step",
+    "finishTest": "Finish Test"
   },
   "profile": {
     "title": "Profile",
@@ -381,6 +391,7 @@
     "incorrectPassword": "Incorrect password",
     "incorrectCredential": "Incorrect username or password.",
     "globalError": "An error has occurred, sorry for the inconvenience.",
+    "cameraPermissionDenied": "Camera permission denied. Please allow camera access in your browser settings.",
     "sendError": "Failed to send invitation. Please try again",
     "missingVariableTitles": "Cannot save: Some variables are missing titles"
   },
@@ -490,8 +501,12 @@
       "today": "Today",
       "joinNow": "Join Now",
       "webinarEnded": "Webinar Ended",
-      "startingToday": "Starting Today"
+      "startingToday": "Starting Today",
+      "startSession": "Start Session"
     },
+    "studyType": "Study Type",
+    "noRecentActivity": "No recent activity",
+    "viewAllActivity": "View All Activity",
     "cards": {
       "recentActivity": "Recent Activity",
       "activities7Days": "Activities (7 days total)",
@@ -821,8 +836,9 @@
       "cooperators_loading": "Loading Cooperators",
       "no_users": "There are no users registered with that email, press enter to select anyways.",
       "remove_cooperator": "Are you sure you want to remove {email} from the cooperators?",
-      "cancel_invitation": "Are you sure you want to cancel {email} from the cooperators?",
+      "cancel_invitation": "Are you sure you want to cancel {email}'s invitation?",
       "change_role": "Are you sure you want to change {email}'s role from {old} to {new}?",
+      "change_role_title": "Change Role",
       "message_title_hint": "Type a title for your message",
       "message_content_hint": "Type the content of your message",
       "invite_message": "You have been invited to collaborate on '{testTitle}'",
@@ -838,7 +854,8 @@
       "currentTasks": "Current Tasks",
       "postForm": "Post Form",
       "writeNewPost": "Write a new post question",
-      "testConfiguration": "Test Configuration"
+      "testConfiguration": "Test Configuration",
+      "eyeTrackingConfigurations": "Eye Tracking Configurations"
     },
     "messages": {
       "noTasks": "You don't have any task, create one to proceed.",
@@ -951,6 +968,75 @@
       "tam3": "TAM-3 (Comprehensive) - includes anxiety, playfulness, and objective usability",
       "sart": "Situation Awareness Rating Technique - measures situational awareness"
     },
+    "answerTypePreview": {
+      "noAnswer": {
+        "message": "Task completed! No additional feedback required."
+      },
+      "textArea": {
+        "placeholder": "Participants will provide their feedback here...",
+        "submitButton": "Submit Feedback"
+      },
+      "postTest": {
+        "title": "Post-Task Questions",
+        "q1": "1. How would you rate the difficulty of this task?",
+        "q2": "2. Any additional comments?",
+        "feedbackPlaceholder": "Optional feedback..."
+      },
+      "postForm": {
+        "title": "External Form",
+        "notice": "Participants will be redirected to complete an external form after the task.",
+        "button": "Open External Form"
+      },
+      "nasaTlx": {
+        "title": "NASA Task Load Index",
+        "mental": "Mental Demand",
+        "physical": "Physical Demand",
+        "range": "Low - High",
+        "moreDimensions": "+ 4 more dimensions"
+      },
+      "sus": {
+        "title": "System Usability Scale",
+        "q1": "1. I think that I would like to use this system frequently.",
+        "disagree": "Strongly Disagree",
+        "agree": "Strongly Agree",
+        "moreStatements": "+ 9 more statements"
+      },
+      "sart": {
+        "title": "Situation Awareness Rating Technique",
+        "instability": "Instability of Situation",
+        "complexity": "Complexity of Situation",
+        "stable": "Very Stable",
+        "unstable": "Very Unstable",
+        "simple": "Very Simple",
+        "complex": "Very Complex",
+        "moreDimensions": "+ 8 more SART dimensions"
+      },
+      "tam": {
+        "tam1": "TAM-1: Technology Acceptance Model (Basic)",
+        "tam2": "TAM-2: Technology Acceptance Model (Extended)",
+        "tam3": "TAM-3: Technology Acceptance Model (Comprehensive)",
+        "items2": "10 items across 2 dimensions",
+        "items7": "25 items across 7 dimensions",
+        "items13": "39 items across 13 dimensions",
+        "pu": "Perceived Usefulness",
+        "eu": "Perceived Ease of Use",
+        "sn": "Subjective Norm",
+        "image": "Image",
+        "jr": "Job Relevance",
+        "oq": "Output Quality",
+        "rd": "Result Demonstrability",
+        "se": "Computer Self-Efficacy",
+        "ec": "External Control",
+        "anxiety": "Anxiety",
+        "play": "Playfulness",
+        "enjoy": "Enjoyment",
+        "ou": "Objective Usability",
+        "q1": "1. Using the system improves my job performance.",
+        "q6": "6. The system is easy to use.",
+        "likertNote": "Participants rate {count} statements on a 5-point Likert scale"
+      },
+      "selectionPrompt": "Select an answer type to see preview"
+    },
     "advanced": {
       "stepTitle": "Step 3: Advanced Options",
       "stepDescription": "Enable additional data collection methods to gather deeper insights. All options are optional but can provide valuable behavioral data and user feedback.",
@@ -1022,10 +1108,44 @@
       "stronglyDisagree": "Strongly Disagree",
       "stronglyAgree": "Strongly Agree",
       "moreStatements": "+ 9 more statements",
-      "sartTitle": "Situation Awareness Rating Technique"
+      "sartTitle": "Situation Awareness Rating Technique",
+      "instability": "Instability of Situation",
+      "complexity": "Complexity of Situation",
+      "veryStable": "Very Stable",
+      "veryUnstable": "Very Unstable",
+      "verySimple": "Very Simple",
+      "veryComplex": "Very Complex",
+      "moreSartDimensions": "+ 8 more SART dimensions",
+      "tam1Title": "TAM-1: Technology Acceptance Model (Basic)",
+      "tam1Subtitle": "10 items across 2 dimensions",
+      "perceivedUsefulness": "Perceived Usefulness (5 items)",
+      "perceivedEaseOfUse": "Perceived Ease of Use (5 items)",
+      "tam1Statement1": "1. Using the system improves my job performance.",
+      "tam1Statement6": "6. The system is easy to use.",
+      "tam2Title": "TAM-2: Technology Acceptance Model (Extended)",
+      "tam2Subtitle": "25 items across 7 dimensions",
+      "tam2Description": "Participants rate 25 statements on a 5-point Likert scale (Strongly Disagree - Strongly Agree)",
+      "tam3Title": "TAM-3: Technology Acceptance Model (Comprehensive)",
+      "tam3Subtitle": "39 items across 13 dimensions",
+      "tam3Description": "Comprehensive assessment with 39 statements across 13 dimensions on a 5-point Likert scale",
+      "selectType": "Select an answer type to see preview",
+      "perceivedUsefulnessShort": "Perceived Usefulness",
+      "perceivedEaseOfUseShort": "Perceived Ease of Use",
+      "subjectiveNorm": "Subjective Norm",
+      "image": "Image",
+      "jobRelevance": "Job Relevance",
+      "outputQuality": "Output Quality",
+      "resultDemonstrability": "Result Demonstrability",
+      "computerSelfEfficacy": "Computer Self-Efficacy",
+      "externalControl": "External Control",
+      "anxiety": "Anxiety",
+      "playfulness": "Playfulness",
+      "enjoyment": "Enjoyment",
+      "objectiveUsability": "Objective Usability"
     }
   },
   "UserTestView": {
+    "loading": "Loading...",
     "titles": {
       "preTestConsent": "Pre Test - Consent",
       "preTestForm": "Pre Test - Form",
@@ -1060,7 +1180,8 @@
       "tasks": "Tasks",
       "postTest": "Post-test",
       "completion": "Completion",
-      "taskX": "Task {num}"
+      "taskX": "Task {num}",
+      "form": "Form"
     },
     "TaskStep": {
       "preview": "Task Preview",
@@ -1139,14 +1260,20 @@
     },
     "messages": {
       "noTasks": "This test doesn't have any tasks.",
-      "answerSaved": "Answer saved successfully."
+      "answerSaved": "Answer saved successfully.",
+      "taskCompletedSuccess": "Task \"{taskName}\" completed successfully!",
+      "useSessionLinkModerated": "Use a session link to access your moderated test!",
+      "useSessionLink": "Use a session link to access the test"
     },
     "errors": {
       "noAnswerData": "No answer data found.",
       "failedToSaveAnswer": "Failed to save the answer. Please try again.",
       "failedToSubmitAnswer": "Failed to submit the answer. Please try again.",
       "noTestData": "No Test Data",
-      "noTestDataMessage": "Test information could not be loaded. Please try again later."
+      "noTestDataMessage": "Test information could not be loaded. Please try again later.",
+      "failedToCompleteStep": "Failed to complete step. Please try again.",
+      "failedToInitializeTestData": "Failed to initialize test data. Please try again.",
+      "loginRequired": "Login to your RUXAILAB account first to access the test!"
     },
     "WelcomeStep": {
       "welcome": "Welcome to RUXAILAB!",
@@ -1186,17 +1313,60 @@
       "instruction": "When you are ready, press the button to start calibration.",
       "startButton": "Start calibration",
       "inProgress": "In progress..."
+    },
+    "warnings": {
+      "sessionNotScheduled": "Your session doesn't have a scheduled date"
     }
   },
   "eyeTracking": {
     "title": "Eye Tracking Calibration",
     "beforeStart": "Before starting calibration",
-    "description1": "We will prepare your device to record your eye movements.",
+    "description1": "We will provide your device to record your eye movements.",
     "description2": "Follow the points that appear on the screen.",
     "start": "Start calibration",
     "inProgress": "Calibration in progress...",
     "completed": "Calibration completed!",
     "continue": "Continue to the test"
+  },
+  "EyeTrackingConfig": {
+    "titles": {
+      "main": "Eye Tracking Configurations",
+      "general": "General Configuration",
+      "miscellaneous": "Miscellaneous Configuration"
+    },
+    "labels": {
+      "pointNumber": "Point Number",
+      "samplesPerPoint": "Samples Per Point",
+      "msPerPoint": "Milliseconds Per Point Capture",
+      "threshold": "Points Distance Threshold",
+      "radius": "Radius",
+      "offset": "Offset",
+      "control": "Control:",
+      "useCustomColors": "Use Custom Colors",
+      "backgroundColor": "Background Color:",
+      "pointColor": "Point Color:",
+      "modelSelection": "Model Selection:",
+      "selectModel": "Select Model",
+      "note": "Note:",
+      "noteText": "The selected model will be used for the calibration process. The default model is Linear Regression. Some models may take longer to train than others. So please be patient."
+    },
+    "tooltips": {
+      "pointNumber": "Number of calibration points shown on the screen (more points = higher accuracy).",
+      "samplesPerPoint": "How many gaze samples are collected per calibration point. Higher values improve precision but increase duration.",
+      "msPerPoint": "Duration (in milliseconds) to capture data per point. Defines how long the user must look at each target.",
+      "threshold": "Maximum distance (in pixels) allowed between calibration samples before they are discarded. Controls spatial tolerance.",
+      "radius": "Adjust the radius of the calibration point. Larger values make the point bigger.",
+      "offset": "Offset (in pixels) to adjust the calibration area position."
+    },
+    "models": {
+      "linear": "Linear Regression",
+      "ridge": "Ridge Regression",
+      "lasso": "Lasso Regression",
+      "elastic": "Elastic Net",
+      "bayesian": "Bayesian Ridge",
+      "sgd": "SGD Regressor",
+      "svr": "Support Vector Regressor"
+    }
   },
   "AccessNotAllowed": {
     "notAllowed": "Access not allowed",
@@ -1365,6 +1535,7 @@
       "loading_settings": "Loading Settings",
       "manage_test_settings": "Manage your test settings and preferences with advanced controls",
       "basic_information": "Basic Information",
+      "confirm_deletion": "Confirm Deletion",
       "configure_test_details": "Configure the fundamental details of your test",
       "advanced_settings": "Advanced Settings",
       "fine_tune_configuration": "Fine-tune your test configuration",
@@ -1377,7 +1548,8 @@
       "quick_actions": "Quick Actions",
       "perform_common_tasks": "Perform common tasks instantly",
       "delete_warning": "All associated data, results, and configurations will be lost forever.",
-      "delete_forever": "Delete Forever"
+      "delete_forever": "Delete Forever",
+      "action_cannot_be_undone": "This action cannot be undone"
     },
     "editTest": {
       "title": "Edit test",
@@ -1430,7 +1602,12 @@
     "duplicateTest": "Duplicate Test",
     "submit": "Submit",
     "couldNotFinish": "Could not finish",
-    "addNewTask": "Add New Task"
+    "addNewTask": "Add New Task",
+    "saveChanges": "Save Changes",
+    "createTemplate": "Create Template",
+    "deleteTest": "Delete Test",
+    "deleteForever": "Delete Forever",
+    "startTest": "Start Test"
   },
   "switches": {
     "noAnswer": "No answer",
@@ -1576,7 +1753,21 @@
   },
   "CardSorting": {
     "noCategory": "No category",
-    "noCards": "No cards found"
+    "noCards": "No cards found",
+    "of": "of",
+    "cards": "Cards",
+    "cards_low": "cards",
+    "currentCards": "Current Cards",
+    "addNewCard": "Add New Card",
+    "settings": "Settings",
+    "configureCards": "Configure how cards will be displayed",
+    "currentCategories": "Current Categories",
+    "addNewTask": "Add New Task",
+    "configureCategories": "Configure how categories will be displayed",
+    "newTask": "New task",
+    "customizeSettings": "Customize the settings and preferences of your test",
+    "test": "Test",
+    "categories": "Categories"
   },
   "analytics": {
     "searchByName": "Search by name",
@@ -1853,7 +2044,10 @@
     "deleteOptionConfirm": {
       "title": "Delete Option",
       "message": "Are you sure you want to delete this option? This action cannot be undone."
-    }
+    },
+    "confirmDeletion": "Confirm Deletion",
+    "actionCannotBeUndone": "This action cannot be undone",
+    "allAssociatedDataLost": "All associated data, results, and configurations will be lost forever."
   },
   "tags": {
     "active": "Active",
@@ -1885,5 +2079,290 @@
       "ACCESSIBILITY_AUTOMATIC": "Automatic Evaluation",
       "WCAG_AUDIT": "WCAG Audit"
     }
+  },
+  "testSettings": {
+    "testInformation": "Test Information",
+    "basicTestSettings": "Basic test settings and description",
+    "advancedSettings": "Advanced Settings",
+    "quickActions": "Quick Actions",
+    "performCommonTasks": "Perform common tasks instantly"
+  },
+  "cooperator": {
+    "goToSession": "Go to session"
+  },
+  "privacyPolicy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last Updated: April 15, 2025",
+    "sections": {
+      "introduction": {
+        "title": "1. Introduction",
+        "content": "Ruxailab is an open-source project committed to protecting your privacy. This Privacy Policy explains how we collect, use, and protect any information you provide when using the Project."
+      },
+      "informationCollected": {
+        "title": "2. Information We Collect",
+        "content": "As an open-source project, we typically do not collect personal information directly. However, if you interact with our website or services (e.g., signing up for an account or submitting a contact form), we may collect:",
+        "items": {
+          "email": "Email addresses (e.g., for account creation or newsletters)",
+          "usage": "Usage data (e.g., analytics on how the website is accessed)",
+          "contributions": "Contributions (e.g., your GitHub username if you contribute to the Project)"
+        }
+      },
+      "usage": {
+        "title": "3. How We Use Your Information",
+        "content": "We may use the information we collect to:",
+        "items": {
+          "improve": "Provide and improve the Project and its services",
+          "communicate": "Communicate with you (e.g., respond to inquiries or notify you of updates)",
+          "analyze": "Analyze usage to improve user experience"
+        }
+      },
+      "sharing": {
+        "title": "4. Data Sharing",
+        "content": "We do not sell or share your personal information with third parties, except as required by law or to protect the Project (e.g., in the case of abuse or fraud)."
+      },
+      "cookies": {
+        "title": "5. Cookies",
+        "content": "Our website may use cookies to enhance your experience (e.g., to remember your preferences). You can disable cookies in your browser settings, but this may affect the functionality of the website."
+      },
+      "security": {
+        "title": "6. Data Security",
+        "content": "We take reasonable measures to protect any data we collect, but no method of transmission over the internet is 100% secure. We cannot guarantee the absolute security of your information."
+      },
+      "rights": {
+        "title": "7. Your Rights",
+        "content": "Depending on your location, you may have the right to access, correct, or delete any personal information we hold about you. Please contact us to exercise these rights."
+      },
+      "changes": {
+        "title": "8. Changes to This Policy",
+        "content": "We may update this Privacy Policy from time to time. We will notify users of significant changes by posting a notice on the Project's website or repository."
+      },
+      "contact": {
+        "title": "9. Contact Us",
+        "content": "If you have any questions about this Privacy Policy, please contact us."
+      }
+    }
+  },
+  "pageNotFound": {
+    "title": "Page Not Found",
+    "description": "We weren't able to find the page you were looking for.",
+    "goBack": "Go Back"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions (FAQs)",
+    "subtitle": "Find answers to common questions about Ruxailab.",
+    "questions": {
+      "q1": {
+        "question": "1. What is Ruxailab?",
+        "answer": "Ruxailab is an open-source platform designed to collect usability feedback from users. It allows you to gather user reviews, analyze them, and create comprehensive reports to better understand your application's usability. Additionally, it offers heuristic tests, enabling experts to evaluate your application's compliance with usability principles. It is maintained by a community of contributors and licensed under the MIT License."
+      },
+      "q2": {
+        "question": "2. How do I get started with the Project?",
+        "answer_part1": "To get started, visit our",
+        "link_text": "GitHub Repository",
+        "answer_part2": "to download the source code. Check out the documentation for installation instructions and examples. You can also visit our",
+        "help_link": "Help",
+        "answer_part3": "page for more resources."
+      },
+      "q3": {
+        "question": "3. Can I contribute to the Project?",
+        "answer": "Absolutely! We welcome contributions from the community. Please read our contribution guidelines in the repository and submit a pull request with your changes."
+      },
+      "q4": {
+        "question": "4. What license does the Project use?",
+        "answer": "The Project is licensed under the MIT License. This means you can use, modify, and distribute the Project freely, as long as you include the license and copyright notice."
+      },
+      "q5": {
+        "question": "5. How do I report a bug or request a feature?",
+        "answer": "You can report bugs or request features by opening an issue on our",
+        "link_text": "GitHub Issues",
+        "answer_part2": ". Please provide as much detail as possible to help us address your request."
+      },
+      "q6": {
+        "question": "6. Is there a community for Ruxailab?",
+        "answer": "Yes! Join our community on",
+        "link_text": "GitHub",
+        "answer_part2": "to connect with other users and contributors, ask questions, and share ideas."
+      },
+      "q7": {
+        "question": "7. How is my data handled?",
+        "answer": "We take your privacy seriously. Please see our",
+        "link_text": "Privacy Policy",
+        "answer_part2": "for details on how we collect and use your information."
+      },
+      "q8": {
+        "question": "8. Who maintains the Project?",
+        "answer": "The Project is maintained by a team of volunteers and contributors. You can find more information about the maintainers in the Project's repository."
+      },
+      "q9": {
+        "question": "9. Still have questions?",
+        "answer": "If you have additional questions, please contact us."
+      }
+    }
+  },
+  "Accessibility": {
+    "description": "Evaluate the accessibility of your web content based on WCAG guidelines",
+    "dashboard": "Dashboard",
+    "addNewPage": "Add New Page",
+    "assessmentProgress": "Assessment Progress",
+    "accessibilityScore": "Accessibility Score",
+    "viewAssessment": "View Assessment",
+    "remove": "Remove",
+    "addNewWebpageAssessment": "Add New Webpage for Assessment",
+    "fillWebpageDetails": "Fill in the details of the webpage you want to assess for accessibility.",
+    "webpageName": "Webpage Name",
+    "webpageNamePlaceholder": "e.g., My Company Homepage",
+    "webpageNameHelp": "A descriptive name for the webpage you are testing.",
+    "url": "URL",
+    "urlPlaceholder": "https://example.com",
+    "urlHelp": "The full URL of the webpage.",
+    "descriptionOptional": "Description (Optional)",
+    "descriptionPlaceholder": "Brief description of the page or specific scenario being tested.",
+    "wcagComplianceLevel": "WCAG Compliance Level",
+    "wcagComplianceLevelHelp": "The target WCAG conformance level for this assessment.",
+    "addWebpageStartAssessment": "Add Webpage & Start Assessment",
+    "cancel": "Cancel",
+    "noDescriptionProvided": "No description provided.",
+    "configuration": "Configuration:",
+    "evaluateAccessibility": "Evaluate the accessibility of your project based on selected WCAG guidelines",
+    "wcagPrinciples": "WCAG Principles",
+    "loading": "Loading...",
+    "noPrinciplesAvailable": "No principles available",
+    "level": "Level",
+    "version": "v",
+    "successCriterion": "Success Criterion",
+    "noSuccessCriteria": "No success criteria available for this rule.",
+    "appraiserNotes": "Appraiser Notes",
+    "note": "Note",
+    "severity": "Severity",
+    "status": "Status",
+    "saveAssessment": "Save Assessment",
+    "signInToSave": "Sign In to Save",
+    "previous": "Previous",
+    "next": "Next",
+    "readyToEvaluate": "Ready to Evaluate",
+    "selectPrincipleInfo": "Select a principle from the list to view its guidelines and rules.",
+    "rules": "Rules",
+    "noRulesAvailable": "No rules available",
+    "assessmentData": "Assessment Data",
+    "close": "Close",
+    "exportJson": "Export JSON",
+    "wcag": "WCAG",
+    "accessibilityIssues": "Accessibility Issues",
+    "errors": "Errors",
+    "warnings": "Warnings",
+    "notices": "Notices",
+    "issuesFound": "Issues Found",
+    "noIssuesFound": "No Issues Found",
+    "rulePassedAllChecks": "This rule passed all accessibility checks for the tested page.",
+    "loadingAccessibilityReport": "Loading accessibility report...",
+    "noReportAvailable": "No Report Available",
+    "noTestRunYet": "No accessibility test has been run for this test ID yet.",
+    "issueDetails": "Issue Details",
+    "type": "Type",
+    "code": "Code",
+    "message": "Message",
+    "context": "Context",
+    "noSpecificCriteria": "No specific criteria defined for this rule.",
+    "selectUserToView": "Select a user to view their accessibility assessment results",
+    "reviewDetailedAssessment": "Review the detailed accessibility assessment results for the selected user",
+    "selectUserToViewResults": "Select a User to View Assessment Results",
+    "information": "Information",
+    "foundUserIds": "Found User IDs:",
+    "userDetails": "User Details:",
+    "usersLoaded": "users loaded",
+    "loadingUsers": "Loading Users",
+    "fetchingParticipants": "Fetching assessment participants...",
+    "assessmentAvailable": "Assessment Available",
+    "viewResults": "View Results",
+    "viewInPreview": "View in Preview",
+    "noUsersFound": "No users found for this assessment test.",
+    "backToUserSelection": "Back to User Selection",
+    "viewInPreviewMode": "View in Preview Mode",
+    "accessibilityAssessmentResults": "Accessibility Assessment Results",
+    "wcagLevelFilter": "WCAG Level Filter:",
+    "all": "All",
+    "totalIssues": "Total Issues",
+    "passed": "Passed",
+    "failed": "Failed",
+    "notApplicable": "Not Applicable",
+    "notEvaluated": "Not Evaluated",
+    "principle": "Principle",
+    "guideline": "Guideline",
+    "rule": "Rule",
+    "assessmentNotes": "Assessment Notes",
+    "noNotesProvided": "No notes provided",
+    "report": "Report",
+    "loadingReport": "Loading report...",
+    "runTest": "Run Test",
+    "viewDetailedIssues": "View detailed accessibility issues and recommendations to improve your web content.",
+    "noAssessmentAvailable": "No Assessment Available for this Test",
+    "accessibilityReport": "Accessibility Report",
+    "issues": "Issues",
+    "loadingMore": "Loading more...",
+    "webpagePreview": "Webpage Preview",
+    "selector": "Selector",
+    "wcagReference": "WCAG Reference",
+    "viewWcagGuidelines": "View WCAG Guidelines",
+    "noReportData": "No report data available.",
+    "setupTestParameters": "Set up and customize your accessibility test parameters",
+    "accessibilityConfiguration": "Accessibility Configuration",
+    "step": "Step",
+    "selectComplianceLevel": "Select the WCAG compliance level for your accessibility requirements.",
+    "rulesFor": "rules for",
+    "compliance": "compliance",
+    "reset": "Reset",
+    "continue": "Continue",
+    "guidelinesSelection": "Guidelines Selection",
+    "selectGuidelinesByPrinciple": "Select guidelines for your assessment. Filter by principle using tabs.",
+    "pleaseFixFollowing": "Please fix the following issues:",
+    "selectSpecificRules": "Select specific rules (required)",
+    "guidelinesSelected": "guideline(s) selected",
+    "totalRules": "Total rules",
+    "back": "Back",
+    "saveConfig": "Save Config",
+    "enterWebsiteUrl": "Enter a website URL to run an automated accessibility test and get a detailed report.",
+    "websiteAccessibilityTester": "Website Accessibility Tester",
+    "analyzeWebsiteCompliance": "Analyze your website's accessibility compliance and get actionable insights",
+    "testing": "Testing...",
+    "runAccessibilityTest": "Run Accessibility Test",
+    "analyzingAccessibility": "Analyzing Accessibility",
+    "runningComprehensiveTests": "Running comprehensive tests on your website...",
+    "testFailed": "Test Failed",
+    "commonIssuesSolutions": "Common Issues & Solutions",
+    "troubleshootingTips": "Troubleshooting Tips",
+    "ensurePubliclyAccessible": "Make sure the website is publicly accessible",
+    "tryDifferentPage": "Try testing a different page on the same domain",
+    "checkRequiresAuth": "Check if the website requires authentication",
+    "verifyUrlCorrect": "Verify the URL is correct and complete",
+    "dismiss": "Dismiss",
+    "tryAgain": "Try Again",
+    "selected": "Selected",
+    "accessibilityManager": "Accessibility Manager",
+    "color": "Color:",
+    "radius": "Radius",
+    "opacity": "Opacity",
+    "browseAccessibilityTools": "Browse accessibility tools and actions",
+    "loadingTestData": "Loading test data...",
+    "checkingAccessPermissions": "Checking access permissions",
+    "access": "Access:",
+    "reviewDetailedIssues": "Review detailed accessibility issues and success criteria based on WCAG guidelines",
+    "cssSelector": "CSS Selector",
+    "of": "of",
+    "selectRuleToView": "Select a Rule to View Details",
+    "choosePrincipleGuideline": "Choose a principle and guideline from the left sidebar to view its associated rules and their issues",
+    "notesFor": "Notes for",
+    "noNotesForRule": "No notes available for this rule.",
+    "viewingMode": "Viewing Mode",
+    "viewingAssessmentData": "You are viewing assessment data for user ID:",
+    "readOnlyMode": "This is read-only mode - you cannot save changes to another user's assessment.",
+    "viewingUserId": "Viewing User ID:",
+    "viewingModeLabel": "Viewing Mode:",
+    "userRole": "User Role:",
+    "canSave": "Can Save:",
+    "complianceLevel": "Compliance Level:",
+    "principlesAvailable": "Principles Available:",
+    "selectedGuidelines": "Selected Guidelines:",
+    "rawWcagDataAvailable": "Raw WCAG Data Available:",
+    "filteredWcagDataAvailable": "Filtered WCAG Data Available:"
   }
 }

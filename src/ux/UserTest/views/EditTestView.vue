@@ -27,7 +27,7 @@
             {{ $t('ModeratedTest.postTest') }}
           </v-tab>
           <v-tab v-if="hasEyeTracking" @click="index = 5">
-            {{ $t('ModeratedTest.eyeTrackingConfig') }}
+            {{ $t('EyeTrackingConfig.titles.main') }}
           </v-tab>
         </v-tabs>
 
@@ -38,9 +38,11 @@
               :welcome="welcomeMessage"
               :final-message="finalMessage"
               @update:welcome-message="
-                ;(welcomeMessage = $event), (change = true)
+                ;((welcomeMessage = $event), (change = true))
               "
-              @update:final-message=";(finalMessage = $event), (change = true)"
+              @update:final-message="
+                ;((finalMessage = $event), (change = true))
+              "
             />
           </div>
 

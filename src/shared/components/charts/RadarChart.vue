@@ -63,11 +63,6 @@ const chartOptions = ref({
 })
 
 const chartInstance = ref(null)
-
-const getChartInstance = (chart) => {
-  chartInstance.value = chart
-}
-
 watch(
   () => props.data,
   () => {
