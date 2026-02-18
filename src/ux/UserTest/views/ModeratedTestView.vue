@@ -175,8 +175,11 @@
               <v-icon color="white"> mdi-wifi-off </v-icon>
             </template>
             <span class="text-white">
-              <strong>Moderator Disconnected</strong><br />
-              The moderator seems to be offline. Please wait or contact support.
+              <strong>{{
+                $t('UserTestView.alerts.moderatorDisconnected')
+              }}</strong
+              ><br />
+              {{ $t('UserTestView.alerts.moderatorDisconnectedMessage') }}
             </span>
           </v-alert>
         </v-col>
@@ -197,8 +200,10 @@
               <v-icon size="small">mdi-wifi-off</v-icon>
             </template>
             <div class="text-caption">
-              <strong>Moderator Disconnected:</strong>
-              The moderator seems to be offline. Please wait.
+              <strong
+                >{{ $t('UserTestView.alerts.moderatorDisconnected') }}:</strong
+              >
+              {{ $t('UserTestView.alerts.moderatorDisconnectedInlineMessage') }}
             </div>
           </v-alert>
 
@@ -982,7 +987,7 @@ const startTest = async () => {
         // displayVideoCallComponent.value = false // Avoid updating state before redirect to prevent unmount error
         // Optionally show start screen or just return to test flow
         // start.value = true
-        showInfo('The moderator has ended the session')
+        showInfo(t('UserTestView.messages.moderatorEndedSession'))
         router.push('/admin')
       }
       return

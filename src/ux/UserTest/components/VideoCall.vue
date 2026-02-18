@@ -19,7 +19,9 @@
             playsinline
             class="video-element"
           ></video>
-          <div class="video-label">Compartilhando tela</div>
+          <div class="video-label">
+            {{ t('UserTestView.VideoCall.labels.sharingScreen') }}
+          </div>
         </div>
       </v-col>
 
@@ -42,7 +44,9 @@
                 <v-icon size="64" color="white" class="mb-2"
                   >mdi-video-off</v-icon
                 >
-                <p class="text-white">Camera is off</p>
+                <p class="text-white">
+                  {{ t('UserTestView.VideoCall.labels.cameraOff') }}
+                </p>
               </div>
 
               <!-- Microphone muted indicator -->
@@ -51,7 +55,11 @@
               </div>
 
               <div class="video-label">
-                Tu video ({{ user?.email?.split('@')[0] }})
+                {{
+                  t('UserTestView.VideoCall.labels.yourVideo', {
+                    name: user?.email?.split('@')[0],
+                  })
+                }}
               </div>
             </div>
           </div>
@@ -79,7 +87,9 @@
                 <v-icon size="64" color="white" class="mb-2"
                   >mdi-video-off</v-icon
                 >
-                <p class="text-white">Camera is off</p>
+                <p class="text-white">
+                  {{ t('UserTestView.VideoCall.labels.cameraOff') }}
+                </p>
               </div>
 
               <!-- Microphone muted indicator for remote peer -->
@@ -100,7 +110,9 @@
             class="d-flex align-center justify-center pa-4 text-grey"
           >
             <v-icon class="mr-2">mdi-account-clock</v-icon>
-            <span>Waiting for participants...</span>
+            <span>{{
+              t('UserTestView.VideoCall.labels.waitingForParticipants')
+            }}</span>
           </div>
         </div>
       </v-col>
@@ -126,7 +138,9 @@
                 <v-icon size="64" color="white" class="mb-2"
                   >mdi-video-off</v-icon
                 >
-                <p class="text-white">Camera is off</p>
+                <p class="text-white">
+                  {{ t('UserTestView.VideoCall.labels.cameraOff') }}
+                </p>
               </div>
 
               <!-- Microphone muted indicator -->
@@ -135,7 +149,11 @@
               </div>
 
               <div class="video-label">
-                Your preview ({{ user?.email?.split('@')[0] }})
+                {{
+                  t('UserTestView.VideoCall.labels.yourPreview', {
+                    name: user?.email?.split('@')[0],
+                  })
+                }}
               </div>
             </div>
           </div>
@@ -150,13 +168,14 @@
       >
         <div class="observator-notice">
           <v-icon size="64" color="primary" class="mb-4">mdi-eye</v-icon>
-          <h3 class="text-h5 mb-2">Observator Mode</h3>
+          <h3 class="text-h5 mb-2">
+            {{ t('UserTestView.VideoCall.labels.observatorMode') }}
+          </h3>
           <p class="text-body-1">
-            Waiting for moderator to start the session...
+            {{ t('UserTestView.VideoCall.labels.waitingModeratorStart') }}
           </p>
           <p class="text-body-2 text-grey mt-2">
-            You will be able to observe all video feeds without sending your
-            own.
+            {{ t('UserTestView.VideoCall.labels.observatorNoSend') }}
           </p>
         </div>
       </v-col>
@@ -178,10 +197,11 @@
             color="primary"
             class="mb-4"
           ></v-progress-circular>
-          <h3 class="text-h6 mb-2">Waiting for moderator...</h3>
+          <h3 class="text-h6 mb-2">
+            {{ t('UserTestView.VideoCall.labels.waitingForModerator') }}
+          </h3>
           <p class="text-body-2 text-grey">
-            The video call will start automatically when the moderator opens the
-            room.
+            {{ t('UserTestView.VideoCall.labels.waitingForModeratorDetail') }}
           </p>
         </div>
       </v-col>
@@ -215,7 +235,9 @@
               </v-btn>
             </template>
             <span>{{
-              isCameraEnabled ? 'Turn off camera' : 'Turn on camera'
+              isCameraEnabled
+                ? t('UserTestView.VideoCall.tooltips.turnOffCamera')
+                : t('UserTestView.VideoCall.tooltips.turnOnCamera')
             }}</span>
           </v-tooltip>
 
@@ -239,7 +261,9 @@
               </v-btn>
             </template>
             <span>{{
-              isMicrophoneEnabled ? 'Mute microphone' : 'Unmute microphone'
+              isMicrophoneEnabled
+                ? t('UserTestView.VideoCall.tooltips.muteMicrophone')
+                : t('UserTestView.VideoCall.tooltips.unmuteMicrophone')
             }}</span>
           </v-tooltip>
 
@@ -263,7 +287,9 @@
               </v-btn>
             </template>
             <span>{{
-              isSharingScreen ? 'Stop sharing screen' : 'Share screen'
+              isSharingScreen
+                ? t('UserTestView.VideoCall.tooltips.stopSharingScreen')
+                : t('UserTestView.VideoCall.tooltips.shareScreen')
             }}</span>
           </v-tooltip>
         </div>
@@ -281,10 +307,12 @@
                 @click="startCall"
               >
                 <v-icon start size="20">mdi-video-plus</v-icon>
-                Open Room
+                {{ t('UserTestView.VideoCall.buttons.openRoom') }}
               </v-btn>
             </template>
-            <span>Start the video call session</span>
+            <span>{{
+              t('UserTestView.VideoCall.tooltips.startVideoCallSession')
+            }}</span>
           </v-tooltip>
 
           <!-- End Call button (for moderator when call is active) -->
@@ -298,10 +326,12 @@
                 @click="endCall"
               >
                 <v-icon start size="20">mdi-phone-hangup</v-icon>
-                End Call
+                {{ t('UserTestView.VideoCall.buttons.endCall') }}
               </v-btn>
             </template>
-            <span>End the video call session</span>
+            <span>{{
+              t('UserTestView.VideoCall.tooltips.endVideoCallSession')
+            }}</span>
           </v-tooltip>
 
           <!-- End Call button (for participant when call is active) -->
@@ -315,10 +345,12 @@
                 @click="endCall"
               >
                 <v-icon start size="20">mdi-phone-hangup</v-icon>
-                Leave Call
+                {{ t('UserTestView.VideoCall.buttons.leaveCall') }}
               </v-btn>
             </template>
-            <span>Leave the video call session</span>
+            <span>{{
+              t('UserTestView.VideoCall.tooltips.leaveVideoCallSession')
+            }}</span>
           </v-tooltip>
 
           <!-- Stepper menu button -->
@@ -338,7 +370,11 @@
                 <v-icon size="28">mdi-format-list-numbered</v-icon>
               </v-btn>
             </template>
-            <span>{{ showStepperPanel ? 'Hide steps' : 'Show steps' }}</span>
+            <span>{{
+              showStepperPanel
+                ? t('UserTestView.VideoCall.tooltips.hideSteps')
+                : t('UserTestView.VideoCall.tooltips.showSteps')
+            }}</span>
           </v-tooltip>
 
           <!-- Side panel toggle button -->
@@ -358,7 +394,11 @@
                 <v-icon size="28">mdi-account-group</v-icon>
               </v-btn>
             </template>
-            <span>{{ showSidePanel ? 'Hide panel' : 'Show panel' }}</span>
+            <span>{{
+              showSidePanel
+                ? t('UserTestView.VideoCall.tooltips.hidePanel')
+                : t('UserTestView.VideoCall.tooltips.showPanel')
+            }}</span>
           </v-tooltip>
         </div>
       </div>
@@ -367,7 +407,7 @@
     <!-- Side Panel -->
     <div class="side-panel" :class="{ 'side-panel-open': showSidePanel }">
       <div class="side-panel-header">
-        <h3>Panel de Herramientas</h3>
+        <h3>{{ t('UserTestView.VideoCall.labels.toolsPanel') }}</h3>
         <v-btn
           icon
           size="small"
@@ -382,7 +422,7 @@
       <div class="side-panel-content">
         <!-- Session Controls Section -->
         <div class="panel-section">
-          <h4>Control de Sesión</h4>
+          <h4>{{ t('UserTestView.VideoCall.labels.sessionControl') }}</h4>
 
           <!-- Connection controls when call is not started -->
           <div v-if="!callStarted" class="session-controls">
@@ -390,7 +430,7 @@
             <div v-if="!caller" class="participant-info">
               <p class="text-body-2 mb-0">
                 <v-icon start size="16">mdi-information</v-icon>
-                Join room controls are now in the main interface above
+                {{ t('UserTestView.VideoCall.labels.joinRoomControlsMoved') }}
               </p>
             </div>
           </div>
@@ -407,7 +447,7 @@
               @click="proceedToNextStep"
             >
               <v-icon start>mdi-arrow-right</v-icon>
-              Proceed to Next Step
+              {{ t('UserTestView.VideoCall.labels.proceedToNextStep') }}
             </v-btn>
 
             <!-- End call button -->
@@ -420,21 +460,21 @@
               @click="endCall"
             >
               <v-icon start>mdi-phone-hangup</v-icon>
-              End Call
+              {{ t('UserTestView.VideoCall.buttons.endCall') }}
             </v-btn>
 
             <!-- Call status -->
             <div class="status-message">
               <v-chip color="green" size="small" class="mb-2">
                 <v-icon start size="16">mdi-phone</v-icon>
-                Llamada activa
+                {{ t('UserTestView.VideoCall.labels.activeCall') }}
               </v-chip>
             </div>
           </div>
         </div>
 
         <div class="panel-section">
-          <h4>Participantes</h4>
+          <h4>{{ t('UserTestView.VideoCall.labels.participants') }}</h4>
           <div
             v-for="participant in participantsList"
             :key="participant.id"
@@ -462,14 +502,19 @@
             </v-avatar>
             <div class="participant-info">
               <span class="participant-name">
-                {{ participant.name }}{{ participant.isSelf ? ' (Tú)' : '' }}
+                {{ participant.name }}
+                <span v-if="participant.isSelf">
+                  ({{ t('UserTestView.VideoCall.participants.you') }})
+                </span>
                 <v-chip
                   v-if="participant.role === 'observator'"
                   size="x-small"
                   color="orange"
                   class="ml-1"
                 >
-                  Observador
+                  {{
+                    t('UserTestView.VideoCall.participants.roles.observator')
+                  }}
                 </v-chip>
                 <v-chip
                   v-else-if="participant.role === 'moderator'"
@@ -477,7 +522,7 @@
                   color="blue"
                   class="ml-1"
                 >
-                  Moderador
+                  {{ t('UserTestView.VideoCall.participants.roles.moderator') }}
                 </v-chip>
                 <v-chip
                   v-else-if="participant.role === 'evaluator'"
@@ -485,7 +530,7 @@
                   color="green"
                   class="ml-1"
                 >
-                  Evaluador
+                  {{ t('UserTestView.VideoCall.participants.roles.evaluator') }}
                 </v-chip>
               </span>
               <div class="participant-status">
@@ -493,7 +538,11 @@
                   size="x-small"
                   :color="participant.connected ? 'green' : 'grey'"
                 >
-                  {{ participant.connected ? 'Conectado' : 'Desconectado' }}
+                  {{
+                    participant.connected
+                      ? t('UserTestView.VideoCall.participants.connected')
+                      : t('UserTestView.VideoCall.participants.disconnected')
+                  }}
                 </v-chip>
                 <v-chip
                   v-if="!isObservator"
@@ -501,7 +550,11 @@
                   :color="participant.hasCamera ? 'green' : 'red'"
                   class="ml-1"
                 >
-                  {{ participant.hasCamera ? 'Cámara' : 'Sin cámara' }}
+                  {{
+                    participant.hasCamera
+                      ? t('UserTestView.VideoCall.participants.cameraOn')
+                      : t('UserTestView.VideoCall.participants.cameraOff')
+                  }}
                 </v-chip>
                 <v-chip
                   v-if="!isObservator"
@@ -510,7 +563,9 @@
                   class="ml-1"
                 >
                   {{
-                    participant.hasMicrophone ? 'Micrófono' : 'Sin micrófono'
+                    participant.hasMicrophone
+                      ? t('UserTestView.VideoCall.participants.microphoneOn')
+                      : t('UserTestView.VideoCall.participants.microphoneOff')
                   }}
                 </v-chip>
               </div>
@@ -519,7 +574,7 @@
         </div>
 
         <div v-if="!isObservator" class="panel-section">
-          <h4>Configuración</h4>
+          <h4>{{ t('UserTestView.VideoCall.labels.settings') }}</h4>
           <v-list density="compact">
             <v-list-item @click="toggleCamera">
               <template #prepend>
@@ -528,7 +583,11 @@
                 </v-icon>
               </template>
               <v-list-item-title>
-                {{ isCameraEnabled ? 'Desactivar cámara' : 'Activar cámara' }}
+                {{
+                  isCameraEnabled
+                    ? t('UserTestView.VideoCall.labels.disableCamera')
+                    : t('UserTestView.VideoCall.labels.enableCamera')
+                }}
               </v-list-item-title>
             </v-list-item>
             <v-list-item @click="toggleMicrophone">
@@ -544,8 +603,8 @@
               <v-list-item-title>
                 {{
                   isMicrophoneEnabled
-                    ? 'Silenciar micrófono'
-                    : 'Activar micrófono'
+                    ? t('UserTestView.VideoCall.labels.muteMicrophone')
+                    : t('UserTestView.VideoCall.labels.enableMicrophone')
                 }}
               </v-list-item-title>
             </v-list-item>
@@ -562,8 +621,8 @@
               <v-list-item-title>
                 {{
                   isSharingScreen
-                    ? 'Detener compartir pantalla'
-                    : 'Compartir pantalla'
+                    ? t('UserTestView.VideoCall.labels.stopSharingScreen')
+                    : t('UserTestView.VideoCall.labels.shareScreen')
                 }}
               </v-list-item-title>
             </v-list-item>
@@ -578,7 +637,7 @@
       :class="{ 'stepper-panel-open': showStepperPanel }"
     >
       <div class="stepper-panel-header">
-        <h3>Test Progress</h3>
+        <h3>{{ t('UserTestView.VideoCall.labels.testProgress') }}</h3>
         <v-btn
           icon
           size="small"
@@ -595,7 +654,7 @@
         <div v-if="!caller" class="moderator-notice">
           <v-chip size="small" color="orange" class="mb-4">
             <v-icon start size="16">mdi-information</v-icon>
-            Solo el moderador puede cambiar los pasos
+            {{ t('UserTestView.VideoCall.labels.onlyModeratorCanChangeSteps') }}
           </v-chip>
         </div>
 
@@ -636,11 +695,11 @@
         </v-avatar>
 
         <v-card-title class="text-h6 font-weight-bold mb-2">
-          Video Call Started
+          {{ t('UserTestView.VideoCall.dialog.title') }}
         </v-card-title>
 
         <v-card-text class="text-body-1 mb-4">
-          The moderator has started the video call. Would you like to join now?
+          {{ t('UserTestView.VideoCall.dialog.description') }}
         </v-card-text>
 
         <v-card-actions class="d-flex flex-column pa-0">
@@ -653,7 +712,7 @@
             @click="joinRoomFromDialog"
           >
             <v-icon start>mdi-video</v-icon>
-            Join Video Call
+            {{ t('UserTestView.VideoCall.buttons.joinVideoCall') }}
           </v-btn>
 
           <v-btn
@@ -662,7 +721,7 @@
             variant="text"
             @click="dismissJoinDialog"
           >
-            Maybe later
+            {{ t('UserTestView.VideoCall.buttons.maybeLater') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -673,6 +732,7 @@
 <script setup>
 import { ref, computed, reactive, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { database } from '@/app/plugins/firebase/index'
 import {
   ref as dbRef,
@@ -698,6 +758,8 @@ const props = defineProps({
   test: Object,
   localTestAnswer: Object,
 })
+
+const { t } = useI18n()
 
 const emit = defineEmits([
   'setRemoteStream',
@@ -767,7 +829,9 @@ const participantsList = computed(() => {
   // Add self first
   list.push({
     id: props.user.id,
-    name: props.user.email?.split('@')[0] || 'You',
+    name:
+      props.user.email?.split('@')[0] ||
+      t('UserTestView.VideoCall.participants.you'),
     email: props.user.email,
     isSelf: true,
     role: isObservator.value
@@ -808,7 +872,7 @@ const participantsList = computed(() => {
         p.name ||
         p.email?.split('@')[0] ||
         coop?.email?.split('@')[0] ||
-        'Unknown',
+        t('UserTestView.VideoCall.participants.unknown'),
       email: p.email || coop?.email,
       isSelf: false,
       role: role,
@@ -827,16 +891,20 @@ const getPeerName = (userId) => {
   if (p) return p.name || p.email
   // Fallback to finding in test cooperators
   const coop = props.test?.cooperators?.find((c) => c.userDocId === userId)
-  return coop?.email || 'Participant'
+  return coop?.email || t('UserTestView.VideoCall.participants.participant')
 }
 
 // Computed property for task dropdown items
 const taskDropdownItems = computed(() => {
   if (!props.test?.testStructure?.userTasks) return []
   return props.test.testStructure.userTasks.map((task, index) => ({
-    title: `Task ${index + 1}: ${
-      task.name || task.title || `User Task ${index + 1}`
-    }`,
+    title: t('UserTestView.VideoCall.task.taskLabel', {
+      index: index + 1,
+      name:
+        task.name ||
+        task.title ||
+        t('UserTestView.VideoCall.task.defaultTaskName', { index: index + 1 }),
+    }),
     index: index,
     completed: index < (props.currentTaskIndex || 0),
     active: index === (props.currentTaskIndex || 0),
@@ -852,13 +920,34 @@ const normalizedCurrentTaskIndex = computed(() => {
 })
 
 const stepsList = computed(() => [
-  { title: 'Welcome', description: 'Introduction to the test' },
-  { title: 'Consent', description: 'User consent and agreement' },
-  { title: 'Pre-Test', description: 'Initial questionnaire' },
-  { title: 'Pre-Tasks', description: 'Task instructions' },
-  { title: 'Tasks', description: 'User testing tasks' },
-  { title: 'Post-Test', description: 'Final questionnaire' },
-  { title: 'Completion', description: 'Test finished' },
+  {
+    title: t('UserTestView.stepper.welcome'),
+    description: t('UserTestView.VideoCall.stepDescriptions.welcome'),
+  },
+  {
+    title: t('UserTestView.stepper.consent'),
+    description: t('UserTestView.VideoCall.stepDescriptions.consent'),
+  },
+  {
+    title: t('UserTestView.stepper.preTest'),
+    description: t('UserTestView.VideoCall.stepDescriptions.preTest'),
+  },
+  {
+    title: t('UserTestView.stepper.preTasks'),
+    description: t('UserTestView.VideoCall.stepDescriptions.preTasks'),
+  },
+  {
+    title: t('UserTestView.stepper.tasks'),
+    description: t('UserTestView.VideoCall.stepDescriptions.tasks'),
+  },
+  {
+    title: t('UserTestView.stepper.postTest'),
+    description: t('UserTestView.VideoCall.stepDescriptions.postTest'),
+  },
+  {
+    title: t('UserTestView.stepper.completion'),
+    description: t('UserTestView.VideoCall.stepDescriptions.completion'),
+  },
 ])
 
 // --- Initialization ---

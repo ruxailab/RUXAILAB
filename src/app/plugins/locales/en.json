@@ -1171,17 +1171,37 @@
       "testConfigErrorMessage": "This test has no tasks configured. Please contact the administrator.",
       "consentDecline": "Test ended due to consent decline. Thank you for your time.",
       "sessionTooFar": "Session Too Far",
-      "sessionTooFarMessage": "The scheduled session is more than 24 hours away. Please come back closer to the session date."
+      "sessionTooFarMessage": "The scheduled session is more than 24 hours away. Please come back closer to the session date.",
+      "moderatorDisconnected": "Moderator Disconnected",
+      "moderatorDisconnectedMessage": "The moderator seems to be offline. Please wait or contact support.",
+      "moderatorDisconnectedInlineMessage": "The moderator seems to be offline. Please wait."
     },
     "stepper": {
+      "welcome": "Welcome",
       "consent": "Consent",
       "preTest": "Pre-test",
       "calibration": "Calibration",
+      "preTasks": "Pre-Tasks",
       "tasks": "Tasks",
       "postTest": "Post-test",
       "completion": "Completion",
       "taskX": "Task {num}",
       "form": "Form"
+    },
+    "StepSelector": {
+      "hideSteps": "Hide steps",
+      "showSteps": "Show steps",
+      "title": "Test Steps",
+      "currentStep": "Current Step",
+      "currentStepProgress": "Step {current} of {total}",
+      "allSteps": "All Steps",
+      "stepLabel": "Step {step}",
+      "taskPlaceholder": "Select a task",
+      "revisit": "Revisit",
+      "goTo": "Go to",
+      "testComplete": "Test Complete",
+      "proceedToStep": "Proceed to Step {step}",
+      "restartTest": "Restart Test"
     },
     "TaskStep": {
       "preview": "Task Preview",
@@ -1255,6 +1275,90 @@
       "note": "Your role is to facilitate and observe. The participant should complete tasks independently unless they specifically request help.",
       "startSession": "Start Moderated Session"
     },
+    "VideoCall": {
+      "labels": {
+        "sharingScreen": "Sharing screen",
+        "cameraOff": "Camera is off",
+        "yourVideo": "Your video ({name})",
+        "yourPreview": "Your preview ({name})",
+        "waitingForParticipants": "Waiting for participants...",
+        "observatorMode": "Observator Mode",
+        "waitingModeratorStart": "Waiting for moderator to start the session...",
+        "observatorNoSend": "You will be able to observe all video feeds without sending your own.",
+        "waitingForModerator": "Waiting for moderator...",
+        "waitingForModeratorDetail": "The video call will start automatically when the moderator opens the room.",
+        "toolsPanel": "Tools Panel",
+        "sessionControl": "Session Control",
+        "joinRoomControlsMoved": "Join room controls are now in the main interface above",
+        "proceedToNextStep": "Proceed to Next Step",
+        "activeCall": "Active call",
+        "participants": "Participants",
+        "settings": "Settings",
+        "disableCamera": "Disable camera",
+        "enableCamera": "Enable camera",
+        "muteMicrophone": "Mute microphone",
+        "enableMicrophone": "Enable microphone",
+        "stopSharingScreen": "Stop sharing screen",
+        "shareScreen": "Share screen",
+        "testProgress": "Test Progress",
+        "onlyModeratorCanChangeSteps": "Only the moderator can change steps"
+      },
+      "tooltips": {
+        "turnOffCamera": "Turn off camera",
+        "turnOnCamera": "Turn on camera",
+        "muteMicrophone": "Mute microphone",
+        "unmuteMicrophone": "Unmute microphone",
+        "stopSharingScreen": "Stop sharing screen",
+        "shareScreen": "Share screen",
+        "startVideoCallSession": "Start the video call session",
+        "endVideoCallSession": "End the video call session",
+        "leaveVideoCallSession": "Leave the video call session",
+        "hideSteps": "Hide steps",
+        "showSteps": "Show steps",
+        "hidePanel": "Hide panel",
+        "showPanel": "Show panel"
+      },
+      "buttons": {
+        "openRoom": "Open Room",
+        "endCall": "End Call",
+        "leaveCall": "Leave Call",
+        "joinVideoCall": "Join Video Call",
+        "maybeLater": "Maybe later"
+      },
+      "participants": {
+        "you": "You",
+        "unknown": "Unknown",
+        "participant": "Participant",
+        "connected": "Connected",
+        "disconnected": "Disconnected",
+        "cameraOn": "Camera",
+        "cameraOff": "No camera",
+        "microphoneOn": "Microphone",
+        "microphoneOff": "No microphone",
+        "roles": {
+          "observator": "Observator",
+          "moderator": "Moderator",
+          "evaluator": "Evaluator"
+        }
+      },
+      "dialog": {
+        "title": "Video Call Started",
+        "description": "The moderator has started the video call. Would you like to join now?"
+      },
+      "task": {
+        "taskLabel": "Task {index}: {name}",
+        "defaultTaskName": "User Task {index}"
+      },
+      "stepDescriptions": {
+        "welcome": "Introduction to the test",
+        "consent": "User consent and agreement",
+        "preTest": "Initial questionnaire",
+        "preTasks": "Task instructions",
+        "tasks": "User testing tasks",
+        "postTest": "Final questionnaire",
+        "completion": "Test finished"
+      }
+    },
     "buttons": {
       "done": "Done"
     },
@@ -1263,7 +1367,8 @@
       "answerSaved": "Answer saved successfully.",
       "taskCompletedSuccess": "Task \"{taskName}\" completed successfully!",
       "useSessionLinkModerated": "Use a session link to access your moderated test!",
-      "useSessionLink": "Use a session link to access the test"
+      "useSessionLink": "Use a session link to access the test",
+      "moderatorEndedSession": "The moderator has ended the session."
     },
     "errors": {
       "noAnswerData": "No answer data found.",

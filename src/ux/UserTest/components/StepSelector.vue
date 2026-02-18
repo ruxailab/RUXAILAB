@@ -17,7 +17,11 @@
           <v-icon size="28">mdi-view-list</v-icon>
         </v-btn>
       </template>
-      <span>{{ showStepPanel ? 'Hide steps' : 'Show steps' }}</span>
+      <span>{{
+        showStepPanel
+          ? t('UserTestView.StepSelector.hideSteps')
+          : t('UserTestView.StepSelector.showSteps')
+      }}</span>
     </v-tooltip>
 
     <!-- Step Selection Panel -->
@@ -29,7 +33,7 @@
       }"
     >
       <div class="step-panel-header">
-        <h3>Test Steps</h3>
+        <h3>{{ t('UserTestView.StepSelector.title') }}</h3>
         <v-btn
           icon
           size="small"
@@ -43,16 +47,21 @@
 
       <div class="step-panel-content">
         <div class="current-step-info">
-          <h4>Current Step</h4>
+          <h4>{{ t('UserTestView.StepSelector.currentStep') }}</h4>
           <v-chip color="primary" size="large" class="mb-3">
             <v-icon start>mdi-play-circle</v-icon>
-            Step {{ currentStep }} of {{ totalSteps }}
+            {{
+              t('UserTestView.StepSelector.currentStepProgress', {
+                current: currentStep,
+                total: totalSteps,
+              })
+            }}
           </v-chip>
           <p class="step-description">{{ getCurrentStepDescription() }}</p>
         </div>
 
         <div class="steps-list">
-          <h4>All Steps</h4>
+          <h4>{{ t('UserTestView.StepSelector.allSteps') }}</h4>
           <div class="step-items">
             <div
               v-for="(step, index) in steps"
@@ -86,7 +95,13 @@
               </div>
 
               <div class="step-item-content">
-                <div class="step-item-title">Step {{ index + 1 }}</div>
+                <div class="step-item-title">
+                  {{
+                    t('UserTestView.StepSelector.stepLabel', {
+                      step: index + 1,
+                    })
+                  }}
+                </div>
                 <div class="step-item-description">
                   {{ step.title }}
                 </div>
@@ -111,7 +126,7 @@
                   density="compact"
                   hide-details
                   class="task-selector"
-                  placeholder="Select a task"
+                  :placeholder="t('UserTestView.StepSelector.taskPlaceholder')"
                   prepend-inner-icon="mdi-format-list-bulleted"
                   :disabled="taskSelectorDisabled"
                   @update:model-value="(v) => emit('taskSelected', v)"
@@ -150,7 +165,11 @@
                   color="primary"
                   @click.stop="selectStep(index + 1)"
                 >
-                  {{ index + 1 < currentStep ? 'Revisit' : 'Go to' }}
+                  {{
+                    index + 1 < currentStep
+                      ? t('UserTestView.StepSelector.revisit')
+                      : t('UserTestView.StepSelector.goTo')
+                  }}
                 </v-btn>
               </div>
             </div>
@@ -170,8 +189,10 @@
             <v-icon start>mdi-arrow-right</v-icon>
             {{
               currentStep >= totalSteps
-                ? 'Test Complete'
-                : `Proceed to Step ${currentStep + 1}`
+                ? t('UserTestView.StepSelector.testComplete')
+                : t('UserTestView.StepSelector.proceedToStep', {
+                    step: currentStep + 1,
+                  })
             }}
           </v-btn>
 
@@ -184,7 +205,7 @@
             @click="resetToFirstStep"
           >
             <v-icon start>mdi-restart</v-icon>
-            Restart Test
+            {{ t('UserTestView.StepSelector.restartTest') }}
           </v-btn>
         </div>
       </div>
@@ -201,6 +222,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 // Props
 const props = defineProps({
@@ -258,6 +280,8 @@ const props = defineProps({
     default: true,
   },
 })
+
+const { t } = useI18n()
 
 // Emits
 const emit = defineEmits([
