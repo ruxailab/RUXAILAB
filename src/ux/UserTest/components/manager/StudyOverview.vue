@@ -100,8 +100,10 @@
 <script setup>
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useStore } from 'vuex'
 
 const { t } = useI18n()
+const store = useStore()
 
 const props = defineProps({
   test: {
@@ -110,39 +112,36 @@ const props = defineProps({
   },
 })
 
-// Combine answers and cooperators since both are participants
-const getAllParticipants = computed(() => {
-  let participants = []
+// Read answers from the Answer Vuex store module (correct data source)
+const answerDocument = computed(() => store.getters.testAnswerDocument)
 
-  // Add answers if they exist
-  const testAnswers = props.test?.answers || []
-  if (Array.isArray(testAnswers)) {
-    participants = [...testAnswers]
-  } else if (typeof testAnswers === 'object' && testAnswers !== null) {
-    participants = Object.values(testAnswers)
-  }
-
-  // Add cooperators since they are also participants who respond
-  const cooperators = props.test?.cooperators || []
-  if (Array.isArray(cooperators)) {
-    participants = [...participants, ...cooperators]
-  }
-
-  return participants.filter(
-    (participant) => typeof participant === 'object' && participant !== null,
+const allAnswers = computed(() => {
+  const doc = answerDocument.value
+  if (!doc || !doc.taskAnswers) return []
+  return Object.values(doc.taskAnswers).filter(
+    (answer) => typeof answer === 'object' && answer !== null,
   )
 })
 
+// Cooperators from the test document
+const cooperators = computed(() => {
+  const testCooperators = props.test?.cooperators || []
+  return Array.isArray(testCooperators) ? testCooperators : []
+})
+
 const totalUsers = computed(() => {
-  return getAllParticipants.value.length
+  // Use the larger of: cooperators count or answers count
+  // This ensures we count all participants who have taken the test
+  // even if they weren't added as cooperators
+  return Math.max(cooperators.value.length, allAnswers.value.length)
 })
 
 const completedTests = computed(() => {
-  return getAllParticipants.value.filter((answer) => answer.submitted).length
+  return allAnswers.value.filter((answer) => answer.submitted).length
 })
 
 const inProgressTests = computed(() => {
-  return getAllParticipants.value.filter(
+  return allAnswers.value.filter(
     (answer) => !answer.submitted && (answer.progress || 0) > 0,
   ).length
 })
@@ -167,20 +166,17 @@ const timeEfficiencyPercentage = computed(() => {
 })
 
 const averageCompletionTime = computed(() => {
-  const completedAnswers = getAllParticipants.value.filter(
-    (answer) => answer.submitted && answer.tasks,
+  const answersWithTasks = allAnswers.value.filter(
+    (answer) => answer.tasks,
   )
 
-  if (completedAnswers.length === 0) return '0 min'
+  if (answersWithTasks.length === 0) return '0 min'
 
   let totalTime = 0
   let taskCount = 0
 
-  completedAnswers.forEach((answer) => {
-    const tasks = Array.isArray(answer.tasks)
-      ? answer.tasks
-      : Object.values(answer.tasks || {})
-    tasks.forEach((task) => {
+  answersWithTasks.forEach((answer) => {
+    Object.values(answer.tasks || {}).forEach((task) => {
       if (task.taskTime) {
         totalTime += task.taskTime
         taskCount++
@@ -191,6 +187,8 @@ const averageCompletionTime = computed(() => {
   if (taskCount === 0) return '0 min'
 
   const avgMs = totalTime / taskCount
+  const avgSeconds = Math.round(avgMs / 1000)
+  if (avgSeconds < 60) return `${avgSeconds} sec`
   const avgMinutes = Math.round(avgMs / 1000 / 60)
   return `${avgMinutes} min`
 })
