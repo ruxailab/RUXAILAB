@@ -18,6 +18,7 @@
               size="large"
               class="text-capitalize w-100 w-md-auto"
               rounded="lg"
+              :disabled="isTemplate"
               @click="
                 () => {
                   dialog = true
@@ -125,6 +126,7 @@
                 variant="text"
                 color="accent"
                 class="mr-2"
+                :disabled="isTemplate"
                 @click="editItem(item)"
               >
                 <v-icon>mdi-pencil</v-icon>
@@ -133,6 +135,7 @@
                 icon
                 variant="text"
                 color="error"
+                :disabled="isTemplate"
                 @click="deleteItem(item)"
               >
                 <v-icon>mdi-trash-can-outline</v-icon>
@@ -143,6 +146,7 @@
         <FormDialog
           v-model:dialog="dialog"
           v-model:task="task"
+          :is-template="isTemplate"
           @add-task="addTask"
         />
       </v-card>
@@ -167,6 +171,7 @@
           <v-btn
             class="bg-red text-white ml-1"
             :loading="taskDeleteLoading"
+            :disabled="isTemplate"
             variant="text"
             @click="confirmTaskDeletion"
           >
@@ -263,13 +268,22 @@ const taskDeleteDialogText = computed(() =>
   }),
 )
 
+const props = defineProps({
+  isTemplate: {
+    type: Boolean,
+    default: false,
+  },
+})
+
 const editItem = (item) => {
+  if (props.isTemplate) return
   editedIndex.value = allTasks.value.indexOf(item)
   task.value = item
   dialog.value = true
 }
 
 const deleteItem = async (item) => {
+  if (props.isTemplate) return
   taskToDelete.value = item
   taskDeleteDialog.value = true
 }
@@ -291,6 +305,7 @@ const confirmTaskDeletion = async () => {
 }
 
 const addTask = async (newTask) => {
+  if (props.isTemplate) return
   try {
     if (editedIndex.value > -1) {
       Object.assign(allTasks.value[editedIndex.value], newTask.toFirestore())

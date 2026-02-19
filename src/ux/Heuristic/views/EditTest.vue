@@ -1,13 +1,13 @@
 <template>
-  <PageWrapper :title="$t('HeuristicsEditTest.pageTitle')" :side-gap="true">
+  <PageWrapper :title="pageTitle" :side-gap="true">
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
-        {{ $t('HeuristicsEditTest.pageSubtitle') }}
+        {{ pageSubtitle }}
       </p>
     </template>
 
     <v-container>
-      <ButtonSave :visible="change" @click="save" />
+      <ButtonSave :visible="!isTemplate && change" @click="save" />
 
       <div>
         <!-- Desktop Tabs -->
@@ -21,7 +21,9 @@
           <v-tab>{{ $t('HeuristicsEditTest.titles.heuristics') }}</v-tab>
           <v-tab>{{ $t('HeuristicsEditTest.titles.options') }}</v-tab>
           <v-tab>{{ $t('HeuristicsEditTest.titles.weights') }}</v-tab>
-          <v-tab>{{ $t('HeuristicsEditTest.titles.settings') }}</v-tab>
+          <v-tab v-if="showSettingsTab">{{
+            $t('HeuristicsEditTest.titles.settings')
+          }}</v-tab>
         </v-tabs>
 
         <!-- Mobile Select Dropdown -->
@@ -44,10 +46,21 @@
         </v-select>
 
         <div class="mt-4">
-          <HeuristicsTable v-if="index == 0" @change="change = true" />
-          <OptionsTable v-if="index == 1" @change="change = true" />
-          <WeightTable v-if="index == 2" />
-          <HeuristicsSettings v-if="index == 3" />
+          <HeuristicsTable
+            v-if="index == 0"
+            :is-template="isTemplate"
+            @change="change = true"
+          />
+          <OptionsTable
+            v-if="index == 1"
+            :is-template="isTemplate"
+            @change="change = true"
+          />
+          <WeightTable v-if="index == 2" :is-template="isTemplate" />
+          <HeuristicsSettings
+            v-if="showSettingsTab && index == 3"
+            :is-template="isTemplate"
+          />
         </div>
       </div>
     </v-container>
@@ -65,21 +78,52 @@ import HeuristicsSettings from '../components/HeuristicsSettings.vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
+import { useI18n } from 'vue-i18n'
+
+const props = defineProps({
+  isTemplate: {
+    type: Boolean,
+    default: false,
+  },
+  templateTest: {
+    type: Object,
+    default: null,
+  },
+})
 
 const store = useStore()
 const route = useRoute()
+const { t } = useI18n()
 
 const index = ref(0)
 const change = ref(false)
 const windowWidth = ref(window.innerWidth)
+const showSettingsTab = computed(() => !props.isTemplate)
+const pageTitle = computed(() =>
+  props.isTemplate
+    ? t('HeuristicsEditTest.previewPageTitle')
+    : t('HeuristicsEditTest.pageTitle'),
+)
+const pageSubtitle = computed(() =>
+  props.isTemplate
+    ? t('HeuristicsEditTest.previewPageSubtitle')
+    : t('HeuristicsEditTest.pageSubtitle'),
+)
 
 // Tab items for mobile dropdown
-const tabItems = computed(() => [
-  { title: 'HEURISTICS', value: 0 },
-  { title: 'OPTIONS', value: 1 },
-  { title: 'WEIGHTS', value: 2 },
-  { title: 'SETTINGS', value: 3 },
-])
+const tabItems = computed(() => {
+  const items = [
+    { title: 'HEURISTICS', value: 0 },
+    { title: 'OPTIONS', value: 1 },
+    { title: 'WEIGHTS', value: 2 },
+  ]
+
+  if (showSettingsTab.value) {
+    items.push({ title: 'SETTINGS', value: 3 })
+  }
+
+  return items
+})
 
 // Check if mobile
 const isMobile = computed(() => windowWidth.value < 960)
@@ -90,6 +134,9 @@ const handleResize = () => {
 }
 
 onMounted(() => {
+  if (props.isTemplate && props.templateTest) {
+    store.commit('SET_TEST', structuredClone(props.templateTest))
+  }
   window.addEventListener('resize', handleResize)
 })
 
@@ -98,6 +145,7 @@ onBeforeUnmount(() => {
 })
 
 const save = async () => {
+  if (props.isTemplate) return
   change.value = false
 
   const rawData = {
