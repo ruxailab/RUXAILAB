@@ -1,6 +1,6 @@
-import { computed, toRef } from 'vue'
+import { computed, toRef, unref } from 'vue'
 
-export function useDataTableConfig(type, t) {
+export function useDataTableConfig(type, t, options = {}) {
   const typeRef = toRef(type)
 
   const headers = computed(() => {
@@ -68,6 +68,16 @@ export function useDataTableConfig(type, t) {
       key: 'creationDate',
       sortable: true,
     })
+
+    if (unref(options.showActions)) {
+      baseHeaders.push({
+        title: '',
+        key: 'actions',
+        sortable: false,
+        align: 'end',
+        width: 64,
+      })
+    }
 
     return baseHeaders
   })
