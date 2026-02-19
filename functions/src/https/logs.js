@@ -1,95 +1,141 @@
+import { onCall, HttpsError } from 'firebase-functions/v2/https'
 import { Logging } from '@google-cloud/logging'
-import { functions } from '../f.firebase.js'
-import { createLogger } from '../utils/logger.js'
-import UserRepository from '../repositories/UserRepository.js'
-
-const logger = createLogger('getFunctionLogs')
-
-const DEFAULT_PAGE_SIZE = 100
-const MAX_PAGE_SIZE = 500
+import { createLogger, LOG_LEVELS } from '../utils/logger.js'
 
 const logging = new Logging()
+const logger = createLogger('getFunctionLogs')
 
-export const getFunctionLogs = functions.onCall({
-  handler: async (request) => {
-    if (!request.auth) {
-      throw new functions.https.HttpsError(
-        'unauthenticated',
-        'The function must be called while authenticated.',
+const DEFAULT_PAGE_SIZE = 50
+const MAX_PAGE_SIZE = 500
+
+export const getFunctionLogs = onCall(async (request) => {
+  if (!request.auth) {
+    throw new HttpsError(
+      'unauthenticated',
+      'Authentication is required to access system logs.',
+    )
+  }
+
+  const {
+    pageToken,
+    nextPageToken,
+    pageSize: requestedSize,
+    startTime,
+  } = request.data ?? {}
+
+  const token = pageToken ?? nextPageToken
+
+  let anchorTime
+
+  if (token) {
+    if (!startTime) {
+      throw new HttpsError(
+        'invalid-argument',
+        'startTime is required when using pageToken.',
       )
     }
+    anchorTime = startTime
+  } else {
+    anchorTime = startTime ?? new Date().toISOString()
+  }
 
-    const userRepository = new UserRepository()
-    const user = await userRepository.get(request.auth.uid)
+  /**
+   * Page size sanitization
+   */
+  const pageSize = Math.min(
+    Math.max(Number(requestedSize ?? DEFAULT_PAGE_SIZE), 1),
+    MAX_PAGE_SIZE,
+  )
 
-    if (user?.accessLevel !== 0) {
-      throw new functions.https.HttpsError(
-        'permission-denied',
-        'Only administrators can view function logs.',
-      )
-    }
+  /**
+   * Excludes logs from this function itself to prevent potential loops if we log a lot.
+   */
+  const filter = `
+    resource.type="cloud_run_revision"
+    AND timestamp <= "${anchorTime}"
+    AND NOT resource.labels.service_name="getFunctionLogs"
+    AND NOT jsonPayload.functionName="getFunctionLogs"
+    AND NOT protoPayload:*
+  `
+    .replace(/\s+/g, ' ')
+    .trim()
 
-    const { pageToken, pageSize: rawPageSize } = request.data ?? {}
+  const options = {
+    filter,
+    orderBy: 'timestamp desc',
+    pageSize,
+    autoPaginate: false,
+    pageToken: token ?? undefined,
+  }
 
-    const parsed = Number(rawPageSize)
-    let pageSize = DEFAULT_PAGE_SIZE
+  try {
+    const [entries, nextQuery] = await logging.getEntries(options)
 
-    if (Number.isFinite(parsed)) {
-      pageSize = Math.floor(parsed)
-      if (pageSize < 1) pageSize = 1
-      if (pageSize > MAX_PAGE_SIZE) pageSize = MAX_PAGE_SIZE
-    }
+    const nextPageToken = nextQuery?.pageToken ?? null
 
-const filter = [
-  '(resource.type="cloud_function" OR resource.type="cloud_run_revision")',
-  'jsonPayload:*',
-  'NOT resource.labels.function_name="getfunctionlogs"',
-  'NOT resource.labels.service_name="getfunctionlogs"',
-].join(' AND ');
+    const logs = entries.map((entry) => {
+      const metadata = entry.metadata || {}
+      const rawPayload = entry.data || entry.jsonPayload || {}
+      const jsonPayload = typeof rawPayload === 'object' ? rawPayload : {}
+      const textPayload =
+        typeof rawPayload === 'string' ? rawPayload : entry.textPayload
 
-
-    const options = {
-      filter,
-      pageSize,
-      orderBy: 'timestamp desc',
-      autoPaginate: false,
-      ...(pageToken ? { pageToken } : {}),
-    }
-
-    try {
-      const [entries, , response] = await logging.getEntries(options)
-
-      const logs = entries.map((entry) => {
-        const ts = entry.metadata.timestamp
-        const timestamp =
-          ts && typeof ts.toISOString === 'function'
-            ? ts.toISOString()
-            : ts?.seconds != null
-              ? new Date(Number(ts.seconds) * 1000).toISOString()
-              : (ts ?? null)
-
-        return {
-          timestamp,
-          severity: entry.metadata.severity ?? null,
-          functionName:
-            entry.metadata.resource?.labels?.function_name ??
-            entry.metadata.resource?.labels?.service_name ??
-            null,
-          message: entry.data?.message ?? null,
-          level: entry.data?.level ?? null,
-          insertId: entry.metadata.insertId,
+      // Map GCP severity to our internal levels if not present in payload
+      let level = jsonPayload.level
+      if (!level) {
+        const severity = metadata.severity || 'DEFAULT'
+        if (
+          severity === 'ERROR' ||
+          severity === 'CRITICAL' ||
+          severity === 'ALERT' ||
+          severity === 'EMERGENCY'
+        ) {
+          level = LOG_LEVELS.ERROR
+        } else if (severity === 'WARNING') {
+          level = LOG_LEVELS.WARN
+        } else {
+          level = LOG_LEVELS.INFO
         }
-      })
+      }
 
-      const nextPageToken = response?.nextPageToken ?? null
+      return {
+        timestamp:
+          metadata.timestamp?.toISOString?.() ||
+          new Date(metadata.timestamp).toISOString(),
+        severity: metadata.severity || 'DEFAULT',
+        level,
+        functionName:
+          jsonPayload.functionName ||
+          metadata.resource?.labels?.service_name ||
+          metadata.labels?.function_name ||
+          'unknown',
+        message:
+          jsonPayload.message ||
+          textPayload ||
+          entry.protoPayload?.status?.message ||
+          (Object.keys(jsonPayload).length > 0
+            ? JSON.stringify(jsonPayload)
+            : 'Empty log body'),
+        insertId: metadata.insertId,
+      }
+    })
 
-      return { logs, nextPageToken }
-    } catch (err) {
-      logger.error('Failed to retrieve function logs', { error: err?.message })
-      throw new functions.https.HttpsError(
-        'internal',
-        'Failed to retrieve function logs.',
-      )
+    return {
+      logs,
+      nextPageToken,
+      startTime: anchorTime,
     }
-  },
+  } catch (error) {
+    logger.error({
+      message: 'Failed to retrieve logs from Cloud Logging.',
+      error: error?.message,
+      stack: error?.stack,
+    })
+
+    throw new HttpsError(
+      'internal',
+      'Failed to retrieve logs from Cloud Logging.',
+      error?.message,
+    )
+  }
 })
