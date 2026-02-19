@@ -7,6 +7,7 @@ import HeuristicRoutes from '@/ux/Heuristic/router.js'
 import accessibilityRoutes from '@/ux/accessibility/router.js'
 import UserTestRoutes from '@/ux/UserTest/router.js'
 import store from '@/store'
+import { getTemplateManagerPath } from '@/shared/utils/templateRouting'
 
 const routes = [
   ...Public,
@@ -45,6 +46,45 @@ router.beforeEach(async (to, from, next) => {
   if (authorize.length && to.path !== '/signin' && !to.params.token) {
     if (!user || !authorize.includes(user.accessLevel)) {
       return next(redirect())
+    }
+  }
+
+  if (to.meta?.templateAccess && to.params?.id) {
+    const template = await store.dispatch('getTemplateById', to.params.id)
+
+    if (!template) {
+      store.commit('SET_TOAST', {
+        type: 'error',
+        message: 'Template not found.',
+      })
+      return next('/admin')
+    }
+
+    const ownerId = template.header?.templateAuthor?.userDocId
+    const isOwner = ownerId && user?.id === ownerId
+    const isPublic = Boolean(template.header?.isTemplatePublic)
+
+    if (!isOwner && !isPublic) {
+      store.commit('SET_TOAST', {
+        type: 'error',
+        message: 'You do not have permission to access this template.',
+      })
+      return next('/admin')
+    }
+
+    const canonicalPath = getTemplateManagerPath(template)
+    if (canonicalPath && canonicalPath !== to.path) {
+      if (to.meta?.templateSection === 'manager') {
+        return next({ path: canonicalPath, query: to.query, replace: true })
+      }
+    }
+
+    if (to.meta?.templateOwnerOnly && !isOwner) {
+      store.commit('SET_TOAST', {
+        type: 'error',
+        message: 'Only template owner can access configuration.',
+      })
+      return next(canonicalPath || '/admin')
     }
   }
 
