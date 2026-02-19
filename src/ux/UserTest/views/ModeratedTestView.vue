@@ -159,12 +159,49 @@
               {{ $t('UserTestView.errors.noTestDataMessage') }}
             </span>
           </v-alert>
+
+          <v-alert
+            v-if="moderatorInactive"
+            type="warning"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="
+              background-color: rgba(255, 255, 255, 0.1);
+              border-color: white;
+            "
+          >
+            <template #prepend>
+              <v-icon color="white"> mdi-wifi-off </v-icon>
+            </template>
+            <span class="text-white">
+              <strong>Moderator Disconnected</strong><br />
+              The moderator seems to be offline. Please wait or contact support.
+            </span>
+          </v-alert>
         </v-col>
       </v-row>
 
       <!--Answer Test Screen-->
       <v-row v-else class="main-test-interface pa-0 ma-0">
         <v-col ref="rightView" class="right-view pa-6">
+          <v-alert
+            v-if="moderatorInactive"
+            density="compact"
+            type="warning"
+            variant="tonal"
+            class="mb-4 rounded-xl"
+            closable
+          >
+            <template #prepend>
+              <v-icon size="small">mdi-wifi-off</v-icon>
+            </template>
+            <div class="text-caption">
+              <strong>Moderator Disconnected:</strong>
+              The moderator seems to be offline. Please wait.
+            </div>
+          </v-alert>
+
           <!--Sticky Stepper to follow Progress-->
           <v-row
             v-if="globalIndex >= 1 || displayVideoCallComponent"
@@ -190,8 +227,8 @@
                       stepperValue == 1
                         ? 'warning'
                         : stepperValue < 1
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -204,8 +241,8 @@
                       stepperValue == 2
                         ? 'warning'
                         : stepperValue < 1
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -218,8 +255,8 @@
                       stepperValue == 3
                         ? 'warning'
                         : stepperValue < 3
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -232,8 +269,8 @@
                       stepperValue == 4
                         ? 'warning'
                         : stepperValue < 4
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -246,8 +283,8 @@
                       stepperValue == 5
                         ? 'warning'
                         : stepperValue < 5
-                        ? 'primary'
-                        : 'success'
+                          ? 'primary'
+                          : 'success'
                     "
                     complete-icon="mdi-check"
                   />
@@ -285,8 +322,8 @@
                         taskIndex == index
                           ? 'warning'
                           : taskIndex < index
-                          ? 'primary'
-                          : 'success'
+                            ? 'primary'
+                            : 'success'
                       "
                       complete-icon="mdi-check"
                     />
@@ -299,11 +336,68 @@
             </v-col>
           </v-row>
 
+          <!-- Observator Notes Drawer -->
+          <v-navigation-drawer
+            v-if="isObservator"
+            v-model="notesDrawerOpen"
+            location="right"
+            persistent
+            width="400"
+            elevation="3"
+            style="
+              position: fixed;
+              top: 0;
+              right: 0;
+              height: 100%;
+              z-index: 1005;
+            "
+          >
+            <ObservatorNotes
+              v-if="localTestAnswer"
+              v-model="localTestAnswer.sessionNotes"
+              :current-task-index="taskIndex"
+              :test="test"
+              @save="saveAnswer"
+            />
+          </v-navigation-drawer>
+
+          <!-- Notes Toggle Button (for Observators) -->
+          <v-btn
+            v-if="isObservator"
+            icon
+            size="large"
+            color="primary"
+            elevation="4"
+            class="notes-toggle-btn"
+            :style="{
+              position: 'fixed',
+              top: '80px',
+              right: notesDrawerOpen ? '420px' : '20px',
+              zIndex: 1006,
+              transition: 'right 0.3s ease',
+            }"
+            @click="notesDrawerOpen = !notesDrawerOpen"
+          >
+            <v-badge
+              :content="localTestAnswer.sessionNotes?.length || 0"
+              :model-value="(localTestAnswer.sessionNotes?.length || 0) > 0"
+              color="error"
+            >
+              <v-icon>
+                {{
+                  notesDrawerOpen ? 'mdi-notebook-edit' : 'mdi-notebook-outline'
+                }}
+              </v-icon>
+            </v-badge>
+          </v-btn>
+
           <!-- Video Call Component -->
-          <div v-show="displayVideoCallComponent">
+          <div v-show="displayVideoCallComponent" v-if="test">
             <VideoCall
               :room-id="roomId"
-              :caller="isUserTestAdmin"
+              :is-moderator="isUserTestAdmin"
+              :user="user"
+              :access-level="currentUserAccessLevel"
               :current-global-index="globalIndex"
               :current-task-index="taskIndex"
               :test="test"
@@ -311,6 +405,8 @@
               @set-remote-stream="remoteStream = $event"
               @proceed-to-next-step="proceedToNextStep"
               @step-selected="handleStepSelected"
+              @call-ended="displayVideoCallComponent = false"
+              @moderator-status-change="handleModeratorStatusChange"
             />
           </div>
 
@@ -512,18 +608,12 @@ import {
   off,
   update,
   set,
+  get,
   onDisconnect,
+  serverTimestamp,
 } from 'firebase/database'
 import { database } from '@/app/plugins/firebase/index'
-import {
-  ref,
-  computed,
-  watch,
-  onMounted,
-  reactive,
-  watchEffect,
-  onUnmounted,
-} from 'vue'
+import { ref, computed, watch, onMounted, reactive, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -538,17 +628,25 @@ import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue'
 import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue'
 import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue'
 import VideoCall from '@/ux/UserTest/components/VideoCall.vue'
+import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { showError, showInfo, showWarning } from '@/shared/utils/toast'
+import { calculateProgress } from '../utils/testProgress'
 
 const store = useStore()
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 // Data variables
+
+onBeforeUnmount(() => {
+  if (moderatorDisconnectTimeout.value)
+    clearTimeout(moderatorDisconnectTimeout.value)
+})
+
 const testDisabledReason = ref(null)
 const isStartTestDisabled = ref(true)
 const loggedIn = ref(null)
@@ -567,6 +665,9 @@ const preTestIndex = ref(null)
 const taskStepComponent = ref(null)
 const allTasksCompleted = ref(false)
 const submitDialog = ref(false)
+const notesDrawerOpen = ref(true)
+const moderatorInactive = ref(false)
+const moderatorDisconnectTimeout = ref(null)
 
 // From video call to be used by recorders
 const remoteStream = ref(null)
@@ -579,8 +680,18 @@ const user = computed(() => {
   return store.getters.user
 })
 const isUserTestAdmin = computed(() => {
-  return test.value.testAdmin.userDocId === user.value?.id
+  return test.value?.testAdmin?.userDocId === user.value?.id
 })
+
+const currentUserAccessLevel = computed(() => {
+  if (isUserTestAdmin.value) return 0 // Admin implicit
+  const cooperator = test.value.cooperators?.find(
+    (c) => c.userDocId === user.value?.id,
+  )
+  return cooperator?.accessLevel ?? 2 // Default to Guest/Participant (2) if not found, but typically should be found
+})
+
+const isObservator = computed(() => currentUserAccessLevel.value === 3)
 
 const timerComponent = computed(() => {
   // Get timer ref from TaskStep
@@ -614,8 +725,13 @@ watch(user, async () => {
 })
 
 watch(
-  () => [globalIndex.value, taskIndex.value],
-  () => {
+  () => [
+    globalIndex.value,
+    taskIndex.value,
+    displayVideoCallComponent.value,
+    isUserTestAdmin.value,
+  ],
+  ([gi, ti, dvc, admin]) => {
     scrollToTop()
   },
 )
@@ -627,6 +743,16 @@ watchEffect(() => {
   const task = Array.isArray(taskList) ? taskList[index] : undefined
 
   const answers = localTestAnswer?.tasks?.[index]?.susAnswers
+
+  if (isUserTestAdmin.value) {
+    doneTaskDisabled.value = false
+    return
+  }
+
+  if (isUserTestAdmin.value) {
+    doneTaskDisabled.value = false
+    return
+  }
 
   if (task?.taskType === 'sus') {
     const validCount = answers?.filter((v) => typeof v === 'number').length ?? 0
@@ -712,8 +838,7 @@ const handleSubmit = async () => {
     localTestAnswer.submitted = true
     await saveAnswer()
     await router.push({ name: 'Admin' })
-  } catch (error) {
-    console.error('Error submitting answer:', error.message) // eslint-disable-line no-console
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSubmitAnswer'),
@@ -738,8 +863,7 @@ const saveAnswer = async () => {
       answersDocId: test.value.answersDocId,
       testType: test.value.testType,
     })
-  } catch (error) {
-    console.error('Error saving answer:', error.message)
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSaveAnswer'),
@@ -774,7 +898,10 @@ const signOut = async () => {
 
 const startTest = async () => {
   // Check if the test has no tasks
-  if (!test.value.testStructure || test.value.testStructure.length === 0) {
+  if (
+    !test.value.testStructure ||
+    Object.keys(test.value.testStructure).length === 0
+  ) {
     store.commit('SET_TOAST', {
       type: 'info',
       message: t('UserTestView.messages.noTasks'),
@@ -790,6 +917,13 @@ const startTest = async () => {
     })
   }
 
+  if (isObservator.value) {
+    // Hidin start screen and mount VideoCall component
+    start.value = false
+    displayVideoCallComponent.value = true
+    return
+  }
+
   // First, add the class for the exit animation
   const startScreen = document.querySelector('.start-screen')
   if (startScreen) {
@@ -799,17 +933,32 @@ const startTest = async () => {
   // listen for changes
   const roomRef = dbRef(database, `rooms/${roomId.value}`)
 
-  onDisconnect(roomRef).set(null)
+  // Ensure only moderator can set this, and only on explicit end, NOT using onDisconnect
+  // onDisconnect(roomRef).set(null)
 
   onValue(roomRef, (snapshot) => {
     const data = snapshot.val()
-    if (!data) return
 
-    globalIndex.value = data.globalIndex
-    taskIndex.value = data.taskIndex
+    // If data is null, the room has been deleted (e.g. by moderator ending call)
+    if (!data) {
+      if (!isUserTestAdmin.value && displayVideoCallComponent.value) {
+        // displayVideoCallComponent.value = false // Avoid updating state before redirect to prevent unmount error
+        // Optionally show start screen or just return to test flow
+        // start.value = true
+        showInfo('The moderator has ended the session')
+        router.push('/admin')
+      }
+      return
+    }
+
+    globalIndex.value = data.globalIndex !== undefined ? data.globalIndex : 0
+    taskIndex.value = data.taskIndex !== undefined ? data.taskIndex : 0
 
     if (!isUserTestAdmin.value) {
-      displayVideoCallComponent.value = data.showVideoCall
+      // sync video call state
+      if (data.showVideoCall !== undefined) {
+        displayVideoCallComponent.value = data.showVideoCall
+      }
     }
   })
 
@@ -817,6 +966,50 @@ const startTest = async () => {
   setTimeout(() => {
     start.value = false
   }, 1000)
+
+  // Initialize Room defaults for Moderator
+  if (isUserTestAdmin.value) {
+    // Check if valid data exists, otherwise init defaults
+    const snapshot = await get(roomRef)
+    const currentData = snapshot.val() || {}
+
+    const updates = {
+      status: 'active',
+      lastUpdate: Date.now(),
+    }
+
+    if (currentData.globalIndex === undefined) updates.globalIndex = 0
+    if (currentData.taskIndex === undefined) updates.taskIndex = 0
+    if (currentData.showVideoCall === undefined) updates.showVideoCall = false
+    if (currentData.createdAt === undefined) updates.createdAt = Date.now()
+
+    await update(roomRef, updates)
+
+    // Write lastUpdate timestamp when moderator disconnects (server-side timestamp)
+    onDisconnect(roomRef).update({ lastUpdate: serverTimestamp() })
+  }
+}
+
+const MODERATOR_DISCONNECT_TIMEOUT_MS = 5 * 60 * 1000 // 5 minutes
+
+const handleModeratorStatusChange = (connected) => {
+  if (isUserTestAdmin.value) return // Moderator does not need this
+
+  if (!connected) {
+    // Moderator disconnected — start 5-min timeout
+    if (moderatorDisconnectTimeout.value)
+      clearTimeout(moderatorDisconnectTimeout.value)
+    moderatorDisconnectTimeout.value = setTimeout(() => {
+      moderatorInactive.value = true
+    }, MODERATOR_DISCONNECT_TIMEOUT_MS)
+  } else {
+    // Moderator reconnected — clear timeout and dismiss alert instantly
+    if (moderatorDisconnectTimeout.value) {
+      clearTimeout(moderatorDisconnectTimeout.value)
+      moderatorDisconnectTimeout.value = null
+    }
+    moderatorInactive.value = false
+  }
 }
 
 // Scroll to top of the page when step changes
@@ -910,23 +1103,22 @@ const completeStep = async (id, type, userCompleted = true) => {
     }
     if (type === 'tasks') {
       if (!Array.isArray(localTestAnswer.tasks)) {
-        console.error(
-          'localTestAnswer.tasks is not an array:',
-          localTestAnswer.tasks,
-        )
+        showWarning('Task data is invalid. Please refresh and try again.')
         return
       }
       localTestAnswer.tasks[id].completed = userCompleted
-      items.value[1].value[id].icon = 'mdi-check-circle-outline'
+      if (items.value[1]?.value?.[id]) {
+        items.value[1].value[id].icon = 'mdi-check-circle-outline'
+      }
       allTasksCompleted.value = true
 
-      for (let i = 0; i < items.value[1].value.length; i++) {
+      for (let i = 0; i < items.value[1]?.value?.length || 0; i++) {
         if (!localTestAnswer.tasks[i]?.completed) {
           allTasksCompleted.value = false
           break
         }
       }
-      if (allTasksCompleted.value) {
+      if (allTasksCompleted.value && items.value[1]) {
         items.value[1].icon = 'mdi-check-circle-outline'
       }
       if (id < localTestAnswer.tasks.length - 1) {
@@ -939,7 +1131,9 @@ const completeStep = async (id, type, userCompleted = true) => {
       if (userCompleted) {
         store.commit('SET_TOAST', {
           type: 'success',
-          message: `Task "${test.value.testStructure.userTasks[id].taskName}" completed successfully!`,
+          message: t('UserTestView.messages.taskCompletedSuccess', {
+            taskName: test.value.testStructure.userTasks[id].taskName,
+          }),
           timeout: 3000,
         })
       }
@@ -959,13 +1153,27 @@ const completeStep = async (id, type, userCompleted = true) => {
       showVideoCall: true,
     })
 
-    calculateProgress()
+    // Update individual participant taskIndex (for tracking)
+    if (!isUserTestAdmin.value && user.value?.id) {
+      const participantRef = dbRef(
+        database,
+        `calls/${roomId.value}/participants/${user.value.id}`,
+      )
+      // We can just update taskIndex.
+      // Note: 'taskIndex' variable here is the NEXT index (already updated above if type=='tasks')
+      // validation: type === 'tasks' ? id + 1 : taskIndex.value
+      await update(participantRef, {
+        taskIndex: taskIndex.value,
+      })
+    }
+
+    calculateProgress(localTestAnswer)
     await saveAnswer()
   } catch (error) {
     console.error('Error in completeStep:', error) // eslint-disable-line no-console
     store.commit('SET_TOAST', {
       type: 'error',
-      message: 'Failed to complete step. Please try again.',
+      message: t('UserTestView.errors.failedToCompleteStep'),
     })
   }
 }
@@ -977,16 +1185,16 @@ const mappingSteps = async () => {
     // PreTest
     if (validate(test.value?.testStructure?.preTest)) {
       items.value.push({
-        title: 'Pre-test',
+        title: t('UserTestView.stepper.preTest'),
         icon: 'mdi-check-bold',
         value: [
           {
-            title: 'Consent',
+            title: t('UserTestView.stepper.consent'),
             icon: 'mdi-check-bold',
             id: 0,
           },
           {
-            title: 'Form',
+            title: t('UserTestView.stepper.form'),
             icon: 'mdi-check-bold',
             id: 1,
           },
@@ -1008,7 +1216,7 @@ const mappingSteps = async () => {
     // Tasks
     if (validate(test.value?.testStructure?.userTasks)) {
       items.value.push({
-        title: 'Tasks',
+        title: t('UserTestView.stepper.tasks'),
         icon: 'mdi-check-bold',
         value: test.value.testStructure.userTasks.map((task, index) => ({
           title: task.taskName,
@@ -1042,7 +1250,7 @@ const mappingSteps = async () => {
     // PostTest
     if (validate(test.value?.testStructure?.postTest)) {
       items.value.push({
-        title: 'Post Test',
+        title: t('UserTestView.stepper.postTest'),
         icon: 'mdi-check-bold',
         value: test.value.testStructure.postTest,
         id: 2,
@@ -1062,7 +1270,7 @@ const mappingSteps = async () => {
     console.error('Error mapping steps:', error.message) // eslint-disable-line no-console
     store.commit('SET_TOAST', {
       type: 'error',
-      message: 'Failed to initialize test data. Please try again.',
+      message: t('UserTestView.errors.failedToInitializeTestData'),
     })
   }
 }
@@ -1077,28 +1285,6 @@ const validate = (object) => {
   )
 }
 
-const calculateProgress = () => {
-  try {
-    const totalSteps = test.value?.testStructure?.userTasks?.length || 0
-    if (totalSteps === 0) return 0
-
-    let completedSteps = 0
-    if (localTestAnswer.consentCompleted) completedSteps += 1
-    if (localTestAnswer.preTestCompleted) completedSteps += 1
-    if (localTestAnswer.postTestCompleted) completedSteps += 1
-
-    if (Array.isArray(localTestAnswer.tasks)) {
-      completedSteps += localTestAnswer.tasks.filter((t) => t.completed).length
-    }
-
-    const progressPercentage = (completedSteps / totalSteps) * 100
-    localTestAnswer.progress = progressPercentage
-    return progressPercentage
-  } catch (error) {
-    console.error('Error in calculateProgress:', error) // eslint-disable-line no-console
-    return 0
-  }
-}
 // testDisabledReason is already declared at line 544
 
 watchEffect(() => {
@@ -1107,12 +1293,39 @@ watchEffect(() => {
     isStartTestDisabled.value = true
     return
   }
-
+  if (isUserTestAdmin.value) {
+    if (localTestAnswer.submitted) {
+      testDisabledReason.value = 'test-already-completed'
+      isStartTestDisabled.value = true
+      isStartTestDisabled.value = true
+    } else if (
+      !test.value.testStructure ||
+      Object.keys(test.value.testStructure).length === 0
+    ) {
+      testDisabledReason.value = 'test-no-tasks-configured'
+      isStartTestDisabled.value = true
+    } else {
+      testDisabledReason.value = null
+      isStartTestDisabled.value = false
+    }
+    return
+  }
   const now = new Date()
-  const cooperator = test.value.cooperators.find(
+  const userSessions = test.value.cooperators.filter(
     (u) => u.userDocId === route.params.token,
   )
-  const sessionDate = cooperator.testDate ? new Date(cooperator.testDate) : null
+
+  const cooperator = userSessions
+    .filter((s) => {
+      const sessionDate = new Date(s.testDate)
+      const diffHours = (sessionDate - now) / (1000 * 60 * 60)
+      return diffHours >= 0 && diffHours <= 24
+    })
+    .sort((a, b) => new Date(a.testDate) - new Date(b.testDate))[0]
+
+  const sessionDate = cooperator?.testDate
+    ? new Date(cooperator.testDate)
+    : null
 
   // 🧩 Test already completed
   if (localTestAnswer.submitted) {
@@ -1153,6 +1366,8 @@ watchEffect(() => {
       isStartTestDisabled.value = true
       return
     }
+    testDisabledReason.value = null
+    return false
   }
 
   // 🧩 Test expired (fallback endDate)
@@ -1165,7 +1380,6 @@ watchEffect(() => {
     }
   }
 
-  // ✅ All good
   testDisabledReason.value = null
   isStartTestDisabled.value = false
 })
@@ -1173,14 +1387,14 @@ watchEffect(() => {
 // Lifecycle hooks
 onMounted(async () => {
   if (!user.value) {
-    showError('Login to your RUXAILAB account first to access the test!')
+    showError(t('UserTestView.errors.loginRequired'))
     router.push('/signin')
     return
   }
 
   if (route.params.token) {
     if (route.params.token === test.value.id) {
-      showInfo('Use a session link to access your moderated test!')
+      showInfo(t('UserTestView.messages.useSessionLinkModerated'))
       router.push('/managerview/' + test.value.id)
       return
     }
@@ -1198,14 +1412,12 @@ onMounted(async () => {
       if (sessionCooperator.value?.testDate) {
         testDate.value = sessionCooperator.value.testDate
       } else {
-        showWarning("Your session doesn't have a scheduled date")
-        router.push('/managerview/' + test.value.id)
+        showWarning(t('UserTestView.warnings.sessionNotScheduled'))
         return
       }
     }
   } else {
-    showInfo('Use a session link to access the test')
-    router.push('/managerview/' + test.value.id)
+    showInfo(t('UserTestView.messages.useSessionLink'))
     return
   }
 
@@ -1222,10 +1434,41 @@ onMounted(async () => {
   await mappingSteps()
 })
 
+// Auto-join if refresh happens during active call
+watch(
+  isUserTestAdmin,
+  async (newValue) => {
+    if (newValue && roomId.value) {
+      const roomRef = dbRef(database, `rooms/${roomId.value}`)
+      const snapshot = await get(roomRef)
+      if (snapshot.exists()) {
+        const val = snapshot.val()
+        if (val.showVideoCall) {
+          displayVideoCallComponent.value = true
+          start.value = false // Ensure we hide the start screen if it's there
+          await startTest()
+        }
+      }
+    }
+  },
+  { immediate: true },
+)
+
 onBeforeUnmount(async () => {
   const roomRef = dbRef(database, `rooms/${roomId.value}`)
   off(roomRef)
-  await set(roomRef, null)
+  // Do NOT delete the room on unmount (refresh/navigate away). Only explicit end should delete.
+  // await set(roomRef, null)
+
+  // Moderator: explicitly stamp lastUpdate on leave (covers SPA navigation)
+  if (isUserTestAdmin.value) {
+    await update(roomRef, { lastUpdate: serverTimestamp() })
+  }
+
+  if (moderatorDisconnectTimeout.value) {
+    clearTimeout(moderatorDisconnectTimeout.value)
+    moderatorDisconnectTimeout.value = null
+  }
 })
 </script>
 
@@ -1303,7 +1546,8 @@ onBeforeUnmount(async () => {
   --v-stepper-header-title-color: #fff !important;
   --v-stepper-item-title-color: #fff !important;
   --v-stepper-item-color: #fff !important;
-  transition: background 1s cubic-bezier(0.4, 0, 0.2, 1),
+  transition:
+    background 1s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

@@ -1,5 +1,3 @@
-import Cooperators from './Cooperators'
-
 /** Class representing a Study. */
 
 export default class Study {

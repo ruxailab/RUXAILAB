@@ -1,6 +1,6 @@
-import { NasaTlxAnswer } from "@/ux/UserTest/models/NasaTlxAnswer"
-import { TamAnswer } from "@/ux/UserTest/models/TamAnswer"
-import SartAnswer from "@/ux/UserTest/models/SartAnswer"
+import { NasaTlxAnswer } from '@/ux/UserTest/models/NasaTlxAnswer'
+import { TamAnswer } from '@/ux/UserTest/models/TamAnswer'
+import SartAnswer from '@/ux/UserTest/models/SartAnswer'
 
 export default class TaskAnswer {
   constructor({
@@ -21,6 +21,9 @@ export default class TaskAnswer {
     tamAnswers,
     sartAnswers,
     facialSentimentResults,
+    screenSize,
+    audioSize,
+    webcamSize,
   } = {}) {
     this.taskId = taskId ?? null
     this.taskAnswer = taskAnswer ?? ''
@@ -37,15 +40,19 @@ export default class TaskAnswer {
     this.susAnswers = susAnswers ?? []
     this.nasaTlxAnswers = nasaTlxAnswers ?? null
     this.tamAnswers = tamAnswers ?? null
-    
+
     if (sartAnswers) {
-      this.sartAnswers = sartAnswers instanceof SartAnswer 
-        ? sartAnswers 
-        : new SartAnswer(sartAnswers)
+      this.sartAnswers =
+        sartAnswers instanceof SartAnswer
+          ? sartAnswers
+          : new SartAnswer(sartAnswers)
     } else {
       this.sartAnswers = new SartAnswer()
     }
     this.facialSentimentResults = facialSentimentResults ?? null
+    this.screenSize = screenSize ?? null
+    this.audioSize = audioSize ?? null
+    this.webcamSize = webcamSize ?? null
   }
 
   static toModel(data) {
@@ -55,16 +62,18 @@ export default class TaskAnswer {
   toFirestore() {
     let nasaTlxData = null
     if (this.nasaTlxAnswers) {
-      nasaTlxData = (this.nasaTlxAnswers instanceof NasaTlxAnswer) 
-        ? this.nasaTlxAnswers.toFirestore() 
-        : new NasaTlxAnswer(this.nasaTlxAnswers).toFirestore()
+      nasaTlxData =
+        this.nasaTlxAnswers instanceof NasaTlxAnswer
+          ? this.nasaTlxAnswers.toFirestore()
+          : new NasaTlxAnswer(this.nasaTlxAnswers).toFirestore()
     }
 
     let tamData = null
     if (this.tamAnswers) {
-      tamData = (this.tamAnswers instanceof TamAnswer) 
-        ? this.tamAnswers.toFirestore() 
-        : new TamAnswer(this.tamAnswers).toFirestore()
+      tamData =
+        this.tamAnswers instanceof TamAnswer
+          ? this.tamAnswers.toFirestore()
+          : new TamAnswer(this.tamAnswers).toFirestore()
     }
 
     return {
@@ -83,8 +92,14 @@ export default class TaskAnswer {
       susAnswers: this.susAnswers,
       nasaTlxAnswers: nasaTlxData,
       tamAnswers: tamData,
-      sartAnswers: this.sartAnswers instanceof SartAnswer ? this.sartAnswers.toFirestore() : this.sartAnswers,
+      sartAnswers:
+        this.sartAnswers instanceof SartAnswer
+          ? this.sartAnswers.toFirestore()
+          : this.sartAnswers,
       facialSentimentResults: this.facialSentimentResults,
+      screenSize: this.screenSize,
+      audioSize: this.audioSize,
+      webcamSize: this.webcamSize,
     }
   }
 }

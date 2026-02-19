@@ -51,7 +51,7 @@ import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { useDisplay } from 'vuetify'
 
-const props = defineProps({
+defineProps({
   items: {
     type: Array,
     default: () => [],
@@ -76,8 +76,11 @@ onMounted(() => {
 })
 
 const go = (item) => {
+  if (!item?.path) return
   if (route.path === item.path) return
-  if (item.path === `/testview/${test.value.id}`) return window.open(item.path)
+  const testId = test.value?.id
+  if (testId && item.path === `/testview/${testId}`)
+    return window.open(item.path)
   router.push(item.path)
   if (mobile.value) {
     drawerOpen.value = false

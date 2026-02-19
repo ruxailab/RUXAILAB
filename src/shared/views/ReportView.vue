@@ -25,7 +25,7 @@
             class="bg-red text-white ml-1"
             :loading="loadingBtn"
             variant="text"
-            @click="removeReport(report), (loadingBtn = true)"
+            @click="(removeReport(report), (loadingBtn = true))"
           >
             {{ $t('buttons.delete') }}
           </v-btn>
@@ -180,7 +180,7 @@
                 prepend-icon="mdi-delete"
                 :title="$t('HeuristicsReport.messages.remove_report')"
                 class="text-error"
-                @click=";(dialog = true), (report = item)"
+                @click=";((dialog = true), (report = item))"
               />
               <v-list-item
                 v-if="item.hidden"
@@ -234,7 +234,7 @@
                   prepend-icon="mdi-delete"
                   :title="$t('HeuristicsReport.messages.remove_report')"
                   class="text-error"
-                  @click=";(dialog = true), (report = item)"
+                  @click=";((dialog = true), (report = item))"
                 />
                 <v-list-item
                   v-if="item.hidden"
@@ -321,7 +321,7 @@
                   <v-icon start size="small">
                     {{ item.hidden ? 'mdi-check' : 'mdi-close' }}
                   </v-icon>
-                  {{ item.hidden ? 'Hidden' : 'Visible' }}
+                  {{ item.hidden ? $t('common.hidden') : $t('common.visible') }}
                 </v-chip>
               </v-sheet>
             </v-col>
@@ -388,7 +388,7 @@ import { showSuccess } from '../utils/toast'
 const store = useStore()
 const { t } = useI18n()
 
-const props = defineProps({ id: { type: String, default: '' } })
+defineProps({ id: { type: String, default: '' } })
 const emit = defineEmits(['goToCoops'])
 
 const dialog = ref(false)
@@ -504,7 +504,7 @@ const unhideReport = async (item) => {
   )
 
   if (!payload) {
-    console.error('Session not found for userDocId:', item.id)
+    // console.error('Session not found for userDocId:', item.id)
     return
   }
   try {
@@ -515,8 +515,8 @@ const unhideReport = async (item) => {
       }),
       answersDocId: test.value.answersDocId,
     })
-  } catch (error) {
-    console.error('Error saving answer:', error.message)
+  } catch {
+    // console.error('Error saving answer:', error.message)
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('errors.globalError'),
@@ -552,7 +552,7 @@ const removeReport = async (report) => {
 
 const goToCoops = () => emit('goToCoops')
 
-const getAvatarColor = (name) => '#3f51b5'
+const getAvatarColor = (_name) => '#3f51b5'
 const getInitials = (name) => name?.charAt(0)?.toUpperCase() || '?'
 const getProgressColor = (progress) => (progress >= 100 ? 'success' : 'primary')
 const getStatusColor = (status) =>
@@ -566,8 +566,8 @@ onMounted(async () => {
   store.commit('setLoading', true)
   try {
     await store.dispatch('getCurrentTestAnswerDoc')
-  } catch (error) {
-    console.error('Error:', error)
+  } catch {
+    // console.error('Error:', error)
   } finally {
     store.commit('setLoading', false)
   }

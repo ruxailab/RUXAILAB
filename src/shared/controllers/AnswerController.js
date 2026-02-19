@@ -112,8 +112,6 @@ export default class AnswerController extends Controller {
           payload.toFirestore()
       }
     }
-    console.log('fieldToUpdate ->', fieldToUpdate)
-
     await super.update(COLLECTION, answersDocId, fieldToUpdate)
   }
 
@@ -130,7 +128,6 @@ export default class AnswerController extends Controller {
       ...payload,
       lastUpdate: Date.now(),
     })
-    console.log('data:', data)
     await super.update(COLLECTION, answersDocId, {
       [fieldPath]: data.toFirestore(),
     })
@@ -159,6 +156,22 @@ export default class AnswerController extends Controller {
     const update = {
       [`${base}.latestTranscriptionDocId`]: latestId,
       [`${base}.transcriptionsCount`]: increment(inc),
+    }
+    return super.update(COLLECTION, answersDocId, update)
+  }
+
+  async setTaskTranscriptionMeta({
+    answersDocId,
+    userDocId,
+    taskId,
+    latestTranscriptionDocId,
+    transcriptionsCount,
+  }) {
+    const base = `taskAnswers.${userDocId}.tasks.${taskId}`
+
+    const update = {
+      [`${base}.latestTranscriptionDocId`]: latestTranscriptionDocId,
+      [`${base}.transcriptionsCount`]: transcriptionsCount,
     }
     return super.update(COLLECTION, answersDocId, update)
   }

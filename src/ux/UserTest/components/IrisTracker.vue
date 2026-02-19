@@ -48,8 +48,6 @@ const mediaStream = ref(null)
 const model = ref(null)
 let trackingLoop = null
 
-onMounted(() => {})
-
 watch(
   () => props.isRunning,
   async (val) => {

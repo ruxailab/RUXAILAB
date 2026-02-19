@@ -1,76 +1,62 @@
 <template>
   <div class="answer-type-preview">
     <!-- No Answer Preview -->
-    <div
-      v-if="taskType === 'no-answer'"
-      class="preview-content"
-    >
+    <div v-if="taskType === 'no-answer'" class="preview-content">
       <div class="preview-mockup">
         <div class="mockup-message">
-          <v-icon
-            color="success"
-            class="mr-2"
-          >
-            mdi-check-circle
-          </v-icon>
-          <span class="text-body-2">Task completed! No additional feedback required.</span>
+          <v-icon color="success" class="mr-2"> mdi-check-circle </v-icon>
+          <span class="text-body-2">{{
+            $t('CreateTask.answerTypePreview.noAnswer.message')
+          }}</span>
         </div>
       </div>
     </div>
 
     <!-- Text Area Preview -->
-    <div
-      v-else-if="taskType === 'text-area'"
-      class="preview-content"
-    >
+    <div v-else-if="taskType === 'text-area'" class="preview-content">
       <div class="preview-mockup">
         <v-textarea
           readonly
-          placeholder="Participants will provide their feedback here..."
+          :placeholder="$t('CreateTask.answerTypePreview.textArea.placeholder')"
           variant="outlined"
           rows="3"
           class="preview-textarea"
         />
         <div class="mockup-actions">
-          <v-btn
-            color="primary"
-            size="small"
-            disabled
-          >
-            Submit Feedback
+          <v-btn color="primary" size="small" disabled>
+            {{ $t('CreateTask.answerTypePreview.textArea.submitButton') }}
           </v-btn>
         </div>
       </div>
     </div>
 
     <!-- Post-Test Questions Preview -->
-    <div
-      v-else-if="taskType === 'post-test'"
-      class="preview-content"
-    >
+    <div v-else-if="taskType === 'post-test'" class="preview-content">
       <div class="preview-mockup">
         <div class="text-subtitle-2 mb-3">
-          Post-Task Questions
+          {{ $t('CreateTask.answerTypePreview.postTest.title') }}
         </div>
         <div class="question-item mb-3">
           <div class="text-body-2 mb-2">
-            1. How would you rate the difficulty of this task?
+            {{ $t('CreateTask.answerTypePreview.postTest.q1') }}
           </div>
-          <v-rating 
-            v-model="mockRating" 
-            readonly 
-            size="small" 
+          <v-rating
+            v-model="mockRating"
+            readonly
+            size="small"
             color="amber"
             class="mb-2"
           />
         </div>
         <div class="question-item">
           <div class="text-body-2 mb-2">
-            2. Any additional comments?
+            {{ $t('CreateTask.answerTypePreview.postTest.q2') }}
           </div>
           <v-text-field
             readonly
-            placeholder="Optional feedback..."
+            :placeholder="
+              $t('CreateTask.answerTypePreview.postTest.feedbackPlaceholder')
+            "
             variant="outlined"
             density="compact"
           />
@@ -79,50 +65,37 @@
     </div>
 
     <!-- External Form Preview -->
-    <div
-      v-else-if="taskType === 'post-form'"
-      class="preview-content"
-    >
+    <div v-else-if="taskType === 'post-form'" class="preview-content">
       <div class="preview-mockup">
         <div class="external-form-notice">
-          <v-icon
-            color="info"
-            size="32"
-            class="mb-2"
-          >
-            mdi-open-in-new
-          </v-icon>
+          <v-icon color="info" size="32" class="mb-2"> mdi-open-in-new </v-icon>
           <div class="text-subtitle-2 mb-2">
-            External Form
+            {{ $t('CreateTask.answerTypePreview.postForm.title') }}
           </div>
           <div class="text-body-2 text-grey-darken-1 mb-3">
-            Participants will be redirected to complete an external form after the task.
+            {{ $t('CreateTask.answerTypePreview.postForm.notice') }}
           </div>
-          <v-btn
-            color="info"
-            variant="outlined"
-            size="small"
-            disabled
-          >
-            Open External Form
+          <v-btn color="info" variant="outlined" size="small" disabled>
+            {{ $t('CreateTask.answerTypePreview.postForm.button') }}
           </v-btn>
         </div>
       </div>
     </div>
 
     <!-- NASA-TLX Preview -->
-    <div
-      v-else-if="taskType === 'nasa-tlx'"
-      class="preview-content"
-    >
+    <div v-else-if="taskType === 'nasa-tlx'" class="preview-content">
       <div class="preview-mockup">
         <div class="text-subtitle-2 mb-3">
-          NASA Task Load Index
+          {{ $t('CreateTask.answerTypePreview.nasaTlx.title') }}
         </div>
         <div class="nasa-item mb-3">
           <div class="d-flex justify-space-between align-center mb-2">
-            <span class="text-body-2">Mental Demand</span>
-            <span class="text-caption text-grey-darken-1">Low - High</span>
+            <span class="text-body-2">{{
+              $t('CreateTask.answerTypePreview.nasaTlx.mental')
+            }}</span>
+            <span class="text-caption text-grey-darken-1">{{
+              $t('CreateTask.answerTypePreview.nasaTlx.range')
+            }}</span>
           </div>
           <v-slider
             readonly
@@ -134,8 +107,12 @@
         </div>
         <div class="nasa-item mb-3">
           <div class="d-flex justify-space-between align-center mb-2">
-            <span class="text-body-2">Physical Demand</span>
-            <span class="text-caption text-grey-darken-1">Low - High</span>
+            <span class="text-body-2">{{
+              $t('CreateTask.answerTypePreview.nasaTlx.physical')
+            }}</span>
+            <span class="text-caption text-grey-darken-1">{{
+              $t('CreateTask.answerTypePreview.nasaTlx.range')
+            }}</span>
           </div>
           <v-slider
             readonly
@@ -146,27 +123,24 @@
           />
         </div>
         <div class="text-caption text-grey-darken-1 text-center">
-          + 4 more dimensions
+          {{ $t('CreateTask.answerTypePreview.nasaTlx.moreDimensions') }}
         </div>
       </div>
     </div>
 
     <!-- SUS Preview -->
-    <div
-      v-else-if="taskType === 'sus'"
-      class="preview-content"
-    >
+    <div v-else-if="taskType === 'sus'" class="preview-content">
       <div class="preview-mockup">
         <div class="text-subtitle-2 mb-3">
-          System Usability Scale
+          {{ $t('CreateTask.answerTypePreview.sus.title') }}
         </div>
         <div class="sus-item mb-3">
           <div class="text-body-2 mb-2">
-            1. I think that I would like to use this system frequently.
+            {{ $t('CreateTask.answerTypePreview.sus.q1') }}
           </div>
-          <v-radio-group 
-            readonly 
-            inline 
+          <v-radio-group
+            readonly
+            inline
             density="compact"
             class="sus-radio-group"
           >
@@ -178,29 +152,30 @@
               density="compact"
             />
           </v-radio-group>
-          <div class="d-flex justify-space-between text-caption text-grey-darken-1 mt-1">
-            <span>Strongly Disagree</span>
-            <span>Strongly Agree</span>
+          <div
+            class="d-flex justify-space-between text-caption text-grey-darken-1 mt-1"
+          >
+            <span>{{ $t('CreateTask.answerTypePreview.sus.disagree') }}</span>
+            <span>{{ $t('CreateTask.answerTypePreview.sus.agree') }}</span>
           </div>
         </div>
         <div class="text-caption text-grey-darken-1 text-center">
-          + 9 more statements
+          {{ $t('CreateTask.answerTypePreview.sus.moreStatements') }}
         </div>
       </div>
     </div>
 
     <!-- SART Preview -->
-    <div
-      v-else-if="taskType === 'sart'"
-      class="preview-content"
-    >
+    <div v-else-if="taskType === 'sart'" class="preview-content">
       <div class="preview-mockup">
         <div class="text-subtitle-2 mb-3">
-          Situation Awareness Rating Technique
+          {{ $t('CreateTask.answerTypePreview.sart.title') }}
         </div>
         <div class="sart-item mb-3">
           <div class="d-flex justify-space-between align-center mb-2">
-            <span class="text-body-2">Instability of Situation</span>
+            <span class="text-body-2">{{
+              $t('CreateTask.answerTypePreview.sart.instability')
+            }}</span>
             <span class="text-caption text-grey-darken-1">1 - 7</span>
           </div>
           <v-slider
@@ -211,17 +186,21 @@
             color="primary"
             track-color="grey-lighten-2"
             thumb-size="12"
-            :ticks="[1,4,7]"
+            :ticks="[1, 4, 7]"
             tick-size="3"
           />
-          <div class="d-flex justify-space-between text-caption text-grey-darken-1 mt-1">
-            <span>Very Stable</span>
-            <span>Very Unstable</span>
+          <div
+            class="d-flex justify-space-between text-caption text-grey-darken-1 mt-1"
+          >
+            <span>{{ $t('CreateTask.answerTypePreview.sart.stable') }}</span>
+            <span>{{ $t('CreateTask.answerTypePreview.sart.unstable') }}</span>
           </div>
         </div>
         <div class="sart-item mb-3">
           <div class="d-flex justify-space-between align-center mb-2">
-            <span class="text-body-2">Complexity of Situation</span>
+            <span class="text-body-2">{{
+              $t('CreateTask.answerTypePreview.sart.complexity')
+            }}</span>
             <span class="text-caption text-grey-darken-1">1 - 7</span>
           </div>
           <v-slider
@@ -232,16 +211,18 @@
             color="primary"
             track-color="grey-lighten-2"
             thumb-size="12"
-            :ticks="[1,4,7]"
+            :ticks="[1, 4, 7]"
             tick-size="3"
           />
-          <div class="d-flex justify-space-between text-caption text-grey-darken-1 mt-1">
-            <span>Very Simple</span>
-            <span>Very Complex</span>
+          <div
+            class="d-flex justify-space-between text-caption text-grey-darken-1 mt-1"
+          >
+            <span>{{ $t('CreateTask.answerTypePreview.sart.simple') }}</span>
+            <span>{{ $t('CreateTask.answerTypePreview.sart.complex') }}</span>
           </div>
         </div>
         <div class="text-caption text-grey-darken-1 text-center">
-          + 8 more SART dimensions
+          {{ $t('CreateTask.answerTypePreview.sart.moreDimensions') }}
         </div>
       </div>
     </div>
@@ -249,27 +230,61 @@
     <!-- TAM-1 Preview -->
     <div v-else-if="taskType === 'tam-1'" class="preview-content">
       <div class="preview-mockup">
-        <div class="text-subtitle-2 mb-3">TAM-1: Technology Acceptance Model (Basic)</div>
-        <div class="text-body-2 text-grey-darken-1 mb-3">10 items across 2 dimensions</div>
-        
+        <div class="text-subtitle-2 mb-3">
+          {{ $t('CreateTask.answerTypePreview.tam.tam1') }}
+        </div>
+        <div class="text-body-2 text-grey-darken-1 mb-3">
+          {{ $t('CreateTask.answerTypePreview.tam.items2') }}
+        </div>
+
         <!-- Dimension 1 -->
         <div class="tam-dimension mb-4">
-          <div class="text-body-2 font-weight-600 mb-2">Perceived Usefulness (5 items)</div>
+          <div class="text-body-2 font-weight-600 mb-2">
+            {{ $t('CreateTask.answerTypePreview.tam.pu') }}
+          </div>
           <div class="tam-item mb-2">
-            <div class="text-body-2 mb-2">1. Using the system improves my job performance.</div>
-            <v-radio-group readonly inline density="compact" class="tam-radio-group">
-              <v-radio v-for="n in 5" :key="`pu-${n}`" :value="n" :label="`${n}`" density="compact" />
+            <div class="text-body-2 mb-2">
+              {{ $t('CreateTask.answerTypePreview.tam.q1') }}
+            </div>
+            <v-radio-group
+              readonly
+              inline
+              density="compact"
+              class="tam-radio-group"
+            >
+              <v-radio
+                v-for="n in 5"
+                :key="`pu-${n}`"
+                :value="n"
+                :label="`${n}`"
+                density="compact"
+              />
             </v-radio-group>
           </div>
         </div>
 
         <!-- Dimension 2 -->
         <div class="tam-dimension">
-          <div class="text-body-2 font-weight-600 mb-2">Perceived Ease of Use (5 items)</div>
+          <div class="text-body-2 font-weight-600 mb-2">
+            {{ $t('CreateTask.answerTypePreview.tam.eu') }}
+          </div>
           <div class="tam-item">
-            <div class="text-body-2 mb-2">6. The system is easy to use.</div>
-            <v-radio-group readonly inline density="compact" class="tam-radio-group">
-              <v-radio v-for="n in 5" :key="`eu-${n}`" :value="n" :label="`${n}`" density="compact" />
+            <div class="text-body-2 mb-2">
+              {{ $t('CreateTask.answerTypePreview.tam.q6') }}
+            </div>
+            <v-radio-group
+              readonly
+              inline
+              density="compact"
+              class="tam-radio-group"
+            >
+              <v-radio
+                v-for="n in 5"
+                :key="`eu-${n}`"
+                :value="n"
+                :label="`${n}`"
+                density="compact"
+              />
             </v-radio-group>
           </div>
         </div>
@@ -279,16 +294,27 @@
     <!-- TAM-2 Preview -->
     <div v-else-if="taskType === 'tam-2'" class="preview-content">
       <div class="preview-mockup">
-        <div class="text-subtitle-2 mb-3">TAM-2: Technology Acceptance Model (Extended)</div>
-        <div class="text-body-2 text-grey-darken-1 mb-3">25 items across 7 dimensions</div>
-        
+        <div class="text-subtitle-2 mb-3">
+          {{ $t('CreateTask.answerTypePreview.tam.tam2') }}
+        </div>
+        <div class="text-body-2 text-grey-darken-1 mb-3">
+          {{ $t('CreateTask.answerTypePreview.tam.items7') }}
+        </div>
+
         <div class="tam-dimensions-grid">
-          <div v-for="(dim, idx) in ['Perceived Usefulness', 'Perceived Ease of Use', 'Subjective Norm', 'Image', 'Job Relevance', 'Output Quality', 'Result Demonstrability']" :key="idx" class="tam-dimension-badge">
-            <v-chip size="small" variant="outlined">{{ dim }}</v-chip>
+          <div
+            v-for="(dim, idx) in tam2Dimensions"
+            :key="idx"
+            class="tam-dimension-badge"
+          >
+            <v-chip size="small" variant="outlined">{{
+              $t(`CreateTask.answerTypePreview.${dim}`)
+            }}</v-chip>
           </div>
         </div>
         <div class="text-caption text-grey-darken-1 mt-3">
-          Participants rate 25 statements on a 5-point Likert scale (Strongly Disagree - Strongly Agree)
+          {{ $t('CreateTask.answerTypePreview.tam2Description') }}
+          {{ $t('CreateTask.answerTypePreview.tam.likertNote', { count: 25 }) }}
         </div>
       </div>
     </div>
@@ -296,35 +322,37 @@
     <!-- TAM-3 Preview -->
     <div v-else-if="taskType === 'tam-3'" class="preview-content">
       <div class="preview-mockup">
-        <div class="text-subtitle-2 mb-3">TAM-3: Technology Acceptance Model (Comprehensive)</div>
-        <div class="text-body-2 text-grey-darken-1 mb-3">39 items across 13 dimensions</div>
-        
+        <div class="text-subtitle-2 mb-3">
+          {{ $t('CreateTask.answerTypePreview.tam3Title') }}
+        </div>
+        <div class="text-body-2 text-grey-darken-1 mb-3">
+          {{ $t('CreateTask.answerTypePreview.tam3Subtitle') }}
+        </div>
+
         <div class="tam-dimensions-grid">
-          <div v-for="(dim, idx) in ['Perceived Usefulness', 'Perceived Ease of Use', 'Subjective Norm', 'Image', 'Job Relevance', 'Output Quality', 'Result Demonstrability', 'Computer Self-Efficacy', 'External Control', 'Anxiety', 'Playfulness', 'Enjoyment', 'Objective Usability']" :key="idx" class="tam-dimension-badge">
-            <v-chip size="small" variant="outlined">{{ dim }}</v-chip>
+          <div
+            v-for="(dim, idx) in tam3Dimensions"
+            :key="idx"
+            class="tam-dimension-badge"
+          >
+            <v-chip size="small" variant="outlined">{{
+              $t(`CreateTask.answerTypePreview.${dim}`)
+            }}</v-chip>
           </div>
         </div>
         <div class="text-caption text-grey-darken-1 mt-3">
-          Comprehensive assessment with 39 statements across 13 dimensions on a 5-point Likert scale
+          {{ $t('CreateTask.answerTypePreview.tam3Description') }}
         </div>
       </div>
     </div>
 
     <!-- Default/Unknown Type -->
-    <div
-      v-else
-      class="preview-content"
-    >
+    <div v-else class="preview-content">
       <div class="preview-mockup">
         <div class="text-center text-grey-darken-1">
-          <v-icon
-            size="48"
-            class="mb-2"
-          >
-            mdi-help-circle-outline
-          </v-icon>
+          <v-icon size="48" class="mb-2"> mdi-help-circle-outline </v-icon>
           <div class="text-body-2">
-            Select an answer type to see preview
+            {{ $t('CreateTask.answerTypePreview.selectionPrompt') }}
           </div>
         </div>
       </div>
@@ -333,17 +361,37 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
 
 defineProps({
   taskType: {
     type: String,
-    default: ''
-  }
-});
+    default: '',
+  },
+})
 
 // Mock data for previews
-const mockRating = ref(4);
+const mockRating = ref(4)
+
+const tam2Dimensions = [
+  'perceivedUsefulnessShort',
+  'perceivedEaseOfUseShort',
+  'subjectiveNorm',
+  'image',
+  'jobRelevance',
+  'outputQuality',
+  'resultDemonstrability',
+]
+
+const tam3Dimensions = [
+  ...tam2Dimensions,
+  'computerSelfEfficacy',
+  'externalControl',
+  'anxiety',
+  'playfulness',
+  'enjoyment',
+  'objectiveUsability',
+]
 </script>
 
 <style scoped>

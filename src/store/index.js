@@ -1,7 +1,7 @@
 import { createStore } from 'vuex'
 import Auth from '@/features/auth/store/Auth'
 import Dashboard from '@/features/dashboard/store'
-import Templates from '@/features/templates/Template'
+import Templates from '@/features/templates/store/Template'
 import Tests from '@/store/modules/Study'
 import Users from '@/features/super/store/User'
 import Reports from '@/shared/store/Report'
@@ -13,7 +13,6 @@ import automaticReport from '@/ux/accessibility/store/automaticReport'
 import UserStudy from '@/ux/UserTest/store/UserStudy'
 import notification from '@/features/notifications/store/notification'
 import CardStudy from '@/ux/CardSorting/stores/CardStudy'
-import mediaRecorder from '../shared/store/mediaRecorder'
 
 export default createStore({
   state: {
@@ -91,6 +90,5 @@ export default createStore({
     UserStudy,
     CardStudy,
     notification,
-    mediaRecorder,
   },
 })

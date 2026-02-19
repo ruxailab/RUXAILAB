@@ -122,12 +122,6 @@ const textRequired = [
 const localOption = ref({ text: '', value: null, description: '' })
 const localHasValue = ref(true)
 
-const testAnswerDocLength = computed(() => {
-  if (!store.getters.testAnswerDocument) return 0
-  const heuristicAnswers = store.getters.testAnswerDocument.heuristicAnswers
-  return Object.keys(heuristicAnswers).length
-})
-
 const valueRequired = computed(() => {
   if (!localHasValue.value) return []
   return [
