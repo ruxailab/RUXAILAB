@@ -409,6 +409,7 @@
     "incorrectPassword": "كلمة مرور غير صحيحة",
     "incorrectCredential": "اسم المستخدم أو كلمة المرور غير صحيحة.",
     "globalError": "حدث خطأ، نعتذر عن الإزعاج.",
+    "cameraPermissionDenied": "يتطلب المتابعة السماح بالوصول إلى الكاميرا. يرجى تفعيل إذن الكاميرا في إعدادات المتصفح.",
     "sendError": "فشل إرسال الدعوة. يرجى المحاولة مرة أخرى",
     "missingVariableTitles": "لا يمكن الحفظ: بعض المتغيرات تفتقد العناوين"
   },
@@ -625,7 +626,8 @@
       "changeWeights": "لاحظ أن تغيير ترتيب الاستدلالات لا يغير الأوزان تلقائيًا، يجب عليك تغييرها يدويًا.",
       "noDescriptions": "لا توجد أوصاف متاحة",
       "startAddingQuestions": "ابدأ بإضافة سؤالك الأول إلى هذا الاستدلال",
-      "cantDeleteAllQuestions": "عذرًا، لا يمكنك حذف جميع الأسئلة من الاستدلال"
+      "cantDeleteAllQuestions": "عذرًا، لا يمكنك حذف جميع الأسئلة من الاستدلال",
+      "studyHasAnswers": "This study has answers"
     },
     "validation": {
       "nameRequired": "الاسم مطلوب",
@@ -732,7 +734,9 @@
       "options": "الخيارات",
       "weights": "الأوزان",
       "settings": "الإعدادات"
-    }
+    },
+    "previewPageTitle": "Preview test",
+    "previewPageSubtitle": "Review the test configuration in read-only mode"
   },
   "HeuristicsTestAnswer": {
     "titles": {
@@ -981,73 +985,60 @@
       "sart": "تقنية تقييم الوعي الظرفي - يقيس الوعي الظرفي"
     },
     "answerTypePreview": {
-      "noAnswer": {
-        "message": "تم إكمال المهمة! لا حاجة لملاحظات إضافية."
-      },
-      "textArea": {
-        "placeholder": "سيقدم المشاركون ملاحظاتهم هنا...",
-        "submitButton": "إرسال الملاحظات"
-      },
-      "postTest": {
-        "title": "أسئلة ما بعد المهمة",
-        "q1": "1. كيف تقيم صعوبة هذه المهمة؟",
-        "q2": "2. أي تعليقات إضافية؟",
-        "feedbackPlaceholder": "ملاحظات اختيارية..."
-      },
-      "postForm": {
-        "title": "نموذج خارجي",
-        "notice": "سيتم إعادة توجيه المشاركين لإكمال نموذج خارجي بعد المهمة.",
-        "button": "فتح النموذج الخارجي"
-      },
-      "nasaTlx": {
-        "title": "مؤشر حمل العمل ناسا",
-        "mental": "الطلب الذهني",
-        "physical": "الطلب البدني",
-        "range": "منخفض - مرتفع",
-        "moreDimensions": "+ 4 أبعاد أخرى"
-      },
-      "sus": {
-        "title": "مقياس قابلية استخدام النظام",
-        "q1": "1. أعتقد أنني أود استخدام هذا النظام بشكل متكرر.",
-        "disagree": "أعارض بشدة",
-        "agree": "أوافق بشدة",
-        "moreStatements": "+ 9 عبارات أخرى"
-      },
-      "sart": {
-        "title": "تقنية تقييم الوعي الظرفي",
-        "instability": "عدم استقرار الوضع",
-        "complexity": "تعقيد الوضع",
-        "stable": "مستقر جداً",
-        "unstable": "غير مستقر جداً",
-        "simple": "بسيط جداً",
-        "complex": "معقد جداً",
-        "moreDimensions": "+ 8 أبعاد أخرى لـ SART"
-      },
-      "tam": {
-        "tam1": "TAM-1: نموذج قبول التكنولوجيا (أساسي)",
-        "tam2": "TAM-2: نموذج قبول التكنولوجيا (موسع)",
-        "tam3": "TAM-3: نموذج قبول التكنولوجيا (شامل)",
-        "items2": "10 بنود عبر بُعدين",
-        "items7": "25 بنداً عبر 7 أبعاد",
-        "items13": "39 بنداً عبر 13 بُعداً",
-        "pu": "الفائدة المتصورة",
-        "eu": "سهولة الاستخدام المتصورة",
-        "sn": "المعيار الذاتي",
-        "image": "الصورة",
-        "jr": "الصلة بالوظيفة",
-        "oq": "جودة المخرجات",
-        "rd": "وضوح النتائج",
-        "se": "الكفاءة الذاتية الحاسوبية",
-        "ec": "التحكم الخارجي",
-        "anxiety": "القلق",
-        "play": "المرح",
-        "enjoy": "الاستمتاع",
-        "ou": "قابلية الاستخدام الموضوعية",
-        "q1": "1. يؤدي استخدام النظام إلى تحسين أداء عملي.",
-        "q6": "6. النظام سهل الاستخدام.",
-        "likertNote": "يقيم المشاركون {count} عبارة على مقياس ليكرت الخماسي"
-      },
-      "selectionPrompt": "حدد نوع الإجابة لمشاهدة المعاينة"
+      "taskCompleted": "اكتملت المهمة! لا توجد ملاحظات إضافية مطلوبة.",
+      "participantsFeedbackHere": "سيقدم المشاركون ملاحظاتهم هنا...",
+      "submitFeedback": "إرسال الملاحظات",
+      "postTaskQuestions": "أسئلة ما بعد المهمة",
+      "rateTaskDifficulty": "1. كيف تقيم صعوبة هذه المهمة؟",
+      "additionalComments": "2. أي تعليقات إضافية؟",
+      "optionalFeedback": "ملاحظات اختيارية...",
+      "externalFormTitle": "نموذج خارجي",
+      "externalFormDescription": "سيتم توجيه المشاركين لملء نموذج خارجي بعد المهمة.",
+      "openExternalForm": "فتح النموذج الخارجي",
+      "nasaTlxTitle": "مؤشر حمل المهام ناسا",
+      "mentalDemand": "المتطلبات الذهنية",
+      "physicalDemand": "المتطلبات الجسدية",
+      "lowHigh": "منخفض - مرتفع",
+      "moreDimensions": "+ 4 أبعاد أخرى",
+      "susTitle": "مقياس قابلية استخدام النظام",
+      "susStatement1": "1. أعتقد أنني أود استخدام هذا النظام بشكل متكرر.",
+      "stronglyDisagree": "أعارض بشدة",
+      "stronglyAgree": "أوافق بشدة",
+      "moreStatements": "+ 9 عبارات أخرى",
+      "sartTitle": "تقنية تقييم الوعي الظرفي",
+      "instability": "عدم استقرار الوضع",
+      "complexity": "تعقيد الوضع",
+      "veryStable": "مستقر جداً",
+      "veryUnstable": "غير مستقر جداً",
+      "verySimple": "بسيط جداً",
+      "veryComplex": "معقد جداً",
+      "moreSartDimensions": "+ 8 أبعاد أخرى لـ SART",
+      "tam1Title": "TAM-1: نموذج قبول التكنولوجيا (أساسي)",
+      "tam1Subtitle": "10 بنود عبر بُعدين",
+      "perceivedUsefulness": "الفائدة المتصورة (5 بنود)",
+      "perceivedEaseOfUse": "سهولة الاستخدام المتصورة (5 بنود)",
+      "tam1Statement1": "1. استخدام النظام يحسن أدائي في العمل.",
+      "tam1Statement6": "6. النظام سهل الاستخدام.",
+      "tam2Title": "TAM-2: نموذج قبول التكنولوجيا (موسع)",
+      "tam2Subtitle": "25 بنداً عبر 7 أبعاد",
+      "tam2Description": "يقيم المشاركون 25 عبارة على مقياس ليكرت الخماسي (أعارض بشدة - أوافق بشدة)",
+      "tam3Title": "TAM-3: نموذج قبول التكنولوجيا (شامل)",
+      "tam3Subtitle": "39 بنداً عبر 13 بُعداً",
+      "tam3Description": "تقييم شامل يتضمن 39 عبارة عبر 13 بُعداً على مقياس ليكرت الخماسي",
+      "selectType": "حدد نوع الإجابة لمشاهدة المعاينة",
+      "perceivedUsefulnessShort": "الفائدة المتصورة",
+      "perceivedEaseOfUseShort": "سهولة الاستخدام المتصورة",
+      "subjectiveNorm": "المعيار الذاتي",
+      "image": "الصورة",
+      "jobRelevance": "الصلة بالوظيفة",
+      "outputQuality": "جودة المخرجات",
+      "resultDemonstrability": "وضوح النتائج",
+      "computerSelfEfficacy": "الكفاءة الذاتية الحاسوبية",
+      "externalControl": "التحكم الخارجي",
+      "anxiety": "القلق",
+      "playfulness": "المرح",
+      "enjoyment": "الاستمتاع",
+      "objectiveUsability": "قابلية الاستخدام الموضوعية"
     },
     "advanced": {
       "stepTitle": "الخطوة 3: الخيارات المتقدمة",
@@ -1283,6 +1274,46 @@
     "completed": "اكتملت المعايرة!",
     "continue": "المتابعة إلى الاختبار"
   },
+  "EyeTrackingConfig": {
+    "titles": {
+      "main": "تكوينات تتبع العين",
+      "general": "التكوين العام",
+      "miscellaneous": "تكوينات متنوعة"
+    },
+    "labels": {
+      "pointNumber": "عدد النقاط",
+      "samplesPerPoint": "عينات لكل نقطة",
+      "msPerPoint": "مللي ثانية لالتقاط النقطة",
+      "threshold": "حد المسافة بين النقاط",
+      "radius": "نصف القطر",
+      "offset": "الإزاحة",
+      "control": "التحكم:",
+      "useCustomColors": "استخدام ألوان مخصصة",
+      "backgroundColor": "لون الخلفية:",
+      "pointColor": "لون النقطة:",
+      "modelSelection": "اختيار النموذج:",
+      "selectModel": "اختر النموذج",
+      "note": "ملاحظة:",
+      "noteText": "سيتم استخدام النموذج المختار لعملية المعايرة. النموذج الافتراضي هو الانحدار الخطي. قد تستغرق بعض النماذج وقتًا أطول للتدريب من غيرها. لذا يرجى التحلي بالصبر."
+    },
+    "tooltips": {
+      "pointNumber": "عدد نقاط المعايرة التي تظهر على الشاشة (المزيد من النقاط = دقة أعلى).",
+      "samplesPerPoint": "كم عدد عينات النظرات التي يتم جمعها لكل نقطة معايرة. القيم الأعلى تحسن الدقة ولكنها تزيد المدة.",
+      "msPerPoint": "المدة (بالمللي ثانية) لالتقاط البيانات لكل نقطة. تحدد المدة التي يجب أن ينظر فيها المستخدم إلى كل هدف.",
+      "threshold": "الحد الأقصى للمسافة (بالبكسل) المسموح بها بين عينات المعايرة قبل التخلص منها. يتحكم في التسامح المكاني.",
+      "radius": "ضبط نصف قطر نقطة المعايرة. القيم الأكبر تجعل النقطة أكبر.",
+      "offset": "الإزاحة (بالبكسل) لضبط موضع منطقة المعايرة."
+    },
+    "models": {
+      "linear": "الانحدار الخطي",
+      "ridge": "انحدار ريدج",
+      "lasso": "انحدار لاسو",
+      "elastic": "الشبكة المرنة",
+      "bayesian": "بايزي ريدج",
+      "sgd": "مُنحدر التدرج العشوائي",
+      "svr": "انحدار متجه الدعم"
+    }
+  },
   "AccessNotAllowed": {
     "notAllowed": "الوصول غير مسموح",
     "noAccess": "ليس لديك إذن للوصول إلى الصفحة التي تحاول الوصول إليها.",
@@ -1427,6 +1458,18 @@
         "manualAccessibility": "إمكانية الوصول اليدوية",
         "automaticAccessibility": "إمكانية الوصول الآلية",
         "all": "الكل"
+      },
+      "unsupportedPreviewType": "Unsupported template type for preview.",
+      "config": {
+        "title": "Template Config",
+        "ownerOnly": "Configuration editing is restricted to template owner.",
+        "version": "Version",
+        "visibility": "Visibility",
+        "owner": "Owner",
+        "public": "Public",
+        "private": "Private",
+        "saved": "Template configuration updated successfully",
+        "saveError": "Failed to update template configuration"
       }
     },
     "createTest": {
@@ -1469,7 +1512,9 @@
     "editTest": {
       "title": "تحرير الاختبار",
       "description": "خصص إعدادات وتفضيلات اختبارك.",
-      "updatedTest": "تم تحديث الاختبار بنجاح"
+      "updatedTest": "تم تحديث الاختبار بنجاح",
+      "previewTitle": "Preview test",
+      "previewDescription": "Review the test in read-only mode."
     },
     "cooperators": {
       "invitationSent": "تم إرسال الدعوة بنجاح"

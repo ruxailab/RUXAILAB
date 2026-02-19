@@ -418,6 +418,7 @@
     "incorrectPassword": "Incorrect password",
     "incorrectCredential": "Incorrect username or password.",
     "globalError": "An error has occurred, sorry for the inconvenience.",
+    "cameraPermissionDenied": "Camera permission denied. Please allow camera access in your browser settings.",
     "sendError": "Failed to send invitation. Please try again",
     "missingVariableTitles": "Cannot save: Some variables are missing titles"
   },
@@ -638,7 +639,8 @@
       "changeWeights": "Be aware that by changing the order of the heuristics, the weights DO NOT change automatically, you must change them manually.",
       "noDescriptions": "No descriptions available",
       "startAddingQuestions": "Start by adding your first question to this heuristic",
-      "cantDeleteAllQuestions": "Sorry, you cannot delete all questions from a heuristic"
+      "cantDeleteAllQuestions": "Sorry, you cannot delete all questions from a heuristic",
+      "studyHasAnswers": "This study has answers"
     },
     "validation": {
       "nameRequired": "Name is mandatory",
@@ -745,7 +747,9 @@
       "options": "Options",
       "weights": "Weights",
       "settings": "Settings"
-    }
+    },
+    "previewPageTitle": "Preview test",
+    "previewPageSubtitle": "Review the test configuration in read-only mode"
   },
   "HeuristicsTestAnswer": {
     "titles": {
@@ -995,73 +999,60 @@
       "sart": "Situation Awareness Rating Technique - measures situational awareness"
     },
     "answerTypePreview": {
-      "noAnswer": {
-        "message": "Task completed! No additional feedback required."
-      },
-      "textArea": {
-        "placeholder": "Participants will provide their feedback here...",
-        "submitButton": "Submit Feedback"
-      },
-      "postTest": {
-        "title": "Post-Task Questions",
-        "q1": "1. How would you rate the difficulty of this task?",
-        "q2": "2. Any additional comments?",
-        "feedbackPlaceholder": "Optional feedback..."
-      },
-      "postForm": {
-        "title": "External Form",
-        "notice": "Participants will be redirected to complete an external form after the task.",
-        "button": "Open External Form"
-      },
-      "nasaTlx": {
-        "title": "NASA Task Load Index",
-        "mental": "Mental Demand",
-        "physical": "Physical Demand",
-        "range": "Low - High",
-        "moreDimensions": "+ 4 more dimensions"
-      },
-      "sus": {
-        "title": "System Usability Scale",
-        "q1": "1. I think that I would like to use this system frequently.",
-        "disagree": "Strongly Disagree",
-        "agree": "Strongly Agree",
-        "moreStatements": "+ 9 more statements"
-      },
-      "sart": {
-        "title": "Situation Awareness Rating Technique",
-        "instability": "Instability of Situation",
-        "complexity": "Complexity of Situation",
-        "stable": "Very Stable",
-        "unstable": "Very Unstable",
-        "simple": "Very Simple",
-        "complex": "Very Complex",
-        "moreDimensions": "+ 8 more SART dimensions"
-      },
-      "tam": {
-        "tam1": "TAM-1: Technology Acceptance Model (Basic)",
-        "tam2": "TAM-2: Technology Acceptance Model (Extended)",
-        "tam3": "TAM-3: Technology Acceptance Model (Comprehensive)",
-        "items2": "10 items across 2 dimensions",
-        "items7": "25 items across 7 dimensions",
-        "items13": "39 items across 13 dimensions",
-        "pu": "Perceived Usefulness",
-        "eu": "Perceived Ease of Use",
-        "sn": "Subjective Norm",
-        "image": "Image",
-        "jr": "Job Relevance",
-        "oq": "Output Quality",
-        "rd": "Result Demonstrability",
-        "se": "Computer Self-Efficacy",
-        "ec": "External Control",
-        "anxiety": "Anxiety",
-        "play": "Playfulness",
-        "enjoy": "Enjoyment",
-        "ou": "Objective Usability",
-        "q1": "1. Using the system improves my job performance.",
-        "q6": "6. The system is easy to use.",
-        "likertNote": "Participants rate {count} statements on a 5-point Likert scale"
-      },
-      "selectionPrompt": "Select an answer type to see preview"
+      "taskCompleted": "Task completed! No additional feedback required.",
+      "participantsFeedbackHere": "Participants will provide their feedback here...",
+      "submitFeedback": "Submit Feedback",
+      "postTaskQuestions": "Post-Task Questions",
+      "rateTaskDifficulty": "1. How would you rate the difficulty of this task?",
+      "additionalComments": "2. Any additional comments?",
+      "optionalFeedback": "Optional feedback...",
+      "externalFormTitle": "External Form",
+      "externalFormDescription": "Participants will be redirected to complete an external form after the task.",
+      "openExternalForm": "Open External Form",
+      "nasaTlxTitle": "NASA Task Load Index",
+      "mentalDemand": "Mental Demand",
+      "physicalDemand": "Physical Demand",
+      "lowHigh": "Low - High",
+      "moreDimensions": "+ 4 more dimensions",
+      "susTitle": "System Usability Scale",
+      "susStatement1": "1. I think that I would like to use this system frequently.",
+      "stronglyDisagree": "Strongly Disagree",
+      "stronglyAgree": "Strongly Agree",
+      "moreStatements": "+ 9 more statements",
+      "sartTitle": "Situation Awareness Rating Technique",
+      "instability": "Instability of Situation",
+      "complexity": "Complexity of Situation",
+      "veryStable": "Very Stable",
+      "veryUnstable": "Very Unstable",
+      "verySimple": "Very Simple",
+      "veryComplex": "Very Complex",
+      "moreSartDimensions": "+ 8 more SART dimensions",
+      "tam1Title": "TAM-1: Technology Acceptance Model (Basic)",
+      "tam1Subtitle": "10 items across 2 dimensions",
+      "perceivedUsefulness": "Perceived Usefulness (5 items)",
+      "perceivedEaseOfUse": "Perceived Ease of Use (5 items)",
+      "tam1Statement1": "1. Using the system improves my job performance.",
+      "tam1Statement6": "6. The system is easy to use.",
+      "tam2Title": "TAM-2: Technology Acceptance Model (Extended)",
+      "tam2Subtitle": "25 items across 7 dimensions",
+      "tam2Description": "Participants rate 25 statements on a 5-point Likert scale (Strongly Disagree - Strongly Agree)",
+      "tam3Title": "TAM-3: Technology Acceptance Model (Comprehensive)",
+      "tam3Subtitle": "39 items across 13 dimensions",
+      "tam3Description": "Comprehensive assessment with 39 statements across 13 dimensions on a 5-point Likert scale",
+      "selectType": "Select an answer type to see preview",
+      "perceivedUsefulnessShort": "Perceived Usefulness",
+      "perceivedEaseOfUseShort": "Perceived Ease of Use",
+      "subjectiveNorm": "Subjective Norm",
+      "image": "Image",
+      "jobRelevance": "Job Relevance",
+      "outputQuality": "Output Quality",
+      "resultDemonstrability": "Result Demonstrability",
+      "computerSelfEfficacy": "Computer Self-Efficacy",
+      "externalControl": "External Control",
+      "anxiety": "Anxiety",
+      "playfulness": "Playfulness",
+      "enjoyment": "Enjoyment",
+      "objectiveUsability": "Objective Usability"
     },
     "advanced": {
       "stepTitle": "Step 3: Advanced Options",
@@ -1291,12 +1282,52 @@
   "eyeTracking": {
     "title": "Eye Tracking Calibration",
     "beforeStart": "Before starting calibration",
-    "description1": "We will prepare your device to record your eye movements.",
+    "description1": "We will provide your device to record your eye movements.",
     "description2": "Follow the points that appear on the screen.",
     "start": "Start calibration",
     "inProgress": "Calibration in progress...",
     "completed": "Calibration completed!",
     "continue": "Continue to the test"
+  },
+  "EyeTrackingConfig": {
+    "titles": {
+      "main": "Eye Tracking Configurations",
+      "general": "General Configuration",
+      "miscellaneous": "Miscellaneous Configuration"
+    },
+    "labels": {
+      "pointNumber": "Point Number",
+      "samplesPerPoint": "Samples Per Point",
+      "msPerPoint": "Milliseconds Per Point Capture",
+      "threshold": "Points Distance Threshold",
+      "radius": "Radius",
+      "offset": "Offset",
+      "control": "Control:",
+      "useCustomColors": "Use Custom Colors",
+      "backgroundColor": "Background Color:",
+      "pointColor": "Point Color:",
+      "modelSelection": "Model Selection:",
+      "selectModel": "Select Model",
+      "note": "Note:",
+      "noteText": "The selected model will be used for the calibration process. The default model is Linear Regression. Some models may take longer to train than others. So please be patient."
+    },
+    "tooltips": {
+      "pointNumber": "Number of calibration points shown on the screen (more points = higher accuracy).",
+      "samplesPerPoint": "How many gaze samples are collected per calibration point. Higher values improve precision but increase duration.",
+      "msPerPoint": "Duration (in milliseconds) to capture data per point. Defines how long the user must look at each target.",
+      "threshold": "Maximum distance (in pixels) allowed between calibration samples before they are discarded. Controls spatial tolerance.",
+      "radius": "Adjust the radius of the calibration point. Larger values make the point bigger.",
+      "offset": "Offset (in pixels) to adjust the calibration area position."
+    },
+    "models": {
+      "linear": "Linear Regression",
+      "ridge": "Ridge Regression",
+      "lasso": "Lasso Regression",
+      "elastic": "Elastic Net",
+      "bayesian": "Bayesian Ridge",
+      "sgd": "SGD Regressor",
+      "svr": "Support Vector Regressor"
+    }
   },
   "AccessNotAllowed": {
     "notAllowed": "Access not allowed",
@@ -1442,6 +1473,18 @@
         "userModerated": "User Moderated",
         "manualAccessibility": "Manual Accessibility",
         "automaticAccessibility": "Automatic Accessibility"
+      },
+      "unsupportedPreviewType": "Unsupported template type for preview.",
+      "config": {
+        "title": "Template Config",
+        "ownerOnly": "Configuration editing is restricted to template owner.",
+        "version": "Version",
+        "visibility": "Visibility",
+        "owner": "Owner",
+        "public": "Public",
+        "private": "Private",
+        "saved": "Template configuration updated successfully",
+        "saveError": "Failed to update template configuration"
       }
     },
     "createTest": {
@@ -1484,7 +1527,9 @@
     "editTest": {
       "title": "Edit test",
       "description": "Customize the settings and preferences of your test.",
-      "updatedTest": "Test updated successfully"
+      "updatedTest": "Test updated successfully",
+      "previewTitle": "Preview test",
+      "previewDescription": "Review the test in read-only mode."
     },
     "cooperators": {
       "invitationSent": "Invitation sent successfully"

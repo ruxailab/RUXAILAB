@@ -8,20 +8,22 @@
               class="text-h5 font-weight-bold pa-0"
               :style="{ color: $vuetify.theme.current.colors['on-surface'] }"
             >
-              {{ title }}
+              {{ props.title }}
             </v-card-title>
 
             <p class="text-body-1" style="color: #4b5563">
-              {{ subtitle }}
+              {{ props.subtitle }}
             </p>
           </v-col>
         </v-row>
 
         <v-card-text>
           <quill-editor
+            ref="quillRef"
             v-model:value="value"
             :options="editorOptions"
-            class="editor-container"
+            :class="['editor-container', { 'editor-readonly': props.readonly }]"
+            @ready="applyReadonlyAttributes"
           />
         </v-card-text>
       </v-card>
@@ -30,12 +32,20 @@
 </template>
 
 <script setup>
-import { watch, computed } from 'vue'
+import { watch, computed, nextTick, ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
-defineProps({
+const value = defineModel({ type: String, default: '' })
+const emit = defineEmits(['update:value'])
+const quillRef = ref(null)
+
+watch(value, (newValue) => {
+  emit('update:value', newValue)
+})
+
+const props = defineProps({
   title: {
     type: String,
     required: true,
@@ -44,27 +54,53 @@ defineProps({
     type: String,
     default: '',
   },
-})
-
-const value = defineModel({ type: String, default: '' })
-const emit = defineEmits(['update:value'])
-
-watch(value, (newValue) => {
-  emit('update:value', newValue)
+  readonly: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const editorOptions = computed(() => ({
   theme: 'snow',
+  readOnly: props.readonly,
   placeholder: t('common.enterTextHere'),
   modules: {
-    toolbar: [
-      ['bold', 'italic', 'underline'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      ['link'],
-      ['clean'],
-    ],
+    toolbar: props.readonly
+      ? false
+      : [
+          ['bold', 'italic', 'underline'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          ['link'],
+          ['clean'],
+        ],
   },
 }))
+
+const applyReadonlyAttributes = async () => {
+  await nextTick()
+  const root = quillRef.value?.$el || quillRef.value
+  const editor = root?.querySelector?.('.ql-editor')
+  if (!editor) return
+
+  if (props.readonly) {
+    editor.setAttribute('contenteditable', 'false')
+    editor.setAttribute('tabindex', '-1')
+  } else {
+    editor.setAttribute('contenteditable', 'true')
+    editor.removeAttribute('tabindex')
+  }
+}
+
+watch(
+  () => props.readonly,
+  () => {
+    applyReadonlyAttributes()
+  },
+)
+
+onMounted(() => {
+  applyReadonlyAttributes()
+})
 </script>
 
 <style scoped>
@@ -92,5 +128,9 @@ const editorOptions = computed(() => ({
 
 :deep(.ql-editor) {
   padding: 16px;
+}
+
+.editor-readonly :deep(.ql-editor) {
+  pointer-events: none;
 }
 </style>
