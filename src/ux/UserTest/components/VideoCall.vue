@@ -487,7 +487,9 @@
                   ? 'blue'
                   : participant.role === 'observator'
                     ? 'orange'
-                    : 'green'
+                    : participant.role === 'evaluator'
+                      ? 'teal'
+                      : 'green'
               "
             >
               <v-icon color="white">{{
@@ -527,7 +529,7 @@
                 <v-chip
                   v-else-if="participant.role === 'evaluator'"
                   size="x-small"
-                  color="green"
+                  color="teal"
                   class="ml-1"
                 >
                   {{ t('UserTestView.VideoCall.participants.roles.evaluator') }}
