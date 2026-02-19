@@ -1,29 +1,22 @@
 <template>
   <v-row class="d-flex align-center" no-gutters>
     <v-col cols="10">
-      <v-slider v-model="radius" :min="10" :max="35" step="1" thumb-label>
-        <template #label>
-          <div class="d-flex align-center">
-            Radius
-            <v-tooltip
-              content-class="modern-tooltip"
-              location="top"
-              max-width="300"
-              text="Adjusts the physical dimensions of the calibration stimulus. A larger radius increases visibility, while a smaller radius demands more precise foveal fixation"
-            >
-              <template #activator="{ props }">
-                <v-icon
-                  v-bind="props"
-                  size="x-small"
-                  color="primary"
-                  icon="mdi-information-outline"
-                  class="ml-2"
-                ></v-icon>
-              </template>
-            </v-tooltip>
-          </div>
+      <v-tooltip
+        :text="$t('EyeTrackingConfig.tooltips.radius')"
+        location="bottom"
+      >
+        <template #activator="{ props }">
+          <v-slider
+            v-bind="props"
+            v-model="radius"
+            :min="10"
+            :max="35"
+            step="1"
+            :label="$t('EyeTrackingConfig.labels.radius')"
+            thumb-label
+          />
         </template>
-      </v-slider>
+      </v-tooltip>
     </v-col>
 
     <v-col cols="2" class="d-flex justify-center">
@@ -62,9 +55,6 @@ const pointColor = computed({
   },
 })
 
-// --- Watchers for Live Preview ---
-
-// Watch for Radius changes to update store and re-draw the canvas
 watch(radius, (newRadius) => {
   const calibrationConfig = new EyeCalibrationSettings({
     ...store.getters.test.calibrationConfig,
@@ -90,24 +80,20 @@ const drawBall = (r, color) => {
   const canvas = radCanvas.value
   const ctx = canvas.getContext('2d')
 
-  // Set canvas dimensions based on client view
   canvas.width = canvas.clientWidth
   canvas.height = canvas.clientHeight
 
   const centerX = canvas.width / 2
   const centerY = canvas.height / 2
 
-  // Clear previous frame
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-  // Draw Outer Circle (User selected color)
   ctx.beginPath()
   ctx.arc(centerX, centerY, r * 2, 0, 2 * Math.PI)
   ctx.fillStyle = color
   ctx.fill()
   ctx.closePath()
 
-  // Draw Inner Target Dot (Fixed Red color)
   ctx.beginPath()
   ctx.arc(centerX, centerY, (r / 3) * 2, 0, 2 * Math.PI)
   ctx.fillStyle = 'red'
@@ -117,7 +103,6 @@ const drawBall = (r, color) => {
 
 // --- Lifecycle ---
 onMounted(() => {
-  // Initialize radius from store and trigger first draw
   radius.value = store.getters.test?.calibrationConfig?.radius ?? 20
   drawBall(radius.value, pointColor.value)
 })

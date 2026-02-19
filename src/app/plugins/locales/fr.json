@@ -409,6 +409,7 @@
     "incorrectPassword": "Mot de passe incorrect",
     "incorrectCredential": "Nom d'utilisateur ou mot de passe incorrect.",
     "globalError": "Une erreur est survenue, désolé pour le désagrément.",
+    "cameraPermissionDenied": "L'accès à la caméra est requis pour continuer. Veuillez autoriser l'accès à la caméra dans les paramètres de votre navigateur.",
     "sendError": "Échec de l'envoi de l'invitation. Veuillez réessayer",
     "missingVariableTitles": "Impossible d'enregistrer : Certaines variables manquent de titres"
   },
@@ -625,7 +626,8 @@
       "changeWeights": "Notez qu'en changeant l'ordre des heuristiques, les poids NE changent PAS automatiquement, vous devez les modifier manuellement.",
       "noDescriptions": "Aucune description disponible",
       "startAddingQuestions": "Commencez par ajouter votre première question à cette heuristique",
-      "cantDeleteAllQuestions": "Désolé, vous ne pouvez pas supprimer toutes les questions d'une heuristique"
+      "cantDeleteAllQuestions": "Désolé, vous ne pouvez pas supprimer toutes les questions d'une heuristique",
+      "studyHasAnswers": "This study has answers"
     },
     "validation": {
       "nameRequired": "Le nom est obligatoire",
@@ -732,7 +734,9 @@
       "options": "Options",
       "weights": "Poids",
       "settings": "Paramètres"
-    }
+    },
+    "previewPageTitle": "Preview test",
+    "previewPageSubtitle": "Review the test configuration in read-only mode"
   },
   "HeuristicsTestAnswer": {
     "titles": {
@@ -981,73 +985,60 @@
       "sart": "Technique d'Évaluation de la Conscience Situationnelle - mesure la conscience situationnelle"
     },
     "answerTypePreview": {
-      "noAnswer": {
-        "message": "Tâche terminée ! Aucun retour supplémentaire requis."
-      },
-      "textArea": {
-        "placeholder": "Les participants fourniront leurs commentaires ici...",
-        "submitButton": "Soumettre les Commentaires"
-      },
-      "postTest": {
-        "title": "Questions Post-Tâche",
-        "q1": "1. Comment évalueriez-vous la difficulté de cette tâche ?",
-        "q2": "2. Des commentaires supplémentaires ?",
-        "feedbackPlaceholder": "Commentaires optionnels..."
-      },
-      "postForm": {
-        "title": "Formulaire Externe",
-        "notice": "Les participants seront redirigés pour remplir un formulaire externe après la tâche.",
-        "button": "Ouvrir le Formulaire Externe"
-      },
-      "nasaTlx": {
-        "title": "Indice de Charge de Travail NASA",
-        "mental": "Exigence Mentale",
-        "physical": "Exigence Physique",
-        "range": "Faible - Élevé",
-        "moreDimensions": "+ 4 dimensions supplémentaires"
-      },
-      "sus": {
-        "title": "Échelle d'Utilisabilité du Système",
-        "q1": "1. Je pense que j'aimerais utiliser ce système fréquemment.",
-        "disagree": "Pas du Tout d'Accord",
-        "agree": "Tout à Fait d'Accord",
-        "moreStatements": "+ 9 déclarations supplémentaires"
-      },
-      "sart": {
-        "title": "Technique d'Évaluation de la Conscience Situationnelle",
-        "instability": "Instabilité de la Situation",
-        "complexity": "Complexité de la Situation",
-        "stable": "Très Stable",
-        "unstable": "Très Instable",
-        "simple": "Très Simple",
-        "complex": "Très Complexe",
-        "moreDimensions": "+ 8 dimensions SART supplémentaires"
-      },
-      "tam": {
-        "tam1": "TAM-1 : Modèle d'Acceptation de la Technologie (Basique)",
-        "tam2": "TAM-2 : Modèle d'Acceptation de la Technologie (Étendu)",
-        "tam3": "TAM-3 : Modèle d'Acceptation de la Technologie (Complet)",
-        "items2": "10 éléments sur 2 dimensions",
-        "items7": "25 éléments sur 7 dimensions",
-        "items13": "39 éléments sur 13 dimensions",
-        "pu": "Utilité Perçue",
-        "eu": "Facilité d'Utilisation Perçue",
-        "sn": "Norme Subjective",
-        "image": "Image",
-        "jr": "Pertinence pour le Poste",
-        "oq": "Qualité des Résultats",
-        "rd": "Démonstrabilité des Résultats",
-        "se": "Auto-efficacité Informatique",
-        "ec": "Contrôle Externe",
-        "anxiety": "Anxiété",
-        "play": "Ludisme",
-        "enjoy": "Plaisir",
-        "ou": "Utilisabilité Objective",
-        "q1": "1. L'utilisation du système améliore mes performances au travail.",
-        "q6": "6. Le système est facile à utiliser.",
-        "likertNote": "Les participants évaluent {count} affirmations sur une échelle de Likert en 5 points"
-      },
-      "selectionPrompt": "Sélectionnez un type de réponse pour voir l'aperçu"
+      "taskCompleted": "Tâche terminée ! Aucun retour supplémentaire requis.",
+      "participantsFeedbackHere": "Les participants fourniront leurs commentaires ici...",
+      "submitFeedback": "Soumettre les Commentaires",
+      "postTaskQuestions": "Questions Post-Tâche",
+      "rateTaskDifficulty": "1. Comment évalueriez-vous la difficulté de cette tâche ?",
+      "additionalComments": "2. Des commentaires supplémentaires ?",
+      "optionalFeedback": "Commentaires optionnels...",
+      "externalFormTitle": "Formulaire Externe",
+      "externalFormDescription": "Les participants seront redirigés pour remplir un formulaire externe après la tâche.",
+      "openExternalForm": "Ouvrir le Formulaire Externe",
+      "nasaTlxTitle": "Indice de Charge de Travail NASA",
+      "mentalDemand": "Demande Mentale",
+      "physicalDemand": "Demande Physique",
+      "lowHigh": "Faible - Élevé",
+      "moreDimensions": "+ 4 dimensions supplémentaires",
+      "susTitle": "Échelle d'Utilisabilité du Système",
+      "susStatement1": "1. Je pense que j'aimerais utiliser ce système fréquemment.",
+      "stronglyDisagree": "Fortement en Désaccord",
+      "stronglyAgree": "Fortement d'Accord",
+      "moreStatements": "+ 9 déclarations supplémentaires",
+      "sartTitle": "Technique d'Évaluation de la Conscience Situationnelle",
+      "instability": "Instabilité de la Situation",
+      "complexity": "Complexité de la Situation",
+      "veryStable": "Très Stable",
+      "veryUnstable": "Très Instable",
+      "verySimple": "Très Simple",
+      "veryComplex": "Très Complexe",
+      "moreSartDimensions": "+ 8 dimensions SART supplémentaires",
+      "tam1Title": "TAM-1 : Modèle d'Acceptation de la Technologie (Basique)",
+      "tam1Subtitle": "10 questions réparties sur 2 dimensions",
+      "perceivedUsefulness": "Utilité Perçue (5 questions)",
+      "perceivedEaseOfUse": "Facilité d'Utilisation Perçue (5 questions)",
+      "tam1Statement1": "1. L'utilisation du système améliore mes performances au travail.",
+      "tam1Statement6": "6. Le système est facile à utiliser.",
+      "tam2Title": "TAM-2 : Modèle d'Acceptation de la Technologie (Étendu)",
+      "tam2Subtitle": "25 questions réparties sur 7 dimensions",
+      "tam2Description": "Les participants évaluent 25 affirmations sur une échelle de Likert en 5 points (Fortement en Désaccord - Fortement d'Accord)",
+      "tam3Title": "TAM-3 : Modèle d'Acceptation de la Technologie (Complet)",
+      "tam3Subtitle": "39 questions réparties sur 13 dimensions",
+      "tam3Description": "Évaluation complète avec 39 affirmations réparties sur 13 dimensions sur une échelle de Likert en 5 points",
+      "selectType": "Sélectionnez un type de réponse pour voir l'aperçu",
+      "perceivedUsefulnessShort": "Utilité Perçue",
+      "perceivedEaseOfUseShort": "Facilité d'Utilisation Perçue",
+      "subjectiveNorm": "Norme Subjective",
+      "image": "Image",
+      "jobRelevance": "Pertinence du Travail",
+      "outputQuality": "Qualité des Résultats",
+      "resultDemonstrability": "Démontrabilité des Résultats",
+      "computerSelfEfficacy": "Auto-Efficacité Informatique",
+      "externalControl": "Contrôle Externe",
+      "anxiety": "Anxiété",
+      "playfulness": "Caractère Ludique",
+      "enjoyment": "Plaisir",
+      "objectiveUsability": "Usabilité Objective"
     },
     "advanced": {
       "stepTitle": "Étape 3 : Options Avancées",
@@ -1283,6 +1274,46 @@
     "completed": "Calibration terminée !",
     "continue": "Continuer vers le test"
   },
+  "EyeTrackingConfig": {
+    "titles": {
+      "main": "Configurations de suivi oculaire",
+      "general": "Configuration générale",
+      "miscellaneous": "Configuration diverses"
+    },
+    "labels": {
+      "pointNumber": "Nombre de points",
+      "samplesPerPoint": "Échantillons par point",
+      "msPerPoint": "Millisecondes par capture de point",
+      "threshold": "Seuil de distance des points",
+      "radius": "Rayon",
+      "offset": "Décalage",
+      "control": "Contrôle :",
+      "useCustomColors": "Utiliser des couleurs personnalisées",
+      "backgroundColor": "Couleur de fond :",
+      "pointColor": "Couleur du point :",
+      "modelSelection": "Sélection du modèle :",
+      "selectModel": "Sélectionner le modèle",
+      "note": "Note :",
+      "noteText": "Le modèle sélectionné sera utilisé pour le processus de calibration. Le modèle par défaut est la régression linéaire. Certains modèles peuvent prendre plus de temps à s'entraîner que d'autres. Veuillez être patient."
+    },
+    "tooltips": {
+      "pointNumber": "Nombre de points de calibration affichés à l'écran (plus de points = plus de précision).",
+      "samplesPerPoint": "Nombre d'échantillons de regard collectés par point de calibration. Des valeurs plus élevées améliorent la précision mais augmentent la durée.",
+      "msPerPoint": "Durée (en millisecondes) pour capturer les données par point. Définit combien de temps l'utilisateur doit regarder chaque cible.",
+      "threshold": "Distance maximale (en pixels) autorisée entre les échantillons de calibration avant qu'ils ne soient ignorés. Contrôle la tolérance spatiale.",
+      "radius": "Ajuste le rayon du point de calibration. Des valeurs plus grandes augmentent la taille du point.",
+      "offset": "Décalage (en pixels) pour ajuster la position de la zone de calibration."
+    },
+    "models": {
+      "linear": "Régression linéaire",
+      "ridge": "Régression Ridge",
+      "lasso": "Régression Lasso",
+      "elastic": "Elastic Net",
+      "bayesian": "Bayesian Ridge",
+      "sgd": "Régresseur SGD",
+      "svr": "Régresseur à vecteurs de support"
+    }
+  },
   "AccessNotAllowed": {
     "notAllowed": "Accès non autorisé",
     "noAccess": "Vous n'avez pas accès à la page que vous essayez d'atteindre.",
@@ -1427,6 +1458,18 @@
         "manualAccessibility": "Accessibilité manuelle",
         "automaticAccessibility": "Accessibilité automatique",
         "all": "Tous"
+      },
+      "unsupportedPreviewType": "Unsupported template type for preview.",
+      "config": {
+        "title": "Template Config",
+        "ownerOnly": "Configuration editing is restricted to template owner.",
+        "version": "Version",
+        "visibility": "Visibility",
+        "owner": "Owner",
+        "public": "Public",
+        "private": "Private",
+        "saved": "Template configuration updated successfully",
+        "saveError": "Failed to update template configuration"
       }
     },
     "createTest": {
@@ -1469,7 +1512,9 @@
     "editTest": {
       "title": "Modifier le test",
       "description": "Personnalisez les paramètres et préférences de votre test.",
-      "updatedTest": "Test mis à jour avec succès"
+      "updatedTest": "Test mis à jour avec succès",
+      "previewTitle": "Preview test",
+      "previewDescription": "Review the test in read-only mode."
     },
     "cooperators": {
       "invitationSent": "Invitation envoyée avec succès"

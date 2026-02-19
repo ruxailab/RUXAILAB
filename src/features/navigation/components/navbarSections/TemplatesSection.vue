@@ -112,32 +112,26 @@
   />
 
   <!-- 🪟 Template dialog -->
-  <TemplateInfoDialog
-    v-model:dialog="tempDialog"
-    :template="temp"
-    :allow-create="true"
-    @close="reloadMyTemplates()"
-  />
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import List from '@/shared/components/tables/ListComponent.vue'
 import {
   METHOD_DEFINITIONS,
   STUDY_TYPES,
   USER_STUDY_SUBTYPES,
 } from '@/shared/constants/methodDefinitions'
-import TemplateInfoDialog from '@/shared/components/dialogs/TemplateInfoDialog.vue'
+import { getTemplateManagerPath } from '@/shared/utils/templateRouting'
 
 const store = useStore()
+const router = useRouter()
 const { t } = useI18n()
 
-const tempDialog = ref(false)
-const temp = ref({})
-const templates = computed(() => store.state.Templates.templates || [])
+const templates = computed(() => store.state.Templates.myTemplates || [])
 
 // ===== Filters =====
 const methodOptions = computed(() => [
@@ -224,15 +218,9 @@ const filteredTemplates = computed(() =>
 // ===== Methods =====
 const setupTempDialog = (template) => {
   if (!template?.header || !template?.body) return
-  temp.value = { ...template }
-  tempDialog.value = true
-}
-
-const getMyTemplates = () => store.dispatch('getTemplatesOfUser')
-
-const reloadMyTemplates = async () => {
-  tempDialog.value = false
-  await getMyTemplates()
+  const path = getTemplateManagerPath(template)
+  if (!path) return
+  router.push(path)
 }
 </script>
 
