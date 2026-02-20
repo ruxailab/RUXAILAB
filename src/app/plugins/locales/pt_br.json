@@ -1218,6 +1218,56 @@
     "PostTestStep": {
       "title": "Pós-teste"
     },
+    "StepSelector": {
+      "hideSteps": "Ocultar etapas",
+      "showSteps": "Mostrar etapas",
+      "title": "Etapas do teste",
+      "currentStep": "Etapa atual",
+      "currentStepProgress": "Etapa {current} de {total}",
+      "allSteps": "Todas as etapas",
+      "stepLabel": "Etapa {step}",
+      "taskPlaceholder": "Selecione uma tarefa",
+      "revisit": "Revisitar",
+      "goTo": "Ir para",
+      "testComplete": "Teste conclu?do",
+      "proceedToStep": "Prosseguir para a etapa {step}",
+      "restartTest": "Reiniciar teste"
+    },
+    "VideoCall": {
+      "labels": {
+        "proceedToNextStep": "Prosseguir para a pr?xima etapa",
+        "activeCall": "Chamada ativa",
+        "yourVideo": "Seu video ({name})",
+        "yourPreview": "Sua pre-visualizacao ({name})"
+      },
+      "buttons": {
+        "endCall": "Encerrar chamada",
+        "leaveCall": "Sair da chamada"
+      },
+      "tooltips": {
+        "endVideoCallSession": "Encerrar a sessao de chamada de video",
+        "leaveVideoCallSession": "Sair da sessao de chamada de video"
+      },
+      "participants": {
+        "cameraOn": "C?mera",
+        "cameraOff": "Sem c?mera",
+        "microphoneOn": "Microfone",
+        "microphoneOff": "Sem microfone",
+        "roles": {
+          "evaluator": "Avaliador"
+        }
+      },
+      "stepDescriptions": {
+        "welcome": "Introdu??o ao teste",
+        "consent": "Consentimento do usu?rio",
+        "preTest": "Question?rio inicial",
+        "preTasks": "Instru??es das tarefas",
+        "tasks": "Tarefas de teste de usu?rio",
+        "postTest": "Question?rio final",
+        "completion": "Teste conclu?do"
+      }
+    },
+
     "buttons": {
       "done": "Concluído"
     },

@@ -1218,6 +1218,56 @@
     "PostTestStep": {
       "title": "Prueba posterior"
     },
+    "StepSelector": {
+      "hideSteps": "Ocultar pasos",
+      "showSteps": "Mostrar pasos",
+      "title": "Pasos de la prueba",
+      "currentStep": "Paso actual",
+      "currentStepProgress": "Paso {current} de {total}",
+      "allSteps": "Todos los pasos",
+      "stepLabel": "Paso {step}",
+      "taskPlaceholder": "Selecciona una tarea",
+      "revisit": "Revisitar",
+      "goTo": "Ir a",
+      "testComplete": "Prueba completada",
+      "proceedToStep": "Continuar al paso {step}",
+      "restartTest": "Reiniciar prueba"
+    },
+    "VideoCall": {
+      "labels": {
+        "proceedToNextStep": "Continuar al siguiente paso",
+        "activeCall": "Llamada activa",
+        "yourVideo": "Tu video ({name})",
+        "yourPreview": "Tu vista previa ({name})"
+      },
+      "buttons": {
+        "endCall": "Finalizar llamada",
+        "leaveCall": "Salir de la llamada"
+      },
+      "tooltips": {
+        "endVideoCallSession": "Finalizar la sesion de videollamada",
+        "leaveVideoCallSession": "Salir de la sesion de videollamada"
+      },
+      "participants": {
+        "cameraOn": "C?mara",
+        "cameraOff": "Sin c?mara",
+        "microphoneOn": "Micr?fono",
+        "microphoneOff": "Sin micr?fono",
+        "roles": {
+          "evaluator": "Evaluador"
+        }
+      },
+      "stepDescriptions": {
+        "welcome": "Introducci?n a la prueba",
+        "consent": "Consentimiento del usuario",
+        "preTest": "Cuestionario inicial",
+        "preTasks": "Instrucciones de las tareas",
+        "tasks": "Tareas de prueba de usuario",
+        "postTest": "Cuestionario final",
+        "completion": "Prueba finalizada"
+      }
+    },
+
     "buttons": {
       "done": "Hecho"
     },

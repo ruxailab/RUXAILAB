@@ -1218,6 +1218,56 @@
     "PostTestStep": {
       "title": "पोस्ट-टेस्ट"
     },
+    "StepSelector": {
+      "hideSteps": "स्टेप्स छिपाएं",
+      "showSteps": "स्टेप्स दिखाएं",
+      "title": "स्टेप चुनें",
+      "currentStep": "वर्तमान स्टेप",
+      "currentStepProgress": "{current} / {total} स्टेप",
+      "allSteps": "सभी स्टेप्स",
+      "stepLabel": "{step} स्टेप",
+      "taskPlaceholder": "कार्य नाम",
+      "revisit": "फिर से देखें",
+      "goTo": "जाएँ",
+      "testComplete": "परीक्षण पूरा हुआ",
+      "proceedToStep": "{step} स्टेप पर जाएँ",
+      "restartTest": "परीक्षण फिर से शुरू करें"
+    },
+    "VideoCall": {
+      "labels": {
+        "proceedToNextStep": "अगले स्टेप पर जाएँ",
+        "activeCall": "सक्रिय कॉल",
+        "yourVideo": "आपका वीडियो ({name})",
+        "yourPreview": "आपका प्रीव्यू ({name})"
+      },
+      "buttons": {
+        "endCall": "कॉल समाप्त करें",
+        "leaveCall": "कॉल छोड़ें"
+      },
+      "tooltips": {
+        "endVideoCallSession": "वीडियो कॉल सत्र समाप्त करें",
+        "leaveVideoCallSession": "वीडियो कॉल सत्र छोड़ें"
+      },
+      "participants": {
+        "cameraOn": "कैमरा चालू",
+        "cameraOff": "कैमरा बंद",
+        "microphoneOn": "माइक्रोफोन चालू",
+        "microphoneOff": "माइक्रोफोन बंद",
+        "roles": {
+          "evaluator": "मूल्यांकनकर्ता"
+        }
+      },
+      "stepDescriptions": {
+        "welcome": "स्वागत संदेश",
+        "consent": "सहमति दस्तावेज़",
+        "preTest": "प्री-टेस्ट चरण",
+        "preTasks": "प्री-टास्क चरण",
+        "tasks": "कार्य चरण",
+        "postTest": "पोस्ट-टेस्ट चरण",
+        "completion": "पूर्णता चरण"
+      }
+    },
+
     "buttons": {
       "done": "समाप्त"
     },

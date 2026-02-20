@@ -1218,6 +1218,56 @@
     "PostTestStep": {
       "title": "事後テスト"
     },
+    "StepSelector": {
+      "hideSteps": "ステップを非表示",
+      "showSteps": "ステップを表示",
+      "title": "ステップセレクター",
+      "currentStep": "現在のステップ",
+      "currentStepProgress": "{current} / {total}",
+      "allSteps": "すべてのステップ",
+      "stepLabel": "ステップ {step}",
+      "taskPlaceholder": "タスク",
+      "revisit": "再訪問",
+      "goTo": "移動",
+      "testComplete": "テスト完了",
+      "proceedToStep": "ステップ {step} に進む",
+      "restartTest": "テストを再開する"
+    },
+    "VideoCall": {
+      "labels": {
+        "proceedToNextStep": "次のステップに進む",
+        "activeCall": "アクティブな通話",
+        "yourVideo": "あなたのビデオ ({name})",
+        "yourPreview": "あなたのプレビュー ({name})"
+      },
+      "buttons": { 
+        "endCall": "通話を終了",
+        "leaveCall": "通話を退出"
+      },
+      "tooltips": {
+        "endVideoCallSession": "ビデオ通話セッションを終了",
+        "leaveVideoCallSession": "ビデオ通話セッションを退出"
+      },
+      "participants": {
+        "cameraOn": "カメラオン",
+        "cameraOff": "カメラオフ",
+        "microphoneOn": "マイクオン",
+        "microphoneOff": "マイクオフ",
+        "roles": {
+          "evaluator": "評価者"
+        }
+      },
+      "stepDescriptions": {
+        "welcome": "ようこそ",
+        "consent": "同意",
+        "preTest": "前測定",
+        "preTasks": "タスク準備",
+        "tasks": "タスク実施",
+        "postTest": "後測定",
+        "completion": "完了"
+      }
+    },
+
     "buttons": {
       "done": "完了"
     },

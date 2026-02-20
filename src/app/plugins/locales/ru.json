@@ -1218,6 +1218,56 @@
     "PostTestStep": {
       "title": "После теста"
     },
+    "StepSelector": {
+      "hideSteps": "Скрыть шаги",
+      "showSteps": "Показать шаги",
+      "title": "Выбор шага",
+      "currentStep": "Текущий шаг",
+      "currentStepProgress": "Шаг {current} из {total}",
+      "allSteps": "Все шаги",
+      "stepLabel": "Шаг {step}",
+      "taskPlaceholder": "Выберите задачу",
+      "revisit": "Повторить шаг",
+      "goTo": "Перейти к шагу",
+      "testComplete": "Тест завершен",
+      "proceedToStep": "Перейти к шагу {step}",
+      "restartTest": "Перезапустить тест"
+    },
+    "VideoCall": {
+      "labels": {
+        "proceedToNextStep": "Перейти к следующему шагу",
+        "activeCall": "Активный видеозвонок",
+        "yourVideo": "Ваше видео ({name})",
+        "yourPreview": "Ваш предварительный просмотр ({name})"
+      },
+      "buttons": {
+        "endCall": "Завершить видеозвонок",
+        "leaveCall": "Покинуть звонок"
+      },
+      "tooltips": {
+        "endVideoCallSession": "Завершить сессию видеозвонка",
+        "leaveVideoCallSession": "Покинуть сессию видеозвонка"
+      },
+      "participants": {
+        "cameraOn": "Камера включена",
+        "cameraOff": "Камера выключена",
+        "microphoneOn": "Микрофон включен",
+        "microphoneOff": "Микрофон выключен",
+        "roles": {
+          "evaluator": "Оценщик"
+        }
+      },
+      "stepDescriptions": {
+        "welcome": "Добро пожаловать в тестовую сессию",
+        "consent": "Согласие на участие",
+        "preTest": "Предварительный тест",
+        "preTasks": "Подготовка к задачам",
+        "tasks": "Выполнение задач",
+        "postTest": "После теста",
+        "completion": "Завершение теста"
+      }
+    },
+
     "buttons": {
       "done": "Готово"
     },

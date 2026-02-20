@@ -1219,6 +1219,56 @@
     "PostTestStep": {
       "title": "Nachtest"
     },
+    "StepSelector": {
+      "hideSteps": "Schritte ausblenden",
+      "showSteps": "Schritte anzeigen",
+      "title": "Testschritte",
+      "currentStep": "Aktueller Schritt",
+      "currentStepProgress": "Schritt {current} von {total}",
+      "allSteps": "Alle Schritte",
+      "stepLabel": "Schritt {step}",
+      "taskPlaceholder": "Aufgabe ausw?hlen",
+      "revisit": "Erneut ansehen",
+      "goTo": "Gehe zu",
+      "testComplete": "Test abgeschlossen",
+      "proceedToStep": "Weiter zu Schritt {step}",
+      "restartTest": "Test neu starten"
+    },
+    "VideoCall": {
+      "labels": {
+        "proceedToNextStep": "Zum n?chsten Schritt",
+        "activeCall": "Aktiver Anruf",
+        "yourVideo": "Dein Video ({name})",
+        "yourPreview": "Deine Vorschau ({name})"
+      },
+      "buttons": {
+        "endCall": "Anruf beenden",
+        "leaveCall": "Anruf verlassen"
+      },
+      "tooltips": {
+        "endVideoCallSession": "Videoanrufsitzung beenden",
+        "leaveVideoCallSession": "Videoanrufsitzung verlassen"
+      },
+      "participants": {
+        "cameraOn": "Kamera",
+        "cameraOff": "Keine Kamera",
+        "microphoneOn": "Mikrofon",
+        "microphoneOff": "Kein Mikrofon",
+        "roles": {
+          "evaluator": "Bewerter"
+        }
+      },
+      "stepDescriptions": {
+        "welcome": "Einf?hrung in den Test",
+        "consent": "Einwilligung des Nutzers",
+        "preTest": "Anfangsfragebogen",
+        "preTasks": "Aufgabenanweisungen",
+        "tasks": "Nutzertest-Aufgaben",
+        "postTest": "Abschlussfragebogen",
+        "completion": "Test beendet"
+      }
+    },
+
     "buttons": {
       "done": "Fertig"
     },

@@ -26,7 +26,10 @@
       </v-col>
 
       <!-- Grid of Participants -->
-      <v-col v-if="callStarted" cols="12">
+      <v-col
+        v-if="callStarted || (caller && !isObservator && localStream)"
+        cols="12"
+      >
         <div class="videos-grid">
           <!-- Local Video (not for observators) -->
           <div v-if="!isObservator" class="video-wrapper">
@@ -56,9 +59,14 @@
 
               <div class="video-label">
                 {{
-                  t('UserTestView.VideoCall.labels.yourVideo', {
-                    name: user?.email?.split('@')[0],
-                  })
+                  t(
+                    callStarted
+                      ? 'UserTestView.VideoCall.labels.yourVideo'
+                      : 'UserTestView.VideoCall.labels.yourPreview',
+                    {
+                      name: user?.email?.split('@')[0],
+                    },
+                  )
                 }}
               </div>
             </div>
@@ -66,6 +74,7 @@
 
           <!-- Remote Videos -->
           <div
+            v-if="callStarted"
             v-for="(stream, userId) in remoteStreams"
             :key="userId"
             class="video-wrapper"
@@ -106,56 +115,13 @@
 
           <!-- Waiting Message if no peers -->
           <div
-            v-if="Object.keys(remoteStreams).length === 0"
+            v-if="callStarted && Object.keys(remoteStreams).length === 0"
             class="d-flex align-center justify-center pa-4 text-grey"
           >
             <v-icon class="mr-2">mdi-account-clock</v-icon>
             <span>{{
               t('UserTestView.VideoCall.labels.waitingForParticipants')
             }}</span>
-          </div>
-        </div>
-      </v-col>
-
-      <!-- Moderator Preview (before opening room) -->
-      <v-col
-        v-if="caller && !callStarted && !isObservator && localStream"
-        cols="12"
-      >
-        <div class="videos-grid">
-          <div class="video-wrapper">
-            <div class="video-container">
-              <video
-                ref="localVideo"
-                autoplay
-                muted
-                playsinline
-                class="video-element"
-              ></video>
-
-              <!-- Camera disabled overlay -->
-              <div v-if="!isCameraEnabled" class="camera-disabled-overlay">
-                <v-icon size="64" color="white" class="mb-2"
-                  >mdi-video-off</v-icon
-                >
-                <p class="text-white">
-                  {{ t('UserTestView.VideoCall.labels.cameraOff') }}
-                </p>
-              </div>
-
-              <!-- Microphone muted indicator -->
-              <div v-if="!isMicrophoneEnabled" class="mic-muted-indicator">
-                <v-icon size="24" color="white">mdi-microphone-off</v-icon>
-              </div>
-
-              <div class="video-label">
-                {{
-                  t('UserTestView.VideoCall.labels.yourPreview', {
-                    name: user?.email?.split('@')[0],
-                  })
-                }}
-              </div>
-            </div>
           </div>
         </div>
       </v-col>
@@ -315,8 +281,8 @@
             }}</span>
           </v-tooltip>
 
-          <!-- End Call button (for moderator when call is active) -->
-          <v-tooltip v-if="caller && callStarted" location="top">
+          <!-- End/Leave Call button (when call is active) -->
+          <v-tooltip v-if="callStarted" location="top">
             <template #activator="{ props }">
               <v-btn
                 v-bind="props"
@@ -326,30 +292,21 @@
                 @click="endCall"
               >
                 <v-icon start size="20">mdi-phone-hangup</v-icon>
-                {{ t('UserTestView.VideoCall.buttons.endCall') }}
+                {{
+                  t(
+                    caller
+                      ? 'UserTestView.VideoCall.buttons.endCall'
+                      : 'UserTestView.VideoCall.buttons.leaveCall',
+                  )
+                }}
               </v-btn>
             </template>
             <span>{{
-              t('UserTestView.VideoCall.tooltips.endVideoCallSession')
-            }}</span>
-          </v-tooltip>
-
-          <!-- End Call button (for participant when call is active) -->
-          <v-tooltip v-if="!caller && callStarted" location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                color="error"
-                class="control-btn control-btn-danger me-2"
-                size="large"
-                @click="endCall"
-              >
-                <v-icon start size="20">mdi-phone-hangup</v-icon>
-                {{ t('UserTestView.VideoCall.buttons.leaveCall') }}
-              </v-btn>
-            </template>
-            <span>{{
-              t('UserTestView.VideoCall.tooltips.leaveVideoCallSession')
+              t(
+                caller
+                  ? 'UserTestView.VideoCall.tooltips.endVideoCallSession'
+                  : 'UserTestView.VideoCall.tooltips.leaveVideoCallSession',
+              )
             }}</span>
           </v-tooltip>
 

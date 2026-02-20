@@ -1218,6 +1218,56 @@
     "PostTestStep": {
       "title": "ما بعد الاختبار"
     },
+    "StepSelector": {
+      "hideSteps": "إخفاء الخطوات",
+      "showSteps": "إظهار الخطوات",
+      "title": "خطوات الاختبار",
+      "currentStep": "الخطوة الحالية",
+      "currentStepProgress": "الخطوة {current} من {total}",
+      "allSteps": "كل الخطوات",
+      "stepLabel": "الخطوة {step}",
+      "taskPlaceholder": "اختر مهمة",
+      "revisit": "مراجعة",
+      "goTo": "الانتقال إلى",
+      "testComplete": "اكتمل الاختبار",
+      "proceedToStep": "المتابعة إلى الخطوة {step}",
+      "restartTest": "إعادة بدء الاختبار"
+    },
+    "VideoCall": {
+      "labels": {
+        "proceedToNextStep": "المتابعة إلى الخطوة التالية",
+        "activeCall": "مكالمة نشطة",
+        "yourVideo": "الفيديو الخاص بك ({name})",
+        "yourPreview": "المعاينة الخاصة بك ({name})"
+      },
+      "buttons": {
+        "endCall": "إنهاء المكالمة",
+        "leaveCall": "مغادرة المكالمة"
+      },
+      "tooltips": {
+        "endVideoCallSession": "إنهاء جلسة مكالمة الفيديو",
+        "leaveVideoCallSession": "مغادرة جلسة مكالمة الفيديو"
+      },
+      "participants": {
+        "cameraOn": "الكاميرا مفعلة",
+        "cameraOff": "الكاميرا متوقفة",
+        "microphoneOn": "الميكروفون مفعل",
+        "microphoneOff": "الميكروفون مكتوم",
+        "roles": {
+          "evaluator": "مُقيِّم"
+        }
+      },
+      "stepDescriptions": {
+        "welcome": "مرحبًا بك في جلسة الاختبار",
+        "consent": "موافقة المستخدم",
+        "preTest": "استبيان ما قبل الاختبار",
+        "preTasks": "تعليمات المهام",
+        "tasks": "مهام اختبار المستخدم",
+        "postTest": "استبيان ما بعد الاختبار",
+        "completion": "اكتمل الاختبار"
+      }
+    },
+
     "buttons": {
       "done": "تم"
     },

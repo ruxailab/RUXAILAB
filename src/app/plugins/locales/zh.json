@@ -1218,6 +1218,56 @@
     "PostTestStep": {
       "title": "后测"
     },
+    "StepSelector": {
+      "hideSteps": "隐藏步骤",
+      "showSteps": "显示步骤",
+      "title": "步骤选择器",
+      "currentStep": "当前步骤",
+      "currentStepProgress": "{current} / {total}",
+      "allSteps": "所有步骤",
+      "stepLabel": "步骤 {step}",
+      "taskPlaceholder": "任务",
+      "revisit": "重新访问",
+      "goTo": "前往",
+      "testComplete": "测试完成",
+      "proceedToStep": "继续到步骤 {step}",
+      "restartTest": "重新开始测试"
+    },
+    "VideoCall": {
+      "labels": {
+        "proceedToNextStep": "继续到下一步",
+        "activeCall": "活跃通话",
+        "yourVideo": "你的视频（{name}）",
+        "yourPreview": "你的预览（{name}）"
+      },
+      "buttons": {
+        "endCall": "结束通话",
+        "leaveCall": "离开通话"
+      },
+      "tooltips": {
+        "endVideoCallSession": "结束视频通话会话",
+        "leaveVideoCallSession": "离开视频通话会话"
+      },
+      "participants": {
+        "cameraOn": "摄像头开启",
+        "cameraOff": "摄像头关闭",
+        "microphoneOn": "麦克风开启",
+        "microphoneOff": "麦克风关闭",
+        "roles": {
+          "evaluator": "评估者"
+        }
+      },
+      "stepDescriptions": {
+        "welcome": "欢迎信息",
+        "consent": "同意条款",
+        "preTest": "前测阶段",
+        "preTasks": "任务准备阶段",
+        "tasks": "任务阶段",
+        "postTest": "后测阶段",
+        "completion": "完成阶段"
+      }
+    },
+
     "buttons": {
       "done": "完成"
     },
