@@ -112,16 +112,8 @@ const props = defineProps({
   },
 })
 
-// Read answers from the Answer Vuex store module (correct data source)
-const answerDocument = computed(() => store.getters.testAnswerDocument)
-
-const allAnswers = computed(() => {
-  const doc = answerDocument.value
-  if (!doc || !doc.taskAnswers) return []
-  return Object.values(doc.taskAnswers).filter(
-    (answer) => typeof answer === 'object' && answer !== null,
-  )
-})
+// Read answers from the centralized Answer Vuex store getter
+const allAnswers = computed(() => store.getters.allAnswersList)
 
 // Cooperators from the test document
 const cooperators = computed(() => {
@@ -177,10 +169,8 @@ const averageCompletionTime = computed(() => {
 
   answersWithTasks.forEach((answer) => {
     Object.values(answer.tasks || {}).forEach((task) => {
-      if (task.taskTime) {
-        totalTime += task.taskTime
-        taskCount++
-      }
+      totalTime += task.taskTime || 0
+      taskCount++
     })
   })
 
