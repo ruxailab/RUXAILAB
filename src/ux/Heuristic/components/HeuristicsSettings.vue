@@ -36,7 +36,7 @@
               prepend-inner-icon="mdi-paperclip"
               show-size
               truncate-length="15"
-              :disabled="testAnswerDocLength > 0"
+              :disabled="props.isTemplate || testAnswerDocLength > 0"
               counter
               class="file-input-field"
               hide-details
@@ -48,7 +48,9 @@
           <div class="d-flex align-center">
             <v-btn
               :loading="loadingUpdate"
-              :disabled="loadingUpdate || testAnswerDocLength > 0"
+              :disabled="
+                props.isTemplate || loadingUpdate || testAnswerDocLength > 0
+              "
               color="primary"
               variant="elevated"
               class="text-none update-button"
@@ -106,6 +108,12 @@ import { showWarning, showSuccess, showError } from '@/shared/utils/toast'
 
 const store = useStore()
 const { t } = useI18n()
+const props = defineProps({
+  isTemplate: {
+    type: Boolean,
+    default: false,
+  },
+})
 
 const loading = ref(false)
 const loader = ref(null)
