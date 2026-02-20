@@ -1,12 +1,5 @@
 import { logger as functionsLogger } from 'firebase-functions';
 
-/**
- * Log levels with tiered retention:
- *   INFO     → 1 month
- *   WARN     → 2 months
- *   ERROR    → 3 months
- *   CRITICAL → 6 months
- */
 const LOG_LEVELS = Object.freeze({
   INFO: 'info',
   WARN: 'warn',
