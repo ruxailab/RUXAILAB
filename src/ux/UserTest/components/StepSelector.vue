@@ -505,7 +505,6 @@ function getCurrentStepDescription() {
 }
 
 .tasks-dropdown {
-  margin-top: 12px;
   flex: 0 0 100%;
   width: 100%;
   margin-top: 10px;
@@ -527,8 +526,6 @@ function getCurrentStepDescription() {
   padding-bottom: 8px;
 }
 
-.task-inline {
-}
 .task-inline .task-selector {
   width: 100%;
   min-width: 0;

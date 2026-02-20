@@ -879,8 +879,8 @@ const participantsList = computed(() => {
       isSelf: false,
       role: role,
       connected: !!peers[userId],
-      hasCamera: role !== 'observator' && p?.media?.cameraEnabled,
-      hasMicrophone: role !== 'observator' && p?.media?.microphoneEnabled,
+      hasCamera: role !== 'observator' && isRemoteCameraEnabled(userId),
+      hasMicrophone: role !== 'observator' && isRemoteMicrophoneEnabled(userId),
     })
   })
 

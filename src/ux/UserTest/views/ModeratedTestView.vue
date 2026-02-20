@@ -813,6 +813,11 @@ const proceedToNextStep = async () => {
       nextTaskIndex = 0
       break
     case 4:
+      if (totalTasks <= 0) {
+        nextGlobalIndex = 5
+        nextTaskIndex = 0
+        break
+      }
       if (taskIndex.value < totalTasks - 1) {
         nextTaskIndex = taskIndex.value + 1
       } else {
@@ -828,6 +833,7 @@ const proceedToNextStep = async () => {
       return
   }
   globalIndex.value = nextGlobalIndex
+  taskIndex.value = nextTaskIndex
   const roomRef = dbRef(database, `rooms/${roomId.value}`)
   await update(roomRef, {
     globalIndex: nextGlobalIndex,
