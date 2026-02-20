@@ -47,12 +47,12 @@ export default {
                   heuristicAnswer: question.heuristicAnswer?.text
                     ? question.heuristicAnswer
                     : {
-                        text:
-                          testOptions?.find(
-                            (op) => op.value === question.heuristicAnswer,
-                          )?.text ?? '',
-                        value: question.heuristicAnswer,
-                      },
+                      text:
+                        testOptions?.find(
+                          (op) => op.value === question.heuristicAnswer,
+                        )?.text ?? '',
+                      value: question.heuristicAnswer,
+                    },
                 }),
               ),
             })),
@@ -109,35 +109,35 @@ export default {
         return taskAnswers[rootState.user.id]
           ? UserStudyEvaluatorAnswer.toModel(taskAnswers[rootState.user.id])
           : new UserStudyEvaluatorAnswer({
-              userDocId: rootState.user.id,
-              preTestAnswer: (() => {
-                const preTestAnswer = []
-                const preTestLength =
-                  rootState.test.testStructure.preTest?.length || 0
-                for (let i = 0; i < preTestLength; i++) {
-                  preTestAnswer[i] = {
-                    preTestAnswerId: i,
-                    answer: '',
-                  }
+            userDocId: rootState.user.id,
+            preTestAnswer: (() => {
+              const preTestAnswer = []
+              const preTestLength =
+                rootState.test.testStructure.preTest?.length || 0
+              for (let i = 0; i < preTestLength; i++) {
+                preTestAnswer[i] = {
+                  preTestAnswerId: i,
+                  answer: '',
                 }
-                return preTestAnswer
-              })(),
-              consent: rootState.test.testStructure.consent || false,
-              postTestAnswer: rootState.test.testStructure.postTest || [],
-              preTestCompleted: false,
-              consentCompleted: false,
-              fullName: '',
-              postTestCompleted: false,
-              tasks: (() => {
-                const tasks = {}
-                const userTasksLength =
-                  rootState.test.testStructure.userTasks?.length || 0
-                for (let i = 0; i < userTasksLength; i++) {
-                  tasks[i] = new TaskAnswer({ taskId: i })
-                }
-                return tasks
-              })(),
-            })
+              }
+              return preTestAnswer
+            })(),
+            consent: rootState.test.testStructure.consent || false,
+            postTestAnswer: rootState.test.testStructure.postTest || [],
+            preTestCompleted: false,
+            consentCompleted: false,
+            fullName: '',
+            postTestCompleted: false,
+            tasks: (() => {
+              const tasks = {}
+              const userTasksLength =
+                rootState.test.testStructure.userTasks?.length || 0
+              for (let i = 0; i < userTasksLength; i++) {
+                tasks[i] = new TaskAnswer({ taskId: i })
+              }
+              return tasks
+            })(),
+          })
       }
 
       return {}
@@ -156,6 +156,13 @@ export default {
       }
 
       return {}
+    },
+    allAnswersList(state) {
+      const doc = state.testAnswerDocument
+      if (!doc || !doc.taskAnswers) return []
+      return Object.values(doc.taskAnswers).filter(
+        (answer) => typeof answer === 'object' && answer !== null,
+      )
     },
   },
   mutations: {

@@ -120,16 +120,8 @@ const router = useRouter()
 const store = useStore()
 const { t } = useI18n()
 
-// Read answers from the Answer Vuex store module (correct data source)
-const answerDocument = computed(() => store.getters.testAnswerDocument)
-
-const allAnswers = computed(() => {
-  const doc = answerDocument.value
-  if (!doc || !doc.taskAnswers) return []
-  return Object.values(doc.taskAnswers).filter(
-    (answer) => typeof answer === 'object' && answer !== null,
-  )
-})
+// Read answers from the centralized Answer Vuex store getter
+const allAnswers = computed(() => store.getters.allAnswersList)
 
 // Get completed participants from answers
 const completedAnswers = computed(() => {

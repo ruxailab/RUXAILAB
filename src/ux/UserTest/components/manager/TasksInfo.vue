@@ -137,26 +137,18 @@ const userTasks = computed(() => props.test?.testStructure?.userTasks || [])
 const hasUserTasks = computed(() => userTasks.value.length > 0)
 const totalTasks = computed(() => userTasks.value.length)
 
-// Read answers from the Answer Vuex store module (correct data source)
-const answerDocument = computed(() => store.getters.testAnswerDocument)
-
-const answers = computed(() => {
-  const doc = answerDocument.value
-  if (!doc || !doc.taskAnswers) return []
-  return Object.values(doc.taskAnswers).filter(
-    (answer) => typeof answer === 'object' && answer !== null,
-  )
-})
+// Read answers from the centralized Answer Vuex store getter
+const answers = computed(() => store.getters.allAnswersList)
 
 const overallCompletionRate = computed(() => {
   if (!hasUserTasks.value || answers.value.length === 0) return 0
 
-  let totalTasks = 0
   let completedTasks = 0
+  let totalTasks = 0
 
   answers.value.forEach((answer) => {
+    totalTasks += Object.keys(answer.tasks || {}).length
     Object.values(answer.tasks || {}).forEach((task) => {
-      totalTasks++
       if (task.completed) {
         completedTasks++
       }
@@ -171,13 +163,13 @@ const overallCompletionRate = computed(() => {
 const taskSuccessRate = computed(() => {
   if (!hasUserTasks.value || answers.value.length === 0) return 0
 
-  let totalTasks = 0
   let successfulTasks = 0
+  let totalTasks = 0
 
   answers.value.forEach((answer) => {
     Object.values(answer.tasks || {}).forEach((task) => {
       totalTasks++
-      if (task.completed === true) {
+      if (task.completed && task.success !== false) {
         successfulTasks++
       }
     })
@@ -196,10 +188,8 @@ const averageTaskDuration = computed(() => {
 
   answers.value.forEach((answer) => {
     Object.values(answer.tasks || {}).forEach((task) => {
-      if (task.taskTime) {
-        totalTime += task.taskTime
-        taskCount++
-      }
+      totalTime += task.taskTime || 0
+      taskCount++
     })
   })
 

@@ -154,16 +154,8 @@ const { t } = useI18n()
 // Storage quota (in bytes) - you can make this configurable
 const STORAGE_QUOTA = 5 * 1024 * 1024 * 1024 // 5GB default
 
-// Read answers from the Answer Vuex store module (correct data source)
-const answerDocument = computed(() => store.getters.testAnswerDocument)
-
-const answers = computed(() => {
-  const doc = answerDocument.value
-  if (!doc || !doc.taskAnswers) return []
-  return Object.values(doc.taskAnswers).filter(
-    (answer) => typeof answer === 'object' && answer !== null,
-  )
-})
+// Read answers from the centralized Answer Vuex store getter
+const answers = computed(() => store.getters.allAnswersList)
 
 const totalMediaFiles = computed(() => {
   let count = 0
