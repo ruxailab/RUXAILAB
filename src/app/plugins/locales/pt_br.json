@@ -599,7 +599,8 @@
       "changeWeights": "Esteja ciente que, ao alterar a ordem das heurísticas, os pesos NÃO mudam automaticamente; você deve ajustá-los manualmente.",
       "noDescriptions": "Nenhuma descrição disponível",
       "startAddingQuestions": "Comece adicionando sua primeira pergunta a esta heurística",
-      "cantDeleteAllQuestions": "Desculpe, você não pode excluir todas as perguntas de uma heurística"
+      "cantDeleteAllQuestions": "Desculpe, você não pode excluir todas as perguntas de uma heurística",
+      "studyHasAnswers": "Este estudo possui respostas"
     },
     "validation": {
       "nameRequired": "Nome é obrigatório",
@@ -706,7 +707,9 @@
       "options": "Opções",
       "weights": "Pesos",
       "settings": "Configurações"
-    }
+    },
+    "previewPageTitle": "Visualizar teste",
+    "previewPageSubtitle": "Revise a configura??o do teste em modo somente leitura"
   },
   "HeuristicsTestAnswer": {
     "titles": {
@@ -955,125 +958,6 @@
       "sart": "Técnica de Avaliação de Consciência Situacional - mede a consciência situacional"
     },
     "answerTypePreview": {
-      "noAnswer": {
-        "message": "Tarefa concluída! Nenhum feedback adicional é necessário."
-      },
-      "textArea": {
-        "placeholder": "Os participantes fornecerão seus comentários aqui...",
-        "submitButton": "Enviar Feedback"
-      },
-      "postTest": {
-        "title": "Perguntas Pós-Tarefa",
-        "q1": "1. Como você avaliaria a dificuldade desta tarefa?",
-        "q2": "2. Algum comentário adicional?",
-        "feedbackPlaceholder": "Feedback opcional..."
-      },
-      "postForm": {
-        "title": "Formulário Externo",
-        "notice": "Os participantes serão redirecionados para preencher um formulário externo após a tarefa.",
-        "button": "Abrir Formulário Externo"
-      },
-      "nasaTlx": {
-        "title": "Índice de Carga de Trabalho NASA",
-        "mental": "Demanda Mental",
-        "physical": "Demanda Física",
-        "range": "Baixo - Alto",
-        "moreDimensions": "+ 4 dimensões adicionais"
-      },
-      "sus": {
-        "title": "Escala de Usabilidade do Sistema",
-        "q1": "1. Acho que gostaria de usar este sistema com frequência.",
-        "disagree": "Discordo Totalmente",
-        "agree": "Concordo Totalmente",
-        "moreStatements": "+ 9 declarações adicionais"
-      },
-      "sart": {
-        "title": "Técnica de Avaliação de Consciência Situacional",
-        "instability": "Instabilidade da Situação",
-        "complexity": "Complexidade da Situação",
-        "stable": "Muito Estável",
-        "unstable": "Muito Instável",
-        "simple": "Muito Simples",
-        "complex": "Muito Complexo",
-        "moreDimensions": "+ 8 dimensões SART adicionais"
-      },
-      "tam": {
-        "tam1": "TAM-1: Modelo de Aceitação de Tecnologia (Básico)",
-        "tam2": "TAM-2: Modelo de Aceitação de Tecnologia (Estendido)",
-        "tam3": "TAM-3: Modelo de Aceitação de Tecnologia (Abrangente)",
-        "items2": "10 itens em 2 dimensões",
-        "items7": "25 itens em 7 dimensões",
-        "items13": "39 itens em 13 dimensões",
-        "pu": "Utilidade Percebida",
-        "eu": "Facilidade de Uso Percebida",
-        "sn": "Norma Subjetiva",
-        "image": "Imagem",
-        "jr": "Relevância no Trabalho",
-        "oq": "Qualidade da Saída",
-        "rd": "Demonstrabilidade do Resultado",
-        "se": "Autoeficácia Computacional",
-        "ec": "Controle Externo",
-        "anxiety": "Ansiedade",
-        "play": "Ludicidade/Diversão",
-        "enjoy": "Prazer",
-        "ou": "Usabilidade Objetiva",
-        "q1": "1. O uso do sistema melhora meu desempenho no trabalho.",
-        "q6": "6. O sistema é fácil de usar.",
-        "likertNote": "Os participantes avaliam {count} afirmações em uma escala Likert de 5 pontos"
-      },
-      "selectionPrompt": "Selecione um tipo de resposta para ver a pré-visualização"
-    },
-    "advanced": {
-      "stepTitle": "Passo 3: Opções Avançadas",
-      "stepDescription": "Habilite métodos adicionais de coleta de dados para obter insights mais profundos.",
-      "eyeTrackingDesc": "Rastreie para onde os participantes olham durante a tarefa.",
-      "screenRecordDesc": "Grave a atividade de tela do participante.",
-      "cameraDesc": "Grave expressões faciais e reações do participante.",
-      "audioDesc": "Grave feedback verbal do participante.",
-      "privacyNotice": "Aviso de Privacidade",
-      "privacyText": "Os recursos de gravação requerem consentimento explícito dos participantes.",
-      "privacyItem1": "Informe claramente os participantes sobre a coleta de dados",
-      "privacyItem2": "Obtenha consentimento adequado antes de iniciar o teste",
-      "privacyItem3": "Siga as regulamentações de proteção de dados (LGPD, etc.)",
-      "privacyItem4": "Armazenamento e manuseio seguros dos dados gravados"
-    },
-    "preview": {
-      "taskSummary": "Resumo da Tarefa",
-      "untitledTask": "Tarefa sem Título",
-      "description": "Descrição:",
-      "noDescription": "Nenhuma descrição fornecida",
-      "participantTip": "Dica ao Participante:",
-      "taskUrl": "URL da Tarefa:",
-      "answerType": "Tipo de Resposta:",
-      "recordingFeatures": "Recursos de Gravação:",
-      "postTaskQuestion": "Pergunta Pós-Tarefa:",
-      "postTaskForm": "Formulário Pós-Tarefa:",
-      "externalForm": "Formulário Externo",
-      "taskReady": "Tarefa Pronta!",
-      "reviewRequired": "Revisão Necessária",
-      "taskReadyMessage": "Sua tarefa está corretamente configurada e pronta para uso no seu estudo.",
-      "reviewRequiredMessage": "Por favor, revise os passos anteriores para garantir que todos os campos obrigatórios estejam preenchidos.",
-      "noTypeSelected": "Nenhum Tipo Selecionado",
-      "answerTypes": {
-        "noAnswer": "Sem Resposta Necessária",
-        "textArea": "Área de Texto",
-        "postTest": "Perguntas Pós-Teste",
-        "postForm": "Formulário Externo",
-        "nasaTlx": "NASA-TLX",
-        "sus": "Escala de Usabilidade do Sistema",
-        "tam1": "TAM-1 (Básico)",
-        "tam2": "TAM-2 (Estendido)",
-        "tam3": "TAM-3 (Abrangente)",
-        "sart": "SART"
-      },
-      "recordingLabels": {
-        "eyeTracking": "Rastreamento Ocular",
-        "screenRecording": "Gravação de Tela",
-        "camera": "Câmera",
-        "audio": "Áudio"
-      }
-    },
-    "answerTypePreview": {
       "taskCompleted": "Tarefa concluída! Nenhum feedback adicional necessário.",
       "participantsFeedbackHere": "Os participantes fornecerão seu feedback aqui...",
       "submitFeedback": "Enviar Feedback",
@@ -1128,6 +1012,56 @@
       "playfulness": "Lúdico",
       "enjoyment": "Prazer",
       "objectiveUsability": "Usabilidade Objetiva"
+    },
+    "advanced": {
+      "stepTitle": "Passo 3: Opções Avançadas",
+      "stepDescription": "Habilite métodos adicionais de coleta de dados para obter insights mais profundos.",
+      "eyeTrackingDesc": "Rastreie para onde os participantes olham durante a tarefa.",
+      "screenRecordDesc": "Grave a atividade de tela do participante.",
+      "cameraDesc": "Grave expressões faciais e reações do participante.",
+      "audioDesc": "Grave feedback verbal do participante.",
+      "privacyNotice": "Aviso de Privacidade",
+      "privacyText": "Os recursos de gravação requerem consentimento explícito dos participantes.",
+      "privacyItem1": "Informe claramente os participantes sobre a coleta de dados",
+      "privacyItem2": "Obtenha consentimento adequado antes de iniciar o teste",
+      "privacyItem3": "Siga as regulamentações de proteção de dados (LGPD, etc.)",
+      "privacyItem4": "Armazenamento e manuseio seguros dos dados gravados"
+    },
+    "preview": {
+      "taskSummary": "Resumo da Tarefa",
+      "untitledTask": "Tarefa sem Título",
+      "description": "Descrição:",
+      "noDescription": "Nenhuma descrição fornecida",
+      "participantTip": "Dica ao Participante:",
+      "taskUrl": "URL da Tarefa:",
+      "answerType": "Tipo de Resposta:",
+      "recordingFeatures": "Recursos de Gravação:",
+      "postTaskQuestion": "Pergunta Pós-Tarefa:",
+      "postTaskForm": "Formulário Pós-Tarefa:",
+      "externalForm": "Formulário Externo",
+      "taskReady": "Tarefa Pronta!",
+      "reviewRequired": "Revisão Necessária",
+      "taskReadyMessage": "Sua tarefa está corretamente configurada e pronta para uso no seu estudo.",
+      "reviewRequiredMessage": "Por favor, revise os passos anteriores para garantir que todos os campos obrigatórios estejam preenchidos.",
+      "noTypeSelected": "Nenhum Tipo Selecionado",
+      "answerTypes": {
+        "noAnswer": "Sem Resposta Necessária",
+        "textArea": "Área de Texto",
+        "postTest": "Perguntas Pós-Teste",
+        "postForm": "Formulário Externo",
+        "nasaTlx": "NASA-TLX",
+        "sus": "Escala de Usabilidade do Sistema",
+        "tam1": "TAM-1 (Básico)",
+        "tam2": "TAM-2 (Estendido)",
+        "tam3": "TAM-3 (Abrangente)",
+        "sart": "SART"
+      },
+      "recordingLabels": {
+        "eyeTracking": "Rastreamento Ocular",
+        "screenRecording": "Gravação de Tela",
+        "camera": "Câmera",
+        "audio": "Áudio"
+      }
     }
   },
   "UserTestView": {
@@ -1497,6 +1431,18 @@
         "manualAccessibility": "Acessibilidade manual",
         "automaticAccessibility": "Acessibilidade automática",
         "all": "Todos"
+      },
+      "unsupportedPreviewType": "Tipo de template n?o suportado para pr?-visualiza??o.",
+      "config": {
+        "title": "Configura??o do Template",
+        "ownerOnly": "A edi??o de configura??o ? restrita ao dono do template.",
+        "version": "Vers?o",
+        "visibility": "Visibilidade",
+        "owner": "Propriet?rio",
+        "public": "P?blico",
+        "private": "Privado",
+        "saved": "Configura??o do template atualizada com sucesso",
+        "saveError": "Falha ao atualizar a configura??o do template"
       }
     },
     "createTest": {
@@ -1539,7 +1485,9 @@
     "editTest": {
       "title": "Editar teste",
       "description": "Personalize as configurações e preferências do seu teste.",
-      "updatedTest": "Teste atualizado com sucesso"
+      "updatedTest": "Teste atualizado com sucesso",
+      "previewTitle": "Visualizar teste",
+      "previewDescription": "Revise o teste em modo somente leitura."
     },
     "cooperators": {
       "invitationSent": "Convite enviado com sucesso"
