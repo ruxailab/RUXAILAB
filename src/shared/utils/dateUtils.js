@@ -7,11 +7,13 @@
 export const formatDateLong = (date, locale = 'en') => {
   if (!date) return '-'
 
+  const normalizedLocale = locale.replace('_', '-')
+
   try {
     const d = new Date(date)
     if (isNaN(d.getTime())) return '-'
 
-    return new Intl.DateTimeFormat(locale, {
+    return new Intl.DateTimeFormat(normalizedLocale, {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
