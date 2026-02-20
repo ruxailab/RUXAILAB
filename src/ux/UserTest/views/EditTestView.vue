@@ -1,13 +1,13 @@
 <template>
-  <PageWrapper :title="t('pages.editTest.title')" :side-gap="true">
+  <PageWrapper :title="pageTitle" :side-gap="true">
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
-        {{ t('pages.editTest.description') }}
+        {{ pageSubtitle }}
       </p>
     </template>
 
     <v-container class="pa-0">
-      <ButtonSave :visible="true" @click="save" />
+      <ButtonSave :visible="!isTemplate" @click="save" />
 
       <div>
         <v-tabs bg-color="transparent" color="#FCA326" class="pb-0 mb-0">
@@ -35,6 +35,7 @@
           <!-- TEST -->
           <div v-if="index === 0">
             <TestConfigForm
+              :readonly="isTemplate"
               :welcome="welcomeMessage"
               :final-message="finalMessage"
               @update:welcome-message="
@@ -50,6 +51,7 @@
           <div v-if="index === 1" rounded="xxl">
             <TextareaForm
               v-model="consent"
+              :readonly="isTemplate"
               :title="$t('ModeratedTest.consentForm')"
               :subtitle="$t('ModeratedTest.consentFormSubtitle')"
               @update:value="consent = $event"
@@ -60,6 +62,7 @@
           <div v-if="index === 2">
             <UserVariables
               type="pre-test"
+              :is-template="isTemplate"
               @change="change = true"
               @update="store.dispatch('UserStudy/setPreTest', $event)"
             />
@@ -67,12 +70,13 @@
 
           <!-- TASKS -->
           <div v-if="index === 3">
-            <ListTasks />
+            <ListTasks :is-template="isTemplate" />
           </div>
           <!-- POST-TEST -->
           <div v-if="index === 4">
             <UserVariables
               type="post-test"
+              :is-template="isTemplate"
               @change="change = true"
               @update="store.dispatch('UserStudy/setPostTest', $event)"
             />
@@ -103,6 +107,17 @@ import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
 import { useI18n } from 'vue-i18n'
 import { showSuccess, showError } from '@/shared/utils/toast'
 
+const props = defineProps({
+  isTemplate: {
+    type: Boolean,
+    default: false,
+  },
+  templateTest: {
+    type: Object,
+    default: null,
+  },
+})
+
 // Controller
 const studyController = new StudyController()
 
@@ -120,41 +135,52 @@ const route = useRoute()
 let unsubscribe = null
 // Computed
 const test = computed(() => store.getters.test)
+const pageTitle = computed(() =>
+  props.isTemplate
+    ? t('pages.editTest.previewTitle')
+    : t('pages.editTest.title'),
+)
+const pageSubtitle = computed(() =>
+  props.isTemplate
+    ? t('pages.editTest.previewDescription')
+    : t('pages.editTest.description'),
+)
 
 const getWelcome = () => {
-  welcomeMessage.value = test.value.testStructure.welcomeMessage || ''
+  welcomeMessage.value = test.value?.testStructure?.welcomeMessage || ''
 }
 
 const getFinalMessage = () => {
-  finalMessage.value = test.value.testStructure.finalMessage || ''
+  finalMessage.value = test.value?.testStructure?.finalMessage || ''
 }
 
 const getConsent = () => {
-  consent.value = test.value.testStructure.consent || ''
+  consent.value = test.value?.testStructure?.consent || ''
 }
 
 const getTasks = () => {
-  const tasksData = test.value.testStructure.userTasks || []
+  const tasksData = test.value?.testStructure?.userTasks || []
   store.dispatch('UserStudy/setTasks', structuredClone(tasksData))
 }
 
 const getPreTest = () => {
-  const preTestData = test.value.testStructure.preTest || []
+  const preTestData = test.value?.testStructure?.preTest || []
   store.dispatch('UserStudy/setPreTest', structuredClone(preTestData))
 }
 
 const getPostTest = () => {
-  const postTestData = test.value.testStructure.postTest || []
+  const postTestData = test.value?.testStructure?.postTest || []
   store.dispatch('UserStudy/setPostTest', structuredClone(postTestData))
 }
 
 const hasEyeTracking = computed(() => {
-  return (test.value.testStructure.userTasks || []).some(
+  return (test.value?.testStructure?.userTasks || []).some(
     (task) => task.hasEye === true,
   )
 })
 
 const save = async () => {
+  if (props.isTemplate) return
   try {
     // Validate pre-test variables
     const preTestVariables = store.getters['UserStudy/preTest'] || []
@@ -213,11 +239,21 @@ const subscribeToTest = () => {
 }
 // Lifecycle
 onMounted(() => {
+  if (props.isTemplate && props.templateTest) {
+    store.commit('SET_TEST', structuredClone(props.templateTest))
+    getWelcome()
+    getFinalMessage()
+    getConsent()
+    getPreTest()
+    getPostTest()
+    getTasks()
+    return
+  }
   subscribeToTest()
 })
 
 onUnmounted(() => {
-  if (unsubscribe) {
+  if (!props.isTemplate && unsubscribe) {
     unsubscribe()
   }
 })

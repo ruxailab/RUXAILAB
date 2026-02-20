@@ -159,7 +159,7 @@ export default {
     },
     allAnswersList(state) {
       const doc = state.testAnswerDocument
-      if (!doc || !doc.taskAnswers) return []
+      if (!doc?.taskAnswers) return []
       return Object.values(doc.taskAnswers).filter(
         (answer) => typeof answer === 'object' && answer !== null,
       )

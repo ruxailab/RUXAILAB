@@ -599,7 +599,8 @@
       "changeWeights": "ヒューリスティックの順序を変更しても重みは自動で更新されません。手動で調整してください。",
       "noDescriptions": "説明が利用できません",
       "startAddingQuestions": "このヒューリスティックに最初の質問を追加して開始してください",
-      "cantDeleteAllQuestions": "申し訳ありませんが、ヒューリスティックからすべての質問を削除することはできません"
+      "cantDeleteAllQuestions": "申し訳ありませんが、ヒューリスティックからすべての質問を削除することはできません",
+      "studyHasAnswers": "This study has answers"
     },
     "validation": {
       "nameRequired": "名前は必須です",
@@ -706,7 +707,9 @@
       "options": "オプション",
       "weights": "重み",
       "settings": "設定"
-    }
+    },
+    "previewPageTitle": "Preview test",
+    "previewPageSubtitle": "Review the test configuration in read-only mode"
   },
   "HeuristicsTestAnswer": {
     "titles": {
@@ -955,125 +958,6 @@
       "sart": "状況認識評価技法 - 状況認識を測定"
     },
     "answerTypePreview": {
-      "noAnswer": {
-        "message": "タスク完了！追加のフィードバックは不要です。"
-      },
-      "textArea": {
-        "placeholder": "参加者はここにフィードバックを入力します...",
-        "submitButton": "フィードバックを送信"
-      },
-      "postTest": {
-        "title": "タスク後の質問",
-        "q1": "1. このタスクの難易度をどう評価しますか？",
-        "q2": "2. 追加のコメントはありますか？",
-        "feedbackPlaceholder": "任意のフィードバック..."
-      },
-      "postForm": {
-        "title": "外部フォーム",
-        "notice": "参加者はタスク後に外部フォームに記入するようリダイレクトされます。",
-        "button": "外部フォームを開く"
-      },
-      "nasaTlx": {
-        "title": "NASAタスクロードインデックス",
-        "mental": "精神的要求",
-        "physical": "身体的要求",
-        "range": "低 - 高",
-        "moreDimensions": "+ 他4つの次元"
-      },
-      "sus": {
-        "title": "システムユーザビリティスケール",
-        "q1": "1. このシステムを頻繁に使いたいと思う。",
-        "disagree": "強く反対",
-        "agree": "強く賛成",
-        "moreStatements": "+ 9つの追加ステートメント"
-      },
-      "sart": {
-        "title": "状況認識評価技法 (SART)",
-        "instability": "状況の不安定性",
-        "complexity": "状況の複雑性",
-        "stable": "非常に安定",
-        "unstable": "非常に不安定",
-        "simple": "非常に単純",
-        "complex": "非常に複雑",
-        "moreDimensions": "+ 8つの追加SART次元"
-      },
-      "tam": {
-        "tam1": "TAM-1: 技術受容モデル (基本)",
-        "tam2": "TAM-2: 技術受容モデル (拡張)",
-        "tam3": "TAM-3: 技術受容モデル (包括的)",
-        "items2": "2次元にわたる10項目",
-        "items7": "7次元にわたる25項目",
-        "items13": "13次元にわたる39項目",
-        "pu": "知覚された有用性",
-        "eu": "知覚された使いやすさ",
-        "sn": "主観的規範",
-        "image": "イメージ",
-        "jr": "仕事への関連性",
-        "oq": "出力の質",
-        "rd": "結果の実証可能性",
-        "se": "コンピュータ自己効力感",
-        "ec": "外部制御",
-        "anxiety": "不安",
-        "play": "遊び心",
-        "enjoy": "楽しさ",
-        "ou": "客観的な使いやすさ",
-        "q1": "1. システムを使用することで、仕事のパフォーマンスが向上する。",
-        "q6": "6. システムは使いやすい。",
-        "likertNote": "参加者は5段階のリッカート尺度で{count}個の記述を評価します"
-      },
-      "selectionPrompt": "プレビューを表示するには回答タイプを選択してください"
-    },
-    "advanced": {
-      "stepTitle": "ステップ3: 詳細オプション",
-      "stepDescription": "より深い洞察を得るための追加のデータ収集方法を有効にします。",
-      "eyeTrackingDesc": "タスク中に参加者がどこを見ているかを追跡します。",
-      "screenRecordDesc": "参加者の画面アクティビティを記録します。",
-      "cameraDesc": "参加者の表情と反応を記録します。",
-      "audioDesc": "参加者の口頭フィードバックを記録します。",
-      "privacyNotice": "プライバシーに関する通知",
-      "privacyText": "録画機能には参加者の明示的な同意が必要です。",
-      "privacyItem1": "データ収集について参加者に明確に通知する",
-      "privacyItem2": "テスト開始前に適切な同意を得る",
-      "privacyItem3": "データ保護規制（GDPR等）に従う",
-      "privacyItem4": "記録データの安全な保管と取り扱い"
-    },
-    "preview": {
-      "taskSummary": "タスクの概要",
-      "untitledTask": "無題のタスク",
-      "description": "説明：",
-      "noDescription": "説明がありません",
-      "participantTip": "参加者へのヒント：",
-      "taskUrl": "タスクURL：",
-      "answerType": "回答タイプ：",
-      "recordingFeatures": "録画機能：",
-      "postTaskQuestion": "タスク後の質問：",
-      "postTaskForm": "タスク後のフォーム：",
-      "externalForm": "外部フォーム",
-      "taskReady": "タスク準備完了！",
-      "reviewRequired": "レビューが必要",
-      "taskReadyMessage": "タスクは正しく設定され、研究で使用する準備ができています。",
-      "reviewRequiredMessage": "すべての必須フィールドが入力されていることを確認するため、前のステップを確認してください。",
-      "noTypeSelected": "タイプが選択されていません",
-      "answerTypes": {
-        "noAnswer": "回答不要",
-        "textArea": "テキストエリア",
-        "postTest": "テスト後の質問",
-        "postForm": "外部フォーム",
-        "nasaTlx": "NASA-TLX",
-        "sus": "システム使用性尺度",
-        "tam1": "TAM-1（基本）",
-        "tam2": "TAM-2（拡張）",
-        "tam3": "TAM-3（包括的）",
-        "sart": "SART"
-      },
-      "recordingLabels": {
-        "eyeTracking": "アイトラッキング",
-        "screenRecording": "画面録画",
-        "camera": "カメラ",
-        "audio": "オーディオ"
-      }
-    },
-    "answerTypePreview": {
       "taskCompleted": "タスク完了！追加のフィードバックは必要ありません。",
       "participantsFeedbackHere": "参加者はここでフィードバックを提供します...",
       "submitFeedback": "フィードバックを送信",
@@ -1128,6 +1012,56 @@
       "playfulness": "遊び心",
       "enjoyment": "楽しさ",
       "objectiveUsability": "客観的な使いやすさ"
+    },
+    "advanced": {
+      "stepTitle": "ステップ3: 詳細オプション",
+      "stepDescription": "より深い洞察を得るための追加のデータ収集方法を有効にします。",
+      "eyeTrackingDesc": "タスク中に参加者がどこを見ているかを追跡します。",
+      "screenRecordDesc": "参加者の画面アクティビティを記録します。",
+      "cameraDesc": "参加者の表情と反応を記録します。",
+      "audioDesc": "参加者の口頭フィードバックを記録します。",
+      "privacyNotice": "プライバシーに関する通知",
+      "privacyText": "録画機能には参加者の明示的な同意が必要です。",
+      "privacyItem1": "データ収集について参加者に明確に通知する",
+      "privacyItem2": "テスト開始前に適切な同意を得る",
+      "privacyItem3": "データ保護規制（GDPR等）に従う",
+      "privacyItem4": "記録データの安全な保管と取り扱い"
+    },
+    "preview": {
+      "taskSummary": "タスクの概要",
+      "untitledTask": "無題のタスク",
+      "description": "説明：",
+      "noDescription": "説明がありません",
+      "participantTip": "参加者へのヒント：",
+      "taskUrl": "タスクURL：",
+      "answerType": "回答タイプ：",
+      "recordingFeatures": "録画機能：",
+      "postTaskQuestion": "タスク後の質問：",
+      "postTaskForm": "タスク後のフォーム：",
+      "externalForm": "外部フォーム",
+      "taskReady": "タスク準備完了！",
+      "reviewRequired": "レビューが必要",
+      "taskReadyMessage": "タスクは正しく設定され、研究で使用する準備ができています。",
+      "reviewRequiredMessage": "すべての必須フィールドが入力されていることを確認するため、前のステップを確認してください。",
+      "noTypeSelected": "タイプが選択されていません",
+      "answerTypes": {
+        "noAnswer": "回答不要",
+        "textArea": "テキストエリア",
+        "postTest": "テスト後の質問",
+        "postForm": "外部フォーム",
+        "nasaTlx": "NASA-TLX",
+        "sus": "システム使用性尺度",
+        "tam1": "TAM-1（基本）",
+        "tam2": "TAM-2（拡張）",
+        "tam3": "TAM-3（包括的）",
+        "sart": "SART"
+      },
+      "recordingLabels": {
+        "eyeTracking": "アイトラッキング",
+        "screenRecording": "画面録画",
+        "camera": "カメラ",
+        "audio": "オーディオ"
+      }
     }
   },
   "UserTestView": {
@@ -1497,6 +1431,18 @@
         "manualAccessibility": "手動アクセシビリティー",
         "automaticAccessibility": "自動アクセシビリティー",
         "all": "すべて"
+      },
+      "unsupportedPreviewType": "Unsupported template type for preview.",
+      "config": {
+        "title": "Template Config",
+        "ownerOnly": "Configuration editing is restricted to template owner.",
+        "version": "Version",
+        "visibility": "Visibility",
+        "owner": "Owner",
+        "public": "Public",
+        "private": "Private",
+        "saved": "Template configuration updated successfully",
+        "saveError": "Failed to update template configuration"
       }
     },
     "createTest": {
@@ -1539,7 +1485,9 @@
     "editTest": {
       "title": "テストを編集",
       "description": "テストの設定と好みをカスタマイズします。",
-      "updatedTest": "テストが正常に更新されました"
+      "updatedTest": "テストが正常に更新されました",
+      "previewTitle": "Preview test",
+      "previewDescription": "Review the test in read-only mode."
     },
     "cooperators": {
       "invitationSent": "招待が正常に送信されました"
@@ -1635,7 +1583,11 @@
       "SelfTest": {
         "title": "セルフテスト",
         "type": "非モデレート",
-        "text": ["自分の時間に回答", "高度な回答分析", "タスクのカスタマイズ"]
+        "text": [
+          "自分の時間に回答",
+          "高度な回答分析",
+          "タスクのカスタマイズ"
+        ]
       },
       "LiveTest": {
         "title": "ライブテスト",
@@ -1917,7 +1869,11 @@
       "blank": {
         "title": "空白の研究から開始",
         "description": "完全なカスタマイズでゼロから研究を作成します",
-        "features": ["完全なカスタマイズ", "ゼロから構築", "設定を完全に制御"]
+        "features": [
+          "完全なカスタマイズ",
+          "ゼロから構築",
+          "設定を完全に制御"
+        ]
       },
       "template": {
         "title": "テンプレートから作成",
