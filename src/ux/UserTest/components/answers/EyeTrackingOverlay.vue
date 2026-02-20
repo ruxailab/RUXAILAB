@@ -36,6 +36,7 @@ function drawFreeEye(cx, cy) {
 }
 
 function drawPrecisionPoints(cx, cy) {
+  console.log("Precision draw called with:", cx, cy)
   ctx.lineWidth = 2
   ctx.strokeStyle = 'rgba(0, 200, 255, 0.6)'
   ctx.beginPath()
@@ -103,7 +104,7 @@ function animateSmooth(timestamp) {
   ctx.clearRect(0, 0, canvas.value.width, canvas.value.height)
 
   if (props.viewMode === 'free') drawFreeEye(cx, cy)
-  else if (props.viewMode === 'precision') drawPrecisionPoints()
+  else if (props.viewMode === 'precision') drawPrecisionPoints(cx, cy)
   else if (props.viewMode === 'heatmap') {
     heatmapData.push({ x: cx, y: cy })
     drawHeatmap()
