@@ -2448,6 +2448,8 @@
     "time": "Uhrzeit",
     "invitationMessage": "Einladungsnachricht",
     "messagePlaceholder": "Geben Sie Ihre Einladungsnachricht ein",
+    "cancel": "Abbrechen",
+    "send": "Senden",
     "errors": {
       "invalidEmailFormat": "Ungültiges E-Mail-Format",
       "emailNotExist": "{email} ist keine gültige E-Mail oder existiert nicht",
