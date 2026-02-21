@@ -2424,5 +2424,27 @@
       "termsOfService": "Terms of Service",
       "privacyPolicy": "Privacy Policy"
     }
+  },
+  "inviteDialog": {
+    "title": "Send Invitation",
+    "existingUser": "Existing User",
+    "emailInvite": "Email Invite",
+    "selectCooperator": "Select cooperator",
+    "noDataText": "There are no users registered with that email, press enter to select anyways.",
+    "emailAddresses": "Enter email address(es)",
+    "emailPlaceholder": "john@example.com, jane@example.com",
+    "emailHint": "Enter multiple emails separated by commas",
+    "emailInvitationMessage": "Users will receive an email invitation to create an account and join the study",
+    "unregisteredUserMessage": "Unregistered user - will receive invitation email",
+    "role": "Role",
+    "date": "Date",
+    "time": "Time",
+    "invitationMessage": "Invitation Message",
+    "messagePlaceholder": "Enter your invitation message",
+    "errors": {
+      "invalidEmailFormat": "Invalid email format",
+      "emailNotExist": "{email} is not a valid email or does not exist",
+      "emailAlreadySelected": "{email} has already been selected"
+    }
   }
 }
