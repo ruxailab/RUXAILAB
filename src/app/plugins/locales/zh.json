@@ -2410,5 +2410,27 @@
       "termsOfService": "服务条款",
       "privacyPolicy": "隐私政策"
     }
+  },
+  "inviteDialog": {
+    "title": "发送邀请",
+    "existingUser": "现有用户",
+    "emailInvite": "邮件邀请",
+    "selectCooperator": "选择合作者",
+    "noDataText": "没有找到该邮箱注册的用户，按回车键仍可选择。",
+    "emailAddresses": "输入邮箱地址",
+    "emailPlaceholder": "zhang@example.com, wang@example.com",
+    "emailHint": "多个邮箱请用逗号分隔",
+    "emailInvitationMessage": "用户将收到创建账户并加入研究的邮件邀请",
+    "unregisteredUserMessage": "未注册用户 - 将收到邀请邮件",
+    "role": "角色",
+    "date": "日期",
+    "time": "时间",
+    "invitationMessage": "邀请信息",
+    "messagePlaceholder": "输入您的邀请信息",
+    "errors": {
+      "invalidEmailFormat": "邮箱格式无效",
+      "emailNotExist": "{email} 不是有效的邮箱或不存在",
+      "emailAlreadySelected": "{email} 已被选中"
+    }
   }
 }
