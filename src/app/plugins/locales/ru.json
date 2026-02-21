@@ -2447,6 +2447,8 @@
     "time": "Время",
     "invitationMessage": "Текст приглашения",
     "messagePlaceholder": "Введите текст приглашения",
+    "cancel": "Отмена",
+    "send": "Отправить",
     "errors": {
       "invalidEmailFormat": "Неверный формат email",
       "emailNotExist": "{email} не является действительным email или не существует",
