@@ -13,14 +13,14 @@
         <h1 class="text-h6">{{ $t('invitation.title') }}</h1>
         <p class="subtitle">{{ $t('invitation.subtitle') }}</p>
 
-        <!-- Error Display -->
+        <!-- Error Display - Fixed: dismissible → closable and attribute order -->
         <v-alert 
           v-if="error" 
           :type="errorType || 'error'" 
-          class="mb-4" 
-          dismissible 
+          class="mb-4"
+          closable  <!-- Changed from dismissible -->
+          variant="tonal"  <!-- Moved before @click:close -->
           @click:close="clearError"
-          variant="tonal"
         >
           <div class="d-flex align-center">
             <v-icon class="mr-2" :icon="errorType === 'warning' ? 'mdi-alert' : 'mdi-alert-circle'"></v-icon>
@@ -30,16 +30,22 @@
             v-if="showLoginInstead" 
             :color="errorType === 'warning' ? 'warning' : 'error'" 
             variant="text" 
-            size="small" 
-            @click="redirectToLogin" 
-            class="mt-2"
+            size="small"
+            class="mt-2"  <!-- class before @click -->
+            @click="redirectToLogin"
           >
             {{ $t('invitation.signInInstead') }}
           </v-btn>
         </v-alert>
 
-        <!-- Success Display -->
-        <v-alert v-if="success" type="success" class="mb-4" dismissible variant="tonal">
+        <!-- Success Display - Fixed: dismissible → closable -->
+        <v-alert 
+          v-if="success" 
+          type="success" 
+          class="mb-4"
+          closable  <!-- Changed from dismissible -->
+          variant="tonal"
+        >
           {{ success }}
         </v-alert>
 
@@ -54,7 +60,11 @@
           <v-icon size="64" color="error" class="mb-4">mdi-alert-circle-outline</v-icon>
           <h2 class="text-h5 mb-3">{{ $t('invitation.invalidTitle') }}</h2>
           <p class="text-body-1 mb-4">{{ error || $t('invitation.invalidMessage') }}</p>
-          <v-btn color="primary" @click="goToHome" rounded="pill">
+          <v-btn 
+            color="primary"
+            rounded="pill"  <!-- rounded before @click -->
+            @click="goToHome"
+          >
             {{ $t('invitation.goToHomepage') }}
           </v-btn>
         </div>
@@ -113,7 +123,7 @@
             </v-card-text>
           </v-card>
 
-          <!-- Registration Form -->
+          <!-- Registration Form - Fixed attribute order -->
           <v-form ref="registerForm" v-model="valid" @submit.prevent="createAccount">
             <v-text-field
               v-model="form.name"
@@ -152,9 +162,9 @@
               class="mb-2"
               prepend-inner-icon="mdi-lock-outline"
               :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+              bg-color="grey-lighten-5"  <!-- Moved before @click -->
+              rounded="lg"  <!-- Moved before @click -->
               @click:append-inner="showPassword = !showPassword"
-              bg-color="grey-lighten-5"
-              rounded="lg"
             />
 
             <PasswordStrength :password="form.password" />
@@ -170,9 +180,9 @@
               class="mb-3 mt-2"
               prepend-inner-icon="mdi-lock-outline"
               :append-inner-icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'"
+              bg-color="grey-lighten-5"  <!-- Moved before @click -->
+              rounded="lg"  <!-- Moved before @click -->
               @click:append-inner="showConfirmPassword = !showConfirmPassword"
-              bg-color="grey-lighten-5"
-              rounded="lg"
             />
 
             <v-checkbox
@@ -201,8 +211,9 @@
               :disabled="!valid"
               class="mt-2"
               prepend-icon="mdi-check-circle"
-              rounded="pill"
-              elevation="2"
+              rounded="pill"  <!-- Moved before @click -->
+              elevation="2"  <!-- Moved before @click -->
+              @click="createAccount"
             >
               {{ $t('invitation.createAndAccept') }}
             </v-btn>
@@ -236,7 +247,7 @@
           </div>
         </div>
 
-        <!-- Success State -->
+        <!-- Success State - Fixed attribute order -->
         <div v-else-if="accountCreated" class="text-center py-6">
           <v-icon size="64" color="success" class="mb-4">mdi-check-circle</v-icon>
           <h2 class="text-h5 mb-3">{{ $t('invitation.successTitle') }}</h2>
@@ -244,11 +255,22 @@
           <p class="text-body-1 font-weight-bold mb-4 text-primary">{{ invitationData.testTitle }}</p>
           <p class="text-body-2 text-medium-emphasis mb-6">{{ $t('invitation.chooseOption') }}</p>
           <div class="d-flex flex-column flex-sm-row justify-center gap-3">
-            <v-btn color="primary" size="large" @click="redirectToStudy" rounded="pill" elevation="2">
+            <v-btn 
+              color="primary" 
+              size="large"
+              rounded="pill"  <!-- Moved before @click -->
+              elevation="2"  <!-- Moved before @click -->
+              @click="redirectToStudy"
+            >
               {{ $t('invitation.goToStudy') }}
               <v-icon end>mdi-arrow-right</v-icon>
             </v-btn>
-            <v-btn variant="outlined" size="large" @click="goToDashboard" rounded="pill">
+            <v-btn 
+              variant="outlined" 
+              size="large"
+              rounded="pill"  <!-- Moved before @click -->
+              @click="goToDashboard"
+            >
               {{ $t('invitation.goToDashboard') }}
             </v-btn>
           </div>
