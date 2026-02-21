@@ -2430,5 +2430,27 @@
       "termsOfService": "Условия использования",
       "privacyPolicy": "Политика конфиденциальности"
     }
+  },
+  "inviteDialog": {
+    "title": "Отправить приглашение",
+    "existingUser": "Существующий пользователь",
+    "emailInvite": "Приглашение по email",
+    "selectCooperator": "Выбрать сотрудника",
+    "noDataText": "Нет пользователей, зарегистрированных с этим email, нажмите Enter, чтобы все равно выбрать.",
+    "emailAddresses": "Введите адрес(а) email",
+    "emailPlaceholder": "ivan@example.com, petr@example.com",
+    "emailHint": "Введите несколько email через запятую",
+    "emailInvitationMessage": "Пользователи получат приглашение по email для создания учетной записи и участия в исследовании",
+    "unregisteredUserMessage": "Незарегистрированный пользователь - получит приглашение по email",
+    "role": "Роль",
+    "date": "Дата",
+    "time": "Время",
+    "invitationMessage": "Текст приглашения",
+    "messagePlaceholder": "Введите текст приглашения",
+    "errors": {
+      "invalidEmailFormat": "Неверный формат email",
+      "emailNotExist": "{email} не является действительным email или не существует",
+      "emailAlreadySelected": "{email} уже был выбран"
+    }
   }
 }
