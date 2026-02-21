@@ -187,7 +187,7 @@
           class="rounded-lg"
           @click="onCancel"
         >
-          {{ cancelText || t('common.cancel') }}
+          {{ cancelText || t('inviteDialog.cancel') }}
         </v-btn>
         <v-btn
           color="primary"
@@ -195,7 +195,7 @@
           :disabled="selectedCoops.length === 0"
           @click="onSend"
         >
-          {{ sendText || t('common.send') }}
+          {{ sendText || t('inviteDialog.send') }}
         </v-btn>
       </v-card-actions>
     </v-card>
