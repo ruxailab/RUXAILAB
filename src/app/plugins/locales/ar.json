@@ -2443,6 +2443,8 @@
     "time": "الوقت",
     "invitationMessage": "رسالة الدعوة",
     "messagePlaceholder": "أدخل رسالة الدعوة الخاصة بك",
+    "cancel": "إلغاء",
+    "send": "إرسال",
     "errors": {
       "invalidEmailFormat": "تنسيق البريد الإلكتروني غير صالح",
       "emailNotExist": "{email} ليس بريدًا إلكترونيًا صالحًا أو غير موجود",
