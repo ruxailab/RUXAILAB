@@ -2426,5 +2426,27 @@
       "termsOfService": "شروط الخدمة",
       "privacyPolicy": "سياسة الخصوصية"
     }
+  },
+  "inviteDialog": {
+    "title": "إرسال دعوة",
+    "existingUser": "مستخدم موجود",
+    "emailInvite": "دعوة عبر البريد",
+    "selectCooperator": "اختيار متعاون",
+    "noDataText": "لا يوجد مستخدمون مسجلون بهذا البريد الإلكتروني، اضغط Enter للاختيار على أي حال.",
+    "emailAddresses": "أدخل عنوان (عناوين) البريد الإلكتروني",
+    "emailPlaceholder": "ahmed@example.com, fatima@example.com",
+    "emailHint": "أدخل عدة عناوين بريد مفصولة بفواصل",
+    "emailInvitationMessage": "سيستلم المستخدمون دعوة عبر البريد الإلكتروني لإنشاء حساب والانضمام إلى الدراسة",
+    "unregisteredUserMessage": "مستخدم غير مسجل - سيستلم بريد الدعوة",
+    "role": "الدور",
+    "date": "التاريخ",
+    "time": "الوقت",
+    "invitationMessage": "رسالة الدعوة",
+    "messagePlaceholder": "أدخل رسالة الدعوة الخاصة بك",
+    "errors": {
+      "invalidEmailFormat": "تنسيق البريد الإلكتروني غير صالح",
+      "emailNotExist": "{email} ليس بريدًا إلكترونيًا صالحًا أو غير موجود",
+      "emailAlreadySelected": "{email} تم تحديده مسبقًا"
+    }
   }
 }
