@@ -2409,5 +2409,27 @@
       "termsOfService": "सेवा की शर्तें",
       "privacyPolicy": "गोपनीयता नीति"
     }
+  },
+  "inviteDialog": {
+    "title": "निमंत्रण भेजें",
+    "existingUser": "मौजूदा उपयोगकर्ता",
+    "emailInvite": "ईमेल निमंत्रण",
+    "selectCooperator": "सहयोगी चुनें",
+    "noDataText": "उस ईमेल से कोई पंजीकृत उपयोगकर्ता नहीं है, फिर भी चुनने के लिए एंटर दबाएं।",
+    "emailAddresses": "ईमेल पता(पते) दर्ज करें",
+    "emailPlaceholder": "ravi@example.com, priya@example.com",
+    "emailHint": "कई ईमेल को अल्पविराम से अलग करके दर्ज करें",
+    "emailInvitationMessage": "उपयोगकर्ताओं को खाता बनाने और अध्ययन में शामिल होने के लिए ईमेल निमंत्रण मिलेगा",
+    "unregisteredUserMessage": "अपंजीकृत उपयोगकर्ता - निमंत्रण ईमेल प्राप्त होगा",
+    "role": "भूमिका",
+    "date": "तारीख",
+    "time": "समय",
+    "invitationMessage": "निमंत्रण संदेश",
+    "messagePlaceholder": "अपना निमंत्रण संदेश दर्ज करें",
+    "errors": {
+      "invalidEmailFormat": "अमान्य ईमेल प्रारूप",
+      "emailNotExist": "{email} मान्य ईमेल नहीं है या मौजूद नहीं है",
+      "emailAlreadySelected": "{email} पहले ही चुना जा चुका है"
+    }
   }
 }
