@@ -2410,5 +2410,27 @@
       "termsOfService": "Termos de Serviço",
       "privacyPolicy": "Política de Privacidade"
     }
+  },
+  "inviteDialog": {
+    "title": "Enviar Convite",
+    "existingUser": "Usuário Existente",
+    "emailInvite": "Convite por Email",
+    "selectCooperator": "Selecionar colaborador",
+    "noDataText": "Não há usuários registrados com esse email, pressione enter para selecionar mesmo assim.",
+    "emailAddresses": "Digitar endereço(s) de email",
+    "emailPlaceholder": "joao@exemplo.com, maria@exemplo.com",
+    "emailHint": "Digite múltiplos emails separados por vírgulas",
+    "emailInvitationMessage": "Os usuários receberão um convite por email para criar uma conta e participar do estudo",
+    "unregisteredUserMessage": "Usuário não registrado - receberá email de convite",
+    "role": "Função",
+    "date": "Data",
+    "time": "Hora",
+    "invitationMessage": "Mensagem de Convite",
+    "messagePlaceholder": "Digite sua mensagem de convite",
+    "errors": {
+      "invalidEmailFormat": "Formato de email inválido",
+      "emailNotExist": "{email} não é um email válido ou não existe",
+      "emailAlreadySelected": "{email} já foi selecionado"
+    }
   }
 }
