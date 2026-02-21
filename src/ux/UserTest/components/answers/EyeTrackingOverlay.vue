@@ -36,7 +36,6 @@ function drawFreeEye(cx, cy) {
 }
 
 function drawPrecisionPoints(cx, cy) {
-  console.log("Precision draw called with:", cx, cy)
   ctx.lineWidth = 2
   ctx.strokeStyle = 'rgba(0, 200, 255, 0.6)'
   ctx.beginPath()
