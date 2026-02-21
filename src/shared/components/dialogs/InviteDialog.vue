@@ -7,7 +7,7 @@
     <v-card class="rounded-lg">
       <v-card-title style="color: white" class="bg-primary rounded-top-lg">
         <v-icon color="white" class="mr-2"> mdi-account-plus </v-icon>
-        {{ title || 'Send Invitation' }}
+        {{ title || t('inviteDialog.title') }}
       </v-card-title>
       <v-card-text class="pt-4">
         <!-- Invitation Type Toggle -->
@@ -15,22 +15,22 @@
           <v-btn 
             :color="invitationType === 'existing' ? 'primary' : 'outlined'"
             variant="outlined"
+            type="button"
             class="flex-grow-1"
             @click="invitationType = 'existing'"
-            type="button"
           >
             <v-icon start>mdi-account</v-icon>
-            Existing User
+            {{ t('inviteDialog.existingUser') }}
           </v-btn>
           <v-btn 
             :color="invitationType === 'email' ? 'primary' : 'outlined'"
             variant="outlined"
+            type="button"
             class="flex-grow-1 ml-2"
             @click="invitationType = 'email'"
-            type="button"
           >
             <v-icon start>mdi-email</v-icon>
-            Email Invite
+            {{ t('inviteDialog.emailInvite') }}
           </v-btn>
         </div>
 
@@ -42,7 +42,7 @@
             v-model="comboboxModel"
             :items="users.filter((user) => user?.email != null)"
             item-title="email"
-            :label="selectLabel || 'Select cooperator'"
+            :label="selectLabel || t('inviteDialog.selectCooperator')"
             multiple
             variant="outlined"
             density="comfortable"
@@ -51,7 +51,7 @@
             <template #no-data>
               {{
                 noDataText ||
-                'There are no users registered with that email, press enter to select anyways.'
+                t('inviteDialog.noDataText')
               }}
             </template>
           </v-combobox>
@@ -61,17 +61,17 @@
         <template v-else>
           <v-text-field
             v-model="emailInput"
-            :label="'Enter email address(es)'"
+            :label="t('inviteDialog.emailAddresses')"
             variant="outlined"
             density="comfortable"
-            placeholder="john@example.com, jane@example.com"
-            hint="Enter multiple emails separated by commas"
+            :placeholder="t('inviteDialog.emailPlaceholder')"
+            :hint="t('inviteDialog.emailHint')"
             persistent-hint
             @keyup.enter="handleEmailInput"
             @blur="handleEmailInput"
           />
           <v-alert type="info" variant="tonal" density="compact" class="mt-2">
-            <small>Users will receive an email invitation to create an account and join the study</small>
+            <small>{{ t('inviteDialog.emailInvitationMessage') }}</small>
           </v-alert>
         </template>
 
@@ -82,14 +82,14 @@
             :key="i"
             closable
             class="ml-2 mt-2"
-            @click:close="removeSelectedCoop(i)"
             :color="coop.isUnregistered ? 'orange' : 'primary'"
             variant="flat"
             :prepend-icon="coop.isUnregistered ? 'mdi-email' : 'mdi-account'"
+            @click:close="removeSelectedCoop(i)"
           >
             {{ typeof coop === 'object' ? coop.email : coop }}
             <v-tooltip v-if="coop.isUnregistered" activator="parent" location="top">
-              Unregistered user - will receive invitation email
+              {{ t('inviteDialog.unregisteredUserMessage') }}
             </v-tooltip>
           </v-chip>
         </v-chip-group>
@@ -97,7 +97,7 @@
         <v-select
           v-model="selectedRole"
           :items="roleOptions"
-          :label="roleLabel || 'Role'"
+          :label="roleLabel || t('inviteDialog.role')"
           variant="outlined"
           density="comfortable"
           class="mt-4"
@@ -120,7 +120,7 @@
                   v-bind="props"
                   variant="outlined"
                   density="compact"
-                  label="Date"
+                  :label="t('inviteDialog.date')"
                   prepend-inner-icon="mdi-calendar"
                 />
               </template>
@@ -150,7 +150,7 @@
                   density="compact"
                   color="primary"
                   variant="outlined"
-                  label="Time"
+                  :label="t('inviteDialog.time')"
                   readonly
                   v-bind="props"
                 />
@@ -170,8 +170,8 @@
           v-if="showInviteMessage"
           v-model="inviteMessage"
           color="primary"
-          :label="messageLabel || 'Invitation Message'"
-          :placeholder="messagePlaceholder || 'Enter your invitation message'"
+          :label="messageLabel || t('inviteDialog.invitationMessage')"
+          :placeholder="messagePlaceholder || t('inviteDialog.messagePlaceholder')"
           variant="outlined"
           class="mt-4"
         />
@@ -187,7 +187,7 @@
           class="rounded-lg"
           @click="onCancel"
         >
-          {{ cancelText || 'Cancel' }}
+          {{ cancelText || t('common.cancel') }}
         </v-btn>
         <v-btn
           color="primary"
@@ -195,7 +195,7 @@
           :disabled="selectedCoops.length === 0"
           @click="onSend"
         >
-          {{ sendText || 'Send' }}
+          {{ sendText || t('common.send') }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -204,11 +204,13 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
 import { showError, showWarning } from '@/shared/utils/toast'
 import UIDGenerator from 'uid-generator'
 
 const uidgen = new UIDGenerator()
+const { t } = useI18n()
 
 const props = defineProps({
   show: {
@@ -341,12 +343,12 @@ const validateEmail = () => {
   // Handle string email input
   if (isStringEmail(email)) {
     if (!isValidEmail(email)) {
-      showError('Invalid email format')
+      showError(t('inviteDialog.errors.invalidEmailFormat'))
       return
     }
 
     if (!isUserEmailValid(email)) {
-      showError(`${email} is not a valid email or does not exist`)
+      showError(t('inviteDialog.errors.emailNotExist', { email }))
       return
     }
 
@@ -360,7 +362,7 @@ const validateEmail = () => {
   if (selectedCoops.value.includes(email)) return
 
   if (isCoopAlreadySelected(email.email)) {
-    showWarning(`${email.email} has already been selected`)
+    showWarning(t('inviteDialog.errors.emailAlreadySelected', { email: email.email }))
     return
   }
 
