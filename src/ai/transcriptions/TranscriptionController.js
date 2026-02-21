@@ -142,10 +142,26 @@ export default class TranscriptionController extends Controller {
 
         if (result.docs.length === 0) return null;
 
-        return result.docs.map(doc => Transcription.toTranscription({
+        const transcriptions = result.docs.map(doc => Transcription.toTranscription({
             id: doc.id, // Include the document ID here
             ...doc.data()
         }));
+
+        const toMillis = (ts) => {
+            if (!ts) return 0;
+            if (typeof ts.toMillis === 'function') return ts.toMillis();
+            if (typeof ts.toDate === 'function') return ts.toDate().getTime();
+            if (typeof ts.seconds === 'number') {
+                return ts.seconds * 1000 + Math.floor((ts.nanoseconds || 0) / 1e6);
+            }
+            if (ts instanceof Date) return ts.getTime();
+            const d = new Date(ts);
+            const ms = d.getTime();
+            return Number.isNaN(ms) ? 0 : ms;
+        };
+
+        transcriptions.sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt));
+        return transcriptions;
     }
 
 
