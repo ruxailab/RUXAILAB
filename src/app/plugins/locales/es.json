@@ -2410,5 +2410,27 @@
       "termsOfService": "Términos de servicio",
       "privacyPolicy": "Política de privacidad"
     }
+  },
+  "inviteDialog": {
+    "title": "Enviar Invitación",
+    "existingUser": "Usuario Existente",
+    "emailInvite": "Invitación por Email",
+    "selectCooperator": "Seleccionar colaborador",
+    "noDataText": "No hay usuarios registrados con ese email, presiona enter para seleccionar de todas formas.",
+    "emailAddresses": "Ingresar dirección(es) de email",
+    "emailPlaceholder": "juan@ejemplo.com, maria@ejemplo.com",
+    "emailHint": "Ingresa múltiples emails separados por comas",
+    "emailInvitationMessage": "Los usuarios recibirán una invitación por email para crear una cuenta y unirse al estudio",
+    "unregisteredUserMessage": "Usuario no registrado - recibirá email de invitación",
+    "role": "Rol",
+    "date": "Fecha",
+    "time": "Hora",
+    "invitationMessage": "Mensaje de Invitación",
+    "messagePlaceholder": "Ingresa tu mensaje de invitación",
+    "errors": {
+      "invalidEmailFormat": "Formato de email inválido",
+      "emailNotExist": "{email} no es un email válido o no existe",
+      "emailAlreadySelected": "{email} ya ha sido seleccionado"
+    }
   }
 }
