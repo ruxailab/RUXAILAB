@@ -2427,6 +2427,8 @@
     "time": "时间",
     "invitationMessage": "邀请信息",
     "messagePlaceholder": "输入您的邀请信息",
+    "cancel": "取消",
+    "send": "发送",
     "errors": {
       "invalidEmailFormat": "邮箱格式无效",
       "emailNotExist": "{email} 不是有效的邮箱或不存在",
