@@ -2431,5 +2431,27 @@
       "termsOfService": "Nutzungsbedingungen",
       "privacyPolicy": "Datenschutzerklärung"
     }
+  },
+  "inviteDialog": {
+    "title": "Einladung Senden",
+    "existingUser": "Bestehender Benutzer",
+    "emailInvite": "E-Mail-Einladung",
+    "selectCooperator": "Mitarbeiter auswählen",
+    "noDataText": "Keine Benutzer mit dieser E-Mail registriert, drücke Enter um trotzdem auszuwählen.",
+    "emailAddresses": "E-Mail-Adresse(n) eingeben",
+    "emailPlaceholder": "max@beispiel.de, anne@beispiel.de",
+    "emailHint": "Mehrere E-Mails durch Kommas getrennt eingeben",
+    "emailInvitationMessage": "Benutzer erhalten eine E-Mail-Einladung zur Kontoerstellung und Teilnahme an der Studie",
+    "unregisteredUserMessage": "Nicht registrierter Benutzer - erhält Einladungs-E-Mail",
+    "role": "Rolle",
+    "date": "Datum",
+    "time": "Uhrzeit",
+    "invitationMessage": "Einladungsnachricht",
+    "messagePlaceholder": "Geben Sie Ihre Einladungsnachricht ein",
+    "errors": {
+      "invalidEmailFormat": "Ungültiges E-Mail-Format",
+      "emailNotExist": "{email} ist keine gültige E-Mail oder existiert nicht",
+      "emailAlreadySelected": "{email} wurde bereits ausgewählt"
+    }
   }
 }
