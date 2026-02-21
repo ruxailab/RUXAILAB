@@ -2422,5 +2422,27 @@
       "termsOfService": "利用規約",
       "privacyPolicy": "プライバシーポリシー"
     }
+  },
+  "inviteDialog": {
+    "title": "招待を送信",
+    "existingUser": "既存ユーザー",
+    "emailInvite": "メール招待",
+    "selectCooperator": "協力者を選択",
+    "noDataText": "このメールで登録されたユーザーはいません。それでも選択するにはEnterキーを押してください。",
+    "emailAddresses": "メールアドレスを入力",
+    "emailPlaceholder": "tanaka@example.com, suzuki@example.com",
+    "emailHint": "複数のメールはカンマで区切ってください",
+    "emailInvitationMessage": "ユーザーはアカウントを作成して研究に参加するためのメール招待を受け取ります",
+    "unregisteredUserMessage": "未登録ユーザー - 招待メールが送信されます",
+    "role": "役割",
+    "date": "日付",
+    "time": "時間",
+    "invitationMessage": "招待メッセージ",
+    "messagePlaceholder": "招待メッセージを入力してください",
+    "errors": {
+      "invalidEmailFormat": "無効なメール形式です",
+      "emailNotExist": "{email} は有効なメールアドレスではないか、存在しません",
+      "emailAlreadySelected": "{email} は既に選択されています"
+    }
   }
 }
