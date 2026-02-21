@@ -2426,6 +2426,8 @@
     "time": "समय",
     "invitationMessage": "निमंत्रण संदेश",
     "messagePlaceholder": "अपना निमंत्रण संदेश दर्ज करें",
+    "cancel": "रद्द करें",
+    "send": "भेजें",
     "errors": {
       "invalidEmailFormat": "अमान्य ईमेल प्रारूप",
       "emailNotExist": "{email} मान्य ईमेल नहीं है या मौजूद नहीं है",
