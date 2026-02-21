@@ -7,7 +7,7 @@ import StudyController from '@/controllers/StudyController'
 import UserController from '@/features/auth/controllers/UserController'
 import { getAuth } from 'firebase/auth'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
-import { auth, db } from '../../app/plugins/firebase/index'
+import { db } from '../../app/plugins/firebase/index'
 
 const studyController = new StudyController()
 
