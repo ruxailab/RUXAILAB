@@ -2430,5 +2430,27 @@
       "termsOfService": "Conditions d'utilisation",
       "privacyPolicy": "Politique de confidentialité"
     }
+  },
+  "inviteDialog": {
+    "title": "Envoyer l'Invitation",
+    "existingUser": "Utilisateur Existant",
+    "emailInvite": "Invitation par Email",
+    "selectCooperator": "Sélectionner un collaborateur",
+    "noDataText": "Aucun utilisateur enregistré avec cet email, appuyez sur entrée pour sélectionner quand même.",
+    "emailAddresses": "Entrer l'adresse(s) email",
+    "emailPlaceholder": "jean@exemple.com, marie@exemple.com",
+    "emailHint": "Entrez plusieurs emails séparés par des virgules",
+    "emailInvitationMessage": "Les utilisateurs recevront une invitation par email pour créer un compte et rejoindre l'étude",
+    "unregisteredUserMessage": "Utilisateur non enregistré - recevra un email d'invitation",
+    "role": "Rôle",
+    "date": "Date",
+    "time": "Heure",
+    "invitationMessage": "Message d'Invitation",
+    "messagePlaceholder": "Entrez votre message d'invitation",
+    "errors": {
+      "invalidEmailFormat": "Format d'email invalide",
+      "emailNotExist": "{email} n'est pas un email valide ou n'existe pas",
+      "emailAlreadySelected": "{email} a déjà été sélectionné"
+    }
   }
 }
