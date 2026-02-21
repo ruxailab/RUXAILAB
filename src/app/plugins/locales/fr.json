@@ -2447,6 +2447,8 @@
     "time": "Heure",
     "invitationMessage": "Message d'Invitation",
     "messagePlaceholder": "Entrez votre message d'invitation",
+    "cancel": "Annuler",
+    "send": "Envoyer",
     "errors": {
       "invalidEmailFormat": "Format d'email invalide",
       "emailNotExist": "{email} n'est pas un email valide ou n'existe pas",
