@@ -21,8 +21,6 @@ export default {
     studyCategory: null,
     studyMethod: null,
     studyType: null,
-    heuristics: [],
-    testWeights: {},
     selectedTemplate: null,
   },
   getters: {
@@ -45,20 +43,8 @@ export default {
   mutations: {
     SET_TEST(state, payload) {
       state.Test = payload
-      if (
-        payload?.testStructure &&
-        payload.testType === STUDY_TYPES.HEURISTIC
-      ) {
-        state.heuristics = Object.entries(payload.testStructure)
-          .filter(([key]) => !isNaN(key))
-          .map(([_, value]) => ({ ...value }))
-        state.testWeights = payload.testWeights || {}
-
-        // Sync to Heuristic store (following the working heuristics pattern)
-        this.commit('SET_HEURISTICS', state.heuristics)
-        this.commit('SET_TEST_WEIGHTS', state.testWeights)
-        this.commit('SET_TEST_OPTIONS', payload.testOptions || [])
-      }
+      // Clean mutation - only mutates own module state
+      // Heuristic sync moved to syncHeuristicData action
     },
     SET_TESTS(state, payload) {
       state.tests = payload
@@ -112,12 +98,32 @@ export default {
     },
   },
   actions: {
-    async createStudy({ commit }, payload) {
+    // Sync heuristic data to Heuristic store
+    // Called after SET_TEST to keep stores in sync
+    async syncHeuristicData({ commit }, payload) {
+      if (
+        payload?.testStructure &&
+        payload.testType === STUDY_TYPES.HEURISTIC
+      ) {
+        const heuristics = Object.entries(payload.testStructure)
+          .filter(([key]) => !isNaN(key))
+          .map(([_, value]) => ({ ...value }))
+        const testWeights = payload.testWeights || {}
+
+        commit('SET_HEURISTICS', heuristics)
+        commit('SET_TEST_WEIGHTS', testWeights)
+        commit('SET_TEST_OPTIONS', payload.testOptions || [])
+      }
+    },
+
+    async createStudy({ commit, dispatch }, payload) {
       commit('setLoading', true)
       try {
         const res = await studyController.createStudy(payload)
         payload.id = res.id
         commit('SET_TEST', payload)
+        // Sync to Heuristic store after setting test
+        await dispatch('syncHeuristicData', payload)
         return res.id
       } catch (err) {
         commit('setError', {
@@ -160,11 +166,13 @@ export default {
       }
     },
 
-    async updateStudy({ commit }, payload) {
+    async updateStudy({ commit, dispatch }, payload) {
       commit('setLoading', true)
       try {
         await studyController.updateStudy(payload)
         commit('SET_TEST', payload)
+        // Sync to Heuristic store after setting test
+        await dispatch('syncHeuristicData', payload)
       } catch (err) {
         commit('setError', {
           errorCode: 'studyError',
@@ -189,11 +197,13 @@ export default {
       }
     },
 
-    async getStudy({ commit }, payload) {
+    async getStudy({ commit, dispatch }, payload) {
       commit('setLoading', true)
       try {
         const res = await studyController.getStudy(payload)
         commit('SET_TEST', res)
+        // Sync to Heuristic store after setting test
+        await dispatch('syncHeuristicData', res)
       } catch (err) {
         commit('setError', {
           errorCode: 'studyError',
