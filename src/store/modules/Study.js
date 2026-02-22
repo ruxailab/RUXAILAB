@@ -134,8 +134,8 @@ export default {
             }
             await userController.update(userDoc.id, userDoc.toFirestore())
             commit('SET_USER', userDoc, { root: true })
-          } catch (userErr) {
-            console.warn('Failed to update user tests after study creation', userErr)
+          } catch (error_) {
+            console.warn('Failed to update user tests after study creation', error_)
           }
         }
         return res.id
