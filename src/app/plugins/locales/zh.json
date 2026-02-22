@@ -382,6 +382,7 @@
     "incorrectPassword": "密码错误",
     "incorrectCredential": "用户名或密码错误。",
     "globalError": "发生错误，给您带来不便，敬请谅解。",
+    "cameraPermissionDenied": "继续操作需要访问摄像头。请在浏览器设置中允许摄像头访问。",
     "sendError": "发送邀请失败，请重试",
     "missingVariableTitles": "无法保存：一些变量缺少标题"
   },
@@ -598,7 +599,8 @@
       "changeWeights": "请注意，更改启发式的顺序不会自动更改权重，您必须手动更改。",
       "noDescriptions": "没有可用的描述",
       "startAddingQuestions": "从此启发式添加第一个问题开始",
-      "cantDeleteAllQuestions": "抱歉，您不能从启发式中删除所有问题"
+      "cantDeleteAllQuestions": "抱歉，您不能从启发式中删除所有问题",
+      "studyHasAnswers": "This study has answers"
     },
     "validation": {
       "nameRequired": "名称是必填项",
@@ -705,7 +707,9 @@
       "options": "选项",
       "weights": "权重",
       "settings": "设置"
-    }
+    },
+    "previewPageTitle": "Preview test",
+    "previewPageSubtitle": "Review the test configuration in read-only mode"
   },
   "HeuristicsTestAnswer": {
     "titles": {
@@ -954,73 +958,60 @@
       "sart": "情境意识评估技术 - 测量情境意识"
     },
     "answerTypePreview": {
-      "noAnswer": {
-        "message": "任务完成！无需额外反馈。"
-      },
-      "textArea": {
-        "placeholder": "参与者将在此处提供反馈...",
-        "submitButton": "提交反馈"
-      },
-      "postTest": {
-        "title": "任务后问题",
-        "q1": "1. 您如何评价此任务的难度？",
-        "q2": "2. 有其他补充意见吗？",
-        "feedbackPlaceholder": "可选反馈..."
-      },
-      "postForm": {
-        "title": "外部表单",
-        "notice": "参与者将在任务后被重定向以填写外部表单。",
-        "button": "打开外部表单"
-      },
-      "nasaTlx": {
-        "title": "NASA任务负荷指数",
-        "mental": "脑力需求",
-        "physical": "体力需求",
-        "range": "低 - 高",
-        "moreDimensions": "+ 另外4个维度"
-      },
-      "sus": {
-        "title": "系统可用性量表",
-        "q1": "1. 我认为我会经常使用这个系统。",
-        "disagree": "非常不同意",
-        "agree": "非常同意",
-        "moreStatements": "+ 另外9条陈述"
-      },
-      "sart": {
-        "title": "情境感知评估技术",
-        "instability": "情境不稳定性",
-        "complexity": "情境复杂性",
-        "stable": "非常稳定",
-        "unstable": "非常不稳定",
-        "simple": "非常简单",
-        "complex": "非常复杂",
-        "moreDimensions": "+ 另外8个SART维度"
-      },
-      "tam": {
-        "tam1": "TAM-1：技术接受模型（基础）",
-        "tam2": "TAM-2：技术接受模型（扩展）",
-        "tam3": "TAM-3：技术接受模型（综合）",
-        "items2": "2个维度共10个项目",
-        "items7": "7个维度共25个项目",
-        "items13": "13个维度共39个项目",
-        "pu": "感知有用性",
-        "eu": "感知易用性",
-        "sn": "主观规范",
-        "image": "形象",
-        "jr": "工作相关性",
-        "oq": "产出质量",
-        "rd": "结果可演示性",
-        "se": "计算机自我效能感",
-        "ec": "外部控制",
-        "anxiety": "焦虑",
-        "play": "趣味性",
-        "enjoy": "愉悦感",
-        "ou": "客观可用性",
-        "q1": "1. 使用该系统能提高我的工作绩效。",
-        "q6": "6. 该系统易于使用。",
-        "likertNote": "参与者在 5 点李克特量表上对 {count} 个陈述进行评分"
-      },
-      "selectionPrompt": "选择答案类型以查看预览"
+      "taskCompleted": "任务完成！无需额外反馈。",
+      "participantsFeedbackHere": "参与者将在此处提供反馈...",
+      "submitFeedback": "提交反馈",
+      "postTaskQuestions": "任务后问题",
+      "rateTaskDifficulty": "1. 您如何评价此任务的难度？",
+      "additionalComments": "2. 有其他评论吗？",
+      "optionalFeedback": "可选反馈...",
+      "externalFormTitle": "外部表单",
+      "externalFormDescription": "参与者将在任务后被重定向填写外部表单。",
+      "openExternalForm": "打开外部表单",
+      "nasaTlxTitle": "NASA任务负荷指数",
+      "mentalDemand": "心理需求",
+      "physicalDemand": "体力需求",
+      "lowHigh": "低 - 高",
+      "moreDimensions": "+ 另外4个维度",
+      "susTitle": "系统可用性量表",
+      "susStatement1": "1. 我认为我会经常使用这个系统。",
+      "stronglyDisagree": "强烈不同意",
+      "stronglyAgree": "强烈同意",
+      "moreStatements": "+ 另外9条陈述",
+      "sartTitle": "情境意识评估技术 (SART)",
+      "instability": "情境的不稳定性",
+      "complexity": "情境的复杂性",
+      "veryStable": "非常稳定",
+      "veryUnstable": "非常不稳定",
+      "verySimple": "非常简单",
+      "veryComplex": "非常复杂",
+      "moreSartDimensions": "+ 8个额外的SART维度",
+      "tam1Title": "TAM-1: 技术接受模型 (基础)",
+      "tam1Subtitle": "跨2个维度的10个项目",
+      "perceivedUsefulness": "感知有用性 (5个项目)",
+      "perceivedEaseOfUse": "感知易用性 (5个项目)",
+      "tam1Statement1": "1. 使用该系统可以提高我的工作绩效。",
+      "tam1Statement6": "6. 该系统易于使用。",
+      "tam2Title": "TAM-2: 技术接受模型 (扩展)",
+      "tam2Subtitle": "跨7个维度的25个项目",
+      "tam2Description": "参与者使用5点李克特量表对25个陈述进行评分 (强烈反对 - 强烈同意)",
+      "tam3Title": "TAM-3: 技术接受模型 (全面)",
+      "tam3Subtitle": "跨13个维度的39个项目",
+      "tam3Description": "跨13个维度的39个陈述的5点李克特量表全面评估",
+      "selectType": "选择答案类型以查看预览",
+      "perceivedUsefulnessShort": "感知有用性",
+      "perceivedEaseOfUseShort": "感知易用性",
+      "subjectiveNorm": "主观规范",
+      "image": "形象",
+      "jobRelevance": "工作相关性",
+      "outputQuality": "输出质量",
+      "resultDemonstrability": "结果可展示性",
+      "computerSelfEfficacy": "计算机自我效能感",
+      "externalControl": "外部控制",
+      "anxiety": "焦虑",
+      "playfulness": "趣味性",
+      "enjoyment": "愉悦感",
+      "objectiveUsability": "客观可用性"
     },
     "advanced": {
       "stepTitle": "步骤 3：高级选项",
@@ -1440,6 +1431,18 @@
         "manualAccessibility": "人工无障碍性",
         "automaticAccessibility": "自动无障碍性",
         "all": "全部"
+      },
+      "unsupportedPreviewType": "Unsupported template type for preview.",
+      "config": {
+        "title": "Template Config",
+        "ownerOnly": "Configuration editing is restricted to template owner.",
+        "version": "Version",
+        "visibility": "Visibility",
+        "owner": "Owner",
+        "public": "Public",
+        "private": "Private",
+        "saved": "Template configuration updated successfully",
+        "saveError": "Failed to update template configuration"
       }
     },
     "createTest": {
@@ -1482,7 +1485,9 @@
     "editTest": {
       "title": "编辑测试",
       "description": "自定义您的测试设置和首选项。",
-      "updatedTest": "测试更新成功"
+      "updatedTest": "测试更新成功",
+      "previewTitle": "Preview test",
+      "previewDescription": "Review the test in read-only mode."
     },
     "cooperators": {
       "invitationSent": "邀请发送成功"
@@ -1560,7 +1565,11 @@
     "test": "测试",
     "testType_1": {
       "testTitle": "可用性启发式",
-      "text": ["可用性百分比", "最终报告PDF", "邀请专家评估您的应用程序"]
+      "text": [
+        "可用性百分比",
+        "最终报告PDF",
+        "邀请专家评估您的应用程序"
+      ]
     },
     "testType_2": {
       "testTitle": "用户可用性",
@@ -1574,12 +1583,20 @@
       "SelfTest": {
         "title": "自主测试",
         "type": "无主持",
-        "text": ["在空闲时间回答", "增强的答案分析", "任务自定义"]
+        "text": [
+          "在空闲时间回答",
+          "增强的答案分析",
+          "任务自定义"
+        ]
       },
       "LiveTest": {
         "title": "实时测试",
         "type": "有主持",
-        "text": ["摄像头、音频和屏幕录制", "增强的答案分析", "有主持的实时测试"]
+        "text": [
+          "摄像头、音频和屏幕录制",
+          "增强的答案分析",
+          "有主持的实时测试"
+        ]
       }
     }
   },
@@ -1852,12 +1869,20 @@
       "blank": {
         "title": "从空白研究开始",
         "description": "从头开始创建研究，完全可定制",
-        "features": ["完全可定制", "从头构建", "对设置的完全控制"]
+        "features": [
+          "完全可定制",
+          "从头构建",
+          "对设置的完全控制"
+        ]
       },
       "template": {
         "title": "从模板创建",
         "description": "使用预构建的模板快速开始",
-        "features": ["快速设置", "预配置设置", "包含最佳实践"]
+        "features": [
+          "快速设置",
+          "预配置设置",
+          "包含最佳实践"
+        ]
       }
     },
     "details": {

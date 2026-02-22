@@ -382,6 +382,7 @@
     "incorrectPassword": "Falsches Passwort",
     "incorrectCredential": "Falscher Benutzername oder Passwort.",
     "globalError": "Ein Fehler ist aufgetreten, entschuldigen Sie die Unannehmlichkeiten.",
+    "cameraPermissionDenied": "Der Zugriff auf die Kamera ist erforderlich, um fortzufahren. Bitte erlauben Sie den Kamerazugriff in den Browser-Einstellungen.",
     "sendError": "Einladung konnte nicht gesendet werden. Bitte versuchen Sie es erneut",
     "missingVariableTitles": "Kann nicht speichern: Einige Variablen fehlen Titel"
   },
@@ -598,7 +599,8 @@
       "changeWeights": "Beachten Sie, dass sich die Gewichte NICHT automatisch ändern, wenn Sie die Reihenfolge der Heuristiken ändern. Sie müssen sie manuell ändern.",
       "noDescriptions": "Keine Beschreibungen verfügbar",
       "startAddingQuestions": "Beginnen Sie, indem Sie Ihre erste Frage zu dieser Heuristik hinzufügen",
-      "cantDeleteAllQuestions": "Entschuldigung, Sie können nicht alle Fragen von einer Heuristik löschen"
+      "cantDeleteAllQuestions": "Entschuldigung, Sie können nicht alle Fragen von einer Heuristik löschen",
+      "studyHasAnswers": "This study has answers"
     },
     "validation": {
       "nameRequired": "Name ist obligatorisch",
@@ -705,7 +707,9 @@
       "options": "Optionen",
       "weights": "Gewichte",
       "settings": "Einstellungen"
-    }
+    },
+    "previewPageTitle": "Preview test",
+    "previewPageSubtitle": "Review the test configuration in read-only mode"
   },
   "HeuristicsTestAnswer": {
     "titles": {
@@ -955,73 +959,60 @@
       "sart": "Situationsbewusstsein-Bewertungstechnik - misst das situative Bewusstsein"
     },
     "answerTypePreview": {
-      "noAnswer": {
-        "message": "Aufgabe abgeschlossen! Kein zusätzliches Feedback erforderlich."
-      },
-      "textArea": {
-        "placeholder": "Teilnehmer geben hier ihr Feedback ab...",
-        "submitButton": "Feedback absenden"
-      },
-      "postTest": {
-        "title": "Fragen nach der Aufgabe",
-        "q1": "1. Wie würden Sie den Schwierigkeitsgrad dieser Aufgabe bewerten?",
-        "q2": "2. Weitere Kommentare?",
-        "feedbackPlaceholder": "Optionales Feedback..."
-      },
-      "postForm": {
-        "title": "Externes Formular",
-        "notice": "Teilnehmer werden nach der Aufgabe zur Ausfüllung eines externen Formulars weitergeleitet.",
-        "button": "Externes Formular öffnen"
-      },
-      "nasaTlx": {
-        "title": "NASA-Aufgabenbelastungsindex",
-        "mental": "Geistige Anforderung",
-        "physical": "Körperliche Anforderung",
-        "range": "Niedrig - Hoch",
-        "moreDimensions": "+ 4 weitere Dimensionen"
-      },
-      "sus": {
-        "title": "System-Usability-Skala",
-        "q1": "1. Ich denke, dass ich dieses System häufig verwenden möchte.",
-        "disagree": "Stimme Überhaupt Nicht Zu",
-        "agree": "Stimme Voll Zu",
-        "moreStatements": "+ 9 weitere Aussagen"
-      },
-      "sart": {
-        "title": "Situationsbewusstseins-Bewertungstechnik",
-        "instability": "Instabilität der Situation",
-        "complexity": "Komplexität der Situation",
-        "stable": "Sehr Stabil",
-        "unstable": "Sehr Instabil",
-        "simple": "Sehr Einfach",
-        "complex": "Sehr Komplex",
-        "moreDimensions": "+ 8 weitere SART-Dimensionen"
-      },
-      "tam": {
-        "tam1": "TAM-1: Akzeptanzmodell für Technologie (Basis)",
-        "tam2": "TAM-2: Akzeptanzmodell für Technologie (Erweitert)",
-        "tam3": "TAM-3: Akzeptanzmodell für Technologie (Umfassend)",
-        "items2": "10 Items in 2 Dimensionen",
-        "items7": "25 Items in 7 Dimensionen",
-        "items13": "39 Items in 13 Dimensionen",
-        "pu": "Wahrgenommene Nützlichkeit",
-        "eu": "Wahrgenommene Benutzerfreundlichkeit",
-        "sn": "Subjektive Norm",
-        "image": "Image",
-        "jr": "Job-Relevanz",
-        "oq": "Output-Qualität",
-        "rd": "Ergebnis-Demonstrierbarkeit",
-        "se": "Computer-Selbstwirksamkeit",
-        "ec": "Externe Kontrolle",
-        "anxiety": "Angst",
-        "play": "Spielfreude",
-        "enjoy": "Vergnügen",
-        "ou": "Objektive Benutzerfreundlichkeit",
-        "q1": "1. Die Nutzung des Systems verbessert meine Arbeitsleistung.",
-        "q6": "6. Das System ist einfach zu bedienen.",
-        "likertNote": "Teilnehmer bewerten {count} Aussagen auf einer 5-Punkte-Likert-Skala"
-      },
-      "selectionPrompt": "Wählen Sie einen Antworttyp aus, um die Vorschau anzuzeigen"
+      "taskCompleted": "Aufgabe abgeschlossen! Kein zusätzliches Feedback erforderlich.",
+      "participantsFeedbackHere": "Teilnehmer geben hier ihr Feedback ab...",
+      "submitFeedback": "Feedback Absenden",
+      "postTaskQuestions": "Post-Aufgaben-Fragen",
+      "rateTaskDifficulty": "1. Wie würden Sie die Schwierigkeit dieser Aufgabe bewerten?",
+      "additionalComments": "2. Zusätzliche Kommentare?",
+      "optionalFeedback": "Optionales Feedback...",
+      "externalFormTitle": "Externes Formular",
+      "externalFormDescription": "Teilnehmer werden nach der Aufgabe zu einem externen Formular weitergeleitet.",
+      "openExternalForm": "Externes Formular Öffnen",
+      "nasaTlxTitle": "NASA-Aufgabenlast-Index",
+      "mentalDemand": "Mentale Anforderung",
+      "physicalDemand": "Physische Anforderung",
+      "lowHigh": "Niedrig - Hoch",
+      "moreDimensions": "+ 4 weitere Dimensionen",
+      "susTitle": "System-Usability-Skala",
+      "susStatement1": "1. Ich denke, dass ich dieses System häufig verwenden möchte.",
+      "stronglyDisagree": "Stimme Überhaupt Nicht Zu",
+      "stronglyAgree": "Stimme Voll Zu",
+      "moreStatements": "+ 9 weitere Aussagen",
+      "sartTitle": "Situationsbewusstseins-Bewertungstechnik",
+      "instability": "Instabilität der Situation",
+      "complexity": "Komplexität der Situation",
+      "veryStable": "Sehr Stabil",
+      "veryUnstable": "Sehr Instabil",
+      "verySimple": "Sehr Einfach",
+      "veryComplex": "Sehr Komplex",
+      "moreSartDimensions": "+ 8 weitere SART-Dimensionen",
+      "tam1Title": "TAM-1: Akzeptanzmodell für Technologie (Basis)",
+      "tam1Subtitle": "10 Items in 2 Dimensionen",
+      "perceivedUsefulness": "Wahrgenommene Nützlichkeit (5 Items)",
+      "perceivedEaseOfUse": "Wahrgenommene Benutzerfreundlichkeit (5 Items)",
+      "tam1Statement1": "1. Die Nutzung des Systems verbessert meine Arbeitsleistung.",
+      "tam1Statement6": "6. Das System ist einfach zu bedienen.",
+      "tam2Title": "TAM-2: Akzeptanzmodell für Technologie (Erweitert)",
+      "tam2Subtitle": "25 Items in 7 Dimensionen",
+      "tam2Description": "Teilnehmer bewerten 25 Aussagen auf einer 5-stufigen Likert-Skala (Stimme überhaupt nicht zu - Stimme voll zu)",
+      "tam3Title": "TAM-3: Akzeptanzmodell für Technologie (Umfassend)",
+      "tam3Subtitle": "39 Items in 13 Dimensionen",
+      "tam3Description": "Umfassende Bewertung mit 39 Aussagen in 13 Dimensionen auf einer 5-stufigen Likert-Skala",
+      "selectType": "Wählen Sie einen Antworttyp aus, um die Vorschau anzuzeigen",
+      "perceivedUsefulnessShort": "Wahrgenommene Nützlichkeit",
+      "perceivedEaseOfUseShort": "Wahrgenommene Benutzerfreundlichkeit",
+      "subjectiveNorm": "Subjektive Norm",
+      "image": "Image",
+      "jobRelevance": "Job-Relevanz",
+      "outputQuality": "Output-Qualität",
+      "resultDemonstrability": "Ergebnis-Demonstrierbarkeit",
+      "computerSelfEfficacy": "Computer-Selbstwirksamkeit",
+      "externalControl": "Externe Kontrolle",
+      "anxiety": "Angst",
+      "playfulness": "Spielfreude",
+      "enjoyment": "Vergnügen",
+      "objectiveUsability": "Objektive Benutzerfreundlichkeit"
     },
     "advanced": {
       "stepTitle": "Schritt 3: Erweiterte Optionen",
@@ -1441,6 +1432,18 @@
         "manualAccessibility": "Manuelle Barrierefreiheit",
         "automaticAccessibility": "Automatische Barrierefreiheit",
         "all": "Alle"
+      },
+      "unsupportedPreviewType": "Unsupported template type for preview.",
+      "config": {
+        "title": "Template Config",
+        "ownerOnly": "Configuration editing is restricted to template owner.",
+        "version": "Version",
+        "visibility": "Visibility",
+        "owner": "Owner",
+        "public": "Public",
+        "private": "Private",
+        "saved": "Template configuration updated successfully",
+        "saveError": "Failed to update template configuration"
       }
     },
     "createTest": {
@@ -1483,7 +1486,9 @@
     "editTest": {
       "title": "Test bearbeiten",
       "description": "Passen Sie die Einstellungen und Vorlieben Ihres Tests an.",
-      "updatedTest": "Test erfolgreich aktualisiert"
+      "updatedTest": "Test erfolgreich aktualisiert",
+      "previewTitle": "Preview test",
+      "previewDescription": "Review the test in read-only mode."
     },
     "cooperators": {
       "invitationSent": "Einladung erfolgreich gesendet"

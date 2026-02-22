@@ -5,8 +5,8 @@
       color="#f9a826"
       class="text-white"
       size="small"
-      :disabled="testAnswerDocLength > 0"
-      :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
+      :disabled="isTemplate || testAnswerDocLength > 0"
+      :class="{ disabledBtnBackground: isTemplate || testAnswerDocLength > 0 }"
       @click="((dialog = true), resetIndex())"
     >
       {{ $t('HeuristicsTable.titles.addNewDescription') }}
@@ -29,11 +29,13 @@
                     density="compact"
                     variant="outlined"
                     :label="$t('common.title')"
+                    :disabled="isTemplate"
                   />
 
                   <TextareaForm
                     v-model="desc.text"
                     :title="$t('common.description')"
+                    :readonly="isTemplate"
                   />
                 </v-col>
               </v-row>
@@ -93,6 +95,10 @@ const props = defineProps({
     required: true,
     default: 0,
   },
+  isTemplate: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const emit = defineEmits(['update-description'])
@@ -112,9 +118,11 @@ const form = ref(null)
 const rules = ref([(v) => !!v || t('errors.fieldRequired')])
 
 const question = computed(() => {
-  return store.state.Tests.Test.testStructure[props.heuristicIndex].questions[
-    props.questionIndex
-  ]
+  return (
+    store.state.Tests?.Test?.testStructure?.[props.heuristicIndex]?.questions?.[
+      props.questionIndex
+    ] || { descriptions: [] }
+  )
 })
 
 const testAnswerDocLength = computed(() => {
@@ -132,6 +140,7 @@ const stripHtml = (value) => {
 }
 
 const validate = async () => {
+  if (props.isTemplate) return
   const { valid } = await form.value.validate()
   const strippedText = stripHtml(desc.value.text)
   if (valid && strippedText.length > 0) {
@@ -150,7 +159,7 @@ const validate = async () => {
 
 const reset = () => {
   dialog.value = false
-  form.value.resetValidation()
+  form.value?.resetValidation()
   desc.value = {
     title: '',
     text: '',
@@ -163,12 +172,14 @@ const resetIndex = () => {
 }
 
 const editSetup = (i) => {
+  if (props.isTemplate) return
   dialog.value = true
   editIndex.value = i
-  desc.value = { ...question.value.descriptions[editIndex.value] }
+  desc.value = { ...(question.value?.descriptions?.[editIndex.value] || {}) }
 }
 
 const submitEdit = async () => {
+  if (props.isTemplate) return
   const { valid } = await form.value.validate()
   const strippedText = stripHtml(desc.value.text)
   if (valid && strippedText.length > 0) {

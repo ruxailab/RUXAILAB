@@ -13,7 +13,7 @@
         prepend-icon="mdi-plus"
         variant="elevated"
         size="large"
-        :disabled="testAnswerDocLength > 0"
+        :disabled="props.isTemplate || testAnswerDocLength > 0"
         class="text-none add-option-btn"
         @click="dialog = true"
       >
@@ -83,7 +83,7 @@
                     variant="text"
                     size="small"
                     color="primary"
-                    :disabled="testAnswerDocLength > 0"
+                    :disabled="props.isTemplate || testAnswerDocLength > 0"
                     class="table-action-btn"
                     @click="editItem(item)"
                   />
@@ -92,7 +92,7 @@
                     variant="text"
                     size="small"
                     color="error"
-                    :disabled="testAnswerDocLength > 0"
+                    :disabled="props.isTemplate || testAnswerDocLength > 0"
                     class="table-action-btn"
                     @click="deleteItem(item)"
                   />
@@ -159,7 +159,7 @@
                   variant="text"
                   size="small"
                   color="primary"
-                  :disabled="testAnswerDocLength > 0"
+                  :disabled="props.isTemplate || testAnswerDocLength > 0"
                   class="action-btn-mobile"
                   @click.stop="editItem(item)"
                 />
@@ -168,7 +168,7 @@
                   variant="text"
                   size="small"
                   color="error"
-                  :disabled="testAnswerDocLength > 0"
+                  :disabled="props.isTemplate || testAnswerDocLength > 0"
                   class="action-btn-mobile"
                   @click.stop="deleteItem(item)"
                 />
@@ -219,7 +219,7 @@
           </div>
           <div class="d-flex align-center gap-2">
             <v-btn
-              v-if="testAnswerDocLength === 0"
+              v-if="!props.isTemplate && testAnswerDocLength === 0"
               color="primary"
               variant="outlined"
               size="small"
@@ -227,7 +227,7 @@
               class="mobile-add-btn"
               @click="dialog = true"
             >
-              Add Option
+              {{ $t('HeuristicsTable.titles.addOption') }}
             </v-btn>
           </div>
         </div>
@@ -256,6 +256,12 @@ const store = useStore()
 const { t } = useI18n()
 
 const emit = defineEmits(['change'])
+const props = defineProps({
+  isTemplate: {
+    type: Boolean,
+    default: false,
+  },
+})
 
 const headers = ref([
   {
@@ -329,9 +335,9 @@ const updateHasValue = (newValue) => {
 }
 
 const updateOptions = (newOption) => {
+  if (props.isTemplate) return
   // Follow heuristics pattern: get current options, modify, then dispatch
   const currentOptions = [...(store.getters.testOptions || [])]
-
   if (editIndex.value === -1) {
     // Add new option
     currentOptions.push({
@@ -355,6 +361,7 @@ const updateOptions = (newOption) => {
 
 const deleteItem = (item) => {
   // Follow heuristics pattern: get current options, modify, then dispatch
+  if (props.isTemplate) return
   const currentOptions = [...(store.getters.testOptions || [])]
   const index = currentOptions.findIndex(
     (opt) => opt.timestamp === item.timestamp,
@@ -369,6 +376,7 @@ const deleteItem = (item) => {
 }
 
 const editItem = (item) => {
+  if (props.isTemplate) return
   const currentOptions = store.getters.testOptions || []
   editIndex.value = currentOptions.findIndex(
     (opt) => opt.timestamp === item.timestamp,
