@@ -1189,6 +1189,32 @@
       "note": "Your role is to facilitate and observe. The participant should complete tasks independently unless they specifically request help.",
       "startSession": "Start Moderated Session"
     },
+    "VideoCallPanel": {
+      "toolsPanelTitle": "Tools Panel",
+      "sessionControl": "Session Control",
+      "joinRoomInfo": "Join room controls are now in the main interface above",
+      "proceedNextStep": "Proceed to Next Step",
+      "endCall": "End Call",
+      "activeCall": "Active call",
+      "participants": "Participants",
+      "you": "You",
+      "observator": "Observer",
+      "moderator": "Moderator",
+      "connected": "Connected",
+      "disconnected": "Disconnected",
+      "camera": "Camera",
+      "noCamera": "No camera",
+      "microphone": "Microphone",
+      "noMicrophone": "No microphone",
+      "settings": "Settings",
+      "disableCamera": "Turn off camera",
+      "enableCamera": "Turn on camera",
+      "muteMicrophone": "Mute microphone",
+      "unmuteMicrophone": "Unmute microphone",
+      "stopScreenShare": "Stop sharing screen",
+      "shareScreen": "Share screen",
+      "moderatorOnlySteps": "Only the moderator can change steps"
+    },
     "buttons": {
       "done": "Done"
     },
