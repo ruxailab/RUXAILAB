@@ -765,8 +765,6 @@ const submitAnswer = async () => {
       type: 'error',
       message: t('UserTestView.errors.failedToSubmitAnswer'),
     })
-  } finally {
-    isLoading.value = false
   }
 }
 
