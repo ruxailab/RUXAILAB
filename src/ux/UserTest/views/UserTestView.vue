@@ -296,8 +296,8 @@
                         taskIndex > idx
                           ? 'success'
                           : taskIndex === idx
-                          ? 'primary'
-                          : 'grey'
+                            ? 'primary'
+                            : 'grey'
                       "
                       complete-icon="mdi-check"
                     />
@@ -519,7 +519,10 @@ import PreTasksStep from '@/ux/UserTest/components/steps/PreTasksStep.vue'
 import TaskStep from '@/ux/UserTest/components/steps/TaskStep.vue'
 import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue'
 import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue'
-import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
+import {
+  STUDY_TYPES,
+  getMethodManagerView,
+} from '@/shared/constants/methodDefinitions'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import EyeTrackingCalibrationStep from '@/ux/UserTest/calibration/EyeTrackingCalibrationStep.vue'
@@ -586,6 +589,12 @@ const hasEyeTracking = computed(() =>
 
 const isUserTestAdmin = computed(() => {
   return test.value.testAdmin.userDocId === user.value?.id
+})
+
+const currentUserAccessLevel = computed(() => {
+  if (!user.value || !test.value?.cooperators) return null
+  const coop = test.value.cooperators.find((c) => c.userDocId === user.value.id)
+  return coop?.accessLevel ?? null
 })
 
 const isStartTestDisabled = computed(() => {
@@ -729,7 +738,15 @@ const saveAnswer = async () => {
       })
     }
 
-    router.push('/admin')
+    if (user.value && currentUserAccessLevel.value === 1) {
+      const managerViewName = getMethodManagerView(
+        test.value.testType,
+        test.value.subType,
+      )
+      router.push({ name: managerViewName, params: { id: testId.value } })
+    } else {
+      router.push('/admin')
+    }
   } catch {
     store.commit('SET_TOAST', {
       type: 'error',
@@ -1360,7 +1377,8 @@ onBeforeUnmount(() => {
   --v-stepper-header-title-color: #fff !important;
   --v-stepper-item-title-color: #fff !important;
   --v-stepper-item-color: #fff !important;
-  transition: background 1s cubic-bezier(0.4, 0, 0.2, 1),
+  transition:
+    background 1s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
