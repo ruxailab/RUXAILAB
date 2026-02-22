@@ -26,7 +26,7 @@
             :title="$t(child.title)"
             :prepend-icon="child.icon"
             :active="activeSection === item.id && activeSubSection === child.id"
-            class="subsection-item ml-4 mb-1"
+            class="subsection-item mb-1"
             rounded="lg"
             @click="selectNavigation(item.id, child.id)"
           />
@@ -191,6 +191,11 @@ const selectNavigation = (sectionId, childId = null) => {
   transform: scale(1.1);
 }
 
+/* Control Vuetify's built-in group indent at the correct parent scope */
+.v-list-group :deep(.v-list-group__items) {
+  --indent-padding: 8px !important;
+}
+
 .subsection-item {
   font-size: 0.9rem;
   padding: 0;
@@ -202,8 +207,13 @@ const selectNavigation = (sectionId, childId = null) => {
   opacity: 1;
 }
 
+/* Tighten the gap between the icon and the label */
+.subsection-item :deep(.v-list-item__prepend) {
+  margin-inline-end: 6px !important;
+}
+
 .subsection-item .v-list-item__prepend .v-icon {
   font-size: 18px;
-  margin-right: 12px;
+  margin-right: 6px;
 }
 </style>
