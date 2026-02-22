@@ -4,6 +4,7 @@ import ChooseStudyMethods from '@/features/ux_creation/ChooseStudyMethods.vue'
 import ChooseStudyType from '@/features/ux_creation/ChooseStudyType.vue'
 import StudyDetailsForm from '@/features/ux_creation/StudyDetailsForm.vue'
 import DashboardView from '@/features/dashboard/views/DashboardView.vue'
+import TemplateManagerView from '@/features/templates/views/TemplateManagerView.vue'
 
 export default [
   {
@@ -59,5 +60,28 @@ export default [
     name: 'study-create-step4',
     meta: { authorize: [1] },
     component: StudyDetailsForm,
+  },
+  {
+    path: '/:TestType/:StudyType/template/manager/:id',
+    name: 'TemplateManagerView',
+    meta: { authorize: [1], templateAccess: true, templateSection: 'manager' },
+    component: TemplateManagerView,
+  },
+  {
+    path: '/:TestType/:StudyType/template/preview/:id',
+    name: 'TemplatePreviewView',
+    meta: { authorize: [1], templateAccess: true, templateSection: 'preview' },
+    component: TemplateManagerView,
+  },
+  {
+    path: '/:TestType/:StudyType/template/config/:id',
+    name: 'TemplateConfigView',
+    meta: {
+      authorize: [1],
+      templateAccess: true,
+      templateOwnerOnly: true,
+      templateSection: 'config',
+    },
+    component: TemplateManagerView,
   },
 ]

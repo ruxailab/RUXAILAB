@@ -382,6 +382,7 @@
     "incorrectPassword": "パスワードが正しくありません",
     "incorrectCredential": "ユーザー名またはパスワードが正しくありません。",
     "globalError": "エラーが発生しました。ご不便をおかけして申し訳ありません。",
+    "cameraPermissionDenied": "カメラへのアクセスが拒否されました。ブラウザの設定でカメラへのアクセスを許可してください。",
     "sendError": "招待の送信に失敗しました。再試行してください",
     "missingVariableTitles": "保存できません：いくつかの変数にタイトルがありません"
   },
@@ -598,7 +599,8 @@
       "changeWeights": "ヒューリスティックの順序を変更しても重みは自動で更新されません。手動で調整してください。",
       "noDescriptions": "説明が利用できません",
       "startAddingQuestions": "このヒューリスティックに最初の質問を追加して開始してください",
-      "cantDeleteAllQuestions": "申し訳ありませんが、ヒューリスティックからすべての質問を削除することはできません"
+      "cantDeleteAllQuestions": "申し訳ありませんが、ヒューリスティックからすべての質問を削除することはできません",
+      "studyHasAnswers": "This study has answers"
     },
     "validation": {
       "nameRequired": "名前は必須です",
@@ -705,7 +707,9 @@
       "options": "オプション",
       "weights": "重み",
       "settings": "設定"
-    }
+    },
+    "previewPageTitle": "Preview test",
+    "previewPageSubtitle": "Review the test configuration in read-only mode"
   },
   "HeuristicsTestAnswer": {
     "titles": {
@@ -954,73 +958,60 @@
       "sart": "状況認識評価技法 - 状況認識を測定"
     },
     "answerTypePreview": {
-      "noAnswer": {
-        "message": "タスク完了！追加のフィードバックは不要です。"
-      },
-      "textArea": {
-        "placeholder": "参加者はここにフィードバックを入力します...",
-        "submitButton": "フィードバックを送信"
-      },
-      "postTest": {
-        "title": "タスク後の質問",
-        "q1": "1. このタスクの難易度をどう評価しますか？",
-        "q2": "2. 追加のコメントはありますか？",
-        "feedbackPlaceholder": "任意のフィードバック..."
-      },
-      "postForm": {
-        "title": "外部フォーム",
-        "notice": "参加者はタスク後に外部フォームに記入するようリダイレクトされます。",
-        "button": "外部フォームを開く"
-      },
-      "nasaTlx": {
-        "title": "NASAタスクロードインデックス",
-        "mental": "精神的要求",
-        "physical": "身体的要求",
-        "range": "低 - 高",
-        "moreDimensions": "+ 他4つの次元"
-      },
-      "sus": {
-        "title": "システムユーザビリティスケール",
-        "q1": "1. このシステムを頻繁に使いたいと思う。",
-        "disagree": "強く反対",
-        "agree": "強く賛成",
-        "moreStatements": "+ 9つの追加ステートメント"
-      },
-      "sart": {
-        "title": "状況認識評価技法 (SART)",
-        "instability": "状況の不安定性",
-        "complexity": "状況の複雑性",
-        "stable": "非常に安定",
-        "unstable": "非常に不安定",
-        "simple": "非常に単純",
-        "complex": "非常に複雑",
-        "moreDimensions": "+ 8つの追加SART次元"
-      },
-      "tam": {
-        "tam1": "TAM-1: 技術受容モデル (基本)",
-        "tam2": "TAM-2: 技術受容モデル (拡張)",
-        "tam3": "TAM-3: 技術受容モデル (包括的)",
-        "items2": "2次元にわたる10項目",
-        "items7": "7次元にわたる25項目",
-        "items13": "13次元にわたる39項目",
-        "pu": "知覚された有用性",
-        "eu": "知覚された使いやすさ",
-        "sn": "主観的規範",
-        "image": "イメージ",
-        "jr": "仕事への関連性",
-        "oq": "出力の質",
-        "rd": "結果の実証可能性",
-        "se": "コンピュータ自己効力感",
-        "ec": "外部制御",
-        "anxiety": "不安",
-        "play": "遊び心",
-        "enjoy": "楽しさ",
-        "ou": "客観的な使いやすさ",
-        "q1": "1. システムを使用することで、仕事のパフォーマンスが向上する。",
-        "q6": "6. システムは使いやすい。",
-        "likertNote": "参加者は5段階のリッカート尺度で{count}個の記述を評価します"
-      },
-      "selectionPrompt": "プレビューを表示するには回答タイプを選択してください"
+      "taskCompleted": "タスク完了！追加のフィードバックは必要ありません。",
+      "participantsFeedbackHere": "参加者はここでフィードバックを提供します...",
+      "submitFeedback": "フィードバックを送信",
+      "postTaskQuestions": "タスク後の質問",
+      "rateTaskDifficulty": "1. このタスクの難易度をどう評価しますか？",
+      "additionalComments": "2. 追加のコメントはありますか？",
+      "optionalFeedback": "オプションのフィードバック...",
+      "externalFormTitle": "外部フォーム",
+      "externalFormDescription": "参加者はタスク後に外部フォームに入力するようリダイレクトされます。",
+      "openExternalForm": "外部フォームを開く",
+      "nasaTlxTitle": "NASAタスク負荷指数",
+      "mentalDemand": "精神的要求",
+      "physicalDemand": "身体的要求",
+      "lowHigh": "低 - 高",
+      "moreDimensions": "+ 4つの追加次元",
+      "susTitle": "システム使用性尺度",
+      "susStatement1": "1. このシステムを頻繁に使いたいと思います。",
+      "stronglyDisagree": "強く反対",
+      "stronglyAgree": "強く賛成",
+      "moreStatements": "+ 9つの追加ステートメント",
+      "sartTitle": "状況認識評価技法 (SART)",
+      "instability": "状況の不安定性",
+      "complexity": "状況の複雑性",
+      "veryStable": "非常に安定",
+      "veryUnstable": "非常に不安定",
+      "verySimple": "非常に単純",
+      "veryComplex": "非常に複雑",
+      "moreSartDimensions": "+ 8つの追加SART次元",
+      "tam1Title": "TAM-1: 技術受容モデル (基本)",
+      "tam1Subtitle": "2次元にわたる10項目",
+      "perceivedUsefulness": "知覚された有用性 (5項目)",
+      "perceivedEaseOfUse": "知覚された使いやすさ (5項目)",
+      "tam1Statement1": "1. システムを利用することで仕事のパフォーマンスが向上する。",
+      "tam1Statement6": "6. システムは使いやすい。",
+      "tam2Title": "TAM-2: 技術受容モデル (拡張)",
+      "tam2Subtitle": "7次元にわたる25項目",
+      "tam2Description": "参加者は25のステートメントを5段階のリッカート尺度で評価します (強く反対 - 強く賛成)",
+      "tam3Title": "TAM-3: 技術受容モデル (包括的)",
+      "tam3Subtitle": "13次元にわたる39項目",
+      "tam3Description": "13次元にわたる39のステートメントによる5段階リッカート尺度での包括的評価",
+      "selectType": "回答タイプを選択してプレビューを表示",
+      "perceivedUsefulnessShort": "知覚された有用性",
+      "perceivedEaseOfUseShort": "知覚された使いやすさ",
+      "subjectiveNorm": "主観的規範",
+      "image": "イメージ",
+      "jobRelevance": "仕事との関連性",
+      "outputQuality": "出力の質",
+      "resultDemonstrability": "結果の実証可能性",
+      "computerSelfEfficacy": "コンピュータ自己効力感",
+      "externalControl": "外部制御",
+      "anxiety": "不安",
+      "playfulness": "遊び心",
+      "enjoyment": "楽しさ",
+      "objectiveUsability": "客観的な使いやすさ"
     },
     "advanced": {
       "stepTitle": "ステップ3: 詳細オプション",
@@ -1440,6 +1431,18 @@
         "manualAccessibility": "手動アクセシビリティー",
         "automaticAccessibility": "自動アクセシビリティー",
         "all": "すべて"
+      },
+      "unsupportedPreviewType": "Unsupported template type for preview.",
+      "config": {
+        "title": "Template Config",
+        "ownerOnly": "Configuration editing is restricted to template owner.",
+        "version": "Version",
+        "visibility": "Visibility",
+        "owner": "Owner",
+        "public": "Public",
+        "private": "Private",
+        "saved": "Template configuration updated successfully",
+        "saveError": "Failed to update template configuration"
       }
     },
     "createTest": {
@@ -1482,7 +1485,9 @@
     "editTest": {
       "title": "テストを編集",
       "description": "テストの設定と好みをカスタマイズします。",
-      "updatedTest": "テストが正常に更新されました"
+      "updatedTest": "テストが正常に更新されました",
+      "previewTitle": "Preview test",
+      "previewDescription": "Review the test in read-only mode."
     },
     "cooperators": {
       "invitationSent": "招待が正常に送信されました"
@@ -1578,7 +1583,11 @@
       "SelfTest": {
         "title": "セルフテスト",
         "type": "非モデレート",
-        "text": ["自分の時間に回答", "高度な回答分析", "タスクのカスタマイズ"]
+        "text": [
+          "自分の時間に回答",
+          "高度な回答分析",
+          "タスクのカスタマイズ"
+        ]
       },
       "LiveTest": {
         "title": "ライブテスト",
@@ -1860,7 +1869,11 @@
       "blank": {
         "title": "空白の研究から開始",
         "description": "完全なカスタマイズでゼロから研究を作成します",
-        "features": ["完全なカスタマイズ", "ゼロから構築", "設定を完全に制御"]
+        "features": [
+          "完全なカスタマイズ",
+          "ゼロから構築",
+          "設定を完全に制御"
+        ]
       },
       "template": {
         "title": "テンプレートから作成",
