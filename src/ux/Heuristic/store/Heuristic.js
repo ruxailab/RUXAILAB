@@ -19,8 +19,14 @@ export default {
     testWeights(state) {
       return state.testWeights
     },
-    testOptions(state) {
-      return state.testOptions
+    testOptions(state, _getters, rootState) {
+      // Smart getter: return Heuristic store if populated, otherwise fallback to Study store
+      // This prevents data loss when user navigates directly to Options tab
+      if (state.testOptions && state.testOptions.length > 0) {
+        return state.testOptions
+      }
+      // Fallback to Study store if Heuristic store not yet seeded
+      return rootState.Tests?.Test?.testOptions || []
     },
   },
   mutations: {
