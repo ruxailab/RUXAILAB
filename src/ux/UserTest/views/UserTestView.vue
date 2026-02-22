@@ -18,7 +18,9 @@
     <v-overlay v-model="isLoading" class="d-flex align-center justify-center">
       <div class="text-center">
         <v-progress-circular indeterminate color="#fca326" size="50" />
-        <div style="color: white" class="mt-3">loading...</div>
+        <div style="color: white" class="mt-3">
+          {{ $t('UserTestView.loading') }}
+        </div>
       </div>
     </v-overlay>
 
@@ -529,6 +531,7 @@ import EyeTrackingCalibrationStep from '@/ux/UserTest/calibration/EyeTrackingCal
 import { db } from '@/app/plugins/firebase'
 import IrisTracker from '../components/IrisTracker.vue'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
+import { calculateProgress } from '../utils/testProgress'
 
 const fullName = ref('')
 const logined = ref(null)
@@ -696,10 +699,9 @@ function toggleTracking(value) {
   isRecording.value = value
 }
 
-const saveAnswer = async () => {
+const savePartialAnswer = async () => {
   try {
-    attachMediaToTasks(localTestAnswer, mediaUrls.value)
-    localTestAnswer.progress = calculateProgress()
+    calculateProgress(localTestAnswer)
     localTestAnswer.fullName = fullName.value
 
     if (user.value && user.value?.email) {
@@ -737,6 +739,11 @@ const saveAnswer = async () => {
         testType: test.value.testType,
       })
     }
+  } catch (error) {
+    // Propagate the error so callers can handle it (e.g., show toasts, prevent navigation).
+    throw error
+  }
+}
 
     if (user.value && currentUserAccessLevel.value === 1) {
       const managerViewName = getMethodManagerView(
@@ -788,13 +795,36 @@ const handleSubmit = () => {
 }
 
 const attachMediaToTasks = (answer, mediaUrls) => {
-  if (!answer?.tasks?.length) return
+  if (!answer?.tasks) return
+
+  const taskEntries = Array.isArray(answer.tasks)
+    ? answer.tasks.map((task, index) => [index, task])
+    : Object.entries(answer.tasks)
+
+  if (!taskEntries.length) return
 
   for (const [taskIndex, medias] of Object.entries(mediaUrls)) {
     const task = answer.tasks[taskIndex]
     if (!task) continue
 
     for (const type in medias) {
+      if (type === 'sizes') {
+        const sizes = medias[type]
+        console.log(`Found sizes for Task ${taskIndex}:`, sizes)
+        if (sizes.screenRecordURL) {
+          task.screenSize = sizes.screenRecordURL
+          console.log('Set screenSize:', task.screenSize)
+        }
+        if (sizes.audioRecordURL) {
+          task.audioSize = sizes.audioRecordURL
+          console.log('Set audioSize:', task.audioSize)
+        }
+        if (sizes.webcamRecordURL) {
+          task.webcamSize = sizes.webcamRecordURL
+          console.log('Set webcamSize:', task.webcamSize)
+        }
+        continue
+      }
       const field = MEDIA_FIELD_MAP?.[type] || type
       const url = medias[type]
       if (url != null) task[field] = url
@@ -840,9 +870,28 @@ const callTimerSave = () => {
   }
 }
 
-function handleTaskFinish(userCompleted) {
-  completeStep(taskIndex.value, 'tasks', userCompleted)
+async function handleTaskFinish(userCompleted) {
   callTimerSave()
+
+  await nextTick()
+
+  if (isLoading.value) {
+    const unwatch = watch(
+      () => isLoading.value,
+      async (val) => {
+        if (!val) {
+          unwatch()
+          completeStep(taskIndex.value, 'tasks', userCompleted)
+          attachMediaToTasks(localTestAnswer, mediaUrls.value)
+          await savePartialAnswer()
+        }
+      },
+    )
+  } else {
+    completeStep(taskIndex.value, 'tasks', userCompleted)
+    attachMediaToTasks(localTestAnswer, mediaUrls.value)
+    await savePartialAnswer()
+  }
 }
 
 const startTimer = () => {
@@ -884,11 +933,13 @@ const completeStep = (id, type, userCompleted = true) => {
     if (type === 'consent') {
       localTestAnswer.consentCompleted = true
       globalIndex.value = 2 // PreTest
+      savePartialAnswer()
     }
 
     if (type === 'preTest') {
       localTestAnswer.preTestCompleted = true
       globalIndex.value = hasEyeTracking.value ? 3 : 3 // se tiver, vai pro PreCalibration
+      savePartialAnswer()
     }
 
     if (type === 'eyeCalibration') {
@@ -942,9 +993,10 @@ const completeStep = (id, type, userCompleted = true) => {
       localTestAnswer.postTestCompleted = true
       // items.value[2].icon = 'mdi-check-circle-outline';
       globalIndex.value = hasEyeTracking.value ? 7 : 6 // Finish
+      savePartialAnswer()
     }
 
-    calculateProgress()
+    calculateProgress(localTestAnswer)
   } catch {
     store.commit('SET_TOAST', {
       type: 'error',
@@ -1005,43 +1057,6 @@ const autoComplete = async () => {
   }
 }
 
-const calculateProgress = () => {
-  try {
-    if (!localTestAnswer) return 0
-    const totalSteps = 4
-    let completedSteps = 0
-
-    if (localTestAnswer.preTestCompleted) completedSteps++
-    if (localTestAnswer.consentCompleted) completedSteps++
-
-    let tasksCompleted = 0
-    if (
-      Array.isArray(localTestAnswer.tasks) &&
-      localTestAnswer.tasks.length > 0
-    ) {
-      for (let i = 0; i < localTestAnswer.tasks.length; i++) {
-        if (
-          localTestAnswer.tasks[i]?.completed ||
-          localTestAnswer.tasks[i]?.attempted
-        ) {
-          tasksCompleted++
-        }
-      }
-      if (tasksCompleted === localTestAnswer.tasks.length) {
-        completedSteps++
-      }
-    }
-
-    if (localTestAnswer.postTestCompleted) completedSteps++
-
-    const progressPercentage = (completedSteps / totalSteps) * 100
-    localTestAnswer.progress = progressPercentage
-    return progressPercentage
-  } catch {
-    return 0
-  }
-}
-
 const initializeAnonymousUser = () => {
   if (!user.value && !anonymousUserDocId.value) {
     anonymousUserDocId.value = nanoid(16)
@@ -1084,7 +1099,7 @@ const setTest = async () => {
     fullName.value = localTestAnswer.fullName
     await mappingSteps()
     await autoComplete()
-    localTestAnswer.progress = calculateProgress()
+    calculateProgress(localTestAnswer)
     initializeAnonymousUser()
   } catch {
     store.commit('SET_TOAST', {
@@ -1268,7 +1283,7 @@ onMounted(async () => {
   await nextTick()
   await setTest()
   await autoComplete()
-  calculateProgress()
+  calculateProgress(localTestAnswer)
   if (!user.value?.id) return
 
   let firstSnapshot = true

@@ -21,6 +21,7 @@ export default {
     studyCategory: null,
     studyMethod: null,
     studyType: null,
+    selectedTemplate: null,
   },
   getters: {
     tests(state) {
@@ -82,10 +83,14 @@ export default {
     SET_STUDY_TYPE(state, payload) {
       state.studyType = payload
     },
+    SET_SELECTED_TEMPLATE(state, payload) {
+      state.selectedTemplate = payload
+    },
     RESET_STUDY_DETAILS(state) {
-      ;(state.studyCategory = null),
+      ;((state.studyCategory = null),
         (state.studyMethod = null),
-        (state.studyType = null)
+        (state.studyType = null),
+        (state.selectedTemplate = null))
     },
     SET_CALIBRATION_CONFIG(state, payload) {
       if (state.Test) {

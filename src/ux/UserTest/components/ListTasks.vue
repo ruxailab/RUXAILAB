@@ -18,6 +18,7 @@
               size="large"
               class="text-capitalize w-100 w-md-auto"
               rounded="lg"
+              :disabled="isTemplate"
               @click="
                 () => {
                   dialog = true
@@ -35,6 +36,7 @@
             :headers="headers"
             :items="allTasks"
             :items-per-page="5"
+            :items-per-page-text="$t('common.table.itemsPerPage')"
             class="elevation-0 rounded-lg"
             style="background: #ffffff; border: 1px solid #e5e7eb"
             :no-data-text="$t('UserTestTable.messages.noTasks')"
@@ -124,6 +126,7 @@
                 variant="text"
                 color="accent"
                 class="mr-2"
+                :disabled="isTemplate"
                 @click="editItem(item)"
               >
                 <v-icon>mdi-pencil</v-icon>
@@ -132,6 +135,7 @@
                 icon
                 variant="text"
                 color="error"
+                :disabled="isTemplate"
                 @click="deleteItem(item)"
               >
                 <v-icon>mdi-trash-can-outline</v-icon>
@@ -142,15 +146,45 @@
         <FormDialog
           v-model:dialog="dialog"
           v-model:task="task"
+          :is-template="isTemplate"
           @add-task="addTask"
         />
       </v-card>
     </v-col>
+
+    <v-dialog v-model="taskDeleteDialog" width="600" persistent>
+      <v-card>
+        <v-card-title class="text-h5 bg-error text-white" primary-title>
+          {{ $t('UserTestTable.messages.confirm_delete_task') }}
+        </v-card-title>
+        <v-card-text>{{ taskDeleteDialogText }}</v-card-text>
+        <v-divider />
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            class="bg-grey-lighten-3"
+            variant="text"
+            @click="taskDeleteDialog = false"
+          >
+            {{ $t('buttons.cancel') }}
+          </v-btn>
+          <v-btn
+            class="bg-red text-white ml-1"
+            :loading="taskDeleteLoading"
+            :disabled="isTemplate"
+            variant="text"
+            @click="confirmTaskDeletion"
+          >
+            {{ $t('buttons.delete') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-row>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import FormDialog from './FormDialog.vue'
@@ -164,6 +198,10 @@ const dialog = ref(false)
 const allTasks = ref([])
 const editedIndex = ref(-1)
 const task = ref(new Task())
+
+const taskDeleteDialog = ref(false)
+const taskToDelete = ref(null)
+const taskDeleteLoading = ref(false)
 
 const headers = ref([
   {
@@ -224,23 +262,50 @@ const headers = ref([
   },
 ])
 
+const taskDeleteDialogText = computed(() =>
+  t('UserTestTable.messages.sure_to_delete_task', {
+    taskName: taskToDelete.value?.taskName,
+  }),
+)
+
+const props = defineProps({
+  isTemplate: {
+    type: Boolean,
+    default: false,
+  },
+})
+
 const editItem = (item) => {
+  if (props.isTemplate) return
   editedIndex.value = allTasks.value.indexOf(item)
   task.value = item
   dialog.value = true
 }
 
 const deleteItem = async (item) => {
-  const index = allTasks.value.indexOf(item)
-  if (confirm('Are you sure you want to delete this task?')) {
-    try {
+  if (props.isTemplate) return
+  taskToDelete.value = item
+  taskDeleteDialog.value = true
+}
+
+const confirmTaskDeletion = async () => {
+  taskDeleteLoading.value = true
+  try {
+    const index = allTasks.value.indexOf(taskToDelete.value)
+    if (index > -1) {
       allTasks.value.splice(index, 1)
       await store.dispatch('UserStudy/setTasks', allTasks.value)
-    } catch {}
+    }
+  } catch {
+  } finally {
+    taskDeleteDialog.value = false
+    taskDeleteLoading.value = false
+    taskToDelete.value = null
   }
 }
 
 const addTask = async (newTask) => {
+  if (props.isTemplate) return
   try {
     if (editedIndex.value > -1) {
       Object.assign(allTasks.value[editedIndex.value], newTask.toFirestore())

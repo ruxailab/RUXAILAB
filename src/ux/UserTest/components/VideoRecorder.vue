@@ -79,6 +79,7 @@ const recordedChunks = ref([])
 const mediaRecorder = ref(null)
 const recordedVideo = ref('')
 const recordingTaskIndex = ref(null) // Store the task index when recording starts
+const cameraPermissionDenied = ref(false)
 
 async function hasCamera() {
   try {
@@ -90,7 +91,25 @@ async function hasCamera() {
   }
 }
 
+const requestCameraPermission = async () => {
+  try {
+    await navigator.mediaDevices.getUserMedia({ video: true })
+    cameraPermissionDenied.value = false
+    return true
+  } catch {
+    cameraPermissionDenied.value = true
+    return false
+  }
+}
+
 const startRecording = async () => {
+  if(cameraPermissionDenied.value) {
+    const permissionGranted = await requestCameraPermission()
+    if (!permissionGranted) {
+      showError(t('errors.cameraPermissionDenied'))
+      return false
+    }
+  }
   try {
     const cameraAvailable = await hasCamera()
     if (!cameraAvailable) return
@@ -115,62 +134,77 @@ const startRecording = async () => {
     }
   } catch (e) {
     recording.value = false
-    console.error(e)
+    if(e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
+      cameraPermissionDenied.value = true
+      showError(t('errors.cameraPermissionDenied'))
+      return false
+    }
+    console.error("Unexpected error while starting video recording:", e)
     showError('errors.globalError')
+    return false
   }
 
   try {
-    mediaRecorder.value.onstop = async () => {
-      emit('showLoading')
-      const videoBlob = new Blob(recordedChunks.value, {
-        type: 'video/webm',
-      })
-      const storage = getStorage()
-      const correctTaskIndex = recordingTaskIndex.value
-      const storageReference = storageRef(
-        storage,
-        `tests/${props.testId}/${props.userDocId}/task_${correctTaskIndex}/video/${recordedVideo.value}`,
-      )
-      await uploadBytes(storageReference, videoBlob)
-
-      recordedVideo.value = await getDownloadURL(storageReference)
-      console.log('webcam url =>', correctTaskIndex, recordedVideo.value)
-      console.log('Tasks array:', currentUserTestAnswer.value.tasks)
-      console.log('Tasks length:', currentUserTestAnswer.value.tasks?.length)
-      console.log(
-        'Task at index:',
-        currentUserTestAnswer.value.tasks?.[correctTaskIndex],
-      )
-
-      await store.dispatch('updateTaskMediaUrl', {
-        taskIndex: correctTaskIndex,
-        mediaType: MEDIA_FIELD_MAP.webcam,
-        url: recordedVideo.value,
-      })
-
-      // Add safety check before setting the property
-      if (
-        currentUserTestAnswer.value.tasks &&
-        currentUserTestAnswer.value.tasks[correctTaskIndex]
-      ) {
-        currentUserTestAnswer.value.tasks[correctTaskIndex].webcamRecordURL =
-          recordedVideo.value
-      } else {
-        console.error(
-          'Task not found at index:',
-          correctTaskIndex,
-          'Available tasks:',
-          currentUserTestAnswer.value.tasks?.length,
+    if (mediaRecorder.value) {
+      mediaRecorder.value.onstop = async () => {
+        emit('showLoading')
+        const videoBlob = new Blob(recordedChunks.value, {
+          type: 'video/webm',
+        })
+        const storage = getStorage()
+        const correctTaskIndex = recordingTaskIndex.value
+        const storageReference = storageRef(
+          storage,
+          `tests/${props.testId}/${props.userDocId}/task_${correctTaskIndex}/video/${recordedVideo.value}`,
         )
+        await uploadBytes(storageReference, videoBlob)
+
+        recordedVideo.value = await getDownloadURL(storageReference)
+        console.log('webcam url =>', correctTaskIndex, recordedVideo.value)
+        console.log('Tasks array:', currentUserTestAnswer.value.tasks)
+        console.log('Tasks length:', currentUserTestAnswer.value.tasks?.length)
+        console.log(
+          'Task at index:',
+          currentUserTestAnswer.value.tasks?.[correctTaskIndex],
+        )
+
+        await store.dispatch('updateTaskMediaUrl', {
+          taskIndex: correctTaskIndex,
+          mediaType: MEDIA_FIELD_MAP.webcam,
+          url: recordedVideo.value,
+          size: videoBlob.size,
+        })
+
+        // Add safety check before setting the property
+        if (
+          currentUserTestAnswer.value.tasks &&
+          currentUserTestAnswer.value.tasks[correctTaskIndex]
+        ) {
+          currentUserTestAnswer.value.tasks[correctTaskIndex].webcamRecordURL =
+            recordedVideo.value
+          currentUserTestAnswer.value.tasks[correctTaskIndex].webcamSize =
+            videoBlob.size
+        } else {
+          console.error(
+            'Task not found at index:',
+            correctTaskIndex,
+            'Available tasks:',
+            currentUserTestAnswer.value.tasks?.length,
+          )
+        }
+
+        videoStream.value.getTracks().forEach((track) => track.stop())
+        recording.value = false
+
+        emit('stopShowLoading')
       }
-
-      videoStream.value.getTracks().forEach((track) => track.stop())
-      recording.value = false
-
-      emit('stopShowLoading')
     }
 
-    mediaRecorder.value.start()
+    if (mediaRecorder.value) {
+      mediaRecorder.value.start()
+      return true
+    }
+    return false
   } catch (e) {
     console.error(e)
     showError('errors.globalError')

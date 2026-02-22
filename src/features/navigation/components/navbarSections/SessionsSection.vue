@@ -80,7 +80,9 @@
 
           <!-- 📅 Session date range filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">{{ t('pages.sessions.sessionDate') }}</div>
+            <div class="filter-label">
+              {{ t('pages.sessions.sessionDate') }}
+            </div>
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
@@ -118,7 +120,9 @@
 
           <!-- ⚙️ Status filter -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">{{ t('pages.sessions.statusLabel') }}</div>
+            <div class="filter-label">
+              {{ t('pages.sessions.statusLabel') }}
+            </div>
             <v-select
               v-model="selectedSessionStatusFilter"
               :items="sessionStatusOptions"
@@ -147,13 +151,25 @@
 
   <!-- 🕓 Empty state (no sessions found) -->
   <div v-else class="empty-state">
-    <v-icon
-      icon="mdi-clock-remove-outline"
-      size="48"
-      color="grey-lighten-1"
-      class="mb-2"
-    />
-    <p class="text-h6">{{ t('pages.sessions.noActiveSessions') }}</p>
+    <div v-if="hasActiveSessionFilters">
+      <v-icon
+        icon="mdi-magnify-remove-outline"
+        size="48"
+        color="grey-lighten-1"
+        class="mb-2"
+      />
+      <div class="text-h6 mt-2">{{ t('common.table.noSearchResults') }}</div>
+      <div class="text-body-2">{{ t('common.table.tryAdjustingSearch') }}</div>
+    </div>
+    <div v-else>
+      <v-icon
+        icon="mdi-clock-remove-outline"
+        size="48"
+        color="grey-lighten-1"
+        class="mb-2"
+      />
+      <p class="text-h6">{{ t('pages.sessions.noActiveSessions') }}</p>
+    </div>
   </div>
 </template>
 

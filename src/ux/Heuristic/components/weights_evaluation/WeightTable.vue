@@ -123,6 +123,7 @@
                   hide-details
                   class="weight-radio-group"
                   density="compact"
+                  :disabled="isTemplate"
                 >
                   <v-tooltip
                     v-for="(r, rad) in importance"
@@ -158,6 +159,7 @@
               variant="elevated"
               size="large"
               class="text-none px-8"
+              :disabled="isTemplate"
               @click="updateDatas"
             >
               {{ $t('HeuristicsWeightsTable.actions.saveWeights') }}
@@ -176,6 +178,12 @@ import { useI18n } from 'vue-i18n'
 import { showSuccess, showError } from '@/shared/utils/toast'
 
 const emit = defineEmits(['change'])
+const props = defineProps({
+  isTemplate: {
+    type: Boolean,
+    default: false,
+  },
+})
 const store = useStore()
 const { t } = useI18n()
 
@@ -207,6 +215,7 @@ const importt = ref([
 const heuristics = computed(() => store.getters.heuristics || [])
 
 const updateDatas = () => {
+  if (props.isTemplate) return
   try {
     store.dispatch('setTestWeights', { ...group.value })
     emit('change')

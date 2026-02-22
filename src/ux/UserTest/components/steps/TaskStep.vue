@@ -690,7 +690,11 @@ function updateElapsedTime() {
 async function startTask() {
   emit('show-loading')
   emit('startTask')
-  await startMediaRecorders()
+  const mediaStarted = await startMediaRecorders()
+  if (!mediaStarted) {
+    emit('stop-show-loading')
+    return
+  }
   stage.value = 2
   taskStartTime = Date.now()
   timerInterval = setInterval(updateElapsedTime, 1000)
@@ -729,11 +733,15 @@ async function startMediaRecorders() {
     await audioRecorder.value.startAudioRecording()
   }
   if (props.task?.hasCamRecord && videoRecorder.value) {
-    await videoRecorder.value.startRecording()
+    const videoStarted = await videoRecorder.value.startRecording()
+    if(!videoStarted){
+      return false
+    }
   }
   if (props.task?.hasScreenRecord && screenRecorder.value) {
     await screenRecorder.value.captureScreen()
   }
+  return true
 }
 
 function forceStopAllMedia() {
@@ -761,6 +769,17 @@ function handleShowPostForm(userCompleted) {
   }
 
   showPostForm.value.userCompleted = userCompleted
+
+  if (props.task?.taskType === 'post-form' && props.task?.postForm) {
+    const link = props.task?.postForm
+    if (link) {
+      const url =
+        link.startsWith('http://') || link.startsWith('https://')
+          ? link
+          : `https://${link}`
+      window.open(url, '_blank')
+    }
+  }
 
   // Show post-task form for all validated task types
   if (VALIDATION_REQUIRED_TYPES.has(props.task?.taskType)) {

@@ -111,9 +111,30 @@
       </v-chip>
     </template>
 
+    <template v-if="showActions" #item.actions="{ item }">
+      <v-btn
+        icon
+        variant="text"
+        size="small"
+        color="primary"
+        @click.stop="emitPreview(item)"
+      >
+        <v-icon>mdi-eye</v-icon>
+      </v-btn>
+    </template>
+
     <!-- No Data Slot -->
     <template #no-data>
-      <div class="text-center pa-4">
+      <div v-if="isFiltered" class="pa-8 text-center text-medium-emphasis">
+        <v-icon size="48" color="grey-lighten-1" class="mb-2">
+          mdi-magnify-remove-outline
+        </v-icon>
+        <div class="text-h6 mt-2">{{ t('common.table.noSearchResults') }}</div>
+        <div class="text-body-2">
+          {{ t('common.table.tryAdjustingSearch') }}
+        </div>
+      </div>
+      <div v-else class="text-center pa-4">
         <span>
           {{ getEmptyStateMessage(t) }}
         </span>
@@ -147,15 +168,26 @@ const props = defineProps({
     required: false,
     default: null,
   },
+  isFiltered: {
+    type: Boolean,
+    default: false,
+  },
+  showActions: {
+    type: Boolean,
+    default: false,
+  },
 })
 
-const emit = defineEmits(['clicked'])
+const emit = defineEmits(['clicked', 'preview-clicked'])
 
 const { t } = useI18n()
 
 // Composables
 const typeRef = toRef(props, 'type')
-const { headers, getEmptyStateMessage } = useDataTableConfig(typeRef, t)
+const showActionsRef = toRef(props, 'showActions')
+const { headers, getEmptyStateMessage } = useDataTableConfig(typeRef, t, {
+  showActions: showActionsRef,
+})
 const {
   getItemTitle,
   getOwnerName,
@@ -172,6 +204,10 @@ const loadingStudy = computed(() => {
 // Event handlers
 const emitClick = (event, { item }) => {
   emit('clicked', item)
+}
+
+const emitPreview = (item) => {
+  emit('preview-clicked', item)
 }
 </script>
 

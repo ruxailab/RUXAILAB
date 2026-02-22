@@ -1,6 +1,6 @@
 <template>
   <div class="signup-wrapper">
-    <!-- LEFT: LOGO -->
+    <Loading />
     <div class="logo-side d-none d-md-flex align-center justify-center">
       <img src="@/assets/logo_full.png" alt="RUXAILAB" class="logo-img" />
     </div>
@@ -55,14 +55,7 @@
             @click:append-inner="showConfirmPassword = !showConfirmPassword"
           />
 
-          <v-btn
-            type="submit"
-            color="primary"
-            block
-            :loading="loading && loadingType === 'signin'"
-            :disabled="loadingType === 'google'"
-            min-height="44"
-          >
+          <v-btn type="submit" color="primary" block min-height="44">
             {{ $t('auth.SIGNIN.sign-up') }}
           </v-btn>
         </v-form>
@@ -106,6 +99,7 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Snackbar from '@/shared/components/Snackbar'
+import Loading from '../../../shared/components/Loading.vue'
 import GoogleSignInButton from '@/features/auth/components/GoogleSignInButton'
 import { createEmailRules } from '@/shared/utils/validators'
 import PasswordStrength from '@/features/auth/components/PasswordStrength.vue'

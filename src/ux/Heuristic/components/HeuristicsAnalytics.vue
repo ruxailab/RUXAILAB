@@ -10,7 +10,9 @@
               <!--Heuristics List-->
               <v-col class="ma-0 pa-0" cols="2">
                 <v-list border rounded density="compact" height="560px">
-                  <v-list-subheader>Heuristics</v-list-subheader>
+                  <v-list-subheader>{{
+                    $t('Dashboard.cards.heuristics')
+                  }}</v-list-subheader>
                   <v-divider />
                   <v-list
                     color="#fca326"

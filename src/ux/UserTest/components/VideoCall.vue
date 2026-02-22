@@ -64,11 +64,32 @@
           >
             <div class="video-container">
               <video
+                v-if="isRemoteCameraEnabled(userId)"
                 :srcObject="stream"
                 autoplay
                 playsinline
                 class="video-element"
               ></video>
+
+              <!-- Camera disabled overlay for remote peer -->
+              <div
+                v-if="!isRemoteCameraEnabled(userId)"
+                class="camera-disabled-overlay"
+              >
+                <v-icon size="64" color="white" class="mb-2"
+                  >mdi-video-off</v-icon
+                >
+                <p class="text-white">Camera is off</p>
+              </div>
+
+              <!-- Microphone muted indicator for remote peer -->
+              <div
+                v-if="!isRemoteMicrophoneEnabled(userId)"
+                class="mic-muted-indicator"
+              >
+                <v-icon size="24" color="white">mdi-microphone-off</v-icon>
+              </div>
+
               <div class="video-label">{{ getPeerName(userId) }}</div>
             </div>
           </div>
@@ -391,6 +412,7 @@
 
             <!-- End call button -->
             <v-btn
+              v-if="!isObservator"
               color="error"
               size="large"
               block
@@ -424,16 +446,16 @@
                 participant.role === 'moderator'
                   ? 'blue'
                   : participant.role === 'observator'
-                  ? 'orange'
-                  : 'green'
+                    ? 'orange'
+                    : 'green'
               "
             >
               <v-icon color="white">{{
                 participant.role === 'moderator'
                   ? 'mdi-account-star'
                   : participant.role === 'observator'
-                  ? 'mdi-eye'
-                  : 'mdi-account'
+                    ? 'mdi-eye'
+                    : 'mdi-account'
               }}</v-icon>
             </v-avatar>
             <div class="participant-info">
@@ -486,7 +508,7 @@
           </div>
         </div>
 
-        <div class="panel-section">
+        <div v-if="!isObservator" class="panel-section">
           <h4>Configuración</h4>
           <v-list density="compact">
             <v-list-item @click="toggleCamera">
@@ -673,16 +695,16 @@
                             item.raw.index < currentTaskIndex
                               ? 'success'
                               : item.raw.index === currentTaskIndex
-                              ? 'primary'
-                              : 'grey'
+                                ? 'primary'
+                                : 'grey'
                           "
                         >
                           {{
                             item.raw.index < currentTaskIndex
                               ? 'mdi-check-circle'
                               : item.raw.index === currentTaskIndex
-                              ? 'mdi-play-circle'
-                              : 'mdi-circle-outline'
+                                ? 'mdi-play-circle'
+                                : 'mdi-circle-outline'
                           }}
                         </v-icon>
                       </template>
@@ -801,6 +823,7 @@
 
 <script setup>
 import { ref, computed, reactive, onMounted, onBeforeUnmount, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { database } from '@/app/plugins/firebase/index'
 import {
   ref as dbRef,
@@ -830,6 +853,7 @@ const emit = defineEmits([
   'setRemoteStream',
   'proceedToNextStep',
   'stepSelected',
+  'moderatorStatusChange',
 ])
 
 // Local State
@@ -851,6 +875,23 @@ const showJoinDialog = ref(false) // Legacy support, maybe unused in Mesh
 // Mesh State
 const peers = reactive({}) // userId -> { connection: RTCPeerConnection, stream: MediaStream }
 const participants = ref({}) // userId -> user info (name, etc)
+
+// Watch for moderator connected status changes and emit to parent
+watch(
+  () => {
+    const allParts = participants.value
+    for (const [userId, data] of Object.entries(allParts)) {
+      if (data.isModerator && userId !== props.user.id) {
+        return data.connected
+      }
+    }
+    return null
+  },
+  (connected, oldConnected) => {
+    if (connected === null || oldConnected === null) return
+    emit('moderatorStatusChange', connected)
+  },
+)
 
 // Computed
 const isObservator = computed(
@@ -881,8 +922,8 @@ const participantsList = computed(() => {
     role: isObservator.value
       ? 'observator'
       : props.isModerator
-      ? 'moderator'
-      : 'participant',
+        ? 'moderator'
+        : 'participant',
     connected: true,
     hasCamera: !isObservator.value && isCameraEnabled.value,
     hasMicrophone: !isObservator.value && isMicrophoneEnabled.value,
@@ -979,20 +1020,23 @@ onMounted(async () => {
     }
   } else {
     // Participants and observators wait for room to be opened by moderator
-    const roomRef = dbRef(database, `rooms/${props.roomId}`)
+    const showVideoCallRef = dbRef(
+      database,
+      `rooms/${props.roomId}/showVideoCall`,
+    )
 
     // Check initial value first
-    const initialSnapshot = await get(roomRef)
-    const initialData = initialSnapshot.val()
-    if (initialData?.showVideoCall && !roomReady.value) {
+    const initialSnapshot = await get(showVideoCallRef)
+    const shouldShow = initialSnapshot.val()
+    if (shouldShow && !roomReady.value) {
       roomReady.value = true
       await joinRoom()
     }
 
     // Then listen for changes
-    onValue(roomRef, (snapshot) => {
-      const roomData = snapshot.val()
-      if (roomData?.showVideoCall) {
+    onValue(showVideoCallRef, (snapshot) => {
+      const shouldShow = snapshot.val()
+      if (shouldShow) {
         if (!roomReady.value) {
           roomReady.value = true
           joinRoom()
@@ -1013,18 +1057,44 @@ const joinRoom = async () => {
   if (!isObservator.value && !localStream.value) {
     await initLocalMedia()
   }
-
   // 2. Register self in participants list
   const myRef = dbRef(
     database,
     `calls/${props.roomId}/participants/${props.user.id}`,
   )
-  await set(myRef, {
+
+  // Restore media settings from DB if available (persistence)
+  const snapshot = await get(myRef)
+  const existingData = snapshot.val()
+  if (existingData && existingData.media) {
+    isCameraEnabled.value = existingData.media.cameraEnabled
+    isMicrophoneEnabled.value = existingData.media.microphoneEnabled
+  }
+
+  // Enforce restored state on tracks
+  if (localStream.value) {
+    const vTrack = localStream.value.getVideoTracks()[0]
+    if (vTrack) vTrack.enabled = isCameraEnabled.value
+
+    const aTrack = localStream.value.getAudioTracks()[0]
+    if (aTrack) aTrack.enabled = isMicrophoneEnabled.value
+  }
+
+  await update(myRef, {
     email: props.user.email,
-    name: props.user.email?.split('@')[0], // Simple name
+    name: props.user.email?.split('@')[0],
     joinedAt: Date.now(),
+    connected: true,
+    isModerator: props.isModerator,
+    taskIndex: props.isModerator ? 0 : props.currentTaskIndex,
+    media: {
+      cameraEnabled: isCameraEnabled.value,
+      microphoneEnabled: isMicrophoneEnabled.value,
+    },
   })
-  onDisconnect(myRef).remove() // Auto-remove on closing tab
+
+  // Mark as disconnected on close tab, but do NOT remove (to persist media settings)
+  onDisconnect(myRef).update({ connected: false })
 
   // 3. Listen to participants to initiate connections
   const participantsRef = dbRef(database, `calls/${props.roomId}/participants`)
@@ -1035,6 +1105,14 @@ const joinRoom = async () => {
     // Check for new peers to connect to
     Object.keys(val).forEach((userId) => {
       if (userId === props.user.id) return
+
+      // Only connect if they are actually connected
+      const pData = val[userId]
+      if (!pData || !pData.connected) {
+        if (peers[userId]) closePeerConnection(userId)
+        return
+      }
+
       if (!peers[userId]) {
         // Found a peer we look not connected to.
         // Rule: Initiator is the one with lexicographically smaller ID (or simply: if I am newer? No, consistent sort is better)
@@ -1043,7 +1121,7 @@ const joinRoom = async () => {
         // When I join, I see existing users -> I offer.
         // They see me -> They wait for offer.
         // How to distinguish? 'joinedAt' timestamp.
-        const otherJoinedAt = val[userId].joinedAt
+        const otherJoinedAt = pData.joinedAt
         const myJoinedAt = val[props.user.id]?.joinedAt
 
         // If I joined AFTER them, I initiate.
@@ -1056,9 +1134,9 @@ const joinRoom = async () => {
       }
     })
 
-    // Cleanup left peers
+    // Cleanup left peers (if removed from DB or marked disconnected)
     Object.keys(peers).forEach((userId) => {
-      if (!val[userId]) {
+      if (!val[userId] || !val[userId].connected) {
         closePeerConnection(userId)
       }
     })
@@ -1093,7 +1171,17 @@ const joinRoom = async () => {
         await pc.setLocalDescription(answer)
         sendSignal(senderId, { type: 'answer', sdp: answer.sdp })
       } catch {
-        // Error handling offer
+        // console.error('Error handling offer logic:', err)
+      }
+
+      // Process pending candidates
+      if (peers[senderId].pendingCandidates.length > 0) {
+        peers[senderId].pendingCandidates.forEach((c) => {
+          pc.addIceCandidate(new RTCIceCandidate(c)).catch((e) => {
+            // console.error('Error adding buffered candidate:', e)
+          })
+        })
+        peers[senderId].pendingCandidates = []
       }
     } else if (signal.type === 'answer') {
       // Only set answer if we're waiting for one (have-local-offer state)
@@ -1102,15 +1190,25 @@ const joinRoom = async () => {
           await pc.setRemoteDescription(
             new RTCSessionDescription({ type: 'answer', sdp: signal.sdp }),
           )
-        } catch {
-          // Error setting remote answer
+        } catch (err) {
+          console.error('Error setting remote answer:', err)
         }
       }
     } else if (signal.candidate) {
-      try {
-        await pc.addIceCandidate(new RTCIceCandidate(signal.candidate))
-      } catch {
-        // Error adding candidate
+      if (pc.remoteDescription) {
+        try {
+          await pc.addIceCandidate(new RTCIceCandidate(signal.candidate))
+        } catch (err) {
+          console.error('Error adding ICE candidate:', err)
+        }
+      } else {
+        // Buffer candidate
+        console.log(
+          `Buffering candidate for ${senderId} (pending remote description)`,
+        )
+        if (peers[senderId]) {
+          peers[senderId].pendingCandidates.push(signal.candidate)
+        }
       }
     }
 
@@ -1140,22 +1238,30 @@ const leaveRoom = () => {
   }
   // Close all connections
   Object.values(peers).forEach((p) => p.connection.close())
-  // Remove self
-  remove(dbRef(database, `calls/${props.roomId}/participants/${props.user.id}`))
+  // Remove self (mark as disconnected)
+  const myRef = dbRef(
+    database,
+    `calls/${props.roomId}/participants/${props.user.id}`,
+  )
+  update(myRef, { connected: false })
+
   remove(dbRef(database, `calls/${props.roomId}/signals/${props.user.id}`)) // Clean my inbox
 }
 
 const initLocalMedia = async () => {
+  console.log('initLocalMedia called')
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
       video: true,
       audio: true,
     })
+    console.log('getUserMedia success', stream)
     localStream.value = stream
     if (localVideo.value) localVideo.value.srcObject = stream
     isCameraEnabled.value = true
     isMicrophoneEnabled.value = true
-  } catch {
+  } catch (error) {
+    console.error('getUserMedia failed', error)
     isCameraEnabled.value = false
   }
 }
@@ -1170,6 +1276,7 @@ const createPeerConnection = (targetUserId, isInitiator) => {
   peers[targetUserId] = {
     connection: pc,
     stream: null,
+    pendingCandidates: [],
   }
 
   // Add local tracks ONLY if not an observator
@@ -1247,6 +1354,8 @@ function toggleCamera() {
   if (track) {
     track.enabled = !track.enabled
     isCameraEnabled.value = track.enabled
+    // Share camera state with other peers
+    updateParticipantStatus()
   }
 }
 
@@ -1256,7 +1365,41 @@ function toggleMicrophone() {
   if (track) {
     track.enabled = !track.enabled
     isMicrophoneEnabled.value = track.enabled
+    // Share mic state with other peers
+    updateParticipantStatus()
   }
+}
+
+async function updateParticipantStatus() {
+  if (!props.user?.id || !props.roomId) return
+  try {
+    const participantRef = dbRef(
+      database,
+      `calls/${props.roomId}/participants/${props.user.id}`,
+    )
+    await update(participantRef, {
+      media: {
+        cameraEnabled: isCameraEnabled.value,
+        microphoneEnabled: isMicrophoneEnabled.value,
+      },
+      updatedAt: Date.now(),
+    })
+  } catch (error) {
+    console.error('Error updating participant status:', error) // eslint-disable-line no-console
+  }
+}
+
+function isRemoteCameraEnabled(userId) {
+  // Check new media structure fallback to old
+  const p = participants.value[userId]
+  if (p?.media) return p.media.cameraEnabled
+  return p?.cameraEnabled !== false
+}
+
+function isRemoteMicrophoneEnabled(userId) {
+  const p = participants.value[userId]
+  if (p?.media) return p.media.microphoneEnabled
+  return p?.microphoneEnabled !== false
 }
 
 function toggleSidePanel() {
@@ -1333,24 +1476,25 @@ const startCall = async () => {
     // Failed to open room
   }
 }
+const router = useRouter() // Ensure router is available
+
 const endCall = async () => {
   if (caller.value) {
     try {
+      // Remove both the call interactions and the room state
       await remove(dbRef(database, `calls/${props.roomId}`))
-    } catch {
-      // Failed to remove calls node
+      // Also remove the room to clean up global state (taskIndex, etc.)
+      await remove(dbRef(database, `rooms/${props.roomId}`))
+    } catch (error) {
+      console.error('Error ending call:', error) // eslint-disable-line no-console
     }
-    try {
-      await update(dbRef(database, `rooms/${props.roomId}`), {
-        showVideoCall: false,
-      })
-    } catch {
-      // Failed to update rooms showVideoCall
-    }
+    emit('call-ended')
     leaveRoom()
+    router.push('/admin')
   } else {
     // Non-moderator: can just leave locally
     leaveRoom()
+    router.push('/admin')
   }
 }
 

@@ -26,7 +26,11 @@
         variant="tonal"
         icon
         size="small"
-        :title="showFilters ? t('pages.templates.hideFilters') : t('pages.templates.showFilters')"
+        :title="
+          showFilters
+            ? t('pages.templates.hideFilters')
+            : t('pages.templates.showFilters')
+        "
         @click="toggleFilters"
       >
         <v-icon>{{
@@ -40,7 +44,9 @@
         <v-row dense>
           <!-- 📅 Creation date -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">{{ t('pages.templates.creationDate') }}</div>
+            <div class="filter-label">
+              {{ t('pages.templates.creationDate') }}
+            </div>
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
@@ -54,12 +60,24 @@
                   variant="outlined"
                   density="compact"
                   hide-details
-                  :placeholder="creationDateRange.length > 1
-                    ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
-                    : t('pages.templates.selectRange')"
-                  :model-value="creationDateRange.length > 1
-                    ? `${new Date(creationDateRange[0]).toLocaleDateString()} - ${new Date(creationDateRange[creationDateRange.length - 1]).toLocaleDateString()}`
-                    : ''"
+                  :placeholder="
+                    creationDateRange.length > 1
+                      ? `${new Date(
+                          creationDateRange[0],
+                        ).toLocaleDateString()} - ${new Date(
+                          creationDateRange[creationDateRange.length - 1],
+                        ).toLocaleDateString()}`
+                      : t('pages.templates.selectRange')
+                  "
+                  :model-value="
+                    creationDateRange.length > 1
+                      ? `${new Date(
+                          creationDateRange[0],
+                        ).toLocaleDateString()} - ${new Date(
+                          creationDateRange[creationDateRange.length - 1],
+                        ).toLocaleDateString()}`
+                      : ''
+                  "
                   prepend-inner-icon="mdi-calendar"
                 />
               </template>
@@ -89,47 +107,52 @@
   <List
     :items="filteredTemplates"
     type="myTemplates"
+    :is-filtered="hasActiveFilters"
     @clicked="setupTempDialog"
   />
 
   <!-- 🪟 Template dialog -->
-  <TemplateInfoDialog
-    v-model:dialog="tempDialog"
-    :template="temp"
-    :allow-create="true"
-    @close="reloadMyTemplates()"
-  />
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import List from '@/shared/components/tables/ListComponent.vue'
 import {
   METHOD_DEFINITIONS,
   STUDY_TYPES,
   USER_STUDY_SUBTYPES,
 } from '@/shared/constants/methodDefinitions'
-import TemplateInfoDialog from '@/shared/components/dialogs/TemplateInfoDialog.vue'
+import { getTemplateManagerPath } from '@/shared/utils/templateRouting'
 
 const store = useStore()
+const router = useRouter()
 const { t } = useI18n()
 
-const tempDialog = ref(false)
-const temp = ref({})
-const templates = computed(() => store.state.Templates.templates || [])
+const templates = computed(() => store.state.Templates.myTemplates || [])
 
 // ===== Filters =====
 const methodOptions = computed(() => [
-
   { title: t('pages.templates.filters.allMethods'), value: 'all' },
-  { title: t('pages.templates.filters.heuristicEvaluation'), value: METHOD_DEFINITIONS.HEURISTICS.id },
-  { title: t('pages.templates.filters.userUnmoderated'), value: METHOD_DEFINITIONS.USER_UNMODERATED.id },
-  { title: t('pages.templates.filters.userModerated'), value: METHOD_DEFINITIONS.USER_MODERATED.id },
+  {
+    title: t('pages.templates.filters.heuristicEvaluation'),
+    value: METHOD_DEFINITIONS.HEURISTICS.id,
+  },
+  {
+    title: t('pages.templates.filters.userUnmoderated'),
+    value: METHOD_DEFINITIONS.USER_UNMODERATED.id,
+  },
+  {
+    title: t('pages.templates.filters.userModerated'),
+    value: METHOD_DEFINITIONS.USER_MODERATED.id,
+  },
   { title: t('pages.templates.filters.manualAccessibility'), value: 'MANUAL' },
-  { title: t('pages.templates.filters.automaticAccessibility'), value: 'AUTOMATIC' },
-
+  {
+    title: t('pages.templates.filters.automaticAccessibility'),
+    value: 'AUTOMATIC',
+  },
 ])
 
 const search = ref('')
@@ -195,15 +218,9 @@ const filteredTemplates = computed(() =>
 // ===== Methods =====
 const setupTempDialog = (template) => {
   if (!template?.header || !template?.body) return
-  temp.value = { ...template }
-  tempDialog.value = true
-}
-
-const getMyTemplates = () => store.dispatch('getTemplatesOfUser')
-
-const reloadMyTemplates = async () => {
-  tempDialog.value = false
-  await getMyTemplates()
+  const path = getTemplateManagerPath(template)
+  if (!path) return
+  router.push(path)
 }
 </script>
 

@@ -12,14 +12,18 @@
     >
       <div class="text-center">
         <v-progress-circular indeterminate size="64" color="primary" />
-        <div class="mt-4 text-h6">Loading test data...</div>
-        <div class="text-caption">Checking access permissions</div>
+        <div class="mt-4 text-h6">
+          {{ $t('Accessibility.loadingTestData') }}
+        </div>
+        <div class="text-caption">
+          {{ $t('Accessibility.checkingAccessPermissions') }}
+        </div>
       </div>
     </v-overlay>
 
     <!-- Access level indicator -->
     <div v-if="!isLoading && userRole" class="ma-2 text-caption text-grey">
-      Access: {{ getAccessLevelText }}
+      {{ $t('Accessibility.access') }} {{ getAccessLevelText }}
     </div>
   </ManagerView>
 </template>
