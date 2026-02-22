@@ -105,12 +105,39 @@ export default {
     },
   },
   actions: {
-    async createStudy({ commit }, payload) {
+    async createStudy({ commit, state, rootGetters }, payload) {
       commit('setLoading', true)
       try {
         const res = await studyController.createStudy(payload)
         payload.id = res.id
         commit('SET_TEST', payload)
+        const nextTests = Array.isArray(state.tests) ? [...state.tests] : []
+        const existingIndex = nextTests.findIndex((t) => t?.id === payload.id)
+        if (existingIndex === -1) nextTests.unshift(payload)
+        else nextTests.splice(existingIndex, 1, payload)
+        commit('SET_TESTS', nextTests)
+
+        const userId = payload?.testAdmin?.userDocId || rootGetters?.user?.id
+        if (userId) {
+          try {
+            const userController = new UserController()
+            const userDoc = await userController.getById(userId)
+            userDoc.myTests = userDoc.myTests || {}
+            userDoc.myTests[payload.id] = {
+              testDocId: payload.id,
+              testTitle: payload.testTitle || payload.title || 'Untitled Test',
+              testType: payload.testType || 'UNKNOWN',
+              subType: payload.subType || null,
+              numberColaborators: payload.cooperators?.length || 0,
+              creationDate: payload.creationDate || Date.now(),
+              updateDate: Date.now(),
+            }
+            await userController.update(userDoc.id, userDoc.toFirestore())
+            commit('SET_USER', userDoc, { root: true })
+          } catch (userErr) {
+            console.warn('Failed to update user tests after study creation', userErr)
+          }
+        }
         return res.id
       } catch (err) {
         commit('setError', {
