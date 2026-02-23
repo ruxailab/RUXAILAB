@@ -599,7 +599,8 @@
       "changeWeights": "لاحظ أن تغيير ترتيب الاستدلالات لا يغير الأوزان تلقائيًا، يجب عليك تغييرها يدويًا.",
       "noDescriptions": "لا توجد أوصاف متاحة",
       "startAddingQuestions": "ابدأ بإضافة سؤالك الأول إلى هذا الاستدلال",
-      "cantDeleteAllQuestions": "عذرًا، لا يمكنك حذف جميع الأسئلة من الاستدلال"
+      "cantDeleteAllQuestions": "عذرًا، لا يمكنك حذف جميع الأسئلة من الاستدلال",
+      "studyHasAnswers": "This study has answers"
     },
     "validation": {
       "nameRequired": "الاسم مطلوب",
@@ -706,7 +707,9 @@
       "options": "الخيارات",
       "weights": "الأوزان",
       "settings": "الإعدادات"
-    }
+    },
+    "previewPageTitle": "Preview test",
+    "previewPageSubtitle": "Review the test configuration in read-only mode"
   },
   "HeuristicsTestAnswer": {
     "titles": {
@@ -955,125 +958,6 @@
       "sart": "تقنية تقييم الوعي الظرفي - يقيس الوعي الظرفي"
     },
     "answerTypePreview": {
-      "noAnswer": {
-        "message": "تم إكمال المهمة! لا حاجة لملاحظات إضافية."
-      },
-      "textArea": {
-        "placeholder": "سيقدم المشاركون ملاحظاتهم هنا...",
-        "submitButton": "إرسال الملاحظات"
-      },
-      "postTest": {
-        "title": "أسئلة ما بعد المهمة",
-        "q1": "1. كيف تقيم صعوبة هذه المهمة؟",
-        "q2": "2. أي تعليقات إضافية؟",
-        "feedbackPlaceholder": "ملاحظات اختيارية..."
-      },
-      "postForm": {
-        "title": "نموذج خارجي",
-        "notice": "سيتم إعادة توجيه المشاركين لإكمال نموذج خارجي بعد المهمة.",
-        "button": "فتح النموذج الخارجي"
-      },
-      "nasaTlx": {
-        "title": "مؤشر حمل العمل ناسا",
-        "mental": "الطلب الذهني",
-        "physical": "الطلب البدني",
-        "range": "منخفض - مرتفع",
-        "moreDimensions": "+ 4 أبعاد أخرى"
-      },
-      "sus": {
-        "title": "مقياس قابلية استخدام النظام",
-        "q1": "1. أعتقد أنني أود استخدام هذا النظام بشكل متكرر.",
-        "disagree": "أعارض بشدة",
-        "agree": "أوافق بشدة",
-        "moreStatements": "+ 9 عبارات أخرى"
-      },
-      "sart": {
-        "title": "تقنية تقييم الوعي الظرفي",
-        "instability": "عدم استقرار الوضع",
-        "complexity": "تعقيد الوضع",
-        "stable": "مستقر جداً",
-        "unstable": "غير مستقر جداً",
-        "simple": "بسيط جداً",
-        "complex": "معقد جداً",
-        "moreDimensions": "+ 8 أبعاد أخرى لـ SART"
-      },
-      "tam": {
-        "tam1": "TAM-1: نموذج قبول التكنولوجيا (أساسي)",
-        "tam2": "TAM-2: نموذج قبول التكنولوجيا (موسع)",
-        "tam3": "TAM-3: نموذج قبول التكنولوجيا (شامل)",
-        "items2": "10 بنود عبر بُعدين",
-        "items7": "25 بنداً عبر 7 أبعاد",
-        "items13": "39 بنداً عبر 13 بُعداً",
-        "pu": "الفائدة المتصورة",
-        "eu": "سهولة الاستخدام المتصورة",
-        "sn": "المعيار الذاتي",
-        "image": "الصورة",
-        "jr": "الصلة بالوظيفة",
-        "oq": "جودة المخرجات",
-        "rd": "وضوح النتائج",
-        "se": "الكفاءة الذاتية الحاسوبية",
-        "ec": "التحكم الخارجي",
-        "anxiety": "القلق",
-        "play": "المرح",
-        "enjoy": "الاستمتاع",
-        "ou": "قابلية الاستخدام الموضوعية",
-        "q1": "1. يؤدي استخدام النظام إلى تحسين أداء عملي.",
-        "q6": "6. النظام سهل الاستخدام.",
-        "likertNote": "يقيم المشاركون {count} عبارة على مقياس ليكرت الخماسي"
-      },
-      "selectionPrompt": "حدد نوع الإجابة لمشاهدة المعاينة"
-    },
-    "advanced": {
-      "stepTitle": "الخطوة 3: الخيارات المتقدمة",
-      "stepDescription": "قم بتمكين طرق جمع البيانات الإضافية للحصول على رؤى أعمق.",
-      "eyeTrackingDesc": "تتبع أين ينظر المشاركون أثناء المهمة.",
-      "screenRecordDesc": "سجل نشاط شاشة المشارك.",
-      "cameraDesc": "سجل تعبيرات وجه المشارك ورد فعله.",
-      "audioDesc": "سجل ملاحظات المشارك الشفهية.",
-      "privacyNotice": "إشعار الخصوصية",
-      "privacyText": "تتطلب ميزات التسجيل موافقة صريحة من المشاركين.",
-      "privacyItem1": "أبلغ المشاركين بوضوح عن جمع البيانات",
-      "privacyItem2": "احصل على موافقة مناسبة قبل بدء الاختبار",
-      "privacyItem3": "اتبع لوائح حماية البيانات (GDPR، إلخ)",
-      "privacyItem4": "التخزين والتعامل الآمن مع البيانات المسجلة"
-    },
-    "preview": {
-      "taskSummary": "ملخص المهمة",
-      "untitledTask": "مهمة بدون عنوان",
-      "description": "الوصف:",
-      "noDescription": "لم يتم تقديم وصف",
-      "participantTip": "تلميح للمشارك:",
-      "taskUrl": "عنوان URL للمهمة:",
-      "answerType": "نوع الإجابة:",
-      "recordingFeatures": "ميزات التسجيل:",
-      "postTaskQuestion": "سؤال ما بعد المهمة:",
-      "postTaskForm": "نموذج ما بعد المهمة:",
-      "externalForm": "نموذج خارجي",
-      "taskReady": "المهمة جاهزة!",
-      "reviewRequired": "المراجعة مطلوبة",
-      "taskReadyMessage": "تم تكوين مهمتك بشكل صحيح وهي جاهزة للاستخدام في دراستك.",
-      "reviewRequiredMessage": "يرجى مراجعة الخطوات السابقة للتأكد من اكتمال جميع الحقول المطلوبة.",
-      "noTypeSelected": "لم يتم تحديد أي نوع",
-      "answerTypes": {
-        "noAnswer": "لا توجد إجابة مطلوبة",
-        "textArea": "منطقة نصية",
-        "postTest": "أسئلة ما بعد الاختبار",
-        "postForm": "نموذج خارجي",
-        "nasaTlx": "NASA-TLX",
-        "sus": "مقياس قابلية استخدام النظام",
-        "tam1": "TAM-1 (أساسي)",
-        "tam2": "TAM-2 (موسع)",
-        "tam3": "TAM-3 (شامل)",
-        "sart": "SART"
-      },
-      "recordingLabels": {
-        "eyeTracking": "تتبع العين",
-        "screenRecording": "تسجيل الشاشة",
-        "camera": "الكاميرا",
-        "audio": "الصوت"
-      }
-    },
-    "answerTypePreview": {
       "taskCompleted": "اكتملت المهمة! لا توجد ملاحظات إضافية مطلوبة.",
       "participantsFeedbackHere": "سيقدم المشاركون ملاحظاتهم هنا...",
       "submitFeedback": "إرسال الملاحظات",
@@ -1128,6 +1012,56 @@
       "playfulness": "المرح",
       "enjoyment": "الاستمتاع",
       "objectiveUsability": "قابلية الاستخدام الموضوعية"
+    },
+    "advanced": {
+      "stepTitle": "الخطوة 3: الخيارات المتقدمة",
+      "stepDescription": "قم بتمكين طرق جمع البيانات الإضافية للحصول على رؤى أعمق.",
+      "eyeTrackingDesc": "تتبع أين ينظر المشاركون أثناء المهمة.",
+      "screenRecordDesc": "سجل نشاط شاشة المشارك.",
+      "cameraDesc": "سجل تعبيرات وجه المشارك ورد فعله.",
+      "audioDesc": "سجل ملاحظات المشارك الشفهية.",
+      "privacyNotice": "إشعار الخصوصية",
+      "privacyText": "تتطلب ميزات التسجيل موافقة صريحة من المشاركين.",
+      "privacyItem1": "أبلغ المشاركين بوضوح عن جمع البيانات",
+      "privacyItem2": "احصل على موافقة مناسبة قبل بدء الاختبار",
+      "privacyItem3": "اتبع لوائح حماية البيانات (GDPR، إلخ)",
+      "privacyItem4": "التخزين والتعامل الآمن مع البيانات المسجلة"
+    },
+    "preview": {
+      "taskSummary": "ملخص المهمة",
+      "untitledTask": "مهمة بدون عنوان",
+      "description": "الوصف:",
+      "noDescription": "لم يتم تقديم وصف",
+      "participantTip": "تلميح للمشارك:",
+      "taskUrl": "عنوان URL للمهمة:",
+      "answerType": "نوع الإجابة:",
+      "recordingFeatures": "ميزات التسجيل:",
+      "postTaskQuestion": "سؤال ما بعد المهمة:",
+      "postTaskForm": "نموذج ما بعد المهمة:",
+      "externalForm": "نموذج خارجي",
+      "taskReady": "المهمة جاهزة!",
+      "reviewRequired": "المراجعة مطلوبة",
+      "taskReadyMessage": "تم تكوين مهمتك بشكل صحيح وهي جاهزة للاستخدام في دراستك.",
+      "reviewRequiredMessage": "يرجى مراجعة الخطوات السابقة للتأكد من اكتمال جميع الحقول المطلوبة.",
+      "noTypeSelected": "لم يتم تحديد أي نوع",
+      "answerTypes": {
+        "noAnswer": "لا توجد إجابة مطلوبة",
+        "textArea": "منطقة نصية",
+        "postTest": "أسئلة ما بعد الاختبار",
+        "postForm": "نموذج خارجي",
+        "nasaTlx": "NASA-TLX",
+        "sus": "مقياس قابلية استخدام النظام",
+        "tam1": "TAM-1 (أساسي)",
+        "tam2": "TAM-2 (موسع)",
+        "tam3": "TAM-3 (شامل)",
+        "sart": "SART"
+      },
+      "recordingLabels": {
+        "eyeTracking": "تتبع العين",
+        "screenRecording": "تسجيل الشاشة",
+        "camera": "الكاميرا",
+        "audio": "الصوت"
+      }
     }
   },
   "UserTestView": {
@@ -1497,6 +1431,18 @@
         "manualAccessibility": "إمكانية الوصول اليدوية",
         "automaticAccessibility": "إمكانية الوصول الآلية",
         "all": "الكل"
+      },
+      "unsupportedPreviewType": "Unsupported template type for preview.",
+      "config": {
+        "title": "Template Config",
+        "ownerOnly": "Configuration editing is restricted to template owner.",
+        "version": "Version",
+        "visibility": "Visibility",
+        "owner": "Owner",
+        "public": "Public",
+        "private": "Private",
+        "saved": "Template configuration updated successfully",
+        "saveError": "Failed to update template configuration"
       }
     },
     "createTest": {
@@ -1539,7 +1485,9 @@
     "editTest": {
       "title": "تحرير الاختبار",
       "description": "خصص إعدادات وتفضيلات اختبارك.",
-      "updatedTest": "تم تحديث الاختبار بنجاح"
+      "updatedTest": "تم تحديث الاختبار بنجاح",
+      "previewTitle": "Preview test",
+      "previewDescription": "Review the test in read-only mode."
     },
     "cooperators": {
       "invitationSent": "تم إرسال الدعوة بنجاح"
@@ -1635,7 +1583,11 @@
       "SelfTest": {
         "title": "اختبار ذاتي",
         "type": "غير مشرف عليه",
-        "text": ["الإجابة في وقت فراغ", "تحليل متقدم للإجابات", "تخصيص المهمة"]
+        "text": [
+          "الإجابة في وقت فراغ",
+          "تحليل متقدم للإجابات",
+          "تخصيص المهمة"
+        ]
       },
       "LiveTest": {
         "title": "اختبار مباشر",
@@ -2365,13 +2317,5 @@
       }
     },
     "title": "سياسة الخصوصية"
-  },
-  "relativeTime": {
-    "today": "اليوم",
-    "yesterday": "أمس",
-    "daysAgo": "منذ {count} أيام",
-    "weeksAgo": "منذ {count} أسابيع",
-    "monthsAgo": "منذ {count} أشهر",
-    "yearsAgo": "منذ {count} سنوات"
   }
 }

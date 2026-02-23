@@ -93,7 +93,7 @@
           </v-col>
 
           <!-- 🧭 Filter by method -->
-          <v-col cols="12" sm="6" md="3">
+          <v-col v-if="!props.forcedMethodFilter" cols="12" sm="6" md="3">
             <div class="filter-label">{{ $t('community.filters.method') }}</div>
             <v-select
               v-model="selectedMethodFilter"
@@ -118,15 +118,9 @@
       )
     "
     type="publicTemplates"
+    :show-actions="selectionMode"
     @clicked="setupTempDialog"
-  />
-
-  <!-- 🪟 Template details dialog -->
-  <TemplateInfoDialog
-    v-model:dialog="tempDialog"
-    :template="temp"
-    :allow-create="true"
-    @close="reloadMyTemplates()"
+    @preview-clicked="goToTemplatePreview"
   />
 </template>
 
@@ -135,7 +129,7 @@
  * This component displays a list of public templates with
  * a search bar, filter controls, and a dialog for viewing template details.
  */
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import {
   METHOD_DEFINITIONS,
@@ -143,22 +137,66 @@ import {
   USER_STUDY_SUBTYPES,
 } from '@/shared/constants/methodDefinitions'
 import ListComponent from '@/shared/components/tables/ListComponent.vue'
-import TemplateInfoDialog from '@/shared/components/dialogs/TemplateInfoDialog.vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
+import {
+  getTemplateManagerPath,
+  getTemplatePreviewPath,
+} from '@/shared/utils/templateRouting'
+
+const props = defineProps({
+  forcedMethodFilter: {
+    type: String,
+    default: null,
+  },
+  selectionMode: {
+    type: Boolean,
+    default: false,
+  },
+  includeMyTemplates: {
+    type: Boolean,
+    default: false,
+  },
+})
+
+const emit = defineEmits(['template-selected'])
 
 const store = useStore()
+const router = useRouter()
 const { t } = useI18n()
 
 // ===== State =====
-const temp = ref({}) // Current selected template
-const tempDialog = ref(false) // Controls dialog visibility
-const templates = computed(() => store.state.Templates.templates || []) // All templates from Vuex
+const publicTemplates = computed(
+  () => store.state.Templates.publicTemplates || [],
+)
+const myTemplates = computed(() => store.state.Templates.myTemplates || [])
+
+const templates = computed(() => {
+  if (!props.includeMyTemplates) {
+    return publicTemplates.value
+  }
+
+  const mapById = new Map()
+  for (const template of [...myTemplates.value, ...publicTemplates.value]) {
+    if (!template?.id) continue
+    mapById.set(template.id, template)
+  }
+
+  return Array.from(mapById.values())
+})
 
 // ===== Filter controls =====
 const search = ref('')
 const showFilters = ref(false)
-const selectedMethodFilter = ref('all')
+const selectedMethodFilter = ref(props.forcedMethodFilter || 'all')
 const creationDateRange = ref([])
+
+watch(
+  () => props.forcedMethodFilter,
+  (newValue) => {
+    selectedMethodFilter.value = newValue || 'all'
+  },
+)
 
 // Available filtering options for method types
 const methodOptions = computed(() => [
@@ -184,7 +222,7 @@ const toggleFilters = () => (showFilters.value = !showFilters.value)
 
 const clearFilters = () => {
   search.value = ''
-  selectedMethodFilter.value = 'all'
+  selectedMethodFilter.value = props.forcedMethodFilter || 'all'
   creationDateRange.value = []
 }
 
@@ -193,7 +231,7 @@ const hasActiveFilters = computed(
   () =>
     !!(
       search.value ||
-      selectedMethodFilter.value !== 'all' ||
+      (!props.forcedMethodFilter && selectedMethodFilter.value !== 'all') ||
       creationDateRange.value.length
     ),
 )
@@ -243,17 +281,35 @@ const filteredTemplates = computed(() =>
 // ===== Dialog handling =====
 const setupTempDialog = (template) => {
   if (!template?.header || !template?.body) return
-  temp.value = { ...template }
-  tempDialog.value = true
+
+  if (props.selectionMode) {
+    emit('template-selected', { ...template })
+    return
+  }
+
+  const path = getTemplateManagerPath(template)
+  if (!path) return
+  router.push(path)
+}
+
+const goToTemplatePreview = (template) => {
+  const path = getTemplatePreviewPath(template)
+  if (!path) return
+  router.push(path)
 }
 
 // ===== Data fetching =====
 const getPublicTemplates = () => store.dispatch('getPublicTemplates')
+const getMyTemplates = () => store.dispatch('getTemplatesOfUser')
 
-const reloadMyTemplates = async () => {
-  tempDialog.value = false
+onMounted(async () => {
+  if (props.includeMyTemplates) {
+    await Promise.all([getPublicTemplates(), getMyTemplates()])
+    return
+  }
+
   await getPublicTemplates()
-}
+})
 </script>
 
 <style scoped>

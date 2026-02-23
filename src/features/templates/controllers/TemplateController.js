@@ -35,7 +35,17 @@ export default class TemplateController extends Controller {
     )
   }
 
+  async getTemplateById(templateId) {
+    const res = await super.readOne(COLLECTION, templateId)
+    if (!res.exists()) return null
+    return Template.toTemplate(Object.assign({ id: res.id }, res.data()))
+  }
+
   async deleteTemplate(templateId) {
     return await super.delete(COLLECTION, templateId)
+  }
+
+  async updateTemplate(templateId, payload) {
+    return super.update(COLLECTION, templateId, payload)
   }
 }
