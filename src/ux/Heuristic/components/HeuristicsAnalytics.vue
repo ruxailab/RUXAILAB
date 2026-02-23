@@ -8,7 +8,7 @@
           <v-card flat rounded="xl" style="background: #f5f7ff">
             <v-row v-if="resultHeuristics" class="ma-0 pa-0">
               <!--Heuristics List-->
-              <v-col class="ma-0 pa-0" cols="2">
+              <v-col class="ma-0 pa-0" cols="12" sm="3" md="2">
                 <v-list border rounded density="compact" height="560px">
                   <v-list-subheader>{{
                     $t('Dashboard.cards.heuristics')
@@ -30,14 +30,14 @@
                       <template v-if="i === heuristicSelect" #prepend>
                         <v-icon>mdi-chevron-right</v-icon>
                       </template>
-                      <v-list-item-title>
+                      <v-list-item-title class="text-truncate">
                         {{ `H${item.id + 1} - ${item.title}` }}
                       </v-list-item-title>
                     </v-list-item>
                   </v-list>
                 </v-list>
               </v-col>
-              <v-divider vertical inset />
+              <v-divider vertical inset class="d-none d-sm-flex" />
               <!--Questions List-->
               <v-col
                 v-if="
@@ -45,10 +45,12 @@
                   test.testStructure[heuristicSelect]
                 "
                 class="ma-0 pa-0"
-                cols="3"
+                cols="12"
+                sm="4"
+                md="3"
               >
                 <v-list border rounded density="compact" height="560px">
-                  <v-list-subheader>
+                  <v-list-subheader class="text-truncate">
                     {{ test.testStructure[heuristicSelect].title }} - Questions
                   </v-list-subheader>
                   <v-divider />
@@ -80,7 +82,7 @@
                       <template v-if="i === questionSelect" #prepend>
                         <v-icon>mdi-chevron-right</v-icon>
                       </template>
-                      <v-list-item-title>
+                      <v-list-item-title class="text-truncate">
                         {{ `Q${item.id + 1} - ${item.title}` }}
                       </v-list-item-title>
                     </v-list-item>
@@ -95,7 +97,9 @@
                   test.testStructure[heuristicSelect]
                 "
                 class="ma-0 pa-0"
-                cols="7"
+                cols="12"
+                sm="5"
+                md="7"
               >
                 <v-card border rounded flat height="560px" elevation-0>
                   <v-list-subheader v-if="questionSelect != -1" class="pa-2">
