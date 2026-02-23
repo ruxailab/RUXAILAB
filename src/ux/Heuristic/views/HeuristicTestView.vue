@@ -1229,15 +1229,17 @@ const handleHeurisClick = (i) => {
 const startTimeTracking = () => {
   if (!test.value?.trackTime) return
 
-  // Start tracking time for current heuristic's questions
+  // Start tracking time for current heuristic
+  // Only set startTime on first question to track heuristic-level time
   if (currentUserTestAnswer.value?.heuristicQuestions?.[heurisIndex.value]) {
     const currentHeuristic =
       currentUserTestAnswer.value.heuristicQuestions[heurisIndex.value]
-    currentHeuristic.heuristicQuestions?.forEach((question) => {
-      if (!question.startTime) {
-        question.startTime = Date.now()
-      }
-    })
+    if (
+      currentHeuristic.heuristicQuestions?.[0] &&
+      !currentHeuristic.heuristicQuestions[0].startTime
+    ) {
+      currentHeuristic.heuristicQuestions[0].startTime = Date.now()
+    }
   }
 
   // Set up interval to update time every second
@@ -1261,11 +1263,12 @@ const updateTimeTracking = () => {
   const currentHeuristic =
     currentUserTestAnswer.value.heuristicQuestions[heurisIndex.value]
 
-  currentHeuristic.heuristicQuestions?.forEach((question) => {
-    if (question.startTime) {
-      question.timeSpent = (question.timeSpent || 0) + 1
-    }
-  })
+  // Track elapsed time once per heuristic, not per question
+  // Only increment the first question's timeSpent to avoid inflation
+  if (currentHeuristic.heuristicQuestions?.[0]?.startTime) {
+    currentHeuristic.heuristicQuestions[0].timeSpent =
+      (currentHeuristic.heuristicQuestions[0].timeSpent || 0) + 1
+  }
 }
 
 const stopTimeTracking = () => {
@@ -1274,13 +1277,13 @@ const stopTimeTracking = () => {
     timeTrackingInterval.value = null
   }
 
-  // Reset start times
+  // Reset start time on first question
   if (currentUserTestAnswer.value?.heuristicQuestions?.[heurisIndex.value]) {
     const currentHeuristic =
       currentUserTestAnswer.value.heuristicQuestions[heurisIndex.value]
-    currentHeuristic.heuristicQuestions?.forEach((question) => {
-      question.startTime = null
-    })
+    if (currentHeuristic.heuristicQuestions?.[0]) {
+      currentHeuristic.heuristicQuestions[0].startTime = null
+    }
   }
 }
 
@@ -1294,11 +1297,12 @@ const switchHeuristicTimeTracking = (newIndex) => {
   if (currentUserTestAnswer.value?.heuristicQuestions?.[newIndex]) {
     const newHeuristic =
       currentUserTestAnswer.value.heuristicQuestions[newIndex]
-    newHeuristic.heuristicQuestions?.forEach((question) => {
-      if (!question.startTime) {
-        question.startTime = Date.now()
-      }
-    })
+    if (
+      newHeuristic.heuristicQuestions?.[0] &&
+      !newHeuristic.heuristicQuestions[0].startTime
+    ) {
+      newHeuristic.heuristicQuestions[0].startTime = Date.now()
+    }
 
     // Restart interval
     startTimeTracking()

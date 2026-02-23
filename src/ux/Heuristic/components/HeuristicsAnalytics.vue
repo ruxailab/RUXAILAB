@@ -436,22 +436,19 @@ const getUserDisplayName = (userDocId) => {
 
 // Helper function to calculate time for a heuristic
 const calculateHeuristicTime = (heuristic) => {
-  let time = 0
-  heuristic.heuristicQuestions?.forEach((question) => {
-    time += question.timeSpent || 0
-  })
-  return time
+  // Time is stored in the first question only to avoid inflation
+  return heuristic.heuristicQuestions?.[0]?.timeSpent || 0
 }
 
 const hasTimeData = computed(() => {
   if (!answers.value || !test.value?.trackTime) return false
 
+  // Check if any heuristic has time data (stored in first question)
   return Object.values(answers.value).some((answer) =>
-    answer.heuristicQuestions?.some((heuristic) =>
-      heuristic.heuristicQuestions?.some(
-        (question) => question.timeSpent && question.timeSpent > 0,
-      ),
-    ),
+    answer.heuristicQuestions?.some((heuristic) => {
+      const timeSpent = heuristic.heuristicQuestions?.[0]?.timeSpent || 0
+      return timeSpent > 0
+    }),
   )
 })
 
