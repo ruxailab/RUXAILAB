@@ -8,7 +8,7 @@
           <v-card flat rounded="xl" style="background: #f5f7ff">
             <v-row v-if="resultHeuristics" class="ma-0 pa-0">
               <!--Heuristics List-->
-              <v-col class="ma-0 pa-0" cols="2">
+              <v-col class="ma-0 pa-0" cols="12" sm="3" md="2">
                 <v-list border rounded density="compact" height="560px">
                   <v-list-subheader>{{
                     $t('Dashboard.cards.heuristics')
@@ -30,14 +30,14 @@
                       <template v-if="i === heuristicSelect" #prepend>
                         <v-icon>mdi-chevron-right</v-icon>
                       </template>
-                      <v-list-item-title>
+                      <v-list-item-title class="text-truncate">
                         {{ `H${item.id + 1} - ${item.title}` }}
                       </v-list-item-title>
                     </v-list-item>
                   </v-list>
                 </v-list>
               </v-col>
-              <v-divider vertical inset />
+              <v-divider vertical inset class="d-none d-sm-flex" />
               <!--Questions List-->
               <v-col
                 v-if="
@@ -45,10 +45,12 @@
                   test.testStructure[heuristicSelect]
                 "
                 class="ma-0 pa-0"
-                cols="3"
+                cols="12"
+                sm="4"
+                md="3"
               >
                 <v-list border rounded density="compact" height="560px">
-                  <v-list-subheader>
+                  <v-list-subheader class="text-truncate">
                     {{ test.testStructure[heuristicSelect].title }} - Questions
                   </v-list-subheader>
                   <v-divider />
@@ -80,7 +82,7 @@
                       <template v-if="i === questionSelect" #prepend>
                         <v-icon>mdi-chevron-right</v-icon>
                       </template>
-                      <v-list-item-title>
+                      <v-list-item-title class="text-truncate">
                         {{ `Q${item.id + 1} - ${item.title}` }}
                       </v-list-item-title>
                     </v-list-item>
@@ -95,7 +97,9 @@
                   test.testStructure[heuristicSelect]
                 "
                 class="ma-0 pa-0"
-                cols="7"
+                cols="12"
+                sm="5"
+                md="7"
               >
                 <v-card border rounded flat height="560px" elevation-0>
                   <v-list-subheader v-if="questionSelect != -1" class="pa-2">
@@ -164,24 +168,15 @@
                         class="mt-2"
                         align-tabs="center"
                       >
-                        <v-tab
-                          class="tab-text"
-                          style="text-transform: none !important"
-                          @click="ind = 0"
-                        >
+                        <v-tab class="tab-text text-none" @click="ind = 0">
                           Comments
                         </v-tab>
-                        <v-tab
-                          class="tab-text"
-                          style="text-transform: none !important"
-                          @click="ind = 1"
-                        >
+                        <v-tab class="tab-text text-none" @click="ind = 1">
                           Chart
                         </v-tab>
                         <v-tab
                           v-if="test?.trackTime && hasTimeData"
-                          class="tab-text"
-                          style="text-transform: none !important"
+                          class="tab-text text-none"
                           @click="ind = 2"
                         >
                           Time Tracking
@@ -189,7 +184,7 @@
                       </v-tabs>
                       <v-col v-if="ind == 1">
                         <v-row justify="center">
-                          <v-col cols="10">
+                          <v-col cols="12" md="10">
                             <BarChart
                               v-if="questionGraph"
                               :labels="questionGraph.label"
@@ -205,7 +200,7 @@
                           style="height: 430px"
                           justify="center"
                         >
-                          <v-col cols="10">
+                          <v-col cols="12" md="10">
                             <v-timeline density="compact" align="start">
                               <v-timeline-item
                                 v-for="(result, index) in itemsHeuristic"
@@ -218,15 +213,16 @@
                                   v-if="result[questionSelect].heuristicComment"
                                   class="elevation-2"
                                 >
-                                  <v-card-text>
+                                  <v-card-text class="text-body-2">
                                     {{
                                       result[questionSelect].heuristicComment
                                     }}
                                   </v-card-text>
-                                  <img
+                                  <v-img
                                     v-if="result[questionSelect].answerImageUrl"
-                                    height="200"
                                     :src="result[questionSelect].answerImageUrl"
+                                    max-height="200"
+                                    cover
                                   />
                                 </v-card>
                               </v-timeline-item>
@@ -239,10 +235,10 @@
                           class="list-scroll time-tracking-scroll"
                           justify="center"
                         >
-                          <v-col cols="11">
+                          <v-col cols="12" lg="11">
                             <!-- Summary Cards -->
                             <v-row class="mb-4" dense>
-                              <v-col cols="12" md="4">
+                              <v-col cols="12" sm="6" md="4">
                                 <v-card variant="tonal" color="primary">
                                   <v-card-text class="pa-3">
                                     <div class="d-flex align-center">
@@ -261,7 +257,7 @@
                                   </v-card-text>
                                 </v-card>
                               </v-col>
-                              <v-col cols="12" md="4">
+                              <v-col cols="12" sm="6" md="4">
                                 <v-card variant="tonal" color="success">
                                   <v-card-text class="pa-3">
                                     <div class="d-flex align-center">
@@ -282,7 +278,7 @@
                                   </v-card-text>
                                 </v-card>
                               </v-col>
-                              <v-col cols="12" md="4">
+                              <v-col cols="12" sm="6" md="4">
                                 <v-card variant="tonal" color="warning">
                                   <v-card-text class="pa-3">
                                     <div class="d-flex align-center">
@@ -312,18 +308,20 @@
                               >
                                 Time per Evaluator and Heuristic
                               </v-card-title>
-                              <v-data-table
-                                :headers="evaluatorHeuristicHeaders"
-                                :items="evaluatorHeuristicTimeData"
-                                density="compact"
-                                :items-per-page="10"
-                              >
-                                <template #[`item.timeSpent`]="{ item }">
-                                  <span class="font-weight-medium">{{
-                                    formatTime(item.timeSpent)
-                                  }}</span>
-                                </template>
-                              </v-data-table>
+                              <div class="table-responsive">
+                                <v-data-table
+                                  :headers="evaluatorHeuristicHeaders"
+                                  :items="evaluatorHeuristicTimeData"
+                                  density="compact"
+                                  :items-per-page="10"
+                                >
+                                  <template #[`item.timeSpent`]="{ item }">
+                                    <span class="font-weight-medium">{{
+                                      formatTime(item.timeSpent)
+                                    }}</span>
+                                  </template>
+                                </v-data-table>
+                              </div>
                             </v-card>
 
                             <!-- Totals per Evaluator -->
@@ -333,23 +331,26 @@
                               >
                                 Total Time per Evaluator
                               </v-card-title>
-                              <v-data-table
-                                :headers="evaluatorTotalHeaders"
-                                :items="evaluatorTotals"
-                                density="compact"
-                                hide-default-footer
-                              >
-                                <template #[`item.totalTime`]="{ item }">
-                                  <span class="font-weight-bold text-primary">{{
-                                    formatTime(item.totalTime)
-                                  }}</span>
-                                </template>
-                                <template #[`item.meanTime`]="{ item }">
-                                  <span class="font-weight-medium">{{
-                                    formatTime(item.meanTime)
-                                  }}</span>
-                                </template>
-                              </v-data-table>
+                              <div class="table-responsive">
+                                <v-data-table
+                                  :headers="evaluatorTotalHeaders"
+                                  :items="evaluatorTotals"
+                                  density="compact"
+                                  hide-default-footer
+                                >
+                                  <template #[`item.totalTime`]="{ item }">
+                                    <span
+                                      class="font-weight-bold text-primary"
+                                      >{{ formatTime(item.totalTime) }}</span
+                                    >
+                                  </template>
+                                  <template #[`item.meanTime`]="{ item }">
+                                    <span class="font-weight-medium">{{
+                                      formatTime(item.meanTime)
+                                    }}</span>
+                                  </template>
+                                </v-data-table>
+                              </div>
                             </v-card>
 
                             <!-- Totals per Heuristic -->
@@ -359,23 +360,26 @@
                               >
                                 Total Time per Heuristic
                               </v-card-title>
-                              <v-data-table
-                                :headers="heuristicTotalHeaders"
-                                :items="heuristicTotals"
-                                density="compact"
-                                hide-default-footer
-                              >
-                                <template #[`item.totalTime`]="{ item }">
-                                  <span class="font-weight-bold text-primary">{{
-                                    formatTime(item.totalTime)
-                                  }}</span>
-                                </template>
-                                <template #[`item.meanTime`]="{ item }">
-                                  <span class="font-weight-medium">{{
-                                    formatTime(item.meanTime)
-                                  }}</span>
-                                </template>
-                              </v-data-table>
+                              <div class="table-responsive">
+                                <v-data-table
+                                  :headers="heuristicTotalHeaders"
+                                  :items="heuristicTotals"
+                                  density="compact"
+                                  hide-default-footer
+                                >
+                                  <template #[`item.totalTime`]="{ item }">
+                                    <span
+                                      class="font-weight-bold text-primary"
+                                      >{{ formatTime(item.totalTime) }}</span
+                                    >
+                                  </template>
+                                  <template #[`item.meanTime`]="{ item }">
+                                    <span class="font-weight-medium">{{
+                                      formatTime(item.meanTime)
+                                    }}</span>
+                                  </template>
+                                </v-data-table>
+                              </div>
                             </v-card>
                           </v-col>
                         </v-row>
@@ -733,5 +737,13 @@ const goToCoops = () => {
 
 .time-tracking-scroll {
   height: 430px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.text-none {
+  text-transform: none !important;
 }
 </style>

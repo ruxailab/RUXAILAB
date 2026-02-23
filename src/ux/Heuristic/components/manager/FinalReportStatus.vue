@@ -2,13 +2,13 @@
   <v-card v-if="test" class="pa-4 mb-0" elevation="3" rounded="lg">
     <!-- Header con icono a la izquierda y título -->
     <div
-      class="d-flex align-center mb-4 clickable-header"
+      class="d-flex align-center mb-3 clickable-header"
       @click="navigateToReport"
     >
-      <v-icon size="24" color="primary" class="header-icon"
+      <v-icon size="22" color="primary" class="header-icon mr-2"
         >mdi-file-document</v-icon
       >
-      <v-card-title class="text-h6 text-primary clickable-title">{{
+      <v-card-title class="text-h6 text-primary clickable-title pa-0">{{
         $t('Dashboard.cards.finalReport')
       }}</v-card-title>
     </div>
@@ -16,11 +16,7 @@
     <!-- Estado del informe -->
     <div class="report-status">
       <div class="d-flex align-center justify-center mb-3">
-        <v-icon
-          size="48"
-          :color="reportExists ? 'success' : 'grey'"
-          class="mb-2"
-        >
+        <v-icon size="48" :color="reportExists ? 'success' : 'grey'">
           {{ reportExists ? 'mdi-file-check' : 'mdi-file-outline' }}
         </v-icon>
       </div>
@@ -156,17 +152,18 @@ const reportDate = computed(() => {
 <style scoped>
 .report-status {
   text-align: center;
-  padding: 16px 0;
+  padding: 14px 0 10px;
 }
 
 .report-title {
-  margin-bottom: 8px;
+  margin-bottom: 6px;
+  line-height: 1.3;
 }
 
 .report-info {
   border-top: 1px solid rgba(0, 0, 0, 0.05);
-  padding-top: 16px;
-  margin-top: 16px;
+  padding-top: 14px;
+  margin-top: 14px;
 }
 
 .clickable-header {
@@ -188,5 +185,15 @@ const reportDate = computed(() => {
 
 .clickable-title {
   transition: color 0.2s ease;
+}
+
+@media (max-width: 400px) {
+  .report-status {
+    padding: 10px 0 6px;
+  }
+
+  .report-title {
+    font-size: 1rem;
+  }
 }
 </style>

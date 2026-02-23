@@ -24,49 +24,53 @@
     </div>
 
     <!-- Métricas en dos columnas con igual importancia -->
-    <div class="metrics-grid">
+    <v-row dense class="pt-4">
       <!-- Aceptados -->
-      <div class="metric-item">
-        <div class="d-flex align-center mb-2">
-          <v-icon size="16" color="success" class="mr-2"
-            >mdi-check-circle</v-icon
-          >
-          <span class="metric-label text-caption text-grey-darken-1">{{
-            $t('Dashboard.cards.accepted')
-          }}</span>
+      <v-col cols="6">
+        <div class="metric-item">
+          <div class="d-flex align-center justify-center mb-2">
+            <v-icon size="16" color="success" class="mr-1"
+              >mdi-check-circle</v-icon
+            >
+            <span class="metric-label text-caption text-grey-darken-1">{{
+              $t('Dashboard.cards.accepted')
+            }}</span>
+          </div>
+          <div class="d-flex align-center justify-center flex-wrap">
+            <span
+              class="metric-value-secondary text-h5 font-weight-bold text-success mr-1"
+              >{{ acceptedCount }}</span
+            >
+            <span class="metric-percentage text-caption text-success"
+              >{{ acceptedPercentage }}%</span
+            >
+          </div>
         </div>
-        <div class="d-flex align-center justify-center">
-          <span
-            class="metric-value-secondary text-h5 font-weight-bold text-success mr-2"
-            >{{ acceptedCount }}</span
-          >
-          <span class="metric-percentage text-caption text-success"
-            >{{ acceptedPercentage }}%</span
-          >
-        </div>
-      </div>
+      </v-col>
 
       <!-- Pendientes -->
-      <div class="metric-item">
-        <div class="d-flex align-center mb-2">
-          <v-icon size="16" color="warning" class="mr-2"
-            >mdi-clock-outline</v-icon
-          >
-          <span class="metric-label text-caption text-grey-darken-1">{{
-            $t('Dashboard.cards.pending')
-          }}</span>
+      <v-col cols="6">
+        <div class="metric-item">
+          <div class="d-flex align-center justify-center mb-2">
+            <v-icon size="16" color="warning" class="mr-1"
+              >mdi-clock-outline</v-icon
+            >
+            <span class="metric-label text-caption text-grey-darken-1">{{
+              $t('Dashboard.cards.pending')
+            }}</span>
+          </div>
+          <div class="d-flex align-center justify-center flex-wrap">
+            <span
+              class="metric-value-secondary text-h5 font-weight-bold text-warning mr-1"
+              >{{ pendingCount }}</span
+            >
+            <span class="metric-percentage text-caption text-warning"
+              >{{ pendingPercentage }}%</span
+            >
+          </div>
         </div>
-        <div class="d-flex align-center justify-center">
-          <span
-            class="metric-value-secondary text-h5 font-weight-bold text-warning mr-2"
-            >{{ pendingCount }}</span
-          >
-          <span class="metric-percentage text-caption text-warning"
-            >{{ pendingPercentage }}%</span
-          >
-        </div>
-      </div>
-    </div>
+      </v-col>
+    </v-row>
   </v-card>
 </template>
 
@@ -133,31 +137,27 @@ const pendingPercentage = computed(() => {
   margin-bottom: 4px;
 }
 
-.metrics-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 16px;
-}
-
 .metric-item {
   text-align: center;
-  padding: 12px;
+  padding: 8px;
   border-radius: 8px;
   background-color: rgba(0, 0, 0, 0.02);
+  height: 100%;
 }
 
 .metric-label {
   font-weight: 500;
+  white-space: nowrap;
+  font-size: 0.75rem;
 }
 
 .metric-value-secondary {
   line-height: 1;
-  margin-bottom: 4px;
 }
 
 .metric-percentage {
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .clickable-header {

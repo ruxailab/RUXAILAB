@@ -2,13 +2,13 @@
   <v-card v-if="test" class="pa-4 mb-0" elevation="3" rounded="lg">
     <!-- Header con icono a la izquierda y título -->
     <div
-      class="d-flex align-center mb-4 clickable-header"
+      class="d-flex align-center mb-3 clickable-header"
       @click="navigateToEdit"
     >
-      <v-icon size="24" color="primary" class="header-icon"
+      <v-icon size="22" color="primary" class="header-icon mr-2"
         >mdi-file-document-edit-outline</v-icon
       >
-      <v-card-title class="text-h6 text-primary clickable-title">{{
+      <v-card-title class="text-h6 text-primary clickable-title pa-0">{{
         $t('Dashboard.cards.edit')
       }}</v-card-title>
     </div>
@@ -17,11 +17,11 @@
     <div class="metrics-grid-top mb-3">
       <!-- Heurísticas creadas -->
       <div class="metric-item">
-        <div class="d-flex align-center justify-center mb-2">
-          <v-icon size="16" color="primary" class="mr-2"
+        <div class="d-flex align-center justify-center mb-1">
+          <v-icon size="16" color="primary" class="mr-1"
             >mdi-list-box-outline</v-icon
           >
-          <span class="metric-label text-caption text-grey-darken-1">{{
+          <span class="metric-label text-grey-darken-2">{{
             $t('Dashboard.cards.heuristics')
           }}</span>
         </div>
@@ -32,11 +32,11 @@
 
       <!-- Preguntas totales -->
       <div class="metric-item">
-        <div class="d-flex align-center justify-center mb-2">
-          <v-icon size="16" color="info" class="mr-2"
+        <div class="d-flex align-center justify-center mb-1">
+          <v-icon size="16" color="info" class="mr-1"
             >mdi-help-circle-outline</v-icon
           >
-          <span class="metric-label text-caption text-grey-darken-1">{{
+          <span class="metric-label text-grey-darken-2">{{
             $t('Dashboard.cards.questions')
           }}</span>
         </div>
@@ -46,55 +46,66 @@
       </div>
     </div>
 
-    <!-- Opciones y chips en la misma fila -->
-    <div class="metrics-grid-bottom">
-      <div class="metric-item-bottom">
-        <div class="d-flex align-center justify-center mb-2">
-          <v-icon size="16" color="success" class="mr-2"
-            >mdi-checkbox-multiple-outline</v-icon
+    <!-- Opciones y chips -->
+    <v-row dense class="ma-0">
+      <v-col cols="12" class="d-flex justify-center pa-1 mb-2">
+        <div class="metric-item-bottom">
+          <div class="d-flex align-center justify-center mb-1">
+            <v-icon size="16" color="success" class="mr-1"
+              >mdi-checkbox-multiple-outline</v-icon
+            >
+            <span class="metric-label text-grey-darken-2">{{
+              $t('Dashboard.cards.totalOptions')
+            }}</span>
+          </div>
+          <div class="metric-value-main text-h5 font-weight-bold text-success">
+            {{ optionsCount }}
+          </div>
+        </div>
+      </v-col>
+
+      <!-- Chips informativos debajo -->
+      <v-col cols="12" class="d-flex justify-center pa-1 mt-1">
+        <div class="chips-container">
+          <v-chip
+            size="small"
+            :color="isQualitative ? 'purple' : 'orange'"
+            variant="outlined"
+            class="chip-item"
           >
-          <span class="metric-label text-caption text-grey-darken-1">{{
-            $t('Dashboard.cards.totalOptions')
-          }}</span>
-        </div>
-        <div class="metric-value-main text-h5 font-weight-bold text-success">
-          {{ optionsCount }}
-        </div>
-      </div>
+            <v-icon start size="small">
+              {{ isQualitative ? 'mdi-text' : 'mdi-chart-bar' }}
+            </v-icon>
+            <span class="chip-text">
+              {{
+                isQualitative
+                  ? $t('Dashboard.cards.qualitative')
+                  : $t('Dashboard.cards.quantitative')
+              }}
+            </span>
+          </v-chip>
 
-      <!-- Chips informativos al lado -->
-      <div class="chips-container">
-        <v-chip
-          size="small"
-          :color="isQualitative ? 'purple' : 'orange'"
-          variant="outlined"
-          class="mb-1"
-        >
-          <v-icon start size="small">
-            {{ isQualitative ? 'mdi-text' : 'mdi-chart-bar' }}
-          </v-icon>
-          {{
-            isQualitative
-              ? $t('Dashboard.cards.qualitative')
-              : $t('Dashboard.cards.quantitative')
-          }}
-        </v-chip>
-
-        <v-chip
-          size="small"
-          :color="hasWeights ? 'success' : 'grey'"
-          variant="outlined"
-        >
-          <v-icon start size="small">
-            {{ hasWeights ? 'mdi-weight' : 'mdi-weight-off' }}
-          </v-icon>
-          {{ $t('Dashboard.cards.weights') }}
-          {{
-            hasWeights ? $t('Dashboard.cards.on') : $t('Dashboard.cards.off')
-          }}
-        </v-chip>
-      </div>
-    </div>
+          <v-chip
+            size="small"
+            :color="hasWeights ? 'success' : 'grey'"
+            variant="outlined"
+            class="chip-item"
+          >
+            <v-icon start size="small">
+              {{ hasWeights ? 'mdi-weight' : 'mdi-weight-off' }}
+            </v-icon>
+            <span class="chip-text">
+              {{ $t('Dashboard.cards.weights') }}
+              {{
+                hasWeights
+                  ? $t('Dashboard.cards.on')
+                  : $t('Dashboard.cards.off')
+              }}
+            </span>
+          </v-chip>
+        </div>
+      </v-col>
+    </v-row>
   </v-card>
 </template>
 
@@ -172,60 +183,57 @@ const hasWeights = computed(() => {
 .metrics-grid-top {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.metrics-grid-bottom {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 16px;
+  gap: 10px;
 }
 
 .metric-item {
   text-align: center;
-  padding: 12px 8px;
+  padding: 10px 8px;
   border-radius: 8px;
   background-color: rgba(0, 0, 0, 0.02);
 }
 
 .metric-item-bottom {
   text-align: center;
-  padding: 12px 16px;
+  padding: 10px 12px;
   border-radius: 8px;
   background-color: rgba(0, 0, 0, 0.02);
-  min-width: 140px;
+  width: 100%;
+  max-width: 180px;
 }
 
 .chips-container {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  padding: 0 4px;
+}
+
+.chip-item {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.chip-text {
+  font-size: 0.7rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .metric-label {
   font-weight: 500;
+  font-size: 0.75rem;
+  white-space: nowrap;
 }
 
 .metric-value-main {
   line-height: 1;
   margin-top: 4px;
-}
-
-/* Responsive: En pantallas pequeñas, cambiar a una columna */
-@media (max-width: 600px) {
-  .metrics-grid-top {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-
-  .metrics-grid-bottom {
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-  }
 }
 
 .clickable-header {
@@ -247,5 +255,23 @@ const hasWeights = computed(() => {
 
 .clickable-title {
   transition: color 0.2s ease;
+}
+
+@media (max-width: 500px) {
+  .chips-container {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .chip-item {
+    width: 100%;
+    max-width: 200px;
+  }
+}
+
+@media (max-width: 350px) {
+  .chip-text {
+    font-size: 0.65rem;
+  }
 }
 </style>
