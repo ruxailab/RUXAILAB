@@ -9,6 +9,7 @@ import { getAuth } from 'firebase/auth'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 
 const studyController = new StudyController()
+const userController = new UserController()
 
 export default {
   state: {
@@ -105,7 +106,7 @@ export default {
     },
   },
   actions: {
-    async createStudy({ commit, state, rootGetters }, payload) {
+    async createStudy({ commit, state }, payload) {
       commit('setLoading', true)
       try {
         const res = await studyController.createStudy(payload)
@@ -116,28 +117,6 @@ export default {
         if (existingIndex === -1) nextTests.unshift(payload)
         else nextTests.splice(existingIndex, 1, payload)
         commit('SET_TESTS', nextTests)
-
-        const userId = payload?.testAdmin?.userDocId || rootGetters?.user?.id
-        if (userId) {
-          try {
-            const userController = new UserController()
-            const userDoc = await userController.getById(userId)
-            userDoc.myTests = userDoc.myTests || {}
-            userDoc.myTests[payload.id] = {
-              testDocId: payload.id,
-              testTitle: payload.testTitle || payload.title || 'Untitled Test',
-              testType: payload.testType || 'UNKNOWN',
-              subType: payload.subType || null,
-              numberColaborators: payload.cooperators?.length || 0,
-              creationDate: payload.creationDate || Date.now(),
-              updateDate: Date.now(),
-            }
-            await userController.update(userDoc.id, userDoc.toFirestore())
-            commit('SET_USER', userDoc, { root: true })
-          } catch (error_) {
-            console.warn('Failed to update user tests after study creation', error_)
-          }
-        }
         return res.id
       } catch (err) {
         commit('setError', {
@@ -261,7 +240,6 @@ export default {
         const user = auth.currentUser
 
         if (user) {
-          const userController = new UserController()
           const userDoc = await userController.getUserWithStudies(user.uid)
 
           if (userDoc) {
