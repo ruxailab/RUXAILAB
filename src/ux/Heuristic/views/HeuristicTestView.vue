@@ -607,6 +607,9 @@ const saveStatusType = ref('default') // default, saving, success, error
 const saveStatusIcon = ref('mdi-check-circle')
 const saveStatusColor = ref('primary')
 
+// Time tracking variables
+const timeTrackingInterval = ref(null)
+
 const test = computed(() => store.getters.test)
 
 const testAlreadyStarted = computed(() => {
@@ -717,6 +720,10 @@ const startTest = async () => {
   if (currentUserTestAnswer.value) {
     currentUserTestAnswer.value.testStarted = true
     currentUserTestAnswer.value.lastViewedHeuristicIndex = heurisIndex.value
+    // Start time tracking if enabled
+    if (test.value?.trackTime) {
+      startTimeTracking()
+    }
     // Auto-save when test starts
     debouncedAutoSave()
   }
@@ -1218,6 +1225,86 @@ const handleHeurisClick = (i) => {
   setReviewTrue()
 }
 
+// Time tracking functions
+const startTimeTracking = () => {
+  if (!test.value?.trackTime) return
+
+  // Start tracking time for current heuristic's questions
+  if (currentUserTestAnswer.value?.heuristicQuestions?.[heurisIndex.value]) {
+    const currentHeuristic =
+      currentUserTestAnswer.value.heuristicQuestions[heurisIndex.value]
+    currentHeuristic.heuristicQuestions?.forEach((question) => {
+      if (!question.startTime) {
+        question.startTime = Date.now()
+      }
+    })
+  }
+
+  // Set up interval to update time every second
+  if (timeTrackingInterval.value) {
+    clearInterval(timeTrackingInterval.value)
+  }
+
+  timeTrackingInterval.value = setInterval(() => {
+    updateTimeTracking()
+  }, 1000)
+}
+
+const updateTimeTracking = () => {
+  if (
+    !test.value?.trackTime ||
+    !currentUserTestAnswer.value?.heuristicQuestions?.[heurisIndex.value]
+  ) {
+    return
+  }
+
+  const currentHeuristic =
+    currentUserTestAnswer.value.heuristicQuestions[heurisIndex.value]
+
+  currentHeuristic.heuristicQuestions?.forEach((question) => {
+    if (question.startTime) {
+      question.timeSpent = (question.timeSpent || 0) + 1
+    }
+  })
+}
+
+const stopTimeTracking = () => {
+  if (timeTrackingInterval.value) {
+    clearInterval(timeTrackingInterval.value)
+    timeTrackingInterval.value = null
+  }
+
+  // Reset start times
+  if (currentUserTestAnswer.value?.heuristicQuestions?.[heurisIndex.value]) {
+    const currentHeuristic =
+      currentUserTestAnswer.value.heuristicQuestions[heurisIndex.value]
+    currentHeuristic.heuristicQuestions?.forEach((question) => {
+      question.startTime = null
+    })
+  }
+}
+
+const switchHeuristicTimeTracking = (newIndex) => {
+  if (!test.value?.trackTime) return
+
+  // Stop tracking for current heuristic
+  stopTimeTracking()
+
+  // Start tracking for new heuristic
+  if (currentUserTestAnswer.value?.heuristicQuestions?.[newIndex]) {
+    const newHeuristic =
+      currentUserTestAnswer.value.heuristicQuestions[newIndex]
+    newHeuristic.heuristicQuestions?.forEach((question) => {
+      if (!question.startTime) {
+        question.startTime = Date.now()
+      }
+    })
+
+    // Restart interval
+    startTimeTracking()
+  }
+}
+
 // Setup auto-save on page unload
 const setupAutoSaveOnUnload = () => {
   window.addEventListener('beforeunload', (_event) => {
@@ -1263,6 +1350,11 @@ watch(heurisIndex, () => {
     currentUserTestAnswer.value.lastViewedHeuristicIndex = heurisIndex.value
     updateSaveStatus('Saving changes...', 'saving')
     debouncedAutoSave()
+
+    // Switch time tracking to new heuristic
+    if (test.value?.trackTime) {
+      switchHeuristicTimeTracking(heurisIndex.value)
+    }
   }
 })
 
@@ -1304,6 +1396,9 @@ onUnmounted(() => {
   if (calculatedProgress.value > 0 && !currentUserTestAnswer.value?.submitted) {
     autoSaveAnswer().catch(() => {})
   }
+
+  // Stop time tracking
+  stopTimeTracking()
 })
 </script>
 

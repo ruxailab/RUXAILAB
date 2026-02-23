@@ -489,7 +489,32 @@
               variant="outlined"
               density="comfortable"
               :rules="questionRequired"
+              class="mb-4"
             />
+
+            <!-- Time Tracking Toggle -->
+            <v-card variant="tonal" color="primary" class="pa-4">
+              <div class="d-flex align-center justify-space-between">
+                <div class="flex-grow-1">
+                  <div class="d-flex align-center mb-1">
+                    <v-icon size="20" class="mr-2">mdi-clock-outline</v-icon>
+                    <span class="text-subtitle-2 font-weight-medium">
+                      {{ $t('HeuristicsTable.timeTracking.title') }}
+                    </span>
+                  </div>
+                  <p class="text-caption text-grey-darken-1 ma-0">
+                    {{ $t('HeuristicsTable.timeTracking.description') }}
+                  </p>
+                </div>
+                <v-switch
+                  v-model="trackTimeEnabled"
+                  color="primary"
+                  hide-details
+                  density="compact"
+                  class="ml-3"
+                />
+              </div>
+            </v-card>
           </v-form>
         </v-card-text>
         <v-card-actions class="pa-6 pt-0">
@@ -674,6 +699,9 @@ const isProcessing = ref(false)
 const questionHeuristicIndex = ref(null)
 const itemsPerPage = ref(5)
 const isDialogClosing = ref(false)
+
+// Time tracking toggle
+const trackTimeEnabled = ref(true)
 
 // Delete confirmation dialog state
 const dialogDelete = ref(false)
@@ -962,6 +990,12 @@ const addHeuris = () => {
     const newHeuristics = [...heuristics.value, { ...heuristicForm.value }]
     store.dispatch('setHeuristics', newHeuristics)
     itemSelect.value = newHeuristics.length - 1
+
+    // Update trackTime setting on the test when first heuristic is added
+    if (newHeuristics.length === 1 && store.state.Tests.Test) {
+      store.state.Tests.Test.trackTime = trackTimeEnabled.value
+    }
+
     formHeurisRef.value.resetValidation()
     emit('change')
   }

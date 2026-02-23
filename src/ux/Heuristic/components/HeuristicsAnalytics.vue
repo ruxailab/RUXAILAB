@@ -178,6 +178,14 @@
                         >
                           Chart
                         </v-tab>
+                        <v-tab
+                          v-if="test?.trackTime && hasTimeData"
+                          class="tab-text"
+                          style="text-transform: none !important"
+                          @click="ind = 2"
+                        >
+                          Time Tracking
+                        </v-tab>
                       </v-tabs>
                       <v-col v-if="ind == 1">
                         <v-row justify="center">
@@ -226,6 +234,152 @@
                           </v-col>
                         </v-row>
                       </v-col>
+                      <v-col v-if="ind == 2 && test?.trackTime">
+                        <v-row
+                          class="list-scroll time-tracking-scroll"
+                          justify="center"
+                        >
+                          <v-col cols="11">
+                            <!-- Summary Cards -->
+                            <v-row class="mb-4" dense>
+                              <v-col cols="12" md="4">
+                                <v-card variant="tonal" color="primary">
+                                  <v-card-text class="pa-3">
+                                    <div class="d-flex align-center">
+                                      <v-icon size="32" class="mr-3"
+                                        >mdi-account-group</v-icon
+                                      >
+                                      <div>
+                                        <div class="text-caption">
+                                          Total Evaluators
+                                        </div>
+                                        <div class="text-h6 font-weight-bold">
+                                          {{ totalEvaluators }}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </v-card-text>
+                                </v-card>
+                              </v-col>
+                              <v-col cols="12" md="4">
+                                <v-card variant="tonal" color="success">
+                                  <v-card-text class="pa-3">
+                                    <div class="d-flex align-center">
+                                      <v-icon size="32" class="mr-3"
+                                        >mdi-clock-outline</v-icon
+                                      >
+                                      <div>
+                                        <div class="text-caption">
+                                          Total Time Spent
+                                        </div>
+                                        <div class="text-h6 font-weight-bold">
+                                          {{
+                                            formatTime(totalTimeAllEvaluators)
+                                          }}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </v-card-text>
+                                </v-card>
+                              </v-col>
+                              <v-col cols="12" md="4">
+                                <v-card variant="tonal" color="warning">
+                                  <v-card-text class="pa-3">
+                                    <div class="d-flex align-center">
+                                      <v-icon size="32" class="mr-3"
+                                        >mdi-chart-line</v-icon
+                                      >
+                                      <div>
+                                        <div class="text-caption">
+                                          Mean Time
+                                        </div>
+                                        <div class="text-h6 font-weight-bold">
+                                          {{
+                                            formatTime(meanTimeAllEvaluators)
+                                          }}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </v-card-text>
+                                </v-card>
+                              </v-col>
+                            </v-row>
+
+                            <!-- Time per Evaluator and Heuristic Table -->
+                            <v-card class="mb-4">
+                              <v-card-title
+                                class="text-subtitle-1 font-weight-bold bg-grey-lighten-4"
+                              >
+                                Time per Evaluator and Heuristic
+                              </v-card-title>
+                              <v-data-table
+                                :headers="evaluatorHeuristicHeaders"
+                                :items="evaluatorHeuristicTimeData"
+                                density="compact"
+                                :items-per-page="10"
+                              >
+                                <template #[`item.timeSpent`]="{ item }">
+                                  <span class="font-weight-medium">{{
+                                    formatTime(item.timeSpent)
+                                  }}</span>
+                                </template>
+                              </v-data-table>
+                            </v-card>
+
+                            <!-- Totals per Evaluator -->
+                            <v-card class="mb-4">
+                              <v-card-title
+                                class="text-subtitle-1 font-weight-bold bg-grey-lighten-4"
+                              >
+                                Total Time per Evaluator
+                              </v-card-title>
+                              <v-data-table
+                                :headers="evaluatorTotalHeaders"
+                                :items="evaluatorTotals"
+                                density="compact"
+                                hide-default-footer
+                              >
+                                <template #[`item.totalTime`]="{ item }">
+                                  <span class="font-weight-bold text-primary">{{
+                                    formatTime(item.totalTime)
+                                  }}</span>
+                                </template>
+                                <template #[`item.meanTime`]="{ item }">
+                                  <span class="font-weight-medium">{{
+                                    formatTime(item.meanTime)
+                                  }}</span>
+                                </template>
+                              </v-data-table>
+                            </v-card>
+
+                            <!-- Totals per Heuristic -->
+                            <v-card>
+                              <v-card-title
+                                class="text-subtitle-1 font-weight-bold bg-grey-lighten-4"
+                              >
+                                Total Time per Heuristic
+                              </v-card-title>
+                              <v-data-table
+                                :headers="heuristicTotalHeaders"
+                                :items="heuristicTotals"
+                                density="compact"
+                                hide-default-footer
+                              >
+                                <template #[`item.totalTime`]="{ item }">
+                                  <span class="font-weight-bold text-primary">{{
+                                    formatTime(item.totalTime)
+                                  }}</span>
+                                </template>
+                                <template #[`item.meanTime`]="{ item }">
+                                  <span class="font-weight-medium">{{
+                                    formatTime(item.meanTime)
+                                  }}</span>
+                                </template>
+                              </v-data-table>
+                            </v-card>
+                          </v-col>
+                        </v-row>
+                      </v-col>
                     </v-card>
                   </v-row>
                 </v-card>
@@ -267,7 +421,193 @@ const answers = computed(() => {
   return store.getters.testAnswerDocument.heuristicAnswers
 })
 
-const loading = computed(() => !Object.values(answers.value).length)
+// Helper function to get user display name (email or ID)
+const getUserDisplayName = (userDocId) => {
+  if (!test.value?.cooperators || !userDocId) {
+    return userDocId || 'Unknown'
+  }
+
+  const cooperator = test.value.cooperators.find(
+    (coop) => coop.userDocId === userDocId,
+  )
+
+  return cooperator?.email || userDocId || 'Unknown'
+}
+
+// Helper function to calculate time for a heuristic
+const calculateHeuristicTime = (heuristic) => {
+  let time = 0
+  heuristic.heuristicQuestions?.forEach((question) => {
+    time += question.timeSpent || 0
+  })
+  return time
+}
+
+const hasTimeData = computed(() => {
+  if (!answers.value || !test.value?.trackTime) return false
+
+  return Object.values(answers.value).some((answer) =>
+    answer.heuristicQuestions?.some((heuristic) =>
+      heuristic.heuristicQuestions?.some(
+        (question) => question.timeSpent && question.timeSpent > 0,
+      ),
+    ),
+  )
+})
+
+// Total number of unique evaluators
+const totalEvaluators = computed(() => {
+  if (!answers.value) return 0
+  return Object.keys(answers.value).length
+})
+
+// Total time spent by all evaluators
+const totalTimeAllEvaluators = computed(() => {
+  if (!answers.value) return 0
+
+  let total = 0
+  Object.values(answers.value).forEach((answer) => {
+    answer.heuristicQuestions?.forEach((heuristic) => {
+      heuristic.heuristicQuestions?.forEach((question) => {
+        total += question.timeSpent || 0
+      })
+    })
+  })
+  return total
+})
+
+// Mean time across all evaluators
+const meanTimeAllEvaluators = computed(() => {
+  if (totalEvaluators.value === 0) return 0
+  return totalTimeAllEvaluators.value / totalEvaluators.value
+})
+
+// Headers for evaluator x heuristic table
+const evaluatorHeuristicHeaders = computed(() => [
+  { title: 'Evaluator', align: 'start', value: 'evaluator' },
+  { title: 'Heuristic', align: 'start', value: 'heuristic' },
+  { title: 'Time Spent', align: 'end', value: 'timeSpent' },
+])
+
+// Data for evaluator x heuristic table
+const evaluatorHeuristicTimeData = computed(() => {
+  if (!answers.value || !test.value?.testStructure) return []
+
+  const data = []
+  Object.values(answers.value).forEach((answer) => {
+    answer.heuristicQuestions?.forEach((heuristic, hIndex) => {
+      const heuristicTime = calculateHeuristicTime(heuristic)
+
+      if (heuristicTime > 0) {
+        data.push({
+          evaluator: getUserDisplayName(answer.userDocId),
+          heuristic:
+            test.value.testStructure[hIndex]?.title || `H${hIndex + 1}`,
+          timeSpent: heuristicTime,
+        })
+      }
+    })
+  })
+  return data
+})
+
+// Headers for evaluator totals table
+const evaluatorTotalHeaders = computed(() => [
+  { title: 'Evaluator', align: 'start', value: 'evaluator' },
+  { title: 'Total Time', align: 'end', value: 'totalTime' },
+  { title: 'Mean Time per Heuristic', align: 'end', value: 'meanTime' },
+])
+
+// Totals per evaluator
+const evaluatorTotals = computed(() => {
+  if (!answers.value) return []
+
+  const totals = []
+  Object.values(answers.value).forEach((answer) => {
+    let totalTime = 0
+    let heuristicCount = 0
+
+    answer.heuristicQuestions?.forEach((heuristic) => {
+      const time = calculateHeuristicTime(heuristic)
+      if (time > 0) {
+        totalTime += time
+        heuristicCount++
+      }
+    })
+
+    if (totalTime > 0) {
+      totals.push({
+        evaluator: getUserDisplayName(answer.userDocId),
+        totalTime: totalTime,
+        meanTime: heuristicCount > 0 ? totalTime / heuristicCount : 0,
+      })
+    }
+  })
+  return totals
+})
+
+// Headers for heuristic totals table
+const heuristicTotalHeaders = computed(() => [
+  { title: 'Heuristic', align: 'start', value: 'heuristic' },
+  { title: 'Total Time', align: 'end', value: 'totalTime' },
+  { title: 'Mean Time per Evaluator', align: 'end', value: 'meanTime' },
+])
+
+// Totals per heuristic
+const heuristicTotals = computed(() => {
+  if (!answers.value || !test.value?.testStructure) return []
+
+  const heuristicTimeMap = {}
+
+  Object.values(answers.value).forEach((answer) => {
+    answer.heuristicQuestions?.forEach((heuristic, hIndex) => {
+      if (!heuristicTimeMap[hIndex]) {
+        heuristicTimeMap[hIndex] = {
+          totalTime: 0,
+          evaluatorCount: 0,
+        }
+      }
+
+      let heuristicTime = calculateHeuristicTime(heuristic)
+
+      if (heuristicTime > 0) {
+        heuristicTimeMap[hIndex].totalTime += heuristicTime
+        heuristicTimeMap[hIndex].evaluatorCount++
+      }
+    })
+  })
+
+  const totals = []
+  Object.keys(heuristicTimeMap).forEach((hIndex) => {
+    const data = heuristicTimeMap[hIndex]
+    if (data.totalTime > 0) {
+      totals.push({
+        heuristic:
+          test.value.testStructure[hIndex]?.title || `H${parseInt(hIndex) + 1}`,
+        totalTime: data.totalTime,
+        meanTime:
+          data.evaluatorCount > 0 ? data.totalTime / data.evaluatorCount : 0,
+      })
+    }
+  })
+
+  return totals
+})
+
+const formatTime = (seconds) => {
+  if (!seconds || seconds === 0) return '0s'
+
+  const hours = Math.floor(seconds / 3600)
+  const minutes = Math.floor((seconds % 3600) / 60)
+  const secs = Math.floor(seconds % 60)
+
+  const parts = []
+  if (hours > 0) parts.push(`${hours}h`)
+  if (minutes > 0) parts.push(`${minutes}m`)
+  if (secs > 0 || parts.length === 0) parts.push(`${secs}s`)
+
+  return parts.join(' ')
+}
 
 const headersHeuristic = computed(() => {
   const header = [
@@ -296,7 +636,7 @@ const itemsHeuristic = computed(() => {
   if (heuristicSelect.value !== null) {
     Object.values(answers.value).forEach((answer) => {
       items.push({
-        uid: { uid: answer.userDocId },
+        uid: { uid: getUserDisplayName(answer.userDocId) },
         ...Object.fromEntries(
           Object.entries(
             answer.heuristicQuestions[heuristicSelect.value].heuristicQuestions,
@@ -392,5 +732,9 @@ const goToCoops = () => {
 /* Handle on hover */
 .list-scroll::-webkit-scrollbar-thumb:hover {
   background: #fca326;
+}
+
+.time-tracking-scroll {
+  height: 430px;
 }
 </style>

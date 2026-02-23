@@ -153,6 +153,7 @@ const save = async () => {
     testStructure: store.getters.heuristics,
     testOptions: store.state.Tests.Test.testOptions,
     testWeights: store.getters.testWeights,
+    trackTime: store.state.Tests.Test.trackTime,
   }
 
   const study = instantiateStudyByType(rawData.testType, rawData)

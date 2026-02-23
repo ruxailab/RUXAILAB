@@ -636,6 +636,10 @@
     "count": {
       "question": "Question",
       "questions": "Questions"
+    },
+    "timeTracking": {
+      "title": "Track Time",
+      "description": "Track how long evaluators spend on each question"
     }
   },
   "HeuristicsOptionsTable": {

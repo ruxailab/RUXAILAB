@@ -4,6 +4,8 @@
  * @param {number} heuristicAnswer - The heuristicAnswer value.
  * @param {string} heuristicComment - The heuristicComment value.
  * @param {string} answerImageUrl - The image comment url.
+ * @param {number} timeSpent - Time spent on this question in seconds.
+ * @param {number} startTime - Timestamp when question was first viewed.
  */
 
 export default class HeuristicQuestionAnswer {
@@ -12,11 +14,15 @@ export default class HeuristicQuestionAnswer {
     heuristicAnswer,
     heuristicComment,
     answerImageUrl,
+    timeSpent,
+    startTime,
   } = {}) {
     this.heuristicId = heuristicId
     this.heuristicAnswer = heuristicAnswer ?? {}
     this.heuristicComment = heuristicComment
     this.answerImageUrl = answerImageUrl
+    this.timeSpent = timeSpent ?? 0
+    this.startTime = startTime ?? null
   }
   static toHeuristicQuestionAnswer(data, testOptions) {
     return new HeuristicQuestionAnswer({
@@ -39,6 +45,8 @@ export default class HeuristicQuestionAnswer {
       heuristicAnswer: this.heuristicAnswer,
       heuristicComment: this.heuristicComment,
       answerImageUrl: this.answerImageUrl || '',
+      timeSpent: this.timeSpent ?? 0,
+      startTime: this.startTime ?? null,
     }
   }
 }
