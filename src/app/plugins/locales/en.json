@@ -1228,7 +1228,8 @@
     "PreTasksStep": {
       "title": "Tasks",
       "heading": "Let's begin the tasks phase",
-      "description": "You are going to complete <strong>{numTasks}</strong> tasks related to using the tool. There are no correct or incorrect answers: what matters is how you interact.",
+      "description": "You are going to complete",
+      "tasksSuffix": "tasks related to using the tool. There are no correct or incorrect answers: what matters is how you interact.",
       "instruction": "When you are ready, click the button to begin.",
       "startButton": "Start tasks",
       "recordingTitle": "Recording Information",
