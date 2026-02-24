@@ -19,7 +19,7 @@
             playsinline
             class="video-element"
           ></video>
-          <div class="video-label">Compartilhando tela</div>
+          <div class="video-label">{{ t('UserTestView.VideoCall.screenSharingLabel') }}</div>
         </div>
       </v-col>
 
@@ -42,7 +42,7 @@
                 <v-icon size="64" color="white" class="mb-2"
                   >mdi-video-off</v-icon
                 >
-                <p class="text-white">Camera is off</p>
+                <p class="text-white">{{ t('UserTestView.VideoCall.cameraOff') }}</p>
               </div>
 
               <!-- Microphone muted indicator -->
@@ -51,7 +51,7 @@
               </div>
 
               <div class="video-label">
-                Tu video ({{ user?.email?.split('@')[0] }})
+                {{ t('UserTestView.VideoCall.yourVideo') }} ({{ user?.email?.split('@')[0] }})
               </div>
             </div>
           </div>
@@ -79,7 +79,7 @@
                 <v-icon size="64" color="white" class="mb-2"
                   >mdi-video-off</v-icon
                 >
-                <p class="text-white">Camera is off</p>
+                <p class="text-white">{{ t('UserTestView.VideoCall.cameraOff') }}</p>
               </div>
 
               <!-- Microphone muted indicator for remote peer -->
@@ -100,7 +100,7 @@
             class="d-flex align-center justify-center pa-4 text-grey"
           >
             <v-icon class="mr-2">mdi-account-clock</v-icon>
-            <span>Waiting for participants...</span>
+            <span>{{ t('UserTestView.VideoCall.waitingForParticipants') }}</span>
           </div>
         </div>
       </v-col>
@@ -126,7 +126,7 @@
                 <v-icon size="64" color="white" class="mb-2"
                   >mdi-video-off</v-icon
                 >
-                <p class="text-white">Camera is off</p>
+                <p class="text-white">{{ t('UserTestView.VideoCall.cameraOff') }}</p>
               </div>
 
               <!-- Microphone muted indicator -->
@@ -135,7 +135,7 @@
               </div>
 
               <div class="video-label">
-                Your preview ({{ user?.email?.split('@')[0] }})
+                {{ t('UserTestView.VideoCall.yourPreview') }} ({{ user?.email?.split('@')[0] }})
               </div>
             </div>
           </div>
@@ -150,13 +150,12 @@
       >
         <div class="observator-notice">
           <v-icon size="64" color="primary" class="mb-4">mdi-eye</v-icon>
-          <h3 class="text-h5 mb-2">Observator Mode</h3>
+          <h3 class="text-h5 mb-2">{{ t('UserTestView.VideoCall.observatorMode') }}</h3>
           <p class="text-body-1">
-            Waiting for moderator to start the session...
+            {{ t('UserTestView.VideoCall.waitingForModeratorToStartSession') }}
           </p>
           <p class="text-body-2 text-grey mt-2">
-            You will be able to observe all video feeds without sending your
-            own.
+            {{ t('UserTestView.VideoCall.observeAllFeedsNotice') }}
           </p>
         </div>
       </v-col>
@@ -178,10 +177,9 @@
             color="primary"
             class="mb-4"
           ></v-progress-circular>
-          <h3 class="text-h6 mb-2">Waiting for moderator...</h3>
+          <h3 class="text-h6 mb-2">{{ t('UserTestView.VideoCall.waitingForModerator') }}</h3>
           <p class="text-body-2 text-grey">
-            The video call will start automatically when the moderator opens the
-            room.
+            {{ t('UserTestView.VideoCall.autoStartWhenModeratorOpensRoom') }}
           </p>
         </div>
       </v-col>
