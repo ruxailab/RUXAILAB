@@ -40,4 +40,4 @@ EXPOSE 9099 5001 8081 5002 9199 4000 4400 4500 9150 5007
 # When startup of the container is complete this is the command that will be executed
 # In our case we want to start the firebase emulator suite
 USER firebase
-CMD ["firebase", "emulators:start", "--project", "retlab-dev"]
+CMD ["firebase", "emulators:start", "--project", "demo-retlab-dev"]

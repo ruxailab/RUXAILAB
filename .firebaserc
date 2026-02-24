@@ -4,13 +4,13 @@
     "dev": "retlab-dev",
     "production": "retlab",
     "prod": "ruxailab-prod",
-    "develop": "ruxailab-develop"
+    "develop": "demo-ruxailab-develop"
   },
   "targets": {
     "retlab-dev": {
       "hosting": {
         "ruxailab-dev": [
-          "ruxailab-dev"
+          "demo-ruxailab-dev"
         ]
       }
     }
