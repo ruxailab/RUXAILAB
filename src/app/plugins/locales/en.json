@@ -1215,6 +1215,18 @@
       "shareScreen": "Share screen",
       "moderatorOnlySteps": "Only the moderator can change steps"
     },
+    "VideoCall": {
+      "screenSharingLabel": "Sharing screen",
+      "cameraOff": "Camera is off",
+      "yourVideo": "Your video",
+      "yourPreview": "Your preview",
+      "observatorMode": "Observer Mode",
+      "waitingForModeratorToStartSession": "Waiting for moderator to start the session...",
+      "observeAllFeedsNotice": "You will be able to observe all video feeds without sending your own.",
+      "waitingForParticipants": "Waiting for participants...",
+      "waitingForModerator": "Waiting for moderator...",
+      "autoStartWhenModeratorOpensRoom": "The video call will start automatically when the moderator opens the room."
+    },
     "buttons": {
       "done": "Done"
     },

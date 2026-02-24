@@ -1220,6 +1220,18 @@
       "shareScreen": "共享屏幕",
       "moderatorOnlySteps": "只有主持人可以更改步骤"
     },
+    "VideoCall": {
+      "screenSharingLabel": "正在共享屏幕",
+      "cameraOff": "摄像头已关闭",
+      "yourVideo": "你的视频",
+      "yourPreview": "你的预览",
+      "observatorMode": "观察者模式",
+      "waitingForModeratorToStartSession": "正在等待主持人开始会话...",
+      "observeAllFeedsNotice": "你可以在不发送自己视频的情况下观察所有视频流。",
+      "waitingForParticipants": "正在等待参与者...",
+      "waitingForModerator": "正在等待主持人...",
+      "autoStartWhenModeratorOpensRoom": "当主持人打开房间时，视频通话将自动开始。"
+    },
     "WelcomeStep": {
       "welcome": "欢迎来到RUXAILAB！",
       "description": "您将参与一项旨在评估数字应用程序易用性和理解程度的用户测试。这种类型的测试帮助我们检测可能的技术障碍并改善每个人的体验。",

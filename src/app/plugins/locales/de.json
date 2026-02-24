@@ -1221,6 +1221,18 @@
       "shareScreen": "Bildschirm freigeben",
       "moderatorOnlySteps": "Nur der Moderator kann Schritte aendern"
     },
+    "VideoCall": {
+      "screenSharingLabel": "Bildschirm wird geteilt",
+      "cameraOff": "Kamera ist aus",
+      "yourVideo": "Dein Video",
+      "yourPreview": "Deine Vorschau",
+      "observatorMode": "Beobachtermodus",
+      "waitingForModeratorToStartSession": "Warte darauf, dass der Moderator die Sitzung startet...",
+      "observeAllFeedsNotice": "Du kannst alle Video-Feeds beobachten, ohne deinen eigenen zu senden.",
+      "waitingForParticipants": "Warte auf Teilnehmer...",
+      "waitingForModerator": "Warte auf Moderator...",
+      "autoStartWhenModeratorOpensRoom": "Der Videoanruf startet automatisch, wenn der Moderator den Raum oeffnet."
+    },
     "WelcomeStep": {
       "welcome": "Willkommen bei RUXAILAB!",
       "description": "Sie werden an einem Benutzertest teilnehmen, der die Benutzerfreundlichkeit und Verständlichkeit einer digitalen Anwendung bewertet. Diese Art von Test hilft uns, mögliche technologische Barrieren zu erkennen und die Erfahrung für alle zu verbessern.",

@@ -1220,6 +1220,18 @@
       "shareScreen": "Compartilhar tela",
       "moderatorOnlySteps": "Somente o moderador pode alterar as etapas"
     },
+    "VideoCall": {
+      "screenSharingLabel": "Compartilhando tela",
+      "cameraOff": "A camera esta desligada",
+      "yourVideo": "Seu video",
+      "yourPreview": "Sua visualizacao",
+      "observatorMode": "Modo observador",
+      "waitingForModeratorToStartSession": "Aguardando o moderador iniciar a sessao...",
+      "observeAllFeedsNotice": "Voce podera observar todos os videos sem enviar o seu.",
+      "waitingForParticipants": "Aguardando participantes...",
+      "waitingForModerator": "Aguardando moderador...",
+      "autoStartWhenModeratorOpensRoom": "A chamada de video iniciara automaticamente quando o moderador abrir a sala."
+    },
     "WelcomeStep": {
       "welcome": "Bem-vindo ao RUXAILAB!",
       "description": "Você está prestes a participar de um teste de usuário que visa avaliar a facilidade de uso e a compreensão de uma aplicação digital. Esse tipo de teste nos ajuda a identificar possíveis barreiras tecnológicas e melhorar a experiência para todos.",

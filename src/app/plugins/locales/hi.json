@@ -1220,6 +1220,18 @@
       "shareScreen": "स्क्रीन शेयर करें",
       "moderatorOnlySteps": "केवल मॉडरेटर चरण बदल सकता है"
     },
+    "VideoCall": {
+      "screenSharingLabel": "स्क्रीन साझा की जा रही है",
+      "cameraOff": "कैमरा बंद है",
+      "yourVideo": "आपका वीडियो",
+      "yourPreview": "आपका प्रीव्यू",
+      "observatorMode": "ऑब्जर्वर मोड",
+      "waitingForModeratorToStartSession": "मॉडरेटर के सेशन शुरू करने की प्रतीक्षा हो रही है...",
+      "observeAllFeedsNotice": "आप अपना वीडियो भेजे बिना सभी वीडियो फीड देख सकेंगे।",
+      "waitingForParticipants": "प्रतिभागियों की प्रतीक्षा हो रही है...",
+      "waitingForModerator": "मॉडरेटर की प्रतीक्षा हो रही है...",
+      "autoStartWhenModeratorOpensRoom": "जब मॉडरेटर रूम खोलेगा, वीडियो कॉल अपने आप शुरू हो जाएगी।"
+    },
     "WelcomeStep": {
       "welcome": "RUXAILAB में आपका स्वागत है!",
       "description": "आप एक उपयोगकर्ता परीक्षण में भाग लेंगे जो किसी डिजिटल एप्लिकेशन की उपयोगिता और समझने की क्षमता का मूल्यांकन करता है। यह परीक्षण संभावित तकनीकी बाधाओं का पता लगाने और अनुभव को बेहतर बनाने में मदद करता है।",

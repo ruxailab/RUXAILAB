@@ -1220,6 +1220,18 @@
       "shareScreen": "مشاركة الشاشة",
       "moderatorOnlySteps": "فقط المشرف يمكنه تغيير الخطوات"
     },
+    "VideoCall": {
+      "screenSharingLabel": "مشاركة الشاشة",
+      "cameraOff": "الكاميرا متوقفة",
+      "yourVideo": "فيديوك",
+      "yourPreview": "معاينتك",
+      "observatorMode": "وضع المراقب",
+      "waitingForModeratorToStartSession": "بانتظار المشرف لبدء الجلسة...",
+      "observeAllFeedsNotice": "ستتمكن من مشاهدة جميع الفيديوهات دون إرسال فيديوك.",
+      "waitingForParticipants": "بانتظار المشاركين...",
+      "waitingForModerator": "بانتظار المشرف...",
+      "autoStartWhenModeratorOpensRoom": "ستبدأ مكالمة الفيديو تلقائيا عندما يفتح المشرف الغرفة."
+    },
     "WelcomeStep": {
       "welcome": "مرحبًا بك في RUXAILAB!",
       "description": "أنت على وشك المشاركة في اختبار مستخدم يهدف إلى تقييم سهولة الاستخدام والفهم لتطبيق رقمي. يساعدنا هذا النوع من الاختبارات في اكتشاف الحواجز التكنولوجية المحتملة وتحسين التجربة للجميع.",
