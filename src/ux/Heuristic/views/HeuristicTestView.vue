@@ -617,6 +617,24 @@ const testAlreadyStarted = computed(() => {
   )
 })
 
+//Fisher-Yates algorithm to shuffle heuristics order
+const shuffleHeuristics = (array) => {
+  // Verify that the input is a valid array
+  if (!array || !Array.isArray(array)) return array
+
+  // Use a copy of the array to avoid mutating the original
+  const shuffledArray = [...array]
+
+  // Algorithem Fisher-Yates
+  for (let i = shuffledArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    // Shuffle elements
+    ;[shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]]
+  }
+
+  return shuffledArray
+}
+
 const heuristics = computed(() => {
   // Prefer heuristics from test.testStructure if available
   if (test.value?.testStructure && Array.isArray(test.value.testStructure)) {
@@ -1287,6 +1305,12 @@ onBeforeMount(async () => {
 
   // Then load user's answers
   await store.dispatch('getCurrentTestAnswerDoc')
+
+  // Random generation of heuristics order to avoid bias
+  if (test.value?.testStructure) {
+    // Change the order of the initial structure
+    test.value.testStructure = shuffleHeuristics(test.value.testStructure)
+  }
 
   populateWithHeuristicQuestions()
   // calculate progress before checking restore
