@@ -2,7 +2,11 @@
   <ShowInfo>
     <template #content>
       <div class="test-content pa-6 rounded-xl text-center">
-           <p class="text-h5 mt-4 mb-4 text-grey-darken-3" v-html="$t('UserTestView.PreTasksStep.description', { numTasks })"></p>
+        <p class="text-h5 mt-4 mb-4 text-grey-darken-3">
+          {{ $t('UserTestView.PreTasksStep.description') }}
+          <strong class="mx-1">{{ numTasks }}</strong>
+          {{ $t('UserTestView.PreTasksStep.tasksSuffix') }}
+        </p>
 
         <!-- Recording Information Card -->
         <v-card 
