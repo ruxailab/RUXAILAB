@@ -1,4 +1,18 @@
 {
+  "wizard": {
+    "welcome_title": "Welcome to RUXAILAB",
+    "subtitle": "Following guide tour will help you configure RUXAILAB according to your organization needs.",
+    "progress": "Progress Bar",
+    "close_button": "Close Config. Wizard",
+    "steps": {
+      "home_tour": "Home Screen Tour",
+      "org_setup": "Setup Organization",
+      "system_setup": "Setup System",
+      "accounting_setup": "Setup Accounting",
+      "products_setup": "Setup Products",
+      "funds_reports": "Setup Funds and Reports"
+    }
+  },
   "language": "Language",
   "auth": {
     "signupSuccess": "Sign up successful",

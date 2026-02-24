@@ -2,14 +2,12 @@
   <v-app>
     <GlobalToolbar />
     <GlobalErrorHandler />
+    <ConfigurationWizardModal />
 
     <GlobalToastHandler />
     <Loading />
     <v-main>
-      <v-container
-        fluid
-        class="pa-0"
-      >
+      <v-container fluid class="pa-0">
         <slot />
       </v-container>
     </v-main>
@@ -21,6 +19,7 @@ import { GlobalToolbar } from '@/features/navigation/utils'
 import GlobalErrorHandler from '@/app/layouts/components/GlobalErrorHandler.vue'
 import GlobalToastHandler from '@/app/layouts/components/GlobalToastHandler.vue'
 import Loading from '@/shared/components/Loading.vue'
+import ConfigurationWizardModal from '@/shared/components/dialogs/ConfigurationWizardModal.vue'
 
 export default {
   components: {
@@ -28,6 +27,10 @@ export default {
     GlobalErrorHandler,
     GlobalToastHandler,
     Loading,
+    ConfigurationWizardModal,
+  },
+  mounted() {
+    this.$store.dispatch('wizard/initializeWizard')
   },
 }
 </script>
