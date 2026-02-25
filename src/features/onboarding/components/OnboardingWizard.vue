@@ -210,16 +210,9 @@ export default {
         actionLabelKey: 'onboarding.start',
         timeEstimate: '3 min',
         buttonKey: 'onboarding.start_tour',
-        action: () => {
-          store.dispatch('Onboarding/markStepCompleted', 'home_tour')
-          internalIsOpen.value = false
-          router.push('/admin?section=dashboard')
-          store.commit('SET_TOAST', {
-            message:
-              'Welcome to your Dashboard! Start by reviewing your recent activity.',
-            type: 'info',
-          })
-        },
+        route: '/admin?section=dashboard',
+        toastMessage:
+          'Welcome to your Dashboard! Start by reviewing your recent activity.',
       },
       {
         id: 'create_study',
@@ -229,18 +222,9 @@ export default {
         actionLabelKey: 'onboarding.begin',
         timeEstimate: '1 min',
         buttonKey: 'onboarding.begin_btn',
-        action: () => {
-          store.dispatch('Onboarding/markStepCompleted', 'create_study')
-          internalIsOpen.value = false
-          router.push('/choose')
-          setTimeout(() => {
-            store.commit('SET_TOAST', {
-              message:
-                'Select the type of research study you want to create to get started.',
-              type: 'info',
-            })
-          }, 300)
-        },
+        route: '/choose',
+        toastMessage:
+          'Select the type of research study you want to create to get started.',
       },
       {
         id: 'explore_templates',
@@ -250,18 +234,9 @@ export default {
         actionLabelKey: 'onboarding.browse',
         timeEstimate: '2 min',
         buttonKey: 'onboarding.browse_btn',
-        action: () => {
-          store.dispatch('Onboarding/markStepCompleted', 'explore_templates')
-          internalIsOpen.value = false
-          router.push('/admin?section=templates')
-          setTimeout(() => {
-            store.commit('SET_TOAST', {
-              message:
-                'Browse and duplicate read-made templates to speed up your research setup.',
-              type: 'info',
-            })
-          }, 300)
-        },
+        route: '/admin?section=templates',
+        toastMessage:
+          'Browse and duplicate read-made templates to speed up your research setup.',
       },
       {
         id: 'complete_profile',
@@ -271,18 +246,9 @@ export default {
         actionLabelKey: 'onboarding.completed_label',
         timeEstimate: '1 min',
         buttonKey: 'onboarding.configure',
-        action: () => {
-          store.dispatch('Onboarding/markStepCompleted', 'complete_profile')
-          internalIsOpen.value = false
-          router.push('/admin?section=profile')
-          setTimeout(() => {
-            store.commit('SET_TOAST', {
-              message:
-                'Please review and complete your profile information to secure your account.',
-              type: 'info',
-            })
-          }, 300)
-        },
+        route: '/admin?section=profile',
+        toastMessage:
+          'Please review and complete your profile information to secure your account.',
       },
     ]
 
@@ -311,7 +277,15 @@ export default {
     }
 
     const startStep = (step) => {
-      step.action()
+      store.dispatch('Onboarding/markStepCompleted', step.id)
+      internalIsOpen.value = false
+      router.push(step.route)
+      setTimeout(() => {
+        store.commit('SET_TOAST', {
+          message: step.toastMessage,
+          type: 'info',
+        })
+      }, 300)
     }
 
     const resetConfig = () => {
