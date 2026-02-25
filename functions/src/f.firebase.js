@@ -6,7 +6,7 @@ import {
 } from 'firebase-functions/storage'
 import firebaseFunctions from 'firebase-functions/v2'
 
-const REGION = process.env.FUNCTIONS_REGION || 'europe-west6'
+const REGION = process.env.RUXAILAB_FUNCTIONS_REGION || 'europe-west6'
 
 function onRequest({ handler, opts = {} }) {
   return firebaseFunctions.https.onRequest({ region: REGION, ...opts }, handler)
