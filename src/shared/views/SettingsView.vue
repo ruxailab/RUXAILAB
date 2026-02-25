@@ -1,8 +1,8 @@
 <template>
   <PageWrapper
-    title="Study Configuration"
+    :title="$t('pages.settings.study_configuration')"
     :loading="loadingPage"
-    loading-text="Loading Settings"
+    :loading-text="$t('pages.settings.loading_settings')"
   >
     <!-- Actions Slot for Save Button -->
     <template #actions>
@@ -15,20 +15,15 @@
         :disabled="!localChanges"
         @click="submit()"
       >
-        <v-icon
-          start
-          size="18"
-        >
-          mdi-check
-        </v-icon>
-        Save Changes
+        <v-icon start size="18"> mdi-check </v-icon>
+        {{ $t('buttons.save') }}
       </v-btn>
     </template>
 
     <!-- Subtitle Slot -->
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
-        Manage your test settings and preferences with advanced controls
+        {{ $t('pages.settings.manage_test_settings') }}
       </p>
     </template>
 
@@ -36,21 +31,14 @@
     <Snackbar />
     <LeaveAlert @submit="onSubmit" />
 
-    <v-dialog
-      v-model="tempDialog"
-      max-width="800"
-    >
+    <v-dialog v-model="tempDialog" max-width="800">
       <v-card class="rounded-xl">
         <v-card-title class="d-flex align-center px-6 py-4">
-          <v-icon
-            color="primary"
-            size="28"
-            class="mr-3"
-          >
+          <v-icon color="primary" size="28" class="mr-3">
             mdi-file-document-plus-outline
           </v-icon>
           <h3 class="text-h5 font-weight-bold text-grey-darken-4">
-            Create Template
+            {{ $t('pages.settings.createTemplate') }}
           </h3>
           <v-spacer />
           <v-btn
@@ -63,35 +51,33 @@
           </v-btn>
         </v-card-title>
         <v-divider />
-        <v-form
-          ref="tempform"
-          class="pa-6"
-        >
+        <v-form ref="tempform" class="pa-6">
           <v-row>
             <v-col cols="12">
               <v-text-field
                 v-model="template.templateTitle"
                 autofocus
-                label="Title"
+                :label="$t('common.title')"
                 :rules="titleRequired"
                 counter="200"
+                maxlength="200"
                 variant="outlined"
                 density="comfortable"
-                placeholder="Enter a title for your template"
+                :placeholder="$t('TestDialog.template.title')"
                 class="mb-4"
               />
               <v-textarea
                 v-model="template.templateDescription"
-                label="Description"
+                :label="$t('common.description')"
                 variant="outlined"
                 rows="4"
                 density="comfortable"
-                placeholder="Provide a description for your template"
+                :placeholder="$t('TestDialog.template.description')"
                 class="mb-4"
               />
               <v-checkbox
                 v-model="template.isTemplatePublic"
-                label="Make template public to all users"
+                :label="$t('TestDialog.template.public')"
                 color="primary"
                 hide-details
                 class="mt-0 pt-0"
@@ -128,26 +114,21 @@
     <div class="settings-layout">
       <div class="content-wrapper">
         <div class="left-column">
-          <v-card
-            class="info-card"
-            elevation="0"
-            height="auto"
-          >
+          <v-card class="info-card" elevation="0" height="auto">
             <div class="d-flex align-start ga-3 pa-6 pb-0">
-              <div class="header-icon bg-grey-lighten-4 rounded-lg d-flex align-center justify-center">
-                <v-icon
-                  color="primary"
-                  size="20"
-                >
+              <div
+                class="header-icon bg-grey-lighten-4 rounded-lg d-flex align-center justify-center"
+              >
+                <v-icon color="primary" size="20">
                   mdi-information-outline
                 </v-icon>
               </div>
               <div>
                 <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">
-                  Basic Information
+                  {{ $t('pages.settings.basic_information') }}
                 </h3>
                 <p class="text-caption text-grey-darken-1">
-                  Configure the fundamental details of your test
+                  {{ $t('pages.settings.configure_test_details') }}
                 </p>
               </div>
             </div>
@@ -165,42 +146,36 @@
         </div>
 
         <div class="right-column">
-          <v-card
-            class="advanced-card"
-            elevation="0"
-          >
+          <v-card class="advanced-card" elevation="0">
             <div class="d-flex align-start ga-3 pa-6 pb-0">
-              <div class="header-icon bg-blue-lighten-5 rounded-lg d-flex align-center justify-center">
-                <v-icon
-                  color="secondary"
-                  size="20"
-                >
-                  mdi-cog-outline
-                </v-icon>
+              <div
+                class="header-icon bg-blue-lighten-5 rounded-lg d-flex align-center justify-center"
+              >
+                <v-icon color="secondary" size="20"> mdi-cog-outline </v-icon>
               </div>
               <div>
                 <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">
-                  Advanced Settings
+                  {{ $t('pages.settings.advanced_settings') }}
                 </h3>
                 <p class="text-caption text-grey-darken-1">
-                  Fine-tune your test configuration
+                  {{ $t('pages.settings.fine_tune_configuration') }}
                 </p>
               </div>
             </div>
             <v-card-text class="py-6">
               <div class="d-flex flex-column ga-5">
-                <div class="pa-5 border rounded-lg bg-grey-lighten-5 position-relative">
+                <div
+                  class="pa-5 border rounded-lg bg-grey-lighten-5 position-relative"
+                >
                   <div class="d-flex align-center ga-2 mb-2">
-                    <v-icon
-                      color="primary"
-                      size="18"
+                    <v-icon color="primary" size="18"> mdi-earth </v-icon>
+                    <span
+                      class="font-weight-semibold text-subtitle-2 text-grey-darken-4"
+                      >{{ $t('pages.settings.public_access') }}</span
                     >
-                      mdi-earth
-                    </v-icon>
-                    <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">Public Access</span>
                   </div>
                   <p class="text-caption text-grey-darken-1 mb-4">
-                    Allow users to view this test
+                    {{ $t('pages.settings.allow_users_view') }}
                   </p>
                   <v-switch
                     v-model="object.isPublic"
@@ -208,52 +183,51 @@
                     hide-details
                     inset
                     class="position-absolute"
-                    style="top: 20px; right: 20px;"
-                    @update:model-value="store.commit('SET_LOCAL_CHANGES', true)"
+                    style="top: 20px; right: 20px"
+                    @update:model-value="
+                      store.commit('SET_LOCAL_CHANGES', true)
+                    "
                   />
                 </div>
                 <div class="pa-5 border rounded-lg bg-grey-lighten-5">
                   <div class="d-flex align-center ga-2 mb-3">
-                    <v-icon
-                      color="primary"
-                      size="18"
+                    <v-icon color="primary" size="18"> mdi-list-status </v-icon>
+                    <span
+                      class="font-weight-semibold text-subtitle-2 text-grey-darken-4"
+                      >{{ $t('pages.settings.test_status') }}</span
                     >
-                      mdi-list-status
-                    </v-icon>
-                    <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">Test Status</span>
                   </div>
                   <v-select
                     v-model="object.status"
                     :items="statusOptions"
-                    label="Select Status"
+                    :label="$t('pages.settings.select_status')"
                     variant="outlined"
                     density="comfortable"
                     hide-details
-                    @update:model-value="store.commit('SET_LOCAL_CHANGES', true)"
+                    @update:model-value="
+                      store.commit('SET_LOCAL_CHANGES', true)
+                    "
                   />
                 </div>
                 <div class="pa-5 border rounded-lg bg-grey-lighten-5">
                   <div class="d-flex align-center ga-2 mb-3">
-                    <v-icon
-                      color="primary"
-                      size="18"
+                    <v-icon color="primary" size="18"> mdi-calendar </v-icon>
+                    <span
+                      class="font-weight-semibold text-subtitle-2 text-grey-darken-4"
+                      >{{ $t('pages.settings.end_date') }}</span
                     >
-                      mdi-calendar
-                    </v-icon>
-                    <span class="font-weight-semibold text-subtitle-2 text-grey-darken-4">End Date</span>
                   </div>
                   <v-menu
                     v-model="dateMenu"
                     :close-on-content-click="false"
                     transition="scale-transition"
-                    offset-y
                     max-width="290px"
                     min-width="auto"
                   >
-                    <template v-slot:activator="{ props }">
+                    <template #activator="{ props }">
                       <v-text-field
                         :model-value="formattedEndDate"
-                        label="Select End Date"
+                        :label="$t('pages.settings.select_end_date')"
                         variant="outlined"
                         density="comfortable"
                         readonly
@@ -277,25 +251,21 @@
       </div>
 
       <!-- Quick Actions Card -->
-      <v-card
-        class="actions-card"
-        elevation="0"
-      >
+      <v-card class="actions-card" elevation="0">
         <div class="d-flex align-start ga-3 pa-6 pb-0">
-          <div class="header-icon bg-amber-lighten-5 rounded-lg d-flex align-center justify-center">
-            <v-icon
-              color="amber-darken-2"
-              size="20"
-            >
+          <div
+            class="header-icon bg-amber-lighten-5 rounded-lg d-flex align-center justify-center"
+          >
+            <v-icon color="amber-darken-2" size="20">
               mdi-lightning-bolt
             </v-icon>
           </div>
           <div>
             <h3 class="text-h6 font-weight-bold text-grey-darken-4 mb-1">
-              Quick Actions
+              {{ $t('pages.settings.quick_actions') }}
             </h3>
             <p class="text-caption text-grey-darken-1">
-              Perform common tasks instantly
+              {{ $t('pages.settings.perform_common_tasks') }}
             </p>
           </div>
         </div>
@@ -309,12 +279,7 @@
               :disabled="hasTemplate || !object"
               @click="tempDialog = true"
             >
-              <v-icon
-                start
-                size="18"
-              >
-                mdi-file-document-plus-outline
-              </v-icon>
+              <v-icon start size="18"> mdi-file-document-plus-outline </v-icon>
               {{ $t('pages.settings.createTemplate') }}
             </v-btn>
             <v-btn
@@ -325,12 +290,7 @@
               :disabled="!object"
               @click="duplicateStudy()"
             >
-              <v-icon
-                start
-                size="18"
-              >
-                mdi-content-duplicate
-              </v-icon>
+              <v-icon start size="18"> mdi-content-duplicate </v-icon>
               {{ $t('buttons.duplicateTest') }}
             </v-btn>
             <v-btn
@@ -341,12 +301,7 @@
               :disabled="!object"
               @click="dialogDel = true"
             >
-              <v-icon
-                start
-                size="18"
-              >
-                mdi-delete-outline
-              </v-icon>
+              <v-icon start size="18"> mdi-delete-outline </v-icon>
               {{ $t('pages.settings.deleteTest') }}
             </v-btn>
           </div>
@@ -354,33 +309,26 @@
       </v-card>
     </div>
 
-    <v-dialog
-      v-model="dialogDel"
-      max-width="500"
-      persistent
-    >
+    <v-dialog v-model="dialogDel" max-width="500" persistent>
       <v-card class="rounded-xl">
         <v-card-title class="d-flex align-start ga-4 pa-6 pb-0">
-          <div class="dialog-icon bg-red-lighten-5 rounded-lg d-flex align-center justify-center">
-            <v-icon
-              color="error"
-              size="28"
-            >
-              mdi-alert-circle-outline
-            </v-icon>
+          <div
+            class="dialog-icon bg-red-lighten-5 rounded-lg d-flex align-center justify-center"
+          >
+            <v-icon color="error" size="28"> mdi-alert-circle-outline </v-icon>
           </div>
           <div>
             <h3 class="text-h5 font-weight-bold text-grey-darken-4 mb-1">
-              Confirm Deletion
+              {{ $t('pages.settings.confirm_deletion') }}
             </h3>
             <p class="text-subtitle-2 text-grey-darken-1">
-              This action cannot be undone
+              {{ $t('common.action_cannot_be_undone') }}
             </p>
           </div>
         </v-card-title>
         <v-card-text class="py-4 px-6">
           <p class="text-body-2 text-grey-darken-1">
-            {{ dialogText }} All associated data, results, and configurations will be lost forever.
+            {{ dialogText }} {{ $t('pages.settings.delete_warning') }}
           </p>
         </v-card-text>
         <v-card-actions class="px-6 pb-6 pt-0 d-flex justify-end ga-3">
@@ -402,13 +350,8 @@
             height="44"
             @click="deleteStudy(object)"
           >
-            <v-icon
-              start
-              size="16"
-            >
-              mdi-delete
-            </v-icon>
-            {{ $t('buttons.delete') }} Forever
+            <v-icon start size="16"> mdi-delete </v-icon>
+            {{ $t('pages.settings.delete_forever') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -419,41 +362,46 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
-import { useStore } from 'vuex';
-import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
-import FormTestDescription from '@/shared/components/FormTestDescription';
-import Snackbar from '@/shared/components/Snackbar';
-import LeaveAlert from '@/shared/components/dialogs/LeaveAlert';
-import AccessNotAllowed from '@/shared/views/AccessNotAllowed';
-import PageWrapper from '@/shared/views/template/PageWrapper.vue';
-import TemplateHeader from '@/shared/models/TemplateHeader';
-import TemplateAuthor from '@/shared/models/TemplateAuthor';
-import TemplateBody from '@/shared/models/TemplateBody';
-import Template from '@/shared/models/Template';
-import { useI18n } from 'vue-i18n';
-import { useToast } from 'vue-toastification';
-import { instantiateStudyByType } from '../constants/methodDefinitions';
-import StudyAdmin from '@/shared/models/StudyAdmin';
+import {
+  ref,
+  computed,
+  watch,
+  onBeforeMount,
+  onBeforeUnmount,
+  onMounted,
+} from 'vue'
+import { useStore } from 'vuex'
+import { useRouter, onBeforeRouteLeave } from 'vue-router'
+import FormTestDescription from '@/shared/components/FormTestDescription'
+import Snackbar from '@/shared/components/Snackbar'
+import LeaveAlert from '@/shared/components/dialogs/LeaveAlert'
+import AccessNotAllowed from '@/shared/views/AccessNotAllowed'
+import PageWrapper from '@/shared/views/template/PageWrapper.vue'
+import TemplateHeader from '@/shared/models/TemplateHeader'
+import TemplateAuthor from '@/shared/models/TemplateAuthor'
+import TemplateBody from '@/shared/models/TemplateBody'
+import Template from '@/shared/models/Template'
+import { useI18n } from 'vue-i18n'
+import { instantiateStudyByType } from '../constants/methodDefinitions'
+import StudyAdmin from '@/shared/models/StudyAdmin'
+import { showSuccess, showError, showWarning } from '@/shared/utils/toast'
 
-const store = useStore();
-const router = useRouter();
-const route = useRoute();
-const { t } = useI18n();
-const toast = useToast();
+const store = useStore()
+const router = useRouter()
+const { t } = useI18n()
 
 const props = defineProps({
   id: {
     type: String,
     required: true,
   },
-});
+})
 
 const template = ref({
   templateTitle: '',
   templateDescription: '',
   isTemplatePublic: false,
-});
+})
 const object = ref({
   testTitle: '',
   testDescription: '',
@@ -465,285 +413,240 @@ const object = ref({
   testAdmin: null,
   collaborators: {},
   configData: {},
-  progress: {}
-});
-const valids = ref([false, true, true]);
-const dialogDel = ref(false);
-const loading = ref(false);
-const loadingPage = ref(true);
-const tempDialog = ref(false);
-const dateMenu = ref(false);
-const form1 = ref(null);
-const tempform = ref(null);
+  progress: {},
+})
+const valids = ref([false, true, true])
+const dialogDel = ref(false)
+const loading = ref(false)
+const loadingPage = ref(true)
+const tempDialog = ref(false)
+const dateMenu = ref(false)
+const form1 = ref(null)
+const tempform = ref(null)
 
-const statusOptions = [
-  { title: 'Active', value: 'active' },
-  { title: 'Pending', value: 'pending' },
-  { title: 'Finished', value: 'finished' },
-  { title: 'Upcoming', value: 'upcoming' },
-];
+const statusOptions = computed(() => [
+  { title: t('studyCreation.details.status.active'), value: 'active' },
+  { title: t('studyCreation.details.status.pending'), value: 'pending' },
+  { title: t('studyCreation.details.status.finished'), value: 'finished' },
+  { title: t('studyCreation.details.status.upcoming'), value: 'upcoming' },
+])
 
 const titleRequired = [
-  v => !!v.trim() || t('errors.fieldRequired'),
-  v => v.length <= 200 || 'Max 200 characters',
-];
+  (v) => !!v.trim() || t('errors.fieldRequired'),
+  (v) =>
+    v.length <= 200 || t('studyCreation.details.validation.max200Characters'),
+]
 
 const localChanges = computed({
   get: () => store.state.localChanges,
-  set: value => store.commit('SET_LOCAL_CHANGES', value),
-});
+  set: (value) => store.commit('SET_LOCAL_CHANGES', value),
+})
 const test = computed({
   get: () => store.getters.test,
-  set: val => store.commit('SET_TEST', val),
-});
-const user = computed(() => store.getters.user);
-const answers = computed(() => store.getters.answers || []);
-const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument);
-const answersNew = computed(() => {
-  if (testAnswerDocument.value) {
-    return Object.values(testAnswerDocument.value.heuristicAnswers);
-  }
-  return [];
-});
-const reports = computed(() => store.getters.reports || []);
-const cooperators = computed(() => store.getters.cooperators || {});
+  set: (val) => store.commit('SET_TEST', val),
+})
+const user = computed(() => store.getters.user)
+const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
 const dialogText = computed(() => {
   if (test.value) {
-    return `Are you sure you want to delete your test "${test.value.testTitle}"?`;
+    return t('alerts.deleteTest', { testTitle: test.value.testTitle })
   }
-  return "Are you sure you want to delete this test?";
-});
+  return t('alerts.deleteTest')
+})
 const hasTemplate = computed(() => {
   if (object.value && 'template' in object.value) {
-    return object.value.template !== null;
+    return object.value.template !== null
   }
-  return false;
-});
+  return false
+})
 
 const formattedEndDate = computed(() => {
   if (object.value?.endDate) {
     try {
-      // Crear la fecha correctamente desde el string ISO
-      const date = new Date(object.value.endDate + 'T00:00:00');
-      if (isNaN(date.getTime())) {
-        return '';
+      const date = new Date(object.value.endDate)
+
+      if (Number.isNaN(date.getTime())) {
+        return ''
       }
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
+      return date.toLocaleDateString()
     } catch (error) {
-      console.error('Error formatting date:', error);
-      return '';
+      return error
     }
   }
-  return '';
-});
+  return ''
+})
 
 const datePickerModel = computed({
   get() {
     if (object.value?.endDate) {
-      return new Date(object.value.endDate + 'T00:00:00');
+      if (typeof object.value.endDate === 'number') {
+        const date = new Date(object.value.endDate)
+        if (!Number.isNaN(date.getTime())) {
+          return date
+        }
+      }
+      const date = new Date(object.value.endDate)
+      if (!Number.isNaN(date.getTime())) {
+        return date
+      }
     }
-    return null;
+    return null
   },
   set(newDate) {
     if (newDate && object.value) {
-      const formattedDate = newDate.toISOString().split('T')[0];
-      object.value.endDate = formattedDate;
-      store.commit('SET_LOCAL_CHANGES', true);
+      object.value.endDate = newDate.getTime()
+      store.commit('SET_LOCAL_CHANGES', true)
     }
-  }
-});
+  },
+})
 
-// Helper function to create object based on test type
 const createObjectFromTest = (testData) => {
-  if (!testData) return null;
+  if (!testData) return null
 
-  // Check if this is an accessibility test (automatic or manual)
-  const isAccessibilityTest = testData.testType === 'AUTOMATIC' || testData.testType === 'MANUAL';
-  
+  const isAccessibilityTest =
+    testData.testType === 'AUTOMATIC' || testData.testType === 'MANUAL'
+
   if (isAccessibilityTest) {
-    // Dynamic mapping for accessibility tests
     return {
-      ...testData, 
+      ...testData,
       testTitle: testData.title || testData.testTitle || testData.name || '',
-      testDescription: testData.description || testData.testDescription || testData.desc || '',
+      testDescription:
+        testData.description || testData.testDescription || testData.desc || '',
       testType: testData.testType,
       status: testData.status || 'draft',
       endDate: testData.endDate || testData.end_date || null,
-      isPublic: testData.isPublic !== undefined ? Boolean(testData.isPublic) : false,
-      websiteUrl: testData.websiteUrl || testData.website_url || testData.url || '',
+      isPublic:
+        testData.isPublic !== undefined ? Boolean(testData.isPublic) : false,
+      websiteUrl:
+        testData.websiteUrl || testData.website_url || testData.url || '',
       testAdmin: testData.testAdmin || testData.admin || null,
       collaborators: testData.collaborators || testData.cooperators || {},
       configData: testData.configData || testData.config || {},
-      progress: testData.progress || testData.progressData || {}
-    };
+      progress: testData.progress || testData.progressData || {},
+    }
   } else {
-    
     return {
       ...testData,
-    };
+    }
   }
-};
+}
 
 watch(
   test,
-  newTest => {
-    if (newTest !== null && newTest !== undefined) {
-      const mappedObject = createObjectFromTest(newTest);
-      object.value = mappedObject;
+  (newTest) => {
+    if (newTest) {
+      const mappedObject = createObjectFromTest(newTest)
+      if (mappedObject) {
+        object.value = mappedObject
+      }
     }
   },
-  { immediate: true }
-);
-
-
+  { immediate: true },
+)
 
 onMounted(async () => {
   if (props.id) {
     try {
-      console.log('Fetching test data for ID:', props.id);
-      // Always fetch the study data when component mounts
-      await store.dispatch('getStudy', { id: props.id });
-      
-      // Log the fetched test data
-      const testData = store.getters.test;
-      console.log('Fetched test data:', testData);
+      await store.dispatch('getStudy', { id: props.id })
+
+      const testData = store.getters.test
       if (!testData) {
-        toast.error('Test not found');
+        showError('errors.globalError')
       }
     } catch (error) {
-      console.error('Error fetching test data:', error);
-      toast.error('Failed to load test data');
+      showError('errors.globalError')
+      return error
     }
   } else {
-    toast.error('Test ID is missing');
+    showError('errors.globalError')
   }
-  
-  loadingPage.value = false;
-});
+
+  loadingPage.value = false
+})
 
 onBeforeMount(() => {
-  store.commit('SET_LOCAL_CHANGES', false);
-  store.commit('SET_DIALOG_LEAVE', false);
-  window.addEventListener('beforeunload', preventNav);
-});
+  store.commit('SET_LOCAL_CHANGES', false)
+  store.commit('SET_DIALOG_LEAVE', false)
+  window.addEventListener('beforeunload', preventNav)
+})
 
 onBeforeUnmount(() => {
-  window.removeEventListener('beforeunload', preventNav);
-});
+  window.removeEventListener('beforeunload', preventNav)
+})
 
-onBeforeRouteLeave((to, from) => {
+onBeforeRouteLeave((to, _from) => {
   if (localChanges.value) {
-    store.commit('SET_DIALOG_LEAVE', true);
-    store.commit('SET_PATH_TO', to.name);
-    return false;
+    store.commit('SET_DIALOG_LEAVE', true)
+    store.commit('SET_PATH_TO', to.name)
+    return false
   }
-  return true;
-});
+  return true
+})
 
 const validate = (valid, index) => {
-  valids.value[index] = valid;
-};
+  valids.value[index] = valid
+}
 
 const onSubmit = async () => {
-  await submit();
-  store.commit('SET_LOCAL_CHANGES', false);
-  router.push({ name: store.state.pathTo });
-};
+  await submit()
+  store.commit('SET_LOCAL_CHANGES', false)
+  store.commit('SET_DIALOG_LEAVE', false)
+  router.push({ name: store.state.pathTo })
+}
 
 const submit = async () => {
-  const title = object.value.testTitle;
+  const title = object.value.testTitle
   if (title.length > 0 && title.length < 200) {
-    loading.value = true;
+    loading.value = true
     try {
-      console.log('Saving object with endDate:', object.value.endDate);
-      const study = instantiateStudyByType(object.value.testType, object.value);
-      console.log('Study object to save:', study);
-      await store.dispatch('updateStudy', study);
-      await store.dispatch('getStudy', { id: props.id });
-      store.commit('SET_LOCAL_CHANGES', false);
-      toast.success(t('alerts.savedChanges'));
-    } catch (error) {
-      toast.error('Failed to save changes.');
-      console.error('Error saving test:', error);
+      const study = instantiateStudyByType(object.value.testType, object.value)
+      await store.dispatch('updateStudy', study)
+      await store.dispatch('getStudy', { id: props.id })
+      store.commit('SET_LOCAL_CHANGES', false)
+      showSuccess('alerts.savedChanges')
+    } catch {
+      showError('errors.globalError')
     } finally {
-      loading.value = false;
+      loading.value = false
     }
   } else if (title.length >= 200) {
-    toast.warning('Title must not exceed 200 characters.');
+    showWarning('studyCreation.details.validation.max200Characters')
   } else {
-    toast.warning('Test must contain a title.');
+    showWarning('studyCreation.details.validation.enterTitle')
   }
-};
+}
 
-const preventNav = event => {
-  if (!localChanges.value) return;
-  event.preventDefault();
-  event.returnValue = '';
-};
+const preventNav = (event) => {
+  if (!localChanges.value) return
+  event.preventDefault()
+  event.returnValue = ''
+}
 
-// Function to fetch and log test data
-const fetchTestData = async () => {
-  if (!props.id) {
-    return;
-  }
-  
+const deleteStudy = async (item) => {
+  loading.value = true
   try {
-    loading.value = true;
-    
-    // Dispatch the getStudy action
-    await store.dispatch('getStudy', { id: props.id });
-    
-    // Get the test data from store
-    const testData = store.getters.test;
-    
-    if (testData) {
-      toast.success('Test data fetched successfully!');
-    } else {
-      toast.warning('No test data found');
-    }
-  } catch (error) {
-    console.error('Error fetching test data:', error);
-    toast.error('Failed to fetch test data: ' + error.message);
+    const auxUser = { ...user.value }
+    delete auxUser.myTests[item.id]
+    item.auxUser = auxUser
+    await store.dispatch('deleteStudy', item)
+    showSuccess('alerts.genericSuccess')
+    router.push({ name: 'Admin' })
+  } catch {
+    showError('errors.globalError')
   } finally {
-    loading.value = false;
+    loading.value = false
+    dialogDel.value = false
   }
-};
-
-// Function to log current component state
-const logCurrentState = () => {
-  // This function can be used for debugging if needed
-};
-
-const deleteStudy = async item => {
-  loading.value = true;
-  try {
-    const auxUser = { ...user.value };
-    delete auxUser.myTests[item.id];
-    item.auxUser = auxUser;
-    await store.dispatch('deleteStudy', item);
-    toast.success('Test deleted successfully!');
-    router.push({ name: 'Admin' });
-  } catch (error) {
-    toast.error('Failed to delete test.');
-    console.error('Error deleting test:', error);
-  } finally {
-    loading.value = false;
-    dialogDel.value = false;
-  }
-};
+}
 
 const createTemplate = async () => {
-  const { valid } = await tempform.value.validate();
+  const { valid } = await tempform.value.validate()
   if (!valid) {
-    toast.warning('Please fill in the required fields.');
-    return;
+    showWarning('errors.fieldRequired')
+    return
   }
 
-  loading.value = true;
+  loading.value = true
   try {
     const tempHeader = new TemplateHeader({
       creationDate: Date.now(),
@@ -758,60 +661,59 @@ const createTemplate = async () => {
         userEmail: test.value.testAdmin.email,
         userDocId: test.value.testAdmin.userDocId,
       }),
-    });
+    })
 
-    const tempBody = new TemplateBody(test.value);
+    const tempBody = new TemplateBody(test.value)
     const templateObj = new Template({
       id: null,
       header: tempHeader,
       body: tempBody,
-    });
+    })
 
-    await store.dispatch('createTemplate', templateObj);
-    toast.success('Template created successfully!');
-    closeDialog();
+    await store.dispatch('createTemplate', templateObj)
+    showSuccess('alerts.genericSuccess')
+    closeDialog()
   } catch (error) {
-    toast.error('Failed to create template.');
-    console.error('Error creating template:', error);
+    showError('errors.globalError')
+    return error
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 const closeDialog = () => {
-  tempDialog.value = false;
+  tempDialog.value = false
   if (tempform.value) {
-    tempform.value.resetValidation();
+    tempform.value.resetValidation()
   }
   template.value = {
     templateTitle: '',
     templateDescription: '',
     isTemplatePublic: false,
-  };
-};
+  }
+}
 
-const updateObject = newObject => {
-  object.value = { ...newObject };
-  store.commit('SET_LOCAL_CHANGES', true);
-};
+const updateObject = (newObject) => {
+  object.value = { ...newObject }
+  store.commit('SET_LOCAL_CHANGES', true)
+}
 
-const onDateChange = (date) => {
-  console.log('Date picker changed to:', date);
-  dateMenu.value = false;
-};
+const onDateChange = (_date) => {
+  dateMenu.value = false
+}
 
 const clearEndDate = () => {
   if (object.value) {
-    object.value.endDate = null;
-    store.commit('SET_LOCAL_CHANGES', true);
+    object.value.endDate = null
+    store.commit('SET_LOCAL_CHANGES', true)
   }
-};
+}
 
 const duplicateStudy = async () => {
-  loading.value = true;
+  loading.value = true
   try {
     const rawData = {
-      testTitle: 'Copy of ' + test.value.testTitle,
+      testTitle: t('buttons.duplicateTest') + ' ' + test.value.testTitle,
       testDescription: test.value.testDescription,
       testType: test.value.testType,
       subType: test.value.subType,
@@ -826,23 +728,22 @@ const duplicateStudy = async () => {
       updateDate: Date.now(),
       status: test.value.status,
       endDate: test.value.endDate,
-    };
+    }
 
-    const study = instantiateStudyByType(rawData.testType, rawData);
+    const study = instantiateStudyByType(rawData.testType, rawData)
 
     await store.dispatch('duplicateStudy', {
       test: study,
       answer: testAnswerDocument.value,
-    });
-    toast.success('Test duplicated successfully!');
-    router.push('/admin');
-  } catch (error) {
-    toast.error('Failed to duplicate test.');
-    console.error('Error duplicating test:', error);
+    })
+    showSuccess('alerts.genericSuccess')
+    router.push('/admin')
+  } catch {
+    showError('errors.globalError')
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 </script>
 
 <style scoped>

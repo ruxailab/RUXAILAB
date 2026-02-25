@@ -8,18 +8,18 @@
     <v-card class="rounded-xl">
       <v-card-title class="bg-error text-white text-h6 align-center">
         <v-icon start>mdi-alert-circle</v-icon>
-        {{ title }}
+        {{ title || $t('acceptInvitation.title') }}
       </v-card-title>
       <v-card-text class="pa-6 text-body-1">
-        {{ message }}
+        {{ message || $t('acceptInvitation.message') }}
       </v-card-text>
       <v-card-actions class="pa-4 bg-grey-lighten-4">
         <v-spacer />
         <v-btn variant="text" @click="$emit('cancel')">
-          {{ cancelLabel }}
+          {{ cancelLabel || $t('acceptInvitation.reject') }}
         </v-btn>
         <v-btn color="error" variant="flat" @click="$emit('submit')">
-          {{ submitLabel }}
+          {{ submitLabel || $t('acceptInvitation.accept') }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -29,11 +29,11 @@
 <script setup>
 defineProps({
   modelValue: Boolean,
-  title: { type: String, default: 'Cooperation Invite' },
-  message: { type: String, default: 'Do you want to accept this invitation?' },
-  cancelLabel: { type: String, default: 'Reject' },
-  submitLabel: { type: String, default: 'Accept' }
+  title: { type: String, default: '' },
+  message: { type: String, default: '' },
+  cancelLabel: { type: String, default: '' },
+  submitLabel: { type: String, default: '' },
 })
 
-const emit = defineEmits(['update:modelValue', 'cancel', 'submit'])
+defineEmits(['update:modelValue', 'cancel', 'submit'])
 </script>

@@ -1,10 +1,7 @@
 <template>
   <div v-if="answers">
     <v-overlay :model-value="loading">
-      <v-progress-circular
-        indeterminate
-        size="64"
-      />
+      <v-progress-circular indeterminate size="64" />
     </v-overlay>
     <IntroAnswer
       v-if="answers != null && intro == true"
@@ -15,7 +12,7 @@
       justify="center"
       class="ma-0 mt-4"
     >
-      <ShowInfo hide-col="true">
+      <ShowInfo :hide-col="true">
         <!-- Main Tabs -->
         <template #top>
           <v-tabs
@@ -53,32 +50,21 @@
                 {{ $t('HeuristicsTestAnswer.titles.statistics') }}
               </v-card-title>
               <v-divider />
-              <v-row
-                justify="space-around"
-                class="ma-0"
-              >
+              <v-row justify="space-around" class="ma-0">
                 <v-col cols="10">
-                  <v-card
-                    class="cardStyle my-6"
-                    flat
-                  >
-                    <v-row
-                      justify="space-around"
-                      class="ma-0"
-                    >
+                  <v-card class="cardStyle my-6" flat>
+                    <v-row justify="space-around" class="ma-0">
                       <v-col cols="4">
-                        <v-row
-                          justify="center"
-                          class="ma-0"
-                        >
+                        <v-row justify="center" class="ma-0">
                           <v-card-title class="mt-4">
-                            {{ $t('HeuristicsTestAnswer.statistics.usabilityPercentage') }}
+                            {{
+                              $t(
+                                'HeuristicsTestAnswer.statistics.usabilityPercentage',
+                              )
+                            }}
                           </v-card-title>
                           <v-card-text>
-                            <v-row
-                              align="center"
-                              justify="center"
-                            >
+                            <v-row align="center" justify="center">
                               <p class="text-h2">
                                 {{ showFinalResult.average }}
                               </p>
@@ -102,7 +88,9 @@
                           </v-list-item>
                           <v-list-item>
                             <template #prepend>
-                              <v-icon>mdi-arrow-down-bold-hexagon-outline</v-icon>
+                              <v-icon
+                                >mdi-arrow-down-bold-hexagon-outline</v-icon
+                              >
                             </template>
                             <v-list-item-title>
                               {{ $t('HeuristicsTestAnswer.statistics.min') }}
@@ -164,12 +152,9 @@
                 </v-tab>
               </v-tabs>
               <v-row justify="center">
-                <v-col
-                  v-if="ind == 0"
-                  cols="10"
-                >
+                <v-col v-if="ind == 0" cols="10">
                   <v-data-table
-                    dense
+                    density="compact"
                     :headers="evaluatorStatistics.header"
                     :items="evaluatorStatistics.items"
                     :items-per-page="15"
@@ -182,10 +167,7 @@
                       >
                         0.0%
                       </v-chip>
-                      <v-chip
-                        v-else
-                        :color="getColorPorcentage(item.result)"
-                      >
+                      <v-chip v-else :color="getColorPorcentage(item.result)">
                         {{ item.result }}%
                       </v-chip>
                     </template>
@@ -202,18 +184,17 @@
                     @click="DownloadEvaluatorCsv"
                   >
                     Export as CSV
-                    <v-icon end>
-                      mdi-download
-                    </v-icon>
+                    <v-icon end> mdi-download </v-icon>
                   </v-btn>
                 </v-col>
-                <v-col
-                  v-if="ind == 1"
-                  cols="10"
-                >
+                <v-col v-if="ind == 1" cols="10">
                   <RadarChart
                     v-if="evaluatorStatistics.items.length >= 3"
-                    :labels="evaluatorStatistics.items.map((item) => `${item.evaluator} - ${item.result}%`)"
+                    :labels="
+                      evaluatorStatistics.items.map(
+                        (item) => `${item.evaluator} - ${item.result}%`,
+                      )
+                    "
                     :data="evaluatorStatistics.items.map((item) => item.result)"
                   />
                   <v-card
@@ -223,7 +204,11 @@
                     align="center"
                     width="970px"
                   >
-                    {{ $t('HeuristicsTestAnswer.evaluators.messages.graphForMoreThan3') }}
+                    {{
+                      $t(
+                        'HeuristicsTestAnswer.evaluators.messages.graphForMoreThan3',
+                      )
+                    }}
                   </v-card>
                 </v-col>
               </v-row>
@@ -244,14 +229,17 @@
                 align="center"
                 width="970px"
               >
-                {{ $t('HeuristicsTestAnswer.heuristics.messages.needMoreThan1Answer') }}
+                {{
+                  $t(
+                    'HeuristicsTestAnswer.heuristics.messages.needMoreThan1Answer',
+                  )
+                }}
               </v-card>
-              <div
-                v-else
-                key="heuristics-data"
-              >
+              <div v-else key="heuristics-data">
                 <v-card-title class="subtitleView">
-                  {{ $t('HeuristicsTestAnswer.heuristics.headers.heuristicsData') }}
+                  {{
+                    $t('HeuristicsTestAnswer.heuristics.headers.heuristicsData')
+                  }}
                 </v-card-title>
                 <v-divider />
                 <v-tabs
@@ -265,14 +253,22 @@
                     style="text-transform: none !important"
                     @click="ind = 0"
                   >
-                    {{ $t('HeuristicsTestAnswer.heuristics.headers.answersByEvaluator') }}
+                    {{
+                      $t(
+                        'HeuristicsTestAnswer.heuristics.headers.answersByEvaluator',
+                      )
+                    }}
                   </v-tab>
                   <v-tab
                     class="tab-text"
                     style="text-transform: none !important"
                     @click="ind = 1"
                   >
-                    {{ $t('HeuristicsTestAnswer.heuristics.headers.answersByHeuristics') }}
+                    {{
+                      $t(
+                        'HeuristicsTestAnswer.heuristics.headers.answersByHeuristics',
+                      )
+                    }}
                   </v-tab>
                   <v-tab
                     class="tab-text"
@@ -293,16 +289,13 @@
                   <v-col cols="10">
                     <v-row>
                       <!-- Bottom Tab 1 -->
-                      <v-col
-                        v-if="ind == 0"
-                        cols="12"
-                      >
+                      <v-col v-if="ind == 0" cols="12">
                         <v-data-table
                           :headers="heuristicsEvaluator.header"
                           :items="heuristicsEvaluator.items"
                           :items-per-page="15"
                           class="elevation-0 cardStyle mx-2 mt-3 mb-6"
-                          dense
+                          density="compact"
                         >
                           <template
                             v-for="header in heuristicsEvaluator.header"
@@ -311,10 +304,16 @@
                           >
                             <v-chip
                               v-if="header.value != 'heuristic'"
-                              :color="getColor(item[header.value], item.max, item.min)"
+                              :color="
+                                getColor(item[header.value], item.max, item.min)
+                              "
                               class="chip"
                             >
-                              {{ item[header.value] ? item[header.value].toFixed(2) : 0 }}
+                              {{
+                                item[header.value]
+                                  ? item[header.value].toFixed(2)
+                                  : 0
+                              }}
                             </v-chip>
                             <v-btn
                               v-else
@@ -327,22 +326,21 @@
                         </v-data-table>
                       </v-col>
                       <!-- Bottom Tab 2 -->
-                      <v-col
-                        v-if="ind == 1"
-                        cols="12"
-                      >
+                      <v-col v-if="ind == 1" cols="12">
                         <v-data-table
                           :headers="heuristicsStatistics.header"
                           :items="heuristicsStatistics.items"
                           :items-per-page="15"
                           class="elevation-0 cardStyle mx-2 mt-3 mb-6"
-                          dense
+                          density="compact"
                         >
                           <template #item.percentage="{ item }">
                             <div style="padding-top: 2px; padding-bottom: 2px">
                               <v-chip
                                 style="width: 35%"
-                                :color="getColor(item.average, item.max, item.min)"
+                                :color="
+                                  getColor(item.average, item.max, item.min)
+                                "
                               >
                                 {{ checkIfNan(item.percentage) }}
                               </v-chip>
@@ -357,51 +355,47 @@
                         </v-data-table>
                       </v-col>
                       <!-- Bottom Tab 3 -->
-                      <v-col
-                        v-if="ind == 2"
-                        cols="12"
-                      >
+                      <v-col v-if="ind == 2" cols="12">
                         <BarChart
                           class="mx-2 mt-3 mb-6"
-                          :labels="heuristicsStatistics.items.map((item) => item.name)"
-                          :data="heuristicsStatistics.items.map((item) => item.average)"
+                          :labels="
+                            heuristicsStatistics.items.map((item) => item.name)
+                          "
+                          :data="
+                            heuristicsStatistics.items.map(
+                              (item) => item.average,
+                            )
+                          "
                           legend="Average"
                         />
                       </v-col>
                       <!-- Bottom Tab 4 -->
-                      <v-col
-                        v-if="ind == 3"
-                        cols="12"
-                        align="center"
-                      >
+                      <v-col v-if="ind == 3" cols="12" align="center">
                         <v-card
                           v-if="relative === null"
                           class="mx-auto mt-10 mb-10 py-6 if-card"
                           align="center"
                           width="970px"
                         >
-                          {{ $t('HeuristicsTestAnswer.heuristics.messages.runWeightFunction') }}
+                          {{
+                            $t(
+                              'HeuristicsTestAnswer.heuristics.messages.runWeightFunction',
+                            )
+                          }}
                         </v-card>
                         <div v-else>
-                          <v-row
-                            align="center"
-                            justify="space-around"
-                          >
-                            <v-col
-                              md="4"
-                              sm="8"
-                            >
+                          <v-row align="center" justify="space-around">
+                            <v-col md="4" sm="8">
                               <v-card
                                 align="center"
                                 class="elevation-4 weightsStatisticsStyle mt-6 py-4 mb-6 mx-auto"
                                 width="950px"
                               >
-                                <v-card-title class="mt-4 mb-4 font-weight-bold">
-                                  <v-row
-                                    align="center"
-                                    justify="center"
-                                  >
-                                    Usability Percentage <br>
+                                <v-card-title
+                                  class="mt-4 mb-4 font-weight-bold"
+                                >
+                                  <v-row align="center" justify="center">
+                                    Usability Percentage <br />
                                     With Weights
                                   </v-row>
                                 </v-card-title>
@@ -417,28 +411,30 @@
                                 </v-card-text>
                               </v-card>
                             </v-col>
-                            <v-col
-                              cols="12"
-                              sm="6"
-                              md="8"
-                            >
+                            <v-col cols="12" sm="6" md="8">
                               <v-card
                                 align="center"
                                 class="elevation-4 weightsStatisticsStyle mt-6 py-4 px-4 mb-6 mx-auto"
                                 width="950px"
                               >
                                 <RadarWeight
-                                  :labels="Array.from({ length: heuristicsLength }, (_, index) => `H ${index + 1}`)"
-                                  :data="weightsStatistics.items.map((item) => item.rw)"
+                                  :labels="
+                                    Array.from(
+                                      { length: heuristicsLength },
+                                      (_, index) => `H ${index + 1}`,
+                                    )
+                                  "
+                                  :data="
+                                    weightsStatistics.items.map(
+                                      (item) => item.rw,
+                                    )
+                                  "
                                   :max-value="maxValue"
                                 />
                               </v-card>
                             </v-col>
                           </v-row>
-                          <v-row
-                            align="center"
-                            justify="space-around"
-                          >
+                          <v-row align="center" justify="space-around">
                             <v-data-table
                               :headers="weightsStatistics.header"
                               :items="weightsStatistics.items"
@@ -466,116 +462,132 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onBeforeMount } from 'vue';
-import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
-import { useI18n } from 'vue-i18n';
-import BarChart from '@/ux/Heuristic/components/charts/BarChart.vue';
-import RadarChart from '@/shared/components/charts/RadarChart.vue';
-import ShowInfo from '@/shared/components/ShowInfo.vue';
-import IntroAnswer from '@/shared/components/introduction_cards/IntroAnswer.vue';
-import RadarWeight from '@/ux/Heuristic/components/weights_evaluation/RadarWeight.vue';
-import HeuristicsAnalytics from '@/ux/Heuristic/components/HeuristicsAnalytics.vue';
+import { ref, computed, watch, onMounted, onBeforeMount } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import BarChart from '@/ux/Heuristic/components/charts/BarChart.vue'
+import RadarChart from '@/shared/components/charts/RadarChart.vue'
+import ShowInfo from '@/shared/components/ShowInfo.vue'
+import IntroAnswer from '@/shared/components/introduction_cards/IntroAnswer.vue'
+import RadarWeight from '@/ux/Heuristic/components/weights_evaluation/RadarWeight.vue'
+import HeuristicsAnalytics from '@/ux/Heuristic/components/HeuristicsAnalytics.vue'
 
-import axios from 'axios';
-import { standardDeviation, finalResult, statistics } from '@/ux/Heuristic/utils/statistics';
-import { heuristicsStatisticsHeaders, weightsStatisticsHeader, heuristicsEvaluatorHeader } from '@/ux/Heuristic/utils/headers.js'
+import axios from 'axios'
+import {
+  standardDeviation,
+  finalResult,
+  statistics,
+} from '@/ux/Heuristic/utils/statistics'
+import {
+  heuristicsStatisticsHeaders,
+  weightsStatisticsHeader,
+  heuristicsEvaluatorHeader,
+} from '@/ux/Heuristic/utils/headers.js'
 
-const store = useStore();
-const router = useRouter();
-const { t } = useI18n();
+const store = useStore()
+const router = useRouter()
+const { t } = useI18n()
 
 const props = defineProps({
   id: {
     type: String,
     default: '',
   },
-});
+})
 
-const emit = defineEmits(['goToCoops']);
+const emit = defineEmits(['goToCoops'])
 
-const tab = ref(0);
-const ind = ref(0);
-const resultEvaluator = ref(statistics());
-let intro = ref(null);
-const tabelacompleta = ref(null);
-const decisionmatrix = ref(null);
-const relative = ref(null);
-const usability_total = ref(0);
-const loading = ref(false); // Note: Check if Vuex getter 'loading' is needed
-const array_scores = ref([]);
+const tab = ref(0)
+const ind = ref(0)
+const resultEvaluator = ref(statistics())
+let intro = ref(null)
+const tabelacompleta = ref(null)
+const decisionmatrix = ref(null)
+const relative = ref(null)
+const usability_total = ref(0)
+const loading = ref(false) // Note: Check if Vuex getter 'loading' is needed
+const array_scores = ref([])
 
-const showFinalResult = computed(() => finalResult());
+const showFinalResult = computed(() => finalResult())
 
-const evaluatorStatistics = computed(() => store.state.Answer.evaluatorStatistics || { header: [], items: [] });
+const evaluatorStatistics = computed(
+  () => store.state.Answer.evaluatorStatistics || { header: [], items: [] },
+)
 
-const testWeights = computed(() => store.state.Tests.Test.testWeights || []);
+const testWeights = computed(() => store.state.Tests.Test.testWeights || [])
 
 const heuristicsEvaluator = computed(() => {
   const table = {
     header: heuristicsEvaluatorHeader,
     items: [],
-  };
-  const options = test.value && test.value.testOptions ? test.value.testOptions.map((op) => op.value) : [];
-  const max = options.length > 0 ? Math.max(...options) : 0;
-  const min = options.length > 0 ? Math.min(...options) : 0;
+  }
+  const options =
+    test.value && test.value.testOptions
+      ? test.value.testOptions.map((op) => op.value)
+      : []
+  const max = options.length > 0 ? Math.max(...options) : 0
+  const min = options.length > 0 ? Math.min(...options) : 0
 
   if (resultEvaluator.value && Array.isArray(resultEvaluator.value)) {
-    let evaluatorIndex = 1;
+    let evaluatorIndex = 1
     resultEvaluator.value.forEach((evaluator) => {
-      evaluator.id = `Ev${evaluatorIndex}`;
-      const header = table.header.find((h) => h.text === evaluator.id);
+      evaluator.id = `Ev${evaluatorIndex}`
+      const header = table.header.find((h) => h.text === evaluator.id)
       if (!header) {
         table.header.push({
           text: evaluator.id,
           align: 'center',
           value: evaluator.id,
-        });
+        })
       }
       if (evaluator.heuristics && Array.isArray(evaluator.heuristics)) {
         evaluator.heuristics.forEach((heuristic) => {
-          const item = table.items.find((i) => i.heuristic === heuristic.id);
+          const item = table.items.find((i) => i.heuristic === heuristic.id)
           if (item) {
             Object.assign(item, {
               [evaluator.id]: heuristic.result,
-            });
+            })
           } else {
             table.items.push({
               heuristic: heuristic.id,
               max: max * (heuristic.totalQuestions || 0),
               min: min * (heuristic.totalQuestions || 0),
               [evaluator.id]: heuristic.result,
-            });
+            })
           }
-        });
+        })
       }
-      evaluatorIndex++;
-    });
+      evaluatorIndex++
+    })
   }
-  return table;
-});
+  return table
+})
 
 const heuristicsStatistics = computed(() => {
   const table = {
     header: heuristicsStatisticsHeaders,
     items: [],
-  };
+  }
 
   if (!heuristicsEvaluator.value || !heuristicsEvaluator.value.items) {
-    return table;
+    return table
   }
 
   heuristicsEvaluator.value.items.forEach((item) => {
     const results = Object.entries(item)
       .filter(([key]) => key.includes('Ev'))
       .map(([, value]) => value)
-      .filter((value) => value !== undefined && value !== null);
+      .filter((value) => value !== undefined && value !== null)
     const valueToConvert = results.length
-      ? results.reduce((total, value) => total + value / results.length, 0).toFixed(2)
-      : '0.00';
-    const convertedValue = item.max && item.min && item.max !== item.min
-      ? ((valueToConvert - item.min) / (item.max - item.min)) * 100
-      : 0;
+      ? results
+          .reduce((total, value) => total + value / results.length, 0)
+          .toFixed(2)
+      : '0.00'
+    const convertedValue =
+      item.max && item.min && item.max !== item.min
+        ? ((valueToConvert - item.min) / (item.max - item.min)) * 100
+        : 0
     table.items.push({
       name: item.heuristic || 'Unknown',
       max: item.max ? Number(item.max).toFixed(2) : '0.00',
@@ -583,178 +595,203 @@ const heuristicsStatistics = computed(() => {
       percentage: convertedValue.toFixed(2),
       sd: results.length ? standardDeviation(results).toFixed(2) : '0.00',
       average: valueToConvert,
-    });
-  });
+    })
+  })
 
-  return table;
-});
+  return table
+})
 
-const heuristics = computed(() => test.value && test.value.testStructure ? test.value.testStructure : []);
+const heuristics = computed(() =>
+  test.value && test.value.testStructure ? test.value.testStructure : [],
+)
 
-const heuristicsLength = computed(() => (relative.value ? relative.value.length : 0));
+const heuristicsLength = computed(() =>
+  relative.value ? relative.value.length : 0,
+)
 
 const weightsStatistics = computed(() => {
   const tableWeights = {
     header: weightsStatisticsHeader,
     items: [],
-  };
+  }
 
-  const relativeLength = relative.value ? relative.value.length : 0;
+  const relativeLength = relative.value ? relative.value.length : 0
 
   if (relativeLength > 0) {
     for (let i = 0; i < relativeLength; i++) {
       tableWeights.items.push({
-        name: `H${i + 1} - ${heuristics.value[i] ? heuristics.value[i].title : ''}`,
+        name: `H${i + 1} - ${
+          heuristics.value[i] ? heuristics.value[i].title : ''
+        }`,
         percentage: store.state.Tests.scoresPercentage[i] || '0.00',
         rw: relative.value[i].toFixed(4),
-      });
+      })
     }
   }
-  return tableWeights;
-});
+  return tableWeights
+})
 
-const usabilityTotalFix = computed(() => parseFloat(usability_total.value || 0).toFixed(2));
+const usabilityTotalFix = computed(() =>
+  parseFloat(usability_total.value || 0).toFixed(2),
+)
 
 const maxValue = computed(() => {
-  const relativeArray = relative.value || [];
-  let maxValue = relativeArray[0] || 0;
+  const relativeArray = relative.value || []
+  let maxValue = relativeArray[0] || 0
   for (let i = 1; i < relativeArray.length; i++) {
     if (relativeArray[i] > maxValue) {
-      maxValue = relativeArray[i];
+      maxValue = relativeArray[i]
     }
   }
-  return parseFloat(maxValue).toFixed(1);
-});
+  return parseFloat(maxValue).toFixed(1)
+})
 
-const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument);
+const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
 
 const answers = computed(() => {
   if (testAnswerDocument.value && testAnswerDocument.value.heuristicAnswers) {
-    return Object.values(testAnswerDocument.value.heuristicAnswers);
+    return Object.values(testAnswerDocument.value.heuristicAnswers)
   }
-  return [];
-});
+  return []
+})
 
 const test = computed(() => {
-  const percentages = heuristicsStatistics.value && heuristicsStatistics.value.items
-    ? heuristicsStatistics.value.items.map((item) => item.percentage)
-    : [];
+  const percentages =
+    heuristicsStatistics.value && heuristicsStatistics.value.items
+      ? heuristicsStatistics.value.items.map((item) => item.percentage)
+      : []
   store.dispatch('processStatistics', {
     resultEvaluator: statistics(),
     percentage: percentages,
-  });
-  return store.getters.test || {};
-});
+  })
+  return store.getters.test || {}
+})
 
 const checkIfNan = (value) => {
-  return !isNaN(Number(value)) ? value : '-';
-};
+  return !isNaN(Number(value)) ? value : '-'
+}
 
 const getColor = (value, max, min) => {
-  max = Number(max) || 0;
-  min = Number(min) || 0;
-  const h = max ? (max - min) / max : 0;
+  value = Number(value)
+  max = Number(max) || 0
+  min = Number(min) || 0
 
-  if (value == null) return 'grey';
-  else if (value === 0) return 'red';
-  else if (value <= min + 1 * h) return 'amber';
-  else if (value <= min + 2 * h) return 'orange lighten-1';
-  else if (value <= min + 3 * h) return 'lime';
-  else return 'green';
-};
+  if (value == null || Number.isNaN(Number(value))) return 'grey'
+  if (value === 0) return 'red'
+  if (max === min) return 'green'
+
+  const h = (max - min) / 4
+
+  if (value <= min + 1 * h) return 'amber'
+  if (value <= min + 2 * h) return 'orange lighten-1'
+  if (value <= min + 3 * h) return 'lime'
+  return 'green'
+}
 
 const getColorPorcentage = (value) => {
-  value = Number(value) || 0;
-  if (value <= 20) return 'red';
-  else if (value <= 40) return 'ambar';
-  else if (value <= 60) return 'orange lighten-1';
-  else if (value <= 80) return 'lime';
-  else return 'green';
-};
+  value = Number(value) || 0
+  if (value <= 20) return 'red'
+  else if (value <= 40) return 'ambar'
+  else if (value <= 60) return 'orange lighten-1'
+  else if (value <= 80) return 'lime'
+  else return 'green'
+}
 
 const goToDataHeuristic = (item) => {
-  const selectHeuristic = heuristicsEvaluator.value && heuristicsEvaluator.value.items
-    ? heuristicsEvaluator.value.items.findIndex((h) => h.heuristic === item)
-    : -1;
+  const selectHeuristic =
+    heuristicsEvaluator.value && heuristicsEvaluator.value.items
+      ? heuristicsEvaluator.value.items.findIndex((h) => h.heuristic === item)
+      : -1
   if (selectHeuristic >= 0) {
-    router.push(`/analyticsview/${props.id}/${selectHeuristic}`).catch((err) => {
-      if (err.name !== 'NavigationDuplicated') {
-        console.error('Navigation error:', err);
-      }
-    });
+    router
+      .push(`/analyticsview/${props.id}/${selectHeuristic}`)
+      .catch((err) => {
+        if (err.name !== 'NavigationDuplicated') {
+        }
+      })
   }
-};
+}
 
 const goToCoops = () => {
-  router.push(`/heuristic/edit/${test.value.id}`);
-  emit('goToCoops');
-};
+  router.push(`/heuristic/edit/${test.value.id}`)
+  emit('goToCoops')
+}
 
 const usuability_percentage_array = () => {
-  const teste = heuristicsStatistics.value;
-  const scores = [];
+  const teste = heuristicsStatistics.value
+  const scores = []
   if (teste && teste.items && Array.isArray(teste.items)) {
     for (let i = 0; i < teste.items.length; i++) {
-      scores.push(teste.items[i].percentage || '0.00');
+      scores.push(teste.items[i].percentage || '0.00')
     }
   }
-  store.dispatch('setScoresPercentage', scores);
-  array_scores.value = scores;
-  return scores;
-};
+  store.dispatch('setScoresPercentage', scores)
+  array_scores.value = scores
+  return scores
+}
 
 const pythonFunction = async () => {
-  const caminhoTestStructure = store.state.Tests.Test.testStructure || [];
-  const caminhoTestWeights = store.state.Tests.Test.testWeights || [];
-  const caminhoTestScore = store.state.Tests.scoresPercentage || [];
+  const caminhoTestStructure = store.state.Tests.Test.testStructure || []
+  const caminhoTestWeights = store.state.Tests.Test.testWeights || []
+  const caminhoTestScore = store.state.Tests.scoresPercentage || []
 
   try {
-    const response = await axios.post(process.env.VUE_APP_CLOUD_FUNCTIONS_URL + '/say_hello', {
-      caminhoTestStructure,
-      caminhoTestWeights,
-      caminhoTestScore,
-    });
-    const data = response.data;
+    const response = await axios.post(
+      process.env.VUE_APP_CLOUD_FUNCTIONS_URL + '/say_hello',
+      {
+        caminhoTestStructure,
+        caminhoTestWeights,
+        caminhoTestScore,
+      },
+    )
+    const data = response.data
 
-    decisionmatrix.value = data.decisionmatrix;
-    tabelacompleta.value = data.tabelacompleta;
-    relative.value = data.relative;
-    usability_total.value = data.usability_total;
-  } catch (error) {
-    console.error('Error calling Cloud Function:', error);
-  }
-};
+    decisionmatrix.value = data.decisionmatrix
+    tabelacompleta.value = data.tabelacompleta
+    relative.value = data.relative
+    usability_total.value = data.usability_total
+  } catch {}
+}
 
 const DownloadEvaluatorCsv = () => {
-  loading.value = true;
-  const headers = evaluatorStatistics.value.header.map((header) => header.text).join(',');
+  loading.value = true
+  const headers = evaluatorStatistics.value.header
+    .map((header) => header.text)
+    .join(',')
   const rows = evaluatorStatistics.value.items
-    .map((item) => evaluatorStatistics.value.header.map((header) => item[header.value] || '').join(','))
-    .join('\n');
-  const csvContent = `data:text/csv;charset=utf-8,${headers}\n${rows}`;
-  const encodedUri = encodeURI(csvContent);
-  const link = document.createElement('a');
-  link.setAttribute('href', encodedUri);
-  link.setAttribute('download', 'evaluatorStatistics.csv');
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+    .map((item) =>
+      evaluatorStatistics.value.header
+        .map((header) => item[header.value] || '')
+        .join(','),
+    )
+    .join('\n')
+  const csvContent = `data:text/csv;charset=utf-8,${headers}\n${rows}`
+  const encodedUri = encodeURI(csvContent)
+  const link = document.createElement('a')
+  link.setAttribute('href', encodedUri)
+  link.setAttribute('download', 'evaluatorStatistics.csv')
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
   setTimeout(() => {
-    loading.value = false;
-  }, 1000);
-};
+    loading.value = false
+  }, 1000)
+}
 
 const setTab = (value) => {
-  tab.value = value;
-  ind.value = 0;
-};
+  tab.value = value
+  ind.value = 0
+}
 
 watch(answers, () => {
-  if (testAnswerDocument.value && (answers.value !== null || answers.value.length > 0)) {
-    resultEvaluator.value = statistics();
-    intro.value = answers.value.length === 0;
+  if (
+    testAnswerDocument.value &&
+    (answers.value !== null || answers.value.length > 0)
+  ) {
+    resultEvaluator.value = statistics()
+    intro.value = answers.value.length === 0
   }
-});
+})
 
 // Watch testAnswerDocument to trigger usuability_percentage_array when dependencies are ready
 watch(
@@ -767,19 +804,19 @@ watch(
       newEvaluatorStats &&
       Array.isArray(newEvaluatorStats.items)
     ) {
-      usuability_percentage_array();
+      usuability_percentage_array()
     }
   },
-  { immediate: true, deep: true }
-);
+  { immediate: true, deep: true },
+)
 
 onBeforeMount(async () => {
-  await store.dispatch('getCurrentTestAnswerDoc');
-});
+  await store.dispatch('getCurrentTestAnswerDoc')
+})
 
 onMounted(() => {
-  pythonFunction();
-});
+  pythonFunction()
+})
 </script>
 
 <style scoped>

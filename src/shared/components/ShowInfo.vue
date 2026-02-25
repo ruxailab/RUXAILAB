@@ -1,10 +1,7 @@
 <template>
-  <v-container>
+  <v-container class="pa-0">
     <v-row class="ma-0">
-      <v-col
-        cols="12"
-        :hidden="hideCol"
-      >
+      <v-col cols="12" :hidden="hideCol">
         <!-- <h1>{{ $t('titles.drawer.' + title) }}</h1> -->
         <h1>{{ title }}</h1>
         <v-divider v-if="title" />
@@ -28,6 +25,10 @@ defineProps({
     type: String,
     default: '',
   },
+  hideCol: {
+    type: Boolean,
+    default: false,
+  },
 })
 </script>
 
@@ -49,8 +50,6 @@ h1 {
   margin-bottom: 4px;
   padding-bottom: 2px;
 }
-
-
 
 .v-sheet.v-card:not(.v-sheet--outlined) {
   box-shadow: none !important;

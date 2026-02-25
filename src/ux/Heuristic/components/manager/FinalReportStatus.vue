@@ -1,40 +1,57 @@
 <template>
   <v-card v-if="test" class="pa-4 mb-0" elevation="3" rounded="lg">
     <!-- Header con icono a la izquierda y título -->
-    <div class="d-flex align-center mb-4 clickable-header" @click="navigateToReport">
-      <v-icon size="24" color="primary" class="header-icon">mdi-file-document</v-icon>
-      <v-card-title class="text-h6 text-primary clickable-title">Final Report</v-card-title>
+    <div
+      class="d-flex align-center mb-4 clickable-header"
+      @click="navigateToReport"
+    >
+      <v-icon size="24" color="primary" class="header-icon"
+        >mdi-file-document</v-icon
+      >
+      <v-card-title class="text-h6 text-primary clickable-title">{{
+        $t('Dashboard.cards.finalReport')
+      }}</v-card-title>
     </div>
-    
+
     <!-- Estado del informe -->
     <div class="report-status">
       <div class="d-flex align-center justify-center mb-3">
-        <v-icon 
-          size="48" 
-          :color="reportExists ? 'success' : 'grey'" 
+        <v-icon
+          size="48"
+          :color="reportExists ? 'success' : 'grey'"
           class="mb-2"
         >
           {{ reportExists ? 'mdi-file-check' : 'mdi-file-outline' }}
         </v-icon>
       </div>
-      
+
       <!-- Status principal -->
       <div class="text-center mb-3">
-        <div class="report-title text-h6 font-weight-bold" :class="reportStatusClass">
+        <div
+          class="report-title text-h6 font-weight-bold"
+          :class="reportStatusClass"
+        >
           {{ reportStatusText }}
         </div>
         <div class="text-caption text-grey-darken-1 mt-1">
           {{ reportSubtitle }}
         </div>
       </div>
-      
+
       <!-- Información adicional -->
       <div class="report-info">
-        <div v-if="reportExists" class="d-flex align-center justify-center mb-2">
-          <v-icon size="16" color="success" class="mr-2">mdi-calendar-check</v-icon>
-          <span class="text-caption text-grey-darken-1">Generado: {{ reportDate }}</span>
+        <div
+          v-if="reportExists"
+          class="d-flex align-center justify-center mb-2"
+        >
+          <v-icon size="16" color="success" class="mr-2"
+            >mdi-calendar-check</v-icon
+          >
+          <span class="text-caption text-grey-darken-1"
+            >{{ $t('Dashboard.cards.generated') }} {{ reportDate }}</span
+          >
         </div>
-        
+
         <div v-if="reportExists" class="d-flex justify-center">
           <v-btn
             size="small"
@@ -42,10 +59,10 @@
             variant="outlined"
             prepend-icon="mdi-download"
           >
-            Descargar
+            {{ $t('Dashboard.cards.download') }}
           </v-btn>
         </div>
-        
+
         <div v-else class="d-flex justify-center">
           <v-btn
             size="small"
@@ -54,7 +71,7 @@
             prepend-icon="mdi-plus"
             disabled
           >
-            Generar Informe
+            {{ $t('Dashboard.cards.generateReport') }}
           </v-btn>
         </div>
       </div>
@@ -65,15 +82,17 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   test: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 })
 
 const router = useRouter()
+const { t, locale } = useI18n()
 
 // Navigate to final report section
 const navigateToReport = () => {
@@ -86,29 +105,36 @@ const navigateToReport = () => {
 const reportExists = computed(() => {
   // Verificamos si existe un informe final
   // Esto puede basarse en diferentes propiedades del test
-  return props.test?.finalReport?.exists || 
-         props.test?.hasReport || 
-         props.test?.reportGenerated || 
-         false
+  return (
+    props.test?.finalReport?.exists ||
+    props.test?.hasReport ||
+    props.test?.reportGenerated ||
+    false
+  )
 })
 
 const reportStatusText = computed(() => {
-  return reportExists.value ? 'Report Available' : 'No Report Generated'
+  return reportExists.value
+    ? t('Dashboard.cards.reportAvailable')
+    : t('Dashboard.cards.noReport')
 })
 
 const reportSubtitle = computed(() => {
   if (reportExists.value) {
-    return 'Final report ready for download'
+    return t('Dashboard.cards.readyForDownload')
   } else {
-    const completedEvaluations = props.test?.participants?.filter(p => p.completed).length || 0
+    const completedEvaluations =
+      props.test?.participants?.filter((p) => p.completed).length || 0
     const totalParticipants = props.test?.participants?.length || 0
-    
+
     if (totalParticipants === 0) {
-      return 'Waiting for participants'
+      return t('Dashboard.cards.waitingForParticipants')
     } else if (completedEvaluations < totalParticipants) {
-      return `${completedEvaluations}/${totalParticipants} evaluations completed`
+      return `${completedEvaluations}/${totalParticipants} ${t(
+        'Dashboard.cards.evaluationsCompleted',
+      )}`
     } else {
-      return 'Ready to generate report'
+      return t('Dashboard.cards.readyToGenerate')
     }
   }
 })
@@ -119,9 +145,11 @@ const reportStatusClass = computed(() => {
 
 const reportDate = computed(() => {
   if (reportExists.value && props.test?.finalReport?.createdAt) {
-    return new Date(props.test.finalReport.createdAt).toLocaleDateString()
+    return new Date(props.test.finalReport.createdAt).toLocaleDateString(
+      locale.value,
+    )
   }
-  return new Date().toLocaleDateString() // Fecha de ejemplo
+  return new Date().toLocaleDateString(locale.value) // Fecha de ejemplo
 })
 </script>
 

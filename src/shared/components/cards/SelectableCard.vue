@@ -14,22 +14,14 @@
       variant="flat"
       size="small"
       class="position-absolute"
-      style="top: 16px; right: 16px; z-index: 1;"
+      style="top: 16px; right: 16px; z-index: 1"
     >
       {{ badge.text }}
     </v-chip>
 
     <v-card-text :class="textClass">
-      <v-avatar
-        :color="color"
-        :size="avatarSize"
-        class="mb-4"
-      >
-        <v-icon
-          :icon="icon"
-          size="32"
-          color="white"
-        />
+      <v-avatar :color="color" :size="avatarSize" class="mb-4">
+        <v-icon :icon="icon" size="32" color="white" />
       </v-avatar>
 
       <h3 class="text-h5 font-weight-medium mb-3">
@@ -48,7 +40,7 @@
       color="primary"
       size="large"
       class="position-absolute"
-      style="bottom: 16px; right: 16px;"
+      style="bottom: 16px; right: 16px"
     />
   </v-card>
 </template>
@@ -63,7 +55,7 @@ const props = defineProps({
   badge: Object,
   avatarSize: {
     type: [String, Number],
-    default: 64
+    default: 64,
   },
   disabled: Boolean,
   textClass: {
@@ -86,7 +78,7 @@ const handleClick = () => {
   &:hover:not(.v-card--disabled) {
     transform: translateY(-4px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
-    border-color: #2196F3 !important;
+    border-color: #2196f3 !important;
   }
 }
 </style>

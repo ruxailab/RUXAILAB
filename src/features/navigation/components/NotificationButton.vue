@@ -1,124 +1,131 @@
 <template>
   <div v-if="Array.isArray(user.notifications)">
     <v-menu
-      location="bottom"
-      absolute
-      offset="8"
-      max-width="400"
+      v-model="menuOpen"
+      location="bottom end"
+      offset="10"
+      max-width="420"
+      transition="scale-transition"
     >
+      <!-- Bell -->
       <template #activator="{ props }">
         <v-badge
-          color="red"
-          location="bottom end"
-          :content="checkIfHasNewNotifications()"
-          :model-value="checkIfHasNewNotifications() > 0"
-          offset-x="5"
-          offset-y="5"
+          v-if="unreadCount > 0"
+          :content="unreadCount"
+          color="error"
+          location="top end"
+          offset-x="6"
+          offset-y="6"
         >
           <v-btn
-            size="small"
             icon
-            class="mr-1"
+            size="small"
+            class="notification-bell"
+            :class="{ pulse: unreadCount > 0 }"
             v-bind="props"
           >
-            <v-icon size="20">
-              {{ checkIfHasNewNotifications() > 0 ? 'mdi-bell-ring' : 'mdi-bell-outline' }}
-            </v-icon>
+            <v-icon>mdi-bell-ring</v-icon>
           </v-btn>
         </v-badge>
+
+        <v-btn v-else icon size="small" v-bind="props">
+          <v-icon>mdi-bell-outline</v-icon>
+        </v-btn>
       </template>
 
-      <v-card
-        class="pa-0"
-        max-width="500"
-        style="overflow: hidden;"
-      >
-        <!-- Fixed header -->
-  <div class="bg-secondary" style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;">
-          <span style="font-weight: bold; font-size: 16px; color: white;">
-            {{ $t('common.notifications') }}
-          </span>
-          <v-btn
-            variant="text"
-            size="small"
-            style="color: white; text-transform: uppercase; font-weight: 500;"
-            @click="goToNotificationPage"
-          >
-            {{ $t('common.viewAll') }}
-          </v-btn>
+      <!-- 📬 Dropdown -->
+      <v-card class="notification-dropdown" elevation="6">
+        <!-- Header -->
+        <div class="dropdown-header">
+          <span class="text-h6">{{ $t('common.notifications') }}</span>
+
+          <div class="actions">
+            <v-btn
+              v-if="unreadCount > 0"
+              size="x-small"
+              variant="text"
+              color="primary"
+              @click="markAllAsRead"
+            >
+              {{ $t('common.markAllAsRead') }}
+            </v-btn>
+
+            <v-btn
+              size="x-small"
+              variant="text"
+              color="primary"
+              @click="goToNotificationPage"
+            >
+              {{ $t('common.viewAll') }}
+            </v-btn>
+          </div>
         </div>
 
         <v-divider />
 
-        <!-- Notifications content -->
-        <v-card-text style="padding: 0;">
-          <div
-            v-if="user.notifications.length > 0"
-            style="max-height: 50vh; overflow-y: auto;"
-          >
-            <v-list
-              density="compact"
-              class="py-1 notification-list"
-            >
-              <template v-for="(notification, i) in sortedNotifications || []" :key="notification.id">
-                <NotificationItem
-                  :notification="notification"
-                  @go-to-redirect="goToNotificationRedirect"
-                  @mark-as-read="goToNotificationRedirect"
-                />
-                <v-divider v-if="i < (user.notifications?.length || 0) - 1" class="mx-4" color="secondary" />
-              </template>
-            </v-list>
-          </div>
+        <!-- Content -->
+        <div class="dropdown-content">
+          <template v-if="unreadNotifications.length">
+            <NotificationItem
+              v-for="(notification, index) in unreadNotifications"
+              :key="notification.id"
+              :notification="notification"
+              :class="{ active: index === activeIndex }"
+              @go-to-redirect="goToNotificationRedirect"
+              @mark-as-read="goToNotificationRedirect"
+            />
+          </template>
 
-          <!-- No notifications -->
-          <div
-            v-else
-            class="text-center py-6"
-          >
-            <v-icon
-              size="36"
-              class="mb-2"
-              color="grey"
-            >
-              mdi-bell-off
-            </v-icon>
-            <div class="text-grey text-subtitle-2">
-              <strong>{{ $t('common.noNotifications') }}</strong>
+          <!-- Empty -->
+          <div v-else class="empty-state">
+            <v-icon size="40" color="grey">mdi-bell-check</v-icon>
+            <div class="empty-title">{{ $t('common.caughtUp') }}</div>
+            <div class="empty-subtitle">
+              {{ $t('common.noNewNotifications') }}
             </div>
           </div>
-        </v-card-text>
+        </div>
       </v-card>
     </v-menu>
 
+    <!-- Dialog -->
     <AcceptInvitationDialog
-    v-model="dialogVisible"
-    @cancel="onReject"
-    @submit="onAccept"
-  />
+      v-model="dialogVisible"
+      @cancel="onReject"
+      @submit="onAccept"
+    />
   </div>
 </template>
 
 <script setup>
-import NotificationItem from '@/features/notifications/components/NotificationItem.vue';
-import { computed, ref } from 'vue';
-import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
-import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue';
-import StudyController from '@/controllers/StudyController';
+import { computed, ref, watch, onUnmounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import NotificationItem from '@/features/notifications/components/NotificationItem.vue'
+import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue'
+import StudyController from '@/controllers/StudyController'
+import { showError } from '@/shared/utils/toast'
 
-// Initialize store, router, and i18n
-const store = useStore();
-const router = useRouter();
+const store = useStore()
+const router = useRouter()
 
-const user = computed(() => store.getters.user);
+const menuOpen = ref(false)
+const activeIndex = ref(-1)
 
-const sortedNotifications = computed(() => {
-  return [...user.value.notifications].sort(
-    (a, b) => b.createdDate - a.createdDate
-  )
-})
+const user = computed(() => store.getters.user)
 
+const unreadNotifications = computed(() =>
+  [...user.value.notifications]
+    .filter((n) => !n.read)
+    .sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate))
+    .slice(0, 6),
+)
+
+const unreadCount = computed(
+  () => user.value.notifications.filter((n) => !n.read).length,
+)
+
+/* Dialog  */
 const dialogVisible = ref(false)
 let resolveDialog
 
@@ -132,55 +139,169 @@ const onReject = () => {
   resolveDialog(false)
 }
 
-function showAcceptDialog() {
+const showAcceptDialog = () => {
   dialogVisible.value = true
-  return new Promise((resolve) => {
-    resolveDialog = resolve
-  })
+  return new Promise((resolve) => (resolveDialog = resolve))
 }
 
-const checkIfHasNewNotifications = () => {
-  return user.value.notifications.filter((n) => !n.read).length;
-};
-
+/* actions */
 const goToNotificationRedirect = async (notification) => {
+  // Only show dialog for Collaboration type invitations
+  if (notification.type === 'Collaboration') {
     const accepted = await showAcceptDialog()
+
     if (!accepted) {
-      // mark as read and exit
       await store.dispatch('markNotificationAsRead', {
         notification,
         user: user.value,
-      });
+      })
       return
     }
-    const study = await new StudyController().getStudy({ id: notification.testId })
 
-    await store.dispatch('acceptStudyCollaboration', {
-      test: study,
-      cooperator: user.value,
-    });
+    if (notification.testId) {
+      try {
+        const study = await new StudyController().getStudy({
+          id: notification.testId,
+        })
+        await store.dispatch('acceptStudyCollaboration', {
+          test: study,
+          cooperator: user.value,
+        })
+      } catch {
+        showError('notifications.errors.acceptCollaborationFailed')
+        return
+      }
+    } else {
+      // Missing testId - cannot process collaboration
+      showError('notifications.errors.invalidCollaboration')
+      return
+    }
+  }
 
   await store.dispatch('markNotificationAsRead', {
     notification,
     user: user.value,
-  });
-  if (notification.redirectsTo) {
-    try {
-      window.open(window.location.origin + notification.redirectsTo, '_blank')
-    } catch(e) {
-      console.error(e)
-      window.open(window.location.origin + '/' + notification.redirectsTo, '_blank')
-    }
-  } else {
-    goToNotificationPage();
+  })
+
+  if (notification.redirectsTo && notification.redirectsTo !== '/') {
+    globalThis.open(
+      globalThis.location.origin + notification.redirectsTo,
+      '_blank',
+    )
   }
-};
+
+  menuOpen.value = false
+}
+
+const markAllAsRead = async () => {
+  const unread = user.value.notifications.filter((n) => !n.read)
+  if (unread.length === 0) return
+
+  await store.dispatch('markAllNotificationsAsRead', user.value)
+}
 
 const goToNotificationPage = () => {
-  router.push({ 
-    path: '/admin', 
-    query: { section: 'notifications' } 
-  }).catch(() => { });
-};
+  menuOpen.value = false
+  router.push({ path: '/admin', query: { section: 'notifications' } })
+}
 
+/* keyboard  */
+const handleKey = (e) => {
+  if (!menuOpen.value) return
+
+  if (e.key === 'j')
+    activeIndex.value = Math.min(
+      activeIndex.value + 1,
+      unreadNotifications.value.length - 1,
+    )
+  if (e.key === 'k') activeIndex.value = Math.max(activeIndex.value - 1, 0)
+  if (e.key === 'Enter' && unreadNotifications.value[activeIndex.value]) {
+    goToNotificationRedirect(unreadNotifications.value[activeIndex.value])
+  }
+  if (e.key === 'Escape') menuOpen.value = false
+}
+
+onUnmounted(() => {
+  globalThis.removeEventListener('keydown', handleKey)
+})
+
+/* Reset keyboard index on open */
+watch(menuOpen, (open) => {
+  if (open) activeIndex.value = 0
+})
 </script>
+
+<style scoped>
+/* Pulse animation */
+.notification-bell.pulse {
+  position: relative;
+  z-index: 1;
+}
+
+.notification-bell.pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 0, 0, 0.5);
+  animation: pulse 1.5s infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+/* Dropdown */
+.notification-dropdown {
+  border-radius: 14px;
+  max-height: 70vh;
+  overflow: hidden;
+}
+
+.dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+}
+
+.dropdown-header .title {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.dropdown-header .actions {
+  display: flex;
+  gap: 6px;
+}
+
+.dropdown-content {
+  max-height: 50vh;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+/* Empty */
+.empty-state {
+  text-align: center;
+  padding: 24px 12px;
+}
+
+.empty-title {
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.empty-subtitle {
+  font-size: 12px;
+  color: #888;
+}
+</style>

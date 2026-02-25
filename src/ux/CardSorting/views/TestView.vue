@@ -1,7 +1,7 @@
 <template>
   <div>
     <Loading />
-    <StartScreenTest v-if="!isTestStarted && test" @start="isTestStarted = true" :test="test" />
+    <StartScreenTest v-if="!isTestStarted && test" :test="test" @start="isTestStarted = true" />
     <!-- <CardSortingTest v-if="isTestStarted" :test="test" /> -->
   </div>
 </template>
@@ -12,12 +12,12 @@ import Loading from '@/shared/components/Loading.vue';
 import StartScreenTest from '@/shared/components/template/StartScreenTest.vue'
 import { computed, onBeforeMount, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useToast } from 'vue-toastification';
 import { useStore } from 'vuex';
+import { showError } from '@/shared/utils/toast'
+
 
 // Stores
 const store = useStore();
-const toast = useToast();
 const route = useRoute();
 const router = useRouter();
 
@@ -34,7 +34,7 @@ onBeforeMount(async () => {
   await store.dispatch('getCurrentTestAnswerDoc')
 
   if (!user.value) {
-    toast.error('Login to your RUXAILAB account first to access the test!');
+    showError('Login to your RUXAILAB account first to access the test!');
     return router.push('/signin');
   }
 })

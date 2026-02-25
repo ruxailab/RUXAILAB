@@ -7,21 +7,17 @@
       persistent
       @update:model-value="$emit('update:dialog', $event)"
     >
-      <v-card
-        class="pa-6"
-        rounded="xl"
-        elevation="6"
-      >
+      <v-card class="pa-6" rounded="xl" elevation="6">
         <v-card-title class="text-h5 font-weight-bold pa-0 mb-4">
-          {{ step === 1 ? $t('pages.createTest.templateInfo') : $t('pages.createTest.create') }}
+          {{
+            step === 1
+              ? $t('pages.createTest.templateInfo')
+              : $t('pages.createTest.create')
+          }}
         </v-card-title>
 
         <!-- Step Navigation -->
-        <v-row
-          v-if="allowCreate"
-          class="mb-4"
-          justify="center"
-        >
+        <v-row v-if="allowCreate" class="mb-4" justify="center">
           <v-btn-toggle
             v-model="step"
             mandatory
@@ -30,18 +26,10 @@
             variant="outlined"
             class="rounded-lg"
           >
-            <v-btn
-              :value="1"
-              class="text-capitalize"
-              width="200px"
-            >
+            <v-btn :value="1" class="text-capitalize" width="200px">
               {{ $t('pages.createTest.templateInfo') }}
             </v-btn>
-            <v-btn
-              :value="2"
-              class="text-capitalize"
-              width="200px"
-            >
+            <v-btn :value="2" class="text-capitalize" width="200px">
               {{ $t('pages.createTest.templateTitle') }}
             </v-btn>
           </v-btn-toggle>
@@ -49,14 +37,8 @@
 
         <!-- Step Content -->
         <v-card-text class="pa-0">
-          <div
-            v-if="step === 1"
-            class="px-4"
-          >
-            <v-row
-              align="center"
-              justify="space-between"
-            >
+          <div v-if="step === 1" class="px-4">
+            <v-row align="center" justify="space-between">
               <v-col cols="12">
                 <h3 class="text-h6 font-weight-bold mb-2">
                   {{ template.header.templateTitle }}
@@ -66,9 +48,15 @@
                   {{
                     template.header.templateVersion === '1.0.0'
                       ? ` on ${getFormattedDate(template.header.creationDate)}`
-                      : ` - Last updated: ${getFormattedDate(template.header.updateDate)}`
+                      : ` - Last updated: ${getFormattedDate(
+                          template.header.updateDate,
+                        )}`
                   }}
-                  ({{ $t('pages.listTests.version') + ' ' + template.header.templateVersion }})
+                  ({{
+                    $t('pages.listTests.version') +
+                    ' ' +
+                    template.header.templateVersion
+                  }})
                 </p>
               </v-col>
             </v-row>
@@ -83,10 +71,7 @@
               }}
             </p>
 
-            <v-row
-              justify="space-between"
-              class="ma-0"
-            >
+            <v-row justify="space-between" class="ma-0">
               <v-btn
                 v-if="isMyTemplate"
                 color="error"
@@ -94,19 +79,11 @@
                 class="text-capitalize"
                 @click="deleteTemplate"
               >
-                <v-icon
-                  start
-                  size="small"
-                >
-                  mdi-delete
-                </v-icon>
+                <v-icon start size="small"> mdi-delete </v-icon>
                 {{ $t('buttons.delete') }}
               </v-btn>
 
-              <div
-                class="d-flex"
-                style="gap: 12px"
-              >
+              <div class="d-flex" style="gap: 12px">
                 <v-btn
                   color="grey-darken-2"
                   variant="outlined"
@@ -123,21 +100,13 @@
                   @click="step = 2"
                 >
                   {{ $t('buttons.next') }}
-                  <v-icon
-                    end
-                    size="small"
-                  >
-                    mdi-arrow-right
-                  </v-icon>
+                  <v-icon end size="small"> mdi-arrow-right </v-icon>
                 </v-btn>
               </div>
             </v-row>
           </div>
 
-          <div
-            v-if="step === 2"
-            class="px-4"
-          >
+          <div v-if="step === 2" class="px-4">
             <FormTestDescription
               ref="formRef"
               class="mb-6"
@@ -147,29 +116,18 @@
               @val-form="handleValForm"
             />
 
-            <v-row
-              justify="space-between"
-              class="ma-0"
-            >
+            <v-row justify="space-between" class="ma-0">
               <v-btn
                 color="grey-darken-2"
                 variant="text"
                 class="text-capitalize"
                 @click="step = 1"
               >
-                <v-icon
-                  start
-                  size="small"
-                >
-                  mdi-arrow-left
-                </v-icon>
+                <v-icon start size="small"> mdi-arrow-left </v-icon>
                 {{ $t('buttons.previous') }}
               </v-btn>
 
-              <div
-                class="d-flex"
-                style="gap: 12px"
-              >
+              <div class="d-flex" style="gap: 12px">
                 <v-btn
                   color="grey-darken-2"
                   variant="outlined"
@@ -185,12 +143,7 @@
                   @click="validate"
                 >
                   {{ $t('buttons.create') }}
-                  <v-icon
-                    end
-                    size="small"
-                  >
-                    mdi-check
-                  </v-icon>
+                  <v-icon end size="small"> mdi-check </v-icon>
                 </v-btn>
               </div>
             </v-row>
@@ -202,13 +155,15 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
-import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
-import { useI18n } from 'vue-i18n';
-import FormTestDescription from '@/shared/components/FormTestDescription.vue';
-import { getMethodManagerView, instantiateStudyByType } from '@/shared/constants/methodDefinitions';
-import StudyAdmin from '@/shared/models/StudyAdmin';
+import { ref, computed, watch } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import FormTestDescription from '@/shared/components/FormTestDescription.vue'
+import {
+  getMethodManagerView,
+  instantiateStudyByType,
+} from '@/shared/constants/methodDefinitions'
+import StudyAdmin from '@/shared/models/StudyAdmin'
 
 const props = defineProps({
   dialog: {
@@ -225,86 +180,90 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-});
+})
 
-const emit = defineEmits(['update:dialog', 'close']);
+const emit = defineEmits(['update:dialog', 'close'])
 
-const store = useStore();
-const router = useRouter();
+const store = useStore()
+const router = useRouter()
 
-const step = ref(1);
-const isMyTemplate = ref(false);
-const localTest = ref(null);
-const formRef = ref(null);
-const formValid = ref(false);
+const step = ref(1)
+const isMyTemplate = ref(false)
+const localTest = ref(null)
+const formRef = ref(null)
+const formValid = ref(false)
 
 const mountTest = computed(() => {
-  if (!props.template?.body) {
-    console.warn('Template body is undefined:', props.template);
-    return {};
-  }
+  // if no template or no body just return null
+  if (!props.template || !props.template.body) return null
 
-  const test = { ...props.template.body };
+  const test = { ...props.template.body }
   if (!test.testType && props.template.body.testType) {
-    test.testType = props.template.body.testType;
+    test.testType = props.template.body.testType
   }
-  return test;
-});
+  return test
+})
 
 const author = computed(() => {
-  return props.template?.header?.templateAuthor?.userEmail || '';
-});
+  return props.template?.header?.templateAuthor?.userEmail || ''
+})
 
 const user = computed(() => {
-  return store.state.Auth.user;
-});
+  return store.state.Auth.user
+})
 
 watch(
   () => props.template,
   (newTemplate) => {
     isMyTemplate.value =
-      newTemplate?.header?.templateAuthor?.userDocId === user.value?.id;
-    localTest.value = mountTest.value ? { ...mountTest.value } : null;
+      newTemplate?.header?.templateAuthor?.userDocId === user.value?.id
+    if (mountTest.value) {
+      localTest.value = { ...mountTest.value }
+    } else {
+      localTest.value = null
+    }
   },
-  { immediate: true, deep: true }
-);
+  { immediate: true, deep: true },
+)
 
 const deleteTemplate = async () => {
-  if (!window.confirm('Are you sure you want to delete the template?')) return;
+  if (!window.confirm('Are you sure you want to delete the template?')) return
 
   try {
-    await store.dispatch('deleteTemplate', props.template.id);
-    reset();
-  } catch (error) {
-    console.error('Error deleting template:', error);
+    await store.dispatch('deleteTemplate', props.template.id)
+    reset()
+  } catch (e) {
+    store.commit('SET_TOAST', {
+      type: 'error',
+      message: 'Failed to delete template. Please try again.',
+    })
   }
-};
+}
 
 const reset = () => {
-  emit('close');
+  emit('close')
   if (formRef.value?.resetVal) {
-    formRef.value.resetVal();
+    formRef.value.resetVal()
   }
-  step.value = 1;
-  localTest.value = null;
-};
+  step.value = 1
+  localTest.value = null
+}
 
 const updateLocalTest = (newTest) => {
-  localTest.value = { ...newTest };
-};
+  localTest.value = { ...newTest }
+}
 
 const handleValForm = (valid) => {
-  formValid.value = valid;
-};
+  formValid.value = valid
+}
 
 const validate = async () => {
   if (!formRef.value?.validate()) {
-    return;
+    return
   }
 
   if (!localTest.value) {
-    console.error('localTest is not initialized');
-    return;
+    return
   }
 
   try {
@@ -318,19 +277,22 @@ const validate = async () => {
       templateDoc: props.template.id,
       creationDate: Date.now(),
       updateDate: Date.now(),
-    };
+    }
 
-    const study = instantiateStudyByType(rawData.testType ,rawData)
-    const testId = await store.dispatch('createStudy', study);
+    const study = instantiateStudyByType(rawData.testType, rawData)
+    const testId = await store.dispatch('createStudy', study)
 
     const methodView = getMethodManagerView(rawData.testType, rawData.subType)
-    await router.push({ name: methodView, params: { id: testId } });
-  } catch (error) {
-    console.error('Error creating test:', error);
+    await router.push({ name: methodView, params: { id: testId } })
+  } catch (e) {
+    store.commit('SET_TOAST', {
+      type: 'error',
+      message: 'Failed to create test from template. Please try again.',
+    })
   }
-};
+}
 
 const getFormattedDate = (date) => {
-  return new Date(date).toLocaleString();
-};
+  return new Date(date).toLocaleString()
+}
 </script>

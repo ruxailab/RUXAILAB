@@ -3,8 +3,7 @@
  * @module Reports
  */
 
-import ReportController from "../controllers/ReportController";
-
+import ReportController from '../controllers/ReportController'
 
 const reportController = new ReportController()
 
@@ -23,22 +22,22 @@ export default {
      * @returns {Promise<void>}
      */
     async removeReport({ commit }, payload) {
-      commit("setLoading", true);
+      commit('setLoading', true)
 
       try {
-        const result = await reportController.removeReport(payload);
+        const result = await reportController.removeReport(payload)
 
         if (!result.success) {
-          commit("setError", {
-            errorCode: "reportError",
+          commit('setError', {
+            errorCode: 'reportError',
             message: result.error,
-          });
+          })
         }
       } catch (err) {
-        commit("setError", { errorCode: "reportError", message: err });
+        commit('setError', { errorCode: 'reportError', message: err })
       } finally {
-        commit("setLoading", false);
+        commit('setLoading', false)
       }
     },
   },
-};
+}

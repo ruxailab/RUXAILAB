@@ -108,26 +108,15 @@ const chartOptions = ref({
       },
       callbacks: {
         title: (tooltipItems) => {
-          const timestamp = tooltipItems[0].parsed.x;
-          const date = new Date(timestamp);
-          return date.toLocaleDateString('en-IN', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-          })
+          const dateLabel = tooltipItems[0].label;
+          return dateLabel;
         },
       },
     },
   },
   scales: {
     x: {
-      type: 'time',
-      time: {
-        unit: 'week',
-        displayFormats: {
-          week: 'dd/MM',
-        },
-      },
+      type: 'category',
       title: {
         display: true,
         text: 'Timeline',
@@ -176,7 +165,12 @@ const chartOptions = ref({
           size: 12,
           weight: '500',
         },
-        stepSize: 0.5,
+        stepSize: 1,
+        callback: function(value) {
+          if (Number.isInteger(value)) {
+            return value;
+          }
+        },
         padding: 10,
       },
     },
@@ -198,33 +192,39 @@ const processDataForChart = () => {
     return;
   }
 
-  const currentDate = new Date();
-  const oneMonthsAgo = new Date(currentDate);
-  oneMonthsAgo.setMonth(currentDate.getMonth() - 1);
-
   const filtered = props.taskAnswers.filter(a => a.lastUpdate && !isNaN(new Date(a.lastUpdate).getTime()));
-  const validAnswers = filtered.filter(a => {
-    const date = new Date(a.lastUpdate);
-    return date >= oneMonthsAgo && date <= currentDate;
-  });
-
-  const testsPerDay = {};
-  const iterator = new Date(oneMonthsAgo);
-  while (iterator <= currentDate) {
-    const dateStr = iterator.toISOString().split('T')[0];
-    testsPerDay[dateStr] = 0;
-    iterator.setDate(iterator.getDate() + 1);
+  
+  if (filtered.length === 0) {
+    chartData.value.datasets[0].data = [];
+    chartData.value.labels = [];
+    chartOptions.value.scales.y.suggestedMax = 1;
+    isDataReady.value = false;
+    return;
   }
 
-  validAnswers.forEach(a => {
+  // Count answers per day - ONLY for dates that have actual data
+  const testsPerDay = {};
+  filtered.forEach(a => {
     const dateStr = new Date(a.lastUpdate).toISOString().split('T')[0];
-    if (testsPerDay[dateStr] !== undefined) {
-      testsPerDay[dateStr]++;
+    if (!testsPerDay[dateStr]) {
+      testsPerDay[dateStr] = 0;
     }
+    testsPerDay[dateStr]++;
   });
 
-  chartData.value.labels = Object.keys(testsPerDay).map(date => new Date(date));
-  chartData.value.datasets[0].data = Object.values(testsPerDay);
+  // Sort dates chronologically
+  const sortedDates = Object.keys(testsPerDay).sort();
+  
+  // Create labels and data arrays with ONLY dates that have data
+  chartData.value.labels = sortedDates.map(date => {
+    const d = new Date(date);
+    return d.toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+  });
+  chartData.value.datasets[0].data = sortedDates.map(date => testsPerDay[date]);
 
   const max = Math.max(...Object.values(testsPerDay));
   chartOptions.value.scales.y.suggestedMax = max + 1;

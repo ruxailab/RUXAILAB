@@ -1,12 +1,24 @@
 <template>
-  <PageWrapper 
-    :title="currentPage === 'userSelection' ? 'Select User' : 'Accessibility Assessment Results'"
+  <PageWrapper
+    :title="
+      currentPage === 'userSelection'
+        ? 'Select User'
+        : 'Accessibility Assessment Results'
+    "
     :loading="isLoading"
-    :loading-text="currentPage === 'userSelection' ? 'Loading users...' : 'Loading assessment data...'"
+    :loading-text="
+      currentPage === 'userSelection'
+        ? 'Loading users...'
+        : 'Loading assessment data...'
+    "
   >
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
-        {{ currentPage === 'userSelection' ? 'Select a user to view their accessibility assessment results' : 'Review the detailed accessibility assessment results for the selected user' }}
+        {{
+          currentPage === 'userSelection'
+            ? $t('Accessibility.selectUserToView')
+            : $t('Accessibility.reviewDetailedAssessment')
+        }}
       </p>
     </template>
     <!-- Page 1: User Selection -->
@@ -14,20 +26,30 @@
       <v-col cols="12">
         <v-card>
           <v-card-title class="text-h5 pa-6">
-            <v-icon left class="mr-3" color="primary">mdi-account-multiple</v-icon>
-            Select a User to View Assessment Results
+            <v-icon start class="mr-3" color="primary">
+              mdi-account-multiple
+            </v-icon>
+            {{ $t('Accessibility.selectUserToViewResults') }}
           </v-card-title>
           <v-card-text class="pa-6">
             <!-- Debug Information -->
-            <v-alert 
+            <v-alert
               v-if="!isLoadingUsers && userDetails.length === 0"
-              type="info" 
+              type="info"
               variant="outlined"
               class="mb-4"
             >
-              <div class="text-subtitle-2 mb-2">Information</div>
-              <div><strong>Found User IDs:</strong> {{ userIds.join(', ') || 'None' }}</div>
-              <div><strong>User Details:</strong> {{ userDetails.length }} users loaded</div>
+              <div class="text-subtitle-2 mb-2">
+                {{ $t('Accessibility.information') }}
+              </div>
+              <div>
+                <strong>{{ $t('Accessibility.foundUserIds') }}</strong>
+                {{ userIds.join(', ') || 'None' }}
+              </div>
+              <div>
+                <strong>{{ $t('Accessibility.userDetails') }}</strong>
+                {{ userDetails.length }} {{ $t('Accessibility.usersLoaded') }}
+              </div>
             </v-alert>
             <!-- Loading overlay while fetching users -->
             <div v-if="isLoadingUsers" class="text-center py-8">
@@ -36,9 +58,13 @@
                 color="primary"
                 size="48"
                 class="mb-4"
-              ></v-progress-circular>
-              <div class="text-h6 mb-2">Loading Users</div>
-              <div class="text-body-2 text-grey">Fetching assessment participants...</div>
+              />
+              <div class="text-h6 mb-2">
+                {{ $t('Accessibility.loadingUsers') }}
+              </div>
+              <div class="text-body-2 text-grey">
+                {{ $t('Accessibility.fetchingParticipants') }}
+              </div>
             </div>
 
             <!-- User table (only show when not loading) -->
@@ -56,13 +82,12 @@
               >
                 <!-- Email/User Info Column -->
                 <template #item.email="{ item }">
-                  <div class="d-flex align-center py-2 cursor-pointer" @click="selectUser(item)">
-                    <v-avatar
-                      size="40"
-                      color="primary"
-                      class="me-3"
-                    >
-                      <v-icon size="20" color="white">mdi-account</v-icon>
+                  <div
+                    class="d-flex align-center py-2 cursor-pointer"
+                    @click="selectUser(item)"
+                  >
+                    <v-avatar size="40" color="primary" class="me-3">
+                      <v-icon size="20" color="white"> mdi-account </v-icon>
                     </v-avatar>
                     <div>
                       <div class="font-weight-medium text-body-1 mb-0">
@@ -76,14 +101,10 @@
                 </template>
 
                 <!-- Status Column -->
-                <template #item.status="{ item }">
-                  <v-chip
-                    color="success"
-                    size="small"
-                    variant="tonal"
-                  >
-                    <v-icon start size="16">mdi-check-circle</v-icon>
-                    Assessment Available
+                <template #item.status>
+                  <v-chip color="success" size="small" variant="tonal">
+                    <v-icon start size="16"> mdi-check-circle </v-icon>
+                    {{ $t('Accessibility.assessmentAvailable') }}
                   </v-chip>
                 </template>
 
@@ -97,7 +118,7 @@
                       prepend-icon="mdi-eye"
                       @click="selectUser(item)"
                     >
-                      View Results
+                      {{ $t('Accessibility.viewResults') }}
                     </v-btn>
                     <v-btn
                       color="secondary"
@@ -106,19 +127,19 @@
                       prepend-icon="mdi-test-tube"
                       @click="viewUserInPreview(item)"
                     >
-                      View in Preview
+                      {{ $t('Accessibility.viewInPreview') }}
                     </v-btn>
                   </div>
                 </template>
               </v-data-table>
             </v-card>
-            
+
             <v-alert
               v-if="userDetails.length === 0 && !isLoadingUsers"
               type="info"
               class="mt-4"
             >
-              No users found for this assessment test.
+              {{ $t('Accessibility.noUsersFound') }}
             </v-alert>
           </v-card-text>
         </v-card>
@@ -139,11 +160,15 @@
                 class="mr-4"
                 @click="goBackToUserSelection"
               >
-                Back to User Selection
+                {{ $t('Accessibility.backToUserSelection') }}
               </v-btn>
               <div>
-                <div class="text-h6">{{ getDisplayName(selectedUser?.email) }}</div>
-                <div class="text-body-2 text-grey">{{ selectedUser?.email }}</div>
+                <div class="text-h6">
+                  {{ getDisplayName(selectedUser?.email) }}
+                </div>
+                <div class="text-body-2 text-grey">
+                  {{ selectedUser?.email }}
+                </div>
               </div>
             </div>
             <div class="d-flex ga-2 align-center">
@@ -153,10 +178,10 @@
                 prepend-icon="mdi-test-tube"
                 @click="viewUserInPreview(selectedUser)"
               >
-                View in Preview Mode
+                {{ $t('Accessibility.viewInPreviewMode') }}
               </v-btn>
               <v-avatar color="primary" size="40">
-                <v-icon color="white">mdi-account</v-icon>
+                <v-icon color="white"> mdi-account </v-icon>
               </v-avatar>
             </div>
           </v-card-text>
@@ -164,31 +189,26 @@
 
         <v-card>
           <v-card-title>
-            <span>Accessibility Assessment Results</span>
+            <span>{{
+              $t('Accessibility.accessibilityAssessmentResults')
+            }}</span>
           </v-card-title>
 
           <!-- Level Filter -->
           <v-card-subtitle class="pb-2">
-            <v-row
-              align="center"
-              class="ma-0"
-            >
-              <v-col
-                cols="auto"
-                class="pa-0"
-              >
-                <span class="text-subtitle-2 font-weight-medium">WCAG Level Filter:</span>
+            <v-row align="center" class="ma-0">
+              <v-col cols="auto" class="pa-0">
+                <span class="text-subtitle-2 font-weight-medium">{{
+                  $t('Accessibility.wcagLevelFilter')
+                }}</span>
               </v-col>
-              <v-col
-                cols="auto"
-                class="pa-0 ml-3"
-              >
+              <v-col cols="auto" class="pa-0 ml-3">
+                <!-- eslint-disable @intlify/vue-i18n/no-raw-text -->
                 <v-btn-toggle
                   v-model="selectedLevel"
                   mandatory
                   color="primary"
                   variant="outlined"
-                  divided
                   density="compact"
                 >
                   <v-btn
@@ -213,11 +233,9 @@
                     AAA
                   </v-btn>
                 </v-btn-toggle>
+                <!-- eslint-enable @intlify/vue-i18n/no-raw-text -->
               </v-col>
-              <v-col
-                cols="auto"
-                class="pa-0 ml-3"
-              >
+              <v-col cols="auto" class="pa-0 ml-3">
                 <v-chip
                   size="small"
                   :color="getLevelChipColor(selectedLevel)"
@@ -230,12 +248,7 @@
           </v-card-subtitle>
 
           <!-- Tabs for Principles -->
-          <v-tabs
-            v-model="activeTab"
-            grow
-            show-arrows
-            class="principle-tabs"
-          >
+          <v-tabs v-model="activeTab" grow show-arrows class="principle-tabs">
             <v-tab
               v-for="(principle, index) in principles"
               :key="index"
@@ -311,14 +324,9 @@
                       size="small"
                       @click="openNotesDialog(item)"
                     >
-                      <v-icon size="small">
-                        mdi-note-text-outline
-                      </v-icon>
+                      <v-icon size="small"> mdi-note-text-outline </v-icon>
                     </v-btn>
-                    <span
-                      v-else
-                      class="text-grey"
-                    >-</span>
+                    <span v-else class="text-grey">-</span>
                   </template>
                 </v-data-table>
               </v-window-item>
@@ -329,105 +337,84 @@
     </v-row>
 
     <!-- Notes Dialog -->
-    <v-dialog
-      v-model="notesDialog.show"
-      max-width="800px"
-    >
-    <v-card>
-      <v-card-title class="d-flex justify-space-between align-center">
-        <span>Notes for {{ notesDialog.ruleId }} -
-          {{ notesDialog.ruleTitle }}</span>
-        <v-btn
-          icon
-          @click="notesDialog.show = false"
-        >
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </v-card-title>
-      <v-card-text class="pt-4">
-        <v-list>
-          <v-list-item
-            v-for="(note, index) in notesDialog.notes"
-            :key="index"
-            class="mb-4"
+    <v-dialog v-model="notesDialog.show" max-width="800px">
+      <v-card>
+        <v-card-title class="d-flex justify-space-between align-center">
+          <span
+            >{{ $t('Accessibility.notesFor') }} {{ notesDialog.ruleId }} -
+            {{ notesDialog.ruleTitle }}</span
           >
-            <template #prepend>
-              <v-avatar
-                color="primary"
-                size="40"
-                class="mr-4"
-              >
-                <span class="text-white">{{ index + 1 }}</span>
-              </v-avatar>
-            </template>
-            <v-list-item-title class="text-h6 mb-2">
-              Note {{ index + 1 }}
-            </v-list-item-title>
-            <v-list-item-subtitle class="text-body-1 mb-2">
-              {{ note.text }}
-            </v-list-item-subtitle>
-            <v-img
-              v-if="note.imagePreview"
-              :src="note.imagePreview"
-              max-height="300"
-              cover
-              class="mt-2 mb-2 rounded"
-            />
-            <v-chip
-              v-if="note.imageName"
-              size="small"
-              color="grey-lighten-2"
-              class="mt-2"
+          <v-btn icon @click="notesDialog.show = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text class="pt-4">
+          <v-list>
+            <v-list-item
+              v-for="(note, index) in notesDialog.notes"
+              :key="index"
+              class="mb-4"
             >
-              <v-icon
+              <template #prepend>
+                <v-avatar color="primary" size="40" class="mr-4">
+                  <span class="text-white">{{ index + 1 }}</span>
+                </v-avatar>
+              </template>
+              <v-list-item-title class="text-h6 mb-2">
+                {{ $t('Accessibility.note') }} {{ index + 1 }}
+              </v-list-item-title>
+              <v-list-item-subtitle class="text-body-1 mb-2">
+                {{ note.text }}
+              </v-list-item-subtitle>
+              <v-img
+                v-if="note.imagePreview"
+                :src="note.imagePreview"
+                max-height="300"
+                cover
+                class="mt-2 mb-2 rounded"
+              />
+              <v-chip
+                v-if="note.imageName"
                 size="small"
-                class="mr-1"
+                color="grey-lighten-2"
+                class="mt-2"
               >
-                mdi-image
-              </v-icon>
-              {{ note.imageName }}
-            </v-chip>
-          </v-list-item>
-          <v-list-item v-if="!notesDialog.notes || notesDialog.notes.length === 0">
-            <v-list-item-title class="text-grey">
-              No notes available for this rule.
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer />
-        <v-btn
-          color="primary"
-          @click="notesDialog.show = false"
-        >
-          Close
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+                <v-icon size="small" class="mr-1"> mdi-image </v-icon>
+                {{ note.imageName }}
+              </v-chip>
+            </v-list-item>
+            <v-list-item
+              v-if="!notesDialog.notes || notesDialog.notes.length === 0"
+            >
+              <v-list-item-title class="text-grey">
+                {{ $t('Accessibility.noNotesForRule') }}
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="primary" @click="notesDialog.show = false">
+            {{ $t('Accessibility.close') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </PageWrapper>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import { useStore } from 'vuex'
-import { useRoute, useRouter } from 'vue-router'
-import { useToast } from 'vue-toastification'
+import { useRoute } from 'vue-router'
+import { showSuccess, showError, showInfo } from '@/shared/utils/toast'
 
 // Icons for principles
-const principleIcons = [
-  'mdi-eye',
-  'mdi-hand-wave',
-  'mdi-brain',
-  'mdi-dumbbell',
-]
+const principleIcons = ['mdi-eye', 'mdi-hand-wave', 'mdi-brain', 'mdi-dumbbell']
 
 const store = useStore()
 const route = useRoute()
-const router = useRouter()
-const toast = useToast()
 
 // State
 const isLoading = ref(true)
@@ -462,26 +449,22 @@ onMounted(async () => {
   try {
     // Load WCAG data first (this affects general loading state)
     await loadWcagData()
-    
+
     // Then fetch users (this affects user loading state)
     isLoadingUsers.value = true
-    
-    // Debug route parameters
-    console.log('Route params:', route.params)
-    console.log('Test ID from route:', route.params.id)
-    console.log('Full route:', route)
-    
+
     if (!route.params.id) {
-      toast.error('Test ID is missing from route parameters. Please check the URL.')
+      showError(
+        'Test ID is missing from route parameters. Please check the URL.',
+      )
       isLoadingUsers.value = false
       return
     }
-    
+
     await fetchUserIdsForTest()
     await fetchUserEmails()
   } catch (error) {
-    console.error('Error in onMounted:', error)
-    toast.error('Failed to load data: ' + error.message)
+    showError('Failed to load data: ' + error.message)
   } finally {
     isLoadingUsers.value = false
   }
@@ -490,7 +473,9 @@ onMounted(async () => {
 // Helper function to get display name from email
 const getDisplayName = (email) => {
   if (!email) return 'Unknown User'
-  return email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1)
+  return (
+    email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1)
+  )
 }
 
 // Navigate to user selection page
@@ -503,26 +488,19 @@ const goBackToUserSelection = () => {
 // Select user and navigate to assessment results
 const selectUser = async (user) => {
   try {
-    console.log('Selecting user:', user)
-    
     if (!user || !user.id) {
-      toast.error('Invalid user selection')
-      console.error('Invalid user object:', user)
+      showError('Invalid user selection')
       return
     }
-    
+
     selectedUser.value = user
     selectedUserId.value = user.email
     currentPage.value = 'assessmentResults'
-    
-    console.log('Selected user ID:', user.id)
-    console.log('Selected user email:', user.email)
-    
+
     // Load assessment data for the selected user
     await loadAssessmentData(user.id)
   } catch (error) {
-    console.error('Error selecting user:', error)
-    toast.error('Failed to load user assessment data: ' + error.message)
+    showError('Failed to load user assessment data: ' + error.message)
   }
 }
 
@@ -530,23 +508,22 @@ const selectUser = async (user) => {
 const viewUserInPreview = (user) => {
   try {
     if (!user || !user.id) {
-      toast.error('Invalid user selection')
+      showError('Invalid user selection')
       return
     }
-    
+
     const testId = route.params.id
     if (!testId) {
-      toast.error('Test ID not found')
+      showError('Test ID not found')
       return
     }
-    
+
     // Navigate to preview page with user ID parameter
     const previewUrl = `/accessibility/manual/preview/${testId}/${user.id}`
     window.open(previewUrl, '_blank')
-    toast.success(`Opening preview for ${getDisplayName(user.email)}`)
-  } catch (error) {
-    console.error('Error opening preview for user:', error)
-    toast.error('Failed to open preview mode')
+    showSuccess(`Opening preview for ${getDisplayName(user.email)}`)
+  } catch {
+    showError('Failed to open preview mode')
   }
 }
 
@@ -564,8 +541,20 @@ const headers = [
 // Headers for user selection table
 const userHeaders = [
   { title: 'User', key: 'email', sortable: true, width: '50%' },
-  { title: 'Status', key: 'status', sortable: false, align: 'center', width: '25%' },
-  { title: 'Actions', key: 'actions', sortable: false, align: 'center', width: '25%' },
+  {
+    title: 'Status',
+    key: 'status',
+    sortable: false,
+    align: 'center',
+    width: '25%',
+  },
+  {
+    title: 'Actions',
+    key: 'actions',
+    sortable: false,
+    align: 'center',
+    width: '25%',
+  },
 ]
 
 // Level filter functions
@@ -619,10 +608,11 @@ const getFilteredRulesCount = (principleIndex) => {
   if (!principle) return 0
 
   const principleRules = allRules.value.filter(
-    (rule) => rule.principleId === principle.id || rule.principle === principle.title
+    (rule) =>
+      rule.principleId === principle.id || rule.principle === principle.title,
   )
 
-  return principleRules.filter(rule => shouldIncludeRule(rule.level)).length
+  return principleRules.filter((rule) => shouldIncludeRule(rule.level)).length
 }
 
 const getStatusColor = (status) => {
@@ -660,68 +650,36 @@ const openNotesDialog = (item) => {
   }
 }
 
-// Helper to find a rule by ID
-const findRuleById = (ruleId) => {
-  for (const principle of wcagData.value?.principles || []) {
-    for (const guideline of principle.guidelines || []) {
-      const rule = (guideline.rules || []).find((r) => r.id === ruleId)
-      if (rule)
-        return {
-          ...rule,
-          principle: principle.title,
-          guideline: guideline.title,
-        }
-    }
-  }
-  return null
-}
-
-// Get all rules from WCAG data
-const getAllRules = () => {
-  const rules = []
-  wcagData.value?.principles?.forEach((principle) => {
-    principle.guidelines?.forEach((guideline) => {
-      guideline.rules?.forEach((rule) => {
-        rules.push({
-          ...rule,
-          principle: principle.title,
-          guideline: guideline.title,
-        })
-      })
-    })
-  })
-  return rules
-}
-
 // Get rules for the current principle (with level filtering)
 const getRulesForPrinciple = (principleIndex) => {
   try {
-    const principle = principles.value?.[principleIndex];
+    const principle = principles.value?.[principleIndex]
     if (!principle) {
-      console.error(`No principle found at index ${principleIndex}`);
-      return [];
+      return []
     }
 
     const principleRules = allRules.value.filter(
       (rule) =>
-        rule.principleId === principle.id || rule.principle === principle.title
-    );
+        rule.principleId === principle.id || rule.principle === principle.title,
+    )
 
     // Apply level filtering
-    const filteredRules = principleRules.filter(rule => shouldIncludeRule(rule.level));
+    const filteredRules = principleRules.filter((rule) =>
+      shouldIncludeRule(rule.level),
+    )
 
     return filteredRules.map((rule) => {
       const assessment = assessmentRules.value[rule.id] || {
         status: 'Not Set',
         severity: 'Not Set',
         notes: [],
-      };
+      }
 
-      let normalizedNotes = [];
+      let normalizedNotes = []
       if (Array.isArray(assessment.notes)) {
-        normalizedNotes = assessment.notes;
+        normalizedNotes = assessment.notes
       } else if (assessment.notes) {
-        normalizedNotes = [assessment.notes];
+        normalizedNotes = [assessment.notes]
       }
 
       return {
@@ -734,13 +692,12 @@ const getRulesForPrinciple = (principleIndex) => {
         severity: assessment.severity,
         notes: normalizedNotes,
         criteria: rule.criteria || [],
-      };
-    });
-  } catch (error) {
-    console.error('Error getting rules for principle:', error);
-    return [];
+      }
+    })
+  } catch {
+    return []
   }
-};
+}
 
 // Get principle icon
 const getPrincipleIcon = (index) => {
@@ -792,11 +749,10 @@ const loadWcagData = async () => {
         })
       })
     } else {
-      toast.error('Failed to load WCAG principles')
+      showError('Failed to load WCAG principles')
     }
   } catch (error) {
-    console.error('Error loading WCAG data:', error)
-    toast.error(`Failed to load WCAG data: ${error.message}`)
+    showError(`Failed to load WCAG data: ${error.message}`)
   } finally {
     isLoading.value = false
   }
@@ -805,79 +761,67 @@ const loadWcagData = async () => {
 // Fetch all user IDs for the given testId
 const fetchUserIdsForTest = async () => {
   try {
-    const { query, where, getDocs, collection } = await import('firebase/firestore');
-    const { db } = await import('@/app/plugins/firebase');
+    const { query, where, getDocs, collection } =
+      await import('firebase/firestore')
+    const { db } = await import('@/app/plugins/firebase')
 
     const testId = route.params.id
-    console.log('Fetching user IDs for test ID:', testId)
-    
+
     if (!testId) {
       throw new Error('Test ID is required')
     }
 
     const q = query(
       collection(db, 'assessments'),
-      where('testId', '==', testId)
-    );
+      where('testId', '==', testId),
+    )
 
-    const querySnapshot = await getDocs(q);
+    const querySnapshot = await getDocs(q)
     const foundUserIds = querySnapshot.docs.map((doc) => {
-      const data = doc.data();
-      console.log('Assessment document:', doc.id, 'data:', data);
-      return data.userId;
-    });
-    
-    userIds.value = foundUserIds;
-    console.log('Found user IDs:', userIds.value)
-    
+      const data = doc.data()
+      return data.userId
+    })
+
+    userIds.value = foundUserIds
+
     if (userIds.value.length === 0) {
-      console.log('No assessment documents found for test ID:', testId);
-      toast.info('No assessment data found for this test. Users need to complete assessments first.');
+      showInfo(
+        'No assessment data found for this test. Users need to complete assessments first.',
+      )
     }
   } catch (error) {
-    console.error('Error fetching user IDs:', error);
-    toast.error('Failed to fetch user IDs: ' + error.message);
-    isLoadingUsers.value = false; // Stop loading on error
+    showError('Failed to fetch user IDs: ' + error.message)
+    isLoadingUsers.value = false // Stop loading on error
   }
-};
+}
 
 // Fetch user emails for the given user IDs
 const fetchUserEmails = async () => {
   try {
-    const { getDoc, doc } = await import('firebase/firestore');
-    const { db } = await import('@/app/plugins/firebase');
-
-    console.log('Fetching emails for user IDs:', userIds.value)
+    const { getDoc, doc } = await import('firebase/firestore')
+    const { db } = await import('@/app/plugins/firebase')
 
     const userPromises = userIds.value.map(async (userId) => {
-      const userRef = doc(db, 'users', userId);
-      const userSnap = await getDoc(userRef);
+      const userRef = doc(db, 'users', userId)
+      const userSnap = await getDoc(userRef)
       if (userSnap.exists()) {
-        const userData = { id: userId, email: userSnap.data().email };
-        console.log('Found user:', userData);
-        return userData;
-      } else {
-        console.log('User document not found for ID:', userId);
+        const userData = { id: userId, email: userSnap.data().email }
+        return userData
       }
-      return null;
-    });
+      return null
+    })
 
-    userDetails.value = (await Promise.all(userPromises)).filter(Boolean);
-    console.log('Final user details:', userDetails.value);
-  } catch (error) {
-    console.error('Error fetching user emails:', error);
-    toast.error('Failed to fetch user emails.');
-    isLoadingUsers.value = false; // Stop loading on error
+    userDetails.value = (await Promise.all(userPromises)).filter(Boolean)
+  } catch {
+    showError('Failed to fetch user emails.')
+    isLoadingUsers.value = false // Stop loading on error
   }
-};
-
-
+}
 
 // Update loadAssessmentData to accept userId as a parameter
 const loadAssessmentData = async (userId) => {
   try {
-    isLoading.value = true;
-    console.log('Loading assessment data for user:', userId)
+    isLoading.value = true
 
     // Validate inputs
     if (!userId) {
@@ -885,24 +829,21 @@ const loadAssessmentData = async (userId) => {
     }
 
     // Get the test ID from route
-    const testId = route.params.id;
-    console.log('Using test ID:', testId)
+    const testId = route.params.id
 
     // Get the assessment document from Firestore
-    const { getDoc, doc } = await import('firebase/firestore');
-    const { db } = await import('@/app/plugins/firebase');
+    const { getDoc, doc } = await import('firebase/firestore')
+    const { db } = await import('@/app/plugins/firebase')
 
-    const docId = `${userId}_${testId}`;
-    console.log('Looking for assessment document:', docId)
-    
-    const docRef = doc(db, 'assessments', docId);
-    const docSnap = await getDoc(docRef);
+    const docId = `${userId}_${testId}`
 
-    const assessmentLookup = {};
+    const docRef = doc(db, 'assessments', docId)
+    const docSnap = await getDoc(docRef)
+
+    const assessmentLookup = {}
 
     if (docSnap.exists()) {
-      const assessment = docSnap.data();
-      console.log('Found assessment document:', assessment)
+      const assessment = docSnap.data()
 
       if (assessment?.assessmentData) {
         assessment.assessmentData.forEach((item) => {
@@ -910,53 +851,44 @@ const loadAssessmentData = async (userId) => {
             status: item.status || 'Not Set',
             severity: item.severity || 'Not Set',
             notes: item.notes || [],
-          };
-        });
-        console.log('Processed assessment data for', Object.keys(assessmentLookup).length, 'rules')
-      } else {
-        console.log('No assessmentData property found in document')
+          }
+        })
       }
     } else {
-      console.log('No assessment document found for:', docId)
-      toast.info('No assessment data found for the selected user.');
+      showInfo('No assessment data found for the selected user.')
     }
 
     // Validate WCAG rules are loaded
     if (!allRules.value || allRules.value.length === 0) {
-      console.error('WCAG rules not loaded')
-      toast.error('WCAG rules not loaded. Please refresh the page.')
+      showError('WCAG rules not loaded. Please refresh the page.')
       return
     }
 
     // Merge with all rules
-    const mergedData = {};
+    const mergedData = {}
     allRules.value.forEach((rule) => {
       const assessment = assessmentLookup[rule.id] || {
         status: 'Not Set',
         severity: 'Not Set',
         notes: [],
-      };
+      }
 
       mergedData[rule.id] = {
         ...rule,
         ...assessment,
-      };
-    });
+      }
+    })
 
     assessmentRules.value = assessmentLookup
     assessmentData.value = mergedData
-    
   } catch (error) {
-    console.error('Error loading assessment data:', error)
-    toast.error(
+    showError(
       `Failed to load assessment data: ${error.message || 'Unknown error'}`,
     )
   } finally {
     isLoading.value = false
   }
 }
-
-
 </script>
 
 <style scoped>

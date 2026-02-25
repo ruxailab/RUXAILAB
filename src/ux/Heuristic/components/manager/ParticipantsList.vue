@@ -3,24 +3,24 @@
     <div class="d-flex justify-space-between align-center mb-4">
       <h3 class="text-h6">Participants</h3>
       <div class="d-flex gap-2">
-        <v-btn 
-          size="small" 
-          variant="outlined" 
+        <v-btn
+          size="small"
+          variant="outlined"
           color="primary"
           prepend-icon="mdi-account-plus"
           @click="inviteParticipant"
         >
           {{ $t('manager.inviteParticipant') }}
         </v-btn>
-        <v-btn 
-          size="small" 
-          variant="text" 
+        <v-btn
+          size="small"
+          variant="text"
           :icon="showAllParticipants ? 'mdi-chevron-up' : 'mdi-chevron-down'"
           @click="toggleShowAll"
         ></v-btn>
       </div>
     </div>
-    
+
     <!-- Filtros -->
     <div class="filters mb-4">
       <v-chip-group v-model="selectedFilter" mandatory>
@@ -38,11 +38,11 @@
         </v-chip>
       </v-chip-group>
     </div>
-    
+
     <!-- Lista de participantes -->
     <div class="participants-list">
-      <div 
-        v-for="participant in filteredParticipants" 
+      <div
+        v-for="participant in filteredParticipants"
         :key="participant.userDocId"
         class="participant-item"
       >
@@ -51,13 +51,13 @@
             <v-icon>mdi-account</v-icon>
           </v-avatar>
         </div>
-        
+
         <div class="participant-info flex-grow-1">
           <div class="participant-name">{{ participant.email }}</div>
           <div class="participant-status">
-            <v-chip 
-              :color="getStatusColor(participant)" 
-              size="x-small" 
+            <v-chip
+              :color="getStatusColor(participant)"
+              size="x-small"
               variant="flat"
             >
               {{ getStatusText(participant) }}
@@ -67,7 +67,7 @@
             </span>
           </div>
         </div>
-        
+
         <div class="participant-progress">
           <div class="progress-text mb-1">{{ participant.progress || 0 }}%</div>
           <v-progress-linear
@@ -77,7 +77,7 @@
             rounded
           ></v-progress-linear>
         </div>
-        
+
         <div class="participant-actions">
           <v-btn
             size="small"
@@ -88,14 +88,19 @@
         </div>
       </div>
     </div>
-    
+
     <!-- Estado vacío -->
-    <div v-if="filteredParticipants.length === 0" class="text-center py-6 text-grey-darken-1">
+    <div
+      v-if="filteredParticipants.length === 0"
+      class="text-center py-6 text-grey-darken-1"
+    >
       <v-icon size="48" class="mb-2">mdi-account-group-outline</v-icon>
-      <div v-if="selectedFilter === 'all'">{{ $t('manager.noParticipants') }}</div>
+      <div v-if="selectedFilter === 'all'">
+        {{ $t('manager.noParticipants') }}
+      </div>
       <div v-else>{{ $t('manager.noParticipantsInFilter') }}</div>
     </div>
-    
+
     <!-- Menú de acciones del participante -->
     <v-menu
       v-model="participantMenu.show"
@@ -115,7 +120,7 @@
             {{ $t('manager.sendReminder') }}
           </v-list-item-title>
         </v-list-item>
-        <v-list-item @click="removeParticipant" class="text-error">
+        <v-list-item class="text-error" @click="removeParticipant">
           <v-list-item-title>
             <v-icon size="small" class="mr-2">mdi-account-remove</v-icon>
             {{ $t('manager.removeParticipant') }}
@@ -134,11 +139,16 @@ import { es } from 'date-fns/locale'
 const props = defineProps({
   test: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 })
 
-const emit = defineEmits(['invite-participant', 'view-participant', 'send-reminder', 'remove-participant'])
+const emit = defineEmits([
+  'invite-participant',
+  'view-participant',
+  'send-reminder',
+  'remove-participant',
+])
 
 // State
 const selectedFilter = ref('all')
@@ -146,44 +156,47 @@ const showAllParticipants = ref(false)
 const participantMenu = ref({
   show: false,
   activator: null,
-  participant: null
+  participant: null,
 })
 
 // Computed properties
 const participants = computed(() => props.test?.cooperators || [])
 
-const completedCount = computed(() => 
-  participants.value.filter(p => p?.progress === 100).length
+const completedCount = computed(
+  () => participants.value.filter((p) => p?.progress === 100).length,
 )
 
-const inProgressCount = computed(() => 
-  participants.value.filter(p => p?.progress > 0 && p?.progress < 100).length
+const inProgressCount = computed(
+  () =>
+    participants.value.filter((p) => p?.progress > 0 && p?.progress < 100)
+      .length,
 )
 
-const notStartedCount = computed(() => 
-  participants.value.filter(p => !p?.progress || p?.progress === 0).length
+const notStartedCount = computed(
+  () =>
+    participants.value.filter((p) => !p?.progress || p?.progress === 0).length,
 )
 
 const filteredParticipants = computed(() => {
   let filtered = participants.value
-  
+
   switch (selectedFilter.value) {
     case 'completed':
-      filtered = filtered.filter(p => p?.progress === 100)
+      filtered = filtered.filter((p) => p?.progress === 100)
       break
     case 'inProgress':
-      filtered = filtered.filter(p => p?.progress > 0 && p?.progress < 100)
+      filtered = filtered.filter((p) => p?.progress > 0 && p?.progress < 100)
       break
     case 'notStarted':
-      filtered = filtered.filter(p => !p?.progress || p?.progress === 0)
+      filtered = filtered.filter((p) => !p?.progress || p?.progress === 0)
       break
   }
-  
+
   // Limitar la vista si no se muestran todos
   if (!showAllParticipants.value && filtered.length > 5) {
     return filtered.slice(0, 5)
   }
-  
+
   return filtered
 })
 
@@ -203,10 +216,10 @@ const getStatusText = (participant) => {
 
 const getLastActivity = (participant) => {
   if (!participant.updateDate) return 'Sin actividad'
-  
-  return formatDistanceToNow(new Date(participant.updateDate), { 
-    addSuffix: true, 
-    locale: es 
+
+  return formatDistanceToNow(new Date(participant.updateDate), {
+    addSuffix: true,
+    locale: es,
   })
 }
 

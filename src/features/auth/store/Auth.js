@@ -6,12 +6,10 @@
 import AuthController from '@/features/auth/controllers/AuthController.js'
 import UserController from '@/features/auth/controllers/UserController'
 import i18n from '@/app/plugins/i18n'
-import { useToast } from 'vue-toastification'
+import { showError } from '@/shared/utils/toast'
 
 const authController = new AuthController()
 const userController = new UserController()
-
-const toast = useToast()
 
 export default {
   state: {
@@ -37,7 +35,9 @@ export default {
       if (isTestOwner) return 0
 
       // Check if the user is a cooperator and get their access level
-      const coopsInfo = test.cooperators?.find((coops) => coops.userDocId === user.id)
+      const coopsInfo = test.cooperators?.find(
+        (coops) => coops.userDocId === user.id,
+      )
       if (coopsInfo) return coopsInfo.accessLevel
 
       // Check if the test is public
@@ -63,7 +63,10 @@ export default {
      */
     async signup({ commit }, payload) {
       try {
-        const { user } = await authController.signUp(payload.email, payload.password)
+        const { user } = await authController.signUp(
+          payload.email,
+          payload.password,
+        )
         await userController.create({ id: user.uid, email: user.email })
         commit('SET_TOAST', {
           message: i18n.global.t('auth.signupSuccess'),
@@ -82,21 +85,40 @@ export default {
 
     async signin({ commit }, payload) {
       commit('setLoading', true)
+
       try {
-        await authController.signIn(payload.email, payload.password, payload.rememberMe)
+        const { user } = await authController.signIn(
+          payload.email,
+          payload.password,
+          payload.rememberMe,
+        )
+
+        const dbUser = await userController.getById(user.uid)
+
+        commit('SET_USER', dbUser)
+
+        commit('SET_TOAST', {
+          message: i18n.global.t('auth.loginSuccess'),
+          type: 'success',
+        })
       } catch (err) {
-        toast.error(i18n.global.t('errors.incorrectCredential'))
+        showError('errors.incorrectCredential')
+        return err
+      } finally {
+        commit('setLoading', false)
       }
     },
 
     /**
- * Handle Google Authentication
- * @action signInWithGoogle
- * @returns {void}
- */
+     * Handle Google Authentication
+     * @action signInWithGoogle
+     * @returns {void}
+     */
     async signInWithGoogle({ commit }, payload) {
       try {
-        const { user } = await authController.signInWithGoogle(payload.rememberMe)
+        const { user } = await authController.signInWithGoogle(
+          payload.rememberMe,
+        )
 
         // Check if user already exists in database
         let dbUser = null
@@ -104,7 +126,7 @@ export default {
           dbUser = await userController.getById(user.uid)
         } catch (error) {
           // User doesn't exist in DB, will be created below
-          console.log('User not found in database, creating new profile')
+          return error
         }
 
         // Create user if they don't exist yet
@@ -113,6 +135,7 @@ export default {
             id: user.uid,
             email: user.email,
             displayName: user.displayName || '',
+            profileImage: user.photoURL || '',
             createdAt: new Date().toISOString(),
             authProvider: 'google',
           })
@@ -133,20 +156,25 @@ export default {
       }
     },
 
-    async logout({ commit }) {
+    async logout({ commit }, { silent = false } = {}) {
       try {
         await authController.signOut()
         commit('SET_USER', null)
-        commit('SET_TOAST', {
-          message: i18n.global.t('auth.logoutSuccess'),
-          type: 'success',
-        })
+
+        if (!silent) {
+          commit('SET_TOAST', {
+            message: i18n.global.t('auth.logoutSuccess'),
+            type: 'success',
+          })
+        }
       } catch (err) {
-        console.error(err)
-        commit('SET_TOAST', {
-          message: i18n.global.t('errors.globalError'),
-          type: 'error',
-        })
+        if (!silent) {
+          commit('SET_TOAST', {
+            message: i18n.global.t('errors.globalError'),
+            type: 'error',
+          })
+        }
+        return err
       } finally {
         commit('setLoading', false)
       }
@@ -159,16 +187,12 @@ export default {
 
         const dbUser = await userController.getById(user.uid)
         commit('SET_USER', dbUser)
-        commit('SET_TOAST', {
-          message: i18n.global.t('auth.loginSuccess'),
-          type: 'success',
-        })
       } catch (e) {
-        console.error(e)
         commit('SET_TOAST', {
           message: i18n.global.t('errors.globalError'),
           type: 'error',
         })
+        return e
       }
     },
 
@@ -181,9 +205,9 @@ export default {
           type: 'success',
         })
       } catch (err) {
-        let errorMsg = i18n.global.t('errors.globalError');
+        let errorMsg = i18n.global.t('errors.globalError')
         if (err.code === 'auth/invalid-email') {
-          errorMsg = i18n.global.t('errors.invalidEmail');
+          errorMsg = i18n.global.t('errors.invalidEmail')
         }
         commit('SET_TOAST', {
           message: errorMsg,
@@ -198,20 +222,14 @@ export default {
       commit('setLoading', true)
       try {
         await authController.deleteAuth(payload)
+        // Store handles state management
+        await authController.signOut()
         commit('SET_USER', null)
-        commit('SET_TOAST', {
-          message: i18n.global.t('auth.deleteSuccess'),
-          type: 'success',
-        })
       } catch (err) {
-        console.error('Error deleting user:', err)
-        commit('SET_TOAST', {
-          message: i18n.global.t('errors.globalError'),
-          type: 'error',
-        })
+        throw err
       } finally {
         commit('setLoading', false)
       }
-    }
+    },
   },
 }

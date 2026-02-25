@@ -3,12 +3,14 @@
     <v-col cols="12">
       <TextareaForm
         v-model="welcomeMessageComputed"
+        :readonly="readonly"
         :title="$t('ModeratedTest.welcomeMessage')"
         :subtitle="$t('ModeratedTest.welcomeMessageDescription')"
       />
 
       <TextareaForm
         v-model="finalMessageComputed"
+        :readonly="readonly"
         :title="$t('ModeratedTest.finalMessage')"
         :subtitle="$t('ModeratedTest.finalMessageDescription')"
       />
@@ -17,8 +19,8 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import TextareaForm from '@/shared/components/TextareaForm.vue';
+import { computed } from 'vue'
+import TextareaForm from '@/shared/components/TextareaForm.vue'
 
 const props = defineProps({
   welcome: {
@@ -29,10 +31,18 @@ const props = defineProps({
     type: String,
     default: '',
   },
-});
+  readonly: {
+    type: Boolean,
+    default: false,
+  },
+})
 
 // Emits
-const emit = defineEmits(['update:welcomeMessage', 'update:finalMessage', 'update:participantCamera']);
+const emit = defineEmits([
+  'update:welcomeMessage',
+  'update:finalMessage',
+  'update:participantCamera',
+])
 
 // Computed
 const welcomeMessageComputed = computed({
@@ -41,7 +51,7 @@ const welcomeMessageComputed = computed({
   },
   set(value) {
     emit('update:welcomeMessage', value)
-  }
+  },
 })
 
 const finalMessageComputed = computed({
@@ -50,6 +60,6 @@ const finalMessageComputed = computed({
   },
   set(value) {
     emit('update:finalMessage', value)
-  }
+  },
 })
 </script>

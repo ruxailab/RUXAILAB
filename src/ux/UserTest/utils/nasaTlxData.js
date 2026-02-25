@@ -1,4 +1,23 @@
 export function getNASATLXData(nasaTlxData) {
+  // Return empty state if no data provided
+  if (!nasaTlxData || nasaTlxData.length === 0) {
+    return {
+      averageOverallScore: 0,
+      totalRespondents: 0,
+      mostStressfulDimension: 'N/A',
+      leastStressfulDimension: 'N/A',
+      dimensionAverages: {
+        mentalDemand: 0,
+        physicalDemand: 0,
+        temporalDemand: 0,
+        performance: 0,
+        effort: 0,
+        frustration: 0
+      },
+      responses: []
+    }
+  }
+
   const dimensionTotals = {
     mentalDemand: 0,
     physicalDemand: 0,
@@ -10,7 +29,7 @@ export function getNASATLXData(nasaTlxData) {
 
   nasaTlxData.forEach(response => {
     Object.keys(dimensionTotals).forEach(key => {
-      dimensionTotals[key] += response.nasaTlxAnswers[key]
+      dimensionTotals[key] += response.nasaTlxAnswers[key] || 0
     })
   })
 
@@ -23,10 +42,11 @@ export function getNASATLXData(nasaTlxData) {
   const mostStressful = dimensionEntries.reduce((max, current) => current[1] > max[1] ? current : max)
   const leastStressful = dimensionEntries.reduce((min, current) => current[1] < min[1] ? current : min)
 
-  const overallScores = nasaTlxData.map(r => r.overallScore)
+  // Calculate overall score as average of all 6 dimensions
+  const overallScore = Math.round(((dimensionAverages.mentalDemand + dimensionAverages.physicalDemand + dimensionAverages.temporalDemand + dimensionAverages.performance + dimensionAverages.effort + dimensionAverages.frustration) / 6) * 10) / 10
 
   return {
-    averageOverallScore: Math.round((overallScores.reduce((sum, score) => sum + score, 0) / overallScores.length) * 10) / 10,
+    averageOverallScore: overallScore,
     totalRespondents: nasaTlxData.length,
     mostStressfulDimension: formatDimensionName(mostStressful[0]),
     leastStressfulDimension: formatDimensionName(leastStressful[0]),

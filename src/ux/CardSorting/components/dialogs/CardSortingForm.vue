@@ -1,17 +1,32 @@
 <template>
-  <v-dialog :model-value="dialog" width="70%" persistent @update:model-value="$emit('update:dialog', $event)">
+  <v-dialog
+    :model-value="dialog"
+    width="70%"
+    persistent
+    @update:model-value="$emit('update:dialog', $event)"
+  >
     <v-card class="dataCard">
       <p class="subtitleView ma-3 pt-3 mb-0 pa-2">
-        New task
+        {{ $t('CardSorting.newTask') }}
       </p>
       <v-divider />
       <v-card-text>
         <VForm ref="form">
           <VRow justify="space-around">
             <VCol class="mt-4" cols="5">
-              <v-text-field v-model="localTask.title" :label="$t('common.name')" :rules="requiredRule"
-                variant="outlined" density="compact" />
-              <quill-editor v-if="options.category_description || options.card_description" v-model:value="localTask.description" class="mb-5" style="height: 40%;" />
+              <v-text-field
+                v-model="localTask.title"
+                :label="$t('common.name')"
+                :rules="requiredRule"
+                variant="outlined"
+                density="compact"
+              />
+              <quill-editor
+                v-if="options.category_description || options.card_description"
+                v-model:value="localTask.description"
+                class="mb-5"
+                style="height: 40%"
+              />
             </VCol>
 
             <!-- <VCol class="mt-4" cols="5" v-if="options.category_description">
@@ -23,7 +38,11 @@
       <v-divider />
       <v-card-actions>
         <v-spacer />
-        <v-btn color="red-lighten-1" variant="text" @click="$emit('update:dialog', false); reset()">
+        <v-btn
+          color="red-lighten-1"
+          variant="text"
+          @click="($emit('update:dialog', false), reset())"
+        >
           {{ $t('buttons.cancel') }}
         </v-btn>
         <v-btn class="text-white bg-orange" @click="submit">
@@ -35,23 +54,23 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch } from 'vue'
 
 // Props
 const props = defineProps({
   dialog: Boolean,
   task: {
     type: Object,
-    default: () => ({})
+    default: () => ({}),
   },
   options: {
     type: Object,
-    default: () => ({})
-  }
-});
+    default: () => ({}),
+  },
+})
 
 // Emits
-const emit = defineEmits(['update:dialog', 'save']);
+const emit = defineEmits(['update:dialog', 'save'])
 
 // Variables
 const form = ref(null)
@@ -70,18 +89,21 @@ const submit = async () => {
 }
 
 const reset = () => {
-  form.value?.reset();
+  form.value?.reset()
 }
 
-watch(() => props.task, (newTask) => {
-  if (newTask && Object.keys(newTask).length > 0) {
-    localTask.value = { ...newTask }
-  } else {
-    localTask.value = {}
-  }
-}, { immediate: true, deep: true })
+watch(
+  () => props.task,
+  (newTask) => {
+    if (newTask && Object.keys(newTask).length > 0) {
+      localTask.value = { ...newTask }
+    } else {
+      localTask.value = {}
+    }
+  },
+  { immediate: true, deep: true },
+)
 </script>
-
 
 <style scoped>
 .subtitleView {

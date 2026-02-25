@@ -11,46 +11,46 @@
  */
 
 export const STUDY_CATEGORIES = [
-    {
-        id: 'test',
-        title: 'Test',
-        description:
-            'Conduct controlled testing with real users to measure usability and performance.',
-        icon: 'mdi-test-tube',
-        color: 'success',
-        hasSubMethods: true,
-        comingSoon: false,
-    },
-    {
-        id: 'inquiry',
-        title: 'Inquiry',
-        description:
-            'Gather insights through surveys, interviews, and other research methods.',
-        icon: 'mdi-comment-question-outline',
-        color: 'warning',
-        hasSubMethods: false,
-        comingSoon: true,
-    },
-    {
-        id: 'inspection',
-        title: 'Inspection',
-        description:
-            'Expert evaluation using established usability principles and guidelines.',
-        icon: 'mdi-magnify',
-        color: 'secondary',
-        hasSubMethods: true,
-        comingSoon: false,
-    },
-    {
-        id: 'accessibility',
-        title: 'Accessibility',
-        description:
-            'Assess your product for accessibility compliance and best practices.',
-        icon: 'mdi-access-point',
-        color: 'primary',
-        hasSubMethods: true,
-        comingSoon: true,
-    },
+  {
+    id: 'test',
+    title: 'Test',
+    description:
+      'Conduct controlled testing with real users to measure usability and performance.',
+    icon: 'mdi-test-tube',
+    color: 'success',
+    hasSubMethods: true,
+    comingSoon: false,
+  },
+  {
+    id: 'inquiry',
+    title: 'Inquiry',
+    description:
+      'Gather insights through surveys, interviews, and other research methods.',
+    icon: 'mdi-comment-question-outline',
+    color: 'warning',
+    hasSubMethods: false,
+    comingSoon: true,
+  },
+  {
+    id: 'inspection',
+    title: 'Inspection',
+    description:
+      'Expert evaluation using established usability principles and guidelines.',
+    icon: 'mdi-magnify',
+    color: 'secondary',
+    hasSubMethods: true,
+    comingSoon: false,
+  },
+  {
+    id: 'accessibility',
+    title: 'Accessibility',
+    description:
+      'Assess your product for accessibility compliance and best practices.',
+    icon: 'mdi-access-point',
+    color: 'primary',
+    hasSubMethods: true,
+    comingSoon: true,
+  },
 ]
 
 /**
@@ -59,7 +59,7 @@ export const STUDY_CATEGORIES = [
  * @returns {Object|undefined} - Categoría encontrada o undefined
  */
 export const getCategoryById = (categoryId) => {
-    return STUDY_CATEGORIES.find(category => category.id === categoryId)
+  return STUDY_CATEGORIES.find((category) => category.id === categoryId)
 }
 
 /**
@@ -67,7 +67,7 @@ export const getCategoryById = (categoryId) => {
  * @returns {Array} - Array de categorías disponibles
  */
 export const getAvailableCategories = () => {
-    return STUDY_CATEGORIES.filter(category => !category.comingSoon)
+  return STUDY_CATEGORIES.filter((category) => !category.comingSoon)
 }
 
 /**
@@ -75,5 +75,5 @@ export const getAvailableCategories = () => {
  * @returns {Array} - Array de categorías con sub-métodos
  */
 export const getCategoriesWithSubMethods = () => {
-    return STUDY_CATEGORIES.filter(category => category.hasSubMethods)
+  return STUDY_CATEGORIES.filter((category) => category.hasSubMethods)
 }

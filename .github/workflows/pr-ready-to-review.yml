@@ -1,0 +1,52 @@
+name: PR Ready to Review
+
+on:
+  pull_request_target:
+    types:
+      - synchronize
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+jobs:
+  update-labels:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check and update PR labels
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request;
+            const labels = pr.labels.map(l => l.name);
+
+            const hasMoreWork = labels.includes("more-work-requested");
+            const hasReady = labels.includes("ready-to-review");
+
+            if (!hasMoreWork) {
+              console.log("PR is not marked as more-work-requested. No action.");
+              return;
+            }
+
+            // Remove "more-work-requested"
+            await github.rest.issues.removeLabel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              name: "more-work-requested",
+            });
+
+            // Add "ready-to-review"
+            if (!hasReady) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                labels: ["ready-to-review"],
+              });
+            }
+
+            console.log("Updated labels: ready-to-review applied.");

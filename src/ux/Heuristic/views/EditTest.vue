@@ -1,90 +1,66 @@
 <template>
-  <PageWrapper
-    title="Edit Test"
-    :side-gap="true"
-  >
+  <PageWrapper :title="pageTitle" :side-gap="true">
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
-        Customize the settings and preferences of your test
+        {{ pageSubtitle }}
       </p>
     </template>
 
     <v-container>
-      <ButtonSave
-        :visible="change"
-        @click="save"
-      />
+      <ButtonSave :visible="!isTemplate && change" @click="save" />
 
       <div>
+        <!-- Desktop Tabs -->
         <v-tabs
+          v-if="!isMobile"
+          v-model="index"
           bg-color="transparent"
           color="#FCA326"
-          class="pb-0 mb-0 responsive-tabs"
+          class="pb-0 mb-0"
         >
-          <v-tab
-            class="tab-content"
-            @click="index = 0"
-          >
-            {{ $t('HeuristicsEditTest.titles.heuristics') }}
-            <v-icon
-              v-if="index === 0"
-              class="tab-icon"
-            >
-              mdi-chevron-down
-            </v-icon>
-          </v-tab>
-
-          <v-tab
-            class="tab-content"
-            @click="index = 1"
-          >
-            {{ $t('HeuristicsEditTest.titles.options') }}
-            <v-icon
-              v-if="index === 1"
-              class="tab-icon"
-            >
-              mdi-chevron-down
-            </v-icon>
-          </v-tab>
-
-          <v-tab
-            class="tab-content"
-            @click="index = 2"
-          >
-            {{ $t('HeuristicsEditTest.titles.weights') }}
-            <v-icon
-              v-if="index === 2"
-              class="tab-icon"
-            >
-              mdi-chevron-down
-            </v-icon>
-          </v-tab>
-
-          <v-tab
-            class="tab-content"
-            @click="index = 3"
-          >
-            {{ $t('HeuristicsEditTest.titles.settings') }}
-            <v-icon
-              v-if="index === 3"
-              class="tab-icon"
-            >
-              mdi-chevron-down
-            </v-icon>
-          </v-tab>
+          <v-tab>{{ $t('HeuristicsEditTest.titles.heuristics') }}</v-tab>
+          <v-tab>{{ $t('HeuristicsEditTest.titles.options') }}</v-tab>
+          <v-tab>{{ $t('HeuristicsEditTest.titles.weights') }}</v-tab>
+          <v-tab v-if="showSettingsTab">{{
+            $t('HeuristicsEditTest.titles.settings')
+          }}</v-tab>
         </v-tabs>
 
-        <div class="mt-responsive">
+        <!-- Mobile Select Dropdown -->
+        <v-select
+          v-else
+          v-model="index"
+          :items="tabItems"
+          variant="outlined"
+          density="compact"
+          class="mobile-tab-select"
+          prepend-inner-icon="mdi-menu"
+          hide-details
+        >
+          <template #selection="{ item }">
+            <div class="d-flex align-center justify-space-between w-100">
+              <span class="font-weight-medium">{{ item.title }}</span>
+              <!-- <v-icon size="small">mdi-chevron-down</v-icon> -->
+            </div>
+          </template>
+        </v-select>
+
+        <div class="mt-4">
           <HeuristicsTable
             v-if="index == 0"
+            :is-template="isTemplate"
             @change="change = true"
           />
           <OptionsTable
             v-if="index == 1"
+            :is-template="isTemplate"
             @change="change = true"
           />
-          <WeightTable v-if="index == 2" />
-          <HeuristicsSenttings v-if="index == 3" />
+          <WeightTable v-if="index == 2" :is-template="isTemplate" />
+          <HeuristicsSettings
+            v-if="showSettingsTab && index == 3"
+            :is-template="isTemplate"
+          />
         </div>
       </div>
     </v-container>
@@ -92,98 +68,110 @@
 </template>
 
 <script setup>
-import ButtonSave from '@/shared/components/buttons/ButtonSave.vue';
-import PageWrapper from '@/shared/views/template/PageWrapper.vue';
-import { ref } from 'vue';
-import HeuristicsTable from '../components/HeuristicsTable.vue';
-import OptionsTable from '../components/OptionsTable.vue';
-import WeightTable from '../components/weights_evaluation/WeightTable.vue';
-import HeuristicsSenttings from '../components/HeuristicsSenttings.vue';
-import { useStore } from 'vuex';
-import { useRoute } from 'vue-router';
-import { instantiateStudyByType } from '@/shared/constants/methodDefinitions';
+import ButtonSave from '@/shared/components/buttons/ButtonSave.vue'
+import PageWrapper from '@/shared/views/template/PageWrapper.vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import HeuristicsTable from '../components/HeuristicsTable.vue'
+import OptionsTable from '../components/OptionsTable.vue'
+import WeightTable from '../components/weights_evaluation/WeightTable.vue'
+import HeuristicsSettings from '../components/HeuristicsSettings.vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
+import { useI18n } from 'vue-i18n'
 
-const store = useStore();
-const route = useRoute();
+const props = defineProps({
+  isTemplate: {
+    type: Boolean,
+    default: false,
+  },
+  templateTest: {
+    type: Object,
+    default: null,
+  },
+})
 
-const index = ref(0);
-const change = ref(false);
+const store = useStore()
+const route = useRoute()
+const { t } = useI18n()
+
+const index = ref(0)
+const change = ref(false)
+const windowWidth = ref(window.innerWidth)
+const showSettingsTab = computed(() => !props.isTemplate)
+const pageTitle = computed(() =>
+  props.isTemplate
+    ? t('HeuristicsEditTest.previewPageTitle')
+    : t('HeuristicsEditTest.pageTitle'),
+)
+const pageSubtitle = computed(() =>
+  props.isTemplate
+    ? t('HeuristicsEditTest.previewPageSubtitle')
+    : t('HeuristicsEditTest.pageSubtitle'),
+)
+
+// Tab items for mobile dropdown
+const tabItems = computed(() => {
+  const items = [
+    { title: 'HEURISTICS', value: 0 },
+    { title: 'OPTIONS', value: 1 },
+    { title: 'WEIGHTS', value: 2 },
+  ]
+
+  if (showSettingsTab.value) {
+    items.push({ title: 'SETTINGS', value: 3 })
+  }
+
+  return items
+})
+
+// Check if mobile
+const isMobile = computed(() => windowWidth.value < 960)
+
+// Handle window resize
+const handleResize = () => {
+  windowWidth.value = window.innerWidth
+}
+
+onMounted(() => {
+  if (props.isTemplate && props.templateTest) {
+    store.commit('SET_TEST', structuredClone(props.templateTest))
+  }
+  window.addEventListener('resize', handleResize)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', handleResize)
+})
 
 const save = async () => {
-  change.value = false;
+  if (props.isTemplate) return
+  change.value = false
 
   const rawData = {
     ...store.getters.test,
     testStructure: store.getters.heuristics,
     testOptions: store.state.Tests.Test.testOptions,
-    testWeights: store.getters.testWeights
-  };
+    testWeights: store.getters.testWeights,
+  }
 
-  const study = instantiateStudyByType(rawData.testType, rawData);
-  await store.dispatch('updateStudy', study);
+  const study = instantiateStudyByType(rawData.testType, rawData)
+  await store.dispatch('updateStudy', study)
   await store.dispatch('getStudy', { id: route.params.id })
 }
 </script>
 
 <style scoped>
-/* Mobile-responsive styles */
-@media (max-width: 960px) {
-  .responsive-tabs {
-    margin-top: 16px;
-    padding: 6px;
-    height: auto;
-    border: 1px solid #9e9e9e;
-    border-radius: 4px;
-  }
-
-  .responsive-tabs :deep(.v-tabs-slider) {
-    display: none;
-  }
-
-  .responsive-tabs :deep(.v-tabs-bar) {
-    height: auto;
-    flex-direction: column;
-  }
-
-  .responsive-tabs :deep(.v-tabs-bar__content) {
-    flex-direction: column;
-    align-items: flex-start;
-    width: 100%;
-  }
-
-  .responsive-tabs :deep(.v-tab) {
-    min-width: 100%;
-    justify-content: space-between;
-    padding-left: 0;
-    text-align: left;
-    font-size: 16px;
-  }
-
-  .tab-content {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  }
-
-  .tab-icon {
-    width: 20px;
-    height: 20px;
-    display: block;
-  }
-
-  .responsive-tabs :deep(.v-slide-group__wrapper) {
-    overflow: visible;
-  }
-
-  .mt-responsive {
-    margin-top: 16px;
-  }
+/* Mobile styles */
+.mobile-tab-select {
+  margin-bottom: 16px;
 }
 
-/* Desktop-responsive styles */
-@media (min-width: 960px) {
-  .tab-icon {
-    display: none; /* Hide icon on larger screens */
+/* Ensure proper spacing on all devices */
+@media (max-width: 960px) {
+  .v-container {
+    padding-left: 12px;
+    padding-right: 12px;
   }
 }
 </style>

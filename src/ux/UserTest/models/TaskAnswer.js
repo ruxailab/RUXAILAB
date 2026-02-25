@@ -1,4 +1,6 @@
-import { NasaTlxAnswer } from "@/ux/UserTest/models/NasaTlxAnswer"
+import { NasaTlxAnswer } from '@/ux/UserTest/models/NasaTlxAnswer'
+import { TamAnswer } from '@/ux/UserTest/models/TamAnswer'
+import SartAnswer from '@/ux/UserTest/models/SartAnswer'
 
 export default class TaskAnswer {
   constructor({
@@ -15,7 +17,13 @@ export default class TaskAnswer {
     irisTrackingData,
     postAnswer,
     susAnswers,
-    nasaTlxAnswers
+    nasaTlxAnswers,
+    tamAnswers,
+    sartAnswers,
+    facialSentimentResults,
+    screenSize,
+    audioSize,
+    webcamSize,
   } = {}) {
     this.taskId = taskId ?? null
     this.taskAnswer = taskAnswer ?? ''
@@ -31,6 +39,20 @@ export default class TaskAnswer {
     this.irisTrackingData = irisTrackingData ?? []
     this.susAnswers = susAnswers ?? []
     this.nasaTlxAnswers = nasaTlxAnswers ?? null
+    this.tamAnswers = tamAnswers ?? null
+
+    if (sartAnswers) {
+      this.sartAnswers =
+        sartAnswers instanceof SartAnswer
+          ? sartAnswers
+          : new SartAnswer(sartAnswers)
+    } else {
+      this.sartAnswers = new SartAnswer()
+    }
+    this.facialSentimentResults = facialSentimentResults ?? null
+    this.screenSize = screenSize ?? null
+    this.audioSize = audioSize ?? null
+    this.webcamSize = webcamSize ?? null
   }
 
   static toModel(data) {
@@ -38,6 +60,22 @@ export default class TaskAnswer {
   }
 
   toFirestore() {
+    let nasaTlxData = null
+    if (this.nasaTlxAnswers) {
+      nasaTlxData =
+        this.nasaTlxAnswers instanceof NasaTlxAnswer
+          ? this.nasaTlxAnswers.toFirestore()
+          : new NasaTlxAnswer(this.nasaTlxAnswers).toFirestore()
+    }
+
+    let tamData = null
+    if (this.tamAnswers) {
+      tamData =
+        this.tamAnswers instanceof TamAnswer
+          ? this.tamAnswers.toFirestore()
+          : new TamAnswer(this.tamAnswers).toFirestore()
+    }
+
     return {
       taskId: this.taskId,
       taskAnswer: this.taskAnswer,
@@ -52,7 +90,16 @@ export default class TaskAnswer {
       postAnswer: this.postAnswer,
       irisTrackingData: this.irisTrackingData,
       susAnswers: this.susAnswers,
-      nasaTlxAnswers: this.nasaTlxAnswers != null ? (this.nasaTlxAnswers instanceof NasaTlxAnswer ? this.nasaTlxAnswers : new NasaTlxAnswer(this.nasaTlxAnswers)).toFirestore() : null,
+      nasaTlxAnswers: nasaTlxData,
+      tamAnswers: tamData,
+      sartAnswers:
+        this.sartAnswers instanceof SartAnswer
+          ? this.sartAnswers.toFirestore()
+          : this.sartAnswers,
+      facialSentimentResults: this.facialSentimentResults,
+      screenSize: this.screenSize,
+      audioSize: this.audioSize,
+      webcamSize: this.webcamSize,
     }
   }
 }

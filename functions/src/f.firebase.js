@@ -1,4 +1,9 @@
 import admin from 'firebase-admin'
+import {
+  onObjectDeleted,
+  onObjectFinalized,
+  onObjectMetadataUpdated,
+} from 'firebase-functions/storage'
 import firebaseFunctions from 'firebase-functions/v2'
 
 function onRequest({ handler, opts = {} }) {
@@ -23,11 +28,25 @@ function onTrigger({ path, event, handler }) {
   return firestoreEvents[event](path, handler)
 }
 
+function onStorageTrigger({ event, handler }) {
+  const storageEvents = {
+    finalized: (h) => onObjectFinalized(h),
+    deleted: (h) => onObjectDeleted(h),
+    metadataUpdated: (h) => onObjectMetadataUpdated(h),
+  }
+
+  if (!storageEvents[event]) {
+    throw new Error(`Unsupported Storage event: ${event}`)
+  }
+  return storageEvents[event](handler)
+}
+
 const functions = {
   onRequest,
   onCall,
   onTrigger,
-  ...firebaseFunctions
+  onStorageTrigger,
+  ...firebaseFunctions,
 }
 
 export { admin, functions }
