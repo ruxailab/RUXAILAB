@@ -136,9 +136,14 @@
             @click="deleteDialog = false"
             >{{ t('common.cancel') }}</v-btn
           >
-          <v-btn color="error" class="rounded-lg" @click="executeDelete">{{
-            t('buttons.delete')
-          }}</v-btn>
+          <v-btn
+            color="error"
+            class="rounded-lg"
+            :loading="deleting"
+            :disabled="deleting"
+            @click="executeDelete"
+            >{{ t('buttons.delete') }}</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -188,8 +193,12 @@
 import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+import { getStorage, ref as storageRef, deleteObject } from 'firebase/storage'
+import { increment, deleteField, writeBatch, doc } from 'firebase/firestore'
+import { db } from '@/app/plugins/firebase'
 import { formatDateLong } from '@/shared/utils/dateUtils'
 import AnswerController from '@/shared/controllers/AnswerController'
+import { showError } from '@/shared/utils/toast'
 
 const store = useStore()
 const { t } = useI18n()
@@ -200,6 +209,8 @@ const fetchedAnswers = ref({}) // Map<testId, answersList>
 // Dialog State
 const deleteDialog = ref(false)
 const fileToDelete = ref(null)
+const deleting = ref(false)
+const deletedUrls = ref(new Set()) // URLs removed from Storage this session
 const previewDialog = ref(false)
 const previewFile = ref(null)
 
@@ -233,7 +244,12 @@ const fetchAllAnswers = async () => {
           test.answersDocId,
         )
         if (answerDoc && answerDoc.taskAnswers) {
-          fetchedAnswers.value[test.id] = Object.values(answerDoc.taskAnswers)
+          fetchedAnswers.value[test.id] = Object.entries(
+            answerDoc.taskAnswers,
+          ).map(([key, val]) => ({
+            ...val,
+            userDocId: val.userDocId || key,
+          }))
         }
       } catch {
         // Error handling: Could not fetch answers for test
@@ -260,7 +276,10 @@ const files = computed(() => {
     let answers = test.answers
       ? Array.isArray(test.answers)
         ? test.answers
-        : Object.values(test.answers)
+        : Object.entries(test.answers).map(([key, val]) => ({
+            ...val,
+            userDocId: val.userDocId || key,
+          }))
       : []
 
     // 2. Merge with fetched answers
@@ -272,17 +291,24 @@ const files = computed(() => {
       const tasks = answer.tasks
         ? Array.isArray(answer.tasks)
           ? answer.tasks
-          : Object.values(answer.tasks)
+          : Object.entries(answer.tasks).map(([key, val]) => ({
+              ...val,
+              taskId: val.taskId || val.id || key,
+            }))
         : []
 
       tasks.forEach((task) => {
         const date = formatDateLong(answer.date || test.creationDate, 'es') // Default to ES locale per usage
+        const userDocId = answer.userDocId || null
 
         // Common file properties
         const baseFile = {
-          id: task.id || self.crypto.randomUUID(),
+          id: task.taskId || self.crypto.randomUUID(),
           studyName: test.testTitle,
           date: date,
+          answersDocId: test.answersDocId || null,
+          userDocId,
+          taskId: task.taskId || null,
         }
 
         // Check for Video
@@ -291,6 +317,8 @@ const files = computed(() => {
             ...baseFile,
             type: 'video',
             url: task.videoRecordURL,
+            urlField: 'videoRecordURL',
+            sizeField: 'webcamSize',
             size: task.webcamSize || 50 * 1024 * 1024,
           })
         }
@@ -300,6 +328,8 @@ const files = computed(() => {
             ...baseFile,
             type: 'audio',
             url: task.audioRecordURL,
+            urlField: 'audioRecordURL',
+            sizeField: 'audioSize',
             size: task.audioSize || 10 * 1024 * 1024,
           })
         }
@@ -309,6 +339,8 @@ const files = computed(() => {
             ...baseFile,
             type: 'screen',
             url: task.screenRecordURL,
+            urlField: 'screenRecordURL',
+            sizeField: 'screenSize',
             size: task.screenSize || 100 * 1024 * 1024,
           })
         }
@@ -318,6 +350,8 @@ const files = computed(() => {
             ...baseFile,
             type: 'webcam',
             url: task.webcamRecordURL,
+            urlField: 'webcamRecordURL',
+            sizeField: 'webcamSize',
             size: task.webcamSize || 50 * 1024 * 1024,
           })
         }
@@ -325,7 +359,7 @@ const files = computed(() => {
     })
   })
 
-  return allFiles
+  return allFiles.filter((f) => !deletedUrls.value.has(f.url))
 })
 
 const totalFormatted = computed(() => {
@@ -357,17 +391,82 @@ function formatBytes(bytes) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i]
 }
 
+function getStoragePathFromDownloadUrl(downloadUrl) {
+  const match = downloadUrl.match(/\/o\/([^?]+)/)
+  if (!match)
+    throw new Error(`Cannot parse storage path from URL: ${downloadUrl}`)
+  return decodeURIComponent(match[1])
+}
+
 // Dialog Actions
 const confirmDelete = (item) => {
   fileToDelete.value = item
   deleteDialog.value = true
 }
 
-const executeDelete = () => {
-  // Mock delete for now (backend coming in PR #2)
-  // Delete file implementation pending backend
-  deleteDialog.value = false
-  fileToDelete.value = null
+const executeDelete = async () => {
+  const file = fileToDelete.value
+  if (!file) return
+
+  deleting.value = true
+  try {
+    //  Delete the file from Firebase Storage
+    const storage = getStorage()
+    const storagePath = getStoragePathFromDownloadUrl(file.url)
+    const fileRef = storageRef(storage, storagePath)
+    await deleteObject(fileRef)
+
+    deletedUrls.value = new Set([...deletedUrls.value, file.url])
+
+    const batch = writeBatch(db)
+    let hasBatchUpdates = false
+
+    //  Decrement the user's storageUsageMB in Firestore and Vuex
+    const currentUser = store.getters.user
+    if (currentUser?.id && file.size > 0) {
+      const deltaMB = file.size / (1024 * 1024)
+      const userRef = doc(db, 'users', currentUser.id)
+      batch.update(userRef, {
+        storageUsageMB: increment(-deltaMB),
+      })
+      hasBatchUpdates = true
+
+      const updatedStorageMB = Math.max(
+        0,
+        (currentUser.storageUsageMB || 0) - deltaMB,
+      )
+      store.commit('SET_USER', {
+        ...currentUser,
+        storageUsageMB: updatedStorageMB,
+      })
+    }
+
+    if (file.answersDocId && file.userDocId && file.taskId && file.urlField) {
+      const fieldPath = `taskAnswers.${file.userDocId}.tasks.${file.taskId}.${file.urlField}`
+      const updatePayload = {
+        [fieldPath]: deleteField(),
+      }
+      if (file.sizeField) {
+        updatePayload[
+          `taskAnswers.${file.userDocId}.tasks.${file.taskId}.${file.sizeField}`
+        ] = deleteField()
+      }
+      const answerRef = doc(db, 'answers', file.answersDocId)
+      batch.update(answerRef, updatePayload)
+      hasBatchUpdates = true
+    }
+
+    if (hasBatchUpdates) {
+      await batch.commit()
+    }
+
+    deleteDialog.value = false
+    fileToDelete.value = null
+  } catch {
+    showError(t('errors.globalError'))
+  } finally {
+    deleting.value = false
+  }
 }
 
 const openPreview = (item) => {
