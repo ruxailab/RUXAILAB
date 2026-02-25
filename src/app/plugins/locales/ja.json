@@ -2331,5 +2331,36 @@
       }
     },
     "title": "プライバシーポリシー"
+  },
+  "onboarding": {
+    "welcome_title": "RUXAILABへようこそ",
+    "welcome_description": "このガイドでは、セットアップの概要とプラットフォームの主要機能について説明します。",
+    "home_tour_title": "ホーム画面ツアー",
+    "home_tour_desc": "メインダッシュボードのガイド付きツアー。",
+    "start_tour": "ツアーを開始",
+    "start": "開始",
+    "create_study_title": "最初の調査を作成",
+    "create_study_desc": "最初のユーザー調査を開始します",
+    "begin_btn": "始める",
+    "begin": "始める",
+    "templates_title": "テンプレートを見る",
+    "templates_desc": "用意されているテストテンプレートを使用する",
+    "browse_btn": "閲覧する",
+    "browse": "閲覧する",
+    "invite_team_title": "チームメンバーを招待",
+    "invite_team_desc": "ワークスペースに共同編集者を追加します。",
+    "configure": "構成する",
+    "completed_label": "完了",
+    "completed": "完了",
+    "steps_completed": "ステップ完了",
+    "resume_anytime": "このセットアップはいつでも再開できます。",
+    "finish_later": "後で終了",
+    "lets_go": "レッツゴー",
+    "reopen_tooltip": "ワークスペースのセットアップ",
+    "reopen_wizard": "ウィザードを再度開く",
+    "all_complete_msg": "セットアップ完了。これらの手順はいつでも再確認できます。",
+    "go_to_dashboard": "ダッシュボードへ",
+    "reset_config": "設定をリセット",
+    "reset_confirm": "セットアップの進行状況をリセットしてもよろしいですか？"
   }
 }

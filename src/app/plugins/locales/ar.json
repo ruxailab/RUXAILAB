@@ -2331,5 +2331,36 @@
       }
     },
     "title": "سياسة الخصوصية"
+  },
+  "onboarding": {
+    "welcome_title": "مرحبًا بك في RUXAILAB",
+    "welcome_description": "يوفر هذا الدليل نظرة عامة على الإعداد ويمر بك عبر الميزات الأساسية.",
+    "home_tour_title": "جولة في الشاشة الرئيسية",
+    "home_tour_desc": "جولة إرشادية في لوحة المعلومات الرئيسية.",
+    "start_tour": "بدء الجولة",
+    "start": "بدء",
+    "create_study_title": "قم بإنشاء دراستك الأولى",
+    "create_study_desc": "إطلاق أول دراسة بحثية للمستخدم",
+    "begin_btn": "يبدأ",
+    "begin": "يبدأ",
+    "templates_title": "استكشف القوالب",
+    "templates_desc": "عرض واستخدام قوالب الاختبار الجاهزة",
+    "browse_btn": "تصفح",
+    "browse": "تصفح",
+    "invite_team_title": "دعوة أعضاء الفريق",
+    "invite_team_desc": "إضافة متعاونين إلى مساحة العمل الخاصة بك.",
+    "configure": "تكوين",
+    "completed_label": "مكتمل",
+    "completed": "مكتمل",
+    "steps_completed": "خطوات مكتملة",
+    "resume_anytime": "يمكنك استئناف هذا الإعداد في أي وقت.",
+    "finish_later": "إنهاء لاحقًا",
+    "lets_go": "هيا بنا",
+    "reopen_tooltip": "إعداد مساحة العمل",
+    "reopen_wizard": "إعادة فتح المعالج",
+    "all_complete_msg": "اكتمل الإعداد. يمكنك إعادة النظر في هذه الخطوات في أي وقت.",
+    "go_to_dashboard": "الذهاب إلى لوحة التحكم",
+    "reset_config": "إعادة تعيين التكوين",
+    "reset_confirm": "هل أنت متأكد من أنك تريد إعادة تعيين تقدم الإعداد الخاص بك؟"
   }
 }

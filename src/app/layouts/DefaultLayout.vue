@@ -2,7 +2,6 @@
   <v-app>
     <GlobalToolbar />
     <GlobalErrorHandler />
-    <ConfigurationWizardModal />
 
     <GlobalToastHandler />
     <Loading />
@@ -11,6 +10,7 @@
         <slot />
       </v-container>
     </v-main>
+    <OnboardingWizard />
   </v-app>
 </template>
 
@@ -19,7 +19,7 @@ import { GlobalToolbar } from '@/features/navigation/utils'
 import GlobalErrorHandler from '@/app/layouts/components/GlobalErrorHandler.vue'
 import GlobalToastHandler from '@/app/layouts/components/GlobalToastHandler.vue'
 import Loading from '@/shared/components/Loading.vue'
-import ConfigurationWizardModal from '@/shared/components/dialogs/ConfigurationWizardModal.vue'
+import OnboardingWizard from '@/features/onboarding/components/OnboardingWizard.vue'
 
 export default {
   components: {
@@ -27,10 +27,10 @@ export default {
     GlobalErrorHandler,
     GlobalToastHandler,
     Loading,
-    ConfigurationWizardModal,
+    OnboardingWizard,
   },
   mounted() {
-    this.$store.dispatch('wizard/initializeWizard')
+    this.$store.dispatch('Onboarding/checkFirstLogin')
   },
 }
 </script>

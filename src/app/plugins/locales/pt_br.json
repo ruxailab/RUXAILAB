@@ -2311,5 +2311,36 @@
       }
     },
     "title": "Política de Privacidade"
+  },
+  "onboarding": {
+    "welcome_title": "Bem-vindo ao RUXAILAB",
+    "welcome_description": "Este guia fornece uma visão geral da configuração e mostra os principais recursos.",
+    "home_tour_title": "Tour pela tela inicial",
+    "home_tour_desc": "Tour guiado do painel principal.",
+    "start_tour": "Iniciar tour",
+    "start": "Iniciar",
+    "create_study_title": "Crie seu primeiro estudo",
+    "create_study_desc": "Inicie sua primeira pesquisa com usuários",
+    "begin_btn": "Começar",
+    "begin": "Começar",
+    "templates_title": "Explorar modelos",
+    "templates_desc": "Veja e use modelos de teste prontos",
+    "browse_btn": "Navegar",
+    "browse": "Navegar",
+    "invite_team_title": "Convidar membros da equipe",
+    "invite_team_desc": "Adicione colaboradores ao seu espaço.",
+    "configure": "Configurar",
+    "completed_label": "Concluído",
+    "completed": "Concluído",
+    "steps_completed": "passos concluídos",
+    "resume_anytime": "Você pode retomar esta configuração a qualquer momento.",
+    "finish_later": "Terminar depois",
+    "lets_go": "Vamos lá",
+    "reopen_tooltip": "Configuração do espaço",
+    "reopen_wizard": "Reabrir assistente",
+    "all_complete_msg": "Configuração concluída. Você pode revisitar esses passos a qualquer momento.",
+    "go_to_dashboard": "Ir para o painel",
+    "reset_config": "Redefinir configuração",
+    "reset_confirm": "Tem certeza de que deseja redefinir o progresso da configuração?"
   }
 }

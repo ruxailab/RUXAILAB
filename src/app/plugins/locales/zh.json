@@ -2331,5 +2331,36 @@
       }
     },
     "title": "隐私政策"
+  },
+  "onboarding": {
+    "welcome_title": "欢迎来到 RUXAILAB",
+    "welcome_description": "本指南提供了设置概述，并介绍了平台的主要功能。",
+    "home_tour_title": "主屏幕导览",
+    "home_tour_desc": "主仪表板的引导式导览。",
+    "start_tour": "开始导览",
+    "start": "开始",
+    "create_study_title": "创建您的第一个研究",
+    "create_study_desc": "启动您的第一个用户研究",
+    "begin_btn": "开始",
+    "begin": "开始",
+    "templates_title": "探索模板",
+    "templates_desc": "查看并使用现成的测试模板",
+    "browse_btn": "浏览",
+    "browse": "浏览",
+    "invite_team_title": "邀请团队成员",
+    "invite_team_desc": "向您的工作区添加协作者。",
+    "configure": "配置",
+    "completed_label": "已完成",
+    "completed": "已完成",
+    "steps_completed": "步已完成",
+    "resume_anytime": "您可以随时从顶部导航恢复此设置。",
+    "finish_later": "稍后完成",
+    "lets_go": "开始吧",
+    "reopen_tooltip": "工作区设置",
+    "reopen_wizard": "重新打开向导",
+    "all_complete_msg": "设置完成。您可以随时重新访问这些步骤。",
+    "go_to_dashboard": "转到仪表板",
+    "reset_config": "重置配置",
+    "reset_confirm": "您确定要重置您的设置进度吗？"
   }
 }

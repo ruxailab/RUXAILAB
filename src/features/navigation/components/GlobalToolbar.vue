@@ -59,6 +59,20 @@
     </v-btn>
 
     <!-- Botones de herramientas -->
+    <v-tooltip :text="$t('onboarding.reopen_tooltip')" location="bottom">
+      <template #activator="{ props }">
+        <v-btn
+          v-if="user"
+          icon
+          v-bind="props"
+          :class="smAndDown ? 'mx-1' : 'mx-2'"
+          aria-label="Open Workspace Setup"
+          @click="openOnboardingWizard"
+        >
+          <v-icon>mdi-format-list-checks</v-icon>
+        </v-btn>
+      </template>
+    </v-tooltip>
     <HelpButton :class="smAndDown ? 'mx-1' : 'mx-2'" />
     <NotificationButton v-if="user" :class="smAndDown ? 'mx-1' : 'mx-2'" />
 
@@ -119,6 +133,10 @@ const toggleDashboardDrawer = () => {
   // Emitir evento para que lo capture el layout o componente padre
   const event = new CustomEvent('toggle-dashboard-drawer')
   window.dispatchEvent(event)
+}
+
+const openOnboardingWizard = () => {
+  store.dispatch('Onboarding/toggleWizard', true)
 }
 </script>
 

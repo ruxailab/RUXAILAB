@@ -2332,5 +2332,36 @@
       }
     },
     "title": "Datenschutzerklärung"
+  },
+  "onboarding": {
+    "welcome_title": "Willkommen bei RUXAILAB",
+    "welcome_description": "Dieser Leitfaden bietet eine Einrichtungsübersicht und führt Sie durch wichtige Funktionen.",
+    "home_tour_title": "Startbildschirm-Tour",
+    "home_tour_desc": "Geführte Tour durch das Haupt-Dashboard.",
+    "start_tour": "Tour starten",
+    "start": "Start",
+    "create_study_title": "Erstellen Sie Ihre erste Studie",
+    "create_study_desc": "Starten Sie Ihre erste Benutzerforschung",
+    "begin_btn": "Beginnen",
+    "begin": "Beginnen",
+    "templates_title": "Vorlagen erkunden",
+    "templates_desc": "Vorgefertigte Testvorlagen ansehen",
+    "browse_btn": "Durchsuchen",
+    "browse": "Durchsuchen",
+    "invite_team_title": "Teammitglieder einladen",
+    "invite_team_desc": "Fügen Sie Ihrem Arbeitsbereich Mitarbeiter hinzu.",
+    "configure": "Konfigurieren",
+    "completed_label": "Abgeschlossen",
+    "completed": "Abgeschlossen",
+    "steps_completed": "Schritte abgeschlossen",
+    "resume_anytime": "Sie können diese Einrichtung jederzeit fortsetzen.",
+    "finish_later": "Später beenden",
+    "lets_go": "Los geht's",
+    "reopen_tooltip": "Arbeitsbereich einrichten",
+    "reopen_wizard": "Assistenten erneut öffnen",
+    "all_complete_msg": "Einrichtung abgeschlossen. Sie können diese Schritte jederzeit wiederholen.",
+    "go_to_dashboard": "Zum Dashboard",
+    "reset_config": "Konfiguration zurücksetzen",
+    "reset_confirm": "Möchten Sie Ihren Einrichtungsfortschritt wirklich zurücksetzen?"
   }
 }
