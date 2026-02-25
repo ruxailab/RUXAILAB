@@ -2347,8 +2347,6 @@
     "templates_desc": "用意されているテストテンプレートを使用する",
     "browse_btn": "閲覧する",
     "browse": "閲覧する",
-    "invite_team_title": "チームメンバーを招待",
-    "invite_team_desc": "ワークスペースに共同編集者を追加します。",
     "configure": "構成する",
     "completed_label": "完了",
     "completed": "完了",
@@ -2361,6 +2359,8 @@
     "all_complete_msg": "セットアップ完了。これらの手順はいつでも再確認できます。",
     "go_to_dashboard": "ダッシュボードへ",
     "reset_config": "設定をリセット",
-    "reset_confirm": "セットアップの進行状況をリセットしてもよろしいですか？"
+    "reset_confirm": "セットアップの進行状況をリセットしてもよろしいですか？",
+    "complete_profile_title": "プロフィールを完了する",
+    "complete_profile_desc": "アカウントを保護し、個人情報を更新します。"
   }
 }

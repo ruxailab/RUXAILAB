@@ -2347,8 +2347,6 @@
     "templates_desc": "查看并使用现成的测试模板",
     "browse_btn": "浏览",
     "browse": "浏览",
-    "invite_team_title": "邀请团队成员",
-    "invite_team_desc": "向您的工作区添加协作者。",
     "configure": "配置",
     "completed_label": "已完成",
     "completed": "已完成",
@@ -2361,6 +2359,8 @@
     "all_complete_msg": "设置完成。您可以随时重新访问这些步骤。",
     "go_to_dashboard": "转到仪表板",
     "reset_config": "重置配置",
-    "reset_confirm": "您确定要重置您的设置进度吗？"
+    "reset_confirm": "您确定要重置您的设置进度吗？",
+    "complete_profile_title": "完善您的个人资料",
+    "complete_profile_desc": "保护您的帐户并更新您的个人详细信息。"
   }
 }

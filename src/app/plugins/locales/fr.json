@@ -2347,8 +2347,6 @@
     "templates_desc": "Voir et utiliser des modèles préconçus",
     "browse_btn": "Parcourir",
     "browse": "Parcourir",
-    "invite_team_title": "Inviter des membres",
-    "invite_team_desc": "Ajouter des collaborateurs à votre espace.",
     "configure": "Configurer",
     "completed_label": "Terminé",
     "completed": "Terminé",
@@ -2361,6 +2359,8 @@
     "all_complete_msg": "Configuration terminée. Vous pouvez revoir ces étapes à tout moment.",
     "go_to_dashboard": "Aller au tableau de bord",
     "reset_config": "Réinitialiser la configuration",
-    "reset_confirm": "Êtes-vous sûr de vouloir réinitialiser votre progression ?"
+    "reset_confirm": "Êtes-vous sûr de vouloir réinitialiser votre progression ?",
+    "complete_profile_title": "Complétez votre Profil",
+    "complete_profile_desc": "Sécurisez votre compte et mettez à jour vos informations personnelles."
   }
 }

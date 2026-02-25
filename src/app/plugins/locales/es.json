@@ -2327,8 +2327,6 @@
     "templates_desc": "Ver y usar plantillas de prueba prediseñadas",
     "browse_btn": "Navegar",
     "browse": "Navegar",
-    "invite_team_title": "Invitar a miembros del equipo",
-    "invite_team_desc": "Agregar colaboradores a su espacio de trabajo.",
     "configure": "Configurar",
     "completed_label": "Completado",
     "completed": "Completado",
@@ -2341,6 +2339,8 @@
     "all_complete_msg": "Configuración completada. Puede revisar estos pasos en cualquier momento.",
     "go_to_dashboard": "Ir al panel",
     "reset_config": "Restablecer configuración",
-    "reset_confirm": "¿Está seguro de que desea restablecer el progreso de su configuración?"
+    "reset_confirm": "¿Está seguro de que desea restablecer el progreso de su configuración?",
+    "complete_profile_title": "Completa tu Perfil",
+    "complete_profile_desc": "Asegura tu cuenta y actualiza tus datos personales."
   }
 }

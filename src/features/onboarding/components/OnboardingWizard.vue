@@ -137,7 +137,7 @@
               >
                 {{ $t('onboarding.finish_later') }}
               </v-btn>
-              <v-btn color="primary" class="text-none" @click="closeWizard">
+              <v-btn color="primary" class="text-none" @click="goToDashboard">
                 {{ $t('onboarding.go_to_dashboard') }}
                 <v-icon icon="mdi-chevron-right" class="ml-1"></v-icon>
               </v-btn>
@@ -211,8 +211,14 @@ export default {
         timeEstimate: '3 min',
         buttonKey: 'onboarding.start_tour',
         action: () => {
-          // TODO: Intercept and start a product tour
           store.dispatch('Onboarding/markStepCompleted', 'home_tour')
+          internalIsOpen.value = false
+          router.push('/admin?section=dashboard')
+          store.commit('SET_TOAST', {
+            message:
+              'Welcome to your Dashboard! Start by reviewing your recent activity.',
+            type: 'info',
+          })
         },
       },
       {
@@ -226,7 +232,14 @@ export default {
         action: () => {
           store.dispatch('Onboarding/markStepCompleted', 'create_study')
           internalIsOpen.value = false
-          router.push('/dashboard') // Or another specific route to create a study
+          router.push('/choose')
+          setTimeout(() => {
+            store.commit('SET_TOAST', {
+              message:
+                'Select the type of research study you want to create to get started.',
+              type: 'info',
+            })
+          }, 300)
         },
       },
       {
@@ -240,28 +253,46 @@ export default {
         action: () => {
           store.dispatch('Onboarding/markStepCompleted', 'explore_templates')
           internalIsOpen.value = false
-          router.push('/templates')
+          router.push('/admin?section=templates')
+          setTimeout(() => {
+            store.commit('SET_TOAST', {
+              message:
+                'Browse and duplicate read-made templates to speed up your research setup.',
+              type: 'info',
+            })
+          }, 300)
         },
       },
       {
-        id: 'invite_team',
-        icon: 'mdi-account-multiple-plus',
-        titleKey: 'onboarding.invite_team_title',
-        descKey: 'onboarding.invite_team_desc',
+        id: 'complete_profile',
+        icon: 'mdi-shield-account-outline',
+        titleKey: 'onboarding.complete_profile_title',
+        descKey: 'onboarding.complete_profile_desc',
         actionLabelKey: 'onboarding.completed_label',
         timeEstimate: '1 min',
         buttonKey: 'onboarding.configure',
         action: () => {
-          store.dispatch('Onboarding/markStepCompleted', 'invite_team')
+          store.dispatch('Onboarding/markStepCompleted', 'complete_profile')
           internalIsOpen.value = false
-          // Go to settings/team page if it exists
+          router.push('/admin?section=profile')
+          setTimeout(() => {
+            store.commit('SET_TOAST', {
+              message:
+                'Please review and complete your profile information to secure your account.',
+              type: 'info',
+            })
+          }, 300)
         },
       },
     ]
 
     const totalSteps = steps.length
+    const validStepIds = steps.map((s) => s.id)
     const completedCount = computed(
-      () => store.getters['Onboarding/completedSteps'].length,
+      () =>
+        store.getters['Onboarding/completedSteps'].filter((id) =>
+          validStepIds.includes(id),
+        ).length,
     )
     const progressPercentage = computed(
       () => (completedCount.value / totalSteps) * 100,
@@ -272,6 +303,11 @@ export default {
 
     const closeWizard = () => {
       internalIsOpen.value = false
+    }
+
+    const goToDashboard = () => {
+      internalIsOpen.value = false
+      router.push('/admin?section=dashboard')
     }
 
     const startStep = (step) => {
@@ -293,6 +329,7 @@ export default {
       progressPercentage,
       isCompleted,
       closeWizard,
+      goToDashboard,
       startStep,
       resetConfig,
     }

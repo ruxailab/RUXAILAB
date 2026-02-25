@@ -2348,8 +2348,6 @@
     "templates_desc": "Vorgefertigte Testvorlagen ansehen",
     "browse_btn": "Durchsuchen",
     "browse": "Durchsuchen",
-    "invite_team_title": "Teammitglieder einladen",
-    "invite_team_desc": "Fügen Sie Ihrem Arbeitsbereich Mitarbeiter hinzu.",
     "configure": "Konfigurieren",
     "completed_label": "Abgeschlossen",
     "completed": "Abgeschlossen",
@@ -2362,6 +2360,8 @@
     "all_complete_msg": "Einrichtung abgeschlossen. Sie können diese Schritte jederzeit wiederholen.",
     "go_to_dashboard": "Zum Dashboard",
     "reset_config": "Konfiguration zurücksetzen",
-    "reset_confirm": "Möchten Sie Ihren Einrichtungsfortschritt wirklich zurücksetzen?"
+    "reset_confirm": "Möchten Sie Ihren Einrichtungsfortschritt wirklich zurücksetzen?",
+    "complete_profile_title": "Vervollständige dein Profil",
+    "complete_profile_desc": "Sichere dein Konto und aktualisiere deine persönlichen Daten."
   }
 }
