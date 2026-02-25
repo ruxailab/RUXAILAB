@@ -201,56 +201,76 @@ export default {
       set: (val) => store.dispatch('Onboarding/toggleWizard', val),
     })
 
-    const steps = [
-      {
-        id: 'home_tour',
-        icon: 'mdi-paper-airplane',
-        titleKey: 'onboarding.home_tour_title',
-        descKey: 'onboarding.home_tour_desc',
-        actionLabelKey: 'onboarding.start',
-        timeEstimate: '3 min',
-        buttonKey: 'onboarding.start_tour',
-        route: '/admin?section=dashboard',
-        toastMessage:
-          'Welcome to your Dashboard! Start by reviewing your recent activity.',
-      },
-      {
-        id: 'create_study',
-        icon: 'mdi-minus-box-outline',
-        titleKey: 'onboarding.create_study_title',
-        descKey: 'onboarding.create_study_desc',
-        actionLabelKey: 'onboarding.begin',
-        timeEstimate: '1 min',
-        buttonKey: 'onboarding.begin_btn',
-        route: '/choose',
-        toastMessage:
-          'Select the type of research study you want to create to get started.',
-      },
-      {
-        id: 'explore_templates',
-        icon: 'mdi-calendar-check',
-        titleKey: 'onboarding.templates_title',
-        descKey: 'onboarding.templates_desc',
-        actionLabelKey: 'onboarding.browse',
-        timeEstimate: '2 min',
-        buttonKey: 'onboarding.browse_btn',
-        route: '/admin?section=templates',
-        toastMessage:
-          'Browse and duplicate read-made templates to speed up your research setup.',
-      },
-      {
-        id: 'complete_profile',
-        icon: 'mdi-shield-account-outline',
-        titleKey: 'onboarding.complete_profile_title',
-        descKey: 'onboarding.complete_profile_desc',
-        actionLabelKey: 'onboarding.completed_label',
-        timeEstimate: '1 min',
-        buttonKey: 'onboarding.configure',
-        route: '/admin?section=profile',
-        toastMessage:
-          'Please review and complete your profile information to secure your account.',
-      },
+    const stepData = [
+      [
+        'home_tour',
+        'mdi-paper-airplane',
+        'home_tour_title',
+        'home_tour_desc',
+        'start',
+        '3 min',
+        'start_tour',
+        '/admin?section=dashboard',
+        'Welcome to your Dashboard! Start by reviewing your recent activity.',
+      ],
+      [
+        'create_study',
+        'mdi-minus-box-outline',
+        'create_study_title',
+        'create_study_desc',
+        'begin',
+        '1 min',
+        'begin_btn',
+        '/choose',
+        'Select the type of research study you want to create to get started.',
+      ],
+      [
+        'explore_templates',
+        'mdi-calendar-check',
+        'templates_title',
+        'templates_desc',
+        'browse',
+        '2 min',
+        'browse_btn',
+        '/admin?section=templates',
+        'Browse and duplicate read-made templates to speed up your research setup.',
+      ],
+      [
+        'complete_profile',
+        'mdi-shield-account-outline',
+        'complete_profile_title',
+        'complete_profile_desc',
+        'completed_label',
+        '1 min',
+        'configure',
+        '/admin?section=profile',
+        'Please review and complete your profile information to secure your account.',
+      ],
     ]
+
+    const steps = stepData.map(
+      ([
+        id,
+        icon,
+        titleKey,
+        descKey,
+        actionLabelKey,
+        timeEstimate,
+        buttonKey,
+        route,
+        toastMessage,
+      ]) => ({
+        id,
+        icon,
+        titleKey: `onboarding.${titleKey}`,
+        descKey: `onboarding.${descKey}`,
+        actionLabelKey: `onboarding.${actionLabelKey}`,
+        timeEstimate,
+        buttonKey: `onboarding.${buttonKey}`,
+        route,
+        toastMessage,
+      }),
+    )
 
     const totalSteps = steps.length
     const validStepIds = steps.map((s) => s.id)
