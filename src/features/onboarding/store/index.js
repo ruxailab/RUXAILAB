@@ -18,23 +18,13 @@ export default {
     },
   },
   actions: {
-    toggleWizard({ commit, state }, isOpen) {
+    toggleWizard({ commit, dispatch, state }, isOpen) {
       const newIsOpen = isOpen !== undefined ? isOpen : !state.isOpen
       commit('SET_IS_OPEN', newIsOpen)
 
       if (newIsOpen) {
         // Load persisted state if any
-        const saved = localStorage.getItem('ruxailab_onboarding_completed')
-        if (saved) {
-          try {
-            commit('SET_COMPLETED_STEPS', JSON.parse(saved))
-          } catch (e) {
-            console.error(
-              'Failed to parse onboarding steps from local storage',
-              e,
-            )
-          }
-        }
+        dispatch('loadPersistedSteps')
       }
     },
     markStepCompleted({ commit, state }, stepId) {
@@ -45,10 +35,23 @@ export default {
         JSON.stringify(state.completedSteps),
       )
     },
-    checkFirstLogin({ commit, dispatch, state }) {
+    checkFirstLogin({ dispatch }) {
       // Check if user has already seen the wizard for the first time
       const hasSeenWizard = localStorage.getItem('ruxailab_onboarding_seen')
 
+      dispatch('loadPersistedSteps')
+
+      if (!hasSeenWizard) {
+        // Automatically open wizard on first login
+        dispatch('toggleWizard', true)
+        localStorage.setItem('ruxailab_onboarding_seen', 'true')
+      }
+    },
+    resetWizard({ commit }) {
+      commit('SET_COMPLETED_STEPS', [])
+      localStorage.removeItem('ruxailab_onboarding_completed')
+    },
+    loadPersistedSteps({ commit }) {
       const saved = localStorage.getItem('ruxailab_onboarding_completed')
       if (saved) {
         try {
@@ -60,16 +63,6 @@ export default {
           )
         }
       }
-
-      if (!hasSeenWizard) {
-        // Automatically open wizard on first login
-        dispatch('toggleWizard', true)
-        localStorage.setItem('ruxailab_onboarding_seen', 'true')
-      }
-    },
-    resetWizard({ commit }) {
-      commit('SET_COMPLETED_STEPS', [])
-      localStorage.removeItem('ruxailab_onboarding_completed')
     },
   },
   getters: {
