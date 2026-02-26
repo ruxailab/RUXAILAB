@@ -713,6 +713,81 @@ const formatLastSaveTime = () => {
   return saveTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
+const parseTimeSpent = (value) => {
+  const [minutes = '0', seconds = '0'] = String(value || '0:0').split(':')
+  return (
+    (Math.max(0, Number(minutes) || 0) * 60 +
+      Math.max(0, Number(seconds) || 0)) *
+    1000
+  )
+}
+
+const formatTimeSpent = (ms) => {
+  const totalSeconds = Math.max(0, Math.floor((Number(ms) || 0) / 1000))
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
+
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+}
+
+const verifyTimerState = (heuristic) => {
+  if (!heuristic) return
+
+  heuristic.timeSpentMs =
+    Number.isFinite(Number(heuristic.timeSpentMs)) &&
+    Number(heuristic.timeSpentMs) >= 0
+      ? Number(heuristic.timeSpentMs)
+      : parseTimeSpent(heuristic.timeSpent)
+  heuristic.timeSpent = formatTimeSpent(heuristic.timeSpentMs)
+  heuristic.timerStartedAt =
+    Number.isFinite(Number(heuristic.timerStartedAt)) &&
+    Number(heuristic.timerStartedAt) > 0
+      ? Number(heuristic.timerStartedAt)
+      : null
+}
+
+const startTimer = (heuristicIndex) => {
+  if (start.value || currentUserTestAnswer.value?.submitted) return
+
+  const heuristic =
+    currentUserTestAnswer.value?.heuristicQuestions?.[heuristicIndex]
+  if (!heuristic) return
+  verifyTimerState(heuristic)
+
+  if (!heuristic.timerStartedAt) {
+    heuristic.timerStartedAt = Date.now()
+  }
+}
+
+const pauseTimer = (heuristicIndex) => {
+  const heuristic =
+    currentUserTestAnswer.value?.heuristicQuestions?.[heuristicIndex]
+  if (!heuristic?.timerStartedAt) return
+  verifyTimerState(heuristic)
+
+  const elapsed = Date.now() - heuristic.timerStartedAt
+  if (elapsed > 0) {
+    heuristic.timeSpentMs += elapsed
+    heuristic.timeSpent = formatTimeSpent(heuristic.timeSpentMs)
+  }
+  heuristic.timerStartedAt = null
+}
+
+const snapshotRunningTimer = (heuristicIndex) => {
+  const heuristic =
+    currentUserTestAnswer.value?.heuristicQuestions?.[heuristicIndex]
+  if (!heuristic?.timerStartedAt) return
+  verifyTimerState(heuristic)
+
+  const now = Date.now()
+  const elapsed = now - heuristic.timerStartedAt
+  if (elapsed > 0) {
+    heuristic.timeSpentMs += elapsed
+    heuristic.timeSpent = formatTimeSpent(heuristic.timeSpentMs)
+    heuristic.timerStartedAt = now
+  }
+}
+
 const startTest = async () => {
   if (heuristics.value.length === 0) {
     store.commit('setError', {
@@ -735,6 +810,7 @@ const startTest = async () => {
   if (currentUserTestAnswer.value) {
     currentUserTestAnswer.value.testStarted = true
     currentUserTestAnswer.value.lastViewedHeuristicIndex = heurisIndex.value
+    startTimer(heurisIndex.value)
     // Auto-save when test starts
     debouncedAutoSave()
   }
@@ -937,6 +1013,8 @@ const autoSaveAnswer = async () => {
     return
   }
 
+  snapshotRunningTimer(heurisIndex.value)
+
   // Update progress and metadata
   currentUserTestAnswer.value.progress = calculatedProgress.value
   currentUserTestAnswer.value.lastViewedHeuristicIndex = heurisIndex.value
@@ -979,6 +1057,8 @@ const manualSaveAnswer = async () => {
     showError('HeuristicsTestView.errors.noAnswerData')
     return
   }
+
+  snapshotRunningTimer(heurisIndex.value)
 
   // Update progress and metadata
   currentUserTestAnswer.value.progress = calculatedProgress.value
@@ -1024,6 +1104,7 @@ const submitAnswer = async () => {
     showError('HeuristicsTestView.errors.noAnswerData')
     return
   }
+  pauseTimer(heurisIndex.value)
   currentUserTestAnswer.value.submitted = true
   autoSaveInProgress.value = true
   updateSaveStatus('Submitting...', 'saving')
@@ -1087,6 +1168,8 @@ const populateWithHeuristicQuestions = () => {
         heuristicId: heu.id,
         heuristicQuestions: questions,
         heuristicTotal: questions.length,
+        timeSpent: '00:00',
+        timerStartedAt: null,
       })
     })
     currentUserTestAnswer.value.heuristicQuestions = heuristicQuestions
@@ -1154,12 +1237,20 @@ const populateWithHeuristicQuestions = () => {
           heuristicId: heu.id,
           heuristicQuestions: questions,
           heuristicTotal: questions.length,
+          timeSpent:
+            existingHeuristic.timeSpent ||
+            formatTimeSpent(existingHeuristic.timeSpentMs || 0),
+          timerStartedAt: existingHeuristic.timerStartedAt || null,
         })
       },
     )
 
     currentUserTestAnswer.value.total = totalQuestions
   }
+  currentUserTestAnswer.value.heuristicQuestions.forEach((heuristic) => {
+    verifyTimerState(heuristic)
+    heuristic.timerStartedAt = null
+  })
 }
 
 const hasSavedAnswers = () => {
@@ -1202,6 +1293,7 @@ const restoreProgress = () => {
 
     // Set test as started
     currentUserTestAnswer.value.testStarted = true
+    startTimer(heurisIndex.value)
 
     // Update status indicator
     updateSaveStatus('Progress restored', 'success')
@@ -1272,13 +1364,18 @@ watch(
   { deep: true },
 )
 
-watch(heurisIndex, () => {
+watch(heurisIndex, (newIndex, oldIndex) => {
   if (rightView.value) {
     rightView.value.scrollTop = 0
   }
   // Auto-save when navigating between heuristics
   if (!start.value) {
+    if (oldIndex !== undefined && oldIndex !== newIndex) {
+      pauseTimer(oldIndex)
+    }
+
     currentUserTestAnswer.value.lastViewedHeuristicIndex = heurisIndex.value
+    startTimer(newIndex)
     updateSaveStatus('Saving changes...', 'saving')
     debouncedAutoSave()
   }
@@ -1326,6 +1423,7 @@ onBeforeMount(async () => {
 onUnmounted(() => {
   // Save progress when component is destroyed
   if (calculatedProgress.value > 0 && !currentUserTestAnswer.value?.submitted) {
+    pauseTimer(heurisIndex.value)
     autoSaveAnswer().catch(() => {})
   }
 })

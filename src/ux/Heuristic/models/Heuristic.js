@@ -14,11 +14,13 @@ export default class Heuristic {
     heuristicTitle,
     heuristicQuestions,
     heuristicTotal,
+    timeSpent,
   } = {}) {
     this.heuristicId = heuristicId
     this.heuristicTitle = heuristicTitle
     this.heuristicQuestions = heuristicQuestions
     this.heuristicTotal = heuristicTotal
+    this.timeSpent = timeSpent ?? '00:00'
   }
   static toHeuristic(data, testOptions) {
     return new Heuristic({
@@ -35,6 +37,7 @@ export default class Heuristic {
       heuristicTitle: this.heuristicTitle,
       heuristicQuestions: this.heuristicQuestions.map((h) => h.toFirestore()),
       heuristicTotal: this.heuristicTotal,
+      timeSpent: this.timeSpent,
     }
   }
 }
