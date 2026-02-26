@@ -666,6 +666,9 @@
     "actions": {
       "downloadCsvTemplate": "تحميل نموذج CSV",
       "update": "تحديث"
+    },
+    "options": {
+      "enableTimeTracking": "تمكين تتبع الوقت"
     }
   },
   "HeuristicsTestView": {

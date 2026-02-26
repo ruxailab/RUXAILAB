@@ -664,6 +664,9 @@
     "actions": {
       "downloadCsvTemplate": "Download CSV template",
       "update": "Update"
+    },
+    "options": {
+      "enableTimeTracking": "Enable time tracking"
     }
   },
   "HeuristicsTestView": {

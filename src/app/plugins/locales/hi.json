@@ -664,6 +664,9 @@
     "actions": {
       "downloadCsvTemplate": "CSV टेम्पलेट डाउनलोड करें",
       "update": "अपडेट करें"
+    },
+    "options": {
+      "enableTimeTracking": "समय ट्रैकिंग सक्षम करें"
     }
   },
   "HeuristicsTestView": {

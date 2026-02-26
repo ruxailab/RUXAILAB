@@ -664,6 +664,9 @@
     "actions": {
       "downloadCsvTemplate": "Скачать шаблон CSV",
       "update": "Обновить"
+    },
+    "options": {
+      "enableTimeTracking": "Включить отслеживание времени"
     }
   },
   "HeuristicsTestView": {

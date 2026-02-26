@@ -72,6 +72,16 @@
           {{ errorMessage }}
         </v-alert>
       </div>
+
+      <!-- Time Tracking Toggle -->
+      <div class="mt-8">
+        <v-switch
+          v-model="enableTimeTracking"
+          :label="t('HeuristicsSettings.options.enableTimeTracking')"
+          color="primary"
+          hide-details
+        />
+      </div>
     </div>
 
     <!-- Confirmation Dialog -->
@@ -106,6 +116,7 @@ import { showWarning, showSuccess, showError } from '@/shared/utils/toast'
 
 const store = useStore()
 const { t } = useI18n()
+const emit = defineEmits(['change'])
 
 const loading = ref(false)
 const loader = ref(null)
@@ -117,6 +128,19 @@ const errorVisible = ref(false)
 const confirmDialog = ref(false)
 
 const test = computed(() => store.getters.test)
+
+// track whether evaluators should record time spent on each heuristic
+const enableTimeTracking = computed({
+  get: () => {
+    return store.state.Tests.Test?.enableTimeTracking || false
+  },
+  set: (val) => {
+    console.log('Time tracking changed:', val)
+    if (!store.state.Tests.Test) return
+    store.commit('SET_ENABLE_TIME_TRACKING', val)
+    emit('change')
+  },
+})
 
 const testAnswerDocLength = computed(() => {
   const doc = store.getters.testAnswerDocument

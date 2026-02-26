@@ -42,6 +42,9 @@ export default {
   mutations: {
     SET_TEST(state, payload) {
       state.Test = payload
+      if (state.Test) {
+        state.Test.enableTimeTracking = payload.enableTimeTracking ?? false
+      }
       if (
         payload?.testStructure &&
         payload.testType === STUDY_TYPES.HEURISTIC
@@ -83,9 +86,9 @@ export default {
       state.studyType = payload
     },
     RESET_STUDY_DETAILS(state) {
-      ;(state.studyCategory = null),
+      ;((state.studyCategory = null),
         (state.studyMethod = null),
-        (state.studyType = null)
+        (state.studyType = null))
     },
     SET_CALIBRATION_CONFIG(state, payload) {
       if (state.Test) {
@@ -97,6 +100,11 @@ export default {
       state.testStructure = null
       state.answersId = null
       state.module = 'test'
+    },
+    SET_ENABLE_TIME_TRACKING(state, value) {
+      if (state.Test) {
+        state.Test.enableTimeTracking = value
+      }
     },
   },
   actions: {

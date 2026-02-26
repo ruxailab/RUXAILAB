@@ -22,6 +22,7 @@ export default class Study {
     status, // transformar em um ENUM
     endDate,
     creationDate,
+    enableTimeTracking,
   } = {}) {
     /**
      * Defines the test id.
@@ -127,6 +128,12 @@ export default class Study {
      * @type {string}
      */
     this.studyConclusion = studyConclusion ?? null
+    /**
+     * Defines whether time tracking is enabled.
+     *
+     * @type {boolean}
+     */
+    this.enableTimeTracking = enableTimeTracking ?? false
 
     /**
      * Defines the test status.
@@ -163,6 +170,7 @@ export default class Study {
       templateDoc: this.templateDoc,
       isPublic: this.isPublic,
       studyConclusion: this.studyConclusion,
+      enableTimeTracking: this.enableTimeTracking,
       status: this.status,
       endDate: this.endDate,
       subType: this.subType,

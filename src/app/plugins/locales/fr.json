@@ -664,6 +664,9 @@
     "actions": {
       "downloadCsvTemplate": "Télécharger le modèle CSV",
       "update": "Mettre à jour"
+    },
+    "options": {
+      "enableTimeTracking": "Activer le suivi du temps"
     }
   },
   "HeuristicsTestView": {

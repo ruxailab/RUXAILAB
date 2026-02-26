@@ -664,6 +664,9 @@
     "actions": {
       "downloadCsvTemplate": "CSVテンプレートをダウンロード",
       "update": "更新"
+    },
+    "options": {
+      "enableTimeTracking": "時間追跡を有効にする"
     }
   },
   "HeuristicsTestView": {

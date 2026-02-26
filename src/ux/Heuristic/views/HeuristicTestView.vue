@@ -427,6 +427,7 @@
                           :disabled="currentUserTestAnswer?.submitted"
                           placeholder="Select an answer..."
                           clearable
+                          @focus="startQuestionTimer(heurisIndex, i)"
                           @update:model-value="
                             handleAnswerChange(heurisIndex, i)
                           "
@@ -596,6 +597,9 @@ const dialog = ref(false)
 const calculatedProgress = ref(0)
 const review = ref(true)
 const rightView = ref(null)
+
+// Timer state: record when evaluator opened/focused on a particular question
+const questionStartTimes = ref({})
 
 // Auto-save status variables
 const autoSaveInProgress = ref(false)
@@ -767,6 +771,18 @@ const handleAnswerChange = (_heurisIndex, _answerIndex) => {
   const question =
     currentUserTestAnswer.value.heuristicQuestions[_heurisIndex]
       .heuristicQuestions[_answerIndex]
+
+  // if time tracking enabled, record elapsed time
+  if (test.value?.enableTimeTracking) {
+    const key = `${_heurisIndex}-${_answerIndex}`
+    const start = questionStartTimes.value[key]
+    if (start) {
+      const elapsed = Date.now() - start
+      question.timeSpent = (question.timeSpent || 0) + elapsed
+      // remove start entry so re-focus will restart timer
+      delete questionStartTimes.value[key]
+    }
+  }
 
   // Check if the answer is actually empty/not selected
   if (
@@ -1061,6 +1077,7 @@ const populateWithHeuristicQuestions = () => {
               heuristicAnswer: null,
               heuristicComment: '',
               answerImageUrl: '',
+              timeSpent: 0,
             }),
         ) || []
       totalQuestions += questions.length
@@ -1117,6 +1134,7 @@ const populateWithHeuristicQuestions = () => {
                 heuristicAnswer: restoredAnswer,
                 heuristicComment: existingQuestion.heuristicComment || '',
                 answerImageUrl: existingQuestion.answerImageUrl || '',
+                timeSpent: existingQuestion.timeSpent || 0,
               })
             } else {
               // Create new question
@@ -1125,6 +1143,7 @@ const populateWithHeuristicQuestions = () => {
                 heuristicAnswer: null,
                 heuristicComment: '',
                 answerImageUrl: '',
+                timeSpent: 0,
               })
             }
           }) || []
@@ -1198,6 +1217,15 @@ const restoreProgress = () => {
   }
 }
 
+const startQuestionTimer = (_heurisIndex, _answerIndex) => {
+  if (!test.value?.enableTimeTracking) return
+  const key = `${_heurisIndex}-${_answerIndex}`
+  // only set if not already started (avoid overwriting on extra focus events)
+  if (!questionStartTimes.value[key]) {
+    questionStartTimes.value[key] = Date.now()
+  }
+}
+
 const setTest = async () => {
   logined.value = true
   await store.dispatch('getCurrentTestAnswerDoc')
@@ -1216,6 +1244,14 @@ const setReviewTrue = () => {
 const handleHeurisClick = (i) => {
   heurisIndex.value = i
   setReviewTrue()
+  // when navigating to a new heuristic, start timer for each question if tracking is on
+  if (test.value?.enableTimeTracking) {
+    const questions =
+      heuristics.value[i]?.questions?.map((q, idx) => `${i}-${idx}`) || []
+    questions.forEach((key) => {
+      questionStartTimes.value[key] = Date.now()
+    })
+  }
 }
 
 // Setup auto-save on page unload
@@ -1263,6 +1299,13 @@ watch(heurisIndex, () => {
     currentUserTestAnswer.value.lastViewedHeuristicIndex = heurisIndex.value
     updateSaveStatus('Saving changes...', 'saving')
     debouncedAutoSave()
+  }
+  // start timer entries for all questions of this heuristic when active
+  if (test.value?.enableTimeTracking) {
+    const count = heuristics.value[heurisIndex.value]?.questions?.length || 0
+    for (let q = 0; q < count; q++) {
+      questionStartTimes.value[`${heurisIndex.value}-${q}`] = Date.now()
+    }
   }
 })
 

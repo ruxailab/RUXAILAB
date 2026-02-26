@@ -664,6 +664,9 @@
     "actions": {
       "downloadCsvTemplate": "下载CSV模板",
       "update": "更新"
+    },
+    "options": {
+      "enableTimeTracking": "启用时间跟踪"
     }
   },
   "HeuristicsTestView": {

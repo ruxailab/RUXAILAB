@@ -666,6 +666,9 @@
     "actions": {
       "downloadCsvTemplate": "CSV-Vorlage herunterladen",
       "update": "Aktualisieren"
+    },
+    "options": {
+      "enableTimeTracking": "Zeiterfassung aktivieren"
     }
   },
   "HeuristicsTestView": {

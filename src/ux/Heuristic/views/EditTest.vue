@@ -47,7 +47,7 @@
           <HeuristicsTable v-if="index == 0" @change="change = true" />
           <OptionsTable v-if="index == 1" @change="change = true" />
           <WeightTable v-if="index == 2" />
-          <HeuristicsSettings v-if="index == 3" />
+          <HeuristicsSettings v-if="index == 3" @change="change = true" />
         </div>
       </div>
     </v-container>
@@ -102,6 +102,7 @@ const save = async () => {
 
   const rawData = {
     ...store.getters.test,
+    enableTimeTracking: store.state.Tests.Test.enableTimeTracking ?? false,
     testStructure: store.getters.heuristics,
     testOptions: store.state.Tests.Test.testOptions,
     testWeights: store.getters.testWeights,

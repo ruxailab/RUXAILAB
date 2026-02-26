@@ -664,6 +664,9 @@
     "actions": {
       "downloadCsvTemplate": "Baixar modelo CSV",
       "update": "Atualizar"
+    },
+    "options": {
+      "enableTimeTracking": "Ativar rastreamento de tempo"
     }
   },
   "HeuristicsTestView": {
