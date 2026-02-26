@@ -596,6 +596,7 @@ const dialog = ref(false)
 const calculatedProgress = ref(0)
 const review = ref(true)
 const rightView = ref(null)
+const displayHeuristics = ref([])
 
 // Auto-save status variables
 const autoSaveInProgress = ref(false)
@@ -636,6 +637,10 @@ const shuffleHeuristics = (array) => {
 }
 
 const heuristics = computed(() => {
+  if (displayHeuristics.value.length) {
+    return displayHeuristics.value
+  }
+
   // Prefer heuristics from test.testStructure if available
   if (test.value?.testStructure && Array.isArray(test.value.testStructure)) {
     return test.value.testStructure
@@ -1277,6 +1282,27 @@ const hasSavedAnswers = () => {
   return false
 }
 
+const initializeHeuristicsOrder = () => {
+  const baseHeuristics = Array.isArray(test.value?.testStructure)
+    ? [...test.value.testStructure]
+    : []
+
+  if (!baseHeuristics.length) {
+    displayHeuristics.value = []
+    return
+  }
+
+  const userAnswer = currentUserTestAnswer.value || {}
+  const hasProgress =
+    Number(userAnswer.progress || 0) > 0 ||
+    !!userAnswer.testStarted ||
+    hasSavedAnswers()
+
+  displayHeuristics.value = hasProgress
+    ? baseHeuristics
+    : shuffleHeuristics(baseHeuristics)
+}
+
 const restoreProgress = () => {
   if (hasSavedAnswers() || currentUserTestAnswer.value?.testStarted) {
     // User has saved progress or test was started
@@ -1311,6 +1337,7 @@ const restoreProgress = () => {
 const setTest = async () => {
   logined.value = true
   await store.dispatch('getCurrentTestAnswerDoc')
+  initializeHeuristicsOrder()
   populateWithHeuristicQuestions()
   restoreProgress()
 }
@@ -1403,11 +1430,8 @@ onBeforeMount(async () => {
   // Then load user's answers
   await store.dispatch('getCurrentTestAnswerDoc')
 
-  // Random generation of heuristics order to avoid bias
-  if (test.value?.testStructure) {
-    // Change the order of the initial structure
-    test.value.testStructure = shuffleHeuristics(test.value.testStructure)
-  }
+  // Randomize only for fresh runs; keep deterministic order for resumed runs.
+  initializeHeuristicsOrder()
 
   populateWithHeuristicQuestions()
   // calculate progress before checking restore
