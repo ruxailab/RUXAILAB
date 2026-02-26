@@ -284,6 +284,13 @@
                   >
                     {{ $t('HeuristicsTestAnswer.heuristics.headers.weights') }}
                   </v-tab>
+                  <v-tab
+                    class="tab-text"
+                    style="text-transform: none !important"
+                    @click="ind = 4"
+                  >
+                    Time by heuristics
+                  </v-tab>
                 </v-tabs>
                 <v-row justify="center">
                   <v-col cols="10">
@@ -446,6 +453,29 @@
                           </v-row>
                         </div>
                       </v-col>
+                      <!-- Bottom Tab 5 -->
+                      <v-col v-if="ind == 4" cols="12">
+                        <v-data-table
+                          :headers="timeByHeuristics.header"
+                          :items="timeByHeuristics.items"
+                          :items-per-page="15"
+                          class="elevation-0 cardStyle mx-2 mt-3 mb-6"
+                          density="compact"
+                        >
+                          <template
+                            v-for="header in timeByHeuristics.header"
+                            :key="header.value"
+                            #[`item.${header.value}`]="{ item }"
+                          >
+                            <span v-if="header.value === 'heuristic'">
+                              {{ item.heuristic }}
+                            </span>
+                            <span v-else>
+                              {{ item[header.value] }}
+                            </span>
+                          </template>
+                        </v-data-table>
+                      </v-col>
                     </v-row>
                   </v-col>
                 </v-row>
@@ -478,6 +508,7 @@ import {
   standardDeviation,
   finalResult,
   statistics,
+  formatTimeSpentFromMs,
 } from '@/ux/Heuristic/utils/statistics'
 import {
   heuristicsStatisticsHeaders,
@@ -561,6 +592,76 @@ const heuristicsEvaluator = computed(() => {
       evaluatorIndex++
     })
   }
+  return table
+})
+
+const timeByHeuristics = computed(() => {
+  const table = {
+    header: [{ title: 'HEURISTICS', align: 'start', value: 'heuristic' }],
+    items: [],
+  }
+
+  if (!Array.isArray(resultEvaluator.value) || !resultEvaluator.value.length) {
+    return table
+  }
+
+  const rowsByHeuristic = {}
+  const timesByHeuristic = {}
+
+  resultEvaluator.value.forEach((evaluator, evaluatorPosition) => {
+    const evaluatorKey = `Ev${evaluatorPosition + 1}`
+    table.header.push({
+      title: evaluatorKey,
+      value: evaluatorKey,
+      align: 'center',
+    })
+
+    if (!Array.isArray(evaluator.heuristics)) return
+
+    evaluator.heuristics.forEach((heuristic) => {
+      const heuristicId = heuristic.id
+      const timeMs = Number(heuristic.timeSpentMs || 0)
+
+      if (!rowsByHeuristic[heuristicId]) {
+        rowsByHeuristic[heuristicId] = { heuristic: heuristicId }
+        timesByHeuristic[heuristicId] = []
+      }
+
+      rowsByHeuristic[heuristicId][evaluatorKey] = formatTimeSpentFromMs(timeMs)
+      timesByHeuristic[heuristicId].push(timeMs)
+    })
+  })
+
+  table.header.push({
+    title: 'Total',
+    value: 'totalTime',
+    align: 'center',
+  })
+  table.header.push({
+    title: 'Average Time',
+    value: 'averageTime',
+    align: 'center',
+  })
+  table.header.push({
+    title: 'Standard deviation',
+    value: 'timeSd',
+    align: 'center',
+  })
+
+  table.items = Object.values(rowsByHeuristic).map((row) => {
+    const times = timesByHeuristic[row.heuristic] || []
+    const totalMs = times.reduce((acc, value) => acc + value, 0)
+    const averageMs = times.length ? totalMs / times.length : 0
+    const sdMs = times.length ? standardDeviation(times) : 0
+
+    return {
+      ...row,
+      totalTime: formatTimeSpentFromMs(totalMs),
+      averageTime: formatTimeSpentFromMs(averageMs),
+      timeSd: formatTimeSpentFromMs(sdMs),
+    }
+  })
+
   return table
 })
 
