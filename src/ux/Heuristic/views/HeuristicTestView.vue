@@ -596,6 +596,7 @@ const dialog = ref(false)
 const calculatedProgress = ref(0)
 const review = ref(true)
 const rightView = ref(null)
+const displayHeuristics = ref([])
 
 // Auto-save status variables
 const autoSaveInProgress = ref(false)
@@ -617,7 +618,29 @@ const testAlreadyStarted = computed(() => {
   )
 })
 
+//Fisher-Yates algorithm to shuffle heuristics order
+const shuffleHeuristics = (array) => {
+  // Verify that the input is a valid array
+  if (!array || !Array.isArray(array)) return array
+
+  // Use a copy of the array to avoid mutating the original
+  const shuffledArray = [...array]
+
+  // Algorithem Fisher-Yates
+  for (let i = shuffledArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    // Shuffle elements
+    ;[shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]]
+  }
+
+  return shuffledArray
+}
+
 const heuristics = computed(() => {
+  if (displayHeuristics.value.length) {
+    return displayHeuristics.value
+  }
+
   // Prefer heuristics from test.testStructure if available
   if (test.value?.testStructure && Array.isArray(test.value.testStructure)) {
     return test.value.testStructure
@@ -1259,6 +1282,27 @@ const hasSavedAnswers = () => {
   return false
 }
 
+const initializeHeuristicsOrder = () => {
+  const baseHeuristics = Array.isArray(test.value?.testStructure)
+    ? [...test.value.testStructure]
+    : []
+
+  if (!baseHeuristics.length) {
+    displayHeuristics.value = []
+    return
+  }
+
+  const userAnswer = currentUserTestAnswer.value || {}
+  const hasProgress =
+    Number(userAnswer.progress || 0) > 0 ||
+    !!userAnswer.testStarted ||
+    hasSavedAnswers()
+
+  displayHeuristics.value = hasProgress
+    ? baseHeuristics
+    : shuffleHeuristics(baseHeuristics)
+}
+
 const restoreProgress = () => {
   if (hasSavedAnswers() || currentUserTestAnswer.value?.testStarted) {
     // User has saved progress or test was started
@@ -1293,6 +1337,7 @@ const restoreProgress = () => {
 const setTest = async () => {
   logined.value = true
   await store.dispatch('getCurrentTestAnswerDoc')
+  initializeHeuristicsOrder()
   populateWithHeuristicQuestions()
   restoreProgress()
 }
@@ -1384,6 +1429,9 @@ onBeforeMount(async () => {
 
   // Then load user's answers
   await store.dispatch('getCurrentTestAnswerDoc')
+
+  // Randomize only for fresh runs; keep deterministic order for resumed runs.
+  initializeHeuristicsOrder()
 
   populateWithHeuristicQuestions()
   // calculate progress before checking restore
