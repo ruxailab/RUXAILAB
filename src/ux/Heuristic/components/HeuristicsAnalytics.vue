@@ -4,12 +4,12 @@
 
     <ShowInfo v-if="answers != null && !intro && test">
       <template #content>
-        <div class="ma-0 pa-0">
+        <div class="ma-0 pa-0" cols="12" md="2">
           <v-card flat rounded="xl" style="background: #f5f7ff">
             <v-row v-if="resultHeuristics" class="ma-0 pa-0">
               <!--Heuristics List-->
-              <v-col class="ma-0 pa-0" cols="2">
-                <v-list border rounded density="compact" height="560px">
+              <v-col class="ma-0 pa-0" cols="12" md="2">
+                <v-list border rounded density="compact" max-height="560px">
                   <v-list-subheader>{{
                     $t('Dashboard.cards.heuristics')
                   }}</v-list-subheader>
@@ -17,7 +17,7 @@
                   <v-list
                     color="#fca326"
                     density="compact"
-                    height="470px"
+                    max-height="470px"
                     class="list-scroll"
                   >
                     <v-list-item
@@ -47,14 +47,14 @@
                 class="ma-0 pa-0"
                 cols="3"
               >
-                <v-list border rounded density="compact" height="560px">
+                <v-list border rounded density="compact" max-height="560px">
                   <v-list-subheader>
                     {{ test.testStructure[heuristicSelect].title }} - Questions
                   </v-list-subheader>
                   <v-divider />
                   <v-list
                     density="compact"
-                    height="470px"
+                    max-height="470px"
                     color="#fca326"
                     class="list-scroll"
                   >
@@ -123,7 +123,7 @@
                         :headers="headersHeuristic"
                         :items="itemsHeuristic"
                         :search="search"
-                        height="375px"
+                        max-height="375px"
                         density="compact"
                       >
                         <template
@@ -155,7 +155,7 @@
                       </v-data-table>
                     </v-col>
                   </v-row>
-                  <v-row v-else class="ma-0 pa-0">
+                  <v-row v-else class="ma-0 pa-0" cols="12" md="2">
                     <v-card width="100%" height="560px">
                       <v-tabs
                         v-model="ind"
