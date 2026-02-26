@@ -27,6 +27,22 @@ function standardDeviation(array) {
   )
 }
 
+function parseTimeSpentToMs(timeSpent) {
+  if (typeof timeSpent !== 'string') return 0
+  const [minutes = '0', seconds = '0'] = timeSpent.split(':')
+  const min = Number(minutes)
+  const sec = Number(seconds)
+  if (!Number.isFinite(min) || !Number.isFinite(sec)) return 0
+  return (Math.max(0, min) * 60 + Math.max(0, sec)) * 1000
+}
+
+function formatTimeSpentFromMs(ms) {
+  const totalSeconds = Math.max(0, Math.floor((Number(ms) || 0) / 1000))
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+}
+
 function calcFinalResult(array) {
   let result = 0
   let qtdQuestion = 0
@@ -137,6 +153,7 @@ function statistics() {
           totalQuestions: heuristic.heuristicTotal,
           totalNoAplication: noAplication,
           totalNoReply: noReply,
+          timeSpentMs: parseTimeSpentToMs(heuristic.timeSpent),
         })
         heurisIndex++
       })
@@ -296,4 +313,6 @@ export {
   finalResult,
   buildHeuristicsStatistics,
   buildHeuristicsEvaluator,
+  parseTimeSpentToMs,
+  formatTimeSpentFromMs,
 }
