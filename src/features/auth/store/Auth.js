@@ -124,9 +124,8 @@ export default {
         let dbUser = null
         try {
           dbUser = await userController.getById(user.uid)
-        } catch (error) {
+        } catch {
           // User doesn't exist in DB, will be created below
-          return error
         }
 
         // Create user if they don't exist yet
