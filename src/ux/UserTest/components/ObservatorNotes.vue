@@ -44,7 +44,7 @@
       <v-textarea
         v-model="newNote"
         variant="outlined"
-        placeholder="Type observation... (Cmd+Enter to save)"
+        placeholder="Type observation... (Ctrl/Cmd+Enter to save)"
         rows="3"
         auto-grow
         hide-details

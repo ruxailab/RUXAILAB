@@ -423,7 +423,7 @@ const valid = ref(false)
 const comboboxModel = ref([])
 const inviteMessage = ref('')
 const loading = ref(false)
-const selectedRole = ref(ACCESS_LEVEL.ADMIN)
+const selectedRole = ref(ACCESS_LEVEL.EVALUATOR)
 
 const roleOptions = [
   {
@@ -626,7 +626,7 @@ const submit = async () => {
 
   inviteMessage.value = ''
   comboboxModel.value = []
-  selectedRole.value = ACCESS_LEVEL.ADMIN
+  selectedRole.value = ACCESS_LEVEL.EVALUATOR
 
   emit('update:dialog', false)
 }
