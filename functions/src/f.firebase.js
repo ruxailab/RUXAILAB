@@ -1,4 +1,5 @@
 import admin from 'firebase-admin'
+import 'dotenv/config'
 import {
   onObjectDeleted,
   onObjectFinalized,
@@ -6,18 +7,26 @@ import {
 } from 'firebase-functions/storage'
 import firebaseFunctions from 'firebase-functions/v2'
 
-const REGION = process.env.RUXAILAB_FUNCTIONS_REGION || 'europe-west6'
+function getRegion() {
+  return process.env.RUXAILAB_FUNCTIONS_REGION || 'europe-west6'
+}
 
 function onRequest({ handler, opts = {} }) {
-  return firebaseFunctions.https.onRequest({ region: REGION, ...opts }, handler)
+  return firebaseFunctions.https.onRequest(
+    { region: getRegion(), ...opts },
+    handler,
+  )
 }
 
 function onCall({ handler, options = {} }) {
-  return firebaseFunctions.https.onCall({ region: REGION, ...options }, handler)
+  return firebaseFunctions.https.onCall(
+    { region: getRegion(), ...options },
+    handler,
+  )
 }
 
 function onTrigger({ path, event, handler }) {
-  const baseOptions = { region: REGION }
+  const baseOptions = { region: getRegion() }
 
   const firestoreEvents = {
     created: (p, h) =>
@@ -49,7 +58,7 @@ function onTrigger({ path, event, handler }) {
 }
 
 function onStorageTrigger({ event, handler }) {
-  const baseOptions = { region: REGION }
+  const baseOptions = { region: getRegion() }
   const storageEvents = {
     finalized: (h) => onObjectFinalized(baseOptions, h),
     deleted: (h) => onObjectDeleted(baseOptions, h),
