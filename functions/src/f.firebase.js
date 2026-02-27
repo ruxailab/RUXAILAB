@@ -6,20 +6,40 @@ import {
 } from 'firebase-functions/storage'
 import firebaseFunctions from 'firebase-functions/v2'
 
+const REGION = process.env.RUXAILAB_FUNCTIONS_REGION || 'europe-west6'
+
 function onRequest({ handler, opts = {} }) {
-  return firebaseFunctions.https.onRequest(opts, handler)
+  return firebaseFunctions.https.onRequest({ region: REGION, ...opts }, handler)
 }
 
 function onCall({ handler, options = {} }) {
-  return firebaseFunctions.https.onCall(options, handler)
+  return firebaseFunctions.https.onCall({ region: REGION, ...options }, handler)
 }
 
 function onTrigger({ path, event, handler }) {
+  const baseOptions = { region: REGION }
+
   const firestoreEvents = {
-    created: (p, h) => firebaseFunctions.firestore.onDocumentCreated(p, h),
-    updated: (p, h) => firebaseFunctions.firestore.onDocumentUpdated(p, h),
-    deleted: (p, h) => firebaseFunctions.firestore.onDocumentDeleted(p, h),
-    written: (p, h) => firebaseFunctions.firestore.onDocumentWritten(p, h),
+    created: (p, h) =>
+      firebaseFunctions.firestore.onDocumentCreated(
+        { document: p, ...baseOptions },
+        h,
+      ),
+    updated: (p, h) =>
+      firebaseFunctions.firestore.onDocumentUpdated(
+        { document: p, ...baseOptions },
+        h,
+      ),
+    deleted: (p, h) =>
+      firebaseFunctions.firestore.onDocumentDeleted(
+        { document: p, ...baseOptions },
+        h,
+      ),
+    written: (p, h) =>
+      firebaseFunctions.firestore.onDocumentWritten(
+        { document: p, ...baseOptions },
+        h,
+      ),
   }
 
   if (!firestoreEvents[event]) {
@@ -29,10 +49,11 @@ function onTrigger({ path, event, handler }) {
 }
 
 function onStorageTrigger({ event, handler }) {
+  const baseOptions = { region: REGION }
   const storageEvents = {
-    finalized: (h) => onObjectFinalized(h),
-    deleted: (h) => onObjectDeleted(h),
-    metadataUpdated: (h) => onObjectMetadataUpdated(h),
+    finalized: (h) => onObjectFinalized(baseOptions, h),
+    deleted: (h) => onObjectDeleted(baseOptions, h),
+    metadataUpdated: (h) => onObjectMetadataUpdated(baseOptions, h),
   }
 
   if (!storageEvents[event]) {
