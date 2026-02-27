@@ -1318,7 +1318,8 @@
     "PreTasksStep": {
       "title": "Tarefas",
       "heading": "Vamos começar com a fase de tarefas",
-      "description": "Você completará <strong>{numTasks}</strong> tarefas relacionadas ao uso da ferramenta. Não há respostas certas ou erradas: o que importa é como você interage.",
+      "description": "Você irá completar",
+      "tasksSuffix": "tarefas relacionadas ao uso da ferramenta. Não há respostas certas ou erradas; o que importa é como você interage.",
       "instruction": "Quando estiver pronto, clique no botão para começar.",
       "startButton": "Iniciar tarefas",
       "recordingTitle": "Informações de gravação",

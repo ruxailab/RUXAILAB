@@ -596,6 +596,7 @@ const dialog = ref(false)
 const calculatedProgress = ref(0)
 const review = ref(true)
 const rightView = ref(null)
+const displayHeuristics = ref([])
 
 // Auto-save status variables
 const autoSaveInProgress = ref(false)
@@ -617,7 +618,29 @@ const testAlreadyStarted = computed(() => {
   )
 })
 
+//Fisher-Yates algorithm to shuffle heuristics order
+const shuffleHeuristics = (array) => {
+  // Verify that the input is a valid array
+  if (!array || !Array.isArray(array)) return array
+
+  // Use a copy of the array to avoid mutating the original
+  const shuffledArray = [...array]
+
+  // Algorithem Fisher-Yates
+  for (let i = shuffledArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    // Shuffle elements
+    ;[shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]]
+  }
+
+  return shuffledArray
+}
+
 const heuristics = computed(() => {
+  if (displayHeuristics.value.length) {
+    return displayHeuristics.value
+  }
+
   // Prefer heuristics from test.testStructure if available
   if (test.value?.testStructure && Array.isArray(test.value.testStructure)) {
     return test.value.testStructure
@@ -695,6 +718,81 @@ const formatLastSaveTime = () => {
   return saveTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
+const parseTimeSpent = (value) => {
+  const [minutes = '0', seconds = '0'] = String(value || '0:0').split(':')
+  return (
+    (Math.max(0, Number(minutes) || 0) * 60 +
+      Math.max(0, Number(seconds) || 0)) *
+    1000
+  )
+}
+
+const formatTimeSpent = (ms) => {
+  const totalSeconds = Math.max(0, Math.floor((Number(ms) || 0) / 1000))
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
+
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+}
+
+const verifyTimerState = (heuristic) => {
+  if (!heuristic) return
+
+  heuristic.timeSpentMs =
+    Number.isFinite(Number(heuristic.timeSpentMs)) &&
+    Number(heuristic.timeSpentMs) >= 0
+      ? Number(heuristic.timeSpentMs)
+      : parseTimeSpent(heuristic.timeSpent)
+  heuristic.timeSpent = formatTimeSpent(heuristic.timeSpentMs)
+  heuristic.timerStartedAt =
+    Number.isFinite(Number(heuristic.timerStartedAt)) &&
+    Number(heuristic.timerStartedAt) > 0
+      ? Number(heuristic.timerStartedAt)
+      : null
+}
+
+const startTimer = (heuristicIndex) => {
+  if (start.value || currentUserTestAnswer.value?.submitted) return
+
+  const heuristic =
+    currentUserTestAnswer.value?.heuristicQuestions?.[heuristicIndex]
+  if (!heuristic) return
+  verifyTimerState(heuristic)
+
+  if (!heuristic.timerStartedAt) {
+    heuristic.timerStartedAt = Date.now()
+  }
+}
+
+const pauseTimer = (heuristicIndex) => {
+  const heuristic =
+    currentUserTestAnswer.value?.heuristicQuestions?.[heuristicIndex]
+  if (!heuristic?.timerStartedAt) return
+  verifyTimerState(heuristic)
+
+  const elapsed = Date.now() - heuristic.timerStartedAt
+  if (elapsed > 0) {
+    heuristic.timeSpentMs += elapsed
+    heuristic.timeSpent = formatTimeSpent(heuristic.timeSpentMs)
+  }
+  heuristic.timerStartedAt = null
+}
+
+const snapshotRunningTimer = (heuristicIndex) => {
+  const heuristic =
+    currentUserTestAnswer.value?.heuristicQuestions?.[heuristicIndex]
+  if (!heuristic?.timerStartedAt) return
+  verifyTimerState(heuristic)
+
+  const now = Date.now()
+  const elapsed = now - heuristic.timerStartedAt
+  if (elapsed > 0) {
+    heuristic.timeSpentMs += elapsed
+    heuristic.timeSpent = formatTimeSpent(heuristic.timeSpentMs)
+    heuristic.timerStartedAt = now
+  }
+}
+
 const startTest = async () => {
   if (heuristics.value.length === 0) {
     store.commit('setError', {
@@ -717,6 +815,7 @@ const startTest = async () => {
   if (currentUserTestAnswer.value) {
     currentUserTestAnswer.value.testStarted = true
     currentUserTestAnswer.value.lastViewedHeuristicIndex = heurisIndex.value
+    startTimer(heurisIndex.value)
     // Auto-save when test starts
     debouncedAutoSave()
   }
@@ -919,6 +1018,8 @@ const autoSaveAnswer = async () => {
     return
   }
 
+  snapshotRunningTimer(heurisIndex.value)
+
   // Update progress and metadata
   currentUserTestAnswer.value.progress = calculatedProgress.value
   currentUserTestAnswer.value.lastViewedHeuristicIndex = heurisIndex.value
@@ -961,6 +1062,8 @@ const manualSaveAnswer = async () => {
     showError('HeuristicsTestView.errors.noAnswerData')
     return
   }
+
+  snapshotRunningTimer(heurisIndex.value)
 
   // Update progress and metadata
   currentUserTestAnswer.value.progress = calculatedProgress.value
@@ -1006,6 +1109,7 @@ const submitAnswer = async () => {
     showError('HeuristicsTestView.errors.noAnswerData')
     return
   }
+  pauseTimer(heurisIndex.value)
   currentUserTestAnswer.value.submitted = true
   autoSaveInProgress.value = true
   updateSaveStatus('Submitting...', 'saving')
@@ -1069,6 +1173,8 @@ const populateWithHeuristicQuestions = () => {
         heuristicId: heu.id,
         heuristicQuestions: questions,
         heuristicTotal: questions.length,
+        timeSpent: '00:00',
+        timerStartedAt: null,
       })
     })
     currentUserTestAnswer.value.heuristicQuestions = heuristicQuestions
@@ -1136,12 +1242,20 @@ const populateWithHeuristicQuestions = () => {
           heuristicId: heu.id,
           heuristicQuestions: questions,
           heuristicTotal: questions.length,
+          timeSpent:
+            existingHeuristic.timeSpent ||
+            formatTimeSpent(existingHeuristic.timeSpentMs || 0),
+          timerStartedAt: existingHeuristic.timerStartedAt || null,
         })
       },
     )
 
     currentUserTestAnswer.value.total = totalQuestions
   }
+  currentUserTestAnswer.value.heuristicQuestions.forEach((heuristic) => {
+    verifyTimerState(heuristic)
+    heuristic.timerStartedAt = null
+  })
 }
 
 const hasSavedAnswers = () => {
@@ -1168,6 +1282,27 @@ const hasSavedAnswers = () => {
   return false
 }
 
+const initializeHeuristicsOrder = () => {
+  const baseHeuristics = Array.isArray(test.value?.testStructure)
+    ? [...test.value.testStructure]
+    : []
+
+  if (!baseHeuristics.length) {
+    displayHeuristics.value = []
+    return
+  }
+
+  const userAnswer = currentUserTestAnswer.value || {}
+  const hasProgress =
+    Number(userAnswer.progress || 0) > 0 ||
+    !!userAnswer.testStarted ||
+    hasSavedAnswers()
+
+  displayHeuristics.value = hasProgress
+    ? baseHeuristics
+    : shuffleHeuristics(baseHeuristics)
+}
+
 const restoreProgress = () => {
   if (hasSavedAnswers() || currentUserTestAnswer.value?.testStarted) {
     // User has saved progress or test was started
@@ -1184,6 +1319,7 @@ const restoreProgress = () => {
 
     // Set test as started
     currentUserTestAnswer.value.testStarted = true
+    startTimer(heurisIndex.value)
 
     // Update status indicator
     updateSaveStatus('Progress restored', 'success')
@@ -1201,6 +1337,7 @@ const restoreProgress = () => {
 const setTest = async () => {
   logined.value = true
   await store.dispatch('getCurrentTestAnswerDoc')
+  initializeHeuristicsOrder()
   populateWithHeuristicQuestions()
   restoreProgress()
 }
@@ -1254,13 +1391,18 @@ watch(
   { deep: true },
 )
 
-watch(heurisIndex, () => {
+watch(heurisIndex, (newIndex, oldIndex) => {
   if (rightView.value) {
     rightView.value.scrollTop = 0
   }
   // Auto-save when navigating between heuristics
   if (!start.value) {
+    if (oldIndex !== undefined && oldIndex !== newIndex) {
+      pauseTimer(oldIndex)
+    }
+
     currentUserTestAnswer.value.lastViewedHeuristicIndex = heurisIndex.value
+    startTimer(newIndex)
     updateSaveStatus('Saving changes...', 'saving')
     debouncedAutoSave()
   }
@@ -1288,6 +1430,9 @@ onBeforeMount(async () => {
   // Then load user's answers
   await store.dispatch('getCurrentTestAnswerDoc')
 
+  // Randomize only for fresh runs; keep deterministic order for resumed runs.
+  initializeHeuristicsOrder()
+
   populateWithHeuristicQuestions()
   // calculate progress before checking restore
   calculateProgress()
@@ -1302,6 +1447,7 @@ onBeforeMount(async () => {
 onUnmounted(() => {
   // Save progress when component is destroyed
   if (calculatedProgress.value > 0 && !currentUserTestAnswer.value?.submitted) {
+    pauseTimer(heurisIndex.value)
     autoSaveAnswer().catch(() => {})
   }
 })
