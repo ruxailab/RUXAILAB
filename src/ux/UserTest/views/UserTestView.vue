@@ -416,6 +416,7 @@
             @show-loading="isLoading = true"
             @stop-show-loading="isLoading = false"
             @recording-started="isVisualizerVisible = $event"
+            @tip-pressed="handleTipPressed"
             @timer-stopped="handleTimerStopped"
             @start-task="
               () => {
@@ -915,6 +916,14 @@ const handleTimerStopped = (elapsedTime, idx) => {
   }
 }
 
+const handleTipPressed = (idx) => {
+  if (idx === undefined || idx === null) return
+  if (!localTestAnswer.tasks?.[idx]) return
+
+  const current = Number(localTestAnswer.tasks[idx].tipPressCount || 0)
+  localTestAnswer.tasks[idx].tipPressCount = current + 1
+}
+
 const completeStep = (id, type, userCompleted = true) => {
   try {
     if (type === 'consent') {
@@ -1161,6 +1170,7 @@ const mappingSteps = async () => {
               taskTime: 0,
               completed: false,
               attempted: false, // Track whether task has been attempted
+              tipPressCount: 0,
               susAnswers: [],
               nasaTlxAnswers: {},
               tamAnswers: {},

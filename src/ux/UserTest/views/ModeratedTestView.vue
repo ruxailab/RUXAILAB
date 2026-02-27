@@ -513,6 +513,7 @@
               @show-loading="isLoading = true"
               @stop-show-loading="isLoading = false"
               @recording-started="isVisualizerVisible = $event"
+              @tip-pressed="handleTipPressed"
               @timer-stopped="handleTimerStopped"
             />
 
@@ -1076,6 +1077,19 @@ const handleTimerStopped = (elapsedTime, idx) => {
   }
 }
 
+const handleTipPressed = (idx) => {
+  if (idx === undefined || idx === null) {
+    return
+  }
+
+  if (!localTestAnswer.tasks?.[idx]) {
+    return
+  }
+
+  const current = Number(localTestAnswer.tasks[idx].tipPressCount || 0)
+  localTestAnswer.tasks[idx].tipPressCount = current + 1
+}
+
 const completeStep = async (id, type, userCompleted = true) => {
   displayVideoCallComponent.value = true
   try {
@@ -1238,6 +1252,7 @@ const mappingSteps = async () => {
               postAnswer: '',
               taskTime: 0,
               completed: false,
+              tipPressCount: 0,
               susAnswers: [],
               nasaTlxAnswers: null,
             })
