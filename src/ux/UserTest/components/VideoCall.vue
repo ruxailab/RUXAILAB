@@ -73,45 +73,46 @@
           </div>
 
           <!-- Remote Videos -->
-          <div
-            v-if="callStarted"
-            v-for="(stream, userId) in remoteStreams"
-            :key="userId"
-            class="video-wrapper"
-          >
-            <div class="video-container">
-              <video
-                v-if="isRemoteCameraEnabled(userId)"
-                :srcObject="stream"
-                autoplay
-                playsinline
-                class="video-element"
-              ></video>
+          <template v-if="callStarted">
+            <div
+              v-for="(stream, userId) in remoteStreams"
+              :key="userId"
+              class="video-wrapper"
+            >
+              <div class="video-container">
+                <video
+                  v-if="isRemoteCameraEnabled(userId)"
+                  :srcObject="stream"
+                  autoplay
+                  playsinline
+                  class="video-element"
+                ></video>
 
-              <!-- Camera disabled overlay for remote peer -->
-              <div
-                v-if="!isRemoteCameraEnabled(userId)"
-                class="camera-disabled-overlay"
-              >
-                <v-icon size="64" color="white" class="mb-2"
-                  >mdi-video-off</v-icon
+                <!-- Camera disabled overlay for remote peer -->
+                <div
+                  v-if="!isRemoteCameraEnabled(userId)"
+                  class="camera-disabled-overlay"
                 >
-                <p class="text-white">
-                  {{ t('UserTestView.VideoCall.labels.cameraOff') }}
-                </p>
-              </div>
+                  <v-icon size="64" color="white" class="mb-2"
+                    >mdi-video-off</v-icon
+                  >
+                  <p class="text-white">
+                    {{ t('UserTestView.VideoCall.labels.cameraOff') }}
+                  </p>
+                </div>
 
-              <!-- Microphone muted indicator for remote peer -->
-              <div
-                v-if="!isRemoteMicrophoneEnabled(userId)"
-                class="mic-muted-indicator"
-              >
-                <v-icon size="24" color="white">mdi-microphone-off</v-icon>
-              </div>
+                <!-- Microphone muted indicator for remote peer -->
+                <div
+                  v-if="!isRemoteMicrophoneEnabled(userId)"
+                  class="mic-muted-indicator"
+                >
+                  <v-icon size="24" color="white">mdi-microphone-off</v-icon>
+                </div>
 
-              <div class="video-label">{{ getPeerName(userId) }}</div>
+                <div class="video-label">{{ getPeerName(userId) }}</div>
+              </div>
             </div>
-          </div>
+          </template>
 
           <!-- Waiting Message if no peers -->
           <div
@@ -695,7 +696,6 @@ import { useI18n } from 'vue-i18n'
 import { database } from '@/app/plugins/firebase/index'
 import {
   ref as dbRef,
-  set,
   onValue,
   push,
   get,

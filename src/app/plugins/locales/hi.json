@@ -599,7 +599,8 @@
       "changeWeights": "ध्यान दें: हीयुरिस्टिक्स का क्रम बदलने पर वज़न स्वतः नहीं बदलेगा; आपको उन्हें मैन्युअल रूप से समायोजित करना होगा।",
       "noDescriptions": "कोई विवरण उपलब्ध नहीं है",
       "startAddingQuestions": "इस हीयुरिस्टिक में अपना पहला प्रश्न जोड़कर शुरू करें",
-      "cantDeleteAllQuestions": "क्षमा करें, आप एक हीयुरिस्टिक से सभी प्रश्न नहीं हटा सकते"
+      "cantDeleteAllQuestions": "क्षमा करें, आप एक हीयुरिस्टिक से सभी प्रश्न नहीं हटा सकते",
+      "studyHasAnswers": "This study has answers"
     },
     "validation": {
       "nameRequired": "नाम अनिवार्य है",
@@ -706,7 +707,9 @@
       "options": "विकल्प",
       "weights": "वज़न",
       "settings": "सेटिंग्स"
-    }
+    },
+    "previewPageTitle": "Preview test",
+    "previewPageSubtitle": "Review the test configuration in read-only mode"
   },
   "HeuristicsTestAnswer": {
     "titles": {
@@ -955,125 +958,6 @@
       "sart": "स्थिति जागरूकता रेटिंग तकनीक - स्थितिजन्य जागरूकता मापती है"
     },
     "answerTypePreview": {
-      "noAnswer": {
-        "message": "कार्य पूरा हुआ! किसी अतिरिक्त फीडबैक की आवश्यकता नहीं है।"
-      },
-      "textArea": {
-        "placeholder": "प्रतिभागी अपना फीडबैक यहां प्रदान करेंगे...",
-        "submitButton": "फीडबैक सबमिट करें"
-      },
-      "postTest": {
-        "title": "कार्य के बाद के प्रश्न",
-        "q1": "1. आप इस कार्य की कठिनाई को कैसे रेट करेंगे?",
-        "q2": "2. कोई अतिरिक्त टिप्पणी?",
-        "feedbackPlaceholder": "वैकल्पिक फीडबैक..."
-      },
-      "postForm": {
-        "title": "बाहरी फॉर्म",
-        "notice": "प्रतिभागियों को कार्य के बाद एक बाहरी फॉर्म पूरा करने के लिए निर्देशित किया जाएगा।",
-        "button": "बाहरी फॉर्म खोलें"
-      },
-      "nasaTlx": {
-        "title": "NASA टास्क लोड इंडेक्स",
-        "mental": "मानसिक मांग",
-        "physical": "शारीरिक मांग",
-        "range": "निम्न - उच्च",
-        "moreDimensions": "+ 4 और आयाम"
-      },
-      "sus": {
-        "title": "सिस्टम उपयोगिता स्केल",
-        "q1": "1. मुझे लगता है कि मैं इस सिस्टम का बार-बार उपयोग करना चाहूंगा।",
-        "disagree": "कड़ी असहमति",
-        "agree": "कड़ी सहमति",
-        "moreStatements": "+ 9 और कथन"
-      },
-      "sart": {
-        "title": "स्थिति जागरूकता रेटिंग तकनीक",
-        "instability": "स्थिति की अस्थिरता",
-        "complexity": "स्थिति की जटिलता",
-        "stable": "बहुत स्थिर",
-        "unstable": "बहुत अस्थिर",
-        "simple": "बहुत सरल",
-        "complex": "बहुत जटिल",
-        "moreDimensions": "+ 8 और SART आयाम"
-      },
-      "tam": {
-        "tam1": "TAM-1: प्रौद्योगिकी स्वीकृति मॉडल (बुनियादी)",
-        "tam2": "TAM-2: प्रौद्योगिकी स्वीकृति मॉडल (विस्तारित)",
-        "tam3": "TAM-3: प्रौद्योगिकी स्वीकृति मॉडल (व्यापक)",
-        "items2": "2 आयामों में 10 आइटम",
-        "items7": "7 आयामों में 25 आइटम",
-        "items13": "13 आयामों में 39 आइटम",
-        "pu": "कथित उपयोगिता",
-        "eu": "उपयोग में कथित आसानी",
-        "sn": "विषयगत मानदंड",
-        "image": "छवि",
-        "jr": "कार्य प्रासंगिकता",
-        "oq": "आउटपुट गुणवत्ता",
-        "rd": "परिणाम प्रदर्शन",
-        "se": "कंप्यूटर आत्म-प्रभावकारिता",
-        "ec": "बाहरी नियंत्रण",
-        "anxiety": "चिंता",
-        "play": "चंचलता",
-        "enjoy": "आनंद",
-        "ou": "वस्तुनिष्ठ उपयोगिता",
-        "q1": "1. सिस्टम का उपयोग करने से मेरे कार्य प्रदर्शन में सुधार होता है।",
-        "q6": "6. सिस्टम का उपयोग करना आसान है।",
-        "likertNote": "प्रतिभागी 5-पॉइंट लिकर्ट स्केल पर {count} कथनों को रेट करते हैं"
-      },
-      "selectionPrompt": "पूर्वावलोकन देखने के लिए एक उत्तर प्रकार चुनें"
-    },
-    "advanced": {
-      "stepTitle": "चरण 3: उन्नत विकल्प",
-      "stepDescription": "गहरी अंतर्दृष्टि प्राप्त करने के लिए अतिरिक्त डेटा संग्रह विधियाँ सक्षम करें।",
-      "eyeTrackingDesc": "टास्क के दौरान प्रतिभागी कहाँ देखते हैं, इसे ट्रैक करें।",
-      "screenRecordDesc": "प्रतिभागी की स्क्रीन गतिविधि रिकॉर्ड करें।",
-      "cameraDesc": "प्रतिभागी के चेहरे के भाव और प्रतिक्रियाएं रिकॉर्ड करें।",
-      "audioDesc": "प्रतिभागी की मौखिक प्रतिक्रिया और टिप्पणियां रिकॉर्ड करें।",
-      "privacyNotice": "गोपनीयता सूचना",
-      "privacyText": "रिकॉर्डिंग सुविधाओं के लिए प्रतिभागियों से स्पष्ट सहमति आवश्यक है।",
-      "privacyItem1": "प्रतिभागियों को डेटा संग्रह के बारे में स्पष्ट रूप से सूचित करें",
-      "privacyItem2": "टेस्ट शुरू करने से पहले उचित सहमति प्राप्त करें",
-      "privacyItem3": "डेटा सुरक्षा नियमों (GDPR, आदि) का पालन करें",
-      "privacyItem4": "रिकॉर्ड किए गए डेटा का सुरक्षित भंडारण और हैंडलिंग"
-    },
-    "preview": {
-      "taskSummary": "टास्क सारांश",
-      "untitledTask": "शीर्षक रहित टास्क",
-      "description": "विवरण:",
-      "noDescription": "कोई विवरण प्रदान नहीं किया गया",
-      "participantTip": "प्रतिभागी सुझाव:",
-      "taskUrl": "टास्क URL:",
-      "answerType": "उत्तर प्रकार:",
-      "recordingFeatures": "रिकॉर्डिंग सुविधाएं:",
-      "postTaskQuestion": "टास्क-पश्चात प्रश्न:",
-      "postTaskForm": "टास्क-पश्चात फॉर्म:",
-      "externalForm": "बाहरी फॉर्म",
-      "taskReady": "टास्क तैयार!",
-      "reviewRequired": "समीक्षा आवश्यक",
-      "taskReadyMessage": "आपकी टास्क ठीक से कॉन्फ़िगर की गई है और आपके अध्ययन में उपयोग के लिए तैयार है।",
-      "reviewRequiredMessage": "कृपया पिछले चरणों की समीक्षा करें ताकि सभी आवश्यक फ़ील्ड पूर्ण हों।",
-      "noTypeSelected": "कोई प्रकार चयनित नहीं",
-      "answerTypes": {
-        "noAnswer": "कोई उत्तर आवश्यक नहीं",
-        "textArea": "टेक्स्ट क्षेत्र",
-        "postTest": "टेस्ट-पश्चात प्रश्न",
-        "postForm": "बाहरी फॉर्म",
-        "nasaTlx": "NASA-TLX",
-        "sus": "सिस्टम उपयोगिता स्केल",
-        "tam1": "TAM-1 (मूल)",
-        "tam2": "TAM-2 (विस्तारित)",
-        "tam3": "TAM-3 (व्यापक)",
-        "sart": "SART"
-      },
-      "recordingLabels": {
-        "eyeTracking": "आई ट्रैकिंग",
-        "screenRecording": "स्क्रीन रिकॉर्डिंग",
-        "camera": "कैमरा",
-        "audio": "ऑडियो"
-      }
-    },
-    "answerTypePreview": {
       "taskCompleted": "कार्य पूर्ण! कोई अतिरिक्त प्रतिक्रिया आवश्यक नहीं है।",
       "participantsFeedbackHere": "प्रतिभागी यहाँ अपनी प्रतिक्रिया देंगे...",
       "submitFeedback": "प्रतिक्रिया सबमिट करें",
@@ -1128,6 +1012,56 @@
       "playfulness": "चंचलता",
       "enjoyment": "आनंद",
       "objectiveUsability": "वस्तुनिष्ठ उपयोगिता"
+    },
+    "advanced": {
+      "stepTitle": "चरण 3: उन्नत विकल्प",
+      "stepDescription": "गहरी अंतर्दृष्टि प्राप्त करने के लिए अतिरिक्त डेटा संग्रह विधियाँ सक्षम करें।",
+      "eyeTrackingDesc": "टास्क के दौरान प्रतिभागी कहाँ देखते हैं, इसे ट्रैक करें।",
+      "screenRecordDesc": "प्रतिभागी की स्क्रीन गतिविधि रिकॉर्ड करें।",
+      "cameraDesc": "प्रतिभागी के चेहरे के भाव और प्रतिक्रियाएं रिकॉर्ड करें।",
+      "audioDesc": "प्रतिभागी की मौखिक प्रतिक्रिया और टिप्पणियां रिकॉर्ड करें।",
+      "privacyNotice": "गोपनीयता सूचना",
+      "privacyText": "रिकॉर्डिंग सुविधाओं के लिए प्रतिभागियों से स्पष्ट सहमति आवश्यक है।",
+      "privacyItem1": "प्रतिभागियों को डेटा संग्रह के बारे में स्पष्ट रूप से सूचित करें",
+      "privacyItem2": "टेस्ट शुरू करने से पहले उचित सहमति प्राप्त करें",
+      "privacyItem3": "डेटा सुरक्षा नियमों (GDPR, आदि) का पालन करें",
+      "privacyItem4": "रिकॉर्ड किए गए डेटा का सुरक्षित भंडारण और हैंडलिंग"
+    },
+    "preview": {
+      "taskSummary": "टास्क सारांश",
+      "untitledTask": "शीर्षक रहित टास्क",
+      "description": "विवरण:",
+      "noDescription": "कोई विवरण प्रदान नहीं किया गया",
+      "participantTip": "प्रतिभागी सुझाव:",
+      "taskUrl": "टास्क URL:",
+      "answerType": "उत्तर प्रकार:",
+      "recordingFeatures": "रिकॉर्डिंग सुविधाएं:",
+      "postTaskQuestion": "टास्क-पश्चात प्रश्न:",
+      "postTaskForm": "टास्क-पश्चात फॉर्म:",
+      "externalForm": "बाहरी फॉर्म",
+      "taskReady": "टास्क तैयार!",
+      "reviewRequired": "समीक्षा आवश्यक",
+      "taskReadyMessage": "आपकी टास्क ठीक से कॉन्फ़िगर की गई है और आपके अध्ययन में उपयोग के लिए तैयार है।",
+      "reviewRequiredMessage": "कृपया पिछले चरणों की समीक्षा करें ताकि सभी आवश्यक फ़ील्ड पूर्ण हों।",
+      "noTypeSelected": "कोई प्रकार चयनित नहीं",
+      "answerTypes": {
+        "noAnswer": "कोई उत्तर आवश्यक नहीं",
+        "textArea": "टेक्स्ट क्षेत्र",
+        "postTest": "टेस्ट-पश्चात प्रश्न",
+        "postForm": "बाहरी फॉर्म",
+        "nasaTlx": "NASA-TLX",
+        "sus": "सिस्टम उपयोगिता स्केल",
+        "tam1": "TAM-1 (मूल)",
+        "tam2": "TAM-2 (विस्तारित)",
+        "tam3": "TAM-3 (व्यापक)",
+        "sart": "SART"
+      },
+      "recordingLabels": {
+        "eyeTracking": "आई ट्रैकिंग",
+        "screenRecording": "स्क्रीन रिकॉर्डिंग",
+        "camera": "कैमरा",
+        "audio": "ऑडियो"
+      }
     }
   },
   "UserTestView": {
@@ -1156,7 +1090,10 @@
       "testConfigErrorMessage": "इस परीक्षण में कोई कार्य कॉन्फ़िगर नहीं किया गया है। कृपया व्यवस्थापक से संपर्क करें।",
       "consentDecline": "सहमति अस्वीकार करने के कारण परीक्षण समाप्त हो गया। आपके समय के लिए धन्यवाद।",
       "sessionTooFar": "सत्र अभी दूर है",
-      "sessionTooFarMessage": "निर्धारित सत्र 24 घंटे से अधिक दूर है। कृपया सत्र की तिथि के करीब वापस आएं।"
+      "sessionTooFarMessage": "निर्धारित सत्र 24 घंटे से अधिक दूर है। कृपया सत्र की तिथि के करीब वापस आएं।",
+      "moderatorDisconnected": "मॉडरेटर डिस्कनेक्ट हो गया",
+      "moderatorDisconnectedInlineMessage": "मॉडरेटर ऑफलाइन लगता है। कृपया प्रतीक्षा करें।",
+      "moderatorDisconnectedMessage": "मॉडरेटर ऑफलाइन लगता है। कृपया प्रतीक्षा करें या सहायता से संपर्क करें।"
     },
     "stepper": {
       "consent": "सहमति",
@@ -1166,7 +1103,9 @@
       "postTest": "पोस्ट-टेस्ट",
       "completion": "पूर्णता",
       "taskX": "कार्य {num}",
-      "form": "फ़ॉर्म"
+      "form": "फ़ॉर्म",
+      "preTasks": "पूर्व-कार्य",
+      "welcome": "स्वागत"
     },
     "TaskStep": {
       "preview": "कार्य पूर्वावलोकन",
@@ -1238,15 +1177,50 @@
         "proceedToNextStep": "अगले स्टेप पर जाएँ",
         "activeCall": "सक्रिय कॉल",
         "yourVideo": "आपका वीडियो ({name})",
-        "yourPreview": "आपका प्रीव्यू ({name})"
+        "yourPreview": "आपका प्रीव्यू ({name})",
+        "cameraOff": "कैमरा बंद है",
+        "disableCamera": "कैमरा बंद करें",
+        "enableCamera": "कैमरा चालू करें",
+        "enableMicrophone": "माइक्रोफोन चालू करें",
+        "joinRoomControlsMoved": "रूम जॉइन करने के कंट्रोल अब ऊपर मुख्य इंटरफेस में हैं",
+        "muteMicrophone": "माइक्रोफोन म्यूट करें",
+        "observatorMode": "ऑब्जर्वर मोड",
+        "observatorNoSend": "आप अपना वीडियो भेजे बिना सभी वीडियो फ़ीड देख सकेंगे।",
+        "onlyModeratorCanChangeSteps": "केवल मॉडरेटर चरण बदल सकता है",
+        "participants": "प्रतिभागी",
+        "sessionControl": "सेशन कंट्रोल",
+        "settings": "सेटिंग्स",
+        "shareScreen": "स्क्रीन साझा करें",
+        "sharingScreen": "स्क्रीन साझा की जा रही है",
+        "stopSharingScreen": "स्क्रीन साझा करना रोकें",
+        "testProgress": "टेस्ट प्रगति",
+        "toolsPanel": "टूल्स पैनल",
+        "waitingForModerator": "मॉडरेटर की प्रतीक्षा हो रही है...",
+        "waitingForModeratorDetail": "मॉडरेटर के रूम खोलते ही वीडियो कॉल अपने आप शुरू हो जाएगी।",
+        "waitingForParticipants": "प्रतिभागियों की प्रतीक्षा हो रही है...",
+        "waitingModeratorStart": "मॉडरेटर द्वारा सत्र शुरू करने की प्रतीक्षा हो रही है..."
       },
       "buttons": {
         "endCall": "कॉल समाप्त करें",
-        "leaveCall": "कॉल छोड़ें"
+        "leaveCall": "कॉल छोड़ें",
+        "joinVideoCall": "वीडियो कॉल में शामिल हों",
+        "maybeLater": "शायद बाद में",
+        "openRoom": "रूम खोलें"
       },
       "tooltips": {
         "endVideoCallSession": "वीडियो कॉल सत्र समाप्त करें",
-        "leaveVideoCallSession": "वीडियो कॉल सत्र छोड़ें"
+        "leaveVideoCallSession": "वीडियो कॉल सत्र छोड़ें",
+        "hidePanel": "पैनल छिपाएं",
+        "hideSteps": "चरण छिपाएं",
+        "muteMicrophone": "माइक्रोफोन म्यूट करें",
+        "shareScreen": "स्क्रीन साझा करें",
+        "showPanel": "पैनल दिखाएं",
+        "showSteps": "चरण दिखाएं",
+        "startVideoCallSession": "वीडियो कॉल सत्र शुरू करें",
+        "stopSharingScreen": "स्क्रीन साझा करना रोकें",
+        "turnOffCamera": "कैमरा बंद करें",
+        "turnOnCamera": "कैमरा चालू करें",
+        "unmuteMicrophone": "माइक्रोफोन अनम्यूट करें"
       },
       "participants": {
         "cameraOn": "कैमरा चालू",
@@ -1254,8 +1228,15 @@
         "microphoneOn": "माइक्रोफोन चालू",
         "microphoneOff": "माइक्रोफोन बंद",
         "roles": {
-          "evaluator": "मूल्यांकनकर्ता"
-        }
+          "evaluator": "मूल्यांकनकर्ता",
+          "moderator": "मॉडरेटर",
+          "observator": "ऑब्जर्वर"
+        },
+        "connected": "कनेक्टेड",
+        "disconnected": "डिस्कनेक्टेड",
+        "participant": "प्रतिभागी",
+        "unknown": "अज्ञात",
+        "you": "आप"
       },
       "stepDescriptions": {
         "welcome": "स्वागत संदेश",
@@ -1265,9 +1246,16 @@
         "tasks": "कार्य चरण",
         "postTest": "पोस्ट-टेस्ट चरण",
         "completion": "पूर्णता चरण"
+      },
+      "dialog": {
+        "description": "मॉडरेटर ने वीडियो कॉल शुरू कर दी है। क्या आप अभी जुड़ना चाहते हैं?",
+        "title": "वीडियो कॉल शुरू हो गई"
+      },
+      "task": {
+        "defaultTaskName": "उपयोगकर्ता कार्य {index}",
+        "taskLabel": "कार्य {index}: {name}"
       }
     },
-
     "buttons": {
       "done": "समाप्त"
     },
@@ -1276,7 +1264,8 @@
       "answerSaved": "उत्तर सफलतापूर्वक सहेजा गया।",
       "taskCompletedSuccess": "कार्य \"{taskName}\" सफलतापूर्वक पूरा हो गया!",
       "useSessionLinkModerated": "अपने मॉडरेटेड टेस्ट तक पहुँचने के लिए सेशन लिंक का उपयोग करें!",
-      "useSessionLink": "टेस्ट तक पहुँचने के लिए सेशन लिंक का उपयोग करें"
+      "useSessionLink": "टेस्ट तक पहुँचने के लिए सेशन लिंक का उपयोग करें",
+      "moderatorEndedSession": "मॉडरेटर ने सत्र समाप्त कर दिया है।"
     },
     "errors": {
       "noAnswerData": "कोई उत्तर डेटा नहीं मिला।",
@@ -1547,6 +1536,18 @@
         "manualAccessibility": "मैनुअल एक्सेसिबिलिटी",
         "automaticAccessibility": "स्वचालित एक्सेसिबिलिटी",
         "all": "सभी"
+      },
+      "unsupportedPreviewType": "Unsupported template type for preview.",
+      "config": {
+        "title": "Template Config",
+        "ownerOnly": "Configuration editing is restricted to template owner.",
+        "version": "Version",
+        "visibility": "Visibility",
+        "owner": "Owner",
+        "public": "Public",
+        "private": "Private",
+        "saved": "Template configuration updated successfully",
+        "saveError": "Failed to update template configuration"
       }
     },
     "createTest": {
@@ -1589,7 +1590,9 @@
     "editTest": {
       "title": "परीक्षण संपादित करें",
       "description": "अपने परीक्षण की सेटिंग्स और प्राथमिकताओं को अनुकूलित करें।",
-      "updatedTest": "परीक्षण सफलतापूर्वक अपडेट किया गया"
+      "updatedTest": "परीक्षण सफलतापूर्वक अपडेट किया गया",
+      "previewTitle": "Preview test",
+      "previewDescription": "Review the test in read-only mode."
     },
     "cooperators": {
       "invitationSent": "आमंत्रण सफलतापूर्वक भेजा गया"

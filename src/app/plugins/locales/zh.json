@@ -599,7 +599,8 @@
       "changeWeights": "请注意，更改启发式的顺序不会自动更改权重，您必须手动更改。",
       "noDescriptions": "没有可用的描述",
       "startAddingQuestions": "从此启发式添加第一个问题开始",
-      "cantDeleteAllQuestions": "抱歉，您不能从启发式中删除所有问题"
+      "cantDeleteAllQuestions": "抱歉，您不能从启发式中删除所有问题",
+      "studyHasAnswers": "This study has answers"
     },
     "validation": {
       "nameRequired": "名称是必填项",
@@ -706,7 +707,9 @@
       "options": "选项",
       "weights": "权重",
       "settings": "设置"
-    }
+    },
+    "previewPageTitle": "Preview test",
+    "previewPageSubtitle": "Review the test configuration in read-only mode"
   },
   "HeuristicsTestAnswer": {
     "titles": {
@@ -955,125 +958,6 @@
       "sart": "情境意识评估技术 - 测量情境意识"
     },
     "answerTypePreview": {
-      "noAnswer": {
-        "message": "任务完成！无需额外反馈。"
-      },
-      "textArea": {
-        "placeholder": "参与者将在此处提供反馈...",
-        "submitButton": "提交反馈"
-      },
-      "postTest": {
-        "title": "任务后问题",
-        "q1": "1. 您如何评价此任务的难度？",
-        "q2": "2. 有其他补充意见吗？",
-        "feedbackPlaceholder": "可选反馈..."
-      },
-      "postForm": {
-        "title": "外部表单",
-        "notice": "参与者将在任务后被重定向以填写外部表单。",
-        "button": "打开外部表单"
-      },
-      "nasaTlx": {
-        "title": "NASA任务负荷指数",
-        "mental": "脑力需求",
-        "physical": "体力需求",
-        "range": "低 - 高",
-        "moreDimensions": "+ 另外4个维度"
-      },
-      "sus": {
-        "title": "系统可用性量表",
-        "q1": "1. 我认为我会经常使用这个系统。",
-        "disagree": "非常不同意",
-        "agree": "非常同意",
-        "moreStatements": "+ 另外9条陈述"
-      },
-      "sart": {
-        "title": "情境感知评估技术",
-        "instability": "情境不稳定性",
-        "complexity": "情境复杂性",
-        "stable": "非常稳定",
-        "unstable": "非常不稳定",
-        "simple": "非常简单",
-        "complex": "非常复杂",
-        "moreDimensions": "+ 另外8个SART维度"
-      },
-      "tam": {
-        "tam1": "TAM-1：技术接受模型（基础）",
-        "tam2": "TAM-2：技术接受模型（扩展）",
-        "tam3": "TAM-3：技术接受模型（综合）",
-        "items2": "2个维度共10个项目",
-        "items7": "7个维度共25个项目",
-        "items13": "13个维度共39个项目",
-        "pu": "感知有用性",
-        "eu": "感知易用性",
-        "sn": "主观规范",
-        "image": "形象",
-        "jr": "工作相关性",
-        "oq": "产出质量",
-        "rd": "结果可演示性",
-        "se": "计算机自我效能感",
-        "ec": "外部控制",
-        "anxiety": "焦虑",
-        "play": "趣味性",
-        "enjoy": "愉悦感",
-        "ou": "客观可用性",
-        "q1": "1. 使用该系统能提高我的工作绩效。",
-        "q6": "6. 该系统易于使用。",
-        "likertNote": "参与者在 5 点李克特量表上对 {count} 个陈述进行评分"
-      },
-      "selectionPrompt": "选择答案类型以查看预览"
-    },
-    "advanced": {
-      "stepTitle": "步骤 3：高级选项",
-      "stepDescription": "启用额外的数据收集方法以获得更深入的见解。",
-      "eyeTrackingDesc": "追踪参与者在任务期间看向哪里。",
-      "screenRecordDesc": "记录参与者的屏幕活动。",
-      "cameraDesc": "记录参与者的面部表情和反应。",
-      "audioDesc": "记录参与者的口头反馈。",
-      "privacyNotice": "隐私声明",
-      "privacyText": "录制功能需要参与者的明确同意。",
-      "privacyItem1": "清楚地告知参与者数据收集情况",
-      "privacyItem2": "在开始测试前获得适当同意",
-      "privacyItem3": "遵守数据保护法规（GDPR 等）",
-      "privacyItem4": "安全存储和处理录制的数据"
-    },
-    "preview": {
-      "taskSummary": "任务摘要",
-      "untitledTask": "未命名任务",
-      "description": "描述：",
-      "noDescription": "未提供描述",
-      "participantTip": "参与者提示：",
-      "taskUrl": "任务 URL：",
-      "answerType": "回答类型：",
-      "recordingFeatures": "录制功能：",
-      "postTaskQuestion": "任务后问题：",
-      "postTaskForm": "任务后表单：",
-      "externalForm": "外部表单",
-      "taskReady": "任务准备就绪！",
-      "reviewRequired": "需要审核",
-      "taskReadyMessage": "您的任务已正确配置，可以在研究中使用了。",
-      "reviewRequiredMessage": "请检查之前的步骤，确保所有必填字段已填写完毕。",
-      "noTypeSelected": "未选择类型",
-      "answerTypes": {
-        "noAnswer": "无需回答",
-        "textArea": "文本区域",
-        "postTest": "测后问题",
-        "postForm": "外部表单",
-        "nasaTlx": "NASA-TLX",
-        "sus": "系统可用性量表",
-        "tam1": "TAM-1（基本）",
-        "tam2": "TAM-2（扩展）",
-        "tam3": "TAM-3（综合）",
-        "sart": "SART"
-      },
-      "recordingLabels": {
-        "eyeTracking": "眼动追踪",
-        "screenRecording": "屏幕录制",
-        "camera": "摄像头",
-        "audio": "音频"
-      }
-    },
-    "answerTypePreview": {
       "taskCompleted": "任务完成！无需额外反馈。",
       "participantsFeedbackHere": "参与者将在此处提供反馈...",
       "submitFeedback": "提交反馈",
@@ -1128,6 +1012,56 @@
       "playfulness": "趣味性",
       "enjoyment": "愉悦感",
       "objectiveUsability": "客观可用性"
+    },
+    "advanced": {
+      "stepTitle": "步骤 3：高级选项",
+      "stepDescription": "启用额外的数据收集方法以获得更深入的见解。",
+      "eyeTrackingDesc": "追踪参与者在任务期间看向哪里。",
+      "screenRecordDesc": "记录参与者的屏幕活动。",
+      "cameraDesc": "记录参与者的面部表情和反应。",
+      "audioDesc": "记录参与者的口头反馈。",
+      "privacyNotice": "隐私声明",
+      "privacyText": "录制功能需要参与者的明确同意。",
+      "privacyItem1": "清楚地告知参与者数据收集情况",
+      "privacyItem2": "在开始测试前获得适当同意",
+      "privacyItem3": "遵守数据保护法规（GDPR 等）",
+      "privacyItem4": "安全存储和处理录制的数据"
+    },
+    "preview": {
+      "taskSummary": "任务摘要",
+      "untitledTask": "未命名任务",
+      "description": "描述：",
+      "noDescription": "未提供描述",
+      "participantTip": "参与者提示：",
+      "taskUrl": "任务 URL：",
+      "answerType": "回答类型：",
+      "recordingFeatures": "录制功能：",
+      "postTaskQuestion": "任务后问题：",
+      "postTaskForm": "任务后表单：",
+      "externalForm": "外部表单",
+      "taskReady": "任务准备就绪！",
+      "reviewRequired": "需要审核",
+      "taskReadyMessage": "您的任务已正确配置，可以在研究中使用了。",
+      "reviewRequiredMessage": "请检查之前的步骤，确保所有必填字段已填写完毕。",
+      "noTypeSelected": "未选择类型",
+      "answerTypes": {
+        "noAnswer": "无需回答",
+        "textArea": "文本区域",
+        "postTest": "测后问题",
+        "postForm": "外部表单",
+        "nasaTlx": "NASA-TLX",
+        "sus": "系统可用性量表",
+        "tam1": "TAM-1（基本）",
+        "tam2": "TAM-2（扩展）",
+        "tam3": "TAM-3（综合）",
+        "sart": "SART"
+      },
+      "recordingLabels": {
+        "eyeTracking": "眼动追踪",
+        "screenRecording": "屏幕录制",
+        "camera": "摄像头",
+        "audio": "音频"
+      }
     }
   },
   "UserTestView": {
@@ -1156,7 +1090,10 @@
       "testConfigErrorMessage": "此测试没有配置任务。请联系管理员。",
       "consentDecline": "由于拒绝同意，测试已结束。感谢您的参与。",
       "sessionTooFar": "会话日期过远",
-      "sessionTooFarMessage": "预定的会话时间距离现在超过 24 小时。请在会话日期临近时再回来。"
+      "sessionTooFarMessage": "预定的会话时间距离现在超过 24 小时。请在会话日期临近时再回来。",
+      "moderatorDisconnected": "主持人已断开连接",
+      "moderatorDisconnectedInlineMessage": "主持人似乎离线。请稍候。",
+      "moderatorDisconnectedMessage": "主持人似乎离线。请稍候或联系支持。"
     },
     "stepper": {
       "consent": "同意",
@@ -1166,7 +1103,9 @@
       "postTest": "后测",
       "completion": "完成",
       "taskX": "任务 {num}",
-      "form": "表单"
+      "form": "表单",
+      "preTasks": "预任务",
+      "welcome": "欢迎"
     },
     "TaskStep": {
       "preview": "任务预览",
@@ -1238,15 +1177,50 @@
         "proceedToNextStep": "继续到下一步",
         "activeCall": "活跃通话",
         "yourVideo": "你的视频（{name}）",
-        "yourPreview": "你的预览（{name}）"
+        "yourPreview": "你的预览（{name}）",
+        "cameraOff": "摄像头已关闭",
+        "disableCamera": "关闭摄像头",
+        "enableCamera": "开启摄像头",
+        "enableMicrophone": "开启麦克风",
+        "joinRoomControlsMoved": "加入房间的控制已移至上方主界面",
+        "muteMicrophone": "麦克风静音",
+        "observatorMode": "观察者模式",
+        "observatorNoSend": "你可以在不发送自己视频的情况下观察所有视频流。",
+        "onlyModeratorCanChangeSteps": "只有主持人可以更改步骤",
+        "participants": "参与者",
+        "sessionControl": "会话控制",
+        "settings": "设置",
+        "shareScreen": "共享屏幕",
+        "sharingScreen": "正在共享屏幕",
+        "stopSharingScreen": "停止共享屏幕",
+        "testProgress": "测试进度",
+        "toolsPanel": "工具面板",
+        "waitingForModerator": "等待主持人...",
+        "waitingForModeratorDetail": "主持人打开房间后，视频通话将自动开始。",
+        "waitingForParticipants": "等待参与者...",
+        "waitingModeratorStart": "等待主持人开始会话..."
       },
       "buttons": {
         "endCall": "结束通话",
-        "leaveCall": "离开通话"
+        "leaveCall": "离开通话",
+        "joinVideoCall": "加入视频通话",
+        "maybeLater": "稍后再说",
+        "openRoom": "打开房间"
       },
       "tooltips": {
         "endVideoCallSession": "结束视频通话会话",
-        "leaveVideoCallSession": "离开视频通话会话"
+        "leaveVideoCallSession": "离开视频通话会话",
+        "hidePanel": "隐藏面板",
+        "hideSteps": "隐藏步骤",
+        "muteMicrophone": "麦克风静音",
+        "shareScreen": "共享屏幕",
+        "showPanel": "显示面板",
+        "showSteps": "显示步骤",
+        "startVideoCallSession": "开始视频通话会话",
+        "stopSharingScreen": "停止共享屏幕",
+        "turnOffCamera": "关闭摄像头",
+        "turnOnCamera": "开启摄像头",
+        "unmuteMicrophone": "取消麦克风静音"
       },
       "participants": {
         "cameraOn": "摄像头开启",
@@ -1254,8 +1228,15 @@
         "microphoneOn": "麦克风开启",
         "microphoneOff": "麦克风关闭",
         "roles": {
-          "evaluator": "评估者"
-        }
+          "evaluator": "评估者",
+          "moderator": "主持人",
+          "observator": "观察者"
+        },
+        "connected": "已连接",
+        "disconnected": "已断开",
+        "participant": "参与者",
+        "unknown": "未知",
+        "you": "你"
       },
       "stepDescriptions": {
         "welcome": "欢迎信息",
@@ -1265,9 +1246,16 @@
         "tasks": "任务阶段",
         "postTest": "后测阶段",
         "completion": "完成阶段"
+      },
+      "dialog": {
+        "description": "主持人已开始视频通话。你想现在加入吗？",
+        "title": "视频通话已开始"
+      },
+      "task": {
+        "defaultTaskName": "用户任务 {index}",
+        "taskLabel": "任务 {index}: {name}"
       }
     },
-
     "buttons": {
       "done": "完成"
     },
@@ -1276,7 +1264,8 @@
       "answerSaved": "答案保存成功。",
       "taskCompletedSuccess": "任务\"{taskName}\"已成功完成！",
       "useSessionLinkModerated": "使用会话链接访问您的主持测试！",
-      "useSessionLink": "使用会话链接访问测试"
+      "useSessionLink": "使用会话链接访问测试",
+      "moderatorEndedSession": "主持人已结束会话。"
     },
     "errors": {
       "noAnswerData": "未找到答案数据。",
@@ -1547,6 +1536,18 @@
         "manualAccessibility": "人工无障碍性",
         "automaticAccessibility": "自动无障碍性",
         "all": "全部"
+      },
+      "unsupportedPreviewType": "Unsupported template type for preview.",
+      "config": {
+        "title": "Template Config",
+        "ownerOnly": "Configuration editing is restricted to template owner.",
+        "version": "Version",
+        "visibility": "Visibility",
+        "owner": "Owner",
+        "public": "Public",
+        "private": "Private",
+        "saved": "Template configuration updated successfully",
+        "saveError": "Failed to update template configuration"
       }
     },
     "createTest": {
@@ -1589,7 +1590,9 @@
     "editTest": {
       "title": "编辑测试",
       "description": "自定义您的测试设置和首选项。",
-      "updatedTest": "测试更新成功"
+      "updatedTest": "测试更新成功",
+      "previewTitle": "Preview test",
+      "previewDescription": "Review the test in read-only mode."
     },
     "cooperators": {
       "invitationSent": "邀请发送成功"
@@ -1667,7 +1670,11 @@
     "test": "测试",
     "testType_1": {
       "testTitle": "可用性启发式",
-      "text": ["可用性百分比", "最终报告PDF", "邀请专家评估您的应用程序"]
+      "text": [
+        "可用性百分比",
+        "最终报告PDF",
+        "邀请专家评估您的应用程序"
+      ]
     },
     "testType_2": {
       "testTitle": "用户可用性",
@@ -1681,12 +1688,20 @@
       "SelfTest": {
         "title": "自主测试",
         "type": "无主持",
-        "text": ["在空闲时间回答", "增强的答案分析", "任务自定义"]
+        "text": [
+          "在空闲时间回答",
+          "增强的答案分析",
+          "任务自定义"
+        ]
       },
       "LiveTest": {
         "title": "实时测试",
         "type": "有主持",
-        "text": ["摄像头、音频和屏幕录制", "增强的答案分析", "有主持的实时测试"]
+        "text": [
+          "摄像头、音频和屏幕录制",
+          "增强的答案分析",
+          "有主持的实时测试"
+        ]
       }
     }
   },
@@ -1959,12 +1974,20 @@
       "blank": {
         "title": "从空白研究开始",
         "description": "从头开始创建研究，完全可定制",
-        "features": ["完全可定制", "从头构建", "对设置的完全控制"]
+        "features": [
+          "完全可定制",
+          "从头构建",
+          "对设置的完全控制"
+        ]
       },
       "template": {
         "title": "从模板创建",
         "description": "使用预构建的模板快速开始",
-        "features": ["快速设置", "预配置设置", "包含最佳实践"]
+        "features": [
+          "快速设置",
+          "预配置设置",
+          "包含最佳实践"
+        ]
       }
     },
     "details": {

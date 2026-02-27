@@ -599,7 +599,8 @@
       "changeWeights": "Notez qu'en changeant l'ordre des heuristiques, les poids NE changent PAS automatiquement, vous devez les modifier manuellement.",
       "noDescriptions": "Aucune description disponible",
       "startAddingQuestions": "Commencez par ajouter votre première question à cette heuristique",
-      "cantDeleteAllQuestions": "Désolé, vous ne pouvez pas supprimer toutes les questions d'une heuristique"
+      "cantDeleteAllQuestions": "Désolé, vous ne pouvez pas supprimer toutes les questions d'une heuristique",
+      "studyHasAnswers": "This study has answers"
     },
     "validation": {
       "nameRequired": "Le nom est obligatoire",
@@ -706,7 +707,9 @@
       "options": "Options",
       "weights": "Poids",
       "settings": "Paramètres"
-    }
+    },
+    "previewPageTitle": "Preview test",
+    "previewPageSubtitle": "Review the test configuration in read-only mode"
   },
   "HeuristicsTestAnswer": {
     "titles": {
@@ -955,125 +958,6 @@
       "sart": "Technique d'Évaluation de la Conscience Situationnelle - mesure la conscience situationnelle"
     },
     "answerTypePreview": {
-      "noAnswer": {
-        "message": "Tâche terminée ! Aucun retour supplémentaire requis."
-      },
-      "textArea": {
-        "placeholder": "Les participants fourniront leurs commentaires ici...",
-        "submitButton": "Soumettre les Commentaires"
-      },
-      "postTest": {
-        "title": "Questions Post-Tâche",
-        "q1": "1. Comment évalueriez-vous la difficulté de cette tâche ?",
-        "q2": "2. Des commentaires supplémentaires ?",
-        "feedbackPlaceholder": "Commentaires optionnels..."
-      },
-      "postForm": {
-        "title": "Formulaire Externe",
-        "notice": "Les participants seront redirigés pour remplir un formulaire externe après la tâche.",
-        "button": "Ouvrir le Formulaire Externe"
-      },
-      "nasaTlx": {
-        "title": "Indice de Charge de Travail NASA",
-        "mental": "Exigence Mentale",
-        "physical": "Exigence Physique",
-        "range": "Faible - Élevé",
-        "moreDimensions": "+ 4 dimensions supplémentaires"
-      },
-      "sus": {
-        "title": "Échelle d'Utilisabilité du Système",
-        "q1": "1. Je pense que j'aimerais utiliser ce système fréquemment.",
-        "disagree": "Pas du Tout d'Accord",
-        "agree": "Tout à Fait d'Accord",
-        "moreStatements": "+ 9 déclarations supplémentaires"
-      },
-      "sart": {
-        "title": "Technique d'Évaluation de la Conscience Situationnelle",
-        "instability": "Instabilité de la Situation",
-        "complexity": "Complexité de la Situation",
-        "stable": "Très Stable",
-        "unstable": "Très Instable",
-        "simple": "Très Simple",
-        "complex": "Très Complexe",
-        "moreDimensions": "+ 8 dimensions SART supplémentaires"
-      },
-      "tam": {
-        "tam1": "TAM-1 : Modèle d'Acceptation de la Technologie (Basique)",
-        "tam2": "TAM-2 : Modèle d'Acceptation de la Technologie (Étendu)",
-        "tam3": "TAM-3 : Modèle d'Acceptation de la Technologie (Complet)",
-        "items2": "10 éléments sur 2 dimensions",
-        "items7": "25 éléments sur 7 dimensions",
-        "items13": "39 éléments sur 13 dimensions",
-        "pu": "Utilité Perçue",
-        "eu": "Facilité d'Utilisation Perçue",
-        "sn": "Norme Subjective",
-        "image": "Image",
-        "jr": "Pertinence pour le Poste",
-        "oq": "Qualité des Résultats",
-        "rd": "Démonstrabilité des Résultats",
-        "se": "Auto-efficacité Informatique",
-        "ec": "Contrôle Externe",
-        "anxiety": "Anxiété",
-        "play": "Ludisme",
-        "enjoy": "Plaisir",
-        "ou": "Utilisabilité Objective",
-        "q1": "1. L'utilisation du système améliore mes performances au travail.",
-        "q6": "6. Le système est facile à utiliser.",
-        "likertNote": "Les participants évaluent {count} affirmations sur une échelle de Likert en 5 points"
-      },
-      "selectionPrompt": "Sélectionnez un type de réponse pour voir l'aperçu"
-    },
-    "advanced": {
-      "stepTitle": "Étape 3 : Options Avancées",
-      "stepDescription": "Activez des méthodes de collecte de données supplémentaires pour obtenir des informations plus approfondies.",
-      "eyeTrackingDesc": "Suivez où les participants regardent pendant la tâche.",
-      "screenRecordDesc": "Enregistrez l'activité d'écran du participant.",
-      "cameraDesc": "Enregistrez les expressions faciales et réactions du participant.",
-      "audioDesc": "Enregistrez les commentaires verbaux du participant.",
-      "privacyNotice": "Avis de Confidentialité",
-      "privacyText": "Les fonctionnalités d'enregistrement nécessitent le consentement explicite des participants.",
-      "privacyItem1": "Informez clairement les participants sur la collecte de données",
-      "privacyItem2": "Obtenez un consentement approprié avant de commencer le test",
-      "privacyItem3": "Suivez les réglementations sur la protection des données (RGPD, etc.)",
-      "privacyItem4": "Stockage et traitement sécurisés des données enregistrées"
-    },
-    "preview": {
-      "taskSummary": "Résumé de la Tâche",
-      "untitledTask": "Tâche sans Titre",
-      "description": "Description :",
-      "noDescription": "Aucune description fournie",
-      "participantTip": "Conseil au Participant :",
-      "taskUrl": "URL de la Tâche :",
-      "answerType": "Type de Réponse :",
-      "recordingFeatures": "Fonctionnalités d'Enregistrement :",
-      "postTaskQuestion": "Question Post-Tâche :",
-      "postTaskForm": "Formulaire Post-Tâche :",
-      "externalForm": "Formulaire Externe",
-      "taskReady": "Tâche Prête !",
-      "reviewRequired": "Révision Requise",
-      "taskReadyMessage": "Votre tâche est correctement configurée et prête à être utilisée dans votre étude.",
-      "reviewRequiredMessage": "Veuillez revoir les étapes précédentes pour vous assurer que tous les champs requis sont remplis.",
-      "noTypeSelected": "Aucun Type Sélectionné",
-      "answerTypes": {
-        "noAnswer": "Aucune Réponse Requise",
-        "textArea": "Zone de Texte",
-        "postTest": "Questions Post-Test",
-        "postForm": "Formulaire Externe",
-        "nasaTlx": "NASA-TLX",
-        "sus": "Échelle d'Utilisabilité du Système",
-        "tam1": "TAM-1 (Base)",
-        "tam2": "TAM-2 (Étendu)",
-        "tam3": "TAM-3 (Complet)",
-        "sart": "SART"
-      },
-      "recordingLabels": {
-        "eyeTracking": "Suivi Oculaire",
-        "screenRecording": "Enregistrement d'Écran",
-        "camera": "Caméra",
-        "audio": "Audio"
-      }
-    },
-    "answerTypePreview": {
       "taskCompleted": "Tâche terminée ! Aucun retour supplémentaire requis.",
       "participantsFeedbackHere": "Les participants fourniront leurs commentaires ici...",
       "submitFeedback": "Soumettre les Commentaires",
@@ -1128,6 +1012,56 @@
       "playfulness": "Caractère Ludique",
       "enjoyment": "Plaisir",
       "objectiveUsability": "Usabilité Objective"
+    },
+    "advanced": {
+      "stepTitle": "Étape 3 : Options Avancées",
+      "stepDescription": "Activez des méthodes de collecte de données supplémentaires pour obtenir des informations plus approfondies.",
+      "eyeTrackingDesc": "Suivez où les participants regardent pendant la tâche.",
+      "screenRecordDesc": "Enregistrez l'activité d'écran du participant.",
+      "cameraDesc": "Enregistrez les expressions faciales et réactions du participant.",
+      "audioDesc": "Enregistrez les commentaires verbaux du participant.",
+      "privacyNotice": "Avis de Confidentialité",
+      "privacyText": "Les fonctionnalités d'enregistrement nécessitent le consentement explicite des participants.",
+      "privacyItem1": "Informez clairement les participants sur la collecte de données",
+      "privacyItem2": "Obtenez un consentement approprié avant de commencer le test",
+      "privacyItem3": "Suivez les réglementations sur la protection des données (RGPD, etc.)",
+      "privacyItem4": "Stockage et traitement sécurisés des données enregistrées"
+    },
+    "preview": {
+      "taskSummary": "Résumé de la Tâche",
+      "untitledTask": "Tâche sans Titre",
+      "description": "Description :",
+      "noDescription": "Aucune description fournie",
+      "participantTip": "Conseil au Participant :",
+      "taskUrl": "URL de la Tâche :",
+      "answerType": "Type de Réponse :",
+      "recordingFeatures": "Fonctionnalités d'Enregistrement :",
+      "postTaskQuestion": "Question Post-Tâche :",
+      "postTaskForm": "Formulaire Post-Tâche :",
+      "externalForm": "Formulaire Externe",
+      "taskReady": "Tâche Prête !",
+      "reviewRequired": "Révision Requise",
+      "taskReadyMessage": "Votre tâche est correctement configurée et prête à être utilisée dans votre étude.",
+      "reviewRequiredMessage": "Veuillez revoir les étapes précédentes pour vous assurer que tous les champs requis sont remplis.",
+      "noTypeSelected": "Aucun Type Sélectionné",
+      "answerTypes": {
+        "noAnswer": "Aucune Réponse Requise",
+        "textArea": "Zone de Texte",
+        "postTest": "Questions Post-Test",
+        "postForm": "Formulaire Externe",
+        "nasaTlx": "NASA-TLX",
+        "sus": "Échelle d'Utilisabilité du Système",
+        "tam1": "TAM-1 (Base)",
+        "tam2": "TAM-2 (Étendu)",
+        "tam3": "TAM-3 (Complet)",
+        "sart": "SART"
+      },
+      "recordingLabels": {
+        "eyeTracking": "Suivi Oculaire",
+        "screenRecording": "Enregistrement d'Écran",
+        "camera": "Caméra",
+        "audio": "Audio"
+      }
     }
   },
   "UserTestView": {
@@ -1156,7 +1090,10 @@
       "testConfigErrorMessage": "Ce test n'a pas de tâches configurées. Veuillez contacter l'administrateur.",
       "consentDecline": "Test terminé en raison du refus du consentement. Merci pour votre temps.",
       "sessionTooFar": "Session trop éloignée",
-      "sessionTooFarMessage": "La session prévue est dans plus de 24 heures. Veuillez revenir plus près de la date de la session."
+      "sessionTooFarMessage": "La session prévue est dans plus de 24 heures. Veuillez revenir plus près de la date de la session.",
+      "moderatorDisconnected": "Moderateur deconnecte",
+      "moderatorDisconnectedInlineMessage": "Le moderateur semble hors ligne. Veuillez patienter.",
+      "moderatorDisconnectedMessage": "Le moderateur semble hors ligne. Veuillez patienter ou contacter le support."
     },
     "stepper": {
       "consent": "Consentement",
@@ -1166,7 +1103,9 @@
       "postTest": "Post-test",
       "completion": "Fin du test",
       "taskX": "Tâche {num}",
-      "form": "Formulaire"
+      "form": "Formulaire",
+      "preTasks": "Pre-taches",
+      "welcome": "Bienvenue"
     },
     "TaskStep": {
       "preview": "Aperçu de la tâche",
@@ -1238,15 +1177,50 @@
         "proceedToNextStep": "Passer ? l'?tape suivante",
         "activeCall": "Appel actif",
         "yourVideo": "Votre video ({name})",
-        "yourPreview": "Votre apercu ({name})"
+        "yourPreview": "Votre apercu ({name})",
+        "cameraOff": "Camera desactivee",
+        "disableCamera": "Desactiver la camera",
+        "enableCamera": "Activer la camera",
+        "enableMicrophone": "Activer le microphone",
+        "joinRoomControlsMoved": "Les controles pour rejoindre la salle sont maintenant dans l'interface principale au-dessus",
+        "muteMicrophone": "Couper le microphone",
+        "observatorMode": "Mode observateur",
+        "observatorNoSend": "Vous pourrez observer tous les flux video sans envoyer le votre.",
+        "onlyModeratorCanChangeSteps": "Seul le moderateur peut changer les etapes",
+        "participants": "Participants",
+        "sessionControl": "Controle de session",
+        "settings": "Parametres",
+        "shareScreen": "Partager l'ecran",
+        "sharingScreen": "Partage de l'ecran",
+        "stopSharingScreen": "Arreter le partage de l'ecran",
+        "testProgress": "Progression du test",
+        "toolsPanel": "Panneau des outils",
+        "waitingForModerator": "En attente du moderateur...",
+        "waitingForModeratorDetail": "L'appel video commencera automatiquement lorsque le moderateur ouvrira la salle.",
+        "waitingForParticipants": "En attente des participants...",
+        "waitingModeratorStart": "En attente du demarrage de la session par le moderateur..."
       },
       "buttons": {
         "endCall": "Terminer l'appel",
-        "leaveCall": "Quitter l'appel"
+        "leaveCall": "Quitter l'appel",
+        "joinVideoCall": "Rejoindre l'appel video",
+        "maybeLater": "Peut-etre plus tard",
+        "openRoom": "Ouvrir la salle"
       },
       "tooltips": {
         "endVideoCallSession": "Terminer la session d'appel video",
-        "leaveVideoCallSession": "Quitter la session d'appel video"
+        "leaveVideoCallSession": "Quitter la session d'appel video",
+        "hidePanel": "Masquer le panneau",
+        "hideSteps": "Masquer les etapes",
+        "muteMicrophone": "Couper le microphone",
+        "shareScreen": "Partager l'ecran",
+        "showPanel": "Afficher le panneau",
+        "showSteps": "Afficher les etapes",
+        "startVideoCallSession": "Demarrer la session d'appel video",
+        "stopSharingScreen": "Arreter le partage de l'ecran",
+        "turnOffCamera": "Desactiver la camera",
+        "turnOnCamera": "Activer la camera",
+        "unmuteMicrophone": "Activer le microphone"
       },
       "participants": {
         "cameraOn": "Cam?ra",
@@ -1254,8 +1228,15 @@
         "microphoneOn": "Micro",
         "microphoneOff": "Sans microphone",
         "roles": {
-          "evaluator": "?valuateur"
-        }
+          "evaluator": "?valuateur",
+          "moderator": "Moderateur",
+          "observator": "Observateur"
+        },
+        "connected": "Connecte",
+        "disconnected": "Deconnecte",
+        "participant": "Participant",
+        "unknown": "Inconnu",
+        "you": "Vous"
       },
       "stepDescriptions": {
         "welcome": "Introduction au test",
@@ -1265,9 +1246,16 @@
         "tasks": "T?ches de test utilisateur",
         "postTest": "Questionnaire final",
         "completion": "Test termin?"
+      },
+      "dialog": {
+        "description": "Le moderateur a demarre l'appel video. Voulez-vous rejoindre maintenant ?",
+        "title": "Appel video demarre"
+      },
+      "task": {
+        "defaultTaskName": "Tache utilisateur {index}",
+        "taskLabel": "Tache {index}: {name}"
       }
     },
-
     "buttons": {
       "done": "Terminé"
     },
@@ -1276,7 +1264,8 @@
       "answerSaved": "Réponse enregistrée avec succès.",
       "taskCompletedSuccess": "Tâche \"{taskName}\" terminée avec succès !",
       "useSessionLinkModerated": "Utilisez un lien de session pour accéder à votre test modéré !",
-      "useSessionLink": "Utilisez un lien de session pour accéder au test"
+      "useSessionLink": "Utilisez un lien de session pour accéder au test",
+      "moderatorEndedSession": "Le moderateur a termine la session."
     },
     "errors": {
       "noAnswerData": "Aucune donnée de réponse trouvée.",
@@ -1547,6 +1536,18 @@
         "manualAccessibility": "Accessibilité manuelle",
         "automaticAccessibility": "Accessibilité automatique",
         "all": "Tous"
+      },
+      "unsupportedPreviewType": "Unsupported template type for preview.",
+      "config": {
+        "title": "Template Config",
+        "ownerOnly": "Configuration editing is restricted to template owner.",
+        "version": "Version",
+        "visibility": "Visibility",
+        "owner": "Owner",
+        "public": "Public",
+        "private": "Private",
+        "saved": "Template configuration updated successfully",
+        "saveError": "Failed to update template configuration"
       }
     },
     "createTest": {
@@ -1589,7 +1590,9 @@
     "editTest": {
       "title": "Modifier le test",
       "description": "Personnalisez les paramètres et préférences de votre test.",
-      "updatedTest": "Test mis à jour avec succès"
+      "updatedTest": "Test mis à jour avec succès",
+      "previewTitle": "Preview test",
+      "previewDescription": "Review the test in read-only mode."
     },
     "cooperators": {
       "invitationSent": "Invitation envoyée avec succès"

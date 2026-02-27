@@ -599,7 +599,8 @@
       "changeWeights": "Обратите внимание, что изменение порядка эвристик НЕ изменяет веса автоматически, вы должны изменить их вручную.",
       "noDescriptions": "Описания недоступны",
       "startAddingQuestions": "Начните с добавления вашего первого вопроса к этой эвристике",
-      "cantDeleteAllQuestions": "Извините, вы не можете удалить все вопросы из эвристики"
+      "cantDeleteAllQuestions": "Извините, вы не можете удалить все вопросы из эвристики",
+      "studyHasAnswers": "This study has answers"
     },
     "validation": {
       "nameRequired": "Имя обязательно",
@@ -706,7 +707,9 @@
       "options": "Варианты",
       "weights": "Веса",
       "settings": "Настройки"
-    }
+    },
+    "previewPageTitle": "Preview test",
+    "previewPageSubtitle": "Review the test configuration in read-only mode"
   },
   "HeuristicsTestAnswer": {
     "titles": {
@@ -955,125 +958,6 @@
       "sart": "Техника оценки ситуационной осведомлённости - измеряет ситуационную осведомлённость"
     },
     "answerTypePreview": {
-      "noAnswer": {
-        "message": "Задание выполнено! Дополнительная обратная связь не требуется."
-      },
-      "textArea": {
-        "placeholder": "Участники предоставят свои отзывы здесь...",
-        "submitButton": "Отправить отзыв"
-      },
-      "postTest": {
-        "title": "Вопросы после задания",
-        "q1": "1. Как бы вы оценили сложность этого задания?",
-        "q2": "2. Есть дополнительные комментарии?",
-        "feedbackPlaceholder": "Необязательный отзыв..."
-      },
-      "postForm": {
-        "title": "Внешняя форма",
-        "notice": "Участники будут перенаправлены для заполнения внешней формы после задания.",
-        "button": "Открыть внешнюю форму"
-      },
-      "nasaTlx": {
-        "title": "Индекс нагрузки задачи NASA",
-        "mental": "Умственная нагрузка",
-        "physical": "Физическая нагрузка",
-        "range": "Низкий - Высокий",
-        "moreDimensions": "+ еще 4 измерения"
-      },
-      "sus": {
-        "title": "Шкала удобства использования системы",
-        "q1": "1. Я думаю, что мне хотелось бы использовать эту систему часто.",
-        "disagree": "Категорически не согласен",
-        "agree": "Полностью согласен",
-        "moreStatements": "+ еще 9 утверждений"
-      },
-      "sart": {
-        "title": "Техника оценки ситуационной осведомленности",
-        "instability": "Нестабильность ситуации",
-        "complexity": "Сложность ситуации",
-        "stable": "Очень стабильно",
-        "unstable": "Очень нестабильно",
-        "simple": "Очень просто",
-        "complex": "Очень сложно",
-        "moreDimensions": "+ еще 8 измерений SART"
-      },
-      "tam": {
-        "tam1": "TAM-1: Модель принятия технологий (базовая)",
-        "tam2": "TAM-2: Модель принятия технологий (расширенная)",
-        "tam3": "TAM-3: Модель принятия технологий (комплексная)",
-        "items2": "10 пунктов по 2 измерениям",
-        "items7": "25 пунктов по 7 измерениям",
-        "items13": "39 пунктов по 13 измерениям",
-        "pu": "Воспринимаемая Полезность",
-        "eu": "Воспринимаемая Легкость Использования",
-        "sn": "Субъективная Норма",
-        "image": "Изображение",
-        "jr": "Актуальность для Работы",
-        "oq": "Качество Результата",
-        "rd": "Демонстрируемость Результата",
-        "se": "Компьютерная Самоэффективность",
-        "ec": "Внешний Контроль",
-        "anxiety": "Тревожность",
-        "play": "Игривость",
-        "enjoy": "Удовольствие",
-        "ou": "Объективное Юзабилити",
-        "q1": "1. Использование системы повышает мою производительность труда.",
-        "q6": "6. Системой легко пользоваться.",
-        "likertNote": "Участники оценивают {count} утверждений по 5-балльной шкале Лайкерта"
-      },
-      "selectionPrompt": "Выберите тип ответа для просмотра предварительного показа"
-    },
-    "advanced": {
-      "stepTitle": "Шаг 3: Расширенные опции",
-      "stepDescription": "Включите дополнительные методы сбора данных для получения более глубоких инсайтов.",
-      "eyeTrackingDesc": "Отслеживайте, куда смотрят участники во время задачи.",
-      "screenRecordDesc": "Записывайте экранную активность участника.",
-      "cameraDesc": "Записывайте выражения лица и реакции участника.",
-      "audioDesc": "Записывайте устную обратную связь участника.",
-      "privacyNotice": "Уведомление о конфиденциальности",
-      "privacyText": "Функции записи требуют явного согласия участников.",
-      "privacyItem1": "Чётко информируйте участников о сборе данных",
-      "privacyItem2": "Получите надлежащее согласие перед началом теста",
-      "privacyItem3": "Соблюдайте правила защиты данных (GDPR и т.д.)",
-      "privacyItem4": "Безопасное хранение и обработка записанных данных"
-    },
-    "preview": {
-      "taskSummary": "Сводка по задаче",
-      "untitledTask": "Задача без названия",
-      "description": "Описание:",
-      "noDescription": "Описание не предоставлено",
-      "participantTip": "Подсказка участнику:",
-      "taskUrl": "URL задачи:",
-      "answerType": "Тип ответа:",
-      "recordingFeatures": "Функции записи:",
-      "postTaskQuestion": "Вопрос после задачи:",
-      "postTaskForm": "Форма после задачи:",
-      "externalForm": "Внешняя форма",
-      "taskReady": "Задача готова!",
-      "reviewRequired": "Требуется проверка",
-      "taskReadyMessage": "Ваша задача правильно настроена и готова к использованию в вашем исследовании.",
-      "reviewRequiredMessage": "Пожалуйста, проверьте предыдущие шаги, чтобы убедиться, что все обязательные поля заполнены.",
-      "noTypeSelected": "Тип не выбран",
-      "answerTypes": {
-        "noAnswer": "Ответ не требуется",
-        "textArea": "Текстовая область",
-        "postTest": "Вопросы после теста",
-        "postForm": "Внешняя форма",
-        "nasaTlx": "NASA-TLX",
-        "sus": "Шкала юзабилити системы",
-        "tam1": "TAM-1 (Базовый)",
-        "tam2": "TAM-2 (Расширенный)",
-        "tam3": "TAM-3 (Всеобъемлющий)",
-        "sart": "SART"
-      },
-      "recordingLabels": {
-        "eyeTracking": "Отслеживание взгляда",
-        "screenRecording": "Запись экрана",
-        "camera": "Камера",
-        "audio": "Аудио"
-      }
-    },
-    "answerTypePreview": {
       "taskCompleted": "Задача выполнена! Дополнительная обратная связь не требуется.",
       "participantsFeedbackHere": "Участники предоставят свой отзыв здесь...",
       "submitFeedback": "Отправить отзыв",
@@ -1128,6 +1012,56 @@
       "playfulness": "Игривость",
       "enjoyment": "Удовольствие",
       "objectiveUsability": "Объективное юзабилити"
+    },
+    "advanced": {
+      "stepTitle": "Шаг 3: Расширенные опции",
+      "stepDescription": "Включите дополнительные методы сбора данных для получения более глубоких инсайтов.",
+      "eyeTrackingDesc": "Отслеживайте, куда смотрят участники во время задачи.",
+      "screenRecordDesc": "Записывайте экранную активность участника.",
+      "cameraDesc": "Записывайте выражения лица и реакции участника.",
+      "audioDesc": "Записывайте устную обратную связь участника.",
+      "privacyNotice": "Уведомление о конфиденциальности",
+      "privacyText": "Функции записи требуют явного согласия участников.",
+      "privacyItem1": "Чётко информируйте участников о сборе данных",
+      "privacyItem2": "Получите надлежащее согласие перед началом теста",
+      "privacyItem3": "Соблюдайте правила защиты данных (GDPR и т.д.)",
+      "privacyItem4": "Безопасное хранение и обработка записанных данных"
+    },
+    "preview": {
+      "taskSummary": "Сводка по задаче",
+      "untitledTask": "Задача без названия",
+      "description": "Описание:",
+      "noDescription": "Описание не предоставлено",
+      "participantTip": "Подсказка участнику:",
+      "taskUrl": "URL задачи:",
+      "answerType": "Тип ответа:",
+      "recordingFeatures": "Функции записи:",
+      "postTaskQuestion": "Вопрос после задачи:",
+      "postTaskForm": "Форма после задачи:",
+      "externalForm": "Внешняя форма",
+      "taskReady": "Задача готова!",
+      "reviewRequired": "Требуется проверка",
+      "taskReadyMessage": "Ваша задача правильно настроена и готова к использованию в вашем исследовании.",
+      "reviewRequiredMessage": "Пожалуйста, проверьте предыдущие шаги, чтобы убедиться, что все обязательные поля заполнены.",
+      "noTypeSelected": "Тип не выбран",
+      "answerTypes": {
+        "noAnswer": "Ответ не требуется",
+        "textArea": "Текстовая область",
+        "postTest": "Вопросы после теста",
+        "postForm": "Внешняя форма",
+        "nasaTlx": "NASA-TLX",
+        "sus": "Шкала юзабилити системы",
+        "tam1": "TAM-1 (Базовый)",
+        "tam2": "TAM-2 (Расширенный)",
+        "tam3": "TAM-3 (Всеобъемлющий)",
+        "sart": "SART"
+      },
+      "recordingLabels": {
+        "eyeTracking": "Отслеживание взгляда",
+        "screenRecording": "Запись экрана",
+        "camera": "Камера",
+        "audio": "Аудио"
+      }
     }
   },
   "UserTestView": {
@@ -1156,7 +1090,10 @@
       "testConfigErrorMessage": "В этом тесте не настроены задачи. Пожалуйста, свяжитесь с администратором.",
       "consentDecline": "Тест завершен из-за отказа от согласия. Благодарим за уделенное время.",
       "sessionTooFar": "Сессия слишком далеко",
-      "sessionTooFarMessage": "Запланированная сессия состоится более чем через 24 часа. Пожалуйста, вернитесь ближе к дате сессии."
+      "sessionTooFarMessage": "Запланированная сессия состоится более чем через 24 часа. Пожалуйста, вернитесь ближе к дате сессии.",
+      "moderatorDisconnected": "Модератор отключен",
+      "moderatorDisconnectedInlineMessage": "Похоже, модератор офлайн. Пожалуйста, подождите.",
+      "moderatorDisconnectedMessage": "Похоже, модератор офлайн. Пожалуйста, подождите или обратитесь в поддержку."
     },
     "stepper": {
       "consent": "Согласие",
@@ -1166,7 +1103,9 @@
       "postTest": "После теста",
       "completion": "Завершение",
       "taskX": "Задача {num}",
-      "form": "Форма"
+      "form": "Форма",
+      "preTasks": "Предзадачи",
+      "welcome": "Добро пожаловать"
     },
     "TaskStep": {
       "preview": "Предпросмотр задачи",
@@ -1238,15 +1177,50 @@
         "proceedToNextStep": "Перейти к следующему шагу",
         "activeCall": "Активный видеозвонок",
         "yourVideo": "Ваше видео ({name})",
-        "yourPreview": "Ваш предварительный просмотр ({name})"
+        "yourPreview": "Ваш предварительный просмотр ({name})",
+        "cameraOff": "Камера выключена",
+        "disableCamera": "Выключить камеру",
+        "enableCamera": "Включить камеру",
+        "enableMicrophone": "Включить микрофон",
+        "joinRoomControlsMoved": "Кнопки входа в комнату теперь находятся выше в основном интерфейсе",
+        "muteMicrophone": "Отключить микрофон",
+        "observatorMode": "Режим наблюдателя",
+        "observatorNoSend": "Вы сможете наблюдать все видеопотоки, не отправляя свой.",
+        "onlyModeratorCanChangeSteps": "Только модератор может менять шаги",
+        "participants": "Участники",
+        "sessionControl": "Управление сессией",
+        "settings": "Настройки",
+        "shareScreen": "Поделиться экраном",
+        "sharingScreen": "Демонстрация экрана",
+        "stopSharingScreen": "Остановить демонстрацию экрана",
+        "testProgress": "Прогресс теста",
+        "toolsPanel": "Панель инструментов",
+        "waitingForModerator": "Ожидание модератора...",
+        "waitingForModeratorDetail": "Видеозвонок начнется автоматически, когда модератор откроет комнату.",
+        "waitingForParticipants": "Ожидание участников...",
+        "waitingModeratorStart": "Ожидание запуска сессии модератором..."
       },
       "buttons": {
         "endCall": "Завершить видеозвонок",
-        "leaveCall": "Покинуть звонок"
+        "leaveCall": "Покинуть звонок",
+        "joinVideoCall": "Присоединиться к видеозвонку",
+        "maybeLater": "Возможно позже",
+        "openRoom": "Открыть комнату"
       },
       "tooltips": {
         "endVideoCallSession": "Завершить сессию видеозвонка",
-        "leaveVideoCallSession": "Покинуть сессию видеозвонка"
+        "leaveVideoCallSession": "Покинуть сессию видеозвонка",
+        "hidePanel": "Скрыть панель",
+        "hideSteps": "Скрыть шаги",
+        "muteMicrophone": "Отключить микрофон",
+        "shareScreen": "Поделиться экраном",
+        "showPanel": "Показать панель",
+        "showSteps": "Показать шаги",
+        "startVideoCallSession": "Начать сессию видеозвонка",
+        "stopSharingScreen": "Остановить демонстрацию экрана",
+        "turnOffCamera": "Выключить камеру",
+        "turnOnCamera": "Включить камеру",
+        "unmuteMicrophone": "Включить микрофон"
       },
       "participants": {
         "cameraOn": "Камера включена",
@@ -1254,8 +1228,15 @@
         "microphoneOn": "Микрофон включен",
         "microphoneOff": "Микрофон выключен",
         "roles": {
-          "evaluator": "Оценщик"
-        }
+          "evaluator": "Оценщик",
+          "moderator": "Модератор",
+          "observator": "Наблюдатель"
+        },
+        "connected": "Подключен",
+        "disconnected": "Отключен",
+        "participant": "Участник",
+        "unknown": "Неизвестно",
+        "you": "Вы"
       },
       "stepDescriptions": {
         "welcome": "Добро пожаловать в тестовую сессию",
@@ -1265,9 +1246,16 @@
         "tasks": "Выполнение задач",
         "postTest": "После теста",
         "completion": "Завершение теста"
+      },
+      "dialog": {
+        "description": "Модератор начал видеозвонок. Хотите присоединиться сейчас?",
+        "title": "Видеозвонок начат"
+      },
+      "task": {
+        "defaultTaskName": "Пользовательская задача {index}",
+        "taskLabel": "Задача {index}: {name}"
       }
     },
-
     "buttons": {
       "done": "Готово"
     },
@@ -1276,7 +1264,8 @@
       "answerSaved": "Ответ успешно сохранен.",
       "taskCompletedSuccess": "Задача \"{taskName}\" успешно завершена!",
       "useSessionLinkModerated": "Используйте ссылку на сессию, чтобы получить доступ к модерируемому тесту!",
-      "useSessionLink": "Используйте ссылку на сессию, чтобы получить доступ к тесту"
+      "useSessionLink": "Используйте ссылку на сессию, чтобы получить доступ к тесту",
+      "moderatorEndedSession": "Модератор завершил сессию."
     },
     "errors": {
       "noAnswerData": "Данные ответа не найдены.",
@@ -1547,6 +1536,18 @@
         "manualAccessibility": "Ручная доступность",
         "automaticAccessibility": "Автоматическая доступность",
         "all": "Все"
+      },
+      "unsupportedPreviewType": "Unsupported template type for preview.",
+      "config": {
+        "title": "Template Config",
+        "ownerOnly": "Configuration editing is restricted to template owner.",
+        "version": "Version",
+        "visibility": "Visibility",
+        "owner": "Owner",
+        "public": "Public",
+        "private": "Private",
+        "saved": "Template configuration updated successfully",
+        "saveError": "Failed to update template configuration"
       }
     },
     "createTest": {
@@ -1589,7 +1590,9 @@
     "editTest": {
       "title": "Редактировать тест",
       "description": "Настройте настройки и предпочтения вашего теста.",
-      "updatedTest": "Тест успешно обновлен"
+      "updatedTest": "Тест успешно обновлен",
+      "previewTitle": "Preview test",
+      "previewDescription": "Review the test in read-only mode."
     },
     "cooperators": {
       "invitationSent": "Приглашение успешно отправлено"
