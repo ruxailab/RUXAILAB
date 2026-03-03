@@ -393,7 +393,10 @@
     "globalError": "An error has occurred, sorry for the inconvenience.",
     "cameraPermissionDenied": "Camera permission denied. Please allow camera access in your browser settings.",
     "sendError": "Failed to send invitation. Please try again",
-    "missingVariableTitles": "Cannot save: Some variables are missing titles"
+    "missingVariableTitles": "Cannot save: Some variables are missing titles",
+    "failedToLoadAnswers": "Failed to load answers. Please try again.",
+    "failedToUpdateAnswer": "Failed to update answer. Please try again.",
+    "failedToRemoveCooperator": "Failed to remove cooperator. Please try again."
   },
   "Introduction": {
     "title": "UX Remote LAB",
