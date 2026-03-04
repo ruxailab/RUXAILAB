@@ -19,7 +19,13 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig)
 const auth = getAuth(firebaseApp)
 const db = getFirestore(firebaseApp)
-const analytics = getAnalytics(firebaseApp)
+
+// Analytics doesn't work well with emulators and fake API keys
+let analytics = null
+if (process.env.VUE_APP_USE_EMULATORS !== 'true' && process.env.VUE_APP_FIREBASE_API_KEY && !process.env.VUE_APP_FIREBASE_API_KEY.includes('dummy')) {
+  analytics = getAnalytics(firebaseApp)
+}
+
 const fbFunctions = getFunctions(firebaseApp)
 const storage = getStorage(firebaseApp, `gs://${firebaseConfig.storageBucket}`)
 const database = getDatabase(firebaseApp, firebaseConfig.databaseURL)

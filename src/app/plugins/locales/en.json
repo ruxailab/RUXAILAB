@@ -47,6 +47,8 @@
   },
   "common": {
     "enterTextHere": "Enter text here...",
+    "valuableFeedback": "Your qualitative feedback is highly valuable",
+    "characters": "characters",
     "units": {
       "mb": "MB",
       "gb": "GB"

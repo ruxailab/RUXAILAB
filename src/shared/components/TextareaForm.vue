@@ -25,6 +25,20 @@
             :class="['editor-container', { 'editor-readonly': props.readonly }]"
             @ready="applyReadonlyAttributes"
           />
+          
+          <v-row class="mt-2" justify="space-between" align="center" no-gutters>
+            <v-col cols="auto">
+              <span class="text-caption text-medium-emphasis">
+                <v-icon size="small" class="mr-1">mdi-lightbulb-outline</v-icon>
+                {{ props.helperText || t('common.valuableFeedback') }}
+              </span>
+            </v-col>
+            <v-col cols="auto">
+              <span class="text-caption text-medium-emphasis">
+                {{ characterCount }} {{ t('common.characters') }}
+              </span>
+            </v-col>
+          </v-row>
         </v-card-text>
       </v-card>
     </v-col>
@@ -54,10 +68,20 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  helperText: {
+    type: String,
+    default: '',
+  },
   readonly: {
     type: Boolean,
     default: false,
   },
+})
+
+const characterCount = computed(() => {
+  if (!value.value) return 0
+  // Strip HTML tags for an accurate character count, as Quill outputs HTML
+  return value.value.replace(/<[^>]*>?/gm, '').trim().length
 })
 
 const editorOptions = computed(() => ({
