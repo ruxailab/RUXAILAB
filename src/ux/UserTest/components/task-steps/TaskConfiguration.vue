@@ -26,7 +26,7 @@
             density="comfortable"
             prepend-inner-icon="mdi-link"
             :placeholder="$t('CreateTask.configuration.taskLinkPlaceholder')"
-            :rules="linkRules"
+            :rules="[...linkRules, ...validationRules]"
             @update:model-value="validateStep"
           />
         </v-col>
