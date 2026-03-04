@@ -9,121 +9,125 @@
       </p>
     </div>
 
-    <v-row>
-      <v-col cols="12" md="4">
-        <p class="text-subtitle-2 font-weight-medium mb-2">
-          {{ $t('CreateTask.configuration.taskLink') }}
-          <!-- <span class="text-error">*</span> -->
-        </p>
-        <p class="text-caption text-grey-darken-1 mb-3">
-          <v-icon size="14" class="mr-1"> mdi-information-outline </v-icon>
-          {{ $t('CreateTask.configuration.taskLinkHint') }}
-        </p>
-        <v-text-field
-          v-model="localTask.taskLink"
-          variant="outlined"
-          density="comfortable"
-          prepend-inner-icon="mdi-link"
-          :placeholder="$t('CreateTask.configuration.taskLinkPlaceholder')"
-          :rules="linkRules"
-          @update:model-value="validateStep"
-        />
-      </v-col>
+    <v-form ref="configForm">
+      <v-row>
+        <v-col cols="12" md="4">
+          <p class="text-subtitle-2 font-weight-medium mb-2">
+            {{ $t('CreateTask.configuration.taskLink') }}
+            <!-- <span class="text-error">*</span> -->
+          </p>
+          <p class="text-caption text-grey-darken-1 mb-3">
+            <v-icon size="14" class="mr-1"> mdi-information-outline </v-icon>
+            {{ $t('CreateTask.configuration.taskLinkHint') }}
+          </p>
+          <v-text-field
+            v-model="localTask.taskLink"
+            variant="outlined"
+            density="comfortable"
+            prepend-inner-icon="mdi-link"
+            :placeholder="$t('CreateTask.configuration.taskLinkPlaceholder')"
+            :rules="linkRules"
+            @update:model-value="validateStep"
+          />
+        </v-col>
 
-      <v-col cols="12" md="4">
-        <p class="text-subtitle-2 font-weight-medium mb-2">
-          {{ $t('CreateTask.configuration.estimatedTime') }}
-          <!-- <span class="text-error">*</span> -->
-        </p>
-        <p class="text-caption text-grey-darken-1 mb-3">
-          <v-icon size="14" class="mr-1"> mdi-information-outline </v-icon>
-          {{ $t('CreateTask.configuration.estimatedTimeHint') }}
-        </p>
-        <v-text-field
-          v-model="localTask.estimatedTime"
-          type="number"
-          variant="outlined"
-          density="comfortable"
-          prepend-inner-icon="mdi-clock-outline"
-          :placeholder="$t('CreateTask.configuration.estimatedTimePlaceholder')"
-          :rules="timeRules"
-          @update:model-value="validateStep"
-        />
-      </v-col>
+        <v-col cols="12" md="4">
+          <p class="text-subtitle-2 font-weight-medium mb-2">
+            {{ $t('CreateTask.configuration.estimatedTime') }}
+            <!-- <span class="text-error">*</span> -->
+          </p>
+          <p class="text-caption text-grey-darken-1 mb-3">
+            <v-icon size="14" class="mr-1"> mdi-information-outline </v-icon>
+            {{ $t('CreateTask.configuration.estimatedTimeHint') }}
+          </p>
+          <v-text-field
+            v-model="localTask.estimatedTime"
+            type="number"
+            variant="outlined"
+            density="comfortable"
+            prepend-inner-icon="mdi-clock-outline"
+            :placeholder="
+              $t('CreateTask.configuration.estimatedTimePlaceholder')
+            "
+            :rules="timeRules"
+            @update:model-value="validateStep"
+          />
+        </v-col>
 
-      <v-col cols="12" md="4">
-        <p class="text-subtitle-2 font-weight-medium mb-2">
-          {{ $t('titles.answerType') }}
-          <!-- <span class="text-error">*</span> -->
-        </p>
-        <p class="text-caption text-grey-darken-1 mb-3">
-          <v-icon size="14" class="mr-1"> mdi-information-outline </v-icon>
-          {{ $t('CreateTask.configuration.answerTypeHint') }}
-        </p>
-        <v-select
-          v-model="localTask.taskType"
-          :items="selectItems"
-          item-title="label"
-          item-value="value"
-          :rules="validationRules"
-          variant="outlined"
-          density="comfortable"
-          prepend-inner-icon="mdi-format-list-bulleted"
-          @update:model-value="validateStep"
-        >
-          <template #item="{ props, item }">
-            <v-list-item v-bind="props" class="answer-type-item">
-              <template #prepend>
-                <v-icon :icon="getAnswerTypeIcon(item.raw.value)" size="20" />
-              </template>
-              <v-list-item-subtitle>{{
-                getAnswerTypeDescription(item.raw.value)
-              }}</v-list-item-subtitle>
-            </v-list-item>
-          </template>
-        </v-select>
-      </v-col>
+        <v-col cols="12" md="4">
+          <p class="text-subtitle-2 font-weight-medium mb-2">
+            {{ $t('titles.answerType') }}
+            <!-- <span class="text-error">*</span> -->
+          </p>
+          <p class="text-caption text-grey-darken-1 mb-3">
+            <v-icon size="14" class="mr-1"> mdi-information-outline </v-icon>
+            {{ $t('CreateTask.configuration.answerTypeHint') }}
+          </p>
+          <v-select
+            v-model="localTask.taskType"
+            :items="selectItems"
+            item-title="label"
+            item-value="value"
+            :rules="validationRules"
+            variant="outlined"
+            density="comfortable"
+            prepend-inner-icon="mdi-format-list-bulleted"
+            @update:model-value="validateStep"
+          >
+            <template #item="{ props, item }">
+              <v-list-item v-bind="props" class="answer-type-item">
+                <template #prepend>
+                  <v-icon :icon="getAnswerTypeIcon(item.raw.value)" size="20" />
+                </template>
+                <v-list-item-subtitle>{{
+                  getAnswerTypeDescription(item.raw.value)
+                }}</v-list-item-subtitle>
+              </v-list-item>
+            </template>
+          </v-select>
+        </v-col>
 
-      <!-- Conditional Fields -->
-      <v-col v-if="localTask.taskType === 'post-test'" cols="12">
-        <p class="text-subtitle-2 font-weight-medium mb-2">
-          {{ $t('switches.postTest') }}
-          <!-- <span class="text-error">*</span> -->
-        </p>
-        <p class="text-caption text-grey-darken-1 mb-3">
-          <v-icon size="14" class="mr-1"> mdi-information-outline </v-icon>
-          {{ $t('CreateTask.configuration.postTestHint') }}
-        </p>
-        <v-text-field
-          v-model="localTask.postQuestion"
-          variant="outlined"
-          density="comfortable"
-          prepend-inner-icon="mdi-help-circle-outline"
-          :placeholder="$t('CreateTask.configuration.postTestPlaceholder')"
-          @update:model-value="validateStep"
-        />
-      </v-col>
+        <!-- Conditional Fields -->
+        <v-col v-if="localTask.taskType === 'post-test'" cols="12">
+          <p class="text-subtitle-2 font-weight-medium mb-2">
+            {{ $t('switches.postTest') }}
+            <!-- <span class="text-error">*</span> -->
+          </p>
+          <p class="text-caption text-grey-darken-1 mb-3">
+            <v-icon size="14" class="mr-1"> mdi-information-outline </v-icon>
+            {{ $t('CreateTask.configuration.postTestHint') }}
+          </p>
+          <v-text-field
+            v-model="localTask.postQuestion"
+            variant="outlined"
+            density="comfortable"
+            prepend-inner-icon="mdi-help-circle-outline"
+            :placeholder="$t('CreateTask.configuration.postTestPlaceholder')"
+            @update:model-value="validateStep"
+          />
+        </v-col>
 
-      <v-col v-if="localTask.taskType === 'post-form'" cols="12">
-        <p class="text-subtitle-2 font-weight-medium mb-2">
-          {{ $t('switches.postForm') }}
-          <!-- <span class="text-error">*</span> -->
-        </p>
-        <p class="text-caption text-grey-darken-1 mb-3">
-          <v-icon size="14" class="mr-1"> mdi-information-outline </v-icon>
-          {{ $t('CreateTask.configuration.postFormHint') }}
-        </p>
-        <v-text-field
-          v-model="localTask.postForm"
-          variant="outlined"
-          density="comfortable"
-          prepend-inner-icon="mdi-form-select"
-          :placeholder="$t('CreateTask.configuration.postFormPlaceholder')"
-          :rules="urlRules"
-          @update:model-value="validateStep"
-        />
-      </v-col>
-    </v-row>
+        <v-col v-if="localTask.taskType === 'post-form'" cols="12">
+          <p class="text-subtitle-2 font-weight-medium mb-2">
+            {{ $t('switches.postForm') }}
+            <!-- <span class="text-error">*</span> -->
+          </p>
+          <p class="text-caption text-grey-darken-1 mb-3">
+            <v-icon size="14" class="mr-1"> mdi-information-outline </v-icon>
+            {{ $t('CreateTask.configuration.postFormHint') }}
+          </p>
+          <v-text-field
+            v-model="localTask.postForm"
+            variant="outlined"
+            density="comfortable"
+            prepend-inner-icon="mdi-form-select"
+            :placeholder="$t('CreateTask.configuration.postFormPlaceholder')"
+            :rules="urlRules"
+            @update:model-value="validateStep"
+          />
+        </v-col>
+      </v-row>
+    </v-form>
 
     <!-- Answer Type Preview -->
     <v-card
@@ -233,7 +237,10 @@ const validateStep = () => {
   return isValid.value
 }
 
+const configForm = ref(null)
+
 const validate = () => {
+  configForm.value?.validate()
   return isValid.value
 }
 
