@@ -230,7 +230,14 @@ const getAnswerTypeDescription = (type) => {
 
 const validateStep = () => {
   emit('validate', isValid.value)
+  return isValid.value
 }
+
+const validate = () => {
+  return isValid.value
+}
+
+defineExpose({ validate })
 
 // Watch for local changes and emit
 watch(

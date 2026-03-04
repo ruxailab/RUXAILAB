@@ -51,6 +51,7 @@
 
       <v-card-text v-if="step === '2'">
         <TaskConfiguration
+          ref="taskConfigurationRef"
           :model-value="localTask"
           :select-items="selectItems"
           :validation-rules="requiredRule"
@@ -60,6 +61,7 @@
 
       <v-card-text v-if="step === '3'">
         <TaskAdvancedOptions
+          ref="taskAdvancedRef"
           :model-value="localTask"
           @update:model-value="handleTaskUpdate"
         />
@@ -98,6 +100,8 @@ const props = defineProps({
 })
 
 const taskBasicInfoRef = ref(null)
+const taskConfigurationRef = ref(null)
+const taskAdvancedRef = ref(null)
 
 const emit = defineEmits(['validate', 'update:task', 'complete'])
 
@@ -129,8 +133,16 @@ const handleTaskUpdate = (updatedTask) => {
 
 const goToNextStep = () => {
   const currentStepNum = Number.parseInt(step.value, 10)
-  if (currentStepNum < 4) {
-    step.value = String(currentStepNum + 1)
+
+  // Validate the current step before allowing movement
+  const isStepValid = valida()
+
+  if (isStepValid) {
+    if (currentStepNum < 4) {
+      step.value = String(currentStepNum + 1)
+    } else {
+      emit('complete', localTask.value)
+    }
   }
 }
 
@@ -142,18 +154,25 @@ const goToPreviousStep = () => {
 }
 
 const valida = () => {
-  const descOk = taskBasicInfoRef.value?.checkDescriptionValidation()
-  const nameOk = taskBasicInfoRef.value?.checkTaskNameValidation()
+  const currentStepNum = Number.parseInt(step.value, 10)
 
-  // trigger visual validator for task name
-  const _ = taskBasicInfoRef.value?.isValid?.value // eslint-disable-line no-unused-vars
-
-  if (nameOk && descOk) {
-    emit('validate', localTask.value)
-    return true
+  if (currentStepNum === 1) {
+    const descOk = taskBasicInfoRef.value?.checkDescriptionValidation()
+    const nameOk = taskBasicInfoRef.value?.checkTaskNameValidation()
+    return !!(nameOk && descOk)
   }
 
-  return false
+  if (currentStepNum === 2) {
+    return taskConfigurationRef.value?.validate() || false
+  }
+
+  if (currentStepNum === 3) {
+    return taskAdvancedRef.value?.validate
+      ? taskAdvancedRef.value.validate()
+      : true
+  }
+
+  return true
 }
 
 const resetVal = () => {
