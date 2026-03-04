@@ -63,11 +63,15 @@ export default {
      */
     async signup({ commit }, payload) {
       try {
+        const normalizedEmail = payload.email?.trim().toLowerCase()
         const { user } = await authController.signUp(
-          payload.email,
+          normalizedEmail,
           payload.password,
         )
-        await userController.create({ id: user.uid, email: user.email })
+        await userController.create({
+          id: user.uid,
+          email: user.email || normalizedEmail,
+        })
         commit('SET_TOAST', {
           message: i18n.global.t('auth.signupSuccess'),
           type: 'success',
@@ -87,8 +91,9 @@ export default {
       commit('setLoading', true)
 
       try {
+        const normalizedEmail = payload.email?.trim().toLowerCase()
         const { user } = await authController.signIn(
-          payload.email,
+          normalizedEmail,
           payload.password,
           payload.rememberMe,
         )
