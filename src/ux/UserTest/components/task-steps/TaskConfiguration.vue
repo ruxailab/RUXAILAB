@@ -239,8 +239,11 @@ const validateStep = () => {
 
 const configForm = ref(null)
 
-const validate = () => {
-  configForm.value?.validate()
+const validate = async () => {
+  if (configForm.value) {
+    const { valid } = await configForm.value.validate()
+    return valid && isValid.value
+  }
   return isValid.value
 }
 
