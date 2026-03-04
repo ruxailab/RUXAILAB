@@ -165,6 +165,7 @@ const checkDescriptionValidation = () => {
 
 const validateStep = () => {
   emit('validate', isValid.value)
+  return !!localTask.value.taskType && !!localTask.value.estimatedTime
 }
 
 defineExpose({ isValid, checkDescriptionValidation, checkTaskNameValidation })
