@@ -12,7 +12,7 @@ export default {
     currentImageUrl: '',
   },
   getters: {
-    heuristics(state, getters, rootState) {
+    heuristics(state) {
       return state.heuristics
     },
     testWeights(state) {
