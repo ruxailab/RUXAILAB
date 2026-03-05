@@ -171,7 +171,7 @@ const accessibilityRoutes = [
     },
     // AI-Assisted Accessibility Routes
     {
-        path: '/accessibility/aiassisted/:id',
+        path: '/accessibility/aiassisted/manager/:id',
         name: 'AccessibilityAIAssistedManager',
         meta: { authorize: [0, 1] },
         component: AIAssistedAccessibilityManager,

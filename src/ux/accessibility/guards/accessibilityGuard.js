@@ -52,7 +52,6 @@ export const accessibilityGuard = async (to, from, next) => {
         const currentUser = await getCurrentUser(store);
 
         if (!currentUser) {
-            console.log('Guard - No user data available, redirecting to signin');
             return next('/signin');
         }
 
@@ -60,7 +59,6 @@ export const accessibilityGuard = async (to, from, next) => {
         const testId = to.params.id;
 
         if (!testId) {
-            console.log('No test ID found');
             return next('/admin');
         }
 
@@ -68,26 +66,19 @@ export const accessibilityGuard = async (to, from, next) => {
         let studyData = null;
         try {
             await store.dispatch('getStudy', { id: testId });
-
-            if (store.getters.test) {
-                studyData = store.getters.test;
-            } else if (store.state.Study?.Test) {
-                studyData = store.state.Study.Test;
-            } else if (store.state.Test) {
-                studyData = store.state.Test;
-            }
+            studyData = store.getters.test ?? store.state.Tests?.Test ?? null;
         } catch (error) {
-            console.error('Error fetching study data:', error);
+            if (process.env.NODE_ENV !== 'production') {
+                console.error('[accessibilityGuard] Failed to fetch study data:', error.message)
+            }
         }
 
         if (!studyData) {
-            console.log('No study data found');
             return next('/admin');
         }
 
         // Check if user has admin access
         if (!hasAdminAccess(currentUser, studyData)) {
-            console.log('User does not have admin access, redirecting to home');
 
 
             let redirectPath;
