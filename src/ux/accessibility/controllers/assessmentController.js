@@ -31,7 +31,7 @@ export const saveAssessment = async (userId, testId, testType, assessmentData) =
     await setDoc(docRef, assessment, { merge: true });
     return { success: true, id: docRef.id };
   } catch (error) {
-    console.error('Error saving assessment:', error);
+    console.error('[assessmentController] saveAssessment failed:', error.message);
     throw new Error('Failed to save assessment');
   }
 };
@@ -52,7 +52,7 @@ export const getAssessment = async (userId, testId) => {
     }
     return null;
   } catch (error) {
-    console.error('Error getting assessment:', error);
+    console.error('[assessmentController] getAssessment failed:', error.message);
     throw new Error('Failed to get assessment');
   }
 };
@@ -117,7 +117,7 @@ export const updateRuleAssessment = async (userId, testId, ruleAssessment, image
               uploadedAt: uploadResult.uploadedAt
             });
           } catch (uploadError) {
-            console.error('Failed to upload image:', uploadError.message);
+            console.error('[assessmentController] updateRuleAssessment image upload failed:', uploadError.message);
             // Continue with other images, don't fail the entire operation
           }
         }
@@ -135,7 +135,7 @@ export const updateRuleAssessment = async (userId, testId, ruleAssessment, image
 
       for (const filePath of orphanedPaths) {
         await deleteAssessmentImage(filePath).catch(err =>
-          console.warn('Failed to delete orphaned image:', err.message)
+          console.warn('[assessmentController] Failed to delete orphaned image:', err.message)
         );
       }
     }
@@ -175,7 +175,7 @@ export const updateRuleAssessment = async (userId, testId, ruleAssessment, image
       updatedNotes: processedNotes
     };
   } catch (error) {
-    console.error('Error updating rule assessment:', error);
+    console.error('[assessmentController] updateRuleAssessment failed:', error.message);
     throw new Error('Failed to update rule assessment: ' + error.message);
   }
 };
@@ -202,7 +202,7 @@ export const deleteAssessment = async (userId, testId) => {
           if (note.filePath) {
             imageCleanupPromises.push(
               deleteAssessmentImage(note.filePath).catch(error => {
-                console.warn('Failed to delete image:', note.filePath, error);
+                console.warn('[assessmentController] deleteAssessment image cleanup failed:', error.message);
                 // Don't fail the entire operation if image deletion fails
               })
             );
@@ -221,7 +221,7 @@ export const deleteAssessment = async (userId, testId) => {
 
     return { success: true };
   } catch (error) {
-    console.error('Error deleting assessment:', error);
+    console.error('[assessmentController] deleteAssessment failed:', error.message);
     throw new Error('Failed to delete assessment');
   }
 };
@@ -244,7 +244,7 @@ export const getUserAssessments = async (userId) => {
       ...doc.data()
     }));
   } catch (error) {
-    console.error('Error getting user assessments:', error);
+    console.error('[assessmentController] getUserAssessments failed:', error.message);
     throw new Error('Failed to get user assessments');
   }
 };
@@ -265,7 +265,7 @@ export const saveConfigData = async (userId, testId, configData) => {
     });
     return { success: true };
   } catch (error) {
-    console.error('Error saving configuration data:', error);
+    console.error('[assessmentController] saveConfigData failed:', error.message);
     throw new Error('Failed to save configuration data');
   }
 };
@@ -286,7 +286,7 @@ export const getConfigData = async (userId, testId) => {
     }
     return null;
   } catch (error) {
-    console.error('Error fetching configuration data:', error);
+    console.error('[assessmentController] getConfigData failed:', error.message);
     throw new Error('Failed to fetch configuration data');
   }
 };
@@ -318,7 +318,7 @@ export const uploadNoteImages = async (imageFiles, userId, testId, ruleId) => {
       .filter(result => result.status === 'fulfilled' && result.value !== null)
       .map(result => result.value);
   } catch (error) {
-    console.error('Error uploading note images:', error);
+    console.error('[assessmentController] uploadNoteImages failed:', error.message);
     throw new Error('Failed to upload note images');
   }
 };
@@ -339,7 +339,7 @@ export const deleteRuleImages = async (userId, testId, ruleId, filePaths) => {
 
     const deletePromises = filePaths.map(filePath =>
       deleteAssessmentImage(filePath).catch(error => {
-        console.warn('Failed to delete image:', filePath, error);
+        console.warn('[assessmentController] deleteRuleImages cleanup failed:', error.message);
         return { success: false, error: error.message };
       })
     );
@@ -355,7 +355,7 @@ export const deleteRuleImages = async (userId, testId, ruleId, filePaths) => {
       totalRequested: filePaths.length
     };
   } catch (error) {
-    console.error('Error deleting rule images:', error);
+    console.error('[assessmentController] deleteRuleImages failed:', error.message);
     throw new Error('Failed to delete rule images');
   }
 };
