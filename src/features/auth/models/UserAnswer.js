@@ -1,6 +1,6 @@
 /**
  * Create a UserAnswer.
- * @param {string} answerDocId - The answerDocId value.
+ * @param {string} answersDocId - The answersDocId value.
  * @param {number} accessLevel - The accessLevel value.
  * @param {number} progress - The progress value.
  * @param {number} total - The total value.
@@ -13,7 +13,7 @@
 
 export default class UserAnswer {
   constructor({
-    answerDocId,
+    answersDocId,
     accessLevel,
     progress,
     total,
@@ -24,7 +24,7 @@ export default class UserAnswer {
     updateDate,
     testAuthorEmail,
   }) {
-    this.answerDocId = answerDocId
+    this.answersDocId = answersDocId
     this.accessLevel = accessLevel
     this.progress = progress
     this.total = total
@@ -41,7 +41,7 @@ export default class UserAnswer {
 
   toFirestore() {
     return {
-      answerDocId: this.answerDocId,
+      answersDocId: this.answersDocId,
       accessLevel: this.accessLevel,
       progress: this.progress,
       total: this.total,

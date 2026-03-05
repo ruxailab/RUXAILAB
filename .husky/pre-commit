@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+echo "🔍 running pre-commit hook"
+node i18n-diff-guard.js
+npm run test
+npx lint-staged

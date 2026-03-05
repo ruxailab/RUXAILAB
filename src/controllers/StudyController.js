@@ -1,5 +1,7 @@
 // imports
 import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
+import { doc, onSnapshot } from 'firebase/firestore'
+import { db } from '@/app/plugins/firebase'
 import AnswerController from '../shared/controllers/AnswerController'
 import UserAnswer from '@/features/auth/models/UserAnswer'
 import UserController from '../features/auth/controllers/UserController'
@@ -30,12 +32,12 @@ export default class StudyController extends Controller {
         new StudyAnswer({ type: payload.test.testType }),
       )
 
+      // Use the correct study type from the payload (already instantiated correctly in SettingsView)
       const duplicatedStudy = payload.test
       duplicatedStudy.answersDocId = answerDoc.id
 
       return await super.create(COLLECTION, duplicatedStudy.toFirestore())
     } catch (error) {
-      console.error("Error duplicating study:", error)
       throw error
     }
   }
@@ -81,7 +83,7 @@ export default class StudyController extends Controller {
   //ToDo: It seems an action from User Testing
   async acceptStudyCollaboration(payload) {
     const userAnswer = new UserAnswer({
-      answerDocId: payload.test.answersDocId,
+      answersDocId: payload.test.answersDocId,
       accessLevel: payload.cooperator.accessLevel,
       progress: 0,
       testAuthorEmail: payload.test.testAdmin.email,
@@ -137,13 +139,23 @@ export default class StudyController extends Controller {
   async getAllStudies() {
     try {
       const response = await super.readAll('tests')
-      const res = response.map((t) => {
-        const rawData = Object.assign({ id: t.id }, t.data())
-        return instantiateStudyByType(rawData.testType, rawData)
+      const res = response.map((data) => {
+        return instantiateStudyByType(data.testType, data)
       })
       return res
     } catch (err) {
       throw err
     }
+  }
+
+  subscribeToStudy(studyId, callback) {
+    const docRef = doc(db, COLLECTION, studyId)
+    return onSnapshot(docRef, (doc) => {
+      if (doc.exists()) {
+        const rawData = Object.assign({ id: doc.id }, doc.data())
+        const study = instantiateStudyByType(rawData.testType, rawData)
+        callback(study)
+      }
+    })
   }
 }

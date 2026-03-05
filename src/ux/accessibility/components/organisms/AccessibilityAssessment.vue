@@ -1,18 +1,11 @@
 <template>
   <v-app>
     <!-- Dashboard Component -->
-    <v-container
-      v-if="currentView === 'dashboard'"
-      fluid
-      class="pa-6"
-    >
+    <v-container v-if="currentView === 'dashboard'" fluid class="pa-6">
       <v-row>
-        <v-col
-          cols="12"
-          class="d-flex justify-space-between align-center mb-4"
-        >
+        <v-col cols="12" class="d-flex justify-space-between align-center mb-4">
           <h1 class="text-h4 font-weight-bold">
-            Dashboard
+            {{ $t('Accessibility.dashboard') }}
           </h1>
           <v-btn
             color="amber-darken-1"
@@ -20,7 +13,7 @@
             prepend-icon="mdi-plus"
             @click="showAddForm"
           >
-            Add New Page
+            {{ $t('Accessibility.addNewPage') }}
           </v-btn>
         </v-col>
       </v-row>
@@ -33,10 +26,7 @@
           md="6"
           lg="4"
         >
-          <v-card
-            class="pa-4"
-            elevation="2"
-          >
+          <v-card class="pa-4" elevation="2">
             <div class="d-flex justify-space-between align-center mb-2">
               <h3 class="text-h6">
                 {{ assessment.name }}
@@ -67,7 +57,9 @@
 
             <div class="mb-2">
               <div class="d-flex justify-space-between align-center mb-1">
-                <span class="text-body-2">Assessment Progress</span>
+                <span class="text-body-2">{{
+                  $t('Accessibility.assessmentProgress')
+                }}</span>
                 <span class="text-body-2">{{ assessment.progress }}%</span>
               </div>
               <v-progress-linear
@@ -80,7 +72,9 @@
 
             <div class="mb-4">
               <div class="d-flex justify-space-between align-center mb-1">
-                <span class="text-body-2">Accessibility Score</span>
+                <span class="text-body-2">{{
+                  $t('Accessibility.accessibilityScore')
+                }}</span>
                 <span class="text-body-2">{{ assessment.score }}%</span>
               </div>
               <v-progress-linear
@@ -93,31 +87,19 @@
 
             <div class="d-flex justify-space-around mb-4">
               <div class="d-flex align-center">
-                <v-icon
-                  color="success"
-                  size="small"
-                  class="mr-1"
-                >
+                <v-icon color="success" size="small" class="mr-1">
                   mdi-check-circle
                 </v-icon>
                 <span class="text-body-2">{{ assessment.passed }}</span>
               </div>
               <div class="d-flex align-center">
-                <v-icon
-                  color="error"
-                  size="small"
-                  class="mr-1"
-                >
+                <v-icon color="error" size="small" class="mr-1">
                   mdi-close-circle
                 </v-icon>
                 <span class="text-body-2">{{ assessment.failed }}</span>
               </div>
               <div class="d-flex align-center">
-                <v-icon
-                  color="warning"
-                  size="small"
-                  class="mr-1"
-                >
+                <v-icon color="warning" size="small" class="mr-1">
                   mdi-alert-circle
                 </v-icon>
                 <span class="text-body-2">{{ assessment.warnings }}</span>
@@ -130,7 +112,7 @@
               block
               prepend-icon="mdi-chart-bar"
             >
-              View Assessment
+              {{ $t('Accessibility.viewAssessment') }}
             </v-btn>
             <v-btn
               color="red"
@@ -140,7 +122,7 @@
               class="mt-2"
               @click="removeAssessment(idx)"
             >
-              Remove
+              {{ $t('Accessibility.remove') }}
             </v-btn>
           </v-card>
         </v-col>
@@ -148,27 +130,15 @@
     </v-container>
 
     <!-- Add New Webpage Form -->
-    <v-container
-      v-if="currentView === 'add-webpage'"
-      fluid
-      class="pa-6"
-    >
+    <v-container v-if="currentView === 'add-webpage'" fluid class="pa-6">
       <v-row justify="center">
-        <v-col
-          cols="12"
-          md="8"
-          lg="6"
-        >
-          <v-card
-            class="pa-6"
-            elevation="2"
-          >
+        <v-col cols="12" md="8" lg="6">
+          <v-card class="pa-6" elevation="2">
             <v-card-title class="text-h5 font-weight-bold pa-0 mb-2">
-              Add New Webpage for Assessment
+              {{ $t('Accessibility.addNewWebpageAssessment') }}
             </v-card-title>
             <v-card-subtitle class="pa-0 mb-6 text-medium-emphasis">
-              Fill in the details of the webpage you want to assess for
-              accessibility.
+              {{ $t('Accessibility.fillWebpageDetails') }}
             </v-card-subtitle>
 
             <v-form @submit.prevent="addWebpage">
@@ -181,7 +151,7 @@
                 :rules="[rules.required]"
               />
               <p class="text-body-2 text-medium-emphasis mb-4 mt-n2">
-                A descriptive name for the webpage you are testing.
+                {{ $t('Accessibility.webpageNameHelp') }}
               </p>
 
               <v-text-field
@@ -193,7 +163,7 @@
                 :rules="[rules.required, rules.url]"
               />
               <p class="text-body-2 text-medium-emphasis mb-4 mt-n2">
-                The full URL of the webpage.
+                {{ $t('Accessibility.urlHelp') }}
               </p>
 
               <v-textarea
@@ -214,7 +184,7 @@
                 :rules="[rules.required]"
               />
               <p class="text-body-2 text-medium-emphasis mb-6 mt-n2">
-                The target WCAG conformance level for this assessment.
+                {{ $t('Accessibility.wcagComplianceLevelHelp') }}
               </p>
 
               <div class="d-flex gap-3">
@@ -224,15 +194,11 @@
                   variant="flat"
                   size="large"
                 >
-                  Add Webpage & Start Assessment
+                  {{ $t('Accessibility.addWebpageStartAssessment') }}
                 </v-btn>
-                <v-btn
-                  variant="outlined"
-                  size="large"
-                  @click="showDashboard"
-                >
-                  Cancel
-                </v-btn>
+                <v-btn variant="outlined" size="large" @click="showDashboard">{{
+                  $t('Accessibility.cancel')
+                }}</v-btn>
               </div>
             </v-form>
           </v-card>
@@ -247,8 +213,6 @@ import { ref, reactive } from 'vue'
 
 // Reactive data
 const currentView = ref('dashboard')
-const assessmentProgress = ref(0)
-const accessibilityScore = ref(0)
 
 const form = reactive({
   name: '',

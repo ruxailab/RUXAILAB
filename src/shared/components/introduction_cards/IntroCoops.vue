@@ -40,7 +40,7 @@ const items = computed(() => [
 ])
 
 const goToDoc = () => {
-  router.push('/cooperators/documentation').catch(() => {})
+  router.push('/help').catch(() => {})
 }
 
 const goToDisc = () => {

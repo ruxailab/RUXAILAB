@@ -9,12 +9,15 @@
 </template>
 
 <script setup>
-import ManagerView from '@/shared/views/template/ManagerView.vue';
-import { ACCESS_LEVEL } from '@/shared/utils/accessLevel';
-import { computed, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import { useStore } from 'vuex';
-import { getNavigatorDefault, getTopCardsDefualt } from '@/shared/utils/managerDefault';
+import ManagerView from '@/shared/views/template/ManagerView.vue'
+import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
+import { computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { useStore } from 'vuex'
+import {
+  getNavigatorDefault,
+  getTopCardsDefualt,
+} from '@/shared/utils/managerDefault'
 
 // Stores
 const store = useStore()
@@ -30,17 +33,25 @@ const accessLevel = computed(() => {
 
   if (!currentUser) return ACCESS_LEVEL.GUEST
   if (currentUser.accessLevel === 0) return ACCESS_LEVEL.ADMIN
-  if (currentTest?.testAdmin?.userDocId === currentUser.id) return ACCESS_LEVEL.ADMIN
+  if (currentTest?.testAdmin?.userDocId === currentUser.id)
+    return ACCESS_LEVEL.ADMIN
 
-  const coop = currentTest?.cooperators?.find(c => c.userDocId === currentUser.id)
+  const coop = currentTest?.cooperators?.find(
+    (c) => c.userDocId === currentUser.id,
+  )
   if (coop) return coop.accessLevel
 
-  return currentTest?.isPublic ? ACCESS_LEVEL.GUEST : ACCESS_LEVEL.EVALUATOR
+  return currentTest?.isPublic ? ACCESS_LEVEL.EVALUATOR : ACCESS_LEVEL.GUEST
 })
 
 const topCards = computed(() => getTopCardsDefualt(test.value, 'cardSorting'))
 const navigator = computed(() => {
-  const items = getNavigatorDefault(test.value, accessLevel.value, route, 'cardSorting')
+  const items = getNavigatorDefault(
+    test.value,
+    accessLevel.value,
+    route,
+    'cardSorting',
+  )
 
   for (const item of items) {
     if (item.title === 'Preview') {

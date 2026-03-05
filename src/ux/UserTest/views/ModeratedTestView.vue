@@ -2,45 +2,292 @@
   <div>
     <v-container fluid class="pa-0">
       <!-- Start Screen -->
-      <v-row v-if="test && start" class="start-screen background-img pa-0 ma-0" align="center">
+      <v-row
+        v-if="test && start"
+        class="start-screen background-img pa-0 ma-0"
+        align="center"
+      >
         <v-col md="8" class="ma-5 pa-5">
-          <img src="@/assets/ruxailab-long-crop-white.png" alt="RUXAILAB" class="mb-10" style="max-width: 300px;" />
+          <img
+            src="@/assets/logo_full_white.png"
+            alt="RUXAILAB"
+            class="mb-10"
+            style="max-width: 300px"
+          />
           <h1 class="text-h2 font-weight-bold text-white">
             {{ test.testTitle }}
           </h1>
           <p class="text-body-1 mb-5 text-white text-justify">
-           {{ test.testDescription }}
+            {{ test.testDescription }}
           </p>
-          <v-btn color="white" variant="outlined" rounded x-large @click="startTest">
-            Start Test
+          <v-btn
+            color="white"
+            variant="outlined"
+            rounded
+            size="x-large"
+            :disabled="isStartTestDisabled"
+            @click="startTest"
+          >
+            {{ $t('UserTestView.actions.startTest') }}
           </v-btn>
+
+          <!-- Messages when test is disabled -->
+          <v-alert
+            v-if="testDisabledReason === 'test-already-completed'"
+            type="info"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="
+              background-color: rgba(255, 255, 255, 0.1);
+              border-color: white;
+            "
+          >
+            <template #prepend>
+              <v-icon color="white"> mdi-check-circle </v-icon>
+            </template>
+            <span class="text-white">
+              <strong>{{
+                $t('UserTestView.alerts.testAlreadyCompleted')
+              }}</strong
+              ><br />
+              {{ $t('UserTestView.alerts.testAlreadyCompletedMessage') }}
+            </span>
+          </v-alert>
+
+          <v-alert
+            v-else-if="testDisabledReason === 'test-expired'"
+            type="warning"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="
+              background-color: rgba(255, 255, 255, 0.1);
+              border-color: white;
+            "
+          >
+            <template #prepend>
+              <v-icon color="white"> mdi-clock-alert </v-icon>
+            </template>
+            <span class="text-white">
+              <strong>{{ $t('UserTestView.alerts.testExpired') }}</strong
+              ><br />
+              {{ $t('UserTestView.alerts.testExpiredMessage') }}
+            </span>
+          </v-alert>
+
+          <v-alert
+            v-else-if="testDisabledReason === 'test-not-active'"
+            type="warning"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="
+              background-color: rgba(255, 255, 255, 0.1);
+              border-color: white;
+            "
+          >
+            <template #prepend>
+              <v-icon color="white"> mdi-pause-circle </v-icon>
+            </template>
+            <span class="text-white">
+              <strong>{{ $t('UserTestView.alerts.testNotActive') }}</strong
+              ><br />
+              {{ $t('UserTestView.alerts.testNotActiveMessage') }}
+            </span>
+          </v-alert>
+
+          <v-alert
+            v-else-if="testDisabledReason === 'test-no-tasks-configured'"
+            type="error"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="
+              background-color: rgba(255, 255, 255, 0.1);
+              border-color: white;
+            "
+          >
+            <template #prepend>
+              <v-icon color="white"> mdi-alert-circle </v-icon>
+            </template>
+            <span class="text-white">
+              <strong>{{ $t('UserTestView.alerts.testConfigError') }}</strong
+              ><br />
+              {{ $t('UserTestView.alerts.testConfigErrorMessage') }}
+            </span>
+          </v-alert>
+
+          <v-alert
+            v-else-if="testDisabledReason === 'test-session-too-far'"
+            type="info"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="
+              background-color: rgba(255, 255, 255, 0.1);
+              border-color: white;
+            "
+          >
+            <template #prepend>
+              <v-icon color="white"> mdi-calendar-clock </v-icon>
+            </template>
+            <span class="text-white">
+              <strong>{{ $t('UserTestView.alerts.sessionTooFar') }}</strong
+              ><br />
+              {{ $t('UserTestView.alerts.sessionTooFarMessage') }}
+            </span>
+          </v-alert>
+
+          <v-alert
+            v-else-if="testDisabledReason === 'test-no-data'"
+            type="error"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="
+              background-color: rgba(255, 255, 255, 0.1);
+              border-color: white;
+            "
+          >
+            <template #prepend>
+              <v-icon color="white"> mdi-alert-circle </v-icon>
+            </template>
+            <span class="text-white">
+              <strong>{{ $t('UserTestView.errors.noTestData') }}</strong
+              ><br />
+              {{ $t('UserTestView.errors.noTestDataMessage') }}
+            </span>
+          </v-alert>
+
+          <v-alert
+            v-if="moderatorInactive"
+            type="warning"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="
+              background-color: rgba(255, 255, 255, 0.1);
+              border-color: white;
+            "
+          >
+            <template #prepend>
+              <v-icon color="white"> mdi-wifi-off </v-icon>
+            </template>
+            <span class="text-white">
+              <strong>Moderator Disconnected</strong><br />
+              The moderator seems to be offline. Please wait or contact support.
+            </span>
+          </v-alert>
         </v-col>
       </v-row>
 
       <!--Answer Test Screen-->
       <v-row v-else class="main-test-interface pa-0 ma-0">
         <v-col ref="rightView" class="right-view pa-6">
+          <v-alert
+            v-if="moderatorInactive"
+            density="compact"
+            type="warning"
+            variant="tonal"
+            class="mb-4 rounded-xl"
+            closable
+          >
+            <template #prepend>
+              <v-icon size="small">mdi-wifi-off</v-icon>
+            </template>
+            <div class="text-caption">
+              <strong>Moderator Disconnected:</strong>
+              The moderator seems to be offline. Please wait.
+            </div>
+          </v-alert>
+
           <!--Sticky Stepper to follow Progress-->
-          <v-row v-if="globalIndex >= 1 || displayVideoCallComponent" class="stepper-row sticky-stepper">
+          <v-row
+            v-if="globalIndex >= 1 || displayVideoCallComponent"
+            class="stepper-row sticky-stepper"
+          >
             <v-col cols="12">
-              <v-stepper :model-value="stepperValue" class="main-stepper rounded-xl elevation-3"
-                :class="{ 'stepper-animate': globalIndex === 4 && test?.testStructure?.userTasks?.length > 1 }"
-                style="visibility:visible">
+              <v-stepper
+                :model-value="stepperValue"
+                class="main-stepper rounded-xl elevation-3"
+                :class="{
+                  'stepper-animate':
+                    globalIndex === 4 &&
+                    test?.testStructure?.userTasks?.length > 1,
+                }"
+                style="visibility: visible"
+              >
                 <v-stepper-header>
-                  <v-stepper-item value="1" title="Consent" :complete="stepperValue >= 1"
-                    :color="stepperValue < 1 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-stepper-item
+                    :value="1"
+                    :title="$t('UserTestView.stepper.consent')"
+                    :complete="stepperValue > 1"
+                    :color="
+                      stepperValue == 1
+                        ? 'warning'
+                        : stepperValue < 1
+                          ? 'primary'
+                          : 'success'
+                    "
+                    complete-icon="mdi-check"
+                  />
                   <v-divider />
-                  <v-stepper-item value="2" title="Pre-test" :complete="stepperValue >= 2"
-                    :color="stepperValue < 2 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-stepper-item
+                    :value="2"
+                    :title="$t('UserTestView.stepper.preTest')"
+                    :complete="stepperValue > 2"
+                    :color="
+                      stepperValue == 2
+                        ? 'warning'
+                        : stepperValue < 1
+                          ? 'primary'
+                          : 'success'
+                    "
+                    complete-icon="mdi-check"
+                  />
                   <v-divider />
-                  <v-stepper-item value="3" title="Tasks" :complete="stepperValue >= 3"
-                    :color="stepperValue < 3 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-stepper-item
+                    :value="3"
+                    :title="$t('UserTestView.stepper.tasks')"
+                    :complete="stepperValue > 3"
+                    :color="
+                      stepperValue == 3
+                        ? 'warning'
+                        : stepperValue < 3
+                          ? 'primary'
+                          : 'success'
+                    "
+                    complete-icon="mdi-check"
+                  />
                   <v-divider />
-                  <v-stepper-item value="4" title="Post-test" :complete="stepperValue >= 4"
-                    :color="stepperValue < 4 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-stepper-item
+                    :value="4"
+                    :title="$t('UserTestView.stepper.postTest')"
+                    :complete="stepperValue > 4"
+                    :color="
+                      stepperValue == 4
+                        ? 'warning'
+                        : stepperValue < 4
+                          ? 'primary'
+                          : 'success'
+                    "
+                    complete-icon="mdi-check"
+                  />
                   <v-divider />
-                  <v-stepper-item value="5" title="Completion" :complete="stepperValue === 5"
-                    :color="stepperValue < 5 ? 'primary' : 'success'" complete-icon="mdi-check" />
+                  <v-stepper-item
+                    :value="5"
+                    :title="$t('UserTestView.stepper.completion')"
+                    :complete="stepperValue > 5"
+                    :color="
+                      stepperValue == 5
+                        ? 'warning'
+                        : stepperValue < 5
+                          ? 'primary'
+                          : 'success'
+                    "
+                    complete-icon="mdi-check"
+                  />
                 </v-stepper-header>
               </v-stepper>
             </v-col>
@@ -48,134 +295,279 @@
 
           <!-- Stepper secundario para tareas -->
           <v-row
-            v-if="globalIndex === 4 && test?.testStructure?.userTasks?.length > 1"
+            v-if="
+              globalIndex === 4 && test?.testStructure?.userTasks?.length > 1
+            "
             class="task-stepper-row"
             justify="center"
           >
-            <v-col
-              cols="12"
-              md="8"
-              lg="6"
-              class="d-flex justify-center"
-            >
+            <v-col cols="12" md="8" lg="6" class="d-flex justify-center">
               <v-stepper
                 :model-value="taskIndex + 1"
                 class="task-stepper rounded-xl elevation-2"
-                style="max-width: 100%;"
+                style="max-width: 100%"
               >
                 <v-stepper-header>
-                  <template v-for="(task, index) in test.testStructure.userTasks" :key="index">
+                  <template
+                    v-for="(task, index) in test.testStructure.userTasks"
+                    :key="index"
+                  >
                     <v-stepper-item
                       :value="index + 1"
                       :title="task.taskName"
-                      :complete="localTestAnswer.tasks[index]?.completed || false"
-                      :color="taskIndex < index ? 'primary' : 'success'"
+                      :complete="
+                        localTestAnswer.tasks[index]?.completed || false
+                      "
+                      :color="
+                        taskIndex == index
+                          ? 'warning'
+                          : taskIndex < index
+                            ? 'primary'
+                            : 'success'
+                      "
                       complete-icon="mdi-check"
                     />
-                    <v-divider v-if="index < test.testStructure.userTasks.length - 1" />
+                    <v-divider
+                      v-if="index < test.testStructure.userTasks.length - 1"
+                    />
                   </template>
                 </v-stepper-header>
               </v-stepper>
             </v-col>
           </v-row>
 
+          <!-- Observator Notes Drawer -->
+          <v-navigation-drawer
+            v-if="isObservator"
+            v-model="notesDrawerOpen"
+            location="right"
+            persistent
+            width="400"
+            elevation="3"
+            style="
+              position: fixed;
+              top: 0;
+              right: 0;
+              height: 100%;
+              z-index: 1005;
+            "
+          >
+            <ObservatorNotes
+              v-if="localTestAnswer"
+              v-model="localTestAnswer.sessionNotes"
+              :current-task-index="taskIndex"
+              :test="test"
+              @save="saveAnswer"
+            />
+          </v-navigation-drawer>
+
+          <!-- Notes Toggle Button (for Observators) -->
+          <v-btn
+            v-if="isObservator"
+            icon
+            size="large"
+            color="primary"
+            elevation="4"
+            class="notes-toggle-btn"
+            :style="{
+              position: 'fixed',
+              top: '80px',
+              right: notesDrawerOpen ? '420px' : '20px',
+              zIndex: 1006,
+              transition: 'right 0.3s ease',
+            }"
+            @click="notesDrawerOpen = !notesDrawerOpen"
+          >
+            <v-badge
+              :content="localTestAnswer.sessionNotes?.length || 0"
+              :model-value="(localTestAnswer.sessionNotes?.length || 0) > 0"
+              color="error"
+            >
+              <v-icon>
+                {{
+                  notesDrawerOpen ? 'mdi-notebook-edit' : 'mdi-notebook-outline'
+                }}
+              </v-icon>
+            </v-badge>
+          </v-btn>
+
           <!-- Video Call Component -->
-          <div v-show="displayVideoCallComponent">
-            <VideoCall 
-              :roomId="roomId" 
-              :caller="isUserTestAdmin"
+          <div v-show="displayVideoCallComponent" v-if="test">
+            <VideoCall
+              :room-id="roomId"
+              :is-moderator="isUserTestAdmin"
+              :user="user"
+              :access-level="currentUserAccessLevel"
               :current-global-index="globalIndex"
               :current-task-index="taskIndex"
               :test="test"
               :local-test-answer="localTestAnswer"
-              @setRemoteStream="remoteStream = $event"
-              @proceedToNextStep="proceedToNextStep"
-              @stepSelected="handleStepSelected"
+              @set-remote-stream="remoteStream = $event"
+              @proceed-to-next-step="proceedToNextStep"
+              @step-selected="handleStepSelected"
+              @call-ended="displayVideoCallComponent = false"
+              @moderator-status-change="handleModeratorStatusChange"
             />
           </div>
 
           <!-- Hide Form Elements while on Video Call Mode -->
           <div v-show="!displayVideoCallComponent">
             <!--Step 0: Welcome - Different for Moderator vs Participant -->
-            <ModeratorWelcomeStep 
-              v-if="globalIndex === 0 && isUserTestAdmin" 
+            <ModeratorWelcomeStep
+              v-if="globalIndex === 0 && isUserTestAdmin"
               :stepper-value="stepperValue"
-              @start="displayVideoCallComponent = true; globalIndex = 1" 
+              @start="
+                () => {
+                  displayVideoCallComponent = true
+                  globalIndex = 1
+                }
+              "
             />
-            <WelcomeStep 
-              v-else-if="globalIndex === 0 && !isUserTestAdmin" 
+            <WelcomeStep
+              v-else-if="globalIndex === 0 && !isUserTestAdmin"
               :stepper-value="stepperValue"
-              @start="displayVideoCallComponent = true; globalIndex = 1" 
+              :welcome-message="test?.testStructure?.welcomeMessage"
+              @start="
+                () => {
+                  displayVideoCallComponent = true
+                  globalIndex = 1
+                }
+              "
             />
 
             <!--Step 1: Consent -->
-            <ConsentStep v-if="globalIndex === 1 && taskIndex === 0" :test-title="test.testTitle"
-              :pre-test-title="$t('UserTestView.titles.preTest')" :consent-text="test.testStructure.consent"
-              :full-name-model="fullName" :consent-completed-model="localTestAnswer.consentCompleted"
-              @update:fullNameModel="val => fullName = val"
-              @update:consentCompletedModel="val => localTestAnswer.consentCompleted = val"
+            <ConsentStep
+              v-if="globalIndex === 1 && taskIndex === 0"
+              :test-title="test.testTitle"
+              :pre-test-title="$t('UserTestView.titles.preTest')"
+              :consent-text="test.testStructure.consent"
+              :full-name-model="fullName"
+              :consent-completed-model="localTestAnswer.consentCompleted"
+              @update:full-name-model="(val) => (fullName = val)"
+              @update:consent-completed-model="
+                (val) => (localTestAnswer.consentCompleted = val)
+              "
               @continue="completeStep(taskIndex, 'consent')"
-              @declineConsent="handleConsentDecline" />
+              @decline-consent="handleConsentDecline"
+            />
 
             <!--Step 2: Pre-test -->
-            <PreTestStep v-if="globalIndex === 2 && taskIndex === 0" :test-title="test.testTitle"
-              :pre-test-title="$t('UserTestView.titles.preTest')" :pre-test="test.testStructure.preTest"
-              :pre-test-answer="localTestAnswer.preTestAnswer" :pre-test-completed="localTestAnswer.preTestCompleted"
-              @done="completeStep(taskIndex, 'preTest')" />
+            <PreTestStep
+              v-if="globalIndex === 2 && taskIndex === 0"
+              :test-title="test.testTitle"
+              :pre-test-title="$t('UserTestView.titles.preTest')"
+              :pre-test="test.testStructure.preTest"
+              :pre-test-answer="localTestAnswer.preTestAnswer"
+              :pre-test-completed="localTestAnswer.preTestCompleted"
+              @done="completeStep(taskIndex, 'preTest')"
+            />
 
             <!-- Step 3: Tasks -->
-            <PreTasksStep v-if="globalIndex === 3 && taskIndex === 0"
+            <PreTasksStep
+              v-if="globalIndex === 3 && taskIndex === 0"
               :num-tasks="test?.testStructure?.userTasks?.length || 0"
-              @startTasks="() => { taskIndex = 0; globalIndex = 4 }" />
-
+              @start-tasks="
+                () => {
+                  taskIndex = 0
+                  globalIndex = 4
+                }
+              "
+            />
 
             <!-- Step 4: Task Step -->
-            <TaskStep v-if="globalIndex === 4 && test.testType === STUDY_TYPES.USER" ref="taskStepComponent"
-              :task="test.testStructure.userTasks[taskIndex]" :task-index="taskIndex" :test-id="testId"
+            <TaskStep
+              v-if="globalIndex === 4 && test.testType === STUDY_TYPES.USER"
+              ref="taskStepComponent"
               v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
               v-model:task-answer="localTestAnswer.tasks[taskIndex].taskAnswer"
-              v-model:task-observations="localTestAnswer.tasks[taskIndex].taskObservations"
+              v-model:task-observations="
+                localTestAnswer.tasks[taskIndex].taskObservations
+              "
+              :task="test.testStructure.userTasks[taskIndex]"
+              :task-index="taskIndex"
+              :test-id="testId"
               :sus-answers="localTestAnswer.tasks[taskIndex].susAnswers"
-              :nasa-tlx-answers="localTestAnswer.tasks[taskIndex].nasaTlxAnswers" :submitted="localTestAnswer.submitted"
+              :nasa-tlx-answers="
+                localTestAnswer.tasks[taskIndex].nasaTlxAnswers
+              "
+              :submitted="localTestAnswer.submitted"
               :done-task-disabled="doneTaskDisabled"
-              :remoteStream="remoteStream"
-              :shouldRecordModerator="!isUserTestAdmin"
-              @update:susAnswers="val => { localTestAnswer.tasks[taskIndex].susAnswers = Array.isArray(val) ? [...val] : [] }"
-              @update:nasaTlxAnswers="val => { localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val } }"
-              @done="() => handleTaskFinish(true)" @couldNotFinish="() => handleTaskFinish(false)"
-              @show-loading="isLoading = true" @stop-show-loading="isLoading = false"
-              @recording-started="isVisualizerVisible = $event" @timer-stopped="handleTimerStopped" />
+              :remote-stream="remoteStream"
+              :should-record-moderator="!isUserTestAdmin"
+              @update:sus-answers="
+                (val) => {
+                  localTestAnswer.tasks[taskIndex].susAnswers = Array.isArray(
+                    val,
+                  )
+                    ? [...val]
+                    : []
+                }
+              "
+              @update:nasa-tlx-answers="
+                (val) => {
+                  localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val }
+                }
+              "
+              @done="() => handleTaskFinish(true)"
+              @could-not-finish="() => handleTaskFinish(false)"
+              @show-loading="isLoading = true"
+              @stop-show-loading="isLoading = false"
+              @recording-started="isVisualizerVisible = $event"
+              @timer-stopped="handleTimerStopped"
+            />
 
-            <PostTestStep v-if="globalIndex === 5"
-              :test-title="test.testTitle" :post-test-title="$t('UserTestView.titles.postTest')"
-              :post-test="test.testStructure.postTest" :post-test-answer="localTestAnswer.postTestAnswer"
+            <PostTestStep
+              v-if="globalIndex === 5"
+              :test-title="test.testTitle"
+              :post-test-title="$t('UserTestView.titles.postTest')"
+              :post-test="test.testStructure.postTest"
+              :post-test-answer="localTestAnswer.postTestAnswer"
               :post-test-completed="localTestAnswer.postTestCompleted"
-              @done="() => { completeStep(taskIndex, 'postTest'); taskIndex = 3 }" />
-            <FinishStep v-if="globalIndex === 6 && localTestAnswer.postTestCompleted && !localTestAnswer.submitted"
-              :final-message="$t('finishTest.finalMessage')" :congratulations="$t('finishTest.congratulations')"
-              :submit-message="$t('finishTest.submitMessage')" :submit-btn="$t('buttons.submit')"
-              @submit="submitDialog = true" />
+              @done="
+                () => {
+                  completeStep(taskIndex, 'postTest')
+                  taskIndex = 3
+                }
+              "
+            />
+            <FinishStep
+              v-if="
+                globalIndex === 6 &&
+                localTestAnswer.postTestCompleted &&
+                !localTestAnswer.submitted
+              "
+              :final-message="$t('finishTest.finalMessage')"
+              :congratulations="$t('finishTest.congratulations')"
+              :submit-message="$t('finishTest.submitMessage')"
+              :submit-btn="$t('buttons.submit')"
+              @submit="submitDialog = true"
+            />
           </div>
         </v-col>
       </v-row>
     </v-container>
 
     <!-- Submit Dialog -->
-    <SubmitDialog :model-value="submitDialog" :title="$t('HeuristicsTestView.messages.submitTest')"
-      :message="$t('HeuristicsTestView.messages.submitOnce')" :cancel-label="$t('buttons.cancel')"
-      :submit-label="$t('buttons.submit')" @cancel="submitDialog = false" @submit="handleSubmit" />
-
+    <SubmitDialog
+      :model-value="submitDialog"
+      :title="$t('HeuristicsTestView.messages.submitTest')"
+      :message="$t('HeuristicsTestView.messages.submitOnce')"
+      :cancel-label="$t('buttons.cancel')"
+      :submit-label="$t('buttons.submit')"
+      @cancel="submitDialog = false"
+      @submit="handleSubmit"
+    />
 
     <!-- Dialog for user to continue or change account -->
     <v-dialog :model-value="!loggedIn" width="500" persistent>
       <v-card v-if="user" class="rounded-xl pa-6">
         <v-row class="ma-0 pa-0" justify="center">
           <v-avatar color="primary-lighten-4" size="120">
-            <v-icon size="80">mdi-account-circle</v-icon>
+            <v-icon size="80"> mdi-account-circle </v-icon>
           </v-avatar>
         </v-row>
         <v-card-title class="text-center text-h6 font-weight-bold mt-4">
-          Welcome back!
+          {{ $t('UserTestView.actions.welcomeBack') }}
         </v-card-title>
         <v-card-text class="text-center text-body-1">
           <p class="font-weight-medium">
@@ -183,12 +575,25 @@
           </p>
         </v-card-text>
         <v-card-actions class="d-flex flex-column pa-0">
-          <v-btn color="primary" block variant="flat" class="my-2" @click="setTestAnswer()">
-            Continue as {{ user.email }}
+          <v-btn
+            color="primary"
+            block
+            variant="flat"
+            class="my-2"
+            @click="setTestAnswer()"
+          >
+            {{
+              $t('UserTestView.actions.continueAs', { userEmail: user.email })
+            }}
           </v-btn>
           <p class="text-caption mt-2">
-            Not you?
-            <a href="#" class="text-primary font-weight-medium" @click.prevent="signOut">Change account</a>
+            {{ $t('UserTestView.actions.notYou') }}
+            <a
+              href="#"
+              class="text-primary font-weight-medium"
+              @click.prevent="signOut"
+              >{{ $t('UserTestView.actions.changeAccount') }}</a
+            >
           </p>
         </v-card-actions>
       </v-card>
@@ -197,227 +602,274 @@
 </template>
 
 <script setup>
-import { ref as dbRef, onValue, off, update, set, onDisconnect } from "firebase/database";
-import { database } from "@/app/plugins/firebase/index";
-import { ref, computed, watch, onMounted, reactive, watchEffect } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useRoute, useRouter } from 'vue-router';
-import { useToast } from 'vue-toastification';
-import { useStore } from 'vuex';
-import { onBeforeUnmount } from 'vue';
-import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue';
-import WelcomeStep from '@/ux/UserTest/components/steps/WelcomeStep.vue';
-import ModeratorWelcomeStep from '@/ux/UserTest/components/steps/ModeratorWelcomeStep.vue';
-import PreTestStep from '@/ux/UserTest/components/steps/PreTestStep.vue';
-import PreTasksStep from '@/ux/UserTest/components/steps/PreTasksStep.vue';
-import TaskStep from '@/ux/UserTest/components/steps/TaskStep.vue';
-import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue';
-import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue';
-import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue';
-import VideoCall from '@/ux/UserTest/components/VideoCall.vue';
-import { STUDY_TYPES } from '@/shared/constants/methodDefinitions';
-import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer';
-import TaskAnswer from '@/ux/UserTest/models/TaskAnswer';
-import { MEDIA_FIELD_MAP } from "@/shared/constants/mediasType";
+import {
+  ref as dbRef,
+  onValue,
+  off,
+  update,
+  set,
+  get,
+  onDisconnect,
+  serverTimestamp,
+} from 'firebase/database'
+import { database } from '@/app/plugins/firebase/index'
+import { ref, computed, watch, onMounted, reactive, watchEffect } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import { onBeforeUnmount } from 'vue'
+import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue'
+import WelcomeStep from '@/ux/UserTest/components/steps/WelcomeStep.vue'
+import ModeratorWelcomeStep from '@/ux/UserTest/components/steps/ModeratorWelcomeStep.vue'
+import PreTestStep from '@/ux/UserTest/components/steps/PreTestStep.vue'
+import PreTasksStep from '@/ux/UserTest/components/steps/PreTasksStep.vue'
+import TaskStep from '@/ux/UserTest/components/steps/TaskStep.vue'
+import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue'
+import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue'
+import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue'
+import VideoCall from '@/ux/UserTest/components/VideoCall.vue'
+import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
+import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
+import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
+import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
+import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
+import { showError, showInfo, showWarning } from '@/shared/utils/toast'
+import { calculateProgress } from '../utils/testProgress'
 
-const store = useStore();
-const router = useRouter();
-const route = useRoute();
-const { t } = useI18n();
-const toast = useToast();
-
+const store = useStore()
+const router = useRouter()
+const route = useRoute()
+const { t } = useI18n()
 // Data variables
-const loggedIn = ref(null);
-const sessionCooperator = ref(null);
-const testDate = ref(null);
-const start = ref(true);
-const globalIndex = ref(null);
-const taskIndex = ref(0);
-const localTestAnswer = reactive(new UserStudyEvaluatorAnswer());
-const rightView = ref(null); // For scroll effect
-const fullName = ref(''); // For consent form component
-const items = ref([]);
-const doneTaskDisabled = ref(false); // ?
-const displayVideoCallComponent = ref(false);
-const preTestIndex = ref(null);
-const taskStepComponent = ref(null);
-const allTasksCompleted = ref(false);
-const submitDialog = ref(false);
+
+onBeforeUnmount(() => {
+  if (moderatorDisconnectTimeout.value)
+    clearTimeout(moderatorDisconnectTimeout.value)
+})
+
+const testDisabledReason = ref(null)
+const isStartTestDisabled = ref(true)
+const loggedIn = ref(null)
+const sessionCooperator = ref(null)
+const testDate = ref(null)
+const start = ref(true)
+const globalIndex = ref(null)
+const taskIndex = ref(0)
+const localTestAnswer = reactive(new UserStudyEvaluatorAnswer())
+const rightView = ref(null) // For scroll effect
+const fullName = ref('') // For consent form component
+const items = ref([])
+const doneTaskDisabled = ref(false) // ?
+const displayVideoCallComponent = ref(false)
+const preTestIndex = ref(null)
+const taskStepComponent = ref(null)
+const allTasksCompleted = ref(false)
+const submitDialog = ref(false)
+const notesDrawerOpen = ref(true)
+const moderatorInactive = ref(false)
+const moderatorDisconnectTimeout = ref(null)
 
 // From video call to be used by recorders
-const remoteStream = ref(null);
+const remoteStream = ref(null)
 
 // Computed properties
-const mediaUrls = computed(() => store.getters.mediaUrls);
-const test = computed(() => store.getters.test);
-const testId = computed(() => store.getters.test?.id || null);
+const mediaUrls = computed(() => store.getters.mediaUrls)
+const test = computed(() => store.getters.test)
+const testId = computed(() => store.getters.test?.id || null)
 const user = computed(() => {
-  return store.getters.user;
-});
+  return store.getters.user
+})
 const isUserTestAdmin = computed(() => {
-  return test.value.testAdmin.userDocId === user.value?.id
-});
+  return test.value?.testAdmin?.userDocId === user.value?.id
+})
+
+const currentUserAccessLevel = computed(() => {
+  if (isUserTestAdmin.value) return 0 // Admin implicit
+  const cooperator = test.value.cooperators?.find(
+    (c) => c.userDocId === user.value?.id,
+  )
+  return cooperator?.accessLevel ?? 2 // Default to Guest/Participant (2) if not found, but typically should be found
+})
+
+const isObservator = computed(() => currentUserAccessLevel.value === 3)
 
 const timerComponent = computed(() => {
   // Get timer ref from TaskStep
-  return taskStepComponent.value?.$refs?.timerComponent || null;
-});
+  return taskStepComponent.value?.$refs?.timerComponent || null
+})
 
-const currentUserTestAnswer = computed(() => store.getters.currentUserTestAnswer);
+const currentUserTestAnswer = computed(
+  () => store.getters.currentUserTestAnswer,
+)
 
 const roomId = computed(() => {
-  return test.value.id; // Assuming we will use the test ID as the room ID
-});
+  return test.value.id // Assuming we will use the test ID as the room ID
+})
 
 const stepperValue = computed(() => {
-  if (globalIndex.value === 0) return 0; // Welcome step
-  if (globalIndex.value === 1 && taskIndex.value === 0) return 1; // Consent
-  if (globalIndex.value === 2 && taskIndex.value === 0) return 2; // Pre-test
-  if (globalIndex.value === 3 && taskIndex.value === 0) return 3; // Pre-tasks (informational)
-  if (globalIndex.value === 4 && taskIndex.value >= 0) return 3;   // Tasks (still step 3)
-  if (globalIndex.value === 5) return 4; // Post-test
-  if (globalIndex.value === 6 && localTestAnswer.postTestCompleted) return 5; // Completion
-  return 1; // Default to first step
-});
+  if (globalIndex.value === 0) return 0 // Welcome step
+  if (globalIndex.value === 1 && taskIndex.value === 0) return 1 // Consent
+  if (globalIndex.value === 2 && taskIndex.value === 0) return 2 // Pre-test
+  if (globalIndex.value === 3 && taskIndex.value === 0) return 3 // Pre-tasks (informational)
+  if (globalIndex.value === 4 && taskIndex.value >= 0) return 3 // Tasks (still step 3)
+  if (globalIndex.value === 5) return 4 // Post-test
+  if (globalIndex.value === 6) return 5 // Completion
+  return 1 // Default to first step
+})
 
 // Watchers
 watch(user, async () => {
   if (user.value) {
-    if (loggedIn.value) await setTestAnswer();
+    if (loggedIn.value) await setTestAnswer()
   }
-});
+})
 
 watch(
-  () => [globalIndex.value, taskIndex.value],
-  () => {
-    scrollToTop();
-  }
-);
+  () => [
+    globalIndex.value,
+    taskIndex.value,
+    displayVideoCallComponent.value,
+    isUserTestAdmin.value,
+  ],
+  ([gi, ti, dvc, admin]) => {
+    scrollToTop()
+  },
+)
 
 watchEffect(() => {
+  const index = taskIndex.value
 
-  const index = taskIndex.value;
+  const taskList = test.value?.testStructure?.userTasks
+  const task = Array.isArray(taskList) ? taskList[index] : undefined
 
-  const taskList = test.value?.testStructure?.userTasks;
-  const task = Array.isArray(taskList) ? taskList[index] : undefined;
+  const answers = localTestAnswer?.tasks?.[index]?.susAnswers
 
-  const answers = localTestAnswer?.tasks?.[index]?.susAnswers;
+  if (isUserTestAdmin.value) {
+    doneTaskDisabled.value = false
+    return
+  }
+
+  if (isUserTestAdmin.value) {
+    doneTaskDisabled.value = false
+    return
+  }
 
   if (task?.taskType === 'sus') {
-    const validCount = answers?.filter(v => typeof v === 'number').length ?? 0;
-    doneTaskDisabled.value = validCount < 10;
-    console.log('SUS respostas válidas:', validCount);
+    const validCount = answers?.filter((v) => typeof v === 'number').length ?? 0
+    doneTaskDisabled.value = validCount < 10
   } else {
-    doneTaskDisabled.value = false;
+    doneTaskDisabled.value = false
   }
-});
+})
 
 watch(
   () => test.value,
   async () => {
-    await mappingSteps();
+    await mappingSteps()
   },
-  { deep: true }
-);
+  { deep: true },
+)
 
 watch(
   () => items.value,
   () => {
     if (items.value.length && globalIndex.value === null) {
-      globalIndex.value = items.value[0].id;
+      globalIndex.value = items.value[0].id
       if (items.value.find((obj) => obj.id === 0)) {
-        preTestIndex.value = items.value[0].value[0].id;
+        preTestIndex.value = items.value[0].value[0].id
       }
     }
   },
-  { deep: true }
-);
+  { deep: true },
+)
 
 // Methods
 const proceedToNextStep = async () => {
-  if (!isUserTestAdmin.value) return;
-  const roomRef = dbRef(database, `rooms/${roomId.value}`);
+  if (!isUserTestAdmin.value) return
+  const roomRef = dbRef(database, `rooms/${roomId.value}`)
   await update(roomRef, {
     globalIndex: globalIndex.value,
     taskIndex: taskIndex.value,
-    showVideoCall: false
-  });
-};
+    showVideoCall: false,
+  })
+}
 
-const handleStepSelected = async ({ globalIndex: newGlobalIndex, taskIndex: newTaskIndex }) => {
-  if (!isUserTestAdmin.value) return;
-  
-  globalIndex.value = newGlobalIndex;
-  taskIndex.value = newTaskIndex;
-  
+const handleStepSelected = async ({
+  globalIndex: newGlobalIndex,
+  taskIndex: newTaskIndex,
+}) => {
+  if (!isUserTestAdmin.value) return
+
+  globalIndex.value = newGlobalIndex
+  taskIndex.value = newTaskIndex
+
   // Moderator stays in video call, but participant sees the selected step
   // Don't change displayVideoCallComponent for moderator
-  
-  const roomRef = dbRef(database, `rooms/${roomId.value}`);
+
+  const roomRef = dbRef(database, `rooms/${roomId.value}`)
   await update(roomRef, {
     globalIndex: newGlobalIndex,
     taskIndex: newTaskIndex,
-    showVideoCall: false  // Set to false so participant sees the step content immediately
-  });
-};
+    showVideoCall: false, // Set to false so participant sees the step content immediately
+  })
+}
 
 const handleConsentDecline = async () => {
   // User declined consent, end the moderated test
-  store.commit('SET_TOAST', { 
-    type: 'info', 
-    message: 'Test ended due to consent decline. Thank you for your time.',
-    timeout: 5000
-  });
-  
+  store.commit('SET_TOAST', {
+    type: 'info',
+    message: t('UserTestView.alerts.consentDecline'),
+    timeout: 5000,
+  })
+
   // Clean up room data
-  const roomRef = dbRef(database, `rooms/${roomId.value}`);
-  await set(roomRef, null);
-  
+  const roomRef = dbRef(database, `rooms/${roomId.value}`)
+  await set(roomRef, null)
+
   // Navigate back to admin
   setTimeout(() => {
-    router.push('/admin');
-  }, 2000);
-};
+    router.push('/admin')
+  }, 2000)
+}
 
 const handleSubmit = async () => {
-  submitDialog.value = false;
+  submitDialog.value = false
   try {
-    localTestAnswer.submitted = true;
-    await saveAnswer();
-    await router.push({ name: 'Admin' });
-  } catch (error) {
-    console.error('Error submitting answer:', error.message);
-    store.commit('SET_TOAST', { type: 'error', message: 'Failed to submit the answer. Please try again.' });
+    localTestAnswer.submitted = true
+    await saveAnswer()
+    await router.push({ name: 'Admin' })
+  } catch {
+    store.commit('SET_TOAST', {
+      type: 'error',
+      message: t('UserTestView.errors.failedToSubmitAnswer'),
+    })
   }
-};
+}
 
 const saveAnswer = async () => {
   try {
-    attachMediaToTasks(localTestAnswer, mediaUrls.value);
+    attachMediaToTasks(localTestAnswer, mediaUrls.value)
 
-    localTestAnswer.fullName = fullName.value;
+    localTestAnswer.fullName = fullName.value
     if (user.value && user.value?.email) {
-      localTestAnswer.userDocId = user.value.id;
-      localTestAnswer.invited = true;
+      localTestAnswer.userDocId = user.value.id
+      localTestAnswer.invited = true
     }
 
-    Object.assign(currentUserTestAnswer.value, localTestAnswer);
+    Object.assign(currentUserTestAnswer.value, localTestAnswer)
 
-    console.log('ANSWER =>', {
-      data: currentUserTestAnswer.value,
-      answerDocId: test.value.answersDocId,
-      testType: test.value.testType,
-    })
     await store.dispatch('saveTestAnswer', {
       data: currentUserTestAnswer.value,
-      answerDocId: test.value.answersDocId,
+      answersDocId: test.value.answersDocId,
       testType: test.value.testType,
-    });
-  } catch (error) {
-    console.error('Error saving answer:', error.message);
-    store.commit('SET_TOAST', { type: 'error', message: 'Failed to save the answer. Please try again.' });
+    })
+  } catch {
+    store.commit('SET_TOAST', {
+      type: 'error',
+      message: t('UserTestView.errors.failedToSaveAnswer'),
+    })
   }
-};
+}
 
 const attachMediaToTasks = (answer, mediaUrls) => {
   if (!answer?.tasks?.length) return
@@ -435,231 +887,336 @@ const attachMediaToTasks = (answer, mediaUrls) => {
 }
 
 const setTestAnswer = async () => {
-  loggedIn.value = true;
-  await store.dispatch('getCurrentTestAnswerDoc');
-};
+  loggedIn.value = true
+  await store.dispatch('getCurrentTestAnswerDoc')
+}
 
 const signOut = async () => {
-  await store.dispatch('signOut');
-  router.push('/signin');
-};
+  await store.dispatch('signOut')
+  router.push('/signin')
+}
 
 const startTest = async () => {
   // Check if the test has no tasks
-  if (!test.value.testStructure || test.value.testStructure.length === 0) {
-    store.commit('SET_TOAST', { type: 'info', message: "This test doesn't have any tasks." });
-    router.push(`/missions/${test.value.id}`);
-    return;
+  if (
+    !test.value.testStructure ||
+    Object.keys(test.value.testStructure).length === 0
+  ) {
+    store.commit('SET_TOAST', {
+      type: 'info',
+      message: t('UserTestView.messages.noTasks'),
+    })
+    router.push(`/missions/${test.value.id}`)
+    return
   }
 
   if (!isUserTestAdmin.value) {
     await store.dispatch('acceptStudyCollaboration', {
       test: test.value,
       cooperator: user.value,
-    });
+    })
+  }
+
+  if (isObservator.value) {
+    // Hidin start screen and mount VideoCall component
+    start.value = false
+    displayVideoCallComponent.value = true
+    return
   }
 
   // First, add the class for the exit animation
-  const startScreen = document.querySelector('.start-screen');
+  const startScreen = document.querySelector('.start-screen')
   if (startScreen) {
-    startScreen.classList.add('leaving');
+    startScreen.classList.add('leaving')
   }
 
   // listen for changes
-  const roomRef = dbRef(database, `rooms/${roomId.value}`);
+  const roomRef = dbRef(database, `rooms/${roomId.value}`)
 
-  onDisconnect(roomRef).set(null);
+  // Ensure only moderator can set this, and only on explicit end, NOT using onDisconnect
+  // onDisconnect(roomRef).set(null)
 
   onValue(roomRef, (snapshot) => {
-    const data = snapshot.val();
-    if (!data) return;
+    const data = snapshot.val()
 
-    globalIndex.value = data.globalIndex;
-    taskIndex.value = data.taskIndex;
+    // If data is null, the room has been deleted (e.g. by moderator ending call)
+    if (!data) {
+      if (!isUserTestAdmin.value && displayVideoCallComponent.value) {
+        // displayVideoCallComponent.value = false // Avoid updating state before redirect to prevent unmount error
+        // Optionally show start screen or just return to test flow
+        // start.value = true
+        showInfo('The moderator has ended the session')
+        router.push('/admin')
+      }
+      return
+    }
+
+    globalIndex.value = data.globalIndex !== undefined ? data.globalIndex : 0
+    taskIndex.value = data.taskIndex !== undefined ? data.taskIndex : 0
 
     if (!isUserTestAdmin.value) {
-      displayVideoCallComponent.value = data.showVideoCall;
+      // sync video call state
+      if (data.showVideoCall !== undefined) {
+        displayVideoCallComponent.value = data.showVideoCall
+      }
     }
-  });
+  })
 
   // Wait for the animation to finish before changing the state
   setTimeout(() => {
-    start.value = false;
-  }, 1000);
-};
+    start.value = false
+  }, 1000)
+
+  // Initialize Room defaults for Moderator
+  if (isUserTestAdmin.value) {
+    // Check if valid data exists, otherwise init defaults
+    const snapshot = await get(roomRef)
+    const currentData = snapshot.val() || {}
+
+    const updates = {
+      status: 'active',
+      lastUpdate: Date.now(),
+    }
+
+    if (currentData.globalIndex === undefined) updates.globalIndex = 0
+    if (currentData.taskIndex === undefined) updates.taskIndex = 0
+    if (currentData.showVideoCall === undefined) updates.showVideoCall = false
+    if (currentData.createdAt === undefined) updates.createdAt = Date.now()
+
+    await update(roomRef, updates)
+
+    // Write lastUpdate timestamp when moderator disconnects (server-side timestamp)
+    onDisconnect(roomRef).update({ lastUpdate: serverTimestamp() })
+  }
+}
+
+const MODERATOR_DISCONNECT_TIMEOUT_MS = 5 * 60 * 1000 // 5 minutes
+
+const handleModeratorStatusChange = (connected) => {
+  if (isUserTestAdmin.value) return // Moderator does not need this
+
+  if (!connected) {
+    // Moderator disconnected — start 5-min timeout
+    if (moderatorDisconnectTimeout.value)
+      clearTimeout(moderatorDisconnectTimeout.value)
+    moderatorDisconnectTimeout.value = setTimeout(() => {
+      moderatorInactive.value = true
+    }, MODERATOR_DISCONNECT_TIMEOUT_MS)
+  } else {
+    // Moderator reconnected — clear timeout and dismiss alert instantly
+    if (moderatorDisconnectTimeout.value) {
+      clearTimeout(moderatorDisconnectTimeout.value)
+      moderatorDisconnectTimeout.value = null
+    }
+    moderatorInactive.value = false
+  }
+}
 
 // Scroll to top of the page when step changes
 const scrollToTop = () => {
   // For most browsers
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({ top: 0, behavior: 'smooth' })
   // For rightView (in case of overflow)
   if (rightView.value) {
-    rightView.value.scrollTop = 0;
+    rightView.value.scrollTop = 0
   }
-};
-
+}
 
 const callTimerSave = () => {
-  if (timerComponent.value && typeof timerComponent.value.stopTimer === 'function') {
-    timerComponent.value.stopTimer();
+  if (
+    timerComponent.value &&
+    typeof timerComponent.value.stopTimer === 'function'
+  ) {
+    timerComponent.value.stopTimer()
   }
-};
+}
 
 function handleTaskFinish(userCompleted) {
-  const currentTask = localTestAnswer.tasks[taskIndex.value];
+  const currentTask = localTestAnswer.tasks[taskIndex.value]
   if (currentTask) {
-    console.log('Estado actual de la tarea antes de finalizar:', currentTask);
+    console.log('Estado actual de la tarea antes de finalizar:', currentTask) // eslint-disable-line no-console
   }
-  completeStep(taskIndex.value, 'tasks', userCompleted);
-  callTimerSave();
+  completeStep(taskIndex.value, 'tasks', userCompleted)
+  callTimerSave()
 }
 
 const startTimer = () => {
-  if (timerComponent.value && typeof timerComponent.value.startTimer === 'function') {
-    timerComponent.value.startTimer();
+  if (
+    timerComponent.value &&
+    typeof timerComponent.value.startTimer === 'function'
+  ) {
+    timerComponent.value.startTimer()
   }
-};
-
+}
 
 const handleTimerStopped = (elapsedTime, idx) => {
   // idx is passed from TaskStep, always use it
-  console.log('handleTimerStopped llamado con:', { elapsedTime, idx });
+  console.log('handleTimerStopped llamado con:', { elapsedTime, idx }) // eslint-disable-line no-console
 
   if (!localTestAnswer.tasks) {
-    console.error('localTestAnswer.tasks no está definido');
-    return;
+    console.error('localTestAnswer.tasks no está definido') // eslint-disable-line no-console
+    return
   }
 
   if (idx === undefined || idx === null) {
-    console.error('Índice de tarea no válido:', idx);
-    return;
+    return
   }
 
   if (localTestAnswer.tasks[idx]) {
-    console.log('Guardando tiempo para tarea', idx, ':', elapsedTime, 'segundos');
     // Asegurar que el tiempo es un número
-    const timeToSave = typeof elapsedTime === 'number' ? elapsedTime : parseInt(elapsedTime);
+    const timeToSave =
+      typeof elapsedTime === 'number' ? elapsedTime : parseInt(elapsedTime)
     if (!isNaN(timeToSave)) {
-      localTestAnswer.tasks[idx].taskTime = timeToSave;
-      console.log('Tiempo guardado correctamente:', localTestAnswer.tasks[idx]);
+      localTestAnswer.tasks[idx].taskTime = timeToSave
     } else {
-      console.error('Tiempo no válido:', elapsedTime);
+      console.error('Tiempo no válido:', elapsedTime) // eslint-disable-line no-console
     }
   } else {
-    console.error('No se pudo guardar el tiempo para la tarea', idx);
+    console.error('No se pudo guardar el tiempo para la tarea', idx) // eslint-disable-line no-console
   }
-};
+}
 
 const completeStep = async (id, type, userCompleted = true) => {
-  displayVideoCallComponent.value = true;
+  displayVideoCallComponent.value = true
   try {
     if (type === 'consent') {
-      localTestAnswer.consentCompleted = true;
-      items.value[0].value[id].icon = 'mdi-check-circle-outline';
-      if (localTestAnswer.preTestCompleted && localTestAnswer.consentCompleted) {
-        items.value[0].icon = 'mdi-check-circle-outline';
+      localTestAnswer.consentCompleted = true
+      items.value[0].value[id].icon = 'mdi-check-circle-outline'
+      if (
+        localTestAnswer.preTestCompleted &&
+        localTestAnswer.consentCompleted
+      ) {
+        items.value[0].icon = 'mdi-check-circle-outline'
       }
-      globalIndex.value = 2;
-
+      globalIndex.value = 2
     }
     if (type === 'preTest') {
-      localTestAnswer.preTestCompleted = true;
-      items.value[0].value[id].icon = 'mdi-check-circle-outline';
-      if (localTestAnswer.preTestCompleted && localTestAnswer.consentCompleted) {
-        items.value[0].icon = 'mdi-check-circle-outline';
+      localTestAnswer.preTestCompleted = true
+      items.value[0].value[id].icon = 'mdi-check-circle-outline'
+      if (
+        localTestAnswer.preTestCompleted &&
+        localTestAnswer.consentCompleted
+      ) {
+        items.value[0].icon = 'mdi-check-circle-outline'
       }
-      globalIndex.value = 3;
+      globalIndex.value = 3
     }
     if (type === 'tasks') {
       if (!Array.isArray(localTestAnswer.tasks)) {
-        console.error('localTestAnswer.tasks is not an array:', localTestAnswer.tasks);
-        return;
+        showWarning('Task data is invalid. Please refresh and try again.')
+        return
       }
-      localTestAnswer.tasks[id].completed = userCompleted;
-      items.value[1].value[id].icon = 'mdi-check-circle-outline';
-      allTasksCompleted.value = true;
+      localTestAnswer.tasks[id].completed = userCompleted
+      if (items.value[1]?.value?.[id]) {
+        items.value[1].value[id].icon = 'mdi-check-circle-outline'
+      }
+      allTasksCompleted.value = true
 
-      for (let i = 0; i < items.value[1].value.length; i++) {
+      for (let i = 0; i < items.value[1]?.value?.length || 0; i++) {
         if (!localTestAnswer.tasks[i]?.completed) {
-          allTasksCompleted.value = false;
-          break;
+          allTasksCompleted.value = false
+          break
         }
       }
-      if (allTasksCompleted.value) {
-        items.value[1].icon = 'mdi-check-circle-outline';
+      if (allTasksCompleted.value && items.value[1]) {
+        items.value[1].icon = 'mdi-check-circle-outline'
       }
       if (id < localTestAnswer.tasks.length - 1) {
-        taskIndex.value = id + 1;
-        startTimer();
+        taskIndex.value = id + 1
+        startTimer()
       } else {
-        console.log('All tasks completed, moving to post-test');
-        globalIndex.value = 5;
+        console.log('All tasks completed, moving to post-test') // eslint-disable-line no-console
+        globalIndex.value = 5
       }
       if (userCompleted) {
         store.commit('SET_TOAST', {
           type: 'success',
-          message: `Task "${test.value.testStructure.userTasks[id].taskName}" completed successfully!`,
+          message: t('UserTestView.messages.taskCompletedSuccess', {
+            taskName: test.value.testStructure.userTasks[id].taskName,
+          }),
           timeout: 3000,
-        });
+        })
       }
     }
     if (type === 'postTest') {
-      localTestAnswer.postTestCompleted = true;
-      globalIndex.value = 6;
+      localTestAnswer.postTestCompleted = true
+      globalIndex.value = 6
       if (items.value[2]?.value && items.value[2].value[id]) {
-        items.value[2].value[id].icon = 'mdi-check-circle-outline';
+        items.value[2].value[id].icon = 'mdi-check-circle-outline'
       }
     }
 
-    const roomRef = dbRef(database, `rooms/${roomId.value}`);
+    const roomRef = dbRef(database, `rooms/${roomId.value}`)
     await update(roomRef, {
       globalIndex: globalIndex.value,
       taskIndex: taskIndex.value,
-      showVideoCall: true
-    });
+      showVideoCall: true,
+    })
 
-    calculateProgress();
-    await saveAnswer();
+    // Update individual participant taskIndex (for tracking)
+    if (!isUserTestAdmin.value && user.value?.id) {
+      const participantRef = dbRef(
+        database,
+        `calls/${roomId.value}/participants/${user.value.id}`,
+      )
+      // We can just update taskIndex.
+      // Note: 'taskIndex' variable here is the NEXT index (already updated above if type=='tasks')
+      // validation: type === 'tasks' ? id + 1 : taskIndex.value
+      await update(participantRef, {
+        taskIndex: taskIndex.value,
+      })
+    }
+
+    calculateProgress(localTestAnswer)
+    await saveAnswer()
   } catch (error) {
-    console.error('Error in completeStep:', error);
-    store.commit('SET_TOAST', { type: 'error', message: 'Failed to complete step. Please try again.' });
+    console.error('Error in completeStep:', error) // eslint-disable-line no-console
+    store.commit('SET_TOAST', {
+      type: 'error',
+      message: t('UserTestView.errors.failedToCompleteStep'),
+    })
   }
-};
+}
 
 const mappingSteps = async () => {
   try {
-    items.value = [];
+    items.value = []
 
     // PreTest
     if (validate(test.value?.testStructure?.preTest)) {
       items.value.push({
-        title: 'Pre-test',
+        title: t('UserTestView.stepper.preTest'),
         icon: 'mdi-check-bold',
         value: [
           {
-            title: 'Consent',
+            title: t('UserTestView.stepper.consent'),
             icon: 'mdi-check-bold',
             id: 0,
           },
           {
-            title: 'Form',
+            title: t('UserTestView.stepper.form'),
             icon: 'mdi-check-bold',
             id: 1,
           },
         ],
         id: 0,
-      });
-      if (!localTestAnswer.preTestAnswer.length && Array.isArray(test.value.testStructure.preTest)) {
-        localTestAnswer.preTestAnswer = test.value.testStructure.preTest.map(() => ({
-          answer: '',
-        }));
+      })
+      if (
+        !localTestAnswer.preTestAnswer.length &&
+        Array.isArray(test.value.testStructure.preTest)
+      ) {
+        localTestAnswer.preTestAnswer = test.value.testStructure.preTest.map(
+          () => ({
+            answer: '',
+          }),
+        )
       }
     }
 
     // Tasks
     if (validate(test.value?.testStructure?.userTasks)) {
       items.value.push({
-        title: 'Tasks',
+        title: t('UserTestView.stepper.tasks'),
         icon: 'mdi-check-bold',
         value: test.value.testStructure.userTasks.map((task, index) => ({
           title: task.taskName,
@@ -667,44 +1224,56 @@ const mappingSteps = async () => {
           id: index,
         })),
         id: 1,
-      });
-      if (!localTestAnswer.tasks.length && Array.isArray(test.value.testStructure.userTasks)) {
-        localTestAnswer.tasks = test.value.testStructure.userTasks.map((task, i) => {
-          const newTask = new TaskAnswer({
-            taskId: task.id || i,
-            taskAnswer: '',
-            taskObservations: '',
-            postAnswer: '',
-            taskTime: 0,
-            completed: false,
-            susAnswers: [],
-            nasaTlxAnswers: null,
-          });
-          console.log('Nueva tarea creada:', i, newTask);
-          return newTask;
-        });
+      })
+      if (
+        !localTestAnswer.tasks.length &&
+        Array.isArray(test.value.testStructure.userTasks)
+      ) {
+        localTestAnswer.tasks = test.value.testStructure.userTasks.map(
+          (task, i) => {
+            const newTask = new TaskAnswer({
+              taskId: task.id || i,
+              taskAnswer: '',
+              taskObservations: '',
+              postAnswer: '',
+              taskTime: 0,
+              completed: false,
+              susAnswers: [],
+              nasaTlxAnswers: null,
+            })
+            return newTask
+          },
+        )
       }
     }
 
     // PostTest
     if (validate(test.value?.testStructure?.postTest)) {
       items.value.push({
-        title: 'Post Test',
+        title: t('UserTestView.stepper.postTest'),
         icon: 'mdi-check-bold',
         value: test.value.testStructure.postTest,
         id: 2,
-      });
-      if (!localTestAnswer.postTestAnswer.length && Array.isArray(test.value.testStructure.postTest)) {
-        localTestAnswer.postTestAnswer = test.value.testStructure.postTest.map(() => ({
-          answer: '',
-        }));
+      })
+      if (
+        !localTestAnswer.postTestAnswer.length &&
+        Array.isArray(test.value.testStructure.postTest)
+      ) {
+        localTestAnswer.postTestAnswer = test.value.testStructure.postTest.map(
+          () => ({
+            answer: '',
+          }),
+        )
       }
     }
   } catch (error) {
-    console.error('Error mapping steps:', error.message);
-    store.commit('SET_TOAST', { type: 'error', message: 'Failed to initialize test data. Please try again.' });
+    console.error('Error mapping steps:', error.message) // eslint-disable-line no-console
+    store.commit('SET_TOAST', {
+      type: 'error',
+      message: t('UserTestView.errors.failedToInitializeTestData'),
+    })
   }
-};
+}
 
 const validate = (object) => {
   return (
@@ -713,96 +1282,194 @@ const validate = (object) => {
     object !== '' &&
     Array.isArray(object) &&
     object.length > 0
-  );
-};
+  )
+}
 
-const calculateProgress = () => {
-  try {
-    if (!localTestAnswer) return 0;
-    const totalSteps = 4;
-    let completedSteps = 0;
+// testDisabledReason is already declared at line 544
 
-    if (localTestAnswer.preTestCompleted) completedSteps++;
-    if (localTestAnswer.consentCompleted) completedSteps++;
+watchEffect(() => {
+  if (!test.value) {
+    testDisabledReason.value = 'test-no-data'
+    isStartTestDisabled.value = true
+    return
+  }
+  if (isUserTestAdmin.value) {
+    if (localTestAnswer.submitted) {
+      testDisabledReason.value = 'test-already-completed'
+      isStartTestDisabled.value = true
+      isStartTestDisabled.value = true
+    } else if (
+      !test.value.testStructure ||
+      Object.keys(test.value.testStructure).length === 0
+    ) {
+      testDisabledReason.value = 'test-no-tasks-configured'
+      isStartTestDisabled.value = true
+    } else {
+      testDisabledReason.value = null
+      isStartTestDisabled.value = false
+    }
+    return
+  }
+  const now = new Date()
+  const userSessions = test.value.cooperators.filter(
+    (u) => u.userDocId === route.params.token,
+  )
 
-    let tasksCompleted = 0;
-    if (items.value[1]?.value && Array.isArray(localTestAnswer.tasks)) {
-      for (let i = 0; i < items.value[1].value.length; i++) {
-        if (localTestAnswer.tasks[i]?.completed) {
-          tasksCompleted++;
-        }
-      }
-      if (tasksCompleted === items.value[1].value.length) {
-        completedSteps++;
-      }
+  const cooperator = userSessions
+    .filter((s) => {
+      const sessionDate = new Date(s.testDate)
+      const diffHours = (sessionDate - now) / (1000 * 60 * 60)
+      return diffHours >= 0 && diffHours <= 24
+    })
+    .sort((a, b) => new Date(a.testDate) - new Date(b.testDate))[0]
+
+  const sessionDate = cooperator?.testDate
+    ? new Date(cooperator.testDate)
+    : null
+
+  // 🧩 Test already completed
+  if (localTestAnswer.submitted) {
+    testDisabledReason.value = 'test-already-completed'
+    isStartTestDisabled.value = true
+    return
+  }
+
+  // 🧩 Test is not active
+  if (test.value.status !== 'active') {
+    testDisabledReason.value = 'test-not-active'
+    isStartTestDisabled.value = true
+    return
+  }
+
+  // 🧩 Test structure missing
+  if (
+    !test.value.testStructure ||
+    Object.keys(test.value.testStructure).length === 0
+  ) {
+    testDisabledReason.value = 'test-no-tasks-configured'
+    isStartTestDisabled.value = true
+    return
+  }
+
+  // 🧩 Check session date
+  if (sessionDate) {
+    const diffHours = (sessionDate.getTime() - now.getTime()) / (1000 * 60 * 60)
+
+    if (diffHours < 0) {
+      testDisabledReason.value = 'test-expired'
+      isStartTestDisabled.value = true
+      return
     }
 
-    if (localTestAnswer.postTestCompleted) completedSteps++;
-
-    const progressPercentage = (completedSteps / totalSteps) * 100;
-    localTestAnswer.progress = progressPercentage;
-    return progressPercentage;
-  } catch (error) {
-    console.error('Error in calculateProgress:', error);
-    return 0;
+    if (diffHours > 24) {
+      testDisabledReason.value = 'test-session-too-far'
+      isStartTestDisabled.value = true
+      return
+    }
+    testDisabledReason.value = null
+    return false
   }
-};
+
+  // 🧩 Test expired (fallback endDate)
+  if (test.value.endDate) {
+    const endDate = new Date(test.value.endDate)
+    if (now > endDate) {
+      testDisabledReason.value = 'test-expired'
+      isStartTestDisabled.value = true
+      return
+    }
+  }
+
+  testDisabledReason.value = null
+  isStartTestDisabled.value = false
+})
 
 // Lifecycle hooks
 onMounted(async () => {
   if (!user.value) {
-    toast.error('Login to your RUXAILAB account first to access the test!');
-    router.push('/signin');
-    return;
+    showError(t('UserTestView.errors.loginRequired'))
+    router.push('/signin')
+    return
   }
 
   if (route.params.token) {
     if (route.params.token === test.value.id) {
-      toast.info('Use a session link to access your moderated test!');
-      router.push('/managerview/' + test.value.id);
-      return;
+      showInfo(t('UserTestView.messages.useSessionLinkModerated'))
+      router.push('/managerview/' + test.value.id)
+      return
     }
 
     if (user.value.id !== route.params.token && !isUserTestAdmin.value) {
-      toast.error(t('errors.globalError'));
-      router.push('/admin');
-      return;
+      showError('errors.globalError')
+      router.push('/admin')
+      return
     }
 
-    if(!isUserTestAdmin.value){
+    if (!isUserTestAdmin.value) {
       sessionCooperator.value = test.value.cooperators.find(
         (user) => user.userDocId === route.params.token,
-      );
+      )
       if (sessionCooperator.value?.testDate) {
-        testDate.value = sessionCooperator.value.testDate;
+        testDate.value = sessionCooperator.value.testDate
       } else {
-        toast.warning("Your session doesn't have a scheduled date");
-        router.push('/managerview/' + test.value.id);
-        return;
+        showWarning(t('UserTestView.warnings.sessionNotScheduled'))
+        return
       }
     }
   } else {
-    toast.info('Use a session link to access the test');
-    router.push('/managerview/' + test.value.id);
-    return;
+    showInfo(t('UserTestView.messages.useSessionLink'))
+    return
   }
 
-  globalIndex.value = 0;
-  
+  globalIndex.value = 0
+
   // Initialize localTestAnswer with existing data from currentUserTestAnswer
-  if (currentUserTestAnswer.value && Object.keys(currentUserTestAnswer.value).length > 0) {
-    Object.assign(localTestAnswer, currentUserTestAnswer.value);
-    console.log('LocalTestAnswer initialized with existing data:', localTestAnswer);
+  if (
+    currentUserTestAnswer.value &&
+    Object.keys(currentUserTestAnswer.value).length > 0
+  ) {
+    Object.assign(localTestAnswer, currentUserTestAnswer.value)
   }
-  
-  await mappingSteps();
-});
+
+  await mappingSteps()
+})
+
+// Auto-join if refresh happens during active call
+watch(
+  isUserTestAdmin,
+  async (newValue) => {
+    if (newValue && roomId.value) {
+      const roomRef = dbRef(database, `rooms/${roomId.value}`)
+      const snapshot = await get(roomRef)
+      if (snapshot.exists()) {
+        const val = snapshot.val()
+        if (val.showVideoCall) {
+          displayVideoCallComponent.value = true
+          start.value = false // Ensure we hide the start screen if it's there
+          await startTest()
+        }
+      }
+    }
+  },
+  { immediate: true },
+)
 
 onBeforeUnmount(async () => {
-  const roomRef = dbRef(database, `rooms/${roomId.value}`);
-  off(roomRef);
-  await set(roomRef, null);
-});
+  const roomRef = dbRef(database, `rooms/${roomId.value}`)
+  off(roomRef)
+  // Do NOT delete the room on unmount (refresh/navigate away). Only explicit end should delete.
+  // await set(roomRef, null)
+
+  // Moderator: explicitly stamp lastUpdate on leave (covers SPA navigation)
+  if (isUserTestAdmin.value) {
+    await update(roomRef, { lastUpdate: serverTimestamp() })
+  }
+
+  if (moderatorDisconnectTimeout.value) {
+    clearTimeout(moderatorDisconnectTimeout.value)
+    moderatorDisconnectTimeout.value = null
+  }
+})
 </script>
 
 <style scoped>
@@ -813,17 +1480,17 @@ onBeforeUnmount(async () => {
   overflow: hidden;
   background-size: 200% 200%;
   animation: subtleGradient 20s ease-in-out infinite;
-  background-image: linear-gradient(160deg,
-      #00213F 0%,
-      #1a2f4f 35%,
-      #303f9f 100%);
+  background-image: linear-gradient(
+    160deg,
+    #00213f 0%,
+    #1a2f4f 35%,
+    #303f9f 100%
+  );
   transition: opacity 8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-
-
 .start-screen.leaving,
-.start-screen.leaving>*,
+.start-screen.leaving > *,
 .start-screen.leaving::before {
   opacity: 0;
   transition-duration: 1.2s;
@@ -851,10 +1518,10 @@ onBeforeUnmount(async () => {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 90%;
-  margin-right: -100px;
-  margin-top: 200px;
-  background-image: url(../../../assets/ruxailab-small-red.png);
+  height: 140%;
+  margin-right: -450px;
+  margin-top: 100px;
+  background-image: url(../../../assets/logo_small_red.png);
   background-repeat: no-repeat;
   background-size: contain;
   background-position: right top;
@@ -874,24 +1541,25 @@ onBeforeUnmount(async () => {
 }
 
 .main-stepper {
-  background: #00213F !important;
+  background: #00213f !important;
   color: #fff !important;
   --v-stepper-header-title-color: #fff !important;
   --v-stepper-item-title-color: #fff !important;
   --v-stepper-item-color: #fff !important;
-  transition: background 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    background 1s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-
 .main-stepper.stepper-animate {
-  background: #00213F !important;
+  background: #00213f !important;
   opacity: 0.3;
   filter: blur(1px);
 }
 
 /* Task stepper background */
 .task-stepper {
-  background: #00213F !important;
+  background: #00213f !important;
   color: #fff !important;
   --v-stepper-header-title-color: #fff !important;
   --v-stepper-item-title-color: #fff !important;
@@ -924,6 +1592,5 @@ onBeforeUnmount(async () => {
 
 .v-stepper-item {
   padding: 1rem;
-  ;
 }
 </style>

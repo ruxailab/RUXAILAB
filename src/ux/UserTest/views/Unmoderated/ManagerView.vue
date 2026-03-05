@@ -6,32 +6,32 @@
       :top-cards="topCards"
       :bottom-cards="bottomCards"
     >
-
       <!-- Dashboard profesional con componentes específicos -->
-      <v-container
-        v-if="test"
-        class="dashboard-container"
-      >
+      <v-container v-if="test" class="dashboard-container">
         <!-- Main Dashboard Layout: Two Columns -->
         <v-row class="dashboard-main-row">
           <!-- Left Column: Dashboard Header -->
-          <v-col
-            cols="12"
-            lg="6"
-          >
+          <v-col cols="12" lg="6">
             <!-- Dashboard Header with Gradient -->
             <div class="dashboard-header gradient-header">
               <div class="header-content">
                 <div class="d-flex align-center mb-3">
                   <div class="header-icon-container mr-3">
-                    <v-icon color="white" size="28">mdi-chart-box-outline</v-icon>
+                    <v-icon color="white" size="28"
+                      >mdi-chart-box-outline</v-icon
+                    >
                   </div>
                   <div class="flex-grow-1">
                     <h1 class="dashboard-title text-white mb-0">
-                      {{ test.testTitle || 'User Test Study' }}
+                      {{
+                        test.testTitle || t('manager.dashboard.defaultTitle')
+                      }}
                     </h1>
                     <p class="dashboard-subtitle text-white opacity-90 mb-0">
-                      {{ test.testDescription || 'User Test Study' }}
+                      {{
+                        test.testDescription ||
+                        t('manager.dashboard.defaultTitle')
+                      }}
                     </p>
                   </div>
                 </div>
@@ -42,14 +42,12 @@
                     variant="outlined"
                     size="small"
                   >
-                    <v-icon
-                      start
-                      size="16"
-                      color="white"
-                    >
+                    <v-icon start size="16" color="white">
                       mdi-account-check-outline
                     </v-icon>
-                    <span class="text-white">Unmoderated Study</span>
+                    <span class="text-white">{{
+                      t('manager.dashboard.unmoderatedStudy')
+                    }}</span>
                   </v-chip>
                   <v-chip
                     class="status-chip"
@@ -57,14 +55,12 @@
                     variant="outlined"
                     size="small"
                   >
-                    <v-icon
-                      start
-                      size="16"
-                      color="white"
-                    >
+                    <v-icon start size="16" color="white">
                       {{ getStatusIcon(test.testStatus) }}
                     </v-icon>
-                    <span class="text-white">{{ test.testStatus || 'Active' }}</span>
+                    <span class="text-white">{{
+                      test.testStatus || t('manager.dashboard.active')
+                    }}</span>
                   </v-chip>
                 </div>
               </div>
@@ -72,11 +68,7 @@
           </v-col>
 
           <!-- Right Column: Study Overview -->
-          <v-col
-            cols="12"
-            lg="6"
-            class="study-overview-column"
-          >
+          <v-col cols="12" lg="6" class="study-overview-column">
             <!-- Las 4 cards de métricas -->
             <div class="study-overview-wrapper">
               <StudyOverview :test="test" />
@@ -88,55 +80,40 @@
         <div class="section-header">
           <h2 class="section-title">
             <v-icon class="section-icon">mdi-view-dashboard</v-icon>
-            Management Modules
+            {{ t('manager.managementModules.title') }}
           </h2>
           <p class="section-description">
-            Comprehensive tools to manage participants, tasks, settings, and analyze your study data
+            {{ t('manager.managementModules.description') }}
           </p>
         </div>
 
         <!-- Modules Grid: 3x2 layout -->
         <v-row class="modules-section">
           <!-- Row 1 -->
-          <v-col
-            cols="12"
-            md="6"
-          >
+          <v-col cols="12" md="6">
             <ParticipantsInfo :test="test" />
           </v-col>
-          <v-col
-            cols="12"
-            md="6"
-          >
+          <v-col cols="12" md="6">
             <TasksInfo :test="test" />
           </v-col>
 
           <!-- Row 2 -->
-          <v-col
-            cols="12"
-            md="6"
-          >
+          <v-col cols="12" md="6">
             <StorageInfo :test="test" />
           </v-col>
-          <v-col
-            cols="12"
-            md="6"
-          >
+          <v-col cols="12" md="6">
             <!-- Empty slot for future components -->
             <v-card
               class="h-100 d-flex align-center justify-center"
               variant="outlined"
-              style="min-height: 200px;"
+              style="min-height: 200px"
             >
               <div class="text-center text-grey-lighten-1">
-                <v-icon
-                  size="48"
-                  class="mb-2"
-                >
+                <v-icon size="48" class="mb-2">
                   mdi-plus-circle-outline
                 </v-icon>
                 <p class="text-body-2">
-                  Space for additional modules
+                  {{ t('manager.managementModules.additionalModules') }}
                 </p>
               </div>
             </v-card>
@@ -148,22 +125,30 @@
 </template>
 
 <script setup>
-import ManagerView from '@/shared/views/template/ManagerView.vue';
-import { ACCESS_LEVEL } from '@/shared/utils/accessLevel';
-import { computed, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import { useStore } from 'vuex';
-import { getBottomCardsDefualt, getNavigatorDefault, getTopCardsDefualt } from '@/shared/utils/managerDefault';
+import ManagerView from '@/shared/views/template/ManagerView.vue'
+import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
+import { computed, onMounted, watchEffect } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import { getStatusIcon } from '@/shared/utils/statusUtils'
+import { useI18n } from 'vue-i18n'
+import {
+  getBottomCardsDefualt,
+  getNavigatorDefault,
+  getTopCardsDefualt,
+} from '@/shared/utils/managerDefault'
 
 // Manager components
-import StudyOverview from '@/ux/UserTest/components/manager/StudyOverview.vue';
-import ParticipantsInfo from '@/ux/UserTest/components/manager/ParticipantsInfo.vue';
-import TasksInfo from '@/ux/UserTest/components/manager/TasksInfo.vue';
-import StorageInfo from '@/ux/UserTest/components/manager/StorageInfo.vue';
+import StudyOverview from '@/ux/UserTest/components/manager/StudyOverview.vue'
+import ParticipantsInfo from '@/ux/UserTest/components/manager/ParticipantsInfo.vue'
+import TasksInfo from '@/ux/UserTest/components/manager/TasksInfo.vue'
+import StorageInfo from '@/ux/UserTest/components/manager/StorageInfo.vue'
 
 // Stores
 const store = useStore()
 const route = useRoute()
+const router = useRouter()
+const { t } = useI18n()
 
 // Computed
 const user = computed(() => store.getters.user)
@@ -172,15 +157,36 @@ const test = computed(() => store.getters.test)
 const accessLevel = computed(() => {
   const currentUser = user.value
   const currentTest = test.value
-
   if (!currentUser) return ACCESS_LEVEL.GUEST
   if (currentUser.accessLevel === 0) return ACCESS_LEVEL.ADMIN
-  if (currentTest?.testAdmin?.userDocId === currentUser.id) return ACCESS_LEVEL.ADMIN
+  if (currentTest?.testAdmin?.userDocId === currentUser.id)
+    return ACCESS_LEVEL.ADMIN
 
-  const coop = currentTest?.cooperators?.find(c => c.userDocId === currentUser.id)
+  const coop = currentTest?.cooperators?.find(
+    (c) => c.userDocId === currentUser.id,
+  )
   if (coop) return coop.accessLevel
 
-  return currentTest?.isPublic ? ACCESS_LEVEL.GUEST : ACCESS_LEVEL.EVALUATOR
+  // Fixed logic: Public studies allow guest access, private studies block non-collaborators
+  if (currentTest?.isPublic) {
+    return ACCESS_LEVEL.GUEST // Public studies: allow as guest
+  } else {
+    return null // Private studies: no access for non-collaborators
+  }
+})
+
+watchEffect(() => {
+  if (user.value != null && test.value != null) {
+    // Allow ADMIN, EVALUATOR, and GUEST (for public studies)
+    const hasAccess =
+      accessLevel.value === ACCESS_LEVEL.ADMIN ||
+      accessLevel.value === ACCESS_LEVEL.EVALUATOR ||
+      accessLevel.value === ACCESS_LEVEL.GUEST
+
+    if (!hasAccess || accessLevel.value === null) {
+      router.push('/')
+    }
+  }
 })
 
 const topCards = computed(() => {
@@ -196,40 +202,16 @@ const bottomCards = computed(() => {
 const navigator = computed(() => {
   if (!test.value) return []
   const items = [
-    ...getNavigatorDefault(test.value, accessLevel.value, route, 'userTest/unmoderated'),
+    ...getNavigatorDefault(
+      test.value,
+      accessLevel.value,
+      route,
+      'userTest/unmoderated',
+    ),
   ]
-
-  if (accessLevel.value === 0 && test.value) {
-    items.push({
-      title: 'Export Data',
-      icon: 'mdi-download',
-      path: `/userTest/unmoderated/answers/${test.value.id}`,
-    })
-  }
 
   return items
 })
-
-// Methods para los componentes adicionales
-const getStatusColor = (status) => {
-  const statusMap = {
-    'Active': 'success',
-    'Draft': 'warning', 
-    'Completed': 'info',
-    'Archived': 'error'
-  }
-  return statusMap[status] || 'primary'
-}
-
-const getStatusIcon = (status) => {
-  const iconMap = {
-    'Active': 'mdi-play-circle',
-    'Draft': 'mdi-pencil-circle',
-    'Completed': 'mdi-check-circle',
-    'Archived': 'mdi-archive'
-  }
-  return iconMap[status] || 'mdi-information'
-}
 
 // Lifecycle
 onMounted(async () => {
@@ -268,7 +250,11 @@ onMounted(async () => {
 }
 
 .gradient-header {
-  background: linear-gradient(135deg, rgb(var(--v-theme-primary)) 0%, rgb(var(--v-theme-secondary)) 100%);
+  background: linear-gradient(
+    135deg,
+    rgb(var(--v-theme-primary)) 0%,
+    rgb(var(--v-theme-secondary)) 100%
+  );
 }
 
 .gradient-header::before {
@@ -278,7 +264,8 @@ onMounted(async () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
+    repeat;
   opacity: 0.1;
 }
 
@@ -380,14 +367,12 @@ onMounted(async () => {
   font-weight: 400;
 }
 
-
 .dashboard-main-row > .v-col {
   padding: 0 12px !important;
   display: flex !important;
   flex-direction: column !important;
   min-height: 320px !important;
 }
-
 
 .study-overview-wrapper {
   width: 100%;
@@ -468,11 +453,11 @@ onMounted(async () => {
     width: 95% !important;
     padding: 24px 16px !important;
   }
-  
+
   .dashboard-header {
     padding: 32px 24px;
   }
-  
+
   .dashboard-title {
     font-size: 2rem !important;
   }
@@ -482,39 +467,39 @@ onMounted(async () => {
   .dashboard-container {
     width: 98% !important;
   }
-  
+
   .dashboard-main-row {
     min-height: 280px !important;
   }
-  
+
   .dashboard-main-row > .v-col {
     min-height: 280px !important;
   }
-  
+
   .dashboard-header {
     min-height: 200px !important;
   }
-  
+
   .study-overview-column {
     min-height: 280px !important;
   }
-  
+
   .header-content {
     flex-direction: column;
     align-items: center;
     text-align: center;
     gap: 24px;
   }
-  
+
   .header-chips {
     flex-direction: row;
     justify-content: center;
   }
-  
+
   .section-title {
     font-size: 1.75rem !important;
   }
-  
+
   .modules-section :deep(.v-card) {
     height: auto !important;
     min-height: 280px !important;
@@ -525,43 +510,41 @@ onMounted(async () => {
   .dashboard-container {
     padding: 16px 8px !important;
   }
-  
+
   .dashboard-main-row {
     min-height: 240px !important;
   }
-  
+
   .dashboard-main-row > .v-col {
     min-height: 240px !important;
   }
-  
+
   .dashboard-header {
     padding: 24px 20px;
     min-height: 180px !important;
   }
-  
+
   .study-overview-column {
     min-height: 240px !important;
   }
-  
+
   .dashboard-title {
     font-size: 1.75rem !important;
   }
-  
+
   .dashboard-subtitle {
     font-size: 1rem !important;
   }
-  
+
   .header-chips {
     flex-direction: column;
     width: 100%;
   }
-  
+
   .test-type-chip,
   .status-chip {
     width: 100%;
     justify-content: center;
   }
 }
-
-
 </style>

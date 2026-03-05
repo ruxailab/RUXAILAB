@@ -3,39 +3,32 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, watch } from 'vue'
 import { useStore } from 'vuex'
-import { useToast } from 'vue-toastification'
+import { showSuccess, showError, showInfo, showWarning, showToast } from '../../../shared/utils/toast';
 
 const store = useStore()
-const toast = useToast()
 
-// Reactive state for tracking previous error
-const previousErrorMessage = ref('')
-const previousErrorCode = ref('')
+const toastMessage = computed(() => store.state.toastMessage)
+const toastType = computed(() => store.state.toastType)
 
-// Computed property for error state from Vuex
-const error = computed(() => store.state.error)
+const toastHelpers = {
+  success: showSuccess,
+  error: showError,
+  info: showInfo,
+  warning: showWarning,
+  default: showToast,
+}
 
-// Watch for error changes
 watch(
-  error,
-  (newError) => {
-    if (
-      newError &&
-      (newError.message || newError.errorCode) &&
-      (newError.message !== previousErrorMessage.value ||
-        newError.errorCode !== previousErrorCode.value)
-    ) {
-      toast.error(`${newError.errorCode}: ${newError.message}`)
-      previousErrorMessage.value = newError.message
-      previousErrorCode.value = newError.errorCode
-      store.commit('clearError')
+  [toastMessage, toastType],
+  ([message, type]) => {
+    if (message) {
+      const helper = toastHelpers[type] || showToast
+      helper(message)
+      store.commit('RESET_TOAST')
     }
   },
-  {
-    immediate: true,
-    deep: true,
-  }
+  { immediate: true }
 )
 </script>

@@ -5,32 +5,22 @@
       color="#f9a826"
       class="text-white"
       size="small"
-      :disabled="testAnswerDocLength > 0"
-      :class="{ disabledBtnBackground: testAnswerDocLength > 0 }"
-      @click="dialog = true; resetIndex()"
+      :disabled="isTemplate || testAnswerDocLength > 0"
+      :class="{ disabledBtnBackground: isTemplate || testAnswerDocLength > 0 }"
+      @click="((dialog = true), resetIndex())"
     >
       {{ $t('HeuristicsTable.titles.addNewDescription') }}
     </v-btn>
 
-    <v-dialog
-      v-model="dialog"
-      width="700"
-      persistent
-    >
+    <v-dialog v-model="dialog" width="700" persistent>
       <v-card class="dataCard">
         <p class="subtitleView ma-3 pt-3 mb-0 pa-2">
           {{ $t('HeuristicsTable.titles.addNewDescription') }}
         </p>
         <v-divider />
-        <v-row
-          justify="center"
-          class="ma-0"
-        >
+        <v-row justify="center" class="ma-0">
           <v-col cols="11">
-            <v-form
-              ref="form"
-              @submit.prevent="validate"
-            >
+            <v-form ref="form" @submit.prevent="validate">
               <v-row justify="center">
                 <v-col cols="12">
                   <v-text-field
@@ -39,11 +29,13 @@
                     density="compact"
                     variant="outlined"
                     :label="$t('common.title')"
+                    :disabled="isTemplate"
                   />
 
                   <TextareaForm
                     v-model="desc.text"
                     :title="$t('common.description')"
+                    :readonly="isTemplate"
                   />
                 </v-col>
               </v-row>
@@ -89,8 +81,8 @@
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
-import { useToast } from 'vue-toastification'
 import TextareaForm from '@/shared/components/TextareaForm'
+import { showInfo } from '@/shared/utils/toast'
 
 const props = defineProps({
   questionIndex: {
@@ -103,13 +95,16 @@ const props = defineProps({
     required: true,
     default: 0,
   },
+  isTemplate: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const emit = defineEmits(['update-description'])
 
 const store = useStore()
 const { t } = useI18n()
-const toast = useToast()
 
 const dialog = ref(false)
 const desc = ref({
@@ -123,8 +118,11 @@ const form = ref(null)
 const rules = ref([(v) => !!v || t('errors.fieldRequired')])
 
 const question = computed(() => {
-  return store.state.Tests.Test.testStructure[props.heuristicIndex]
-    .questions[props.questionIndex]
+  return (
+    store.state.Tests?.Test?.testStructure?.[props.heuristicIndex]?.questions?.[
+      props.questionIndex
+    ] || { descriptions: [] }
+  )
 })
 
 const testAnswerDocLength = computed(() => {
@@ -135,9 +133,16 @@ const testAnswerDocLength = computed(() => {
   return Object.keys(doc.heuristicAnswers).length
 })
 
+const stripHtml = (value) => {
+  const el = document.createElement('div')
+  el.innerHTML = value || ''
+  return (el.textContent || '').trim()
+}
+
 const validate = async () => {
+  if (props.isTemplate) return
   const { valid } = await form.value.validate()
-  const strippedText = desc.value.text.replace(/<\/?[^>]+(>|$)/g, '').trim()
+  const strippedText = stripHtml(desc.value.text)
   if (valid && strippedText.length > 0) {
     store.commit('SETUP_HEURISTIC_QUESTION_DESCRIPTION', {
       heuristic: props.heuristicIndex,
@@ -148,13 +153,13 @@ const validate = async () => {
     emit('update-description')
     reset()
   } else if (valid && strippedText.length === 0) {
-    toast.info(t('alerts.addDescription'))
+    showInfo('alerts.addDescription')
   }
 }
 
 const reset = () => {
   dialog.value = false
-  form.value.resetValidation()
+  form.value?.resetValidation()
   desc.value = {
     title: '',
     text: '',
@@ -167,14 +172,16 @@ const resetIndex = () => {
 }
 
 const editSetup = (i) => {
+  if (props.isTemplate) return
   dialog.value = true
   editIndex.value = i
-  desc.value = { ...question.value.descriptions[editIndex.value] }
+  desc.value = { ...(question.value?.descriptions?.[editIndex.value] || {}) }
 }
 
 const submitEdit = async () => {
+  if (props.isTemplate) return
   const { valid } = await form.value.validate()
-  const strippedText = desc.value.text.replace(/<\/?[^>]+(>|$)/g, '').trim()
+  const strippedText = stripHtml(desc.value.text)
   if (valid && strippedText.length > 0) {
     store.commit('SETUP_HEURISTIC_QUESTION_DESCRIPTION', {
       heuristic: props.heuristicIndex,
@@ -185,12 +192,12 @@ const submitEdit = async () => {
     emit('update-description')
     reset()
   } else if (valid && strippedText.length === 0) {
-    toast.info(t('alerts.addDescription'))
+    showInfo('alerts.addDescription')
   }
 }
 
 defineExpose({
-  editSetup
+  editSetup,
 })
 </script>
 
@@ -211,7 +218,7 @@ defineExpose({
   padding-bottom: 2px;
 }
 .dataCard {
-  box-shadow: 0px 4px 4px_RGBA(0, 0, 0, 0.25);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 4px;
 }
 </style>

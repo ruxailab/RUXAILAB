@@ -8,6 +8,8 @@
     class="rounded-lg"
     elevation="2"
     hover
+    :loading="loadingStudy"
+    :items-per-page-text="t('common.table.itemsPerPage')"
     @click:row="emitClick"
   >
     <!-- Type Column -->
@@ -18,7 +20,7 @@
             v-bind="props"
             size="32"
             :color="getAvatarColor(item)"
-            style="color: #fff"
+            variant="tonal"
           >
             <v-icon size="18">
               {{ getTypeIcon(item) }}
@@ -33,18 +35,14 @@
 
     <!-- Name Column -->
     <template #item.name="{ item }">
-      <div
-        class="d-flex flex-column"
-        style="line-height: 1;"
-      >
+      <div class="d-flex flex-column" style="line-height: 1">
         <div class="text-subtitle-1 font-weight-medium text-on-surface">
           {{ getItemTitle(item) }}
         </div>
-        <div v-if="type == 'sessions'" class="text-caption text-medium-emphasis">
+        <!-- <div v-if="type == 'sessions'" class="text-caption text-medium-emphasis">
           Session Date: {{formatDateTime(item.testDate, 'es')}}
         </div>
         <div v-else class="text-caption text-medium-emphasis">
-          <!-- If study does not belong to logged in user -->
           <span v-if="item.testAuthorEmail">
             Last Updated:
           </span>
@@ -52,41 +50,42 @@
             Creation Date:
           </span>
            {{ formatItemDate(item) }}
-        </div>
+        </div> -->
       </div>
+    </template>
+
+    <template #item.tags="{ item }">
+      <v-chip
+        v-for="(tag, i) in getTags(item)"
+        :key="i"
+        :color="tag.color"
+        size="small"
+        class="ma-1"
+      >
+        <v-icon start size="14">{{ tag.icon }}</v-icon>
+        {{ tag.label }}
+      </v-chip>
+    </template>
+
+    <template #item.updateDate="{ item }">
+      {{ formatItemDate(item) }}
+    </template>
+
+    <template #item.creationDate="{ item }">
+      {{ formatItemDate(item) }}
+    </template>
+
+    <template #item.testDate="{ item }">
+      {{ formatDateTime(item.testDate, 'es') }}
     </template>
 
     <!-- Owner Column -->
     <template #item.owner="{ item }">
-      <div class="d-flex align-center">
-        <v-avatar
-          size="32"
-          class="mr-3"
-        >
-          <v-img
-            v-if="getOwnerImage(item)"
-            :src="getOwnerImage(item)"
-            cover
-          />
-          <span
-            v-else
-            class="font-weight-medium"
-          >
-            {{ getOwnerName(item)?.[0]?.toUpperCase() ?? '?' }}
-          </span>
-        </v-avatar>
-        <span class="text-body-1">
-          {{ getOwnerName(item) }}
-        </span>
-      </div>
+      {{ getOwnerName(item) }}
     </template>
 
     <template #item.evaluator="{ item }">
-      <div class="d-flex align-center">
-        <span class="text-body-1">
-          {{ item.email }}
-        </span>
-      </div>
+      {{ item.email }}
     </template>
 
     <!-- Participants Column -->
@@ -94,14 +93,14 @@
       <v-chip
         size="small"
         variant="tonal"
-        color="primary"
+        :color="getParticipantCount(item) > 0 ? 'info' : 'light'"
         prepend-icon="mdi-account-multiple"
       >
         {{ getParticipantCount(item) }}
       </v-chip>
     </template>
 
-     <!-- Status Column -->
+    <!-- Status Column -->
     <template #item.status="{ item }">
       <v-chip
         label
@@ -112,9 +111,30 @@
       </v-chip>
     </template>
 
+    <template v-if="showActions" #item.actions="{ item }">
+      <v-btn
+        icon
+        variant="text"
+        size="small"
+        color="primary"
+        @click.stop="emitPreview(item)"
+      >
+        <v-icon>mdi-eye</v-icon>
+      </v-btn>
+    </template>
+
     <!-- No Data Slot -->
     <template #no-data>
-      <div class="text-center pa-4">
+      <div v-if="isFiltered" class="pa-8 text-center text-medium-emphasis">
+        <v-icon size="48" color="grey-lighten-1" class="mb-2">
+          mdi-magnify-remove-outline
+        </v-icon>
+        <div class="text-h6 mt-2">{{ t('common.table.noSearchResults') }}</div>
+        <div class="text-body-2">
+          {{ t('common.table.tryAdjustingSearch') }}
+        </div>
+      </div>
+      <div v-else class="text-center pa-4">
         <span>
           {{ getEmptyStateMessage(t) }}
         </span>
@@ -124,13 +144,14 @@
 </template>
 
 <script setup>
-import { toRef } from 'vue'
+import { computed, toRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useItemFormatting } from '@/shared/composables/useItemFormatting'
 import { useItemTypes } from '@/shared/composables/useItemTypes'
 import { useDataTableConfig } from '@/shared/composables/useDataTableConfig'
 import { formatDateTime } from '@/shared/utils/dateUtils'
 import { getSessionStatus } from '@/shared/utils/sessionsUtils'
+import store from '@/store'
 
 const props = defineProps({
   items: {
@@ -147,21 +168,46 @@ const props = defineProps({
     required: false,
     default: null,
   },
+  isFiltered: {
+    type: Boolean,
+    default: false,
+  },
+  showActions: {
+    type: Boolean,
+    default: false,
+  },
 })
 
-const emit = defineEmits(['clicked'])
+const emit = defineEmits(['clicked', 'preview-clicked'])
 
 const { t } = useI18n()
 
 // Composables
 const typeRef = toRef(props, 'type')
-const { headers, getEmptyStateMessage } = useDataTableConfig(typeRef)
-const { getItemTitle, getOwnerName, getOwnerImage, getParticipantCount, formatItemDate } = useItemFormatting(typeRef)
+const showActionsRef = toRef(props, 'showActions')
+const { headers, getEmptyStateMessage } = useDataTableConfig(typeRef, t, {
+  showActions: showActionsRef,
+})
+const {
+  getItemTitle,
+  getOwnerName,
+  getTags,
+  getParticipantCount,
+  formatItemDate,
+} = useItemFormatting(typeRef)
 const { getTypeIcon, getTestType, getAvatarColor } = useItemTypes()
+
+const loadingStudy = computed(() => {
+  return store.getters.loading
+})
 
 // Event handlers
 const emitClick = (event, { item }) => {
   emit('clicked', item)
+}
+
+const emitPreview = (item) => {
+  emit('preview-clicked', item)
 }
 </script>
 
@@ -185,7 +231,7 @@ const emitClick = (event, { item }) => {
 /* Header styling */
 :deep(.v-data-table-header__content) {
   font-weight: 700 !important;
-  color: #1F2937 !important;
+  color: #1f2937 !important;
 }
 
 /* Optional: Add a subtle border between rows for better separation */

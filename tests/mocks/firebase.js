@@ -28,6 +28,12 @@ jest.mock('firebase/storage', () => {
   }
 })
 
+jest.mock('firebase/database', () => {
+  return {
+    getDatabase: jest.fn(),
+  }
+})
+
 jest.mock('firebase/functions', () => {
   return {
     getFunctions: jest.fn(),

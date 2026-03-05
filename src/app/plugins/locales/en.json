@@ -1,4 +1,5 @@
 {
+  "language": "Language",
   "auth": {
     "signupSuccess": "Sign up successful",
     "logoutSuccess": "Logout successful",
@@ -28,11 +29,30 @@
       "email": "Email",
       "instructions": "Enter your email and we'll send you a link to reset your password.",
       "reset_button": "Send Reset Link",
-      "back_to_signin": "Back to Sign In"
+      "back_to_signin": "Back to Sign In",
+      "check_your_email": "Check your email",
+      "reset_link_sent": "We’ve sent a password reset link to",
+      "no_email": "Didn’t get the email?",
+      "try_again": "Try again"
+    },
+    "passwordStrength": "Password Strength",
+    "number": "Number",
+    "strength": {
+      "veryWeak": "Very Weak",
+      "weak": "Weak",
+      "fair": "Fair",
+      "good": "Good",
+      "strong": "Strong"
     }
   },
-  "language": "Language",
   "common": {
+    "enterTextHere": "Enter text here...",
+    "units": {
+      "mb": "MB",
+      "gb": "GB"
+    },
+    "hidden": "Hidden",
+    "visible": "Visible",
     "loading": "Loading Test",
     "continueAs": "Continue as",
     "notUser": "Not {userEmail}?",
@@ -45,6 +65,7 @@
     "title": "Title",
     "description": "Description",
     "cancel": "Cancel",
+    "proceed": "proceed",
     "confirm": "Confirm",
     "add": "Add",
     "text": "Text",
@@ -54,8 +75,12 @@
     "type": "Type",
     "noNotifications": "You don't have notifications yet",
     "notifications": "Notifications",
+    "markAllAsRead": "Mark all as read",
+    "caughtUp": "You're all caught up",
+    "noNewNotifications": "No new notifications",
     "unread": "unread",
     "inbox": "inbox",
+    "all": "All",
     "timeAgo": {
       "years": "{count} year | {count} years",
       "months": "{count} month | {count} months",
@@ -66,7 +91,173 @@
     },
     "viewAll": "View all",
     "sentBy": "Sent by",
-    "new": "NEW"
+    "new": "NEW",
+    "test": "a Study",
+    "actions": "Actions",
+    "confirm_deletion": "Confirm Deletion",
+    "action_cannot_be_undone": "This action cannot be undone",
+    "user": "User",
+    "id": "ID",
+    "itemsPerPage": "Items per page:",
+    "table": {
+      "itemsPerPage": "Items per page:",
+      "type": "Type",
+      "name": "Name",
+      "tags": "Tags",
+      "owner": "Owner",
+      "evaluator": "Evaluator",
+      "status": "Status",
+      "sessionDate": "Session Date",
+      "participants": "Participants",
+      "created": "Created",
+      "noSearchResults": "No results found matching your criteria",
+      "tryAdjustingSearch": "Try adjusting your search or filters to find what you're looking for"
+    }
+  },
+  "storage": {
+    "pageTitle": "Storage",
+    "totalStorage": "Total Storage",
+    "acrossFiles": "Across {count} files",
+    "mediaFiles": "Media Files",
+    "searchByStudyOrDate": "Search by study or date",
+    "deleteFile": "Delete File",
+    "noMediaFiles": "No media files found",
+    "confirmDeletion": "Confirm Deletion",
+    "deleteConfirmMessage": "Are you sure you want to delete this {type} file from \"{studyName}\"?",
+    "actionCannotBeUndone": "This action cannot be undone.",
+    "headers": {
+      "type": "Type",
+      "name": "Name",
+      "tags": "Tags",
+      "owner": "Owner",
+      "participants": "Participants",
+      "created": "Created",
+      "evaluator": "Evaluator",
+      "status": "Status",
+      "sessionDate": "Session Date",
+      "itemsPerPage": "Items per page:",
+      "studyName": "Study Name",
+      "date": "Date",
+      "size": "Size",
+      "actions": "Actions"
+    }
+  },
+  "community": {
+    "studies": {
+      "title": "Community Studies",
+      "searchPlaceholder": "Search studies..."
+    },
+    "templates": {
+      "title": "Community Templates",
+      "searchPlaceholder": "Search templates..."
+    },
+    "reset": "Reset",
+    "showFilters": "Show filters",
+    "hideFilters": "Hide filters",
+    "selectRange": "Select range",
+    "filters": {
+      "creationDate": "Creation date",
+      "status": "Status",
+      "method": "Method",
+      "ownership": "Ownership",
+      "participants": "Participants"
+    },
+    "status": {
+      "allStatuses": "All Statuses",
+      "active": "Active",
+      "draft": "Draft",
+      "completed": "Completed"
+    },
+    "ownership": {
+      "allStudies": "All Studies",
+      "myStudies": "My Studies",
+      "whereICollaborate": "Where I Collaborate"
+    },
+    "participants": {
+      "all": "All",
+      "lessThan10": "< 10 participants",
+      "between10And50": "10 – 50 participants",
+      "moreThan50": "> 50 participants"
+    },
+    "method": {
+      "allMethods": "All Methods",
+      "all": "All",
+      "heuristicEvaluation": "Heuristic Evaluation",
+      "moderatedUserTest": "Moderated User Test",
+      "unmoderatedUserTest": "Unmoderated User Test",
+      "accessibilityManual": "Accessibility Manual Evaluation",
+      "accessibilityAutomatic": "Accessibility Automatic Evaluation"
+    }
+  },
+  "acceptInvitation": {
+    "title": "Cooperation Invite",
+    "message": "Do you want to accept this invitation?",
+    "reject": "Reject",
+    "accept": "Accept"
+  },
+  "notificationsPage": {
+    "subtitle": "Stay updated with your activities and collaborations",
+    "markAllRead": "Mark all read",
+    "searchPlaceholder": "Search notifications…",
+    "notification": "Notification",
+    "important": "Important",
+    "markAsRead": "Mark as read",
+    "markAsUnread": "Mark as unread",
+    "refresh": "Refresh",
+    "noResultsFound": "No results found",
+    "allCaughtUp": "All caught up!",
+    "noNotificationsYet": "No notifications yet",
+    "tryDifferentKeywords": "Try different keywords or clear your search",
+    "allReadMessage": "You've read all your notifications. Great job!",
+    "newActivitiesMessage": "You'll see notifications here when you have new activities",
+    "justNow": "Just now",
+    "minutesAgo": "{count}m ago",
+    "hoursAgo": "{count}h ago",
+    "daysAgo": "{count}d ago",
+    "newNotification": "You have a new notification."
+  },
+  "notifications": {
+    "errors": {
+      "acceptCollaborationFailed": "Failed to accept collaboration. Please try again.",
+      "invalidCollaboration": "This collaboration invitation is invalid or has expired."
+    }
+  },
+  "cooperators": {
+    "updatedRole": "Updated role to {role} for: {users}",
+    "inviteSent": "Invitation sent to: {users}"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "studies": "Studies",
+    "sessions": "Sessions",
+    "templates": "Templates",
+    "storage": "Storage",
+    "community": "Community",
+    "communityStudies": "Community Studies",
+    "communityTemplates": "Community Templates",
+    "visibility": "Visibility",
+    "public": "Public",
+    "private": "Private",
+    "allVisibility": "All Visibility",
+    "subtitles": {
+      "manageStudies": "Manage your research studies",
+      "accessTemplates": "Access your saved templates",
+      "stayUpdated": "Stay updated with your activities and collaborations",
+      "overviewSessions": "Overview of your sessions",
+      "manageStorage": "Manage your stored media files",
+      "viewEditProfile": "View and edit your profile information",
+      "exploreCommunityStudies": "Explore studies shared by the RUXAI community",
+      "browseCommunityTemplates": "Browse templates contributed by the RUXAI community"
+    },
+    "appName": "RUXAILAB",
+    "tagline": "UX Research Platform",
+    "appNavigation": "App Navigation",
+    "createNewStudy": "Create New Study",
+    "exitTest": "Exit Test",
+    "signOut": "Sign Out",
+    "previousStep": "Previous Step",
+    "nextStep": "Next Step",
+    "finishTest": "Finish Test"
   },
   "profile": {
     "title": "Profile",
@@ -75,6 +266,7 @@
     "editProfile": "Edit Profile",
     "account": "Account",
     "admin": "Admin",
+    "superAdmin": "Super Admin",
     "security": "Security",
     "personalInfo": "Personal Info",
     "changePassword": "Change Password",
@@ -99,7 +291,36 @@
     "passwordUppercase": "Must contain an uppercase letter",
     "passwordSymbol": "Must contain a symbol",
     "confirmPasswordRequired": "Confirm password is required",
-    "passwordsMatch": "Passwords must match"
+    "passwordsMatch": "Passwords must match",
+    "usernameRequired": "Username is required",
+    "usernameMinLength": "Username must be at least 3 characters",
+    "countryRequired": "Country is required",
+    "contactNumberRequired": "Contact number is required",
+    "enterValidPhoneNumber": "Please enter a valid phone number (9-15 digits only)",
+    "profileImageUpdatedSuccess": "Profile image updated successfully",
+    "profileImageUploadFailed": "Failed to upload profile image",
+    "uploadProfilePicture": "Upload Profile Picture",
+    "removeProfilePicture": "Remove Profile Picture",
+    "takePhoto": "Take Photo",
+    "cameraCaptureTitle": "Capture Profile Photo",
+    "cameraNotAvailable": "Camera is not available on this device",
+    "cameraPermissionDenied": "Camera permission denied. Please allow camera access in your browser settings.",
+    "noUserSignedIn": "No user signed in",
+    "profileLoadFailed": "Failed to load profile",
+    "profileUpdatedSuccess": "Profile updated successfully",
+    "profileUpdateFailed": "Failed to update profile",
+    "currentPassword": "Current Password",
+    "currentPasswordRequired": "Current password is required",
+    "wrongCurrentPassword": "Current password is incorrect",
+    "recentLoginRequired": "Please log out and log back in before changing your password",
+    "googleUserPasswordInfo": "You signed in with Google. Click the button below to verify with Google and set a password for your account.",
+    "passwordChangedSuccess": "Password changed successfully",
+    "passwordChangeFailed": "Failed to change password",
+    "accountDeletionFailed": "Account deletion failed",
+    "accountDeletedSuccess": "Account deleted successfully",
+    "yourPassword": "Your Password",
+    "back": "Back",
+    "deleteForever": "Delete Forever"
   },
   "titles": {
     "manager": "Manager",
@@ -112,6 +333,10 @@
     "template": "Template",
     "finalReport": "Final Report",
     "answerType": "Answer type:",
+    "users": "Users",
+    "studies": "Studies",
+    "accessLevel": "Access Level",
+    "actions": "Actions",
     "drawer": {
       "Manager": "Manager",
       "Test": "Test",
@@ -124,8 +349,9 @@
       "Final Report": "Final Report",
       "Answer Test": "Answer Test",
       "Settings": "Settings",
-      "Analyse": "Analyze",
-      "Examine": "Examine"
+      "name": "Name",
+      "studiesCount": "Studies Count",
+      "mediaSize": "Media Size"
     },
     "heuristic": "Usability Heuristic Evaluation"
   },
@@ -135,6 +361,9 @@
     "reports": "Take a look at how your evaluators are doing.",
     "answers": "See how your evaluators are evaluating your project.",
     "analytics": "Analyze comments and answers from your evaluators.",
+    "overallAnalyticsDescription": "View the aggregated analytics for your test.",
+    "individualAnalytics": "Individual Analytics",
+    "nasaTlxAnalytics": "NASA-TLX Analytics",
     "finalReport": "Add additional data to your test.",
     "intro": {
       "reports": "Keep track of your evaluators progress and answering status while they complete your test.",
@@ -155,14 +384,16 @@
     "passwordRequired": "Password is required",
     "passwordValidate": "Password must be at least 8 characters",
     "differentPasswords": "Different passwords",
-    "fieldRequired": "Field required",
+    "fieldRequired": "This field is required",
     "passwordUppercase": "Must contain an uppercase letter",
     "passwordSymbol": "Must contain a symbol",
     "userNotExist": "This user does not exist.",
     "incorrectPassword": "Incorrect password",
     "incorrectCredential": "Incorrect username or password.",
     "globalError": "An error has occurred, sorry for the inconvenience.",
-    "sendError": "Failed to send invitation. Please try again"
+    "cameraPermissionDenied": "Camera permission denied. Please allow camera access in your browser settings.",
+    "sendError": "Failed to send invitation. Please try again",
+    "missingVariableTitles": "Cannot save: Some variables are missing titles"
   },
   "Introduction": {
     "title": "UX Remote LAB",
@@ -171,6 +402,8 @@
     "cta": "Get started"
   },
   "Dashboard": {
+    "welcomeBack": "Welcome back, {name}!",
+    "subtitle": "Here's what's happening with your research projects today",
     "createNewTest": "Create new study",
     "tests": "Tests",
     "templates": "Templates",
@@ -180,7 +413,157 @@
     "publicTests": "Public tests",
     "sessions": "Sessions",
     "personal": "Personal",
-    "explore": "Explore"
+    "explore": "Explore",
+    "activeStudies": {
+      "noActiveStudies": "No Active Studies",
+      "createNewStudy": "Create New Study",
+      "emptyStateMessage": "You don't have any studies yet. Create your first study to start gathering valuable user insights."
+    },
+    "studyStatus": {
+      "finished": "Finished",
+      "expiredDaysAgo": "Expired {days} days ago",
+      "endsToday": "Ends today",
+      "endsTodayStarted": "Ends today · started",
+      "readyToSubmit": "Ready to submit",
+      "endsTodayReady": "Ends today · Ready",
+      "notStarted": "Not started"
+    },
+    "activeStudiesOverview": "Active Studies Overview",
+    "viewAll": "View All",
+    "showMore": "Show more",
+    "showLess": "Show less",
+    "progress": "Progress",
+    "participants": "participants",
+    "participantsLabel": "Participants",
+    "daysLeft": "days left",
+    "dayLeft": "day left",
+    "studies": "Studies",
+    "studiesPage": {
+      "searchPlaceholder": "Search studies...",
+      "reset": "Reset",
+      "showFilters": "Show filters",
+      "hideFilters": "Hide filters",
+      "filters": {
+        "creationDate": "Creation date",
+        "status": "Status",
+        "visibility": "Visibility",
+        "method": "Method",
+        "ownership": "Ownership",
+        "participants": "Participants",
+        "selectRange": "Select range",
+        "allStatuses": "All Statuses",
+        "allVisibility": "All Visibility",
+        "public": "Public",
+        "private": "Private",
+        "allMethods": "All Methods",
+        "allStudies": "All Studies",
+        "myStudies": "My Studies",
+        "whereICollaborate": "Where I Collaborate",
+        "all": "All",
+        "lt10": "< 10 participants",
+        "btw10_50": "10 – 50 participants",
+        "gt50": "> 50 participants"
+      }
+    },
+    "storage": "Storage",
+    "free": "Free",
+    "plan": "Plan",
+    "recentActivity": "Recent Activity",
+    "comingSoon": "Coming Soon",
+    "mostUsedMethods": "Most used methods",
+    "use": "Use",
+    "uses": "Uses",
+    "noDataAvailable": "No data available yet",
+    "createFirstStudy": "Create your first study to see statistics here.",
+    "nextSession": "Next Session",
+    "noSessionsScheduled": "No sessions scheduled",
+    "nextSessionWillAppear": "Your next session will appear here",
+    "latestBlogPosts": "Latest Blog Posts",
+    "viewBlog": "View Blog",
+    "date": "Date",
+    "time": "Time",
+    "status": {
+      "active": "Active",
+      "recruiting": "Recruiting",
+      "paused": "Paused",
+      "finished": "Finished",
+      "unknown": "Unknown"
+    },
+    "officeHours": {
+      "title": "Monthly Office Hours",
+      "description": "Starting in November, we will host monthly office hours to discuss project updates, answer questions, and connect with our community.",
+      "nextSessionDate": "Nov 2025",
+      "frequency": "Monthly"
+    },
+    "webinar": {
+      "ended": "Ended",
+      "live": "Live",
+      "today": "Today",
+      "joinNow": "Join Now",
+      "webinarEnded": "Webinar Ended",
+      "startingToday": "Starting Today",
+      "startSession": "Start Session"
+    },
+    "studyType": "Study Type",
+    "noRecentActivity": "No recent activity",
+    "viewAllActivity": "View All Activity",
+    "cards": {
+      "recentActivity": "Recent Activity",
+      "activities7Days": "Activities (7 days total)",
+      "lastActivity": "Last activity",
+      "noActivity": "No activity",
+      "edit": "Edit",
+      "heuristics": "Heuristics",
+      "questions": "Questions",
+      "totalOptions": "Total Options",
+      "qualitative": "Qualitative",
+      "quantitative": "Quantitative",
+      "weights": "Weights",
+      "on": "ON",
+      "off": "OFF",
+      "cooperators": "Cooperators",
+      "totalInvited": "Total invited",
+      "accepted": "Accepted",
+      "pending": "Pending",
+      "storage": "Storage",
+      "currentStorage": "Storage (current)",
+      "limitAvailable": "Limit available",
+      "results": "Results",
+      "generalUsability": "General Usability",
+      "finalReport": "Final Report",
+      "generatePDF": "Generate PDF",
+      "download": "Download",
+      "generated": "Generated:",
+      "generateReport": "Generate Report",
+      "reportAvailable": "Report Available",
+      "noReport": "No Report Generated",
+      "readyForDownload": "Final report ready for download",
+      "waitingForParticipants": "Waiting for participants",
+      "evaluationsCompleted": "evaluations completed",
+      "readyToGenerate": "Ready to generate report",
+      "excellentUsability": "Excellent Usability",
+      "acceptableUsability": "Acceptable Usability",
+      "needsImprovement": "Needs Improvement",
+      "basedOn": "Based on",
+      "evaluations": "evaluations",
+      "evaluationUpdated": "Evaluation updated",
+      "updatedProgress": "updated their progress",
+      "invitationSentTitle": "Invitation sent",
+      "invitationPendingDesc": "Invitation pending for",
+      "pendingStatus": "Pending"
+    },
+    "managerView": {
+      "heuristicStudy": "Heuristic Study",
+      "freePlan": "Free Plan",
+      "generalStatistics": "General Statistics",
+      "modules": "Modules"
+    },
+    "stats": {
+      "participants": "Participants",
+      "completion": "Completion",
+      "daysActive": "Days active",
+      "heuristics": "Heuristics"
+    }
   },
   "HeuristicsTable": {
     "titles": {
@@ -204,7 +587,14 @@
       "deleteQuestion": "Delete question",
       "addNewDescription": "Add a new Description",
       "addOption": "Add a new Option",
-      "hasValue": "Has Value"
+      "hasValue": "Has Value",
+      "moveUp": "Move Up",
+      "moveDown": "Move Down",
+      "Question": "Question",
+      "Questions": "Questions",
+      "noQuestions": "No Questions",
+      "noDescriptions": "No Descriptions",
+      "loading": "Loading..."
     },
     "placeholders": {
       "titleHeuristic": "Title Heuristic",
@@ -219,7 +609,11 @@
       "youMustHave": "You must have typen something wrong...",
       "noHeuristicsDeleteAll": "Sorry, but you can't delete all heuristics questions",
       "noCsvFileSelected": "No CSV file selected. Please select one before proceeding.",
-      "changeWeights": "Be aware that by changing the order of the heuristics, the weights DO NOT change automatically, you must change them manually."
+      "changeWeights": "Be aware that by changing the order of the heuristics, the weights DO NOT change automatically, you must change them manually.",
+      "noDescriptions": "No descriptions available",
+      "startAddingQuestions": "Start by adding your first question to this heuristic",
+      "cantDeleteAllQuestions": "Sorry, you cannot delete all questions from a heuristic",
+      "studyHasAnswers": "This study has answers"
     },
     "validation": {
       "nameRequired": "Name is mandatory",
@@ -232,15 +626,32 @@
       "showComment": "Show comment",
       "addComment": "Add comment",
       "hideTextArea": "Hide text area"
+    },
+    "errors": {
+      "failedToLoadQuestionForm": "Failed to load question form. Please try again.",
+      "failedToLoadEditForm": "Failed to load edit form. Please try again.",
+      "invalidHeuristic": "Invalid heuristic selection",
+      "invalidQuestion": "Invalid question selection"
+    },
+    "count": {
+      "question": "Question",
+      "questions": "Questions"
     }
   },
   "HeuristicsOptionsTable": {
     "titles": {
-      "options": "Options"
+      "options": "Options",
+      "noOptions": "No Options"
     },
-    "messages": {},
+    "messages": {
+      "startAddingOptions": "Start adding options to your heuristic questions"
+    },
     "placeHolders": {},
-    "actions": {}
+    "actions": {},
+    "count": {
+      "option": "option",
+      "options": "options"
+    }
   },
   "HeuristicsWeightsTable": {
     "titles": {
@@ -256,7 +667,8 @@
   },
   "HeuristicsSettings": {
     "titles": {
-      "settings": "Settings"
+      "settings": "Settings",
+      "confirmUpload": "Confirm Upload"
     },
     "messages": {
       "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
@@ -274,7 +686,21 @@
     "messages": {
       "submitTest": "Are you sure you want to submit this test?",
       "submitOnce": "Are you sure you want to submit your test. You can only do it once.",
-      "noHeuristics": "This test don't have any heuristic"
+      "noHeuristics": "This test don't have any heuristic",
+      "noHeuristicsConfigured": "Configuration Error: This test has no heuristics configured. Please add heuristics to proceed.",
+      "answerSaved": "Answer saved successfully"
+    },
+    "errors": {
+      "questionNotLoaded": "Question could not be loaded",
+      "noAnswerData": "No answer data found",
+      "failedToSaveAnswer": "Failed to save answer. Please try again.",
+      "failedToSubmitAnswer": "Failed to submit answer. Please try again."
+    },
+    "unknownHeuristic": "Unknown Heuristic",
+    "unknownQuestion": "Unknown Question",
+    "selectAnOption": "Select an Option",
+    "headers": {
+      "heuristics": "HEURISTICS"
     },
     "actions": {
       "cancel": "Cancel",
@@ -287,12 +713,16 @@
     }
   },
   "HeuristicsEditTest": {
+    "pageTitle": "Edit Test",
+    "pageSubtitle": "Customize the settings and preferences of your test",
     "titles": {
       "heuristics": "Heuristics",
       "options": "Options",
       "weights": "Weights",
       "settings": "Settings"
-    }
+    },
+    "previewPageTitle": "Preview test",
+    "previewPageSubtitle": "Review the test configuration in read-only mode"
   },
   "HeuristicsTestAnswer": {
     "titles": {
@@ -334,25 +764,35 @@
   "HeuristicsReport": {
     "titles": {
       "reports": "Reports",
-      "last_updated": "Last Updated"
+      "last_updated": "Last Updated",
+      "reports_dashboard": "Reports Dashboard"
     },
     "headers": {
       "evaluator": "Evaluator",
       "last_update": "Last Update",
       "progress": "Progress",
       "status": "Status",
-      "more": "More"
+      "actions": "Actions"
     },
     "messages": {
       "confirm_delete_report": "Are you sure you want to delete this report?",
       "reports_loading": "Loading Reports",
       "remove_report": "Remove Report",
       "sure_to_delete": "Are you sure you want to delete {user}'s report? This action can't be undone.",
-      "report_deleted": "Report successfully deleted"
+      "report_deleted": "Report successfully deleted",
+      "no_reports_found": "No reports found",
+      "try_adjusting_search": "Try adjusting your search or filter criteria"
     },
     "status": {
       "submitted": "submitted",
       "in_progress": "in progress"
+    },
+    "filters": {
+      "search_reports": "Search reports...",
+      "filter_by_status": "Filter by status"
+    },
+    "actions": {
+      "unhide_report": "Unhide Report"
     }
   },
   "UsabilityCooperators": {
@@ -367,6 +807,9 @@
   "HeuristicsCooperators": {
     "title": {
       "cooperators": "Cooperators"
+    },
+    "subtitles": {
+      "manage_participants": "Manage people who participate in your study"
     },
     "headers": {
       "email": "Email",
@@ -396,10 +839,15 @@
       "cooperators_loading": "Loading Cooperators",
       "no_users": "There are no users registered with that email, press enter to select anyways.",
       "remove_cooperator": "Are you sure you want to remove {email} from the cooperators?",
-      "cancel_invitation": "Are you sure you want to cancel {email} from the cooperators?",
+      "cancel_invitation": "Are you sure you want to cancel {email}'s invitation?",
       "change_role": "Are you sure you want to change {email}'s role from {old} to {new}?",
+      "change_role_title": "Change Role",
       "message_title_hint": "Type a title for your message",
-      "message_content_hint": "Type the content of your message"
+      "message_content_hint": "Type the content of your message",
+      "invite_message": "You have been invited to collaborate on '{testTitle}'",
+      "message_sent_success": "Message sent successfully",
+      "message_sent_error": "Failed to send message",
+      "user_not_registered": "This user has not accepted the invitation yet or is not registered."
     }
   },
   "UserTestTable": {
@@ -408,17 +856,24 @@
       "userVariables": "User Variables",
       "currentTasks": "Current Tasks",
       "postForm": "Post Form",
-      "writeNewPost": "Write a new post question"
+      "writeNewPost": "Write a new post question",
+      "testConfiguration": "Test Configuration",
+      "eyeTrackingConfigurations": "Eye Tracking Configurations"
     },
     "messages": {
-      "noTasks": "You don't have any task, create one to proceed."
+      "noTasks": "You don't have any task, create one to proceed.",
+      "noVariables": "No variables added yet. Click below to create a new variable.",
+      "noOptions": "No options added.",
+      "confirm_delete_task": "Confirm Delete Task",
+      "sure_to_delete_task": "Are you sure you want to delete Task : {taskName}? This action cannot be undone"
     },
     "inputs": {
       "consent": "Consent",
-      "variableName": "Variable Name",
-      "description": "Description",
-      "selection": "Selection",
-      "writeQuestion": "Write a question"
+      "variableName": "Variable Title",
+      "description": "Description (Optional)",
+      "selection": "Option",
+      "writeQuestion": "Write a question",
+      "dialogVariableName": "Variable Name"
     },
     "checkboxes": {
       "selectionField": "Selection Field",
@@ -428,18 +883,331 @@
     },
     "buttons": {
       "createNewVariable": "Create a new variable",
-      "createNewPost": "Create a new post question"
+      "createNewPost": "Create a new post question",
+      "addFirstOption": "Add First Option"
+    },
+    "headers": {
+      "name": "Name",
+      "type": "Type",
+      "estimatedTime": "Estimated Time (min)",
+      "tip": "Tip",
+      "screenRecord": "Screen Record",
+      "camera": "Camera",
+      "eyeTracker": "Eye Tracker",
+      "audioRecord": "Audio Record",
+      "actions": "Actions",
+      "na": "N/A"
+    },
+    "fallbacks": {
+      "untitledVariable": "Untitled Variable"
+    }
+  },
+  "CreateTask": {
+    "dialog": {
+      "title": "Create New Task",
+      "subtitle": "Configure your task step by step"
+    },
+    "stepper": {
+      "basicInfo": "Basic Info",
+      "configuration": "Configuration",
+      "advanced": "Advanced",
+      "preview": "Preview"
+    },
+    "selectItems": {
+      "noAnswer": "No Answer",
+      "shortAnswer": "Short Answer",
+      "paragraphAnswer": "Paragraph Answer",
+      "googleFormsLink": "Google Forms Link",
+      "nasaTlx": "NASA TLX",
+      "sus": "System Usability Scale",
+      "tam1": "TAM-1 – Basic Acceptance",
+      "tam2": "TAM-2 – Extended Acceptance",
+      "tam3": "TAM-3 – Advanced Acceptance",
+      "sart": "Situation Awareness Rating Technique"
+    },
+    "validation": {
+      "fieldRequired": "Field Required",
+      "validUrl": "Must be a valid URL starting with http:// or https://",
+      "positiveNumber": "Must be a positive number"
+    },
+    "basicInfo": {
+      "stepTitle": "Step 1: Task Basic Information",
+      "stepDescription": "Define what participants will do in this task. This is the foundation of your user test - be clear and specific about the goals and expectations.",
+      "taskTitle": "Task title",
+      "taskTitleHint": "Give your task a clear, concise name that describes what participants need to accomplish",
+      "taskTitlePlaceholder": "e.g., 'Find product information', 'Complete checkout process'",
+      "taskDescription": "Task Description",
+      "taskDescriptionHint": "Provide detailed instructions for participants. Include the goal, context, and any specific steps they should follow.",
+      "taskDescriptionPlaceholder": "Describe the task in detail. What should the participant do?",
+      "tipLabel": "Tip",
+      "tipHint": "Optional guidance or hints to help participants during the task",
+      "tipPlaceholder": "e.g., 'Focus on the main navigation', 'Take your time to explore'"
+    },
+    "configuration": {
+      "stepTitle": "Step 2: Task Configuration",
+      "stepDescription": "Configure where the task takes place and how participants will provide their responses. This determines the user experience and data collection method.",
+      "taskLink": "Task Link (URL)",
+      "taskLinkHint": "The website or application URL where participants will perform the task",
+      "taskLinkPlaceholder": "https://example.com",
+      "estimatedTime": "Estimated Time (minutes)",
+      "estimatedTimeHint": "The estimated time participants will need to complete this task",
+      "estimatedTimePlaceholder": "e.g. 10",
+      "answerTypeHint": "Choose how participants will provide feedback after completing the task",
+      "answerTypePreview": "Answer Type Preview",
+      "postTestHint": "Enter the specific question you want to ask participants after they complete the task",
+      "postTestPlaceholder": "e.g., 'How easy was it to find the product information?'",
+      "postFormHint": "URL to an external form that participants will fill out after completing the task",
+      "postFormPlaceholder": "https://forms.google.com/d/your-form-id"
+    },
+    "configurationDescriptions": {
+      "noAnswer": "Participants complete the task without providing feedback",
+      "textArea": "Participants provide written feedback after the task",
+      "postTest": "Participants answer specific questions after the task",
+      "postForm": "Participants fill out an external form after the task",
+      "nasaTlx": "NASA Task Load Index - measures workload",
+      "sus": "System Usability Scale - measures usability",
+      "tam1": "TAM-1 (Basic Acceptance) - measures perceived usefulness and ease of use",
+      "tam2": "TAM-2 (Extended) - adds external influences and results demonstrability",
+      "tam3": "TAM-3 (Comprehensive) - includes anxiety, playfulness, and objective usability",
+      "sart": "Situation Awareness Rating Technique - measures situational awareness"
+    },
+    "answerTypePreview": {
+      "taskCompleted": "Task completed! No additional feedback required.",
+      "participantsFeedbackHere": "Participants will provide their feedback here...",
+      "submitFeedback": "Submit Feedback",
+      "postTaskQuestions": "Post-Task Questions",
+      "rateTaskDifficulty": "1. How would you rate the difficulty of this task?",
+      "additionalComments": "2. Any additional comments?",
+      "optionalFeedback": "Optional feedback...",
+      "externalFormTitle": "External Form",
+      "externalFormDescription": "Participants will be redirected to complete an external form after the task.",
+      "openExternalForm": "Open External Form",
+      "nasaTlxTitle": "NASA Task Load Index",
+      "mentalDemand": "Mental Demand",
+      "physicalDemand": "Physical Demand",
+      "lowHigh": "Low - High",
+      "moreDimensions": "+ 4 more dimensions",
+      "susTitle": "System Usability Scale",
+      "susStatement1": "1. I think that I would like to use this system frequently.",
+      "stronglyDisagree": "Strongly Disagree",
+      "stronglyAgree": "Strongly Agree",
+      "moreStatements": "+ 9 more statements",
+      "sartTitle": "Situation Awareness Rating Technique",
+      "instability": "Instability of Situation",
+      "complexity": "Complexity of Situation",
+      "veryStable": "Very Stable",
+      "veryUnstable": "Very Unstable",
+      "verySimple": "Very Simple",
+      "veryComplex": "Very Complex",
+      "moreSartDimensions": "+ 8 more SART dimensions",
+      "tam1Title": "TAM-1: Technology Acceptance Model (Basic)",
+      "tam1Subtitle": "10 items across 2 dimensions",
+      "perceivedUsefulness": "Perceived Usefulness (5 items)",
+      "perceivedEaseOfUse": "Perceived Ease of Use (5 items)",
+      "tam1Statement1": "1. Using the system improves my job performance.",
+      "tam1Statement6": "6. The system is easy to use.",
+      "tam2Title": "TAM-2: Technology Acceptance Model (Extended)",
+      "tam2Subtitle": "25 items across 7 dimensions",
+      "tam2Description": "Participants rate 25 statements on a 5-point Likert scale (Strongly Disagree - Strongly Agree)",
+      "tam3Title": "TAM-3: Technology Acceptance Model (Comprehensive)",
+      "tam3Subtitle": "39 items across 13 dimensions",
+      "tam3Description": "Comprehensive assessment with 39 statements across 13 dimensions on a 5-point Likert scale",
+      "selectType": "Select an answer type to see preview",
+      "perceivedUsefulnessShort": "Perceived Usefulness",
+      "perceivedEaseOfUseShort": "Perceived Ease of Use",
+      "subjectiveNorm": "Subjective Norm",
+      "image": "Image",
+      "jobRelevance": "Job Relevance",
+      "outputQuality": "Output Quality",
+      "resultDemonstrability": "Result Demonstrability",
+      "computerSelfEfficacy": "Computer Self-Efficacy",
+      "externalControl": "External Control",
+      "anxiety": "Anxiety",
+      "playfulness": "Playfulness",
+      "enjoyment": "Enjoyment",
+      "objectiveUsability": "Objective Usability"
+    },
+    "advanced": {
+      "stepTitle": "Step 3: Advanced Options",
+      "stepDescription": "Enable additional data collection methods to gather deeper insights. All options are optional but can provide valuable behavioral data and user feedback.",
+      "eyeTrackingDesc": "Track where participants look during the task. Provides heatmaps and gaze patterns to understand visual attention and navigation behavior.",
+      "screenRecordDesc": "Record the participant's screen activity. Captures clicks, scrolling, and interactions to analyze user behavior and identify pain points.",
+      "cameraDesc": "Record participant's facial expressions and reactions. Captures emotions, confusion, and satisfaction to understand user experience beyond interactions.",
+      "audioDesc": "Record participant's verbal feedback and comments. Captures think-aloud protocols, frustrations, and insights that reveal thought processes.",
+      "privacyNotice": "Privacy Notice",
+      "privacyText": "Recording features require explicit consent from participants. Make sure to:",
+      "privacyItem1": "Clearly inform participants about data collection",
+      "privacyItem2": "Obtain proper consent before starting the test",
+      "privacyItem3": "Follow data protection regulations (GDPR, etc.)",
+      "privacyItem4": "Secure storage and handling of recorded data"
+    },
+    "preview": {
+      "taskSummary": "Task Summary",
+      "untitledTask": "Untitled Task",
+      "description": "Description:",
+      "noDescription": "No description provided",
+      "participantTip": "Participant Tip:",
+      "taskUrl": "Task URL:",
+      "answerType": "Answer Type:",
+      "recordingFeatures": "Recording Features:",
+      "postTaskQuestion": "Post-Task Question:",
+      "postTaskForm": "Post-Task Form:",
+      "externalForm": "External Form",
+      "taskReady": "Task Ready!",
+      "reviewRequired": "Review Required",
+      "taskReadyMessage": "Your task is properly configured and ready to be used in your study.",
+      "reviewRequiredMessage": "Please review the previous steps to ensure all required fields are completed.",
+      "noTypeSelected": "No Type Selected",
+      "answerTypes": {
+        "noAnswer": "No Answer Required",
+        "textArea": "Text Area",
+        "postTest": "Post-Test Questions",
+        "postForm": "External Form",
+        "nasaTlx": "NASA-TLX",
+        "sus": "System Usability Scale",
+        "tam1": "TAM-1 (Basic)",
+        "tam2": "TAM-2 (Extended)",
+        "tam3": "TAM-3 (Comprehensive)",
+        "sart": "SART"
+      },
+      "recordingLabels": {
+        "eyeTracking": "Eye Tracking",
+        "screenRecording": "Screen Recording",
+        "camera": "Camera",
+        "audio": "Audio"
+      }
     }
   },
   "UserTestView": {
+    "loading": "Loading...",
     "titles": {
       "preTestConsent": "Pre Test - Consent",
       "preTestForm": "Pre Test - Form",
       "preTest": "Pre-Test",
-      "postTest": "Post-Test"
+      "postTest": "Post-Test",
+      "eyeTrackingCalibration": "Eye tracking calibration"
+    },
+    "actions": {
+      "welcomeBack": "Welcome back!",
+      "continueAs": "Continue as {userEmail}",
+      "notYou": "Not you?",
+      "changeAccount": "Change account",
+      "startTest": "Start Test"
+    },
+    "alerts": {
+      "testAlreadyCompleted": "Test Already Completed",
+      "testAlreadyCompletedMessage": "You have already completed and submitted this test. Thank you for your participation!",
+      "testExpired": "Test Expired",
+      "testExpiredMessage": "This test is no longer available as it has passed its end date.",
+      "testNotActive": "Test Not Active",
+      "testNotActiveMessage": "This test is currently not active. Please contact the administrator.",
+      "testConfigError": "Test Configuration Error",
+      "testConfigErrorMessage": "This test has no tasks configured. Please contact the administrator.",
+      "consentDecline": "Test ended due to consent decline. Thank you for your time.",
+      "sessionTooFar": "Session Too Far",
+      "sessionTooFarMessage": "The scheduled session is more than 24 hours away. Please come back closer to the session date."
+    },
+    "stepper": {
+      "consent": "Consent",
+      "preTest": "Pre-test",
+      "calibration": "Calibration",
+      "tasks": "Tasks",
+      "postTest": "Post-test",
+      "completion": "Completion",
+      "taskX": "Task {num}",
+      "form": "Form"
+    },
+    "TaskStep": {
+      "preview": "Task Preview",
+      "recordingInfo": "This task will record the following data during your interaction:",
+      "screenRecord": "Screen Record",
+      "screenRecordDesc": "Captures clicks, scrolling, and interactions to analyze user behavior.",
+      "camera": "Camera",
+      "cameraDesc": "Records facial expressions and reactions to understand user emotions.",
+      "audioRecord": "Audio Record",
+      "audioRecordDesc": "Captures verbal feedback and think-aloud protocols during the task.",
+      "eyeTracker": "Eye Tracker",
+      "eyeTrackerDesc": "Tracks visual attention patterns and gaze behavior during the task.",
+      "newWindow": "New Window Will Open",
+      "newWindowDesc": "When you start the task, a new window will open with the tool you need to use.",
+      "tip": "Tip",
+      "tipDesc": "You can switch between tabs or close the new window at any time. The recording will continue until you complete the task.",
+      "internalInterface": "This task will be completed within the current interface.",
+      "startTask": "Start task",
+      "description": "Task Description",
+      "needHelp": "Need Help?",
+      "needHelpDesc": "Having trouble? Get helpful guidance to complete this task.",
+      "externalTool": "External Tool",
+      "reopenDesc": "Accidentally closed the tool window? Reopen it here.",
+      "reopenTool": "Reopen Tool",
+      "answerLabel": "Answer",
+      "observationLabel": "Observation (optional)",
+      "cannotFinish": "I can not finish the task",
+      "completed": "Task completed",
+      "noQuestionnaire": "No post-task questionnaire required for this task type.",
+      "validationError": "Please answer all questions before continuing.",
+      "finishTask": "Finish task"
+    },
+    "ConsentStep": {
+      "fullName": "Full Name",
+      "nameRequired": "Name is required",
+      "acceptTerms": "I accept the consent terms",
+      "declineTerms": "I do not accept the consent terms",
+      "continue": "Continue",
+      "declinedTitle": "Consent Declined",
+      "declinedMessage1": "You have chosen not to accept the consent terms for this study.",
+      "declinedMessage2": "If you confirm this action, the test will be terminated immediately as your participation requires explicit consent to proceed. Your data will not be collected or stored.",
+      "declinedConfirm": "Are you sure you want to end the test without participating?",
+      "goBack": "Go Back",
+      "endTest": "Yes, End Test"
+    },
+    "PreTestStep": {
+      "title": "PreTest"
+    },
+    "PostTestStep": {
+      "title": "Post-Test"
+    },
+    "CalibrationInProgressModal": {
+      "completed": "Calibration completed!",
+      "waiting": "Waiting for calibration...",
+      "calibrating": "Calibrating, please wait...",
+      "notOpened": "The calibration didn't open?",
+      "clickHere": "Click here",
+      "success": "The calibration was successful!",
+      "continue": "CONTINUE TO THE TEST!"
+    },
+    "ModeratorWelcomeStep": {
+      "badge": "Moderator View",
+      "welcome": "Welcome to the Moderated Test Session",
+      "description": "As the moderator, you will guide the participant through the test process while observing their interactions via video call.",
+      "instructionsTitle": "Moderator Instructions",
+      "instruction1": "Start by opening the video call room",
+      "instruction2": "Observe participant interactions without interference",
+      "instruction3": "Use the step navigator to jump between test phases",
+      "instruction4": "Provide guidance only when necessary",
+      "remember": "Remember:",
+      "note": "Your role is to facilitate and observe. The participant should complete tasks independently unless they specifically request help.",
+      "startSession": "Start Moderated Session"
     },
     "buttons": {
       "done": "Done"
+    },
+    "messages": {
+      "noTasks": "This test doesn't have any tasks.",
+      "answerSaved": "Answer saved successfully.",
+      "taskCompletedSuccess": "Task \"{taskName}\" completed successfully!",
+      "useSessionLinkModerated": "Use a session link to access your moderated test!",
+      "useSessionLink": "Use a session link to access the test"
+    },
+    "errors": {
+      "noAnswerData": "No answer data found.",
+      "failedToSaveAnswer": "Failed to save the answer. Please try again.",
+      "failedToSubmitAnswer": "Failed to submit the answer. Please try again.",
+      "noTestData": "No Test Data",
+      "noTestDataMessage": "Test information could not be loaded. Please try again later.",
+      "failedToCompleteStep": "Failed to complete step. Please try again.",
+      "failedToInitializeTestData": "Failed to initialize test data. Please try again.",
+      "loginRequired": "Login to your RUXAILAB account first to access the test!"
     },
     "WelcomeStep": {
       "welcome": "Welcome to RUXAILAB!",
@@ -460,7 +1228,8 @@
     "PreTasksStep": {
       "title": "Tasks",
       "heading": "Let's begin the tasks phase",
-      "description": "You are going to complete <strong>{numTasks}</strong> tasks related to using the tool. There are no correct or incorrect answers: what matters is how you interact.",
+      "description": "You are going to complete",
+      "tasksSuffix": "tasks related to using the tool. There are no correct or incorrect answers: what matters is how you interact.",
       "instruction": "When you are ready, click the button to begin.",
       "startButton": "Start tasks",
       "recordingTitle": "Recording Information",
@@ -470,6 +1239,68 @@
       "audioRecording": "Audio",
       "eyeTracking": "Eye Tracking",
       "recordingNote": "You will be notified before any recording begins. All data is collected solely for research purposes and handled according to privacy guidelines."
+    },
+    "CalibrationStep": {
+      "title": "Eye Tracking Calibration",
+      "heading": "Before starting calibration",
+      "description": "We are going to prepare your device to <strong>record your eye movement</strong>. This will allow us to understand how you navigate the screen during the test.",
+      "process": "Calibration involves following points that will appear on the screen with your eyes. It is important that you are in a well-lit place, sit comfortably, and keep your head stable.",
+      "instruction": "When you are ready, press the button to start calibration.",
+      "startButton": "Start calibration",
+      "inProgress": "In progress..."
+    },
+    "warnings": {
+      "sessionNotScheduled": "Your session doesn't have a scheduled date"
+    }
+  },
+  "eyeTracking": {
+    "title": "Eye Tracking Calibration",
+    "beforeStart": "Before starting calibration",
+    "description1": "We will provide your device to record your eye movements.",
+    "description2": "Follow the points that appear on the screen.",
+    "start": "Start calibration",
+    "inProgress": "Calibration in progress...",
+    "completed": "Calibration completed!",
+    "continue": "Continue to the test"
+  },
+  "EyeTrackingConfig": {
+    "titles": {
+      "main": "Eye Tracking Configurations",
+      "general": "General Configuration",
+      "miscellaneous": "Miscellaneous Configuration"
+    },
+    "labels": {
+      "pointNumber": "Point Number",
+      "samplesPerPoint": "Samples Per Point",
+      "msPerPoint": "Milliseconds Per Point Capture",
+      "threshold": "Points Distance Threshold",
+      "radius": "Radius",
+      "offset": "Offset",
+      "control": "Control:",
+      "useCustomColors": "Use Custom Colors",
+      "backgroundColor": "Background Color:",
+      "pointColor": "Point Color:",
+      "modelSelection": "Model Selection:",
+      "selectModel": "Select Model",
+      "note": "Note:",
+      "noteText": "The selected model will be used for the calibration process. The default model is Linear Regression. Some models may take longer to train than others. So please be patient."
+    },
+    "tooltips": {
+      "pointNumber": "Number of calibration points shown on the screen (more points = higher accuracy).",
+      "samplesPerPoint": "How many gaze samples are collected per calibration point. Higher values improve precision but increase duration.",
+      "msPerPoint": "Duration (in milliseconds) to capture data per point. Defines how long the user must look at each target.",
+      "threshold": "Maximum distance (in pixels) allowed between calibration samples before they are discarded. Controls spatial tolerance.",
+      "radius": "Adjust the radius of the calibration point. Larger values make the point bigger.",
+      "offset": "Offset (in pixels) to adjust the calibration area position."
+    },
+    "models": {
+      "linear": "Linear Regression",
+      "ridge": "Ridge Regression",
+      "lasso": "Lasso Regression",
+      "elastic": "Elastic Net",
+      "bayesian": "Bayesian Ridge",
+      "sgd": "SGD Regressor",
+      "svr": "Support Vector Regressor"
     }
   },
   "AccessNotAllowed": {
@@ -522,7 +1353,113 @@
       "updated": "Last Updated on",
       "version": "Version:",
       "noTests": "No tests found",
-      "noTemplates": "No templates found"
+      "noTemplates": "No templates found",
+      "noSessions": "No sessions found"
+    },
+    "navigation": {
+      "dashboard": "Dashboard",
+      "studies": "Studies",
+      "sessions": "Sessions",
+      "templates": "Templates",
+      "storage": "Storage",
+      "notifications": "Notifications",
+      "profile": "Profile",
+      "communityStudies": "Community Studies",
+      "communityTemplates": "Community Templates",
+      "studiesSubtitle": "Manage your research studies",
+      "templatesSubtitle": "Access your saved templates"
+    },
+    "studies": {
+      "searchPlaceholder": "Search studies...",
+      "reset": "Reset",
+      "showFilters": "Show filters",
+      "hideFilters": "Hide filters",
+      "creationDate": "Creation date",
+      "selectRange": "Select range",
+      "statusLabel": "Status",
+      "visibility": "Visibility",
+      "method": "Method",
+      "ownership": "Ownership",
+      "participants": "Participants",
+      "filters": {
+        "allStatuses": "All Statuses",
+        "active": "Active",
+        "draft": "Draft",
+        "completed": "Completed",
+        "allVisibility": "All Visibility",
+        "public": "Public",
+        "private": "Private",
+        "allStudies": "All Studies",
+        "myStudies": "My Studies",
+        "whereICollaborate": "Where I Collaborate",
+        "allMethods": "All Methods",
+        "lessThan10": "< 10 participants",
+        "between10And50": "10 – 50 participants",
+        "moreThan50": "> 50 participants"
+      },
+      "table": {
+        "type": "Type",
+        "name": "Name",
+        "tags": "Tags",
+        "owner": "Owner",
+        "evaluator": "Evaluator",
+        "status": "Status",
+        "sessionDate": "Session Date",
+        "participants": "Participants",
+        "created": "Created",
+        "itemsPerPage": "Items per page:"
+      }
+    },
+    "sessions": {
+      "searchPlaceholder": "Search sessions...",
+      "reset": "Reset",
+      "showFilters": "Show filters",
+      "hideFilters": "Hide filters",
+      "sessionDate": "Session date",
+      "selectRange": "Select range",
+      "statusLabel": "Status",
+      "ownership": "Ownership",
+      "evaluator": "Evaluator",
+      "noActiveSessions": "You don't have active sessions",
+      "filters": {
+        "allStatuses": "All Statuses",
+        "today": "Today",
+        "upcoming": "Upcoming",
+        "completed": "Completed",
+        "allStudies": "All Studies",
+        "myStudies": "My Studies",
+        "whereICollaborate": "Where I Collaborate"
+      }
+    },
+    "templates": {
+      "searchPlaceholder": "Search templates...",
+      "reset": "Reset",
+      "showFilters": "Show filters",
+      "hideFilters": "Hide filters",
+      "creationDate": "Creation date",
+      "selectRange": "Select range",
+      "method": "Method",
+      "filters": {
+        "allMethods": "All Methods",
+        "all": "All",
+        "heuristicEvaluation": "Heuristic Evaluation",
+        "userUnmoderated": "User Unmoderated",
+        "userModerated": "User Moderated",
+        "manualAccessibility": "Manual Accessibility",
+        "automaticAccessibility": "Automatic Accessibility"
+      },
+      "unsupportedPreviewType": "Unsupported template type for preview.",
+      "config": {
+        "title": "Template Config",
+        "ownerOnly": "Configuration editing is restricted to template owner.",
+        "version": "Version",
+        "visibility": "Visibility",
+        "owner": "Owner",
+        "public": "Public",
+        "private": "Private",
+        "saved": "Template configuration updated successfully",
+        "saveError": "Failed to update template configuration"
+      }
     },
     "createTest": {
       "title": "Create a new test",
@@ -540,12 +1477,33 @@
       "title": "Settings",
       "currentTest": "Current test",
       "createTemplate": "CREATE TEMPLATE",
-      "deleteTest": "DELETE TEST"
+      "deleteTest": "DELETE TEST",
+      "study_configuration": "Study Configuration",
+      "loading_settings": "Loading Settings",
+      "manage_test_settings": "Manage your test settings and preferences with advanced controls",
+      "basic_information": "Basic Information",
+      "confirm_deletion": "Confirm Deletion",
+      "configure_test_details": "Configure the fundamental details of your test",
+      "advanced_settings": "Advanced Settings",
+      "fine_tune_configuration": "Fine-tune your test configuration",
+      "public_access": "Public Access",
+      "allow_users_view": "Allow users to view this test",
+      "test_status": "Test Status",
+      "select_status": "Select Status",
+      "end_date": "End Date",
+      "select_end_date": "Select End Date",
+      "quick_actions": "Quick Actions",
+      "perform_common_tasks": "Perform common tasks instantly",
+      "delete_warning": "All associated data, results, and configurations will be lost forever.",
+      "delete_forever": "Delete Forever",
+      "action_cannot_be_undone": "This action cannot be undone"
     },
     "editTest": {
       "title": "Edit test",
       "description": "Customize the settings and preferences of your test.",
-      "updatedTest": "Test updated successfully"
+      "updatedTest": "Test updated successfully",
+      "previewTitle": "Preview test",
+      "previewDescription": "Review the test in read-only mode."
     },
     "cooperators": {
       "invitationSent": "Invitation sent successfully"
@@ -554,16 +1512,20 @@
   "alerts": {
     "copy": "Copy successful",
     "noCopy": "Copy unsuccessful",
-    "deleteTemplate": "Are you sure to delete this template? This action can not be undone!",
+    "deleteTemplate": "Are you sure you want to delete this template? This action cannot be undone!",
     "deleteTest": "Are you sure you want to delete this test?",
+    "deleteQuestion": "Are you sure you want to delete the question: ",
+    "deleteDescription": "Are you sure you want to delete the description: ",
     "addDescription": "Please add a descritpion",
     "errorOccurred": "An error has occurred",
     "leave": "Are you sure you want to leave?",
     "sureLeave": "Are you sure you want to leave? All your changes will be discarded",
     "imageURL": "Type the image URL:",
-    "deleteHeuristic": "Are you sure delete the heuristic ",
+    "deleteHeuristic": "Are you sure you want to delete the heuristic: ",
     "deleteAccount": " Are you sure you want to delete your account? This action cannot be undone.",
-    "genericSuccess": "Operation successful"
+    "genericSuccess": "Operation successful",
+    "savedChanges": "Changes saved successfully",
+    "deleteUser": "Are you sure you want to delete this user? This action cannot be undone."
   },
   "buttons": {
     "next": "Next",
@@ -588,7 +1550,13 @@
     "back": "Back",
     "duplicateTest": "Duplicate Test",
     "submit": "Submit",
-    "couldNotFinish": "Could not finish"
+    "couldNotFinish": "Could not finish",
+    "addNewTask": "Add New Task",
+    "saveChanges": "Save Changes",
+    "createTemplate": "Create Template",
+    "deleteTest": "Delete Test",
+    "deleteForever": "Delete Forever",
+    "startTest": "Start Test"
   },
   "switches": {
     "noAnswer": "No answer",
@@ -600,7 +1568,8 @@
     "eyeTracker": "Eye Tracker",
     "audioRecord": "Audio Record",
     "postForm": "Post Form",
-    "nasa": "NASA-TLX"
+    "nasa": "NASA-TLX",
+    "sart": "SART"
   },
   "inputs": {
     "consentForm": "Consent Form",
@@ -652,7 +1621,12 @@
     "sub-heading": "Add a name to your test!",
     "test-name": "Test Name",
     "test-description": "Test Description",
-    "test-label": "Test public to all users"
+    "test-label": "Test public to all users",
+    "template": {
+      "title": "Enter a title for your template",
+      "description": "Provide a description for your template",
+      "public": "Make template public to all users"
+    }
   },
   "finishTest": {
     "title": "Finish Test",
@@ -695,32 +1669,12 @@
     "viewAllArticles": "View All Articles",
     "videoAltText": "FAQ demonstration video showing the visual steps to solve the frequently asked question. No audio content is present in this instructional video."
   },
-  "PROFILE": {
-    "user": "USER",
-    "account": "Account",
-    "security": "Security",
-    "personalInfo": "Personal Info",
-    "contact": "Contact",
-    "country": "Country",
-    "editDetails": "Edit Details",
-    "typeDeleteToConfirm": "Type \"DELETE\" to confirm",
-    "pleaseTypeDeleteToConfirm": "Please type DELETE to confirm",
-    "finalStepVerifyIdentity": "Final step: Verify your identity",
-    "enterPasswordForAccountDeletion": "Enter your password to proceed with account deletion",
-    "yourPassword": "Your Password",
-    "usernameRequired": "Username is required",
-    "usernameMinLength": "Username must be at least 3 characters",
-    "countryRequired": "Country is required",
-    "contactNumberRequired": "Contact number is required",
-    "enterValidPhoneNumber": "Please enter a valid phone number (9-15 digits only)",
-    "email": "Email",
-    "username": "Username"
-  },
   "ModeratedTest": {
     "preTest": "PRE-TEST",
     "tasks": "TASKS",
     "postTest": "POST-TEST",
     "consentForm": "Consent Form",
+    "consentFormSubtitle": "Edit the consent text for the test. Changes are saved when you click the Save button.",
     "consentDescription": "This is a Consent Checkbox with a text to confirm consent.",
     "welcomeMessage": "Welcome message",
     "welcomeMessageDescription": "This message will be the first thing participants see before the session starts.",
@@ -739,11 +1693,29 @@
     "postFormDescription": "This is a post-questionnaire to collect participant data.",
     "finalMessage": "Final message",
     "finalMessageDescription": "This is a final message you leave for the participant at the end of the test.",
-    "finalMessagePlaceholder": "Enter Final message"
+    "finalMessagePlaceholder": "Enter Final message",
+    "preTestVariables": "Pre-Test Variables",
+    "postTestVariables": "Post-Test Variables",
+    "configureVariables": "Configure the variables for the {type} section. Add, edit, or remove variables as needed.",
+    "createNewVariableTitle": "Create New Variable"
   },
   "CardSorting": {
     "noCategory": "No category",
-    "noCards": "No cards found"
+    "noCards": "No cards found",
+    "of": "of",
+    "cards": "Cards",
+    "cards_low": "cards",
+    "currentCards": "Current Cards",
+    "addNewCard": "Add New Card",
+    "settings": "Settings",
+    "configureCards": "Configure how cards will be displayed",
+    "currentCategories": "Current Categories",
+    "addNewTask": "Add New Task",
+    "configureCategories": "Configure how categories will be displayed",
+    "newTask": "New task",
+    "customizeSettings": "Customize the settings and preferences of your test",
+    "test": "Test",
+    "categories": "Categories"
   },
   "analytics": {
     "searchByName": "Search by name",
@@ -780,6 +1752,565 @@
     "postTestDescription": "Results from the post-test form",
     "all": "All",
     "question": "Question {number}",
-    "comingSoon": "Coming Soon"
+    "comingSoon": "Coming Soon",
+    "downloadResume": "Download Resume PDF",
+    "sartAnalytics": "SART Analytics",
+    "generalAnalytics": "General Analytics",
+    "individualAnalytics": "Individual Analytics",
+    "susAnalytics": "SUS Analytics",
+    "nasaTlxAnalytics": "NASA-TLX Analytics",
+    "eyeTrackingAnalytics": "Eye Tracking Analytics",
+    "transcriptions": "Transcriptions",
+    "overallAnalyticsDescription": "Overview of the test results and metrics.",
+    "user": "User",
+    "summary": "Summary",
+    "invite": "Invite",
+    "actions": "Actions",
+    "completed": "Completed",
+    "notCompleted": "Incomplete",
+    "timeTaken": "Time Taken",
+    "tasks": "tasks",
+    "total": "total",
+    "yes": "Yes",
+    "invited": "Invited",
+    "answers": "Answers",
+    "no": "No"
+  },
+  "studyCreation": {
+    "chooseEvaluationCategory": "Choose Evaluation Category",
+    "selectEvaluationType": "Select the type of evaluation you want to conduct for your study",
+    "backToDashboard": "Back to Dashboard",
+    "chooseMethod": "Choose {category} Method",
+    "selectMethod": "Select the specific method for your study",
+    "backToCategories": "Back to Categories",
+    "chooseStudyType": "Choose Study Type",
+    "selectStudyType": "Select how you want to create your study",
+    "backToMethods": "Back to Methods",
+    "studyDetails": "Study Details",
+    "provideStudyInfo": "Provide basic information about your study",
+    "backToStudyType": "Back to Study Type",
+    "createStudy": "Create Study",
+    "multipleMethods": "Multiple Methods",
+    "comingSoon": "Coming Soon",
+    "steps": {
+      "category": "Category",
+      "methods": "Methods",
+      "studyType": "Study Type",
+      "details": "Details"
+    },
+    "categories": {
+      "test": {
+        "title": "Test",
+        "description": "Conduct controlled testing with real users to measure usability and performance."
+      },
+      "inquiry": {
+        "title": "Inquiry",
+        "description": "Gather insights through surveys, interviews, and other research methods."
+      },
+      "inspection": {
+        "title": "Inspection",
+        "description": "Expert evaluation using established usability principles and guidelines."
+      },
+      "accessibility": {
+        "title": "Accessibility",
+        "description": "Assess your product for accessibility compliance and best practices."
+      }
+    },
+    "methods": {
+      "test": {
+        "usability_unmoderated": {
+          "name": "Usability Testing (Unmoderated)",
+          "description": "Participants complete tasks independently while their interactions are recorded"
+        },
+        "usability_moderated": {
+          "name": "Usability Testing (Moderated)",
+          "description": "Real-time sessions with facilitator guidance and immediate feedback"
+        },
+        "card_sorting_unmoderated": {
+          "name": "Card Sorting (Unmoderated)",
+          "description": "Participants organize cards independently, without the presence of a moderator, allowing data to be collected on how they group and categorize information according to their own logic."
+        },
+        "ab_testing": {
+          "name": "A/B Testing",
+          "description": "Compare two versions to determine which performs better"
+        }
+      },
+      "inspection": {
+        "heuristic_evaluation": {
+          "name": "Heuristic Evaluation",
+          "description": "Expert review using established usability principles and guidelines"
+        },
+        "cognitive_walkthrough": {
+          "name": "Cognitive Walkthrough",
+          "description": "Step-by-step evaluation of user task completion processes"
+        }
+      },
+      "accessibility": {
+        "manual_testing": {
+          "name": "Manual Testing",
+          "description": "Human evaluators assess accessibility using assistive technologies"
+        },
+        "automatic_testing": {
+          "name": "Automatic Testing",
+          "description": "Automated tools to identify common accessibility issues"
+        },
+        "ai_assisted_testing": {
+          "name": "AI-Assisted Testing",
+          "description": "AI-driven tools to identify and suggest fixes for accessibility issues"
+        }
+      }
+    },
+    "studyTypes": {
+      "blank": {
+        "title": "Start with Blank Study",
+        "description": "Create a study from scratch with complete customization",
+        "features": [
+          "Complete customization",
+          "Build from ground up",
+          "Full control over settings"
+        ]
+      },
+      "template": {
+        "title": "Create from Template",
+        "description": "Use pre-built templates to get started quickly",
+        "features": [
+          "Quick setup",
+          "Pre-configured settings",
+          "Best practices included"
+        ]
+      }
+    },
+    "details": {
+      "basicInformation": "Basic Information",
+      "studyTitle": "Study Title",
+      "enterTitle": "Enter a descriptive title for your study",
+      "studyDescription": "Study Description",
+      "enterDescription": "Describe the purpose and goals of your study",
+      "websiteName": "Website Name",
+      "enterWebsiteName": "Enter the website name",
+      "websiteUrl": "Website URL (optional)",
+      "enterWebsiteUrl": "Enter the website URL",
+      "privacySettings": "Privacy Settings",
+      "controlVisibility": "Control who can see your study",
+      "publicStudy": "Public Study",
+      "privateStudy": "Private Study",
+      "visibleToEveryone": "Visible to everyone",
+      "onlyInvitedUsers": "Only invited users",
+      "public": "Public",
+      "private": "Private",
+      "validation": {
+        "enterTitle": "Enter a Title",
+        "max200Characters": "Max 200 characters",
+        "max600Characters": "Max 600 characters",
+        "enterWebsiteName": "Enter website name",
+        "enterWebsiteUrl": "Enter website URL",
+        "urlProtocol": "URL must start with http:// or https://",
+        "validUrl": "Enter a valid URL (e.g., https://example.com)"
+      },
+      "status": {
+        "active": "Active",
+        "pending": "Pending",
+        "finished": "Finished",
+        "upcoming": "Upcoming"
+      }
+    }
+  },
+  "taskCreation": {
+    "taskDescription": "Task Description",
+    "taskDescriptionHelper": "Provide detailed instructions for participants. Include the goal, context, and any specific steps they should follow."
+  },
+  "manager": {
+    "dashboard": {
+      "defaultTitle": "User Test Study",
+      "unmoderatedStudy": "Unmoderated Study",
+      "moderatedStudy": "Moderated Study",
+      "active": "Active",
+      "draft": "Draft",
+      "completed": "Completed",
+      "archived": "Archived",
+      "moderatedDescription": "Manage your moderated user testing study, track participant progress, and analyze results from your comprehensive dashboard."
+    },
+    "studyOverview": {
+      "totalParticipants": "Total Participants",
+      "completed": "Completed",
+      "rate": "{percentage}% rate",
+      "inProgress": "In Progress",
+      "active": "{percentage}% active",
+      "averageTime": "Average Time",
+      "completionTime": "Completion time",
+      "minUnit": "{value} min"
+    },
+    "managementModules": {
+      "title": "Management Modules",
+      "description": "Comprehensive tools to manage participants, tasks, settings, and analyze your study data",
+      "additionalModules": "Space for additional modules"
+    },
+    "participants": {
+      "title": "Participants",
+      "subtitle": "Test participation overview",
+      "beta": "Beta",
+      "completed": "Completed",
+      "notStarted": "Not Started",
+      "pendingInvites": "Pending Invites",
+      "overallProgress": "Overall Progress",
+      "participantsCompleted": "{completed} of {total} participants completed",
+      "details": "Details"
+    },
+    "tasks": {
+      "title": "Tasks Overview",
+      "subtitle": "Task structure and completion",
+      "beta": "Beta",
+      "noTasksConfigured": "No tasks configured",
+      "taskCompletionRate": "Task Completion Rate",
+      "totalTasks": "Total Tasks",
+      "avgTaskDuration": "Avg. Task Duration",
+      "successRate": "Success Rate",
+      "taskTypes": "Task Types",
+      "viewTasks": "View Tasks"
+    },
+    "storage": {
+      "title": "Storage Usage",
+      "subtitle": "Media files and storage metrics",
+      "beta": "Beta",
+      "storageUsed": "Storage Used",
+      "storageQuota": "{used} of {quota} used",
+      "mediaFiles": "Media Files",
+      "videoRecordings": "Video Recordings",
+      "audioRecordings": "Audio Recordings",
+      "screenRecordings": "Screen Recordings",
+      "storageBreakdown": "Storage Breakdown",
+      "responsesData": "Responses Data",
+      "analyticsData": "Analytics Data",
+      "manageStorage": "Manage Storage"
+    }
+  },
+  "dialogs": {
+    "deleteVariableConfirm": {
+      "title": "Delete Variable",
+      "message": "Are you sure you want to delete this variable? This action cannot be undone."
+    },
+    "deleteOptionConfirm": {
+      "title": "Delete Option",
+      "message": "Are you sure you want to delete this option? This action cannot be undone."
+    },
+    "confirmDeletion": "Confirm Deletion",
+    "actionCannotBeUndone": "This action cannot be undone",
+    "allAssociatedDataLost": "All associated data, results, and configurations will be lost forever."
+  },
+  "tags": {
+    "active": "Active",
+    "draft": "Draft",
+    "completed": "Completed",
+    "archived": "Archived",
+    "public": "Public",
+    "private": "Private",
+    "fromTemplate": "From Template",
+    "withCollaborators": "With Collaborators"
+  },
+  "methods": {
+    "categories": {
+      "test": "User Testing",
+      "inquiry": "User Research",
+      "inspection": "Expert Inspection",
+      "accessibility": "Accessibility",
+      "other": "Other"
+    },
+    "definitions": {
+      "HEURISTICS": "Heuristic Evaluation",
+      "USER_MODERATED": "Moderated Usability Test",
+      "USER_UNMODERATED": "Unmoderated Usability Test",
+      "SURVEY": "Survey",
+      "INTERVIEW": "Interview",
+      "CARD_SORTING": "Card Sorting",
+      "COGNITIVE_WALKTHROUGH": "Cognitive Walkthrough",
+      "ACCESSIBILITY_MANUAL": "Manual Evaluation",
+      "ACCESSIBILITY_AUTOMATIC": "Automatic Evaluation",
+      "WCAG_AUDIT": "WCAG Audit"
+    }
+  },
+  "testSettings": {
+    "testInformation": "Test Information",
+    "basicTestSettings": "Basic test settings and description",
+    "advancedSettings": "Advanced Settings",
+    "quickActions": "Quick Actions",
+    "performCommonTasks": "Perform common tasks instantly"
+  },
+  "cooperator": {
+    "goToSession": "Go to session"
+  },
+  "privacyPolicy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last Updated: April 15, 2025",
+    "sections": {
+      "introduction": {
+        "title": "1. Introduction",
+        "content": "Ruxailab is an open-source project committed to protecting your privacy. This Privacy Policy explains how we collect, use, and protect any information you provide when using the Project."
+      },
+      "informationCollected": {
+        "title": "2. Information We Collect",
+        "content": "As an open-source project, we typically do not collect personal information directly. However, if you interact with our website or services (e.g., signing up for an account or submitting a contact form), we may collect:",
+        "items": {
+          "email": "Email addresses (e.g., for account creation or newsletters)",
+          "usage": "Usage data (e.g., analytics on how the website is accessed)",
+          "contributions": "Contributions (e.g., your GitHub username if you contribute to the Project)"
+        }
+      },
+      "usage": {
+        "title": "3. How We Use Your Information",
+        "content": "We may use the information we collect to:",
+        "items": {
+          "improve": "Provide and improve the Project and its services",
+          "communicate": "Communicate with you (e.g., respond to inquiries or notify you of updates)",
+          "analyze": "Analyze usage to improve user experience"
+        }
+      },
+      "sharing": {
+        "title": "4. Data Sharing",
+        "content": "We do not sell or share your personal information with third parties, except as required by law or to protect the Project (e.g., in the case of abuse or fraud)."
+      },
+      "cookies": {
+        "title": "5. Cookies",
+        "content": "Our website may use cookies to enhance your experience (e.g., to remember your preferences). You can disable cookies in your browser settings, but this may affect the functionality of the website."
+      },
+      "security": {
+        "title": "6. Data Security",
+        "content": "We take reasonable measures to protect any data we collect, but no method of transmission over the internet is 100% secure. We cannot guarantee the absolute security of your information."
+      },
+      "rights": {
+        "title": "7. Your Rights",
+        "content": "Depending on your location, you may have the right to access, correct, or delete any personal information we hold about you. Please contact us to exercise these rights."
+      },
+      "changes": {
+        "title": "8. Changes to This Policy",
+        "content": "We may update this Privacy Policy from time to time. We will notify users of significant changes by posting a notice on the Project's website or repository."
+      },
+      "contact": {
+        "title": "9. Contact Us",
+        "content": "If you have any questions about this Privacy Policy, please contact us."
+      }
+    }
+  },
+  "pageNotFound": {
+    "title": "Page Not Found",
+    "description": "We weren't able to find the page you were looking for.",
+    "goBack": "Go Back"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions (FAQs)",
+    "subtitle": "Find answers to common questions about Ruxailab.",
+    "questions": {
+      "q1": {
+        "question": "1. What is Ruxailab?",
+        "answer": "Ruxailab is an open-source platform designed to collect usability feedback from users. It allows you to gather user reviews, analyze them, and create comprehensive reports to better understand your application's usability. Additionally, it offers heuristic tests, enabling experts to evaluate your application's compliance with usability principles. It is maintained by a community of contributors and licensed under the MIT License."
+      },
+      "q2": {
+        "question": "2. How do I get started with the Project?",
+        "answer_part1": "To get started, visit our",
+        "link_text": "GitHub Repository",
+        "answer_part2": "to download the source code. Check out the documentation for installation instructions and examples. You can also visit our",
+        "help_link": "Help",
+        "answer_part3": "page for more resources."
+      },
+      "q3": {
+        "question": "3. Can I contribute to the Project?",
+        "answer": "Absolutely! We welcome contributions from the community. Please read our contribution guidelines in the repository and submit a pull request with your changes."
+      },
+      "q4": {
+        "question": "4. What license does the Project use?",
+        "answer": "The Project is licensed under the MIT License. This means you can use, modify, and distribute the Project freely, as long as you include the license and copyright notice."
+      },
+      "q5": {
+        "question": "5. How do I report a bug or request a feature?",
+        "answer": "You can report bugs or request features by opening an issue on our",
+        "link_text": "GitHub Issues",
+        "answer_part2": ". Please provide as much detail as possible to help us address your request."
+      },
+      "q6": {
+        "question": "6. Is there a community for Ruxailab?",
+        "answer": "Yes! Join our community on",
+        "link_text": "GitHub",
+        "answer_part2": "to connect with other users and contributors, ask questions, and share ideas."
+      },
+      "q7": {
+        "question": "7. How is my data handled?",
+        "answer": "We take your privacy seriously. Please see our",
+        "link_text": "Privacy Policy",
+        "answer_part2": "for details on how we collect and use your information."
+      },
+      "q8": {
+        "question": "8. Who maintains the Project?",
+        "answer": "The Project is maintained by a team of volunteers and contributors. You can find more information about the maintainers in the Project's repository."
+      },
+      "q9": {
+        "question": "9. Still have questions?",
+        "answer": "If you have additional questions, please contact us."
+      }
+    }
+  },
+  "Accessibility": {
+    "description": "Evaluate the accessibility of your web content based on WCAG guidelines",
+    "dashboard": "Dashboard",
+    "addNewPage": "Add New Page",
+    "assessmentProgress": "Assessment Progress",
+    "accessibilityScore": "Accessibility Score",
+    "viewAssessment": "View Assessment",
+    "remove": "Remove",
+    "addNewWebpageAssessment": "Add New Webpage for Assessment",
+    "fillWebpageDetails": "Fill in the details of the webpage you want to assess for accessibility.",
+    "webpageName": "Webpage Name",
+    "webpageNamePlaceholder": "e.g., My Company Homepage",
+    "webpageNameHelp": "A descriptive name for the webpage you are testing.",
+    "url": "URL",
+    "urlPlaceholder": "https://example.com",
+    "urlHelp": "The full URL of the webpage.",
+    "descriptionOptional": "Description (Optional)",
+    "descriptionPlaceholder": "Brief description of the page or specific scenario being tested.",
+    "wcagComplianceLevel": "WCAG Compliance Level",
+    "wcagComplianceLevelHelp": "The target WCAG conformance level for this assessment.",
+    "addWebpageStartAssessment": "Add Webpage & Start Assessment",
+    "cancel": "Cancel",
+    "noDescriptionProvided": "No description provided.",
+    "configuration": "Configuration:",
+    "evaluateAccessibility": "Evaluate the accessibility of your project based on selected WCAG guidelines",
+    "wcagPrinciples": "WCAG Principles",
+    "loading": "Loading...",
+    "noPrinciplesAvailable": "No principles available",
+    "level": "Level",
+    "version": "v",
+    "successCriterion": "Success Criterion",
+    "noSuccessCriteria": "No success criteria available for this rule.",
+    "appraiserNotes": "Appraiser Notes",
+    "note": "Note",
+    "severity": "Severity",
+    "status": "Status",
+    "saveAssessment": "Save Assessment",
+    "signInToSave": "Sign In to Save",
+    "previous": "Previous",
+    "next": "Next",
+    "readyToEvaluate": "Ready to Evaluate",
+    "selectPrincipleInfo": "Select a principle from the list to view its guidelines and rules.",
+    "rules": "Rules",
+    "noRulesAvailable": "No rules available",
+    "assessmentData": "Assessment Data",
+    "close": "Close",
+    "exportJson": "Export JSON",
+    "wcag": "WCAG",
+    "accessibilityIssues": "Accessibility Issues",
+    "errors": "Errors",
+    "warnings": "Warnings",
+    "notices": "Notices",
+    "issuesFound": "Issues Found",
+    "noIssuesFound": "No Issues Found",
+    "rulePassedAllChecks": "This rule passed all accessibility checks for the tested page.",
+    "loadingAccessibilityReport": "Loading accessibility report...",
+    "noReportAvailable": "No Report Available",
+    "noTestRunYet": "No accessibility test has been run for this test ID yet.",
+    "issueDetails": "Issue Details",
+    "type": "Type",
+    "code": "Code",
+    "message": "Message",
+    "context": "Context",
+    "noSpecificCriteria": "No specific criteria defined for this rule.",
+    "selectUserToView": "Select a user to view their accessibility assessment results",
+    "reviewDetailedAssessment": "Review the detailed accessibility assessment results for the selected user",
+    "selectUserToViewResults": "Select a User to View Assessment Results",
+    "information": "Information",
+    "foundUserIds": "Found User IDs:",
+    "userDetails": "User Details:",
+    "usersLoaded": "users loaded",
+    "loadingUsers": "Loading Users",
+    "fetchingParticipants": "Fetching assessment participants...",
+    "assessmentAvailable": "Assessment Available",
+    "viewResults": "View Results",
+    "viewInPreview": "View in Preview",
+    "noUsersFound": "No users found for this assessment test.",
+    "backToUserSelection": "Back to User Selection",
+    "viewInPreviewMode": "View in Preview Mode",
+    "accessibilityAssessmentResults": "Accessibility Assessment Results",
+    "wcagLevelFilter": "WCAG Level Filter:",
+    "all": "All",
+    "totalIssues": "Total Issues",
+    "passed": "Passed",
+    "failed": "Failed",
+    "notApplicable": "Not Applicable",
+    "notEvaluated": "Not Evaluated",
+    "principle": "Principle",
+    "guideline": "Guideline",
+    "rule": "Rule",
+    "assessmentNotes": "Assessment Notes",
+    "noNotesProvided": "No notes provided",
+    "report": "Report",
+    "loadingReport": "Loading report...",
+    "runTest": "Run Test",
+    "viewDetailedIssues": "View detailed accessibility issues and recommendations to improve your web content.",
+    "noAssessmentAvailable": "No Assessment Available for this Test",
+    "accessibilityReport": "Accessibility Report",
+    "issues": "Issues",
+    "loadingMore": "Loading more...",
+    "webpagePreview": "Webpage Preview",
+    "selector": "Selector",
+    "wcagReference": "WCAG Reference",
+    "viewWcagGuidelines": "View WCAG Guidelines",
+    "noReportData": "No report data available.",
+    "setupTestParameters": "Set up and customize your accessibility test parameters",
+    "accessibilityConfiguration": "Accessibility Configuration",
+    "step": "Step",
+    "selectComplianceLevel": "Select the WCAG compliance level for your accessibility requirements.",
+    "rulesFor": "rules for",
+    "compliance": "compliance",
+    "reset": "Reset",
+    "continue": "Continue",
+    "guidelinesSelection": "Guidelines Selection",
+    "selectGuidelinesByPrinciple": "Select guidelines for your assessment. Filter by principle using tabs.",
+    "pleaseFixFollowing": "Please fix the following issues:",
+    "selectSpecificRules": "Select specific rules (required)",
+    "guidelinesSelected": "guideline(s) selected",
+    "totalRules": "Total rules",
+    "back": "Back",
+    "saveConfig": "Save Config",
+    "enterWebsiteUrl": "Enter a website URL to run an automated accessibility test and get a detailed report.",
+    "websiteAccessibilityTester": "Website Accessibility Tester",
+    "analyzeWebsiteCompliance": "Analyze your website's accessibility compliance and get actionable insights",
+    "testing": "Testing...",
+    "runAccessibilityTest": "Run Accessibility Test",
+    "analyzingAccessibility": "Analyzing Accessibility",
+    "runningComprehensiveTests": "Running comprehensive tests on your website...",
+    "testFailed": "Test Failed",
+    "commonIssuesSolutions": "Common Issues & Solutions",
+    "troubleshootingTips": "Troubleshooting Tips",
+    "ensurePubliclyAccessible": "Make sure the website is publicly accessible",
+    "tryDifferentPage": "Try testing a different page on the same domain",
+    "checkRequiresAuth": "Check if the website requires authentication",
+    "verifyUrlCorrect": "Verify the URL is correct and complete",
+    "dismiss": "Dismiss",
+    "tryAgain": "Try Again",
+    "selected": "Selected",
+    "accessibilityManager": "Accessibility Manager",
+    "color": "Color:",
+    "radius": "Radius",
+    "opacity": "Opacity",
+    "browseAccessibilityTools": "Browse accessibility tools and actions",
+    "loadingTestData": "Loading test data...",
+    "checkingAccessPermissions": "Checking access permissions",
+    "access": "Access:",
+    "reviewDetailedIssues": "Review detailed accessibility issues and success criteria based on WCAG guidelines",
+    "cssSelector": "CSS Selector",
+    "of": "of",
+    "selectRuleToView": "Select a Rule to View Details",
+    "choosePrincipleGuideline": "Choose a principle and guideline from the left sidebar to view its associated rules and their issues",
+    "notesFor": "Notes for",
+    "noNotesForRule": "No notes available for this rule.",
+    "viewingMode": "Viewing Mode",
+    "viewingAssessmentData": "You are viewing assessment data for user ID:",
+    "readOnlyMode": "This is read-only mode - you cannot save changes to another user's assessment.",
+    "viewingUserId": "Viewing User ID:",
+    "viewingModeLabel": "Viewing Mode:",
+    "userRole": "User Role:",
+    "canSave": "Can Save:",
+    "complianceLevel": "Compliance Level:",
+    "principlesAvailable": "Principles Available:",
+    "selectedGuidelines": "Selected Guidelines:",
+    "rawWcagDataAvailable": "Raw WCAG Data Available:",
+    "filteredWcagDataAvailable": "Filtered WCAG Data Available:"
   }
 }

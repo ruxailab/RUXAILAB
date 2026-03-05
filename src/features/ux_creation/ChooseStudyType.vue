@@ -1,30 +1,22 @@
 <template>
-  <v-container
-    fluid
-    class="create-study-view"
-  >
+  <v-container fluid class="create-study-view">
     <v-container class="py-6">
       <!-- Stepper Header -->
-      <StepperHeader
-        :current-step="3"
-        :steps="steps"
-      />
+      <StepperHeader :current-step="3" :steps="steps" />
 
       <!-- Page Header -->
       <SectionHeader
-        title="Choose Study Type"
-        subtitle="Select how you want to create your study"
+        :title="$t('studyCreation.chooseStudyType')"
+        :subtitle="$t('studyCreation.selectStudyType')"
       />
 
       <!-- Options Grid -->
-      <v-row
-        justify="center"
-        class="mb-8"
-      >
+      <v-row v-if="selectedOption !== 'template'" justify="center" class="mb-8">
         <v-col
           v-for="option in options"
           :key="option.id"
           cols="12"
+          sm="6"
           md="6"
           lg="5"
         >
@@ -34,15 +26,16 @@
             :title="option.title"
             :description="option.description"
             :color="option.color"
-            :badge="option.recommended ? { text: 'Coming Soon', color: 'warning' } : null"
-            @click="() => selectOption(option.id)"
+            :badge="
+              option.recommended
+                ? { text: $t('studyCreation.comingSoon'), color: 'warning' }
+                : null
+            "
             :disabled="option.disabled"
+            @click="() => selectOption(option.id)"
           >
             <template #extra>
-              <v-list
-                class="bg-transparent pl-8 text-start"
-                density="compact"
-              >
+              <v-list class="bg-transparent pl-8 text-start" density="compact">
                 <v-list-item
                   v-for="feature in option.features"
                   :key="feature"
@@ -66,81 +59,102 @@
         </v-col>
       </v-row>
 
+      <v-row v-if="selectedOption === 'template'" justify="center" class="mb-8">
+        <v-col cols="12" lg="10" xl="8">
+          <CommunityTemplatesSection
+            :selection-mode="true"
+            :include-my-templates="true"
+            :forced-method-filter="studyMethod"
+            @template-selected="selectTemplate"
+          />
+        </v-col>
+      </v-row>
+
       <!-- Back Button -->
-      <BackButton
-        label="Back to Methods"
-        @back="goBack"
-      />
+      <BackButton :label="$t('studyCreation.backToMethods')" @back="goBack" />
     </v-container>
   </v-container>
 </template>
 
 <script setup>
-
 import BackButton from '@/features/ux_creation/components/BackButton.vue'
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue'
 import SelectableCard from '@/shared/components/cards/SelectableCard.vue'
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue'
-import { ref } from 'vue'
+import CommunityTemplatesSection from '@/features/navigation/components/navbarSections/CommunityTemplatesSection.vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
 const store = useStore()
+const { t, tm } = useI18n()
 const selectedOption = ref('')
+const studyMethod = computed(() => store.state.Tests.studyMethod)
 
-const steps = [
-  { value: 1, title: 'Category', complete: true },
-  { value: 2, title: 'Methods', complete: true },
-  { value: 3, title: 'Study Type', complete: false },
-  { value: 4, title: 'Details', complete: false }
-]
+const steps = computed(() => [
+  { value: 1, title: t('studyCreation.steps.category'), complete: true },
+  { value: 2, title: t('studyCreation.steps.methods'), complete: true },
+  { value: 3, title: t('studyCreation.steps.studyType'), complete: false },
+  { value: 4, title: t('studyCreation.steps.details'), complete: false },
+])
 
-const options = [
+const options = computed(() => [
   {
     id: 'blank',
-    title: 'Start with Blank Study',
-    description: 'Create a study from scratch with complete customization',
+    title: t('studyCreation.studyTypes.blank.title'),
+    description: t('studyCreation.studyTypes.blank.description'),
     icon: 'mdi-file-outline',
     color: 'primary',
     recommended: false,
     disabled: false,
-    features: [
-      'Complete customization',
-      'Build from ground up',
-      'Full control over settings'
-    ]
+    features: tm('studyCreation.studyTypes.blank.features'),
   },
   {
     id: 'template',
-    title: 'Create from Template',
-    description: 'Use pre-built templates to get started quickly',
+    title: t('studyCreation.studyTypes.template.title'),
+    description: t('studyCreation.studyTypes.template.description'),
     icon: 'mdi-clipboard-text-outline',
     color: 'success',
-    recommended: true,
-    disabled: true,
-    features: [
-      'Quick setup',
-      'Pre-configured settings',
-      'Best practices included'
-    ]
-  }
-]
+    recommended: false,
+    disabled: false,
+    features: tm('studyCreation.studyTypes.template.features'),
+  },
+])
 
 const selectOption = (optionId) => {
   selectedOption.value = optionId
   store.commit('SET_STUDY_TYPE', optionId)
+  store.commit('SET_SELECTED_TEMPLATE', null)
+
+  if (optionId === 'blank') {
+    router.push({ name: 'study-create-step4' })
+  }
+}
+
+const selectTemplate = (template) => {
+  if (!template) return
+  store.commit('SET_SELECTED_TEMPLATE', template)
   router.push({ name: 'study-create-step4' })
 }
 
 const goBack = () => {
   const method = store.state.Tests.studyMethod
+
+  store.commit('SET_STUDY_TYPE', null)
+  store.commit('SET_SELECTED_TEMPLATE', null)
+
   if (method) {
     router.push({ name: 'study-create-step2' })
   } else {
     router.push({ name: 'study-create-step1' })
   }
 }
+
+onMounted(() => {
+  selectedOption.value = store.state.Tests.studyType || ''
+})
 </script>
 
 <style scoped>

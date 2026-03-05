@@ -1,15 +1,12 @@
 <template>
-  <v-container
-    fluid
-    class="dashboard-container"
-  >
+  <v-container fluid class="pa-0">
     <!-- Header with User Welcome -->
     <div class="dashboard-header mb-6">
       <h1 class="text-h4 font-weight-bold text-grey-darken-4 mb-2">
-        Welcome back, {{ userDisplayName }}! 👋
+        {{ $t('Dashboard.welcomeBack', { name: userDisplayName }) }}
       </h1>
       <p class="text-subtitle-1 text-grey-darken-1">
-        Here's what's happening with your research projects today
+        {{ $t('Dashboard.subtitle') }}
       </p>
     </div>
 
@@ -22,21 +19,12 @@
 
     <!-- Second Row: Activity Timeline and Active Studies -->
     <v-row class="mb-6">
-      <v-col
-        cols="12"
-        lg="8"
-      >
+      <v-col cols="12" lg="8">
         <div class="component-height">
-          <ActiveStudies 
-            :studies="items"
-            @update-total="totalParticipants = $event"
-          />
+          <ActiveStudies :studies="items" />
         </div>
       </v-col>
-      <v-col
-        cols="12"
-        lg="4"
-      >
+      <v-col cols="12" lg="4">
         <div class="component-height">
           <ActivityTimeline />
         </div>
@@ -45,44 +33,29 @@
 
     <!-- Third Row: Upcoming Webinar and Top Methods -->
     <v-row class="mb-6">
-      <v-col
-        cols="12"
-        lg="4"
-      >
-        <UpcomingWebinar />
+      <v-col cols="12" lg="4">
+        <UpcomingWebinar :webinar-data="upcomingWebinar || {}" />
       </v-col>
-      <v-col
-        cols="12"
-        lg="4"
-      >
-        <TopMethods />
+      <v-col cols="12" lg="4">
+        <TopMethods :methods-data="topMethodsData" />
       </v-col>
-      <v-col
-        cols="12"
-        lg="4"
-      >
-        <NextSession :next-session="sessions" />
+      <v-col cols="12" lg="4">
+        <NextSession :next-session="nextSession" />
       </v-col>
     </v-row>
 
     <!-- Fourth Row: Blog Posts and Next Session -->
     <v-row class="mb-6">
-      <v-col
-        cols="12"
-        lg="6"
-      >
+      <v-col cols="12" lg="6">
         <BlogPosts />
       </v-col>
-      <v-col
-        cols="12"
-        lg="6"
-      />
+      <v-col cols="12" lg="6" />
     </v-row>
   </v-container>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import StatsCards from '@/features/dashboard/components/StatsCards.vue'
 import ActivityTimeline from '@/features/dashboard/components/ActivityTimeline.vue'
@@ -91,6 +64,7 @@ import BlogPosts from '@/features/dashboard/components/BlogPosts.vue'
 import UpcomingWebinar from '@/features/dashboard/components/UpcomingWebinar.vue'
 import TopMethods from '@/features/dashboard/components/TopMethods.vue'
 import NextSession from '@/features/dashboard/components/NextSession.vue'
+import { getMethodDefinition } from '@/shared/constants/methodDefinitions'
 
 const props = defineProps({
   items: {
@@ -107,26 +81,106 @@ const props = defineProps({
 
 const store = useStore()
 
-const totalStudies = ref(12)
-const usedStorage = ref(150)
-const totalParticipants = ref(0)
+const usedStorage = ref(0)
+const nextSession = ref(null)
 
 const userDisplayName = computed(() => {
-  const user = store.getters['auth/getUser']
-  if (user && user.displayName) {
-    return user.displayName.split(' ')[0]
-  }
-  return 'User'
+  const user = store.getters.user
+  return user?.username?.split(' ')[0] || 'User'
 })
 
-watch(() => props.items, (newVal) => {
-  totalStudies.value = newVal.length
-}, { immediate: true })
+const userStorageUsage = computed(() => {
+  const user = store.getters.user
+  return user?.storageUsageMB || 0
+})
+
+const userStudies = computed(() => {
+  const user = store.getters.user
+  if (!user || !props.items) return []
+
+  return props.items.filter((study) => study?.testAdmin?.userDocId === user.id)
+})
+
+const totalStudies = computed(() => userStudies.value.length)
+
+const totalParticipants = computed(() => {
+  return userStudies.value.flatMap((s) => s.cooperators || []).length
+})
+
+const upcomingWebinar = computed(
+  () => store.getters['Dashboard/upcomingWebinar'],
+)
+
+const topMethodsData = computed(() => {
+  const methodCounts = {}
+
+  userStudies.value.forEach((study) => {
+    const key = `${study.testType}|${study.subType || ''}`
+
+    if (!methodCounts[key]) {
+      const def = getMethodDefinition(study.testType, study.subType)
+      if (def) {
+        methodCounts[key] = {
+          id: key,
+          count: 0,
+          name: def.nameEn,
+          type: def.name,
+          icon: def.icon,
+          color: def.color,
+          bgColor: def.color,
+        }
+      }
+    }
+
+    if (methodCounts[key]) {
+      methodCounts[key].count++
+    }
+  })
+  return Object.values(methodCounts)
+    .sort((a, b) => b.count - a.count)
+    .map((m) => ({
+      ...m,
+      usage: m.count.toString(),
+    }))
+})
+
+watch(
+  () => props.sessions,
+  (sessions) => {
+    if (!sessions?.length) {
+      nextSession.value = null
+      return
+    }
+
+    const now = new Date()
+    const futureSessions = sessions.filter((s) => new Date(s.testDate) > now)
+
+    if (!futureSessions.length) {
+      nextSession.value = null
+      return
+    }
+
+    futureSessions.sort((a, b) => new Date(a.testDate) - new Date(b.testDate))
+    nextSession.value = futureSessions[0]
+  },
+  { immediate: true, deep: true },
+)
+
+watch(
+  () => userStorageUsage.value,
+  (newVal) => {
+    usedStorage.value = parseFloat(newVal)
+  },
+  { immediate: true },
+)
+
+onMounted(() => {
+  store.dispatch('Dashboard/fetchUpcomingWebinar')
+})
 </script>
 
 <style scoped>
 .dashboard-container {
-  padding: 24px;
   background-color: rgb(var(--v-theme-background));
   min-height: 100vh;
 }
@@ -149,15 +203,7 @@ watch(() => props.items, (newVal) => {
   flex: 1;
   overflow-y: auto;
 }
-
-@media (max-width: 960px) {
-  .dashboard-container {
-    padding: 16px;
-  }
-  
-  .component-height {
-    height: auto;
-    min-height: 400px;
-  }
+:deep(.v-row) {
+  margin: -14px !important;
 }
 </style>

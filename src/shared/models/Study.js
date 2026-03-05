@@ -1,10 +1,6 @@
-import Cooperators from './Cooperators'
-// import Cooperators from '@/models/Cooperators'
+/** Class representing a Study. */
 
-/**
- * Represents the test model.
- */
-export default class Study { // mudar nome para Study e mover para Shared
+export default class Study {
   /**
    * @param {Partial<Test>} partial
    */
@@ -63,10 +59,10 @@ export default class Study { // mudar nome para Study e mover para Shared
     this.testType = testType ?? null
 
     /**
-    * Defines the test subtype.
-    *
-    * @type {string}
-    */
+     * Defines the test subtype.
+     *
+     * @type {string}
+     */
     this.subType = subType ?? null
 
     /**
@@ -79,7 +75,7 @@ export default class Study { // mudar nome para Study e mover para Shared
     /**
      * Defines the test options.
      *
-     * @type {[]}
+     * @type {Array}
      */
     this.testOptions = testOptions ?? []
 
@@ -134,7 +130,7 @@ export default class Study { // mudar nome para Study e mover para Shared
 
     /**
      * Defines the test status.
-     * 
+     *
      * @type {string}
      */
 
@@ -145,7 +141,6 @@ export default class Study { // mudar nome para Study e mover para Shared
      * @type {number}
      */
     this.endDate = endDate ?? null
-
   }
 
   /**

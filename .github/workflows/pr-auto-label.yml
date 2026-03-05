@@ -1,0 +1,395 @@
+name: PR Auto Labeler
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+      - edited
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+jobs:
+  auto-label:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Auto-label PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const prNumber = pr.number;
+            const prTitle = pr.title.toLowerCase();
+            const prBody = pr.body || "";
+            const labelsToAdd = [];
+
+            // Get ALL files changed in PR using pagination
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+              per_page: 100,
+            });
+
+            // Calculate total lines changed (excluding lockfiles)
+            let totalAdditions = 0;
+            let totalDeletions = 0;
+            const changedPaths = [];
+
+            for (const file of files) {
+              // Ignore lockfiles for complexity/size stats to avoid noise
+              if (file.filename === 'package-lock.json' || file.filename === 'yarn.lock') {
+                continue;
+              }
+              changedPaths.push(file.filename);
+              totalAdditions += file.additions;
+              totalDeletions += file.deletions;
+            }
+
+            const fileCount = changedPaths.length;
+            const totalChanges = totalAdditions + totalDeletions;
+            console.log(`Stats (excluding lockfiles): ${fileCount} files, ${totalChanges} lines changed (${totalAdditions} additions, ${totalDeletions} deletions)`);
+
+            // 1. Size labels based on lines changed
+            if (totalChanges < 10) {
+              labelsToAdd.push("size/XS");
+            } else if (totalChanges < 100) {
+              labelsToAdd.push("size/S");
+            } else if (totalChanges < 500) {
+              labelsToAdd.push("size/M");
+            } else if (totalChanges < 1000) {
+              labelsToAdd.push("size/L");
+            } else {
+              labelsToAdd.push("size/XL");
+            }
+
+            // Complexity labels based on file count
+            if (fileCount < 5) {
+              labelsToAdd.push("low-complexity");
+            } else if (fileCount >= 5 && fileCount <= 10) {
+              labelsToAdd.push("medium-complexity");
+            } else {
+              labelsToAdd.push("high-complexity");
+            }
+
+            // Type labels based on PR title
+            if (prTitle.startsWith("fix:") || prTitle.includes("fix(")) {
+              labelsToAdd.push("fix");
+            } else if (prTitle.startsWith("feat:") || prTitle.includes("feat(")) {
+              labelsToAdd.push("new-feature");
+            }
+
+            // 2. Component-specific labels based on changed files
+            const hasVueComponents = changedPaths.some(p => p.includes("src/") && (p.endsWith(".vue") || p.includes("/components/")));
+            const hasFunctions = changedPaths.some(p => p.startsWith("functions/"));
+            const hasTests = changedPaths.some(p => p.includes("test") || p.includes("spec") || p.includes("cypress/") || p.includes("playwright/"));
+            const hasDocs = changedPaths.some(p => p.includes("README") || p.includes("docs/") || p.endsWith(".md"));
+            const hasWorkflows = changedPaths.some(p => p.includes(".github/workflows/"));
+            const hasAssets = changedPaths.some(p => p.includes("/assets/") || p.match(/\.(png|jpg|jpeg|svg|gif|ico)$/));
+
+            // Feature-specific labels based on UX folders
+            const hasAccessibility = changedPaths.some(p => p.includes("ux/accessibility") || p.includes("ux/Accessibility"));
+            const hasCardSorting = changedPaths.some(p => p.includes("ux/CardSorting"));
+            const hasHeuristic = changedPaths.some(p => p.includes("ux/Heuristic"));
+            const hasUserTest = changedPaths.some(p => p.includes("ux/UserTest"));
+
+            if (hasVueComponents) labelsToAdd.push("ui/ux");
+            if (hasFunctions) labelsToAdd.push("backend");
+            if (hasTests) labelsToAdd.push("testing");
+            if (hasDocs) labelsToAdd.push("documentation");
+            if (hasWorkflows) labelsToAdd.push("ci/cd");
+            if (hasAssets) labelsToAdd.push("assets");
+            if (hasAccessibility) labelsToAdd.push("accessibility");
+            if (hasCardSorting) labelsToAdd.push("card-sorting");
+            if (hasHeuristic) labelsToAdd.push("heuristic");
+            if (hasUserTest) labelsToAdd.push("user-test");
+
+            // 5. PR Description Validation
+            const descriptionIssues = [];
+
+            // Detect bot PRs
+            const BOT_LOGINS = new Set(['dependabot[bot]', 'github-actions[bot]']);
+            const isBot = BOT_LOGINS.has(pr.user.login) || pr.user.type === 'Bot';
+
+            // Skip validation for bot PRs
+            if (!isBot) {
+              // Check minimum description length
+              const lengthValid = prBody.trim().length >= 20;
+              if (!lengthValid) {
+                descriptionIssues.push("- Description is too short (minimum 20 characters)");
+              }
+
+              // Check for issue reference and validate it
+              const issueRefMatch = prBody.match(/(?:fix|close|resolve)(?:es|ed|s)?[\s:]*#(\d+)/i);
+              let hasIssueRef = false;
+              
+              if (!issueRefMatch) {
+                descriptionIssues.push("- Missing issue reference (e.g., 'Fixes #123')");
+              } else {
+                const issueNumber = parseInt(issueRefMatch[1]);
+
+                try {
+                  const { data: issue } = await github.rest.issues.get({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: issueNumber,
+                  });
+
+                  if (issue.state === 'closed') {
+                    descriptionIssues.push(`- Referenced issue #${issueNumber} is closed. Please reference an open issue.`);
+                  } else {
+                    hasIssueRef = true;
+                  }
+                } catch (error) {
+                  if (error.status === 404) {
+                    descriptionIssues.push(`- Referenced issue #${issueNumber} does not exist in this repository.`);
+                  } else {
+                    console.log(`Error checking issue #${issueNumber}: ${error.message}`);
+                    hasIssueRef = true;
+                  }
+                }
+              }
+
+              // Get existing comments
+              const { data: comments } = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+              });
+
+              const existingComment = comments.find(c => c.body && c.body.includes("PR Description Issues Detected"));
+
+              // Both rules satisfied - remove label and comment
+              if (lengthValid && hasIssueRef) {
+                // Try to remove label
+                try {
+                  await github.rest.issues.removeLabel({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: prNumber,
+                    name: "needs-description",
+                  });
+                  console.log("Removed needs-description label");
+                } catch (error) {
+                  if (error.status !== 404) {
+                    console.log(`Could not remove label: ${error.message}`);
+                  }
+                }
+
+                // Delete comment if exists
+                if (existingComment) {
+                  try {
+                    await github.rest.issues.deleteComment({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      comment_id: existingComment.id,
+                    });
+                    console.log("Deleted validation comment");
+                  } catch (error) {
+                    console.log(`Could not delete comment: ${error.message}`);
+                  }
+                }
+              }
+              // At least one rule fails - add label and comment
+              else if (descriptionIssues.length > 0) {
+                labelsToAdd.push("needs-description");
+
+                const warningComment = `⚠️ **PR Description Issues Detected**\n\n${descriptionIssues.join("\n")}\n\nPlease update the PR description to address these issues.`;
+
+                try {
+                  if (existingComment) {
+                    await github.rest.issues.updateComment({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      comment_id: existingComment.id,
+                      body: warningComment,
+                    });
+                    console.log("Updated description validation comment");
+                  } else {
+                    await github.rest.issues.createComment({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      issue_number: prNumber,
+                      body: warningComment,
+                    });
+                    console.log("Posted description validation comment");
+                  }
+                } catch (error) {
+                  console.log(`Could not manage comment: ${error.message}`);
+                }
+              }
+            }
+
+            // Refetch PR to get current labels
+            const { data: updatedPR } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            });
+            const existingLabels = updatedPR.labels.map(l => l.name);
+
+            // DEFINE MANAGED LABELS
+            // These are labels that this script "owns". If they are not in labelsToAdd, they will be removed.
+            const sizeLabels = ["size/XS", "size/S", "size/M", "size/L", "size/XL"];
+            const complexityLabels = ["low-complexity", "medium-complexity", "high-complexity"];
+            const typeLabels = ["fix", "new-feature"];
+            const componentLabels = [
+              "ui/ux", "backend", "testing", "documentation", "ci/cd", "assets",
+              "accessibility", "card-sorting", "heuristic", "user-test"
+            ];
+
+            const allManagedLabels = [...sizeLabels, ...complexityLabels, ...typeLabels, ...componentLabels];
+
+            // Remove ANY managed label that is NOT in the calculated list
+            for (const label of allManagedLabels) {
+              if (existingLabels.includes(label) && !labelsToAdd.includes(label)) {
+                try {
+                  await github.rest.issues.removeLabel({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: prNumber,
+                    name: label,
+                  });
+                  console.log(`Removed label: ${label}`);
+                } catch (error) {
+                  console.log(`Could not remove label ${label}: ${error.message}`);
+                }
+              }
+            }
+
+            // Add new labels
+            const newLabels = labelsToAdd.filter(l => !existingLabels.includes(l));
+            if (newLabels.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                labels: newLabels,
+              });
+              console.log(`Added labels: ${newLabels.join(", ")}`);
+            } else {
+              console.log("No new labels to add");
+            }
+            // 6. Limit open PRs per author (anti-spam)
+            const MAX_OPEN_PRS = 2;
+
+            // Skip for bots
+            if (!isBot) {
+              const { data: openPRs } = await github.rest.pulls.list({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: "open",
+                per_page: 100,
+              });
+
+              const userOpenPRs = openPRs.filter(p =>
+                p.user.login === pr.user.login && p.number !== prNumber
+              );
+
+              if (userOpenPRs.length >= MAX_OPEN_PRS) {
+                const spamWarning = `
+            🚫 **Too many open Pull Requests**
+
+            You already have **${userOpenPRs.length + 1} open PRs** in this repository.
+
+            Please finish or close existing PRs before opening new ones.
+            `;
+
+                // Avoid duplicate comments
+                const { data: comments } = await github.rest.issues.listComments({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                });
+
+                const alreadyWarned = comments.some(c =>
+                  c.body && c.body.includes("Too many open Pull Requests")
+                );
+
+                if (!alreadyWarned) {
+                  await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: prNumber,
+                    body: spamWarning,
+                  });
+                }
+
+                labelsToAdd.push("pr-limit-exceeded");
+
+                await github.rest.pulls.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: prNumber,
+                  state: "closed",
+                });
+
+                // Hard fail to block merge
+                throw new Error("Author exceeded max number of open PRs");
+              }
+            }
+            // 7. Media requirement: at least one image or video
+            if (!isBot) {
+              const mediaFileRegex = /\.(png|jpe?g|gif|webp|mp4|mov|webm)$/i;
+
+              const hasMediaFile = changedPaths.some(p => mediaFileRegex.test(p));
+              
+              // Match media URLs with optional query strings (e.g., .png?jwt=...)
+              const mediaUrlRegex = /\.(png|jpe?g|gif|webp|mp4|mov|webm)(\?[^\s)]*)?/i;
+              // Match GitHub's user-content CDN URLs (private images/videos, user-attachments, etc.)
+              const githubAssetRegex = /https?:\/\/(user-images\.githubusercontent\.com|private-user-images\.githubusercontent\.com|github\.com\/(user-attachments\/assets|[^/]+\/[^/]+\/assets))\//i;
+              
+              const hasMediaLink = mediaUrlRegex.test(prBody) || githubAssetRegex.test(prBody);
+
+
+              if (!hasMediaFile && !hasMediaLink) {
+                const mediaWarning = `
+            📸 **Media required**
+
+            This PR must include **at least one image or video**:
+            - as a changed file (png, jpg, gif, mp4, etc), or
+            - as a link in the PR description.
+
+            Please add media to help reviewers understand the change.
+            `;
+
+                const { data: comments } = await github.rest.issues.listComments({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                });
+
+                const alreadyWarned = comments.some(c =>
+                  c.body && c.body.includes("Media required")
+                );
+
+                if (!alreadyWarned) {
+                  await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: prNumber,
+                    body: mediaWarning,
+                  });
+                }
+
+                labelsToAdd.push("needs-media");
+
+                await github.rest.pulls.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: prNumber,
+                  state: "closed",
+                });
+
+                throw new Error("PR closed due to missing required media");
+              }
+            }

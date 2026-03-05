@@ -1,6 +1,7 @@
 import { createStore } from 'vuex'
 import Auth from '@/features/auth/store/Auth'
-import Templates from '@/features/templates/Template'
+import Dashboard from '@/features/dashboard/store'
+import Templates from '@/features/templates/store/Template'
 import Tests from '@/store/modules/Study'
 import Users from '@/features/super/store/User'
 import Reports from '@/shared/store/Report'
@@ -26,12 +27,12 @@ export default createStore({
   },
   mutations: {
     SET_TOAST(state, { message, type }) {
-      state.toastMessage = message;
-      state.toastType = type || 'info';
+      state.toastMessage = message
+      state.toastType = type || 'info'
     },
     RESET_TOAST(state) {
-      state.toastMessage = '';
-      state.toastType = 'info';
+      state.toastMessage = ''
+      state.toastType = 'info'
     },
     setLoading(state, payload) {
       state.loading = payload
@@ -78,6 +79,7 @@ export default createStore({
   modules: {
     Assessment,
     Auth,
+    Dashboard,
     Templates,
     Tests,
     Users,
@@ -90,5 +92,5 @@ export default createStore({
     UserStudy,
     CardStudy,
     notification,
-  }
+  },
 })

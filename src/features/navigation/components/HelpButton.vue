@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="d-none d-md-flex">
     <v-btn
       v-if="!isHelp"
       size="small"

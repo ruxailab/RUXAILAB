@@ -35,6 +35,7 @@ UX Remote LAB provides a collaborative environment for creators to share their p
 
 ### Support
 
+- [Contributing Guide 📝](CONTRIBUTING.md)
 - [Report a Bug 🐛](https://github.com/uramakilab/remote-usability-lab/issues/new)
 - [Request a Feature 🚀](https://github.com/uramakilab/remote-usability-lab/issues/new)
 - [Ask a Question 🤗](https://github.com/uramakilab/remote-usability-lab/discussions)
@@ -43,59 +44,45 @@ For commercial support, academic collaborations, and answers to common questions
 
 ### Development Environment
 
-- Node.js version: ≤ 22.15.1
-- Vue.js version: 3.5.13
+- Node.js version: ≤ 24.12.0
+- Vue.js version: 3.5.26
 - Vue CLI version: 5.0.8
-- Vuetify version: 3.7.18
+- Vuetify version: 3.11.6
 - Python version: 3.11.8
+- Recommended formatter: Prettier - Code formatter
 
-## Video Guide
+## Quick Start
 
-<a href='https://youtu.be/dAf4LRxITCc'>Tutorial - Running RUXAILAB with Firebase Emulators 🖥️</a>
-
-## Getting Started
-
-Follow these steps to set up the development environment and run the application locally:
+### For End Users
 
 ```bash
+# Clone the repository
+git clone https://github.com/uramakilab/remote-usability-lab.git
+cd remote-usability-lab
+
 # Install dependencies
 npm install
-pip install
+
+# Run development server
+npm run serve
 ```
 
-Open Firebase / Firestore and start a project.
+### For Contributors & Developers
 
-- In the project dashboard, on the left hand side menu, click on build, click on realtime database and activate it.
-- In the project dashboard, click on the settings button on the left side of the screen (gear icon).
-- In the project settings, under the general tab, scroll down to the end of the screen, you should find the following screen.
-  <div align="center">
-    <img src="public/FBexample.png" alt="FBexample" height="450" />
-  </div>
+**Want to contribute or set up a complete development environment?**
 
-In the folder of your project, create a file with the name .env and put the following data:
+Please see our [**CONTRIBUTING.md**](CONTRIBUTING.md) guide for:
 
-```ini
-VUE_APP_FIREBASE_API_KEY=""
-VUE_APP_FIREBASE_AUTH_DOMAIN=""
-VUE_APP_FIREBASE_DB_URL=""
-VUE_APP_FIREBASE_PROJECT_ID=""
-VUE_APP_FIREBASE_STORAGE_BUCKET=""
-VUE_APP_FIREBASE_MESSAGING_SENDER_ID=""
-VUE_APP_FIREBASE_APP_ID=""
+- 🐳 Docker setup with Firebase Emulators (recommended)
+- 🔧 Production Firebase configuration
+- 📋 Contribution workflow and guidelines
+- ✅ Code standards and testing
+- 🐛 Issue reporting
 
-# Doesn't need changes
-VUE_APP_I18N_LOCALE="en"
-VUE_APP_I18N_FALLBACK_LOCALE="en"
-```
+### Video Tutorial
 
-Then, complete the information in your .env file with the firebase information, respectively in their fields, and run:
-
-```bash
- # Run the application locally
- npm run serve
-```
-
-## Running with Firebase Emulators
+For a visual walkthrough of running RUXAILAB with Firebase Emulators, check out:
+[Tutorial - Running RUXAILAB with Firebase Emulators 🖥️](https://youtu.be/dAf4LRxITCc)
 
 - Add `firebase.json` file with the following code snippet:
 
@@ -218,4 +205,4 @@ Visit `http://localhost:5000` in your browser to access the UX Remote LAB platfo
 
 ## License
 
-MIT © [UX Remote LAB](https://github.com/uramakilab/remote-usability-lab)
+MIT © [RUXAILAB](https://github.com/uramakilab/remote-usability-lab)
