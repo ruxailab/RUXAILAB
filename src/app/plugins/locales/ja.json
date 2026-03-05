@@ -112,7 +112,9 @@
     "user": "ユーザー",
     "id": "ID",
     "itemsPerPage": "ページごとの項目数：",
-    "visible": "表示"
+    "visible": "表示",
+    "valuableFeedback": "Your qualitative feedback is highly valuable",
+    "characters": "characters"
   },
   "storage": {
     "pageTitle": "ストレージ",

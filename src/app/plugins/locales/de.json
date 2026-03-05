@@ -112,7 +112,9 @@
     "user": "Benutzer",
     "id": "ID",
     "itemsPerPage": "Elemente pro Seite:",
-    "visible": "Sichtbar"
+    "visible": "Sichtbar",
+    "valuableFeedback": "Your qualitative feedback is highly valuable",
+    "characters": "characters"
   },
   "storage": {
     "pageTitle": "Speicher",

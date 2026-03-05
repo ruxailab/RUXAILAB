@@ -112,7 +112,9 @@
     "user": "Пользователь",
     "id": "ID",
     "itemsPerPage": "Элементов на странице:",
-    "visible": "Видимый"
+    "visible": "Видимый",
+    "valuableFeedback": "Your qualitative feedback is highly valuable",
+    "characters": "characters"
   },
   "storage": {
     "pageTitle": "Хранилище",

@@ -80,8 +80,12 @@ const props = defineProps({
 
 const characterCount = computed(() => {
   if (!value.value) return 0
-  // Strip HTML tags for an accurate character count, as Quill outputs HTML
-  return value.value.replace(/<[^>]*>?/gm, '').trim().length
+  // Use DOMParser to derive plain text from HTML, decoding entities for an accurate count
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(value.value, 'text/html')
+  const text = doc.body?.textContent || ''
+
+  return text.trim().length
 })
 
 const editorOptions = computed(() => ({

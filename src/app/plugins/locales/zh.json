@@ -112,7 +112,9 @@
     "user": "用户",
     "id": "ID",
     "itemsPerPage": "每页项目数：",
-    "visible": "可见"
+    "visible": "可见",
+    "valuableFeedback": "Your qualitative feedback is highly valuable",
+    "characters": "characters"
   },
   "storage": {
     "pageTitle": "存储",

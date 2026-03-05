@@ -112,7 +112,9 @@
     "user": "مستخدم",
     "id": "ID",
     "itemsPerPage": "عدد العناصر في الصفحة:",
-    "visible": "مرئي"
+    "visible": "مرئي",
+    "valuableFeedback": "Your qualitative feedback is highly valuable",
+    "characters": "characters"
   },
   "storage": {
     "pageTitle": "التخزين",

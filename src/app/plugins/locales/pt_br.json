@@ -112,7 +112,9 @@
     "user": "Usuário",
     "id": "ID",
     "itemsPerPage": "Itens por página:",
-    "visible": "Visível"
+    "visible": "Visível",
+    "valuableFeedback": "Your qualitative feedback is highly valuable",
+    "characters": "characters"
   },
   "storage": {
     "pageTitle": "Armazenamento",

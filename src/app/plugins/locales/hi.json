@@ -112,7 +112,9 @@
     "user": "उपयोगकर्ता",
     "id": "आईडी",
     "itemsPerPage": "प्रति पृष्ठ आइटम:",
-    "visible": "दृश्य"
+    "visible": "दृश्य",
+    "valuableFeedback": "Your qualitative feedback is highly valuable",
+    "characters": "characters"
   },
   "storage": {
     "pageTitle": "संग्रहण",
