@@ -16,32 +16,24 @@
  */
 export const hasAdminAccess = (currentUser, studyData) => {
     if (!currentUser || !studyData) {
-        console.log('AccessControl - No user or study data');
         return false;
     }
 
     // Try multiple possible user ID fields (id, uid, userDocId)
     const currentUserId = currentUser.id || currentUser.uid || currentUser.userDocId;
 
-    console.log('AccessControl - Current User ID:', currentUserId);
-    console.log('AccessControl - Test Admin UserDocId:', studyData.testAdmin?.userDocId);
-
     // Check if user is the test admin
     if (studyData.testAdmin?.userDocId === currentUserId) {
-        console.log('AccessControl - User is test admin');
         return true;
     }
 
     // Check if user is cooperator with accessLevel 0
     const cooperator = studyData.cooperators?.find(coop => coop.userDocId === currentUserId);
-    console.log('AccessControl - Cooperator found:', cooperator);
 
     if (cooperator && cooperator.accessLevel === 0) {
-        console.log('AccessControl - User is cooperator with accessLevel 0');
         return true;
     }
 
-    console.log('AccessControl - User does not have admin access');
     return false;
 };
 
