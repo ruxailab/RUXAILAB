@@ -1,14 +1,14 @@
 <template>
   <PageWrapper 
-    title="Website Analysis"
-    subtitle="Analyze website accessibility using automated tools"
+    :title="$t('Accessibility.websiteAnalysisTitle')"
+    :subtitle="$t('Accessibility.analyzeWebsiteAutomated')"
   >
   <template #subtitle>
       <p v-if="!assessmentExists" class="text-body-1 text-grey-darken-1">
-        Enter a website URL to run an automated accessibility test and get a detailed report.
+        {{ $t('Accessibility.enterWebsiteUrl') }}
       </p>
       <p v-else class="text-body-1 text-grey-darken-1">
-        This test already has accessibility results. View the existing reports or answers.
+        {{ $t('Accessibility.existingAssessmentSubtitle') }}
       </p>
     </template>
     <v-row
@@ -38,11 +38,10 @@
               </v-icon>
             </div>
             <h1 class="main-title mb-4">
-              Website Accessibility Tester
+              {{ $t('Accessibility.websiteAccessibilityTester') }}
             </h1>
             <p class="subtitle">
-              Analyze your website's accessibility compliance and get actionable
-              insights
+              {{ $t('Accessibility.analyzeWebsiteCompliance') }}
             </p>
           </v-card-text>
         </v-card>
@@ -62,9 +61,9 @@
               color="primary"
               class="mb-4"
             />
-            <h3 class="text-h6 mb-2">Checking for existing assessment...</h3>
+            <h3 class="text-h6 mb-2">{{ $t('Accessibility.checkingForExistingAssessment') }}</h3>
             <p class="text-body-2 text-grey-darken-1 mb-0">
-              Please wait while we check if this test already has results.
+              {{ $t('Accessibility.pleaseWaitResults') }}
             </p>
           </v-card-text>
         </v-card>
@@ -88,10 +87,10 @@
                 mdi-check-circle
               </v-icon>
               <h3 class="text-h5 font-weight-bold mb-2 text-success">
-                Assessment Already Available
+                {{ $t('Accessibility.assessmentAlreadyAvailable') }}
               </h3>
               <p class="text-body-1 text-grey-darken-1">
-                This test already has accessibility results available. You can view the detailed reports or answers.
+                {{ $t('Accessibility.alreadyHasResults') }}
               </p>
             </div>
 
@@ -106,7 +105,7 @@
                   size="small"
                   block
                 >
-                  {{ existingAssessment.ReportUrl || 'No URL available' }}
+                  {{ existingAssessment.ReportUrl || $t('Accessibility.noUrlAvailable') }}
                 </v-chip>
               </v-col>
               <v-col cols="12" md="6">
@@ -131,7 +130,7 @@
                     <div class="text-h6 font-weight-bold text-error">
                       {{ issuesSummary.errors }}
                     </div>
-                    <div class="text-caption">Errors</div>
+                    <div class="text-caption">{{ $t('Accessibility.errors') }}</div>
                   </v-card-text>
                 </v-card>
               </v-col>
@@ -141,7 +140,7 @@
                     <div class="text-h6 font-weight-bold text-warning">
                       {{ issuesSummary.warnings }}
                     </div>
-                    <div class="text-caption">Warnings</div>
+                    <div class="text-caption">{{ $t('Accessibility.warnings') }}</div>
                   </v-card-text>
                 </v-card>
               </v-col>
@@ -151,7 +150,7 @@
                     <div class="text-h6 font-weight-bold text-info">
                       {{ issuesSummary.notices }}
                     </div>
-                    <div class="text-caption">Notices</div>
+                    <div class="text-caption">{{ $t('Accessibility.notices') }}</div>
                   </v-card-text>
                 </v-card>
               </v-col>
@@ -167,7 +166,7 @@
                 class="flex-fill"
                 @click="goToAnswers"
               >
-                View Answers
+                {{ $t('Accessibility.viewAnswers') }}
               </v-btn>
               <v-btn
                 color="success"
@@ -177,7 +176,7 @@
                 class="flex-fill"
                 @click="goToReport"
               >
-                View Reports
+                {{ $t('Accessibility.viewReports') }}
               </v-btn>
             </div>
 
@@ -196,8 +195,8 @@
             <v-form @submit.prevent="runTest">
               <v-text-field
                 v-model="url"
-                label="Website URL"
-                placeholder="example.com or https://example.com"
+                :label="$t('Accessibility.websiteUrlLabel')"
+                :placeholder="$t('Accessibility.websiteUrlPlaceholder')"
                 type="url"
                 required
                 :disabled="isLoading"
@@ -224,7 +223,7 @@
                     mdi-play
                   </v-icon>
                 </template>
-                {{ isLoading ? 'Testing...' : 'Run Accessibility Test' }}
+                {{ isLoading ? $t('Accessibility.testing') : $t('Accessibility.runAccessibilityTest') }}
               </v-btn>
             </v-form>
           </v-card-text>
@@ -247,10 +246,10 @@
             />
 
             <h3 class="loading-title mb-2">
-              Analyzing Accessibility
+              {{ $t('Accessibility.analyzingAccessibility') }}
             </h3>
             <p class="loading-text mb-6">
-              Running comprehensive tests on your website...
+              {{ $t('Accessibility.runningComprehensiveTests') }}
             </p>
 
             <div class="loading-steps">
@@ -296,7 +295,7 @@
                 mdi-alert-circle
               </v-icon>
               <h3 class="error-title">
-                Test Failed
+                {{ $t('Accessibility.testFailed') }}
               </h3>
             </div>
 
@@ -314,7 +313,7 @@
                     <v-icon class="me-2">
                       mdi-information
                     </v-icon>
-                    Common Issues & Solutions
+                    {{ $t('Accessibility.commonIssuesSolutions') }}
                   </v-expansion-panel-title>
                   <v-expansion-panel-text>
                     <v-list class="bg-transparent">
@@ -350,13 +349,13 @@
                 class="mb-4"
               >
                 <div class="font-weight-medium mb-2">
-                  Troubleshooting Tips:
+                  {{ $t('Accessibility.troubleshootingTips') }}:
                 </div>
                 <ul class="ma-0 pa-0 ms-4">
-                  <li>Make sure the website is publicly accessible</li>
-                  <li>Try testing a different page on the same domain</li>
-                  <li>Check if the website requires authentication</li>
-                  <li>Verify the URL is correct and complete</li>
+                  <li>{{ $t('Accessibility.ensurePubliclyAccessible') }}</li>
+                  <li>{{ $t('Accessibility.tryDifferentPage') }}</li>
+                  <li>{{ $t('Accessibility.checkRequiresAuth') }}</li>
+                  <li>{{ $t('Accessibility.verifyUrlCorrect') }}</li>
                 </ul>
               </v-alert>
             </div>
@@ -371,7 +370,7 @@
                 <template #prepend>
                   <v-icon>mdi-close</v-icon>
                 </template>
-                Dismiss
+                {{ $t('Accessibility.dismiss') }}
               </v-btn>
               <v-btn
                 color="primary"
@@ -381,7 +380,7 @@
                 <template #prepend>
                   <v-icon>mdi-refresh</v-icon>
                 </template>
-                Try Again
+                {{ $t('Accessibility.tryAgain') }}
               </v-btn>
             </div>
           </v-card-text>
@@ -395,8 +394,11 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
+
+const { t } = useI18n()
 
 // Reactive data
 const url = ref('')
@@ -409,14 +411,14 @@ const existingAssessment = ref(null)
 const checkingAssessment = ref(true)
 
 // Constants
-const steps = [
-  'Scanning page structure',
-  'Checking color contrast',
-  'Validating ARIA attributes',
-  'Generating report',
-]
+const steps = computed(() => [
+  t('Accessibility.scanningPageStructure'),
+  t('Accessibility.checkingColorContrast'),
+  t('Accessibility.validatingAriaAttributes'),
+  t('Accessibility.generatingReport'),
+])
 const rules = {
-  required: (value) => !!(value && String(value).trim()) || 'URL is required',
+  required: (value) => !!(value && String(value).trim()) || t('Accessibility.urlRequired'),
   url: (value) => {
     const v = String(value || '').trim()
     // Be lenient in the UI: allow domains without protocol; we'll normalize on submit
@@ -424,7 +426,7 @@ const rules = {
     const domainish = /^(https?:\/\/)?[\w.-]+\.[A-Za-z]{2,}([/:?#].*)?$/i.test(v)
     return (
       (hasProtocol || domainish) ||
-      'Enter a valid URL (e.g., example.com or https://example.com)'
+      t('Accessibility.enterValidUrl')
     )
   },
 }
@@ -437,7 +439,7 @@ const testId = ref(route.params.id || route.params.testId || '')
 
 // Computed properties
 const formattedDate = computed(() => {
-  if (!existingAssessment.value?.ReportDateTime) return 'Date not available'
+  if (!existingAssessment.value?.ReportDateTime) return t('Accessibility.dateNotAvailable')
   return new Date(existingAssessment.value.ReportDateTime).toLocaleString()
 })
 
@@ -511,7 +513,7 @@ const runTest = async () => {
         router.push(`/accessibility/automatic/reports/${testId.value}`);
       } catch (saveError) {
         console.error('Error saving assessment:', saveError.message);
-        error.value = 'Test completed but failed to save results. Please try again.';
+        error.value = t('Accessibility.saveFailedRetry');
         errorType.value = 'server';
       }
     }
@@ -536,19 +538,17 @@ const determineErrorType = (err) => {
 
 const getErrorMessage = () => {
   const messages = {
-    network:
-      'Unable to connect to the website. Please check your internet connection.',
-    'invalid-url': 'The provided URL appears to be invalid or malformed.',
-    blocked: 'Access to this website was blocked or restricted.',
-    timeout:
-      'The request timed out. The website may be slow or unresponsive.',
-    server: 'Our accessibility testing service encountered an error.',
+    network: t('Accessibility.errorNetwork'),
+    'invalid-url': t('Accessibility.errorInvalidUrl'),
+    blocked: t('Accessibility.errorBlocked'),
+    timeout: t('Accessibility.errorTimeout'),
+    server: t('Accessibility.errorServer'),
   }
 
   return (
     messages[errorType.value] ||
     error.value ||
-    'An unexpected error occurred while testing the website.'
+    t('Accessibility.errorUnexpected')
   )
 }
 
@@ -558,36 +558,36 @@ const getSolutions = () => {
       type: 'network',
       icon: 'mdi-wifi-off',
       color: 'warning',
-      title: 'Network Connection',
-      description: 'Check your internet connection and try again',
+      title: t('Accessibility.solutionNetworkTitle'),
+      description: t('Accessibility.solutionNetworkDesc'),
     },
     'invalid-url': {
       type: 'invalid-url',
       icon: 'mdi-link-off',
       color: 'error',
-      title: 'Invalid URL',
-      description: 'Ensure the URL starts with http:// or https://',
+      title: t('Accessibility.solutionInvalidUrlTitle'),
+      description: t('Accessibility.solutionInvalidUrlDesc'),
     },
     blocked: {
       type: 'blocked',
       icon: 'mdi-shield-off',
       color: 'warning',
-      title: 'Access Blocked',
-      description: 'The website may be blocking automated requests',
+      title: t('Accessibility.solutionBlockedTitle'),
+      description: t('Accessibility.solutionBlockedDesc'),
     },
     timeout: {
       type: 'timeout',
       icon: 'mdi-clock-alert',
       color: 'info',
-      title: 'Request Timeout',
-      description: 'The website took too long to respond',
+      title: t('Accessibility.solutionTimeoutTitle'),
+      description: t('Accessibility.solutionTimeoutDesc'),
     },
     server: {
       type: 'server',
       icon: 'mdi-server-off',
       color: 'error',
-      title: 'Server Error',
-      description: 'There was an issue with our testing service',
+      title: t('Accessibility.solutionServerTitle'),
+      description: t('Accessibility.solutionServerDesc'),
     },
   }
 
@@ -618,7 +618,6 @@ const checkExistingAssessment = async () => {
     if (report && report.ReportIssues) {
       assessmentExists.value = true
       existingAssessment.value = report
-      console.log("Existing assessment found:", report)
     } else {
       assessmentExists.value = false
       existingAssessment.value = null

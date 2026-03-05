@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { getAnalytics } from 'firebase/analytics'
+import { getAnalytics, isSupported } from 'firebase/analytics'
 import { getAuth, connectAuthEmulator } from 'firebase/auth'
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions'
@@ -14,32 +14,36 @@ const firebaseConfig = {
   projectId: process.env.VUE_APP_FIREBASE_PROJECT_ID,
   messagingSenderId: process.env.VUE_APP_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.VUE_APP_FIREBASE_APP_ID,
+  measurementId: process.env.VUE_APP_FIREBASE_MEASUREMENT_ID,
 }
 
 const firebaseApp = initializeApp(firebaseConfig)
 const auth = getAuth(firebaseApp)
 const db = getFirestore(firebaseApp)
-const analytics = getAnalytics(firebaseApp)
+
+// Analytics is not available in emulator mode or when using fake credentials,
+// as it always contacts Google's servers and has no emulator support.
+const useEmulators = process.env.VUE_APP_USE_EMULATORS === 'true'
+let analytics = null
+if (!useEmulators) {
+  isSupported().then((supported) => {
+    if (supported) {
+      analytics = getAnalytics(firebaseApp)
+    }
+  }).catch(() => {
+    // Analytics not available in this environment
+  })
+}
 const fbFunctions = getFunctions(firebaseApp)
 const storage = getStorage(firebaseApp, `gs://${firebaseConfig.storageBucket}`)
 const database = getDatabase(firebaseApp, firebaseConfig.databaseURL)
 
+// Emulators if running locally
 if (process.env.VUE_APP_USE_EMULATORS === 'true') {
-  const EMULATOR_HOST =
-    process.env.VUE_APP_FIREBASE_EMULATOR_HOST || 'localhost'
-  const FIRESTORE_EMULATOR_PORT =
-    Number(process.env.VUE_APP_FIRESTORE_EMULATOR_PORT) || 8081
-  const AUTH_EMULATOR_PORT =
-    Number(process.env.VUE_APP_AUTH_EMULATOR_PORT) || 9099
-  const FUNCTIONS_EMULATOR_PORT =
-    Number(process.env.VUE_APP_FUNCTIONS_EMULATOR_PORT) || 5002
-  const STORAGE_EMULATOR_PORT =
-    Number(process.env.VUE_APP_STORAGE_EMULATOR_PORT) || 9199
-
-  connectFirestoreEmulator(db, EMULATOR_HOST, FIRESTORE_EMULATOR_PORT)
-  connectAuthEmulator(auth, `http://${EMULATOR_HOST}:${AUTH_EMULATOR_PORT}`)
-  connectFunctionsEmulator(fbFunctions, EMULATOR_HOST, FUNCTIONS_EMULATOR_PORT)
-  connectStorageEmulator(storage, EMULATOR_HOST, STORAGE_EMULATOR_PORT)
+  connectFirestoreEmulator(db, 'localhost', 8081)
+  connectAuthEmulator(auth, 'http://localhost:9099')
+  connectFunctionsEmulator(fbFunctions, 'localhost', 5001)
+  connectStorageEmulator(storage, '127.0.0.1', 9199)
 }
 
 export { auth, db, analytics, fbFunctions, storage, database }
