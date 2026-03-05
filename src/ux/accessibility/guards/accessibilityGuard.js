@@ -89,11 +89,15 @@ export const accessibilityGuard = async (to, from, next) => {
         if (!hasAdminAccess(currentUser, studyData)) {
             console.log('User does not have admin access, redirecting to home');
 
-            // Determine if manual or automatic and redirect to base route (home)
-            const isManual = to.path.includes('/manual/');
-            const redirectPath = isManual
-                ? `/accessibility/manual/${testId}`
-                : `/accessibility/automatic/manager/${testId}`;
+
+            let redirectPath;
+            if (to.path.includes('/manual/')) {
+                redirectPath = `/accessibility/manual/${testId}`;
+            } else if (to.path.includes('/aiassisted/')) {
+                redirectPath = `/accessibility/aiassisted/manager/${testId}`;
+            } else {
+                redirectPath = `/accessibility/automatic/manager/${testId}`;
+            }
 
             return next(redirectPath);
         }
