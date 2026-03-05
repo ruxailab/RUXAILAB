@@ -1,199 +1,168 @@
 <template>
   <PageWrapper
-    title="AnchorSense - Link Accessibility Analyzer"
-    subtitle="AI-powered anchor tag analysis with intelligent fix suggestions"
+    title="AnchorSense"
+    :loading="loading"
+    loading-text="Analyzing anchor tags with AI..."
   >
-    <v-row>
-      <v-col cols="12">
-        <v-card>
-          <v-card-text class="pa-6">
-            <!-- Input Display -->
-            <v-alert type="info" variant="tonal" class="mb-4">
-              <div class="d-flex align-center justify-space-between">
-                <div>
-                  <strong>Analyzing:</strong>
-                  <span v-if="inputType === 'url'"> {{ inputUrl }}</span>
-                  <span v-else> {{ inputFileName }}</span>
-                </div>
-                <v-btn
-                  size="small"
-                  variant="text"
-                  prepend-icon="mdi-arrow-left"
-                  @click="goBackToInputSelection"
-                >
-                  Change Input
-                </v-btn>
-              </div>
-            </v-alert>
+    <template #subtitle>
+      <p class="page-subtitle">AI-powered anchor tag analysis with intelligent fix suggestions</p>
+    </template>
 
-            <!-- Start Analysis Button -->
-            <v-card v-if="!loading && !results" variant="outlined" class="mb-4">
-              <v-card-text class="text-center pa-8">
-                <v-icon icon="mdi-link-variant" size="80" color="blue" class="mb-4" />
-                <h3 class="text-h5 mb-3">Ready to Analyze Anchor Tags</h3>
-                <p class="text-body-1 mb-6">
-                  AnchorSense will scan your {{ inputType === 'url' ? 'webpage' : 'HTML file' }} for link accessibility issues
-                </p>
-                <v-btn
-                  color="blue"
-                  size="x-large"
-                  prepend-icon="mdi-play"
-                  @click="startAnalysis"
-                >
-                  Start AnchorSense Analysis
-                </v-btn>
-              </v-card-text>
-            </v-card>
+    <div class="apple-content">
+      <!-- Input Display Banner -->
+      <div class="input-banner">
+        <div class="banner-content">
+          <div class="banner-icon">
+            <v-icon :icon="inputType === 'url' ? 'mdi-web' : 'mdi-file-code-outline'" size="20" />
+          </div>
+          <div class="banner-text">
+            <span class="banner-label">Analyzing</span>
+            <span class="banner-value">{{ inputType === 'url' ? inputUrl : inputFileName }}</span>
+          </div>
+        </div>
+        <button class="change-btn" @click="goBackToInputSelection">
+          <v-icon icon="mdi-swap-horizontal" size="16" />
+          <span>Change</span>
+        </button>
+      </div>
 
-            <!-- Error Display -->
-            <v-alert v-if="error" type="error" variant="tonal" class="mb-4">
-              <strong>Error:</strong> {{ error }}
-            </v-alert>
+      <!-- Error Display -->
+      <div v-if="error" class="error-banner">
+        <v-icon icon="mdi-alert-circle" size="20" />
+        <span>{{ error }}</span>
+      </div>
 
-            <!-- Loading State -->
-            <v-card v-if="loading" variant="outlined" class="mb-4">
-              <v-card-text class="text-center pa-8">
-                <v-progress-circular
-                  indeterminate
-                  color="blue"
-                  size="64"
-                  class="mb-4"
-                />
-                <h4 class="text-h6">Analyzing anchor tags with AI...</h4>
-                <p class="text-body-2">Detecting issues and generating suggestions</p>
-              </v-card-text>
-            </v-card>
+      <!-- Start Analysis Card -->
+      <div v-if="!loading && !results" class="start-card">
+        <div class="start-icon start-icon-blue">
+          <v-icon icon="mdi-link-variant" size="40" />
+        </div>
+        <h2 class="start-title">Ready to Analyze Links</h2>
+        <p class="start-description">
+          AnchorSense will scan your {{ inputType === 'url' ? 'webpage' : 'HTML file' }} for link accessibility issues and provide AI-powered fix suggestions.
+        </p>
+        <button class="primary-btn primary-btn-blue" @click="startAnalysis">
+          <v-icon icon="mdi-play" size="20" />
+          <span>Start Analysis</span>
+        </button>
+      </div>
 
-            <!-- Results Display -->
-            <v-expand-transition>
-              <div v-if="results && !loading">
-                <!-- Summary Stats -->
-                <v-card variant="outlined" class="mb-4">
-                  <v-card-title class="bg-blue-lighten-5">
-                    <v-icon icon="mdi-chart-box" class="mr-2" />
-                    Analysis Summary
-                  </v-card-title>
-                  <v-card-text class="pa-4">
-                    <div class="d-flex flex-wrap align-center gap-3">
-                      <div class="d-flex align-center px-3 py-2 rounded" :class="results.passed ? 'bg-green-lighten-5' : 'bg-red-lighten-5'">
-                        <v-icon :icon="results.passed ? 'mdi-check-circle' : 'mdi-alert-circle'" :color="results.passed ? 'green' : 'red'" class="mr-2" />
-                        <div class="text-body-2">
-                          <div class="font-weight-medium">Overall Status</div>
-                          <div>{{ results.passed ? 'Passed' : 'Issues Found' }}</div>
-                        </div>
-                      </div>
-
-                      <div class="d-flex align-center px-3 py-2 rounded bg-orange-lighten-5">
-                        <v-icon icon="mdi-alert" color="orange" class="mr-2" />
-                        <div class="text-body-2">
-                          <div class="font-weight-medium">Total Issues</div>
-                          <div>{{ results.total_issues }}</div>
-                        </div>
-                      </div>
-
-                      <div class="d-flex align-center px-3 py-2 rounded bg-blue-lighten-5">
-                        <v-icon icon="mdi-link-variant" color="blue" class="mr-2" />
-                        <div class="text-body-2">
-                          <div class="font-weight-medium">Links Analyzed</div>
-                          <div>{{ results.issues?.length || 0 }}</div>
-                        </div>
-                      </div>
-                    </div>
-                  </v-card-text>
-                </v-card>
-
-                <!-- Issues List -->
-                <v-card v-if="(results.issues?.length || 0) > 0" variant="outlined" class="mb-4">
-                  <v-card-title class="bg-orange-lighten-5">
-                    <v-icon icon="mdi-alert-circle" class="mr-2" />
-                    Anchor Tag Issues ({{ results.issues.length }})
-                  </v-card-title>
-                  <v-card-text class="pa-4">
-                    <v-expansion-panels>
-                      <v-expansion-panel
-                        v-for="(issue, index) in results.issues"
-                        :key="index"
-                      >
-                        <v-expansion-panel-title>
-                          <div class="d-flex align-center gap-3">
-                            <v-chip color="orange" size="small">
-                              {{ issue.module || 'linkalt' }}
-                            </v-chip>
-                            <span class="font-weight-medium">{{ issue.issue }}</span>
-                          </div>
-                        </v-expansion-panel-title>
-                        <v-expansion-panel-text>
-                          <div class="pa-2">
-                            <p class="text-body-2 mb-3"><strong>Issue:</strong> {{ issue.issue }}</p>
-                            
-                            <v-card variant="outlined" class="mb-3">
-                              <v-card-text>
-                                <strong>Current HTML:</strong>
-                                <pre class="mt-2 pa-2 bg-grey-lighten-4 rounded">{{ issue.element }}</pre>
-                              </v-card-text>
-                            </v-card>
-
-                            <v-card color="green-lighten-5" variant="outlined" class="mb-3">
-                              <v-card-text>
-                                <div class="d-flex align-center mb-2">
-                                  <v-icon icon="mdi-lightbulb" color="green" class="mr-2" />
-                                  <strong>How to Fix:</strong>
-                                </div>
-                                <p class="text-body-2">{{ issue.help }}</p>
-                              </v-card-text>
-                            </v-card>
-                          </div>
-                        </v-expansion-panel-text>
-                      </v-expansion-panel>
-                    </v-expansion-panels>
-                  </v-card-text>
-                </v-card>
-
-                <!-- No Issues Found -->
-                <v-card v-else variant="outlined" class="mb-4">
-                  <v-card-text class="text-center pa-8">
-                    <v-icon icon="mdi-check-circle" size="80" color="green" class="mb-4" />
-                    <h3 class="text-h5 mb-3">No Issues Found!</h3>
-                    <p class="text-body-1">All anchor tags are properly accessible.</p>
-                  </v-card-text>
-                </v-card>
-
-                <!-- Action Buttons -->
-                <v-card variant="outlined">
-                  <v-card-text class="pa-4">
-                    <div class="d-flex flex-wrap gap-2">
-                      <v-btn color="green" prepend-icon="mdi-download" @click="downloadReport">
-                        Export Report
-                      </v-btn>
-                      <v-btn
-                        color="grey"
-                        variant="outlined"
-                        prepend-icon="mdi-refresh"
-                        @click="resetAnalysis"
-                      >
-                        New Analysis
-                      </v-btn>
-                    </div>
-                  </v-card-text>
-                </v-card>
-              </div>
-            </v-expand-transition>
-
-            <!-- Back Button -->
-            <div class="text-center mt-6">
-              <v-btn
-                color="grey"
-                variant="outlined"
-                prepend-icon="mdi-arrow-left"
-                @click="goBack"
-              >
-                Back to Tools
-              </v-btn>
+      <!-- Results Display -->
+      <div v-if="results && !loading" class="results-container">
+        <!-- Summary Stats -->
+        <div class="stats-grid">
+          <div :class="['stat-card', results.passed ? 'stat-success' : 'stat-error']">
+            <div class="stat-icon">
+              <v-icon :icon="results.passed ? 'mdi-check-circle' : 'mdi-alert-circle'" size="24" />
             </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+            <div class="stat-content">
+              <span class="stat-value">{{ results.passed ? 'Passed' : 'Issues Found' }}</span>
+              <span class="stat-label">Status</span>
+            </div>
+          </div>
+
+          <div class="stat-card stat-warning">
+            <div class="stat-icon">
+              <v-icon icon="mdi-alert" size="24" />
+            </div>
+            <div class="stat-content">
+              <span class="stat-value">{{ results.total_issues }}</span>
+              <span class="stat-label">Total Issues</span>
+            </div>
+          </div>
+
+          <div class="stat-card stat-info">
+            <div class="stat-icon">
+              <v-icon icon="mdi-link-variant" size="24" />
+            </div>
+            <div class="stat-content">
+              <span class="stat-value">{{ results.issues?.length || 0 }}</span>
+              <span class="stat-label">Links Analyzed</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Issues List -->
+        <div v-if="(results.issues?.length || 0) > 0" class="section-card">
+          <div class="section-header">
+            <div class="section-header-left">
+              <div class="section-icon section-icon-warning">
+                <v-icon icon="mdi-alert-circle-outline" size="20" />
+              </div>
+              <h3 class="section-title">Link Issues</h3>
+              <span class="section-count">{{ results.issues.length }}</span>
+            </div>
+          </div>
+
+          <div class="issues-list">
+            <div 
+              v-for="(issue, index) in results.issues" 
+              :key="index"
+              class="issue-item"
+            >
+              <div class="issue-header" @click="toggleIssue(index)">
+                <div class="issue-header-left">
+                  <span class="issue-number">{{ index + 1 }}</span>
+                  <span class="issue-module">{{ issue.module || 'linkalt' }}</span>
+                  <span class="issue-title">{{ issue.issue }}</span>
+                </div>
+                <v-icon 
+                  :icon="expandedIssues.includes(index) ? 'mdi-chevron-up' : 'mdi-chevron-down'" 
+                  size="20" 
+                  class="issue-chevron"
+                />
+              </div>
+
+              <v-expand-transition>
+                <div v-if="expandedIssues.includes(index)" class="issue-details">
+                  <div class="detail-block">
+                    <span class="detail-label">Current HTML</span>
+                    <pre class="code-block">{{ issue.element }}</pre>
+                  </div>
+
+                  <div class="detail-block detail-block-success">
+                    <div class="detail-header">
+                      <v-icon icon="mdi-lightbulb-outline" size="18" />
+                      <span class="detail-label">How to Fix</span>
+                    </div>
+                    <p class="detail-text">{{ issue.help }}</p>
+                  </div>
+                </div>
+              </v-expand-transition>
+            </div>
+          </div>
+        </div>
+
+        <!-- No Issues Found -->
+        <div v-else class="success-card">
+          <div class="success-icon">
+            <v-icon icon="mdi-check-circle" size="48" />
+          </div>
+          <h3 class="success-title">All Clear!</h3>
+          <p class="success-description">All anchor tags are properly accessible.</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="actions-bar">
+          <button class="primary-btn primary-btn-green" @click="downloadReport">
+            <v-icon icon="mdi-download" size="18" />
+            <span>Export Report</span>
+          </button>
+          <button class="secondary-btn" @click="resetAnalysis">
+            <v-icon icon="mdi-refresh" size="18" />
+            <span>New Analysis</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="footer-actions">
+        <button class="ghost-btn" @click="goBack">
+          <v-icon icon="mdi-arrow-left" size="18" />
+          <span>Back to Tools</span>
+        </button>
+      </div>
+    </div>
   </PageWrapper>
 </template>
 
@@ -219,8 +188,18 @@ const loading = ref(false)
 const error = ref(null)
 const results = ref(null)
 const saving = ref(false)
+const expandedIssues = ref([])
 
 const testId = computed(() => route.params.id)
+
+const toggleIssue = (index) => {
+  const idx = expandedIssues.value.indexOf(index)
+  if (idx === -1) {
+    expandedIssues.value.push(index)
+  } else {
+    expandedIssues.value.splice(idx, 1)
+  }
+}
 
 // Load saved input on mount
 onMounted(() => {
@@ -425,32 +404,536 @@ const goBackToInputSelection = () => {
 </script>
 
 <style scoped>
-.input-card {
+/* Apple/Notion Inspired Design */
+.page-subtitle {
+  font-size: 15px;
+  color: #6b6b6b;
+  margin-top: 4px;
+}
+
+.apple-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* Input Banner */
+.input-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: #f0f7ff;
+  border: 1px solid #d0e3ff;
+  border-radius: 12px;
+}
+
+.banner-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.banner-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #2383e2;
+  border-radius: 8px;
+  color: white;
+}
+
+.banner-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.banner-label {
+  font-size: 12px;
+  color: #6b6b6b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.banner-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.change-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid #d0e3ff;
+  border-radius: 8px;
+  color: #2383e2;
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.input-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.change-btn:hover {
+  background: #e8f4ff;
 }
 
-.selected-input {
-  border: 2px solid rgb(var(--v-theme-blue)) !important;
-  background-color: rgba(33, 150, 243, 0.05);
+/* Error Banner */
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  color: #dc2626;
+  font-size: 14px;
 }
 
-pre {
+/* Start Card */
+.start-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 32px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  text-align: center;
+}
+
+.start-icon {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  color: white;
+  margin-bottom: 24px;
+}
+
+.start-icon-blue {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+}
+
+.start-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 12px 0;
+}
+
+.start-description {
+  font-size: 15px;
+  color: #6b6b6b;
+  max-width: 400px;
+  margin: 0 0 28px 0;
+  line-height: 1.6;
+}
+
+/* Buttons */
+.primary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.primary-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.primary-btn-blue {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+}
+
+.primary-btn-green {
+  background: linear-gradient(135deg, #27ae60 0%, #219a52 100%);
+}
+
+.secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: transparent;
+  color: #6b6b6b;
+  border: 1.5px solid #e5e5e5;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.secondary-btn:hover {
+  background: #f5f5f5;
+  border-color: #d0d0d0;
+  color: #1a1a1a;
+}
+
+.ghost-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: transparent;
+  color: #6b6b6b;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ghost-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #1a1a1a;
+}
+
+/* Results Container */
+.results-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 640px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.stat-icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+.stat-success .stat-icon {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.stat-error .stat-icon {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.stat-warning .stat-icon {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+
+.stat-info .stat-icon {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: #6b6b6b;
+}
+
+/* Section Card */
+.section-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.section-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  color: white;
+}
+
+.section-icon-warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.section-count {
+  padding: 4px 10px;
+  background: #f5f5f5;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b6b6b;
+}
+
+/* Issues List */
+.issues-list {
+  padding: 8px;
+}
+
+.issue-item {
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.issue-item:last-child {
+  margin-bottom: 0;
+}
+
+.issue-item:hover {
+  border-color: #d0d0d0;
+}
+
+.issue-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  cursor: pointer;
+  background: #fafafa;
+}
+
+.issue-header:hover {
+  background: #f5f5f5;
+}
+
+.issue-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.issue-number {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e5e5e5;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b6b6b;
+  flex-shrink: 0;
+}
+
+.issue-module {
+  padding: 4px 8px;
+  background: #fff3e0;
+  color: #ef6c00;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.issue-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a1a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.issue-chevron {
+  color: #a0a0a0;
+  flex-shrink: 0;
+}
+
+.issue-details {
+  padding: 16px;
+  background: #ffffff;
+  border-top: 1px solid #e5e5e5;
+}
+
+.detail-block {
+  margin-bottom: 16px;
+}
+
+.detail-block:last-child {
+  margin-bottom: 0;
+}
+
+.detail-block-success {
+  padding: 14px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: #16a34a;
+}
+
+.detail-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b6b6b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.detail-block-success .detail-label {
+  color: #16a34a;
+  margin-bottom: 0;
+}
+
+.detail-text {
+  font-size: 14px;
+  color: #1a1a1a;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.code-block {
+  padding: 12px;
+  background: #f5f5f5;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+  font-size: 13px;
+  color: #1a1a1a;
   white-space: pre-wrap;
   word-break: break-all;
-  font-size: 0.85rem;
+  margin: 0;
 }
 
-.gap-2 {
-  gap: 0.5rem;
+/* Success Card */
+.success-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 32px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 16px;
+  text-align: center;
 }
 
-.gap-3 {
-  gap: 0.75rem;
+.success-icon {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #dcfce7;
+  border-radius: 50%;
+  color: #16a34a;
+  margin-bottom: 20px;
+}
+
+.success-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #16a34a;
+  margin: 0 0 8px 0;
+}
+
+.success-description {
+  font-size: 15px;
+  color: #6b6b6b;
+  margin: 0;
+}
+
+/* Actions Bar */
+.actions-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Footer Actions */
+.footer-actions {
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
 }
 </style>

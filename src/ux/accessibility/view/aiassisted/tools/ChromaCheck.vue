@@ -1,272 +1,233 @@
 <template>
   <PageWrapper
-    title="ChromaCheck - Color Contrast Analyzer"
-    subtitle="AI-powered color contrast analysis for WCAG compliance"
+    title="ChromaCheck"
+    :loading="loading"
+    loading-text="Analyzing color contrast..."
   >
-    <v-row>
-      <v-col cols="12">
-        <v-card>
-          <v-card-text class="pa-6">
-            <!-- Input Display -->
-            <v-alert type="info" variant="tonal" class="mb-4">
-              <div class="d-flex align-center justify-space-between">
-                <div>
-                  <strong>Analyzing:</strong>
-                  <span v-if="inputType === 'url'"> {{ inputUrl }}</span>
-                  <span v-else> {{ inputFileName }}</span>
-                </div>
-                <v-btn
-                  size="small"
-                  variant="text"
-                  prepend-icon="mdi-arrow-left"
-                  @click="goBackToInputSelection"
-                >
-                  Change Input
-                </v-btn>
-              </div>
-            </v-alert>
+    <template #subtitle>
+      <p class="page-subtitle">AI-powered color contrast analysis for WCAG compliance</p>
+    </template>
 
-            <!-- Start Analysis Button -->
-            <v-card v-if="!loading && !results" variant="outlined" class="mb-4">
-              <v-card-text class="text-center pa-8">
-                <v-icon icon="mdi-palette" size="80" color="purple" class="mb-4" />
-                <h3 class="text-h5 mb-3">Ready to Analyze Color Contrast</h3>
-                <p class="text-body-1 mb-6">
-                  ChromaCheck will scan your {{ inputType === 'url' ? 'webpage' : 'HTML file' }} for color contrast issues
-                </p>
-                <v-btn
-                  color="purple"
-                  size="x-large"
-                  prepend-icon="mdi-play"
-                  @click="startAnalysis"
-                >
-                  Start ChromaCheck Analysis
-                </v-btn>
-              </v-card-text>
-            </v-card>
+    <div class="apple-content">
+      <!-- Input Display Banner -->
+      <div class="input-banner">
+        <div class="banner-content">
+          <div class="banner-icon banner-icon-purple">
+            <v-icon :icon="inputType === 'url' ? 'mdi-web' : 'mdi-file-code-outline'" size="20" />
+          </div>
+          <div class="banner-text">
+            <span class="banner-label">Analyzing</span>
+            <span class="banner-value">{{ inputType === 'url' ? inputUrl : inputFileName }}</span>
+          </div>
+        </div>
+        <button class="change-btn" @click="goBackToInputSelection">
+          <v-icon icon="mdi-swap-horizontal" size="16" />
+          <span>Change</span>
+        </button>
+      </div>
 
-            <!-- Error Display -->
-            <v-alert v-if="error" type="error" variant="tonal" class="mb-4">
-              <strong>Error:</strong> {{ error }}
-            </v-alert>
+      <!-- Error Display -->
+      <div v-if="error" class="error-banner">
+        <v-icon icon="mdi-alert-circle" size="20" />
+        <span>{{ error }}</span>
+      </div>
 
-            <!-- Loading State -->
-            <v-card v-if="loading" variant="outlined" class="mb-4">
-              <v-card-text class="text-center pa-8">
-                <v-progress-circular
-                  indeterminate
-                  color="purple"
-                  size="64"
-                  class="mb-4"
-                />
-                <h4 class="text-h6">Analyzing color contrast...</h4>
-                <p class="text-body-2">This may take a moment</p>
-              </v-card-text>
-            </v-card>
+      <!-- Start Analysis Card -->
+      <div v-if="!loading && !results" class="start-card">
+        <div class="start-icon start-icon-purple">
+          <v-icon icon="mdi-palette" size="40" />
+        </div>
+        <h2 class="start-title">Ready to Analyze Colors</h2>
+        <p class="start-description">
+          ChromaCheck will scan your {{ inputType === 'url' ? 'webpage' : 'HTML file' }} for color contrast issues and ensure WCAG compliance.
+        </p>
+        <button class="primary-btn primary-btn-purple" @click="startAnalysis">
+          <v-icon icon="mdi-play" size="20" />
+          <span>Start Analysis</span>
+        </button>
+      </div>
 
-            <!-- Results Display -->
-            <v-expand-transition>
-              <div v-if="results && !loading">
-                <!-- Primary Actions: Inspect & Download -->
-                <v-card v-if="results?.marked_html" variant="outlined" class="mb-4">
-                  <v-card-title class="bg-purple-lighten-5">
-                    <v-icon icon="mdi-magnify" class="mr-2" />
-                    Inspect and Export
-                  </v-card-title>
-                  <v-card-text class="pa-4">
-                    <div class="d-flex flex-wrap gap-2">
-                      <v-btn
-                        color="green"
-                        prepend-icon="mdi-eye"
-                        @click="showMarkedHtml"
-                      >
-                        Inspect Webpage
-                      </v-btn>
-                      <v-btn
-                        color="blue"
-                        prepend-icon="mdi-download"
-                        @click="downloadMarkedHtml"
-                      >
-                        Download Report
-                      </v-btn>
-                    </div>
-                  </v-card-text>
-                </v-card>
-
-                <!-- Summary Stats -->
-                <v-card variant="outlined" class="mb-4">
-                  <v-card-title class="bg-purple-lighten-5">
-                    <v-icon icon="mdi-chart-box" class="mr-2" />
-                    Analysis Summary
-                  </v-card-title>
-                  <v-card-text class="pa-4">
-                    <div class="d-flex flex-wrap align-center gap-3">
-                      <div class="d-flex align-center px-3 py-2 rounded" :class="results.passed ? 'bg-green-lighten-5' : 'bg-red-lighten-5'">
-                        <v-icon :icon="results.passed ? 'mdi-check-circle' : 'mdi-alert-circle'" :color="results.passed ? 'green' : 'red'" class="mr-2" />
-                        <div class="text-body-2">
-                          <div class="font-weight-medium">Overall Status</div>
-                          <div>{{ results.passed ? 'Passed' : 'Failed' }}</div>
-                        </div>
-                      </div>
-
-                      <div class="d-flex align-center px-3 py-2 rounded bg-orange-lighten-5">
-                        <v-icon icon="mdi-alert" color="orange" class="mr-2" />
-                        <div class="text-body-2">
-                          <div class="font-weight-medium">Total Issues</div>
-                          <div>{{ results.total_issues }}</div>
-                        </div>
-                      </div>
-
-                      <div class="d-flex align-center px-3 py-2 rounded bg-blue-lighten-5">
-                        <v-icon icon="mdi-file-document" color="blue" class="mr-2" />
-                        <div class="text-body-2">
-                          <div class="font-weight-medium">Violations Found</div>
-                          <div>{{ (results.violations?.length || 0) }}</div>
-                        </div>
-                      </div>
-
-                      <div class="d-flex align-center px-3 py-2 rounded bg-purple-lighten-5">
-                        <v-icon icon="mdi-eye" color="purple" class="mr-2" />
-                        <div class="text-body-2">
-                          <div class="font-weight-medium">Standard</div>
-                          <div>WCAG 2.1</div>
-                        </div>
-                      </div>
-                    </div>
-                  </v-card-text>
-                </v-card>
-
-                <!-- Violations List -->
-                <v-card v-if="(results.violations?.length || 0) > 0" variant="outlined" class="mb-4">
-                  <v-card-title class="bg-red-lighten-5">
-                    <v-icon icon="mdi-alert-circle" class="mr-2" />
-                    Color Contrast Issues ({{ results.violations.length }})
-                  </v-card-title>
-                  <v-card-text class="pa-4">
-                    <v-data-table
-                      :headers="violationHeaders"
-                      :items="paginatedRows"
-                      class="elevation-0"
-                    >
-                      <template #item.impact="{ value }">
-                        <v-chip :color="getImpactColor(value)" size="small">{{ value }}</v-chip>
-                      </template>
-                      <template #item.elementHtml="{ value }">
-                        <pre class="ma-0 pa-2 bg-grey-lighten-4 rounded" style="max-width: 520px; white-space: pre-wrap; word-break: break-word;">{{ truncateHtml(value) }}</pre>
-                      </template>
-                      <template #item.help_url="{ value }">
-                        <v-btn :href="value" target="_blank" color="purple" variant="text" size="small">
-                          Guide <v-icon icon="mdi-open-in-new" end />
-                        </v-btn>
-                      </template>
-                      <template #item.actions="{ item }">
-                        <v-btn color="purple" variant="text" size="small" @click="openViolationDialog(item.violation)">
-                          Details
-                        </v-btn>
-                      </template>
-                    </v-data-table>
-                    <div class="d-flex justify-end mt-3">
-                      <v-pagination v-model="page" :length="pageCount" density="comfortable" />
-                    </div>
-                  </v-card-text>
-                </v-card>
-
-                <!-- Action Buttons -->
-                <v-card variant="outlined">
-                  <v-card-text class="pa-4">
-                    <div class="d-flex flex-wrap gap-2">
-                      <v-btn
-                        color="grey"
-                        variant="outlined"
-                        prepend-icon="mdi-refresh"
-                        @click="resetAnalysis"
-                      >
-                        New Analysis
-                      </v-btn>
-                    </div>
-                  </v-card-text>
-                </v-card>
-              </div>
-            </v-expand-transition>
-
-            <!-- Back Button -->
-            <div class="text-center mt-6">
-              <v-btn
-                color="grey"
-                variant="outlined"
-                prepend-icon="mdi-arrow-left"
-                @click="goBack"
-              >
-                Back to Tools
-              </v-btn>
+      <!-- Results Display -->
+      <div v-if="results && !loading" class="results-container">
+        <!-- Primary Actions -->
+        <div v-if="results?.marked_html" class="actions-card">
+          <div class="actions-card-header">
+            <div class="actions-icon">
+              <v-icon icon="mdi-magnify" size="20" />
             </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+            <span class="actions-title">Inspect & Export</span>
+          </div>
+          <div class="actions-buttons">
+            <button class="action-btn action-btn-green" @click="showMarkedHtml">
+              <v-icon icon="mdi-eye" size="18" />
+              <span>Inspect Webpage</span>
+            </button>
+            <button class="action-btn action-btn-blue" @click="downloadMarkedHtml">
+              <v-icon icon="mdi-download" size="18" />
+              <span>Download Report</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Summary Stats -->
+        <div class="stats-grid">
+          <div :class="['stat-card', results.passed ? 'stat-success' : 'stat-error']">
+            <div class="stat-icon">
+              <v-icon :icon="results.passed ? 'mdi-check-circle' : 'mdi-alert-circle'" size="24" />
+            </div>
+            <div class="stat-content">
+              <span class="stat-value">{{ results.passed ? 'Passed' : 'Failed' }}</span>
+              <span class="stat-label">Status</span>
+            </div>
+          </div>
+
+          <div class="stat-card stat-warning">
+            <div class="stat-icon">
+              <v-icon icon="mdi-alert" size="24" />
+            </div>
+            <div class="stat-content">
+              <span class="stat-value">{{ results.total_issues }}</span>
+              <span class="stat-label">Total Issues</span>
+            </div>
+          </div>
+
+          <div class="stat-card stat-info">
+            <div class="stat-icon">
+              <v-icon icon="mdi-file-document" size="24" />
+            </div>
+            <div class="stat-content">
+              <span class="stat-value">{{ results.violations?.length || 0 }}</span>
+              <span class="stat-label">Violations</span>
+            </div>
+          </div>
+
+          <div class="stat-card stat-purple">
+            <div class="stat-icon">
+              <v-icon icon="mdi-check-decagram" size="24" />
+            </div>
+            <div class="stat-content">
+              <span class="stat-value">WCAG 2.1</span>
+              <span class="stat-label">Standard</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Violations Table -->
+        <div v-if="(results.violations?.length || 0) > 0" class="section-card">
+          <div class="section-header">
+            <div class="section-header-left">
+              <div class="section-icon section-icon-error">
+                <v-icon icon="mdi-alert-circle-outline" size="20" />
+              </div>
+              <h3 class="section-title">Color Contrast Issues</h3>
+              <span class="section-count">{{ results.violations.length }}</span>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <v-data-table
+              :headers="violationHeaders"
+              :items="paginatedRows"
+              class="modern-table"
+              hide-default-footer
+            >
+              <template #item.impact="{ value }">
+                <span :class="['impact-badge', `impact-${value}`]">{{ value }}</span>
+              </template>
+              <template #item.elementHtml="{ value }">
+                <pre class="code-preview">{{ truncateHtml(value) }}</pre>
+              </template>
+              <template #item.help_url="{ value }">
+                <a :href="value" target="_blank" class="help-link">
+                  Guide <v-icon icon="mdi-open-in-new" size="14" />
+                </a>
+              </template>
+              <template #item.actions="{ item }">
+                <button class="details-btn" @click="openViolationDialog(item.violation)">
+                  Details
+                </button>
+              </template>
+            </v-data-table>
+          </div>
+
+          <div class="table-footer">
+            <v-pagination v-model="page" :length="pageCount" density="comfortable" rounded />
+          </div>
+        </div>
+
+        <!-- Actions Bar -->
+        <div class="actions-bar">
+          <button class="secondary-btn" @click="resetAnalysis">
+            <v-icon icon="mdi-refresh" size="18" />
+            <span>New Analysis</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="footer-actions">
+        <button class="ghost-btn" @click="goBack">
+          <v-icon icon="mdi-arrow-left" size="18" />
+          <span>Back to Tools</span>
+        </button>
+      </div>
+    </div>
 
     <!-- Marked HTML Dialog -->
     <v-dialog v-model="showingMarkedHtml" fullscreen>
-      <v-card>
-        <v-toolbar color="purple">
-          <v-toolbar-title>Marked HTML Preview</v-toolbar-title>
-          <v-spacer />
-          <v-btn icon @click="showingMarkedHtml = false">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-toolbar>
-        <v-card-text class="pa-0">
-          <v-alert type="warning" variant="tonal" class="ma-4">
-            🔴 Red outlines indicate contrast issues. Hover over them to see details.
-          </v-alert>
-          <iframe
-            v-if="results?.marked_html"
-            :srcdoc="results.marked_html"
-            frameborder="0"
-            style="width: 100%; height: calc(100vh - 140px);"
-          />
-        </v-card-text>
+      <v-card class="dialog-card">
+        <div class="dialog-header">
+          <h3 class="dialog-title">Webpage Preview</h3>
+          <button class="dialog-close" @click="showingMarkedHtml = false">
+            <v-icon icon="mdi-close" size="20" />
+          </button>
+        </div>
+        <div class="dialog-alert">
+          <v-icon icon="mdi-information" size="18" />
+          <span>Red outlines indicate contrast issues. Hover over them for details.</span>
+        </div>
+        <iframe
+          v-if="results?.marked_html"
+          :srcdoc="results.marked_html"
+          frameborder="0"
+          class="preview-iframe"
+        />
       </v-card>
     </v-dialog>
 
     <!-- Violation Details Dialog -->
-    <v-dialog v-model="showViolationDialog" max-width="900">
-      <v-card>
-        <v-toolbar color="purple">
-          <v-toolbar-title>Issue Details</v-toolbar-title>
-          <v-spacer />
-          <v-btn icon @click="showViolationDialog = false">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-toolbar>
-        <v-card-text class="pa-4">
-          <div class="d-flex align-center mb-3">
-            <v-chip :color="getImpactColor(selectedViolation?.impact)" size="small" class="mr-2">
-              {{ selectedViolation?.impact }}
-            </v-chip>
-            <span class="font-weight-medium">{{ selectedViolation?.description }}</span>
+    <v-dialog v-model="showViolationDialog" max-width="700">
+      <v-card class="details-dialog">
+        <div class="dialog-header">
+          <h3 class="dialog-title">Issue Details</h3>
+          <button class="dialog-close" @click="showViolationDialog = false">
+            <v-icon icon="mdi-close" size="20" />
+          </button>
+        </div>
+        <div class="details-content">
+          <div class="details-top">
+            <span :class="['impact-badge', `impact-${selectedViolation?.impact}`]">{{ selectedViolation?.impact }}</span>
+            <span class="details-description">{{ selectedViolation?.description }}</span>
           </div>
-          <p class="text-body-2 mb-3">{{ selectedViolation?.help }}</p>
+          <p class="details-help">{{ selectedViolation?.help }}</p>
 
-          <v-card variant="outlined" class="mb-3">
-            <v-card-text>
-              <strong>HTML Element:</strong>
-              <pre class="mt-2 pa-2 bg-grey-lighten-4 rounded">{{ selectedViolation?.element?.html }}</pre>
-            </v-card-text>
-          </v-card>
-
-          <v-alert v-if="selectedViolation?.failure_summary" type="info" variant="tonal" density="compact" class="mb-3">
-            {{ selectedViolation?.failure_summary }}
-          </v-alert>
-
-          <div class="d-flex gap-2">
-            <v-btn v-if="selectedViolation?.help_url" :href="selectedViolation?.help_url" target="_blank" color="purple" variant="text" size="small">
-              Learn More <v-icon icon="mdi-open-in-new" end />
-            </v-btn>
-            <v-spacer />
-            <v-btn color="grey" variant="outlined" @click="showViolationDialog = false">Close</v-btn>
+          <div class="detail-block">
+            <span class="detail-label">HTML Element</span>
+            <pre class="code-block">{{ selectedViolation?.element?.html }}</pre>
           </div>
-        </v-card-text>
+
+          <div v-if="selectedViolation?.failure_summary" class="info-block">
+            <v-icon icon="mdi-information" size="18" />
+            <span>{{ selectedViolation?.failure_summary }}</span>
+          </div>
+
+          <div class="details-actions">
+            <a v-if="selectedViolation?.help_url" :href="selectedViolation?.help_url" target="_blank" class="learn-more-link">
+              Learn More <v-icon icon="mdi-open-in-new" size="14" />
+            </a>
+            <button class="secondary-btn" @click="showViolationDialog = false">Close</button>
+          </div>
+        </div>
       </v-card>
     </v-dialog>
   </PageWrapper>
@@ -533,17 +494,661 @@ const goBackToInputSelection = () => {
 </script>
 
 <style scoped>
-pre {
+/* Apple/Notion Inspired Design */
+.page-subtitle {
+  font-size: 15px;
+  color: #6b6b6b;
+  margin-top: 4px;
+}
+
+.apple-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* Input Banner */
+.input-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: #faf5ff;
+  border: 1px solid #e9d5ff;
+  border-radius: 12px;
+}
+
+.banner-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.banner-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  color: white;
+}
+
+.banner-icon-purple {
+  background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+}
+
+.banner-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.banner-label {
+  font-size: 12px;
+  color: #6b6b6b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.banner-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.change-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid #e9d5ff;
+  border-radius: 8px;
+  color: #9b59b6;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.change-btn:hover {
+  background: #faf5ff;
+}
+
+/* Error Banner */
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  color: #dc2626;
+  font-size: 14px;
+}
+
+/* Start Card */
+.start-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 32px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  text-align: center;
+}
+
+.start-icon {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  color: white;
+  margin-bottom: 24px;
+}
+
+.start-icon-purple {
+  background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+}
+
+.start-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 12px 0;
+}
+
+.start-description {
+  font-size: 15px;
+  color: #6b6b6b;
+  max-width: 400px;
+  margin: 0 0 28px 0;
+  line-height: 1.6;
+}
+
+/* Buttons */
+.primary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.primary-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.primary-btn-purple {
+  background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+}
+
+.secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: transparent;
+  color: #6b6b6b;
+  border: 1.5px solid #e5e5e5;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.secondary-btn:hover {
+  background: #f5f5f5;
+  border-color: #d0d0d0;
+  color: #1a1a1a;
+}
+
+.ghost-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: transparent;
+  color: #6b6b6b;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ghost-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #1a1a1a;
+}
+
+/* Results Container */
+.results-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Actions Card */
+.actions-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  background: #faf5ff;
+  border: 1px solid #e9d5ff;
+  border-radius: 12px;
+}
+
+.actions-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.actions-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+  border-radius: 8px;
+  color: white;
+}
+
+.actions-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.actions-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+  transform: translateY(-1px);
+}
+
+.action-btn-green {
+  background: linear-gradient(135deg, #27ae60 0%, #219a52 100%);
+}
+
+.action-btn-blue {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.stat-icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+.stat-success .stat-icon {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.stat-error .stat-icon {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.stat-warning .stat-icon {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+
+.stat-info .stat-icon {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.stat-purple .stat-icon {
+  background: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: #6b6b6b;
+}
+
+/* Section Card */
+.section-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.section-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  color: white;
+}
+
+.section-icon-error {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.section-count {
+  padding: 4px 10px;
+  background: #fef2f2;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #dc2626;
+}
+
+/* Table */
+.table-container {
+  padding: 16px;
+}
+
+.modern-table {
+  background: transparent !important;
+}
+
+.table-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.impact-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.impact-critical {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.impact-serious {
+  background: #fff7ed;
+  color: #ea580c;
+}
+
+.impact-moderate {
+  background: #fefce8;
+  color: #ca8a04;
+}
+
+.impact-minor {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.code-preview {
+  padding: 8px 10px;
+  background: #f5f5f5;
+  border-radius: 6px;
+  font-family: 'SF Mono', Monaco, monospace;
+  font-size: 12px;
+  max-width: 300px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+}
+
+.help-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #9b59b6;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.help-link:hover {
+  text-decoration: underline;
+}
+
+.details-btn {
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  color: #6b6b6b;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.details-btn:hover {
+  background: #f5f5f5;
+  color: #1a1a1a;
+}
+
+/* Actions Bar */
+.actions-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Footer Actions */
+.footer-actions {
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+}
+
+/* Dialog Styles */
+.dialog-card {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #1a1a1a;
+  color: white;
+}
+
+.dialog-title {
+  font-size: 17px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.dialog-close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dialog-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dialog-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 13px;
+}
+
+.preview-iframe {
+  width: 100%;
+  flex: 1;
+  border: none;
+}
+
+/* Details Dialog */
+.details-dialog {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.details-content {
+  padding: 24px;
+}
+
+.details-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.details-description {
+  font-size: 15px;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.details-help {
+  font-size: 14px;
+  color: #6b6b6b;
+  margin: 0 0 20px 0;
+  line-height: 1.5;
+}
+
+.detail-block {
+  margin-bottom: 16px;
+}
+
+.detail-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b6b6b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.code-block {
+  padding: 12px;
+  background: #f5f5f5;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  font-family: 'SF Mono', Monaco, monospace;
+  font-size: 13px;
   white-space: pre-wrap;
   word-break: break-all;
-  font-size: 0.85rem;
+  margin: 0;
 }
 
-.gap-2 {
-  gap: 0.5rem;
+.info-block {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  background: #eff6ff;
+  border-radius: 8px;
+  color: #1e40af;
+  font-size: 13px;
+  margin-bottom: 20px;
 }
 
-.gap-3 {
-  gap: 0.75rem;
+.details-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.learn-more-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #9b59b6;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.learn-more-link:hover {
+  text-decoration: underline;
 }
 </style>

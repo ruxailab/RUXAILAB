@@ -1,224 +1,259 @@
 <template>
   <PageWrapper
-    title="AI-Assisted Accessibility Report"
-    subtitle="Generate and download comprehensive accessibility reports"
+    title="Accessibility Report"
+    :loading="loading"
+    loading-text="Loading analysis data..."
   >
-    <v-container fluid>
-      <v-row justify="center">
-        <v-col cols="12" lg="10">
-          <!-- Loading State -->
-          <div v-if="loading" class="text-center pa-8">
-            <v-progress-circular indeterminate color="purple" size="64" class="mb-4" />
-            <p>Loading analysis data...</p>
+    <template #subtitle>
+      <p class="page-subtitle">Generate and download comprehensive accessibility reports</p>
+    </template>
+
+    <div class="apple-content">
+      <!-- Error State -->
+      <div v-if="error" class="error-banner">
+        <v-icon icon="mdi-alert-circle" size="20" />
+        <span>{{ error }}</span>
+        <button class="close-btn" @click="error = null">
+          <v-icon icon="mdi-close" size="16" />
+        </button>
+      </div>
+
+      <!-- No Data State -->
+      <div v-if="!loading && !hasAnyResults" class="empty-state-card">
+        <div class="empty-icon">
+          <v-icon icon="mdi-file-document-alert-outline" size="48" />
+        </div>
+        <h2 class="empty-title">No Analysis Data Available</h2>
+        <p class="empty-description">
+          Please run at least one analysis tool before generating a report.
+        </p>
+        <button class="primary-btn primary-btn-purple" @click="goToExamine">
+          <v-icon icon="mdi-arrow-right" size="20" />
+          <span>Go to Examine</span>
+        </button>
+      </div>
+
+      <!-- Report Content -->
+      <div v-if="!loading && hasAnyResults">
+        <!-- Test Information Card -->
+        <div class="info-card">
+          <div class="info-header">
+            <div class="info-icon">
+              <v-icon icon="mdi-information-outline" size="20" />
+            </div>
+            <h3 class="info-title">Test Information</h3>
           </div>
-
-          <!-- Error State -->
-          <v-alert v-if="error" type="error" variant="tonal" class="mb-4" closable @click:close="error = null">
-            <strong>Error:</strong> {{ error }}
-          </v-alert>
-
-          <!-- No Data State -->
-          <v-card v-if="!loading && !hasAnyResults" variant="outlined">
-            <v-card-text class="text-center pa-8">
-              <v-icon icon="mdi-file-document-alert-outline" size="80" color="grey" class="mb-4" />
-              <h3 class="text-h5 mb-3">No Analysis Data Available</h3>
-              <p class="text-body-1 mb-6">
-                Please run at least one analysis tool before generating a report.
-              </p>
-              <v-btn
-                color="purple"
-                size="large"
-                prepend-icon="mdi-arrow-left"
-                @click="goToExamine"
-              >
-                Go to Examine
-              </v-btn>
-            </v-card-text>
-          </v-card>
-
-          <!-- Report Content -->
-          <div v-if="!loading && hasAnyResults">
-            <!-- Test Information Card -->
-            <v-card variant="outlined" class="mb-4">
-              <v-card-title class="bg-purple-lighten-5">
-                <v-icon icon="mdi-information" class="mr-2" />
-                Test Information
-              </v-card-title>
-              <v-card-text class="pa-4">
-                <v-row>
-                  <v-col cols="12" md="6">
-                    <p><strong>Test ID:</strong> {{ testId }}</p>
-                    <p><strong>Input Type:</strong> {{ analysisResult.inputType }}</p>
-                    <p v-if="analysisResult.inputType === 'url'"><strong>URL:</strong> {{ analysisResult.url }}</p>
-                    <p v-else><strong>File:</strong> {{ analysisResult.sourceFileName }}</p>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <p><strong>Tools Completed:</strong> {{ analysisResult.toolsCompleted?.length || 0 }}/3</p>
-                    <p><strong>Total Issues:</strong> {{ analysisResult.totalIssues || 0 }}</p>
-                    <p><strong>Last Updated:</strong> {{ formatDate(analysisResult.updatedAt) }}</p>
-                  </v-col>
-                </v-row>
-              </v-card-text>
-            </v-card>
-
-            <!-- Available Reports Cards -->
-            <v-row class="mb-4">
-              <!-- ChromaCheck Report -->
-              <v-col cols="12" md="4">
-                <v-card 
-                  :color="analysisResult.chroma_check ? 'purple-lighten-5' : 'grey-lighten-3'" 
-                  class="pa-4"
-                  :class="{ 'report-available': analysisResult.chroma_check }"
-                >
-                  <div class="text-center">
-                    <v-icon 
-                      :icon="analysisResult.chroma_check ? 'mdi-palette' : 'mdi-alert-circle-outline'" 
-                      size="x-large" 
-                      :color="analysisResult.chroma_check ? 'purple' : 'grey'" 
-                    />
-                    <h3 class="text-h6 mt-2">ChromaCheck</h3>
-                    <p class="text-caption mb-3">Color Contrast Analysis</p>
-                    <v-chip 
-                      :color="analysisResult.chroma_check ? 'green' : 'grey'" 
-                      size="small"
-                      class="mb-3"
-                    >
-                      {{ analysisResult.chroma_check ? 'Available' : 'Not Run' }}
-                    </v-chip>
-                    <div v-if="analysisResult.chroma_check">
-                      <p class="text-body-2"><strong>{{ analysisResult.chroma_check.total_issues || 0 }}</strong> issues found</p>
-                      <v-btn 
-                        color="purple" 
-                        size="small" 
-                        class="mt-2"
-                        @click="generatePDF('chroma_check')"
-                        :loading="generating === 'chroma_check'"
-                      >
-                        <v-icon icon="mdi-download" class="mr-1" />
-                        Download PDF
-                      </v-btn>
-                    </div>
-                  </div>
-                </v-card>
-              </v-col>
-
-              <!-- AnchorSense Report -->
-              <v-col cols="12" md="4">
-                <v-card 
-                  :color="analysisResult.anchor_sense ? 'blue-lighten-5' : 'grey-lighten-3'" 
-                  class="pa-4"
-                  :class="{ 'report-available': analysisResult.anchor_sense }"
-                >
-                  <div class="text-center">
-                    <v-icon 
-                      :icon="analysisResult.anchor_sense ? 'mdi-link-variant' : 'mdi-alert-circle-outline'" 
-                      size="x-large" 
-                      :color="analysisResult.anchor_sense ? 'blue' : 'grey'" 
-                    />
-                    <h3 class="text-h6 mt-2">AnchorSense</h3>
-                    <p class="text-caption mb-3">Link Analysis</p>
-                    <v-chip 
-                      :color="analysisResult.anchor_sense ? 'green' : 'grey'" 
-                      size="small"
-                      class="mb-3"
-                    >
-                      {{ analysisResult.anchor_sense ? 'Available' : 'Not Run' }}
-                    </v-chip>
-                    <div v-if="analysisResult.anchor_sense">
-                      <p class="text-body-2"><strong>{{ analysisResult.anchor_sense.total_issues || 0 }}</strong> issues found</p>
-                      <v-btn 
-                        color="blue" 
-                        size="small" 
-                        class="mt-2"
-                        @click="generatePDF('anchor_sense')"
-                        :loading="generating === 'anchor_sense'"
-                      >
-                        <v-icon icon="mdi-download" class="mr-1" />
-                        Download PDF
-                      </v-btn>
-                    </div>
-                  </div>
-                </v-card>
-              </v-col>
-
-              <!-- ImgTagTip Report -->
-              <v-col cols="12" md="4">
-                <v-card 
-                  :color="analysisResult.img_tip ? 'green-lighten-5' : 'grey-lighten-3'" 
-                  class="pa-4"
-                  :class="{ 'report-available': analysisResult.img_tip }"
-                >
-                  <div class="text-center">
-                    <v-icon 
-                      :icon="analysisResult.img_tip ? 'mdi-image-text' : 'mdi-alert-circle-outline'" 
-                      size="x-large" 
-                      :color="analysisResult.img_tip ? 'green' : 'grey'" 
-                    />
-                    <h3 class="text-h6 mt-2">ImgTagTip</h3>
-                    <p class="text-caption mb-3">Image Alt Text Analysis</p>
-                    <v-chip 
-                      :color="analysisResult.img_tip ? 'green' : 'grey'" 
-                      size="small"
-                      class="mb-3"
-                    >
-                      {{ analysisResult.img_tip ? 'Available' : 'Not Run' }}
-                    </v-chip>
-                    <div v-if="analysisResult.img_tip">
-                      <p class="text-body-2"><strong>{{ analysisResult.img_tip.total_issues || 0 }}</strong> issues found</p>
-                      <v-btn 
-                        color="green" 
-                        size="small" 
-                        class="mt-2"
-                        @click="generatePDF('img_tip')"
-                        :loading="generating === 'img_tip'"
-                      >
-                        <v-icon icon="mdi-download" class="mr-1" />
-                        Download PDF
-                      </v-btn>
-                    </div>
-                  </div>
-                </v-card>
-              </v-col>
-            </v-row>
-            
-            <!-- Combined Report Option -->
-            <v-card variant="outlined" class="mb-4">
-              <v-card-title class="bg-green-lighten-5">
-                <v-icon icon="mdi-file-document-multiple" class="mr-2" />
-                Combined Report
-              </v-card-title>
-              <v-card-text class="pa-4">
-                <p class="text-body-1 mb-4">
-                  Generate a comprehensive PDF report containing all completed analyses.
-                </p>
-                <v-btn 
-                  color="green" 
-                  size="large"
-                  prepend-icon="mdi-download"
-                  @click="generateCombinedPDF"
-                  :loading="generating === 'combined'"
-                  :disabled="!hasAnyResults"
-                >
-                  Download Combined Report
-                </v-btn>
-              </v-card-text>
-            </v-card>
-            
-            <!-- Action Buttons -->
-            <div class="d-flex gap-2 mb-4 justify-center">
-              <v-btn variant="outlined" prepend-icon="mdi-arrow-left" @click="goBack">
-                Back to Home
-              </v-btn>
-              <v-btn variant="outlined" prepend-icon="mdi-file-search" @click="router.push({ name: 'AIAssistedAccessibilityAnswers', params: { id: testId } })">
-                View Detailed Results
-              </v-btn>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Test ID</span>
+              <span class="info-value">{{ testId }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Input Type</span>
+              <span class="info-value info-badge">{{ analysisResult.inputType }}</span>
+            </div>
+            <div class="info-item" v-if="analysisResult.inputType === 'url'">
+              <span class="info-label">URL</span>
+              <span class="info-value info-url">{{ analysisResult.url }}</span>
+            </div>
+            <div class="info-item" v-else>
+              <span class="info-label">File</span>
+              <span class="info-value">{{ analysisResult.sourceFileName }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Tools Completed</span>
+              <span class="info-value">{{ analysisResult.toolsCompleted?.length || 0 }}/3</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Total Issues</span>
+              <span class="info-value info-issues">{{ analysisResult.totalIssues || 0 }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Last Updated</span>
+              <span class="info-value">{{ formatDate(analysisResult.updatedAt) }}</span>
             </div>
           </div>
-        </v-col>
-      </v-row>
-    </v-container>
+        </div>
+
+        <!-- Reports Grid -->
+        <div class="reports-grid">
+          <!-- ChromaCheck Report -->
+          <div :class="['report-card', { 'report-available': analysisResult.chroma_check }]">
+            <div :class="['report-icon', analysisResult.chroma_check ? 'report-icon-purple' : 'report-icon-disabled']">
+              <v-icon :icon="analysisResult.chroma_check ? 'mdi-palette' : 'mdi-alert-circle-outline'" size="28" />
+            </div>
+            <h4 class="report-name">ChromaCheck</h4>
+            <p class="report-description">Color Contrast Analysis</p>
+            
+            <div v-if="analysisResult.chroma_check" class="report-status report-status-available">
+              <v-icon icon="mdi-check-circle" size="14" />
+              <span>Available</span>
+            </div>
+            <div v-else class="report-status report-status-pending">
+              <v-icon icon="mdi-clock-outline" size="14" />
+              <span>Not Run</span>
+            </div>
+
+            <div v-if="analysisResult.chroma_check" class="report-stats">
+              <span class="stat-value">{{ analysisResult.chroma_check.total_issues || 0 }}</span>
+              <span class="stat-label">issues found</span>
+            </div>
+
+            <button 
+              v-if="analysisResult.chroma_check" 
+              class="download-btn download-btn-purple"
+              @click="generatePDF('chroma_check')"
+              :disabled="generating === 'chroma_check'"
+            >
+              <v-icon v-if="generating !== 'chroma_check'" icon="mdi-download" size="16" />
+              <v-progress-circular v-else indeterminate size="16" width="2" />
+              <span>Download PDF</span>
+            </button>
+
+            <button 
+              v-if="analysisResult.chroma_check?.marked_html" 
+              class="inspect-btn"
+              @click="showMarkedHtml(analysisResult.chroma_check.marked_html)"
+            >
+              <v-icon icon="mdi-eye" size="16" />
+              <span>Inspect Webpage</span>
+            </button>
+          </div>
+
+          <!-- AnchorSense Report -->
+          <div :class="['report-card', { 'report-available': analysisResult.anchor_sense }]">
+            <div :class="['report-icon', analysisResult.anchor_sense ? 'report-icon-blue' : 'report-icon-disabled']">
+              <v-icon :icon="analysisResult.anchor_sense ? 'mdi-link-variant' : 'mdi-alert-circle-outline'" size="28" />
+            </div>
+            <h4 class="report-name">AnchorSense</h4>
+            <p class="report-description">Link Analysis</p>
+            
+            <div v-if="analysisResult.anchor_sense" class="report-status report-status-available">
+              <v-icon icon="mdi-check-circle" size="14" />
+              <span>Available</span>
+            </div>
+            <div v-else class="report-status report-status-pending">
+              <v-icon icon="mdi-clock-outline" size="14" />
+              <span>Not Run</span>
+            </div>
+
+            <div v-if="analysisResult.anchor_sense" class="report-stats">
+              <span class="stat-value">{{ analysisResult.anchor_sense.total_issues || 0 }}</span>
+              <span class="stat-label">issues found</span>
+            </div>
+
+            <button 
+              v-if="analysisResult.anchor_sense" 
+              class="download-btn download-btn-blue"
+              @click="generatePDF('anchor_sense')"
+              :disabled="generating === 'anchor_sense'"
+            >
+              <v-icon v-if="generating !== 'anchor_sense'" icon="mdi-download" size="16" />
+              <v-progress-circular v-else indeterminate size="16" width="2" />
+              <span>Download PDF</span>
+            </button>
+          </div>
+
+          <!-- ImgTagTip Report -->
+          <div :class="['report-card', { 'report-available': analysisResult.img_tip }]">
+            <div :class="['report-icon', analysisResult.img_tip ? 'report-icon-green' : 'report-icon-disabled']">
+              <v-icon :icon="analysisResult.img_tip ? 'mdi-image-text' : 'mdi-alert-circle-outline'" size="28" />
+            </div>
+            <h4 class="report-name">ImgTagTip</h4>
+            <p class="report-description">Image Alt Text Analysis</p>
+            
+            <div v-if="analysisResult.img_tip" class="report-status report-status-available">
+              <v-icon icon="mdi-check-circle" size="14" />
+              <span>Available</span>
+            </div>
+            <div v-else class="report-status report-status-pending">
+              <v-icon icon="mdi-clock-outline" size="14" />
+              <span>Not Run</span>
+            </div>
+
+            <div v-if="analysisResult.img_tip" class="report-stats">
+              <span class="stat-value">{{ analysisResult.img_tip.total_issues || 0 }}</span>
+              <span class="stat-label">issues found</span>
+            </div>
+
+            <button 
+              v-if="analysisResult.img_tip" 
+              class="download-btn download-btn-green"
+              @click="generatePDF('img_tip')"
+              :disabled="generating === 'img_tip'"
+            >
+              <v-icon v-if="generating !== 'img_tip'" icon="mdi-download" size="16" />
+              <v-progress-circular v-else indeterminate size="16" width="2" />
+              <span>Download PDF</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Combined Report Card -->
+        <div class="combined-card">
+          <div class="combined-header">
+            <div class="combined-icon">
+              <v-icon icon="mdi-file-document-multiple" size="24" />
+            </div>
+            <div class="combined-info">
+              <h3 class="combined-title">Combined Report</h3>
+              <p class="combined-description">Generate a comprehensive PDF report containing all completed analyses.</p>
+            </div>
+          </div>
+          <button 
+            class="primary-btn primary-btn-green"
+            @click="generateCombinedPDF"
+            :disabled="generating === 'combined' || !hasAnyResults"
+          >
+            <v-icon v-if="generating !== 'combined'" icon="mdi-download" size="20" />
+            <v-progress-circular v-else indeterminate size="20" width="2" color="white" />
+            <span>Download Combined Report</span>
+          </button>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="actions-bar">
+          <button class="secondary-btn" @click="goBack">
+            <v-icon icon="mdi-arrow-left" size="18" />
+            <span>Back to Home</span>
+          </button>
+          <button class="secondary-btn" @click="router.push({ name: 'AIAssistedAccessibilityAnswers', params: { id: testId } })">
+            <v-icon icon="mdi-file-search" size="18" />
+            <span>View Detailed Results</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Marked HTML Dialog -->
+    <v-dialog v-model="showingMarkedHtmlDialog" fullscreen>
+      <div class="fullscreen-dialog">
+        <div class="dialog-header">
+          <div class="dialog-title-section">
+            <div class="dialog-icon">
+              <v-icon icon="mdi-magnify" size="20" />
+            </div>
+            <h3 class="dialog-title">Inspect Webpage - Color Contrast Issues</h3>
+          </div>
+          <button class="dialog-close" @click="showingMarkedHtmlDialog = false">
+            <v-icon icon="mdi-close" size="20" />
+          </button>
+        </div>
+        <div class="dialog-alert">
+          <v-icon icon="mdi-information" size="18" />
+          <span>🔴 Red outlines indicate color contrast issues. Elements with insufficient contrast are highlighted.</span>
+        </div>
+        <div class="dialog-content">
+          <iframe
+            v-if="currentMarkedHtml"
+            :srcdoc="currentMarkedHtml"
+            frameborder="0"
+            class="preview-iframe"
+          />
+        </div>
+      </div>
+    </v-dialog>
   </PageWrapper>
-  
 </template>
 
 <script setup>
@@ -240,6 +275,8 @@ const loading = ref(true);
 const error = ref(null);
 const analysisResult = ref(null);
 const generating = ref(null);
+const showingMarkedHtmlDialog = ref(false);
+const currentMarkedHtml = ref('');
 
 const hasAnyResults = computed(() => {
   if (!analysisResult.value) return false;
@@ -296,6 +333,11 @@ const goBack = () => {
 
 const goToExamine = () => {
   router.push({ name: 'AIAssistedAccessibilityExamine', params: { id: testId.value } });
+};
+
+const showMarkedHtml = (markedHtml) => {
+  currentMarkedHtml.value = markedHtml;
+  showingMarkedHtmlDialog.value = true;
 };
 
 // PDF Generation Functions
@@ -741,17 +783,568 @@ const generateCombinedPDF = async () => {
 </script>
 
 <style scoped>
-.report-available {
-  transition: transform 0.2s ease;
-  cursor: default;
+.page-subtitle {
+  color: #6b6b6b;
+  font-size: 15px;
+  font-weight: 400;
+  margin: 0;
 }
 
-.report-available:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+.apple-content {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px 40px;
 }
 
-.gap-2 {
-  gap: 0.5rem;
+/* Error Banner */
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  color: #b91c1c;
+}
+
+.error-banner .close-btn {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: #b91c1c;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.error-banner .close-btn:hover {
+  background: rgba(185, 28, 28, 0.1);
+}
+
+/* Empty State */
+.empty-state-card {
+  text-align: center;
+  padding: 60px 40px;
+  background: #fafafa;
+  border: 1px solid #e5e5e5;
+  border-radius: 16px;
+  margin-bottom: 24px;
+}
+
+.empty-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #e5e5e5 0%, #d0d0d0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  color: #6b6b6b;
+}
+
+.empty-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+}
+
+.empty-description {
+  font-size: 15px;
+  color: #6b6b6b;
+  max-width: 400px;
+  margin: 0 auto 28px;
+  line-height: 1.5;
+}
+
+/* Info Card */
+.info-card {
+  background: white;
+  border: 1px solid #e5e5e5;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.info-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: #fafafa;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.info-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.info-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  padding: 20px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b6b6b;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.info-value {
+  font-size: 14px;
+  color: #1a1a1a;
+  font-weight: 500;
+}
+
+.info-badge {
+  display: inline-block;
+  background: #ede9fe;
+  color: #7c3aed;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  width: fit-content;
+}
+
+.info-url {
+  word-break: break-all;
+  color: #2563eb;
+}
+
+.info-issues {
+  color: #d97706;
+  font-weight: 600;
+}
+
+/* Reports Grid */
+.reports-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* Report Card */
+.report-card {
+  background: #fafafa;
+  border: 1px solid #e5e5e5;
+  border-radius: 14px;
+  padding: 24px;
+  text-align: center;
+  transition: all 0.25s ease;
+}
+
+.report-card.report-available {
+  background: white;
+  border-color: #22c55e;
+  box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.1);
+}
+
+/* Report Icon */
+.report-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  color: white;
+}
+
+.report-icon-purple {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+}
+
+.report-icon-blue {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.report-icon-green {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+}
+
+.report-icon-disabled {
+  background: linear-gradient(135deg, #d0d0d0 0%, #b0b0b0 100%);
+}
+
+/* Report Name */
+.report-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 6px;
+}
+
+/* Report Description */
+.report-description {
+  font-size: 13px;
+  color: #6b6b6b;
+  margin: 0 0 16px;
+}
+
+/* Report Status */
+.report-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.report-status-available {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.report-status-pending {
+  background: #f3f4f6;
+  color: #6b6b6b;
+}
+
+/* Report Stats */
+.report-stats {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e5e5;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a1a;
+  display: block;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #6b6b6b;
+}
+
+/* Download Button */
+.download-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 16px;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.download-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.download-btn-purple {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+}
+
+.download-btn-purple:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+.download-btn-blue {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.download-btn-blue:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.download-btn-green {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+}
+
+.download-btn-green:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+/* Inspect Button */
+.inspect-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 8px;
+  background: white;
+  border: 1px solid #7c3aed;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #7c3aed;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.inspect-btn:hover {
+  background: #ede9fe;
+}
+
+/* Fullscreen Dialog */
+.fullscreen-dialog {
+  background: white;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  color: white;
+}
+
+.dialog-title-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dialog-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dialog-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.dialog-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.dialog-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dialog-alert {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 24px;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 14px;
+}
+
+.dialog-content {
+  flex: 1;
+  overflow: hidden;
+}
+
+.preview-iframe {
+  width: 100%;
+  height: 100%;
+}
+
+/* Combined Card */
+.combined-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 1px solid #bbf7d0;
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.combined-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.combined-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.combined-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: #15803d;
+  margin: 0 0 4px;
+}
+
+.combined-description {
+  font-size: 14px;
+  color: #16a34a;
+  margin: 0;
+}
+
+/* Buttons */
+.primary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  border-radius: 10px;
+  padding: 14px 28px;
+  font-size: 15px;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.primary-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.primary-btn-purple {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+}
+
+.primary-btn-purple:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+.primary-btn-green {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+}
+
+.primary-btn-green:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+/* Actions Bar */
+.actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: 1px solid #d0d0d0;
+  border-radius: 10px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a1a;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.secondary-btn:hover {
+  background: #f5f5f5;
+  border-color: #b0b0b0;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .reports-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .combined-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .combined-card .primary-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .actions-bar {
+    flex-direction: column;
+  }
+
+  .actions-bar .secondary-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .apple-content {
+    padding: 0 16px 32px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 </style>

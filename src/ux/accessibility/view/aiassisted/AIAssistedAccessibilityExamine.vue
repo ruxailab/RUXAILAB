@@ -1,305 +1,214 @@
 <template>
   <PageWrapper
     title="AI-Assisted Examination"
-    subtitle="Step 1: Provide your webpage or HTML file for analysis"
+    :loading="loading"
+    loading-text="Checking for existing analysis..."
   >
-    <v-row justify="center">
-      <v-col cols="12" lg="10">
-        <!-- Loading State -->
-        <div v-if="loading" class="text-center pa-8">
-          <v-progress-circular indeterminate color="purple" size="64" class="mb-4" />
-          <p>Checking for existing analysis...</p>
+    <template #subtitle>
+      <p class="page-subtitle">Analyze your webpage for accessibility issues with intelligent AI tools</p>
+    </template>
+
+    <div class="apple-content">
+      <!-- Existing Input Alert -->
+      <div v-if="hasAnyCompletedTools" class="existing-alert">
+        <div class="alert-icon">
+          <v-icon icon="mdi-information-outline" size="20" />
+        </div>
+        <div class="alert-content">
+          <span class="alert-title">Existing Analysis Found</span>
+          <span class="alert-description">
+            <span v-if="savedInputType === 'url'">URL: <strong>{{ savedUrl }}</strong></span>
+            <span v-else>File: <strong>{{ savedFileName }}</strong></span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Step 1: Input Method Selection -->
+      <div v-if="!hasAnyCompletedTools" class="section-card">
+        <div class="section-header">
+          <span class="step-indicator">1</span>
+          <div class="section-title-group">
+            <h2 class="section-title">Choose Input Method</h2>
+            <p class="section-subtitle">Select how you'd like to provide your content for analysis</p>
+          </div>
         </div>
 
-        <v-card v-else>
-          <v-card-text class="pa-6">
-            <!-- Alert for Existing Input -->
-            <v-alert 
-              v-if="hasAnyCompletedTools" 
-              type="info" 
-              variant="tonal" 
-              class="mb-4"
-              prominent
-            >
-              <v-icon icon="mdi-information" class="mr-2" />
-              <strong>Existing Input Detected:</strong>
-              An analysis has already been performed using 
-              <span v-if="savedInputType === 'url'">URL: <strong>{{ savedUrl }}</strong></span>
-              <span v-else>File: <strong>{{ savedFileName }}</strong></span>
-              <br>
-              <small>You can continue with additional tools below, or change the input if needed.</small>
-            </v-alert>
-
-            <!-- Step 1: Input Method Selection - Show only if no tools completed -->
-            <v-card v-if="!hasAnyCompletedTools" variant="outlined" class="mb-4">
-              <v-card-title class="bg-purple-lighten-5">
-                <v-icon icon="mdi-numeric-1-circle" class="mr-2" />
-                Step 1: Choose Input Method
-              </v-card-title>
-              <v-card-text class="pa-6">
-                <v-row>
-                  <v-col cols="12" md="6">
-                    <v-card 
-                      :class="{ 'selected-input': inputMethod === 'url' }" 
-                      variant="outlined"
-                      hover
-                      @click="selectInputMethod('url')"
-                      class="input-card"
-                    >
-                      <v-card-text class="text-center pa-6">
-                        <v-icon icon="mdi-web" size="x-large" color="purple" />
-                        <h4 class="text-h6 mt-3">Webpage URL</h4>
-                        <p class="text-body-2">Analyze a live website</p>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-card 
-                      :class="{ 'selected-input': inputMethod === 'file' }" 
-                      variant="outlined"
-                      hover
-                      @click="selectInputMethod('file')"
-                      class="input-card"
-                    >
-                      <v-card-text class="text-center pa-6">
-                        <v-icon icon="mdi-file-code" size="x-large" color="purple" />
-                        <h4 class="text-h6 mt-3">HTML File</h4>
-                        <p class="text-body-2">Upload an HTML file</p>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-                </v-row>
-
-                <!-- URL Input -->
-                <v-expand-transition>
-                  <div v-if="inputMethod === 'url'" class="mt-6">
-                    <v-text-field
-                      v-model="urlInput"
-                      label="Enter Website URL"
-                      placeholder="https://example.com"
-                      variant="outlined"
-                      prepend-inner-icon="mdi-link"
-                      :rules="[v => !!v || 'URL is required']"
-                      @keyup.enter="saveInputAndProceed"
-                    />
-                  </div>
-                </v-expand-transition>
-
-                <!-- File Input -->
-                <v-expand-transition>
-                  <div v-if="inputMethod === 'file'" class="mt-6">
-                    <v-file-input
-                      v-model="selectedFile"
-                      label="Upload HTML File"
-                      accept=".html,.htm"
-                      variant="outlined"
-                      prepend-icon="mdi-paperclip"
-                      :rules="[v => !!v || 'File is required']"
-                      @update:model-value="handleFileChange"
-                    />
-                    <v-alert v-if="fileContent" type="success" variant="tonal" density="compact" class="mt-2">
-                      File loaded: {{ selectedFile?.[0]?.name || selectedFile?.name }} ({{ fileSize }})
-                    </v-alert>
-                  </div>
-                </v-expand-transition>
-
-                <div v-if="inputMethod" class="text-center mt-6">
-                  <v-btn
-                    color="purple"
-                    size="large"
-                    :disabled="!canProceed"
-                    prepend-icon="mdi-arrow-right"
-                    @click="saveInputAndProceed"
-                  >
-                    Continue to Tool Selection
-                  </v-btn>
-                </div>
-              </v-card-text>
-            </v-card>
-
-            <!-- Step 2: Tool Selection - Show when input is provided OR when tools have been completed -->
-            <v-card v-if="inputProvided || hasAnyCompletedTools" variant="outlined" class="mb-4">
-              <v-card-title class="bg-green-lighten-5">
-                <v-icon icon="mdi-numeric-2-circle" class="mr-2" />
-                Select Analysis Tool
-              </v-card-title>
-                <v-card-text class="pa-6">
-                  <!-- All Tools Completed Alert -->
-                  <v-alert v-if="allToolsCompleted" type="success" variant="tonal" class="mb-4" prominent>
-                    <v-icon icon="mdi-check-all" class="mr-2" />
-                    <strong>All tools completed!</strong> You can view the results or change the input to analyze a different source.
-                  </v-alert>
-
-                  <h4 class="text-h6 mb-4 text-center">Choose an AI-powered tool to analyze your input</h4>
-                  
-                  <v-row>
-                    <!-- ChromaCheck Tool -->
-                    <v-col cols="12" md="4">
-                      <v-card 
-                        :class="['tool-card', { 'tool-disabled': completedTools.chroma }]" 
-                        :color="completedTools.chroma ? 'grey-lighten-3' : 'purple-lighten-5'" 
-                        hover
-                        :disabled="completedTools.chroma"
-                        @click="navigateToTool('chroma')"
-                      >
-                        <v-card-text class="text-center pa-6">
-                          <v-avatar size="80" :color="completedTools.chroma ? 'grey' : 'purple'" class="mb-4">
-                            <v-icon 
-                              :icon="completedTools.chroma ? 'mdi-check-circle' : 'mdi-palette'" 
-                              size="x-large" 
-                              color="white" 
-                            />
-                          </v-avatar>
-                          <h4 class="text-h6 mb-2">ChromaCheck</h4>
-                          <p class="text-body-2 mb-3">
-                            Detect and analyze color contrast issues to ensure WCAG compliance
-                          </p>
-                          <v-chip 
-                            :color="completedTools.chroma ? 'green' : 'purple'" 
-                            variant="tonal" 
-                            size="small"
-                          >
-                            {{ completedTools.chroma ? '✓ Completed' : 'Color Contrast' }}
-                          </v-chip>
-                        </v-card-text>
-                        <v-card-actions class="justify-center pb-4">
-                          <v-btn 
-                            :color="completedTools.chroma ? 'grey' : 'purple'" 
-                            variant="elevated"
-                            :prepend-icon="completedTools.chroma ? 'mdi-check' : 'mdi-arrow-right'"
-                            :disabled="completedTools.chroma"
-                          >
-                            {{ completedTools.chroma ? 'Completed' : 'Analyze' }}
-                          </v-btn>
-                        </v-card-actions>
-                      </v-card>
-                    </v-col>
-
-                    <!-- AnchorSense Tool -->
-                    <v-col cols="12" md="4">
-                      <v-card 
-                        :class="['tool-card', { 'tool-disabled': completedTools.anchorsense }]" 
-                        :color="completedTools.anchorsense ? 'grey-lighten-3' : 'blue-lighten-5'" 
-                        hover
-                        :disabled="completedTools.anchorsense"
-                        @click="navigateToTool('anchorsense')"
-                      >
-                        <v-card-text class="text-center pa-6">
-                          <v-avatar size="80" :color="completedTools.anchorsense ? 'grey' : 'blue'" class="mb-4">
-                            <v-icon 
-                              :icon="completedTools.anchorsense ? 'mdi-check-circle' : 'mdi-link-variant'" 
-                              size="x-large" 
-                              color="white" 
-                            />
-                          </v-avatar>
-                          <h4 class="text-h6 mb-2">AnchorSense</h4>
-                          <p class="text-body-2 mb-3">
-                            AI-powered analysis of anchor tags with intelligent fix suggestions
-                          </p>
-                          <v-chip 
-                            :color="completedTools.anchorsense ? 'green' : 'blue'" 
-                            variant="tonal" 
-                            size="small"
-                          >
-                            {{ completedTools.anchorsense ? '✓ Completed' : 'Link Analysis' }}
-                          </v-chip>
-                        </v-card-text>
-                        <v-card-actions class="justify-center pb-4">
-                          <v-btn 
-                            :color="completedTools.anchorsense ? 'grey' : 'blue'" 
-                            variant="elevated"
-                            :prepend-icon="completedTools.anchorsense ? 'mdi-check' : 'mdi-arrow-right'"
-                            :disabled="completedTools.anchorsense"
-                          >
-                            {{ completedTools.anchorsense ? 'Completed' : 'Analyze' }}
-                          </v-btn>
-                        </v-card-actions>
-                      </v-card>
-                    </v-col>
-
-                    <!-- ImgTagTip Tool -->
-                    <v-col cols="12" md="4">
-                      <v-card 
-                        :class="['tool-card', { 'tool-disabled': completedTools.imgtip }]" 
-                        :color="completedTools.imgtip ? 'grey-lighten-3' : 'green-lighten-5'" 
-                        hover
-                        :disabled="completedTools.imgtip"
-                        @click="navigateToTool('imgtip')"
-                      >
-                        <v-card-text class="text-center pa-6">
-                          <v-avatar size="80" :color="completedTools.imgtip ? 'grey' : 'green'" class="mb-4">
-                            <v-icon 
-                              :icon="completedTools.imgtip ? 'mdi-check-circle' : 'mdi-image-text'" 
-                              size="x-large" 
-                              color="white" 
-                            />
-                          </v-avatar>
-                          <h4 class="text-h6 mb-2">ImgTagTip</h4>
-                          <p class="text-body-2 mb-3">
-                            AI-generated alt text suggestions for images to improve screen reader support
-                          </p>
-                          <v-chip 
-                            :color="completedTools.imgtip ? 'green' : 'green'" 
-                            variant="tonal" 
-                            size="small"
-                          >
-                            {{ completedTools.imgtip ? '✓ Completed' : 'Image Alt Text' }}
-                          </v-chip>
-                        </v-card-text>
-                        <v-card-actions class="justify-center pb-4">
-                          <v-btn 
-                            :color="completedTools.imgtip ? 'grey' : 'green'" 
-                            variant="elevated"
-                            :prepend-icon="completedTools.imgtip ? 'mdi-check' : 'mdi-arrow-right'"
-                            :disabled="completedTools.imgtip"
-                          >
-                            {{ completedTools.imgtip ? 'Completed' : 'Analyze' }}
-                          </v-btn>
-                        </v-card-actions>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-
-                  <div class="text-center mt-4">
-                    <v-btn
-                      v-if="hasAnyCompletedTools"
-                      color="purple"
-                      variant="elevated"
-                      size="large"
-                      prepend-icon="mdi-chart-box"
-                      class="mr-2"
-                      @click="goToResults"
-                    >
-                      View Results
-                    </v-btn>
-                    <v-btn
-                      color="grey"
-                      variant="text"
-                      prepend-icon="mdi-refresh"
-                      @click="resetInput"
-                    >
-                      Change Input
-                    </v-btn>
-                  </div>
-                </v-card-text>
-              </v-card>
-
-            <v-divider class="my-6" />
-
-            <div class="text-center">
-              <v-btn 
-                color="grey" 
-                variant="outlined" 
-                prepend-icon="mdi-arrow-left" 
-                @click="goBack"
-              >
-                Back to Home
-              </v-btn>
+        <div class="input-options">
+          <div 
+            :class="['input-option', { 'input-option-selected': inputMethod === 'url' }]"
+            @click="selectInputMethod('url')"
+          >
+            <div class="option-icon option-icon-url">
+              <v-icon icon="mdi-web" size="24" />
             </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+            <div class="option-content">
+              <h3 class="option-title">Webpage URL</h3>
+              <p class="option-description">Analyze a live website by entering its URL</p>
+            </div>
+            <div class="option-check" v-if="inputMethod === 'url'">
+              <v-icon icon="mdi-check" size="16" />
+            </div>
+          </div>
+
+          <div 
+            :class="['input-option', { 'input-option-selected': inputMethod === 'file' }]"
+            @click="selectInputMethod('file')"
+          >
+            <div class="option-icon option-icon-file">
+              <v-icon icon="mdi-file-code-outline" size="24" />
+            </div>
+            <div class="option-content">
+              <h3 class="option-title">HTML File</h3>
+              <p class="option-description">Upload an HTML file from your computer</p>
+            </div>
+            <div class="option-check" v-if="inputMethod === 'file'">
+              <v-icon icon="mdi-check" size="16" />
+            </div>
+          </div>
+        </div>
+
+        <!-- URL Input -->
+        <v-expand-transition>
+          <div v-if="inputMethod === 'url'" class="input-field-container">
+            <div class="custom-input">
+              <v-icon icon="mdi-link-variant" size="20" class="input-icon" />
+              <input
+                v-model="urlInput"
+                type="url"
+                placeholder="https://example.com"
+                class="url-input"
+                @keyup.enter="saveInputAndProceed"
+              />
+            </div>
+          </div>
+        </v-expand-transition>
+
+        <!-- File Input -->
+        <v-expand-transition>
+          <div v-if="inputMethod === 'file'" class="input-field-container">
+            <div class="file-drop-zone" @click="triggerFileInput">
+              <input
+                ref="fileInputRef"
+                type="file"
+                accept=".html,.htm"
+                class="hidden-file-input"
+                @change="handleFileInputChange"
+              />
+              <div class="drop-zone-content">
+                <v-icon icon="mdi-cloud-upload-outline" size="32" class="drop-icon" />
+                <p class="drop-text">Click to upload or drag and drop</p>
+                <p class="drop-hint">HTML files only</p>
+              </div>
+            </div>
+            <div v-if="fileContent" class="file-success">
+              <v-icon icon="mdi-check-circle" size="18" class="success-icon" />
+              <span>{{ selectedFile?.name }} ({{ fileSize }})</span>
+            </div>
+          </div>
+        </v-expand-transition>
+
+        <div v-if="inputMethod" class="action-container">
+          <button
+            :class="['primary-btn', { 'btn-disabled': !canProceed }]"
+            :disabled="!canProceed"
+            @click="saveInputAndProceed"
+          >
+            <span>Continue</span>
+            <v-icon icon="mdi-arrow-right" size="18" />
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: Tool Selection -->
+      <div v-if="inputProvided || hasAnyCompletedTools" class="section-card">
+        <div class="section-header">
+          <span class="step-indicator">2</span>
+          <div class="section-title-group">
+            <h2 class="section-title">Select Analysis Tool</h2>
+            <p class="section-subtitle">Choose an AI-powered tool to examine your content</p>
+          </div>
+        </div>
+
+        <!-- All Tools Completed -->
+        <div v-if="allToolsCompleted" class="success-banner">
+          <v-icon icon="mdi-check-circle" size="20" />
+          <span>All tools completed! View your comprehensive results below.</span>
+        </div>
+
+        <div class="tools-grid">
+          <!-- ChromaCheck -->
+          <div 
+            :class="['tool-card', { 'tool-completed': completedTools.chroma }]"
+            @click="navigateToTool('chroma')"
+          >
+            <div class="tool-header">
+              <div :class="['tool-icon', completedTools.chroma ? 'tool-icon-completed' : 'tool-icon-purple']">
+                <v-icon :icon="completedTools.chroma ? 'mdi-check' : 'mdi-palette'" size="24" />
+              </div>
+              <span v-if="completedTools.chroma" class="completed-badge">Completed</span>
+            </div>
+            <h3 class="tool-title">ChromaCheck</h3>
+            <p class="tool-description">Analyze color contrast for WCAG compliance</p>
+            <div class="tool-tag tool-tag-purple">Color Contrast</div>
+          </div>
+
+          <!-- AnchorSense -->
+          <div 
+            :class="['tool-card', { 'tool-completed': completedTools.anchorsense }]"
+            @click="navigateToTool('anchorsense')"
+          >
+            <div class="tool-header">
+              <div :class="['tool-icon', completedTools.anchorsense ? 'tool-icon-completed' : 'tool-icon-blue']">
+                <v-icon :icon="completedTools.anchorsense ? 'mdi-check' : 'mdi-link-variant'" size="24" />
+              </div>
+              <span v-if="completedTools.anchorsense" class="completed-badge">Completed</span>
+            </div>
+            <h3 class="tool-title">AnchorSense</h3>
+            <p class="tool-description">Smart analysis of links with fix suggestions</p>
+            <div class="tool-tag tool-tag-blue">Link Analysis</div>
+          </div>
+
+          <!-- ImgTagTip -->
+          <div 
+            :class="['tool-card', { 'tool-completed': completedTools.imgtip }]"
+            @click="navigateToTool('imgtip')"
+          >
+            <div class="tool-header">
+              <div :class="['tool-icon', completedTools.imgtip ? 'tool-icon-completed' : 'tool-icon-green']">
+                <v-icon :icon="completedTools.imgtip ? 'mdi-check' : 'mdi-image-outline'" size="24" />
+              </div>
+              <span v-if="completedTools.imgtip" class="completed-badge">Completed</span>
+            </div>
+            <h3 class="tool-title">ImgTagTip</h3>
+            <p class="tool-description">AI-generated alt text for better accessibility</p>
+            <div class="tool-tag tool-tag-green">Image Alt Text</div>
+          </div>
+        </div>
+
+        <div class="tools-actions">
+          <button
+            v-if="hasAnyCompletedTools"
+            class="primary-btn"
+            @click="goToResults"
+          >
+            <v-icon icon="mdi-chart-box-outline" size="18" />
+            <span>View Results</span>
+          </button>
+          <button class="secondary-btn" @click="resetInput">
+            <v-icon icon="mdi-refresh" size="18" />
+            <span>Change Input</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="footer-actions">
+        <button class="ghost-btn" @click="goBack">
+          <v-icon icon="mdi-arrow-left" size="18" />
+          <span>Back to Home</span>
+        </button>
+      </div>
+    </div>
   </PageWrapper>
 </template>
 
@@ -320,6 +229,7 @@ const inputMethod = ref('')
 const urlInput = ref('')
 const selectedFile = ref(null)
 const fileContent = ref('')
+const fileInputRef = ref(null)
 
 // Step 2: Saved input for tool selection
 const inputProvided = ref(false)
@@ -453,6 +363,22 @@ const selectInputMethod = (method) => {
   inputProvided.value = false
 }
 
+const triggerFileInput = () => {
+  fileInputRef.value?.click()
+}
+
+const handleFileInputChange = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    selectedFile.value = file
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      fileContent.value = e.target.result
+    }
+    reader.readAsText(file)
+  }
+}
+
 const handleFileChange = async (file) => {
   if (file) {
     const reader = new FileReader()
@@ -534,40 +460,533 @@ const goToResults = () => {
 </script>
 
 <style scoped>
-.input-card {
+/* Apple/Notion Inspired Design System */
+.page-subtitle {
+  font-size: 15px;
+  color: #6b6b6b;
+  margin-top: 4px;
+  font-weight: 400;
+}
+
+.apple-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* Existing Alert */
+.existing-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: #f0f7ff;
+  border: 1px solid #d0e3ff;
+  border-radius: 12px;
+}
+
+.alert-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #2383e2;
+  border-radius: 8px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.alert-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.alert-title {
+  font-weight: 600;
+  color: #1a1a1a;
+  font-size: 14px;
+}
+
+.alert-description {
+  color: #6b6b6b;
+  font-size: 13px;
+}
+
+/* Section Card */
+.section-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+}
+
+.section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 24px 24px 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.step-indicator {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a1a1a;
+  color: white;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.section-title-group {
+  flex: 1;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 4px 0;
+}
+
+.section-subtitle {
+  font-size: 14px;
+  color: #6b6b6b;
+  margin: 0;
+}
+
+/* Input Options */
+.input-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 24px;
+}
+
+@media (max-width: 640px) {
+  .input-options {
+    grid-template-columns: 1fr;
+  }
+}
+
+.input-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  background: #fafafa;
+  border: 1.5px solid #e5e5e5;
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
-  height: 100%;
+  position: relative;
 }
 
-.input-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+.input-option:hover {
+  background: #f5f5f5;
+  border-color: #d0d0d0;
 }
 
-.selected-input {
-  border: 2px solid rgb(var(--v-theme-purple)) !important;
-  background-color: rgba(156, 39, 176, 0.08);
+.input-option-selected {
+  background: #f7f7f7;
+  border-color: #1a1a1a;
+}
+
+.option-icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.option-icon-url {
+  background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+  color: white;
+}
+
+.option-icon-file {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+}
+
+.option-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.option-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 2px 0;
+}
+
+.option-description {
+  font-size: 13px;
+  color: #6b6b6b;
+  margin: 0;
+}
+
+.option-check {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a1a1a;
+  border-radius: 50%;
+  color: white;
+}
+
+/* Input Fields */
+.input-field-container {
+  padding: 0 24px 24px;
+}
+
+.custom-input {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: #fafafa;
+  border: 1.5px solid #e5e5e5;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.custom-input:focus-within {
+  background: #ffffff;
+  border-color: #1a1a1a;
+  box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.08);
+}
+
+.input-icon {
+  color: #6b6b6b;
+  flex-shrink: 0;
+}
+
+.url-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  color: #1a1a1a;
+  outline: none;
+  font-family: inherit;
+}
+
+.url-input::placeholder {
+  color: #a0a0a0;
+}
+
+/* File Drop Zone */
+.file-drop-zone {
+  border: 2px dashed #d0d0d0;
+  border-radius: 12px;
+  padding: 40px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #fafafa;
+}
+
+.file-drop-zone:hover {
+  border-color: #a0a0a0;
+  background: #f5f5f5;
+}
+
+.hidden-file-input {
+  display: none;
+}
+
+.drop-zone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.drop-icon {
+  color: #a0a0a0;
+}
+
+.drop-text {
+  font-size: 15px;
+  font-weight: 500;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.drop-hint {
+  font-size: 13px;
+  color: #6b6b6b;
+  margin: 0;
+}
+
+.file-success {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #e8f5e9;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #2e7d32;
+}
+
+.success-icon {
+  color: #2e7d32;
+}
+
+/* Action Container */
+.action-container {
+  padding: 0 24px 24px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Buttons */
+.primary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: #1a1a1a;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.primary-btn:hover {
+  background: #333333;
+  transform: translateY(-1px);
+}
+
+.primary-btn:active {
+  transform: translateY(0);
+}
+
+.btn-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-disabled:hover {
+  background: #1a1a1a;
+  transform: none;
+}
+
+.secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: transparent;
+  color: #6b6b6b;
+  border: 1.5px solid #e5e5e5;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.secondary-btn:hover {
+  background: #f5f5f5;
+  border-color: #d0d0d0;
+  color: #1a1a1a;
+}
+
+.ghost-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: transparent;
+  color: #6b6b6b;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.ghost-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #1a1a1a;
+}
+
+/* Success Banner */
+.success-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  margin: 0 24px 16px;
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  border-radius: 10px;
+  color: #2e7d32;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Tools Grid */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding: 24px;
+}
+
+@media (max-width: 768px) {
+  .tools-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .tool-card {
+  background: #fafafa;
+  border: 1.5px solid #e5e5e5;
+  border-radius: 14px;
+  padding: 24px;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  height: 100%;
+  transition: all 0.25s ease;
 }
 
 .tool-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+  background: #f5f5f5;
+  border-color: #d0d0d0;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
-.tool-card.tool-disabled {
-  cursor: not-allowed;
-  opacity: 0.7;
+.tool-completed {
+  opacity: 0.6;
+  cursor: default;
 }
 
-.tool-card.tool-disabled:hover {
+.tool-completed:hover {
   transform: none;
-  box-shadow: none !important;
+  box-shadow: none;
+}
+
+.tool-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.tool-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  color: white;
+}
+
+.tool-icon-purple {
+  background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+}
+
+.tool-icon-blue {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+}
+
+.tool-icon-green {
+  background: linear-gradient(135deg, #27ae60 0%, #219a52 100%);
+}
+
+.tool-icon-completed {
+  background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+}
+
+.completed-badge {
+  padding: 4px 10px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.tool-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 6px 0;
+}
+
+.tool-description {
+  font-size: 13px;
+  color: #6b6b6b;
+  margin: 0 0 16px 0;
+  line-height: 1.5;
+}
+
+.tool-tag {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.tool-tag-purple {
+  background: rgba(155, 89, 182, 0.12);
+  color: #8e44ad;
+}
+
+.tool-tag-blue {
+  background: rgba(52, 152, 219, 0.12);
+  color: #2980b9;
+}
+
+.tool-tag-green {
+  background: rgba(39, 174, 96, 0.12);
+  color: #219a52;
+}
+
+/* Tools Actions */
+.tools-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 24px 24px;
+}
+
+/* Footer Actions */
+.footer-actions {
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
 }
 </style>
