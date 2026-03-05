@@ -37,15 +37,11 @@ export const uploadAssessmentImage = async (file, userId, testId, ruleId, noteIn
         const imagePath = `assessments/${testId}/${userId}/images/${sanitizedFileName}`;
         const imageRef = storageRef(storage, imagePath);
 
-        console.log('Uploading image to path:', imagePath);
-
         // Upload the file
         const uploadResult = await uploadBytes(imageRef, file);
-        console.log('Image uploaded successfully:', uploadResult);
 
         // Get the download URL
         const downloadURL = await getDownloadURL(uploadResult.ref);
-        console.log('Download URL obtained:', downloadURL);
 
         return {
             success: true,
@@ -57,7 +53,7 @@ export const uploadAssessmentImage = async (file, userId, testId, ruleId, noteIn
             uploadedAt: new Date().toISOString()
         };
     } catch (error) {
-        console.error('Error uploading assessment image:', error);
+        console.error('[storageController] uploadAssessmentImage failed:', error.message);
         throw new Error(`Failed to upload image: ${error.message}`);
     }
 };
@@ -75,14 +71,12 @@ export const deleteAssessmentImage = async (filePath) => {
 
         const imageRef = storageRef(storage, filePath);
         await deleteObject(imageRef);
-        console.log('Image deleted successfully:', filePath);
 
         return { success: true };
     } catch (error) {
-        console.error('Error deleting assessment image:', error);
+        console.error('[storageController] deleteAssessmentImage failed:', error.message);
         // Don't throw error if file doesn't exist
         if (error.code === 'storage/object-not-found') {
-            console.log('File not found, considering as successfully deleted:', filePath);
             return { success: true };
         }
         throw new Error(`Failed to delete image: ${error.message}`);
@@ -129,7 +123,7 @@ export const uploadMultipleAssessmentImages = async (files, userId, testId, rule
             failureCount: failedUploads.length
         };
     } catch (error) {
-        console.error('Error uploading multiple images:', error);
+        console.error('[storageController] uploadMultipleAssessmentImages failed:', error.message);
         throw new Error(`Failed to upload images: ${error.message}`);
     }
 };
@@ -156,7 +150,7 @@ export const getImageMetadata = async (filePath) => {
         if (error.code === 'storage/object-not-found') {
             return { exists: false };
         }
-        console.error('Error getting image metadata:', error);
+        console.error('[storageController] getImageMetadata failed:', error.message);
         throw new Error(`Failed to get image metadata: ${error.message}`);
     }
 };
