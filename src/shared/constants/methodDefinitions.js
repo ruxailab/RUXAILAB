@@ -4,6 +4,7 @@ import Study from '../models/Study'
 import CardSortingStudy from '@/ux/CardSorting/models/CardSortingStudy'
 import ManualAccessibilityTest from '@/ux/accessibility/models/ManualAccessibilityTest'
 import AutomaticAccessibilityTest from '@/ux/accessibility/models/AutomaticAccessibilityTest'
+import AIAssistedAccessibilityTest from '@/ux/accessibility/models/AIAssistedAccessibilityTest'
 import Cooperators from '../models/Cooperators'
 import StudyAdmin from '@/shared/models/StudyAdmin'
 import StudyAnswer from '../models/StudyAnswer'
@@ -41,6 +42,8 @@ export function instantiateStudyByType(type, rawData) {
       return new ManualAccessibilityTest(normalizedData)
     case STUDY_TYPES.ACCESSIBILITY_AUTOMATIC:
       return new AutomaticAccessibilityTest(normalizedData)
+    case STUDY_TYPES.ACCESSIBILITY_AI_ASSISTED:
+      return new AIAssistedAccessibilityTest(normalizedData)
     default:
       return new Study(normalizedData)
   }
@@ -75,6 +78,7 @@ export const STUDY_TYPES = {
   CARD_SORTING: 'CARD_SORTING',
   ACCESSIBILITY_MANUAL: 'MANUAL',
   ACCESSIBILITY_AUTOMATIC: 'AUTOMATIC',
+  ACCESSIBILITY_AI_ASSISTED: 'AI_ASSISTED',
 }
 
 /**
@@ -283,6 +287,16 @@ export const METHOD_DEFINITIONS = {
     category: METHOD_CATEGORIES.accessibility.id,
     status: METHOD_STATUSES.AVAILABLE.id,
   },
+  ACCESSIBILITY_AI_ASSISTED: {
+    id: 'ACCESSIBILITY_AI_ASSISTED',
+    name: 'Evaluación con Asistencia de IA',
+    nameEn: 'AI-Assisted Evaluation',
+    icon: 'mdi-brain',
+    color: '#7B1FA2',
+    description: 'AI-assisted accessibility evaluation',
+    category: METHOD_CATEGORIES.accessibility.id,
+    status: METHOD_STATUSES.AVAILABLE.id,
+  },
   WCAG_AUDIT: {
     id: 'WCAG_AUDIT',
     name: 'Auditoría WCAG',
@@ -332,7 +346,12 @@ export const getMethodManagerView = (type, subType) => {
       return 'UserUnmoderatedManagerView'
     else if (subType === USER_STUDY_SUBTYPES.MODERATED)
       return 'UserModeratedManagerView'
-  }
+  } else if (normalizedType === STUDY_TYPES.ACCESSIBILITY_MANUAL)
+    return 'AccessibilityManualManager'
+  else if (normalizedType === STUDY_TYPES.ACCESSIBILITY_AUTOMATIC)
+    return 'AccessibilityAutomaticManager'
+  else if (normalizedType === STUDY_TYPES.ACCESSIBILITY_AI_ASSISTED)
+    return 'AccessibilityAIAssistedManager'
 }
 
 /**

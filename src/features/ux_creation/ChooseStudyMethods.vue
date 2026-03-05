@@ -159,7 +159,7 @@ const methodsByCategory = {
         'studyCreation.methods.accessibility.ai_assisted_testing.description',
       icon: 'mdi-brain',
       color: 'purple darken-3',
-      available: false,
+      available: true,
     },
   ],
 }

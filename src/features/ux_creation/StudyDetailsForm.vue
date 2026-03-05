@@ -449,10 +449,14 @@ const submit = async () => {
 
 const submitAccessibility = async () => {
   const selectedMethod = method.value
-  let testType =
-    selectedMethod === 'AUTOMATIC'
-      ? STUDY_TYPES.ACCESSIBILITY_AUTOMATIC
-      : STUDY_TYPES.ACCESSIBILITY_MANUAL
+  let testType
+  if (selectedMethod === 'AUTOMATIC') {
+    testType = STUDY_TYPES.ACCESSIBILITY_AUTOMATIC
+  } else if (selectedMethod === 'AI_ASSISTED') {
+    testType = STUDY_TYPES.ACCESSIBILITY_AI_ASSISTED
+  } else {
+    testType = STUDY_TYPES.ACCESSIBILITY_MANUAL
+  }
 
   isLoading.value = true
   const user = store.getters.user
@@ -485,6 +489,8 @@ const submitAccessibility = async () => {
 
     if (selectedMethod === 'AUTOMATIC') {
       router.push(`/accessibility/automatic/${testId}`)
+    } else if (selectedMethod === 'AI_ASSISTED') {
+      router.push(`/accessibility/aiassisted/manager/${testId}`)
     } else {
       router.push(`/accessibility/manual/${testId}`)
     }
