@@ -59,7 +59,7 @@ const navItems = computed(() => [
     path: `/accessibility/automatic/answers/${testId.value}`,
   },
   {
-    title: 'Reports',
+    title: 'Report',
     icon: 'mdi-file-document',
     path: `/accessibility/automatic/reports/${testId.value}`,
   },
