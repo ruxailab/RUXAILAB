@@ -9,6 +9,16 @@ import UserController from '@/features/auth/controllers/UserController';
 const userController = new UserController();
 
 /**
+ * Environment-gated logger — only emits in non-production builds.
+ * Never logs PII (UIDs, emails, user objects).
+ */
+const debugLog = (...args) => {
+    if (process.env.NODE_ENV !== 'production') {
+        console.log(...args);
+    }
+};
+
+/**
  * Wait for Firebase Auth to be ready
  * @param {number} timeout - Maximum time to wait in milliseconds (default: 5000)
  * @returns {Promise<User|null>} Firebase user or null
@@ -19,22 +29,22 @@ const waitForAuthReady = (timeout = 5000) => {
 
         // If user is already available, resolve immediately
         if (auth.currentUser) {
-            console.log('getCurrentUser - Auth already ready, user:', auth.currentUser.uid);
+            debugLog('getCurrentUser - Auth already ready, user authenticated');
             resolve(auth.currentUser);
             return;
         }
 
         // Set up timeout
         const timeoutId = setTimeout(() => {
-            console.log('getCurrentUser - Auth wait timeout, no user available');
+            debugLog('getCurrentUser - Auth wait timeout, no user available');
             unsubscribe();
             resolve(null);
         }, timeout);
 
         // Wait for auth state to change
-        console.log('getCurrentUser - Waiting for auth state...');
+        debugLog('getCurrentUser - Waiting for auth state...');
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-            console.log('getCurrentUser - Auth state changed, user:', user?.uid || 'none');
+            debugLog('getCurrentUser - Auth state changed, user:', user ? 'authenticated' : 'none');
             clearTimeout(timeoutId);
             unsubscribe();
             resolve(user);
@@ -58,27 +68,27 @@ export const getCurrentUser = async (store) => {
     const firebaseUser = await waitForAuthReady();
 
     if (!firebaseUser) {
-        console.log('getCurrentUser - No Firebase user authenticated');
+        debugLog('getCurrentUser - No Firebase user authenticated');
         return null;
     }
 
-    console.log('getCurrentUser - Firebase user UID:', firebaseUser.uid);    // Try to get user from store
+    debugLog('getCurrentUser - Firebase user authenticated');    // Try to get user from store
     let currentUser = store.state.Auth.user;
 
     // If not in store or incomplete, fetch from database
     if (!currentUser || !currentUser.id) {
-        console.log('getCurrentUser - User not in store, fetching from database...');
+        debugLog('getCurrentUser - User not in store, fetching from database...');
 
         try {
             currentUser = await userController.getById(firebaseUser.uid);
-            console.log('getCurrentUser - User fetched from database:', currentUser);
+            debugLog('getCurrentUser - User fetched from database successfully');
 
             // Update store with user data
             if (currentUser) {
                 store.commit('SET_USER', currentUser);
             }
         } catch (error) {
-            console.error('getCurrentUser - Error fetching user from database:', error);
+            console.error('getCurrentUser - Error fetching user from database:', error.message);
 
             // Use Firebase user as fallback with minimum required fields
             currentUser = {
@@ -87,10 +97,10 @@ export const getCurrentUser = async (store) => {
                 displayName: firebaseUser.displayName || '',
             };
 
-            console.log('getCurrentUser - Using Firebase user as fallback:', currentUser);
+            debugLog('getCurrentUser - Using Firebase user as fallback');
         }
     } else {
-        console.log('getCurrentUser - User from store:', currentUser);
+        debugLog('getCurrentUser - User resolved from store');
     }
 
     return currentUser;
@@ -109,7 +119,7 @@ export const getCurrentUserSync = (store) => {
     let currentUser = store.state.Auth.user;
 
     if (currentUser && currentUser.id) {
-        console.log('getCurrentUserSync - User from store:', currentUser.id);
+        debugLog('getCurrentUserSync - User resolved from store');
         return currentUser;
     }
 
@@ -118,11 +128,11 @@ export const getCurrentUserSync = (store) => {
     const firebaseUser = auth.currentUser;
 
     if (!firebaseUser) {
-        console.log('getCurrentUserSync - No user available (auth may not be ready yet)');
+        debugLog('getCurrentUserSync - No user available (auth may not be ready yet)');
         return null;
     }
 
-    console.log('getCurrentUserSync - Using Firebase user:', firebaseUser.uid);
+    debugLog('getCurrentUserSync - Using Firebase user (auth ready)');
 
     // Return minimal user object from Firebase
     return {

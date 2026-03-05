@@ -430,9 +430,10 @@ const rules = {
 }
 
 // Router composables
+const route = useRoute()
 const router = useRouter()
 const store = useStore()
-const testId = ref(globalThis.location.href.split("/").pop())
+const testId = ref(route.params.id || route.params.testId || '')
 
 // Computed properties
 const formattedDate = computed(() => {
@@ -491,29 +492,25 @@ const runTest = async () => {
     }
 
     // Use env variable for API endpoint
-    const apiUrl = process.env.VUE_APP_ACCESSIBILITY_API_LOCAL
-    console.log("API URL:", apiUrl);
+    const apiUrl = process.env.VUE_APP_ACCESSIBILITY_API || process.env.VUE_APP_ACCESSIBILITY_API_LOCAL
     const response = await axios.post(apiUrl, {
       url: normalized,
     });
     
     if (response && response.data) {
       const resData = response.data;
-      console.log("Response Data:", resData);
       
       // Save the assessment data to Firestore and update the study
       try {
-        const assessmentId = await store.dispatch('automaticReport/saveAssessment', {
+        await store.dispatch('automaticReport/saveAssessment', {
           testData: resData,
           testId: testId.value
         });
         
-        console.log("Assessment saved with ID:", assessmentId);
-        
         // Redirect to the reports page
         router.push(`/accessibility/automatic/reports/${testId.value}`);
       } catch (saveError) {
-        console.error('Error saving assessment:', saveError);
+        console.error('Error saving assessment:', saveError.message);
         error.value = 'Test completed but failed to save results. Please try again.';
         errorType.value = 'server';
       }

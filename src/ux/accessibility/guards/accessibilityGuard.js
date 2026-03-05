@@ -92,7 +92,7 @@ export const accessibilityGuard = async (to, from, next) => {
 
             let redirectPath;
             if (to.path.includes('/manual/')) {
-                redirectPath = `/accessibility/manual/${testId}`;
+                redirectPath = `/accessibility/manual/manager/${testId}`;
             } else if (to.path.includes('/aiassisted/')) {
                 redirectPath = `/accessibility/aiassisted/manager/${testId}`;
             } else {

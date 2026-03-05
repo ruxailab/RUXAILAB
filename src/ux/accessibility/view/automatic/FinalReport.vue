@@ -98,6 +98,7 @@ import { useStore } from 'vuex'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
+import { showError } from '@/shared/utils/toast'
 
 // Composables
 const route = useRoute()
@@ -152,19 +153,6 @@ const formatDate = (dateString) => {
   return date.toLocaleString()
 }
 
-const getIssueColor = (type) => {
-  switch (type) {
-    case 'error':
-      return 'error'
-    case 'warning':
-      return 'warning'
-    case 'notice':
-      return 'info'
-    default:
-      return 'grey'
-  }
-}
-
 // Download CSV function
 const downloadCSV = () => {
   if (!report.value?.ReportIssues || report.value.ReportIssues.length === 0) {
@@ -207,7 +195,7 @@ const downloadCSV = () => {
     document.body.removeChild(link)
   } catch (error) {
     console.error('Error generating CSV:', error)
-    alert('Failed to generate CSV file. Please try again.')
+    showError('Failed to generate CSV file. Please try again.')
   } finally {
     downloadingCsv.value = false
   }
@@ -309,7 +297,7 @@ const downloadPDF = () => {
     doc.save(filename)
   } catch (error) {
     console.error('Error generating PDF:', error)
-    alert('Failed to generate PDF file. Please try again.')
+    showError('Failed to generate PDF file. Please try again.')
   } finally {
     downloadingPdf.value = false
   }

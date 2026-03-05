@@ -98,8 +98,6 @@ export const updateRuleAssessment = async (userId, testId, ruleAssessment, image
     // Handle image uploads if provided
     const uploadedImages = [];
     if (imageFiles && imageFiles.length > 0) {
-      console.log('Processing image uploads for rule:', ruleAssessment.ruleId);
-
       for (let i = 0; i < imageFiles.length; i++) {
         const file = imageFiles[i];
         if (file && file instanceof File) {
@@ -118,12 +116,27 @@ export const updateRuleAssessment = async (userId, testId, ruleAssessment, image
               fileSize: uploadResult.fileSize,
               uploadedAt: uploadResult.uploadedAt
             });
-            console.log('Image uploaded successfully:', uploadResult.fileName);
           } catch (uploadError) {
-            console.error('Failed to upload image:', uploadError);
+            console.error('Failed to upload image:', uploadError.message);
             // Continue with other images, don't fail the entire operation
           }
         }
+      }
+    }
+
+    // Delete orphaned images from the previous version of this rule's notes
+    if (existingRuleData?.notes?.length) {
+      const newFilePaths = new Set(
+        (ruleAssessment.notes || []).map(n => n.filePath).filter(Boolean)
+      );
+      const orphanedPaths = existingRuleData.notes
+        .map(n => n.filePath)
+        .filter(fp => fp && !newFilePaths.has(fp));
+
+      for (const filePath of orphanedPaths) {
+        await deleteAssessmentImage(filePath).catch(err =>
+          console.warn('Failed to delete orphaned image:', err.message)
+        );
       }
     }
 
@@ -199,14 +212,12 @@ export const deleteAssessment = async (userId, testId) => {
 
       // Wait for image cleanup (with timeout)
       if (imageCleanupPromises.length > 0) {
-        console.log('Cleaning up images for assessment:', `${userId}_${testId}`);
         await Promise.allSettled(imageCleanupPromises);
       }
     }
 
     // Delete the assessment document
     await deleteDoc(docRef);
-    console.log('Assessment deleted successfully:', `${userId}_${testId}`);
 
     return { success: true };
   } catch (error) {

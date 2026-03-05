@@ -9,14 +9,13 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import ManagerView from '@/shared/views/template/ManagerView.vue'
 import { useAccessibilityAccess } from '@/ux/accessibility/composables/useAccessibilityAccess.js'
 import { getAccessibilityNavigator, getAccessibilityTopCards, getAccessibilityBottomCards } from '@/shared/utils/managerDefault.js'
 
 const route = useRoute()
-const router = useRouter()
 const store = useStore()
 const testId = ref(route.params.id || '')
 
@@ -46,8 +45,5 @@ const bottomCards = computed(() => {
 
 onMounted(async () => {
   await fetchAccessData(testId.value)
-  console.log('User role determined:', userRole.value)
-  // Home page is accessible to all users (admin and cooperators)
-  // The page will show filtered content based on user role
 })
 </script>

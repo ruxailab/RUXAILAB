@@ -1,6 +1,14 @@
 <template>
-  <!-- Loading overlay -->
-  <h1 v-if="isLoading" class="text-center my-10">Loading...</h1>
+  <div>
+    <!-- Loading state -->
+    <h1 v-if="isLoading" class="text-center my-10">Loading...</h1>
+
+    <!-- Main content -->
+    <div v-else>
+      <ManagerBanner :title="store.getters.test?.testTitle || ''" />
+      <CardsManager :cards="managerCards" :per-row="mdAndUp ? 3 : 1" @click="(path) => router.push(path)" />
+    </div>
+  </div>
 </template>
 
 <script setup>

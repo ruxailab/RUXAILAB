@@ -109,7 +109,7 @@
 import { ref } from 'vue'
 
 // API Configuration
-const API_BASE_URL = 'http://localhost:8000'
+const API_BASE_URL = process.env.VUE_APP_AI_ACCESSIBILITY_API || 'http://localhost:8000'
 
 // Reactive State
 const urlInput = ref('')

@@ -92,7 +92,7 @@
         </div>
 
         <div v-if="toolStatus.img_tip && results.img_tip" class="tool-stats">
-          <span class="stat-value">{{ results.img_tip.issues_found || 0 }}</span>
+          <span class="stat-value">{{ results.img_tip.total_issues || 0 }}</span>
           <span class="stat-label">issues found</span>
         </div>
 
