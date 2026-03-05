@@ -1,12 +1,12 @@
 <template>
   <PageWrapper
-    title="Final Accessibility Report"
+    :title="$t('Accessibility.finalAccessibilityReport')"
     :loading="loading"
-    loading-text="Loading report data..."
+    :loading-text="$t('Accessibility.loadingReportData')"
   >
     <template #subtitle>
       <p class="text-body-1 text-medium-emphasis">
-        Download comprehensive accessibility reports in CSV or PDF format
+        {{ $t('Accessibility.downloadReportSubtitle') }}
       </p>
     </template>
 
@@ -27,8 +27,8 @@
         >
           mdi-information-outline
         </v-icon>
-        <span class="text-h6 font-weight-bold mb-2">No Data Available</span>
-        <span class="text-body-1">Please run an accessibility test first to generate a report</span>
+        <span class="text-h6 font-weight-bold mb-2">{{ $t('Accessibility.noDataAvailable') }}</span>
+        <span class="text-body-1">{{ $t('Accessibility.runAccessibilityTestFirst') }}</span>
       </div>
     </v-alert>
 
@@ -38,7 +38,7 @@
       <v-card class="mb-6 rounded-lg" elevation="2">
         <v-card-title class="text-h6 py-4 px-6 bg-grey-lighten-4">
           <v-icon icon="mdi-download" class="me-3" size="28" />
-          <span>Download Options</span>
+          <span>{{ $t('Accessibility.downloadOptions') }}</span>
         </v-card-title>
         <v-card-text class="pa-6">
           <v-row>
@@ -46,9 +46,9 @@
               <v-card class="pa-4 rounded-lg border" elevation="0">
                 <div class="d-flex flex-column align-center">
                   <v-icon icon="mdi-file-delimited" size="64" color="success" class="mb-4" />
-                  <h3 class="text-h6 mb-2">CSV Export</h3>
+                  <h3 class="text-h6 mb-2">{{ $t('Accessibility.csvExport') }}</h3>
                   <p class="text-body-2 text-center text-medium-emphasis mb-4">
-                    Download issue data in CSV format for analysis in spreadsheet applications
+                    {{ $t('Accessibility.csvExportDescription') }}
                   </p>
                   <v-btn
                     color="success"
@@ -58,7 +58,7 @@
                     :loading="downloadingCsv"
                     @click="downloadCSV"
                   >
-                    Download CSV
+                    {{ $t('Accessibility.downloadCsv') }}
                   </v-btn>
                 </div>
               </v-card>
@@ -67,9 +67,9 @@
               <v-card class="pa-4 rounded-lg border" elevation="0">
                 <div class="d-flex flex-column align-center">
                   <v-icon icon="mdi-file-pdf-box" size="64" color="error" class="mb-4" />
-                  <h3 class="text-h6 mb-2">PDF Report</h3>
+                  <h3 class="text-h6 mb-2">{{ $t('Accessibility.pdfReport') }}</h3>
                   <p class="text-body-2 text-center text-medium-emphasis mb-4">
-                    Download a comprehensive accessibility report in PDF format
+                    {{ $t('Accessibility.pdfReportDescription') }}
                   </p>
                   <v-btn
                     color="error"
@@ -79,7 +79,7 @@
                     :loading="downloadingPdf"
                     @click="downloadPDF"
                   >
-                    Download PDF
+                    {{ $t('Accessibility.downloadPdf') }}
                   </v-btn>
                 </div>
               </v-card>
@@ -95,6 +95,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
@@ -103,6 +104,7 @@ import { showError } from '@/shared/utils/toast'
 // Composables
 const route = useRoute()
 const store = useStore()
+const { t } = useI18n()
 
 // Reactive data
 const downloadingCsv = ref(false)
@@ -182,20 +184,23 @@ const downloadCSV = () => {
 
     // Create blob and download
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-    const link = document.createElement('a')
     const url = URL.createObjectURL(blob)
-    
+    const link = document.createElement('a')
+
     const filename = `accessibility-report-${formatDateForFilename(report.value.ReportDateTime)}.csv`
-    
+
     link.setAttribute('href', url)
     link.setAttribute('download', filename)
     link.style.visibility = 'hidden'
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
+    URL.revokeObjectURL(url)
   } catch (error) {
-    console.error('Error generating CSV:', error)
-    showError('Failed to generate CSV file. Please try again.')
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('[FinalReport] downloadCSV failed:', error.message)
+    }
+    showError(t('Accessibility.failedGenerateCsv'))
   } finally {
     downloadingCsv.value = false
   }
@@ -296,8 +301,10 @@ const downloadPDF = () => {
     const filename = `accessibility-report-${formatDateForFilename(report.value.ReportDateTime)}.pdf`
     doc.save(filename)
   } catch (error) {
-    console.error('Error generating PDF:', error)
-    showError('Failed to generate PDF file. Please try again.')
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('[FinalReport] downloadPDF failed:', error.message)
+    }
+    showError(t('Accessibility.failedGeneratePdf'))
   } finally {
     downloadingPdf.value = false
   }
@@ -323,7 +330,10 @@ onMounted(async () => {
   try {
     await store.dispatch('automaticReport/fetchReport', testId.value)
   } catch (error) {
-    console.error('Error fetching report:', error)
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('[FinalReport] fetchReport failed:', error.message)
+    }
+    showError(t('Accessibility.failedFetchReport'))
   } finally {
     isBootstrapping.value = false
   }
