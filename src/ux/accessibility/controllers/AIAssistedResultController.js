@@ -8,8 +8,7 @@ import {
     deleteDoc,
     query,
     where,
-    getDocs,
-    serverTimestamp
+    getDocs
 } from 'firebase/firestore';
 import { ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import AIAssistedResult from '../models/AIAssistedResult';
