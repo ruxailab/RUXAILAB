@@ -22,7 +22,6 @@ import FinalReport from '@/ux/accessibility/view/automatic/FinalReport.vue';
 import AIAssistedAccessibilityManager from '@/ux/accessibility/view/aiassisted/AIAssistedAccessibilityManager.vue';
 import AIAssistedAccessibilityHome from '@/ux/accessibility/view/aiassisted/AIAssistedAccessibilityHome.vue';
 import AIAssistedAccessibilityExamine from '@/ux/accessibility/view/aiassisted/AIAssistedAccessibilityExamine.vue';
-import AIAssistedAccessibilitySettings from '@/ux/accessibility/view/aiassisted/AIAssistedAccessibilitySettings.vue';
 import AIAssistedAccessibilityAnswers from '@/ux/accessibility/view/aiassisted/AIAssistedAccessibilityAnswers.vue';
 import AIAssistedAccessibilityReport from '@/ux/accessibility/view/aiassisted/AIAssistedAccessibilityReport.vue';
 
