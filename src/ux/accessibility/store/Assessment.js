@@ -764,15 +764,20 @@ const actions = {
     try {
       if (!userId) throw new Error('User ID is required');
 
-      // Process image files from notes
-      const processedImageFiles = [];
+      // Collect File objects embedded in assessment.notes[].image
+      const notesImageFiles = [];
       if (assessment.notes && Array.isArray(assessment.notes)) {
         assessment.notes.forEach(note => {
           if (note.image && note.image instanceof File) {
-            processedImageFiles.push(note.image);
+            notesImageFiles.push(note.image);
           }
         });
       }
+
+      // Merge explicitly-passed imageFiles with those extracted from notes,
+      const processedImageFiles = [
+        ...new Set([...imageFiles.filter(f => f instanceof File), ...notesImageFiles])
+      ];
 
       // First update local state
       commit('UPDATE_RULE_ASSESSMENT', { ruleId, assessment });
