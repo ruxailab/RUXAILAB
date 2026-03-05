@@ -175,10 +175,11 @@ const goToNotificationRedirect = async (notification) => {
   }
   
   // Check if it's an accessibility study (skiping acceptStudyCollaboration for accessibility tests)
-  const isAccessibilityStudy = notification.redirectsTo && 
-    notification.redirectsTo.includes('/accessibility/manual/preview/') ||
-    notification.redirectsTo.includes('/accessibility/automatic/preview/')||
-    notification.redirectsTo.includes('/accessibility/aiassisted/answers/');
+  const redirectsTo = notification.redirectsTo || '';
+  const isAccessibilityStudy =
+    redirectsTo.includes('/accessibility/manual/preview/') ||
+    redirectsTo.includes('/accessibility/automatic/preview/') ||
+    redirectsTo.includes('/accessibility/aiassisted/answers/');
   
   if (!isAccessibilityStudy) {
     const study = await new StudyController().getStudy({ id: notification.testId })
