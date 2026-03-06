@@ -115,17 +115,19 @@ const props = defineProps({
 // Read answers from the centralized Answer Vuex store getter
 const allAnswers = computed(() => store.getters.allAnswersList)
 
-// Cooperators from the test document
-const cooperators = computed(() => {
+// Accepted cooperators from the test document
+const acceptedCooperators = computed(() => {
   const testCooperators = props.test?.cooperators || []
-  return Array.isArray(testCooperators) ? testCooperators : []
+  return Array.isArray(testCooperators)
+    ? testCooperators.filter((cooperator) => cooperator.accepted === true)
+    : []
 })
 
 const totalUsers = computed(() => {
-  // Use the larger of: cooperators count or answers count
+  // Use the larger of: accepted cooperators count or answers count
   // This ensures we count all participants who have taken the test
   // even if they weren't added as cooperators
-  return Math.max(cooperators.value.length, allAnswers.value.length)
+  return Math.max(acceptedCooperators.value.length, allAnswers.value.length)
 })
 
 const completedTests = computed(() => {
@@ -158,9 +160,7 @@ const timeEfficiencyPercentage = computed(() => {
 })
 
 const averageCompletionTime = computed(() => {
-  const answersWithTasks = allAnswers.value.filter(
-    (answer) => answer.tasks,
-  )
+  const answersWithTasks = allAnswers.value.filter((answer) => answer.tasks)
 
   if (answersWithTasks.length === 0) return '0 min'
 
