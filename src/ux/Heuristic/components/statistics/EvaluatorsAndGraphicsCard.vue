@@ -47,9 +47,7 @@
               {{ item.result }}%
             </v-chip>
           </template>
-          <template #item.answered="{ item }">
-            {{ item.answered }}%
-          </template>
+          <template #item.answered="{ item }"> {{ item.answered }}% </template>
         </v-data-table>
 
         <v-btn
@@ -69,7 +67,11 @@
       <v-col v-if="localInd == 1" cols="10">
         <RadarChart
           v-if="statistics.items.length >= 3"
-          :labels="statistics.items.map((item) => `${item.evaluator} - ${item.result}%`)"
+          :labels="
+            statistics.items.map(
+              (item) => `${item.evaluator} - ${item.result}%`,
+            )
+          "
           :data="statistics.items.map((item) => item.result)"
         />
         <v-card
