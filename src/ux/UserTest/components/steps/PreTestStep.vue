@@ -154,6 +154,11 @@ watch(
   },
   { deep: true },
 )
+
+// function updateAnswer(index, value) {
+//   localAnswers.value[index].answer = value;
+//   emit("update:preTestAnswer", localAnswers.value);
+// }
 </script>
 
 <style scoped>
