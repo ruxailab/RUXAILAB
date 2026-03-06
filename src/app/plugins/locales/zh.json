@@ -43,7 +43,34 @@
       "fair": "一般",
       "good": "好",
       "strong": "强"
-    }
+    },
+    "emailNotVerified": "电子邮件未验证",
+    "verificationEmailSent": "验证电子邮件发送成功！",
+    "errorSendingVerification": "发送验证电子邮件时出错",
+    "verifyEmailTitle": "验证您的电子邮件",
+    "verifyEmailSubtitle": "我们已向您的电子邮件发送了验证链接",
+    "emailLabel": "电子邮件",
+    "verifyingEmail": "验证中...",
+    "emailAlreadyVerified": "电子邮件已经验证了吗？",
+    "emailVerified": "电子邮件验证成功！",
+    "checkEmailTitle": "检查您的电子邮件",
+    "checkEmailStep1": "检查您的收件箱以获取验证电子邮件",
+    "checkEmailStep2": "单击电子邮件中的链接以验证您的帐户",
+    "checkEmailStep3": "返回此处，您的帐户将被验证",
+    "checkSpamFolder": "没看到？检查您的垃圾邮件文件夹",
+    "resending": "重新发送中...",
+    "resendEmail": "重新发送电子邮件",
+    "changeEmail": "更改电子邮件",
+    "continueToDashboard": "继续到仪表板",
+    "signOut": "退出登录",
+    "newEmail": "新电子邮件",
+    "enterNewEmail": "输入您的新电子邮件地址",
+    "saving": "保存中...",
+    "errorCheckingVerification": "检查验证状态时出错",
+    "errorResendingEmail": "重新发送验证电子邮件时出错",
+    "invalidEmail": "无效的电子邮件地址",
+    "emailUpdatedVerification": "电子邮件已更新！我们已向您的新电子邮件发送了验证链接。",
+    "errorUpdatingEmail": "更新电子邮件时出错"
   },
   "common": {
     "enterTextHere": "在此输入文本...",
@@ -112,6 +139,7 @@
     "user": "用户",
     "id": "ID",
     "itemsPerPage": "每页项目数：",
+    "saving": "保存中...",
     "visible": "可见"
   },
   "storage": {
@@ -1566,11 +1594,7 @@
     "test": "测试",
     "testType_1": {
       "testTitle": "可用性启发式",
-      "text": [
-        "可用性百分比",
-        "最终报告PDF",
-        "邀请专家评估您的应用程序"
-      ]
+      "text": ["可用性百分比", "最终报告PDF", "邀请专家评估您的应用程序"]
     },
     "testType_2": {
       "testTitle": "用户可用性",
@@ -1584,20 +1608,12 @@
       "SelfTest": {
         "title": "自主测试",
         "type": "无主持",
-        "text": [
-          "在空闲时间回答",
-          "增强的答案分析",
-          "任务自定义"
-        ]
+        "text": ["在空闲时间回答", "增强的答案分析", "任务自定义"]
       },
       "LiveTest": {
         "title": "实时测试",
         "type": "有主持",
-        "text": [
-          "摄像头、音频和屏幕录制",
-          "增强的答案分析",
-          "有主持的实时测试"
-        ]
+        "text": ["摄像头、音频和屏幕录制", "增强的答案分析", "有主持的实时测试"]
       }
     }
   },
@@ -1870,20 +1886,12 @@
       "blank": {
         "title": "从空白研究开始",
         "description": "从头开始创建研究，完全可定制",
-        "features": [
-          "完全可定制",
-          "从头构建",
-          "对设置的完全控制"
-        ]
+        "features": ["完全可定制", "从头构建", "对设置的完全控制"]
       },
       "template": {
         "title": "从模板创建",
         "description": "使用预构建的模板快速开始",
-        "features": [
-          "快速设置",
-          "预配置设置",
-          "包含最佳实践"
-        ]
+        "features": ["快速设置", "预配置设置", "包含最佳实践"]
       }
     },
     "details": {

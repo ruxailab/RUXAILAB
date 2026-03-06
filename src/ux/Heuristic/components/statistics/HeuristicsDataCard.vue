@@ -1,6 +1,5 @@
 <template>
   <v-card rounded="xl" flat class="mb-6 py-2" style="background: #f5f7ff">
-
     <!-- Guard: not enough answers -->
     <v-card
       v-if="!hasEnoughData"
@@ -36,7 +35,9 @@
           style="text-transform: none !important"
           @click="localInd = 1"
         >
-          {{ $t('HeuristicsTestAnswer.heuristics.headers.answersByHeuristics') }}
+          {{
+            $t('HeuristicsTestAnswer.heuristics.headers.answersByHeuristics')
+          }}
         </v-tab>
         <v-tab
           class="tab-text"
@@ -64,7 +65,6 @@
       <v-row justify="center">
         <v-col cols="10">
           <v-row>
-
             <!-- Sub-tab 0: Answers by Evaluator -->
             <v-col v-if="localInd == 0" cols="12">
               <v-data-table
@@ -143,7 +143,11 @@
                 align="center"
                 width="970px"
               >
-                {{ $t('HeuristicsTestAnswer.heuristics.messages.runWeightFunction') }}
+                {{
+                  $t(
+                    'HeuristicsTestAnswer.heuristics.messages.runWeightFunction',
+                  )
+                }}
               </v-card>
               <div v-else>
                 <v-row align="center" justify="space-around">
@@ -155,7 +159,8 @@
                     >
                       <v-card-title class="mt-4 mb-4 font-weight-bold">
                         <v-row align="center" justify="center">
-                          Usability Percentage <br /> With Weights
+                          Usability Percentage <br />
+                          With Weights
                         </v-row>
                       </v-card-title>
                       <v-card-text>
@@ -220,7 +225,6 @@
                 </template>
               </v-data-table>
             </v-col>
-
           </v-row>
         </v-col>
       </v-row>

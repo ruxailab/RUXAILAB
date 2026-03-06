@@ -43,7 +43,34 @@
       "fair": "普通",
       "good": "良い",
       "strong": "強い"
-    }
+    },
+    "emailNotVerified": "メールが確認されていません",
+    "verificationEmailSent": "確認メールが正常に送信されました！",
+    "errorSendingVerification": "確認メール送信エラー",
+    "verifyEmailTitle": "メールを確認してください",
+    "verifyEmailSubtitle": "確認リンクをメールに送信しました",
+    "emailLabel": "メール",
+    "verifyingEmail": "確認中...",
+    "emailAlreadyVerified": "メールはすでに確認されていますか？",
+    "emailVerified": "メールが正常に確認されました！",
+    "checkEmailTitle": "メールをご確認ください",
+    "checkEmailStep1": "確認メールを受け取るためにインボックスをチェック",
+    "checkEmailStep2": "メール内のリンクをクリックして、アカウントを確認",
+    "checkEmailStep3": "ここに戻るとアカウントが確認されます",
+    "checkSpamFolder": "見当たりませんか？ スパムフォルダを確認",
+    "resending": "再送信中...",
+    "resendEmail": "メールを再送信",
+    "changeEmail": "メールアドレスを変更",
+    "continueToDashboard": "ダッシュボードに進む",
+    "signOut": "サインアウト",
+    "newEmail": "新しいメール",
+    "enterNewEmail": "新しいメールアドレスを入力してください",
+    "saving": "保存中...",
+    "errorCheckingVerification": "確認状態の確認エラー",
+    "errorResendingEmail": "確認メール再送信エラー",
+    "invalidEmail": "無効なメールアドレス",
+    "emailUpdatedVerification": "メールが更新されました！新しいメールアドレスに確認リンクを送信しました。",
+    "errorUpdatingEmail": "メール更新エラー"
   },
   "common": {
     "enterTextHere": "ここにテキストを入力...",
@@ -112,6 +139,7 @@
     "user": "ユーザー",
     "id": "ID",
     "itemsPerPage": "ページごとの項目数：",
+    "saving": "保存中...",
     "visible": "表示"
   },
   "storage": {
@@ -1584,11 +1612,7 @@
       "SelfTest": {
         "title": "セルフテスト",
         "type": "非モデレート",
-        "text": [
-          "自分の時間に回答",
-          "高度な回答分析",
-          "タスクのカスタマイズ"
-        ]
+        "text": ["自分の時間に回答", "高度な回答分析", "タスクのカスタマイズ"]
       },
       "LiveTest": {
         "title": "ライブテスト",
@@ -1870,11 +1894,7 @@
       "blank": {
         "title": "空白の研究から開始",
         "description": "完全なカスタマイズでゼロから研究を作成します",
-        "features": [
-          "完全なカスタマイズ",
-          "ゼロから構築",
-          "設定を完全に制御"
-        ]
+        "features": ["完全なカスタマイズ", "ゼロから構築", "設定を完全に制御"]
       },
       "template": {
         "title": "テンプレートから作成",

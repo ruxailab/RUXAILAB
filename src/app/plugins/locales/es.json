@@ -43,7 +43,34 @@
       "fair": "Regular",
       "good": "Buena",
       "strong": "Fuerte"
-    }
+    },
+    "emailNotVerified": "Correo electrónico no verificado",
+    "verificationEmailSent": "¡Correo de verificación enviado exitosamente!",
+    "errorSendingVerification": "Error al enviar el correo de verificación",
+    "verifyEmailTitle": "Verifique su correo electrónico",
+    "verifyEmailSubtitle": "Hemos enviado un enlace de verificación a su correo electrónico",
+    "emailLabel": "Correo electrónico",
+    "verifyingEmail": "Verificando...",
+    "emailAlreadyVerified": "¿El correo electrónico ya está verificado?",
+    "emailVerified": "¡Correo electrónico verificado exitosamente!",
+    "checkEmailTitle": "Verifique su correo electrónico",
+    "checkEmailStep1": "Revise su bandeja de entrada para recibir un correo de verificación",
+    "checkEmailStep2": "Haga clic en el enlace del correo para verificar su cuenta",
+    "checkEmailStep3": "Vuelva aquí y su cuenta será verificada",
+    "checkSpamFolder": "¿No lo ve? Revise su carpeta de spam",
+    "resending": "Reenviando...",
+    "resendEmail": "Reenviar correo",
+    "changeEmail": "Cambiar correo electrónico",
+    "continueToDashboard": "Continuar al panel de control",
+    "signOut": "Cerrar sesión",
+    "newEmail": "Nuevo correo electrónico",
+    "enterNewEmail": "Ingrese su nueva dirección de correo electrónico",
+    "saving": "Guardando...",
+    "errorCheckingVerification": "Error al verificar el estado de verificación",
+    "errorResendingEmail": "Error al reenviar el correo de verificación",
+    "invalidEmail": "Dirección de correo electrónico inválida",
+    "emailUpdatedVerification": "¡Correo actualizado! Hemos enviado un enlace de verificación a su nuevo correo.",
+    "errorUpdatingEmail": "Error al actualizar el correo electrónico"
   },
   "common": {
     "enterTextHere": "Ingrese texto aquí...",
@@ -112,6 +139,7 @@
     "user": "Usuario",
     "id": "ID",
     "itemsPerPage": "Elementos por página:",
+    "saving": "Guardando...",
     "visible": "Visible"
   },
   "storage": {

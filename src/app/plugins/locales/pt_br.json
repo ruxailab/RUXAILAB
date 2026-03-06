@@ -43,7 +43,34 @@
       "fair": "Regular",
       "good": "Boa",
       "strong": "Forte"
-    }
+    },
+    "emailNotVerified": "E-mail não verificado",
+    "verificationEmailSent": "E-mail de verificação enviado com sucesso!",
+    "errorSendingVerification": "Erro ao enviar e-mail de verificação",
+    "verifyEmailTitle": "Verifique seu e-mail",
+    "verifyEmailSubtitle": "Enviamos um link de verificação para seu e-mail",
+    "emailLabel": "E-mail",
+    "verifyingEmail": "Verificando...",
+    "emailAlreadyVerified": "Email já verificado?",
+    "emailVerified": "E-mail verificado com sucesso!",
+    "checkEmailTitle": "Verifique seu e-mail",
+    "checkEmailStep1": "Verifique sua caixa de entrada para um e-mail de verificação",
+    "checkEmailStep2": "Clique no link do e-mail para verificar sua conta",
+    "checkEmailStep3": "Volte aqui e sua conta será verificada",
+    "checkSpamFolder": "Não vê? Verifique sua pasta de spam",
+    "resending": "Reenviando...",
+    "resendEmail": "Reenviar e-mail",
+    "changeEmail": "Alterar e-mail",
+    "continueToDashboard": "Continuar para o painel",
+    "signOut": "Sair",
+    "newEmail": "Novo e-mail",
+    "enterNewEmail": "Insira seu novo endereço de e-mail",
+    "saving": "Salvando...",
+    "errorCheckingVerification": "Erro ao verificar o status de verificação",
+    "errorResendingEmail": "Erro ao reenviar e-mail de verificação",
+    "invalidEmail": "Endereço de e-mail inválido",
+    "emailUpdatedVerification": "E-mail atualizado! Enviamos um link de verificação para seu novo e-mail.",
+    "errorUpdatingEmail": "Erro ao atualizar e-mail"
   },
   "common": {
     "enterTextHere": "Digite o texto aqui...",
@@ -112,6 +139,7 @@
     "user": "Usuário",
     "id": "ID",
     "itemsPerPage": "Itens por página:",
+    "saving": "Salvando...",
     "visible": "Visível"
   },
   "storage": {

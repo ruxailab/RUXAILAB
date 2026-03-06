@@ -43,7 +43,34 @@
       "fair": "ठीक",
       "good": "अच्छा",
       "strong": "मजबूत"
-    }
+    },
+    "emailNotVerified": "ईमेल सत्यापित नहीं है",
+    "verificationEmailSent": "सत्यापन ईमेल सफलतापूर्वक भेजा गया!",
+    "errorSendingVerification": "सत्यापन ईमेल भेजने में त्रुटि",
+    "verifyEmailTitle": "अपनी ईमेल सत्यापित करें",
+    "verifyEmailSubtitle": "हमने आपकी ईमेल पर एक सत्यापन लिंक भेजा है",
+    "emailLabel": "ईमेल",
+    "verifyingEmail": "सत्यापन जारी...",
+    "emailAlreadyVerified": "क्या ईमेल पहले से सत्यापित है?",
+    "emailVerified": "ईमेल सफलतापूर्वक सत्यापित!",
+    "checkEmailTitle": "अपनी ईमेल जांचें",
+    "checkEmailStep1": "सत्यापन ईमेल के लिए अपने इनबॉक्स की जांच करें",
+    "checkEmailStep2": "अपने खाते को सत्यापित करने के लिए ईमेल में लिंक पर क्लिक करें",
+    "checkEmailStep3": "यहां वापस आएं और आपका खाता सत्यापित हो जाएगा",
+    "checkSpamFolder": "नहीं देख रहे? अपने स्पैम फोल्डर की जांच करें",
+    "resending": "पुनः भेज रहे हैं...",
+    "resendEmail": "ईमेल फिर से भेजें",
+    "changeEmail": "ईमेल बदलें",
+    "continueToDashboard": "डैशबोर्ड पर जारी रखें",
+    "signOut": "साइन आउट",
+    "newEmail": "नई ईमेल",
+    "enterNewEmail": "अपना नया ईमेल पता दर्ज करें",
+    "saving": "सहेजा जा रहा है...",
+    "errorCheckingVerification": "सत्यापन स्थिति जांचने में त्रुटि",
+    "errorResendingEmail": "सत्यापन ईमेल पुनः भेजने में त्रुटि",
+    "invalidEmail": "अमान्य ईमेल पता",
+    "emailUpdatedVerification": "ईमेल अपडेट किया गया! हमने आपकी नई ईमेल पर एक सत्यापन लिंक भेजा है।",
+    "errorUpdatingEmail": "ईमेल अपडेट करने में त्रुटि"
   },
   "common": {
     "enterTextHere": "यहाँ टेक्स्ट दर्ज करें...",
@@ -112,6 +139,7 @@
     "user": "उपयोगकर्ता",
     "id": "आईडी",
     "itemsPerPage": "प्रति पृष्ठ आइटम:",
+    "saving": "सहेजा जा रहा है...",
     "visible": "दृश्य"
   },
   "storage": {
