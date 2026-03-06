@@ -63,20 +63,21 @@ export default {
      */
     async signup({ commit }, payload) {
       try {
+        const normalizedEmail = payload.email?.trim().toLowerCase()
         const { user } = await authController.signUp(
-          payload.email,
+          normalizedEmail,
           payload.password,
         )
-        await userController.create({ id: user.uid, email: user.email })
-        
+        await userController.create({
+          id: user.uid,
+          email: user.email || normalizedEmail,
+        })
+
         // Send verification email
         try {
           await authController.sendVerificationEmail(user.email, user.email)
-        } catch (emailErr) {
-          console.warn('Failed to send verification email:', emailErr)
-          // Don't fail signup if email sending fails
-        }
-        
+        } catch {}
+
         commit('SET_TOAST', {
           message: i18n.global.t('auth.signupSuccess'),
           type: 'success',
@@ -96,8 +97,9 @@ export default {
       commit('setLoading', true)
 
       try {
+        const normalizedEmail = payload.email?.trim().toLowerCase()
         const { user } = await authController.signIn(
-          payload.email,
+          normalizedEmail,
           payload.password,
           payload.rememberMe,
         )
@@ -145,9 +147,8 @@ export default {
         let dbUser = null
         try {
           dbUser = await userController.getById(user.uid)
-        } catch (error) {
+        } catch {
           // User doesn't exist in DB, will be created below
-          return error
         }
 
         // Create user if they don't exist yet

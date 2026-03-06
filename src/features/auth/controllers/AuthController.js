@@ -163,7 +163,6 @@ export default class AuthController {
         },
       })
     } catch (err) {
-      console.error('Error sending verification email:', err)
       throw err
     }
   }

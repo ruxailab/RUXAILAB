@@ -142,6 +142,17 @@
           </div>
         </template>
 
+        <template #[`item.totalTime`]="{ item }">
+          <div class="d-flex align-center">
+            <v-icon
+              icon="mdi-timer-outline"
+              size="small"
+              class="mr-2 text-medium-emphasis"
+            />
+            <span class="text-body-1">{{ item.totalTime }}</span>
+          </div>
+        </template>
+
         <template #[`item.status`]="{ item }">
           <v-chip
             :color="getStatusColor(item.status)"
@@ -300,6 +311,31 @@
               </v-sheet>
             </v-col>
 
+            <v-col cols="12">
+              <v-sheet
+                rounded
+                color="grey-lighten-4"
+                variant="flat"
+                class="pa-3 h-100"
+              >
+                <div
+                  class="text-caption font-weight-bold text-medium-emphasis mb-1"
+                >
+                  Total Time
+                </div>
+                <div class="d-flex align-center">
+                  <v-icon
+                    icon="mdi-timer-outline"
+                    size="small"
+                    class="mr-2 text-medium-emphasis"
+                  />
+                  <span class="text-body-2 font-weight-medium">
+                    {{ item.totalTime }}
+                  </span>
+                </div>
+              </v-sheet>
+            </v-col>
+
             <v-col cols="6">
               <v-sheet
                 rounded
@@ -383,6 +419,10 @@ import Intro from '@/shared/components/introduction_cards/IntroReports.vue'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
+import {
+  parseTimeSpentToMs,
+  formatTimeSpentFromMs,
+} from '@/ux/Heuristic/utils/statistics'
 import { showSuccess } from '../utils/toast'
 
 const store = useStore()
@@ -410,6 +450,7 @@ const allHeaders = computed(() => [
   { title: t('HeuristicsReport.headers.evaluator'), key: 'evaluator' },
   { title: t('HeuristicsReport.headers.last_update'), key: 'lastUpdate' },
   { title: t('HeuristicsReport.headers.progress'), key: 'progress' },
+  { title: 'Total Time', key: 'totalTime' },
   { title: t('HeuristicsReport.headers.status'), key: 'status' },
   { title: t('common.hidden'), key: 'hidden' },
   {
@@ -459,6 +500,27 @@ const formatDate = (timestamp) => {
 
 const formatTimeAgo = (count, unit) => t(`common.timeAgo.${unit}`, { count })
 
+const getReportTotalTime = (reportData, type) => {
+  if (!reportData) return '00:00'
+
+  if (type === STUDY_TYPES.HEURISTIC) {
+    const heuristics = reportData.heuristicQuestions || []
+    const totalMs = heuristics.reduce(
+      (acc, heuristic) => acc + parseTimeSpentToMs(heuristic?.timeSpent),
+      0,
+    )
+    return formatTimeSpentFromMs(totalMs)
+  }
+
+  const tasks = reportData.tasks || {}
+  const list = Array.isArray(tasks) ? tasks : Object.values(tasks)
+  const totalMs = list.reduce(
+    (acc, task) => acc + Number(task?.taskTime || 0),
+    0,
+  )
+  return formatTimeSpentFromMs(totalMs)
+}
+
 const reports = computed(() => {
   const doc = answers.value
   if (!doc) return []
@@ -473,6 +535,7 @@ const reports = computed(() => {
     evaluator: getCooperatorEmail(r.userDocId),
     userDocId: r.userDocId,
     progress: parseFloat(r.progress).toFixed(2),
+    totalTime: getReportTotalTime(r, type),
     status: checkIfIsSubmitted(r.submitted),
     lastUpdate: formatDate(r.lastUpdate),
     hidden: r.hidden ?? false,

@@ -4,7 +4,7 @@
       <!-- Header -->
       <div class="verify-header">
         <div class="icon-circle">
-          <i class="fas fa-envelope"></i>
+          <v-icon>mdi-email</v-icon>
         </div>
         <h1>{{ $t('auth.verifyEmailTitle') }}</h1>
         <p class="subtitle">{{ $t('auth.verifyEmailSubtitle') }}</p>
@@ -18,17 +18,14 @@
 
       <!-- Status Messages -->
       <div v-if="isVerifying" class="status-message loading">
-        <i class="fas fa-spinner fa-spin"></i>
         {{ $t('auth.verifyingEmail') }}
       </div>
 
       <div v-if="isVerified" class="status-message status-success">
-        <i class="fas fa-check-circle"></i>
         {{ $t('auth.emailVerified') }}
       </div>
 
       <div v-if="error" class="status-message status-error">
-        <i class="fas fa-exclamation-circle"></i>
         {{ error }}
       </div>
 
@@ -45,41 +42,30 @@
 
       <!-- Actions -->
       <div v-if="!isVerified" class="actions">
-        <button 
+        <button
           :disabled="isVerifying"
           class="btn btn-primary"
-          @click="checkEmailVerificationStatus" 
+          @click="checkEmailVerificationStatus"
         >
-          <i class="fas fa-check"></i>
-          {{ isVerifying ? $t('auth.verifyingEmail') : 'Already Verified?' }}
+          {{
+            isVerifying
+              ? $t('auth.verifyingEmail')
+              : $t('auth.emailAlreadyVerified')
+          }}
         </button>
 
-        <button 
+        <button
           :disabled="isResending || isVerifying"
           class="btn btn-secondary"
-          @click="resendVerificationEmail" 
+          @click="resendVerificationEmail"
         >
-          <i class="fas fa-redo"></i>
           {{ isResending ? $t('auth.resending') : $t('auth.resendEmail') }}
-        </button>
-
-        <button 
-          :disabled="isVerifying"
-          class="btn btn-tertiary"
-          @click="changeEmail" 
-        >
-          <i class="fas fa-edit"></i>
-          {{ $t('auth.changeEmail') }}
         </button>
       </div>
 
       <!-- Verified Actions -->
       <div v-if="isVerified" class="actions">
-        <button 
-          class="btn btn-primary"
-          @click="goToDashboard" 
-        >
-          <i class="fas fa-arrow-right"></i>
+        <button class="btn btn-primary" @click="goToDashboard">
           {{ $t('auth.continueToDashboard') }}
         </button>
       </div>
@@ -91,55 +77,13 @@
         </button>
       </div>
     </div>
-
-    <!-- Change Email Modal -->
-    <div v-if="showChangeEmailModal" class="modal-overlay" @click="showChangeEmailModal = false">
-      <div class="modal-content" @click.stop>
-        <div class="modal-header">
-          <h2>{{ $t('auth.changeEmail') }}</h2>
-          <button class="close-btn" @click="showChangeEmailModal = false">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-
-        <div class="modal-body">
-          <div class="form-group">
-            <label>{{ $t('auth.newEmail') }}</label>
-            <input 
-              v-model="newEmail" 
-              type="email" 
-              :placeholder="$t('auth.enterNewEmail')"
-              @keyup.enter="updateEmail"
-            />
-          </div>
-
-          <p v-if="modalError" class="error-text">{{ modalError }}</p>
-        </div>
-
-        <div class="modal-footer">
-          <button 
-            class="btn btn-outline"
-            @click="showChangeEmailModal = false" 
-          >
-            {{ $t('common.cancel') }}
-          </button>
-          <button 
-            :disabled="isUpdatingEmail || !newEmail"
-            class="btn btn-primary"
-            @click="updateEmail" 
-          >
-            {{ isUpdatingEmail ? $t('common.saving') : $t('common.save') }}
-          </button>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex'
 import { auth } from '@/app/plugins/firebase'
-import { onAuthStateChanged, updateEmail } from 'firebase/auth'
+import { onAuthStateChanged } from 'firebase/auth'
 
 export default {
   name: 'VerifyEmailView',
@@ -150,8 +94,6 @@ export default {
       isVerified: false,
       isResending: false,
       error: null,
-      showChangeEmailModal: false,
-      newEmail: '',
       modalError: null,
       isUpdatingEmail: false,
       verificationCheckInterval: null,
@@ -159,12 +101,12 @@ export default {
   },
   computed: {
     ...mapState({
-      currentUser: state => state.user,
+      currentUser: (state) => state.user,
     }),
   },
   mounted() {
     // Ensure user is logged in
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, () => {
       this.initializeVerification()
     })
   },
@@ -182,10 +124,10 @@ export default {
       try {
         this.isVerifying = true
         this.error = null
-        
+
         // Reload user to get latest email verification status
         await auth.currentUser.reload()
-        
+
         if (auth.currentUser.emailVerified) {
           this.isVerified = true
           this.$store.commit('SET_TOAST', {
@@ -203,8 +145,7 @@ export default {
             type: 'warning',
           })
         }
-      } catch (err) {
-        console.error('Error checking email verification:', err)
+      } catch {
         this.error = this.$t('auth.errorCheckingVerification')
         this.$store.commit('SET_TOAST', {
           message: this.$t('auth.errorCheckingVerification'),
@@ -219,60 +160,15 @@ export default {
       try {
         this.isResending = true
         this.error = null
-        
+
         const email = auth.currentUser.email
         const displayName = auth.currentUser.displayName || 'User'
-        
+
         await this.sendVerificationEmail({ email, userName: displayName })
-        
-        // Show success message using Vuex toast
-        this.$store.commit('SET_TOAST', {
-          message: this.$t('auth.verificationEmailSent'),
-          type: 'success',
-        })
-      } catch (err) {
-        console.error('Error resending verification email:', err)
+      } catch {
         this.error = this.$t('auth.errorResendingEmail')
       } finally {
         this.isResending = false
-      }
-    },
-
-    changeEmail() {
-      this.showChangeEmailModal = true
-      this.newEmail = ''
-      this.modalError = null
-    },
-
-    async updateEmail() {
-      try {
-        if (!this.newEmail || !this.newEmail.includes('@')) {
-          this.modalError = this.$t('auth.invalidEmail')
-          return
-        }
-
-        this.isUpdatingEmail = true
-        this.modalError = null
-
-        // Update email in Firebase
-        await updateEmail(auth.currentUser, this.newEmail)
-        
-        // Send verification email to new address
-        const displayName = auth.currentUser.displayName || 'User'
-        await this.sendVerificationEmail({ email: this.newEmail, userName: displayName })
-
-        this.userEmail = this.newEmail
-        this.showChangeEmailModal = false
-
-        this.$store.commit('SET_TOAST', {
-          message: this.$t('auth.emailUpdatedVerification'),
-          type: 'success',
-        })
-      } catch (err) {
-        console.error('Error updating email:', err)
-        this.modalError = err.message || this.$t('auth.errorUpdatingEmail')
-      } finally {
-        this.isUpdatingEmail = false
       }
     },
 
@@ -284,9 +180,7 @@ export default {
       try {
         await this.logout()
         this.$router.push('/signin')
-      } catch (err) {
-        console.error('Error signing out:', err)
-      }
+      } catch {}
     },
 
     initializeVerification() {
@@ -314,7 +208,9 @@ export default {
   justify-content: center;
   background: #ffffff;
   padding: 20px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+    Cantarell, sans-serif;
 }
 
 .verify-card {
@@ -327,7 +223,7 @@ export default {
 }
 
 .verify-header {
-  background: #00213F;
+  background: #00213f;
   color: white;
   padding: 40px 30px;
   text-align: center;
@@ -392,8 +288,8 @@ export default {
 
 .status-message.loading {
   background: #eff6ff;
-  color: #00213F;
-  border-left: 4px solid #00213F;
+  color: #00213f;
+  border-left: 4px solid #00213f;
 }
 
 .status-message.success {
@@ -475,7 +371,7 @@ export default {
 }
 
 .btn-primary {
-  background: #00213F;
+  background: #00213f;
   color: white;
 }
 
@@ -496,8 +392,8 @@ export default {
 
 .btn-tertiary {
   background: white;
-  color: #00213F;
-  border: 2px solid #00213F;
+  color: #00213f;
+  border: 2px solid #00213f;
 }
 
 .btn-tertiary:hover:not(:disabled) {
