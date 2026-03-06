@@ -34,7 +34,8 @@ const parseDateInput = (input) => {
  * @returns {string} - Formatted date or '-'
  */
 export const formatDateLong = (date, locale = 'en') => {
-  const normalizedLocale = locale.replace('_', '-')
+  const normalizedLocale =
+    typeof locale === 'string' ? locale.replace('_', '-') : 'en'
 
   try {
     const d = parseDateInput(date)
