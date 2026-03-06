@@ -14,7 +14,7 @@ export default class EmailController {
    * @returns {Promise<{success: boolean, message: string}>} Result of email send operation
    */
   async send(payload) {
-    try {
+    try { 
       // Use Firebase SDK callable function instead of HTTP
       // Firebase callable wraps the argument automatically, so pass payload directly
       const sendEmailFunction = httpsCallable(fbFunctions, 'sendEmail')

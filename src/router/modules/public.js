@@ -52,14 +52,14 @@ export default [
     name: 'AllArticles',
     meta: { authorize: [] },
     component: Help,
-    props: { showAllOnLoad: true },
-  } /*
+    props: { showAllOnLoad: true }
+  },/*
   {
     path: '/',
     name: 'Landing',
     meta: { authorize: [] },
     component: LandingPage,
-  },*/,
+  },*/
   {
     path: '/:catchAll(.*)',
     name: 'Page not Found',

@@ -108,7 +108,7 @@ const formattedStorage = computed(() => {
     const gb = (props.usedStorage / 1000).toFixed(2)
     return `${gb}GB/0.5GB`
   }
-  return `${props.usedStorage.toFixed(2)}MB/500MB`
+  return `${parseFloat(props.usedStorage.toFixed(2))}MB/500MB`
 })
 </script>
 
