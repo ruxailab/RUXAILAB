@@ -1,4 +1,5 @@
-import axios from 'axios'
+import { fbFunctions } from '@/app/plugins/firebase'
+import { httpsCallable } from 'firebase/functions'
 
 export default class EmailController {
   /**
@@ -14,9 +15,10 @@ export default class EmailController {
    */
   async send(payload) {
     try {
-      await axios.post(process.env.VUE_APP_CLOUD_FUNCTIONS_URL + '/sendEmail', {
-        data: payload,
-      })
+      // Use Firebase SDK callable function instead of HTTP
+      // Firebase callable wraps the argument automatically, so pass payload directly
+      const sendEmailFunction = httpsCallable(fbFunctions, 'sendEmail')
+      await sendEmailFunction(payload)
       return { success: true, message: 'Email sent successfully.' }
     } catch (error) {
       return { success: false, message: error.message }

@@ -40,6 +40,9 @@
         :headers="headers"
         :items="files"
         :search="search"
+        :custom-key-sort="customSort"
+        :custom-filter="customFilter"
+        item-value="id"
         :items-per-page-text="t('common.table.itemsPerPage')"
         hover
       >
@@ -63,6 +66,11 @@
           >
             {{ item.studyName }}
           </a>
+        </template>
+
+        <!-- Date -->
+        <template #[`item.date`]="{ item }">
+          {{ item.dateFormatted }}
         </template>
 
         <!-- Size -->
@@ -201,7 +209,7 @@ import AnswerController from '@/shared/controllers/AnswerController'
 import { showError } from '@/shared/utils/toast'
 
 const store = useStore()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const search = ref('')
 const answerController = new AnswerController()
 const fetchedAnswers = ref({}) // Map<testId, answersList>
@@ -224,7 +232,11 @@ const headers = computed(() => [
   },
   { title: t('storage.headers.studyName'), key: 'studyName', align: 'start' },
   { title: t('storage.headers.date'), key: 'date', align: 'start' },
-  { title: t('storage.headers.size'), key: 'size', align: 'end' },
+  {
+    title: t('storage.headers.size'),
+    key: 'size',
+    align: 'end',
+  },
   {
     title: t('storage.headers.actions'),
     key: 'actions',
@@ -234,6 +246,26 @@ const headers = computed(() => [
 ])
 
 const tests = computed(() => store.getters.tests || [])
+
+// Custom sort functions for v-data-table columns
+const customSort = {
+  studyName: (a, b) =>
+    a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }),
+  date: (a, b) => a - b,
+  size: (a, b) => a - b,
+}
+
+// Custom filter so search works on displayed values (e.g. dateFormatted, studyName)
+const customFilter = (value, query, item) => {
+  if (!query) return true
+  const q = query.toLowerCase()
+  const raw = item?.raw || item
+  return (
+    (raw.studyName || '').toLowerCase().includes(q) ||
+    (raw.dateFormatted || '').toLowerCase().includes(q) ||
+    (raw.type || '').toLowerCase().includes(q)
+  )
+}
 
 // Fetch answers for all tests
 const fetchAllAnswers = async () => {
@@ -287,7 +319,7 @@ const files = computed(() => {
       answers = [...answers, ...fetchedAnswers.value[test.id]]
     }
 
-    answers.forEach((answer) => {
+    answers.forEach((answer, answerIdx) => {
       const tasks = answer.tasks
         ? Array.isArray(answer.tasks)
           ? answer.tasks
@@ -297,15 +329,18 @@ const files = computed(() => {
             }))
         : []
 
-      tasks.forEach((task) => {
-        const date = formatDateLong(answer.date || test.creationDate, 'es') // Default to ES locale per usage
+      tasks.forEach((task, taskIdx) => {
+        const rawDate = answer.date || test.creationDate
+        const dateFormatted = formatDateLong(rawDate, locale.value)
+        const dateTimestamp = rawDate ? new Date(rawDate).getTime() : 0
+        const idPrefix = `${test.id}_${answerIdx}_${taskIdx}`
         const userDocId = answer.userDocId || null
 
         // Common file properties
         const baseFile = {
-          id: task.taskId || self.crypto.randomUUID(),
           studyName: test.testTitle,
-          date: date,
+          date: dateTimestamp,
+          dateFormatted,
           answersDocId: test.answersDocId || null,
           userDocId,
           taskId: task.taskId || null,
@@ -315,6 +350,7 @@ const files = computed(() => {
         if (task.videoRecordURL) {
           allFiles.push({
             ...baseFile,
+            id: `${idPrefix}_video`,
             type: 'video',
             url: task.videoRecordURL,
             urlField: 'videoRecordURL',
@@ -326,6 +362,7 @@ const files = computed(() => {
         if (task.audioRecordURL) {
           allFiles.push({
             ...baseFile,
+            id: `${idPrefix}_audio`,
             type: 'audio',
             url: task.audioRecordURL,
             urlField: 'audioRecordURL',
@@ -337,6 +374,7 @@ const files = computed(() => {
         if (task.screenRecordURL) {
           allFiles.push({
             ...baseFile,
+            id: `${idPrefix}_screen`,
             type: 'screen',
             url: task.screenRecordURL,
             urlField: 'screenRecordURL',
@@ -344,10 +382,11 @@ const files = computed(() => {
             size: task.screenSize || 100 * 1024 * 1024,
           })
         }
-        // Check for Webcam (Fix for missing icons)
+        // Check for Webcam
         if (task.webcamRecordURL) {
           allFiles.push({
             ...baseFile,
+            id: `${idPrefix}_webcam`,
             type: 'webcam',
             url: task.webcamRecordURL,
             urlField: 'webcamRecordURL',

@@ -2,6 +2,7 @@ import TestView from '@/views/public/TestView.vue'
 import SignIn from '@/features/auth/views/SignInView.vue'
 import SignUp from '@/features/auth/views/SignUpView.vue'
 import ForgotPassword from '@/features/auth/views/ForgotPasswordView.vue'
+import VerifyEmailView from '@/features/auth/views/VerifyEmailView.vue'
 import PageNotFound from '@/shared/views/public/PageNotFoundView.vue'
 import Help from '@/shared/views/public/Help.vue'
 import TermsOfService from '@/features/legal/TermsOfService.vue'
@@ -35,6 +36,12 @@ export default [
     component: ForgotPassword,
   },
   {
+    path: '/verify-email',
+    name: 'Verify Email',
+    meta: { authorize: [], layout: 'no-toolbar' },
+    component: VerifyEmailView,
+  },
+  {
     path: '/help',
     name: 'Help',
     meta: { authorize: [] },
@@ -45,14 +52,14 @@ export default [
     name: 'AllArticles',
     meta: { authorize: [] },
     component: Help,
-    props: { showAllOnLoad: true }
-  },/*
+    props: { showAllOnLoad: true },
+  } /*
   {
     path: '/',
     name: 'Landing',
     meta: { authorize: [] },
     component: LandingPage,
-  },*/
+  },*/,
   {
     path: '/:catchAll(.*)',
     name: 'Page not Found',
