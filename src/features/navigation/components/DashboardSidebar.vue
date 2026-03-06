@@ -26,7 +26,7 @@
             :title="$t(child.title)"
             :prepend-icon="child.icon"
             :active="activeSection === item.id && activeSubSection === child.id"
-            class="subsection-item ml-4 mb-1"
+            class="subsection-item ml-1 mb-1"
             rounded="lg"
             @click="selectNavigation(item.id, child.id)"
           />
@@ -196,14 +196,19 @@ const selectNavigation = (sectionId, childId = null) => {
   padding: 0;
   opacity: 0.85;
   transition: opacity 0.2s ease-in-out;
+  --indent-padding: 8px !important;
 }
 
 .subsection-item:hover {
   opacity: 1;
 }
 
+.subsection-item :deep(.v-list-item__prepend) {
+  margin-inline-end: 6px !important;
+}
+
 .subsection-item .v-list-item__prepend .v-icon {
   font-size: 18px;
-  margin-right: 12px;
+  margin-right: 6px;
 }
 </style>
