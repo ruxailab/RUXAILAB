@@ -43,7 +43,34 @@
       "fair": "متوسط",
       "good": "جيد",
       "strong": "قوي"
-    }
+    },
+    "emailNotVerified": "البريد الإلكتروني غير مُتحقق",
+    "verificationEmailSent": "تم إرسال بريد التحقق بنجاح!",
+    "errorSendingVerification": "خطأ في إرسال بريد التحقق",
+    "verifyEmailTitle": "تحقق من بريدك الإلكتروني",
+    "verifyEmailSubtitle": "لقد أرسلنا رابط تحقق إلى بريدك الإلكتروني",
+    "emailLabel": "البريد الإلكتروني",
+    "verifyingEmail": "جاري التحقق...",
+    "emailAlreadyVerified": "هل تم التحقق من البريد الإلكتروني بالفعل؟",
+    "emailVerified": "تم التحقق من البريد الإلكتروني بنجاح!",
+    "checkEmailTitle": "تحقق من بريدك الإلكتروني",
+    "checkEmailStep1": "تحقق من صندوق الوارد للحصول على بريد تحقق",
+    "checkEmailStep2": "انقر على الرابط في البريد للتحقق من حسابك",
+    "checkEmailStep3": "عد هنا وسيتم التحقق من حسابك",
+    "checkSpamFolder": "لا ترى؟ تحقق من مجلد البريد العشوائي",
+    "resending": "جاري الإعادة...",
+    "resendEmail": "إعادة إرسال البريد",
+    "changeEmail": "تغيير البريد الإلكتروني",
+    "continueToDashboard": "المتابعة إلى لوحة التحكم",
+    "signOut": "تسجيل الخروج",
+    "newEmail": "البريد الإلكتروني الجديد",
+    "enterNewEmail": "أدخل عنوان بريدك الإلكتروني الجديد",
+    "saving": "جاري الحفظ...",
+    "errorCheckingVerification": "خطأ في فحص حالة التحقق",
+    "errorResendingEmail": "خطأ في إعادة إرسال بريد التحقق",
+    "invalidEmail": "عنوان بريد إلكتروني غير صالح",
+    "emailUpdatedVerification": "تم تحديث البريد! لقد أرسلنا رابط تحقق إلى بريدك الجديد.",
+    "errorUpdatingEmail": "خطأ في تحديث البريد الإلكتروني"
   },
   "common": {
     "enterTextHere": "أدخل النص هنا...",
@@ -112,6 +139,7 @@
     "user": "مستخدم",
     "id": "ID",
     "itemsPerPage": "عدد العناصر في الصفحة:",
+    "saving": "جاري الحفظ...",
     "visible": "مرئي"
   },
   "storage": {
@@ -1584,11 +1612,7 @@
       "SelfTest": {
         "title": "اختبار ذاتي",
         "type": "غير مشرف عليه",
-        "text": [
-          "الإجابة في وقت فراغ",
-          "تحليل متقدم للإجابات",
-          "تخصيص المهمة"
-        ]
+        "text": ["الإجابة في وقت فراغ", "تحليل متقدم للإجابات", "تخصيص المهمة"]
       },
       "LiveTest": {
         "title": "اختبار مباشر",

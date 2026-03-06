@@ -143,7 +143,7 @@ const onSignUp = async () => {
         email: email.value,
         password: password.value,
       })
-      await router.push('/admin')
+      await router.push('/verify-email')
     } catch (error) {
       return error
     } finally {
