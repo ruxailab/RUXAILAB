@@ -56,7 +56,11 @@
             :is-template="isTemplate"
             @change="change = true"
           />
-          <WeightTable v-if="index == 2" :is-template="isTemplate" />
+          <WeightTable
+            v-if="index == 2"
+            :is-template="isTemplate"
+            @change="change = true"
+          />
           <HeuristicsSettings
             v-if="showSettingsTab && index == 3"
             :is-template="isTemplate"

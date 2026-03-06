@@ -51,6 +51,7 @@
     "verifyEmailSubtitle": "Wir haben einen Bestätigungslink an Ihre E-Mail gesendet",
     "emailLabel": "E-Mail",
     "verifyingEmail": "Verifizierung...",
+    "emailAlreadyVerified": "E-Mail bereits verifiziert?",
     "emailVerified": "E-Mail erfolgreich verifiziert!",
     "checkEmailTitle": "Überprüfen Sie Ihre E-Mail",
     "checkEmailStep1": "Überprüfen Sie Ihren Posteingang auf eine Bestätigungs-E-Mail",
@@ -1241,7 +1242,8 @@
     "PreTasksStep": {
       "title": "Aufgaben",
       "heading": "Beginnen wir mit der Aufgabenphase",
-      "description": "Sie werden <strong>{numTasks}</strong> Aufgaben im Zusammenhang mit der Nutzung des Tools abschließen. Es gibt keine richtigen oder falschen Antworten: Was zählt, ist, wie Sie interagieren.",
+      "description": "Sie werden",
+      "tasksSuffix": "Aufgaben im Zusammenhang mit der Nutzung des Tools abschließen. Es gibt keine richtigen oder falschen Antworten – entscheidend ist Ihre Interaktion.",
       "instruction": "Wenn Sie bereit sind, klicken Sie auf die Schaltfläche, um zu beginnen.",
       "startButton": "Aufgaben starten",
       "recordingTitle": "Aufzeichnungsinformationen",

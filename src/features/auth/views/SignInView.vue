@@ -1,13 +1,19 @@
 <template>
   <div class="signin-wrapper">
-    <!-- LEFT: LOGO -->
     <div class="logo-side d-none d-md-flex align-center justify-center">
       <img src="@/assets/logo_full.png" alt="RUXAILAB" class="logo-img" />
     </div>
 
-    <!-- RIGHT: FORM -->
     <div class="form-side d-flex align-center justify-center">
       <div class="signin-box">
+        <div class="d-md-none text-center mb-6">
+          <img
+            src="@/assets/logo_full.png"
+            alt="RUXAILAB"
+            class="mobile-logo-img"
+          />
+        </div>
+
         <h1 class="text-h6">
           {{ $t('auth.SIGNIN.sign-in-title') }}
         </h1>
@@ -221,6 +227,11 @@ const onGoogleSignInError = (error) => {
   width: 100%;
 }
 
+.mobile-logo-img {
+  max-width: 220px;
+  width: 100%;
+}
+
 /* RIGHT SIDE FORM */
 .form-side {
   width: 50%;
@@ -250,16 +261,18 @@ const onGoogleSignInError = (error) => {
 /* RESPONSIVE ADJUSTMENTS */
 @media (max-width: 960px) {
   .logo-side {
-    display: none; /* hide logo on smaller screens */
+    display: none;
   }
 
   .form-side {
     width: 100%;
     padding: 24px;
+    align-items: center;
   }
 
   .signin-box {
     padding: 24px;
+    box-shadow: none; /* Clean for mobile view */
   }
 }
 
