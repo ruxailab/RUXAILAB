@@ -673,8 +673,11 @@ function handleIrisData(data) {
 }
 
 const openCalibration = () => {
+  const calibrationBaseUrl =
+    (process.env.VUE_APP_EYE_LAB_FRONTEND_URL || '').trim() ||
+    window.location.origin
   calibrationPopup.value = window.open(
-    `${process.env.VUE_APP_EYE_LAB_FRONTEND_URL}/calibration/camera?auth=${user.value?.id}&test=${test.value.id}`,
+    `${calibrationBaseUrl}/calibration/camera?auth=${user.value?.id}&test=${test.value.id}`,
     '_blank',
   )
   calibrationInProgress.value = true
