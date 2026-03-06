@@ -1,27 +1,28 @@
 import EmailController from '@/shared/controllers/EmailController'
-import axios from 'axios'
+import { httpsCallable } from 'firebase/functions'
 
-jest.mock('axios', () => ({
-    post: jest.fn()
+jest.mock('firebase/functions', () => ({
+    httpsCallable: jest.fn()
+}))
+
+jest.mock('@/app/plugins/firebase', () => ({
+    fbFunctions: {}
 }))
 
 describe('EmailController', () => {
     let emailController
     let consoleErrorSpy
-    const originalEnv = process.env
+    let mockSendEmailFunction
 
     beforeEach(() => {
         jest.clearAllMocks()
+        mockSendEmailFunction = jest.fn()
+        httpsCallable.mockReturnValue(mockSendEmailFunction)
         emailController = new EmailController()
-        process.env = {
-            ...originalEnv,
-            VUE_APP_CLOUD_FUNCTIONS_URL: 'https://cloud-functions.example.com'
-        }
         consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
     })
 
     afterEach(() => {
-        process.env = originalEnv
         consoleErrorSpy.mockRestore()
     })
 
@@ -32,8 +33,8 @@ describe('EmailController', () => {
     })
 
     describe('send', () => {
-        it('should call axios.post with correct URL and payload', async () => {
-            axios.post.mockResolvedValue({ data: {} })
+        it('should call httpsCallable with correct function name and payload', async () => {
+            mockSendEmailFunction.mockResolvedValue({ data: {} })
 
             const payload = {
                 to: 'test@example.com',
@@ -44,14 +45,12 @@ describe('EmailController', () => {
 
             await emailController.send(payload)
 
-            expect(axios.post).toHaveBeenCalledWith(
-                'https://cloud-functions.example.com/sendEmail',
-                { data: payload }
-            )
+            expect(httpsCallable).toHaveBeenCalledWith(expect.anything(), 'sendEmail')
+            expect(mockSendEmailFunction).toHaveBeenCalledWith(payload)
         })
 
         it('should return success response when email is sent successfully', async () => {
-            axios.post.mockResolvedValue({ data: {} })
+            mockSendEmailFunction.mockResolvedValue({ data: {} })
 
             const payload = {
                 to: 'test@example.com',
@@ -67,9 +66,9 @@ describe('EmailController', () => {
             })
         })
 
-        it('should return error response when axios fails', async () => {
+        it('should return error response when httpsCallable fails', async () => {
             const mockError = new Error('Network error')
-            axios.post.mockRejectedValue(mockError)
+            mockSendEmailFunction.mockRejectedValue(mockError)
 
             const payload = {
                 to: 'test@example.com',
@@ -87,7 +86,7 @@ describe('EmailController', () => {
 
         it('should handle server error responses', async () => {
             const mockError = new Error('Internal Server Error')
-            axios.post.mockRejectedValue(mockError)
+            mockSendEmailFunction.mockRejectedValue(mockError)
 
             const result = await emailController.send({
                 to: 'invalid@test.com',

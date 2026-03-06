@@ -43,7 +43,34 @@
       "fair": "一般",
       "good": "好",
       "strong": "强"
-    }
+    },
+    "emailNotVerified": "电子邮件未验证",
+    "verificationEmailSent": "验证电子邮件发送成功！",
+    "errorSendingVerification": "发送验证电子邮件时出错",
+    "verifyEmailTitle": "验证您的电子邮件",
+    "verifyEmailSubtitle": "我们已向您的电子邮件发送了验证链接",
+    "emailLabel": "电子邮件",
+    "verifyingEmail": "验证中...",
+    "emailAlreadyVerified": "电子邮件已经验证了吗？",
+    "emailVerified": "电子邮件验证成功！",
+    "checkEmailTitle": "检查您的电子邮件",
+    "checkEmailStep1": "检查您的收件箱以获取验证电子邮件",
+    "checkEmailStep2": "单击电子邮件中的链接以验证您的帐户",
+    "checkEmailStep3": "返回此处，您的帐户将被验证",
+    "checkSpamFolder": "没看到？检查您的垃圾邮件文件夹",
+    "resending": "重新发送中...",
+    "resendEmail": "重新发送电子邮件",
+    "changeEmail": "更改电子邮件",
+    "continueToDashboard": "继续到仪表板",
+    "signOut": "退出登录",
+    "newEmail": "新电子邮件",
+    "enterNewEmail": "输入您的新电子邮件地址",
+    "saving": "保存中...",
+    "errorCheckingVerification": "检查验证状态时出错",
+    "errorResendingEmail": "重新发送验证电子邮件时出错",
+    "invalidEmail": "无效的电子邮件地址",
+    "emailUpdatedVerification": "电子邮件已更新！我们已向您的新电子邮件发送了验证链接。",
+    "errorUpdatingEmail": "更新电子邮件时出错"
   },
   "common": {
     "enterTextHere": "在此输入文本...",
@@ -112,6 +139,7 @@
     "user": "用户",
     "id": "ID",
     "itemsPerPage": "每页项目数：",
+    "saving": "保存中...",
     "visible": "可见"
   },
   "storage": {
@@ -599,7 +627,8 @@
       "changeWeights": "请注意，更改启发式的顺序不会自动更改权重，您必须手动更改。",
       "noDescriptions": "没有可用的描述",
       "startAddingQuestions": "从此启发式添加第一个问题开始",
-      "cantDeleteAllQuestions": "抱歉，您不能从启发式中删除所有问题"
+      "cantDeleteAllQuestions": "抱歉，您不能从启发式中删除所有问题",
+      "studyHasAnswers": "This study has answers"
     },
     "validation": {
       "nameRequired": "名称是必填项",
@@ -706,7 +735,9 @@
       "options": "选项",
       "weights": "权重",
       "settings": "设置"
-    }
+    },
+    "previewPageTitle": "Preview test",
+    "previewPageSubtitle": "Review the test configuration in read-only mode"
   },
   "HeuristicsTestAnswer": {
     "titles": {
@@ -955,125 +986,6 @@
       "sart": "情境意识评估技术 - 测量情境意识"
     },
     "answerTypePreview": {
-      "noAnswer": {
-        "message": "任务完成！无需额外反馈。"
-      },
-      "textArea": {
-        "placeholder": "参与者将在此处提供反馈...",
-        "submitButton": "提交反馈"
-      },
-      "postTest": {
-        "title": "任务后问题",
-        "q1": "1. 您如何评价此任务的难度？",
-        "q2": "2. 有其他补充意见吗？",
-        "feedbackPlaceholder": "可选反馈..."
-      },
-      "postForm": {
-        "title": "外部表单",
-        "notice": "参与者将在任务后被重定向以填写外部表单。",
-        "button": "打开外部表单"
-      },
-      "nasaTlx": {
-        "title": "NASA任务负荷指数",
-        "mental": "脑力需求",
-        "physical": "体力需求",
-        "range": "低 - 高",
-        "moreDimensions": "+ 另外4个维度"
-      },
-      "sus": {
-        "title": "系统可用性量表",
-        "q1": "1. 我认为我会经常使用这个系统。",
-        "disagree": "非常不同意",
-        "agree": "非常同意",
-        "moreStatements": "+ 另外9条陈述"
-      },
-      "sart": {
-        "title": "情境感知评估技术",
-        "instability": "情境不稳定性",
-        "complexity": "情境复杂性",
-        "stable": "非常稳定",
-        "unstable": "非常不稳定",
-        "simple": "非常简单",
-        "complex": "非常复杂",
-        "moreDimensions": "+ 另外8个SART维度"
-      },
-      "tam": {
-        "tam1": "TAM-1：技术接受模型（基础）",
-        "tam2": "TAM-2：技术接受模型（扩展）",
-        "tam3": "TAM-3：技术接受模型（综合）",
-        "items2": "2个维度共10个项目",
-        "items7": "7个维度共25个项目",
-        "items13": "13个维度共39个项目",
-        "pu": "感知有用性",
-        "eu": "感知易用性",
-        "sn": "主观规范",
-        "image": "形象",
-        "jr": "工作相关性",
-        "oq": "产出质量",
-        "rd": "结果可演示性",
-        "se": "计算机自我效能感",
-        "ec": "外部控制",
-        "anxiety": "焦虑",
-        "play": "趣味性",
-        "enjoy": "愉悦感",
-        "ou": "客观可用性",
-        "q1": "1. 使用该系统能提高我的工作绩效。",
-        "q6": "6. 该系统易于使用。",
-        "likertNote": "参与者在 5 点李克特量表上对 {count} 个陈述进行评分"
-      },
-      "selectionPrompt": "选择答案类型以查看预览"
-    },
-    "advanced": {
-      "stepTitle": "步骤 3：高级选项",
-      "stepDescription": "启用额外的数据收集方法以获得更深入的见解。",
-      "eyeTrackingDesc": "追踪参与者在任务期间看向哪里。",
-      "screenRecordDesc": "记录参与者的屏幕活动。",
-      "cameraDesc": "记录参与者的面部表情和反应。",
-      "audioDesc": "记录参与者的口头反馈。",
-      "privacyNotice": "隐私声明",
-      "privacyText": "录制功能需要参与者的明确同意。",
-      "privacyItem1": "清楚地告知参与者数据收集情况",
-      "privacyItem2": "在开始测试前获得适当同意",
-      "privacyItem3": "遵守数据保护法规（GDPR 等）",
-      "privacyItem4": "安全存储和处理录制的数据"
-    },
-    "preview": {
-      "taskSummary": "任务摘要",
-      "untitledTask": "未命名任务",
-      "description": "描述：",
-      "noDescription": "未提供描述",
-      "participantTip": "参与者提示：",
-      "taskUrl": "任务 URL：",
-      "answerType": "回答类型：",
-      "recordingFeatures": "录制功能：",
-      "postTaskQuestion": "任务后问题：",
-      "postTaskForm": "任务后表单：",
-      "externalForm": "外部表单",
-      "taskReady": "任务准备就绪！",
-      "reviewRequired": "需要审核",
-      "taskReadyMessage": "您的任务已正确配置，可以在研究中使用了。",
-      "reviewRequiredMessage": "请检查之前的步骤，确保所有必填字段已填写完毕。",
-      "noTypeSelected": "未选择类型",
-      "answerTypes": {
-        "noAnswer": "无需回答",
-        "textArea": "文本区域",
-        "postTest": "测后问题",
-        "postForm": "外部表单",
-        "nasaTlx": "NASA-TLX",
-        "sus": "系统可用性量表",
-        "tam1": "TAM-1（基本）",
-        "tam2": "TAM-2（扩展）",
-        "tam3": "TAM-3（综合）",
-        "sart": "SART"
-      },
-      "recordingLabels": {
-        "eyeTracking": "眼动追踪",
-        "screenRecording": "屏幕录制",
-        "camera": "摄像头",
-        "audio": "音频"
-      }
-    },
-    "answerTypePreview": {
       "taskCompleted": "任务完成！无需额外反馈。",
       "participantsFeedbackHere": "参与者将在此处提供反馈...",
       "submitFeedback": "提交反馈",
@@ -1128,6 +1040,56 @@
       "playfulness": "趣味性",
       "enjoyment": "愉悦感",
       "objectiveUsability": "客观可用性"
+    },
+    "advanced": {
+      "stepTitle": "步骤 3：高级选项",
+      "stepDescription": "启用额外的数据收集方法以获得更深入的见解。",
+      "eyeTrackingDesc": "追踪参与者在任务期间看向哪里。",
+      "screenRecordDesc": "记录参与者的屏幕活动。",
+      "cameraDesc": "记录参与者的面部表情和反应。",
+      "audioDesc": "记录参与者的口头反馈。",
+      "privacyNotice": "隐私声明",
+      "privacyText": "录制功能需要参与者的明确同意。",
+      "privacyItem1": "清楚地告知参与者数据收集情况",
+      "privacyItem2": "在开始测试前获得适当同意",
+      "privacyItem3": "遵守数据保护法规（GDPR 等）",
+      "privacyItem4": "安全存储和处理录制的数据"
+    },
+    "preview": {
+      "taskSummary": "任务摘要",
+      "untitledTask": "未命名任务",
+      "description": "描述：",
+      "noDescription": "未提供描述",
+      "participantTip": "参与者提示：",
+      "taskUrl": "任务 URL：",
+      "answerType": "回答类型：",
+      "recordingFeatures": "录制功能：",
+      "postTaskQuestion": "任务后问题：",
+      "postTaskForm": "任务后表单：",
+      "externalForm": "外部表单",
+      "taskReady": "任务准备就绪！",
+      "reviewRequired": "需要审核",
+      "taskReadyMessage": "您的任务已正确配置，可以在研究中使用了。",
+      "reviewRequiredMessage": "请检查之前的步骤，确保所有必填字段已填写完毕。",
+      "noTypeSelected": "未选择类型",
+      "answerTypes": {
+        "noAnswer": "无需回答",
+        "textArea": "文本区域",
+        "postTest": "测后问题",
+        "postForm": "外部表单",
+        "nasaTlx": "NASA-TLX",
+        "sus": "系统可用性量表",
+        "tam1": "TAM-1（基本）",
+        "tam2": "TAM-2（扩展）",
+        "tam3": "TAM-3（综合）",
+        "sart": "SART"
+      },
+      "recordingLabels": {
+        "eyeTracking": "眼动追踪",
+        "screenRecording": "屏幕录制",
+        "camera": "摄像头",
+        "audio": "音频"
+      }
     }
   },
   "UserTestView": {
@@ -1279,7 +1241,8 @@
     "PreTasksStep": {
       "title": "任务",
       "heading": "让我们开始任务阶段",
-      "description": "您将完成与工具使用相关的<strong>{numTasks}</strong>个任务。没有正确或错误的答案：重要的是您如何互动。",
+      "description": "您将完成",
+      "tasksSuffix": "与使用该工具相关的任务。没有正确或错误的答案，重要的是您的交互方式。",
       "instruction": "当您准备好后，点击按钮开始。",
       "startButton": "开始任务",
       "recordingTitle": "录制信息",
@@ -1497,6 +1460,18 @@
         "manualAccessibility": "人工无障碍性",
         "automaticAccessibility": "自动无障碍性",
         "all": "全部"
+      },
+      "unsupportedPreviewType": "Unsupported template type for preview.",
+      "config": {
+        "title": "Template Config",
+        "ownerOnly": "Configuration editing is restricted to template owner.",
+        "version": "Version",
+        "visibility": "Visibility",
+        "owner": "Owner",
+        "public": "Public",
+        "private": "Private",
+        "saved": "Template configuration updated successfully",
+        "saveError": "Failed to update template configuration"
       }
     },
     "createTest": {
@@ -1539,7 +1514,9 @@
     "editTest": {
       "title": "编辑测试",
       "description": "自定义您的测试设置和首选项。",
-      "updatedTest": "测试更新成功"
+      "updatedTest": "测试更新成功",
+      "previewTitle": "Preview test",
+      "previewDescription": "Review the test in read-only mode."
     },
     "cooperators": {
       "invitationSent": "邀请发送成功"

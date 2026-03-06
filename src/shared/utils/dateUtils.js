@@ -1,57 +1,83 @@
+const INVALID_DATE_FALLBACK = '-'
+const DATE_ONLY_REGEX = /^\d{4}-\d{2}-\d{2}$/
+
+/**
+ * Parse Date input consistently.
+ * Handles Firestore timestamps and keeps date-only strings in local time.
+ */
+const parseDateInput = (input) => {
+  if (!input) return null
+
+  if (typeof input?.toDate === 'function') {
+    const d = input.toDate()
+    return isNaN(d.getTime()) ? null : d
+  }
+
+  if (input instanceof Date) {
+    return isNaN(input.getTime()) ? null : input
+  }
+
+  if (typeof input === 'string' && DATE_ONLY_REGEX.test(input)) {
+    const [year, month, day] = input.split('-').map(Number)
+    const d = new Date(year, month - 1, day)
+    return isNaN(d.getTime()) ? null : d
+  }
+
+  const d = new Date(input)
+  return isNaN(d.getTime()) ? null : d
+}
+
 /**
  * Formatted date to long format (e.g., "10 January 2024")
- * @param {string|Date} date - The date to format
- * @param {string} locale - The language locale (e.g., 'es', 'en', 'zh')
- * @returns {string} - Formatted date or '-' if invalid
+ * @param {string|Date|object} date - Date, string or Firestore timestamp
+ * @param {string} locale - Locale for formatting (e.g., 'en', 'pt-BR')
+ * @returns {string} - Formatted date or '-'
  */
 export const formatDateLong = (date, locale = 'en') => {
-  if (!date) return '-'
+  const normalizedLocale =
+    typeof locale === 'string' ? locale.replace('_', '-') : 'en'
 
   try {
-    const d = new Date(date)
-    if (isNaN(d.getTime())) return '-'
+    const d = parseDateInput(date)
+    if (!d) return INVALID_DATE_FALLBACK
 
-    return new Intl.DateTimeFormat(locale, {
+    return new Intl.DateTimeFormat(normalizedLocale, {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
     }).format(d)
   } catch {
-    return '-'
+    return INVALID_DATE_FALLBACK
   }
 }
 
 /**
- * Formatea una fecha al formato corto "15/08/2024"
- * @param {string|Date} date - La fecha a formatear
- * @param {string} locale - El locale para el formato
- * @returns {string} - Fecha formateada o '-' si no hay fecha
+ * Format date in short format.
+ * @param {string|Date|object} date - Date, string or Firestore timestamp
+ * @param {string} locale - Locale for formatting
+ * @returns {string} - Formatted date or '-'
  */
 export const formatDateShort = (date, locale = 'en-GB') => {
-  if (!date) return '-'
-
   try {
-    const d = new Date(date)
-    if (isNaN(d.getTime())) return '-'
+    const d = parseDateInput(date)
+    if (!d) return INVALID_DATE_FALLBACK
 
     return d.toLocaleDateString(locale)
-  } catch (error) {
-    return error
+  } catch {
+    return INVALID_DATE_FALLBACK
   }
 }
 
 /**
- * Formatea una fecha con hora completa
- * @param {string|Date} date - La fecha a formatear
- * @param {string} locale - El locale para el formato
- * @returns {string} - Fecha y hora formateada
+ * Format date and time.
+ * @param {string|Date|object} date - Date, string or Firestore timestamp
+ * @param {string} locale - Locale for formatting
+ * @returns {string} - Formatted date-time or '-'
  */
-export const formatDateTime = (date, locale = 'es-ES') => {
-  if (!date) return '-'
-
+export const formatDateTime = (date, locale = 'en') => {
   try {
-    const d = new Date(date)
-    if (isNaN(d.getTime())) return '-'
+    const d = parseDateInput(date)
+    if (!d) return INVALID_DATE_FALLBACK
 
     return d.toLocaleString(locale, {
       day: 'numeric',
@@ -61,91 +87,83 @@ export const formatDateTime = (date, locale = 'es-ES') => {
       minute: '2-digit',
     })
   } catch {
-    return '-'
+    return INVALID_DATE_FALLBACK
   }
 }
 
 /**
- * Calcula el tiempo relativo (hace 2 días, hace 1 semana, etc.)
- * @param {string|Date} date - La fecha a comparar
- * @returns {string} - Tiempo relativo
+ * Format relative time with Intl.RelativeTimeFormat.
+ * @param {string|Date|object} date - Date, string or Firestore timestamp
+ * @param {string} locale - Locale for formatting
+ * @returns {string} - Relative time or '-'
  */
-export const formatRelativeTime = (date) => {
-  if (!date) return '-'
-
+export const formatRelativeTime = (date, locale = 'en') => {
   try {
-    const d = new Date(date)
-    if (isNaN(d.getTime())) return '-'
+    const d = parseDateInput(date)
+    if (!d) return INVALID_DATE_FALLBACK
 
     const now = new Date()
-    const diffMs = now - d
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+    const diffInSeconds = Math.floor((d.getTime() - now.getTime()) / 1000)
+    const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' })
 
-    if (diffDays === 0) return 'Hoy'
-    if (diffDays === 1) return 'Ayer'
-    if (diffDays < 7) return `Hace ${diffDays} días`
-    if (diffDays < 30) return `Hace ${Math.floor(diffDays / 7)} semanas`
-    if (diffDays < 365) return `Hace ${Math.floor(diffDays / 30)} meses`
+    const divisions = [
+      { amount: 60, unit: 'second' },
+      { amount: 60, unit: 'minute' },
+      { amount: 24, unit: 'hour' },
+      { amount: 7, unit: 'day' },
+      { amount: 4.34524, unit: 'week' },
+      { amount: 12, unit: 'month' },
+      { amount: Infinity, unit: 'year' },
+    ]
 
-    return `Hace ${Math.floor(diffDays / 365)} años`
+    let duration = diffInSeconds
+
+    for (let i = 0; i < divisions.length; i += 1) {
+      if (Math.abs(duration) < divisions[i].amount) {
+        return rtf.format(Math.round(duration), divisions[i].unit)
+      }
+      duration /= divisions[i].amount
+    }
+
+    return INVALID_DATE_FALLBACK
   } catch {
-    return '-'
+    return INVALID_DATE_FALLBACK
   }
 }
 
 /**
- * Format date for general use (used by many components)
- * @param {string|Date|object} timestamp - Date to format (can be Date, string, or Firestore timestamp)
- * @returns {string} - Formatted date string
+ * Format date as DD/MM/YYYY.
+ * @param {string|Date|object} timestamp - Date, string or Firestore timestamp
+ * @returns {string} - Formatted date or '-'
  */
 export const formatDate = (timestamp) => {
-  if (!timestamp) return ''
-
   try {
-    let date
+    const date = parseDateInput(timestamp)
+    if (!date) return INVALID_DATE_FALLBACK
 
-    // Handle Firestore timestamp objects
-    if (timestamp && typeof timestamp.toDate === 'function') {
-      date = timestamp.toDate()
-    } else {
-      date = new Date(timestamp)
-    }
-
-    if (isNaN(date.getTime())) return ''
-
-    const day = date.getDate()
-    const month = date.getMonth() + 1
+    const day = String(date.getDate()).padStart(2, '0')
+    const month = String(date.getMonth() + 1).padStart(2, '0')
     const year = date.getFullYear()
     return `${day}/${month}/${year}`
   } catch {
-    return ''
+    return INVALID_DATE_FALLBACK
   }
 }
 
 /**
- * Format time from timestamp
- * @param {string|Date|object} timestamp - Date to format
- * @returns {string} - Formatted time string (HH:MM)
+ * Format time as HH:MM.
+ * @param {string|Date|object} timestamp - Date, string or Firestore timestamp
+ * @returns {string} - Formatted time or '-'
  */
 export const formatTime = (timestamp) => {
-  if (!timestamp) return ''
-
   try {
-    let date
+    const date = parseDateInput(timestamp)
+    if (!date) return INVALID_DATE_FALLBACK
 
-    // Handle Firestore timestamp objects
-    if (timestamp && typeof timestamp.toDate === 'function') {
-      date = timestamp.toDate()
-    } else {
-      date = new Date(timestamp)
-    }
-
-    if (isNaN(date.getTime())) return ''
-
-    const hours = date.getHours()
-    const minutes = date.getMinutes()
-    return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`
+    const hours = String(date.getHours()).padStart(2, '0')
+    const minutes = String(date.getMinutes()).padStart(2, '0')
+    return `${hours}:${minutes}`
   } catch {
-    return ''
+    return INVALID_DATE_FALLBACK
   }
 }

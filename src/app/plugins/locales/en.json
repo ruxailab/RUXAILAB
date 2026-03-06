@@ -37,6 +37,33 @@
     },
     "passwordStrength": "Password Strength",
     "number": "Number",
+    "verifyEmailTitle": "Verify Your Email",
+    "verifyEmailSubtitle": "We've sent a verification link to your email",
+    "emailLabel": "Email",
+    "verifyingEmail": "Verifying...",
+    "emailAlreadyVerified": "Email already verified?",
+    "checkEmailTitle": "Check Your Email",
+    "checkEmailStep1": "Check your inbox for a verification email",
+    "checkEmailStep2": "Click the link in the email to verify your account",
+    "checkEmailStep3": "Return here and your account will be verified",
+    "checkSpamFolder": "Don't see it? Check your spam folder",
+    "resendEmail": "Resend Email",
+    "resending": "Resending...",
+    "changeEmail": "Change Email",
+    "signOut": "Sign Out",
+    "emailVerified": "Email verified successfully!",
+    "continueToDashboard": "Continue to Dashboard",
+    "newEmail": "New Email",
+    "enterNewEmail": "Enter your new email address",
+    "emailUpdatedVerification": "Email updated! We've sent a verification link to your new email.",
+    "verificationEmailSent": "Verification email sent successfully!",
+    "errorCheckingVerification": "Error checking verification status",
+    "errorResendingEmail": "Error resending verification email",
+    "errorUpdatingEmail": "Error updating email",
+    "success": "Success",
+    "invalidEmail": "Invalid email address",
+    "emailNotVerified": "Email not verified",
+    "errorSendingVerification": "Error sending verification email",
     "strength": {
       "veryWeak": "Very Weak",
       "weak": "Weak",
@@ -71,6 +98,7 @@
     "text": "Text",
     "value": "Value",
     "save": "Save",
+    "saving": "Saving...",
     "editDelete": "Edit/Delete",
     "type": "Type",
     "noNotifications": "You don't have notifications yet",
@@ -612,7 +640,8 @@
       "changeWeights": "Be aware that by changing the order of the heuristics, the weights DO NOT change automatically, you must change them manually.",
       "noDescriptions": "No descriptions available",
       "startAddingQuestions": "Start by adding your first question to this heuristic",
-      "cantDeleteAllQuestions": "Sorry, you cannot delete all questions from a heuristic"
+      "cantDeleteAllQuestions": "Sorry, you cannot delete all questions from a heuristic",
+      "studyHasAnswers": "This study has answers"
     },
     "validation": {
       "nameRequired": "Name is mandatory",
@@ -719,7 +748,9 @@
       "options": "Options",
       "weights": "Weights",
       "settings": "Settings"
-    }
+    },
+    "previewPageTitle": "Preview test",
+    "previewPageSubtitle": "Review the test configuration in read-only mode"
   },
   "HeuristicsTestAnswer": {
     "titles": {
@@ -969,125 +1000,6 @@
       "sart": "Situation Awareness Rating Technique - measures situational awareness"
     },
     "answerTypePreview": {
-      "noAnswer": {
-        "message": "Task completed! No additional feedback required."
-      },
-      "textArea": {
-        "placeholder": "Participants will provide their feedback here...",
-        "submitButton": "Submit Feedback"
-      },
-      "postTest": {
-        "title": "Post-Task Questions",
-        "q1": "1. How would you rate the difficulty of this task?",
-        "q2": "2. Any additional comments?",
-        "feedbackPlaceholder": "Optional feedback..."
-      },
-      "postForm": {
-        "title": "External Form",
-        "notice": "Participants will be redirected to complete an external form after the task.",
-        "button": "Open External Form"
-      },
-      "nasaTlx": {
-        "title": "NASA Task Load Index",
-        "mental": "Mental Demand",
-        "physical": "Physical Demand",
-        "range": "Low - High",
-        "moreDimensions": "+ 4 more dimensions"
-      },
-      "sus": {
-        "title": "System Usability Scale",
-        "q1": "1. I think that I would like to use this system frequently.",
-        "disagree": "Strongly Disagree",
-        "agree": "Strongly Agree",
-        "moreStatements": "+ 9 more statements"
-      },
-      "sart": {
-        "title": "Situation Awareness Rating Technique",
-        "instability": "Instability of Situation",
-        "complexity": "Complexity of Situation",
-        "stable": "Very Stable",
-        "unstable": "Very Unstable",
-        "simple": "Very Simple",
-        "complex": "Very Complex",
-        "moreDimensions": "+ 8 more SART dimensions"
-      },
-      "tam": {
-        "tam1": "TAM-1: Technology Acceptance Model (Basic)",
-        "tam2": "TAM-2: Technology Acceptance Model (Extended)",
-        "tam3": "TAM-3: Technology Acceptance Model (Comprehensive)",
-        "items2": "10 items across 2 dimensions",
-        "items7": "25 items across 7 dimensions",
-        "items13": "39 items across 13 dimensions",
-        "pu": "Perceived Usefulness",
-        "eu": "Perceived Ease of Use",
-        "sn": "Subjective Norm",
-        "image": "Image",
-        "jr": "Job Relevance",
-        "oq": "Output Quality",
-        "rd": "Result Demonstrability",
-        "se": "Computer Self-Efficacy",
-        "ec": "External Control",
-        "anxiety": "Anxiety",
-        "play": "Playfulness",
-        "enjoy": "Enjoyment",
-        "ou": "Objective Usability",
-        "q1": "1. Using the system improves my job performance.",
-        "q6": "6. The system is easy to use.",
-        "likertNote": "Participants rate {count} statements on a 5-point Likert scale"
-      },
-      "selectionPrompt": "Select an answer type to see preview"
-    },
-    "advanced": {
-      "stepTitle": "Step 3: Advanced Options",
-      "stepDescription": "Enable additional data collection methods to gather deeper insights. All options are optional but can provide valuable behavioral data and user feedback.",
-      "eyeTrackingDesc": "Track where participants look during the task. Provides heatmaps and gaze patterns to understand visual attention and navigation behavior.",
-      "screenRecordDesc": "Record the participant's screen activity. Captures clicks, scrolling, and interactions to analyze user behavior and identify pain points.",
-      "cameraDesc": "Record participant's facial expressions and reactions. Captures emotions, confusion, and satisfaction to understand user experience beyond interactions.",
-      "audioDesc": "Record participant's verbal feedback and comments. Captures think-aloud protocols, frustrations, and insights that reveal thought processes.",
-      "privacyNotice": "Privacy Notice",
-      "privacyText": "Recording features require explicit consent from participants. Make sure to:",
-      "privacyItem1": "Clearly inform participants about data collection",
-      "privacyItem2": "Obtain proper consent before starting the test",
-      "privacyItem3": "Follow data protection regulations (GDPR, etc.)",
-      "privacyItem4": "Secure storage and handling of recorded data"
-    },
-    "preview": {
-      "taskSummary": "Task Summary",
-      "untitledTask": "Untitled Task",
-      "description": "Description:",
-      "noDescription": "No description provided",
-      "participantTip": "Participant Tip:",
-      "taskUrl": "Task URL:",
-      "answerType": "Answer Type:",
-      "recordingFeatures": "Recording Features:",
-      "postTaskQuestion": "Post-Task Question:",
-      "postTaskForm": "Post-Task Form:",
-      "externalForm": "External Form",
-      "taskReady": "Task Ready!",
-      "reviewRequired": "Review Required",
-      "taskReadyMessage": "Your task is properly configured and ready to be used in your study.",
-      "reviewRequiredMessage": "Please review the previous steps to ensure all required fields are completed.",
-      "noTypeSelected": "No Type Selected",
-      "answerTypes": {
-        "noAnswer": "No Answer Required",
-        "textArea": "Text Area",
-        "postTest": "Post-Test Questions",
-        "postForm": "External Form",
-        "nasaTlx": "NASA-TLX",
-        "sus": "System Usability Scale",
-        "tam1": "TAM-1 (Basic)",
-        "tam2": "TAM-2 (Extended)",
-        "tam3": "TAM-3 (Comprehensive)",
-        "sart": "SART"
-      },
-      "recordingLabels": {
-        "eyeTracking": "Eye Tracking",
-        "screenRecording": "Screen Recording",
-        "camera": "Camera",
-        "audio": "Audio"
-      }
-    },
-    "answerTypePreview": {
       "taskCompleted": "Task completed! No additional feedback required.",
       "participantsFeedbackHere": "Participants will provide their feedback here...",
       "submitFeedback": "Submit Feedback",
@@ -1142,6 +1054,56 @@
       "playfulness": "Playfulness",
       "enjoyment": "Enjoyment",
       "objectiveUsability": "Objective Usability"
+    },
+    "advanced": {
+      "stepTitle": "Step 3: Advanced Options",
+      "stepDescription": "Enable additional data collection methods to gather deeper insights. All options are optional but can provide valuable behavioral data and user feedback.",
+      "eyeTrackingDesc": "Track where participants look during the task. Provides heatmaps and gaze patterns to understand visual attention and navigation behavior.",
+      "screenRecordDesc": "Record the participant's screen activity. Captures clicks, scrolling, and interactions to analyze user behavior and identify pain points.",
+      "cameraDesc": "Record participant's facial expressions and reactions. Captures emotions, confusion, and satisfaction to understand user experience beyond interactions.",
+      "audioDesc": "Record participant's verbal feedback and comments. Captures think-aloud protocols, frustrations, and insights that reveal thought processes.",
+      "privacyNotice": "Privacy Notice",
+      "privacyText": "Recording features require explicit consent from participants. Make sure to:",
+      "privacyItem1": "Clearly inform participants about data collection",
+      "privacyItem2": "Obtain proper consent before starting the test",
+      "privacyItem3": "Follow data protection regulations (GDPR, etc.)",
+      "privacyItem4": "Secure storage and handling of recorded data"
+    },
+    "preview": {
+      "taskSummary": "Task Summary",
+      "untitledTask": "Untitled Task",
+      "description": "Description:",
+      "noDescription": "No description provided",
+      "participantTip": "Participant Tip:",
+      "taskUrl": "Task URL:",
+      "answerType": "Answer Type:",
+      "recordingFeatures": "Recording Features:",
+      "postTaskQuestion": "Post-Task Question:",
+      "postTaskForm": "Post-Task Form:",
+      "externalForm": "External Form",
+      "taskReady": "Task Ready!",
+      "reviewRequired": "Review Required",
+      "taskReadyMessage": "Your task is properly configured and ready to be used in your study.",
+      "reviewRequiredMessage": "Please review the previous steps to ensure all required fields are completed.",
+      "noTypeSelected": "No Type Selected",
+      "answerTypes": {
+        "noAnswer": "No Answer Required",
+        "textArea": "Text Area",
+        "postTest": "Post-Test Questions",
+        "postForm": "External Form",
+        "nasaTlx": "NASA-TLX",
+        "sus": "System Usability Scale",
+        "tam1": "TAM-1 (Basic)",
+        "tam2": "TAM-2 (Extended)",
+        "tam3": "TAM-3 (Comprehensive)",
+        "sart": "SART"
+      },
+      "recordingLabels": {
+        "eyeTracking": "Eye Tracking",
+        "screenRecording": "Screen Recording",
+        "camera": "Camera",
+        "audio": "Audio"
+      }
     }
   },
   "UserTestView": {
@@ -1294,7 +1256,8 @@
     "PreTasksStep": {
       "title": "Tasks",
       "heading": "Let's begin the tasks phase",
-      "description": "You are going to complete <strong>{numTasks}</strong> tasks related to using the tool. There are no correct or incorrect answers: what matters is how you interact.",
+      "description": "You are going to complete",
+      "tasksSuffix": "tasks related to using the tool. There are no correct or incorrect answers: what matters is how you interact.",
       "instruction": "When you are ready, click the button to begin.",
       "startButton": "Start tasks",
       "recordingTitle": "Recording Information",
@@ -1512,6 +1475,18 @@
         "userModerated": "User Moderated",
         "manualAccessibility": "Manual Accessibility",
         "automaticAccessibility": "Automatic Accessibility"
+      },
+      "unsupportedPreviewType": "Unsupported template type for preview.",
+      "config": {
+        "title": "Template Config",
+        "ownerOnly": "Configuration editing is restricted to template owner.",
+        "version": "Version",
+        "visibility": "Visibility",
+        "owner": "Owner",
+        "public": "Public",
+        "private": "Private",
+        "saved": "Template configuration updated successfully",
+        "saveError": "Failed to update template configuration"
       }
     },
     "createTest": {
@@ -1554,7 +1529,9 @@
     "editTest": {
       "title": "Edit test",
       "description": "Customize the settings and preferences of your test.",
-      "updatedTest": "Test updated successfully"
+      "updatedTest": "Test updated successfully",
+      "previewTitle": "Preview test",
+      "previewDescription": "Review the test in read-only mode."
     },
     "cooperators": {
       "invitationSent": "Invitation sent successfully"
