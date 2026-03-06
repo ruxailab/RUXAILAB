@@ -59,10 +59,10 @@ export default class StudyController extends Controller {
           promises.push(
             userController.removeTestFromUser(cooperator.userDocId, payload.id),
           )
-          promises.push(
-            userController.removeNotificationsForTest(payload.id, cooperators),
-          )
         }
+        promises.push(
+          userController.removeNotificationsForTest(payload.id, cooperators),
+        )
         await Promise.all(promises)
       }
       await super.update('users', payload.testAdmin.userDocId, payload.auxUser)
