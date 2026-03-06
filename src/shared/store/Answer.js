@@ -158,6 +158,16 @@ export default {
 
       return {}
     },
+    allAnswersList(state) {
+      const doc = state.testAnswerDocument
+      if (!doc?.taskAnswers) return []
+      return Object.values(doc.taskAnswers).filter(
+        (answer) =>
+          typeof answer === 'object' &&
+          answer !== null &&
+          answer.hidden !== true,
+      )
+    },
   },
   mutations: {
     SET_ANSWER_DOCUMENT(state, payload) {

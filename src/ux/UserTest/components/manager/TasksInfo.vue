@@ -120,6 +120,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useStore } from 'vuex'
 
 const props = defineProps({
   test: {
@@ -129,64 +130,53 @@ const props = defineProps({
 })
 
 const router = useRouter()
+const store = useStore()
 const { t } = useI18n()
 
 const userTasks = computed(() => props.test?.testStructure?.userTasks || [])
 const hasUserTasks = computed(() => userTasks.value.length > 0)
 const totalTasks = computed(() => userTasks.value.length)
 
-const answers = computed(() => {
-  const testAnswers = props.test?.answers || []
-  return Array.isArray(testAnswers) ? testAnswers : Object.values(testAnswers)
-})
+// Read answers from the centralized Answer Vuex store getter
+const answers = computed(() => store.getters.allAnswersList)
 
 const overallCompletionRate = computed(() => {
   if (!hasUserTasks.value || answers.value.length === 0) return 0
 
-  let totalAttempts = 0
-  let completedAttempts = 0
+  let completedTasks = 0
+  let totalTasks = 0
 
   answers.value.forEach((answer) => {
-    const tasks = Array.isArray(answer.tasks)
-      ? answer.tasks
-      : Object.values(answer.tasks || {})
-    tasks.forEach((task) => {
-      if (task.attempted) {
-        totalAttempts++
-        if (task.completed) {
-          completedAttempts++
-        }
+    totalTasks += Object.keys(answer.tasks || {}).length
+    Object.values(answer.tasks || {}).forEach((task) => {
+      if (task.completed) {
+        completedTasks++
       }
     })
   })
 
-  return totalAttempts > 0
-    ? Math.round((completedAttempts / totalAttempts) * 100)
+  return totalTasks > 0
+    ? Math.round((completedTasks / totalTasks) * 100)
     : 0
 })
 
 const taskSuccessRate = computed(() => {
   if (!hasUserTasks.value || answers.value.length === 0) return 0
 
-  let totalCompleted = 0
-  let successfullyCompleted = 0
+  let successfulTasks = 0
+  let totalTasks = 0
 
   answers.value.forEach((answer) => {
-    const tasks = Array.isArray(answer.tasks)
-      ? answer.tasks
-      : Object.values(answer.tasks || {})
-    tasks.forEach((task) => {
-      if (task.attempted) {
-        totalCompleted++
-        if (task.completed === true) {
-          successfullyCompleted++
-        }
+    Object.values(answer.tasks || {}).forEach((task) => {
+      totalTasks++
+      if (task.completed && task.success !== false) {
+        successfulTasks++
       }
     })
   })
 
-  return totalCompleted > 0
-    ? Math.round((successfullyCompleted / totalCompleted) * 100)
+  return totalTasks > 0
+    ? Math.round((successfulTasks / totalTasks) * 100)
     : 0
 })
 
@@ -197,20 +187,17 @@ const averageTaskDuration = computed(() => {
   let taskCount = 0
 
   answers.value.forEach((answer) => {
-    const tasks = Array.isArray(answer.tasks)
-      ? answer.tasks
-      : Object.values(answer.tasks || {})
-    tasks.forEach((task) => {
-      if (task.taskTime && task.attempted) {
-        totalTime += task.taskTime
-        taskCount++
-      }
+    Object.values(answer.tasks || {}).forEach((task) => {
+      totalTime += task.taskTime || 0
+      taskCount++
     })
   })
 
   if (taskCount === 0) return '0 min'
 
   const avgMs = totalTime / taskCount
+  const avgSeconds = Math.round(avgMs / 1000)
+  if (avgSeconds < 60) return `${avgSeconds} sec`
   const avgMinutes = Math.round(avgMs / 1000 / 60)
   return `${avgMinutes} min`
 })
