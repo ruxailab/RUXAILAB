@@ -25,7 +25,7 @@
             class="mb-7"
           />
 
-          <div class="question-shell mx-auto mb-8">
+          <div v-if="currentItem" class="question-shell mx-auto mb-8">
             <h2
               class="text-h5 text-sm-h4 font-weight-bold text-secondary text-center mb-3"
             >
@@ -154,11 +154,6 @@ watch(
   },
   { deep: true },
 )
-
-// function updateAnswer(index, value) {
-//   localAnswers.value[index].answer = value;
-//   emit("update:preTestAnswer", localAnswers.value);
-// }
 </script>
 
 <style scoped>
