@@ -3,7 +3,7 @@ const { test, expect } = require('@playwright/test');
 
 // 🔄 Reusable login function
 const logIn = async (page, email, password) => {
-  await page.goto('http://localhost:8080/signin');
+  await page.goto('/signin');
   await page.getByLabel('Email').fill(email);
   await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByTestId('sign-in-button').click();
@@ -22,7 +22,7 @@ test.describe('Sign In Workflow', () => {
     try {
       // 1. Initial access to Sign In page
       await test.step('Navigate to Sign In page', async () => {
-        await page.goto('http://localhost:8080/signin', { waitUntil: 'networkidle' });
+        await page.goto('/signin', { waitUntil: 'networkidle' });
         await expect(page.locator('#app')).toBeVisible();
         await expect(page).toHaveTitle(/RUXAILAB/);
       });
@@ -82,7 +82,7 @@ test.describe('Sign In Workflow', () => {
 
   test('Password recovery only sends reset request', async ({ page }) => {
     // 1) Go to Sign In page
-    await page.goto('http://localhost:8080/signin', { waitUntil: 'networkidle' });
+    await page.goto('/signin', { waitUntil: 'networkidle' });
     await expect(page.locator('#app')).toBeVisible();
 
     // 2) Click "Forgot Password" link (exact text from UI)
@@ -116,7 +116,7 @@ test.describe('Sign In Workflow', () => {
 
   test('Validates password strength requirements during sign in', async ({ page }) => {
     await test.step('Navigate to Sign In page', async () => {
-      await page.goto('http://localhost:8080/signin', { waitUntil: 'networkidle' });
+      await page.goto('/signin', { waitUntil: 'networkidle' });
       await expect(page.locator('#app')).toBeVisible();
     });
 

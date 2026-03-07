@@ -55,7 +55,7 @@ test.describe('Link Page Tests', () => {
     try {
 
       await test.step('Navigate to signin page', async () => {
-        await page.goto('http://localhost:8080/signin', {
+        await page.goto('/signin', {
           waitUntil: 'networkidle',
           timeout: 45000
         });

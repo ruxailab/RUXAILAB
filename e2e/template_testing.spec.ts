@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('should create a template and verify it appears in the list', async ({ page }) => {
-  await page.goto('http://localhost:8080/');
+  await page.goto('/');
   await page.getByRole('button', { name: 'Sign in' }).click();
   await page.getByLabel('Email').fill('dfa@dfa.com');
   await page.getByLabel('Password', { exact: true }).fill('Password@123');
@@ -27,7 +27,7 @@ test('should create a template and verify it appears in the list', async ({ page
 });
 
 test('should show error when creating a template with duplicate name', async ({ page }) => {
-  await page.goto('http://localhost:8080/');
+  await page.goto('/');
   await page.getByRole('button', { name: 'Sign in' }).click();
   await page.getByLabel('Email').fill('dfa@dfa.com');
   await page.getByLabel('Password', { exact: true }).fill('Password@123');
@@ -46,7 +46,7 @@ test('should show error when creating a template with duplicate name', async ({ 
 });
 
 test('should validate required fields when creating a template', async ({ page }) => {
-  await page.goto('http://localhost:8080/');
+  await page.goto('/');
   await page.getByRole('button', { name: 'Sign in' }).click();
   await page.getByLabel('Email').fill('dfa@dfa.com');
   await page.getByLabel('Password', { exact: true }).fill('Password@123');
@@ -64,7 +64,7 @@ test('should validate required fields when creating a template', async ({ page }
 });
 
 test('should filter templates by name', async ({ page }) => {
-  await page.goto('http://localhost:8080/');
+  await page.goto('/');
   await page.getByRole('button', { name: 'Sign in' }).click();
   await page.getByLabel('Email').fill('dfa@dfa.com');
   await page.getByLabel('Password', { exact: true }).fill('Password@123');
@@ -77,7 +77,7 @@ test('should filter templates by name', async ({ page }) => {
 });
 
 test('should not allow saving template with empty description', async ({ page }) => {
-  await page.goto('http://localhost:8080/');
+  await page.goto('/');
   await page.getByRole('button', { name: 'Sign in' }).click();
   await page.getByLabel('Email').fill('dfa@dfa.com');
   await page.getByLabel('Password', { exact: true }).fill('Password@123');

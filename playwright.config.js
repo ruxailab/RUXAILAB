@@ -1,8 +1,6 @@
 // @ts-check
 const { defineConfig, devices } = require('@playwright/test');
 
-const devBaseUrl = 'http://localhost:8080';
-
 module.exports = defineConfig({
   testDir: './e2e',
   /* Run tests in files in parallel */
@@ -24,7 +22,7 @@ module.exports = defineConfig({
   outputDir: './playwright/output',
 
   use: {
-    baseURL: devBaseUrl,
+    baseURL: process.env.BASE_URL || 'http://localhost:8080',
     ...devices['Desktop Chrome'],
     /* Collect trace when retrying the failed test */
     trace: 'on-first-retry',

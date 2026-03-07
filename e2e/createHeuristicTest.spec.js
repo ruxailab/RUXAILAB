@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 // --- Reusable login function ---
 const logIn = async (page) => {
   await test.step('Navigate to signin page', async () => {
-    await page.goto('http://localhost:8080/signin', { waitUntil: 'networkidle' });
+    await page.goto('/signin', { waitUntil: 'networkidle' });
   });
 
   await test.step('Fill login credentials', async () => {
