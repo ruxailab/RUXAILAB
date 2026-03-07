@@ -68,8 +68,6 @@ export default {
 
         await authController.deleteUserData(user.id)
         commit('REMOVE_USER', user.id)
-      } catch (e) {
-        throw e
       } finally {
         commit('setLoading', false)
       }

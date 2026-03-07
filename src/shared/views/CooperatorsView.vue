@@ -249,15 +249,11 @@ const sendNotification = async ({
     accessLevel,
   })
 
-  try {
-    await store.dispatch('addNotification', {
-      userId,
-      notification,
-    })
-    return true
-  } catch (error) {
-    throw error
-  }
+  await store.dispatch('addNotification', {
+    userId,
+    notification,
+  })
+  return true
 }
 
 let showIntroComponent = ref(true)

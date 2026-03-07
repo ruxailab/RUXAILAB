@@ -797,18 +797,14 @@ const attachMediaToTasks = (answer, mediaUrls) => {
     for (const type in medias) {
       if (type === 'sizes') {
         const sizes = medias[type]
-        console.log(`Found sizes for Task ${taskIndex}:`, sizes)
         if (sizes.screenRecordURL) {
           task.screenSize = sizes.screenRecordURL
-          console.log('Set screenSize:', task.screenSize)
         }
         if (sizes.audioRecordURL) {
           task.audioSize = sizes.audioRecordURL
-          console.log('Set audioSize:', task.audioSize)
         }
         if (sizes.webcamRecordURL) {
           task.webcamSize = sizes.webcamRecordURL
-          console.log('Set webcamSize:', task.webcamSize)
         }
         continue
       }
@@ -961,7 +957,6 @@ const completeStep = (id, type, userCompleted = true) => {
         if (allTasksCompleted.value) {
           taskIndex.value = id + 1 // to help saving methods
           globalIndex.value = hasEyeTracking.value ? 6 : 5 // PostTest
-        } else {
         }
       }
       //TODO: Show proper toast not the following one

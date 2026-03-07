@@ -410,7 +410,7 @@ const tasksArray = computed(() => {
       }))
   })
 })
-console.log(tasksArray.value)
+
 const analytics = computed(() => {
     const scores = tasksArray.value.map(r => r.susScore)
     return {

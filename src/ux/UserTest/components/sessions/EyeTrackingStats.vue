@@ -217,8 +217,6 @@ watch(selectedView, (value) => emit('view-changed', value))
 
 onMounted(async () => {
   try {
-    console.log(calibrationConfig)
-
     const res = await axios.post(
       process.env.VUE_APP_EYE_LAB_BACKEND_URL + '/api/session/batch_predict',
       {

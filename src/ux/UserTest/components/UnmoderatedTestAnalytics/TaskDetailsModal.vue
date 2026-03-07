@@ -417,14 +417,6 @@ const formatDuration = (duration) => {
   if (totalSeconds < 60) return `${totalSeconds}s`
   return `${minutes}m ${seconds}s`
 }
-
-watch(
-  () => props.userSession,
-  (newValue) => {
-    console.log('userSession updated:', newValue)
-  },
-  { immediate: true }, // also logs on first load
-)
 </script>
 
 <style scoped>

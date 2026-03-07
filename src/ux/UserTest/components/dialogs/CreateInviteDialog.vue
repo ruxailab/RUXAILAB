@@ -553,12 +553,6 @@ const saveInvitation = async () => {
 
     // Construct datetime string with proper validation
     const dateTimeString = `${dateValue}T${timeValue}:00`
-    console.log('Constructing datetime from:', {
-      originalDate: date.value,
-      formattedDate: dateValue,
-      hour: hour.value,
-      dateTimeString,
-    })
 
     const dateTime = new Date(dateTimeString)
 

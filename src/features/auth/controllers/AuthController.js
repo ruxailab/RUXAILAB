@@ -141,13 +141,9 @@ export default class AuthController {
   }
 
   async deleteUserData(userId) {
-    try {
-      await axios.post(
-        process.env.VUE_APP_CLOUD_FUNCTIONS_URL + '/deleteAuth',
-        { data: { userId } },
-      )
-    } catch (err) {
-      throw err
-    }
+    await axios.post(
+      process.env.VUE_APP_CLOUD_FUNCTIONS_URL + '/deleteAuth',
+      { data: { userId } },
+    )
   }
 }

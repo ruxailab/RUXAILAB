@@ -229,8 +229,6 @@ export default {
         // Store handles state management
         await authController.signOut()
         commit('SET_USER', null)
-      } catch (err) {
-        throw err
       } finally {
         commit('setLoading', false)
       }

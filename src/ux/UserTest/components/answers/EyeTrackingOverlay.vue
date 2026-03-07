@@ -137,13 +137,6 @@ async function resizeCanvas() {
 
   ctx.imageSmoothingEnabled = true
   ctx.imageSmoothingQuality = 'high'
-  console.log(
-    dpr,
-    rect.width,
-    rect.height,
-    canvas.value.width,
-    canvas.value.height,
-  )
 }
 
 onMounted(() => {
@@ -163,8 +156,6 @@ watch(
   (val) => {
     if (!val?.length) return
 
-    console.log('[Overlay] typeof:', typeof val, 'Array?', Array.isArray(val))
-
     const t0 = val[0].timestamp // timestamp inicial absoluto
     normalized = val.map((p) => ({
       x: (p.predicted_x ?? p.x) / (p.screen_width || 1),
@@ -173,12 +164,6 @@ watch(
     }))
 
     heatmapData = []
-    console.log(
-      '[Overlay] Normalização concluída:',
-      normalized.length,
-      'pontos. Último t =',
-      normalized.at(-1)?.t,
-    )
   },
   { immediate: true },
 )
@@ -202,29 +187,7 @@ watch(
     const nextIdx = normalized.findIndex((p) => p.t > currentMs)
     i = nextIdx === -1 ? normalized.length - 1 : Math.max(0, nextIdx - 1)
 
-    console.log(
-      '[Overlay] currentTime →',
-      time.toFixed(2),
-      's | currentMs =',
-      currentMs,
-      '| index =',
-      i,
-    )
-
-    // Loga o timestamp real do ponto
-    const currentPoint = props.predictedData[i]
-    if (currentPoint) {
-      console.log('[Overlay] ponto atual:', {
-        timestamp: currentPoint.timestamp,
-        x: currentPoint.predicted_x,
-        y: currentPoint.predicted_y,
-      })
-    } else {
-      console.warn('[Overlay] Nenhum ponto encontrado pra esse tempo!')
-    }
-
     const visiblePoints = normalized.slice(0, i + 1)
-    console.log('[Overlay] total de pontos desenhados:', visiblePoints.length)
 
     ctx.clearRect(0, 0, canvas.value.width, canvas.value.height)
 

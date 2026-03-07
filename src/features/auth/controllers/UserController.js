@@ -78,9 +78,8 @@ export default class UserController extends Controller {
   async _fetchStudiesByIds(ids) {
     if (!ids || ids.length === 0) return []
 
-    try {
-      // If there are few (<= 10), use "in" query (faster and more direct)
-      if (ids.length <= 10) {
+    // If there are few (<= 10), use "in" query (faster and more direct)
+    if (ids.length <= 10) {
         const q = {
           field: documentId(),
           condition: 'in',
@@ -100,9 +99,6 @@ export default class UserController extends Controller {
         .map((r) => {
           return Object.assign({ id: r.id }, r.data())
         })
-    } catch (error) {
-      throw error
-    }
   }
 
   async updateProfile(docId, payload) {
@@ -190,63 +186,50 @@ export default class UserController extends Controller {
   }
 
   async removeNotificationsForTest(testId, cooperators) {
-    try {
-      for (let cooperator = 0; cooperator < cooperators.length; cooperator++) {
-        const userDocID = cooperators[cooperator].userDocId
+    for (let cooperator = 0; cooperator < cooperators.length; cooperator++) {
+      const userDocID = cooperators[cooperator].userDocId
 
-        // Lê o documento do usuário diretamente
-        const userDoc = await super.readOne('users', userDocID)
+      // Lê o documento do usuário diretamente
+      const userDoc = await super.readOne('users', userDocID)
 
-        // Verifica se o documento do usuário existe
-        if (userDoc.exists()) {
-          const userData = userDoc.data()
-          const userId = userDoc.id
+      // Verifica se o documento do usuário existe
+      if (userDoc.exists()) {
+        const userData = userDoc.data()
+        const userId = userDoc.id
 
-          // Verificar se o usuário tem notificações
-          if (userData.notifications && userData.notifications.length > 0) {
-            // Filtrar notificações que têm o testId correspondente
-            userData.notifications = userData.notifications.filter(
-              (notification) => notification.testId !== testId,
-            )
-            // Atualizar o documento do usuário com as notificações filtradas
-            await super.update('users', userId, {
-              notifications: userData.notifications,
-            })
-          }
-        } else {
+        // Verificar se o usuário tem notificações
+        if (userData.notifications && userData.notifications.length > 0) {
+          // Filtrar notificações que têm o testId correspondente
+          userData.notifications = userData.notifications.filter(
+            (notification) => notification.testId !== testId,
+          )
+          // Atualizar o documento do usuário com as notificações filtradas
+          await super.update('users', userId, {
+            notifications: userData.notifications,
+          })
         }
       }
-    } catch (error) {
-      throw error
     }
   }
 
   async removeTestFromUser(userId, testIdToRemove) {
-    try {
-      const userDoc = await super.readOne('users', userId)
+    const userDoc = await super.readOne('users', userId)
 
-      if (!userDoc.exists()) {
-        return
-      }
-      const userData = userDoc.data()
-
-      if (userData.myTests[testIdToRemove]) {
-        delete userData.myTests[testIdToRemove]
-      }
-      if (userData.myAnswers[testIdToRemove]) {
-        delete userData.myAnswers[testIdToRemove]
-      }
-
-      await super.update('users', userId, userData)
-    } catch (error) {
-      throw error
+    if (!userDoc.exists()) {
+      return
     }
+    const userData = userDoc.data()
+
+    if (userData.myTests[testIdToRemove]) {
+      delete userData.myTests[testIdToRemove]
+    }
+    if (userData.myAnswers[testIdToRemove]) {
+      delete userData.myAnswers[testIdToRemove]
+    }
+
+    await super.update('users', userId, userData)
   }
   async updateLevel(uid, accessLevel) {
-    try {
-      return super.update(COLLECTION, uid, { accessLevel })
-    } catch (error) {
-      throw error
-    }
+    return super.update(COLLECTION, uid, { accessLevel })
   }
 }

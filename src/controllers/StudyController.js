@@ -27,57 +27,45 @@ export default class StudyController extends Controller {
     return await super.create(COLLECTION, payload.toFirestore())
   }
   async duplicateStudy(payload) {
-    try {
-      const answerDoc = await answerController.createAnswer(
-        new StudyAnswer({ type: payload.test.testType }),
-      )
+    const answerDoc = await answerController.createAnswer(
+      new StudyAnswer({ type: payload.test.testType }),
+    )
 
-      // Use the correct study type from the payload (already instantiated correctly in SettingsView)
-      const duplicatedStudy = payload.test
-      duplicatedStudy.answersDocId = answerDoc.id
+    // Use the correct study type from the payload (already instantiated correctly in SettingsView)
+    const duplicatedStudy = payload.test
+    duplicatedStudy.answersDocId = answerDoc.id
 
-      return await super.create(COLLECTION, duplicatedStudy.toFirestore())
-    } catch (error) {
-      throw error
-    }
+    return await super.create(COLLECTION, duplicatedStudy.toFirestore())
   }
 
   async deleteStudy(payload) {
-    try {
-      const testToDelete = await super.readOne(COLLECTION, payload.id)
-      if (!testToDelete.exists()) {
-        return null
-      }
-
-      const collaborators = await testToDelete.data()
-      const cooperators = collaborators.cooperators
-      if (cooperators) {
-        const promises = []
-
-        for (const cooperator of cooperators) {
-          // Add the call to remove notifications for the test being deleted
-          promises.push(
-            userController.removeTestFromUser(cooperator.userDocId, payload.id),
-          )
-          promises.push(
-            userController.removeNotificationsForTest(payload.id, cooperators),
-          )
-        }
-        await Promise.all(promises)
-      }
-      await super.update('users', payload.testAdmin.userDocId, payload.auxUser)
-      await super.delete(COLLECTION, payload.id)
-    } catch (error) {
-      throw error
+    const testToDelete = await super.readOne(COLLECTION, payload.id)
+    if (!testToDelete.exists()) {
+      return null
     }
+
+    const collaborators = await testToDelete.data()
+    const cooperators = collaborators.cooperators
+    if (cooperators) {
+      const promises = []
+
+      for (const cooperator of cooperators) {
+        // Add the call to remove notifications for the test being deleted
+        promises.push(
+          userController.removeTestFromUser(cooperator.userDocId, payload.id),
+        )
+        promises.push(
+          userController.removeNotificationsForTest(payload.id, cooperators),
+        )
+      }
+      await Promise.all(promises)
+    }
+    await super.update('users', payload.testAdmin.userDocId, payload.auxUser)
+    await super.delete(COLLECTION, payload.id)
   }
 
   async updateStudy(payload) {
-    try {
-      return await super.update(COLLECTION, payload.id, payload.toFirestore())
-    } catch (e) {
-      throw e
-    }
+    return await super.update(COLLECTION, payload.id, payload.toFirestore())
   }
 
   //ToDo: It seems an action from User Testing
@@ -137,15 +125,11 @@ export default class StudyController extends Controller {
   }
 
   async getAllStudies() {
-    try {
-      const response = await super.readAll('tests')
-      const res = response.map((data) => {
-        return instantiateStudyByType(data.testType, data)
-      })
-      return res
-    } catch (err) {
-      throw err
-    }
+    const response = await super.readAll('tests')
+    const res = response.map((data) => {
+      return instantiateStudyByType(data.testType, data)
+    })
+    return res
   }
 
   subscribeToStudy(studyId, callback) {

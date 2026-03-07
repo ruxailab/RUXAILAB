@@ -913,7 +913,6 @@ const editDescription = (desc) => {
   const btn = descBtn.value[itemSelect.value]
   if (btn && typeof btn.editSetup === 'function') {
     btn.editSetup(ind)
-  } else {
   }
 }
 
