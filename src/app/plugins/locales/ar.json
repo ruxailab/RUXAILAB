@@ -43,7 +43,34 @@
       "fair": "متوسط",
       "good": "جيد",
       "strong": "قوي"
-    }
+    },
+    "emailNotVerified": "البريد الإلكتروني غير مُتحقق",
+    "verificationEmailSent": "تم إرسال بريد التحقق بنجاح!",
+    "errorSendingVerification": "خطأ في إرسال بريد التحقق",
+    "verifyEmailTitle": "تحقق من بريدك الإلكتروني",
+    "verifyEmailSubtitle": "لقد أرسلنا رابط تحقق إلى بريدك الإلكتروني",
+    "emailLabel": "البريد الإلكتروني",
+    "verifyingEmail": "جاري التحقق...",
+    "emailAlreadyVerified": "هل تم التحقق من البريد الإلكتروني بالفعل؟",
+    "emailVerified": "تم التحقق من البريد الإلكتروني بنجاح!",
+    "checkEmailTitle": "تحقق من بريدك الإلكتروني",
+    "checkEmailStep1": "تحقق من صندوق الوارد للحصول على بريد تحقق",
+    "checkEmailStep2": "انقر على الرابط في البريد للتحقق من حسابك",
+    "checkEmailStep3": "عد هنا وسيتم التحقق من حسابك",
+    "checkSpamFolder": "لا ترى؟ تحقق من مجلد البريد العشوائي",
+    "resending": "جاري الإعادة...",
+    "resendEmail": "إعادة إرسال البريد",
+    "changeEmail": "تغيير البريد الإلكتروني",
+    "continueToDashboard": "المتابعة إلى لوحة التحكم",
+    "signOut": "تسجيل الخروج",
+    "newEmail": "البريد الإلكتروني الجديد",
+    "enterNewEmail": "أدخل عنوان بريدك الإلكتروني الجديد",
+    "saving": "جاري الحفظ...",
+    "errorCheckingVerification": "خطأ في فحص حالة التحقق",
+    "errorResendingEmail": "خطأ في إعادة إرسال بريد التحقق",
+    "invalidEmail": "عنوان بريد إلكتروني غير صالح",
+    "emailUpdatedVerification": "تم تحديث البريد! لقد أرسلنا رابط تحقق إلى بريدك الجديد.",
+    "errorUpdatingEmail": "خطأ في تحديث البريد الإلكتروني"
   },
   "common": {
     "enterTextHere": "أدخل النص هنا...",
@@ -112,6 +139,7 @@
     "user": "مستخدم",
     "id": "ID",
     "itemsPerPage": "عدد العناصر في الصفحة:",
+    "saving": "جاري الحفظ...",
     "visible": "مرئي"
   },
   "storage": {
@@ -1194,6 +1222,44 @@
       "note": "دورك هو التسهيل والمراقبة. يجب على المشارك إكمال المهام بشكل مستقل ما لم يطلب المساعدة بشكل خاص.",
       "startSession": "بدء الجلسة الخاضعة للإشراف"
     },
+    "VideoCallPanel": {
+      "toolsPanelTitle": "لوحة الأدوات",
+      "sessionControl": "التحكم في الجلسة",
+      "joinRoomInfo": "عناصر الانضمام إلى الغرفة أصبحت الآن في الواجهة الرئيسية بالأعلى",
+      "proceedNextStep": "الانتقال إلى الخطوة التالية",
+      "endCall": "إنهاء المكالمة",
+      "activeCall": "مكالمة نشطة",
+      "participants": "المشاركون",
+      "you": "أنت",
+      "observator": "مراقب",
+      "moderator": "مشرف",
+      "connected": "متصل",
+      "disconnected": "غير متصل",
+      "camera": "الكاميرا",
+      "noCamera": "بدون كاميرا",
+      "microphone": "الميكروفون",
+      "noMicrophone": "بدون ميكروفون",
+      "settings": "الإعدادات",
+      "disableCamera": "إيقاف الكاميرا",
+      "enableCamera": "تشغيل الكاميرا",
+      "muteMicrophone": "كتم الميكروفون",
+      "unmuteMicrophone": "إلغاء كتم الميكروفون",
+      "stopScreenShare": "إيقاف مشاركة الشاشة",
+      "shareScreen": "مشاركة الشاشة",
+      "moderatorOnlySteps": "فقط المشرف يمكنه تغيير الخطوات"
+    },
+    "VideoCall": {
+      "screenSharingLabel": "مشاركة الشاشة",
+      "cameraOff": "الكاميرا متوقفة",
+      "yourVideo": "فيديوك",
+      "yourPreview": "معاينتك",
+      "observatorMode": "وضع المراقب",
+      "waitingForModeratorToStartSession": "بانتظار المشرف لبدء الجلسة...",
+      "observeAllFeedsNotice": "ستتمكن من مشاهدة جميع الفيديوهات دون إرسال فيديوك.",
+      "waitingForParticipants": "بانتظار المشاركين...",
+      "waitingForModerator": "بانتظار المشرف...",
+      "autoStartWhenModeratorOpensRoom": "ستبدأ مكالمة الفيديو تلقائيا عندما يفتح المشرف الغرفة."
+    },
     "WelcomeStep": {
       "welcome": "مرحبًا بك في RUXAILAB!",
       "description": "أنت على وشك المشاركة في اختبار مستخدم يهدف إلى تقييم سهولة الاستخدام والفهم لتطبيق رقمي. يساعدنا هذا النوع من الاختبارات في اكتشاف الحواجز التكنولوجية المحتملة وتحسين التجربة للجميع.",
@@ -1584,11 +1650,7 @@
       "SelfTest": {
         "title": "اختبار ذاتي",
         "type": "غير مشرف عليه",
-        "text": [
-          "الإجابة في وقت فراغ",
-          "تحليل متقدم للإجابات",
-          "تخصيص المهمة"
-        ]
+        "text": ["الإجابة في وقت فراغ", "تحليل متقدم للإجابات", "تخصيص المهمة"]
       },
       "LiveTest": {
         "title": "اختبار مباشر",

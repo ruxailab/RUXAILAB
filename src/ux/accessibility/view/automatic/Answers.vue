@@ -547,6 +547,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
+import { createManagedListeners } from '@/shared/composables/useManagedListeners'
 
 export default {
   name: 'ReportDetail',
@@ -563,6 +564,7 @@ export default {
       page: 1,
       itemsPerPage: 10,
       infiniteScrollCount: 20, // Number of issues to show initially in infinite scroll
+      iframeListeners: createManagedListeners(),
     }
   },
   computed: {
@@ -602,6 +604,9 @@ export default {
         }, 100)
       })
     })
+  },
+  beforeUnmount() {
+    this.iframeListeners.removeListeners()
   },
   methods: {
     ...mapActions('automaticReport', ['fetchReport']),
@@ -649,6 +654,26 @@ export default {
       this.selectedIssue = index
       this.scrollToIssue(index)
     },
+    _onIframeLoad() {
+      const frame = this.$refs.previewFrame
+      if (!frame?.contentWindow || !frame?.contentDocument) return
+      this.iframeListeners.addListeners([
+        {
+          target: frame.contentWindow,
+          event: 'click',
+          handler: this._onContentWindowClick,
+        },
+      ])
+    },
+    _onContentWindowClick(event) {
+      const issueMarker = event.target.closest('.a11y-issue-marker')
+      if (issueMarker) {
+        const issueId = issueMarker.getAttribute('data-issue-id')
+        const index = parseInt(issueId?.replace('issue-', '') ?? '', 10)
+        if (!Number.isFinite(index) || index < 0) return
+        this.selectIssue(index)
+      }
+    },
     renderModifiedHtml() {
       if (
         !this.$refs.previewFrame ||
@@ -658,21 +683,14 @@ export default {
         return
       }
       try {
+        this.iframeListeners.removeListeners()
         const frame = this.$refs.previewFrame
-        frame.addEventListener('load', () => {
-          if (!frame.contentWindow || !frame.contentDocument) {
-            return
-          }
-          frame.contentWindow.addEventListener('click', (event) => {
-            const issueMarker = event.target.closest('.a11y-issue-marker')
-            if (issueMarker) {
-              const issueId = issueMarker.getAttribute('data-issue-id')
-              const index = parseInt(issueId.replace('issue-', ''))
-              this.selectIssue(index)
-            }
-          })
-        })
-      } catch {}
+        this.iframeListeners.addListeners([
+          { target: frame, event: 'load', handler: this._onIframeLoad },
+        ])
+      } catch {
+        // Ignore DOM/ref errors when iframe is not ready
+      }
     },
     scrollToIssue(index) {
       if (

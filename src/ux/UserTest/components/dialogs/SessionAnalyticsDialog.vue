@@ -143,6 +143,7 @@
 
 <script setup>
 import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
+import { useManagedListeners } from '@/shared/composables/useManagedListeners'
 import SessionTimeline from '../sessions/SessionTimeline.vue'
 import TranscriptWordCloud from '../sessions/TranscriptWordCloud.vue'
 import EyeTrackingStats from '../sessions/EyeTrackingStats.vue'
@@ -234,22 +235,21 @@ const onSeek = (time) => {
 
 const close = () => (open.value = false)
 
+const managedListeners = useManagedListeners()
+managedListeners.addCleanup(() => cancelAnimationFrame(rafId))
+
 onMounted(() => {
   const video = mainVideo2.value
   if (!video) return
 
-  video.addEventListener('loadedmetadata', onMetadataLoaded)
-  video.addEventListener('play', onVideoPlay)
-  video.addEventListener('pause', onVideoPause)
+  managedListeners.addListeners([
+    { target: video, event: 'loadedmetadata', handler: onMetadataLoaded },
+    { target: video, event: 'play', handler: onVideoPlay },
+    { target: video, event: 'pause', handler: onVideoPause },
+  ])
 })
 onBeforeUnmount(() => {
-  const video = mainVideo2.value
-  if (video) {
-    video.removeEventListener('loadedmetadata', onMetadataLoaded)
-    video.removeEventListener('play', onVideoPlay)
-    video.removeEventListener('pause', onVideoPause)
-  }
-  cancelAnimationFrame(rafId)
+  managedListeners.removeListeners()
 })
 </script>
 

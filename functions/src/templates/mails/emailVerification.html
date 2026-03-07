@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .header {
+            background-color: #00213F;
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .logo {
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .logo img {
+            max-width: 200px;
+            height: auto;
+        }
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: white;
+        }
+        .header p {
+            font-size: 14px;
+            color: #e0e7ff;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .greeting {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: 500;
+        }
+        .message {
+            font-size: 15px;
+            margin-bottom: 30px;
+            color: #555;
+            line-height: 1.8;
+        }
+        .button-container {
+            text-align: center;
+            margin: 40px 0;
+        }
+        .verify-button {
+            display: inline-block;
+            background-color: #00213F;
+            color: white;
+            padding: 14px 45px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+        }
+        .verify-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 33, 63, 0.3);
+            background-color: #001838;
+        }
+        .link-text {
+            font-size: 13px;
+            color: #666;
+            margin-top: 20px;
+            word-break: break-all;
+            background-color: #f8f9fa;
+            padding: 12px;
+            border-radius: 4px;
+            border-left: 3px solid #00213F;
+        }
+        .link-text strong {
+            display: block;
+            margin-bottom: 8px;
+            color: #00213F;
+            font-weight: 600;
+        }
+        .expiry {
+            background-color: #eff6ff;
+            padding: 15px;
+            border-left: 4px solid #00213F;
+            margin: 30px 0;
+            font-size: 14px;
+            color: #00213F;
+            border-radius: 4px;
+        }
+        .expiry strong {
+            color: #00213F;
+            font-weight: 600;
+        }
+        .expiry p {
+            margin-top: 8px;
+            color: #334155;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #e0e7ff;
+        }
+        .footer a {
+            color: #00213F;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        .divider {
+            height: 1px;
+            background-color: #e0e7ff;
+            margin: 30px 0;
+        }
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+            }
+            .content {
+                padding: 30px 20px;
+            }
+            .header {
+                padding: 25px 20px;
+            }
+            .header h1 {
+                font-size: 24px;
+            }
+            .logo img {
+                max-width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <img src="https://raw.githubusercontent.com/ruxailab/RUXAILAB/develop/src/assets/logo_full_white.png" alt="RUXAILAB Logo">
+            </div>
+            <h1>Verify Your Email</h1>
+            <p>Complete your registration</p>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <div class="greeting">
+                Hello {{userName}},
+            </div>
+
+            <div class="message">
+                Thank you for signing up! To complete your registration and start using RUXAILAB, please verify your email address by clicking the button below.
+            </div>
+
+            <!-- Verify Button -->
+            <div class="button-container">
+                <a href="{{verificationLink}}" class="verify-button" style="color: white !important;">Verify Email Address</a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>&copy; 2026 RUXAILAB. All rights reserved.</p>
+            <p style="margin-top: 10px;">
+                <a href="https://ruxailab.com/privacy">Privacy Policy</a> • 
+                <a href="https://ruxailab.com/terms">Terms of Service</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
