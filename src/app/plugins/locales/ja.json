@@ -412,7 +412,10 @@
     "globalError": "エラーが発生しました。ご不便をおかけして申し訳ありません。",
     "cameraPermissionDenied": "カメラへのアクセスが拒否されました。ブラウザの設定でカメラへのアクセスを許可してください。",
     "sendError": "招待の送信に失敗しました。再試行してください",
-    "missingVariableTitles": "保存できません：いくつかの変数にタイトルがありません"
+    "missingVariableTitles": "保存できません：いくつかの変数にタイトルがありません",
+    "failedToLoadAnswers": "Failed to load answers",
+    "failedToUpdateAnswer": "Failed to update answer",
+    "failedToSaveAnswerCooperator": "Failed to save cooperator answer"
   },
   "Introduction": {
     "title": "UXリモートラボ",

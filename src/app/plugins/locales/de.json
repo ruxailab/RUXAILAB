@@ -412,7 +412,10 @@
     "globalError": "Ein Fehler ist aufgetreten, entschuldigen Sie die Unannehmlichkeiten.",
     "cameraPermissionDenied": "Der Zugriff auf die Kamera ist erforderlich, um fortzufahren. Bitte erlauben Sie den Kamerazugriff in den Browser-Einstellungen.",
     "sendError": "Einladung konnte nicht gesendet werden. Bitte versuchen Sie es erneut",
-    "missingVariableTitles": "Kann nicht speichern: Einige Variablen fehlen Titel"
+    "missingVariableTitles": "Kann nicht speichern: Einige Variablen fehlen Titel",
+    "failedToLoadAnswers": "Fehler beim Laden der Antworten",
+    "failedToUpdateAnswer": "Fehler beim Aktualisieren der Antwort",
+    "failedToSaveAnswerCooperator": "Fehler beim Speichern der Cooperator-Antwort"
   },
   "Introduction": {
     "title": "UX Remote LAB",

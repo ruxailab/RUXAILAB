@@ -412,7 +412,10 @@
     "globalError": "Une erreur est survenue, désolé pour le désagrément.",
     "cameraPermissionDenied": "L'accès à la caméra est requis pour continuer. Veuillez autoriser l'accès à la caméra dans les paramètres de votre navigateur.",
     "sendError": "Échec de l'envoi de l'invitation. Veuillez réessayer",
-    "missingVariableTitles": "Impossible d'enregistrer : Certaines variables manquent de titres"
+    "missingVariableTitles": "Impossible d'enregistrer : Certaines variables manquent de titres",
+    "failedToLoadAnswers": "Échec du chargement des réponses",
+    "failedToUpdateAnswer": "Échec de la mise à jour de la réponse",
+    "failedToSaveAnswerCooperator": "Échec de l'enregistrement de la réponse du coopérateur"
   },
   "Introduction": {
     "title": "UX Remote LAB",

@@ -412,7 +412,10 @@
     "globalError": "حدث خطأ، نعتذر عن الإزعاج.",
     "cameraPermissionDenied": "يتطلب المتابعة السماح بالوصول إلى الكاميرا. يرجى تفعيل إذن الكاميرا في إعدادات المتصفح.",
     "sendError": "فشل إرسال الدعوة. يرجى المحاولة مرة أخرى",
-    "missingVariableTitles": "لا يمكن الحفظ: بعض المتغيرات تفتقد العناوين"
+    "missingVariableTitles": "لا يمكن الحفظ: بعض المتغيرات تفتقد العناوين",
+    "failedToLoadAnswers": "Failed to load answers",
+    "failedToUpdateAnswer": "Failed to update answer",
+    "failedToSaveAnswerCooperator": "Failed to save cooperator answer"
   },
   "Introduction": {
     "title": "مختبر UX عن بعد",
