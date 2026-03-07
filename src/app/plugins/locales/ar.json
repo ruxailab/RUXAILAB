@@ -683,11 +683,13 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "الإعدادات",
-      "confirmUpload": "تأكيد التحميل"
+      "confirmUpload": "تأكيد التحميل",
+      "enableWeights": "تفعيل ميزة الأوزان"
     },
     "messages": {
       "acceptCsv": "إذا وافقت، سيتم استبدال جميع الاستدلالات الحالية بتلك الموجودة في ملف CSV.",
-      "noCsvFileSelected": "لم يتم تحديد ملف CSV. \nيرجى تحديد واحد قبل المتابعة."
+      "noCsvFileSelected": "لم يتم تحديد ملف CSV. \nيرجى تحديد واحد قبل المتابعة.",
+      "enableWeightsDescription": "السماح للمقيمين بتعيين الأوزان للاستدلالات في هذه الدراسة"
     },
     "placeHolders": {
       "importCsv": "قم باستيراد ملف CSV الخاص بك هنا."

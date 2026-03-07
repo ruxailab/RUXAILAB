@@ -683,11 +683,13 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "Configurações",
-      "confirmUpload": "Confirmar Upload"
+      "confirmUpload": "Confirmar Upload",
+      "enableWeights": "Ativar Recurso de Pesos"
     },
     "messages": {
       "acceptCsv": "Se aceitar, todas as suas heurísticas atuais serão substituídas pelas do arquivo CSV.",
-      "noCsvFileSelected": "Nenhum arquivo CSV selecionado. \nPor favor, selecione um antes de continuar."
+      "noCsvFileSelected": "Nenhum arquivo CSV selecionado. \nPor favor, selecione um antes de continuar.",
+      "enableWeightsDescription": "Permita que os avaliadores atribuam pesos às heurísticas neste estudo"
     },
     "placeHolders": {
       "importCsv": "Importe seu arquivo CSV de teste aqui."

@@ -683,11 +683,13 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "设置",
-      "confirmUpload": "确认上传"
+      "confirmUpload": "确认上传",
+      "enableWeights": "启用权重功能"
     },
     "messages": {
       "acceptCsv": "如果接受，您当前的启发式将被CSV文件中的内容替换。",
-      "noCsvFileSelected": "未选择CSV文件。\n请选择一个以继续。"
+      "noCsvFileSelected": "未选择CSV文件。\n请选择一个以继续。",
+      "enableWeightsDescription": "允许评估者在本研究中为启发式分配权重"
     },
     "placeHolders": {
       "importCsv": "在此导入您的CSV测试文件。"
