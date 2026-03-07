@@ -412,7 +412,10 @@
     "globalError": "Произошла ошибка, извините за неудобства.",
     "cameraPermissionDenied": "Для продолжения требуется доступ к камере. Пожалуйста, разрешите доступ к камере в настройках браузера.",
     "sendError": "Не удалось отправить приглашение. Пожалуйста, попробуйте еще раз",
-    "missingVariableTitles": "Не удается сохранить: Некоторым переменным не хватает заголовков"
+    "missingVariableTitles": "Не удается сохранить: Некоторым переменным не хватает заголовков",
+    "failedToLoadAnswers": "Failed to load answers",
+    "failedToUpdateAnswer": "Failed to update answer",
+    "failedToSaveAnswerCooperator": "Failed to save cooperator answer"
   },
   "Introduction": {
     "title": "Удаленная лаборатория UX",
