@@ -24,10 +24,7 @@
                 </div>
                 <div
                   class="description-content"
-                  v-html="
-                    (task && task.taskDescription) ||
-                    $t('CreateTask.preview.noDescription')
-                  "
+                  v-html="sanitizedTaskDescription"
                 ></div>
               </div>
 
@@ -164,6 +161,7 @@
 </template>
 
 <script setup>
+import DOMPurify from 'dompurify'
 import { computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -178,6 +176,11 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['validate'])
+
+const sanitizedTaskDescription = computed(() => {
+  const raw = (props.task && props.task.taskDescription) || t('CreateTask.preview.noDescription')
+  return DOMPurify.sanitize(raw)
+})
 
 const recordingFeatures = computed(() => {
   if (!props.task) return []
