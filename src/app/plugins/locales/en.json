@@ -424,7 +424,8 @@
     "missingVariableTitles": "Cannot save: Some variables are missing titles",
     "failedToLoadAnswers": "Failed to load answers. Please try again.",
     "failedToUpdateAnswer": "Failed to update answer. Please try again.",
-    "failedToRemoveCooperator": "Failed to remove cooperator. Please try again."
+    "failedToRemoveCooperator": "Failed to remove cooperator. Please try again.",
+    "failedToSaveAnswerCooperator": "Failed to save cooperator answer"
   },
   "Introduction": {
     "title": "UX Remote LAB",

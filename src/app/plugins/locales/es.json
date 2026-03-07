@@ -412,7 +412,10 @@
     "globalError": "Ha ocurrido un error, disculpa las molestias.",
     "cameraPermissionDenied": "Se requiere acceso a la cámara para continuar. Por favor, permita el acceso a la cámara en la configuración de su navegador.",
     "sendError": "No se pudo enviar la invitación. Por favor, intenta de nuevo.",
-    "missingVariableTitles": "No se puede guardar: Algunas variables no tienen título"
+    "missingVariableTitles": "No se puede guardar: Algunas variables no tienen título",
+    "failedToLoadAnswers": "Error al cargar respuestas",
+    "failedToUpdateAnswer": "Error al actualizar respuesta",
+    "failedToSaveAnswerCooperator": "Error al guardar respuesta del cooperador"
   },
   "Introduction": {
     "title": "UX LAB Remoto",
