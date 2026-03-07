@@ -223,7 +223,7 @@
               </div>
 
               <!-- eslint-disable-next-line vue/no-v-html -->
-              <div class="mt-4" v-html="pdfSummaryHtml"></div>
+              <div class="mt-4" v-html="sanitizedPdfSummaryHtml"></div>
 
               <div v-for="(run, i) in previewRuns" :key="run.id" class="mt-6">
                 <h3 class="text-subtitle-2 m-0">
@@ -259,6 +259,7 @@
 
 <script setup>
 import { ref, watch, computed } from 'vue'
+import DOMPurify from 'dompurify'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { QuillEditor } from '@vueup/vue-quill'
@@ -291,6 +292,7 @@ const pdfMeta = ref({
 const pdfSummaryHtml = ref('<p>Add an executive summary here…</p>')
 
 const controller = new TranscriptionController()
+const sanitizedPdfSummaryHtml = computed(() => DOMPurify.sanitize(pdfSummaryHtml.value || ''))
 
 const formatIcon = computed(
   () =>

@@ -2,7 +2,7 @@
   <ShowInfo :title="testTitle + ' - ' + 'Consent'">
     <template #content>
       <div class="test-content pa-md-4 rounded-xl">
-        <div class="rich-text mb-6 pa-md-4" v-html="consentText" />
+        <div class="rich-text mb-6 pa-md-4" v-html="sanitizedConsentText" />
         <v-row justify="center">
           <v-col cols="12" md="6">
             <v-text-field
@@ -63,8 +63,9 @@ color="primary" variant="flat" block :disabled="localConsentCompleted === null |
   </v-dialog>
 </template>
 <script setup>
+import DOMPurify from 'dompurify'
 import ShowInfo from '@/shared/components/ShowInfo.vue';
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 const props = defineProps({
   testTitle: String,
   consentText: String,
@@ -76,6 +77,7 @@ const emit = defineEmits(['update:fullNameModel', 'update:consentCompletedModel'
 const localFullName = ref(props.fullNameModel);
 const localConsentCompleted = ref(null); // Always start with no selection
 const showDeclineModal = ref(false);
+const sanitizedConsentText = computed(() => DOMPurify.sanitize(props.consentText || ''));
 
 watch(() => props.fullNameModel, val => { localFullName.value = val; });
 // Removed watcher for consentCompletedModel to prevent pre-selection

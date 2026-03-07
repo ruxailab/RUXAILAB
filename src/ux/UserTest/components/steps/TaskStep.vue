@@ -6,7 +6,7 @@
         <template v-if="stage === 1">
           <div
             class="rich-text mb-4 task-description"
-            v-html="task?.taskDescription || taskDescription"
+            v-html="sanitizedTaskDescription"
           />
 
           <!-- Task Preview Information -->
@@ -177,7 +177,7 @@
                   </div>
                   <div
                     class="rich-text text-body-1 task-description"
-                    v-html="task?.taskDescription || taskDescription"
+                    v-html="sanitizedTaskDescription"
                   />
                 </v-col>
 
@@ -469,6 +469,7 @@
 
 <script setup>
 import { ref, watch, nextTick, computed, onBeforeUnmount } from 'vue'
+import DOMPurify from 'dompurify'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import TipButton from '@/ux/UserTest/components/TipButton.vue'
 import AudioRecorder from '@/ux/UserTest/components/AudioRecorder.vue'
@@ -506,6 +507,9 @@ const props = defineProps({
   remoteStream: MediaStream, // props that receive the remote video stream in case of moderated test
   shouldRecordModerator: Boolean, // props that indicate whether to record the moderator's video
 })
+
+const sanitizedTaskDescription = computed(() => DOMPurify.sanitize(props.task?.taskDescription || props.taskDescription || ''))
+
 const emit = defineEmits([
   'done',
   'couldNotFinish',
