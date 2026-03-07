@@ -43,6 +43,6 @@ const props = defineProps({
     submitMessage: String,
     submitBtn: String
 });
-const emit = defineEmits(['submit']);
+defineEmits(['submit']);
 const sanitizedCongratulations = computed(() => DOMPurify.sanitize(props.congratulations || ''));
 </script>
