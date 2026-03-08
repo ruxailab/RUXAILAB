@@ -140,7 +140,13 @@
     "id": "ID",
     "itemsPerPage": "عدد العناصر في الصفحة:",
     "saving": "جاري الحفظ...",
-    "visible": "مرئي"
+    "visible": "مرئي",
+    "percentValue": "{value}%",
+    "comments": "التعليقات",
+    "image": "صورة",
+    "images": "صور",
+    "close": "إغلاق",
+    "selectImage": "حدد صورة للرفع"
   },
   "storage": {
     "pageTitle": "التخزين",
@@ -643,7 +649,14 @@
     "AddCommentBtn": {
       "showComment": "إظهار التعليق",
       "addComment": "إضافة تعليق",
-      "hideTextArea": "إخفاء منطقة النص"
+      "hideTextArea": "إخفاء منطقة النص",
+      "addAnotherComment": "إضافة تعليق آخر",
+      "addNewComment": "إضافة تعليق جديد"
+    },
+    "ImportImage": {
+      "imagesCount": "تم إرفاق {count} صورة",
+      "uploadSuccess": "تم رفع الصورة بنجاح",
+      "uploadError": "فشل رفع الصورة"
     },
     "errors": {
       "failedToLoadQuestionForm": "فشل تحميل نموذج السؤال. يرجى المحاولة مرة أخرى.",
@@ -655,6 +668,10 @@
       "question": "سؤال",
       "questions": "أسئلة"
     }
+  },
+  "HeuristicsAnalytics": {
+    "dataTable": "جدول البيانات",
+    "chart": "الرسم البياني"
   },
   "HeuristicsOptionsTable": {
     "titles": {
@@ -1579,7 +1596,8 @@
     "deleteAccount": "هل أنت متأكد أنك تريد حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء.",
     "genericSuccess": "تمت العملية بنجاح",
     "savedChanges": "تم حفظ التغييرات بنجاح",
-    "deleteUser": "هل أنت متأكد من أنك تريد حذف هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء."
+    "deleteUser": "هل أنت متأكد من أنك تريد حذف هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء.",
+    "errorSavingProgress": "خطأ في حفظ التقدم"
   },
   "buttons": {
     "next": "التالي",
