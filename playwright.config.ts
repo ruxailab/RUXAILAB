@@ -1,9 +1,8 @@
 import { defineConfig, devices, PlaywrightTestOptions } from '@playwright/test'
 
 /**
- * Shared base options spread into every project's `use` block.
- * Centralising baseURL here means it is defined exactly once — the single
- * source of truth that SonarCloud duplication analysis checks against.
+ * Shared base options spread into the global use block and every project.
+ * Defined once here — the single source of truth that SonarCloud checks.
  *
  * Override at runtime:
  *   BASE_URL=https://staging.example.com npx playwright test
@@ -13,8 +12,17 @@ const baseUse: Partial<PlaywrightTestOptions> = {
 }
 
 /**
- * See https://playwright.dev/docs/test-configuration.
+ * Browser matrix: [projectName, deviceDescriptor]
+ * Add or remove rows here to change which browsers are tested — no repetition
+ * of the project-object shape needed.
  */
+const browserProjects: [string, (typeof devices)[string]][] = [
+  ['chromium', devices['Desktop Chrome']],
+  ['firefox',  devices['Desktop Firefox']],
+  ['webkit',   devices['Desktop Safari']],
+]
+
+/** See https://playwright.dev/docs/test-configuration. */
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
@@ -30,20 +38,10 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
 
-  /* Each project spreads baseUse explicitly so baseURL is present even if
-     Playwright's merge order ever changes in a future version. */
-  projects: [
-    {
-      name: 'chromium',
-      use: { ...baseUse, ...devices['Desktop Chrome'] },
-    },
-    {
-      name: 'firefox',
-      use: { ...baseUse, ...devices['Desktop Firefox'] },
-    },
-    {
-      name: 'webkit',
-      use: { ...baseUse, ...devices['Desktop Safari'] },
-    },
-  ],
+  /* Projects are generated from the matrix above — the use-block shape
+     is written once in the map callback rather than repeated per browser. */
+  projects: browserProjects.map(([name, device]) => ({
+    name,
+    use: { ...baseUse, ...device },
+  })),
 })
