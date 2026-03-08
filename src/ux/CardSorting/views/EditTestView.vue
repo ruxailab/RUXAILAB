@@ -12,63 +12,65 @@
       <div>
         <v-tabs
           v-model="index"
-          bg-color="transparent"
-          color="white"
-          class="mb-4 pill-tabs"
+          bg-color="#F5F5F5"
+          color="black"
+          class="mb-6 segmented-control"
           show-arrows
           density="compact"
           slider-color="transparent"
+          rounded="pill"
         >
           <v-tab
             :value="0"
-            :class="{ 'active-pill': index === 0 }"
+            :class="{ 'active-segment': index === 0 }"
             rounded="pill"
             variant="text"
-            class="mr-2"
+            class="segmented-tab"
           >
             {{ $t('CardSorting.test') }}
           </v-tab>
           <v-tab
             :value="1"
-            :class="{ 'active-pill': index === 1 }"
+            :class="{ 'active-segment': index === 1 }"
             rounded="pill"
             variant="text"
-            class="mr-2"
+            class="segmented-tab"
           >
             {{ $t('ModeratedTest.consentForm') }}
           </v-tab>
           <v-tab
             :value="2"
-            :class="{ 'active-pill': index === 2 }"
+            :class="{ 'active-segment': index === 2 }"
             rounded="pill"
             variant="text"
-            class="mr-2"
+            class="segmented-tab"
           >
             {{ $t('ModeratedTest.preTest') }}
           </v-tab>
           <v-tab
             :value="3"
-            :class="{ 'active-pill': index === 3 }"
+            :class="{ 'active-segment': index === 3 }"
             rounded="pill"
             variant="text"
-            class="mr-2"
+            class="segmented-tab"
           >
             {{ $t('CardSorting.categories') }}
           </v-tab>
           <v-tab
             :value="4"
-            :class="{ 'active-pill': index === 4 }"
+            :class="{ 'active-segment': index === 4 }"
             rounded="pill"
             variant="text"
-            class="mr-2"
+            class="segmented-tab"
           >
             {{ $t('CardSorting.cards') }}
           </v-tab>
           <v-tab
             :value="5"
-            :class="{ 'active-pill': index === 5 }"
+            :class="{ 'active-segment': index === 5 }"
             rounded="pill"
             variant="text"
+            class="segmented-tab"
           >
             {{ $t('ModeratedTest.postTest') }}
           </v-tab>
@@ -264,12 +266,30 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.active-pill {
-  background-color: #fca326 !important;
-  color: white !important;
+.active-segment {
+  background-color: white !important;
+  color: #212121 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
 }
 
-.pill-tabs :deep(.v-slide-group__content) {
-  padding: 4px;
+.segmented-control {
+  padding: 4px !important;
+  height: auto !important;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.segmented-tab {
+  text-transform: none !important;
+  font-weight: 500 !important;
+  letter-spacing: normal !important;
+  color: #757575 !important;
+  min-height: 36px !important;
+  height: 36px !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.segmented-control :deep(.v-slide-group__content) {
+  padding: 0 !important;
 }
 </style>

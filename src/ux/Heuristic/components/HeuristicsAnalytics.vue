@@ -159,29 +159,31 @@
                     <v-card width="100%" height="560px" flat>
                       <v-tabs
                         v-model="ind"
-                        bg-color="transparent"
-                        color="white"
-                        class="mt-2 pill-tabs"
+                        bg-color="#F5F5F5"
+                        color="black"
+                        class="mt-2 mb-4 segmented-control"
                         align-tabs="center"
                         show-arrows
                         density="compact"
                         slider-color="transparent"
+                        rounded="pill"
                       >
                         <v-tab
                           :value="0"
-                          :class="{ 'active-pill': ind === 0 }"
+                          :class="{ 'active-segment': ind === 0 }"
                           rounded="pill"
                           variant="text"
-                          class="mr-2"
+                          class="segmented-tab"
                           style="text-transform: none !important"
                         >
                           Comments
                         </v-tab>
                         <v-tab
                           :value="1"
-                          :class="{ 'active-pill': ind === 1 }"
+                          :class="{ 'active-segment': ind === 1 }"
                           rounded="pill"
                           variant="text"
+                          class="segmented-tab"
                           style="text-transform: none !important"
                         >
                           Chart
@@ -406,12 +408,30 @@ const goToCoops = () => {
   background: #fca326;
 }
 
-.active-pill {
-  background-color: #fca326 !important;
-  color: white !important;
+.active-segment {
+  background-color: white !important;
+  color: #212121 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
 }
 
-.pill-tabs :deep(.v-slide-group__content) {
-  padding: 4px;
+.segmented-control {
+  padding: 4px !important;
+  height: auto !important;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.segmented-tab {
+  text-transform: none !important;
+  font-weight: 500 !important;
+  letter-spacing: normal !important;
+  color: #757575 !important;
+  min-height: 32px !important;
+  height: 32px !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.segmented-control :deep(.v-slide-group__content) {
+  padding: 0 !important;
 }
 </style>
