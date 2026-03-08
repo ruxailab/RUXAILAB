@@ -25,9 +25,11 @@ export default defineConfig({
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
-    // baseURL: 'http://127.0.0.1:3000',
-   
+    /* All tests use relative paths (e.g. page.goto('/signin')).
+       baseURL is merged into every project so relative navigation resolves correctly.
+       Override per environment: BASE_URL=https://staging.example.com npx playwright test */
+    baseURL: process.env.BASE_URL || 'http://localhost:8080',
+
     video: 'on',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */

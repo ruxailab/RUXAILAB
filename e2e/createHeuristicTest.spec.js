@@ -1,9 +1,14 @@
 import { test, expect } from '@playwright/test';
 
 // --- Reusable login function ---
-const logIn = async (page) => {
+const logIn = async (page, testInfo) => {
+  console.log('Base URL:', testInfo.project.use.baseURL);
   await test.step('Navigate to signin page', async () => {
-    await page.goto('/signin', { waitUntil: 'networkidle' });
+    // Use 'domcontentloaded' instead of 'networkidle' — Firebase keeps persistent
+    // WebSocket connections open so 'networkidle' never fires on this app.
+    await page.goto('/signin', { waitUntil: 'domcontentloaded' });
+    // Wait for the sign-in form to be interactive before proceeding.
+    await page.getByLabel('Email').waitFor({ state: 'visible', timeout: 15000 });
   });
 
   await test.step('Fill login credentials', async () => {
@@ -39,8 +44,8 @@ const fillTestForm = async (page, testName = '', testDescription = '', isPublic 
 };
 
 test.describe('Heuristic Test Case: Creation Scenarios', () => {
-  test.beforeEach(async ({ page }) => {
-    await logIn(page);
+  test.beforeEach(async ({ page }, testInfo) => {
+    await logIn(page, testInfo);
   });
 
   test('Create test successfully', async ({ page }) => {

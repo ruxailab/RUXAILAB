@@ -22,8 +22,10 @@ module.exports = defineConfig({
   outputDir: './playwright/output',
 
   use: {
+    /* Base URL so relative paths like page.goto('/signin') resolve correctly.
+       Override by setting BASE_URL env var, e.g. BASE_URL=https://staging.example.com */
     baseURL: process.env.BASE_URL || 'http://localhost:8080',
-    ...devices['Desktop Chrome'],
+
     /* Collect trace when retrying the failed test */
     trace: 'on-first-retry',
 
@@ -37,25 +39,21 @@ module.exports = defineConfig({
     navigationTimeout: 30000,
   },
 
-  /* Configure projects for major browsers */
+  /* Configure projects for major browsers.
+     Each project inherits the global `use` block (including baseURL) and adds
+     its own device-specific viewport / userAgent settings. */
   projects: [
     {
       name: 'chromium',
-      use: {
-        ...devices['Desktop Chrome'],
-      },
+      use: { ...devices['Desktop Chrome'] },
     },
     {
       name: 'firefox',
-      use: {
-        ...devices['Desktop Firefox'],
-      },
+      use: { ...devices['Desktop Firefox'] },
     },
     {
       name: 'webkit',
-      use: { 
-        ...devices['Desktop Safari'], 
-      },
+      use: { ...devices['Desktop Safari'] },
     },
   ],
 });
