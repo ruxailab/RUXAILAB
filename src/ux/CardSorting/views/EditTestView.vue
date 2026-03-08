@@ -10,30 +10,73 @@
       <ButtonSave :visible="change" @click="save" />
 
       <div>
-        <VTabs bg-color="transparent" color="#FCA326" class="pb-0 mb-0">
-          <VTab @click="index = 0">
+        <v-tabs
+          v-model="index"
+          bg-color="transparent"
+          color="white"
+          class="mb-4 pill-tabs"
+          show-arrows
+          density="compact"
+          slider-color="transparent"
+        >
+          <v-tab
+            :value="0"
+            :class="{ 'active-pill': index === 0 }"
+            rounded="pill"
+            variant="text"
+            class="mr-2"
+          >
             {{ $t('CardSorting.test') }}
-          </VTab>
-          <VTab @click="index = 1">
+          </v-tab>
+          <v-tab
+            :value="1"
+            :class="{ 'active-pill': index === 1 }"
+            rounded="pill"
+            variant="text"
+            class="mr-2"
+          >
             {{ $t('ModeratedTest.consentForm') }}
-          </VTab>
-          <VTab @click="index = 2">
+          </v-tab>
+          <v-tab
+            :value="2"
+            :class="{ 'active-pill': index === 2 }"
+            rounded="pill"
+            variant="text"
+            class="mr-2"
+          >
             {{ $t('ModeratedTest.preTest') }}
-          </VTab>
-          <VTab @click="index = 3">
+          </v-tab>
+          <v-tab
+            :value="3"
+            :class="{ 'active-pill': index === 3 }"
+            rounded="pill"
+            variant="text"
+            class="mr-2"
+          >
             {{ $t('CardSorting.categories') }}
-          </VTab>
-          <VTab @click="index = 4">
+          </v-tab>
+          <v-tab
+            :value="4"
+            :class="{ 'active-pill': index === 4 }"
+            rounded="pill"
+            variant="text"
+            class="mr-2"
+          >
             {{ $t('CardSorting.cards') }}
-          </VTab>
-          <VTab @click="index = 5">
+          </v-tab>
+          <v-tab
+            :value="5"
+            :class="{ 'active-pill': index === 5 }"
+            rounded="pill"
+            variant="text"
+          >
             {{ $t('ModeratedTest.postTest') }}
-          </VTab>
-        </VTabs>
+          </v-tab>
+        </v-tabs>
 
-        <VCol cols="12">
+        <v-window v-model="index" class="mt-4">
           <!-- TEST -->
-          <div v-if="index === 0">
+          <v-window-item :value="0">
             <TestConfigForm
               :welcome="welcomeMessage"
               :final-message="finalMessage"
@@ -42,54 +85,58 @@
               "
               @update:final-message="((finalMessage = $event), (change = true))"
             />
-          </div>
+          </v-window-item>
 
           <!-- CONSENT FORM -->
-          <div v-if="index === 1" rounded="xxl">
+          <v-window-item :value="1">
             <TextareaForm
               v-model="consent"
               :title="$t('ModeratedTest.consentForm')"
               :subtitle="$t('ModeratedTest.consentFormSubtitle')"
               @update:value="((consent = $event), (change = true))"
             />
-          </div>
+          </v-window-item>
 
           <!-- PRE-TEST -->
-          <v-card v-if="index === 2" rounded="xxl">
-            <UserVariables
-              type="pre-test"
-              @change="change = true"
-              @update="store.dispatch('setPreTest', $event)"
-            />
-          </v-card>
+          <v-window-item :value="2">
+            <v-card rounded="xxl">
+              <UserVariables
+                type="pre-test"
+                @change="change = true"
+                @update="store.dispatch('setPreTest', $event)"
+              />
+            </v-card>
+          </v-window-item>
 
           <!-- CATEGORIES -->
-          <div v-if="index === 3" rounded="xxl">
+          <v-window-item :value="3">
             <CategoriesEditCardSorting
               @change="change = true"
               @categories="categories = $event"
               @options="optionsCategories = $event"
             />
-          </div>
+          </v-window-item>
 
           <!-- CARDS -->
-          <div v-if="index === 4" rounded="xxl">
+          <v-window-item :value="4">
             <CardsEditCardSorting
               @change="change = true"
               @cards="cards = $event"
               @options="optionsCards = $event"
             />
-          </div>
+          </v-window-item>
 
           <!-- POS-TEST -->
-          <v-card v-if="index === 5" rounded="xxl">
-            <UserVariables
-              type="post-test"
-              @change="change = true"
-              @update="store.dispatch('setPostTest', $event)"
-            />
-          </v-card>
-        </VCol>
+          <v-window-item :value="5">
+            <v-card rounded="xxl">
+              <UserVariables
+                type="post-test"
+                @change="change = true"
+                @update="store.dispatch('setPostTest', $event)"
+              />
+            </v-card>
+          </v-window-item>
+        </v-window>
       </div>
     </v-container>
   </PageWrapper>
@@ -215,3 +262,14 @@ onMounted(() => {
   getPostTest()
 })
 </script>
+
+<style scoped>
+.active-pill {
+  background-color: #fca326 !important;
+  color: white !important;
+}
+
+.pill-tabs :deep(.v-slide-group__content) {
+  padding: 4px;
+}
+</style>

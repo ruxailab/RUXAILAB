@@ -156,76 +156,88 @@
                     </v-col>
                   </v-row>
                   <v-row v-else class="ma-0 pa-0">
-                    <v-card width="100%" height="560px">
+                    <v-card width="100%" height="560px" flat>
                       <v-tabs
                         v-model="ind"
                         bg-color="transparent"
-                        color="grey-darken-2"
-                        class="mt-2"
+                        color="white"
+                        class="mt-2 pill-tabs"
                         align-tabs="center"
+                        show-arrows
+                        density="compact"
+                        slider-color="transparent"
                       >
                         <v-tab
-                          class="tab-text"
+                          :value="0"
+                          :class="{ 'active-pill': ind === 0 }"
+                          rounded="pill"
+                          variant="text"
+                          class="mr-2"
                           style="text-transform: none !important"
-                          @click="ind = 0"
                         >
                           Comments
                         </v-tab>
                         <v-tab
-                          class="tab-text"
+                          :value="1"
+                          :class="{ 'active-pill': ind === 1 }"
+                          rounded="pill"
+                          variant="text"
                           style="text-transform: none !important"
-                          @click="ind = 1"
                         >
                           Chart
                         </v-tab>
                       </v-tabs>
-                      <v-col v-if="ind == 1">
-                        <v-row justify="center">
-                          <v-col cols="10">
-                            <BarChart
-                              v-if="questionGraph"
-                              :labels="questionGraph.label"
-                              :data="questionGraph.data"
-                              legend="Quantity"
-                            />
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                      <v-col v-if="ind == 0">
-                        <v-row
-                          class="list-scroll"
-                          style="height: 430px"
-                          justify="center"
-                        >
-                          <v-col cols="10">
-                            <v-timeline density="compact" align="start">
-                              <v-timeline-item
-                                v-for="(result, index) in itemsHeuristic"
-                                :key="index"
-                                fill-dot
-                                dot-color="#fca326"
-                                icon="mdi-message-reply-text"
-                              >
-                                <v-card
-                                  v-if="result[questionSelect].heuristicComment"
-                                  class="elevation-2"
+
+                      <v-window v-model="ind">
+                        <v-window-item :value="1">
+                          <v-row justify="center" class="mt-4">
+                            <v-col cols="10">
+                              <BarChart
+                                v-if="questionGraph"
+                                :labels="questionGraph.label"
+                                :data="questionGraph.data"
+                                legend="Quantity"
+                              />
+                            </v-col>
+                          </v-row>
+                        </v-window-item>
+
+                        <v-window-item :value="0">
+                          <v-row
+                            class="list-scroll mt-4"
+                            style="height: 430px"
+                            justify="center"
+                          >
+                            <v-col cols="10">
+                              <v-timeline density="compact" align="start">
+                                <v-timeline-item
+                                  v-for="(result, index) in itemsHeuristic"
+                                  :key="index"
+                                  fill-dot
+                                  dot-color="#fca326"
+                                  icon="mdi-message-reply-text"
                                 >
-                                  <v-card-text>
-                                    {{
-                                      result[questionSelect].heuristicComment
-                                    }}
-                                  </v-card-text>
-                                  <img
-                                    v-if="result[questionSelect].answerImageUrl"
-                                    height="200"
-                                    :src="result[questionSelect].answerImageUrl"
-                                  />
-                                </v-card>
-                              </v-timeline-item>
-                            </v-timeline>
-                          </v-col>
-                        </v-row>
-                      </v-col>
+                                  <v-card
+                                    v-if="result[questionSelect].heuristicComment"
+                                    class="elevation-2"
+                                  >
+                                    <v-card-text>
+                                      {{
+                                        result[questionSelect].heuristicComment
+                                      }}
+                                    </v-card-text>
+                                    <v-img
+                                      v-if="result[questionSelect].answerImageUrl"
+                                      height="200"
+                                      :src="result[questionSelect].answerImageUrl"
+                                    />
+                                  </v-card>
+                                </v-timeline-item>
+                              </v-timeline>
+                            </v-col>
+                          </v-row>
+                        </v-window-item>
+                      </v-window>
                     </v-card>
                   </v-row>
                 </v-card>
@@ -392,5 +404,14 @@ const goToCoops = () => {
 /* Handle on hover */
 .list-scroll::-webkit-scrollbar-thumb:hover {
   background: #fca326;
+}
+
+.active-pill {
+  background-color: #fca326 !important;
+  color: white !important;
+}
+
+.pill-tabs :deep(.v-slide-group__content) {
+  padding: 4px;
 }
 </style>

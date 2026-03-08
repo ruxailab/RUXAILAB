@@ -10,62 +10,76 @@
       <ButtonSave :visible="!isTemplate && change" @click="save" />
 
       <div>
-        <!-- Desktop Tabs -->
         <v-tabs
-          v-if="!isMobile"
           v-model="index"
           bg-color="transparent"
-          color="#FCA326"
-          class="pb-0 mb-0"
+          color="white"
+          class="mb-4 pill-tabs"
+          show-arrows
+          density="compact"
+          slider-color="transparent"
         >
-          <v-tab>{{ $t('HeuristicsEditTest.titles.heuristics') }}</v-tab>
-          <v-tab>{{ $t('HeuristicsEditTest.titles.options') }}</v-tab>
-          <v-tab>{{ $t('HeuristicsEditTest.titles.weights') }}</v-tab>
-          <v-tab v-if="showSettingsTab">{{
-            $t('HeuristicsEditTest.titles.settings')
-          }}</v-tab>
+          <v-tab
+            :value="0"
+            :class="{ 'active-pill': index === 0 }"
+            rounded="pill"
+            variant="text"
+            class="mr-2"
+          >
+            {{ $t('HeuristicsEditTest.titles.heuristics') }}
+          </v-tab>
+          <v-tab
+            :value="1"
+            :class="{ 'active-pill': index === 1 }"
+            rounded="pill"
+            variant="text"
+            class="mr-2"
+          >
+            {{ $t('HeuristicsEditTest.titles.options') }}
+          </v-tab>
+          <v-tab
+            :value="2"
+            :class="{ 'active-pill': index === 2 }"
+            rounded="pill"
+            variant="text"
+            class="mr-2"
+          >
+            {{ $t('HeuristicsEditTest.titles.weights') }}
+          </v-tab>
+          <v-tab
+            v-if="showSettingsTab"
+            :value="3"
+            :class="{ 'active-pill': index === 3 }"
+            rounded="pill"
+            variant="text"
+          >
+            {{ $t('HeuristicsEditTest.titles.settings') }}
+          </v-tab>
         </v-tabs>
 
-        <!-- Mobile Select Dropdown -->
-        <v-select
-          v-else
-          v-model="index"
-          :items="tabItems"
-          variant="outlined"
-          density="compact"
-          class="mobile-tab-select"
-          prepend-inner-icon="mdi-menu"
-          hide-details
-        >
-          <template #selection="{ item }">
-            <div class="d-flex align-center justify-space-between w-100">
-              <span class="font-weight-medium">{{ item.title }}</span>
-              <!-- <v-icon size="small">mdi-chevron-down</v-icon> -->
-            </div>
-          </template>
-        </v-select>
-
-        <div class="mt-4">
-          <HeuristicsTable
-            v-if="index == 0"
-            :is-template="isTemplate"
-            @change="change = true"
-          />
-          <OptionsTable
-            v-if="index == 1"
-            :is-template="isTemplate"
-            @change="change = true"
-          />
-          <WeightTable
-            v-if="index == 2"
-            :is-template="isTemplate"
-            @change="change = true"
-          />
-          <HeuristicsSettings
-            v-if="showSettingsTab && index == 3"
-            :is-template="isTemplate"
-          />
-        </div>
+        <v-window v-model="index" class="mt-4">
+          <v-window-item :value="0">
+            <HeuristicsTable
+              :is-template="isTemplate"
+              @change="change = true"
+            />
+          </v-window-item>
+          <v-window-item :value="1">
+            <OptionsTable
+              :is-template="isTemplate"
+              @change="change = true"
+            />
+          </v-window-item>
+          <v-window-item :value="2">
+            <WeightTable
+              :is-template="isTemplate"
+              @change="change = true"
+            />
+          </v-window-item>
+          <v-window-item v-if="showSettingsTab" :value="3">
+            <HeuristicsSettings :is-template="isTemplate" />
+          </v-window-item>
+        </v-window>
       </div>
     </v-container>
   </PageWrapper>
@@ -166,16 +180,12 @@ const save = async () => {
 </script>
 
 <style scoped>
-/* Mobile styles */
-.mobile-tab-select {
-  margin-bottom: 16px;
+.active-pill {
+  background-color: #fca326 !important;
+  color: white !important;
 }
 
-/* Ensure proper spacing on all devices */
-@media (max-width: 960px) {
-  .v-container {
-    padding-left: 12px;
-    padding-right: 12px;
-  }
+.pill-tabs :deep(.v-slide-group__content) {
+  padding: 4px;
 }
 </style>

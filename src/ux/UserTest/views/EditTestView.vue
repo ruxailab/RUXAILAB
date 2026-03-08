@@ -10,45 +10,95 @@
       <ButtonSave :visible="!isTemplate" @click="save" />
 
       <div>
-        <v-tabs bg-color="transparent" color="#FCA326" class="pb-0 mb-0">
-          <v-tab @click="index = 0">
+        <v-tabs
+          v-model="index"
+          bg-color="transparent"
+          color="white"
+          class="mb-4 pill-tabs"
+          show-arrows
+          density="compact"
+          slider-color="transparent"
+        >
+          <v-tab
+            :value="0"
+            :class="{ 'active-pill': index === 0 }"
+            rounded="pill"
+            variant="text"
+            class="mr-2"
+          >
             {{ $t('UserTestTable.titles.testConfiguration') }}
           </v-tab>
-          <v-tab @click="index = 1">
+          <v-tab
+            :value="1"
+            :class="{ 'active-pill': index === 1 }"
+            rounded="pill"
+            variant="text"
+            class="mr-2"
+          >
             {{ $t('ModeratedTest.consentForm') }}
           </v-tab>
-          <v-tab @click="index = 2">
+          <v-tab
+            :value="2"
+            :class="{ 'active-pill': index === 2 }"
+            rounded="pill"
+            variant="text"
+            class="mr-2"
+          >
             {{ $t('ModeratedTest.preTest') }}
           </v-tab>
-          <v-tab @click="index = 3">
+          <v-tab
+            :value="3"
+            :class="{ 'active-pill': index === 3 }"
+            rounded="pill"
+            variant="text"
+            class="mr-2"
+          >
             {{ $t('ModeratedTest.tasks') }}
           </v-tab>
-          <v-tab @click="index = 4">
+          <v-tab
+            :value="4"
+            :class="{ 'active-pill': index === 4 }"
+            rounded="pill"
+            variant="text"
+            class="mr-2"
+          >
             {{ $t('ModeratedTest.postTest') }}
           </v-tab>
-          <v-tab v-if="hasEyeTracking" @click="index = 5">
+          <v-tab
+            v-if="hasEyeTracking"
+            :value="5"
+            :class="{ 'active-pill': index === 5 }"
+            rounded="pill"
+            variant="text"
+          >
             {{ $t('EyeTrackingConfig.titles.main') }}
           </v-tab>
         </v-tabs>
 
-        <v-col cols="12">
+        <v-window v-model="index" class="mt-4">
           <!-- TEST -->
-          <div v-if="index === 0">
+          <v-window-item :value="0">
             <TestConfigForm
               :readonly="isTemplate"
               :welcome="welcomeMessage"
               :final-message="finalMessage"
               @update:welcome-message="
-                ;((welcomeMessage = $event), (change = true))
+                (val) => {
+                  welcomeMessage = val
+                  change = true
+                }
               "
               @update:final-message="
-                ;((finalMessage = $event), (change = true))
+                (val) => {
+                  finalMessage = val
+                  change = true
+                }
               "
             />
-          </div>
+          </v-window-item>
 
           <!-- CONSENT FORM -->
-          <div v-if="index === 1" rounded="xxl">
+          <v-window-item :value="1">
             <TextareaForm
               v-model="consent"
               :readonly="isTemplate"
@@ -56,36 +106,38 @@
               :subtitle="$t('ModeratedTest.consentFormSubtitle')"
               @update:value="consent = $event"
             />
-          </div>
+          </v-window-item>
 
           <!-- PRE-TEST -->
-          <div v-if="index === 2">
+          <v-window-item :value="2">
             <UserVariables
               type="pre-test"
               :is-template="isTemplate"
               @change="change = true"
               @update="store.dispatch('UserStudy/setPreTest', $event)"
             />
-          </div>
+          </v-window-item>
 
           <!-- TASKS -->
-          <div v-if="index === 3">
+          <v-window-item :value="3">
             <ListTasks :is-template="isTemplate" />
-          </div>
+          </v-window-item>
           <!-- POST-TEST -->
-          <div v-if="index === 4">
+          <v-window-item :value="4">
             <UserVariables
               type="post-test"
               :is-template="isTemplate"
               @change="change = true"
               @update="store.dispatch('UserStudy/setPostTest', $event)"
             />
-          </div>
+          </v-window-item>
 
-          <v-card v-if="index === 5 && hasEyeTracking" rounded="xxl">
-            <EyeTrackingConfig />
-          </v-card>
-        </v-col>
+          <v-window-item v-if="hasEyeTracking" :value="5">
+            <v-card rounded="xxl">
+              <EyeTrackingConfig />
+            </v-card>
+          </v-window-item>
+        </v-window>
       </div>
     </v-container>
   </PageWrapper>
@@ -273,5 +325,14 @@ onUnmounted(() => {
 .v-text-field--outlined :deep(fieldset) {
   border-radius: 25px;
   border: 1px solid #ffceb2;
+}
+
+.active-pill {
+  background-color: #fca326 !important;
+  color: white !important;
+}
+
+.pill-tabs :deep(.v-slide-group__content) {
+  padding: 4px;
 }
 </style>
