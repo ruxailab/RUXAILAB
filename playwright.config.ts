@@ -1,83 +1,49 @@
-import { defineConfig, devices } from '@playwright/test'
+import { defineConfig, devices, PlaywrightTestOptions } from '@playwright/test'
 
 /**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
+ * Shared base options spread into every project's `use` block.
+ * Centralising baseURL here means it is defined exactly once — the single
+ * source of truth that SonarCloud duplication analysis checks against.
+ *
+ * Override at runtime:
+ *   BASE_URL=https://staging.example.com npx playwright test
  */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
+const baseUse: Partial<PlaywrightTestOptions> = {
+  baseURL: process.env.BASE_URL || 'http://localhost:8080',
+}
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
   testDir: './e2e',
-  /* Run tests in files in parallel */
   fullyParallel: true,
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+
+  /* Global settings inherited by all projects. */
   use: {
-    /* All tests use relative paths (e.g. page.goto('/signin')).
-       baseURL is merged into every project so relative navigation resolves correctly.
-       Override per environment: BASE_URL=https://staging.example.com npx playwright test */
-    baseURL: process.env.BASE_URL || 'http://localhost:8080',
-
+    ...baseUse,
     video: 'on',
-
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
   },
 
-  /* Configure projects for major browsers */
+  /* Each project spreads baseUse explicitly so baseURL is present even if
+     Playwright's merge order ever changes in a future version. */
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...baseUse, ...devices['Desktop Chrome'] },
     },
-
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      use: { ...baseUse, ...devices['Desktop Firefox'] },
     },
-
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      use: { ...baseUse, ...devices['Desktop Safari'] },
     },
-
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
   ],
-
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://127.0.0.1:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
 })
