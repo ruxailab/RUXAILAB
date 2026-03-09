@@ -18,6 +18,8 @@ Thank you for your interest in contributing to RUXAILAB! This document provides 
 
 We are committed to providing a welcoming and inclusive environment for all contributors. Please be respectful and constructive in all interactions.
 
+For Code of Conduct discussions and support, please use our Discord channel: https://discord.com/channels/1209902463239593984/1209902463713288293
+
 ## Getting Started
 
 RUXAILAB is a Vue.js-based platform for usability testing and heuristic evaluation. Before contributing, familiarize yourself with:
@@ -173,6 +175,7 @@ Then create a Pull Request on GitHub:
 - Target the `develop` branch
 - Provide a clear description of your changes
 - Reference any related issues
+- Keep at most **2 open Pull Requests** per contributor at any time (additional PRs are automatically closed by workflow)
 - Wait for review and address any feedback
 
 ## Code Standards
@@ -257,6 +260,8 @@ npm run test:e2e:headed
 - Keep tests maintainable and readable
 
 ## Reporting Issues
+
+Each contributor may have a maximum of **5 open issues** at a time.
 
 ### Bug Reports
 
