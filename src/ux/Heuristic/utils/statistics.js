@@ -11,10 +11,12 @@ const testData = {
 }
 
 function percentage(value, result) {
+  if (result === 0) return 0
   return (value * 100) / result
 }
 
 function standardDeviation(array) {
+  if (!Array.isArray(array) || array.length === 0) return 0
   const average = array.reduce(
     (total, value) => total + value / array.length,
     0,
@@ -52,7 +54,7 @@ function calcFinalResult(array) {
   const test = store.getters.test
   if (!test || !Array.isArray(test.testOptions)) {
     console.warn('calcFinalResult: test or testOptions is not available', test)
-    return '0.00' // Return a default value to prevent errors
+    return 0
   }
 
   const maxOption = Math.max(...test.testOptions.map((item) => item.value))
@@ -70,8 +72,8 @@ function calcFinalResult(array) {
 
   const perfectResult = (qtdQuestion - qtdNoAplication) * maxOption
   return perfectResult === 0
-    ? '0.00'
-    : ((result * 100) / perfectResult).toFixed(2)
+    ? 0
+    : parseFloat(((result * 100) / perfectResult).toFixed(2))
 }
 
 function answers() {
