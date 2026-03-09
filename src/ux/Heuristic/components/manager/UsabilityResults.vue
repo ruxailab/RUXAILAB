@@ -57,6 +57,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useStore } from 'vuex'
 
 const props = defineProps({
   test: {
@@ -67,6 +68,7 @@ const props = defineProps({
 
 const router = useRouter()
 const { t } = useI18n()
+const store = useStore()
 
 // Navigate to answers section
 const navigateToAnswers = () => {
@@ -77,9 +79,46 @@ const navigateToAnswers = () => {
 
 // Computed properties
 const usabilityPercentage = computed(() => {
-  // Por ahora devolvemos 75% como solicitado
-  // En el futuro esto se calculará basado en las respuestas reales
-  return 75
+  const testAnswerDocument = store.getters.testAnswerDocument
+  if (!testAnswerDocument?.heuristicAnswers) return 0
+
+  const testOptions = props.test?.testOptions
+  if (!Array.isArray(testOptions) || testOptions.length === 0) return 0
+
+  const maxOption = Math.max(...testOptions.map((o) => o.value))
+  if (maxOption <= 0) return 0
+
+  const evaluators = Object.values(testAnswerDocument.heuristicAnswers)
+  if (evaluators.length === 0) return 0
+
+  const evaluatorResults = evaluators.map((evaluator) => {
+    let sumResult = 0
+    let totalQuestions = 0
+    let totalNA = 0
+
+    const heuristicGroups = evaluator.heuristicQuestions || []
+    heuristicGroups.forEach((heuristic) => {
+      const questions = heuristic.heuristicQuestions || []
+      questions.forEach((question) => {
+        const answer = question.heuristicAnswer
+        // Answer may be {value, text} object (after getter transform) or raw number
+        const value = typeof answer === 'object' ? answer?.value : answer
+        totalQuestions++
+        if (value === -1) {
+          totalNA++
+        } else if (value !== null && value !== undefined) {
+          sumResult += value
+        }
+      })
+    })
+
+    const perfectScore = (totalQuestions - totalNA) * maxOption
+    return perfectScore === 0 ? 0 : (sumResult * 100) / perfectScore
+  })
+
+  const average =
+    evaluatorResults.reduce((sum, r) => sum + r, 0) / evaluatorResults.length
+  return parseFloat(average.toFixed(2))
 })
 
 const participantsCount = computed(() => {
