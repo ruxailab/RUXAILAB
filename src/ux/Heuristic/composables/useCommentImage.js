@@ -93,7 +93,7 @@ export function useCommentImage(props, emit) {
 
   const handleImageUploaded = (imageUrl) => {
     if (imageUrl) {
-      const newImage = { id: `temp-${Date.now()}`, url: imageUrl, createdAt: Date.now() }
+      const newImage = { id: imageUrl, url: imageUrl, createdAt: Date.now() }
       localImages.value = [...localImages.value, newImage]
       emit('addImage', imageUrl)
       if (localImages.value.length === 1) emit('updateImage', imageUrl)
