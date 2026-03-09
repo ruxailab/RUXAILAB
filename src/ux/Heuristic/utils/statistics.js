@@ -73,7 +73,7 @@ function calcFinalResult(array) {
   const perfectResult = (qtdQuestion - qtdNoAplication) * maxOption
   return perfectResult === 0
     ? 0
-    : parseFloat(((result * 100) / perfectResult).toFixed(2))
+    : ((result * 100) / perfectResult).toFixed(2)
 }
 
 function answers() {
