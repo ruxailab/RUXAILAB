@@ -945,7 +945,8 @@
     "validation": {
       "fieldRequired": "フィールドは必須です",
       "validUrl": "http:// または https:// で始まる有効なURLである必要があります",
-      "positiveNumber": "正の数である必要があります"
+      "positiveNumber": "正の数である必要があります",
+      "minOne": "値は1以上である必要があります"
     },
     "basicInfo": {
       "stepTitle": "ステップ1: タスク基本情報",

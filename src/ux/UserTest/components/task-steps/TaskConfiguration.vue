@@ -47,7 +47,10 @@
           prepend-inner-icon="mdi-clock-outline"
           :placeholder="$t('CreateTask.configuration.estimatedTimePlaceholder')"
           :rules="timeRules"
+          min="1"
+          step="1"
           @update:model-value="validateStep"
+          @keypress="onlyNumbers"
         />
       </v-col>
 
@@ -181,8 +184,17 @@ const urlRules = computed(() => [
 
 const timeRules = computed(() => [
   (v) => !!v || t('CreateTask.validation.fieldRequired'),
-  (v) => (v && v > 0) || t('CreateTask.validation.positiveNumber'),
+  (v) =>
+    (Number.isInteger(Number(v)) && Number(v) >= 1) ||
+    t('CreateTask.validation.minOne'),
 ])
+
+const onlyNumbers = (event) => {
+  const charCode = event.which ? event.which : event.keyCode
+  if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+    event.preventDefault()
+  }
+}
 
 const isValid = computed(() => {
   const hasTaskType = !!localTask.value.taskType

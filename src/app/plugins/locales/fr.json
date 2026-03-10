@@ -945,7 +945,8 @@
     "validation": {
       "fieldRequired": "Champ Requis",
       "validUrl": "Doit être une URL valide commençant par http:// ou https://",
-      "positiveNumber": "Doit être un nombre positif"
+      "positiveNumber": "Doit être un nombre positif",
+      "minOne": "La valeur doit être d'au moins 1"
     },
     "basicInfo": {
       "stepTitle": "Étape 1 : Informations de Base de la Tâche",
