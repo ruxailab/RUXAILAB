@@ -222,11 +222,8 @@ export default {
       commit('setLoading', true)
       try {
         await authController.deleteAuth(payload)
-        // Store handles state management
         await authController.signOut()
         commit('SET_USER', null)
-      } catch (err) {
-        throw err
       } finally {
         commit('setLoading', false)
       }

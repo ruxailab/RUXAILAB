@@ -581,77 +581,63 @@ const actions = {
 
   // Reset assessment
   async resetAssessment({ commit, rootState }, { testId }) {
-    try {
-      const userId = rootState.auth.user?.uid
-      if (userId && testId) {
-        await assessmentController.deleteAssessment(userId, testId)
-      }
-      commit('RESET_ASSESSMENT')
-    } catch (error) {
-      throw error
+    const userId = rootState.auth.user?.uid
+    if (userId && testId) {
+      await assessmentController.deleteAssessment(userId, testId)
     }
+    commit('RESET_ASSESSMENT')
   },
 
   // Save assessment to Firestore
   async saveAssessment({ state }, { userId, testId, testType = 'manual' }) {
-    try {
-      if (!userId) throw new Error('User ID is required')
+    if (!userId) throw new Error('User ID is required')
 
-      // Convert rule assessments to array format
-      const assessmentData = Object.entries(state.ruleAssessments).map(
-        ([ruleId, assessment]) => ({
-          ruleId,
-          ...assessment,
-          // Add any additional fields needed from the rule data
-          ...(state.wcagData && {
-            // Include rule metadata for easier querying
-            ruleTitle: findRuleTitle(ruleId, state.wcagData),
-            principle: findPrincipleForRule(ruleId, state.wcagData),
-            guideline: findGuidelineForRule(ruleId, state.wcogData),
-          }),
+    // Convert rule assessments to array format
+    const assessmentData = Object.entries(state.ruleAssessments).map(
+      ([ruleId, assessment]) => ({
+        ruleId,
+        ...assessment,
+        ...(state.wcagData && {
+          ruleTitle: findRuleTitle(ruleId, state.wcagData),
+          principle: findPrincipleForRule(ruleId, state.wcagData),
+          guideline: findGuidelineForRule(ruleId, state.wcogData),
         }),
-      )
+      }),
+    )
 
-      await assessmentController.saveAssessment(
-        userId,
-        testId,
-        testType,
-        assessmentData,
-      )
-      return { success: true }
-    } catch (error) {
-      throw error
-    }
+    await assessmentController.saveAssessment(
+      userId,
+      testId,
+      testType,
+      assessmentData,
+    )
+    return { success: true }
   },
 
   // Load assessment from Firestore
   async loadAssessment({ commit }, { userId, testId }) {
-    try {
-      if (!userId) throw new Error('User ID is required')
+    if (!userId) throw new Error('User ID is required')
 
-      const assessment = await assessmentController.getAssessment(
-        userId,
-        testId,
-      )
-      if (!assessment) return null
+    const assessment = await assessmentController.getAssessment(
+      userId,
+      testId,
+    )
+    if (!assessment) return null
 
-      // Update the store with loaded assessment data
-      const ruleAssessments = {}
-      const completedRules = []
+    // Update the store with loaded assessment data
+    const ruleAssessments = {}
+    const completedRules = []
 
-      assessment.assessmentData.forEach((item) => {
-        const { ruleId, status, severity, notes } = item
-        ruleAssessments[ruleId] = { status, severity, notes }
-        if (status) completedRules.push(ruleId)
-      })
+    assessment.assessmentData.forEach((item) => {
+      const { ruleId, status, severity, notes } = item
+      ruleAssessments[ruleId] = { status, severity, notes }
+      if (status) completedRules.push(ruleId)
+    })
 
-      commit('SET_RULE_ASSESSMENTS', ruleAssessments)
-      commit('SET_COMPLETED_RULES', completedRules)
+    commit('SET_RULE_ASSESSMENTS', ruleAssessments)
+    commit('SET_COMPLETED_RULES', completedRules)
 
-      return assessment
-    } catch (error) {
-      throw error
-    }
+    return assessment
   },
 
   // Update a single rule assessment
@@ -659,55 +645,42 @@ const actions = {
     { commit, state },
     { userId, testId, ruleId, assessment },
   ) {
-    try {
-      if (!userId) throw new Error('User ID is required')
+    if (!userId) throw new Error('User ID is required')
 
-      // First update local state
-      commit('UPDATE_RULE_ASSESSMENT', { ruleId, assessment })
+    // First update local state
+    commit('UPDATE_RULE_ASSESSMENT', { ruleId, assessment })
 
-      // Then update in Firestore
-      await assessmentController.updateRuleAssessment(userId, testId, {
-        ruleId,
-        ...assessment,
-        // Add any additional metadata
-        ...(state.wcagData && {
-          ruleTitle: findRuleTitle(ruleId, state.wcagData),
-          principle: findPrincipleForRule(ruleId, state.wcagData),
-          guideline: findGuidelineForRule(ruleId, state.wcogData),
-        }),
-      })
+    // Then update in Firestore
+    await assessmentController.updateRuleAssessment(userId, testId, {
+      ruleId,
+      ...assessment,
+      ...(state.wcagData && {
+        ruleTitle: findRuleTitle(ruleId, state.wcagData),
+        principle: findPrincipleForRule(ruleId, state.wcagData),
+        guideline: findGuidelineForRule(ruleId, state.wcogData),
+      }),
+    })
 
-      return { success: true }
-    } catch (error) {
-      throw error
-    }
+    return { success: true }
   },
 
   // Add a new action to fetch configData from Firestore
   async fetchConfigData({ commit, state, rootState }, testId) {
-    try {
-      // Check if configData is already available in the store
-      if (state.configuration && state.configuration.testId === testId) {
-        return state.configuration
-      }
-
-      // Fetch userId from Auth module
-      const userId = rootState.Auth.user?.id
-      if (!userId) throw new Error('User not authenticated')
-
-      // Fetch configData from Firestore (replace with actual Firestore fetch logic)
-      const configData = await assessmentController.getConfigData(
-        userId,
-        testId,
-      )
-
-      // Commit the fetched configData to the store
-      commit('SET_CONFIGURATION', configData)
-
-      return configData
-    } catch (error) {
-      throw error
+    if (state.configuration && state.configuration.testId === testId) {
+      return state.configuration
     }
+
+    const userId = rootState.Auth.user?.id
+    if (!userId) throw new Error('User not authenticated')
+
+    const configData = await assessmentController.getConfigData(
+      userId,
+      testId,
+    )
+
+    commit('SET_CONFIGURATION', configData)
+
+    return configData
   },
 }
 

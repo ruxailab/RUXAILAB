@@ -115,11 +115,7 @@ const startRecording = async () => {
     if (!cameraAvailable) return
 
     recording.value = true
-    recordingTaskIndex.value = props.taskIndex // Store the current task index when recording starts
-    console.log(
-      'VideoRecorder: Recording started for task index:',
-      props.taskIndex,
-    )
+    recordingTaskIndex.value = props.taskIndex
     videoStream.value = await navigator.mediaDevices.getUserMedia({
       video: true,
     })
@@ -160,13 +156,6 @@ const startRecording = async () => {
         await uploadBytes(storageReference, videoBlob)
 
         recordedVideo.value = await getDownloadURL(storageReference)
-        console.log('webcam url =>', correctTaskIndex, recordedVideo.value)
-        console.log('Tasks array:', currentUserTestAnswer.value.tasks)
-        console.log('Tasks length:', currentUserTestAnswer.value.tasks?.length)
-        console.log(
-          'Task at index:',
-          currentUserTestAnswer.value.tasks?.[correctTaskIndex],
-        )
 
         await store.dispatch('updateTaskMediaUrl', {
           taskIndex: correctTaskIndex,

@@ -1202,10 +1202,6 @@ const joinRoom = async () => {
           console.error('Error adding ICE candidate:', err)
         }
       } else {
-        // Buffer candidate
-        console.log(
-          `Buffering candidate for ${senderId} (pending remote description)`,
-        )
         if (peers[senderId]) {
           peers[senderId].pendingCandidates.push(signal.candidate)
         }
@@ -1249,13 +1245,11 @@ const leaveRoom = () => {
 }
 
 const initLocalMedia = async () => {
-  console.log('initLocalMedia called')
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
       video: true,
       audio: true,
     })
-    console.log('getUserMedia success', stream)
     localStream.value = stream
     if (localVideo.value) localVideo.value.srcObject = stream
     isCameraEnabled.value = true

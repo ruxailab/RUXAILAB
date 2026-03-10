@@ -1032,10 +1032,6 @@ const callTimerSave = () => {
 }
 
 function handleTaskFinish(userCompleted) {
-  const currentTask = localTestAnswer.tasks[taskIndex.value]
-  if (currentTask) {
-    console.log('Estado actual de la tarea antes de finalizar:', currentTask) // eslint-disable-line no-console
-  }
   completeStep(taskIndex.value, 'tasks', userCompleted)
   callTimerSave()
 }
@@ -1050,9 +1046,6 @@ const startTimer = () => {
 }
 
 const handleTimerStopped = (elapsedTime, idx) => {
-  // idx is passed from TaskStep, always use it
-  console.log('handleTimerStopped llamado con:', { elapsedTime, idx }) // eslint-disable-line no-console
-
   if (!localTestAnswer.tasks) {
     console.error('localTestAnswer.tasks no está definido') // eslint-disable-line no-console
     return
@@ -1125,7 +1118,6 @@ const completeStep = async (id, type, userCompleted = true) => {
         taskIndex.value = id + 1
         startTimer()
       } else {
-        console.log('All tasks completed, moving to post-test') // eslint-disable-line no-console
         globalIndex.value = 5
       }
       if (userCompleted) {

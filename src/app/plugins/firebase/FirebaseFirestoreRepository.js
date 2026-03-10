@@ -154,12 +154,8 @@ export default class Controller {
   }
 
   async update(col, docId, payload) {
-    try {
-      const ref = doc(db, `${col}/${docId}`)
-      return updateDoc(ref, payload)
-    } catch (e) {
-      throw e
-    }
+    const ref = doc(db, `${col}/${docId}`)
+    return updateDoc(ref, payload)
   }
 
   async delete(col, docId) {

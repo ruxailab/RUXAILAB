@@ -110,24 +110,14 @@ export function useProfile() {
   }
 
   const uploadProfileImage = async (file) => {
-    try {
-      const auth = getAuth()
-      const user = auth.currentUser
-      if (!user) throw new Error(t('profile.noUserSignedIn'))
+    const auth = getAuth()
+    const user = auth.currentUser
+    if (!user) throw new Error(t('profile.noUserSignedIn'))
 
-      // Compress the image first
+    const compressedFile = await compressImage(file, 300, 0.6)
+    const base64DataUrl = await fileToBase64(compressedFile)
 
-      const compressedFile = await compressImage(file, 300, 0.6)
-
-      // Convert to Base64 (stores directly in Firestore, no Storage needed!)
-
-      const base64DataUrl = await fileToBase64(compressedFile)
-
-      // Return the Base64 data URL (this will be stored in Firestore)
-      return base64DataUrl
-    } catch (error) {
-      throw error
-    }
+    return base64DataUrl
   }
 
   const removeProfileImage = async () => {
