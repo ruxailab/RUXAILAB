@@ -5,51 +5,25 @@ import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions'
 import { getStorage, connectStorageEmulator } from 'firebase/storage'
 import { getDatabase } from 'firebase/database'
-
+// changed
 const firebaseConfig = {
-  apiKey: 'AIzaSyDPjRW1yeCx7qjc6nxyQJ0Pc8U3FFGWDXg',
-  authDomain: 'bugrux-db346.firebaseapp.com',
-  projectId: 'bugrux-db346',
-  storageBucket: 'bugrux-db346.firebasestorage.app',
-  messagingSenderId: '135444117599',
-  appId: '1:135444117599:web:129f1abff4ab4ad83643ea',
+  apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
+  authDomain: process.env.VUE_APP_FIREBASE_AUTH_DOMAIN,
+  storageBucket: process.env.VUE_APP_FIREBASE_STORAGE_BUCKET,
+  databaseURL: process.env.VUE_APP_FIREBASE_DB_URL,
+  projectId: process.env.VUE_APP_FIREBASE_PROJECT_ID,
+  messagingSenderId: process.env.VUE_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.VUE_APP_FIREBASE_APP_ID,
+  //chnaged
 }
 
 const firebaseApp = initializeApp(firebaseConfig)
 const auth = getAuth(firebaseApp)
 const db = getFirestore(firebaseApp)
-
-// Analytics - only initialize if measurement ID is configured
-let analytics = null
-if (process.env.VUE_APP_FIREBASE_MEASUREMENT_ID) {
-  try {
-    analytics = getAnalytics(firebaseApp)
-  } catch (e) {
-    console.warn('Analytics initialization skipped:', e.message)
-  }
-}
-
+const analytics = getAnalytics(firebaseApp)
 const fbFunctions = getFunctions(firebaseApp)
-
-// Storage - safe initialization with bucket validation
-let storage = null
-if (firebaseConfig.storageBucket) {
-  try {
-    storage = getStorage(firebaseApp, `gs://${firebaseConfig.storageBucket}`)
-  } catch (e) {
-    console.warn('Storage initialization failed:', e.message)
-  }
-}
-
-// Database - safe initialization with URL validation
-let database = null
-if (firebaseConfig.databaseURL) {
-  try {
-    database = getDatabase(firebaseApp, firebaseConfig.databaseURL)
-  } catch (e) {
-    console.warn('Database initialization failed:', e.message)
-  }
-}
+const storage = getStorage(firebaseApp, `gs://${firebaseConfig.storageBucket}`)
+const database = getDatabase(firebaseApp, firebaseConfig.databaseURL)
 
 if (process.env.VUE_APP_USE_EMULATORS === 'true') {
   const EMULATOR_HOST =
