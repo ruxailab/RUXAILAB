@@ -1,0 +1,182 @@
+# Quality Control Check Sheet Pipeline - Reuse Guide
+
+This guide helps contributors run this Quality Control (QC) pipeline in a different repository.
+It is written as a practical setup reference: what to copy, what to change, and how to validate.
+
+## 1) What this pipeline does
+
+The QC pipeline collects failed CI workflow runs and writes them into a weekly check sheet.
+
+It does five things:
+
+1. Detects failed workflows from `workflow_run` events.
+2. Classifies each failure into a QC category using keywords.
+3. Updates `.github/quality_control_data.json` (Mon-Fri counters, UTC-based).
+4. Tracks open issues by labels (`bug`, `enhancement`, `documentation/docs`).
+5. Commits the JSON update and shows summary tables in the job output.
+
+Main files:
+
+- `.github/workflows/quality-control-aggregator.yml`
+- `.github/scripts/generate_qc_report.js`
+- `.github/quality_control_data.json`
+
+## 2) Quick start (5 steps)
+
+1. Copy the 3 files above to your target repository.
+2. Confirm your workflows are active in GitHub Actions.
+3. Adjust the keyword mapping in `quality-control-aggregator.yml`.
+4. Verify category names in JSON match the script mapping.
+5. Run one failing workflow and confirm the QC JSON and issue metrics are updated.
+
+## 3) Prerequisites
+
+Before enabling the pipeline in another project, confirm:
+
+1. The repository uses GitHub Actions.
+2. Workflows to be monitored are active.
+3. The workflow can push commits (`contents: write`) or uses a PAT (Personal Access Token).
+4. Branch protection rules allow CI/bot updates.
+5. The workflow has `issues: read` permission to collect open issue metrics.
+
+## 4) What you must change
+
+### A) Keyword mapping in the aggregator workflow
+
+The pipeline no longer depends on a fixed list of workflow names.
+It classifies failures by checking keywords in the workflow name.
+
+Current logic in `.github/workflows/quality-control-aggregator.yml`:
+
+```js
+if (nameLower.includes('test')) testFails = 1
+else if (nameLower.includes('gitguardian') || nameLower.includes('security'))
+  secFails = 1
+else if (
+  nameLower.includes('sonar') ||
+  nameLower.includes('code issue') ||
+  nameLower.includes('code smell') ||
+  nameLower.includes('pr check') ||
+  nameLower.includes('lint')
+)
+  codeFails = 1
+```
+
+What to update:
+
+- Replace or extend these keywords to match the naming used in your workflows.
+- Keep keywords simple and predictable (for example, `lint`, `test`, `security`).
+
+Important behavior:
+
+- Only active workflows are listed in the discovery log.
+- If a failed workflow does not match any keyword, no category is incremented.
+
+### B) Category names in JSON and script
+
+Current category mapping in `.github/scripts/generate_qc_report.js`:
+
+- `Test error` <- `TEST_ERRORS`
+- `Security vulnerability` <- `SECURITY_ISSUES`
+- `Code smells/Bugs` <- `CODE_SMELLS`
+
+If you rename categories in `.github/quality_control_data.json`, also update the `switch (record.occurrence)` block in `generate_qc_report.js`.
+
+### C) Schedule and timezone
+
+Current schedule:
+
+```yaml
+schedule:
+  - cron: '0 23 * * 1-5'
+```
+
+This runs at 23:00 UTC, Monday to Friday.
+
+The script uses UTC day logic (`getUTCDay()`). If your class/team reports by local timezone, adjust the cron and/or day calculation.
+
+### D) Commit permissions
+
+The pipeline commits updates using `stefanzweifel/git-auto-commit-action@v5`.
+
+Default permissions:
+
+```yaml
+permissions:
+  contents: write
+```
+
+If `GITHUB_TOKEN` cannot push due to branch rules, use a PAT:
+
+```yaml
+with:
+  token: ${{ secrets.PAT_TOKEN }}
+```
+
+Then add `PAT_TOKEN` in repository secrets.
+
+### E) Issue tracking labels (new)
+
+The pipeline now reads open issues from the repository and stores counters in `issues_tracking`:
+
+- `open_bugs`
+- `open_enhancements`
+- `open_docs`
+- `total_open`
+
+Label mapping used by the script:
+
+- Bug: `bug`
+- Enhancement: `enhancement`
+- Docs: `documentation` or `docs`
+
+What to update in another project:
+
+- If your label names are different, change the mapping in `.github/scripts/generate_qc_report.js`.
+- Keep `permissions.issues: read` in `.github/workflows/quality-control-aggregator.yml`.
+
+## 5) Validation checklist
+
+After migration, validate with this sequence:
+
+1. Trigger one monitored workflow and make it fail intentionally.
+2. Open the `Quality Control Aggregator` run.
+3. Check the job summary table.
+4. Confirm `.github/quality_control_data.json` was updated and committed.
+5. Confirm no permission errors in the commit step.
+6. Confirm the issue-analysis table appears with expected counters.
+
+## 6) Common issues and fixes
+
+1. **JSON did not update**
+   - Cause: no keyword matched the failed workflow name.
+   - Fix: update keyword rules in `Fetch Pipeline Results`.
+
+2. **Commit step failed**
+   - Cause: token lacks write rights or branch protection blocks push.
+   - Fix: allow `contents: write`, or use `PAT_TOKEN`.
+
+3. **Wrong weekday count**
+   - Cause: UTC logic does not match local timezone.
+   - Fix: adjust cron and/or day calculation logic.
+
+4. **Custom category never increments**
+   - Cause: category was added in JSON but not mapped in script.
+   - Fix: add mapping in `generate_qc_report.js`.
+
+5. **Issue counters are zero or missing**
+
+- Cause: missing `issues: read` permission or label names do not match.
+- Fix: enable `issues: read` and align label mapping in the script.
+
+## 7) One-page handoff for students
+
+To adapt this pipeline quickly, align these 4 points first:
+
+1. Keyword rules (`nameLower.includes(...)`)
+2. Category labels (JSON + script `switch`)
+3. Schedule/timezone (cron + UTC logic)
+4. Commit permissions (`GITHUB_TOKEN` or `PAT_TOKEN`)
+5. Issue label mapping (`bug`, `enhancement`, `documentation/docs`)
+
+If these points are correct, the pipeline is usually portable with no extra code changes.
