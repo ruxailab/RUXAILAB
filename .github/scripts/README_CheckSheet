@@ -161,7 +161,7 @@ After migration, validate with this sequence:
    - Fix: adjust cron and/or day calculation logic.
 
 4. **Custom category never increments**
-   - Cause: category was added in JSON but not mapped in script.
+   - Cause: category was added in JSON but not mapped in script
    - Fix: add mapping in `generate_qc_report.js`.
 
 5. **Issue counters are zero or missing**
