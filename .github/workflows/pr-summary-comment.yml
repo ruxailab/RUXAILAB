@@ -1,0 +1,31 @@
+name: PR/Commit Checks Summary
+
+on:
+  workflow_run:
+    # Trigada quando alguma dessas pipelines principais finalizarem
+    workflows:
+      - "test"
+      - "GitGuardian scan"
+      - "PR Checks"
+      - "Quality Control Aggregator"
+    types:
+      - completed
+
+permissions:
+  pull-requests: write # Necessário para comentar nos PRs
+  actions: read        # Necessário para ler workflow runs e runs de checks
+  checks: read         # Necessário para acessar a Check API do commit
+
+jobs:
+  generate-summary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate Markdown Summary
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const script = require('./.github/scripts/generate_pr_summary.js');
+            await script({github, context, core});
