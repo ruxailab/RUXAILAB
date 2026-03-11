@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <!-- Total Users -->
-    <v-col cols="12" md="6" class="py-0">
+    <v-col cols="12" sm="6">
       <v-card class="study-card study-card-primary-blur" elevation="8">
         <v-card-text class="pa-4">
           <div class="d-flex justify-space-between align-center">
@@ -20,7 +20,7 @@
     </v-col>
 
     <!-- Completed Tests -->
-    <v-col cols="12" md="6" class="py-0">
+    <v-col cols="12" sm="6">
       <v-card class="study-card study-card-primary-blur" elevation="8">
         <v-card-text class="pa-4">
           <div class="d-flex justify-space-between align-center">
@@ -46,7 +46,7 @@
     </v-col>
 
     <!-- In Progress -->
-    <v-col cols="12" md="6" m>
+    <v-col cols="12" sm="6">
       <v-card class="study-card study-card-primary-blur" elevation="8">
         <v-card-text class="pa-4">
           <div class="d-flex justify-space-between align-center">
@@ -72,7 +72,7 @@
     </v-col>
 
     <!-- Average Completion Time -->
-    <v-col cols="12" md="6">
+    <v-col cols="12" sm="6">
       <v-card class="study-card study-card-primary-blur" elevation="8">
         <v-card-text class="pa-4">
           <div class="d-flex justify-space-between align-center">
