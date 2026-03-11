@@ -2,7 +2,6 @@ name: Quality Control Aggregator
 
 on:
   workflow_run:
-    workflows: ["test🧪", "GitGuardian scan", "SonarCloud Issue Creator"]
     types:
       - completed
   schedule:
@@ -32,15 +31,40 @@ jobs:
           script: |
             const eventName = context.eventName;
             let testFails = 0, secFails = 0, codeFails = 0;
+
+            try {
+              // 1. Busca as pipelines/workflows do repositório automaticamente
+              const { data } = await github.rest.actions.listRepoWorkflows({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+              });
+              
+              const activeWorkflows = data.workflows.filter(w => w.state === 'active');
+              
+              // 2. Verifica se existem pipelines ativas
+              if (activeWorkflows.length === 0) {
+                core.info('⚠️ Nenhuma pipeline ativa encontrada no repositório.');
+              } else {
+                core.info(`✅ Encontradas ${activeWorkflows.length} pipelines ativas no repositório.`);
+                activeWorkflows.forEach(w => core.info(`- ${w.name}`));
+              }
+            } catch (error) {
+              core.warning(`Erro ao buscar pipelines: ${error.message}`);
+            }
             
+            // 3. Verifica a pipeline que engatilhou o evento usando palavras-chave
             if (eventName === 'workflow_run') {
               const triggeredBy = context.payload.workflow.name;
               const conclusion = context.payload.workflow_run.conclusion;
               
               if (conclusion === 'failure') {
-                if (triggeredBy === 'test🧪') testFails = 1;
-                if (triggeredBy === 'GitGuardian scan') secFails = 1;
-                if (triggeredBy === 'SonarCloud Issue Creator') codeFails = 1;
+                const nameLower = triggeredBy.toLowerCase();
+                
+                // Mapeamento automático em vez de nomes cravados (hardcoded)
+                if (nameLower.includes('test')) testFails = 1;
+                else if (nameLower.includes('gitguardian') || nameLower.includes('security')) secFails = 1;
+                else if (nameLower.includes('sonar') || nameLower.includes('code issue') || nameLower.includes('code smell') || nameLower.includes('pr check') || nameLower.includes('lint')) codeFails = 1;
+                else core.info(`Pipeline '${triggeredBy}' falhou, mas não foi mapeada para as categorias de QC padroes.`);
               }
             }
             
