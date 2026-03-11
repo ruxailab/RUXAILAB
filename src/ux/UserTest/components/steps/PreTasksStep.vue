@@ -9,15 +9,14 @@
         </p>
 
         <!-- Recording Information Card -->
-        <v-card 
-          variant="outlined" 
-          color="secondary" 
+        <v-card
+          variant="outlined"
+          color="secondary"
           class="my-6 mx-auto"
           max-width="600"
         >
           <v-card-text class="pa-4">
             <div class="d-flex align-center mb-3">
-              
               <h3 class="text-h6 font-weight-bold text-secondary">
                 {{ $t('UserTestView.PreTasksStep.recordingTitle') }}
               </h3>
@@ -25,9 +24,9 @@
             <p class="text-body-1 text-left mb-3">
               {{ $t('UserTestView.PreTasksStep.recordingDescription') }}
             </p>
-            
+
             <!-- Recording Types -->
-            <div class="d-flex flex-wrap justify-center" style="gap: 12px;">
+            <div class="d-flex flex-wrap justify-center" style="gap: 12px">
               <v-chip
                 size="small"
                 color="secondary"
@@ -84,9 +83,9 @@
   </ShowInfo>
 </template>
 <script setup>
-import ShowInfo from '@/shared/components/ShowInfo.vue';
+import ShowInfo from '@/shared/components/ShowInfo.vue'
 const props = defineProps({
-    numTasks: Number
-});
-const emit = defineEmits(['startTasks']);
+  numTasks: Number,
+})
+const emit = defineEmits(['startTasks'])
 </script>

@@ -20,15 +20,17 @@ import CardSortingStudyAnswer from '@/ux/CardSorting/models/CardSortingStudyAnsw
  * @returns {Study|UserStudy|HeuristicStudy|CardSortingStudy}
  */
 export function instantiateStudyByType(type, rawData) {
+  const normalizedType = normalizeStudyType(type)
   const normalizedData = {
     ...rawData,
+    testType: normalizedType,
     testAdmin: rawData?.testAdmin ? new StudyAdmin(rawData.testAdmin) : null,
     cooperators: rawData?.cooperators
       ? rawData.cooperators.map((c) => new Cooperators(c))
       : [],
   }
 
-  switch (type) {
+  switch (normalizedType) {
     case STUDY_TYPES.USER:
       return new UserStudy(normalizedData)
     case STUDY_TYPES.HEURISTIC:
@@ -73,6 +75,18 @@ export const STUDY_TYPES = {
   CARD_SORTING: 'CARD_SORTING',
   ACCESSIBILITY_MANUAL: 'MANUAL',
   ACCESSIBILITY_AUTOMATIC: 'AUTOMATIC',
+}
+
+/**
+ * Normalizes legacy study type values to the canonical enum.
+ *
+ * @param {string} type
+ * @returns {string}
+ */
+export const normalizeStudyType = (type = '') => {
+  const normalized = String(type || '').toUpperCase()
+  if (normalized === 'HEURISTICS') return STUDY_TYPES.HEURISTIC
+  return normalized
 }
 
 /**
@@ -285,7 +299,7 @@ export const METHOD_DEFINITIONS = {
  * Retrieves the full definition of a method given its type and subtype.
  */
 export const getMethodDefinition = (testType, subType = '') => {
-  const type = testType?.toUpperCase() || ''
+  const type = normalizeStudyType(testType)
   const subtype = subType?.toUpperCase() || ''
 
   switch (type) {
@@ -308,9 +322,12 @@ export const getMethodDefinition = (testType, subType = '') => {
 }
 
 export const getMethodManagerView = (type, subType) => {
-  if (type === STUDY_TYPES.HEURISTIC) return 'HeuristicManagerView'
-  else if (type === STUDY_TYPES.CARD_SORTING) return 'CardSortingManagerView'
-  else if (type === STUDY_TYPES.USER) {
+  const normalizedType = normalizeStudyType(type)
+
+  if (normalizedType === STUDY_TYPES.HEURISTIC) return 'HeuristicManagerView'
+  else if (normalizedType === STUDY_TYPES.CARD_SORTING)
+    return 'CardSortingManagerView'
+  else if (normalizedType === STUDY_TYPES.USER) {
     if (subType === USER_STUDY_SUBTYPES.UNMODERATED)
       return 'UserUnmoderatedManagerView'
     else if (subType === USER_STUDY_SUBTYPES.MODERATED)

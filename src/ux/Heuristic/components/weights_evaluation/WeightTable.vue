@@ -118,12 +118,18 @@
               <!-- Weight Radio Buttons -->
               <div class="weights-cell">
                 <v-radio-group
-                  v-model="group[tabs][tam]"
+                  :model-value="group[tabs]?.[tam]"
                   inline
                   hide-details
                   class="weight-radio-group"
                   density="compact"
                   :disabled="isTemplate"
+                  @update:model-value="
+                    (val) => {
+                      ensureGroup(tabs, tam)
+                      group[tabs][tam] = val
+                    }
+                  "
                 >
                   <v-tooltip
                     v-for="(r, rad) in importance"
@@ -151,20 +157,6 @@
               </div>
             </div>
           </v-card>
-
-          <!-- Save Button -->
-          <div class="text-center mt-6">
-            <v-btn
-              color="accent"
-              variant="elevated"
-              size="large"
-              class="text-none px-8"
-              :disabled="isTemplate"
-              @click="updateDatas"
-            >
-              {{ $t('HeuristicsWeightsTable.actions.saveWeights') }}
-            </v-btn>
-          </div>
         </v-tabs-window-item>
       </v-tabs-window>
     </v-card>
@@ -172,10 +164,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onBeforeMount } from 'vue'
+import { ref, computed, onBeforeMount, watch } from 'vue'
 import { useStore } from 'vuex'
-import { useI18n } from 'vue-i18n'
-import { showSuccess, showError } from '@/shared/utils/toast'
 
 const emit = defineEmits(['change'])
 const props = defineProps({
@@ -185,7 +175,6 @@ const props = defineProps({
   },
 })
 const store = useStore()
-const { t } = useI18n()
 
 const tabs = ref(0)
 const group = ref({})
@@ -214,21 +203,30 @@ const importt = ref([
 
 const heuristics = computed(() => store.getters.heuristics || [])
 
-const updateDatas = () => {
-  if (props.isTemplate) return
-  try {
-    store.dispatch('setTestWeights', { ...group.value })
+watch(
+  group,
+  (newValue) => {
+    if (props.isTemplate) return
+
+    store.dispatch('setTestWeights', { ...newValue })
     emit('change')
-    showSuccess('HeuristicsWeightsTable.messages.weightsSaved')
-  } catch (error) {
-    console.error('Error saving weights:', error)
-    showError('HeuristicsWeightsTable.errors.failedToSaveWeights')
+  },
+  { deep: true },
+)
+
+const ensureGroup = (tabIndex, itemIndex) => {
+  if (!group.value[tabIndex]) {
+    group.value[tabIndex] = []
+  }
+  if (group.value[tabIndex][itemIndex] === undefined) {
+    group.value[tabIndex][itemIndex] = null
   }
 }
 
 onBeforeMount(() => {
   const heuristicLength = heuristics.value.length
-  const testWeights = store.getters.testWeights || {}
+  const testWeights = store.getters.test.testWeights
+  store.dispatch('setTestWeights', testWeights)
 
   if (Object.keys(testWeights).length === 0) {
     const weightMap = {}
