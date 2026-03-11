@@ -9,6 +9,12 @@ import { showError } from '@/shared/utils/toast'
 
 const answerController = new AnswerController()
 
+const isPreviewRoute = () => {
+  if (typeof window === 'undefined') return false
+  const path = window.location?.pathname || ''
+  return path.includes('/testview/') || path.includes('/preview/')
+}
+
 export default {
   state: {
     testAnswerDocument: null,
@@ -260,6 +266,9 @@ export default {
       }
     },
     async updateUserAnswer({ commit }, payload) {
+      if (isPreviewRoute()) {
+        return
+      }
       commit('setLoading', true)
       try {
         await answerController.updateUserAnswer(payload)
@@ -285,6 +294,9 @@ export default {
       }
     },
     async saveTestAnswer({ commit, state, rootState }, payload) {
+      if (isPreviewRoute()) {
+        return
+      }
       commit('setLoading', true)
       try {
         await answerController.saveTestAnswer(
@@ -331,6 +343,9 @@ export default {
       }
     },
     async updateTaskAnswer({ commit }, { payload, answersDocId }) {
+      if (isPreviewRoute()) {
+        return
+      }
       commit('setLoading', true)
       try {
         await answerController.updateTaskAnswer(payload, answersDocId)

@@ -588,6 +588,7 @@ const localTestAnswer = reactive(new UserStudyEvaluatorAnswer())
 
 const store = useStore()
 const router = useRouter()
+const isPreview = computed(() => route.meta?.isPreview === true)
 const { t } = useI18n()
 
 const mediaUrls = computed(() => store.getters.mediaUrls)
@@ -724,6 +725,7 @@ function toggleTracking(value) {
 }
 
 const savePartialAnswer = async () => {
+  if (isPreview.value) return // ← ADD THIS LINE
   try {
     calculateProgress(localTestAnswer)
     localTestAnswer.fullName = fullName.value
@@ -859,7 +861,7 @@ const startTest = async () => {
     return
   }
 
-  if (!isUserTestAdmin.value && user.value) {
+  if (!isUserTestAdmin.value && user.value && !isPreview.value) {
     await store.dispatch('acceptStudyCollaboration', {
       test: test.value,
       cooperator: user.value,

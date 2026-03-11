@@ -12,6 +12,8 @@ import {
 } from 'firebase/firestore'
 
 const ASSESSMENTS_COLLECTION = 'assessments'
+const isPreviewMode = () =>
+  typeof window !== 'undefined' && window.location.pathname.includes('preview')
 
 /**
  * Save or update an assessment in Firestore
@@ -42,9 +44,11 @@ export const saveAssessment = async (
       ...(docSnap.exists() ? {} : { createdAt: new Date().toISOString() }),
     }
 
-    await setDoc(docRef, assessment, { merge: true })
+    if (!isPreviewMode()) {
+      await setDoc(docRef, assessment, { merge: true })
+    }
     return { success: true, id: docRef.id }
-  } catch {
+  } catch (error) {
     throw new Error('Failed to save assessment')
   }
 }
@@ -105,13 +109,15 @@ export const updateRuleAssessment = async (userId, testId, ruleAssessment) => {
     // Add or update the rule assessment
     updatedAssessmentData.push(ruleAssessment)
 
-    await updateDoc(docRef, {
-      assessmentData: updatedAssessmentData,
-      updatedAt: new Date().toISOString(),
-    })
+    if (!isPreviewMode()) {
+      await updateDoc(docRef, {
+        assessmentData: updatedAssessmentData,
+        updatedAt: new Date().toISOString(),
+      })
+    }
 
     return { success: true }
-  } catch {
+  } catch (error) {
     throw new Error('Failed to update rule assessment: ' + error.message)
   }
 }
@@ -127,7 +133,7 @@ export const deleteAssessment = async (userId, testId) => {
     const docRef = doc(db, ASSESSMENTS_COLLECTION, `${userId}_${testId}`)
     await deleteDoc(docRef)
     return { success: true }
-  } catch {
+  } catch (error) {
     throw new Error('Failed to delete assessment')
   }
 }
@@ -164,12 +170,14 @@ export const getUserAssessments = async (userId) => {
 export const saveConfigData = async (userId, testId, configData) => {
   try {
     const docRef = doc(db, 'tests', `${testId}`)
-    await updateDoc(docRef, {
-      configData,
-      updatedAt: new Date().toISOString(),
-    })
+    if (!isPreviewMode()) {
+      await updateDoc(docRef, {
+        configData,
+        updatedAt: new Date().toISOString(),
+      })
+    }
     return { success: true }
-  } catch {
+  } catch (error) {
     throw new Error('Failed to save configuration data')
   }
 }

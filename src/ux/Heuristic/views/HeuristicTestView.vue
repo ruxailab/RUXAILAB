@@ -36,7 +36,7 @@
 
     <!-- Persistent Save Status Indicator (Right Side) -->
     <div
-      v-if="!start && !currentUserTestAnswer?.submitted"
+      v-if="!props.isPreview && !start && !currentUserTestAnswer?.submitted"
       class="save-status-indicator"
       :class="{ 'status-mini': mini }"
     >
@@ -393,7 +393,9 @@
                         currentUserTestAnswer.heuristicQuestions[heurisIndex]
                           ?.heuristicQuestions[i] || {}
                       "
-                      :disable="currentUserTestAnswer?.submitted"
+                      :disable="
+                        props.isPreview || currentUserTestAnswer?.submitted
+                      "
                       @update-comment="
                         (comment) => updateComment(comment, heurisIndex, i)
                       "
@@ -503,7 +505,7 @@
     </v-card>
 
     <v-btn
-      v-if="showSaveBtn && !start"
+      v-if="!props.isPreview && showSaveBtn && !start"
       position="fixed"
       location="bottom right"
       icon
@@ -575,6 +577,7 @@ import { showSuccess, showError } from '@/shared/utils/toast'
 const props = defineProps({
   id: { type: String, default: '' },
   token: { type: String, default: null },
+  isPreview: { type: Boolean, default: false },
 })
 
 const store = useStore()
@@ -802,7 +805,7 @@ const startTest = async () => {
     return
   }
 
-  if (!isUserTestAdmin.value) {
+  if (!isUserTestAdmin.value && !props.isPreview) {
     await store.dispatch('acceptStudyCollaboration', {
       test: test.value,
       cooperator: user.value,
@@ -812,7 +815,7 @@ const startTest = async () => {
   start.value = false
 
   // Mark test as started
-  if (currentUserTestAnswer.value) {
+  if (currentUserTestAnswer.value && !props.isPreview) {
     currentUserTestAnswer.value.testStarted = true
     currentUserTestAnswer.value.lastViewedHeuristicIndex = heurisIndex.value
     startTimer(heurisIndex.value)
@@ -1014,6 +1017,7 @@ const perHeuristicProgress = (item) => {
 }
 
 const autoSaveAnswer = async () => {
+  if (props.isPreview) return
   if (!currentUserTestAnswer.value || currentUserTestAnswer.value.submitted) {
     return
   }
@@ -1058,6 +1062,7 @@ const autoSaveAnswer = async () => {
 
 // Manual save function (with toast)
 const manualSaveAnswer = async () => {
+  if (props.isPreview) return
   if (!currentUserTestAnswer.value) {
     showError('HeuristicsTestView.errors.noAnswerData')
     return
@@ -1105,6 +1110,7 @@ const manualSaveAnswer = async () => {
 const debouncedAutoSave = debounce(autoSaveAnswer, 1500)
 
 const submitAnswer = async () => {
+  if (props.isPreview) return
   if (!currentUserTestAnswer.value) {
     showError('HeuristicsTestView.errors.noAnswerData')
     return
@@ -1357,6 +1363,7 @@ const handleHeurisClick = (i) => {
 
 // Setup auto-save on page unload
 const setupAutoSaveOnUnload = () => {
+  if (props.isPreview) return
   window.addEventListener('beforeunload', (_event) => {
     if (
       calculatedProgress.value > 0 &&
@@ -1445,6 +1452,7 @@ onBeforeMount(async () => {
 })
 
 onUnmounted(() => {
+  if (props.isPreview) return
   // Save progress when component is destroyed
   if (calculatedProgress.value > 0 && !currentUserTestAnswer.value?.submitted) {
     pauseTimer(heurisIndex.value)
