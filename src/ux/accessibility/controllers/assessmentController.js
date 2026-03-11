@@ -13,7 +13,8 @@ import {
 
 const ASSESSMENTS_COLLECTION = 'assessments'
 const isPreviewMode = () =>
-  typeof window !== 'undefined' && window.location.pathname.includes('preview')
+  typeof globalThis !== 'undefined' &&
+  globalThis.location.pathname.includes('preview')
 
 /**
  * Save or update an assessment in Firestore
@@ -49,7 +50,7 @@ export const saveAssessment = async (
     }
     return { success: true, id: docRef.id }
   } catch (error) {
-    throw new Error('Failed to save assessment')
+    throw new Error('Failed to save assessment : ' + error.message)
   }
 }
 
@@ -134,7 +135,7 @@ export const deleteAssessment = async (userId, testId) => {
     await deleteDoc(docRef)
     return { success: true }
   } catch (error) {
-    throw new Error('Failed to delete assessment')
+    throw new Error('Failed to delete assessment : ' + error.message)
   }
 }
 
@@ -155,8 +156,8 @@ export const getUserAssessments = async (userId) => {
       id: doc.id,
       ...doc.data(),
     }))
-  } catch {
-    throw new Error('Failed to get user assessments')
+  } catch (error) {
+    throw new Error('Failed to get user assessments : ' + error.message)
   }
 }
 
@@ -178,7 +179,7 @@ export const saveConfigData = async (userId, testId, configData) => {
     }
     return { success: true }
   } catch (error) {
-    throw new Error('Failed to save configuration data')
+    throw new Error('Failed to save configuration data : ' + error.message)
   }
 }
 
@@ -197,7 +198,7 @@ export const getConfigData = async (userId, testId) => {
       return docSnap.data().configData || null
     }
     return null
-  } catch {
-    throw new Error('Failed to fetch configuration data')
+  } catch (error) {
+    throw new Error('Failed to fetch configuration data : ' + error.message)
   }
 }
