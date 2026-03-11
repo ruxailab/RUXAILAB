@@ -12,6 +12,7 @@ on:
 permissions:
   contents: write
   actions: read
+  issues: read
 
 jobs:
   aggregate-quality-control:

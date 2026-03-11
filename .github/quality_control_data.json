@@ -64,5 +64,11 @@
   "summary": {
     "grand_total": 3,
     "days_tracked": 5
+  },
+  "issues_tracking": {
+    "open_bugs": 0,
+    "open_enhancements": 0,
+    "open_docs": 0,
+    "total_open": 0
   }
 }

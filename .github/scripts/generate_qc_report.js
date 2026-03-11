@@ -58,6 +58,49 @@ module.exports = async ({ github, context, core }) => {
   // Recalcular o Grand Total
   qcData.summary.grand_total = qcData.records.reduce((sum, record) => sum + record.total, 0);
 
+  // --- Rastreamento Automático de Issues e Labels ---
+  try {
+    core.info('Buscando issues abertas no repositório...');
+    
+    // Buscar todas as issues abertas (o GitHub API retorna PRs como issues também, filtraremos depois se necessário)
+    const { data: openIssues } = await github.rest.issues.listForRepo({
+      owner: context.repo.owner,
+      repo: context.repo.repo,
+      state: 'open',
+      per_page: 100
+    });
+    
+    // Apenas issues reais (não Pull Requests)
+    const realIssues = openIssues.filter(issue => !issue.pull_request);
+    
+    let bugCount = 0;
+    let enhancementCount = 0;
+    let docsCount = 0;
+    
+    realIssues.forEach(issue => {
+      const labels = issue.labels.map(l => l.name.toLowerCase());
+      if (labels.includes('bug')) bugCount++;
+      if (labels.includes('enhancement')) enhancementCount++;
+      if (labels.includes('documentation') || labels.includes('docs')) docsCount++;
+    });
+
+    // Atualizar no schema do JSON
+    if (!qcData.issues_tracking) {
+        qcData.issues_tracking = { open_bugs: 0, open_enhancements: 0, open_docs: 0, total_open: 0 };
+    }
+    
+    qcData.issues_tracking.open_bugs = bugCount;
+    qcData.issues_tracking.open_enhancements = enhancementCount;
+    qcData.issues_tracking.open_docs = docsCount;
+    qcData.issues_tracking.total_open = realIssues.length;
+    
+    core.info(`Issues trackeadas: ${realIssues.length} total, Bugs: ${bugCount}, Enhancements: ${enhancementCount}, Docs: ${docsCount}`);
+    
+  } catch (error) {
+    core.warning(`Erro ao buscar e contabilizar issues: ${error.message}`);
+  }
+  // ----------------------------------------------------
+
   // 4. Salvar o arquivo JSON atualizado
   fs.writeFileSync(jsonPath, JSON.stringify(qcData, null, 2));
   core.info('Arquivo quality_control_data.json atualizado com sucesso.');
@@ -73,6 +116,13 @@ module.exports = async ({ github, context, core }) => {
   
   mdSummary += `| **GRAND TOTAL** | | | | | | **${qcData.summary.grand_total}** |\n\n`;
   
+  if (qcData.issues_tracking) {
+    mdSummary += `## Ánalise de Issues Ativas (Labels)\n\n`;
+    mdSummary += `| Status | Bug 🐛 | Enhancement ✨ | Docs 📝 | Total (Geral)\n`;
+    mdSummary += `| :--- | :---: | :---: | :---: | :---: |\n`;
+    mdSummary += `| Aberto | ${qcData.issues_tracking.open_bugs} | ${qcData.issues_tracking.open_enhancements} | ${qcData.issues_tracking.open_docs} | **${qcData.issues_tracking.total_open}** |\n\n`;
+  }
+
   mdSummary += `*Workflow triggered by recent CI runs. Data cumulative for the week.*`;
 
   // Escrever no Github Step Summary
