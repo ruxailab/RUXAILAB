@@ -85,7 +85,10 @@ const usabilityPercentage = computed(() => {
   const testOptions = props.test?.testOptions
   if (!Array.isArray(testOptions) || testOptions.length === 0) return 0
 
-  const maxOption = Math.max(...testOptions.map((o) => o.value))
+  const finiteValues = testOptions
+    .map((o) => Number(o.value))
+    .filter(Number.isFinite)
+  const maxOption = finiteValues.length > 0 ? Math.max(...finiteValues) : 0
   if (maxOption <= 0) return 0
 
   const evaluators = Object.values(testAnswerDocument.heuristicAnswers)
@@ -102,11 +105,12 @@ const usabilityPercentage = computed(() => {
       questions.forEach((question) => {
         const answer = question.heuristicAnswer
         // Answer may be {value, text} object (after getter transform) or raw number
-        const value = typeof answer === 'object' ? answer?.value : answer
+        const rawValue = typeof answer === 'object' ? answer?.value : answer
+        const value = Number.isFinite(rawValue) ? rawValue : null
         totalQuestions++
-        if (value === -1) {
+        if (value === null || value === -1) {
           totalNA++
-        } else if (value !== null && value !== undefined) {
+        } else {
           sumResult += value
         }
       })

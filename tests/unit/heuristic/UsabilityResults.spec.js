@@ -133,4 +133,41 @@ describe('UsabilityResults.vue', () => {
     expect(text).not.toContain('NaN')
     expect(text).not.toContain('Infinity')
   })
+
+  it('treats null answers as N/A', () => {
+    // 3 questions: value 5, null (N/A), value 3 → perfectScore = 2*5 = 10, sum = 8 → 80%
+    const wrapper = mountComponent({
+      testAnswerDocument: buildDocument({
+        evaluator1: evaluatorFromAnswers([{ value: 5 }, null, { value: 3 }]),
+      }),
+    })
+
+    expect(wrapper.text()).toContain('80%')
+  })
+
+  it('treats undefined answers as N/A', () => {
+    // 3 questions: value 4, undefined (N/A), value 2 → perfectScore = 2*5 = 10, sum = 6 → 60%
+    const wrapper = mountComponent({
+      testAnswerDocument: buildDocument({
+        evaluator1: evaluatorFromAnswers([
+          { value: 4 },
+          undefined,
+          { value: 2 },
+        ]),
+      }),
+    })
+
+    expect(wrapper.text()).toContain('60%')
+  })
+
+  it('handles mixed null, undefined, and -1 as N/A correctly', () => {
+    // 4 questions: value 5, null (N/A), undefined (N/A), -1 (N/A) → perfectScore = 1*5 = 5, sum = 5 → 100%
+    const wrapper = mountComponent({
+      testAnswerDocument: buildDocument({
+        evaluator1: evaluatorFromAnswers([{ value: 5 }, null, undefined, -1]),
+      }),
+    })
+
+    expect(wrapper.text()).toContain('100%')
+  })
 })
