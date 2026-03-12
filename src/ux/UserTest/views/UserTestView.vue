@@ -890,24 +890,27 @@ const callTimerSave = () => {
 async function handleTaskFinish(userCompleted) {
   callTimerSave()
 
+  if (taskStepComponent.value?.stopRecording) {
+    isLoading.value = true
+
+    try {
+      await taskStepComponent.value.stopRecording()
+    } catch (error) {
+      console.error('Recording stop failed:', error)
+    } finally {
+      isLoading.value = false
+    }
+  }
+
   await nextTick()
 
-  if (isLoading.value) {
-    const unwatch = watch(
-      () => isLoading.value,
-      async (val) => {
-        if (!val) {
-          unwatch()
-          completeStep(taskIndex.value, 'tasks', userCompleted)
-          attachMediaToTasks(localTestAnswer, mediaUrls.value)
-          await savePartialAnswer()
-        }
-      },
-    )
-  } else {
-    completeStep(taskIndex.value, 'tasks', userCompleted)
-    attachMediaToTasks(localTestAnswer, mediaUrls.value)
+  completeStep(taskIndex.value, 'tasks', userCompleted)
+  attachMediaToTasks(localTestAnswer, mediaUrls.value)
+
+  try {
     await savePartialAnswer()
+  } catch (error) {
+    console.error('Failed to save answer:', error)
   }
 }
 

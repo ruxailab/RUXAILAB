@@ -95,58 +95,51 @@ const recordScreen = async () => {
   if (!isRecording.value) {
     chunks.value = []
     mediaRecorder.value = new MediaRecorder(videoStream.value)
-    mediaRecorder.value.start()
 
     mediaRecorder.value.ondataavailable = (e) => {
-      chunks.value.push(e.data)
+      if (e.data.size > 0) chunks.value.push(e.data)
     }
 
-    mediaRecorder.value.onstop = async () => {
+    mediaRecorder.value.addEventListener('stop', async () => {
       emit('showLoading')
-      const videoBlob = new Blob(chunks.value, { type: 'video/webm' })
-      const storage = getStorage()
-      const storagePath = `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${recordingTaskIndex.value}/screen_record/${videoUrl.value}`
-      const storageReference = storageRef(storage, storagePath)
+      try {
+        const videoBlob = new Blob(chunks.value, { type: 'video/webm' })
+        const storage = getStorage()
 
-      await uploadBytes(storageReference, videoBlob)
-      videoUrl.value = await getDownloadURL(storageReference)
+        const correctTaskIndex = recordingTaskIndex.value
+        const storagePath = `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${correctTaskIndex}/screen_record/${Date.now()}.webm`
+        const storageReference = storageRef(storage, storagePath)
 
-      // Use the task index from when recording started, not the current one
-      const correctTaskIndex = recordingTaskIndex.value
+        await uploadBytes(storageReference, videoBlob)
+        videoUrl.value = await getDownloadURL(storageReference)
 
-      await store.dispatch('updateTaskMediaUrl', {
-        taskIndex: correctTaskIndex,
-        mediaType: MEDIA_FIELD_MAP.screen,
-        url: videoUrl.value,
-        size: videoBlob.size,
-      })
+        await store.dispatch('updateTaskMediaUrl', {
+          taskIndex: correctTaskIndex,
+          mediaType: MEDIA_FIELD_MAP.screen,
+          url: videoUrl.value,
+          size: videoBlob.size,
+        })
 
-      // Add safety check before setting the property
-      if (
-        currentUserTestAnswer.value.tasks &&
-        currentUserTestAnswer.value.tasks[correctTaskIndex]
-      ) {
-        currentUserTestAnswer.value.tasks[correctTaskIndex].screenRecordURL =
-          videoUrl.value
-        currentUserTestAnswer.value.tasks[correctTaskIndex].screenSize =
-          videoBlob.size
-      } else {
-        console.error(
-          'Task not found at index:',
-          correctTaskIndex,
-          'Available tasks:',
-          currentUserTestAnswer.value.tasks?.length,
-        )
+        if (currentUserTestAnswer.value.tasks?.[correctTaskIndex]) {
+          currentUserTestAnswer.value.tasks[correctTaskIndex].screenRecordURL =
+            videoUrl.value
+          currentUserTestAnswer.value.tasks[correctTaskIndex].screenSize =
+            videoBlob.size
+        }
+
+        if (videoStream.value) {
+          videoStream.value.getTracks().forEach((track) => track.stop())
+        }
+      } catch (err) {
+        console.error('Failed to save screen recording: ', err)
+      } finally {
+        isRecording.value = false
+        isCapturing.value = false
+        emit('stopShowLoading')
       }
+    })
 
-      // Stop all tracks
-      videoStream.value.getTracks().forEach((track) => track.stop())
-      isRecording.value = false
-      isCapturing.value = false
-
-      emit('stopShowLoading')
-    }
-
+    mediaRecorder.value.start()
     isRecording.value = true
   } else {
     mediaRecorder.value.stop()
@@ -154,9 +147,21 @@ const recordScreen = async () => {
 }
 
 const stopRecording = () => {
-  if (isRecording.value) {
-    mediaRecorder.value.stop()
-  }
+  return new Promise((resolve) => {
+    if (isRecording.value && mediaRecorder.value) {
+      mediaRecorder.value.addEventListener(
+        'stop',
+        () => {
+          resolve()
+        },
+        { once: true },
+      )
+
+      mediaRecorder.value.stop()
+    } else {
+      resolve()
+    }
+  })
 }
 
 defineExpose({ captureScreen, stopRecording })
