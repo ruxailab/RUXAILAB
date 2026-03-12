@@ -40,7 +40,7 @@ export default class AnswerController extends Controller {
 
     // Delete answers document
     const answerDocumentId =
-      userToUpdate.myAnswers[`${payload.testDocId}`].testDocId
+      userToUpdate.myAnswers[`${payload.testDocId}`].answersDocId
     await super.delete(COLLECTION, answerDocumentId)
 
     // Remove it from user
