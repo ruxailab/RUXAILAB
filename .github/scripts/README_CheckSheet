@@ -41,10 +41,23 @@ Before enabling the pipeline in another project, confirm:
 
 ## 4) What you must change
 
-### A) Keyword mapping in the aggregator workflow
+### A) The workflow_run trigger list (CRITICAL)
 
-The pipeline no longer depends on a fixed list of workflow names.
-It classifies failures by checking keywords in the workflow name.
+The aggregator is triggered when other pipelines finish. To use this in your project, you **MUST** update the `workflows` list in `.github/workflows/quality-control-aggregator.yml`.
+
+If you don't list your specific quality pipelines there, the aggregator will only run on schedule or manual dispatch, and won't give you real-time updates after runs.
+
+```yaml
+on:
+  workflow_run:
+    workflows: ["YOUR_TEST_WORKFLOW", "YOUR_LINT_WORKFLOW", "YOUR_SECURITY_SCAN"]
+    types:
+      - completed
+```
+
+### B) Keyword mapping in the aggregator workflow
+
+The pipeline no longer depends on a fixed list of workflow names for *counting* (it scans all active workflows from today). However, it classifies failures by checking keywords in the workflow name.
 
 Current logic in `.github/workflows/quality-control-aggregator.yml`:
 
@@ -115,24 +128,22 @@ with:
 
 Then add `PAT_TOKEN` in repository secrets.
 
-### E) Issue tracking labels (new)
+### F) Issue tracking labels (expanded)
 
-The pipeline now reads open issues from the repository and stores counters in `issues_tracking`:
+The pipeline now reads open issues from the repository and stores counters in `issues_tracking` for several categories:
 
-- `open_bugs`
-- `open_enhancements`
-- `open_docs`
-- `total_open`
-
-Label mapping used by the script:
-
-- Bug: `bug`
-- Enhancement: `enhancement`
-- Docs: `documentation` or `docs`
+- `open_bugs`: Labels `bug`, `fix`.
+- `open_features`: Labels `feature`, `new-feature`, `enhancement`.
+- `open_ux`: UX-specific labels (`ui/ux`, `accessibility`, `card-sorting`, `heuristic`, `user-test`).
+- `open_infra`: Infrastructure labels (`chore`, `refactor`, `ci/cd`, `ci`, `build`, `performance`, `style`).
+- `open_testing`: Testing labels (`testing`, `tests`).
+- `open_docs`: Documentation labels (`documentation`, `docs`).
+- `total_open`: Grand total of open issues.
 
 What to update in another project:
 
 - If your label names are different, change the mapping in `.github/scripts/generate_qc_report.js`.
+- Ensure the Markdown table headers in the script match your needs.
 - Keep `permissions.issues: read` in `.github/workflows/quality-control-aggregator.yml`.
 
 ## 5) Validation checklist
@@ -177,6 +188,6 @@ To adapt this pipeline quickly, align these 4 points first:
 2. Category labels (JSON + script `switch`)
 3. Schedule/timezone (cron + UTC logic)
 4. Commit permissions (`GITHUB_TOKEN` or `PAT_TOKEN`)
-5. Issue label mapping (`bug`, `enhancement`, `documentation/docs`)
+5. Issue label mapping (Bugs, Features, UX, Infra, Testing, Docs)
 
 If these points are correct, the pipeline is usually portable with no extra code changes.
