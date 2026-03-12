@@ -1370,7 +1370,8 @@
       "elastic": "Elastic Net",
       "bayesian": "Bayesian Ridge",
       "sgd": "SGD Regressor",
-      "svr": "Support Vector Regressor"
+      "svr": "Support Vector Regressor",
+      "rfr": "Random Forest Regressor"
     }
   },
   "AccessNotAllowed": {
