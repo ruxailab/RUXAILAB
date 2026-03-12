@@ -1354,7 +1354,8 @@
       "elastic": "Elastic Net",
       "bayesian": "ベイズリッジ",
       "sgd": "SGD Regressor",
-      "svr": "Support Vector Regressor"
+      "svr": "Support Vector Regressor",
+      "rfr": "ランダムフォレスト回帰"
     }
   },
   "AccessNotAllowed": {

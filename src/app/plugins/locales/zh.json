@@ -1354,7 +1354,8 @@
       "elastic": "弹性网络",
       "bayesian": "贝叶斯岭回归",
       "sgd": "SGD回归器",
-      "svr": "支持向量回归器"
+      "svr": "支持向量回归器",
+      "rfr": "随机森林回归器"
     }
   },
   "AccessNotAllowed": {

@@ -1354,7 +1354,8 @@
       "elastic": "Elastic Net",
       "bayesian": "Bayesian Ridge",
       "sgd": "Regressor SGD",
-      "svr": "Regressor de Vetor de Suporte"
+      "svr": "Regressor de Vetor de Suporte",
+      "rfr": "Regressor de Floresta Aleatória"
     }
   },
   "AccessNotAllowed": {
