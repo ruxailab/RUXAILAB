@@ -74,27 +74,35 @@ module.exports = async ({ github, context, core }) => {
     const realIssues = openIssues.filter(issue => !issue.pull_request);
     
     let bugCount = 0;
-    let enhancementCount = 0;
+    let featureCount = 0;
     let docsCount = 0;
+    let uxCount = 0;
+    let infraCount = 0;
+    let testingCount = 0;
     
     realIssues.forEach(issue => {
       const labels = issue.labels.map(l => l.name.toLowerCase());
-      if (labels.includes('bug')) bugCount++;
-      if (labels.includes('enhancement')) enhancementCount++;
-      if (labels.includes('documentation') || labels.includes('docs')) docsCount++;
+      
+      if (labels.some(l => l === 'bug' || l === 'fix')) bugCount++;
+      if (labels.some(l => l === 'feature' || l === 'new-feature' || l === 'enhancement')) featureCount++;
+      if (labels.some(l => l === 'documentation' || l === 'docs')) docsCount++;
+      if (labels.some(l => ['ui/ux', 'accessibility', 'card-sorting', 'heuristic', 'user-test'].includes(l))) uxCount++;
+      if (labels.some(l => ['chore', 'refactor', 'ci/cd', 'ci', 'build', 'performance', 'style'].includes(l))) infraCount++;
+      if (labels.some(l => l === 'testing' || l === 'tests')) testingCount++;
     });
 
     // Atualizar no schema do JSON
-    if (!qcData.issues_tracking) {
-        qcData.issues_tracking = { open_bugs: 0, open_enhancements: 0, open_docs: 0, total_open: 0 };
-    }
+    qcData.issues_tracking = { 
+      open_bugs: bugCount, 
+      open_features: featureCount, 
+      open_docs: docsCount,
+      open_ux: uxCount,
+      open_infra: infraCount,
+      open_testing: testingCount,
+      total_open: realIssues.length 
+    };
     
-    qcData.issues_tracking.open_bugs = bugCount;
-    qcData.issues_tracking.open_enhancements = enhancementCount;
-    qcData.issues_tracking.open_docs = docsCount;
-    qcData.issues_tracking.total_open = realIssues.length;
-    
-    core.info(`Issues trackeadas: ${realIssues.length} total, Bugs: ${bugCount}, Enhancements: ${enhancementCount}, Docs: ${docsCount}`);
+    core.info(`Issues trackeadas: ${realIssues.length} total, Bugs: ${bugCount}, Features: ${featureCount}, UX: ${uxCount}`);
     
   } catch (error) {
     core.warning(`Erro ao buscar e contabilizar issues: ${error.message}`);
@@ -119,9 +127,9 @@ module.exports = async ({ github, context, core }) => {
   
   if (qcData.issues_tracking) {
     mdSummary += `### 🐛 Active Issues Analysis (by Labels)\n\n`;
-    mdSummary += `| Status | Bug 🐛 | Enhancement ✨ | Docs 📝 | Total (Open)\n`;
-    mdSummary += `| :--- | :---: | :---: | :---: | :---: |\n`;
-    mdSummary += `| Count | ${qcData.issues_tracking.open_bugs} | ${qcData.issues_tracking.open_enhancements} | ${qcData.issues_tracking.open_docs} | **${qcData.issues_tracking.total_open}** |\n\n`;
+    mdSummary += `| Category | Bug 🐛 | Feature ✨ | UX/UI 🎨 | Infra 🛠️ | Testing 🧪 | Docs 📝 | **Total (Open)** |\n`;
+    mdSummary += `| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |\n`;
+    mdSummary += `| Count | ${qcData.issues_tracking.open_bugs} | ${qcData.issues_tracking.open_features} | ${qcData.issues_tracking.open_ux} | ${qcData.issues_tracking.open_infra} | ${qcData.issues_tracking.open_testing} | ${qcData.issues_tracking.open_docs} | **${qcData.issues_tracking.total_open}** |\n\n`;
   }
 
   mdSummary += `--- \n`;
