@@ -22,10 +22,10 @@
         "Mon": 0,
         "Tue": 0,
         "Wed": 1,
-        "Thu": 2,
+        "Thu": 3,
         "Fri": 0
       },
-      "total": 3
+      "total": 4
     },
     {
       "occurrence": "Security vulnerability",
@@ -62,7 +62,7 @@
     }
   ],
   "summary": {
-    "grand_total": 8,
+    "grand_total": 9,
     "days_tracked": 5
   },
   "issues_tracking": {
