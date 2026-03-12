@@ -2,6 +2,7 @@ name: Quality Control Aggregator
 
 on:
   workflow_run:
+    workflows: ["test🧪", "GitGuardian scan", "SonarCloud Issue Creator", "PR Checks", "test"]
     types:
       - completed
   schedule:
