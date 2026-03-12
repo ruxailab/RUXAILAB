@@ -34,17 +34,17 @@ module.exports = async ({ github, context, core }) => {
 
   core.info(`Coletado hoje (${today}): Testes: ${testErrorsCount}, Segurança: ${securityIssuesCount}, Code Smells: ${codeSmellsCount}`);
 
-  // 3. Atualizar as contagens diárias
+  // 3. Atualizar as contagens diárias (Sobrescrever para refletir o estado atual do dia)
   qcData.records.forEach(record => {
     switch (record.occurrence) {
       case 'Test error':
-        record.daily_counts[today] += testErrorsCount;
+        record.daily_counts[today] = testErrorsCount;
         break;
       case 'Security vulnerability':
-        record.daily_counts[today] += securityIssuesCount;
+        record.daily_counts[today] = securityIssuesCount;
         break;
       case 'Code smells/Bugs':
-        record.daily_counts[today] += codeSmellsCount;
+        record.daily_counts[today] = codeSmellsCount;
         break;
       default:
         // Other/Misc não mapeado automaticamente para este trigger
@@ -106,7 +106,8 @@ module.exports = async ({ github, context, core }) => {
   core.info('Arquivo quality_control_data.json atualizado com sucesso.');
 
   // 5. Gerar o Markdown para o Job Summary
-  let mdSummary = `# Quality Control Report (${new Date().toISOString().split('T')[0]})\n\n`;
+  let mdSummary = `# 🛡️ Quality Control Daily Report (${new Date().toISOString().split('T')[0]})\n\n`;
+  mdSummary += `### 📊 Weekly Cumulative Defects (Check Sheet)\n\n`;
   mdSummary += `| Defect/Event occurrence | Mon | Tue | Wed | Thu | Fri | TOTAL |\n`;
   mdSummary += `| :--- | :---: | :---: | :---: | :---: | :---: | :---: |\n`;
   
@@ -117,13 +118,14 @@ module.exports = async ({ github, context, core }) => {
   mdSummary += `| **GRAND TOTAL** | | | | | | **${qcData.summary.grand_total}** |\n\n`;
   
   if (qcData.issues_tracking) {
-    mdSummary += `## Ánalise de Issues Ativas (Labels)\n\n`;
-    mdSummary += `| Status | Bug 🐛 | Enhancement ✨ | Docs 📝 | Total (Geral)\n`;
+    mdSummary += `### 🐛 Active Issues Analysis (by Labels)\n\n`;
+    mdSummary += `| Status | Bug 🐛 | Enhancement ✨ | Docs 📝 | Total (Open)\n`;
     mdSummary += `| :--- | :---: | :---: | :---: | :---: |\n`;
-    mdSummary += `| Aberto | ${qcData.issues_tracking.open_bugs} | ${qcData.issues_tracking.open_enhancements} | ${qcData.issues_tracking.open_docs} | **${qcData.issues_tracking.total_open}** |\n\n`;
+    mdSummary += `| Count | ${qcData.issues_tracking.open_bugs} | ${qcData.issues_tracking.open_enhancements} | ${qcData.issues_tracking.open_docs} | **${qcData.issues_tracking.total_open}** |\n\n`;
   }
 
-  mdSummary += `*Workflow triggered by recent CI runs. Data cumulative for the week.*`;
+  mdSummary += `--- \n`;
+  mdSummary += `*💡 This report aggregates results from all active pipelines for today. Values represent the current state of failures.*`;
 
   // Escrever no Github Step Summary
   await core.summary.addRaw(mdSummary).write();

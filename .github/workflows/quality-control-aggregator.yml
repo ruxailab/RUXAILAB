@@ -30,8 +30,11 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const eventName = context.eventName;
             let testFails = 0, secFails = 0, codeFails = 0;
+            const todayStart = new Date();
+            todayStart.setUTCHours(0, 0, 0, 0);
+            
+            core.info(`Scanning workflows for runs since: ${todayStart.toISOString()}`);
 
             try {
               // 1. Busca as pipelines/workflows do repositório automaticamente
@@ -41,32 +44,37 @@ jobs:
               });
               
               const activeWorkflows = data.workflows.filter(w => w.state === 'active');
-              
-              // 2. Verifica se existem pipelines ativas
-              if (activeWorkflows.length === 0) {
-                core.info('⚠️ Nenhuma pipeline ativa encontrada no repositório.');
-              } else {
-                core.info(`✅ Encontradas ${activeWorkflows.length} pipelines ativas no repositório.`);
-                activeWorkflows.forEach(w => core.info(`- ${w.name}`));
+              core.info(`✅ Encontradas ${activeWorkflows.length} pipelines ativas no repositório.`);
+
+              for (const workflow of activeWorkflows) {
+                // Pular o próprio aggregator para evitar loop ou ruído
+                if (workflow.name === 'Quality Control Aggregator' || workflow.name === 'PR/Commit Checks Summary') continue;
+
+                const { data: { workflow_runs } } = await github.rest.actions.listWorkflowRuns({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  workflow_id: workflow.id,
+                  per_page: 20
+                });
+
+                const failedToday = workflow_runs.filter(run => 
+                  run.conclusion === 'failure' && 
+                  new Date(run.created_at) >= todayStart
+                );
+
+                if (failedToday.length > 0) {
+                  core.info(`- ❌ Workflow '${workflow.name}' teve ${failedToday.length} falhas hoje.`);
+                  const nameLower = workflow.name.toLowerCase();
+                  
+                  if (nameLower.includes('test')) testFails += failedToday.length;
+                  else if (nameLower.includes('gitguardian') || nameLower.includes('security')) secFails += failedToday.length;
+                  else if (nameLower.includes('sonar') || nameLower.includes('code issue') || nameLower.includes('code smell') || nameLower.includes('pr check') || nameLower.includes('lint')) codeFails += failedToday.length;
+                } else {
+                   core.info(`- ✅ Workflow '${workflow.name}' sem falhas registradas hoje.`);
+                }
               }
             } catch (error) {
               core.warning(`Erro ao buscar pipelines: ${error.message}`);
-            }
-            
-            // 3. Verifica a pipeline que engatilhou o evento usando palavras-chave
-            if (eventName === 'workflow_run') {
-              const triggeredBy = context.payload.workflow.name;
-              const conclusion = context.payload.workflow_run.conclusion;
-              
-              if (conclusion === 'failure') {
-                const nameLower = triggeredBy.toLowerCase();
-                
-                // Mapeamento automático em vez de nomes cravados (hardcoded)
-                if (nameLower.includes('test')) testFails = 1;
-                else if (nameLower.includes('gitguardian') || nameLower.includes('security')) secFails = 1;
-                else if (nameLower.includes('sonar') || nameLower.includes('code issue') || nameLower.includes('code smell') || nameLower.includes('pr check') || nameLower.includes('lint')) codeFails = 1;
-                else core.info(`Pipeline '${triggeredBy}' falhou, mas não foi mapeada para as categorias de QC padroes.`);
-              }
             }
             
             core.exportVariable('TEST_ERRORS', testFails);
