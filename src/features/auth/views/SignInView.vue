@@ -198,7 +198,7 @@ const onGoogleSignInSuccess = async () => {
 
 const onGoogleSignInError = (error) => {
   loadingType.value = ''
-  store.dispatch('setLoading', false)
+  store.commit('setLoading', false)
   return error
 }
 </script>

@@ -170,14 +170,19 @@ export default {
           type: 'success',
         })
       } catch (err) {
-        if (err.message === 'EMAIL_NOT_VERIFIED') {
-          throw err
+        const silentErrors = [
+          'auth/popup-closed-by-user',
+          'auth/cancelled-popup-request',
+        ]
+        if (!silentErrors.includes(err.code)) {
+          commit('SET_TOAST', {
+            message: i18n.global.t('errors.globalError'),
+            type: 'error',
+          })
         }
-        commit('SET_TOAST', {
-          message: i18n.global.t('errors.globalError'),
-          type: 'error',
-        })
         throw err
+      } finally {
+        commit('setLoading', false)
       }
     },
 
