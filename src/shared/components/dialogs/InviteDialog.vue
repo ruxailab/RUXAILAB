@@ -30,17 +30,17 @@
           </template>
         </v-combobox>
 
-        <v-chip-group>
+        <div class="d-flex flex-wrap mt-1">
           <v-chip
             v-for="(coop, i) in selectedCoops"
             :key="i"
             closable
-            class="ml-2 mt-2"
+            class="mb-2 mr-2 email-chip"
             @click:close="removeSelectedCoop(i)"
           >
             {{ typeof coop == 'object' ? coop.email : coop }}
           </v-chip>
-        </v-chip-group>
+        </div>
 
         <v-select
           v-model="selectedRole"
@@ -332,5 +332,9 @@ watch(
 .v-btn {
   font-weight: 600;
   text-transform: unset !important;
+}
+
+.email-chip {
+  max-width: 100%;
 }
 </style>
