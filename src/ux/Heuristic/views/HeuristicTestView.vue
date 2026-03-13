@@ -1044,6 +1044,7 @@ const autoSaveAnswer = async () => {
     lastSaveTime.value = new Date()
     updateSaveStatus('All changes saved', 'success')
   } catch (error) {
+    console.error('Auto-save failed:', error)
     updateSaveStatus('Failed to save', 'error')
     // Revert to default after 5 seconds
     setTimeout(() => {
@@ -1094,6 +1095,7 @@ const manualSaveAnswer = async () => {
     // Show manual save success toast
     showSuccess('HeuristicsTestView.messages.answerSaved')
   } catch (error) {
+    console.error('Manual save failed:', error)
     updateSaveStatus('Save failed', 'error')
     showError('HeuristicsTestView.errors.failedToSaveAnswer')
   } finally {
@@ -1126,6 +1128,7 @@ const submitAnswer = async () => {
       router.push('/admin')
     }, 1500)
   } catch (error) {
+    console.error('Submit answer failed:', error)
     currentUserTestAnswer.value.submitted = false
     showError('HeuristicsTestView.errors.failedToSubmitAnswer')
     updateSaveStatus('Submission failed', 'error')
