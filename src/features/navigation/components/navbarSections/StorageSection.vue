@@ -279,7 +279,7 @@ const fetchAllAnswers = async () => {
           }))
         }
       } catch {
-        // Error handling: Could not fetch answers for test
+        showError(t('storage.fetchAnswersError', { testTitle: test.testTitle }))
       }
     }
   }
