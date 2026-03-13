@@ -19,9 +19,7 @@
             playsinline
             class="video-element"
           ></video>
-          <div class="video-label">
-            {{ t('UserTestView.VideoCall.screenSharingLabel') }}
-          </div>
+          <div class="video-label">{{ t('UserTestView.VideoCall.screenSharingLabel') }}</div>
         </div>
       </v-col>
 
@@ -44,9 +42,7 @@
                 <v-icon size="64" color="white" class="mb-2"
                   >mdi-video-off</v-icon
                 >
-                <p class="text-white">
-                  {{ t('UserTestView.VideoCall.cameraOff') }}
-                </p>
+                <p class="text-white">{{ t('UserTestView.VideoCall.cameraOff') }}</p>
               </div>
 
               <!-- Microphone muted indicator -->
@@ -55,9 +51,7 @@
               </div>
 
               <div class="video-label">
-                {{ t('UserTestView.VideoCall.yourVideo') }} ({{
-                  user?.email?.split('@')[0]
-                }})
+                {{ t('UserTestView.VideoCall.yourVideo') }} ({{ user?.email?.split('@')[0] }})
               </div>
             </div>
           </div>
@@ -85,9 +79,7 @@
                 <v-icon size="64" color="white" class="mb-2"
                   >mdi-video-off</v-icon
                 >
-                <p class="text-white">
-                  {{ t('UserTestView.VideoCall.cameraOff') }}
-                </p>
+                <p class="text-white">{{ t('UserTestView.VideoCall.cameraOff') }}</p>
               </div>
 
               <!-- Microphone muted indicator for remote peer -->
@@ -108,9 +100,7 @@
             class="d-flex align-center justify-center pa-4 text-grey"
           >
             <v-icon class="mr-2">mdi-account-clock</v-icon>
-            <span>{{
-              t('UserTestView.VideoCall.waitingForParticipants')
-            }}</span>
+            <span>{{ t('UserTestView.VideoCall.waitingForParticipants') }}</span>
           </div>
         </div>
       </v-col>
@@ -136,9 +126,7 @@
                 <v-icon size="64" color="white" class="mb-2"
                   >mdi-video-off</v-icon
                 >
-                <p class="text-white">
-                  {{ t('UserTestView.VideoCall.cameraOff') }}
-                </p>
+                <p class="text-white">{{ t('UserTestView.VideoCall.cameraOff') }}</p>
               </div>
 
               <!-- Microphone muted indicator -->
@@ -147,9 +135,7 @@
               </div>
 
               <div class="video-label">
-                {{ t('UserTestView.VideoCall.yourPreview') }} ({{
-                  user?.email?.split('@')[0]
-                }})
+                {{ t('UserTestView.VideoCall.yourPreview') }} ({{ user?.email?.split('@')[0] }})
               </div>
             </div>
           </div>
@@ -164,9 +150,7 @@
       >
         <div class="observator-notice">
           <v-icon size="64" color="primary" class="mb-4">mdi-eye</v-icon>
-          <h3 class="text-h5 mb-2">
-            {{ t('UserTestView.VideoCall.observatorMode') }}
-          </h3>
+          <h3 class="text-h5 mb-2">{{ t('UserTestView.VideoCall.observatorMode') }}</h3>
           <p class="text-body-1">
             {{ t('UserTestView.VideoCall.waitingForModeratorToStartSession') }}
           </p>
@@ -193,9 +177,7 @@
             color="primary"
             class="mb-4"
           ></v-progress-circular>
-          <h3 class="text-h6 mb-2">
-            {{ t('UserTestView.VideoCall.waitingForModerator') }}
-          </h3>
+          <h3 class="text-h6 mb-2">{{ t('UserTestView.VideoCall.waitingForModerator') }}</h3>
           <p class="text-body-2 text-grey">
             {{ t('UserTestView.VideoCall.autoStartWhenModeratorOpensRoom') }}
           </p>
