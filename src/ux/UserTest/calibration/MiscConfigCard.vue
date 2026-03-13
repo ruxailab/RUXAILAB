@@ -76,6 +76,10 @@ const availableModels = computed(() => [
     title: t('EyeTrackingConfig.models.svr'),
     value: 'Support Vector Regressor',
   },
+  {
+    title: t('EyeTrackingConfig.models.rfr'),
+    value: 'Random Forest Regressor',
+  },
 ])
 
 /**

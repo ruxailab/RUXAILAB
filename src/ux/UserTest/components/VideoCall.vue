@@ -19,7 +19,9 @@
             playsinline
             class="video-element"
           ></video>
-          <div class="video-label">Compartilhando tela</div>
+          <div class="video-label">
+            {{ t('UserTestView.VideoCall.screenSharingLabel') }}
+          </div>
         </div>
       </v-col>
 
@@ -42,7 +44,9 @@
                 <v-icon size="64" color="white" class="mb-2"
                   >mdi-video-off</v-icon
                 >
-                <p class="text-white">Camera is off</p>
+                <p class="text-white">
+                  {{ t('UserTestView.VideoCall.cameraOff') }}
+                </p>
               </div>
 
               <!-- Microphone muted indicator -->
@@ -51,7 +55,9 @@
               </div>
 
               <div class="video-label">
-                Tu video ({{ user?.email?.split('@')[0] }})
+                {{ t('UserTestView.VideoCall.yourVideo') }} ({{
+                  user?.email?.split('@')[0]
+                }})
               </div>
             </div>
           </div>
@@ -79,7 +85,9 @@
                 <v-icon size="64" color="white" class="mb-2"
                   >mdi-video-off</v-icon
                 >
-                <p class="text-white">Camera is off</p>
+                <p class="text-white">
+                  {{ t('UserTestView.VideoCall.cameraOff') }}
+                </p>
               </div>
 
               <!-- Microphone muted indicator for remote peer -->
@@ -100,7 +108,9 @@
             class="d-flex align-center justify-center pa-4 text-grey"
           >
             <v-icon class="mr-2">mdi-account-clock</v-icon>
-            <span>Waiting for participants...</span>
+            <span>{{
+              t('UserTestView.VideoCall.waitingForParticipants')
+            }}</span>
           </div>
         </div>
       </v-col>
@@ -126,7 +136,9 @@
                 <v-icon size="64" color="white" class="mb-2"
                   >mdi-video-off</v-icon
                 >
-                <p class="text-white">Camera is off</p>
+                <p class="text-white">
+                  {{ t('UserTestView.VideoCall.cameraOff') }}
+                </p>
               </div>
 
               <!-- Microphone muted indicator -->
@@ -135,7 +147,9 @@
               </div>
 
               <div class="video-label">
-                Your preview ({{ user?.email?.split('@')[0] }})
+                {{ t('UserTestView.VideoCall.yourPreview') }} ({{
+                  user?.email?.split('@')[0]
+                }})
               </div>
             </div>
           </div>
@@ -150,13 +164,14 @@
       >
         <div class="observator-notice">
           <v-icon size="64" color="primary" class="mb-4">mdi-eye</v-icon>
-          <h3 class="text-h5 mb-2">Observator Mode</h3>
+          <h3 class="text-h5 mb-2">
+            {{ t('UserTestView.VideoCall.observatorMode') }}
+          </h3>
           <p class="text-body-1">
-            Waiting for moderator to start the session...
+            {{ t('UserTestView.VideoCall.waitingForModeratorToStartSession') }}
           </p>
           <p class="text-body-2 text-grey mt-2">
-            You will be able to observe all video feeds without sending your
-            own.
+            {{ t('UserTestView.VideoCall.observeAllFeedsNotice') }}
           </p>
         </div>
       </v-col>
@@ -178,10 +193,11 @@
             color="primary"
             class="mb-4"
           ></v-progress-circular>
-          <h3 class="text-h6 mb-2">Waiting for moderator...</h3>
+          <h3 class="text-h6 mb-2">
+            {{ t('UserTestView.VideoCall.waitingForModerator') }}
+          </h3>
           <p class="text-body-2 text-grey">
-            The video call will start automatically when the moderator opens the
-            room.
+            {{ t('UserTestView.VideoCall.autoStartWhenModeratorOpensRoom') }}
           </p>
         </div>
       </v-col>
@@ -367,7 +383,7 @@
     <!-- Side Panel -->
     <div class="side-panel" :class="{ 'side-panel-open': showSidePanel }">
       <div class="side-panel-header">
-        <h3>Panel de Herramientas</h3>
+        <h3>{{ t('UserTestView.VideoCallPanel.toolsPanelTitle') }}</h3>
         <v-btn
           icon
           size="small"
@@ -382,7 +398,7 @@
       <div class="side-panel-content">
         <!-- Session Controls Section -->
         <div class="panel-section">
-          <h4>Control de Sesión</h4>
+          <h4>{{ t('UserTestView.VideoCallPanel.sessionControl') }}</h4>
 
           <!-- Connection controls when call is not started -->
           <div v-if="!callStarted" class="session-controls">
@@ -390,7 +406,7 @@
             <div v-if="!caller" class="participant-info">
               <p class="text-body-2 mb-0">
                 <v-icon start size="16">mdi-information</v-icon>
-                Join room controls are now in the main interface above
+                {{ t('UserTestView.VideoCallPanel.joinRoomInfo') }}
               </p>
             </div>
           </div>
@@ -407,7 +423,7 @@
               @click="proceedToNextStep"
             >
               <v-icon start>mdi-arrow-right</v-icon>
-              Proceed to Next Step
+              {{ t('UserTestView.VideoCallPanel.proceedNextStep') }}
             </v-btn>
 
             <!-- End call button -->
@@ -420,21 +436,21 @@
               @click="endCall"
             >
               <v-icon start>mdi-phone-hangup</v-icon>
-              End Call
+              {{ t('UserTestView.VideoCallPanel.endCall') }}
             </v-btn>
 
             <!-- Call status -->
             <div class="status-message">
               <v-chip color="green" size="small" class="mb-2">
                 <v-icon start size="16">mdi-phone</v-icon>
-                Llamada activa
+                {{ t('UserTestView.VideoCallPanel.activeCall') }}
               </v-chip>
             </div>
           </div>
         </div>
 
         <div class="panel-section">
-          <h4>Participantes</h4>
+          <h4>{{ t('UserTestView.VideoCallPanel.participants') }}</h4>
           <div
             v-for="participant in participantsList"
             :key="participant.id"
@@ -460,14 +476,19 @@
             </v-avatar>
             <div class="participant-info">
               <span class="participant-name">
-                {{ participant.name }}{{ participant.isSelf ? ' (Tú)' : '' }}
+                {{
+                  participant.name +
+                  (participant.isSelf
+                    ? ` (${t('UserTestView.VideoCallPanel.you')})`
+                    : '')
+                }}
                 <v-chip
                   v-if="participant.role === 'observator'"
                   size="x-small"
                   color="orange"
                   class="ml-1"
                 >
-                  Observador
+                  {{ t('UserTestView.VideoCallPanel.observator') }}
                 </v-chip>
                 <v-chip
                   v-else-if="participant.role === 'moderator'"
@@ -475,7 +496,7 @@
                   color="blue"
                   class="ml-1"
                 >
-                  Moderador
+                  {{ t('UserTestView.VideoCallPanel.moderator') }}
                 </v-chip>
               </span>
               <div class="participant-status">
@@ -483,7 +504,11 @@
                   size="x-small"
                   :color="participant.connected ? 'green' : 'grey'"
                 >
-                  {{ participant.connected ? 'Conectado' : 'Desconectado' }}
+                  {{
+                    participant.connected
+                      ? t('UserTestView.VideoCallPanel.connected')
+                      : t('UserTestView.VideoCallPanel.disconnected')
+                  }}
                 </v-chip>
                 <v-chip
                   v-if="participant.isSelf && !isObservator"
@@ -491,7 +516,11 @@
                   :color="participant.hasCamera ? 'green' : 'red'"
                   class="ml-1"
                 >
-                  {{ participant.hasCamera ? 'Cámara' : 'Sin cámara' }}
+                  {{
+                    participant.hasCamera
+                      ? t('UserTestView.VideoCallPanel.camera')
+                      : t('UserTestView.VideoCallPanel.noCamera')
+                  }}
                 </v-chip>
                 <v-chip
                   v-if="participant.isSelf && !isObservator"
@@ -500,7 +529,9 @@
                   class="ml-1"
                 >
                   {{
-                    participant.hasMicrophone ? 'Micrófono' : 'Sin micrófono'
+                    participant.hasMicrophone
+                      ? t('UserTestView.VideoCallPanel.microphone')
+                      : t('UserTestView.VideoCallPanel.noMicrophone')
                   }}
                 </v-chip>
               </div>
@@ -509,7 +540,7 @@
         </div>
 
         <div v-if="!isObservator" class="panel-section">
-          <h4>Configuración</h4>
+          <h4>{{ t('UserTestView.VideoCallPanel.settings') }}</h4>
           <v-list density="compact">
             <v-list-item @click="toggleCamera">
               <template #prepend>
@@ -518,7 +549,11 @@
                 </v-icon>
               </template>
               <v-list-item-title>
-                {{ isCameraEnabled ? 'Desactivar cámara' : 'Activar cámara' }}
+                {{
+                  isCameraEnabled
+                    ? t('UserTestView.VideoCallPanel.disableCamera')
+                    : t('UserTestView.VideoCallPanel.enableCamera')
+                }}
               </v-list-item-title>
             </v-list-item>
             <v-list-item @click="toggleMicrophone">
@@ -534,8 +569,8 @@
               <v-list-item-title>
                 {{
                   isMicrophoneEnabled
-                    ? 'Silenciar micrófono'
-                    : 'Activar micrófono'
+                    ? t('UserTestView.VideoCallPanel.muteMicrophone')
+                    : t('UserTestView.VideoCallPanel.unmuteMicrophone')
                 }}
               </v-list-item-title>
             </v-list-item>
@@ -552,8 +587,8 @@
               <v-list-item-title>
                 {{
                   isSharingScreen
-                    ? 'Detener compartir pantalla'
-                    : 'Compartir pantalla'
+                    ? t('UserTestView.VideoCallPanel.stopScreenShare')
+                    : t('UserTestView.VideoCallPanel.shareScreen')
                 }}
               </v-list-item-title>
             </v-list-item>
@@ -585,7 +620,7 @@
         <div v-if="!caller" class="moderator-notice">
           <v-chip size="small" color="orange" class="mb-4">
             <v-icon start size="16">mdi-information</v-icon>
-            Solo el moderador puede cambiar los pasos
+            {{ t('UserTestView.VideoCallPanel.moderatorOnlySteps') }}
           </v-chip>
         </div>
 
@@ -824,6 +859,7 @@
 <script setup>
 import { ref, computed, reactive, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { database } from '@/app/plugins/firebase/index'
 import {
   ref as dbRef,
@@ -855,6 +891,7 @@ const emit = defineEmits([
   'stepSelected',
   'moderatorStatusChange',
 ])
+const { t } = useI18n()
 
 // Local State
 const localVideo = ref(null)

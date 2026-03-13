@@ -412,7 +412,10 @@
     "globalError": "حدث خطأ، نعتذر عن الإزعاج.",
     "cameraPermissionDenied": "يتطلب المتابعة السماح بالوصول إلى الكاميرا. يرجى تفعيل إذن الكاميرا في إعدادات المتصفح.",
     "sendError": "فشل إرسال الدعوة. يرجى المحاولة مرة أخرى",
-    "missingVariableTitles": "لا يمكن الحفظ: بعض المتغيرات تفتقد العناوين"
+    "missingVariableTitles": "لا يمكن الحفظ: بعض المتغيرات تفتقد العناوين",
+    "failedToLoadAnswers": "Failed to load answers",
+    "failedToUpdateAnswer": "Failed to update answer",
+    "failedToSaveAnswerCooperator": "Failed to save cooperator answer"
   },
   "Introduction": {
     "title": "مختبر UX عن بعد",
@@ -1222,6 +1225,44 @@
       "note": "دورك هو التسهيل والمراقبة. يجب على المشارك إكمال المهام بشكل مستقل ما لم يطلب المساعدة بشكل خاص.",
       "startSession": "بدء الجلسة الخاضعة للإشراف"
     },
+    "VideoCallPanel": {
+      "toolsPanelTitle": "لوحة الأدوات",
+      "sessionControl": "التحكم في الجلسة",
+      "joinRoomInfo": "عناصر الانضمام إلى الغرفة أصبحت الآن في الواجهة الرئيسية بالأعلى",
+      "proceedNextStep": "الانتقال إلى الخطوة التالية",
+      "endCall": "إنهاء المكالمة",
+      "activeCall": "مكالمة نشطة",
+      "participants": "المشاركون",
+      "you": "أنت",
+      "observator": "مراقب",
+      "moderator": "مشرف",
+      "connected": "متصل",
+      "disconnected": "غير متصل",
+      "camera": "الكاميرا",
+      "noCamera": "بدون كاميرا",
+      "microphone": "الميكروفون",
+      "noMicrophone": "بدون ميكروفون",
+      "settings": "الإعدادات",
+      "disableCamera": "إيقاف الكاميرا",
+      "enableCamera": "تشغيل الكاميرا",
+      "muteMicrophone": "كتم الميكروفون",
+      "unmuteMicrophone": "إلغاء كتم الميكروفون",
+      "stopScreenShare": "إيقاف مشاركة الشاشة",
+      "shareScreen": "مشاركة الشاشة",
+      "moderatorOnlySteps": "فقط المشرف يمكنه تغيير الخطوات"
+    },
+    "VideoCall": {
+      "screenSharingLabel": "مشاركة الشاشة",
+      "cameraOff": "الكاميرا متوقفة",
+      "yourVideo": "فيديوك",
+      "yourPreview": "معاينتك",
+      "observatorMode": "وضع المراقب",
+      "waitingForModeratorToStartSession": "بانتظار المشرف لبدء الجلسة...",
+      "observeAllFeedsNotice": "ستتمكن من مشاهدة جميع الفيديوهات دون إرسال فيديوك.",
+      "waitingForParticipants": "بانتظار المشاركين...",
+      "waitingForModerator": "بانتظار المشرف...",
+      "autoStartWhenModeratorOpensRoom": "ستبدأ مكالمة الفيديو تلقائيا عندما يفتح المشرف الغرفة."
+    },
     "WelcomeStep": {
       "welcome": "مرحبًا بك في RUXAILAB!",
       "description": "أنت على وشك المشاركة في اختبار مستخدم يهدف إلى تقييم سهولة الاستخدام والفهم لتطبيق رقمي. يساعدنا هذا النوع من الاختبارات في اكتشاف الحواجز التكنولوجية المحتملة وتحسين التجربة للجميع.",
@@ -1313,7 +1354,8 @@
       "elastic": "الشبكة المرنة",
       "bayesian": "بايزي ريدج",
       "sgd": "مُنحدر التدرج العشوائي",
-      "svr": "انحدار متجه الدعم"
+      "svr": "انحدار متجه الدعم",
+      "rfr": "مُنحدر الغابة العشوائية"
     }
   },
   "AccessNotAllowed": {

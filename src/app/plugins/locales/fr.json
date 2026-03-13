@@ -412,7 +412,10 @@
     "globalError": "Une erreur est survenue, désolé pour le désagrément.",
     "cameraPermissionDenied": "L'accès à la caméra est requis pour continuer. Veuillez autoriser l'accès à la caméra dans les paramètres de votre navigateur.",
     "sendError": "Échec de l'envoi de l'invitation. Veuillez réessayer",
-    "missingVariableTitles": "Impossible d'enregistrer : Certaines variables manquent de titres"
+    "missingVariableTitles": "Impossible d'enregistrer : Certaines variables manquent de titres",
+    "failedToLoadAnswers": "Échec du chargement des réponses",
+    "failedToUpdateAnswer": "Échec de la mise à jour de la réponse",
+    "failedToSaveAnswerCooperator": "Échec de l'enregistrement de la réponse du coopérateur"
   },
   "Introduction": {
     "title": "UX Remote LAB",
@@ -1222,6 +1225,44 @@
       "note": "Votre rôle est de faciliter et d'observer. Le participant doit effectuer les tâches de manière indépendante, sauf s'il demande spécifiquement de l'aide.",
       "startSession": "Démarrer la session modérée"
     },
+    "VideoCallPanel": {
+      "toolsPanelTitle": "Panneau d'outils",
+      "sessionControl": "Controle de session",
+      "joinRoomInfo": "Les controles pour rejoindre la salle sont maintenant dans l'interface principale ci-dessus",
+      "proceedNextStep": "Passer a l'etape suivante",
+      "endCall": "Terminer l'appel",
+      "activeCall": "Appel actif",
+      "participants": "Participants",
+      "you": "Vous",
+      "observator": "Observateur",
+      "moderator": "Moderateur",
+      "connected": "Connecte",
+      "disconnected": "Deconnecte",
+      "camera": "Camera",
+      "noCamera": "Sans camera",
+      "microphone": "Microphone",
+      "noMicrophone": "Sans microphone",
+      "settings": "Parametres",
+      "disableCamera": "Desactiver la camera",
+      "enableCamera": "Activer la camera",
+      "muteMicrophone": "Couper le microphone",
+      "unmuteMicrophone": "Activer le microphone",
+      "stopScreenShare": "Arreter le partage d'ecran",
+      "shareScreen": "Partager l'ecran",
+      "moderatorOnlySteps": "Seul le moderateur peut changer les etapes"
+    },
+    "VideoCall": {
+      "screenSharingLabel": "Partage d'ecran",
+      "cameraOff": "La camera est desactivee",
+      "yourVideo": "Votre video",
+      "yourPreview": "Votre apercu",
+      "observatorMode": "Mode observateur",
+      "waitingForModeratorToStartSession": "En attente du moderateur pour demarrer la session...",
+      "observeAllFeedsNotice": "Vous pourrez observer tous les flux video sans envoyer le votre.",
+      "waitingForParticipants": "En attente des participants...",
+      "waitingForModerator": "En attente du moderateur...",
+      "autoStartWhenModeratorOpensRoom": "L'appel video demarrera automatiquement lorsque le moderateur ouvrira la salle."
+    },
     "WelcomeStep": {
       "welcome": "Bienvenue sur RUXAILAB !",
       "description": "Vous allez participer à un test utilisateur qui vise à évaluer la facilité d'utilisation et la compréhension d'une application numérique. Ce type de test nous aide à détecter les barrières technologiques possibles et à améliorer l'expérience pour tout le monde.",
@@ -1313,7 +1354,8 @@
       "elastic": "Elastic Net",
       "bayesian": "Bayesian Ridge",
       "sgd": "Régresseur SGD",
-      "svr": "Régresseur à vecteurs de support"
+      "svr": "Régresseur à vecteurs de support",
+      "rfr": "Régresseur par forêt aléatoire"
     }
   },
   "AccessNotAllowed": {

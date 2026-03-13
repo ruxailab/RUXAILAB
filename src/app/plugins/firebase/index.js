@@ -6,6 +6,22 @@ import { getFunctions, connectFunctionsEmulator } from 'firebase/functions'
 import { getStorage, connectStorageEmulator } from 'firebase/storage'
 import { getDatabase } from 'firebase/database'
 
+const REQUIRED_ENV_VARS = {
+  VUE_APP_FIREBASE_API_KEY: process.env.VUE_APP_FIREBASE_API_KEY,
+  VUE_APP_FIREBASE_AUTH_DOMAIN: process.env.VUE_APP_FIREBASE_AUTH_DOMAIN,
+  VUE_APP_FIREBASE_PROJECT_ID: process.env.VUE_APP_FIREBASE_PROJECT_ID,
+  VUE_APP_FIREBASE_APP_ID: process.env.VUE_APP_FIREBASE_APP_ID,
+  VUE_APP_FIREBASE_DB_URL: process.env.VUE_APP_FIREBASE_DB_URL,
+}
+
+const missingVars = Object.entries(REQUIRED_ENV_VARS)
+  .filter(([, v]) => !v)
+  .map(([k]) => k)
+
+if (missingVars.length > 0) {
+  throw new Error(`Missing required env vars: ${missingVars.join(', ')}`)
+}
+
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
   authDomain: process.env.VUE_APP_FIREBASE_AUTH_DOMAIN,
