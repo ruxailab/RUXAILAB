@@ -8,9 +8,6 @@ import {
   setPersistence,
   browserLocalPersistence,
   browserSessionPersistence,
-  reauthenticateWithCredential,
-  reauthenticateWithPopup,
-  EmailAuthProvider,
 } from 'firebase/auth'
 import { auth } from '@/app/plugins/firebase'
 import axios from 'axios'
@@ -114,20 +111,7 @@ export default class AuthController {
     const { user, password } = payload
 
     if (!user) throw new Error('No user provided')
-
-    const hasGoogle = user.providerData.some(
-      (p) => p.providerId === 'google.com',
-    )
-
-    // Reauthenticate based on provider
-    if (hasGoogle) {
-      await reauthenticateWithPopup(user, new GoogleAuthProvider())
-    } else {
-      if (!password) throw new Error('Password required')
-      const cred = EmailAuthProvider.credential(user.email, password)
-      await reauthenticateWithCredential(user, cred)
-    }
-
+      
     // Delete user from Firebase Auth
     await user.delete()
 
