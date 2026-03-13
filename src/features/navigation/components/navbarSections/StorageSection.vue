@@ -147,8 +147,8 @@
           <v-btn
             color="error"
             class="rounded-lg"
-            :loading="deleting"
-            :disabled="deleting"
+            :loading="store.getters['Storage/isDeleting']"
+            :disabled="store.getters['Storage/isDeleting']"
             @click="executeDelete"
             >{{ t('buttons.delete') }}</v-btn
           >
@@ -201,9 +201,6 @@
 import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
-import { getStorage, ref as storageRef, deleteObject } from 'firebase/storage'
-import { increment, deleteField, writeBatch, doc } from 'firebase/firestore'
-import { db } from '@/app/plugins/firebase'
 import { formatDateLong } from '@/shared/utils/dateUtils'
 import AnswerController from '@/shared/controllers/AnswerController'
 import { showError } from '@/shared/utils/toast'
@@ -217,8 +214,6 @@ const fetchedAnswers = ref({}) // Map<testId, answersList>
 // Dialog State
 const deleteDialog = ref(false)
 const fileToDelete = ref(null)
-const deleting = ref(false)
-const deletedUrls = ref(new Set()) // URLs removed from Storage this session
 const previewDialog = ref(false)
 const previewFile = ref(null)
 
@@ -398,7 +393,9 @@ const files = computed(() => {
     })
   })
 
-  return allFiles.filter((f) => !deletedUrls.value.has(f.url))
+  return allFiles.filter(
+    (f) => !store.getters['Storage/deletedUrls'].has(f.url),
+  )
 })
 
 const totalFormatted = computed(() => {
@@ -430,13 +427,6 @@ function formatBytes(bytes) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i]
 }
 
-function getStoragePathFromDownloadUrl(downloadUrl) {
-  const match = downloadUrl.match(/\/o\/([^?]+)/)
-  if (!match)
-    throw new Error(`Cannot parse storage path from URL: ${downloadUrl}`)
-  return decodeURIComponent(match[1])
-}
-
 // Dialog Actions
 const confirmDelete = (item) => {
   fileToDelete.value = item
@@ -447,64 +437,12 @@ const executeDelete = async () => {
   const file = fileToDelete.value
   if (!file) return
 
-  deleting.value = true
   try {
-    //  Delete the file from Firebase Storage
-    const storage = getStorage()
-    const storagePath = getStoragePathFromDownloadUrl(file.url)
-    const fileRef = storageRef(storage, storagePath)
-    await deleteObject(fileRef)
-
-    deletedUrls.value = new Set([...deletedUrls.value, file.url])
-
-    const batch = writeBatch(db)
-    let hasBatchUpdates = false
-
-    //  Decrement the user's storageUsageMB in Firestore and Vuex
-    const currentUser = store.getters.user
-    if (currentUser?.id && file.size > 0) {
-      const deltaMB = file.size / (1024 * 1024)
-      const userRef = doc(db, 'users', currentUser.id)
-      batch.update(userRef, {
-        storageUsageMB: increment(-deltaMB),
-      })
-      hasBatchUpdates = true
-
-      const updatedStorageMB = Math.max(
-        0,
-        (currentUser.storageUsageMB || 0) - deltaMB,
-      )
-      store.commit('SET_USER', {
-        ...currentUser,
-        storageUsageMB: updatedStorageMB,
-      })
-    }
-
-    if (file.answersDocId && file.userDocId && file.taskId && file.urlField) {
-      const fieldPath = `taskAnswers.${file.userDocId}.tasks.${file.taskId}.${file.urlField}`
-      const updatePayload = {
-        [fieldPath]: deleteField(),
-      }
-      if (file.sizeField) {
-        updatePayload[
-          `taskAnswers.${file.userDocId}.tasks.${file.taskId}.${file.sizeField}`
-        ] = deleteField()
-      }
-      const answerRef = doc(db, 'answers', file.answersDocId)
-      batch.update(answerRef, updatePayload)
-      hasBatchUpdates = true
-    }
-
-    if (hasBatchUpdates) {
-      await batch.commit()
-    }
-
+    await store.dispatch('Storage/deleteFile', file)
     deleteDialog.value = false
     fileToDelete.value = null
-  } catch {
-    showError(t('errors.globalError'))
-  } finally {
-    deleting.value = false
+  } catch (error) {
+    // Error is already handled in the store
   }
 }
 
