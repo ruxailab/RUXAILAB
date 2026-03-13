@@ -74,6 +74,7 @@
   },
   "common": {
     "enterTextHere": "Ingrese texto aquí...",
+    "percentValue": "{value}%",
     "units": {
       "mb": "MB",
       "gb": "GB"
@@ -87,6 +88,11 @@
     "editAndInvite": "Editar e invitar personas a tu prueba",
     "analyzeProject": "Analizar el proyecto y los evaluadores",
     "comment": "Comentario",
+    "comments": "Comentarios",
+    "image": "Imagen",
+    "images": "Imágenes",
+    "close": "Cerrar",
+    "selectImage": "Seleccione una imagen para cargar",
     "inputImage": "Ingresa una imagen de tu elección relacionada con el tema",
     "title": "Título",
     "description": "Descripción",
@@ -643,7 +649,14 @@
     "AddCommentBtn": {
       "showComment": "Mostrar comentario",
       "addComment": "Agregar comentario",
+      "addAnotherComment": "Agregar otro comentario",
+      "addNewComment": "Agregar un nuevo comentario",
       "hideTextArea": "Ocultar área de texto"
+    },
+    "ImportImage": {
+      "uploadSuccess": "Imagen cargada exitosamente",
+      "uploadError": "Error al cargar imagen",
+      "imagesCount": "{count} imagen(es) adjunta(s)"
     },
     "errors": {
       "failedToLoadQuestionForm": "Error al cargar el formulario de pregunta. Por favor, inténtalo de nuevo.",
@@ -655,6 +668,12 @@
       "question": "Pregunta",
       "questions": "Preguntas"
     }
+  },
+  "HeuristicsAnalytics": {
+    "dataTable": "Tabla de datos",
+    "chart": "Gráfico",
+    "userUploadedContent": "Contenido subido por el usuario",
+    "userUploadedAttachment": "Archivo adjunto subido por el usuario"
   },
   "HeuristicsOptionsTable": {
     "titles": {
@@ -1580,6 +1599,7 @@
     "deleteAccount": "¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.",
     "genericSuccess": "Operación exitosa",
     "savedChanges": "Cambios guardados con éxito",
+    "errorSavingProgress": "Error al guardar el progreso",
     "deleteUser": "¿Está seguro de que desea eliminar este usuario? Esta acción no se puede deshacer."
   },
   "buttons": {

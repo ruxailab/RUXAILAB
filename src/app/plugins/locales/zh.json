@@ -140,7 +140,13 @@
     "id": "ID",
     "itemsPerPage": "每页项目数：",
     "saving": "保存中...",
-    "visible": "可见"
+    "visible": "可见",
+    "percentValue": "{value}%",
+    "comments": "评论",
+    "image": "图片",
+    "images": "图片",
+    "close": "关闭",
+    "selectImage": "选择要上传的图片"
   },
   "storage": {
     "pageTitle": "存储",
@@ -643,7 +649,14 @@
     "AddCommentBtn": {
       "showComment": "显示评论",
       "addComment": "添加评论",
-      "hideTextArea": "隐藏文本区域"
+      "hideTextArea": "隐藏文本区域",
+      "addAnotherComment": "添加另一条评论",
+      "addNewComment": "添加新评论"
+    },
+    "ImportImage": {
+      "imagesCount": "已附加 {count} 张图片",
+      "uploadSuccess": "图片上传成功",
+      "uploadError": "图片上传失败"
     },
     "errors": {
       "failedToLoadQuestionForm": "加载问题表单失败。请重试。",
@@ -655,6 +668,10 @@
       "question": "问题",
       "questions": "问题"
     }
+  },
+  "HeuristicsAnalytics": {
+    "dataTable": "数据表",
+    "chart": "图表"
   },
   "HeuristicsOptionsTable": {
     "titles": {
@@ -1580,7 +1597,8 @@
     "deleteAccount": "您确定要删除您的账户吗？此操作无法撤销。",
     "genericSuccess": "操作成功",
     "savedChanges": "更改保存成功",
-    "deleteUser": "您确定要删除此用户吗？此操作无法撤销。"
+    "deleteUser": "您确定要删除此用户吗？此操作无法撤销。",
+    "errorSavingProgress": "保存进度时出错"
   },
   "buttons": {
     "next": "下一步",

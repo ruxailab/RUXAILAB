@@ -74,6 +74,7 @@
   },
   "common": {
     "enterTextHere": "Entrez le texte ici...",
+    "percentValue": "{value}%",
     "units": {
       "mb": "Mo",
       "gb": "Go"
@@ -86,6 +87,11 @@
     "editAndInvite": "Modifier et inviter des personnes à votre test",
     "analyzeProject": "Analyser le projet et les évaluateurs",
     "comment": "Commentaire",
+    "comments": "Commentaires",
+    "image": "Image",
+    "images": "Images",
+    "close": "Fermer",
+    "selectImage": "Sélectionnez une image à télécharger",
     "inputImage": "Entrez une image de votre choix en rapport avec le sujet",
     "title": "Titre",
     "description": "Description",
@@ -643,7 +649,14 @@
     "AddCommentBtn": {
       "showComment": "Afficher le commentaire",
       "addComment": "Ajouter un commentaire",
+      "addAnotherComment": "Ajouter un autre commentaire",
+      "addNewComment": "Ajouter un nouveau commentaire",
       "hideTextArea": "Masquer la zone de texte"
+    },
+    "ImportImage": {
+      "uploadSuccess": "Image téléchargée avec succès",
+      "uploadError": "Échec du téléchargement de l'image",
+      "imagesCount": "{count} image(s) jointe(s)"
     },
     "errors": {
       "failedToLoadQuestionForm": "Échec du chargement du formulaire de question. Veuillez réessayer.",
@@ -655,6 +668,10 @@
       "question": "Question",
       "questions": "Questions"
     }
+  },
+  "HeuristicsAnalytics": {
+    "dataTable": "Tableau de données",
+    "chart": "Graphique"
   },
   "HeuristicsOptionsTable": {
     "titles": {
@@ -1580,7 +1597,8 @@
     "deleteAccount": "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action ne peut pas être annulée.",
     "genericSuccess": "Opération réussie",
     "savedChanges": "Modifications enregistrées avec succès",
-    "deleteUser": "Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action ne peut pas être annulée."
+    "deleteUser": "Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action ne peut pas être annulée.",
+    "errorSavingProgress": "Erreur lors de l'enregistrement de la progression"
   },
   "buttons": {
     "next": "Suivant",
