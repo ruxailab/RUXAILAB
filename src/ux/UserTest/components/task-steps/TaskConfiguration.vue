@@ -26,7 +26,7 @@
           density="comfortable"
           prepend-inner-icon="mdi-link"
           :placeholder="$t('CreateTask.configuration.taskLinkPlaceholder')"
-          :rules="[...linkRules, ...validationRules]"
+          :rules="[...linkRules]"
           @update:model-value="validateStep"
         />
       </v-col>
@@ -183,20 +183,11 @@ const urlRules = computed(() => [
 ])
 
 const timeRules = computed(() => [
-  (v) => !!v || t('CreateTask.validation.fieldRequired'),
-  (v) => (v && v > 0) || t('CreateTask.validation.positiveNumber'),
+  (v) => !v || v > 0 || t('CreateTask.validation.positiveNumber'),
 ])
 
 const isValid = computed(() => {
-  const hasTaskType = !!localTask.value.taskType
-  const linkValid =
-    !localTask.value.taskLink || /^https?:\/\/.+/.test(localTask.value.taskLink)
-  const postFormValid =
-    localTask.value.taskType !== 'post-form' ||
-    (localTask.value.postForm &&
-      /^https?:\/\/.+/.test(localTask.value.postForm))
-
-  return hasTaskType && linkValid && postFormValid
+  return !!localTask.value.taskType
 })
 
 const getAnswerTypeIcon = (type) => {
@@ -236,7 +227,6 @@ const validateStep = () => {
   return isValid.value
 }
 
-const configForm = ref(null)
 const urlField = ref(null)
 const timeField = ref(null)
 const typeField = ref(null)
@@ -246,11 +236,7 @@ const validate = () => {
   timeField.value?.validate()
   typeField.value?.validate()
 
-  return (
-    !!localTask.value.estimatedTime &&
-    !!localTask.value.taskType &&
-    !!localTask.value.taskLink
-  )
+  return !!localTask.value.taskType
 }
 
 defineExpose({ validate })
