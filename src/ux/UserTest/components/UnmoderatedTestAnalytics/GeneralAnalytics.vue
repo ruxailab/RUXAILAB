@@ -1270,7 +1270,7 @@ const onExportTimeline = () => {
   const counts = {}
 
   for (let d = new Date(oneMonthAgo); d <= now; d.setDate(d.getDate() + 1)) {
-    const key = formatDate(d)
+    const key = d.toISOString().split('T')[0]
     counts[key] = 0
   }
 
