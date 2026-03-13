@@ -144,9 +144,14 @@
             @click="deleteDialog = false"
             >{{ t('common.cancel') }}</v-btn
           >
-          <v-btn color="error" class="rounded-lg" @click="executeDelete">{{
-            t('buttons.delete')
-          }}</v-btn>
+          <v-btn
+            color="error"
+            class="rounded-lg"
+            :loading="store.getters['Storage/isDeleting']"
+            :disabled="store.getters['Storage/isDeleting']"
+            @click="executeDelete"
+            >{{ t('buttons.delete') }}</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -198,6 +203,7 @@ import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import { formatDateLong } from '@/shared/utils/dateUtils'
 import AnswerController from '@/shared/controllers/AnswerController'
+import { showError } from '@/shared/utils/toast'
 
 const store = useStore()
 const { t, locale } = useI18n()
@@ -238,7 +244,8 @@ const tests = computed(() => store.getters.tests || [])
 
 // Custom sort functions for v-data-table columns
 const customSort = {
-  studyName: (a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }),
+  studyName: (a, b) =>
+    a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }),
   date: (a, b) => a - b,
   size: (a, b) => a - b,
 }
@@ -264,10 +271,15 @@ const fetchAllAnswers = async () => {
           test.answersDocId,
         )
         if (answerDoc && answerDoc.taskAnswers) {
-          fetchedAnswers.value[test.id] = Object.values(answerDoc.taskAnswers)
+          fetchedAnswers.value[test.id] = Object.entries(
+            answerDoc.taskAnswers,
+          ).map(([key, val]) => ({
+            ...val,
+            userDocId: val.userDocId || key,
+          }))
         }
       } catch {
-        // Error handling: Could not fetch answers for test
+        showError(t('storage.fetchAnswersError', { testTitle: test.testTitle }))
       }
     }
   }
@@ -291,7 +303,10 @@ const files = computed(() => {
     let answers = test.answers
       ? Array.isArray(test.answers)
         ? test.answers
-        : Object.values(test.answers)
+        : Object.entries(test.answers).map(([key, val]) => ({
+            ...val,
+            userDocId: val.userDocId || key,
+          }))
       : []
 
     // 2. Merge with fetched answers
@@ -303,7 +318,10 @@ const files = computed(() => {
       const tasks = answer.tasks
         ? Array.isArray(answer.tasks)
           ? answer.tasks
-          : Object.values(answer.tasks)
+          : Object.entries(answer.tasks).map(([key, val]) => ({
+              ...val,
+              taskId: val.taskId || val.id || key,
+            }))
         : []
 
       tasks.forEach((task, taskIdx) => {
@@ -311,12 +329,16 @@ const files = computed(() => {
         const dateFormatted = formatDateLong(rawDate, locale.value)
         const dateTimestamp = rawDate ? new Date(rawDate).getTime() : 0
         const idPrefix = `${test.id}_${answerIdx}_${taskIdx}`
+        const userDocId = answer.userDocId || null
 
         // Common file properties
         const baseFile = {
           studyName: test.testTitle,
           date: dateTimestamp,
           dateFormatted,
+          answersDocId: test.answersDocId || null,
+          userDocId,
+          taskId: task.taskId || null,
         }
 
         // Check for Video
@@ -326,6 +348,8 @@ const files = computed(() => {
             id: `${idPrefix}_video`,
             type: 'video',
             url: task.videoRecordURL,
+            urlField: 'videoRecordURL',
+            sizeField: 'webcamSize',
             size: task.webcamSize || 50 * 1024 * 1024,
           })
         }
@@ -336,6 +360,8 @@ const files = computed(() => {
             id: `${idPrefix}_audio`,
             type: 'audio',
             url: task.audioRecordURL,
+            urlField: 'audioRecordURL',
+            sizeField: 'audioSize',
             size: task.audioSize || 10 * 1024 * 1024,
           })
         }
@@ -346,6 +372,8 @@ const files = computed(() => {
             id: `${idPrefix}_screen`,
             type: 'screen',
             url: task.screenRecordURL,
+            urlField: 'screenRecordURL',
+            sizeField: 'screenSize',
             size: task.screenSize || 100 * 1024 * 1024,
           })
         }
@@ -356,6 +384,8 @@ const files = computed(() => {
             id: `${idPrefix}_webcam`,
             type: 'webcam',
             url: task.webcamRecordURL,
+            urlField: 'webcamRecordURL',
+            sizeField: 'webcamSize',
             size: task.webcamSize || 50 * 1024 * 1024,
           })
         }
@@ -363,7 +393,9 @@ const files = computed(() => {
     })
   })
 
-  return allFiles
+  return allFiles.filter(
+    (f) => !store.getters['Storage/deletedUrls'].has(f.url),
+  )
 })
 
 const totalFormatted = computed(() => {
@@ -401,11 +433,17 @@ const confirmDelete = (item) => {
   deleteDialog.value = true
 }
 
-const executeDelete = () => {
-  // Mock delete for now (backend coming in PR #2)
-  // Delete file implementation pending backend
-  deleteDialog.value = false
-  fileToDelete.value = null
+const executeDelete = async () => {
+  const file = fileToDelete.value
+  if (!file) return
+
+  try {
+    await store.dispatch('Storage/deleteFile', file)
+    deleteDialog.value = false
+    fileToDelete.value = null
+  } catch (error) {
+    // Error is already handled in the store
+  }
 }
 
 const openPreview = (item) => {
