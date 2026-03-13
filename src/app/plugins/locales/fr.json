@@ -74,6 +74,7 @@
   },
   "common": {
     "enterTextHere": "Entrez le texte ici...",
+    "percentValue": "{value}%",
     "units": {
       "mb": "Mo",
       "gb": "Go"
@@ -86,6 +87,11 @@
     "editAndInvite": "Modifier et inviter des personnes à votre test",
     "analyzeProject": "Analyser le projet et les évaluateurs",
     "comment": "Commentaire",
+    "comments": "Commentaires",
+    "image": "Image",
+    "images": "Images",
+    "close": "Fermer",
+    "selectImage": "Sélectionnez une image à télécharger",
     "inputImage": "Entrez une image de votre choix en rapport avec le sujet",
     "title": "Titre",
     "description": "Description",
@@ -412,7 +418,10 @@
     "globalError": "Une erreur est survenue, désolé pour le désagrément.",
     "cameraPermissionDenied": "L'accès à la caméra est requis pour continuer. Veuillez autoriser l'accès à la caméra dans les paramètres de votre navigateur.",
     "sendError": "Échec de l'envoi de l'invitation. Veuillez réessayer",
-    "missingVariableTitles": "Impossible d'enregistrer : Certaines variables manquent de titres"
+    "missingVariableTitles": "Impossible d'enregistrer : Certaines variables manquent de titres",
+    "failedToLoadAnswers": "Échec du chargement des réponses",
+    "failedToUpdateAnswer": "Échec de la mise à jour de la réponse",
+    "failedToSaveAnswerCooperator": "Échec de l'enregistrement de la réponse du coopérateur"
   },
   "Introduction": {
     "title": "UX Remote LAB",
@@ -640,7 +649,14 @@
     "AddCommentBtn": {
       "showComment": "Afficher le commentaire",
       "addComment": "Ajouter un commentaire",
+      "addAnotherComment": "Ajouter un autre commentaire",
+      "addNewComment": "Ajouter un nouveau commentaire",
       "hideTextArea": "Masquer la zone de texte"
+    },
+    "ImportImage": {
+      "uploadSuccess": "Image téléchargée avec succès",
+      "uploadError": "Échec du téléchargement de l'image",
+      "imagesCount": "{count} image(s) jointe(s)"
     },
     "errors": {
       "failedToLoadQuestionForm": "Échec du chargement du formulaire de question. Veuillez réessayer.",
@@ -652,6 +668,10 @@
       "question": "Question",
       "questions": "Questions"
     }
+  },
+  "HeuristicsAnalytics": {
+    "dataTable": "Tableau de données",
+    "chart": "Graphique"
   },
   "HeuristicsOptionsTable": {
     "titles": {
@@ -1222,6 +1242,44 @@
       "note": "Votre rôle est de faciliter et d'observer. Le participant doit effectuer les tâches de manière indépendante, sauf s'il demande spécifiquement de l'aide.",
       "startSession": "Démarrer la session modérée"
     },
+    "VideoCallPanel": {
+      "toolsPanelTitle": "Panneau d'outils",
+      "sessionControl": "Controle de session",
+      "joinRoomInfo": "Les controles pour rejoindre la salle sont maintenant dans l'interface principale ci-dessus",
+      "proceedNextStep": "Passer a l'etape suivante",
+      "endCall": "Terminer l'appel",
+      "activeCall": "Appel actif",
+      "participants": "Participants",
+      "you": "Vous",
+      "observator": "Observateur",
+      "moderator": "Moderateur",
+      "connected": "Connecte",
+      "disconnected": "Deconnecte",
+      "camera": "Camera",
+      "noCamera": "Sans camera",
+      "microphone": "Microphone",
+      "noMicrophone": "Sans microphone",
+      "settings": "Parametres",
+      "disableCamera": "Desactiver la camera",
+      "enableCamera": "Activer la camera",
+      "muteMicrophone": "Couper le microphone",
+      "unmuteMicrophone": "Activer le microphone",
+      "stopScreenShare": "Arreter le partage d'ecran",
+      "shareScreen": "Partager l'ecran",
+      "moderatorOnlySteps": "Seul le moderateur peut changer les etapes"
+    },
+    "VideoCall": {
+      "screenSharingLabel": "Partage d'ecran",
+      "cameraOff": "La camera est desactivee",
+      "yourVideo": "Votre video",
+      "yourPreview": "Votre apercu",
+      "observatorMode": "Mode observateur",
+      "waitingForModeratorToStartSession": "En attente du moderateur pour demarrer la session...",
+      "observeAllFeedsNotice": "Vous pourrez observer tous les flux video sans envoyer le votre.",
+      "waitingForParticipants": "En attente des participants...",
+      "waitingForModerator": "En attente du moderateur...",
+      "autoStartWhenModeratorOpensRoom": "L'appel video demarrera automatiquement lorsque le moderateur ouvrira la salle."
+    },
     "WelcomeStep": {
       "welcome": "Bienvenue sur RUXAILAB !",
       "description": "Vous allez participer à un test utilisateur qui vise à évaluer la facilité d'utilisation et la compréhension d'une application numérique. Ce type de test nous aide à détecter les barrières technologiques possibles et à améliorer l'expérience pour tout le monde.",
@@ -1313,7 +1371,8 @@
       "elastic": "Elastic Net",
       "bayesian": "Bayesian Ridge",
       "sgd": "Régresseur SGD",
-      "svr": "Régresseur à vecteurs de support"
+      "svr": "Régresseur à vecteurs de support",
+      "rfr": "Régresseur par forêt aléatoire"
     }
   },
   "AccessNotAllowed": {
@@ -1538,7 +1597,8 @@
     "deleteAccount": "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action ne peut pas être annulée.",
     "genericSuccess": "Opération réussie",
     "savedChanges": "Modifications enregistrées avec succès",
-    "deleteUser": "Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action ne peut pas être annulée."
+    "deleteUser": "Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action ne peut pas être annulée.",
+    "errorSavingProgress": "Erreur lors de l'enregistrement de la progression"
   },
   "buttons": {
     "next": "Suivant",

@@ -74,6 +74,7 @@
   },
   "common": {
     "enterTextHere": "यहाँ टेक्स्ट दर्ज करें...",
+    "percentValue": "{value}%",
     "units": {
       "mb": "MB",
       "gb": "GB"
@@ -86,6 +87,11 @@
     "editAndInvite": "अपने परीक्षण को संपादित करें और लोगों को आमंत्रित करें",
     "analyzeProject": "परियोजना और मूल्यांककों का विश्लेषण करें",
     "comment": "टिप्पणी",
+    "comments": "टिप्पणियाँ",
+    "image": "छवि",
+    "images": "छवियाँ",
+    "close": "बंद करें",
+    "selectImage": "अपलोड करने के लिए एक छवि चुनें",
     "inputImage": "विषय से संबंधित अपनी पसंद की एक छवि दर्ज करें",
     "title": "शीर्षक",
     "description": "विवरण",
@@ -412,7 +418,10 @@
     "globalError": "एक त्रुटि हुई है, असुविधा के लिए खेद है।",
     "cameraPermissionDenied": "आगे बढ़ने के लिए कैमरा एक्सेस आवश्यक है। कृपया अपने ब्राउज़र की सेटिंग्स में कैमरा एक्सेस की अनुमति दें।",
     "sendError": "आमंत्रण भेजने में असमर्थ। कृपया पुनः प्रयास करें।",
-    "missingVariableTitles": "सहेजा नहीं जा सका: कुछ वेरिएबल्स के शीर्षक गायब हैं"
+    "missingVariableTitles": "सहेजा नहीं जा सका: कुछ वेरिएबल्स के शीर्षक गायब हैं",
+    "failedToLoadAnswers": "Failed to load answers",
+    "failedToUpdateAnswer": "Failed to update answer",
+    "failedToSaveAnswerCooperator": "Failed to save cooperator answer"
   },
   "Introduction": {
     "title": "UX रिमोट लैब",
@@ -640,7 +649,14 @@
     "AddCommentBtn": {
       "showComment": "टिप्पणी दिखाएं",
       "addComment": "टिप्पणी जोड़ें",
+      "addAnotherComment": "एक और टिप्पणी जोड़ें",
+      "addNewComment": "एक नई टिप्पणी जोड़ें",
       "hideTextArea": "टेक्स्ट क्षेत्र छुपाएं"
+    },
+    "ImportImage": {
+      "uploadSuccess": "छवि सफलतापूर्वक अपलोड की गई",
+      "uploadError": "छवि अपलोड करने में विफल",
+      "imagesCount": "{count} छवि(यां) संलग्न"
     },
     "errors": {
       "failedToLoadQuestionForm": "प्रश्न फॉर्म लोड करने में विफल। कृपया पुनः प्रयास करें।",
@@ -652,6 +668,12 @@
       "question": "प्रश्न",
       "questions": "प्रश्न"
     }
+  },
+  "HeuristicsAnalytics": {
+    "dataTable": "डेटा तालिका",
+    "chart": "चार्ट",
+    "userUploadedContent": "उपयोगकर्ता द्वारा अपलोड की गई सामग्री",
+    "userUploadedAttachment": "उपयोगकर्ता द्वारा अपलोड किया गया अटैचमेंट"
   },
   "HeuristicsOptionsTable": {
     "titles": {
@@ -1222,6 +1244,44 @@
       "note": "आपकी भूमिका सुविधाजनक बनाना और अवलोकन करना है। प्रतिभागी को स्वतंत्र रूप से कार्य पूरा करना चाहिए जब तक कि वे विशेष रूप से मदद का अनुरोध न करें।",
       "startSession": "मॉडरेटेड सेशन शुरू करें"
     },
+    "VideoCallPanel": {
+      "toolsPanelTitle": "टूल्स पैनल",
+      "sessionControl": "सेशन नियंत्रण",
+      "joinRoomInfo": "जॉइन रूम नियंत्रण अब ऊपर मुख्य इंटरफेस में हैं",
+      "proceedNextStep": "अगले चरण पर जाएं",
+      "endCall": "कॉल समाप्त करें",
+      "activeCall": "कॉल सक्रिय है",
+      "participants": "प्रतिभागी",
+      "you": "आप",
+      "observator": "पर्यवेक्षक",
+      "moderator": "मॉडरेटर",
+      "connected": "कनेक्टेड",
+      "disconnected": "डिस्कनेक्टेड",
+      "camera": "कैमरा",
+      "noCamera": "कैमरा नहीं",
+      "microphone": "माइक्रोफोन",
+      "noMicrophone": "माइक्रोफोन नहीं",
+      "settings": "सेटिंग्स",
+      "disableCamera": "कैमरा बंद करें",
+      "enableCamera": "कैमरा चालू करें",
+      "muteMicrophone": "माइक्रोफोन म्यूट करें",
+      "unmuteMicrophone": "माइक्रोफोन अनम्यूट करें",
+      "stopScreenShare": "स्क्रीन शेयर बंद करें",
+      "shareScreen": "स्क्रीन शेयर करें",
+      "moderatorOnlySteps": "केवल मॉडरेटर चरण बदल सकता है"
+    },
+    "VideoCall": {
+      "screenSharingLabel": "स्क्रीन साझा की जा रही है",
+      "cameraOff": "कैमरा बंद है",
+      "yourVideo": "आपका वीडियो",
+      "yourPreview": "आपका प्रीव्यू",
+      "observatorMode": "ऑब्जर्वर मोड",
+      "waitingForModeratorToStartSession": "मॉडरेटर के सेशन शुरू करने की प्रतीक्षा हो रही है...",
+      "observeAllFeedsNotice": "आप अपना वीडियो भेजे बिना सभी वीडियो फीड देख सकेंगे।",
+      "waitingForParticipants": "प्रतिभागियों की प्रतीक्षा हो रही है...",
+      "waitingForModerator": "मॉडरेटर की प्रतीक्षा हो रही है...",
+      "autoStartWhenModeratorOpensRoom": "जब मॉडरेटर रूम खोलेगा, वीडियो कॉल अपने आप शुरू हो जाएगी।"
+    },
     "WelcomeStep": {
       "welcome": "RUXAILAB में आपका स्वागत है!",
       "description": "आप एक उपयोगकर्ता परीक्षण में भाग लेंगे जो किसी डिजिटल एप्लिकेशन की उपयोगिता और समझने की क्षमता का मूल्यांकन करता है। यह परीक्षण संभावित तकनीकी बाधाओं का पता लगाने और अनुभव को बेहतर बनाने में मदद करता है।",
@@ -1313,7 +1373,8 @@
       "elastic": "इलास्टिक नेट",
       "bayesian": "बायेसियन रिज",
       "sgd": "एसजीडी रिग्रेशर",
-      "svr": "सपोर्ट वेक्टर रिग्रेशर"
+      "svr": "सपोर्ट वेक्टर रिग्रेशर",
+      "rfr": "रैंडम फॉरेस्ट रिग्रेशर"
     }
   },
   "AccessNotAllowed": {
@@ -1538,6 +1599,7 @@
     "deleteAccount": "क्या आप वाकई अपना खाता हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।",
     "genericSuccess": "ऑपरेशन सफल रहा",
     "savedChanges": "परिवर्तनों को सफलतापूर्वक सहेजा गया",
+    "errorSavingProgress": "प्रगति सहेजने में त्रुटि",
     "deleteUser": "क्या आप वाकई इस उपयोगकर्ता को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।"
   },
   "buttons": {

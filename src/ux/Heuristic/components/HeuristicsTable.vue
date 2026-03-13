@@ -507,13 +507,10 @@
     <!-- Add Question Dialog -->
     <v-dialog v-model="dialogQuestion" max-width="600" persistent>
       <v-card>
-        <v-card-title
-          class="text-h5 pa-6"
-          style="background-color: #fca326; color: white"
-        >
+        <v-card-title class="text-h5 bg-orange pa-4 text-white">
           {{ $t('HeuristicsTable.titles.newQuestion') }}
         </v-card-title>
-        <v-card-text class="pa-6 pt-0">
+        <v-card-text class="pa-6">
           <v-form ref="formQuestionRef" @submit.prevent="addQuestion">
             <v-text-field
               v-if="dialogQuestion && newQuestion"
@@ -549,17 +546,14 @@
     <!-- Edit Heuristic/Question Dialog -->
     <v-dialog v-model="dialogEdit" max-width="600" persistent>
       <v-card>
-        <v-card-title
-          class="text-h5 pa-6"
-          style="background-color: #fca326; color: white"
-        >
+        <v-card-title class="text-h5 bg-orange pa-4 text-white">
           {{
             itemEdit && !isDialogClosing
               ? itemEdit.title
               : $t('HeuristicsTable.titles.loading')
           }}
         </v-card-title>
-        <v-card-text class="pa-6 pt-0">
+        <v-card-text class="pa-6">
           <v-form ref="formEditRef" @submit.prevent="validateEdit">
             <v-text-field
               v-if="itemEdit && !isDialogClosing"

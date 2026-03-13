@@ -140,7 +140,13 @@
     "id": "ID",
     "itemsPerPage": "每页项目数：",
     "saving": "保存中...",
-    "visible": "可见"
+    "visible": "可见",
+    "percentValue": "{value}%",
+    "comments": "评论",
+    "image": "图片",
+    "images": "图片",
+    "close": "关闭",
+    "selectImage": "选择要上传的图片"
   },
   "storage": {
     "pageTitle": "存储",
@@ -412,7 +418,10 @@
     "globalError": "发生错误，给您带来不便，敬请谅解。",
     "cameraPermissionDenied": "继续操作需要访问摄像头。请在浏览器设置中允许摄像头访问。",
     "sendError": "发送邀请失败，请重试",
-    "missingVariableTitles": "无法保存：一些变量缺少标题"
+    "missingVariableTitles": "无法保存：一些变量缺少标题",
+    "failedToLoadAnswers": "Failed to load answers",
+    "failedToUpdateAnswer": "Failed to update answer",
+    "failedToSaveAnswerCooperator": "Failed to save cooperator answer"
   },
   "Introduction": {
     "title": "UX远程实验室",
@@ -640,7 +649,14 @@
     "AddCommentBtn": {
       "showComment": "显示评论",
       "addComment": "添加评论",
-      "hideTextArea": "隐藏文本区域"
+      "hideTextArea": "隐藏文本区域",
+      "addAnotherComment": "添加另一条评论",
+      "addNewComment": "添加新评论"
+    },
+    "ImportImage": {
+      "imagesCount": "已附加 {count} 张图片",
+      "uploadSuccess": "图片上传成功",
+      "uploadError": "图片上传失败"
     },
     "errors": {
       "failedToLoadQuestionForm": "加载问题表单失败。请重试。",
@@ -652,6 +668,10 @@
       "question": "问题",
       "questions": "问题"
     }
+  },
+  "HeuristicsAnalytics": {
+    "dataTable": "数据表",
+    "chart": "图表"
   },
   "HeuristicsOptionsTable": {
     "titles": {
@@ -1222,6 +1242,44 @@
       "note": "您的角色是提供便利和观察。参与者应独立完成任务，除非他们特别要求帮助。",
       "startSession": "启动主持式环节"
     },
+    "VideoCallPanel": {
+      "toolsPanelTitle": "工具面板",
+      "sessionControl": "会话控制",
+      "joinRoomInfo": "加入房间的控制现在位于上方主界面",
+      "proceedNextStep": "进入下一步",
+      "endCall": "结束通话",
+      "activeCall": "通话进行中",
+      "participants": "参与者",
+      "you": "你",
+      "observator": "观察者",
+      "moderator": "主持人",
+      "connected": "已连接",
+      "disconnected": "已断开",
+      "camera": "摄像头",
+      "noCamera": "无摄像头",
+      "microphone": "麦克风",
+      "noMicrophone": "无麦克风",
+      "settings": "设置",
+      "disableCamera": "关闭摄像头",
+      "enableCamera": "开启摄像头",
+      "muteMicrophone": "麦克风静音",
+      "unmuteMicrophone": "取消麦克风静音",
+      "stopScreenShare": "停止屏幕共享",
+      "shareScreen": "共享屏幕",
+      "moderatorOnlySteps": "只有主持人可以更改步骤"
+    },
+    "VideoCall": {
+      "screenSharingLabel": "正在共享屏幕",
+      "cameraOff": "摄像头已关闭",
+      "yourVideo": "你的视频",
+      "yourPreview": "你的预览",
+      "observatorMode": "观察者模式",
+      "waitingForModeratorToStartSession": "正在等待主持人开始会话...",
+      "observeAllFeedsNotice": "你可以在不发送自己视频的情况下观察所有视频流。",
+      "waitingForParticipants": "正在等待参与者...",
+      "waitingForModerator": "正在等待主持人...",
+      "autoStartWhenModeratorOpensRoom": "当主持人打开房间时，视频通话将自动开始。"
+    },
     "WelcomeStep": {
       "welcome": "欢迎来到RUXAILAB！",
       "description": "您将参与一项旨在评估数字应用程序易用性和理解程度的用户测试。这种类型的测试帮助我们检测可能的技术障碍并改善每个人的体验。",
@@ -1313,7 +1371,8 @@
       "elastic": "弹性网络",
       "bayesian": "贝叶斯岭回归",
       "sgd": "SGD回归器",
-      "svr": "支持向量回归器"
+      "svr": "支持向量回归器",
+      "rfr": "随机森林回归器"
     }
   },
   "AccessNotAllowed": {
@@ -1538,7 +1597,8 @@
     "deleteAccount": "您确定要删除您的账户吗？此操作无法撤销。",
     "genericSuccess": "操作成功",
     "savedChanges": "更改保存成功",
-    "deleteUser": "您确定要删除此用户吗？此操作无法撤销。"
+    "deleteUser": "您确定要删除此用户吗？此操作无法撤销。",
+    "errorSavingProgress": "保存进度时出错"
   },
   "buttons": {
     "next": "下一步",

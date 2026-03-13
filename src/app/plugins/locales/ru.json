@@ -140,7 +140,13 @@
     "id": "ID",
     "itemsPerPage": "Элементов на странице:",
     "saving": "Сохранение...",
-    "visible": "Видимый"
+    "visible": "Видимый",
+    "percentValue": "{value}%",
+    "comments": "Комментарии",
+    "image": "Изображение",
+    "images": "Изображения",
+    "close": "Закрыть",
+    "selectImage": "Выберите изображение для загрузки"
   },
   "storage": {
     "pageTitle": "Хранилище",
@@ -412,7 +418,10 @@
     "globalError": "Произошла ошибка, извините за неудобства.",
     "cameraPermissionDenied": "Для продолжения требуется доступ к камере. Пожалуйста, разрешите доступ к камере в настройках браузера.",
     "sendError": "Не удалось отправить приглашение. Пожалуйста, попробуйте еще раз",
-    "missingVariableTitles": "Не удается сохранить: Некоторым переменным не хватает заголовков"
+    "missingVariableTitles": "Не удается сохранить: Некоторым переменным не хватает заголовков",
+    "failedToLoadAnswers": "Failed to load answers",
+    "failedToUpdateAnswer": "Failed to update answer",
+    "failedToSaveAnswerCooperator": "Failed to save cooperator answer"
   },
   "Introduction": {
     "title": "Удаленная лаборатория UX",
@@ -640,7 +649,14 @@
     "AddCommentBtn": {
       "showComment": "Показать комментарий",
       "addComment": "Добавить комментарий",
-      "hideTextArea": "Скрыть текстовое поле"
+      "hideTextArea": "Скрыть текстовое поле",
+      "addAnotherComment": "Добавить еще один комментарий",
+      "addNewComment": "Добавить новый комментарий"
+    },
+    "ImportImage": {
+      "imagesCount": "Прикреплено изображений: {count}",
+      "uploadSuccess": "Изображение успешно загружено",
+      "uploadError": "Не удалось загрузить изображение"
     },
     "errors": {
       "failedToLoadQuestionForm": "Не удалось загрузить форму вопроса. Пожалуйста, попробуйте снова.",
@@ -652,6 +668,10 @@
       "question": "Вопрос",
       "questions": "Вопросы"
     }
+  },
+  "HeuristicsAnalytics": {
+    "dataTable": "Таблица данных",
+    "chart": "Диаграмма"
   },
   "HeuristicsOptionsTable": {
     "titles": {
@@ -1222,6 +1242,44 @@
       "note": "Ваша роль — содействовать и наблюдать. Участник должен выполнять задачи самостоятельно, если только он специально не попросит о помощи.",
       "startSession": "Начать модерируемую сессию"
     },
+    "VideoCallPanel": {
+      "toolsPanelTitle": "Панель инструментов",
+      "sessionControl": "Управление сессией",
+      "joinRoomInfo": "Кнопки входа в комнату теперь находятся в основном интерфейсе выше",
+      "proceedNextStep": "Перейти к следующему шагу",
+      "endCall": "Завершить звонок",
+      "activeCall": "Активный звонок",
+      "participants": "Участники",
+      "you": "Вы",
+      "observator": "Наблюдатель",
+      "moderator": "Модератор",
+      "connected": "Подключен",
+      "disconnected": "Отключен",
+      "camera": "Камера",
+      "noCamera": "Без камеры",
+      "microphone": "Микрофон",
+      "noMicrophone": "Без микрофона",
+      "settings": "Настройки",
+      "disableCamera": "Отключить камеру",
+      "enableCamera": "Включить камеру",
+      "muteMicrophone": "Выключить микрофон",
+      "unmuteMicrophone": "Включить микрофон",
+      "stopScreenShare": "Остановить демонстрацию экрана",
+      "shareScreen": "Демонстрировать экран",
+      "moderatorOnlySteps": "Только модератор может менять шаги"
+    },
+    "VideoCall": {
+      "screenSharingLabel": "Демонстрация экрана",
+      "cameraOff": "Камера выключена",
+      "yourVideo": "Ваше видео",
+      "yourPreview": "Ваш предпросмотр",
+      "observatorMode": "Режим наблюдателя",
+      "waitingForModeratorToStartSession": "Ожидание, пока модератор начнет сессию...",
+      "observeAllFeedsNotice": "Вы сможете наблюдать все видеопотоки, не отправляя свой.",
+      "waitingForParticipants": "Ожидание участников...",
+      "waitingForModerator": "Ожидание модератора...",
+      "autoStartWhenModeratorOpensRoom": "Видеозвонок начнется автоматически, когда модератор откроет комнату."
+    },
     "WelcomeStep": {
       "welcome": "Добро пожаловать в RUXAILAB!",
       "description": "Вы собираетесь принять участие в пользовательском тесте, направленном на оценку удобства использования и понимания цифрового приложения. Этот тип теста помогает нам выявить возможные технологические барьеры и улучшить опыт для всех.",
@@ -1313,7 +1371,8 @@
       "elastic": "Эластичная сеть",
       "bayesian": "Байесовский ридж",
       "sgd": "SGD-регрессор",
-      "svr": "Регрессор опорных векторов"
+      "svr": "Регрессор опорных векторов",
+      "rfr": "Регрессор случайного леса"
     }
   },
   "AccessNotAllowed": {
@@ -1538,7 +1597,8 @@
     "deleteAccount": "Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя отменить.",
     "genericSuccess": "Операция выполнена успешно",
     "savedChanges": "Изменения успешно сохранены",
-    "deleteUser": "Вы уверены, что хотите удалить этого пользователя? Это действие нельзя отменить."
+    "deleteUser": "Вы уверены, что хотите удалить этого пользователя? Это действие нельзя отменить.",
+    "errorSavingProgress": "Ошибка при сохранении прогресса"
   },
   "buttons": {
     "next": "Далее",

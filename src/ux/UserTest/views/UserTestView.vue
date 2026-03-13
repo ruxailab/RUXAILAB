@@ -222,14 +222,16 @@
                     complete-icon="mdi-check"
                   />
                   <v-divider />
-                  <v-stepper-item
-                    value="2"
-                    :title="$t('UserTestView.stepper.preTest')"
-                    :complete="stepperValue >= 2"
-                    color="white"
-                    complete-icon="mdi-check"
-                  />
-                  <v-divider />
+                  <template v-if="hasPreTest">
+                    <v-stepper-item
+                      value="2"
+                      :title="$t('UserTestView.stepper.preTest')"
+                      :complete="stepperValue >= 2"
+                      color="white"
+                      complete-icon="mdi-check"
+                    />
+                    <v-divider />
+                  </template>
 
                   <v-stepper-item
                     v-if="hasEyeTracking"
@@ -242,23 +244,33 @@
                   <v-divider v-if="hasEyeTracking" />
 
                   <v-stepper-item
-                    :value="hasEyeTracking ? 4 : 3"
+                    :value="!hasPreTest ? 2 : hasEyeTracking ? 4 : 3"
                     :title="$t('UserTestView.stepper.tasks')"
                     :complete="stepperValue >= (hasEyeTracking ? 4 : 3)"
                     color="white"
                     complete-icon="mdi-check"
                   />
                   <v-divider />
+                  <template v-if="hasPostTest">
+                    <v-stepper-item
+                      :value="!hasPreTest ? 3 : hasEyeTracking ? 5 : 4"
+                      :title="$t('UserTestView.stepper.postTest')"
+                      :complete="stepperValue >= (hasEyeTracking ? 5 : 4)"
+                      color="white"
+                      complete-icon="mdi-check"
+                    />
+                    <v-divider />
+                  </template>
                   <v-stepper-item
-                    :value="hasEyeTracking ? 5 : 4"
-                    :title="$t('UserTestView.stepper.postTest')"
-                    :complete="stepperValue >= (hasEyeTracking ? 5 : 4)"
-                    color="white"
-                    complete-icon="mdi-check"
-                  />
-                  <v-divider />
-                  <v-stepper-item
-                    :value="hasEyeTracking ? 6 : 5"
+                    :value="
+                      !hasPostTest && !hasPreTest
+                        ? 3
+                        : !hasPreTest && hasPostTest
+                          ? 4
+                          : hasEyeTracking
+                            ? 6
+                            : 5
+                    "
                     :title="$t('UserTestView.stepper.completion')"
                     :complete="stepperValue === (hasEyeTracking ? 6 : 5)"
                     color="white"
@@ -316,6 +328,8 @@
             v-if="globalIndex === 0"
             :stepper-value="stepperValue"
             :has-eye-tracking="hasEyeTracking"
+            :has-pre-test="hasPreTest"
+            :has-post-test="hasPostTest"
             :welcome-message="test?.testStructure?.welcomeMessage"
             @start="globalIndex = 1"
           />
@@ -353,7 +367,11 @@
           />
 
           <PreTasksStep
-            v-if="globalIndex === (hasEyeTracking ? 4 : 3) && taskIndex === 0"
+            v-if="
+              hasPreTest &&
+              globalIndex === (hasEyeTracking ? 4 : 3) &&
+              taskIndex === 0
+            "
             :num-tasks="test?.testStructure?.userTasks?.length || 0"
             @start-tasks="
               () => {
@@ -428,6 +446,7 @@
 
           <PostTestStep
             v-if="
+              hasPostTest &&
               globalIndex === (hasEyeTracking ? 6 : 5) &&
               (!localTestAnswer.postTestCompleted || localTestAnswer.submitted)
             "
@@ -586,6 +605,20 @@ const currentUserTestAnswer = computed(
 const hasEyeTracking = computed(() =>
   test.value?.testStructure?.userTasks?.some((task) => task.hasEye),
 )
+
+const hasPreTest = computed(() => {
+  return (
+    test.value?.testStructure?.preTest != null &&
+    test.value?.testStructure?.preTest.length > 0
+  )
+})
+
+const hasPostTest = computed(() => {
+  return (
+    test.value?.testStructure?.postTest != null &&
+    test.value?.testStructure?.postTest.length > 0
+  )
+})
 
 const isUserTestAdmin = computed(() => {
   return test.value.testAdmin.userDocId === user.value?.id
@@ -797,18 +830,15 @@ const attachMediaToTasks = (answer, mediaUrls) => {
     for (const type in medias) {
       if (type === 'sizes') {
         const sizes = medias[type]
-        console.log(`Found sizes for Task ${taskIndex}:`, sizes)
+
         if (sizes.screenRecordURL) {
           task.screenSize = sizes.screenRecordURL
-          console.log('Set screenSize:', task.screenSize)
         }
         if (sizes.audioRecordURL) {
           task.audioSize = sizes.audioRecordURL
-          console.log('Set audioSize:', task.audioSize)
         }
         if (sizes.webcamRecordURL) {
           task.webcamSize = sizes.webcamRecordURL
-          console.log('Set webcamSize:', task.webcamSize)
         }
         continue
       }
@@ -919,7 +949,12 @@ const completeStep = (id, type, userCompleted = true) => {
   try {
     if (type === 'consent') {
       localTestAnswer.consentCompleted = true
-      globalIndex.value = 2 // PreTest
+      if (hasPreTest.value) {
+        globalIndex.value = 2 // PreTest
+      } else {
+        globalIndex.value = 4 // Tasks
+        localTestAnswer.preTestCompleted = true
+      }
       savePartialAnswer()
     }
 
@@ -960,8 +995,12 @@ const completeStep = (id, type, userCompleted = true) => {
       } else {
         if (allTasksCompleted.value) {
           taskIndex.value = id + 1 // to help saving methods
-          globalIndex.value = hasEyeTracking.value ? 6 : 5 // PostTest
-        } else {
+          if (hasPostTest.value) {
+            globalIndex.value = hasEyeTracking.value ? 6 : 5 // PostTest
+          } else {
+            globalIndex.value = hasEyeTracking.value ? 7 : 6 // Finish
+            localTestAnswer.postTestCompleted = true
+          }
         }
       }
       //TODO: Show proper toast not the following one
