@@ -108,10 +108,10 @@ export default class AuthController {
    * @returns {Promise}
    */
   async deleteAuth(payload) {
-    const { user, password } = payload
+    const { user } = payload
 
     if (!user) throw new Error('No user provided')
-      
+
     // Delete user from Firebase Auth
     await user.delete()
 
