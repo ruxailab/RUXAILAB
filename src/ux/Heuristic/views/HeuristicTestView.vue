@@ -540,7 +540,7 @@
           <template #activator="{ props }">
             <v-btn
               v-bind="props"
-              :disabled="calculateProgress < 100"
+              :disabled="calculatedProgress < 100"
               class="text-white"
               icon
               size="small"
