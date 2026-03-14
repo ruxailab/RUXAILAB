@@ -118,7 +118,10 @@ export default {
   },
 
   methods: {
-    ...mapActions(['sendVerificationEmail', 'logout']),
+    ...mapActions({
+      sendVerificationEmail: 'sendVerificationEmail',
+      logoutAction: 'logout',
+    }),
 
     async checkEmailVerificationStatus() {
       try {
@@ -178,7 +181,7 @@ export default {
 
     async logout() {
       try {
-        await this.logout()
+        await this.logoutAction()
         this.$router.push('/signin')
       } catch {}
     },
