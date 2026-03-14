@@ -44,51 +44,22 @@ export function useDeleteAccount() {
     showError(messageKey)
   }
 
-  const deleteAccount = async (user) => {
+  const deleteAccount = async (user, password) => {
     try {
-      const userDocRef = doc(db, 'users', user.uid)
-      await deleteDoc(userDocRef)
-
-      try {
-        await store.dispatch('deleteAuth', user.uid)
-      } catch (storeError) {
-        return storeError
-      }
-
-      await deleteUser(user)
+      await store.dispatch('deleteAuth', { user, password })
 
       showSuccess('profile.accountDeletedSuccess')
-
       await signOut()
     } catch (error) {
-      if (error.code === 'permission-denied') {
-        showError('profile.permissionDenied')
-      } else if (error.code === 'not-found') {
-        try {
-          await deleteUser(user)
-          showSuccess('profile.accountDeletedSuccess')
-          await signOut()
-        } catch (authError) {
-          showError('profile.accountDeletionFailed')
-          throw authError
-        }
-      } else {
-        showError('profile.accountDeletionFailed')
-        throw error
-      }
+      showError('profile.accountDeletionFailed')
+      throw error
     }
   }
 
   const signOut = async () => {
-    try {
-      await store.dispatch('logout', { silent: true })
-      setTimeout(() => {
-        globalThis.location.href = '/signin'
-      }, 500)
-    } catch (error) {
+    setTimeout(() => {
       globalThis.location.href = '/signin'
-      return error
-    }
+    }, 500)
   }
 
   const handleDeleteConfirmText = async () => {
@@ -111,7 +82,6 @@ export function useDeleteAccount() {
 
     try {
       isDeleting.value = true
-      await reauthenticateWithPopup(user, new GoogleAuthProvider())
       await deleteAccount(user)
     } catch (error) {
       handleAuthError(error, GOOGLE_ERRORS)
@@ -136,11 +106,7 @@ export function useDeleteAccount() {
 
     try {
       isDeleting.value = true
-
-      const cred = EmailAuthProvider.credential(user.email, userPassword.value)
-      await reauthenticateWithCredential(user, cred)
-
-      await deleteAccount(user)
+      await deleteAccount(user, userPassword.value)
     } catch (error) {
       handleAuthError(error, EMAIL_ERRORS)
     } finally {
