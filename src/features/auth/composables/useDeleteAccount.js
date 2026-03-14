@@ -1,15 +1,6 @@
 import { ref } from 'vue'
 import { useStore } from 'vuex'
-import {
-  getAuth,
-  reauthenticateWithCredential,
-  EmailAuthProvider,
-  reauthenticateWithPopup,
-  GoogleAuthProvider,
-  deleteUser,
-} from 'firebase/auth'
-import { doc, deleteDoc } from 'firebase/firestore'
-import { db } from '@/app/plugins/firebase'
+import { getAuth } from 'firebase/auth'
 import { showError, showSuccess } from '../../../shared/utils/toast'
 
 const SHARED_ERRORS = {
