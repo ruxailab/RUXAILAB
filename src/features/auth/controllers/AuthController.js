@@ -101,12 +101,13 @@ export default class AuthController {
   }
 
   /**
-   * Delete user account - consolidated method
+   * Deletes the authenticated user account and cleans up backend data.
+   * @precondition Caller must reauthenticate the user before invoking 
+   * this method. This is handled by useDeleteAccount.js composable.
    * @param {Object} payload - Deletion payload
-   * @param {Object} payload.user - Firebase auth user
-   * @param {string} payload.password - User password for reauthentication (optional)
+   * @param {Object} payload.user - Firebase auth user (already reauthenticated)
    * @returns {Promise}
-   */
+  */
   async deleteAuth(payload) {
     const { user } = payload
 
