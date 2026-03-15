@@ -939,9 +939,17 @@ const handleTimerStopped = (elapsedTime, idx) => {
       localTestAnswer.tasks[idx].taskTime = timeToSave
     } else {
       //TODO: Add error snackbar
+      store.commit('SET_TOAST', {
+        message: 'An error occurred while loading the evaluation.',
+        type: 'error',
+      })
     }
   } else {
     //TODO: Add error snackbar
+    store.commit('SET_TOAST', {
+      message: 'Failed to save progress. Please try again.',
+      type: 'error',
+    })
   }
 }
 
