@@ -100,3 +100,91 @@ export const getCalibrationConfig = functions.onRequest({
     }
   },
 })
+
+export const storeBenchmarkResult = functions.onRequest({
+  handler: async (req, res) => {
+    if (req.method !== 'POST') {
+      return res.status(405).send('Method Not Allowed')
+    }
+
+    try {
+      const { session_id, benchmark_results } = req.body
+
+      if (!session_id) {
+        return res.status(400).json({ error: 'session_id is required' })
+      }
+
+      if (!benchmark_results) {
+        return res.status(400).json({ error: 'benchmark_results is required' })
+      }
+
+      const db = admin.firestore()
+
+      const benchmarkRef = db.collection('benchmarks').doc(session_id)
+      const existingDoc = await benchmarkRef.get()
+
+      const benchmarkData = {
+        session_id,
+        benchmark_results,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      }
+
+      if (!existingDoc.exists) {
+        benchmarkData.createdAt = admin.firestore.FieldValue.serverTimestamp()
+      }
+
+      await benchmarkRef.set(benchmarkData, { merge: true })
+
+      logger.info('Benchmark result stored successfully', { session_id })
+
+      return res.status(200).json({
+        message: 'Benchmark result stored successfully',
+        session_id,
+        benchmark_results,
+      })
+    } catch (error) {
+      logger.error('Error storing benchmark result:', { error })
+      return res.status(500).json({ error: error.message })
+    }
+  },
+})
+
+export const getSessionBenchmark = functions.onRequest({
+  handler: async (req, res) => {
+    if (req.method !== 'GET') {
+      return res.status(405).send('Method Not Allowed')
+    }
+
+    try {
+      const { session_id } = req.query
+
+      if (!session_id) {
+        return res.status(400).json({ error: 'session_id is required' })
+      }
+
+      const db = admin.firestore()
+
+      const benchmarkRef = db.collection('benchmarks').doc(session_id)
+      const benchmarkDoc = await benchmarkRef.get()
+
+      if (!benchmarkDoc.exists) {
+        return res.status(404).json({
+          error: 'No benchmark results found for this session',
+          session_id,
+        })
+      }
+
+      const benchmarkData = benchmarkDoc.data()
+
+      return res.status(200).json({
+        session_id,
+        benchmark_results: benchmarkData.benchmark_results,
+        createdAt: benchmarkData.createdAt,
+        updatedAt: benchmarkData.updatedAt,
+      })
+    } catch (error) {
+      logger.error('Error retrieving benchmark result:', { error })
+      return res.status(500).json({ error: error.message })
+    }
+  },
+})
