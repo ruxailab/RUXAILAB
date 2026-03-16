@@ -264,6 +264,7 @@
                         color="success"
                         size="large"
                         :loading="isLoading"
+                        :disabled="!isFormValid || isLoading"
                         prepend-icon="mdi-plus"
                         block
                         @click="validate"
@@ -283,7 +284,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
@@ -339,6 +340,14 @@ const steps = computed(() => [
   { value: 3, title: t('studyCreation.steps.studyType'), complete: true },
   { value: 4, title: t('studyCreation.steps.details'), complete: false },
 ])
+
+const isFormValid = computed(() => {
+  return (
+    test.value.title &&
+    test.value.title.length <= 200 &&
+    test.value.description.length <= 600
+  )
+})
 
 watch(
   selectedTemplate,
@@ -529,6 +538,10 @@ const submitAccessibility = async () => {
 const goBack = () => {
   router.push({ name: 'study-create-step3' })
 }
+
+onMounted(() => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+})
 </script>
 
 <style scoped>
