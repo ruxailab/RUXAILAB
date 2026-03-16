@@ -153,6 +153,7 @@ const goBack = () => {
 }
 
 onMounted(() => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
   selectedOption.value = store.state.Tests.studyType || ''
 })
 </script>
