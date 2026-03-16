@@ -13,6 +13,7 @@ import {
   EmailAuthProvider,
 } from 'firebase/auth'
 import { auth } from '@/app/plugins/firebase'
+import { isFirebaseDisabled } from '@/config/runtimeFlags'
 import axios from 'axios'
 import EmailController from '@/shared/controllers/EmailController'
 
@@ -27,6 +28,9 @@ export default class AuthController {
    * @returns {Promise} - Firebase auth user credential
    */
   async signUp(email, password) {
+    if (isFirebaseDisabled) {
+      return { user: { uid: 'mock-user-id', email: email, emailVerified: true } }
+    }
     return createUserWithEmailAndPassword(auth, email, password)
   }
 
@@ -37,10 +41,13 @@ export default class AuthController {
    * @returns {Promise} - Firebase auth user credential
    */
   async signIn(email, password, rememberMe) {
-    await setPersistence(
-      auth,
-      rememberMe ? browserLocalPersistence : browserSessionPersistence,
-    )
+    if (isFirebaseDisabled) {
+      return { user: { uid: 'mock-user-id', email: email, emailVerified: true } }
+    }
+    const persistence = rememberMe
+      ? browserLocalPersistence
+      : browserSessionPersistence
+    await setPersistence(auth, persistence)
     return signInWithEmailAndPassword(auth, email, password)
   }
 
@@ -49,10 +56,13 @@ export default class AuthController {
    * @returns {Promise} - Firebase auth user credential
    */
   async signInWithGoogle(rememberMe) {
-    await setPersistence(
-      auth,
-      rememberMe ? browserLocalPersistence : browserSessionPersistence,
-    )
+    if (isFirebaseDisabled) {
+      return { user: { uid: 'mock-user-id', email: 'google@mock.com', displayName: 'Mock Google User', emailVerified: true } }
+    }
+    const persistence = rememberMe
+      ? browserLocalPersistence
+      : browserSessionPersistence
+    await setPersistence(auth, persistence)
     const provider = new GoogleAuthProvider()
     return signInWithPopup(auth, provider)
   }
@@ -62,7 +72,19 @@ export default class AuthController {
    * @returns {Object} - Current Firebase user
    */
   async getCurrentUser() {
-    return auth.currentUser
+    if (isFirebaseDisabled) {
+      return { uid: 'mock-user-id', email: 'mock@mock.com', emailVerified: true }
+    }
+    return new Promise((resolve, reject) => {
+      const unsubscribe = onAuthStateChanged(
+        auth,
+        (user) => {
+          unsubscribe()
+          resolve(user)
+        },
+        reject,
+      )
+    })
   }
 
   /**
@@ -70,6 +92,7 @@ export default class AuthController {
    * @returns {Promise} - Firebase auth signOut promise
    */
   async signOut() {
+    if (isFirebaseDisabled) return true
     return signOut(auth)
   }
 
@@ -78,18 +101,11 @@ export default class AuthController {
    * @returns {Promise} - Current user or null
    */
   async autoSignIn() {
-    return new Promise((resolve, reject) => {
-      const unsubscribe = onAuthStateChanged(
-        auth,
-        (user) => {
-          unsubscribe()
-          resolve(user)
-        },
-        (error) => {
-          unsubscribe()
-          reject(error)
-        },
-      )
+    if (isFirebaseDisabled) return null
+    return new Promise((resolve) => {
+      onAuthStateChanged(auth, (user) => {
+        resolve(user)
+      })
     })
   }
   // Reset Password

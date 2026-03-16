@@ -230,21 +230,8 @@ export default {
     async getTestsAdminByUser({ commit }) {
       commit('setLoading', true)
       try {
-        const auth = getAuth()
-        const user = auth.currentUser
-
-        if (user) {
-          const userController = new UserController()
-          const userDoc = await userController.getUserWithStudies(user.uid)
-
-          if (userDoc) {
-            const tests = [
-              ...Object.values(userDoc.myTests || {}),
-              ...Object.values(userDoc.myAnswers || {}),
-            ]
-            commit('SET_TESTS', tests)
-          }
-        }
+        const tests = await studyController.getAllStudies()
+        commit('SET_TESTS', tests)
       } catch (err) {
         commit('setError', {
           errorCode: 'studyError',

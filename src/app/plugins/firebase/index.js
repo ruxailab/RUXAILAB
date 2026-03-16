@@ -5,22 +5,7 @@ import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions'
 import { getStorage, connectStorageEmulator } from 'firebase/storage'
 import { getDatabase } from 'firebase/database'
-
-const REQUIRED_ENV_VARS = {
-  VUE_APP_FIREBASE_API_KEY: process.env.VUE_APP_FIREBASE_API_KEY,
-  VUE_APP_FIREBASE_AUTH_DOMAIN: process.env.VUE_APP_FIREBASE_AUTH_DOMAIN,
-  VUE_APP_FIREBASE_PROJECT_ID: process.env.VUE_APP_FIREBASE_PROJECT_ID,
-  VUE_APP_FIREBASE_APP_ID: process.env.VUE_APP_FIREBASE_APP_ID,
-  VUE_APP_FIREBASE_DB_URL: process.env.VUE_APP_FIREBASE_DB_URL,
-}
-
-const missingVars = Object.entries(REQUIRED_ENV_VARS)
-  .filter(([, v]) => !v)
-  .map(([k]) => k)
-
-if (missingVars.length > 0) {
-  throw new Error(`Missing required env vars: ${missingVars.join(', ')}`)
-}
+import { isFirebaseDisabled } from '@/config/runtimeFlags'
 
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
@@ -32,30 +17,43 @@ const firebaseConfig = {
   appId: process.env.VUE_APP_FIREBASE_APP_ID,
 }
 
-const firebaseApp = initializeApp(firebaseConfig)
-const auth = getAuth(firebaseApp)
-const db = getFirestore(firebaseApp)
-const analytics = getAnalytics(firebaseApp)
-const fbFunctions = getFunctions(firebaseApp)
-const storage = getStorage(firebaseApp, `gs://${firebaseConfig.storageBucket}`)
-const database = getDatabase(firebaseApp, firebaseConfig.databaseURL)
+let auth, db, analytics, fbFunctions, storage, database;
 
-if (process.env.VUE_APP_USE_EMULATORS === 'true') {
-  const EMULATOR_HOST =
-    process.env.VUE_APP_FIREBASE_EMULATOR_HOST || 'localhost'
-  const FIRESTORE_EMULATOR_PORT =
-    Number(process.env.VUE_APP_FIRESTORE_EMULATOR_PORT) || 8081
-  const AUTH_EMULATOR_PORT =
-    Number(process.env.VUE_APP_AUTH_EMULATOR_PORT) || 9099
-  const FUNCTIONS_EMULATOR_PORT =
-    Number(process.env.VUE_APP_FUNCTIONS_EMULATOR_PORT) || 5002
-  const STORAGE_EMULATOR_PORT =
-    Number(process.env.VUE_APP_STORAGE_EMULATOR_PORT) || 9199
+if (!isFirebaseDisabled) {
+  const firebaseApp = initializeApp(firebaseConfig)
+  auth = getAuth(firebaseApp)
+  db = getFirestore(firebaseApp)
+  analytics = getAnalytics(firebaseApp)
+  fbFunctions = getFunctions(firebaseApp)
+  storage = getStorage(firebaseApp, `gs://${firebaseConfig.storageBucket}`)
+  database = getDatabase(firebaseApp, firebaseConfig.databaseURL)
 
-  connectFirestoreEmulator(db, EMULATOR_HOST, FIRESTORE_EMULATOR_PORT)
-  connectAuthEmulator(auth, `http://${EMULATOR_HOST}:${AUTH_EMULATOR_PORT}`)
-  connectFunctionsEmulator(fbFunctions, EMULATOR_HOST, FUNCTIONS_EMULATOR_PORT)
-  connectStorageEmulator(storage, EMULATOR_HOST, STORAGE_EMULATOR_PORT)
+  if (process.env.VUE_APP_USE_EMULATORS === 'true') {
+    const EMULATOR_HOST =
+      process.env.VUE_APP_FIREBASE_EMULATOR_HOST || 'localhost'
+    const FIRESTORE_EMULATOR_PORT =
+      Number(process.env.VUE_APP_FIRESTORE_EMULATOR_PORT) || 8081
+    const AUTH_EMULATOR_PORT =
+      Number(process.env.VUE_APP_AUTH_EMULATOR_PORT) || 9099
+    const FUNCTIONS_EMULATOR_PORT =
+      Number(process.env.VUE_APP_FUNCTIONS_EMULATOR_PORT) || 5002
+    const STORAGE_EMULATOR_PORT =
+      Number(process.env.VUE_APP_STORAGE_EMULATOR_PORT) || 9199
+
+    connectFirestoreEmulator(db, EMULATOR_HOST, FIRESTORE_EMULATOR_PORT)
+    connectAuthEmulator(auth, `http://${EMULATOR_HOST}:${AUTH_EMULATOR_PORT}`)
+    connectFunctionsEmulator(fbFunctions, EMULATOR_HOST, FUNCTIONS_EMULATOR_PORT)
+    connectStorageEmulator(storage, EMULATOR_HOST, STORAGE_EMULATOR_PORT)
+  }
+} else {
+  // Provide empty mocks to allow platform UI to load when Firebase is disabled
+  auth = {}
+  db = {}
+  analytics = {}
+  fbFunctions = {}
+  storage = {}
+  database = {}
+  console.info('Firebase initialization bypassed: isFirebaseDisabled flag is active.')
 }
 
 export { auth, db, analytics, fbFunctions, storage, database }

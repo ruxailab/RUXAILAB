@@ -159,6 +159,18 @@
                   </div>
                 </v-card-text>
               </v-card>
+
+              <!-- Study Variations (Exploratory Integration for A/B Testing) -->
+              <!-- NOTE: This is a temporary placement for UI exploration and contribution feedback. -->
+              <v-card v-if="isABExploration" class="custom-card mt-4" elevation="4">
+                <v-card-text class="pa-8">
+                  <StudyVariationsManager 
+                    v-model="test.variations" 
+                    :show-errors="showVariationsErrors"
+                    @update:is-valid="v => isVariationsValid = v" 
+                  />
+                </v-card-text>
+              </v-card>
             </v-col>
 
             <!-- Privacy Settings Column -->
@@ -278,6 +290,7 @@ import { useI18n } from 'vue-i18n'
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue'
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue'
 import BackButton from '@/features/ux_creation/components/BackButton.vue'
+import StudyVariationsManager from '@/shared/components/StudyVariationsManager/StudyVariationsManager.vue'
 import {
   getMethodManagerView,
   instantiateStudyByType,
@@ -296,7 +309,11 @@ const test = ref({
   description: '',
   isPublic: false,
   subType: '',
+  variations: [] // Added for A/B Testing Early Integration
 })
+
+const isVariationsValid = ref(true)
+const showVariationsErrors = ref(false)
 
 const websiteDetails = ref({
   siteName: '',
@@ -308,6 +325,13 @@ const method = computed(() => store.state.Tests.studyMethod)
 const studyType = computed(() => store.state.Tests.studyType)
 const selectedTemplate = computed(() => store.state.Tests.selectedTemplate)
 const isLoading = ref(false)
+
+// Feature Flag for A/B Testing Exploration (Contribution Guard)
+const isABExploration = computed(() => {
+  // Guard condition: Only show if method is specifically A/B Testing
+  // or set to true for temporary UI testing/demonstration in the PR
+  return method.value === 'ab_testing' || true 
+})
 
 const steps = computed(() => [
   { value: 1, title: t('studyCreation.steps.category'), complete: true },
@@ -347,6 +371,14 @@ const validate = () => {
     showWarning('studyCreation.details.validation.max600Characters')
     return
   }
+  
+  // Validate Variations if they were added
+  showVariationsErrors.value = true
+  if (!isVariationsValid.value) {
+    showWarning('Please fix the errors in your A/B Test variations (e.g., URLs and 100% Traffic)')
+    return
+  }
+
   handleTestType()
 }
 

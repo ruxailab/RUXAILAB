@@ -6,6 +6,7 @@ import {
   updatePassword,
 } from 'firebase/auth'
 import { documentId } from 'firebase/firestore'
+import { isFirebaseDisabled } from '@/config/runtimeFlags'
 const COLLECTION = 'users'
 
 export default class UserController extends Controller {
@@ -13,22 +14,11 @@ export default class UserController extends Controller {
     super()
   }
   async create(payload) {
-    const user = new User({
-      email: payload.email,
-      username: payload.displayName || payload.username || '',
-      profileImage: payload.profileImage || '',
-      country: payload.country || '',
-      accessLevel: 1,
-      myTests: {},
-      myAnswers: {},
-      notifications: [],
-      storageUsageMB: 0,
-    }).toFirestore()
-    return super.set(COLLECTION, payload.id, user)
+    return super.create(COLLECTION, payload.toFirestore())
   }
 
   async update(docId, payload) {
-    return super.update(COLLECTION, docId, payload)
+    return super.update(COLLECTION, docId, payload.toFirestore())
   }
 
   async readAll() {
@@ -37,41 +27,49 @@ export default class UserController extends Controller {
   }
 
   async getById(docId) {
+    if (isFirebaseDisabled) {
+      return new User({
+        id: docId,
+        email: 'mock@mock.com',
+        username: 'Mock User',
+        profileImage: '',
+        country: '',
+        accessLevel: 1,
+        myTests: {},
+        myAnswers: {},
+        notifications: [],
+        storageUsageMB: 0,
+      })
+    }
     const res = await super.readOne(COLLECTION, docId)
-    return new User(Object.assign({ id: res.id }, res.data()))
+    if (res.exists()) {
+      return new User(Object.assign({ id: res.id }, res.data()))
+    } else {
+      return null
+    }
   }
 
   async getUserWithStudies(docId) {
-    const res = await super.readOne(COLLECTION, docId)
-    const user = new User({ id: res.id, ...res.data() })
-
-    const myTestsIds = Object.keys(user.myTests || {})
-    const myAnswersIds = Object.keys(user.myAnswers || {})
-
-    const [testsDocs, answersDocs] = await Promise.all([
-      this._fetchStudiesByIds(myTestsIds),
-      this._fetchStudiesByIds(myAnswersIds),
-    ])
-
-    const myTests = {}
-    testsDocs.forEach((doc) => {
-      myTests[doc.id] = {
-        ...(user.myTests?.[doc.id] || {}),
-        ...doc,
-      }
-    })
-
-    const myAnswers = {}
-    answersDocs.forEach((doc) => {
-      myAnswers[doc.id] = {
-        ...(user.myAnswers?.[doc.id] || {}),
-        ...doc,
-      }
-    })
-
-    user.myTests = myTests
-    user.myAnswers = myAnswers
-
+    if (isFirebaseDisabled) {
+      return new User({
+        id: docId,
+        email: 'mock@mock.com',
+        username: 'Mock User',
+        profileImage: '',
+        country: '',
+        accessLevel: 1,
+        myTests: {},
+        myAnswers: {},
+        notifications: [],
+        storageUsageMB: 0,
+      })
+    }
+    const user = await this.getById(docId)
+    if (user) {
+      const studyIds = Object.keys(user.myTests)
+      const studies = await this._fetchStudiesByIds(studyIds)
+      user.myTests = studies
+    }
     return user
   }
 
