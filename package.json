@@ -38,6 +38,7 @@
     "@vue/babel-plugin-jsx": "^2.0.1",
     "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.13.6",
+    "axios-retry": "^4.5.0",
     "buffer": "^6.0.3",
     "chart.js": "^4.5.1",
     "chartjs-adapter-date-fns": "^3.0.0",
