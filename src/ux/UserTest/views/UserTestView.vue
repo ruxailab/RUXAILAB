@@ -936,13 +936,19 @@ const handleTimerStopped = (elapsedTime, idx) => {
     const timeToSave =
       typeof elapsedTime === 'number' ? elapsedTime : parseInt(elapsedTime)
     if (!isNaN(timeToSave)) {
-      localTestAnswer.tasks[idx].taskTime = timeToSave
-    } else {
-      //TODO: Add error snackbar
-    }
-  } else {
-    //TODO: Add error snackbar
-  }
+  localTestAnswer.tasks[idx].taskTime = timeToSave
+} else {
+  store.commit('SET_TOAST', {
+    type: 'error',
+    message: t('UserTestView.errors.invalidTime'),
+  })
+}
+} else {
+  store.commit('SET_TOAST', {
+    type: 'error',
+    message: t('UserTestView.errors.taskNotFound'),
+  })
+ }
 }
 
 const completeStep = (id, type, userCompleted = true) => {
@@ -1004,7 +1010,7 @@ const completeStep = (id, type, userCompleted = true) => {
         }
       }
       //TODO: Show proper toast not the following one
-      /*
+      
       if (userCompleted) {
         store.commit('SET_TOAST', {
           type: 'success',
@@ -1012,7 +1018,7 @@ const completeStep = (id, type, userCompleted = true) => {
           timeout: 3000,
         });
       }
-        */
+        
     }
 
     if (type === 'postTest') {
