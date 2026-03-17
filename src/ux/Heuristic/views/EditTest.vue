@@ -72,6 +72,7 @@
 </template>
 
 <script setup>
+import { useRoute, onBeforeRouteLeave } from 'vue-router'
 import ButtonSave from '@/shared/components/buttons/ButtonSave.vue'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
@@ -80,7 +81,6 @@ import OptionsTable from '../components/OptionsTable.vue'
 import WeightTable from '../components/weights_evaluation/WeightTable.vue'
 import HeuristicsSettings from '../components/HeuristicsSettings.vue'
 import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
 import { useI18n } from 'vue-i18n'
 
@@ -163,6 +163,15 @@ const save = async () => {
   await store.dispatch('updateStudy', study)
   await store.dispatch('getStudy', { id: route.params.id })
 }
+onBeforeRouteLeave((to, from, next) => {
+  // check if navigating to preview page
+  if (change.value && to.path.includes('testview')) {
+    alert('Please save changes before previewing.')
+    return next(false)
+  }
+
+  next()
+})
 </script>
 
 <style scoped>
