@@ -1058,10 +1058,10 @@ const startTimer = () => {
 
 const handleTimerStopped = (elapsedTime, idx) => {
   // idx is passed from TaskStep, always use it
-  console.log('handleTimerStopped llamado con:', { elapsedTime, idx }) // eslint-disable-line no-console
+  console.log('handleTimerStopped called with:', { elapsedTime, idx }) // eslint-disable-line no-console
 
   if (!localTestAnswer.tasks) {
-    console.error('localTestAnswer.tasks no está definido') // eslint-disable-line no-console
+    console.error('localTestAnswer.tasks is not defined') // eslint-disable-line no-console
     return
   }
 
@@ -1076,10 +1076,10 @@ const handleTimerStopped = (elapsedTime, idx) => {
     if (!isNaN(timeToSave)) {
       localTestAnswer.tasks[idx].taskTime = timeToSave
     } else {
-      console.error('Tiempo no válido:', elapsedTime) // eslint-disable-line no-console
+      console.error('Invalid time value:', elapsedTime) // eslint-disable-line no-console
     }
   } else {
-    console.error('No se pudo guardar el tiempo para la tarea', idx) // eslint-disable-line no-console
+    cconsole.error('Could not save time for task', idx) // eslint-disable-line no-console
   }
 }
 
