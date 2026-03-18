@@ -177,7 +177,7 @@
                   </div>
                   <div
                     class="rich-text text-body-1 task-description"
-                    v-html="task?.taskDescription || taskDescription"
+                    v-html="sanitizedContent(task?.taskDescription || taskDescription)"
                   />
                 </v-col>
 
@@ -468,6 +468,10 @@
 </template>
 
 <script setup>
+import DOMPurify from 'dompurify'
+
+const sanitizedContent = (content) => DOMPurify.sanitize(content)
+
 import { ref, watch, nextTick, computed, onBeforeUnmount } from 'vue'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import TipButton from '@/ux/UserTest/components/TipButton.vue'

@@ -12,7 +12,7 @@
           {{ finalMessage }}!
         </h3>
 
-        <div class="text-body-1 mt-2 text-grey-darken-1" v-html="congratulations"></div>
+        <div class="text-body-1 mt-2 text-grey-darken-1" v-html="sanitizedContent(congratulations)"></div>
 
         <p class="text-body-1 mt-6 text-grey-darken-1">
           {{ submitMessage }}
@@ -34,6 +34,8 @@
   </ShowInfo>
 </template>
 <script setup>
+import DOMPurify from 'dompurify'
+const sanitizedContent = (content) => DOMPurify.sanitize(content)
 import ShowInfo from '@/shared/components/ShowInfo.vue';
 const props = defineProps({
     finalMessage: String,

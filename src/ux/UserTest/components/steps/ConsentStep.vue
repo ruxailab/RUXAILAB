@@ -2,7 +2,7 @@
   <ShowInfo :title="testTitle + ' - ' + 'Consent'">
     <template #content>
       <div class="test-content pa-md-4 rounded-xl">
-        <div class="rich-text mb-6 pa-md-4" v-html="consentText" />
+        <div class="rich-text mb-6 pa-md-4" v-html="sanitizedContent(consentText)"/>
         <v-row justify="center">
           <v-col cols="12" md="6">
             <v-text-field
@@ -63,6 +63,9 @@ color="primary" variant="flat" block :disabled="localConsentCompleted === null |
   </v-dialog>
 </template>
 <script setup>
+import DOMPurify from 'dompurify'
+const sanitizedContent = (content) => DOMPurify.sanitize(content)
+
 import ShowInfo from '@/shared/components/ShowInfo.vue';
 import { ref, watch } from 'vue';
 const props = defineProps({

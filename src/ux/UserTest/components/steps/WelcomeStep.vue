@@ -8,7 +8,7 @@
         <div
           v-if="welcomeMessage"
           class="text-body-1 mb-4 text-grey-darken-3"
-          v-html="welcomeMessage"
+          v-html="sanitizedContent(welcomeMessage)"
         ></div>
         <p v-else class="text-body-1 mb-4 text-grey-darken-3">
           {{ $t('UserTestView.WelcomeStep.description') }}
@@ -102,7 +102,8 @@
   </ShowInfo>
 </template>
 
-<script setup>
+<script setup>'import DOMPurify from 'dompurify'
+const sanitizedContent = (content) => DOMPurify.sanitize(content)
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import { VStepperVertical } from 'vuetify/labs/VStepperVertical'
 import { useDisplay } from 'vuetify'

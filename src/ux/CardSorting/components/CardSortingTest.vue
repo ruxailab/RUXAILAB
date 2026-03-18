@@ -164,7 +164,7 @@
             <v-divider class="my-8" />
             <v-row>
               <v-col cols="8" class="mx-auto py-0">
-                <div class="rich-text mb-6" v-html="test.testStructure.consent"></div>
+                <div class="rich-text mb-6" v-html="sanitizedContent(test.testStructure.consent)"></div>
               </v-col>
             </v-row>
             <v-row>
@@ -200,6 +200,8 @@
 </template>
 
 <script setup>
+import DOMPurify from 'dompurify'
+const sanitizedContent = (content) => DOMPurify.sanitize(content)
 import { onMounted, reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import CardSortingTask from '../components/CardSortingTask.vue'
