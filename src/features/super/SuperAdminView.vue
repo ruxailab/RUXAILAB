@@ -1,7 +1,7 @@
 <template>
   <v-main class="pt-4">
     <Snackbar />
-    <!-- Delete Alert Dialog -->
+
     <v-dialog v-model="dialogDel" width="600" persistent>
       <v-card>
         <v-card-title class="text-h5 bg-error text-white" primary-title>
@@ -40,7 +40,6 @@
 
       <v-col cols="10">
         <v-window v-model="tab">
-          <!-- Users tab -->
           <v-window-item value="users">
             <v-data-table
               :search="search"
@@ -63,32 +62,21 @@
                 />
               </template>
 
-              <!-- Username Column -->
               <template #[`item.username`]="{ item }">
-                <span>{{ item.username || 'N/A' }}</span>
+                <span>{{ item.username || item.displayName || 'N/A' }}</span>
               </template>
 
-              <!-- Studies Count Column -->
-              <template #[`item.studiesCount`]="{ item }">
-                <span>{{ item.studiesCount }}</span>
-              </template>
-
-              <!-- Media Size Column -->
-              <template #[`item.mediaSize`]="{ item }">
-                <span>{{ item.mediaSize }}</span>
-              </template>
-
-              <!-- Access Level Column -->
               <template #[`item.accessLevel`]="{ item }">
                 <v-chip
                   :color="getAccessLevelColor(item.accessLevel)"
                   size="small"
+                  label
+                  class="text-uppercase font-weight-bold"
                 >
                   {{ level(item.accessLevel) }}
                 </v-chip>
               </template>
 
-              <!-- Actions Column -->
               <template #[`item.actions`]="{ item }">
                 <v-icon size="small" class="mr-2" @click="editUser(item)">
                   mdi-pencil
@@ -154,7 +142,6 @@
             </v-dialog>
           </v-window-item>
 
-          <!-- Tests Tab -->
           <v-window-item value="studies">
             <v-data-table
               :search="search"
@@ -176,20 +163,25 @@
                   :label="$t('Dashboard.search')"
                 />
               </template>
+
+              <template #[`item.creationDate`]="{ item }">
+                {{
+                  item.creationDate
+                    ? new Date(item.creationDate).toLocaleString()
+                    : 'N/A'
+                }}
+              </template>
+
               <template #[`item.actions`]="{ item }">
-                <v-icon size="small" class="mr-2" @click="openManager(item)">
+                <v-icon size="small" @click="openManager(item)">
                   mdi-eye
                 </v-icon>
-              </template>
-              <template #[`item.creationDate`]="{ item }">
-                {{ new Date(item.creationDate).toLocaleString() }}
               </template>
             </v-data-table>
           </v-window-item>
         </v-window>
       </v-col>
     </v-row>
-    <v-card />
   </v-main>
 </template>
 
@@ -210,29 +202,28 @@ const dialogDel = ref(false)
 const userClicked = ref(null)
 const search = ref('')
 const editedIndex = ref(-1)
-const editedUser = ref({ uid: '', email: '', accessLevel: 1 })
-const defaultUser = { uid: '', email: '', accessLevel: 1 }
+const editedUser = ref({ id: '', email: '', accessLevel: 1 })
+const defaultUser = { id: '', email: '', accessLevel: 1 }
 
-const users = computed(() => store.getters.users ?? [])
+const usersFromStore = computed(() => store.getters.users ?? [])
 const tests = computed(() => store.getters.tests ?? [])
 const loading = computed(() => store.getters.loading)
-
 const tab = ref('users')
 
-// Format users data with calculated fields
+const formatMediaSize = (mb) => {
+  if (!mb || mb === 0) return '0 MB'
+  if (mb < 1024) return `${Math.round(mb * 10) / 10} MB`
+  return `${Math.round((mb / 1024) * 10) / 10} GB`
+}
+
 const formattedUsers = computed(() => {
-  return users.value.map((user) => ({
+  return usersFromStore.value.map((user) => ({
     ...user,
-    // Calculate number of studies created (count keys in myTests object)
     studiesCount: user.myTests ? Object.keys(user.myTests).length : 0,
-    // Format media size (convert MB to GB if > 1024 MB)
     mediaSize: formatMediaSize(user.storageUsageMB || 0),
-    // Ensure username is not undefined
-    username: user.username || 'N/A',
   }))
 })
 
-// Table headers
 const usersHeaders = computed(() => [
   { title: t('titles.drawer.name'), align: 'start', value: 'username' },
   { title: t('auth.SIGNIN.email'), value: 'email', align: 'center' },
@@ -273,49 +264,22 @@ const accessLevels = computed(() => [
 ])
 
 const dialogText = computed(
-  () =>
-    `${t('alerts.deleteUser')} ${
-      userClicked.value ? userClicked.value.email : ''
-    }`,
+  () => `${t('alerts.deleteUser')} ${userClicked.value?.email || ''}`,
 )
 
-// Helper function to format media size
-const formatMediaSize = (mb) => {
-  if (mb === 0) return '0 MB'
-  if (mb < 1024) {
-    return `${Math.round(mb * 10) / 10} MB`
-  }
-  const gb = mb / 1024
-  return `${Math.round(gb * 10) / 10} GB`
-}
-
-// Helper function to get access level color
 const getAccessLevelColor = (level) => {
-  switch (level) {
-    case 0:
-      return 'red darken-2' // Super Admin
-    case 1:
-      return 'blue darken-2' // Regular User
-    default:
-      return 'grey'
-  }
+  return level === 0 ? 'red-lighten-1' : level === 1 ? 'blue-lighten-1' : 'grey'
 }
 
-// Helper function to get access level text
 const level = (lv) => {
   const found = accessLevels.value.find((item) => item.level === lv)
   return found ? found.title : 'Unknown'
 }
 
-// Edit user - need to find original user from formattedUsers
 const editUser = (item) => {
-  // Find the original user in the users array
-  const originalUser = users.value.find((u) => u.id === item.id)
-  if (originalUser) {
-    editedIndex.value = users.value.indexOf(originalUser)
-    editedUser.value = { ...originalUser }
-    dialog.value = true
-  }
+  editedIndex.value = formattedUsers.value.indexOf(item)
+  editedUser.value = { ...item }
+  dialog.value = true
 }
 
 const close = () => {
@@ -329,9 +293,7 @@ const close = () => {
 const save = (user) => {
   const payload = {
     uid: user.id,
-    customClaims: {
-      accessLevel: user.accessLevel,
-    },
+    customClaims: { accessLevel: user.accessLevel },
   }
   store.dispatch('updateLevel', { data: payload })
   close()
@@ -359,10 +321,7 @@ const openManager = (study) => {
   router.push({ name: methodView, params: { id: study.id } })
 }
 
-watch(dialog, (val) => {
-  if (!val) close()
-})
-
+// Reset search when switching tabs
 watch(tab, () => {
   search.value = ''
 })
