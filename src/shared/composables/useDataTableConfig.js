@@ -75,7 +75,7 @@ export function useDataTableConfig(type, t, options = {}) {
         key: 'actions',
         sortable: false,
         align: 'end',
-        width: 64,
+        width: 100,
       })
     }
 

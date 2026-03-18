@@ -111,18 +111,60 @@
       </v-chip>
     </template>
 
-    <template v-if="showActions" #item.actions="{ item }">
+
+<template v-if="showActions" #item.actions="{ item }">
+  <v-btn
+    icon
+    variant="text"
+    size="small"
+    color="primary"
+    @click.stop="emitPreview(item)"
+  >
+    <v-icon>mdi-eye</v-icon>
+  </v-btn>
+  <v-tooltip location="top" :text="t('common.copyLink.tooltip')">
+    <template #activator="{ props: tooltipProps }">
       <v-btn
+        v-bind="tooltipProps"
         icon
         variant="text"
         size="small"
         color="primary"
-        @click.stop="emitPreview(item)"
+        @click.stop="handleCopyLink(item)"
       >
-        <v-icon>mdi-eye</v-icon>
+        <v-icon>mdi-link-variant</v-icon>
       </v-btn>
     </template>
+  </v-tooltip>
+</template>
 
+<!-- Fallback dialog for browsers that block clipboard API -->
+<v-dialog v-model="fallbackDialogVisible" max-width="480">
+  <v-card rounded="lg">
+    <v-card-title class="text-h6 pa-4">
+      {{ t('common.copyLink.fallbackTitle') }}
+    </v-card-title>
+    <v-card-text class="px-4 pb-2">
+      <p class="text-body-2 text-medium-emphasis mb-3">
+        {{ t('common.copyLink.fallbackHint') }}
+      </p>
+      <v-text-field
+        :value="fallbackUrl"
+        readonly
+        variant="outlined"
+        density="compact"
+        hide-details
+        @focus="$event.target.select()"
+      />
+    </v-card-text>
+    <v-card-actions class="pa-4 pt-2">
+      <v-spacer />
+      <v-btn variant="tonal" @click="fallbackDialogVisible = false">
+        {{ t('common.close') }}
+      </v-btn>
+    </v-card-actions>
+  </v-card>
+</v-dialog>
     <!-- No Data Slot -->
     <template #no-data>
       <div v-if="isFiltered" class="pa-8 text-center text-medium-emphasis">
@@ -149,6 +191,7 @@ import { useI18n } from 'vue-i18n'
 import { useItemFormatting } from '@/shared/composables/useItemFormatting'
 import { useItemTypes } from '@/shared/composables/useItemTypes'
 import { useDataTableConfig } from '@/shared/composables/useDataTableConfig'
+import { useCopyLink } from '@/shared/composables/useCopyLink'
 import { formatDateTime } from '@/shared/utils/dateUtils'
 import { getSessionStatus } from '@/shared/utils/sessionsUtils'
 import store from '@/store'
@@ -196,6 +239,7 @@ const {
   formatItemDate,
 } = useItemFormatting(typeRef)
 const { getTypeIcon, getTestType, getAvatarColor } = useItemTypes()
+const { copyTestLink, fallbackDialogVisible, fallbackUrl } = useCopyLink()
 
 const loadingStudy = computed(() => {
   return store.getters.loading
@@ -208,6 +252,10 @@ const emitClick = (event, { item }) => {
 
 const emitPreview = (item) => {
   emit('preview-clicked', item)
+}
+const handleCopyLink = (item) => {
+  const id = item.id ?? item.testId
+  copyTestLink(id)
 }
 </script>
 
