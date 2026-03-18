@@ -149,7 +149,7 @@
         {{ t('common.copyLink.fallbackHint') }}
       </p>
       <v-text-field
-        :value="fallbackUrl"
+        :model-value="fallbackUrl"
         readonly
         variant="outlined"
         density="compact"
