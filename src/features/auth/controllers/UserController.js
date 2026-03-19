@@ -38,6 +38,7 @@ export default class UserController extends Controller {
 
   async getById(docId) {
     const res = await super.readOne(COLLECTION, docId)
+    if (!res.exists()) return null
     return new User(Object.assign({ id: res.id }, res.data()))
   }
 

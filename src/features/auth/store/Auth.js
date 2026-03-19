@@ -113,7 +113,19 @@ export default {
           throw new Error('EMAIL_NOT_VERIFIED')
         }
 
-        const dbUser = await userController.getById(user.uid)
+        let dbUser = await userController.getById(user.uid)
+
+        if (!dbUser || !dbUser.email) {
+          await userController.create({
+            id: user.uid,
+            email: user.email,
+            displayName: user.displayName || '',
+            profileImage: user.photoURL || '',
+            createdAt: new Date().toISOString(),
+            authProvider: 'email',
+          })
+          dbUser = await userController.getById(user.uid)
+        }
 
         commit('SET_USER', dbUser)
 
