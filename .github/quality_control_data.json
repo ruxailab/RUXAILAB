@@ -22,10 +22,10 @@
         "Mon": 0,
         "Tue": 0,
         "Wed": 0,
-        "Thu": 4,
+        "Thu": 0,
         "Fri": 0
       },
-      "total": 4
+      "total": 0
     },
     {
       "occurrence": "Security vulnerability",
@@ -33,10 +33,10 @@
         "Mon": 0,
         "Tue": 0,
         "Wed": 0,
-        "Thu": 4,
+        "Thu": 1,
         "Fri": 0
       },
-      "total": 4
+      "total": 1
     },
     {
       "occurrence": "Code smells/Bugs",
@@ -62,7 +62,7 @@
     }
   ],
   "summary": {
-    "grand_total": 8,
+    "grand_total": 1,
     "days_tracked": 5
   },
   "issues_tracking": {
