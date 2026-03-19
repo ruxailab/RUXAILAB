@@ -1,0 +1,190 @@
+name: Firebase Deploy (CD)
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        type: choice
+        options:
+          - dev
+          - develop
+          - prod
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Determine environment
+        id: env
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "env_name=${{ github.event.inputs.environment }}" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "env_name=prod" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+            echo "env_name=develop" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create .env file
+        run: |
+          ENV_NAME="${{ steps.env.outputs.env_name }}"
+
+          if [[ "$ENV_NAME" == "prod" ]]; then
+            echo "${{ secrets.ENV_PROD }}" > .env
+          elif [[ "$ENV_NAME" == "develop" ]]; then
+            echo "${{ secrets.ENV_DEVELOP }}" > .env
+          elif [[ "$ENV_NAME" == "dev" ]]; then
+            echo "${{ secrets.ENV_DEV }}" > .env
+          fi
+
+      - name: Build application
+        run: |
+          ENV_NAME="${{ steps.env.outputs.env_name }}"
+
+          if [[ "$ENV_NAME" == "prod" ]]; then
+            npm run build-prod
+          else
+            npm run build-dev
+          fi
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ steps.env.outputs.env_name }}
+          path: dist/
+          retention-days: 3
+
+    outputs:
+      env_name: ${{ steps.env.outputs.env_name }}
+
+  deploy-hosting:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    environment:
+      name: ${{ needs.build.outputs.env_name }}
+      url: https://ruxailab-${{ needs.build.outputs.env_name }}.web.app
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-${{ needs.build.outputs.env_name }}
+          path: dist/
+
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
+          channelId: live
+          target: ruxailab-${{ needs.build.outputs.env_name }}
+
+  deploy-functions:
+    needs: build
+    runs-on: ubuntu-latest
+    if: needs.build.outputs.env_name == 'prod' || needs.build.outputs.env_name == 'develop'
+    permissions:
+      contents: read
+
+    environment:
+      name: ${{ needs.build.outputs.env_name }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install function dependencies
+        run: npm ci --prefix functions
+
+      - name: Deploy Firebase Functions
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only functions
+        env:
+          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+
+  deploy-firestore-rules:
+    needs: build
+    runs-on: ubuntu-latest
+    if: needs.build.outputs.env_name == 'prod' || needs.build.outputs.env_name == 'develop'
+    permissions:
+      contents: read
+
+    environment:
+      name: ${{ needs.build.outputs.env_name }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy Firestore Rules & Indexes
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only firestore
+        env:
+          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+
+  deploy-storage-rules:
+    needs: build
+    runs-on: ubuntu-latest
+    if: needs.build.outputs.env_name == 'prod' || needs.build.outputs.env_name == 'develop'
+    permissions:
+      contents: read
+
+    environment:
+      name: ${{ needs.build.outputs.env_name }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy Storage Rules
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only storage
+        env:
+          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
