@@ -35,6 +35,7 @@
         icon
         size="small"
         class="mr-2 bg-orange"
+        aria-label="Toggle mini mode"
         @click.stop="toggleMiniMode"
       >
         <v-icon color="white">
