@@ -30,7 +30,7 @@
                   <v-text-field
                     v-model.number="localOption.value"
                     :label="$t('common.value')"
-                    :disabled="!localHasValue"
+                    :disabled="!localHasValue || localWarning"
                     type="number"
                     placeholder="Ex. 0.5"
                     :rules="valueRequired"
@@ -65,10 +65,19 @@
               </v-row>
 
               <v-row justify="center">
-                <v-checkbox
-                  v-model="localHasValue"
-                  :label="$t('HeuristicsTable.titles.hasValue')"
-                />
+                <v-col cols="12" class="d-flex align-center">
+                  <v-checkbox
+                    v-model="localHasValue"
+                    :label="$t('HeuristicsTable.titles.hasValue')"
+                    hide-details
+                    class="me-15"
+                  />
+                  <v-checkbox
+                    v-model="localWarning"
+                    label="warning"
+                    hide-details
+                  />
+                </v-col>
               </v-row>
             </v-form>
           </v-col>
@@ -96,24 +105,23 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   option: { type: Object, required: true },
   dialog: { type: Boolean, default: false },
   hasValue: { type: Boolean, required: true, default: true },
+  warning: { type: Boolean, required: true, default: false },
 })
 
 const emit = defineEmits([
   'update:dialog',
-  'changeHasValue',
+  'changeOptionFlags',
   'addOption',
   'change',
 ])
 
 const { t } = useI18n()
-const store = useStore()
 const form = ref(null)
 
 const textRequired = [
@@ -121,9 +129,10 @@ const textRequired = [
 ]
 const localOption = ref({ text: '', value: null, description: '' })
 const localHasValue = ref(true)
+const localWarning = ref(false)
 
 const valueRequired = computed(() => {
-  if (!localHasValue.value) return []
+  if (!localHasValue.value || localWarning.value) return []
   return [
     (v) =>
       (v !== null && v !== '' && v >= 0) ||
@@ -147,16 +156,38 @@ watch(
   { immediate: true },
 )
 
+watch(
+  () => props.warning,
+  (newValue) => {
+    localWarning.value = newValue
+  },
+  { immediate: true },
+)
+
+const emitOptionFlags = () => {
+  emit('changeOptionFlags', {
+    hasValue: localHasValue.value,
+    warning: localWarning.value,
+  })
+}
+
 watch(localHasValue, (newValue) => {
   if (!newValue) localOption.value.value = null
-  emit('changeHasValue', newValue)
+  emitOptionFlags()
+})
+
+watch(localWarning, () => {
+  if (localWarning.value) localOption.value.value = null
+  emitOptionFlags()
 })
 
 const validate = async () => {
   const { valid } = await form.value.validate()
   if (valid) {
     const optionToSave = { ...localOption.value }
-    if (!localHasValue.value) optionToSave.value = null
+    if (!localHasValue.value || localWarning.value) optionToSave.value = null
+    optionToSave.hasValue = localHasValue.value
+    optionToSave.warning = localWarning.value
     emit('addOption', optionToSave)
     emit('change')
     emit('update:dialog', false)
@@ -172,6 +203,7 @@ const cancel = () => {
 const resetVal = () => {
   localOption.value = { text: '', value: null, description: '' }
   localHasValue.value = true
+  localWarning.value = false
   form.value.resetValidation()
 }
 </script>

@@ -62,7 +62,6 @@ function standardDeviation(array) {
   )
 }
 
-<<<<<<< Updated upstream
 function parseTimeSpentToMs(timeSpent) {
   if (typeof timeSpent !== 'string') return 0
   const [minutes = '0', seconds = '0'] = timeSpent.split(':')
@@ -79,7 +78,6 @@ function formatTimeSpentFromMs(ms) {
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
 }
 
-=======
 /**
  * Calcula el resultado final de un evaluador en porcentaje.
  *
@@ -101,7 +99,6 @@ function formatTimeSpentFromMs(ms) {
  * Lista de resultados por heuristica.
  * @returns {string} Porcentaje final con 2 decimales (ej. "87.50").
  */
->>>>>>> Stashed changes
 function calcFinalResult(array) {
   let result = 0
   let qtdQuestion = 0
@@ -223,11 +220,7 @@ function statistics() {
       evaluator.heuristicQuestions.forEach((heuristic) => {
         let noAplication = 0
         let noReply = 0
-<<<<<<< Updated upstream
-        let qNotApplicable = 0
-=======
         let warningCount = 0
->>>>>>> Stashed changes
         let res = heuristic.heuristicQuestions.reduce(
           (totalQuestions, question) => {
             const hasWarning = Boolean(
@@ -246,15 +239,12 @@ function statistics() {
             if (
               question.heuristicAnswer.value === 0 ||
               question.heuristicAnswer.value === '0'
-            ) {
-              qNotApplicable++
-            }
-
-            if (
-              question.heuristicAnswer.value === '' ||
-              Object.values(question.heuristicAnswer).length < 3
             )
-              noReply++
+              if (
+                question.heuristicAnswer.value === '' ||
+                Object.values(question.heuristicAnswer).length < 3
+              )
+                noReply++
             return totalQuestions + Number(question.heuristicAnswer.value)
           },
           0,
