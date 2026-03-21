@@ -92,6 +92,21 @@
                     class="rounded-lg"
                     @update:model-value="v => handleTrafficInput(variant, v)"
                   />
+                  
+                  <!-- Visual Distribution Indicator -->
+                  <v-progress-linear
+                    :model-value="trafficPercentage(variant.traffic)"
+                    height="8"
+                    :color="totalTraffic === 100 ? 'primary' : 'warning'"
+                    rounded
+                    :stream="false"
+                    :striped="false"
+                    class="mt-3 mx-1"
+                    style="transition: all 0.3s ease;"
+                  />
+                  <div class="text-caption font-weight-medium text-grey-darken-1 mt-1 px-1 text-right">
+                    {{ trafficPercentage(variant.traffic) }}%
+                  </div>
                 </v-col>
               </v-row>
             </v-col>
@@ -204,6 +219,10 @@ watch(isValid, (valid) => {
 // Methods
 const getCharFromIndex = (index) => {
   return String.fromCharCode(65 + index) // 0 -> A, 1 -> B, 2 -> C
+}
+
+const trafficPercentage = (traffic) => {
+  return Math.max(0, Math.min(100, Number(traffic) || 0))
 }
 
 /**
