@@ -2004,6 +2004,18 @@
         "finished": "Finished",
         "upcoming": "Upcoming"
       }
+    },
+    "ab": {
+      "variationsTitle": "A/B Test Variations",
+      "variationsSubtitle": "Add variants and distribute traffic percentages. Total traffic must equal 100%.",
+      "variantLabel": "Variant {char}",
+      "urlLabel": "Variant URL",
+      "urlPlaceholder": "https://example.com/variant",
+      "urlRequired": "URL is required",
+      "trafficLabel": "Traffic %",
+      "addVariant": "Add Variant",
+      "totalTraffic": "Total Traffic",
+      "trafficError": "Total traffic across all variants must equal exactly 100%."
     }
   },
   "taskCreation": {
