@@ -48,8 +48,8 @@ For commercial support, academic collaborations, and answers to common questions
 
 ### Development Environment
 
-- Node.js version: ≤ 24.12.0
-- Vue.js version: 3.5.26
+- Node.js version: ≥ 18.0.0
+- Vue.js version: ^3.5.29
 - Vue CLI version: 5.0.8
 - Vuetify version: 3.11.6
 - Python version: 3.11.8
