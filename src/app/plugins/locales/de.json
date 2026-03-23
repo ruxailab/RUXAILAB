@@ -959,6 +959,12 @@
       "sart": "Situationsbewusstsein-Bewertungstechnik - misst das situative Bewusstsein"
     },
     "answerTypePreview": {
+      "postTest": {
+      "title": "Feedback nach dem Test",
+      "q1": "Bewerten Sie Ihre Erfahrung",
+      "q2": "Wie fanden Sie das Produkt während des Betatests?",
+      "feedbackPlaceholder": "Das Produkt hatte eine flüssige Benutzeroberfläche, war aber an einigen Stellen langsam."
+      },
       "taskCompleted": "Aufgabe abgeschlossen! Kein zusätzliches Feedback erforderlich.",
       "participantsFeedbackHere": "Teilnehmer geben hier ihr Feedback ab...",
       "submitFeedback": "Feedback Absenden",

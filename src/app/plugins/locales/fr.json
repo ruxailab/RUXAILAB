@@ -958,6 +958,12 @@
       "sart": "Technique d'Évaluation de la Conscience Situationnelle - mesure la conscience situationnelle"
     },
     "answerTypePreview": {
+      "postTest": {
+      "title": "Retour après le test",
+      "q1": "Évaluez votre expérience",
+      "q2": "Comment avez-vous trouvé le produit lors des tests bêta ?",
+      "feedbackPlaceholder": "Le produit avait une interface fluide, mais présentait des ralentissements à certains endroits."
+      },
       "taskCompleted": "Tâche terminée ! Aucun retour supplémentaire requis.",
       "participantsFeedbackHere": "Les participants fourniront leurs commentaires ici...",
       "submitFeedback": "Soumettre les Commentaires",
