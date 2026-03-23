@@ -8,6 +8,14 @@ import accessibilityRoutes from '@/ux/accessibility/router.js'
 import UserTestRoutes from '@/ux/UserTest/router.js'
 import store from '@/store'
 
+/** Study creation wizard routes — scroll is reset when moving between steps */
+const STUDY_CREATION_ROUTE_NAMES = new Set([
+  'study-create-step1',
+  'study-create-step2',
+  'study-create-step3',
+  'study-create-step4',
+])
+
 const routes = [
   ...Public,
   ...Admin,
@@ -21,6 +29,25 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+  scrollBehavior(to, _from, _savedPosition) {
+    if (!to.name || !STUDY_CREATION_ROUTE_NAMES.has(to.name)) {
+      return false
+    }
+
+    return new Promise((resolve) => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const main = document.querySelector('.v-main')
+          if (main) main.scrollTop = 0
+
+          window.scrollTo({ top: 0, left: 0 })
+          document.documentElement.scrollTop = 0
+          document.body.scrollTop = 0
+          resolve(false)
+        })
+      })
+    })
+  },
 })
 
 router.beforeEach(async (to, from, next) => {
