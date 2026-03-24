@@ -23,12 +23,23 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
+  /* Output directory for screenshots of failed tests */
+  outputDir: './playwright/output',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    // baseURL: 'http://127.0.0.1:3000',
+    baseURL: 'http://localhost:8080',
    
     video: 'on',
+
+    /* Create a screenshot if a test fails */
+    screenshot: { mode: 'only-on-failure', fullPage: true },
+
+    /* Set global timeout for actions (e.g., click, fill) */
+    actionTimeout: 10000,
+
+    /* Set global timeout for navigation */
+    navigationTimeout: 30000,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -72,10 +83,16 @@ export default defineConfig({
     // },
   ],
 
-  /* Run your local dev server before starting the tests */
+  /* 
+   * Local development flow:
+   * 1. Start the dev server manually: `npm run serve` (runs on port 8080 by default)
+   * 2. Run the tests in a separate terminal: `npm run test-playwright`
+   * 
+   * Optionally, uncomment webServer below once the preferred app startup flow is agreed.
+   */
   // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://127.0.0.1:3000',
+  //   command: 'npm run serve',
+  //   url: 'http://localhost:8080',
   //   reuseExistingServer: !process.env.CI,
   // },
 })

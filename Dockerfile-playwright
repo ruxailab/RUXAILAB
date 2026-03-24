@@ -38,7 +38,7 @@ RUN npm install @playwright/test -D
 RUN chown -R app:app /home/app/.cache/ms-playwright
 
 # Copiar la configuración de Playwright y el resto de la aplicación
-COPY playwright.config.js .
+
 COPY playwright.config.ts .
 COPY e2e ./e2e
 COPY tests ./tests
