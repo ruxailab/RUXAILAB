@@ -35,7 +35,7 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig)
 const auth = getAuth(firebaseApp)
 const db = getFirestore(firebaseApp)
-const analytics = getAnalytics(firebaseApp)
+const analytics = process.env.VUE_APP_USE_EMULATORS !== 'true' ? getAnalytics(firebaseApp) : null
 const fbFunctions = getFunctions(firebaseApp)
 const storage = getStorage(firebaseApp, `gs://${firebaseConfig.storageBucket}`)
 const database = getDatabase(firebaseApp, firebaseConfig.databaseURL)
