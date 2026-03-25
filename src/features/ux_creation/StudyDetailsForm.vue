@@ -77,7 +77,7 @@
                         class="mb-4"
                         @change="store.commit('SET_LOCAL_CHANGES', true)"
                       />
-                      <div v-if="method == STUDY_TYPES.HEURISTIC">
+                      <div v-if="needsHeuristicWebsiteFields">
                         <v-text-field
                           v-model="websiteDetails.siteName"
                           :rules="[
@@ -252,6 +252,7 @@
                         color="success"
                         size="large"
                         :loading="isLoading"
+                        :disabled="!canCreateStudy || isLoading"
                         prepend-icon="mdi-plus"
                         block
                         @click="validate"
@@ -281,6 +282,7 @@ import BackButton from '@/features/ux_creation/components/BackButton.vue'
 import {
   getMethodManagerView,
   instantiateStudyByType,
+  METHOD_DEFINITIONS,
   normalizeStudyType,
   STUDY_TYPES,
 } from '@/shared/constants/methodDefinitions'
@@ -308,6 +310,36 @@ const method = computed(() => store.state.Tests.studyMethod)
 const studyType = computed(() => store.state.Tests.studyType)
 const selectedTemplate = computed(() => store.state.Tests.selectedTemplate)
 const isLoading = ref(false)
+
+/** Store uses method id `HEURISTICS`, not STUDY_TYPES.HEURISTIC */
+const needsHeuristicWebsiteFields = computed(
+  () => method.value === METHOD_DEFINITIONS.HEURISTICS.id,
+)
+
+function isValidHttpWebsiteUrl(value) {
+  if (!value || value.length > 200) return false
+  try {
+    const url = new URL(value)
+    return ['http:', 'https:'].includes(url.protocol)
+  } catch {
+    return false
+  }
+}
+
+const canCreateStudy = computed(() => {
+  if (!test.value.title || test.value.title.length > 200) return false
+  const description = test.value.description ?? ''
+  if (description.length > 600) return false
+
+  if (needsHeuristicWebsiteFields.value) {
+    const siteName = websiteDetails.value.siteName ?? ''
+    const siteURL = websiteDetails.value.siteURL ?? ''
+    if (!siteName || siteName.length > 200) return false
+    if (!isValidHttpWebsiteUrl(siteURL)) return false
+  }
+
+  return true
+})
 
 const steps = computed(() => [
   { value: 1, title: t('studyCreation.steps.category'), complete: true },
@@ -346,6 +378,36 @@ const validate = () => {
   if (test.value.description.length > 600) {
     showWarning('studyCreation.details.validation.max600Characters')
     return
+  }
+  if (needsHeuristicWebsiteFields.value) {
+    const siteName = websiteDetails.value.siteName ?? ''
+    if (!siteName) {
+      showWarning('studyCreation.details.validation.enterWebsiteName')
+      return
+    }
+    if (siteName.length > 200) {
+      showWarning('studyCreation.details.validation.max200Characters')
+      return
+    }
+    const siteURL = websiteDetails.value.siteURL ?? ''
+    if (!siteURL) {
+      showWarning('studyCreation.details.validation.enterWebsiteUrl')
+      return
+    }
+    if (siteURL.length > 200) {
+      showWarning('studyCreation.details.validation.max200Characters')
+      return
+    }
+    try {
+      const url = new URL(siteURL)
+      if (!['http:', 'https:'].includes(url.protocol)) {
+        showWarning('studyCreation.details.validation.urlProtocol')
+        return
+      }
+    } catch {
+      showWarning('studyCreation.details.validation.validUrl')
+      return
+    }
   }
   handleTestType()
 }
