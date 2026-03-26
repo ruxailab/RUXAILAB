@@ -145,8 +145,15 @@ export default class AudioSentimentController extends Controller {
 
     const regions = audioSentimentDocuemnt.regions || [] // Guard against undefined regions
 
-    // Use current array length to avoid idx/count drift.
-    region.idx = regions.length
+    // Assign a monotonically increasing idx to avoid collisions after deletions.
+    const nextIdx =
+      regions.length === 0
+        ? 0
+        : regions.reduce((maxIdx, r) => {
+            const currentIdx = typeof r.idx === 'number' ? r.idx : -1
+            return currentIdx > maxIdx ? currentIdx : maxIdx
+          }, -1) + 1
+    region.idx = nextIdx
     region.transcript = region.transcript || region.transcipt || '' // Support legacy typo field
 
     // Add the region and sync count from actual array length.
