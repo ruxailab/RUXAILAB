@@ -412,6 +412,15 @@ const tasksArray = computed(() => {
 })
 const analytics = computed(() => {
     const scores = tasksArray.value.map(r => r.susScore)
+
+    if (scores.length === 0) {
+        return {
+            averageScore: 0,
+            totalRespondents: 0,
+            minScore: 0,
+            maxScore: 0,
+        }
+    }
     return {
         averageScore: Math.round((scores.reduce((sum, score) => sum + score, 0) / scores.length) * 10) / 10,
         totalRespondents: tasksArray.value.length,
