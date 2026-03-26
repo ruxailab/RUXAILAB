@@ -2,7 +2,7 @@ rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
 
-    // 🔐 Helper functions
+    //  Helper functions
     function isAuthenticated() {
       return request.auth != null;
     }
@@ -23,23 +23,23 @@ service firebase.storage {
       return isAdmin() || isSuperAdmin();
     }
 
-    // 👤 User-specific files
+    //  User-specific files
     match /users/{userId}/{allPaths=**} {
       allow read, write: if isOwner(userId) || isAdminOrAbove();
     }
 
-    // 🧪 Study/Test related files
+    //  Study/Test related files
     match /studies/{studyId}/{allPaths=**} {
       allow read, write: if isAuthenticated();
     }
 
-    // 📦 Public assets (optional)
+    //  Public assets (optional)
     match /public/{allPaths=**} {
       allow read: if true;
       allow write: if isAdminOrAbove();
     }
 
-    // 🔒 Default deny (VERY IMPORTANT)
+    //  Default deny (VERY IMPORTANT)
     match /{allPaths=**} {
       allow read, write: if false;
     }
