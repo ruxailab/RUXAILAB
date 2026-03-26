@@ -1,9 +1,48 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    //  Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.accessLevel == 1;
+    }
+
+    function isSuperAdmin() {
+      return isAuthenticated() && request.auth.token.accessLevel == 0;
+    }
+
+    function isAdminOrAbove() {
+      return isAdmin() || isSuperAdmin();
+    }
+
+    //  Users collection
+    match /users/{userId} {
+      allow read, write: if isOwner(userId) || isAdminOrAbove();
+    }
+
+    //  Studies / Tests
+    match /studies/{studyId} {
+      allow read, write: if isAuthenticated() &&
+        (request.auth.uid == resource.data.ownerId || isAdminOrAbove());
+    }
+
+    //  Results
+    match /results/{resultId} {
+      allow read, write: if isAuthenticated() &&
+        (request.auth.uid == resource.data.ownerId || isAdminOrAbove());
+    }
+
+    //  Default deny (IMPORTANT)
     match /{document=**} {
-      allow read, write: if
-          request.time < timestamp.date(2026, 10, 18);
+      allow read, write: if false;
     }
   }
 }

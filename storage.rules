@@ -1,12 +1,47 @@
 rules_version = '2';
-
-// Craft rules based on data in your Firestore database
-// allow write: if firestore.get(
-//    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
 service firebase.storage {
   match /b/{bucket}/o {
+
+    // 🔐 Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.accessLevel == 1;
+    }
+
+    function isSuperAdmin() {
+      return isAuthenticated() && request.auth.token.accessLevel == 0;
+    }
+
+    function isAdminOrAbove() {
+      return isAdmin() || isSuperAdmin();
+    }
+
+    // 👤 User-specific files
+    match /users/{userId}/{allPaths=**} {
+      allow read, write: if isOwner(userId) || isAdminOrAbove();
+    }
+
+    // 🧪 Study/Test related files
+    match /studies/{studyId}/{allPaths=**} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // 📦 Public assets (optional)
+    match /public/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdminOrAbove();
+    }
+
+    // 🔒 Default deny (VERY IMPORTANT)
     match /{allPaths=**} {
-      allow read, write: if true;
+      allow read, write: if false;
     }
   }
 }
