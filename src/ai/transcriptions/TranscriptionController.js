@@ -60,14 +60,23 @@ export default class TranscriptionController extends Controller {
      */
 
     async create(transcriptionData) {
+        const moderator = {
+            ...transcriptionData.moderator,
+            transcript: transcriptionData?.moderator?.transcript || transcriptionData?.moderator?.transcipt || '' // Support legacy typo field
+        };
+        const evaluator = {
+            ...transcriptionData.evaluator,
+            transcript: transcriptionData?.evaluator?.transcript || transcriptionData?.evaluator?.transcipt || '' // Support legacy typo field
+        };
+
         const transcription = new Transcription({
             answersDocId: transcriptionData.answersDocId,
             userDocId: transcriptionData.userDocId,
             taskId: transcriptionData.taskId,
             provider: transcriptionData.provider,
             model: transcriptionData.model,
-            moderator: transcriptionData.moderator,
-            evaluator: transcriptionData.evaluator,
+            moderator,
+            evaluator,
         }).toFirestore();
 
         try {

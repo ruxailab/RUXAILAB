@@ -75,16 +75,17 @@ export default class AudioSentiment {
      * @returns {AudioSentiment} - The newly created AudioSentiment instance.
      */
     static toAudioSentiment(data) {
+        const regions = data?.regions || []; // Guard against missing regions array
         return new AudioSentiment({
             id: data.id, // Include the ID here
             answersDocId: data.answersDocId,
             userDocId: data.userDocId,
-            regionsCount: data.regionsCount,
-            regions: data.regions.map(region => ({
+            regionsCount: regions.length,
+            regions: regions.map(region => ({
                 idx: region.idx,
                 start: region.start,
                 end: region.end,
-                transcript: region.transcript, // Fixed typo here
+                transcript: region.transcript || region.transcipt || '', // Support legacy typo field
                 sentiment: region.sentiment,
                 confidence: region.confidence
             }))
@@ -109,15 +110,16 @@ export default class AudioSentiment {
      * Note: The document ID is not included in the returned object as Firestore manages it separately.
      */
     toFirestore() {
+        const regions = this.regions || []; // Guard against missing regions array
         return {
             answersDocId: this.answersDocId,
             userDocId: this.userDocId,
-            regionsCount: this.regionsCount,
-            regions: this.regions.map(region => ({
+            regionsCount: regions.length,
+            regions: regions.map(region => ({
                 idx: region.idx,
                 start: region.start,
                 end: region.end,
-                transcript: region.transcript,
+                transcript: region.transcript || region.transcipt || '', // Keep writes safe for mixed payloads
                 sentiment: region.sentiment,
                 confidence: region.confidence
             }))

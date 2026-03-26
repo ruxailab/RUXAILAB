@@ -143,14 +143,16 @@ export default class AudioSentimentController extends Controller {
       return null
     }
 
-    // Set the index of the region
-    region.idx = audioSentimentDocuemnt.regionsCount
+    const regions = audioSentimentDocuemnt.regions || [] // Guard against undefined regions
 
-    // Increment the regions count
-    audioSentimentDocuemnt.regionsCount += 1
+    // Use current array length to avoid idx/count drift.
+    region.idx = regions.length
+    region.transcript = region.transcript || region.transcipt || '' // Support legacy typo field
 
-    // Add the region to the document object array
-    audioSentimentDocuemnt.regions.push(region)
+    // Add the region and sync count from actual array length.
+    regions.push(region)
+    audioSentimentDocuemnt.regions = regions
+    audioSentimentDocuemnt.regionsCount = regions.length
 
     return await super.update(
       COLLECTION,
@@ -165,10 +167,14 @@ export default class AudioSentimentController extends Controller {
     if (audioSentimentDocuemnt == null) {
       throw new Error(`Audio sentiment document with id ${id} does not exist.`)
     }
+    const regions = audioSentimentDocuemnt.regions || [] // Guard against undefined regions
+
     // Remove the region
-    audioSentimentDocuemnt.regions = audioSentimentDocuemnt.regions.filter(
+    audioSentimentDocuemnt.regions = regions.filter(
       (region) => region.idx !== regionIdx,
     )
+    // Keep regionsCount aligned with the actual regions array.
+    audioSentimentDocuemnt.regionsCount = audioSentimentDocuemnt.regions.length
 
     return await super.update(
       COLLECTION,

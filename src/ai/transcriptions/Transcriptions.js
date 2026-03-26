@@ -153,6 +153,11 @@ export default class Transcription {
     * @returns {Transcription} The created Transcription instance.
     */
     static toTranscription(data) {
+        const moderator = data?.moderator || {};
+        const evaluator = data?.evaluator || {};
+        const moderatorSegments = moderator.segments || []; // Guard against missing segments
+        const evaluatorSegments = evaluator.segments || []; // Guard against missing segments
+
         return new Transcription({
             id: data.id,
             answersDocId: data.answersDocId,
@@ -162,18 +167,18 @@ export default class Transcription {
             model: data.model,
             createdAt: data.createdAt,
             moderator: {
-                language: data.moderator.language,
-                transcript: data.moderator.transcript,
-                segments: data.moderator.segments.map(segment => ({
+                language: moderator.language,
+                transcript: moderator.transcript || moderator.transcipt || '', // Support legacy typo field
+                segments: moderatorSegments.map(segment => ({
                     start: segment.startTimeSec,
                     end: segment.endTimeSec,
                     text: segment.text
                 }))
             },
             evaluator: {
-                language: data.evaluator.language,
-                transcript: data.evaluator.transcript,
-                segments: data.evaluator.segments.map(segment => ({
+                language: evaluator.language,
+                transcript: evaluator.transcript || evaluator.transcipt || '', // Support legacy typo field
+                segments: evaluatorSegments.map(segment => ({
                     start: segment.startTimeSec,
                     end: segment.endTimeSec,
                     text: segment.text
@@ -211,6 +216,11 @@ export default class Transcription {
      * @param {string} - The text of the segment.
      */
     toFirestore() {
+        const moderator = this.moderator || {};
+        const evaluator = this.evaluator || {};
+        const moderatorSegments = moderator.segments || []; // Guard against missing segments
+        const evaluatorSegments = evaluator.segments || []; // Guard against missing segments
+
         return {
             answersDocId: this.answersDocId,
             userDocId: this.userDocId,
@@ -219,18 +229,18 @@ export default class Transcription {
             model: this.model,
             createdAt: this.createdAt,
             moderator: {
-                language: this.moderator.language,
-                transcript: this.moderator.transcript,
-                segments: this.moderator.segments.map(segment => ({
+                language: moderator.language,
+                transcript: moderator.transcript || moderator.transcipt || '', // Keep writes safe for mixed payloads
+                segments: moderatorSegments.map(segment => ({
                     startTimeSec: segment.start,
                     endTimeSec: segment.end,
                     text: segment.text
                 }))
             },
             evaluator: {
-                language: this.evaluator.language,
-                transcript: this.evaluator.transcript,
-                segments: this.evaluator.segments.map(segment => ({
+                language: evaluator.language,
+                transcript: evaluator.transcript || evaluator.transcipt || '', // Keep writes safe for mixed payloads
+                segments: evaluatorSegments.map(segment => ({
                     startTimeSec: segment.start,
                     endTimeSec: segment.end,
                     text: segment.text
