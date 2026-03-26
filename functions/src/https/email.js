@@ -81,7 +81,10 @@ export const sendEmail = functions.onCall({
       return 'Email sent successfully.'
     } catch (err) {
       logger.error('Error sending email:', { error: err })
-      return err
+      throw new functions.https.HttpsError(
+        'internal',
+        `Failed to send email: ${err.message}`,
+      )
     }
   },
 })
