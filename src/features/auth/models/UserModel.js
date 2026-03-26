@@ -45,21 +45,21 @@ export default class User {
     })
   }
 
-  toFirestore() {
-    return {
-      accessLevel: this.accessLevel,
-      email: this.email,
-      notifications: this.notifications,
-      myAnswers: this.myAnswers,
-      myTests: this.myTests,
-      username: this.username, // Include username in Firestore representation
-      contactNo: this.contactNo, // Include contactNo in Firestore representation
-      country: this.country, // Include country in Firestore representation
-      profileImage: this.profileImage, // Include profileImage in Firestore representation
-      calibrationId: this.calibrationId,
-      storageUsageMB: this.storageUsageMB,
-    }
+toFirestore() {
+  return {
+    accessLevel: this.accessLevel,
+    email: this.email,
+    notifications: this.notifications,
+    myAnswers: this.myAnswers,
+    myTests: this.myTests,
+    username: this.username,
+    contactNo: this.contactNo,
+    country: this.country,
+    profileImage: this.profileImage,
+    calibrationId: this.calibrationId,
+    storageUsageMB: this.storageUsageMB,
   }
+}
 
   /**
    * Move all current notifications to the inbox.

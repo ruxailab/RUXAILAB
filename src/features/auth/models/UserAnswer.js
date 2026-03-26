@@ -23,6 +23,7 @@ export default class UserAnswer {
     testDocId,
     updateDate,
     testAuthorEmail,
+    ownerId, 
   }) {
     this.answersDocId = answersDocId
     this.accessLevel = accessLevel
@@ -34,6 +35,7 @@ export default class UserAnswer {
     this.testDocId = testDocId
     this.updateDate = updateDate
     this.testAuthorEmail = testAuthorEmail
+    this.ownerId = ownerId 
   }
   static toUserAnswer(data) {
     return new UserAnswer(data)
@@ -51,6 +53,7 @@ export default class UserAnswer {
       testDocId: this.testDocId,
       updateDate: this.updateDate,
       testAuthorEmail: this.testAuthorEmail,
+      ownerId: this.ownerId, // ✅ REQUIRED
     }
   }
 }

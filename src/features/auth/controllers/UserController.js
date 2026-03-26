@@ -6,12 +6,15 @@ import {
   updatePassword,
 } from 'firebase/auth'
 import { documentId } from 'firebase/firestore'
+
 const COLLECTION = 'users'
 
 export default class UserController extends Controller {
-  constructor() {
+  constructor(currentUserId) {
     super()
+    this.currentUserId = currentUserId
   }
+
   async create(payload) {
     const user = new User({
       email: payload.email,
@@ -19,21 +22,25 @@ export default class UserController extends Controller {
       profileImage: payload.profileImage || '',
       country: payload.country || '',
       accessLevel: 1,
+      ownerId: payload.id,
       myTests: {},
       myAnswers: {},
       notifications: [],
       storageUsageMB: 0,
     }).toFirestore()
+
     return super.set(COLLECTION, payload.id, user)
   }
 
-  async update(docId, payload) {
+  async update(docId, payload, currentUserId) {
+    if (docId !== currentUserId) {
+      throw new Error('Unauthorized update')
+    }
     return super.update(COLLECTION, docId, payload)
   }
 
   async readAll() {
-    const docs = await super.readAll(COLLECTION)
-    return docs.map((doc) => new User(doc))
+    throw new Error('Not allowed: Cannot fetch all users')
   }
 
   async getById(docId) {
@@ -79,22 +86,30 @@ export default class UserController extends Controller {
     if (!ids || ids.length === 0) return []
 
     try {
-      // If there are few (<= 10), use "in" query (faster and more direct)
       if (ids.length <= 10) {
-        const q = {
-          field: documentId(),
-          condition: 'in',
-          value: ids,
-        }
-        const res = await super.query('tests', q)
+        const queries = [
+          {
+            field: documentId(),
+            condition: 'in',
+            value: ids,
+          },
+          {
+            field: 'ownerId',
+            condition: '==',
+            value: this.currentUserId,
+          },
+        ]
+
+        const res = await super.query('tests', queries)
+
         return res.docs.map((doc) => {
           return Object.assign({ id: doc.id }, doc.data())
         })
       }
 
-      // If there are many (>10), parallelize individual gets
       const promises = ids.map((id) => super.readOne('tests', id))
       const results = await Promise.all(promises)
+
       return results
         .filter((r) => r.exists())
         .map((r) => {
@@ -111,10 +126,13 @@ export default class UserController extends Controller {
       contactNo: payload.contactNo,
       country: payload.country,
     }
-    return super.update(COLLECTION, docId, userData)
+    return this.update(docId, userData, docId)
   }
 
-  async deleteUser(docId) {
+  async deleteUser(docId, currentUserId) {
+    if (docId !== currentUserId) {
+      throw new Error('Unauthorized delete')
+    }
     return super.delete(COLLECTION, docId)
   }
 
@@ -139,30 +157,33 @@ export default class UserController extends Controller {
   async addNotification(payload) {
     const userToUpdate = await this.getById(payload.userId)
     userToUpdate.notifications.push(payload.notification.toFirestore())
-    return this.update(payload.userId, userToUpdate.toFirestore())
+
+    return this.update(
+      payload.userId,
+      userToUpdate.toFirestore(),
+      payload.userId
+    )
   }
 
   async markNotificationAsRead(payload) {
     const userToUpdate = new User(payload.user)
 
-    // Find the notification in the notifications array
     const notificationIndex = userToUpdate.notifications.findIndex(
       (n) => n.createdDate === payload.notification.createdDate,
     )
 
     if (notificationIndex !== -1) {
-      // Mark notification as read
       userToUpdate.notifications[notificationIndex].read = true
       userToUpdate.notifications[notificationIndex].readAt = Date.now()
 
-      // Save updated user data to Firestore
       await this.update(
         userToUpdate.id,
         userToUpdate.toFirestore(),
+        userToUpdate.id
       )
+
       return userToUpdate
     } else {
-      // Notification was not found in the array
       throw new Error('Notification not found.')
     }
   }
@@ -184,8 +205,9 @@ export default class UserController extends Controller {
     await this.update(
       userToUpdate.id,
       userToUpdate.toFirestore(),
+      userToUpdate.id
     )
-    // Return the updated user object (in memory) so the store can commit it immediately
+
     return userToUpdate
   }
 
@@ -194,26 +216,23 @@ export default class UserController extends Controller {
       for (let cooperator = 0; cooperator < cooperators.length; cooperator++) {
         const userDocID = cooperators[cooperator].userDocId
 
-        // Lê o documento do usuário diretamente
         const userDoc = await super.readOne('users', userDocID)
 
-        // Verifica se o documento do usuário existe
         if (userDoc.exists()) {
           const userData = userDoc.data()
           const userId = userDoc.id
 
-          // Verificar se o usuário tem notificações
           if (userData.notifications && userData.notifications.length > 0) {
-            // Filtrar notificações que têm o testId correspondente
             userData.notifications = userData.notifications.filter(
               (notification) => notification.testId !== testId,
             )
-            // Atualizar o documento do usuário com as notificações filtradas
-            await super.update('users', userId, {
-              notifications: userData.notifications,
-            })
+
+            await this.update(
+              userId,
+              { notifications: userData.notifications },
+              userId
+            )
           }
-        } else {
         }
       }
     } catch (error) {
@@ -228,23 +247,26 @@ export default class UserController extends Controller {
       if (!userDoc.exists()) {
         return
       }
+
       const userData = userDoc.data()
 
       if (userData.myTests[testIdToRemove]) {
         delete userData.myTests[testIdToRemove]
       }
+
       if (userData.myAnswers[testIdToRemove]) {
         delete userData.myAnswers[testIdToRemove]
       }
 
-      await super.update('users', userId, userData)
+      await this.update(userId, userData, userId)
     } catch (error) {
       throw error
     }
   }
+
   async updateLevel(uid, accessLevel) {
     try {
-      return super.update(COLLECTION, uid, { accessLevel })
+      return this.update(uid, { accessLevel }, uid)
     } catch (error) {
       throw error
     }

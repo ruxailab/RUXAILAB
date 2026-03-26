@@ -9,7 +9,7 @@ import i18n from '@/app/plugins/i18n'
 import { showError } from '@/shared/utils/toast'
 
 const authController = new AuthController()
-const userController = new UserController()
+let userController
 
 export default {
   state: {
@@ -68,6 +68,7 @@ export default {
           normalizedEmail,
           payload.password,
         )
+        userController = new UserController(user.uid)
         await userController.create({
           id: user.uid,
           email: user.email || normalizedEmail,
@@ -113,7 +114,18 @@ export default {
           throw new Error('EMAIL_NOT_VERIFIED')
         }
 
-        const dbUser = await userController.getById(user.uid)
+        userController = new UserController(user.uid)
+
+        let dbUser
+        try {
+          dbUser = await userController.getById(user.uid)
+        } catch {
+          await userController.create({
+            id: user.uid,
+            email: user.email,
+          })
+          dbUser = await userController.getById(user.uid)
+        }
 
         commit('SET_USER', dbUser)
 
@@ -142,6 +154,9 @@ export default {
         const { user } = await authController.signInWithGoogle(
           payload.rememberMe,
         )
+
+
+        userController = new UserController(user.uid) 
 
         // Check if user already exists in database
         let dbUser = null
@@ -217,7 +232,18 @@ export default {
           return user
         }
 
-        const dbUser = await userController.getById(user.uid)
+         userController = new UserController(user.uid)
+
+        let dbUser
+          try {
+            dbUser = await userController.getById(user.uid)
+          } catch {
+            await userController.create({
+              id: user.uid,
+              email: user.email,
+            })
+            dbUser = await userController.getById(user.uid)
+          }
         commit('SET_USER', dbUser)
       } catch (e) {
         commit('SET_TOAST', {
