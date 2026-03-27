@@ -33,7 +33,7 @@ export const deleteAuth = functions.onCall({
       logger.error('Error deleting user:', { error: err })
       throw new functions.https.HttpsError(
         'internal',
-        `Failed to delete user: ${err.message}`,
+        'Failed to delete user.',
       )
     }
   },
