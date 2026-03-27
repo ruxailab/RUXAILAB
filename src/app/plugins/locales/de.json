@@ -74,6 +74,7 @@
   },
   "common": {
     "enterTextHere": "Text hier eingeben...",
+    "percentValue": "{value}%",
     "units": {
       "mb": "MB",
       "gb": "GB"
@@ -86,6 +87,11 @@
     "editAndInvite": "Bearbeiten und Personen zu Ihrem Test einladen",
     "analyzeProject": "Projekt und Evaluatoren analysieren",
     "comment": "Kommentar",
+    "comments": "Kommentare",
+    "image": "Bild",
+    "images": "Bilder",
+    "close": "Schließen",
+    "selectImage": "Wählen Sie ein Bild zum Hochladen",
     "inputImage": "Geben Sie ein Bild Ihrer Wahl zum Thema ein",
     "title": "Titel",
     "description": "Beschreibung",
@@ -643,7 +649,14 @@
     "AddCommentBtn": {
       "showComment": "Kommentar anzeigen",
       "addComment": "Kommentar hinzufügen",
+      "addAnotherComment": "Weiteren Kommentar hinzufügen",
+      "addNewComment": "Neuen Kommentar hinzufügen",
       "hideTextArea": "Textbereich ausblenden"
+    },
+    "ImportImage": {
+      "uploadSuccess": "Bild erfolgreich hochgeladen",
+      "uploadError": "Fehler beim Hochladen des Bildes",
+      "imagesCount": "{count} Bild(er) angehängt"
     },
     "errors": {
       "failedToLoadQuestionForm": "Fehler beim Laden des Frageformulars. Bitte versuchen Sie es erneut.",
@@ -655,6 +668,12 @@
       "question": "Frage",
       "questions": "Fragen"
     }
+  },
+  "HeuristicsAnalytics": {
+    "dataTable": "Datentabelle",
+    "chart": "Diagramm",
+    "userUploadedContent": "Vom Benutzer hochgeladener Inhalt",
+    "userUploadedAttachment": "Vom Benutzer hochgeladener Anhang"
   },
   "HeuristicsOptionsTable": {
     "titles": {
@@ -1355,7 +1374,8 @@
       "elastic": "Elastic Net",
       "bayesian": "Bayesian Ridge",
       "sgd": "SGD-Regressor",
-      "svr": "Support Vector Regressor"
+      "svr": "Support Vector Regressor",
+      "rfr": "Random Forest Regressor"
     }
   },
   "AccessNotAllowed": {
@@ -1580,6 +1600,7 @@
     "deleteAccount": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
     "genericSuccess": "Vorgang erfolgreich",
     "savedChanges": "Änderungen erfolgreich gespeichert",
+    "errorSavingProgress": "Fehler beim Speichern des Fortschritts",
     "deleteUser": "Sind Sie sicher, dass Sie diesen Benutzer löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
   },
   "buttons": {

@@ -7,7 +7,7 @@
         value="1"
         editable
         :title="$t('CreateTask.stepper.basicInfo')"
-        @click="step = '1'"
+        @click="valida() ? (step = '1') : null"
       />
       <v-divider />
       <v-stepper-item
@@ -16,7 +16,7 @@
         value="2"
         editable
         :title="$t('CreateTask.stepper.configuration')"
-        @click="step = '2'"
+        @click="valida() ? (step = '2') : null"
       />
       <v-divider />
       <v-stepper-item
@@ -25,7 +25,7 @@
         value="3"
         editable
         :title="$t('CreateTask.stepper.advanced')"
-        @click="step = '3'"
+        @click="valida() ? (step = '3') : null"
       />
       <v-divider />
       <v-stepper-item
@@ -34,7 +34,7 @@
         value="4"
         editable
         :title="$t('CreateTask.stepper.preview')"
-        @click="step = '4'"
+        @click="valida() ? (step = '4') : null"
       />
     </v-stepper-header>
 
@@ -51,6 +51,7 @@
 
       <v-card-text v-if="step === '2'">
         <TaskConfiguration
+          ref="taskConfigurationRef"
           :model-value="localTask"
           :select-items="selectItems"
           :validation-rules="requiredRule"
@@ -60,6 +61,7 @@
 
       <v-card-text v-if="step === '3'">
         <TaskAdvancedOptions
+          ref="taskAdvancedRef"
           :model-value="localTask"
           @update:model-value="handleTaskUpdate"
         />
@@ -98,6 +100,8 @@ const props = defineProps({
 })
 
 const taskBasicInfoRef = ref(null)
+const taskConfigurationRef = ref(null)
+const taskAdvancedRef = ref(null)
 
 const emit = defineEmits(['validate', 'update:task', 'complete'])
 
@@ -129,8 +133,16 @@ const handleTaskUpdate = (updatedTask) => {
 
 const goToNextStep = () => {
   const currentStepNum = Number.parseInt(step.value, 10)
-  if (currentStepNum < 4) {
-    step.value = String(currentStepNum + 1)
+
+  // Validate the current step before allowing movement
+  const isStepValid = valida()
+
+  if (isStepValid) {
+    if (currentStepNum < 4) {
+      step.value = String(currentStepNum + 1)
+    } else {
+      emit('complete', localTask.value)
+    }
   }
 }
 
@@ -142,18 +154,30 @@ const goToPreviousStep = () => {
 }
 
 const valida = () => {
-  const descOk = taskBasicInfoRef.value?.checkDescriptionValidation()
-  const nameOk = taskBasicInfoRef.value?.checkTaskNameValidation()
+  const currentStepNum = Number.parseInt(step.value, 10)
 
-  // trigger visual validator for task name
-  const _ = taskBasicInfoRef.value?.isValid?.value // eslint-disable-line no-unused-vars
+  if (currentStepNum === 1) {
+    const descOk = taskBasicInfoRef.value?.checkDescriptionValidation()
+    const nameOk = taskBasicInfoRef.value?.checkTaskNameValidation()
+    return !!(nameOk && descOk)
+  }
 
-  if (nameOk && descOk) {
+  if (currentStepNum === 2) {
+    return taskConfigurationRef.value?.validate() || false
+  }
+
+  if (currentStepNum === 3) {
+    return taskAdvancedRef.value?.validate
+      ? taskAdvancedRef.value.validate()
+      : true
+  }
+
+  if (currentStepNum === 4) {
     emit('validate', localTask.value)
     return true
   }
 
-  return false
+  return true
 }
 
 const resetVal = () => {
