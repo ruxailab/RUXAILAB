@@ -304,7 +304,7 @@
                 color="error"
                 block
                 variant="outlined"
-                class="mr-2 task-action-btn"
+                class="mr-2"
                 :disabled="isWaitingForUploadToFinish"
                 :class="{
                   'mb-3': $vuetify.display.xs,
@@ -325,7 +325,6 @@
                 color="primary"
                 block
                 variant="flat"
-                class="ml-2 task-action-btn"
                 :disabled="isWaitingForUploadToFinish"
                 :class="{ 'ml-2': $vuetify.display.smAndUp }"
                 @click="handleShowPostForm(true)"
@@ -417,7 +416,7 @@
                 color="primary"
                 block
                 variant="flat"
-                class="ml-2 task-action-btn"
+                :class="{ 'ml-2': $vuetify.display.smAndUp }"
                 :disabled="
                   shouldDisableFinishButton || isWaitingForUploadToFinish
                 "
@@ -866,14 +865,8 @@ function onTimerStopped(elapsedTime) {
 </script>
 
 <style scoped>
-.test-content {
-  max-width: 100%;
-  overflow-x: hidden; /* Keep participant task UI inside viewport */
-}
-
 .task-description {
   white-space: pre-line;
-  overflow-wrap: anywhere;
 }
 
 .recording-features-grid {
@@ -924,17 +917,9 @@ function onTimerStopped(elapsedTime) {
   margin: 0;
 }
 
-.task-action-btn {
-  min-height: 44px; /* Touch-friendly action buttons */
-}
-
 @media (max-width: 768px) {
   .recording-features-grid {
     grid-template-columns: 1fr;
-  }
-
-  .test-content {
-    padding: 0.75rem !important;
   }
 
   .recording-feature-card {
@@ -944,11 +929,6 @@ function onTimerStopped(elapsedTime) {
 
   .feature-icon-container {
     align-self: center;
-  }
-
-  .task-action-btn {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
   }
 }
 </style>

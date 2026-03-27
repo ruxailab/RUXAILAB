@@ -86,7 +86,7 @@
         class="start-screen background-img pa-0 ma-0"
         align="center"
       >
-        <v-col cols="12" md="8" class="ma-5 pa-5 start-screen-content">
+        <v-col md="8" class="ma-5 pa-5">
           <img
             src="../../../assets/logo_full_white.png"
             alt="RUXAILAB"
@@ -199,7 +199,7 @@
         </v-col>
       </v-row>
 
-      <v-row v-else class="main-test-interface pa-0 ma-0">
+      <v-row v-else class="main-test-interface participant-container pa-0 ma-0">
         <v-col ref="rightView" class="right-view pa-6">
           <v-row v-if="globalIndex >= 1" class="stepper-row sticky-stepper">
             <v-col cols="12">
@@ -1361,12 +1361,6 @@ onBeforeUnmount(() => {
   transition: opacity 8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.main-test-interface,
-.right-view {
-  max-width: 100%;
-  overflow-x: hidden; /* Prevent page-level horizontal scroll in participant flow */
-}
-
 .start-screen.leaving,
 .start-screen.leaving > *,
 .start-screen.leaving::before {
@@ -1472,33 +1466,22 @@ onBeforeUnmount(() => {
   padding: 1rem;
 }
 
-:deep(.v-btn) {
-  min-height: 44px; /* Keep tap targets accessible on touch devices */
-}
-
 @media (max-width: 768px) {
-  .start-screen-content {
-    margin: 0 !important;
-    padding: 1rem !important;
+  .participant-container :deep(.v-btn) {
+    min-height: 44px;
   }
 
-  .right-view {
-    padding: 0.75rem !important;
-  }
-
-  .task-stepper-row {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-  }
-
-  :deep(.main-stepper .v-stepper-item__title),
-  :deep(.task-stepper .v-stepper-item__title) {
-    display: none; /* Reduce stepper width pressure on small screens */
-  }
-
-  :deep(.main-stepper .v-stepper-item),
-  :deep(.task-stepper .v-stepper-item) {
-    padding: 0.4rem !important;
+  .participant-container :deep(.main-stepper .v-stepper-item__title),
+  .participant-container :deep(.task-stepper .v-stepper-item__title) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 }
 </style>
