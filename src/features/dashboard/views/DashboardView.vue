@@ -49,7 +49,46 @@
       <v-col cols="12" lg="6">
         <BlogPosts />
       </v-col>
-      <v-col cols="12" lg="6" />
+      <v-col cols="12" lg="6">
+        <v-card elevation="2" rounded="lg" class="emerging-tools-card">
+          <v-card-title class="d-flex align-center py-4">
+            <v-icon
+              icon="mdi-rocket-launch-outline"
+              class="me-2"
+              color="primary"
+            />
+            Emerging Technologies &amp; Tools
+          </v-card-title>
+
+          <v-card-text class="pa-4">
+            <v-card
+              v-for="feature in emergingTechnologies"
+              :key="feature.name"
+              variant="outlined"
+              rounded="lg"
+              class="mb-3 emerging-tool-item"
+            >
+              <v-card-text class="py-3">
+                <div class="d-flex align-center justify-space-between mb-1">
+                  <span class="text-subtitle-2 font-weight-medium">
+                    {{ feature.name }}
+                  </span>
+                  <v-chip
+                    :color="feature.statusColor"
+                    variant="tonal"
+                    size="small"
+                  >
+                    {{ feature.status }}
+                  </v-chip>
+                </div>
+                <p class="text-body-2 text-medium-emphasis mb-0">
+                  {{ feature.description }}
+                </p>
+              </v-card-text>
+            </v-card>
+          </v-card-text>
+        </v-card>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -144,6 +183,37 @@ const topMethodsData = computed(() => {
     }))
 })
 
+const emergingTechnologies = [
+  {
+    name: 'AI Heuristic Evaluation',
+    description:
+      'Assists expert reviews with AI-generated heuristic insights.',
+    status: 'Coming Soon',
+    statusColor: 'warning',
+  },
+  {
+    name: 'NLP Response Analysis',
+    description:
+      'Summarizes participant text feedback and detects recurring themes.',
+    status: 'Coming Soon',
+    statusColor: 'warning',
+  },
+  {
+    name: 'Playwright Integration',
+    description:
+      'Automates scenario validation for interaction flows and regressions.',
+    status: 'Available',
+    statusColor: 'success',
+  },
+  {
+    name: 'Firebase Analytics Signals',
+    description:
+      'Surfaces usage metrics to support faster research decisions.',
+    status: 'Available',
+    statusColor: 'success',
+  },
+]
+
 watch(
   () => props.sessions,
   (sessions) => {
@@ -203,6 +273,15 @@ onMounted(() => {
   flex: 1;
   overflow-y: auto;
 }
+
+.emerging-tools-card {
+  height: 100%;
+}
+
+.emerging-tool-item:last-child {
+  margin-bottom: 0 !important;
+}
+
 :deep(.v-row) {
   margin: -14px !important;
 }
