@@ -498,7 +498,7 @@
               <v-icon>mdi-content-save</v-icon>
             </v-btn>
           </template>
-          <span>Save</span>
+          <span>{{ $t('common.save') }}</span>
         </v-tooltip>
         <v-tooltip location="left">
           <template #activator="{ props }">
@@ -507,7 +507,7 @@
               <v-icon>mdi-file-move</v-icon>
             </v-btn>
           </template>
-          <span>Submit</span>
+          <span>{{ $t('common.submit') }}</span>
         </v-tooltip>
       </v-speed-dial>
     </v-btn>
@@ -989,7 +989,11 @@ const completeStep = (id, type, userCompleted = true) => {
 
     if (type === 'preTest') {
       localTestAnswer.preTestCompleted = true
-      globalIndex.value = 3 // Eye Tracking Calibration (if enabled) or PreTasks
+      if (hasEyeTracking.value) {
+        globalIndex.value = 3 // Eye Tracking Calibration
+      } else {
+        globalIndex.value = 4 // Tasks / PreTasks
+      }
       savePartialAnswer()
     }
 

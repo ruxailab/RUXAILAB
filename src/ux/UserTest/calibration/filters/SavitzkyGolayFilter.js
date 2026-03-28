@@ -140,6 +140,7 @@ export default class SavitzkyGolayFilter extends SignalFilter {
   }
 
   _transpose(M) {
+    if (!M || M.length === 0) return []
     return M[0].map((_, i) => M.map(row => row[i]))
   }
 

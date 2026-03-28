@@ -229,10 +229,16 @@ export const computeOverallRating = (precision, accuracy, rmsError, dataLoss) =>
  * Rate a value against thresholds
  * @param {number} value
  * @param {Object} thresholds - { good, acceptable }
- * @param {boolean} inverted - true if lower is better
+ * @param {boolean} inverted - true if higher is better
  * @returns {string}
  */
-const rateValue = (value, thresholds) => {
+const rateValue = (value, thresholds, inverted = false) => {
+  if (inverted) {
+    if (value >= thresholds.good) return 'good'
+    if (value >= thresholds.acceptable) return 'acceptable'
+    return 'poor'
+  }
+  
   if (value <= thresholds.good) return 'good'
   if (value <= thresholds.acceptable) return 'acceptable'
   return 'poor'

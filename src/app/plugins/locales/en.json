@@ -104,6 +104,7 @@
     "text": "Text",
     "value": "Value",
     "save": "Save",
+    "submit": "Submit",
     "saving": "Saving...",
     "editDelete": "Edit/Delete",
     "type": "Type",
@@ -141,6 +142,7 @@
       "owner": "Owner",
       "evaluator": "Evaluator",
       "status": "Status",
+      "submit": "Submit",
       "sessionDate": "Session Date",
       "participants": "Participants",
       "created": "Created",
@@ -1286,10 +1288,12 @@
       "answerSaved": "Answer saved successfully.",
       "taskCompletedSuccess": "Task \"{taskName}\" completed successfully!",
       "useSessionLinkModerated": "Use a session link to access your moderated test!",
-      "useSessionLink": "Use a session link to access the test"
+      "useSessionLink": "Use a session link to access the test",
+      "recordingStarted": "Data recording has started.",
+      "calibrationPassed": "Calibration successful. High precision detected."
     },
     "errors": {
-      "timerError": "Error recording task time",
+      "timerError": "Error recording task time. Please ensure the task was completed correctly.",
       "noAnswerData": "No answer data found.",
       "failedToSaveAnswer": "Failed to save the answer. Please try again.",
       "failedToSubmitAnswer": "Failed to submit the answer. Please try again.",
@@ -1297,7 +1301,9 @@
       "noTestDataMessage": "Test information could not be loaded. Please try again later.",
       "failedToCompleteStep": "Failed to complete step. Please try again.",
       "failedToInitializeTestData": "Failed to initialize test data. Please try again.",
-      "loginRequired": "Login to your RUXAILAB account first to access the test!"
+      "loginRequired": "Login to your RUXAILAB account first to access the test!",
+      "calibrationFailed": "Calibration quality is low. Please try adjusting your lighting or head position.",
+      "driftDetected": "Significant gaze drift detected. Consider re-calibrating."
     },
     "WelcomeStep": {
       "welcome": "Welcome to RUXAILAB!",
@@ -1344,14 +1350,23 @@
     }
   },
   "eyeTracking": {
-    "title": "Eye Tracking Calibration",
-    "beforeStart": "Before starting calibration",
-    "description1": "We will provide your device to record your eye movements.",
-    "description2": "Follow the points that appear on the screen.",
-    "start": "Start calibration",
     "inProgress": "Calibration in progress...",
     "completed": "Calibration completed!",
-    "continue": "Continue to the test"
+    "continue": "Continue to the test",
+    "calibration": {
+      "drift": {
+        "title": "Drift Reference",
+        "instructions": "A small reference point will appear at the center. This helps detect drift during the session."
+      },
+      "startDriftReference": "Start Drift Reference",
+      "skip": "Skip",
+      "continue": "Continue",
+      "completeButton": "Complete Reference",
+      "status": "Drift Status:",
+      "offset": "Offset:",
+      "referenceSet": "Drift Reference Set",
+      "readyDescription": "Calibration is ready for the session."
+    }
   },
   "EyeTrackingConfig": {
     "titles": {

@@ -15,7 +15,7 @@
     <!-- Active control -->
     <div v-if="isActive" class="active-controls mt-4 text-center" style="z-index: 10; position: relative;">
       <v-btn color="success" @click="completeDriftReference">
-        Complete Reference
+        {{ $t('eyeTracking.calibration.drift.completeButton') }}
       </v-btn>
     </div>
 
@@ -27,21 +27,21 @@
     <!-- Drift monitoring -->
     <div v-if="isActive && driftStatus" class="drift-status">
       <div :class="['drift-indicator', driftStatus.status]">
-        <span class="drift-label">Drift Status:</span>
+        <span class="drift-label">{{ $t('eyeTracking.calibration.drift.status') }}</span>
         <span class="drift-value">{{ driftStatus.label }}</span>
       </div>
       <div v-if="driftStatus.driftVector" class="drift-vector">
-        Offset: {{ driftStatus.driftVector.x.toFixed(1) }}, {{ driftStatus.driftVector.y.toFixed(1) }} px
+        {{ $t('eyeTracking.calibration.drift.offset') }} {{ driftStatus.driftVector.x.toFixed(1) }}, {{ driftStatus.driftVector.y.toFixed(1) }} px
       </div>
     </div>
 
     <!-- Complete state -->
     <div v-if="isComplete" class="completion-info">
       <v-icon color="success" size="48">mdi-check-circle</v-icon>
-      <h3>Drift Reference Set</h3>
-      <p>Calibration is ready for the session.</p>
+      <h3>{{ $t('eyeTracking.calibration.drift.referenceSet') }}</h3>
+      <p>{{ $t('eyeTracking.calibration.drift.readyDescription') }}</p>
       <v-btn color="primary" @click="emit('complete', driftData)">
-        {{ $t('eyeTracking.calibration.continue') || 'Continue' }}
+        {{ $t('eyeTracking.calibration.continue') }}
       </v-btn>
     </div>
   </div>
@@ -249,11 +249,9 @@ onMounted(() => {
 onBeforeUnmount(() => {
   if (monitoringInterval) {
     clearInterval(monitoringInterval)
-    monitoringInterval = null
   }
   if (driftWarningTimerId) {
     clearTimeout(driftWarningTimerId)
-    driftWarningTimerId = null
   }
 })
 </script>
