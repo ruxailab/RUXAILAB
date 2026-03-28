@@ -1,3 +1,3 @@
 # Project Configuration
 
-Project root: `C:\Users\rushi\OneDrive\Desktop\RUXAILAB`
+Project root: `<repo-root>` (the root directory of this repository)

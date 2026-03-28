@@ -209,6 +209,9 @@ export default {
       try {
         const userData = await authController.autoSignIn()
         if (userData) {
+          if (!userData.emailVerified) {
+            return userData
+          }
           try {
             const dbUser = await userController.getById(userData.uid)
             commit('SET_USER', dbUser)

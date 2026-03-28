@@ -80,7 +80,6 @@ const model = ref(null)
 let trackingLoop = null
 
 // Filter state
-const gazeFilter = ref(null)
 const leftEyeFilter = ref(null)
 const rightEyeFilter = ref(null)
 
@@ -89,7 +88,6 @@ const rightEyeFilter = ref(null)
  */
 const initializeFilters = () => {
   if (!props.useFilter) {
-    gazeFilter.value = null
     leftEyeFilter.value = null
     rightEyeFilter.value = null
     return
@@ -218,7 +216,9 @@ const startTracking = async () => {
         }
 
         // Apply filters if enabled
-        if (props.useFilter && leftEyeFilter.value && rightEyeFilter.value) {
+        const hasValidIris = rawGaze.left_iris_x != null && rawGaze.left_iris_y != null &&
+          rawGaze.right_iris_x != null && rawGaze.right_iris_y != null
+        if (props.useFilter && leftEyeFilter.value && rightEyeFilter.value && hasValidIris) {
           const leftFiltered = applyFilter(
             { x: rawGaze.left_iris_x, y: rawGaze.left_iris_y },
             leftEyeFilter.value,

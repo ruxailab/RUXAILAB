@@ -189,11 +189,11 @@ function applyKalmanFilter(x, y, timestamp) {
   const K = matMul(PHt, SInv)
 
   // Innovation
-  const Hx = [H[0][0] * predictedState[0], H[1][0] * predictedState[0] + H[1][1] * predictedState[1]]
-  const y = [z[0] - Hx[0], z[1] - Hx[1]]
+  const Hx = [predictedState[0], predictedState[1]]
+  const innovation = [z[0] - Hx[0], z[1] - Hx[1]]
 
   // Update state
-  const Ky = matVecMul(K, y)
+  const Ky = matVecMul(K, innovation)
   kalmanFilterState.state = {
     x: predictedState[0] + Ky[0],
     y: predictedState[1] + Ky[1],

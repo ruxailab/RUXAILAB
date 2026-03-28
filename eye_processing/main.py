@@ -5,15 +5,18 @@ including Kalman filtering for jitter reduction, drift compensation, and accurac
 """
 
 import json
+import os
 import numpy as np
 from firebase_functions import https_fn
 from firebase_admin import initialize_app
 
 initialize_app()
 
+allowed_origin = os.environ.get('ALLOWED_ORIGIN', 'https://ruxailab.web.app')
+
 common_headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Origin': allowed_origin,
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Access-Control-Allow-Methods': 'POST, OPTIONS'
 }
 

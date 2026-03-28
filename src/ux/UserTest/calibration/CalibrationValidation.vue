@@ -154,7 +154,7 @@ const handleFaceData = (data) => {
       
       if (currentDotIndex.value >= dots.value.length) {
         isTracking.value = false;
-        calculateMetrics();
+        await calculateMetrics();
       }
     }
   }
@@ -180,7 +180,7 @@ const calculateMetrics = async () => {
     }
   } catch (err) {
     console.error("Metrics calculation failed:", err);
-    throw err;
+    results.value = { error: true, message: err.message };
   } finally {
     isCalculating.value = false;
   }
