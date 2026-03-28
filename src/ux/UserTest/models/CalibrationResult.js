@@ -58,7 +58,10 @@ export default class CalibrationResult {
    * @private
    */
   _generateId() {
-    return `calib_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    const arr = new Uint8Array(9)
+    window.crypto.getRandomValues(arr)
+    const suffix = Array.from(arr, b => b.toString(36).padStart(2, '0')).join('').substr(0, 9)
+    return `calib_${Date.now()}_${suffix}`
   }
 
   /**
