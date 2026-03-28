@@ -9,12 +9,7 @@ export const onTestUpdate = functions.onTrigger({
     const snapshot = event.data.after
     if (!snapshot) return logger.info('No data associated with the event')
 
-    try {
-      const newTest = snapshot.data()
-      await updateUserTestEntry(newTest, snapshot.id)
-    } catch (error) {
-      logger.error(`Error in onTestUpdate for test ${event.params.docId}:`, { error })
-      throw error
-    }
+    const newTest = snapshot.data()
+    await updateUserTestEntry(newTest, snapshot.id)
   },
 })
