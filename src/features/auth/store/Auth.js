@@ -206,23 +206,24 @@ export default {
     },
 
     async autoSignIn({ commit }) {
-      return new Promise((resolve) => {
-        authController.onAuthStateChanged(async (userData) => {
-          if (userData) {
-            try {
-              const dbUser = await userController.getById(userData.uid)
-              commit('SET_USER', dbUser)
-              resolve(dbUser)
-            } catch (error) {
-              commit('SET_USER', null)
-              resolve(null)
-            }
-          } else {
+      try {
+        const userData = await authController.autoSignIn()
+        if (userData) {
+          try {
+            const dbUser = await userController.getById(userData.uid)
+            commit('SET_USER', dbUser)
+            return dbUser
+          } catch (error) {
             commit('SET_USER', null)
-            resolve(null)
+            return null
           }
-        })
-      })
+        }
+        commit('SET_USER', null)
+        return null
+      } catch (error) {
+        commit('SET_USER', null)
+        return null
+      }
     },
 
     async resetPassword({ commit }, payload) {
