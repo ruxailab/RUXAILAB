@@ -952,15 +952,20 @@ const handleTimerStopped = (elapsedTime, idx) => {
 
   if (localTestAnswer.tasks[idx]) {
     // Asegurar que el tiempo es un número
-    const timeToSave =
-      typeof elapsedTime === 'number' ? elapsedTime : parseInt(elapsedTime)
+    const timeToSave = typeof elapsedTime === 'number' ? elapsedTime : parseInt(elapsedTime)
     if (!isNaN(timeToSave)) {
       localTestAnswer.tasks[idx].taskTime = timeToSave
     } else {
-      //TODO: Add error snackbar
+      store.commit('SET_TOAST', {
+        type: 'error',
+        message: t('errors.globalError') || 'Error recording task time'
+      })
     }
   } else {
-    //TODO: Add error snackbar
+    store.commit('SET_TOAST', {
+      type: 'error',
+      message: t('errors.globalError') || 'Error recording task time'
+    })
   }
 }
 
@@ -1026,8 +1031,6 @@ const completeStep = (id, type, userCompleted = true) => {
           }
         }
       }
-      //TODO: Show proper toast not the following one
-      /*
       if (userCompleted) {
         store.commit('SET_TOAST', {
           type: 'success',
@@ -1035,7 +1038,6 @@ const completeStep = (id, type, userCompleted = true) => {
           timeout: 3000,
         });
       }
-        */
     }
 
     if (type === 'postTest') {
