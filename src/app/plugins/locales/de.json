@@ -705,11 +705,14 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "Einstellungen",
-      "confirmUpload": "Upload bestätigen"
+      "confirmUpload": "Upload bestätigen",
+      "timeTracking": "Zeiterfassung"
     },
     "messages": {
       "acceptCsv": "Wenn Sie akzeptieren, werden alle Ihre vorhandenen Heuristiken durch die in der .csv-Datei ersetzt.",
-      "noCsvFileSelected": "Keine CSV-Datei ausgewählt. \nBitte wählen Sie eine aus, bevor Sie fortfahren."
+      "noCsvFileSelected": "Keine CSV-Datei ausgewählt. \nBitte wählen Sie eine aus, bevor Sie fortfahren.",
+      "timeTrackingDescription": "Zeichnet die Zeit auf, die jeder Gutachter pro Heuristik während der Bewertung verbringt.",
+      "settingsSaved": "Einstellungen erfolgreich gespeichert."
     },
     "placeHolders": {
       "importCsv": "Importieren Sie Ihre CSV-Testdatei hier."
@@ -717,6 +720,10 @@
     "actions": {
       "downloadCsvTemplate": "CSV-Vorlage herunterladen",
       "update": "Aktualisieren"
+    },
+    "labels": {
+      "timeTrackingOn": "Zeiterfassung aktiviert",
+      "timeTrackingOff": "Zeiterfassung deaktiviert"
     }
   },
   "HeuristicsTestView": {

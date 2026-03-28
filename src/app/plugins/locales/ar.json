@@ -703,11 +703,14 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "الإعدادات",
-      "confirmUpload": "تأكيد التحميل"
+      "confirmUpload": "تأكيد التحميل",
+      "timeTracking": "تتبع الوقت"
     },
     "messages": {
       "acceptCsv": "إذا وافقت، سيتم استبدال جميع الاستدلالات الحالية بتلك الموجودة في ملف CSV.",
-      "noCsvFileSelected": "لم يتم تحديد ملف CSV. \nيرجى تحديد واحد قبل المتابعة."
+      "noCsvFileSelected": "لم يتم تحديد ملف CSV. \nيرجى تحديد واحد قبل المتابعة.",
+      "timeTrackingDescription": "يسجل الوقت الذي يقضيه كل مقيّم في كل معيار إرشادي خلال التقييم.",
+      "settingsSaved": "تم حفظ الإعدادات بنجاح."
     },
     "placeHolders": {
       "importCsv": "قم باستيراد ملف CSV الخاص بك هنا."
@@ -715,6 +718,10 @@
     "actions": {
       "downloadCsvTemplate": "تحميل نموذج CSV",
       "update": "تحديث"
+    },
+    "labels": {
+      "timeTrackingOn": "تتبع الوقت مفعّل",
+      "timeTrackingOff": "تتبع الوقت معطّل"
     }
   },
   "HeuristicsTestView": {
@@ -1672,7 +1679,11 @@
       "SelfTest": {
         "title": "اختبار ذاتي",
         "type": "غير مشرف عليه",
-        "text": ["الإجابة في وقت فراغ", "تحليل متقدم للإجابات", "تخصيص المهمة"]
+        "text": [
+          "الإجابة في وقت فراغ",
+          "تحليل متقدم للإجابات",
+          "تخصيص المهمة"
+        ]
       },
       "LiveTest": {
         "title": "اختبار مباشر",

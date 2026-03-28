@@ -703,11 +703,14 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "Настройки",
-      "confirmUpload": "Подтвердить загрузку"
+      "confirmUpload": "Подтвердить загрузку",
+      "timeTracking": "Отслеживание времени"
     },
     "messages": {
       "acceptCsv": "Если вы согласны, все ваши текущие эвристики будут заменены теми, что в CSV-файле.",
-      "noCsvFileSelected": "CSV-файл не выбран. \nПожалуйста, выберите один, чтобы продолжить."
+      "noCsvFileSelected": "CSV-файл не выбран. \nПожалуйста, выберите один, чтобы продолжить.",
+      "timeTrackingDescription": "Записывает время, затраченное каждым оценщиком на каждую эвристику в процессе оценки.",
+      "settingsSaved": "Настройки успешно сохранены."
     },
     "placeHolders": {
       "importCsv": "Импортируйте ваш CSV тестовый файл сюда."
@@ -715,6 +718,10 @@
     "actions": {
       "downloadCsvTemplate": "Скачать шаблон CSV",
       "update": "Обновить"
+    },
+    "labels": {
+      "timeTrackingOn": "Отслеживание времени включено",
+      "timeTrackingOff": "Отслеживание времени отключено"
     }
   },
   "HeuristicsTestView": {

@@ -705,11 +705,14 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "सेटिंग्स",
-      "confirmUpload": "अपलोड की पुष्टि करें"
+      "confirmUpload": "अपलोड की पुष्टि करें",
+      "timeTracking": "समय ट्रैकिंग"
     },
     "messages": {
       "acceptCsv": "स्वीकार करने पर, आपके सभी वर्तमान हीयुरिस्टिक्स .csv फ़ाइल में दिए गए हीयुरिस्टिक्स से बदल दिए जाएंगे।",
-      "noCsvFileSelected": "कोई CSV फ़ाइल चयनित नहीं है। कृपया आगे बढ़ने से पहले एक चुनें।"
+      "noCsvFileSelected": "कोई CSV फ़ाइल चयनित नहीं है। कृपया आगे बढ़ने से पहले एक चुनें।",
+      "timeTrackingDescription": "मूल्यांकन के दौरान प्रत्येक मूल्यांकनकर्ता द्वारा प्रति हेयुरिस्टिक बिताया गया समय रिकॉर्ड करता है।",
+      "settingsSaved": "सेटिंग्स सफलतापूर्वक सहेजी गईं।"
     },
     "placeHolders": {
       "importCsv": "यहां अपनी परीक्षण CSV फ़ाइल आयात करें।"
@@ -717,6 +720,10 @@
     "actions": {
       "downloadCsvTemplate": "CSV टेम्पलेट डाउनलोड करें",
       "update": "अपडेट करें"
+    },
+    "labels": {
+      "timeTrackingOn": "समय ट्रैकिंग सक्षम",
+      "timeTrackingOff": "समय ट्रैकिंग अक्षम"
     }
   },
   "HeuristicsTestView": {

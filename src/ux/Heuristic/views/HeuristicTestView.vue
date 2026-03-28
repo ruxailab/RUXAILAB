@@ -637,6 +637,8 @@ const saveStatusColor = ref('primary')
 
 const test = computed(() => store.getters.test)
 
+const trackTimeEnabled = computed(() => test.value?.trackTime !== false)
+
 const testAlreadyStarted = computed(() => {
   return (
     currentUserTestAnswer.value?.testStarted ||
@@ -840,7 +842,7 @@ const startTest = async () => {
   if (currentUserTestAnswer.value) {
     currentUserTestAnswer.value.testStarted = true
     currentUserTestAnswer.value.lastViewedHeuristicIndex = heurisIndex.value
-    startTimer(heurisIndex.value)
+    if (trackTimeEnabled.value) startTimer(heurisIndex.value)
     // Auto-save when test starts
     debouncedAutoSave()
   }
@@ -1258,7 +1260,7 @@ const autoSaveAnswer = async () => {
     return
   }
 
-  snapshotRunningTimer(heurisIndex.value)
+  if (trackTimeEnabled.value) snapshotRunningTimer(heurisIndex.value)
 
   // Update progress and metadata
   currentUserTestAnswer.value.progress = calculatedProgress.value
@@ -1303,7 +1305,7 @@ const manualSaveAnswer = async () => {
     return
   }
 
-  snapshotRunningTimer(heurisIndex.value)
+  if (trackTimeEnabled.value) snapshotRunningTimer(heurisIndex.value)
 
   // Update progress and metadata
   currentUserTestAnswer.value.progress = calculatedProgress.value
@@ -1349,7 +1351,7 @@ const submitAnswer = async () => {
     showError('HeuristicsTestView.errors.noAnswerData')
     return
   }
-  pauseTimer(heurisIndex.value)
+  if (trackTimeEnabled.value) pauseTimer(heurisIndex.value)
   currentUserTestAnswer.value.submitted = true
   autoSaveInProgress.value = true
   updateSaveStatus('Submitting...', 'saving')
@@ -1583,7 +1585,7 @@ const restoreProgress = () => {
 
     // Set test as started
     currentUserTestAnswer.value.testStarted = true
-    startTimer(heurisIndex.value)
+    if (trackTimeEnabled.value) startTimer(heurisIndex.value)
 
     // Update status indicator
     updateSaveStatus('Progress restored', 'success')
@@ -1661,12 +1663,14 @@ watch(heurisIndex, (newIndex, oldIndex) => {
   }
   // Auto-save when navigating between heuristics
   if (!start.value) {
-    if (oldIndex !== undefined && oldIndex !== newIndex) {
-      pauseTimer(oldIndex)
+    if (trackTimeEnabled.value) {
+      if (oldIndex !== undefined && oldIndex !== newIndex) {
+        pauseTimer(oldIndex)
+      }
+      startTimer(newIndex)
     }
 
     currentUserTestAnswer.value.lastViewedHeuristicIndex = heurisIndex.value
-    startTimer(newIndex)
     updateSaveStatus('Saving changes...', 'saving')
     debouncedAutoSave()
   }
@@ -1711,7 +1715,7 @@ onBeforeMount(async () => {
 onUnmounted(() => {
   // Save progress when component is destroyed
   if (calculatedProgress.value > 0 && !currentUserTestAnswer.value?.submitted) {
-    pauseTimer(heurisIndex.value)
+    if (trackTimeEnabled.value) pauseTimer(heurisIndex.value)
     autoSaveAnswer().catch(() => {})
   }
 })

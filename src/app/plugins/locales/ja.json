@@ -703,11 +703,14 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "設定",
-      "confirmUpload": "アップロードの確認"
+      "confirmUpload": "アップロードの確認",
+      "timeTracking": "時間追跡"
     },
     "messages": {
       "acceptCsv": "同意すると、現在のヒューリスティックはCSVファイルの内容で置き換えられます。",
-      "noCsvFileSelected": "CSVファイルが選択されていません。続行する前に選択してください。"
+      "noCsvFileSelected": "CSVファイルが選択されていません。続行する前に選択してください。",
+      "timeTrackingDescription": "評価中に各評価者がヒューリスティックごとに費やす時間を記録します。",
+      "settingsSaved": "設定が正常に保存されました。"
     },
     "placeHolders": {
       "importCsv": "ここにCSVテストファイルをインポートしてください。"
@@ -715,6 +718,10 @@
     "actions": {
       "downloadCsvTemplate": "CSVテンプレートをダウンロード",
       "update": "更新"
+    },
+    "labels": {
+      "timeTrackingOn": "時間追跡が有効",
+      "timeTrackingOff": "時間追跡が無効"
     }
   },
   "HeuristicsTestView": {
@@ -1672,7 +1679,11 @@
       "SelfTest": {
         "title": "セルフテスト",
         "type": "非モデレート",
-        "text": ["自分の時間に回答", "高度な回答分析", "タスクのカスタマイズ"]
+        "text": [
+          "自分の時間に回答",
+          "高度な回答分析",
+          "タスクのカスタマイズ"
+        ]
       },
       "LiveTest": {
         "title": "ライブテスト",
@@ -1954,7 +1965,11 @@
       "blank": {
         "title": "空白の研究から開始",
         "description": "完全なカスタマイズでゼロから研究を作成します",
-        "features": ["完全なカスタマイズ", "ゼロから構築", "設定を完全に制御"]
+        "features": [
+          "完全なカスタマイズ",
+          "ゼロから構築",
+          "設定を完全に制御"
+        ]
       },
       "template": {
         "title": "テンプレートから作成",

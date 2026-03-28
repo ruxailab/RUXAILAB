@@ -703,11 +703,14 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "Paramètres",
-      "confirmUpload": "Confirmer le téléchargement"
+      "confirmUpload": "Confirmer le téléchargement",
+      "timeTracking": "Suivi du temps"
     },
     "messages": {
       "acceptCsv": "Si vous acceptez, toutes vos heuristiques actuelles seront remplacées par celles du fichier .csv.",
-      "noCsvFileSelected": "Aucun fichier CSV sélectionné. \nVeuillez en sélectionner un avant de continuer."
+      "noCsvFileSelected": "Aucun fichier CSV sélectionné. \nVeuillez en sélectionner un avant de continuer.",
+      "timeTrackingDescription": "Enregistre le temps que chaque évaluateur passe par heuristique lors de l'évaluation.",
+      "settingsSaved": "Paramètres enregistrés avec succès."
     },
     "placeHolders": {
       "importCsv": "Importez votre fichier CSV test ici."
@@ -715,6 +718,10 @@
     "actions": {
       "downloadCsvTemplate": "Télécharger le modèle CSV",
       "update": "Mettre à jour"
+    },
+    "labels": {
+      "timeTrackingOn": "Suivi du temps activé",
+      "timeTrackingOff": "Suivi du temps désactivé"
     }
   },
   "HeuristicsTestView": {
