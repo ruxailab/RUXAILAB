@@ -6,7 +6,7 @@
  * For TAM score calculations, use TamScoreCalculator instead
  * Example:
  *   import TamScoreCalculator from './TamScoreCalculator.js'
- *   const result = TamScoreCalculator.calculateTAMScore(answers, 'tam-1')
+ *   const result = TamScoreCalculator.analyzeTAM(answers, 1)
  */
 
 // Re-export from TamScoreCalculator for backward compatibility
