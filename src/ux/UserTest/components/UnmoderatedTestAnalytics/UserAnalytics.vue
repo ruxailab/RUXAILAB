@@ -281,6 +281,31 @@
                 </div>
               </v-col>
 
+              <!-- Calibration Metrics -->
+              <v-col
+                v-if="dialogItem?.calibrationValidation"
+                cols="12"
+                class="section-col"
+              >
+                <div class="section-card py-4 bg-grey-lighten-4">
+                  <div class="section-title d-flex align-center">
+                    <v-icon color="primary" class="mr-2">mdi-eye-check</v-icon>
+                    Eye Tracking Quality
+                  </div>
+                  <v-divider class="my-3" />
+                  <v-row class="text-center py-2">
+                    <v-col cols="6">
+                      <div class="text-subtitle-2 text-grey-darken-1 mb-1">Accuracy (Offset)</div>
+                      <div class="text-h4 font-weight-bold text-primary">{{ dialogItem.calibrationValidation.overallAccuracy?.toFixed(1) || '---' }} <span class="text-body-2">px</span></div>
+                    </v-col>
+                    <v-col cols="6">
+                      <div class="text-subtitle-2 text-grey-darken-1 mb-1">Precision (Jitter)</div>
+                      <div class="text-h4 font-weight-bold text-success">{{ dialogItem.calibrationValidation.overallPrecision?.toFixed(1) || '---' }} <span class="text-body-2">px</span></div>
+                    </v-col>
+                  </v-row>
+                </div>
+              </v-col>
+
               <!-- Pre-Test Answers -->
               <v-col
                 v-if="dialogItem?.preTestAnswer?.length"
@@ -602,7 +627,7 @@ const onFilterChange = (idx, val) => {
 }
 
 const hasActiveFilters = computed(() => {
-  const someFilters = Object.entries(selectedFilters.value).some(([v]) => {
+  const someFilters = Object.entries(selectedFilters.value).some(([, v]) => {
     if (Array.isArray(v)) return v.length && !v.includes(ALL_VALUE)
     return !!v // texto
   })
@@ -690,6 +715,7 @@ const tableData = computed(() => {
       tasks: session.tasks || {},
       preTestAnswer: session.preTestAnswer || [],
       postTestAnswer: session.postTestAnswer || [],
+      calibrationValidation: session.calibrationValidation || null,
     }
 
     userTasks.forEach((_, i) => {

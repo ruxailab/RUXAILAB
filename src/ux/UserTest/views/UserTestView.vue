@@ -97,7 +97,7 @@
             {{ test.testTitle }}
           </h1>
           <p class="text-body-1 mb-5 text-white text-justify">
-            {{ test.testDescription }}
+            {{ test?.testDescription }}
           </p>
           <v-btn
             color="white"
@@ -336,8 +336,8 @@
 
           <ConsentStep
             v-if="globalIndex === 1 && taskIndex === 0"
-            :test-title="test.testTitle"
-            :consent-text="test.testStructure.consent"
+            :test-title="test?.testTitle"
+            :consent-text="test?.testStructure?.consent"
             :full-name-model="fullName"
             :consent-completed-model="localTestAnswer.consentCompleted"
             @update:full-name-model="(val) => (fullName = val)"
@@ -350,8 +350,8 @@
 
           <PreTestStep
             v-if="globalIndex === 2 && taskIndex === 0"
-            :test-title="test.testTitle"
-            :pre-test="test.testStructure.preTest"
+            :test-title="test?.testTitle"
+            :pre-test="test?.testStructure?.preTest"
             :pre-test-answer="localTestAnswer.preTestAnswer"
             :pre-test-completed="localTestAnswer.preTestCompleted"
             @done="completeStep(taskIndex, 'preTest')"
@@ -361,7 +361,7 @@
             v-if="globalIndex === 3 && hasEyeTracking"
             :calibration-in-progress="calibrationInProgress"
             :calibration-completed="calibrationCompleted"
-            @done="globalIndex = 4"
+            @done="(res) => handleCalibrationDone(res)"
             @close-calibration="closeCalibration()"
             @open-calibration="openCalibration()"
           />
@@ -384,7 +384,7 @@
           <TaskStep
             v-if="
               globalIndex === (hasEyeTracking ? 5 : 4) &&
-              test.testType === STUDY_TYPES.USER
+              test?.testType === STUDY_TYPES.USER
             "
             ref="taskStepComponent"
             v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
@@ -450,8 +450,8 @@
               globalIndex === (hasEyeTracking ? 6 : 5) &&
               (!localTestAnswer.postTestCompleted || localTestAnswer.submitted)
             "
-            :test-title="test.testTitle"
-            :post-test="test.testStructure.postTest"
+            :test-title="test?.testTitle"
+            :post-test="test?.testStructure?.postTest"
             :post-test-answer="localTestAnswer.postTestAnswer"
             :post-test-completed="localTestAnswer.postTestCompleted"
             @done="
@@ -469,7 +469,7 @@
               !localTestAnswer.submitted
             "
             :final-message="$t('finishTest.finalMessage')"
-            :congratulations="test.testStructure.finalMessage"
+            :congratulations="test?.testStructure?.finalMessage"
             :submit-message="$t('finishTest.submitMessage')"
             :submit-btn="$t('buttons.submit')"
             @submit="dialog = true"
@@ -547,6 +547,7 @@ import EyeTrackingCalibrationStep from '@/ux/UserTest/calibration/EyeTrackingCal
 import { db } from '@/app/plugins/firebase'
 import IrisTracker from '../components/IrisTracker.vue'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
+import AuthController from '@/features/auth/controllers/AuthController.js'
 import { calculateProgress } from '../utils/testProgress'
 
 const fullName = ref('')
@@ -586,6 +587,18 @@ const calibrationInProgress = ref(false)
 
 const localTestAnswer = reactive(new UserStudyEvaluatorAnswer())
 
+const signOut = async () => {
+  try {
+    const authController = new AuthController()
+    await authController.signOut()
+    store.commit('SET_USER', null)
+    logined.value = null
+    noExistUser.value = true
+  } catch (err) {
+    console.error('Sign out error:', err)
+  }
+}
+
 const store = useStore()
 const router = useRouter()
 const { t } = useI18n()
@@ -621,7 +634,7 @@ const hasPostTest = computed(() => {
 })
 
 const isUserTestAdmin = computed(() => {
-  return test.value.testAdmin.userDocId === user.value?.id
+  return test.value?.testAdmin?.userDocId === user.value?.id
 })
 
 const isStartTestDisabled = computed(() => {
@@ -716,6 +729,13 @@ const openCalibration = () => {
 const closeCalibration = () => {
   calibrationInProgress.value = false
   completeStep(taskIndex.value, 'eyeCalibration')
+}
+
+const handleCalibrationDone = (results) => {
+  if (results) {
+    localTestAnswer.calibrationValidation = results
+  }
+  globalIndex.value = 4
 }
 
 function toggleTracking(value) {
@@ -952,15 +972,19 @@ const completeStep = (id, type, userCompleted = true) => {
       if (hasPreTest.value) {
         globalIndex.value = 2 // PreTest
       } else {
-        globalIndex.value = 4 // Tasks
         localTestAnswer.preTestCompleted = true
+        if (hasEyeTracking.value) {
+          globalIndex.value = 3 // Eye Tracking Calibration
+        } else {
+          globalIndex.value = 3 // PreTasks
+        }
       }
       savePartialAnswer()
     }
 
     if (type === 'preTest') {
       localTestAnswer.preTestCompleted = true
-      globalIndex.value = hasEyeTracking.value ? 3 : 3 // se tiver, vai pro PreCalibration
+      globalIndex.value = 3 // Eye Tracking Calibration (if enabled) or PreTasks
       savePartialAnswer()
     }
 

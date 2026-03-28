@@ -15,7 +15,7 @@
       </v-col>
       <v-col cols="auto">
         <v-chip
-          :color="isAnalyzing ? 'grey' : hasError ? 'red-darken-2' : 'primary'"
+          :color="isAnalyzing ? 'grey' : hasError ? 'red-darken-2' : qualityColor"
           variant="flat"
           prepend-icon="mdi-eye"
         >
@@ -24,7 +24,7 @@
               ? 'Analyzing...'
               : hasError
               ? 'Analysis Failed'
-              : 'Analysis Completed'
+              : qualityLabel
           }}
         </v-chip>
       </v-col>
@@ -61,8 +61,33 @@
 
     <!-- Results -->
     <v-row v-else>
+      <!-- Quality Summary -->
+      <v-col cols="12">
+        <v-card
+          :class="['pa-4', 'elevation-2', 'rounded-xl', 'quality-border']"
+          :style="{ borderLeft: `4px solid ${qualityColor}` }"
+        >
+          <v-row align="center">
+            <v-col cols="auto">
+              <v-icon :color="qualityColor" size="40">
+                {{ qualityIcon }}
+              </v-icon>
+            </v-col>
+            <v-col>
+              <div class="text-h6 font-weight-bold">Calibration Quality</div>
+              <div class="text-body-2 text-grey">{{ qualityDescription }}</div>
+            </v-col>
+            <v-col cols="auto">
+              <v-chip :color="qualityColor" variant="elevated" size="large">
+                {{ qualityLabel }}
+              </v-chip>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+
       <!-- Summary Metrics -->
-      <v-col v-for="metric in summaryMetrics" :key="metric.label" cols="12">
+      <v-col v-for="metric in summaryMetrics" :key="metric.label" cols="12" sm="6" md="3">
         <v-card class="pa-4" elevation="2" rounded="xl">
           <div class="d-flex justify-space-between align-center mb-1">
             <span class="font-weight-medium text-grey-darken-1">{{
@@ -71,6 +96,7 @@
             <v-icon :color="metric.color">{{ metric.icon }}</v-icon>
           </div>
           <div class="text-h6 font-weight-bold">{{ metric.value }}</div>
+          <div class="text-caption text-grey">{{ metric.rating }}</div>
           <v-progress-linear
             :model-value="metric.progress"
             :color="metric.color"
@@ -78,6 +104,44 @@
             class="mt-2"
             rounded
           />
+        </v-card>
+      </v-col>
+
+      <!-- Drift Status -->
+      <v-col v-if="driftStatus" cols="12" md="6">
+        <v-card class="pa-4" elevation="2" rounded="xl">
+          <div class="d-flex justify-space-between align-center mb-2">
+            <span class="font-weight-medium text-grey-darken-1">Drift Status</span>
+            <v-icon :color="driftStatus.color">{{ driftStatus.icon }}</v-icon>
+          </div>
+          <div class="text-h6 font-weight-bold">{{ driftStatus.label }}</div>
+          <div v-if="driftStatus.driftVector" class="text-caption text-grey">
+            Offset: {{ driftStatus.driftVector.x.toFixed(1) }}, {{ driftStatus.driftVector.y.toFixed(1) }} px
+          </div>
+          <div class="mt-2">
+            <v-chip
+              v-if="driftStatus.recommendation !== 'none'"
+              :color="driftStatus.recommendation === 'recalibrate' ? 'orange' : 'blue'"
+              size="small"
+              variant="tonal"
+            >
+              {{ driftStatus.recommendation }}
+            </v-chip>
+          </div>
+        </v-card>
+      </v-col>
+
+      <!-- Filter Status -->
+      <v-col v-if="filterInfo" cols="12" md="6">
+        <v-card class="pa-4" elevation="2" rounded="xl">
+          <div class="d-flex justify-space-between align-center mb-2">
+            <span class="font-weight-medium text-grey-darken-1">Active Filter</span>
+            <v-icon color="green">mdi-filter</v-icon>
+          </div>
+          <div class="text-h6 font-weight-bold">{{ filterInfo.type }}</div>
+          <div class="text-caption text-grey">
+            {{ filterInfo.enabled ? 'Enabled' : 'Disabled' }}
+          </div>
         </v-card>
       </v-col>
 
@@ -202,22 +266,96 @@ const emit = defineEmits(['predictions-ready', 'view-changed'])
 const store = useStore()
 
 const calibrationConfig = computed(
-  () => store.state.Tests.Test.calibrationConfig || {},
+  () => store.state.Tests?.Test?.calibrationConfig || {},
 )
 const selectedView = ref('precision')
 const predictedData = ref(null)
 const isAnalyzing = ref(true)
 const hasError = ref(false)
 
+// Accuracy metrics from advanced framework
+const accuracyMetrics = ref(null)
+const precisionValue = ref(null)
+const accuracyValue = ref(null)
+const rmsErrorValue = ref(null)
+const dataLossValue = ref(null)
+const driftStatus = ref(null)
+const filterInfo = ref(null)
+
 const totalPredictions = ref(0)
 const insights = ref([])
 const summaryMetrics = ref([])
+
+// Quality computation
+const qualityLabel = computed(() => {
+  if (accuracyMetrics.value) {
+    const ratings = {
+      good: 'Good Quality',
+      acceptable: 'Acceptable',
+      poor: 'Poor Quality'
+    }
+    return ratings[accuracyMetrics.value.overall] || 'Unknown'
+  }
+  return 'Analysis Complete'
+})
+
+const qualityColor = computed(() => {
+  if (accuracyMetrics.value) {
+    const colors = {
+      good: 'green',
+      acceptable: 'orange',
+      poor: 'red'
+    }
+    return colors[accuracyMetrics.value.overall] || 'grey'
+  }
+  return 'primary'
+})
+
+const qualityIcon = computed(() => {
+  if (accuracyMetrics.value) {
+    const icons = {
+      good: 'mdi-check-circle',
+      acceptable: 'mdi-alert-circle',
+      poor: 'mdi-close-circle'
+    }
+    return icons[accuracyMetrics.value.overall] || 'mdi-help-circle'
+  }
+  return 'mdi-eye'
+})
+
+const qualityDescription = computed(() => {
+  if (!accuracyMetrics.value) return 'No calibration data available'
+  const m = accuracyMetrics.value
+  return `Precision: ${m.precision?.value?.toFixed(2) || 'N/A'}° | Accuracy: ${m.accuracy?.value?.toFixed(2) || 'N/A'}°`
+})
 
 watch(selectedView, (value) => emit('view-changed', value))
 
 onMounted(async () => {
   try {
     console.log(calibrationConfig)
+
+    // Try to get advanced metrics from backend
+    try {
+      const metricsRes = await axios.post(
+        process.env.VUE_APP_EYE_LAB_BACKEND_URL + '/api/eyeTracking/calibrate',
+        {
+          calibration_data: props.irisData.map(d => ({
+            gaze: { x: d.left_iris_x || 0, y: d.left_iris_y || 0 },
+            target: { x: 960, y: 540 } // Center as default
+          })),
+          screen_width: 1920,
+          screen_height: 1080
+        },
+        { headers: { 'Content-Type': 'application/json' } }
+      )
+
+      if (metricsRes.data && metricsRes.data.metrics) {
+        accuracyMetrics.value = metricsRes.data.metrics
+      }
+    } catch (metricsErr) {
+      console.warn('Could not fetch advanced metrics:', metricsErr)
+    }
 
     const res = await axios.post(
       process.env.VUE_APP_EYE_LAB_BACKEND_URL + '/api/session/batch_predict',
@@ -238,7 +376,7 @@ onMounted(async () => {
       try {
         data = JSON.parse(data)
       } catch (parseErr) {
-        console.error('❌ Failed to parse JSON response:', parseErr)
+        console.error('Failed to parse JSON response:', parseErr)
         hasError.value = true
         isAnalyzing.value = false
         return
@@ -250,7 +388,7 @@ onMounted(async () => {
     processAnalytics(predictedData.value)
     emit('predictions-ready', predictedData.value)
   } catch (err) {
-    console.error('❌ Eye tracking error:', err)
+    console.error('Eye tracking error:', err)
     predictedData.value = null
     hasError.value = true
   } finally {
@@ -269,14 +407,122 @@ function processAnalytics(data) {
 
   totalPredictions.value = predictions.length
 
+  // Build summary metrics
   summaryMetrics.value = [
     {
       label: 'Total Predictions',
       value: totalPredictions.value,
-      progress: Math.min(totalPredictions.value, 300),
+      progress: Math.min(totalPredictions.value / 3, 100),
       color: 'indigo-darken-2',
       icon: 'mdi-eye-outline',
+      rating: ''
     },
+    {
+      label: 'Precision',
+      value: accuracyMetrics.value?.precision?.value
+        ? `${accuracyMetrics.value.precision.value.toFixed(2)}°`
+        : 'N/A',
+      progress: accuracyMetrics.value?.precision?.value
+        ? Math.max(0, 100 - accuracyMetrics.value.precision.value * 50)
+        : 50,
+      color: getMetricColor(accuracyMetrics.value?.precision?.rating),
+      icon: 'mdi-crosshairs-gps',
+      rating: accuracyMetrics.value?.precision?.rating || ''
+    },
+    {
+      label: 'Accuracy',
+      value: accuracyMetrics.value?.accuracy?.value
+        ? `${accuracyMetrics.value.accuracy.value.toFixed(2)}°`
+        : 'N/A',
+      progress: accuracyMetrics.value?.accuracy?.value
+        ? Math.max(0, 100 - accuracyMetrics.value.accuracy.value * 30)
+        : 50,
+      color: getMetricColor(accuracyMetrics.value?.accuracy?.rating),
+      icon: 'mdi-target',
+      rating: accuracyMetrics.value?.accuracy?.rating || ''
+    },
+    {
+      label: 'RMS Error',
+      value: accuracyMetrics.value?.rmsError?.value
+        ? `${accuracyMetrics.value.rmsError.value.toFixed(1)}px`
+        : 'N/A',
+      progress: accuracyMetrics.value?.rmsError?.value
+        ? Math.max(0, 100 - accuracyMetrics.value.rmsError.value)
+        : 50,
+      color: getMetricColor(accuracyMetrics.value?.rmsError?.rating),
+      icon: 'mdi-chart-line',
+      rating: accuracyMetrics.value?.rmsError?.rating || ''
+    }
   ]
+
+  // Build insights
+  buildInsights()
+}
+
+function buildInsights() {
+  insights.value = []
+
+  if (!accuracyMetrics.value) return
+
+  const m = accuracyMetrics.value
+
+  if (m.precision?.rating === 'poor') {
+    insights.value.push({
+      type: 'error',
+      color: 'red',
+      icon: 'mdi-alert',
+      text: 'Gaze precision is poor. Consider improving lighting or stabilizing head position.'
+    })
+  } else if (m.precision?.rating === 'good') {
+    insights.value.push({
+      type: 'success',
+      color: 'green',
+      icon: 'mdi-check',
+      text: 'Excellent gaze stability during the session.'
+    })
+  }
+
+  if (m.accuracy?.rating === 'poor') {
+    insights.value.push({
+      type: 'error',
+      color: 'red',
+      icon: 'mdi-alert',
+      text: 'Gaze accuracy is low. Recalibration may improve results.'
+    })
+  } else if (m.accuracy?.rating === 'good') {
+    insights.value.push({
+      type: 'success',
+      color: 'green',
+      icon: 'mdi-check',
+      text: 'Gaze tracking closely matches intended targets.'
+    })
+  }
+
+  if (m.dataLoss?.value > 15) {
+    insights.value.push({
+      type: 'warning',
+      color: 'orange',
+      icon: 'mdi-alert-circle',
+      text: `High data loss (${m.dataLoss.value.toFixed(1)}%). Check camera visibility.`
+    })
+  }
+
+  if (insights.value.length === 0) {
+    insights.value.push({
+      type: 'info',
+      color: 'blue',
+      icon: 'mdi-information',
+      text: 'Calibration quality is acceptable for research use.'
+    })
+  }
+}
+
+function getMetricColor(rating) {
+  const colors = {
+    good: 'green',
+    acceptable: 'orange',
+    poor: 'red'
+  }
+  return colors[rating] || 'grey'
 }
 </script>

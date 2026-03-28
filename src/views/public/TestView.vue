@@ -1,20 +1,20 @@
 <template>
   <div v-if="test">
-    <div v-if="test.testType == STUDY_TYPES.HEURISTIC">
+    <div v-if="test?.testType == STUDY_TYPES.HEURISTIC">
       <HeuristicTestView :id="id" :token="token" />
     </div>
     <div
       v-if="
-        test.testType == STUDY_TYPES.USER &&
-        test.subType === USER_STUDY_SUBTYPES.UNMODERATED
+        test?.testType == STUDY_TYPES.USER &&
+        test?.subType === USER_STUDY_SUBTYPES.UNMODERATED
       "
     >
       <UserTestView />
     </div>
     <div
       v-if="
-        test.testType === STUDY_TYPES.USER &&
-        test.subType === USER_STUDY_SUBTYPES.MODERATED
+        test?.testType === STUDY_TYPES.USER &&
+        test?.subType === USER_STUDY_SUBTYPES.MODERATED
       "
     >
       <ModeratedTestView ref="moderatedTestViewRef" :token="token" />

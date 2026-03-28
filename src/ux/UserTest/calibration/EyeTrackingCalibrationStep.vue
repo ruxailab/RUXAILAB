@@ -1,9 +1,11 @@
 <template>
-
     <CalibrationInProgressModal
-:is-open="calibrationInProgress" :is-completed="calibrationCompleted"
-        @close="emit('closeCalibration')" @open-calibration="emit('openCalibration')" />
-    <ShowInfo :title="$t('UserTestView.CalibrationStep.title')">
+      :is-open="calibrationInProgress && !showValidation" 
+      :is-completed="calibrationCompleted && !showValidation"
+      @close="handleModalClose" 
+      @open-calibration="emit('openCalibration')" 
+    />
+    <ShowInfo v-if="!showValidation" :title="$t('UserTestView.CalibrationStep.title')">
         <template #content>
             <div class="test-content pa-6 rounded-xl text-center">
                 <v-icon size="96" color="primary">mdi-eye</v-icon>
@@ -25,16 +27,21 @@ class="text-body-1 mt-4 mb-4 text-grey-darken-1"
             </div>
         </template>
     </ShowInfo>
+
+    <CalibrationValidation 
+      v-if="showValidation && calibrationCompleted"
+      @validation-complete="handleValidationComplete"
+    />
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import ShowInfo from '@/shared/components/ShowInfo.vue';
 import CalibrationInProgressModal from '@/ux/UserTest/components/CalibrationInProgressModal.vue';
 import StartCalibrationButton from '@/ux/UserTest/components/StartCalibrationButton.vue';
+import CalibrationValidation from './CalibrationValidation.vue';
 
-const emit = defineEmits(['done', 'openCalibration', 'closeCalibration']);
-
-const props = defineProps({
+defineProps({
     calibrationInProgress: {
         type: Boolean,
         default: false
@@ -44,5 +51,18 @@ const props = defineProps({
         default: false
     }
 });
+
+const emit = defineEmits(['done', 'openCalibration', 'closeCalibration']);
+const showValidation = ref(false);
+
+const handleModalClose = () => {
+    emit('closeCalibration');
+    showValidation.value = true;
+};
+
+const handleValidationComplete = (results) => {
+    showValidation.value = false;
+    emit('done', results);
+};
 
 </script>

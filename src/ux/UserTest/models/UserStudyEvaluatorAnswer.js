@@ -16,7 +16,9 @@ export default class UserStudyEvaluatorAnswer {
     userDocId,
     lastUpdate,
     invited,
-    hidden
+    hidden,
+    sessionNotes,
+    calibrationValidation
   } = {}) {
     this.preTestAnswer = preTestAnswer ?? []
     this.consent = consent ?? ''
@@ -32,15 +34,15 @@ export default class UserStudyEvaluatorAnswer {
     this.userDocId = userDocId ?? null
     this.lastUpdate = lastUpdate ?? null
     this.invited = invited ?? false
-    this.invited = invited ?? false
     this.hidden = hidden ?? false
-    this.sessionNotes = [] // [{ text, timestamp, taskIndex, authorId }]
+    this.sessionNotes = sessionNotes ?? [] // [{ text, timestamp, taskIndex, authorId }]
+    this.calibrationValidation = calibrationValidation ?? null
   }
   static toModel(data) {
     return new UserStudyEvaluatorAnswer({
       ...data,
       tasks: Object.fromEntries(
-        Object.entries(data.tasks).map(([key, value]) => [
+        Object.entries(data?.tasks || {}).map(([key, value]) => [
           key,
           TaskAnswer.toModel(value),
         ]),
@@ -69,7 +71,8 @@ export default class UserStudyEvaluatorAnswer {
       lastUpdate: this.lastUpdate,
       invited: this.invited,
       hidden: this.hidden,
-      sessionNotes: this.sessionNotes
+      sessionNotes: this.sessionNotes,
+      calibrationValidation: this.calibrationValidation
     }
   }
 }

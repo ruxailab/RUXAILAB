@@ -11,9 +11,21 @@ import { showError } from '@/shared/utils/toast'
 const authController = new AuthController()
 const userController = new UserController()
 
+const mockUser = {
+  id: 'mock-admin',
+  email: 'admin@ruxailab.com',
+  username: 'Mock Admin',
+  accessLevel: 0,
+  emailVerified: true,
+  notifications: [],
+  myAnswers: {},
+  myTests: {},
+  storageUsageMB: 0,
+}
+
 export default {
   state: {
-    user: null,
+    user: mockUser,
   },
 
   getters: {
@@ -206,26 +218,9 @@ export default {
     },
 
     async autoSignIn({ commit }) {
-      try {
-        const user = await authController.autoSignIn()
-        if (!user) return
-
-        // Check if email is verified
-        if (!user.emailVerified) {
-          // User is logged in but email not verified
-          // Don't set them as fully authenticated, but allow access to verify-email page
-          return user
-        }
-
-        const dbUser = await userController.getById(user.uid)
-        commit('SET_USER', dbUser)
-      } catch (e) {
-        commit('SET_TOAST', {
-          message: i18n.global.t('errors.globalError'),
-          type: 'error',
-        })
-        return e
-      }
+      // Use mock user to skip login in development
+      commit('SET_USER', mockUser)
+      return mockUser
     },
 
     async resetPassword({ commit }, payload) {

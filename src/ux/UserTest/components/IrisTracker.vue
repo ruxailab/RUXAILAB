@@ -6,6 +6,12 @@
 import { ref, watch, onMounted, onBeforeUnmount, toRaw, computed } from 'vue'
 import { useStore } from 'vuex'
 
+// Filter imports
+import KalmanFilter from '../calibration/filters/KalmanFilter.js'
+import MovingAverageFilter from '../calibration/filters/MovingAverageFilter.js'
+import SavitzkyGolayFilter from '../calibration/filters/SavitzkyGolayFilter.js'
+import OneEuroFilter from '../calibration/filters/OneEuroFilter.js'
+
 let tf
 let faceLandmarksDetection
 
@@ -29,14 +35,39 @@ const loadDependencies = async (store) => {
   }
 }
 
+/**
+ * Create filter instance based on type
+ * @param {string} filterType
+ * @param {Object} filterConfig
+ * @returns {Object} filter instance
+ */
+const createFilter = (filterType, filterConfig) => {
+  switch (filterType) {
+    case 'kalman':
+      return new KalmanFilter(filterConfig)
+    case 'movingaverage':
+      return new MovingAverageFilter(filterConfig)
+    case 'savitzkygolay':
+      return new SavitzkyGolayFilter(filterConfig)
+    case 'oneeuro':
+      return new OneEuroFilter(filterConfig)
+    default:
+      return new KalmanFilter(filterConfig) // Default to Kalman
+  }
+}
+
 const props = defineProps({
   msPerCapture: { type: Number, default: 100 },
   isRunning: { type: Boolean, default: false },
   testId: { type: String, required: true },
   taskIndex: { type: Number, required: true },
+  // Filter configuration props
+  useFilter: { type: Boolean, default: true },
+  filterType: { type: String, default: 'kalman' }, // 'kalman' | 'movingaverage' | 'savitzkygolay' | 'oneeuro'
+  filterConfig: { type: Object, default: () => ({}) },
 })
 
-const emit = defineEmits(['faceData', 'screenRecording'])
+const emit = defineEmits(['faceData', 'rawGaze', 'filteredGaze', 'screenRecording'])
 
 const store = useStore()
 const currentUserTestAnswer = computed(
@@ -47,6 +78,47 @@ const videoRef = ref(null)
 const mediaStream = ref(null)
 const model = ref(null)
 let trackingLoop = null
+
+// Filter state
+const gazeFilter = ref(null)
+const leftEyeFilter = ref(null)
+const rightEyeFilter = ref(null)
+
+/**
+ * Initialize or update filters based on props
+ */
+const initializeFilters = () => {
+  if (!props.useFilter) {
+    gazeFilter.value = null
+    leftEyeFilter.value = null
+    rightEyeFilter.value = null
+    return
+  }
+
+  const config = props.filterConfig || {}
+  leftEyeFilter.value = createFilter(props.filterType, { ...config, id: 'left' })
+  rightEyeFilter.value = createFilter(props.filterType, { ...config, id: 'right' })
+}
+
+/**
+ * Apply filter to gaze point
+ * @param {Object} gazePoint - raw gaze { x, y }
+ * @param {Object} filter - filter instance
+ * @param {number} timestamp
+ * @returns {Object} filtered gaze
+ */
+const applyFilter = (gazePoint, filter, timestamp) => {
+  if (!filter) return gazePoint
+  return filter.filter(gazePoint, timestamp)
+}
+
+/**
+ * Reset all filters
+ */
+const resetFilters = () => {
+  if (leftEyeFilter.value) leftEyeFilter.value.reset()
+  if (rightEyeFilter.value) rightEyeFilter.value.reset()
+}
 
 watch(
   () => props.isRunning,
@@ -59,6 +131,19 @@ watch(
     }
   },
 )
+
+watch(
+  () => [props.useFilter, props.filterType, props.filterConfig],
+  () => {
+    initializeFilters()
+    resetFilters()
+  },
+  { deep: true }
+)
+
+onMounted(() => {
+  initializeFilters()
+})
 
 onBeforeUnmount(() => {
   stopTracking()
@@ -121,13 +206,45 @@ const startTracking = async () => {
       })
       if (predictions.length > 0) {
         const keypoints = predictions[0].keypoints
-        emit('faceData', {
-          timestamp: Date.now(),
+        const timestamp = Date.now()
+
+        // Raw gaze data
+        const rawGaze = {
+          timestamp,
           left_iris_x: keypoints[468]?.x,
           left_iris_y: keypoints[468]?.y,
           right_iris_x: keypoints[473]?.x,
           right_iris_y: keypoints[473]?.y,
-        })
+        }
+
+        // Apply filters if enabled
+        if (props.useFilter && leftEyeFilter.value && rightEyeFilter.value) {
+          const leftFiltered = applyFilter(
+            { x: rawGaze.left_iris_x, y: rawGaze.left_iris_y },
+            leftEyeFilter.value,
+            timestamp
+          )
+          const rightFiltered = applyFilter(
+            { x: rawGaze.right_iris_x, y: rawGaze.right_iris_y },
+            rightEyeFilter.value,
+            timestamp
+          )
+
+          // Emit filtered gaze
+          emit('filteredGaze', {
+            timestamp,
+            left_iris_x: leftFiltered.x,
+            left_iris_y: leftFiltered.y,
+            right_iris_x: rightFiltered.x,
+            right_iris_y: rightFiltered.y,
+          })
+        }
+
+        // Emit raw gaze
+        emit('rawGaze', rawGaze)
+
+        // Original faceData emit for backwards compatibility
+        emit('faceData', rawGaze)
       }
     } catch (err) {
       console.error('Erro durante rastreamento:', err)

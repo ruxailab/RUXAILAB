@@ -14,6 +14,7 @@ import automaticReport from '@/ux/accessibility/store/automaticReport'
 import UserStudy from '@/ux/UserTest/store/UserStudy'
 import notification from '@/features/notifications/store/notification'
 import CardStudy from '@/ux/CardSorting/stores/CardStudy'
+import EyeTracking from '@/store/modules/EyeTracking'
 
 export default createStore({
   state: {
@@ -91,6 +92,7 @@ export default createStore({
     automaticReport,
     UserStudy,
     CardStudy,
+    EyeTracking,
     notification,
   },
 })
