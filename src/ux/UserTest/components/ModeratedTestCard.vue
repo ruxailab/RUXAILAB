@@ -1,5 +1,5 @@
 <template>
-  <v-card class="d-flex align-center pa-2 my-2">
+  <v-card class="d-flex align-center pa-3 my-3">
     <!-- Moderator -->
     <v-avatar
       size="48"
@@ -9,10 +9,10 @@
       <span class="text-h5">{{ moderator.name[0] }}</span>
     </v-avatar>
     <v-card-text class="ml-3">
-      <div class="font-weight-bold">
+      <div class="name">
         {{ moderator.name }}
       </div>
-      <div class="text-caption text-grey">
+      <div class="role">
         Moderator
       </div>
     </v-card-text>
@@ -51,5 +51,18 @@ const props = defineProps({
 </script>
   
 <style scoped>
-
+.card {
+  border-radius: 12px;
+  transition: 0.2s ease;
+}
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,1);
+}
+.role {
+  font-size: 12px;
+  color: #888;
+}
+.name {
+  font-weight: 600;
+}
 </style>
