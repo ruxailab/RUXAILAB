@@ -1209,6 +1209,7 @@
       "noTasks": "Esta prueba no tiene ninguna tarea.",
       "answerSaved": "Respuesta guardada con éxito.",
       "taskCompletedSuccess": "¡Tarea \"{taskName}\" completada exitosamente!",
+      "taskNotCompleted": "No se pudo completar la tarea \"{taskName}\".",
       "useSessionLinkModerated": "Usa un enlace de sesión para acceder a tu prueba moderada.",
       "useSessionLink": "Usa un enlace de sesión para acceder a la prueba"
     },
@@ -1220,7 +1221,9 @@
       "noTestDataMessage": "No se pudo cargar la información de la prueba. Por favor, inténtalo de nuevo más tarde.",
       "failedToCompleteStep": "Error al completar el paso. Por favor, inténtalo de nuevo.",
       "failedToInitializeTestData": "Error al inicializar los datos de la prueba. Por favor, inténtalo de nuevo.",
-      "loginRequired": "Inicia sesión primero en tu cuenta de RUXAILAB para acceder a la prueba."
+      "loginRequired": "Inicia sesión primero en tu cuenta de RUXAILAB para acceder a la prueba.",
+      "timerIndexNotFound": "An error occurred while saving the task time.",
+      "taskNotFound": "Task not found. Please try again."
     },
     "CalibrationInProgressModal": {
       "completed": "¡Calibración completada!",

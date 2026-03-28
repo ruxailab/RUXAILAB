@@ -1207,6 +1207,7 @@
       "noTasks": "此测试没有任务。",
       "answerSaved": "答案保存成功。",
       "taskCompletedSuccess": "任务\"{taskName}\"已成功完成！",
+      "taskNotCompleted": "任务 \"{taskName}\" 未能完成。",
       "useSessionLinkModerated": "使用会话链接访问您的主持测试！",
       "useSessionLink": "使用会话链接访问测试"
     },
@@ -1218,7 +1219,9 @@
       "noTestDataMessage": "无法加载测试信息。请稍后再试。",
       "failedToCompleteStep": "完成步骤失败。请重试。",
       "failedToInitializeTestData": "初始化测试数据失败。请重试。",
-      "loginRequired": "请先登录您的 RUXAILAB 账户以访问测试！"
+      "loginRequired": "请先登录您的 RUXAILAB 账户以访问测试！",
+      "timerIndexNotFound": "An error occurred while saving the task time.",
+      "taskNotFound": "Task not found. Please try again."
     },
     "CalibrationInProgressModal": {
       "completed": "校准完成！",

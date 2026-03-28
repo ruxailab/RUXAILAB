@@ -1211,6 +1211,7 @@
       "answerSaved": "Antwort erfolgreich gespeichert.",
       "taskCompletedSuccess": "Aufgabe \"{taskName}\" erfolgreich abgeschlossen!",
       "useSessionLinkModerated": "Verwenden Sie einen Sitzungslink, um auf Ihren moderierten Test zuzugreifen!",
+      "taskNotCompleted": "Die Aufgabe \"{taskName}\" konnte nicht abgeschlossen werden.",
       "useSessionLink": "Verwenden Sie einen Sitzungslink, um auf den Test zuzugreifen"
     },
     "errors": {
@@ -1221,7 +1222,9 @@
       "noTestDataMessage": "Testinformationen konnten nicht geladen werden. Bitte versuchen Sie es später erneut.",
       "failedToCompleteStep": "Fehler beim Abschließen des Schritts. Bitte versuchen Sie es erneut.",
       "failedToInitializeTestData": "Fehler beim Initialisieren der Testdaten. Bitte versuchen Sie es erneut.",
-      "loginRequired": "Bitte melden Sie sich zuerst bei Ihrem RUXAILAB-Konto an, um auf den Test zuzugreifen!"
+      "loginRequired": "Bitte melden Sie sich zuerst bei Ihrem RUXAILAB-Konto an, um auf den Test zuzugreifen!",
+      "timerIndexNotFound": "An error occurred while saving the task time.",
+      "taskNotFound": "Task not found. Please try again."
     },
     "CalibrationInProgressModal": {
       "completed": "Kalibrierung abgeschlossen!",

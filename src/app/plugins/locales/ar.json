@@ -1207,6 +1207,7 @@
       "noTasks": "هذا الاختبار ليس لديه أي مهام.",
       "answerSaved": "تم حفظ الإجابة بنجاح.",
       "taskCompletedSuccess": "تم إكمال المهمة \"{taskName}\" بنجاح!",
+      "taskNotCompleted": "تعذّر إكمال المهمة \"{taskName}\".",
       "useSessionLinkModerated": "استخدم رابط الجلسة للوصول إلى الاختبار المُدار!",
       "useSessionLink": "استخدم رابط الجلسة للوصول إلى الاختبار"
     },
@@ -1218,7 +1219,9 @@
       "noTestDataMessage": "تعذر تحميل معلومات الاختبار. يرجى المحاولة مرة أخرى لاحقًا.",
       "failedToCompleteStep": "فشل في إكمال الخطوة. يرجى المحاولة مرة أخرى.",
       "failedToInitializeTestData": "فشل في تهيئة بيانات الاختبار. يرجى المحاولة مرة أخرى.",
-      "loginRequired": "يرجى تسجيل الدخول إلى حساب RUXAILAB الخاص بك أولاً للوصول إلى الاختبار!"
+      "loginRequired": "يرجى تسجيل الدخول إلى حساب RUXAILAB الخاص بك أولاً للوصول إلى الاختبار!",
+      "timerIndexNotFound": "An error occurred while saving the task time.",
+      "taskNotFound": "Task not found. Please try again."
     },
     "CalibrationInProgressModal": {
       "completed": "اكتملت المعايرة!",

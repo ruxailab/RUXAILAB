@@ -1207,6 +1207,7 @@
       "noTasks": "В этом тесте нет задач.",
       "answerSaved": "Ответ успешно сохранен.",
       "taskCompletedSuccess": "Задача \"{taskName}\" успешно завершена!",
+      "taskNotCompleted": "Не удалось завершить задачу \"{taskName}\".",
       "useSessionLinkModerated": "Используйте ссылку на сессию, чтобы получить доступ к модерируемому тесту!",
       "useSessionLink": "Используйте ссылку на сессию, чтобы получить доступ к тесту"
     },
@@ -1218,7 +1219,9 @@
       "noTestDataMessage": "Не удалось загрузить информацию о тесте. Пожалуйста, попробуйте еще раз позже.",
       "failedToCompleteStep": "Не удалось завершить шаг. Пожалуйста, попробуйте еще раз.",
       "failedToInitializeTestData": "Не удалось инициализировать данные теста. Пожалуйста, попробуйте еще раз.",
-      "loginRequired": "Пожалуйста, сначала войдите в свою учетную запись RUXAILAB, чтобы получить доступ к тесту!"
+      "loginRequired": "Пожалуйста, сначала войдите в свою учетную запись RUXAILAB, чтобы получить доступ к тесту!",
+      "timerIndexNotFound": "An error occurred while saving the task time.",
+      "taskNotFound": "Task not found. Please try again."
     },
     "CalibrationInProgressModal": {
       "completed": "Калибровка завершена!",
