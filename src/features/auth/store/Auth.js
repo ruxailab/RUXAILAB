@@ -11,21 +11,9 @@ import { showError } from '@/shared/utils/toast'
 const authController = new AuthController()
 const userController = new UserController()
 
-const mockUser = {
-  id: 'mock-admin',
-  email: 'admin@ruxailab.com',
-  username: 'Mock Admin',
-  accessLevel: 0,
-  emailVerified: true,
-  notifications: [],
-  myAnswers: {},
-  myTests: {},
-  storageUsageMB: 0,
-}
-
 export default {
   state: {
-    user: mockUser,
+    user: null,
   },
 
   getters: {
@@ -218,9 +206,23 @@ export default {
     },
 
     async autoSignIn({ commit }) {
-      // Use mock user to skip login in development
-      commit('SET_USER', mockUser)
-      return mockUser
+      return new Promise((resolve) => {
+        authController.onAuthStateChanged(async (userData) => {
+          if (userData) {
+            try {
+              const dbUser = await userController.getById(userData.uid)
+              commit('SET_USER', dbUser)
+              resolve(dbUser)
+            } catch (error) {
+              commit('SET_USER', null)
+              resolve(null)
+            }
+          } else {
+            commit('SET_USER', null)
+            resolve(null)
+          }
+        })
+      })
     },
 
     async resetPassword({ commit }, payload) {
