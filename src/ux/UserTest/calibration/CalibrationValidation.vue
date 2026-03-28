@@ -138,7 +138,8 @@ const handleFaceData = (data) => {
     // Generate mock mapped screen coordinates centered around the true target 
     // to simulate the output of a real regression model mapping face mesh to screen
     const target = dots.value[currentDotIndex.value];
-    const noise = Math.random() * 30 - 15;
+    const randomValue = window.crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
+    const noise = randomValue * 30 - 15;
     
     // In a real scenario, applying Kalman + regression model:
     const mockScreenX = target.x + (data.left_iris_x ? noise : 0);
@@ -162,7 +163,7 @@ const handleFaceData = (data) => {
 const calculateMetrics = async () => {
   isCalculating.value = true;
   try {
-    const backendUrl = process.env.VUE_APP_EYE_LAB_BACKEND_URL || 'http://127.0.0.1:5001/ruxailab/us-central1'
+    const backendUrl = process.env.VUE_APP_EYE_LAB_BACKEND_URL;
     const response = await fetch(`${backendUrl}/calculate_accuracy_metrics`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
