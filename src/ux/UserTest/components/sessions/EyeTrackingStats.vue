@@ -8,9 +8,9 @@
     <!-- Header -->
     <v-row class="mb-4" align="center" justify="space-between">
       <v-col cols="auto">
-        <h3 class="text-h5 font-weight-bold mb-1">Eye Tracking Analytics</h3>
+        <h3 class="text-h5 font-weight-bold mb-1">{{ $t('EyeTrackingStats.title') }}</h3>
         <div class="text-body-2 text-grey">
-          Gaze precision and prediction insights
+          {{ $t('EyeTrackingStats.subtitle') }}
         </div>
       </v-col>
       <v-col cols="auto">
@@ -21,9 +21,9 @@
         >
           {{
             isAnalyzing
-              ? 'Analyzing...'
+              ? $t('EyeTrackingStats.analyzing')
               : hasError
-              ? 'Analysis Failed'
+              ? $t('EyeTrackingStats.analysisFailed')
               : qualityLabel
           }}
         </v-chip>
@@ -40,10 +40,10 @@
       <v-col cols="auto" class="text-center">
         <v-progress-circular indeterminate size="64" color="primary" />
         <div class="mt-3 text-body-1 font-weight-medium">
-          Analyzing gaze data...
+          {{ $t('EyeTrackingStats.analyzingGaze') }}
         </div>
         <div class="mt-1 text-body-2 text-grey-darken-1">
-          This may take a few seconds
+          {{ $t('EyeTrackingStats.loadingSubtitle') }}
         </div>
       </v-col>
     </v-row>
@@ -52,9 +52,9 @@
     <v-row v-else-if="hasError" justify="center" align="center" class="my-12">
       <v-col cols="auto" class="text-center">
         <v-icon size="64" color="red-darken-2">mdi-alert-circle-outline</v-icon>
-        <div class="mt-3 text-body-1 font-weight-medium">Analysis failed</div>
+        <div class="mt-3 text-body-1 font-weight-medium">{{ $t('EyeTrackingStats.analysisFailed') }}</div>
         <div class="mt-1 text-body-2 text-grey-darken-1">
-          Could not process gaze data. Please try again later.
+          {{ $t('EyeTrackingStats.errorMsg') }}
         </div>
       </v-col>
     </v-row>
@@ -74,7 +74,7 @@
               </v-icon>
             </v-col>
             <v-col>
-              <div class="text-h6 font-weight-bold">Calibration Quality</div>
+              <div class="text-h6 font-weight-bold">{{ $t('EyeTrackingStats.calibrationQuality') }}</div>
               <div class="text-body-2 text-grey">{{ qualityDescription }}</div>
             </v-col>
             <v-col cols="auto">
@@ -111,7 +111,7 @@
       <v-col v-if="driftStatus" cols="12" md="6">
         <v-card class="pa-4" elevation="2" rounded="xl">
           <div class="d-flex justify-space-between align-center mb-2">
-            <span class="font-weight-medium text-grey-darken-1">Drift Status</span>
+            <span class="font-weight-medium text-grey-darken-1">{{ $t('EyeTrackingStats.driftStatus') }}</span>
             <v-icon :color="driftStatus.color">{{ driftStatus.icon }}</v-icon>
           </div>
           <div class="text-h6 font-weight-bold">{{ driftStatus.label }}</div>
@@ -135,7 +135,7 @@
       <v-col v-if="filterInfo" cols="12" md="6">
         <v-card class="pa-4" elevation="2" rounded="xl">
           <div class="d-flex justify-space-between align-center mb-2">
-            <span class="font-weight-medium text-grey-darken-1">Active Filter</span>
+            <span class="font-weight-medium text-grey-darken-1">{{ $t('EyeTrackingStats.activeFilter') }}</span>
             <v-icon color="green">mdi-filter</v-icon>
           </div>
           <div class="text-h6 font-weight-bold">{{ filterInfo.type }}</div>
@@ -149,7 +149,7 @@
       <v-col cols="12" md="12">
         <v-card class="pa-4" elevation="2" rounded="xl">
           <h4 class="text-subtitle-1 font-weight-medium mb-3">
-            Prediction Overview
+            {{ $t('EyeTrackingStats.predictionOverview') }}
           </h4>
 
           <v-btn-toggle
@@ -178,7 +178,7 @@
               >
                 mdi-crosshairs-gps
               </v-icon>
-              Prediction Points
+              {{ $t('EyeTrackingStats.predictionPoints') }}
             </v-btn>
 
             <v-btn
@@ -201,7 +201,7 @@
               >
                 mdi-fire
               </v-icon>
-              Heatmap
+              {{ $t('EyeTrackingStats.heatmap') }}
             </v-btn>
 
             <v-btn
@@ -220,7 +220,7 @@
               >
                 mdi-eye
               </v-icon>
-              Free Eye
+              {{ $t('EyeTrackingStats.freeEye') }}
             </v-btn>
           </v-btn-toggle>
         </v-card>
@@ -229,7 +229,7 @@
       <!-- Insights -->
       <v-col cols="12" md="12">
         <v-card class="pa-4" elevation="2" rounded="xl">
-          <h4 class="text-subtitle-1 font-weight-medium mb-3">Key Insights</h4>
+          <h4 class="text-subtitle-1 font-weight-medium mb-3">{{ $t('EyeTrackingStats.keyInsights') }}</h4>
           <v-row>
             <v-col v-for="(insight, index) in insights" :key="index" cols="12">
               <v-alert
@@ -324,7 +324,7 @@ const qualityIcon = computed(() => {
 })
 
 const qualityDescription = computed(() => {
-  if (!accuracyMetrics.value) return 'No calibration data available'
+  if (!accuracyMetrics.value) return $t('EyeTrackingStats.noCalibrationData')
   const m = accuracyMetrics.value
   return `Precision: ${m.precision?.value?.toFixed(2) || 'N/A'}° | Accuracy: ${m.accuracy?.value?.toFixed(2) || 'N/A'}°`
 })
@@ -333,31 +333,9 @@ watch(selectedView, (value) => emit('view-changed', value))
 
 onMounted(async () => {
   try {
-    console.log(calibrationConfig)
-
-    // Try to get advanced metrics from backend
-    try {
-      const metricsRes = await axios.post(
-        process.env.VUE_APP_EYE_LAB_BACKEND_URL + '/api/eyeTracking/calibrate',
-        {
-          calibration_data: props.irisData.map(d => ({
-            gaze: { x: d.left_iris_x || 0, y: d.left_iris_y || 0 },
-            target: { x: 960, y: 540 } // Center as default
-          })),
-          screen_width: 1920,
-          screen_height: 1080,
-          dry_run: true
-        },
-        { headers: { 'Content-Type': 'application/json' } }
-      )
-
-      if (metricsRes.data && metricsRes.data.metrics) {
-        accuracyMetrics.value = metricsRes.data.metrics
-      }
-    } catch (metricsErr) {
-      console.warn('Could not fetch advanced metrics:', metricsErr)
-    }
-
+    // Skip redundant metrics calculation during session analytics to avoid misleading accuracy data
+    // as targets are unknown during the test session. Rely on calibration results instead.
+    
     const res = await axios.post(
       process.env.VUE_APP_EYE_LAB_BACKEND_URL + '/api/session/batch_predict',
       {

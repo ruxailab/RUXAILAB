@@ -1,0 +1,23 @@
+
+Oops! Something went wrong! :(
+
+ESLint: 8.57.1
+
+TypeError: Converting circular structure to JSON
+    --> starting at object with constructor 'Object'
+    |     property 'plugins' -> object with constructor 'Object'
+    |     property '@intlify/vue-i18n' -> object with constructor 'Object'
+    |     ...
+    |     property 'base' -> object with constructor 'Array'
+    --- index 0 closes the circle
+Referenced from: C:\Users\rushi\OneDrive\Desktop\RUXAILAB\.eslintrc.js
+    at JSON.stringify (<anonymous>)
+    at C:\Users\rushi\OneDrive\Desktop\RUXAILAB\node_modules\eslint\node_modules\@eslint\eslintrc\dist\eslintrc.cjs:2156:45
+    at Array.map (<anonymous>)
+    at ConfigValidator.formatErrors (C:\Users\rushi\OneDrive\Desktop\RUXAILAB\node_modules\eslint\node_modules\@eslint\eslintrc\dist\eslintrc.cjs:2147:23)
+    at ConfigValidator.validateConfigSchema (C:\Users\rushi\OneDrive\Desktop\RUXAILAB\node_modules\eslint\node_modules\@eslint\eslintrc\dist\eslintrc.cjs:2177:84)
+    at ConfigArrayFactory._normalizeConfigData (C:\Users\rushi\OneDrive\Desktop\RUXAILAB\node_modules\eslint\node_modules\@eslint\eslintrc\dist\eslintrc.cjs:3019:19)
+    at ConfigArrayFactory._loadExtendedPluginConfig (C:\Users\rushi\OneDrive\Desktop\RUXAILAB\node_modules\eslint\node_modules\@eslint\eslintrc\dist\eslintrc.cjs:3239:25)
+    at ConfigArrayFactory._loadExtends (C:\Users\rushi\OneDrive\Desktop\RUXAILAB\node_modules\eslint\node_modules\@eslint\eslintrc\dist\eslintrc.cjs:3154:29)
+    at ConfigArrayFactory._normalizeObjectConfigDataBody (C:\Users\rushi\OneDrive\Desktop\RUXAILAB\node_modules\eslint\node_modules\@eslint\eslintrc\dist\eslintrc.cjs:3095:25)
+    at _normalizeObjectConfigDataBody.next (<anonymous>)

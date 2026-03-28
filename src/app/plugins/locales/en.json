@@ -1289,6 +1289,7 @@
       "useSessionLink": "Use a session link to access the test"
     },
     "errors": {
+      "timerError": "Error recording task time",
       "noAnswerData": "No answer data found.",
       "failedToSaveAnswer": "Failed to save the answer. Please try again.",
       "failedToSubmitAnswer": "Failed to submit the answer. Please try again.",
@@ -2403,5 +2404,39 @@
     "selectedGuidelines": "Selected Guidelines:",
     "rawWcagDataAvailable": "Raw WCAG Data Available:",
     "filteredWcagDataAvailable": "Filtered WCAG Data Available:"
+  },
+  "CalibrationValidation": {
+    "title": "Eye-Tracking Validation",
+    "description": "To ensure high accuracy during the test, we need to validate your calibration. Please look directly at the red dots as they appear on the screen.",
+    "startButton": "Start Validation",
+    "phase": "Validation Phase",
+    "pointInfo": "Point {current} of {total}",
+    "complete": "Validation Complete",
+    "analyzing": "Analyzing gaze accuracy...",
+    "results": {
+      "accuracy": "Accuracy (Offset)",
+      "precision": "Precision (Jitter)"
+    },
+    "sufficientQuality": "Your calibration quality is sufficient. You can now proceed to the main task.",
+    "continueButton": "Continue to Tasks"
+  },
+  "EyeTrackingStats": {
+    "title": "Eye Tracking Analytics",
+    "subtitle": "Gaze precision and prediction insights",
+    "analyzing": "Analyzing...",
+    "analyzingGaze": "Analyzing gaze data...",
+    "loadingSubtitle": "This may take a few seconds",
+    "analysisFailed": "Analysis Failed",
+    "calibrationQuality": "Calibration Quality",
+    "driftStatus": "Drift Status",
+    "activeFilter": "Active Filter",
+    "predictionOverview": "Prediction Overview",
+    "predictionPoints": "Prediction Points",
+    "heatmap": "Heatmap",
+    "freeEye": "Free Eye",
+    "keyInsights": "Key Insights",
+    "errorMsg": "Could not process gaze data. Please try again later.",
+    "noCalibrationData": "No calibration data available",
+    "analysisComplete": "Analysis Complete"
   }
 }

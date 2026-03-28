@@ -157,19 +157,24 @@ export default class KalmanFilter extends SignalFilter {
 
   // Matrix operations
   _matVecMul(M, v) {
-    return [
-      M[0][0] * v[0] + M[0][1] * v[1] + M[0][2] * v[2] + M[0][3] * v[3],
-      M[1][0] * v[0] + M[1][1] * v[1] + M[1][2] * v[2] + M[1][3] * v[3],
-      M[2][0] * v[0] + M[2][1] * v[1] + M[2][2] * v[2] + M[2][3] * v[3],
-      M[3][0] * v[0] + M[3][1] * v[1] + M[3][2] * v[2] + M[3][3] * v[3]
-    ]
+    const rows = M.length
+    const result = new Array(rows).fill(0)
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < M[i].length; j++) {
+        result[i] += M[i][j] * v[j]
+      }
+    }
+    return result
   }
 
   _matMul(A, B) {
-    const result = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
-    for (let i = 0; i < 4; i++) {
-      for (let j = 0; j < 4; j++) {
-        for (let k = 0; k < 4; k++) {
+    const rowsA = A.length
+    const colsA = A[0].length
+    const colsB = B[0].length
+    const result = Array.from({ length: rowsA }, () => new Array(colsB).fill(0))
+    for (let i = 0; i < rowsA; i++) {
+      for (let j = 0; j < colsB; j++) {
+        for (let k = 0; k < colsA; k++) {
           result[i][j] += A[i][k] * B[k][j]
         }
       }
@@ -178,32 +183,23 @@ export default class KalmanFilter extends SignalFilter {
   }
 
   _transpose(M) {
-    return [
-      [M[0][0], M[1][0], M[2][0], M[3][0]],
-      [M[0][1], M[1][1], M[2][1], M[3][1]],
-      [M[0][2], M[1][2], M[2][2], M[3][2]],
-      [M[0][3], M[1][3], M[2][3], M[3][3]]
-    ]
+    const rows = M.length
+    const cols = M[0].length
+    const result = Array.from({ length: cols }, () => new Array(rows))
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        result[j][i] = M[i][j]
+      }
+    }
+    return result
   }
 
   _matAdd(A, B) {
-    const result = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
-    for (let i = 0; i < 4; i++) {
-      for (let j = 0; j < 4; j++) {
-        result[i][j] = A[i][j] + B[i][j]
-      }
-    }
-    return result
+    return A.map((row, i) => row.map((val, j) => val + B[i][j]))
   }
 
   _matSub(A, B) {
-    const result = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
-    for (let i = 0; i < 4; i++) {
-      for (let j = 0; j < 4; j++) {
-        result[i][j] = A[i][j] - B[i][j]
-      }
-    }
-    return result
+    return A.map((row, i) => row.map((val, j) => val - B[i][j]))
   }
 
   _scaleMat(s, M) {

@@ -263,9 +263,9 @@ export default class CalibrationResult {
       id: this.calibrationId,
       timestamp: this.timestamp,
       quality: this.qualityRating,
-      precision: this.metrics.precision ? `${this.metrics.precision.toFixed(2)}°` : 'N/A',
-      accuracy: this.metrics.accuracy ? `${this.metrics.accuracy.toFixed(2)}°` : 'N/A',
-      rmsError: this.metrics.rmsError ? `${this.metrics.rmsError.toFixed(1)}px` : 'N/A',
+      precision: this.metrics.precision != null ? `${this.metrics.precision.toFixed(2)}°` : 'N/A',
+      accuracy: this.metrics.accuracy != null ? `${this.metrics.accuracy.toFixed(2)}°` : 'N/A',
+      rmsError: this.metrics.rmsError != null ? `${this.metrics.rmsError.toFixed(1)}px` : 'N/A',
       status: this.status,
       isExpired: this.isExpired()
     }

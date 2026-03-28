@@ -35,11 +35,11 @@ class="text-body-1 mt-4 mb-4 text-grey-darken-1"
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import ShowInfo from '@/shared/components/ShowInfo.vue';
-import CalibrationInProgressModal from '@/ux/UserTest/components/CalibrationInProgressModal.vue';
-import StartCalibrationButton from '@/ux/UserTest/components/StartCalibrationButton.vue';
-import CalibrationValidation from './CalibrationValidation.vue';
+import { ref } from 'vue'
+import ShowInfo from '@/shared/components/ShowInfo.vue'
+import CalibrationInProgressModal from '@/ux/UserTest/components/CalibrationInProgressModal.vue'
+import StartCalibrationButton from '@/ux/UserTest/components/StartCalibrationButton.vue'
+import CalibrationValidation from './CalibrationValidation.vue'
 
 defineProps({
     calibrationInProgress: {
@@ -50,19 +50,19 @@ defineProps({
         type: Boolean,
         default: false
     }
-});
+})
 
-const emit = defineEmits(['done', 'openCalibration', 'closeCalibration']);
-const showValidation = ref(false);
+const emit = defineEmits(['done', 'openCalibration', 'closeCalibration'])
+const showValidation = ref(false)
 
 const handleModalClose = () => {
-    emit('closeCalibration');
-    showValidation.value = true;
-};
+    emit('closeCalibration')
+    showValidation.value = true
+}
 
 const handleValidationComplete = (results) => {
-    showValidation.value = false;
-    emit('done', results);
-};
+    showValidation.value = false
+    emit('done', results)
+}
 
 </script>

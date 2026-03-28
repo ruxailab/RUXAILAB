@@ -959,13 +959,13 @@ const handleTimerStopped = (elapsedTime, idx) => {
     } else {
       store.commit('SET_TOAST', {
         type: 'error',
-        message: t('errors.globalError') || 'Error recording task time',
+        message: t('UserTestView.errors.timerError'),
       })
     }
   } else {
     store.commit('SET_TOAST', {
       type: 'error',
-      message: t('errors.globalError') || 'Error recording task time',
+      message: t('UserTestView.errors.timerError'),
     })
   }
 }
@@ -1035,7 +1035,7 @@ const completeStep = (id, type, userCompleted = true) => {
       if (userCompleted) {
         store.commit('SET_TOAST', {
           type: 'success',
-          message: `Task "${test.value.testStructure.userTasks[id].taskName}" completed successfully!`,
+          message: t('UserTestView.messages.taskCompletedSuccess', { taskName: test.value.testStructure.userTasks[id].taskName }),
           timeout: 3000,
         })
       }
