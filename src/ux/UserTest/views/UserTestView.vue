@@ -728,14 +728,13 @@ const openCalibration = () => {
 
 const closeCalibration = () => {
   calibrationInProgress.value = false
-  completeStep(taskIndex.value, 'eyeCalibration')
 }
 
 const handleCalibrationDone = (results) => {
   if (results) {
     localTestAnswer.calibrationValidation = results
   }
-  globalIndex.value = 4
+  completeStep(taskIndex.value, 'eyeCalibration')
 }
 
 function toggleTracking(value) {

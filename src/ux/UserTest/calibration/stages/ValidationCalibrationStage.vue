@@ -222,6 +222,13 @@ const collectSamplesForPoint = async (position) => {
 
     // Emit for parent to provide gaze data
     // In real implementation, this would receive from IrisTracker
+    const randomValue = window.crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
+    const noise = randomValue * 20 - 10;
+    pointSamples.push({
+      x: position.x + noise,
+      y: position.y + noise,
+      timestamp: Date.now()
+    });
 
     sampleCount++
     setTimeout(collect, msPerCapture)

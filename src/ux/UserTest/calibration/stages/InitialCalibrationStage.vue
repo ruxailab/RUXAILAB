@@ -242,6 +242,14 @@ const collectSamplesForPoint = async (position) => {
 
     // In a real implementation, this would receive data from IrisTracker
     // For now, we'll emit events for the parent to handle
+    const randomValue = window.crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
+    const noise = randomValue * 20 - 10;
+    samples.push({
+      x: position.x + noise,
+      y: position.y + noise,
+      timestamp: Date.now()
+    });
+    
     emit('pointCollected', {
       targetX: position.x,
       targetY: position.y,

@@ -71,18 +71,18 @@ export default class OneEuroFilter extends SignalFilter {
     // cutoff = minCutoff + cutoffSlope * speed
     const cutoff = this.minCutoff + this.cutoffSlope * velocity
 
-    // Alpha for low-pass filter: alpha = tau / (tau + dt)
+    // Alpha for low-pass filter: alpha = dt / (tau + dt)
     // where tau = 1 / (2 * pi * cutoff)
     const tau = 1.0 / (2.0 * Math.PI * cutoff)
-    const alpha = tau / (tau + dt)
+    const alpha = dt / (tau + dt)
 
     // Apply low-pass filter to position
     const filteredX = alpha * rawX + (1 - alpha) * this.prevFiltered.x
     const filteredY = alpha * rawY + (1 - alpha) * this.prevFiltered.y
 
-    // Compute alpha for derivative
+    // Compute alpha for derivative: alphaD = dt / (tauD + dt)
     const tauD = 1.0 / (2.0 * Math.PI * this.derivativeCutoff)
-    const alphaD = tauD / (tauD + dt)
+    const alphaD = dt / (tauD + dt)
 
     // Low-pass filter the velocity
     const smoothVelocityX = alphaD * velocityX + (1 - alphaD) * this.prevVelocity.x

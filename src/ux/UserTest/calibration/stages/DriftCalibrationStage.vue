@@ -215,7 +215,7 @@ const completeDriftReference = () => {
     referencePosition: referencePosition.value,
     baselineTimestamp: Date.now(),
     driftDetectorState: driftDetector.value?.getState(),
-    monitorDuration: isActive.value ? Date.now() - referencePosition.value : 0
+    monitorDuration: 0
   }
 
   // Clear canvas

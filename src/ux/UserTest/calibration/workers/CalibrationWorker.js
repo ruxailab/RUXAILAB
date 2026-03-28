@@ -183,10 +183,10 @@ function applyKalmanFilter(x, y, timestamp) {
   const z = [x, y]
 
   // Kalman gain
-  const HP = matMul(H, P)
-  const S = matAdd(matMul(HP, transpose(H)), scaleMat(R, [[1, 0], [0, 1]]))
+  const PHt = matMul(P, transpose(H))
+  const S = matAdd(matMul(H, PHt), scaleMat(R, [[1, 0], [0, 1]]))
   const SInv = inverse2x2(S)
-  const K = matMul(transpose(H), SInv)
+  const K = matMul(PHt, SInv)
 
   // Innovation
   const Hx = [H[0][0] * predictedState[0], H[1][0] * predictedState[0] + H[1][1] * predictedState[1]]
@@ -299,7 +299,7 @@ function applyOneEuroFilter(x, y, timestamp) {
   // Adaptive cutoff
   const cutoff = minCutoff + cutoffSlope * velocity
   const tau = 1.0 / (2.0 * Math.PI * cutoff)
-  const alpha = tau / (tau + dt)
+  const alpha = dt / (tau + dt)
 
   // Low-pass filter
   const filteredX = alpha * x + (1 - alpha) * oneEuroState.prevFiltered.x

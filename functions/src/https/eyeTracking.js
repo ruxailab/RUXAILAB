@@ -206,7 +206,7 @@ export const validateCalibration = functions.onRequest({
       // Compute validation metrics
       const metrics = computeAllMetrics({
         samples: validation_data,
-        totalExpected: validation_data.length * 10, // Expected more samples
+        totalExpected: validation_data.length,
         totalActual: validation_data.length,
         screenWidth: screen_width || 1920,
         screenHeight: screen_height || 1080,

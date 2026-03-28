@@ -162,8 +162,12 @@ const onInitialComplete = (data) => {
 
   // Compute initial metrics
   if (data.samples && data.samples.length > 0) {
+    const transformedSamples = data.samples.map((s) => ({
+      target: { x: s.targetX, y: s.targetY },
+      gaze: { x: s.gazeX, y: s.gazeY }
+    }))
     const metrics = accuracyMetrics.value.computeAll({
-      samples: data.samples,
+      samples: transformedSamples,
       totalExpected: props.config.pointNumber * props.config.samplePerPoint,
       totalActual: data.samples.length
     })
@@ -198,9 +202,10 @@ const onValidationComplete = (data) => {
     ...data.metrics
   }
 
-  calibrationResult.value.qualityRating = data.isValid
-    ? accuracyMetrics.value._computeOverallRating({ samples: data.samples })
-    : 'poor'
+  calibrationResult.value.qualityRating =
+    data.isValid && data.metrics && typeof data.metrics.overall !== 'undefined'
+      ? data.metrics.overall
+      : 'poor'
 
   emit('metricsComputed', data.metrics)
   emit('qualityUpdate', {

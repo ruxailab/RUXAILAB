@@ -54,7 +54,7 @@ export default class SavitzkyGolayFilter extends SignalFilter {
     let sumY = 0
 
     for (let i = 0; i < this.windowSize; i++) {
-      const coeff = this.coeffs[centerIdx][i]
+      const coeff = this.centerCoeffs[i]
       sumX += coeff * this.buffer[i].x
       sumY += coeff * this.buffer[i].y
     }
@@ -121,19 +121,13 @@ export default class SavitzkyGolayFilter extends SignalFilter {
     const ATApinv = this._pseudoInverse(this._matMul(AT, A))
     const coeffsMatrix = this._matMul(ATApinv, AT)
 
-    // Extract the center row (these are the convolution coefficients)
-    this.coeffs = []
-    for (let i = 0; i < m; i++) {
-      const row = []
-      for (let j = 0; j < m; j++) {
-        // Coefficient for sample j when estimating center
-        row.push(coeffsMatrix[i][j])
-      }
-      this.coeffs.push(row)
-    }
+    // coeffsMatrix has shape (polynomialOrder + 1) x windowSize.
+    // Each row corresponds to a polynomial/derivative order; the first row
+    // (index 0) contains the smoothing coefficients for the center sample.
+    this.coeffs = coeffsMatrix
 
-    // Also store coefficients for center position (most commonly used)
-    this.centerCoeffs = this.coeffs[centerIdx]
+    // Store coefficients for center position (0th-derivative smoothing)
+    this.centerCoeffs = coeffsMatrix[0]
   }
 
   _transpose(M) {
