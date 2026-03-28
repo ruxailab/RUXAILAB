@@ -952,19 +952,20 @@ const handleTimerStopped = (elapsedTime, idx) => {
 
   if (localTestAnswer.tasks[idx]) {
     // Asegurar que el tiempo es un número
-    const timeToSave = typeof elapsedTime === 'number' ? elapsedTime : parseInt(elapsedTime)
+    const timeToSave =
+      typeof elapsedTime === 'number' ? elapsedTime : parseInt(elapsedTime)
     if (!isNaN(timeToSave)) {
       localTestAnswer.tasks[idx].taskTime = timeToSave
     } else {
       store.commit('SET_TOAST', {
         type: 'error',
-        message: t('errors.globalError') || 'Error recording task time'
+        message: t('errors.globalError') || 'Error recording task time',
       })
     }
   } else {
     store.commit('SET_TOAST', {
       type: 'error',
-      message: t('errors.globalError') || 'Error recording task time'
+      message: t('errors.globalError') || 'Error recording task time',
     })
   }
 }
@@ -980,7 +981,7 @@ const completeStep = (id, type, userCompleted = true) => {
         if (hasEyeTracking.value) {
           globalIndex.value = 3 // Eye Tracking Calibration
         } else {
-          globalIndex.value = 3 // PreTasks
+          globalIndex.value = 4 // Tasks
         }
       }
       savePartialAnswer()
@@ -1036,7 +1037,7 @@ const completeStep = (id, type, userCompleted = true) => {
           type: 'success',
           message: `Task "${test.value.testStructure.userTasks[id].taskName}" completed successfully!`,
           timeout: 3000,
-        });
+        })
       }
     }
 

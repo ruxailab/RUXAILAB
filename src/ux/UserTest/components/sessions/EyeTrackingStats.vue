@@ -345,7 +345,8 @@ onMounted(async () => {
             target: { x: 960, y: 540 } // Center as default
           })),
           screen_width: 1920,
-          screen_height: 1080
+          screen_height: 1080,
+          dry_run: true
         },
         { headers: { 'Content-Type': 'application/json' } }
       )

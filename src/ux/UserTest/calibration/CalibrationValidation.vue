@@ -131,7 +131,7 @@ const startValidation = () => {
   isTracking.value = true;
 };
 
-const handleFaceData = (data) => {
+const handleFaceData = async (data) => {
   if (!isValidating.value || isCalculating.value) return;
   
   if (currentDotIndex.value < dots.value.length) {

@@ -60,7 +60,7 @@ import InitialCalibrationStage from './stages/InitialCalibrationStage.vue'
 import ValidationCalibrationStage from './stages/ValidationCalibrationStage.vue'
 import DriftCalibrationStage from './stages/DriftCalibrationStage.vue'
 import CalibrationResult from '../models/CalibrationResult.js'
-import AccuracyMetrics from '../metrics/AccuracyMetrics.js'
+import AccuracyMetrics from './metrics/AccuracyMetrics.js'
 
 const props = defineProps({
   config: {
@@ -108,6 +108,8 @@ const accuracyMetrics = ref(null)
 const initialStageRef = ref(null)
 const validationStageRef = ref(null)
 const driftStageRef = ref(null)
+
+const calibrationConfig = computed(() => props.config)
 
 // Computed
 const currentStage = computed(() => stages[currentStageIndex.value].id)

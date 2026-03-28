@@ -377,7 +377,7 @@ const actions = {
       state.currentCalibration.testId = testId
 
       // Call API
-      const response = await fetch('/api/eyeTracking/calibrate', {
+      const response = await fetch(process.env.VUE_APP_EYE_LAB_BACKEND_URL + '/api/eyeTracking/calibrate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

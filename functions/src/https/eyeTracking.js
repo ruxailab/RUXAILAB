@@ -123,11 +123,15 @@ export const calibrateEyeTracking = functions.onRequest({
         filter_config,
         screen_width,
         screen_height,
-        viewing_distance
+        viewing_distance,
+        dry_run
       } = req.body
 
       if (!calibration_data || !Array.isArray(calibration_data)) {
         return res.status(400).json({ error: 'calibration_data array is required' })
+      }
+      if (calibration_data.length > 5000) {
+        return res.status(400).json({ error: 'Payload too large, max 5000 sample elements allowed' })
       }
 
       // Compute accuracy metrics
@@ -158,7 +162,9 @@ export const calibrateEyeTracking = functions.onRequest({
         status: metrics.overall === 'good' || metrics.overall === 'acceptable' ? 'valid' : 'needs_review'
       }
 
-      await calibRef.set(calibrationRecord)
+      if (!dry_run) {
+        await calibRef.set(calibrationRecord)
+      }
 
       // Generate report
       const report = generateCalibrationReport(metrics, { calibrationId: calibId })

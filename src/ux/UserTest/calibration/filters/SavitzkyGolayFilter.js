@@ -43,8 +43,8 @@ export default class SavitzkyGolayFilter extends SignalFilter {
       this.timestamps.shift()
     }
 
-    // Need at least polynomialOrder + 1 samples
-    if (this.buffer.length < this.polynomialOrder + 1) {
+    // Need at least windowSize samples for full filtering
+    if (this.buffer.length < this.windowSize) {
       return gazePoint
     }
 

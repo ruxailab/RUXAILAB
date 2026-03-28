@@ -12,6 +12,13 @@
       </v-btn>
     </div>
 
+    <!-- Active control -->
+    <div v-if="isActive" class="active-controls mt-4 text-center" style="z-index: 10; position: relative;">
+      <v-btn color="success" @click="completeDriftReference">
+        Complete Reference
+      </v-btn>
+    </div>
+
     <!-- Drift reference canvas -->
     <div v-show="isActive" class="drift-canvas-container">
       <canvas ref="canvasRef" class="drift-canvas" />

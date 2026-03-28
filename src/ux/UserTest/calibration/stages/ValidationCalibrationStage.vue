@@ -92,6 +92,7 @@ const isValid = ref(false)
 const validationPoints = ref([])
 const samples = ref([])
 const metrics = ref(null)
+const totalRawSamplesCollected = ref(0)
 
 // Config
 const numValidationPoints = 5 // Number of intermediate targets
@@ -199,6 +200,7 @@ const collectSamplesForPoint = async (position) => {
     if (sampleCount >= samplesPerPoint) {
       // Store average gaze position for this target
       if (pointSamples.length > 0) {
+        totalRawSamplesCollected.value += pointSamples.length;
         let sumX = 0, sumY = 0
         for (const s of pointSamples) {
           sumX += s.x
@@ -220,15 +222,17 @@ const collectSamplesForPoint = async (position) => {
       return
     }
 
-    // Emit for parent to provide gaze data
-    // In real implementation, this would receive from IrisTracker
-    const randomValue = window.crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
-    const noise = randomValue * 20 - 10;
-    pointSamples.push({
-      x: position.x + noise,
-      y: position.y + noise,
-      timestamp: Date.now()
-    });
+    // Receive from IrisTracker in real implementation
+    // Fall back to simulation only if dev mode is enabled
+    if (props.config.devMode) {
+      const randomValue = window.crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
+      const noise = randomValue * 20 - 10;
+      pointSamples.push({
+        x: position.x + noise,
+        y: position.y + noise,
+        timestamp: Date.now()
+      });
+    }
 
     sampleCount++
     setTimeout(collect, msPerCapture)
@@ -247,7 +251,7 @@ const finishValidation = () => {
     metrics.value = accuracyMetrics.value.computeAll({
       samples: samples.value,
       totalExpected: numValidationPoints * 30,
-      totalActual: samples.value.reduce((sum, s) => sum + 30, 0)
+      totalActual: totalRawSamplesCollected.value
     })
 
     // Determine validity based on thresholds
