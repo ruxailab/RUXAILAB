@@ -215,10 +215,19 @@ const startTracking = async () => {
           right_iris_y: keypoints[473]?.y,
         }
 
-        // Apply filters if enabled
+        // Only emit when all iris coordinates are valid numbers
         const hasValidIris = rawGaze.left_iris_x != null && rawGaze.left_iris_y != null &&
-          rawGaze.right_iris_x != null && rawGaze.right_iris_y != null
-        if (props.useFilter && leftEyeFilter.value && rightEyeFilter.value && hasValidIris) {
+          rawGaze.right_iris_x != null && rawGaze.right_iris_y != null &&
+          Number.isFinite(rawGaze.left_iris_x) && Number.isFinite(rawGaze.left_iris_y) &&
+          Number.isFinite(rawGaze.right_iris_x) && Number.isFinite(rawGaze.right_iris_y)
+
+        if (!hasValidIris) {
+          // Skip this frame — keypoints are missing or invalid
+          trackingLoop = setTimeout(loop, props.msPerCapture)
+          return
+        }
+
+        if (props.useFilter && leftEyeFilter.value && rightEyeFilter.value) {
           const leftFiltered = applyFilter(
             { x: rawGaze.left_iris_x, y: rawGaze.left_iris_y },
             leftEyeFilter.value,
@@ -247,7 +256,7 @@ const startTracking = async () => {
         emit('faceData', rawGaze)
       }
     } catch (err) {
-      console.error('Erro durante rastreamento:', err)
+      console.error('Error during iris tracking:', err)
     }
     trackingLoop = setTimeout(loop, props.msPerCapture)
   }

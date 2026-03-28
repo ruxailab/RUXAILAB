@@ -386,12 +386,10 @@ function inverse2x2(M) {
 // Metrics computation
 function computeAllMetrics(samples, totalExpected, totalActual, screenWidth, screenHeight, viewingDistance) {
   const DPI = 96
-  const sw = screenWidth || 1920
-  const sh = screenHeight || 1080
   const vd = viewingDistance || 600
 
-  const precision = computePrecision(samples)
-  const accuracy = computeAccuracy(samples, vd)
+  const precision = computePrecision(samples, DPI, vd)
+  const accuracy = computeAccuracy(samples, DPI, vd)
   const rmsError = computeRMSError(samples)
   const dataLoss = computeDataLoss(totalExpected, totalActual)
 
@@ -400,7 +398,7 @@ function computeAllMetrics(samples, totalExpected, totalActual, screenWidth, scr
   return { precision, accuracy, rmsError, dataLoss, overall }
 }
 
-function computePrecision(gazePoints) {
+function computePrecision(gazePoints, dpi, viewingDist) {
   if (!gazePoints || gazePoints.length < 2) {
     return { value: Infinity, rating: 'poor', samples: 0 }
   }
@@ -421,17 +419,19 @@ function computePrecision(gazePoints) {
   }
 
   const stdDev = Math.sqrt(sumSqDist / gazePoints.length)
-  const stdDevMm = (stdDev / DPI) * 25.4
-  const stdDevDeg = Math.atan2(stdDevMm, vd) * (180 / Math.PI)
+  const stdDevMm = (stdDev / dpi) * 25.4
+  const stdDevDeg = Math.atan2(stdDevMm, viewingDist) * (180 / Math.PI)
+
+  const safeValue = Number.isFinite(stdDevDeg) ? stdDevDeg : Infinity
 
   return {
-    value: stdDevDeg,
-    rating: stdDevDeg <= 0.5 ? 'good' : stdDevDeg <= 1.0 ? 'acceptable' : 'poor',
+    value: safeValue,
+    rating: safeValue <= 0.5 ? 'good' : safeValue <= 1.0 ? 'acceptable' : 'poor',
     samples: gazePoints.length
   }
 }
 
-function computeAccuracy(samples, viewingDistance) {
+function computeAccuracy(samples, dpi, viewingDist) {
   if (!samples || samples.length === 0) {
     return { value: Infinity, rating: 'poor', samples: 0 }
   }
@@ -444,17 +444,18 @@ function computeAccuracy(samples, viewingDistance) {
     const dx = s.gaze.x - s.target.x
     const dy = s.gaze.y - s.target.y
     const dist = Math.sqrt(dx * dx + dy * dy)
-    const distMm = (dist / DPI) * 25.4
-    sumError += Math.atan2(distMm, viewingDistance) * (180 / Math.PI)
+    const distMm = (dist / dpi) * 25.4
+    sumError += Math.atan2(distMm, viewingDist) * (180 / Math.PI)
     count++
   }
 
   if (count === 0) return { value: Infinity, rating: 'poor', samples: 0 }
 
   const avgError = sumError / count
+  const safeValue = Number.isFinite(avgError) ? avgError : Infinity
   return {
-    value: avgError,
-    rating: avgError <= 1.0 ? 'good' : avgError <= 2.0 ? 'acceptable' : 'poor',
+    value: safeValue,
+    rating: safeValue <= 1.0 ? 'good' : safeValue <= 2.0 ? 'acceptable' : 'poor',
     samples: count
   }
 }

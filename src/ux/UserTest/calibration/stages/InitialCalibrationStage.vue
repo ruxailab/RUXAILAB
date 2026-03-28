@@ -73,6 +73,7 @@ const pointPositions = ref([])
 const pointQuality = ref([])
 const collectedSamples = ref([])
 const pointStartTime = ref(null)
+let collectionTimerId = null
 
 // Config
 const showQualityPerPoint = computed(() => props.config.enableAdaptiveSampling ?? true)
@@ -261,11 +262,11 @@ const collectSamplesForPoint = async (position) => {
 
     sampleCount++
 
-    setTimeout(collect, msPerCapture)
+    collectionTimerId = setTimeout(collect, msPerCapture)
   }
 
   // Start collection after a brief delay
-  setTimeout(collect, 500)
+  collectionTimerId = setTimeout(collect, 500)
 }
 
 // Evaluate quality of collected samples for a point
@@ -384,7 +385,10 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  // Cleanup
+  if (collectionTimerId) {
+    clearTimeout(collectionTimerId)
+    collectionTimerId = null
+  }
 })
 </script>
 

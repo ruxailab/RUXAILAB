@@ -80,6 +80,7 @@ const driftStatus = ref(null)
 const driftData = ref(null)
 const referencePosition = ref(null)
 let monitoringInterval = null
+let driftWarningTimerId = null
 
 // Computed
 const centerPosition = computed(() => ({
@@ -200,7 +201,7 @@ const showDriftWarning = () => {
   // Flash the reference point
   if (ctx.value) {
     drawReferencePoint(referencePosition.value, false)
-    setTimeout(() => {
+    driftWarningTimerId = setTimeout(() => {
       if (isActive.value) {
         drawReferencePoint(referencePosition.value, true)
       }
@@ -248,6 +249,11 @@ onMounted(() => {
 onBeforeUnmount(() => {
   if (monitoringInterval) {
     clearInterval(monitoringInterval)
+    monitoringInterval = null
+  }
+  if (driftWarningTimerId) {
+    clearTimeout(driftWarningTimerId)
+    driftWarningTimerId = null
   }
 })
 </script>

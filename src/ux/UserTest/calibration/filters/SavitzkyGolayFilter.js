@@ -12,6 +12,15 @@ export default class SavitzkyGolayFilter extends SignalFilter {
     this.windowSize = config.windowSize || 7
     this.polynomialOrder = config.polynomialOrder || 2
 
+    // Ensure windowSize is large enough for the polynomial order
+    if (this.windowSize <= this.polynomialOrder) {
+      this.windowSize = this.polynomialOrder + 1
+    }
+    // windowSize must be odd for a symmetric filter
+    if (this.windowSize % 2 === 0) {
+      this.windowSize += 1
+    }
+
     // Precompute filter coefficients
     this._computeCoefficients()
 

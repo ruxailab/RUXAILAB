@@ -77,12 +77,25 @@ def process_gaze_data(req):
         # Initialize filter with first point
         if len(raw_gaze_points) > 0:
             first_pt = raw_gaze_points[0]
+            if not isinstance(first_pt, dict):
+                return (json.dumps({"error": "Each gaze point must be a dict with x, y keys"}), 400, common_headers)
             kf.x[0, 0] = first_pt.get("x", 0)
             kf.x[1, 0] = first_pt.get("y", 0)
             
         for pt in raw_gaze_points:
+            if not isinstance(pt, dict):
+                continue
+            x_val = pt.get("x")
+            y_val = pt.get("y")
+            if x_val is None or y_val is None:
+                continue
+            try:
+                x_float = float(x_val)
+                y_float = float(y_val)
+            except (TypeError, ValueError):
+                continue
             kf.predict()
-            filtered_pt = kf.update([pt.get("x", 0), pt.get("y", 0)])
+            filtered_pt = kf.update([x_float, y_float])
             filtered_points.append({
                 "x": float(filtered_pt[0, 0]),
                 "y": float(filtered_pt[1, 0]),
@@ -111,8 +124,11 @@ def calculate_accuracy_metrics(req):
     try:
         req_data = req.get_json()
         targets = req_data.get("targets", []) # List of dicts {x, y}
-        gaze_samples = req_data.get("samples", []) # List of lists of gaze points {x, y} corresponding to each target
-        
+        gaze_samples = req_data.get("samples", []) # List of lists of gaze points {x, y}
+
+        if not isinstance(targets, list) or not isinstance(gaze_samples, list):
+            return (json.dumps({"error": "targets and samples must be arrays"}), 400, common_headers)
+
         # Calculate offset (accuracy) and variance (precision)
         metrics = {"targets": []}
         overall_accuracy = 0
