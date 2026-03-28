@@ -190,7 +190,7 @@ export const computeDataLoss = (expectedSamples, actualSamples, thresholds = DEF
 
   return {
     value: Math.max(0, lossPercent),
-    rating: rateValue(lossPercent, thresholds, true), // Lower is better
+    rating: rateValue(lossPercent, thresholds), // Lower is better
     expected: expectedSamples,
     actual: actualSamples
   }
@@ -232,16 +232,10 @@ export const computeOverallRating = (precision, accuracy, rmsError, dataLoss) =>
  * @param {boolean} inverted - true if lower is better
  * @returns {string}
  */
-const rateValue = (value, thresholds, inverted = false) => {
-  if (inverted) {
-    if (value <= thresholds.good) return 'good'
-    if (value <= thresholds.acceptable) return 'acceptable'
-    return 'poor'
-  } else {
-    if (value <= thresholds.good) return 'good'
-    if (value <= thresholds.acceptable) return 'acceptable'
-    return 'poor'
-  }
+const rateValue = (value, thresholds) => {
+  if (value <= thresholds.good) return 'good'
+  if (value <= thresholds.acceptable) return 'acceptable'
+  return 'poor'
 }
 
 /**

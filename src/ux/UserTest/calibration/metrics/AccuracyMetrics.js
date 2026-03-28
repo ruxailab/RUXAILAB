@@ -157,7 +157,7 @@ export default class AccuracyMetrics {
 
     return {
       value: lossPercent,
-      rating: this._rateValue(lossPercent, this.thresholds.dataLoss, true), // inverted
+      rating: this._rateValue(lossPercent, this.thresholds.dataLoss),
       expected: expectedSamples,
       actual: actualSamples
     }
@@ -227,16 +227,10 @@ export default class AccuracyMetrics {
    * @param {Object} thresholds - { good, acceptable }
    * @param {boolean} inverted - true if lower is better
    */
-  _rateValue(value, thresholds, inverted = false) {
-    if (inverted) {
-      if (value <= thresholds.good) return 'good'
-      if (value <= thresholds.acceptable) return 'acceptable'
-      return 'poor'
-    } else {
-      if (value <= thresholds.good) return 'good'
-      if (value <= thresholds.acceptable) return 'acceptable'
-      return 'poor'
-    }
+  _rateValue(value, thresholds) {
+    if (value <= thresholds.good) return 'good'
+    if (value <= thresholds.acceptable) return 'acceptable'
+    return 'poor'
   }
 
   /**
