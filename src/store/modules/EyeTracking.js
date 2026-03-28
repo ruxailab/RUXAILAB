@@ -260,7 +260,7 @@ const actions = {
 
     try {
       // Get device info from test settings
-      const test = rootGetters.currentTest
+      const test = rootGetters.test || rootGetters.currentTest
       const deviceInfo = {
         hardwareSource: 'WEBCAM',
         screenWidth: test?.screenWidth || 1920,

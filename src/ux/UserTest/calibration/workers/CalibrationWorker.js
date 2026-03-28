@@ -314,19 +314,22 @@ function applyOneEuroFilter(x, y, timestamp) {
 
 // Matrix operations
 function matVecMul(M, v) {
-  return [
-    M[0][0] * v[0] + M[0][1] * v[1] + M[0][2] * v[2] + M[0][3] * v[3],
-    M[1][0] * v[0] + M[1][1] * v[1] + M[1][2] * v[2] + M[1][3] * v[3],
-    M[2][0] * v[0] + M[2][1] * v[1] + M[2][2] * v[2] + M[2][3] * v[3],
-    M[3][0] * v[0] + M[3][1] * v[1] + M[3][2] * v[2] + M[3][3] * v[3]
-  ]
+  const rows = M.length, cols = M[0].length
+  const result = Array(rows).fill(0)
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      result[i] += M[i][j] * v[j]
+    }
+  }
+  return result
 }
 
 function matMul(A, B) {
-  const result = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
-  for (let i = 0; i < 4; i++) {
-    for (let j = 0; j < 4; j++) {
-      for (let k = 0; k < 4; k++) {
+  const rowsA = A.length, colsA = A[0].length, colsB = B[0].length
+  const result = Array(rowsA).fill(0).map(() => Array(colsB).fill(0))
+  for (let i = 0; i < rowsA; i++) {
+    for (let j = 0; j < colsB; j++) {
+      for (let k = 0; k < colsA; k++) {
         result[i][j] += A[i][k] * B[k][j]
       }
     }
@@ -335,18 +338,21 @@ function matMul(A, B) {
 }
 
 function transpose(M) {
-  return [
-    [M[0][0], M[1][0], M[2][0], M[3][0]],
-    [M[0][1], M[1][1], M[2][1], M[3][1]],
-    [M[0][2], M[1][2], M[2][2], M[3][2]],
-    [M[0][3], M[1][3], M[2][3], M[3][3]]
-  ]
+  const rows = M.length, cols = M[0].length
+  const result = Array(cols).fill(0).map(() => Array(rows).fill(0))
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      result[j][i] = M[i][j]
+    }
+  }
+  return result
 }
 
 function matAdd(A, B) {
-  const result = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
-  for (let i = 0; i < 4; i++) {
-    for (let j = 0; j < 4; j++) {
+  const rows = A.length, cols = A[0].length
+  const result = Array(rows).fill(0).map(() => Array(cols).fill(0))
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
       result[i][j] = A[i][j] + B[i][j]
     }
   }
@@ -354,9 +360,10 @@ function matAdd(A, B) {
 }
 
 function subMat(A, B) {
-  const result = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
-  for (let i = 0; i < 4; i++) {
-    for (let j = 0; j < 4; j++) {
+  const rows = A.length, cols = A[0].length
+  const result = Array(rows).fill(0).map(() => Array(cols).fill(0))
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
       result[i][j] = A[i][j] - B[i][j]
     }
   }

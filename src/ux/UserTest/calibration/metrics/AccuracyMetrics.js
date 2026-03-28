@@ -96,8 +96,8 @@ export default class AccuracyMetrics {
       const dy = sample.gaze.y - sample.target.y
       const distPixels = Math.sqrt(dx * dx + dy * dy)
 
-      // Convert to degrees
-      const distMm = (distPixels / 96) * 25.4 // assuming 96 DPI
+      // Convert to degrees using configured DPI
+      const distMm = (distPixels / this.dpi) * 25.4
       const errorDegrees = this._mmToDegrees(distMm)
       sumError += errorDegrees
     }

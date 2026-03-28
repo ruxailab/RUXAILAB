@@ -7,7 +7,7 @@
       <v-btn color="primary" @click="startDriftReference">
         {{ $t('eyeTracking.calibration.startDriftReference') || 'Start Drift Reference' }}
       </v-btn>
-      <v-btn text @click="emit('skip')" style="margin-left: 1rem;">
+      <v-btn variant="text" @click="emit('skip')" style="margin-left: 1rem;">
         {{ $t('eyeTracking.calibration.skip') || 'Skip' }}
       </v-btn>
     </div>

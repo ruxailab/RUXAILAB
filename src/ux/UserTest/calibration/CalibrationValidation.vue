@@ -178,11 +178,8 @@ const calculateMetrics = async () => {
       throw new Error('Fallback to mock calculation');
     }
   } catch (err) {
-    console.warn("Using mock metrics calculation");
-    results.value = {
-        overallAccuracy: 12.4 + Math.random() * 5,
-        overallPrecision: 4.8 + Math.random() * 2
-    };
+    console.error("Metrics calculation failed:", err);
+    throw err;
   } finally {
     isCalculating.value = false;
   }

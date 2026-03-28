@@ -1,0 +1,27 @@
+﻿[feat/advanced-eye-tracking d3aa3d34] feat(eye-tracking): implement advanced calibration and filtering framework
+ 39 files changed, 8531 insertions(+), 2477 deletions(-)
+ create mode 100644 .claude/settings.local.json
+ create mode 100644 .eslintrc.js
+ create mode 100644 CLAUDE.md
+ create mode 100644 HEALTH_CHECK_SUMMARY.md
+ create mode 100644 PROPOSAL.md
+ delete mode 100644 eslint.config.mjs
+ create mode 100644 eye_processing/main.py
+ create mode 100644 eye_processing/requirements.txt
+ create mode 100644 functions/src/eyeTracking/accuracyMetrics.js
+ create mode 100644 functions/src/eyeTracking/driftCompensation.js
+ create mode 100644 src/store/modules/EyeTracking.js
+ create mode 100644 src/ux/UserTest/calibration/AdvancedCalibrationManager.vue
+ create mode 100644 src/ux/UserTest/calibration/CalibrationValidation.vue
+ create mode 100644 src/ux/UserTest/calibration/filters/KalmanFilter.js
+ create mode 100644 src/ux/UserTest/calibration/filters/MovingAverageFilter.js
+ create mode 100644 src/ux/UserTest/calibration/filters/OneEuroFilter.js
+ create mode 100644 src/ux/UserTest/calibration/filters/SavitzkyGolayFilter.js
+ create mode 100644 src/ux/UserTest/calibration/filters/SignalFilter.js
+ create mode 100644 src/ux/UserTest/calibration/metrics/AccuracyMetrics.js
+ create mode 100644 src/ux/UserTest/calibration/metrics/DriftDetector.js
+ create mode 100644 src/ux/UserTest/calibration/stages/DriftCalibrationStage.vue
+ create mode 100644 src/ux/UserTest/calibration/stages/InitialCalibrationStage.vue
+ create mode 100644 src/ux/UserTest/calibration/stages/ValidationCalibrationStage.vue
+ create mode 100644 src/ux/UserTest/calibration/workers/CalibrationWorker.js
+ create mode 100644 src/ux/UserTest/models/CalibrationResult.js
