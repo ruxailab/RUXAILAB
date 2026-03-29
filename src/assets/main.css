@@ -1,14 +1,12 @@
 /* Fix: Prevent hyperlink popup overflow in Quill editor*/
-.ql-tooltip {
+.ql-snow .ql-tooltip {
   max-width: 250px;
-  left: 0 !important;
-  transform: none !important;
   white-space: normal !important;
   overflow-wrap: break-word;
   z-index: 1000;
 }
 
-.ql-tooltip input {
+.ql-snow .ql-tooltip input {
   width: 100% !important;
   box-sizing: border-box;
 }
