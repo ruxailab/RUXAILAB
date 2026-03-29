@@ -437,7 +437,8 @@
                       <v-expansion-panel
                         v-if="
                           dialogItem.tasks[taskSelect].webcamRecordURL ||
-                          dialogItem.tasks[taskSelect].irisTrackingData > 0
+                          dialogItem.tasks[taskSelect].irisTrackingData
+                            ?.length > 0
                         "
                         readonly
                         hide-actions

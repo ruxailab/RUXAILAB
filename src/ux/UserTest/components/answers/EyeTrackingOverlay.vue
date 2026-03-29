@@ -75,9 +75,9 @@ function drawPrecisionPoints(cx, cy) {
 function drawHeatmapPoint(x, y) {
   const radius = 20
   const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius)
-  gradient.addColorStop(0, 'rgba(255,0,0,0.03)')
-  gradient.addColorStop(0.6, 'rgba(255,150,0,0.06)')
-  gradient.addColorStop(1, 'rgba(255,255,0,0.0012)')
+  gradient.addColorStop(0, 'rgba(255,0,0,0.4)')
+  gradient.addColorStop(0.6, 'rgba(255,150,0,0.25)')
+  gradient.addColorStop(1, 'rgba(255,255,0,0.05)')
   ctx.fillStyle = gradient
   ctx.beginPath()
   ctx.arc(x, y, radius, 0, 2 * Math.PI)
@@ -103,7 +103,7 @@ function animateSmooth(timestamp) {
   ctx.clearRect(0, 0, canvas.value.width, canvas.value.height)
 
   if (props.viewMode === 'free') drawFreeEye(cx, cy)
-  else if (props.viewMode === 'precision') drawPrecisionPoints()
+  else if (props.viewMode === 'precision') drawPrecisionPoints(cx, cy)
   else if (props.viewMode === 'heatmap') {
     heatmapData.push({ x: cx, y: cy })
     drawHeatmap()

@@ -46,9 +46,127 @@
             <NasaTlxAnalytics v-if="tab === '4'" />
             <TamAnalytics v-if="tab === '5'" />
             <SartAnalytics v-if="tab === '6'" />
-            <div v-if="tab === '7'" style="height: 100%; overflow-y: auto">
-              <!-- Eye Tracking content would go here -->
-            </div>
+            <v-container
+              v-if="tab === '7'"
+              fluid
+              class="pa-6"
+              style="height: 100%; overflow-y: auto"
+            >
+              <div class="mb-8">
+                <h1 class="text-h3 font-weight-bold text-primary">
+                  {{ $t('analytics.eyeTrackingAnalytics') }}
+                </h1>
+                <p class="text-h6 text-grey-darken-1">
+                  Eye tracking data collected from participants
+                </p>
+              </div>
+
+              <v-row class="mb-4">
+                <v-col cols="12" md="4">
+                  <v-card
+                    class="pa-6 text-left"
+                    elevation="2"
+                    style="border-radius: 12px"
+                  >
+                    <div class="d-flex justify-space-between align-center">
+                      <div>
+                        <div class="text-caption text-grey-darken-1 mb-1">
+                          Participants with Eye Tracking
+                        </div>
+                        <div class="text-h2 font-weight-bold text-primary mb-1">
+                          {{ eyeTrackingSummary.participantCount }}
+                        </div>
+                        <div class="text-caption text-grey">
+                          out of
+                          {{ eyeTrackingSummary.totalParticipants }} total
+                        </div>
+                      </div>
+                      <v-icon size="48" color="primary">mdi-eye-outline</v-icon>
+                    </div>
+                  </v-card>
+                </v-col>
+                <v-col cols="12" md="4">
+                  <v-card
+                    class="pa-6 text-left"
+                    elevation="2"
+                    style="border-radius: 12px"
+                  >
+                    <div class="d-flex justify-space-between align-center">
+                      <div>
+                        <div class="text-caption text-grey-darken-1 mb-1">
+                          Total Gaze Data Points
+                        </div>
+                        <div class="text-h2 font-weight-bold text-warning mb-1">
+                          {{ eyeTrackingSummary.totalDataPoints }}
+                        </div>
+                        <div class="text-caption text-grey">
+                          across all sessions
+                        </div>
+                      </div>
+                      <v-icon size="48" color="warning"
+                        >mdi-chart-scatter-plot</v-icon
+                      >
+                    </div>
+                  </v-card>
+                </v-col>
+                <v-col cols="12" md="4">
+                  <v-card
+                    class="pa-6 text-left"
+                    elevation="2"
+                    style="border-radius: 12px"
+                  >
+                    <div class="d-flex justify-space-between align-center">
+                      <div>
+                        <div class="text-caption text-grey-darken-1 mb-1">
+                          Tasks with Tracking
+                        </div>
+                        <div class="text-h2 font-weight-bold text-success mb-1">
+                          {{ eyeTrackingSummary.tasksWithTracking }}
+                        </div>
+                        <div class="text-caption text-grey">
+                          task sessions recorded
+                        </div>
+                      </div>
+                      <v-icon size="48" color="success"
+                        >mdi-crosshairs-gps</v-icon
+                      >
+                    </div>
+                  </v-card>
+                </v-col>
+              </v-row>
+
+              <v-card class="pa-4" elevation="2" style="border-radius: 12px">
+                <h3 class="text-h6 font-weight-medium mb-3">
+                  Per-Participant Eye Tracking
+                </h3>
+                <v-alert type="info" variant="tonal" class="mb-4">
+                  To view detailed eye tracking visualizations (heatmaps, gaze
+                  paths, and predictions), open the Individual Analytics tab and
+                  select a participant's Task Analytics.
+                </v-alert>
+                <v-table>
+                  <thead>
+                    <tr>
+                      <th>Participant</th>
+                      <th>Tasks with Eye Tracking</th>
+                      <th>Total Data Points</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="(
+                        participant, idx
+                      ) in eyeTrackingSummary.participants"
+                      :key="idx"
+                    >
+                      <td>{{ participant.id }}</td>
+                      <td>{{ participant.tasksWithData }}</td>
+                      <td>{{ participant.dataPoints }}</td>
+                    </tr>
+                  </tbody>
+                </v-table>
+              </v-card>
+            </v-container>
             <TranscriptionTool v-if="tab === '8'" />
           </div>
         </template>
@@ -161,9 +279,50 @@ const showEye = computed(
     testAnswerDocument.value &&
     testAnswerDocument.value.type === 'User' &&
     Object.values(testAnswerDocument.value.taskAnswers).some((ev) =>
-      Object.values(ev.tasks).some((task) => task.irisTrackingData.length > 0),
+      Object.values(ev.tasks).some((task) => task.irisTrackingData?.length > 0),
     ),
 )
+
+const eyeTrackingSummary = computed(() => {
+  const summary = {
+    participantCount: 0,
+    totalParticipants: 0,
+    totalDataPoints: 0,
+    tasksWithTracking: 0,
+    participants: [],
+  }
+  if (!testAnswerDocument.value?.taskAnswers) return summary
+
+  const answers = testAnswerDocument.value.taskAnswers
+  summary.totalParticipants = Object.keys(answers).length
+
+  Object.entries(answers).forEach(([userId, ev]) => {
+    const tasks = ev.tasks || {}
+    let userDataPoints = 0
+    let userTasksWithData = 0
+
+    Object.values(tasks).forEach((task) => {
+      const dataLen = task.irisTrackingData?.length || 0
+      if (dataLen > 0) {
+        userDataPoints += dataLen
+        userTasksWithData++
+        summary.tasksWithTracking++
+      }
+    })
+
+    if (userDataPoints > 0) {
+      summary.participantCount++
+      summary.participants.push({
+        id: userId,
+        tasksWithData: userTasksWithData,
+        dataPoints: userDataPoints,
+      })
+    }
+    summary.totalDataPoints += userDataPoints
+  })
+
+  return summary
+})
 
 const goToCoops = () => {
   if (!study.value?.id) return

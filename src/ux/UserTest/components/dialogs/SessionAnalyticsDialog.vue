@@ -61,7 +61,7 @@
           <v-col cols="12" md="6">
             <v-tabs v-model="rightTab" bg-color="grey-lighten-4" grow>
               <!-- <v-tab value="general">General</v-tab> -->
-              <v-tab v-if="taskAnswer?.irisTrackingData.length > 0" value="eye"
+              <v-tab v-if="taskAnswer?.irisTrackingData?.length > 0" value="eye"
                 >Eye Tracker</v-tab
               >
               <v-tab v-if="taskAnswer?.webcamRecordURL" value="sentimental"
@@ -80,7 +80,7 @@
                             </v-window-item> -->
 
               <v-window-item
-                v-if="taskAnswer?.irisTrackingData.length > 0"
+                v-if="taskAnswer?.irisTrackingData?.length > 0"
                 value="eye"
               >
                 <EyeTrackingStats
