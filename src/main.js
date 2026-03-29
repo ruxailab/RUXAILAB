@@ -6,10 +6,10 @@ import vuetify from './app/plugins/vuetify.js';
 import i18n from './app/plugins/i18n';
 import Toast, { useToast } from 'vue-toastification';
 import TextClamp from 'vue3-text-clamp';
-import { quillEditor } from 'vue3-quill'
+import { quillEditor } from 'vue3-quill';
 import 'vue-toastification/dist/index.css';
-import '@vueup/vue-quill/dist/vue-quill.snow.css'
-import '@/assets/main.css'
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import '@/assets/main.css';
 
 const app = createApp(App);
 
