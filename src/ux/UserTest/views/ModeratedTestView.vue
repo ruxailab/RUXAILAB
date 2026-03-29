@@ -630,6 +630,7 @@ import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue'
 import VideoCall from '@/ux/UserTest/components/VideoCall.vue'
 import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
+import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
@@ -692,6 +693,14 @@ const currentUserAccessLevel = computed(() => {
 })
 
 const isObservator = computed(() => currentUserAccessLevel.value === 3)
+
+const hasTestDashboardAccess = computed(() => {
+  if (!user.value) return false
+  return (
+    currentUserAccessLevel.value === ACCESS_LEVEL.ADMIN ||
+    currentUserAccessLevel.value === ACCESS_LEVEL.EVALUATOR
+  )
+})
 
 const timerComponent = computed(() => {
   // Get timer ref from TaskStep
@@ -841,7 +850,11 @@ const handleSubmit = async () => {
   try {
     localTestAnswer.submitted = true
     await saveAnswer()
-    await router.push({ name: 'Admin' })
+    if (hasTestDashboardAccess.value) {
+      await router.push(`/userTest/moderated/manager/${test.value.id}`)
+    } else {
+      await router.push({ name: 'Admin' })
+    }
   } catch {
     store.commit('SET_TOAST', {
       type: 'error',

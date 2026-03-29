@@ -598,6 +598,7 @@ import Snackbar from '@/shared/components/Snackbar'
 import HeuristicQuestionAnswer from '@/ux/Heuristic/models/HeuristicQuestionAnswer'
 import Heuristic from '@/ux/Heuristic/models/Heuristic'
 import { showSuccess, showError } from '@/shared/utils/toast'
+import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 
 const props = defineProps({
   id: { type: String, default: '' },
@@ -694,6 +695,15 @@ const showSaveBtn = computed(() => {
 
 const isUserTestAdmin = computed(() => {
   return test.value.testAdmin.userDocId === user.value?.id
+})
+
+const hasTestDashboardAccess = computed(() => {
+  if (!user.value) return false
+  if (isUserTestAdmin.value) return true
+  const coop = test.value?.cooperators?.find(
+    (c) => c.userDocId === user.value.id,
+  )
+  return coop?.accessLevel === ACCESS_LEVEL.EVALUATOR
 })
 
 const isValidProgress = computed(() => {
@@ -1363,7 +1373,11 @@ const submitAnswer = async () => {
     })
     showSuccess('alerts.genericSuccess')
     setTimeout(() => {
-      router.push('/admin')
+      if (hasTestDashboardAccess.value) {
+        router.push(`/heuristic/manager/${test.value.id}`)
+      } else {
+        router.push('/admin')
+      }
     }, 1500)
   } catch {
     currentUserTestAnswer.value.submitted = false
