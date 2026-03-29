@@ -1,32 +1,37 @@
-# Multimodal Input Modules — Text & Audio
+# Multimodal Fusion and Explainability
 
-Branch: `feature/multimodal-input-modules`
+Branch: `feature/multimodal-fusion-explainability`
 
-This branch adds the text sentiment and audio emotion modules to the RUXAILAB sentiment analysis engine. Both modules produce `SentimentOutput` objects that conform to the shared schema from Phase 1. This is the branch where actual models start doing inference.
+This branch adds the fusion layer that combines predictions from text, audio, and facial sentiment modules into a single output — and the explainability component that breaks down how much each modality contributed to the final result.
+
+This is the last of the three implementation phases. It builds on the schema layer (Phase 1) and the input modules (Phase 2).
 
 ---
 
 ## What's in here
 
 ```
-modules/
-  text_sentiment.py       — BERT-based text emotion classifier
-  audio_emotion.py        — MFCC + SVM audio emotion classifier
+fusion/
+  multimodal_fusion.py       — Weighted late fusion over per-modality SentimentOutput objects
 
-preprocessing/
-  audio_features.py       — Feature extraction from raw audio files
+explainability/
+  contributions.py           — Computes normalized modality contribution scores
 
+tests/
+  test_multimodal_fusion.py
+  test_contributions.py
 ```
 
 ---
 
 ## Setup
 
-This branch depends on the schema and processing layer from `feature/unified-sentiment-pipeline`. Make sure that code is available before running anything here — either by merging that branch first, or by checking out this branch on top of it.
+This branch requires both Phase 1 (`feature/unified-sentiment-pipeline`) and Phase 2 (`feature/multimodal-input-modules`) to be merged first.
 
 ```bash
-git clone https://github.com/HITESH-S-P/multimodal-sentiment-engine.git
+clone repository
 cd sentiment-engine
+git checkout feature/multimodal-fusion-explainability
 
 python -m venv venv
 source venv/bin/activate
@@ -34,172 +39,94 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-The first time you run the text module, it will download the DistilRoBERTa model weights (~300MB) from Hugging Face. After that it's cached locally.
+---
+
+## Fusion
+
+### Approach
+
+**Weighted late fusion.** Each modality runs its full pipeline independently and returns a `SentimentOutput` with a complete emotion probability distribution. The fusion module receives all of these and combines them.
+
+For each emotion class, the fused score is a weighted average of that class's probability across all available modalities:
+
+```
+fused_score(emotion) = Σ [ weight(m) × P(emotion | m) ]
+                       ─────────────────────────────────
+                              Σ weight(m)
+```
+
+The fusion then picks the emotion with the highest fused score, normalizes all scores so they sum to 1, and returns a `SentimentOutput` with `modality: "fused"`.
+
+### Default weights
+
+```
+face:  0.40
+audio: 0.35
+text:  0.25
+```
+---
+
+## Explainability — modality contributions
+
+The `contributions` field in the fused output answers the question: which modality most influenced this prediction?
+
+### Formula
+
+```
+contribution(m) = weight(m) × confidence(m)
+                  ─────────────────────────────────
+                  Σ [ weight(i) × confidence(i) ]
+```
+
+This multiplies each modality's assigned weight by its prediction confidence on this specific input, then normalizes. A modality that had a high weight but low confidence will contribute less than its weight alone would suggest — and vice versa.
+
+Contributions always sum to 1.0.
+
+### What contributions mean in practice
+
+If a session is flagged as "high frustration" and the contributions show `{"face": 0.71, "audio": 0.19, "text": 0.10}`, a researcher knows the facial signal was almost entirely responsible for that label. They might want to look at the video clip for that segment. If instead contributions were `{"face": 0.38, "audio": 0.35, "text": 0.27}`, the signal was distributed across all three and any of them would be worth examining.
+
+This is more useful than just the top label and confidence because it tells you *why* the system said what it said, not just *what* it said.
 
 ---
 
-## Text sentiment analysis
+## Running the tests
 
-### Model
-
-`j-hartmann/emotion-english-distilroberta-base` — a DistilRoBERTa model fine-tuned on emotion classification. Returns probabilities for 7 classes: anger, disgust, fear, joy, neutral, sadness, surprise.
-
-### Usage
-
-```python
-from modules.text_sentiment import TextSentimentAnalyzer
-
-analyzer = TextSentimentAnalyzer()
-
-result = analyzer.analyze("I have absolutely no idea what this button is supposed to do")
-print(result.model_dump_json(indent=2))
+```bash
+pytest tests/test_fusion.py -v
 ```
 
-```json
-{
-  "emotion": "confusion",
-  "confidence": 0.7834,
-  "usability_label": "confusion",
-  "modality": "text",
-  "raw_scores": {
-    "confusion": 0.7834,
-    "fear": 0.1102,
-    "neutral": 0.0621,
-    "sadness": 0.0281,
-    "anger": 0.0098,
-    "joy": 0.0042,
-    "disgust": 0.0022
-  },
-  "contributions": null
-}
-```
+Tests cover:
 
-### Intent detection
-
-The text module also detects intent from the surface-level content of the text. When intent signals are found, they override the usability label from the emotion model:
-
-| Detected signal | Override label |
-|---|---|
-| Complaint indicators ("doesn't work", "can't find") | frustration |
-| Suggestion indicators ("should be", "would be better") | engagement |
-| Question about navigation ("where is", "how do I") | confusion |
-
-This is a pattern-matching layer, not an ML model. It runs after the emotion classifier and only fires if a pattern matches. If nothing matches, the usability label comes from the emotion mapper as usual.
+- Three modalities available — contributions sum to 1.0
+- Two modalities only — renormalization is correct
+- Modalities agree — high confidence fused output
+- Modalities disagree — contributions reflect per-modality confidence, not just weights
+- Custom weights — fusion and contributions both respect them
+- Zero confidence edge case — handled without division by zero
+- Schema validation — all outputs pass Pydantic validation
 
 ---
 
-## Audio emotion recognition
+## What's not in here yet
 
-### Feature extraction
+**Attention-based fusion.** The weighted average approach is a strong baseline, but it treats the weights as fixed. An attention mechanism could learn weights as a function of the inputs — for example, learning that audio is more informative when text contains hedging language. That's a meaningful extension but requires training data and a differentiable fusion model. When the annotated usability dataset is available, this is worth revisiting.
 
-Before classification, audio files are processed into a 16-dimensional feature vector:
-
-```python
-from preprocessing.audio_features import extract_audio_features
-
-features = extract_audio_features("recording.wav")
-# Returns:
-# {
-#   "mfcc_mean": [f1, f2, ..., f13],   # 13 MFCC coefficients
-#   "pitch_mean": 182.4,                # Hz, voiced frames only
-#   "energy_mean": 0.031,               # RMS amplitude
-#   "zcr_mean": 0.094                   # zero crossings per frame
-# }
-```
-
-Features are extracted using `librosa`. Supported formats: WAV, MP3. The function returns a dict — call `.values()` and flatten to get the raw numpy array for the classifier.
-
-### Classifier
-
-```python
-from modules.audio_emotion import AudioEmotionAnalyzer
-import numpy as np
-
-analyzer = AudioEmotionAnalyzer()
-
-# If you have labeled training data:
-# analyzer.train(X_train, y_train)  # X: (n_samples, 16), y: list of emotion strings
-
-# Without training, the module uses a rule-based heuristic fallback
-result = analyzer.analyze("session_clip.wav")
-print(result.model_dump_json(indent=2))
-```
-
-```json
-{
-  "emotion": "anger",
-  "confidence": 0.6412,
-  "usability_label": "frustration",
-  "modality": "audio",
-  "raw_scores": {
-    "anger": 0.6412,
-    "neutral": 0.2103,
-    "fear": 0.0881,
-    "sadness": 0.0421,
-    "joy": 0.0183
-  },
-  "contributions": null
-}
-```
-
-### Training the classifier
-
-```python
-from preprocessing.audio_features import extract_audio_features
-from modules.audio_emotion import AudioEmotionAnalyzer
-import numpy as np
-
-# Build feature matrix from labeled audio files
-file_label_pairs = [
-    ("recordings/frustration_01.wav", "anger"),
-    ("recordings/confusion_01.wav", "confusion"),
-    # ... more files
-]
-
-X, y = [], []
-for path, label in file_label_pairs:
-    features = extract_audio_features(path)
-    vector = features["mfcc_mean"] + [
-        features["pitch_mean"],
-        features["energy_mean"],
-        features["zcr_mean"]
-    ]
-    X.append(vector)
-    y.append(label)
-
-analyzer = AudioEmotionAnalyzer()
-analyzer.train(np.array(X), y)
-
-# Now analyzer.analyze() uses the trained classifier
-result = analyzer.analyze("new_recording.wav")
-```
+**Temporal fusion.** Right now, fusion happens at the clip or utterance level. For longer recordings, it would be valuable to fuse across time — tracking how affect changes across the session and flagging specific moments where frustration or confusion spiked. That's a separate architectural concern and out of scope for this phase.
 
 ---
 
-## Dependencies
-
-In addition to the Phase 1 dependencies:
+## How all three phases fit together
 
 ```
-transformers>=4.35
-torch>=2.0
-librosa>=0.10
-scikit-learn>=1.3
-soundfile>=0.12
+Text input     → TextSentimentAnalyzer     → SentimentOutput (modality: text)  ┐
+Audio input    → AudioEmotionAnalyzer      → SentimentOutput (modality: audio) ├─→ MultimodalFusion → SentimentOutput (modality: fused)
+Facial input   → FacialSentimentAnalyzer  → SentimentOutput (modality: face)  ┘         ↑
+                                                                            contributions.py
 ```
 
----
+Phase 1 (`feature/unified-sentiment-pipeline`) — schema, confidence extraction, emotion mapping
 
-## Current limitations
+Phase 2 (`feature/multimodal-input-modules`) — text and audio models, audio feature extraction
 
-**Text module is English-only.** The underlying model doesn't handle other languages. Multilingual support will need a separate model.
-
-**Audio classifier needs training data.** The heuristic fallback works for basic testing, but accurate predictions require labeled usability session recordings. Once the RUXAILAB dataset is annotated, run `.train()` on it.
-
-**Short audio clips only.** The feature extractor averages over the full clip. For clips longer than ~30 seconds, consider splitting into chunks and analyzing each chunk separately.
-
----
-
-## Relation to the full project
-
-This is Phase 2. Phase 1 (`feature/unified-sentiment-pipeline`) has to be merged first, this branch imports from `pipeline/`, `schemas/`, and `utils/` defined there.
+Phase 3 (this branch) — fusion, contribution tracking, explainable output
