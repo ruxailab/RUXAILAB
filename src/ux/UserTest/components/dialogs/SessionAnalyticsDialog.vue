@@ -109,6 +109,7 @@
                   :webcam-video-url="taskAnswer?.webcamRecordURL"
                   :test-answer="testAnswer"
                   :selected-task="selectedTask"
+                  :timeline="taskAnswer?.emotionTimeline ?? null"
                 />
               </v-window-item>
 

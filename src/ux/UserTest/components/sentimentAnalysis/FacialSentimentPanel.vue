@@ -107,6 +107,11 @@
           </v-row>
         </v-card>
       </v-col>
+
+      <!-- Emotion Timeline -->
+      <v-col cols="12">
+        <EmotionTimeline :timeline="activeTimeline" />
+      </v-col>
     </v-row>
   </v-card>
 </template>
@@ -126,6 +131,7 @@ import {
 import axios from 'axios'
 import { useStore } from 'vuex'
 import UserStudyEvaluatorAnswer from '../../models/UserStudyEvaluatorAnswer'
+import EmotionTimeline from './EmotionTimeline.vue'
 
 ChartJS.register(
   Title,
@@ -142,9 +148,22 @@ const props = defineProps({
   webcamVideoUrl: { type: String, default: null },
   testAnswer: { type: Object, default: null },
   selectedTask: { type: Number, default: 0 },
+  /**
+   * Optional pre-fetched emotion timeline from the Facial Sentiment API.
+   * Shape: Array<{ id, starting_time, ending_time, emotion, value }>
+   * When null or empty, the EmotionTimeline component is hidden.
+   */
+  timeline: { type: Array, default: null },
 })
 
 const isAnalyzing = ref(true)
+
+/**
+ * Passes the real timeline data through to EmotionTimeline.
+ * The component itself guards with v-if="timeline && timeline.length > 0",
+ * so it renders nothing until the backend provides real data.
+ */
+const activeTimeline = computed(() => props.timeline)
 const summaryMetrics = ref([])
 const insights = ref([])
 const radarData = ref({
