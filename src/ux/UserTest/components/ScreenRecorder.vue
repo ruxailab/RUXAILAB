@@ -153,10 +153,31 @@ const recordScreen = async () => {
   }
 }
 
+const STOP_TIMEOUT_MS = 30000
+
 const stopRecording = () => {
-  if (isRecording.value) {
+  if (!isRecording.value) return Promise.resolve()
+
+  return new Promise((resolve) => {
+    const timeout = setTimeout(() => {
+      console.warn('ScreenRecorder: upload timed out after 30s')
+      resolve()
+    }, STOP_TIMEOUT_MS)
+
+    const originalOnStop = mediaRecorder.value.onstop
+    mediaRecorder.value.onstop = async (event) => {
+      try {
+        await originalOnStop(event)
+      } catch (err) {
+        console.error('ScreenRecorder: error in onstop handler', err)
+      } finally {
+        clearTimeout(timeout)
+        resolve()
+      }
+    }
+
     mediaRecorder.value.stop()
-  }
+  })
 }
 
 defineExpose({ captureScreen, stopRecording })

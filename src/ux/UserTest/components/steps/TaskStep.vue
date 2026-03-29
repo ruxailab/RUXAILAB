@@ -528,10 +528,6 @@ onBeforeUnmount(() => {
     clearInterval(timerInterval)
     timerInterval = null
   }
-  if (finishTimeout) {
-    clearTimeout(finishTimeout)
-    finishTimeout = null
-  }
   forceStopAllMedia()
 
   uploadingCount.value = 0
@@ -643,7 +639,6 @@ const pendingFinalTime = ref(null)
 
 let taskStartTime = null
 let timerInterval = null
-let finishTimeout = null
 
 function onShowLoading() {
   uploadingCount.value++
@@ -654,29 +649,10 @@ function onStopShowLoading() {
   uploadingCount.value--
   if (uploadingCount.value < 0) uploadingCount.value = 0
   emit('stop-show-loading')
-
-  if (uploadingCount.value === 0 && isWaitingForUploadToFinish.value) {
-    emitDoneOrCouldNotFinish(pendingFinalTime.value)
-  }
 }
 
 function attemptFinish() {
-  if (uploadingCount.value > 0) {
-    isWaitingForUploadToFinish.value = true
-  } else {
-    // Check for where uploads have not started yet
-    if (stage.value !== 3 && hasAnyRecording.value) {
-      isWaitingForUploadToFinish.value = true
-      // Short timeout to alllow recorders to emit show-loading
-      finishTimeout = setTimeout(() => {
-        if (uploadingCount.value === 0 && isWaitingForUploadToFinish.value) {
-          emitDoneOrCouldNotFinish(pendingFinalTime.value)
-        }
-      }, 500)
-    } else {
-      emitDoneOrCouldNotFinish(pendingFinalTime.value)
-    }
-  }
+  emitDoneOrCouldNotFinish(pendingFinalTime.value)
 }
 
 function updateElapsedTime() {
@@ -734,7 +710,7 @@ async function startMediaRecorders() {
   }
   if (props.task?.hasCamRecord && videoRecorder.value) {
     const videoStarted = await videoRecorder.value.startRecording()
-    if(!videoStarted){
+    if (!videoStarted) {
       return false
     }
   }
@@ -744,16 +720,40 @@ async function startMediaRecorders() {
   return true
 }
 
-function forceStopAllMedia() {
-  audioRecorder.value?.stopAudioRecording?.()
-  videoRecorder.value?.stopRecording?.()
-  screenRecorder.value?.stopRecording?.()
+async function forceStopAllMedia() {
+  const promises = []
+
+  if (audioRecorder.value?.stopAudioRecording) {
+    promises.push(
+      Promise.resolve(audioRecorder.value.stopAudioRecording()).catch((err) =>
+        console.error('Error stopping audio recorder:', err),
+      ),
+    )
+  }
+  if (videoRecorder.value?.stopRecording) {
+    promises.push(
+      Promise.resolve(videoRecorder.value.stopRecording()).catch((err) =>
+        console.error('Error stopping video recorder:', err),
+      ),
+    )
+  }
+  if (screenRecorder.value?.stopRecording) {
+    promises.push(
+      Promise.resolve(screenRecorder.value.stopRecording()).catch((err) =>
+        console.error('Error stopping screen recorder:', err),
+      ),
+    )
+  }
+
+  await Promise.all(promises)
 }
 
-function handleShowPostForm(userCompleted) {
+async function handleShowPostForm(userCompleted) {
   if (isWaitingForUploadToFinish.value) return
 
-  forceStopAllMedia()
+  isWaitingForUploadToFinish.value = true
+  showPostForm.value.userCompleted = userCompleted
+  emit('show-loading')
 
   if (timerInterval) {
     clearInterval(timerInterval)
@@ -764,11 +764,13 @@ function handleShowPostForm(userCompleted) {
   if (taskStartTime) {
     finalTime = Math.round(Date.now() - taskStartTime)
     pendingFinalTime.value = finalTime
-    console.log('Tiempo detenido en:', finalTime, 'segundos')
     emit('timer-stopped', finalTime, props.taskIndex)
   }
 
-  showPostForm.value.userCompleted = userCompleted
+  await forceStopAllMedia()
+
+  emit('stop-show-loading')
+  isWaitingForUploadToFinish.value = false
 
   if (props.task?.taskType === 'post-form' && props.task?.postForm) {
     const link = props.task?.postForm
@@ -785,7 +787,7 @@ function handleShowPostForm(userCompleted) {
   if (VALIDATION_REQUIRED_TYPES.has(props.task?.taskType)) {
     stage.value = 3
   } else {
-    attemptFinish()
+    emitDoneOrCouldNotFinish(pendingFinalTime.value)
   }
 }
 
@@ -837,10 +839,6 @@ watch(
 watch(
   () => props.taskIndex,
   () => {
-    if (finishTimeout) {
-      clearTimeout(finishTimeout)
-      finishTimeout = null
-    }
     forceStopAllMedia()
     stage.value = 1
     taskStartTime = null

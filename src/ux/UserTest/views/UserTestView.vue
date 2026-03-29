@@ -890,25 +890,10 @@ const callTimerSave = () => {
 async function handleTaskFinish(userCompleted) {
   callTimerSave()
 
-  await nextTick()
-
-  if (isLoading.value) {
-    const unwatch = watch(
-      () => isLoading.value,
-      async (val) => {
-        if (!val) {
-          unwatch()
-          completeStep(taskIndex.value, 'tasks', userCompleted)
-          attachMediaToTasks(localTestAnswer, mediaUrls.value)
-          await savePartialAnswer()
-        }
-      },
-    )
-  } else {
-    completeStep(taskIndex.value, 'tasks', userCompleted)
-    attachMediaToTasks(localTestAnswer, mediaUrls.value)
-    await savePartialAnswer()
-  }
+  // Media uploads are now guaranteed to be complete before TaskStep emits done/couldNotFinish
+  completeStep(taskIndex.value, 'tasks', userCompleted)
+  attachMediaToTasks(localTestAnswer, mediaUrls.value)
+  await savePartialAnswer()
 }
 
 const startTimer = () => {

@@ -103,7 +103,7 @@ const requestCameraPermission = async () => {
 }
 
 const startRecording = async () => {
-  if(cameraPermissionDenied.value) {
+  if (cameraPermissionDenied.value) {
     const permissionGranted = await requestCameraPermission()
     if (!permissionGranted) {
       showError(t('errors.cameraPermissionDenied'))
@@ -134,12 +134,12 @@ const startRecording = async () => {
     }
   } catch (e) {
     recording.value = false
-    if(e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
+    if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
       cameraPermissionDenied.value = true
       showError(t('errors.cameraPermissionDenied'))
       return false
     }
-    console.error("Unexpected error while starting video recording:", e)
+    console.error('Unexpected error while starting video recording:', e)
     showError('errors.globalError')
     return false
   }
@@ -211,10 +211,33 @@ const startRecording = async () => {
   }
 }
 
+const STOP_TIMEOUT_MS = 30000
+
 const stopRecording = () => {
-  if (mediaRecorder.value) {
-    mediaRecorder.value.stop()
+  if (!mediaRecorder.value || mediaRecorder.value.state === 'inactive') {
+    return Promise.resolve()
   }
+
+  return new Promise((resolve) => {
+    const timeout = setTimeout(() => {
+      console.warn('VideoRecorder: upload timed out after 30s')
+      resolve()
+    }, STOP_TIMEOUT_MS)
+
+    const originalOnStop = mediaRecorder.value.onstop
+    mediaRecorder.value.onstop = async (event) => {
+      try {
+        await originalOnStop(event)
+      } catch (err) {
+        console.error('VideoRecorder: error in onstop handler', err)
+      } finally {
+        clearTimeout(timeout)
+        resolve()
+      }
+    }
+
+    mediaRecorder.value.stop()
+  })
 }
 
 defineExpose({ startRecording, stopRecording })

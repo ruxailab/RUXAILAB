@@ -224,22 +224,70 @@ const startAudioRecording = async () => {
   }
 }
 
+const STOP_TIMEOUT_MS = 30000
+
 const stopAudioRecording = () => {
-  if (!recordingAudio.value) return
+  if (!recordingAudio.value) return Promise.resolve()
+
+  const promises = []
 
   if (
     mediaRecorder.value?.local &&
     mediaRecorder.value.local.state !== 'inactive'
   ) {
-    mediaRecorder.value.local.stop()
+    promises.push(
+      new Promise((resolve) => {
+        const timeout = setTimeout(() => {
+          console.warn('AudioRecorder: local upload timed out after 30s')
+          resolve()
+        }, STOP_TIMEOUT_MS)
+
+        const originalOnStop = mediaRecorder.value.local.onstop
+        mediaRecorder.value.local.onstop = async (event) => {
+          try {
+            await originalOnStop(event)
+          } catch (err) {
+            console.error('AudioRecorder: error in local onstop handler', err)
+          } finally {
+            clearTimeout(timeout)
+            resolve()
+          }
+        }
+
+        mediaRecorder.value.local.stop()
+      }),
+    )
   }
 
   if (
     mediaRecorder.value?.remote &&
     mediaRecorder.value.remote.state !== 'inactive'
   ) {
-    mediaRecorder.value.remote.stop()
+    promises.push(
+      new Promise((resolve) => {
+        const timeout = setTimeout(() => {
+          console.warn('AudioRecorder: remote upload timed out after 30s')
+          resolve()
+        }, STOP_TIMEOUT_MS)
+
+        const originalOnStop = mediaRecorder.value.remote.onstop
+        mediaRecorder.value.remote.onstop = async (event) => {
+          try {
+            await originalOnStop(event)
+          } catch (err) {
+            console.error('AudioRecorder: error in remote onstop handler', err)
+          } finally {
+            clearTimeout(timeout)
+            resolve()
+          }
+        }
+
+        mediaRecorder.value.remote.stop()
+      }),
+    )
   }
+
+  return Promise.all(promises)
 }
 
 defineExpose({ startAudioRecording, stopAudioRecording })
