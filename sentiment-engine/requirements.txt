@@ -1,0 +1,9 @@
+transformers 
+torch 
+librosa 
+numpy 
+scikit-learn 
+pydantic
+pytest 
+black 
+flake8
