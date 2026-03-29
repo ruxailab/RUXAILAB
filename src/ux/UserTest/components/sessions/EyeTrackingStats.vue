@@ -209,7 +209,6 @@ const predictedData = ref(null)
 const isAnalyzing = ref(true)
 const hasError = ref(false)
 
-const totalPredictions = ref(0)
 const insights = ref([])
 const summaryMetrics = ref([])
 
@@ -258,6 +257,60 @@ onMounted(async () => {
   }
 })
 
+function detectFixations(predictions) {
+  const SPATIAL_THRESHOLD = 50
+  const MIN_DURATION = 200
+  const SCREEN_W = predictions[0]?.screen_width || 1920
+  const SCREEN_H = predictions[0]?.screen_height || 1080
+
+  if (!predictions.length) return []
+
+  const fixations = []
+  let cluster = [predictions[0]]
+
+  for (let k = 1; k < predictions.length; k++) {
+    const p = predictions[k]
+    const cx = cluster.reduce((s, q) => s + q.predicted_x, 0) / cluster.length
+    const cy = cluster.reduce((s, q) => s + q.predicted_y, 0) / cluster.length
+    const dx = p.predicted_x - cx
+    const dy = p.predicted_y - cy
+
+    if (Math.sqrt(dx * dx + dy * dy) <= SPATIAL_THRESHOLD) {
+      cluster.push(p)
+    } else {
+      const duration =
+        cluster[cluster.length - 1].timestamp - cluster[0].timestamp
+      if (duration >= MIN_DURATION && cluster.length >= 3) {
+        fixations.push({
+          x: cx / SCREEN_W,
+          y: cy / SCREEN_H,
+          duration,
+          pointCount: cluster.length,
+        })
+      }
+      cluster = [p]
+    }
+  }
+
+  // Finalize last cluster
+  if (cluster.length >= 3) {
+    const duration =
+      cluster[cluster.length - 1].timestamp - cluster[0].timestamp
+    if (duration >= MIN_DURATION) {
+      const cx = cluster.reduce((s, q) => s + q.predicted_x, 0) / cluster.length
+      const cy = cluster.reduce((s, q) => s + q.predicted_y, 0) / cluster.length
+      fixations.push({
+        x: cx / SCREEN_W,
+        y: cy / SCREEN_H,
+        duration,
+        pointCount: cluster.length,
+      })
+    }
+  }
+
+  return fixations
+}
+
 function processAnalytics(data) {
   const predictions = Array.isArray(data) ? data : []
 
@@ -267,16 +320,113 @@ function processAnalytics(data) {
     return
   }
 
-  totalPredictions.value = predictions.length
+  const total = predictions.length
+
+  const fixations = detectFixations(predictions)
+  const fixationCount = fixations.length
+  const avgFixationDuration =
+    fixationCount > 0
+      ? Math.round(
+          fixations.reduce((s, f) => s + f.duration, 0) / fixationCount,
+        )
+      : 0
+
+  const GRID = 10
+  const visitedCells = new Set()
+  predictions.forEach((p) => {
+    const col = Math.min(
+      Math.floor((p.predicted_x / (p.screen_width || 1920)) * GRID),
+      GRID - 1,
+    )
+    const row = Math.min(
+      Math.floor((p.predicted_y / (p.screen_height || 1080)) * GRID),
+      GRID - 1,
+    )
+    visitedCells.add(`${col},${row}`)
+  })
+  const coveragePct = Math.round((visitedCells.size / (GRID * GRID)) * 100)
 
   summaryMetrics.value = [
     {
       label: 'Total Predictions',
-      value: totalPredictions.value,
-      progress: Math.min(totalPredictions.value, 300),
+      value: total,
+      progress: Math.min((total / 500) * 100, 100),
       color: 'indigo-darken-2',
       icon: 'mdi-eye-outline',
     },
+    {
+      label: 'Fixation Count',
+      value: fixationCount,
+      progress: Math.min((fixationCount / 30) * 100, 100),
+      color: 'teal-darken-2',
+      icon: 'mdi-eye-circle-outline',
+    },
+    {
+      label: 'Avg Fixation Duration',
+      value: `${avgFixationDuration} ms`,
+      progress: Math.min((avgFixationDuration / 800) * 100, 100),
+      color: 'deep-purple-darken-2',
+      icon: 'mdi-timer-outline',
+    },
+    {
+      label: 'Screen Coverage',
+      value: `${coveragePct}%`,
+      progress: coveragePct,
+      color: 'green-darken-2',
+      icon: 'mdi-grid',
+    },
   ]
+
+  const insightList = []
+
+  if (fixationCount > 20) {
+    insightList.push({
+      type: 'success',
+      color: 'green',
+      icon: 'mdi-check-circle',
+      text: `High engagement detected: ${fixationCount} fixations recorded.`,
+    })
+  } else if (fixationCount > 8) {
+    insightList.push({
+      type: 'info',
+      color: 'blue',
+      icon: 'mdi-information',
+      text: `Moderate gaze stability: ${fixationCount} fixations detected.`,
+    })
+  } else {
+    insightList.push({
+      type: 'warning',
+      color: 'orange',
+      icon: 'mdi-alert',
+      text: `Few fixations detected (${fixationCount}). User may have been scanning rapidly.`,
+    })
+  }
+
+  if (avgFixationDuration > 400) {
+    insightList.push({
+      type: 'info',
+      color: 'deep-purple',
+      icon: 'mdi-timer-sand',
+      text: `Long average fixation duration (${avgFixationDuration} ms): user focused on specific areas.`,
+    })
+  }
+
+  if (coveragePct > 60) {
+    insightList.push({
+      type: 'success',
+      color: 'teal',
+      icon: 'mdi-view-grid',
+      text: `Good screen coverage (${coveragePct}%): gaze explored most of the viewport.`,
+    })
+  } else if (coveragePct < 30) {
+    insightList.push({
+      type: 'warning',
+      color: 'orange',
+      icon: 'mdi-view-grid-outline',
+      text: `Limited screen coverage (${coveragePct}%): gaze was concentrated in a narrow region.`,
+    })
+  }
+
+  insights.value = insightList
 }
 </script>

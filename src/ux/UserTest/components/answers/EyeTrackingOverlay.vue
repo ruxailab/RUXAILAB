@@ -23,36 +23,52 @@ let resizeObs = null
 let heatmapData = []
 
 const DURATION = 450
+const FREE_TRAIL_LENGTH = 20
+const FADE_WINDOW = 40
 
 function lerp(a, b, t) {
   return a + (b - a) * t
 }
 
-function drawFreeEye(cx, cy) {
+function drawFreeEye(cx, cy, opacity = 1) {
   ctx.beginPath()
   ctx.arc(cx * canvas.value.width, cy * canvas.value.height, 8, 0, 2 * Math.PI)
-  ctx.fillStyle = 'rgba(255,0,0,0.8)'
+  ctx.fillStyle = `rgba(255, 0, 0, ${(opacity * 0.8).toFixed(2)})`
   ctx.fill()
 }
 
 function drawPrecisionPoints(cx, cy) {
-  ctx.lineWidth = 2
-  ctx.strokeStyle = 'rgba(0, 200, 255, 0.6)'
-  ctx.beginPath()
-
+  // Draw path segments with per-segment opacity fade (newer = brighter)
   for (let j = 0; j < i; j++) {
     const a = normalized[j]
     const b = normalized[j + 1] || a
+    const age = i - j
+    const opacity =
+      age <= FADE_WINDOW ? Math.max(0.08, 1 - age / FADE_WINDOW) : 0.08
+    ctx.lineWidth = 2
+    ctx.strokeStyle = `rgba(0, 200, 255, ${opacity.toFixed(2)})`
+    ctx.beginPath()
     ctx.moveTo(a.x * canvas.value.width, a.y * canvas.value.height)
     ctx.lineTo(b.x * canvas.value.width, b.y * canvas.value.height)
+    ctx.stroke()
   }
 
-  const prev = normalized[i]
-  ctx.moveTo(prev.x * canvas.value.width, prev.y * canvas.value.height)
-  ctx.lineTo(cx * canvas.value.width, cy * canvas.value.height)
-  ctx.stroke()
+  // Live segment from last known point to current interpolated position
+  if (normalized[i]) {
+    const prev = normalized[i]
+    ctx.lineWidth = 2
+    ctx.strokeStyle = 'rgba(0, 200, 255, 1.0)'
+    ctx.beginPath()
+    ctx.moveTo(prev.x * canvas.value.width, prev.y * canvas.value.height)
+    ctx.lineTo(cx * canvas.value.width, cy * canvas.value.height)
+    ctx.stroke()
+  }
 
+  // Dots: faded for older points, bright for current
   normalized.slice(0, i + 1).forEach((p, idx) => {
+    const age = i - idx
+    const opacity =
+      age <= FADE_WINDOW ? Math.max(0.15, 1 - age / FADE_WINDOW) : 0.15
     ctx.beginPath()
     ctx.arc(
       p.x * canvas.value.width,
@@ -62,22 +78,26 @@ function drawPrecisionPoints(cx, cy) {
       2 * Math.PI,
     )
     ctx.fillStyle =
-      idx === i ? 'rgba(0, 255, 255, 1)' : 'rgba(0, 200, 255, 0.7)'
+      idx === i
+        ? 'rgba(0, 255, 255, 1)'
+        : `rgba(0, 200, 255, ${opacity.toFixed(2)})`
     ctx.fill()
   })
 
+  // White cursor at live interpolated position
   ctx.beginPath()
   ctx.arc(cx * canvas.value.width, cy * canvas.value.height, 6, 0, 2 * Math.PI)
-  ctx.fillStyle = 'rgba(255,255,255,0.9)'
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
   ctx.fill()
 }
 
 function drawHeatmapPoint(x, y) {
-  const radius = 20
+  const radius = 60
   const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius)
-  gradient.addColorStop(0, 'rgba(255,0,0,0.03)')
-  gradient.addColorStop(0.6, 'rgba(255,150,0,0.06)')
-  gradient.addColorStop(1, 'rgba(255,255,0,0.0012)')
+  gradient.addColorStop(0, 'rgba(255, 0,   0,   0.35)')
+  gradient.addColorStop(0.4, 'rgba(255, 80,  0,   0.20)')
+  gradient.addColorStop(0.7, 'rgba(255, 200, 0,   0.10)')
+  gradient.addColorStop(1, 'rgba(255, 255, 0,   0.00)')
   ctx.fillStyle = gradient
   ctx.beginPath()
   ctx.arc(x, y, radius, 0, 2 * Math.PI)
@@ -103,7 +123,7 @@ function animateSmooth(timestamp) {
   ctx.clearRect(0, 0, canvas.value.width, canvas.value.height)
 
   if (props.viewMode === 'free') drawFreeEye(cx, cy)
-  else if (props.viewMode === 'precision') drawPrecisionPoints()
+  else if (props.viewMode === 'precision') drawPrecisionPoints(cx, cy)
   else if (props.viewMode === 'heatmap') {
     heatmapData.push({ x: cx, y: cy })
     drawHeatmap()
@@ -229,9 +249,13 @@ watch(
     ctx.clearRect(0, 0, canvas.value.width, canvas.value.height)
 
     if (props.viewMode === 'free') {
-      visiblePoints.forEach((p) => drawFreeEye(p.x, p.y))
+      const trail = visiblePoints.slice(-FREE_TRAIL_LENGTH)
+      trail.forEach((p, idx) => {
+        const opacity = (idx + 1) / trail.length
+        drawFreeEye(p.x, p.y, opacity)
+      })
     } else if (props.viewMode === 'precision') {
-      visiblePoints.forEach((p) => drawPrecisionPoints(p.x, p.y))
+      drawPrecisionPoints(normalized[i].x, normalized[i].y)
     } else if (props.viewMode === 'heatmap') {
       heatmapData = visiblePoints
       drawHeatmap()
