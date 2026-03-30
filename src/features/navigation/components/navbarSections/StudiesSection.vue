@@ -89,9 +89,9 @@
 
           <!-- ⚙️ Status -->
           <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">
+            <label class="filter-label" style="cursor:pointer">
               {{ $t('pages.studies.statusLabel') }}
-            </div>
+            </label>
             <v-select
               v-model="selectedStatusFilter"
               :items="statusOptions"
@@ -102,6 +102,9 @@
               density="compact"
               variant="outlined"
               hide-details
+              class="status-select"
+              role="listbox"
+              :aria-label="$t('pages.studies.statusLabel')"
             />
           </v-col>
 
@@ -405,4 +408,9 @@ const goTo = (test) => {
 .filter-field :deep(.v-field__input) {
   min-height: 36px;
 }
+
+.status-select :deep(.v-chip){
+  pointer-events: none;
+}
+
 </style>
