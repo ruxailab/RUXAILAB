@@ -95,6 +95,7 @@
 
             <!-- status-select id ties this to the label above for accessibility -->
             <v-select
+              id="status-select"
               v-model="selectedStatusFilter"
               :items="statusOptions"
               item-title="text"
