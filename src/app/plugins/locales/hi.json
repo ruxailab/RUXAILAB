@@ -74,6 +74,7 @@
   },
   "common": {
     "enterTextHere": "यहाँ टेक्स्ट दर्ज करें...",
+    "percentValue": "{value}%",
     "units": {
       "mb": "MB",
       "gb": "GB"
@@ -86,6 +87,11 @@
     "editAndInvite": "अपने परीक्षण को संपादित करें और लोगों को आमंत्रित करें",
     "analyzeProject": "परियोजना और मूल्यांककों का विश्लेषण करें",
     "comment": "टिप्पणी",
+    "comments": "टिप्पणियाँ",
+    "image": "छवि",
+    "images": "छवियाँ",
+    "close": "बंद करें",
+    "selectImage": "अपलोड करने के लिए एक छवि चुनें",
     "inputImage": "विषय से संबंधित अपनी पसंद की एक छवि दर्ज करें",
     "title": "शीर्षक",
     "description": "विवरण",
@@ -643,7 +649,14 @@
     "AddCommentBtn": {
       "showComment": "टिप्पणी दिखाएं",
       "addComment": "टिप्पणी जोड़ें",
+      "addAnotherComment": "एक और टिप्पणी जोड़ें",
+      "addNewComment": "एक नई टिप्पणी जोड़ें",
       "hideTextArea": "टेक्स्ट क्षेत्र छुपाएं"
+    },
+    "ImportImage": {
+      "uploadSuccess": "छवि सफलतापूर्वक अपलोड की गई",
+      "uploadError": "छवि अपलोड करने में विफल",
+      "imagesCount": "{count} छवि(यां) संलग्न"
     },
     "errors": {
       "failedToLoadQuestionForm": "प्रश्न फॉर्म लोड करने में विफल। कृपया पुनः प्रयास करें।",
@@ -655,6 +668,12 @@
       "question": "प्रश्न",
       "questions": "प्रश्न"
     }
+  },
+  "HeuristicsAnalytics": {
+    "dataTable": "डेटा तालिका",
+    "chart": "चार्ट",
+    "userUploadedContent": "उपयोगकर्ता द्वारा अपलोड की गई सामग्री",
+    "userUploadedAttachment": "उपयोगकर्ता द्वारा अपलोड किया गया अटैचमेंट"
   },
   "HeuristicsOptionsTable": {
     "titles": {
@@ -1354,7 +1373,8 @@
       "elastic": "इलास्टिक नेट",
       "bayesian": "बायेसियन रिज",
       "sgd": "एसजीडी रिग्रेशर",
-      "svr": "सपोर्ट वेक्टर रिग्रेशर"
+      "svr": "सपोर्ट वेक्टर रिग्रेशर",
+      "rfr": "रैंडम फॉरेस्ट रिग्रेशर"
     }
   },
   "AccessNotAllowed": {
@@ -1579,6 +1599,7 @@
     "deleteAccount": "क्या आप वाकई अपना खाता हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।",
     "genericSuccess": "ऑपरेशन सफल रहा",
     "savedChanges": "परिवर्तनों को सफलतापूर्वक सहेजा गया",
+    "errorSavingProgress": "प्रगति सहेजने में त्रुटि",
     "deleteUser": "क्या आप वाकई इस उपयोगकर्ता को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।"
   },
   "buttons": {
