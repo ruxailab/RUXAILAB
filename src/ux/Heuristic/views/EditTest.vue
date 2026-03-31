@@ -253,71 +253,91 @@ const buildStudy = () => {
   return instantiateStudyByType(rawData.testType, rawData)
 }
 
-const save = async ({ showToast = false } = {}) => {
-  if (props.isTemplate) return true
+const waitForCurrentSave = async () => {
+  if (!currentSavePromise) return false
 
-  if (currentSavePromise) {
-    try {
-      await currentSavePromise
-    } catch {
-      // Continue with the latest pending state after a failed save.
-    }
-
-    if (!hasPendingChanges.value) {
-      return true
-    }
+  try {
+    await currentSavePromise
+  } catch {
+    // Continue with the latest pending state after a failed save.
   }
 
-  const study = buildStudy()
-  if (!study) return false
+  return !hasPendingChanges.value
+}
 
-  const saveVersion = pendingChangeVersion.value
+const beginSave = (study) => {
   const savePromise = studyController.updateStudy(study)
 
   autoSaveInProgress.value = true
   updateSaveStatus('Saving changes...', 'saving')
   currentSavePromise = savePromise
 
+  return savePromise
+}
+
+const handleSuccessfulSave = (study, saveVersion, showToast) => {
+  store.commit('SET_TEST', study)
+
+  if (saveVersion !== pendingChangeVersion.value) {
+    updateSaveStatus('Saving changes...', 'saving')
+    debouncedAutoSave()
+    return
+  }
+
+  hasPendingChanges.value = false
+  lastSaveTime.value = new Date()
+  updateSaveStatus('All changes saved', 'success')
+
+  if (showToast) {
+    showSuccess('alerts.savedChanges')
+  }
+}
+
+const handleFailedSave = (showToast) => {
+  hasPendingChanges.value = true
+  updateSaveStatus('Failed to save', 'error')
+
+  if (showToast) {
+    showError('alerts.errorSavingProgress')
+  }
+}
+
+const finalizeSave = (savePromise) => {
+  autoSaveInProgress.value = false
+
+  if (currentSavePromise === savePromise) {
+    currentSavePromise = null
+  }
+
+  if (
+    hasPendingChanges.value &&
+    !currentSavePromise &&
+    saveStatusType.value !== 'error'
+  ) {
+    debouncedAutoSave()
+  }
+}
+
+const save = async ({ showToast = false } = {}) => {
+  if (props.isTemplate) return true
+
+  if (await waitForCurrentSave()) return true
+
+  const study = buildStudy()
+  if (!study) return false
+
+  const saveVersion = pendingChangeVersion.value
+  const savePromise = beginSave(study)
+
   try {
     await savePromise
-    store.commit('SET_TEST', study)
-
-    if (saveVersion === pendingChangeVersion.value) {
-      hasPendingChanges.value = false
-      lastSaveTime.value = new Date()
-      updateSaveStatus('All changes saved', 'success')
-
-      if (showToast) {
-        showSuccess('alerts.savedChanges')
-      }
-    } else {
-      updateSaveStatus('Saving changes...', 'saving')
-      debouncedAutoSave()
-    }
-
+    handleSuccessfulSave(study, saveVersion, showToast)
     return true
   } catch {
-    hasPendingChanges.value = true
-    updateSaveStatus('Failed to save', 'error')
-
-    if (showToast) {
-      showError('alerts.errorSavingProgress')
-    }
-
+    handleFailedSave(showToast)
     return false
   } finally {
-    autoSaveInProgress.value = false
-    if (currentSavePromise === savePromise) {
-      currentSavePromise = null
-    }
-
-    if (
-      hasPendingChanges.value &&
-      !currentSavePromise &&
-      saveStatusType.value !== 'error'
-    ) {
-      debouncedAutoSave()
-    }
+    finalizeSave(savePromise)
   }
 }
 
