@@ -20,12 +20,12 @@
       "occurrence": "Test error",
       "daily_counts": {
         "Mon": 0,
-        "Tue": 1,
+        "Tue": 2,
         "Wed": 0,
         "Thu": 0,
         "Fri": 1
       },
-      "total": 2
+      "total": 3
     },
     {
       "occurrence": "Security vulnerability",
@@ -62,7 +62,7 @@
     }
   ],
   "summary": {
-    "grand_total": 6,
+    "grand_total": 7,
     "days_tracked": 5
   },
   "issues_tracking": {
