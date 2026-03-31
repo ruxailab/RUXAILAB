@@ -7,8 +7,11 @@ Professor: Marc Gonzalez
 # Team 3 - 26 : Erasmus Team 
 
 Patrick Augusto Pinheiro da Silva 
+
 Pedro Ulisses Reis de Dorneles
+
 Paul Coursault
+
 Simon Drouin
 
 **Universitat de Lleida — Academic Year 2025–2026**
