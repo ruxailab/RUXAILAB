@@ -37,10 +37,7 @@ export default class AuthController {
    * @returns {Promise} - Firebase auth user credential
    */
   async signIn(email, password, rememberMe) {
-    await setPersistence(
-      auth,
-      rememberMe ? browserLocalPersistence : browserSessionPersistence,
-    )
+    await this._setAuthPersistence(rememberMe)
     return signInWithEmailAndPassword(auth, email, password)
   }
 
@@ -49,10 +46,7 @@ export default class AuthController {
    * @returns {Promise} - Firebase auth user credential
    */
   async signInWithGoogle(rememberMe) {
-    await setPersistence(
-      auth,
-      rememberMe ? browserLocalPersistence : browserSessionPersistence,
-    )
+    await this._setAuthPersistence(rememberMe)
     const provider = new GoogleAuthProvider()
     return signInWithPopup(auth, provider)
   }
@@ -141,14 +135,28 @@ export default class AuthController {
   }
 
   async deleteUserData(userId) {
+    const cloudFunctionsUrl = process.env.VUE_APP_CLOUD_FUNCTIONS_URL
+    if (!cloudFunctionsUrl) {
+      console.warn('VUE_APP_CLOUD_FUNCTIONS_URL is not defined. Skipping backend cleanup.')
+      return
+    }
+
     try {
-      await axios.post(
-        process.env.VUE_APP_CLOUD_FUNCTIONS_URL + '/deleteAuth',
-        { data: { userId } },
-      )
+      await axios.post(`${cloudFunctionsUrl}/deleteAuth`, { data: { userId } })
     } catch (err) {
       throw err
     }
+  }
+
+  /**
+   * Helper to set auth persistence
+   * @private
+   */
+  async _setAuthPersistence(rememberMe) {
+    await setPersistence(
+      auth,
+      rememberMe ? browserLocalPersistence : browserSessionPersistence,
+    )
   }
 
   async sendVerificationEmail(email, userName) {

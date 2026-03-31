@@ -27,17 +27,22 @@ router.beforeEach(async (to, from, next) => {
   const { authorize = [] } = to.meta || {}
   let user = store.state.Auth.user
 
-  // Special handling for accessibility preview routes - allow complete public access
-  const isAccessibilityPreview =
-    to.path.includes('/accessibility/') && to.path.includes('/preview/')
+  // Special handling for accessibility public routes - allow complete access
+  const isAccessibilityPublicRoute =
+    to.path.startsWith('/accessibility/') &&
+    (!to.meta.authorize || to.meta.authorize.length === 0)
 
-  if (isAccessibilityPreview) {
-    return next() // Allow immediate access without any checks
+  if (isAccessibilityPublicRoute) {
+    return next()
   }
 
-   // Allow access to public pages even if user is logged in but email not verified
+  // Allow access to public pages
   const publicPages = ['/signin', '/signup', '/verify-email', '/forgot-password']
   if (publicPages.includes(to.path)) {
+    // If already logged in, redirect to dashboard
+    if (user && (to.path === '/signin' || to.path === '/signup')) {
+      return next(redirect())
+    }
     return next()
   }
 
@@ -46,9 +51,9 @@ router.beforeEach(async (to, from, next) => {
     user = store.state.Auth.user
     // If user is logged in but email not verified, redirect to verify-email
     if (authUser && authUser.emailVerified === false && !publicPages.includes(to.path)) {
-      return next('/verify-email')
+        return next('/verify-email')
+    }
   }
-}
 
   if (to.path === '/') return next(redirect())
 
@@ -62,8 +67,9 @@ router.beforeEach(async (to, from, next) => {
 })
 
 function redirect() {
-  if (!store.state.Auth.user) return '/signin'
-  const level = store.state.Auth.user.accessLevel
+  const { user } = store.state.Auth
+  if (!user) return '/signin'
+  const level = user.accessLevel
   if (level === 0) return '/superadmin'
   if (level === 1) return '/admin'
   return '/signin'

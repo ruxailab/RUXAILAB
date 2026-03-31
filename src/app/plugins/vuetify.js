@@ -28,10 +28,23 @@ export default createVuetify({
     ...components,
   },
   directives,
+  icons: {
+    defaultSet: 'mdi',
+  },
   theme: {
     defaultTheme: 'myCustomLightTheme',
     themes: {
-      myCustomLightTheme,
+      myCustomLightTheme: {
+        ...myCustomLightTheme,
+        colors: {
+          ...myCustomLightTheme.colors,
+          'on-primary': '#FFFFFF',
+          'on-secondary': '#FFFFFF',
+          'on-success': '#FFFFFF',
+          'on-error': '#FFFFFF',
+          'on-warning': '#000000',
+        },
+      },
     },
-  }
+  },
 })

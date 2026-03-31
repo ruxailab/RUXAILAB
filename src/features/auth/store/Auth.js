@@ -25,7 +25,7 @@ export default {
       const { user } = state
 
       // Check if the user is defined
-      if (!user) return 1
+      if (!user) return test.isPublic ? 1 : 2
 
       // If the user is a superadmin
       if (user.accessLevel === 0) return 0
@@ -126,7 +126,7 @@ export default {
           throw err
         }
         showError('errors.incorrectCredential')
-        return err
+        throw err
       } finally {
         commit('setLoading', false)
       }
