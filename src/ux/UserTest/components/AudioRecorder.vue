@@ -103,6 +103,34 @@ async function hasAudio() {
   }
 }
 
+/**
+ * Retry a Firebase uploadBytes call up to `maxAttempts` times.
+ * Uses exponential back-off: 1 s → 2 s → 4 s between retries.
+ * Throws the last error if all attempts are exhausted.
+ */
+async function uploadWithRetry(storageReference, blob, maxAttempts = 3) {
+  let lastError
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      await uploadBytes(storageReference, blob)
+      return // success – exit immediately
+    } catch (err) {
+      lastError = err
+      console.warn(
+        `Upload attempt ${attempt}/${maxAttempts} failed:`,
+        err.message,
+      )
+      if (attempt < maxAttempts) {
+        // wait 1 s × 2^(attempt-1): 1 s, 2 s, 4 s …
+        await new Promise((resolve) =>
+          setTimeout(resolve, 1000 * Math.pow(2, attempt - 1)),
+        )
+      }
+    }
+  }
+  throw lastError
+}
+
 // Methods
 const startAudioRecording = async () => {
   try {
@@ -141,39 +169,47 @@ const startAudioRecording = async () => {
       const audioBlob = new Blob(recordedChunks.value.local, {
         type: 'audio/webm',
       })
-      const storage = getStorage()
-      const correctTaskIndex = recordingTaskIndex.value
-      const storageReference = storageRef(
-        storage,
-        `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${correctTaskIndex}_evaluator/${Date.now()}.webm`,
-      )
-      await uploadBytes(storageReference, audioBlob)
+      try {
+        const storage = getStorage()
+        const correctTaskIndex = recordingTaskIndex.value
+        const storageReference = storageRef(
+          storage,
+          `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${correctTaskIndex}_evaluator/${Date.now()}.webm`,
+        )
 
-      recordedAudio.value = await getDownloadURL(storageReference)
+        // Retry up to 3 times on transient network errors
+        await uploadWithRetry(storageReference, audioBlob)
 
-      await store.dispatch('updateTaskMediaUrl', {
-        taskIndex: correctTaskIndex,
-        mediaType: MEDIA_FIELD_MAP.audio,
-        url: recordedAudio.value,
-        size: audioBlob.size,
-      })
+        recordedAudio.value = await getDownloadURL(storageReference)
 
-      if (audioStream.value) {
-        audioStream.value.getTracks().forEach((track) => track.stop())
-        audioStream.value = null
+        await store.dispatch('updateTaskMediaUrl', {
+          taskIndex: correctTaskIndex,
+          mediaType: MEDIA_FIELD_MAP.audio,
+          url: recordedAudio.value,
+          size: audioBlob.size,
+        })
+
+        if (audioStream.value) {
+          audioStream.value.getTracks().forEach((track) => track.stop())
+          audioStream.value = null
+        }
+
+        emit('recordingStarted', false)
+        // Size
+        if (
+          currentUserTestAnswer.value.tasks &&
+          currentUserTestAnswer.value.tasks[recordingTaskIndex.value]
+        ) {
+          currentUserTestAnswer.value.tasks[
+            recordingTaskIndex.value
+          ].audioSize = new Blob(recordedChunks.value.local).size
+        }
+      } catch (err) {
+        console.error('Audio upload failed after retries:', err)
+      } finally {
+        emit('stopShowLoading')
+        recordingAudio.value = false
       }
-
-      emit('recordingStarted', false)
-      // Size
-      if (
-        currentUserTestAnswer.value.tasks &&
-        currentUserTestAnswer.value.tasks[recordingTaskIndex.value]
-      ) {
-        currentUserTestAnswer.value.tasks[recordingTaskIndex.value].audioSize =
-          new Blob(recordedChunks.value.local).size
-      }
-      emit('stopShowLoading')
-      recordingAudio.value = false
     }
 
     mediaRecorder.value.local.start()
@@ -198,21 +234,28 @@ const startAudioRecording = async () => {
           const blob = new Blob(recordedChunks.value.remote, {
             type: 'audio/webm',
           })
-          const storage = getStorage()
-          const correctTaskIndex = recordingTaskIndex.value
-          const storageReference = storageRef(
-            storage,
-            `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${correctTaskIndex}_moderator/${Date.now()}.webm`,
-          )
-          await uploadBytes(storageReference, blob)
-          const downloadURL = await getDownloadURL(storageReference)
+          try {
+            const storage = getStorage()
+            const correctTaskIndex = recordingTaskIndex.value
+            const storageReference = storageRef(
+              storage,
+              `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${correctTaskIndex}_moderator/${Date.now()}.webm`,
+            )
 
-          await store.dispatch('updateTaskMediaUrl', {
-            taskIndex: correctTaskIndex,
-            mediaType: MEDIA_FIELD_MAP.moderator,
-            url: downloadURL,
-            size: blob.size,
-          })
+            // Retry up to 3 times on transient network errors
+            await uploadWithRetry(storageReference, blob)
+
+            const downloadURL = await getDownloadURL(storageReference)
+
+            await store.dispatch('updateTaskMediaUrl', {
+              taskIndex: correctTaskIndex,
+              mediaType: MEDIA_FIELD_MAP.moderator,
+              url: downloadURL,
+              size: blob.size,
+            })
+          } catch (err) {
+            console.error('Remote audio upload failed after retries:', err)
+          }
         }
 
         mediaRecorder.value.remote.start()
