@@ -379,7 +379,8 @@ watch(
 
 // Methods
 const goToSession = (coopId) => {
-  router.push(`/testview/${study.value.id}/${coopId}`)
+  // Open session links in new tab
+  window.open(`/testview/${study.value.id}/${coopId}`)
 }
 </script>
 

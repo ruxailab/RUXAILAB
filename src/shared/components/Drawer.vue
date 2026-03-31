@@ -79,7 +79,8 @@ const go = (item) => {
   if (!item?.path) return
   if (route.path === item.path) return
   const testId = test.value?.id
-  if (testId && item.path === `/testview/${testId}`)
+  // Open testview (preview) links in new tab - handles both unmoderated and moderated tests
+  if (testId && item.path.startsWith(`/testview/${testId}`))
     return window.open(item.path)
   router.push(item.path)
   if (mobile.value) {
