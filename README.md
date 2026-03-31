@@ -25,6 +25,37 @@
   </table>
 </div>
 
+## CI/CD Pipelines
+
+This project uses **GitHub Actions** for Continuous Integration and Continuous Deployment.
+
+### CI Pipeline ([`.github/workflows/ci.yml`](.github/workflows/ci.yml))
+
+Triggered on **push** and **pull request** to `main` and `develop` branches. Runs three jobs in sequence:
+
+| Job | Description |
+|---|---|
+| **Lint** | Runs ESLint to validate code style across `src/` |
+| **Test** | Executes unit tests via `npm test` |
+| **Build** | Builds the Vue.js application (runs after lint and test pass) |
+
+### CD Pipeline ([`.github/workflows/cd.yml`](.github/workflows/cd.yml))
+
+Triggered on **push** to `main` or `develop`, or via **manual dispatch** (`workflow_dispatch`). Deploys the application to Firebase:
+
+| Job | Description |
+|---|---|
+| **Build** | Runs tests, determines target environment, and produces the build artifact |
+| **Deploy Hosting** | Deploys the built app to Firebase Hosting |
+| **Deploy Functions** | Deploys Cloud Functions (prod/develop only) |
+| **Deploy Firestore Rules** | Deploys Firestore security rules and indexes (prod/develop only) |
+| **Deploy Storage Rules** | Deploys Storage security rules (prod/develop only) |
+
+**Environment mapping:**
+- `main` branch → `prod`
+- `develop` branch → `develop`
+- Manual dispatch → choose `dev`, `develop`, or `prod`
+
 ## About
 
 UX Remote LAB is an open-source platform designed to collect usability feedback from users. It allows you to gather user reviews, analyze them, and create comprehensive reports to better understand your application's usability. Additionally, it offers heuristic tests, enabling experts to evaluate your application's compliance with usability principles.
