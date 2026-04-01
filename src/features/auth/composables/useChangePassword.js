@@ -18,6 +18,8 @@ export function useChangePassword() {
   const showPassword = ref(false)
   const showConfirmPassword = ref(false)
   const valid = ref(false)
+  const passwordTouched = ref(false)
+  const confirmTouched = ref(false)
 
   const isGoogleUser = computed(() => {
     const auth = getAuth()
@@ -38,15 +40,33 @@ export function useChangePassword() {
   ])
 
   const passwordRules = computed(() => [
-    (v) => !!v || i18n.global.t('profile.passwordRequired'),
-    (v) => (v && v.length >= 8) || i18n.global.t('profile.passwordMinLength'),
-    (v) => (v && /[A-Z]/.test(v)) || i18n.global.t('profile.passwordUppercase'),
-    (v) => (v && hasSpecialChar(v)) || i18n.global.t('profile.passwordSymbol'),
+    (v) =>
+      !passwordTouched.value ||
+      !!v ||
+      i18n.global.t('profile.passwordRequired'),
+    (v) =>
+      !passwordTouched.value ||
+      v?.length >= 8 ||
+      i18n.global.t('profile.passwordMinLength'),
+    (v) =>
+      !passwordTouched.value ||
+      (v && /[A-Z]/.test(v)) ||
+      i18n.global.t('profile.passwordUppercase'),
+    (v) =>
+      !passwordTouched.value ||
+      (v && hasSpecialChar(v)) ||
+      i18n.global.t('profile.passwordSymbol'),
   ])
 
   const confirmPasswordRules = computed(() => [
-    (v) => !!v || i18n.global.t('profile.confirmPasswordRequired'),
-    (v) => v === newPassword.value || i18n.global.t('profile.passwordsMatch'),
+    (v) =>
+      !confirmTouched.value ||
+      !!v ||
+      i18n.global.t('profile.confirmPasswordRequired'),
+    (v) =>
+      !confirmTouched.value ||
+      v === newPassword.value ||
+      i18n.global.t('profile.passwordsMatch'),
   ])
 
   const specialCharColor = computed(() =>
@@ -67,6 +87,8 @@ export function useChangePassword() {
     showPassword.value = false
     showConfirmPassword.value = false
     valid.value = false
+    passwordTouched.value = false
+    confirmTouched.value = false
   }
 
   const changePassword = async () => {
@@ -130,6 +152,8 @@ export function useChangePassword() {
     showPassword,
     showConfirmPassword,
     valid,
+    passwordTouched,
+    confirmTouched,
     isGoogleUser,
     currentPasswordRules,
     passwordRules,
