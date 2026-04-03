@@ -274,7 +274,7 @@ When reporting bugs, please include:
 - **Screenshots** if applicable
 - **Error messages** or console logs
 
-Use the [Bug Report template](https://github.com/uramakilab/remote-usability-lab/issues/new)
+Use the [Bug Report template](https://github.com/ruxailab/RUXAILAB/issues/new?template=bug.yml)
 
 ### Feature Requests
 
@@ -284,11 +284,11 @@ For feature requests, include:
 - **Proposed solution** - How should it work?
 - **Alternatives considered** - Other approaches you've thought about
 
-Use the [Feature Request template](https://github.com/uramakilab/remote-usability-lab/issues/new)
+Use the [Feature Request template](https://github.com/ruxailab/RUXAILAB/issues/new?template=feature.yml)
 
 ### Questions and Discussions
 
-For questions or general discussion, use [GitHub Discussions](https://github.com/uramakilab/remote-usability-lab/discussions).
+For questions or general discussion, use [GitHub Discussions](https://github.com/ruxailab/RUXAILAB/discussions).
 
 ## Issue Labeling Guide
 
@@ -563,8 +563,8 @@ async function fetchUserData(userId) {
 
 ## Getting Help
 
-- **General Questions**: [GitHub Discussions](https://github.com/uramakilab/remote-usability-lab/discussions)
-- **Bug Reports**: [GitHub Issues](https://github.com/uramakilab/remote-usability-lab/issues)
+- **General Questions**: [GitHub Discussions](https://github.com/ruxailab/RUXAILAB/discussions)
+- **Bug Reports**: [GitHub Issues](https://github.com/ruxailab/RUXAILAB/issues/new?template=bug.yml)
 - **Security Issues**: Contact the maintainers privately
 
 Thank you for contributing to RUXAILAB! 🎉
