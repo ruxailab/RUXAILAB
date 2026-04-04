@@ -216,6 +216,7 @@
 <script>
 import axios from 'axios'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
+import { saveReportByTestId } from '@/ux/accessibility/controllers/AccessibilityReportController'
 
 export default {
   name: 'Home',
@@ -263,20 +264,37 @@ export default {
           this.currentStep = i
         }
 
-        // Get the testId from route or store
-        const testId = this.$route.params.testId || this.testId
+        const testId = this.$route.params.id
+        if (!testId) {
+          throw new Error(
+            'No test ID found in route. Cannot save accessibility report.',
+          )
+        }
 
-        // Use env variable for API endpoint
-        const apiUrl = process.env.VUE_APP_ACCESSIBILITY_API
+        const apiUrl =
+          process.env.VUE_APP_ACCESSIBILITY_API ||
+          'http://localhost:4321/api/v3/test'
         const response = await axios.post(apiUrl, {
           url: this.url,
           testId: testId,
         })
-        if (response) {
-          // Done
+
+        if (response.data) {
+          const reportData = {
+            ReportUrl: response.data.meta?.url || response.data.url || this.url,
+            ReportDateTime:
+              response.data.meta?.scanTime ||
+              response.data.testDateTime ||
+              new Date().toISOString(),
+            ReportIssues: response.data.issues || [],
+            ReportModifiedHtml: response.data.snapshot?.html || '',
+            ReportSummary: response.data.summary || null,
+          }
+
+          await saveReportByTestId(testId, reportData)
         }
-        // Redirect to the report page
-        this.$router.push(`/answers/${testId}`)
+
+        this.$router.push(`/accessibility/automatic/answers/${testId}`)
       } catch (error) {
         this.error =
           error.response?.data?.error || 'Failed to run the accessibility test'
@@ -288,10 +306,13 @@ export default {
     },
 
     determineErrorType(error) {
-      if (!error.response) return 'network'
-      if (error.response.status === 400) return 'invalid-url'
-      if (error.response.status === 403) return 'blocked'
-      if (error.response.status === 408) return 'timeout'
+      if (error.response) {
+        if (error.response.status === 400) return 'invalid-url'
+        if (error.response.status === 403) return 'blocked'
+        if (error.response.status === 408) return 'timeout'
+        return 'server'
+      }
+      if (error.request) return 'network'
       return 'server'
     },
 

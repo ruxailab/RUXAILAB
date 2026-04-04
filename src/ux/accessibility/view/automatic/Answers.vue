@@ -1,546 +1,540 @@
 <template>
   <PageWrapper
-    title="Accessibility Test Answers"
+    title="Accessibility Report"
     :loading="loading"
     loading-text="Loading accessibility test results..."
   >
-    <!-- Error State -->
-    <!-- if the data not available  -->
     <template #subtitle>
-      <p class="text-body-1 text-grey-darken-1">
+      <p class="text-body-2 text-grey-darken-1">
         {{ $t('Accessibility.viewDetailedIssues') }}
       </p>
     </template>
+
+    <!-- Error / Empty States -->
     <v-alert
       v-if="error"
       type="info"
       variant="tonal"
-      closable
-      class="mb-2 text-body-2 pa-2"
+      class="mb-4 rounded-xl"
+      icon="mdi-information-outline"
     >
-      <div class="d-flex flex-column align-center justify-center">
-        <v-icon color="info" size="48" class="mb-2"> mdi-info-circle </v-icon>
-        <span class="text-h6 font-weight-bold mb-1">{{
-          $t('Accessibility.information')
-        }}</span>
-        <span class="text-body-1">{{
-          $t('Accessibility.noAssessmentAvailable')
-        }}</span>
-      </div>
+      {{ $t('Accessibility.noAssessmentAvailable') }}
     </v-alert>
 
-    <!-- Main Report Content -->
-    <div v-else-if="report">
-      <!-- Report Header -->
-      <v-card class="mb-2" density="compact">
-        <v-card-title class="text-body-1 py-2">
-          <v-icon icon="mdi-web-check" class="me-2" color="primary" size="20" />
-          {{ $t('Accessibility.accessibilityReport') }}
-        </v-card-title>
-        <v-card-text class="py-1">
-          <v-row class="ma-0" dense>
-            <v-col cols="12" md="6" class="py-0">
-              <v-chip
-                prepend-icon="mdi-link"
-                variant="outlined"
-                color="primary"
-                class="mb-1 text-caption"
-                size="small"
-              >
-                {{ report.ReportUrl }}
-              </v-chip>
-            </v-col>
-            <v-col cols="12" md="6" class="py-0">
-              <v-chip
-                prepend-icon="mdi-calendar"
-                variant="outlined"
-                color="secondary"
-                class="mb-1 text-caption"
-                size="small"
-              >
+    <v-alert
+      v-else-if="!report"
+      type="info"
+      variant="tonal"
+      class="mb-4 rounded-xl"
+    >
+      {{ $t('Accessibility.noReportData') }}
+    </v-alert>
+
+    <!-- Main Report -->
+    <template v-else>
+      <!-- ── Report Header ───────────────────────────────────────── -->
+      <v-card class="mb-4 rounded-xl" elevation="2">
+        <v-card-text class="pa-4">
+          <div class="d-flex align-center flex-wrap gap-3 mb-3">
+            <v-icon color="primary" size="28">mdi-web-check</v-icon>
+            <div>
+              <div class="text-h6 font-weight-bold">
+                {{ $t('Accessibility.accessibilityReport') }}
+              </div>
+              <div class="text-caption text-grey">
                 {{ formatDate(report.ReportDateTime) }}
-              </v-chip>
+              </div>
+            </div>
+            <v-spacer />
+            <v-chip
+              prepend-icon="mdi-link-variant"
+              variant="outlined"
+              color="primary"
+              class="text-caption"
+            >
+              {{ report.ReportUrl }}
+            </v-chip>
+          </div>
+
+          <!-- Summary stat cards -->
+          <v-row dense>
+            <v-col v-for="stat in summaryStats" :key="stat.label" cols="4">
+              <v-card
+                :color="stat.count > 0 ? stat.color : undefined"
+                :variant="stat.count > 0 ? 'tonal' : 'outlined'"
+                class="rounded-lg text-center pa-2"
+                elevation="0"
+              >
+                <div
+                  class="text-h5 font-weight-black"
+                  :class="stat.count > 0 ? `text-${stat.color}` : 'text-grey'"
+                >
+                  {{ stat.count }}
+                </div>
+                <div
+                  class="text-caption font-weight-medium"
+                  :class="stat.count > 0 ? `text-${stat.color}` : 'text-grey'"
+                >
+                  {{ stat.label }}
+                </div>
+              </v-card>
             </v-col>
           </v-row>
         </v-card-text>
       </v-card>
 
-      <!-- Tabs -->
-      <v-card density="compact">
+      <!-- ── Tabs ────────────────────────────────────────────────── -->
+      <v-card class="rounded-xl" elevation="2">
         <v-tabs
           v-model="currentTab"
           bg-color="primary"
-          align-tabs="center"
           color="white"
-          density="compact"
-          class="text-caption"
+          align-tabs="center"
+          density="comfortable"
         >
           <v-tab
-            v-for="(tab, index) in tabs"
-            :key="index"
-            :value="index"
-            class="text-none px-2"
+            v-for="(tab, idx) in tabs"
+            :key="idx"
+            :value="idx"
+            class="text-none text-caption font-weight-medium"
           >
-            <v-icon :icon="getTabIcon(index)" class="me-1" size="16" />
+            <v-icon :icon="tabIcons[idx]" class="me-1" size="16" />
             {{ tab }}
           </v-tab>
         </v-tabs>
 
         <v-window v-model="currentTab">
-          <!-- Summary & Issues Tab -->
+          <!-- ── Tab 0 : Summary & Issues ──────────────────────── -->
           <v-window-item :value="0">
-            <v-container fluid class="pa-1">
-              <!-- Summary Cards -->
-              <v-row class="mb-2" dense>
-                <v-col cols="12" sm="4" class="py-0">
-                  <v-card
-                    :color="
-                      getIssueCounts().errors > 0 ? 'error' : 'grey-lighten-3'
-                    "
-                    :variant="
-                      getIssueCounts().errors > 0 ? 'elevated' : 'outlined'
-                    "
-                    density="compact"
-                  >
-                    <v-card-text class="text-center py-2 px-1">
-                      <div
-                        class="text-h5 font-weight-bold mb-0"
-                        style="font-size: 1.3rem"
-                      >
-                        {{ getIssueCounts().errors }}
-                      </div>
-                      <div class="text-caption">
-                        {{ $t('Accessibility.errors') }}
-                      </div>
-                    </v-card-text>
-                  </v-card>
-                </v-col>
-                <v-col cols="12" sm="4" class="py-0">
-                  <v-card
-                    :color="
-                      getIssueCounts().warnings > 0
-                        ? 'warning'
-                        : 'grey-lighten-3'
-                    "
-                    :variant="
-                      getIssueCounts().warnings > 0 ? 'elevated' : 'outlined'
-                    "
-                    density="compact"
-                  >
-                    <v-card-text class="text-center py-2 px-1">
-                      <div
-                        class="text-h5 font-weight-bold mb-0"
-                        style="font-size: 1.3rem"
-                      >
-                        {{ getIssueCounts().warnings }}
-                      </div>
-                      <div class="text-caption">
-                        {{ $t('Accessibility.warnings') }}
-                      </div>
-                    </v-card-text>
-                  </v-card>
-                </v-col>
-                <v-col cols="12" sm="4" class="py-0">
-                  <v-card
-                    :color="
-                      getIssueCounts().notices > 0 ? 'info' : 'grey-lighten-3'
-                    "
-                    :variant="
-                      getIssueCounts().notices > 0 ? 'elevated' : 'outlined'
-                    "
-                    density="compact"
-                  >
-                    <v-card-text class="text-center py-2 px-1">
-                      <div
-                        class="text-h5 font-weight-bold mb-0"
-                        style="font-size: 1.3rem"
-                      >
-                        {{ getIssueCounts().notices }}
-                      </div>
-                      <div class="text-caption">
-                        {{ $t('Accessibility.notices') }}
-                      </div>
-                    </v-card-text>
-                  </v-card>
-                </v-col>
-              </v-row>
+            <v-container fluid class="pa-3">
+              <!-- Issue list with pagination -->
+              <div
+                class="text-body-2 font-weight-medium mb-2 d-flex align-center gap-1"
+              >
+                <v-icon size="16" color="primary"
+                  >mdi-format-list-bulleted</v-icon
+                >
+                All Issues
+                <v-chip
+                  size="x-small"
+                  color="primary"
+                  variant="tonal"
+                  class="ms-1"
+                >
+                  {{ report.ReportIssues.length }}
+                </v-chip>
+              </div>
+              <v-list lines="two" class="pa-0">
+                <v-list-item
+                  v-for="(issue, idx) in paginatedIssues"
+                  :key="(page - 1) * itemsPerPage + idx"
+                  :active="selectedIssue === (page - 1) * itemsPerPage + idx"
+                  :active-color="getIssueColor(issue.type)"
+                  class="issue-row rounded-lg mb-2 pa-2"
+                  @click="selectedIssue = (page - 1) * itemsPerPage + idx"
+                >
+                  <template #prepend>
+                    <v-avatar
+                      :color="getIssueColor(issue.type)"
+                      size="32"
+                      class="me-2 text-caption font-weight-bold text-white"
+                    >
+                      {{ (page - 1) * itemsPerPage + idx + 1 }}
+                    </v-avatar>
+                  </template>
 
-              <!-- Issues List -->
-              <v-card density="compact">
-                <v-card-title class="py-2 px-3 text-body-2">
-                  <v-icon icon="mdi-alert-circle" class="me-1" size="18" />
-                  {{ $t('Accessibility.issues') }}
-                </v-card-title>
-                <v-card-text class="py-1 px-2">
-                  <v-list density="compact">
+                  <v-list-item-title
+                    class="text-caption mb-1 d-flex align-center flex-wrap gap-1"
+                  >
+                    <v-chip
+                      :color="getIssueColor(issue.type)"
+                      size="x-small"
+                      variant="elevated"
+                      class="text-uppercase font-weight-bold"
+                    >
+                      {{ issue.type }}
+                    </v-chip>
+                    <v-chip
+                      v-if="issue.code"
+                      variant="tonal"
+                      color="grey"
+                      size="x-small"
+                      class="font-weight-medium"
+                    >
+                      {{ issue.code }}
+                    </v-chip>
+                    <v-chip
+                      v-if="issue.wcag"
+                      variant="outlined"
+                      color="primary"
+                      size="x-small"
+                    >
+                      WCAG {{ issue.wcag }}
+                    </v-chip>
+                  </v-list-item-title>
+                  <v-list-item-subtitle class="text-caption">
+                    {{ issue.message }}
+                  </v-list-item-subtitle>
+                </v-list-item>
+              </v-list>
+
+              <v-pagination
+                v-if="totalPages > 1"
+                v-model="page"
+                :length="totalPages"
+                class="mt-3"
+                color="primary"
+                size="small"
+                density="compact"
+              />
+            </v-container>
+          </v-window-item>
+
+          <!-- ── Tab 1 : Issues & Preview ──────────────────────── -->
+          <v-window-item :value="1">
+            <v-row no-gutters style="min-height: 520px">
+              <!-- Left: scrollable issue list -->
+              <v-col cols="12" md="4" class="border-e">
+                <div class="pa-2 border-b">
+                  <div
+                    class="text-caption font-weight-medium text-grey-darken-2 d-flex align-center gap-1"
+                  >
+                    <v-icon size="14">mdi-alert-circle-outline</v-icon>
+                    Issues
+                    <v-chip
+                      size="x-small"
+                      variant="tonal"
+                      color="primary"
+                      class="ms-1"
+                    >
+                      {{ report.ReportIssues.length }}
+                    </v-chip>
+                  </div>
+                </div>
+                <div
+                  class="overflow-y-auto"
+                  style="max-height: 480px"
+                  @scroll="onInfiniteScroll"
+                >
+                  <v-list lines="two" density="compact" class="pa-1">
                     <v-list-item
-                      v-for="(issue, index) in paginatedIssues"
-                      :key="(page - 1) * itemsPerPage + index"
-                      :active="
-                        selectedIssue === (page - 1) * itemsPerPage + index
-                      "
-                      class="mb-1 py-1 px-1"
-                      style="min-height: 36px"
-                      @click="selectIssue((page - 1) * itemsPerPage + index)"
+                      v-for="(issue, idx) in infiniteIssues"
+                      :key="idx"
+                      :active="selectedIssue === idx"
+                      :active-color="getIssueColor(issue.type)"
+                      class="rounded-lg mb-1"
+                      @click="selectIssue(idx)"
                     >
                       <template #prepend>
                         <v-avatar
                           :color="getIssueColor(issue.type)"
-                          size="x-small"
+                          size="24"
+                          class="me-2 text-white"
+                          style="font-size: 10px; font-weight: 700"
                         >
-                          {{ (page - 1) * itemsPerPage + index + 1 }}
+                          {{ idx + 1 }}
                         </v-avatar>
                       </template>
-                      <v-list-item-title class="text-caption">
+                      <v-list-item-title
+                        class="text-caption d-flex align-center gap-1 flex-wrap mb-1"
+                      >
                         <v-chip
                           :color="getIssueColor(issue.type)"
                           size="x-small"
-                          class="me-1"
+                          variant="elevated"
+                          >{{ issue.type }}</v-chip
                         >
-                          {{ issue.type }}
-                        </v-chip>
-                        <v-chip variant="outlined" size="x-small" class="me-1">
-                          {{ issue.code }}
-                        </v-chip>
+                        <v-chip
+                          v-if="issue.code"
+                          size="x-small"
+                          variant="tonal"
+                          color="grey"
+                          >{{ issue.code }}</v-chip
+                        >
                       </v-list-item-title>
-                      <v-list-item-subtitle class="text-caption">
-                        {{ issue.message }}
-                      </v-list-item-subtitle>
+                      <v-list-item-subtitle class="text-caption">{{
+                        issue.message
+                      }}</v-list-item-subtitle>
                     </v-list-item>
                   </v-list>
-                  <v-pagination
-                    v-if="totalPages > 1"
-                    v-model="page"
-                    :length="totalPages"
-                    class="mt-1"
-                    color="primary"
-                    size="small"
-                  />
-                </v-card-text>
-              </v-card>
-            </v-container>
-          </v-window-item>
-
-          <!-- Issues & Preview Tab -->
-          <v-window-item :value="1">
-            <v-row no-gutters>
-              <v-col cols="12" md="5">
-                <v-card
-                  height="100%"
-                  class="d-flex flex-column"
-                  density="compact"
-                >
-                  <v-card-title class="py-2 px-3 text-body-2">
-                    <v-icon icon="mdi-alert-circle" class="me-1" size="18" />
-                    {{ $t('Accessibility.issues') }}
-                  </v-card-title>
-                  <v-card-text
-                    class="flex-grow-1 overflow-y-auto py-1 px-2"
-                    @scroll="onInfiniteScroll"
+                  <div
+                    v-if="
+                      infiniteIssues.length <
+                      (report?.ReportIssues?.length || 0)
+                    "
+                    class="text-center text-caption text-grey pa-2"
                   >
-                    <v-list density="compact">
-                      <v-list-item
-                        v-for="(issue, index) in infiniteIssues"
-                        :key="index"
-                        :active="selectedIssue === index"
-                        class="mb-1 py-1 px-1"
-                        style="min-height: 36px"
-                        rounded
-                        @click="selectIssue(index)"
-                      >
-                        <template #prepend>
-                          <v-avatar
-                            :color="getIssueColor(issue.type)"
-                            size="x-small"
-                          >
-                            {{ index + 1 }}
-                          </v-avatar>
-                        </template>
-                        <v-list-item-title class="text-caption">
-                          <v-chip
-                            :color="getIssueColor(issue.type)"
-                            size="x-small"
-                            class="me-1"
-                          >
-                            {{ issue.type }}
-                          </v-chip>
-                          <v-chip
-                            variant="outlined"
-                            size="x-small"
-                            class="me-1"
-                          >
-                            {{ issue.code }}
-                          </v-chip>
-                        </v-list-item-title>
-                        <v-list-item-subtitle class="text-caption">
-                          {{ issue.message }}
-                        </v-list-item-subtitle>
-                      </v-list-item>
-                    </v-list>
-                    <div
-                      v-if="
-                        infiniteIssues.length <
-                        (report?.ReportIssues?.length || 0)
-                      "
-                      class="text-center py-2 text-caption grey-text"
-                    >
-                      {{ $t('Accessibility.loadingMore') }}
-                    </div>
-                  </v-card-text>
-                </v-card>
+                    {{ $t('Accessibility.loadingMore') }}
+                  </div>
+                </div>
               </v-col>
 
-              <v-col cols="12" md="7">
-                <v-card
-                  height="100%"
-                  class="d-flex flex-column"
-                  density="compact"
-                >
-                  <v-card-title class="py-2 px-3 text-body-2">
-                    <v-icon icon="mdi-web" class="me-1" size="18" />
-                    {{ $t('Accessibility.webpagePreview') }}
-                  </v-card-title>
-                  <v-card-text
-                    v-if="report.ReportModifiedHtml"
-                    class="flex-grow-1 pa-1"
+              <!-- Right: snapshot iframe -->
+              <v-col cols="12" md="8">
+                <div class="pa-2 border-b">
+                  <div
+                    class="text-caption font-weight-medium text-grey-darken-2 d-flex align-center gap-1"
                   >
-                    <iframe
-                      ref="previewFrame"
-                      class="preview-frame"
-                      sandbox="allow-same-origin allow-scripts allow-popups"
-                      title="Modified webpage preview with accessibility issues highlighted"
-                      :srcdoc="report?.ReportModifiedHtml"
-                      style="
-                        width: 100%;
-                        height: 100%;
-                        border: 1px solid #e0e0e0;
-                        border-radius: 4px;
-                        min-height: 320px;
-                      "
-                    />
-                  </v-card-text>
-                  <v-card-text v-else>
-                    <v-alert
-                      type="info"
+                    <v-icon size="14">mdi-monitor-screenshot</v-icon>
+                    Page Snapshot
+                    <v-chip
+                      v-if="selectedIssue !== null"
+                      size="x-small"
                       variant="tonal"
-                      class="pa-2 text-caption"
-                      text="No modified HTML content available."
-                    />
-                  </v-card-text>
-                </v-card>
+                      :color="
+                        getIssueColor(report.ReportIssues[selectedIssue]?.type)
+                      "
+                    >
+                      Issue #{{ selectedIssue + 1 }} highlighted
+                    </v-chip>
+                  </div>
+                </div>
+                <div class="pa-2" style="height: 480px">
+                  <iframe
+                    v-if="report.ReportModifiedHtml"
+                    ref="previewFrame"
+                    class="preview-frame"
+                    sandbox="allow-same-origin allow-scripts allow-popups"
+                    title="Page snapshot with highlighted accessibility issues"
+                    :srcdoc="markedUpHtml"
+                    style="
+                      width: 100%;
+                      height: 100%;
+                      border: 1px solid #e0e0e0;
+                      border-radius: 8px;
+                    "
+                  />
+                  <v-alert
+                    v-else
+                    type="info"
+                    variant="tonal"
+                    class="ma-2 rounded-lg"
+                    text="No snapshot available for this report."
+                  />
+                </div>
               </v-col>
             </v-row>
           </v-window-item>
 
-          <!-- Issues & Details Tab -->
+          <!-- ── Tab 2 : Issues & Details ──────────────────────── -->
           <v-window-item :value="2">
-            <v-row no-gutters>
-              <v-col cols="12" md="5">
-                <v-card
-                  height="100%"
-                  class="d-flex flex-column"
-                  density="compact"
-                >
-                  <v-card-title class="py-2 px-3 text-body-2">
-                    <v-icon icon="mdi-alert-circle" class="me-1" size="18" />
-                    {{ $t('Accessibility.issues') }}
-                  </v-card-title>
-                  <v-card-text
-                    class="flex-grow-1 overflow-y-auto py-1 px-2"
-                    style="max-height: 400px"
-                    @scroll="onInfiniteScroll"
+            <v-row no-gutters style="min-height: 520px">
+              <!-- Left: scrollable issue list -->
+              <v-col cols="12" md="4" class="border-e">
+                <div class="pa-2 border-b">
+                  <div
+                    class="text-caption font-weight-medium text-grey-darken-2 d-flex align-center gap-1"
                   >
-                    <v-list density="compact">
-                      <v-list-item
-                        v-for="(issue, index) in infiniteIssues"
-                        :key="index"
-                        :active="selectedIssue === index"
-                        class="mb-1 py-1 px-1"
-                        style="min-height: 36px"
-                        rounded
-                        @click="selectIssue(index)"
-                      >
-                        <template #prepend>
-                          <v-avatar
-                            :color="getIssueColor(issue.type)"
-                            size="x-small"
-                          >
-                            {{ index + 1 }}
-                          </v-avatar>
-                        </template>
-                        <v-list-item-title class="text-caption">
-                          <v-chip
-                            :color="getIssueColor(issue.type)"
-                            size="x-small"
-                            class="me-1"
-                          >
-                            {{ issue.type }}
-                          </v-chip>
-                          <v-chip
-                            variant="outlined"
-                            size="x-small"
-                            class="me-1"
-                          >
-                            {{ issue.code }}
-                          </v-chip>
-                        </v-list-item-title>
-                        <v-list-item-subtitle class="text-caption">
-                          {{ issue.message }}
-                        </v-list-item-subtitle>
-                      </v-list-item>
-                    </v-list>
-                    <div
-                      v-if="
-                        infiniteIssues.length <
-                        (report?.ReportIssues?.length || 0)
-                      "
-                      class="text-center py-2 text-caption grey-text"
+                    <v-icon size="14">mdi-alert-circle-outline</v-icon>
+                    Issues
+                    <v-chip
+                      size="x-small"
+                      variant="tonal"
+                      color="primary"
+                      class="ms-1"
                     >
-                      {{ $t('Accessibility.loadingMore') }}
-                    </div>
-                  </v-card-text>
-                </v-card>
+                      {{ report.ReportIssues.length }}
+                    </v-chip>
+                  </div>
+                </div>
+                <div
+                  class="overflow-y-auto"
+                  style="max-height: 480px"
+                  @scroll="onInfiniteScroll"
+                >
+                  <v-list lines="two" density="compact" class="pa-1">
+                    <v-list-item
+                      v-for="(issue, idx) in infiniteIssues"
+                      :key="idx"
+                      :active="selectedIssue === idx"
+                      :active-color="getIssueColor(issue.type)"
+                      class="rounded-lg mb-1"
+                      @click="selectedIssue = idx"
+                    >
+                      <template #prepend>
+                        <v-avatar
+                          :color="getIssueColor(issue.type)"
+                          size="24"
+                          class="me-2 text-white"
+                          style="font-size: 10px; font-weight: 700"
+                        >
+                          {{ idx + 1 }}
+                        </v-avatar>
+                      </template>
+                      <v-list-item-title
+                        class="text-caption d-flex align-center gap-1 flex-wrap mb-1"
+                      >
+                        <v-chip
+                          :color="getIssueColor(issue.type)"
+                          size="x-small"
+                          variant="elevated"
+                          >{{ issue.type }}</v-chip
+                        >
+                        <v-chip
+                          v-if="issue.code"
+                          size="x-small"
+                          variant="tonal"
+                          color="grey"
+                          >{{ issue.code }}</v-chip
+                        >
+                      </v-list-item-title>
+                      <v-list-item-subtitle class="text-caption">{{
+                        issue.message
+                      }}</v-list-item-subtitle>
+                    </v-list-item>
+                  </v-list>
+                  <div
+                    v-if="
+                      infiniteIssues.length <
+                      (report?.ReportIssues?.length || 0)
+                    "
+                    class="text-center text-caption text-grey pa-2"
+                  >
+                    {{ $t('Accessibility.loadingMore') }}
+                  </div>
+                </div>
               </v-col>
 
-              <v-col cols="12" md="7">
-                <v-card
-                  height="100%"
-                  class="d-flex flex-column"
-                  density="compact"
+              <!-- Right: issue detail panel -->
+              <v-col cols="12" md="8">
+                <div class="pa-2 border-b">
+                  <div
+                    class="text-caption font-weight-medium text-grey-darken-2 d-flex align-center gap-1"
+                  >
+                    <v-icon size="14">mdi-information-outline</v-icon>
+                    Issue Detail
+                  </div>
+                </div>
+
+                <!-- No selection -->
+                <div
+                  v-if="selectedIssue === null"
+                  class="d-flex flex-column align-center justify-center text-grey"
+                  style="height: 460px"
                 >
-                  <v-card-title class="py-2 px-3 text-body-2">
-                    <v-icon icon="mdi-information" class="me-1" size="18" />
-                    {{ $t('Accessibility.issueDetails') }}
-                  </v-card-title>
-                  <v-card-text class="flex-grow-1 overflow-y-auto py-1 px-2">
-                    <div v-if="selectedIssue !== null">
-                      <v-list density="compact">
-                        <v-list-item>
-                          <v-list-item-title
-                            class="text-caption font-weight-bold"
-                          >
-                            {{ $t('Accessibility.type') }}
-                          </v-list-item-title>
-                          <v-list-item-subtitle>
-                            <v-chip
-                              :color="
-                                getIssueColor(
-                                  report.ReportIssues[selectedIssue].type,
-                                )
-                              "
-                              size="x-small"
-                            >
-                              {{ report.ReportIssues[selectedIssue].type }}
-                            </v-chip>
-                          </v-list-item-subtitle>
-                        </v-list-item>
-                        <v-list-item>
-                          <v-list-item-title
-                            class="text-caption font-weight-bold"
-                          >
-                            {{ $t('Accessibility.code') }}
-                          </v-list-item-title>
-                          <v-list-item-subtitle>
-                            <code
-                              class="bg-grey-lighten-4 pa-1 rounded text-caption"
-                              >{{
-                                report.ReportIssues[selectedIssue].code
-                              }}</code
-                            >
-                          </v-list-item-subtitle>
-                        </v-list-item>
-                        <v-list-item>
-                          <v-list-item-title
-                            class="text-caption font-weight-bold"
-                          >
-                            {{ $t('Accessibility.message') }}
-                          </v-list-item-title>
-                          <v-list-item-subtitle class="mt-1 text-caption">
-                            {{ report.ReportIssues[selectedIssue].message }}
-                          </v-list-item-subtitle>
-                        </v-list-item>
-                        <v-list-item>
-                          <v-list-item-title
-                            class="text-caption font-weight-bold"
-                          >
-                            {{ $t('Accessibility.context') }}
-                          </v-list-item-title>
-                          <v-list-item-subtitle class="mt-1">
-                            <v-sheet
-                              color="grey-lighten-5"
-                              class="pa-1 rounded"
-                            >
-                              <pre class="text-caption" style="font-size: 11px"
-                                >{{
-                                  report.ReportIssues[selectedIssue].context
-                                }}
-                    </pre
-                              >
-                            </v-sheet>
-                          </v-list-item-subtitle>
-                        </v-list-item>
-                        <v-list-item
-                          v-if="report.ReportIssues[selectedIssue].selector"
-                        >
-                          <v-list-item-title
-                            class="text-caption font-weight-bold"
-                          >
-                            {{ $t('Accessibility.selector') }}
-                          </v-list-item-title>
-                          <v-list-item-subtitle>
-                            <code
-                              class="bg-grey-lighten-4 pa-1 rounded text-caption"
-                              >{{
-                                report.ReportIssues[selectedIssue].selector
-                              }}</code
-                            >
-                          </v-list-item-subtitle>
-                        </v-list-item>
-                        <v-list-item
-                          v-if="report.ReportIssues[selectedIssue].runnerExtras"
-                        >
-                          <v-list-item-title
-                            class="text-caption font-weight-bold"
-                          >
-                            {{ $t('Accessibility.wcagReference') }}
-                          </v-list-item-title>
-                          <v-list-item-subtitle>
-                            <v-btn
-                              :href="
-                                report.ReportIssues[selectedIssue].runnerExtras
-                                  .wcagReference
-                              "
-                              target="_blank"
-                              variant="outlined"
-                              size="x-small"
-                              prepend-icon="mdi-open-in-new"
-                            >
-                              {{ $t('Accessibility.viewWcagGuidelines') }}
-                            </v-btn>
-                          </v-list-item-subtitle>
-                        </v-list-item>
-                      </v-list>
+                  <v-icon size="48" class="mb-3" color="grey-lighten-2"
+                    >mdi-cursor-pointer</v-icon
+                  >
+                  <div class="text-body-2">Select an issue to view details</div>
+                </div>
+
+                <!-- Detail view -->
+                <div
+                  v-else
+                  class="pa-4 overflow-y-auto"
+                  style="max-height: 480px"
+                >
+                  <!-- Severity banner -->
+                  <v-alert
+                    :color="getIssueColor(activeIssue.type)"
+                    variant="tonal"
+                    class="mb-4 rounded-xl"
+                    :icon="getSeverityIcon(activeIssue.type)"
+                  >
+                    <div class="d-flex align-center gap-2 flex-wrap">
+                      <v-chip
+                        :color="getIssueColor(activeIssue.type)"
+                        variant="elevated"
+                        size="small"
+                        class="text-uppercase font-weight-bold"
+                      >
+                        {{ activeIssue.type }}
+                      </v-chip>
+                      <v-chip
+                        v-if="activeIssue.code"
+                        variant="tonal"
+                        color="grey"
+                        size="small"
+                      >
+                        {{ activeIssue.code }}
+                      </v-chip>
+                      <v-chip
+                        v-if="activeIssue.wcag"
+                        variant="outlined"
+                        color="primary"
+                        size="small"
+                      >
+                        WCAG {{ activeIssue.wcag }}
+                      </v-chip>
                     </div>
-                    <v-alert
-                      v-else
-                      type="info"
-                      variant="tonal"
-                      class="pa-2 text-caption"
-                      text="Select an issue from the list to view details"
-                    />
-                  </v-card-text>
-                </v-card>
+                  </v-alert>
+
+                  <!-- Message -->
+                  <div class="mb-4">
+                    <div
+                      class="text-caption text-grey font-weight-medium mb-1 text-uppercase tracking-wider"
+                    >
+                      Message
+                    </div>
+                    <div class="text-body-2">{{ activeIssue.message }}</div>
+                  </div>
+
+                  <!-- Selector -->
+                  <div v-if="activeIssue.selector" class="mb-4">
+                    <div
+                      class="text-caption text-grey font-weight-medium mb-1 text-uppercase tracking-wider"
+                    >
+                      CSS Selector
+                    </div>
+                    <v-sheet color="grey-lighten-5" class="pa-2 rounded-lg">
+                      <code
+                        class="text-caption"
+                        style="word-break: break-all"
+                        >{{ activeIssue.selector }}</code
+                      >
+                    </v-sheet>
+                  </div>
+
+                  <!-- Context HTML -->
+                  <div v-if="activeIssue.context" class="mb-4">
+                    <div
+                      class="text-caption text-grey font-weight-medium mb-1 text-uppercase tracking-wider"
+                    >
+                      HTML Context
+                    </div>
+                    <v-sheet
+                      color="grey-lighten-5"
+                      class="pa-2 rounded-lg"
+                      style="overflow-x: auto"
+                    >
+                      <pre
+                        class="text-caption ma-0"
+                        style="
+                          font-size: 11px;
+                          white-space: pre-wrap;
+                          word-break: break-all;
+                        "
+                        >{{ activeIssue.context }}</pre
+                      >
+                    </v-sheet>
+                  </div>
+
+                  <!-- WCAG reference link -->
+                  <div v-if="activeIssue.runnerExtras?.wcagReference">
+                    <div
+                      class="text-caption text-grey font-weight-medium mb-2 text-uppercase tracking-wider"
+                    >
+                      WCAG Reference
+                    </div>
+                    <v-btn
+                      :href="activeIssue.runnerExtras.wcagReference"
+                      target="_blank"
+                      variant="outlined"
+                      color="primary"
+                      size="small"
+                      prepend-icon="mdi-open-in-new"
+                      class="rounded-lg"
+                    >
+                      View WCAG Guidelines
+                    </v-btn>
+                  </div>
+                </div>
               </v-col>
             </v-row>
           </v-window-item>
         </v-window>
       </v-card>
-    </div>
-    <div v-else>
-      <v-alert type="info" variant="tonal" class="mb-2 text-body-2 pa-2">
-        {{ $t('Accessibility.noReportData') }}
-      </v-alert>
-    </div>
+    </template>
   </PageWrapper>
 </template>
 
@@ -551,44 +545,116 @@ import { createManagedListeners } from '@/shared/composables/useManagedListeners
 
 export default {
   name: 'ReportDetail',
-  components: {
-    PageWrapper,
-  },
+  components: { PageWrapper },
+
   data() {
     const testId = this.$route.params.testId || this.$route.params.id
     return {
       selectedIssue: null,
       testId,
       tabs: ['Summary & Issues', 'Issues & Preview', 'Issues & Details'],
+      tabIcons: ['mdi-view-list', 'mdi-monitor-eye', 'mdi-information-outline'],
       currentTab: 0,
       page: 1,
-      itemsPerPage: 10,
-      infiniteScrollCount: 20, // Number of issues to show initially in infinite scroll
+      itemsPerPage: 15,
+      infiniteScrollCount: 20,
       iframeListeners: createManagedListeners(),
     }
   },
+
   computed: {
     ...mapState('automaticReport', ['report']),
+
     loading() {
       return this.$store.getters.loading
     },
     error() {
       return this.$store.getters.getError
     },
+
+    /** Issues for Tab 0 pagination */
     paginatedIssues() {
-      if (!this.report || !this.report.ReportIssues) return []
+      if (!this.report?.ReportIssues) return []
       const start = (this.page - 1) * this.itemsPerPage
       return this.report.ReportIssues.slice(start, start + this.itemsPerPage)
     },
     totalPages() {
-      if (!this.report || !this.report.ReportIssues) return 1
+      if (!this.report?.ReportIssues) return 1
       return Math.ceil(this.report.ReportIssues.length / this.itemsPerPage) || 1
     },
+
+    /** Issues for Tabs 1 & 2 (infinite scroll) */
     infiniteIssues() {
-      if (!this.report || !this.report.ReportIssues) return []
+      if (!this.report?.ReportIssues) return []
       return this.report.ReportIssues.slice(0, this.infiniteScrollCount)
     },
+
+    /** Currently selected issue object */
+    activeIssue() {
+      if (this.selectedIssue === null || !this.report?.ReportIssues) return null
+      return this.report.ReportIssues[this.selectedIssue] ?? null
+    },
+
+    /** Summary-card data derived from normalized issues */
+    summaryStats() {
+      const issues = this.report?.ReportIssues ?? []
+      const count = (type) => issues.filter((i) => i?.type === type).length
+      return [
+        { label: 'Errors', color: 'error', count: count('error') },
+        { label: 'Warnings', color: 'warning', count: count('warning') },
+        { label: 'Notices', color: 'info', count: count('notice') },
+      ]
+    },
+
+    /**
+     * Snapshot HTML with coloured outlines injected onto each element
+     * matched by issue.selector — resolved entirely client-side.
+     */
+    markedUpHtml() {
+      const html = this.report?.ReportModifiedHtml
+      const issues = this.report?.ReportIssues
+      if (!html || !issues?.length) return html ?? ''
+
+      try {
+        const parser = new DOMParser()
+        const doc = parser.parseFromString(html, 'text/html')
+
+        const severityColor = {
+          error: 'rgba(239,68,68,0.75)',
+          warning: 'rgba(245,158,11,0.75)',
+          notice: 'rgba(59,130,246,0.6)',
+        }
+
+        issues.forEach((issue, index) => {
+          if (!issue?.selector) return
+          try {
+            doc.querySelectorAll(issue.selector).forEach((el) => {
+              el.setAttribute('data-issue-id', `issue-${index}`)
+              el.classList.add('a11y-marker')
+              el.style.outline = `3px solid ${severityColor[issue.type] ?? severityColor.notice}`
+              el.style.outlineOffset = '2px'
+              el.style.cursor = 'pointer'
+            })
+          } catch {
+            /* invalid selector — skip */
+          }
+        })
+
+        const style = doc.createElement('style')
+        style.textContent = [
+          '.a11y-marker { transition: box-shadow 0.2s; }',
+          '.a11y-marker:hover { box-shadow: 0 0 0 4px rgba(99,102,241,0.35); }',
+          '.a11y-marker--active { box-shadow: 0 0 0 6px rgba(99,102,241,0.8) !important; position: relative; z-index: 9999; }',
+        ].join('\n')
+        doc.head.appendChild(style)
+
+        return doc.documentElement.outerHTML
+      } catch {
+        return html
+      }
+    },
   },
+
   mounted() {
     if (!this.testId) {
       this.$store.commit('setError', {
@@ -597,43 +663,21 @@ export default {
       })
       return
     }
-    this.fetchReport(this.testId).then(() => {
-      this.$nextTick(() => {
-        setTimeout(() => {
-          this.renderModifiedHtml()
-        }, 100)
-      })
-    })
+    this.fetchReport(this.testId)
   },
+
   beforeUnmount() {
     this.iframeListeners.removeListeners()
   },
+
   methods: {
     ...mapActions('automaticReport', ['fetchReport']),
+
     formatDate(dateString) {
-      const date = new Date(dateString)
-      return date.toLocaleString()
+      if (!dateString) return '—'
+      return new Date(dateString).toLocaleString()
     },
-    getIssueCounts() {
-      if (
-        !this.report ||
-        !this.report.ReportIssues ||
-        !Array.isArray(this.report.ReportIssues)
-      ) {
-        return { errors: 0, warnings: 0, notices: 0 }
-      }
-      return {
-        errors: this.report.ReportIssues.filter(
-          (issue) => issue && issue.type === 'error',
-        ).length,
-        warnings: this.report.ReportIssues.filter(
-          (issue) => issue && issue.type === 'warning',
-        ).length,
-        notices: this.report.ReportIssues.filter(
-          (issue) => issue && issue.type === 'notice',
-        ).length,
-      }
-    },
+
     getIssueColor(type) {
       switch (type) {
         case 'error':
@@ -646,98 +690,48 @@ export default {
           return 'grey'
       }
     },
-    getTabIcon(index) {
-      const icons = ['mdi-chart-pie', 'mdi-web', 'mdi-information']
-      return icons[index] || 'mdi-tab'
+
+    getSeverityIcon(type) {
+      switch (type) {
+        case 'error':
+          return 'mdi-alert-circle'
+        case 'warning':
+          return 'mdi-alert'
+        case 'notice':
+          return 'mdi-information'
+        default:
+          return 'mdi-help-circle'
+      }
     },
+
     selectIssue(index) {
       this.selectedIssue = index
-      this.scrollToIssue(index)
+      this.$nextTick(() => this.scrollToIssue(index))
     },
-    _onIframeLoad() {
-      const frame = this.$refs.previewFrame
-      if (!frame?.contentWindow || !frame?.contentDocument) return
-      this.iframeListeners.addListeners([
-        {
-          target: frame.contentWindow,
-          event: 'click',
-          handler: this._onContentWindowClick,
-        },
-      ])
-    },
-    _onContentWindowClick(event) {
-      const issueMarker = event.target.closest('.a11y-issue-marker')
-      if (issueMarker) {
-        const issueId = issueMarker.getAttribute('data-issue-id')
-        const index = parseInt(issueId?.replace('issue-', '') ?? '', 10)
-        if (!Number.isFinite(index) || index < 0) return
-        this.selectIssue(index)
-      }
-    },
-    renderModifiedHtml() {
-      if (
-        !this.$refs.previewFrame ||
-        !this.$refs.previewFrame.parentNode ||
-        !this.report?.modifiedHtml
-      ) {
-        return
-      }
-      try {
-        this.iframeListeners.removeListeners()
-        const frame = this.$refs.previewFrame
-        this.iframeListeners.addListeners([
-          { target: frame, event: 'load', handler: this._onIframeLoad },
-        ])
-      } catch {
-        // Ignore DOM/ref errors when iframe is not ready
-      }
-    },
+
     scrollToIssue(index) {
-      if (
-        !this.$refs.previewFrame ||
-        !this.$refs.previewFrame.parentNode ||
-        !this.report
+      const frame = this.$refs.previewFrame
+      if (!frame?.contentDocument) return
+      const el = frame.contentDocument.querySelector(
+        `[data-issue-id="issue-${index}"]`,
       )
-        return
-      const frame = this.$refs.previewFrame
-      const frameDoc = frame.contentDocument || frame.contentWindow.document
-      const element = frameDoc.querySelector(`[data-issue-id="issue-${index}"]`)
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        this.highlightElement(`issue-${index}`)
-      }
+      if (!el) return
+
+      frame.contentDocument
+        .querySelectorAll('.a11y-marker--active')
+        .forEach((e) => e.classList.remove('a11y-marker--active'))
+
+      el.classList.add('a11y-marker--active')
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
     },
-    highlightElement(issueId) {
-      if (!this.$refs.previewFrame || !this.$refs.previewFrame.parentNode)
-        return
-      const frame = this.$refs.previewFrame
-      const frameDoc = frame.contentDocument || frame.contentWindow.document
-      this.unhighlightElements()
-      const element = frameDoc.querySelector(`[data-issue-id="${issueId}"]`)
-      if (element) {
-        element.style.boxShadow = '0 0 0 4px rgba(255, 0, 0, 0.5)'
-        element.style.zIndex = '1000'
-      }
-    },
-    unhighlightElements() {
-      if (!this.$refs.previewFrame || !this.$refs.previewFrame.parentNode)
-        return
-      const frame = this.$refs.previewFrame
-      const frameDoc = frame.contentDocument || frame.contentWindow.document
-      const elements = frameDoc.querySelectorAll('.a11y-issue')
-      elements.forEach((el) => {
-        el.style.boxShadow = ''
-        el.style.zIndex = ''
-      })
-    },
+
     onInfiniteScroll(e) {
       const el = e.target
-      if (el.scrollTop + el.clientHeight >= el.scrollHeight - 10) {
-        if (
-          this.infiniteScrollCount < (this.report?.ReportIssues?.length || 0)
-        ) {
-          this.infiniteScrollCount += 20
-        }
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight - 50) {
+        this.infiniteScrollCount = Math.min(
+          this.infiniteScrollCount + 20,
+          this.report?.ReportIssues?.length ?? 0,
+        )
       }
     },
   },
@@ -745,43 +739,39 @@ export default {
 </script>
 
 <style scoped>
+.issue-row {
+  border: 1px solid transparent;
+  transition:
+    border-color 0.15s,
+    background-color 0.15s;
+  cursor: pointer;
+}
+.issue-row:hover {
+  background-color: rgba(var(--v-theme-primary), 0.04);
+  border-color: rgba(var(--v-theme-primary), 0.15);
+}
 .preview-frame {
-  background-color: #fff;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 8px;
 }
-
-pre {
-  white-space: pre-wrap;
-  word-break: break-word;
-  font-family: 'Roboto Mono', monospace;
-  font-size: 0.875rem;
-  line-height: 1.4;
+.border-e {
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
 }
-
-code {
-  font-family: 'Roboto Mono', monospace;
-  font-size: 0.875rem;
+.border-b {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
-
-/* Custom scrollbar for better aesthetics */
-.overflow-y-auto::-webkit-scrollbar {
-  width: 8px;
+.tracking-wider {
+  letter-spacing: 0.08em;
 }
-
-.overflow-y-auto::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
+.gap-1 {
+  gap: 4px;
 }
-
-.overflow-y-auto::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
+.gap-2 {
+  gap: 8px;
 }
-
-.overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
-}
-
-.error-alert-center {
-  text-align: center;
+.gap-3 {
+  gap: 12px;
 }
 </style>
