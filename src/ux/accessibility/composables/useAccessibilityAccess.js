@@ -9,10 +9,31 @@ export function useAccessibilityAccess() {
   const accessLevel = ref(null)
   const isLoading = ref(true)
 
-  /** Fetches study data from the store by testId. */
   const fetchStudyData = async (testId) => {
-    await store.dispatch('getStudy', { id: testId })
-    return store.getters.test ?? null
+    try {
+      await store.dispatch('getStudy', { id: testId })
+    } catch {
+      try {
+        await store.dispatch('getTest', { id: testId })
+      } catch {
+        const studyModule = store._modules.root._children.Study
+        if (studyModule) {
+          await store.dispatch('Study/getStudy', { id: testId })
+        } else {
+          await store.dispatch('getStudy', { id: testId })
+        }
+      }
+    }
+
+    if (store.getters.test) {
+      return store.getters.test
+    } else if (store.state.Study?.Test) {
+      return store.state.Study.Test
+    } else if (store.state.Test) {
+      return store.state.Test
+    } else {
+      return null
+    }
   }
 
   const determineUserRole = (currentUser, studyData) => {

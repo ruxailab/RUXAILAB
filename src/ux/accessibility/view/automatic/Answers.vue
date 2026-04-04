@@ -32,7 +32,6 @@
 
     <!-- Main Report -->
     <template v-else>
-      <!-- ── Report Header ───────────────────────────────────────── -->
       <v-card class="mb-4 rounded-xl" elevation="2">
         <v-card-text class="pa-4">
           <div class="d-flex align-center flex-wrap gap-3 mb-3">
@@ -83,7 +82,6 @@
         </v-card-text>
       </v-card>
 
-      <!-- ── Tabs ────────────────────────────────────────────────── -->
       <v-card class="rounded-xl" elevation="2">
         <v-tabs
           v-model="currentTab"
@@ -107,7 +105,6 @@
           <!-- ── Tab 0 : Summary & Issues ──────────────────────── -->
           <v-window-item :value="0">
             <v-container fluid class="pa-3">
-              <!-- Issue list with pagination -->
               <div
                 class="text-body-2 font-weight-medium mb-2 d-flex align-center gap-1"
               >
@@ -120,9 +117,8 @@
                   color="primary"
                   variant="tonal"
                   class="ms-1"
+                  >{{ report.ReportIssues.length }}</v-chip
                 >
-                  {{ report.ReportIssues.length }}
-                </v-chip>
               </div>
               <v-list lines="two" class="pa-0">
                 <v-list-item
@@ -151,30 +147,27 @@
                       size="x-small"
                       variant="elevated"
                       class="text-uppercase font-weight-bold"
+                      >{{ issue.type }}</v-chip
                     >
-                      {{ issue.type }}
-                    </v-chip>
                     <v-chip
                       v-if="issue.code"
                       variant="tonal"
                       color="grey"
                       size="x-small"
                       class="font-weight-medium"
+                      >{{ issue.code }}</v-chip
                     >
-                      {{ issue.code }}
-                    </v-chip>
                     <v-chip
                       v-if="issue.wcag"
                       variant="outlined"
                       color="primary"
                       size="x-small"
+                      >WCAG {{ issue.wcag }}</v-chip
                     >
-                      WCAG {{ issue.wcag }}
-                    </v-chip>
                   </v-list-item-title>
-                  <v-list-item-subtitle class="text-caption">
-                    {{ issue.message }}
-                  </v-list-item-subtitle>
+                  <v-list-item-subtitle class="text-caption">{{
+                    issue.message
+                  }}</v-list-item-subtitle>
                 </v-list-item>
               </v-list>
 
@@ -193,7 +186,6 @@
           <!-- ── Tab 1 : Issues & Preview ──────────────────────── -->
           <v-window-item :value="1">
             <v-row no-gutters style="min-height: 520px">
-              <!-- Left: scrollable issue list -->
               <v-col cols="12" md="4" class="border-e">
                 <div class="pa-2 border-b">
                   <div
@@ -206,9 +198,8 @@
                       variant="tonal"
                       color="primary"
                       class="ms-1"
+                      >{{ report.ReportIssues.length }}</v-chip
                     >
-                      {{ report.ReportIssues.length }}
-                    </v-chip>
                   </div>
                 </div>
                 <div
@@ -231,9 +222,8 @@
                           size="24"
                           class="me-2 text-white"
                           style="font-size: 10px; font-weight: 700"
+                          >{{ idx + 1 }}</v-avatar
                         >
-                          {{ idx + 1 }}
-                        </v-avatar>
                       </template>
                       <v-list-item-title
                         class="text-caption d-flex align-center gap-1 flex-wrap mb-1"
@@ -264,12 +254,11 @@
                     "
                     class="text-center text-caption text-grey pa-2"
                   >
-                    {{ $t('Accessibility.loadingMore') }}
+                    Loading more...
                   </div>
                 </div>
               </v-col>
 
-              <!-- Right: snapshot iframe -->
               <v-col cols="12" md="8">
                 <div class="pa-2 border-b">
                   <div
@@ -284,9 +273,8 @@
                       :color="
                         getIssueColor(report.ReportIssues[selectedIssue]?.type)
                       "
+                      >Issue #{{ selectedIssue + 1 }} highlighted</v-chip
                     >
-                      Issue #{{ selectedIssue + 1 }} highlighted
-                    </v-chip>
                   </div>
                 </div>
                 <div class="pa-2" style="height: 480px">
@@ -319,7 +307,6 @@
           <!-- ── Tab 2 : Issues & Details ──────────────────────── -->
           <v-window-item :value="2">
             <v-row no-gutters style="min-height: 520px">
-              <!-- Left: scrollable issue list -->
               <v-col cols="12" md="4" class="border-e">
                 <div class="pa-2 border-b">
                   <div
@@ -332,9 +319,8 @@
                       variant="tonal"
                       color="primary"
                       class="ms-1"
+                      >{{ report.ReportIssues.length }}</v-chip
                     >
-                      {{ report.ReportIssues.length }}
-                    </v-chip>
                   </div>
                 </div>
                 <div
@@ -357,9 +343,8 @@
                           size="24"
                           class="me-2 text-white"
                           style="font-size: 10px; font-weight: 700"
+                          >{{ idx + 1 }}</v-avatar
                         >
-                          {{ idx + 1 }}
-                        </v-avatar>
                       </template>
                       <v-list-item-title
                         class="text-caption d-flex align-center gap-1 flex-wrap mb-1"
@@ -390,12 +375,11 @@
                     "
                     class="text-center text-caption text-grey pa-2"
                   >
-                    {{ $t('Accessibility.loadingMore') }}
+                    Loading more...
                   </div>
                 </div>
               </v-col>
 
-              <!-- Right: issue detail panel -->
               <v-col cols="12" md="8">
                 <div class="pa-2 border-b">
                   <div
@@ -406,7 +390,6 @@
                   </div>
                 </div>
 
-                <!-- No selection -->
                 <div
                   v-if="selectedIssue === null"
                   class="d-flex flex-column align-center justify-center text-grey"
@@ -418,13 +401,11 @@
                   <div class="text-body-2">Select an issue to view details</div>
                 </div>
 
-                <!-- Detail view -->
                 <div
                   v-else
                   class="pa-4 overflow-y-auto"
                   style="max-height: 480px"
                 >
-                  <!-- Severity banner -->
                   <v-alert
                     :color="getIssueColor(activeIssue.type)"
                     variant="tonal"
@@ -437,29 +418,25 @@
                         variant="elevated"
                         size="small"
                         class="text-uppercase font-weight-bold"
+                        >{{ activeIssue.type }}</v-chip
                       >
-                        {{ activeIssue.type }}
-                      </v-chip>
                       <v-chip
                         v-if="activeIssue.code"
                         variant="tonal"
                         color="grey"
                         size="small"
+                        >{{ activeIssue.code }}</v-chip
                       >
-                        {{ activeIssue.code }}
-                      </v-chip>
                       <v-chip
                         v-if="activeIssue.wcag"
                         variant="outlined"
                         color="primary"
                         size="small"
+                        >WCAG {{ activeIssue.wcag }}</v-chip
                       >
-                        WCAG {{ activeIssue.wcag }}
-                      </v-chip>
                     </div>
                   </v-alert>
 
-                  <!-- Message -->
                   <div class="mb-4">
                     <div
                       class="text-caption text-grey font-weight-medium mb-1 text-uppercase tracking-wider"
@@ -469,7 +446,6 @@
                     <div class="text-body-2">{{ activeIssue.message }}</div>
                   </div>
 
-                  <!-- Selector -->
                   <div v-if="activeIssue.selector" class="mb-4">
                     <div
                       class="text-caption text-grey font-weight-medium mb-1 text-uppercase tracking-wider"
@@ -485,7 +461,6 @@
                     </v-sheet>
                   </div>
 
-                  <!-- Context HTML -->
                   <div v-if="activeIssue.context" class="mb-4">
                     <div
                       class="text-caption text-grey font-weight-medium mb-1 text-uppercase tracking-wider"
@@ -509,7 +484,6 @@
                     </v-sheet>
                   </div>
 
-                  <!-- WCAG reference link -->
                   <div v-if="activeIssue.runnerExtras?.wcagReference">
                     <div
                       class="text-caption text-grey font-weight-medium mb-2 text-uppercase tracking-wider"
@@ -572,7 +546,6 @@ export default {
       return this.$store.getters.getError
     },
 
-    /** Issues for Tab 0 pagination */
     paginatedIssues() {
       if (!this.report?.ReportIssues) return []
       const start = (this.page - 1) * this.itemsPerPage
@@ -583,19 +556,16 @@ export default {
       return Math.ceil(this.report.ReportIssues.length / this.itemsPerPage) || 1
     },
 
-    /** Issues for Tabs 1 & 2 (infinite scroll) */
     infiniteIssues() {
       if (!this.report?.ReportIssues) return []
       return this.report.ReportIssues.slice(0, this.infiniteScrollCount)
     },
 
-    /** Currently selected issue object */
     activeIssue() {
       if (this.selectedIssue === null || !this.report?.ReportIssues) return null
       return this.report.ReportIssues[this.selectedIssue] ?? null
     },
 
-    /** Summary-card data derived from normalized issues */
     summaryStats() {
       const issues = this.report?.ReportIssues ?? []
       const count = (type) => issues.filter((i) => i?.type === type).length
@@ -606,10 +576,6 @@ export default {
       ]
     },
 
-    /**
-     * Snapshot HTML with coloured outlines injected onto each element
-     * matched by issue.selector — resolved entirely client-side.
-     */
     markedUpHtml() {
       const html = this.report?.ReportModifiedHtml
       const issues = this.report?.ReportIssues
@@ -618,7 +584,6 @@ export default {
       try {
         const parser = new DOMParser()
         const doc = parser.parseFromString(html, 'text/html')
-
         const severityColor = {
           error: 'rgba(239,68,68,0.75)',
           warning: 'rgba(245,158,11,0.75)',
@@ -636,7 +601,7 @@ export default {
               el.style.cursor = 'pointer'
             })
           } catch {
-            /* invalid selector — skip */
+            /* skip invalid selector */
           }
         })
 
@@ -647,7 +612,6 @@ export default {
           '.a11y-marker--active { box-shadow: 0 0 0 6px rgba(99,102,241,0.8) !important; position: relative; z-index: 9999; }',
         ].join('\n')
         doc.head.appendChild(style)
-
         return doc.documentElement.outerHTML
       } catch {
         return html
@@ -720,7 +684,6 @@ export default {
       frame.contentDocument
         .querySelectorAll('.a11y-marker--active')
         .forEach((e) => e.classList.remove('a11y-marker--active'))
-
       el.classList.add('a11y-marker--active')
       el.scrollIntoView({ behavior: 'smooth', block: 'center' })
     },
