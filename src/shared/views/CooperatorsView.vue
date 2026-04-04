@@ -612,6 +612,7 @@ const executeInvitationCancellation = async (guest) => {
 }
 
 const openDialog = async () => {
+  if (!store.state.Users?.users) store.dispatch('getAllUsers')
   if (slots.dialog) drawerOpen.value = true
   else showInviteDialog.value = true
 }
@@ -623,8 +624,6 @@ watch(loading, (newVal) => {
 })
 
 onMounted(async () => {
-  store.dispatch('getAllUsers')
-
   const testId = props.id || route.params.id
 
   if (testId) {
