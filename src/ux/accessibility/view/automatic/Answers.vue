@@ -183,6 +183,7 @@
                   v-if="report.ReportModifiedHtml"
                   ref="previewFrame"
                   class="preview-frame"
+                  title="Accessibility issue visual preview"
                   sandbox="allow-same-origin allow-scripts"
                   :srcdoc="markedUpHtml"
                   style="width: 100%; height: 480px; border: none"
@@ -349,7 +350,7 @@ export default {
           if (!issue?.selector) return
           try {
             doc.querySelectorAll(issue.selector).forEach((el) => {
-              el.setAttribute('data-issue-id', `issue-${idx}`)
+              el.dataset.issueId = `issue-${idx}`
               el.style.outline = `3px solid ${colors[issue.type] || colors.notice}`
               el.style.outlineOffset = '2px'
             })
