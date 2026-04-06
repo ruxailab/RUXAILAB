@@ -319,9 +319,10 @@ export default {
       return this.report.ReportIssues.slice(0, this.infiniteScrollCount)
     },
     activeIssue() {
-      return this.selectedIssue !== null
-        ? this.report?.ReportIssues[this.selectedIssue]
-        : null
+      if (this.selectedIssue === null || this.selectedIssue === undefined) {
+        return null
+      }
+      return this.report?.ReportIssues[this.selectedIssue] ?? null
     },
     summaryStats() {
       const issues = this.report?.ReportIssues ?? []
@@ -352,14 +353,16 @@ export default {
               el.style.outline = `3px solid ${colors[issue.type] || colors.notice}`
               el.style.outlineOffset = '2px'
             })
-          } catch (e) {}
+          } catch {
+            // Malformed CSS selector — skip this issue safely.
+          }
         })
         const style = doc.createElement('style')
         style.textContent =
           '.a11y-active { box-shadow: 0 0 0 6px #6366f1 !important; z-index: 9999; }'
         doc.head.appendChild(style)
         return doc.documentElement.outerHTML
-      } catch (e) {
+      } catch {
         return html
       }
     },
@@ -382,14 +385,9 @@ export default {
     formatDate(d) {
       return d ? new Date(d).toLocaleString() : '—'
     },
-    getIssueColor(t) {
-      return t === 'error'
-        ? 'error'
-        : t === 'warning'
-          ? 'warning'
-          : t === 'notice'
-            ? 'info'
-            : 'grey'
+    getIssueColor(type) {
+      const colorMap = { error: 'error', warning: 'warning', notice: 'info' }
+      return colorMap[type] ?? 'grey'
     },
     selectIssue(idx) {
       this.selectedIssue = idx
