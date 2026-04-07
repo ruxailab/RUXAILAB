@@ -20,23 +20,23 @@
       "occurrence": "Test error",
       "daily_counts": {
         "Mon": 0,
-        "Tue": 3,
+        "Tue": 0,
         "Wed": 0,
         "Thu": 0,
         "Fri": 0
       },
-      "total": 3
+      "total": 0
     },
     {
       "occurrence": "Security vulnerability",
       "daily_counts": {
         "Mon": 0,
-        "Tue": 3,
+        "Tue": 0,
         "Wed": 0,
         "Thu": 0,
         "Fri": 0
       },
-      "total": 3
+      "total": 0
     },
     {
       "occurrence": "Code smells/Bugs",
@@ -62,7 +62,7 @@
     }
   ],
   "summary": {
-    "grand_total": 6,
+    "grand_total": 0,
     "days_tracked": 5
   },
   "issues_tracking": {
