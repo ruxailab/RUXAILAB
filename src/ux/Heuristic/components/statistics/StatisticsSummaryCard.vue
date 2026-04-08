@@ -72,11 +72,19 @@
 <script setup>
 // Receives the final result object from the parent
 // { average, max, min, sd }
-const props = defineProps({
+defineProps({
   result: {
     type: Object,
     required: true,
     default: () => ({ average: '0%', max: '0%', min: '0%', sd: '0%' }),
+  },
+  imageTotalsByHeuristic: {
+    type: Array,
+    default: () => [],
+  },
+  optionResponseTotals: {
+    type: Array,
+    default: () => [],
   },
 })
 </script>

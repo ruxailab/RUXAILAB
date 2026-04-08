@@ -1,5 +1,9 @@
 <template>
   <div v-if="answers">
+    <p>{{ showFinalResult }}</p>
+    <p>imageTotalsByHeuristic: {{ imageTotalsByHeuristic }}</p>
+    <p>optionResponseTotals: {{ optionResponseTotals }}</p>
+
     <v-overlay :model-value="loading">
       <v-progress-circular indeterminate size="64" />
     </v-overlay>
@@ -40,7 +44,12 @@
         <template #content>
           <div class="ma-0 pa-0">
             <!-- Tab 1 - Statistics -->
-            <StatisticsSummaryCard v-if="tab == 0" :result="showFinalResult" />
+            <StatisticsSummaryCard
+              v-if="tab == 0"
+              :result="showFinalResult"
+              :image-totals-by-heuristic="imageTotalsByHeuristic"
+              :option-response-totals="optionResponseTotals"
+            />
 
             <!-- Tab 2 - Evaluators -->
             <EvaluatorsAndGraphicsCard
@@ -93,6 +102,9 @@ import {
   standardDeviation,
   finalResult,
   statistics,
+  FinalResultWarnings,
+  calcFinalResult,
+  calcResultsWarnings,
   formatTimeSpentFromMs,
 } from '@/ux/Heuristic/utils/statistics'
 import {
@@ -125,7 +137,76 @@ const usability_total = ref(0)
 const loading = ref(false) // Note: Check if Vuex getter 'loading' is needed
 const array_scores = ref([])
 
-const showFinalResult = computed(() => finalResult())
+const showFinalResult = computed(() => finalResult(resultEvaluator.value))
+
+const imageTotalsByHeuristic = computed(() => {
+  const totals = {}
+
+  if (!Array.isArray(resultEvaluator.value)) return []
+
+  resultEvaluator.value.forEach((evaluator) => {
+    if (!Array.isArray(evaluator.heuristics)) return
+
+    evaluator.heuristics.forEach((heuristic) => {
+      totals[heuristic.id] =
+        (totals[heuristic.id] || 0) + Number(heuristic.totalImages || 0)
+    })
+  })
+
+  return Object.entries(totals)
+    .map(([heuristic, totalImages]) => ({ heuristic, totalImages }))
+    .sort(
+      (a, b) =>
+        Number(a.heuristic.replace(/\D/g, '')) -
+        Number(b.heuristic.replace(/\D/g, '')),
+    )
+})
+
+const optionResponseTotals = computed(() => {
+  const options = Array.isArray(test.value?.testOptions)
+    ? test.value.testOptions
+    : []
+  const totalsMap = new Map()
+
+  options.forEach((option) => {
+    const key = String(option.value)
+    totalsMap.set(key, {
+      text: option.text || String(option.value),
+      total: 0,
+    })
+  })
+
+  if (!Array.isArray(answers.value)) return Array.from(totalsMap.values())
+
+  answers.value.forEach((evaluator) => {
+    if (!Array.isArray(evaluator?.heuristicQuestions)) return
+
+    evaluator.heuristicQuestions.forEach((heuristic) => {
+      if (!Array.isArray(heuristic?.heuristicQuestions)) return
+
+      heuristic.heuristicQuestions.forEach((question) => {
+        const rawValue = question?.heuristicAnswer?.value
+        if (rawValue === null || rawValue === undefined || rawValue === '')
+          return
+
+        const key = String(rawValue)
+        if (!totalsMap.has(key)) {
+          totalsMap.set(key, {
+            value: rawValue,
+            text: String(rawValue),
+            total: 0,
+          })
+        }
+
+        totalsMap.get(key).total += 1
+      })
+    })
+  })
+
+  return Array.from(totalsMap.values()).sort(
+    (a, b) => Number(a.value) - Number(b.value),
+  )
+})
 
 const evaluatorStatistics = computed(
   () => store.state.Answer.evaluatorStatistics || { header: [], items: [] },
