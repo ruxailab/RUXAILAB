@@ -44,18 +44,32 @@ export default {
             heuristicQuestions: value.heuristicQuestions.map((heuristic) => ({
               ...heuristic,
               heuristicQuestions: heuristic.heuristicQuestions.map(
-                (question) => ({
-                  ...question,
-                  heuristicAnswer: question.heuristicAnswer?.text
-                    ? question.heuristicAnswer
-                    : {
-                        text:
-                          testOptions?.find(
-                            (op) => op.value === question.heuristicAnswer,
-                          )?.text ?? '',
-                        value: question.heuristicAnswer,
-                      },
-                }),
+                (question) => {
+                  const heuristicAnswer = question.heuristicAnswer
+
+                  return {
+                    ...question,
+                    heuristicAnswer: heuristicAnswer?.text
+                      ? heuristicAnswer
+                      : typeof heuristicAnswer === 'object' &&
+                          heuristicAnswer !== null
+                        ? {
+                            ...heuristicAnswer,
+                            text:
+                              testOptions?.find(
+                                (op) => op.value === heuristicAnswer.value,
+                              )?.text ?? '',
+                            value: heuristicAnswer.value,
+                          }
+                        : {
+                            text:
+                              testOptions?.find(
+                                (op) => op.value === heuristicAnswer,
+                              )?.text ?? '',
+                            value: heuristicAnswer,
+                          },
+                  }
+                },
               ),
             })),
           }
