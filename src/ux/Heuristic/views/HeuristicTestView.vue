@@ -1562,9 +1562,17 @@ const initializeHeuristicsOrder = () => {
     !!userAnswer.testStarted ||
     hasSavedAnswers()
 
-  displayHeuristics.value = hasProgress
-    ? baseHeuristics
-    : shuffleHeuristics(baseHeuristics)
+  if (hasProgress && Array.isArray(userAnswer.heuristicQuestions)) {
+    const ordered = userAnswer.heuristicQuestions
+      .map((savedHeu) =>
+        baseHeuristics.find((h) => h.id === savedHeu.heuristicId),
+      )
+      .filter(Boolean)
+
+    displayHeuristics.value = ordered
+  } else {
+    displayHeuristics.value = shuffleHeuristics(baseHeuristics)
+  }
 }
 
 const restoreProgress = () => {
@@ -1633,6 +1641,14 @@ const setupAutoSaveOnUnload = () => {
     }
   })
 }
+
+watch(
+  displayHeuristics,
+  async () => {
+    mappingSteps()
+  },
+  { deep: true },
+)
 
 watch(
   test,
