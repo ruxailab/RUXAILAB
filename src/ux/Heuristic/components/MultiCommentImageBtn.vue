@@ -9,7 +9,7 @@
           <template #activator="{ props: tooltipProps }">
             <v-btn icon v-bind="tooltipProps" @click="show = !show">
               <v-badge
-                v-if="totalItemCount > 1"
+                v-if="totalItemCount > 0"
                 :content="totalItemCount"
                 color="warning"
                 floating
@@ -46,11 +46,7 @@
           <v-chip size="small" color="primary" variant="tonal" class="mb-2">
             <v-icon start size="small">mdi-comment-multiple</v-icon>
             {{ allComments.length }}
-            {{
-              allComments.length === 1
-                ? $t('common.comment')
-                : $t('common.comments')
-            }}
+            {{ $t('common.comments', allComments.length) }}
           </v-chip>
           <v-card
             v-for="(comment, index) in allComments"
@@ -82,7 +78,7 @@
                     size="small"
                     color="success"
                     :disabled="disable"
-                    @click="saveEditComment(comment.id, index)"
+                    @click="saveEditComment(comment.id)"
                   />
                   <v-btn
                     icon="mdi-close"
@@ -108,21 +104,17 @@
                     size="x-small"
                     color="error"
                     :disabled="disable"
-                    @click="handleRemoveComment(comment.id, index)"
+                    @click="removeComment(comment.id, index)"
                   />
                 </template>
               </v-col>
             </v-row>
-            <div
-              v-if="comment.createdAt && comment.createdAt > 0"
-              class="text-caption text-grey mt-1"
-            >
+            <div v-if="comment.createdAt" class="text-caption text-grey mt-1">
               {{ formatDate(comment.createdAt) }}
             </div>
           </v-card>
         </div>
 
-        <!-- Add New Comment -->
         <v-textarea
           v-model="newCommentText"
           variant="outlined"
@@ -131,16 +123,11 @@
           rows="2"
           clearable
           clear-icon="mdi-close"
-          :label="
-            allComments.length > 0
-              ? $t('HeuristicsTable.AddCommentBtn.addAnotherComment')
-              : $t('common.comment')
-          "
+          :label="$t('HeuristicsTable.AddCommentBtn.addNewComment')"
           :disabled="disable"
           @keydown.enter.ctrl="addNewComment"
         />
         <v-btn
-          v-if="newCommentText?.trim()"
           size="small"
           color="primary"
           variant="tonal"
@@ -152,19 +139,12 @@
           {{ $t('HeuristicsTable.AddCommentBtn.addComment') }}
         </v-btn>
 
-        <v-divider
-          v-if="allImages.length > 0 || allComments.length > 0"
-          class="my-3"
-        />
+        <v-divider class="my-3" />
 
-        <!-- Existing Images Display -->
         <div v-if="allImages.length > 0" class="mb-3">
           <v-chip size="small" color="primary" variant="tonal" class="mb-2">
             <v-icon start size="small">mdi-image-multiple</v-icon>
-            {{ allImages.length }}
-            {{
-              allImages.length === 1 ? $t('common.image') : $t('common.images')
-            }}
+            {{ allImages.length }} {{ $t('common.images', allImages.length) }}
           </v-chip>
           <v-row>
             <v-col
@@ -189,19 +169,19 @@
                   color="error"
                   class="delete-image-btn"
                   :disabled="disable"
-                  @click="handleRemoveImage(image.id, index)"
+                  @click="removeImage(image.id, index)"
                 />
               </v-card>
             </v-col>
           </v-row>
         </div>
 
-        <!-- Add New Image -->
-        <ImageImport
+        <MultiImageImport
           :heuristic-id="heuristicIdForImage"
           :question-id="questionIdForImage"
           :test-id="testIdForImage"
           :disable="disable"
+          :existing-images-count="allImages.length"
           @image-uploaded="handleImageUploaded"
         />
       </v-col>
@@ -209,7 +189,11 @@
 
     <v-dialog v-model="imagePreviewDialog" max-width="800">
       <v-card>
-        <v-img :src="previewImageUrl" max-height="600" cover />
+        <v-img :src="previewImageUrl" max-height="600" cover>
+          <template #error>
+            <v-icon size="64" color="grey">mdi-image-broken</v-icon>
+          </template>
+        </v-img>
         <v-card-actions>
           <v-spacer />
           <v-btn color="primary" @click="imagePreviewDialog = false">
@@ -224,7 +208,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useStore } from 'vuex'
-import ImageImport from '@/ux/Heuristic/components/ImportImage.vue'
+import MultiImageImport from '@/ux/Heuristic/components/MultiImageImport.vue'
 import { useCommentImage } from '@/ux/Heuristic/composables/useCommentImage'
 
 const props = defineProps({
@@ -234,13 +218,13 @@ const props = defineProps({
 })
 
 const emit = defineEmits([
-  'updateComment',
-  'updateImage',
   'addComment',
-  'updateCommentById',
+  'updateComment',
   'removeComment',
   'addImage',
   'removeImage',
+  'updateLegacyComment',
+  'updateLegacyImage',
 ])
 
 const store = useStore()
@@ -262,9 +246,9 @@ const {
   startEditComment,
   cancelEditComment,
   saveEditComment,
-  removeComment: handleRemoveComment,
+  removeComment,
   handleImageUploaded,
-  removeImage: handleRemoveImage,
+  removeImage,
   openImagePreview,
 } = useCommentImage(props, emit)
 

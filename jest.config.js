@@ -5,7 +5,7 @@ module.exports = {
     '^.+\\.js$': 'babel-jest'
   },
   testMatch: ['**/*.spec.js'],
-  testPathIgnorePatterns: ['/e2e/'],
+  testPathIgnorePatterns: ['/e2e/', '/functions/'],
   setupFilesAfterEnv: ['./tests/mocks/firebase.js'],
   resetMocks: true,
   clearMocks: true,
