@@ -449,7 +449,6 @@
                           density="compact"
                           :disabled="currentUserTestAnswer?.submitted"
                           placeholder="Select an answer..."
-                          clearable
                           @update:model-value="
                             handleAnswerChange(heurisIndex, i)
                           "
