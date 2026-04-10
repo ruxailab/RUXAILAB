@@ -140,7 +140,13 @@
     "id": "ID",
     "itemsPerPage": "ページごとの項目数：",
     "saving": "保存中...",
-    "visible": "表示"
+    "visible": "表示",
+    "percentValue": "{value}%",
+    "comments": "コメント",
+    "image": "画像",
+    "images": "画像",
+    "close": "閉じる",
+    "selectImage": "アップロードする画像を選択"
   },
   "storage": {
     "pageTitle": "ストレージ",
@@ -646,7 +652,14 @@
     "AddCommentBtn": {
       "showComment": "コメントを表示",
       "addComment": "コメントを追加",
-      "hideTextArea": "テキストエリアを非表示"
+      "hideTextArea": "テキストエリアを非表示",
+      "addAnotherComment": "別のコメントを追加",
+      "addNewComment": "新しいコメントを追加"
+    },
+    "ImportImage": {
+      "imagesCount": "{count} 枚の画像が添付されています",
+      "uploadSuccess": "画像のアップロードに成功しました",
+      "uploadError": "画像のアップロードに失敗しました"
     },
     "errors": {
       "failedToLoadQuestionForm": "質問フォームの読み込みに失敗しました。もう一度お試しください。",
@@ -658,6 +671,10 @@
       "question": "質問",
       "questions": "質問"
     }
+  },
+  "HeuristicsAnalytics": {
+    "dataTable": "データテーブル",
+    "chart": "チャート"
   },
   "HeuristicsOptionsTable": {
     "titles": {
@@ -1357,7 +1374,8 @@
       "elastic": "Elastic Net",
       "bayesian": "ベイズリッジ",
       "sgd": "SGD Regressor",
-      "svr": "Support Vector Regressor"
+      "svr": "Support Vector Regressor",
+      "rfr": "ランダムフォレスト回帰"
     }
   },
   "AccessNotAllowed": {
@@ -1582,7 +1600,8 @@
     "deleteAccount": "アカウントを削除してもよろしいですか？この操作は元に戻せません。",
     "genericSuccess": "操作が成功しました",
     "savedChanges": "変更が保存されました",
-    "deleteUser": "このユーザーを削除してもよろしいですか？この操作は元に戻せません。"
+    "deleteUser": "このユーザーを削除してもよろしいですか？この操作は元に戻せません。",
+    "errorSavingProgress": "進行状況の保存中にエラーが発生しました"
   },
   "buttons": {
     "next": "次へ",
