@@ -683,9 +683,7 @@ const user = computed(() => {
   if (store.getters.user) setExistUser()
   return store.getters.user
 })
-const currentUserTestAnswer = computed(() => {
-  return store.getters.currentUserTestAnswer || {}
-})
+const currentUserTestAnswer = ref({})
 const showSaveBtn = computed(() => {
   if (currentUserTestAnswer.value.submitted) return false
   return true
@@ -1608,6 +1606,7 @@ const restoreProgress = () => {
 const setTest = async () => {
   logined.value = true
   await store.dispatch('getCurrentTestAnswerDoc')
+  currentUserTestAnswer.value = store.getters.currentUserTestAnswer || {}
   initializeHeuristicsOrder()
   populateWithHeuristicQuestions()
   restoreProgress()
@@ -1708,6 +1707,9 @@ onBeforeMount(async () => {
 
   // Then load user's answers
   await store.dispatch('getCurrentTestAnswerDoc')
+
+  // Load answer data into local reactive state
+  currentUserTestAnswer.value = store.getters.currentUserTestAnswer || {}
 
   // Randomize only for fresh runs; keep deterministic order for resumed runs.
   initializeHeuristicsOrder()
