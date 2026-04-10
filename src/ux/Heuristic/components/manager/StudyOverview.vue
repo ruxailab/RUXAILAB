@@ -2,7 +2,7 @@
   <div v-if="test">
     <v-row class="mb-6">
       <!-- Card 1: Participantes -->
-      <v-col cols="12" sm="6" md="3">
+      <v-col cols="6">
         <v-card class="pa-4 text-center" elevation="1">
           <v-icon size="32" color="primary" class="mb-2"
             >mdi-account-group</v-icon
@@ -15,7 +15,7 @@
       </v-col>
 
       <!-- Card 2: Completación -->
-      <v-col cols="12" sm="6" md="3">
+      <v-col cols="6">
         <v-card class="pa-4 text-center" elevation="1">
           <v-icon size="32" color="success" class="mb-2">mdi-chart-line</v-icon>
           <div class="metric-value text-h4 mb-1">{{ completionRate }}%</div>
@@ -26,7 +26,7 @@
       </v-col>
 
       <!-- Card 3: Días Activos -->
-      <v-col cols="12" sm="6" md="3">
+      <v-col cols="6">
         <v-card class="pa-4 text-center" elevation="1">
           <v-icon size="32" color="warning" class="mb-2"
             >mdi-calendar-clock</v-icon
@@ -38,7 +38,7 @@
         </v-card>
       </v-col>
       <!-- Card 4: Heurísticas -->
-      <v-col cols="12" sm="6" md="3">
+      <v-col cols="6">
         <v-card class="pa-4 text-center" elevation="1">
           <v-icon size="32" color="info" class="mb-2"
             >mdi-format-list-checks</v-icon

@@ -568,7 +568,10 @@
       "updatedProgress": "a mis à jour sa progression",
       "invitationSentTitle": "Invitation envoyée",
       "invitationPendingDesc": "Invitation en attente pour",
-      "pendingStatus": "En attente"
+      "pendingStatus": "En attente",
+      "evaluatorInfo": "Info Évaluateurs",
+      "evaluatorInfoEmpty": "Aucune section d'information. Ajoutez-en pour guider vos évaluateurs.",
+      "evaluatorInfoSeeAll": "Voir les {count} sections"
     },
     "managerView": {
       "heuristicStudy": "Étude heuristique",
@@ -2387,5 +2390,32 @@
       }
     },
     "title": "Politique de confidentialité"
+  },
+  "EvaluatorInfoView": {
+    "pageTitle": "Informations pour les Évaluateurs",
+    "pageSubtitle": "Créez des sections d'information que les évaluateurs verront avant de commencer le test"
+  },
+  "EvaluatorInfoEditor": {
+    "title": "Informations pour les Évaluateurs",
+    "subtitle": "Créez des sections d'information que les évaluateurs verront avant de commencer le test",
+    "noSections": "Aucune section. Ajoutez-en une pour commencer.",
+    "untitledSection": "Section sans titre",
+    "addSection": "Ajouter une section",
+    "sectionTitle": "Titre de la section",
+    "sectionContent": "Contenu",
+    "sectionType": "Type",
+    "types": {
+      "info": "Information",
+      "warning": "Avertissement",
+      "tip": "Conseil"
+    },
+    "save": "Enregistrer",
+    "cancel": "Annuler"
+  },
+  "EvaluatorInfoDisplay": {
+    "title": "Avant de commencer",
+    "subtitle": "Veuillez lire les informations suivantes avant de démarrer l'évaluation",
+    "startButton": "Démarrer l'évaluation",
+    "noContent": "Aucune information supplémentaire."
   }
 }
