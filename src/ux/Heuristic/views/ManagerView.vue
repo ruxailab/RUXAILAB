@@ -104,10 +104,9 @@ import {
 } from '@/shared/utils/managerDefault'
 import ManagerView from '@/shared/views/template/ManagerView.vue'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
-import { computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, onMounted, watchEffect } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import { useI18n } from 'vue-i18n'
 
 // Componentes del manager
 import StudyOverview from '@/ux/Heuristic/components/manager/StudyOverview.vue'
@@ -123,6 +122,7 @@ import EvaluatorInfoCard from '@/ux/Heuristic/components/manager/EvaluatorInfoCa
 // Stores
 const store = useStore()
 const route = useRoute()
+const router = useRouter()
 
 // Computed
 const user = computed(() => store.getters.user)
@@ -142,7 +142,22 @@ const accessLevel = computed(() => {
   )
   if (coop) return coop.accessLevel
 
-  return currentTest?.isPublic ? ACCESS_LEVEL.EVALUATOR : ACCESS_LEVEL.GUEST
+  if (currentTest?.isPublic) return ACCESS_LEVEL.GUEST
+  return null
+})
+
+watchEffect(() => {
+  if (user.value != null && test.value != null) {
+    const hasAccess =
+      accessLevel.value === ACCESS_LEVEL.ADMIN ||
+      accessLevel.value === ACCESS_LEVEL.EVALUATOR ||
+      accessLevel.value === ACCESS_LEVEL.GUEST ||
+      accessLevel.value === ACCESS_LEVEL.OBSERVATOR
+
+    if (!hasAccess || accessLevel.value === null) {
+      router.push('/')
+    }
+  }
 })
 
 const topCards = computed(() => {
@@ -169,7 +184,6 @@ const navigator = computed(() => {
     })
   }
 
-  // Evaluator Info is heuristic-specific and admin-only
   if (
     (accessLevel.value === ACCESS_LEVEL.ADMIN ||
       accessLevel.value === ACCESS_LEVEL.SUPER_ADMIN) &&
