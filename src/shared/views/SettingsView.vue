@@ -567,17 +567,20 @@ onMounted(async () => {
 onBeforeMount(() => {
   store.commit('SET_LOCAL_CHANGES', false)
   store.commit('SET_DIALOG_LEAVE', false)
+  store.commit('SET_PATH_TO', null)
   window.addEventListener('beforeunload', preventNav)
 })
 
 onBeforeUnmount(() => {
+  store.commit('SET_DIALOG_LEAVE', false)
+  store.commit('SET_PATH_TO', null)
   window.removeEventListener('beforeunload', preventNav)
 })
 
 onBeforeRouteLeave((to, _from) => {
   if (localChanges.value) {
     store.commit('SET_DIALOG_LEAVE', true)
-    store.commit('SET_PATH_TO', to.name)
+    store.commit('SET_PATH_TO', to.fullPath)
     return false
   }
   return true
@@ -588,10 +591,21 @@ const validate = (valid, index) => {
 }
 
 const onSubmit = async () => {
-  await submit()
+  const targetRoute = store.state.pathTo
+
+  const didSave = await submit()
+
+  if (!didSave) {
+    return
+  }
+
   store.commit('SET_LOCAL_CHANGES', false)
   store.commit('SET_DIALOG_LEAVE', false)
-  router.push({ name: store.state.pathTo })
+  store.commit('SET_PATH_TO', null)
+
+  if (targetRoute) {
+    router.push(targetRoute).catch(() => {})
+  }
 }
 
 const submit = async () => {
@@ -604,15 +618,19 @@ const submit = async () => {
       await store.dispatch('getStudy', { id: props.id })
       store.commit('SET_LOCAL_CHANGES', false)
       showSuccess('alerts.savedChanges')
+      return true
     } catch {
       showError('errors.globalError')
+      return false
     } finally {
       loading.value = false
     }
   } else if (title.length >= 200) {
     showWarning('studyCreation.details.validation.max200Characters')
+    return false
   } else {
     showWarning('studyCreation.details.validation.enterTitle')
+    return false
   }
 }
 

@@ -223,15 +223,26 @@ export function useAccessibilityTestSettings(config) {
   }
 
   const onSubmit = async () => {
-    await submit()
+    const targetRoute = store.state.pathTo
+    const didSave = await submit()
+
+    if (!didSave) {
+      return
+    }
+
     store.commit('SET_LOCAL_CHANGES', false)
-    router.push({ name: store.state.pathTo })
+    store.commit('SET_DIALOG_LEAVE', false)
+    store.commit('SET_PATH_TO', null)
+
+    if (targetRoute) {
+      router.push(targetRoute).catch(() => {})
+    }
   }
 
   const submit = async () => {
     if (!object.value) {
       showError('No test data available')
-      return
+      return false
     }
 
     const title = object.value.title || object.value.testTitle
@@ -254,15 +265,19 @@ export function useAccessibilityTestSettings(config) {
         await fetchTest() // Refresh the test data
         store.commit('SET_LOCAL_CHANGES', false)
         showSuccess('Changes saved successfully')
+        return true
       } catch (error) {
         showError('Failed to save changes.')
+        return false
       } finally {
         loading.value = false
       }
     } else if (title && title.length >= 200) {
       showWarning('Title must not exceed 200 characters.')
+      return false
     } else {
       showWarning('Test must contain a title.')
+      return false
     }
   }
 
@@ -399,17 +414,20 @@ export function useAccessibilityTestSettings(config) {
   onBeforeMount(() => {
     store.commit('SET_LOCAL_CHANGES', false)
     store.commit('SET_DIALOG_LEAVE', false)
+    store.commit('SET_PATH_TO', null)
     window.addEventListener('beforeunload', preventNav)
   })
 
   onBeforeUnmount(() => {
+    store.commit('SET_DIALOG_LEAVE', false)
+    store.commit('SET_PATH_TO', null)
     window.removeEventListener('beforeunload', preventNav)
   })
 
   onBeforeRouteLeave((to, from) => {
     if (localChanges.value) {
       store.commit('SET_DIALOG_LEAVE', true)
-      store.commit('SET_PATH_TO', to.name)
+      store.commit('SET_PATH_TO', to.fullPath)
       return false
     }
     return true

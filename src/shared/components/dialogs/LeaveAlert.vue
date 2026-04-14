@@ -10,7 +10,7 @@
       <v-divider />
       <v-card-actions>
         <v-spacer />
-        <v-btn class="bg-grey-lighten-3" variant="text" @click="setDialog">
+        <v-btn class="bg-grey-lighten-3" variant="text" @click="resetLeaveState">
           {{ $t('buttons.stay') }}
         </v-btn>
         <v-btn
@@ -40,8 +40,9 @@ const router = useRouter()
 
 const dialogLeaveStatus = computed(() => store.getters.getDialogLeaveStatus)
 
-const setDialog = () => {
+const resetLeaveState = () => {
   store.commit('SET_DIALOG_LEAVE', false)
+  store.commit('SET_PATH_TO', null)
 }
 
 const discardChanges = () => {
@@ -49,8 +50,14 @@ const discardChanges = () => {
 }
 
 const handleLeave = () => {
+  const targetRoute = store.state.pathTo
+
   discardChanges()
-  router.push({ name: store.state.pathTo })
+  resetLeaveState()
+
+  if (targetRoute) {
+    router.push(targetRoute).catch(() => {})
+  }
 }
 
 const submit = () => {
