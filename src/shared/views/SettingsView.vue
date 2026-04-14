@@ -599,7 +599,23 @@ const submit = async () => {
   if (title.length > 0 && title.length < 200) {
     loading.value = true
     try {
-      const study = instantiateStudyByType(object.value.testType, object.value)
+      // Keep a local snapshot so UI refreshes do not drop unsaved edits.
+      const localDraft = { ...object.value }
+
+      // Reload latest study before saving to avoid rolling back invitation state.
+      await store.dispatch('getStudy', { id: props.id })
+      const latestStudy = store.getters.test
+
+      const mergedStudyData = {
+        ...localDraft,
+        cooperators: latestStudy?.cooperators ?? localDraft.cooperators,
+        collaborators: latestStudy?.collaborators ?? localDraft.collaborators,
+      }
+
+      const study = instantiateStudyByType(
+        mergedStudyData.testType,
+        mergedStudyData,
+      )
       await store.dispatch('updateStudy', study)
       await store.dispatch('getStudy', { id: props.id })
       store.commit('SET_LOCAL_CHANGES', false)
