@@ -385,6 +385,11 @@ import { useI18n } from 'vue-i18n'
 import { instantiateStudyByType } from '../constants/methodDefinitions'
 import StudyAdmin from '@/shared/models/StudyAdmin'
 import { showSuccess, showError, showWarning } from '@/shared/utils/toast'
+import {
+  capturePendingLeaveRoute,
+  clearPendingLeaveRoute,
+  navigateToPendingLeaveRoute,
+} from '@/shared/utils/pendingLeaveRoute'
 
 const store = useStore()
 const router = useRouter()
@@ -566,21 +571,18 @@ onMounted(async () => {
 
 onBeforeMount(() => {
   store.commit('SET_LOCAL_CHANGES', false)
-  store.commit('SET_DIALOG_LEAVE', false)
-  store.commit('SET_PATH_TO', null)
+  clearPendingLeaveRoute(store)
   window.addEventListener('beforeunload', preventNav)
 })
 
 onBeforeUnmount(() => {
-  store.commit('SET_DIALOG_LEAVE', false)
-  store.commit('SET_PATH_TO', null)
+  clearPendingLeaveRoute(store)
   window.removeEventListener('beforeunload', preventNav)
 })
 
 onBeforeRouteLeave((to, _from) => {
   if (localChanges.value) {
-    store.commit('SET_DIALOG_LEAVE', true)
-    store.commit('SET_PATH_TO', to.fullPath)
+    capturePendingLeaveRoute(store, to)
     return false
   }
   return true
@@ -591,8 +593,6 @@ const validate = (valid, index) => {
 }
 
 const onSubmit = async () => {
-  const targetRoute = store.state.pathTo
-
   const didSave = await submit()
 
   if (!didSave) {
@@ -600,12 +600,7 @@ const onSubmit = async () => {
   }
 
   store.commit('SET_LOCAL_CHANGES', false)
-  store.commit('SET_DIALOG_LEAVE', false)
-  store.commit('SET_PATH_TO', null)
-
-  if (targetRoute) {
-    router.push(targetRoute).catch(() => {})
-  }
+  await navigateToPendingLeaveRoute(store, router)
 }
 
 const submit = async () => {

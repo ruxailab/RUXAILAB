@@ -14,6 +14,11 @@ import {
   onBeforeRouteUpdate,
 } from 'vue-router'
 import { showSuccess, showError, showWarning } from '../utils/toast'
+import {
+  capturePendingLeaveRoute,
+  clearPendingLeaveRoute,
+  navigateToPendingLeaveRoute,
+} from '../utils/pendingLeaveRoute'
 
 /**
  * Composable for shared accessibility test settings functionality
@@ -223,7 +228,6 @@ export function useAccessibilityTestSettings(config) {
   }
 
   const onSubmit = async () => {
-    const targetRoute = store.state.pathTo
     const didSave = await submit()
 
     if (!didSave) {
@@ -231,12 +235,7 @@ export function useAccessibilityTestSettings(config) {
     }
 
     store.commit('SET_LOCAL_CHANGES', false)
-    store.commit('SET_DIALOG_LEAVE', false)
-    store.commit('SET_PATH_TO', null)
-
-    if (targetRoute) {
-      router.push(targetRoute).catch(() => {})
-    }
+    await navigateToPendingLeaveRoute(store, router)
   }
 
   const submit = async () => {
@@ -413,21 +412,18 @@ export function useAccessibilityTestSettings(config) {
 
   onBeforeMount(() => {
     store.commit('SET_LOCAL_CHANGES', false)
-    store.commit('SET_DIALOG_LEAVE', false)
-    store.commit('SET_PATH_TO', null)
+    clearPendingLeaveRoute(store)
     window.addEventListener('beforeunload', preventNav)
   })
 
   onBeforeUnmount(() => {
-    store.commit('SET_DIALOG_LEAVE', false)
-    store.commit('SET_PATH_TO', null)
+    clearPendingLeaveRoute(store)
     window.removeEventListener('beforeunload', preventNav)
   })
 
-  onBeforeRouteLeave((to, from) => {
+  onBeforeRouteLeave((to, _from) => {
     if (localChanges.value) {
-      store.commit('SET_DIALOG_LEAVE', true)
-      store.commit('SET_PATH_TO', to.fullPath)
+      capturePendingLeaveRoute(store, to)
       return false
     }
     return true

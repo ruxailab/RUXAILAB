@@ -32,6 +32,10 @@
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import {
+  clearPendingLeaveRoute,
+  navigateToPendingLeaveRoute,
+} from '@/shared/utils/pendingLeaveRoute'
 
 const emit = defineEmits(['submit'])
 
@@ -40,24 +44,15 @@ const router = useRouter()
 
 const dialogLeaveStatus = computed(() => store.getters.getDialogLeaveStatus)
 
-const resetLeaveState = () => {
-  store.commit('SET_DIALOG_LEAVE', false)
-  store.commit('SET_PATH_TO', null)
-}
+const resetLeaveState = () => clearPendingLeaveRoute(store)
 
 const discardChanges = () => {
   store.commit('SET_LOCAL_CHANGES', false)
 }
 
-const handleLeave = () => {
-  const targetRoute = store.state.pathTo
-
+const handleLeave = async () => {
   discardChanges()
-  resetLeaveState()
-
-  if (targetRoute) {
-    router.push(targetRoute).catch(() => {})
-  }
+  await navigateToPendingLeaveRoute(store, router)
 }
 
 const submit = () => {
