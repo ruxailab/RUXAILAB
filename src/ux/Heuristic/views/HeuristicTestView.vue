@@ -597,6 +597,7 @@ import Snackbar from '@/shared/components/Snackbar'
 import HeuristicQuestionAnswer from '@/ux/Heuristic/models/HeuristicQuestionAnswer'
 import Heuristic from '@/ux/Heuristic/models/Heuristic'
 import { showSuccess, showError } from '@/shared/utils/toast'
+import HeuristicAnswer from '../models/HeuristicAnswer'
 
 const props = defineProps({
   id: { type: String, default: '' },
@@ -1271,9 +1272,11 @@ const autoSaveAnswer = async () => {
 
   autoSaveInProgress.value = true
 
+  const orderedData = getOrderedHeuristicsForSave()
+
   try {
     await store.dispatch('saveTestAnswer', {
-      data: currentUserTestAnswer.value,
+      data: orderedData,
       answersDocId: test.value.answersDocId,
       testType: test.value.testType,
       // No success message for auto-save
@@ -1291,6 +1294,29 @@ const autoSaveAnswer = async () => {
   } finally {
     autoSaveInProgress.value = false
   }
+}
+
+const getOrderedHeuristicsForSave = () => {
+  if (
+    !currentUserTestAnswer.value?.heuristicQuestions ||
+    !test.value?.testStructure
+  ) {
+    return currentUserTestAnswer.value
+  }
+
+  const baseOrder = test.value.testStructure.map((h) => h.id)
+
+  const orderedHeuristicQuestions = [
+    ...currentUserTestAnswer.value.heuristicQuestions,
+  ].sort(
+    (a, b) =>
+      baseOrder.indexOf(a.heuristicId) - baseOrder.indexOf(b.heuristicId),
+  )
+
+  return new HeuristicAnswer({
+    ...currentUserTestAnswer.value,
+    heuristicQuestions: orderedHeuristicQuestions,
+  })
 }
 
 // Manual save function (with toast)
@@ -1317,9 +1343,11 @@ const manualSaveAnswer = async () => {
   autoSaveInProgress.value = true
   updateSaveStatus('Saving...', 'saving')
 
+  const orderedData = getOrderedHeuristicsForSave()
+
   try {
     await store.dispatch('saveTestAnswer', {
-      data: currentUserTestAnswer.value,
+      data: orderedData,
       answersDocId: test.value.answersDocId,
       testType: test.value.testType,
       successMessage: t('alerts.savedChanges'),
@@ -1350,11 +1378,12 @@ const submitAnswer = async () => {
   currentUserTestAnswer.value.submitted = true
   autoSaveInProgress.value = true
   updateSaveStatus('Submitting...', 'saving')
+  const orderedData = getOrderedHeuristicsForSave()
   try {
     currentUserTestAnswer.value.progress = calculatedProgress.value
     currentUserTestAnswer.value.lastSaveTime = new Date().toISOString()
     await store.dispatch('saveTestAnswer', {
-      data: currentUserTestAnswer.value,
+      data: orderedData,
       answersDocId: test.value.answersDocId,
       testType: test.value.testType,
     })
@@ -1560,13 +1589,24 @@ const initializeHeuristicsOrder = () => {
     hasSavedAnswers()
 
   if (hasProgress && Array.isArray(userAnswer.heuristicQuestions)) {
-    const ordered = userAnswer.heuristicQuestions
+    const shuffled = shuffleHeuristics(baseHeuristics)
+    const ordered = shuffled
+      .map((shuffledHeu) =>
+        userAnswer.heuristicQuestions.find(
+          (savedHeu) => savedHeu.heuristicId === shuffledHeu.id,
+        ),
+      )
+      .filter(Boolean)
       .map((savedHeu) =>
         baseHeuristics.find((h) => h.id === savedHeu.heuristicId),
       )
       .filter(Boolean)
 
-    displayHeuristics.value = ordered
+    displayHeuristics.value = shuffled
+    // Reorder answers to match shuffled heuristics
+    currentUserTestAnswer.value.heuristicQuestions = ordered.map((heu) =>
+      userAnswer.heuristicQuestions.find((h) => h.heuristicId === heu.id),
+    )
   } else {
     displayHeuristics.value = shuffleHeuristics(baseHeuristics)
   }
