@@ -421,6 +421,7 @@ const loading = ref(false)
 const loadingPage = ref(true)
 const tempDialog = ref(false)
 const dateMenu = ref(false)
+const isSubmitting = ref(false)
 const form1 = ref(null)
 const tempform = ref(null)
 
@@ -534,6 +535,8 @@ const createObjectFromTest = (testData) => {
 watch(
   test,
   (newTest) => {
+    if (isSubmitting.value) return
+
     if (newTest) {
       const mappedObject = createObjectFromTest(newTest)
       if (mappedObject) {
@@ -588,28 +591,38 @@ const validate = (valid, index) => {
 }
 
 const onSubmit = async () => {
-  await submit()
-  store.commit('SET_LOCAL_CHANGES', false)
-  store.commit('SET_DIALOG_LEAVE', false)
-  router.push({ name: store.state.pathTo })
+  const saved = await submit()
+  if (saved) {
+    store.commit('SET_LOCAL_CHANGES', false)
+    store.commit('SET_DIALOG_LEAVE', false)
+    router.push({ name: store.state.pathTo })
+  }
 }
 
 const submit = async () => {
   const title = object.value.testTitle
+  let localDraft = null
+
   if (title.length > 0 && title.length < 200) {
     loading.value = true
+    isSubmitting.value = true
     try {
       // Keep a local snapshot so UI refreshes do not drop unsaved edits.
-      const localDraft = { ...object.value }
+      localDraft = { ...object.value }
 
       // Reload latest study before saving to avoid rolling back invitation state.
       await store.dispatch('getStudy', { id: props.id })
       const latestStudy = store.getters.test
 
+      if (!latestStudy) {
+        showError('errors.globalError')
+        return false
+      }
+
       const mergedStudyData = {
         ...localDraft,
-        cooperators: latestStudy?.cooperators ?? localDraft.cooperators,
-        collaborators: latestStudy?.collaborators ?? localDraft.collaborators,
+        cooperators: latestStudy.cooperators ?? localDraft.cooperators,
+        collaborators: latestStudy.collaborators ?? localDraft.collaborators,
       }
 
       const study = instantiateStudyByType(
@@ -620,15 +633,24 @@ const submit = async () => {
       await store.dispatch('getStudy', { id: props.id })
       store.commit('SET_LOCAL_CHANGES', false)
       showSuccess('alerts.savedChanges')
+      return true
     } catch {
+      if (localDraft) {
+        object.value = localDraft
+        store.commit('SET_LOCAL_CHANGES', true)
+      }
       showError('errors.globalError')
+      return false
     } finally {
       loading.value = false
+      isSubmitting.value = false
     }
   } else if (title.length >= 200) {
     showWarning('studyCreation.details.validation.max200Characters')
+    return false
   } else {
     showWarning('studyCreation.details.validation.enterTitle')
+    return false
   }
 }
 
