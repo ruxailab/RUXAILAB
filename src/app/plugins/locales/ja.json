@@ -140,7 +140,13 @@
     "id": "ID",
     "itemsPerPage": "ページごとの項目数：",
     "saving": "保存中...",
-    "visible": "表示"
+    "visible": "表示",
+    "percentValue": "{value}%",
+    "comments": "コメント",
+    "image": "画像",
+    "images": "画像",
+    "close": "閉じる",
+    "selectImage": "アップロードする画像を選択"
   },
   "storage": {
     "pageTitle": "ストレージ",
@@ -412,7 +418,10 @@
     "globalError": "エラーが発生しました。ご不便をおかけして申し訳ありません。",
     "cameraPermissionDenied": "カメラへのアクセスが拒否されました。ブラウザの設定でカメラへのアクセスを許可してください。",
     "sendError": "招待の送信に失敗しました。再試行してください",
-    "missingVariableTitles": "保存できません：いくつかの変数にタイトルがありません"
+    "missingVariableTitles": "保存できません：いくつかの変数にタイトルがありません",
+    "failedToLoadAnswers": "Failed to load answers",
+    "failedToUpdateAnswer": "Failed to update answer",
+    "failedToSaveAnswerCooperator": "Failed to save cooperator answer"
   },
   "Introduction": {
     "title": "UXリモートラボ",
@@ -565,7 +574,10 @@
       "updatedProgress": "進捗を更新しました",
       "invitationSentTitle": "招待送信済み",
       "invitationPendingDesc": "招待保留中:",
-      "pendingStatus": "保留中"
+      "pendingStatus": "保留中",
+      "evaluatorInfo": "評価者情報",
+      "evaluatorInfoEmpty": "情報セクションがありません。評価者を案内するために追加してください。",
+      "evaluatorInfoSeeAll": "すべての{count}セクションを表示"
     },
     "managerView": {
       "heuristicStudy": "ヒューリスティック評価",
@@ -640,7 +652,14 @@
     "AddCommentBtn": {
       "showComment": "コメントを表示",
       "addComment": "コメントを追加",
-      "hideTextArea": "テキストエリアを非表示"
+      "hideTextArea": "テキストエリアを非表示",
+      "addAnotherComment": "別のコメントを追加",
+      "addNewComment": "新しいコメントを追加"
+    },
+    "ImportImage": {
+      "imagesCount": "{count} 枚の画像が添付されています",
+      "uploadSuccess": "画像のアップロードに成功しました",
+      "uploadError": "画像のアップロードに失敗しました"
     },
     "errors": {
       "failedToLoadQuestionForm": "質問フォームの読み込みに失敗しました。もう一度お試しください。",
@@ -652,6 +671,10 @@
       "question": "質問",
       "questions": "質問"
     }
+  },
+  "HeuristicsAnalytics": {
+    "dataTable": "データテーブル",
+    "chart": "チャート"
   },
   "HeuristicsOptionsTable": {
     "titles": {
@@ -1224,6 +1247,44 @@
       "note": "あなたの役割は進行のサポートと観察です。参加者が特に助けを求めない限り、タスクは参加者自身で完了させてください。",
       "startSession": "モデレートセッションを開始"
     },
+    "VideoCallPanel": {
+      "toolsPanelTitle": "ツールパネル",
+      "sessionControl": "セッション管理",
+      "joinRoomInfo": "ルーム参加の操作は上部のメイン画面に移動しました",
+      "proceedNextStep": "次のステップへ進む",
+      "endCall": "通話を終了",
+      "activeCall": "通話中",
+      "participants": "参加者",
+      "you": "あなた",
+      "observator": "オブザーバー",
+      "moderator": "モデレーター",
+      "connected": "接続中",
+      "disconnected": "切断",
+      "camera": "カメラ",
+      "noCamera": "カメラなし",
+      "microphone": "マイク",
+      "noMicrophone": "マイクなし",
+      "settings": "設定",
+      "disableCamera": "カメラをオフ",
+      "enableCamera": "カメラをオン",
+      "muteMicrophone": "マイクをミュート",
+      "unmuteMicrophone": "マイクのミュート解除",
+      "stopScreenShare": "画面共有を停止",
+      "shareScreen": "画面を共有",
+      "moderatorOnlySteps": "ステップを変更できるのはモデレーターのみです"
+    },
+    "VideoCall": {
+      "screenSharingLabel": "画面共有中",
+      "cameraOff": "カメラはオフです",
+      "yourVideo": "あなたのビデオ",
+      "yourPreview": "あなたのプレビュー",
+      "observatorMode": "オブザーバーモード",
+      "waitingForModeratorToStartSession": "モデレーターがセッションを開始するのを待っています...",
+      "observeAllFeedsNotice": "自分の映像を送信せずに、すべてのビデオフィードを観察できます。",
+      "waitingForParticipants": "参加者を待っています...",
+      "waitingForModerator": "モデレーターを待っています...",
+      "autoStartWhenModeratorOpensRoom": "モデレーターがルームを開くと、ビデオ通話は自動的に開始されます。"
+    },
     "WelcomeStep": {
       "welcome": "RUXAILABへようこそ！",
       "description": "あなたはデジタルアプリケーションの使いやすさと理解度を評価するためのユーザーテストに参加します。この種のテストは、技術的な障壁を検出し、すべての人のために体験を改善するのに役立ちます。",
@@ -1315,7 +1376,8 @@
       "elastic": "Elastic Net",
       "bayesian": "ベイズリッジ",
       "sgd": "SGD Regressor",
-      "svr": "Support Vector Regressor"
+      "svr": "Support Vector Regressor",
+      "rfr": "ランダムフォレスト回帰"
     }
   },
   "AccessNotAllowed": {
@@ -1540,7 +1602,8 @@
     "deleteAccount": "アカウントを削除してもよろしいですか？この操作は元に戻せません。",
     "genericSuccess": "操作が成功しました",
     "savedChanges": "変更が保存されました",
-    "deleteUser": "このユーザーを削除してもよろしいですか？この操作は元に戻せません。"
+    "deleteUser": "このユーザーを削除してもよろしいですか？この操作は元に戻せません。",
+    "errorSavingProgress": "進行状況の保存中にエラーが発生しました"
   },
   "buttons": {
     "next": "次へ",
@@ -1614,7 +1677,11 @@
       "SelfTest": {
         "title": "セルフテスト",
         "type": "非モデレート",
-        "text": ["自分の時間に回答", "高度な回答分析", "タスクのカスタマイズ"]
+        "text": [
+          "自分の時間に回答",
+          "高度な回答分析",
+          "タスクのカスタマイズ"
+        ]
       },
       "LiveTest": {
         "title": "ライブテスト",
@@ -1896,7 +1963,11 @@
       "blank": {
         "title": "空白の研究から開始",
         "description": "完全なカスタマイズでゼロから研究を作成します",
-        "features": ["完全なカスタマイズ", "ゼロから構築", "設定を完全に制御"]
+        "features": [
+          "完全なカスタマイズ",
+          "ゼロから構築",
+          "設定を完全に制御"
+        ]
       },
       "template": {
         "title": "テンプレートから作成",
@@ -2340,5 +2411,32 @@
       }
     },
     "title": "プライバシーポリシー"
+  },
+  "EvaluatorInfoView": {
+    "pageTitle": "評価者向け情報",
+    "pageSubtitle": "テスト開始前に評価者が確認する情報セクションを作成します"
+  },
+  "EvaluatorInfoEditor": {
+    "title": "評価者向け情報",
+    "subtitle": "テスト開始前に評価者が確認する情報セクションを作成します",
+    "noSections": "セクションがありません。追加してください。",
+    "untitledSection": "無題のセクション",
+    "addSection": "セクションを追加",
+    "sectionTitle": "セクションタイトル",
+    "sectionContent": "内容",
+    "sectionType": "タイプ",
+    "types": {
+      "info": "情報",
+      "warning": "警告",
+      "tip": "ヒント"
+    },
+    "save": "保存",
+    "cancel": "キャンセル"
+  },
+  "EvaluatorInfoDisplay": {
+    "title": "開始前に",
+    "subtitle": "評価を開始する前に以下の情報をお読みください",
+    "startButton": "評価を開始",
+    "noContent": "追加情報はありません。"
   }
 }

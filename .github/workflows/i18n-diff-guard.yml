@@ -27,7 +27,7 @@ jobs:
       - name: Run i18n diff guard
         id: i18n_check
         continue-on-error: true
-        run: node i18n-diff-guard.js
+        run: node i18n-diff-guard.mjs
 
       - name: Post PR comment on failure
         if: steps.i18n_check.outcome == 'failure'

@@ -74,6 +74,7 @@
   },
   "common": {
     "enterTextHere": "Enter text here...",
+    "percentValue": "{value}%",
     "units": {
       "mb": "MB",
       "gb": "GB"
@@ -88,6 +89,11 @@
     "editAndInvite": "Edit and invite people to your test",
     "analyzeProject": "Analyze the project and evaluators",
     "comment": "Comment",
+    "comments": "Comments",
+    "image": "Image",
+    "images": "Images",
+    "close": "Close",
+    "selectImage": "Select an image to upload",
     "inputImage": "Input an image of your choice referent to the topic",
     "title": "Title",
     "description": "Description",
@@ -377,6 +383,7 @@
       "Final Report": "Final Report",
       "Answer Test": "Answer Test",
       "Settings": "Settings",
+      "Evaluator Info": "Evaluator Info",
       "name": "Name",
       "studiesCount": "Studies Count",
       "mediaSize": "Media Size"
@@ -421,7 +428,11 @@
     "globalError": "An error has occurred, sorry for the inconvenience.",
     "cameraPermissionDenied": "Camera permission denied. Please allow camera access in your browser settings.",
     "sendError": "Failed to send invitation. Please try again",
-    "missingVariableTitles": "Cannot save: Some variables are missing titles"
+    "missingVariableTitles": "Cannot save: Some variables are missing titles",
+    "failedToLoadAnswers": "Failed to load answers. Please try again.",
+    "failedToUpdateAnswer": "Failed to update answer. Please try again.",
+    "failedToRemoveCooperator": "Failed to remove cooperator. Please try again.",
+    "failedToSaveAnswerCooperator": "Failed to save cooperator answer"
   },
   "Introduction": {
     "title": "UX Remote LAB",
@@ -578,7 +589,10 @@
       "updatedProgress": "updated their progress",
       "invitationSentTitle": "Invitation sent",
       "invitationPendingDesc": "Invitation pending for",
-      "pendingStatus": "Pending"
+      "pendingStatus": "Pending",
+      "evaluatorInfo": "Evaluator Info",
+      "evaluatorInfoEmpty": "No information sections yet. Add some to guide your evaluators.",
+      "evaluatorInfoSeeAll": "See all {count} sections"
     },
     "managerView": {
       "heuristicStudy": "Heuristic Study",
@@ -592,6 +606,12 @@
       "daysActive": "Days active",
       "heuristics": "Heuristics"
     }
+  },
+  "HeuristicsAnalytics": {
+    "dataTable": "Data Table",
+    "chart": "Chart",
+    "userUploadedContent": "User uploaded content",
+    "userUploadedAttachment": "User uploaded attachment"
   },
   "HeuristicsTable": {
     "titles": {
@@ -651,9 +671,16 @@
       "addQuestion": "Please add at least one question to your heuristic"
     },
     "AddCommentBtn": {
-      "showComment": "Show comment",
+      "showComment": "Show comments",
       "addComment": "Add comment",
-      "hideTextArea": "Hide text area"
+      "addAnotherComment": "Add another comment",
+      "addNewComment": "Add a new comment",
+      "hideTextArea": "Hide comments area"
+    },
+    "ImportImage": {
+      "uploadSuccess": "Image uploaded successfully",
+      "uploadError": "Failed to upload image",
+      "imagesCount": "{count} image(s) attached"
     },
     "errors": {
       "failedToLoadQuestionForm": "Failed to load question form. Please try again.",
@@ -742,6 +769,34 @@
       "startTest": "Start Test"
     }
   },
+  "EvaluatorInfoView": {
+    "pageTitle": "Evaluator Information",
+    "pageSubtitle": "Create information sections that evaluators will see before starting the test"
+  },
+  "EvaluatorInfoEditor": {
+    "title": "Evaluator Information",
+    "subtitle": "Create information sections that evaluators will see before starting the test",
+    "enableToggle": "Show information screen to evaluators",
+    "noSections": "No sections yet. Add one to get started.",
+    "untitledSection": "Untitled section",
+    "addSection": "Add Section",
+    "sectionTitle": "Section title",
+    "sectionContent": "Content",
+    "sectionType": "Type",
+    "types": {
+      "info": "Information",
+      "warning": "Warning",
+      "tip": "Tip"
+    },
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "EvaluatorInfoDisplay": {
+    "title": "Before you start",
+    "subtitle": "Please read the following information before beginning the evaluation",
+    "startButton": "Start Evaluation",
+    "noContent": "No additional information provided."
+  },
   "HeuristicsEditTest": {
     "pageTitle": "Edit Test",
     "pageSubtitle": "Customize the settings and preferences of your test",
@@ -749,7 +804,8 @@
       "heuristics": "Heuristics",
       "options": "Options",
       "weights": "Weights",
-      "settings": "Settings"
+      "settings": "Settings",
+      "evaluatorInfo": "Evaluator Info"
     },
     "previewPageTitle": "Preview test",
     "previewPageSubtitle": "Review the test configuration in read-only mode"
@@ -1219,6 +1275,44 @@
       "note": "Your role is to facilitate and observe. The participant should complete tasks independently unless they specifically request help.",
       "startSession": "Start Moderated Session"
     },
+    "VideoCallPanel": {
+      "toolsPanelTitle": "Tools Panel",
+      "sessionControl": "Session Control",
+      "joinRoomInfo": "Join room controls are now in the main interface above",
+      "proceedNextStep": "Proceed to Next Step",
+      "endCall": "End Call",
+      "activeCall": "Active call",
+      "participants": "Participants",
+      "you": "You",
+      "observator": "Observer",
+      "moderator": "Moderator",
+      "connected": "Connected",
+      "disconnected": "Disconnected",
+      "camera": "Camera",
+      "noCamera": "No camera",
+      "microphone": "Microphone",
+      "noMicrophone": "No microphone",
+      "settings": "Settings",
+      "disableCamera": "Turn off camera",
+      "enableCamera": "Turn on camera",
+      "muteMicrophone": "Mute microphone",
+      "unmuteMicrophone": "Unmute microphone",
+      "stopScreenShare": "Stop sharing screen",
+      "shareScreen": "Share screen",
+      "moderatorOnlySteps": "Only the moderator can change steps"
+    },
+    "VideoCall": {
+      "screenSharingLabel": "Sharing screen",
+      "cameraOff": "Camera is off",
+      "yourVideo": "Your video",
+      "yourPreview": "Your preview",
+      "observatorMode": "Observer Mode",
+      "waitingForModeratorToStartSession": "Waiting for moderator to start the session...",
+      "observeAllFeedsNotice": "You will be able to observe all video feeds without sending your own.",
+      "waitingForParticipants": "Waiting for participants...",
+      "waitingForModerator": "Waiting for moderator...",
+      "autoStartWhenModeratorOpensRoom": "The video call will start automatically when the moderator opens the room."
+    },
     "buttons": {
       "done": "Done"
     },
@@ -1330,7 +1424,8 @@
       "elastic": "Elastic Net",
       "bayesian": "Bayesian Ridge",
       "sgd": "SGD Regressor",
-      "svr": "Support Vector Regressor"
+      "svr": "Support Vector Regressor",
+      "rfr": "Random Forest Regressor"
     }
   },
   "AccessNotAllowed": {
@@ -1555,6 +1650,7 @@
     "deleteAccount": " Are you sure you want to delete your account? This action cannot be undone.",
     "genericSuccess": "Operation successful",
     "savedChanges": "Changes saved successfully",
+    "errorSavingProgress": "Error saving progress",
     "deleteUser": "Are you sure you want to delete this user? This action cannot be undone."
   },
   "buttons": {

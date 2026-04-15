@@ -396,7 +396,9 @@ onMounted(async () => {
 }
 
 .modules-section :deep(.v-card) {
-  height: 320px !important;
+  min-height: 320px !important;
+  display: flex !important;
+  flex-direction: column !important;
   border-radius: 16px !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
   border: 1px solid rgba(0, 0, 0, 0.06) !important;
@@ -420,7 +422,8 @@ onMounted(async () => {
 
 .modules-section :deep(.v-card-text) {
   padding: 20px !important;
-  height: calc(100% - 120px) !important;
+  flex: 1 !important;
+  min-height: 0 !important;
   overflow-y: auto !important;
 }
 

@@ -11,13 +11,16 @@ export default class HeuristicStudy extends Study {
 
     this.testType = STUDY_TYPES.HEURISTIC
     this.testWeights = params.testWeights ?? {}
-    this.useWeights = params.useWeights ?? false
+    this.evaluatorInfo = params.evaluatorInfo ?? {
+      enabled: false,
+      sections: [],
+    }
   }
 
   toFirestore() {
     return Object.assign(super.toFirestore(), {
       testWeights: this.testWeights,
-      useWeights: this.useWeights,
+      evaluatorInfo: this.evaluatorInfo,
     })
   }
 }

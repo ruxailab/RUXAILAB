@@ -74,6 +74,7 @@
   },
   "common": {
     "enterTextHere": "Text hier eingeben...",
+    "percentValue": "{value}%",
     "units": {
       "mb": "MB",
       "gb": "GB"
@@ -86,6 +87,11 @@
     "editAndInvite": "Bearbeiten und Personen zu Ihrem Test einladen",
     "analyzeProject": "Projekt und Evaluatoren analysieren",
     "comment": "Kommentar",
+    "comments": "Kommentare",
+    "image": "Bild",
+    "images": "Bilder",
+    "close": "Schließen",
+    "selectImage": "Wählen Sie ein Bild zum Hochladen",
     "inputImage": "Geben Sie ein Bild Ihrer Wahl zum Thema ein",
     "title": "Titel",
     "description": "Beschreibung",
@@ -412,7 +418,10 @@
     "globalError": "Ein Fehler ist aufgetreten, entschuldigen Sie die Unannehmlichkeiten.",
     "cameraPermissionDenied": "Der Zugriff auf die Kamera ist erforderlich, um fortzufahren. Bitte erlauben Sie den Kamerazugriff in den Browser-Einstellungen.",
     "sendError": "Einladung konnte nicht gesendet werden. Bitte versuchen Sie es erneut",
-    "missingVariableTitles": "Kann nicht speichern: Einige Variablen fehlen Titel"
+    "missingVariableTitles": "Kann nicht speichern: Einige Variablen fehlen Titel",
+    "failedToLoadAnswers": "Fehler beim Laden der Antworten",
+    "failedToUpdateAnswer": "Fehler beim Aktualisieren der Antwort",
+    "failedToSaveAnswerCooperator": "Fehler beim Speichern der Cooperator-Antwort"
   },
   "Introduction": {
     "title": "UX Remote LAB",
@@ -565,7 +574,10 @@
       "updatedProgress": "hat seinen Fortschritt aktualisiert",
       "invitationSentTitle": "Einladung gesendet",
       "invitationPendingDesc": "Einladung ausstehend für",
-      "pendingStatus": "Ausstehend"
+      "pendingStatus": "Ausstehend",
+      "evaluatorInfo": "Evaluator-Info",
+      "evaluatorInfoEmpty": "Keine Informationsabschnitte. Fügen Sie welche hinzu.",
+      "evaluatorInfoSeeAll": "Alle {count} Abschnitte anzeigen"
     },
     "managerView": {
       "heuristicStudy": "Heuristische Studie",
@@ -640,7 +652,14 @@
     "AddCommentBtn": {
       "showComment": "Kommentar anzeigen",
       "addComment": "Kommentar hinzufügen",
+      "addAnotherComment": "Weiteren Kommentar hinzufügen",
+      "addNewComment": "Neuen Kommentar hinzufügen",
       "hideTextArea": "Textbereich ausblenden"
+    },
+    "ImportImage": {
+      "uploadSuccess": "Bild erfolgreich hochgeladen",
+      "uploadError": "Fehler beim Hochladen des Bildes",
+      "imagesCount": "{count} Bild(er) angehängt"
     },
     "errors": {
       "failedToLoadQuestionForm": "Fehler beim Laden des Frageformulars. Bitte versuchen Sie es erneut.",
@@ -652,6 +671,12 @@
       "question": "Frage",
       "questions": "Fragen"
     }
+  },
+  "HeuristicsAnalytics": {
+    "dataTable": "Datentabelle",
+    "chart": "Diagramm",
+    "userUploadedContent": "Vom Benutzer hochgeladener Inhalt",
+    "userUploadedAttachment": "Vom Benutzer hochgeladener Anhang"
   },
   "HeuristicsOptionsTable": {
     "titles": {
@@ -1225,6 +1250,44 @@
       "note": "Ihre Rolle besteht darin, zu fördern und zu beobachten. Der Teilnehmer sollte die Aufgaben selbstständig erledigen, es sei denn, er bittet ausdrücklich um Hilfe.",
       "startSession": "Moderierte Sitzung starten"
     },
+    "VideoCallPanel": {
+      "toolsPanelTitle": "Werkzeugbereich",
+      "sessionControl": "Sitzungssteuerung",
+      "joinRoomInfo": "Die Steuerung zum Beitreten befindet sich jetzt oben in der Hauptoberflaeche",
+      "proceedNextStep": "Zum naechsten Schritt",
+      "endCall": "Anruf beenden",
+      "activeCall": "Aktiver Anruf",
+      "participants": "Teilnehmer",
+      "you": "Du",
+      "observator": "Beobachter",
+      "moderator": "Moderator",
+      "connected": "Verbunden",
+      "disconnected": "Getrennt",
+      "camera": "Kamera",
+      "noCamera": "Keine Kamera",
+      "microphone": "Mikrofon",
+      "noMicrophone": "Kein Mikrofon",
+      "settings": "Einstellungen",
+      "disableCamera": "Kamera ausschalten",
+      "enableCamera": "Kamera einschalten",
+      "muteMicrophone": "Mikrofon stummschalten",
+      "unmuteMicrophone": "Mikrofon aktivieren",
+      "stopScreenShare": "Bildschirmfreigabe beenden",
+      "shareScreen": "Bildschirm freigeben",
+      "moderatorOnlySteps": "Nur der Moderator kann Schritte aendern"
+    },
+    "VideoCall": {
+      "screenSharingLabel": "Bildschirm wird geteilt",
+      "cameraOff": "Kamera ist aus",
+      "yourVideo": "Dein Video",
+      "yourPreview": "Deine Vorschau",
+      "observatorMode": "Beobachtermodus",
+      "waitingForModeratorToStartSession": "Warte darauf, dass der Moderator die Sitzung startet...",
+      "observeAllFeedsNotice": "Du kannst alle Video-Feeds beobachten, ohne deinen eigenen zu senden.",
+      "waitingForParticipants": "Warte auf Teilnehmer...",
+      "waitingForModerator": "Warte auf Moderator...",
+      "autoStartWhenModeratorOpensRoom": "Der Videoanruf startet automatisch, wenn der Moderator den Raum oeffnet."
+    },
     "WelcomeStep": {
       "welcome": "Willkommen bei RUXAILAB!",
       "description": "Sie werden an einem Benutzertest teilnehmen, der die Benutzerfreundlichkeit und Verständlichkeit einer digitalen Anwendung bewertet. Diese Art von Test hilft uns, mögliche technologische Barrieren zu erkennen und die Erfahrung für alle zu verbessern.",
@@ -1316,7 +1379,8 @@
       "elastic": "Elastic Net",
       "bayesian": "Bayesian Ridge",
       "sgd": "SGD-Regressor",
-      "svr": "Support Vector Regressor"
+      "svr": "Support Vector Regressor",
+      "rfr": "Random Forest Regressor"
     }
   },
   "AccessNotAllowed": {
@@ -1541,6 +1605,7 @@
     "deleteAccount": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
     "genericSuccess": "Vorgang erfolgreich",
     "savedChanges": "Änderungen erfolgreich gespeichert",
+    "errorSavingProgress": "Fehler beim Speichern des Fortschritts",
     "deleteUser": "Sind Sie sicher, dass Sie diesen Benutzer löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
   },
   "buttons": {
@@ -2349,5 +2414,32 @@
       }
     },
     "title": "Datenschutzerklärung"
+  },
+  "EvaluatorInfoView": {
+    "pageTitle": "Informationen für Evaluatoren",
+    "pageSubtitle": "Erstellen Sie Informationsabschnitte, die Evaluatoren vor dem Test sehen"
+  },
+  "EvaluatorInfoEditor": {
+    "title": "Informationen für Evaluatoren",
+    "subtitle": "Erstellen Sie Informationsabschnitte, die Evaluatoren vor dem Test sehen",
+    "noSections": "Keine Abschnitte. Fügen Sie einen hinzu.",
+    "untitledSection": "Abschnitt ohne Titel",
+    "addSection": "Abschnitt hinzufügen",
+    "sectionTitle": "Abschnittstitel",
+    "sectionContent": "Inhalt",
+    "sectionType": "Typ",
+    "types": {
+      "info": "Information",
+      "warning": "Warnung",
+      "tip": "Tipp"
+    },
+    "save": "Speichern",
+    "cancel": "Abbrechen"
+  },
+  "EvaluatorInfoDisplay": {
+    "title": "Bevor Sie beginnen",
+    "subtitle": "Bitte lesen Sie die folgenden Informationen vor der Evaluation",
+    "startButton": "Evaluation starten",
+    "noContent": "Keine zusätzlichen Informationen."
   }
 }
