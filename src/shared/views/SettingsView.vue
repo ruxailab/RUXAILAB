@@ -607,10 +607,8 @@ const submit = async () => {
     loading.value = true
     isSubmitting.value = true
     try {
-      // Keep a local snapshot so UI refreshes do not drop unsaved edits.
       localDraft = { ...object.value }
 
-      // Reload latest study before saving to avoid rolling back invitation state.
       await store.dispatch('getStudy', { id: props.id })
       const latestStudy = store.getters.test
 
@@ -619,15 +617,19 @@ const submit = async () => {
         return false
       }
 
-      const mergedStudyData = {
-        ...localDraft,
-        cooperators: latestStudy.cooperators ?? localDraft.cooperators,
-        collaborators: latestStudy.collaborators ?? localDraft.collaborators,
+      const updatedStudyData = {
+        ...latestStudy,
+        testTitle: localDraft.testTitle,
+        testDescription: localDraft.testDescription,
+        testType: localDraft.testType,
+        status: localDraft.status,
+        isPublic: localDraft.isPublic,
+        endDate: localDraft.endDate,
       }
 
       const study = instantiateStudyByType(
-        mergedStudyData.testType,
-        mergedStudyData,
+        updatedStudyData.testType,
+        updatedStudyData,
       )
       await store.dispatch('updateStudy', study)
       await store.dispatch('getStudy', { id: props.id })
