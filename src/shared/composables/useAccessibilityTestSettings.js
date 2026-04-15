@@ -14,6 +14,11 @@ import {
   onBeforeRouteUpdate,
 } from 'vue-router'
 import { showSuccess, showError, showWarning } from '../utils/toast'
+import {
+  capturePendingLeaveRoute,
+  clearPendingLeaveRoute,
+  navigateToPendingLeaveRoute,
+} from '../utils/pendingLeaveRoute'
 
 /**
  * Composable for shared accessibility test settings functionality
@@ -223,15 +228,20 @@ export function useAccessibilityTestSettings(config) {
   }
 
   const onSubmit = async () => {
-    await submit()
+    const didSave = await submit()
+
+    if (!didSave) {
+      return
+    }
+
     store.commit('SET_LOCAL_CHANGES', false)
-    router.push({ name: store.state.pathTo })
+    await navigateToPendingLeaveRoute(store, router)
   }
 
   const submit = async () => {
     if (!object.value) {
       showError('No test data available')
-      return
+      return false
     }
 
     const title = object.value.title || object.value.testTitle
@@ -254,15 +264,19 @@ export function useAccessibilityTestSettings(config) {
         await fetchTest() // Refresh the test data
         store.commit('SET_LOCAL_CHANGES', false)
         showSuccess('Changes saved successfully')
+        return true
       } catch (error) {
         showError('Failed to save changes.')
+        return false
       } finally {
         loading.value = false
       }
     } else if (title && title.length >= 200) {
       showWarning('Title must not exceed 200 characters.')
+      return false
     } else {
       showWarning('Test must contain a title.')
+      return false
     }
   }
 
@@ -398,18 +412,18 @@ export function useAccessibilityTestSettings(config) {
 
   onBeforeMount(() => {
     store.commit('SET_LOCAL_CHANGES', false)
-    store.commit('SET_DIALOG_LEAVE', false)
+    clearPendingLeaveRoute(store)
     window.addEventListener('beforeunload', preventNav)
   })
 
   onBeforeUnmount(() => {
+    clearPendingLeaveRoute(store)
     window.removeEventListener('beforeunload', preventNav)
   })
 
-  onBeforeRouteLeave((to, from) => {
+  onBeforeRouteLeave((to, _from) => {
     if (localChanges.value) {
-      store.commit('SET_DIALOG_LEAVE', true)
-      store.commit('SET_PATH_TO', to.name)
+      capturePendingLeaveRoute(store, to)
       return false
     }
     return true
