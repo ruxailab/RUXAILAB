@@ -1,3 +1,5 @@
+import { ref, computed, watch } from 'vue'
+
 <template>
   <div>
     <!-- <v-col>
@@ -149,12 +151,16 @@ const recordScreen = async () => {
 const stopRecording = () => {
   return new Promise((resolve) => {
     if (isRecording.value && mediaRecorder.value) {
-      mediaRecorder.value.addEventListener(
-        'stop',
-        () => {
-          resolve()
+      // watcher that waits for the upload flow to finish
+      const stopWatch = watch(
+        isRecording,
+        (newVal) => {
+          if (!newVal) {
+            stopWatch()
+            resolve()
+          }
         },
-        { once: true },
+        { immediate: false },
       )
 
       mediaRecorder.value.stop()

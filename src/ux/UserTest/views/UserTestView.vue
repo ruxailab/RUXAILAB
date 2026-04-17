@@ -892,7 +892,6 @@ async function handleTaskFinish(userCompleted) {
 
   if (taskStepComponent.value?.stopRecording) {
     isLoading.value = true
-
     try {
       await taskStepComponent.value.stopRecording()
     } catch (error) {
@@ -901,9 +900,7 @@ async function handleTaskFinish(userCompleted) {
       isLoading.value = false
     }
   }
-
   await nextTick()
-
   completeStep(taskIndex.value, 'tasks', userCompleted)
   attachMediaToTasks(localTestAnswer, mediaUrls.value)
 

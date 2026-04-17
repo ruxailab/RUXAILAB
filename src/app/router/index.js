@@ -24,6 +24,43 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
+  const { authorize = [] } = to.meta || {}
+  let user = store.state.Auth.user
+
+  const publicPages = [
+    '/signin',
+    '/signup',
+    '/verify-email',
+    '/forgot-password',
+  ]
+  if (publicPages.includes(to.path)) {
+    return next()
+  }
+
+  if (!user) {
+    await store.dispatch('autoSignIn')
+    user = store.state.Auth.user
+  }
+
+  if (authorize.length) {
+    if (!user) {
+      return next({
+        path: '/signin',
+        query: { redirect: to.fullPath },
+      })
+    }
+
+    if (user.emailVerified === false) {
+      return next('/verify-email')
+    }
+
+    if (!authorize.includes(user.accessLevel)) {
+      return next(redirect())
+    }
+  }
+
+  if (to.path === '/') return next(redirect())
+
   return next()
 })
 
