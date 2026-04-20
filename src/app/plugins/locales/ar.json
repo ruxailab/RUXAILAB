@@ -574,7 +574,10 @@
       "updatedProgress": "قام بتحديث تقدمه",
       "invitationSentTitle": "تم إرسال الدعوة",
       "invitationPendingDesc": "الدعوة معلقة لـ",
-      "pendingStatus": "قيد الانتظار"
+      "pendingStatus": "قيد الانتظار",
+      "evaluatorInfo": "معلومات المقيِّمين",
+      "evaluatorInfoEmpty": "لا توجد أقسام معلومات. أضف بعضها لتوجيه المقيِّمين.",
+      "evaluatorInfoSeeAll": "عرض جميع الأقسام {count}"
     },
     "managerView": {
       "heuristicStudy": "دراسة استدلالية",
@@ -1672,7 +1675,11 @@
       "SelfTest": {
         "title": "اختبار ذاتي",
         "type": "غير مشرف عليه",
-        "text": ["الإجابة في وقت فراغ", "تحليل متقدم للإجابات", "تخصيص المهمة"]
+        "text": [
+          "الإجابة في وقت فراغ",
+          "تحليل متقدم للإجابات",
+          "تخصيص المهمة"
+        ]
       },
       "LiveTest": {
         "title": "اختبار مباشر",
@@ -2402,5 +2409,32 @@
       }
     },
     "title": "سياسة الخصوصية"
+  },
+  "EvaluatorInfoView": {
+    "pageTitle": "معلومات للمقيِّمين",
+    "pageSubtitle": "أنشئ أقساماً من المعلومات التي سيراها المقيِّمون قبل بدء الاختبار"
+  },
+  "EvaluatorInfoEditor": {
+    "title": "معلومات للمقيِّمين",
+    "subtitle": "أنشئ أقساماً من المعلومات التي سيراها المقيِّمون قبل بدء الاختبار",
+    "noSections": "لا توجد أقسام بعد. أضف قسماً للبدء.",
+    "untitledSection": "قسم بدون عنوان",
+    "addSection": "إضافة قسم",
+    "sectionTitle": "عنوان القسم",
+    "sectionContent": "المحتوى",
+    "sectionType": "النوع",
+    "types": {
+      "info": "معلومات",
+      "warning": "تحذير",
+      "tip": "نصيحة"
+    },
+    "save": "حفظ",
+    "cancel": "إلغاء"
+  },
+  "EvaluatorInfoDisplay": {
+    "title": "قبل البدء",
+    "subtitle": "يرجى قراءة المعلومات التالية قبل بدء التقييم",
+    "startButton": "بدء التقييم",
+    "noContent": "لا توجد معلومات إضافية."
   }
 }

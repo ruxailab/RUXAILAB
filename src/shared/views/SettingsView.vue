@@ -385,6 +385,11 @@ import { useI18n } from 'vue-i18n'
 import { instantiateStudyByType } from '../constants/methodDefinitions'
 import StudyAdmin from '@/shared/models/StudyAdmin'
 import { showSuccess, showError, showWarning } from '@/shared/utils/toast'
+import {
+  capturePendingLeaveRoute,
+  clearPendingLeaveRoute,
+  navigateToPendingLeaveRoute,
+} from '@/shared/utils/pendingLeaveRoute'
 
 const store = useStore()
 const router = useRouter()
@@ -566,18 +571,18 @@ onMounted(async () => {
 
 onBeforeMount(() => {
   store.commit('SET_LOCAL_CHANGES', false)
-  store.commit('SET_DIALOG_LEAVE', false)
+  clearPendingLeaveRoute(store)
   window.addEventListener('beforeunload', preventNav)
 })
 
 onBeforeUnmount(() => {
+  clearPendingLeaveRoute(store)
   window.removeEventListener('beforeunload', preventNav)
 })
 
 onBeforeRouteLeave((to, _from) => {
   if (localChanges.value) {
-    store.commit('SET_DIALOG_LEAVE', true)
-    store.commit('SET_PATH_TO', to.name)
+    capturePendingLeaveRoute(store, to)
     return false
   }
   return true
@@ -588,10 +593,14 @@ const validate = (valid, index) => {
 }
 
 const onSubmit = async () => {
-  await submit()
+  const didSave = await submit()
+
+  if (!didSave) {
+    return
+  }
+
   store.commit('SET_LOCAL_CHANGES', false)
-  store.commit('SET_DIALOG_LEAVE', false)
-  router.push({ name: store.state.pathTo })
+  await navigateToPendingLeaveRoute(store, router)
 }
 
 const submit = async () => {
@@ -604,15 +613,19 @@ const submit = async () => {
       await store.dispatch('getStudy', { id: props.id })
       store.commit('SET_LOCAL_CHANGES', false)
       showSuccess('alerts.savedChanges')
+      return true
     } catch {
       showError('errors.globalError')
+      return false
     } finally {
       loading.value = false
     }
   } else if (title.length >= 200) {
     showWarning('studyCreation.details.validation.max200Characters')
+    return false
   } else {
     showWarning('studyCreation.details.validation.enterTitle')
+    return false
   }
 }
 

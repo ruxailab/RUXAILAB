@@ -6,6 +6,7 @@ module.exports = {
   },
   testMatch: ['**/*.spec.js'],
   testPathIgnorePatterns: ['/e2e/', '/functions/'],
+  transformIgnorePatterns: ['/node_modules/(?!axios)'],
   setupFilesAfterEnv: ['./tests/mocks/firebase.js'],
   resetMocks: true,
   clearMocks: true,
