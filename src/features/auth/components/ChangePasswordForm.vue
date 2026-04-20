@@ -73,7 +73,7 @@ v-model="confirmPassword" :rules="confirmPasswordRules"
           </v-col>
         </v-row>
         <v-btn
-:disabled="!valid || isChanging ||" :loading="isChanging" color="primary" variant="flat"
+:disabled="!valid || isChanging" :loading="isChanging" color="primary" variant="flat"
           class="mt-4 text-capitalize" @click="handleChangePassword">
           <v-icon start>
             mdi-key
