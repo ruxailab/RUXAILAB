@@ -274,7 +274,7 @@ When reporting bugs, please include:
 - **Screenshots** if applicable
 - **Error messages** or console logs
 
-Use the [Bug Report template](https://github.com/uramakilab/remote-usability-lab/issues/new)
+Use the [Bug Report template](https://github.com/uramakilab/remote-usability-lab/issues/new?template=bug.yml)
 
 ### Feature Requests
 
@@ -284,7 +284,7 @@ For feature requests, include:
 - **Proposed solution** - How should it work?
 - **Alternatives considered** - Other approaches you've thought about
 
-Use the [Feature Request template](https://github.com/uramakilab/remote-usability-lab/issues/new)
+Use the [Feature Request template](https://github.com/uramakilab/remote-usability-lab/issues/new?template=feature.yml)
 
 ### Questions and Discussions
 
