@@ -151,11 +151,11 @@ export const formatDate = (timestamp) => {
 }
 
 /**
- * Format time as HH:MM.
+ * Format time from date/timestamp to HH:MM format
  * @param {string|Date|object} timestamp - Date, string or Firestore timestamp
  * @returns {string} - Formatted time or '-'
  */
-export const formatTime = (timestamp) => {
+export const formatTimeFromDate = (timestamp) => {
   try {
     const date = parseDateInput(timestamp)
     if (!date) return INVALID_DATE_FALLBACK
@@ -167,3 +167,9 @@ export const formatTime = (timestamp) => {
     return INVALID_DATE_FALLBACK
   }
 }
+
+/**
+ * @deprecated Use formatTimeFromDate instead for HH:MM from date
+ * or use formatTime from timeUtils for MM:SS from seconds
+ */
+export const formatTime = formatTimeFromDate
