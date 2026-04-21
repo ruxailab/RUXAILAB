@@ -426,6 +426,7 @@ const loading = ref(false)
 const loadingPage = ref(true)
 const tempDialog = ref(false)
 const dateMenu = ref(false)
+const isSubmitting = ref(false)
 const form1 = ref(null)
 const tempform = ref(null)
 
@@ -539,6 +540,8 @@ const createObjectFromTest = (testData) => {
 watch(
   test,
   (newTest) => {
+    if (isSubmitting.value) return
+
     if (newTest) {
       const mappedObject = createObjectFromTest(newTest)
       if (mappedObject) {
@@ -605,20 +608,51 @@ const onSubmit = async () => {
 
 const submit = async () => {
   const title = object.value.testTitle
+  let localDraft = null
+
   if (title.length > 0 && title.length < 200) {
     loading.value = true
+    isSubmitting.value = true
     try {
-      const study = instantiateStudyByType(object.value.testType, object.value)
+      localDraft = { ...object.value }
+
+      await store.dispatch('getStudy', { id: props.id })
+      const latestStudy = store.getters.test
+
+      if (!latestStudy) {
+        showError('errors.globalError')
+        return false
+      }
+
+      const updatedStudyData = {
+        ...latestStudy,
+        testTitle: localDraft.testTitle,
+        testDescription: localDraft.testDescription,
+        testType: localDraft.testType,
+        status: localDraft.status,
+        isPublic: localDraft.isPublic,
+        endDate: localDraft.endDate,
+      }
+
+      const study = instantiateStudyByType(
+        updatedStudyData.testType,
+        updatedStudyData,
+      )
       await store.dispatch('updateStudy', study)
       await store.dispatch('getStudy', { id: props.id })
       store.commit('SET_LOCAL_CHANGES', false)
       showSuccess('alerts.savedChanges')
       return true
     } catch {
+      if (localDraft) {
+        object.value = localDraft
+        store.commit('SET_LOCAL_CHANGES', true)
+      }
       showError('errors.globalError')
       return false
     } finally {
       loading.value = false
+      isSubmitting.value = false
     }
   } else if (title.length >= 200) {
     showWarning('studyCreation.details.validation.max200Characters')
