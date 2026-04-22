@@ -1,5 +1,5 @@
 import { admin, functions } from '../f.firebase.js'
-import logger from "../utils/logger.js";
+import logger from '../utils/logger.js'
 
 export const deleteAuth = functions.onCall({
   handler: async (data) => {
@@ -8,7 +8,7 @@ export const deleteAuth = functions.onCall({
 
       const testsRef = db.collection('tests')
       const testsQuery = await testsRef
-        .where("testAdmin.userDocId", "==", data.data.userId)
+        .where('testAdmin.userDocId', '==', data.data.userId)
         .get()
 
       if (!testsQuery.empty) {
@@ -16,10 +16,11 @@ export const deleteAuth = functions.onCall({
           const testData = testDoc.data()
 
           const answersDocId = testData.answersDocId
-          if (answersDocId) await db.collection("answers").doc(answersDocId).delete()
+          if (answersDocId)
+            await db.collection('answers').doc(answersDocId).delete()
 
           await deleteFolderFiles(testDoc.id)
-          await db.collection("tests").doc(testDoc.id).delete()
+          await db.collection('tests').doc(testDoc.id).delete()
         }
       }
 
@@ -29,18 +30,24 @@ export const deleteAuth = functions.onCall({
       await admin.auth().deleteUser(data.data.userId)
       return 'User deleted successfully.'
     } catch (err) {
-      logger.error('Error deleting user:', { error: err });
-      return err
+      logger.error('Error deleting user:', { error: err })
+      throw new functions.https.HttpsError(
+        'internal',
+        'Failed to delete user.',
+      )
     }
-  }
+  },
 })
 
 const deleteFolderFiles = async (testId) => {
-  const folderPath = `tests/${testId}/`;
-  const [files] = await admin.storage().bucket().getFiles({ prefix: folderPath });
+  const folderPath = `tests/${testId}/`
+  const [files] = await admin
+    .storage()
+    .bucket()
+    .getFiles({ prefix: folderPath })
 
   if (files.length > 0) {
-    logger.info(`Deletando ${files.length} arquivos da pasta ${folderPath}`);
-    await Promise.all(files.map(file => file.delete()));
+    logger.info(`Deletando ${files.length} arquivos da pasta ${folderPath}`)
+    await Promise.all(files.map((file) => file.delete()))
   }
 }

@@ -114,7 +114,7 @@ export default class Controller {
     const { orderBy: ob = [], where: wh = [], limit: lm = 0 } = constraints
 
     const q = query(
-      collection(col),
+      collection(db, col),
       ...ob.map((o) => orderBy(o.field, o.mode)),
       ...wh.map((w) => where(w.field, w.operator, w.value)),
       limit(lm),
