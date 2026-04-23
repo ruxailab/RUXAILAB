@@ -265,7 +265,7 @@ export default {
         await answerController.updateUserAnswer(payload)
       } catch (error) {
         console.error('[Answer Store] Failed to update user answer:', error)
-        showError('errors.failedToUpdateAnswer')
+        throw error
       } finally {
         commit('setLoading', false)
       }

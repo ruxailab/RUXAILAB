@@ -140,7 +140,7 @@ const accessLevel = computed(() => {
   const coop = currentTest?.cooperators?.find(
     (c) => c.userDocId === currentUser.id,
   )
-  if (coop) return coop.accessLevel
+  if (coop?.accepted === true) return coop.accessLevel
 
   if (currentTest?.isPublic) return ACCESS_LEVEL.GUEST
   return null

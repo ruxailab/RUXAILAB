@@ -450,10 +450,30 @@ const changeRole = async (item, newValue) => {
 }
 
 const executeRoleChange = async (item, newValue) => {
-  const index = cooperatorsEdit.value.indexOf(item)
-  const newCoop = { ...item, accessLevel: newValue.value }
-  test.value.cooperators[index] = newCoop
+  const cooperators = Array.isArray(test.value?.cooperators)
+    ? test.value.cooperators
+    : []
+
+  const index = cooperators.findIndex(
+    (coop) =>
+      (coop.token && item.token && coop.token === item.token) ||
+      (coop.userDocId && item.userDocId && coop.userDocId === item.userDocId) ||
+      coop.email === item.email,
+  )
+
+  if (index < 0) {
+    throw new Error('COOPERATOR_NOT_FOUND')
+  }
+
+  const updatedCooperators = [...cooperators]
+  const newCoop = new Cooperators({
+    ...updatedCooperators[index],
+    accessLevel: newValue.value,
+  })
+  updatedCooperators[index] = newCoop
+  test.value.cooperators = updatedCooperators
   await store.dispatch('updateStudy', test.value)
+  await store.dispatch('getStudy', { id: test.value.id })
 
   // Pending/rejected collaborators may not have an answer document yet.
   // Role update is still valid, so only sync answer metadata when the
