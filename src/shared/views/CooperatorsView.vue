@@ -454,6 +454,14 @@ const executeRoleChange = async (item, newValue) => {
   const newCoop = { ...item, accessLevel: newValue.value }
   test.value.cooperators[index] = newCoop
   await store.dispatch('updateStudy', test.value)
+
+  // Pending/rejected collaborators may not have an answer document yet.
+  // Role update is still valid, so only sync answer metadata when the
+  // collaborator is accepted and linked to a user document.
+  if (!newCoop.userDocId || newCoop.accepted !== true) {
+    return
+  }
+
   await store.dispatch('updateUserAnswer', {
     testDocId: test.value.id,
     cooperatorId: newCoop.userDocId,
