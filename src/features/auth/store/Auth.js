@@ -257,9 +257,9 @@ export default {
           await authController.deleteUserData(payload)
         } catch (e) {
           // Best effort backend cleanup
+          console.warn('Failed to delete user backend data during deleteAuth', e)
         }
-        // Store handles state management
-        commit('SET_USER', null)
+        // State management is handled by the final logout action
       } catch (err) {
         throw err
       } finally {
