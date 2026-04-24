@@ -91,7 +91,6 @@ import HeuristicsDataCard from '@/ux/Heuristic/components/statistics/HeuristicsD
 import axios from 'axios'
 import {
   standardDeviation,
-  finalResult,
   statistics,
   formatTimeSpentFromMs,
 } from '@/ux/Heuristic/utils/statistics'
@@ -125,11 +124,46 @@ const usability_total = ref(0)
 const loading = ref(false) // Note: Check if Vuex getter 'loading' is needed
 const array_scores = ref([])
 
-const showFinalResult = computed(() => finalResult())
-
 const evaluatorStatistics = computed(
   () => store.state.Answer.evaluatorStatistics || { header: [], items: [] },
 )
+
+const showFinalResult = computed(() => {
+  const items = evaluatorStatistics.value?.items || []
+
+  if (!items.length) {
+    return {
+      average: '0.00%',
+      max: '0.00%',
+      min: '0.00%',
+      sd: '0.00%',
+    }
+  }
+
+  const numericResults = items
+    .map((item) => Number(item.result))
+    .filter((value) => !Number.isNaN(value))
+
+  if (!numericResults.length) {
+    return {
+      average: '0.00%',
+      max: '0.00%',
+      min: '0.00%',
+      sd: '0.00%',
+    }
+  }
+
+  const average =
+    numericResults.reduce((total, value) => total + value, 0) /
+    numericResults.length
+
+  return {
+    average: `${average.toFixed(2)}%`,
+    max: `${Math.max(...numericResults).toFixed(2)}%`,
+    min: `${Math.min(...numericResults).toFixed(2)}%`,
+    sd: `${standardDeviation(numericResults).toFixed(2)}%`,
+  }
+})
 
 const testWeights = computed(() => store.state.Tests.Test.testWeights || [])
 
