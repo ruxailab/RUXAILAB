@@ -458,7 +458,7 @@ const executeRoleChange = async (item, newValue) => {
     (coop) =>
       (coop.token && item.token && coop.token === item.token) ||
       (coop.userDocId && item.userDocId && coop.userDocId === item.userDocId) ||
-      coop.email === item.email,
+      (coop.email && item.email && coop.email === item.email),
   )
 
   if (index < 0) {
@@ -608,8 +608,15 @@ const removeCoop = async (coop) => {
 }
 
 const executeCooperatorRemoval = async (coop) => {
-  const index = cooperatorsEdit.value.indexOf(coop)
-  cooperatorsEdit.value.splice(index, 1)
+  const index = cooperatorsEdit.value.findIndex(
+    (c) =>
+      (c.token && coop.token && c.token === coop.token) ||
+      (c.userDocId && coop.userDocId && c.userDocId === coop.userDocId) ||
+      (c.email && coop.email && c.email === coop.email),
+  )
+  if (index !== -1) {
+    cooperatorsEdit.value.splice(index, 1)
+  }
   test.value.cooperators = cooperatorsEdit.value
   await store.dispatch('updateStudy', test.value)
   await store.dispatch('removeTestFromCooperator', {
@@ -642,8 +649,15 @@ const cancelInvitation = async (guest) => {
 }
 
 const executeInvitationCancellation = async (guest) => {
-  const index = cooperatorsEdit.value.indexOf(guest)
-  cooperatorsEdit.value.splice(index, 1)
+  const index = cooperatorsEdit.value.findIndex(
+    (c) =>
+      (c.token && guest.token && c.token === guest.token) ||
+      (c.userDocId && guest.userDocId && c.userDocId === guest.userDocId) ||
+      (c.email && guest.email && c.email === guest.email),
+  )
+  if (index !== -1) {
+    cooperatorsEdit.value.splice(index, 1)
+  }
   test.value.cooperators = cooperatorsEdit.value
   await store.dispatch('updateStudy', test.value)
 }
