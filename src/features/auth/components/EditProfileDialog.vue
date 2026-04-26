@@ -227,20 +227,26 @@ watch(
 
 // Validation rules
 const usernameRules = computed(() => [
-  (v) => !!v || t('profile.usernameRequired'),
-  (v) => (v && v.length >= 3) || t('profile.usernameMinLength'),
+  (v) => !v || v.length >= 3 || t('profile.usernameMinLength'),
 ])
 
-const countryRules = computed(() => [
-  (v) => !!v || t('profile.countryRequired'),
-])
+const countryRules = computed(() => [])
 
 const contactRules = computed(() => [
-  (v) => !!v || t('profile.contactNumberRequired'),
-  (v) => /^\d{9,15}$/.test(v) || t('profile.enterValidPhoneNumber'),
+  (v) => !v || /^\d{9,15}$/.test(v) || t('profile.enterValidPhoneNumber'),
 ])
 
-const canSave = computed(() => isValid.value && hasChanges.value)
+const hasTextFieldChanges = computed(() => {
+  return (
+    localProfileData.value.username !== props.profileData.username ||
+    localProfileData.value.contactNo !== props.profileData.contactNo ||
+    localProfileData.value.country !== props.profileData.country
+  )
+})
+
+const canSave = computed(() => {
+  return hasChanges.value && !isSaving.value
+})
 
 const selectImage = () => {
   fileInput.value.click()
@@ -315,9 +321,11 @@ const handleCameraCapture = ({ file, previewUrl }) => {
 
 const handleSave = async () => {
   try {
-    if (!formRef.value) return
-    const { valid } = await formRef.value.validate()
-    if (!valid) return
+    if (hasTextFieldChanges.value) {
+      if (!formRef.value) return
+      const { valid } = await formRef.value.validate()
+      if (!valid) return
+    }
 
     isSaving.value = true
 
