@@ -1,4 +1,4 @@
-# Multimodal Input Modules — Text & Audio
+# Multimodal Input Modules — Text and Audio
 
 Branch: `feature/multimodal-input-modules`
 
@@ -78,11 +78,11 @@ print(result.model_dump_json(indent=2))
 
 The text module also detects intent from the surface-level content of the text. When intent signals are found, they override the usability label from the emotion model:
 
-| Detected signal | Override label |
-|---|---|
-| Complaint indicators ("doesn't work", "can't find") | frustration |
-| Suggestion indicators ("should be", "would be better") | engagement |
-| Question about navigation ("where is", "how do I") | confusion |
+| Detected signal                                        | Override label |
+| ------------------------------------------------------ | -------------- |
+| Complaint indicators ("doesn't work", "can't find")    | frustration    |
+| Suggestion indicators ("should be", "would be better") | engagement     |
+| Question about navigation ("where is", "how do I")     | confusion      |
 
 This is a pattern-matching layer, not an ML model. It runs after the emotion classifier and only fires if a pattern matches. If nothing matches, the usability label comes from the emotion mapper as usual.
 
