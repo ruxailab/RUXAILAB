@@ -41,7 +41,7 @@ jobs:
             DETECTED=1
 
             # Fail: CORS wildcard origin
-            if grep -rEn "origin\s*:\s*['"]?\*['"]?" --include="*.js" --include="*.ts" . 2>/dev/null | grep -v node_modules | grep -v "//"; then
+            if grep -rEn 'origin\s*:\s*['"'"'"]?\*['"'"'"]?' --include="*.js" --include="*.ts" . 2>/dev/null | grep -v node_modules | grep -v "//"; then
               echo "::error::Express/Fastify — CORS allows all origins (*). Restrict to known domains."
               FAIL=1
             fi
