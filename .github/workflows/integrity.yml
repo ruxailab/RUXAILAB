@@ -263,9 +263,21 @@ jobs:
           fi
 
           # Detect hardcoded passwords or tokens
+          # Excludes Vue/JSX dynamic prop bindings (:password="var") — those are runtime
+          # variable references, not hardcoded values. The pattern [[:space:]]:[a-zA-Z]
+          # matches " :prop=" which is the Vue dynamic binding syntax in grep output lines.
           if grep -rEn "password\s*[=:]\s*['\"][^'\"]{4,}['\"]" \
             --include="*.js" --include="*.ts" --include="*.vue" --include="*.py" --include="*.java" \
-            . 2>/dev/null | grep -v node_modules | grep -v "//"; then
+            . 2>/dev/null \
+            | grep -v node_modules \
+            | grep -v "//" \
+            | grep -vE "[[:space:]]:[a-zA-Z][a-zA-Z0-9_-]*=" \
+            | grep -q .; then
+            grep -rEn "password\s*[=:]\s*['\"][^'\"]{4,}['\"]" \
+              --include="*.js" --include="*.ts" --include="*.vue" --include="*.py" --include="*.java" \
+              . 2>/dev/null \
+              | grep -v node_modules | grep -v "//" \
+              | grep -vE "[[:space:]]:[a-zA-Z][a-zA-Z0-9_-]*="
             echo "::error::Hardcoded password value detected in source code"
             DETECTED=1
             FAIL=1
