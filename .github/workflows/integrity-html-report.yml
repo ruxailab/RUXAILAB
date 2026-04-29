@@ -1,0 +1,50 @@
+name: Integrity HTML Report
+
+on:
+  workflow_run:
+    workflows:
+      - "Integrity"
+    types:
+      - completed
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  render-html:
+    name: Render HTML Report
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download JSON report artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: integrity-security-report
+          path: integrity-security-report/
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+
+      - name: Render HTML from JSON
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REF_NAME: ${{ github.event.workflow_run.head_branch }}
+          GITHUB_SHA: ${{ github.event.workflow_run.head_sha }}
+          GITHUB_RUN_ID: ${{ github.event.workflow_run.id }}
+        run: node .github/scripts/render-integrity-html.js
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: integrity-html-report
+          path: integrity-html-report/security-report.html
+          if-no-files-found: error
+          retention-days: 30
