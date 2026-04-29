@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
 
 test('should create a template and verify it appears in the list', async ({ page }) => {
-  await page.goto('http://localhost:8080/');
-  await page.getByRole('button', { name: 'Sign in' }).click();
+  //await page.goto('http://localhost:8080/');
+  //await page.getByRole('button', { name: 'Sign in' }).click();
+  await page.goto('http://localhost:8080/signin', { waitUntil: 'networkidle' });
   await page.getByLabel('Email').fill('dfa@dfa.com');
   await page.getByLabel('Password', { exact: true }).fill('Password@123');
   await page.getByTestId('sign-in-button').click();
@@ -27,8 +28,9 @@ test('should create a template and verify it appears in the list', async ({ page
 });
 
 test('should show error when creating a template with duplicate name', async ({ page }) => {
-  await page.goto('http://localhost:8080/');
-  await page.getByRole('button', { name: 'Sign in' }).click();
+  //await page.goto('http://localhost:8080/');
+  //await page.getByRole('button', { name: 'Sign in' }).click();
+  await page.goto('http://localhost:8080/signin', { waitUntil: 'networkidle' });
   await page.getByLabel('Email').fill('dfa@dfa.com');
   await page.getByLabel('Password', { exact: true }).fill('Password@123');
   await page.getByTestId('sign-in-button').click();
@@ -46,8 +48,9 @@ test('should show error when creating a template with duplicate name', async ({ 
 });
 
 test('should validate required fields when creating a template', async ({ page }) => {
-  await page.goto('http://localhost:8080/');
-  await page.getByRole('button', { name: 'Sign in' }).click();
+  //await page.goto('http://localhost:8080/');
+  //await page.getByRole('button', { name: 'Sign in' }).click();
+  await page.goto('http://localhost:8080/signin', { waitUntil: 'networkidle' });
   await page.getByLabel('Email').fill('dfa@dfa.com');
   await page.getByLabel('Password', { exact: true }).fill('Password@123');
   await page.getByTestId('sign-in-button').click();
@@ -64,8 +67,9 @@ test('should validate required fields when creating a template', async ({ page }
 });
 
 test('should filter templates by name', async ({ page }) => {
-  await page.goto('http://localhost:8080/');
-  await page.getByRole('button', { name: 'Sign in' }).click();
+  //await page.goto('http://localhost:8080/');
+  //await page.getByRole('button', { name: 'Sign in' }).click();
+  await page.goto('http://localhost:8080/signin', { waitUntil: 'networkidle' });
   await page.getByLabel('Email').fill('dfa@dfa.com');
   await page.getByLabel('Password', { exact: true }).fill('Password@123');
   await page.getByTestId('sign-in-button').click();
@@ -77,8 +81,9 @@ test('should filter templates by name', async ({ page }) => {
 });
 
 test('should not allow saving template with empty description', async ({ page }) => {
-  await page.goto('http://localhost:8080/');
-  await page.getByRole('button', { name: 'Sign in' }).click();
+  //await page.goto('http://localhost:8080/');
+  //await page.getByRole('button', { name: 'Sign in' }).click();
+  await page.goto('http://localhost:8080/signin', { waitUntil: 'networkidle' });
   await page.getByLabel('Email').fill('dfa@dfa.com');
   await page.getByLabel('Password', { exact: true }).fill('Password@123');
   await page.getByTestId('sign-in-button').click();
