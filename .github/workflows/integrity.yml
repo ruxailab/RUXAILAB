@@ -121,8 +121,12 @@ jobs:
 
             # Warn: Dockerfile has no non-root USER directive
             for df in $(find . -name "Dockerfile*" -not -path "*/node_modules/*" 2>/dev/null); do
-              if grep -q "^FROM" "$df" && ! grep -qE "^USER\s+(?!root)" "$df"; then
-                echo "::warning file=$df::Dockerfile has no non-root USER directive — containers should not run as root."
+              if grep -q "^FROM" "$df"; then
+                if ! grep -qE "^USER[[:space:]]+" "$df"; then
+                  echo "::warning file=$df::Dockerfile has no USER directive — container may run as root."
+                elif grep -qE "^USER[[:space:]]+root" "$df"; then
+                  echo "::warning file=$df::Dockerfile sets USER root explicitly — containers should not run as root."
+                fi
               fi
             done
           fi
@@ -252,14 +256,21 @@ jobs:
       - name: Scan for Auth Bypass Patterns
         run: |
           echo "=== Auth Bypass Pattern Scan ==="
-          DETECTED=0
           FAIL=0
+
+          # Mark DETECTED=1 if there are any source files to scan at all.
+          # The scan should only be considered ineffective if there are no files.
+          if find . \( -name "*.js" -o -name "*.ts" -o -name "*.vue" -o -name "*.py" -o -name "*.java" \) \
+            -not -path "*/node_modules/*" -not -path "*/dist/*" 2>/dev/null | grep -q .; then
+            DETECTED=1
+          else
+            DETECTED=0
+          fi
 
           # Detect unconditional frontend router guard bypass (Vue / React Router)
           if grep -rEn "next\(true\)|beforeEach.*return true|navigate\(.*\{.*replace.*\}\)" \
             --include="*.js" --include="*.ts" --include="*.vue" . 2>/dev/null | grep -v node_modules | grep -v "//"; then
             echo "::warning::Possible unconditional navigation guard bypass detected"
-            DETECTED=1
           fi
 
           # Detect hardcoded passwords or tokens
@@ -279,7 +290,6 @@ jobs:
               | grep -v node_modules | grep -v "//" \
               | grep -vE "[[:space:]]:[a-zA-Z][a-zA-Z0-9_-]*="
             echo "::error::Hardcoded password value detected in source code"
-            DETECTED=1
             FAIL=1
           fi
 
@@ -288,7 +298,6 @@ jobs:
             --include="*.js" --include="*.ts" --include="*.vue" --include="*.py" \
             . 2>/dev/null | grep -v node_modules | grep -v "//"; then
             echo "::warning::eval()/exec() usage detected — review for potential code injection risk"
-            DETECTED=1
           fi
 
           # Detect disabled SSL/TLS certificate verification
@@ -296,7 +305,6 @@ jobs:
             --include="*.js" --include="*.ts" --include="*.py" --include="*.java" \
             . 2>/dev/null | grep -v node_modules | grep -v "//"; then
             echo "::error::SSL/TLS certificate verification disabled. This allows man-in-the-middle attacks."
-            DETECTED=1
             FAIL=1
           fi
 
@@ -305,7 +313,6 @@ jobs:
             --include="*.js" --include="*.ts" --include="*.vue" --include="*.py" \
             . 2>/dev/null | grep -v node_modules | grep -v "//"; then
             echo "::warning::Sensitive token/key passed in URL query string — use Authorization header instead."
-            DETECTED=1
           fi
 
           # ── Final result ─────────────────────────────────
