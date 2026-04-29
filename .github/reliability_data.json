@@ -1,0 +1,17 @@
+{
+  "metric_name": "Reliability",
+  "group": "RUXAILAB",
+  "pipeline_name": "Reliability",
+  "status": "passed",
+  "date": null,
+  "run_id": null,
+  "summary": {
+    "total": 0,
+    "passed": 0,
+    "failed": 0,
+    "flaky": 0,
+    "skipped": 0,
+    "score": 0
+  },
+  "history": []
+}
