@@ -412,5 +412,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: integrity-security-report
-          path: integrity-report/security-report.html
+          path: integrity-report/security-report.json
           if-no-files-found: error
