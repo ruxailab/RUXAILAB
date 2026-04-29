@@ -31,6 +31,8 @@ jobs:
 
       - name: Audit Access Controls
         run: |
+          mkdir -p integrity-report
+          exec > >(tee -a integrity-report/access-control.log) 2>&1
           echo "=== Access Control Audit ==="
           DETECTED=0
           FAIL=0
@@ -165,6 +167,14 @@ jobs:
 
           echo "✅ Access Control Audit passed"
 
+      - name: Upload access control findings
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integrity-job1
+          path: integrity-report/access-control.log
+          if-no-files-found: warn
+
   # ─────────────────────────────────────────────────
   # JOB 2 — Route Authorization Integrity
   # Verifies the Vue Router guard enforces authentication
@@ -185,6 +195,8 @@ jobs:
 
       - name: Verify Router Guard Integrity
         run: |
+          mkdir -p integrity-report
+          exec > >(tee -a integrity-report/route-auth.log) 2>&1
           echo "=== Router Guard Integrity Check ==="
           FAIL=0
 
@@ -220,7 +232,18 @@ jobs:
           fi
 
       - name: Audit Route Definitions for Missing Auth Metadata
-        run: node .github/scripts/route-auth-audit.js
+        run: |
+          mkdir -p integrity-report
+          set -o pipefail
+          node .github/scripts/route-auth-audit.js 2>&1 | tee -a integrity-report/route-auth.log
+
+      - name: Upload route auth findings
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integrity-job2
+          path: integrity-report/route-auth.log
+          if-no-files-found: warn
 
   # ─────────────────────────────────────────────────
   # JOB 3 — Static Security Analysis (OWASP)
@@ -241,6 +264,8 @@ jobs:
 
       - name: Run OWASP Top 10 Scan
         run: |
+          mkdir -p integrity-report
+          exec > >(tee -a integrity-report/static-scan.log) 2>&1
           semgrep \
             --config=p/owasp-top-ten \
             --config=p/javascript \
@@ -255,6 +280,8 @@ jobs:
 
       - name: Scan for Auth Bypass Patterns
         run: |
+          mkdir -p integrity-report
+          exec > >(tee -a integrity-report/static-scan.log) 2>&1
           echo "=== Auth Bypass Pattern Scan ==="
           FAIL=0
 
@@ -327,3 +354,63 @@ jobs:
           else
             exit 1
           fi
+
+      - name: Upload static scan findings
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integrity-job3
+          path: integrity-report/static-scan.log
+          if-no-files-found: warn
+
+  # ─────────────────────────────────────────────────
+  # JOB 4 — Generate Security Report
+  # Downloads findings from all 3 jobs and produces a
+  # self-contained HTML security report as an artifact.
+  # Always runs, even if upstream jobs fail.
+  # ─────────────────────────────────────────────────
+  generate-report:
+    name: Generate Security Report
+    runs-on: ubuntu-latest
+    needs: [access-control-audit, route-auth-audit, static-security-scan]
+    if: always()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download access control findings
+        uses: actions/download-artifact@v4
+        with:
+          name: integrity-job1
+          path: integrity-job1/
+        continue-on-error: true
+
+      - name: Download route auth findings
+        uses: actions/download-artifact@v4
+        with:
+          name: integrity-job2
+          path: integrity-job2/
+        continue-on-error: true
+
+      - name: Download static scan findings
+        uses: actions/download-artifact@v4
+        with:
+          name: integrity-job3
+          path: integrity-job3/
+        continue-on-error: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+
+      - name: Generate HTML report
+        run: node .github/scripts/generate-integrity-report.js
+
+      - name: Upload security report
+        uses: actions/upload-artifact@v4
+        with:
+          name: integrity-security-report
+          path: integrity-report/security-report.html
+          if-no-files-found: error
