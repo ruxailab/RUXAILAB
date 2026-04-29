@@ -310,15 +310,18 @@ const handleSendMessage = async ({ user, title, content }) => {
   }
 }
 
-const handleSendEmail = async (guest) => {
+const handleSendEmail = async (guest, customMessage = null) => {
   const emailController = new EmailController()
+  const inviteMessage =
+    customMessage ?? guest?.inviteMessage ?? inviteMessages.value ?? ''
+
   await emailController.send({
     to: guest.email,
     subject: t('HeuristicsCooperators.actions.send_invitation'),
     attachments: [],
     template: 'invite',
     data: {
-      message: inviteMessages.value || '',
+      message: inviteMessage,
       testTitle: test.value.testTitle,
       testDescription: test.value.testDescription,
       adminEmail: test.value.testAdmin.email,
@@ -356,6 +359,7 @@ const handleSendInvitations = async (invitationData) => {
           invited: true,
           accepted: false,
           accessLevel: roleOptions.value[selectedRole].value,
+          inviteMessage: inviteMessage || null,
           token,
           progress: 0,
           updateDate: test.value?.updateDate || new Date().toISOString(),
@@ -368,6 +372,7 @@ const handleSendInvitations = async (invitationData) => {
           invited: true,
           accepted: false,
           accessLevel: roleOptions.value[selectedRole].value,
+          inviteMessage: inviteMessage || null,
           token,
           progress: 0,
           updateDate: test.value?.updateDate || new Date().toISOString(),
@@ -381,11 +386,12 @@ const handleSendInvitations = async (invitationData) => {
       const existing = cooperatorsEdit.value[existingIndex]
       const newRole = roleOptions.value[selectedRole].value
 
-      if (existing.accessLevel !== newRole) {
+      if (existing.accessLevel !== newRole || existing.inviteMessage !== inviteMessage) {
         // Update the existing entry's role
         cooperatorsEdit.value[existingIndex] = {
           ...existing,
           accessLevel: newRole,
+          inviteMessage: inviteMessage || existing.inviteMessage || null,
           updateDate: new Date().toISOString(),
         }
         updatedRoles.push(coopEmail)
@@ -473,19 +479,22 @@ const submit = async () => {
 
     await Promise.all([
       store.dispatch('getStudy', { id: test.value.id }),
-      ...newCooperators.map((guest) => sendMenssages(guest)),
+      ...newCooperators.map((guest) => sendMenssages(guest, guest.inviteMessage)),
     ])
   } catch {
     // console.error('Error updating study:', error)
   }
 }
 
-const sendMenssages = async (guest) => {
+const sendMenssages = async (guest, customMessage = null) => {
+  const messageToSend =
+    customMessage ?? guest?.inviteMessage ?? inviteMessages.value ?? ''
+
   try {
-    await notifyCooperator(guest)
+    await notifyCooperator(guest, messageToSend)
     // Email is optional - don't let it block the notification
     try {
-      await handleSendEmail(guest)
+      await handleSendEmail(guest, messageToSend)
     } catch {
       // console.warn('Email sending failed (may be missing VUE_APP_CLOUD_FUNCTIONS_URL):', emailError.message)
     }
@@ -497,7 +506,7 @@ const sendMenssages = async (guest) => {
   }
 }
 
-const notifyCooperator = async (guest) => {
+const notifyCooperator = async (guest, customMessage = null) => {
   if (guest.userDocId) {
     // Check if it's an accessibility test (MANUAL or AUTOMATIC)
     //if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
@@ -531,8 +540,8 @@ const notifyCooperator = async (guest) => {
       titleTemplate: 'HeuristicsCooperators.actions.send_invitation',
     }
 
-    if (inviteMessages.value) {
-      payload.description = inviteMessages.value
+    if (customMessage) {
+      payload.description = customMessage
     } else {
       payload.descriptionTemplate =
         'HeuristicsCooperators.messages.invite_message'
@@ -544,7 +553,7 @@ const notifyCooperator = async (guest) => {
 }
 
 const reinvite = async (guest) => {
-  await sendMenssages(guest)
+  await sendMenssages(guest, guest?.inviteMessage ?? null)
 }
 
 const removeCoop = async (coop) => {

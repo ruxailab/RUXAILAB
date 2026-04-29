@@ -574,7 +574,10 @@
       "updatedProgress": "更新了进度",
       "invitationSentTitle": "邀请已发送",
       "invitationPendingDesc": "邀请待处理：",
-      "pendingStatus": "待处理"
+      "pendingStatus": "待处理",
+      "evaluatorInfo": "评估员信息",
+      "evaluatorInfoEmpty": "暂无信息部分，请添加以指导您的评估员。",
+      "evaluatorInfoSeeAll": "查看全部 {count} 个部分"
     },
     "managerView": {
       "heuristicStudy": "启发式研究",
@@ -2413,5 +2416,32 @@
       }
     },
     "title": "隐私政策"
+  },
+  "EvaluatorInfoView": {
+    "pageTitle": "评估员信息",
+    "pageSubtitle": "创建评估员在开始测试前将看到的信息部分"
+  },
+  "EvaluatorInfoEditor": {
+    "title": "评估员信息",
+    "subtitle": "创建评估员在开始测试前将看到的信息部分",
+    "noSections": "暂无部分，请添加一个以开始。",
+    "untitledSection": "无标题部分",
+    "addSection": "添加部分",
+    "sectionTitle": "部分标题",
+    "sectionContent": "内容",
+    "sectionType": "类型",
+    "types": {
+      "info": "信息",
+      "warning": "警告",
+      "tip": "提示"
+    },
+    "save": "保存",
+    "cancel": "取消"
+  },
+  "EvaluatorInfoDisplay": {
+    "title": "开始之前",
+    "subtitle": "请在开始评估前阅读以下信息",
+    "startButton": "开始评估",
+    "noContent": "暂无其他信息。"
   }
 }

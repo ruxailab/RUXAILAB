@@ -574,7 +574,10 @@
       "updatedProgress": "進捗を更新しました",
       "invitationSentTitle": "招待送信済み",
       "invitationPendingDesc": "招待保留中:",
-      "pendingStatus": "保留中"
+      "pendingStatus": "保留中",
+      "evaluatorInfo": "評価者情報",
+      "evaluatorInfoEmpty": "情報セクションがありません。評価者を案内するために追加してください。",
+      "evaluatorInfoSeeAll": "すべての{count}セクションを表示"
     },
     "managerView": {
       "heuristicStudy": "ヒューリスティック評価",
@@ -2413,5 +2416,32 @@
       }
     },
     "title": "プライバシーポリシー"
+  },
+  "EvaluatorInfoView": {
+    "pageTitle": "評価者向け情報",
+    "pageSubtitle": "テスト開始前に評価者が確認する情報セクションを作成します"
+  },
+  "EvaluatorInfoEditor": {
+    "title": "評価者向け情報",
+    "subtitle": "テスト開始前に評価者が確認する情報セクションを作成します",
+    "noSections": "セクションがありません。追加してください。",
+    "untitledSection": "無題のセクション",
+    "addSection": "セクションを追加",
+    "sectionTitle": "セクションタイトル",
+    "sectionContent": "内容",
+    "sectionType": "タイプ",
+    "types": {
+      "info": "情報",
+      "warning": "警告",
+      "tip": "ヒント"
+    },
+    "save": "保存",
+    "cancel": "キャンセル"
+  },
+  "EvaluatorInfoDisplay": {
+    "title": "開始前に",
+    "subtitle": "評価を開始する前に以下の情報をお読みください",
+    "startButton": "評価を開始",
+    "noContent": "追加情報はありません。"
   }
 }

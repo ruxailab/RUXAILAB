@@ -574,7 +574,10 @@
       "updatedProgress": "अपनी प्रगति अपडेट की",
       "invitationSentTitle": "आमंत्रण भेजा गया",
       "invitationPendingDesc": "आमंत्रण लंबित है",
-      "pendingStatus": "लंबित"
+      "pendingStatus": "लंबित",
+      "evaluatorInfo": "मूल्यांकनकर्ता जानकारी",
+      "evaluatorInfoEmpty": "कोई जानकारी अनुभाग नहीं। अपने मूल्यांकनकर्ताओं को मार्गदर्शन देने के लिए कुछ जोड़ें।",
+      "evaluatorInfoSeeAll": "सभी {count} अनुभाग देखें"
     },
     "managerView": {
       "heuristicStudy": "हीयुरिस्टिक अध्ययन",
@@ -2394,5 +2397,32 @@
       }
     },
     "title": "गोपनीयता नीति"
+  },
+  "EvaluatorInfoView": {
+    "pageTitle": "मूल्यांकनकर्ताओं के लिए जानकारी",
+    "pageSubtitle": "ऐसे अनुभाग बनाएं जो मूल्यांकनकर्ता परीक्षण शुरू करने से पहले देखेंगे"
+  },
+  "EvaluatorInfoEditor": {
+    "title": "मूल्यांकनकर्ताओं के लिए जानकारी",
+    "subtitle": "ऐसे अनुभाग बनाएं जो मूल्यांकनकर्ता परीक्षण शुरू करने से पहले देखेंगे",
+    "noSections": "कोई अनुभाग नहीं। शुरू करने के लिए एक जोड़ें।",
+    "untitledSection": "शीर्षकहीन अनुभाग",
+    "addSection": "अनुभाग जोड़ें",
+    "sectionTitle": "अनुभाग शीर्षक",
+    "sectionContent": "सामग्री",
+    "sectionType": "प्रकार",
+    "types": {
+      "info": "जानकारी",
+      "warning": "चेतावनी",
+      "tip": "सुझाव"
+    },
+    "save": "सहेजें",
+    "cancel": "रद्द करें"
+  },
+  "EvaluatorInfoDisplay": {
+    "title": "शुरू करने से पहले",
+    "subtitle": "कृपया मूल्यांकन शुरू करने से पहले निम्नलिखित जानकारी पढ़ें",
+    "startButton": "मूल्यांकन शुरू करें",
+    "noContent": "कोई अतिरिक्त जानकारी नहीं।"
   }
 }

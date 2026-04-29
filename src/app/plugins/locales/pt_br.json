@@ -574,7 +574,10 @@
       "updatedProgress": "atualizou seu progresso",
       "invitationSentTitle": "Convite enviado",
       "invitationPendingDesc": "Convite pendente para",
-      "pendingStatus": "Pendente"
+      "pendingStatus": "Pendente",
+      "evaluatorInfo": "Info para Avaliadores",
+      "evaluatorInfoEmpty": "Sem seções de informação. Adicione algumas para orientar seus avaliadores.",
+      "evaluatorInfoSeeAll": "Ver todas as {count} seções"
     },
     "managerView": {
       "heuristicStudy": "Estudo Heurístico",
@@ -2395,5 +2398,32 @@
       }
     },
     "title": "Política de Privacidade"
+  },
+  "EvaluatorInfoView": {
+    "pageTitle": "Informações para Avaliadores",
+    "pageSubtitle": "Crie seções de informação que os avaliadores verão antes de iniciar o teste"
+  },
+  "EvaluatorInfoEditor": {
+    "title": "Informações para Avaliadores",
+    "subtitle": "Crie seções de informação que os avaliadores verão antes de iniciar o teste",
+    "noSections": "Sem seções. Adicione uma para começar.",
+    "untitledSection": "Seção sem título",
+    "addSection": "Adicionar seção",
+    "sectionTitle": "Título da seção",
+    "sectionContent": "Conteúdo",
+    "sectionType": "Tipo",
+    "types": {
+      "info": "Informação",
+      "warning": "Aviso",
+      "tip": "Dica"
+    },
+    "save": "Salvar",
+    "cancel": "Cancelar"
+  },
+  "EvaluatorInfoDisplay": {
+    "title": "Antes de começar",
+    "subtitle": "Por favor leia as informações a seguir antes de iniciar a avaliação",
+    "startButton": "Iniciar Avaliação",
+    "noContent": "Nenhuma informação adicional."
   }
 }
