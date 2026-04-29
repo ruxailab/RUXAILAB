@@ -67,7 +67,7 @@ jobs:
       - name: Start app
         if: steps.detect_tests.outputs.has_tests == 'true'
         run: |
-          npm run dev -- --host 0.0.0.0 --port 8080 &
+          npm run serve -- --host 0.0.0.0 --port 8080 > reliability-app.log 2>&1 &
           npx wait-on http://127.0.0.1:8080
 
       - name: Run Playwright reliability suite
