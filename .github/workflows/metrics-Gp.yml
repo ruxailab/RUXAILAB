@@ -1,0 +1,36 @@
+name: Metrics Action
+
+on:
+  push:
+    branches: [
+      "master",
+     "develop",
+     "features/*",
+      "111-feat-implement-a-metric-action"
+    ]
+#  pull_request:
+#    branches: ["master"]
+  workflow_dispatch:
+
+
+   # branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.12]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Fog Index Metric
+      run: |
+          python3 .github/scripts/metrics/fog_comments_index.py . 

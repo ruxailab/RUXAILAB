@@ -1,0 +1,71 @@
+name: Reliability
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+  schedule:
+    - cron: '0 22 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  reliability:
+    name: Reliability Tests
+    runs-on: ubuntu-latest
+    env:
+      CI: true
+      PLAYWRIGHT_REPORTER: json
+      PLAYWRIGHT_JSON_OUTPUT_NAME: reliability-results.json
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright reliability suite
+        run: npm run test-playwright
+
+      - name: Generate reliability report
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const script = require('./.github/scripts/generate_reliability_report.js');
+            await script({github, context, core});
+
+      - name: Upload reliability artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reliability-results
+          path: |
+            reliability-results.json
+            .github/reliability_data.json
+            .github/reliability_report.md
+
+      - name: Commit updated reliability history
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore(reliability): update reliability control sheet'
+          file_pattern: .github/reliability_data.json
