@@ -32,11 +32,11 @@
       "daily_counts": {
         "Mon": 0,
         "Tue": 0,
-        "Wed": 6,
+        "Wed": 7,
         "Thu": 0,
         "Fri": 0
       },
-      "total": 6
+      "total": 7
     },
     {
       "occurrence": "Code smells/Bugs",
@@ -62,7 +62,7 @@
     }
   ],
   "summary": {
-    "grand_total": 6,
+    "grand_total": 7,
     "days_tracked": 5
   },
   "issues_tracking": {
