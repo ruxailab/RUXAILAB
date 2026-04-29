@@ -1,0 +1,310 @@
+name: Integrity
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Runs every Monday at 03:00 UTC
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # ─────────────────────────────────────────────────
+  # JOB 1 — Access Control Audit
+  # Stack-agnostic detection of unauthorized access.
+  # Covers: Express/Fastify, Django/Flask, Spring Boot,
+  # PostgreSQL/MySQL, Docker/K8s, and generic REST APIs.
+  # Fails if no recognizable security stack is detected.
+  # ─────────────────────────────────────────────────
+  access-control-audit:
+    name: Access Control Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Audit Access Controls
+        run: |
+          echo "=== Access Control Audit ==="
+          DETECTED=0
+          FAIL=0
+
+          # ── Express / Fastify (Node.js) ──────────────────
+          if find . -name "*.js" -o -name "*.ts" | grep -v node_modules | xargs grep -lE "express\(\)|fastify\(\)" 2>/dev/null | grep -q .; then
+            echo "--- Detected: Express/Fastify ---"
+            DETECTED=1
+
+            # Fail: CORS wildcard origin
+            if grep -rEn "origin\s*:\s*['"]?\*['"]?" --include="*.js" --include="*.ts" . 2>/dev/null | grep -v node_modules | grep -v "//"; then
+              echo "::error::Express/Fastify — CORS allows all origins (*). Restrict to known domains."
+              FAIL=1
+            fi
+
+            # Warn: routes with no recognizable auth middleware
+            UNPROTECTED=$(grep -rEn "app\.(get|post|put|delete|patch)\s*\(" --include="*.js" --include="*.ts" . 2>/dev/null \
+              | grep -v node_modules | grep -v "//" \
+              | grep -vE "auth|middleware|verify|protect|guard|token|jwt|session")
+            if [ -n "$UNPROTECTED" ]; then
+              COUNT=$(echo "$UNPROTECTED" | wc -l | tr -d ' ')
+              echo "::warning::Express/Fastify — $COUNT route(s) found with no recognizable auth middleware:"
+              echo "$UNPROTECTED"
+            fi
+          fi
+
+          # ── Django / Flask (Python) ──────────────────────
+          if find . -name "*.py" | grep -v node_modules | xargs grep -lE "from django|from flask|import flask" 2>/dev/null | grep -q .; then
+            echo "--- Detected: Django/Flask ---"
+            DETECTED=1
+
+            PROTECTED=$(grep -rEn "@login_required|@permission_required|@jwt_required|LoginRequiredMixin" --include="*.py" . 2>/dev/null)
+            if [ -z "$PROTECTED" ]; then
+              echo "::error::Django/Flask — No @login_required or @permission_required decorators found. Views may be publicly accessible."
+              FAIL=1
+            else
+              echo "✅ Django/Flask — auth decorators detected"
+            fi
+          fi
+
+          # ── Spring Boot (Java) ───────────────────────────
+          if find . -name "*.java" 2>/dev/null | grep -q .; then
+            echo "--- Detected: Spring Boot (Java) ---"
+            DETECTED=1
+
+            if ! grep -rEn "@PreAuthorize|SecurityFilterChain|WebSecurityConfigurerAdapter|antMatchers" --include="*.java" . 2>/dev/null | grep -q .; then
+              echo "::error::Spring Boot — No security configuration found (@PreAuthorize / SecurityFilterChain). Routes may be unprotected."
+              FAIL=1
+            else
+              echo "✅ Spring Boot — security configuration detected"
+            fi
+
+            # Warn: permitAll without restriction
+            if grep -rEn "\.permitAll\(\)" --include="*.java" . 2>/dev/null | grep -v "//"; then
+              echo "::warning::Spring Boot — .permitAll() detected. Verify this is only for intended public endpoints."
+            fi
+          fi
+
+          # ── PostgreSQL / MySQL ───────────────────────────
+          if find . \( -name "*.sql" -o -name "*.pgsql" \) 2>/dev/null | grep -q .; then
+            echo "--- Detected: SQL schema files ---"
+            DETECTED=1
+
+            if grep -rEin "GRANT ALL.*TO PUBLIC|GRANT ALL PRIVILEGES.*TO PUBLIC" --include="*.sql" --include="*.pgsql" . 2>/dev/null; then
+              echo "::error::Database — GRANT ALL TO PUBLIC detected. This exposes all tables to unauthenticated users."
+              FAIL=1
+            fi
+
+            if grep -rEin "GRANT.*TO\s+''" --include="*.sql" --include="*.pgsql" . 2>/dev/null; then
+              echo "::error::Database — GRANT to empty user detected. This may expose data to anonymous connections."
+              FAIL=1
+            fi
+
+            if [ "$FAIL" -eq 0 ]; then
+              echo "✅ SQL schema — no public grant issues detected"
+            fi
+          fi
+
+          # ── Docker / Kubernetes ──────────────────────────
+          if find . \( -name "Dockerfile*" -o -name "docker-compose*.yml" -o -name "deployment.yaml" -o -name "*.k8s.yml" \) -not -path "*/node_modules/*" 2>/dev/null | grep -q .; then
+            echo "--- Detected: Docker/Kubernetes ---"
+            DETECTED=1
+
+            # Warn: sensitive service ports exposed to host
+            if grep -rEn "['\"]?(3306|5432|27017|6379|9200|2375):[0-9]+['\"]?" --include="*.yml" --include="*.yaml" . 2>/dev/null | grep -v node_modules; then
+              echo "::warning::Docker — Sensitive port(s) (DB/cache/Docker daemon) mapped to host. Restrict to internal networks."
+            fi
+
+            # Warn: Dockerfile has no non-root USER directive
+            for df in $(find . -name "Dockerfile*" -not -path "*/node_modules/*" 2>/dev/null); do
+              if grep -q "^FROM" "$df" && ! grep -qE "^USER\s+(?!root)" "$df"; then
+                echo "::warning file=$df::Dockerfile has no non-root USER directive — containers should not run as root."
+              fi
+            done
+          fi
+
+          # ── REST API / Generic ───────────────────────────
+          if find . \( -name "*.js" -o -name "*.ts" -o -name "*.py" -o -name "*.java" \) -not -path "*/node_modules/*" 2>/dev/null | grep -q .; then
+            echo "--- Running generic REST API checks ---"
+            DETECTED=1
+
+            # Warn: JWT sign/verify without environment variable for secret
+            if grep -rEn "jwt\.sign\(|jwt\.verify\(" --include="*.js" --include="*.ts" . 2>/dev/null \
+              | grep -v node_modules | grep -v "//" \
+              | grep -vE "process\.env|config\.|secrets\."; then
+              echo "::warning::REST API — JWT call found with possible hardcoded secret. Use environment variables."
+            fi
+
+            # Fail: Access-Control-Allow-Origin: * set directly in code
+            if grep -rEn "Access-Control-Allow-Origin:\s*\*" --include="*.js" --include="*.ts" --include="*.py" --include="*.java" . 2>/dev/null \
+              | grep -v node_modules | grep -v "//"; then
+              echo "::error::REST API — Access-Control-Allow-Origin: * found in source code. Restrict CORS to known origins."
+              FAIL=1
+            fi
+          fi
+
+          # ── Final result ─────────────────────────────────
+          echo ""
+          if [ "$DETECTED" -eq 0 ]; then
+            echo "::error::Access Control Audit — No recognizable technology stack detected. Cannot verify security controls are in place."
+            exit 1
+          fi
+
+          if [ "$FAIL" -eq 1 ]; then
+            echo "❌ Access Control Audit failed — critical issues found above"
+            exit 1
+          fi
+
+          echo "✅ Access Control Audit passed"
+
+  # ─────────────────────────────────────────────────
+  # JOB 2 — Route Authorization Integrity
+  # Verifies the Vue Router guard enforces authentication
+  # and that protected routes have the authorize meta.
+  # ─────────────────────────────────────────────────
+  route-auth-audit:
+    name: Route Authorization Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+
+      - name: Verify Router Guard Integrity
+        run: |
+          echo "=== Router Guard Integrity Check ==="
+          FAIL=0
+
+          ROUTER="src/app/router/index.js"
+
+          # Fail: no beforeEach guard at all
+          if ! grep -q "router\.beforeEach" "$ROUTER"; then
+            echo "::error file=$ROUTER::router.beforeEach guard not found — all routes may be unprotected"
+            FAIL=1
+          fi
+
+          # Fail: guard does not check authorize meta
+          if ! grep -q "authorize" "$ROUTER"; then
+            echo "::error file=$ROUTER::No authorization enforcement found in router guard"
+            FAIL=1
+          fi
+
+          # Fail: guard does not verify authentication state
+          if ! grep -qE "Auth\.user|autoSignIn|currentUser" "$ROUTER"; then
+            echo "::error file=$ROUTER::Router guard does not appear to verify authentication state"
+            FAIL=1
+          fi
+
+          # Warn: no redirect for unauthenticated users
+          if ! grep -q "signin" "$ROUTER"; then
+            echo "::warning file=$ROUTER::Router guard may not redirect unauthenticated users to /signin"
+          fi
+
+          if [ "$FAIL" -eq 0 ]; then
+            echo "✅ Router guard integrity verified"
+          else
+            exit 1
+          fi
+
+      - name: Audit Route Definitions for Missing Auth Metadata
+        run: node .github/scripts/route-auth-audit.js
+
+  # ─────────────────────────────────────────────────
+  # JOB 3 — Static Security Analysis (OWASP)
+  # Runs Semgrep with OWASP Top 10 and JavaScript
+  # security rulesets to detect unauthorized access
+  # patterns, broken auth, and insecure code.
+  # ─────────────────────────────────────────────────
+  static-security-scan:
+    name: Static Security Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Semgrep
+        run: pip install semgrep --quiet
+
+      - name: Run OWASP Top 10 Scan
+        run: |
+          semgrep \
+            --config=p/owasp-top-ten \
+            --config=p/javascript \
+            --exclude=node_modules \
+            --exclude=dist \
+            --exclude=tests \
+            --include="*.js" \
+            --include="*.vue" \
+            --error \
+            src/ functions/src/
+        continue-on-error: true
+
+      - name: Scan for Auth Bypass Patterns
+        run: |
+          echo "=== Auth Bypass Pattern Scan ==="
+          DETECTED=0
+          FAIL=0
+
+          # Detect unconditional frontend router guard bypass (Vue / React Router)
+          if grep -rEn "next\(true\)|beforeEach.*return true|navigate\(.*\{.*replace.*\}\)" \
+            --include="*.js" --include="*.ts" --include="*.vue" . 2>/dev/null | grep -v node_modules | grep -v "//"; then
+            echo "::warning::Possible unconditional navigation guard bypass detected"
+            DETECTED=1
+          fi
+
+          # Detect hardcoded passwords or tokens
+          if grep -rEn "password\s*[=:]\s*['\"][^'\"]{4,}['\"]" \
+            --include="*.js" --include="*.ts" --include="*.vue" --include="*.py" --include="*.java" \
+            . 2>/dev/null | grep -v node_modules | grep -v "//"; then
+            echo "::error::Hardcoded password value detected in source code"
+            DETECTED=1
+            FAIL=1
+          fi
+
+          # Detect eval() / exec() usage (code injection / auth bypass risk)
+          if grep -rEn "\beval\(|\bexec\(" \
+            --include="*.js" --include="*.ts" --include="*.vue" --include="*.py" \
+            . 2>/dev/null | grep -v node_modules | grep -v "//"; then
+            echo "::warning::eval()/exec() usage detected — review for potential code injection risk"
+            DETECTED=1
+          fi
+
+          # Detect disabled SSL/TLS certificate verification
+          if grep -rEn "rejectUnauthorized\s*:\s*false|verify\s*=\s*False|ssl_verify\s*=\s*false" \
+            --include="*.js" --include="*.ts" --include="*.py" --include="*.java" \
+            . 2>/dev/null | grep -v node_modules | grep -v "//"; then
+            echo "::error::SSL/TLS certificate verification disabled. This allows man-in-the-middle attacks."
+            DETECTED=1
+            FAIL=1
+          fi
+
+          # Detect token or API key passed in query string (URL exposure)
+          if grep -rEn "[?&](token|api_key|apikey|access_token|secret)=" \
+            --include="*.js" --include="*.ts" --include="*.vue" --include="*.py" \
+            . 2>/dev/null | grep -v node_modules | grep -v "//"; then
+            echo "::warning::Sensitive token/key passed in URL query string — use Authorization header instead."
+            DETECTED=1
+          fi
+
+          # ── Final result ─────────────────────────────────
+          echo ""
+          if [ "$DETECTED" -eq 0 ]; then
+            echo "::error::Auth Bypass Scan — No source files or patterns were matched. Cannot confirm scan was effective."
+            exit 1
+          fi
+
+          if [ "$FAIL" -eq 0 ]; then
+            echo "✅ Auth bypass pattern scan passed"
+          else
+            exit 1
+          fi

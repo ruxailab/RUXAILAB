@@ -70,7 +70,7 @@ jobs:
                   const nameLower = workflow.name.toLowerCase();
                   
                   if (nameLower.includes('test')) testFails += failedToday.length;
-                  else if (nameLower.includes('gitguardian') || nameLower.includes('security')) secFails += failedToday.length;
+                  else if (nameLower.includes('gitguardian') || nameLower.includes('security') || nameLower.includes('integrity')) secFails += failedToday.length;
                   else if (nameLower.includes('sonar') || nameLower.includes('code issue') || nameLower.includes('code smell') || nameLower.includes('pr check') || nameLower.includes('lint')) codeFails += failedToday.length;
                 } else {
                    core.info(`- ✅ Workflow '${workflow.name}' sem falhas registradas hoje.`);
