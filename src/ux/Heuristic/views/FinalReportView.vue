@@ -30,6 +30,10 @@
             </v-stepper-item>
             <v-divider />
             <v-stepper-item :complete="step > 2" :value="2" color="orange">
+              Paso intermedio
+            </v-stepper-item>
+            <v-divider />
+            <v-stepper-item :complete="step > 3" :value="3" color="orange">
               Generate Report
             </v-stepper-item>
           </v-stepper-header>
@@ -61,8 +65,38 @@
               </div>
             </v-stepper-window-item>
 
+            <!-- Paso intermedio: comentarios por heurística -->
             <v-stepper-window-item :value="2" class="align-mid pt-5 min-h-500">
-              <FinalReportSelectionBox @return-step="step--" />
+              <div class="container">
+                <h3 class="mb-6">Comentarios por heurística</h3>
+                <div
+                  v-for="heuristic in test?.testStructure || []"
+                  :key="heuristic.id"
+                  class="mb-4"
+                >
+                  <TextareaForm
+                    v-model="heuristicComments[heuristic.id]"
+                    :title="heuristic.title || heuristic.name"
+                    :subtitle="'Escribe un comentario para esta heurística'"
+                  />
+                </div>
+                <v-row class="ma-0" justify="space-between" align-content="end">
+                  <v-btn
+                    color="blue-grey-darken-3"
+                    elevation="0"
+                    @click="step = 1"
+                    >Anterior</v-btn
+                  >
+                  <v-btn color="orange" @click="step = 3">Siguiente</v-btn>
+                </v-row>
+              </div>
+            </v-stepper-window-item>
+
+            <v-stepper-window-item :value="3" class="align-mid pt-5 min-h-500">
+              <FinalReportSelectionBox
+                :heuristic-comments="heuristicComments"
+                @return-step="step--"
+              />
             </v-stepper-window-item>
           </v-stepper-window>
         </v-stepper>
@@ -72,7 +106,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, reactive, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import TextControls from '@/ux/Heuristic/components/final_report/FinalReportControls.vue'
@@ -80,17 +114,35 @@ import FinalReportSelectionBox from '@/ux/Heuristic/components/final_report/Fina
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import IntroFinalReport from '@/ux/Heuristic/components/IntroFinalReport.vue'
+import TextareaForm from '@/shared/components/TextareaForm.vue'
 
 const store = useStore()
 const router = useRouter()
 
 const step = ref(1)
+const subStep = ref(1)
 const object = ref({})
 let intro = ref(null)
 
 const loading = ref(false)
 
 const test = computed(() => store.getters.test)
+
+// Comentarios por heurística (reactivo por id)
+const heuristicComments = reactive({})
+watch(
+  () => test.value?.testStructure,
+  (structure) => {
+    if (Array.isArray(structure)) {
+      structure.forEach((heuristic) => {
+        if (!(heuristic.id in heuristicComments)) {
+          heuristicComments[heuristic.id] = ''
+        }
+      })
+    }
+  },
+  { immediate: true },
+)
 
 const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
 
@@ -140,8 +192,10 @@ onMounted(() => {
 <style scoped>
 .form-control {
   background-color: white;
-  box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.2),
-    0px 0px 0px 0px rgba(0, 0, 0, 0.14), 0px 0px 0px 0px rgba(0, 0, 0, 0.12) !important;
+  box-shadow:
+    0px 0px 0px 0px rgba(0, 0, 0, 0.2),
+    0px 0px 0px 0px rgba(0, 0, 0, 0.14),
+    0px 0px 0px 0px rgba(0, 0, 0, 0.12) !important;
   width: 100%;
   height: 55vh;
   resize: none;
