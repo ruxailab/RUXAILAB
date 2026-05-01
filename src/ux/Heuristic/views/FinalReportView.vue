@@ -87,7 +87,12 @@
                     @click="step = 1"
                     >Anterior</v-btn
                   >
-                  <v-btn color="orange" @click="step = 3">Siguiente</v-btn>
+                  <v-btn
+                    color="orange"
+                    :loading="loading"
+                    @click="handleNextFromComments"
+                    >Siguiente</v-btn
+                  >
                 </v-row>
               </div>
             </v-stepper-window-item>
@@ -130,6 +135,19 @@ const test = computed(() => store.getters.test)
 
 // Comentarios por heurística (reactivo por id)
 const heuristicComments = reactive({})
+
+// Cargar comentarios existentes del test
+watch(
+  () => test.value,
+  (testValue) => {
+    if (testValue?.heuristicComments) {
+      Object.assign(heuristicComments, testValue.heuristicComments)
+    }
+  },
+  { immediate: true },
+)
+
+// Inicializar campos vacíos para nuevas heurísticas
 watch(
   () => test.value?.testStructure,
   (structure) => {
@@ -175,6 +193,21 @@ const handleNext = async () => {
   loading.value = true
   await update()
   loading.value = false
+  step.value++
+}
+
+const saveHeuristicComments = async () => {
+  loading.value = true
+  object.value.heuristicComments = { ...heuristicComments }
+  const rawData = { ...test.value, ...object.value }
+  const updatedTest = instantiateStudyByType(rawData.testType, rawData)
+  await store.dispatch('updateStudy', updatedTest)
+  await store.dispatch('getStudy', { id: test.value.id })
+  loading.value = false
+}
+
+const handleNextFromComments = async () => {
+  await saveHeuristicComments()
   step.value++
 }
 
