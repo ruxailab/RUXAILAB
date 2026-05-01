@@ -68,74 +68,26 @@
             <!-- Paso intermedio: comentarios por heurística -->
             <v-stepper-window-item :value="2" class="align-mid pt-5 min-h-500">
               <div class="container">
-                <div class="d-flex justify-space-between align-center mb-6">
-                  <h3>Comentarios por heurística</h3>
-                  <v-chip color="primary" variant="tonal">
-                    {{ commentsCount }} /
-                    {{ (test?.testStructure || []).length }} completados
-                  </v-chip>
-                </div>
-
+                <h3 class="mb-6">Comentarios por heurística</h3>
                 <div
-                  class="comments-container"
-                  style="max-height: 60vh; overflow-y: auto"
+                  v-for="heuristic in test?.testStructure || []"
+                  :key="heuristic.id"
+                  class="mb-4"
                 >
-                  <v-expansion-panels variant="accordion" multiple>
-                    <v-expansion-panel
-                      v-for="(heuristic, index) in test?.testStructure || []"
-                      :key="heuristic.id"
-                      :value="heuristic.id"
-                    >
-                      <v-expansion-panel-title>
-                        <div class="d-flex align-center gap-2">
-                          <v-icon
-                            :color="
-                              heuristicComments[heuristic.id]
-                                ? 'success'
-                                : 'grey'
-                            "
-                            size="small"
-                          >
-                            {{
-                              heuristicComments[heuristic.id]
-                                ? 'mdi-check-circle'
-                                : 'mdi-circle-outline'
-                            }}
-                          </v-icon>
-                          <span class="font-weight-medium">
-                            {{ index + 1 }}.
-                            {{ heuristic.title || heuristic.name }}
-                          </span>
-                        </div>
-                      </v-expansion-panel-title>
-                      <v-expansion-panel-text>
-                        <TextareaForm
-                          v-model="heuristicComments[heuristic.id]"
-                          :title="'Comentario'"
-                          :subtitle="'Escribe un comentario para esta heurística'"
-                        />
-                      </v-expansion-panel-text>
-                    </v-expansion-panel>
-                  </v-expansion-panels>
+                  <TextareaForm
+                    v-model="heuristicComments[heuristic.id]"
+                    :title="heuristic.title || heuristic.name"
+                    :subtitle="'Escribe un comentario para esta heurística'"
+                  />
                 </div>
-
-                <v-row
-                  class="ma-0 mt-6"
-                  justify="space-between"
-                  align-content="end"
-                >
+                <v-row class="ma-0" justify="space-between" align-content="end">
                   <v-btn
                     color="blue-grey-darken-3"
                     elevation="0"
                     @click="step = 1"
                     >Anterior</v-btn
                   >
-                  <v-btn
-                    color="orange"
-                    :loading="loading"
-                    @click="handleNextFromComments"
-                    >Siguiente</v-btn
-                  >
+                  <v-btn color="orange" @click="step = 3">Siguiente</v-btn>
                 </v-row>
               </div>
             </v-stepper-window-item>
@@ -178,26 +130,6 @@ const test = computed(() => store.getters.test)
 
 // Comentarios por heurística (reactivo por id)
 const heuristicComments = reactive({})
-
-// Contador de comentarios completados
-const commentsCount = computed(() => {
-  return Object.values(heuristicComments).filter(
-    (comment) => comment && comment.trim().length > 0,
-  ).length
-})
-
-// Cargar comentarios existentes del test
-watch(
-  () => test.value,
-  (testValue) => {
-    if (testValue?.heuristicComments) {
-      Object.assign(heuristicComments, testValue.heuristicComments)
-    }
-  },
-  { immediate: true },
-)
-
-// Inicializar campos vacíos para nuevas heurísticas
 watch(
   () => test.value?.testStructure,
   (structure) => {
@@ -243,21 +175,6 @@ const handleNext = async () => {
   loading.value = true
   await update()
   loading.value = false
-  step.value++
-}
-
-const saveHeuristicComments = async () => {
-  loading.value = true
-  object.value.heuristicComments = { ...heuristicComments }
-  const rawData = { ...test.value, ...object.value }
-  const updatedTest = instantiateStudyByType(rawData.testType, rawData)
-  await store.dispatch('updateStudy', updatedTest)
-  await store.dispatch('getStudy', { id: test.value.id })
-  loading.value = false
-}
-
-const handleNextFromComments = async () => {
-  await saveHeuristicComments()
   step.value++
 }
 
