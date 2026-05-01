@@ -23,7 +23,12 @@
             marginRight: '8px',
           }"
         />
-        <span>{{ option }} ({{ counts[option] || 0 }})</span>
+        <span>
+          {{ option }} ({{ counts[option] || 0 }})
+          <template v-if="showPercentages">
+            - {{ optionPercent(option) }}%
+          </template>
+        </span>
       </div>
     </div>
   </v-card>
@@ -50,7 +55,44 @@ const props = defineProps({
       '#D4E157',
     ],
   },
+  showPercentages: {
+    type: Boolean,
+    default: false,
+  },
 })
+
+const getTotal = () => Object.values(props.counts || {}).reduce((a, b) => a + b, 0)
+
+const optionPercent = (option) => {
+  const total = getTotal()
+  if (!total) return '0.0'
+  const value = props.counts?.[option] || 0
+  return ((value * 100) / total).toFixed(1)
+}
+
+const drawPercentLabel = (ctx, option, startAngle, endAngle) => {
+  const total = getTotal()
+  if (!total) return
+
+  const value = props.counts?.[option] || 0
+  if (!value) return
+
+  const percentage = (value * 100) / total
+  if (percentage < 6) return
+
+  const midAngle = (startAngle + endAngle) / 2
+  const labelRadius = 62
+  const x = 90 + Math.cos(midAngle) * labelRadius
+  const y = 90 + Math.sin(midAngle) * labelRadius
+
+  ctx.save()
+  ctx.fillStyle = '#1f2937'
+  ctx.font = '600 11px sans-serif'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  ctx.fillText(`${percentage.toFixed(0)}%`, x, y)
+  ctx.restore()
+}
 
 const drawChart = () => {
   nextTick(() => {
@@ -58,19 +100,25 @@ const drawChart = () => {
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    const total = Object.values(props.counts).reduce((a, b) => a + b, 0)
+    const total = getTotal()
     if (!total) return
     let start = -0.5 * Math.PI
     props.options.forEach((opt, idx) => {
       const count = props.counts[opt] || 0
       const angle = (count / total) * 2 * Math.PI
+      const end = start + angle
       ctx.beginPath()
       ctx.moveTo(90, 90)
-      ctx.arc(90, 90, 80, start, start + angle)
+      ctx.arc(90, 90, 80, start, end)
       ctx.closePath()
       ctx.fillStyle = props.chartColors[idx % props.chartColors.length]
       ctx.fill()
-      start += angle
+
+      if (props.showPercentages) {
+        drawPercentLabel(ctx, opt, start, end)
+      }
+
+      start = end
     })
     // Círculo central blanco (donut)
     ctx.beginPath()

@@ -775,6 +775,32 @@
       "min": "Mínimo",
       "std": "Desviación estándar"
     },
+    "summary": {
+      "title": "Resumen de Evaluación",
+      "usabilityAverageTest": "Usability Average Test",
+      "average": "Promedio",
+      "max": "Máx.",
+      "min": "Mín.",
+      "std": "Desv. Est.",
+      "evaluators": "Evaluadores",
+      "evaluatorsHint": "Se muestra como contexto, pero sin protagonismo en el diseño",
+      "impact": "Impacto de las alertas",
+      "impactHint": "Cuánto cambia la evaluación al tener en cuenta las alertas",
+      "warningSummary": "Implicación de las alertas",
+      "warningExplanation": "Las preguntas respondidas como no verificables analizando únicamente la web se han marcado como alertas. Para estas alertas, se ha calculado el cambio del porcentaje en dos escenarios: si esas respuestas hubieran recibido la puntuación máxima posible y si hubieran recibido la puntuación mínima posible.",
+      "warningSubtitle": "Casos que no se pueden comprobar como evaluador, y qué porcentaje tendríamos si estuvieran resueltos todos (avrgMaxWarning) o teniendo en cuenta los campos que no cumplen (avrgMinWarning)",
+      "imagesByHeuristic": "Total de Imágenes por Heurística",
+      "imagesSubtitle": "Distribución horizontal por heurística",
+      "responsesByOption": "Tipo de Respuesta",
+      "responsesSubtitle": "Distribución circular de las opciones seleccionadas",
+      "noImageData": "Sin datos de imágenes",
+      "noOptionData": "Sin datos de opciones",
+      "averageWarning": "Umbral medio de alertas",
+      "averageMaxWarning": "Umbral medio máximo de alertas",
+      "averageMinWarning": "Umbral medio mínimo de alertas",
+      "groups": "grupos",
+      "metrics": "métricas"
+    },
     "evaluators": {
       "headers": {
         "table": "Tabla",

@@ -9,7 +9,7 @@
     </v-overlay>
     <IntroAnswer
       v-if="answers != null && intro == true"
-      @go-to-coops="goToCoops"
+      @go-to-coops="goToCoops"  
     />
     <v-row
       v-else-if="answers != null || intro == false"
@@ -49,6 +49,8 @@
               :result="showFinalResult"
               :image-totals-by-heuristic="imageTotalsByHeuristic"
               :option-response-totals="optionResponseTotals"
+              :test-title="testTitle"
+              :evaluator-identity="singleEvaluatorIdentity"
             />
 
             <!-- Tab 2 - Evaluators -->
@@ -85,7 +87,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, onBeforeMount } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import BarChart from '@/ux/Heuristic/components/charts/BarChart.vue'
 import RadarChart from '@/shared/components/charts/RadarChart.vue'
@@ -106,6 +108,8 @@ import {
   calcFinalResult,
   calcResultsWarnings,
   formatTimeSpentFromMs,
+  buildHeuristicTestBundlePayload,
+  downloadHeuristicTestBundlePayload,
 } from '@/ux/Heuristic/utils/statistics'
 import {
   heuristicsStatisticsHeaders,
@@ -115,6 +119,7 @@ import {
 
 const store = useStore()
 const router = useRouter()
+const route = useRoute()
 const { t } = useI18n()
 
 const props = defineProps({
@@ -434,6 +439,38 @@ const test = computed(() => {
   return store.getters.test || {}
 })
 
+const testTitle = computed(
+  () => test.value?.testTitle || test.value?.title || test.value?.name || '',
+)
+
+const testBundlePayload = computed(() =>
+  buildHeuristicTestBundlePayload({
+    test: test.value,
+    testAnswerDocument: testAnswerDocument.value,
+    evaluatorItems: evaluatorStatistics.value?.items || [],
+  }),
+)
+
+const singleEvaluatorIdentity = computed(() => {
+  if (Number(showFinalResult.value?.evaluators) !== 1) return ''
+
+  const evaluatorUserDocId =
+    resultEvaluator.value?.find((item) => item?.userDocId)?.userDocId || ''
+
+  if (!evaluatorUserDocId) return ''
+
+  const participants = [test.value?.testAdmin, ...(test.value?.cooperators || [])]
+  const evaluator = participants.find((item) => item?.userDocId === evaluatorUserDocId)
+
+  return (
+    evaluator?.fullName ||
+    evaluator?.name ||
+    evaluator?.displayName ||
+    evaluator?.email ||
+    evaluatorUserDocId
+  )
+})
+
 const checkIfNan = (value) => {
   return !isNaN(Number(value)) ? value : '-'
 }
@@ -578,11 +615,22 @@ watch(
 )
 
 onBeforeMount(async () => {
+  const studyId = props.id || route.params.id
+  if (studyId && !store.getters.test?.id) {
+    await store.dispatch('getStudy', { id: studyId })
+  }
   await store.dispatch('getCurrentTestAnswerDoc')
 })
 
 onMounted(() => {
   pythonFunction()
+
+  if (typeof window !== 'undefined') {
+    // Handy debug API from browser console to inspect/download test+answers.
+    window.getHeuristicTestBundlePayload = () => testBundlePayload.value
+    window.downloadHeuristicTestBundlePayload = (fileName) =>
+      downloadHeuristicTestBundlePayload(testBundlePayload.value, fileName)
+  }
 })
 </script>
 
