@@ -81,10 +81,13 @@
                 >
                   <v-chip
                     v-if="header.value != 'heuristic'"
-                    :color="getColor(item[header.value], item.max, item.min)"
-                    class="chip"
+                    :class="[
+                      'score-chip',
+                      getColor(item[header.value], item.max, item.min),
+                    ]"
+                    variant="flat"
                   >
-                    {{ item[header.value] ? item[header.value].toFixed(2) : 0 }}
+                    {{ formatScore(item[header.value]) }}
                   </v-chip>
                   <v-btn
                     v-else
@@ -110,7 +113,11 @@
                   <div style="padding-top: 2px; padding-bottom: 2px">
                     <v-chip
                       style="width: 35%"
-                      :color="getColor(item.average, item.max, item.min)"
+                      :class="[
+                        'score-chip',
+                        getColor(item.average, item.max, item.min),
+                      ]"
+                      variant="flat"
                     >
                       {{ checkIfNan(item.percentage) }}
                     </v-chip>
@@ -285,18 +292,65 @@ defineProps({
 
 defineEmits(['go-to-heuristic'])
 
-// Local copy — keeps component self-contained without importing from parent
 const getColor = (value, max, min) => {
-  if (value === null || value === undefined) return 'grey'
-  if (max === min) return 'blue'
-  const normalized = (value - min) / (max - min)
-  if (normalized < 0.25) return 'red'
-  if (normalized < 0.5) return 'orange'
-  if (normalized < 0.75) return 'yellow'
-  return 'green'
+  const numericValue = Number(value)
+  const numericMax = Number(max)
+  const numericMin = Number(min)
+
+  if (!Number.isFinite(numericValue)) return 'score-chip--empty'
+  if (!Number.isFinite(numericMax) || !Number.isFinite(numericMin)) {
+    return 'score-chip--empty'
+  }
+  if (numericMax === numericMin) {
+    return numericValue > 0 ? 'score-chip--high' : 'score-chip--empty'
+  }
+
+  const normalized = (numericValue - numericMin) / (numericMax - numericMin)
+  if (normalized < 0.25) return 'score-chip--low'
+  if (normalized < 0.5) return 'score-chip--medium-low'
+  if (normalized < 0.75) return 'score-chip--medium-high'
+  return 'score-chip--high'
 }
 
 const checkIfNan = (value) => {
   return isNaN(value) || value === null ? '—' : value
 }
+
+const formatScore = (value) => {
+  const numericValue = Number(value)
+  return Number.isFinite(numericValue) ? numericValue.toFixed(2) : '—'
+}
 </script>
+
+<style scoped>
+.score-chip {
+  min-width: 58px;
+  justify-content: center;
+  font-weight: 500;
+}
+
+.score-chip--low {
+  background-color: #fde5e2 !important;
+  color: #ff2a1a !important;
+}
+
+.score-chip--medium-low {
+  background-color: #ffefd9 !important;
+  color: #ff8500 !important;
+}
+
+.score-chip--medium-high {
+  background-color: #fff8dc !important;
+  color: #ffd000 !important;
+}
+
+.score-chip--high {
+  background-color: #e5f3e8 !important;
+  color: #25a83a !important;
+}
+
+.score-chip--empty {
+  background-color: #eeeeee !important;
+  color: #777777 !important;
+}
+</style>
