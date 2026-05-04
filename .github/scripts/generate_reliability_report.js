@@ -15,6 +15,7 @@ function formatPercent(value) {
 
 function parseEcCoverage(report) {
   const coverage = {}
+  const ecTests = []
   const ecTagRegex = /\[EC\]\[([^\]]+)\]\[(valid|invalid)\]/i
 
   const testSuites = Array.isArray(report?.testResults) ? report.testResults : []
@@ -35,6 +36,7 @@ function parseEcCoverage(report) {
       const variable = match[1]
       const ecType = match[2].toLowerCase()
       const status = assertion.status || 'failed'
+      const testName = assertion.title
 
       if (!coverage[variable]) {
         coverage[variable] = {
@@ -49,10 +51,17 @@ function parseEcCoverage(report) {
       } else {
         coverage[variable][ecType].failed += 1
       }
+
+      ecTests.push({
+        name: testName,
+        variable,
+        type: ecType,
+        status,
+      })
     })
   })
 
-  return coverage
+  return { coverage, ecTests }
 }
 
 function summarizeEcCoverage(coverage) {
@@ -130,7 +139,7 @@ module.exports = async ({ github, context, core }) => {
       ? Math.round((passedTests / totalTests) * 1000) / 10
       : 100
 
-  const ecCoverage = isJestReport ? parseEcCoverage(report) : {}
+  const { coverage: ecCoverage, ecTests } = isJestReport ? parseEcCoverage(report) : { coverage: {}, ecTests: [] }
   const ecSummary = summarizeEcCoverage(ecCoverage)
 
   const currentEntry = hasTests
@@ -248,23 +257,50 @@ module.exports = async ({ github, context, core }) => {
   markdown += `| Report type | ${currentEntry.report_type || 'unknown'} |\n`
   markdown += `| Reliability score | ${formatPercent(currentEntry.score)} |\n\n`
 
-  markdown += `## Equivalence Classes (EC) coverage\n\n`
-  markdown += `| Variable | Valid EC (passed/total) | Invalid EC (passed/total) |\n`
-  markdown += `| :-- | --: | --: |\n`
+  markdown += `## Equivalence Classes (EC) Coverage\n\n`
+  markdown += `Equivalence class testing partitions inputs into groups that should be treated identically. This section shows coverage of **valid inputs** (accepted/processed) and **invalid inputs** (properly rejected).\n\n`
+  markdown += `### EC Coverage by Input Variable\n\n`
+  markdown += `| Input Variable | Acceptance Cases (✓/total) | Rejection Cases (✓/total) | Status |\n`
+  markdown += `| :-- | --: | --: | :-- |\n`
 
   const ecVariables = Object.keys(ecCoverage).sort()
   if (ecVariables.length === 0) {
-    markdown += `| _No tagged EC tests found_ | 0/0 | 0/0 |\n`
+    markdown += `| _No tagged EC tests found_ | 0/0 | 0/0 | ⚠️ No coverage |\n`
   } else {
     ecVariables.forEach((variable) => {
       const data = ecCoverage[variable]
-      markdown += `| ${variable} | ${data.valid.passed}/${data.valid.total} | ${data.invalid.passed}/${data.invalid.total} |\n`
+      const validStatus = data.valid.total === 0 ? '-' : data.valid.passed === data.valid.total ? '✅' : '⚠️'
+      const invalidStatus = data.invalid.total === 0 ? '-' : data.invalid.passed === data.invalid.total ? '✅' : '⚠️'
+      const overallStatus = (validStatus === '✅' && invalidStatus === '✅') ? '✅ Complete' : '⚠️ Partial'
+      markdown += `| ${variable} | ${data.valid.passed}/${data.valid.total} ${validStatus} | ${data.invalid.passed}/${data.invalid.total} ${invalidStatus} | ${overallStatus} |\n`
     })
   }
 
-  markdown += `\n`
-  markdown += `Valid EC totals: ${ecSummary.validPassed}/${ecSummary.validTotal} passed.\n`
-  markdown += `Invalid EC totals: ${ecSummary.invalidPassed}/${ecSummary.invalidTotal} passed.\n\n`
+  markdown += `\n### Individual EC Test Results\n\n`
+  markdown += `| Test Name | Variable | Type | Result |\n`
+  markdown += `| :-- | :-- | :-- | :-- |\n`
+
+  if (ecTests.length === 0) {
+    markdown += `| _No tagged EC tests found_ | - | - | - |\n`
+  } else {
+    ecTests.forEach((test) => {
+      const statusIcon = test.status === 'passed' ? '✅ Passed' : '❌ Failed'
+      const typeLabel = test.type === 'valid' ? 'Acceptance' : 'Rejection'
+      markdown += `| ${test.name} | ${test.variable} | ${typeLabel} | ${statusIcon} |\n`
+    })
+  }
+
+  markdown += `\n### Overall EC Summary\n\n`
+  markdown += `- **Acceptance Cases (Valid EC)**: ${ecSummary.validPassed}/${ecSummary.validTotal} passed\n`
+  markdown += `  - Tests that verify the system **correctly accepts and processes valid inputs**.\n`
+  markdown += `  - If all pass: system properly handles normal/correct data.\n\n`
+  markdown += `- **Rejection Cases (Invalid EC)**: ${ecSummary.invalidPassed}/${ecSummary.invalidTotal} passed\n`
+  markdown += `  - Tests that verify the system **properly rejects and handles invalid inputs**.\n`
+  markdown += `  - If all pass: system has robust error handling and boundary validation.\n\n`
+  
+  const acceptanceRate = ecSummary.validTotal > 0 ? Math.round((ecSummary.validPassed / ecSummary.validTotal) * 1000) / 10 : 100
+  const rejectionRate = ecSummary.invalidTotal > 0 ? Math.round((ecSummary.invalidPassed / ecSummary.invalidTotal) * 1000) / 10 : 100
+  markdown += `**EC Reliability Assessment**: Acceptance ${acceptanceRate}% + Rejection ${rejectionRate}% = **${formatPercent((acceptanceRate + rejectionRate) / 2)} average EC coverage**\n\n`
 
   markdown += `## Recent history\n\n`
   markdown += `| Date | Status | Total | Passed | Failed | Flaky | Score |\n`
@@ -273,8 +309,26 @@ module.exports = async ({ github, context, core }) => {
     markdown += `| ${entry.date} | ${entry.status} | ${entry.total} | ${entry.passed} | ${entry.failed} | ${entry.flaky} | ${formatPercent(entry.score)} |\n`
   })
 
-  markdown += `\n## Interpretation\n\n`
-  markdown += `This pipeline measures reliability using automated test outcomes. Prefer modeling reliability scenarios with equivalence classes (valid and invalid ECs) so each EC is covered by at least one test case. Any failure should be treated as a reliability regression.\n`
+  markdown += `## Interpretation & Analysis\n\n`
+  markdown += `### What does this report measure?\n`
+  markdown += `This pipeline measures **input reliability** through equivalence class testing:\n`
+  markdown += `- **Acceptance cases** ensure the system works correctly with valid, well-formed inputs.\n`
+  markdown += `- **Rejection cases** ensure the system safely rejects or handles invalid/malformed inputs.\n\n`
+  
+  markdown += `### How to interpret the results:\n\n`
+  markdown += `| Scenario | Meaning | Action |\n`
+  markdown += `| :-- | :-- | :-- |\n`
+  markdown += `| ✅ All Acceptance & Rejection cases pass | System is robust | No action needed |\n`
+  markdown += `| ⚠️ Some Acceptance cases fail | Normal inputs break | Fix input handling |\n`
+  markdown += `| ⚠️ Some Rejection cases fail | Invalid inputs not caught | Add validation |\n`
+  markdown += `| ❌ Overall score < 80% | Significant reliability gaps | Increase test coverage |\n\n`
+  
+  markdown += `### Reliability scoring formula:\n`
+  markdown += `\`\`\`\n`
+  markdown += `Score = (Passed Tests / Total Tests) × 100%\n`
+  markdown += `\`\`\`\n\n`
+  
+  markdown += `A score of 100% indicates that all equivalence classes (both valid and invalid inputs) are being handled correctly, demonstrating high reliability of the input processing layer.\n\n`
 
   fs.writeFileSync(markdownPath, markdown)
 
