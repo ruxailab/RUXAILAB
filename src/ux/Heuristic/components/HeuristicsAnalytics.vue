@@ -130,16 +130,17 @@
                       >
                         <template
                           v-for="header in headersHeuristic"
+                          :key="header.value"
                           #[`item.${header.value}`]="{ item }"
                         >
                           <div
-                            v-if="item[header.value].uid"
+                            v-if="item[header.value]?.uid"
                             :key="item[header.value].uid"
                           >
                             {{ item[header.value].uid }}
                           </div>
                           <div
-                            v-else
+                            v-else-if="item[header.value]?.heuristicAnswer"
                             :key="item[header.value].heuristicAnswer.value"
                           >
                             <div
@@ -150,9 +151,20 @@
                               -
                             </div>
                             <div v-else>
-                              {{ item[header.value].heuristicAnswer.value }}
+                              <v-chip
+                                :class="[
+                                  'answer-chip',
+                                  getAnswerChipClass(
+                                    item[header.value].heuristicAnswer.value,
+                                  ),
+                                ]"
+                                variant="flat"
+                              >
+                                {{ item[header.value].heuristicAnswer.value }}
+                              </v-chip>
                             </div>
                           </div>
+                          <div v-else>-</div>
                         </template>
                       </v-data-table>
                     </v-col>
@@ -327,7 +339,7 @@ const headersHeuristic = computed(() => {
     test.value.testStructure[heuristicSelect.value].questions.forEach(
       (question) => {
         header.push({
-          title: `Q${question.id + 1}`,
+          title: `Q${question.id + 1} - ${question.title}`,
           align: 'center',
           value: question.id.toString(),
         })
@@ -446,6 +458,33 @@ const questionGraph = computed(() => {
   return graph
 })
 
+const getAnswerChipClass = (value) => {
+  const options = Array.isArray(test.value?.testOptions)
+    ? test.value.testOptions
+    : []
+  const optionValues = options
+    .map((option) => Number(option.value))
+    .filter((optionValue) => Number.isFinite(optionValue))
+  const numericValue = Number(value)
+
+  if (!Number.isFinite(numericValue) || optionValues.length === 0) {
+    return 'answer-chip--empty'
+  }
+
+  const min = Math.min(...optionValues)
+  const max = Math.max(...optionValues)
+
+  if (max === min) {
+    return numericValue > 0 ? 'answer-chip--high' : 'answer-chip--empty'
+  }
+
+  const normalized = (numericValue - min) / (max - min)
+  if (normalized < 0.25) return 'answer-chip--low'
+  if (normalized < 0.5) return 'answer-chip--medium-low'
+  if (normalized < 0.75) return 'answer-chip--medium-high'
+  return 'answer-chip--high'
+}
+
 watch(
   answers,
   () => {
@@ -513,5 +552,36 @@ const formatDate = (timestamp) => {
 /* Handle on hover */
 .list-scroll::-webkit-scrollbar-thumb:hover {
   background: #fca326;
+}
+
+.answer-chip {
+  min-width: 50px;
+  justify-content: center;
+  font-weight: 500;
+}
+
+.answer-chip--low {
+  background-color: #fde5e2 !important;
+  color: #ff2a1a !important;
+}
+
+.answer-chip--medium-low {
+  background-color: #ffefd9 !important;
+  color: #ff8500 !important;
+}
+
+.answer-chip--medium-high {
+  background-color: #fff8dc !important;
+  color: #ffd000 !important;
+}
+
+.answer-chip--high {
+  background-color: #e5f3e8 !important;
+  color: #25a83a !important;
+}
+
+.answer-chip--empty {
+  background-color: #eeeeee !important;
+  color: #777777 !important;
 }
 </style>

@@ -30,10 +30,9 @@
             </div>
             <div class="summary-evaluator-meta">
               <v-chip
-                size="small"
                 color="#E9EEF5"
                 variant="flat"
-                class="text-slate-700"
+                class="text-slate-700 evaluator-count-chip"
               >
                 {{ evaluatorsLabel }}
               </v-chip>
@@ -122,15 +121,30 @@
                 {{ t('HeuristicsTestAnswer.summary.imagesSubtitle') }}
               </div>
             </div>
-            <v-chip
-              size="small"
-              color="#E9EEF5"
-              variant="flat"
-              class="text-slate-700"
-            >
-              {{ imageTotalsByHeuristic.length }}
-              {{ t('HeuristicsTestAnswer.titles.heuristics') }}
-            </v-chip>
+            <div class="summary-header-chips">
+              <v-chip
+                color="#EDF7F2"
+                variant="flat"
+                class="text-slate-700 comments-count-chip"
+              >
+                {{ commentsLabel }}
+              </v-chip>
+              <v-chip
+                color="#EEF3FA"
+                variant="flat"
+                class="text-slate-700 comments-count-chip"
+              >
+                {{ imagesLabel }}
+              </v-chip>
+              <v-chip
+                color="#E9EEF5"
+                variant="flat"
+                class="text-slate-700 heuristic-count-chip"
+              >
+                {{ imageTotalsByHeuristic.length }}
+                {{ t('HeuristicsTestAnswer.titles.heuristics') }}
+              </v-chip>
+            </div>
           </div>
 
           <div v-if="imageTotalsByHeuristic.length" class="images-chart-center">
@@ -257,6 +271,20 @@ const isSingleEvaluator = computed(() => evaluatorsCount.value === 1)
 const evaluatorsLabel = computed(() => {
   const suffix = evaluatorsCount.value === 1 ? 'Evaluator' : 'Evaluators'
   return `${evaluatorsCount.value} ${suffix}`
+})
+
+const totalComments = computed(() => Number(props.result?.totalComments) || 0)
+
+const commentsLabel = computed(() => {
+  const key = totalComments.value === 1 ? 'common.comment' : 'common.comments'
+  return `${totalComments.value} ${t(key)}`
+})
+
+const totalImages = computed(() => Number(props.result?.totalImages) || 0)
+
+const imagesLabel = computed(() => {
+  const key = totalImages.value === 1 ? 'common.image' : 'common.images'
+  return `${totalImages.value} ${t(key)}`
 })
 
 const evaluatorIdentityLabel = computed(() =>
@@ -519,8 +547,37 @@ const summaryTitle = computed(
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 6px;
+  gap: 8px;
   max-width: 48%;
+}
+
+.evaluator-count-chip {
+  min-height: 32px;
+  padding-inline: 12px;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.summary-header-chips {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.comments-count-chip {
+  min-height: 32px;
+  padding-inline: 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.heuristic-count-chip {
+  min-height: 36px;
+  padding-inline: 14px;
+  font-size: 0.9rem;
+  font-weight: 800;
 }
 
 .single-evaluator-identity {
@@ -553,6 +610,11 @@ const summaryTitle = computed(
 
   .image-stat-grid {
     grid-template-columns: 1fr;
+  }
+
+  .summary-header-chips {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .single-evaluator-row {

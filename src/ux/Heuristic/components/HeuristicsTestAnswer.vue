@@ -9,7 +9,7 @@
     </v-overlay>
     <IntroAnswer
       v-if="answers != null && intro == true"
-      @go-to-coops="goToCoops"  
+      @go-to-coops="goToCoops"
     />
     <v-row
       v-else-if="answers != null || intro == false"
@@ -235,16 +235,19 @@ const heuristicsEvaluator = computed(() => {
     let evaluatorIndex = 1
     resultEvaluator.value.forEach((evaluator) => {
       evaluator.id = `Ev${evaluatorIndex}`
-      const header = table.header.find((h) => h.text === evaluator.id)
+      const header = table.header.find((h) => h.value === evaluator.id)
       if (!header) {
         table.header.push({
-          text: evaluator.id,
+          title: `Evaluator ${evaluatorIndex}`,
           align: 'center',
           value: evaluator.id,
         })
       }
       if (evaluator.heuristics && Array.isArray(evaluator.heuristics)) {
         evaluator.heuristics.forEach((heuristic) => {
+          const totalQuestions = Number(
+            heuristic.SumOfValues ?? heuristic.totalQuestions ?? 0,
+          )
           const item = table.items.find((i) => i.heuristic === heuristic.id)
           if (item) {
             Object.assign(item, {
@@ -253,8 +256,8 @@ const heuristicsEvaluator = computed(() => {
           } else {
             table.items.push({
               heuristic: heuristic.id,
-              max: max * (heuristic.totalQuestions || 0),
-              min: min * (heuristic.totalQuestions || 0),
+              max: max * totalQuestions,
+              min: min * totalQuestions,
               [evaluator.id]: heuristic.result,
             })
           }
@@ -282,7 +285,7 @@ const timeByHeuristics = computed(() => {
   resultEvaluator.value.forEach((evaluator, evaluatorPosition) => {
     const evaluatorKey = `Ev${evaluatorPosition + 1}`
     table.header.push({
-      title: evaluatorKey,
+      title: `Evaluator ${evaluatorPosition + 1}`,
       value: evaluatorKey,
       align: 'center',
     })
@@ -304,17 +307,17 @@ const timeByHeuristics = computed(() => {
   })
 
   table.header.push({
-    title: 'Total',
+    title: 'Total time',
     value: 'totalTime',
     align: 'center',
   })
   table.header.push({
-    title: 'Average Time',
+    title: 'Average time per evaluator',
     value: 'averageTime',
     align: 'center',
   })
   table.header.push({
-    title: 'Standard deviation',
+    title: 'Time standard deviation',
     value: 'timeSd',
     align: 'center',
   })
@@ -357,7 +360,9 @@ const heuristicsStatistics = computed(() => {
           .toFixed(2)
       : '0.00'
     const convertedValue =
-      item.max && item.min && item.max !== item.min
+      item.max !== undefined &&
+      item.min !== undefined &&
+      Number(item.max) !== Number(item.min)
         ? ((valueToConvert - item.min) / (item.max - item.min)) * 100
         : 0
     table.items.push({
@@ -459,8 +464,13 @@ const singleEvaluatorIdentity = computed(() => {
 
   if (!evaluatorUserDocId) return ''
 
-  const participants = [test.value?.testAdmin, ...(test.value?.cooperators || [])]
-  const evaluator = participants.find((item) => item?.userDocId === evaluatorUserDocId)
+  const participants = [
+    test.value?.testAdmin,
+    ...(test.value?.cooperators || []),
+  ]
+  const evaluator = participants.find(
+    (item) => item?.userDocId === evaluatorUserDocId,
+  )
 
   return (
     evaluator?.fullName ||

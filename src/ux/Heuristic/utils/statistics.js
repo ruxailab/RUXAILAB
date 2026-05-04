@@ -19,6 +19,8 @@ function createEmptySummary() {
     avrgminWarning: null,
     impactWarning: null,
     evaluators: 0,
+    totalComments: 0,
+    totalImages: 0,
   }
 }
 
@@ -117,6 +119,31 @@ function hasLegacyImage(question) {
   )
 }
 
+function getQuestionComments(question) {
+  const answer = question?.heuristicAnswer || {}
+  const comments = []
+
+  if (Array.isArray(question?.comments)) {
+    comments.push(...question.comments)
+  }
+
+  if (Array.isArray(answer.comments)) {
+    comments.push(...answer.comments)
+  }
+
+  const validComments = comments.filter((comment) => {
+    if (typeof comment === 'string') return comment.trim() !== ''
+    return String(comment?.text || '').trim() !== ''
+  })
+
+  if (validComments.length > 0) return validComments
+
+  const legacyComment =
+    question?.heuristicComment || answer?.heuristicComment || ''
+
+  return legacyComment.trim() ? [{ id: 'legacy', text: legacyComment }] : []
+}
+
 function isQuestionWithoutReply(answer) {
   return answer?.value === '' || Object.values(answer || {}).length < 3
 }
@@ -126,6 +153,7 @@ function summarizeQuestion(question) {
   const warning = answer.warning === true
   const value = toFiniteNumber(answer.value)
   const images = getQuestionImages(question)
+  const comments = getQuestionComments(question)
 
   return {
     value,
@@ -134,6 +162,7 @@ function summarizeQuestion(question) {
     isNoReply: isQuestionWithoutReply(answer),
     imageCount:
       images.length > 0 ? images.length : hasLegacyImage(question) ? 1 : 0,
+    commentCount: comments.length,
   }
 }
 
@@ -151,6 +180,7 @@ function summarizeHeuristic(heuristic, heuristicIndex) {
       summary.totalNoReply += current.isNoReply ? 1 : 0
       summary.totalWarnings += current.isWarning ? 1 : 0
       summary.totalImages += current.imageCount
+      summary.totalComments += current.commentCount
 
       return summary
     },
@@ -160,6 +190,7 @@ function summarizeHeuristic(heuristic, heuristicIndex) {
       totalNoReply: 0,
       totalWarnings: 0,
       totalImages: 0,
+      totalComments: 0,
     },
   )
 
@@ -175,6 +206,7 @@ function summarizeHeuristic(heuristic, heuristicIndex) {
     totalNoReply: questionSummary.totalNoReply,
     totalWarnings: questionSummary.totalWarnings,
     totalImages: questionSummary.totalImages,
+    totalComments: questionSummary.totalComments,
     timeSpentMs: parseTimeSpentToMs(heuristic?.timeSpent),
   }
 }
@@ -190,6 +222,14 @@ function summarizeEvaluator(evaluator) {
     userDocId: evaluator?.userDocId,
     id: evaluator?.userDocId,
     heuristics,
+    totalComments: heuristics.reduce(
+      (total, heuristic) => total + toFiniteNumber(heuristic.totalComments),
+      0,
+    ),
+    totalImages: heuristics.reduce(
+      (total, heuristic) => total + toFiniteNumber(heuristic.totalImages),
+      0,
+    ),
     result: 0,
     lastUpdate: toFiniteNumber(evaluator?.lastUpdate),
   }
@@ -398,6 +438,14 @@ function finalResult(
     avrgminWarning: formatPercentage(averageMinWarning),
     impactWarning: formatPercentage(averageResult - averageBaseWarning),
     evaluators: validItems.length,
+    totalComments: validItems.reduce(
+      (total, item) => total + toFiniteNumber(item.totalComments),
+      0,
+    ),
+    totalImages: validItems.reduce(
+      (total, item) => total + toFiniteNumber(item.totalImages),
+      0,
+    ),
   }
   return testData
 }
