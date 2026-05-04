@@ -111,6 +111,65 @@ describe('AuthController', () => {
         })
     })
 
+    describe('Equivalence Classes (EC) - signIn reliability', () => {
+        it('[EC][auth.signIn.credentials][valid] accepts known valid credentials', async () => {
+            const mockCredential = { user: { uid: 'valid-user-id' } }
+            setPersistence.mockResolvedValue()
+            signInWithEmailAndPassword.mockResolvedValue(mockCredential)
+
+            const result = await authController.signIn('valid@example.com', 'Password@123', false)
+
+            expect(result).toEqual(mockCredential)
+            expect(signInWithEmailAndPassword).toHaveBeenCalledWith(
+                expect.anything(),
+                'valid@example.com',
+                'Password@123'
+            )
+        })
+
+        it('[EC][auth.signIn.credentials][invalid] rejects malformed email', async () => {
+            const mockError = Object.assign(new Error('Invalid email'), {
+                code: 'auth/invalid-email'
+            })
+            setPersistence.mockResolvedValue()
+            signInWithEmailAndPassword.mockRejectedValue(mockError)
+
+            await expect(
+                authController.signIn('invalid-email-format', 'Password@123', false)
+            ).rejects.toThrow('Invalid email')
+        })
+
+        it('[EC][auth.signIn.credentials][invalid] rejects empty password', async () => {
+            const mockError = Object.assign(new Error('Missing password'), {
+                code: 'auth/missing-password'
+            })
+            setPersistence.mockResolvedValue()
+            signInWithEmailAndPassword.mockRejectedValue(mockError)
+
+            await expect(
+                authController.signIn('valid@example.com', '', false)
+            ).rejects.toThrow('Missing password')
+        })
+
+        it('[EC][auth.signIn.rememberMe][valid] persists local session when rememberMe=true', async () => {
+            setPersistence.mockResolvedValue()
+            signInWithEmailAndPassword.mockResolvedValue({ user: { uid: 'local-user' } })
+
+            await authController.signIn('valid@example.com', 'Password@123', true)
+
+            expect(setPersistence).toHaveBeenCalledWith(expect.anything(), 'local')
+        })
+
+        it('[EC][auth.signIn.rememberMe][invalid] treats falsy rememberMe as session persistence', async () => {
+            setPersistence.mockResolvedValue()
+            signInWithEmailAndPassword.mockResolvedValue({ user: { uid: 'session-user' } })
+
+            await authController.signIn('valid@example.com', 'Password@123', null)
+
+            expect(setPersistence).toHaveBeenCalledWith(expect.anything(), 'session')
+        })
+    })
+
     describe('signInWithGoogle', () => {
         it('should set persistence and call signInWithPopup', async () => {
             const mockCredential = { user: { uid: 'google-user-id' } }
