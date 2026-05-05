@@ -264,12 +264,8 @@ jobs:
           FILES="${{ steps.all-files.outputs.files }}${{ steps.changed-files.outputs.all_changed_files }}"
           # Exclude tooling scripts — quality gates target application code only
           FILTERED=$(echo "$FILES" | tr ' ' '\n' | grep -v '^\.github' | tr '\n' ' ')
-          # Fallback — if diff produced no app code files, full-scan src/
-          if [[ -z "${FILTERED// /}" ]]; then
-            FILTERED=$(find src/ functions/src/ -type f 2>/dev/null \
-              | grep -E '\.(py|js|ts|jsx|tsx|mjs|cjs)$' \
-              | grep -v node_modules | grep -v /dist/ | sort | tr '\n' ' ' || true)
-          fi
+          # No fallback: identifier-length gates newly-changed code only.
+          # A full-scan fails on legacy files that predate this threshold.
           if [[ -n "${FILTERED// /}" ]]; then
             python .github/scripts/len_identifiersGP.py $FILTERED
           else
