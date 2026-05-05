@@ -31,12 +31,12 @@
       "occurrence": "Security vulnerability",
       "daily_counts": {
         "Mon": 2,
-        "Tue": 9,
+        "Tue": 10,
         "Wed": 17,
         "Thu": 0,
         "Fri": 0
       },
-      "total": 28
+      "total": 29
     },
     {
       "occurrence": "Code smells/Bugs",
@@ -62,7 +62,7 @@
     }
   ],
   "summary": {
-    "grand_total": 28,
+    "grand_total": 29,
     "days_tracked": 5
   },
   "issues_tracking": {
