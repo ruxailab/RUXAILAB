@@ -32,7 +32,7 @@ JS_EXTENSIONS = {'.js', '.ts', '.mjs', '.tsx', '.jsx', '.cjs'}
 ACCEPTED_EXTENSIONS = {'.py'} | JS_EXTENSIONS
 
 IDENTIFIER = r'\b[a-zA-Z_][a-zA-Z0-9_]*\b'
-THRESHOLD = 10
+THRESHOLD = 6
 
 def extract_identifiers(code):
     return re.findall(IDENTIFIER, code)

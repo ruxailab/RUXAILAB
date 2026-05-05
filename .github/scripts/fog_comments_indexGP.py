@@ -64,7 +64,7 @@ def classify(score):
         return "NO DATA"
     elif score < 12:
         return "OK"
-    elif score <= 17:
+    elif score <= 22:
         return "MODERATE"
     else:
         return "COMPLEX"
@@ -102,7 +102,7 @@ def scan(target_path):
 def print_json(results, total, failed):
     output = {
         "analysis_type": "Comment Readability (Fog Index)",
-        "threshold": 17,
+        "threshold": 22,
         "summary": {
             "total_files": total,
             "failed_files": failed

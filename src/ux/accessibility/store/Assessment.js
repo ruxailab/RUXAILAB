@@ -156,6 +156,43 @@ const getters = {
   },
 }
 
+// Helper: transform a single WCAG rule into the internal format
+function transformRule(rule) {
+  return {
+    id: rule.id || '',
+    title: rule.title || '',
+    level: rule.level || '',
+    version: rule.version || '2.0',
+    criteria: Array.isArray(rule.criteria) ? rule.criteria : [],
+  }
+}
+
+// Helper: transform a single WCAG guideline (including its rules)
+function transformGuideline(guideline) {
+  if (!guideline) return null
+  return {
+    id: guideline.id || '',
+    title: guideline.title || '',
+    description: guideline.description || '',
+    rules: Array.isArray(guideline.Rules) ? guideline.Rules.map(transformRule) : [],
+  }
+}
+
+// Helper: transform a single WCAG principle entry (including its guidelines)
+function transformPrinciple(principleObj) {
+  const principleKey = Object.keys(principleObj)[0]
+  const principle = principleObj[principleKey]
+  if (!principle) return null
+  return {
+    id: principleKey,
+    title: principle.title || '',
+    description: principle.description || '',
+    Guidelines: Array.isArray(principle.Guidelines)
+      ? principle.Guidelines.map(transformGuideline).filter(Boolean)
+      : [],
+  }
+}
+
 // Helper: filter rules by compliance level, selected guidelines, and selected rules
 function filterWcagByComplianceLevel(
   wcagData,
@@ -378,70 +415,15 @@ const actions = {
     try {
       commit('setLoading', true, { root: true })
 
-      // Import the WCAG data
       const wcagData = await import('@/assets/WacgAxe.json')
 
-      // Transform the data to match our expected format
-      const transformedData = {
-        principles: [],
-      }
-
-      // Process each principle
-      if (Array.isArray(wcagData.default)) {
-        wcagData.default.forEach((principleObj) => {
-          const principleKey = Object.keys(principleObj)[0]
-          const principle = principleObj[principleKey]
-
-          if (principle) {
-            const transformedPrinciple = {
-              id: principleKey,
-              title: principle.title || '',
-              description: principle.description || '',
-              Guidelines: [],
-            }
-
-            // Process guidelines if they exist
-            if (Array.isArray(principle.Guidelines)) {
-              principle.Guidelines.forEach((guideline) => {
-                if (guideline) {
-                  const transformedGuideline = {
-                    id: guideline.id || '',
-                    title: guideline.title || '',
-                    description: guideline.description || '',
-                    rules: [],
-                  }
-
-                  // Process rules if they exist
-                  if (Array.isArray(guideline.Rules)) {
-                    transformedGuideline.rules = guideline.Rules.map(
-                      (rule) => ({
-                        id: rule.id || '',
-                        title: rule.title || '',
-                        level: rule.level || '',
-                        version: rule.version || '2.0',
-                        criteria: Array.isArray(rule.criteria)
-                          ? rule.criteria
-                          : [],
-                      }),
-                    )
-                  }
-
-                  transformedPrinciple.Guidelines.push(transformedGuideline)
-                }
-              })
-            }
-
-            transformedData.principles.push(transformedPrinciple)
-          }
-        })
-      }
+      const principles = Array.isArray(wcagData.default)
+        ? wcagData.default.map(transformPrinciple).filter(Boolean)
+        : []
+      const transformedData = { principles }
 
       commit('SET_WCAG_DATA', transformedData)
-      // Filter by config
-      await dispatch(
-        'filterByComplianceLevel',
-        state.configuration.complianceLevel,
-      )
+      await dispatch('filterByComplianceLevel', state.configuration.complianceLevel)
       return transformedData
     } catch (error) {
       commit(

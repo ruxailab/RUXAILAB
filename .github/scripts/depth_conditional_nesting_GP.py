@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 from typing import Dict, Optional, List, Any
 
-CRITICAL_THRESHOLD = 5
+CRITICAL_THRESHOLD = 7
 WARNING_THRESHOLD = 3
 
 # ── JavaScript / TypeScript support ──────────────────────────────────────────

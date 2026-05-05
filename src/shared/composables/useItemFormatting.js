@@ -57,7 +57,7 @@ export function useItemFormatting(type) {
       })
     }
 
-    // method category (ex: Test / Inquiry / Inspection / Accessibility)
+    // method category
     const category = getMethodCategory(item)
     if (category) {
       tags.push({

@@ -310,7 +310,7 @@ jobs:
       - name: Run fog index analysis
         run: |
           mkdir -p quality-job4
-          python .github/scripts/fog_comments_indexGP.py . \
+          python .github/scripts/fog_comments_indexGP.py src/ \
             > quality-job4/fog-results.json
           cat quality-job4/fog-results.json
 

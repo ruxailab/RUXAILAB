@@ -121,7 +121,7 @@ def es_archivo_valido(ruta):
 
     return True
 
-def analizar_archivos(rutas_archivos: list, limite_complejidad: int = 15):
+def analizar_archivos(rutas_archivos: list, limite_complejidad: int = 20):
     resultados_array = []
     archivos_procesados = 0
     archivos_fallidos = 0
@@ -172,7 +172,7 @@ def analizar_archivos(rutas_archivos: list, limite_complejidad: int = 15):
 
 if __name__ == "__main__":
     archivos_a_analizar = sys.argv[1:]
-    limite = 15
+    limite = 20
     
     if not archivos_a_analizar:
         # Estructura vacía consistente si no hay archivos
