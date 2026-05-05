@@ -94,6 +94,14 @@ jobs:
             fi
           fi
 
+          # Fallback — if diff produced no code files, full-scan src/
+          if [[ -z "${FILES// /}" ]]; then
+            FILES=$(find src/ functions/src/ weight_function/ -type f 2>/dev/null \
+              | grep -E "$EXT_PATTERN" \
+              | grep -v node_modules | grep -v /dist/ \
+              | sort | tr '\n' ' ' || true)
+          fi
+
           FOUND=$([ -n "${FILES// /}" ] && echo 'true' || echo 'false')
           echo "files=$FILES"      >> "$GITHUB_OUTPUT"
           echo "found=$FOUND"      >> "$GITHUB_OUTPUT"
@@ -181,6 +189,12 @@ jobs:
         run: |
           # Prefer full-scan list for schedule/dispatch; fall back to changed-files
           FILES="${{ steps.all-files.outputs.files }}${{ steps.changed-files.outputs.all_changed_files }}"
+          # Fallback — if diff produced no code files, full-scan src/
+          if [[ -z "${FILES// /}" ]]; then
+            FILES=$(find src/ functions/src/ weight_function/ -type f 2>/dev/null \
+              | grep -E '\.(py|js|ts|jsx|tsx|mjs|cjs)$' \
+              | grep -v node_modules | grep -v /dist/ | sort | tr '\n' ' ' || true)
+          fi
           if [[ -n "${FILES// /}" ]]; then
             python .github/scripts/depth_conditional_nesting_GP.py $FILES
           else
@@ -250,6 +264,12 @@ jobs:
           FILES="${{ steps.all-files.outputs.files }}${{ steps.changed-files.outputs.all_changed_files }}"
           # Exclude tooling scripts — quality gates target application code only
           FILTERED=$(echo "$FILES" | tr ' ' '\n' | grep -v '^\.github' | tr '\n' ' ')
+          # Fallback — if diff produced no app code files, full-scan src/
+          if [[ -z "${FILTERED// /}" ]]; then
+            FILTERED=$(find src/ functions/src/ -type f 2>/dev/null \
+              | grep -E '\.(py|js|ts|jsx|tsx|mjs|cjs)$' \
+              | grep -v node_modules | grep -v /dist/ | sort | tr '\n' ' ' || true)
+          fi
           if [[ -n "${FILTERED// /}" ]]; then
             python .github/scripts/len_identifiersGP.py $FILTERED
           else
