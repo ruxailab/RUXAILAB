@@ -3,22 +3,48 @@
 /**
  * render-integrity-html.js
  *
- * Reads security-report.json produced by the Integrity pipeline and generates
- * a self-contained HTML visualisation. Separated from the JSON generator so
- * the report layer is a pure presentation concern with no CI-environment deps.
+ * Reads a security/quality report JSON and generates a self-contained HTML
+ * visualisation. Path resolution is environment-variable-driven so both the
+ * legacy integrity-GP.yml workflow and the unified quality-pipeline.yml can
+ * share this script without modification.
  *
- * Input  : integrity-security-report/security-report.json
- * Output : integrity-html-report/security-report.html
+ * Environment variables:
+ *   REPORT_INPUT_DIR   — directory containing the input JSON
+ *                        (default: "integrity-security-report")
+ *   REPORT_OUTPUT_DIR  — directory to write the HTML file into
+ *                        (default: "integrity-html-report")
+ *
+ * Input  : <REPORT_INPUT_DIR>/report.json
+ *          (legacy fallback: <REPORT_INPUT_DIR>/security-report.json)
+ * Output : <REPORT_OUTPUT_DIR>/report.html
+ *          (legacy fallback: <REPORT_OUTPUT_DIR>/security-report.html)
  */
 
 const fs = require('fs')
 const path = require('path')
 
+// ─── Path resolution ─────────────────────────────────────────────────────────
+
+const INPUT_DIR  = process.env.REPORT_INPUT_DIR  || 'integrity-security-report'
+const OUTPUT_DIR = process.env.REPORT_OUTPUT_DIR || 'integrity-html-report'
+
+// Unified pipeline uses report.json; legacy pipeline used security-report.json
+function resolveInputPath() {
+  const primary = path.join(INPUT_DIR, 'report.json')
+  const legacy  = path.join(INPUT_DIR, 'security-report.json')
+  if (fs.existsSync(primary)) return primary
+  if (fs.existsSync(legacy))  return legacy
+  return primary  // will fail with a clear error below
+}
+
+const jsonPath  = resolveInputPath()
+const htmlFile  = fs.existsSync(path.join(INPUT_DIR, 'report.json'))
+  ? 'report.html'
+  : 'security-report.html'
+
 // ─── Load JSON ───────────────────────────────────────────────────────────────
 
-const jsonPath = path.join('integrity-security-report', 'security-report.json')
 let report
-
 try {
   report = JSON.parse(fs.readFileSync(jsonPath, 'utf8'))
 } catch (err) {
@@ -210,8 +236,8 @@ const html = `<!DOCTYPE html>
 
 // ─── Write output ─────────────────────────────────────────────────────────────
 
-fs.mkdirSync('integrity-html-report', { recursive: true })
-const outFile = path.join('integrity-html-report', 'security-report.html')
+fs.mkdirSync(OUTPUT_DIR, { recursive: true })
+const outFile = path.join(OUTPUT_DIR, htmlFile)
 fs.writeFileSync(outFile, html, 'utf8')
 
 console.log(`✅ HTML report generated: ${outFile}`)

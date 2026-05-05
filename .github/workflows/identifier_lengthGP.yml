@@ -1,0 +1,40 @@
+name: Length Identifiers Metric
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [ "**" ]
+
+jobs:
+  length-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Identify Changed Files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            **/*.py
+
+      - name: Run Identifier Length Metric
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          python3 .github/scripts/metrics/len_identifiers.py ${{ steps.changed-files.outputs.all_changed_files }}
+
+      - name: Upload metrics report
+        uses: actions/upload-artifact@v4
+        with:
+          name: identifier-metrics
+          path: identifier_report.json

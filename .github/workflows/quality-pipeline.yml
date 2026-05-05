@@ -1,0 +1,809 @@
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │                     Unified Quality & Security Pipeline                      │
+# │                                                                              │
+# │  Consolidates 6 former workflows into a single dependency-ordered graph:    │
+# │                                                                              │
+# │  TIER 1 (parallel) ─── Quality Metrics                                      │
+# │    job1 · cyclomatic-complexity   (Python + JS/TS)                          │
+# │    job2 · nesting-depth           (Python + JS/TS)                          │
+# │    job3 · identifier-length       (Python + JS/TS)                          │
+# │    job4 · fog-index-metrics       (Python, JS/TS, Java, HTML)               │
+# │                                                                              │
+# │  TIER 2 (parallel, after TIER 1) ─── Security Audits                       │
+# │    job5 · access-control-audit    (multi-stack bash grep)                   │
+# │    job6 · route-auth-audit        (Vue Router + Python routes)              │
+# │    job7 · static-security-scan    (Semgrep OWASP / auth bypass)             │
+# │                                                                              │
+# │  TIER 3 (always, after TIER 2) ─── Report                                  │
+# │    job8 · generate-report         (JSON + HTML consolidated artifact)       │
+# │                                                                              │
+# │  Replaces: ComplexiCheckGP.yml, conditional-nestingGP.yml,                  │
+# │            identifier_lengthGP.yml, metrics-Gp.yml,                         │
+# │            integrity-GP.yml, Metrics-html-reportGP.yml                      │
+# └─────────────────────────────────────────────────────────────────────────────┘
+
+name: Quality & Security Pipeline
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main, develop, "features/**"]
+  schedule:
+    - cron: '0 3 * * 1'   # Weekly integrity sweep — Monday 03:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TIER 1 — Quality Metric Jobs  (run in parallel)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+jobs:
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 1 · Cyclomatic Complexity
+  # Source: ComplexiCheckGP.yml
+  # Script: CyclomaticMetricGP.py  (Python AST + JS/TS regex)
+  # Gate  : fail if any file exceeds complexity threshold (default 15)
+  # ─────────────────────────────────────────────────────────────────────────────
+  cyclomatic-complexity:
+    name: "📊 Cyclomatic Complexity"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Resolve target files
+        id: target
+        run: |
+          EXT_PATTERN='\.(py|js|ts|jsx|tsx|mjs|cjs)$'
+          EVENT="${{ github.event_name }}"
+          BEFORE="${{ github.event.before }}"
+
+          if [[ "$EVENT" == "schedule" || "$EVENT" == "workflow_dispatch" ]]; then
+            # Full scan on scheduled / manual runs
+            FILES=$(find src/ functions/src/ weight_function/ -type f 2>/dev/null \
+              | grep -E "$EXT_PATTERN" \
+              | grep -v node_modules | grep -v /dist/ \
+              | sort | tr '\n' ' ' || true)
+
+          elif [[ "$EVENT" == "pull_request" ]]; then
+            FILES=$(git diff --name-only --diff-filter=AM \
+              "origin/${{ github.base_ref }}" HEAD 2>/dev/null \
+              | grep -E "$EXT_PATTERN" | tr '\n' ' ' || true)
+
+          else
+            # push — fall back to full scan when branch is new (zeroed before SHA)
+            if [[ "$BEFORE" =~ ^0+$ ]]; then
+              FILES=$(find src/ functions/src/ -type f 2>/dev/null \
+                | grep -E "$EXT_PATTERN" | grep -v node_modules | sort | tr '\n' ' ' || true)
+            else
+              FILES=$(git diff --name-only --diff-filter=AM \
+                "$BEFORE" "${{ github.sha }}" 2>/dev/null \
+                | grep -E "$EXT_PATTERN" | tr '\n' ' ' || true)
+            fi
+          fi
+
+          FOUND=$([ -n "${FILES// /}" ] && echo 'true' || echo 'false')
+          echo "files=$FILES"      >> "$GITHUB_OUTPUT"
+          echo "found=$FOUND"      >> "$GITHUB_OUTPUT"
+
+      - name: Run complexity analysis
+        run: |
+          mkdir -p quality-job1
+          if [[ "${{ steps.target.outputs.found }}" == "true" ]]; then
+            python .github/scripts/CyclomaticMetricGP.py \
+              ${{ steps.target.outputs.files }} \
+              > quality-job1/complexity-results.json
+          else
+            echo '{"analysis_type":"Cyclomatic Complexity","threshold":15,"summary":{"total_files":0,"failed_files":0},"results":[],"skipped":true}' \
+              > quality-job1/complexity-results.json
+            echo "::notice::No supported files changed — complexity check skipped"
+          fi
+          cat quality-job1/complexity-results.json
+
+      - name: Gate — fail if threshold exceeded
+        run: |
+          python3 - <<'PYEOF'
+          import json, sys
+          with open("quality-job1/complexity-results.json") as f:
+              d = json.load(f)
+          failed = d["summary"]["failed_files"]
+          if failed > 0:
+              print(f"::error::Cyclomatic complexity: {failed} file(s) exceed threshold {d['threshold']}")
+              sys.exit(1)
+          print(f"✅ Cyclomatic complexity OK — {d['summary']['total_files']} file(s) analysed")
+          PYEOF
+
+      - name: Upload artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-job1
+          path: quality-job1/complexity-results.json
+          retention-days: 30
+          if-no-files-found: warn
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 2 · Nesting Depth
+  # Source: conditional-nestingGP.yml
+  # Script: depth_conditional_nesting_GP.py  (Python AST + brace-tracking)
+  # Gate  : script exits 1 when any file exceeds CRITICAL_THRESHOLD (5)
+  # ─────────────────────────────────────────────────────────────────────────────
+  nesting-depth:
+    name: "🌲 Nesting Depth"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Detect changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v46
+        with:
+          files: |
+            **/*.py
+            **/*.js
+            **/*.ts
+            **/*.jsx
+            **/*.tsx
+            **/*.mjs
+            **/*.cjs
+
+      - name: Resolve target files (scheduled / manual full scan)
+        id: all-files
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: |
+          FILES=$(find src/ functions/src/ weight_function/ -type f 2>/dev/null \
+            | grep -E '\.(py|js|ts|jsx|tsx|mjs|cjs)$' \
+            | grep -v node_modules | grep -v /dist/ | sort | tr '\n' ' ' || true)
+          echo "files=$FILES" >> "$GITHUB_OUTPUT"
+
+      - name: Run nesting depth analysis
+        run: |
+          # Prefer full-scan list for schedule/dispatch; fall back to changed-files
+          FILES="${{ steps.all-files.outputs.files }}${{ steps.changed-files.outputs.all_changed_files }}"
+          if [[ -n "${FILES// /}" ]]; then
+            python .github/scripts/depth_conditional_nesting_GP.py $FILES
+          else
+            echo '{"analysis_type":"Depth of Conditional Nesting","threshold":5,"summary":{"total_files":0,"failed_files":0},"results":[]}' \
+              > nesting_metrics.json
+            echo "::notice::No supported files changed — nesting depth check skipped"
+          fi
+
+      - name: Stage artifact
+        if: always()
+        run: mkdir -p quality-job2 && mv nesting_metrics.json quality-job2/ 2>/dev/null || true
+
+      - name: Upload artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-job2
+          path: quality-job2/nesting_metrics.json
+          retention-days: 30
+          if-no-files-found: warn
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 3 · Identifier Length
+  # Source: identifier_lengthGP.yml
+  # Script: len_identifiersGP.py  (Python + JS/TS keyword-aware regex)
+  # Gate  : fail if any file has average identifier length < 10
+  # ─────────────────────────────────────────────────────────────────────────────
+  identifier-length:
+    name: "🏷️ Identifier Length"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Detect changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v46
+        with:
+          files: |
+            **/*.py
+            **/*.js
+            **/*.ts
+            **/*.jsx
+            **/*.tsx
+            **/*.mjs
+            **/*.cjs
+
+      - name: Resolve target files (scheduled / manual full scan)
+        id: all-files
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: |
+          FILES=$(find src/ functions/src/ weight_function/ -type f 2>/dev/null \
+            | grep -E '\.(py|js|ts|jsx|tsx|mjs|cjs)$' \
+            | grep -v node_modules | grep -v /dist/ | sort | tr '\n' ' ' || true)
+          echo "files=$FILES" >> "$GITHUB_OUTPUT"
+
+      - name: Run identifier length analysis
+        run: |
+          FILES="${{ steps.all-files.outputs.files }}${{ steps.changed-files.outputs.all_changed_files }}"
+          if [[ -n "${FILES// /}" ]]; then
+            python .github/scripts/len_identifiersGP.py $FILES
+          else
+            echo '{"analysis_type":"Identifier Length","threshold":10,"summary":{"total_files":0,"failed_files":0},"results":[]}' \
+              > identifier_report.json
+            echo "::notice::No supported files changed — identifier length check skipped"
+          fi
+
+      - name: Gate — fail if threshold exceeded
+        run: |
+          python3 - <<'PYEOF'
+          import json, sys
+          with open("identifier_report.json") as f:
+              d = json.load(f)
+          failed = d["summary"]["failed_files"]
+          if failed > 0:
+              for r in d.get("results", []):
+                  if r.get("status_code") != "OK!":
+                      print(f"::error file={r['file']}::Average identifier length {r['avg_length']:.1f} is below threshold {d['threshold']}")
+              sys.exit(1)
+          print(f"✅ Identifier length OK — {d['summary']['total_files']} file(s) analysed")
+          PYEOF
+
+      - name: Stage artifact
+        if: always()
+        run: mkdir -p quality-job3 && mv identifier_report.json quality-job3/ 2>/dev/null || true
+
+      - name: Upload artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-job3
+          path: quality-job3/identifier_report.json
+          retention-days: 30
+          if-no-files-found: warn
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 4 · Fog Index (Comment Readability)
+  # Source: metrics-Gp.yml
+  # Script: fog_comments_indexGP.py  (Gunning Fog via textstat)
+  # Scope : always full-tree scan (readability is a project-wide concern)
+  # Gate  : fail if any file has average fog score > 17
+  # ─────────────────────────────────────────────────────────────────────────────
+  fog-index-metrics:
+    name: "📖 Fog Index"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install textstat
+        run: pip install textstat --quiet
+
+      - name: Run fog index analysis
+        run: |
+          mkdir -p quality-job4
+          python .github/scripts/fog_comments_indexGP.py . \
+            > quality-job4/fog-results.json
+          cat quality-job4/fog-results.json
+
+      - name: Gate — fail if threshold exceeded
+        run: |
+          python3 - <<'PYEOF'
+          import json, sys
+          with open("quality-job4/fog-results.json") as f:
+              d = json.load(f)
+          failed = d["summary"]["failed_files"]
+          if failed > 0:
+              for r in d.get("results", []):
+                  if r.get("status_code") == "COMPLEX":
+                      avg = r.get("avg_fog") or "N/A"
+                      print(f"::error file={r['file']}::Fog index {avg} exceeds threshold {d['threshold']}")
+              sys.exit(1)
+          print(f"✅ Fog index OK — {d['summary']['total_files']} file(s) analysed")
+          PYEOF
+
+      - name: Upload artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-job4
+          path: quality-job4/fog-results.json
+          retention-days: 30
+          if-no-files-found: warn
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TIER 2 — Security Audit Jobs  (parallel, start after all TIER 1 jobs finish)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 5 · Access Control Audit
+  # Source: integrity-GP.yml — Job 1
+  # Covers: Express/Fastify, Django/Flask, Spring Boot, SQL, Docker/K8s, REST
+  # ─────────────────────────────────────────────────────────────────────────────
+  access-control-audit:
+    name: "🛡️ Access Control Audit"
+    runs-on: ubuntu-latest
+    needs: [cyclomatic-complexity, nesting-depth, identifier-length, fog-index-metrics]
+    if: always()
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Audit Access Controls
+        run: |
+          mkdir -p quality-job5
+          exec > >(tee -a quality-job5/access-control.log) 2>&1
+          echo "=== Access Control Audit ==="
+          DETECTED=0
+          FAIL=0
+
+          # ── Express / Fastify (Node.js) ──────────────────
+          if find . -name "*.js" -o -name "*.ts" | grep -v node_modules | xargs grep -lE "express\(\)|fastify\(\)" 2>/dev/null | grep -q .; then
+            echo "--- Detected: Express/Fastify ---"
+            DETECTED=1
+
+            if grep -rEn 'origin\s*:\s*['"'"'"]?\*['"'"'"]?' --include="*.js" --include="*.ts" . 2>/dev/null | grep -v node_modules | grep -v "//"; then
+              echo "::error::Express/Fastify — CORS allows all origins (*). Restrict to known domains."
+              FAIL=1
+            fi
+
+            UNPROTECTED=$(grep -rEn "app\.(get|post|put|delete|patch)\s*\(" --include="*.js" --include="*.ts" . 2>/dev/null \
+              | grep -v node_modules | grep -v "//" \
+              | grep -vE "auth|middleware|verify|protect|guard|token|jwt|session")
+            if [ -n "$UNPROTECTED" ]; then
+              COUNT=$(echo "$UNPROTECTED" | wc -l | tr -d ' ')
+              echo "::warning::Express/Fastify — $COUNT route(s) found with no recognizable auth middleware:"
+              echo "$UNPROTECTED"
+            fi
+          fi
+
+          # ── Django / Flask (Python) ──────────────────────
+          if find . -name "*.py" | grep -v node_modules | xargs grep -lE "from django|from flask|import flask" 2>/dev/null | grep -q .; then
+            echo "--- Detected: Django/Flask ---"
+            DETECTED=1
+
+            PROTECTED=$(grep -rEn "@login_required|@permission_required|@jwt_required|LoginRequiredMixin" --include="*.py" . 2>/dev/null)
+            if [ -z "$PROTECTED" ]; then
+              echo "::error::Django/Flask — No @login_required or @permission_required decorators found. Views may be publicly accessible."
+              FAIL=1
+            else
+              echo "✅ Django/Flask — auth decorators detected"
+            fi
+          fi
+
+          # ── Spring Boot (Java) ───────────────────────────
+          if find . -name "*.java" 2>/dev/null | grep -q .; then
+            echo "--- Detected: Spring Boot (Java) ---"
+            DETECTED=1
+
+            if ! grep -rEn "@PreAuthorize|SecurityFilterChain|WebSecurityConfigurerAdapter|antMatchers" --include="*.java" . 2>/dev/null | grep -q .; then
+              echo "::error::Spring Boot — No security configuration found (@PreAuthorize / SecurityFilterChain). Routes may be unprotected."
+              FAIL=1
+            else
+              echo "✅ Spring Boot — security configuration detected"
+            fi
+
+            if grep -rEn "\.permitAll\(\)" --include="*.java" . 2>/dev/null | grep -v "//"; then
+              echo "::warning::Spring Boot — .permitAll() detected. Verify this is only for intended public endpoints."
+            fi
+          fi
+
+          # ── PostgreSQL / MySQL ───────────────────────────
+          if find . \( -name "*.sql" -o -name "*.pgsql" \) 2>/dev/null | grep -q .; then
+            echo "--- Detected: SQL schema files ---"
+            DETECTED=1
+
+            if grep -rEin "GRANT ALL.*TO PUBLIC|GRANT ALL PRIVILEGES.*TO PUBLIC" --include="*.sql" --include="*.pgsql" . 2>/dev/null; then
+              echo "::error::Database — GRANT ALL TO PUBLIC detected. This exposes all tables to unauthenticated users."
+              FAIL=1
+            fi
+
+            if grep -rEin "GRANT.*TO\s+''" --include="*.sql" --include="*.pgsql" . 2>/dev/null; then
+              echo "::error::Database — GRANT to empty user detected. This may expose data to anonymous connections."
+              FAIL=1
+            fi
+
+            if [ "$FAIL" -eq 0 ]; then
+              echo "✅ SQL schema — no public grant issues detected"
+            fi
+          fi
+
+          # ── Docker / Kubernetes ──────────────────────────
+          if find . \( -name "Dockerfile*" -o -name "docker-compose*.yml" -o -name "deployment.yaml" -o -name "*.k8s.yml" \) -not -path "*/node_modules/*" 2>/dev/null | grep -q .; then
+            echo "--- Detected: Docker/Kubernetes ---"
+            DETECTED=1
+
+            if grep -rEn "['\"]?(3306|5432|27017|6379|9200|2375):[0-9]+['\"]?" --include="*.yml" --include="*.yaml" . 2>/dev/null | grep -v node_modules; then
+              echo "::warning::Docker — Sensitive port(s) (DB/cache/Docker daemon) mapped to host. Restrict to internal networks."
+            fi
+
+            for df in $(find . -name "Dockerfile*" -not -path "*/node_modules/*" 2>/dev/null); do
+              if grep -q "^FROM" "$df"; then
+                if ! grep -qE "^USER[[:space:]]+" "$df"; then
+                  echo "::warning file=$df::Dockerfile has no USER directive — container may run as root."
+                elif grep -qE "^USER[[:space:]]+root" "$df"; then
+                  echo "::warning file=$df::Dockerfile sets USER root explicitly — containers should not run as root."
+                fi
+              fi
+            done
+          fi
+
+          # ── REST API / Generic ───────────────────────────
+          if find . \( -name "*.js" -o -name "*.ts" -o -name "*.py" -o -name "*.java" \) -not -path "*/node_modules/*" 2>/dev/null | grep -q .; then
+            echo "--- Running generic REST API checks ---"
+            DETECTED=1
+
+            if grep -rEn "jwt\.sign\(|jwt\.verify\(" --include="*.js" --include="*.ts" . 2>/dev/null \
+              | grep -v node_modules | grep -v "//" \
+              | grep -vE "process\.env|config\.|secrets\."; then
+              echo "::warning::REST API — JWT call found with possible hardcoded secret. Use environment variables."
+            fi
+
+            if grep -rEn "Access-Control-Allow-Origin:\s*\*" --include="*.js" --include="*.ts" --include="*.py" --include="*.java" . 2>/dev/null \
+              | grep -v node_modules | grep -v "//"; then
+              echo "::error::REST API — Access-Control-Allow-Origin: * found in source code. Restrict CORS to known origins."
+              FAIL=1
+            fi
+          fi
+
+          # ── Final result ─────────────────────────────────
+          echo ""
+          if [ "$DETECTED" -eq 0 ]; then
+            echo "::error::Access Control Audit — No recognizable technology stack detected."
+            exit 1
+          fi
+
+          if [ "$FAIL" -eq 1 ]; then
+            echo "❌ Access Control Audit failed — critical issues found above"
+            exit 1
+          fi
+
+          echo "✅ Access Control Audit passed"
+
+      - name: Upload artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-job5
+          path: quality-job5/access-control.log
+          retention-days: 30
+          if-no-files-found: warn
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 6 · Route Authorization Audit
+  # Source: integrity-GP.yml — Job 2
+  # Checks: Vue Router beforeEach guard + route meta + Python route decorators
+  # ─────────────────────────────────────────────────────────────────────────────
+  route-auth-audit:
+    name: "🔑 Route Authorization Audit"
+    runs-on: ubuntu-latest
+    needs: [cyclomatic-complexity, nesting-depth, identifier-length, fog-index-metrics]
+    if: always()
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+
+      - name: Verify Router Guard Integrity
+        run: |
+          mkdir -p quality-job6
+          exec > >(tee -a quality-job6/route-auth.log) 2>&1
+          echo "=== Router Guard Integrity Check ==="
+          FAIL=0
+
+          ROUTER="src/app/router/index.js"
+
+          if ! grep -q "router\.beforeEach" "$ROUTER"; then
+            echo "::error file=$ROUTER::router.beforeEach guard not found — all routes may be unprotected"
+            FAIL=1
+          fi
+
+          if ! grep -q "authorize" "$ROUTER"; then
+            echo "::error file=$ROUTER::No authorization enforcement found in router guard"
+            FAIL=1
+          fi
+
+          if ! grep -qE "Auth\.user|autoSignIn|currentUser" "$ROUTER"; then
+            echo "::error file=$ROUTER::Router guard does not appear to verify authentication state"
+            FAIL=1
+          fi
+
+          if ! grep -q "signin" "$ROUTER"; then
+            echo "::warning file=$ROUTER::Router guard may not redirect unauthenticated users to /signin"
+          fi
+
+          if [ "$FAIL" -eq 0 ]; then
+            echo "✅ Router guard integrity verified"
+          else
+            exit 1
+          fi
+
+      - name: Audit Route Definitions for Missing Auth Metadata
+        run: |
+          set -o pipefail
+          node .github/scripts/route-auth-audit.js 2>&1 | tee -a quality-job6/route-auth.log
+
+      - name: Upload artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-job6
+          path: quality-job6/route-auth.log
+          retention-days: 30
+          if-no-files-found: warn
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 7 · Static Security Scan (OWASP / Semgrep)
+  # Source: integrity-GP.yml — Job 3
+  # Scans : JS, TS, Vue, Python, Java  +  C# via p/csharp
+  # ─────────────────────────────────────────────────────────────────────────────
+  static-security-scan:
+    name: "🔍 Static Security Scan (OWASP)"
+    runs-on: ubuntu-latest
+    needs: [cyclomatic-complexity, nesting-depth, identifier-length, fog-index-metrics]
+    if: always()
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Semgrep
+        run: pip install semgrep --quiet
+
+      - name: Run OWASP Top 10 Scan
+        run: |
+          mkdir -p quality-job7
+          exec > >(tee -a quality-job7/static-scan.log) 2>&1
+          semgrep \
+            --config=p/owasp-top-ten \
+            --config=p/javascript \
+            --exclude=node_modules \
+            --exclude=dist \
+            --exclude=tests \
+            --include="*.js" \
+            --include="*.vue" \
+            --error \
+            src/ functions/src/
+        continue-on-error: true
+
+      - name: Run C# security scan (Semgrep p/csharp)
+        run: |
+          exec >> quality-job7/static-scan.log 2>&1
+          if find . -name "*.cs" -not -path "*/node_modules/*" 2>/dev/null | grep -q .; then
+            echo "--- C# files detected — running p/csharp ruleset ---"
+            semgrep \
+              --config=p/csharp \
+              --exclude=node_modules \
+              --include="*.cs" \
+              --error \
+              . || true
+          else
+            echo "::notice::No .cs files found — C# scan skipped"
+          fi
+
+      - name: Scan for Auth Bypass Patterns
+        run: |
+          exec >> quality-job7/static-scan.log 2>&1
+          echo "=== Auth Bypass Pattern Scan ==="
+          FAIL=0
+
+          if find . \( -name "*.js" -o -name "*.ts" -o -name "*.vue" -o -name "*.py" -o -name "*.java" \) \
+            -not -path "*/node_modules/*" -not -path "*/dist/*" 2>/dev/null | grep -q .; then
+            DETECTED=1
+          else
+            DETECTED=0
+          fi
+
+          # Unconditional frontend router guard bypass
+          if grep -rEn "next\(true\)|beforeEach.*return true|navigate\(.*\{.*replace.*\}\)" \
+            --include="*.js" --include="*.ts" --include="*.vue" . 2>/dev/null \
+            | grep -v node_modules | grep -v "//"; then
+            echo "::warning::Possible unconditional navigation guard bypass detected"
+          fi
+
+          # Hardcoded passwords / tokens
+          if grep -rEn "password\s*[=:]\s*['\"][^'\"]{4,}['\"]" \
+            --include="*.js" --include="*.ts" --include="*.vue" --include="*.py" --include="*.java" \
+            . 2>/dev/null \
+            | grep -v node_modules \
+            | grep -v "//" \
+            | grep -vE "[[:space:]]:[a-zA-Z][a-zA-Z0-9_-]*=" \
+            | grep -q .; then
+            grep -rEn "password\s*[=:]\s*['\"][^'\"]{4,}['\"]" \
+              --include="*.js" --include="*.ts" --include="*.vue" --include="*.py" --include="*.java" \
+              . 2>/dev/null \
+              | grep -v node_modules | grep -v "//" \
+              | grep -vE "[[:space:]]:[a-zA-Z][a-zA-Z0-9_-]*="
+            echo "::error::Hardcoded password value detected in source code"
+            FAIL=1
+          fi
+
+          # eval() / exec() usage
+          if grep -rEn "\beval\(|\bexec\(" \
+            --include="*.js" --include="*.ts" --include="*.vue" --include="*.py" \
+            . 2>/dev/null | grep -v node_modules | grep -v "//"; then
+            echo "::warning::eval()/exec() usage detected — review for potential code injection risk"
+          fi
+
+          # Disabled SSL/TLS certificate verification
+          if grep -rEn "rejectUnauthorized\s*:\s*false|verify\s*=\s*False|ssl_verify\s*=\s*false" \
+            --include="*.js" --include="*.ts" --include="*.py" --include="*.java" \
+            . 2>/dev/null | grep -v node_modules | grep -v "//"; then
+            echo "::error::SSL/TLS certificate verification disabled — man-in-the-middle attack risk"
+            FAIL=1
+          fi
+
+          # Sensitive tokens in URL query strings
+          if grep -rEn "[?&](token|api_key|apikey|access_token|secret)=" \
+            --include="*.js" --include="*.ts" --include="*.vue" --include="*.py" \
+            . 2>/dev/null | grep -v node_modules | grep -v "//"; then
+            echo "::warning::Sensitive token/key passed in URL query string — use Authorization header instead."
+          fi
+
+          # ── Final result ─────────────────────────────────
+          echo ""
+          if [ "$DETECTED" -eq 0 ]; then
+            echo "::error::Auth Bypass Scan — No source files matched. Cannot confirm scan was effective."
+            exit 1
+          fi
+
+          if [ "$FAIL" -eq 1 ]; then
+            exit 1
+          fi
+
+          echo "✅ Auth bypass pattern scan passed"
+
+      - name: Upload artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-job7
+          path: quality-job7/static-scan.log
+          retention-days: 30
+          if-no-files-found: warn
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TIER 3 — Report Generation  (always runs, even if upstream jobs failed)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 8 · Generate Consolidated Report
+  # Source: integrity-GP.yml — Job 4  +  Metrics-html-reportGP.yml (merged)
+  # Output: quality-security-report/report.json  +  report.html
+  # ─────────────────────────────────────────────────────────────────────────────
+  generate-report:
+    name: "📋 Generate Consolidated Report"
+    runs-on: ubuntu-latest
+    needs:
+      - cyclomatic-complexity
+      - nesting-depth
+      - identifier-length
+      - fog-index-metrics
+      - access-control-audit
+      - route-auth-audit
+      - static-security-scan
+    if: always()
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+
+      # Download all seven job artifacts (continue-on-error: true so a missing
+      # artifact from a skipped or failed job does not block the report)
+      - name: Download quality-job1 (cyclomatic complexity)
+        uses: actions/download-artifact@v4
+        with:
+          name: quality-job1
+          path: quality-job1/
+        continue-on-error: true
+
+      - name: Download quality-job2 (nesting depth)
+        uses: actions/download-artifact@v4
+        with:
+          name: quality-job2
+          path: quality-job2/
+        continue-on-error: true
+
+      - name: Download quality-job3 (identifier length)
+        uses: actions/download-artifact@v4
+        with:
+          name: quality-job3
+          path: quality-job3/
+        continue-on-error: true
+
+      - name: Download quality-job4 (fog index)
+        uses: actions/download-artifact@v4
+        with:
+          name: quality-job4
+          path: quality-job4/
+        continue-on-error: true
+
+      - name: Download quality-job5 (access control)
+        uses: actions/download-artifact@v4
+        with:
+          name: quality-job5
+          path: quality-job5/
+        continue-on-error: true
+
+      - name: Download quality-job6 (route auth)
+        uses: actions/download-artifact@v4
+        with:
+          name: quality-job6
+          path: quality-job6/
+        continue-on-error: true
+
+      - name: Download quality-job7 (static scan)
+        uses: actions/download-artifact@v4
+        with:
+          name: quality-job7
+          path: quality-job7/
+        continue-on-error: true
+
+      - name: Generate JSON report
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REF_NAME:   ${{ github.ref_name }}
+          GITHUB_SHA:        ${{ github.sha }}
+          GITHUB_RUN_ID:     ${{ github.run_id }}
+          # Tell the script to use the new artifact paths and output directory
+          QUALITY_ARTIFACT_PREFIX: quality-job
+          REPORT_OUTPUT_DIR:       quality-security-report
+        run: node .github/scripts/generate-integrity-report.js
+
+      - name: Render HTML report
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REF_NAME:   ${{ github.ref_name }}
+          GITHUB_SHA:        ${{ github.sha }}
+          GITHUB_RUN_ID:     ${{ github.run_id }}
+          # Tell the renderer where to find the JSON and where to write HTML
+          REPORT_INPUT_DIR:  quality-security-report
+          REPORT_OUTPUT_DIR: quality-security-report
+        run: node .github/scripts/render-integrity-html.js
+
+      - name: Upload consolidated report
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-security-report
+          path: quality-security-report/
+          retention-days: 30
+          if-no-files-found: error

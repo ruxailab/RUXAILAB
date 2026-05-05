@@ -1,0 +1,91 @@
+{
+  "schema_version": "2.0",
+  "pipeline": "integrity",
+  "metadata": {
+    "repository": "",
+    "ref": "",
+    "sha": "",
+    "run_id": "",
+    "generated_at": "2026-05-05T10:23:00.454Z"
+  },
+  "languages_targeted": [
+    "python",
+    "javascript",
+    "typescript",
+    "java",
+    "csharp"
+  ],
+  "summary": {
+    "overall": "warn",
+    "jobs": {
+      "access-control-audit": "unknown",
+      "route-auth-audit": "unknown",
+      "static-security-scan": "unknown"
+    }
+  },
+  "quality": null,
+  "security": {
+    "access_control": {
+      "id": "access-control",
+      "name": "Access Control Audit",
+      "status": "unknown",
+      "errors": 0,
+      "warnings": 0,
+      "notices": 0,
+      "findings": []
+    },
+    "route_auth": {
+      "id": "route-auth",
+      "name": "Route Authorization Audit",
+      "status": "unknown",
+      "errors": 0,
+      "warnings": 0,
+      "notices": 0,
+      "findings": []
+    },
+    "static_scan": {
+      "id": "static-scan",
+      "name": "Static Security Analysis",
+      "status": "unknown",
+      "errors": 0,
+      "warnings": 0,
+      "notices": 0,
+      "findings": []
+    }
+  },
+  "overall": {
+    "status": "warn",
+    "total_errors": 0,
+    "total_warnings": 0,
+    "total_notices": 0
+  },
+  "jobs": [
+    {
+      "id": "access-control",
+      "name": "Access Control Audit",
+      "status": "unknown",
+      "errors": 0,
+      "warnings": 0,
+      "notices": 0,
+      "findings": []
+    },
+    {
+      "id": "route-auth",
+      "name": "Route Authorization Audit",
+      "status": "unknown",
+      "errors": 0,
+      "warnings": 0,
+      "notices": 0,
+      "findings": []
+    },
+    {
+      "id": "static-scan",
+      "name": "Static Security Analysis",
+      "status": "unknown",
+      "errors": 0,
+      "warnings": 0,
+      "notices": 0,
+      "findings": []
+    }
+  ]
+}

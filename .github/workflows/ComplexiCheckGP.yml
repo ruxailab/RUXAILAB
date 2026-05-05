@@ -1,0 +1,27 @@
+name: Python Complexity Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  complexity-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Necesario para comparar ramas y detectar archivos cambiados
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Ejecutar análisis de complejidad
+        run: |
+          ARCHIVOS=$(git diff --name-only --diff-filter=AM origin/${{ github.base_ref }} HEAD | grep '\.py$' || true)
+          
+          python CyclomaticMetric.py $ARCHIVOS > resultados_complejidad.json
+          
+          cat resultados_complejidad.json
