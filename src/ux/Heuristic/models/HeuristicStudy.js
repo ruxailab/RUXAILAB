@@ -15,12 +15,14 @@ export default class HeuristicStudy extends Study {
       enabled: false,
       sections: [],
     }
+    this.heuristicComments = params.heuristicComments ?? {}
   }
 
   toFirestore() {
     return Object.assign(super.toFirestore(), {
       testWeights: this.testWeights,
       evaluatorInfo: this.evaluatorInfo,
+      heuristicComments: this.heuristicComments,
     })
   }
 }
