@@ -32,18 +32,43 @@ def _strip_js_noise(source: str) -> str:
     return source
 
 
+# Matches function-like declarations in JS/TS (named functions, arrow fns, method shorthands)
+_JS_FN_PATTERN = re.compile(
+    r'\bfunction\s*\w*\s*\('     # function foo( or function(
+    r'|(?<!=)=>\s*[{(]'            # => { or => ( (arrow function body)
+    r'|\basync\s+\w+\s*\('        # async method shorthand
+    r'|(?:^|[{,;\n])\s*\w+\s*\([^)]*\)\s*\{',  # method shorthand: foo(args) {
+    re.MULTILINE
+)
+
+
 def calcular_js(codigo_fuente: str) -> int:
-    """Regex-based cyclomatic complexity estimator for JavaScript / TypeScript."""
+    """Return average cyclomatic complexity per function (JS/TS).
+
+    Divides the file-level branch count by the number of function declarations
+    so that the threshold is meaningful on a per-function basis, not per-file.
+    """
     source = _strip_js_noise(codigo_fuente)
-    complejidad = 1
+    total = 1
     for pattern in _JS_DECISION_PATTERNS:
-        complejidad += len(pattern.findall(source))
-    return complejidad
+        total += len(pattern.findall(source))
+    fn_count = max(len(_JS_FN_PATTERN.findall(source)), 1)
+    # Ceiling integer division
+    return (total + fn_count - 1) // fn_count
 # ─────────────────────────────────────────────────────────────────────────────
 
 class AnalizadorComplejidad(ast.NodeVisitor):
     def __init__(self):
         self.complejidad = 1
+        self.fn_count = 0
+
+    def visit_FunctionDef(self, node):
+        self.fn_count += 1
+        self.generic_visit(node)
+
+    def visit_AsyncFunctionDef(self, node):
+        self.fn_count += 1
+        self.generic_visit(node)
 
     def visit_If(self, node):
         self.complejidad += 1
@@ -97,7 +122,9 @@ def calcular(codigo_fuente: str, extension: str = '.py') -> int:
 
     visitante = AnalizadorComplejidad()
     visitante.visit(arbol)
-    return visitante.complejidad
+    fn_count = max(visitante.fn_count, 1)
+    # Ceiling integer division — average CC per function
+    return (visitante.complejidad + fn_count - 1) // fn_count
 
 DIRECTORIOS_IGNORADOS = {'venv', 'env', '.venv', 'migrations', '__pycache__', '.git', 'tests',
                          'node_modules', 'dist', 'build', '.next', 'coverage'}

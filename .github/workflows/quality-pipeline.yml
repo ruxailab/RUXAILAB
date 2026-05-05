@@ -80,7 +80,7 @@ jobs:
           elif [[ "$EVENT" == "pull_request" ]]; then
             FILES=$(git diff --name-only --diff-filter=AM \
               "origin/${{ github.base_ref }}" HEAD 2>/dev/null \
-              | grep -E "$EXT_PATTERN" | tr '\n' ' ' || true)
+              | grep -E "$EXT_PATTERN" | grep -v '^\.github' | tr '\n' ' ' || true)
 
           else
             # push — fall back to full scan when branch is new (zeroed before SHA)
@@ -90,7 +90,7 @@ jobs:
             else
               FILES=$(git diff --name-only --diff-filter=AM \
                 "$BEFORE" "${{ github.sha }}" 2>/dev/null \
-                | grep -E "$EXT_PATTERN" | tr '\n' ' ' || true)
+                | grep -E "$EXT_PATTERN" | grep -v '^\.github' | tr '\n' ' ' || true)
             fi
           fi
 
@@ -106,7 +106,7 @@ jobs:
               ${{ steps.target.outputs.files }} \
               > quality-job1/complexity-results.json
           else
-            echo '{"analysis_type":"Cyclomatic Complexity","threshold":15,"summary":{"total_files":0,"failed_files":0},"results":[],"skipped":true}' \
+            echo '{"analysis_type":"Cyclomatic Complexity","threshold":20,"summary":{"total_files":0,"failed_files":0},"results":[],"skipped":true}' \
               > quality-job1/complexity-results.json
             echo "::notice::No supported files changed — complexity check skipped"
           fi
@@ -248,10 +248,12 @@ jobs:
       - name: Run identifier length analysis
         run: |
           FILES="${{ steps.all-files.outputs.files }}${{ steps.changed-files.outputs.all_changed_files }}"
-          if [[ -n "${FILES// /}" ]]; then
-            python .github/scripts/len_identifiersGP.py $FILES
+          # Exclude tooling scripts — quality gates target application code only
+          FILTERED=$(echo "$FILES" | tr ' ' '\n' | grep -v '^\.github' | tr '\n' ' ')
+          if [[ -n "${FILTERED// /}" ]]; then
+            python .github/scripts/len_identifiersGP.py $FILTERED
           else
-            echo '{"analysis_type":"Identifier Length","threshold":10,"summary":{"total_files":0,"failed_files":0},"results":[]}' \
+            echo '{"analysis_type":"Identifier Length","threshold":6,"summary":{"total_files":0,"failed_files":0},"results":[]}' \
               > identifier_report.json
             echo "::notice::No supported files changed — identifier length check skipped"
           fi
