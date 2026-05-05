@@ -95,7 +95,7 @@ function stat(value, label, color, bg) {
   </div>`
 }
 
-// ─── Job section ─────────────────────────────────────────────────────────────
+// ─── Security job section ─────────────────────────────────────────────────────
 
 const JOB_ICONS = {
   'access-control': '🛡️',
@@ -105,7 +105,6 @@ const JOB_ICONS = {
 
 function buildJobSection(job) {
   const icon = JOB_ICONS[job.id] || '📋'
-  const s = STATUS_STYLE[job.status] || STATUS_STYLE.unknown
 
   const findingsHtml = job.findings.length === 0
     ? `<p style="color:#64748b;font-style:italic;margin:0;font-size:14px">No security annotations found.</p>`
@@ -133,15 +132,86 @@ function buildJobSection(job) {
   </div>`
 }
 
+// ─── Quality metric section ───────────────────────────────────────────────────
+
+const QUALITY_META = {
+  complexity:        { icon: '📊', name: 'Cyclomatic Complexity', metric: 'complexity',        unit: 'CC avg/fn', decimals: 0 },
+  nesting:           { icon: '🌲', name: 'Nesting Depth',         metric: 'max_nesting_depth', unit: 'max depth', decimals: 0 },
+  identifier_length: { icon: '🏷️', name: 'Identifier Length',     metric: 'avg_length',        unit: 'avg chars', decimals: 2 },
+  fog_index:         { icon: '📖', name: 'Fog Index',             metric: 'fog_score',         unit: 'score',     decimals: 1 },
+}
+
+function qualityJobStatus(data) {
+  if (!data || data.skipped) return 'unknown'
+  return (data.summary && data.summary.failed_files > 0) ? 'fail' : 'pass'
+}
+
+function buildQualitySection(key, data) {
+  const qm = QUALITY_META[key]
+  if (!qm) return ''
+  const status = qualityJobStatus(data)
+
+  if (!data || data.skipped) {
+    return `
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:24px;margin-bottom:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <h2 style="margin:0;font-size:17px;color:#0f172a">${qm.icon} ${esc(qm.name)}</h2>
+      ${badge('unknown')}
+    </div>
+    <p style="color:#64748b;font-style:italic;margin:16px 0 0;font-size:14px">Skipped — no files analysed.</p>
+  </div>`
+  }
+
+  const results = data.results || []
+  const totalFiles = (data.summary && data.summary.total_files != null) ? data.summary.total_files : results.length
+  const violations = results.filter((r) => r.status_code !== 'OK' && r.status_code !== 'OK!')
+  const passed = totalFiles - violations.length
+
+  const findingsHtml = violations.length === 0
+    ? `<p style="color:#64748b;font-style:italic;margin:0;font-size:14px">All ${totalFiles} file(s) passed — no violations found.</p>`
+    : violations.map((r) => {
+        const val = r[qm.metric]
+        const display = typeof val === 'number' ? val.toFixed(qm.decimals) : (val ?? '?')
+        const lvl = (r.status_code === 'DANGER' || r.status_code === '⚠️ IMPROVE NAMING') ? 'error' : 'warning'
+        return `
+      <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #f1f5f9">
+        <div style="flex-shrink:0;padding-top:1px">${chip(lvl)}</div>
+        <div>
+          <div style="font-family:ui-monospace,monospace;font-size:13px;color:#1e293b;word-break:break-word">
+            ${esc(qm.metric)} = ${esc(display)} ${esc(qm.unit)} &nbsp;·&nbsp; threshold: ${esc(String(data.threshold))}
+          </div>
+          <div style="font-size:11px;color:#94a3b8;margin-top:3px">📄 ${esc(r.file)}</div>
+        </div>
+      </div>`
+      }).join('')
+
+  return `
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:24px;margin-bottom:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+      <h2 style="margin:0;font-size:17px;color:#0f172a">${qm.icon} ${esc(qm.name)}</h2>
+      ${badge(status)}
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px">
+      ${stat(totalFiles,       'Files Analysed', '#2563eb', '#eff6ff')}
+      ${stat(data.threshold,   'Threshold',      '#6b7280', '#f3f4f6')}
+      ${stat(violations.length,'Violations',     violations.length > 0 ? '#dc2626' : '#16a34a', violations.length > 0 ? '#fee2e2' : '#dcfce7')}
+      ${stat(passed,           'Passed',         '#16a34a', '#dcfce7')}
+    </div>
+    <div>${findingsHtml}</div>
+  </div>`
+}
+
 // ─── Assemble HTML ───────────────────────────────────────────────────────────
 
-const { metadata: meta, overall, jobs } = report
+const { metadata: meta, overall, jobs, quality } = report
+
+const QUALITY_ORDER = ['complexity', 'nesting', 'identifier_length', 'fog_index']
 
 const os = STATUS_STYLE[overall.status] || STATUS_STYLE.unknown
 const overallLabel = {
   pass:    '✅ ALL CHECKS PASSED',
   warn:    '⚠️ WARNINGS DETECTED',
-  fail:    '❌ SECURITY ISSUES FOUND',
+  fail:    '❌ ISSUES FOUND',
   unknown: '❓ INCOMPLETE',
 }[overall.status] || '❓ INCOMPLETE'
 
@@ -149,7 +219,26 @@ const runUrl = meta.repository && meta.run_id
   ? `https://github.com/${esc(meta.repository)}/actions/runs/${esc(meta.run_id)}`
   : null
 
-const summaryRows = jobs.map((j) => `
+// Quality rows in the summary table (shown only when quality data is present)
+const qualitySummaryRows = quality
+  ? QUALITY_ORDER.map((key) => {
+      const qm = QUALITY_META[key]
+      const data = quality[key]
+      const status = qualityJobStatus(data)
+      const violations = data ? (data.results || []).filter((r) => r.status_code !== 'OK' && r.status_code !== 'OK!').length : 0
+      return `
+  <tr>
+    <td style="padding:12px 16px"><strong>${qm.icon} ${esc(qm.name)}</strong></td>
+    <td style="padding:12px 16px">${badge(status)}</td>
+    <td style="padding:12px 16px;text-align:center;font-weight:700;color:${violations > 0 ? '#dc2626' : '#64748b'}">${violations}</td>
+    <td style="padding:12px 16px;text-align:center;color:#94a3b8">—</td>
+    <td style="padding:12px 16px;text-align:center;color:#94a3b8">—</td>
+  </tr>`
+    }).join('')
+  : ''
+
+// Security rows in the summary table
+const securitySummaryRows = jobs.map((j) => `
   <tr>
     <td style="padding:12px 16px"><strong>${JOB_ICONS[j.id] || '📋'} ${esc(j.name)}</strong></td>
     <td style="padding:12px 16px">${badge(j.status)}</td>
@@ -158,12 +247,19 @@ const summaryRows = jobs.map((j) => `
     <td style="padding:12px 16px;text-align:center;color:#64748b">${j.notices}</td>
   </tr>`).join('')
 
+const summaryRows = qualitySummaryRows + securitySummaryRows
+
+// Quality sections HTML
+const qualitySectionsHtml = quality
+  ? QUALITY_ORDER.map((key) => buildQualitySection(key, quality[key])).join('')
+  : ''
+
 const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Integrity Security Report — ${esc(meta.repository)}</title>
+  <title>Quality &amp; Security Report — ${esc(meta.repository)}</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     body {
@@ -187,7 +283,7 @@ const html = `<!DOCTYPE html>
     <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:28px;margin-bottom:20px">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px">
         <div>
-          <h1 style="margin:0 0 6px;font-size:22px;color:#0f172a">🔐 Integrity Security Report</h1>
+          <h1 style="margin:0 0 6px;font-size:22px;color:#0f172a">🔐 Quality &amp; Security Report</h1>
           <p style="margin:0;color:#64748b;font-size:13px">
             ${esc(meta.repository)}${meta.ref ? ` · ${esc(meta.ref)}` : ''}${meta.sha ? ` · <code>${esc(meta.sha.slice(0, 7))}</code>` : ''}
           </p>
@@ -205,7 +301,7 @@ const html = `<!DOCTYPE html>
       </div>
     </div>
 
-    <!-- Summary -->
+    <!-- Pipeline Summary (all 7 jobs) -->
     <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;margin-bottom:20px;overflow:hidden">
       <div style="padding:18px 20px 14px;border-bottom:1px solid #e2e8f0">
         <h2 style="margin:0;font-size:15px;color:#0f172a">Pipeline Summary</h2>
@@ -214,7 +310,7 @@ const html = `<!DOCTYPE html>
         <thead>
           <tr>
             <th>Job</th><th>Status</th>
-            <th style="text-align:center">Errors</th>
+            <th style="text-align:center">Violations / Errors</th>
             <th style="text-align:center">Warnings</th>
             <th style="text-align:center">Notices</th>
           </tr>
@@ -223,12 +319,18 @@ const html = `<!DOCTYPE html>
       </table>
     </div>
 
-    <!-- Per-job details -->
-    <h2 style="font-size:15px;color:#0f172a;margin:0 0 14px">Detailed Findings</h2>
+    ${quality ? `
+    <!-- Quality Metrics -->
+    <h2 style="font-size:15px;color:#0f172a;margin:0 0 14px">📐 Quality Metrics</h2>
+    ${qualitySectionsHtml}
+    ` : ''}
+
+    <!-- Security Audits -->
+    <h2 style="font-size:15px;color:#0f172a;margin:0 0 14px">🔒 Security Audits</h2>
     ${jobs.map(buildJobSection).join('')}
 
     <p style="text-align:center;color:#94a3b8;font-size:11px;margin-top:24px">
-      Integrity Pipeline · ${esc(meta.generated_at)}
+      Quality &amp; Security Pipeline · ${esc(meta.generated_at)}
     </p>
   </div>
 </body>
