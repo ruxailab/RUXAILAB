@@ -376,111 +376,76 @@ function statistics() {
     return []
   }
 
-  if (testAnswerDocument.type === STUDY_TYPES.HEURISTIC) {
-    const resultEvaluator = []
-
-    // Get Evaluator answers
-    answers().forEach((evaluator) => {
-      let SelectEvaluator = resultEvaluator.find(
-        (e) => e.userDocId == evaluator.userDocId,
-      )
-
-      if (!SelectEvaluator) {
-        resultEvaluator.push({
-          userDocId: evaluator.userDocId,
-          id: evaluator.userDocId,
-          heuristics: [],
-          result: 0,
-          lastUpdate: evaluator.lastUpdate,
-        })
-        SelectEvaluator = resultEvaluator[resultEvaluator.length - 1]
-      } else {
-        // Update lastUpdate if evaluator already exists
-        SelectEvaluator.lastUpdate = evaluator.lastUpdate
-      }
-
-      // Get Heuristics for evaluators
-      let heurisIndex = 1
-      evaluator.heuristicQuestions.forEach((heuristic) => {
-        let noAplication = 0
-        let noReply = 0
-        let qNotApplicable = 0
-        let res = heuristic.heuristicQuestions.reduce(
-          (totalQuestions, question) => {
-            if (question.heuristicAnswer.value === null) {
-              noAplication++
-            }
-            if (
-              question.heuristicAnswer.value === 0 ||
-              question.heuristicAnswer.value === '0'
-            ) {
-              qNotApplicable++
-            }
-
-            if (
-              question.heuristicAnswer.value === '' ||
-              Object.values(question.heuristicAnswer).length < 3
-            )
-              noReply++
-            return totalQuestions + Number(question.heuristicAnswer.value)
-          },
-          0,
-        )
-
-        if (noAplication == heuristic.heuristicQuestions.length) res = null
-
-        SelectEvaluator.heuristics.push({
-          id: `H${heurisIndex}`,
-          result: res == -1 ? 0 : res,
-          totalQuestions: heuristic.heuristicTotal,
-          totalNoAplication: noAplication,
-          totalNoReply: noReply,
-          timeSpentMs: parseTimeSpentToMs(heuristic.timeSpent),
-        })
-        heurisIndex++
-      })
-    })
-
-    // Sort resultEvaluator based on lastUpdate
-    resultEvaluator.sort((a, b) => b.lastUpdate - a.lastUpdate)
-
-    // Calc Final result
-    resultEvaluator.forEach((ev) => {
-      ev.result = calcFinalResult(ev.heuristics)
-    })
-
-    return resultEvaluator
+  if (testAnswerDocument.type !== STUDY_TYPES.HEURISTIC) {
+    return []
   }
-  return []
+
+  return answers()
+    .map((evaluator) => {
+      const evaluatorSummary = summarizeEvaluator(evaluator)
+
+      return {
+        ...evaluatorSummary,
+        ...calcFinalResult(evaluatorSummary.heuristics, test.testOptions),
+      }
+    })
+    .sort((left, right) => right.lastUpdate - left.lastUpdate)
 }
 
-function finalResult(itemsArg) {
-  // Permite pasar los items directamente, o usa el store como fallback
-  const items = Array.isArray(itemsArg)
-    ? itemsArg
-    : (store.state.Answer.evaluatorStatistics &&
-        store.state.Answer.evaluatorStatistics.items) ||
-      []
-  if (items.length) {
-    const res = items.reduce((total, value) => {
-      return !isNaN(parseInt(value.result))
-        ? total + value.result / items.length
-        : 0
-    }, 0)
+function finalResult(
+  evaluatorItems = store.state.Answer.evaluatorStatistics?.items || [],
+) {
+  const validItems = Array.isArray(evaluatorItems)
+    ? evaluatorItems.filter((item) =>
+        Number.isFinite(toNumericScore(item.result)),
+      )
+    : []
 
-    testData.average = `${Math.fround(res).toFixed(2)}%`
+  if (!validItems.length) {
+    return createEmptySummary()
+  }
 
-    testData.max = `${Math.max(
-      ...items.map((item) => (!isNaN(parseInt(item.result)) ? item.result : 0)),
-    ).toFixed(2)}%`
+  const resultValues = validItems.map((item) => toNumericScore(item.result))
+  const baseWarningValues = validItems.map(
+    (item) => toNumericScore(item.baseWarning) || 0,
+  )
+  const maxWarningValues = validItems.map(
+    (item) => toNumericScore(item.maxWarning) || 0,
+  )
+  const minWarningValues = validItems.map(
+    (item) => toNumericScore(item.minWarning) || 0,
+  )
 
-    testData.min = `${Math.min(
-      ...items.map((item) => (!isNaN(parseInt(item.result)) ? item.result : 0)),
-    ).toFixed(2)}%`
+  const averageResult =
+    resultValues.reduce((total, value) => total + value, 0) / validItems.length
+  const averageBaseWarning =
+    baseWarningValues.reduce((total, value) => total + value, 0) /
+    validItems.length
+  const averageMaxWarning =
+    maxWarningValues.reduce((total, value) => total + value, 0) /
+    validItems.length
+  const averageMinWarning =
+    minWarningValues.reduce((total, value) => total + value, 0) /
+    validItems.length
 
-    testData.sd = `${standardDeviation(
-      items.map((item) => (!isNaN(parseInt(item.result)) ? item.result : 0)),
-    ).toFixed(2)}%`
+  return {
+    average: formatPercentage(averageResult),
+    max: formatPercentage(Math.max(...resultValues)),
+    min: formatPercentage(Math.min(...resultValues)),
+    sd: formatPercentage(standardDeviation(resultValues)),
+    avrgWarning: formatPercentage(averageBaseWarning),
+    avrgmaxWarning: formatPercentage(averageMaxWarning),
+    avrgminWarning: formatPercentage(averageMinWarning),
+    impactWarning: formatPercentage(averageResult - averageBaseWarning),
+    evaluators: validItems.length,
+    totalComments: validItems.reduce(
+      (total, item) => total + toFiniteNumber(item.totalComments),
+      0,
+    ),
+    totalImages: validItems.reduce(
+      (total, item) => total + toFiniteNumber(item.totalImages),
+      0,
+    ),
   }
 }
 
