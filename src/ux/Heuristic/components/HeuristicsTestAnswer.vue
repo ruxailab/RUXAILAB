@@ -1,9 +1,5 @@
 <template>
   <div v-if="answers">
-    <p>{{ showFinalResult }}</p>
-    <p>imageTotalsByHeuristic: {{ imageTotalsByHeuristic }}</p>
-    <p>optionResponseTotals: {{ optionResponseTotals }}</p>
-
     <v-overlay :model-value="loading">
       <v-progress-circular indeterminate size="64" />
     </v-overlay>
