@@ -1033,10 +1033,7 @@ watch([localVideo, localStream], ([videoEl, stream]) => {
 onMounted(async () => {
   // Moderator gets media preview but doesn't join room yet
   if (props.isModerator) {
-    // Just get local media for preview
-    if (!isObservator.value) {
-      await initLocalMedia()
-    }
+    // Do NOT initialize local media here  wait for startCall()
   } else {
     // Participants and observators wait for room to be opened by moderator
     const showVideoCallRef = dbRef(
@@ -1484,6 +1481,9 @@ function dismissJoinDialog() {
 const startCall = async () => {
   // Moderator joins the room and signals others
   try {
+    if (!localStream.value) {
+      await initLocalMedia()
+    }
     // Set flag first so others can join
     await update(dbRef(database, `rooms/${props.roomId}`), {
       showVideoCall: true,
