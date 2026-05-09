@@ -1,7 +1,7 @@
 const heuristicsStatisticsHeaders = [
   { title: 'HEURISTICS', align: 'start', sortable: false, value: 'name' },
   {
-    title: 'Usability score (%)',
+    title: 'Usability Percentage (%)',
     value: 'percentage',
     align: 'center',
     sortable: false,
@@ -35,7 +35,7 @@ const heuristicsStatisticsHeaders = [
 const weightsStatisticsHeader = [
   { title: 'HEURISTICS', align: 'start', sortable: false, value: 'name' },
   {
-    title: 'Usability Score (%)',
+    title: 'Usability Percentage (%)',
     value: 'percentage',
     align: 'center',
     sortable: true,

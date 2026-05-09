@@ -824,29 +824,40 @@
     },
     "summary": {
       "title": "Evaluation Summary",
-      "usabilityAverageTest": "Usability Average Test",
-      "average": "Average",
-      "max": "Max.",
-      "min": "Min.",
-      "std": "Std. Dev.",
-      "evaluators": "Evaluators",
-      "evaluatorsHint": "Shown for context, but not emphasized in the layout",
-      "impact": "Impact of warnings",
-      "impactHint": "How far the evaluation shifts when warnings are taken into account",
-      "warningSummary": "Implication of alerts",
-      "warningExplanation": "Questions answered as unable to be verified by analyzing only the website have been marked as warnings. For these warnings, the percentage change has been calculated in two scenarios: if those answers had received the highest possible score, and if they had received the lowest possible score.",
-      "warningSubtitle": "Cases that cannot be checked as an evaluator, and the percentage we would have if everything were resolved (avrgMaxWarning) or if the non-compliant fields are taken into account (avrgMinWarning)",
-      "imagesByHeuristic": "Total Images by Heuristic",
-      "imagesSubtitle": "Horizontal distribution per heuristic",
-      "responsesByOption": "Response Type",
-      "responsesSubtitle": "Circular distribution of selected options",
-      "noImageData": "No image data",
-      "noOptionData": "No option data",
-      "averageWarning": "Average warning threshold",
-      "averageMaxWarning": "Average max warning threshold",
-      "averageMinWarning": "Average min warning threshold",
-      "groups": "groups",
-      "metrics": "metrics"
+      "stats": {
+        "average": "Average",
+        "max": "Max.",
+        "min": "Min.",
+        "stdDev": "Std. Dev.",
+        "evaluators": "Evaluators"
+      },
+      "warnings": {
+        "title": "Impact of warnings",
+        "hint": "How far the evaluation shifts when warnings are taken into account",
+        "description": "Questions answered as unable to be verified by analyzing only the website have been marked as warnings. The percentage change has been calculated in two scenarios: highest possible score and lowest possible score.",
+        "scenarios": {
+          "max": "Average max warning threshold",
+          "min": "Average min warning threshold",
+          "average": "Average warning threshold"
+        },
+        "details": ""
+      },
+      "charts": {
+        "imagesByHeuristic": {
+          "title": "Images by Heuristic",
+          "subtitle": "Horizontal distribution per heuristic",
+          "empty": "No image data"
+        },
+        "responsesByOption": {
+          "title": "Response Type",
+          "subtitle": "Circular distribution of selected options",
+          "empty": "No option data"
+        }
+      },
+      "meta": {
+        "groups": "groups",
+        "metrics": "metrics"
+      }
     },
     "evaluators": {
       "headers": {
@@ -860,7 +871,7 @@
     "heuristics": {
       "headers": {
         "heuristicsData": "Heuristics Data",
-        "answersByEvaluator": "Answers by Evaluator",
+        "answersByEvaluator": "Response Values by Evaluator",
         "answersByHeuristics": "Answers by Heuristics",
         "graphic": "Graphic",
         "weights": "Weights"

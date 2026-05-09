@@ -18,7 +18,7 @@
               <div class="stat-icon stat-icon--blue">%</div>
               <div>
                 <div class="text-subtitle-2 text-medium-emphasis">
-                  {{ t('HeuristicsTestAnswer.summary.usabilityAverageTest') }}
+                  {{ t('HeuristicsTestAnswer.summary.stats.average') }}
                 </div>
                 <div
                   class="hero-value"
@@ -57,19 +57,19 @@
           <v-row v-if="!isSingleEvaluator" class="mt-4 metrics-mini" dense>
             <v-col cols="4">
               <div class="mini-label">
-                {{ t('HeuristicsTestAnswer.summary.max') }}
+                {{ t('HeuristicsTestAnswer.summary.stats.max') }}
               </div>
               <div class="mini-value">{{ result.max || '0.00%' }}</div>
             </v-col>
             <v-col cols="4">
               <div class="mini-label">
-                {{ t('HeuristicsTestAnswer.summary.min') }}
+                {{ t('HeuristicsTestAnswer.summary.stats.min') }}
               </div>
               <div class="mini-value">{{ result.min || '0.00%' }}</div>
             </v-col>
             <v-col cols="4">
               <div class="mini-label">
-                {{ t('HeuristicsTestAnswer.summary.std') }}
+                {{ t('HeuristicsTestAnswer.summary.stats.stdDev') }}
               </div>
               <div class="mini-value">{{ result.sd || '0.00%' }}</div>
             </v-col>
@@ -77,15 +77,18 @@
 
           <div class="single-evaluator-caption warning-summary-inline mt-6">
             <div class="single-evaluator-title">
-              {{ t('HeuristicsTestAnswer.summary.warningSummary') }}
+              {{ t('HeuristicsTestAnswer.summary.warnings.title') }}
+            </div>
+            <div class="warning-summary-hint">
+              {{ t('HeuristicsTestAnswer.summary.warnings.hint') }}
             </div>
             <div class="warning-summary-description">
-              {{ t('HeuristicsTestAnswer.summary.warningExplanation') }}
+              {{ `${t('HeuristicsTestAnswer.summary.warnings.description')} ` }}
             </div>
             <div class="single-evaluator-row mt-2">
               <div class="single-evaluator-item">
                 <div class="mini-label">
-                  {{ t('HeuristicsTestAnswer.summary.averageMaxWarning') }}
+                  {{ t('HeuristicsTestAnswer.summary.warnings.scenarios.max') }}
                 </div>
                 <div
                   class="mini-value warning-summary-value"
@@ -96,7 +99,7 @@
               </div>
               <div class="single-evaluator-item">
                 <div class="mini-label">
-                  {{ t('HeuristicsTestAnswer.summary.averageMinWarning') }}
+                  {{ t('HeuristicsTestAnswer.summary.warnings.scenarios.min') }}
                 </div>
                 <div
                   class="mini-value warning-summary-value"
@@ -115,10 +118,18 @@
           <div class="d-flex align-center justify-space-between mb-4">
             <div>
               <div class="text-subtitle-1 font-weight-bold">
-                {{ t('HeuristicsTestAnswer.summary.imagesByHeuristic') }}
+                {{
+                  t(
+                    'HeuristicsTestAnswer.summary.charts.imagesByHeuristic.title',
+                  )
+                }}
               </div>
               <div class="text-caption text-medium-emphasis">
-                {{ t('HeuristicsTestAnswer.summary.imagesSubtitle') }}
+                {{
+                  t(
+                    'HeuristicsTestAnswer.summary.charts.imagesByHeuristic.subtitle',
+                  )
+                }}
               </div>
             </div>
             <div class="summary-header-chips">
@@ -171,7 +182,9 @@
           </div>
 
           <div v-else class="text-body-2 text-medium-emphasis">
-            {{ t('HeuristicsTestAnswer.summary.noImageData') }}
+            {{
+              t('HeuristicsTestAnswer.summary.charts.imagesByHeuristic.empty')
+            }}
           </div>
         </v-card>
       </v-col>
@@ -181,10 +194,18 @@
           <div class="d-flex align-center justify-space-between mb-4">
             <div>
               <div class="text-subtitle-1 font-weight-bold">
-                {{ t('HeuristicsTestAnswer.summary.responsesByOption') }}
+                {{
+                  t(
+                    'HeuristicsTestAnswer.summary.charts.responsesByOption.title',
+                  )
+                }}
               </div>
               <div class="text-caption text-medium-emphasis">
-                {{ t('HeuristicsTestAnswer.summary.responsesSubtitle') }}
+                {{
+                  t(
+                    'HeuristicsTestAnswer.summary.charts.responsesByOption.subtitle',
+                  )
+                }}
               </div>
             </div>
           </div>
@@ -200,7 +221,9 @@
           />
 
           <div v-else class="text-body-2 text-medium-emphasis">
-            {{ t('HeuristicsTestAnswer.summary.noOptionData') }}
+            {{
+              t('HeuristicsTestAnswer.summary.charts.responsesByOption.empty')
+            }}
           </div>
         </v-card>
       </v-col>
@@ -333,7 +356,8 @@ const optionCounts = computed(() =>
 )
 
 const summaryTitle = computed(
-  () => `Evaluation Test : ${props.testTitle || '-'}`,
+  () =>
+    `${t('HeuristicsTestAnswer.summary.title')} : ${props.testTitle || '-'}`,
 )
 </script>
 
@@ -457,6 +481,14 @@ const summaryTitle = computed(
   color: #64748b;
   font-size: 0.82rem;
   line-height: 1.45;
+}
+
+.warning-summary-hint {
+  margin-top: 4px;
+  width: 100%;
+  color: #475569;
+  font-size: 0.78rem;
+  line-height: 1.4;
 }
 
 .single-evaluator-row {
