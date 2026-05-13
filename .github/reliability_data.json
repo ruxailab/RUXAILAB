@@ -3,8 +3,8 @@
   "group": "RUXAILAB",
   "pipeline_name": "Reliability",
   "status": "passed",
-  "date": "2026-05-12",
-  "run_id": "25766931301",
+  "date": "2026-05-13",
+  "run_id": "25831226777",
   "summary": {
     "total": 98,
     "passed": 98,
@@ -103,6 +103,18 @@
       "score": 100,
       "report_type": "jest",
       "run_id": "25766931301"
+    },
+    {
+      "date": "2026-05-13",
+      "status": "passed",
+      "total": 98,
+      "passed": 98,
+      "failed": 0,
+      "flaky": 0,
+      "skipped": 0,
+      "score": 100,
+      "report_type": "jest",
+      "run_id": "25831226777"
     }
   ]
 }
