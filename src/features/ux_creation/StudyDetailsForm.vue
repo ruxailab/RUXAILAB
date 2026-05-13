@@ -388,8 +388,8 @@ const submitFromTemplate = async () => {
       test.value.description || templateBody.testDescription || '',
     isPublic: test.value.isPublic,
     testAdmin: new StudyAdmin({
-      userDocId: user.id,
-      email: user.email,
+      userDocId: user?.id || ' ' ,
+      email: user?.email || ' ' ,
     }),
     templateDoc: template.id,
     creationDate: Date.now(),
@@ -424,8 +424,8 @@ const submit = async () => {
     isPublic: test.value.isPublic,
     subType: test.value.subType,
     testAdmin: new StudyAdmin({
-      userDocId: user.id,
-      email: user.email,
+      userDocId: user?.id || ' ' ,
+      email: user?.email || ' ' ,
     }),
     creationDate: Date.now(),
     updateDate: Date.now(),
@@ -464,15 +464,15 @@ const submitAccessibility = async () => {
     testType: testType,
     isPublic: test.value.isPublic || false,
     testAdmin: new StudyAdmin({
-      userDocId: user.id,
-      email: user.email,
+      userDocId: user?.id || ' ' ,
+      email: user?.email || ' ' ,
     }),
     creationDate: Date.now(),
     updateDate: Date.now(),
     status: 'draft',
     websiteUrl: '',
     collaborators: {
-      [user.id]: 'admin',
+      [user?.id || ' ' ]: 'admin',
     },
   }
 
