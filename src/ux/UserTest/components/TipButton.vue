@@ -12,6 +12,7 @@
         block
         prepend-icon="mdi-lightbulb-outline"
         v-bind="props"
+        @click="onTipPress"
       >
         Tip
       </v-btn>
@@ -75,6 +76,7 @@
 <script setup>
 import { ref } from 'vue'
 
+const emit = defineEmits(['tip-pressed'])
 defineProps({
   task: {
     type: Object,
@@ -86,6 +88,8 @@ defineProps({
 })
 
 const dialog = ref(false)
+const onTipPress = () => emit('tip-pressed')
+
 </script>
 
 <style scoped>

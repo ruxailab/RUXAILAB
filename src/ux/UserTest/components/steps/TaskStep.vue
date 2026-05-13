@@ -214,7 +214,7 @@
                           Having trouble? Get helpful guidance to complete this
                           task.
                         </p>
-                        <TipButton :task="task" />
+                        <TipButton :task="task" @tip-pressed="onTipPressed" />
                       </div>
                     </v-col>
 
@@ -521,6 +521,7 @@ const emit = defineEmits([
   'update:tamAnswers',
   'update:sartAnswers',
   'startTask',
+  'tip-pressed',
 ])
 
 onBeforeUnmount(() => {
@@ -859,6 +860,9 @@ function onUpdateTaskObservations(val) {
 }
 function onUpdateNasaTlx(val) {
   emit('update:nasaTlxAnswers', val)
+}
+function onTipPressed() {
+  emit('tip-pressed', props.taskIndex)
 }
 function onTimerStopped(elapsedTime) {
   emit('timer-stopped', elapsedTime, props.taskIndex)
