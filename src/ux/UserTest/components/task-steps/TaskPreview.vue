@@ -161,9 +161,9 @@
 </template>
 
 <script setup>
-import DOMPurify from 'dompurify'
 import { computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { sanitizeHtml } from '@/shared/utils/sanitizeUtils'
 
 const { t } = useI18n()
 
@@ -178,8 +178,10 @@ const props = defineProps({
 const emit = defineEmits(['validate'])
 
 const sanitizedTaskDescription = computed(() => {
-  const raw = (props.task && props.task.taskDescription) || t('CreateTask.preview.noDescription')
-  return DOMPurify.sanitize(raw)
+  const raw =
+    (props.task && props.task.taskDescription) ||
+    t('CreateTask.preview.noDescription')
+  return sanitizeHtml(raw)
 })
 
 const recordingFeatures = computed(() => {

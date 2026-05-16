@@ -43,7 +43,7 @@
     "chartjs-adapter-date-fns": "^3.0.0",
     "crypto-browserify": "^3.12.1",
     "date-fns": "^4.1.0",
-    "dompurify": "^3.3.2",
+    "dompurify": "^3.4.3",
     "firebase": "^9.23.0",
     "firebase-admin": "^13.7.0",
     "firebase-functions": "^6.6.0",

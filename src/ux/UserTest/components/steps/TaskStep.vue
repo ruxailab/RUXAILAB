@@ -469,8 +469,8 @@
 
 <script setup>
 import { ref, watch, nextTick, computed, onBeforeUnmount } from 'vue'
-import DOMPurify from 'dompurify'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
+import { sanitizeHtml } from '@/shared/utils/sanitizeUtils'
 import TipButton from '@/ux/UserTest/components/TipButton.vue'
 import AudioRecorder from '@/ux/UserTest/components/AudioRecorder.vue'
 import AudioVisualizer from '@/ux/UserTest/components/AudioVisualizer.vue'
@@ -508,7 +508,9 @@ const props = defineProps({
   shouldRecordModerator: Boolean, // props that indicate whether to record the moderator's video
 })
 
-const sanitizedTaskDescription = computed(() => DOMPurify.sanitize(props.task?.taskDescription || props.taskDescription || ''))
+const sanitizedTaskDescription = computed(() =>
+  sanitizeHtml(props.task?.taskDescription || props.taskDescription),
+)
 
 const emit = defineEmits([
   'done',
@@ -739,7 +741,7 @@ async function startMediaRecorders() {
   }
   if (props.task?.hasCamRecord && videoRecorder.value) {
     const videoStarted = await videoRecorder.value.startRecording()
-    if(!videoStarted){
+    if (!videoStarted) {
       return false
     }
   }

@@ -259,10 +259,10 @@
 
 <script setup>
 import { ref, watch, computed } from 'vue'
-import DOMPurify from 'dompurify'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { QuillEditor } from '@vueup/vue-quill'
+import { sanitizeHtml } from '@/shared/utils/sanitizeUtils'
 
 import TranscriptionController from '@/ai/transcriptions/TranscriptionController'
 
@@ -292,7 +292,9 @@ const pdfMeta = ref({
 const pdfSummaryHtml = ref('<p>Add an executive summary here…</p>')
 
 const controller = new TranscriptionController()
-const sanitizedPdfSummaryHtml = computed(() => DOMPurify.sanitize(pdfSummaryHtml.value || ''))
+const sanitizedPdfSummaryHtml = computed(() =>
+  sanitizeHtml(pdfSummaryHtml.value),
+)
 
 const formatIcon = computed(
   () =>
@@ -300,7 +302,7 @@ const formatIcon = computed(
       csv: 'mdi-file-delimited-outline',
       json: 'mdi-code-json',
       pdf: 'mdi-file-pdf-box',
-    }[format.value]),
+    })[format.value],
 )
 
 const exportLabel = computed(() =>

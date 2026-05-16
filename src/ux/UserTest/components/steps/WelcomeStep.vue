@@ -103,9 +103,9 @@
 </template>
 
 <script setup>
-import DOMPurify from 'dompurify'
 import { computed } from 'vue'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
+import { sanitizeHtml } from '@/shared/utils/sanitizeUtils'
 import { VStepperVertical } from 'vuetify/labs/VStepperVertical'
 import { useDisplay } from 'vuetify'
 
@@ -118,7 +118,9 @@ const props = defineProps({
 })
 defineEmits(['start'])
 const { smAndDown } = useDisplay()
-const sanitizedWelcomeMessage = computed(() => DOMPurify.sanitize(props.welcomeMessage || ''))
+const sanitizedWelcomeMessage = computed(() =>
+  sanitizeHtml(props.welcomeMessage),
+)
 </script>
 
 <style scoped>
