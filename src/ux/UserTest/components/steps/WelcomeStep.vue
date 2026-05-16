@@ -109,7 +109,7 @@ import ShowInfo from '@/shared/components/ShowInfo.vue'
 import { VStepperVertical } from 'vuetify/labs/VStepperVertical'
 import { useDisplay } from 'vuetify'
 
-defineProps({
+const props = defineProps({
   stepperValue: { type: Number, required: true },
   welcomeMessage: { type: String, default: '' },
   hasEyeTracking: { type: Boolean, default: false },
