@@ -639,6 +639,7 @@
       "addNewDescription": "Add a new Description",
       "addOption": "Add a new Option",
       "hasValue": "Has Value",
+      "warning": "Warning",
       "moveUp": "Move Up",
       "moveDown": "Move Down",
       "Question": "Question",
@@ -819,7 +820,11 @@
       "statistics": "Statistics",
       "evaluators": "Evaluators",
       "heuristics": "Heuristics",
-      "analytics": "Analytics"
+      "analytics": "Analytics",
+      "evaluatorNumber": "Evaluator {n}",
+      "totalTime": "Total time",
+      "averageTime": "Average time per evaluator",
+      "timeStdDev": "Time standard deviation"
     },
     "statistics": {
       "usabilityPercentage": "Usability Percentage",

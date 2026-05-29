@@ -361,7 +361,10 @@ const editItem = (item) => {
     (opt) => opt.timestamp === item.timestamp,
   )
   option.value = { ...store.state.Tests.Test.testOptions[editIndex.value] }
-  hasValue.value = option.value.value !== null
+  hasValue.value = typeof option.value.hasValue === 'boolean'
+    ? option.value.hasValue
+    : option.value.value !== null
+  warning.value = option.value.warning ?? false
   dialog.value = true
 }
 

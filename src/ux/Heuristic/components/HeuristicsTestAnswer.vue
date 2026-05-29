@@ -100,9 +100,7 @@ import {
   standardDeviation,
   finalResult,
   statistics,
-  FinalResultWarnings,
   calcFinalResult,
-  calcResultsWarnings,
   formatTimeSpentFromMs,
   buildHeuristicTestBundlePayload,
   downloadHeuristicTestBundlePayload,
@@ -172,6 +170,7 @@ const optionResponseTotals = computed(() => {
   options.forEach((option) => {
     const key = String(option.value)
     totalsMap.set(key, {
+      value: option.value,
       text: option.text || String(option.value),
       total: 0,
     })
@@ -234,7 +233,7 @@ const heuristicsEvaluator = computed(() => {
       const header = table.header.find((h) => h.value === evaluator.id)
       if (!header) {
         table.header.push({
-          title: `Evaluator ${evaluatorIndex}`,
+          title: t('HeuristicsTestAnswer.titles.evaluatorNumber', { n: evaluatorIndex }),
           align: 'center',
           value: evaluator.id,
         })
@@ -242,7 +241,7 @@ const heuristicsEvaluator = computed(() => {
       if (evaluator.heuristics && Array.isArray(evaluator.heuristics)) {
         evaluator.heuristics.forEach((heuristic) => {
           const totalQuestions = Number(
-            heuristic.SumOfValues ?? heuristic.totalQuestions ?? 0,
+            heuristic.totalQuestionsValues ?? heuristic.totalQuestions ?? 0,
           )
           const item = table.items.find((i) => i.heuristic === heuristic.id)
           if (item) {
@@ -281,7 +280,7 @@ const timeByHeuristics = computed(() => {
   resultEvaluator.value.forEach((evaluator, evaluatorPosition) => {
     const evaluatorKey = `Ev${evaluatorPosition + 1}`
     table.header.push({
-      title: `Evaluator ${evaluatorPosition + 1}`,
+      title: t('HeuristicsTestAnswer.titles.evaluatorNumber', { n: evaluatorPosition + 1 }),
       value: evaluatorKey,
       align: 'center',
     })
@@ -303,17 +302,17 @@ const timeByHeuristics = computed(() => {
   })
 
   table.header.push({
-    title: 'Total time',
+    title: t('HeuristicsTestAnswer.titles.totalTime'),
     value: 'totalTime',
     align: 'center',
   })
   table.header.push({
-    title: 'Average time per evaluator',
+    title: t('HeuristicsTestAnswer.titles.averageTime'),
     value: 'averageTime',
     align: 'center',
   })
   table.header.push({
-    title: 'Time standard deviation',
+    title: t('HeuristicsTestAnswer.titles.timeStdDev'),
     value: 'timeSd',
     align: 'center',
   })
@@ -631,12 +630,7 @@ onBeforeMount(async () => {
 onMounted(() => {
   pythonFunction()
 
-  if (typeof window !== 'undefined') {
-    // Handy debug API from browser console to inspect/download test+answers.
-    window.getHeuristicTestBundlePayload = () => testBundlePayload.value
-    window.downloadHeuristicTestBundlePayload = (fileName) =>
-      downloadHeuristicTestBundlePayload(testBundlePayload.value, fileName)
-  }
+  // Debug API removed for production
 })
 </script>
 

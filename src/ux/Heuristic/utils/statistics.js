@@ -145,7 +145,7 @@ function getQuestionComments(question) {
 }
 
 function isQuestionWithoutReply(answer) {
-  return answer?.value === '' || Object.values(answer || {}).length < 3
+  return answer?.value == null || answer?.value === ''
 }
 
 function summarizeQuestion(question) {
@@ -201,7 +201,7 @@ function summarizeHeuristic(heuristic, heuristicIndex) {
   return {
     id: `H${heuristicIndex + 1}`,
     result: allQuestionsAreNotApplicable ? null : questionSummary.result,
-    SumOfValues: toFiniteNumber(heuristic?.heuristicTotal),
+    totalQuestionsValues: toFiniteNumber(heuristic?.heuristicTotal),
     totalNoAplication: questionSummary.totalNoAplication,
     totalNoReply: questionSummary.totalNoReply,
     totalWarnings: questionSummary.totalWarnings,
@@ -331,7 +331,7 @@ function calcFinalResult(
         heuristic?.result === null || heuristic?.result === -1
           ? 0
           : toFiniteNumber(heuristic?.result)
-      const totalQuestions = toFiniteNumber(heuristic?.SumOfValues)
+      const totalQuestions = toFiniteNumber(heuristic?.totalQuestionsValues)
       const totalNoAplication = toFiniteNumber(heuristic?.totalNoAplication)
       const totalWarnings = toFiniteNumber(heuristic?.totalWarnings)
 
@@ -471,7 +471,7 @@ function buildHeuristicsEvaluator(resultEvaluator, testOptions) {
     const evaluatorId = `Ev${index + 1}`
 
     table.header.push({
-      text: evaluatorId,
+      title: evaluatorId,
       align: 'center',
       value: evaluatorId,
     })
@@ -479,7 +479,7 @@ function buildHeuristicsEvaluator(resultEvaluator, testOptions) {
     if (!Array.isArray(evaluator?.heuristics)) return
 
     evaluator.heuristics.forEach((heuristic) => {
-      const totalQuestions = toFiniteNumber(heuristic?.SumOfValues)
+      const totalQuestions = toFiniteNumber(heuristic?.totalQuestionsValues)
       const row = rowsByHeuristic.get(heuristic.id) || {
         heuristic: heuristic.id,
         max: maxOption * totalQuestions,
