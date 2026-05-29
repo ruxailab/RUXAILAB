@@ -90,6 +90,8 @@
     "analyzeProject": "Analyze the project and evaluators",
     "comment": "Comment",
     "comments": "Comments",
+    "evaluator": "Evaluator",
+    "evaluators": "Evaluators",
     "image": "Image",
     "images": "Images",
     "close": "Close",

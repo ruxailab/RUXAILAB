@@ -292,8 +292,8 @@ const evaluatorsCount = computed(() => Number(props.result?.evaluators) || 0)
 const isSingleEvaluator = computed(() => evaluatorsCount.value === 1)
 
 const evaluatorsLabel = computed(() => {
-  const suffix = evaluatorsCount.value === 1 ? 'Evaluator' : 'Evaluators'
-  return `${evaluatorsCount.value} ${suffix}`
+  const key = evaluatorsCount.value === 1 ? 'common.evaluator' : 'common.evaluators'
+  return `${evaluatorsCount.value} ${t(key)}`
 })
 
 const totalComments = computed(() => Number(props.result?.totalComments) || 0)
