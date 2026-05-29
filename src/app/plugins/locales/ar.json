@@ -147,7 +147,9 @@
     "image": "صورة",
     "images": "صور",
     "close": "إغلاق",
-    "selectImage": "حدد صورة للرفع"
+    "selectImage": "حدد صورة للرفع",
+    "evaluator": "Evaluator",
+    "evaluators": "Evaluators"
   },
   "storage": {
     "pageTitle": "التخزين",
@@ -624,7 +626,8 @@
       "Questions": "أسئلة",
       "noQuestions": "لا توجد أسئلة",
       "noDescriptions": "لا توجد أوصاف",
-      "loading": "جاري التحميل..."
+      "loading": "جاري التحميل...",
+      "warning": "Warning"
     },
     "placeholders": {
       "titleHeuristic": "عنوان الاستدلال",
@@ -773,7 +776,11 @@
       "statistics": "الإحصائيات",
       "evaluators": "المقيمون",
       "heuristics": "الاستدلالات",
-      "analytics": "التحليلات"
+      "analytics": "التحليلات",
+      "evaluatorNumber": "Evaluator {n}",
+      "totalTime": "Total time",
+      "averageTime": "Average time per evaluator",
+      "timeStdDev": "Time standard deviation"
     },
     "statistics": {
       "usabilityPercentage": "نسبة الاستخدام",
@@ -801,6 +808,32 @@
       "messages": {
         "needMoreThan1Answer": "تحتاج هذه الصفحة إلى أكثر من إجابة واحدة ليتم إنشاؤها.",
         "runWeightFunction": "تحتاج هذه الصفحة إلى تشغيل وظيفة الأوزان (Python)، يمكن أن تكون في وضع المحاكاة أو النشر، ويجب تحديد الأوزان بالكامل في صفحة إنشاء الاختبار."
+      }
+    },
+    "summary": {
+      "title": "Evaluation Summary",
+      "stats": {
+        "average": "Average",
+        "max": "Max.",
+        "min": "Min.",
+        "stdDev": "Std. Dev."
+      },
+      "warnings": {
+        "title": "Impact of warnings",
+        "hint": "How far the evaluation shifts when warnings are taken into account",
+        "description": "Questions answered as unable to be verified by analyzing only the website have been marked as warnings. The percentage change has been calculated in two scenarios: highest possible score and lowest possible score.",
+        "scenarios": {
+          "max": "Average max warning threshold",
+          "min": "Average min warning threshold"
+        }
+      },
+      "charts": {
+        "imagesByHeuristic": {
+          "empty": "No image data"
+        },
+        "responsesByOption": {
+          "empty": "No option data"
+        }
       }
     }
   },

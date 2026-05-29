@@ -147,7 +147,9 @@
     "id": "ID",
     "itemsPerPage": "Itens por página:",
     "saving": "Salvando...",
-    "visible": "Visível"
+    "visible": "Visível",
+    "evaluator": "Evaluator",
+    "evaluators": "Evaluators"
   },
   "storage": {
     "pageTitle": "Armazenamento",
@@ -624,7 +626,8 @@
       "Questions": "Perguntas",
       "noQuestions": "Nenhuma pergunta",
       "noDescriptions": "Nenhuma descrição",
-      "loading": "Carregando..."
+      "loading": "Carregando...",
+      "warning": "Warning"
     },
     "placeholders": {
       "titleHeuristic": "Título da Heurística",
@@ -775,7 +778,11 @@
       "statistics": "Estatísticas",
       "evaluators": "Avaliadores",
       "heuristics": "Heurísticas",
-      "analytics": "Análises"
+      "analytics": "Análises",
+      "evaluatorNumber": "Evaluator {n}",
+      "totalTime": "Total time",
+      "averageTime": "Average time per evaluator",
+      "timeStdDev": "Time standard deviation"
     },
     "statistics": {
       "usabilityPercentage": "Porcentagem de usabilidade",
@@ -803,6 +810,32 @@
       "messages": {
         "needMoreThan1Answer": "Esta página precisa de mais de uma resposta para ser gerada.",
         "runWeightFunction": "Esta página exige que a função de pesos (Python) esteja em execução, seja em emuladores ou em modo implantado, e que os pesos estejam completamente configurados na página de criação do teste."
+      }
+    },
+    "summary": {
+      "title": "Evaluation Summary",
+      "stats": {
+        "average": "Average",
+        "max": "Max.",
+        "min": "Min.",
+        "stdDev": "Std. Dev."
+      },
+      "warnings": {
+        "title": "Impact of warnings",
+        "hint": "How far the evaluation shifts when warnings are taken into account",
+        "description": "Questions answered as unable to be verified by analyzing only the website have been marked as warnings. The percentage change has been calculated in two scenarios: highest possible score and lowest possible score.",
+        "scenarios": {
+          "max": "Average max warning threshold",
+          "min": "Average min warning threshold"
+        }
+      },
+      "charts": {
+        "imagesByHeuristic": {
+          "empty": "No image data"
+        },
+        "responsesByOption": {
+          "empty": "No option data"
+        }
       }
     }
   },

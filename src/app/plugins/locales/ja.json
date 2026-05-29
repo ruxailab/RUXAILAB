@@ -147,7 +147,9 @@
     "image": "画像",
     "images": "画像",
     "close": "閉じる",
-    "selectImage": "アップロードする画像を選択"
+    "selectImage": "アップロードする画像を選択",
+    "evaluator": "Evaluator",
+    "evaluators": "Evaluators"
   },
   "storage": {
     "pageTitle": "ストレージ",
@@ -624,7 +626,8 @@
       "Questions": "質問",
       "noQuestions": "質問がありません",
       "noDescriptions": "説明がありません",
-      "loading": "読み込み中..."
+      "loading": "読み込み中...",
+      "warning": "Warning"
     },
     "placeholders": {
       "titleHeuristic": "ヒューリスティックのタイトル",
@@ -773,7 +776,11 @@
       "statistics": "統計",
       "evaluators": "評価者",
       "heuristics": "ヒューリスティック",
-      "analytics": "分析"
+      "analytics": "分析",
+      "evaluatorNumber": "Evaluator {n}",
+      "totalTime": "Total time",
+      "averageTime": "Average time per evaluator",
+      "timeStdDev": "Time standard deviation"
     },
     "statistics": {
       "usabilityPercentage": "ユーザビリティ割合",
@@ -801,6 +808,32 @@
       "messages": {
         "needMoreThan1Answer": "このページを生成するには、2つ以上の回答が必要です。",
         "runWeightFunction": "このページには重み関数（Python）の実行が必要です。エミュレータまたはデプロイモードで実行し、作成ページで重みが完全に設定されている必要があります。"
+      }
+    },
+    "summary": {
+      "title": "Evaluation Summary",
+      "stats": {
+        "average": "Average",
+        "max": "Max.",
+        "min": "Min.",
+        "stdDev": "Std. Dev."
+      },
+      "warnings": {
+        "title": "Impact of warnings",
+        "hint": "How far the evaluation shifts when warnings are taken into account",
+        "description": "Questions answered as unable to be verified by analyzing only the website have been marked as warnings. The percentage change has been calculated in two scenarios: highest possible score and lowest possible score.",
+        "scenarios": {
+          "max": "Average max warning threshold",
+          "min": "Average min warning threshold"
+        }
+      },
+      "charts": {
+        "imagesByHeuristic": {
+          "empty": "No image data"
+        },
+        "responsesByOption": {
+          "empty": "No option data"
+        }
       }
     }
   },
