@@ -92,7 +92,7 @@ function tryRequireYaml(core) {
 }
 
 /**
- * Simple line-by-line parser for our specific milestone-config.yml structure.
+ * Permissive line-by-line parser for our specific milestone-config.yml structure.
  * Handles only the flat structure we expect — NOT a general YAML parser.
  *
  * Expected structure:
@@ -127,20 +127,20 @@ function fallbackParseYaml(content, core) {
       continue;
     }
 
-    // Milestone sub-key (2-space indent): "Month YYYY":
+    // Milestone sub-key (indented key): e.g. "June 2026": or 'June 2026': or June 2026:
     if (currentSection === 'milestones') {
-      const keyMatch = line.match(/^\s{2}"([^"]+)":\s*$/);
+      const keyMatch = line.match(/^\s+["']?([^"']+)["']?:\s*$/);
       if (keyMatch) {
-        currentMilestoneKey = keyMatch[1];
+        currentMilestoneKey = keyMatch[1].trim();
         result.milestones[currentMilestoneKey] = [];
         continue;
       }
     }
 
-    // List items
-    const itemMatch = line.match(/^\s+-\s+"([^"]+)"\s*$/);
+    // List items starting with "-"
+    const itemMatch = line.match(/^\s*-\s+["']?([^"']+)["']?\s*$/);
     if (itemMatch) {
-      const value = itemMatch[1];
+      const value = itemMatch[1].trim();
       if (currentSection === 'default_objectives' && !currentMilestoneKey) {
         result.default_objectives.push(value);
       } else if (
@@ -242,7 +242,7 @@ function httpPost(url, payload) {
       (res) => {
         let body = '';
         res.on('data', (chunk) => (body += chunk));
-        res.on('end', () => resolve({ status: res.statusCode, body }));
+        res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, body }));
       }
     );
 
@@ -277,9 +277,17 @@ async function postToDiscord(webhookUrl, embed, core) {
         return true;
       }
 
-      // Rate limited — respect Retry-After if available
+      // Rate limited — respect Retry-After header if available
       if (res.status === 429) {
-        const retryAfter = 2000 * attempt; // fallback backoff
+        let retryAfter = 2000 * attempt; // fallback backoff
+        const headerValue = res.headers && (res.headers['retry-after'] || res.headers['x-ratelimit-reset-after']);
+        if (headerValue) {
+          const parsed = parseFloat(headerValue);
+          if (!isNaN(parsed)) {
+            // Discord rate limit headers are in seconds, let's convert to ms and add buffer
+            retryAfter = Math.ceil(parsed * 1000) + 500;
+          }
+        }
         core.warning(
           `Discord rate limited (429). Retrying in ${retryAfter}ms...`
         );
@@ -323,7 +331,8 @@ module.exports = async ({ github, context, core }) => {
   const monthName = MONTH_NAMES[month];
   const milestoneTitle = `${monthName} ${year}`;
   const lastDay = lastDayOfMonth(year, month);
-  const dueDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}T23:59:59Z`;
+  // Set predictable time component matching GitHub's default stored value (08:00:00Z)
+  const dueDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}T08:00:00Z`;
 
   core.info(`Target milestone: "${milestoneTitle}" (due ${dueDate})`);
 
@@ -340,7 +349,7 @@ module.exports = async ({ github, context, core }) => {
   const description = [
     `## 🎯 Objectives for ${milestoneTitle}`,
     '',
-    ...objectives.map((obj, i) => `- [ ] ${obj}`),
+    ...objectives.map((obj) => `- [ ] ${obj}`),
     '',
     '---',
     `_This milestone was automatically created by the Monthly Milestone Bot on ${new Date().toISOString().split('T')[0]}._`,
@@ -367,23 +376,27 @@ module.exports = async ({ github, context, core }) => {
     milestoneUrl = created.html_url;
     core.info(`✅ Milestone #${milestoneNumber} created: ${milestoneUrl}`);
   } catch (createErr) {
-    // Check for "already exists" (HTTP 422)
-    if (
-      createErr.status === 422 ||
-      (createErr.message && createErr.message.includes('already_exists'))
-    ) {
+    // Inspect if the error is specifically a duplicate/already_exists error
+    const isAlreadyExists =
+      createErr.status === 422 &&
+      (createErr.response?.data?.errors?.some(e => e.code === 'already_exists') ||
+       (createErr.message && createErr.message.includes('already_exists')));
+
+    if (isAlreadyExists) {
       core.info(
         `Milestone "${milestoneTitle}" already exists. Searching to update...`
       );
 
-      // Find existing milestone by title
-      const { data: existingMilestones } =
-        await github.rest.issues.listMilestones({
+      // Paginate all pages of milestones to reliably find the existing one
+      const existingMilestones = await github.paginate(
+        github.rest.issues.listMilestones,
+        {
           owner,
           repo,
           state: 'all',
           per_page: 100,
-        });
+        }
+      );
 
       const existing = existingMilestones.find(
         (m) => m.title === milestoneTitle
@@ -406,13 +419,13 @@ module.exports = async ({ github, context, core }) => {
         );
       } else {
         core.setFailed(
-          `GitHub returned 422 but could not find milestone "${milestoneTitle}" to update.`
+          `GitHub returned 422 (already_exists) but could not find milestone "${milestoneTitle}" during pagination.`
         );
         return;
       }
     } else {
       core.setFailed(
-        `Failed to create milestone: ${createErr.message || createErr}`
+        `Failed to create milestone (Validation Error): ${createErr.message || createErr}`
       );
       return;
     }

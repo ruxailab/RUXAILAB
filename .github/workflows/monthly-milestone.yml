@@ -30,9 +30,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install YAML parser
-        # Installed here (not from package.json) to keep project deps clean.
+        # Installed with --no-save to avoid polluting package.json / package-lock.json.
         # The script has a fallback parser if this step fails.
-        run: npm install yaml
+        run: npm install --no-save yaml
         continue-on-error: true
 
       - name: Create or Update Monthly Milestone
