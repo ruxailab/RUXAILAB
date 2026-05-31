@@ -1,0 +1,47 @@
+name: Monthly Milestone Creator
+
+on:
+  schedule:
+    # Runs at 08:00 UTC on the 1st of each month
+    # (Avoids midnight to reduce GitHub Actions cron scheduling delays)
+    - cron: '0 8 1 * *'
+
+  workflow_dispatch:
+    inputs:
+      month:
+        description: 'Month name in English (e.g. June). Leave empty for current month.'
+        required: false
+        type: string
+      year:
+        description: 'Year (e.g. 2026). Leave empty for current year.'
+        required: false
+        type: string
+
+permissions:
+  contents: read    # To checkout repo and read milestone-config.yml
+  issues: write     # To create/update milestones (milestones use the Issues API)
+
+jobs:
+  create-milestone:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install YAML parser
+        # Installed here (not from package.json) to keep project deps clean.
+        # The script has a fallback parser if this step fails.
+        run: npm install yaml
+        continue-on-error: true
+
+      - name: Create or Update Monthly Milestone
+        uses: actions/github-script@v7
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          INPUT_MONTH: ${{ github.event.inputs.month || '' }}
+          INPUT_YEAR: ${{ github.event.inputs.year || '' }}
+        with:
+          script: |
+            const script = require('./.github/scripts/create-monthly-milestone.js');
+            await script({ github, context, core });

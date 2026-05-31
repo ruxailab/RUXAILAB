@@ -1,0 +1,27 @@
+# milestone-config.yml — Monthly Milestone Bot Configuration
+# ============================================================
+# Maintainers: edit the objectives for the upcoming month BEFORE the 1st.
+# If no entry matches the current month, "default_objectives" will be used.
+#
+# Keys under "milestones" must use the format: "Month YYYY"
+#   e.g. "June 2026", "July 2026", "January 2027"
+#
+# Each entry is a list of objective strings.
+
+default_objectives:
+  - "Review and triage open issues"
+  - "Merge approved pull requests"
+  - "Update project documentation"
+  - "Improve test coverage"
+
+milestones:
+  "June 2026":
+    - "Implement milestone bot automation"
+    - "Refactor authentication module"
+    - "Add end-to-end tests for new heuristic flows"
+    - "Release v0.2.0-beta"
+
+  # "July 2026":
+  #   - "Migrate state management to Pinia"
+  #   - "Performance audit and optimization"
+  #   - "Localization updates (pt-BR, en)"
