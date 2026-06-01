@@ -52,8 +52,11 @@ function calcFinalResult(array) {
 
   // Check if test and testOptions exist
   const test = store.getters.test
-  if (!test || !Array.isArray(test.testOptions)) {
-    console.warn('calcFinalResult: test or testOptions is not available', test)
+  if (
+    !test ||
+    !Array.isArray(test.testOptions) ||
+    test.testOptions.length === 0
+  ) {
     return 0
   }
 
@@ -73,7 +76,7 @@ function calcFinalResult(array) {
   const perfectResult = (qtdQuestion - qtdNoAplication) * maxOption
   return perfectResult === 0
     ? 0
-    : parseFloat(((result * 100) / perfectResult).toFixed(2))
+    : Number.parseFloat(((result * 100) / perfectResult).toFixed(2))
 }
 
 function answers() {
