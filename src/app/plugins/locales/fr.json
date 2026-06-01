@@ -74,6 +74,7 @@
   },
   "common": {
     "enterTextHere": "Entrez le texte ici...",
+    "percentValue": "{value}%",
     "units": {
       "mb": "Mo",
       "gb": "Go"
@@ -86,6 +87,11 @@
     "editAndInvite": "Modifier et inviter des personnes à votre test",
     "analyzeProject": "Analyser le projet et les évaluateurs",
     "comment": "Commentaire",
+    "comments": "Commentaires",
+    "image": "Image",
+    "images": "Images",
+    "close": "Fermer",
+    "selectImage": "Sélectionnez une image à télécharger",
     "inputImage": "Entrez une image de votre choix en rapport avec le sujet",
     "title": "Titre",
     "description": "Description",
@@ -568,7 +574,10 @@
       "updatedProgress": "a mis à jour sa progression",
       "invitationSentTitle": "Invitation envoyée",
       "invitationPendingDesc": "Invitation en attente pour",
-      "pendingStatus": "En attente"
+      "pendingStatus": "En attente",
+      "evaluatorInfo": "Info Évaluateurs",
+      "evaluatorInfoEmpty": "Aucune section d'information. Ajoutez-en pour guider vos évaluateurs.",
+      "evaluatorInfoSeeAll": "Voir les {count} sections"
     },
     "managerView": {
       "heuristicStudy": "Étude heuristique",
@@ -643,7 +652,14 @@
     "AddCommentBtn": {
       "showComment": "Afficher le commentaire",
       "addComment": "Ajouter un commentaire",
+      "addAnotherComment": "Ajouter un autre commentaire",
+      "addNewComment": "Ajouter un nouveau commentaire",
       "hideTextArea": "Masquer la zone de texte"
+    },
+    "ImportImage": {
+      "uploadSuccess": "Image téléchargée avec succès",
+      "uploadError": "Échec du téléchargement de l'image",
+      "imagesCount": "{count} image(s) jointe(s)"
     },
     "errors": {
       "failedToLoadQuestionForm": "Échec du chargement du formulaire de question. Veuillez réessayer.",
@@ -655,6 +671,10 @@
       "question": "Question",
       "questions": "Questions"
     }
+  },
+  "HeuristicsAnalytics": {
+    "dataTable": "Tableau de données",
+    "chart": "Graphique"
   },
   "HeuristicsOptionsTable": {
     "titles": {
@@ -686,11 +706,13 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "Paramètres",
-      "confirmUpload": "Confirmer le téléchargement"
+      "confirmUpload": "Confirmer le téléchargement",
+      "enableWeights": "Activer la fonctionnalité de pondération"
     },
     "messages": {
       "acceptCsv": "Si vous acceptez, toutes vos heuristiques actuelles seront remplacées par celles du fichier .csv.",
-      "noCsvFileSelected": "Aucun fichier CSV sélectionné. \nVeuillez en sélectionner un avant de continuer."
+      "noCsvFileSelected": "Aucun fichier CSV sélectionné. \nVeuillez en sélectionner un avant de continuer.",
+      "enableWeightsDescription": "Permettre aux évaluateurs d'attribuer des poids aux heuristiques dans cette étude"
     },
     "placeHolders": {
       "importCsv": "Importez votre fichier CSV test ici."
@@ -1355,7 +1377,8 @@
       "elastic": "Elastic Net",
       "bayesian": "Bayesian Ridge",
       "sgd": "Régresseur SGD",
-      "svr": "Régresseur à vecteurs de support"
+      "svr": "Régresseur à vecteurs de support",
+      "rfr": "Régresseur par forêt aléatoire"
     }
   },
   "AccessNotAllowed": {
@@ -1580,7 +1603,8 @@
     "deleteAccount": "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action ne peut pas être annulée.",
     "genericSuccess": "Opération réussie",
     "savedChanges": "Modifications enregistrées avec succès",
-    "deleteUser": "Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action ne peut pas être annulée."
+    "deleteUser": "Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action ne peut pas être annulée.",
+    "errorSavingProgress": "Erreur lors de l'enregistrement de la progression"
   },
   "buttons": {
     "next": "Suivant",
@@ -2388,5 +2412,32 @@
       }
     },
     "title": "Politique de confidentialité"
+  },
+  "EvaluatorInfoView": {
+    "pageTitle": "Informations pour les Évaluateurs",
+    "pageSubtitle": "Créez des sections d'information que les évaluateurs verront avant de commencer le test"
+  },
+  "EvaluatorInfoEditor": {
+    "title": "Informations pour les Évaluateurs",
+    "subtitle": "Créez des sections d'information que les évaluateurs verront avant de commencer le test",
+    "noSections": "Aucune section. Ajoutez-en une pour commencer.",
+    "untitledSection": "Section sans titre",
+    "addSection": "Ajouter une section",
+    "sectionTitle": "Titre de la section",
+    "sectionContent": "Contenu",
+    "sectionType": "Type",
+    "types": {
+      "info": "Information",
+      "warning": "Avertissement",
+      "tip": "Conseil"
+    },
+    "save": "Enregistrer",
+    "cancel": "Annuler"
+  },
+  "EvaluatorInfoDisplay": {
+    "title": "Avant de commencer",
+    "subtitle": "Veuillez lire les informations suivantes avant de démarrer l'évaluation",
+    "startButton": "Démarrer l'évaluation",
+    "noContent": "Aucune information supplémentaire."
   }
 }

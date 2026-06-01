@@ -71,6 +71,7 @@
               :key="notification.id"
               :notification="notification"
               :class="{ active: index === activeIndex }"
+              style="margin-bottom: 10px"
               @go-to-redirect="goToNotificationRedirect"
               @mark-as-read="goToNotificationRedirect"
             />
