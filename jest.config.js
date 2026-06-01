@@ -7,6 +7,9 @@ module.exports = {
   testMatch: ['**/*.spec.js'],
   testPathIgnorePatterns: ['/e2e/', '/functions/'],
   transformIgnorePatterns: ['/node_modules/(?!axios)'],
+  moduleNameMapper: {
+    '^axios$': '<rootDir>/node_modules/axios/dist/node/axios.cjs',
+  },
   setupFilesAfterEnv: ['./tests/mocks/firebase.js'],
   resetMocks: true,
   clearMocks: true,
