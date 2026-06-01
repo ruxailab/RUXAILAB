@@ -258,10 +258,13 @@ export default {
     async deleteAuth({ commit }, payload) {
       commit('setLoading', true)
       try {
-        await authController.deleteAuth(payload)
-        // Store handles state management
-        await authController.signOut()
-        commit('SET_USER', null)
+        try {
+          await authController.deleteUserData(payload)
+        } catch (e) {
+          // Best effort backend cleanup
+          console.warn('Failed to delete user backend data during deleteAuth', e)
+        }
+        // State management is handled by the final logout action
       } catch (err) {
         throw err
       } finally {
