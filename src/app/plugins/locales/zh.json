@@ -102,6 +102,7 @@
     "markAllAsRead": "全部标记为已读",
     "caughtUp": "您已读完所有通知",
     "noNewNotifications": "没有新通知",
+    "notificationBell": "通知铃铛",
     "unread": "未读",
     "inbox": "收件箱",
     "timeAgo": {
@@ -282,7 +283,8 @@
       "viewEditProfile": "查看和编辑您的个人资料信息",
       "exploreCommunityStudies": "探索由 RUXAI 社区共享的调查",
       "browseCommunityTemplates": "浏览由 RUXAI 社区贡献的模板"
-    }
+    },
+    "helpButton": "帮助按钮"
   },
   "profile": {
     "title": "个人资料",
@@ -376,7 +378,8 @@
       "Settings": "设置",
       "name": "姓名",
       "studiesCount": "研究数量",
-      "mediaSize": "媒体大小"
+      "mediaSize": "媒体大小",
+      "toggleMiniMode": "切换迷你模式"
     },
     "heuristic": "可用性启发式评估"
   },

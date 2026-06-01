@@ -112,6 +112,7 @@
     "markAllAsRead": "Mark all as read",
     "caughtUp": "You're all caught up",
     "noNewNotifications": "No new notifications",
+    "notificationBell": "Notification bell",
     "unread": "unread",
     "inbox": "inbox",
     "all": "All",
@@ -291,7 +292,8 @@
     "signOut": "Sign Out",
     "previousStep": "Previous Step",
     "nextStep": "Next Step",
-    "finishTest": "Finish Test"
+    "finishTest": "Finish Test",
+    "helpButton": "Help button"
   },
   "profile": {
     "title": "Profile",
@@ -386,7 +388,8 @@
       "Evaluator Info": "Evaluator Info",
       "name": "Name",
       "studiesCount": "Studies Count",
-      "mediaSize": "Media Size"
+      "mediaSize": "Media Size",
+      "toggleMiniMode": "Toggle mini mode"
     },
     "heuristic": "Usability Heuristic Evaluation"
   },

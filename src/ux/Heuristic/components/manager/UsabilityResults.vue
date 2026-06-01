@@ -29,6 +29,7 @@
           size="80"
           width="8"
           :color="usabilityColor"
+          :aria-label="`${$t('Dashboard.cards.generalUsability')}: ${usabilityPercentage}%`"
         >
           <span class="text-h5 font-weight-bold"
             >{{ usabilityPercentage }}%</span

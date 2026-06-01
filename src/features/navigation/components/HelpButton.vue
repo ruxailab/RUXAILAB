@@ -5,23 +5,21 @@
       size="small"
       icon
       class="mr-1"
+      :aria-label="$t('navigation.helpButton')"
       @click="$router.push('/help')"
     >
-      <v-icon size="20">
-        mdi-help-circle-outline
-      </v-icon>
+      <v-icon size="20"> mdi-help-circle-outline </v-icon>
     </v-btn>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 
 const route = useRoute()
 
 const isHelp = computed(() => route.name === 'Help') // Use strict equality
-
 </script>
 
 <style></style>
