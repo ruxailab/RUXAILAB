@@ -74,6 +74,7 @@
   },
   "common": {
     "enterTextHere": "Text hier eingeben...",
+    "percentValue": "{value}%",
     "units": {
       "mb": "MB",
       "gb": "GB"
@@ -86,6 +87,11 @@
     "editAndInvite": "Bearbeiten und Personen zu Ihrem Test einladen",
     "analyzeProject": "Projekt und Evaluatoren analysieren",
     "comment": "Kommentar",
+    "comments": "Kommentare",
+    "image": "Bild",
+    "images": "Bilder",
+    "close": "Schließen",
+    "selectImage": "Wählen Sie ein Bild zum Hochladen",
     "inputImage": "Geben Sie ein Bild Ihrer Wahl zum Thema ein",
     "title": "Titel",
     "description": "Beschreibung",
@@ -568,7 +574,10 @@
       "updatedProgress": "hat seinen Fortschritt aktualisiert",
       "invitationSentTitle": "Einladung gesendet",
       "invitationPendingDesc": "Einladung ausstehend für",
-      "pendingStatus": "Ausstehend"
+      "pendingStatus": "Ausstehend",
+      "evaluatorInfo": "Evaluator-Info",
+      "evaluatorInfoEmpty": "Keine Informationsabschnitte. Fügen Sie welche hinzu.",
+      "evaluatorInfoSeeAll": "Alle {count} Abschnitte anzeigen"
     },
     "managerView": {
       "heuristicStudy": "Heuristische Studie",
@@ -643,7 +652,14 @@
     "AddCommentBtn": {
       "showComment": "Kommentar anzeigen",
       "addComment": "Kommentar hinzufügen",
+      "addAnotherComment": "Weiteren Kommentar hinzufügen",
+      "addNewComment": "Neuen Kommentar hinzufügen",
       "hideTextArea": "Textbereich ausblenden"
+    },
+    "ImportImage": {
+      "uploadSuccess": "Bild erfolgreich hochgeladen",
+      "uploadError": "Fehler beim Hochladen des Bildes",
+      "imagesCount": "{count} Bild(er) angehängt"
     },
     "errors": {
       "failedToLoadQuestionForm": "Fehler beim Laden des Frageformulars. Bitte versuchen Sie es erneut.",
@@ -655,6 +671,12 @@
       "question": "Frage",
       "questions": "Fragen"
     }
+  },
+  "HeuristicsAnalytics": {
+    "dataTable": "Datentabelle",
+    "chart": "Diagramm",
+    "userUploadedContent": "Vom Benutzer hochgeladener Inhalt",
+    "userUploadedAttachment": "Vom Benutzer hochgeladener Anhang"
   },
   "HeuristicsOptionsTable": {
     "titles": {
@@ -686,11 +708,13 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "Einstellungen",
-      "confirmUpload": "Upload bestätigen"
+      "confirmUpload": "Upload bestätigen",
+      "enableWeights": "Gewichtungsfunktion aktivieren"
     },
     "messages": {
       "acceptCsv": "Wenn Sie akzeptieren, werden alle Ihre vorhandenen Heuristiken durch die in der .csv-Datei ersetzt.",
-      "noCsvFileSelected": "Keine CSV-Datei ausgewählt. \nBitte wählen Sie eine aus, bevor Sie fortfahren."
+      "noCsvFileSelected": "Keine CSV-Datei ausgewählt. \nBitte wählen Sie eine aus, bevor Sie fortfahren.",
+      "enableWeightsDescription": "Ermöglichen Sie es Bewertern, Gewichte für Heuristiken in dieser Studie zuzuordnen"
     },
     "placeHolders": {
       "importCsv": "Importieren Sie Ihre CSV-Testdatei hier."
@@ -946,7 +970,8 @@
     "validation": {
       "fieldRequired": "Feld Erforderlich",
       "validUrl": "Muss eine gültige URL sein, die mit http:// oder https:// beginnt",
-      "positiveNumber": "Muss eine positive Zahl sein"
+      "positiveNumber": "Muss eine positive Zahl sein",
+      "minOne": "Wert muss mindestens 1 sein"
     },
     "basicInfo": {
       "stepTitle": "Schritt 1: Grundlegende Aufgabeninformationen",
@@ -1355,7 +1380,8 @@
       "elastic": "Elastic Net",
       "bayesian": "Bayesian Ridge",
       "sgd": "SGD-Regressor",
-      "svr": "Support Vector Regressor"
+      "svr": "Support Vector Regressor",
+      "rfr": "Random Forest Regressor"
     }
   },
   "AccessNotAllowed": {
@@ -1580,6 +1606,7 @@
     "deleteAccount": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
     "genericSuccess": "Vorgang erfolgreich",
     "savedChanges": "Änderungen erfolgreich gespeichert",
+    "errorSavingProgress": "Fehler beim Speichern des Fortschritts",
     "deleteUser": "Sind Sie sicher, dass Sie diesen Benutzer löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
   },
   "buttons": {
@@ -2388,5 +2415,32 @@
       }
     },
     "title": "Datenschutzerklärung"
+  },
+  "EvaluatorInfoView": {
+    "pageTitle": "Informationen für Evaluatoren",
+    "pageSubtitle": "Erstellen Sie Informationsabschnitte, die Evaluatoren vor dem Test sehen"
+  },
+  "EvaluatorInfoEditor": {
+    "title": "Informationen für Evaluatoren",
+    "subtitle": "Erstellen Sie Informationsabschnitte, die Evaluatoren vor dem Test sehen",
+    "noSections": "Keine Abschnitte. Fügen Sie einen hinzu.",
+    "untitledSection": "Abschnitt ohne Titel",
+    "addSection": "Abschnitt hinzufügen",
+    "sectionTitle": "Abschnittstitel",
+    "sectionContent": "Inhalt",
+    "sectionType": "Typ",
+    "types": {
+      "info": "Information",
+      "warning": "Warnung",
+      "tip": "Tipp"
+    },
+    "save": "Speichern",
+    "cancel": "Abbrechen"
+  },
+  "EvaluatorInfoDisplay": {
+    "title": "Bevor Sie beginnen",
+    "subtitle": "Bitte lesen Sie die folgenden Informationen vor der Evaluation",
+    "startButton": "Evaluation starten",
+    "noContent": "Keine zusätzlichen Informationen."
   }
 }

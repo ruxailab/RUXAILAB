@@ -40,6 +40,7 @@
             <v-icon size="14" class="mr-1">mdi-information-outline</v-icon>
             {{ $t('CreateTask.basicInfo.taskDescriptionHint') }}
           </p>
+
           <div
             class="description-editor"
             :class="{
@@ -55,12 +56,18 @@
               @blur="checkDescriptionValidation"
             />
           </div>
-          <span
-            v-if="showDescriptionError && !localTask.taskDescription?.trim()"
-            class="error-text ml-4"
-          >
-            {{ t('CreateTask.validation.fieldRequired') }}
-          </span>
+
+          <v-expand-transition>
+            <div
+              v-if="showDescriptionError && !localTask.taskDescription?.trim()"
+              class="error-text ml-4 mt-1"
+            >
+              <v-icon size="14" color="red" class="mr-1"
+                >mdi-alert-circle</v-icon
+              >
+              {{ t('CreateTask.validation.fieldRequired') }}
+            </div>
+          </v-expand-transition>
         </v-col>
 
         <v-col cols="12">
@@ -146,6 +153,7 @@ const onChangeEditor = (content) => {
 
 const checkTaskNameValidation = () => {
   const nameOk = !!localTask.value.taskName?.trim()
+  basicInfoForm.value?.validate()
   return nameOk
 }
 
@@ -157,6 +165,7 @@ const checkDescriptionValidation = () => {
 
 const validateStep = () => {
   emit('validate', isValid.value)
+  return !!localTask.value.taskType && !!localTask.value.estimatedTime
 }
 
 defineExpose({ isValid, checkDescriptionValidation, checkTaskNameValidation })

@@ -140,7 +140,13 @@
     "id": "ID",
     "itemsPerPage": "ページごとの項目数：",
     "saving": "保存中...",
-    "visible": "表示"
+    "visible": "表示",
+    "percentValue": "{value}%",
+    "comments": "コメント",
+    "image": "画像",
+    "images": "画像",
+    "close": "閉じる",
+    "selectImage": "アップロードする画像を選択"
   },
   "storage": {
     "pageTitle": "ストレージ",
@@ -568,7 +574,10 @@
       "updatedProgress": "進捗を更新しました",
       "invitationSentTitle": "招待送信済み",
       "invitationPendingDesc": "招待保留中:",
-      "pendingStatus": "保留中"
+      "pendingStatus": "保留中",
+      "evaluatorInfo": "評価者情報",
+      "evaluatorInfoEmpty": "情報セクションがありません。評価者を案内するために追加してください。",
+      "evaluatorInfoSeeAll": "すべての{count}セクションを表示"
     },
     "managerView": {
       "heuristicStudy": "ヒューリスティック評価",
@@ -643,7 +652,14 @@
     "AddCommentBtn": {
       "showComment": "コメントを表示",
       "addComment": "コメントを追加",
-      "hideTextArea": "テキストエリアを非表示"
+      "hideTextArea": "テキストエリアを非表示",
+      "addAnotherComment": "別のコメントを追加",
+      "addNewComment": "新しいコメントを追加"
+    },
+    "ImportImage": {
+      "imagesCount": "{count} 枚の画像が添付されています",
+      "uploadSuccess": "画像のアップロードに成功しました",
+      "uploadError": "画像のアップロードに失敗しました"
     },
     "errors": {
       "failedToLoadQuestionForm": "質問フォームの読み込みに失敗しました。もう一度お試しください。",
@@ -655,6 +671,10 @@
       "question": "質問",
       "questions": "質問"
     }
+  },
+  "HeuristicsAnalytics": {
+    "dataTable": "データテーブル",
+    "chart": "チャート"
   },
   "HeuristicsOptionsTable": {
     "titles": {
@@ -686,11 +706,13 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "設定",
-      "confirmUpload": "アップロードの確認"
+      "confirmUpload": "アップロードの確認",
+      "enableWeights": "重み機能を有効にする"
     },
     "messages": {
       "acceptCsv": "同意すると、現在のヒューリスティックはCSVファイルの内容で置き換えられます。",
-      "noCsvFileSelected": "CSVファイルが選択されていません。続行する前に選択してください。"
+      "noCsvFileSelected": "CSVファイルが選択されていません。続行する前に選択してください。",
+      "enableWeightsDescription": "評価者がこの研究でヒューリスティックに重みを割り当てることを許可する"
     },
     "placeHolders": {
       "importCsv": "ここにCSVテストファイルをインポートしてください。"
@@ -945,7 +967,8 @@
     "validation": {
       "fieldRequired": "フィールドは必須です",
       "validUrl": "http:// または https:// で始まる有効なURLである必要があります",
-      "positiveNumber": "正の数である必要があります"
+      "positiveNumber": "正の数である必要があります",
+      "minOne": "値は1以上である必要があります"
     },
     "basicInfo": {
       "stepTitle": "ステップ1: タスク基本情報",
@@ -1354,7 +1377,8 @@
       "elastic": "Elastic Net",
       "bayesian": "ベイズリッジ",
       "sgd": "SGD Regressor",
-      "svr": "Support Vector Regressor"
+      "svr": "Support Vector Regressor",
+      "rfr": "ランダムフォレスト回帰"
     }
   },
   "AccessNotAllowed": {
@@ -1579,7 +1603,8 @@
     "deleteAccount": "アカウントを削除してもよろしいですか？この操作は元に戻せません。",
     "genericSuccess": "操作が成功しました",
     "savedChanges": "変更が保存されました",
-    "deleteUser": "このユーザーを削除してもよろしいですか？この操作は元に戻せません。"
+    "deleteUser": "このユーザーを削除してもよろしいですか？この操作は元に戻せません。",
+    "errorSavingProgress": "進行状況の保存中にエラーが発生しました"
   },
   "buttons": {
     "next": "次へ",
@@ -1653,7 +1678,11 @@
       "SelfTest": {
         "title": "セルフテスト",
         "type": "非モデレート",
-        "text": ["自分の時間に回答", "高度な回答分析", "タスクのカスタマイズ"]
+        "text": [
+          "自分の時間に回答",
+          "高度な回答分析",
+          "タスクのカスタマイズ"
+        ]
       },
       "LiveTest": {
         "title": "ライブテスト",
@@ -1935,7 +1964,11 @@
       "blank": {
         "title": "空白の研究から開始",
         "description": "完全なカスタマイズでゼロから研究を作成します",
-        "features": ["完全なカスタマイズ", "ゼロから構築", "設定を完全に制御"]
+        "features": [
+          "完全なカスタマイズ",
+          "ゼロから構築",
+          "設定を完全に制御"
+        ]
       },
       "template": {
         "title": "テンプレートから作成",
@@ -2379,5 +2412,32 @@
       }
     },
     "title": "プライバシーポリシー"
+  },
+  "EvaluatorInfoView": {
+    "pageTitle": "評価者向け情報",
+    "pageSubtitle": "テスト開始前に評価者が確認する情報セクションを作成します"
+  },
+  "EvaluatorInfoEditor": {
+    "title": "評価者向け情報",
+    "subtitle": "テスト開始前に評価者が確認する情報セクションを作成します",
+    "noSections": "セクションがありません。追加してください。",
+    "untitledSection": "無題のセクション",
+    "addSection": "セクションを追加",
+    "sectionTitle": "セクションタイトル",
+    "sectionContent": "内容",
+    "sectionType": "タイプ",
+    "types": {
+      "info": "情報",
+      "warning": "警告",
+      "tip": "ヒント"
+    },
+    "save": "保存",
+    "cancel": "キャンセル"
+  },
+  "EvaluatorInfoDisplay": {
+    "title": "開始前に",
+    "subtitle": "評価を開始する前に以下の情報をお読みください",
+    "startButton": "評価を開始",
+    "noContent": "追加情報はありません。"
   }
 }

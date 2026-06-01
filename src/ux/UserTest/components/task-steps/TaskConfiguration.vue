@@ -20,12 +20,13 @@
           {{ $t('CreateTask.configuration.taskLinkHint') }}
         </p>
         <v-text-field
+          ref="urlField"
           v-model="localTask.taskLink"
           variant="outlined"
           density="comfortable"
           prepend-inner-icon="mdi-link"
           :placeholder="$t('CreateTask.configuration.taskLinkPlaceholder')"
-          :rules="linkRules"
+          :rules="[...linkRules]"
           @update:model-value="validateStep"
         />
       </v-col>
@@ -40,6 +41,7 @@
           {{ $t('CreateTask.configuration.estimatedTimeHint') }}
         </p>
         <v-text-field
+          ref="timeField"
           v-model="localTask.estimatedTime"
           type="number"
           variant="outlined"
@@ -47,7 +49,10 @@
           prepend-inner-icon="mdi-clock-outline"
           :placeholder="$t('CreateTask.configuration.estimatedTimePlaceholder')"
           :rules="timeRules"
+          min="1"
+          step="1"
           @update:model-value="validateStep"
+          @keypress="onlyNumbers"
         />
       </v-col>
 
@@ -61,6 +66,7 @@
           {{ $t('CreateTask.configuration.answerTypeHint') }}
         </p>
         <v-select
+          ref="typeField"
           v-model="localTask.taskType"
           :items="selectItems"
           item-title="label"
@@ -181,19 +187,20 @@ const urlRules = computed(() => [
 
 const timeRules = computed(() => [
   (v) => !!v || t('CreateTask.validation.fieldRequired'),
-  (v) => (v && v > 0) || t('CreateTask.validation.positiveNumber'),
+  (v) =>
+    (Number.isInteger(Number(v)) && Number(v) >= 1) ||
+    t('CreateTask.validation.minOne'),
 ])
 
-const isValid = computed(() => {
-  const hasTaskType = !!localTask.value.taskType
-  const linkValid =
-    !localTask.value.taskLink || /^https?:\/\/.+/.test(localTask.value.taskLink)
-  const postFormValid =
-    localTask.value.taskType !== 'post-form' ||
-    (localTask.value.postForm &&
-      /^https?:\/\/.+/.test(localTask.value.postForm))
+const onlyNumbers = (event) => {
+  const charCode = event.which ? event.which : event.keyCode
+  if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+    event.preventDefault()
+  }
+}
 
-  return hasTaskType && linkValid && postFormValid
+const isValid = computed(() => {
+  return !!localTask.value.taskType
 })
 
 const getAnswerTypeIcon = (type) => {
@@ -230,7 +237,22 @@ const getAnswerTypeDescription = (type) => {
 
 const validateStep = () => {
   emit('validate', isValid.value)
+  return isValid.value
 }
+
+const urlField = ref(null)
+const timeField = ref(null)
+const typeField = ref(null)
+
+const validate = () => {
+  urlField.value?.validate()
+  timeField.value?.validate()
+  typeField.value?.validate()
+
+  return !!localTask.value.taskType
+}
+
+defineExpose({ validate })
 
 // Watch for local changes and emit
 watch(

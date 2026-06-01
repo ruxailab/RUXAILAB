@@ -140,7 +140,13 @@
     "id": "ID",
     "itemsPerPage": "每页项目数：",
     "saving": "保存中...",
-    "visible": "可见"
+    "visible": "可见",
+    "percentValue": "{value}%",
+    "comments": "评论",
+    "image": "图片",
+    "images": "图片",
+    "close": "关闭",
+    "selectImage": "选择要上传的图片"
   },
   "storage": {
     "pageTitle": "存储",
@@ -568,7 +574,10 @@
       "updatedProgress": "更新了进度",
       "invitationSentTitle": "邀请已发送",
       "invitationPendingDesc": "邀请待处理：",
-      "pendingStatus": "待处理"
+      "pendingStatus": "待处理",
+      "evaluatorInfo": "评估员信息",
+      "evaluatorInfoEmpty": "暂无信息部分，请添加以指导您的评估员。",
+      "evaluatorInfoSeeAll": "查看全部 {count} 个部分"
     },
     "managerView": {
       "heuristicStudy": "启发式研究",
@@ -643,7 +652,14 @@
     "AddCommentBtn": {
       "showComment": "显示评论",
       "addComment": "添加评论",
-      "hideTextArea": "隐藏文本区域"
+      "hideTextArea": "隐藏文本区域",
+      "addAnotherComment": "添加另一条评论",
+      "addNewComment": "添加新评论"
+    },
+    "ImportImage": {
+      "imagesCount": "已附加 {count} 张图片",
+      "uploadSuccess": "图片上传成功",
+      "uploadError": "图片上传失败"
     },
     "errors": {
       "failedToLoadQuestionForm": "加载问题表单失败。请重试。",
@@ -655,6 +671,10 @@
       "question": "问题",
       "questions": "问题"
     }
+  },
+  "HeuristicsAnalytics": {
+    "dataTable": "数据表",
+    "chart": "图表"
   },
   "HeuristicsOptionsTable": {
     "titles": {
@@ -686,11 +706,13 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "设置",
-      "confirmUpload": "确认上传"
+      "confirmUpload": "确认上传",
+      "enableWeights": "启用权重功能"
     },
     "messages": {
       "acceptCsv": "如果接受，您当前的启发式将被CSV文件中的内容替换。",
-      "noCsvFileSelected": "未选择CSV文件。\n请选择一个以继续。"
+      "noCsvFileSelected": "未选择CSV文件。\n请选择一个以继续。",
+      "enableWeightsDescription": "允许评估者在本研究中为启发式分配权重"
     },
     "placeHolders": {
       "importCsv": "在此导入您的CSV测试文件。"
@@ -945,7 +967,8 @@
     "validation": {
       "fieldRequired": "字段必填",
       "validUrl": "必须是以 http:// 或 https:// 开头的有效 URL",
-      "positiveNumber": "必须是正数"
+      "positiveNumber": "必须是正数",
+      "minOne": "值必须至少为 1"
     },
     "basicInfo": {
       "stepTitle": "步骤 1：任务基本信息",
@@ -1354,7 +1377,8 @@
       "elastic": "弹性网络",
       "bayesian": "贝叶斯岭回归",
       "sgd": "SGD回归器",
-      "svr": "支持向量回归器"
+      "svr": "支持向量回归器",
+      "rfr": "随机森林回归器"
     }
   },
   "AccessNotAllowed": {
@@ -1579,7 +1603,8 @@
     "deleteAccount": "您确定要删除您的账户吗？此操作无法撤销。",
     "genericSuccess": "操作成功",
     "savedChanges": "更改保存成功",
-    "deleteUser": "您确定要删除此用户吗？此操作无法撤销。"
+    "deleteUser": "您确定要删除此用户吗？此操作无法撤销。",
+    "errorSavingProgress": "保存进度时出错"
   },
   "buttons": {
     "next": "下一步",
@@ -1635,7 +1660,11 @@
     "test": "测试",
     "testType_1": {
       "testTitle": "可用性启发式",
-      "text": ["可用性百分比", "最终报告PDF", "邀请专家评估您的应用程序"]
+      "text": [
+        "可用性百分比",
+        "最终报告PDF",
+        "邀请专家评估您的应用程序"
+      ]
     },
     "testType_2": {
       "testTitle": "用户可用性",
@@ -1649,12 +1678,20 @@
       "SelfTest": {
         "title": "自主测试",
         "type": "无主持",
-        "text": ["在空闲时间回答", "增强的答案分析", "任务自定义"]
+        "text": [
+          "在空闲时间回答",
+          "增强的答案分析",
+          "任务自定义"
+        ]
       },
       "LiveTest": {
         "title": "实时测试",
         "type": "有主持",
-        "text": ["摄像头、音频和屏幕录制", "增强的答案分析", "有主持的实时测试"]
+        "text": [
+          "摄像头、音频和屏幕录制",
+          "增强的答案分析",
+          "有主持的实时测试"
+        ]
       }
     }
   },
@@ -1927,12 +1964,20 @@
       "blank": {
         "title": "从空白研究开始",
         "description": "从头开始创建研究，完全可定制",
-        "features": ["完全可定制", "从头构建", "对设置的完全控制"]
+        "features": [
+          "完全可定制",
+          "从头构建",
+          "对设置的完全控制"
+        ]
       },
       "template": {
         "title": "从模板创建",
         "description": "使用预构建的模板快速开始",
-        "features": ["快速设置", "预配置设置", "包含最佳实践"]
+        "features": [
+          "快速设置",
+          "预配置设置",
+          "包含最佳实践"
+        ]
       }
     },
     "details": {
@@ -2367,5 +2412,32 @@
       }
     },
     "title": "隐私政策"
+  },
+  "EvaluatorInfoView": {
+    "pageTitle": "评估员信息",
+    "pageSubtitle": "创建评估员在开始测试前将看到的信息部分"
+  },
+  "EvaluatorInfoEditor": {
+    "title": "评估员信息",
+    "subtitle": "创建评估员在开始测试前将看到的信息部分",
+    "noSections": "暂无部分，请添加一个以开始。",
+    "untitledSection": "无标题部分",
+    "addSection": "添加部分",
+    "sectionTitle": "部分标题",
+    "sectionContent": "内容",
+    "sectionType": "类型",
+    "types": {
+      "info": "信息",
+      "warning": "警告",
+      "tip": "提示"
+    },
+    "save": "保存",
+    "cancel": "取消"
+  },
+  "EvaluatorInfoDisplay": {
+    "title": "开始之前",
+    "subtitle": "请在开始评估前阅读以下信息",
+    "startButton": "开始评估",
+    "noContent": "暂无其他信息。"
   }
 }
