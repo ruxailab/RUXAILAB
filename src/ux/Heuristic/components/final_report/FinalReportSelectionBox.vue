@@ -66,6 +66,14 @@ const { t } = useI18n()
 // Emits
 const emit = defineEmits(['return-step'])
 
+// Props
+const props = defineProps({
+  heuristicComments: {
+    type: Object,
+    default: () => ({}),
+  },
+})
+
 // Reactive state
 const statisticsData = ref('')
 const isLoading = ref(false)
@@ -98,7 +106,6 @@ const heuristicsStatistics = computed(() =>
 // Methods
 const submitPdf = async () => {
   isLoading.value = true
-
   try {
     // Extract valid emails from cooperators
     const getCooperatorEmails = () => {
@@ -125,7 +132,9 @@ const submitPdf = async () => {
       generalStatistics: statisticsData.value,
       statisticsTable: store.state.Answer.evaluatorStatistics,
       type: testAnswerDocument.value?.type || STUDY_TYPES.HEURISTIC,
+      heuristicComments: props.heuristicComments,
     }
+    console.log(finalReportItem)
 
     const payload = {
       payload: finalReportItem,
