@@ -58,6 +58,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { statistics, finalResult } from '@/ux/Heuristic/utils/statistics'
 
 const props = defineProps({
   test: {
@@ -78,9 +79,11 @@ const navigateToAnswers = () => {
 
 // Computed properties
 const usabilityPercentage = computed(() => {
-  // Por ahora devolvemos 75% como solicitado
-  // En el futuro esto se calculará basado en las respuestas reales
-  return 75
+  const evaluatorResults = statistics()
+
+  const result = finalResult(evaluatorResults)
+
+  return Number.parseFloat(result.average) || 0
 })
 
 const participantsCount = computed(() => {
