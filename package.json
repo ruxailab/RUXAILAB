@@ -44,7 +44,7 @@
     "crypto-browserify": "^3.12.1",
     "date-fns": "^4.3.0",
     "firebase": "^9.23.0",
-    "firebase-admin": "^13.7.0",
+    "firebase-admin": "^13.8.0",
     "firebase-functions": "^6.6.0",
     "jspdf": "^3.0.3",
     "jspdf-autotable": "^5.0.7",
