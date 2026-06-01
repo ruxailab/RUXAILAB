@@ -386,7 +386,10 @@ const handleSendInvitations = async (invitationData) => {
       const existing = cooperatorsEdit.value[existingIndex]
       const newRole = roleOptions.value[selectedRole].value
 
-      if (existing.accessLevel !== newRole || existing.inviteMessage !== inviteMessage) {
+      if (
+        existing.accessLevel !== newRole ||
+        existing.inviteMessage !== inviteMessage
+      ) {
         // Update the existing entry's role
         cooperatorsEdit.value[existingIndex] = {
           ...existing,
@@ -479,7 +482,9 @@ const submit = async () => {
 
     await Promise.all([
       store.dispatch('getStudy', { id: test.value.id }),
-      ...newCooperators.map((guest) => sendMenssages(guest, guest.inviteMessage)),
+      ...newCooperators.map((guest) =>
+        sendMenssages(guest, guest.inviteMessage),
+      ),
     ])
   } catch {
     // console.error('Error updating study:', error)

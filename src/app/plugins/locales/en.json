@@ -723,11 +723,13 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "Settings",
-      "confirmUpload": "Confirm Upload"
+      "confirmUpload": "Confirm Upload",
+      "enableWeights": "Enable Weights Feature"
     },
     "messages": {
       "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
-      "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding."
+      "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding.",
+      "enableWeightsDescription": "Allow evaluators to assign weights to heuristics in this study"
     },
     "placeHolders": {
       "importCsv": "Import your CSV testfile here."
@@ -1012,7 +1014,8 @@
     "validation": {
       "fieldRequired": "Field Required",
       "validUrl": "Must be a valid URL starting with http:// or https://",
-      "positiveNumber": "Must be a positive number"
+      "positiveNumber": "Must be a positive number",
+      "minOne": "Value must be at least 1"
     },
     "basicInfo": {
       "stepTitle": "Step 1: Task Basic Information",

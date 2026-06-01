@@ -706,11 +706,13 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "设置",
-      "confirmUpload": "确认上传"
+      "confirmUpload": "确认上传",
+      "enableWeights": "启用权重功能"
     },
     "messages": {
       "acceptCsv": "如果接受，您当前的启发式将被CSV文件中的内容替换。",
-      "noCsvFileSelected": "未选择CSV文件。\n请选择一个以继续。"
+      "noCsvFileSelected": "未选择CSV文件。\n请选择一个以继续。",
+      "enableWeightsDescription": "允许评估者在本研究中为启发式分配权重"
     },
     "placeHolders": {
       "importCsv": "在此导入您的CSV测试文件。"
@@ -965,7 +967,8 @@
     "validation": {
       "fieldRequired": "字段必填",
       "validUrl": "必须是以 http:// 或 https:// 开头的有效 URL",
-      "positiveNumber": "必须是正数"
+      "positiveNumber": "必须是正数",
+      "minOne": "值必须至少为 1"
     },
     "basicInfo": {
       "stepTitle": "步骤 1：任务基本信息",

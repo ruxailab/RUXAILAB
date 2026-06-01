@@ -706,11 +706,13 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "Paramètres",
-      "confirmUpload": "Confirmer le téléchargement"
+      "confirmUpload": "Confirmer le téléchargement",
+      "enableWeights": "Activer la fonctionnalité de pondération"
     },
     "messages": {
       "acceptCsv": "Si vous acceptez, toutes vos heuristiques actuelles seront remplacées par celles du fichier .csv.",
-      "noCsvFileSelected": "Aucun fichier CSV sélectionné. \nVeuillez en sélectionner un avant de continuer."
+      "noCsvFileSelected": "Aucun fichier CSV sélectionné. \nVeuillez en sélectionner un avant de continuer.",
+      "enableWeightsDescription": "Permettre aux évaluateurs d'attribuer des poids aux heuristiques dans cette étude"
     },
     "placeHolders": {
       "importCsv": "Importez votre fichier CSV test ici."
@@ -965,7 +967,8 @@
     "validation": {
       "fieldRequired": "Champ Requis",
       "validUrl": "Doit être une URL valide commençant par http:// ou https://",
-      "positiveNumber": "Doit être un nombre positif"
+      "positiveNumber": "Doit être un nombre positif",
+      "minOne": "La valeur doit être d'au moins 1"
     },
     "basicInfo": {
       "stepTitle": "Étape 1 : Informations de Base de la Tâche",
