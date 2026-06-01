@@ -4,6 +4,7 @@
       v-if="user"
       icon
       class="d-flex d-lg-none"
+      :aria-label="$t('navigation.appNavigation')"
       @click="toggleDashboardDrawer"
     >
       <v-icon>mdi-menu</v-icon>
@@ -73,7 +74,13 @@
       {{ $t('auth.SIGNIN.sign-in') }}
     </v-btn>
 
-    <v-btn v-if="!user" icon class="d-flex d-lg-none" @click="goTo('/signin')">
+    <v-btn
+      v-if="!user"
+      icon
+      class="d-flex d-lg-none"
+      :aria-label="$t('auth.SIGNIN.sign-in')"
+      @click="goTo('/signin')"
+    >
       <v-icon :size="iconSize"> mdi-lock </v-icon>
     </v-btn>
 

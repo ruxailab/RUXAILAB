@@ -109,6 +109,7 @@
     "markAllAsRead": "Marcar todo como leído",
     "caughtUp": "Estás al día",
     "noNewNotifications": "No hay notificaciones nuevas",
+    "notificationBell": "Campana de notificaciones",
     "unread": "No leído",
     "inbox": "Bandeja de entrada",
     "timeAgo": {
@@ -282,7 +283,8 @@
       "viewEditProfile": "Ver y editar tu información de perfil",
       "exploreCommunityStudies": "Explora estudios compartidos por la comunidad RUXAI",
       "browseCommunityTemplates": "Explora plantillas contribuidas por la comunidad RUXAI"
-    }
+    },
+    "helpButton": "Botón de ayuda"
   },
   "profile": {
     "superAdmin": "Súper Administrador",
@@ -376,7 +378,8 @@
       "Settings": "Configuración",
       "name": "Nombre",
       "studiesCount": "Recuento de Estudios",
-      "mediaSize": "Tamaño de Medios"
+      "mediaSize": "Tamaño de Medios",
+      "toggleMiniMode": "Alternar modo mini"
     },
     "heuristic": "Evaluación heurística de usabilidad"
   },
@@ -574,7 +577,10 @@
       "updatedProgress": "actualizó su progreso",
       "invitationSentTitle": "Invitación enviada",
       "invitationPendingDesc": "Invitación pendiente para",
-      "pendingStatus": "Pendiente"
+      "pendingStatus": "Pendiente",
+      "evaluatorInfo": "Info para Evaluadores",
+      "evaluatorInfoEmpty": "Sin secciones de información. Agrega algunas para guiar a tus evaluadores.",
+      "evaluatorInfoSeeAll": "Ver las {count} secciones"
     },
     "managerView": {
       "heuristicStudy": "Estudio Heurístico",
@@ -705,11 +711,13 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "Configuración",
-      "confirmUpload": "Confirmar carga"
+      "confirmUpload": "Confirmar carga",
+      "enableWeights": "Habilitar función de pesos"
     },
     "messages": {
       "acceptCsv": "Si aceptas, todas tus heurísticas actuales serán reemplazadas por las del archivo CSV.",
-      "noCsvFileSelected": "No se ha seleccionado ningún archivo CSV. Por favor, selecciona uno antes de continuar."
+      "noCsvFileSelected": "No se ha seleccionado ningún archivo CSV. Por favor, selecciona uno antes de continuar.",
+      "enableWeightsDescription": "Permitir que los evaluadores asignen pesos a las heurísticas en este estudio"
     },
     "placeHolders": {
       "importCsv": "Importa tu archivo CSV de prueba aquí."
@@ -964,7 +972,8 @@
     "validation": {
       "fieldRequired": "Campo Requerido",
       "validUrl": "Debe ser una URL válida que comience con http:// o https://",
-      "positiveNumber": "Debe ser un número positivo"
+      "positiveNumber": "Debe ser un número positivo",
+      "minOne": "El valor debe ser al menos 1"
     },
     "basicInfo": {
       "stepTitle": "Paso 1: Información Básica de la Tarea",
@@ -1008,6 +1017,12 @@
       "sart": "Técnica de Calificación de Conciencia Situacional - mide la conciencia situacional"
     },
     "answerTypePreview": {
+      "postTest": {
+      "title": "Comentarios posteriores a la prueba",
+      "q1": "Califica tu experiencia",
+      "q2": "¿Cómo encontraste el producto durante las pruebas beta?",
+      "feedbackPlaceholder": "El producto tenía una interfaz fluida, pero presentaba retrasos en algunas partes."
+      },
       "taskCompleted": "¡Tarea completada! No se requiere retroalimentación adicional.",
       "participantsFeedbackHere": "Los participantes proporcionarán su retroalimentación aquí...",
       "submitFeedback": "Enviar Retroalimentación",
@@ -2388,5 +2403,32 @@
       }
     },
     "title": "Política de Privacidad"
+  },
+  "EvaluatorInfoView": {
+    "pageTitle": "Información para Evaluadores",
+    "pageSubtitle": "Crea secciones de información que los evaluadores verán antes de comenzar el test"
+  },
+  "EvaluatorInfoEditor": {
+    "title": "Información para Evaluadores",
+    "subtitle": "Crea secciones de información que los evaluadores verán antes de comenzar el test",
+    "noSections": "Sin secciones. Agrega una para comenzar.",
+    "untitledSection": "Sección sin título",
+    "addSection": "Agregar sección",
+    "sectionTitle": "Título de la sección",
+    "sectionContent": "Contenido",
+    "sectionType": "Tipo",
+    "types": {
+      "info": "Información",
+      "warning": "Advertencia",
+      "tip": "Consejo"
+    },
+    "save": "Guardar",
+    "cancel": "Cancelar"
+  },
+  "EvaluatorInfoDisplay": {
+    "title": "Antes de comenzar",
+    "subtitle": "Por favor lee la siguiente información antes de iniciar la evaluación",
+    "startButton": "Iniciar Evaluación",
+    "noContent": "No hay información adicional."
   }
 }

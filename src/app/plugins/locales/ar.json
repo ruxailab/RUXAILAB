@@ -102,6 +102,7 @@
     "markAllAsRead": "تحديد الكل كمقروء",
     "caughtUp": "لقد قرأت كل شيء",
     "noNewNotifications": "لا توجد إشعارات جديدة",
+    "notificationBell": "جرس الإشعارات",
     "unread": "غير مقروء",
     "inbox": "صندوق الوارد",
     "timeAgo": {
@@ -282,7 +283,8 @@
       "viewEditProfile": "عرض وتحرير معلومات ملفك الشخصي",
       "exploreCommunityStudies": "استكشف الدراسات التي تمت مشاركتها من قبل مجتمع RUXAI",
       "browseCommunityTemplates": "تصفح القوالب التي ساهم بها مجتمع RUXAI"
-    }
+    },
+    "helpButton": "زر المساعدة"
   },
   "profile": {
     "title": "الملف الشخصي",
@@ -376,7 +378,8 @@
       "Settings": "الإعدادات",
       "name": "الاسم",
       "studiesCount": "عدد الدراسات",
-      "mediaSize": "حجم الوسائط"
+      "mediaSize": "حجم الوسائط",
+      "toggleMiniMode": "تبديل الوضع المصغر"
     },
     "heuristic": "تقييم الاستدلالات الخاصة بالاستخدام"
   },
@@ -574,7 +577,10 @@
       "updatedProgress": "قام بتحديث تقدمه",
       "invitationSentTitle": "تم إرسال الدعوة",
       "invitationPendingDesc": "الدعوة معلقة لـ",
-      "pendingStatus": "قيد الانتظار"
+      "pendingStatus": "قيد الانتظار",
+      "evaluatorInfo": "معلومات المقيِّمين",
+      "evaluatorInfoEmpty": "لا توجد أقسام معلومات. أضف بعضها لتوجيه المقيِّمين.",
+      "evaluatorInfoSeeAll": "عرض جميع الأقسام {count}"
     },
     "managerView": {
       "heuristicStudy": "دراسة استدلالية",
@@ -703,11 +709,13 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "الإعدادات",
-      "confirmUpload": "تأكيد التحميل"
+      "confirmUpload": "تأكيد التحميل",
+      "enableWeights": "تفعيل ميزة الأوزان"
     },
     "messages": {
       "acceptCsv": "إذا وافقت، سيتم استبدال جميع الاستدلالات الحالية بتلك الموجودة في ملف CSV.",
-      "noCsvFileSelected": "لم يتم تحديد ملف CSV. \nيرجى تحديد واحد قبل المتابعة."
+      "noCsvFileSelected": "لم يتم تحديد ملف CSV. \nيرجى تحديد واحد قبل المتابعة.",
+      "enableWeightsDescription": "السماح للمقيمين بتعيين الأوزان للاستدلالات في هذه الدراسة"
     },
     "placeHolders": {
       "importCsv": "قم باستيراد ملف CSV الخاص بك هنا."
@@ -962,7 +970,8 @@
     "validation": {
       "fieldRequired": "الحقل مطلوب",
       "validUrl": "يجب أن يكون عنوان URL صالحًا يبدأ بـ http:// أو https://",
-      "positiveNumber": "يجب أن يكون رقمًا موجبًا"
+      "positiveNumber": "يجب أن يكون رقمًا موجبًا",
+      "minOne": "القيمة يجب أن تكون 1 على الأقل"
     },
     "basicInfo": {
       "stepTitle": "الخطوة 1: معلومات المهمة الأساسية",
@@ -1006,6 +1015,12 @@
       "sart": "تقنية تقييم الوعي الظرفي - يقيس الوعي الظرفي"
     },
     "answerTypePreview": {
+      "postTest": {
+      "title": "ملاحظات ما بعد الاختبار",
+      "q1": "قيّم تجربتك",
+      "q2": "كيف وجدت المنتج أثناء الاختبار التجريبي؟",
+      "feedbackPlaceholder": "كان للمنتج واجهة سلسة، لكنه كان بطيئًا في بعض الأجزاء."
+      },
       "taskCompleted": "اكتملت المهمة! لا توجد ملاحظات إضافية مطلوبة.",
       "participantsFeedbackHere": "سيقدم المشاركون ملاحظاتهم هنا...",
       "submitFeedback": "إرسال الملاحظات",
@@ -1672,7 +1687,11 @@
       "SelfTest": {
         "title": "اختبار ذاتي",
         "type": "غير مشرف عليه",
-        "text": ["الإجابة في وقت فراغ", "تحليل متقدم للإجابات", "تخصيص المهمة"]
+        "text": [
+          "الإجابة في وقت فراغ",
+          "تحليل متقدم للإجابات",
+          "تخصيص المهمة"
+        ]
       },
       "LiveTest": {
         "title": "اختبار مباشر",
@@ -2402,5 +2421,32 @@
       }
     },
     "title": "سياسة الخصوصية"
+  },
+  "EvaluatorInfoView": {
+    "pageTitle": "معلومات للمقيِّمين",
+    "pageSubtitle": "أنشئ أقساماً من المعلومات التي سيراها المقيِّمون قبل بدء الاختبار"
+  },
+  "EvaluatorInfoEditor": {
+    "title": "معلومات للمقيِّمين",
+    "subtitle": "أنشئ أقساماً من المعلومات التي سيراها المقيِّمون قبل بدء الاختبار",
+    "noSections": "لا توجد أقسام بعد. أضف قسماً للبدء.",
+    "untitledSection": "قسم بدون عنوان",
+    "addSection": "إضافة قسم",
+    "sectionTitle": "عنوان القسم",
+    "sectionContent": "المحتوى",
+    "sectionType": "النوع",
+    "types": {
+      "info": "معلومات",
+      "warning": "تحذير",
+      "tip": "نصيحة"
+    },
+    "save": "حفظ",
+    "cancel": "إلغاء"
+  },
+  "EvaluatorInfoDisplay": {
+    "title": "قبل البدء",
+    "subtitle": "يرجى قراءة المعلومات التالية قبل بدء التقييم",
+    "startButton": "بدء التقييم",
+    "noContent": "لا توجد معلومات إضافية."
   }
 }

@@ -10,7 +10,11 @@
       <v-divider />
       <v-card-actions>
         <v-spacer />
-        <v-btn class="bg-grey-lighten-3" variant="text" @click="setDialog">
+        <v-btn
+          class="bg-grey-lighten-3"
+          variant="text"
+          @click="resetLeaveState"
+        >
           {{ $t('buttons.stay') }}
         </v-btn>
         <v-btn
@@ -32,6 +36,10 @@
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import {
+  clearPendingLeaveRoute,
+  navigateToPendingLeaveRoute,
+} from '@/shared/utils/pendingLeaveRoute'
 
 const emit = defineEmits(['submit'])
 
@@ -40,17 +48,15 @@ const router = useRouter()
 
 const dialogLeaveStatus = computed(() => store.getters.getDialogLeaveStatus)
 
-const setDialog = () => {
-  store.commit('SET_DIALOG_LEAVE', false)
-}
+const resetLeaveState = () => clearPendingLeaveRoute(store)
 
 const discardChanges = () => {
   store.commit('SET_LOCAL_CHANGES', false)
 }
 
-const handleLeave = () => {
+const handleLeave = async () => {
   discardChanges()
-  router.push({ name: store.state.pathTo })
+  await navigateToPendingLeaveRoute(store, router)
 }
 
 const submit = () => {

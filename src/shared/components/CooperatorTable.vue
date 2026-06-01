@@ -49,8 +49,8 @@
         :items="filteredCooperators"
         :items-per-page="itemsPerPage"
         class="cooperators-table"
-        item-key="email"
-        item-value="email"
+        item-key="_rowKey"
+        item-value="_rowKey"
         height="50vh"
       >
         <!-- Email Column -->
@@ -317,7 +317,13 @@ const computedHeaders = computed(() => {
 })
 
 const filteredCooperators = computed(() => {
-  let result = [...props.cooperators]
+  let result = props.cooperators.map((coop, index) => ({
+    ...coop,
+    _rowKey:
+      coop.userDocId ||
+      coop.token ||
+      `${coop.email || 'cooperator'}-${index}-${coop.accessLevel}-${coop.accepted}`,
+  }))
 
   if (filters.value.role) {
     result = result.filter(

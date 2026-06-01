@@ -103,7 +103,7 @@ function animateSmooth(timestamp) {
   ctx.clearRect(0, 0, canvas.value.width, canvas.value.height)
 
   if (props.viewMode === 'free') drawFreeEye(cx, cy)
-  else if (props.viewMode === 'precision') drawPrecisionPoints()
+  else if (props.viewMode === 'precision') drawPrecisionPoints(cx, cy)
   else if (props.viewMode === 'heatmap') {
     heatmapData.push({ x: cx, y: cy })
     drawHeatmap()
