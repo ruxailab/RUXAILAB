@@ -1,10 +1,11 @@
 import { initializeApp } from 'firebase/app'
-import { getAnalytics } from 'firebase/analytics'
+//import { getAnalytics } from 'firebase/analytics'
 import { getAuth, connectAuthEmulator } from 'firebase/auth'
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions'
 import { getStorage, connectStorageEmulator } from 'firebase/storage'
 import { getDatabase } from 'firebase/database'
+
 
 const REQUIRED_ENV_VARS = {
   VUE_APP_FIREBASE_API_KEY: process.env.VUE_APP_FIREBASE_API_KEY,
@@ -35,7 +36,7 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig)
 const auth = getAuth(firebaseApp)
 const db = getFirestore(firebaseApp)
-const analytics = getAnalytics(firebaseApp)
+//const analytics = getAnalytics(firebaseApp)
 const fbFunctions = getFunctions(firebaseApp)
 const storage = getStorage(firebaseApp, `gs://${firebaseConfig.storageBucket}`)
 const database = getDatabase(firebaseApp, firebaseConfig.databaseURL)
@@ -58,4 +59,4 @@ if (process.env.VUE_APP_USE_EMULATORS === 'true') {
   connectStorageEmulator(storage, EMULATOR_HOST, STORAGE_EMULATOR_PORT)
 }
 
-export { auth, db, analytics, fbFunctions, storage, database }
+export { auth, db,  fbFunctions, storage, database }

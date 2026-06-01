@@ -386,7 +386,10 @@ const handleSendInvitations = async (invitationData) => {
       const existing = cooperatorsEdit.value[existingIndex]
       const newRole = roleOptions.value[selectedRole].value
 
-      if (existing.accessLevel !== newRole || existing.inviteMessage !== inviteMessage) {
+      if (
+        existing.accessLevel !== newRole ||
+        existing.inviteMessage !== inviteMessage
+      ) {
         // Update the existing entry's role
         cooperatorsEdit.value[existingIndex] = {
           ...existing,
@@ -450,10 +453,38 @@ const changeRole = async (item, newValue) => {
 }
 
 const executeRoleChange = async (item, newValue) => {
-  const index = cooperatorsEdit.value.indexOf(item)
-  const newCoop = { ...item, accessLevel: newValue.value }
-  test.value.cooperators[index] = newCoop
+  const cooperators = Array.isArray(test.value?.cooperators)
+    ? test.value.cooperators
+    : []
+
+  const index = cooperators.findIndex(
+    (coop) =>
+      (coop.token && item.token && coop.token === item.token) ||
+      (coop.userDocId && item.userDocId && coop.userDocId === item.userDocId) ||
+      (coop.email && item.email && coop.email === item.email),
+  )
+
+  if (index < 0) {
+    throw new Error('COOPERATOR_NOT_FOUND')
+  }
+
+  const updatedCooperators = [...cooperators]
+  const newCoop = new Cooperators({
+    ...updatedCooperators[index],
+    accessLevel: newValue.value,
+  })
+  updatedCooperators[index] = newCoop
+  test.value.cooperators = updatedCooperators
   await store.dispatch('updateStudy', test.value)
+  await store.dispatch('getStudy', { id: test.value.id })
+
+  // Pending/rejected collaborators may not have an answer document yet.
+  // Role update is still valid, so only sync answer metadata when the
+  // collaborator is accepted and linked to a user document.
+  if (!newCoop.userDocId || newCoop.accepted !== true) {
+    return
+  }
+
   await store.dispatch('updateUserAnswer', {
     testDocId: test.value.id,
     cooperatorId: newCoop.userDocId,
@@ -479,7 +510,9 @@ const submit = async () => {
 
     await Promise.all([
       store.dispatch('getStudy', { id: test.value.id }),
-      ...newCooperators.map((guest) => sendMenssages(guest, guest.inviteMessage)),
+      ...newCooperators.map((guest) =>
+        sendMenssages(guest, guest.inviteMessage),
+      ),
     ])
   } catch {
     // console.error('Error updating study:', error)
@@ -580,8 +613,15 @@ const removeCoop = async (coop) => {
 }
 
 const executeCooperatorRemoval = async (coop) => {
-  const index = cooperatorsEdit.value.indexOf(coop)
-  cooperatorsEdit.value.splice(index, 1)
+  const index = cooperatorsEdit.value.findIndex(
+    (c) =>
+      (c.token && coop.token && c.token === coop.token) ||
+      (c.userDocId && coop.userDocId && c.userDocId === coop.userDocId) ||
+      (c.email && coop.email && c.email === coop.email),
+  )
+  if (index !== -1) {
+    cooperatorsEdit.value.splice(index, 1)
+  }
   test.value.cooperators = cooperatorsEdit.value
   await store.dispatch('updateStudy', test.value)
   await store.dispatch('removeTestFromCooperator', {
@@ -614,8 +654,15 @@ const cancelInvitation = async (guest) => {
 }
 
 const executeInvitationCancellation = async (guest) => {
-  const index = cooperatorsEdit.value.indexOf(guest)
-  cooperatorsEdit.value.splice(index, 1)
+  const index = cooperatorsEdit.value.findIndex(
+    (c) =>
+      (c.token && guest.token && c.token === guest.token) ||
+      (c.userDocId && guest.userDocId && c.userDocId === guest.userDocId) ||
+      (c.email && guest.email && c.email === guest.email),
+  )
+  if (index !== -1) {
+    cooperatorsEdit.value.splice(index, 1)
+  }
   test.value.cooperators = cooperatorsEdit.value
   await store.dispatch('updateStudy', test.value)
 }

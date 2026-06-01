@@ -165,7 +165,7 @@ const accessLevel = computed(() => {
   const coop = currentTest?.cooperators?.find(
     (c) => c.userDocId === currentUser.id,
   )
-  if (coop) return coop.accessLevel
+  if (coop?.accepted === true) return coop.accessLevel
 
   // Fixed logic: Public studies allow guest access, private studies block non-collaborators
   if (currentTest?.isPublic) {

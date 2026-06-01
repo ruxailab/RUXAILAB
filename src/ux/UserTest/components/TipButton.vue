@@ -1,9 +1,5 @@
 <template>
-  <v-dialog
-    v-model="dialog"
-    max-width="600"
-    persistent
-  >
+  <v-dialog v-model="dialog" max-width="600" persistent>
     <template #activator="{ props }">
       <v-btn
         color="success"
@@ -12,6 +8,7 @@
         block
         prepend-icon="mdi-lightbulb-outline"
         v-bind="props"
+        @click="onTipPress"
       >
         Tip
       </v-btn>
@@ -20,35 +17,25 @@
     <v-card class="tip-modal">
       <v-card-title class="tip-header d-flex align-center pa-4">
         <div class="tip-icon-container mr-3">
-          <v-icon 
-            size="32" 
-            color="white"
-          >
-            mdi-lightbulb
-          </v-icon>
+          <v-icon size="32" color="white"> mdi-lightbulb </v-icon>
         </div>
         <div>
-          <h2 class="text-h5 font-weight-bold text-white mb-1">
-            Helpful Tip
-          </h2>
+          <h2 class="text-h5 font-weight-bold text-white mb-1">Helpful Tip</h2>
           <p class="text-subtitle-2 text-white opacity-90 mb-0">
             {{ task.taskName }}
           </p>
         </div>
         <v-spacer />
-        <v-btn
-          icon
-          variant="text"
-          size="small"
-          @click="dialog = false"
-        >
+        <v-btn icon variant="text" size="small" @click="dialog = false">
           <v-icon color="white">mdi-close</v-icon>
         </v-btn>
       </v-card-title>
 
       <v-card-text class="pa-6">
         <div class="tip-content">
-          <div class="rich-text text-body-1 text-grey-darken-3 line-height-relaxed tip-text">
+          <div
+            class="rich-text text-body-1 text-grey-darken-3 line-height-relaxed tip-text"
+          >
             {{ task.taskTip }}
           </div>
         </div>
@@ -75,6 +62,7 @@
 <script setup>
 import { ref } from 'vue'
 
+const emit = defineEmits(['tip-pressed'])
 defineProps({
   task: {
     type: Object,
@@ -86,6 +74,7 @@ defineProps({
 })
 
 const dialog = ref(false)
+const onTipPress = () => emit('tip-pressed')
 </script>
 
 <style scoped>
@@ -95,7 +84,7 @@ const dialog = ref(false)
 }
 
 .tip-header {
-  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
   border-radius: 16px 16px 0 0;
 }
 
@@ -129,7 +118,7 @@ const dialog = ref(false)
 
 .rich-text :deep(strong) {
   font-weight: 600;
-  color: #2E7D32;
+  color: #2e7d32;
 }
 
 .rich-text :deep(em) {
