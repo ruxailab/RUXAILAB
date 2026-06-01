@@ -706,11 +706,13 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "設定",
-      "confirmUpload": "アップロードの確認"
+      "confirmUpload": "アップロードの確認",
+      "enableWeights": "重み機能を有効にする"
     },
     "messages": {
       "acceptCsv": "同意すると、現在のヒューリスティックはCSVファイルの内容で置き換えられます。",
-      "noCsvFileSelected": "CSVファイルが選択されていません。続行する前に選択してください。"
+      "noCsvFileSelected": "CSVファイルが選択されていません。続行する前に選択してください。",
+      "enableWeightsDescription": "評価者がこの研究でヒューリスティックに重みを割り当てることを許可する"
     },
     "placeHolders": {
       "importCsv": "ここにCSVテストファイルをインポートしてください。"

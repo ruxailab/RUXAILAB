@@ -20,7 +20,9 @@
         >
           <v-tab>{{ $t('HeuristicsEditTest.titles.heuristics') }}</v-tab>
           <v-tab>{{ $t('HeuristicsEditTest.titles.options') }}</v-tab>
-          <v-tab>{{ $t('HeuristicsEditTest.titles.weights') }}</v-tab>
+          <v-tab v-if="showWeightsTab">{{
+            $t('HeuristicsEditTest.titles.weights')
+          }}</v-tab>
           <v-tab v-if="showSettingsTab">{{
             $t('HeuristicsEditTest.titles.settings')
           }}</v-tab>
@@ -57,12 +59,12 @@
             @change="change = true"
           />
           <WeightTable
-            v-if="index == 2"
+            v-if="showWeightsTab && index == 2"
             :is-template="isTemplate"
             @change="change = true"
           />
           <HeuristicsSettings
-            v-if="showSettingsTab && index == 3"
+            v-if="showSettingsTab && (showWeightsTab ? index == 3 : index == 2)"
             :is-template="isTemplate"
           />
         </div>
@@ -74,7 +76,7 @@
 <script setup>
 import ButtonSave from '@/shared/components/buttons/ButtonSave.vue'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import HeuristicsTable from '../components/HeuristicsTable.vue'
 import OptionsTable from '../components/OptionsTable.vue'
 import WeightTable from '../components/weights_evaluation/WeightTable.vue'
@@ -103,6 +105,8 @@ const index = ref(0)
 const change = ref(false)
 const windowWidth = ref(window.innerWidth)
 const showSettingsTab = computed(() => !props.isTemplate)
+const test = computed(() => store.getters.test)
+const showWeightsTab = computed(() => test.value.useWeights ?? false)
 const pageTitle = computed(() =>
   props.isTemplate
     ? t('HeuristicsEditTest.previewPageTitle')
@@ -119,11 +123,15 @@ const tabItems = computed(() => {
   const items = [
     { title: 'HEURISTICS', value: 0 },
     { title: 'OPTIONS', value: 1 },
-    { title: 'WEIGHTS', value: 2 },
   ]
 
+  if (showWeightsTab.value) {
+    items.push({ title: 'WEIGHTS', value: 2 })
+  }
+
   if (showSettingsTab.value) {
-    items.push({ title: 'SETTINGS', value: 3 })
+    const settingsIndex = showWeightsTab.value ? 3 : 2
+    items.push({ title: 'SETTINGS', value: settingsIndex })
   }
 
   return items
@@ -136,6 +144,17 @@ const isMobile = computed(() => windowWidth.value < 960)
 const handleResize = () => {
   windowWidth.value = window.innerWidth
 }
+
+// Watch for changes in showWeightsTab to fix index
+watch(showWeightsTab, (newVal, oldVal) => {
+  // If weights tab visibility changed and we're currently on or past the weights tab
+  if (newVal !== oldVal) {
+    if (!newVal && index.value > 1) {
+      // Weights tab is now hidden and index is on Settings (was 3, should be 2)
+      index.value = 2
+    }
+  }
+})
 
 onMounted(() => {
   if (props.isTemplate && props.templateTest) {

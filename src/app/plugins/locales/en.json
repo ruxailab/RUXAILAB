@@ -723,11 +723,13 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "Settings",
-      "confirmUpload": "Confirm Upload"
+      "confirmUpload": "Confirm Upload",
+      "enableWeights": "Enable Weights Feature"
     },
     "messages": {
       "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
-      "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding."
+      "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding.",
+      "enableWeightsDescription": "Allow evaluators to assign weights to heuristics in this study"
     },
     "placeHolders": {
       "importCsv": "Import your CSV testfile here."
