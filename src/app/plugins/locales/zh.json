@@ -967,7 +967,8 @@
     "validation": {
       "fieldRequired": "字段必填",
       "validUrl": "必须是以 http:// 或 https:// 开头的有效 URL",
-      "positiveNumber": "必须是正数"
+      "positiveNumber": "必须是正数",
+      "minOne": "值必须至少为 1"
     },
     "basicInfo": {
       "stepTitle": "步骤 1：任务基本信息",

@@ -969,7 +969,8 @@
     "validation": {
       "fieldRequired": "फ़ील्ड आवश्यक है",
       "validUrl": "http:// या https:// से शुरू होने वाला एक वैध URL होना चाहिए",
-      "positiveNumber": "एक सकारात्मक संख्या होनी चाहिए"
+      "positiveNumber": "एक सकारात्मक संख्या होनी चाहिए",
+      "minOne": "मान कम से कम 1 होना चाहिए"
     },
     "basicInfo": {
       "stepTitle": "चरण 1: टास्क मूल जानकारी",

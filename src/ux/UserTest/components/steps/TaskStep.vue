@@ -735,7 +735,7 @@ async function startMediaRecorders() {
   }
   if (props.task?.hasCamRecord && videoRecorder.value) {
     const videoStarted = await videoRecorder.value.startRecording()
-    if(!videoStarted){
+    if (!videoStarted) {
       return false
     }
   }

@@ -969,7 +969,8 @@
     "validation": {
       "fieldRequired": "Campo Requerido",
       "validUrl": "Debe ser una URL válida que comience con http:// o https://",
-      "positiveNumber": "Debe ser un número positivo"
+      "positiveNumber": "Debe ser un número positivo",
+      "minOne": "El valor debe ser al menos 1"
     },
     "basicInfo": {
       "stepTitle": "Paso 1: Información Básica de la Tarea",

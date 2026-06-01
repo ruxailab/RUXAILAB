@@ -967,7 +967,8 @@
     "validation": {
       "fieldRequired": "الحقل مطلوب",
       "validUrl": "يجب أن يكون عنوان URL صالحًا يبدأ بـ http:// أو https://",
-      "positiveNumber": "يجب أن يكون رقمًا موجبًا"
+      "positiveNumber": "يجب أن يكون رقمًا موجبًا",
+      "minOne": "القيمة يجب أن تكون 1 على الأقل"
     },
     "basicInfo": {
       "stepTitle": "الخطوة 1: معلومات المهمة الأساسية",
