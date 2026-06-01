@@ -164,6 +164,9 @@ To calculate heuristic weights, run:
 
 ```bash
 # Run locally
+ cd functions
+ npm install
+ cd ..
  firebase init functions
  firebase use weight_function
  firebase emulators:start --only functions
