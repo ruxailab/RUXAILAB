@@ -1015,6 +1015,12 @@
       "sart": "情境意识评估技术 - 测量情境意识"
     },
     "answerTypePreview": {
+      "postTest": {
+      "title": "测试后反馈",
+      "q1": "请评价您的体验",
+      "q2": "您在测试阶段如何看待该产品？",
+      "feedbackPlaceholder": "该产品界面流畅，但在某些地方存在卡顿。"
+      },
       "taskCompleted": "任务完成！无需额外反馈。",
       "participantsFeedbackHere": "参与者将在此处提供反馈...",
       "submitFeedback": "提交反馈",

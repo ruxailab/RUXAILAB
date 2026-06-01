@@ -1062,6 +1062,12 @@
       "sart": "Situation Awareness Rating Technique - measures situational awareness"
     },
     "answerTypePreview": {
+      "postTest": {
+        "title": "Post Test Feedback",
+        "q1":"Rate your experience",
+        "q2":"How did you find the product in beta testing?",
+        "feedbackPlaceholder": "The product had a smooth UI but it was lagging in some places."
+      },
       "taskCompleted": "Task completed! No additional feedback required.",
       "participantsFeedbackHere": "Participants will provide their feedback here...",
       "submitFeedback": "Submit Feedback",

@@ -1015,6 +1015,12 @@
       "sart": "状況認識評価技法 - 状況認識を測定"
     },
     "answerTypePreview": {
+      "postTest": {
+      "title": "テスト後のフィードバック",
+      "q1": "体験を評価してください",
+      "q2": "ベータテスト中、この製品をどのように感じましたか？",
+      "feedbackPlaceholder": "製品のUIはスムーズでしたが、いくつかの箇所で遅延がありました。"
+      },
       "taskCompleted": "タスク完了！追加のフィードバックは必要ありません。",
       "participantsFeedbackHere": "参加者はここでフィードバックを提供します...",
       "submitFeedback": "フィードバックを送信",
