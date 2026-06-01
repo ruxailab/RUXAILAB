@@ -35,7 +35,7 @@
         icon
         size="small"
         class="mr-2 bg-orange"
-        aria-label="Toggle mini mode"
+        :aria-label="$t('titles.drawer.toggleMiniMode')"
         @click.stop="toggleMiniMode"
       >
         <v-icon color="white">

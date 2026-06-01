@@ -5,7 +5,7 @@
       size="small"
       icon
       class="mr-1"
-      aria-label="Help button"
+      :aria-label="$t('navigation.helpButton')"
       @click="$router.push('/help')"
     >
       <v-icon size="20"> mdi-help-circle-outline </v-icon>

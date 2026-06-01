@@ -108,6 +108,7 @@
     "markAllAsRead": "सभी को पढ़ा हुआ मान लें",
     "caughtUp": "आप पूरी तरह से अपडेट हैं",
     "noNewNotifications": "कोई नई सूचनाएं नहीं",
+    "notificationBell": "अधिसूचना घंटी",
     "unread": "अनपढ़",
     "inbox": "इनबॉक्स",
     "all": "सभी",
@@ -282,7 +283,8 @@
       "viewEditProfile": "अपनी प्रोफ़ाइल जानकारी देखें और संपादित करें",
       "exploreCommunityStudies": "RUXAI समुदाय द्वारा साझा किए गए अध्ययनों का पता लगाएं",
       "browseCommunityTemplates": "RUXAI समुदाय द्वारा योगदान किए गए टेम्पलेट्स ब्राउज़ करें"
-    }
+    },
+    "helpButton": "सहायता बटन"
   },
   "profile": {
     "title": "प्रोफ़ाइल",
@@ -376,7 +378,8 @@
       "Settings": "सेटिंग्स",
       "name": "नाम",
       "studiesCount": "अध्ययन संख्या",
-      "mediaSize": "मीडिया आकार"
+      "mediaSize": "मीडिया आकार",
+      "toggleMiniMode": "मिनी मोड टॉगल करें"
     },
     "heuristic": "उपयोगिता हीयुरिस्टिक मूल्यांकन"
   },

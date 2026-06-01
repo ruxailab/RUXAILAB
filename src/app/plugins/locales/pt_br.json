@@ -109,6 +109,7 @@
     "markAllAsRead": "Marcar todas como lidas",
     "caughtUp": "Você está em dia",
     "noNewNotifications": "Nenhuma notificação nova",
+    "notificationBell": "Sino de notificações",
     "unread": "Não lido",
     "inbox": "Caixa de entrada",
     "timeAgo": {
@@ -282,7 +283,8 @@
       "viewEditProfile": "Visualizar e editar suas informações de perfil",
       "exploreCommunityStudies": "Explore estudos compartilhados pela comunidade RUXAI",
       "browseCommunityTemplates": "Navegue por modelos contribuídos pela comunidade RUXAI"
-    }
+    },
+    "helpButton": "Botão de ajuda"
   },
   "profile": {
     "title": "Perfil",
@@ -376,7 +378,8 @@
       "Settings": "Configurações",
       "name": "Nome",
       "studiesCount": "Contagem de Estudos",
-      "mediaSize": "Tamanho da Mídia"
+      "mediaSize": "Tamanho da Mídia",
+      "toggleMiniMode": "Alternar modo compacto"
     },
     "heuristic": "Avaliação Heurística de Usabilidade"
   },

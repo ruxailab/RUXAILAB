@@ -23,7 +23,7 @@
             class="notification-bell"
             :class="{ pulse: unreadCount > 0 }"
             v-bind="props"
-            aria-label="notification bell"
+            :aria-label="$t('common.notificationBell')"
           >
             <v-icon>mdi-bell-ring</v-icon>
           </v-btn>
@@ -34,7 +34,7 @@
           icon
           size="small"
           v-bind="props"
-          aria-label="notification bell"
+          :aria-label="$t('common.notificationBell')"
         >
           <v-icon>mdi-bell-outline</v-icon>
         </v-btn>

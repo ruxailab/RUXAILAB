@@ -102,6 +102,7 @@
     "markAllAsRead": "تحديد الكل كمقروء",
     "caughtUp": "لقد قرأت كل شيء",
     "noNewNotifications": "لا توجد إشعارات جديدة",
+    "notificationBell": "جرس الإشعارات",
     "unread": "غير مقروء",
     "inbox": "صندوق الوارد",
     "timeAgo": {
@@ -282,7 +283,8 @@
       "viewEditProfile": "عرض وتحرير معلومات ملفك الشخصي",
       "exploreCommunityStudies": "استكشف الدراسات التي تمت مشاركتها من قبل مجتمع RUXAI",
       "browseCommunityTemplates": "تصفح القوالب التي ساهم بها مجتمع RUXAI"
-    }
+    },
+    "helpButton": "زر المساعدة"
   },
   "profile": {
     "title": "الملف الشخصي",
@@ -376,7 +378,8 @@
       "Settings": "الإعدادات",
       "name": "الاسم",
       "studiesCount": "عدد الدراسات",
-      "mediaSize": "حجم الوسائط"
+      "mediaSize": "حجم الوسائط",
+      "toggleMiniMode": "تبديل الوضع المصغر"
     },
     "heuristic": "تقييم الاستدلالات الخاصة بالاستخدام"
   },

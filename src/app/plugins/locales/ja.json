@@ -102,6 +102,7 @@
     "markAllAsRead": "すべて既読にする",
     "caughtUp": "最新の状態です",
     "noNewNotifications": "新しい通知はありません",
+    "notificationBell": "通知ベル",
     "unread": "未読",
     "inbox": "受信トレイ",
     "timeAgo": {
@@ -282,7 +283,8 @@
       "viewEditProfile": "プロファイル情報の表示と編集",
       "exploreCommunityStudies": "RUXAIコミュニティで共有されている調査を探索",
       "browseCommunityTemplates": "RUXAIコミュニティが提供するテンプレートを閲覧"
-    }
+    },
+    "helpButton": "ヘルプボタン"
   },
   "profile": {
     "title": "プロフィール",
@@ -376,7 +378,8 @@
       "Settings": "設定",
       "name": "名前",
       "studiesCount": "研究数",
-      "mediaSize": "メディアサイズ"
+      "mediaSize": "メディアサイズ",
+      "toggleMiniMode": "ミニモードを切り替え"
     },
     "heuristic": "ユーザビリティ ヒューリスティック評価"
   },
