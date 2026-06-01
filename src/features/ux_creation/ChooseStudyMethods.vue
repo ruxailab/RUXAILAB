@@ -185,6 +185,7 @@ const goBack = () => {
 }
 
 onMounted(() => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
   if (!currentCategory.value) {
     router.push({ name: 'study-create-step1' })
   }
