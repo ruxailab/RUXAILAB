@@ -40,33 +40,15 @@ export function useChangePassword() {
   ])
 
   const passwordRules = computed(() => [
-    (v) =>
-      !passwordTouched.value ||
-      !!v ||
-      i18n.global.t('profile.passwordRequired'),
-    (v) =>
-      !passwordTouched.value ||
-      v?.length >= 8 ||
-      i18n.global.t('profile.passwordMinLength'),
-    (v) =>
-      !passwordTouched.value ||
-      (v && /[A-Z]/.test(v)) ||
-      i18n.global.t('profile.passwordUppercase'),
-    (v) =>
-      !passwordTouched.value ||
-      (v && hasSpecialChar(v)) ||
-      i18n.global.t('profile.passwordSymbol'),
+    (v) => !!v || i18n.global.t('profile.passwordRequired'),
+    (v) => (v && v.length >= 8) || i18n.global.t('profile.passwordMinLength'),
+    (v) => (v && /[A-Z]/.test(v)) || i18n.global.t('profile.passwordUppercase'),
+    (v) => (v && hasSpecialChar(v)) || i18n.global.t('profile.passwordSymbol'),
   ])
 
   const confirmPasswordRules = computed(() => [
-    (v) =>
-      !confirmTouched.value ||
-      !!v ||
-      i18n.global.t('profile.confirmPasswordRequired'),
-    (v) =>
-      !confirmTouched.value ||
-      v === newPassword.value ||
-      i18n.global.t('profile.passwordsMatch'),
+    (v) => !!v || i18n.global.t('profile.confirmPasswordRequired'),
+    (v) => v === newPassword.value || i18n.global.t('profile.passwordsMatch'),
   ])
 
   const specialCharColor = computed(() =>
