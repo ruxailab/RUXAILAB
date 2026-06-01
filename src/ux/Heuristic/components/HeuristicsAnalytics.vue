@@ -66,7 +66,9 @@
                       <template v-if="questionSelect === -1" #prepend>
                         <v-icon>mdi-chevron-right</v-icon>
                       </template>
-                      <v-list-item-title>Data Table</v-list-item-title>
+                      <v-list-item-title>{{
+                        $t('HeuristicsAnalytics.dataTable')
+                      }}</v-list-item-title>
                     </v-list-item>
 
                     <v-list-item
@@ -106,7 +108,7 @@
                     }}
                   </v-list-subheader>
                   <v-list-subheader v-else class="pa-2">
-                    Data Table
+                    {{ $t('HeuristicsAnalytics.dataTable') }}
                   </v-list-subheader>
                   <v-divider />
                   <!-- DATA TABLE CONTENT TYPE -->
@@ -169,14 +171,14 @@
                           style="text-transform: none !important"
                           @click="ind = 0"
                         >
-                          Comments
+                          {{ $t('common.comments') }}
                         </v-tab>
                         <v-tab
                           class="tab-text"
                           style="text-transform: none !important"
                           @click="ind = 1"
                         >
-                          Chart
+                          {{ $t('HeuristicsAnalytics.chart') }}
                         </v-tab>
                       </v-tabs>
                       <v-col v-if="ind == 1">
@@ -200,26 +202,72 @@
                           <v-col cols="10">
                             <v-timeline density="compact" align="start">
                               <v-timeline-item
-                                v-for="(result, index) in itemsHeuristic"
+                                v-for="(
+                                  itemData, index
+                                ) in processedItemsHeuristic"
                                 :key="index"
                                 fill-dot
                                 dot-color="#fca326"
                                 icon="mdi-message-reply-text"
                               >
                                 <v-card
-                                  v-if="result[questionSelect].heuristicComment"
+                                  v-if="itemData.hasContent"
                                   class="elevation-2"
                                 >
-                                  <v-card-text>
-                                    {{
-                                      result[questionSelect].heuristicComment
-                                    }}
-                                  </v-card-text>
-                                  <img
-                                    v-if="result[questionSelect].answerImageUrl"
-                                    height="200"
-                                    :src="result[questionSelect].answerImageUrl"
-                                  />
+                                  <!-- Display all comments -->
+                                  <template v-if="itemData.comments.length > 0">
+                                    <v-card-text
+                                      v-for="(
+                                        comment, cIndex
+                                      ) in itemData.comments"
+                                      :key="'comment-' + cIndex"
+                                      :class="{
+                                        'border-b':
+                                          cIndex < itemData.comments.length - 1,
+                                      }"
+                                    >
+                                      <v-icon size="small" class="mr-1"
+                                        >mdi-comment</v-icon
+                                      >
+                                      {{ comment.text || comment }}
+                                      <div
+                                        v-if="
+                                          comment.createdAt &&
+                                          comment.createdAt > 0
+                                        "
+                                        class="text-caption text-grey mt-1"
+                                      >
+                                        {{ formatDate(comment.createdAt) }}
+                                      </div>
+                                    </v-card-text>
+                                  </template>
+                                  <!-- Display all images -->
+                                  <v-row
+                                    v-if="itemData.images.length > 0"
+                                    class="pa-2"
+                                  >
+                                    <v-col
+                                      v-for="(
+                                        attachment, iIndex
+                                      ) in itemData.images"
+                                      :key="'attachment-' + iIndex"
+                                      cols="6"
+                                      sm="4"
+                                    >
+                                      <img
+                                        height="200"
+                                        :src="attachment.url || attachment"
+                                        :alt="
+                                          attachment.alt ||
+                                          $t(
+                                            'HeuristicsAnalytics.userUploadedAttachment',
+                                          )
+                                        "
+                                        class="rounded"
+                                        style="object-fit: cover; width: 100%"
+                                      />
+                                    </v-col>
+                                  </v-row>
                                 </v-card>
                               </v-timeline-item>
                             </v-timeline>
@@ -267,8 +315,6 @@ const answers = computed(() => {
   return store.getters.testAnswerDocument.heuristicAnswers
 })
 
-const loading = computed(() => !Object.values(answers.value).length)
-
 const headersHeuristic = computed(() => {
   const header = [
     {
@@ -307,6 +353,71 @@ const itemsHeuristic = computed(() => {
   }
   return items
 })
+
+const processedItemsHeuristic = computed(() => {
+  if (questionSelect.value === null || questionSelect.value < 0) {
+    return []
+  }
+  return itemsHeuristic.value.map((result) => {
+    const questionAnswer = result[questionSelect.value]
+    const comments = getCommentsFromAnswer(questionAnswer)
+    const images = getImagesFromAnswer(questionAnswer)
+    return {
+      result,
+      comments,
+      images,
+      hasContent: comments.length > 0 || images.length > 0,
+    }
+  })
+})
+
+const getCommentsFromAnswer = (questionAnswer) => {
+  if (!questionAnswer) return []
+
+  const comments = []
+
+  if (Array.isArray(questionAnswer.comments)) {
+    comments.push(...questionAnswer.comments)
+  }
+
+  if (
+    comments.length === 0 &&
+    questionAnswer.heuristicComment &&
+    questionAnswer.heuristicComment.trim() !== ''
+  ) {
+    comments.push({
+      id: 'legacy',
+      text: questionAnswer.heuristicComment,
+      createdAt: 0,
+    })
+  }
+
+  return comments
+}
+
+const getImagesFromAnswer = (questionAnswer) => {
+  if (!questionAnswer) return []
+
+  const images = []
+
+  if (Array.isArray(questionAnswer.images)) {
+    images.push(...questionAnswer.images)
+  }
+
+  if (
+    images.length === 0 &&
+    questionAnswer.answerImageUrl &&
+    questionAnswer.answerImageUrl.trim() !== ''
+  ) {
+    images.push({
+      id: 'legacy',
+      url: questionAnswer.answerImageUrl,
+      createdAt: 0,
+    })
+  }
+
+  return images
+}
 
 const questionGraph = computed(() => {
   const { testOptions: options } = test.value
@@ -363,6 +474,16 @@ onMounted(async () => {
 
 const goToCoops = () => {
   emit('goToCoops')
+}
+
+const formatDate = (timestamp) => {
+  if (!timestamp) return ''
+  const date = new Date(timestamp)
+  return (
+    date.toLocaleDateString() +
+    ' ' +
+    date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  )
 }
 </script>
 

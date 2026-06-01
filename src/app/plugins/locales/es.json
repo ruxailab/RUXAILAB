@@ -43,10 +43,38 @@
       "fair": "Regular",
       "good": "Buena",
       "strong": "Fuerte"
-    }
+    },
+    "emailNotVerified": "Correo electrónico no verificado",
+    "verificationEmailSent": "¡Correo de verificación enviado exitosamente!",
+    "errorSendingVerification": "Error al enviar el correo de verificación",
+    "verifyEmailTitle": "Verifique su correo electrónico",
+    "verifyEmailSubtitle": "Hemos enviado un enlace de verificación a su correo electrónico",
+    "emailLabel": "Correo electrónico",
+    "verifyingEmail": "Verificando...",
+    "emailAlreadyVerified": "¿El correo electrónico ya está verificado?",
+    "emailVerified": "¡Correo electrónico verificado exitosamente!",
+    "checkEmailTitle": "Verifique su correo electrónico",
+    "checkEmailStep1": "Revise su bandeja de entrada para recibir un correo de verificación",
+    "checkEmailStep2": "Haga clic en el enlace del correo para verificar su cuenta",
+    "checkEmailStep3": "Vuelva aquí y su cuenta será verificada",
+    "checkSpamFolder": "¿No lo ve? Revise su carpeta de spam",
+    "resending": "Reenviando...",
+    "resendEmail": "Reenviar correo",
+    "changeEmail": "Cambiar correo electrónico",
+    "continueToDashboard": "Continuar al panel de control",
+    "signOut": "Cerrar sesión",
+    "newEmail": "Nuevo correo electrónico",
+    "enterNewEmail": "Ingrese su nueva dirección de correo electrónico",
+    "saving": "Guardando...",
+    "errorCheckingVerification": "Error al verificar el estado de verificación",
+    "errorResendingEmail": "Error al reenviar el correo de verificación",
+    "invalidEmail": "Dirección de correo electrónico inválida",
+    "emailUpdatedVerification": "¡Correo actualizado! Hemos enviado un enlace de verificación a su nuevo correo.",
+    "errorUpdatingEmail": "Error al actualizar el correo electrónico"
   },
   "common": {
     "enterTextHere": "Ingrese texto aquí...",
+    "percentValue": "{value}%",
     "units": {
       "mb": "MB",
       "gb": "GB"
@@ -60,6 +88,11 @@
     "editAndInvite": "Editar e invitar personas a tu prueba",
     "analyzeProject": "Analizar el proyecto y los evaluadores",
     "comment": "Comentario",
+    "comments": "Comentarios",
+    "image": "Imagen",
+    "images": "Imágenes",
+    "close": "Cerrar",
+    "selectImage": "Seleccione una imagen para cargar",
     "inputImage": "Ingresa una imagen de tu elección relacionada con el tema",
     "title": "Título",
     "description": "Descripción",
@@ -112,6 +145,7 @@
     "user": "Usuario",
     "id": "ID",
     "itemsPerPage": "Elementos por página:",
+    "saving": "Guardando...",
     "visible": "Visible"
   },
   "storage": {
@@ -384,7 +418,10 @@
     "globalError": "Ha ocurrido un error, disculpa las molestias.",
     "cameraPermissionDenied": "Se requiere acceso a la cámara para continuar. Por favor, permita el acceso a la cámara en la configuración de su navegador.",
     "sendError": "No se pudo enviar la invitación. Por favor, intenta de nuevo.",
-    "missingVariableTitles": "No se puede guardar: Algunas variables no tienen título"
+    "missingVariableTitles": "No se puede guardar: Algunas variables no tienen título",
+    "failedToLoadAnswers": "Error al cargar respuestas",
+    "failedToUpdateAnswer": "Error al actualizar respuesta",
+    "failedToSaveAnswerCooperator": "Error al guardar respuesta del cooperador"
   },
   "Introduction": {
     "title": "UX LAB Remoto",
@@ -537,7 +574,10 @@
       "updatedProgress": "actualizó su progreso",
       "invitationSentTitle": "Invitación enviada",
       "invitationPendingDesc": "Invitación pendiente para",
-      "pendingStatus": "Pendiente"
+      "pendingStatus": "Pendiente",
+      "evaluatorInfo": "Info para Evaluadores",
+      "evaluatorInfoEmpty": "Sin secciones de información. Agrega algunas para guiar a tus evaluadores.",
+      "evaluatorInfoSeeAll": "Ver las {count} secciones"
     },
     "managerView": {
       "heuristicStudy": "Estudio Heurístico",
@@ -612,7 +652,14 @@
     "AddCommentBtn": {
       "showComment": "Mostrar comentario",
       "addComment": "Agregar comentario",
+      "addAnotherComment": "Agregar otro comentario",
+      "addNewComment": "Agregar un nuevo comentario",
       "hideTextArea": "Ocultar área de texto"
+    },
+    "ImportImage": {
+      "uploadSuccess": "Imagen cargada exitosamente",
+      "uploadError": "Error al cargar imagen",
+      "imagesCount": "{count} imagen(es) adjunta(s)"
     },
     "errors": {
       "failedToLoadQuestionForm": "Error al cargar el formulario de pregunta. Por favor, inténtalo de nuevo.",
@@ -624,6 +671,12 @@
       "question": "Pregunta",
       "questions": "Preguntas"
     }
+  },
+  "HeuristicsAnalytics": {
+    "dataTable": "Tabla de datos",
+    "chart": "Gráfico",
+    "userUploadedContent": "Contenido subido por el usuario",
+    "userUploadedAttachment": "Archivo adjunto subido por el usuario"
   },
   "HeuristicsOptionsTable": {
     "titles": {
@@ -1194,6 +1247,44 @@
       "note": "Su función es facilitar y observar. El participante debe completar las tareas de forma independiente a menos que solicite ayuda específicamente.",
       "startSession": "Iniciar Sesión Moderada"
     },
+    "VideoCallPanel": {
+      "toolsPanelTitle": "Panel de herramientas",
+      "sessionControl": "Control de sesion",
+      "joinRoomInfo": "Los controles para unirse estan ahora en la interfaz principal superior",
+      "proceedNextStep": "Continuar al siguiente paso",
+      "endCall": "Finalizar llamada",
+      "activeCall": "Llamada activa",
+      "participants": "Participantes",
+      "you": "Tu",
+      "observator": "Observador",
+      "moderator": "Moderador",
+      "connected": "Conectado",
+      "disconnected": "Desconectado",
+      "camera": "Camara",
+      "noCamera": "Sin camara",
+      "microphone": "Microfono",
+      "noMicrophone": "Sin microfono",
+      "settings": "Configuracion",
+      "disableCamera": "Desactivar camara",
+      "enableCamera": "Activar camara",
+      "muteMicrophone": "Silenciar microfono",
+      "unmuteMicrophone": "Activar microfono",
+      "stopScreenShare": "Detener compartir pantalla",
+      "shareScreen": "Compartir pantalla",
+      "moderatorOnlySteps": "Solo el moderador puede cambiar los pasos"
+    },
+    "VideoCall": {
+      "screenSharingLabel": "Compartiendo pantalla",
+      "cameraOff": "La camara esta apagada",
+      "yourVideo": "Tu video",
+      "yourPreview": "Tu vista previa",
+      "observatorMode": "Modo observador",
+      "waitingForModeratorToStartSession": "Esperando a que el moderador inicie la sesion...",
+      "observeAllFeedsNotice": "Podras observar todas las transmisiones de video sin enviar la tuya.",
+      "waitingForParticipants": "Esperando participantes...",
+      "waitingForModerator": "Esperando al moderador...",
+      "autoStartWhenModeratorOpensRoom": "La videollamada comenzara automaticamente cuando el moderador abra la sala."
+    },
     "WelcomeStep": {
       "welcome": "¡Bienvenido a RUXAILAB!",
       "description": "Vas a participar en una prueba de usuario que tiene como objetivo evaluar la facilidad de uso y comprensión de una aplicación digital. Este tipo de prueba nos ayuda a detectar posibles barreras tecnológicas y mejorar la experiencia para todos.",
@@ -1285,7 +1376,8 @@
       "elastic": "Elastic Net",
       "bayesian": "Bayesian Ridge",
       "sgd": "SGD Regressor",
-      "svr": "Support Vector Regressor"
+      "svr": "Support Vector Regressor",
+      "rfr": "Regresor de Bosque Aleatorio"
     }
   },
   "AccessNotAllowed": {
@@ -1510,6 +1602,7 @@
     "deleteAccount": "¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.",
     "genericSuccess": "Operación exitosa",
     "savedChanges": "Cambios guardados con éxito",
+    "errorSavingProgress": "Error al guardar el progreso",
     "deleteUser": "¿Está seguro de que desea eliminar este usuario? Esta acción no se puede deshacer."
   },
   "buttons": {
@@ -2298,5 +2391,32 @@
       }
     },
     "title": "Política de Privacidad"
+  },
+  "EvaluatorInfoView": {
+    "pageTitle": "Información para Evaluadores",
+    "pageSubtitle": "Crea secciones de información que los evaluadores verán antes de comenzar el test"
+  },
+  "EvaluatorInfoEditor": {
+    "title": "Información para Evaluadores",
+    "subtitle": "Crea secciones de información que los evaluadores verán antes de comenzar el test",
+    "noSections": "Sin secciones. Agrega una para comenzar.",
+    "untitledSection": "Sección sin título",
+    "addSection": "Agregar sección",
+    "sectionTitle": "Título de la sección",
+    "sectionContent": "Contenido",
+    "sectionType": "Tipo",
+    "types": {
+      "info": "Información",
+      "warning": "Advertencia",
+      "tip": "Consejo"
+    },
+    "save": "Guardar",
+    "cancel": "Cancelar"
+  },
+  "EvaluatorInfoDisplay": {
+    "title": "Antes de comenzar",
+    "subtitle": "Por favor lee la siguiente información antes de iniciar la evaluación",
+    "startButton": "Iniciar Evaluación",
+    "noContent": "No hay información adicional."
   }
 }

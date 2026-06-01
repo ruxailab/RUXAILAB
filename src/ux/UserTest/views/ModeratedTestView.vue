@@ -513,6 +513,7 @@
               @show-loading="isLoading = true"
               @stop-show-loading="isLoading = false"
               @recording-started="isVisualizerVisible = $event"
+              @tip-pressed="handleTipPressed"
               @timer-stopped="handleTimerStopped"
             />
 
@@ -786,6 +787,10 @@ watch(
 // Methods
 const proceedToNextStep = async () => {
   if (!isUserTestAdmin.value) return
+
+  // Increment globalIndex before updating Firebase
+  globalIndex.value = globalIndex.value + 1
+
   const roomRef = dbRef(database, `rooms/${roomId.value}`)
   await update(roomRef, {
     globalIndex: globalIndex.value,
@@ -959,6 +964,9 @@ const startTest = async () => {
       if (data.showVideoCall !== undefined) {
         displayVideoCallComponent.value = data.showVideoCall
       }
+    } else {
+      // Admin always stays in video call during session
+      displayVideoCallComponent.value = true
     }
   })
 
@@ -1074,6 +1082,19 @@ const handleTimerStopped = (elapsedTime, idx) => {
   } else {
     console.error('No se pudo guardar el tiempo para la tarea', idx) // eslint-disable-line no-console
   }
+}
+
+const handleTipPressed = (idx) => {
+  if (idx === undefined || idx === null) {
+    return
+  }
+
+  if (!localTestAnswer.tasks?.[idx]) {
+    return
+  }
+
+  const current = Number(localTestAnswer.tasks[idx].tipPressCount || 0)
+  localTestAnswer.tasks[idx].tipPressCount = current + 1
 }
 
 const completeStep = async (id, type, userCompleted = true) => {
@@ -1238,6 +1259,7 @@ const mappingSteps = async () => {
               postAnswer: '',
               taskTime: 0,
               completed: false,
+              tipPressCount: 0,
               susAnswers: [],
               nasaTlxAnswers: null,
             })

@@ -76,8 +76,8 @@
                     study.status === 'active'
                       ? 'success'
                       : study.status === 'finished'
-                        ? 'warning'
-                        : 'info'
+                      ? 'warning'
+                      : 'info'
                   "
                   variant="tonal"
                   size="small"
@@ -367,9 +367,7 @@ watch(
 <style scoped>
 .study-card {
   height: 100%;
-  transition:
-    transform 0.2s ease-in-out,
-    box-shadow 0.2s ease-in-out;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
 .study-card:hover {

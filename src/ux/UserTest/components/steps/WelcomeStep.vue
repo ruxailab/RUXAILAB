@@ -34,12 +34,13 @@
               :title="$t('UserTestView.WelcomeStep.steps.consent')"
             />
             <v-divider />
-
-            <v-stepper-item
-              value="2"
-              :title="$t('UserTestView.WelcomeStep.steps.preQuestions')"
-            />
-            <v-divider />
+            <template v-if="hasPreTest">
+              <v-stepper-item
+                value="2"
+                :title="$t('UserTestView.WelcomeStep.steps.preQuestions')"
+              />
+              <v-divider />
+            </template>
             <v-stepper-item
               v-if="hasEyeTracking"
               value="3"
@@ -47,17 +48,27 @@
             />
             <v-divider v-if="hasEyeTracking" />
             <v-stepper-item
-              :value="hasEyeTracking ? '4' : '3'"
+              :value="!hasPreTest ? 2 : hasEyeTracking ? '4' : '3'"
               :title="$t('UserTestView.WelcomeStep.steps.tasks')"
             />
             <v-divider />
+            <template v-if="hasPostTest">
+              <v-stepper-item
+                :value="!hasPreTest ? 3 : hasEyeTracking ? '5' : '4'"
+                :title="$t('UserTestView.WelcomeStep.steps.postQuestions')"
+              />
+              <v-divider />
+            </template>
             <v-stepper-item
-              :value="hasEyeTracking ? '5' : '4'"
-              :title="$t('UserTestView.WelcomeStep.steps.postQuestions')"
-            />
-            <v-divider />
-            <v-stepper-item
-              :value="hasEyeTracking ? '6' : '5'"
+              :value="
+                !hasPostTest && !hasPreTest
+                  ? 3
+                  : !hasPreTest && hasPostTest
+                    ? 4
+                    : hasEyeTracking
+                      ? '6'
+                      : '5'
+              "
               :title="$t('UserTestView.WelcomeStep.steps.submission')"
             />
           </v-stepper-header>
@@ -97,12 +108,15 @@ import { computed } from 'vue'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import { VStepperVertical } from 'vuetify/labs/VStepperVertical'
 import { useDisplay } from 'vuetify'
-const props = defineProps({
+
+defineProps({
   stepperValue: { type: Number, required: true },
   welcomeMessage: { type: String, default: '' },
   hasEyeTracking: { type: Boolean, default: false },
+  hasPreTest: { type: Boolean, default: true },
+  hasPostTest: { type: Boolean, default: true },
 })
-const emit = defineEmits(['start'])
+defineEmits(['start'])
 const { smAndDown } = useDisplay()
 const sanitizedWelcomeMessage = computed(() => DOMPurify.sanitize(props.welcomeMessage || ''))
 </script>

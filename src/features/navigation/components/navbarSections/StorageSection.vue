@@ -40,6 +40,9 @@
         :headers="headers"
         :items="files"
         :search="search"
+        :custom-key-sort="customSort"
+        :custom-filter="customFilter"
+        item-value="id"
         :items-per-page-text="t('common.table.itemsPerPage')"
         hover
       >
@@ -63,6 +66,11 @@
           >
             {{ item.studyName }}
           </a>
+        </template>
+
+        <!-- Date -->
+        <template #[`item.date`]="{ item }">
+          {{ item.dateFormatted }}
         </template>
 
         <!-- Size -->
@@ -136,9 +144,14 @@
             @click="deleteDialog = false"
             >{{ t('common.cancel') }}</v-btn
           >
-          <v-btn color="error" class="rounded-lg" @click="executeDelete">{{
-            t('buttons.delete')
-          }}</v-btn>
+          <v-btn
+            color="error"
+            class="rounded-lg"
+            :loading="store.getters['Storage/isDeleting']"
+            :disabled="store.getters['Storage/isDeleting']"
+            @click="executeDelete"
+            >{{ t('buttons.delete') }}</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -190,9 +203,10 @@ import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import { formatDateLong } from '@/shared/utils/dateUtils'
 import AnswerController from '@/shared/controllers/AnswerController'
+import { showError } from '@/shared/utils/toast'
 
 const store = useStore()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const search = ref('')
 const answerController = new AnswerController()
 const fetchedAnswers = ref({}) // Map<testId, answersList>
@@ -213,7 +227,11 @@ const headers = computed(() => [
   },
   { title: t('storage.headers.studyName'), key: 'studyName', align: 'start' },
   { title: t('storage.headers.date'), key: 'date', align: 'start' },
-  { title: t('storage.headers.size'), key: 'size', align: 'end' },
+  {
+    title: t('storage.headers.size'),
+    key: 'size',
+    align: 'end',
+  },
   {
     title: t('storage.headers.actions'),
     key: 'actions',
@@ -224,6 +242,26 @@ const headers = computed(() => [
 
 const tests = computed(() => store.getters.tests || [])
 
+// Custom sort functions for v-data-table columns
+const customSort = {
+  studyName: (a, b) =>
+    a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }),
+  date: (a, b) => a - b,
+  size: (a, b) => a - b,
+}
+
+// Custom filter so search works on displayed values (e.g. dateFormatted, studyName)
+const customFilter = (value, query, item) => {
+  if (!query) return true
+  const q = query.toLowerCase()
+  const raw = item?.raw || item
+  return (
+    (raw.studyName || '').toLowerCase().includes(q) ||
+    (raw.dateFormatted || '').toLowerCase().includes(q) ||
+    (raw.type || '').toLowerCase().includes(q)
+  )
+}
+
 // Fetch answers for all tests
 const fetchAllAnswers = async () => {
   for (const test of tests.value) {
@@ -233,10 +271,15 @@ const fetchAllAnswers = async () => {
           test.answersDocId,
         )
         if (answerDoc && answerDoc.taskAnswers) {
-          fetchedAnswers.value[test.id] = Object.values(answerDoc.taskAnswers)
+          fetchedAnswers.value[test.id] = Object.entries(
+            answerDoc.taskAnswers,
+          ).map(([key, val]) => ({
+            ...val,
+            userDocId: val.userDocId || key,
+          }))
         }
       } catch {
-        // Error handling: Could not fetch answers for test
+        showError(t('storage.fetchAnswersError', { testTitle: test.testTitle }))
       }
     }
   }
@@ -260,7 +303,10 @@ const files = computed(() => {
     let answers = test.answers
       ? Array.isArray(test.answers)
         ? test.answers
-        : Object.values(test.answers)
+        : Object.entries(test.answers).map(([key, val]) => ({
+            ...val,
+            userDocId: val.userDocId || key,
+          }))
       : []
 
     // 2. Merge with fetched answers
@@ -268,29 +314,42 @@ const files = computed(() => {
       answers = [...answers, ...fetchedAnswers.value[test.id]]
     }
 
-    answers.forEach((answer) => {
+    answers.forEach((answer, answerIdx) => {
       const tasks = answer.tasks
         ? Array.isArray(answer.tasks)
           ? answer.tasks
-          : Object.values(answer.tasks)
+          : Object.entries(answer.tasks).map(([key, val]) => ({
+              ...val,
+              taskId: val.taskId || val.id || key,
+            }))
         : []
 
-      tasks.forEach((task) => {
-        const date = formatDateLong(answer.date || test.creationDate, 'es') // Default to ES locale per usage
+      tasks.forEach((task, taskIdx) => {
+        const rawDate = answer.date || test.creationDate
+        const dateFormatted = formatDateLong(rawDate, locale.value)
+        const dateTimestamp = rawDate ? new Date(rawDate).getTime() : 0
+        const idPrefix = `${test.id}_${answerIdx}_${taskIdx}`
+        const userDocId = answer.userDocId || null
 
         // Common file properties
         const baseFile = {
-          id: task.id || self.crypto.randomUUID(),
           studyName: test.testTitle,
-          date: date,
+          date: dateTimestamp,
+          dateFormatted,
+          answersDocId: test.answersDocId || null,
+          userDocId,
+          taskId: task.taskId || null,
         }
 
         // Check for Video
         if (task.videoRecordURL) {
           allFiles.push({
             ...baseFile,
+            id: `${idPrefix}_video`,
             type: 'video',
             url: task.videoRecordURL,
+            urlField: 'videoRecordURL',
+            sizeField: 'webcamSize',
             size: task.webcamSize || 50 * 1024 * 1024,
           })
         }
@@ -298,8 +357,11 @@ const files = computed(() => {
         if (task.audioRecordURL) {
           allFiles.push({
             ...baseFile,
+            id: `${idPrefix}_audio`,
             type: 'audio',
             url: task.audioRecordURL,
+            urlField: 'audioRecordURL',
+            sizeField: 'audioSize',
             size: task.audioSize || 10 * 1024 * 1024,
           })
         }
@@ -307,17 +369,23 @@ const files = computed(() => {
         if (task.screenRecordURL) {
           allFiles.push({
             ...baseFile,
+            id: `${idPrefix}_screen`,
             type: 'screen',
             url: task.screenRecordURL,
+            urlField: 'screenRecordURL',
+            sizeField: 'screenSize',
             size: task.screenSize || 100 * 1024 * 1024,
           })
         }
-        // Check for Webcam (Fix for missing icons)
+        // Check for Webcam
         if (task.webcamRecordURL) {
           allFiles.push({
             ...baseFile,
+            id: `${idPrefix}_webcam`,
             type: 'webcam',
             url: task.webcamRecordURL,
+            urlField: 'webcamRecordURL',
+            sizeField: 'webcamSize',
             size: task.webcamSize || 50 * 1024 * 1024,
           })
         }
@@ -325,7 +393,9 @@ const files = computed(() => {
     })
   })
 
-  return allFiles
+  return allFiles.filter(
+    (f) => !store.getters['Storage/deletedUrls'].has(f.url),
+  )
 })
 
 const totalFormatted = computed(() => {
@@ -363,11 +433,17 @@ const confirmDelete = (item) => {
   deleteDialog.value = true
 }
 
-const executeDelete = () => {
-  // Mock delete for now (backend coming in PR #2)
-  // Delete file implementation pending backend
-  deleteDialog.value = false
-  fileToDelete.value = null
+const executeDelete = async () => {
+  const file = fileToDelete.value
+  if (!file) return
+
+  try {
+    await store.dispatch('Storage/deleteFile', file)
+    deleteDialog.value = false
+    fileToDelete.value = null
+  } catch (error) {
+    // Error is already handled in the store
+  }
 }
 
 const openPreview = (item) => {
