@@ -108,6 +108,7 @@
     "markAllAsRead": "Tout marquer comme lu",
     "caughtUp": "Vous êtes à jour",
     "noNewNotifications": "Pas de nouvelles notifications",
+    "notificationBell": "Cloche de notification",
     "unread": "non lu",
     "inbox": "Boîte de réception",
     "timeAgo": {
@@ -282,7 +283,8 @@
       "viewEditProfile": "Afficher et modifier les informations de votre profil",
       "exploreCommunityStudies": "Explorez les études partagées par la communauté RUXAI",
       "browseCommunityTemplates": "Parcourez les modèles fournis par la communauté RUXAI"
-    }
+    },
+    "helpButton": "Bouton d'aide"
   },
   "profile": {
     "title": "Profil",
@@ -376,7 +378,8 @@
       "Settings": "Paramètres",
       "name": "Nom",
       "studiesCount": "Nombre d'Études",
-      "mediaSize": "Taille des Médias"
+      "mediaSize": "Taille des Médias",
+      "toggleMiniMode": "Basculer le mode compact"
     },
     "heuristic": "Évaluation heuristique de l'utilisabilité"
   },
@@ -706,11 +709,13 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "Paramètres",
-      "confirmUpload": "Confirmer le téléchargement"
+      "confirmUpload": "Confirmer le téléchargement",
+      "enableWeights": "Activer la fonctionnalité de pondération"
     },
     "messages": {
       "acceptCsv": "Si vous acceptez, toutes vos heuristiques actuelles seront remplacées par celles du fichier .csv.",
-      "noCsvFileSelected": "Aucun fichier CSV sélectionné. \nVeuillez en sélectionner un avant de continuer."
+      "noCsvFileSelected": "Aucun fichier CSV sélectionné. \nVeuillez en sélectionner un avant de continuer.",
+      "enableWeightsDescription": "Permettre aux évaluateurs d'attribuer des poids aux heuristiques dans cette étude"
     },
     "placeHolders": {
       "importCsv": "Importez votre fichier CSV test ici."
@@ -965,7 +970,8 @@
     "validation": {
       "fieldRequired": "Champ Requis",
       "validUrl": "Doit être une URL valide commençant par http:// ou https://",
-      "positiveNumber": "Doit être un nombre positif"
+      "positiveNumber": "Doit être un nombre positif",
+      "minOne": "La valeur doit être d'au moins 1"
     },
     "basicInfo": {
       "stepTitle": "Étape 1 : Informations de Base de la Tâche",
@@ -1009,6 +1015,12 @@
       "sart": "Technique d'Évaluation de la Conscience Situationnelle - mesure la conscience situationnelle"
     },
     "answerTypePreview": {
+      "postTest": {
+      "title": "Retour après le test",
+      "q1": "Évaluez votre expérience",
+      "q2": "Comment avez-vous trouvé le produit lors des tests bêta ?",
+      "feedbackPlaceholder": "Le produit avait une interface fluide, mais présentait des ralentissements à certains endroits."
+      },
       "taskCompleted": "Tâche terminée ! Aucun retour supplémentaire requis.",
       "participantsFeedbackHere": "Les participants fourniront leurs commentaires ici...",
       "submitFeedback": "Soumettre les Commentaires",

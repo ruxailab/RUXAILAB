@@ -8,9 +8,6 @@ import {
   setPersistence,
   browserLocalPersistence,
   browserSessionPersistence,
-  reauthenticateWithCredential,
-  reauthenticateWithPopup,
-  EmailAuthProvider,
 } from 'firebase/auth'
 import { auth } from '@/app/plugins/firebase'
 import axios from 'axios'
@@ -104,29 +101,17 @@ export default class AuthController {
   }
 
   /**
-   * Delete user account - consolidated method
+   * Deletes the authenticated user account and cleans up backend data.
+   * @precondition Caller must reauthenticate the user before invoking 
+   * this method. This is handled by useDeleteAccount.js composable.
    * @param {Object} payload - Deletion payload
-   * @param {Object} payload.user - Firebase auth user
-   * @param {string} payload.password - User password for reauthentication (optional)
+   * @param {Object} payload.user - Firebase auth user (already reauthenticated)
    * @returns {Promise}
-   */
+  */
   async deleteAuth(payload) {
-    const { user, password } = payload
+    const { user } = payload
 
     if (!user) throw new Error('No user provided')
-
-    const hasGoogle = user.providerData.some(
-      (p) => p.providerId === 'google.com',
-    )
-
-    // Reauthenticate based on provider
-    if (hasGoogle) {
-      await reauthenticateWithPopup(user, new GoogleAuthProvider())
-    } else {
-      if (!password) throw new Error('Password required')
-      const cred = EmailAuthProvider.credential(user.email, password)
-      await reauthenticateWithCredential(user, cred)
-    }
 
     // Delete user from Firebase Auth
     await user.delete()

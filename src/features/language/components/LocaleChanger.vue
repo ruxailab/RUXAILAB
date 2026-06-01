@@ -21,7 +21,13 @@
     >
       <v-menu>
         <template #activator="{ props }">
-          <v-btn size="small" color="primary" icon v-bind="props">
+          <v-btn
+            size="small"
+            color="primary"
+            icon
+            v-bind="props"
+            :aria-label="$t('language')"
+          >
             <v-icon size="20" color="white"> mdi-translate </v-icon>
           </v-btn>
         </template>

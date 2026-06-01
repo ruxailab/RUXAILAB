@@ -6,10 +6,7 @@ import {
   EmailAuthProvider,
   reauthenticateWithPopup,
   GoogleAuthProvider,
-  deleteUser,
 } from 'firebase/auth'
-import { doc, deleteDoc } from 'firebase/firestore'
-import { db } from '@/app/plugins/firebase'
 import { showError, showSuccess } from '../../../shared/utils/toast'
 
 const SHARED_ERRORS = {
@@ -44,18 +41,9 @@ export function useDeleteAccount() {
     showError(messageKey)
   }
 
-  const deleteAccount = async (user) => {
+  const deleteAccount = async (user, password) => {
     try {
-      const userDocRef = doc(db, 'users', user.uid)
-      await deleteDoc(userDocRef)
-
-      try {
-        await store.dispatch('deleteAuth', user.uid)
-      } catch (storeError) {
-        return storeError
-      }
-
-      await deleteUser(user)
+      await store.dispatch('deleteAuth', { user, password })
 
       showSuccess('profile.accountDeletedSuccess')
 
@@ -63,15 +51,6 @@ export function useDeleteAccount() {
     } catch (error) {
       if (error.code === 'permission-denied') {
         showError('profile.permissionDenied')
-      } else if (error.code === 'not-found') {
-        try {
-          await deleteUser(user)
-          showSuccess('profile.accountDeletedSuccess')
-          await signOut()
-        } catch (authError) {
-          showError('profile.accountDeletionFailed')
-          throw authError
-        }
       } else {
         showError('profile.accountDeletionFailed')
         throw error
@@ -112,7 +91,7 @@ export function useDeleteAccount() {
     try {
       isDeleting.value = true
       await reauthenticateWithPopup(user, new GoogleAuthProvider())
-      await deleteAccount(user)
+      await deleteAccount(user, null)
     } catch (error) {
       handleAuthError(error, GOOGLE_ERRORS)
     } finally {
@@ -140,7 +119,7 @@ export function useDeleteAccount() {
       const cred = EmailAuthProvider.credential(user.email, userPassword.value)
       await reauthenticateWithCredential(user, cred)
 
-      await deleteAccount(user)
+      await deleteAccount(user, userPassword.value)
     } catch (error) {
       handleAuthError(error, EMAIL_ERRORS)
     } finally {
