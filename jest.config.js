@@ -4,7 +4,6 @@ module.exports = {
     '^.+\\.vue$': '@vue/vue3-jest',
     '^.+\\.js$': 'babel-jest',
   },
-  transformIgnorePatterns: ['/node_modules/(?!axios)'],
   testMatch: ['**/*.spec.js'],
   testPathIgnorePatterns: ['/e2e/', '/functions/'],
   transformIgnorePatterns: ['/node_modules/(?!axios)'],
