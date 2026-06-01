@@ -7,7 +7,7 @@
       {{ $t('profile.changePassword') }}
     </v-card-title>
     <v-card-text>
-      <v-alert type="warning" variant="outlined" class="mb-6">
+      <v-alert v-if="newPassword.length > 0" type="warning" variant="outlined" class="mb-6">
         <div class="text-subtitle-1 font-weight-medium mb-2">
           {{ $t('profile.passwordRequirements') }}
         </div>
@@ -61,7 +61,7 @@ v-model="currentPassword" :rules="currentPasswordRules" :label="$t('profile.curr
 v-model="newPassword" :rules="passwordRules" :label="$t('profile.newPassword')"
               :type="showPassword ? 'text' : 'password'" variant="outlined" density="compact"
               prepend-inner-icon="mdi-lock" :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-              class="input-field-transition" @click:append-inner="togglePasswordVisibility()" />
+              class="input-field-transition" @click:append-inner="togglePasswordVisibility()" @input="passwordTouched = true" />
           </v-col>
           <v-col cols="12" sm="6">
             <v-text-field
@@ -69,7 +69,7 @@ v-model="confirmPassword" :rules="confirmPasswordRules"
               :label="$t('profile.confirmNewPassword')" :type="showConfirmPassword ? 'text' : 'password'"
               variant="outlined" density="compact" prepend-inner-icon="mdi-lock-check"
               :append-inner-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'" class="input-field-transition"
-              @click:append-inner="toggleConfirmPasswordVisibility()" />
+              @click:append-inner="toggleConfirmPasswordVisibility()" @input="confirmTouched = true" />
           </v-col>
         </v-row>
         <v-btn
@@ -100,6 +100,8 @@ const {
   showPassword,
   showConfirmPassword,
   valid,
+  passwordTouched,
+  confirmTouched,
   isGoogleUser,
   currentPasswordRules,
   passwordRules,
