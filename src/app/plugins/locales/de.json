@@ -708,11 +708,13 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "Einstellungen",
-      "confirmUpload": "Upload bestätigen"
+      "confirmUpload": "Upload bestätigen",
+      "enableWeights": "Gewichtungsfunktion aktivieren"
     },
     "messages": {
       "acceptCsv": "Wenn Sie akzeptieren, werden alle Ihre vorhandenen Heuristiken durch die in der .csv-Datei ersetzt.",
-      "noCsvFileSelected": "Keine CSV-Datei ausgewählt. \nBitte wählen Sie eine aus, bevor Sie fortfahren."
+      "noCsvFileSelected": "Keine CSV-Datei ausgewählt. \nBitte wählen Sie eine aus, bevor Sie fortfahren.",
+      "enableWeightsDescription": "Ermöglichen Sie es Bewertern, Gewichte für Heuristiken in dieser Studie zuzuordnen"
     },
     "placeHolders": {
       "importCsv": "Importieren Sie Ihre CSV-Testdatei hier."

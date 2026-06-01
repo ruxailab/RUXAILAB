@@ -706,11 +706,13 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "Paramètres",
-      "confirmUpload": "Confirmer le téléchargement"
+      "confirmUpload": "Confirmer le téléchargement",
+      "enableWeights": "Activer la fonctionnalité de pondération"
     },
     "messages": {
       "acceptCsv": "Si vous acceptez, toutes vos heuristiques actuelles seront remplacées par celles du fichier .csv.",
-      "noCsvFileSelected": "Aucun fichier CSV sélectionné. \nVeuillez en sélectionner un avant de continuer."
+      "noCsvFileSelected": "Aucun fichier CSV sélectionné. \nVeuillez en sélectionner un avant de continuer.",
+      "enableWeightsDescription": "Permettre aux évaluateurs d'attribuer des poids aux heuristiques dans cette étude"
     },
     "placeHolders": {
       "importCsv": "Importez votre fichier CSV test ici."
