@@ -1064,8 +1064,8 @@
     "answerTypePreview": {
       "postTest": {
         "title": "Post Test Feedback",
-        "q1":"Rate your experience",
-        "q2":"How did you find the product in beta testing?",
+        "q1": "Rate your experience",
+        "q2": "How did you find the product in beta testing?",
         "feedbackPlaceholder": "The product had a smooth UI but it was lagging in some places."
       },
       "taskCompleted": "Task completed! No additional feedback required.",
@@ -1382,8 +1382,7 @@
       "instruction": "When you are ready, press the button to start calibration.",
       "startButton": "Start calibration",
       "inProgress": "In progress...",
-      "reuseSkipButton":"Reuse/Skip Calibration"
-      "inProgress": "In progress..."
+      "reuseSkipButton": "Reuse/Skip Calibration"
     },
     "warnings": {
       "sessionNotScheduled": "Your session doesn't have a scheduled date"

@@ -1018,10 +1018,10 @@
     },
     "answerTypePreview": {
       "postTest": {
-      "title": "Comentarios posteriores a la prueba",
-      "q1": "Califica tu experiencia",
-      "q2": "¿Cómo encontraste el producto durante las pruebas beta?",
-      "feedbackPlaceholder": "El producto tenía una interfaz fluida, pero presentaba retrasos en algunas partes."
+        "title": "Comentarios posteriores a la prueba",
+        "q1": "Califica tu experiencia",
+        "q2": "¿Cómo encontraste el producto durante las pruebas beta?",
+        "feedbackPlaceholder": "El producto tenía una interfaz fluida, pero presentaba retrasos en algunas partes."
       },
       "taskCompleted": "¡Tarea completada! No se requiere retroalimentación adicional.",
       "participantsFeedbackHere": "Los participantes proporcionarán su retroalimentación aquí...",
@@ -1337,7 +1337,6 @@
       "startButton": "Comenzar calibración",
       "inProgress": "En progreso...",
       "reuseSkipButton": "Reutilizar/Saltar calibración"
-      "inProgress": "En progreso..."
     },
     "warnings": {
       "sessionNotScheduled": "Esta sesión aún no tiene una fecha programada"

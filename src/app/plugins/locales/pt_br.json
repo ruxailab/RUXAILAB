@@ -1017,11 +1017,11 @@
       "sart": "Técnica de Avaliação de Consciência Situacional - mede a consciência situacional"
     },
     "answerTypePreview": {
-      "postTest":{
-       "title":"Feedback pós-teste",
-       "q1":"Avalie sua experiência",
-       "q2":"Como você achou o produto durante o teste beta?",
-       "feedbackPlaceholder":"O produto tinha uma interface fluida, mas apresentava lentidão em algumas partes."
+      "postTest": {
+        "title": "Feedback pós-teste",
+        "q1": "Avalie sua experiência",
+        "q2": "Como você achou o produto durante o teste beta?",
+        "feedbackPlaceholder": "O produto tinha uma interface fluida, mas apresentava lentidão em algumas partes."
       },
       "taskCompleted": "Tarefa concluída! Nenhum feedback adicional necessário.",
       "participantsFeedbackHere": "Os participantes fornecerão seu feedback aqui...",
@@ -1337,7 +1337,6 @@
       "startButton": "Iniciar calibração",
       "inProgress": "Em andamento...",
       "reuseSkipButton": "Reutilizar/Pular calibração"
-      "inProgress": "Em andamento..."
     },
     "warnings": {
       "sessionNotScheduled": "Esta sessão ainda não possui uma data agendada"

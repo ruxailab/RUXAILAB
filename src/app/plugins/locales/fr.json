@@ -1016,10 +1016,10 @@
     },
     "answerTypePreview": {
       "postTest": {
-      "title": "Retour après le test",
-      "q1": "Évaluez votre expérience",
-      "q2": "Comment avez-vous trouvé le produit lors des tests bêta ?",
-      "feedbackPlaceholder": "Le produit avait une interface fluide, mais présentait des ralentissements à certains endroits."
+        "title": "Retour après le test",
+        "q1": "Évaluez votre expérience",
+        "q2": "Comment avez-vous trouvé le produit lors des tests bêta ?",
+        "feedbackPlaceholder": "Le produit avait une interface fluide, mais présentait des ralentissements à certains endroits."
       },
       "taskCompleted": "Tâche terminée ! Aucun retour supplémentaire requis.",
       "participantsFeedbackHere": "Les participants fourniront leurs commentaires ici...",
@@ -1335,7 +1335,6 @@
       "startButton": "Commencer le calibrage",
       "inProgress": "En cours...",
       "reuseSkipButton": "Réutiliser/Sauter la calibration"
-      "inProgress": "En cours..."
     },
     "warnings": {
       "sessionNotScheduled": "Cette session n’a pas encore de date programmée"
