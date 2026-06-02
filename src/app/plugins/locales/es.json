@@ -89,8 +89,6 @@
     "analyzeProject": "Analizar el proyecto y los evaluadores",
     "comment": "Comentario",
     "comments": "Comentarios",
-    "evaluator": "Evaluador",
-    "evaluators": "Evaluadores",
     "image": "Imagen",
     "images": "Imágenes",
     "close": "Cerrar",
@@ -620,7 +618,6 @@
       "addNewDescription": "Agregar nueva descripción",
       "addOption": "Agregar nueva opción",
       "hasValue": "Tiene valor",
-      "warning": "Advertencia",
       "moveUp": "Mover arriba",
       "moveDown": "Mover abajo",
       "Question": "Pregunta",
@@ -778,54 +775,13 @@
       "statistics": "Estadísticas",
       "evaluators": "Evaluadores",
       "heuristics": "Heurísticas",
-      "analytics": "Análisis",
-      "evaluatorNumber": "Evaluador {n}",
-      "totalTime": "Tiempo total",
-      "averageTime": "Tiempo promedio por evaluador",
-      "timeStdDev": "Desviación estándar de tiempo"
+      "analytics": "Análisis"
     },
     "statistics": {
       "usabilityPercentage": "Porcentaje de usabilidad",
       "max": "Máximo",
       "min": "Mínimo",
       "std": "Desviación estándar"
-    },
-    "summary": {
-      "title": "Resumen de Evaluación",
-      "stats": {
-        "average": "Promedio",
-        "max": "Máx.",
-        "min": "Mín.",
-        "stdDev": "Desv. Est.",
-        "evaluators": "Evaluadores"
-      },
-      "warnings": {
-        "title": "Impacto de las alertas",
-        "hint": "Cuánto cambia la evaluación al tener en cuenta las alertas",
-        "description": "Las preguntas respondidas como no verificables analizando únicamente la web se han marcado como alertas. El cambio porcentual se ha calculado en dos escenarios: la puntuación más alta posible y la puntuación más baja posible.",
-        "scenarios": {
-          "max": "Umbral medio máximo de alertas",
-          "min": "Umbral medio mínimo de alertas",
-          "average": "Umbral medio de alertas"
-        },
-        "details": ""
-      },
-      "charts": {
-        "imagesByHeuristic": {
-          "title": "Imágenes por heurística",
-          "subtitle": "Distribución horizontal por heurística",
-          "empty": "Sin datos de imágenes"
-        },
-        "responsesByOption": {
-          "title": "Tipo de respuesta",
-          "subtitle": "Distribución circular de las opciones seleccionadas",
-          "empty": "Sin datos de opciones"
-        }
-      },
-      "meta": {
-        "groups": "grupos",
-        "metrics": "métricas"
-      }
     },
     "evaluators": {
       "headers": {

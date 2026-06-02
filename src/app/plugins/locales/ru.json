@@ -147,9 +147,7 @@
     "image": "Изображение",
     "images": "Изображения",
     "close": "Закрыть",
-    "selectImage": "Выберите изображение для загрузки",
-    "evaluator": "Evaluator",
-    "evaluators": "Evaluators"
+    "selectImage": "Выберите изображение для загрузки"
   },
   "storage": {
     "pageTitle": "Хранилище",
@@ -626,8 +624,7 @@
       "Questions": "Вопросы",
       "noQuestions": "Нет вопросов",
       "noDescriptions": "Нет описаний",
-      "loading": "Загрузка...",
-      "warning": "Warning"
+      "loading": "Загрузка..."
     },
     "placeholders": {
       "titleHeuristic": "Заголовок эвристики",
@@ -776,11 +773,7 @@
       "statistics": "Статистика",
       "evaluators": "Оценщики",
       "heuristics": "Эвристики",
-      "analytics": "Аналитика",
-      "evaluatorNumber": "Evaluator {n}",
-      "totalTime": "Total time",
-      "averageTime": "Average time per evaluator",
-      "timeStdDev": "Time standard deviation"
+      "analytics": "Аналитика"
     },
     "statistics": {
       "usabilityPercentage": "Процент удобства использования",
@@ -808,32 +801,6 @@
       "messages": {
         "needMoreThan1Answer": "Для создания этой страницы требуется более одного ответа.",
         "runWeightFunction": "Для этой страницы требуется работа функции весов (Python), которая может быть в эмуляторах или в режиме развертывания, и веса должны быть полностью отмечены на странице создания теста."
-      }
-    },
-    "summary": {
-      "title": "Evaluation Summary",
-      "stats": {
-        "average": "Average",
-        "max": "Max.",
-        "min": "Min.",
-        "stdDev": "Std. Dev."
-      },
-      "warnings": {
-        "title": "Impact of warnings",
-        "hint": "How far the evaluation shifts when warnings are taken into account",
-        "description": "Questions answered as unable to be verified by analyzing only the website have been marked as warnings. The percentage change has been calculated in two scenarios: highest possible score and lowest possible score.",
-        "scenarios": {
-          "max": "Average max warning threshold",
-          "min": "Average min warning threshold"
-        }
-      },
-      "charts": {
-        "imagesByHeuristic": {
-          "empty": "No image data"
-        },
-        "responsesByOption": {
-          "empty": "No option data"
-        }
       }
     }
   },

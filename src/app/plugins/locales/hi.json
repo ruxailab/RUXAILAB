@@ -147,9 +147,7 @@
     "id": "आईडी",
     "itemsPerPage": "प्रति पृष्ठ आइटम:",
     "saving": "सहेजा जा रहा है...",
-    "visible": "दृश्य",
-    "evaluator": "Evaluator",
-    "evaluators": "Evaluators"
+    "visible": "दृश्य"
   },
   "storage": {
     "pageTitle": "संग्रहण",
@@ -626,8 +624,7 @@
       "Questions": "प्रश्न",
       "noQuestions": "कोई प्रश्न नहीं",
       "noDescriptions": "कोई विवरण नहीं",
-      "loading": "लोड हो रहा है...",
-      "warning": "Warning"
+      "loading": "लोड हो रहा है..."
     },
     "placeholders": {
       "titleHeuristic": "हीयुरिस्टिक का शीर्षक",
@@ -778,11 +775,7 @@
       "statistics": "सांख्यिकी",
       "evaluators": "मूल्यांकक",
       "heuristics": "हीयुरिस्टिक्स",
-      "analytics": "विश्लेषण",
-      "evaluatorNumber": "Evaluator {n}",
-      "totalTime": "Total time",
-      "averageTime": "Average time per evaluator",
-      "timeStdDev": "Time standard deviation"
+      "analytics": "विश्लेषण"
     },
     "statistics": {
       "usabilityPercentage": "उपयोगिता प्रतिशत",
@@ -810,32 +803,6 @@
       "messages": {
         "needMoreThan1Answer": "इस पृष्ठ को उत्पन्न करने के लिए एक से अधिक उत्तर की आवश्यकता है।",
         "runWeightFunction": "इस पृष्ठ के लिए वज़न फ़ंक्शन (python) चलाना आवश्यक है — यह एमुलेटर में या डिप्लॉय मोड में हो सकता है, और वज़न को परीक्षण निर्माण पृष्ठ पर पूरी तरह से सेट किया जाना चाहिए।"
-      }
-    },
-    "summary": {
-      "title": "Evaluation Summary",
-      "stats": {
-        "average": "Average",
-        "max": "Max.",
-        "min": "Min.",
-        "stdDev": "Std. Dev."
-      },
-      "warnings": {
-        "title": "Impact of warnings",
-        "hint": "How far the evaluation shifts when warnings are taken into account",
-        "description": "Questions answered as unable to be verified by analyzing only the website have been marked as warnings. The percentage change has been calculated in two scenarios: highest possible score and lowest possible score.",
-        "scenarios": {
-          "max": "Average max warning threshold",
-          "min": "Average min warning threshold"
-        }
-      },
-      "charts": {
-        "imagesByHeuristic": {
-          "empty": "No image data"
-        },
-        "responsesByOption": {
-          "empty": "No option data"
-        }
       }
     }
   },

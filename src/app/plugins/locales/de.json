@@ -147,9 +147,7 @@
     "id": "ID",
     "itemsPerPage": "Elemente pro Seite:",
     "saving": "Wird gespeichert...",
-    "visible": "Sichtbar",
-    "evaluator": "Evaluator",
-    "evaluators": "Evaluators"
+    "visible": "Sichtbar"
   },
   "storage": {
     "pageTitle": "Speicher",
@@ -626,8 +624,7 @@
       "Questions": "Fragen",
       "noQuestions": "Keine Fragen",
       "noDescriptions": "Keine Beschreibungen",
-      "loading": "Lädt...",
-      "warning": "Warning"
+      "loading": "Lädt..."
     },
     "placeholders": {
       "titleHeuristic": "Titel Heuristik",
@@ -778,11 +775,7 @@
       "statistics": "Statistiken",
       "evaluators": "Evaluatoren",
       "heuristics": "Heuristiken",
-      "analytics": "Analysen",
-      "evaluatorNumber": "Evaluator {n}",
-      "totalTime": "Total time",
-      "averageTime": "Average time per evaluator",
-      "timeStdDev": "Time standard deviation"
+      "analytics": "Analysen"
     },
     "statistics": {
       "usabilityPercentage": "Usability-Prozentsatz",
@@ -810,32 +803,6 @@
       "messages": {
         "needMoreThan1Answer": "Diese Seite benötigt mehr als 1 Antwort, um generiert zu werden.",
         "runWeightFunction": "Diese Seite benötigt die Gewichtsfunktion (Python), die in Emulatoren oder im Bereitstellungsmodus ausgeführt wird, und die Gewichte müssen auf Ihrer Testseite vollständig markiert sein."
-      }
-    },
-    "summary": {
-      "title": "Evaluation Summary",
-      "stats": {
-        "average": "Average",
-        "max": "Max.",
-        "min": "Min.",
-        "stdDev": "Std. Dev."
-      },
-      "warnings": {
-        "title": "Impact of warnings",
-        "hint": "How far the evaluation shifts when warnings are taken into account",
-        "description": "Questions answered as unable to be verified by analyzing only the website have been marked as warnings. The percentage change has been calculated in two scenarios: highest possible score and lowest possible score.",
-        "scenarios": {
-          "max": "Average max warning threshold",
-          "min": "Average min warning threshold"
-        }
-      },
-      "charts": {
-        "imagesByHeuristic": {
-          "empty": "No image data"
-        },
-        "responsesByOption": {
-          "empty": "No option data"
-        }
       }
     }
   },
