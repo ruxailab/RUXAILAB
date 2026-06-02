@@ -1019,10 +1019,10 @@
     },
     "answerTypePreview": {
       "postTest": {
-      "title": "Feedback nach dem Test",
-      "q1": "Bewerten Sie Ihre Erfahrung",
-      "q2": "Wie fanden Sie das Produkt während des Betatests?",
-      "feedbackPlaceholder": "Das Produkt hatte eine flüssige Benutzeroberfläche, war aber an einigen Stellen langsam."
+        "title": "Feedback nach dem Test",
+        "q1": "Bewerten Sie Ihre Erfahrung",
+        "q2": "Wie fanden Sie das Produkt während des Betatests?",
+        "feedbackPlaceholder": "Das Produkt hatte eine flüssige Benutzeroberfläche, war aber an einigen Stellen langsam."
       },
       "taskCompleted": "Aufgabe abgeschlossen! Kein zusätzliches Feedback erforderlich.",
       "participantsFeedbackHere": "Teilnehmer geben hier ihr Feedback ab...",
@@ -1336,7 +1336,8 @@
       "process": "Die Kalibrierung beinhaltet das Verfolgen von Punkten, die auf dem Bildschirm erscheinen, mit Ihren Augen. Es ist wichtig, dass Sie sich an einem gut beleuchteten Ort befinden, bequem sitzen und Ihren Kopf ruhig halten.",
       "instruction": "Wenn Sie bereit sind, drücken Sie die Taste, um die Kalibrierung zu starten.",
       "startButton": "Kalibrierung starten",
-      "inProgress": "In Bearbeitung..."
+      "inProgress": "In Bearbeitung...",
+      "reuseSkipButton": "Kalibrierung wiederverwenden/überspringen"
     },
     "warnings": {
       "sessionNotScheduled": "Für diese Sitzung ist noch kein Termin geplant"

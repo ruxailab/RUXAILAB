@@ -1016,10 +1016,10 @@
     },
     "answerTypePreview": {
       "postTest": {
-      "title": "Retour après le test",
-      "q1": "Évaluez votre expérience",
-      "q2": "Comment avez-vous trouvé le produit lors des tests bêta ?",
-      "feedbackPlaceholder": "Le produit avait une interface fluide, mais présentait des ralentissements à certains endroits."
+        "title": "Retour après le test",
+        "q1": "Évaluez votre expérience",
+        "q2": "Comment avez-vous trouvé le produit lors des tests bêta ?",
+        "feedbackPlaceholder": "Le produit avait une interface fluide, mais présentait des ralentissements à certains endroits."
       },
       "taskCompleted": "Tâche terminée ! Aucun retour supplémentaire requis.",
       "participantsFeedbackHere": "Les participants fourniront leurs commentaires ici...",
@@ -1333,7 +1333,8 @@
       "process": "Le calibrage consiste à suivre des points qui apparaîtront sur l'écran avec vos yeux. Il est important que vous soyez dans un endroit bien éclairé, assis confortablement et que vous gardiez la tête stable.",
       "instruction": "Lorsque vous êtes prêt, appuyez sur le bouton pour commencer le calibrage.",
       "startButton": "Commencer le calibrage",
-      "inProgress": "En cours..."
+      "inProgress": "En cours...",
+      "reuseSkipButton": "Réutiliser/Sauter la calibration"
     },
     "warnings": {
       "sessionNotScheduled": "Cette session n’a pas encore de date programmée"

@@ -1017,11 +1017,11 @@
       "sart": "Técnica de Avaliação de Consciência Situacional - mede a consciência situacional"
     },
     "answerTypePreview": {
-      "postTest":{
-       "title":"Feedback pós-teste",
-       "q1":"Avalie sua experiência",
-       "q2":"Como você achou o produto durante o teste beta?",
-       "feedbackPlaceholder":"O produto tinha uma interface fluida, mas apresentava lentidão em algumas partes."
+      "postTest": {
+        "title": "Feedback pós-teste",
+        "q1": "Avalie sua experiência",
+        "q2": "Como você achou o produto durante o teste beta?",
+        "feedbackPlaceholder": "O produto tinha uma interface fluida, mas apresentava lentidão em algumas partes."
       },
       "taskCompleted": "Tarefa concluída! Nenhum feedback adicional necessário.",
       "participantsFeedbackHere": "Os participantes fornecerão seu feedback aqui...",
@@ -1335,7 +1335,8 @@
       "process": "A calibração envolve acompanhar com os olhos os pontos que aparecerão na tela. É importante que você esteja em um local bem iluminado, sente-se confortavelmente e mantenha a cabeça estável.",
       "instruction": "Quando estiver pronto, pressione o botão para iniciar a calibração.",
       "startButton": "Iniciar calibração",
-      "inProgress": "Em andamento..."
+      "inProgress": "Em andamento...",
+      "reuseSkipButton": "Reutilizar/Pular calibração"
     },
     "warnings": {
       "sessionNotScheduled": "Esta sessão ainda não possui uma data agendada"
