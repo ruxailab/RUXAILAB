@@ -13,7 +13,7 @@
         prepend-icon="mdi-plus"
         variant="elevated"
         size="large"
-        :disabled="testAnswerDocLength > 0"
+        :disabled="props.isTemplate || testAnswerDocLength > 0"
         class="text-none add-heuristic-btn"
         @click="dialogHeuris = true"
       >
@@ -79,7 +79,9 @@
                 variant="text"
                 size="small"
                 color="accent"
-                :disabled="index === 0 || testAnswerDocLength > 0"
+                :disabled="
+                  index === 0 || props.isTemplate || testAnswerDocLength > 0
+                "
                 class="action-btn"
                 @click="moveItemUp(index)"
               >
@@ -95,6 +97,7 @@
                 color="accent"
                 :disabled="
                   index === filteredHeuristics.length - 1 ||
+                  props.isTemplate ||
                   testAnswerDocLength > 0
                 "
                 class="action-btn"
@@ -110,7 +113,7 @@
                 variant="text"
                 size="small"
                 color="accent"
-                :disabled="testAnswerDocLength > 0"
+                :disabled="props.isTemplate || testAnswerDocLength > 0"
                 class="action-btn"
                 @click="setupQuestion(index)"
               >
@@ -125,15 +128,15 @@
                   variant="text"
                   size="small"
                   color="primary"
-                  :disabled="testAnswerDocLength > 0"
+                  :disabled="props.isTemplate || testAnswerDocLength > 0"
                   class="action-btn"
                   @click="editHeuris(heuristic)"
                 >
                   <v-icon>mdi-pencil</v-icon>
                 </v-btn>
                 <v-tooltip activator="parent" location="top">
-                  <template v-if="testAnswerDocLength > 0">
-                    This study has answers
+                  <template v-if="props.isTemplate || testAnswerDocLength > 0">
+                    {{ $t('HeuristicsTable.messages.studyHasAnswers') }}
                   </template>
                   <template v-else>
                     {{ $t('HeuristicsTable.titles.editHeuristic') }}
@@ -146,15 +149,15 @@
                   variant="text"
                   size="small"
                   color="error"
-                  :disabled="testAnswerDocLength > 0"
+                  :disabled="props.isTemplate || testAnswerDocLength > 0"
                   class="action-btn"
                   @click="deleteHeuristic(index)"
                 >
                   <v-icon>mdi-delete</v-icon>
                 </v-btn>
                 <v-tooltip activator="parent" location="top">
-                  <template v-if="testAnswerDocLength > 0">
-                    This study has answers
+                  <template v-if="props.isTemplate || testAnswerDocLength > 0">
+                    {{ $t('HeuristicsTable.messages.studyHasAnswers') }}
                   </template>
                   <template v-else>
                     {{ $t('HeuristicsTable.titles.deleteHeuristic') }}
@@ -237,6 +240,9 @@
                           variant="text"
                           size="small"
                           color="primary"
+                          :disabled="
+                            props.isTemplate || testAnswerDocLength > 0
+                          "
                           class="action-btn"
                           @click.stop="editQuestions(question)"
                         />
@@ -245,7 +251,9 @@
                           variant="text"
                           size="small"
                           color="error"
-                          :disabled="testAnswerDocLength > 0"
+                          :disabled="
+                            props.isTemplate || testAnswerDocLength > 0
+                          "
                           class="action-btn"
                           @click.stop="deleteQuestion(qIndex)"
                         />
@@ -267,6 +275,7 @@
                               </h4>
                               <!-- Updated Add Description Button -->
                               <AddDescBtn
+                                v-if="!isTemplate"
                                 :ref="(el) => (descBtn[index] = el)"
                                 :question-index="questionSelect"
                                 :heuristic-index="itemSelect"
@@ -307,6 +316,10 @@
                                       size="small"
                                       variant="text"
                                       color="primary"
+                                      :disabled="
+                                        props.isTemplate ||
+                                        testAnswerDocLength > 0
+                                      "
                                       class="table-action-btn"
                                       @click="editDescription(item)"
                                     >
@@ -317,6 +330,10 @@
                                       size="small"
                                       variant="text"
                                       color="error"
+                                      :disabled="
+                                        props.isTemplate ||
+                                        testAnswerDocLength > 0
+                                      "
                                       class="table-action-btn"
                                       @click="deleteItem(item)"
                                     >
@@ -413,7 +430,7 @@
                     color="primary"
                     variant="outlined"
                     prepend-icon="mdi-plus"
-                    :disabled="testAnswerDocLength > 0"
+                    :disabled="props.isTemplate || testAnswerDocLength > 0"
                     @click="setupQuestion(index)"
                   >
                     {{ $t('HeuristicsTable.titles.addNewQuestion') }}
@@ -490,13 +507,10 @@
     <!-- Add Question Dialog -->
     <v-dialog v-model="dialogQuestion" max-width="600" persistent>
       <v-card>
-        <v-card-title
-          class="text-h5 pa-6"
-          style="background-color: #fca326; color: white"
-        >
+        <v-card-title class="text-h5 bg-orange pa-4 text-white">
           {{ $t('HeuristicsTable.titles.newQuestion') }}
         </v-card-title>
-        <v-card-text class="pa-6 pt-0">
+        <v-card-text class="pa-6">
           <v-form ref="formQuestionRef" @submit.prevent="addQuestion">
             <v-text-field
               v-if="dialogQuestion && newQuestion"
@@ -532,17 +546,14 @@
     <!-- Edit Heuristic/Question Dialog -->
     <v-dialog v-model="dialogEdit" max-width="600" persistent>
       <v-card>
-        <v-card-title
-          class="text-h5 pa-6"
-          style="background-color: #fca326; color: white"
-        >
+        <v-card-title class="text-h5 bg-orange pa-4 text-white">
           {{
             itemEdit && !isDialogClosing
               ? itemEdit.title
               : $t('HeuristicsTable.titles.loading')
           }}
         </v-card-title>
-        <v-card-text class="pa-6 pt-0">
+        <v-card-text class="pa-6">
           <v-form ref="formEditRef" @submit.prevent="validateEdit">
             <v-text-field
               v-if="itemEdit && !isDialogClosing"
@@ -631,6 +642,12 @@ import AddDescBtn from '@/ux/Heuristic/components/AddDescBtn.vue'
 import { showError, showWarning } from '@/shared/utils/toast'
 
 const emit = defineEmits(['change'])
+const props = defineProps({
+  isTemplate: {
+    type: Boolean,
+    default: false,
+  },
+})
 const store = useStore()
 const { t } = useI18n()
 
@@ -685,7 +702,7 @@ const test = computed(() => store.getters.test)
 const heuristics = computed(() => {
   const source = store.getters.heuristics?.length
     ? store.getters.heuristics
-    : store.state.Tests?.Test.testStructure || []
+    : store.state.Tests?.Test?.testStructure || []
 
   return Array.isArray(source)
     ? source.map((h) => ({
@@ -769,6 +786,7 @@ const toggleHeuristic = (index) => {
 }
 
 const moveItemUp = (index) => {
+  if (props.isTemplate) return
   if (index > 0) {
     const newHeuristics = [...heuristics.value]
     const itemToMove = newHeuristics[index]
@@ -787,6 +805,7 @@ const moveItemUp = (index) => {
 }
 
 const moveItemDown = (index) => {
+  if (props.isTemplate) return
   if (index < filteredHeuristics.value.length - 1) {
     const newHeuristics = [...heuristics.value]
     const itemToMove = newHeuristics[index]
@@ -805,6 +824,7 @@ const moveItemDown = (index) => {
 }
 
 const deleteHeuristic = (index) => {
+  if (props.isTemplate) return
   deleteMessage.value = `${t('alerts.deleteHeuristic')} "${
     heuristics.value[index].title
   }"?`
@@ -818,6 +838,7 @@ const deleteHeuristic = (index) => {
 }
 
 const deleteQuestion = (qIndex) => {
+  if (props.isTemplate) return
   if (heuristics.value[itemSelect.value].questions.length > 1) {
     deleteMessage.value = `${t('alerts.deleteQuestion')} "${
       heuristics.value[itemSelect.value].questions[qIndex].title
@@ -846,6 +867,7 @@ const confirmDeleteAction = () => {
 }
 
 const editHeuris = (item) => {
+  if (props.isTemplate) return
   const heuristicIndex = heuristics.value.findIndex((h) => h.id === item.id)
   if (heuristicIndex === -1) {
     showError(t('HeuristicsTable.errors.invalidHeuristic'))
@@ -862,6 +884,7 @@ const editHeuris = (item) => {
 }
 
 const editQuestions = (item) => {
+  if (props.isTemplate) return
   if (itemSelect.value == null || !heuristics.value[itemSelect.value]) {
     showError('HeuristicsTable.errors.invalidHeuristic')
     return
@@ -876,6 +899,7 @@ const editQuestions = (item) => {
 }
 
 const editDescription = (desc) => {
+  if (props.isTemplate) return
   const ind =
     heuristics.value[itemSelect.value].questions[
       questionSelect.value
@@ -888,6 +912,7 @@ const editDescription = (desc) => {
 }
 
 const setupQuestion = (heuristicIndex) => {
+  if (props.isTemplate) return
   if (!heuristics.value[heuristicIndex]) {
     showError('HeuristicsTable.errors.invalidHeuristic')
     return
@@ -906,6 +931,7 @@ const setupQuestion = (heuristicIndex) => {
 }
 
 const deleteItem = (item) => {
+  if (props.isTemplate) return
   deleteMessage.value = `${t('alerts.deleteDescription')} "${
     item.title || 'this description'
   }"?`
@@ -924,6 +950,7 @@ const deleteItem = (item) => {
 }
 
 const addHeuris = () => {
+  if (props.isTemplate) return
   if (formHeurisRef.value.validate()) {
     dialogHeuris.value = false
     const newHeuristics = [...heuristics.value, { ...heuristicForm.value }]
@@ -967,6 +994,7 @@ const closeDialog = (dialogName) => {
 }
 
 const addQuestion = () => {
+  if (props.isTemplate) return
   if (!newQuestion.value || questionHeuristicIndex.value === null) {
     showError('HeuristicsTable.errors.invalidHeuristic')
     return
@@ -989,6 +1017,7 @@ const addQuestion = () => {
 }
 
 const validateEdit = () => {
+  if (props.isTemplate) return
   if (isProcessing.value) {
     return
   }
@@ -1031,6 +1060,7 @@ const validateEdit = () => {
 }
 
 const updateDescription = () => {
+  if (props.isTemplate) return
   emit('change')
 }
 </script>

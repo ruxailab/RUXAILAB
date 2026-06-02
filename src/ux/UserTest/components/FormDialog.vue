@@ -33,11 +33,15 @@
         <v-btn
           color="red-lighten-1"
           variant="text"
-          @click="$emit('update:dialog', false), reset()"
+          @click="($emit('update:dialog', false), reset())"
         >
           {{ $t('buttons.cancel') }}
         </v-btn>
-        <v-btn class="text-white bg-orange" @click="validate">
+        <v-btn
+          class="text-white bg-orange"
+          :disabled="isTemplate"
+          @click="validate"
+        >
           {{ $t('common.save') }}
         </v-btn>
       </v-card-actions>
@@ -53,6 +57,10 @@ import Task from '../models/Task'
 const props = defineProps({
   dialog: Boolean,
   task: Object,
+  isTemplate: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const emit = defineEmits(['update:dialog', 'update:task', 'addTask'])
@@ -64,7 +72,10 @@ const localTask = reactive(Task.fromJson({ ...props.task }))
 watch(
   () => props.dialog,
   (val) => {
-    if (val) Object.assign(localTask, props.task)
+    if (val) {
+      Object.assign(localTask, Task.fromJson({}))
+      Object.assign(localTask, Task.fromJson({ ...props.task }))
+    }
   },
 )
 
@@ -83,6 +94,7 @@ const submit = (task) => {
 }
 
 const reset = () => {
+  Object.assign(localTask, Task.fromJson({}))
   form.value?.resetVal()
 }
 </script>

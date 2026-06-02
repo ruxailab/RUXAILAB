@@ -40,7 +40,11 @@ UX Remote LAB provides a collaborative environment for creators to share their p
 - [Request a Feature 🚀](https://github.com/uramakilab/remote-usability-lab/issues/new)
 - [Ask a Question 🤗](https://github.com/uramakilab/remote-usability-lab/discussions)
 
-For commercial support, academic collaborations, and answers to common questions, please use [Get Support]() to contact us.
+For commercial support, academic collaborations, and answers to common questions, please contact us by one of our communications channels:
+
+- [Discord Server](https://discord.gg/YnkDk9BNYK)
+- [Discussions](https://github.com/ruxailab/RUXAILAB/discussions)
+- Email: `ruxailab@gmail.com`
 
 ### Development Environment
 
@@ -160,6 +164,9 @@ To calculate heuristic weights, run:
 
 ```bash
 # Run locally
+ cd functions
+ npm install
+ cd ..
  firebase init functions
  firebase use weight_function
  firebase emulators:start --only functions
@@ -205,4 +212,4 @@ Visit `http://localhost:5000` in your browser to access the UX Remote LAB platfo
 
 ## License
 
-MIT © [RUXAILAB](https://github.com/uramakilab/remote-usability-lab)
+MIT © [RUXAILAB](https://github.com/ruxailab/RUXAILAB)

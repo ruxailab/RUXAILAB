@@ -66,6 +66,14 @@ const { t } = useI18n()
 // Emits
 const emit = defineEmits(['return-step'])
 
+// Props
+const props = defineProps({
+  heuristicComments: {
+    type: Object,
+    default: () => ({}),
+  },
+})
+
 // Reactive state
 const statisticsData = ref('')
 const isLoading = ref(false)
@@ -98,7 +106,6 @@ const heuristicsStatistics = computed(() =>
 // Methods
 const submitPdf = async () => {
   isLoading.value = true
-
   try {
     // Extract valid emails from cooperators
     const getCooperatorEmails = () => {
@@ -109,24 +116,28 @@ const submitPdf = async () => {
     statisticsData.value = finalResult()
     const cooperatorsEmailsList = getCooperatorEmails()
 
+    const finalReportItem = {
+      title: test.value.testTitle,
+      creationDate: test.value.creationDate,
+      testDescription: test.value.testDescription,
+      cooperatorsEmail: cooperatorsEmailsList,
+      creatorEmail: test.value.testAdmin?.email || '',
+      finalReport: test.value.studyConclusion,
+      allOptions: test.value.testOptions,
+      allAnswers: answers.value,
+      taskAnswers: Object.values(testAnswerDocument.value?.taskAnswers || {}),
+      testStructure: test.value.testStructure,
+      statisticsByEvaluatorAnswer: heuristicsEvaluator.value,
+      statisticsByHeuristics: heuristicsStatistics.value,
+      generalStatistics: statisticsData.value,
+      statisticsTable: store.state.Answer.evaluatorStatistics,
+      type: testAnswerDocument.value?.type || STUDY_TYPES.HEURISTIC,
+      heuristicComments: props.heuristicComments,
+    }
+    console.log(finalReportItem)
+
     const payload = {
-      items: [
-        {
-          title: test.value.testTitle,
-          creationDate: test.value.creationDate,
-          testDescription: test.value.testDescription,
-          cooperatorsEmail: cooperatorsEmailsList,
-          creatorEmail: test.value.testAdmin.email,
-          studyConclusion: test.value.studyConclusion,
-          allOptions: test.value.testOptions,
-          allAnswers: answers.value,
-          testStructure: test.value.testStructure,
-          statisticsByEvaluatorAnswer: heuristicsEvaluator.value,
-          statisticsByHeuristics: heuristicsStatistics.value,
-          gstatistics: statisticsData.value,
-          statisticstable: store.state.Answer.evaluatorStatistics,
-        },
-      ],
+      payload: finalReportItem,
     }
 
     const response = await axios.post(

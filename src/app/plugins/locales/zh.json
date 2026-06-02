@@ -43,7 +43,34 @@
       "fair": "一般",
       "good": "好",
       "strong": "强"
-    }
+    },
+    "emailNotVerified": "电子邮件未验证",
+    "verificationEmailSent": "验证电子邮件发送成功！",
+    "errorSendingVerification": "发送验证电子邮件时出错",
+    "verifyEmailTitle": "验证您的电子邮件",
+    "verifyEmailSubtitle": "我们已向您的电子邮件发送了验证链接",
+    "emailLabel": "电子邮件",
+    "verifyingEmail": "验证中...",
+    "emailAlreadyVerified": "电子邮件已经验证了吗？",
+    "emailVerified": "电子邮件验证成功！",
+    "checkEmailTitle": "检查您的电子邮件",
+    "checkEmailStep1": "检查您的收件箱以获取验证电子邮件",
+    "checkEmailStep2": "单击电子邮件中的链接以验证您的帐户",
+    "checkEmailStep3": "返回此处，您的帐户将被验证",
+    "checkSpamFolder": "没看到？检查您的垃圾邮件文件夹",
+    "resending": "重新发送中...",
+    "resendEmail": "重新发送电子邮件",
+    "changeEmail": "更改电子邮件",
+    "continueToDashboard": "继续到仪表板",
+    "signOut": "退出登录",
+    "newEmail": "新电子邮件",
+    "enterNewEmail": "输入您的新电子邮件地址",
+    "saving": "保存中...",
+    "errorCheckingVerification": "检查验证状态时出错",
+    "errorResendingEmail": "重新发送验证电子邮件时出错",
+    "invalidEmail": "无效的电子邮件地址",
+    "emailUpdatedVerification": "电子邮件已更新！我们已向您的新电子邮件发送了验证链接。",
+    "errorUpdatingEmail": "更新电子邮件时出错"
   },
   "common": {
     "enterTextHere": "在此输入文本...",
@@ -75,6 +102,7 @@
     "markAllAsRead": "全部标记为已读",
     "caughtUp": "您已读完所有通知",
     "noNewNotifications": "没有新通知",
+    "notificationBell": "通知铃铛",
     "unread": "未读",
     "inbox": "收件箱",
     "timeAgo": {
@@ -112,7 +140,14 @@
     "user": "用户",
     "id": "ID",
     "itemsPerPage": "每页项目数：",
-    "visible": "可见"
+    "saving": "保存中...",
+    "visible": "可见",
+    "percentValue": "{value}%",
+    "comments": "评论",
+    "image": "图片",
+    "images": "图片",
+    "close": "关闭",
+    "selectImage": "选择要上传的图片"
   },
   "storage": {
     "pageTitle": "存储",
@@ -248,7 +283,8 @@
       "viewEditProfile": "查看和编辑您的个人资料信息",
       "exploreCommunityStudies": "探索由 RUXAI 社区共享的调查",
       "browseCommunityTemplates": "浏览由 RUXAI 社区贡献的模板"
-    }
+    },
+    "helpButton": "帮助按钮"
   },
   "profile": {
     "title": "个人资料",
@@ -342,7 +378,8 @@
       "Settings": "设置",
       "name": "姓名",
       "studiesCount": "研究数量",
-      "mediaSize": "媒体大小"
+      "mediaSize": "媒体大小",
+      "toggleMiniMode": "切换迷你模式"
     },
     "heuristic": "可用性启发式评估"
   },
@@ -382,8 +419,12 @@
     "incorrectPassword": "密码错误",
     "incorrectCredential": "用户名或密码错误。",
     "globalError": "发生错误，给您带来不便，敬请谅解。",
+    "cameraPermissionDenied": "继续操作需要访问摄像头。请在浏览器设置中允许摄像头访问。",
     "sendError": "发送邀请失败，请重试",
-    "missingVariableTitles": "无法保存：一些变量缺少标题"
+    "missingVariableTitles": "无法保存：一些变量缺少标题",
+    "failedToLoadAnswers": "Failed to load answers",
+    "failedToUpdateAnswer": "Failed to update answer",
+    "failedToSaveAnswerCooperator": "Failed to save cooperator answer"
   },
   "Introduction": {
     "title": "UX远程实验室",
@@ -536,7 +577,10 @@
       "updatedProgress": "更新了进度",
       "invitationSentTitle": "邀请已发送",
       "invitationPendingDesc": "邀请待处理：",
-      "pendingStatus": "待处理"
+      "pendingStatus": "待处理",
+      "evaluatorInfo": "评估员信息",
+      "evaluatorInfoEmpty": "暂无信息部分，请添加以指导您的评估员。",
+      "evaluatorInfoSeeAll": "查看全部 {count} 个部分"
     },
     "managerView": {
       "heuristicStudy": "启发式研究",
@@ -598,7 +642,8 @@
       "changeWeights": "请注意，更改启发式的顺序不会自动更改权重，您必须手动更改。",
       "noDescriptions": "没有可用的描述",
       "startAddingQuestions": "从此启发式添加第一个问题开始",
-      "cantDeleteAllQuestions": "抱歉，您不能从启发式中删除所有问题"
+      "cantDeleteAllQuestions": "抱歉，您不能从启发式中删除所有问题",
+      "studyHasAnswers": "This study has answers"
     },
     "validation": {
       "nameRequired": "名称是必填项",
@@ -610,7 +655,14 @@
     "AddCommentBtn": {
       "showComment": "显示评论",
       "addComment": "添加评论",
-      "hideTextArea": "隐藏文本区域"
+      "hideTextArea": "隐藏文本区域",
+      "addAnotherComment": "添加另一条评论",
+      "addNewComment": "添加新评论"
+    },
+    "ImportImage": {
+      "imagesCount": "已附加 {count} 张图片",
+      "uploadSuccess": "图片上传成功",
+      "uploadError": "图片上传失败"
     },
     "errors": {
       "failedToLoadQuestionForm": "加载问题表单失败。请重试。",
@@ -622,6 +674,10 @@
       "question": "问题",
       "questions": "问题"
     }
+  },
+  "HeuristicsAnalytics": {
+    "dataTable": "数据表",
+    "chart": "图表"
   },
   "HeuristicsOptionsTable": {
     "titles": {
@@ -653,11 +709,13 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "设置",
-      "confirmUpload": "确认上传"
+      "confirmUpload": "确认上传",
+      "enableWeights": "启用权重功能"
     },
     "messages": {
       "acceptCsv": "如果接受，您当前的启发式将被CSV文件中的内容替换。",
-      "noCsvFileSelected": "未选择CSV文件。\n请选择一个以继续。"
+      "noCsvFileSelected": "未选择CSV文件。\n请选择一个以继续。",
+      "enableWeightsDescription": "允许评估者在本研究中为启发式分配权重"
     },
     "placeHolders": {
       "importCsv": "在此导入您的CSV测试文件。"
@@ -705,7 +763,9 @@
       "options": "选项",
       "weights": "权重",
       "settings": "设置"
-    }
+    },
+    "previewPageTitle": "Preview test",
+    "previewPageSubtitle": "Review the test configuration in read-only mode"
   },
   "HeuristicsTestAnswer": {
     "titles": {
@@ -824,6 +884,7 @@
       "remove_cooperator": "您确定要删除 {email} 的合作者吗？",
       "cancel_invitation": "您确定要取消 {email} 的合作者邀请吗？",
       "change_role": "您确定要将 {email} 的角色从 {old} 更改为 {new} 吗？",
+      "change_role_title": "更改角色",
       "message_title_hint": "输入您的消息标题",
       "message_content_hint": "输入您的消息内容",
       "invite_message": "您已被邀请参与 '{testTitle}' 的协作",
@@ -909,7 +970,8 @@
     "validation": {
       "fieldRequired": "字段必填",
       "validUrl": "必须是以 http:// 或 https:// 开头的有效 URL",
-      "positiveNumber": "必须是正数"
+      "positiveNumber": "必须是正数",
+      "minOne": "值必须至少为 1"
     },
     "basicInfo": {
       "stepTitle": "步骤 1：任务基本信息",
@@ -951,6 +1013,68 @@
       "tam2": "TAM-2（扩展）- 添加外部影响和结果可演示性",
       "tam3": "TAM-3（综合）- 包括焦虑、趣味性和客观可用性",
       "sart": "情境意识评估技术 - 测量情境意识"
+    },
+    "answerTypePreview": {
+      "postTest": {
+      "title": "测试后反馈",
+      "q1": "请评价您的体验",
+      "q2": "您在测试阶段如何看待该产品？",
+      "feedbackPlaceholder": "该产品界面流畅，但在某些地方存在卡顿。"
+      },
+      "taskCompleted": "任务完成！无需额外反馈。",
+      "participantsFeedbackHere": "参与者将在此处提供反馈...",
+      "submitFeedback": "提交反馈",
+      "postTaskQuestions": "任务后问题",
+      "rateTaskDifficulty": "1. 您如何评价此任务的难度？",
+      "additionalComments": "2. 有其他评论吗？",
+      "optionalFeedback": "可选反馈...",
+      "externalFormTitle": "外部表单",
+      "externalFormDescription": "参与者将在任务后被重定向填写外部表单。",
+      "openExternalForm": "打开外部表单",
+      "nasaTlxTitle": "NASA任务负荷指数",
+      "mentalDemand": "心理需求",
+      "physicalDemand": "体力需求",
+      "lowHigh": "低 - 高",
+      "moreDimensions": "+ 另外4个维度",
+      "susTitle": "系统可用性量表",
+      "susStatement1": "1. 我认为我会经常使用这个系统。",
+      "stronglyDisagree": "强烈不同意",
+      "stronglyAgree": "强烈同意",
+      "moreStatements": "+ 另外9条陈述",
+      "sartTitle": "情境意识评估技术 (SART)",
+      "instability": "情境的不稳定性",
+      "complexity": "情境的复杂性",
+      "veryStable": "非常稳定",
+      "veryUnstable": "非常不稳定",
+      "verySimple": "非常简单",
+      "veryComplex": "非常复杂",
+      "moreSartDimensions": "+ 8个额外的SART维度",
+      "tam1Title": "TAM-1: 技术接受模型 (基础)",
+      "tam1Subtitle": "跨2个维度的10个项目",
+      "perceivedUsefulness": "感知有用性 (5个项目)",
+      "perceivedEaseOfUse": "感知易用性 (5个项目)",
+      "tam1Statement1": "1. 使用该系统可以提高我的工作绩效。",
+      "tam1Statement6": "6. 该系统易于使用。",
+      "tam2Title": "TAM-2: 技术接受模型 (扩展)",
+      "tam2Subtitle": "跨7个维度的25个项目",
+      "tam2Description": "参与者使用5点李克特量表对25个陈述进行评分 (强烈反对 - 强烈同意)",
+      "tam3Title": "TAM-3: 技术接受模型 (全面)",
+      "tam3Subtitle": "跨13个维度的39个项目",
+      "tam3Description": "跨13个维度的39个陈述的5点李克特量表全面评估",
+      "selectType": "选择答案类型以查看预览",
+      "perceivedUsefulnessShort": "感知有用性",
+      "perceivedEaseOfUseShort": "感知易用性",
+      "subjectiveNorm": "主观规范",
+      "image": "形象",
+      "jobRelevance": "工作相关性",
+      "outputQuality": "输出质量",
+      "resultDemonstrability": "结果可展示性",
+      "computerSelfEfficacy": "计算机自我效能感",
+      "externalControl": "外部控制",
+      "anxiety": "焦虑",
+      "playfulness": "趣味性",
+      "enjoyment": "愉悦感",
+      "objectiveUsability": "客观可用性"
     },
     "advanced": {
       "stepTitle": "步骤 3：高级选项",
@@ -1001,29 +1125,6 @@
         "camera": "摄像头",
         "audio": "音频"
       }
-    },
-    "answerTypePreview": {
-      "taskCompleted": "任务完成！无需额外反馈。",
-      "participantsFeedbackHere": "参与者将在此处提供反馈...",
-      "submitFeedback": "提交反馈",
-      "postTaskQuestions": "任务后问题",
-      "rateTaskDifficulty": "1. 您如何评价此任务的难度？",
-      "additionalComments": "2. 有其他评论吗？",
-      "optionalFeedback": "可选反馈...",
-      "externalFormTitle": "外部表单",
-      "externalFormDescription": "参与者将在任务后被重定向填写外部表单。",
-      "openExternalForm": "打开外部表单",
-      "nasaTlxTitle": "NASA任务负荷指数",
-      "mentalDemand": "心理需求",
-      "physicalDemand": "体力需求",
-      "lowHigh": "低 - 高",
-      "moreDimensions": "+ 另外4个维度",
-      "susTitle": "系统可用性量表",
-      "susStatement1": "1. 我认为我会经常使用这个系统。",
-      "stronglyDisagree": "强烈不同意",
-      "stronglyAgree": "强烈同意",
-      "moreStatements": "+ 另外9条陈述",
-      "sartTitle": "情境意识评估技术"
     }
   },
   "UserTestView": {
@@ -1156,6 +1257,44 @@
       "note": "您的角色是提供便利和观察。参与者应独立完成任务，除非他们特别要求帮助。",
       "startSession": "启动主持式环节"
     },
+    "VideoCallPanel": {
+      "toolsPanelTitle": "工具面板",
+      "sessionControl": "会话控制",
+      "joinRoomInfo": "加入房间的控制现在位于上方主界面",
+      "proceedNextStep": "进入下一步",
+      "endCall": "结束通话",
+      "activeCall": "通话进行中",
+      "participants": "参与者",
+      "you": "你",
+      "observator": "观察者",
+      "moderator": "主持人",
+      "connected": "已连接",
+      "disconnected": "已断开",
+      "camera": "摄像头",
+      "noCamera": "无摄像头",
+      "microphone": "麦克风",
+      "noMicrophone": "无麦克风",
+      "settings": "设置",
+      "disableCamera": "关闭摄像头",
+      "enableCamera": "开启摄像头",
+      "muteMicrophone": "麦克风静音",
+      "unmuteMicrophone": "取消麦克风静音",
+      "stopScreenShare": "停止屏幕共享",
+      "shareScreen": "共享屏幕",
+      "moderatorOnlySteps": "只有主持人可以更改步骤"
+    },
+    "VideoCall": {
+      "screenSharingLabel": "正在共享屏幕",
+      "cameraOff": "摄像头已关闭",
+      "yourVideo": "你的视频",
+      "yourPreview": "你的预览",
+      "observatorMode": "观察者模式",
+      "waitingForModeratorToStartSession": "正在等待主持人开始会话...",
+      "observeAllFeedsNotice": "你可以在不发送自己视频的情况下观察所有视频流。",
+      "waitingForParticipants": "正在等待参与者...",
+      "waitingForModerator": "正在等待主持人...",
+      "autoStartWhenModeratorOpensRoom": "当主持人打开房间时，视频通话将自动开始。"
+    },
     "WelcomeStep": {
       "welcome": "欢迎来到RUXAILAB！",
       "description": "您将参与一项旨在评估数字应用程序易用性和理解程度的用户测试。这种类型的测试帮助我们检测可能的技术障碍并改善每个人的体验。",
@@ -1175,7 +1314,8 @@
     "PreTasksStep": {
       "title": "任务",
       "heading": "让我们开始任务阶段",
-      "description": "您将完成与工具使用相关的<strong>{numTasks}</strong>个任务。没有正确或错误的答案：重要的是您如何互动。",
+      "description": "您将完成",
+      "tasksSuffix": "与使用该工具相关的任务。没有正确或错误的答案，重要的是您的交互方式。",
       "instruction": "当您准备好后，点击按钮开始。",
       "startButton": "开始任务",
       "recordingTitle": "录制信息",
@@ -1210,6 +1350,47 @@
     "inProgress": "正在校准...",
     "completed": "校准完成！",
     "continue": "继续测试"
+  },
+  "EyeTrackingConfig": {
+    "titles": {
+      "main": "视线追踪配置",
+      "general": "常规配置",
+      "miscellaneous": "杂项配置"
+    },
+    "labels": {
+      "pointNumber": "点数",
+      "samplesPerPoint": "每个点的样本数",
+      "msPerPoint": "每个点的捕捉毫秒数",
+      "threshold": "点距离阈值",
+      "radius": "半径",
+      "offset": "偏移量",
+      "control": "控制：",
+      "useCustomColors": "使用自定义颜色",
+      "backgroundColor": "背景颜色：",
+      "pointColor": "点颜色：",
+      "modelSelection": "模型选择：",
+      "selectModel": "选择模型",
+      "note": "注意：",
+      "noteText": "所选模型将用于校准过程。默认模型为线性回归。某些模型的训练时间可能比其他模型长，请耐心等待。"
+    },
+    "tooltips": {
+      "pointNumber": "屏幕上显示的校准点数量（点越多 = 精度越高）。",
+      "samplesPerPoint": "每个校准点收集的注视样本数量。较高的值可提高精度，但会增加持续时间。",
+      "msPerPoint": "捕捉每个点数据的时间（以毫秒为单位）。定义用户注视每个目标的时间。",
+      "threshold": "校准样本之间允许的最大距离（以像素为单位），超过该距离将被丢弃。控制空间容差。",
+      "radius": "调整校准点的半径。值越大，点越大。",
+      "offset": "用于调整校准区域位置的偏移量（以像素为单位）。"
+    },
+    "models": {
+      "linear": "线性回归",
+      "ridge": "岭回归",
+      "lasso": "Lasso回归",
+      "elastic": "弹性网络",
+      "bayesian": "贝叶斯岭回归",
+      "sgd": "SGD回归器",
+      "svr": "支持向量回归器",
+      "rfr": "随机森林回归器"
+    }
   },
   "AccessNotAllowed": {
     "notAllowed": "访问被拒绝",
@@ -1355,6 +1536,18 @@
         "manualAccessibility": "人工无障碍性",
         "automaticAccessibility": "自动无障碍性",
         "all": "全部"
+      },
+      "unsupportedPreviewType": "Unsupported template type for preview.",
+      "config": {
+        "title": "Template Config",
+        "ownerOnly": "Configuration editing is restricted to template owner.",
+        "version": "Version",
+        "visibility": "Visibility",
+        "owner": "Owner",
+        "public": "Public",
+        "private": "Private",
+        "saved": "Template configuration updated successfully",
+        "saveError": "Failed to update template configuration"
       }
     },
     "createTest": {
@@ -1391,12 +1584,15 @@
       "perform_common_tasks": "立即执行常见任务",
       "delete_warning": "所有相关数据、结果和配置将永久丢失。",
       "delete_forever": "永久删除",
+      "action_cannot_be_undone": "此操作无法撤销",
       "confirm_deletion": "确认删除"
     },
     "editTest": {
       "title": "编辑测试",
       "description": "自定义您的测试设置和首选项。",
-      "updatedTest": "测试更新成功"
+      "updatedTest": "测试更新成功",
+      "previewTitle": "Preview test",
+      "previewDescription": "Review the test in read-only mode."
     },
     "cooperators": {
       "invitationSent": "邀请发送成功"
@@ -1418,7 +1614,8 @@
     "deleteAccount": "您确定要删除您的账户吗？此操作无法撤销。",
     "genericSuccess": "操作成功",
     "savedChanges": "更改保存成功",
-    "deleteUser": "您确定要删除此用户吗？此操作无法撤销。"
+    "deleteUser": "您确定要删除此用户吗？此操作无法撤销。",
+    "errorSavingProgress": "保存进度时出错"
   },
   "buttons": {
     "next": "下一步",
@@ -2226,5 +2423,32 @@
       }
     },
     "title": "隐私政策"
+  },
+  "EvaluatorInfoView": {
+    "pageTitle": "评估员信息",
+    "pageSubtitle": "创建评估员在开始测试前将看到的信息部分"
+  },
+  "EvaluatorInfoEditor": {
+    "title": "评估员信息",
+    "subtitle": "创建评估员在开始测试前将看到的信息部分",
+    "noSections": "暂无部分，请添加一个以开始。",
+    "untitledSection": "无标题部分",
+    "addSection": "添加部分",
+    "sectionTitle": "部分标题",
+    "sectionContent": "内容",
+    "sectionType": "类型",
+    "types": {
+      "info": "信息",
+      "warning": "警告",
+      "tip": "提示"
+    },
+    "save": "保存",
+    "cancel": "取消"
+  },
+  "EvaluatorInfoDisplay": {
+    "title": "开始之前",
+    "subtitle": "请在开始评估前阅读以下信息",
+    "startButton": "开始评估",
+    "noContent": "暂无其他信息。"
   }
 }

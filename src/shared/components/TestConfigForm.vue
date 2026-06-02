@@ -3,12 +3,14 @@
     <v-col cols="12">
       <TextareaForm
         v-model="welcomeMessageComputed"
+        :readonly="readonly"
         :title="$t('ModeratedTest.welcomeMessage')"
         :subtitle="$t('ModeratedTest.welcomeMessageDescription')"
       />
 
       <TextareaForm
         v-model="finalMessageComputed"
+        :readonly="readonly"
         :title="$t('ModeratedTest.finalMessage')"
         :subtitle="$t('ModeratedTest.finalMessageDescription')"
       />
@@ -28,6 +30,10 @@ const props = defineProps({
   finalMessage: {
     type: String,
     default: '',
+  },
+  readonly: {
+    type: Boolean,
+    default: false,
   },
 })
 

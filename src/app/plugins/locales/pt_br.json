@@ -43,10 +43,38 @@
       "fair": "Regular",
       "good": "Boa",
       "strong": "Forte"
-    }
+    },
+    "emailNotVerified": "E-mail não verificado",
+    "verificationEmailSent": "E-mail de verificação enviado com sucesso!",
+    "errorSendingVerification": "Erro ao enviar e-mail de verificação",
+    "verifyEmailTitle": "Verifique seu e-mail",
+    "verifyEmailSubtitle": "Enviamos um link de verificação para seu e-mail",
+    "emailLabel": "E-mail",
+    "verifyingEmail": "Verificando...",
+    "emailAlreadyVerified": "Email já verificado?",
+    "emailVerified": "E-mail verificado com sucesso!",
+    "checkEmailTitle": "Verifique seu e-mail",
+    "checkEmailStep1": "Verifique sua caixa de entrada para um e-mail de verificação",
+    "checkEmailStep2": "Clique no link do e-mail para verificar sua conta",
+    "checkEmailStep3": "Volte aqui e sua conta será verificada",
+    "checkSpamFolder": "Não vê? Verifique sua pasta de spam",
+    "resending": "Reenviando...",
+    "resendEmail": "Reenviar e-mail",
+    "changeEmail": "Alterar e-mail",
+    "continueToDashboard": "Continuar para o painel",
+    "signOut": "Sair",
+    "newEmail": "Novo e-mail",
+    "enterNewEmail": "Insira seu novo endereço de e-mail",
+    "saving": "Salvando...",
+    "errorCheckingVerification": "Erro ao verificar o status de verificação",
+    "errorResendingEmail": "Erro ao reenviar e-mail de verificação",
+    "invalidEmail": "Endereço de e-mail inválido",
+    "emailUpdatedVerification": "E-mail atualizado! Enviamos um link de verificação para seu novo e-mail.",
+    "errorUpdatingEmail": "Erro ao atualizar e-mail"
   },
   "common": {
     "enterTextHere": "Digite o texto aqui...",
+    "percentValue": "{value}%",
     "units": {
       "mb": "MB",
       "gb": "GB"
@@ -60,6 +88,11 @@
     "editAndInvite": "Editar e convidar pessoas para o seu teste",
     "analyzeProject": "Analisar o projeto e os avaliadores",
     "comment": "Comentário",
+    "comments": "Comentários",
+    "image": "Imagem",
+    "images": "Imagens",
+    "close": "Fechar",
+    "selectImage": "Selecione uma imagem para enviar",
     "inputImage": "Insira uma imagem de sua escolha referente ao tema",
     "title": "Título",
     "description": "Descrição",
@@ -76,6 +109,7 @@
     "markAllAsRead": "Marcar todas como lidas",
     "caughtUp": "Você está em dia",
     "noNewNotifications": "Nenhuma notificação nova",
+    "notificationBell": "Sino de notificações",
     "unread": "Não lido",
     "inbox": "Caixa de entrada",
     "timeAgo": {
@@ -112,6 +146,7 @@
     "user": "Usuário",
     "id": "ID",
     "itemsPerPage": "Itens por página:",
+    "saving": "Salvando...",
     "visible": "Visível"
   },
   "storage": {
@@ -248,7 +283,8 @@
       "viewEditProfile": "Visualizar e editar suas informações de perfil",
       "exploreCommunityStudies": "Explore estudos compartilhados pela comunidade RUXAI",
       "browseCommunityTemplates": "Navegue por modelos contribuídos pela comunidade RUXAI"
-    }
+    },
+    "helpButton": "Botão de ajuda"
   },
   "profile": {
     "title": "Perfil",
@@ -342,7 +378,8 @@
       "Settings": "Configurações",
       "name": "Nome",
       "studiesCount": "Contagem de Estudos",
-      "mediaSize": "Tamanho da Mídia"
+      "mediaSize": "Tamanho da Mídia",
+      "toggleMiniMode": "Alternar modo compacto"
     },
     "heuristic": "Avaliação Heurística de Usabilidade"
   },
@@ -382,8 +419,12 @@
     "incorrectPassword": "Senha incorreta",
     "incorrectCredential": "Usuário ou senha incorretos.",
     "globalError": "Ocorreu um erro, desculpe-nos pelo transtorno.",
+    "cameraPermissionDenied": "O acesso à câmera é necessário para continuar. Por favor, permita o acesso à câmera nas configurações do navegador.",
     "sendError": "Não foi possível enviar o convite. Por favor, tente novamente",
-    "missingVariableTitles": "Não é possível salvar: Algumas variáveis estão sem títulos"
+    "missingVariableTitles": "Não é possível salvar: Algumas variáveis estão sem títulos",
+    "failedToLoadAnswers": "Falha ao carregar respostas",
+    "failedToUpdateAnswer": "Falha ao atualizar resposta",
+    "failedToSaveAnswerCooperator": "Falha ao salvar resposta do cooperador"
   },
   "Introduction": {
     "title": "UX LAB Remoto",
@@ -536,7 +577,10 @@
       "updatedProgress": "atualizou seu progresso",
       "invitationSentTitle": "Convite enviado",
       "invitationPendingDesc": "Convite pendente para",
-      "pendingStatus": "Pendente"
+      "pendingStatus": "Pendente",
+      "evaluatorInfo": "Info para Avaliadores",
+      "evaluatorInfoEmpty": "Sem seções de informação. Adicione algumas para orientar seus avaliadores.",
+      "evaluatorInfoSeeAll": "Ver todas as {count} seções"
     },
     "managerView": {
       "heuristicStudy": "Estudo Heurístico",
@@ -598,7 +642,8 @@
       "changeWeights": "Esteja ciente que, ao alterar a ordem das heurísticas, os pesos NÃO mudam automaticamente; você deve ajustá-los manualmente.",
       "noDescriptions": "Nenhuma descrição disponível",
       "startAddingQuestions": "Comece adicionando sua primeira pergunta a esta heurística",
-      "cantDeleteAllQuestions": "Desculpe, você não pode excluir todas as perguntas de uma heurística"
+      "cantDeleteAllQuestions": "Desculpe, você não pode excluir todas as perguntas de uma heurística",
+      "studyHasAnswers": "Este estudo possui respostas"
     },
     "validation": {
       "nameRequired": "Nome é obrigatório",
@@ -610,7 +655,14 @@
     "AddCommentBtn": {
       "showComment": "Mostrar comentário",
       "addComment": "Adicionar comentário",
+      "addAnotherComment": "Adicionar outro comentário",
+      "addNewComment": "Adicionar um novo comentário",
       "hideTextArea": "Ocultar área de texto"
+    },
+    "ImportImage": {
+      "uploadSuccess": "Imagem enviada com sucesso",
+      "uploadError": "Falha ao enviar imagem",
+      "imagesCount": "{count} imagem(ns) anexada(s)"
     },
     "errors": {
       "failedToLoadQuestionForm": "Falha ao carregar o formulário de pergunta. Por favor, tente novamente.",
@@ -622,6 +674,12 @@
       "question": "Pergunta",
       "questions": "Perguntas"
     }
+  },
+  "HeuristicsAnalytics": {
+    "dataTable": "Tabela de dados",
+    "chart": "Gráfico",
+    "userUploadedContent": "Conteúdo enviado pelo usuário",
+    "userUploadedAttachment": "Anexo enviado pelo usuário"
   },
   "HeuristicsOptionsTable": {
     "titles": {
@@ -653,11 +711,13 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "Configurações",
-      "confirmUpload": "Confirmar Upload"
+      "confirmUpload": "Confirmar Upload",
+      "enableWeights": "Ativar Recurso de Pesos"
     },
     "messages": {
       "acceptCsv": "Se aceitar, todas as suas heurísticas atuais serão substituídas pelas do arquivo CSV.",
-      "noCsvFileSelected": "Nenhum arquivo CSV selecionado. \nPor favor, selecione um antes de continuar."
+      "noCsvFileSelected": "Nenhum arquivo CSV selecionado. \nPor favor, selecione um antes de continuar.",
+      "enableWeightsDescription": "Permita que os avaliadores atribuam pesos às heurísticas neste estudo"
     },
     "placeHolders": {
       "importCsv": "Importe seu arquivo CSV de teste aqui."
@@ -705,7 +765,9 @@
       "options": "Opções",
       "weights": "Pesos",
       "settings": "Configurações"
-    }
+    },
+    "previewPageTitle": "Visualizar teste",
+    "previewPageSubtitle": "Revise a configura??o do teste em modo somente leitura"
   },
   "HeuristicsTestAnswer": {
     "titles": {
@@ -824,6 +886,7 @@
       "remove_cooperator": "Tem certeza de que deseja remover {email} dos colaboradores?",
       "cancel_invitation": "Tem certeza de que deseja cancelar o convite de {email}?",
       "change_role": "Tem certeza de que deseja alterar a função de {email} de {old} para {new}?",
+      "change_role_title": "Alterar função",
       "message_title_hint": "Digite um título para sua mensagem",
       "message_content_hint": "Digite o conteúdo da sua mensagem",
       "invite_message": "Você foi convidado para colaborar em '{testTitle}'",
@@ -909,7 +972,8 @@
     "validation": {
       "fieldRequired": "Campo Obrigatório",
       "validUrl": "Deve ser uma URL válida começando com http:// ou https://",
-      "positiveNumber": "Deve ser um número positivo"
+      "positiveNumber": "Deve ser um número positivo",
+      "minOne": "O valor deve ser pelo menos 1"
     },
     "basicInfo": {
       "stepTitle": "Passo 1: Informações Básicas da Tarefa",
@@ -951,6 +1015,68 @@
       "tam2": "TAM-2 (Estendido) - adiciona influências externas e demonstrabilidade de resultados",
       "tam3": "TAM-3 (Abrangente) - inclui ansiedade, diversão e usabilidade objetiva",
       "sart": "Técnica de Avaliação de Consciência Situacional - mede a consciência situacional"
+    },
+    "answerTypePreview": {
+      "postTest":{
+       "title":"Feedback pós-teste",
+       "q1":"Avalie sua experiência",
+       "q2":"Como você achou o produto durante o teste beta?",
+       "feedbackPlaceholder":"O produto tinha uma interface fluida, mas apresentava lentidão em algumas partes."
+      },
+      "taskCompleted": "Tarefa concluída! Nenhum feedback adicional necessário.",
+      "participantsFeedbackHere": "Os participantes fornecerão seu feedback aqui...",
+      "submitFeedback": "Enviar Feedback",
+      "postTaskQuestions": "Perguntas Pós-Tarefa",
+      "rateTaskDifficulty": "1. Como você avaliaria a dificuldade desta tarefa?",
+      "additionalComments": "2. Comentários adicionais?",
+      "optionalFeedback": "Feedback opcional...",
+      "externalFormTitle": "Formulário Externo",
+      "externalFormDescription": "Os participantes serão redirecionados para preencher um formulário externo após a tarefa.",
+      "openExternalForm": "Abrir Formulário Externo",
+      "nasaTlxTitle": "Índice de Carga de Tarefas NASA",
+      "mentalDemand": "Demanda Mental",
+      "physicalDemand": "Demanda Física",
+      "lowHigh": "Baixo - Alto",
+      "moreDimensions": "+ 4 dimensões adicionais",
+      "susTitle": "Escala de Usabilidade do Sistema",
+      "susStatement1": "1. Acho que gostaria de usar este sistema com frequência.",
+      "stronglyDisagree": "Discordo Totalmente",
+      "stronglyAgree": "Concordo Totalmente",
+      "moreStatements": "+ 9 declarações adicionais",
+      "sartTitle": "Técnica de Avaliação de Consciência Situacional",
+      "instability": "Instabilidade da Situação",
+      "complexity": "Complexidade da Situação",
+      "veryStable": "Muito Estável",
+      "veryUnstable": "Muito Instável",
+      "verySimple": "Muito Simples",
+      "veryComplex": "Muito Complexo",
+      "moreSartDimensions": "+ 8 dimensões SART adicionais",
+      "tam1Title": "TAM-1: Modelo de Aceitação de Tecnologia (Básico)",
+      "tam1Subtitle": "10 itens em 2 dimensões",
+      "perceivedUsefulness": "Utilidade Percebida (5 itens)",
+      "perceivedEaseOfUse": "Facilidade de Uso Percebida (5 itens)",
+      "tam1Statement1": "1. O uso do sistema melhora o meu desempenho no trabalho.",
+      "tam1Statement6": "6. O sistema é fácil de usar.",
+      "tam2Title": "TAM-2: Modelo de Aceitação de Tecnologia (Estendido)",
+      "tam2Subtitle": "25 itens em 7 dimensões",
+      "tam2Description": "Os participantes avaliam 25 afirmações em uma escala Likert de 5 pontos (Discordo Totalmente - Concordo Totalmente)",
+      "tam3Title": "TAM-3: Modelo de Aceitação de Tecnologia (Abrangente)",
+      "tam3Subtitle": "39 itens em 13 dimensões",
+      "tam3Description": "Avaliação abrangente com 39 afirmações em 13 dimensões em uma escala Likert de 5 pontos",
+      "selectType": "Selecione um tipo de resposta para ver a prévia",
+      "perceivedUsefulnessShort": "Utilidade Percebida",
+      "perceivedEaseOfUseShort": "Facilidade de Uso Percebida",
+      "subjectiveNorm": "Norma Subjetiva",
+      "image": "Imagem",
+      "jobRelevance": "Relevância do Trabalho",
+      "outputQuality": "Qualidade do Resultado",
+      "resultDemonstrability": "Demonstrabilidade de Resultados",
+      "computerSelfEfficacy": "Autoeficácia Computacional",
+      "externalControl": "Controle Externo",
+      "anxiety": "Ansiedade",
+      "playfulness": "Lúdico",
+      "enjoyment": "Prazer",
+      "objectiveUsability": "Usabilidade Objetiva"
     },
     "advanced": {
       "stepTitle": "Passo 3: Opções Avançadas",
@@ -1001,29 +1127,6 @@
         "camera": "Câmera",
         "audio": "Áudio"
       }
-    },
-    "answerTypePreview": {
-      "taskCompleted": "Tarefa concluída! Nenhum feedback adicional necessário.",
-      "participantsFeedbackHere": "Os participantes fornecerão seu feedback aqui...",
-      "submitFeedback": "Enviar Feedback",
-      "postTaskQuestions": "Perguntas Pós-Tarefa",
-      "rateTaskDifficulty": "1. Como você avaliaria a dificuldade desta tarefa?",
-      "additionalComments": "2. Comentários adicionais?",
-      "optionalFeedback": "Feedback opcional...",
-      "externalFormTitle": "Formulário Externo",
-      "externalFormDescription": "Os participantes serão redirecionados para preencher um formulário externo após a tarefa.",
-      "openExternalForm": "Abrir Formulário Externo",
-      "nasaTlxTitle": "Índice de Carga de Tarefas NASA",
-      "mentalDemand": "Demanda Mental",
-      "physicalDemand": "Demanda Física",
-      "lowHigh": "Baixo - Alto",
-      "moreDimensions": "+ 4 dimensões adicionais",
-      "susTitle": "Escala de Usabilidade do Sistema",
-      "susStatement1": "1. Acho que gostaria de usar este sistema com frequência.",
-      "stronglyDisagree": "Discordo Totalmente",
-      "stronglyAgree": "Concordo Totalmente",
-      "moreStatements": "+ 9 declarações adicionais",
-      "sartTitle": "Técnica de Avaliação de Consciência Situacional"
     }
   },
   "UserTestView": {
@@ -1156,6 +1259,44 @@
       "note": "Seu papel é facilitar e observar. O participante deve concluir as tarefas de forma independente, a menos que solicite ajuda especificamente.",
       "startSession": "Iniciar Sessão Moderada"
     },
+    "VideoCallPanel": {
+      "toolsPanelTitle": "Painel de ferramentas",
+      "sessionControl": "Controle da sessao",
+      "joinRoomInfo": "Os controles para entrar na sala agora estao na interface principal acima",
+      "proceedNextStep": "Prosseguir para o proximo passo",
+      "endCall": "Encerrar chamada",
+      "activeCall": "Chamada ativa",
+      "participants": "Participantes",
+      "you": "Voce",
+      "observator": "Observador",
+      "moderator": "Moderador",
+      "connected": "Conectado",
+      "disconnected": "Desconectado",
+      "camera": "Camera",
+      "noCamera": "Sem camera",
+      "microphone": "Microfone",
+      "noMicrophone": "Sem microfone",
+      "settings": "Configuracao",
+      "disableCamera": "Desativar camera",
+      "enableCamera": "Ativar camera",
+      "muteMicrophone": "Silenciar microfone",
+      "unmuteMicrophone": "Ativar microfone",
+      "stopScreenShare": "Parar compartilhamento de tela",
+      "shareScreen": "Compartilhar tela",
+      "moderatorOnlySteps": "Somente o moderador pode alterar as etapas"
+    },
+    "VideoCall": {
+      "screenSharingLabel": "Compartilhando tela",
+      "cameraOff": "A camera esta desligada",
+      "yourVideo": "Seu video",
+      "yourPreview": "Sua visualizacao",
+      "observatorMode": "Modo observador",
+      "waitingForModeratorToStartSession": "Aguardando o moderador iniciar a sessao...",
+      "observeAllFeedsNotice": "Voce podera observar todos os videos sem enviar o seu.",
+      "waitingForParticipants": "Aguardando participantes...",
+      "waitingForModerator": "Aguardando moderador...",
+      "autoStartWhenModeratorOpensRoom": "A chamada de video iniciara automaticamente quando o moderador abrir a sala."
+    },
     "WelcomeStep": {
       "welcome": "Bem-vindo ao RUXAILAB!",
       "description": "Você está prestes a participar de um teste de usuário que visa avaliar a facilidade de uso e a compreensão de uma aplicação digital. Esse tipo de teste nos ajuda a identificar possíveis barreiras tecnológicas e melhorar a experiência para todos.",
@@ -1175,7 +1316,8 @@
     "PreTasksStep": {
       "title": "Tarefas",
       "heading": "Vamos começar com a fase de tarefas",
-      "description": "Você completará <strong>{numTasks}</strong> tarefas relacionadas ao uso da ferramenta. Não há respostas certas ou erradas: o que importa é como você interage.",
+      "description": "Você irá completar",
+      "tasksSuffix": "tarefas relacionadas ao uso da ferramenta. Não há respostas certas ou erradas; o que importa é como você interage.",
       "instruction": "Quando estiver pronto, clique no botão para começar.",
       "startButton": "Iniciar tarefas",
       "recordingTitle": "Informações de gravação",
@@ -1210,6 +1352,47 @@
     "inProgress": "Calibração em andamento...",
     "completed": "Calibração concluída!",
     "continue": "Continuar para o teste"
+  },
+  "EyeTrackingConfig": {
+    "titles": {
+      "main": "Configurações de Rastreamento Ocular",
+      "general": "Configurações Gerais",
+      "miscellaneous": "Configurações Diversas"
+    },
+    "labels": {
+      "pointNumber": "Número de Pontos",
+      "samplesPerPoint": "Amostras por Ponto",
+      "msPerPoint": "Milissegundos por Captura de Ponto",
+      "threshold": "Limiar de Distância de Pontos",
+      "radius": "Raio",
+      "offset": "Deslocamento",
+      "control": "Controle:",
+      "useCustomColors": "Usar Cores Personalizadas",
+      "backgroundColor": "Cor de Fundo:",
+      "pointColor": "Cor do Ponto:",
+      "modelSelection": "Seleção de Modelo:",
+      "selectModel": "Selecionar Modelo",
+      "note": "Nota:",
+      "noteText": "O modelo selecionado será usado para o processo de calibração. O modelo padrão é a Regressão Linear. Alguns modelos podem demorar mais para treinar do que outros. Por favor, seja paciente."
+    },
+    "tooltips": {
+      "pointNumber": "Número de pontos de calibração mostrados na tela (mais pontos = maior precisão).",
+      "samplesPerPoint": "Quantas amostras de olhar são coletadas por ponto de calibração. Valores mais altos melhoram a precisão, mas aumentam a duração.",
+      "msPerPoint": "Duração (em milissegundos) para capturar dados por ponto. Define quanto tempo o usuário deve olhar para cada alvo.",
+      "threshold": "Distância máxima (em pixels) permitida entre as amostras de calibração antes de serem descartadas. Controla a tolerância espacial.",
+      "radius": "Ajusta o raio do ponto de calibração. Valores maiores tornam o ponto maior.",
+      "offset": "Deslocamento (em pixels) para ajustar a posição da área de calibração."
+    },
+    "models": {
+      "linear": "Regressão Linear",
+      "ridge": "Regressão Ridge",
+      "lasso": "Regressão Lasso",
+      "elastic": "Elastic Net",
+      "bayesian": "Bayesian Ridge",
+      "sgd": "Regressor SGD",
+      "svr": "Regressor de Vetor de Suporte",
+      "rfr": "Regressor de Floresta Aleatória"
+    }
   },
   "AccessNotAllowed": {
     "notAllowed": "Acesso não permitido",
@@ -1355,6 +1538,18 @@
         "manualAccessibility": "Acessibilidade manual",
         "automaticAccessibility": "Acessibilidade automática",
         "all": "Todos"
+      },
+      "unsupportedPreviewType": "Tipo de template n?o suportado para pr?-visualiza??o.",
+      "config": {
+        "title": "Configura??o do Template",
+        "ownerOnly": "A edi??o de configura??o ? restrita ao dono do template.",
+        "version": "Vers?o",
+        "visibility": "Visibilidade",
+        "owner": "Propriet?rio",
+        "public": "P?blico",
+        "private": "Privado",
+        "saved": "Configura??o do template atualizada com sucesso",
+        "saveError": "Falha ao atualizar a configura??o do template"
       }
     },
     "createTest": {
@@ -1391,12 +1586,15 @@
       "perform_common_tasks": "Execute tarefas comuns instantaneamente",
       "delete_warning": "Todos os dados, resultados e configurações associados serão perdidos para sempre.",
       "delete_forever": "Excluir para sempre",
+      "action_cannot_be_undone": "Esta ação não pode ser desfeita",
       "confirm_deletion": "Confirmar exclusão"
     },
     "editTest": {
       "title": "Editar teste",
       "description": "Personalize as configurações e preferências do seu teste.",
-      "updatedTest": "Teste atualizado com sucesso"
+      "updatedTest": "Teste atualizado com sucesso",
+      "previewTitle": "Visualizar teste",
+      "previewDescription": "Revise o teste em modo somente leitura."
     },
     "cooperators": {
       "invitationSent": "Convite enviado com sucesso"
@@ -1418,6 +1616,7 @@
     "deleteAccount": "Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita.",
     "genericSuccess": "Operação bem-sucedida",
     "savedChanges": "Alterações salvas com sucesso",
+    "errorSavingProgress": "Erro ao salvar progresso",
     "deleteUser": "Tem certeza de que deseja excluir este usuário? Esta ação não pode ser desfeita."
   },
   "buttons": {
@@ -2206,5 +2405,32 @@
       }
     },
     "title": "Política de Privacidade"
+  },
+  "EvaluatorInfoView": {
+    "pageTitle": "Informações para Avaliadores",
+    "pageSubtitle": "Crie seções de informação que os avaliadores verão antes de iniciar o teste"
+  },
+  "EvaluatorInfoEditor": {
+    "title": "Informações para Avaliadores",
+    "subtitle": "Crie seções de informação que os avaliadores verão antes de iniciar o teste",
+    "noSections": "Sem seções. Adicione uma para começar.",
+    "untitledSection": "Seção sem título",
+    "addSection": "Adicionar seção",
+    "sectionTitle": "Título da seção",
+    "sectionContent": "Conteúdo",
+    "sectionType": "Tipo",
+    "types": {
+      "info": "Informação",
+      "warning": "Aviso",
+      "tip": "Dica"
+    },
+    "save": "Salvar",
+    "cancel": "Cancelar"
+  },
+  "EvaluatorInfoDisplay": {
+    "title": "Antes de começar",
+    "subtitle": "Por favor leia as informações a seguir antes de iniciar a avaliação",
+    "startButton": "Iniciar Avaliação",
+    "noContent": "Nenhuma informação adicional."
   }
 }

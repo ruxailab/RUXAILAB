@@ -35,7 +35,9 @@
                       <v-text-field
                         v-model="test.title"
                         :rules="[
-                          (v) => !!v || $t('studyCreation.details.validation.enterTitle'),
+                          (v) =>
+                            !!v ||
+                            $t('studyCreation.details.validation.enterTitle'),
                         ]"
                         :label="$t('studyCreation.details.studyTitle')"
                         :placeholder="$t('studyCreation.details.enterTitle')"
@@ -43,7 +45,13 @@
                         :counter="200"
                         maxlength="200"
                         :error="test.title?.length === 200"
-                        :error-messages="test.title?.length === 200 ? $t('studyCreation.details.validation.max200Characters') : []"
+                        :error-messages="
+                          test.title?.length === 200
+                            ? $t(
+                                'studyCreation.details.validation.max200Characters',
+                              )
+                            : []
+                        "
                         prepend-inner-icon="mdi-format-title"
                         class="mb-4"
                         @change="store.commit('SET_LOCAL_CHANGES', true)"
@@ -58,7 +66,13 @@
                         :counter="600"
                         maxlength="600"
                         :error="test.description?.length === 600"
-                        :error-messages="test.description?.length === 600 ? $t('studyCreation.details.validation.max600Characters') : []"
+                        :error-messages="
+                          test.description?.length === 600
+                            ? $t(
+                                'studyCreation.details.validation.max600Characters',
+                              )
+                            : []
+                        "
                         prepend-inner-icon="mdi-text"
                         class="mb-4"
                         @change="store.commit('SET_LOCAL_CHANGES', true)"
@@ -86,7 +100,13 @@
                           :counter="200"
                           maxlength="200"
                           :error="websiteDetails.siteName?.length === 200"
-                          :error-messages="websiteDetails.siteName?.length === 200 ? $t('studyCreation.details.validation.max200Characters') : []"
+                          :error-messages="
+                            websiteDetails.siteName?.length === 200
+                              ? $t(
+                                  'studyCreation.details.validation.max200Characters',
+                                )
+                              : []
+                          "
                           prepend-inner-icon="mdi-alpha-n-box"
                           class="mb-4"
                           @change="store.commit('SET_LOCAL_CHANGES', true)"
@@ -122,9 +142,15 @@
                           "
                           variant="outlined"
                           :counter="200"
-                           maxlength="200"
+                          maxlength="200"
                           :error="websiteDetails.siteURL?.length === 200"
-                          :error-messages="websiteDetails.siteURL?.length === 200 ? $t('studyCreation.details.validation.max200Characters') : []"
+                          :error-messages="
+                            websiteDetails.siteURL?.length === 200
+                              ? $t(
+                                  'studyCreation.details.validation.max200Characters',
+                                )
+                              : []
+                          "
                           prepend-inner-icon="mdi-link-variant"
                           @change="store.commit('SET_LOCAL_CHANGES', true)"
                         />
@@ -226,6 +252,7 @@
                         color="success"
                         size="large"
                         :loading="isLoading"
+                        :disabled="!isFormValid || isLoading"
                         prepend-icon="mdi-plus"
                         block
                         @click="validate"
@@ -245,7 +272,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
@@ -255,6 +282,7 @@ import BackButton from '@/features/ux_creation/components/BackButton.vue'
 import {
   getMethodManagerView,
   instantiateStudyByType,
+  normalizeStudyType,
   STUDY_TYPES,
 } from '@/shared/constants/methodDefinitions'
 import StudyAdmin from '@/shared/models/StudyAdmin'
@@ -279,6 +307,7 @@ const websiteDetails = ref({
 const category = computed(() => store.state.Tests.studyCategory)
 const method = computed(() => store.state.Tests.studyMethod)
 const studyType = computed(() => store.state.Tests.studyType)
+const selectedTemplate = computed(() => store.state.Tests.selectedTemplate)
 const isLoading = ref(false)
 
 const steps = computed(() => [
@@ -287,6 +316,32 @@ const steps = computed(() => [
   { value: 3, title: t('studyCreation.steps.studyType'), complete: true },
   { value: 4, title: t('studyCreation.steps.details'), complete: false },
 ])
+
+const isFormValid = computed(() => {
+  return (
+    test.value.title &&
+    test.value.title.length <= 200 &&
+    test.value.description.length <= 600
+  )
+})
+
+watch(
+  selectedTemplate,
+  (template) => {
+    if (studyType.value !== 'template' || !template?.body) return
+
+    test.value = {
+      title: template.body.testTitle || template.header?.templateTitle || '',
+      description:
+        template.body.testDescription ||
+        template.header?.templateDescription ||
+        '',
+      isPublic: template.body.isPublic || false,
+      subType: template.body.subType || '',
+    }
+  },
+  { immediate: true },
+)
 
 const validate = () => {
   if (!test.value.title) {
@@ -305,6 +360,11 @@ const validate = () => {
 }
 
 const handleTestType = () => {
+  if (studyType.value === 'template' && selectedTemplate.value?.body) {
+    submitFromTemplate()
+    return
+  }
+
   const testCategory = category.value
   if (testCategory === 'test') {
     const extraDetails = {}
@@ -316,6 +376,44 @@ const handleTestType = () => {
     submitAccessibility()
   } else {
     submit()
+  }
+}
+
+const submitFromTemplate = async () => {
+  const template = selectedTemplate.value
+  const templateBody = template?.body
+  if (!templateBody) return
+
+  isLoading.value = true
+  const user = store.getters.user
+  const normalizedTestType = normalizeStudyType(templateBody.testType)
+
+  const rawData = {
+    ...templateBody,
+    id: null,
+    testType: normalizedTestType,
+    testTitle: test.value.title || templateBody.testTitle || '',
+    testDescription:
+      test.value.description || templateBody.testDescription || '',
+    isPublic: test.value.isPublic,
+    testAdmin: new StudyAdmin({
+      userDocId: user.id,
+      email: user.email,
+    }),
+    templateDoc: template.id,
+    creationDate: Date.now(),
+    updateDate: Date.now(),
+  }
+
+  const study = instantiateStudyByType(normalizedTestType, rawData)
+  const testId = await store.dispatch('createStudy', study)
+  isLoading.value = false
+
+  store.commit('RESET_STUDY_DETAILS')
+
+  const methodView = getMethodManagerView(normalizedTestType, rawData.subType)
+  if (testId) {
+    router.push({ name: methodView, params: { id: testId } })
   }
 }
 
@@ -408,6 +506,10 @@ const submitAccessibility = async () => {
 const goBack = () => {
   router.push({ name: 'study-create-step3' })
 }
+
+onMounted(() => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+})
 </script>
 
 <style scoped>

@@ -75,6 +75,24 @@
       @send-invitations="handleSendInvitations"
     />
 
+    <!-- Confirmation Dialog -->
+    <ConfirmDialog
+      v-model:show="confirmDialog.show"
+      :title="confirmDialog.title"
+      :subtitle="confirmDialog.subtitle"
+      :message="confirmDialog.message"
+      :confirm-text="$t('common.confirm')"
+      :cancel-text="$t('common.cancel')"
+      :confirm-color="confirmDialog.confirmColor"
+      :confirm-icon="confirmDialog.confirmIcon"
+      :icon="confirmDialog.icon"
+      :icon-color="confirmDialog.iconColor"
+      :type="confirmDialog.type"
+      :loading="confirmDialog.loading"
+      @confirm="handleConfirmAction"
+      @cancel="handleCancelAction"
+    />
+
     <AccessNotAllowed v-if="!loading && verified" />
 
     <slot
@@ -95,6 +113,7 @@ import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import CooperatorTable from '@/shared/components/CooperatorTable.vue'
 import MessageDialog from '@/shared/components/dialogs/MessageDialog.vue'
 import InviteDialog from '@/shared/components/dialogs/InviteDialog.vue'
+import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 import UIDGenerator from 'uid-generator'
 import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
 import { useCooperatorActions } from '@/shared/composables/useCooperatorActions'
@@ -137,11 +156,69 @@ const { t } = useI18n()
 
 const { roleOptions } = useCooperatorUtils()
 
-const {
-  handleRoleChange,
-  handleCooperatorRemoval,
-  handleInvitationCancellation,
-} = useCooperatorActions()
+useCooperatorActions() // Keep the hook call in case it has side effects
+
+// Confirmation dialog state
+const confirmDialog = ref({
+  show: false,
+  title: '',
+  subtitle: '',
+  message: '',
+  confirmColor: 'primary',
+  confirmIcon: '',
+  icon: 'mdi-alert-circle-outline',
+  iconColor: 'warning',
+  type: 'warning',
+  loading: false,
+  action: null,
+  data: null,
+})
+
+const resetConfirmDialog = () => {
+  confirmDialog.value = {
+    show: false,
+    title: '',
+    subtitle: '',
+    message: '',
+    confirmColor: 'primary',
+    confirmIcon: '',
+    icon: 'mdi-alert-circle-outline',
+    iconColor: 'warning',
+    type: 'warning',
+    loading: false,
+    action: null,
+    data: null,
+  }
+}
+
+const handleConfirmAction = async () => {
+  const { action, data } = confirmDialog.value
+  confirmDialog.value.loading = true
+
+  try {
+    if (action === 'changeRole') {
+      await executeRoleChange(data.item, data.newValue)
+      showSuccess('Role updated successfully!')
+    } else if (action === 'removeCooperator') {
+      await executeCooperatorRemoval(data.coop)
+      showSuccess('Cooperator removed successfully!')
+    } else if (action === 'cancelInvitation') {
+      await executeInvitationCancellation(data.guest)
+      showSuccess('Invitation cancelled successfully!')
+    }
+  } catch (error) {
+    showError(
+      `Failed to ${action === 'changeRole' ? 'update role' : action === 'removeCooperator' ? 'remove cooperator' : 'cancel invitation'}.`,
+    )
+    console.error('Confirm action error:', error)
+  } finally {
+    resetConfirmDialog()
+  }
+}
+
+const handleCancelAction = () => {
+  resetConfirmDialog()
+}
 
 const sendNotification = async ({
   userId,
@@ -233,15 +310,18 @@ const handleSendMessage = async ({ user, title, content }) => {
   }
 }
 
-const handleSendEmail = async (guest) => {
+const handleSendEmail = async (guest, customMessage = null) => {
   const emailController = new EmailController()
+  const inviteMessage =
+    customMessage ?? guest?.inviteMessage ?? inviteMessages.value ?? ''
+
   await emailController.send({
     to: guest.email,
     subject: t('HeuristicsCooperators.actions.send_invitation'),
     attachments: [],
     template: 'invite',
     data: {
-      message: inviteMessages.value || '',
+      message: inviteMessage,
       testTitle: test.value.testTitle,
       testDescription: test.value.testDescription,
       adminEmail: test.value.testAdmin.email,
@@ -279,6 +359,7 @@ const handleSendInvitations = async (invitationData) => {
           invited: true,
           accepted: false,
           accessLevel: roleOptions.value[selectedRole].value,
+          inviteMessage: inviteMessage || null,
           token,
           progress: 0,
           updateDate: test.value?.updateDate || new Date().toISOString(),
@@ -291,6 +372,7 @@ const handleSendInvitations = async (invitationData) => {
           invited: true,
           accepted: false,
           accessLevel: roleOptions.value[selectedRole].value,
+          inviteMessage: inviteMessage || null,
           token,
           progress: 0,
           updateDate: test.value?.updateDate || new Date().toISOString(),
@@ -304,11 +386,15 @@ const handleSendInvitations = async (invitationData) => {
       const existing = cooperatorsEdit.value[existingIndex]
       const newRole = roleOptions.value[selectedRole].value
 
-      if (existing.accessLevel !== newRole) {
+      if (
+        existing.accessLevel !== newRole ||
+        existing.inviteMessage !== inviteMessage
+      ) {
         // Update the existing entry's role
         cooperatorsEdit.value[existingIndex] = {
           ...existing,
           accessLevel: newRole,
+          inviteMessage: inviteMessage || existing.inviteMessage || null,
           updateDate: new Date().toISOString(),
         }
         updatedRoles.push(coopEmail)
@@ -336,22 +422,74 @@ const handleSendInvitations = async (invitationData) => {
 }
 
 const changeRole = async (item, newValue) => {
-  await handleRoleChange(
-    item,
-    newValue,
-    roleOptions.value,
-    async (item, newValue) => {
-      const index = cooperatorsEdit.value.indexOf(item)
-      const newCoop = { ...item, accessLevel: newValue.value }
-      test.value.cooperators[index] = newCoop
-      await store.dispatch('updateStudy', test.value)
-      await store.dispatch('updateUserAnswer', {
-        testDocId: test.value.id,
-        cooperatorId: newCoop.userDocId,
-        data: { accessLevel: newCoop.accessLevel },
-      })
-    },
+  const currentAccessLevelText = roleOptions.value.find(
+    (r) => r.value === item.accessLevel,
+  )?.title
+  const newAccessLevelText = newValue.title
+
+  if (item.accessLevel !== newValue.value) {
+    confirmDialog.value = {
+      show: true,
+      title:
+        t('HeuristicsCooperators.messages.change_role_title') || 'Change Role',
+      subtitle:
+        t('pages.settings.action_cannot_be_undone') ||
+        "This action will update the user's permissions",
+      message: t('HeuristicsCooperators.messages.change_role', {
+        email: item.email,
+        old: currentAccessLevelText,
+        new: newAccessLevelText,
+      }),
+      confirmColor: 'primary',
+      confirmIcon: 'mdi-check',
+      icon: 'mdi-account-convert',
+      iconColor: 'primary',
+      type: 'info',
+      loading: false,
+      action: 'changeRole',
+      data: { item, newValue },
+    }
+  }
+}
+
+const executeRoleChange = async (item, newValue) => {
+  const cooperators = Array.isArray(test.value?.cooperators)
+    ? test.value.cooperators
+    : []
+
+  const index = cooperators.findIndex(
+    (coop) =>
+      (coop.token && item.token && coop.token === item.token) ||
+      (coop.userDocId && item.userDocId && coop.userDocId === item.userDocId) ||
+      (coop.email && item.email && coop.email === item.email),
   )
+
+  if (index < 0) {
+    throw new Error('COOPERATOR_NOT_FOUND')
+  }
+
+  const updatedCooperators = [...cooperators]
+  const newCoop = new Cooperators({
+    ...updatedCooperators[index],
+    accessLevel: newValue.value,
+  })
+  updatedCooperators[index] = newCoop
+  test.value.cooperators = updatedCooperators
+  await store.dispatch('updateStudy', test.value)
+  await store.dispatch('getStudy', { id: test.value.id })
+
+  // Pending/rejected collaborators may not have an answer document yet.
+  // Role update is still valid, so only sync answer metadata when the
+  // collaborator is accepted and linked to a user document.
+  if (!newCoop.userDocId || newCoop.accepted !== true) {
+    return
+  }
+
+  await store.dispatch('updateUserAnswer', {
+    testDocId: test.value.id,
+    cooperatorId: newCoop.userDocId,
+    data: { accessLevel: newCoop.accessLevel },
+  })
 }
 
 const submit = async () => {
@@ -372,19 +510,24 @@ const submit = async () => {
 
     await Promise.all([
       store.dispatch('getStudy', { id: test.value.id }),
-      ...newCooperators.map((guest) => sendMenssages(guest)),
+      ...newCooperators.map((guest) =>
+        sendMenssages(guest, guest.inviteMessage),
+      ),
     ])
   } catch {
     // console.error('Error updating study:', error)
   }
 }
 
-const sendMenssages = async (guest) => {
+const sendMenssages = async (guest, customMessage = null) => {
+  const messageToSend =
+    customMessage ?? guest?.inviteMessage ?? inviteMessages.value ?? ''
+
   try {
-    await notifyCooperator(guest)
+    await notifyCooperator(guest, messageToSend)
     // Email is optional - don't let it block the notification
     try {
-      await handleSendEmail(guest)
+      await handleSendEmail(guest, messageToSend)
     } catch {
       // console.warn('Email sending failed (may be missing VUE_APP_CLOUD_FUNCTIONS_URL):', emailError.message)
     }
@@ -396,7 +539,7 @@ const sendMenssages = async (guest) => {
   }
 }
 
-const notifyCooperator = async (guest) => {
+const notifyCooperator = async (guest, customMessage = null) => {
   if (guest.userDocId) {
     // Check if it's an accessibility test (MANUAL or AUTOMATIC)
     //if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
@@ -430,8 +573,8 @@ const notifyCooperator = async (guest) => {
       titleTemplate: 'HeuristicsCooperators.actions.send_invitation',
     }
 
-    if (inviteMessages.value) {
-      payload.description = inviteMessages.value
+    if (customMessage) {
+      payload.description = customMessage
     } else {
       payload.descriptionTemplate =
         'HeuristicsCooperators.messages.invite_message'
@@ -443,29 +586,85 @@ const notifyCooperator = async (guest) => {
 }
 
 const reinvite = async (guest) => {
-  await sendMenssages(guest)
+  await sendMenssages(guest, guest?.inviteMessage ?? null)
 }
 
 const removeCoop = async (coop) => {
-  await handleCooperatorRemoval(coop, async (coop) => {
-    const index = cooperatorsEdit.value.indexOf(coop)
+  confirmDialog.value = {
+    show: true,
+    title:
+      t('HeuristicsCooperators.actions.remove_cooperator') ||
+      'Remove Cooperator',
+    subtitle:
+      t('pages.settings.action_cannot_be_undone') ||
+      'This action cannot be undone',
+    message: t('HeuristicsCooperators.messages.remove_cooperator', {
+      email: coop.email,
+    }),
+    confirmColor: 'error',
+    confirmIcon: 'mdi-delete',
+    icon: 'mdi-account-remove',
+    iconColor: 'error',
+    type: 'error',
+    loading: false,
+    action: 'removeCooperator',
+    data: { coop },
+  }
+}
+
+const executeCooperatorRemoval = async (coop) => {
+  const index = cooperatorsEdit.value.findIndex(
+    (c) =>
+      (c.token && coop.token && c.token === coop.token) ||
+      (c.userDocId && coop.userDocId && c.userDocId === coop.userDocId) ||
+      (c.email && coop.email && c.email === coop.email),
+  )
+  if (index !== -1) {
     cooperatorsEdit.value.splice(index, 1)
-    test.value.cooperators = cooperatorsEdit.value
-    await store.dispatch('updateStudy', test.value)
-    await store.dispatch('removeTestFromCooperator', {
-      test: test.value,
-      cooperator: coop,
-    })
+  }
+  test.value.cooperators = cooperatorsEdit.value
+  await store.dispatch('updateStudy', test.value)
+  await store.dispatch('removeTestFromCooperator', {
+    test: test.value,
+    cooperator: coop,
   })
 }
 
 const cancelInvitation = async (guest) => {
-  await handleInvitationCancellation(guest, async (guest) => {
-    const index = cooperatorsEdit.value.indexOf(guest)
+  confirmDialog.value = {
+    show: true,
+    title:
+      t('HeuristicsCooperators.actions.cancel_invitation') ||
+      'Cancel Invitation',
+    subtitle:
+      t('pages.settings.action_cannot_be_undone') ||
+      'This action cannot be undone',
+    message: t('HeuristicsCooperators.messages.cancel_invitation', {
+      email: guest.email,
+    }),
+    confirmColor: 'warning',
+    confirmIcon: 'mdi-cancel',
+    icon: 'mdi-email-remove',
+    iconColor: 'warning',
+    type: 'warning',
+    loading: false,
+    action: 'cancelInvitation',
+    data: { guest },
+  }
+}
+
+const executeInvitationCancellation = async (guest) => {
+  const index = cooperatorsEdit.value.findIndex(
+    (c) =>
+      (c.token && guest.token && c.token === guest.token) ||
+      (c.userDocId && guest.userDocId && c.userDocId === guest.userDocId) ||
+      (c.email && guest.email && c.email === guest.email),
+  )
+  if (index !== -1) {
     cooperatorsEdit.value.splice(index, 1)
-    test.value.cooperators = cooperatorsEdit.value
-    await store.dispatch('updateStudy', test.value)
-  })
+  }
+  test.value.cooperators = cooperatorsEdit.value
+  await store.dispatch('updateStudy', test.value)
 }
 
 const openDialog = async () => {

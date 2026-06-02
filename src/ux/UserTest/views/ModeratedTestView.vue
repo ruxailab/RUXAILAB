@@ -159,12 +159,49 @@
               {{ $t('UserTestView.errors.noTestDataMessage') }}
             </span>
           </v-alert>
+
+          <v-alert
+            v-if="moderatorInactive"
+            type="warning"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="
+              background-color: rgba(255, 255, 255, 0.1);
+              border-color: white;
+            "
+          >
+            <template #prepend>
+              <v-icon color="white"> mdi-wifi-off </v-icon>
+            </template>
+            <span class="text-white">
+              <strong>Moderator Disconnected</strong><br />
+              The moderator seems to be offline. Please wait or contact support.
+            </span>
+          </v-alert>
         </v-col>
       </v-row>
 
       <!--Answer Test Screen-->
       <v-row v-else class="main-test-interface pa-0 ma-0">
         <v-col ref="rightView" class="right-view pa-6">
+          <v-alert
+            v-if="moderatorInactive"
+            density="compact"
+            type="warning"
+            variant="tonal"
+            class="mb-4 rounded-xl"
+            closable
+          >
+            <template #prepend>
+              <v-icon size="small">mdi-wifi-off</v-icon>
+            </template>
+            <div class="text-caption">
+              <strong>Moderator Disconnected:</strong>
+              The moderator seems to be offline. Please wait.
+            </div>
+          </v-alert>
+
           <!--Sticky Stepper to follow Progress-->
           <v-row
             v-if="globalIndex >= 1 || displayVideoCallComponent"
@@ -355,7 +392,7 @@
           </v-btn>
 
           <!-- Video Call Component -->
-          <div v-show="displayVideoCallComponent">
+          <div v-show="displayVideoCallComponent" v-if="test">
             <VideoCall
               :room-id="roomId"
               :is-moderator="isUserTestAdmin"
@@ -368,6 +405,8 @@
               @set-remote-stream="remoteStream = $event"
               @proceed-to-next-step="proceedToNextStep"
               @step-selected="handleStepSelected"
+              @call-ended="displayVideoCallComponent = false"
+              @moderator-status-change="handleModeratorStatusChange"
             />
           </div>
 
@@ -474,6 +513,7 @@
               @show-loading="isLoading = true"
               @stop-show-loading="isLoading = false"
               @recording-started="isVisualizerVisible = $event"
+              @tip-pressed="handleTipPressed"
               @timer-stopped="handleTimerStopped"
             />
 
@@ -569,18 +609,12 @@ import {
   off,
   update,
   set,
+  get,
   onDisconnect,
+  serverTimestamp,
 } from 'firebase/database'
 import { database } from '@/app/plugins/firebase/index'
-import {
-  ref,
-  computed,
-  watch,
-  onMounted,
-  reactive,
-  watchEffect,
-  onUnmounted,
-} from 'vue'
+import { ref, computed, watch, onMounted, reactive, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -597,6 +631,7 @@ import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue'
 import VideoCall from '@/ux/UserTest/components/VideoCall.vue'
 import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
+import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
@@ -608,6 +643,12 @@ const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 // Data variables
+
+onBeforeUnmount(() => {
+  if (moderatorDisconnectTimeout.value)
+    clearTimeout(moderatorDisconnectTimeout.value)
+})
+
 const testDisabledReason = ref(null)
 const isStartTestDisabled = ref(true)
 const loggedIn = ref(null)
@@ -627,6 +668,8 @@ const taskStepComponent = ref(null)
 const allTasksCompleted = ref(false)
 const submitDialog = ref(false)
 const notesDrawerOpen = ref(true)
+const moderatorInactive = ref(false)
+const moderatorDisconnectTimeout = ref(null)
 
 // From video call to be used by recorders
 const remoteStream = ref(null)
@@ -639,7 +682,7 @@ const user = computed(() => {
   return store.getters.user
 })
 const isUserTestAdmin = computed(() => {
-  return test.value.testAdmin.userDocId === user.value?.id
+  return test.value?.testAdmin?.userDocId === user.value?.id
 })
 
 const currentUserAccessLevel = computed(() => {
@@ -651,6 +694,14 @@ const currentUserAccessLevel = computed(() => {
 })
 
 const isObservator = computed(() => currentUserAccessLevel.value === 3)
+
+const hasTestDashboardAccess = computed(() => {
+  if (!user.value) return false
+  return (
+    currentUserAccessLevel.value === ACCESS_LEVEL.ADMIN ||
+    currentUserAccessLevel.value === ACCESS_LEVEL.EVALUATOR
+  )
+})
 
 const timerComponent = computed(() => {
   // Get timer ref from TaskStep
@@ -684,8 +735,13 @@ watch(user, async () => {
 })
 
 watch(
-  () => [globalIndex.value, taskIndex.value],
-  () => {
+  () => [
+    globalIndex.value,
+    taskIndex.value,
+    displayVideoCallComponent.value,
+    isUserTestAdmin.value,
+  ],
+  ([gi, ti, dvc, admin]) => {
     scrollToTop()
   },
 )
@@ -697,6 +753,16 @@ watchEffect(() => {
   const task = Array.isArray(taskList) ? taskList[index] : undefined
 
   const answers = localTestAnswer?.tasks?.[index]?.susAnswers
+
+  if (isUserTestAdmin.value) {
+    doneTaskDisabled.value = false
+    return
+  }
+
+  if (isUserTestAdmin.value) {
+    doneTaskDisabled.value = false
+    return
+  }
 
   if (task?.taskType === 'sus') {
     const validCount = answers?.filter((v) => typeof v === 'number').length ?? 0
@@ -730,6 +796,10 @@ watch(
 // Methods
 const proceedToNextStep = async () => {
   if (!isUserTestAdmin.value) return
+
+  // Increment globalIndex before updating Firebase
+  globalIndex.value = globalIndex.value + 1
+
   const roomRef = dbRef(database, `rooms/${roomId.value}`)
   await update(roomRef, {
     globalIndex: globalIndex.value,
@@ -781,8 +851,12 @@ const handleSubmit = async () => {
   try {
     localTestAnswer.submitted = true
     await saveAnswer()
-    await router.push({ name: 'Admin' })
-  } catch (error) {
+    if (hasTestDashboardAccess.value) {
+      await router.push(`/userTest/moderated/manager/${test.value.id}`)
+    } else {
+      await router.push({ name: 'Admin' })
+    }
+  } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSubmitAnswer'),
@@ -877,17 +951,35 @@ const startTest = async () => {
   // listen for changes
   const roomRef = dbRef(database, `rooms/${roomId.value}`)
 
-  onDisconnect(roomRef).set(null)
+  // Ensure only moderator can set this, and only on explicit end, NOT using onDisconnect
+  // onDisconnect(roomRef).set(null)
 
   onValue(roomRef, (snapshot) => {
     const data = snapshot.val()
-    if (!data) return
 
-    globalIndex.value = data.globalIndex
-    taskIndex.value = data.taskIndex
+    // If data is null, the room has been deleted (e.g. by moderator ending call)
+    if (!data) {
+      if (!isUserTestAdmin.value && displayVideoCallComponent.value) {
+        // displayVideoCallComponent.value = false // Avoid updating state before redirect to prevent unmount error
+        // Optionally show start screen or just return to test flow
+        // start.value = true
+        showInfo('The moderator has ended the session')
+        router.push('/admin')
+      }
+      return
+    }
+
+    globalIndex.value = data.globalIndex !== undefined ? data.globalIndex : 0
+    taskIndex.value = data.taskIndex !== undefined ? data.taskIndex : 0
 
     if (!isUserTestAdmin.value) {
-      displayVideoCallComponent.value = data.showVideoCall
+      // sync video call state
+      if (data.showVideoCall !== undefined) {
+        displayVideoCallComponent.value = data.showVideoCall
+      }
+    } else {
+      // Admin always stays in video call during session
+      displayVideoCallComponent.value = true
     }
   })
 
@@ -895,6 +987,50 @@ const startTest = async () => {
   setTimeout(() => {
     start.value = false
   }, 1000)
+
+  // Initialize Room defaults for Moderator
+  if (isUserTestAdmin.value) {
+    // Check if valid data exists, otherwise init defaults
+    const snapshot = await get(roomRef)
+    const currentData = snapshot.val() || {}
+
+    const updates = {
+      status: 'active',
+      lastUpdate: Date.now(),
+    }
+
+    if (currentData.globalIndex === undefined) updates.globalIndex = 0
+    if (currentData.taskIndex === undefined) updates.taskIndex = 0
+    if (currentData.showVideoCall === undefined) updates.showVideoCall = false
+    if (currentData.createdAt === undefined) updates.createdAt = Date.now()
+
+    await update(roomRef, updates)
+
+    // Write lastUpdate timestamp when moderator disconnects (server-side timestamp)
+    onDisconnect(roomRef).update({ lastUpdate: serverTimestamp() })
+  }
+}
+
+const MODERATOR_DISCONNECT_TIMEOUT_MS = 5 * 60 * 1000 // 5 minutes
+
+const handleModeratorStatusChange = (connected) => {
+  if (isUserTestAdmin.value) return // Moderator does not need this
+
+  if (!connected) {
+    // Moderator disconnected — start 5-min timeout
+    if (moderatorDisconnectTimeout.value)
+      clearTimeout(moderatorDisconnectTimeout.value)
+    moderatorDisconnectTimeout.value = setTimeout(() => {
+      moderatorInactive.value = true
+    }, MODERATOR_DISCONNECT_TIMEOUT_MS)
+  } else {
+    // Moderator reconnected — clear timeout and dismiss alert instantly
+    if (moderatorDisconnectTimeout.value) {
+      clearTimeout(moderatorDisconnectTimeout.value)
+      moderatorDisconnectTimeout.value = null
+    }
+    moderatorInactive.value = false
+  }
 }
 
 // Scroll to top of the page when step changes
@@ -961,6 +1097,19 @@ const handleTimerStopped = (elapsedTime, idx) => {
   }
 }
 
+const handleTipPressed = (idx) => {
+  if (idx === undefined || idx === null) {
+    return
+  }
+
+  if (!localTestAnswer.tasks?.[idx]) {
+    return
+  }
+
+  const current = Number(localTestAnswer.tasks[idx].tipPressCount || 0)
+  localTestAnswer.tasks[idx].tipPressCount = current + 1
+}
+
 const completeStep = async (id, type, userCompleted = true) => {
   displayVideoCallComponent.value = true
   try {
@@ -988,10 +1137,7 @@ const completeStep = async (id, type, userCompleted = true) => {
     }
     if (type === 'tasks') {
       if (!Array.isArray(localTestAnswer.tasks)) {
-        console.error(
-          'localTestAnswer.tasks is not an array:',
-          localTestAnswer.tasks,
-        )
+        showWarning('Task data is invalid. Please refresh and try again.')
         return
       }
       localTestAnswer.tasks[id].completed = userCompleted
@@ -1040,6 +1186,20 @@ const completeStep = async (id, type, userCompleted = true) => {
       taskIndex: taskIndex.value,
       showVideoCall: true,
     })
+
+    // Update individual participant taskIndex (for tracking)
+    if (!isUserTestAdmin.value && user.value?.id) {
+      const participantRef = dbRef(
+        database,
+        `calls/${roomId.value}/participants/${user.value.id}`,
+      )
+      // We can just update taskIndex.
+      // Note: 'taskIndex' variable here is the NEXT index (already updated above if type=='tasks')
+      // validation: type === 'tasks' ? id + 1 : taskIndex.value
+      await update(participantRef, {
+        taskIndex: taskIndex.value,
+      })
+    }
 
     calculateProgress(localTestAnswer)
     await saveAnswer()
@@ -1112,6 +1272,7 @@ const mappingSteps = async () => {
               postAnswer: '',
               taskTime: 0,
               completed: false,
+              tipPressCount: 0,
               susAnswers: [],
               nasaTlxAnswers: null,
             })
@@ -1170,21 +1331,19 @@ watchEffect(() => {
   if (isUserTestAdmin.value) {
     if (localTestAnswer.submitted) {
       testDisabledReason.value = 'test-already-completed'
-      return true
-    }
-    if (test.value.status !== 'active') {
-      testDisabledReason.value = 'test-not-active'
-      return true
-    }
-    if (
+      isStartTestDisabled.value = true
+      isStartTestDisabled.value = true
+    } else if (
       !test.value.testStructure ||
       Object.keys(test.value.testStructure).length === 0
     ) {
       testDisabledReason.value = 'test-no-tasks-configured'
-      return true
+      isStartTestDisabled.value = true
+    } else {
+      testDisabledReason.value = null
+      isStartTestDisabled.value = false
     }
-    testDisabledReason.value = null
-    return false // Admin can proceed
+    return
   }
   const now = new Date()
   const userSessions = test.value.cooperators.filter(
@@ -1310,10 +1469,41 @@ onMounted(async () => {
   await mappingSteps()
 })
 
+// Auto-join if refresh happens during active call
+watch(
+  isUserTestAdmin,
+  async (newValue) => {
+    if (newValue && roomId.value) {
+      const roomRef = dbRef(database, `rooms/${roomId.value}`)
+      const snapshot = await get(roomRef)
+      if (snapshot.exists()) {
+        const val = snapshot.val()
+        if (val.showVideoCall) {
+          displayVideoCallComponent.value = true
+          start.value = false // Ensure we hide the start screen if it's there
+          await startTest()
+        }
+      }
+    }
+  },
+  { immediate: true },
+)
+
 onBeforeUnmount(async () => {
   const roomRef = dbRef(database, `rooms/${roomId.value}`)
   off(roomRef)
-  await set(roomRef, null)
+  // Do NOT delete the room on unmount (refresh/navigate away). Only explicit end should delete.
+  // await set(roomRef, null)
+
+  // Moderator: explicitly stamp lastUpdate on leave (covers SPA navigation)
+  if (isUserTestAdmin.value) {
+    await update(roomRef, { lastUpdate: serverTimestamp() })
+  }
+
+  if (moderatorDisconnectTimeout.value) {
+    clearTimeout(moderatorDisconnectTimeout.value)
+    moderatorDisconnectTimeout.value = null
+  }
 })
 </script>
 

@@ -1,9 +1,11 @@
 import AnswerController from '@/shared/controllers/AnswerController'
 import HeuristicAnswer from '@/ux/Heuristic/models/HeuristicAnswer'
 import { percentage } from '@/ux/Heuristic/utils/statistics'
+import { formatTimeSpentFromMs } from '@/ux/Heuristic/utils/statistics'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
+import { showError } from '@/shared/utils/toast'
 
 const answerController = new AnswerController()
 
@@ -157,6 +159,16 @@ export default {
 
       return {}
     },
+    allAnswersList(state) {
+      const doc = state.testAnswerDocument
+      if (!doc?.taskAnswers) return []
+      return Object.values(doc.taskAnswers).filter(
+        (answer) =>
+          typeof answer === 'object' &&
+          answer !== null &&
+          answer.hidden !== true,
+      )
+    },
   },
   mutations: {
     SET_ANSWER_DOCUMENT(state, payload) {
@@ -240,8 +252,9 @@ export default {
         const answerDoc =
           await answerController.getAnswerById(currentAnswersDocId)
         commit('SET_ANSWER_DOCUMENT', answerDoc)
-      } catch {
-        // commit("setError", true);
+      } catch (error) {
+        console.error('[Answer Store] Failed to fetch answer document:', error)
+        showError('errors.failedToLoadAnswers')
       } finally {
         commit('setLoading', false)
       }
@@ -250,8 +263,9 @@ export default {
       commit('setLoading', true)
       try {
         await answerController.updateUserAnswer(payload)
-      } catch {
-        // commit("setError", true);
+      } catch (error) {
+        console.error('[Answer Store] Failed to update user answer:', error)
+        throw error
       } finally {
         commit('setLoading', false)
       }
@@ -264,7 +278,8 @@ export default {
           testDocId: payload.test.id,
         })
       } catch (e) {
-        // commit("setError", true);
+        console.error('[Answer Store] Failed to remove cooperator:', e)
+        showError('errors.failedToRemoveCooperator')
       } finally {
         commit('setLoading', false)
       }
@@ -303,8 +318,7 @@ export default {
           })
         }
       } catch (e) {
-        console.error('Error in save test answer', e)
-        // commit("setError", true);
+        console.error('[Answer Store] Failed to save test answer:', e)
         if (payload.errorMessage) {
           commit('SET_TOAST', {
             type: 'error',
@@ -320,7 +334,9 @@ export default {
       commit('setLoading', true)
       try {
         await answerController.updateTaskAnswer(payload, answersDocId)
-      } catch {
+      } catch (error) {
+        console.error('[Answer Store] Failed to update task answer:', error)
+        showError('errors.failedToUpdateAnswer')
       } finally {
         commit('setLoading', false)
       }
@@ -358,6 +374,7 @@ export default {
           value: 'answered',
           align: 'center',
         },
+        { title: 'Total Time', value: 'totalTime', align: 'center' },
         { title: 'Last Update', value: 'lastUpdate', align: 'center' },
       ]
 
@@ -368,11 +385,13 @@ export default {
           let totalNoAplication = 0
           let totalNoReply = 0
           let totalQuestions = 0
+          let totalTimeMs = 0
 
           evaluator.heuristics.forEach((heuristic) => {
             totalNoAplication += heuristic.totalNoAplication
             totalNoReply += heuristic.totalNoReply
             totalQuestions += heuristic.totalQuestions
+            totalTimeMs += Number(heuristic.timeSpentMs || 0)
           })
 
           table.items.push({
@@ -384,6 +403,7 @@ export default {
               totalQuestions - totalNoReply,
               totalQuestions,
             ).toFixed(2),
+            totalTime: formatTimeSpentFromMs(totalTimeMs),
             lastUpdate: new Date(evaluator.lastUpdate).toLocaleString(),
           })
           evaluatorIndex++

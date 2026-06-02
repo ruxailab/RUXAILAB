@@ -111,6 +111,18 @@
       </v-chip>
     </template>
 
+    <template v-if="showActions" #item.actions="{ item }">
+      <v-btn
+        icon
+        variant="text"
+        size="small"
+        color="primary"
+        @click.stop="emitPreview(item)"
+      >
+        <v-icon>mdi-eye</v-icon>
+      </v-btn>
+    </template>
+
     <!-- No Data Slot -->
     <template #no-data>
       <div v-if="isFiltered" class="pa-8 text-center text-medium-emphasis">
@@ -160,15 +172,22 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  showActions: {
+    type: Boolean,
+    default: false,
+  },
 })
 
-const emit = defineEmits(['clicked'])
+const emit = defineEmits(['clicked', 'preview-clicked'])
 
 const { t } = useI18n()
 
 // Composables
 const typeRef = toRef(props, 'type')
-const { headers, getEmptyStateMessage } = useDataTableConfig(typeRef, t)
+const showActionsRef = toRef(props, 'showActions')
+const { headers, getEmptyStateMessage } = useDataTableConfig(typeRef, t, {
+  showActions: showActionsRef,
+})
 const {
   getItemTitle,
   getOwnerName,
@@ -185,6 +204,10 @@ const loadingStudy = computed(() => {
 // Event handlers
 const emitClick = (event, { item }) => {
   emit('clicked', item)
+}
+
+const emitPreview = (item) => {
+  emit('preview-clicked', item)
 }
 </script>
 

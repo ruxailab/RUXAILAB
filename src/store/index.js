@@ -1,8 +1,9 @@
 import { createStore } from 'vuex'
 import Auth from '@/features/auth/store/Auth'
 import Dashboard from '@/features/dashboard/store'
-import Templates from '@/features/templates/Template'
+import Templates from '@/features/templates/store/Template'
 import Tests from '@/store/modules/Study'
+import Storage from '@/store/modules/Storage'
 import Users from '@/features/super/store/User'
 import Reports from '@/shared/store/Report'
 import Heuristic from '@/ux/Heuristic/store/Heuristic'
@@ -81,6 +82,7 @@ export default createStore({
     Dashboard,
     Templates,
     Tests,
+    Storage,
     Users,
     Reports,
     Heuristic,

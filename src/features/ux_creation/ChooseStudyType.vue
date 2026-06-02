@@ -11,7 +11,7 @@
       />
 
       <!-- Options Grid -->
-      <v-row justify="center" class="mb-8">
+      <v-row v-if="selectedOption !== 'template'" justify="center" class="mb-8">
         <v-col
           v-for="option in options"
           :key="option.id"
@@ -59,6 +59,17 @@
         </v-col>
       </v-row>
 
+      <v-row v-if="selectedOption === 'template'" justify="center" class="mb-8">
+        <v-col cols="12" lg="10" xl="8">
+          <CommunityTemplatesSection
+            :selection-mode="true"
+            :include-my-templates="true"
+            :forced-method-filter="studyMethod"
+            @template-selected="selectTemplate"
+          />
+        </v-col>
+      </v-row>
+
       <!-- Back Button -->
       <BackButton :label="$t('studyCreation.backToMethods')" @back="goBack" />
     </v-container>
@@ -70,7 +81,8 @@ import BackButton from '@/features/ux_creation/components/BackButton.vue'
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue'
 import SelectableCard from '@/shared/components/cards/SelectableCard.vue'
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue'
-import { ref, computed } from 'vue'
+import CommunityTemplatesSection from '@/features/navigation/components/navbarSections/CommunityTemplatesSection.vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
@@ -79,6 +91,7 @@ const router = useRouter()
 const store = useStore()
 const { t, tm } = useI18n()
 const selectedOption = ref('')
+const studyMethod = computed(() => store.state.Tests.studyMethod)
 
 const steps = computed(() => [
   { value: 1, title: t('studyCreation.steps.category'), complete: true },
@@ -104,8 +117,8 @@ const options = computed(() => [
     description: t('studyCreation.studyTypes.template.description'),
     icon: 'mdi-clipboard-text-outline',
     color: 'success',
-    recommended: true,
-    disabled: true,
+    recommended: false,
+    disabled: false,
     features: tm('studyCreation.studyTypes.template.features'),
   },
 ])
@@ -113,17 +126,36 @@ const options = computed(() => [
 const selectOption = (optionId) => {
   selectedOption.value = optionId
   store.commit('SET_STUDY_TYPE', optionId)
+  store.commit('SET_SELECTED_TEMPLATE', null)
+
+  if (optionId === 'blank') {
+    router.push({ name: 'study-create-step4' })
+  }
+}
+
+const selectTemplate = (template) => {
+  if (!template) return
+  store.commit('SET_SELECTED_TEMPLATE', template)
   router.push({ name: 'study-create-step4' })
 }
 
 const goBack = () => {
   const method = store.state.Tests.studyMethod
+
+  store.commit('SET_STUDY_TYPE', null)
+  store.commit('SET_SELECTED_TEMPLATE', null)
+
   if (method) {
     router.push({ name: 'study-create-step2' })
   } else {
     router.push({ name: 'study-create-step1' })
   }
 }
+
+onMounted(() => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+  selectedOption.value = store.state.Tests.studyType || ''
+})
 </script>
 
 <style scoped>

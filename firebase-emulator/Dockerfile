@@ -18,19 +18,22 @@ RUN firebase setup:emulators:firestore
 RUN firebase setup:emulators:storage
 RUN firebase setup:emulators:ui
 
-# Mount your firebase project directory to /app when running the container
-# This is the folder containing the firebase.json
-WORKDIR /firebase-emulator
+# Mount the repository to /app when running the container
+WORKDIR /app
 
 # Create a non-root user for running the emulator
 RUN useradd -m -u 1001 firebase
 
-# Copia los archivos de configuración de Firebase al contenedor
-COPY firebase.json .
-COPY firestore.rules .
-COPY firestore.indexes.json .
-COPY storage.rules .
-RUN touch /firebase-emulator/firebase-debug.log && chown firebase:firebase /firebase-emulator/firebase-debug.log
+# Copy emulator config files to the same path used in docker-compose mounts
+COPY firebase.json /app/firebase-emulator/firebase.json
+COPY firestore.rules /app/firebase-emulator/firestore.rules
+COPY firestore.indexes.json /app/firebase-emulator/firestore.indexes.json
+COPY storage.rules /app/firebase-emulator/storage.rules
+
+# Ensure the firebase user can write logs and access the mounted app directory
+RUN mkdir -p /app/firebase-emulator && \
+    touch /app/firebase-emulator/firebase-debug.log && \
+    chown -R firebase:firebase /home/firebase /app
 
 # Expose the emulator ports
 # If you use non standard ports change them to the ones in your firebase.json
@@ -40,4 +43,4 @@ EXPOSE 9099 5001 8081 5002 9199 4000 4400 4500 9150 5007
 # When startup of the container is complete this is the command that will be executed
 # In our case we want to start the firebase emulator suite
 USER firebase
-CMD ["firebase", "emulators:start", "--project", "retlab-dev"]
+CMD ["firebase", "emulators:start", "--project", "retlab-dev", "--config", "/app/firebase-emulator/firebase.json"]

@@ -21,6 +21,7 @@ export default {
     studyCategory: null,
     studyMethod: null,
     studyType: null,
+    selectedTemplate: null,
   },
   getters: {
     tests(state) {
@@ -58,6 +59,11 @@ export default {
     SET_PUBLIC_TESTS(state, payload) {
       state.publicTests = payload
     },
+    SET_TEST_EVALUATOR_INFO(state, payload) {
+      if (state.Test) {
+        state.Test.evaluatorInfo = payload
+      }
+    },
     SET_TEST_STRUCTURE(state, payload) {
       state.testStructure = { ...payload }
     },
@@ -82,10 +88,14 @@ export default {
     SET_STUDY_TYPE(state, payload) {
       state.studyType = payload
     },
+    SET_SELECTED_TEMPLATE(state, payload) {
+      state.selectedTemplate = payload
+    },
     RESET_STUDY_DETAILS(state) {
-      ;(state.studyCategory = null),
+      ;((state.studyCategory = null),
         (state.studyMethod = null),
-        (state.studyType = null)
+        (state.studyType = null),
+        (state.selectedTemplate = null))
     },
     SET_CALIBRATION_CONFIG(state, payload) {
       if (state.Test) {
@@ -158,6 +168,7 @@ export default {
           errorCode: 'studyError',
           message: err,
         })
+        return null
       } finally {
         commit('setLoading', false)
       }

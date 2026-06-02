@@ -43,10 +43,38 @@
       "fair": "Mittel",
       "good": "Gut",
       "strong": "Stark"
-    }
+    },
+    "emailNotVerified": "E-Mail nicht verifiziert",
+    "verificationEmailSent": "Bestätigungs-E-Mail erfolgreich versendet!",
+    "errorSendingVerification": "Fehler beim Versenden der Bestätigungs-E-Mail",
+    "verifyEmailTitle": "Verifizieren Sie Ihre E-Mail",
+    "verifyEmailSubtitle": "Wir haben einen Bestätigungslink an Ihre E-Mail gesendet",
+    "emailLabel": "E-Mail",
+    "verifyingEmail": "Verifizierung...",
+    "emailAlreadyVerified": "E-Mail bereits verifiziert?",
+    "emailVerified": "E-Mail erfolgreich verifiziert!",
+    "checkEmailTitle": "Überprüfen Sie Ihre E-Mail",
+    "checkEmailStep1": "Überprüfen Sie Ihren Posteingang auf eine Bestätigungs-E-Mail",
+    "checkEmailStep2": "Klicken Sie auf den Link in der E-Mail, um Ihr Konto zu verifizieren",
+    "checkEmailStep3": "Kehren Sie hier zurück und Ihr Konto wird verifiziert",
+    "checkSpamFolder": "Nicht gesehen? Überprüfen Sie Ihren Spam-Ordner",
+    "resending": "Wird erneut gesendet...",
+    "resendEmail": "E-Mail erneut senden",
+    "changeEmail": "E-Mail ändern",
+    "continueToDashboard": "Weiter zum Dashboard",
+    "signOut": "Abmelden",
+    "newEmail": "Neue E-Mail",
+    "enterNewEmail": "Geben Sie Ihre neue E-Mail-Adresse ein",
+    "saving": "Wird gespeichert...",
+    "errorCheckingVerification": "Fehler beim Überprüfen des Verifizierungsstatus",
+    "errorResendingEmail": "Fehler beim erneuten Versenden der Bestätigungs-E-Mail",
+    "invalidEmail": "Ungültige E-Mail-Adresse",
+    "emailUpdatedVerification": "E-Mail aktualisiert! Wir haben einen Bestätigungslink an Ihre neue E-Mail gesendet.",
+    "errorUpdatingEmail": "Fehler beim Aktualisieren der E-Mail"
   },
   "common": {
     "enterTextHere": "Text hier eingeben...",
+    "percentValue": "{value}%",
     "units": {
       "mb": "MB",
       "gb": "GB"
@@ -59,6 +87,11 @@
     "editAndInvite": "Bearbeiten und Personen zu Ihrem Test einladen",
     "analyzeProject": "Projekt und Evaluatoren analysieren",
     "comment": "Kommentar",
+    "comments": "Kommentare",
+    "image": "Bild",
+    "images": "Bilder",
+    "close": "Schließen",
+    "selectImage": "Wählen Sie ein Bild zum Hochladen",
     "inputImage": "Geben Sie ein Bild Ihrer Wahl zum Thema ein",
     "title": "Titel",
     "description": "Beschreibung",
@@ -75,6 +108,7 @@
     "markAllAsRead": "Alle als gelesen markieren",
     "caughtUp": "Du bist auf dem Laufenden",
     "noNewNotifications": "Keine neuen Benachrichtigungen",
+    "notificationBell": "Benachrichtigungsglocke",
     "unread": "ungelesen",
     "inbox": "Posteingang",
     "timeAgo": {
@@ -112,6 +146,7 @@
     "user": "Benutzer",
     "id": "ID",
     "itemsPerPage": "Elemente pro Seite:",
+    "saving": "Wird gespeichert...",
     "visible": "Sichtbar"
   },
   "storage": {
@@ -248,7 +283,8 @@
       "viewEditProfile": "Sieh dir deine Profilinformationen an und bearbeite diese",
       "exploreCommunityStudies": "Erkunde Studien, die von der RUXAI-Community geteilt wurden",
       "browseCommunityTemplates": "Durchsuche Vorlagen, die von der RUXAI-Community beigesteuert wurden"
-    }
+    },
+    "helpButton": "Hilfe-Schaltfläche"
   },
   "profile": {
     "title": "Profil",
@@ -342,7 +378,8 @@
       "Settings": "Einstellungen",
       "name": "Name",
       "studiesCount": "Studienanzahl",
-      "mediaSize": "Mediengröße"
+      "mediaSize": "Mediengröße",
+      "toggleMiniMode": "Mini-Modus umschalten"
     },
     "heuristic": "Usability-Heuristik-Evaluation"
   },
@@ -382,8 +419,12 @@
     "incorrectPassword": "Falsches Passwort",
     "incorrectCredential": "Falscher Benutzername oder Passwort.",
     "globalError": "Ein Fehler ist aufgetreten, entschuldigen Sie die Unannehmlichkeiten.",
+    "cameraPermissionDenied": "Der Zugriff auf die Kamera ist erforderlich, um fortzufahren. Bitte erlauben Sie den Kamerazugriff in den Browser-Einstellungen.",
     "sendError": "Einladung konnte nicht gesendet werden. Bitte versuchen Sie es erneut",
-    "missingVariableTitles": "Kann nicht speichern: Einige Variablen fehlen Titel"
+    "missingVariableTitles": "Kann nicht speichern: Einige Variablen fehlen Titel",
+    "failedToLoadAnswers": "Fehler beim Laden der Antworten",
+    "failedToUpdateAnswer": "Fehler beim Aktualisieren der Antwort",
+    "failedToSaveAnswerCooperator": "Fehler beim Speichern der Cooperator-Antwort"
   },
   "Introduction": {
     "title": "UX Remote LAB",
@@ -536,7 +577,10 @@
       "updatedProgress": "hat seinen Fortschritt aktualisiert",
       "invitationSentTitle": "Einladung gesendet",
       "invitationPendingDesc": "Einladung ausstehend für",
-      "pendingStatus": "Ausstehend"
+      "pendingStatus": "Ausstehend",
+      "evaluatorInfo": "Evaluator-Info",
+      "evaluatorInfoEmpty": "Keine Informationsabschnitte. Fügen Sie welche hinzu.",
+      "evaluatorInfoSeeAll": "Alle {count} Abschnitte anzeigen"
     },
     "managerView": {
       "heuristicStudy": "Heuristische Studie",
@@ -598,7 +642,8 @@
       "changeWeights": "Beachten Sie, dass sich die Gewichte NICHT automatisch ändern, wenn Sie die Reihenfolge der Heuristiken ändern. Sie müssen sie manuell ändern.",
       "noDescriptions": "Keine Beschreibungen verfügbar",
       "startAddingQuestions": "Beginnen Sie, indem Sie Ihre erste Frage zu dieser Heuristik hinzufügen",
-      "cantDeleteAllQuestions": "Entschuldigung, Sie können nicht alle Fragen von einer Heuristik löschen"
+      "cantDeleteAllQuestions": "Entschuldigung, Sie können nicht alle Fragen von einer Heuristik löschen",
+      "studyHasAnswers": "This study has answers"
     },
     "validation": {
       "nameRequired": "Name ist obligatorisch",
@@ -610,7 +655,14 @@
     "AddCommentBtn": {
       "showComment": "Kommentar anzeigen",
       "addComment": "Kommentar hinzufügen",
+      "addAnotherComment": "Weiteren Kommentar hinzufügen",
+      "addNewComment": "Neuen Kommentar hinzufügen",
       "hideTextArea": "Textbereich ausblenden"
+    },
+    "ImportImage": {
+      "uploadSuccess": "Bild erfolgreich hochgeladen",
+      "uploadError": "Fehler beim Hochladen des Bildes",
+      "imagesCount": "{count} Bild(er) angehängt"
     },
     "errors": {
       "failedToLoadQuestionForm": "Fehler beim Laden des Frageformulars. Bitte versuchen Sie es erneut.",
@@ -622,6 +674,12 @@
       "question": "Frage",
       "questions": "Fragen"
     }
+  },
+  "HeuristicsAnalytics": {
+    "dataTable": "Datentabelle",
+    "chart": "Diagramm",
+    "userUploadedContent": "Vom Benutzer hochgeladener Inhalt",
+    "userUploadedAttachment": "Vom Benutzer hochgeladener Anhang"
   },
   "HeuristicsOptionsTable": {
     "titles": {
@@ -653,11 +711,13 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "Einstellungen",
-      "confirmUpload": "Upload bestätigen"
+      "confirmUpload": "Upload bestätigen",
+      "enableWeights": "Gewichtungsfunktion aktivieren"
     },
     "messages": {
       "acceptCsv": "Wenn Sie akzeptieren, werden alle Ihre vorhandenen Heuristiken durch die in der .csv-Datei ersetzt.",
-      "noCsvFileSelected": "Keine CSV-Datei ausgewählt. \nBitte wählen Sie eine aus, bevor Sie fortfahren."
+      "noCsvFileSelected": "Keine CSV-Datei ausgewählt. \nBitte wählen Sie eine aus, bevor Sie fortfahren.",
+      "enableWeightsDescription": "Ermöglichen Sie es Bewertern, Gewichte für Heuristiken in dieser Studie zuzuordnen"
     },
     "placeHolders": {
       "importCsv": "Importieren Sie Ihre CSV-Testdatei hier."
@@ -705,7 +765,9 @@
       "options": "Optionen",
       "weights": "Gewichte",
       "settings": "Einstellungen"
-    }
+    },
+    "previewPageTitle": "Preview test",
+    "previewPageSubtitle": "Review the test configuration in read-only mode"
   },
   "HeuristicsTestAnswer": {
     "titles": {
@@ -825,6 +887,7 @@
       "remove_cooperator": "Sind Sie sicher, dass Sie {email} aus den Mitarbeitern entfernen möchten?",
       "cancel_invitation": "Sind Sie sicher, dass Sie {email} aus den Mitarbeitern stornieren möchten?",
       "change_role": "Sind Sie sicher, dass Sie die Rolle von {email} von {old} zu {new} ändern möchten?",
+      "change_role_title": "Rolle ändern",
       "message_title_hint": "Geben Sie einen Titel für Ihre Nachricht ein",
       "message_content_hint": "Geben Sie den Inhalt Ihrer Nachricht ein",
       "invite_message": "Sie wurden eingeladen, an '{testTitle}' mitzuarbeiten",
@@ -910,7 +973,8 @@
     "validation": {
       "fieldRequired": "Feld Erforderlich",
       "validUrl": "Muss eine gültige URL sein, die mit http:// oder https:// beginnt",
-      "positiveNumber": "Muss eine positive Zahl sein"
+      "positiveNumber": "Muss eine positive Zahl sein",
+      "minOne": "Wert muss mindestens 1 sein"
     },
     "basicInfo": {
       "stepTitle": "Schritt 1: Grundlegende Aufgabeninformationen",
@@ -952,6 +1016,68 @@
       "tam2": "TAM-2 (Erweitert) - fügt externe Einflüsse und Ergebnis-Demonstrierbarkeit hinzu",
       "tam3": "TAM-3 (Umfassend) - umfasst Angst, Spielfreude und objektive Benutzerfreundlichkeit",
       "sart": "Situationsbewusstsein-Bewertungstechnik - misst das situative Bewusstsein"
+    },
+    "answerTypePreview": {
+      "postTest": {
+      "title": "Feedback nach dem Test",
+      "q1": "Bewerten Sie Ihre Erfahrung",
+      "q2": "Wie fanden Sie das Produkt während des Betatests?",
+      "feedbackPlaceholder": "Das Produkt hatte eine flüssige Benutzeroberfläche, war aber an einigen Stellen langsam."
+      },
+      "taskCompleted": "Aufgabe abgeschlossen! Kein zusätzliches Feedback erforderlich.",
+      "participantsFeedbackHere": "Teilnehmer geben hier ihr Feedback ab...",
+      "submitFeedback": "Feedback Absenden",
+      "postTaskQuestions": "Post-Aufgaben-Fragen",
+      "rateTaskDifficulty": "1. Wie würden Sie die Schwierigkeit dieser Aufgabe bewerten?",
+      "additionalComments": "2. Zusätzliche Kommentare?",
+      "optionalFeedback": "Optionales Feedback...",
+      "externalFormTitle": "Externes Formular",
+      "externalFormDescription": "Teilnehmer werden nach der Aufgabe zu einem externen Formular weitergeleitet.",
+      "openExternalForm": "Externes Formular Öffnen",
+      "nasaTlxTitle": "NASA-Aufgabenlast-Index",
+      "mentalDemand": "Mentale Anforderung",
+      "physicalDemand": "Physische Anforderung",
+      "lowHigh": "Niedrig - Hoch",
+      "moreDimensions": "+ 4 weitere Dimensionen",
+      "susTitle": "System-Usability-Skala",
+      "susStatement1": "1. Ich denke, dass ich dieses System häufig verwenden möchte.",
+      "stronglyDisagree": "Stimme Überhaupt Nicht Zu",
+      "stronglyAgree": "Stimme Voll Zu",
+      "moreStatements": "+ 9 weitere Aussagen",
+      "sartTitle": "Situationsbewusstseins-Bewertungstechnik",
+      "instability": "Instabilität der Situation",
+      "complexity": "Komplexität der Situation",
+      "veryStable": "Sehr Stabil",
+      "veryUnstable": "Sehr Instabil",
+      "verySimple": "Sehr Einfach",
+      "veryComplex": "Sehr Komplex",
+      "moreSartDimensions": "+ 8 weitere SART-Dimensionen",
+      "tam1Title": "TAM-1: Akzeptanzmodell für Technologie (Basis)",
+      "tam1Subtitle": "10 Items in 2 Dimensionen",
+      "perceivedUsefulness": "Wahrgenommene Nützlichkeit (5 Items)",
+      "perceivedEaseOfUse": "Wahrgenommene Benutzerfreundlichkeit (5 Items)",
+      "tam1Statement1": "1. Die Nutzung des Systems verbessert meine Arbeitsleistung.",
+      "tam1Statement6": "6. Das System ist einfach zu bedienen.",
+      "tam2Title": "TAM-2: Akzeptanzmodell für Technologie (Erweitert)",
+      "tam2Subtitle": "25 Items in 7 Dimensionen",
+      "tam2Description": "Teilnehmer bewerten 25 Aussagen auf einer 5-stufigen Likert-Skala (Stimme überhaupt nicht zu - Stimme voll zu)",
+      "tam3Title": "TAM-3: Akzeptanzmodell für Technologie (Umfassend)",
+      "tam3Subtitle": "39 Items in 13 Dimensionen",
+      "tam3Description": "Umfassende Bewertung mit 39 Aussagen in 13 Dimensionen auf einer 5-stufigen Likert-Skala",
+      "selectType": "Wählen Sie einen Antworttyp aus, um die Vorschau anzuzeigen",
+      "perceivedUsefulnessShort": "Wahrgenommene Nützlichkeit",
+      "perceivedEaseOfUseShort": "Wahrgenommene Benutzerfreundlichkeit",
+      "subjectiveNorm": "Subjektive Norm",
+      "image": "Image",
+      "jobRelevance": "Job-Relevanz",
+      "outputQuality": "Output-Qualität",
+      "resultDemonstrability": "Ergebnis-Demonstrierbarkeit",
+      "computerSelfEfficacy": "Computer-Selbstwirksamkeit",
+      "externalControl": "Externe Kontrolle",
+      "anxiety": "Angst",
+      "playfulness": "Spielfreude",
+      "enjoyment": "Vergnügen",
+      "objectiveUsability": "Objektive Benutzerfreundlichkeit"
     },
     "advanced": {
       "stepTitle": "Schritt 3: Erweiterte Optionen",
@@ -1002,29 +1128,6 @@
         "camera": "Kamera",
         "audio": "Audio"
       }
-    },
-    "answerTypePreview": {
-      "taskCompleted": "Aufgabe abgeschlossen! Kein zusätzliches Feedback erforderlich.",
-      "participantsFeedbackHere": "Teilnehmer geben hier ihr Feedback ab...",
-      "submitFeedback": "Feedback Absenden",
-      "postTaskQuestions": "Post-Aufgaben-Fragen",
-      "rateTaskDifficulty": "1. Wie würden Sie die Schwierigkeit dieser Aufgabe bewerten?",
-      "additionalComments": "2. Zusätzliche Kommentare?",
-      "optionalFeedback": "Optionales Feedback...",
-      "externalFormTitle": "Externes Formular",
-      "externalFormDescription": "Teilnehmer werden nach der Aufgabe zu einem externen Formular weitergeleitet.",
-      "openExternalForm": "Externes Formular Öffnen",
-      "nasaTlxTitle": "NASA-Aufgabenlast-Index",
-      "mentalDemand": "Mentale Anforderung",
-      "physicalDemand": "Physische Anforderung",
-      "lowHigh": "Niedrig - Hoch",
-      "moreDimensions": "+ 4 weitere Dimensionen",
-      "susTitle": "System-Usability-Skala",
-      "susStatement1": "1. Ich denke, dass ich dieses System häufig verwenden möchte.",
-      "stronglyDisagree": "Stimme Überhaupt Nicht Zu",
-      "stronglyAgree": "Stimme Voll Zu",
-      "moreStatements": "+ 9 weitere Aussagen",
-      "sartTitle": "Situationsbewusstseins-Bewertungstechnik"
     }
   },
   "UserTestView": {
@@ -1157,6 +1260,44 @@
       "note": "Ihre Rolle besteht darin, zu fördern und zu beobachten. Der Teilnehmer sollte die Aufgaben selbstständig erledigen, es sei denn, er bittet ausdrücklich um Hilfe.",
       "startSession": "Moderierte Sitzung starten"
     },
+    "VideoCallPanel": {
+      "toolsPanelTitle": "Werkzeugbereich",
+      "sessionControl": "Sitzungssteuerung",
+      "joinRoomInfo": "Die Steuerung zum Beitreten befindet sich jetzt oben in der Hauptoberflaeche",
+      "proceedNextStep": "Zum naechsten Schritt",
+      "endCall": "Anruf beenden",
+      "activeCall": "Aktiver Anruf",
+      "participants": "Teilnehmer",
+      "you": "Du",
+      "observator": "Beobachter",
+      "moderator": "Moderator",
+      "connected": "Verbunden",
+      "disconnected": "Getrennt",
+      "camera": "Kamera",
+      "noCamera": "Keine Kamera",
+      "microphone": "Mikrofon",
+      "noMicrophone": "Kein Mikrofon",
+      "settings": "Einstellungen",
+      "disableCamera": "Kamera ausschalten",
+      "enableCamera": "Kamera einschalten",
+      "muteMicrophone": "Mikrofon stummschalten",
+      "unmuteMicrophone": "Mikrofon aktivieren",
+      "stopScreenShare": "Bildschirmfreigabe beenden",
+      "shareScreen": "Bildschirm freigeben",
+      "moderatorOnlySteps": "Nur der Moderator kann Schritte aendern"
+    },
+    "VideoCall": {
+      "screenSharingLabel": "Bildschirm wird geteilt",
+      "cameraOff": "Kamera ist aus",
+      "yourVideo": "Dein Video",
+      "yourPreview": "Deine Vorschau",
+      "observatorMode": "Beobachtermodus",
+      "waitingForModeratorToStartSession": "Warte darauf, dass der Moderator die Sitzung startet...",
+      "observeAllFeedsNotice": "Du kannst alle Video-Feeds beobachten, ohne deinen eigenen zu senden.",
+      "waitingForParticipants": "Warte auf Teilnehmer...",
+      "waitingForModerator": "Warte auf Moderator...",
+      "autoStartWhenModeratorOpensRoom": "Der Videoanruf startet automatisch, wenn der Moderator den Raum oeffnet."
+    },
     "WelcomeStep": {
       "welcome": "Willkommen bei RUXAILAB!",
       "description": "Sie werden an einem Benutzertest teilnehmen, der die Benutzerfreundlichkeit und Verständlichkeit einer digitalen Anwendung bewertet. Diese Art von Test hilft uns, mögliche technologische Barrieren zu erkennen und die Erfahrung für alle zu verbessern.",
@@ -1176,7 +1317,8 @@
     "PreTasksStep": {
       "title": "Aufgaben",
       "heading": "Beginnen wir mit der Aufgabenphase",
-      "description": "Sie werden <strong>{numTasks}</strong> Aufgaben im Zusammenhang mit der Nutzung des Tools abschließen. Es gibt keine richtigen oder falschen Antworten: Was zählt, ist, wie Sie interagieren.",
+      "description": "Sie werden",
+      "tasksSuffix": "Aufgaben im Zusammenhang mit der Nutzung des Tools abschließen. Es gibt keine richtigen oder falschen Antworten – entscheidend ist Ihre Interaktion.",
       "instruction": "Wenn Sie bereit sind, klicken Sie auf die Schaltfläche, um zu beginnen.",
       "startButton": "Aufgaben starten",
       "recordingTitle": "Aufzeichnungsinformationen",
@@ -1211,6 +1353,47 @@
     "inProgress": "Kalibrierung läuft...",
     "completed": "Kalibrierung abgeschlossen!",
     "continue": "Zum Test fortfahren"
+  },
+  "EyeTrackingConfig": {
+    "titles": {
+      "main": "Blickverfolgungs-Konfigurationen",
+      "general": "Allgemeine Konfiguration",
+      "miscellaneous": "Verschiedene Konfigurationen"
+    },
+    "labels": {
+      "pointNumber": "Punktanzahl",
+      "samplesPerPoint": "Proben pro Punkt",
+      "msPerPoint": "Millisekunden pro Punktaufnahme",
+      "threshold": "Punktabstandsschwelle",
+      "radius": "Radius",
+      "offset": "Offset",
+      "control": "Steuerung:",
+      "useCustomColors": "Benutzerdefinierte Farben verwenden",
+      "backgroundColor": "Hintergrundfarbe:",
+      "pointColor": "Punktfarbe:",
+      "modelSelection": "Modellauswahl:",
+      "selectModel": "Modell auswählen",
+      "note": "Hinweis:",
+      "noteText": "Das ausgewählte Modell wird für den Kalibrierungsprozess verwendet. Das Standardmodell ist die lineare Regression. Einige Modelle benötigen möglicherweise länger zum Trainieren als andere. Bitte haben Sie Geduld."
+    },
+    "tooltips": {
+      "pointNumber": "Anzahl der auf dem Bildschirm angezeigten Kalibrierungspunkte (mehr Punkte = höhere Genauigkeit).",
+      "samplesPerPoint": "Wie viele Blickproben pro Kalibrierungspunkt gesammelt werden. Höhere Werte verbessern die Präzision, erhöhen aber die Dauer.",
+      "msPerPoint": "Dauer (in Millisekunden) zur Erfassung der Daten pro Punkt. Legt fest, wie lange der Benutzer auf jedes Ziel schauen muss.",
+      "threshold": "Maximal zulässiger Abstand (in Pixeln) zwischen Kalibrierungsproben, bevor diese verworfen werden. Steuert die räumliche Toleranz.",
+      "radius": "Passen Sie den Radius des Kalibrierungspunkts an. Größere Werte machen den Punkt größer.",
+      "offset": "Offset (in Pixeln) zur Anpassung der Position des Kalibrierungsbereichs."
+    },
+    "models": {
+      "linear": "Lineare Regression",
+      "ridge": "Ridge-Regression",
+      "lasso": "Lasso-Regression",
+      "elastic": "Elastic Net",
+      "bayesian": "Bayesian Ridge",
+      "sgd": "SGD-Regressor",
+      "svr": "Support Vector Regressor",
+      "rfr": "Random Forest Regressor"
+    }
   },
   "AccessNotAllowed": {
     "notAllowed": "Zugriff nicht erlaubt",
@@ -1356,6 +1539,18 @@
         "manualAccessibility": "Manuelle Barrierefreiheit",
         "automaticAccessibility": "Automatische Barrierefreiheit",
         "all": "Alle"
+      },
+      "unsupportedPreviewType": "Unsupported template type for preview.",
+      "config": {
+        "title": "Template Config",
+        "ownerOnly": "Configuration editing is restricted to template owner.",
+        "version": "Version",
+        "visibility": "Visibility",
+        "owner": "Owner",
+        "public": "Public",
+        "private": "Private",
+        "saved": "Template configuration updated successfully",
+        "saveError": "Failed to update template configuration"
       }
     },
     "createTest": {
@@ -1392,12 +1587,15 @@
       "perform_common_tasks": "Führen Sie häufige Aufgaben sofort aus",
       "delete_warning": "Alle zugehörigen Daten, Ergebnisse und Konfigurationen gehen für immer verloren.",
       "delete_forever": "Endgültig löschen",
+      "action_cannot_be_undone": "Diese Aktion kann nicht rückgängig gemacht werden",
       "confirm_deletion": "Löschen bestätigen"
     },
     "editTest": {
       "title": "Test bearbeiten",
       "description": "Passen Sie die Einstellungen und Vorlieben Ihres Tests an.",
-      "updatedTest": "Test erfolgreich aktualisiert"
+      "updatedTest": "Test erfolgreich aktualisiert",
+      "previewTitle": "Preview test",
+      "previewDescription": "Review the test in read-only mode."
     },
     "cooperators": {
       "invitationSent": "Einladung erfolgreich gesendet"
@@ -1419,6 +1617,7 @@
     "deleteAccount": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
     "genericSuccess": "Vorgang erfolgreich",
     "savedChanges": "Änderungen erfolgreich gespeichert",
+    "errorSavingProgress": "Fehler beim Speichern des Fortschritts",
     "deleteUser": "Sind Sie sicher, dass Sie diesen Benutzer löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
   },
   "buttons": {
@@ -2227,5 +2426,32 @@
       }
     },
     "title": "Datenschutzerklärung"
+  },
+  "EvaluatorInfoView": {
+    "pageTitle": "Informationen für Evaluatoren",
+    "pageSubtitle": "Erstellen Sie Informationsabschnitte, die Evaluatoren vor dem Test sehen"
+  },
+  "EvaluatorInfoEditor": {
+    "title": "Informationen für Evaluatoren",
+    "subtitle": "Erstellen Sie Informationsabschnitte, die Evaluatoren vor dem Test sehen",
+    "noSections": "Keine Abschnitte. Fügen Sie einen hinzu.",
+    "untitledSection": "Abschnitt ohne Titel",
+    "addSection": "Abschnitt hinzufügen",
+    "sectionTitle": "Abschnittstitel",
+    "sectionContent": "Inhalt",
+    "sectionType": "Typ",
+    "types": {
+      "info": "Information",
+      "warning": "Warnung",
+      "tip": "Tipp"
+    },
+    "save": "Speichern",
+    "cancel": "Abbrechen"
+  },
+  "EvaluatorInfoDisplay": {
+    "title": "Bevor Sie beginnen",
+    "subtitle": "Bitte lesen Sie die folgenden Informationen vor der Evaluation",
+    "startButton": "Evaluation starten",
+    "noContent": "Keine zusätzlichen Informationen."
   }
 }

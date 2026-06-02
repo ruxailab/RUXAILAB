@@ -19,7 +19,9 @@
             playsinline
             class="video-element"
           ></video>
-          <div class="video-label">Compartilhando tela</div>
+          <div class="video-label">
+            {{ t('UserTestView.VideoCall.screenSharingLabel') }}
+          </div>
         </div>
       </v-col>
 
@@ -42,7 +44,9 @@
                 <v-icon size="64" color="white" class="mb-2"
                   >mdi-video-off</v-icon
                 >
-                <p class="text-white">Camera is off</p>
+                <p class="text-white">
+                  {{ t('UserTestView.VideoCall.cameraOff') }}
+                </p>
               </div>
 
               <!-- Microphone muted indicator -->
@@ -51,7 +55,9 @@
               </div>
 
               <div class="video-label">
-                Tu video ({{ user?.email?.split('@')[0] }})
+                {{ t('UserTestView.VideoCall.yourVideo') }} ({{
+                  user?.email?.split('@')[0]
+                }})
               </div>
             </div>
           </div>
@@ -79,7 +85,9 @@
                 <v-icon size="64" color="white" class="mb-2"
                   >mdi-video-off</v-icon
                 >
-                <p class="text-white">Camera is off</p>
+                <p class="text-white">
+                  {{ t('UserTestView.VideoCall.cameraOff') }}
+                </p>
               </div>
 
               <!-- Microphone muted indicator for remote peer -->
@@ -100,7 +108,9 @@
             class="d-flex align-center justify-center pa-4 text-grey"
           >
             <v-icon class="mr-2">mdi-account-clock</v-icon>
-            <span>Waiting for participants...</span>
+            <span>{{
+              t('UserTestView.VideoCall.waitingForParticipants')
+            }}</span>
           </div>
         </div>
       </v-col>
@@ -126,7 +136,9 @@
                 <v-icon size="64" color="white" class="mb-2"
                   >mdi-video-off</v-icon
                 >
-                <p class="text-white">Camera is off</p>
+                <p class="text-white">
+                  {{ t('UserTestView.VideoCall.cameraOff') }}
+                </p>
               </div>
 
               <!-- Microphone muted indicator -->
@@ -135,7 +147,9 @@
               </div>
 
               <div class="video-label">
-                Your preview ({{ user?.email?.split('@')[0] }})
+                {{ t('UserTestView.VideoCall.yourPreview') }} ({{
+                  user?.email?.split('@')[0]
+                }})
               </div>
             </div>
           </div>
@@ -150,13 +164,14 @@
       >
         <div class="observator-notice">
           <v-icon size="64" color="primary" class="mb-4">mdi-eye</v-icon>
-          <h3 class="text-h5 mb-2">Observator Mode</h3>
+          <h3 class="text-h5 mb-2">
+            {{ t('UserTestView.VideoCall.observatorMode') }}
+          </h3>
           <p class="text-body-1">
-            Waiting for moderator to start the session...
+            {{ t('UserTestView.VideoCall.waitingForModeratorToStartSession') }}
           </p>
           <p class="text-body-2 text-grey mt-2">
-            You will be able to observe all video feeds without sending your
-            own.
+            {{ t('UserTestView.VideoCall.observeAllFeedsNotice') }}
           </p>
         </div>
       </v-col>
@@ -178,10 +193,11 @@
             color="primary"
             class="mb-4"
           ></v-progress-circular>
-          <h3 class="text-h6 mb-2">Waiting for moderator...</h3>
+          <h3 class="text-h6 mb-2">
+            {{ t('UserTestView.VideoCall.waitingForModerator') }}
+          </h3>
           <p class="text-body-2 text-grey">
-            The video call will start automatically when the moderator opens the
-            room.
+            {{ t('UserTestView.VideoCall.autoStartWhenModeratorOpensRoom') }}
           </p>
         </div>
       </v-col>
@@ -367,7 +383,7 @@
     <!-- Side Panel -->
     <div class="side-panel" :class="{ 'side-panel-open': showSidePanel }">
       <div class="side-panel-header">
-        <h3>Panel de Herramientas</h3>
+        <h3>{{ t('UserTestView.VideoCallPanel.toolsPanelTitle') }}</h3>
         <v-btn
           icon
           size="small"
@@ -382,7 +398,7 @@
       <div class="side-panel-content">
         <!-- Session Controls Section -->
         <div class="panel-section">
-          <h4>Control de Sesión</h4>
+          <h4>{{ t('UserTestView.VideoCallPanel.sessionControl') }}</h4>
 
           <!-- Connection controls when call is not started -->
           <div v-if="!callStarted" class="session-controls">
@@ -390,7 +406,7 @@
             <div v-if="!caller" class="participant-info">
               <p class="text-body-2 mb-0">
                 <v-icon start size="16">mdi-information</v-icon>
-                Join room controls are now in the main interface above
+                {{ t('UserTestView.VideoCallPanel.joinRoomInfo') }}
               </p>
             </div>
           </div>
@@ -407,11 +423,12 @@
               @click="proceedToNextStep"
             >
               <v-icon start>mdi-arrow-right</v-icon>
-              Proceed to Next Step
+              {{ t('UserTestView.VideoCallPanel.proceedNextStep') }}
             </v-btn>
 
             <!-- End call button -->
             <v-btn
+              v-if="!isObservator"
               color="error"
               size="large"
               block
@@ -419,21 +436,21 @@
               @click="endCall"
             >
               <v-icon start>mdi-phone-hangup</v-icon>
-              End Call
+              {{ t('UserTestView.VideoCallPanel.endCall') }}
             </v-btn>
 
             <!-- Call status -->
             <div class="status-message">
               <v-chip color="green" size="small" class="mb-2">
                 <v-icon start size="16">mdi-phone</v-icon>
-                Llamada activa
+                {{ t('UserTestView.VideoCallPanel.activeCall') }}
               </v-chip>
             </div>
           </div>
         </div>
 
         <div class="panel-section">
-          <h4>Participantes</h4>
+          <h4>{{ t('UserTestView.VideoCallPanel.participants') }}</h4>
           <div
             v-for="participant in participantsList"
             :key="participant.id"
@@ -459,14 +476,19 @@
             </v-avatar>
             <div class="participant-info">
               <span class="participant-name">
-                {{ participant.name }}{{ participant.isSelf ? ' (Tú)' : '' }}
+                {{
+                  participant.name +
+                  (participant.isSelf
+                    ? ` (${t('UserTestView.VideoCallPanel.you')})`
+                    : '')
+                }}
                 <v-chip
                   v-if="participant.role === 'observator'"
                   size="x-small"
                   color="orange"
                   class="ml-1"
                 >
-                  Observador
+                  {{ t('UserTestView.VideoCallPanel.observator') }}
                 </v-chip>
                 <v-chip
                   v-else-if="participant.role === 'moderator'"
@@ -474,7 +496,7 @@
                   color="blue"
                   class="ml-1"
                 >
-                  Moderador
+                  {{ t('UserTestView.VideoCallPanel.moderator') }}
                 </v-chip>
               </span>
               <div class="participant-status">
@@ -482,7 +504,11 @@
                   size="x-small"
                   :color="participant.connected ? 'green' : 'grey'"
                 >
-                  {{ participant.connected ? 'Conectado' : 'Desconectado' }}
+                  {{
+                    participant.connected
+                      ? t('UserTestView.VideoCallPanel.connected')
+                      : t('UserTestView.VideoCallPanel.disconnected')
+                  }}
                 </v-chip>
                 <v-chip
                   v-if="participant.isSelf && !isObservator"
@@ -490,7 +516,11 @@
                   :color="participant.hasCamera ? 'green' : 'red'"
                   class="ml-1"
                 >
-                  {{ participant.hasCamera ? 'Cámara' : 'Sin cámara' }}
+                  {{
+                    participant.hasCamera
+                      ? t('UserTestView.VideoCallPanel.camera')
+                      : t('UserTestView.VideoCallPanel.noCamera')
+                  }}
                 </v-chip>
                 <v-chip
                   v-if="participant.isSelf && !isObservator"
@@ -499,7 +529,9 @@
                   class="ml-1"
                 >
                   {{
-                    participant.hasMicrophone ? 'Micrófono' : 'Sin micrófono'
+                    participant.hasMicrophone
+                      ? t('UserTestView.VideoCallPanel.microphone')
+                      : t('UserTestView.VideoCallPanel.noMicrophone')
                   }}
                 </v-chip>
               </div>
@@ -507,8 +539,8 @@
           </div>
         </div>
 
-        <div class="panel-section">
-          <h4>Configuración</h4>
+        <div v-if="!isObservator" class="panel-section">
+          <h4>{{ t('UserTestView.VideoCallPanel.settings') }}</h4>
           <v-list density="compact">
             <v-list-item @click="toggleCamera">
               <template #prepend>
@@ -517,7 +549,11 @@
                 </v-icon>
               </template>
               <v-list-item-title>
-                {{ isCameraEnabled ? 'Desactivar cámara' : 'Activar cámara' }}
+                {{
+                  isCameraEnabled
+                    ? t('UserTestView.VideoCallPanel.disableCamera')
+                    : t('UserTestView.VideoCallPanel.enableCamera')
+                }}
               </v-list-item-title>
             </v-list-item>
             <v-list-item @click="toggleMicrophone">
@@ -533,8 +569,8 @@
               <v-list-item-title>
                 {{
                   isMicrophoneEnabled
-                    ? 'Silenciar micrófono'
-                    : 'Activar micrófono'
+                    ? t('UserTestView.VideoCallPanel.muteMicrophone')
+                    : t('UserTestView.VideoCallPanel.unmuteMicrophone')
                 }}
               </v-list-item-title>
             </v-list-item>
@@ -551,8 +587,8 @@
               <v-list-item-title>
                 {{
                   isSharingScreen
-                    ? 'Detener compartir pantalla'
-                    : 'Compartir pantalla'
+                    ? t('UserTestView.VideoCallPanel.stopScreenShare')
+                    : t('UserTestView.VideoCallPanel.shareScreen')
                 }}
               </v-list-item-title>
             </v-list-item>
@@ -584,7 +620,7 @@
         <div v-if="!caller" class="moderator-notice">
           <v-chip size="small" color="orange" class="mb-4">
             <v-icon start size="16">mdi-information</v-icon>
-            Solo el moderador puede cambiar los pasos
+            {{ t('UserTestView.VideoCallPanel.moderatorOnlySteps') }}
           </v-chip>
         </div>
 
@@ -822,6 +858,8 @@
 
 <script setup>
 import { ref, computed, reactive, onMounted, onBeforeUnmount, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { database } from '@/app/plugins/firebase/index'
 import {
   ref as dbRef,
@@ -851,7 +889,9 @@ const emit = defineEmits([
   'setRemoteStream',
   'proceedToNextStep',
   'stepSelected',
+  'moderatorStatusChange',
 ])
+const { t } = useI18n()
 
 // Local State
 const localVideo = ref(null)
@@ -872,6 +912,23 @@ const showJoinDialog = ref(false) // Legacy support, maybe unused in Mesh
 // Mesh State
 const peers = reactive({}) // userId -> { connection: RTCPeerConnection, stream: MediaStream }
 const participants = ref({}) // userId -> user info (name, etc)
+
+// Watch for moderator connected status changes and emit to parent
+watch(
+  () => {
+    const allParts = participants.value
+    for (const [userId, data] of Object.entries(allParts)) {
+      if (data.isModerator && userId !== props.user.id) {
+        return data.connected
+      }
+    }
+    return null
+  },
+  (connected, oldConnected) => {
+    if (connected === null || oldConnected === null) return
+    emit('moderatorStatusChange', connected)
+  },
+)
 
 // Computed
 const isObservator = computed(
@@ -994,26 +1051,26 @@ watch([localVideo, localStream], ([videoEl, stream]) => {
 onMounted(async () => {
   // Moderator gets media preview but doesn't join room yet
   if (props.isModerator) {
-    // Just get local media for preview
-    if (!isObservator.value) {
-      await initLocalMedia()
-    }
+    // Do NOT initialize local media here  wait for startCall()
   } else {
     // Participants and observators wait for room to be opened by moderator
-    const roomRef = dbRef(database, `rooms/${props.roomId}`)
+    const showVideoCallRef = dbRef(
+      database,
+      `rooms/${props.roomId}/showVideoCall`,
+    )
 
     // Check initial value first
-    const initialSnapshot = await get(roomRef)
-    const initialData = initialSnapshot.val()
-    if (initialData?.showVideoCall && !roomReady.value) {
+    const initialSnapshot = await get(showVideoCallRef)
+    const shouldShow = initialSnapshot.val()
+    if (shouldShow && !roomReady.value) {
       roomReady.value = true
       await joinRoom()
     }
 
     // Then listen for changes
-    onValue(roomRef, (snapshot) => {
-      const roomData = snapshot.val()
-      if (roomData?.showVideoCall) {
+    onValue(showVideoCallRef, (snapshot) => {
+      const shouldShow = snapshot.val()
+      if (shouldShow) {
         if (!roomReady.value) {
           roomReady.value = true
           joinRoom()
@@ -1034,20 +1091,44 @@ const joinRoom = async () => {
   if (!isObservator.value && !localStream.value) {
     await initLocalMedia()
   }
-
   // 2. Register self in participants list
   const myRef = dbRef(
     database,
     `calls/${props.roomId}/participants/${props.user.id}`,
   )
-  await set(myRef, {
+
+  // Restore media settings from DB if available (persistence)
+  const snapshot = await get(myRef)
+  const existingData = snapshot.val()
+  if (existingData && existingData.media) {
+    isCameraEnabled.value = existingData.media.cameraEnabled
+    isMicrophoneEnabled.value = existingData.media.microphoneEnabled
+  }
+
+  // Enforce restored state on tracks
+  if (localStream.value) {
+    const vTrack = localStream.value.getVideoTracks()[0]
+    if (vTrack) vTrack.enabled = isCameraEnabled.value
+
+    const aTrack = localStream.value.getAudioTracks()[0]
+    if (aTrack) aTrack.enabled = isMicrophoneEnabled.value
+  }
+
+  await update(myRef, {
     email: props.user.email,
-    name: props.user.email?.split('@')[0], // Simple name
+    name: props.user.email?.split('@')[0],
     joinedAt: Date.now(),
-    cameraEnabled: isCameraEnabled.value,
-    microphoneEnabled: isMicrophoneEnabled.value,
+    connected: true,
+    isModerator: props.isModerator,
+    taskIndex: props.isModerator ? 0 : props.currentTaskIndex,
+    media: {
+      cameraEnabled: isCameraEnabled.value,
+      microphoneEnabled: isMicrophoneEnabled.value,
+    },
   })
-  onDisconnect(myRef).remove() // Auto-remove on closing tab
+
+  // Mark as disconnected on close tab, but do NOT remove (to persist media settings)
+  onDisconnect(myRef).update({ connected: false })
 
   // 3. Listen to participants to initiate connections
   const participantsRef = dbRef(database, `calls/${props.roomId}/participants`)
@@ -1058,6 +1139,14 @@ const joinRoom = async () => {
     // Check for new peers to connect to
     Object.keys(val).forEach((userId) => {
       if (userId === props.user.id) return
+
+      // Only connect if they are actually connected
+      const pData = val[userId]
+      if (!pData || !pData.connected) {
+        if (peers[userId]) closePeerConnection(userId)
+        return
+      }
+
       if (!peers[userId]) {
         // Found a peer we look not connected to.
         // Rule: Initiator is the one with lexicographically smaller ID (or simply: if I am newer? No, consistent sort is better)
@@ -1066,7 +1155,7 @@ const joinRoom = async () => {
         // When I join, I see existing users -> I offer.
         // They see me -> They wait for offer.
         // How to distinguish? 'joinedAt' timestamp.
-        const otherJoinedAt = val[userId].joinedAt
+        const otherJoinedAt = pData.joinedAt
         const myJoinedAt = val[props.user.id]?.joinedAt
 
         // If I joined AFTER them, I initiate.
@@ -1079,9 +1168,9 @@ const joinRoom = async () => {
       }
     })
 
-    // Cleanup left peers
+    // Cleanup left peers (if removed from DB or marked disconnected)
     Object.keys(peers).forEach((userId) => {
-      if (!val[userId]) {
+      if (!val[userId] || !val[userId].connected) {
         closePeerConnection(userId)
       }
     })
@@ -1116,7 +1205,17 @@ const joinRoom = async () => {
         await pc.setLocalDescription(answer)
         sendSignal(senderId, { type: 'answer', sdp: answer.sdp })
       } catch {
-        // Error handling offer
+        // console.error('Error handling offer logic:', err)
+      }
+
+      // Process pending candidates
+      if (peers[senderId].pendingCandidates.length > 0) {
+        peers[senderId].pendingCandidates.forEach((c) => {
+          pc.addIceCandidate(new RTCIceCandidate(c)).catch((e) => {
+            // console.error('Error adding buffered candidate:', e)
+          })
+        })
+        peers[senderId].pendingCandidates = []
       }
     } else if (signal.type === 'answer') {
       // Only set answer if we're waiting for one (have-local-offer state)
@@ -1125,15 +1224,25 @@ const joinRoom = async () => {
           await pc.setRemoteDescription(
             new RTCSessionDescription({ type: 'answer', sdp: signal.sdp }),
           )
-        } catch {
-          // Error setting remote answer
+        } catch (err) {
+          console.error('Error setting remote answer:', err)
         }
       }
     } else if (signal.candidate) {
-      try {
-        await pc.addIceCandidate(new RTCIceCandidate(signal.candidate))
-      } catch {
-        // Error adding candidate
+      if (pc.remoteDescription) {
+        try {
+          await pc.addIceCandidate(new RTCIceCandidate(signal.candidate))
+        } catch (err) {
+          console.error('Error adding ICE candidate:', err)
+        }
+      } else {
+        // Buffer candidate
+        console.log(
+          `Buffering candidate for ${senderId} (pending remote description)`,
+        )
+        if (peers[senderId]) {
+          peers[senderId].pendingCandidates.push(signal.candidate)
+        }
       }
     }
 
@@ -1163,22 +1272,30 @@ const leaveRoom = () => {
   }
   // Close all connections
   Object.values(peers).forEach((p) => p.connection.close())
-  // Remove self
-  remove(dbRef(database, `calls/${props.roomId}/participants/${props.user.id}`))
+  // Remove self (mark as disconnected)
+  const myRef = dbRef(
+    database,
+    `calls/${props.roomId}/participants/${props.user.id}`,
+  )
+  update(myRef, { connected: false })
+
   remove(dbRef(database, `calls/${props.roomId}/signals/${props.user.id}`)) // Clean my inbox
 }
 
 const initLocalMedia = async () => {
+  console.log('initLocalMedia called')
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
       video: true,
       audio: true,
     })
+    console.log('getUserMedia success', stream)
     localStream.value = stream
     if (localVideo.value) localVideo.value.srcObject = stream
     isCameraEnabled.value = true
     isMicrophoneEnabled.value = true
-  } catch {
+  } catch (error) {
+    console.error('getUserMedia failed', error)
     isCameraEnabled.value = false
   }
 }
@@ -1193,6 +1310,7 @@ const createPeerConnection = (targetUserId, isInitiator) => {
   peers[targetUserId] = {
     connection: pc,
     stream: null,
+    pendingCandidates: [],
   }
 
   // Add local tracks ONLY if not an observator
@@ -1294,8 +1412,10 @@ async function updateParticipantStatus() {
       `calls/${props.roomId}/participants/${props.user.id}`,
     )
     await update(participantRef, {
-      cameraEnabled: isCameraEnabled.value,
-      microphoneEnabled: isMicrophoneEnabled.value,
+      media: {
+        cameraEnabled: isCameraEnabled.value,
+        microphoneEnabled: isMicrophoneEnabled.value,
+      },
       updatedAt: Date.now(),
     })
   } catch (error) {
@@ -1304,11 +1424,16 @@ async function updateParticipantStatus() {
 }
 
 function isRemoteCameraEnabled(userId) {
-  return participants.value[userId]?.cameraEnabled !== false
+  // Check new media structure fallback to old
+  const p = participants.value[userId]
+  if (p?.media) return p.media.cameraEnabled
+  return p?.cameraEnabled !== false
 }
 
 function isRemoteMicrophoneEnabled(userId) {
-  return participants.value[userId]?.microphoneEnabled !== false
+  const p = participants.value[userId]
+  if (p?.media) return p.media.microphoneEnabled
+  return p?.microphoneEnabled !== false
 }
 
 function toggleSidePanel() {
@@ -1374,6 +1499,9 @@ function dismissJoinDialog() {
 const startCall = async () => {
   // Moderator joins the room and signals others
   try {
+    if (!localStream.value) {
+      await initLocalMedia()
+    }
     // Set flag first so others can join
     await update(dbRef(database, `rooms/${props.roomId}`), {
       showVideoCall: true,
@@ -1385,24 +1513,25 @@ const startCall = async () => {
     // Failed to open room
   }
 }
+const router = useRouter() // Ensure router is available
+
 const endCall = async () => {
   if (caller.value) {
     try {
+      // Remove both the call interactions and the room state
       await remove(dbRef(database, `calls/${props.roomId}`))
-    } catch {
-      // Failed to remove calls node
+      // Also remove the room to clean up global state (taskIndex, etc.)
+      await remove(dbRef(database, `rooms/${props.roomId}`))
+    } catch (error) {
+      console.error('Error ending call:', error) // eslint-disable-line no-console
     }
-    try {
-      await update(dbRef(database, `rooms/${props.roomId}`), {
-        showVideoCall: false,
-      })
-    } catch {
-      // Failed to update rooms showVideoCall
-    }
+    emit('call-ended')
     leaveRoom()
+    router.push('/admin')
   } else {
     // Non-moderator: can just leave locally
     leaveRoom()
+    router.push('/admin')
   }
 }
 

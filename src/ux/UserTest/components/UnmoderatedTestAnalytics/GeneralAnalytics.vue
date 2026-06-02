@@ -347,8 +347,8 @@
                       taskStat.successRate >= 70
                         ? 'success'
                         : taskStat.successRate >= 50
-                        ? 'warning'
-                        : 'error'
+                          ? 'warning'
+                          : 'error'
                     "
                     variant="tonal"
                     size="small"
@@ -949,7 +949,7 @@ const calculateEfficiency = () => {
   }
 }
 
-() => {
+;() => {
   if (!filteredSessions.value.length) return 0
 
   let totalSatisfaction = 0
@@ -966,12 +966,12 @@ const calculateEfficiency = () => {
         userProgress >= 90
           ? 4.5
           : userProgress >= 70
-          ? 4.0
-          : userProgress >= 50
-          ? 3.5
-          : userProgress >= 30
-          ? 3.0
-          : 2.5
+            ? 4.0
+            : userProgress >= 50
+              ? 3.5
+              : userProgress >= 30
+                ? 3.0
+                : 2.5
       totalSatisfaction += simulatedRating
       ratingsCount++
     }
@@ -1269,12 +1269,9 @@ const onExportTimeline = () => {
 
   const counts = {}
 
-  // Initialize all days
-  const iterator = new Date(oneMonthAgo)
-  while (iterator <= now) {
-    const key = iterator.toISOString().split('T')[0]
+  for (let d = new Date(oneMonthAgo); d <= now; d.setDate(d.getDate() + 1)) {
+    const key = d.toISOString().split('T')[0]
     counts[key] = 0
-    iterator.setDate(iterator.getDate() + 1)
   }
 
   // Count answers per day

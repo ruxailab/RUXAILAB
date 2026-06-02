@@ -63,6 +63,7 @@
                     :rules="[(v) => !!v || $t('errors.fieldRequired')]"
                     color="primary"
                     class="mb-md-4"
+                    :disabled="isTemplate"
                     @update:model-value="markDirty"
                   />
                   <v-textarea
@@ -73,6 +74,7 @@
                     color="primary"
                     rows="3"
                     class="mb-4"
+                    :disabled="isTemplate"
                     @update:model-value="markDirty"
                   />
                   <div v-if="item.selectionField">
@@ -91,10 +93,12 @@
                         :rules="[(v) => !!v || $t('errors.fieldRequired')]"
                         color="primary"
                         class="mr-md-2"
+                        :disabled="isTemplate"
                         @update:model-value="markDirty"
                       >
                         <template #append>
                           <v-icon
+                            v-if="!isTemplate"
                             color="accent"
                             class="mr-2"
                             @click="newSelection(i)"
@@ -102,7 +106,9 @@
                             mdi-plus-circle
                           </v-icon>
                           <v-icon
-                            v-if="item.selectionFields.length > 1"
+                            v-if="
+                              !isTemplate && item.selectionFields.length > 1
+                            "
                             color="error"
                             @click="showDeleteOption(i, index)"
                           >
@@ -120,6 +126,7 @@
                         variant="text"
                         color="accent"
                         class="text-capitalize"
+                        :disabled="isTemplate"
                         @click="newSelection(i)"
                       >
                         <v-icon start> mdi-plus </v-icon>
@@ -133,7 +140,8 @@
                         v-model="item.selectionField"
                         :label="$t('UserTestTable.checkboxes.selectionField')"
                         color="primary"
-                        @update:model-value="selectField(i), markDirty()"
+                        :disabled="isTemplate"
+                        @update:model-value="(selectField(i), markDirty())"
                       />
                     </v-col>
                     <v-col cols="12" sm="5">
@@ -141,11 +149,17 @@
                         v-model="item.textField"
                         :label="$t('UserTestTable.checkboxes.textField')"
                         color="primary"
-                        @update:model-value="selectText(i), markDirty()"
+                        :disabled="isTemplate"
+                        @update:model-value="(selectText(i), markDirty())"
                       />
                     </v-col>
                     <v-col cols="12" sm="1" class="text-right">
-                      <v-btn icon color="error" @click="showDeleteVariable(i)">
+                      <v-btn
+                        icon
+                        color="error"
+                        :disabled="isTemplate"
+                        @click="showDeleteVariable(i)"
+                      >
                         <v-icon>mdi-trash-can-outline</v-icon>
                       </v-btn>
                     </v-col>
@@ -172,6 +186,7 @@
               border-style: dashed !important;
               border-color: #d1d5db;
             "
+            :class="{ 'disabled-card': isTemplate }"
             @click="showModal"
           >
             <v-card-text>
@@ -209,6 +224,7 @@
             density="comfortable"
             :rules="[(v) => !!v.trim() || $t('errors.fieldRequired')]"
             color="primary"
+            :disabled="isTemplate"
             @update:model-value="markDirty"
           />
         </v-form>
@@ -228,7 +244,7 @@
           color="success"
           variant="flat"
           class="px-6"
-          :disabled="!valid || isSaving"
+          :disabled="!valid || isSaving || isTemplate"
           :loading="isSaving"
           @click="saveNewItem"
         >
@@ -296,6 +312,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  isTemplate: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const store = useStore()
@@ -332,12 +352,14 @@ const currentVariables = computed(() => {
 })
 
 const markDirty = () => {
+  if (props.isTemplate) return
   isDirty.value = true
   emit('change')
   emit('update', items.value)
 }
 
 const showModal = () => {
+  if (props.isTemplate) return
   show.value = true
   newItem.value = ''
   form.value?.resetValidation()
@@ -350,6 +372,7 @@ const closeModal = () => {
 }
 
 const selectField = (i) => {
+  if (props.isTemplate) return
   if (
     items.value[i].selectionField &&
     items.value[i].selectionFields.length === 0
@@ -364,17 +387,20 @@ const selectField = (i) => {
 }
 
 const selectText = (i) => {
+  if (props.isTemplate) return
   items.value[i].selectionFields = []
   items.value[i].selectionField = false
   markDirty()
 }
 
 const showDeleteVariable = (i) => {
+  if (props.isTemplate) return
   pendingDeleteVariableIndex.value = i
   showDeleteVariableConfirm.value = true
 }
 
 const confirmDeleteVariable = () => {
+  if (props.isTemplate) return
   if (pendingDeleteVariableIndex.value !== null) {
     items.value.splice(pendingDeleteVariableIndex.value, 1)
     saveState()
@@ -384,11 +410,13 @@ const confirmDeleteVariable = () => {
 }
 
 const showDeleteOption = (variableIndex, optionIndex) => {
+  if (props.isTemplate) return
   pendingDeleteOptionIndices.value = { variableIndex, optionIndex }
   showDeleteOptionConfirm.value = true
 }
 
 const confirmDeleteOption = () => {
+  if (props.isTemplate) return
   const { variableIndex, optionIndex } = pendingDeleteOptionIndices.value
   if (variableIndex !== null && optionIndex !== null) {
     items.value[variableIndex].selectionFields.splice(optionIndex, 1)
@@ -399,6 +427,7 @@ const confirmDeleteOption = () => {
 }
 
 const newSelection = (index) => {
+  if (props.isTemplate) return
   items.value[index] = {
     ...items.value[index],
     selectionFields: [...items.value[index].selectionFields, ''],
@@ -407,6 +436,7 @@ const newSelection = (index) => {
 }
 
 const saveNewItem = async () => {
+  if (props.isTemplate) return
   if (!valid.value) return await form.value?.validate()
 
   try {
@@ -431,6 +461,7 @@ const saveNewItem = async () => {
 }
 
 const saveState = async () => {
+  if (props.isTemplate) return
   try {
     const invalidItems = items.value.filter(
       (item) => !item.title || !item.title.trim(),
@@ -504,5 +535,10 @@ onMounted(() => {
   .v-row:not(.align-center) {
     flex-direction: column;
   }
+}
+
+.disabled-card {
+  pointer-events: none;
+  opacity: 0.6;
 }
 </style>

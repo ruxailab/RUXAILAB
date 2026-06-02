@@ -7,6 +7,29 @@
       </h1>
       <v-divider class="mb-6" />
 
+      <!-- Enable Weights Feature Toggle -->
+      <div class="mb-8">
+        <div class="d-flex align-center justify-space-between">
+          <div>
+            <h3 class="text-h6 font-weight-medium mb-1">
+              {{ $t('HeuristicsSettings.titles.enableWeights') }}
+            </h3>
+            <p class="text-body-2 text-grey-darken-1">
+              {{ $t('HeuristicsSettings.messages.enableWeightsDescription') }}
+            </p>
+          </div>
+          <v-switch
+            v-model="useWeights"
+            :disabled="props.isTemplate"
+            color="primary"
+            inset
+            class="ms-4"
+          />
+        </div>
+      </div>
+
+      <v-divider class="mb-6" />
+
       <!-- Download CSV Template -->
       <div class="mb-8">
         <v-btn
@@ -36,7 +59,7 @@
               prepend-inner-icon="mdi-paperclip"
               show-size
               truncate-length="15"
-              :disabled="testAnswerDocLength > 0"
+              :disabled="props.isTemplate || testAnswerDocLength > 0"
               counter
               class="file-input-field"
               hide-details
@@ -48,7 +71,9 @@
           <div class="d-flex align-center">
             <v-btn
               :loading="loadingUpdate"
-              :disabled="loadingUpdate || testAnswerDocLength > 0"
+              :disabled="
+                props.isTemplate || loadingUpdate || testAnswerDocLength > 0
+              "
               color="primary"
               variant="elevated"
               class="text-none update-button"
@@ -106,6 +131,12 @@ import { showWarning, showSuccess, showError } from '@/shared/utils/toast'
 
 const store = useStore()
 const { t } = useI18n()
+const props = defineProps({
+  isTemplate: {
+    type: Boolean,
+    default: false,
+  },
+})
 
 const loading = ref(false)
 const loader = ref(null)
@@ -117,6 +148,16 @@ const errorVisible = ref(false)
 const confirmDialog = ref(false)
 
 const test = computed(() => store.getters.test)
+
+const useWeights = computed({
+  get: () => test.value.useWeights ?? false,
+  set: (value) => {
+    store.commit('SET_TEST', {
+      ...test.value,
+      useWeights: value,
+    })
+  },
+})
 
 const testAnswerDocLength = computed(() => {
   const doc = store.getters.testAnswerDocument

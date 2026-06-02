@@ -214,7 +214,7 @@
                           Having trouble? Get helpful guidance to complete this
                           task.
                         </p>
-                        <TipButton :task="task" />
+                        <TipButton :task="task" @tip-pressed="onTipPressed" />
                       </div>
                     </v-col>
 
@@ -521,6 +521,7 @@ const emit = defineEmits([
   'update:tamAnswers',
   'update:sartAnswers',
   'startTask',
+  'tip-pressed',
 ])
 
 onBeforeUnmount(() => {
@@ -690,7 +691,11 @@ function updateElapsedTime() {
 async function startTask() {
   emit('show-loading')
   emit('startTask')
-  await startMediaRecorders()
+  const mediaStarted = await startMediaRecorders()
+  if (!mediaStarted) {
+    emit('stop-show-loading')
+    return
+  }
   stage.value = 2
   taskStartTime = Date.now()
   timerInterval = setInterval(updateElapsedTime, 1000)
@@ -729,11 +734,15 @@ async function startMediaRecorders() {
     await audioRecorder.value.startAudioRecording()
   }
   if (props.task?.hasCamRecord && videoRecorder.value) {
-    await videoRecorder.value.startRecording()
+    const videoStarted = await videoRecorder.value.startRecording()
+    if (!videoStarted) {
+      return false
+    }
   }
   if (props.task?.hasScreenRecord && screenRecorder.value) {
     await screenRecorder.value.captureScreen()
   }
+  return true
 }
 
 function forceStopAllMedia() {
@@ -851,6 +860,9 @@ function onUpdateTaskObservations(val) {
 }
 function onUpdateNasaTlx(val) {
   emit('update:nasaTlxAnswers', val)
+}
+function onTipPressed() {
+  emit('tip-pressed', props.taskIndex)
 }
 function onTimerStopped(elapsedTime) {
   emit('timer-stopped', elapsedTime, props.taskIndex)
