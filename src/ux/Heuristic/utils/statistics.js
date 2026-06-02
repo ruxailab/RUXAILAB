@@ -447,7 +447,6 @@ function finalResult(
       0,
     ),
   }
-  return testData
 }
 
 function buildHeuristicsEvaluator(resultEvaluator, testOptions) {
