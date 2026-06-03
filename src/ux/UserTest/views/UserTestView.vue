@@ -235,16 +235,24 @@
 
                   <v-stepper-item
                     v-if="hasEyeTracking"
-                    value="3"
+                    :value="hasPreTest ? 3 : 2"
                     :title="$t('UserTestView.stepper.calibration')"
-                    :complete="stepperValue >= 3"
+                    :complete="stepperValue >= (hasPreTest ? 3 : 2)"
                     color="white"
                     complete-icon="mdi-check"
                   />
                   <v-divider v-if="hasEyeTracking" />
 
                   <v-stepper-item
-                    :value="!hasPreTest ? 2 : hasEyeTracking ? 4 : 3"
+                    :value="
+                      hasPreTest
+                        ? hasEyeTracking
+                          ? 4
+                          : 3
+                        : hasEyeTracking
+                          ? 3
+                          : 2
+                    "
                     :title="$t('UserTestView.stepper.tasks')"
                     :complete="stepperValue >= (hasEyeTracking ? 4 : 3)"
                     color="white"
@@ -253,7 +261,15 @@
                   <v-divider />
                   <template v-if="hasPostTest">
                     <v-stepper-item
-                      :value="!hasPreTest ? 3 : hasEyeTracking ? 5 : 4"
+                      :value="
+                        hasPreTest
+                          ? hasEyeTracking
+                            ? 5
+                            : 4
+                          : hasEyeTracking
+                            ? 4
+                            : 3
+                      "
                       :title="$t('UserTestView.stepper.postTest')"
                       :complete="stepperValue >= (hasEyeTracking ? 5 : 4)"
                       color="white"
@@ -263,13 +279,21 @@
                   </template>
                   <v-stepper-item
                     :value="
-                      !hasPostTest && !hasPreTest
-                        ? 3
-                        : !hasPreTest && hasPostTest
-                          ? 4
-                          : hasEyeTracking
+                      hasPostTest
+                        ? hasPreTest
+                          ? hasEyeTracking
                             ? 6
                             : 5
+                          : hasEyeTracking
+                            ? 5
+                            : 4
+                        : hasPreTest
+                          ? hasEyeTracking
+                            ? 5
+                            : 4
+                          : hasEyeTracking
+                            ? 4
+                            : 3
                     "
                     :title="$t('UserTestView.stepper.completion')"
                     :complete="stepperValue === (hasEyeTracking ? 6 : 5)"
@@ -361,7 +385,7 @@
             v-if="globalIndex === 3 && hasEyeTracking"
             :calibration-in-progress="calibrationInProgress"
             :calibration-completed="calibrationCompleted"
-            @done="globalIndex = 4"
+            @done="globalIndex = hasPreTest ? 4 : 5"
             @close-calibration="closeCalibration()"
             @open-calibration="openCalibration()"
           />
@@ -975,7 +999,8 @@ const completeStep = (id, type, userCompleted = true) => {
       if (hasPreTest.value) {
         globalIndex.value = 2 // PreTest
       } else {
-        globalIndex.value = 4 // Tasks
+        // No pre-test: go to calibration if eye tracking is enabled, otherwise go to tasks
+        globalIndex.value = hasEyeTracking.value ? 3 : 4
         localTestAnswer.preTestCompleted = true
       }
       savePartialAnswer()
@@ -983,12 +1008,14 @@ const completeStep = (id, type, userCompleted = true) => {
 
     if (type === 'preTest') {
       localTestAnswer.preTestCompleted = true
-      globalIndex.value = hasEyeTracking.value ? 3 : 3 // se tiver, vai pro PreCalibration
+      // With eye tracking: index 3 = Calibration; without eye tracking: index 3 = PreTasksStep
+      globalIndex.value = 3
       savePartialAnswer()
     }
 
     if (type === 'eyeCalibration') {
-      globalIndex.value = 4 // PreTasks
+      // After calibration: go to PreTasksStep if there was a pre-test, otherwise go directly to tasks
+      globalIndex.value = hasPreTest.value ? 4 : 5
       taskIndex.value = 0
       eyeCalibrationStepDone.value = true
     }
