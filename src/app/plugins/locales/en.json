@@ -112,6 +112,7 @@
     "markAllAsRead": "Mark all as read",
     "caughtUp": "You're all caught up",
     "noNewNotifications": "No new notifications",
+    "notificationBell": "Notification bell",
     "unread": "unread",
     "inbox": "inbox",
     "all": "All",
@@ -291,7 +292,8 @@
     "signOut": "Sign Out",
     "previousStep": "Previous Step",
     "nextStep": "Next Step",
-    "finishTest": "Finish Test"
+    "finishTest": "Finish Test",
+    "helpButton": "Help button"
   },
   "profile": {
     "title": "Profile",
@@ -383,9 +385,11 @@
       "Final Report": "Final Report",
       "Answer Test": "Answer Test",
       "Settings": "Settings",
+      "Evaluator Info": "Evaluator Info",
       "name": "Name",
       "studiesCount": "Studies Count",
-      "mediaSize": "Media Size"
+      "mediaSize": "Media Size",
+      "toggleMiniMode": "Toggle mini mode"
     },
     "heuristic": "Usability Heuristic Evaluation"
   },
@@ -588,7 +592,10 @@
       "updatedProgress": "updated their progress",
       "invitationSentTitle": "Invitation sent",
       "invitationPendingDesc": "Invitation pending for",
-      "pendingStatus": "Pending"
+      "pendingStatus": "Pending",
+      "evaluatorInfo": "Evaluator Info",
+      "evaluatorInfoEmpty": "No information sections yet. Add some to guide your evaluators.",
+      "evaluatorInfoSeeAll": "See all {count} sections"
     },
     "managerView": {
       "heuristicStudy": "Heuristic Study",
@@ -719,11 +726,13 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "Settings",
-      "confirmUpload": "Confirm Upload"
+      "confirmUpload": "Confirm Upload",
+      "enableWeights": "Enable Weights Feature"
     },
     "messages": {
       "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
-      "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding."
+      "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding.",
+      "enableWeightsDescription": "Allow evaluators to assign weights to heuristics in this study"
     },
     "placeHolders": {
       "importCsv": "Import your CSV testfile here."
@@ -763,6 +772,34 @@
       "startTest": "Start Test"
     }
   },
+  "EvaluatorInfoView": {
+    "pageTitle": "Evaluator Information",
+    "pageSubtitle": "Create information sections that evaluators will see before starting the test"
+  },
+  "EvaluatorInfoEditor": {
+    "title": "Evaluator Information",
+    "subtitle": "Create information sections that evaluators will see before starting the test",
+    "enableToggle": "Show information screen to evaluators",
+    "noSections": "No sections yet. Add one to get started.",
+    "untitledSection": "Untitled section",
+    "addSection": "Add Section",
+    "sectionTitle": "Section title",
+    "sectionContent": "Content",
+    "sectionType": "Type",
+    "types": {
+      "info": "Information",
+      "warning": "Warning",
+      "tip": "Tip"
+    },
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "EvaluatorInfoDisplay": {
+    "title": "Before you start",
+    "subtitle": "Please read the following information before beginning the evaluation",
+    "startButton": "Start Evaluation",
+    "noContent": "No additional information provided."
+  },
   "HeuristicsEditTest": {
     "pageTitle": "Edit Test",
     "pageSubtitle": "Customize the settings and preferences of your test",
@@ -770,7 +807,8 @@
       "heuristics": "Heuristics",
       "options": "Options",
       "weights": "Weights",
-      "settings": "Settings"
+      "settings": "Settings",
+      "evaluatorInfo": "Evaluator Info"
     },
     "previewPageTitle": "Preview test",
     "previewPageSubtitle": "Review the test configuration in read-only mode"
@@ -979,7 +1017,8 @@
     "validation": {
       "fieldRequired": "Field Required",
       "validUrl": "Must be a valid URL starting with http:// or https://",
-      "positiveNumber": "Must be a positive number"
+      "positiveNumber": "Must be a positive number",
+      "minOne": "Value must be at least 1"
     },
     "basicInfo": {
       "stepTitle": "Step 1: Task Basic Information",
@@ -1023,6 +1062,12 @@
       "sart": "Situation Awareness Rating Technique - measures situational awareness"
     },
     "answerTypePreview": {
+      "postTest": {
+        "title": "Post Test Feedback",
+        "q1": "Rate your experience",
+        "q2": "How did you find the product in beta testing?",
+        "feedbackPlaceholder": "The product had a smooth UI but it was lagging in some places."
+      },
       "taskCompleted": "Task completed! No additional feedback required.",
       "participantsFeedbackHere": "Participants will provide their feedback here...",
       "submitFeedback": "Submit Feedback",
@@ -1339,7 +1384,8 @@
       "process": "Calibration involves following points that will appear on the screen with your eyes. It is important that you are in a well-lit place, sit comfortably, and keep your head stable.",
       "instruction": "When you are ready, press the button to start calibration.",
       "startButton": "Start calibration",
-      "inProgress": "In progress..."
+      "inProgress": "In progress...",
+      "reuseSkipButton": "Reuse/Skip Calibration"
     },
     "warnings": {
       "sessionNotScheduled": "Your session doesn't have a scheduled date"

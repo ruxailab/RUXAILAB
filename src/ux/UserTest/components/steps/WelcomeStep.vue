@@ -43,31 +43,43 @@
             </template>
             <v-stepper-item
               v-if="hasEyeTracking"
-              value="3"
+              :value="hasPreTest ? 3 : 2"
               title="Calibration"
             />
             <v-divider v-if="hasEyeTracking" />
             <v-stepper-item
-              :value="!hasPreTest ? 2 : hasEyeTracking ? '4' : '3'"
+              :value="
+                hasPreTest ? (hasEyeTracking ? 4 : 3) : hasEyeTracking ? 3 : 2
+              "
               :title="$t('UserTestView.WelcomeStep.steps.tasks')"
             />
             <v-divider />
             <template v-if="hasPostTest">
               <v-stepper-item
-                :value="!hasPreTest ? 3 : hasEyeTracking ? '5' : '4'"
+                :value="
+                  hasPreTest ? (hasEyeTracking ? 5 : 4) : hasEyeTracking ? 4 : 3
+                "
                 :title="$t('UserTestView.WelcomeStep.steps.postQuestions')"
               />
               <v-divider />
             </template>
             <v-stepper-item
               :value="
-                !hasPostTest && !hasPreTest
-                  ? 3
-                  : !hasPreTest && hasPostTest
-                    ? 4
+                hasPostTest
+                  ? hasPreTest
+                    ? hasEyeTracking
+                      ? 6
+                      : 5
                     : hasEyeTracking
-                      ? '6'
-                      : '5'
+                      ? 5
+                      : 4
+                  : hasPreTest
+                    ? hasEyeTracking
+                      ? 5
+                      : 4
+                    : hasEyeTracking
+                      ? 4
+                      : 3
               "
               :title="$t('UserTestView.WelcomeStep.steps.submission')"
             />

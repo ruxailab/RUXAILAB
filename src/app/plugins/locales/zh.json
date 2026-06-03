@@ -102,6 +102,7 @@
     "markAllAsRead": "全部标记为已读",
     "caughtUp": "您已读完所有通知",
     "noNewNotifications": "没有新通知",
+    "notificationBell": "通知铃铛",
     "unread": "未读",
     "inbox": "收件箱",
     "timeAgo": {
@@ -282,7 +283,17 @@
       "viewEditProfile": "查看和编辑您的个人资料信息",
       "exploreCommunityStudies": "探索由 RUXAI 社区共享的调查",
       "browseCommunityTemplates": "浏览由 RUXAI 社区贡献的模板"
-    }
+    },
+    "appName": "RUXAILAB",
+    "tagline": "用户体验研究平台",
+    "appNavigation": "应用导航",
+    "createNewStudy": "创建新研究",
+    "exitTest": "退出测试",
+    "signOut": "登出",
+    "previousStep": "上一步",
+    "nextStep": "下一步",
+    "finishTest": "完成测试",
+    "helpButton": "帮助按钮"
   },
   "profile": {
     "title": "个人资料",
@@ -376,7 +387,8 @@
       "Settings": "设置",
       "name": "姓名",
       "studiesCount": "研究数量",
-      "mediaSize": "媒体大小"
+      "mediaSize": "媒体大小",
+      "toggleMiniMode": "切换迷你模式"
     },
     "heuristic": "可用性启发式评估"
   },
@@ -574,7 +586,10 @@
       "updatedProgress": "更新了进度",
       "invitationSentTitle": "邀请已发送",
       "invitationPendingDesc": "邀请待处理：",
-      "pendingStatus": "待处理"
+      "pendingStatus": "待处理",
+      "evaluatorInfo": "评估员信息",
+      "evaluatorInfoEmpty": "暂无信息部分，请添加以指导您的评估员。",
+      "evaluatorInfoSeeAll": "查看全部 {count} 个部分"
     },
     "managerView": {
       "heuristicStudy": "启发式研究",
@@ -703,11 +718,13 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "设置",
-      "confirmUpload": "确认上传"
+      "confirmUpload": "确认上传",
+      "enableWeights": "启用权重功能"
     },
     "messages": {
       "acceptCsv": "如果接受，您当前的启发式将被CSV文件中的内容替换。",
-      "noCsvFileSelected": "未选择CSV文件。\n请选择一个以继续。"
+      "noCsvFileSelected": "未选择CSV文件。\n请选择一个以继续。",
+      "enableWeightsDescription": "允许评估者在本研究中为启发式分配权重"
     },
     "placeHolders": {
       "importCsv": "在此导入您的CSV测试文件。"
@@ -962,7 +979,8 @@
     "validation": {
       "fieldRequired": "字段必填",
       "validUrl": "必须是以 http:// 或 https:// 开头的有效 URL",
-      "positiveNumber": "必须是正数"
+      "positiveNumber": "必须是正数",
+      "minOne": "值必须至少为 1"
     },
     "basicInfo": {
       "stepTitle": "步骤 1：任务基本信息",
@@ -1006,6 +1024,12 @@
       "sart": "情境意识评估技术 - 测量情境意识"
     },
     "answerTypePreview": {
+      "postTest": {
+        "title": "测试后反馈",
+        "q1": "请评价您的体验",
+        "q2": "您在测试阶段如何看待该产品？",
+        "feedbackPlaceholder": "该产品界面流畅，但在某些地方存在卡顿。"
+      },
       "taskCompleted": "任务完成！无需额外反馈。",
       "participantsFeedbackHere": "参与者将在此处提供反馈...",
       "submitFeedback": "提交反馈",
@@ -1321,7 +1345,8 @@
       "process": "校准包括用眼睛跟随屏幕上出现的点。重要的是要在光线充足的地方，坐得舒服，保持头部稳定。",
       "instruction": "准备好后，按按钮开始校准。",
       "startButton": "开始校准",
-      "inProgress": "进行中..."
+      "inProgress": "进行中...",
+      "reuseSkipButton": "复用/跳过校准"
     },
     "warnings": {
       "sessionNotScheduled": "该会话尚未安排日期"
@@ -2389,5 +2414,32 @@
       }
     },
     "title": "隐私政策"
+  },
+  "EvaluatorInfoView": {
+    "pageTitle": "评估员信息",
+    "pageSubtitle": "创建评估员在开始测试前将看到的信息部分"
+  },
+  "EvaluatorInfoEditor": {
+    "title": "评估员信息",
+    "subtitle": "创建评估员在开始测试前将看到的信息部分",
+    "noSections": "暂无部分，请添加一个以开始。",
+    "untitledSection": "无标题部分",
+    "addSection": "添加部分",
+    "sectionTitle": "部分标题",
+    "sectionContent": "内容",
+    "sectionType": "类型",
+    "types": {
+      "info": "信息",
+      "warning": "警告",
+      "tip": "提示"
+    },
+    "save": "保存",
+    "cancel": "取消"
+  },
+  "EvaluatorInfoDisplay": {
+    "title": "开始之前",
+    "subtitle": "请在开始评估前阅读以下信息",
+    "startButton": "开始评估",
+    "noContent": "暂无其他信息。"
   }
 }
