@@ -502,41 +502,6 @@
         </v-col>
       </v-row>
     </v-container>
-    <!-- Floating Action Button -->
-    <!--TODO: Remove if not necessary
-    <v-btn v-if="showSaveBtn && localTestAnswer && !start" position="fixed" location="bottom right" icon
-      class="mb-10 mr-5">
-      <v-speed-dial v-model="fab" class="mr-3" open-on-hover>
-        <template #activator="{ props }">
-          <v-btn v-model="fab" size="large" color="#F9A826" v-bind="props" icon class="btn-fix">
-            <v-icon v-if="fab">
-              mdi-close
-            </v-icon>
-            <v-icon v-else size="large">
-              mdi-hammer-screwdriver
-            </v-icon>
-          </v-btn>
-        </template>
-        <v-tooltip location="left">
-          <template #activator="{ props }">
-            <v-btn v-bind="props" icon size="small" color="#F9A826" @click="saveAnswer">
-              <v-icon>mdi-content-save</v-icon>
-            </v-btn>
-          </template>
-          <span>Save</span>
-        </v-tooltip>
-        <v-tooltip location="left">
-          <template #activator="{ props }">
-            <v-btn v-bind="props" :disabled="localTestAnswer && !localTestAnswer.postTestCompleted" class="text-white"
-              icon size="small" color="#F9A826" @click="dialog = true">
-              <v-icon>mdi-file-move</v-icon>
-            </v-btn>
-          </template>
-          <span>Submit</span>
-        </v-tooltip>
-      </v-speed-dial>
-    </v-btn>
-    -->
   </div>
 </template>
 
@@ -977,13 +942,20 @@ const handleTimerStopped = (elapsedTime, idx) => {
     if (!isNaN(timeToSave)) {
       localTestAnswer.tasks[idx].taskTime = timeToSave
     } else {
-      //TODO: Add error snackbar
+      store.commit('SET_TOAST', {
+        type: 'error',
+        message: t('UserTestView.errors.timerIndexNotFound'),
+        timeout: 3000,
+      })
     }
   } else {
-    //TODO: Add error snackbar
+    store.commit('SET_TOAST', {
+      type: 'error',
+      message: t('UserTestView.errors.taskNotFound'),
+      timeout: 3000,
+    })
   }
 }
-
 const handleTipPressed = (idx) => {
   if (idx === undefined || idx === null) return
   if (!localTestAnswer.tasks?.[idx]) return
@@ -1053,17 +1025,24 @@ const completeStep = (id, type, userCompleted = true) => {
           }
         }
       }
-      //TODO: Show proper toast not the following one
-      /*
       if (userCompleted) {
         store.commit('SET_TOAST', {
           type: 'success',
-          message: `Task "${test.value.testStructure.userTasks[id].taskName}" completed successfully!`,
+          message: t('UserTestView.messages.taskCompletedSuccess', {
+            taskName: test.value.testStructure.userTasks[id].taskName,
+          }),
           timeout: 3000,
-        });
+        })
+      } else {
+        store.commit('SET_TOAST', {
+          type: 'warning',
+          message: t('UserTestView.messages.taskNotCompleted', {
+            taskName: test.value.testStructure.userTasks[id].taskName,
+          }),
+          timeout: 3000,
+        })
       }
-        */
-    }
+    } // closes if (type === 'tasks')
 
     if (type === 'postTest') {
       localTestAnswer.postTestCompleted = true

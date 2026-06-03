@@ -89,7 +89,11 @@
 
           <!-- ⚙️ Status -->
           <v-col cols="12" sm="6" md="3">
-            <label class="filter-label" for="status-select" style="cursor:pointer">
+            <label
+              class="filter-label"
+              for="status-select"
+              style="cursor: pointer"
+            >
               {{ $t('pages.studies.statusLabel') }}
             </label>
 
@@ -414,5 +418,4 @@ const goTo = (test) => {
 .status-select :deep(.v-chip) {
   pointer-events: none;
 }
-
 </style>

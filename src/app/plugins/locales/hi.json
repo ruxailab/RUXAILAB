@@ -284,6 +284,15 @@
       "exploreCommunityStudies": "RUXAI समुदाय द्वारा साझा किए गए अध्ययनों का पता लगाएं",
       "browseCommunityTemplates": "RUXAI समुदाय द्वारा योगदान किए गए टेम्पलेट्स ब्राउज़ करें"
     },
+    "appName": "RUXAILAB",
+    "tagline": "यूएक्स अनुसंधान मंच",
+    "appNavigation": "ऐप नेविगेशन",
+    "createNewStudy": "नया अध्ययन बनाएँ",
+    "exitTest": "परीक्षा छोड़ें",
+    "signOut": "साइन आउट",
+    "previousStep": "पिछला चरण",
+    "nextStep": "अगला चरण",
+    "finishTest": "परीक्षा समाप्त करें",
     "helpButton": "सहायता बटन"
   },
   "profile": {
@@ -1224,6 +1233,7 @@
       "noTasks": "इस परीक्षण में कोई कार्य नहीं है।",
       "answerSaved": "उत्तर सफलतापूर्वक सहेजा गया।",
       "taskCompletedSuccess": "कार्य \"{taskName}\" सफलतापूर्वक पूरा हो गया!",
+      "taskNotCompleted": "कार्य \"{taskName}\" पूरा नहीं किया जा सका।",
       "useSessionLinkModerated": "अपने मॉडरेटेड टेस्ट तक पहुँचने के लिए सेशन लिंक का उपयोग करें!",
       "useSessionLink": "टेस्ट तक पहुँचने के लिए सेशन लिंक का उपयोग करें"
     },
@@ -1235,7 +1245,9 @@
       "noTestDataMessage": "परीक्षण जानकारी लोड नहीं की जा सकी। कृपया बाद में पुनः प्रयास करें।",
       "failedToCompleteStep": "चरण पूरा करने में विफल। कृपया पुनः प्रयास करें।",
       "failedToInitializeTestData": "परीक्षण डेटा प्रारंभ करने में विफल। कृपया पुनः प्रयास करें।",
-      "loginRequired": "टेस्ट तक पहुँचने के लिए पहले अपने RUXAILAB खाते में लॉग इन करें!"
+      "loginRequired": "टेस्ट तक पहुँचने के लिए पहले अपने RUXAILAB खाते में लॉग इन करें!",
+      "timerIndexNotFound": "An error occurred while saving the task time.",
+      "taskNotFound": "Task not found. Please try again."
     },
     "CalibrationInProgressModal": {
       "completed": "कैलिब्रेशन पूरा हुआ!",

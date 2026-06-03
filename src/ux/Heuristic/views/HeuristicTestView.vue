@@ -427,15 +427,17 @@
                       <template #answer>
                         <v-select
                           v-if="
-    currentUserTestAnswer?.heuristicQuestions?.[heurisIndex]?.heuristicQuestions?.[i]
-    && test?.testOptions?.length > 0
-  "
-  v-model="
-    currentUserTestAnswer.heuristicQuestions[
-      heurisIndex
-    ].heuristicQuestions[i].heuristicAnswer
-  "
-  :items="test.testOptions"
+                            currentUserTestAnswer?.heuristicQuestions?.[
+                              heurisIndex
+                            ]?.heuristicQuestions?.[i] &&
+                            test?.testOptions?.length > 0
+                          "
+                          v-model="
+                            currentUserTestAnswer.heuristicQuestions[
+                              heurisIndex
+                            ].heuristicQuestions[i].heuristicAnswer
+                          "
+                          :items="test.testOptions"
                           :item-title="
                             (item) =>
                               item?.text ||
@@ -450,13 +452,13 @@
                             handleAnswerChange(heurisIndex, i)
                           "
                         />
-                               <v-alert
-  v-else-if="!test?.testOptions?.length"
-  type="warning"
-  class="mt-4"
->
-  No answer options configured for this test.
-</v-alert>
+                        <v-alert
+                          v-else-if="!test?.testOptions?.length"
+                          type="warning"
+                          class="mt-4"
+                        >
+                          No answer options configured for this test.
+                        </v-alert>
 
                         <v-alert v-else type="error" class="mt-4">
                           {{
@@ -839,12 +841,11 @@ const startTest = async () => {
     })
     return
   }
-  //check options before satrting the test 
+  //check options before satrting the test
   if (!test.value?.testOptions?.length) {
     showError('No answer options configured for this test.')
     return
   }
-  
 
   if (!isUserTestAdmin.value) {
     await store.dispatch('acceptStudyCollaboration', {
@@ -863,8 +864,6 @@ const startTest = async () => {
     // Auto-save when test starts
     debouncedAutoSave()
   }
- 
-
 }
 
 const updateComment = (_comment, _heurisIndex, _answerIndex) => {

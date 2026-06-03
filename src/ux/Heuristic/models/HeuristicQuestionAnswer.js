@@ -194,24 +194,37 @@ export default class HeuristicQuestionAnswer {
     }
     return []
   }
-  static toHeuristicQuestionAnswer(data, testOptions) {
-    const instance = new HeuristicQuestionAnswer({
-      // TODO: This needs to be changed urgently, just a hotfix for now
-      ...data,
-      heuristicAnswer: data.heuristicAnswer?.text
-        ? data.heuristicAnswer
-        : {
-            text:
-              testOptions.find((op) => op.value === data.heuristicAnswer)
-                ?.text ?? '',
-            value: data.heuristicAnswer,
-          },
-      comments: Array.isArray(data.comments) ? data.comments : [],
-      images: Array.isArray(data.images) ? data.images : [],
-    })
-    instance.migrateToArrayFormat()
-    return instance
+  /**
+ * Normalizes a heuristicAnswer value into the standard {text, value} shape.
+ * Handles both legacy scalar values and already-normalized objects.
+ * @param {*} answer - Raw answer value (string/number) or {text, value} object.
+ * @param {Array<{text: string, value: *}>} testOptions - Available answer options.
+ * @returns {{text: string, value: *}}
+ */
+static normalizeAnswer(answer, testOptions) {
+  if (answer && typeof answer === 'object' && answer.text) {
+    return answer
   }
+  const match = testOptions.find((op) => op.value === answer)
+  return {
+    text: match?.text ?? '',
+    value: answer ?? null,
+  }
+}
+
+static toHeuristicQuestionAnswer(data, testOptions) {
+  const instance = new HeuristicQuestionAnswer({
+    ...data,
+    heuristicAnswer: HeuristicQuestionAnswer.normalizeAnswer(
+      data.heuristicAnswer,
+      testOptions
+    ),
+    comments: Array.isArray(data.comments) ? data.comments : [],
+    images: Array.isArray(data.images) ? data.images : [],
+  })
+  instance.migrateToArrayFormat()
+  return instance
+}
 
   toFirestore() {
     return {

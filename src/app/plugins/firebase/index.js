@@ -6,7 +6,6 @@ import { getFunctions, connectFunctionsEmulator } from 'firebase/functions'
 import { getStorage, connectStorageEmulator } from 'firebase/storage'
 import { getDatabase } from 'firebase/database'
 
-
 const REQUIRED_ENV_VARS = {
   VUE_APP_FIREBASE_API_KEY: process.env.VUE_APP_FIREBASE_API_KEY,
   VUE_APP_FIREBASE_AUTH_DOMAIN: process.env.VUE_APP_FIREBASE_AUTH_DOMAIN,
@@ -59,4 +58,4 @@ if (process.env.VUE_APP_USE_EMULATORS === 'true') {
   connectStorageEmulator(storage, EMULATOR_HOST, STORAGE_EMULATOR_PORT)
 }
 
-export { auth, db,  fbFunctions, storage, database }
+export { auth, db, fbFunctions, storage, database }

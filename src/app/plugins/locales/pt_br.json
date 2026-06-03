@@ -284,6 +284,15 @@
       "exploreCommunityStudies": "Explore estudos compartilhados pela comunidade RUXAI",
       "browseCommunityTemplates": "Navegue por modelos contribuídos pela comunidade RUXAI"
     },
+    "appName": "RUXAILAB",
+    "tagline": "UX Research Platform",
+    "appNavigation": "Navegação do aplicativo",
+    "createNewStudy": "Criar novo estudo",
+    "exitTest": "Sair do teste",
+    "signOut": "Sair",
+    "previousStep": "Passo anterior",
+    "nextStep": "Próximo passo",
+    "finishTest": "Concluir teste",
     "helpButton": "Botão de ajuda"
   },
   "profile": {
@@ -1224,6 +1233,7 @@
       "noTasks": "Este teste não possui tarefas.",
       "answerSaved": "Resposta salva com sucesso.",
       "taskCompletedSuccess": "Tarefa \"{taskName}\" concluída com sucesso!",
+      "taskNotCompleted": "Tarefa \"{taskName}\" não pôde ser concluída.",
       "useSessionLinkModerated": "Use um link de sessão para acessar seu teste moderado!",
       "useSessionLink": "Use um link de sessão para acessar o teste"
     },
@@ -1235,7 +1245,9 @@
       "noTestDataMessage": "As informações do teste não puderam ser carregadas. Tente novamente mais tarde.",
       "failedToCompleteStep": "Falha ao completar etapa. Tente novamente.",
       "failedToInitializeTestData": "Falha ao inicializar dados do teste. Tente novamente.",
-      "loginRequired": "Faça login primeiro na sua conta do RUXAILAB para acessar o teste!"
+      "loginRequired": "Faça login primeiro na sua conta do RUXAILAB para acessar o teste!",
+      "timerIndexNotFound": "An error occurred while saving the task time.",
+      "taskNotFound": "Task not found. Please try again."
     },
     "CalibrationInProgressModal": {
       "completed": "Calibração concluída!",

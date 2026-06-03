@@ -284,6 +284,15 @@
       "exploreCommunityStudies": "RUXAIコミュニティで共有されている調査を探索",
       "browseCommunityTemplates": "RUXAIコミュニティが提供するテンプレートを閲覧"
     },
+    "appName": "RUXAILAB",
+    "tagline": "UX リサーチプラットフォーム",
+    "appNavigation": "アプリのナビゲーション",
+    "createNewStudy": "新しい研究を作成",
+    "exitTest": "テストを終了",
+    "signOut": "サインアウト",
+    "previousStep": "前のステップ",
+    "nextStep": "次のステップ",
+    "finishTest": "テストを完了",
     "helpButton": "ヘルプボタン"
   },
   "profile": {
@@ -1222,6 +1231,7 @@
       "noTasks": "このテストにはタスクがありません。",
       "answerSaved": "回答が正常に保存されました。",
       "taskCompletedSuccess": "タスク「{taskName}」が正常に完了しました！",
+      "taskNotCompleted": "タスク「{taskName}」を完了できませんでした。",
       "useSessionLinkModerated": "セッションリンクを使用して、モデレートされたテストにアクセスしてください。",
       "useSessionLink": "セッションリンクを使用してテストにアクセスしてください"
     },
@@ -1233,7 +1243,9 @@
       "noTestDataMessage": "テスト情報をロードできませんでした。後でもう一度お試しください。",
       "failedToCompleteStep": "ステップの完了に失敗しました。もう一度お試しください。",
       "failedToInitializeTestData": "テストデータの初期化に失敗しました。もう一度お試しください。",
-      "loginRequired": "テストにアクセスするには、まずRUXAILABアカウントにログインしてください。"
+      "loginRequired": "テストにアクセスするには、まずRUXAILABアカウントにログインしてください。",
+      "timerIndexNotFound": "An error occurred while saving the task time.",
+      "taskNotFound": "Task not found. Please try again."
     },
     "CalibrationInProgressModal": {
       "completed": "キャリブレーション完了！",
