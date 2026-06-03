@@ -235,16 +235,24 @@
 
                   <v-stepper-item
                     v-if="hasEyeTracking"
-                    value="3"
+                    :value="hasPreTest ? 3 : 2"
                     :title="$t('UserTestView.stepper.calibration')"
-                    :complete="stepperValue >= 3"
+                    :complete="stepperValue >= (hasPreTest ? 3 : 2)"
                     color="white"
                     complete-icon="mdi-check"
                   />
                   <v-divider v-if="hasEyeTracking" />
 
                   <v-stepper-item
-                    :value="!hasPreTest ? 2 : hasEyeTracking ? 4 : 3"
+                    :value="
+                      hasPreTest
+                        ? hasEyeTracking
+                          ? 4
+                          : 3
+                        : hasEyeTracking
+                          ? 3
+                          : 2
+                    "
                     :title="$t('UserTestView.stepper.tasks')"
                     :complete="stepperValue >= (hasEyeTracking ? 4 : 3)"
                     color="white"
@@ -253,7 +261,15 @@
                   <v-divider />
                   <template v-if="hasPostTest">
                     <v-stepper-item
-                      :value="!hasPreTest ? 3 : hasEyeTracking ? 5 : 4"
+                      :value="
+                        hasPreTest
+                          ? hasEyeTracking
+                            ? 5
+                            : 4
+                          : hasEyeTracking
+                            ? 4
+                            : 3
+                      "
                       :title="$t('UserTestView.stepper.postTest')"
                       :complete="stepperValue >= (hasEyeTracking ? 5 : 4)"
                       color="white"
@@ -263,13 +279,21 @@
                   </template>
                   <v-stepper-item
                     :value="
-                      !hasPostTest && !hasPreTest
-                        ? 3
-                        : !hasPreTest && hasPostTest
-                          ? 4
-                          : hasEyeTracking
+                      hasPostTest
+                        ? hasPreTest
+                          ? hasEyeTracking
                             ? 6
                             : 5
+                          : hasEyeTracking
+                            ? 5
+                            : 4
+                        : hasPreTest
+                          ? hasEyeTracking
+                            ? 5
+                            : 4
+                          : hasEyeTracking
+                            ? 4
+                            : 3
                     "
                     :title="$t('UserTestView.stepper.completion')"
                     :complete="stepperValue === (hasEyeTracking ? 6 : 5)"
