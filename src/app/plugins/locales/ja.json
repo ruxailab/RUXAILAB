@@ -102,6 +102,7 @@
     "markAllAsRead": "すべて既読にする",
     "caughtUp": "最新の状態です",
     "noNewNotifications": "新しい通知はありません",
+    "notificationBell": "通知ベル",
     "unread": "未読",
     "inbox": "受信トレイ",
     "timeAgo": {
@@ -282,7 +283,8 @@
       "viewEditProfile": "プロファイル情報の表示と編集",
       "exploreCommunityStudies": "RUXAIコミュニティで共有されている調査を探索",
       "browseCommunityTemplates": "RUXAIコミュニティが提供するテンプレートを閲覧"
-    }
+    },
+    "helpButton": "ヘルプボタン"
   },
   "profile": {
     "title": "プロフィール",
@@ -376,7 +378,8 @@
       "Settings": "設定",
       "name": "名前",
       "studiesCount": "研究数",
-      "mediaSize": "メディアサイズ"
+      "mediaSize": "メディアサイズ",
+      "toggleMiniMode": "ミニモードを切り替え"
     },
     "heuristic": "ユーザビリティ ヒューリスティック評価"
   },
@@ -574,7 +577,10 @@
       "updatedProgress": "進捗を更新しました",
       "invitationSentTitle": "招待送信済み",
       "invitationPendingDesc": "招待保留中:",
-      "pendingStatus": "保留中"
+      "pendingStatus": "保留中",
+      "evaluatorInfo": "評価者情報",
+      "evaluatorInfoEmpty": "情報セクションがありません。評価者を案内するために追加してください。",
+      "evaluatorInfoSeeAll": "すべての{count}セクションを表示"
     },
     "managerView": {
       "heuristicStudy": "ヒューリスティック評価",
@@ -703,11 +709,13 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "設定",
-      "confirmUpload": "アップロードの確認"
+      "confirmUpload": "アップロードの確認",
+      "enableWeights": "重み機能を有効にする"
     },
     "messages": {
       "acceptCsv": "同意すると、現在のヒューリスティックはCSVファイルの内容で置き換えられます。",
-      "noCsvFileSelected": "CSVファイルが選択されていません。続行する前に選択してください。"
+      "noCsvFileSelected": "CSVファイルが選択されていません。続行する前に選択してください。",
+      "enableWeightsDescription": "評価者がこの研究でヒューリスティックに重みを割り当てることを許可する"
     },
     "placeHolders": {
       "importCsv": "ここにCSVテストファイルをインポートしてください。"
@@ -962,7 +970,8 @@
     "validation": {
       "fieldRequired": "フィールドは必須です",
       "validUrl": "http:// または https:// で始まる有効なURLである必要があります",
-      "positiveNumber": "正の数である必要があります"
+      "positiveNumber": "正の数である必要があります",
+      "minOne": "値は1以上である必要があります"
     },
     "basicInfo": {
       "stepTitle": "ステップ1: タスク基本情報",
@@ -1006,6 +1015,12 @@
       "sart": "状況認識評価技法 - 状況認識を測定"
     },
     "answerTypePreview": {
+      "postTest": {
+        "title": "テスト後のフィードバック",
+        "q1": "体験を評価してください",
+        "q2": "ベータテスト中、この製品をどのように感じましたか？",
+        "feedbackPlaceholder": "製品のUIはスムーズでしたが、いくつかの箇所で遅延がありました。"
+      },
       "taskCompleted": "タスク完了！追加のフィードバックは必要ありません。",
       "participantsFeedbackHere": "参加者はここでフィードバックを提供します...",
       "submitFeedback": "フィードバックを送信",
@@ -1318,7 +1333,8 @@
       "process": "キャリブレーションには、画面に表示されるポイントを目で追うことが含まれます。明るい場所にいて、快適に座り、頭を安定させることが重要です。",
       "instruction": "準備ができたら、ボタンを押してキャリブレーションを開始してください。",
       "startButton": "キャリブレーションを開始",
-      "inProgress": "進行中..."
+      "inProgress": "進行中...",
+      "reuseSkipButton": "キャリブレーションを再利用/スキップ"
     },
     "warnings": {
       "sessionNotScheduled": "このセッションにはまだ予定された日付がありません"
@@ -2398,5 +2414,32 @@
       }
     },
     "title": "プライバシーポリシー"
+  },
+  "EvaluatorInfoView": {
+    "pageTitle": "評価者向け情報",
+    "pageSubtitle": "テスト開始前に評価者が確認する情報セクションを作成します"
+  },
+  "EvaluatorInfoEditor": {
+    "title": "評価者向け情報",
+    "subtitle": "テスト開始前に評価者が確認する情報セクションを作成します",
+    "noSections": "セクションがありません。追加してください。",
+    "untitledSection": "無題のセクション",
+    "addSection": "セクションを追加",
+    "sectionTitle": "セクションタイトル",
+    "sectionContent": "内容",
+    "sectionType": "タイプ",
+    "types": {
+      "info": "情報",
+      "warning": "警告",
+      "tip": "ヒント"
+    },
+    "save": "保存",
+    "cancel": "キャンセル"
+  },
+  "EvaluatorInfoDisplay": {
+    "title": "開始前に",
+    "subtitle": "評価を開始する前に以下の情報をお読みください",
+    "startButton": "評価を開始",
+    "noContent": "追加情報はありません。"
   }
 }

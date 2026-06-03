@@ -13,10 +13,13 @@ jest.mock('@/app/plugins/firebase', () => ({
   db: {},
 }))
 
+const mockGetById = jest.fn()
+const mockUpdate = jest.fn()
+
 jest.mock('../../src/features/auth/controllers/UserController', () => {
   return jest.fn().mockImplementation(() => ({
-    getById: jest.fn(),
-    update: jest.fn(),
+    getById: mockGetById,
+    update: mockUpdate,
   }))
 })
 
@@ -116,6 +119,77 @@ describe('AnswerController', () => {
       )
 
       createSpy.mockRestore()
+    })
+  })
+
+  describe('updateUserAnswer', () => {
+    beforeEach(() => {
+      mockGetById.mockClear()
+      mockUpdate.mockClear()
+    })
+
+    it('should return null if payload is missing required fields', async () => {
+      const result1 = await answerController.updateUserAnswer({})
+      const result2 = await answerController.updateUserAnswer({ cooperatorId: '1' })
+      const result3 = await answerController.updateUserAnswer({ cooperatorId: '1', testDocId: '2' })
+      expect(result1).toBeNull()
+      expect(result2).toBeNull()
+      expect(result3).toBeNull()
+    })
+
+    it('should return null if user does not exist', async () => {
+      mockGetById.mockResolvedValue(null)
+      const result = await answerController.updateUserAnswer({
+        cooperatorId: 'invalid-id',
+        testDocId: 'test-123',
+        data: { accessLevel: 1 },
+      })
+      expect(result).toBeNull()
+    })
+
+    it('should return null if user does not have answers for the test yet', async () => {
+      mockGetById.mockResolvedValue({
+        id: 'user-123',
+        myAnswers: {},
+      })
+      const result = await answerController.updateUserAnswer({
+        cooperatorId: 'user-123',
+        testDocId: 'test-123',
+        data: { accessLevel: 1 },
+      })
+      expect(result).toBeNull()
+    })
+
+    it('should merge data correctly and update user when answer metadata exists', async () => {
+      const mockUserToUpdate = {
+        id: 'user-123',
+        myAnswers: {
+          'test-123': {
+            testDocId: 'test-123',
+            accessLevel: 0,
+            progress: 50,
+          },
+        },
+        toFirestore: jest.fn().mockReturnValue({ myAnswers: 'updated' }),
+      }
+      mockGetById.mockResolvedValue(mockUserToUpdate)
+      mockUpdate.mockResolvedValue(true)
+
+      const payload = {
+        cooperatorId: 'user-123',
+        testDocId: 'test-123',
+        data: { accessLevel: 1, progress: 100 },
+      }
+
+      const result = await answerController.updateUserAnswer(payload)
+
+      expect(mockUserToUpdate.myAnswers['test-123']).toEqual({
+        testDocId: 'test-123',
+        accessLevel: 1,
+        progress: 100,
+      })
+      expect(mockUpdate).toHaveBeenCalledWith('user-123', { myAnswers: 'updated' })
+      expect(result).toBe(true)
     })
   })
 

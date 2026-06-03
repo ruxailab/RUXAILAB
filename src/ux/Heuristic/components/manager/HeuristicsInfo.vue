@@ -1,5 +1,5 @@
 <template>
-  <v-card v-if="test" class="pa-4 mb-0" elevation="3" rounded="lg">
+  <v-card v-if="test" class="pl-2 pr-4 pt-4 pb-4 mb-0" elevation="3" rounded="lg">
     <!-- Header con icono a la izquierda y título -->
     <div
       class="d-flex align-center mb-4 clickable-header"
@@ -176,10 +176,10 @@ const hasWeights = computed(() => {
 }
 
 .metrics-grid-bottom {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: center;
 }
 
 .metric-item {
@@ -194,7 +194,7 @@ const hasWeights = computed(() => {
   padding: 12px 16px;
   border-radius: 8px;
   background-color: rgba(0, 0, 0, 0.02);
-  min-width: 140px;
+  width: 100%;
 }
 
 .chips-container {

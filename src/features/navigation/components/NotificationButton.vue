@@ -23,12 +23,19 @@
             class="notification-bell"
             :class="{ pulse: unreadCount > 0 }"
             v-bind="props"
+            :aria-label="$t('common.notificationBell')"
           >
             <v-icon>mdi-bell-ring</v-icon>
           </v-btn>
         </v-badge>
 
-        <v-btn v-else icon size="small" v-bind="props">
+        <v-btn
+          v-else
+          icon
+          size="small"
+          v-bind="props"
+          :aria-label="$t('common.notificationBell')"
+        >
           <v-icon>mdi-bell-outline</v-icon>
         </v-btn>
       </template>
@@ -71,6 +78,7 @@
               :key="notification.id"
               :notification="notification"
               :class="{ active: index === activeIndex }"
+              style="margin-bottom: 10px"
               @go-to-redirect="goToNotificationRedirect"
               @mark-as-read="goToNotificationRedirect"
             />

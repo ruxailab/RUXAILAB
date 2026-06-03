@@ -59,6 +59,11 @@ export default {
     SET_PUBLIC_TESTS(state, payload) {
       state.publicTests = payload
     },
+    SET_TEST_EVALUATOR_INFO(state, payload) {
+      if (state.Test) {
+        state.Test.evaluatorInfo = payload
+      }
+    },
     SET_TEST_STRUCTURE(state, payload) {
       state.testStructure = { ...payload }
     },
@@ -163,6 +168,7 @@ export default {
           errorCode: 'studyError',
           message: err,
         })
+        return null
       } finally {
         commit('setLoading', false)
       }
