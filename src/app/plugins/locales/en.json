@@ -90,6 +90,8 @@
     "analyzeProject": "Analyze the project and evaluators",
     "comment": "Comment",
     "comments": "Comments",
+    "evaluator": "Evaluator",
+    "evaluators": "Evaluators",
     "image": "Image",
     "images": "Images",
     "close": "Close",
@@ -639,6 +641,7 @@
       "addNewDescription": "Add a new Description",
       "addOption": "Add a new Option",
       "hasValue": "Has Value",
+      "warning": "Warning",
       "moveUp": "Move Up",
       "moveDown": "Move Down",
       "Question": "Question",
@@ -826,13 +829,54 @@
       "statistics": "Statistics",
       "evaluators": "Evaluators",
       "heuristics": "Heuristics",
-      "analytics": "Analytics"
+      "analytics": "Analytics",
+      "evaluatorNumber": "Evaluator {n}",
+      "totalTime": "Total time",
+      "averageTime": "Average time per evaluator",
+      "timeStdDev": "Time standard deviation"
     },
     "statistics": {
       "usabilityPercentage": "Usability Percentage",
       "max": "Max",
       "min": "Min",
       "std": "Standard deviation"
+    },
+    "summary": {
+      "title": "Evaluation Summary",
+      "stats": {
+        "average": "Average",
+        "max": "Max.",
+        "min": "Min.",
+        "stdDev": "Std. Dev.",
+        "evaluators": "Evaluators"
+      },
+      "warnings": {
+        "title": "Impact of warnings",
+        "hint": "How far the evaluation shifts when warnings are taken into account",
+        "description": "Questions answered as unable to be verified by analyzing only the website have been marked as warnings. The percentage change has been calculated in two scenarios: highest possible score and lowest possible score.",
+        "scenarios": {
+          "max": "Average max warning threshold",
+          "min": "Average min warning threshold",
+          "average": "Average warning threshold"
+        },
+        "details": ""
+      },
+      "charts": {
+        "imagesByHeuristic": {
+          "title": "Images by Heuristic",
+          "subtitle": "Horizontal distribution per heuristic",
+          "empty": "No image data"
+        },
+        "responsesByOption": {
+          "title": "Response Type",
+          "subtitle": "Circular distribution of selected options",
+          "empty": "No option data"
+        }
+      },
+      "meta": {
+        "groups": "groups",
+        "metrics": "metrics"
+      }
     },
     "evaluators": {
       "headers": {
@@ -846,7 +890,7 @@
     "heuristics": {
       "headers": {
         "heuristicsData": "Heuristics Data",
-        "answersByEvaluator": "Answers by Evaluator",
+        "answersByEvaluator": "Response Values by Evaluator",
         "answersByHeuristics": "Answers by Heuristics",
         "graphic": "Graphic",
         "weights": "Weights"
