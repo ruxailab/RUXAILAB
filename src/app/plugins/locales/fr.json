@@ -719,11 +719,14 @@
     "titles": {
       "settings": "Paramètres",
       "confirmUpload": "Confirmer le téléchargement",
+      "timeTracking": "Suivi du temps",
       "enableWeights": "Activer la fonctionnalité de pondération"
     },
     "messages": {
       "acceptCsv": "Si vous acceptez, toutes vos heuristiques actuelles seront remplacées par celles du fichier .csv.",
       "noCsvFileSelected": "Aucun fichier CSV sélectionné. \nVeuillez en sélectionner un avant de continuer.",
+      "timeTrackingDescription": "Enregistre le temps que chaque évaluateur passe par heuristique lors de l'évaluation.",
+      "settingsSaved": "Paramètres enregistrés avec succès.",
       "enableWeightsDescription": "Permettre aux évaluateurs d'attribuer des poids aux heuristiques dans cette étude"
     },
     "placeHolders": {
@@ -732,6 +735,10 @@
     "actions": {
       "downloadCsvTemplate": "Télécharger le modèle CSV",
       "update": "Mettre à jour"
+    },
+    "labels": {
+      "timeTrackingOn": "Suivi du temps activé",
+      "timeTrackingOff": "Suivi du temps désactivé"
     }
   },
   "HeuristicsTestView": {

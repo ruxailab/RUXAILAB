@@ -719,11 +719,14 @@
     "titles": {
       "settings": "الإعدادات",
       "confirmUpload": "تأكيد التحميل",
+      "timeTracking": "تتبع الوقت",
       "enableWeights": "تفعيل ميزة الأوزان"
     },
     "messages": {
       "acceptCsv": "إذا وافقت، سيتم استبدال جميع الاستدلالات الحالية بتلك الموجودة في ملف CSV.",
       "noCsvFileSelected": "لم يتم تحديد ملف CSV. \nيرجى تحديد واحد قبل المتابعة.",
+      "timeTrackingDescription": "يسجل الوقت الذي يقضيه كل مقيّم في كل معيار إرشادي خلال التقييم.",
+      "settingsSaved": "تم حفظ الإعدادات بنجاح.",
       "enableWeightsDescription": "السماح للمقيمين بتعيين الأوزان للاستدلالات في هذه الدراسة"
     },
     "placeHolders": {
@@ -732,6 +735,10 @@
     "actions": {
       "downloadCsvTemplate": "تحميل نموذج CSV",
       "update": "تحديث"
+    },
+    "labels": {
+      "timeTrackingOn": "تتبع الوقت مفعّل",
+      "timeTrackingOff": "تتبع الوقت معطّل"
     }
   },
   "HeuristicsTestView": {

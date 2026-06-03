@@ -195,36 +195,36 @@ export default class HeuristicQuestionAnswer {
     return []
   }
   /**
- * Normalizes a heuristicAnswer value into the standard {text, value} shape.
- * Handles both legacy scalar values and already-normalized objects.
- * @param {*} answer - Raw answer value (string/number) or {text, value} object.
- * @param {Array<{text: string, value: *}>} testOptions - Available answer options.
- * @returns {{text: string, value: *}}
- */
-static normalizeAnswer(answer, testOptions) {
-  if (answer && typeof answer === 'object' && answer.text) {
-    return answer
+   * Normalizes a heuristicAnswer value into the standard {text, value} shape.
+   * Handles both legacy scalar values and already-normalized objects.
+   * @param {*} answer - Raw answer value (string/number) or {text, value} object.
+   * @param {Array<{text: string, value: *}>} testOptions - Available answer options.
+   * @returns {{text: string, value: *}}
+   */
+  static normalizeAnswer(answer, testOptions) {
+    if (answer && typeof answer === 'object' && answer.text) {
+      return answer
+    }
+    const match = testOptions.find((op) => op.value === answer)
+    return {
+      text: match?.text ?? '',
+      value: answer ?? null,
+    }
   }
-  const match = testOptions.find((op) => op.value === answer)
-  return {
-    text: match?.text ?? '',
-    value: answer ?? null,
-  }
-}
 
-static toHeuristicQuestionAnswer(data, testOptions) {
-  const instance = new HeuristicQuestionAnswer({
-    ...data,
-    heuristicAnswer: HeuristicQuestionAnswer.normalizeAnswer(
-      data.heuristicAnswer,
-      testOptions
-    ),
-    comments: Array.isArray(data.comments) ? data.comments : [],
-    images: Array.isArray(data.images) ? data.images : [],
-  })
-  instance.migrateToArrayFormat()
-  return instance
-}
+  static toHeuristicQuestionAnswer(data, testOptions) {
+    const instance = new HeuristicQuestionAnswer({
+      ...data,
+      heuristicAnswer: HeuristicQuestionAnswer.normalizeAnswer(
+        data.heuristicAnswer,
+        testOptions,
+      ),
+      comments: Array.isArray(data.comments) ? data.comments : [],
+      images: Array.isArray(data.images) ? data.images : [],
+    })
+    instance.migrateToArrayFormat()
+    return instance
+  }
 
   toFirestore() {
     return {

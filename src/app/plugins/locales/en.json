@@ -727,11 +727,14 @@
     "titles": {
       "settings": "Settings",
       "confirmUpload": "Confirm Upload",
+      "timeTracking": "Time Tracking",
       "enableWeights": "Enable Weights Feature"
     },
     "messages": {
       "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
       "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding.",
+      "timeTrackingDescription": "Track the time each evaluator spends per heuristic during evaluation.",
+      "settingsSaved": "Settings saved successfully.",
       "enableWeightsDescription": "Allow evaluators to assign weights to heuristics in this study"
     },
     "placeHolders": {
@@ -740,6 +743,10 @@
     "actions": {
       "downloadCsvTemplate": "Download CSV template",
       "update": "Update"
+    },
+    "labels": {
+      "timeTrackingOn": "Time tracking enabled",
+      "timeTrackingOff": "Time tracking disabled"
     }
   },
   "HeuristicsTestView": {

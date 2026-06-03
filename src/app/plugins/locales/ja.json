@@ -719,11 +719,14 @@
     "titles": {
       "settings": "設定",
       "confirmUpload": "アップロードの確認",
+      "timeTracking": "時間追跡",
       "enableWeights": "重み機能を有効にする"
     },
     "messages": {
       "acceptCsv": "同意すると、現在のヒューリスティックはCSVファイルの内容で置き換えられます。",
       "noCsvFileSelected": "CSVファイルが選択されていません。続行する前に選択してください。",
+      "timeTrackingDescription": "評価中に各評価者がヒューリスティックごとに費やす時間を記録します。",
+      "settingsSaved": "設定が正常に保存されました。",
       "enableWeightsDescription": "評価者がこの研究でヒューリスティックに重みを割り当てることを許可する"
     },
     "placeHolders": {
@@ -732,6 +735,10 @@
     "actions": {
       "downloadCsvTemplate": "CSVテンプレートをダウンロード",
       "update": "更新"
+    },
+    "labels": {
+      "timeTrackingOn": "時間追跡が有効",
+      "timeTrackingOff": "時間追跡が無効"
     }
   },
   "HeuristicsTestView": {

@@ -719,11 +719,14 @@
     "titles": {
       "settings": "设置",
       "confirmUpload": "确认上传",
+      "timeTracking": "时间追踪",
       "enableWeights": "启用权重功能"
     },
     "messages": {
       "acceptCsv": "如果接受，您当前的启发式将被CSV文件中的内容替换。",
       "noCsvFileSelected": "未选择CSV文件。\n请选择一个以继续。",
+      "timeTrackingDescription": "记录每位评估者在评估过程中每个启发式上花费的时间。",
+      "settingsSaved": "设置保存成功。",
       "enableWeightsDescription": "允许评估者在本研究中为启发式分配权重"
     },
     "placeHolders": {
@@ -732,6 +735,10 @@
     "actions": {
       "downloadCsvTemplate": "下载CSV模板",
       "update": "更新"
+    },
+    "labels": {
+      "timeTrackingOn": "时间追踪已启用",
+      "timeTrackingOff": "时间追踪已禁用"
     }
   },
   "HeuristicsTestView": {

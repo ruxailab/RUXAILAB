@@ -721,11 +721,14 @@
     "titles": {
       "settings": "Configurações",
       "confirmUpload": "Confirmar Upload",
+      "timeTracking": "Rastreamento de tempo",
       "enableWeights": "Ativar Recurso de Pesos"
     },
     "messages": {
       "acceptCsv": "Se aceitar, todas as suas heurísticas atuais serão substituídas pelas do arquivo CSV.",
       "noCsvFileSelected": "Nenhum arquivo CSV selecionado. \nPor favor, selecione um antes de continuar.",
+      "timeTrackingDescription": "Registra o tempo que cada avaliador gasta por heurística durante a avaliação.",
+      "settingsSaved": "Configurações salvas com sucesso.",
       "enableWeightsDescription": "Permita que os avaliadores atribuam pesos às heurísticas neste estudo"
     },
     "placeHolders": {
@@ -734,6 +737,10 @@
     "actions": {
       "downloadCsvTemplate": "Baixar modelo CSV",
       "update": "Atualizar"
+    },
+    "labels": {
+      "timeTrackingOn": "Rastreamento de tempo ativado",
+      "timeTrackingOff": "Rastreamento de tempo desativado"
     }
   },
   "HeuristicsTestView": {

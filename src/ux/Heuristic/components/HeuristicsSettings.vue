@@ -43,6 +43,29 @@
         </v-btn>
       </div>
 
+      <!-- Time Tracking Section -->
+      <div class="mb-8">
+        <h2 class="text-h6 font-weight-medium mb-2">
+          {{ $t('HeuristicsSettings.titles.timeTracking') }}
+        </h2>
+        <p class="text-body-2 text-medium-emphasis mb-3">
+          {{ $t('HeuristicsSettings.messages.timeTrackingDescription') }}
+        </p>
+        <v-switch
+          v-model="localTrackTime"
+          color="primary"
+          hide-details
+          :loading="loadingTrackTime"
+          :label="
+            localTrackTime
+              ? $t('HeuristicsSettings.labels.timeTrackingOn')
+              : $t('HeuristicsSettings.labels.timeTrackingOff')
+          "
+        />
+      </div>
+
+      <v-divider class="mb-6" />
+
       <!-- File Upload Section -->
       <div>
         <div class="d-flex align-stretch mb-4 file-upload-container">
@@ -123,7 +146,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import { getStorage, ref as storageRef, getDownloadURL } from 'firebase/storage'
@@ -143,11 +166,28 @@ const loader = ref(null)
 const csvFile = ref(null)
 const myFile = ref(null)
 const loadingUpdate = ref(false)
+const loadingTrackTime = ref(false)
 const errorMessage = ref('')
 const errorVisible = ref(false)
 const confirmDialog = ref(false)
 
 const test = computed(() => store.getters.test)
+
+const localTrackTime = ref(test.value?.trackTime ?? true)
+
+watch(localTrackTime, async (newVal) => {
+  loadingTrackTime.value = true
+  try {
+    store.state.Tests.Test.trackTime = newVal
+    await store.dispatch('updateStudy', test.value)
+    await nextTick()
+    showSuccess(t('HeuristicsSettings.messages.settingsSaved'))
+  } catch (error) {
+    showError(error)
+  } finally {
+    loadingTrackTime.value = false
+  }
+})
 
 const useWeights = computed({
   get: () => test.value.useWeights ?? false,
