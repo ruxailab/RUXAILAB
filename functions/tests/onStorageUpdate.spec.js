@@ -38,7 +38,11 @@ jest.unstable_mockModule('../src/f.firebase.js', () => ({
   },
 }));
 
-const { onStorageUpdate, calculateStorageUsage } = await import('../src/triggers/onStorageUpdate.js');
+const {
+  onStorageUpdate,
+  onStorageDelete,
+  calculateStorageUsage,
+} = await import('../src/triggers/onStorageUpdate.js');
 
 describe('onStorageUpdate.js', () => {
   beforeEach(() => {
@@ -93,6 +97,31 @@ describe('onStorageUpdate.js', () => {
 
       await onStorageUpdate(event);
       expect(mockGetFiles).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('onStorageDelete', () => {
+    it('recalculates storage usage after a file deletion', async () => {
+      const event = { data: { name: 'tests/test1234/file.jpg' } };
+
+      mockGet.mockResolvedValueOnce({
+        empty: false,
+        docs: [
+          {
+            ref: 'mock-doc-ref',
+            data: () => ({ myTests: { test1234: true } }),
+          },
+        ],
+      });
+
+      mockGetFiles.mockResolvedValueOnce([[{ metadata: { size: 1048576 } }]]);
+
+      await onStorageDelete(event);
+
+      expect(mockUpdate).toHaveBeenCalledWith('mock-doc-ref', {
+        storageUsageMB: 1,
+      });
+      expect(mockCommit).toHaveBeenCalled();
     });
   });
 

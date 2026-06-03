@@ -235,16 +235,24 @@
 
                   <v-stepper-item
                     v-if="hasEyeTracking"
-                    value="3"
+                    :value="hasPreTest ? 3 : 2"
                     :title="$t('UserTestView.stepper.calibration')"
-                    :complete="stepperValue >= 3"
+                    :complete="stepperValue >= (hasPreTest ? 3 : 2)"
                     color="white"
                     complete-icon="mdi-check"
                   />
                   <v-divider v-if="hasEyeTracking" />
 
                   <v-stepper-item
-                    :value="!hasPreTest ? 2 : hasEyeTracking ? 4 : 3"
+                    :value="
+                      hasPreTest
+                        ? hasEyeTracking
+                          ? 4
+                          : 3
+                        : hasEyeTracking
+                          ? 3
+                          : 2
+                    "
                     :title="$t('UserTestView.stepper.tasks')"
                     :complete="stepperValue >= (hasEyeTracking ? 4 : 3)"
                     color="white"
@@ -253,7 +261,15 @@
                   <v-divider />
                   <template v-if="hasPostTest">
                     <v-stepper-item
-                      :value="!hasPreTest ? 3 : hasEyeTracking ? 5 : 4"
+                      :value="
+                        hasPreTest
+                          ? hasEyeTracking
+                            ? 5
+                            : 4
+                          : hasEyeTracking
+                            ? 4
+                            : 3
+                      "
                       :title="$t('UserTestView.stepper.postTest')"
                       :complete="stepperValue >= (hasEyeTracking ? 5 : 4)"
                       color="white"
@@ -263,13 +279,21 @@
                   </template>
                   <v-stepper-item
                     :value="
-                      !hasPostTest && !hasPreTest
-                        ? 3
-                        : !hasPreTest && hasPostTest
-                          ? 4
-                          : hasEyeTracking
+                      hasPostTest
+                        ? hasPreTest
+                          ? hasEyeTracking
                             ? 6
                             : 5
+                          : hasEyeTracking
+                            ? 5
+                            : 4
+                        : hasPreTest
+                          ? hasEyeTracking
+                            ? 5
+                            : 4
+                          : hasEyeTracking
+                            ? 4
+                            : 3
                     "
                     :title="$t('UserTestView.stepper.completion')"
                     :complete="stepperValue === (hasEyeTracking ? 6 : 5)"
@@ -361,7 +385,7 @@
             v-if="globalIndex === 3 && hasEyeTracking"
             :calibration-in-progress="calibrationInProgress"
             :calibration-completed="calibrationCompleted"
-            @done="globalIndex = 4"
+            @done="globalIndex = hasPreTest ? 4 : 5"
             @close-calibration="closeCalibration()"
             @open-calibration="openCalibration()"
           />
@@ -434,6 +458,7 @@
             @show-loading="isLoading = true"
             @stop-show-loading="isLoading = false"
             @recording-started="isVisualizerVisible = $event"
+            @tip-pressed="handleTipPressed"
             @timer-stopped="handleTimerStopped"
             @start-task="
               () => {
@@ -477,41 +502,6 @@
         </v-col>
       </v-row>
     </v-container>
-    <!-- Floating Action Button -->
-    <!--TODO: Remove if not necessary
-    <v-btn v-if="showSaveBtn && localTestAnswer && !start" position="fixed" location="bottom right" icon
-      class="mb-10 mr-5">
-      <v-speed-dial v-model="fab" class="mr-3" open-on-hover>
-        <template #activator="{ props }">
-          <v-btn v-model="fab" size="large" color="#F9A826" v-bind="props" icon class="btn-fix">
-            <v-icon v-if="fab">
-              mdi-close
-            </v-icon>
-            <v-icon v-else size="large">
-              mdi-hammer-screwdriver
-            </v-icon>
-          </v-btn>
-        </template>
-        <v-tooltip location="left">
-          <template #activator="{ props }">
-            <v-btn v-bind="props" icon size="small" color="#F9A826" @click="saveAnswer">
-              <v-icon>mdi-content-save</v-icon>
-            </v-btn>
-          </template>
-          <span>Save</span>
-        </v-tooltip>
-        <v-tooltip location="left">
-          <template #activator="{ props }">
-            <v-btn v-bind="props" :disabled="localTestAnswer && !localTestAnswer.postTestCompleted" class="text-white"
-              icon size="small" color="#F9A826" @click="dialog = true">
-              <v-icon>mdi-file-move</v-icon>
-            </v-btn>
-          </template>
-          <span>Submit</span>
-        </v-tooltip>
-      </v-speed-dial>
-    </v-btn>
-    -->
   </div>
 </template>
 
@@ -541,6 +531,7 @@ import TaskStep from '@/ux/UserTest/components/steps/TaskStep.vue'
 import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue'
 import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
+import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import EyeTrackingCalibrationStep from '@/ux/UserTest/calibration/EyeTrackingCalibrationStep.vue'
@@ -622,6 +613,15 @@ const hasPostTest = computed(() => {
 
 const isUserTestAdmin = computed(() => {
   return test.value.testAdmin.userDocId === user.value?.id
+})
+
+const hasTestDashboardAccess = computed(() => {
+  if (!user.value) return false
+  if (isUserTestAdmin.value) return true
+  const coop = test.value?.cooperators?.find(
+    (c) => c.userDocId === user.value.id,
+  )
+  return coop?.accessLevel === ACCESS_LEVEL.EVALUATOR
 })
 
 const isStartTestDisabled = computed(() => {
@@ -773,7 +773,11 @@ const saveAnswer = async () => {
   try {
     attachMediaToTasks(localTestAnswer, mediaUrls.value)
     await savePartialAnswer()
-    router.push('/admin')
+    if (hasTestDashboardAccess.value) {
+      router.push(`/userTest/unmoderated/manager/${test.value.id}`)
+    } else {
+      router.push('/admin')
+    }
   } catch {
     store.commit('SET_TOAST', {
       type: 'error',
@@ -938,11 +942,26 @@ const handleTimerStopped = (elapsedTime, idx) => {
     if (!isNaN(timeToSave)) {
       localTestAnswer.tasks[idx].taskTime = timeToSave
     } else {
-      //TODO: Add error snackbar
+      store.commit('SET_TOAST', {
+        type: 'error',
+        message: t('UserTestView.errors.timerIndexNotFound'),
+        timeout: 3000,
+      })
     }
   } else {
-    //TODO: Add error snackbar
+    store.commit('SET_TOAST', {
+      type: 'error',
+      message: t('UserTestView.errors.taskNotFound'),
+      timeout: 3000,
+    })
   }
+}
+const handleTipPressed = (idx) => {
+  if (idx === undefined || idx === null) return
+  if (!localTestAnswer.tasks?.[idx]) return
+
+  const current = Number(localTestAnswer.tasks[idx].tipPressCount || 0)
+  localTestAnswer.tasks[idx].tipPressCount = current + 1
 }
 
 const completeStep = (id, type, userCompleted = true) => {
@@ -952,7 +971,8 @@ const completeStep = (id, type, userCompleted = true) => {
       if (hasPreTest.value) {
         globalIndex.value = 2 // PreTest
       } else {
-        globalIndex.value = 4 // Tasks
+        // No pre-test: go to calibration if eye tracking is enabled, otherwise go to tasks
+        globalIndex.value = hasEyeTracking.value ? 3 : 4
         localTestAnswer.preTestCompleted = true
       }
       savePartialAnswer()
@@ -960,12 +980,14 @@ const completeStep = (id, type, userCompleted = true) => {
 
     if (type === 'preTest') {
       localTestAnswer.preTestCompleted = true
-      globalIndex.value = hasEyeTracking.value ? 3 : 3 // se tiver, vai pro PreCalibration
+      // With eye tracking: index 3 = Calibration; without eye tracking: index 3 = PreTasksStep
+      globalIndex.value = 3
       savePartialAnswer()
     }
 
     if (type === 'eyeCalibration') {
-      globalIndex.value = 4 // PreTasks
+      // After calibration: go to PreTasksStep if there was a pre-test, otherwise go directly to tasks
+      globalIndex.value = hasPreTest.value ? 4 : 5
       taskIndex.value = 0
       eyeCalibrationStepDone.value = true
     }
@@ -1003,17 +1025,24 @@ const completeStep = (id, type, userCompleted = true) => {
           }
         }
       }
-      //TODO: Show proper toast not the following one
-      /*
       if (userCompleted) {
         store.commit('SET_TOAST', {
           type: 'success',
-          message: `Task "${test.value.testStructure.userTasks[id].taskName}" completed successfully!`,
+          message: t('UserTestView.messages.taskCompletedSuccess', {
+            taskName: test.value.testStructure.userTasks[id].taskName,
+          }),
           timeout: 3000,
-        });
+        })
+      } else {
+        store.commit('SET_TOAST', {
+          type: 'warning',
+          message: t('UserTestView.messages.taskNotCompleted', {
+            taskName: test.value.testStructure.userTasks[id].taskName,
+          }),
+          timeout: 3000,
+        })
       }
-        */
-    }
+    } // closes if (type === 'tasks')
 
     if (type === 'postTest') {
       localTestAnswer.postTestCompleted = true
@@ -1200,6 +1229,7 @@ const mappingSteps = async () => {
               taskTime: 0,
               completed: false,
               attempted: false, // Track whether task has been attempted
+              tipPressCount: 0,
               susAnswers: [],
               nasaTlxAnswers: {},
               tamAnswers: {},

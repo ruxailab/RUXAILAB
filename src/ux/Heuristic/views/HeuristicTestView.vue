@@ -429,15 +429,14 @@
                           v-if="
                             currentUserTestAnswer?.heuristicQuestions?.[
                               heurisIndex
-                            ]?.heuristicQuestions?.[i]
+                            ]?.heuristicQuestions?.[i] &&
+                            test?.testOptions?.length > 0
                           "
                           v-model="
                             currentUserTestAnswer.heuristicQuestions[
                               heurisIndex
                             ].heuristicQuestions[i].heuristicAnswer
                           "
-                          class="optionSelect"
-                          return-object
                           :items="test.testOptions"
                           :item-title="
                             (item) =>
@@ -453,6 +452,14 @@
                             handleAnswerChange(heurisIndex, i)
                           "
                         />
+                        <v-alert
+                          v-else-if="!test?.testOptions?.length"
+                          type="warning"
+                          class="mt-4"
+                        >
+                          No answer options configured for this test.
+                        </v-alert>
+
                         <v-alert v-else type="error" class="mt-4">
                           {{
                             $t('HeuristicsTestView.errors.questionNotLoaded')
@@ -564,7 +571,7 @@
           <template #activator="{ props }">
             <v-btn
               v-bind="props"
-              :disabled="calculateProgress < 100"
+              :disabled="calculatedProgress < 100"
               class="text-white"
               icon
               size="small"
@@ -597,6 +604,7 @@ import Snackbar from '@/shared/components/Snackbar'
 import HeuristicQuestionAnswer from '@/ux/Heuristic/models/HeuristicQuestionAnswer'
 import Heuristic from '@/ux/Heuristic/models/Heuristic'
 import { showSuccess, showError } from '@/shared/utils/toast'
+import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import HeuristicAnswer from '../models/HeuristicAnswer'
 
 const props = defineProps({
@@ -694,6 +702,15 @@ const showSaveBtn = computed(() => {
 
 const isUserTestAdmin = computed(() => {
   return test.value.testAdmin.userDocId === user.value?.id
+})
+
+const hasTestDashboardAccess = computed(() => {
+  if (!user.value) return false
+  if (isUserTestAdmin.value) return true
+  const coop = test.value?.cooperators?.find(
+    (c) => c.userDocId === user.value.id,
+  )
+  return coop?.accessLevel === ACCESS_LEVEL.EVALUATOR
 })
 
 const isValidProgress = computed(() => {
@@ -824,6 +841,11 @@ const startTest = async () => {
       errorCode: 400,
       message: t('HeuristicsTestView.messages.noHeuristics'),
     })
+    return
+  }
+  //check options before satrting the test
+  if (!test.value?.testOptions?.length) {
+    showError('No answer options configured for this test.')
     return
   }
 
@@ -1391,7 +1413,11 @@ const submitAnswer = async () => {
     })
     showSuccess('alerts.genericSuccess')
     setTimeout(() => {
-      router.push('/admin')
+      if (hasTestDashboardAccess.value) {
+        router.push(`/heuristic/manager/${test.value.id}`)
+      } else {
+        router.push('/admin')
+      }
     }, 1500)
   } catch {
     currentUserTestAnswer.value.submitted = false

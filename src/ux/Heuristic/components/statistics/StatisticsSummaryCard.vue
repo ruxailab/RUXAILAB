@@ -72,7 +72,7 @@
 <script setup>
 // Receives the final result object from the parent
 // { average, max, min, sd }
-const props = defineProps({
+defineProps({
   result: {
     type: Object,
     required: true,

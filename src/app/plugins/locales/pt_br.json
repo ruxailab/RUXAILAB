@@ -109,6 +109,7 @@
     "markAllAsRead": "Marcar todas como lidas",
     "caughtUp": "Você está em dia",
     "noNewNotifications": "Nenhuma notificação nova",
+    "notificationBell": "Sino de notificações",
     "unread": "Não lido",
     "inbox": "Caixa de entrada",
     "timeAgo": {
@@ -282,7 +283,17 @@
       "viewEditProfile": "Visualizar e editar suas informações de perfil",
       "exploreCommunityStudies": "Explore estudos compartilhados pela comunidade RUXAI",
       "browseCommunityTemplates": "Navegue por modelos contribuídos pela comunidade RUXAI"
-    }
+    },
+    "appName": "RUXAILAB",
+    "tagline": "UX Research Platform",
+    "appNavigation": "Navegação do aplicativo",
+    "createNewStudy": "Criar novo estudo",
+    "exitTest": "Sair do teste",
+    "signOut": "Sair",
+    "previousStep": "Passo anterior",
+    "nextStep": "Próximo passo",
+    "finishTest": "Concluir teste",
+    "helpButton": "Botão de ajuda"
   },
   "profile": {
     "title": "Perfil",
@@ -376,7 +387,8 @@
       "Settings": "Configurações",
       "name": "Nome",
       "studiesCount": "Contagem de Estudos",
-      "mediaSize": "Tamanho da Mídia"
+      "mediaSize": "Tamanho da Mídia",
+      "toggleMiniMode": "Alternar modo compacto"
     },
     "heuristic": "Avaliação Heurística de Usabilidade"
   },
@@ -709,13 +721,15 @@
     "titles": {
       "settings": "Configurações",
       "confirmUpload": "Confirmar Upload",
-      "timeTracking": "Rastreamento de tempo"
+      "timeTracking": "Rastreamento de tempo",
+      "enableWeights": "Ativar Recurso de Pesos"
     },
     "messages": {
       "acceptCsv": "Se aceitar, todas as suas heurísticas atuais serão substituídas pelas do arquivo CSV.",
       "noCsvFileSelected": "Nenhum arquivo CSV selecionado. \nPor favor, selecione um antes de continuar.",
       "timeTrackingDescription": "Registra o tempo que cada avaliador gasta por heurística durante a avaliação.",
-      "settingsSaved": "Configurações salvas com sucesso."
+      "settingsSaved": "Configurações salvas com sucesso.",
+      "enableWeightsDescription": "Permita que os avaliadores atribuam pesos às heurísticas neste estudo"
     },
     "placeHolders": {
       "importCsv": "Importe seu arquivo CSV de teste aqui."
@@ -974,7 +988,8 @@
     "validation": {
       "fieldRequired": "Campo Obrigatório",
       "validUrl": "Deve ser uma URL válida começando com http:// ou https://",
-      "positiveNumber": "Deve ser um número positivo"
+      "positiveNumber": "Deve ser um número positivo",
+      "minOne": "O valor deve ser pelo menos 1"
     },
     "basicInfo": {
       "stepTitle": "Passo 1: Informações Básicas da Tarefa",
@@ -1018,6 +1033,12 @@
       "sart": "Técnica de Avaliação de Consciência Situacional - mede a consciência situacional"
     },
     "answerTypePreview": {
+      "postTest": {
+        "title": "Feedback pós-teste",
+        "q1": "Avalie sua experiência",
+        "q2": "Como você achou o produto durante o teste beta?",
+        "feedbackPlaceholder": "O produto tinha uma interface fluida, mas apresentava lentidão em algumas partes."
+      },
       "taskCompleted": "Tarefa concluída! Nenhum feedback adicional necessário.",
       "participantsFeedbackHere": "Os participantes fornecerão seu feedback aqui...",
       "submitFeedback": "Enviar Feedback",
@@ -1219,6 +1240,7 @@
       "noTasks": "Este teste não possui tarefas.",
       "answerSaved": "Resposta salva com sucesso.",
       "taskCompletedSuccess": "Tarefa \"{taskName}\" concluída com sucesso!",
+      "taskNotCompleted": "Tarefa \"{taskName}\" não pôde ser concluída.",
       "useSessionLinkModerated": "Use um link de sessão para acessar seu teste moderado!",
       "useSessionLink": "Use um link de sessão para acessar o teste"
     },
@@ -1230,7 +1252,9 @@
       "noTestDataMessage": "As informações do teste não puderam ser carregadas. Tente novamente mais tarde.",
       "failedToCompleteStep": "Falha ao completar etapa. Tente novamente.",
       "failedToInitializeTestData": "Falha ao inicializar dados do teste. Tente novamente.",
-      "loginRequired": "Faça login primeiro na sua conta do RUXAILAB para acessar o teste!"
+      "loginRequired": "Faça login primeiro na sua conta do RUXAILAB para acessar o teste!",
+      "timerIndexNotFound": "An error occurred while saving the task time.",
+      "taskNotFound": "Task not found. Please try again."
     },
     "CalibrationInProgressModal": {
       "completed": "Calibração concluída!",
@@ -1330,7 +1354,8 @@
       "process": "A calibração envolve acompanhar com os olhos os pontos que aparecerão na tela. É importante que você esteja em um local bem iluminado, sente-se confortavelmente e mantenha a cabeça estável.",
       "instruction": "Quando estiver pronto, pressione o botão para iniciar a calibração.",
       "startButton": "Iniciar calibração",
-      "inProgress": "Em andamento..."
+      "inProgress": "Em andamento...",
+      "reuseSkipButton": "Reutilizar/Pular calibração"
     },
     "warnings": {
       "sessionNotScheduled": "Esta sessão ainda não possui uma data agendada"

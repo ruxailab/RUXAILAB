@@ -102,6 +102,7 @@
     "markAllAsRead": "تحديد الكل كمقروء",
     "caughtUp": "لقد قرأت كل شيء",
     "noNewNotifications": "لا توجد إشعارات جديدة",
+    "notificationBell": "جرس الإشعارات",
     "unread": "غير مقروء",
     "inbox": "صندوق الوارد",
     "timeAgo": {
@@ -282,7 +283,17 @@
       "viewEditProfile": "عرض وتحرير معلومات ملفك الشخصي",
       "exploreCommunityStudies": "استكشف الدراسات التي تمت مشاركتها من قبل مجتمع RUXAI",
       "browseCommunityTemplates": "تصفح القوالب التي ساهم بها مجتمع RUXAI"
-    }
+    },
+    "appName": "RUXAILAB",
+    "tagline": "منصة أبحاث تجربة المستخدم",
+    "appNavigation": "تنقل التطبيق",
+    "createNewStudy": "إنشاء دراسة جديدة",
+    "exitTest": "الخروج من الاختبار",
+    "signOut": "تسجيل الخروج",
+    "previousStep": "الخطوة السابقة",
+    "nextStep": "الخطوة التالية",
+    "finishTest": "إنهاء الاختبار",
+    "helpButton": "زر المساعدة"
   },
   "profile": {
     "title": "الملف الشخصي",
@@ -376,7 +387,8 @@
       "Settings": "الإعدادات",
       "name": "الاسم",
       "studiesCount": "عدد الدراسات",
-      "mediaSize": "حجم الوسائط"
+      "mediaSize": "حجم الوسائط",
+      "toggleMiniMode": "تبديل الوضع المصغر"
     },
     "heuristic": "تقييم الاستدلالات الخاصة بالاستخدام"
   },
@@ -707,13 +719,15 @@
     "titles": {
       "settings": "الإعدادات",
       "confirmUpload": "تأكيد التحميل",
-      "timeTracking": "تتبع الوقت"
+      "timeTracking": "تتبع الوقت",
+      "enableWeights": "تفعيل ميزة الأوزان"
     },
     "messages": {
       "acceptCsv": "إذا وافقت، سيتم استبدال جميع الاستدلالات الحالية بتلك الموجودة في ملف CSV.",
       "noCsvFileSelected": "لم يتم تحديد ملف CSV. \nيرجى تحديد واحد قبل المتابعة.",
       "timeTrackingDescription": "يسجل الوقت الذي يقضيه كل مقيّم في كل معيار إرشادي خلال التقييم.",
-      "settingsSaved": "تم حفظ الإعدادات بنجاح."
+      "settingsSaved": "تم حفظ الإعدادات بنجاح.",
+      "enableWeightsDescription": "السماح للمقيمين بتعيين الأوزان للاستدلالات في هذه الدراسة"
     },
     "placeHolders": {
       "importCsv": "قم باستيراد ملف CSV الخاص بك هنا."
@@ -972,7 +986,8 @@
     "validation": {
       "fieldRequired": "الحقل مطلوب",
       "validUrl": "يجب أن يكون عنوان URL صالحًا يبدأ بـ http:// أو https://",
-      "positiveNumber": "يجب أن يكون رقمًا موجبًا"
+      "positiveNumber": "يجب أن يكون رقمًا موجبًا",
+      "minOne": "القيمة يجب أن تكون 1 على الأقل"
     },
     "basicInfo": {
       "stepTitle": "الخطوة 1: معلومات المهمة الأساسية",
@@ -1016,6 +1031,12 @@
       "sart": "تقنية تقييم الوعي الظرفي - يقيس الوعي الظرفي"
     },
     "answerTypePreview": {
+      "postTest": {
+        "title": "ملاحظات ما بعد الاختبار",
+        "q1": "قيّم تجربتك",
+        "q2": "كيف وجدت المنتج أثناء الاختبار التجريبي؟",
+        "feedbackPlaceholder": "كان للمنتج واجهة سلسة، لكنه كان بطيئًا في بعض الأجزاء."
+      },
       "taskCompleted": "اكتملت المهمة! لا توجد ملاحظات إضافية مطلوبة.",
       "participantsFeedbackHere": "سيقدم المشاركون ملاحظاتهم هنا...",
       "submitFeedback": "إرسال الملاحظات",
@@ -1217,6 +1238,7 @@
       "noTasks": "هذا الاختبار ليس لديه أي مهام.",
       "answerSaved": "تم حفظ الإجابة بنجاح.",
       "taskCompletedSuccess": "تم إكمال المهمة \"{taskName}\" بنجاح!",
+      "taskNotCompleted": "تعذّر إكمال المهمة \"{taskName}\".",
       "useSessionLinkModerated": "استخدم رابط الجلسة للوصول إلى الاختبار المُدار!",
       "useSessionLink": "استخدم رابط الجلسة للوصول إلى الاختبار"
     },
@@ -1228,7 +1250,9 @@
       "noTestDataMessage": "تعذر تحميل معلومات الاختبار. يرجى المحاولة مرة أخرى لاحقًا.",
       "failedToCompleteStep": "فشل في إكمال الخطوة. يرجى المحاولة مرة أخرى.",
       "failedToInitializeTestData": "فشل في تهيئة بيانات الاختبار. يرجى المحاولة مرة أخرى.",
-      "loginRequired": "يرجى تسجيل الدخول إلى حساب RUXAILAB الخاص بك أولاً للوصول إلى الاختبار!"
+      "loginRequired": "يرجى تسجيل الدخول إلى حساب RUXAILAB الخاص بك أولاً للوصول إلى الاختبار!",
+      "timerIndexNotFound": "An error occurred while saving the task time.",
+      "taskNotFound": "Task not found. Please try again."
     },
     "CalibrationInProgressModal": {
       "completed": "اكتملت المعايرة!",
@@ -1328,7 +1352,8 @@
       "process": "تتضمن المعايرة متابعة النقاط التي ستظهر  على الشاشة بعينيك. من المهم أن تكون في مكان جيد الإضاءة، وتجلس بشكل مريح، وتحافظ على ثبات رأسك.",
       "instruction": "عندما تكون جاهزًا، اضغط على الزر لبدء المعايرة.",
       "startButton": "بدء المعايرة",
-      "inProgress": "جارٍ العمل..."
+      "inProgress": "جارٍ العمل...",
+      "reuseSkipButton": "إعادة استخدام/تخطي المعايرة"
     },
     "warnings": {
       "sessionNotScheduled": "لم يتم تحديد موعد لهذه الجلسة بعد"
@@ -1682,11 +1707,7 @@
       "SelfTest": {
         "title": "اختبار ذاتي",
         "type": "غير مشرف عليه",
-        "text": [
-          "الإجابة في وقت فراغ",
-          "تحليل متقدم للإجابات",
-          "تخصيص المهمة"
-        ]
+        "text": ["الإجابة في وقت فراغ", "تحليل متقدم للإجابات", "تخصيص المهمة"]
       },
       "LiveTest": {
         "title": "اختبار مباشر",

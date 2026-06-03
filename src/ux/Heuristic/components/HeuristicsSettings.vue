@@ -7,6 +7,29 @@
       </h1>
       <v-divider class="mb-6" />
 
+      <!-- Enable Weights Feature Toggle -->
+      <div class="mb-8">
+        <div class="d-flex align-center justify-space-between">
+          <div>
+            <h3 class="text-h6 font-weight-medium mb-1">
+              {{ $t('HeuristicsSettings.titles.enableWeights') }}
+            </h3>
+            <p class="text-body-2 text-grey-darken-1">
+              {{ $t('HeuristicsSettings.messages.enableWeightsDescription') }}
+            </p>
+          </div>
+          <v-switch
+            v-model="useWeights"
+            :disabled="props.isTemplate"
+            color="primary"
+            inset
+            class="ms-4"
+          />
+        </div>
+      </div>
+
+      <v-divider class="mb-6" />
+
       <!-- Download CSV Template -->
       <div class="mb-8">
         <v-btn
@@ -164,6 +187,16 @@ watch(localTrackTime, async (newVal) => {
   } finally {
     loadingTrackTime.value = false
   }
+})
+
+const useWeights = computed({
+  get: () => test.value.useWeights ?? false,
+  set: (value) => {
+    store.commit('SET_TEST', {
+      ...test.value,
+      useWeights: value,
+    })
+  },
 })
 
 const testAnswerDocLength = computed(() => {

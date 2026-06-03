@@ -168,6 +168,7 @@ export default {
           errorCode: 'studyError',
           message: err,
         })
+        return null
       } finally {
         commit('setLoading', false)
       }
