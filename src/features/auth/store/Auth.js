@@ -170,14 +170,19 @@ export default {
           type: 'success',
         })
       } catch (err) {
-        if (err.message === 'EMAIL_NOT_VERIFIED') {
-          throw err
+        const silentErrors = [
+          'auth/popup-closed-by-user',
+          'auth/cancelled-popup-request',
+        ]
+        if (!silentErrors.includes(err.code)) {
+          commit('SET_TOAST', {
+            message: i18n.global.t('errors.globalError'),
+            type: 'error',
+          })
         }
-        commit('SET_TOAST', {
-          message: i18n.global.t('errors.globalError'),
-          type: 'error',
-        })
         throw err
+      } finally {
+        commit('setLoading', false)
       }
     },
 
@@ -253,10 +258,16 @@ export default {
     async deleteAuth({ commit }, payload) {
       commit('setLoading', true)
       try {
-        await authController.deleteAuth(payload)
-        // Store handles state management
-        await authController.signOut()
-        commit('SET_USER', null)
+        try {
+          await authController.deleteUserData(payload)
+        } catch (e) {
+          // Best effort backend cleanup
+          console.warn(
+            'Failed to delete user backend data during deleteAuth',
+            e,
+          )
+        }
+        // State management is handled by the final logout action
       } catch (err) {
         throw err
       } finally {

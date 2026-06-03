@@ -57,6 +57,7 @@
               :heuristics-evaluator="heuristicsEvaluator"
               :heuristics-statistics="heuristicsStatistics"
               :time-by-heuristics="timeByHeuristics"
+              :track-time="trackTime"
               :weights-statistics="weightsStatistics"
               :relative="relative"
               :usability-total-fix="usabilityTotalFix"
@@ -333,6 +334,8 @@ const maxValue = computed(() => {
 })
 
 const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
+
+const trackTime = computed(() => store.getters.test?.trackTime !== false)
 
 const answers = computed(() => {
   if (testAnswerDocument.value && testAnswerDocument.value.heuristicAnswers) {

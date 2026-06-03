@@ -157,7 +157,9 @@ export default class Study {
       testStructure: this.testStructure,
       testOptions: this.testOptions,
       answersDocId: this.answersDocId,
-      cooperators: this.cooperators.map((c) => c.toFirestore()),
+      cooperators: (this.cooperators || []).map((c) =>
+        typeof c?.toFirestore === 'function' ? c.toFirestore() : c,
+      ),
       creationDate: this.creationDate,
       updateDate: this.updateDate,
       templateDoc: this.templateDoc,

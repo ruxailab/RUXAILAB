@@ -108,6 +108,7 @@
     "markAllAsRead": "Tout marquer comme lu",
     "caughtUp": "Vous êtes à jour",
     "noNewNotifications": "Pas de nouvelles notifications",
+    "notificationBell": "Cloche de notification",
     "unread": "non lu",
     "inbox": "Boîte de réception",
     "timeAgo": {
@@ -282,7 +283,17 @@
       "viewEditProfile": "Afficher et modifier les informations de votre profil",
       "exploreCommunityStudies": "Explorez les études partagées par la communauté RUXAI",
       "browseCommunityTemplates": "Parcourez les modèles fournis par la communauté RUXAI"
-    }
+    },
+    "appName": "RUXAILAB",
+    "tagline": "Plateforme de recherche UX",
+    "appNavigation": "Navigation de l'application",
+    "createNewStudy": "Créer une nouvelle étude",
+    "exitTest": "Quitter le test",
+    "signOut": "Se déconnecter",
+    "previousStep": "Étape précédente",
+    "nextStep": "Étape suivante",
+    "finishTest": "Terminer le test",
+    "helpButton": "Bouton d'aide"
   },
   "profile": {
     "title": "Profil",
@@ -376,7 +387,8 @@
       "Settings": "Paramètres",
       "name": "Nom",
       "studiesCount": "Nombre d'Études",
-      "mediaSize": "Taille des Médias"
+      "mediaSize": "Taille des Médias",
+      "toggleMiniMode": "Basculer le mode compact"
     },
     "heuristic": "Évaluation heuristique de l'utilisabilité"
   },
@@ -574,7 +586,10 @@
       "updatedProgress": "a mis à jour sa progression",
       "invitationSentTitle": "Invitation envoyée",
       "invitationPendingDesc": "Invitation en attente pour",
-      "pendingStatus": "En attente"
+      "pendingStatus": "En attente",
+      "evaluatorInfo": "Info Évaluateurs",
+      "evaluatorInfoEmpty": "Aucune section d'information. Ajoutez-en pour guider vos évaluateurs.",
+      "evaluatorInfoSeeAll": "Voir les {count} sections"
     },
     "managerView": {
       "heuristicStudy": "Étude heuristique",
@@ -703,11 +718,16 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "Paramètres",
-      "confirmUpload": "Confirmer le téléchargement"
+      "confirmUpload": "Confirmer le téléchargement",
+      "timeTracking": "Suivi du temps",
+      "enableWeights": "Activer la fonctionnalité de pondération"
     },
     "messages": {
       "acceptCsv": "Si vous acceptez, toutes vos heuristiques actuelles seront remplacées par celles du fichier .csv.",
-      "noCsvFileSelected": "Aucun fichier CSV sélectionné. \nVeuillez en sélectionner un avant de continuer."
+      "noCsvFileSelected": "Aucun fichier CSV sélectionné. \nVeuillez en sélectionner un avant de continuer.",
+      "timeTrackingDescription": "Enregistre le temps que chaque évaluateur passe par heuristique lors de l'évaluation.",
+      "settingsSaved": "Paramètres enregistrés avec succès.",
+      "enableWeightsDescription": "Permettre aux évaluateurs d'attribuer des poids aux heuristiques dans cette étude"
     },
     "placeHolders": {
       "importCsv": "Importez votre fichier CSV test ici."
@@ -715,6 +735,10 @@
     "actions": {
       "downloadCsvTemplate": "Télécharger le modèle CSV",
       "update": "Mettre à jour"
+    },
+    "labels": {
+      "timeTrackingOn": "Suivi du temps activé",
+      "timeTrackingOff": "Suivi du temps désactivé"
     }
   },
   "HeuristicsTestView": {
@@ -962,7 +986,8 @@
     "validation": {
       "fieldRequired": "Champ Requis",
       "validUrl": "Doit être une URL valide commençant par http:// ou https://",
-      "positiveNumber": "Doit être un nombre positif"
+      "positiveNumber": "Doit être un nombre positif",
+      "minOne": "La valeur doit être d'au moins 1"
     },
     "basicInfo": {
       "stepTitle": "Étape 1 : Informations de Base de la Tâche",
@@ -1006,6 +1031,12 @@
       "sart": "Technique d'Évaluation de la Conscience Situationnelle - mesure la conscience situationnelle"
     },
     "answerTypePreview": {
+      "postTest": {
+        "title": "Retour après le test",
+        "q1": "Évaluez votre expérience",
+        "q2": "Comment avez-vous trouvé le produit lors des tests bêta ?",
+        "feedbackPlaceholder": "Le produit avait une interface fluide, mais présentait des ralentissements à certains endroits."
+      },
       "taskCompleted": "Tâche terminée ! Aucun retour supplémentaire requis.",
       "participantsFeedbackHere": "Les participants fourniront leurs commentaires ici...",
       "submitFeedback": "Soumettre les Commentaires",
@@ -1207,6 +1238,7 @@
       "noTasks": "Ce test n'a aucune tâche.",
       "answerSaved": "Réponse enregistrée avec succès.",
       "taskCompletedSuccess": "Tâche \"{taskName}\" terminée avec succès !",
+      "taskNotCompleted": "No se pudo completar la tarea \"{taskName}\".",
       "useSessionLinkModerated": "Utilisez un lien de session pour accéder à votre test modéré !",
       "useSessionLink": "Utilisez un lien de session pour accéder au test"
     },
@@ -1218,7 +1250,9 @@
       "noTestDataMessage": "Les informations sur le test n'ont pas pu être chargées. Veuillez réessayer plus tard.",
       "failedToCompleteStep": "Échec de la complétion de l'étape. Veuillez réessayer.",
       "failedToInitializeTestData": "Échec de l'initialisation des données de test. Veuillez réessayer.",
-      "loginRequired": "Veuillez d’abord vous connecter à votre compte RUXAILAB pour accéder au test !"
+      "loginRequired": "Veuillez d’abord vous connecter à votre compte RUXAILAB pour accéder au test !",
+      "timerIndexNotFound": "An error occurred while saving the task time.",
+      "taskNotFound": "Task not found. Please try again."
     },
     "CalibrationInProgressModal": {
       "completed": "Calibrage terminé !",
@@ -1318,7 +1352,8 @@
       "process": "Le calibrage consiste à suivre des points qui apparaîtront sur l'écran avec vos yeux. Il est important que vous soyez dans un endroit bien éclairé, assis confortablement et que vous gardiez la tête stable.",
       "instruction": "Lorsque vous êtes prêt, appuyez sur le bouton pour commencer le calibrage.",
       "startButton": "Commencer le calibrage",
-      "inProgress": "En cours..."
+      "inProgress": "En cours...",
+      "reuseSkipButton": "Réutiliser/Sauter la calibration"
     },
     "warnings": {
       "sessionNotScheduled": "Cette session n’a pas encore de date programmée"
@@ -2406,5 +2441,32 @@
       }
     },
     "title": "Politique de confidentialité"
+  },
+  "EvaluatorInfoView": {
+    "pageTitle": "Informations pour les Évaluateurs",
+    "pageSubtitle": "Créez des sections d'information que les évaluateurs verront avant de commencer le test"
+  },
+  "EvaluatorInfoEditor": {
+    "title": "Informations pour les Évaluateurs",
+    "subtitle": "Créez des sections d'information que les évaluateurs verront avant de commencer le test",
+    "noSections": "Aucune section. Ajoutez-en une pour commencer.",
+    "untitledSection": "Section sans titre",
+    "addSection": "Ajouter une section",
+    "sectionTitle": "Titre de la section",
+    "sectionContent": "Contenu",
+    "sectionType": "Type",
+    "types": {
+      "info": "Information",
+      "warning": "Avertissement",
+      "tip": "Conseil"
+    },
+    "save": "Enregistrer",
+    "cancel": "Annuler"
+  },
+  "EvaluatorInfoDisplay": {
+    "title": "Avant de commencer",
+    "subtitle": "Veuillez lire les informations suivantes avant de démarrer l'évaluation",
+    "startButton": "Démarrer l'évaluation",
+    "noContent": "Aucune information supplémentaire."
   }
 }

@@ -37,20 +37,13 @@
         <!-- Divider -->
         <v-divider class="mb-6" />
 
-        <!-- Título de estadísticas -->
-        <v-row>
-          <v-col cols="12">
-            <h2 class="text-h5">
-              {{ $t('Dashboard.managerView.generalStatistics') }}
-            </h2>
-          </v-col>
-        </v-row>
-        <v-divider class="mb-6" />
-
-        <!-- Las 4 cards de métricas -->
-        <v-row>
-          <v-col cols="12">
+        <!-- Las 4 cards de métricas + Evaluator Info -->
+        <v-row class="mb-2">
+          <v-col cols="12" md="6">
             <StudyOverview :test="test" />
+          </v-col>
+          <v-col cols="12" md="6">
+            <EvaluatorInfoCard :test="test" />
           </v-col>
         </v-row>
 
@@ -111,10 +104,9 @@ import {
 } from '@/shared/utils/managerDefault'
 import ManagerView from '@/shared/views/template/ManagerView.vue'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
-import { computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, onMounted, watchEffect } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import { useI18n } from 'vue-i18n'
 
 // Componentes del manager
 import StudyOverview from '@/ux/Heuristic/components/manager/StudyOverview.vue'
@@ -125,10 +117,12 @@ import HeuristicsInfo from '@/ux/Heuristic/components/manager/HeuristicsInfo.vue
 import StorageInfo from '@/ux/Heuristic/components/manager/StorageInfo.vue'
 import UsabilityResults from '@/ux/Heuristic/components/manager/UsabilityResults.vue'
 import FinalReportStatus from '@/ux/Heuristic/components/manager/FinalReportStatus.vue'
+import EvaluatorInfoCard from '@/ux/Heuristic/components/manager/EvaluatorInfoCard.vue'
 
 // Stores
 const store = useStore()
 const route = useRoute()
+const router = useRouter()
 
 // Computed
 const user = computed(() => store.getters.user)
@@ -146,9 +140,24 @@ const accessLevel = computed(() => {
   const coop = currentTest?.cooperators?.find(
     (c) => c.userDocId === currentUser.id,
   )
-  if (coop) return coop.accessLevel
+  if (coop?.accepted === true) return coop.accessLevel
 
-  return currentTest?.isPublic ? ACCESS_LEVEL.EVALUATOR : ACCESS_LEVEL.GUEST
+  if (currentTest?.isPublic) return ACCESS_LEVEL.GUEST
+  return null
+})
+
+watchEffect(() => {
+  if (user.value != null && test.value != null) {
+    const hasAccess =
+      accessLevel.value === ACCESS_LEVEL.ADMIN ||
+      accessLevel.value === ACCESS_LEVEL.EVALUATOR ||
+      accessLevel.value === ACCESS_LEVEL.GUEST ||
+      accessLevel.value === ACCESS_LEVEL.OBSERVATOR
+
+    if (!hasAccess || accessLevel.value === null) {
+      router.push('/')
+    }
+  }
 })
 
 const topCards = computed(() => {
@@ -172,6 +181,18 @@ const navigator = computed(() => {
       title: 'Final Report',
       icon: 'mdi-file-document',
       path: `/heuristic/finalreport/${test.value.id}`,
+    })
+  }
+
+  if (
+    (accessLevel.value === ACCESS_LEVEL.ADMIN ||
+      accessLevel.value === ACCESS_LEVEL.SUPER_ADMIN) &&
+    test.value
+  ) {
+    items.push({
+      title: 'Evaluator Info',
+      icon: 'mdi-book-information-variant',
+      path: `/heuristic/evaluatorinfo/${test.value.id}`,
     })
   }
 
