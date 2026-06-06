@@ -6,7 +6,6 @@ on:
     # (Avoids midnight to reduce GitHub Actions cron scheduling delays)
     - cron: '0 8 1 * *'
 
-  # See .github/milestone_bot_flowchart.png for the end-to-end workflow diagram.
   workflow_dispatch:
     inputs:
       month:
