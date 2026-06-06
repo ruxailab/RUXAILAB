@@ -486,7 +486,7 @@ module.exports = async ({ github, context, core }) => {
       }
     } else {
       core.setFailed(
-        `Failed to create milestone (Validation Error): ${createErr.message || createErr}`
+        `Failed to create milestone (HTTP ${createErr.status ?? createErr.response?.status ?? 'unknown'}): ${createErr.message || createErr}`
       );
       return;
     }
