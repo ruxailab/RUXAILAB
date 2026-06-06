@@ -6,6 +6,7 @@ on:
     # (Avoids midnight to reduce GitHub Actions cron scheduling delays)
     - cron: '0 8 1 * *'
 
+  # See .github/milestone_bot_flowchart.png for the end-to-end workflow diagram.
   workflow_dispatch:
     inputs:
       month:
@@ -29,10 +30,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        # Pin Node explicitly — ubuntu-latest's bundled Node version is not a
+        # stable contract and can shift between runner image releases.
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
       - name: Install YAML parser
         # Installed with --no-save to avoid polluting package.json / package-lock.json.
+        # Version is pinned (~2.6.1 = patches only) so a new yaml release on the
+        # scheduled cron run cannot silently break parsing. Bump intentionally.
         # The script has a fallback parser if this step fails.
-        run: npm install --no-save yaml
+        run: npm install --no-save yaml@~2.6.1
         continue-on-error: true
 
       - name: Create or Update Monthly Milestone

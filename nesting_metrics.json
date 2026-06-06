@@ -1,0 +1,28 @@
+{
+    "analysis_type": "Depth of Conditional Nesting",
+    "threshold": 7,
+    "summary": {
+        "total_files": 3,
+        "failed_files": 0
+    },
+    "results": [
+        {
+            "file": "src/ux/accessibility/store/Assessment.js",
+            "avg_depth": 3.3,
+            "max_depth": 6,
+            "status_code": "🚨 WARNING"
+        },
+        {
+            "file": "src/shared/store/Answer.js",
+            "avg_depth": 4.9,
+            "max_depth": 7,
+            "status_code": "🚨 WARNING"
+        },
+        {
+            "file": "src/features/auth/controllers/UserController.js",
+            "avg_depth": 3.9,
+            "max_depth": 6,
+            "status_code": "🚨 WARNING"
+        }
+    ]
+}

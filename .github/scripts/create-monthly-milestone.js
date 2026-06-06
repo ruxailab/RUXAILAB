@@ -162,6 +162,52 @@ function fallbackParseYaml(content, core) {
 }
 
 /**
+ * Type-check a parsed config object. Returns { default_objectives, milestones }
+ * with guaranteed shapes:
+ *   - default_objectives: string[] (non-empty strings) OR null if invalid
+ *   - milestones: { [title: string]: string[] } (malformed entries dropped, with warnings)
+ */
+function normalizeParsedConfig(parsed, core) {
+  const isNonEmptyString = (v) => typeof v === 'string' && v.trim().length > 0;
+  const isStringArray = (v) =>
+    Array.isArray(v) && v.length > 0 && v.every(isNonEmptyString);
+
+  let default_objectives = null;
+  if (parsed && 'default_objectives' in parsed) {
+    if (isStringArray(parsed.default_objectives)) {
+      default_objectives = parsed.default_objectives;
+    } else {
+      core.warning(
+        `Config "default_objectives" is malformed (expected non-empty array of strings, got ${typeof parsed.default_objectives}). Will use hardcoded defaults.`
+      );
+    }
+  }
+
+  const milestones = {};
+  if (parsed && parsed.milestones && typeof parsed.milestones === 'object' && !Array.isArray(parsed.milestones)) {
+    for (const [key, value] of Object.entries(parsed.milestones)) {
+      if (!isNonEmptyString(key)) {
+        core.warning(`Dropping milestone entry with non-string key.`);
+        continue;
+      }
+      if (isStringArray(value)) {
+        milestones[key] = value;
+      } else {
+        core.warning(
+          `Dropping milestone "${key}" (expected non-empty array of strings, got ${typeof value}).`
+        );
+      }
+    }
+  } else if (parsed && parsed.milestones !== undefined) {
+    core.warning(
+      `Config "milestones" is malformed (expected object, got ${Array.isArray(parsed.milestones) ? 'array' : typeof parsed.milestones}). Treating as empty.`
+    );
+  }
+
+  return { default_objectives, milestones };
+}
+
+/**
  * Read and parse milestone-config.yml with layered fallbacks.
  */
 function loadConfig(core) {
@@ -186,10 +232,10 @@ function loadConfig(core) {
       const parsed = yamlLib.parse(rawContent);
       if (parsed && typeof parsed === 'object') {
         core.info('Config parsed successfully with yaml library.');
+        const normalized = normalizeParsedConfig(parsed, core);
         return {
-          default_objectives:
-            parsed.default_objectives || HARDCODED_OBJECTIVES,
-          milestones: parsed.milestones || {},
+          default_objectives: normalized.default_objectives || HARDCODED_OBJECTIVES,
+          milestones: normalized.milestones,
         };
       }
     } catch (err) {
@@ -222,7 +268,7 @@ function loadConfig(core) {
 /**
  * Send a JSON payload to a URL via POST. Returns a Promise.
  */
-function httpPost(url, payload) {
+function httpPost(url, payload, timeoutMs = 10000) {
   return new Promise((resolve, reject) => {
     const urlObj = new URL(url);
     const transport = urlObj.protocol === 'https:' ? https : http;
@@ -238,6 +284,7 @@ function httpPost(url, payload) {
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(data),
         },
+        timeout: timeoutMs,
       },
       (res) => {
         let body = '';
@@ -246,6 +293,9 @@ function httpPost(url, payload) {
       }
     );
 
+    req.on('timeout', () => {
+      req.destroy(new Error(`Request timed out after ${timeoutMs}ms`));
+    });
     req.on('error', (err) => reject(err));
     req.write(data);
     req.end();
@@ -338,10 +388,21 @@ module.exports = async ({ github, context, core }) => {
 
   // 2. Load config & resolve objectives
   const config = loadConfig(core);
-  const objectives =
+  let objectives =
     config.milestones[milestoneTitle] ||
     config.default_objectives ||
     HARDCODED_OBJECTIVES;
+
+  if (
+    !Array.isArray(objectives) ||
+    objectives.length === 0 ||
+    !objectives.every((o) => typeof o === 'string' && o.trim().length > 0)
+  ) {
+    core.warning(
+      'Objectives malformed (expected a non-empty array of non-empty strings). Falling back to hardcoded defaults.'
+    );
+    objectives = HARDCODED_OBJECTIVES;
+  }
 
   core.info(`Objectives (${objectives.length}): ${objectives.join(', ')}`);
 
@@ -442,13 +503,31 @@ module.exports = async ({ github, context, core }) => {
     return;
   }
 
+  let parsedWebhookUrl;
+  try {
+    parsedWebhookUrl = new URL(webhookUrl);
+  } catch {
+    core.warning(
+      'DISCORD_WEBHOOK_URL is not a valid URL. Skipping Discord notification.'
+    );
+    return;
+  }
+  if (parsedWebhookUrl.protocol !== 'https:') {
+    core.warning(
+      `DISCORD_WEBHOOK_URL must use https: (got "${parsedWebhookUrl.protocol}"). Refusing to send webhook over plaintext. Skipping notification.`
+    );
+    return;
+  }
+
   const actionVerb = wasUpdated ? 'Updated' : 'Created';
   const embedColor = wasUpdated ? 0xffa500 : 0x2ecc71; // orange for update, green for create
 
   const embed = {
     title: `📅 ${milestoneTitle} — Monthly Milestone ${actionVerb}`,
     description: [
-      `A new milestone has been ${actionVerb.toLowerCase()} for **${milestoneTitle}**.`,
+      wasUpdated
+        ? `The milestone for **${milestoneTitle}** has been updated with the latest objectives.`
+        : `A new milestone has been created for **${milestoneTitle}**.`,
       '',
       '**🎯 Objectives:**',
       ...objectives.map((obj) => `• ${obj}`),

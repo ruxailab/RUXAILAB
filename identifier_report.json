@@ -1,0 +1,20 @@
+{
+    "analysis_type": "Identifier Length",
+    "threshold": 6,
+    "summary": {
+        "total_files": 2,
+        "failed_files": 0
+    },
+    "results": [
+        {
+            "file": "src/ux/accessibility/store/Assessment.js",
+            "avg_length": 8.09,
+            "status_code": "OK!"
+        },
+        {
+            "file": "src/shared/composables/useItemFormatting.js",
+            "avg_length": 6.62,
+            "status_code": "OK!"
+        }
+    ]
+}

@@ -1,0 +1,15 @@
+A3: CI/CD Pipeline with GitHub Actions
+Patrick Augusto — Universitat de Lleida, 2025–2026
+
+Workflow   | File     | Trigger                              | Jobs
+-----------|----------|--------------------------------------|--------------------------------------------
+CI         | ci.yml   | push, pull_request                   | Lint → Test → Build
+CD         | cd.yml   | push (main/develop), manual dispatch | Build → Deploy (Hosting, Functions, Firestore, Storage)
+
+Link          | URL
+--------------|--------------------------------------------------------------------
+Report        | https://github.com/Patrick-Augusto/RUXAILAB/blob/develop/.github/A3_CI_CD_Pipeline_Report.md
+CI Workflow   | https://github.com/Patrick-Augusto/RUXAILAB/blob/develop/.github/workflows/ci.yml
+CD Workflow   | https://github.com/Patrick-Augusto/RUXAILAB/blob/develop/.github/workflows/cd.yml
+Repository    | https://github.com/Patrick-Augusto/RUXAILAB
+
