@@ -40,16 +40,6 @@
     </v-btn>
 
     <v-btn
-      v-if="['/admin', '/signin', '/signup'].includes($route.path)"
-      variant="text"
-      color="#f9a826"
-      class="console-button mx-1 d-none d-lg-flex"
-      @click="goTo('/')"
-    >
-      {{ $t('AccessNotAllowed.goHome') }}
-    </v-btn>
-
-    <v-btn
       v-if="!['/', '/admin', '/signin', '/signup'].includes($route.path)"
       variant="text"
       color="#f9a826"
