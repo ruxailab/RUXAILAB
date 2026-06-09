@@ -23,8 +23,8 @@
             isAnalyzing
               ? 'Analyzing...'
               : hasError
-              ? 'Analysis Failed'
-              : 'Analysis Completed'
+                ? 'Analysis Failed'
+                : 'Analysis Completed'
           }}
         </v-chip>
       </v-col>
@@ -227,6 +227,8 @@ onMounted(async () => {
         screen_width: 1920,
         iris_tracking_data: props.irisData,
         calib_id: props.userId,
+        model_name_x: calibrationConfig.value.models,
+        model_name_y: calibrationConfig.value.models,
       },
       { headers: { 'Content-Type': 'application/json' } },
     )
