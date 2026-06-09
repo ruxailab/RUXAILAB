@@ -33,10 +33,4 @@ ui-debug.log
 *.sln
 *.sw?
 /test-results/
-/playwright-report/
 /blob-report/
-/playwright/.cache/
-
-# Ignore the playwright test screenshots and video
-/playwright/output
-debug-screenshot.png

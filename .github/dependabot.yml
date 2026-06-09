@@ -48,7 +48,6 @@ updates:
       testing:
         patterns:
           - '@testing-library/*'
-          - '@playwright/*'
           - '@vue/test-utils'
           - '@vue/vue3-jest'
         update-types:
@@ -181,9 +180,6 @@ updates:
         update-types: ['version-update:semver-major']
 
       # Testing frameworks - test suite compatibility
-      - dependency-name: '@playwright/test'
-        update-types: ['version-update:semver-major']
-
       - dependency-name: 'jest'
         update-types: ['version-update:semver-major']
 
