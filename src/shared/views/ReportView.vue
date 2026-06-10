@@ -415,9 +415,10 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import Intro from '@/shared/components/introduction_cards/IntroReports.vue'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
-import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
+import { STUDY_TYPES, USER_STUDY_SUBTYPES, normalizeStudyType } from '@/shared/constants/methodDefinitions'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import {
   parseTimeSpentToMs,
@@ -427,6 +428,7 @@ import { showSuccess } from '../utils/toast'
 
 const store = useStore()
 const { t } = useI18n()
+const router = useRouter()
 
 defineProps({ id: { type: String, default: '' } })
 const emit = defineEmits(['goToCoops'])
@@ -613,7 +615,27 @@ const removeReport = async (report) => {
   dialog.value = false
 }
 
-const goToCoops = () => emit('goToCoops')
+const goToCoops = () => {
+  // determine study type and subtype preferring the answers doc when available
+  const type = answers.value?.type || test.value?.testType || ''
+  const subType = answers.value?.subType || test.value?.subType || ''
+  const normalized = normalizeStudyType(type)
+
+  let base = '/heuristic'
+  if (normalized === STUDY_TYPES.USER) {
+    base = subType === USER_STUDY_SUBTYPES.UNMODERATED
+      ? '/userTest/unmoderated'
+      : '/userTest/moderated'
+  } else if (normalized === STUDY_TYPES.CARD_SORTING) {
+    base = '/cardSorting'
+  } else if (normalized === STUDY_TYPES.ACCESSIBILITY_MANUAL || normalized === STUDY_TYPES.ACCESSIBILITY_AUTOMATIC) {
+    base = '/accessibility'
+  }
+
+  if (test.value?.id) {
+    router.push(`${base}/cooperators/${test.value.id}`).catch(() => {})
+  }
+}
 
 const getAvatarColor = (_name) => '#3f51b5'
 const getInitials = (name) => name?.charAt(0)?.toUpperCase() || '?'
