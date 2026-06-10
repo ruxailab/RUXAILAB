@@ -678,7 +678,7 @@
     },
     "AddCommentBtn": {
       "showComment": "Show comments",
-      "addComment": "Add comment",
+      "addComment": "Save comment",
       "addAnotherComment": "Add another comment",
       "addNewComment": "Add a new comment",
       "hideTextArea": "Hide comments area"

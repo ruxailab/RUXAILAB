@@ -663,7 +663,7 @@
     },
     "AddCommentBtn": {
       "showComment": "Mostrar comentario",
-      "addComment": "Agregar comentario",
+      "addComment": "Guardar comentario",
       "addAnotherComment": "Agregar otro comentario",
       "addNewComment": "Agregar un nuevo comentario",
       "hideTextArea": "Ocultar área de texto"

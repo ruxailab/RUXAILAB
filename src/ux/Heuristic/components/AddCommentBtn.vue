@@ -148,7 +148,7 @@
           :disabled="disable || !newCommentText?.trim()"
           @click="addNewComment"
         >
-          <v-icon start>mdi-plus</v-icon>
+          <v-icon start>mdi-content-save</v-icon>
           {{ $t('HeuristicsTable.AddCommentBtn.addComment') }}
         </v-btn>
 
