@@ -205,6 +205,7 @@ import { ref, computed, watch } from 'vue'
 import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { matchesSearch } from '@/shared/utils/searchUtils'
 
 const router = useRouter()
 const store = useStore()
@@ -339,7 +340,7 @@ const filteredCooperators = computed(() => {
 
   if (filters.value.search) {
     result = result.filter((coop) =>
-      coop.email.toLowerCase().includes(filters.value.search.toLowerCase()),
+      matchesSearch(coop.email, filters.value.search),
     )
   }
 
