@@ -108,7 +108,7 @@
                     size="x-small"
                     color="error"
                     :disabled="disable"
-                    @click="handleRemoveComment(comment.id, index)"
+                    @click="openDeleteCommentDialog(comment.id, index)"
                   />
                 </template>
               </v-col>
@@ -189,7 +189,7 @@
                   color="error"
                   class="delete-image-btn"
                   :disabled="disable"
-                  @click="handleRemoveImage(image.id, index)"
+                  @click="openDeleteImageDialog(image.id, index)"
                 />
               </v-card>
             </v-col>
@@ -219,13 +219,44 @@
       </v-card>
     </v-dialog>
   </div>
+
+  <ConfirmDialog
+    v-model:show="showDeleteCommentDialog"
+    :title="$t('HeuristicsTable.AddCommentBtn.deleteCommentTitle')"
+    :message="$t('HeuristicsTable.AddCommentBtn.deleteCommentMessage')"
+    :confirm-text="$t('common.delete')"
+    :cancel-text="$t('buttons.cancel')"
+    confirm-color="error"
+    confirm-icon="mdi-delete"
+    icon="mdi-alert-circle-outline"
+    icon-color="error"
+    type="error"
+    @confirm="confirmDeleteComment"
+    @cancel="cancelDeleteComment"
+  />
+
+  <ConfirmDialog
+    v-model:show="showDeleteImageDialog"
+    :title="$t('HeuristicsTable.ImportImage.deleteImageTitle')"
+    :message="$t('HeuristicsTable.ImportImage.deleteImageMessage')"
+    :confirm-text="$t('common.delete')"
+    :cancel-text="$t('buttons.cancel')"
+    confirm-color="error"
+    confirm-icon="mdi-delete"
+    icon="mdi-alert-circle-outline"
+    icon-color="error"
+    type="error"
+    @confirm="confirmDeleteImage"
+    @cancel="cancelDeleteImage"
+  />
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import ImageImport from '@/ux/Heuristic/components/ImportImage.vue'
 import { useCommentImage } from '@/ux/Heuristic/composables/useCommentImage'
+import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 
 const props = defineProps({
   answerHeu: { type: Object, default: () => ({}), required: true },
@@ -245,6 +276,62 @@ const emit = defineEmits([
 
 const store = useStore()
 const test = computed(() => store.getters.test || {})
+const showDeleteCommentDialog = ref(false)
+const selectedCommentToDelete = ref(null)
+const showDeleteImageDialog = ref(false)
+const selectedImageToDelete = ref(null)
+
+const openDeleteCommentDialog = (commentId, index) => {
+  selectedCommentToDelete.value = {
+    id: commentId,
+    index,
+  }
+
+  showDeleteCommentDialog.value = true
+}
+
+const confirmDeleteComment = () => {
+  if (!selectedCommentToDelete.value) return
+
+  handleRemoveComment(
+    selectedCommentToDelete.value.id,
+    selectedCommentToDelete.value.index,
+  )
+
+  showDeleteCommentDialog.value = false
+  selectedCommentToDelete.value = null
+}
+
+const cancelDeleteComment = () => {
+  showDeleteCommentDialog.value = false
+  selectedCommentToDelete.value = null
+}
+
+const openDeleteImageDialog = (imageId, index) => {
+  selectedImageToDelete.value = {
+    id: imageId,
+    index,
+  }
+
+  showDeleteImageDialog.value = true
+}
+
+const confirmDeleteImage = () => {
+  if (!selectedImageToDelete.value) return
+
+  handleRemoveImage(
+    selectedImageToDelete.value.id,
+    selectedImageToDelete.value.index,
+  )
+
+  showDeleteImageDialog.value = false
+  selectedImageToDelete.value = null
+}
+
+const cancelDeleteImage = () => {
+  showDeleteImageDialog.value = false
+  selectedImageToDelete.value = null
+}
 
 const {
   show,

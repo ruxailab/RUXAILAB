@@ -98,6 +98,7 @@
     "description": "Descripción",
     "cancel": "Cancelar",
     "confirm": "Confirmar",
+    "delete":"Eliminar",
     "add": "Agregar",
     "text": "Texto",
     "value": "Valor",
@@ -666,12 +667,16 @@
       "addComment": "Guardar comentario",
       "addAnotherComment": "Agregar otro comentario",
       "addNewComment": "Agregar un nuevo comentario",
-      "hideTextArea": "Ocultar área de texto"
+      "hideTextArea": "Ocultar área de texto",
+      "deleteCommentTitle": "Eliminar comentario",
+      "deleteCommentMessage": "¿Seguro que quieres eliminar este comentario?"
     },
     "ImportImage": {
       "uploadSuccess": "Imagen cargada exitosamente",
       "uploadError": "Error al cargar imagen",
-      "imagesCount": "{count} imagen(es) adjunta(s)"
+      "imagesCount": "{count} imagen(es) adjunta(s)",
+      "deleteImageTitle": "Eliminar imagen",
+      "deleteImageMessage": "¿Seguro que quieres eliminar esta imagen adjunta?"
     },
     "errors": {
       "failedToLoadQuestionForm": "Error al cargar el formulario de pregunta. Por favor, inténtalo de nuevo.",
@@ -2106,7 +2111,8 @@
     },
     "confirmDeletion": "Confirmar eliminación",
     "actionCannotBeUndone": "Esta acción no se puede deshacer",
-    "allAssociatedDataLost": "Todos los datos, resultados y configuraciones asociados se perderán para siempre."
+    "allAssociatedDataLost": "Todos los datos, resultados y configuraciones asociados se perderán para siempre.",
+    "signOutMessage": "¿Seguro que quieres cerrar sesión?"
   },
   "tags": {
     "active": "Activo",
