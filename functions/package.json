@@ -5,9 +5,13 @@
   "scripts": {
     "lint": "eslint .",
     "serve": "firebase emulators:start --only functions",
+    "serve:dev": "cross-env NODE_ENV=development ENV_FILE=.env.development firebase emulators:start --only functions --project develop",
+    "serve:prod": "cross-env NODE_ENV=production ENV_FILE=.env.production firebase emulators:start --only functions --project prod",
     "shell": "firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
+    "deploy:dev": "cross-env NODE_ENV=development ENV_FILE=.env.development firebase deploy --only functions --project develop",
+    "deploy:prod": "cross-env NODE_ENV=production ENV_FILE=.env.production firebase deploy --only functions --project prod",
     "logs": "firebase functions:log",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
   },
