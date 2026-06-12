@@ -6,13 +6,6 @@ const calibrationCorsOrigins = (process.env.EYE_LAB_CORS_ORIGINS || '')
   .map((origin) => origin.trim())
   .filter(Boolean)
 
-export const testEyeTracking = functions.onRequest({
-  handler: async (req, res) => {
-    console.log(calibrationCorsOrigins)
-    res.send('200')
-  },
-})
-
 export const receiveCalibration = functions.onRequest({
   opts: {
     cors: calibrationCorsOrigins,
