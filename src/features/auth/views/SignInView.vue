@@ -209,46 +209,54 @@ const onGoogleSignInError = (error) => {
   flex-direction: row;
   min-height: 100vh;
   background-color: #ffffff;
-  flex-wrap: wrap;
 }
 
 /* LEFT SIDE LOGO */
 .logo-side {
   width: 50%;
-  min-height: 100%;
+  min-height: 100vh;
   background-color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: 100vh;
 }
 
 .logo-img {
-  max-width: 600px;
+  max-width: 70%;
   width: 100%;
 }
 
 .mobile-logo-img {
-  max-width: 220px;
+  max-width: 200px;
   width: 100%;
+  margin-bottom: 8px;
 }
 
 /* RIGHT SIDE FORM */
 .form-side {
   width: 50%;
-  padding: 40px;
+  min-height: 100vh;
+  padding: 40px 40px;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 /* BOX STYLING */
 .signin-box {
   width: 100%;
-  max-width: 450px;
-  padding: 32px;
+   max-width: 440px;
+  padding: 36px 32px;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.08);
+  margin: auto 0;
 }
 
 /* TITLE & SUBTITLE */
@@ -260,31 +268,56 @@ const onGoogleSignInError = (error) => {
 
 /* RESPONSIVE ADJUSTMENTS */
 @media (max-width: 960px) {
+.signin-wrapper {
+    flex-direction: column;
+  }
+
   .logo-side {
     display: none;
   }
 
   .form-side {
     width: 100%;
-    padding: 24px;
-    align-items: center;
+    min-height: 100vh;
+    padding: 32px 24px;
+    align-items: flex-start;
+    justify-content: center;
   }
 
   .signin-box {
-    padding: 24px;
-    box-shadow: none; /* Clean for mobile view */
+    padding: 28px 24px;
+    box-shadow: none;
+    margin: auto;
+    max-width: 480px;
   }
 }
 
 @media (max-width: 600px) {
+  .form-side {
+    padding: 24px 16px;
+  }
+
   .signin-box {
-    padding: 16px;
+    padding: 20px 16px;
     border-radius: 12px;
+    max-width: 100%;
   }
 
   .subtitle {
     font-size: 0.9rem;
     margin-bottom: 1rem;
+  }
+}
+
+/* Handle small-screen layouts without clipping form content */
+@media (max-height: 600px) {
+  .form-side {
+    align-items: flex-start;
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+  .logo-side {
+    align-items: center;
   }
 }
 </style>
