@@ -70,6 +70,8 @@
 </template>
 
 <script setup>
+import { watch, onMounted } from 'vue'
+
 // Receives the final result object from the parent
 // { average, max, min, sd }
 const props = defineProps({
@@ -79,4 +81,29 @@ const props = defineProps({
     default: () => ({ average: '0%', max: '0%', min: '0%', sd: '0%' }),
   },
 })
+
+// Debug: Ver el contenido de result
+onMounted(() => {
+  console.log('=== StatisticsSummaryCard - result inicial ===')
+  console.log('result:', props.result)
+  console.log('average:', props.result?.average)
+  console.log('max:', props.result?.max)
+  console.log('min:', props.result?.min)
+  console.log('sd:', props.result?.sd)
+  console.log('===========================================')
+})
+
+watch(
+  () => props.result,
+  (newResult) => {
+    console.log('=== StatisticsSummaryCard - result actualizado ===')
+    console.log('result:', newResult)
+    console.log('average:', newResult?.average)
+    console.log('max:', newResult?.max)
+    console.log('min:', newResult?.min)
+    console.log('sd:', newResult?.sd)
+    console.log('===============================================')
+  },
+  { deep: true },
+)
 </script>

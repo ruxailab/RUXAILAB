@@ -105,8 +105,14 @@ function statistics() {
   if (testAnswerDocument.type === STUDY_TYPES.HEURISTIC) {
     const resultEvaluator = []
 
-    // Get Evaluator answers
+    // Get Evaluator answers - only include submitted evaluations
     answers().forEach((evaluator) => {
+      // Skip evaluators who haven't submitted their evaluation
+      if (!evaluator.submitted) {
+        console.log('Skipping evaluator (not submitted):', evaluator.userDocId)
+        return
+      }
+
       let SelectEvaluator = resultEvaluator.find(
         (e) => e.userDocId == evaluator.userDocId,
       )
@@ -166,6 +172,17 @@ function statistics() {
         heurisIndex++
       })
     })
+
+    // Log statistics about included evaluators
+    const totalEvaluators = answers().length
+    const completedEvaluators = resultEvaluator.length
+    console.log('=== ESTADÍSTICAS DE EVALUADORES ===')
+    console.log(`Total de evaluadores: ${totalEvaluators}`)
+    console.log(`Evaluadores completados: ${completedEvaluators}`)
+    console.log(
+      `Evaluadores excluidos (no completados): ${totalEvaluators - completedEvaluators}`,
+    )
+    console.log('===================================')
 
     // Sort resultEvaluator based on lastUpdate
     resultEvaluator.sort((a, b) => b.lastUpdate - a.lastUpdate)
