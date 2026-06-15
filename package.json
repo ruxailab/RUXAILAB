@@ -60,7 +60,7 @@
     "vuedraggable": "^4.1.0",
     "vuetify": "^3.12.8",
     "vuex": "^4.0.2",
-    "wavesurfer.js": "^7.12.3"
+    "wavesurfer.js": "^7.12.8"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
