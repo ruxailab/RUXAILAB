@@ -164,6 +164,9 @@ To calculate heuristic weights, run:
 
 ```bash
 # Run locally
+ cd functions
+ npm install
+ cd ..
  firebase init functions
  firebase use weight_function
  firebase emulators:start --only functions
@@ -184,6 +187,39 @@ If you want to deply the fuction, change your account from spark to blaze, run:
 
 Go to firebase panel -> functions -> on the right side of the function press "detailed usage statistics".
 There you can get the url and replace on .env file.
+
+### Functions: Run & Deploy
+
+Use the npm scripts in the `functions` package to run local emulators with the correct environment or to deploy to Firebase project aliases defined in `.firebaserc`.
+
+- Run local emulators (development env):
+
+```bash
+cd functions
+npm install
+npm run serve:dev
+```
+
+- Run local emulators (production env):
+
+```bash
+cd functions
+npm run serve:prod
+```
+
+- Deploy functions (development alias `develop`):
+
+```bash
+npm run deploy:dev
+```
+
+- Deploy functions (production alias `prod`):
+
+```bash
+npm run deploy:prod
+```
+
+These scripts load `functions/.env.development` or `functions/.env.production` depending on the target and use the `develop` and `prod` aliases from `.firebaserc`.
 
 ## Docker Setup
 

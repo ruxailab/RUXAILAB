@@ -429,15 +429,14 @@
                           v-if="
                             currentUserTestAnswer?.heuristicQuestions?.[
                               heurisIndex
-                            ]?.heuristicQuestions?.[i]
+                            ]?.heuristicQuestions?.[i] &&
+                            test?.testOptions?.length > 0
                           "
                           v-model="
                             currentUserTestAnswer.heuristicQuestions[
                               heurisIndex
                             ].heuristicQuestions[i].heuristicAnswer
                           "
-                          class="optionSelect"
-                          return-object
                           :items="test.testOptions"
                           :item-title="
                             (item) =>
@@ -453,6 +452,14 @@
                             handleAnswerChange(heurisIndex, i)
                           "
                         />
+                        <v-alert
+                          v-else-if="!test?.testOptions?.length"
+                          type="warning"
+                          class="mt-4"
+                        >
+                          No answer options configured for this test.
+                        </v-alert>
+
                         <v-alert v-else type="error" class="mt-4">
                           {{
                             $t('HeuristicsTestView.errors.questionNotLoaded')
@@ -564,7 +571,7 @@
           <template #activator="{ props }">
             <v-btn
               v-bind="props"
-              :disabled="calculateProgress < 100"
+              :disabled="calculatedProgress < 100"
               class="text-white"
               icon
               size="small"
@@ -597,6 +604,7 @@ import Snackbar from '@/shared/components/Snackbar'
 import HeuristicQuestionAnswer from '@/ux/Heuristic/models/HeuristicQuestionAnswer'
 import Heuristic from '@/ux/Heuristic/models/Heuristic'
 import { showSuccess, showError } from '@/shared/utils/toast'
+import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import HeuristicAnswer from '../models/HeuristicAnswer'
 
 const props = defineProps({
@@ -636,6 +644,8 @@ const saveStatusIcon = ref('mdi-check-circle')
 const saveStatusColor = ref('primary')
 
 const test = computed(() => store.getters.test)
+
+const trackTimeEnabled = computed(() => test.value?.trackTime !== false)
 
 const testAlreadyStarted = computed(() => {
   return (
@@ -692,6 +702,15 @@ const showSaveBtn = computed(() => {
 
 const isUserTestAdmin = computed(() => {
   return test.value.testAdmin.userDocId === user.value?.id
+})
+
+const hasTestDashboardAccess = computed(() => {
+  if (!user.value) return false
+  if (isUserTestAdmin.value) return true
+  const coop = test.value?.cooperators?.find(
+    (c) => c.userDocId === user.value.id,
+  )
+  return coop?.accessLevel === ACCESS_LEVEL.EVALUATOR
 })
 
 const isValidProgress = computed(() => {
@@ -824,6 +843,11 @@ const startTest = async () => {
     })
     return
   }
+  //check options before satrting the test
+  if (!test.value?.testOptions?.length) {
+    showError('No answer options configured for this test.')
+    return
+  }
 
   if (!isUserTestAdmin.value) {
     await store.dispatch('acceptStudyCollaboration', {
@@ -838,7 +862,7 @@ const startTest = async () => {
   if (currentUserTestAnswer.value) {
     currentUserTestAnswer.value.testStarted = true
     currentUserTestAnswer.value.lastViewedHeuristicIndex = heurisIndex.value
-    startTimer(heurisIndex.value)
+    if (trackTimeEnabled.value) startTimer(heurisIndex.value)
     // Auto-save when test starts
     debouncedAutoSave()
   }
@@ -1256,7 +1280,7 @@ const autoSaveAnswer = async () => {
     return
   }
 
-  snapshotRunningTimer(heurisIndex.value)
+  if (trackTimeEnabled.value) snapshotRunningTimer(heurisIndex.value)
 
   // Update progress and metadata
   currentUserTestAnswer.value.progress = calculatedProgress.value
@@ -1326,7 +1350,7 @@ const manualSaveAnswer = async () => {
     return
   }
 
-  snapshotRunningTimer(heurisIndex.value)
+  if (trackTimeEnabled.value) snapshotRunningTimer(heurisIndex.value)
 
   // Update progress and metadata
   currentUserTestAnswer.value.progress = calculatedProgress.value
@@ -1374,7 +1398,7 @@ const submitAnswer = async () => {
     showError('HeuristicsTestView.errors.noAnswerData')
     return
   }
-  pauseTimer(heurisIndex.value)
+  if (trackTimeEnabled.value) pauseTimer(heurisIndex.value)
   currentUserTestAnswer.value.submitted = true
   autoSaveInProgress.value = true
   updateSaveStatus('Submitting...', 'saving')
@@ -1389,7 +1413,11 @@ const submitAnswer = async () => {
     })
     showSuccess('alerts.genericSuccess')
     setTimeout(() => {
-      router.push('/admin')
+      if (hasTestDashboardAccess.value) {
+        router.push(`/heuristic/manager/${test.value.id}`)
+      } else {
+        router.push('/admin')
+      }
     }, 1500)
   } catch {
     currentUserTestAnswer.value.submitted = false
@@ -1628,7 +1656,7 @@ const restoreProgress = () => {
 
     // Set test as started
     currentUserTestAnswer.value.testStarted = true
-    startTimer(heurisIndex.value)
+    if (trackTimeEnabled.value) startTimer(heurisIndex.value)
 
     // Update status indicator
     updateSaveStatus('Progress restored', 'success')
@@ -1715,12 +1743,14 @@ watch(heurisIndex, (newIndex, oldIndex) => {
   }
   // Auto-save when navigating between heuristics
   if (!start.value) {
-    if (oldIndex !== undefined && oldIndex !== newIndex) {
-      pauseTimer(oldIndex)
+    if (trackTimeEnabled.value) {
+      if (oldIndex !== undefined && oldIndex !== newIndex) {
+        pauseTimer(oldIndex)
+      }
+      startTimer(newIndex)
     }
 
     currentUserTestAnswer.value.lastViewedHeuristicIndex = heurisIndex.value
-    startTimer(newIndex)
     updateSaveStatus('Saving changes...', 'saving')
     debouncedAutoSave()
   }
@@ -1768,7 +1798,7 @@ onBeforeMount(async () => {
 onUnmounted(() => {
   // Save progress when component is destroyed
   if (calculatedProgress.value > 0 && !currentUserTestAnswer.value?.submitted) {
-    pauseTimer(heurisIndex.value)
+    if (trackTimeEnabled.value) pauseTimer(heurisIndex.value)
     autoSaveAnswer().catch(() => {})
   }
 })

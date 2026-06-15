@@ -72,7 +72,10 @@ const localTask = reactive(Task.fromJson({ ...props.task }))
 watch(
   () => props.dialog,
   (val) => {
-    if (val) Object.assign(localTask, props.task)
+    if (val) {
+      Object.assign(localTask, Task.fromJson({}))
+      Object.assign(localTask, Task.fromJson({ ...props.task }))
+    }
   },
 )
 
@@ -91,6 +94,7 @@ const submit = (task) => {
 }
 
 const reset = () => {
+  Object.assign(localTask, Task.fromJson({}))
   form.value?.resetVal()
 }
 </script>

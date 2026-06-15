@@ -7,6 +7,9 @@ const calibrationCorsOrigins = (process.env.EYE_LAB_CORS_ORIGINS || '')
   .filter(Boolean)
 
 export const receiveCalibration = functions.onRequest({
+  opts: {
+    cors: calibrationCorsOrigins,
+  },
   handler: async (req, res) => {
     if (req.method !== 'POST') {
       return res.status(405).send('Method Not Allowed')

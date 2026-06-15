@@ -10,6 +10,7 @@ export default class TaskAnswer {
     taskTime,
     completed,
     attempted,
+    tipPressCount,
     audioRecordURL,
     moderatorAudioURL,
     screenRecordURL,
@@ -31,6 +32,7 @@ export default class TaskAnswer {
     this.taskTime = taskTime ?? null
     this.completed = completed ?? null
     this.attempted = attempted ?? false
+    this.tipPressCount = Number.isFinite(tipPressCount) ? tipPressCount : 0
     this.audioRecordURL = audioRecordURL ?? null
     this.moderatorAudioURL = moderatorAudioURL ?? null
     this.screenRecordURL = screenRecordURL ?? null
@@ -83,6 +85,7 @@ export default class TaskAnswer {
       taskTime: this.taskTime,
       completed: this.completed,
       attempted: this.attempted,
+      tipPressCount: this.tipPressCount,
       audioRecordURL: this.audioRecordURL,
       moderatorAudioURL: this.moderatorAudioURL,
       screenRecordURL: this.screenRecordURL,

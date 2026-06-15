@@ -11,18 +11,7 @@ import fs from 'fs'
 import path from 'path'
 
 const BASE_LOCALE = 'en'
-const ALL_LOCALES = [
-  'en',
-  'es',
-  'pt_br',
-  'hi',
-  'de',
-  'fr',
-  'zh',
-  'ar',
-  'ru',
-  'ja',
-]
+const ALL_LOCALES = ['en', 'es']
 const LOCALES_DIR = 'src/app/plugins/locales'
 const GIT_BIN = '/usr/bin/git'
 

@@ -31,6 +31,10 @@ export default {
     REMOVE_USER(state, userId) {
       state.users = state.users.filter((user) => user.id !== userId)
     },
+    UPDATE_USER_LEVEL(state, { uid, accessLevel }) {
+      const user = state.users?.find((u) => u.id === uid)
+      if (user) user.accessLevel = accessLevel
+    },
   },
 
   actions: {
@@ -50,8 +54,10 @@ export default {
           data.uid,
           data.customClaims.accessLevel,
         )
-        const updatedUsers = await userController.readAll()
-        commit('SET_USERS', updatedUsers)
+        commit('UPDATE_USER_LEVEL', {
+          uid: data.uid,
+          accessLevel: data.customClaims.accessLevel,
+        })
       } catch (e) {
         return e
       } finally {

@@ -40,7 +40,14 @@
         <template #content>
           <div class="ma-0 pa-0">
             <!-- Tab 1 - Statistics -->
-            <StatisticsSummaryCard v-if="tab == 0" :result="showFinalResult" />
+            <StatisticsSummaryCard
+              v-if="tab == 0"
+              :result="showFinalResult"
+              :image-totals-by-heuristic="imageTotalsByHeuristic"
+              :option-response-totals="optionResponseTotals"
+              :test-title="testTitle"
+              :evaluator-identity="singleEvaluatorIdentity"
+            />
 
             <!-- Tab 2 - Evaluators -->
             <EvaluatorsAndGraphicsCard
@@ -57,6 +64,7 @@
               :heuristics-evaluator="heuristicsEvaluator"
               :heuristics-statistics="heuristicsStatistics"
               :time-by-heuristics="timeByHeuristics"
+              :track-time="trackTime"
               :weights-statistics="weightsStatistics"
               :relative="relative"
               :usability-total-fix="usabilityTotalFix"
@@ -76,7 +84,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, onBeforeMount } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import BarChart from '@/ux/Heuristic/components/charts/BarChart.vue'
 import RadarChart from '@/shared/components/charts/RadarChart.vue'
@@ -93,7 +101,10 @@ import {
   standardDeviation,
   finalResult,
   statistics,
+  calcFinalResult,
   formatTimeSpentFromMs,
+  buildHeuristicTestBundlePayload,
+  downloadHeuristicTestBundlePayload,
 } from '@/ux/Heuristic/utils/statistics'
 import {
   heuristicsStatisticsHeaders,
@@ -103,6 +114,7 @@ import {
 
 const store = useStore()
 const router = useRouter()
+const route = useRoute()
 const { t } = useI18n()
 
 const props = defineProps({
@@ -125,7 +137,77 @@ const usability_total = ref(0)
 const loading = ref(false) // Note: Check if Vuex getter 'loading' is needed
 const array_scores = ref([])
 
-const showFinalResult = computed(() => finalResult())
+const showFinalResult = computed(() => finalResult(resultEvaluator.value))
+
+const imageTotalsByHeuristic = computed(() => {
+  const totals = {}
+
+  if (!Array.isArray(resultEvaluator.value)) return []
+
+  resultEvaluator.value.forEach((evaluator) => {
+    if (!Array.isArray(evaluator.heuristics)) return
+
+    evaluator.heuristics.forEach((heuristic) => {
+      totals[heuristic.id] =
+        (totals[heuristic.id] || 0) + Number(heuristic.totalImages || 0)
+    })
+  })
+
+  return Object.entries(totals)
+    .map(([heuristic, totalImages]) => ({ heuristic, totalImages }))
+    .sort(
+      (a, b) =>
+        Number(a.heuristic.replace(/\D/g, '')) -
+        Number(b.heuristic.replace(/\D/g, '')),
+    )
+})
+
+const optionResponseTotals = computed(() => {
+  const options = Array.isArray(test.value?.testOptions)
+    ? test.value.testOptions
+    : []
+  const totalsMap = new Map()
+
+  options.forEach((option) => {
+    const key = String(option.value)
+    totalsMap.set(key, {
+      value: option.value,
+      text: option.text || String(option.value),
+      total: 0,
+    })
+  })
+
+  if (!Array.isArray(answers.value)) return Array.from(totalsMap.values())
+
+  answers.value.forEach((evaluator) => {
+    if (!Array.isArray(evaluator?.heuristicQuestions)) return
+
+    evaluator.heuristicQuestions.forEach((heuristic) => {
+      if (!Array.isArray(heuristic?.heuristicQuestions)) return
+
+      heuristic.heuristicQuestions.forEach((question) => {
+        const rawValue = question?.heuristicAnswer?.value
+        if (rawValue === null || rawValue === undefined || rawValue === '')
+          return
+
+        const key = String(rawValue)
+        if (!totalsMap.has(key)) {
+          totalsMap.set(key, {
+            value: rawValue,
+            text: String(rawValue),
+            total: 0,
+          })
+        }
+
+        totalsMap.get(key).total += 1
+      })
+    })
+  })
+
+  return Array.from(totalsMap.values()).sort(
+    (a, b) => Number(a.value) - Number(b.value),
+  )
+})
 
 const evaluatorStatistics = computed(
   () => store.state.Answer.evaluatorStatistics || { header: [], items: [] },
@@ -149,16 +231,21 @@ const heuristicsEvaluator = computed(() => {
     let evaluatorIndex = 1
     resultEvaluator.value.forEach((evaluator) => {
       evaluator.id = `Ev${evaluatorIndex}`
-      const header = table.header.find((h) => h.text === evaluator.id)
+      const header = table.header.find((h) => h.value === evaluator.id)
       if (!header) {
         table.header.push({
-          text: evaluator.id,
+          title: t('HeuristicsTestAnswer.titles.evaluatorNumber', {
+            n: evaluatorIndex,
+          }),
           align: 'center',
           value: evaluator.id,
         })
       }
       if (evaluator.heuristics && Array.isArray(evaluator.heuristics)) {
         evaluator.heuristics.forEach((heuristic) => {
+          const totalQuestions = Number(
+            heuristic.totalQuestionsValues ?? heuristic.totalQuestions ?? 0,
+          )
           const item = table.items.find((i) => i.heuristic === heuristic.id)
           if (item) {
             Object.assign(item, {
@@ -167,8 +254,8 @@ const heuristicsEvaluator = computed(() => {
           } else {
             table.items.push({
               heuristic: heuristic.id,
-              max: max * (heuristic.totalQuestions || 0),
-              min: min * (heuristic.totalQuestions || 0),
+              max: max * totalQuestions,
+              min: min * totalQuestions,
               [evaluator.id]: heuristic.result,
             })
           }
@@ -196,7 +283,9 @@ const timeByHeuristics = computed(() => {
   resultEvaluator.value.forEach((evaluator, evaluatorPosition) => {
     const evaluatorKey = `Ev${evaluatorPosition + 1}`
     table.header.push({
-      title: evaluatorKey,
+      title: t('HeuristicsTestAnswer.titles.evaluatorNumber', {
+        n: evaluatorPosition + 1,
+      }),
       value: evaluatorKey,
       align: 'center',
     })
@@ -218,17 +307,17 @@ const timeByHeuristics = computed(() => {
   })
 
   table.header.push({
-    title: 'Total',
+    title: t('HeuristicsTestAnswer.titles.totalTime'),
     value: 'totalTime',
     align: 'center',
   })
   table.header.push({
-    title: 'Average Time',
+    title: t('HeuristicsTestAnswer.titles.averageTime'),
     value: 'averageTime',
     align: 'center',
   })
   table.header.push({
-    title: 'Standard deviation',
+    title: t('HeuristicsTestAnswer.titles.timeStdDev'),
     value: 'timeSd',
     align: 'center',
   })
@@ -271,7 +360,9 @@ const heuristicsStatistics = computed(() => {
           .toFixed(2)
       : '0.00'
     const convertedValue =
-      item.max && item.min && item.max !== item.min
+      item.max !== undefined &&
+      item.min !== undefined &&
+      Number(item.max) !== Number(item.min)
         ? ((valueToConvert - item.min) / (item.max - item.min)) * 100
         : 0
     table.items.push({
@@ -334,6 +425,8 @@ const maxValue = computed(() => {
 
 const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
 
+const trackTime = computed(() => store.getters.test?.trackTime !== false)
+
 const answers = computed(() => {
   if (testAnswerDocument.value && testAnswerDocument.value.heuristicAnswers) {
     return Object.values(testAnswerDocument.value.heuristicAnswers)
@@ -351,6 +444,43 @@ const test = computed(() => {
     percentage: percentages,
   })
   return store.getters.test || {}
+})
+
+const testTitle = computed(
+  () => test.value?.testTitle || test.value?.title || test.value?.name || '',
+)
+
+const testBundlePayload = computed(() =>
+  buildHeuristicTestBundlePayload({
+    test: test.value,
+    testAnswerDocument: testAnswerDocument.value,
+    evaluatorItems: evaluatorStatistics.value?.items || [],
+  }),
+)
+
+const singleEvaluatorIdentity = computed(() => {
+  if (Number(showFinalResult.value?.evaluators) !== 1) return ''
+
+  const evaluatorUserDocId =
+    resultEvaluator.value?.find((item) => item?.userDocId)?.userDocId || ''
+
+  if (!evaluatorUserDocId) return ''
+
+  const participants = [
+    test.value?.testAdmin,
+    ...(test.value?.cooperators || []),
+  ]
+  const evaluator = participants.find(
+    (item) => item?.userDocId === evaluatorUserDocId,
+  )
+
+  return (
+    evaluator?.fullName ||
+    evaluator?.name ||
+    evaluator?.displayName ||
+    evaluator?.email ||
+    evaluatorUserDocId
+  )
 })
 
 const checkIfNan = (value) => {
@@ -497,11 +627,17 @@ watch(
 )
 
 onBeforeMount(async () => {
+  const studyId = props.id || route.params.id
+  if (studyId && !store.getters.test?.id) {
+    await store.dispatch('getStudy', { id: studyId })
+  }
   await store.dispatch('getCurrentTestAnswerDoc')
 })
 
 onMounted(() => {
   pythonFunction()
+
+  // Debug API removed for production
 })
 </script>
 

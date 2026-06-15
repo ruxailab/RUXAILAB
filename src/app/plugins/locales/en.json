@@ -90,6 +90,8 @@
     "analyzeProject": "Analyze the project and evaluators",
     "comment": "Comment",
     "comments": "Comments",
+    "evaluator": "Evaluator",
+    "evaluators": "Evaluators",
     "image": "Image",
     "images": "Images",
     "close": "Close",
@@ -112,6 +114,7 @@
     "markAllAsRead": "Mark all as read",
     "caughtUp": "You're all caught up",
     "noNewNotifications": "No new notifications",
+    "notificationBell": "Notification bell",
     "unread": "unread",
     "inbox": "inbox",
     "all": "All",
@@ -291,7 +294,8 @@
     "signOut": "Sign Out",
     "previousStep": "Previous Step",
     "nextStep": "Next Step",
-    "finishTest": "Finish Test"
+    "finishTest": "Finish Test",
+    "helpButton": "Help button"
   },
   "profile": {
     "title": "Profile",
@@ -386,7 +390,8 @@
       "Evaluator Info": "Evaluator Info",
       "name": "Name",
       "studiesCount": "Studies Count",
-      "mediaSize": "Media Size"
+      "mediaSize": "Media Size",
+      "toggleMiniMode": "Toggle mini mode"
     },
     "heuristic": "Usability Heuristic Evaluation"
   },
@@ -636,6 +641,7 @@
       "addNewDescription": "Add a new Description",
       "addOption": "Add a new Option",
       "hasValue": "Has Value",
+      "warning": "Warning",
       "moveUp": "Move Up",
       "moveDown": "Move Down",
       "Question": "Question",
@@ -723,11 +729,16 @@
   "HeuristicsSettings": {
     "titles": {
       "settings": "Settings",
-      "confirmUpload": "Confirm Upload"
+      "confirmUpload": "Confirm Upload",
+      "timeTracking": "Time Tracking",
+      "enableWeights": "Enable Weights Feature"
     },
     "messages": {
       "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
-      "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding."
+      "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding.",
+      "timeTrackingDescription": "Track the time each evaluator spends per heuristic during evaluation.",
+      "settingsSaved": "Settings saved successfully.",
+      "enableWeightsDescription": "Allow evaluators to assign weights to heuristics in this study"
     },
     "placeHolders": {
       "importCsv": "Import your CSV testfile here."
@@ -735,6 +746,10 @@
     "actions": {
       "downloadCsvTemplate": "Download CSV template",
       "update": "Update"
+    },
+    "labels": {
+      "timeTrackingOn": "Time tracking enabled",
+      "timeTrackingOff": "Time tracking disabled"
     }
   },
   "HeuristicsTestView": {
@@ -814,13 +829,54 @@
       "statistics": "Statistics",
       "evaluators": "Evaluators",
       "heuristics": "Heuristics",
-      "analytics": "Analytics"
+      "analytics": "Analytics",
+      "evaluatorNumber": "Evaluator {n}",
+      "totalTime": "Total time",
+      "averageTime": "Average time per evaluator",
+      "timeStdDev": "Time standard deviation"
     },
     "statistics": {
       "usabilityPercentage": "Usability Percentage",
       "max": "Max",
       "min": "Min",
       "std": "Standard deviation"
+    },
+    "summary": {
+      "title": "Evaluation Summary",
+      "stats": {
+        "average": "Average",
+        "max": "Max.",
+        "min": "Min.",
+        "stdDev": "Std. Dev.",
+        "evaluators": "Evaluators"
+      },
+      "warnings": {
+        "title": "Impact of warnings",
+        "hint": "How far the evaluation shifts when warnings are taken into account",
+        "description": "Questions answered as unable to be verified by analyzing only the website have been marked as warnings. The percentage change has been calculated in two scenarios: highest possible score and lowest possible score.",
+        "scenarios": {
+          "max": "Average max warning threshold",
+          "min": "Average min warning threshold",
+          "average": "Average warning threshold"
+        },
+        "details": ""
+      },
+      "charts": {
+        "imagesByHeuristic": {
+          "title": "Images by Heuristic",
+          "subtitle": "Horizontal distribution per heuristic",
+          "empty": "No image data"
+        },
+        "responsesByOption": {
+          "title": "Response Type",
+          "subtitle": "Circular distribution of selected options",
+          "empty": "No option data"
+        }
+      },
+      "meta": {
+        "groups": "groups",
+        "metrics": "metrics"
+      }
     },
     "evaluators": {
       "headers": {
@@ -834,7 +890,7 @@
     "heuristics": {
       "headers": {
         "heuristicsData": "Heuristics Data",
-        "answersByEvaluator": "Answers by Evaluator",
+        "answersByEvaluator": "Response Values by Evaluator",
         "answersByHeuristics": "Answers by Heuristics",
         "graphic": "Graphic",
         "weights": "Weights"
@@ -1012,7 +1068,8 @@
     "validation": {
       "fieldRequired": "Field Required",
       "validUrl": "Must be a valid URL starting with http:// or https://",
-      "positiveNumber": "Must be a positive number"
+      "positiveNumber": "Must be a positive number",
+      "minOne": "Value must be at least 1"
     },
     "basicInfo": {
       "stepTitle": "Step 1: Task Basic Information",
@@ -1056,6 +1113,12 @@
       "sart": "Situation Awareness Rating Technique - measures situational awareness"
     },
     "answerTypePreview": {
+      "postTest": {
+        "title": "Post Test Feedback",
+        "q1": "Rate your experience",
+        "q2": "How did you find the product in beta testing?",
+        "feedbackPlaceholder": "The product had a smooth UI but it was lagging in some places."
+      },
       "taskCompleted": "Task completed! No additional feedback required.",
       "participantsFeedbackHere": "Participants will provide their feedback here...",
       "submitFeedback": "Submit Feedback",
@@ -1318,6 +1381,7 @@
       "noTasks": "This test doesn't have any tasks.",
       "answerSaved": "Answer saved successfully.",
       "taskCompletedSuccess": "Task \"{taskName}\" completed successfully!",
+      "taskNotCompleted": "Task \"{taskName}\" could not be completed.",
       "useSessionLinkModerated": "Use a session link to access your moderated test!",
       "useSessionLink": "Use a session link to access the test"
     },
@@ -1329,7 +1393,9 @@
       "noTestDataMessage": "Test information could not be loaded. Please try again later.",
       "failedToCompleteStep": "Failed to complete step. Please try again.",
       "failedToInitializeTestData": "Failed to initialize test data. Please try again.",
-      "loginRequired": "Login to your RUXAILAB account first to access the test!"
+      "loginRequired": "Login to your RUXAILAB account first to access the test!",
+      "timerIndexNotFound": "An error occurred while saving the task time.",
+      "taskNotFound": "Task not found. Please try again."
     },
     "WelcomeStep": {
       "welcome": "Welcome to RUXAILAB!",
@@ -1369,7 +1435,8 @@
       "process": "Calibration involves following points that will appear on the screen with your eyes. It is important that you are in a well-lit place, sit comfortably, and keep your head stable.",
       "instruction": "When you are ready, press the button to start calibration.",
       "startButton": "Start calibration",
-      "inProgress": "In progress..."
+      "inProgress": "In progress...",
+      "reuseSkipButton": "Reuse/Skip Calibration"
     },
     "warnings": {
       "sessionNotScheduled": "Your session doesn't have a scheduled date"

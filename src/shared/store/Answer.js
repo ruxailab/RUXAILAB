@@ -265,7 +265,7 @@ export default {
         await answerController.updateUserAnswer(payload)
       } catch (error) {
         console.error('[Answer Store] Failed to update user answer:', error)
-        showError('errors.failedToUpdateAnswer')
+        throw error
       } finally {
         commit('setLoading', false)
       }
@@ -384,24 +384,24 @@ export default {
           evaluator.id = `Ev${evaluatorIndex}`
           let totalNoAplication = 0
           let totalNoReply = 0
-          let totalQuestions = 0
+          let totalQuestionsValues = 0
           let totalTimeMs = 0
 
           evaluator.heuristics.forEach((heuristic) => {
             totalNoAplication += heuristic.totalNoAplication
             totalNoReply += heuristic.totalNoReply
-            totalQuestions += heuristic.totalQuestions
+            totalQuestionsValues += heuristic.totalQuestionsValues
             totalTimeMs += Number(heuristic.timeSpentMs || 0)
           })
 
           table.items.push({
             evaluator: evaluator.id,
             result: evaluator.result,
-            aplication: totalQuestions - totalNoAplication,
+            aplication: totalQuestionsValues - totalNoAplication,
             noAplication: totalNoAplication,
             answered: percentage(
-              totalQuestions - totalNoReply,
-              totalQuestions,
+              totalQuestionsValues - totalNoReply,
+              totalQuestionsValues,
             ).toFixed(2),
             totalTime: formatTimeSpentFromMs(totalTimeMs),
             lastUpdate: new Date(evaluator.lastUpdate).toLocaleString(),

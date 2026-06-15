@@ -1,11 +1,19 @@
 import admin from 'firebase-admin'
-import 'dotenv/config'
+import dotenv from 'dotenv'
 import {
   onObjectDeleted,
   onObjectFinalized,
   onObjectMetadataUpdated,
 } from 'firebase-functions/storage'
 import firebaseFunctions from 'firebase-functions/v2'
+
+dotenv.config()
+const envPath =
+  process.env.ENV_FILE ||
+  (process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : null)
+if (envPath) {
+  dotenv.config({ path: envPath })
+}
 
 function getRegion() {
   return process.env.RUXAILAB_FUNCTIONS_REGION || 'europe-west6'

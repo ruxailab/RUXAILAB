@@ -4,6 +4,7 @@
       v-if="user"
       icon
       class="d-flex d-lg-none"
+      :aria-label="$t('navigation.appNavigation')"
       @click="toggleDashboardDrawer"
     >
       <v-icon>mdi-menu</v-icon>
@@ -39,16 +40,6 @@
     </v-btn>
 
     <v-btn
-      v-if="['/admin', '/signin', '/signup'].includes($route.path)"
-      variant="text"
-      color="#f9a826"
-      class="console-button mx-1 d-none d-lg-flex"
-      @click="goTo('/')"
-    >
-      {{ $t('AccessNotAllowed.goHome') }}
-    </v-btn>
-
-    <v-btn
       v-if="!['/', '/admin', '/signin', '/signup'].includes($route.path)"
       variant="text"
       color="#f9a826"
@@ -73,7 +64,13 @@
       {{ $t('auth.SIGNIN.sign-in') }}
     </v-btn>
 
-    <v-btn v-if="!user" icon class="d-flex d-lg-none" @click="goTo('/signin')">
+    <v-btn
+      v-if="!user"
+      icon
+      class="d-flex d-lg-none"
+      :aria-label="$t('auth.SIGNIN.sign-in')"
+      @click="goTo('/signin')"
+    >
       <v-icon :size="iconSize"> mdi-lock </v-icon>
     </v-btn>
 

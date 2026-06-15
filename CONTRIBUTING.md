@@ -242,16 +242,6 @@ npm run test:unit:watch
 npm run test:unit:coverage
 ```
 
-### End-to-End Tests (Playwright)
-
-```bash
-# Run E2E tests
-npm run test:e2e
-
-# Run in headed mode (see browser)
-npm run test:e2e:headed
-```
-
 ### Writing Tests
 
 - Write unit tests for utility functions and components

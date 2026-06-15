@@ -279,7 +279,7 @@ const fetchAllAnswers = async () => {
           }))
         }
       } catch {
-        showError(t('storage.fetchAnswersError', { testTitle: test.testTitle }))
+        showError('Error fetching answers', { testTitle: test.testTitle })
       }
     }
   }
@@ -437,13 +437,9 @@ const executeDelete = async () => {
   const file = fileToDelete.value
   if (!file) return
 
-  try {
-    await store.dispatch('Storage/deleteFile', file)
-    deleteDialog.value = false
-    fileToDelete.value = null
-  } catch (error) {
-    // Error is already handled in the store
-  }
+  await store.dispatch('Storage/deleteFile', file)
+  deleteDialog.value = false
+  fileToDelete.value = null
 }
 
 const openPreview = (item) => {

@@ -7,6 +7,29 @@
       </h1>
       <v-divider class="mb-6" />
 
+      <!-- Enable Weights Feature Toggle -->
+      <div class="mb-8">
+        <div class="d-flex align-center justify-space-between">
+          <div>
+            <h3 class="text-h6 font-weight-medium mb-1">
+              {{ $t('HeuristicsSettings.titles.enableWeights') }}
+            </h3>
+            <p class="text-body-2 text-grey-darken-1">
+              {{ $t('HeuristicsSettings.messages.enableWeightsDescription') }}
+            </p>
+          </div>
+          <v-switch
+            v-model="useWeights"
+            :disabled="props.isTemplate"
+            color="primary"
+            inset
+            class="ms-4"
+          />
+        </div>
+      </div>
+
+      <v-divider class="mb-6" />
+
       <!-- Download CSV Template -->
       <div class="mb-8">
         <v-btn
@@ -19,6 +42,29 @@
           {{ $t('HeuristicsSettings.actions.downloadCsvTemplate') }}
         </v-btn>
       </div>
+
+      <!-- Time Tracking Section -->
+      <div class="mb-8">
+        <h2 class="text-h6 font-weight-medium mb-2">
+          {{ $t('HeuristicsSettings.titles.timeTracking') }}
+        </h2>
+        <p class="text-body-2 text-medium-emphasis mb-3">
+          {{ $t('HeuristicsSettings.messages.timeTrackingDescription') }}
+        </p>
+        <v-switch
+          v-model="localTrackTime"
+          color="primary"
+          hide-details
+          :loading="loadingTrackTime"
+          :label="
+            localTrackTime
+              ? $t('HeuristicsSettings.labels.timeTrackingOn')
+              : $t('HeuristicsSettings.labels.timeTrackingOff')
+          "
+        />
+      </div>
+
+      <v-divider class="mb-6" />
 
       <!-- File Upload Section -->
       <div>
@@ -100,7 +146,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import { getStorage, ref as storageRef, getDownloadURL } from 'firebase/storage'
@@ -120,11 +166,38 @@ const loader = ref(null)
 const csvFile = ref(null)
 const myFile = ref(null)
 const loadingUpdate = ref(false)
+const loadingTrackTime = ref(false)
 const errorMessage = ref('')
 const errorVisible = ref(false)
 const confirmDialog = ref(false)
 
 const test = computed(() => store.getters.test)
+
+const localTrackTime = ref(test.value?.trackTime ?? true)
+
+watch(localTrackTime, async (newVal) => {
+  loadingTrackTime.value = true
+  try {
+    store.state.Tests.Test.trackTime = newVal
+    await store.dispatch('updateStudy', test.value)
+    await nextTick()
+    showSuccess(t('HeuristicsSettings.messages.settingsSaved'))
+  } catch (error) {
+    showError(error)
+  } finally {
+    loadingTrackTime.value = false
+  }
+})
+
+const useWeights = computed({
+  get: () => test.value.useWeights ?? false,
+  set: (value) => {
+    store.commit('SET_TEST', {
+      ...test.value,
+      useWeights: value,
+    })
+  },
+})
 
 const testAnswerDocLength = computed(() => {
   const doc = store.getters.testAnswerDocument

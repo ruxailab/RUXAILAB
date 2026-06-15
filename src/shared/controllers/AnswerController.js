@@ -26,22 +26,33 @@ export default class AnswerController extends Controller {
   }
 
   async updateUserAnswer(payload) {
-    const userToUpdate = await userController.getById(payload.cooperatorId)
+    if (!payload?.cooperatorId || !payload?.testDocId || !payload?.data) {
+      return null
+    }
 
-    userToUpdate.myAnswers[`${payload.testDocId}`] = Object.assign(
-      userToUpdate.myAnswers[`${payload.testDocId}`],
-      payload.data,
-    )
+    const userToUpdate = await userController.getById(payload.cooperatorId)
+    if (!userToUpdate) {
+      return null
+    }
+
+    userToUpdate.myAnswers = userToUpdate.myAnswers || {}
+    const currentAnswer = userToUpdate.myAnswers[`${payload.testDocId}`]
+
+    // No answer document linked yet (common for pending/new collaborators).
+    // Role changes should not fail because of missing answer metadata.
+    if (!currentAnswer || typeof currentAnswer !== 'object') {
+      return null
+    }
+
+    userToUpdate.myAnswers[`${payload.testDocId}`] = {
+      ...currentAnswer,
+      ...payload.data,
+    }
     return userController.update(userToUpdate.id, userToUpdate.toFirestore())
   }
 
   async removeUserAnswer(payload) {
     const userToUpdate = await userController.getById(payload.cooperatorId)
-
-    // Delete answers document
-    const answerDocumentId =
-      userToUpdate.myAnswers[`${payload.testDocId}`].testDocId
-    await super.delete(COLLECTION, answerDocumentId)
 
     // Remove it from user
     delete userToUpdate.myAnswers[`${payload.testDocId}`]
