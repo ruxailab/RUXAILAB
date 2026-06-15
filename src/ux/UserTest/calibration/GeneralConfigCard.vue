@@ -37,6 +37,7 @@
               hide-details
               class="number-input"
               placeholder="2-9"
+              @change="validatePointNumber"
               @blur="validatePointNumber"
             />
           </div>
