@@ -7,6 +7,7 @@ import CooperatorsView from '@/shared/views/CooperatorsView.vue'
 import HeuristicAnalyticsView from './views/HeuristicAnalyticsView.vue'
 import HeuristicAnswerView from './views/HeuristicAnswerView.vue'
 import EvaluatorInfoView from './views/EvaluatorInfoView.vue'
+import StorageView from '@/shared/views/StorageView.vue'
 
 export default [
   {
@@ -64,6 +65,13 @@ export default [
         props: true,
         meta: { authorize: [0, 1] },
         component: EvaluatorInfoView,
+      },
+      {
+        path: '/heuristic/storage/:id/:token?',
+        name: 'HeuristicStorageView',
+        props: true,
+        meta: { authorize: [0, 1] },
+        component: StorageView,
       } /*
       {
         path: '/heuristic/analytics/:id/:heuristic?',

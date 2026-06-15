@@ -196,6 +196,12 @@ const navigator = computed(() => {
     })
   }
 
+  items.push({
+    title: 'Storage',
+    icon: 'mdi-database',
+    path: `/heuristic/storage/${test.value.id}`,
+  })
+
   return items
 })
 

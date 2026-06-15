@@ -187,6 +187,12 @@ const navigator = computed(() => {
     ),
   ]
 
+  items.push({
+    title: 'Storage',
+    icon: 'mdi-database',
+    path: `/userTest/moderated/storage/${test.value.id}`,
+  })
+
   for (const item of items) {
     if (item.title === 'Preview') {
       item.path = `/testview/${test.value.id}/${user.value.id}`
