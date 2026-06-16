@@ -14,7 +14,7 @@ const ALLOWED_LEVELS = new Set(['info', 'warn', 'error'])
 const TYPE_PATTERN = /^[A-Z][A-Z0-9_]{1,63}$/
 const SAFE_ID_PATTERN = /^[A-Za-z0-9:_-]{3,160}$/
 const SENSITIVE_KEY_PATTERN = /email|fullName|displayName|phone|token|secret/i
-const EMAIL_PATTERN = /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*/g
+const EMAIL_PATTERN = /\b[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}\b/g
 
 function httpsError(code, message) {
   return new functions.https.HttpsError(code, message)

@@ -233,38 +233,16 @@ describe('logEvents.js -> logEvents', () => {
     expect(mockDb.batch).not.toHaveBeenCalled()
   })
 
-  it('rejects non-object log events', async () => {
+  it.each([
+    ['non-object log events', ['not-an-object']],
+    ['invalid type pattern', [{ type: 'lowercase_invalid', layer: 'technical', level: 'info' }]],
+    ['invalid layer', [{ type: 'TASK_COMPLETED', layer: 'nonexistent', level: 'info' }]],
+    ['invalid level', [{ type: 'TASK_COMPLETED', layer: 'technical', level: 'critical' }]],
+  ])('rejects %s', async (_, events) => {
     await expect(
       logEvents({
         auth: { uid: 'user-1' },
-        ...buildPayload(['not-an-object']),
-      }),
-    ).rejects.toMatchObject({ code: 'invalid-argument' })
-  })
-
-  it('rejects events with invalid type pattern', async () => {
-    await expect(
-      logEvents({
-        auth: { uid: 'user-1' },
-        ...buildPayload([{ type: 'lowercase_invalid', layer: 'technical', level: 'info' }]),
-      }),
-    ).rejects.toMatchObject({ code: 'invalid-argument' })
-  })
-
-  it('rejects events with invalid layer', async () => {
-    await expect(
-      logEvents({
-        auth: { uid: 'user-1' },
-        ...buildPayload([{ type: 'TASK_COMPLETED', layer: 'nonexistent', level: 'info' }]),
-      }),
-    ).rejects.toMatchObject({ code: 'invalid-argument' })
-  })
-
-  it('rejects events with invalid level', async () => {
-    await expect(
-      logEvents({
-        auth: { uid: 'user-1' },
-        ...buildPayload([{ type: 'TASK_COMPLETED', layer: 'technical', level: 'critical' }]),
+        ...buildPayload(events),
       }),
     ).rejects.toMatchObject({ code: 'invalid-argument' })
   })
