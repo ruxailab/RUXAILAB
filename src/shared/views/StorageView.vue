@@ -25,7 +25,7 @@
         v-for="metric in summaryMetrics"
         :key="metric.key"
         cols="12"
-        sm="6"
+        sm="4"
         lg="3"
       >
         <v-card class="h-100 summary-card" elevation="0" border>
@@ -69,7 +69,7 @@
             v-for="item in typeBreakdown"
             :key="item.type"
             cols="12"
-            sm="6"
+            sm="4"
             md="4"
           >
             <div class="breakdown-item pa-4">
@@ -390,6 +390,61 @@
             class="audio-preview"
           />
         </v-card-text>
+        <v-divider />
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            icon="mdi-delete"
+            color="error"
+            variant="tonal"
+            :loading="isDeleting"
+            :disabled="isDeleting"
+            :aria-label="t('storage.deleteFile')"
+            :title="t('storage.deleteFile')"
+            @click="confirmDelete(previewFile)"
+          />
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="deleteDialog" max-width="500">
+      <v-card class="rounded-lg">
+        <v-card-title class="bg-error text-white">
+          <v-icon color="white" class="mr-2">mdi-alert</v-icon>
+          {{ t('storage.confirmDeletion') }}
+        </v-card-title>
+        <v-card-text class="pt-4">
+          {{
+            t('storage.deleteConfirmMessage', {
+              type: fileTypeLabel(fileToDelete?.type || 'image'),
+              studyName: studyTitle,
+            })
+          }}
+          <div class="text-caption text-medium-emphasis mt-2">
+            {{ t('storage.actionCannotBeUndone') }}
+          </div>
+        </v-card-text>
+        <v-divider />
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            variant="outlined"
+            class="rounded-lg"
+            :disabled="isDeleting"
+            @click="deleteDialog = false"
+          >
+            {{ t('buttons.cancel') }}
+          </v-btn>
+          <v-btn
+            color="error"
+            class="rounded-lg"
+            :loading="isDeleting"
+            :disabled="isDeleting"
+            @click="executeDelete"
+          >
+            {{ t('buttons.delete') }}
+          </v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
   </PageWrapper>
@@ -403,6 +458,7 @@ import { getMetadata, ref as storageRef } from 'firebase/storage'
 import { storage } from '@/app/plugins/firebase'
 import AnswerController from '@/shared/controllers/AnswerController'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
+import { showError } from '@/shared/utils/toast'
 
 const STORAGE_QUOTA_BYTES = 5 * 1024 * 1024 * 1024
 
@@ -428,10 +484,13 @@ const search = ref('')
 const selectedType = ref('all')
 const previewDialog = ref(false)
 const previewFile = ref(null)
+const deleteDialog = ref(false)
+const fileToDelete = ref(null)
 
 const study = computed(() => store.getters.test)
 const user = computed(() => store.getters.user)
 const storageQuotaBytes = STORAGE_QUOTA_BYTES
+const isDeleting = computed(() => store.getters['Storage/isDeleting'])
 
 const studyTitle = computed(
   () => study.value?.testTitle || study.value?.title || t('storage.untitled'),
@@ -895,6 +954,27 @@ const formatFileDate = (timestamp) => {
 const openPreview = (file) => {
   previewFile.value = file
   previewDialog.value = true
+}
+
+const confirmDelete = (file) => {
+  if (!file) return
+  fileToDelete.value = file
+  deleteDialog.value = true
+}
+
+const executeDelete = async () => {
+  const file = fileToDelete.value
+  if (!file) return
+
+  try {
+    await store.dispatch('Storage/deleteFile', file)
+    deleteDialog.value = false
+    previewDialog.value = false
+    fileToDelete.value = null
+    previewFile.value = null
+  } catch {
+    showError('errors.globalError')
+  }
 }
 </script>
 
