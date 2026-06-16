@@ -14,7 +14,7 @@ const ALLOWED_LEVELS = new Set(['info', 'warn', 'error'])
 const TYPE_PATTERN = /^[A-Z][A-Z0-9_]{1,63}$/
 const SAFE_ID_PATTERN = /^[A-Za-z0-9:_-]{3,160}$/
 const SENSITIVE_KEY_PATTERN = /email|fullName|displayName|phone|token|secret/i
-const EMAIL_PATTERN = /[^\s@]+@[^\s@]+\.[^\s@]+/g
+const EMAIL_PATTERN = /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*/g
 
 function httpsError(code, message) {
   return new functions.https.HttpsError(code, message)
@@ -91,10 +91,10 @@ function validateEvent(event) {
     type: event.type,
     layer: event.layer,
     level: event.level,
-    source: sanitizeString(event.source || 'client', 80),
-    traceId: sanitizeString(event.traceId || '', MAX_TRACE_ID_LENGTH),
-    message: sanitizeString(event.message || event.type),
-    details: sanitizeDetails(event.details || {}),
+    source: sanitizeString(event.source ?? 'client', 80),
+    traceId: sanitizeString(event.traceId ?? '', MAX_TRACE_ID_LENGTH),
+    message: sanitizeString(event.message ?? event.type),
+    details: sanitizeDetails(event.details ?? {}),
   }
 }
 
@@ -121,14 +121,18 @@ function validatePayload(payload) {
     testId,
     batchId,
     answersDocId,
-    clientTimestamp: sanitizeString(payload.clientTimestamp || '', 80),
-    sessionId: sanitizeString(payload.sessionId || '', 120),
+    clientTimestamp: sanitizeString(payload.clientTimestamp ?? '', 80),
+    sessionId: sanitizeString(payload.sessionId ?? '', 120),
     events: payload.events.map(validateEvent),
   }
 }
 
 function createActorHash(uid, testId) {
-  const salt = process.env.LOG_ACTOR_HASH_SALT || 'ruxailab-log-v1'
+  const salt = process.env.LOG_ACTOR_HASH_SALT
+  if (!salt) {
+    logger.error('LOG_ACTOR_HASH_SALT environment variable is not configured')
+    throw httpsError('internal', 'Logging service is misconfigured')
+  }
   return crypto.createHash('sha256').update(`${salt}:${testId}:${uid}`).digest('hex')
 }
 
@@ -228,7 +232,8 @@ export const logEvents = functions.onCall({
       }
 
       logger.error('Failed to write log batch', {
-        error,
+        errorCode: error?.code,
+        errorMessage: error?.message,
         testId: payload.testId,
         batchId: payload.batchId,
       })
