@@ -61,6 +61,8 @@ jest.unstable_mockModule('../src/utils/logger.js', () => ({
 const { logEvents } = await import('../src/https/logEvents.js')
 
 describe('logEvents.js -> logEvents', () => {
+  const savedSalt = process.env.LOG_ACTOR_HASH_SALT
+
   beforeEach(() => {
     jest.clearAllMocks()
     process.env.LOG_ACTOR_HASH_SALT = 'test-salt'
@@ -93,7 +95,11 @@ describe('logEvents.js -> logEvents', () => {
   })
 
   afterEach(() => {
-    delete process.env.LOG_ACTOR_HASH_SALT
+    if (savedSalt !== undefined) {
+      process.env.LOG_ACTOR_HASH_SALT = savedSalt
+    } else {
+      delete process.env.LOG_ACTOR_HASH_SALT
+    }
   })
 
   it('writes a validated log batch into a study logs subcollection', async () => {
@@ -245,5 +251,95 @@ describe('logEvents.js -> logEvents', () => {
 
     expect(mockDb.batch).not.toHaveBeenCalled()
   })
+
+  it('rejects non-object log events', async () => {
+    await expect(
+      logEvents({
+        auth: { uid: 'user-1' },
+        data: {
+          testId: 'test-1',
+          batchId: 'batch-1',
+          events: ['not-an-object'],
+        },
+      }),
+    ).rejects.toMatchObject({ code: 'invalid-argument' })
+  })
+
+  it('rejects events with invalid type pattern', async () => {
+    await expect(
+      logEvents({
+        auth: { uid: 'user-1' },
+        data: {
+          testId: 'test-1',
+          batchId: 'batch-1',
+          events: [
+            {
+              type: 'lowercase_invalid',
+              layer: 'technical',
+              level: 'info',
+            },
+          ],
+        },
+      }),
+    ).rejects.toMatchObject({ code: 'invalid-argument' })
+  })
+
+  it('rejects events with invalid layer', async () => {
+    await expect(
+      logEvents({
+        auth: { uid: 'user-1' },
+        data: {
+          testId: 'test-1',
+          batchId: 'batch-1',
+          events: [
+            {
+              type: 'TASK_COMPLETED',
+              layer: 'nonexistent',
+              level: 'info',
+            },
+          ],
+        },
+      }),
+    ).rejects.toMatchObject({ code: 'invalid-argument' })
+  })
+
+  it('rejects events with invalid level', async () => {
+    await expect(
+      logEvents({
+        auth: { uid: 'user-1' },
+        data: {
+          testId: 'test-1',
+          batchId: 'batch-1',
+          events: [
+            {
+              type: 'TASK_COMPLETED',
+              layer: 'technical',
+              level: 'critical',
+            },
+          ],
+        },
+      }),
+    ).rejects.toMatchObject({ code: 'invalid-argument' })
+  })
+
+  it('throws internal error when LOG_ACTOR_HASH_SALT is not configured', async () => {
+    delete process.env.LOG_ACTOR_HASH_SALT
+
+    await expect(
+      logEvents({
+        auth: { uid: 'user-1' },
+        data: {
+          testId: 'test-1',
+          batchId: 'batch-1',
+          events: [
+            {
+              type: 'TASK_COMPLETED',
+              layer: 'methodological',
+              level: 'info',
+            },
+          ],
+        },
+      }),
+    ).rejects.toMatchObject({ code: 'internal' })
+  })
 })
-  
