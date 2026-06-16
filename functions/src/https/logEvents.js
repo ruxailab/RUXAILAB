@@ -11,10 +11,18 @@ const MAX_OBJECT_KEYS = 40
 
 const ALLOWED_LAYERS = new Set(['technical', 'methodological', 'ai'])
 const ALLOWED_LEVELS = new Set(['info', 'warn', 'error'])
+
+// Mirrors src/shared/utils/accessLevel.js — must stay in sync
+const COOPERATOR_ROLE_MAP = new Map([
+  [0, 'admin'],
+  [1, 'evaluator'],
+  [2, 'guest'],
+  [3, 'observator'],
+])
 const TYPE_PATTERN = /^[A-Z][A-Z0-9_]{1,63}$/
 const SAFE_ID_PATTERN = /^[A-Za-z0-9:_-]{3,160}$/
 const SENSITIVE_KEY_PATTERN = /email|fullName|displayName|phone|token|secret/i
-const EMAIL_PATTERN = /\b[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}\b/g
+const EMAIL_PATTERN = /\b[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,63}\b/g
 
 function httpsError(code, message) {
   return new functions.https.HttpsError(code, message)
@@ -144,7 +152,10 @@ function resolveActorRole(testData, uid) {
   )
 
   if (cooperator) {
-    return cooperator.accessLevel || 'cooperator'
+    // accessLevel is stored as a number (0=admin, 1=evaluator, 2=guest, 3=observer).
+    // Using ?? so accessLevel=0 is not incorrectly treated as falsy.
+    const level = cooperator.accessLevel ?? null
+    return COOPERATOR_ROLE_MAP.get(level) ?? 'cooperator'
   }
 
   return null

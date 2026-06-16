@@ -89,7 +89,7 @@ describe('logEvents.js -> logEvents', () => {
         testType: 'USER',
         subType: 'USER_UNMODERATED',
         testAdmin: { userDocId: 'admin-1' },
-        cooperators: [{ userDocId: 'user-1', accessLevel: 'evaluator' }],
+        cooperators: [{ userDocId: 'user-1', accessLevel: 1 }],
       }),
     })
   })
@@ -231,6 +231,27 @@ describe('logEvents.js -> logEvents', () => {
     ).rejects.toMatchObject({ code: 'invalid-argument' })
 
     expect(mockDb.batch).not.toHaveBeenCalled()
+  })
+
+  it('treats cooperator accessLevel 0 as admin role, not falsy', async () => {
+    mockTestGet.mockResolvedValueOnce({
+      exists: true,
+      data: () => ({
+        answersDocId: 'answers-1',
+        testType: 'USER',
+        subType: 'USER_UNMODERATED',
+        testAdmin: { userDocId: 'other-admin' },
+        cooperators: [{ userDocId: 'user-1', accessLevel: 0 }],
+      }),
+    })
+
+    const result = await logEvents({
+      auth: { uid: 'user-1' },
+      ...buildPayload(),
+    })
+
+    expect(result.status).toBe('ok')
+    expect(mockBatchSet.mock.calls[0][1].actorRole).toBe('admin')
   })
 
   it.each([
