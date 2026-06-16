@@ -102,6 +102,22 @@ describe('logEvents.js -> logEvents', () => {
     }
   })
 
+  const buildPayload = (events, overrides = {}) => {
+    const defaultEvent = {
+      type: 'TASK_COMPLETED',
+      layer: 'methodological',
+      level: 'info',
+    }
+    return {
+      data: {
+        testId: 'test-1',
+        batchId: 'batch-1',
+        events: events === undefined ? [defaultEvent] : events,
+        ...overrides,
+      },
+    }
+  }
+
   it('writes a validated log batch into a study logs subcollection', async () => {
     const result = await logEvents({
       auth: { uid: 'user-1' },
@@ -176,17 +192,7 @@ describe('logEvents.js -> logEvents', () => {
 
     const result = await logEvents({
       auth: { uid: 'user-1' },
-      data: {
-        testId: 'test-1',
-        batchId: 'batch-1',
-        events: [
-          {
-            type: 'TASK_COMPLETED',
-            layer: 'methodological',
-            level: 'info',
-          },
-        ],
-      },
+      ...buildPayload(),
     })
 
     expect(result).toEqual({
@@ -197,55 +203,30 @@ describe('logEvents.js -> logEvents', () => {
   })
 
   it('rejects unauthenticated callers', async () => {
-    await expect(
-      logEvents({
-        data: {
-          testId: 'test-1',
-          batchId: 'batch-1',
-          events: [
-            {
-              type: 'TASK_COMPLETED',
-              layer: 'methodological',
-              level: 'info',
-            },
-          ],
-        },
-      }),
-    ).rejects.toMatchObject({ code: 'unauthenticated' })
+    await expect(logEvents(buildPayload())).rejects.toMatchObject({
+      code: 'unauthenticated',
+    })
   })
 
   it('rejects users who are not attached to the study', async () => {
     await expect(
       logEvents({
         auth: { uid: 'stranger-1' },
-        data: {
-          testId: 'test-1',
-          batchId: 'batch-1',
-          events: [
-            {
-              type: 'TASK_COMPLETED',
-              layer: 'methodological',
-              level: 'info',
-            },
-          ],
-        },
+        ...buildPayload(),
       }),
     ).rejects.toMatchObject({ code: 'permission-denied' })
   })
 
   it('rejects oversized batches before writing anything', async () => {
+    const events = Array.from({ length: 26 }, () => ({
+      type: 'ANSWER_CHANGED',
+      layer: 'methodological',
+      level: 'info',
+    }))
     await expect(
       logEvents({
         auth: { uid: 'user-1' },
-        data: {
-          testId: 'test-1',
-          batchId: 'batch-1',
-          events: Array.from({ length: 26 }, () => ({
-            type: 'ANSWER_CHANGED',
-            layer: 'methodological',
-            level: 'info',
-          })),
-        },
+        ...buildPayload(events),
       }),
     ).rejects.toMatchObject({ code: 'invalid-argument' })
 
@@ -256,11 +237,7 @@ describe('logEvents.js -> logEvents', () => {
     await expect(
       logEvents({
         auth: { uid: 'user-1' },
-        data: {
-          testId: 'test-1',
-          batchId: 'batch-1',
-          events: ['not-an-object'],
-        },
+        ...buildPayload(['not-an-object']),
       }),
     ).rejects.toMatchObject({ code: 'invalid-argument' })
   })
@@ -269,17 +246,7 @@ describe('logEvents.js -> logEvents', () => {
     await expect(
       logEvents({
         auth: { uid: 'user-1' },
-        data: {
-          testId: 'test-1',
-          batchId: 'batch-1',
-          events: [
-            {
-              type: 'lowercase_invalid',
-              layer: 'technical',
-              level: 'info',
-            },
-          ],
-        },
+        ...buildPayload([{ type: 'lowercase_invalid', layer: 'technical', level: 'info' }]),
       }),
     ).rejects.toMatchObject({ code: 'invalid-argument' })
   })
@@ -288,17 +255,7 @@ describe('logEvents.js -> logEvents', () => {
     await expect(
       logEvents({
         auth: { uid: 'user-1' },
-        data: {
-          testId: 'test-1',
-          batchId: 'batch-1',
-          events: [
-            {
-              type: 'TASK_COMPLETED',
-              layer: 'nonexistent',
-              level: 'info',
-            },
-          ],
-        },
+        ...buildPayload([{ type: 'TASK_COMPLETED', layer: 'nonexistent', level: 'info' }]),
       }),
     ).rejects.toMatchObject({ code: 'invalid-argument' })
   })
@@ -307,17 +264,7 @@ describe('logEvents.js -> logEvents', () => {
     await expect(
       logEvents({
         auth: { uid: 'user-1' },
-        data: {
-          testId: 'test-1',
-          batchId: 'batch-1',
-          events: [
-            {
-              type: 'TASK_COMPLETED',
-              layer: 'technical',
-              level: 'critical',
-            },
-          ],
-        },
+        ...buildPayload([{ type: 'TASK_COMPLETED', layer: 'technical', level: 'critical' }]),
       }),
     ).rejects.toMatchObject({ code: 'invalid-argument' })
   })
@@ -328,17 +275,7 @@ describe('logEvents.js -> logEvents', () => {
     await expect(
       logEvents({
         auth: { uid: 'user-1' },
-        data: {
-          testId: 'test-1',
-          batchId: 'batch-1',
-          events: [
-            {
-              type: 'TASK_COMPLETED',
-              layer: 'methodological',
-              level: 'info',
-            },
-          ],
-        },
+        ...buildPayload(),
       }),
     ).rejects.toMatchObject({ code: 'internal' })
   })
