@@ -48,7 +48,7 @@ export const receiveCalibration = functions.onRequest({
 
       await calibRef.set(calibrationData)
 
-      const userDocRef = db.collection('users').doc(session_id)
+      const userDocRef = db.collection('users').doc(user_id)
       const userDoc = await userDocRef.get()
 
       if (userDoc.exists) {
