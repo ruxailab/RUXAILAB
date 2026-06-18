@@ -603,6 +603,7 @@ const createFile = ({
   fallbackName,
   contentType,
   name,
+  ...metadata
 }) => ({
   id,
   type: inferFileType({
@@ -618,6 +619,7 @@ const createFile = ({
   evaluator: evaluator || t('storage.unknownEvaluator'),
   name: name || fileNameFromUrl(url, fallbackName),
   contentType: contentType || '',
+  ...metadata,
 })
 
 const extractUserTestFiles = (answerDoc) => {
@@ -638,21 +640,29 @@ const extractUserTestFiles = (answerDoc) => {
           type: 'webcam',
           url: task.webcamRecordURL || task.videoRecordURL,
           size: task.webcamSize,
+          urlField: task.webcamRecordURL ? 'webcamRecordURL' : 'videoRecordURL',
+          sizeField: task.webcamSize ? 'webcamSize' : null,
         },
         {
           type: 'screen',
           url: task.screenRecordURL,
           size: task.screenSize,
+          urlField: 'screenRecordURL',
+          sizeField: 'screenSize',
         },
         {
           type: 'audio',
           url: task.audioRecordURL,
           size: task.audioSize,
+          urlField: 'audioRecordURL',
+          sizeField: 'audioSize',
         },
         {
           type: 'audio',
           url: task.moderatorAudioURL,
           size: task.moderatorAudioSize,
+          urlField: 'moderatorAudioURL',
+          sizeField: task.moderatorAudioSize ? 'moderatorAudioSize' : null,
         },
       ]
 
@@ -664,6 +674,9 @@ const extractUserTestFiles = (answerDoc) => {
             ...item,
             id: `${prefix}-${mediaIndex}`,
             fallbackName: `${item.type}-${taskIndex + 1}`,
+            answersDocId: study.value?.answersDocId,
+            userDocId: answer.userDocId,
+            taskId: task.taskId,
           }),
         )
       })
@@ -702,6 +715,9 @@ const extractHeuristicFiles = (answerDoc) => {
               contentType: image.contentType,
               name: image.name,
               fallbackName: `file-${imageIndex + 1}`,
+              answersDocId: study.value?.answersDocId,
+              userDocId: answer.userDocId,
+              answerCollection: 'heuristicAnswers',
             }),
           )
         })
@@ -721,6 +737,9 @@ const extractHeuristicFiles = (answerDoc) => {
             date: answer.lastUpdate,
             evaluator,
             fallbackName: 'file',
+            answersDocId: study.value?.answersDocId,
+            userDocId: answer.userDocId,
+            answerCollection: 'heuristicAnswers',
           }),
         )
       }
@@ -738,6 +757,8 @@ const extractHeuristicFiles = (answerDoc) => {
 }
 
 const enrichFileMetadata = async (file) => {
+  if (!file?.url) return null
+
   try {
     const metadata = await getMetadata(storageRef(storage, file.url))
     const name = metadata.name || file.name
@@ -761,7 +782,15 @@ const enrichFileMetadata = async (file) => {
       contentType,
       date: file.date || new Date(metadata.timeCreated).getTime(),
     }
-  } catch {
+  } catch (error) {
+    if (
+      error?.code === 'storage/object-not-found' ||
+      error?.code === 'storage/invalid-url'
+    ) {
+      await store.dispatch('Storage/removeFileReference', file)
+      return null
+    }
+
     return {
       ...file,
       type: inferFileType({
@@ -793,9 +822,10 @@ const loadFiles = async () => {
     const uniqueFiles = Array.from(
       new Map(discovered.map((file) => [file.url, file])).values(),
     )
-    filesWithMetadata.value = await Promise.all(
+    const existingFiles = await Promise.all(
       uniqueFiles.map(enrichFileMetadata),
     )
+    filesWithMetadata.value = existingFiles.filter(Boolean)
   } catch {
     answerDocument.value = null
     filesWithMetadata.value = []
