@@ -24,9 +24,9 @@
     </tr>
   </table>
 </div>
-
+ 
 ## About
-
+as
 UX Remote LAB is an open-source platform designed to collect usability feedback from users. It allows you to gather user reviews, analyze them, and create comprehensive reports to better understand your application's usability. Additionally, it offers heuristic tests, enabling experts to evaluate your application's compliance with usability principles.
 
 ### Community & Experience
