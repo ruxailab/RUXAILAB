@@ -26,10 +26,10 @@ export default class EyeTrackerController extends Controller {
 
     const response = await this.batchPredict({
       pointNumber: lastCalib.k,
-      screenHeight: lastCalib.screen_height,
-      screenWidth: lastCalib.screen_width,
+      screenHeight: lastCalib.screenHeight,
+      screenWidth: lastCalib.screenWidth,
       irisData: irisData,
-      calibId: lastCalib.session_id,
+      calibId: lastCalib.sessionId,
       model: lastCalib.model,
     })
 
