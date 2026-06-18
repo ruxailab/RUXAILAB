@@ -53,7 +53,7 @@
 import { ref, watch, onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
-import EyeCalibrationSettings from '../models/EyeCalibrationSettings'
+import EyeCalibrationSettings from '@/ux/UserTest/models/EyeCalibrationSettings'
 
 const { t } = useI18n()
 

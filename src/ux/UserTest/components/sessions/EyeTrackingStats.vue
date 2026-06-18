@@ -190,9 +190,8 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
-import axios from 'axios'
 import { useStore } from 'vuex'
-
+import EyeTrackerController from '@/ux/UserTest/controllers/EyeTrackerController.js'
 const props = defineProps({
   irisData: { type: Array, required: true },
   userId: { type: String, required: true },
@@ -200,10 +199,8 @@ const props = defineProps({
 
 const emit = defineEmits(['predictions-ready', 'view-changed'])
 const store = useStore()
+const study = computed(() => store.state.Tests.Test)
 
-const calibrationConfig = computed(
-  () => store.state.Tests.Test.calibrationConfig || {},
-)
 const selectedView = ref('precision')
 const predictedData = ref(null)
 const isAnalyzing = ref(true)
@@ -217,42 +214,16 @@ watch(selectedView, (value) => emit('view-changed', value))
 
 onMounted(async () => {
   try {
-    console.log(calibrationConfig)
-
-    const res = await axios.post(
-      process.env.VUE_APP_EYE_LAB_BACKEND_URL + '/api/session/batch_predict',
-      {
-        k: calibrationConfig.value.pointNumber,
-        screen_height: 1080,
-        screen_width: 1920,
-        iris_tracking_data: props.irisData,
-        calib_id: props.userId,
-        model_name_x: calibrationConfig.value.models,
-        model_name_y: calibrationConfig.value.models,
-      },
-      { headers: { 'Content-Type': 'application/json' } },
+    const data = await new EyeTrackerController().getLastCalibAndPredict(
+      props.userId,
+      study.value.id,
+      props.irisData,
     )
 
-    let data = res.data
-
-    // FIX 1: Handle string responses by parsing JSON
-    if (typeof data === 'string') {
-      try {
-        data = JSON.parse(data)
-      } catch (parseErr) {
-        console.error('❌ Failed to parse JSON response:', parseErr)
-        hasError.value = true
-        isAnalyzing.value = false
-        return
-      }
-    }
-
     predictedData.value = data
-
     processAnalytics(predictedData.value)
     emit('predictions-ready', predictedData.value)
-  } catch (err) {
-    console.error('❌ Eye tracking error:', err)
+  } catch {
     predictedData.value = null
     hasError.value = true
   } finally {
@@ -264,7 +235,6 @@ function processAnalytics(data) {
   const predictions = Array.isArray(data) ? data : []
 
   if (predictions.length === 0) {
-    console.warn('No predictions data available')
     hasError.value = true
     return
   }

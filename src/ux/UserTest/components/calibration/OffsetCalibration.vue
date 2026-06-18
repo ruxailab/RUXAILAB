@@ -36,7 +36,7 @@
 <script setup>
 import { ref, watch, onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
-import EyeCalibrationSettings from '../models/EyeCalibrationSettings'
+import EyeCalibrationSettings from '../../models/EyeCalibrationSettings'
 
 const store = useStore()
 const offCanvas = ref(null)
