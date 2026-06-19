@@ -16,7 +16,15 @@ export const receiveCalibration = functions.onRequest({
     }
 
     try {
-      const { session_id, screen_height, screen_width, k } = req.body
+      const {
+        session_id,
+        screen_height,
+        screen_width,
+        k,
+        model,
+        study_id,
+        user_id,
+      } = req.body
 
       if (!session_id) {
         return res.status(400).json({ error: 'session_id is required' })
@@ -28,25 +36,24 @@ export const receiveCalibration = functions.onRequest({
       const calibId = calibRef.id
 
       const calibrationData = {
-        session_id,
-        screen_height,
-        screen_width,
+        sessionId: session_id,
+        screenHeight: screen_height,
+        screenWidth: screen_width,
         k,
+        model,
+        userId: user_id,
+        studyId: study_id,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
       }
 
       await calibRef.set(calibrationData)
 
-      const userDocRef = db.collection('users').doc(session_id)
+      const userDocRef = db.collection('users').doc(user_id)
       const userDoc = await userDocRef.get()
 
       if (userDoc.exists) {
         await userDocRef.update({
-          calibrationId: calibId,
-        })
-      } else {
-        await userDocRef.set({
-          calibrationId: calibId,
+          lastCalibrationId: calibId,
         })
       }
 
