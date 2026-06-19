@@ -534,7 +534,7 @@ import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
-import EyeTrackingCalibrationStep from '@/ux/UserTest/calibration/EyeTrackingCalibrationStep.vue'
+import EyeTrackingCalibrationStep from '@/ux/UserTest/components/calibration/EyeTrackingCalibrationStep.vue'
 import { db } from '@/app/plugins/firebase'
 import IrisTracker from '../components/IrisTracker.vue'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
@@ -1355,7 +1355,7 @@ onMounted(async () => {
       return
     }
 
-    if (data.calibrationId) {
+    if (data.lastCalibrationId) {
       calibrationCompleted.value = true
       if (calibrationPopup.value) {
         calibrationPopup.value.close()
