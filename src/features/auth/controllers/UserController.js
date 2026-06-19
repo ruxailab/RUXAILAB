@@ -139,7 +139,11 @@ export default class UserController extends Controller {
   async addNotification(payload) {
     const userToUpdate = await this.getById(payload.userId)
     userToUpdate.notifications.push(payload.notification.toFirestore())
-    return this.update(payload.userId, userToUpdate.toFirestore())
+    // Only write the notifications field to avoid overwriting other fields
+    // (e.g. myTests) with a stale in-memory copy.
+    return this.update(payload.userId, {
+      notifications: userToUpdate.notifications,
+    })
   }
 
   async markNotificationAsRead(payload) {
@@ -155,11 +159,11 @@ export default class UserController extends Controller {
       userToUpdate.notifications[notificationIndex].read = true
       userToUpdate.notifications[notificationIndex].readAt = Date.now()
 
-      // Save updated user data to Firestore
-      await this.update(
-        userToUpdate.id,
-        userToUpdate.toFirestore(),
-      )
+      // Only write the notifications field. Writing the full document with
+      // toFirestore() would overwrite myTests with the stale in-memory copy.
+      await this.update(userToUpdate.id, {
+        notifications: userToUpdate.notifications,
+      })
       return userToUpdate
     } else {
       // Notification was not found in the array
@@ -181,10 +185,11 @@ export default class UserController extends Controller {
 
     if (!hasUnread) return userToUpdate
 
-    await this.update(
-      userToUpdate.id,
-      userToUpdate.toFirestore(),
-    )
+    // Only write the notifications field. Writing the full document with
+    // toFirestore() would overwrite myTests with the stale in-memory copy.
+    await this.update(userToUpdate.id, {
+      notifications: userToUpdate.notifications,
+    })
     // Return the updated user object (in memory) so the store can commit it immediately
     return userToUpdate
   }
@@ -230,10 +235,10 @@ export default class UserController extends Controller {
       }
       const userData = userDoc.data()
 
-      if (userData.myTests[testIdToRemove]) {
+      if (userData.myTests?.[testIdToRemove]) {
         delete userData.myTests[testIdToRemove]
       }
-      if (userData.myAnswers[testIdToRemove]) {
+      if (userData.myAnswers?.[testIdToRemove]) {
         delete userData.myAnswers[testIdToRemove]
       }
 
