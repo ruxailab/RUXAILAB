@@ -20,97 +20,136 @@
       </div>
     </template>
 
-    <v-row class="mb-2 storage-summary">
-      <v-col
-        v-for="metric in summaryMetrics"
-        :key="metric.key"
-        cols="12"
-        sm="4"
-        lg="3"
-      >
-        <v-card class="h-100 summary-card" elevation="0" border>
-          <v-card-text class="pa-5">
-            <div class="d-flex align-center justify-space-between mb-3">
-              <span class="text-overline">{{ metric.title }}</span>
-              <v-avatar :color="metric.color" variant="tonal" size="38">
-                <v-icon :icon="metric.icon" size="21" />
-              </v-avatar>
+    <v-row class="mb-3 storage-top-grid" align="stretch">
+      <v-col cols="12" lg="7">
+        <v-row class="storage-summary" dense>
+          <v-col
+            v-for="metric in summaryMetrics"
+            :key="metric.key"
+            cols="12"
+            sm="6"
+          >
+            <v-card class="h-100 summary-card" elevation="0" border>
+              <v-card-text class="summary-card-content">
+                <div class="d-flex align-center ga-3">
+                  <v-avatar :color="metric.color" variant="tonal" size="32">
+                    <v-icon :icon="metric.icon" size="18" />
+                  </v-avatar>
+                  <div class="summary-card-copy">
+                    <div class="text-caption text-medium-emphasis">
+                      {{ metric.title }}
+                    </div>
+                    <div class="text-h6 font-weight-bold summary-value">
+                      {{ metric.value }}
+                    </div>
+                  </div>
+                </div>
+                <div class="text-caption text-medium-emphasis mt-2 summary-subtitle">
+                  {{ metric.subtitle }}
+                </div>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-col>
+
+      <v-col cols="12" lg="5">
+        <v-card class="analysis-card rounded-lg h-100" elevation="0" border>
+          <v-card-text class="analysis-content">
+            <div class="d-flex align-center justify-space-between ga-3 mb-2">
+              <div>
+                <div class="text-subtitle-1 font-weight-bold">
+                  {{ t('storage.storageAnalysis') }}
+                </div>
+                <div class="text-caption text-medium-emphasis">
+                  {{ t('storage.accountStorage') }}
+                </div>
+              </div>
+              <div class="d-flex align-center ga-2">
+                <div class="text-right">
+                  <div class="text-subtitle-2 font-weight-bold">
+                    {{ formatBytes(accountUsedBytes) }}
+                  </div>
+                  <div class="text-caption text-medium-emphasis">
+                    / {{ formatBytes(storageQuotaBytes) }}
+                  </div>
+                </div>
+                <v-btn
+                  :icon="
+                    isStorageAnalysisExpanded
+                      ? 'mdi-chevron-up'
+                      : 'mdi-chevron-down'
+                  "
+                  variant="text"
+                  size="small"
+                  :aria-label="t('storage.storageAnalysis')"
+                  @click="isStorageAnalysisExpanded = !isStorageAnalysisExpanded"
+                />
+              </div>
             </div>
-            <div class="text-h5 font-weight-bold">{{ metric.value }}</div>
-            <div class="text-caption text-medium-emphasis mt-1">
-              {{ metric.subtitle }}
-            </div>
+            <v-progress-linear
+              :model-value="accountUsagePercentage"
+              :color="usageColor"
+              height="8"
+              rounded
+            />
+
+            <v-expand-transition>
+              <div v-show="isStorageAnalysisExpanded">
+                <v-row class="analysis-breakdown mt-3" dense>
+                  <v-col
+                    v-for="item in recordingBreakdown"
+                    :key="item.type"
+                    cols="12"
+                    sm="4"
+                    lg="12"
+                    xl="4"
+                  >
+                    <div class="breakdown-item">
+                      <div class="breakdown-row">
+                        <v-avatar :color="item.color" variant="tonal" size="28">
+                          <v-icon :icon="item.icon" size="16" />
+                        </v-avatar>
+                        <div class="breakdown-copy">
+                          <div class="breakdown-title text-body-2 font-weight-medium">
+                            {{ fileTypeLabel(item.type) }}
+                          </div>
+                          <div class="text-caption text-medium-emphasis">
+                            {{ t('storage.fileCount', { count: item.count }) }}
+                          </div>
+                        </div>
+                        <div class="breakdown-size text-body-2 font-weight-bold">
+                          {{ formatBytes(item.size) }}
+                        </div>
+                      </div>
+                      <v-progress-linear
+                        :model-value="item.percentage"
+                        :color="item.color"
+                        height="4"
+                        rounded
+                        class="mt-1"
+                      />
+                    </div>
+                  </v-col>
+                </v-row>
+
+                <v-alert
+                  v-if="unknownSizeCount"
+                  type="warning"
+                  variant="tonal"
+                  density="compact"
+                  class="mt-2 compact-alert"
+                >
+                  {{
+                    t('storage.unknownSizeWarning', { count: unknownSizeCount })
+                  }}
+                </v-alert>
+              </div>
+            </v-expand-transition>
           </v-card-text>
         </v-card>
       </v-col>
     </v-row>
-
-    <v-card class="analysis-card rounded-lg mb-6" elevation="0" border>
-      <v-card-title class="px-6 pt-5 text-h6 font-weight-bold">
-        {{ t('storage.storageAnalysis') }}
-      </v-card-title>
-      <v-card-text class="px-6 pb-6">
-        <div class="d-flex justify-space-between text-body-2 mb-2">
-          <span>{{ t('storage.accountStorage') }}</span>
-          <span>
-            {{ formatBytes(accountUsedBytes) }} /
-            {{ formatBytes(storageQuotaBytes) }}
-          </span>
-        </div>
-        <v-progress-linear
-          :model-value="accountUsagePercentage"
-          :color="usageColor"
-          height="12"
-          rounded
-        />
-
-        <v-row class="mt-5">
-          <v-col
-            v-for="item in typeBreakdown"
-            :key="item.type"
-            cols="12"
-            sm="4"
-            md="4"
-          >
-            <div class="breakdown-item pa-4">
-              <div class="d-flex align-center ga-3">
-                <v-avatar :color="item.color" variant="tonal" size="36">
-                  <v-icon :icon="item.icon" size="20" />
-                </v-avatar>
-                <div class="flex-grow-1">
-                  <div class="d-flex justify-space-between">
-                    <span class="font-weight-medium">
-                      {{ fileTypeLabel(item.type) }}
-                    </span>
-                    <span>{{ formatBytes(item.size) }}</span>
-                  </div>
-                  <div class="text-caption text-medium-emphasis">
-                    {{ t('storage.fileCount', { count: item.count }) }}
-                  </div>
-                </div>
-              </div>
-              <v-progress-linear
-                :model-value="item.percentage"
-                :color="item.color"
-                height="6"
-                rounded
-                class="mt-3"
-              />
-            </div>
-          </v-col>
-        </v-row>
-
-        <v-alert
-          v-if="unknownSizeCount"
-          type="warning"
-          variant="tonal"
-          density="compact"
-          class="mt-4"
-        >
-          {{ t('storage.unknownSizeWarning', { count: unknownSizeCount }) }}
-        </v-alert>
-      </v-card-text>
-    </v-card>
 
     <v-card
       class="files-card rounded-lg d-none d-sm-block"
@@ -451,6 +490,7 @@
 </template>
 
 <script setup>
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import { useStorageFiles } from '@/shared/composables/useStorageFiles'
@@ -467,6 +507,7 @@ defineProps({
 })
 
 const { t } = useI18n()
+const isStorageAnalysisExpanded = ref(false)
 const {
   loading,
   search,
@@ -496,6 +537,16 @@ const {
   confirmDelete,
   executeDelete,
 } = useStorageFiles()
+
+const recordingTypes = ['webcam', 'screen', 'audio']
+
+const recordingBreakdown = computed(() =>
+  recordingTypes
+    .map((type) =>
+      typeBreakdown.value.find((breakdown) => breakdown.type === type),
+    )
+    .filter(Boolean),
+)
 </script>
 
 <style scoped>
@@ -504,16 +555,53 @@ const {
   border-color: rgba(0, 0, 0, 0.06) !important;
 }
 
+.storage-top-grid {
+  align-items: stretch;
+}
+
+.storage-top-grid > .v-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.storage-summary {
+  flex: 1;
+}
+
 .summary-card {
-  border-radius: 12px !important;
+  border-radius: 10px !important;
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
 }
 
+.summary-card-content {
+  padding: 12px 14px !important;
+}
+
+.summary-card-copy {
+  min-width: 0;
+}
+
+.summary-value {
+  line-height: 1.15;
+}
+
+.summary-subtitle {
+  line-height: 1.25;
+}
+
 .summary-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07) !important;
+}
+
+.analysis-content {
+  padding: 14px !important;
+}
+
+.analysis-breakdown {
+  margin-bottom: -4px;
 }
 
 .breakdown-item {
@@ -521,6 +609,32 @@ const {
   border-radius: 8px;
   background: rgb(var(--v-theme-surface));
   height: 100%;
+  padding: 10px;
+}
+
+.breakdown-row {
+  align-items: center;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.breakdown-copy {
+  min-width: 0;
+}
+
+.breakdown-title {
+  overflow-wrap: anywhere;
+}
+
+.breakdown-size {
+  min-width: 52px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.compact-alert {
+  font-size: 0.8125rem;
 }
 
 .files-card {
@@ -604,6 +718,16 @@ const {
 @media (max-width: 600px) {
   .storage-summary {
     margin-top: 0;
+  }
+
+  .breakdown-row {
+    align-items: start;
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .breakdown-size {
+    grid-column: 2;
+    text-align: left;
   }
 
   .type-filter,
