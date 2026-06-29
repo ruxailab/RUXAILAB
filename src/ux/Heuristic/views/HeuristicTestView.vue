@@ -121,51 +121,96 @@
       </v-card>
     </v-dialog>
 
-    <v-container
-      v-if="test && start && !testAlreadyStarted"
-      class="start-container"
-      fluid
-    >
-      <v-row class="start-row fill-height" align="center" justify="center">
+    <v-container v-if="test && start" fluid class="pa-0">
+      <v-row
+        :class="[
+          currentPage === TEST_PAGES.welcome
+            ? 'start-screen background-img'
+            : 'instructions-screen',
+          'pa-0 ma-0',
+        ]"
+        :align="currentPage === TEST_PAGES.welcome ? 'center' : 'start'"
+      >
         <v-col
+          v-if="currentPage === TEST_PAGES.welcome"
           cols="12"
-          md="6"
-          sm="12"
-          class="text-center text-md-left mb-4 mb-md-0"
+          md="8"
+          class="ma-5 pa-5"
         >
-          <h1 class="text-h2 font-weight-light text-white mb-4">
+          <img
+            src="../../../assets/logo_full_white.png"
+            alt="RUXAILAB"
+            class="mb-10"
+            style="max-width: 300px"
+          />
+          <h1 class="text-h2 font-weight-bold text-white">
             {{ test.testTitle }}
           </h1>
-          <p class="text-body-1 text-white mb-6">
+          <p class="text-body-1 mb-5 text-white text-justify">
             {{ test.testDescription }}
           </p>
-          <v-alert
-            v-if="heuristics.length === 0"
-            type="warning"
-            class="mb-6 text-left"
-            variant="tonal"
-            density="compact"
-            icon="mdi-alert"
-          >
-            {{ $t('HeuristicsTestView.messages.noHeuristicsConfigured') }}
-          </v-alert>
           <v-btn
             color="white"
             variant="outlined"
-            size="large"
             rounded
-            :disabled="!user || heuristics.length === 0"
-            @click="startTest()"
+            class="mt-4"
+            :disabled="isStartTestDisabled"
+            @click="openInstructionsPage"
           >
             {{ $t('HeuristicsTestView.actions.startTest') }}
           </v-btn>
+
+          <v-alert
+            v-if="testDisabledReason === 'already-completed'"
+            type="info"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="
+              background-color: rgba(255, 255, 255, 0.1);
+              border-color: white;
+            "
+          >
+            <template #prepend>
+              <v-icon color="white"> mdi-check-circle </v-icon>
+            </template>
+            <span class="text-white">
+              <strong>{{
+                $t('HeuristicsTestView.alerts.testAlreadyCompleted')
+              }}</strong
+              ><br />
+              {{ $t('HeuristicsTestView.alerts.testAlreadyCompletedMessage') }}
+            </span>
+          </v-alert>
+
+          <v-alert
+            v-else-if="testDisabledReason === 'no-heuristics'"
+            type="error"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="
+              background-color: rgba(255, 255, 255, 0.1);
+              border-color: white;
+            "
+          >
+            <template #prepend>
+              <v-icon color="white"> mdi-alert-circle </v-icon>
+            </template>
+            <span class="text-white">
+              <strong>{{
+                $t('HeuristicsTestView.alerts.testConfigError')
+              }}</strong
+              ><br />
+              {{ $t('HeuristicsTestView.messages.noHeuristicsConfigured') }}
+            </span>
+          </v-alert>
         </v-col>
-        <v-col cols="12" md="5" class="d-flex justify-center">
-          <v-img
-            :src="require('../../../assets/BackgroundTestView.png')"
-            cover
-            max-width="80%"
-            height="auto"
+        <v-col v-else cols="12" class="pa-6">
+          <HeuristicInstructionsStep
+            :sections="evaluatorInfoSections"
+            :disabled="isStartTestDisabled"
+            @start="startTest"
           />
         </v-col>
       </v-row>
@@ -601,6 +646,7 @@ import AddCommentBtn from '@/ux/Heuristic/components/AddCommentBtn.vue'
 import HelpBtn from '@/ux/Heuristic/components/QuestionHelpBtn.vue'
 import TextClamp from 'vue3-text-clamp'
 import Snackbar from '@/shared/components/Snackbar'
+import HeuristicInstructionsStep from '@/ux/Heuristic/components/HeuristicInstructionsStep.vue'
 import HeuristicQuestionAnswer from '@/ux/Heuristic/models/HeuristicQuestionAnswer'
 import Heuristic from '@/ux/Heuristic/models/Heuristic'
 import { showSuccess, showError } from '@/shared/utils/toast'
@@ -633,6 +679,13 @@ const review = ref(true)
 const rightView = ref(null)
 const displayHeuristics = ref([])
 
+const TEST_PAGES = {
+  welcome: 'welcome_page',
+  instructions: 'instructions_page',
+  answers: 'heuristic_answer_page',
+}
+const currentPage = ref(TEST_PAGES.welcome)
+
 // Auto-save status variables
 const autoSaveInProgress = ref(false)
 const lastSaveTime = ref(null)
@@ -645,15 +698,21 @@ const saveStatusColor = ref('primary')
 
 const test = computed(() => store.getters.test)
 
+const evaluatorInfoSections = computed(() => {
+  const sections = test.value?.evaluatorInfo?.sections
+  return Array.isArray(sections) ? sections : []
+})
+
 const trackTimeEnabled = computed(() => test.value?.trackTime !== false)
 
-const testAlreadyStarted = computed(() => {
-  return (
-    currentUserTestAnswer.value?.testStarted ||
-    calculatedProgress.value > 0 ||
-    hasSavedAnswers()
-  )
+const testDisabledReason = computed(() => {
+  if (currentUserTestAnswer.value?.submitted) return 'already-completed'
+  if (heuristics.value.length === 0) return 'no-heuristics'
+  if (!user.value) return 'login-required'
+  return null
 })
+
+const isStartTestDisabled = computed(() => Boolean(testDisabledReason.value))
 
 //Fisher-Yates algorithm to shuffle heuristics order
 const shuffleHeuristics = (array) => {
@@ -835,6 +894,17 @@ const snapshotRunningTimer = (heuristicIndex) => {
   }
 }
 
+const openInstructionsPage = () => {
+  const startScreen = document.querySelector('.start-screen')
+  if (startScreen) {
+    startScreen.classList.add('leaving')
+  }
+
+  setTimeout(() => {
+    currentPage.value = TEST_PAGES.instructions
+  }, 1000)
+}
+
 const startTest = async () => {
   if (heuristics.value.length === 0) {
     store.commit('setError', {
@@ -857,6 +927,7 @@ const startTest = async () => {
   }
 
   start.value = false
+  currentPage.value = TEST_PAGES.answers
 
   // Mark test as started
   if (currentUserTestAnswer.value) {
@@ -1641,9 +1712,19 @@ const initializeHeuristicsOrder = () => {
 }
 
 const restoreProgress = () => {
+  if (currentUserTestAnswer.value?.submitted) {
+    start.value = true
+    currentPage.value = TEST_PAGES.welcome
+    review.value = true
+    calculateProgress()
+    updateSaveStatus('All changes saved', 'default')
+    return
+  }
+
   if (hasSavedAnswers() || currentUserTestAnswer.value?.testStarted) {
     // User has saved progress or test was started
     start.value = false
+    currentPage.value = TEST_PAGES.answers
     review.value = true
 
     // Calculate progress from saved data
@@ -1666,6 +1747,7 @@ const restoreProgress = () => {
   } else {
     // No saved progress, start fresh
     start.value = true
+    currentPage.value = TEST_PAGES.welcome
     review.value = true
     calculatedProgress.value = 0
   }
@@ -1813,6 +1895,66 @@ onUnmounted(() => {
   max-width: 1200px;
   margin: 0 auto;
 }
+.start-screen {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background-size: 200% 200%;
+  animation: subtleGradient 20s ease-in-out infinite;
+  background-image: linear-gradient(
+    160deg,
+    #00213f 0%,
+    #1a2f4f 35%,
+    #303f9f 100%
+  );
+  transition: opacity 8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.start-screen.leaving,
+.start-screen.leaving > *,
+.start-screen.leaving::before {
+  opacity: 0;
+  transition-duration: 1.2s;
+}
+
+@keyframes subtleGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.start-screen::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 140%;
+  margin-right: -450px;
+  margin-top: 100px;
+  background-image: url(../../../assets/logo_small_red.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: right top;
+  opacity: 0.2;
+}
+
+.instructions-screen {
+  min-height: 100vh;
+  background: #fff;
+}
+
 .background-main {
   background-color: #f5f7fa;
   height: 100%;

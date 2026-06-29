@@ -777,6 +777,11 @@
     "headers": {
       "heuristics": "HEURISTICS"
     },
+    "alerts": {
+      "testAlreadyCompleted": "Test Already Completed",
+      "testAlreadyCompletedMessage": "You have already completed and submitted this test. Thank you for your participation!",
+      "testConfigError": "Test Configuration Error"
+    },
     "actions": {
       "cancel": "Cancel",
       "submit": "Submit",
@@ -785,6 +790,20 @@
       "notMail": "Not {userEmail}?",
       "changeAccount": "Change account",
       "startTest": "Start Test"
+    },
+    "InstructionsStep": {
+      "welcomeTitle": "Welcome to RUXAILAB!",
+      "defaultDescription": "You are going to participate in a heuristic evaluation that aims to identify possible usability problems in a digital application.",
+      "howItWorks": "How does this test work?",
+      "phases": "You will review the interface using a set of usability heuristics. For each heuristic, answer the questions, select the option that best matches your evaluation, and add comments or evidence when you find a usability issue.",
+      "summary": "Here you can see a summary of the phases you will follow:",
+      "ready": "When you are ready, click the button to start. You can move at your own pace and stop at any time if you need to.",
+      "startButton": "Start the test",
+      "steps": {
+        "instructions": "Instructions",
+        "evaluation": "Heuristic evaluation",
+        "submission": "Final submission"
+      }
     }
   },
   "EvaluatorInfoView": {
