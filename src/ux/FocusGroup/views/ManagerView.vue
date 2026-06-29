@@ -59,6 +59,11 @@ const navigator = computed(() => {
       path: `/focusGroup/manager/${route.params.id}`,
     },
     {
+      title: 'Test',
+      icon: ICONS.DOCUMENT_EDIT,
+      path: `/focusGroup/edit/${test.value.id}`,
+    },
+    {
       title: 'Cooperators',
       icon: ICONS.ACCOUNT_GROUP,
       path: `/focusGroup/cooperators/${test.value.id}`,
