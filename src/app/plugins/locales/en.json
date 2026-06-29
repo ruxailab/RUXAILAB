@@ -1975,8 +1975,24 @@
   "focusGroup": {
     "manager": {
       "title": "Focus Group",
-      "underConstruction": "The Focus Group module is under active development. Session setup, the live discussion room, and reporting are coming soon.",
-      "description": "For now you can manage cooperators and study settings. Use the navigation menu to invite participants and configure your study."
+      "underConstruction": "The Focus Group module is under active development. The live discussion room and reporting are coming soon.",
+      "description": "You can build your discussion guide, manage cooperators, and configure study settings from the navigation menu."
+    },
+    "edit": {
+      "title": "Discussion Guide",
+      "subtitle": "Define the topics and prompts your facilitator will guide the group through.",
+      "save": "Save guide",
+      "saved": "Discussion guide saved",
+      "noTopics": "No topics yet. Add your first discussion topic to get started.",
+      "addTopic": "Add topic",
+      "removeTopic": "Remove topic",
+      "topicTitle": "Topic",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "prompt": "Prompt",
+      "addPrompt": "Add prompt",
+      "removePrompt": "Remove prompt",
+      "duration": "Minutes"
     }
   },
   "studyCreation": {
