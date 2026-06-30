@@ -113,6 +113,34 @@ const methodsByCategory = {
       comingSoon: true,
     },
   ],
+  inquiry: [
+    {
+      id: METHOD_DEFINITIONS.FOCUS_GROUP.id,
+      nameKey: 'studyCreation.methods.inquiry.focus_group.name',
+      descKey: 'studyCreation.methods.inquiry.focus_group.description',
+      icon: 'mdi-account-group',
+      color: 'secondary',
+      available: true,
+    },
+    {
+      id: METHOD_DEFINITIONS.SURVEY.id,
+      nameKey: 'studyCreation.methods.inquiry.survey.name',
+      descKey: 'studyCreation.methods.inquiry.survey.description',
+      icon: 'mdi-clipboard-text',
+      color: 'primary',
+      available: false,
+      comingSoon: true,
+    },
+    {
+      id: METHOD_DEFINITIONS.INTERVIEW.id,
+      nameKey: 'studyCreation.methods.inquiry.interview.name',
+      descKey: 'studyCreation.methods.inquiry.interview.description',
+      icon: 'mdi-microphone',
+      color: 'info',
+      available: false,
+      comingSoon: true,
+    },
+  ],
   inspection: [
     {
       id: METHOD_DEFINITIONS.HEURISTICS.id,

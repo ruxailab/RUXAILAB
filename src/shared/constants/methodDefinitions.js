@@ -10,6 +10,8 @@ import StudyAnswer from '../models/StudyAnswer'
 import UserStudyAnswer from '@/ux/UserTest/models/UserStudyAnswer'
 import HeuristicStudyAnswer from '@/ux/Heuristic/models/HeuristicStudyAnswer'
 import CardSortingStudyAnswer from '@/ux/CardSorting/models/CardSortingStudyAnswer'
+import FocusGroupStudy from '@/ux/FocusGroup/models/FocusGroupStudy'
+import FocusGroupStudyAnswer from '@/ux/FocusGroup/models/FocusGroupStudyAnswer'
 
 /**
  * Factory function to instantiate the correct study model based on type.
@@ -41,6 +43,8 @@ export function instantiateStudyByType(type, rawData) {
       return new ManualAccessibilityTest(normalizedData)
     case STUDY_TYPES.ACCESSIBILITY_AUTOMATIC:
       return new AutomaticAccessibilityTest(normalizedData)
+    case STUDY_TYPES.FOCUS_GROUP:
+      return new FocusGroupStudy(normalizedData)
     default:
       return new Study(normalizedData)
   }
@@ -61,6 +65,8 @@ export function instantiateStudyAnswerByType(type, rawData) {
       return new HeuristicStudyAnswer(rawData)
     case STUDY_TYPES.CARD_SORTING:
       return new CardSortingStudyAnswer(rawData)
+    case STUDY_TYPES.FOCUS_GROUP:
+      return new FocusGroupStudyAnswer(rawData)
     default:
       return new StudyAnswer(rawData)
   }
@@ -75,6 +81,7 @@ export const STUDY_TYPES = {
   CARD_SORTING: 'CARD_SORTING',
   ACCESSIBILITY_MANUAL: 'MANUAL',
   ACCESSIBILITY_AUTOMATIC: 'AUTOMATIC',
+  FOCUS_GROUP: 'FOCUS_GROUP',
 }
 
 /**
@@ -243,6 +250,16 @@ export const METHOD_DEFINITIONS = {
     category: METHOD_CATEGORIES.inquiry.id,
     status: METHOD_STATUSES.COMING_SOON.id,
   },
+  FOCUS_GROUP: {
+    id: 'FOCUS_GROUP',
+    name: 'Grupo Focal',
+    nameEn: 'Focus Group',
+    icon: 'mdi-account-group',
+    color: '#FF425A',
+    description: 'Moderated group discussion to gather qualitative insights',
+    category: METHOD_CATEGORIES.inquiry.id,
+    status: METHOD_STATUSES.IMPROVING.id,
+  },
   CARD_SORTING: {
     id: 'CARD_SORTING',
     name: 'Card Sorting',
@@ -316,6 +333,8 @@ export const getMethodDefinition = (testType, subType = '') => {
       return METHOD_DEFINITIONS.HEURISTICS
     case STUDY_TYPES.CARD_SORTING:
       return METHOD_DEFINITIONS.CARD_SORTING
+    case STUDY_TYPES.FOCUS_GROUP:
+      return METHOD_DEFINITIONS.FOCUS_GROUP
     default:
       return null
   }
@@ -327,6 +346,8 @@ export const getMethodManagerView = (type, subType) => {
   if (normalizedType === STUDY_TYPES.HEURISTIC) return 'HeuristicManagerView'
   else if (normalizedType === STUDY_TYPES.CARD_SORTING)
     return 'CardSortingManagerView'
+  else if (normalizedType === STUDY_TYPES.FOCUS_GROUP)
+    return 'FocusGroupManagerView'
   else if (normalizedType === STUDY_TYPES.USER) {
     if (subType === USER_STUDY_SUBTYPES.UNMODERATED)
       return 'UserUnmoderatedManagerView'
