@@ -6,89 +6,28 @@
       :top-cards="topCards"
       :bottom-cards="bottomCards"
     >
-      <!-- Dashboard profesional con componentes específicos -->
-      <v-container v-if="test" class="dashboard-container">
-        <!-- Main Dashboard Layout: Two Columns -->
-        <v-row class="dashboard-main-row">
-          <!-- Left Column: Dashboard Header -->
-          <v-col cols="12" lg="6">
-            <!-- Dashboard Header with Gradient -->
-            <div class="dashboard-header gradient-header">
-              <div class="header-content">
-                <div class="d-flex align-center mb-3">
-                  <div class="header-icon-container mr-3">
-                    <v-icon color="white" size="28"
-                      >mdi-chart-box-outline</v-icon
-                    >
-                  </div>
-                  <div class="flex-grow-1">
-                    <h1 class="dashboard-title text-white mb-0">
-                      {{
-                        test.testTitle || $t('manager.dashboard.defaultTitle')
-                      }}
-                    </h1>
-                    <p class="dashboard-subtitle text-white opacity-90 mb-0">
-                      {{ $t('manager.dashboard.moderatedDescription') }}
-                    </p>
-                  </div>
-                </div>
-                <div class="header-chips">
-                  <v-chip
-                    class="test-type-chip"
-                    color="rgba(255,255,255,0.2)"
-                    variant="outlined"
-                    size="small"
-                  >
-                    <v-icon start size="16" color="white">
-                      mdi-account-supervisor-circle
-                    </v-icon>
-                    <span class="text-white">{{
-                      $t('manager.dashboard.moderatedStudy')
-                    }}</span>
-                  </v-chip>
-                  <v-chip
-                    class="status-chip"
-                    color="rgba(255,255,255,0.15)"
-                    variant="outlined"
-                    size="small"
-                  >
-                    <v-icon start size="16" color="white">
-                      {{ getStatusIcon(test.testStatus) }}
-                    </v-icon>
-                    <span class="text-white">{{
-                      test.testStatus
-                        ? $t(`manager.dashboard.${test.testStatus}`)
-                        : $t('manager.dashboard.active')
-                    }}</span>
-                  </v-chip>
-                </div>
-              </div>
-            </div>
-          </v-col>
+      <ManagerDashboardLayout
+        v-if="test"
+        :test="test"
+        :title="test.testTitle || $t('manager.dashboard.defaultTitle')"
+        :subtitle="$t('manager.dashboard.moderatedDescription')"
+        icon="mdi-chart-box-outline"
+        :type-label="$t('manager.dashboard.moderatedStudy')"
+        type-icon="mdi-account-supervisor-circle"
+        :status-icon="getStatusIcon(test.testStatus)"
+        :status-text="
+          test.testStatus
+            ? $t(`manager.dashboard.${test.testStatus}`)
+            : $t('manager.dashboard.active')
+        "
+        :modules-title="$t('manager.managementModules.title')"
+        :modules-description="$t('manager.managementModules.description')"
+      >
+        <template #overview>
+          <StudyOverview :test="test" />
+        </template>
 
-          <!-- Right Column: Study Overview -->
-          <v-col cols="12" lg="6" class="study-overview-column">
-            <!-- Las 4 cards de métricas -->
-            <div class="study-overview-wrapper">
-              <StudyOverview :test="test" />
-            </div>
-          </v-col>
-        </v-row>
-
-        <!-- Management Modules Section (Full Width) -->
-        <div class="section-header">
-          <h2 class="section-title">
-            <v-icon class="section-icon">mdi-view-dashboard</v-icon>
-            {{ $t('manager.managementModules.title') }}
-          </h2>
-          <p class="section-description">
-            {{ $t('manager.managementModules.description') }}
-          </p>
-        </div>
-
-        <!-- Modules Grid: 3x2 layout -->
-        <v-row class="modules-section">
-          <!-- Row 1 -->
+        <template #modules>
           <v-col cols="12" md="6">
             <ParticipantsInfo :test="test" />
           </v-col>
@@ -117,8 +56,8 @@
               </div>
             </v-card>
           </v-col>
-        </v-row>
-      </v-container>
+        </template>
+      </ManagerDashboardLayout>
     </ManagerView>
   </div>
 </template>
@@ -129,8 +68,10 @@ import {
   getNavigatorDefault,
   getTopCardsDefualt,
 } from '@/shared/utils/managerDefault'
+import ManagerDashboardLayout from '@/shared/components/manager/ManagerDashboardLayout.vue'
 import ManagerView from '@/shared/views/template/ManagerView.vue'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
+import { getStatusIcon } from '@/shared/utils/statusUtils'
 import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
@@ -195,345 +136,9 @@ const navigator = computed(() => {
   return items
 })
 
-const getStatusIcon = (status) => {
-  switch (status) {
-    case 'active':
-      return 'mdi-play-circle'
-    case 'draft':
-      return 'mdi-file-document-edit-outline'
-    case 'finished':
-      return 'mdi-check-circle'
-    case 'paused':
-      return 'mdi-pause-circle'
-    case 'archived':
-      return 'mdi-archive'
-    default:
-      return 'mdi-information'
-  }
-}
-
 // Lifecycle
 onMounted(async () => {
   await store.dispatch('getStudy', { id: route.params.id })
   await store.dispatch('getCurrentTestAnswerDoc')
 })
 </script>
-
-<style scoped>
-/* Dashboard Container */
-.dashboard-container {
-  margin-left: auto !important;
-  margin-right: auto !important;
-  width: 85% !important;
-  max-width: 1400px !important;
-  padding: 32px 24px !important;
-}
-
-/* Header Styling */
-.dashboard-header {
-  border-radius: 20px;
-  padding: 32px 28px;
-  color: white;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-  position: relative;
-  overflow: hidden;
-  min-height: 240px !important;
-  display: flex !important;
-  align-items: center !important;
-  transition: all 0.3s ease;
-}
-
-.dashboard-header:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-}
-
-.gradient-header {
-  background: linear-gradient(
-    135deg,
-    rgb(var(--v-theme-primary)) 0%,
-    rgb(var(--v-theme-secondary)) 100%
-  );
-}
-
-.gradient-header::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
-    repeat;
-  opacity: 0.1;
-}
-
-.header-icon-container {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  padding: 12px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.header-content {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 32px;
-}
-
-.title-section {
-  flex: 1;
-}
-
-.dashboard-title {
-  font-size: 2.5rem !important;
-  font-weight: 700 !important;
-  line-height: 1.2 !important;
-  margin-bottom: 12px !important;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.dashboard-subtitle {
-  font-size: 1.1rem !important;
-  opacity: 0.9;
-  margin: 0 !important;
-  max-width: 600px;
-  line-height: 1.5;
-}
-
-.header-chips {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.test-type-chip,
-.status-chip {
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  transition: all 0.3s ease;
-}
-
-.test-type-chip:hover,
-.status-chip:hover {
-  background: rgba(255, 255, 255, 0.25) !important;
-  transform: translateY(-1px);
-}
-
-.test-type-chip,
-.status-chip {
-  font-weight: 600 !important;
-  font-size: 0.875rem !important;
-  padding: 12px 20px !important;
-  border-radius: 12px !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-  backdrop-filter: blur(10px) !important;
-  background: rgba(255, 255, 255, 0.2) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-}
-
-/* Section Headers */
-.section-header {
-  margin: 48px 0 32px 0;
-  text-align: center;
-}
-
-.section-title {
-  font-size: 2rem !important;
-  font-weight: 600 !important;
-  color: #2c3e50 !important;
-  margin-bottom: 8px !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-}
-
-.section-icon {
-  color: var(--v-theme-primary) !important;
-  font-size: 2rem !important;
-}
-
-.section-description {
-  font-size: 1.1rem !important;
-  color: #64748b !important;
-  margin: 0 !important;
-  font-weight: 400;
-}
-
-/* Dashboard Main Layout */
-.dashboard-main-row {
-  align-items: stretch !important;
-  margin: 0 !important;
-  min-height: 320px !important;
-}
-
-.dashboard-main-row > .v-col {
-  padding: 0 12px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  min-height: 320px !important;
-}
-
-/* Study Overview Column Styling */
-.study-overview-column {
-  display: flex !important;
-  align-items: center !important;
-  min-height: 320px !important;
-}
-
-.study-overview-wrapper {
-  width: 100%;
-  margin-top: 0 !important;
-  flex: 1 !important;
-  display: flex !important;
-  align-items: center !important;
-}
-
-.study-overview-wrapper :deep(.v-row) {
-  margin: 0 !important;
-  align-items: stretch !important;
-}
-
-.study-overview-wrapper :deep(.v-col) {
-  padding: 8px !important;
-}
-
-/* Module Cards Styling */
-.modules-section {
-  margin-bottom: 32px !important;
-}
-
-.modules-section :deep(.v-card) {
-  min-height: 320px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  border-radius: 16px !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
-  border: 1px solid rgba(0, 0, 0, 0.06) !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  overflow: hidden;
-}
-
-.modules-section :deep(.v-card:hover) {
-  transform: translateY(-4px) !important;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12) !important;
-}
-
-.modules-section :deep(.v-card-title) {
-  font-size: 1.2rem !important;
-  font-weight: 600 !important;
-  color: #2c3e50 !important;
-  padding: 20px 20px 12px 20px !important;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
-}
-
-.modules-section :deep(.v-card-text) {
-  padding: 20px !important;
-  flex: 1 !important;
-  min-height: 0 !important;
-  overflow-y: auto !important;
-}
-
-.modules-section :deep(.v-card-actions) {
-  padding: 16px 20px !important;
-  border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
-  background: #fafbfc !important;
-}
-
-/* Progress bars and chips styling */
-.modules-section :deep(.v-progress-linear) {
-  border-radius: 8px !important;
-  overflow: hidden !important;
-}
-
-.modules-section :deep(.v-chip) {
-  font-weight: 500 !important;
-  border-radius: 8px !important;
-}
-
-/* Responsive Design */
-@media (max-width: 1400px) {
-  .dashboard-container {
-    width: 90% !important;
-  }
-}
-
-@media (max-width: 1200px) {
-  .dashboard-container {
-    width: 95% !important;
-    padding: 24px 16px !important;
-  }
-
-  .dashboard-header {
-    padding: 32px 24px;
-  }
-
-  .dashboard-title {
-    font-size: 2rem !important;
-  }
-}
-
-@media (max-width: 960px) {
-  .dashboard-container {
-    width: 98% !important;
-  }
-
-  .header-content {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 24px;
-  }
-
-  .header-chips {
-    flex-direction: row;
-    justify-content: center;
-  }
-
-  .section-title {
-    font-size: 1.75rem !important;
-  }
-
-  .modules-section :deep(.v-card) {
-    height: auto !important;
-    min-height: 280px !important;
-  }
-}
-
-@media (max-width: 600px) {
-  .dashboard-container {
-    padding: 16px 8px !important;
-  }
-
-  .dashboard-header {
-    padding: 24px 20px;
-    margin-bottom: 32px;
-  }
-
-  .dashboard-title {
-    font-size: 1.75rem !important;
-  }
-
-  .dashboard-subtitle {
-    font-size: 1rem !important;
-  }
-
-  .header-chips {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .test-type-chip,
-  .status-chip {
-    width: 100%;
-    justify-content: center;
-  }
-}
-</style>
