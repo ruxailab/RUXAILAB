@@ -1,4 +1,18 @@
 import { computed, toRef, unref } from 'vue'
+import { getSessionStatus } from '@/shared/utils/sessionsUtils'
+
+const toSortableTimestamp = (value) => {
+  if (!value) return 0
+  if (typeof value?.toMillis === 'function') return value.toMillis()
+
+  const timestamp = new Date(value).getTime()
+  return Number.isNaN(timestamp) ? 0 : timestamp
+}
+
+const getSessionItemValue = (item) =>
+  [item.id, item.userDocId ?? item.email, item.email, item.testDate]
+    .map((value) => encodeURIComponent(String(value ?? '')))
+    .join(':')
 
 const getSortableTitle = (item) =>
   item.header?.templateTitle ?? item.testTitle ?? item.title ?? item.email ?? ''
@@ -25,6 +39,9 @@ const getSortableCreationDate = (item, type) => {
 
 export function useDataTableConfig(type, t, options = {}) {
   const typeRef = toRef(type)
+
+  const itemValue = (item) =>
+    typeRef.value === 'sessions' ? getSessionItemValue(item) : item.id
 
   const headers = computed(() => {
     const currentType = typeRef.value
@@ -67,11 +84,13 @@ export function useDataTableConfig(type, t, options = {}) {
         title: t('common.table.status'),
         key: 'status',
         sortable: true,
+        value: (item) => getSessionStatus(item.testDate).status,
       })
       baseHeaders.push({
         title: t('common.table.sessionDate'),
         key: 'testDate',
         sortable: true,
+        value: (item) => toSortableTimestamp(item.testDate),
       })
     }
 
@@ -126,5 +145,6 @@ export function useDataTableConfig(type, t, options = {}) {
   return {
     headers,
     getEmptyStateMessage,
+    itemValue,
   }
 }
