@@ -38,12 +38,16 @@
               :readonly="isTemplate"
               :welcome="welcomeMessage"
               :final-message="finalMessage"
+              :test-id="route.params.id"
+              :video-call="videoCallConfig"
+              :show-video-call-config="isModerated"
               @update:welcome-message="
                 ;((welcomeMessage = $event), (change = true))
               "
               @update:final-message="
                 ;((finalMessage = $event), (change = true))
               "
+              @update:video-call="onVideoCallConfigChange"
             />
           </div>
 
@@ -103,7 +107,8 @@ import TestConfigForm from '@/shared/components/TestConfigForm.vue'
 import EyeTrackingConfig from '../components/EyeTrackingConfig.vue'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import ButtonSave from '@/shared/components/buttons/ButtonSave.vue'
-import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
+import { instantiateStudyByType, USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions'
+import { DEFAULT_VIDEO_CALL_CONFIG } from '@/shared/constants/videoCallProviders'
 import { useI18n } from 'vue-i18n'
 import { showSuccess, showError } from '@/shared/utils/toast'
 
@@ -130,6 +135,7 @@ const change = ref(false)
 const welcomeMessage = ref('')
 const finalMessage = ref('')
 const consent = ref('')
+const videoCallConfig = ref({ ...DEFAULT_VIDEO_CALL_CONFIG })
 const index = ref(0)
 const route = useRoute()
 let unsubscribe = null
@@ -157,6 +163,22 @@ const getFinalMessage = () => {
 const getConsent = () => {
   consent.value = test.value?.testStructure?.consent || ''
 }
+
+const getVideoCallConfig = () => {
+  const saved = test.value?.testStructure?.videoCall
+  videoCallConfig.value = saved
+    ? { ...saved }
+    : { ...DEFAULT_VIDEO_CALL_CONFIG }
+}
+
+const onVideoCallConfigChange = (config) => {
+  videoCallConfig.value = config
+  change.value = true
+}
+
+const isModerated = computed(
+  () => test.value?.subType === USER_STUDY_SUBTYPES.MODERATED,
+)
 
 const getTasks = () => {
   const tasksData = test.value?.testStructure?.userTasks || []
@@ -213,6 +235,10 @@ const save = async () => {
       consent: consent.value,
     }
 
+    if (isModerated.value) {
+      testStructure.videoCall = structuredClone(videoCallConfig.value)
+    }
+
     const rawData = { ...test.value, testStructure: testStructure }
     const study = instantiateStudyByType(rawData.testType, rawData)
     await store.dispatch('updateStudy', study)
@@ -231,6 +257,7 @@ const subscribeToTest = () => {
       getWelcome()
       getFinalMessage()
       getConsent()
+      getVideoCallConfig()
       getPreTest()
       getPostTest()
       getTasks()
@@ -244,6 +271,7 @@ onMounted(() => {
     getWelcome()
     getFinalMessage()
     getConsent()
+    getVideoCallConfig()
     getPreTest()
     getPostTest()
     getTasks()

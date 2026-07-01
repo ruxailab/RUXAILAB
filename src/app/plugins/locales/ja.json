@@ -1707,7 +1707,11 @@
       "SelfTest": {
         "title": "セルフテスト",
         "type": "非モデレート",
-        "text": ["自分の時間に回答", "高度な回答分析", "タスクのカスタマイズ"]
+        "text": [
+          "自分の時間に回答",
+          "高度な回答分析",
+          "タスクのカスタマイズ"
+        ]
       },
       "LiveTest": {
         "title": "ライブテスト",
@@ -1823,6 +1827,61 @@
     "postTestVariables": "事後テストの変数",
     "configureVariables": "{type}セクションの変数を構成します。必要に応じて追加、編集、削除してください。",
     "createNewVariableTitle": "新しい変数を作成"
+  },
+  "videoCall": {
+    "title": "Video Call",
+    "description": "Choose the video call technology for this moderated session.",
+    "providers": {
+      "mesh": {
+        "name": "Standard (Mesh)",
+        "range": "2–5 participants",
+        "description": "Peer-to-peer connections. Best for small sessions."
+      },
+      "livekit": {
+        "name": "LiveKit (SFU)",
+        "range": "5+ participants",
+        "description": "Server-based routing for larger groups and multiple observers."
+      }
+    },
+    "sessionActiveWarning": "Cannot change provider while a session is in progress.",
+    "session": {
+      "screenSharingLabel": "画面共有中",
+      "cameraOff": "カメラはオフです",
+      "yourVideo": "あなたのビデオ",
+      "yourPreview": "あなたのプレビュー",
+      "observatorMode": "オブザーバーモード",
+      "waitingForModeratorToStartSession": "モデレーターがセッションを開始するのを待っています...",
+      "observeAllFeedsNotice": "自分の映像を送信せずに、すべてのビデオフィードを観察できます。",
+      "waitingForParticipants": "参加者を待っています...",
+      "waitingForModerator": "モデレーターを待っています...",
+      "autoStartWhenModeratorOpensRoom": "モデレーターがルームを開くと、ビデオ通話は自動的に開始されます。"
+    },
+    "panel": {
+      "toolsPanelTitle": "ツールパネル",
+      "sessionControl": "セッション管理",
+      "joinRoomInfo": "ルーム参加の操作は上部のメイン画面に移動しました",
+      "proceedNextStep": "次のステップへ進む",
+      "endCall": "通話を終了",
+      "activeCall": "通話中",
+      "participants": "参加者",
+      "you": "あなた",
+      "observator": "オブザーバー",
+      "moderator": "モデレーター",
+      "connected": "接続中",
+      "disconnected": "切断",
+      "camera": "カメラ",
+      "noCamera": "カメラなし",
+      "microphone": "マイク",
+      "noMicrophone": "マイクなし",
+      "settings": "設定",
+      "disableCamera": "カメラをオフ",
+      "enableCamera": "カメラをオン",
+      "muteMicrophone": "マイクをミュート",
+      "unmuteMicrophone": "マイクのミュート解除",
+      "stopScreenShare": "画面共有を停止",
+      "shareScreen": "画面を共有",
+      "moderatorOnlySteps": "ステップを変更できるのはモデレーターのみです"
+    }
   },
   "CardSorting": {
     "noCategory": "カテゴリがありません",
@@ -1989,7 +2048,11 @@
       "blank": {
         "title": "空白の研究から開始",
         "description": "完全なカスタマイズでゼロから研究を作成します",
-        "features": ["完全なカスタマイズ", "ゼロから構築", "設定を完全に制御"]
+        "features": [
+          "完全なカスタマイズ",
+          "ゼロから構築",
+          "設定を完全に制御"
+        ]
       },
       "template": {
         "title": "テンプレートから作成",

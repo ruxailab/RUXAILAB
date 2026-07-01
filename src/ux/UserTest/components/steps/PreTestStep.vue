@@ -25,7 +25,13 @@
             class="mb-7"
           />
 
-          <div class="question-shell mx-auto mb-8">
+          <div v-if="!hasQuestions" class="question-shell mx-auto mb-8 text-center">
+            <p class="text-body-1 text-medium-emphasis">
+              No pre-test questions configured for this study.
+            </p>
+          </div>
+
+          <div v-else-if="currentItem" class="question-shell mx-auto mb-8">
             <h2
               class="text-h5 text-sm-h4 font-weight-bold text-secondary text-center mb-3"
             >
@@ -75,6 +81,7 @@
           <v-row class="mt-2" justify="space-between">
             <v-col cols="auto">
               <v-btn
+                v-if="hasQuestions"
                 rounded="pill"
                 variant="outlined"
                 :disabled="step === 0"
@@ -85,7 +92,7 @@
             </v-col>
             <v-col cols="auto">
               <v-btn
-                v-if="!isLastStep"
+                v-if="hasQuestions && !isLastStep"
                 rounded="pill"
                 color="primary"
                 variant="flat"
@@ -125,16 +132,22 @@ const props = defineProps({
 const emit = defineEmits(['done', 'update:preTestAnswer'])
 
 const step = ref(0)
-const localAnswers = ref([...props.preTestAnswer])
+const localAnswers = ref(
+  Array.isArray(props.preTestAnswer) ? [...props.preTestAnswer] : [],
+)
 
-const currentItem = computed(() => props.preTest[step.value])
-const isLastStep = computed(() => step.value === props.preTest.length - 1)
+const hasQuestions = computed(() => (props.preTest?.length ?? 0) > 0)
+const currentItem = computed(() => props.preTest?.[step.value] ?? null)
+const isLastStep = computed(
+  () => !hasQuestions.value || step.value === props.preTest.length - 1,
+)
 const progressPercentage = computed(() => {
-  if (!props.preTest?.length) return 0
+  if (!hasQuestions.value) return 100
   return ((step.value + 1) / props.preTest.length) * 100
 })
 
 const next = () => {
+  if (!hasQuestions.value) return
   if (step.value < props.preTest.length - 1) step.value++
 }
 
@@ -143,6 +156,7 @@ const prev = () => {
 }
 
 const updateAnswer = (index, value) => {
+  if (!localAnswers.value[index]) return
   localAnswers.value[index].answer = value
   emit('update:preTestAnswer', localAnswers.value)
 }
@@ -150,9 +164,20 @@ const updateAnswer = (index, value) => {
 watch(
   () => props.preTestAnswer,
   (newVal) => {
-    localAnswers.value = [...newVal]
+    if (Array.isArray(newVal)) {
+      localAnswers.value = [...newVal]
+    }
   },
   { deep: true },
+)
+
+watch(
+  () => props.preTest?.length,
+  (length) => {
+    if (length && step.value >= length) {
+      step.value = Math.max(0, length - 1)
+    }
+  },
 )
 
 // function updateAnswer(index, value) {

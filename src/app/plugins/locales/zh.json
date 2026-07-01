@@ -1689,7 +1689,11 @@
     "test": "测试",
     "testType_1": {
       "testTitle": "可用性启发式",
-      "text": ["可用性百分比", "最终报告PDF", "邀请专家评估您的应用程序"]
+      "text": [
+        "可用性百分比",
+        "最终报告PDF",
+        "邀请专家评估您的应用程序"
+      ]
     },
     "testType_2": {
       "testTitle": "用户可用性",
@@ -1703,12 +1707,20 @@
       "SelfTest": {
         "title": "自主测试",
         "type": "无主持",
-        "text": ["在空闲时间回答", "增强的答案分析", "任务自定义"]
+        "text": [
+          "在空闲时间回答",
+          "增强的答案分析",
+          "任务自定义"
+        ]
       },
       "LiveTest": {
         "title": "实时测试",
         "type": "有主持",
-        "text": ["摄像头、音频和屏幕录制", "增强的答案分析", "有主持的实时测试"]
+        "text": [
+          "摄像头、音频和屏幕录制",
+          "增强的答案分析",
+          "有主持的实时测试"
+        ]
       }
     }
   },
@@ -1815,6 +1827,61 @@
     "postTestVariables": "后测变量",
     "configureVariables": "配置{type}部分的变量。根据需要添加、编辑或删除变量。",
     "createNewVariableTitle": "创建新变量"
+  },
+  "videoCall": {
+    "title": "Video Call",
+    "description": "Choose the video call technology for this moderated session.",
+    "providers": {
+      "mesh": {
+        "name": "Standard (Mesh)",
+        "range": "2–5 participants",
+        "description": "Peer-to-peer connections. Best for small sessions."
+      },
+      "livekit": {
+        "name": "LiveKit (SFU)",
+        "range": "5+ participants",
+        "description": "Server-based routing for larger groups and multiple observers."
+      }
+    },
+    "sessionActiveWarning": "Cannot change provider while a session is in progress.",
+    "session": {
+      "screenSharingLabel": "正在共享屏幕",
+      "cameraOff": "摄像头已关闭",
+      "yourVideo": "你的视频",
+      "yourPreview": "你的预览",
+      "observatorMode": "观察者模式",
+      "waitingForModeratorToStartSession": "正在等待主持人开始会话...",
+      "observeAllFeedsNotice": "你可以在不发送自己视频的情况下观察所有视频流。",
+      "waitingForParticipants": "正在等待参与者...",
+      "waitingForModerator": "正在等待主持人...",
+      "autoStartWhenModeratorOpensRoom": "当主持人打开房间时，视频通话将自动开始。"
+    },
+    "panel": {
+      "toolsPanelTitle": "工具面板",
+      "sessionControl": "会话控制",
+      "joinRoomInfo": "加入房间的控制现在位于上方主界面",
+      "proceedNextStep": "进入下一步",
+      "endCall": "结束通话",
+      "activeCall": "通话进行中",
+      "participants": "参与者",
+      "you": "你",
+      "observator": "观察者",
+      "moderator": "主持人",
+      "connected": "已连接",
+      "disconnected": "已断开",
+      "camera": "摄像头",
+      "noCamera": "无摄像头",
+      "microphone": "麦克风",
+      "noMicrophone": "无麦克风",
+      "settings": "设置",
+      "disableCamera": "关闭摄像头",
+      "enableCamera": "开启摄像头",
+      "muteMicrophone": "麦克风静音",
+      "unmuteMicrophone": "取消麦克风静音",
+      "stopScreenShare": "停止屏幕共享",
+      "shareScreen": "共享屏幕",
+      "moderatorOnlySteps": "只有主持人可以更改步骤"
+    }
   },
   "CardSorting": {
     "noCategory": "无类别",
@@ -1981,12 +2048,20 @@
       "blank": {
         "title": "从空白研究开始",
         "description": "从头开始创建研究，完全可定制",
-        "features": ["完全可定制", "从头构建", "对设置的完全控制"]
+        "features": [
+          "完全可定制",
+          "从头构建",
+          "对设置的完全控制"
+        ]
       },
       "template": {
         "title": "从模板创建",
         "description": "使用预构建的模板快速开始",
-        "features": ["快速设置", "预配置设置", "包含最佳实践"]
+        "features": [
+          "快速设置",
+          "预配置设置",
+          "包含最佳实践"
+        ]
       }
     },
     "details": {

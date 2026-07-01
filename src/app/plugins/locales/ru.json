@@ -1828,6 +1828,61 @@
     "configureVariables": "Настройте переменные для раздела {type}. Добавляйте, редактируйте или удаляйте переменные по мере необходимости.",
     "createNewVariableTitle": "Создать новую переменную"
   },
+  "videoCall": {
+    "title": "Video Call",
+    "description": "Choose the video call technology for this moderated session.",
+    "providers": {
+      "mesh": {
+        "name": "Standard (Mesh)",
+        "range": "2–5 participants",
+        "description": "Peer-to-peer connections. Best for small sessions."
+      },
+      "livekit": {
+        "name": "LiveKit (SFU)",
+        "range": "5+ participants",
+        "description": "Server-based routing for larger groups and multiple observers."
+      }
+    },
+    "sessionActiveWarning": "Cannot change provider while a session is in progress.",
+    "session": {
+      "screenSharingLabel": "Демонстрация экрана",
+      "cameraOff": "Камера выключена",
+      "yourVideo": "Ваше видео",
+      "yourPreview": "Ваш предпросмотр",
+      "observatorMode": "Режим наблюдателя",
+      "waitingForModeratorToStartSession": "Ожидание, пока модератор начнет сессию...",
+      "observeAllFeedsNotice": "Вы сможете наблюдать все видеопотоки, не отправляя свой.",
+      "waitingForParticipants": "Ожидание участников...",
+      "waitingForModerator": "Ожидание модератора...",
+      "autoStartWhenModeratorOpensRoom": "Видеозвонок начнется автоматически, когда модератор откроет комнату."
+    },
+    "panel": {
+      "toolsPanelTitle": "Панель инструментов",
+      "sessionControl": "Управление сессией",
+      "joinRoomInfo": "Кнопки входа в комнату теперь находятся в основном интерфейсе выше",
+      "proceedNextStep": "Перейти к следующему шагу",
+      "endCall": "Завершить звонок",
+      "activeCall": "Активный звонок",
+      "participants": "Участники",
+      "you": "Вы",
+      "observator": "Наблюдатель",
+      "moderator": "Модератор",
+      "connected": "Подключен",
+      "disconnected": "Отключен",
+      "camera": "Камера",
+      "noCamera": "Без камеры",
+      "microphone": "Микрофон",
+      "noMicrophone": "Без микрофона",
+      "settings": "Настройки",
+      "disableCamera": "Отключить камеру",
+      "enableCamera": "Включить камеру",
+      "muteMicrophone": "Выключить микрофон",
+      "unmuteMicrophone": "Включить микрофон",
+      "stopScreenShare": "Остановить демонстрацию экрана",
+      "shareScreen": "Демонстрировать экран",
+      "moderatorOnlySteps": "Только модератор может менять шаги"
+    }
+  },
   "CardSorting": {
     "noCategory": "Нет категории",
     "noCards": "Карточки не найдены",

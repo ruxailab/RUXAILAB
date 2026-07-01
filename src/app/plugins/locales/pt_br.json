@@ -1314,7 +1314,16 @@
       "observeAllFeedsNotice": "Voce podera observar todos os videos sem enviar o seu.",
       "waitingForParticipants": "Aguardando participantes...",
       "waitingForModerator": "Aguardando moderador...",
-      "autoStartWhenModeratorOpensRoom": "A chamada de video iniciara automaticamente quando o moderador abrir a sala."
+      "autoStartWhenModeratorOpensRoom": "A chamada de video iniciara automaticamente quando o moderador abrir a sala.",
+      "cameraDevice": "camera",
+      "microphoneDevice": "microfone",
+      "screenShareDevice": "compartilhamento de tela",
+      "secureContextRequired": "{device} requer uma conexao segura (HTTPS ou localhost). Abra o app via localhost em vez do endereco IP da rede.",
+      "mediaDeviceNotFound": "Nao foi possivel acessar a {device}. Verifique se esta conectada e nao esta em uso por outro aplicativo.",
+      "mediaPermissionDenied": "Permissao para usar a {device} foi negada. Permita o acesso nas configuracoes do navegador.",
+      "mediaDeviceInUse": "A {device} esta em uso por outro aplicativo.",
+      "mediaConstraintsNotSupported": "A {device} nao suporta as configuracoes necessarias.",
+      "mediaDeviceUnavailable": "A {device} nao esta disponivel. Voce ainda pode entrar na chamada sem ela."
     },
     "WelcomeStep": {
       "welcome": "Bem-vindo ao RUXAILAB!",
@@ -1809,6 +1818,70 @@
     "postTestVariables": "Variáveis de Pós-Teste",
     "configureVariables": "Configure as variáveis para a seção {type}. Adicione, edite ou remova variáveis conforme necessário.",
     "createNewVariableTitle": "Criar nova variável"
+  },
+  "videoCall": {
+    "title": "Videochamada",
+    "description": "Escolha a tecnologia de videochamada para esta sessão moderada.",
+    "providers": {
+      "mesh": {
+        "name": "Padrão (Mesh)",
+        "range": "2–5 participantes",
+        "description": "Conexão direta entre participantes. Ideal para sessões pequenas."
+      },
+      "livekit": {
+        "name": "LiveKit (SFU)",
+        "range": "5+ participantes",
+        "description": "Servidor dedicado para múltiplos participantes e observadores."
+      }
+    },
+    "sessionActiveWarning": "Não é possível alterar o provider enquanto uma sessão estiver em andamento.",
+    "session": {
+      "screenSharingLabel": "Compartilhando tela",
+      "cameraOff": "A camera esta desligada",
+      "yourVideo": "Seu video",
+      "yourPreview": "Sua visualizacao",
+      "observatorMode": "Modo observador",
+      "waitingForModeratorToStartSession": "Aguardando o moderador iniciar a sessao...",
+      "observeAllFeedsNotice": "Voce podera observar todos os videos sem enviar o seu.",
+      "waitingForParticipants": "Aguardando participantes...",
+      "waitingForModerator": "Aguardando moderador...",
+      "autoStartWhenModeratorOpensRoom": "A chamada de video iniciara automaticamente quando o moderador abrir a sala.",
+      "cameraDevice": "camera",
+      "microphoneDevice": "microfone",
+      "screenShareDevice": "compartilhamento de tela",
+      "secureContextRequired": "{device} requer uma conexao segura (HTTPS ou localhost). Abra o app via localhost em vez do endereco IP da rede.",
+      "mediaDeviceNotFound": "Nao foi possivel acessar a {device}. Verifique se esta conectada e nao esta em uso por outro aplicativo.",
+      "mediaPermissionDenied": "Permissao para usar a {device} foi negada. Permita o acesso nas configuracoes do navegador.",
+      "mediaDeviceInUse": "A {device} esta em uso por outro aplicativo.",
+      "mediaConstraintsNotSupported": "A {device} nao suporta as configuracoes necessarias.",
+      "mediaDeviceUnavailable": "A {device} nao esta disponivel. Voce ainda pode entrar na chamada sem ela."
+    },
+    "panel": {
+      "toolsPanelTitle": "Painel de ferramentas",
+      "sessionControl": "Controle da sessao",
+      "joinRoomInfo": "Os controles para entrar na sala agora estao na interface principal acima",
+      "proceedNextStep": "Prosseguir para o proximo passo",
+      "endCall": "Encerrar chamada",
+      "activeCall": "Chamada ativa",
+      "participants": "Participantes",
+      "you": "Voce",
+      "observator": "Observador",
+      "moderator": "Moderador",
+      "connected": "Conectado",
+      "disconnected": "Desconectado",
+      "camera": "Camera",
+      "noCamera": "Sem camera",
+      "microphone": "Microfone",
+      "noMicrophone": "Sem microfone",
+      "settings": "Configuracao",
+      "disableCamera": "Desativar camera",
+      "enableCamera": "Ativar camera",
+      "muteMicrophone": "Silenciar microfone",
+      "unmuteMicrophone": "Ativar microfone",
+      "stopScreenShare": "Parar compartilhamento de tela",
+      "shareScreen": "Compartilhar tela",
+      "moderatorOnlySteps": "Somente o moderador pode alterar as etapas"
+    }
   },
   "CardSorting": {
     "noCategory": "Sem categoria",

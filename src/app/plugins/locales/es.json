@@ -1810,6 +1810,61 @@
     "configureVariables": "Configura las variables para la sección {type}. Agrega, edita o elimina variables según sea necesario.",
     "createNewVariableTitle": "Crear Nueva Variable"
   },
+  "videoCall": {
+    "title": "Videollamada",
+    "description": "Elija la tecnología de videollamada para esta sesión moderada.",
+    "providers": {
+      "mesh": {
+        "name": "Estándar (Mesh)",
+        "range": "2–5 participantes",
+        "description": "Conexión directa entre participantes. Ideal para sesiones pequeñas."
+      },
+      "livekit": {
+        "name": "LiveKit (SFU)",
+        "range": "5+ participantes",
+        "description": "Enrutamiento basado en servidor para grupos grandes y múltiples observadores."
+      }
+    },
+    "sessionActiveWarning": "No se puede cambiar el proveedor mientras una sesión está en curso.",
+    "session": {
+      "screenSharingLabel": "Compartiendo pantalla",
+      "cameraOff": "La camara esta apagada",
+      "yourVideo": "Tu video",
+      "yourPreview": "Tu vista previa",
+      "observatorMode": "Modo observador",
+      "waitingForModeratorToStartSession": "Esperando a que el moderador inicie la sesion...",
+      "observeAllFeedsNotice": "Podras observar todas las transmisiones de video sin enviar la tuya.",
+      "waitingForParticipants": "Esperando participantes...",
+      "waitingForModerator": "Esperando al moderador...",
+      "autoStartWhenModeratorOpensRoom": "La videollamada comenzara automaticamente cuando el moderador abra la sala."
+    },
+    "panel": {
+      "toolsPanelTitle": "Panel de herramientas",
+      "sessionControl": "Control de sesion",
+      "joinRoomInfo": "Los controles para unirse estan ahora en la interfaz principal superior",
+      "proceedNextStep": "Continuar al siguiente paso",
+      "endCall": "Finalizar llamada",
+      "activeCall": "Llamada activa",
+      "participants": "Participantes",
+      "you": "Tu",
+      "observator": "Observador",
+      "moderator": "Moderador",
+      "connected": "Conectado",
+      "disconnected": "Desconectado",
+      "camera": "Camara",
+      "noCamera": "Sin camara",
+      "microphone": "Microfono",
+      "noMicrophone": "Sin microfono",
+      "settings": "Configuracion",
+      "disableCamera": "Desactivar camara",
+      "enableCamera": "Activar camara",
+      "muteMicrophone": "Silenciar microfono",
+      "unmuteMicrophone": "Activar microfono",
+      "stopScreenShare": "Detener compartir pantalla",
+      "shareScreen": "Compartir pantalla",
+      "moderatorOnlySteps": "Solo el moderador puede cambiar los pasos"
+    }
+  },
   "CardSorting": {
     "noCategory": "Sin categoría",
     "noCards": "No se encontraron tarjetas",

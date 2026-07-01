@@ -1707,7 +1707,11 @@
       "SelfTest": {
         "title": "اختبار ذاتي",
         "type": "غير مشرف عليه",
-        "text": ["الإجابة في وقت فراغ", "تحليل متقدم للإجابات", "تخصيص المهمة"]
+        "text": [
+          "الإجابة في وقت فراغ",
+          "تحليل متقدم للإجابات",
+          "تخصيص المهمة"
+        ]
       },
       "LiveTest": {
         "title": "اختبار مباشر",
@@ -1823,6 +1827,61 @@
     "postTestVariables": "متغيرات ما بعد الاختبار",
     "configureVariables": "تكوين المتغيرات لقسم {type}. أضف أو حرر أو أزل المتغيرات حسب الحاجة.",
     "createNewVariableTitle": "إنشاء متغير جديد"
+  },
+  "videoCall": {
+    "title": "Video Call",
+    "description": "Choose the video call technology for this moderated session.",
+    "providers": {
+      "mesh": {
+        "name": "Standard (Mesh)",
+        "range": "2–5 participants",
+        "description": "Peer-to-peer connections. Best for small sessions."
+      },
+      "livekit": {
+        "name": "LiveKit (SFU)",
+        "range": "5+ participants",
+        "description": "Server-based routing for larger groups and multiple observers."
+      }
+    },
+    "sessionActiveWarning": "Cannot change provider while a session is in progress.",
+    "session": {
+      "screenSharingLabel": "مشاركة الشاشة",
+      "cameraOff": "الكاميرا متوقفة",
+      "yourVideo": "فيديوك",
+      "yourPreview": "معاينتك",
+      "observatorMode": "وضع المراقب",
+      "waitingForModeratorToStartSession": "بانتظار المشرف لبدء الجلسة...",
+      "observeAllFeedsNotice": "ستتمكن من مشاهدة جميع الفيديوهات دون إرسال فيديوك.",
+      "waitingForParticipants": "بانتظار المشاركين...",
+      "waitingForModerator": "بانتظار المشرف...",
+      "autoStartWhenModeratorOpensRoom": "ستبدأ مكالمة الفيديو تلقائيا عندما يفتح المشرف الغرفة."
+    },
+    "panel": {
+      "toolsPanelTitle": "لوحة الأدوات",
+      "sessionControl": "التحكم في الجلسة",
+      "joinRoomInfo": "عناصر الانضمام إلى الغرفة أصبحت الآن في الواجهة الرئيسية بالأعلى",
+      "proceedNextStep": "الانتقال إلى الخطوة التالية",
+      "endCall": "إنهاء المكالمة",
+      "activeCall": "مكالمة نشطة",
+      "participants": "المشاركون",
+      "you": "أنت",
+      "observator": "مراقب",
+      "moderator": "مشرف",
+      "connected": "متصل",
+      "disconnected": "غير متصل",
+      "camera": "الكاميرا",
+      "noCamera": "بدون كاميرا",
+      "microphone": "الميكروفون",
+      "noMicrophone": "بدون ميكروفون",
+      "settings": "الإعدادات",
+      "disableCamera": "إيقاف الكاميرا",
+      "enableCamera": "تشغيل الكاميرا",
+      "muteMicrophone": "كتم الميكروفون",
+      "unmuteMicrophone": "إلغاء كتم الميكروفون",
+      "stopScreenShare": "إيقاف مشاركة الشاشة",
+      "shareScreen": "مشاركة الشاشة",
+      "moderatorOnlySteps": "فقط المشرف يمكنه تغيير الخطوات"
+    }
   },
   "CardSorting": {
     "noCategory": "لا توجد فئة",
