@@ -1991,6 +1991,13 @@
     "answers": "Answers",
     "no": "No"
   },
+  "focusGroup": {
+    "manager": {
+      "title": "Focus Group",
+      "underConstruction": "The Focus Group module is under active development. Session setup, the live discussion room, and reporting are coming soon.",
+      "description": "For now you can manage cooperators and study settings. Use the navigation menu to invite participants and configure your study."
+    }
+  },
   "studyCreation": {
     "chooseEvaluationCategory": "Choose Evaluation Category",
     "selectEvaluationType": "Select the type of evaluation you want to conduct for your study",
@@ -2048,6 +2055,20 @@
         "ab_testing": {
           "name": "A/B Testing",
           "description": "Compare two versions to determine which performs better"
+        }
+      },
+      "inquiry": {
+        "focus_group": {
+          "name": "Focus Group",
+          "description": "Moderated group discussion to gather qualitative insights from participants"
+        },
+        "survey": {
+          "name": "Survey",
+          "description": "Collect structured feedback from participants through questionnaires"
+        },
+        "interview": {
+          "name": "Interview",
+          "description": "One-on-one qualitative conversations to explore participant experiences"
         }
       },
       "inspection": {

@@ -1911,6 +1911,13 @@
     "no": "No",
     "sartAnalytics": "Análisis SART"
   },
+  "focusGroup": {
+    "manager": {
+      "title": "Grupo Focal",
+      "underConstruction": "El módulo de Grupo Focal está en desarrollo activo. La configuración de sesiones, la sala de discusión en vivo y los informes estarán disponibles pronto.",
+      "description": "Por ahora puedes gestionar colaboradores y la configuración del estudio. Usa el menú de navegación para invitar participantes y configurar tu estudio."
+    }
+  },
   "studyCreation": {
     "chooseEvaluationCategory": "Elegir Categoría de Evaluación",
     "selectEvaluationType": "Selecciona el tipo de evaluación que deseas realizar para tu estudio",
@@ -1968,6 +1975,20 @@
         "ab_testing": {
           "name": "Pruebas A/B",
           "description": "Compara dos versiones para determinar cuál tiene mejor rendimiento."
+        }
+      },
+      "inquiry": {
+        "focus_group": {
+          "name": "Grupo Focal",
+          "description": "Discusión grupal moderada para recopilar percepciones cualitativas de los participantes."
+        },
+        "survey": {
+          "name": "Encuesta",
+          "description": "Recopila comentarios estructurados de los participantes mediante cuestionarios."
+        },
+        "interview": {
+          "name": "Entrevista",
+          "description": "Conversaciones cualitativas individuales para explorar las experiencias de los participantes."
         }
       },
       "inspection": {

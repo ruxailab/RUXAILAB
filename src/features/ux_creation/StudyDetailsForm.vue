@@ -422,6 +422,8 @@ const submit = async () => {
     category.value == 'test' ? STUDY_TYPES.USER : STUDY_TYPES.HEURISTIC
   if (method.value === STUDY_TYPES.CARD_SORTING)
     testType = STUDY_TYPES.CARD_SORTING
+  if (method.value === STUDY_TYPES.FOCUS_GROUP)
+    testType = STUDY_TYPES.FOCUS_GROUP
 
   isLoading.value = true
   const user = store.getters.user

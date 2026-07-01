@@ -1,10 +1,5 @@
 <template>
-  <v-card
-    v-if="test"
-    class="pl-2 pr-4 pt-4 pb-4 mb-0"
-    elevation="3"
-    rounded="lg"
-  >
+  <v-card v-if="test" class="pa-4 mb-0" elevation="3" rounded="lg">
     <!-- Header con icono a la izquierda y título -->
     <div
       class="d-flex align-center mb-4 clickable-header"
