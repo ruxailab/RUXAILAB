@@ -65,7 +65,12 @@ export default class StudyController extends Controller {
         )
         await Promise.all(promises)
       }
-      await super.update('users', payload.testAdmin.userDocId, payload.auxUser)
+      // Remove only the deleted test from the admin's myTests/myAnswers via a
+      // fresh read, instead of overwriting the whole user doc with a stale copy.
+      await userController.removeTestFromUser(
+        payload.testAdmin.userDocId,
+        payload.id,
+      )
       await super.delete(COLLECTION, payload.id)
     } catch (error) {
       throw error
@@ -95,10 +100,15 @@ export default class StudyController extends Controller {
       updateDate: Date.now(),
     })
 
-    // Update answers inside collaborator
+    // Update answers inside collaborator. Only write the single myAnswers
+    // entry; writing the full document with toFirestore() would overwrite
+    // myTests with the stale in-memory copy of the cooperator.
     const userToUpdate = payload.cooperator
     userToUpdate.myAnswers[`${userAnswer.testDocId}`] = userAnswer.toFirestore()
-    await userController.update(userToUpdate.id, userToUpdate.toFirestore())
+    await userController.update(userToUpdate.id, {
+      [`myAnswers.${userAnswer.testDocId}`]:
+        userToUpdate.myAnswers[`${userAnswer.testDocId}`],
+    })
 
     const testToUpdate = payload.test
     const index = testToUpdate.cooperators.findIndex(

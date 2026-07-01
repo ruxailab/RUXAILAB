@@ -186,8 +186,7 @@ describe('StudyController', () => {
         it('should delete study and remove collaborators', async () => {
             const mockPayload = {
                 id: 'study-123',
-                testAdmin: { userDocId: 'admin-123' },
-                auxUser: { id: 'admin-123' }
+                testAdmin: { userDocId: 'admin-123' }
             }
 
             const mockStudyData = {
@@ -203,13 +202,14 @@ describe('StudyController', () => {
             }
 
             spies.readOne.mockResolvedValueOnce(mockDoc)
-            spies.update.mockResolvedValue()
             spies.delete.mockResolvedValue()
 
             await studyController.deleteStudy(mockPayload)
 
             expect(spies.readOne).toHaveBeenCalledWith('tests', 'study-123')
-            expect(spies.update).toHaveBeenCalled()
+            // The study doc is deleted. The admin's myTests entry is removed
+            // via UserController.removeTestFromUser (fresh read) rather than a
+            // full overwrite of the user doc, so super.update is not called here.
             expect(spies.delete).toHaveBeenCalledWith('tests', 'study-123')
         })
 
