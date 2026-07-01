@@ -672,9 +672,6 @@ const preventNav = (event) => {
 const deleteStudy = async (item) => {
   loading.value = true
   try {
-    const auxUser = { ...user.value }
-    delete auxUser.myTests[item.id]
-    item.auxUser = auxUser
     await store.dispatch('deleteStudy', item)
     showSuccess('alerts.genericSuccess')
     router.push({ name: 'Admin' })

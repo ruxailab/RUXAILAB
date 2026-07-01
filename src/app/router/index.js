@@ -6,6 +6,7 @@ import CardSorting from '@/ux/CardSorting/router.js'
 import HeuristicRoutes from '@/ux/Heuristic/router.js'
 import accessibilityRoutes from '@/ux/accessibility/router.js'
 import UserTestRoutes from '@/ux/UserTest/router.js'
+import FocusGroupRoutes from '@/ux/FocusGroup/router.js'
 import store from '@/store'
 
 const routes = [
@@ -16,6 +17,7 @@ const routes = [
   ...accessibilityRoutes,
   ...HeuristicRoutes,
   ...UserTestRoutes,
+  ...FocusGroupRoutes,
 ]
 
 const router = createRouter({
