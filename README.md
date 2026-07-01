@@ -188,6 +188,31 @@ If you want to deply the fuction, change your account from spark to blaze, run:
 Go to firebase panel -> functions -> on the right side of the function press "detailed usage statistics".
 There you can get the url and replace on .env file.
 
+## LiveKit Setup (Moderated Video Calls)
+
+Moderated user tests with video calls require a separate **LiveKit** stack. RUXAILAB does not bundle the server or token issuer — clone the companion repository and run it alongside this project.
+
+### Clone the repository
+
+```bash
+git clone https://github.com/ruxailab/video-call-server.git
+cd video-call-server
+```
+
+Follow the setup and run instructions in that repository's README (LiveKit server + token server).
+
+### Configure RUXAILAB
+
+Copy the LiveKit variables from `.env.example` into your `.env` file:
+
+```bash
+VUE_APP_LIVEKIT_ENABLED=true
+VUE_APP_LIVEKIT_TOKEN_SERVER_URL=http://localhost:3001
+VUE_APP_LIVEKIT_URL=ws://localhost:7880
+```
+
+Adjust the URLs if your local setup uses different ports.
+
 ## Docker Setup
 
 ### Building the Docker Image
