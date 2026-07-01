@@ -22,7 +22,7 @@ export default class User {
     contactNo = null,
     country = null,
     profileImage = '',
-    calibrationId = null,
+    lastCalibrationId = null,
     storageUsageMB = 0,
   } = {}) {
     this.id = id
@@ -35,7 +35,7 @@ export default class User {
     this.contactNo = contactNo
     this.country = country
     this.profileImage = profileImage
-    this.calibrationId = calibrationId
+    this.lastCalibrationId = lastCalibrationId
     this.storageUsageMB = storageUsageMB
   }
 
@@ -56,7 +56,7 @@ export default class User {
       contactNo: this.contactNo, // Include contactNo in Firestore representation
       country: this.country, // Include country in Firestore representation
       profileImage: this.profileImage, // Include profileImage in Firestore representation
-      calibrationId: this.calibrationId,
+      lastCalibrationId: this.lastCalibrationId,
       storageUsageMB: this.storageUsageMB,
     }
   }

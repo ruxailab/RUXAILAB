@@ -24,7 +24,7 @@
     </tr>
   </table>
 </div>
-
+ 
 ## About
 
 UX Remote LAB is an open-source platform designed to collect usability feedback from users. It allows you to gather user reviews, analyze them, and create comprehensive reports to better understand your application's usability. Additionally, it offers heuristic tests, enabling experts to evaluate your application's compliance with usability principles.
@@ -187,6 +187,39 @@ If you want to deply the fuction, change your account from spark to blaze, run:
 
 Go to firebase panel -> functions -> on the right side of the function press "detailed usage statistics".
 There you can get the url and replace on .env file.
+
+### Functions: Run & Deploy
+
+Use the npm scripts in the `functions` package to run local emulators with the correct environment or to deploy to Firebase project aliases defined in `.firebaserc`.
+
+- Run local emulators (development env):
+
+```bash
+cd functions
+npm install
+npm run serve:dev
+```
+
+- Run local emulators (production env):
+
+```bash
+cd functions
+npm run serve:prod
+```
+
+- Deploy functions (development alias `develop`):
+
+```bash
+npm run deploy:dev
+```
+
+- Deploy functions (production alias `prod`):
+
+```bash
+npm run deploy:prod
+```
+
+These scripts load `functions/.env.development` or `functions/.env.production` depending on the target and use the `develop` and `prod` aliases from `.firebaserc`.
 
 ## LiveKit Setup (Moderated Video Calls)
 

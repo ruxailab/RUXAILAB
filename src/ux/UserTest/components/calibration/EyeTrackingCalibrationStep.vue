@@ -26,39 +26,19 @@
           :calibration-in-progress="calibrationInProgress"
           @open-calibration="emit('openCalibration')"
         />
-
-        <v-btn
-          v-if="canSkipCalibration"
-          variant="text"
-          color="secondary"
-          class="mt-2"
-          @click="handleSkipCalibration"
-        >
-          <v-icon start>mdi-skip-next</v-icon>
-          {{ $t('UserTestView.CalibrationStep.reuseSkipButton') }}
-        </v-btn>
       </div>
     </template>
   </ShowInfo>
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useStore } from 'vuex'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import CalibrationInProgressModal from '@/ux/UserTest/components/CalibrationInProgressModal.vue'
 import StartCalibrationButton from '@/ux/UserTest/components/StartCalibrationButton.vue'
 
-const store = useStore()
-const user = computed(() => store.getters.user)
-
-const canSkipCalibration = computed(() => {
-  return user.value && user.value.calibrationId
-})
-
 const emit = defineEmits(['done', 'openCalibration', 'closeCalibration'])
 
-const props = defineProps({
+defineProps({
   calibrationInProgress: {
     type: Boolean,
     default: false,
@@ -68,8 +48,4 @@ const props = defineProps({
     default: false,
   },
 })
-
-const handleSkipCalibration = () => {
-  emit('closeCalibration')
-}
 </script>

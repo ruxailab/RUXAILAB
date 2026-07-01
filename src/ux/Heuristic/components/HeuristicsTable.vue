@@ -640,6 +640,7 @@ import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import AddDescBtn from '@/ux/Heuristic/components/AddDescBtn.vue'
 import { showError, showWarning } from '@/shared/utils/toast'
+import { matchesSearch } from '@/shared/utils/searchUtils'
 
 const emit = defineEmits(['change'])
 const props = defineProps({
@@ -720,13 +721,12 @@ const heuristics = computed(() => {
 })
 
 const filteredHeuristics = computed(() => {
-  const searchLower = search.value.toLowerCase()
+  const searchQuery = search.value
   return heuristics.value.filter((item) => {
     const idString = item.id.toString()
     return (
-      item.title.toLowerCase().includes(searchLower) ||
-      idString.includes(searchLower) ||
-      idString === searchLower
+      matchesSearch(item.title, searchQuery) ||
+      matchesSearch(idString, searchQuery)
     )
   })
 })

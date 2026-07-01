@@ -43,12 +43,14 @@
                 class="video-rect-skeleton"
                 @timeupdate="onTimeUpdate"
                 @loadedmetadata="onMetadataLoaded"
+                @play="onVideoPlay"
+                @pause="onVideoPause"
               >
                 <source :src="taskAnswer?.screenRecordURL" type="video/mp4" />
               </video>
 
               <EyeTrackingOverlay
-                v-show="rightTab === 'eye' && predictedData"
+                v-if="rightTab === 'eye' && predictedData && videoReady"
                 :video-ref="mainVideo2"
                 :predicted-data="predictedData"
                 :current-time="videoCurrentTime"
@@ -145,10 +147,8 @@
 import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useManagedListeners } from '@/shared/composables/useManagedListeners'
 import SessionTimeline from '../sessions/SessionTimeline.vue'
-import TranscriptWordCloud from '../sessions/TranscriptWordCloud.vue'
 import EyeTrackingStats from '../sessions/EyeTrackingStats.vue'
 import FacialSentimentPanel from '../sentimentAnalysis/FacialSentimentPanel.vue'
-import SentimentSummary from '../sessions/SentimentSummary.vue'
 import EyeTrackingOverlay from '../answers/EyeTrackingOverlay.vue'
 
 const props = defineProps({
@@ -162,12 +162,6 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 const open = ref(props.modelValue)
-watch(
-  () => props.modelValue,
-  (val) => (open.value = val),
-)
-watch(open, (val) => emit('update:modelValue', val))
-
 const rightTab = ref('eye')
 const mainVideo1 = ref(null)
 const mainVideo2 = ref(null)
@@ -177,66 +171,58 @@ const videoCurrentTime = ref(0)
 let rafId = null
 const predictedData = ref(null)
 const selectedView = ref('precision')
+const videoReady = ref(false)
 
 const mockEyeTracking = { accuracy: 92, fixations: 34 }
 
-function updateLoop() {
-  if (!isPlaying.value) return
-  const video = mainVideo2.value
-  if (video) {
-    videoCurrentTime.value = video.currentTime
-    rafId = requestAnimationFrame(updateLoop)
-  }
-}
-
 function onMetadataLoaded(event) {
   const video = event.target
+
   videoDuration.value = video.duration
+  videoReady.value = true
 }
 
 function onTimeUpdate(event) {
-  const video = event.target
-  videoCurrentTime.value = video.currentTime
+  videoCurrentTime.value = event.target.currentTime
 }
 
 function onVideoPlay() {
   isPlaying.value = true
-  updateLoop()
 }
 
 function onVideoPause() {
   isPlaying.value = false
-  cancelAnimationFrame(rafId)
 }
 
 const togglePlay = () => {
   const video = mainVideo2.value
   if (!video) return
 
-  if (isPlaying.value) {
-    video.pause()
-    cancelAnimationFrame(rafId)
-    isPlaying.value = false
-  } else {
+  if (video.paused) {
     video.play()
-    isPlaying.value = true
-    updateLoop()
+  } else {
+    video.pause()
   }
 }
 
 const onSeek = (time) => {
   const video = mainVideo2.value
   if (!video) return
-  cancelAnimationFrame(rafId)
+
   video.currentTime = time
   videoCurrentTime.value = time
-  if (isPlaying.value) updateLoop()
 }
 
 const close = () => (open.value = false)
 
 const managedListeners = useManagedListeners()
 managedListeners.addCleanup(() => cancelAnimationFrame(rafId))
+
+watch(
+  () => props.modelValue,
+  (val) => (open.value = val),
+)
+watch(open, (val) => emit('update:modelValue', val))
 
 onMounted(() => {
   const video = mainVideo2.value

@@ -185,6 +185,7 @@ import {
   getSessionStatus,
   SESSION_STATUSES,
 } from '@/shared/utils/sessionsUtils'
+import { matchesSearch } from '@/shared/utils/searchUtils'
 
 const { t } = useI18n()
 
@@ -257,11 +258,10 @@ const user = computed(() => store.getters.user)
 const filteredSessions = computed(() => {
   return props.sessions.filter((session) => {
     // 🔍 Search filter
-    const matchesSearch =
-      !searchSessions.value ||
-      session.testTitle
-        .toLowerCase()
-        .includes(searchSessions.value.toLowerCase())
+    const matchesSearchQuery = matchesSearch(
+      session.testTitle,
+      searchSessions.value,
+    )
 
     // ⚙️ Status filter (based on test date)
     const sessionStatus = getSessionStatus(session.testDate).status
@@ -298,7 +298,7 @@ const filteredSessions = computed(() => {
 
     // ✅ Final inclusion condition
     return (
-      matchesSearch &&
+      matchesSearchQuery &&
       matchesStatus &&
       matchesOwnership &&
       matchesEvaluator &&

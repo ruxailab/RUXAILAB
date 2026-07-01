@@ -169,6 +169,7 @@ import {
   STUDY_TYPES,
   USER_STUDY_SUBTYPES,
 } from '@/shared/constants/methodDefinitions'
+import { matchesSearch } from '@/shared/utils/searchUtils'
 
 const store = useStore()
 const router = useRouter()
@@ -266,9 +267,9 @@ const user = computed(() => store.getters.user)
 const filteredTests = computed(() => {
   if (!tests.value) return []
   return tests.value.filter((test) => {
-    const title = (test.testTitle || test.title || '').toLowerCase()
-    const query = (search.value || '').toLowerCase()
-    const matchesSearch = !query || title.includes(query)
+    const title = test.testTitle || test.title || ''
+    const query = search.value || ''
+    const matchesSearchQuery = matchesSearch(title, query)
 
     // Filter by method
     let matchesMethod = true

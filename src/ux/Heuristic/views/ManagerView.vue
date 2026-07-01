@@ -15,83 +15,61 @@
         <v-progress-circular indeterminate color="primary" size="64" />
       </div>
 
-      <!-- Dashboard profesional con componentes específicos -->
-      <v-container v-else class="large-margins">
-        <!-- Primera fila: Título del proyecto con chip al lado -->
-        <v-row>
-          <v-col cols="12">
-            <div class="d-flex align-center gap-3">
-              <h1 class="text-h4">
-                {{
-                  test.testTitle || $t('Dashboard.managerView.heuristicStudy')
-                }}
-              </h1>
-              <v-chip class="ml-5" color="info" variant="outlined" size="small">
-                <v-icon start size="small"> mdi-crown-outline </v-icon>
-                {{ $t('Dashboard.managerView.freePlan') }}
-              </v-chip>
-            </div>
-          </v-col>
-        </v-row>
+      <ManagerDashboardLayout
+        v-else
+        :test="test"
+        :title="test.testTitle || $t('Dashboard.managerView.heuristicStudy')"
+        :subtitle="
+          test.testDescription || $t('Dashboard.managerView.heuristicStudy')
+        "
+        icon="mdi-clipboard-search-outline"
+        :type-label="$t('Dashboard.managerView.heuristicStudy')"
+        type-icon="mdi-clipboard-search-outline"
+        :status-icon="getStatusIcon(test.testStatus)"
+        :status-text="test.testStatus || 'active'"
+        :extra-chips="[
+          {
+            icon: 'mdi-crown-outline',
+            label: $t('Dashboard.managerView.freePlan'),
+          },
+        ]"
+        :modules-title="$t('manager.managementModules.title')"
+        :modules-description="$t('manager.managementModules.description')"
+      >
+        <template #overview>
+          <StudyOverview :test="test" />
+        </template>
 
-        <!-- Divider -->
-        <v-divider class="mb-6" />
-
-        <!-- Las 4 cards de métricas + Evaluator Info -->
-        <v-row class="mb-2">
-          <v-col cols="12" md="6">
-            <StudyOverview :test="test" />
-          </v-col>
+        <template #modules>
           <v-col cols="12" md="6">
             <EvaluatorInfoCard :test="test" />
           </v-col>
-        </v-row>
 
-        <v-row>
-          <v-col cols="12">
-            <h2 class="text-h5">
-              {{ $t('Dashboard.managerView.modules') }}
-            </h2>
-          </v-col>
-        </v-row>
-        <v-divider class="mb-6" />
-
-        <!-- Fila con 3 módulos -->
-        <v-row class="modules-section">
-          <!-- Módulo 1: Actividad reciente -->
-          <v-col cols="12" md="4">
+          <v-col cols="12" md="6">
             <RecentActivity :test="test" @view-all="viewAllActivity" />
           </v-col>
 
-          <!-- Módulo 2: Cooperadores -->
-          <v-col cols="12" md="4">
+          <v-col cols="12" md="6">
             <CooperatorsInfo :test="test" />
           </v-col>
 
-          <!-- Módulo 3: Información de heurísticas -->
-          <v-col cols="12" md="4">
+          <v-col cols="12" md="6">
             <HeuristicsInfo :test="test" />
           </v-col>
-        </v-row>
 
-        <!-- Segunda fila con 3 módulos -->
-        <v-row class="mb-2 modules-section">
-          <!-- Módulo 4: Storage -->
-          <v-col cols="12" md="4">
+          <v-col cols="12" md="6">
             <StorageInfo :test="test" />
           </v-col>
 
-          <!-- Módulo 5: Resultados de Usabilidad -->
-          <v-col cols="12" md="4">
+          <v-col cols="12" md="6">
             <UsabilityResults :test="test" />
           </v-col>
 
-          <!-- Módulo 6: Estado del Informe Final -->
-          <v-col cols="12" md="4">
+          <v-col cols="12" md="6">
             <FinalReportStatus :test="test" />
           </v-col>
-        </v-row>
-      </v-container>
+        </template>
+      </ManagerDashboardLayout>
     </ManagerView>
   </div>
 </template>
@@ -102,8 +80,10 @@ import {
   getNavigatorDefault,
   getTopCardsDefualt,
 } from '@/shared/utils/managerDefault'
+import ManagerDashboardLayout from '@/shared/components/manager/ManagerDashboardLayout.vue'
 import ManagerView from '@/shared/views/template/ManagerView.vue'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
+import { getStatusIcon } from '@/shared/utils/statusUtils'
 import { computed, onMounted, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -208,41 +188,3 @@ onMounted(async () => {
   await store.dispatch('getCurrentTestAnswerDoc')
 })
 </script>
-
-<style scoped>
-.large-margins {
-  margin-left: auto !important;
-  margin-right: auto !important;
-  width: 70% !important;
-  max-width: none !important;
-}
-
-@media (max-width: 1200px) {
-  .large-margins {
-    width: 80% !important;
-  }
-}
-
-@media (max-width: 960px) {
-  .large-margins {
-    width: 90% !important;
-  }
-
-  .d-flex.gap-3 {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px !important;
-  }
-}
-
-@media (max-width: 600px) {
-  .large-margins {
-    width: 96% !important;
-  }
-}
-
-/* Solo igualar alturas de los módulos, no las cards de estadísticas */
-.modules-section :deep(.v-card) {
-  height: 300px;
-}
-</style>

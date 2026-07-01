@@ -143,6 +143,7 @@ import {
   getTemplateManagerPath,
   getTemplatePreviewPath,
 } from '@/shared/utils/templateRouting'
+import { matchesSearch } from '@/shared/utils/searchUtils'
 
 const props = defineProps({
   forcedMethodFilter: {
@@ -240,9 +241,10 @@ const hasActiveFilters = computed(
 const filteredTemplates = computed(() =>
   templates.value?.filter((temp) => {
     // 🔍 Text search filter
-    const matchesSearch = temp.header.templateTitle
-      .toLowerCase()
-      .includes(search.value.toLowerCase())
+    const matchesSearchQuery = matchesSearch(
+      temp.header.templateTitle,
+      search.value,
+    )
 
     // 🎛️ Method filter
     const method = selectedMethodFilter.value
@@ -274,7 +276,7 @@ const filteredTemplates = computed(() =>
       inDateRange = date >= start && date <= end
     }
 
-    return matchesSearch && matchesMethod && inDateRange
+    return matchesSearchQuery && matchesMethod && inDateRange
   }),
 )
 

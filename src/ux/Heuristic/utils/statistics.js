@@ -376,8 +376,97 @@ function statistics() {
     return []
   }
 
-  if (testAnswerDocument.type !== STUDY_TYPES.HEURISTIC) {
-    return []
+  if (testAnswerDocument.type === STUDY_TYPES.HEURISTIC) {
+    const resultEvaluator = []
+
+    // Get Evaluator answers - only include submitted evaluations
+    answers().forEach((evaluator) => {
+      // Skip evaluators who haven't submitted their evaluation
+      if (!evaluator.submitted) {
+        console.log('Skipping evaluator (not submitted):', evaluator.userDocId)
+        return
+      }
+
+      let SelectEvaluator = resultEvaluator.find(
+        (e) => e.userDocId == evaluator.userDocId,
+      )
+
+      if (!SelectEvaluator) {
+        resultEvaluator.push({
+          userDocId: evaluator.userDocId,
+          id: evaluator.userDocId,
+          heuristics: [],
+          result: 0,
+          lastUpdate: evaluator.lastUpdate,
+        })
+        SelectEvaluator = resultEvaluator[resultEvaluator.length - 1]
+      } else {
+        // Update lastUpdate if evaluator already exists
+        SelectEvaluator.lastUpdate = evaluator.lastUpdate
+      }
+
+      // Get Heuristics for evaluators
+      let heurisIndex = 1
+      evaluator.heuristicQuestions.forEach((heuristic) => {
+        let noAplication = 0
+        let noReply = 0
+        let qNotApplicable = 0
+        let res = heuristic.heuristicQuestions.reduce(
+          (totalQuestions, question) => {
+            if (question.heuristicAnswer.value === null) {
+              noAplication++
+            }
+            if (
+              question.heuristicAnswer.value === 0 ||
+              question.heuristicAnswer.value === '0'
+            ) {
+              qNotApplicable++
+            }
+
+            if (
+              question.heuristicAnswer.value === '' ||
+              Object.values(question.heuristicAnswer).length < 3
+            )
+              noReply++
+            return totalQuestions + Number(question.heuristicAnswer.value)
+          },
+          0,
+        )
+
+        if (noAplication == heuristic.heuristicQuestions.length) res = null
+
+        SelectEvaluator.heuristics.push({
+          id: `H${heurisIndex}`,
+          result: res == -1 ? 0 : res,
+          totalQuestions: heuristic.heuristicTotal,
+          totalNoAplication: noAplication,
+          totalNoReply: noReply,
+          timeSpentMs: parseTimeSpentToMs(heuristic.timeSpent),
+        })
+        heurisIndex++
+      })
+    })
+
+    // Log statistics about included evaluators
+    const totalEvaluators = answers().length
+    const completedEvaluators = resultEvaluator.length
+    console.log('=== ESTADÍSTICAS DE EVALUADORES ===')
+    console.log(`Total de evaluadores: ${totalEvaluators}`)
+    console.log(`Evaluadores completados: ${completedEvaluators}`)
+    console.log(
+      `Evaluadores excluidos (no completados): ${totalEvaluators - completedEvaluators}`,
+    )
+    console.log('===================================')
+
+    // Sort resultEvaluator based on lastUpdate
+    resultEvaluator.sort((a, b) => b.lastUpdate - a.lastUpdate)
+
+    // Calc Final result
+    resultEvaluator.forEach((ev) => {
+      ev.result = calcFinalResult(ev.heuristics)
+    })
+
+    return resultEvaluator
   }
 
   return answers()

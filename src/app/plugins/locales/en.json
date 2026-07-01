@@ -102,6 +102,7 @@
     "cancel": "Cancel",
     "proceed": "proceed",
     "confirm": "Confirm",
+    "delete":"Delete",
     "add": "Add",
     "text": "Text",
     "value": "Value",
@@ -678,15 +679,19 @@
     },
     "AddCommentBtn": {
       "showComment": "Show comments",
-      "addComment": "Add comment",
+      "addComment": "Save comment",
       "addAnotherComment": "Add another comment",
       "addNewComment": "Add a new comment",
-      "hideTextArea": "Hide comments area"
+      "hideTextArea": "Hide comments area",
+      "deleteCommentTitle": "Delete Comment",
+      "deleteCommentMessage": "Are you sure you want to delete this comment?"
     },
     "ImportImage": {
       "uploadSuccess": "Image uploaded successfully",
       "uploadError": "Failed to upload image",
-      "imagesCount": "{count} image(s) attached"
+      "imagesCount": "{count} image(s) attached",
+      "deleteImageTitle": "Delete Image",
+      "deleteImageMessage": "Are you sure you want to delete this attached image?"
     },
     "errors": {
       "failedToLoadQuestionForm": "Failed to load question form. Please try again.",
@@ -2040,6 +2045,13 @@
     "answers": "Answers",
     "no": "No"
   },
+  "focusGroup": {
+    "manager": {
+      "title": "Focus Group",
+      "underConstruction": "The Focus Group module is under active development. Session setup, the live discussion room, and reporting are coming soon.",
+      "description": "For now you can manage cooperators and study settings. Use the navigation menu to invite participants and configure your study."
+    }
+  },
   "studyCreation": {
     "chooseEvaluationCategory": "Choose Evaluation Category",
     "selectEvaluationType": "Select the type of evaluation you want to conduct for your study",
@@ -2097,6 +2109,20 @@
         "ab_testing": {
           "name": "A/B Testing",
           "description": "Compare two versions to determine which performs better"
+        }
+      },
+      "inquiry": {
+        "focus_group": {
+          "name": "Focus Group",
+          "description": "Moderated group discussion to gather qualitative insights from participants"
+        },
+        "survey": {
+          "name": "Survey",
+          "description": "Collect structured feedback from participants through questionnaires"
+        },
+        "interview": {
+          "name": "Interview",
+          "description": "One-on-one qualitative conversations to explore participant experiences"
         }
       },
       "inspection": {
@@ -2259,7 +2285,8 @@
     },
     "confirmDeletion": "Confirm Deletion",
     "actionCannotBeUndone": "This action cannot be undone",
-    "allAssociatedDataLost": "All associated data, results, and configurations will be lost forever."
+    "allAssociatedDataLost": "All associated data, results, and configurations will be lost forever.",
+    "signOutMessage": "Are you sure you want to sign out?"
   },
   "tags": {
     "active": "Active",

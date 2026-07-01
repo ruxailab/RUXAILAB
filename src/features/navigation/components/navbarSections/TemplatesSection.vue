@@ -126,6 +126,7 @@ import {
   USER_STUDY_SUBTYPES,
 } from '@/shared/constants/methodDefinitions'
 import { getTemplateManagerPath } from '@/shared/utils/templateRouting'
+import { matchesSearch } from '@/shared/utils/searchUtils'
 
 const store = useStore()
 const router = useRouter()
@@ -179,9 +180,10 @@ const hasActiveFilters = computed(
 // ===== Filtered templates =====
 const filteredTemplates = computed(() =>
   templates.value?.filter((temp) => {
-    const matchesSearch = temp.header.templateTitle
-      .toLowerCase()
-      .includes(search.value.toLowerCase())
+    const matchesSearchQuery = matchesSearch(
+      temp.header.templateTitle,
+      search.value,
+    )
 
     const method = selectedMethodFilter.value
     const testType = temp.header.templateType
@@ -211,7 +213,7 @@ const filteredTemplates = computed(() =>
       inDateRange = date >= start && date <= end
     }
 
-    return matchesSearch && matchesMethod && inDateRange
+    return matchesSearchQuery && matchesMethod && inDateRange
   }),
 )
 

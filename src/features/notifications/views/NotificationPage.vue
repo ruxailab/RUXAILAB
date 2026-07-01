@@ -291,6 +291,7 @@ import { useStore } from 'vuex'
 import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue'
 import { useI18n } from 'vue-i18n'
 import StudyController from '@/controllers/StudyController'
+import { matchesSearch } from '@/shared/utils/searchUtils'
 
 const store = useStore()
 const { t } = useI18n()
@@ -357,12 +358,12 @@ const filteredNotifications = computed(() => {
 
   // Apply search filter
   if (search.value.trim()) {
-    const query = search.value.toLowerCase().trim()
+    const query = search.value.trim()
     list = list.filter(
       (n) =>
-        (n.title || '').toLowerCase().includes(query) ||
-        (n.description || '').toLowerCase().includes(query) ||
-        (n.author || '').toLowerCase().includes(query),
+        matchesSearch(n.title, query) ||
+        matchesSearch(n.description, query) ||
+        matchesSearch(n.author, query),
     )
   }
 

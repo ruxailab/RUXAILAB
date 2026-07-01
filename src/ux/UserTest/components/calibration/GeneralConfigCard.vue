@@ -37,6 +37,7 @@
               hide-details
               class="number-input"
               placeholder="2-9"
+              @change="validatePointNumber"
               @blur="validatePointNumber"
             />
           </div>
@@ -149,7 +150,7 @@ import { ref, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import RadiusCalibration from './RadiusCalibration.vue'
 import OffsetCalibration from './OffsetCalibration.vue'
-import EyeCalibrationSettings from '../models/EyeCalibrationSettings'
+import EyeCalibrationSettings from '../../models/EyeCalibrationSettings.js'
 
 const store = useStore()
 

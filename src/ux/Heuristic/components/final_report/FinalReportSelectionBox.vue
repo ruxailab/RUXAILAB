@@ -2,21 +2,95 @@
   <div>
     <v-col class="d-flex flex-column" style="min-height: 500px">
       <!-- Título no topo -->
-      <h2>Final Report Content</h2>
+      <h2 class="mb-4">Configuración del Reporte Final</h2>
+      <p class="text-body-2 text-grey-darken-1 mb-6">
+        Selecciona qué información deseas incluir en el PDF
+      </p>
 
-      <!-- Lista de conteúdo do relatório -->
-      <ul class="mt-4" style="padding-left: 1.2rem; line-height: 1.6">
-        <li>Test description</li>
-        <li>Conclusion and final observations</li>
-        <li>General test data and metadata</li>
-        <li>Results with statistics and visual tables</li>
-        <li>All evaluator answers with optional comments and images</li>
-        <li>Grouped answers by heuristic and evaluator</li>
-        <li>Formatted layout for presentation</li>
-        <li>Downloadable PDF document</li>
-      </ul>
+      <!-- Sistema de checkboxes para configurar el payload -->
+      <v-card variant="outlined" class="mb-4">
+        <v-card-text>
+          <h3 class="text-h6 mb-4">Contenido del Reporte</h3>
 
-      <div v-if="isLoading" class="mt-12">
+          <v-checkbox
+            v-model="pdfConfig.includeDescription"
+            label="Descripción del test"
+            density="comfortable"
+            hide-details
+            class="mb-2"
+          />
+
+          <v-checkbox
+            v-model="pdfConfig.includeConclusion"
+            label="Conclusión y observaciones finales"
+            density="comfortable"
+            hide-details
+            class="mb-2"
+          />
+
+          <v-checkbox
+            v-model="pdfConfig.includeHeuristicComments"
+            label="Comentarios por heurística"
+            density="comfortable"
+            hide-details
+            class="mb-2"
+          />
+
+          <v-divider class="my-4" />
+
+          <h3 class="text-h6 mb-4">Estadísticas y Datos</h3>
+
+          <v-checkbox
+            v-model="pdfConfig.includeGeneralStatistics"
+            label="Estadísticas generales y tablas visuales"
+            density="comfortable"
+            hide-details
+            class="mb-2"
+          />
+
+          <v-checkbox
+            v-model="pdfConfig.includeStatisticsByHeuristic"
+            label="Estadísticas agrupadas por heurística"
+            density="comfortable"
+            hide-details
+            class="mb-2"
+          />
+
+          <v-divider class="my-4" />
+
+          <h3 class="text-h6 mb-4">Respuestas de Evaluadores</h3>
+
+          <v-checkbox
+            v-model="pdfConfig.includeIndividualAnswers"
+            label="Respuestas individuales de evaluadores (con comentarios e imágenes)"
+            density="comfortable"
+            hide-details
+            class="mb-2"
+          />
+
+          <v-checkbox
+            v-model="pdfConfig.includeGroupedAnswers"
+            label="Respuestas agrupadas por heurística y evaluador"
+            density="comfortable"
+            hide-details
+            class="mb-2"
+          />
+
+          <v-divider class="my-4" />
+
+          <h3 class="text-h6 mb-4">Privacidad</h3>
+
+          <v-checkbox
+            v-model="pdfConfig.anonymizeEvaluators"
+            label="Anonimizar información de evaluadores"
+            density="comfortable"
+            hide-details
+            color="warning"
+          />
+        </v-card-text>
+      </v-card>
+
+      <div v-if="isLoading" class="mt-4">
         <p>
           Generating Report PDF. This operation might take a few minutes. Don't
           close this tab.
@@ -45,7 +119,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, reactive } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import axios from 'axios'
@@ -77,6 +151,18 @@ const props = defineProps({
 // Reactive state
 const statisticsData = ref('')
 const isLoading = ref(false)
+
+// Configuración del PDF (checkboxes)
+const pdfConfig = reactive({
+  includeDescription: true,
+  includeConclusion: true,
+  includeHeuristicComments: true,
+  includeGeneralStatistics: true,
+  includeStatisticsByHeuristic: true,
+  includeIndividualAnswers: true,
+  includeGroupedAnswers: true,
+  anonymizeEvaluators: false,
+})
 
 // Computed properties
 const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
@@ -110,35 +196,78 @@ const submitPdf = async () => {
     // Extract valid emails from cooperators
     const getCooperatorEmails = () => {
       const cooperators = test.value.cooperators || []
+      if (pdfConfig.anonymizeEvaluators) {
+        return []
+      }
       return cooperators.filter((coop) => coop?.email).map((coop) => coop.email)
+    }
+
+    // Anonimizar respuestas si está activado
+    const processAnswers = (answersArray) => {
+      if (!pdfConfig.anonymizeEvaluators) {
+        return answersArray
+      }
+      return answersArray.map((answer, index) => ({
+        ...answer,
+        evaluatorName: `Evaluador ${index + 1}`,
+        evaluatorEmail: null,
+      }))
     }
 
     statisticsData.value = finalResult()
     const cooperatorsEmailsList = getCooperatorEmails()
 
+    // Construir el payload según la configuración
     const finalReportItem = {
       title: test.value.testTitle,
       creationDate: test.value.creationDate,
-      testDescription: test.value.testDescription,
+      testDescription: pdfConfig.includeDescription
+        ? test.value.testDescription
+        : null,
       cooperatorsEmail: cooperatorsEmailsList,
-      creatorEmail: test.value.testAdmin?.email || '',
-      finalReport: test.value.studyConclusion,
+      creatorEmail: pdfConfig.anonymizeEvaluators
+        ? null
+        : test.value.testAdmin?.email || '',
+      finalReport: pdfConfig.includeConclusion
+        ? test.value.studyConclusion
+        : null,
       allOptions: test.value.testOptions,
-      allAnswers: answers.value,
-      taskAnswers: Object.values(testAnswerDocument.value?.taskAnswers || {}),
+      allAnswers: pdfConfig.includeIndividualAnswers
+        ? processAnswers(answers.value)
+        : [],
+      taskAnswers: pdfConfig.includeIndividualAnswers
+        ? processAnswers(
+            Object.values(testAnswerDocument.value?.taskAnswers || {}),
+          )
+        : [],
       testStructure: test.value.testStructure,
-      statisticsByEvaluatorAnswer: heuristicsEvaluator.value,
-      statisticsByHeuristics: heuristicsStatistics.value,
-      generalStatistics: statisticsData.value,
-      statisticsTable: store.state.Answer.evaluatorStatistics,
+      statisticsByEvaluatorAnswer: pdfConfig.includeGroupedAnswers
+        ? heuristicsEvaluator.value
+        : null,
+      statisticsByHeuristics: pdfConfig.includeStatisticsByHeuristic
+        ? heuristicsStatistics.value
+        : null,
+      generalStatistics: pdfConfig.includeGeneralStatistics
+        ? statisticsData.value
+        : null,
+      statisticsTable: pdfConfig.includeGeneralStatistics
+        ? store.state.Answer.evaluatorStatistics
+        : null,
       type: testAnswerDocument.value?.type || STUDY_TYPES.HEURISTIC,
-      heuristicComments: props.heuristicComments,
+      heuristicComments: pdfConfig.includeHeuristicComments
+        ? props.heuristicComments
+        : {},
+      anonymized: pdfConfig.anonymizeEvaluators,
     }
-    console.log(finalReportItem)
 
     const payload = {
       payload: finalReportItem,
     }
+
+    console.log('=== PAYLOAD ENVIADO AL BACKEND ===')
+    console.log('Configuración del PDF:', pdfConfig)
+    console.log('Payload completo:', JSON.stringify(finalReportItem, null, 2))
+    console.log('==================================')
 
     const response = await axios.post(
       `${process.env.VUE_APP_LARAVEL_PDF}/generate-pdf`,
@@ -158,7 +287,8 @@ const submitPdf = async () => {
     const creationDate = slugify(
       test.value.creationDate || new Date().toISOString(),
     )
-    const filename = `final_report_${title}_${creationDate}.pdf`
+    const anonymizedSuffix = pdfConfig.anonymizeEvaluators ? '_anonimo' : ''
+    const filename = `final_report_${title}_${creationDate}${anonymizedSuffix}.pdf`
 
     // Trigger file download
     const blob = new Blob([response.data])

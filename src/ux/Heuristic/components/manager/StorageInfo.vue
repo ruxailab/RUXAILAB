@@ -15,12 +15,15 @@
       <div class="metric-subtitle text-caption text-grey-darken-1">
         {{ $t('Dashboard.cards.currentStorage') }}
       </div>
-      <div class="metric-value text-h3 font-weight-bold">{{ storageUsed }}</div>
-      <div
-        class="metric-change text-caption"
-        :class="storageGrowth >= 0 ? 'text-success' : 'text-error'"
-      >
-        {{ storageGrowthFormatted }}
+      <div class="metric-value text-h3 font-weight-bold">
+        <v-progress-circular
+          v-if="loadingStorage"
+          indeterminate
+          color="primary"
+          size="36"
+          width="3"
+        />
+        <span v-else>{{ storageUsed }}</span>
       </div>
     </div>
 
@@ -37,9 +40,16 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, ref, watch } from 'vue'
+import {
+  getMetadata,
+  listAll,
+  ref as storageRef,
+} from 'firebase/storage'
 import { useI18n } from 'vue-i18n'
+import { useStore } from 'vuex'
+import { storage } from '@/app/plugins/firebase'
+import { formatBytes } from '@/shared/utils/formatUtils'
 
 const props = defineProps({
   test: {
@@ -48,55 +58,70 @@ const props = defineProps({
   },
 })
 
-const router = useRouter()
 const { t } = useI18n()
+const store = useStore()
+const storageUsedBytes = ref(0)
+const loadingStorage = ref(false)
+const storageLoadFailed = ref(false)
 
-// Navigate to storage/data section
-const navigateToStorage = () => {
-  if (props.test?.id) {
-    router.push(`/heuristic/data/${props.test.id}`)
+const getFolderSize = async (folderReference) => {
+  const folderContents = await listAll(folderReference)
+  const fileMetadata = await Promise.all(
+    folderContents.items.map((item) => getMetadata(item)),
+  )
+  const nestedFolderSizes = await Promise.all(
+    folderContents.prefixes.map((prefix) => getFolderSize(prefix)),
+  )
+
+  const filesSize = fileMetadata.reduce(
+    (total, metadata) => total + Number(metadata.size || 0),
+    0,
+  )
+
+  return (
+    filesSize +
+    nestedFolderSizes.reduce((total, folderSize) => total + folderSize, 0)
+  )
+}
+
+const loadStorageUsage = async (testId) => {
+  if (!testId) {
+    storageUsedBytes.value = 0
+    return
+  }
+
+  loadingStorage.value = true
+  storageLoadFailed.value = false
+  try {
+    storageUsedBytes.value = await getFolderSize(
+      storageRef(storage, `tests/${testId}`),
+    )
+  } catch {
+    storageLoadFailed.value = true
+    storageUsedBytes.value = 0
+  } finally {
+    loadingStorage.value = false
   }
 }
 
-// Computed properties para métricas de storage
-const storageUsed = computed(() => {
-  // Simulamos el cálculo del storage usado basado en los datos del test
-  const baseStorage = 450 // MB base
-  const participantsStorage = (props.test?.participants?.length || 0) * 15 // 15MB por participante
-  const heuristicsStorage = (props.test?.heuristics?.length || 0) * 5 // 5MB por heurística
-  const totalMB = baseStorage + participantsStorage + heuristicsStorage
-  return `${totalMB}${t('common.units.mb')}`
-})
+watch(
+  () => props.test?.id,
+  (testId) => loadStorageUsage(testId),
+  { immediate: true },
+)
+
+watch(
+  () => store.getters['Storage/deletedUrls'].size,
+  () => loadStorageUsage(props.test?.id),
+)
+
+const storageUsed = computed(() =>
+  storageLoadFailed.value ? '-' : formatBytes(storageUsedBytes.value),
+)
 
 const storageLimit = computed(() => {
   // Límite estándar para estudios
   return `2${t('common.units.gb')}`
-})
-
-const storageGrowth = computed(() => {
-  // Simulamos el crecimiento basado en actividad reciente
-  const recentParticipants =
-    props.test?.participants?.filter((p) => {
-      const participationDate = new Date(p.createdAt || p.joinedAt)
-      const weekAgo = new Date()
-      weekAgo.setDate(weekAgo.getDate() - 7)
-      return participationDate > weekAgo
-    }).length || 0
-
-  // Crecimiento aproximado del 0.1% por participante reciente
-  return recentParticipants * 0.1
-})
-
-const storageGrowthFormatted = computed(() => {
-  const growth = storageGrowth.value
-  const sign = growth >= 0 ? '+' : ''
-  return `${sign}${growth.toFixed(1)}%`
-})
-
-const storagePercentageUsed = computed(() => {
-  const usedMB = parseInt(storageUsed.value.replace('MB', ''))
-  const limitMB = 2048 // 2GB en MB
-  return Math.round((usedMB / limitMB) * 100)
 })
 </script>
 

@@ -91,7 +91,7 @@ jobs:
             // 2. Component-specific labels based on changed files
             const hasVueComponents = changedPaths.some(p => p.includes("src/") && (p.endsWith(".vue") || p.includes("/components/")));
             const hasFunctions = changedPaths.some(p => p.startsWith("functions/"));
-            const hasTests = changedPaths.some(p => p.includes("test") || p.includes("spec") || p.includes("cypress/") || p.includes("playwright/"));
+            const hasTests = changedPaths.some(p => p.includes("test") || p.includes("spec") || p.includes("cypress/"));
             const hasDocs = changedPaths.some(p => p.includes("README") || p.includes("docs/") || p.endsWith(".md"));
             const hasWorkflows = changedPaths.some(p => p.includes(".github/workflows/"));
             const hasAssets = changedPaths.some(p => p.includes("/assets/") || p.match(/\.(png|jpg|jpeg|svg|gif|ico)$/));

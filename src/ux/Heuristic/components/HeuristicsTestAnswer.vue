@@ -234,7 +234,9 @@ const heuristicsEvaluator = computed(() => {
       const header = table.header.find((h) => h.value === evaluator.id)
       if (!header) {
         table.header.push({
-          title: t('HeuristicsTestAnswer.titles.evaluatorNumber', { n: evaluatorIndex }),
+          title: t('HeuristicsTestAnswer.titles.evaluatorNumber', {
+            n: evaluatorIndex,
+          }),
           align: 'center',
           value: evaluator.id,
         })
@@ -281,7 +283,9 @@ const timeByHeuristics = computed(() => {
   resultEvaluator.value.forEach((evaluator, evaluatorPosition) => {
     const evaluatorKey = `Ev${evaluatorPosition + 1}`
     table.header.push({
-      title: t('HeuristicsTestAnswer.titles.evaluatorNumber', { n: evaluatorPosition + 1 }),
+      title: t('HeuristicsTestAnswer.titles.evaluatorNumber', {
+        n: evaluatorPosition + 1,
+      }),
       value: evaluatorKey,
       align: 'center',
     })
