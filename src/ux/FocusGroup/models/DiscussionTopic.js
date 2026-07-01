@@ -7,10 +7,19 @@
  */
 export default class DiscussionTopic {
   constructor({ id, title, prompts, durationMinutes } = {}) {
-    this.id = id ?? `topic-${Date.now()}-${Math.floor(Math.random() * 1000)}`
+    this.id = id ?? DiscussionTopic.generateId()
     this.title = title ?? ''
     this.prompts = prompts ?? []
     this.durationMinutes = durationMinutes ?? 5
+  }
+
+  static generateId() {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      return `topic-${crypto.randomUUID()}`
+    }
+    const array = new Uint32Array(2)
+    crypto.getRandomValues(array)
+    return `topic-${Date.now()}-${array[0].toString(36)}${array[1].toString(36)}`
   }
 
   toFirestore() {
