@@ -159,6 +159,9 @@ import {
   normalizeCooperatorInviteEntry,
 } from '@/shared/composables/useCooperatorUtils'
 import { showError, showWarning } from '@/shared/utils/toast'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   show: {
@@ -261,7 +264,7 @@ const addEmailToSelection = () => {
     currentUserEmail: props.currentUserEmail,
     studyOwnerEmail: props.studyOwnerEmail,
     existingCooperators: props.existingCooperators,
-    registeredUsers: props.users,
+    t,
   })
 
   if (validationError) {

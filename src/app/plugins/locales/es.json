@@ -98,7 +98,7 @@
     "description": "Descripción",
     "cancel": "Cancelar",
     "confirm": "Confirmar",
-    "delete":"Eliminar",
+    "delete": "Eliminar",
     "add": "Agregar",
     "text": "Texto",
     "value": "Valor",
@@ -298,7 +298,14 @@
   },
   "cooperators": {
     "updatedRole": "Rol actualizado a {role} para: {users}",
-    "inviteSent": "Invitación enviada a: {users}"
+    "inviteSent": "Invitación enviada a: {users}",
+    "validation": {
+      "invalidEmail": "Por favor, introduce un correo electrónico válido.",
+      "invalidFormat": "Por favor, introduce un correo electrónico válido.",
+      "inviteSelf": "No puedes invitarte a ti mismo.",
+      "inviteOwner": "El propietario del estudio no puede ser invitado como colaborador.",
+      "alreadyCooperator": "Este correo ya es un colaborador de este estudio."
+    }
   },
   "navigation": {
     "dashboard": "Panel",

@@ -42,29 +42,29 @@ export const getCooperatorInviteValidationError = ({
   currentUserEmail,
   studyOwnerEmail,
   existingCooperators = [],
-  registeredUsers = [],
+  t,
 }) => {
   if (!email || typeof email !== 'string') {
-    return 'Please enter a valid email address.'
+    return t('cooperators.validation.invalidEmail')
   }
 
   const normalizedEmail = email.trim().toLowerCase()
   if (!normalizedEmail.includes('@') || !normalizedEmail.includes('.')) {
-    return 'Please enter a valid email address.'
+    return t('cooperators.validation.invalidFormat')
   }
 
   if (
     currentUserEmail &&
     normalizedEmail === currentUserEmail.trim().toLowerCase()
   ) {
-    return 'You cannot invite yourself.'
+    return t('cooperators.validation.inviteSelf')
   }
 
   if (
     studyOwnerEmail &&
     normalizedEmail === studyOwnerEmail.trim().toLowerCase()
   ) {
-    return 'The study owner cannot be invited as a cooperator.'
+    return t('cooperators.validation.inviteOwner')
   }
 
   const alreadyCooperator = existingCooperators.some((cooperator) => {
@@ -72,7 +72,7 @@ export const getCooperatorInviteValidationError = ({
   })
 
   if (alreadyCooperator) {
-    return 'This email is already a cooperator for this study.'
+    return t('cooperators.validation.alreadyCooperator')
   }
 
   return null

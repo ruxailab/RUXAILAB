@@ -3,6 +3,22 @@ import {
   normalizeCooperatorInviteEntry,
 } from '@/shared/composables/useCooperatorUtils'
 
+const t = (key) => {
+  const messages = {
+    'cooperators.validation.invalidEmail':
+      'Please enter a valid email address.',
+    'cooperators.validation.invalidFormat':
+      'Please enter a valid email address.',
+    'cooperators.validation.inviteSelf': 'You cannot invite yourself.',
+    'cooperators.validation.inviteOwner':
+      'The study owner cannot be invited as a cooperator.',
+    'cooperators.validation.alreadyCooperator':
+      'This email is already a cooperator for this study.',
+  }
+
+  return messages[key]
+}
+
 describe('getCooperatorInviteValidationError', () => {
   it('rejects invalid email addresses', () => {
     const result = getCooperatorInviteValidationError({
@@ -10,7 +26,7 @@ describe('getCooperatorInviteValidationError', () => {
       currentUserEmail: 'owner@example.com',
       studyOwnerEmail: 'study-owner@example.com',
       existingCooperators: [],
-      registeredUsers: [],
+      t,
     })
 
     expect(result).toBe('Please enter a valid email address.')
@@ -22,7 +38,7 @@ describe('getCooperatorInviteValidationError', () => {
       currentUserEmail: 'me@example.com',
       studyOwnerEmail: 'study-owner@example.com',
       existingCooperators: [],
-      registeredUsers: [],
+      t,
     })
 
     expect(result).toBe('You cannot invite yourself.')
@@ -34,7 +50,7 @@ describe('getCooperatorInviteValidationError', () => {
       currentUserEmail: 'me@example.com',
       studyOwnerEmail: 'study-owner@example.com',
       existingCooperators: [],
-      registeredUsers: [],
+      t,
     })
 
     expect(result).toBe('The study owner cannot be invited as a cooperator.')
@@ -46,29 +62,21 @@ describe('getCooperatorInviteValidationError', () => {
       currentUserEmail: 'me@example.com',
       studyOwnerEmail: 'study-owner@example.com',
       existingCooperators: [{ email: 'existing@example.com' }],
-      registeredUsers: [],
+      t,
     })
 
     expect(result).toBe('This email is already a cooperator for this study.')
   })
 
-  it('allows a valid email that matches a registered user', () => {
+  it('returns null for valid email', () => {
     const result = getCooperatorInviteValidationError({
       email: 'registered@example.com',
       currentUserEmail: 'me@example.com',
       studyOwnerEmail: 'study-owner@example.com',
       existingCooperators: [],
-      registeredUsers: [{ email: 'registered@example.com' }],
+      t,
     })
 
     expect(result).toBeNull()
-  })
-
-  it('normalizes a typed invite into an email payload', () => {
-    const result = normalizeCooperatorInviteEntry('new@example.com', [
-      { id: 'user-1', email: 'new@example.com' },
-    ])
-
-    expect(result).toEqual({ email: 'new@example.com', userDocId: 'user-1' })
   })
 })

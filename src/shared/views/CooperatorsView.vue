@@ -357,6 +357,7 @@ const handleSendInvitations = async (invitationData) => {
       currentUserEmail: userAuth.value?.email,
       studyOwnerEmail: test.value?.testAdmin?.email,
       existingCooperators: cooperatorsEdit.value,
+      t,
     })
 
     if (validationError) {

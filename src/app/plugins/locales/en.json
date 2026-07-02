@@ -102,7 +102,7 @@
     "cancel": "Cancel",
     "proceed": "proceed",
     "confirm": "Confirm",
-    "delete":"Delete",
+    "delete": "Delete",
     "add": "Add",
     "text": "Text",
     "value": "Value",
@@ -300,7 +300,14 @@
   },
   "cooperators": {
     "updatedRole": "Updated role to {role} for: {users}",
-    "inviteSent": "Invitation sent to: {users}"
+    "inviteSent": "Invitation sent to: {users}",
+    "validation": {
+      "invalidEmail": "Please enter a valid email address.",
+      "invalidFormat": "Please enter a valid email address.",
+      "inviteSelf": "You cannot invite yourself.",
+      "inviteOwner": "The study owner cannot be invited as a cooperator.",
+      "alreadyCooperator": "This email is already a cooperator for this study."
+    }
   },
   "navigation": {
     "dashboard": "Dashboard",
