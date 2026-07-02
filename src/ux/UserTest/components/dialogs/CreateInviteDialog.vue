@@ -524,12 +524,12 @@ const saveInvitation = async () => {
       const userDocId =
         normalizedEntry.userDocId || (typeof item === 'object' ? item.id : null)
 
-      // Prevnt duplicate invites
-      if (
-        !cooperatorsEdit.value.some(
-          (c) => c.email === email && c.testDate === timestamp,
-        )
-      ) {
+      // Prevent duplicate invites
+      const alreadyExists = cooperatorsEdit.value.some(
+        (c) => c.email === email && c.testDate === timestamp,
+      )
+
+      if (!alreadyExists) {
         cooperatorsEdit.value.push(
           new Cooperators({
             userDocId,

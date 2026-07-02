@@ -74,6 +74,8 @@ export const getCooperatorInviteValidationError = ({
   if (alreadyCooperator) {
     return 'This email is already a cooperator for this study.'
   }
+
+  return null
 }
 
 /**
