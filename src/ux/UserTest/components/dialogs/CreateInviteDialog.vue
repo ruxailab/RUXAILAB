@@ -16,7 +16,7 @@
             {{ $t('UsabilityCooperators.inviteEvaluator') }}
           </h2>
           <p class="text-body-2 mb-0 opacity-90">
-            Send evaluation invitations to participants
+            {{ $t('UsabilityCooperators.inviteEvaluatorDescription') }}
           </p>
         </div>
       </v-card-title>
@@ -32,10 +32,10 @@
                     <v-icon class="mr-2" size="20"
                       >mdi-account-cowboy-hat</v-icon
                     >
-                    Role
+                    {{ $t('UsabilityCooperators.role') }}
                   </label>
                   <p class="field-description mb-3">
-                    Select the role for this participant.
+                    {{ $t('UsabilityCooperators.roleDescription') }}
                   </p>
                   <v-radio-group
                     v-model="selectedRole"
@@ -65,16 +65,18 @@
                     <v-icon class="mr-2" size="20">mdi-account-outline</v-icon>
                     {{ $t('UsabilityCooperators.email') }}
                   </label>
+                  <p class="field-description mb-3"></p>
                   <p class="field-description mb-3">
-                    Select the participant you want to invite to this evaluation
-                    session.
+                    {{
+                      $t('UsabilityCooperators.selectParticipantDescription')
+                    }}
                   </p>
                   <v-row class="ma-0">
                     <v-text-field
                       v-model="emailInput"
                       variant="outlined"
                       density="comfortable"
-                      placeholder="Type an email address and press Enter"
+                      :placeholder="$t('UsabilityCooperators.emailPlaceholder')"
                       prepend-inner-icon="mdi-account-multiple-plus"
                       color="primary"
                       clearable
@@ -92,7 +94,7 @@
 
                   <div v-if="comboboxModel.length" class="mt-3">
                     <div class="text-caption text-grey-darken-1 mb-2">
-                      Added participants
+                      {{ $t('UsabilityCooperators.addedParticipants') }}
                     </div>
                     <v-chip-group>
                       <v-chip
@@ -117,7 +119,7 @@
                     {{ $t('UsabilityCooperators.scheduledAt') }}
                   </div>
                   <p class="field-description mb-3">
-                    Choose the date and time for the evaluation session.
+                    {{ $t('UsabilityCooperators.scheduleDescription') }}
                   </p>
 
                   <v-row class="mt-2">
@@ -138,7 +140,13 @@
                             density="comfortable"
                             prepend-inner-icon="mdi-calendar"
                             placeholder="Select date"
-                            :rules="[(v) => !!v || 'Date is required']"
+                            :rules="[
+                              (v) =>
+                                !!v ||
+                                t(
+                                  'UsabilityCooperators.validation.dateRequired',
+                                ),
+                            ]"
                             required
                           />
                         </template>
@@ -199,7 +207,7 @@
                     {{ $t('UsabilityCooperators.inviteMessage') }}
                   </div>
                   <p class="field-description mb-3">
-                    Write a personalized message to include with the invitation.
+                    {{ $t('UsabilityCooperators.inviteMessageDescription') }}
                   </p>
                   <v-textarea
                     v-model="inviteMessage"
@@ -230,7 +238,9 @@
                   <v-icon class="mr-2" size="24" color="primary"
                     >mdi-eye-outline</v-icon
                   >
-                  <h3 class="text-h6 font-weight-bold">Invitation Preview</h3>
+                  <h3 class="text-h6 font-weight-bold">
+                    {{ $t('UsabilityCooperators.invitationPreview') }}
+                  </h3>
                 </div>
 
                 <v-card class="invitation-preview elevation-2" border>
@@ -238,13 +248,15 @@
                     <v-icon class="mr-2" color="primary"
                       >mdi-email-outline</v-icon
                     >
-                    <span class="text-subtitle-1">Evaluation Invitation</span>
+                    <span class="text-subtitle-1">
+                      {{ $t('UsabilityCooperators.evaluationInvitation') }}
+                    </span>
                   </v-card-title>
 
                   <v-card-text class="pa-4">
                     <div class="preview-content">
                       <p class="text-body-2 mb-3">
-                        <strong>To:</strong>
+                        <strong>{{ $t('UsabilityCooperators.to') }}:</strong>
                         <v-chip-group>
                           <v-chip
                             v-for="(item, i) in comboboxModel"
@@ -255,19 +267,26 @@
                           >
                             {{ typeof item === 'object' ? item.email : item }}
                           </v-chip>
-                          <span v-if="!comboboxModel.length"
-                            >No participant selected</span
-                          >
+                          <span v-if="!comboboxModel.length">{{
+                            $t('UsabilityCooperators.noParticipantSelected')
+                          }}</span>
                         </v-chip-group>
                       </p>
                       <p class="text-body-2 mb-3">
-                        <strong>Scheduled:</strong>
+                        <strong
+                          >{{ $t('UsabilityCooperators.scheduled') }}:</strong
+                        >
                         {{ formattedDateTime || 'No date/time selected' }}
                       </p>
                       <div class="mb-3">
-                        <strong class="text-body-2">Message:</strong>
+                        <strong class="text-body-2"
+                          >{{ $t('UsabilityCooperators.message') }}:</strong
+                        >
                         <div class="mt-1 pa-3 bg-grey-lighten-5 rounded">
-                          {{ inviteMessage || 'No message entered yet...' }}
+                          {{
+                            inviteMessage ||
+                            $t('UsabilityCooperators.noMessageYet')
+                          }}
                         </div>
                       </div>
                     </div>
@@ -281,12 +300,12 @@
                     class="mb-4"
                     icon="mdi-information-outline"
                   >
-                    <v-alert-title>{{
-                      $t('UsabilityCooperators.inviteInfo')
-                    }}</v-alert-title>
+                    <v-alert-title>
+                      {{ $t('UsabilityCooperators.inviteInfoTitle') }}
+                    </v-alert-title>
+
                     <div class="text-body-2 mt-2">
-                      The participant will receive an email notification and can
-                      accept or decline the invitation.
+                      {{ $t('UsabilityCooperators.inviteInfoDescription') }}
                     </div>
                   </v-alert>
                 </div>
@@ -304,7 +323,7 @@
             size="large"
             @click="$emit('update:dialog', false)"
           >
-            Cancel
+            {{ $t('common.cancel') }}
           </v-btn>
           <v-btn
             color="primary"
@@ -379,18 +398,18 @@ const inviteMessage = ref('')
 const loading = ref(false)
 const selectedRole = ref(ACCESS_LEVEL.ADMIN)
 
-const roleOptions = [
+const roleOptions = computed(() => [
   {
-    label: 'Evaluator',
+    label: t('UsabilityCooperators.roles.evaluator'),
     value: ACCESS_LEVEL.EVALUATOR,
-    description: 'Participates in the test, shares screen/video.',
+    description: t('UsabilityCooperators.roles.evaluatorDesc'),
   },
   {
-    label: 'Observator',
+    label: t('UsabilityCooperators.roles.observator'),
     value: ACCESS_LEVEL.OBSERVATOR,
-    description: 'Watches the session silently, takes notes.',
+    description: t('UsabilityCooperators.roles.observatorDesc'),
   },
-]
+])
 
 // Computed
 const users = computed(() =>
@@ -456,7 +475,7 @@ const addEmailToSelection = () => {
   if (!email) return
 
   if (!validateEmailFormat(email)) {
-    showError('Invalid email: ' + email)
+    showError(t('UsabilityCooperators.validation.invalidEmail', { email }))
     emailInput.value = ''
     return
   }

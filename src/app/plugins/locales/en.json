@@ -307,6 +307,19 @@
       "inviteSelf": "You cannot invite yourself.",
       "inviteOwner": "The study owner cannot be invited as a cooperator.",
       "alreadyCooperator": "This email is already a cooperator for this study."
+    },
+    "invite": {
+      "title": "Send Invitation",
+      "emailPlaceholder": "Type cooperator email",
+      "emailInputPlaceholder": "Type an email address",
+      "role": "Role",
+      "date": "Date",
+      "time": "Time",
+      "message": "Invitation Message",
+      "messagePlaceholder": "Enter your invitation message",
+      "cancel": "Cancel",
+      "send": "Send",
+      "alreadySelected": "{email} has already been selected"
     }
   },
   "navigation": {
@@ -988,12 +1001,48 @@
   },
   "UsabilityCooperators": {
     "inviteEvaluator": "Invite Evaluator To Test",
+    "inviteEvaluatorDescription": "Send evaluation invitations to participants",
     "email": "Email",
     "scheduledAt": "Scheduled at",
     "inviteMessage": "Invite message",
+    "inviteMessageDescription": "Write a personalized message to include with the invitation.",
     "placeholderMessage": "Hey, let's make a test...",
     "inviteInfo": "Invite with test link will be sent to evaluator email at scheduled time",
-    "send": "Send"
+    "send": "Send",
+
+    "role": "Role",
+    "roleDescription": "Select the role for this participant.",
+
+    "roles": {
+      "evaluator": "Evaluator",
+      "evaluatorDesc": "Participates in the test, shares screen/video.",
+      "observator": "Observator",
+      "observatorDesc": "Watches the session silently, takes notes."
+    },
+
+    "selectParticipantDescription": "Select the participant you want to invite to this evaluation session.",
+    "emailPlaceholder": "Type an email address and press Enter",
+    "addedParticipants": "Added participants",
+    "noParticipantSelected": "No participant selected",
+
+    "scheduleDescription": "Choose the date and time for the evaluation session.",
+
+    "invitationPreview": "Invitation Preview",
+    "evaluationInvitation": "Evaluation Invitation",
+
+    "to": "To",
+    "scheduled": "Scheduled",
+    "message": "Message",
+
+    "noMessageYet": "No message entered yet...",
+
+    "inviteInfoTitle": "Information",
+    "inviteInfoDescription": "The participant will receive an email notification and can accept or decline the invitation.",
+
+    "validation": {
+      "invalidEmail": "Invalid email: {email}",
+      "dateRequired": "Date is required"
+    }
   },
   "HeuristicsCooperators": {
     "title": {

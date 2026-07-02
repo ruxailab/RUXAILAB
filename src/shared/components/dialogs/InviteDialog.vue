@@ -7,13 +7,13 @@
     <v-card class="rounded-lg">
       <v-card-title style="color: white" class="bg-primary rounded-top-lg">
         <v-icon color="white" class="mr-2"> mdi-account-plus </v-icon>
-        {{ title || 'Send Invitation' }}
+        {{ title || t('cooperators.invite.title') }}
       </v-card-title>
       <v-card-text class="pt-4">
         <v-row class="ma-0">
           <v-text-field
             v-model="emailInput"
-            :label="selectLabel || 'Type cooperator email'"
+            :label="selectLabel || t('cooperators.invite.emailPlaceholder')"
             variant="outlined"
             density="comfortable"
             placeholder="Type an email address"
@@ -46,7 +46,7 @@
         <v-select
           v-model="selectedRole"
           :items="roleOptions"
-          :label="roleLabel || 'Role'"
+          :label="roleLabel || t('cooperators.invite.role')"
           variant="outlined"
           density="comfortable"
           class="mt-4"
@@ -69,7 +69,7 @@
                   v-bind="props"
                   variant="outlined"
                   density="compact"
-                  label="Date"
+                  :label="t('cooperators.invite.date')"
                   prepend-inner-icon="mdi-calendar"
                 />
               </template>
@@ -99,7 +99,7 @@
                   density="compact"
                   color="primary"
                   variant="outlined"
-                  label="Time"
+                  :label="t('cooperators.invite.time')"
                   readonly
                   v-bind="props"
                 />
@@ -119,8 +119,10 @@
           v-if="showInviteMessage"
           v-model="inviteMessage"
           color="primary"
-          :label="messageLabel || 'Invitation Message'"
-          :placeholder="messagePlaceholder || 'Enter your invitation message'"
+          :label="messageLabel || t('cooperators.invite.message')"
+          :placeholder="
+            messagePlaceholder || t('cooperators.invite.messagePlaceholder')
+          "
           variant="outlined"
           class="mt-4"
         />
@@ -136,7 +138,7 @@
           class="rounded-lg"
           @click="onCancel"
         >
-          {{ cancelText || 'Cancel' }}
+          {{ cancelText || t('cooperators.invite.cancel') }}
         </v-btn>
         <v-btn
           color="primary"
@@ -144,7 +146,7 @@
           :disabled="selectedCoops.length === 0"
           @click="onSend"
         >
-          {{ sendText || 'Send' }}
+          {{ sendText || t('cooperators.invite.send') }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -274,7 +276,7 @@ const addEmailToSelection = () => {
   }
 
   if (isCoopAlreadySelected(rawValue)) {
-    showWarning(`${rawValue} has already been selected`)
+    showWarning(t('cooperators.invite.alreadySelected', { email: rawValue }))
     emailInput.value = ''
     return
   }
