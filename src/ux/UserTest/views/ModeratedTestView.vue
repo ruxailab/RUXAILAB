@@ -393,7 +393,7 @@
 
           <!-- Video Call Component -->
           <div v-show="displayVideoCallComponent" v-if="test">
-            <VideoCall
+            <VideoCallFactory
               :room-id="roomId"
               :is-moderator="isUserTestAdmin"
               :user="user"
@@ -628,7 +628,7 @@ import TaskStep from '@/ux/UserTest/components/steps/TaskStep.vue'
 import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue'
 import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue'
 import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue'
-import VideoCall from '@/ux/UserTest/components/VideoCall.vue'
+import VideoCallFactory from '@/shared/components/videoCall/VideoCallFactory.vue'
 import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
@@ -1110,28 +1110,58 @@ const handleTipPressed = (idx) => {
   localTestAnswer.tasks[idx].tipPressCount = current + 1
 }
 
+const STEP_GROUP_IDS = {
+  preTest: 0,
+  tasks: 1,
+  postTest: 2,
+}
+
+function findStepGroup(groupId) {
+  return items.value.find((item) => item.id === groupId)
+}
+
+function markSubStepComplete(groupId, subStepId) {
+  const group = findStepGroup(groupId)
+  if (group?.value?.[subStepId]) {
+    group.value[subStepId].icon = 'mdi-check-circle-outline'
+  }
+}
+
+function markGroupComplete(groupId) {
+  const group = findStepGroup(groupId)
+  if (group) {
+    group.icon = 'mdi-check-circle-outline'
+  }
+}
+
 const completeStep = async (id, type, userCompleted = true) => {
   displayVideoCallComponent.value = true
   try {
     if (type === 'consent') {
       localTestAnswer.consentCompleted = true
-      items.value[0].value[id].icon = 'mdi-check-circle-outline'
-      if (
-        localTestAnswer.preTestCompleted &&
-        localTestAnswer.consentCompleted
-      ) {
-        items.value[0].icon = 'mdi-check-circle-outline'
+      const preTestGroup = findStepGroup(STEP_GROUP_IDS.preTest)
+      if (preTestGroup) {
+        markSubStepComplete(STEP_GROUP_IDS.preTest, 0)
+        if (
+          localTestAnswer.preTestCompleted &&
+          localTestAnswer.consentCompleted
+        ) {
+          markGroupComplete(STEP_GROUP_IDS.preTest)
+        }
+        globalIndex.value = 2
+      } else {
+        localTestAnswer.preTestCompleted = true
+        globalIndex.value = 3
       }
-      globalIndex.value = 2
     }
     if (type === 'preTest') {
       localTestAnswer.preTestCompleted = true
-      items.value[0].value[id].icon = 'mdi-check-circle-outline'
+      markSubStepComplete(STEP_GROUP_IDS.preTest, 1)
       if (
         localTestAnswer.preTestCompleted &&
         localTestAnswer.consentCompleted
       ) {
-        items.value[0].icon = 'mdi-check-circle-outline'
+        markGroupComplete(STEP_GROUP_IDS.preTest)
       }
       globalIndex.value = 3
     }
@@ -1141,19 +1171,18 @@ const completeStep = async (id, type, userCompleted = true) => {
         return
       }
       localTestAnswer.tasks[id].completed = userCompleted
-      if (items.value[1]?.value?.[id]) {
-        items.value[1].value[id].icon = 'mdi-check-circle-outline'
-      }
+      markSubStepComplete(STEP_GROUP_IDS.tasks, id)
       allTasksCompleted.value = true
 
-      for (let i = 0; i < items.value[1]?.value?.length || 0; i++) {
+      const tasksGroup = findStepGroup(STEP_GROUP_IDS.tasks)
+      for (let i = 0; i < tasksGroup?.value?.length || 0; i++) {
         if (!localTestAnswer.tasks[i]?.completed) {
           allTasksCompleted.value = false
           break
         }
       }
-      if (allTasksCompleted.value && items.value[1]) {
-        items.value[1].icon = 'mdi-check-circle-outline'
+      if (allTasksCompleted.value) {
+        markGroupComplete(STEP_GROUP_IDS.tasks)
       }
       if (id < localTestAnswer.tasks.length - 1) {
         taskIndex.value = id + 1
@@ -1175,9 +1204,7 @@ const completeStep = async (id, type, userCompleted = true) => {
     if (type === 'postTest') {
       localTestAnswer.postTestCompleted = true
       globalIndex.value = 6
-      if (items.value[2]?.value && items.value[2].value[id]) {
-        items.value[2].value[id].icon = 'mdi-check-circle-outline'
-      }
+      markSubStepComplete(STEP_GROUP_IDS.postTest, id)
     }
 
     const roomRef = dbRef(database, `rooms/${roomId.value}`)
@@ -1214,11 +1241,11 @@ const completeStep = async (id, type, userCompleted = true) => {
 
 const mappingSteps = async () => {
   try {
-    items.value = []
+    const nextItems = []
 
     // PreTest
     if (validate(test.value?.testStructure?.preTest)) {
-      items.value.push({
+      nextItems.push({
         title: t('UserTestView.stepper.preTest'),
         icon: 'mdi-check-bold',
         value: [
@@ -1249,7 +1276,7 @@ const mappingSteps = async () => {
 
     // Tasks
     if (validate(test.value?.testStructure?.userTasks)) {
-      items.value.push({
+      nextItems.push({
         title: t('UserTestView.stepper.tasks'),
         icon: 'mdi-check-bold',
         value: test.value.testStructure.userTasks.map((task, index) => ({
@@ -1284,7 +1311,7 @@ const mappingSteps = async () => {
 
     // PostTest
     if (validate(test.value?.testStructure?.postTest)) {
-      items.value.push({
+      nextItems.push({
         title: t('UserTestView.stepper.postTest'),
         icon: 'mdi-check-bold',
         value: test.value.testStructure.postTest,
@@ -1301,6 +1328,8 @@ const mappingSteps = async () => {
         )
       }
     }
+
+    items.value = nextItems
   } catch (error) {
     console.error('Error mapping steps:', error.message) // eslint-disable-line no-console
     store.commit('SET_TOAST', {

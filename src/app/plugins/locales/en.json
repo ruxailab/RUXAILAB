@@ -1377,7 +1377,16 @@
       "observeAllFeedsNotice": "You will be able to observe all video feeds without sending your own.",
       "waitingForParticipants": "Waiting for participants...",
       "waitingForModerator": "Waiting for moderator...",
-      "autoStartWhenModeratorOpensRoom": "The video call will start automatically when the moderator opens the room."
+      "autoStartWhenModeratorOpensRoom": "The video call will start automatically when the moderator opens the room.",
+      "cameraDevice": "camera",
+      "microphoneDevice": "microphone",
+      "screenShareDevice": "screen sharing",
+      "secureContextRequired": "{device} requires a secure connection (HTTPS or localhost). Open the app via localhost instead of the network IP address.",
+      "mediaDeviceNotFound": "Could not access the {device}. Check that it is connected and not in use by another application.",
+      "mediaPermissionDenied": "Permission to use the {device} was denied. Allow access in your browser settings.",
+      "mediaDeviceInUse": "The {device} is in use by another application.",
+      "mediaConstraintsNotSupported": "The {device} does not support the required settings.",
+      "mediaDeviceUnavailable": "The {device} is unavailable. You can still join the call without it."
     },
     "buttons": {
       "done": "Done"
@@ -1894,6 +1903,70 @@
     "postTestVariables": "Post-Test Variables",
     "configureVariables": "Configure the variables for the {type} section. Add, edit, or remove variables as needed.",
     "createNewVariableTitle": "Create New Variable"
+  },
+  "videoCall": {
+    "title": "Video Call",
+    "description": "Choose the video call technology for this moderated session.",
+    "providers": {
+      "mesh": {
+        "name": "Standard (Mesh)",
+        "range": "2–5 participants",
+        "description": "Peer-to-peer connections. Best for small sessions."
+      },
+      "livekit": {
+        "name": "LiveKit (SFU)",
+        "range": "5+ participants",
+        "description": "Server-based routing for larger groups and multiple observers."
+      }
+    },
+    "sessionActiveWarning": "Cannot change provider while a session is in progress.",
+    "session": {
+      "screenSharingLabel": "Sharing screen",
+      "cameraOff": "Camera is off",
+      "yourVideo": "Your video",
+      "yourPreview": "Your preview",
+      "observatorMode": "Observer Mode",
+      "waitingForModeratorToStartSession": "Waiting for moderator to start the session...",
+      "observeAllFeedsNotice": "You will be able to observe all video feeds without sending your own.",
+      "waitingForParticipants": "Waiting for participants...",
+      "waitingForModerator": "Waiting for moderator...",
+      "autoStartWhenModeratorOpensRoom": "The video call will start automatically when the moderator opens the room.",
+      "cameraDevice": "camera",
+      "microphoneDevice": "microphone",
+      "screenShareDevice": "screen sharing",
+      "secureContextRequired": "{device} requires a secure connection (HTTPS or localhost). Open the app via localhost instead of the network IP address.",
+      "mediaDeviceNotFound": "Could not access the {device}. Check that it is connected and not in use by another application.",
+      "mediaPermissionDenied": "Permission to use the {device} was denied. Allow access in your browser settings.",
+      "mediaDeviceInUse": "The {device} is in use by another application.",
+      "mediaConstraintsNotSupported": "The {device} does not support the required settings.",
+      "mediaDeviceUnavailable": "The {device} is unavailable. You can still join the call without it."
+    },
+    "panel": {
+      "toolsPanelTitle": "Tools Panel",
+      "sessionControl": "Session Control",
+      "joinRoomInfo": "Join room controls are now in the main interface above",
+      "proceedNextStep": "Proceed to Next Step",
+      "endCall": "End Call",
+      "activeCall": "Active call",
+      "participants": "Participants",
+      "you": "You",
+      "observator": "Observer",
+      "moderator": "Moderator",
+      "connected": "Connected",
+      "disconnected": "Disconnected",
+      "camera": "Camera",
+      "noCamera": "No camera",
+      "microphone": "Microphone",
+      "noMicrophone": "No microphone",
+      "settings": "Settings",
+      "disableCamera": "Turn off camera",
+      "enableCamera": "Turn on camera",
+      "muteMicrophone": "Mute microphone",
+      "unmuteMicrophone": "Unmute microphone",
+      "stopScreenShare": "Stop sharing screen",
+      "shareScreen": "Share screen",
+      "moderatorOnlySteps": "Only the moderator can change steps"
+    }
   },
   "CardSorting": {
     "noCategory": "No category",
