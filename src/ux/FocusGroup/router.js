@@ -4,7 +4,8 @@ import CooperatorsView from '@/shared/views/CooperatorsView.vue'
 
 export default [
   {
-    path: '/focusGroup/manager/:id',
+    path: '/focusGroup/dashboard/:id',
+    alias: '/focusGroup/manager/:id',
     name: 'FocusGroupManagerView',
     meta: { authorize: [0, 1] },
     component: ManagerView,

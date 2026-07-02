@@ -62,7 +62,8 @@ export default [
     component: StudyDetailsForm,
   },
   {
-    path: '/:TestType/:StudyType/template/manager/:id',
+    path: '/:TestType/:StudyType/template/dashboard/:id',
+    alias: '/:TestType/:StudyType/template/manager/:id',
     name: 'TemplateManagerView',
     meta: { authorize: [1], templateAccess: true, templateSection: 'manager' },
     component: TemplateManagerView,

@@ -1,6 +1,9 @@
 <template>
   <ManagerView :navigator="navigator" :top-cards="[]" :bottom-cards="[]">
-    <template v-if="$route.path.includes('manager')" #default>
+    <template
+      v-if="$route.path.includes('dashboard') || $route.path.includes('manager')"
+      #default
+    >
       <ManagerBanner :title="test?.testTitle" />
 
       <v-container class="card-container">
@@ -54,9 +57,9 @@ const navigator = computed(() => {
   if (!test.value) return []
   return [
     {
-      title: 'Manager',
+      title: 'Dashboard',
       icon: ICONS.MANAGER,
-      path: `/focusGroup/manager/${route.params.id}`,
+      path: `/focusGroup/dashboard/${route.params.id}`,
     },
     {
       title: 'Cooperators',

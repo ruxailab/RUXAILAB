@@ -275,8 +275,8 @@ export default {
         if (response) {
           // Done
         }
-        // Redirect to the report page
-        this.$router.push(`/answers/${testId}`)
+        // Redirect to the results page
+        this.$router.push(`/accessibility/automatic/results/${testId}`)
       } catch (error) {
         this.error =
           error.response?.data?.error || 'Failed to run the accessibility test'

@@ -852,7 +852,7 @@ const handleSubmit = async () => {
     localTestAnswer.submitted = true
     await saveAnswer()
     if (hasTestDashboardAccess.value) {
-      await router.push(`/userTest/moderated/manager/${test.value.id}`)
+      await router.push(`/userTest/moderated/dashboard/${test.value.id}`)
     } else {
       await router.push({ name: 'Admin' })
     }

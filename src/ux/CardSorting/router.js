@@ -6,7 +6,8 @@ import TestView from '@/ux/CardSorting/views/TestView.vue'
 
 export default [
   {
-    path: '/cardSorting/manager/:id',
+    path: '/cardSorting/dashboard/:id',
+    alias: '/cardSorting/manager/:id',
     name: 'CardSortingManagerView',
     meta: { authorize: [0, 1] },
     component: ManagerView,

@@ -6,9 +6,9 @@ export const getNavigatorDefault = (test, accessLevel, route, type) => {
 
   const items = [
     {
-      title: 'Manager',
+      title: 'Dashboard',
       icon: ICONS.MANAGER,
-      path: `/${type}/manager/${route.params.id}`,
+      path: `/${type}/dashboard/${route.params.id}`,
     },
   ]
 
@@ -24,14 +24,14 @@ export const getNavigatorDefault = (test, accessLevel, route, type) => {
       },
       { title: 'Preview', icon: ICONS.PREVIEW, path: `/testview/${test.id}` },
       {
-        title: 'Reports',
+        title: 'Progress',
         icon: ICONS.BOOK,
-        path: `/${type}/report/${test.id}`,
+        path: `/${type}/progress/${test.id}`,
       },
       {
-        title: 'Answers',
+        title: 'Results',
         icon: ICONS.ORDER,
-        path: `/${type}/answer/${test.id}`,
+        path: `/${type}/results/${test.id}`,
       },
       {
         title: 'Cooperators',
@@ -54,9 +54,9 @@ export const getNavigatorDefault = (test, accessLevel, route, type) => {
         path: `/testview/${test.id}`,
       },
       {
-        title: 'Answers',
+        title: 'Results',
         icon: ICONS.ORDER,
-        path: `/${type}/answer/${test.id}`,
+        path: `/${type}/results/${test.id}`,
       },
     )
   }
@@ -74,9 +74,9 @@ export const getAccessibilityNavigator = (test, userRole, route, type) => {
 
   const items = [
     {
-      title: 'Manager',
+      title: 'Dashboard',
       icon: ICONS.MANAGER,
-      path: `/${type}/${testId}`,
+      path: `/${type}/dashboard/${testId}`,
       requiresAdmin: false,
     },
   ]
@@ -102,9 +102,9 @@ export const getAccessibilityNavigator = (test, userRole, route, type) => {
         requiresAdmin: false,
       },
       {
-        title: 'Answers',
+        title: 'Results',
         icon: ICONS.ORDER,
-        path: `/accessibility/manual/result/${testId}`,
+        path: `/accessibility/manual/results/${testId}`,
         requiresAdmin: true,
       },
       {
@@ -125,15 +125,15 @@ export const getAccessibilityNavigator = (test, userRole, route, type) => {
         requiresAdmin: true,
       },
       {
-        title: 'Answers',
+        title: 'Results',
         icon: ICONS.ORDER,
-        path: `/accessibility/automatic/answers/${testId}`,
+        path: `/accessibility/automatic/results/${testId}`,
         requiresAdmin: true,
       },
       {
-        title: 'Report',
+        title: 'Progress',
         icon: ICONS.BOOK,
-        path: `/accessibility/automatic/reports/${testId}`,
+        path: `/accessibility/automatic/progress/${testId}`,
         requiresAdmin: false, // Reports can be viewed by cooperators
       },
       {
@@ -250,14 +250,14 @@ export const getBottomCardsDefualt = (test, type) => {
       title: 'reports',
       bottom: '#000',
       description: 'reports',
-      path: `/${type}/report/${test.answersDocId}`,
+      path: `/${type}/progress/${test.answersDocId}`,
     },
     {
       ...createCardConfig('ANSWERS'),
       title: 'answers',
       bottom: '#000',
       description: 'answers',
-      path: `/${type}/answer/${test.answersDocId}`,
+      path: `/${type}/results/${test.answersDocId}`,
     },
   ]
 }
@@ -286,7 +286,7 @@ export const getAccessibilityBottomCards = (test, userRole, type) => {
         title: 'View Results',
         subtitle: 'Analyze accessibility test answers',
         icon: 'mdi-chart-bar',
-        path: `/accessibility/manual/result/${testId}`,
+        path: `/accessibility/manual/results/${testId}`,
         color: 'warning',
       })
     }
@@ -297,7 +297,7 @@ export const getAccessibilityBottomCards = (test, userRole, type) => {
       title: 'View Report',
       subtitle: 'See accessibility analysis results',
       icon: 'mdi-chart-bar',
-      path: `/accessibility/automatic/reports/${testId}`,
+      path: `/accessibility/automatic/progress/${testId}`,
       color: 'info',
     })
 
