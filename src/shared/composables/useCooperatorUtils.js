@@ -3,6 +3,89 @@ import { getStatusColor, getStatusText } from '@/shared/utils/statusUtils'
 import { formatDate, formatTime } from '@/shared/utils/dateUtils'
 import { formatInitials } from '@/shared/utils/formatUtils'
 
+export const normalizeCooperatorInviteEntry = (entry, registeredUsers = []) => {
+  if (!entry) {
+    return { email: '', userDocId: null }
+  }
+
+  if (typeof entry === 'string') {
+    const email = entry.trim()
+    const normalizedEmail = email.toLowerCase()
+    const matchedUser = registeredUsers.find((user) => {
+      const userEmail = user?.email?.trim().toLowerCase()
+      return userEmail && userEmail === normalizedEmail
+    })
+
+    return {
+      email,
+      userDocId: matchedUser?.id || matchedUser?.userDocId || null,
+    }
+  }
+
+  const email = entry?.email?.trim() || entry?.value?.trim() || ''
+  const matchedUser = registeredUsers.find((user) => {
+    const userEmail = user?.email?.trim().toLowerCase()
+    return userEmail && userEmail === email.trim().toLowerCase()
+  })
+
+  return {
+    email,
+    userDocId:
+      entry?.userDocId ||
+      entry?.id ||
+      matchedUser?.id ||
+      matchedUser?.userDocId ||
+      null,
+  }
+}
+
+export const getCooperatorInviteValidationError = ({
+  email,
+  currentUserEmail,
+  studyOwnerEmail,
+  existingCooperators = [],
+  registeredUsers = [],
+}) => {
+  if (!email || typeof email !== 'string') {
+    return 'Please enter a valid email address.'
+  }
+
+  const normalizedEmail = email.trim().toLowerCase()
+  if (!normalizedEmail.includes('@') || !normalizedEmail.includes('.')) {
+    return 'Please enter a valid email address.'
+  }
+
+  if (
+    currentUserEmail &&
+    normalizedEmail === currentUserEmail.trim().toLowerCase()
+  ) {
+    return 'You cannot invite yourself.'
+  }
+
+  if (
+    studyOwnerEmail &&
+    normalizedEmail === studyOwnerEmail.trim().toLowerCase()
+  ) {
+    return 'The study owner cannot be invited as a cooperator.'
+  }
+
+  const alreadyCooperator = existingCooperators.some((cooperator) => {
+    const cooperatorEmail = cooperator?.email?.trim().toLowerCase()
+    return cooperatorEmail && cooperatorEmail === normalizedEmail
+  })
+
+  if (alreadyCooperator) {
+    return 'This email is already a cooperator for this study.'
+  }
+
+  const isRegisteredUser = registeredUsers.some((user) => {
+    const userEmail = user?.email?.trim().toLowerCase()
+    return userEmail && userEmail === normalizedEmail
+  })
+
+  return isRegisteredUser ? null : null
+}
+
 /**
  * Composable for common cooperator utilities
  */
@@ -74,5 +157,6 @@ export function useCooperatorUtils() {
     formatDate,
     formatTime,
     validateEmail,
+    getCooperatorInviteValidationError,
   }
 }

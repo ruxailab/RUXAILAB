@@ -10,25 +10,26 @@
         {{ title || 'Send Invitation' }}
       </v-card-title>
       <v-card-text class="pt-4">
-        <v-combobox
-          :key="comboboxKey"
-          ref="combobox"
-          v-model="comboboxModel"
-          :items="users.filter((user) => user?.email != null)"
-          item-title="email"
-          :label="selectLabel || 'Select cooperator'"
-          multiple
-          variant="outlined"
-          density="comfortable"
-          @update:model-value="validateEmail"
-        >
-          <template #no-data>
-            {{
-              noDataText ||
-              'There are no users registered with that email, press enter to select anyways.'
-            }}
-          </template>
-        </v-combobox>
+        <v-row class="ma-0">
+          <v-text-field
+            v-model="emailInput"
+            :label="selectLabel || 'Type cooperator email'"
+            variant="outlined"
+            density="comfortable"
+            placeholder="Type an email address"
+            prepend-inner-icon="mdi-email-outline"
+            clearable
+            @keydown.enter.prevent="addEmailToSelection"
+          />
+          <v-btn
+            class="ml-2"
+            icon
+            variant="outlined"
+            :disabled="!emailInput.trim()"
+            @click="addEmailToSelection"
+            ><v-icon>mdi-plus</v-icon></v-btn
+          >
+        </v-row>
 
         <div class="d-flex flex-wrap mt-1">
           <v-chip
@@ -152,7 +153,11 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
+import {
+  useCooperatorUtils,
+  getCooperatorInviteValidationError,
+  normalizeCooperatorInviteEntry,
+} from '@/shared/composables/useCooperatorUtils'
 import { showError, showWarning } from '@/shared/utils/toast'
 
 const props = defineProps({
@@ -163,6 +168,18 @@ const props = defineProps({
   users: {
     type: Array,
     default: () => [],
+  },
+  existingCooperators: {
+    type: Array,
+    default: () => [],
+  },
+  currentUserEmail: {
+    type: String,
+    default: '',
+  },
+  studyOwnerEmail: {
+    type: String,
+    default: '',
   },
   showDateTimeSelection: {
     type: Boolean,
@@ -186,15 +203,13 @@ const props = defineProps({
 const emit = defineEmits(['update:show', 'send-invitations'])
 
 // Use composables
-const { roleOptions, validateEmail: isValidEmail } = useCooperatorUtils()
+const { roleOptions } = useCooperatorUtils()
 
 // Local state
 const selectedCoops = ref([])
-const comboboxModel = ref([])
-const comboboxKey = ref(0)
 const selectedRole = ref(1)
 const inviteMessage = ref('')
-const combobox = ref(null)
+const emailInput = ref('')
 
 // Date and time for scheduling (accessibility tests)
 const date = ref(
@@ -231,53 +246,40 @@ const removeSelectedCoop = (index) => {
   selectedCoops.value.splice(index, 1)
 }
 
-const isStringEmail = (email) => {
-  return typeof email !== 'object' && email !== undefined && email.length > 0
-}
-
-const isUserEmailValid = (email) => {
-  return props.users.find((user) => user.email === email)
-}
-
 const isCoopAlreadySelected = (emailToCheck) => {
   return selectedCoops.value.find(
     (coop) => (typeof coop === 'object' ? coop.email : coop) === emailToCheck,
   )
 }
 
-const validateEmail = () => {
-  const email = comboboxModel.value.pop()
-  comboboxKey.value++
+const addEmailToSelection = () => {
+  const rawValue = emailInput.value.trim()
+  if (!rawValue) return
 
-  if (!email) return
+  const validationError = getCooperatorInviteValidationError({
+    email: rawValue,
+    currentUserEmail: props.currentUserEmail,
+    studyOwnerEmail: props.studyOwnerEmail,
+    existingCooperators: props.existingCooperators,
+    registeredUsers: props.users,
+  })
 
-  // Handle string email input
-  if (isStringEmail(email)) {
-    if (!isValidEmail(email)) {
-      showError('Invalid email format')
-      return
-    }
-
-    if (!isUserEmailValid(email)) {
-      showError(`${email} is not a valid email or does not exist`)
-      return
-    }
-
-    if (!selectedCoops.value.includes(email)) {
-      selectedCoops.value.push(email)
-    }
+  if (validationError) {
+    showError(validationError)
+    emailInput.value = ''
     return
   }
 
-  // Handle object email input
-  if (selectedCoops.value.includes(email)) return
-
-  if (isCoopAlreadySelected(email.email)) {
-    showWarning(`${email.email} has already been selected`)
+  if (isCoopAlreadySelected(rawValue)) {
+    showWarning(`${rawValue} has already been selected`)
+    emailInput.value = ''
     return
   }
 
-  selectedCoops.value.push(email)
+  selectedCoops.value.push(
+    normalizeCooperatorInviteEntry(rawValue, props.users),
+  )
+  emailInput.value = ''
 }
 
 const onCancel = () => {
@@ -303,10 +305,9 @@ const onSend = () => {
 
 const resetForm = () => {
   selectedCoops.value = []
-  comboboxModel.value = []
   inviteMessage.value = ''
   selectedRole.value = 1
-  combobox.value?.blur()
+  emailInput.value = ''
 }
 
 // Watch for dialog visibility to reset form
