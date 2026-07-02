@@ -12,8 +12,7 @@ export const normalizeCooperatorInviteEntry = (entry, registeredUsers = []) => {
     const email = entry.trim()
     const normalizedEmail = email.toLowerCase()
     const matchedUser = registeredUsers.find((user) => {
-      const userEmail = user?.email?.trim().toLowerCase()
-      return userEmail && userEmail === normalizedEmail
+      return user?.email?.trim()?.toLowerCase() === normalizedEmail
     })
 
     return {
@@ -24,8 +23,7 @@ export const normalizeCooperatorInviteEntry = (entry, registeredUsers = []) => {
 
   const email = entry?.email?.trim() || entry?.value?.trim() || ''
   const matchedUser = registeredUsers.find((user) => {
-    const userEmail = user?.email?.trim().toLowerCase()
-    return userEmail && userEmail === email.trim().toLowerCase()
+    return user?.email?.trim()?.toLowerCase() === email.trim().toLowerCase()
   })
 
   return {
@@ -70,20 +68,12 @@ export const getCooperatorInviteValidationError = ({
   }
 
   const alreadyCooperator = existingCooperators.some((cooperator) => {
-    const cooperatorEmail = cooperator?.email?.trim().toLowerCase()
-    return cooperatorEmail && cooperatorEmail === normalizedEmail
+    return cooperator?.email?.trim()?.toLowerCase() === normalizedEmail
   })
 
   if (alreadyCooperator) {
     return 'This email is already a cooperator for this study.'
   }
-
-  const isRegisteredUser = registeredUsers.some((user) => {
-    const userEmail = user?.email?.trim().toLowerCase()
-    return userEmail && userEmail === normalizedEmail
-  })
-
-  return isRegisteredUser ? null : null
 }
 
 /**
