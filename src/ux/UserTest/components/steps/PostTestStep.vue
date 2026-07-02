@@ -25,7 +25,13 @@
             class="mb-7"
           />
 
-          <div class="question-shell mx-auto mb-8">
+          <div v-if="!hasQuestions" class="question-shell mx-auto mb-8 text-center">
+            <p class="text-body-1 text-medium-emphasis">
+              No post-test questions configured for this study.
+            </p>
+          </div>
+
+          <div v-else-if="currentItem" class="question-shell mx-auto mb-8">
             <h2
               class="text-h4 text-sm-h3 font-weight-bold text-secondary text-center mb-3"
             >
@@ -74,6 +80,7 @@
           <v-row justify="space-between" class="mt-2">
             <v-col cols="auto">
               <v-btn
+                v-if="hasQuestions"
                 rounded="pill"
                 variant="outlined"
                 :disabled="step === 0"
@@ -84,7 +91,7 @@
             </v-col>
             <v-col cols="auto">
               <v-btn
-                v-if="!isLastStep"
+                v-if="hasQuestions && !isLastStep"
                 rounded="pill"
                 color="primary"
                 variant="flat"
@@ -124,16 +131,22 @@ const props = defineProps({
 const emit = defineEmits(['done', 'update:postTestAnswer'])
 
 const step = ref(0)
-const localAnswers = ref([...props.postTestAnswer])
+const localAnswers = ref(
+  Array.isArray(props.postTestAnswer) ? [...props.postTestAnswer] : [],
+)
 
-const currentItem = computed(() => props.postTest[step.value])
-const isLastStep = computed(() => step.value === props.postTest.length - 1)
+const hasQuestions = computed(() => (props.postTest?.length ?? 0) > 0)
+const currentItem = computed(() => props.postTest?.[step.value] ?? null)
+const isLastStep = computed(
+  () => !hasQuestions.value || step.value === props.postTest.length - 1,
+)
 const progressPercentage = computed(() => {
-  if (!props.postTest?.length) return 0
+  if (!hasQuestions.value) return 100
   return ((step.value + 1) / props.postTest.length) * 100
 })
 
 const next = () => {
+  if (!hasQuestions.value) return
   if (step.value < props.postTest.length - 1) step.value++
 }
 
@@ -142,6 +155,7 @@ const prev = () => {
 }
 
 const updateAnswer = (index, value) => {
+  if (!localAnswers.value[index]) return
   localAnswers.value[index].answer = value
   emit('update:postTestAnswer', localAnswers.value)
 }
@@ -149,11 +163,20 @@ const updateAnswer = (index, value) => {
 watch(
   () => props.postTestAnswer,
   (newAnswers) => {
-    if (newAnswers) {
+    if (Array.isArray(newAnswers)) {
       localAnswers.value = [...newAnswers]
     }
   },
   { deep: true, immediate: true },
+)
+
+watch(
+  () => props.postTest?.length,
+  (length) => {
+    if (length && step.value >= length) {
+      step.value = Math.max(0, length - 1)
+    }
+  },
 )
 </script>
 

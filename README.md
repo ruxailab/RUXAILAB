@@ -26,7 +26,7 @@
 </div>
  
 ## About
-as
+
 UX Remote LAB is an open-source platform designed to collect usability feedback from users. It allows you to gather user reviews, analyze them, and create comprehensive reports to better understand your application's usability. Additionally, it offers heuristic tests, enabling experts to evaluate your application's compliance with usability principles.
 
 ### Community & Experience
@@ -220,6 +220,31 @@ npm run deploy:prod
 ```
 
 These scripts load `functions/.env.development` or `functions/.env.production` depending on the target and use the `develop` and `prod` aliases from `.firebaserc`.
+
+## LiveKit Setup (Moderated Video Calls)
+
+Moderated user tests with video calls require a separate **LiveKit** stack. RUXAILAB does not bundle the server or token issuer — clone the companion repository and run it alongside this project.
+
+### Clone the repository
+
+```bash
+git clone https://github.com/ruxailab/video-call-server.git
+cd video-call-server
+```
+
+Follow the setup and run instructions in that repository's README (LiveKit server + token server).
+
+### Configure RUXAILAB
+
+Copy the LiveKit variables from `.env.example` into your `.env` file:
+
+```bash
+VUE_APP_LIVEKIT_ENABLED=true
+VUE_APP_LIVEKIT_TOKEN_SERVER_URL=http://localhost:3001
+VUE_APP_LIVEKIT_URL=ws://localhost:7880
+```
+
+Adjust the URLs if your local setup uses different ports.
 
 ## Docker Setup
 
