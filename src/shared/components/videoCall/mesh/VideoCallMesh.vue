@@ -8,107 +8,116 @@
     <v-row class="video-row justify-center" no-gutters>
       <!-- Grid of Participants -->
       <v-col v-if="callStarted" cols="12">
-        <div class="videos-grid">
-          <!-- Local Video (not for observators) -->
-          <div v-if="!isObservator" class="video-wrapper">
-            <div class="video-container">
-              <video
-                ref="localVideo"
-                autoplay
-                muted
-                playsinline
-                class="video-element"
-              ></video>
+        <div class="video-stage">
+          <!-- Screen share spotlight (highlighted, large) -->
+          <div v-if="hasScreenShare" class="spotlight-primary">
+            <div
+              v-for="feed in screenShareFeeds"
+              :key="feed.key"
+              class="spotlight-item"
+            >
+              <div class="video-container screen-share-container">
+                <video
+                  :srcObject="feed.stream"
+                  autoplay
+                  playsinline
+                  class="video-element screen-share-element"
+                ></video>
+                <div class="video-label">{{ feed.label }}</div>
+              </div>
+            </div>
+          </div>
 
-              <!-- Camera disabled overlay -->
-              <div v-if="!isCameraEnabled" class="camera-disabled-overlay">
-                <v-icon size="64" color="white" class="mb-2"
-                  >mdi-video-off</v-icon
+          <!-- Camera grid (becomes a compact filmstrip during screen share) -->
+          <div
+            class="videos-grid"
+            :class="{ 'videos-filmstrip': hasScreenShare }"
+            :style="gridStyleVars"
+          >
+            <!-- Local Video (not for observators) -->
+            <div v-if="!isObservator" class="video-wrapper">
+              <div class="video-container">
+                <video
+                  ref="localVideo"
+                  autoplay
+                  muted
+                  playsinline
+                  class="video-element"
+                ></video>
+
+                <!-- Camera disabled overlay -->
+                <div v-if="!isCameraEnabled" class="camera-disabled-overlay">
+                  <v-icon size="64" color="white" class="mb-2"
+                    >mdi-video-off</v-icon
+                  >
+                  <p class="text-white">
+                    {{ t('videoCall.session.cameraOff') }}
+                  </p>
+                </div>
+
+                <!-- Microphone muted indicator -->
+                <div v-if="!isMicrophoneEnabled" class="mic-muted-indicator">
+                  <v-icon size="24" color="white">mdi-microphone-off</v-icon>
+                </div>
+
+                <div class="video-label">
+                  {{ t('videoCall.session.yourVideo') }} ({{
+                    user?.email?.split('@')[0]
+                  }})
+                </div>
+              </div>
+            </div>
+
+            <!-- Remote Videos -->
+            <div
+              v-for="(stream, userId) in remoteStreams"
+              :key="userId"
+              class="video-wrapper"
+            >
+              <div class="video-container">
+                <video
+                  v-if="isRemoteCameraEnabled(userId)"
+                  :srcObject="stream"
+                  autoplay
+                  playsinline
+                  class="video-element"
+                ></video>
+
+                <!-- Camera disabled overlay for remote peer -->
+                <div
+                  v-if="!isRemoteCameraEnabled(userId)"
+                  class="camera-disabled-overlay"
                 >
-                <p class="text-white">
-                  {{ t('videoCall.session.cameraOff') }}
-                </p>
-              </div>
+                  <v-icon size="64" color="white" class="mb-2"
+                    >mdi-video-off</v-icon
+                  >
+                  <p class="text-white">
+                    {{ t('videoCall.session.cameraOff') }}
+                  </p>
+                </div>
 
-              <!-- Microphone muted indicator -->
-              <div v-if="!isMicrophoneEnabled" class="mic-muted-indicator">
-                <v-icon size="24" color="white">mdi-microphone-off</v-icon>
-              </div>
-
-              <div class="video-label">
-                {{ t('videoCall.session.yourVideo') }} ({{
-                  user?.email?.split('@')[0]
-                }})
-              </div>
-            </div>
-          </div>
-
-          <!-- Remote Videos -->
-          <div
-            v-for="(stream, userId) in remoteStreams"
-            :key="userId"
-            class="video-wrapper"
-          >
-            <div class="video-container">
-              <video
-                v-if="isRemoteCameraEnabled(userId)"
-                :srcObject="stream"
-                autoplay
-                playsinline
-                class="video-element"
-              ></video>
-
-              <!-- Camera disabled overlay for remote peer -->
-              <div
-                v-if="!isRemoteCameraEnabled(userId)"
-                class="camera-disabled-overlay"
-              >
-                <v-icon size="64" color="white" class="mb-2"
-                  >mdi-video-off</v-icon
+                <!-- Microphone muted indicator for remote peer -->
+                <div
+                  v-if="!isRemoteMicrophoneEnabled(userId)"
+                  class="mic-muted-indicator"
                 >
-                <p class="text-white">
-                  {{ t('videoCall.session.cameraOff') }}
-                </p>
+                  <v-icon size="24" color="white">mdi-microphone-off</v-icon>
+                </div>
+
+                <div class="video-label">{{ getPeerName(userId) }}</div>
               </div>
-
-              <!-- Microphone muted indicator for remote peer -->
-              <div
-                v-if="!isRemoteMicrophoneEnabled(userId)"
-                class="mic-muted-indicator"
-              >
-                <v-icon size="24" color="white">mdi-microphone-off</v-icon>
-              </div>
-
-              <div class="video-label">{{ getPeerName(userId) }}</div>
             </div>
-          </div>
 
-          <!-- Screen share tiles (local and remote) -->
-          <div
-            v-for="feed in screenShareFeeds"
-            :key="feed.key"
-            class="video-wrapper"
-          >
-            <div class="video-container screen-share-container">
-              <video
-                :srcObject="feed.stream"
-                autoplay
-                playsinline
-                class="video-element screen-share-element"
-              ></video>
-              <div class="video-label">{{ feed.label }}</div>
+            <!-- Waiting Message if no peers -->
+            <div
+              v-if="Object.keys(remoteStreams).length === 0 && !hasScreenShare"
+              class="d-flex align-center justify-center pa-4 text-grey"
+            >
+              <v-icon class="mr-2">mdi-account-clock</v-icon>
+              <span>{{
+                t('videoCall.session.waitingForParticipants')
+              }}</span>
             </div>
-          </div>
-
-          <!-- Waiting Message if no peers -->
-          <div
-            v-if="Object.keys(remoteStreams).length === 0"
-            class="d-flex align-center justify-center pa-4 text-grey"
-          >
-            <v-icon class="mr-2">mdi-account-clock</v-icon>
-            <span>{{
-              t('videoCall.session.waitingForParticipants')
-            }}</span>
           </div>
         </div>
       </v-col>
@@ -118,7 +127,7 @@
         v-if="caller && !callStarted && !isObservator && localStream"
         cols="12"
       >
-        <div class="videos-grid">
+        <div class="videos-grid" :style="{ '--grid-cols': 1 }">
           <div class="video-wrapper">
             <div class="video-container">
               <video
@@ -966,6 +975,28 @@ const callStarted = computed(
   () =>
     roomReady.value && (Object.keys(peers).length > 0 || !!localStream.value),
 )
+
+// Whether any screen share feed is active (drives the spotlight layout)
+const hasScreenShare = computed(() => screenShareFeeds.value.length > 0)
+
+// Count of camera tiles currently visible (local + remotes)
+const cameraCount = computed(
+  () =>
+    (isObservator.value ? 0 : 1) + Object.keys(remoteStreams.value).length,
+)
+
+// Number of grid columns, so tiles resize based on participant count
+const cameraColumns = computed(() => {
+  const count = cameraCount.value
+  if (count <= 1) return 1
+  if (count <= 4) return 2
+  if (count <= 9) return 3
+  return 4
+})
+
+const gridStyleVars = computed(() => ({
+  '--grid-cols': cameraColumns.value,
+}))
 
 // Organize participants by role
 const participantsList = computed(() => {
