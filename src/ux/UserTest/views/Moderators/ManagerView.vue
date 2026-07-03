@@ -64,13 +64,11 @@
 
 <script setup>
 import {
-  getBottomCardsDefualt,
-  getNavigatorDefault,
-  getTopCardsDefualt,
-} from '@/shared/utils/managerDefault'
+  buildStudyManagerCards,
+  buildStudyNavigator,
+} from '@/shared/utils/studyNavigation'
 import ManagerDashboardLayout from '@/shared/components/manager/ManagerDashboardLayout.vue'
 import ManagerView from '@/shared/views/template/ManagerView.vue'
-import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import { getStatusIcon } from '@/shared/utils/statusUtils'
 import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
@@ -90,56 +88,32 @@ const route = useRoute()
 const user = computed(() => store.getters.user)
 const test = computed(() => store.getters.test)
 
-const accessLevel = computed(() => {
-  const currentUser = user.value
-  const currentTest = test.value
-
-  if (!currentUser) return ACCESS_LEVEL.GUEST
-  if (currentUser.accessLevel === 0) return ACCESS_LEVEL.ADMIN
-  if (currentTest?.testAdmin?.userDocId === currentUser.id)
-    return ACCESS_LEVEL.ADMIN
-
-  const coop = currentTest?.cooperators?.find(
-    (c) => c.userDocId === currentUser.id,
-  )
-  if (coop?.accepted === true) return coop.accessLevel
-
-  return currentTest?.isPublic ? ACCESS_LEVEL.EVALUATOR : ACCESS_LEVEL.GUEST
-})
-
 const topCards = computed(() => {
   if (!test.value) return []
-  return getTopCardsDefualt(test.value, 'userTest/moderated')
+  return buildStudyManagerCards({
+    study: test.value,
+    user: user.value,
+    type: 'userTest/moderated',
+  }).topCards
 })
 
 const bottomCards = computed(() => {
   if (!test.value) return []
-  return getBottomCardsDefualt(test.value, 'userTest/moderated')
+  return buildStudyManagerCards({
+    study: test.value,
+    user: user.value,
+    type: 'userTest/moderated',
+  }).bottomCards
 })
 
 const navigator = computed(() => {
   if (!test.value) return []
-  const items = [
-    ...getNavigatorDefault(
-      test.value,
-      accessLevel.value,
-      route,
-      'userTest/moderated',
-    ),
-  ]
-
-  items.push({
-    title: 'Storage',
-    icon: 'mdi-database',
-    path: `/userTest/moderated/storage/${test.value.id}`,
+  return buildStudyNavigator({
+    study: test.value,
+    user: user.value,
+    type: 'userTest/moderated',
+    previewPath: `/testview/${test.value.id}/${user.value.id}`,
   })
-
-  for (const item of items) {
-    if (item.title === 'Preview') {
-      item.path = `/testview/${test.value.id}/${user.value.id}`
-    }
-  }
-  return items
 })
 
 // Lifecycle
