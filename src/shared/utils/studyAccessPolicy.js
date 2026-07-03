@@ -35,6 +35,15 @@ export const STUDY_CAPABILITY = Object.freeze({
 const C = STUDY_CAPABILITY
 const R = STUDY_ROLE
 
+export const STUDY_ROLE_LABEL = Object.freeze({
+  [R.ADMIN]: 'Admin',
+  [R.EVALUATOR]: 'Evaluator',
+  [R.GUEST]: 'Guest',
+  [R.OBSERVATOR]: 'Observator',
+  [R.MANAGER]: 'Manager',
+  [R.USER]: 'User',
+})
+
 const USER_ROLES = Object.freeze([R.ADMIN, R.MANAGER, R.USER, R.OBSERVATOR])
 const HEURISTIC_ROLES = Object.freeze([
   R.ADMIN,
@@ -165,6 +174,17 @@ export function getAssignableRoles(study, user) {
     return [...(MANAGER_ASSIGNABLE_ROLES[studyType] ?? [])]
   }
   return []
+}
+
+const toRoleOptions = (roles) =>
+  roles.map((value) => ({ title: STUDY_ROLE_LABEL[value], value }))
+
+export function getSupportedRoleOptions(study) {
+  return toRoleOptions(getSupportedRoles(study))
+}
+
+export function getAssignableRoleOptions(study, user) {
+  return toRoleOptions(getAssignableRoles(study, user))
 }
 
 export function canManageCooperator(

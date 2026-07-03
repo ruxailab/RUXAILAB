@@ -3,6 +3,8 @@ import {
   STUDY_ROLE,
   canManageCooperator,
   getAssignableRoles,
+  getAssignableRoleOptions,
+  getSupportedRoleOptions,
   getStudyFallbackPath,
   hasStudyCapability,
   resolveStudyAccess,
@@ -120,6 +122,19 @@ describe('study access policy', () => {
     expect(getAssignableRoles(study, manager)).toEqual([
       STUDY_ROLE.EVALUATOR,
       STUDY_ROLE.GUEST,
+    ])
+    expect(getAssignableRoleOptions(study, manager)).toEqual([
+      { title: 'Evaluator', value: STUDY_ROLE.EVALUATOR },
+      { title: 'Guest', value: STUDY_ROLE.GUEST },
+    ])
+  })
+
+  it('exposes only roles supported by the current study type', () => {
+    expect(getSupportedRoleOptions(userStudy())).toEqual([
+      { title: 'Admin', value: STUDY_ROLE.ADMIN },
+      { title: 'Manager', value: STUDY_ROLE.MANAGER },
+      { title: 'User', value: STUDY_ROLE.USER },
+      { title: 'Observator', value: STUDY_ROLE.OBSERVATOR },
     ])
   })
 

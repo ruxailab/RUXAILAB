@@ -81,11 +81,11 @@
             :ref="'select' + cooperators.indexOf(item)"
             :key="dataTableKey"
             :model-value="item.accessLevel"
-            :items="roleOptions"
+            :items="roleOptionsFor(item)"
             item-title="title"
             return-object
             density="comfortable"
-            :disabled="!item.invited || item.accepted ? false : true"
+            :disabled="!canChangeRole(item) || (item.invited && !item.accepted)"
             variant="plain"
             @update:model-value="onRoleChange(item, $event)"
           >
@@ -177,7 +177,7 @@
                 </v-list-item-title>
               </v-list-item>
               <v-list-item
-                v-if="item.accepted"
+                v-if="item.accepted && canRemove(item)"
                 @click="onRemoveCooperator(item)"
               >
                 <v-list-item-title>
@@ -185,7 +185,9 @@
                 </v-list-item-title>
               </v-list-item>
               <v-list-item
-                v-if="item.invited && !item.accepted"
+                v-if="
+                  item.invited && !item.accepted && canCancelInvitation(item)
+                "
                 @click="onCancelInvitation(item)"
               >
                 <v-list-item-title>
@@ -252,6 +254,26 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  roleOptions: {
+    type: Array,
+    default: () => [],
+  },
+  assignableRoleOptions: {
+    type: Array,
+    default: () => [],
+  },
+  canChangeRole: {
+    type: Function,
+    default: () => true,
+  },
+  canRemove: {
+    type: Function,
+    default: () => true,
+  },
+  canCancelInvitation: {
+    type: Function,
+    default: () => true,
+  },
 })
 
 const emit = defineEmits([
@@ -265,7 +287,6 @@ const emit = defineEmits([
 
 // Use composables
 const {
-  roleOptions,
   statusFilterOptions,
   getInitials,
   getRoleColor,
@@ -275,6 +296,17 @@ const {
   formatDate,
   formatTime,
 } = useCooperatorUtils()
+
+const roleOptionsFor = (cooperator) => {
+  const options = [...props.assignableRoleOptions]
+  const currentRole = props.roleOptions.find(
+    (role) => role.value === cooperator.accessLevel,
+  )
+  if (currentRole && !options.some((role) => role.value === currentRole.value)) {
+    options.push(currentRole)
+  }
+  return options
+}
 
 // Local state
 const dataTableKey = ref(0)
@@ -329,7 +361,7 @@ const filteredCooperators = computed(() => {
   if (filters.value.role) {
     result = result.filter(
       (coop) =>
-        roleOptions.value.find((r) => r.value === coop.accessLevel)?.title ===
+        props.roleOptions.find((r) => r.value === coop.accessLevel)?.title ===
         filters.value.role,
     )
   }

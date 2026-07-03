@@ -31,6 +31,11 @@
       :loading="loading"
       :show-date-columns="showDateColumns"
       :show-session-column="showSessionColumn"
+      :role-options="supportedRoleOptions"
+      :assignable-role-options="assignableRoleOptions"
+      :can-change-role="canChangeRole"
+      :can-remove="canRemoveCooperator"
+      :can-cancel-invitation="canCancelCooperatorInvitation"
       :message-text="$t('HeuristicsCooperators.actions.send_message')"
       :reinvite-text="$t('HeuristicsCooperators.actions.reinvite')"
       :remove-text="$t('HeuristicsCooperators.actions.remove_cooperator')"
@@ -65,6 +70,7 @@
     <InviteDialog
       v-model:show="showInviteDialog"
       :users="users"
+      :role-options="assignableRoleOptions"
       :show-date-time-selection="false"
       :title="$t('HeuristicsCooperators.actions.send_invitation')"
       :select-label="$t('HeuristicsCooperators.actions.select_cooperator')"
@@ -115,7 +121,6 @@ import MessageDialog from '@/shared/components/dialogs/MessageDialog.vue'
 import InviteDialog from '@/shared/components/dialogs/InviteDialog.vue'
 import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 import UIDGenerator from 'uid-generator'
-import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
 import { useCooperatorActions } from '@/shared/composables/useCooperatorActions'
 import Cooperators from '../models/Cooperators'
 import { getMethodManagerView } from '../constants/methodDefinitions'
@@ -124,6 +129,11 @@ import Notification from '@/shared/models/Notification'
 import EmailController from '../controllers/EmailController'
 import { useI18n } from 'vue-i18n'
 import { showSuccess, showError, showWarning } from '@/shared/utils/toast'
+import {
+  canManageCooperator,
+  getAssignableRoleOptions,
+  getSupportedRoleOptions,
+} from '@/shared/utils/studyAccessPolicy'
 
 const uidgen = new UIDGenerator()
 const router = useRouter()
@@ -153,8 +163,6 @@ const store = useStore()
 const route = useRoute()
 const slots = useSlots()
 const { t } = useI18n()
-
-const { roleOptions } = useCooperatorUtils()
 
 useCooperatorActions() // Keep the hook call in case it has side effects
 
@@ -281,6 +289,28 @@ const cooperatorsEdit = computed(() =>
   test.value?.cooperators ? [...test.value.cooperators] : [],
 )
 const loading = computed(() => store.getters.loading)
+const supportedRoleOptions = computed(() => getSupportedRoleOptions(test.value))
+const assignableRoleOptions = computed(() =>
+  getAssignableRoleOptions(test.value, userAuth.value),
+)
+
+const canChangeRole = (cooperator) =>
+  assignableRoleOptions.value.some((role) =>
+    canManageCooperator(test.value, userAuth.value, cooperator, {
+      action: 'assignRole',
+      role: role.value,
+    }),
+  )
+
+const canRemoveCooperator = (cooperator) =>
+  canManageCooperator(test.value, userAuth.value, cooperator, {
+    action: 'remove',
+  })
+
+const canCancelCooperatorInvitation = (cooperator) =>
+  canManageCooperator(test.value, userAuth.value, cooperator, {
+    action: 'cancelInvitation',
+  })
 
 const openMessageDialog = (item) => {
   selectedUser.value = item
@@ -341,6 +371,27 @@ const handleSendInvitations = async (invitationData) => {
   inviteMessages.value = inviteMessage
   cooperatorsUpdate.value = [...cooperatorsEdit.value]
 
+  const roleOption = assignableRoleOptions.value.find(
+    (role) => role.value === selectedRole,
+  )
+  if (!roleOption) {
+    showError('AccessNotAllowed.noAccess')
+    return
+  }
+
+  const unauthorizedTarget = selectedCoops.find((coop) => {
+    const coopEmail = coop.email || coop
+    const existing = cooperatorsEdit.value.find((item) => item.email === coopEmail)
+    return !canManageCooperator(test.value, userAuth.value, existing, {
+      action: existing ? 'assignRole' : 'invite',
+      role: selectedRole,
+    })
+  })
+  if (unauthorizedTarget) {
+    showError('AccessNotAllowed.noAccess')
+    return
+  }
+
   selectedCoops.forEach((coop) => {
     const coopEmail = coop.email || coop // Handle both object and string formats
 
@@ -358,7 +409,7 @@ const handleSendInvitations = async (invitationData) => {
           email: coop,
           invited: true,
           accepted: false,
-          accessLevel: roleOptions.value[selectedRole].value,
+          accessLevel: selectedRole,
           inviteMessage: inviteMessage || null,
           token,
           progress: 0,
@@ -371,7 +422,7 @@ const handleSendInvitations = async (invitationData) => {
           email: coop.email,
           invited: true,
           accepted: false,
-          accessLevel: roleOptions.value[selectedRole].value,
+          accessLevel: selectedRole,
           inviteMessage: inviteMessage || null,
           token,
           progress: 0,
@@ -384,7 +435,7 @@ const handleSendInvitations = async (invitationData) => {
     } else {
       // Email already exists - update their role instead of creating duplicate
       const existing = cooperatorsEdit.value[existingIndex]
-      const newRole = roleOptions.value[selectedRole].value
+      const newRole = selectedRole
 
       if (
         existing.accessLevel !== newRole ||
@@ -411,7 +462,7 @@ const handleSendInvitations = async (invitationData) => {
   if (updatedRoles.length > 0) {
     showSuccess(
       t('cooperators.updatedRole', {
-        role: roleOptions.value[selectedRole].title,
+        role: roleOption.title,
         users: updatedRoles.join(', '),
       }),
     )
@@ -422,7 +473,17 @@ const handleSendInvitations = async (invitationData) => {
 }
 
 const changeRole = async (item, newValue) => {
-  const currentAccessLevelText = roleOptions.value.find(
+  if (
+    !canManageCooperator(test.value, userAuth.value, item, {
+      action: 'assignRole',
+      role: newValue.value,
+    })
+  ) {
+    showError('AccessNotAllowed.noAccess')
+    return
+  }
+
+  const currentAccessLevelText = supportedRoleOptions.value.find(
     (r) => r.value === item.accessLevel,
   )?.title
   const newAccessLevelText = newValue.title
@@ -453,6 +514,15 @@ const changeRole = async (item, newValue) => {
 }
 
 const executeRoleChange = async (item, newValue) => {
+  if (
+    !canManageCooperator(test.value, userAuth.value, item, {
+      action: 'assignRole',
+      role: newValue.value,
+    })
+  ) {
+    throw new Error('STUDY_ROLE_FORBIDDEN')
+  }
+
   const cooperators = Array.isArray(test.value?.cooperators)
     ? test.value.cooperators
     : []
@@ -568,7 +638,9 @@ const notifyCooperator = async (guest, customMessage = null) => {
       testId: test.value.id,
       redirectsTo: path,
       type: 'Collaboration',
-      accessLevel: roleOptions.value.find((r) => r.value === guest.accessLevel)
+      accessLevel: supportedRoleOptions.value.find(
+        (r) => r.value === guest.accessLevel,
+      )
         ?.value,
       titleTemplate: 'HeuristicsCooperators.actions.send_invitation',
     }
@@ -590,6 +662,11 @@ const reinvite = async (guest) => {
 }
 
 const removeCoop = async (coop) => {
+  if (!canRemoveCooperator(coop)) {
+    showError('AccessNotAllowed.noAccess')
+    return
+  }
+
   confirmDialog.value = {
     show: true,
     title:
@@ -613,6 +690,10 @@ const removeCoop = async (coop) => {
 }
 
 const executeCooperatorRemoval = async (coop) => {
+  if (!canRemoveCooperator(coop)) {
+    throw new Error('STUDY_ROLE_FORBIDDEN')
+  }
+
   const index = cooperatorsEdit.value.findIndex(
     (c) =>
       (c.token && coop.token && c.token === coop.token) ||
@@ -631,6 +712,11 @@ const executeCooperatorRemoval = async (coop) => {
 }
 
 const cancelInvitation = async (guest) => {
+  if (!canCancelCooperatorInvitation(guest)) {
+    showError('AccessNotAllowed.noAccess')
+    return
+  }
+
   confirmDialog.value = {
     show: true,
     title:
@@ -654,6 +740,10 @@ const cancelInvitation = async (guest) => {
 }
 
 const executeInvitationCancellation = async (guest) => {
+  if (!canCancelCooperatorInvitation(guest)) {
+    throw new Error('STUDY_ROLE_FORBIDDEN')
+  }
+
   const index = cooperatorsEdit.value.findIndex(
     (c) =>
       (c.token && guest.token && c.token === guest.token) ||
