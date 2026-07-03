@@ -122,6 +122,23 @@
   max-height: 72vh;
 }
 
+/* Click-to-focus affordance on any tile */
+.tile-clickable {
+  cursor: pointer;
+}
+
+.videos-grid .tile-clickable .video-container {
+  transition:
+    outline-color 0.2s ease,
+    transform 0.2s ease;
+  outline: 3px solid transparent;
+  outline-offset: 2px;
+}
+
+.videos-grid .tile-clickable:hover .video-container {
+  outline-color: rgba(var(--v-theme-primary), 0.8);
+}
+
 .screen-share-container .screen-share-element {
   width: 100%;
   height: 100%;

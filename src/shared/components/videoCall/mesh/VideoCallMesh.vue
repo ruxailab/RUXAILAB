@@ -9,83 +9,32 @@
       <!-- Grid of Participants -->
       <v-col v-if="callStarted" cols="12">
         <div class="video-stage">
-          <!-- Screen share spotlight (highlighted, large) -->
-          <div v-if="hasScreenShare" class="spotlight-primary">
+          <!-- Spotlight: focused participant or shared screen -->
+          <div v-if="isFocusMode" class="spotlight-primary">
             <div
-              v-for="feed in screenShareFeeds"
-              :key="feed.key"
-              class="spotlight-item"
+              :key="focusedTile.id"
+              class="spotlight-item tile-clickable"
+              @click="clearFocus"
             >
-              <div class="video-container screen-share-container">
+              <div
+                class="video-container"
+                :class="{
+                  'screen-share-container': focusedTile.type === 'screen',
+                }"
+              >
                 <video
-                  :srcObject="feed.stream"
+                  :srcObject="focusedTile.stream"
                   autoplay
-                  playsinline
-                  class="video-element screen-share-element"
-                ></video>
-                <div class="video-label">{{ feed.label }}</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Camera grid (becomes a compact filmstrip during screen share) -->
-          <div
-            class="videos-grid"
-            :class="{ 'videos-filmstrip': hasScreenShare }"
-            :style="gridStyleVars"
-          >
-            <!-- Local Video (not for observators) -->
-            <div v-if="!isObservator" class="video-wrapper">
-              <div class="video-container">
-                <video
-                  ref="localVideo"
-                  autoplay
-                  muted
+                  :muted="focusedTile.muted"
                   playsinline
                   class="video-element"
+                  :class="{
+                    'screen-share-element': focusedTile.type === 'screen',
+                  }"
                 ></video>
 
-                <!-- Camera disabled overlay -->
-                <div v-if="!isCameraEnabled" class="camera-disabled-overlay">
-                  <v-icon size="64" color="white" class="mb-2"
-                    >mdi-video-off</v-icon
-                  >
-                  <p class="text-white">
-                    {{ t('videoCall.session.cameraOff') }}
-                  </p>
-                </div>
-
-                <!-- Microphone muted indicator -->
-                <div v-if="!isMicrophoneEnabled" class="mic-muted-indicator">
-                  <v-icon size="24" color="white">mdi-microphone-off</v-icon>
-                </div>
-
-                <div class="video-label">
-                  {{ t('videoCall.session.yourVideo') }} ({{
-                    user?.email?.split('@')[0]
-                  }})
-                </div>
-              </div>
-            </div>
-
-            <!-- Remote Videos -->
-            <div
-              v-for="(stream, userId) in remoteStreams"
-              :key="userId"
-              class="video-wrapper"
-            >
-              <div class="video-container">
-                <video
-                  v-if="isRemoteCameraEnabled(userId)"
-                  :srcObject="stream"
-                  autoplay
-                  playsinline
-                  class="video-element"
-                ></video>
-
-                <!-- Camera disabled overlay for remote peer -->
                 <div
-                  v-if="!isRemoteCameraEnabled(userId)"
+                  v-if="focusedTile.type === 'camera' && !focusedTile.hasCamera"
                   class="camera-disabled-overlay"
                 >
                   <v-icon size="64" color="white" class="mb-2"
@@ -96,21 +45,71 @@
                   </p>
                 </div>
 
-                <!-- Microphone muted indicator for remote peer -->
                 <div
-                  v-if="!isRemoteMicrophoneEnabled(userId)"
+                  v-if="
+                    focusedTile.type === 'camera' && !focusedTile.hasMicrophone
+                  "
                   class="mic-muted-indicator"
                 >
                   <v-icon size="24" color="white">mdi-microphone-off</v-icon>
                 </div>
 
-                <div class="video-label">{{ getPeerName(userId) }}</div>
+                <div class="video-label">{{ focusedTile.label }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tiles: full grid, or a compact filmstrip when focusing -->
+          <div
+            class="videos-grid"
+            :class="{ 'videos-filmstrip': isFocusMode }"
+            :style="gridStyleVars"
+          >
+            <div
+              v-for="tile in isFocusMode ? otherTiles : tiles"
+              :key="tile.id"
+              class="video-wrapper tile-clickable"
+              @click="focusTile(tile.id)"
+            >
+              <div
+                class="video-container"
+                :class="{ 'screen-share-container': tile.type === 'screen' }"
+              >
+                <video
+                  :srcObject="tile.stream"
+                  autoplay
+                  :muted="tile.muted"
+                  playsinline
+                  class="video-element"
+                  :class="{ 'screen-share-element': tile.type === 'screen' }"
+                ></video>
+
+                <div
+                  v-if="tile.type === 'camera' && !tile.hasCamera"
+                  class="camera-disabled-overlay"
+                >
+                  <v-icon size="64" color="white" class="mb-2"
+                    >mdi-video-off</v-icon
+                  >
+                  <p class="text-white">
+                    {{ t('videoCall.session.cameraOff') }}
+                  </p>
+                </div>
+
+                <div
+                  v-if="tile.type === 'camera' && !tile.hasMicrophone"
+                  class="mic-muted-indicator"
+                >
+                  <v-icon size="24" color="white">mdi-microphone-off</v-icon>
+                </div>
+
+                <div class="video-label">{{ tile.label }}</div>
               </div>
             </div>
 
             <!-- Waiting Message if no peers -->
             <div
-              v-if="Object.keys(remoteStreams).length === 0 && !hasScreenShare"
+              v-if="showWaitingMessage"
               class="d-flex align-center justify-center pa-4 text-grey"
             >
               <v-icon class="mr-2">mdi-account-clock</v-icon>
@@ -880,6 +879,7 @@ import {
   onChildAdded,
 } from 'firebase/database'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
+import { useVideoFocus } from '../composables/useVideoFocus'
 
 const props = defineProps({
   roomId: String,
@@ -975,9 +975,6 @@ const callStarted = computed(
   () =>
     roomReady.value && (Object.keys(peers).length > 0 || !!localStream.value),
 )
-
-// Whether any screen share feed is active (drives the spotlight layout)
-const hasScreenShare = computed(() => screenShareFeeds.value.length > 0)
 
 // Count of camera tiles currently visible (local + remotes)
 const cameraCount = computed(
@@ -1533,6 +1530,62 @@ function isRemoteMicrophoneEnabled(userId) {
   if (p?.media) return p.media.microphoneEnabled
   return p?.microphoneEnabled !== false
 }
+
+// Unified list of tiles (local camera, remote cameras and screen shares)
+const tiles = computed(() => {
+  const list = []
+
+  if (!isObservator.value) {
+    list.push({
+      id: 'local-camera',
+      type: 'camera',
+      kind: 'local',
+      label: `${t('videoCall.session.yourVideo')} (${
+        props.user?.email?.split('@')[0] ?? ''
+      })`,
+      hasCamera: isCameraEnabled.value,
+      hasMicrophone: isMicrophoneEnabled.value,
+      muted: true,
+      stream: localStream.value,
+    })
+  }
+
+  Object.keys(remoteStreams.value).forEach((userId) => {
+    list.push({
+      id: `camera:${userId}`,
+      type: 'camera',
+      kind: 'remote',
+      userId,
+      label: getPeerName(userId),
+      hasCamera: isRemoteCameraEnabled(userId),
+      hasMicrophone: isRemoteMicrophoneEnabled(userId),
+      muted: false,
+      stream: remoteStreams.value[userId],
+    })
+  })
+
+  screenShareFeeds.value.forEach((feed) => {
+    list.push({
+      id: `screen:${feed.key}`,
+      type: 'screen',
+      label: feed.label,
+      muted: feed.key === 'local-screen',
+      stream: feed.stream,
+    })
+  })
+
+  return list
+})
+
+const { focusedTile, otherTiles, isFocusMode, focusTile, clearFocus } =
+  useVideoFocus(tiles)
+
+const showWaitingMessage = computed(
+  () =>
+    !isFocusMode.value &&
+    Object.keys(remoteStreams.value).length === 0 &&
+    screenShareFeeds.value.length === 0,
+)
 
 function toggleSidePanel() {
   showSidePanel.value = !showSidePanel.value
