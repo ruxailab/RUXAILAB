@@ -16,7 +16,7 @@
             {{ $t('UsabilityCooperators.inviteEvaluator') }}
           </h2>
           <p class="text-body-2 mb-0 opacity-90">
-            Send evaluation invitations to participants
+            {{ $t('UsabilityCooperators.inviteEvaluatorDescription') }}
           </p>
         </div>
       </v-card-title>
@@ -32,10 +32,10 @@
                     <v-icon class="mr-2" size="20"
                       >mdi-account-cowboy-hat</v-icon
                     >
-                    Role
+                    {{ $t('UsabilityCooperators.role') }}
                   </label>
                   <p class="field-description mb-3">
-                    Select the role for this participant.
+                    {{ $t('UsabilityCooperators.roleDescription') }}
                   </p>
                   <v-radio-group
                     v-model="selectedRole"
@@ -65,102 +65,51 @@
                     <v-icon class="mr-2" size="20">mdi-account-outline</v-icon>
                     {{ $t('UsabilityCooperators.email') }}
                   </label>
+                  <p class="field-description mb-3"></p>
                   <p class="field-description mb-3">
-                    Select the participant you want to invite to this evaluation
-                    session.
+                    {{
+                      $t('UsabilityCooperators.selectParticipantDescription')
+                    }}
                   </p>
-                  <v-combobox
-                    ref="comboboxRef"
-                    v-model="comboboxModel"
-                    :items="filteredUsers"
-                    item-title="email"
-                    item-value="id"
-                    multiple
-                    chips
-                    variant="outlined"
-                    density="comfortable"
-                    placeholder="Type email address or select from list..."
-                    prepend-inner-icon="mdi-account-multiple-plus"
-                    color="primary"
-                    clearable
-                    :menu-props="{ maxHeight: 300 }"
-                    @update:model-value="validateEmailInput"
-                  >
-                    <template #chip="{ props, item }">
+                  <v-row class="ma-0">
+                    <v-text-field
+                      v-model="emailInput"
+                      variant="outlined"
+                      density="comfortable"
+                      :placeholder="$t('UsabilityCooperators.emailPlaceholder')"
+                      prepend-inner-icon="mdi-account-multiple-plus"
+                      color="primary"
+                      clearable
+                      @keydown.enter.prevent="addEmailToSelection"
+                    />
+                    <v-btn
+                      class="ml-2"
+                      icon
+                      variant="outlined"
+                      :disabled="!emailInput.trim()"
+                      @click="addEmailToSelection"
+                      ><v-icon>mdi-plus</v-icon></v-btn
+                    >
+                  </v-row>
+
+                  <div v-if="comboboxModel.length" class="mt-3">
+                    <div class="text-caption text-grey-darken-1 mb-2">
+                      {{ $t('UsabilityCooperators.addedParticipants') }}
+                    </div>
+                    <v-chip-group>
                       <v-chip
-                        v-bind="props"
+                        v-for="(item, i) in comboboxModel"
+                        :key="i"
                         closable
                         color="primary"
                         variant="tonal"
                         size="small"
+                        @click:close="removeEmail(i)"
                       >
-                        <v-avatar start>
-                          <span class="text-caption">
-                            {{
-                              (typeof item.raw === 'object'
-                                ? item.raw.email
-                                : item.raw
-                              )
-                                .charAt(0)
-                                .toUpperCase()
-                            }}
-                          </span>
-                        </v-avatar>
-                        {{
-                          typeof item.raw === 'object'
-                            ? item.raw.email
-                            : item.raw
-                        }}
+                        {{ item.email }}
                       </v-chip>
-                    </template>
-                    <template #item="{ props, item }">
-                      <v-list-item
-                        v-bind="props"
-                        :title="item.raw.email"
-                        :subtitle="item.raw.name || 'Registered user'"
-                        class="participant-item"
-                      >
-                        <template #prepend>
-                          <v-avatar size="40" color="primary" class="mr-3">
-                            <span class="text-white font-weight-bold">
-                              {{ item.raw.email.charAt(0).toUpperCase() }}
-                            </span>
-                          </v-avatar>
-                        </template>
-                        <template #append>
-                          <v-chip
-                            v-if="isEmailAlreadySelected(item.raw.email)"
-                            size="small"
-                            color="success"
-                            variant="tonal"
-                          >
-                            Selected
-                          </v-chip>
-                          <v-chip
-                            v-else-if="isParticipantAlreadyInvited(item.raw.id)"
-                            size="small"
-                            color="warning"
-                            variant="tonal"
-                          >
-                            Already Invited
-                          </v-chip>
-                        </template>
-                      </v-list-item>
-                    </template>
-                    <template #no-data>
-                      <div class="pa-4 text-center">
-                        <v-icon size="48" color="primary" class="mb-2">
-                          mdi-email-plus-outline
-                        </v-icon>
-                        <p class="text-body-2 text-grey-darken-1 mb-1">
-                          Type any email address and press Enter
-                        </p>
-                        <p class="text-caption text-grey">
-                          You can invite anyone, not just registered users
-                        </p>
-                      </div>
-                    </template>
-                  </v-combobox>
+                    </v-chip-group>
+                  </div>
                 </div>
 
                 <!-- Schedule Section -->
@@ -170,7 +119,7 @@
                     {{ $t('UsabilityCooperators.scheduledAt') }}
                   </div>
                   <p class="field-description mb-3">
-                    Choose the date and time for the evaluation session.
+                    {{ $t('UsabilityCooperators.scheduleDescription') }}
                   </p>
 
                   <v-row class="mt-2">
@@ -191,7 +140,13 @@
                             density="comfortable"
                             prepend-inner-icon="mdi-calendar"
                             placeholder="Select date"
-                            :rules="[(v) => !!v || 'Date is required']"
+                            :rules="[
+                              (v) =>
+                                !!v ||
+                                t(
+                                  'UsabilityCooperators.validation.dateRequired',
+                                ),
+                            ]"
                             required
                           />
                         </template>
@@ -252,7 +207,7 @@
                     {{ $t('UsabilityCooperators.inviteMessage') }}
                   </div>
                   <p class="field-description mb-3">
-                    Write a personalized message to include with the invitation.
+                    {{ $t('UsabilityCooperators.inviteMessageDescription') }}
                   </p>
                   <v-textarea
                     v-model="inviteMessage"
@@ -283,7 +238,9 @@
                   <v-icon class="mr-2" size="24" color="primary"
                     >mdi-eye-outline</v-icon
                   >
-                  <h3 class="text-h6 font-weight-bold">Invitation Preview</h3>
+                  <h3 class="text-h6 font-weight-bold">
+                    {{ $t('UsabilityCooperators.invitationPreview') }}
+                  </h3>
                 </div>
 
                 <v-card class="invitation-preview elevation-2" border>
@@ -291,13 +248,15 @@
                     <v-icon class="mr-2" color="primary"
                       >mdi-email-outline</v-icon
                     >
-                    <span class="text-subtitle-1">Evaluation Invitation</span>
+                    <span class="text-subtitle-1">
+                      {{ $t('UsabilityCooperators.evaluationInvitation') }}
+                    </span>
                   </v-card-title>
 
                   <v-card-text class="pa-4">
                     <div class="preview-content">
                       <p class="text-body-2 mb-3">
-                        <strong>To:</strong>
+                        <strong>{{ $t('UsabilityCooperators.to') }}:</strong>
                         <v-chip-group>
                           <v-chip
                             v-for="(item, i) in comboboxModel"
@@ -308,19 +267,26 @@
                           >
                             {{ typeof item === 'object' ? item.email : item }}
                           </v-chip>
-                          <span v-if="!comboboxModel.length"
-                            >No participant selected</span
-                          >
+                          <span v-if="!comboboxModel.length">{{
+                            $t('UsabilityCooperators.noParticipantSelected')
+                          }}</span>
                         </v-chip-group>
                       </p>
                       <p class="text-body-2 mb-3">
-                        <strong>Scheduled:</strong>
+                        <strong
+                          >{{ $t('UsabilityCooperators.scheduled') }}:</strong
+                        >
                         {{ formattedDateTime || 'No date/time selected' }}
                       </p>
                       <div class="mb-3">
-                        <strong class="text-body-2">Message:</strong>
+                        <strong class="text-body-2"
+                          >{{ $t('UsabilityCooperators.message') }}:</strong
+                        >
                         <div class="mt-1 pa-3 bg-grey-lighten-5 rounded">
-                          {{ inviteMessage || 'No message entered yet...' }}
+                          {{
+                            inviteMessage ||
+                            $t('UsabilityCooperators.noMessageYet')
+                          }}
                         </div>
                       </div>
                     </div>
@@ -334,12 +300,12 @@
                     class="mb-4"
                     icon="mdi-information-outline"
                   >
-                    <v-alert-title>{{
-                      $t('UsabilityCooperators.inviteInfo')
-                    }}</v-alert-title>
+                    <v-alert-title>
+                      {{ $t('UsabilityCooperators.inviteInfoTitle') }}
+                    </v-alert-title>
+
                     <div class="text-body-2 mt-2">
-                      The participant will receive an email notification and can
-                      accept or decline the invitation.
+                      {{ $t('UsabilityCooperators.inviteInfoDescription') }}
                     </div>
                   </v-alert>
                 </div>
@@ -357,7 +323,7 @@
             size="large"
             @click="$emit('update:dialog', false)"
           >
-            Cancel
+            {{ $t('common.cancel') }}
           </v-btn>
           <v-btn
             color="primary"
@@ -382,11 +348,17 @@ import EmailController from '@/shared/controllers/EmailController'
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { ACCESS_LEVEL } from '../../../../shared/utils/accessLevel'
-import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
+import {
+  useCooperatorUtils,
+  normalizeCooperatorInviteEntry,
+} from '@/shared/composables/useCooperatorUtils'
 import { showError, showSuccess } from '@/shared/utils/toast'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 // Props
-const props = defineProps({
+defineProps({
   dialog: Boolean,
 })
 
@@ -397,7 +369,7 @@ const emit = defineEmits(['update:dialog'])
 const store = useStore()
 
 // Composables
-const { validateEmail } = useCooperatorUtils()
+const { validateEmail: validateEmailFormat } = useCooperatorUtils()
 
 // Helper functions
 const getDefaultTime = () => {
@@ -421,24 +393,29 @@ const hour = ref(getDefaultTime())
 const inviteForm = ref(null)
 const valid = ref(false)
 const comboboxModel = ref([])
+const emailInput = ref('')
 const inviteMessage = ref('')
 const loading = ref(false)
 const selectedRole = ref(ACCESS_LEVEL.ADMIN)
 
-const roleOptions = [
+const roleOptions = computed(() => [
   {
-    label: 'Evaluator',
+    label: t('UsabilityCooperators.roles.evaluator'),
     value: ACCESS_LEVEL.EVALUATOR,
-    description: 'Participates in the test, shares screen/video.',
+    description: t('UsabilityCooperators.roles.evaluatorDesc'),
   },
   {
-    label: 'Observator',
+    label: t('UsabilityCooperators.roles.observator'),
     value: ACCESS_LEVEL.OBSERVATOR,
-    description: 'Watches the session silently, takes notes.',
+    description: t('UsabilityCooperators.roles.observatorDesc'),
   },
-]
+])
 
 // Computed
+const users = computed(() =>
+  test.value?.cooperators ? [...test.value.cooperators] : [],
+)
+
 const minTime = computed(() => {
   const currentDate = new Date()
   currentDate.setDate(currentDate.getDate() - 1)
@@ -455,29 +432,11 @@ const minTime = computed(() => {
   }
 })
 
+const test = computed(() => store.getters.test)
+
 const cooperatorsEdit = computed(() =>
   test.value?.cooperators ? [...test.value.cooperators] : [],
 )
-
-const test = computed(() => store.getters.test)
-const users = computed(() => store.state.Users?.users || [])
-
-const filteredUsers = computed(() => {
-  if (!users.value || users.value.length === 0) return []
-
-  return users.value
-    .filter((user) => user && user.email) // Filter out invalid users
-    .map((user) => ({
-      ...user,
-      displayText: user.name ? `${user.email} (${user.name})` : user.email,
-    }))
-    .sort((a, b) => {
-      // Sort by email alphabetically with null checks
-      const emailA = a.email || ''
-      const emailB = b.email || ''
-      return emailA.localeCompare(emailB)
-    })
-})
 
 const formattedDateTime = computed(() => {
   if (!date.value || !hour.value) return ''
@@ -504,27 +463,46 @@ const formattedDateTime = computed(() => {
 })
 
 // Methods
-const isParticipantAlreadyInvited = (userId) => {
-  if (!userId || !cooperatorsEdit.value) return false
-  return cooperatorsEdit.value.some(
-    (cooperator) => cooperator && cooperator.userDocId === userId,
-  )
+const isEmailAlreadySelected = (email) =>
+  comboboxModel.value.some((item) => item === email)
+
+const removeEmail = (index) => {
+  comboboxModel.value.splice(index, 1)
 }
 
-const isEmailAlreadySelected = (email) =>
-  comboboxModel.value.some(
-    (item) => (typeof item === 'object' ? item.email : item) === email,
-  )
+const addEmailToSelection = () => {
+  const email = emailInput.value.trim()
+  if (!email) return
 
-const validateEmailInput = () => {
-  comboboxModel.value = comboboxModel.value.filter((item) => {
-    const email = typeof item === 'object' ? item.email : item
-    if (!validateEmail(email)) {
-      showError('Invalid email: ' + email)
-      return false
-    }
-    return true
-  })
+  if (!validateEmailFormat(email)) {
+    showError(t('UsabilityCooperators.validation.invalidEmail', { email }))
+    emailInput.value = ''
+    return
+  }
+
+  const validationError =
+    useCooperatorUtils().getCooperatorInviteValidationError({
+      email,
+      currentUserEmail: store.getters.user?.email,
+      studyOwnerEmail: test.value?.testAdmin?.email,
+      existingCooperators: cooperatorsEdit.value,
+      t,
+    })
+
+  if (validationError) {
+    showError(validationError)
+    emailInput.value = ''
+    return
+  }
+
+  if (isEmailAlreadySelected(email)) {
+    showError('This email has already been added.')
+    emailInput.value = ''
+    return
+  }
+
+  comboboxModel.value.push(normalizeCooperatorInviteEntry(email, users.value))
+  emailInput.value = ''
 }
 
 const saveInvitation = async () => {
@@ -553,13 +531,6 @@ const saveInvitation = async () => {
 
     // Construct datetime string with proper validation
     const dateTimeString = `${dateValue}T${timeValue}:00`
-    console.log('Constructing datetime from:', {
-      originalDate: date.value,
-      formattedDate: dateValue,
-      hour: hour.value,
-      dateTimeString,
-    })
-
     const dateTime = new Date(dateTimeString)
 
     // Check if the constructed date is valid
@@ -568,17 +539,20 @@ const saveInvitation = async () => {
     }
 
     const timestamp = dateTime.toISOString()
-    // Loopin through all selected emails/users
+    // Loop through all selected emails/users
     comboboxModel.value.forEach((item) => {
-      const email = typeof item === 'object' ? item.email : item
-      const userDocId = typeof item === 'object' ? item.id : null
+      const normalizedEntry = normalizeCooperatorInviteEntry(item, users.value)
+      const email =
+        normalizedEntry.email || (typeof item === 'object' ? item.email : item)
+      const userDocId =
+        normalizedEntry.userDocId || (typeof item === 'object' ? item.id : null)
 
-      // Prevnt duplicate invites
-      if (
-        !cooperatorsEdit.value.some(
-          (c) => c.email === email && c.testDate === timestamp,
-        )
-      ) {
+      // Prevent duplicate invites
+      const alreadyExists = cooperatorsEdit.value.some(
+        (c) => c.email === email && c.testDate === timestamp,
+      )
+
+      if (!alreadyExists) {
         cooperatorsEdit.value.push(
           new Cooperators({
             userDocId,
@@ -596,7 +570,6 @@ const saveInvitation = async () => {
     })
     await submit()
   } catch (error) {
-    console.error('Error saving invitation:', error)
     showError(error.message)
   } finally {
     loading.value = false
@@ -612,9 +585,7 @@ const submit = async () => {
     if (!guest.accepted) {
       try {
         await notifyCooperator(guest)
-      } catch (err) {
-        console.error('notfyCooperator error:', err)
-      }
+      } catch {}
     }
   }
 
@@ -626,6 +597,7 @@ const submit = async () => {
 
   inviteMessage.value = ''
   comboboxModel.value = []
+  emailInput.value = ''
   selectedRole.value = ACCESS_LEVEL.ADMIN
 
   emit('update:dialog', false)
@@ -653,8 +625,7 @@ const notifyCooperator = async (guest) => {
         }),
       })
       showSuccess('Notification sent successfully')
-    } catch (err) {
-      console.error('addNotification failed:', err)
+    } catch {
       showError('Failed to send notification')
     }
     return
@@ -681,8 +652,7 @@ const notifyCooperator = async (guest) => {
       },
     })
     showSuccess('Email invitation sent')
-  } catch (err) {
-    console.error('External email send failed:', err)
+  } catch {
     showError('Failed to send email invitation')
   }
 }
