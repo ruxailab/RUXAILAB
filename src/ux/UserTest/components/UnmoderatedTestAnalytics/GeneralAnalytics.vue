@@ -502,6 +502,8 @@ import axios from 'axios'
 import { calculateSUSScore } from '../../utils/susCalculator'
 import { getNASATLXData } from '../../utils/nasaTlxData'
 import { useFilterDefinitions } from './useFilterDefinitions'
+import { exportStudySummary } from '@/shared/utils/studySummaryExport'
+import { showError } from '@/shared/utils/toast'
 
 // Declaraciones reactivas primero para evitar errores de acceso antes de inicialización
 const testTasks = ref([])
@@ -598,6 +600,7 @@ const store = useStore()
 useI18n()
 
 const test = computed(() => store.getters.test)
+const user = computed(() => store.getters.user)
 const testStructure = computed(() => store.state.Tests.Test.testStructure)
 const answers = computed(() => {
   if (!store.getters.visibleUserAnswers) return {}
@@ -669,31 +672,34 @@ const averageTimePerTask = computed(() => {
 
 const downloadPdfResume = async () => {
   try {
-    const response = await axios.post(
-      process.env.VUE_APP_LARAVEL_PDF + '/generate-pdf',
-      {
-        payload: {
-          title: test.value.testTitle || '',
-          description: test.value.testDescription || '',
-          type: test.value.testType || '',
-          taskAnswers: answers.value,
-        },
+    await exportStudySummary({
+      study: test.value,
+      user: user.value,
+      answers: answers.value,
+      notifyDenied: showError,
+      requestPdf: async (payload) => {
+        const response = await axios.post(
+          process.env.VUE_APP_LARAVEL_PDF + '/generate-pdf',
+          payload,
+          {
+            headers: { 'Content-Type': 'application/json' },
+            responseType: 'arraybuffer',
+          },
+        )
+        return response.data
       },
-      {
-        headers: { 'Content-Type': 'application/json' },
-        responseType: 'arraybuffer', // Recebe como binary
+      savePdf: (pdf, filename) => {
+        const blob = new Blob([pdf], { type: 'application/pdf' })
+        const url = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = filename
+        link.click()
+        window.URL.revokeObjectURL(url)
       },
-    )
-
-    const blob = new Blob([response.data], { type: 'application/pdf' })
-    const url = window.URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `${test.value.testTitle || 'resume'}.pdf`
-    link.click()
-    window.URL.revokeObjectURL(url)
+    })
   } catch {
-    // Error generating PDF
+    showError('Unable to generate the summary PDF.')
   }
 }
 
