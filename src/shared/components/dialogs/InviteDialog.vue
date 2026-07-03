@@ -340,6 +340,13 @@ watch(
   text-transform: unset !important;
 }
 
+:deep(.v-btn) {
+  border-radius: 12px;
+  text-transform: none;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
 .email-chip {
   max-width: 100%;
 }
