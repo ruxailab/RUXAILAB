@@ -1,0 +1,256 @@
+import { admin, functions } from '../f.firebase.js'
+
+const ROLE = Object.freeze({
+  ADMIN: 0,
+  EVALUATOR: 1,
+  GUEST: 2,
+  OBSERVATOR: 3,
+  MANAGER: 4,
+  USER: 5,
+})
+
+const SUPPORTED_ROLES = Object.freeze({
+  USER: [ROLE.ADMIN, ROLE.MANAGER, ROLE.USER, ROLE.OBSERVATOR],
+  HEURISTIC: [ROLE.ADMIN, ROLE.MANAGER, ROLE.EVALUATOR, ROLE.GUEST],
+})
+
+const MANAGER_ROLES = Object.freeze({
+  USER: [ROLE.USER, ROLE.OBSERVATOR],
+  HEURISTIC: [ROLE.EVALUATOR, ROLE.GUEST],
+})
+
+const normalizeStudyType = (type) => {
+  const normalized = String(type || '').toUpperCase()
+  return normalized === 'HEURISTICS' ? 'HEURISTIC' : normalized
+}
+
+const error = (code, message) =>
+  new functions.https.HttpsError(code, message)
+
+const getData = (request) => request?.data || request || {}
+
+const sameEmail = (left, right) =>
+  Boolean(
+    left && right && String(left).trim().toLowerCase() === String(right).trim().toLowerCase(),
+  )
+
+const findTargetIndex = (cooperators, { targetUserId, targetEmail }) =>
+  cooperators.findIndex(
+    (cooperator) =>
+      (targetUserId && cooperator?.userDocId === targetUserId) ||
+      sameEmail(cooperator?.email, targetEmail),
+  )
+
+const getActorRole = (study, actorId, isSuperAdmin) => {
+  if (isSuperAdmin || study?.testAdmin?.userDocId === actorId) return ROLE.ADMIN
+  return (
+    study?.cooperators?.find(
+      (cooperator) =>
+        cooperator?.userDocId === actorId && cooperator?.accepted === true,
+    )?.accessLevel ?? null
+  )
+}
+
+const getAssignableRoles = (study, actorRole) => {
+  const studyType = normalizeStudyType(study?.testType)
+  if (actorRole === ROLE.ADMIN) return SUPPORTED_ROLES[studyType] || []
+  if (actorRole === ROLE.MANAGER) return MANAGER_ROLES[studyType] || []
+  return []
+}
+
+export function assertMembershipMutationAllowed({
+  study,
+  actorId,
+  isSuperAdmin = false,
+  action,
+  target = null,
+  role = null,
+}) {
+  const actorRole = getActorRole(study, actorId, isSuperAdmin)
+  const assignableRoles = getAssignableRoles(study, actorRole)
+
+  if (target?.userDocId && target.userDocId === actorId) {
+    throw error('permission-denied', 'A member cannot manage their own role')
+  }
+
+  if (action === 'invite') {
+    if (!assignableRoles.includes(role)) {
+      throw error('permission-denied', 'The assigned role is not permitted')
+    }
+    return
+  }
+
+  if (![ROLE.ADMIN, ROLE.MANAGER].includes(actorRole)) {
+    throw error('permission-denied', 'Cooperator management is not permitted')
+  }
+
+  if (action === 'assignRole') {
+    if (!assignableRoles.includes(role)) {
+      throw error('permission-denied', 'The assigned role is not permitted')
+    }
+    if (
+      actorRole === ROLE.MANAGER &&
+      !assignableRoles.includes(target?.accessLevel)
+    ) {
+      throw error('permission-denied', 'Managers cannot modify this member')
+    }
+    return
+  }
+
+  if (action === 'remove' || action === 'cancelInvitation') {
+    if (
+      actorRole === ROLE.MANAGER &&
+      !assignableRoles.includes(target?.accessLevel)
+    ) {
+      throw error('permission-denied', 'Managers cannot remove this member')
+    }
+    return
+  }
+
+  throw error('invalid-argument', 'Unsupported membership action')
+}
+
+export const manageStudyMembership = functions.onCall({
+  handler: async (request) => {
+    const actorId = request?.auth?.uid
+    if (!actorId) throw error('unauthenticated', 'Authentication is required')
+
+    const data = getData(request)
+    const { studyId, action, targetUserId = null, targetEmail = null } = data
+    const role = Number.isInteger(data.role) ? data.role : null
+    if (!studyId || !action) {
+      throw error('invalid-argument', 'studyId and action are required')
+    }
+
+    const db = admin.firestore()
+    const studyRef = db.collection('tests').doc(studyId)
+    const actorRef = db.collection('users').doc(actorId)
+
+    return db.runTransaction(async (transaction) => {
+      const [studySnap, actorSnap] = await Promise.all([
+        transaction.get(studyRef),
+        transaction.get(actorRef),
+      ])
+      if (!studySnap.exists) throw error('not-found', 'Study not found')
+
+      const study = studySnap.data()
+      const actor = actorSnap.exists ? actorSnap.data() : {}
+      const cooperators = [...(study.cooperators || [])]
+      const studyRoleMap = { ...(study.studyRoleMap || {}) }
+
+      if (action === 'accept') {
+        const actorEmail = actor?.email || request?.auth?.token?.email || ''
+        const index = cooperators.findIndex(
+          (cooperator) =>
+            cooperator?.accepted !== true &&
+            (cooperator?.userDocId === actorId ||
+              sameEmail(cooperator?.email, actorEmail)),
+        )
+        if (index < 0) {
+          throw error('permission-denied', 'No invitation matches this account')
+        }
+        const membership = {
+          ...cooperators[index],
+          userDocId: actorId,
+          accepted: true,
+          updateDate: Date.now(),
+        }
+        cooperators[index] = membership
+        studyRoleMap[actorId] = membership.accessLevel
+        transaction.update(studyRef, { cooperators, studyRoleMap })
+        transaction.update(actorRef, {
+          [`myAnswers.${studyId}`]: {
+            answersDocId: study.answersDocId,
+            accessLevel: membership.accessLevel,
+            progress: 0,
+            testAuthorEmail: study.testAdmin?.email || '',
+            testDocId: studyId,
+            testType: study.testType,
+            subType: study.subType || null,
+            testTitle: study.testTitle || '',
+            total: 0,
+            updateDate: Date.now(),
+          },
+        })
+        return { status: 'accepted', cooperator: membership }
+      }
+
+      const targetIndex = findTargetIndex(cooperators, {
+        targetUserId,
+        targetEmail,
+      })
+      const target = targetIndex >= 0 ? cooperators[targetIndex] : null
+      const isSuperAdmin = actor?.accessLevel === 0
+
+      assertMembershipMutationAllowed({
+        study,
+        actorId,
+        isSuperAdmin,
+        action,
+        target,
+        role,
+      })
+
+      if (action === 'invite') {
+        if (target) {
+          throw error('already-exists', 'An invitation or membership already exists')
+        }
+        const membership = {
+          userDocId: targetUserId,
+          email: targetEmail,
+          invited: true,
+          accepted: false,
+          accessLevel: role,
+          inviteMessage: data.inviteMessage || null,
+          token: data.token || null,
+          progress: 0,
+          updateDate: Date.now(),
+          testAuthorEmail: study.testAdmin?.email || '',
+        }
+        cooperators.push(membership)
+        transaction.update(studyRef, { cooperators })
+        return { status: 'invited', cooperator: membership }
+      }
+
+      if (!target) throw error('not-found', 'Cooperator not found')
+
+      if (action === 'assignRole') {
+        const membership = {
+          ...target,
+          accessLevel: role,
+          updateDate: Date.now(),
+        }
+        cooperators[targetIndex] = membership
+        if (membership.accepted && membership.userDocId) {
+          studyRoleMap[membership.userDocId] = role
+          const targetRef = db.collection('users').doc(membership.userDocId)
+          transaction.update(targetRef, {
+            [`myAnswers.${studyId}.accessLevel`]: role,
+          })
+        }
+        transaction.update(studyRef, { cooperators, studyRoleMap })
+        return { status: 'role-assigned', cooperator: membership }
+      }
+
+      if (action === 'remove' && target.accepted !== true) {
+        throw error('failed-precondition', 'Only accepted memberships can be removed')
+      }
+      if (action === 'cancelInvitation' && target.accepted === true) {
+        throw error('failed-precondition', 'Accepted memberships cannot be cancelled')
+      }
+
+      cooperators.splice(targetIndex, 1)
+      if (target.userDocId) delete studyRoleMap[target.userDocId]
+      transaction.update(studyRef, { cooperators, studyRoleMap })
+      if (action === 'remove' && target.userDocId) {
+        const targetRef = db.collection('users').doc(target.userDocId)
+        transaction.update(targetRef, {
+          [`myAnswers.${studyId}`]: admin.firestore.FieldValue.delete(),
+        })
+      }
+      return {
+        status: action === 'remove' ? 'removed' : 'invitation-cancelled',
+      }
+    })
+  },
+})

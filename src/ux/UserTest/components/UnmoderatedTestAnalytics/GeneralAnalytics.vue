@@ -498,12 +498,12 @@ import UxMetricCard from '../answers/UxMetricCard.vue'
 import CommentListCard from '../answers/CommentListCard.vue'
 import SelectionPieChart from '../answers/SelectionPieChart.vue'
 import AnswersTimeline from '../answers/AnswersTimeline.vue'
-import axios from 'axios'
 import { calculateSUSScore } from '../../utils/susCalculator'
 import { getNASATLXData } from '../../utils/nasaTlxData'
 import { useFilterDefinitions } from './useFilterDefinitions'
 import { exportStudySummary } from '@/shared/utils/studySummaryExport'
 import { showError } from '@/shared/utils/toast'
+import { requestStudySummaryPdf } from '@/shared/services/studySummaryService'
 
 // Declaraciones reactivas primero para evitar errores de acceso antes de inicialización
 const testTasks = ref([])
@@ -677,17 +677,7 @@ const downloadPdfResume = async () => {
       user: user.value,
       answers: answers.value,
       notifyDenied: showError,
-      requestPdf: async (payload) => {
-        const response = await axios.post(
-          process.env.VUE_APP_LARAVEL_PDF + '/generate-pdf',
-          payload,
-          {
-            headers: { 'Content-Type': 'application/json' },
-            responseType: 'arraybuffer',
-          },
-        )
-        return response.data
-      },
+      requestPdf: () => requestStudySummaryPdf(test.value.id),
       savePdf: (pdf, filename) => {
         const blob = new Blob([pdf], { type: 'application/pdf' })
         const url = window.URL.createObjectURL(blob)

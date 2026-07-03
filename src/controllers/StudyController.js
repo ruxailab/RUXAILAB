@@ -3,10 +3,11 @@ import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import { doc, onSnapshot } from 'firebase/firestore'
 import { db } from '@/app/plugins/firebase'
 import AnswerController from '../shared/controllers/AnswerController'
-import UserAnswer from '@/features/auth/models/UserAnswer'
 import UserController from '../features/auth/controllers/UserController'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
 import StudyAnswer from '@/shared/models/StudyAnswer'
+import { getAuth } from 'firebase/auth'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 
 const COLLECTION = 'tests'
 const answerController = new AnswerController()
@@ -18,25 +19,34 @@ export default class StudyController extends Controller {
   }
 
   async createStudy(payload) {
+    const createdBy = getAuth().currentUser?.uid ?? null
     // Create answers doc for test
     const answerDoc = await answerController.createAnswer(
-      new StudyAnswer({ type: payload.testType }),
+      new StudyAnswer({ type: payload.testType, createdBy }),
     )
     payload.answersDocId = answerDoc.id
 
-    return await super.create(COLLECTION, payload.toFirestore())
+    const studyDoc = await super.create(COLLECTION, payload.toFirestore())
+    await answerController.linkAnswerToStudy(answerDoc.id, studyDoc.id)
+    return studyDoc
   }
   async duplicateStudy(payload) {
     try {
+      const createdBy = getAuth().currentUser?.uid ?? null
       const answerDoc = await answerController.createAnswer(
-        new StudyAnswer({ type: payload.test.testType }),
+        new StudyAnswer({ type: payload.test.testType, createdBy }),
       )
 
       // Use the correct study type from the payload (already instantiated correctly in SettingsView)
       const duplicatedStudy = payload.test
       duplicatedStudy.answersDocId = answerDoc.id
 
-      return await super.create(COLLECTION, duplicatedStudy.toFirestore())
+      const studyDoc = await super.create(
+        COLLECTION,
+        duplicatedStudy.toFirestore(),
+      )
+      await answerController.linkAnswerToStudy(answerDoc.id, studyDoc.id)
+      return studyDoc
     } catch (error) {
       throw error
     }
@@ -87,42 +97,12 @@ export default class StudyController extends Controller {
 
   //ToDo: It seems an action from User Testing
   async acceptStudyCollaboration(payload) {
-    const userAnswer = new UserAnswer({
-      answersDocId: payload.test.answersDocId,
-      accessLevel: payload.cooperator.accessLevel,
-      progress: 0,
-      testAuthorEmail: payload.test.testAdmin.email,
-      testDocId: payload.test.id,
-      testType: payload.test.testType,
-      subType: payload.test.subType,
-      testTitle: payload.test.testTitle,
-      total: 0,
-      updateDate: Date.now(),
-    })
-
-    // Update answers inside collaborator. Only write the single myAnswers
-    // entry; writing the full document with toFirestore() would overwrite
-    // myTests with the stale in-memory copy of the cooperator.
-    const userToUpdate = payload.cooperator
-    userToUpdate.myAnswers[`${userAnswer.testDocId}`] = userAnswer.toFirestore()
-    await userController.update(userToUpdate.id, {
-      [`myAnswers.${userAnswer.testDocId}`]:
-        userToUpdate.myAnswers[`${userAnswer.testDocId}`],
-    })
-
-    const testToUpdate = payload.test
-    const index = testToUpdate.cooperators.findIndex(
-      (c) => c.email === userToUpdate.email,
-    )
-    testToUpdate.cooperators[index].accepted = true
-    testToUpdate.cooperators[index].userDocId = userToUpdate.id
-
-    // Update invitation on test to accepted
-    return await super.update(
-      COLLECTION,
-      testToUpdate.id,
-      testToUpdate.toFirestore(),
-    )
+    const response =
+      await FirebaseFunctionsController.callHttpsCallableFunction(
+        'manageStudyMembership',
+        { studyId: payload.test.id, action: 'accept' },
+      )
+    return response.data
   }
 
   async getStudy(parameter) {

@@ -1,12 +1,44 @@
 rules_version = '2';
-
-// Craft rules based on data in your Firestore database
-// allow write: if firestore.get(
-//    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
 service firebase.storage {
   match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function currentUser() {
+      return firestore.get(
+        /databases/(default)/documents/users/$(request.auth.uid)
+      );
+    }
+
+    function study(studyId) {
+      return firestore.get(
+        /databases/(default)/documents/tests/$(studyId)
+      ).data;
+    }
+
+    function roleFor(studyId) {
+      return signedIn() &&
+        study(studyId).studyRoleMap is map &&
+        request.auth.uid in study(studyId).studyRoleMap
+          ? study(studyId).studyRoleMap[request.auth.uid]
+          : null;
+    }
+
+    function canAccessStorage(studyId) {
+      return signedIn() && (
+        currentUser().data.accessLevel == 0 ||
+        study(studyId).testAdmin.userDocId == request.auth.uid ||
+        roleFor(studyId) == 0
+      );
+    }
+
+    match /tests/{studyId}/{allPaths=**} {
+      allow read, write: if canAccessStorage(studyId);
+    }
+
     match /{allPaths=**} {
-      allow read, write: if true;
+      allow read, write: if false;
     }
   }
 }

@@ -122,7 +122,6 @@ import InviteDialog from '@/shared/components/dialogs/InviteDialog.vue'
 import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 import UIDGenerator from 'uid-generator'
 import { useCooperatorActions } from '@/shared/composables/useCooperatorActions'
-import Cooperators from '../models/Cooperators'
 import { getMethodManagerView } from '../constants/methodDefinitions'
 import { useRouter, useRoute } from 'vue-router'
 import Notification from '@/shared/models/Notification'
@@ -134,6 +133,7 @@ import {
   getAssignableRoleOptions,
   getSupportedRoleOptions,
 } from '@/shared/utils/studyAccessPolicy'
+import { manageStudyMembership } from '@/shared/services/studyMembershipService'
 
 const uidgen = new UIDGenerator()
 const router = useRouter()
@@ -273,7 +273,6 @@ const inviteMessages = ref('')
 const verified = ref(false)
 const messageModel = ref(false)
 const selectedUser = ref([])
-const cooperatorsUpdate = ref([])
 const showInviteDialog = ref(false)
 const drawerOpen = ref(false)
 
@@ -364,12 +363,10 @@ const handleSendInvitations = async (invitationData) => {
   if (!test.value) return
 
   const { selectedCoops, selectedRole, inviteMessage } = invitationData
-  const tokens = {}
   const newInvites = []
   const updatedRoles = []
 
   inviteMessages.value = inviteMessage
-  cooperatorsUpdate.value = [...cooperatorsEdit.value]
 
   const roleOption = assignableRoleOptions.value.find(
     (role) => role.value === selectedRole,
@@ -392,70 +389,43 @@ const handleSendInvitations = async (invitationData) => {
     return
   }
 
-  selectedCoops.forEach((coop) => {
+  for (const coop of selectedCoops) {
     const coopEmail = coop.email || coop // Handle both object and string formats
-
-    // Check if this email already exists in cooperators list
     const existingIndex = cooperatorsEdit.value.findIndex(
       (c) => c.email === coopEmail,
     )
 
     if (existingIndex === -1) {
-      // New email - create new cooperator entry
       const token = uidgen.generateSync()
-      if (!coop.id) {
-        cooperatorsEdit.value.push({
-          userDocId: null,
-          email: coop,
-          invited: true,
-          accepted: false,
-          accessLevel: selectedRole,
-          inviteMessage: inviteMessage || null,
-          token,
-          progress: 0,
-          updateDate: test.value?.updateDate || new Date().toISOString(),
-          testAuthorEmail: test.value?.testAdmin?.email || '',
-        })
-      } else {
-        cooperatorsEdit.value.push({
-          userDocId: coop.id,
-          email: coop.email,
-          invited: true,
-          accepted: false,
-          accessLevel: selectedRole,
-          inviteMessage: inviteMessage || null,
-          token,
-          progress: 0,
-          updateDate: test.value?.updateDate || new Date().toISOString(),
-          testAuthorEmail: test.value?.testAdmin?.email || '',
-        })
-      }
-      tokens[coop.id || coop] = token
-      newInvites.push(coopEmail)
+      const result = await manageStudyMembership({
+        studyId: test.value.id,
+        action: 'invite',
+        targetUserId: coop.id || null,
+        targetEmail: coopEmail,
+        role: selectedRole,
+        inviteMessage,
+        token,
+      })
+      newInvites.push(result.cooperator)
     } else {
-      // Email already exists - update their role instead of creating duplicate
       const existing = cooperatorsEdit.value[existingIndex]
-      const newRole = selectedRole
-
-      if (
-        existing.accessLevel !== newRole ||
-        existing.inviteMessage !== inviteMessage
-      ) {
-        // Update the existing entry's role
-        cooperatorsEdit.value[existingIndex] = {
-          ...existing,
-          accessLevel: newRole,
-          inviteMessage: inviteMessage || existing.inviteMessage || null,
-          updateDate: new Date().toISOString(),
-        }
+      if (existing.accessLevel !== selectedRole) {
+        await manageStudyMembership({
+          studyId: test.value.id,
+          action: 'assignRole',
+          targetUserId: existing.userDocId || null,
+          targetEmail: existing.email,
+          role: selectedRole,
+        })
         updatedRoles.push(coopEmail)
       }
-      // Keep existing token so their invite link still works
-      tokens[coop.id || coop] = existing.token
     }
-  })
+  }
 
-  await submit()
+  await store.dispatch('getStudy', { id: test.value.id })
+  await Promise.all(
+    newInvites.map((guest) => sendMenssages(guest, guest.inviteMessage)),
+  )
   showInviteDialog.value = false
 
   // Show appropriate feedback
@@ -468,7 +438,11 @@ const handleSendInvitations = async (invitationData) => {
     )
   }
   if (newInvites.length > 0) {
-    showSuccess(t('cooperators.inviteSent', { users: newInvites.join(', ') }))
+    showSuccess(
+      t('cooperators.inviteSent', {
+        users: newInvites.map((guest) => guest.email).join(', '),
+      }),
+    )
   }
 }
 
@@ -523,70 +497,14 @@ const executeRoleChange = async (item, newValue) => {
     throw new Error('STUDY_ROLE_FORBIDDEN')
   }
 
-  const cooperators = Array.isArray(test.value?.cooperators)
-    ? test.value.cooperators
-    : []
-
-  const index = cooperators.findIndex(
-    (coop) =>
-      (coop.token && item.token && coop.token === item.token) ||
-      (coop.userDocId && item.userDocId && coop.userDocId === item.userDocId) ||
-      (coop.email && item.email && coop.email === item.email),
-  )
-
-  if (index < 0) {
-    throw new Error('COOPERATOR_NOT_FOUND')
-  }
-
-  const updatedCooperators = [...cooperators]
-  const newCoop = new Cooperators({
-    ...updatedCooperators[index],
-    accessLevel: newValue.value,
+  await manageStudyMembership({
+    studyId: test.value.id,
+    action: 'assignRole',
+    targetUserId: item.userDocId || null,
+    targetEmail: item.email,
+    role: newValue.value,
   })
-  updatedCooperators[index] = newCoop
-  test.value.cooperators = updatedCooperators
-  await store.dispatch('updateStudy', test.value)
   await store.dispatch('getStudy', { id: test.value.id })
-
-  // Pending/rejected collaborators may not have an answer document yet.
-  // Role update is still valid, so only sync answer metadata when the
-  // collaborator is accepted and linked to a user document.
-  if (!newCoop.userDocId || newCoop.accepted !== true) {
-    return
-  }
-
-  await store.dispatch('updateUserAnswer', {
-    testDocId: test.value.id,
-    cooperatorId: newCoop.userDocId,
-    data: { accessLevel: newCoop.accessLevel },
-  })
-}
-
-const submit = async () => {
-  if (!test.value) return
-
-  const coops = cooperatorsEdit.value.map(
-    (coop) =>
-      new Cooperators({ ...coop, userDocId: coop.userDocId || coop.id }),
-  )
-  test.value.cooperators = [...coops]
-
-  const newCooperators = cooperatorsEdit.value.filter(
-    (guest) => !cooperatorsUpdate.value.some((c) => c.email === guest.email),
-  )
-
-  try {
-    await store.dispatch('updateStudy', test.value)
-
-    await Promise.all([
-      store.dispatch('getStudy', { id: test.value.id }),
-      ...newCooperators.map((guest) =>
-        sendMenssages(guest, guest.inviteMessage),
-      ),
-    ])
-  } catch {
-    // console.error('Error updating study:', error)
-  }
 }
 
 const sendMenssages = async (guest, customMessage = null) => {
@@ -694,21 +612,13 @@ const executeCooperatorRemoval = async (coop) => {
     throw new Error('STUDY_ROLE_FORBIDDEN')
   }
 
-  const index = cooperatorsEdit.value.findIndex(
-    (c) =>
-      (c.token && coop.token && c.token === coop.token) ||
-      (c.userDocId && coop.userDocId && c.userDocId === coop.userDocId) ||
-      (c.email && coop.email && c.email === coop.email),
-  )
-  if (index !== -1) {
-    cooperatorsEdit.value.splice(index, 1)
-  }
-  test.value.cooperators = cooperatorsEdit.value
-  await store.dispatch('updateStudy', test.value)
-  await store.dispatch('removeTestFromCooperator', {
-    test: test.value,
-    cooperator: coop,
+  await manageStudyMembership({
+    studyId: test.value.id,
+    action: 'remove',
+    targetUserId: coop.userDocId || null,
+    targetEmail: coop.email,
   })
+  await store.dispatch('getStudy', { id: test.value.id })
 }
 
 const cancelInvitation = async (guest) => {
@@ -744,17 +654,13 @@ const executeInvitationCancellation = async (guest) => {
     throw new Error('STUDY_ROLE_FORBIDDEN')
   }
 
-  const index = cooperatorsEdit.value.findIndex(
-    (c) =>
-      (c.token && guest.token && c.token === guest.token) ||
-      (c.userDocId && guest.userDocId && c.userDocId === guest.userDocId) ||
-      (c.email && guest.email && c.email === guest.email),
-  )
-  if (index !== -1) {
-    cooperatorsEdit.value.splice(index, 1)
-  }
-  test.value.cooperators = cooperatorsEdit.value
-  await store.dispatch('updateStudy', test.value)
+  await manageStudyMembership({
+    studyId: test.value.id,
+    action: 'cancelInvitation',
+    targetUserId: guest.userDocId || null,
+    targetEmail: guest.email,
+  })
+  await store.dispatch('getStudy', { id: test.value.id })
 }
 
 const openDialog = async () => {

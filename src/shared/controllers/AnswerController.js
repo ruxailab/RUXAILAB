@@ -25,6 +25,10 @@ export default class AnswerController extends Controller {
     return super.create(COLLECTION, payload.toFirestore())
   }
 
+  async linkAnswerToStudy(answerId, studyId) {
+    return super.update(COLLECTION, answerId, { studyId })
+  }
+
   async updateUserAnswer(payload) {
     if (!payload?.cooperatorId || !payload?.testDocId || !payload?.data) {
       return null
