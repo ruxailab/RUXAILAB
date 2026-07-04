@@ -19,9 +19,10 @@ jest.unstable_mockModule('../src/f.firebase.js', () => ({
   },
 }))
 
-const { assertMembershipMutationAllowed } = await import(
-  '../src/https/studyMembership.js'
-)
+const {
+  assertMembershipMutationAllowed,
+  findMatchingPendingInvitation,
+} = await import('../src/https/studyMembership.js')
 
 const study = (testType, actorRole) => ({
   testType,
@@ -32,6 +33,34 @@ const study = (testType, actorRole) => ({
 })
 
 describe('study membership authorization', () => {
+  it('matches a pending invitation only to the invited account and token', () => {
+    const invitedStudy = {
+      cooperators: [
+        {
+          userDocId: 'invitee',
+          email: 'invitee@example.com',
+          token: 'invite-token',
+          accepted: false,
+        },
+      ],
+    }
+
+    expect(
+      findMatchingPendingInvitation(invitedStudy, {
+        uid: 'invitee',
+        email: 'invitee@example.com',
+        token: 'invite-token',
+      }),
+    ).toEqual(expect.objectContaining({ userDocId: 'invitee' }))
+    expect(
+      findMatchingPendingInvitation(invitedStudy, {
+        uid: 'forwarded-user',
+        email: 'other@example.com',
+        token: 'invite-token',
+      }),
+    ).toBeNull()
+  })
+
   it('allows a user-study Manager to invite User and Observator only', () => {
     expect(() =>
       assertMembershipMutationAllowed({

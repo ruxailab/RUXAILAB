@@ -34,6 +34,20 @@ const sameEmail = (left, right) =>
     left && right && String(left).trim().toLowerCase() === String(right).trim().toLowerCase(),
   )
 
+export const findMatchingPendingInvitation = (
+  study,
+  { uid, email, token },
+) =>
+  study?.cooperators?.find((cooperator) => {
+    if (cooperator?.accepted === true) return false
+    const accountMatches =
+      cooperator?.userDocId === uid || sameEmail(cooperator?.email, email)
+    const tokenMatches =
+      token &&
+      (token === cooperator?.token || token === cooperator?.userDocId)
+    return accountMatches && tokenMatches
+  }) ?? null
+
 const findTargetIndex = (cooperators, { targetUserId, targetEmail }) =>
   cooperators.findIndex(
     (cooperator) =>
@@ -203,6 +217,7 @@ export const manageStudyMembership = functions.onCall({
           accessLevel: role,
           inviteMessage: data.inviteMessage || null,
           token: data.token || null,
+          testDate: data.testDate || null,
           progress: 0,
           updateDate: Date.now(),
           testAuthorEmail: study.testAdmin?.email || '',
@@ -252,5 +267,49 @@ export const manageStudyMembership = functions.onCall({
         status: action === 'remove' ? 'removed' : 'invitation-cancelled',
       }
     })
+  },
+})
+
+export const getStudyInvitation = functions.onCall({
+  handler: async (request) => {
+    const uid = request?.auth?.uid
+    if (!uid) throw error('unauthenticated', 'Authentication is required')
+
+    const { studyId, token } = getData(request)
+    if (!studyId || !token) {
+      throw error('invalid-argument', 'studyId and token are required')
+    }
+
+    const db = admin.firestore()
+    const [studySnap, userSnap] = await Promise.all([
+      db.collection('tests').doc(studyId).get(),
+      db.collection('users').doc(uid).get(),
+    ])
+    if (!studySnap.exists) throw error('not-found', 'Study not found')
+
+    const study = studySnap.data()
+    const invitation = findMatchingPendingInvitation(study, {
+      uid,
+      email: userSnap.data()?.email || request?.auth?.token?.email,
+      token,
+    })
+    if (!invitation) {
+      throw error('permission-denied', 'No invitation matches this account')
+    }
+
+    return {
+      study: {
+        id: studyId,
+        testType: study.testType,
+        subType: study.subType || null,
+        testTitle: study.testTitle || '',
+        testDescription: study.testDescription || '',
+        testAdminEmail: study.testAdmin?.email || '',
+      },
+      invitation: {
+        accessLevel: invitation.accessLevel,
+        testDate: invitation.testDate || null,
+      },
+    }
   },
 })

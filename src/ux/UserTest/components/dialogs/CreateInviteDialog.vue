@@ -376,14 +376,15 @@
 </template>
 
 <script setup>
-import Cooperators from '@/shared/models/Cooperators'
 import Notification from '@/shared/models/Notification'
 import EmailController from '@/shared/controllers/EmailController'
-import { computed, ref } from 'vue'
+import UIDGenerator from 'uid-generator'
+import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
-import { ACCESS_LEVEL } from '../../../../shared/utils/accessLevel'
 import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
 import { showError, showSuccess } from '@/shared/utils/toast'
+import { getAssignableRoleOptions } from '@/shared/utils/studyAccessPolicy'
+import { manageStudyMembership } from '@/shared/services/studyMembershipService'
 
 // Props
 const props = defineProps({
@@ -395,6 +396,7 @@ const emit = defineEmits(['update:dialog'])
 
 // Store
 const store = useStore()
+const uidgen = new UIDGenerator()
 
 // Composables
 const { validateEmail } = useCooperatorUtils()
@@ -423,20 +425,7 @@ const valid = ref(false)
 const comboboxModel = ref([])
 const inviteMessage = ref('')
 const loading = ref(false)
-const selectedRole = ref(ACCESS_LEVEL.ADMIN)
-
-const roleOptions = [
-  {
-    label: 'Evaluator',
-    value: ACCESS_LEVEL.EVALUATOR,
-    description: 'Participates in the test, shares screen/video.',
-  },
-  {
-    label: 'Observator',
-    value: ACCESS_LEVEL.OBSERVATOR,
-    description: 'Watches the session silently, takes notes.',
-  },
-]
+const selectedRole = ref(null)
 
 // Computed
 const minTime = computed(() => {
@@ -460,7 +449,28 @@ const cooperatorsEdit = computed(() =>
 )
 
 const test = computed(() => store.getters.test)
+const currentUser = computed(() => store.getters.user)
 const users = computed(() => store.state.Users?.users || [])
+const roleOptions = computed(() =>
+  getAssignableRoleOptions(test.value, currentUser.value).map((role) => ({
+    ...role,
+    label: role.title,
+    description:
+      role.title === 'Observator'
+        ? 'Watches the session and reviews its answers.'
+        : `Collaborates as ${role.title}.`,
+  })),
+)
+
+watch(
+  roleOptions,
+  (options) => {
+    if (!options.some((option) => option.value === selectedRole.value)) {
+      selectedRole.value = options[0]?.value ?? null
+    }
+  },
+  { immediate: true },
+)
 
 const filteredUsers = computed(() => {
   if (!users.value || users.value.length === 0) return []
@@ -568,33 +578,24 @@ const saveInvitation = async () => {
     }
 
     const timestamp = dateTime.toISOString()
-    // Loopin through all selected emails/users
-    comboboxModel.value.forEach((item) => {
+    const invited = []
+    for (const item of comboboxModel.value) {
       const email = typeof item === 'object' ? item.email : item
       const userDocId = typeof item === 'object' ? item.id : null
 
-      // Prevnt duplicate invites
-      if (
-        !cooperatorsEdit.value.some(
-          (c) => c.email === email && c.testDate === timestamp,
-        )
-      ) {
-        cooperatorsEdit.value.push(
-          new Cooperators({
-            userDocId,
-            email,
-            invited: true,
-            accepted: false,
-            accessLevel: selectedRole.value,
-            testDate: timestamp,
-            inviteMessage: inviteMessage.value,
-            updateDate: test.value.updateDate,
-            testAuthorEmail: test.value.testAdmin.email,
-          }),
-        )
-      }
-    })
-    await submit()
+      const result = await manageStudyMembership({
+        studyId: test.value.id,
+        action: 'invite',
+        targetUserId: userDocId,
+        targetEmail: email,
+        role: selectedRole.value,
+        inviteMessage: inviteMessage.value,
+        testDate: timestamp,
+        token: uidgen.generateSync(),
+      })
+      invited.push(result.cooperator)
+    }
+    await submit(invited)
   } catch (error) {
     console.error('Error saving invitation:', error)
     showError(error.message)
@@ -603,20 +604,17 @@ const saveInvitation = async () => {
   }
 }
 
-const submit = async () => {
-  test.value.cooperators = [...cooperatorsEdit.value]
-  await store.dispatch('updateStudy', test.value)
-
+const submit = async (invited) => {
   // Ensure notifications / external emails are sent one by one
-  for (const guest of cooperatorsEdit.value) {
-    if (!guest.accepted) {
-      try {
-        await notifyCooperator(guest)
-      } catch (err) {
-        console.error('notfyCooperator error:', err)
-      }
+  for (const guest of invited) {
+    try {
+      await notifyCooperator(guest)
+    } catch (err) {
+      console.error('notfyCooperator error:', err)
     }
   }
+
+  await store.dispatch('getStudy', { id: test.value.id })
 
   inviteForm.value.resetValidation()
 
@@ -626,7 +624,7 @@ const submit = async () => {
 
   inviteMessage.value = ''
   comboboxModel.value = []
-  selectedRole.value = ACCESS_LEVEL.ADMIN
+  selectedRole.value = roleOptions.value[0]?.value ?? null
 
   emit('update:dialog', false)
 }

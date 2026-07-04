@@ -928,13 +928,6 @@ const startTest = async () => {
     return
   }
 
-  if (!isUserTestAdmin.value) {
-    await store.dispatch('acceptStudyCollaboration', {
-      test: test.value,
-      cooperator: user.value,
-    })
-  }
-
   if (isObservator.value) {
     // Hidin start screen and mount VideoCall component
     start.value = false

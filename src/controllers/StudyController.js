@@ -100,7 +100,7 @@ export default class StudyController extends Controller {
     const response =
       await FirebaseFunctionsController.callHttpsCallableFunction(
         'manageStudyMembership',
-        { studyId: payload.test.id, action: 'accept' },
+        { studyId: payload.studyId ?? payload.test?.id, action: 'accept' },
       )
     return response.data
   }
