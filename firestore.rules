@@ -51,13 +51,13 @@ service cloud.firestore {
     function canViewDashboard(study) {
       return isAdmin(study) || isManager(study) ||
         (isUserStudy(study) && roleFor(study) == 3) ||
-        (isHeuristicStudy(study) && roleFor(study) in [1, 2, 3]);
+        (isHeuristicStudy(study) && roleFor(study) in [1, 2]);
     }
 
     function canViewAnswers(study) {
       return isAdmin(study) || isManager(study) ||
         (isUserStudy(study) && roleFor(study) == 3) ||
-        (isHeuristicStudy(study) && roleFor(study) in [1, 2, 3]);
+        (isHeuristicStudy(study) && roleFor(study) in [1, 2]);
     }
 
     function canAnswer(study) {

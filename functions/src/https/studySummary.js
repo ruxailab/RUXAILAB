@@ -3,13 +3,21 @@ import { admin, functions } from '../f.firebase.js'
 const error = (code, message) =>
   new functions.https.HttpsError(code, message)
 
-const canExportSummary = (study, uid, isSuperAdmin) => {
+export const assertSummaryExportAllowed = (study, uid, isSuperAdmin) => {
+  if (study?.testType !== 'USER') {
+    throw error(
+      'failed-precondition',
+      'Summary export is available only for user studies',
+    )
+  }
   if (isSuperAdmin || study?.testAdmin?.userDocId === uid) return true
   const membership = study?.cooperators?.find(
     (cooperator) =>
       cooperator?.userDocId === uid && cooperator?.accepted === true,
   )
-  return membership?.accessLevel === 0 || membership?.accessLevel === 4
+  if (membership?.accessLevel !== 0 && membership?.accessLevel !== 4) {
+    throw error('permission-denied', 'Summary export is not permitted')
+  }
 }
 
 export const generateStudySummary = functions.onCall({
@@ -28,9 +36,7 @@ export const generateStudySummary = functions.onCall({
     if (!studySnap.exists) throw error('not-found', 'Study not found')
 
     const study = studySnap.data()
-    if (!canExportSummary(study, uid, userSnap.data()?.accessLevel === 0)) {
-      throw error('permission-denied', 'Summary export is not permitted')
-    }
+    assertSummaryExportAllowed(study, uid, userSnap.data()?.accessLevel === 0)
 
     const answerSnap = await db.collection('answers').doc(study.answersDocId).get()
     const pdfServiceUrl =

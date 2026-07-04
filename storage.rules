@@ -33,8 +33,35 @@ service firebase.storage {
       );
     }
 
-    match /tests/{studyId}/{allPaths=**} {
-      allow read, write: if canAccessStorage(studyId);
+    function canAnswerStudy(studyId) {
+      return signedIn() && (
+        study(studyId).isPublic == true ||
+        roleFor(studyId) == 0 ||
+        roleFor(studyId) == 4 ||
+        (study(studyId).testType == 'USER' && roleFor(studyId) == 5) ||
+        ((study(studyId).testType == 'HEURISTIC' ||
+          study(studyId).testType == 'HEURISTICS') &&
+          roleFor(studyId) == 1) ||
+        study(studyId).testAdmin.userDocId == request.auth.uid
+      );
+    }
+
+    function canEditStudy(studyId) {
+      return signedIn() && (
+        currentUser().data.accessLevel == 0 ||
+        study(studyId).testAdmin.userDocId == request.auth.uid ||
+        roleFor(studyId) in [0, 4]
+      );
+    }
+
+    match /tests/{studyId}/{userId}/{allPaths=**} {
+      allow read: if canAccessStorage(studyId) ||
+        (userId.matches('heuristic_.*') && canEditStudy(studyId));
+      allow create, update: if
+        canAccessStorage(studyId) ||
+        (userId.matches('heuristic_.*') && canEditStudy(studyId)) ||
+        (request.auth.uid == userId && canAnswerStudy(studyId));
+      allow delete: if canAccessStorage(studyId);
     }
 
     match /{allPaths=**} {

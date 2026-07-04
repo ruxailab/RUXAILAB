@@ -121,8 +121,14 @@
       </v-card>
     </v-dialog>
 
+    <EvaluatorInfoDisplay
+      v-if="showEvaluatorInfo"
+      :sections="evaluatorInfoSections"
+      @start="evaluatorInfoAcknowledged = true"
+    />
+
     <v-container
-      v-if="test && start && !testAlreadyStarted"
+      v-else-if="test && start && !testAlreadyStarted"
       class="start-container"
       fluid
     >
@@ -606,6 +612,11 @@ import Heuristic from '@/ux/Heuristic/models/Heuristic'
 import { showSuccess, showError } from '@/shared/utils/toast'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import HeuristicAnswer from '../models/HeuristicAnswer'
+import EvaluatorInfoDisplay from '@/ux/Heuristic/components/EvaluatorInfoDisplay.vue'
+import {
+  resolveStudyAccess,
+  STUDY_ROLE,
+} from '@/shared/utils/studyAccessPolicy'
 
 const props = defineProps({
   id: { type: String, default: '' },
@@ -620,6 +631,7 @@ const logined = ref(null)
 const fromlink = ref(null)
 const drawer = ref(true)
 const start = ref(true)
+const evaluatorInfoAcknowledged = ref(false)
 const mini = ref(false)
 const index = ref(null)
 const noExistUser = ref(true)
@@ -644,6 +656,24 @@ const saveStatusIcon = ref('mdi-check-circle')
 const saveStatusColor = ref('primary')
 
 const test = computed(() => store.getters.test)
+const evaluatorInfoSections = computed(
+  () => test.value?.evaluatorInfo?.sections || [],
+)
+const showEvaluatorInfo = computed(() => {
+  if (
+    !test.value ||
+    !user.value ||
+    !start.value ||
+    testAlreadyStarted.value ||
+    evaluatorInfoAcknowledged.value ||
+    evaluatorInfoSections.value.length === 0
+  ) {
+    return false
+  }
+
+  const access = resolveStudyAccess(test.value, user.value)
+  return access.role === STUDY_ROLE.EVALUATOR || access.isPublicParticipant
+})
 
 const trackTimeEnabled = computed(() => test.value?.trackTime !== false)
 
@@ -847,13 +877,6 @@ const startTest = async () => {
   if (!test.value?.testOptions?.length) {
     showError('No answer options configured for this test.')
     return
-  }
-
-  if (!isUserTestAdmin.value) {
-    await store.dispatch('acceptStudyCollaboration', {
-      test: test.value,
-      cooperator: user.value,
-    })
   }
 
   start.value = false
