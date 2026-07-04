@@ -36,7 +36,10 @@ service cloud.firestore {
     }
 
     function isStudyMember(study) {
-      return roleFor(study) != null;
+      return
+        (study.testType == 'USER' && roleFor(study) in [0, 3, 4, 5]) ||
+        ((study.testType == 'HEURISTIC' || study.testType == 'HEURISTICS') &&
+          roleFor(study) in [0, 1, 2, 4]);
     }
 
     function isUserStudy(study) {
