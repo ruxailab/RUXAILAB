@@ -1,6 +1,7 @@
 import {
   buildStudyManagerCards,
   buildStudyNavigator,
+  getCommunityStudyDestination,
 } from '@/shared/utils/studyNavigation'
 import { STUDY_ROLE } from '@/shared/utils/studyAccessPolicy'
 
@@ -20,6 +21,17 @@ const titlesFor = (study, user, type = 'userTest/unmoderated') =>
   buildStudyNavigator({ study, user, type }).map((item) => item.title)
 
 describe('study navigation', () => {
+  it('opens a public community study as an answer, without visiting Manager', () => {
+    const publicStudy = { ...studyWith('USER'), isPublic: true }
+
+    expect(
+      getCommunityStudyDestination({
+        study: publicStudy,
+        user: { id: 'public-participant', accessLevel: 1 },
+      }),
+    ).toEqual({ name: 'TestView', params: { id: publicStudy.id } })
+  })
+
   it('shows every user-study Admin item, including Storage', () => {
     expect(titlesFor(studyWith('USER'), owner)).toEqual([
       'Manager',

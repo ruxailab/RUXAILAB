@@ -1,10 +1,42 @@
 import { ICONS, createCardConfig } from '@/shared/constants/theme'
 import {
+  STUDY_TYPES,
+  USER_STUDY_SUBTYPES,
+} from '@/shared/constants/methodDefinitions'
+import {
   STUDY_CAPABILITY,
   hasStudyCapability,
 } from '@/shared/utils/studyAccessPolicy'
 
 const C = STUDY_CAPABILITY
+
+export function getCommunityStudyDestination({ study, user }) {
+  if (!study || !user) return null
+
+  if (hasStudyCapability(study, user, C.DASHBOARD_VIEW)) {
+    if (study.testType === STUDY_TYPES.HEURISTIC) {
+      return { name: 'HeuristicManagerView', params: { id: study.id } }
+    }
+    if (
+      study.testType === STUDY_TYPES.USER &&
+      study.subType === USER_STUDY_SUBTYPES.UNMODERATED
+    ) {
+      return { name: 'UserUnmoderatedManagerView', params: { id: study.id } }
+    }
+    if (
+      study.testType === STUDY_TYPES.USER &&
+      study.subType === USER_STUDY_SUBTYPES.MODERATED
+    ) {
+      return { name: 'UserModeratedManagerView', params: { id: study.id } }
+    }
+  }
+
+  if (hasStudyCapability(study, user, C.STUDY_ANSWER)) {
+    return { name: 'TestView', params: { id: study.id } }
+  }
+
+  return null
+}
 
 const NAVIGATION_ITEMS = Object.freeze([
   {
