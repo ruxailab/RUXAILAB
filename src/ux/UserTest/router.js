@@ -8,6 +8,7 @@ import CooperatorsModeratedView from './views/Moderators/CooperatorsModeratedVie
 import UserAnswerView from './views/UserAnswerView.vue'
 import StorageView from '@/shared/views/StorageView.vue'
 import { STUDY_CAPABILITY as C } from '@/shared/utils/studyAccessPolicy'
+import AuditTrailView from '@/shared/views/AuditTrailView.vue'
 
 const studyMeta = (studyCapability, studyRouteBase) => ({
   authorize: [0, 1],
@@ -65,6 +66,17 @@ export default [
         meta: studyMeta(C.STORAGE_ACCESS, 'userTest/unmoderated'),
         component: StorageView,
       },
+      {
+        path: '/userTest/unmoderated/audit/:id',
+        name: 'UserUnmoderatedAuditTrailView',
+        props: true,
+        meta: {
+          authorize: [0, 1],
+          studyOwnerOnly: true,
+          studyRouteBase: 'userTest/unmoderated',
+        },
+        component: AuditTrailView,
+      },
     ],
   },
   {
@@ -115,6 +127,17 @@ export default [
         props: true,
         meta: studyMeta(C.STORAGE_ACCESS, 'userTest/moderated'),
         component: StorageView,
+      },
+      {
+        path: '/userTest/moderated/audit/:id',
+        name: 'UserModeratedAuditTrailView',
+        props: true,
+        meta: {
+          authorize: [0, 1],
+          studyOwnerOnly: true,
+          studyRouteBase: 'userTest/moderated',
+        },
+        component: AuditTrailView,
       },
     ],
   },

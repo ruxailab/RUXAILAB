@@ -57,12 +57,38 @@ const updateStorageUsageForPath = async (filePath) => {
   }
 };
 
+const writeStorageAudit = async (event) => {
+  const filePath = event.data?.name;
+  const actorId = event.data?.metadata?.actorId;
+  const match = filePath?.match(/^tests\/([^\/]+)/);
+  if (!match || !actorId) return;
+
+  await admin
+    .firestore()
+    .collection('tests')
+    .doc(match[1])
+    .collection('auditTrail')
+    .add({
+      action: 'storage.fileWritten',
+      actorId,
+      target: filePath,
+      details: {},
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    });
+};
+
 /**
  * Cloud Function triggered when a file is created or overwritten.
  */
 export const onStorageUpdate = functions.onStorageTrigger({
   event: "finalized",
-  handler: async (event) => updateStorageUsageForPath(event.data?.name),
+  handler: async (event) => {
+    const [result] = await Promise.all([
+      updateStorageUsageForPath(event.data?.name),
+      writeStorageAudit(event),
+    ]);
+    return result;
+  },
 });
 
 /**

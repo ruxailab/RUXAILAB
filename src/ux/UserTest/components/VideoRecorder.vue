@@ -52,6 +52,7 @@ import {
 } from 'firebase/storage'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { showError } from '@/shared/utils/toast'
+import { getAuditedUploadMetadata } from '@/shared/utils/storageAudit'
 
 const props = defineProps({
   testId: {
@@ -157,7 +158,11 @@ const startRecording = async () => {
           storage,
           `tests/${props.testId}/${props.userDocId}/task_${correctTaskIndex}/video/${recordedVideo.value}`,
         )
-        await uploadBytes(storageReference, videoBlob)
+        await uploadBytes(
+          storageReference,
+          videoBlob,
+          getAuditedUploadMetadata(),
+        )
 
         recordedVideo.value = await getDownloadURL(storageReference)
         console.log('webcam url =>', correctTaskIndex, recordedVideo.value)

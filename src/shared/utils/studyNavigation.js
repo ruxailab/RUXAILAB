@@ -6,6 +6,7 @@ import {
 import {
   STUDY_CAPABILITY,
   hasStudyCapability,
+  resolveStudyAccess,
 } from '@/shared/utils/studyAccessPolicy'
 
 const C = STUDY_CAPABILITY
@@ -106,13 +107,23 @@ export function buildStudyNavigator({ study, user, type, previewPath }) {
   if (!hasStudyCapability(study, user, C.DASHBOARD_VIEW)) return []
 
   const context = { type, id: study.id, previewPath }
-  return NAVIGATION_ITEMS.filter((item) =>
+  const items = NAVIGATION_ITEMS.filter((item) =>
     hasStudyCapability(study, user, item.capability),
   ).map(({ title, icon, path }) => ({
     title,
     icon,
     path: path(context),
   }))
+
+  if (resolveStudyAccess(study, user).isOwner) {
+    items.push({
+      title: 'Audit Trail',
+      icon: 'mdi-history',
+      path: `/${type}/audit/${study.id}`,
+    })
+  }
+
+  return items
 }
 
 export function buildStudyManagerCards({ study, user, type }) {

@@ -89,7 +89,12 @@ export default class StudyController extends Controller {
 
   async updateStudy(payload) {
     try {
-      return await super.update(COLLECTION, payload.id, payload.toFirestore())
+      const response =
+        await FirebaseFunctionsController.callHttpsCallableFunction(
+          'updateStudyWithAudit',
+          { studyId: payload.id, study: payload.toFirestore() },
+        )
+      return response.data
     } catch (e) {
       throw e
     }

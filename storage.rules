@@ -57,11 +57,12 @@ service firebase.storage {
     match /tests/{studyId}/{userId}/{allPaths=**} {
       allow read: if canAccessStorage(studyId) ||
         (userId.matches('heuristic_.*') && canEditStudy(studyId));
-      allow create, update: if
+      allow create, update: if request.resource.metadata.actorId == request.auth.uid && (
         canAccessStorage(studyId) ||
         (userId.matches('heuristic_.*') && canEditStudy(studyId)) ||
-        (request.auth.uid == userId && canAnswerStudy(studyId));
-      allow delete: if canAccessStorage(studyId);
+        (request.auth.uid == userId && canAnswerStudy(studyId))
+      );
+      allow delete: if false;
     }
 
     match /{allPaths=**} {

@@ -9,6 +9,7 @@ import HeuristicAnswerView from './views/HeuristicAnswerView.vue'
 import EvaluatorInfoView from './views/EvaluatorInfoView.vue'
 import StorageView from '@/shared/views/StorageView.vue'
 import { STUDY_CAPABILITY as C } from '@/shared/utils/studyAccessPolicy'
+import AuditTrailView from '@/shared/views/AuditTrailView.vue'
 
 const studyMeta = (studyCapability) => ({
   authorize: [0, 1],
@@ -79,6 +80,17 @@ export default [
         props: true,
         meta: studyMeta(C.STORAGE_ACCESS),
         component: StorageView,
+      },
+      {
+        path: '/heuristic/audit/:id',
+        name: 'HeuristicAuditTrailView',
+        props: true,
+        meta: {
+          authorize: [0, 1],
+          studyOwnerOnly: true,
+          studyRouteBase: 'heuristic',
+        },
+        component: AuditTrailView,
       } /*
       {
         path: '/heuristic/analytics/:id/:heuristic?',

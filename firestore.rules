@@ -51,6 +51,10 @@ service cloud.firestore {
         study.testType == 'HEURISTICS';
     }
 
+    function isRbacStudy(study) {
+      return isUserStudy(study) || isHeuristicStudy(study);
+    }
+
     function canViewDashboard(study) {
       return isAdmin(study) || isManager(study) ||
         (isUserStudy(study) && roleFor(study) == 3) ||
@@ -107,11 +111,27 @@ service cloud.firestore {
         isStudyMember(resource.data) ||
         canViewDashboard(resource.data)
       );
-      allow update: if isAdmin(resource.data) ||
-        (isManager(resource.data) && managerChangedOnlyStudyContent());
+      allow update: if !isRbacStudy(resource.data) && (
+        isAdmin(resource.data) ||
+        (isManager(resource.data) && managerChangedOnlyStudyContent())
+      );
       allow delete: if isAdmin(resource.data);
 
-      match /{nestedDocument=**} {
+      match /auditTrail/{eventId} {
+        allow read: if signedIn() &&
+          get(/databases/$(database)/documents/tests/$(studyId))
+            .data.testAdmin.userDocId == request.auth.uid;
+        allow write: if false;
+      }
+
+      match /logs/{logId} {
+        allow read: if canViewDashboard(
+          get(/databases/$(database)/documents/tests/$(studyId)).data
+        );
+        allow write: if false;
+      }
+
+      match /logBatches/{batchId} {
         allow read: if canViewDashboard(
           get(/databases/$(database)/documents/tests/$(studyId)).data
         );

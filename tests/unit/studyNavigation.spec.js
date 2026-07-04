@@ -42,6 +42,7 @@ describe('study navigation', () => {
       'Cooperators',
       'Settings',
       'Storage',
+      'Audit Trail',
     ])
   })
 
@@ -56,6 +57,13 @@ describe('study navigation', () => {
       'Answers',
       'Cooperators',
     ])
+  })
+
+  it('does not show Audit Trail to an invited Admin', () => {
+    const user = { id: 'admin', accessLevel: 1 }
+    const study = studyWith('USER', user.id, STUDY_ROLE.ADMIN)
+
+    expect(titlesFor(study, user)).not.toContain('Audit Trail')
   })
 
   it('shows an Observator the dashboard and Answers but not Storage', () => {

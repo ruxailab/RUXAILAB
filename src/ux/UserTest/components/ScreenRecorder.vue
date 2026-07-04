@@ -55,6 +55,7 @@ import {
   getDownloadURL,
 } from 'firebase/storage'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
+import { getAuditedUploadMetadata } from '@/shared/utils/storageAudit'
 
 const props = defineProps({
   testId: String,
@@ -108,7 +109,11 @@ const recordScreen = async () => {
       const storagePath = `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${recordingTaskIndex.value}/screen_record/${videoUrl.value}`
       const storageReference = storageRef(storage, storagePath)
 
-      await uploadBytes(storageReference, videoBlob)
+      await uploadBytes(
+        storageReference,
+        videoBlob,
+        getAuditedUploadMetadata(),
+      )
       videoUrl.value = await getDownloadURL(storageReference)
 
       // Use the task index from when recording started, not the current one

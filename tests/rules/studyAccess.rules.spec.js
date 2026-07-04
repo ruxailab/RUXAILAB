@@ -4,7 +4,7 @@ import {
   assertSucceeds,
   initializeTestEnvironment,
 } from '@firebase/rules-unit-testing'
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
+import { deleteDoc, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
 import {
   deleteObject,
   getBytes,
@@ -96,24 +96,63 @@ describe('Firestore study RBAC', () => {
     )
   })
 
-  it('allows Manager study-content edits but rejects Settings and membership edits', async () => {
+  it('denies unsupported Observator access on heuristic studies', async () => {
+    await testEnv.withSecurityRulesDisabled((adminContext) =>
+      updateDoc(doc(adminContext.firestore(), 'tests/study-1'), {
+        testType: 'HEURISTIC',
+      }),
+    )
+
+    await assertFails(
+      getDoc(doc(context('observator').firestore(), 'tests/study-1')),
+    )
+  })
+
+  it('routes all RBAC study updates through trusted callable operations', async () => {
     const managerStudy = doc(context('manager').firestore(), 'tests/study-1')
 
-    await assertSucceeds(updateDoc(managerStudy, { testTitle: 'New title' }))
+    await assertFails(updateDoc(managerStudy, { testTitle: 'New title' }))
     await assertFails(updateDoc(managerStudy, { isPublic: true }))
     await assertFails(updateDoc(managerStudy, { studyRoleMap: { manager: 0 } }))
+    await assertFails(
+      updateDoc(doc(context('admin').firestore(), 'tests/study-1'), {
+        testTitle: 'Admin bypass',
+      }),
+    )
+  })
+
+  it('allows only the Study Owner to read audit events and denies client writes', async () => {
+    await testEnv.withSecurityRulesDisabled((adminContext) =>
+      setDoc(
+        doc(adminContext.firestore(), 'tests/study-1/auditTrail/event-1'),
+        { action: 'study.edited', actorId: 'manager' },
+      ),
+    )
+
+    await assertSucceeds(
+      getDoc(
+        doc(context('owner').firestore(), 'tests/study-1/auditTrail/event-1'),
+      ),
+    )
+    await assertFails(
+      getDoc(
+        doc(context('admin').firestore(), 'tests/study-1/auditTrail/event-1'),
+      ),
+    )
+    await assertFails(
+      setDoc(
+        doc(context('owner').firestore(), 'tests/study-1/auditTrail/forged'),
+        { action: 'forged' },
+      ),
+    )
   })
 
   it('allows only Admin capability holders to delete the study', async () => {
     await assertFails(
-      updateDoc(doc(context('manager').firestore(), 'tests/study-1'), {
-        status: 'deleted',
-      }),
+      deleteDoc(doc(context('manager').firestore(), 'tests/study-1')),
     )
     await assertSucceeds(
-      updateDoc(doc(context('admin').firestore(), 'tests/study-1'), {
-        status: 'deleted',
-      }),
+      deleteDoc(doc(context('admin').firestore(), 'tests/study-1')),
     )
   })
 
@@ -163,13 +202,64 @@ describe('Storage study RBAC', () => {
     )
     const managerFile = ref(
       context('manager').storage(),
-      'tests/study-1/manager/file.txt',
+      'tests/study-1/owner/file.txt',
     )
 
-    await assertSucceeds(uploadBytes(adminFile, new Uint8Array([1, 2, 3])))
+    await assertSucceeds(
+      uploadBytes(adminFile, new Uint8Array([1, 2, 3]), {
+        customMetadata: { actorId: 'admin' },
+      }),
+    )
     await assertSucceeds(getBytes(adminFile))
-    await assertFails(uploadBytes(managerFile, new Uint8Array([1])))
+    await assertFails(
+      uploadBytes(managerFile, new Uint8Array([1]), {
+        customMetadata: { actorId: 'manager' },
+      }),
+    )
     await assertFails(getBytes(managerFile))
-    await assertSucceeds(deleteObject(adminFile))
+    await assertFails(deleteObject(adminFile))
+  })
+
+  it('allows a participant to upload only under their own answer path', async () => {
+    const ownFile = ref(
+      context('user').storage(),
+      'tests/study-1/user/recording.webm',
+    )
+    const otherFile = ref(
+      context('user').storage(),
+      'tests/study-1/observator/recording.webm',
+    )
+    const metadata = { customMetadata: { actorId: 'user' } }
+
+    await assertSucceeds(uploadBytes(ownFile, new Uint8Array([1]), metadata))
+    await assertFails(uploadBytes(otherFile, new Uint8Array([1]), metadata))
+  })
+
+  it('allows a Manager to write heuristic editing assets without opening Storage', async () => {
+    await testEnv.withSecurityRulesDisabled((adminContext) =>
+      updateDoc(doc(adminContext.firestore(), 'tests/study-1'), {
+        testType: 'HEURISTIC',
+      }),
+    )
+    const asset = ref(
+      context('manager').storage(),
+      'tests/study-1/heuristic_1/question/image.png',
+    )
+
+    await assertSucceeds(
+      uploadBytes(asset, new Uint8Array([1]), {
+        customMetadata: { actorId: 'manager' },
+      }),
+    )
+
+    const unsupportedUserRecording = ref(
+      context('user').storage(),
+      'tests/study-1/user/recording.webm',
+    )
+    await assertFails(
+      uploadBytes(unsupportedUserRecording, new Uint8Array([1]), {
+        customMetadata: { actorId: 'user' },
+      }),
+    )
   })
 })

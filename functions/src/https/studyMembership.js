@@ -1,4 +1,5 @@
 import { admin, functions } from '../f.firebase.js'
+import { writeAuditEvent } from '../utils/auditTrail.js'
 
 const ROLE = Object.freeze({
   ADMIN: 0,
@@ -186,6 +187,12 @@ export const manageStudyMembership = functions.onCall({
             updateDate: Date.now(),
           },
         })
+        writeAuditEvent(transaction, studyRef, {
+          action: 'cooperator.invitationAccepted',
+          actorId,
+          target: actorId,
+          details: { role: membership.accessLevel },
+        })
         return { status: 'accepted', cooperator: membership }
       }
 
@@ -224,6 +231,12 @@ export const manageStudyMembership = functions.onCall({
         }
         cooperators.push(membership)
         transaction.update(studyRef, { cooperators })
+        writeAuditEvent(transaction, studyRef, {
+          action: 'cooperator.invited',
+          actorId,
+          target: targetUserId || targetEmail,
+          details: { role },
+        })
         return { status: 'invited', cooperator: membership }
       }
 
@@ -244,6 +257,12 @@ export const manageStudyMembership = functions.onCall({
           })
         }
         transaction.update(studyRef, { cooperators, studyRoleMap })
+        writeAuditEvent(transaction, studyRef, {
+          action: 'cooperator.roleChanged',
+          actorId,
+          target: membership.userDocId || membership.email,
+          details: { previousRole: target.accessLevel, role },
+        })
         return { status: 'role-assigned', cooperator: membership }
       }
 
@@ -263,6 +282,15 @@ export const manageStudyMembership = functions.onCall({
           [`myAnswers.${studyId}`]: admin.firestore.FieldValue.delete(),
         })
       }
+      writeAuditEvent(transaction, studyRef, {
+        action:
+          action === 'remove'
+            ? 'cooperator.removed'
+            : 'cooperator.invitationCancelled',
+        actorId,
+        target: target.userDocId || target.email,
+        details: { previousRole: target.accessLevel },
+      })
       return {
         status: action === 'remove' ? 'removed' : 'invitation-cancelled',
       }

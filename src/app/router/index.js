@@ -11,6 +11,7 @@ import store from '@/store'
 import {
   getStudyFallbackPath,
   hasStudyCapability,
+  resolveStudyAccess,
 } from '@/shared/utils/studyAccessPolicy'
 
 const routes = [
@@ -33,6 +34,7 @@ router.beforeEach(async (to, from, next) => {
   const {
     authorize = [],
     studyCapability = null,
+    studyOwnerOnly = false,
     studyRouteBase = '',
   } = to.meta || {}
   let user = store.state.Auth.user
@@ -68,7 +70,7 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 
-  if (studyCapability && to.params.id && user) {
+  if ((studyCapability || studyOwnerOnly) && to.params.id && user) {
     const studyId = to.params.id
     let study = store.getters.test
 
@@ -77,7 +79,13 @@ router.beforeEach(async (to, from, next) => {
       study = store.getters.test
     }
 
-    if (study?.id !== studyId || !hasStudyCapability(study, user, studyCapability)) {
+    const denied =
+      study?.id !== studyId ||
+      (studyOwnerOnly
+        ? !resolveStudyAccess(study, user).isOwner
+        : !hasStudyCapability(study, user, studyCapability))
+
+    if (denied) {
       store.commit('SET_TOAST', {
         message: 'AccessNotAllowed.noAccess',
         type: 'error',
