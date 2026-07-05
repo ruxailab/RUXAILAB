@@ -7,28 +7,29 @@
     <v-card class="rounded-lg">
       <v-card-title style="color: white" class="bg-primary rounded-top-lg">
         <v-icon color="white" class="mr-2"> mdi-account-plus </v-icon>
-        {{ title || 'Send Invitation' }}
+        {{ title || t('cooperators.invite.title') }}
       </v-card-title>
       <v-card-text class="pt-4">
-        <v-combobox
-          :key="comboboxKey"
-          ref="combobox"
-          v-model="comboboxModel"
-          :items="users.filter((user) => user?.email != null)"
-          item-title="email"
-          :label="selectLabel || 'Select cooperator'"
-          multiple
-          variant="outlined"
-          density="comfortable"
-          @update:model-value="validateEmail"
-        >
-          <template #no-data>
-            {{
-              noDataText ||
-              'There are no users registered with that email, press enter to select anyways.'
-            }}
-          </template>
-        </v-combobox>
+        <v-row class="ma-0">
+          <v-text-field
+            v-model="emailInput"
+            :label="selectLabel || t('cooperators.invite.emailPlaceholder')"
+            variant="outlined"
+            density="comfortable"
+            placeholder="Type an email address"
+            prepend-inner-icon="mdi-email-outline"
+            clearable
+            @keydown.enter.prevent="addEmailToSelection"
+          />
+          <v-btn
+            class="ml-2"
+            icon
+            variant="outlined"
+            :disabled="!emailInput.trim()"
+            @click="addEmailToSelection"
+            ><v-icon>mdi-plus</v-icon></v-btn
+          >
+        </v-row>
 
         <div class="d-flex flex-wrap mt-1">
           <v-chip
@@ -47,7 +48,7 @@
           :items="roleOptions"
           item-title="title"
           item-value="value"
-          :label="roleLabel || 'Role'"
+          :label="roleLabel || t('cooperators.invite.role')"
           variant="outlined"
           density="comfortable"
           class="mt-4"
@@ -70,7 +71,7 @@
                   v-bind="props"
                   variant="outlined"
                   density="compact"
-                  label="Date"
+                  :label="t('cooperators.invite.date')"
                   prepend-inner-icon="mdi-calendar"
                 />
               </template>
@@ -100,7 +101,7 @@
                   density="compact"
                   color="primary"
                   variant="outlined"
-                  label="Time"
+                  :label="t('cooperators.invite.time')"
                   readonly
                   v-bind="props"
                 />
@@ -120,8 +121,10 @@
           v-if="showInviteMessage"
           v-model="inviteMessage"
           color="primary"
-          :label="messageLabel || 'Invitation Message'"
-          :placeholder="messagePlaceholder || 'Enter your invitation message'"
+          :label="messageLabel || t('cooperators.invite.message')"
+          :placeholder="
+            messagePlaceholder || t('cooperators.invite.messagePlaceholder')
+          "
           variant="outlined"
           class="mt-4"
         />
@@ -137,7 +140,7 @@
           class="rounded-lg"
           @click="onCancel"
         >
-          {{ cancelText || 'Cancel' }}
+          {{ cancelText || t('cooperators.invite.cancel') }}
         </v-btn>
         <v-btn
           color="primary"
@@ -145,7 +148,7 @@
           :disabled="selectedCoops.length === 0 || selectedRole === null"
           @click="onSend"
         >
-          {{ sendText || 'Send' }}
+          {{ sendText || t('cooperators.invite.send') }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -154,8 +157,14 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
+import {
+  getCooperatorInviteValidationError,
+  normalizeCooperatorInviteEntry,
+} from '@/shared/composables/useCooperatorUtils'
 import { showError, showWarning } from '@/shared/utils/toast'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   show: {
@@ -165,6 +174,18 @@ const props = defineProps({
   users: {
     type: Array,
     default: () => [],
+  },
+  existingCooperators: {
+    type: Array,
+    default: () => [],
+  },
+  currentUserEmail: {
+    type: String,
+    default: '',
+  },
+  studyOwnerEmail: {
+    type: String,
+    default: '',
   },
   showDateTimeSelection: {
     type: Boolean,
@@ -191,16 +212,11 @@ const props = defineProps({
 
 const emit = defineEmits(['update:show', 'send-invitations'])
 
-// Use composables
-const { validateEmail: isValidEmail } = useCooperatorUtils()
-
 // Local state
 const selectedCoops = ref([])
-const comboboxModel = ref([])
-const comboboxKey = ref(0)
 const selectedRole = ref(null)
 const inviteMessage = ref('')
-const combobox = ref(null)
+const emailInput = ref('')
 
 watch(
   () => props.roleOptions,
@@ -247,53 +263,40 @@ const removeSelectedCoop = (index) => {
   selectedCoops.value.splice(index, 1)
 }
 
-const isStringEmail = (email) => {
-  return typeof email !== 'object' && email !== undefined && email.length > 0
-}
-
-const isUserEmailValid = (email) => {
-  return props.users.find((user) => user.email === email)
-}
-
 const isCoopAlreadySelected = (emailToCheck) => {
   return selectedCoops.value.find(
     (coop) => (typeof coop === 'object' ? coop.email : coop) === emailToCheck,
   )
 }
 
-const validateEmail = () => {
-  const email = comboboxModel.value.pop()
-  comboboxKey.value++
+const addEmailToSelection = () => {
+  const rawValue = emailInput.value.trim()
+  if (!rawValue) return
 
-  if (!email) return
+  const validationError = getCooperatorInviteValidationError({
+    email: rawValue,
+    currentUserEmail: props.currentUserEmail,
+    studyOwnerEmail: props.studyOwnerEmail,
+    existingCooperators: props.existingCooperators,
+    t,
+  })
 
-  // Handle string email input
-  if (isStringEmail(email)) {
-    if (!isValidEmail(email)) {
-      showError('Invalid email format')
-      return
-    }
-
-    if (!isUserEmailValid(email)) {
-      showError(`${email} is not a valid email or does not exist`)
-      return
-    }
-
-    if (!selectedCoops.value.includes(email)) {
-      selectedCoops.value.push(email)
-    }
+  if (validationError) {
+    showError(validationError)
+    emailInput.value = ''
     return
   }
 
-  // Handle object email input
-  if (selectedCoops.value.includes(email)) return
-
-  if (isCoopAlreadySelected(email.email)) {
-    showWarning(`${email.email} has already been selected`)
+  if (isCoopAlreadySelected(rawValue)) {
+    showWarning(t('cooperators.invite.alreadySelected', { email: rawValue }))
+    emailInput.value = ''
     return
   }
 
-  selectedCoops.value.push(email)
+  selectedCoops.value.push(
+    normalizeCooperatorInviteEntry(rawValue, props.users),
+  )
+  emailInput.value = ''
 }
 
 const onCancel = () => {
@@ -319,10 +322,9 @@ const onSend = () => {
 
 const resetForm = () => {
   selectedCoops.value = []
-  comboboxModel.value = []
   inviteMessage.value = ''
   selectedRole.value = props.roleOptions[0]?.value ?? null
-  combobox.value?.blur()
+  emailInput.value = ''
 }
 
 // Watch for dialog visibility to reset form
@@ -348,6 +350,13 @@ watch(
 .v-btn {
   font-weight: 600;
   text-transform: unset !important;
+}
+
+:deep(.v-btn) {
+  border-radius: 12px;
+  text-transform: none;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .email-chip {

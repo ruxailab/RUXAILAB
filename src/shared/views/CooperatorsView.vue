@@ -71,6 +71,9 @@
       v-model:show="showInviteDialog"
       :users="users"
       :role-options="assignableRoleOptions"
+      :existing-cooperators="cooperatorsEdit"
+      :current-user-email="userAuth?.email"
+      :study-owner-email="test?.testAdmin?.email"
       :show-date-time-selection="false"
       :title="$t('HeuristicsCooperators.actions.send_invitation')"
       :select-label="$t('HeuristicsCooperators.actions.select_cooperator')"
@@ -121,6 +124,10 @@ import MessageDialog from '@/shared/components/dialogs/MessageDialog.vue'
 import InviteDialog from '@/shared/components/dialogs/InviteDialog.vue'
 import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 import UIDGenerator from 'uid-generator'
+import {
+  getCooperatorInviteValidationError,
+  normalizeCooperatorInviteEntry,
+} from '@/shared/composables/useCooperatorUtils'
 import { useCooperatorActions } from '@/shared/composables/useCooperatorActions'
 import { getMethodManagerView } from '../constants/methodDefinitions'
 import { useRouter, useRoute } from 'vue-router'
@@ -364,7 +371,6 @@ const handleSendInvitations = async (invitationData) => {
 
   const { selectedCoops, selectedRole, inviteMessage } = invitationData
   const newInvites = []
-  const updatedRoles = []
 
   inviteMessages.value = inviteMessage
 
@@ -375,51 +381,49 @@ const handleSendInvitations = async (invitationData) => {
     showError('AccessNotAllowed.noAccess')
     return
   }
-
-  const unauthorizedTarget = selectedCoops.find((coop) => {
-    const coopEmail = coop.email || coop
-    const existing = cooperatorsEdit.value.find((item) => item.email === coopEmail)
-    return !canManageCooperator(test.value, userAuth.value, existing, {
-      action: existing ? 'assignRole' : 'invite',
+  if (
+    !canManageCooperator(test.value, userAuth.value, null, {
+      action: 'invite',
       role: selectedRole,
     })
-  })
-  if (unauthorizedTarget) {
+  ) {
     showError('AccessNotAllowed.noAccess')
     return
   }
 
-  for (const coop of selectedCoops) {
-    const coopEmail = coop.email || coop // Handle both object and string formats
-    const existingIndex = cooperatorsEdit.value.findIndex(
-      (c) => c.email === coopEmail,
-    )
+  const normalizedInvites = selectedCoops.map((coop) => {
+    const normalizedEntry = normalizeCooperatorInviteEntry(coop, users.value)
+    const coopEmail =
+      normalizedEntry?.email || (typeof coop === 'object' ? coop.email : coop)
+    return { ...normalizedEntry, email: coopEmail?.trim() || '' }
+  })
 
-    if (existingIndex === -1) {
-      const token = uidgen.generateSync()
-      const result = await manageStudyMembership({
-        studyId: test.value.id,
-        action: 'invite',
-        targetUserId: coop.id || null,
-        targetEmail: coopEmail,
-        role: selectedRole,
-        inviteMessage,
-        token,
-      })
-      newInvites.push(result.cooperator)
-    } else {
-      const existing = cooperatorsEdit.value[existingIndex]
-      if (existing.accessLevel !== selectedRole) {
-        await manageStudyMembership({
-          studyId: test.value.id,
-          action: 'assignRole',
-          targetUserId: existing.userDocId || null,
-          targetEmail: existing.email,
-          role: selectedRole,
-        })
-        updatedRoles.push(coopEmail)
-      }
+  for (const invite of normalizedInvites) {
+    const validationError = getCooperatorInviteValidationError({
+      email: invite.email,
+      currentUserEmail: userAuth.value?.email,
+      studyOwnerEmail: test.value?.testAdmin?.email,
+      existingCooperators: cooperatorsEdit.value,
+      t,
+    })
+
+    if (validationError) {
+      showError(validationError)
+      return
     }
+  }
+
+  for (const invite of normalizedInvites) {
+    const result = await manageStudyMembership({
+      studyId: test.value.id,
+      action: 'invite',
+      targetUserId: invite.userDocId || null,
+      targetEmail: invite.email,
+      role: selectedRole,
+      inviteMessage,
+      token: uidgen.generateSync(),
+    })
+    newInvites.push(result.cooperator)
   }
 
   await store.dispatch('getStudy', { id: test.value.id })
@@ -429,14 +433,6 @@ const handleSendInvitations = async (invitationData) => {
   showInviteDialog.value = false
 
   // Show appropriate feedback
-  if (updatedRoles.length > 0) {
-    showSuccess(
-      t('cooperators.updatedRole', {
-        role: roleOption.title,
-        users: updatedRoles.join(', '),
-      }),
-    )
-  }
   if (newInvites.length > 0) {
     showSuccess(
       t('cooperators.inviteSent', {
@@ -664,7 +660,6 @@ const executeInvitationCancellation = async (guest) => {
 }
 
 const openDialog = async () => {
-  if (!store.state.Users?.users) store.dispatch('getAllUsers')
   if (slots.dialog) drawerOpen.value = true
   else showInviteDialog.value = true
 }

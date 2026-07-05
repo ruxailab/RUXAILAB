@@ -3,6 +3,81 @@ import { getStatusColor, getStatusText } from '@/shared/utils/statusUtils'
 import { formatDate, formatTime } from '@/shared/utils/dateUtils'
 import { formatInitials } from '@/shared/utils/formatUtils'
 
+export const normalizeCooperatorInviteEntry = (entry, registeredUsers = []) => {
+  if (!entry) {
+    return { email: '', userDocId: null }
+  }
+
+  if (typeof entry === 'string') {
+    const email = entry.trim()
+    const normalizedEmail = email.toLowerCase()
+    const matchedUser = registeredUsers.find((user) => {
+      return user?.email?.trim()?.toLowerCase() === normalizedEmail
+    })
+
+    return {
+      email,
+      userDocId: matchedUser?.id || matchedUser?.userDocId || null,
+    }
+  }
+
+  const email = entry?.email?.trim() || entry?.value?.trim() || ''
+  const matchedUser = registeredUsers.find((user) => {
+    return user?.email?.trim()?.toLowerCase() === email.trim().toLowerCase()
+  })
+
+  return {
+    email,
+    userDocId:
+      entry?.userDocId ||
+      entry?.id ||
+      matchedUser?.id ||
+      matchedUser?.userDocId ||
+      null,
+  }
+}
+
+export const getCooperatorInviteValidationError = ({
+  email,
+  currentUserEmail,
+  studyOwnerEmail,
+  existingCooperators = [],
+  t,
+}) => {
+  if (!email || typeof email !== 'string') {
+    return t('cooperators.validation.invalidEmail')
+  }
+
+  const normalizedEmail = email.trim().toLowerCase()
+  if (!normalizedEmail.includes('@') || !normalizedEmail.includes('.')) {
+    return t('cooperators.validation.invalidFormat')
+  }
+
+  if (
+    currentUserEmail &&
+    normalizedEmail === currentUserEmail.trim().toLowerCase()
+  ) {
+    return t('cooperators.validation.inviteSelf')
+  }
+
+  if (
+    studyOwnerEmail &&
+    normalizedEmail === studyOwnerEmail.trim().toLowerCase()
+  ) {
+    return t('cooperators.validation.inviteOwner')
+  }
+
+  const alreadyCooperator = existingCooperators.some((cooperator) => {
+    return cooperator?.email?.trim()?.toLowerCase() === normalizedEmail
+  })
+
+  if (alreadyCooperator) {
+    return t('cooperators.validation.alreadyCooperator')
+  }
+
+  return null
+}
+
 /**
  * Composable for common cooperator utilities
  */
@@ -82,5 +157,6 @@ export function useCooperatorUtils() {
     formatDate,
     formatTime,
     validateEmail,
+    getCooperatorInviteValidationError,
   }
 }
