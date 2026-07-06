@@ -98,7 +98,7 @@
     "description": "Descripción",
     "cancel": "Cancelar",
     "confirm": "Confirmar",
-    "delete":"Eliminar",
+    "delete": "Eliminar",
     "add": "Agregar",
     "text": "Texto",
     "value": "Valor",
@@ -152,6 +152,34 @@
   },
   "storage": {
     "pageTitle": "Almacenamiento",
+    "studyDescription": "Gestiona los archivos asociados a este estudio.",
+    "studyInformation": "Información del estudio",
+    "study": "Estudio",
+    "studyId": "ID del estudio",
+    "studyType": "Tipo de estudio",
+    "untitled": "Estudio sin título",
+    "unknownType": "Desconocido",
+    "storageAnalysis": "Análisis de almacenamiento",
+    "accountStorage": "Almacenamiento de la cuenta",
+    "studyStorageUsed": "Ocupado por el estudio",
+    "freeSpace": "Espacio libre",
+    "accountQuota": "Disponible en el plan de la cuenta",
+    "totalFiles": "Total de archivos",
+    "fileTypes": "{count} tipos de archivo",
+    "largestType": "Tipo con mayor tamaño",
+    "knownSizes": "Tamaño conocido en {known} de {total} archivos",
+    "fileCount": "{count} archivos",
+    "unknownSizeWarning": "No se ha podido obtener el tamaño de {count} archivos. No se incluyen en el espacio ocupado.",
+    "unknownSize": "Desconocido",
+    "unknownDate": "Fecha desconocida",
+    "unknownEvaluator": "Evaluador desconocido",
+    "allTypes": "Todos los tipos",
+    "filterByType": "Filtrar por tipo",
+    "searchFiles": "Buscar archivos",
+    "previewFile": "Previsualizar archivo",
+    "openFile": "Abrir archivo",
+    "noData": "Sin datos",
+    "noMediaFilesDescription": "Los archivos aparecerán cuando los participantes carguen imágenes o generen grabaciones.",
     "totalStorage": "Almacenamiento total",
     "acrossFiles": "En {count} archivos",
     "mediaFiles": "Archivos multimedia",
@@ -161,6 +189,16 @@
     "confirmDeletion": "Confirmar eliminación",
     "deleteConfirmMessage": "¿Estás seguro de que deseas eliminar este archivo {type} de \"{studyName}\"?",
     "actionCannotBeUndone": "Esta acción no se puede deshacer.",
+    "types": {
+      "video": "Vídeo",
+      "webcam": "Webcam",
+      "screen": "Grabación de pantalla",
+      "audio": "Audio",
+      "image": "Imagen",
+      "document": "Documento",
+      "archive": "Archivo comprimido",
+      "file": "Otro archivo"
+    },
     "headers": {
       "type": "Tipo",
       "name": "Nombre",
@@ -260,7 +298,27 @@
   },
   "cooperators": {
     "updatedRole": "Rol actualizado a {role} para: {users}",
-    "inviteSent": "Invitación enviada a: {users}"
+    "inviteSent": "Invitación enviada a: {users}",
+    "validation": {
+      "invalidEmail": "Por favor, introduce un correo electrónico válido.",
+      "invalidFormat": "Por favor, introduce un correo electrónico válido.",
+      "inviteSelf": "No puedes invitarte a ti mismo.",
+      "inviteOwner": "El propietario del estudio no puede ser invitado como colaborador.",
+      "alreadyCooperator": "Este correo ya es un colaborador de este estudio."
+    },
+    "invite": {
+      "title": "Enviar invitación",
+      "emailPlaceholder": "Correo del colaborador",
+      "emailInputPlaceholder": "Escribe un correo electrónico",
+      "role": "Rol",
+      "date": "Fecha",
+      "time": "Hora",
+      "message": "Mensaje de invitación",
+      "messagePlaceholder": "Escribe tu mensaje de invitación",
+      "cancel": "Cancelar",
+      "send": "Enviar",
+      "alreadySelected": "{email} ya fue seleccionado"
+    }
   },
   "navigation": {
     "dashboard": "Panel",
@@ -386,6 +444,7 @@
       "Final Report": "Informe final",
       "Answer Test": "Responder prueba",
       "Settings": "Configuración",
+      "Storage": "Almacenamiento",
       "name": "Nombre",
       "studiesCount": "Recuento de Estudios",
       "mediaSize": "Tamaño de Medios",
@@ -882,12 +941,48 @@
   },
   "UsabilityCooperators": {
     "inviteEvaluator": "Invitar evaluador a la prueba",
+    "inviteMessageDescription": "Escribe un mensaje personalizado para incluir en la invitación.",
+    "inviteEvaluatorDescription": "Envía invitaciones de evaluación a los participantes",
     "email": "Correo electrónico",
-    "scheduledAt": "Programado para",
+    "scheduledAt": "Programado en",
     "inviteMessage": "Mensaje de invitación",
     "placeholderMessage": "Hola, hagamos una prueba...",
-    "inviteInfo": "La invitación con el enlace de la prueba se enviará al correo del evaluador en el horario programado",
-    "send": "Enviar"
+    "inviteInfo": "La invitación con el enlace de la prueba será enviada al correo del evaluador en el horario programado",
+    "send": "Enviar",
+
+    "role": "Rol",
+    "roleDescription": "Selecciona el rol para este participante.",
+
+    "roles": {
+      "evaluator": "Evaluador",
+      "evaluatorDesc": "Participa en la prueba, comparte pantalla/video.",
+      "observator": "Observador",
+      "observatorDesc": "Observa la sesión en silencio y toma notas."
+    },
+
+    "selectParticipantDescription": "Selecciona el participante que deseas invitar a esta sesión de evaluación.",
+    "emailPlaceholder": "Escribe un correo electrónico y presiona Enter",
+    "addedParticipants": "Participantes añadidos",
+    "noParticipantSelected": "Ningún participante seleccionado",
+
+    "scheduleDescription": "Elige la fecha y hora de la sesión de evaluación.",
+
+    "invitationPreview": "Vista previa de la invitación",
+    "evaluationInvitation": "Invitación de evaluación",
+
+    "to": "Para",
+    "scheduled": "Programado",
+    "message": "Mensaje",
+
+    "noMessageYet": "Aún no se ha ingresado ningún mensaje...",
+
+    "inviteInfoTitle": "Información",
+    "inviteInfoDescription": "El participante recibirá una notificación por correo electrónico y podrá aceptar o rechazar la invitación.",
+
+    "validation": {
+      "invalidEmail": "Correo inválido: {email}",
+      "dateRequired": "La fecha es obligatoria"
+    }
   },
   "HeuristicsCooperators": {
     "title": {
@@ -1833,6 +1928,61 @@
     "postTestVariables": "Variables de la Prueba Posterior",
     "configureVariables": "Configura las variables para la sección {type}. Agrega, edita o elimina variables según sea necesario.",
     "createNewVariableTitle": "Crear Nueva Variable"
+  },
+  "videoCall": {
+    "title": "Videollamada",
+    "description": "Elija la tecnología de videollamada para esta sesión moderada.",
+    "providers": {
+      "mesh": {
+        "name": "Estándar (Mesh)",
+        "range": "2–5 participantes",
+        "description": "Conexión directa entre participantes. Ideal para sesiones pequeñas."
+      },
+      "livekit": {
+        "name": "LiveKit (SFU)",
+        "range": "5+ participantes",
+        "description": "Enrutamiento basado en servidor para grupos grandes y múltiples observadores."
+      }
+    },
+    "sessionActiveWarning": "No se puede cambiar el proveedor mientras una sesión está en curso.",
+    "session": {
+      "screenSharingLabel": "Compartiendo pantalla",
+      "cameraOff": "La camara esta apagada",
+      "yourVideo": "Tu video",
+      "yourPreview": "Tu vista previa",
+      "observatorMode": "Modo observador",
+      "waitingForModeratorToStartSession": "Esperando a que el moderador inicie la sesion...",
+      "observeAllFeedsNotice": "Podras observar todas las transmisiones de video sin enviar la tuya.",
+      "waitingForParticipants": "Esperando participantes...",
+      "waitingForModerator": "Esperando al moderador...",
+      "autoStartWhenModeratorOpensRoom": "La videollamada comenzara automaticamente cuando el moderador abra la sala."
+    },
+    "panel": {
+      "toolsPanelTitle": "Panel de herramientas",
+      "sessionControl": "Control de sesion",
+      "joinRoomInfo": "Los controles para unirse estan ahora en la interfaz principal superior",
+      "proceedNextStep": "Continuar al siguiente paso",
+      "endCall": "Finalizar llamada",
+      "activeCall": "Llamada activa",
+      "participants": "Participantes",
+      "you": "Tu",
+      "observator": "Observador",
+      "moderator": "Moderador",
+      "connected": "Conectado",
+      "disconnected": "Desconectado",
+      "camera": "Camara",
+      "noCamera": "Sin camara",
+      "microphone": "Microfono",
+      "noMicrophone": "Sin microfono",
+      "settings": "Configuracion",
+      "disableCamera": "Desactivar camara",
+      "enableCamera": "Activar camara",
+      "muteMicrophone": "Silenciar microfono",
+      "unmuteMicrophone": "Activar microfono",
+      "stopScreenShare": "Detener compartir pantalla",
+      "shareScreen": "Compartir pantalla",
+      "moderatorOnlySteps": "Solo el moderador puede cambiar los pasos"
+    }
   },
   "CardSorting": {
     "noCategory": "Sin categoría",

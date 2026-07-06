@@ -15,7 +15,11 @@
       </v-col>
       <v-spacer />
       <v-col cols="auto">
-        <v-btn variant="outlined" :disabled="isAnalyzing" @click="analyzeVideo">
+        <v-btn
+          variant="outlined"
+          :disabled="isAnalyzing"
+          @click="reanalyzeVideo()"
+        >
           <span class="sr-only">Re-analyze Video</span>
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
@@ -209,6 +213,13 @@ function checkExistingResults() {
     if (videoPath) {
       analyzeVideo(videoPath)
     }
+  }
+}
+
+function reanalyzeVideo() {
+  const videoPath = extractVideoNameFromUrl(props.webcamVideoUrl)
+  if (videoPath) {
+    analyzeVideo(videoPath)
   }
 }
 

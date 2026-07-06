@@ -102,7 +102,7 @@
     "cancel": "Cancel",
     "proceed": "proceed",
     "confirm": "Confirm",
-    "delete":"Delete",
+    "delete": "Delete",
     "add": "Add",
     "text": "Text",
     "value": "Value",
@@ -154,6 +154,34 @@
   },
   "storage": {
     "pageTitle": "Storage",
+    "studyDescription": "Manage the files associated with this study.",
+    "studyInformation": "Study information",
+    "study": "Study",
+    "studyId": "Study ID",
+    "studyType": "Study type",
+    "untitled": "Untitled study",
+    "unknownType": "Unknown",
+    "storageAnalysis": "Storage analysis",
+    "accountStorage": "Account storage",
+    "studyStorageUsed": "Used by this study",
+    "freeSpace": "Free space",
+    "accountQuota": "Available in the account plan",
+    "totalFiles": "Total files",
+    "fileTypes": "{count} file types",
+    "largestType": "Largest file type",
+    "knownSizes": "Known size for {known} of {total} files",
+    "fileCount": "{count} files",
+    "unknownSizeWarning": "The size of {count} files could not be retrieved. They are not included in used storage.",
+    "unknownSize": "Unknown",
+    "unknownDate": "Unknown date",
+    "unknownEvaluator": "Unknown evaluator",
+    "allTypes": "All types",
+    "filterByType": "Filter by type",
+    "searchFiles": "Search files",
+    "previewFile": "Preview file",
+    "openFile": "Open file",
+    "noData": "No data",
+    "noMediaFilesDescription": "Files will appear when participants upload images or create recordings.",
     "totalStorage": "Total Storage",
     "acrossFiles": "Across {count} files",
     "mediaFiles": "Media Files",
@@ -163,6 +191,16 @@
     "confirmDeletion": "Confirm Deletion",
     "deleteConfirmMessage": "Are you sure you want to delete this {type} file from \"{studyName}\"?",
     "actionCannotBeUndone": "This action cannot be undone.",
+    "types": {
+      "video": "Video",
+      "webcam": "Webcam",
+      "screen": "Screen recording",
+      "audio": "Audio",
+      "image": "Image",
+      "document": "Document",
+      "archive": "Archive",
+      "file": "Other file"
+    },
     "headers": {
       "type": "Type",
       "name": "Name",
@@ -262,7 +300,27 @@
   },
   "cooperators": {
     "updatedRole": "Updated role to {role} for: {users}",
-    "inviteSent": "Invitation sent to: {users}"
+    "inviteSent": "Invitation sent to: {users}",
+    "validation": {
+      "invalidEmail": "Please enter a valid email address.",
+      "invalidFormat": "Please enter a valid email address.",
+      "inviteSelf": "You cannot invite yourself.",
+      "inviteOwner": "The study owner cannot be invited as a cooperator.",
+      "alreadyCooperator": "This email is already a cooperator for this study."
+    },
+    "invite": {
+      "title": "Send Invitation",
+      "emailPlaceholder": "Type cooperator email",
+      "emailInputPlaceholder": "Type an email address",
+      "role": "Role",
+      "date": "Date",
+      "time": "Time",
+      "message": "Invitation Message",
+      "messagePlaceholder": "Enter your invitation message",
+      "cancel": "Cancel",
+      "send": "Send",
+      "alreadySelected": "{email} has already been selected"
+    }
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -389,6 +447,7 @@
       "Answer Test": "Answer Test",
       "Settings": "Settings",
       "Evaluator Info": "Evaluator Info",
+      "Storage": "Storage",
       "name": "Name",
       "studiesCount": "Studies Count",
       "mediaSize": "Media Size",
@@ -961,12 +1020,48 @@
   },
   "UsabilityCooperators": {
     "inviteEvaluator": "Invite Evaluator To Test",
+    "inviteEvaluatorDescription": "Send evaluation invitations to participants",
     "email": "Email",
     "scheduledAt": "Scheduled at",
     "inviteMessage": "Invite message",
+    "inviteMessageDescription": "Write a personalized message to include with the invitation.",
     "placeholderMessage": "Hey, let's make a test...",
     "inviteInfo": "Invite with test link will be sent to evaluator email at scheduled time",
-    "send": "Send"
+    "send": "Send",
+
+    "role": "Role",
+    "roleDescription": "Select the role for this participant.",
+
+    "roles": {
+      "evaluator": "Evaluator",
+      "evaluatorDesc": "Participates in the test, shares screen/video.",
+      "observator": "Observator",
+      "observatorDesc": "Watches the session silently, takes notes."
+    },
+
+    "selectParticipantDescription": "Select the participant you want to invite to this evaluation session.",
+    "emailPlaceholder": "Type an email address and press Enter",
+    "addedParticipants": "Added participants",
+    "noParticipantSelected": "No participant selected",
+
+    "scheduleDescription": "Choose the date and time for the evaluation session.",
+
+    "invitationPreview": "Invitation Preview",
+    "evaluationInvitation": "Evaluation Invitation",
+
+    "to": "To",
+    "scheduled": "Scheduled",
+    "message": "Message",
+
+    "noMessageYet": "No message entered yet...",
+
+    "inviteInfoTitle": "Information",
+    "inviteInfoDescription": "The participant will receive an email notification and can accept or decline the invitation.",
+
+    "validation": {
+      "invalidEmail": "Invalid email: {email}",
+      "dateRequired": "Date is required"
+    }
   },
   "HeuristicsCooperators": {
     "title": {
@@ -1396,7 +1491,16 @@
       "observeAllFeedsNotice": "You will be able to observe all video feeds without sending your own.",
       "waitingForParticipants": "Waiting for participants...",
       "waitingForModerator": "Waiting for moderator...",
-      "autoStartWhenModeratorOpensRoom": "The video call will start automatically when the moderator opens the room."
+      "autoStartWhenModeratorOpensRoom": "The video call will start automatically when the moderator opens the room.",
+      "cameraDevice": "camera",
+      "microphoneDevice": "microphone",
+      "screenShareDevice": "screen sharing",
+      "secureContextRequired": "{device} requires a secure connection (HTTPS or localhost). Open the app via localhost instead of the network IP address.",
+      "mediaDeviceNotFound": "Could not access the {device}. Check that it is connected and not in use by another application.",
+      "mediaPermissionDenied": "Permission to use the {device} was denied. Allow access in your browser settings.",
+      "mediaDeviceInUse": "The {device} is in use by another application.",
+      "mediaConstraintsNotSupported": "The {device} does not support the required settings.",
+      "mediaDeviceUnavailable": "The {device} is unavailable. You can still join the call without it."
     },
     "buttons": {
       "done": "Done"
@@ -1913,6 +2017,70 @@
     "postTestVariables": "Post-Test Variables",
     "configureVariables": "Configure the variables for the {type} section. Add, edit, or remove variables as needed.",
     "createNewVariableTitle": "Create New Variable"
+  },
+  "videoCall": {
+    "title": "Video Call",
+    "description": "Choose the video call technology for this moderated session.",
+    "providers": {
+      "mesh": {
+        "name": "Standard (Mesh)",
+        "range": "2–5 participants",
+        "description": "Peer-to-peer connections. Best for small sessions."
+      },
+      "livekit": {
+        "name": "LiveKit (SFU)",
+        "range": "5+ participants",
+        "description": "Server-based routing for larger groups and multiple observers."
+      }
+    },
+    "sessionActiveWarning": "Cannot change provider while a session is in progress.",
+    "session": {
+      "screenSharingLabel": "Sharing screen",
+      "cameraOff": "Camera is off",
+      "yourVideo": "Your video",
+      "yourPreview": "Your preview",
+      "observatorMode": "Observer Mode",
+      "waitingForModeratorToStartSession": "Waiting for moderator to start the session...",
+      "observeAllFeedsNotice": "You will be able to observe all video feeds without sending your own.",
+      "waitingForParticipants": "Waiting for participants...",
+      "waitingForModerator": "Waiting for moderator...",
+      "autoStartWhenModeratorOpensRoom": "The video call will start automatically when the moderator opens the room.",
+      "cameraDevice": "camera",
+      "microphoneDevice": "microphone",
+      "screenShareDevice": "screen sharing",
+      "secureContextRequired": "{device} requires a secure connection (HTTPS or localhost). Open the app via localhost instead of the network IP address.",
+      "mediaDeviceNotFound": "Could not access the {device}. Check that it is connected and not in use by another application.",
+      "mediaPermissionDenied": "Permission to use the {device} was denied. Allow access in your browser settings.",
+      "mediaDeviceInUse": "The {device} is in use by another application.",
+      "mediaConstraintsNotSupported": "The {device} does not support the required settings.",
+      "mediaDeviceUnavailable": "The {device} is unavailable. You can still join the call without it."
+    },
+    "panel": {
+      "toolsPanelTitle": "Tools Panel",
+      "sessionControl": "Session Control",
+      "joinRoomInfo": "Join room controls are now in the main interface above",
+      "proceedNextStep": "Proceed to Next Step",
+      "endCall": "End Call",
+      "activeCall": "Active call",
+      "participants": "Participants",
+      "you": "You",
+      "observator": "Observer",
+      "moderator": "Moderator",
+      "connected": "Connected",
+      "disconnected": "Disconnected",
+      "camera": "Camera",
+      "noCamera": "No camera",
+      "microphone": "Microphone",
+      "noMicrophone": "No microphone",
+      "settings": "Settings",
+      "disableCamera": "Turn off camera",
+      "enableCamera": "Turn on camera",
+      "muteMicrophone": "Mute microphone",
+      "unmuteMicrophone": "Unmute microphone",
+      "stopScreenShare": "Stop sharing screen",
+      "shareScreen": "Share screen",
+      "moderatorOnlySteps": "Only the moderator can change steps"
+    }
   },
   "CardSorting": {
     "noCategory": "No category",

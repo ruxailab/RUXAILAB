@@ -3,7 +3,7 @@
     :headers="headers"
     :items="items"
     :sort-by="sortBy || [{ key: 'updateDate', order: 'desc' }]"
-    item-key="id"
+    :item-value="itemValue"
     density="comfortable"
     class="rounded-lg"
     elevation="2"
@@ -185,9 +185,13 @@ const { t } = useI18n()
 // Composables
 const typeRef = toRef(props, 'type')
 const showActionsRef = toRef(props, 'showActions')
-const { headers, getEmptyStateMessage } = useDataTableConfig(typeRef, t, {
-  showActions: showActionsRef,
-})
+const { headers, getEmptyStateMessage, itemValue } = useDataTableConfig(
+  typeRef,
+  t,
+  {
+    showActions: showActionsRef,
+  },
+)
 const {
   getItemTitle,
   getOwnerName,

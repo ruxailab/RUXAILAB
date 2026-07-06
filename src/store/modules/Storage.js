@@ -4,7 +4,13 @@
  */
 
 import { getStorage, ref as storageRef, deleteObject } from 'firebase/storage'
-import { increment, deleteField, writeBatch, doc } from 'firebase/firestore'
+import {
+  increment,
+  deleteField,
+  writeBatch,
+  doc,
+  getDoc,
+} from 'firebase/firestore'
 import { db } from '@/app/plugins/firebase'
 
 export default {
@@ -33,6 +39,18 @@ export default {
   },
 
   actions: {
+    async removeFileReference({ commit }, file) {
+      if (!file) return
+
+      const batch = writeBatch(db)
+      const hasBatchUpdates = await queueFileReferenceRemoval(batch, file)
+
+      if (hasBatchUpdates) {
+        await batch.commit()
+        commit('ADD_DELETED_URL', file.url)
+      }
+    },
+
     async deleteFile({ commit, rootGetters }, file) {
       if (!file) return
 
@@ -71,25 +89,8 @@ export default {
           )
         }
 
-        if (
-          file.answersDocId &&
-          file.userDocId &&
-          file.taskId &&
-          file.urlField
-        ) {
-          const fieldPath = `taskAnswers.${file.userDocId}.tasks.${file.taskId}.${file.urlField}`
-          const updatePayload = {
-            [fieldPath]: deleteField(),
-          }
-          if (file.sizeField) {
-            updatePayload[
-              `taskAnswers.${file.userDocId}.tasks.${file.taskId}.${file.sizeField}`
-            ] = deleteField()
-          }
-          const answerRef = doc(db, 'answers', file.answersDocId)
-          batch.update(answerRef, updatePayload)
-          hasBatchUpdates = true
-        }
+        hasBatchUpdates =
+          (await queueFileReferenceRemoval(batch, file)) || hasBatchUpdates
 
         if (hasBatchUpdates) {
           await batch.commit()
@@ -109,4 +110,97 @@ function getStoragePathFromDownloadUrl(downloadUrl) {
   if (!match)
     throw new Error(`Cannot parse storage path from URL: ${downloadUrl}`)
   return decodeURIComponent(match[1])
+}
+
+async function queueFileReferenceRemoval(batch, file) {
+  let hasBatchUpdates = false
+
+  if (
+    file.answersDocId &&
+    file.userDocId &&
+    file.taskId !== undefined &&
+    file.taskId !== null &&
+    file.urlField
+  ) {
+    const fieldPath = `taskAnswers.${file.userDocId}.tasks.${file.taskId}.${file.urlField}`
+    const updatePayload = {
+      [fieldPath]: deleteField(),
+    }
+    if (file.sizeField) {
+      updatePayload[
+        `taskAnswers.${file.userDocId}.tasks.${file.taskId}.${file.sizeField}`
+      ] = deleteField()
+    }
+    const answerRef = doc(db, 'answers', file.answersDocId)
+    batch.update(answerRef, updatePayload)
+    hasBatchUpdates = true
+  }
+
+  if (
+    file.answerCollection === 'heuristicAnswers' &&
+    file.answersDocId &&
+    file.userDocId &&
+    file.url
+  ) {
+    const answerRef = doc(db, 'answers', file.answersDocId)
+    const answerSnapshot = await getDoc(answerRef)
+    const heuristicAnswer =
+      answerSnapshot.data()?.heuristicAnswers?.[file.userDocId]
+    const { value: cleanedAnswer, changed } = removeHeuristicFileReferences(
+      heuristicAnswer,
+      file.url,
+    )
+
+    if (changed) {
+      batch.update(answerRef, {
+        [`heuristicAnswers.${file.userDocId}`]: cleanedAnswer,
+      })
+      hasBatchUpdates = true
+    }
+  }
+
+  return hasBatchUpdates
+}
+
+function removeHeuristicFileReferences(value, deletedUrl) {
+  if (Array.isArray(value)) {
+    let changed = false
+    const cleaned = value
+      .map((item) => {
+        const result = removeHeuristicFileReferences(item, deletedUrl)
+        changed = changed || result.changed
+        return result.value
+      })
+      .filter((item) => {
+        const shouldKeep = item?.url !== deletedUrl
+        changed = changed || !shouldKeep
+        return shouldKeep
+      })
+    return { value: cleaned, changed }
+  }
+
+  if (!value || typeof value !== 'object') {
+    return { value, changed: false }
+  }
+
+  let changed = false
+  const cleaned = {}
+
+  Object.entries(value).forEach(([key, child]) => {
+    if (key === 'answerImageUrl' && child === deletedUrl) {
+      changed = true
+      return
+    }
+
+    if (key === 'imageSize' && value.answerImageUrl === deletedUrl) {
+      changed = true
+      return
+    }
+
+    const result = removeHeuristicFileReferences(child, deletedUrl)
+    changed = changed || result.changed
+    cleaned[key] = result.value
+  })
+
+  return { value: cleaned, changed }
 }

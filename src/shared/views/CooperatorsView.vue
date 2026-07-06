@@ -64,7 +64,9 @@
     <!-- Invite Dialog -->
     <InviteDialog
       v-model:show="showInviteDialog"
-      :users="users"
+      :existing-cooperators="cooperatorsEdit"
+      :current-user-email="userAuth?.email"
+      :study-owner-email="test?.testAdmin?.email"
       :show-date-time-selection="false"
       :title="$t('HeuristicsCooperators.actions.send_invitation')"
       :select-label="$t('HeuristicsCooperators.actions.select_cooperator')"
@@ -72,6 +74,7 @@
       :role-label="$t('HeuristicsCooperators.headers.role')"
       :cancel-text="$t('HeuristicsCooperators.actions.cancel')"
       :send-text="$t('HeuristicsCooperators.actions.send')"
+      :users="cooperatorsEdit"
       @send-invitations="handleSendInvitations"
     />
 
@@ -115,7 +118,10 @@ import MessageDialog from '@/shared/components/dialogs/MessageDialog.vue'
 import InviteDialog from '@/shared/components/dialogs/InviteDialog.vue'
 import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 import UIDGenerator from 'uid-generator'
-import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
+import {
+  useCooperatorUtils,
+  normalizeCooperatorInviteEntry,
+} from '@/shared/composables/useCooperatorUtils'
 import { useCooperatorActions } from '@/shared/composables/useCooperatorActions'
 import Cooperators from '../models/Cooperators'
 import { getMethodManagerView } from '../constants/methodDefinitions'
@@ -154,7 +160,7 @@ const route = useRoute()
 const slots = useSlots()
 const { t } = useI18n()
 
-const { roleOptions } = useCooperatorUtils()
+const { roleOptions, getCooperatorInviteValidationError } = useCooperatorUtils()
 
 useCooperatorActions() // Keep the hook call in case it has side effects
 
@@ -276,7 +282,6 @@ const showIntroView = computed(() => {
 const dialog = computed(() => store.getters.getDialogLeaveStatus)
 const test = computed(() => store.getters.test)
 const userAuth = computed(() => store.getters.user)
-const users = computed(() => store.state.Users?.users || [])
 const cooperatorsEdit = computed(() =>
   test.value?.cooperators ? [...test.value.cooperators] : [],
 )
@@ -342,47 +347,45 @@ const handleSendInvitations = async (invitationData) => {
   cooperatorsUpdate.value = [...cooperatorsEdit.value]
 
   selectedCoops.forEach((coop) => {
-    const coopEmail = coop.email || coop // Handle both object and string formats
+    const normalizedEntry = normalizeCooperatorInviteEntry(coop)
+    const coopEmail =
+      normalizedEntry?.email || (typeof coop === 'object' ? coop.email : coop)
+    const normalizedEmail = coopEmail?.trim().toLowerCase()
 
-    // Check if this email already exists in cooperators list
+    const validationError = getCooperatorInviteValidationError({
+      email: normalizedEmail,
+      currentUserEmail: userAuth.value?.email,
+      studyOwnerEmail: test.value?.testAdmin?.email,
+      existingCooperators: cooperatorsEdit.value,
+      t,
+    })
+
+    if (validationError) {
+      showError(validationError)
+      return
+    }
+
     const existingIndex = cooperatorsEdit.value.findIndex(
-      (c) => c.email === coopEmail,
+      (c) => c.email?.trim().toLowerCase() === normalizedEmail,
     )
 
     if (existingIndex === -1) {
-      // New email - create new cooperator entry
       const token = uidgen.generateSync()
-      if (!coop.id) {
-        cooperatorsEdit.value.push({
-          userDocId: null,
-          email: coop,
-          invited: true,
-          accepted: false,
-          accessLevel: roleOptions.value[selectedRole].value,
-          inviteMessage: inviteMessage || null,
-          token,
-          progress: 0,
-          updateDate: test.value?.updateDate || new Date().toISOString(),
-          testAuthorEmail: test.value?.testAdmin?.email || '',
-        })
-      } else {
-        cooperatorsEdit.value.push({
-          userDocId: coop.id,
-          email: coop.email,
-          invited: true,
-          accepted: false,
-          accessLevel: roleOptions.value[selectedRole].value,
-          inviteMessage: inviteMessage || null,
-          token,
-          progress: 0,
-          updateDate: test.value?.updateDate || new Date().toISOString(),
-          testAuthorEmail: test.value?.testAdmin?.email || '',
-        })
-      }
-      tokens[coop.id || coop] = token
+      cooperatorsEdit.value.push({
+        userDocId: normalizedEntry?.userDocId || null,
+        email: coopEmail,
+        invited: true,
+        accepted: false,
+        accessLevel: roleOptions.value[selectedRole].value,
+        inviteMessage: inviteMessage || null,
+        token,
+        progress: 0,
+        updateDate: test.value?.updateDate || new Date().toISOString(),
+        testAuthorEmail: test.value?.testAdmin?.email || '',
+      })
+      tokens[normalizedEntry?.userDocId || coopEmail] = token
       newInvites.push(coopEmail)
     } else {
-      // Email already exists - update their role instead of creating duplicate
       const existing = cooperatorsEdit.value[existingIndex]
       const newRole = roleOptions.value[selectedRole].value
 
@@ -390,7 +393,6 @@ const handleSendInvitations = async (invitationData) => {
         existing.accessLevel !== newRole ||
         existing.inviteMessage !== inviteMessage
       ) {
-        // Update the existing entry's role
         cooperatorsEdit.value[existingIndex] = {
           ...existing,
           accessLevel: newRole,
@@ -399,8 +401,7 @@ const handleSendInvitations = async (invitationData) => {
         }
         updatedRoles.push(coopEmail)
       }
-      // Keep existing token so their invite link still works
-      tokens[coop.id || coop] = existing.token
+      tokens[normalizedEntry?.userDocId || coopEmail] = existing.token
     }
   })
 
@@ -668,7 +669,6 @@ const executeInvitationCancellation = async (guest) => {
 }
 
 const openDialog = async () => {
-  if (!store.state.Users?.users) store.dispatch('getAllUsers')
   if (slots.dialog) drawerOpen.value = true
   else showInviteDialog.value = true
 }

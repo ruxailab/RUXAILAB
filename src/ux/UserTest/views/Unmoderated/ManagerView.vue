@@ -145,6 +145,12 @@ const navigator = computed(() => {
     ),
   ]
 
+  items.push({
+    title: 'Storage',
+    icon: 'mdi-database',
+    path: `/userTest/unmoderated/storage/${test.value.id}`,
+  })
+
   return items
 })
 
