@@ -2162,6 +2162,39 @@
       "addPrompt": "Add prompt",
       "removePrompt": "Remove prompt",
       "duration": "Minutes"
+    },
+    "dashboard": {
+      "typeLabel": "Focus Group",
+      "subtitle": "Manage your discussion guide, participants, and moderated sessions from one dashboard."
+    },
+    "studyOverview": {
+      "topics": "Discussion Topics",
+      "topicsSubtitle": "In the guide",
+      "totalDuration": "Total Duration",
+      "durationSubtitle": "Planned",
+      "maxParticipants": "Max Participants",
+      "perSession": "Per session",
+      "team": "Team",
+      "teamSubtitle": "Facilitators & observers"
+    },
+    "modules": {
+      "guideTitle": "Discussion Guide",
+      "topicCount": "{count} topics",
+      "guideDescription": "{minutes} min planned",
+      "untitledTopic": "Untitled topic",
+      "moreTopics": "+{count} more",
+      "guideEmpty": "No topics yet. Add your first topic in the guide editor.",
+      "manageGuide": "Manage guide",
+      "configTitle": "Session Configuration",
+      "maxParticipantsLabel": "Max participants per session",
+      "waitingRoom": "Waiting room enabled",
+      "consent": "Consent required",
+      "backroom": "Observers hidden from participants",
+      "configure": "Configure",
+      "liveSessionTitle": "Live Session",
+      "liveSessionComingSoon": "Moderated live discussion is coming soon.",
+      "reportsTitle": "Results & Reports",
+      "reportsComingSoon": "Session results and analysis will appear here."
     }
   },
   "studyCreation": {
