@@ -1,72 +1,97 @@
 <template>
-  <v-card class="mt-6 pa-2" rounded="xl" variant="outlined">
-    <v-card-title class="text-h6">
-      {{ $t('videoCall.title') }}
-    </v-card-title>
-    <v-card-subtitle class="mb-4">
-      {{ $t('videoCall.description') }}
-    </v-card-subtitle>
+  <v-row justify="center">
+    <v-col lg="12" class="px-0 py-5">
+      <v-card class="elevation-2 rounded-lg pa-md-6" width="100%">
+        <v-row class="pa-4 pa-0">
+          <v-col>
+            <v-card-title
+              class="text-h5 font-weight-bold pa-0"
+              :style="{ color: $vuetify.theme.current.colors['on-surface'] }"
+            >
+              {{ $t('videoCall.title') }}
+            </v-card-title>
 
-    <v-card-text>
-      <v-radio-group
-        v-model="providerModel"
-        :disabled="readonly || hasActiveSession"
-        hide-details
-      >
-        <v-radio :value="VIDEO_CALL_PROVIDERS.MESH" class="mb-4">
-          <template #label>
-            <div class="provider-option">
-              <div class="d-flex align-center flex-wrap ga-2">
-                <span class="font-weight-medium">
-                  {{ $t('videoCall.providers.mesh.name') }}
-                </span>
-                <v-chip size="small" color="primary" variant="tonal">
-                  {{ $t('videoCall.providers.mesh.range') }}
-                </v-chip>
-              </div>
-              <p class="text-body-2 text-medium-emphasis mb-0 mt-1">
-                {{ $t('videoCall.providers.mesh.description') }}
-              </p>
-            </div>
+            <p class="text-body-1" style="color: #4b5563">
+              {{ $t('videoCall.description') }}
+            </p>
+          </v-col>
+        </v-row>
+
+        <v-card-text>
+          <!-- Feature disabled via environment flag -->
+          <v-alert
+            v-if="!videoCallEnabled"
+            type="warning"
+            variant="tonal"
+            density="comfortable"
+          >
+            <template #prepend>
+              <v-icon>mdi-video-off-outline</v-icon>
+            </template>
+            {{ $t('videoCall.disabledMessage') }}
+          </v-alert>
+
+          <!-- Provider selection -->
+          <template v-else>
+            <v-radio-group
+              v-model="providerModel"
+              :disabled="readonly || hasActiveSession"
+              hide-details
+            >
+              <v-radio :value="VIDEO_CALL_PROVIDERS.MESH" class="mb-4">
+                <template #label>
+                  <div class="provider-option">
+                    <div class="d-flex align-center flex-wrap ga-2">
+                      <span class="font-weight-medium">
+                        {{ $t('videoCall.providers.mesh.name') }}
+                      </span>
+                      <v-chip size="small" color="primary" variant="tonal">
+                        {{ $t('videoCall.providers.mesh.range') }}
+                      </v-chip>
+                    </div>
+                    <p class="text-body-2 text-medium-emphasis mb-0 mt-1">
+                      {{ $t('videoCall.providers.mesh.description') }}
+                    </p>
+                  </div>
+                </template>
+              </v-radio>
+
+              <v-radio :value="VIDEO_CALL_PROVIDERS.LIVEKIT">
+                <template #label>
+                  <div class="provider-option">
+                    <div class="d-flex align-center flex-wrap ga-2">
+                      <span class="font-weight-medium">
+                        {{ $t('videoCall.providers.livekit.name') }}
+                      </span>
+                      <v-chip size="small" color="secondary" variant="tonal">
+                        {{ $t('videoCall.providers.livekit.range') }}
+                      </v-chip>
+                    </div>
+                    <p class="text-body-2 text-medium-emphasis mb-0 mt-1">
+                      {{ $t('videoCall.providers.livekit.description') }}
+                    </p>
+                  </div>
+                </template>
+              </v-radio>
+            </v-radio-group>
+
+            <v-alert
+              v-if="hasActiveSession"
+              type="info"
+              variant="tonal"
+              density="compact"
+              class="mt-4"
+            >
+              <template #prepend>
+                <v-icon>mdi-information-outline</v-icon>
+              </template>
+              {{ $t('videoCall.sessionActiveWarning') }}
+            </v-alert>
           </template>
-        </v-radio>
-
-        <v-radio
-          v-if="livekitOptionVisible"
-          :value="VIDEO_CALL_PROVIDERS.LIVEKIT"
-        >
-          <template #label>
-            <div class="provider-option">
-              <div class="d-flex align-center flex-wrap ga-2">
-                <span class="font-weight-medium">
-                  {{ $t('videoCall.providers.livekit.name') }}
-                </span>
-                <v-chip size="small" color="secondary" variant="tonal">
-                  {{ $t('videoCall.providers.livekit.range') }}
-                </v-chip>
-              </div>
-              <p class="text-body-2 text-medium-emphasis mb-0 mt-1">
-                {{ $t('videoCall.providers.livekit.description') }}
-              </p>
-            </div>
-          </template>
-        </v-radio>
-      </v-radio-group>
-
-      <v-alert
-        v-if="hasActiveSession"
-        type="info"
-        variant="tonal"
-        density="compact"
-        class="mt-4"
-      >
-        <template #prepend>
-          <v-icon>mdi-information-outline</v-icon>
-        </template>
-        {{ $t('videoCall.sessionActiveWarning') }}
-      </v-alert>
-    </v-card-text>
-  </v-card>
+        </v-card-text>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script setup>
@@ -97,7 +122,7 @@ const emit = defineEmits(['update:videoCall'])
 
 const hasActiveSession = ref(false)
 
-const livekitOptionVisible = computed(() => {
+const videoCallEnabled = computed(() => {
   return process.env.VUE_APP_LIVEKIT_ENABLED !== 'false'
 })
 
