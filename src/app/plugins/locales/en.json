@@ -1920,6 +1920,7 @@
       }
     },
     "sessionActiveWarning": "Cannot change provider while a session is in progress.",
+    "disabledMessage": "Video call is currently disabled for this environment.",
     "session": {
       "screenSharingLabel": "Sharing screen",
       "cameraOff": "Camera is off",
