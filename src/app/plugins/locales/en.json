@@ -2698,5 +2698,25 @@
     "selectedGuidelines": "Selected Guidelines:",
     "rawWcagDataAvailable": "Raw WCAG Data Available:",
     "filteredWcagDataAvailable": "Filtered WCAG Data Available:"
+  },
+  "invite": {
+    "loading": "Loading invitation...",
+    "signIn": "Sign in",
+    "createAccount": "Create account",
+    "or": "or",
+    "title": "You're invited!",
+    "description": "You've been invited to participate in a study.",
+    "unavailableTitle": "Invitation unavailable",
+    "unavailableDescription": "This invitation is no longer available.",
+    "wrongAccountDescription": "This invitation is associated with a different account. Please sign in using the account that received the invitation.",
+    "currentAccount": "You are currently signed in as",
+    "chooseHowToContinue": "Choose how you'd like to continue.",
+    "accept": "Accept invitation",
+    "signInAnotherAccount": "Sign in with another account",
+    "createDifferentAccount": "Create a different account",
+    "continueAsGuest": "Continue without an account",
+    "invalidLink": "Invalid invitation link.",
+    "loadFailed": "Failed to load invitation.",
+    "acceptFailed": "Failed to accept invitation."
   }
 }

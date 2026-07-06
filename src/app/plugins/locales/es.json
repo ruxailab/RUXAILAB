@@ -2627,5 +2627,25 @@
     "subtitle": "Por favor lee la siguiente información antes de iniciar la evaluación",
     "startButton": "Iniciar Evaluación",
     "noContent": "No hay información adicional."
+  },
+  "invite": {
+    "signIn": "Iniciar sesión",
+    "createAccount": "Crear cuenta",
+    "or": "o",
+    "loading": "Cargando invitación...",
+    "title": "¡Has sido invitado!",
+    "description": "Has sido invitado a participar en un estudio.",
+    "unavailableTitle": "Invitación no disponible",
+    "unavailableDescription": "Esta invitación ya no está disponible.",
+    "wrongAccountDescription": "Esta invitación está asociada a otra cuenta. Inicia sesión con la cuenta que recibió la invitación.",
+    "currentAccount": "Has iniciado sesión como",
+    "chooseHowToContinue": "Elige cómo deseas continuar.",
+    "accept": "Aceptar invitación",
+    "signInAnotherAccount": "Iniciar sesión con otra cuenta",
+    "createDifferentAccount": "Crear una cuenta diferente",
+    "continueAsGuest": "Continuar sin una cuenta",
+    "invalidLink": "El enlace de invitación no es válido.",
+    "loadFailed": "No se pudo cargar la invitación.",
+    "acceptFailed": "No se pudo aceptar la invitación."
   }
 }

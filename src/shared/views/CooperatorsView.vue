@@ -331,6 +331,7 @@ const handleSendEmail = async (guest, customMessage = null) => {
       testDescription: test.value.testDescription,
       adminEmail: test.value.testAdmin.email,
       adminName: userAuth.value.name || userAuth.value.email,
+      studyId: test.value.id,
     },
   })
 }

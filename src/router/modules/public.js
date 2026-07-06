@@ -8,6 +8,7 @@ import Help from '@/shared/views/public/Help.vue'
 import TermsOfService from '@/features/legal/TermsOfService.vue'
 import PrivacyPolicy from '@/features/legal/PrivacyPolicy.vue'
 import FAQ from '@/shared/views/public/FAQ.vue'
+import InviteView from '@/shared/views/public/InviteView.vue'
 
 export default [
   {
@@ -52,14 +53,14 @@ export default [
     name: 'AllArticles',
     meta: { authorize: [] },
     component: Help,
-    props: { showAllOnLoad: true }
-  },/*
+    props: { showAllOnLoad: true },
+  } /*
   {
     path: '/',
     name: 'Landing',
     meta: { authorize: [] },
     component: LandingPage,
-  },*/
+  },*/,
   {
     path: '/:catchAll(.*)',
     name: 'Page not Found',
@@ -83,5 +84,11 @@ export default [
     name: 'FAQ',
     meta: { authorize: [] },
     component: FAQ,
+  },
+  {
+    path: '/invite',
+    name: 'Invite',
+    meta: { authorize: [], layout: 'no-toolbar' },
+    component: InviteView,
   },
 ]
