@@ -65,7 +65,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
-    "@babel/eslint-parser": "^7.28.6",
+    "@babel/eslint-parser": "^8.0.1",
     "@babel/plugin-proposal-optional-chaining": "^7.21.0",
     "@intlify/eslint-plugin-vue-i18n": "^4.5.1",
     "@testing-library/cypress": "^10.0.1",
