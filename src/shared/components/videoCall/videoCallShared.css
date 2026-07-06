@@ -1,4 +1,6 @@
 .video-call-container {
+  --vc-chrome-top: 180px;
+  --vc-controls: 128px;
   display: flex;
   flex-direction: column;
   min-height: auto;
@@ -14,26 +16,73 @@
 
 .video-row {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
-  padding: 20px;
-  min-height: 400px;
-  flex: 0 0 auto; /* Don't grow to fill height */
+  padding: 12px 16px;
+  flex: 0 0 auto;
+}
+
+.video-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  min-height: 0;
+  max-height: max(
+    280px,
+    calc(100dvh - var(--vc-chrome-top) - var(--vc-controls))
+  );
+}
+
+.video-stage:has(.spotlight-primary) {
+  height: max(280px, calc(100dvh - var(--vc-chrome-top) - var(--vc-controls)));
 }
 
 .videos-grid {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols, 2), minmax(0, 1fr));
+  gap: 16px;
+  align-items: stretch;
+  justify-items: center;
   width: 100%;
+  max-width: min(100%, calc(var(--grid-cols, 2) * 480px));
+  margin: 0 auto;
+}
+
+.video-stage > .videos-grid:not(.videos-filmstrip) {
+  flex: 1 1 auto;
+  min-height: 0;
+  align-content: safe center;
+  overflow-y: auto;
+}
+
+.video-stage
+  > .videos-grid:not(.videos-filmstrip)
+  .video-wrapper
+  .video-container {
+  max-height: 100%;
+}
+
+.videos-grid.videos-filmstrip {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: safe center;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 4px;
 }
 
 .video-wrapper {
-  flex: 0 1 auto;
+  width: 100%;
   display: flex;
   justify-content: center;
+}
+
+.videos-filmstrip .video-wrapper {
+  width: auto;
 }
 
 .videos-container {
@@ -54,7 +103,8 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 400px;
+  height: 100%;
+  min-height: 220px;
   padding: 1rem;
   box-sizing: border-box;
   font-size: 1.1rem;
@@ -63,18 +113,62 @@
 
 .video-element {
   width: 100%;
-  height: 400px;
+  height: 100%;
   object-fit: cover;
   border: 3px solid rgb(var(--v-theme-primary));
   border-radius: 16px;
   box-sizing: border-box;
 }
 
+.spotlight-primary {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 1600px;
+  min-height: 0;
+  margin: 0 auto;
+}
+
+.spotlight-item {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.spotlight-item .video-container {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  height: 100%;
+  max-height: 100%;
+  aspect-ratio: auto;
+}
+
+.tile-clickable {
+  cursor: pointer;
+}
+
+.videos-grid .tile-clickable .video-container {
+  transition:
+    outline-color 0.2s ease,
+    transform 0.2s ease;
+  outline: 3px solid transparent;
+  outline-offset: 2px;
+}
+
+.videos-grid .tile-clickable:hover .video-container {
+  outline-color: rgba(var(--v-theme-primary), 0.8);
+}
+
 .screen-share-container .screen-share-element {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  max-width: none;
   object-fit: contain;
   background-color: #111;
-  min-width: 480px;
-  max-width: 960px;
 }
 
 .v-container {
@@ -82,7 +176,6 @@
   padding-bottom: 0;
 }
 
-/* Fixed Bottom Control Bar */
 .bottom-control-bar {
   position: fixed;
   bottom: 16px;
@@ -131,7 +224,6 @@
   color: white;
 }
 
-/* Control button styles */
 .control-btn {
   width: 48px !important;
   height: 48px !important;
@@ -214,14 +306,13 @@
   box-shadow: 0 6px 16px rgba(244, 67, 54, 0.4) !important;
 }
 
-/* Participant controls in main interface - completely separate row */
 .participant-controls-row {
   margin-top: 40px;
   margin-bottom: 24px;
   min-height: 120px;
-  flex: 0 0 auto; /* Fixed height, don't grow */
-  clear: both; /* Ensure it clears any floating elements */
-  position: relative; /* Ensure proper positioning context */
+  flex: 0 0 auto;
+  clear: both;
+  position: relative;
   width: 100%;
 }
 
@@ -274,16 +365,21 @@
 /* Video container for overlays */
 .video-container {
   position: relative;
-  flex: 1;
-  max-width: 500px;
-  min-width: 300px;
-  height: 400px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  height: auto;
+  aspect-ratio: 16 / 9;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   border-radius: 16px;
   overflow: hidden;
 }
 
-/* Video label */
+.videos-filmstrip .video-container {
+  width: 240px;
+  max-width: 240px;
+}
+
 .video-label {
   position: absolute;
   bottom: 12px;
@@ -298,7 +394,6 @@
   z-index: 20;
 }
 
-/* Camera disabled overlay */
 .camera-disabled-overlay {
   position: absolute;
   top: 0;
@@ -313,7 +408,6 @@
   z-index: 10;
 }
 
-/* Microphone muted indicator */
 .mic-muted-indicator {
   position: absolute;
   top: 12px;
@@ -329,7 +423,6 @@
   backdrop-filter: blur(4px);
 }
 
-/* Observator Notice */
 .observator-notice {
   display: flex;
   flex-direction: column;
@@ -345,7 +438,6 @@
   margin: 40px auto;
 }
 
-/* Side Panel */
 .side-panel {
   position: fixed;
   top: 0;
@@ -390,7 +482,6 @@
   padding: 24px;
 }
 
-/* Stepper Panel */
 .stepper-panel {
   position: fixed;
   top: 0;
@@ -431,7 +522,6 @@
   padding: 24px;
 }
 
-/* Custom Stepper Styles */
 .custom-stepper {
   display: flex;
   flex-direction: column;
@@ -629,7 +719,6 @@
   margin-top: 12px;
 }
 
-/* Panel overlay for mobile */
 .panel-overlay {
   position: fixed;
   top: 0;
@@ -641,7 +730,6 @@
   display: none;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .side-panel {
     width: 100%;
@@ -683,18 +771,18 @@
     flex-direction: row;
   }
 
-  .video-container {
-    height: 250px;
-    max-width: 350px;
-    min-width: 200px;
+  .videos-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    max-width: 100%;
   }
 
-  .video-element {
-    height: 250px;
+  .videos-filmstrip .video-container {
+    width: 180px;
+    max-width: 180px;
   }
 
   .not-connected-message {
-    height: 250px;
     font-size: 1rem;
   }
 }
@@ -704,18 +792,17 @@
     gap: 8px;
   }
 
-  .video-container {
-    height: 180px;
-    max-width: 280px;
-    min-width: 150px;
+  .videos-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 
-  .video-element {
-    height: 180px;
+  .videos-filmstrip .video-container {
+    width: 140px;
+    max-width: 140px;
   }
 
   .not-connected-message {
-    height: 180px;
     font-size: 0.85rem;
   }
 
@@ -724,5 +811,61 @@
     width: calc(100% - 16px);
     padding: 8px 10px;
     border-radius: 16px;
+  }
+}
+
+@media (max-height: 780px) {
+  .video-call-container {
+    --vc-controls: 112px;
+  }
+
+  .video-stage {
+    gap: 10px;
+  }
+
+  .videos-filmstrip .video-container {
+    width: 200px;
+    max-width: 200px;
+  }
+
+  .bottom-control-bar {
+    bottom: 10px;
+    padding: 8px 16px;
+  }
+
+  .control-btn {
+    width: 42px !important;
+    height: 42px !important;
+  }
+}
+
+@media (max-height: 620px) {
+  .video-call-container {
+    --vc-chrome-top: 140px;
+    --vc-controls: 104px;
+  }
+
+  .video-row {
+    padding: 8px 12px;
+  }
+
+  .video-stage {
+    gap: 8px;
+  }
+
+  .videos-filmstrip .video-container {
+    width: 160px;
+    max-width: 160px;
+  }
+
+  .control-btn {
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  .control-btn-primary,
+  .control-btn-danger {
+    height: 40px !important;
+    padding: 0 14px !important;
   }
 }

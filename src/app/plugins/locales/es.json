@@ -1926,6 +1926,7 @@
       }
     },
     "sessionActiveWarning": "No se puede cambiar el proveedor mientras una sesión está en curso.",
+    "disabledMessage": "La videollamada está deshabilitada actualmente en este entorno.",
     "session": {
       "screenSharingLabel": "Compartiendo pantalla",
       "cameraOff": "La camara esta apagada",
