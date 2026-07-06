@@ -71,7 +71,7 @@
     "@testing-library/cypress": "^10.0.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/vue": "^8.1.0",
-    "@types/node": "^25.9.2",
+    "@types/node": "^26.1.0",
     "@vue/cli-plugin-babel": "^5.0.8",
     "@vue/cli-plugin-router": "^5.0.8",
     "@vue/cli-plugin-unit-jest": "^5.0.8",
