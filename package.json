@@ -31,7 +31,7 @@
     "@tiptap/pm": "^2.27.2",
     "@tiptap/starter-kit": "^2.27.2",
     "@tiptap/vue-3": "^2.27.2",
-    "@vue/babel-plugin-jsx": "^2.0.1",
+    "@vue/babel-plugin-jsx": "^3.0.0",
     "@vueup/vue-quill": "^1.5.3",
     "axios": "^1.18.0",
     "buffer": "^6.0.3",
