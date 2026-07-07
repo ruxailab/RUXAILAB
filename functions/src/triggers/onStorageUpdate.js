@@ -85,7 +85,10 @@ export const onStorageUpdate = functions.onStorageTrigger({
   handler: async (event) => {
     const [result] = await Promise.all([
       updateStorageUsageForPath(event.data?.name),
-      writeStorageAudit(event),
+      writeStorageAudit(event).catch((error) => {
+        logger.warn('Failed to write storage audit event', { error });
+        return null;
+      }),
     ]);
     return result;
   },

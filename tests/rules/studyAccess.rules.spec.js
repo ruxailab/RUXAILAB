@@ -12,7 +12,7 @@ import {
   uploadBytes,
 } from 'firebase/storage'
 
-const projectId = 'ruxailab-rbac-test'
+const projectId = 'demo-ruxailab-rbac'
 let testEnv
 
 const study = (overrides = {}) => ({
@@ -190,6 +190,24 @@ describe('Firestore study RBAC', () => {
       updateDoc(doc(context('user').firestore(), 'answers/answers-1'), {
         'taskAnswers.user': { progress: 25 },
       }),
+    )
+  })
+
+  it('allows only the creator to clean up an unlinked answer container', async () => {
+    await testEnv.withSecurityRulesDisabled((adminContext) =>
+      setDoc(doc(adminContext.firestore(), 'answers/unlinked-answer'), {
+        studyId: null,
+        createdBy: 'owner',
+        type: 'USER',
+        taskAnswers: {},
+      }),
+    )
+
+    await assertFails(
+      deleteDoc(doc(context('stranger').firestore(), 'answers/unlinked-answer')),
+    )
+    await assertSucceeds(
+      deleteDoc(doc(context('owner').firestore(), 'answers/unlinked-answer')),
     )
   })
 })

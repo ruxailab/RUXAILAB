@@ -190,7 +190,10 @@ service cloud.firestore {
         requestedAnswerStudy().testAdmin.userDocId == request.auth.uid &&
         requestedAnswerStudy().answersDocId == answerId
       ) || updatesOwnUserAnswer(answerStudy()) || isAdmin(answerStudy());
-      allow delete: if isAdmin(answerStudy());
+      allow delete: if (
+        resource.data.studyId == null &&
+        resource.data.createdBy == request.auth.uid
+      ) || isAdmin(answerStudy());
     }
 
     // Existing non-study modules retain authenticated access. Their

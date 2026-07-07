@@ -27,7 +27,15 @@ export default class StudyController extends Controller {
     payload.answersDocId = answerDoc.id
 
     const studyDoc = await super.create(COLLECTION, payload.toFirestore())
-    await answerController.linkAnswerToStudy(answerDoc.id, studyDoc.id)
+    try {
+      await answerController.linkAnswerToStudy(answerDoc.id, studyDoc.id)
+    } catch (error) {
+      await Promise.allSettled([
+        super.delete(COLLECTION, studyDoc.id),
+        answerController.delete('answers', answerDoc.id),
+      ])
+      throw error
+    }
     return studyDoc
   }
   async duplicateStudy(payload) {
@@ -45,7 +53,15 @@ export default class StudyController extends Controller {
         COLLECTION,
         duplicatedStudy.toFirestore(),
       )
-      await answerController.linkAnswerToStudy(answerDoc.id, studyDoc.id)
+      try {
+        await answerController.linkAnswerToStudy(answerDoc.id, studyDoc.id)
+      } catch (error) {
+        await Promise.allSettled([
+          super.delete(COLLECTION, studyDoc.id),
+          answerController.delete('answers', answerDoc.id),
+        ])
+        throw error
+      }
       return studyDoc
     } catch (error) {
       throw error

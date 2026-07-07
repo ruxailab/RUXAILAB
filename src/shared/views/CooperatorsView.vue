@@ -413,23 +413,28 @@ const handleSendInvitations = async (invitationData) => {
     }
   }
 
-  for (const invite of normalizedInvites) {
-    const result = await manageStudyMembership({
-      studyId: test.value.id,
-      action: 'invite',
-      targetUserId: invite.userDocId || null,
-      targetEmail: invite.email,
-      role: selectedRole,
-      inviteMessage,
-      token: uidgen.generateSync(),
-    })
-    newInvites.push(result.cooperator)
-  }
+  try {
+    for (const invite of normalizedInvites) {
+      const result = await manageStudyMembership({
+        studyId: test.value.id,
+        action: 'invite',
+        targetUserId: invite.userDocId || null,
+        targetEmail: invite.email,
+        role: selectedRole,
+        inviteMessage,
+        token: uidgen.generateSync(),
+      })
+      newInvites.push(result.cooperator)
+    }
 
-  await store.dispatch('getStudy', { id: test.value.id })
-  await Promise.all(
-    newInvites.map((guest) => sendMenssages(guest, guest.inviteMessage)),
-  )
+    await store.dispatch('getStudy', { id: test.value.id })
+    await Promise.all(
+      newInvites.map((guest) => sendMenssages(guest, guest.inviteMessage)),
+    )
+  } catch {
+    showError('errors.sendError')
+    return
+  }
   showInviteDialog.value = false
 
   // Show appropriate feedback

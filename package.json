@@ -10,7 +10,7 @@
     "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'",
     "doc": "jsdoc -c conf.json",
     "test": "vue-cli-service test:unit",
-    "test:rules": "firebase emulators:exec --only firestore,storage \"jest --config jest.rules.config.js --runInBand\"",
+    "test:rules": "firebase emulators:exec --project demo-ruxailab-rbac --only firestore,storage \"./node_modules/.bin/jest --config jest.rules.config.js --runInBand\"",
     "build-dev": "vue-cli-service build --mode development",
     "build-prod": "vue-cli-service build --mode production",
     "cypress:open": "cypress open",
