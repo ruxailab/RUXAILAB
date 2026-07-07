@@ -20,14 +20,16 @@ import AccessibilityAnalyse from '@/ux/accessibility/view/automatic/EditTest.vue
 const accessibilityRoutes = [
   // Manual Accessibility Routes
   {
-    path: '/accessibility/manual/:id',
+    path: '/accessibility/manual/dashboard/:id',
+    alias: '/accessibility/manual/:id',
     name: 'AccessibilityManualManager',
     meta: { authorize: [0, 1] },
     component: AccessibilityManagerView,
     props: true,
     children: [
       {
-        path: '/accessibility/manual/:id',
+        path: '/accessibility/manual/dashboard/:id',
+        alias: '/accessibility/manual/:id',
         name: 'AccessibilityHome',
         props: true,
         meta: { authorize: [0, 1] },
@@ -48,7 +50,8 @@ const accessibilityRoutes = [
         component: AccessibilityPreviewTest,
       },
       {
-        path: '/accessibility/manual/result/:id',
+        path: '/accessibility/manual/results/:id',
+        alias: '/accessibility/manual/result/:id',
         name: 'AccessibilityTestAnswers',
         props: true,
         meta: { authorize: [0, 1] },
@@ -80,14 +83,16 @@ const accessibilityRoutes = [
   },
   // Automatic Accessibility Routes
   {
-    path: '/accessibility/automatic/:id',
+    path: '/accessibility/automatic/dashboard/:id',
+    alias: '/accessibility/automatic/:id',
     name: 'AccessibilityAutomaticManager',
     meta: { authorize: [0, 1] },
     component: AutomatedAccessibilityManager,
     props: true,
     children: [
       {
-        path: '/accessibility/automatic/:id',
+        path: '/accessibility/automatic/dashboard/:id',
+        alias: '/accessibility/automatic/:id',
         name: 'AutomatedAccessibilityHome',
         props: true,
         meta: { authorize: [0, 1] },
@@ -101,14 +106,16 @@ const accessibilityRoutes = [
         component: AccessibilityAnalyse,
       },
       {
-        path: '/accessibility/automatic/answers/:id',
+        path: '/accessibility/automatic/results/:id',
+        alias: '/accessibility/automatic/answers/:id',
         name: 'AccessibilityAnswers',
         props: true,
         meta: { authorize: [0, 1] },
         component: AccessibilityAnswers,
       },
       {
-        path: '/accessibility/automatic/reports/:id/:token?',
+        path: '/accessibility/automatic/progress/:id/:token?',
+        alias: '/accessibility/automatic/reports/:id/:token?',
         name: 'AccessibilityReport',
         props: true,
         meta: { authorize: [] }, // Allow public access with token

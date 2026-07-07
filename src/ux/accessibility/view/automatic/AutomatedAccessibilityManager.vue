@@ -84,9 +84,10 @@ onMounted(async () => {
   // Redirect non-admin users trying to access manager page
   if (
     userRole.value !== 'admin' &&
-    route.path === `/accessibility/automatic/${testId.value}`
+    (route.path === `/accessibility/automatic/${testId.value}` ||
+      route.path === `/accessibility/automatic/dashboard/${testId.value}`)
   ) {
-    router.push(`/accessibility/automatic/reports/${testId.value}`)
+    router.push(`/accessibility/automatic/progress/${testId.value}`)
   }
 })
 </script>
