@@ -36,7 +36,6 @@ import {
   uploadBytes,
   getDownloadURL,
 } from 'firebase/storage'
-import { getAuditedUploadMetadata } from '@/shared/utils/storageAudit'
 
 const props = defineProps({
   heuristicId: {
@@ -151,7 +150,7 @@ const uploadFile = async () => {
       storage,
       `tests/${props.testId}/heuristic_${props.heuristicId}/${props.questionId}/${file.name}`,
     )
-    await uploadBytes(storageReference, file, getAuditedUploadMetadata())
+    await uploadBytes(storageReference, file)
     url.value = await getDownloadURL(storageReference)
     store.dispatch('setCurrentImageUrl', url.value)
     imageUploaded.value = true

@@ -21,6 +21,7 @@ jest.unstable_mockModule('../src/f.firebase.js', () => ({
 
 const {
   assertMembershipMutationAllowed,
+  assertValidInviteTarget,
   findMatchingPendingInvitation,
 } = await import('../src/https/studyMembership.js')
 
@@ -121,6 +122,52 @@ describe('study membership authorization', () => {
         actorId: 'actor',
         action: 'remove',
         target: { userDocId: 'actor', accessLevel: 0, accepted: true },
+      }),
+    ).toThrow(expect.objectContaining({ code: 'permission-denied' }))
+  })
+
+  it('validates invite targets server-side', () => {
+    const ownedStudy = {
+      testAdmin: { userDocId: 'owner', email: 'owner@example.com' },
+    }
+
+    expect(() =>
+      assertValidInviteTarget({
+        study: ownedStudy,
+        actorId: 'actor',
+        actorEmail: 'actor@example.com',
+        targetUserId: 'target',
+        targetEmail: 'target@example.com',
+      }),
+    ).not.toThrow()
+
+    expect(() =>
+      assertValidInviteTarget({
+        study: ownedStudy,
+        actorId: 'actor',
+        actorEmail: 'actor@example.com',
+        targetUserId: 'target',
+        targetEmail: 'not-an-email',
+      }),
+    ).toThrow(expect.objectContaining({ code: 'invalid-argument' }))
+
+    expect(() =>
+      assertValidInviteTarget({
+        study: ownedStudy,
+        actorId: 'actor',
+        actorEmail: 'actor@example.com',
+        targetUserId: 'actor',
+        targetEmail: 'actor@example.com',
+      }),
+    ).toThrow(expect.objectContaining({ code: 'permission-denied' }))
+
+    expect(() =>
+      assertValidInviteTarget({
+        study: ownedStudy,
+        actorId: 'actor',
+        actorEmail: 'actor@example.com',
+        targetUserId: 'owner',
+        targetEmail: 'owner@example.com',
       }),
     ).toThrow(expect.objectContaining({ code: 'permission-denied' }))
   })

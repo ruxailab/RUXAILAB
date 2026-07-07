@@ -52,7 +52,6 @@ import {
   getDownloadURL,
 } from 'firebase/storage'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
-import { getAuditedUploadMetadata } from '@/shared/utils/storageAudit'
 
 const props = defineProps({
   testId: {
@@ -148,11 +147,7 @@ const startAudioRecording = async () => {
         storage,
         `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${correctTaskIndex}_evaluator/${Date.now()}.webm`,
       )
-        await uploadBytes(
-          storageReference,
-          audioBlob,
-          getAuditedUploadMetadata(),
-        )
+      await uploadBytes(storageReference, audioBlob)
 
       recordedAudio.value = await getDownloadURL(storageReference)
 
@@ -209,11 +204,7 @@ const startAudioRecording = async () => {
             storage,
             `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${correctTaskIndex}_moderator/${Date.now()}.webm`,
           )
-          await uploadBytes(
-            storageReference,
-            blob,
-            getAuditedUploadMetadata(),
-          )
+          await uploadBytes(storageReference, blob)
           const downloadURL = await getDownloadURL(storageReference)
 
           await store.dispatch('updateTaskMediaUrl', {

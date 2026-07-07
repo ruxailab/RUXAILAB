@@ -35,6 +35,10 @@ const sameEmail = (left, right) =>
     left && right && String(left).trim().toLowerCase() === String(right).trim().toLowerCase(),
   )
 
+const isValidEmail = (email) =>
+  typeof email === 'string' &&
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
+
 export const findMatchingPendingInvitation = (
   study,
   { uid, email, token },
@@ -125,6 +129,34 @@ export function assertMembershipMutationAllowed({
   throw error('invalid-argument', 'Unsupported membership action')
 }
 
+export function assertValidInviteTarget({
+  study,
+  actorId,
+  actorEmail,
+  targetUserId,
+  targetEmail,
+}) {
+  if (!isValidEmail(targetEmail)) {
+    throw error('invalid-argument', 'A valid targetEmail is required')
+  }
+
+  if (targetUserId && targetUserId === actorId) {
+    throw error('permission-denied', 'A member cannot invite themselves')
+  }
+
+  if (sameEmail(targetEmail, actorEmail)) {
+    throw error('permission-denied', 'A member cannot invite themselves')
+  }
+
+  if (targetUserId && targetUserId === study?.testAdmin?.userDocId) {
+    throw error('permission-denied', 'The study owner cannot be invited')
+  }
+
+  if (sameEmail(targetEmail, study?.testAdmin?.email)) {
+    throw error('permission-denied', 'The study owner cannot be invited')
+  }
+}
+
 export const manageStudyMembership = functions.onCall({
   handler: async (request) => {
     const actorId = request?.auth?.uid
@@ -150,11 +182,11 @@ export const manageStudyMembership = functions.onCall({
 
       const study = studySnap.data()
       const actor = actorSnap.exists ? actorSnap.data() : {}
+      const actorEmail = actor?.email || request?.auth?.token?.email || ''
       const cooperators = [...(study.cooperators || [])]
       const studyRoleMap = { ...(study.studyRoleMap || {}) }
 
       if (action === 'accept') {
-        const actorEmail = actor?.email || request?.auth?.token?.email || ''
         const index = cooperators.findIndex(
           (cooperator) =>
             cooperator?.accepted !== true &&
@@ -216,6 +248,13 @@ export const manageStudyMembership = functions.onCall({
         if (target) {
           throw error('already-exists', 'An invitation or membership already exists')
         }
+        assertValidInviteTarget({
+          study,
+          actorId,
+          actorEmail,
+          targetUserId,
+          targetEmail,
+        })
         const membership = {
           userDocId: targetUserId,
           email: targetEmail,

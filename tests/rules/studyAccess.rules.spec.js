@@ -223,17 +223,9 @@ describe('Storage study RBAC', () => {
       'tests/study-1/owner/file.txt',
     )
 
-    await assertSucceeds(
-      uploadBytes(adminFile, new Uint8Array([1, 2, 3]), {
-        customMetadata: { actorId: 'admin' },
-      }),
-    )
+    await assertSucceeds(uploadBytes(adminFile, new Uint8Array([1, 2, 3])))
     await assertSucceeds(getBytes(adminFile))
-    await assertFails(
-      uploadBytes(managerFile, new Uint8Array([1]), {
-        customMetadata: { actorId: 'manager' },
-      }),
-    )
+    await assertFails(uploadBytes(managerFile, new Uint8Array([1])))
     await assertFails(getBytes(managerFile))
     await assertFails(deleteObject(adminFile))
   })
@@ -247,10 +239,36 @@ describe('Storage study RBAC', () => {
       context('user').storage(),
       'tests/study-1/observator/recording.webm',
     )
-    const metadata = { customMetadata: { actorId: 'user' } }
+    await assertSucceeds(uploadBytes(ownFile, new Uint8Array([1])))
+    await assertSucceeds(getBytes(ownFile))
+    await assertFails(uploadBytes(otherFile, new Uint8Array([1])))
+    await assertFails(getBytes(otherFile))
+  })
 
-    await assertSucceeds(uploadBytes(ownFile, new Uint8Array([1]), metadata))
-    await assertFails(uploadBytes(otherFile, new Uint8Array([1]), metadata))
+  it('allows authenticated users to read the heuristic CSV template', async () => {
+    await testEnv.withSecurityRulesDisabled((adminContext) =>
+      uploadBytes(
+        ref(adminContext.storage(), 'template-csv/heuristic-template.csv'),
+        new Uint8Array([1]),
+      ),
+    )
+
+    await assertSucceeds(
+      getBytes(
+        ref(
+          context('manager').storage(),
+          'template-csv/heuristic-template.csv',
+        ),
+      ),
+    )
+    await assertFails(
+      getBytes(
+        ref(
+          testEnv.unauthenticatedContext().storage(),
+          'template-csv/heuristic-template.csv',
+        ),
+      ),
+    )
   })
 
   it('allows a Manager to write heuristic editing assets without opening Storage', async () => {
@@ -264,20 +282,12 @@ describe('Storage study RBAC', () => {
       'tests/study-1/heuristic_1/question/image.png',
     )
 
-    await assertSucceeds(
-      uploadBytes(asset, new Uint8Array([1]), {
-        customMetadata: { actorId: 'manager' },
-      }),
-    )
+    await assertSucceeds(uploadBytes(asset, new Uint8Array([1])))
 
     const unsupportedUserRecording = ref(
       context('user').storage(),
       'tests/study-1/user/recording.webm',
     )
-    await assertFails(
-      uploadBytes(unsupportedUserRecording, new Uint8Array([1]), {
-        customMetadata: { actorId: 'user' },
-      }),
-    )
+    await assertFails(uploadBytes(unsupportedUserRecording, new Uint8Array([1])))
   })
 })

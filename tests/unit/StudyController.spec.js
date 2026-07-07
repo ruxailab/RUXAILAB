@@ -267,6 +267,29 @@ describe('StudyController', () => {
             )
         })
 
+        it('should update study from a plain partial object', async () => {
+            const mockPayload = {
+                id: 'study-123',
+                configData: {
+                    complianceLevel: 'AA'
+                }
+            }
+
+            await studyController.updateStudy(mockPayload)
+
+            expect(mockCallHttpsCallableFunction).toHaveBeenCalledWith(
+                'updateStudyWithAudit',
+                {
+                    studyId: 'study-123',
+                    study: {
+                        configData: {
+                            complianceLevel: 'AA'
+                        }
+                    }
+                }
+            )
+        })
+
         it('should throw error when update fails', async () => {
             const mockError = new Error('Update failed')
             const mockPayload = {
