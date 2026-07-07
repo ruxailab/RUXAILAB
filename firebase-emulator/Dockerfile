@@ -24,11 +24,11 @@ WORKDIR /app
 # Create a non-root user for running the emulator
 RUN useradd -m -u 1001 firebase
 
-# Copy emulator config files to the same path used in docker-compose mounts
-COPY firebase.json /app/firebase-emulator/firebase.json
-COPY firestore.rules /app/firebase-emulator/firestore.rules
-COPY firestore.indexes.json /app/firebase-emulator/firestore.indexes.json
-COPY storage.rules /app/firebase-emulator/storage.rules
+# Copy emulator config and the root rules referenced by firebase-emulator/firebase.json
+COPY firebase-emulator/firebase.json /app/firebase-emulator/firebase.json
+COPY firebase-emulator/firestore.indexes.json /app/firebase-emulator/firestore.indexes.json
+COPY firestore.rules /app/firestore.rules
+COPY storage.rules /app/storage.rules
 
 # Ensure the firebase user can write logs and access the mounted app directory
 RUN mkdir -p /app/firebase-emulator && \
