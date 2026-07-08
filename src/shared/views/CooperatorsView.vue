@@ -121,6 +121,7 @@ import UIDGenerator from 'uid-generator'
 import {
   useCooperatorUtils,
   normalizeCooperatorInviteEntry,
+  enrichCooperatorInviteEntry,
 } from '@/shared/composables/useCooperatorUtils'
 import { useCooperatorActions } from '@/shared/composables/useCooperatorActions'
 import Cooperators from '../models/Cooperators'
@@ -261,7 +262,6 @@ const sendNotification = async ({
     })
     return true
   } catch (error) {
-    console.log('Error sending notification:', error)
     throw error
   }
 }
@@ -315,6 +315,20 @@ const handleSendMessage = async ({ user, title, content }) => {
   }
 }
 
+const resolveUserByEmail = async (email) => {
+  if (!email) return null
+
+  try {
+    const response = await store.dispatch('findUserByEmail', {
+      email,
+    })
+
+    return response || null
+  } catch {
+    return null
+  }
+}
+
 const handleSendEmail = async (guest, customMessage = null) => {
   const emailController = new EmailController()
   const inviteMessage =
@@ -348,7 +362,7 @@ const handleSendInvitations = async (invitationData) => {
   inviteMessages.value = inviteMessage
   cooperatorsUpdate.value = [...cooperatorsEdit.value]
 
-  selectedCoops.forEach((coop) => {
+  for (const coop of selectedCoops) {
     const normalizedEntry = normalizeCooperatorInviteEntry(coop)
     const coopEmail =
       normalizedEntry?.email || (typeof coop === 'object' ? coop.email : coop)
@@ -364,8 +378,12 @@ const handleSendInvitations = async (invitationData) => {
 
     if (validationError) {
       showError(validationError)
-      return
+      continue
     }
+
+    const enrichedEntry = await enrichCooperatorInviteEntry(coop, {
+      resolveUserByEmail,
+    })
 
     const existingIndex = cooperatorsEdit.value.findIndex(
       (c) => c.email?.trim().toLowerCase() === normalizedEmail,
@@ -374,7 +392,7 @@ const handleSendInvitations = async (invitationData) => {
     if (existingIndex === -1) {
       const token = uidgen.generateSync()
       cooperatorsEdit.value.push({
-        userDocId: normalizedEntry?.userDocId || null,
+        userDocId: enrichedEntry?.userDocId || null,
         email: coopEmail,
         invited: true,
         accepted: false,
@@ -385,7 +403,7 @@ const handleSendInvitations = async (invitationData) => {
         updateDate: test.value?.updateDate || new Date().toISOString(),
         testAuthorEmail: test.value?.testAdmin?.email || '',
       })
-      tokens[normalizedEntry?.userDocId || coopEmail] = token
+      tokens[enrichedEntry?.userDocId || coopEmail] = token
       newInvites.push(coopEmail)
     } else {
       const existing = cooperatorsEdit.value[existingIndex]
@@ -403,9 +421,9 @@ const handleSendInvitations = async (invitationData) => {
         }
         updatedRoles.push(coopEmail)
       }
-      tokens[normalizedEntry?.userDocId || coopEmail] = existing.token
+      tokens[enrichedEntry?.userDocId || coopEmail] = existing.token
     }
-  })
+  }
 
   await submit()
   showInviteDialog.value = false
@@ -527,6 +545,14 @@ const sendMenssages = async (guest, customMessage = null) => {
     customMessage ?? guest?.inviteMessage ?? inviteMessages.value ?? ''
 
   try {
+    const resolvedGuest = await enrichCooperatorInviteEntry(guest, {
+      resolveUserByEmail,
+    })
+
+    if (resolvedGuest.userDocId) {
+      guest.userDocId = resolvedGuest.userDocId
+    }
+
     await notifyCooperator(guest, messageToSend)
     // Email is optional - don't let it block the notification
     try {
@@ -543,7 +569,6 @@ const sendMenssages = async (guest, customMessage = null) => {
 }
 
 const notifyCooperator = async (guest, customMessage = null) => {
-  console.log(guest) // TODO: we need userDocId here to send the notification, otherwise it will fail
   if (guest.userDocId) {
     // Check if it's an accessibility test (MANUAL or AUTOMATIC)
     //if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
