@@ -1,11 +1,11 @@
 import axios from 'axios'
 
 export default class InviteController {
-  static async resolveInvite(token) {
+  static async resolveInvite(token, uid) {
     const { data } = await axios.post(
       `${process.env.VUE_APP_CLOUD_FUNCTIONS_URL}/resolveInvite`,
       {
-        data: { token },
+        data: { token, uid },
       },
     )
 

@@ -2706,7 +2706,7 @@
     "createAccount": "Create account",
     "or": "or",
     "title": "You're invited!",
-    "description": "You've been invited to participate in a study.",
+    "description": "You've been invited to participate in the study",
     "unavailableTitle": "Invitation unavailable",
     "unavailableDescription": "This invitation is no longer available.",
     "wrongAccountDescription": "This invitation is associated with a different account. Please sign in using the account that received the invitation.",
@@ -2718,6 +2718,11 @@
     "continueAsGuest": "Continue without an account",
     "invalidLink": "Invalid invitation link.",
     "loadFailed": "Failed to load invitation.",
-    "acceptFailed": "Failed to accept invitation."
+    "acceptFailed": "Failed to accept invitation.",
+    "pendingTitle": "Pending invitation",
+    "pendingSubtitle": "You have been invited to participate in a study",
+    "pendingDescription": "You have a pending invitation. Would you like to accept it now?",
+    "notNow": "Not now",
+    "loginRequired": "This invitation requires you to sign in or create an account before participating."
   }
 }

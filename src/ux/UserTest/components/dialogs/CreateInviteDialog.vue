@@ -648,7 +648,7 @@ const notifyCooperator = async (guest) => {
         testId: test.value.id,
         scheduledAt: guest.testDate,
         accessLevel: guest.accessLevel,
-        token: guest.token || null,
+        isPublic: false, // Assuming all invites are private for now
       },
     })
     showSuccess('Email invitation sent')

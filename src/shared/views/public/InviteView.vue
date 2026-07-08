@@ -55,11 +55,12 @@
 
           <p class="subtitle mb-6">
             {{ $t('invite.description') }}
+            <strong>{{ invite.studyTitle ?? '' }}</strong>
           </p>
 
           <template v-if="user">
-            <v-alert type="info" variant="tonal" class="mb-4">
-              {{ $t('invite.description') }}
+            <v-alert type="warning" variant="tonal" class="mb-6">
+              {{ $t('invite.currentAccount') }}
               <strong>{{ user.email }}</strong
               >.
             </v-alert>
@@ -80,10 +81,34 @@
           </template>
 
           <template v-else>
+            <template v-if="canContinueAsGuest">
+              <v-divider class="mb-4" />
+
+              <v-btn
+                block
+                variant="outlined"
+                color="primary"
+                @click="continueAsGuest"
+              >
+                {{ $t('invite.continueAsGuest') }}
+              </v-btn>
+            </template>
+
+            <template v-if="!user && !canContinueAsGuest">
+              <v-alert type="info" variant="tonal" class="mb-4">
+                {{ $t('invite.loginRequired') }}
+              </v-alert>
+            </template>
             <p class="mb-4">{{ $t('invite.chooseHowToContinue') }}</p>
           </template>
 
-          <v-btn block color="primary" class="mb-2" @click="goToLogin">
+          <v-btn
+            block
+            variant="outlined"
+            color="primary"
+            class="mb-2"
+            @click="goToLogin"
+          >
             {{ user ? $t('invite.signInAnotherAccount') : $t('invite.signIn') }}
           </v-btn>
 
@@ -96,17 +121,6 @@
           >
             {{ $t('invite.createAccount') }}
           </v-btn>
-
-          <v-divider class="mb-4" />
-
-          <v-btn
-            block
-            variant="outlined"
-            color="primary"
-            @click="continueAsGuest"
-          >
-            {{ $t('invite.continueAsGuest') }}
-          </v-btn>
         </div>
       </div>
     </div>
@@ -114,7 +128,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import store from '@/store'
 import InviteController from '@/shared/controllers/InviteController.js'
@@ -132,6 +146,8 @@ const invite = ref(null)
 
 const token = ref(null)
 const user = ref(null)
+
+const canContinueAsGuest = computed(() => invite.value?.isPublic === true)
 
 const goToLogin = async () => {
   localStorage.setItem('pendingInviteToken', token.value)

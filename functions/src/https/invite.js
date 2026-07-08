@@ -1,17 +1,10 @@
 import { admin, functions } from '../f.firebase.js'
 
 export const resolveInvite = functions.onCall({
-  handler: async (data, context) => {
-    const uid = context.auth?.uid
+  handler: async (data) => {
+    const { token, uid } = data.data || data
 
-    if (!uid) {
-      throw new functions.https.HttpsError(
-        'unauthenticated',
-        'User must be logged in',
-      )
-    }
-
-    const { token } = data
+    console.log(token, uid)
 
     if (!token) {
       throw new functions.https.HttpsError('invalid-argument', 'Missing token')
@@ -51,18 +44,6 @@ export const resolveInvite = functions.onCall({
     }
 
     /**
-     * OPTIONAL SAFETY CHECK (recommended)
-     */
-    const user = await admin.auth().getUser(uid)
-
-    if (user.email !== invite.email) {
-      throw new functions.https.HttpsError(
-        'permission-denied',
-        'Email mismatch',
-      )
-    }
-
-    /**
      * Atomic accept
      */
     await ref.update({
@@ -75,7 +56,9 @@ export const resolveInvite = functions.onCall({
       invite: {
         id: ref.id,
         studyId: invite.studyId,
-        email: invite.email,
+        studyTitle: invite.studyTitle,
+        email: invite.email ?? null,
+        isPublic: !!invite.isPublic,
       },
     }
   },
@@ -130,7 +113,9 @@ export const validateInvite = functions.onCall({
         invite: {
           id: doc.id,
           studyId: dataInvite.studyId,
-          email: dataInvite.email,
+          studyTitle: dataInvite.studyTitle,
+          email: dataInvite.email ?? null,
+          isPublic: !!dataInvite.isPublic,
         },
       }
     } catch (err) {

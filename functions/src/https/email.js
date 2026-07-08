@@ -29,6 +29,8 @@ export const sendEmail = functions.onCall({
       const inviteLink = await InviteUtils.generateInviteLink(
         content.data.studyId,
         content.to,
+        content.data.testTitle,
+        content.data.isPublic,
       )
 
       htmlTemplate = fs.readFileSync(templatePath, 'utf-8')

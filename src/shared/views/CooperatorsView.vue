@@ -212,11 +212,10 @@ const handleConfirmAction = async () => {
       await executeInvitationCancellation(data.guest)
       showSuccess('Invitation cancelled successfully!')
     }
-  } catch (error) {
+  } catch {
     showError(
       `Failed to ${action === 'changeRole' ? 'update role' : action === 'removeCooperator' ? 'remove cooperator' : 'cancel invitation'}.`,
     )
-    console.error('Confirm action error:', error)
   } finally {
     resetConfirmDialog()
   }
@@ -262,6 +261,7 @@ const sendNotification = async ({
     })
     return true
   } catch (error) {
+    console.log('Error sending notification:', error)
     throw error
   }
 }
@@ -332,6 +332,7 @@ const handleSendEmail = async (guest, customMessage = null) => {
       adminEmail: test.value.testAdmin.email,
       adminName: userAuth.value.name || userAuth.value.email,
       studyId: test.value.id,
+      isPublic: false, // Assuming all invites are private for now
     },
   })
 }
@@ -542,6 +543,7 @@ const sendMenssages = async (guest, customMessage = null) => {
 }
 
 const notifyCooperator = async (guest, customMessage = null) => {
+  console.log(guest) // TODO: we need userDocId here to send the notification, otherwise it will fail
   if (guest.userDocId) {
     // Check if it's an accessibility test (MANUAL or AUTOMATIC)
     //if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
