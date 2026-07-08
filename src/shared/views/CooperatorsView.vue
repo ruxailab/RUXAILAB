@@ -347,6 +347,7 @@ const handleSendEmail = async (guest, customMessage = null) => {
       adminName: userAuth.value.name || userAuth.value.email,
       studyId: test.value.id,
       isPublic: false, // Assuming all invites are private for now
+      accessLevel: guest.accessLevel,
     },
   })
 }

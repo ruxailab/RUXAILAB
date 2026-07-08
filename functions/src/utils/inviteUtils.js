@@ -2,7 +2,13 @@ import crypto from 'crypto'
 import { admin } from '../f.firebase.js'
 
 export default class InviteUtils {
-  static async generateInviteLink(studyId, email, studyTitle, isPublic) {
+  static async generateInviteLink(
+    studyId,
+    email,
+    studyTitle,
+    isPublic,
+    accessLevel,
+  ) {
     const token = crypto.randomBytes(32).toString('hex')
 
     await admin
@@ -17,6 +23,7 @@ export default class InviteUtils {
         acceptedAt: null,
         studyTitle: studyTitle || null,
         isPublic: isPublic || false,
+        accessLevel: accessLevel || null,
       })
 
     return `${process.env.SITE_URL}/invite?token=${encodeURIComponent(token)}`
