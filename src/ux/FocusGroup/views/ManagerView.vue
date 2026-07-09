@@ -8,8 +8,8 @@
       icon="mdi-account-group"
       :type-label="t('focusGroup.dashboard.typeLabel')"
       type-icon="mdi-account-group"
-      :status-icon="getStatusIcon(test.testStatus)"
-      :status-text="test.testStatus || t('manager.dashboard.active')"
+      :status-icon="getStatusIcon(statusValue)"
+      :status-text="t(`studyCreation.details.status.${statusValue}`)"
       :modules-title="t('manager.managementModules.title')"
       :modules-description="t('manager.managementModules.description')"
     >
@@ -196,6 +196,15 @@ const PREVIEW_TOPIC_LIMIT = 4
 
 const user = computed(() => store.getters.user)
 const test = computed(() => store.getters.test)
+
+// Status chip reflects the study's `status` field (set in Settings).
+// Fall back to 'active' for unset/legacy values so the chip always shows a
+// valid, translatable status with a real icon (not the ? fallback).
+const KNOWN_STATUSES = ['active', 'pending', 'finished', 'upcoming']
+const statusValue = computed(() => {
+  const status = test.value?.status
+  return KNOWN_STATUSES.includes(status) ? status : 'active'
+})
 
 const discussionGuide = computed(() =>
   Array.isArray(test.value?.discussionGuide) ? test.value.discussionGuide : [],
