@@ -1,4 +1,5 @@
 import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import UserController from '../../features/auth/controllers/UserController'
 import {
   instantiateStudyAnswerByType,
@@ -19,6 +20,14 @@ export default class AnswerController extends Controller {
       ...res.data(),
     })
     return answer
+  }
+
+  async getMyStudyAnswer(studyId) {
+    const response = await FirebaseFunctionsController.callHttpsCallableFunction(
+      'getMyStudyAnswer',
+      { studyId },
+    )
+    return instantiateStudyAnswerByType(response.data.type, response.data)
   }
 
   async createAnswer(payload) {

@@ -9,6 +9,10 @@ import { showError } from '@/shared/utils/toast'
 
 const answerController = new AnswerController()
 
+const isPermissionDenied = (error) =>
+  error?.code === 'permission-denied' ||
+  error?.message?.includes('PERMISSION_DENIED')
+
 export default {
   state: {
     testAnswerDocument: null,
@@ -253,7 +257,22 @@ export default {
           await answerController.getAnswerById(currentAnswersDocId)
         commit('SET_ANSWER_DOCUMENT', answerDoc)
       } catch (error) {
-        console.error('[Answer Store] Failed to fetch answer document:', error)
+        if (isPermissionDenied(error) && currentTest.id) {
+          try {
+            const answerDoc = await answerController.getMyStudyAnswer(
+              currentTest.id,
+            )
+            commit('SET_ANSWER_DOCUMENT', answerDoc)
+            return
+          } catch (fallbackError) {
+            console.error(
+              '[Answer Store] Failed to fetch own answer document:',
+              fallbackError,
+            )
+          }
+        } else {
+          console.error('[Answer Store] Failed to fetch answer document:', error)
+        }
         showError('errors.failedToLoadAnswers')
       } finally {
         commit('setLoading', false)
