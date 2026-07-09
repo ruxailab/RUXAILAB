@@ -76,6 +76,56 @@ describe('study access policy', () => {
     ).toBe(false)
   })
 
+  it('allows viewer roles to answer public studies but not private studies', () => {
+    const publicUserStudy = userStudy({ isPublic: true })
+    const privateUserStudy = userStudy()
+    const guest = { id: 'guest', accessLevel: 1 }
+    const publicHeuristicStudy = userStudy({
+      testType: 'HEURISTIC',
+      isPublic: true,
+      cooperators: [
+        {
+          userDocId: guest.id,
+          accessLevel: STUDY_ROLE.GUEST,
+          accepted: true,
+        },
+      ],
+    })
+    const privateHeuristicStudy = {
+      ...publicHeuristicStudy,
+      isPublic: false,
+    }
+
+    expect(
+      hasStudyCapability(
+        publicUserStudy,
+        observator,
+        STUDY_CAPABILITY.STUDY_ANSWER,
+      ),
+    ).toBe(true)
+    expect(
+      hasStudyCapability(
+        privateUserStudy,
+        observator,
+        STUDY_CAPABILITY.STUDY_ANSWER,
+      ),
+    ).toBe(false)
+    expect(
+      hasStudyCapability(
+        publicHeuristicStudy,
+        guest,
+        STUDY_CAPABILITY.STUDY_ANSWER,
+      ),
+    ).toBe(true)
+    expect(
+      hasStudyCapability(
+        privateHeuristicStudy,
+        guest,
+        STUDY_CAPABILITY.STUDY_ANSWER,
+      ),
+    ).toBe(false)
+  })
+
   it('applies the user-study capability matrix', () => {
     const study = userStudy()
 

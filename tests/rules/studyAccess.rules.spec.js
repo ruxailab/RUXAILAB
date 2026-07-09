@@ -210,6 +210,64 @@ describe('Firestore study RBAC', () => {
       deleteDoc(doc(context('owner').firestore(), 'answers/unlinked-answer')),
     )
   })
+
+  it('allows the owner creation flow to create, attach, and read an answer container', async () => {
+    const ownerDb = context('owner').firestore()
+    const answerRef = doc(ownerDb, 'answers/new-answers')
+    const studyRef = doc(ownerDb, 'tests/new-study')
+
+    await assertSucceeds(
+      setDoc(answerRef, {
+        studyId: null,
+        createdBy: 'owner',
+        type: 'USER',
+        taskAnswers: {},
+      }),
+    )
+    await assertSucceeds(
+      setDoc(
+        studyRef,
+        study({
+          answersDocId: 'new-answers',
+          studyRoleMap: {},
+        }),
+      ),
+    )
+    await assertSucceeds(updateDoc(answerRef, { studyId: 'new-study' }))
+    await assertSucceeds(getDoc(answerRef))
+  })
+
+  it('allows a heuristic evaluator to answer while a Guest remains read-only', async () => {
+    await testEnv.withSecurityRulesDisabled(async (adminContext) => {
+      const db = adminContext.firestore()
+      await Promise.all([
+        updateDoc(doc(db, 'tests/study-1'), {
+          testType: 'HEURISTIC',
+          studyRoleMap: { evaluator: 1, guest: 2 },
+        }),
+        setDoc(doc(db, 'users/evaluator'), { accessLevel: 1 }),
+        setDoc(doc(db, 'users/guest'), { accessLevel: 1 }),
+        updateDoc(doc(db, 'answers/answers-1'), {
+          type: 'HEURISTIC',
+          heuristicAnswers: {},
+        }),
+      ])
+    })
+
+    await assertSucceeds(
+      updateDoc(doc(context('evaluator').firestore(), 'answers/answers-1'), {
+        'heuristicAnswers.evaluator': { progress: 50 },
+      }),
+    )
+    await assertSucceeds(
+      getDoc(doc(context('guest').firestore(), 'answers/answers-1')),
+    )
+    await assertFails(
+      updateDoc(doc(context('guest').firestore(), 'answers/answers-1'), {
+        'heuristicAnswers.guest': { progress: 50 },
+      }),
+    )
+  })
 })
 
 describe('Storage study RBAC', () => {
@@ -243,6 +301,22 @@ describe('Storage study RBAC', () => {
     await assertSucceeds(getBytes(ownFile))
     await assertFails(uploadBytes(otherFile, new Uint8Array([1])))
     await assertFails(getBytes(otherFile))
+  })
+
+  it('does not require a users document for public participant storage access', async () => {
+    await testEnv.withSecurityRulesDisabled((adminContext) =>
+      updateDoc(doc(adminContext.firestore(), 'tests/study-1'), {
+        isPublic: true,
+      }),
+    )
+
+    const participantFile = ref(
+      context('new-participant').storage(),
+      'tests/study-1/new-participant/recording.webm',
+    )
+
+    await assertSucceeds(uploadBytes(participantFile, new Uint8Array([1])))
+    await assertSucceeds(getBytes(participantFile))
   })
 
   it('allows authenticated users to read the heuristic CSV template', async () => {

@@ -11,6 +11,12 @@ service firebase.storage {
       );
     }
 
+    function isSuperAdmin() {
+      return signedIn() &&
+        currentUser().data != null &&
+        currentUser().data.accessLevel == 0;
+    }
+
     function study(studyId) {
       return firestore.get(
         /databases/(default)/documents/tests/$(studyId)
@@ -27,7 +33,7 @@ service firebase.storage {
 
     function canAccessStorage(studyId) {
       return signedIn() && (
-        currentUser().data.accessLevel == 0 ||
+        isSuperAdmin() ||
         study(studyId).testAdmin.userDocId == request.auth.uid ||
         roleFor(studyId) == 0
       );
@@ -48,7 +54,7 @@ service firebase.storage {
 
     function canEditStudy(studyId) {
       return signedIn() && (
-        currentUser().data.accessLevel == 0 ||
+        isSuperAdmin() ||
         study(studyId).testAdmin.userDocId == request.auth.uid ||
         roleFor(studyId) in [0, 4]
       );

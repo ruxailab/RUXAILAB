@@ -140,7 +140,7 @@ export function resolveStudyAccess(study, user) {
     isOwner,
     isSuperAdmin,
     isAcceptedMember: Boolean(membership),
-    isPublicParticipant: Boolean(userId && study?.isPublic && role === null),
+    isPublicParticipant: Boolean(userId && study?.isPublic),
     membership,
   }
 }
