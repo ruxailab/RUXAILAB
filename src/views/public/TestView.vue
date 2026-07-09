@@ -48,6 +48,7 @@
 
 <script setup>
 import { ref, computed, onBeforeMount } from 'vue'
+import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import UserTestView from '@/ux/UserTest/views/UserTestView.vue'
 import ModeratedTestView from '../../ux/UserTest/views/ModeratedTestView.vue'
@@ -60,6 +61,7 @@ import {
   getStudyInvitation,
   manageStudyMembership,
 } from '@/shared/services/studyMembershipService'
+import { getAcceptedInvitationDestination } from '@/shared/utils/studyNavigation'
 import { showError } from '@/shared/utils/toast'
 
 const props = defineProps({
@@ -68,6 +70,7 @@ const props = defineProps({
 })
 
 const store = useStore()
+const router = useRouter()
 
 const test = computed(() => store.getters.test)
 const moderatedTestViewRef = ref(null)
@@ -77,14 +80,20 @@ const accepting = ref(false)
 const loadStudy = async () => {
   const loaded = await store.dispatch('getStudy', { id: props.id })
   if (loaded) await store.dispatch('getCurrentTestAnswerDoc')
+  return loaded
 }
 
 const acceptInvitation = async () => {
   accepting.value = true
   try {
     await manageStudyMembership({ studyId: props.id, action: 'accept' })
+    const acceptedStudy = await loadStudy()
+    const destination = getAcceptedInvitationDestination({
+      study: acceptedStudy || test.value,
+      user: store.getters.user,
+    })
+    if (destination) await router.replace(destination)
     invitation.value = null
-    await loadStudy()
   } catch (error) {
     showError(error?.message || 'Unable to accept this invitation.')
   } finally {

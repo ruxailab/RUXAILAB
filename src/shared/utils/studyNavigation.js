@@ -2,9 +2,11 @@ import { ICONS, createCardConfig } from '@/shared/constants/theme'
 import {
   STUDY_TYPES,
   USER_STUDY_SUBTYPES,
+  normalizeStudyType,
 } from '@/shared/constants/methodDefinitions'
 import {
   STUDY_CAPABILITY,
+  STUDY_ROLE,
   hasStudyCapability,
   resolveStudyAccess,
 } from '@/shared/utils/studyAccessPolicy'
@@ -12,31 +14,64 @@ import {
 const C = STUDY_CAPABILITY
 
 export function getCommunityStudyDestination({ study, user }) {
-  if (!study || !user) return null
+  if (!study) return null
+  const studyId = study.testDocId || study.id
 
-  if (hasStudyCapability(study, user, C.DASHBOARD_VIEW)) {
+  if (user && hasStudyCapability(study, user, C.DASHBOARD_VIEW)) {
     if (study.testType === STUDY_TYPES.HEURISTIC) {
-      return { name: 'HeuristicManagerView', params: { id: study.id } }
+      return { name: 'HeuristicManagerView', params: { id: studyId } }
     }
     if (
       study.testType === STUDY_TYPES.USER &&
       study.subType === USER_STUDY_SUBTYPES.UNMODERATED
     ) {
-      return { name: 'UserUnmoderatedManagerView', params: { id: study.id } }
+      return { name: 'UserUnmoderatedManagerView', params: { id: studyId } }
     }
     if (
       study.testType === STUDY_TYPES.USER &&
       study.subType === USER_STUDY_SUBTYPES.MODERATED
     ) {
-      return { name: 'UserModeratedManagerView', params: { id: study.id } }
+      return { name: 'UserModeratedManagerView', params: { id: studyId } }
     }
   }
 
-  if (hasStudyCapability(study, user, C.STUDY_ANSWER)) {
-    return { name: 'TestView', params: { id: study.id } }
+  if (study.isPublic || hasStudyCapability(study, user, C.STUDY_ANSWER)) {
+    return { name: 'TestView', params: { id: studyId } }
   }
 
   return null
+}
+
+export function getAcceptedInvitationDestination({ study, user }) {
+  const access = resolveStudyAccess(study, user)
+  const studyType = normalizeStudyType(study?.testType)
+  const answersByRole =
+    (studyType === STUDY_TYPES.USER && access.role === STUDY_ROLE.USER) ||
+    (studyType === STUDY_TYPES.HEURISTIC &&
+      access.role === STUDY_ROLE.EVALUATOR)
+
+  if (answersByRole) {
+    const userId = user?.id || user?.uid
+    return {
+      name: 'TestView',
+      params: {
+        id: study.testDocId || study.id,
+        ...(userId ? { token: userId } : {}),
+      },
+    }
+  }
+
+  const destination = getCommunityStudyDestination({ study, user })
+  if (!destination || destination.name !== 'TestView') return destination
+
+  const userId = user?.id || user?.uid
+  return {
+    ...destination,
+    params: {
+      ...destination.params,
+      ...(userId ? { token: userId } : {}),
+    },
+  }
 }
 
 const NAVIGATION_ITEMS = Object.freeze([

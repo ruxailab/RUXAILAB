@@ -23,6 +23,7 @@ const {
   assertMembershipMutationAllowed,
   assertValidInviteTarget,
   findMatchingPendingInvitation,
+  resolveInviteTargetUserId,
 } = await import('../src/https/studyMembership.js')
 
 const study = (testType, actorRole) => ({
@@ -170,5 +171,50 @@ describe('study membership authorization', () => {
         targetEmail: 'owner@example.com',
       }),
     ).toThrow(expect.objectContaining({ code: 'permission-denied' }))
+  })
+
+  it('resolves an email-only invite to an existing Firebase Auth user', async () => {
+    const auth = {
+      getUserByEmail: jest.fn().mockResolvedValue({ uid: 'registered-user' }),
+    }
+
+    await expect(
+      resolveInviteTargetUserId({
+        auth,
+        targetUserId: null,
+        targetEmail: ' Registered@Example.com ',
+      }),
+    ).resolves.toBe('registered-user')
+    expect(auth.getUserByEmail).toHaveBeenCalledWith('registered@example.com')
+  })
+
+  it('keeps an unregistered invite email-only', async () => {
+    const auth = {
+      getUserByEmail: jest.fn().mockRejectedValue({
+        code: 'auth/user-not-found',
+      }),
+    }
+
+    await expect(
+      resolveInviteTargetUserId({
+        auth,
+        targetUserId: null,
+        targetEmail: 'external@example.com',
+      }),
+    ).resolves.toBeNull()
+  })
+
+  it('rejects a target user id that belongs to another email', async () => {
+    const auth = {
+      getUserByEmail: jest.fn().mockResolvedValue({ uid: 'registered-user' }),
+    }
+
+    await expect(
+      resolveInviteTargetUserId({
+        auth,
+        targetUserId: 'different-user',
+        targetEmail: 'registered@example.com',
+      }),
+    ).rejects.toMatchObject({ code: 'invalid-argument' })
   })
 })

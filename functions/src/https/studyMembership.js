@@ -39,6 +39,30 @@ const isValidEmail = (email) =>
   typeof email === 'string' &&
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
 
+export async function resolveInviteTargetUserId({
+  auth,
+  targetUserId,
+  targetEmail,
+}) {
+  const normalizedEmail = String(targetEmail || '').trim().toLowerCase()
+
+  try {
+    const user = await auth.getUserByEmail(normalizedEmail)
+    if (targetUserId && targetUserId !== user.uid) {
+      throw error(
+        'invalid-argument',
+        'targetUserId does not match targetEmail',
+      )
+    }
+    return user.uid
+  } catch (lookupError) {
+    if (lookupError?.code === 'auth/user-not-found' && !targetUserId) {
+      return null
+    }
+    throw lookupError
+  }
+}
+
 export const findMatchingPendingInvitation = (
   study,
   { uid, email, token },
@@ -248,15 +272,20 @@ export const manageStudyMembership = functions.onCall({
         if (target) {
           throw error('already-exists', 'An invitation or membership already exists')
         }
+        const resolvedTargetUserId = await resolveInviteTargetUserId({
+          auth: admin.auth(),
+          targetUserId,
+          targetEmail,
+        })
         assertValidInviteTarget({
           study,
           actorId,
           actorEmail,
-          targetUserId,
+          targetUserId: resolvedTargetUserId,
           targetEmail,
         })
         const membership = {
-          userDocId: targetUserId,
+          userDocId: resolvedTargetUserId,
           email: targetEmail,
           invited: true,
           accepted: false,
