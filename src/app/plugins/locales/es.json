@@ -734,6 +734,8 @@
       "uploadSuccess": "Imagen cargada exitosamente",
       "uploadError": "Error al cargar imagen",
       "imagesCount": "{count} imagen(es) adjunta(s)",
+      "dropImage": "Suelta la captura o vídeo aquí",
+      "imageFormats": "o haz clic para seleccionar una imagen o vídeo",
       "deleteImageTitle": "Eliminar imagen",
       "deleteImageMessage": "¿Seguro que quieres eliminar esta imagen adjunta?"
     },
@@ -786,12 +788,14 @@
       "settings": "Configuración",
       "confirmUpload": "Confirmar carga",
       "timeTracking": "Seguimiento de tiempo",
+      "answerMetrics": "Métricas de respuesta",
       "enableWeights": "Habilitar función de pesos"
     },
     "messages": {
       "acceptCsv": "Si aceptas, todas tus heurísticas actuales serán reemplazadas por las del archivo CSV.",
       "noCsvFileSelected": "No se ha seleccionado ningún archivo CSV. Por favor, selecciona uno antes de continuar.",
       "timeTrackingDescription": "Registra el tiempo que cada evaluador dedica por heurística durante la evaluación.",
+      "answerMetricsDescription": "Elige qué métricas responderán los evaluadores cuando no haya opciones personalizadas configuradas.",
       "settingsSaved": "Configuración guardada correctamente.",
       "enableWeightsDescription": "Permitir que los evaluadores asignen pesos a las heurísticas en este estudio"
     },
@@ -804,7 +808,9 @@
     },
     "labels": {
       "timeTrackingOn": "Seguimiento de tiempo activado",
-      "timeTrackingOff": "Seguimiento de tiempo desactivado"
+      "timeTrackingOff": "Seguimiento de tiempo desactivado",
+      "frequency": "Frecuencia",
+      "severity": "Severidad"
     }
   },
   "HeuristicsTestView": {
@@ -817,6 +823,7 @@
     },
     "errors": {
       "questionNotLoaded": "No se pudo cargar la pregunta",
+      "noAnswerOptions": "No hay opciones de respuesta configuradas para esta prueba.",
       "noAnswerData": "No se encontraron datos de respuesta",
       "failedToSaveAnswer": "Error al guardar la respuesta. Por favor, inténtelo de nuevo.",
       "failedToSubmitAnswer": "Error al enviar la respuesta. Por favor, inténtelo de nuevo."
@@ -826,6 +833,86 @@
     "selectAnOption": "Seleccionar una opción",
     "headers": {
       "heuristics": "HEURÍSTICAS"
+    },
+    "flow": {
+      "instructions": "Instrucciones",
+      "evaluateHeuristic": "Evalúa la heurística",
+      "finishEvaluation": "Finaliza la evaluación",
+      "heuristicEvaluation": "Evaluación heurística",
+      "finalSubmission": "Envío final",
+      "reviewHeuristics": "Evaluación heurística"
+    },
+    "cards": {
+      "title": "Selecciona una heurística",
+      "description": "Revisa el progreso de cada heurística y elige una para responder sus preguntas.",
+      "questionsCount": "{count} preguntas",
+      "open": "Evaluar heurística",
+      "back": "Volver a la selección",
+      "storage": "Storage: {value}",
+      "noDescription": "Revisa esta heurística y responde sus preguntas según tu evaluación."
+    },
+    "answer": {
+      "currentLocation": "Heurística {heuristic} · Pregunta {current} de {total}",
+      "responseType": "Tipo de respuesta",
+      "responseTypeHint": "Escoge el formato de respuesta una vez. Se usará en todas las preguntas de esta heurística.",
+      "assessment": "Evaluación",
+      "assessmentHint": "Selecciona la opción que mejor refleje tu evaluación para esta pregunta.",
+      "optionsAnalysis": "Análisis de opciones",
+      "optionsAnalysisHint": "Evalúa la pregunta usando las opciones configuradas, severidad, frecuencia o ambas.",
+      "evidence": "Evidencias y comentarios",
+      "evidenceSubtitle": "Escribe el motivo de tu evaluación y añade evidencias si hace falta.",
+      "evidenceHint": "Añade comentarios, imágenes o una transcripción de audio como evidencia.",
+      "commentEvidence": "Evidencia en comentarios",
+      "commentEvidenceSubtitle": "Explica qué has observado. Puedes escribir tus notas o grabar audio para crear un comentario.",
+      "commentEvidenceHint": "Añade observaciones escritas o usa la transcripción de audio.",
+      "commentPrompt": "Opcional: añade cualquier comentario para justificar tu respuesta.",
+      "imageEvidence": "Evidencia en imágenes",
+      "imageEvidenceSubtitle": "Adjunta capturas o evidencia visual que apoye tu análisis.",
+      "imageEvidenceHint": "Sube una o más imágenes para esta pregunta.",
+      "imagePrompt": "Opcional: añade una imagen o vídeo para justificar tu respuesta.",
+      "commentLabel": "Comentario de evaluación",
+      "commentPlaceholder": "¿Qué has observado?",
+      "frequency": "Frecuencia",
+      "severity": "Severidad",
+      "questionTitle": "Question",
+      "frequencyOccurrence": "Frequency of occurrence",
+      "severityRanking": "Severity ranking",
+      "chooseBestOption": "Escoge la opción que más se adapte a tu evaluación.",
+      "frequencyQuestion": "¿Con qué frecuencia ocurre?",
+      "severityQuestion": "¿Qué tan crítico es?",
+      "questions": "Preguntas",
+      "answered": "Respondida",
+      "pending": "Pendiente",
+      "questionNumber": "Pregunta {number}",
+      "questionProgress": "Pregunta {current} de {total}",
+      "previousQuestion": "Pregunta anterior",
+      "nextQuestion": "Pregunta siguiente",
+      "previousHeuristic": "Heurística anterior",
+      "nextHeuristic": "Heurística siguiente",
+      "backToHeuristicList": "Volver a la lista de heurísticas",
+      "recordAudio": "Grabar audio",
+      "stopRecording": "Detener",
+      "speechUnsupported": "La transcripción por voz no está disponible en este navegador.",
+      "modes": {
+        "frequencySeverity": "Frecuencia + severidad",
+        "frequency": "Frecuencia",
+        "severity": "Severidad",
+        "customOptions": "Análisis de opciones"
+      },
+      "frequencyScale": {
+        "rare": "Rara",
+        "occasional": "Ocasional",
+        "sometimes": "A veces",
+        "frequent": "Frecuente",
+        "constant": "Constante"
+      },
+      "severityScale": {
+        "cosmetic": "Cosmética",
+        "minor": "Menor",
+        "moderate": "Moderada",
+        "major": "Grave",
+        "catastrophic": "Catastrófica"
+      }
     },
     "alerts": {
       "testAlreadyCompleted": "Prueba ya completada",
@@ -839,16 +926,16 @@
       "continueAs": "Continuar como {userEmail}",
       "notMail": "¿No es {userEmail}?",
       "changeAccount": "Cambiar cuenta",
-      "startTest": "Comenzar prueba"
+      "startTest": "Comenzar evaluación"
     },
     "InstructionsStep": {
       "welcomeTitle": "¡Bienvenido a RUXAILAB!",
       "defaultDescription": "Vas a participar en una evaluación heurística que tiene como objetivo identificar posibles problemas de usabilidad en una aplicación digital.",
-      "howItWorks": "¿Cómo funciona este test?",
+      "howItWorks": "¿Cómo funciona esta evaluación?",
       "phases": "Revisarás la interfaz usando un conjunto de heurísticas de usabilidad. Para cada heurística, responde las preguntas, selecciona la opción que mejor refleje tu evaluación y añade comentarios o evidencias cuando encuentres un problema de usabilidad.",
       "summary": "Aquí puedes ver un resumen de las fases que seguirás:",
       "ready": "Cuando estés listo, haz clic en el botón para empezar. Puedes avanzar a tu ritmo y detenerte en cualquier momento si lo necesitas.",
-      "startButton": "Comenzar el test",
+      "startButton": "Comenzar evaluación",
       "steps": {
         "instructions": "Instrucciones",
         "evaluation": "Evaluación heurística",

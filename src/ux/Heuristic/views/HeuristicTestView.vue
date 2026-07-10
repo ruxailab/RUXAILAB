@@ -38,7 +38,6 @@
     <div
       v-if="!start && !currentUserTestAnswer?.submitted"
       class="save-status-indicator"
-      :class="{ 'status-mini': mini }"
     >
       <v-card
         elevation="2"
@@ -216,365 +215,116 @@
       </v-row>
     </v-container>
 
-    <v-card v-else height="100vh">
-      <v-layout class="fill-height">
-        <v-navigation-drawer
-          v-model="drawer"
-          :rail="mini"
-          permanent
-          color="testPrimary"
-        >
-          <div v-if="!mini" class="pa-4">
-            <v-list-item>
-              <v-row dense align="center">
-                <v-col cols="8" class="pa-0 pl-3">
-                  <text-clamp
-                    class="text-h5 text-white text-truncate font-weight-bold"
-                    :text="test.testTitle"
-                    :max-lines="2"
+    <v-container v-else fluid class="pa-0">
+      <v-row class="main-test-interface pa-0 ma-0">
+        <v-col ref="rightView" class="right-view pa-6">
+          <v-row class="stepper-row sticky-stepper">
+            <v-col cols="12">
+              <v-stepper
+                :model-value="heuristicStepperValue"
+                class="main-stepper rounded-xl elevation-3"
+                style="visibility: visible"
+              >
+                <v-stepper-header>
+                  <v-stepper-item
+                    value="1"
+                    :title="$t('HeuristicsTestView.flow.instructions')"
+                    complete
+                    color="white"
+                    complete-icon="mdi-check"
                   />
-                </v-col>
-                <v-col cols="4" class="d-flex justify-end">
-                  <v-progress-circular
-                    rotate="-90"
-                    :model-value="isValidProgress ? calculatedProgress : 0"
-                    color="forth"
-                    :size="50"
-                    :width="5"
-                  >
-                    <div class="text-caption text-white">
-                      {{
-                        $t('common.percentValue', {
-                          value: isValidProgress ? calculatedProgress : 0,
-                        })
-                      }}
-                    </div>
-                  </v-progress-circular>
-                </v-col>
-              </v-row>
-            </v-list-item>
-          </div>
+                  <v-divider />
+                  <v-stepper-item
+                    value="2"
+                    :title="$t('HeuristicsTestView.flow.heuristicEvaluation')"
+                    :complete="review == false || currentUserTestAnswer?.submitted"
+                    color="white"
+                    complete-icon="mdi-check"
+                  />
+                  <v-divider />
+                  <v-stepper-item
+                    value="3"
+                    :title="$t('HeuristicsTestView.flow.finalSubmission')"
+                    :complete="currentUserTestAnswer?.submitted"
+                    color="white"
+                    complete-icon="mdi-check"
+                  />
+                </v-stepper-header>
+              </v-stepper>
+            </v-col>
+          </v-row>
 
-          <v-list class="nav-list" density="compact">
-            <div v-for="(item, n) in items" :key="n">
-              <v-list
-                v-if="item.id == 1"
-                :value="index == 1 ? true : false"
-                @click="index = item.id"
-              >
-                <div v-if="mini">
-                  <v-tooltip
-                    v-for="(heuris, i) in item.value"
-                    :key="i"
-                    location="right"
-                  >
-                    <template #activator="{ props }">
-                      <v-list-item
-                        v-bind="props"
-                        link
-                        :active="heurisIndex == i"
-                        @click="heurisIndex = i"
-                      >
-                        <template #prepend>
-                          <v-progress-circular
-                            v-if="
-                              perHeuristicProgress(
-                                currentUserTestAnswer.heuristicQuestions[i],
-                              ) != 100
-                            "
-                            rotate="-90"
-                            :model-value="
-                              perHeuristicProgress(
-                                currentUserTestAnswer.heuristicQuestions[i],
-                              )
-                            "
-                            :size="24"
-                            :width="3"
-                            :color="heurisIndex == i ? 'white' : 'secondary'"
-                          />
-                          <v-icon
-                            v-else
-                            :color="heurisIndex == i ? 'white' : 'secondary'"
-                          >
-                            {{ heuris.icon }}
-                          </v-icon>
-                        </template>
-                      </v-list-item>
-                    </template>
-                    <div>
-                      <span>{{
-                        heuris.title ||
-                        $t('HeuristicsTestView.unknownHeuristic')
-                      }}</span>
-                    </div>
-                  </v-tooltip>
-                </div>
+          <v-row class="justify-center">
+            <v-col cols="12" lg="10" xl="9">
+              <HeuristicCardsStep
+                v-if="index == 1 && review == true && showHeuristicCards"
+                :heuristics="heuristics"
+                :current-user-test-answer="currentUserTestAnswer"
+                :calculated-progress="calculatedProgress"
+                :per-heuristic-progress="perHeuristicProgress"
+                :heuristic-description="heuristicDescription"
+                :heuristic-storage="heuristicStorage"
+                @select-heuristic="handleHeurisClick"
+                @finish-evaluation="review = false"
+              />
 
-                <div v-else>
-                  <v-list-item
-                    v-for="(heuris, i) in item.value"
-                    :key="i"
-                    link
-                    :active="heurisIndex == i"
-                    @click="handleHeurisClick(i)"
-                  >
-                    <template #prepend>
-                      <v-progress-circular
-                        v-if="
-                          perHeuristicProgress(
-                            currentUserTestAnswer.heuristicQuestions[i],
-                          ) != 100
-                        "
-                        rotate="-90"
-                        :model-value="
-                          perHeuristicProgress(
-                            currentUserTestAnswer.heuristicQuestions[i],
-                          )
-                        "
-                        :size="24"
-                        :width="3"
-                        :color="heurisIndex == i ? 'white' : 'forth'"
-                      />
-                      <v-icon
-                        v-else
-                        :color="heurisIndex == i ? 'white' : 'forth'"
-                      >
-                        {{ heuris.icon }}
-                      </v-icon>
-                    </template>
-                    <v-list-item-title
-                      :class="heurisIndex == i ? 'text-white' : 'text-forth'"
-                      class="pl-5"
-                    >
-                      {{
-                        heuris.title ||
-                        $t('HeuristicsTestView.unknownHeuristic')
-                      }}
-                    </v-list-item-title>
-                  </v-list-item>
-                  <v-list-item
-                    v-if="review == true && calculatedProgress == 100"
-                    link
-                    @click="review = false"
-                  >
-                    <template #prepend>
-                      <v-icon color="forth"> mdi-send-circle-outline </v-icon>
-                    </template>
-                    <v-list-item-title class="text-forth">
-                      {{ $t('buttons.submit') }}
-                    </v-list-item-title>
-                  </v-list-item>
-                </div>
-              </v-list>
+              <HeuristicAnswerStep
+                v-if="index == 1 && review == true && !showHeuristicCards"
+                :heuristic="heuristics[heurisIndex]"
+                :heuristics="heuristics"
+                :heuris-index="heurisIndex"
+                :current-user-test-answer="currentUserTestAnswer"
+                :test="test"
+                @back="showHeuristicCards = true"
+                @select-heuristic="handleHeurisClick"
+                @finish-evaluation="review = false"
+                @update-answer="
+                  (questionIndex, value) =>
+                    updateHeuristicAnswer(heurisIndex, questionIndex, value)
+                "
+                @update-comment="
+                  (sourceHeurisIndex, questionIndex, comment) =>
+                    updateComment(comment, sourceHeurisIndex, questionIndex)
+                "
+                @update-image="
+                  (sourceHeurisIndex, questionIndex, imageUrl) =>
+                    updateImageUrl(imageUrl, sourceHeurisIndex, questionIndex)
+                "
+                @add-comment="
+                  (sourceHeurisIndex, questionIndex, comment) =>
+                    addComment(comment, sourceHeurisIndex, questionIndex)
+                "
+                @update-comment-by-id="
+                  (sourceHeurisIndex, questionIndex, commentId, text) =>
+                    updateCommentById(
+                      commentId,
+                      text,
+                      sourceHeurisIndex,
+                      questionIndex,
+                    )
+                "
+                @remove-comment="
+                  (sourceHeurisIndex, questionIndex, commentId) =>
+                    removeComment(commentId, sourceHeurisIndex, questionIndex)
+                "
+                @add-image="
+                  (sourceHeurisIndex, questionIndex, imageUrl, metadata) =>
+                    addImage(imageUrl, sourceHeurisIndex, questionIndex, metadata)
+                "
+                @remove-image="
+                  (sourceHeurisIndex, questionIndex, imageId) =>
+                    removeImage(imageId, sourceHeurisIndex, questionIndex)
+                "
+              />
 
-              <v-list-item v-else-if="item.id == 2" @click="index = item.id">
-                <template #prepend>
-                  <v-icon :color="index == item.id ? 'white' : 'forth'">
-                    {{ item.icon }}
-                  </v-icon>
-                </template>
-                <v-list-item-title
-                  :class="index == item.id ? 'text-white' : 'text-forth'"
-                >
-                  {{ item.title }}
-                </v-list-item-title>
-              </v-list-item>
-            </div>
-          </v-list>
-
-          <template #append>
-            <v-row class="d-flex pb-10 pt-5 px-5" justify="end">
-              <v-btn
-                size="small"
-                icon
-                class="bg-secondary"
-                @click.stop="mini = !mini"
-              >
-                <v-icon v-if="mini" color="white"> mdi-chevron-right </v-icon>
-                <v-icon v-else color="white"> mdi-chevron-left </v-icon>
-              </v-btn>
-            </v-row>
-          </template>
-        </v-navigation-drawer>
-
-        <v-main
-          ref="rightView"
-          :class="{ 'main-content-shifted': !mini }"
-          class="background-main px-20 py-4 transition-all"
-        >
-          <ShowInfo
-            v-if="index == 1 && review == true"
-            :title="
-              heuristics[heurisIndex]?.title ||
-              $t('HeuristicsTestView.unknownHeuristic')
-            "
-          >
-            <template #content>
-              <v-card-title class="text-h6 font-weight-regular text-primary">
-                {{
-                  heuristics[heurisIndex]?.title ||
-                  $t('HeuristicsTestView.unknownHeuristic')
-                }}
-              </v-card-title>
-              <v-divider class="mb-5" />
-              <v-row
-                v-for="(question, i) in heuristics[heurisIndex]?.questions ||
-                []"
-                :key="i"
-                justify="center"
-              >
-                <v-col cols="10">
-                  <v-card class="elevation-2 px-10 py-5 mb-2">
-                    <v-row class="mb-2">
-                      <v-col cols="11">
-                        <p class="text-body-1 font-weight-medium">
-                          {{ i + 1 }})
-                          {{
-                            question.title ||
-                            $t('HeuristicsTestView.unknownQuestion')
-                          }}
-                        </p>
-                      </v-col>
-                      <v-col cols="1">
-                        <HelpBtn :question="question" />
-                      </v-col>
-                    </v-row>
-                    <AddCommentBtn
-                      :heuris-index="heurisIndex"
-                      :answer-heu="
-                        currentUserTestAnswer.heuristicQuestions[heurisIndex]
-                          ?.heuristicQuestions[i] || {}
-                      "
-                      :disable="currentUserTestAnswer?.submitted"
-                      @update-comment="
-                        (comment) => updateComment(comment, heurisIndex, i)
-                      "
-                      @update-image="
-                        (imageUrl) => updateImageUrl(imageUrl, heurisIndex, i)
-                      "
-                      @add-comment="
-                        (comment) => addComment(comment, heurisIndex, i)
-                      "
-                      @update-comment-by-id="
-                        (commentId, text) =>
-                          updateCommentById(commentId, text, heurisIndex, i)
-                      "
-                      @remove-comment="
-                        (commentId) => removeComment(commentId, heurisIndex, i)
-                      "
-                      @add-image="
-                        (imageUrl) => addImage(imageUrl, heurisIndex, i)
-                      "
-                      @remove-image="
-                        (imageId) => removeImage(imageId, heurisIndex, i)
-                      "
-                    >
-                      <template #answer>
-                        <v-select
-                          v-if="
-                            currentUserTestAnswer?.heuristicQuestions?.[
-                              heurisIndex
-                            ]?.heuristicQuestions?.[i] &&
-                            test?.testOptions?.length > 0
-                          "
-                          v-model="
-                            currentUserTestAnswer.heuristicQuestions[
-                              heurisIndex
-                            ].heuristicQuestions[i].heuristicAnswer
-                          "
-                          :items="test.testOptions"
-                          :item-title="
-                            (item) =>
-                              item?.text ||
-                              $t('HeuristicsTestView.selectAnOption')
-                          "
-                          item-value="value"
-                          variant="outlined"
-                          density="compact"
-                          :disabled="currentUserTestAnswer?.submitted"
-                          placeholder="Select an answer..."
-                          @update:model-value="
-                            handleAnswerChange(heurisIndex, i)
-                          "
-                        />
-                        <v-alert
-                          v-else-if="!test?.testOptions?.length"
-                          type="warning"
-                          class="mt-4"
-                        >
-                          No answer options configured for this test.
-                        </v-alert>
-
-                        <v-alert v-else type="error" class="mt-4">
-                          {{
-                            $t('HeuristicsTestView.errors.questionNotLoaded')
-                          }}
-                        </v-alert>
-                      </template>
-                    </AddCommentBtn>
-                  </v-card>
-                </v-col>
-              </v-row>
-            </template>
-          </ShowInfo>
-
-          <div v-if="calculatedProgress == 100 && review == false">
-            <ShowInfo :title="$t('finishTest.title')">
-              <template #content>
-                <v-row justify="center" class="pa-4">
-                  <v-col cols="11" class="mt-3">
-                    <v-card class="pa-10">
-                      <v-row
-                        justify="center"
-                        class="text-h5 font-weight-bold text-testPrimary mb-2"
-                      >
-                        {{ $t('finishTest.finalMessage') }}!
-                      </v-row>
-                      <v-row
-                        justify="center"
-                        class="text-subtitle-1 text-ternary"
-                      >
-                        {{ $t('finishTest.congratulations') }}
-                      </v-row>
-                      <v-row justify="center" align="center" class="mt-6">
-                        <v-col cols="12" md="6" class="text-center">
-                          <img
-                            draggable="false"
-                            :src="
-                              require('../../../../public/finalMessage.svg')
-                            "
-                            alt="Final test svg"
-                            class="img-fluid"
-                          />
-                        </v-col>
-                        <v-col
-                          cols="12"
-                          md="6"
-                          class="text-center text-md-left"
-                        >
-                          <div class="text-subtitle-1 text-ternary mb-4">
-                            {{ $t('finishTest.submitMessage') }}
-                          </div>
-                          <v-btn
-                            color="testPrimary"
-                            variant="flat"
-                            :disabled="currentUserTestAnswer?.submitted"
-                            @click="dialog = true"
-                          >
-                            <v-icon start> mdi-send </v-icon>
-                            {{ $t('buttons.submit') }}
-                          </v-btn>
-                        </v-col>
-                      </v-row>
-                    </v-card>
-                  </v-col>
-                </v-row>
-              </template>
-            </ShowInfo>
-          </div>
-        </v-main>
-      </v-layout>
-    </v-card>
+              <div v-if="calculatedProgress == 100 && review == false">
+                <HeuristicFinishStep @submit="dialog = true" />
+              </div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-container>
 
     <v-btn
       v-if="showSaveBtn && !start"
@@ -641,12 +391,11 @@ import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { debounce } from 'lodash'
-import ShowInfo from '@/shared/components/ShowInfo.vue'
-import AddCommentBtn from '@/ux/Heuristic/components/AddCommentBtn.vue'
-import HelpBtn from '@/ux/Heuristic/components/QuestionHelpBtn.vue'
-import TextClamp from 'vue3-text-clamp'
 import Snackbar from '@/shared/components/Snackbar'
 import HeuristicInstructionsStep from '@/ux/Heuristic/components/HeuristicInstructionsStep.vue'
+import HeuristicAnswerStep from '@/ux/Heuristic/components/steps/HeuristicAnswerStep.vue'
+import HeuristicCardsStep from '@/ux/Heuristic/components/steps/HeuristicCardsStep.vue'
+import HeuristicFinishStep from '@/ux/Heuristic/components/steps/HeuristicFinishStep.vue'
 import HeuristicQuestionAnswer from '@/ux/Heuristic/models/HeuristicQuestionAnswer'
 import Heuristic from '@/ux/Heuristic/models/Heuristic'
 import { showSuccess, showError } from '@/shared/utils/toast'
@@ -664,20 +413,17 @@ const route = useRoute()
 const { t } = useI18n()
 const logined = ref(null)
 const fromlink = ref(null)
-const drawer = ref(true)
 const start = ref(true)
-const mini = ref(false)
-const index = ref(null)
+const index = ref(1)
 const noExistUser = ref(true)
 const heurisIndex = ref(0)
-const preTestIndex = ref(null)
-const items = ref([])
 const fab = ref(false)
 const dialog = ref(false)
 const calculatedProgress = ref(0)
 const review = ref(true)
 const rightView = ref(null)
 const displayHeuristics = ref([])
+const showHeuristicCards = ref(true)
 
 const TEST_PAGES = {
   welcome: 'welcome_page',
@@ -713,6 +459,76 @@ const testDisabledReason = computed(() => {
 })
 
 const isStartTestDisabled = computed(() => Boolean(testDisabledReason.value))
+
+const heuristicDescription = (heuristic) => {
+  if (!heuristic) return t('HeuristicsTestView.cards.noDescription')
+
+  const directDescription =
+    heuristic.description || heuristic.text || heuristic.subtitle
+  if (directDescription) return directDescription
+
+  const firstQuestionDescription = heuristic.questions
+    ?.flatMap((question) => question.descriptions || [])
+    ?.find((description) => description?.text)
+
+  return (
+    firstQuestionDescription?.text ||
+    t('HeuristicsTestView.cards.noDescription')
+  )
+}
+
+const byteSize = (value) => {
+  if (!value) return 0
+  const text = typeof value === 'string' ? value : JSON.stringify(value)
+  return new TextEncoder().encode(text).length
+}
+
+const formatBytes = (bytes) => {
+  if (!bytes) return '0 KB'
+  const units = ['B', 'KB', 'MB', 'GB']
+  let size = bytes
+  let unitIndex = 0
+
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024
+    unitIndex += 1
+  }
+
+  const decimals = size >= 10 || unitIndex === 0 ? 0 : 1
+  return `${size.toFixed(decimals)} ${units[unitIndex]}`
+}
+
+const heuristicStorage = (heuristicAnswer) => {
+  if (!heuristicAnswer?.heuristicQuestions) return formatBytes(0)
+
+  const totalBytes = heuristicAnswer.heuristicQuestions.reduce(
+    (total, question) => {
+      const commentsBytes = Array.isArray(question.comments)
+        ? question.comments.reduce(
+            (sum, comment) => sum + byteSize(comment?.text),
+            0,
+          )
+        : byteSize(question.heuristicComment)
+
+      const imagesBytes = Array.isArray(question.images)
+        ? question.images.reduce(
+            (sum, image) => sum + Number(image?.size || image?.bytes || 0),
+            0,
+          )
+        : 0
+
+      const legacyImageBytes =
+        !Array.isArray(question.images) || question.images.length === 0
+          ? byteSize(question.answerImageUrl)
+          : 0
+
+      return total + commentsBytes + imagesBytes + legacyImageBytes
+    },
+    0,
+  )
+
+  return formatBytes(totalBytes)
+}
 
 //Fisher-Yates algorithm to shuffle heuristics order
 const shuffleHeuristics = (array) => {
@@ -772,8 +588,9 @@ const hasTestDashboardAccess = computed(() => {
   return coop?.accessLevel === ACCESS_LEVEL.EVALUATOR
 })
 
-const isValidProgress = computed(() => {
-  return calculatedProgress.value >= 0 && calculatedProgress.value <= 100
+const heuristicStepperValue = computed(() => {
+  if (currentUserTestAnswer.value?.submitted || review.value === false) return 3
+  return 2
 })
 
 // Status management functions
@@ -913,12 +730,6 @@ const startTest = async () => {
     })
     return
   }
-  //check options before satrting the test
-  if (!test.value?.testOptions?.length) {
-    showError('No answer options configured for this test.')
-    return
-  }
-
   if (!isUserTestAdmin.value) {
     await store.dispatch('acceptStudyCollaboration', {
       test: test.value,
@@ -928,6 +739,8 @@ const startTest = async () => {
 
   start.value = false
   currentPage.value = TEST_PAGES.answers
+  showHeuristicCards.value = true
+  index.value = 1
 
   // Mark test as started
   if (currentUserTestAnswer.value) {
@@ -1113,7 +926,7 @@ const removeComment = (_commentId, _heurisIndex, _answerIndex) => {
 /**
  * Add a new image to a question
  */
-const addImage = (_imageUrl, _heurisIndex, _answerIndex) => {
+const addImage = (_imageUrl, _heurisIndex, _answerIndex, _metadata = {}) => {
   if (
     !currentUserTestAnswer.value.heuristicQuestions?.[_heurisIndex]
       ?.heuristicQuestions?.[_answerIndex]
@@ -1134,6 +947,7 @@ const addImage = (_imageUrl, _heurisIndex, _answerIndex) => {
     id: generateId(),
     url: _imageUrl,
     createdAt: Date.now(),
+    ..._metadata,
   }
 
   // Use spread operator to trigger Vue reactivity
@@ -1188,6 +1002,20 @@ const removeImage = (_imageId, _heurisIndex, _answerIndex) => {
   debouncedAutoSave()
 }
 
+const updateHeuristicAnswer = (_heurisIndex, _answerIndex, _value) => {
+  if (
+    !currentUserTestAnswer.value.heuristicQuestions?.[_heurisIndex]
+      ?.heuristicQuestions?.[_answerIndex]
+  ) {
+    return
+  }
+
+  currentUserTestAnswer.value.heuristicQuestions[
+    _heurisIndex
+  ].heuristicQuestions[_answerIndex].heuristicAnswer = _value
+  handleAnswerChange(_heurisIndex, _answerIndex)
+}
+
 const handleAnswerChange = (_heurisIndex, _answerIndex) => {
   if (
     !currentUserTestAnswer.value.heuristicQuestions?.[_heurisIndex]
@@ -1208,7 +1036,7 @@ const handleAnswerChange = (_heurisIndex, _answerIndex) => {
     // Check if it's an empty answer object
     const isEmptyAnswer = isAnswerEmpty(question.heuristicAnswer)
 
-    if (isEmptyAnswer) {
+    if (isEmptyAnswer && !question.heuristicAnswer.mode) {
       question.heuristicAnswer = null
     }
   }
@@ -1229,6 +1057,24 @@ const isAnswerEmpty = (answer) => {
   if (typeof answer === 'object') {
     if (Object.keys(answer).length === 0) {
       return true
+    }
+
+    if (answer.mode) {
+      if (answer.mode === 'frequency') {
+        return answer.frequency === null || answer.frequency === undefined
+      }
+      if (answer.mode === 'severity') {
+        return answer.severity === null || answer.severity === undefined
+      }
+      if (answer.mode === 'frequencySeverity') {
+        return (
+          (answer.frequency === null || answer.frequency === undefined) ||
+          (answer.severity === null || answer.severity === undefined)
+        )
+      }
+      if (answer.mode === 'customOptions') {
+        return !answer.custom || !answer.custom.text
+      }
     }
 
     // Check for your specific answer structure
@@ -1268,27 +1114,53 @@ const isAnswerEmpty = (answer) => {
   return false
 }
 
-const mappingSteps = () => {
-  if (validate(heuristics.value) && heuristics.value.length !== 0) {
-    items.value = [
-      {
-        title: t('HeuristicsTestView.headers.heuristics'),
-        icon: 'mdi-checkbox-marked-circle-outline',
-        value: heuristics.value.map((option) => ({
-          title: option.title || t('HeuristicsTestView.unknownHeuristic'),
-          icon: 'mdi-checkbox-marked-circle-outline',
-          done: false,
-          total: option.total || 0,
-          id: option.id,
-        })),
-        id: 1,
-      },
-    ]
+const answerCompletionMode = computed(() => {
+  if (Array.isArray(test.value?.testOptions) && test.value.testOptions.length) {
+    return 'customOptions'
   }
-}
+  const requiresFrequency = test.value?.useFrequency !== false
+  const requiresSeverity = test.value?.useSeverity !== false
+  if (requiresFrequency && requiresSeverity) return 'frequencySeverity'
+  if (requiresFrequency) return 'frequency'
+  if (requiresSeverity) return 'severity'
+  return null
+})
 
-const validate = (object) => {
-  return object !== null && object !== undefined && object !== ''
+const isFilledAnswerValue = (value) =>
+  value !== undefined && value !== null && value !== ''
+
+const isAnswerCompleteForMode = (answer, mode = answerCompletionMode.value) => {
+  if (!mode) return isAnswerValid(answer)
+  if (!answer || typeof answer !== 'object') return false
+
+  if (mode === 'frequency') {
+    return isFilledAnswerValue(answer.frequency ?? answer.value)
+  }
+
+  if (mode === 'severity') {
+    return isFilledAnswerValue(answer.severity ?? answer.value)
+  }
+
+  if (mode === 'frequencySeverity') {
+    const value = answer.value && typeof answer.value === 'object'
+      ? answer.value
+      : {}
+    return (
+      isFilledAnswerValue(answer.frequency ?? value.frequency) &&
+      isFilledAnswerValue(answer.severity ?? value.severity)
+    )
+  }
+
+  if (mode === 'customOptions') {
+    return Boolean(
+      answer.custom?.text ||
+        isFilledAnswerValue(answer.custom?.value) ||
+        answer.text ||
+        isFilledAnswerValue(answer.value),
+    )
+  }
+
+  return isAnswerValid(answer)
 }
 
 const calculateProgress = () => {
@@ -1303,7 +1175,9 @@ const calculateProgress = () => {
     if (heuQ?.heuristicQuestions) {
       heuQ.heuristicQuestions.forEach((question) => {
         // Check for valid answer content, not just object existence
-        const hasValidAnswer = isAnswerValid(question.heuristicAnswer)
+        const hasValidAnswer = isAnswerCompleteForMode(
+          question.heuristicAnswer,
+        )
 
         if (hasValidAnswer) {
           answered++
@@ -1340,7 +1214,7 @@ const perHeuristicProgress = (item) => {
   const total = item.heuristicTotal || 0
 
   const answered = item.heuristicQuestions.filter((q) =>
-    isAnswerValid(q.heuristicAnswer),
+    isAnswerCompleteForMode(q.heuristicAnswer),
   ).length
 
   return total > 0 ? ((answered * 100) / total).toFixed(1) : 0
@@ -1726,6 +1600,8 @@ const restoreProgress = () => {
     start.value = false
     currentPage.value = TEST_PAGES.answers
     review.value = true
+    showHeuristicCards.value = true
+    index.value = 1
 
     // Calculate progress from saved data
     calculateProgress()
@@ -1749,6 +1625,8 @@ const restoreProgress = () => {
     start.value = true
     currentPage.value = TEST_PAGES.welcome
     review.value = true
+    showHeuristicCards.value = true
+    index.value = 1
     calculatedProgress.value = 0
   }
 }
@@ -1772,6 +1650,7 @@ const setReviewTrue = () => {
 
 const handleHeurisClick = (i) => {
   heurisIndex.value = i
+  showHeuristicCards.value = false
   setReviewTrue()
 }
 
@@ -1789,35 +1668,6 @@ const setupAutoSaveOnUnload = () => {
     }
   })
 }
-
-watch(
-  displayHeuristics,
-  async () => {
-    mappingSteps()
-  },
-  { deep: true },
-)
-
-watch(
-  test,
-  async () => {
-    mappingSteps()
-  },
-  { deep: true },
-)
-
-watch(
-  items,
-  () => {
-    if (items.value.length) {
-      index.value = items.value[0].id
-      if (items.value.find((obj) => obj.id == 0)) {
-        preTestIndex.value = items.value[0].value[0].id
-      }
-    }
-  },
-  { deep: true },
-)
 
 watch(heurisIndex, (newIndex, oldIndex) => {
   if (rightView.value) {
@@ -1955,30 +1805,58 @@ onUnmounted(() => {
   background: #fff;
 }
 
-.background-main {
-  background-color: #f5f7fa;
-  height: 100%;
-  overflow-y: auto;
-  transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.main-test-interface {
+  min-height: 100vh;
+  background: #fff;
 }
-.main-content-shifted {
-  padding-left: 256px !important; /* Vuetify's default drawer width */
+
+.right-view {
+  min-height: 100vh;
 }
+
+.sticky-stepper {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: transparent;
+}
+
+.main-stepper {
+  background: #00213f !important;
+  color: #fff !important;
+  --v-stepper-header-title-color: #fff !important;
+  --v-stepper-item-title-color: #fff !important;
+  --v-stepper-item-color: #fff !important;
+}
+
 .btn-fix:focus::before {
   opacity: 0 !important;
 }
-.nav-list::-webkit-scrollbar {
-  width: 7px;
+
+:deep(.v-stepper-item__avatar) {
+  font-size: 1rem !important;
+  font-weight: 900 !important;
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
-.nav-list::-webkit-scrollbar-track {
-  background: none;
+
+:deep(.v-stepper-item--complete .v-stepper-item__avatar .v-icon) {
+  font-size: 1.25rem !important;
+  width: 2.2rem !important;
+  height: 2.2rem !important;
 }
-.nav-list::-webkit-scrollbar-thumb {
-  background: #7986cb;
-  border-radius: 4px;
+
+:deep(.v-stepper-item__title) {
+  font-size: 1.1rem !important;
+  font-weight: 300 !important;
+  line-height: 0.8 !important;
 }
-.nav-list::-webkit-scrollbar-thumb:hover {
-  background: #5c6bc0;
+
+.v-stepper-item {
+  padding: 1rem;
 }
 
 /* Persistent Save Status Indicator */
@@ -1989,10 +1867,6 @@ onUnmounted(() => {
   z-index: 999;
   width: 220px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.save-status-indicator.status-mini {
-  right: 80px;
 }
 
 .status-card {

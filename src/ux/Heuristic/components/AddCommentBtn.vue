@@ -1,10 +1,14 @@
 <template>
   <div>
     <v-row justify="start" align="center">
-      <v-col cols="10" sm="11" class="py-0">
+      <v-col
+        :cols="openByDefault ? 12 : 10"
+        :sm="openByDefault ? 12 : 11"
+        class="py-0"
+      >
         <slot name="answer" />
       </v-col>
-      <v-col cols="1" class="mb-6 py-0">
+      <v-col v-if="!openByDefault" cols="1" class="mb-6 py-0">
         <v-tooltip v-if="!show" location="bottom">
           <template #activator="{ props: tooltipProps }">
             <v-btn icon v-bind="tooltipProps" @click="show = !show">
@@ -42,7 +46,10 @@
 
       <v-col v-if="show" cols="12" class="py-0">
         <!-- Existing Comments Display -->
-        <div v-if="allComments.length > 0" class="mb-3">
+        <div
+          v-if="showComments && !openByDefault && allComments.length > 0"
+          class="mb-3"
+        >
           <v-chip size="small" color="primary" variant="tonal" class="mb-2">
             <v-icon start size="small">mdi-comment-multiple</v-icon>
             {{ allComments.length }}
@@ -123,28 +130,37 @@
         </div>
 
         <!-- Add New Comment -->
-        <v-textarea
-          v-model="newCommentText"
-          variant="outlined"
-          density="compact"
-          auto-grow
-          rows="2"
-          clearable
-          clear-icon="mdi-close"
-          :label="
-            allComments.length > 0
-              ? $t('HeuristicsTable.AddCommentBtn.addAnotherComment')
-              : $t('common.comment')
-          "
-          :disabled="disable"
-          @keydown.enter.ctrl="addNewComment"
-        />
+        <div v-if="showComments" class="comment-input-wrap">
+          <v-textarea
+            v-model="newCommentText"
+            class="comment-evidence-input"
+            variant="solo"
+            density="comfortable"
+            auto-grow
+            rows="4"
+            :clearable="!openByDefault"
+            clear-icon="mdi-close"
+            :label="commentFieldLabel"
+            :placeholder="commentPlaceholder"
+            :disabled="disable"
+            @keydown.enter.ctrl="!openByDefault && addNewComment()"
+          />
+          <v-btn
+            v-if="openByDefault && newCommentText?.trim()"
+            icon="mdi-delete-outline"
+            variant="text"
+            color="error"
+            class="comment-clear-btn"
+            :disabled="disable"
+            @click="clearDraftComment"
+          />
+        </div>
         <v-btn
-          v-if="newCommentText?.trim()"
-          size="small"
+          v-if="showComments && !openByDefault && newCommentText?.trim()"
+          size="default"
           color="primary"
-          variant="tonal"
-          class="mb-3"
+          variant="flat"
+          class="mb-3 text-none comment-save-btn"
           :disabled="disable || !newCommentText?.trim()"
           @click="addNewComment"
         >
@@ -153,14 +169,19 @@
         </v-btn>
 
         <v-divider
-          v-if="allImages.length > 0 || allComments.length > 0"
+          v-if="
+            showComments &&
+            !openByDefault &&
+            showImages &&
+            (allImages.length > 0 || allComments.length > 0)
+          "
           class="my-3"
         />
 
         <!-- Existing Images Display -->
-        <div v-if="allImages.length > 0" class="mb-3">
+        <div v-if="showImages && allImages.length > 0" class="mb-3">
           <v-chip size="small" color="primary" variant="tonal" class="mb-2">
-            <v-icon start size="small">mdi-image-multiple</v-icon>
+            <v-icon start size="small">mdi-file-image-outline</v-icon>
             {{ allImages.length }}
             {{
               allImages.length === 1 ? $t('common.image') : $t('common.images')
@@ -175,12 +196,20 @@
               md="3"
             >
               <v-card variant="outlined" class="image-card">
+                <video
+                  v-if="isVideoMedia(image)"
+                  :src="image.url"
+                  class="media-thumbnail cursor-pointer"
+                  controls
+                  @click="openImagePreview(image)"
+                />
                 <v-img
+                  v-else
                   :src="image.url"
                   height="150"
                   cover
                   class="cursor-pointer"
-                  @click="openImagePreview(image.url)"
+                  @click="openImagePreview(image)"
                 />
                 <v-btn
                   icon="mdi-delete"
@@ -198,8 +227,10 @@
 
         <!-- Add New Image -->
         <ImageImport
+          v-if="showImages"
           :heuristic-id="heuristicIdForImage"
           :question-id="questionIdForImage"
+          :question-index="questionIndex"
           :test-id="testIdForImage"
           :disable="disable"
           @image-uploaded="handleImageUploaded"
@@ -209,7 +240,14 @@
 
     <v-dialog v-model="imagePreviewDialog" max-width="800">
       <v-card>
-        <v-img :src="previewImageUrl" max-height="600" cover />
+        <video
+          v-if="previewMediaType?.startsWith('video/')"
+          :src="previewImageUrl"
+          class="preview-video"
+          controls
+          autoplay
+        />
+        <v-img v-else :src="previewImageUrl" max-height="600" cover />
         <v-card-actions>
           <v-spacer />
           <v-btn color="primary" @click="imagePreviewDialog = false">
@@ -253,6 +291,7 @@
 
 <script setup>
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useStore } from 'vuex'
 import ImageImport from '@/ux/Heuristic/components/ImportImage.vue'
 import { useCommentImage } from '@/ux/Heuristic/composables/useCommentImage'
@@ -261,7 +300,13 @@ import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 const props = defineProps({
   answerHeu: { type: Object, default: () => ({}), required: true },
   heurisIndex: { type: Number, default: 0 },
+  questionIndex: { type: Number, default: 0 },
   disable: { type: Boolean, default: false, required: false },
+  openByDefault: { type: Boolean, default: false },
+  commentLabel: { type: String, default: '' },
+  commentPlaceholder: { type: String, default: '' },
+  showComments: { type: Boolean, default: true },
+  showImages: { type: Boolean, default: true },
 })
 
 const emit = defineEmits([
@@ -275,6 +320,7 @@ const emit = defineEmits([
 ])
 
 const store = useStore()
+const { t } = useI18n()
 const test = computed(() => store.getters.test || {})
 const showDeleteCommentDialog = ref(false)
 const selectedCommentToDelete = ref(null)
@@ -340,6 +386,7 @@ const {
   editingCommentText,
   imagePreviewDialog,
   previewImageUrl,
+  previewMediaType,
   allComments,
   allImages,
   hasContent,
@@ -353,7 +400,13 @@ const {
   handleImageUploaded,
   removeImage: handleRemoveImage,
   openImagePreview,
+  isVideoMedia,
+  clearDraftComment,
 } = useCommentImage(props, emit)
+
+if (props.openByDefault) {
+  show.value = true
+}
 
 const heuristicIdForImage = computed(() =>
   (props.heurisIndex ?? '0').toString(),
@@ -362,6 +415,14 @@ const questionIdForImage = computed(() =>
   (props.answerHeu?.heuristicId ?? '0').toString(),
 )
 const testIdForImage = computed(() => test.value?.id || '')
+
+const commentFieldLabel = computed(() => {
+  if (props.openByDefault) return ''
+  if (props.commentLabel) return props.commentLabel
+  return allComments.value.length > 0
+    ? t('HeuristicsTable.AddCommentBtn.addAnotherComment')
+    : t('common.comment')
+})
 </script>
 
 <style scoped>
@@ -377,5 +438,58 @@ const testIdForImage = computed(() => test.value?.id || '')
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+.media-thumbnail {
+  display: block;
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  background: #071829;
+}
+
+.preview-video {
+  display: block;
+  width: 100%;
+  max-height: 600px;
+  background: #071829;
+}
+
+.comment-input-wrap {
+  position: relative;
+}
+
+.comment-clear-btn {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.45rem;
+  z-index: 2;
+}
+
+.comment-evidence-input :deep(.v-field) {
+  border: 1px solid rgba(0, 33, 63, 0.14);
+  border-radius: 8px;
+  background: #fff !important;
+  box-shadow: none;
+}
+
+.comment-evidence-input :deep(.v-field--focused) {
+  border-color: #00213f;
+  box-shadow: 0 0 0 3px rgba(0, 33, 63, 0.08);
+}
+
+.comment-evidence-input :deep(.v-field__input) {
+  min-height: 136px;
+  padding-top: 1rem;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.comment-evidence-input :deep(.v-label) {
+  display: none;
+}
+
+.comment-save-btn {
+  min-width: 132px;
 }
 </style>
