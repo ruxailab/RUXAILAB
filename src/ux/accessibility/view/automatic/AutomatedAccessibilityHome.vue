@@ -42,14 +42,14 @@ const navItems = computed(() => [
     path: `/accessibility/automatic/analyse/${testId.value}`,
   },
   {
-    title: 'Answers',
+    title: 'Results',
     icon: 'mdi-help-circle',
-    path: `/accessibility/automatic/answers/${testId.value}`,
+    path: `/accessibility/automatic/results/${testId.value}`,
   },
   {
-    title: 'Report',
+    title: 'Progress',
     icon: 'mdi-file-document',
-    path: `/accessibility/automatic/reports/${testId.value}`,
+    path: `/accessibility/automatic/progress/${testId.value}`,
   },
   {
     title: 'Settings',

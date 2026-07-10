@@ -1485,7 +1485,7 @@ const submitAnswer = async () => {
     showSuccess('alerts.genericSuccess')
     setTimeout(() => {
       if (hasTestDashboardAccess.value) {
-        router.push(`/heuristic/manager/${test.value.id}`)
+        router.push(`/heuristic/dashboard/${test.value.id}`)
       } else {
         router.push('/admin')
       }

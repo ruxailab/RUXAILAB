@@ -774,7 +774,7 @@ const saveAnswer = async () => {
     attachMediaToTasks(localTestAnswer, mediaUrls.value)
     await savePartialAnswer()
     if (hasTestDashboardAccess.value) {
-      router.push(`/userTest/unmoderated/manager/${test.value.id}`)
+      router.push(`/userTest/unmoderated/dashboard/${test.value.id}`)
     } else {
       router.push('/admin')
     }
