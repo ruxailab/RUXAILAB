@@ -591,13 +591,17 @@
       "recruiting": "Recruiting",
       "paused": "Paused",
       "finished": "Finished",
-      "unknown": "Unknown"
+      "unknown": "Unknown",
+      "pending": "Pending",
+      "upcoming": "Upcoming"
     },
     "officeHours": {
       "title": "Monthly Office Hours",
       "description": "Starting in November, we will host monthly office hours to discuss project updates, answer questions, and connect with our community.",
       "nextSessionDate": "Nov 2025",
-      "frequency": "Monthly"
+      "frequency": "Monthly",
+      "pending": "Pending",
+      "upcoming": "Upcoming"
     },
     "webinar": {
       "ended": "Ended",
@@ -2401,6 +2405,9 @@
     "signOutMessage": "Are you sure you want to sign out?"
   },
   "tags": {
+    "finished": "Finished",
+    "pending": "Pending",
+    "upcoming": "Upcoming",
     "active": "Active",
     "draft": "Draft",
     "completed": "Completed",

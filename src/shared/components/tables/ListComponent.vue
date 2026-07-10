@@ -76,7 +76,7 @@
     </template>
 
     <template #item.testDate="{ item }">
-      {{ formatDateTime(item.testDate, 'es') }}
+      {{ formatDateTime(item.testDate, locale.value) }}
     </template>
 
     <!-- Owner Column -->
@@ -180,7 +180,7 @@ const props = defineProps({
 
 const emit = defineEmits(['clicked', 'preview-clicked'])
 
-const { t } = useI18n()
+const { t,locale } = useI18n()
 
 // Composables
 const typeRef = toRef(props, 'type')
