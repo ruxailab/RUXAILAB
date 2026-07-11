@@ -218,6 +218,78 @@
       "actions": "Actions"
     }
   },
+  "auditTrail": {
+    "title": "Audit Trail",
+    "subtitle": "Sensitive changes to study settings, cooperators, and storage.",
+    "loadError": "Unable to load the audit trail.",
+    "headers": {
+      "time": "Time",
+      "action": "Action",
+      "actor": "Actor",
+      "description": "Description"
+    },
+    "actions": {
+      "study": {
+        "edited": "Study edited",
+        "settingsChanged": "Study settings changed"
+      },
+      "cooperator": {
+        "invited": "Cooperator invited",
+        "invitationAccepted": "Invitation accepted",
+        "roleChanged": "Cooperator role changed",
+        "removed": "Cooperator removed",
+        "invitationCancelled": "Invitation cancelled"
+      },
+      "storage": {
+        "fileDeleted": "Storage file deleted"
+      }
+    },
+    "descriptions": {
+      "studyUpdated": "Updated {target}",
+      "studyRenamed": "Renamed study from \"{before}\" to \"{after}\"",
+      "studyDescriptionUpdated": "Updated study description",
+      "studyAccessChanged": "Changed access from {before} to {after}",
+      "studyStatusChanged": "Changed status from {before} to {after}",
+      "fieldUpdated": "Updated {field}",
+      "cooperatorInvited": "Invited {target} as {role}",
+      "cooperatorInvitationAccepted": "{target} accepted the invitation",
+      "cooperatorRoleChanged": "Changed {target}'s role from {before} to {after}",
+      "cooperatorRemoved": "Removed {target} from the study",
+      "cooperatorInvitationCancelled": "Cancelled invitation for {target}",
+      "storageFileDeleted": "Deleted {target}"
+    },
+    "fields": {
+      "testTitle": "title",
+      "testDescription": "description",
+      "isPublic": "public access",
+      "status": "status",
+      "testStatus": "test status",
+      "endDate": "end date",
+      "testStructure": "tasks",
+      "testOptions": "options",
+      "studyConclusion": "conclusion",
+      "evaluatorInfo": "evaluator information"
+    },
+    "values": {
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "empty": "Empty",
+      "public": "Public",
+      "private": "Private",
+      "draft": "Draft",
+      "published": "Published",
+      "active": "Active",
+      "closed": "Closed"
+    },
+    "roles": {
+      "admin": "Admin",
+      "evaluator": "Evaluator",
+      "guest": "Guest",
+      "observator": "Observator",
+      "manager": "Manager",
+      "user": "User"
+    }
+  },
   "community": {
     "studies": {
       "title": "Community Studies",

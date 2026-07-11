@@ -216,6 +216,78 @@
       "actions": "Acciones"
     }
   },
+  "auditTrail": {
+    "title": "Registro de auditoría",
+    "subtitle": "Cambios sensibles en la configuración, los colaboradores y el almacenamiento del estudio.",
+    "loadError": "No se pudo cargar el registro de auditoría.",
+    "headers": {
+      "time": "Hora",
+      "action": "Acción",
+      "actor": "Actor",
+      "description": "Descripción"
+    },
+    "actions": {
+      "study": {
+        "edited": "Estudio editado",
+        "settingsChanged": "Configuración del estudio modificada"
+      },
+      "cooperator": {
+        "invited": "Colaborador invitado",
+        "invitationAccepted": "Invitación aceptada",
+        "roleChanged": "Rol de colaborador modificado",
+        "removed": "Colaborador eliminado",
+        "invitationCancelled": "Invitación cancelada"
+      },
+      "storage": {
+        "fileDeleted": "Archivo de almacenamiento eliminado"
+      }
+    },
+    "descriptions": {
+      "studyUpdated": "Se actualizó {target}",
+      "studyRenamed": "Se renombró el estudio de \"{before}\" a \"{after}\"",
+      "studyDescriptionUpdated": "Se actualizó la descripción del estudio",
+      "studyAccessChanged": "Se cambió el acceso de {before} a {after}",
+      "studyStatusChanged": "Se cambió el estado de {before} a {after}",
+      "fieldUpdated": "Se actualizó {field}",
+      "cooperatorInvited": "Se invitó a {target} como {role}",
+      "cooperatorInvitationAccepted": "{target} aceptó la invitación",
+      "cooperatorRoleChanged": "Se cambió el rol de {target} de {before} a {after}",
+      "cooperatorRemoved": "Se eliminó a {target} del estudio",
+      "cooperatorInvitationCancelled": "Se canceló la invitación para {target}",
+      "storageFileDeleted": "Se eliminó {target}"
+    },
+    "fields": {
+      "testTitle": "título",
+      "testDescription": "descripción",
+      "isPublic": "acceso público",
+      "status": "estado",
+      "testStatus": "estado de la prueba",
+      "endDate": "fecha de finalización",
+      "testStructure": "tareas",
+      "testOptions": "opciones",
+      "studyConclusion": "conclusión",
+      "evaluatorInfo": "información del evaluador"
+    },
+    "values": {
+      "enabled": "Activado",
+      "disabled": "Desactivado",
+      "empty": "Vacío",
+      "public": "Público",
+      "private": "Privado",
+      "draft": "Borrador",
+      "published": "Publicado",
+      "active": "Activo",
+      "closed": "Cerrado"
+    },
+    "roles": {
+      "admin": "Admin",
+      "evaluator": "Evaluador",
+      "guest": "Invitado",
+      "observator": "Observator",
+      "manager": "Manager",
+      "user": "User"
+    }
+  },
   "community": {
     "studies": {
       "title": "Estudios comunitarios",

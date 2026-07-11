@@ -6,6 +6,28 @@ jest.mock('vue-router', () => ({
   useRoute: () => ({ params: { id: 'study-1' } }),
 }))
 
+jest.mock('vue-i18n', () => ({
+  useI18n: () => ({
+    t: (key) =>
+      ({
+        'auditTrail.title': 'Audit Trail',
+        'auditTrail.subtitle': 'Sensitive changes made to this study.',
+        'auditTrail.loadError': 'Unable to load the audit trail.',
+        'auditTrail.headers.time': 'Time',
+        'auditTrail.headers.action': 'Action',
+        'auditTrail.headers.actor': 'Actor',
+        'auditTrail.headers.description': 'Description',
+        'auditTrail.actions.study.edited': 'Study edited',
+        'auditTrail.descriptions.studyUpdated': 'Updated {target}',
+      })[key] || key,
+    te: (key) =>
+      [
+        'auditTrail.actions.study.edited',
+        'auditTrail.descriptions.studyUpdated',
+      ].includes(key),
+  }),
+}))
+
 jest.mock('@/app/plugins/firebase', () => ({ db: {} }))
 
 jest.mock('firebase/firestore', () => ({

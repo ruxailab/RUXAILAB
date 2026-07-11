@@ -1,8 +1,8 @@
 <template>
-  <PageWrapper title="Audit Trail" :side-gap="true">
+  <PageWrapper :title="t('auditTrail.title')" :side-gap="true">
     <template #subtitle>
       <p class="text-body-1 text-grey-darken-1">
-        Sensitive changes made to this study.
+        {{ t('auditTrail.subtitle') }}
       </p>
     </template>
 
@@ -21,7 +21,7 @@
       </template>
       <template #item.action="{ item }">
         <v-chip color="primary" size="small" variant="tonal">
-          {{ item.action }}
+          {{ formatAction(item.action) }}
         </v-chip>
       </template>
     </v-data-table>
@@ -29,27 +29,35 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { collection, getDocs, orderBy, query } from 'firebase/firestore'
 import { db } from '@/app/plugins/firebase'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
+import { normalizeAuditEvent } from '@/shared/utils/auditTrailDisplay'
 
 const route = useRoute()
+const { t, te } = useI18n()
 const events = ref([])
 const loading = ref(true)
 const error = ref('')
 
-const headers = [
-  { title: 'Time', key: 'timestamp' },
-  { title: 'Action', key: 'action' },
-  { title: 'Actor', key: 'actorId' },
-  { title: 'Target', key: 'target' },
-]
+const headers = computed(() => [
+  { title: t('auditTrail.headers.time'), key: 'timestamp' },
+  { title: t('auditTrail.headers.action'), key: 'action' },
+  { title: t('auditTrail.headers.actor'), key: 'actorDisplay' },
+  { title: t('auditTrail.headers.description'), key: 'descriptionDisplay' },
+])
 
 const formatTimestamp = (timestamp) => {
   const date = timestamp?.toDate?.() || (timestamp ? new Date(timestamp) : null)
   return date && !Number.isNaN(date.getTime()) ? date.toLocaleString() : '-'
+}
+
+const formatAction = (action) => {
+  const actionKey = `auditTrail.actions.${action}`
+  return te(actionKey) ? t(actionKey) : action
 }
 
 onMounted(async () => {
@@ -59,12 +67,20 @@ onMounted(async () => {
       orderBy('timestamp', 'desc'),
     )
     const snapshot = await getDocs(auditQuery)
-    events.value = snapshot.docs.map((document) => ({
-      id: document.id,
-      ...document.data(),
-    }))
+    events.value = snapshot.docs.map((document) =>
+      normalizeAuditEvent(
+        {
+          id: document.id,
+          ...document.data(),
+        },
+        {
+          t,
+          te,
+        },
+      ),
+    )
   } catch {
-    error.value = 'Unable to load the audit trail.'
+    error.value = t('auditTrail.loadError')
   } finally {
     loading.value = false
   }
