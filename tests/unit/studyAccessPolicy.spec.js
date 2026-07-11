@@ -2,11 +2,13 @@ import {
   STUDY_CAPABILITY,
   STUDY_ROLE,
   canManageCooperator,
+  canJoinModeratedUserSession,
   getAssignableRoles,
   getAssignableRoleOptions,
   getSupportedRoleOptions,
   getStudyFallbackPath,
   hasStudyCapability,
+  isModeratedSessionViewer,
   resolveStudyAccess,
 } from '@/shared/utils/studyAccessPolicy'
 
@@ -265,5 +267,49 @@ describe('study access policy', () => {
     expect(
       getStudyFallbackPath(userStudy(), { id: 'removed', accessLevel: 1 }),
     ).toBe('/admin')
+  })
+
+  it('allows Manager and Observator to join another moderated user session as viewers', () => {
+    const study = userStudy({
+      cooperators: [
+        ...userStudy().cooperators,
+        {
+          userDocId: participant.id,
+          accessLevel: STUDY_ROLE.USER,
+          accepted: true,
+        },
+      ],
+    })
+
+    expect(canJoinModeratedUserSession(study, manager, participant.id)).toBe(
+      true,
+    )
+    expect(canJoinModeratedUserSession(study, observator, participant.id)).toBe(
+      true,
+    )
+    expect(isModeratedSessionViewer(study, manager, participant.id)).toBe(true)
+    expect(isModeratedSessionViewer(study, observator, participant.id)).toBe(
+      true,
+    )
+  })
+
+  it('keeps participants from joining another user session', () => {
+    const study = userStudy({
+      cooperators: [
+        {
+          userDocId: participant.id,
+          accessLevel: STUDY_ROLE.USER,
+          accepted: true,
+        },
+      ],
+    })
+
+    expect(
+      canJoinModeratedUserSession(study, participant, participant.id),
+    ).toBe(true)
+    expect(canJoinModeratedUserSession(study, participant, manager.id)).toBe(
+      false,
+    )
+    expect(isModeratedSessionViewer(study, participant, manager.id)).toBe(false)
   })
 })

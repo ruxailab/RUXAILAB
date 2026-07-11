@@ -242,3 +242,25 @@ export function getStudyFallbackPath(study, user, studyRouteBase = '') {
 
   return '/admin'
 }
+
+export function canJoinModeratedUserSession(study, user, targetUserId) {
+  const userId = getUserId(user)
+  if (!study || !userId || !targetUserId) return false
+
+  if (targetUserId === userId) {
+    return hasStudyCapability(study, user, C.STUDY_ANSWER)
+  }
+
+  return hasStudyCapability(study, user, C.ANSWERS_VIEW)
+}
+
+export function isModeratedSessionViewer(study, user, targetUserId) {
+  const userId = getUserId(user)
+  return Boolean(
+    study &&
+    userId &&
+    targetUserId &&
+    targetUserId !== userId &&
+    hasStudyCapability(study, user, C.ANSWERS_VIEW),
+  )
+}
