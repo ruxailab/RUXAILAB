@@ -22,13 +22,12 @@ jest.unstable_mockModule('../src/f.firebase.js', () => ({
   },
 }))
 
-const { authorizeStudyUpdate } = await import(
-  '../src/https/studyUpdate.js'
-)
-const { assertStorageDeletionAllowed } = await import(
-  '../src/https/studyStorage.js'
-)
-const { writeAuditEvent } = await import('../src/utils/auditTrail.js')
+const { authorizeStudyUpdate, buildStudyAuditDetails } =
+  await import('../src/https/studyUpdate.js')
+const { assertStorageDeletionAllowed } =
+  await import('../src/https/studyStorage.js')
+const { buildAuditEvent, writeAuditEvent } =
+  await import('../src/utils/auditTrail.js')
 
 const study = {
   testType: 'USER',
@@ -80,16 +79,79 @@ describe('trusted study RBAC operations', () => {
     writeAuditEvent(transaction, studyRef, {
       action: 'study.edited',
       actorId: 'manager',
+      actorEmail: 'manager@example.com',
       target: 'study-1',
+      targetLabel: 'Checkout usability study',
+      targetType: 'study',
       details: { changedFields: ['testTitle'] },
     })
 
     expect(transaction.set).toHaveBeenCalledWith(auditRef, {
       action: 'study.edited',
       actorId: 'manager',
+      actorEmail: 'manager@example.com',
       target: 'study-1',
+      targetLabel: 'Checkout usability study',
+      targetType: 'study',
       details: { changedFields: ['testTitle'] },
       timestamp: 'server-time',
+    })
+  })
+
+  it('omits optional audit display fields when no readable labels are available', () => {
+    expect(
+      buildAuditEvent({
+        action: 'storage.fileDeleted',
+        actorId: 'admin',
+        target: 'tests/study-1/file.webm',
+      }),
+    ).toEqual({
+      action: 'storage.fileDeleted',
+      actorId: 'admin',
+      target: 'tests/study-1/file.webm',
+      details: {},
+      timestamp: 'server-time',
+    })
+  })
+
+  it('builds readable study audit details without storing large objects', () => {
+    expect(
+      buildStudyAuditDetails({
+        current: {
+          testTitle: 'Old title',
+          testDescription: 'Old description',
+          isPublic: true,
+          testStructure: [{ task: 'old' }],
+        },
+        requestedUpdates: {
+          testTitle: 'New title',
+          testDescription: 'New description',
+          isPublic: false,
+          testStructure: [{ task: 'new' }],
+        },
+        changedFields: [
+          'testTitle',
+          'testDescription',
+          'isPublic',
+          'testStructure',
+        ],
+      }),
+    ).toEqual({
+      changedFields: [
+        'testTitle',
+        'testDescription',
+        'isPublic',
+        'testStructure',
+      ],
+      changes: {
+        testTitle: { before: 'Old title', after: 'New title' },
+        testDescription: {
+          before: 'Old description',
+          after: 'New description',
+        },
+        isPublic: { before: true, after: false },
+        testStructure: { changed: true },
+      },
     })
   })
 })

@@ -17,6 +17,7 @@ const MANAGER_DENIED_FIELDS = new Set([
   'templateDoc',
   'testStatus',
 ])
+const MAX_AUDIT_TEXT_LENGTH = 160
 
 const error = (code, message) =>
   new functions.https.HttpsError(code, message)
@@ -67,6 +68,40 @@ export const authorizeStudyUpdate = ({
   }
 }
 
+const truncateAuditText = (value) =>
+  value.length > MAX_AUDIT_TEXT_LENGTH
+    ? `${value.slice(0, MAX_AUDIT_TEXT_LENGTH)}…`
+    : value
+
+const auditValue = (value) => {
+  if (value === undefined || value === null) return null
+  if (typeof value === 'string') return truncateAuditText(value)
+  if (typeof value === 'number' || typeof value === 'boolean') return value
+  if (value instanceof Date) return value.toISOString()
+  if (typeof value?.toDate === 'function') return value.toDate().toISOString()
+  return null
+}
+
+export const buildStudyAuditDetails = ({
+  current,
+  requestedUpdates,
+  changedFields,
+}) => ({
+  changedFields,
+  changes: Object.fromEntries(
+    changedFields.map((field) => {
+      const before = auditValue(current[field])
+      const after = auditValue(requestedUpdates[field])
+      return [
+        field,
+        before !== null || after !== null
+          ? { before, after }
+          : { changed: true },
+      ]
+    }),
+  ),
+})
+
 export const updateStudyWithAudit = functions.onCall({
   handler: async (request) => {
     const uid = request?.auth?.uid
@@ -90,6 +125,8 @@ export const updateStudyWithAudit = functions.onCall({
       if (!studySnap.exists) throw error('not-found', 'Study not found')
 
       const current = studySnap.data()
+      const actorEmail =
+        userSnap.data()?.email || request?.auth?.token?.email || ''
       const { changedFields, updates, settingsChanged } = authorizeStudyUpdate({
         current,
         requestedUpdates,
@@ -101,7 +138,14 @@ export const updateStudyWithAudit = functions.onCall({
         action: settingsChanged ? 'study.settingsChanged' : 'study.edited',
         actorId: uid,
         target: studyId,
-        details: { changedFields },
+        actorEmail,
+        targetLabel: current.testTitle || requestedUpdates.testTitle || studyId,
+        targetType: 'study',
+        details: buildStudyAuditDetails({
+          current,
+          requestedUpdates,
+          changedFields,
+        }),
       })
 
       return { status: 'updated', changedFields }

@@ -1,4 +1,5 @@
 import { admin, functions } from '../f.firebase.js'
+import { buildAuditEvent } from '../utils/auditTrail.js'
 
 const error = (code, message) =>
   new functions.https.HttpsError(code, message)
@@ -48,13 +49,18 @@ export const deleteStudyStorageFile = functions.onCall({
       .collection('tests')
       .doc(studyId)
       .collection('auditTrail')
-      .add({
-        action: 'storage.fileDeleted',
-        actorId: uid,
-        target: path,
-        details: {},
-        timestamp: admin.firestore.FieldValue.serverTimestamp(),
-      })
+      .add(
+        buildAuditEvent({
+          action: 'storage.fileDeleted',
+          actorId: uid,
+          actorEmail:
+            userSnap.data()?.email || request?.auth?.token?.email || '',
+          target: path,
+          targetLabel: path.split('/').pop() || path,
+          targetType: 'storageFile',
+          details: {},
+        }),
+      )
 
     return { status: 'deleted' }
   },

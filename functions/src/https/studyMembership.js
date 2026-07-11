@@ -247,6 +247,9 @@ export const manageStudyMembership = functions.onCall({
           action: 'cooperator.invitationAccepted',
           actorId,
           target: actorId,
+          actorEmail,
+          targetLabel: membership.email || actorEmail || actorId,
+          targetType: 'cooperator',
           details: { role: membership.accessLevel },
         })
         return { status: 'accepted', cooperator: membership }
@@ -302,7 +305,10 @@ export const manageStudyMembership = functions.onCall({
         writeAuditEvent(transaction, studyRef, {
           action: 'cooperator.invited',
           actorId,
-          target: targetUserId || targetEmail,
+          target: resolvedTargetUserId || targetEmail,
+          actorEmail,
+          targetLabel: targetEmail,
+          targetType: 'cooperator',
           details: { role },
         })
         return { status: 'invited', cooperator: membership }
@@ -329,6 +335,9 @@ export const manageStudyMembership = functions.onCall({
           action: 'cooperator.roleChanged',
           actorId,
           target: membership.userDocId || membership.email,
+          actorEmail,
+          targetLabel: membership.email || membership.userDocId,
+          targetType: 'cooperator',
           details: { previousRole: target.accessLevel, role },
         })
         return { status: 'role-assigned', cooperator: membership }
@@ -357,6 +366,9 @@ export const manageStudyMembership = functions.onCall({
             : 'cooperator.invitationCancelled',
         actorId,
         target: target.userDocId || target.email,
+        actorEmail,
+        targetLabel: target.email || target.userDocId,
+        targetType: 'cooperator',
         details: { previousRole: target.accessLevel },
       })
       return {
