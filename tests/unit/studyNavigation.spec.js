@@ -3,6 +3,8 @@ import {
   buildStudyNavigator,
   getAcceptedInvitationDestination,
   getCommunityStudyDestination,
+  getStudyRouteBase,
+  getTestViewAccessRedirect,
 } from '@/shared/utils/studyNavigation'
 import { STUDY_ROLE } from '@/shared/utils/studyAccessPolicy'
 import { USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions'
@@ -259,5 +261,122 @@ describe('study navigation', () => {
       topCards: [],
       bottomCards: [{ title: 'answers' }],
     })
+  })
+
+  it('maps each study type to the route base used by manager fallbacks', () => {
+    expect(getStudyRouteBase(studyWith('HEURISTIC'))).toBe('heuristic')
+    expect(
+      getStudyRouteBase({
+        ...studyWith('USER'),
+        subType: USER_STUDY_SUBTYPES.MODERATED,
+      }),
+    ).toBe('userTest/moderated')
+    expect(
+      getStudyRouteBase({
+        ...studyWith('USER'),
+        subType: USER_STUDY_SUBTYPES.UNMODERATED,
+      }),
+    ).toBe('userTest/unmoderated')
+  })
+
+  it('redirects private moderated direct links without a session token', () => {
+    const participant = { id: 'participant', accessLevel: 1 }
+    const manager = { id: 'manager', accessLevel: 1 }
+    const observator = { id: 'observator', accessLevel: 1 }
+    const study = {
+      ...studyWith('USER'),
+      subType: USER_STUDY_SUBTYPES.MODERATED,
+      cooperators: [
+        {
+          userDocId: participant.id,
+          accessLevel: STUDY_ROLE.USER,
+          accepted: true,
+        },
+        {
+          userDocId: manager.id,
+          accessLevel: STUDY_ROLE.MANAGER,
+          accepted: true,
+        },
+        {
+          userDocId: observator.id,
+          accessLevel: STUDY_ROLE.OBSERVATOR,
+          accepted: true,
+        },
+      ],
+    }
+
+    expect(
+      getTestViewAccessRedirect({
+        study,
+        user: participant,
+        token: null,
+      }),
+    ).toBe('/testview/study-1/participant')
+    expect(
+      getTestViewAccessRedirect({
+        study,
+        user: manager,
+        token: null,
+      }),
+    ).toBe('/userTest/moderated/manager/study-1')
+    expect(
+      getTestViewAccessRedirect({
+        study,
+        user: observator,
+        token: null,
+      }),
+    ).toBe('/userTest/moderated/manager/study-1')
+  })
+
+  it('allows moderated viewers into a participant session but rejects strangers', () => {
+    const participant = { id: 'participant', accessLevel: 1 }
+    const observator = { id: 'observator', accessLevel: 1 }
+    const study = {
+      ...studyWith('USER'),
+      subType: USER_STUDY_SUBTYPES.MODERATED,
+      cooperators: [
+        {
+          userDocId: participant.id,
+          accessLevel: STUDY_ROLE.USER,
+          accepted: true,
+        },
+        {
+          userDocId: observator.id,
+          accessLevel: STUDY_ROLE.OBSERVATOR,
+          accepted: true,
+        },
+      ],
+    }
+
+    expect(
+      getTestViewAccessRedirect({
+        study,
+        user: observator,
+        token: participant.id,
+      }),
+    ).toBeNull()
+    expect(
+      getTestViewAccessRedirect({
+        study,
+        user: { id: 'stranger', accessLevel: 1 },
+        token: participant.id,
+      }),
+    ).toBe('/admin')
+  })
+
+  it('redirects private non-answer roles away from direct testview', () => {
+    const observator = { id: 'observator', accessLevel: 1 }
+    const study = {
+      ...studyWith('USER', observator.id, STUDY_ROLE.OBSERVATOR),
+      subType: USER_STUDY_SUBTYPES.UNMODERATED,
+    }
+
+    expect(
+      getTestViewAccessRedirect({
+        study,
+        user: observator,
+        token: null,
+      }),
+    ).toBe('/userTest/unmoderated/manager/study-1')
   })
 })

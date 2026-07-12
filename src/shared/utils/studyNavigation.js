@@ -7,11 +7,58 @@ import {
 import {
   STUDY_CAPABILITY,
   STUDY_ROLE,
+  canJoinModeratedUserSession,
+  getStudyFallbackPath,
   hasStudyCapability,
   resolveStudyAccess,
 } from '@/shared/utils/studyAccessPolicy'
 
 const C = STUDY_CAPABILITY
+
+export function getStudyRouteBase(study) {
+  const studyType = normalizeStudyType(study?.testType)
+
+  if (studyType === STUDY_TYPES.HEURISTIC) return 'heuristic'
+  if (
+    studyType === STUDY_TYPES.USER &&
+    study?.subType === USER_STUDY_SUBTYPES.MODERATED
+  ) {
+    return 'userTest/moderated'
+  }
+  if (studyType === STUDY_TYPES.USER) return 'userTest/unmoderated'
+
+  return ''
+}
+
+export function getTestViewAccessRedirect({ study, user, token }) {
+  if (!study) return '/admin'
+
+  const studyType = normalizeStudyType(study?.testType)
+  const routeBase = getStudyRouteBase(study)
+  const isModeratedUserStudy =
+    studyType === STUDY_TYPES.USER &&
+    study?.subType === USER_STUDY_SUBTYPES.MODERATED
+
+  if (isModeratedUserStudy && !token && !study?.isPublic) {
+    return getStudyFallbackPath(study, user, routeBase)
+  }
+
+  if (isModeratedUserStudy && token) {
+    if (!canJoinModeratedUserSession(study, user, token)) {
+      return getStudyFallbackPath(study, user, routeBase)
+    }
+    return null
+  }
+
+  if (
+    !study?.isPublic &&
+    !hasStudyCapability(study, user, C.STUDY_ANSWER)
+  ) {
+    return getStudyFallbackPath(study, user, routeBase)
+  }
+
+  return null
+}
 
 export function getCommunityStudyDestination({ study, user }) {
   if (!study) return null

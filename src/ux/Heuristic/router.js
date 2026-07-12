@@ -82,7 +82,7 @@ export default [
         component: StorageView,
       },
       {
-        path: '/heuristic/audit/:id',
+        path: '/heuristic/audit/:id/:token?',
         name: 'HeuristicAuditTrailView',
         props: true,
         meta: {

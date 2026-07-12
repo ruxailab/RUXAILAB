@@ -67,7 +67,7 @@ export default [
         component: StorageView,
       },
       {
-        path: '/userTest/unmoderated/audit/:id',
+        path: '/userTest/unmoderated/audit/:id/:token?',
         name: 'UserUnmoderatedAuditTrailView',
         props: true,
         meta: {
@@ -129,7 +129,7 @@ export default [
         component: StorageView,
       },
       {
-        path: '/userTest/moderated/audit/:id',
+        path: '/userTest/moderated/audit/:id/:token?',
         name: 'UserModeratedAuditTrailView',
         props: true,
         meta: {
