@@ -1,56 +1,88 @@
 <template>
   <v-card flat rounded="xl" class="pa-4">
+    <div class="d-flex flex-wrap align-center justify-space-between mb-3 ga-2">
+      <div>
+        <h3 class="text-h6 mb-1">{{ $t('CardSorting.categoryMatrix') }}</h3>
+        <p class="text-caption text-medium-emphasis mb-0">
+          {{ $t('CardSorting.categoryMatrixHint') }}
+        </p>
+      </div>
+      <v-btn-toggle
+        v-model="displayMode"
+        mandatory
+        density="compact"
+        color="primary"
+        variant="outlined"
+        divided
+      >
+        <v-btn value="absolute" size="small">
+          {{ $t('CardSorting.absoluteValues') }}
+        </v-btn>
+        <v-btn value="percentage" size="small">
+          {{ $t('CardSorting.percentageValues') }}
+        </v-btn>
+      </v-btn-toggle>
+    </div>
+
     <div v-if="!hasData" class="text-center text-medium-emphasis py-10">
       <v-icon size="48" color="grey-lighten-1">mdi-cards-outline</v-icon>
       <div class="text-body-2 mt-2">{{ $t('CardSorting.noAnswers') }}</div>
     </div>
 
-    <v-table v-else density="comfortable" class="matrix-table">
-      <thead>
-        <tr>
-          <th class="text-left">{{ $t('CardSorting.card') }}</th>
-          <th
-            v-for="category in categoryTitles"
-            :key="category"
-            class="text-center"
-          >
-            {{ category }}
-          </th>
-          <th class="text-center">{{ $t('CardSorting.notCategorized') }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="card in cardTitles" :key="card">
-          <td class="font-weight-medium">{{ card }}</td>
-          <td
-            v-for="category in categoryTitles"
-            :key="category"
-            class="text-center"
-          >
-            <div
-              class="matrix-cell"
-              :style="cellStyle(matrix[card][category])"
+    <div v-else class="matrix-scroll">
+      <v-table density="comfortable" class="matrix-table">
+        <thead>
+          <tr>
+            <th class="text-left sticky-label">{{ $t('CardSorting.card') }}</th>
+            <th
+              v-for="category in categoryTitles"
+              :key="category"
+              class="text-center"
             >
-              {{ matrix[card][category] || '' }}
-            </div>
-          </td>
-          <td class="text-center">
-            <div class="matrix-cell matrix-cell--muted">
-              {{ matrix[card].__unassigned || '' }}
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </v-table>
+              {{ category }}
+            </th>
+            <th class="text-center">{{ $t('CardSorting.notCategorized') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="card in cardTitles" :key="card">
+            <td class="font-weight-medium sticky-label">{{ card }}</td>
+            <td
+              v-for="category in categoryTitles"
+              :key="category"
+              class="text-center"
+            >
+              <div
+                class="matrix-cell"
+                :style="cellStyle(matrix[card][category])"
+              >
+                {{ formatCell(matrix[card][category]) }}
+              </div>
+            </td>
+            <td class="text-center">
+              <div class="matrix-cell matrix-cell--muted">
+                {{ formatCell(matrix[card].__unassigned) }}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </v-table>
+    </div>
 
-    <p v-if="hasData" class="text-caption text-medium-emphasis mt-3">
+    <p v-if="hasData" class="text-caption text-medium-emphasis mt-3 mb-0">
       {{ $t('CardSorting.matrixHint', { total: totalParticipants }) }}
     </p>
   </v-card>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import {
+  UNASSIGNED_KEY,
+  getCardTitles,
+  getCategoryTitles,
+  getSubmittedAnswers,
+} from '../../utils/cardSortingAnalytics'
 
 const props = defineProps({
   test: {
@@ -63,33 +95,13 @@ const props = defineProps({
   },
 })
 
-const UNASSIGNED_KEY = '__unassigned'
+const displayMode = ref('absolute')
 
-const cardTitles = computed(
-  () =>
-    (props.test?.testStructure?.cardSorting?.cards || []).map((c) => c.title),
+const cardTitles = computed(() => getCardTitles(props.test))
+const submittedAnswers = computed(() => getSubmittedAnswers(props.answers))
+const categoryTitles = computed(() =>
+  getCategoryTitles(props.test, submittedAnswers.value),
 )
-
-// Only submitted answers are counted towards the aggregated results
-const submittedAnswers = computed(() =>
-  props.answers.filter((answer) => answer?.submitted),
-)
-
-const categoryTitles = computed(() => {
-  const predefined = (
-    props.test?.testStructure?.cardSorting?.categories || []
-  ).map((c) => c.title)
-  const fromAnswers = new Set(predefined)
-
-  submittedAnswers.value.forEach((answer) => {
-    Object.keys(answer?.sorting || {}).forEach((category) => {
-      if (category !== UNASSIGNED_KEY) fromAnswers.add(category)
-    })
-  })
-
-  return Array.from(fromAnswers)
-})
-
 const totalParticipants = computed(() => submittedAnswers.value.length)
 
 const hasData = computed(
@@ -122,6 +134,15 @@ const matrix = computed(() => {
   return result
 })
 
+const formatCell = (count) => {
+  if (!count) return ''
+  if (displayMode.value === 'percentage' && totalParticipants.value) {
+    const pct = Math.round((count / totalParticipants.value) * 1000) / 10
+    return `${pct}%`
+  }
+  return count
+}
+
 const cellStyle = (count) => {
   if (!count || !totalParticipants.value) return {}
   const intensity = count / totalParticipants.value
@@ -133,9 +154,23 @@ const cellStyle = (count) => {
 </script>
 
 <style scoped>
+.matrix-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
 .matrix-table {
   border: 1px solid #e5e7eb;
   border-radius: 12px;
+  min-width: max-content;
+}
+
+.sticky-label {
+  position: sticky;
+  left: 0;
+  background: #fff;
+  z-index: 1;
+  min-width: 120px;
 }
 
 .matrix-cell {

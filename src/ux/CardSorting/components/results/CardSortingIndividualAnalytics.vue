@@ -1,7 +1,30 @@
 <template>
-  <div class="pa-4">
+  <div class="pa-4 analytics-dashboard">
+    <v-card class="mb-4 pa-4 elevation-2 overflow-hidden">
+      <div class="d-flex align-center flex-wrap ga-2">
+        <v-text-field
+          v-model="searchTerm"
+          prepend-inner-icon="mdi-magnify"
+          density="compact"
+          hide-details
+          variant="outlined"
+          :placeholder="$t('analytics.searchByName')"
+          class="flex-grow-1"
+          clearable
+        />
+        <v-btn
+          color="primary"
+          prepend-icon="mdi-filter-remove"
+          :disabled="!searchTerm"
+          @click="searchTerm = ''"
+        >
+          {{ $t('analytics.reset') }}
+        </v-btn>
+      </div>
+    </v-card>
+
     <div
-      v-if="answers.length === 0"
+      v-if="filteredAnswers.length === 0"
       class="text-center text-medium-emphasis py-10"
     >
       <v-icon size="48" color="grey-lighten-1">mdi-inbox-outline</v-icon>
@@ -10,7 +33,7 @@
 
     <v-expansion-panels v-else variant="accordion">
       <v-expansion-panel
-        v-for="(answer, index) in answers"
+        v-for="(answer, index) in filteredAnswers"
         :key="answer.userDocId || index"
       >
         <v-expansion-panel-title>
@@ -21,9 +44,18 @@
                   getInitials(answer.fullName)
                 }}</span>
               </v-avatar>
-              <span class="font-weight-medium">
-                {{ answer.fullName || $t('CardSorting.anonymous') }}
-              </span>
+              <div>
+                <div class="font-weight-medium">
+                  {{ answer.fullName || $t('CardSorting.anonymous') }}
+                </div>
+                <div class="text-caption text-medium-emphasis">
+                  {{
+                    $t('CardSorting.categoriesUsed', {
+                      count: getAnswerCategories(answer).length,
+                    })
+                  }}
+                </div>
+              </div>
             </div>
             <v-chip
               size="small"
@@ -49,14 +81,22 @@
               md="4"
             >
               <v-card variant="outlined" rounded="lg" class="pa-3 h-100">
-                <div class="d-flex align-center mb-2">
-                  <h4 class="mb-0">{{ category }}</h4>
+                <div class="d-flex align-center mb-2 flex-wrap ga-1">
+                  <h4 class="mb-0">
+                    {{
+                      category === UNASSIGNED_KEY
+                        ? $t('CardSorting.notCategorized')
+                        : category
+                    }}
+                  </h4>
                   <v-chip
-                    v-if="!predefinedCategorySet.has(category)"
+                    v-if="
+                      category !== UNASSIGNED_KEY &&
+                      !predefinedCategorySet.has(category)
+                    "
                     size="x-small"
                     color="primary"
                     variant="tonal"
-                    class="ml-2"
                   >
                     {{ $t('CardSorting.customCategory') }}
                   </v-chip>
@@ -87,15 +127,23 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
+import { UNASSIGNED_KEY } from '../../utils/cardSortingAnalytics'
 
 const store = useStore()
+const searchTerm = ref('')
 
 const test = computed(() => store.getters.test)
 const answers = computed(() => store.getters.cardSortingAnswersList)
 
-const UNASSIGNED_KEY = '__unassigned'
+const filteredAnswers = computed(() => {
+  const term = searchTerm.value.trim().toLowerCase()
+  if (!term) return answers.value
+  return answers.value.filter((answer) =>
+    (answer.fullName || '').toLowerCase().includes(term),
+  )
+})
 
 const predefinedCategorySet = computed(() => {
   return new Set(
@@ -107,11 +155,15 @@ const predefinedCategorySet = computed(() => {
 
 const getAnswerCategories = (answer) => {
   const predefined = Array.from(predefinedCategorySet.value)
-  const fromAnswer = Object.keys(answer?.sorting || {}).filter(
-    (key) => key !== UNASSIGNED_KEY,
-  )
+  const fromAnswer = Object.keys(answer?.sorting || {})
   const merged = new Set([...predefined, ...fromAnswer])
-  return Array.from(merged)
+
+  // Keep unassigned last when present
+  const categories = Array.from(merged).filter((key) => key !== UNASSIGNED_KEY)
+  if (fromAnswer.includes(UNASSIGNED_KEY)) {
+    categories.push(UNASSIGNED_KEY)
+  }
+  return categories
 }
 
 const getInitials = (name) => name?.charAt(0)?.toUpperCase() || '?'

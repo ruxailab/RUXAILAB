@@ -2,7 +2,7 @@
   <PageWrapper :title="hasAnswers ? $t('titles.answers') : ''" :side-gap="true">
     <template v-if="hasAnswers" #subtitle>
       <p class="text-body-1 text-grey-darken-1">
-        {{ $t('analytics.overallAnalyticsDescription') }}
+        {{ $t('CardSorting.answersSubtitle') }}
       </p>
     </template>
 
