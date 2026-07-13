@@ -27,6 +27,9 @@
             {{ $t('CardSorting.cards') }}
           </VTab>
           <VTab @click="index = 5">
+            {{ $t('CardSorting.recording') }}
+          </VTab>
+          <VTab @click="index = 6">
             {{ $t('ModeratedTest.postTest') }}
           </VTab>
         </VTabs>
@@ -81,8 +84,19 @@
             />
           </div>
 
+          <!-- RECORDING -->
+          <div v-if="index === 5" rounded="xxl">
+            <TaskAdvancedOptions
+              :model-value="recordingOptions"
+              :show-eye-tracking="false"
+              :title="$t('CardSorting.recordingTitle')"
+              :description="$t('CardSorting.recordingDescription')"
+              @update:model-value="onRecordingOptionsChange"
+            />
+          </div>
+
           <!-- POS-TEST -->
-          <v-card v-if="index === 5" rounded="xxl">
+          <v-card v-if="index === 6" rounded="xxl">
             <UserVariables
               type="post-test"
               @change="change = true"
@@ -109,6 +123,7 @@ import TestConfigForm from '@/shared/components/TestConfigForm.vue'
 import { CardSortingStudyCategory } from '../models/CardSortingStudyCategory'
 import { CardSortingStudyCard } from '../models/CardSortingStudyCard'
 import { CardSortingStudyOptions } from '../models/CardSortingStudyOptions'
+import TaskAdvancedOptions from '@/ux/UserTest/components/task-steps/TaskAdvancedOptions.vue'
 
 // Variables
 const index = ref(0)
@@ -120,6 +135,12 @@ const categories = ref([])
 const cards = ref([])
 const optionsCategories = ref({})
 const optionsCards = ref({})
+const recordingOptions = ref({
+  hasScreenRecord: false,
+  hasCamRecord: false,
+  hasAudioRecord: false,
+  hasEye: false,
+})
 
 // Stores
 const store = useStore()
@@ -128,6 +149,23 @@ const store = useStore()
 const test = computed(() => store.getters.test)
 
 // Methods
+const onRecordingOptionsChange = (value) => {
+  const prev = recordingOptions.value
+  const changed =
+    !!prev.hasScreenRecord !== !!value.hasScreenRecord ||
+    !!prev.hasCamRecord !== !!value.hasCamRecord ||
+    !!prev.hasAudioRecord !== !!value.hasAudioRecord
+
+  recordingOptions.value = {
+    hasScreenRecord: !!value.hasScreenRecord,
+    hasCamRecord: !!value.hasCamRecord,
+    hasAudioRecord: !!value.hasAudioRecord,
+    hasEye: false,
+  }
+
+  if (changed) change.value = true
+}
+
 const save = async () => {
   await submit()
   change.value = false
@@ -150,6 +188,9 @@ const submit = async () => {
         category_image: optionsCategories.value.category_image,
         allow_create_categories:
           optionsCategories.value.allow_create_categories,
+        hasScreenRecord: !!recordingOptions.value.hasScreenRecord,
+        hasCamRecord: !!recordingOptions.value.hasCamRecord,
+        hasAudioRecord: !!recordingOptions.value.hasAudioRecord,
       },
     },
   }
@@ -189,12 +230,15 @@ const getCards = () => {
 
 const getOptions = () => {
   if (!test.value.testStructure.cardSorting) return
-  optionsCategories.value = new CardSortingStudyOptions(
-    test.value.testStructure.cardSorting.options,
-  )
-  optionsCards.value = new CardSortingStudyOptions(
-    test.value.testStructure.cardSorting.options,
-  )
+  const options = test.value.testStructure.cardSorting.options || {}
+  optionsCategories.value = new CardSortingStudyOptions(options)
+  optionsCards.value = new CardSortingStudyOptions(options)
+  recordingOptions.value = {
+    hasScreenRecord: !!options.hasScreenRecord,
+    hasCamRecord: !!options.hasCamRecord,
+    hasAudioRecord: !!options.hasAudioRecord,
+    hasEye: false,
+  }
 }
 
 const getPreTest = () => {

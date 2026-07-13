@@ -2041,7 +2041,15 @@
     "categoriesUsed": "{count} categorías",
     "studyStructure": "Estructura del estudio",
     "studyStructureSubtitle": "Resumen de tarjetas y categorías",
-    "viewResults": "Ver resultados"
+    "viewResults": "Ver resultados",
+    "recording": "Grabación",
+    "recordingTitle": "Opciones de grabación",
+    "recordingDescription": "Elige qué medios capturar mientras los participantes ordenan las tarjetas. Las grabaciones se guardan con cada respuesta para revisión posterior.",
+    "sortingPreview": "Vista previa del ordenamiento",
+    "recordingInfo": "Esta sesión grabará los siguientes datos durante tu ordenamiento:",
+    "startSorting": "Comenzar ordenamiento",
+    "uploadingRecordings": "Subiendo grabaciones...",
+    "recordings": "Grabaciones"
   },
   "analytics": {
     "searchByName": "Buscar por nombre",

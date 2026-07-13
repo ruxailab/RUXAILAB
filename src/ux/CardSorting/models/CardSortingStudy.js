@@ -20,6 +20,9 @@ const buildDefaultStructure = () => ({
       category_description: false,
       category_image: false,
       allow_create_categories: false,
+      hasScreenRecord: false,
+      hasCamRecord: false,
+      hasAudioRecord: false,
     },
   },
 })

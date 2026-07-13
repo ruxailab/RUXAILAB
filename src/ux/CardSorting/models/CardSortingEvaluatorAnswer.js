@@ -22,6 +22,12 @@ export default class CardSortingEvaluatorAnswer {
     lastUpdate,
     invited,
     hidden,
+    audioRecordURL,
+    screenRecordURL,
+    webcamRecordURL,
+    screenSize,
+    audioSize,
+    webcamSize,
   } = {}) {
     this.userDocId = userDocId ?? null
     this.fullName = fullName ?? ''
@@ -38,6 +44,12 @@ export default class CardSortingEvaluatorAnswer {
     this.lastUpdate = lastUpdate ?? null
     this.invited = invited ?? false
     this.hidden = hidden ?? false
+    this.audioRecordURL = audioRecordURL ?? null
+    this.screenRecordURL = screenRecordURL ?? null
+    this.webcamRecordURL = webcamRecordURL ?? null
+    this.screenSize = screenSize ?? null
+    this.audioSize = audioSize ?? null
+    this.webcamSize = webcamSize ?? null
   }
 
   static toModel(data) {
@@ -61,6 +73,12 @@ export default class CardSortingEvaluatorAnswer {
       lastUpdate: this.lastUpdate,
       invited: this.invited,
       hidden: this.hidden,
+      audioRecordURL: this.audioRecordURL,
+      screenRecordURL: this.screenRecordURL,
+      webcamRecordURL: this.webcamRecordURL,
+      screenSize: this.screenSize,
+      audioSize: this.audioSize,
+      webcamSize: this.webcamSize,
     }
   }
 }

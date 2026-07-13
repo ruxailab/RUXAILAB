@@ -2139,7 +2139,15 @@
     "categoriesUsed": "{count} categories",
     "studyStructure": "Study Structure",
     "studyStructureSubtitle": "Cards and categories overview",
-    "viewResults": "View results"
+    "viewResults": "View results",
+    "recording": "Recording",
+    "recordingTitle": "Recording options",
+    "recordingDescription": "Choose which media to capture while participants sort the cards. Recordings are saved with each answer for later review.",
+    "sortingPreview": "Sorting Preview",
+    "recordingInfo": "This session will record the following data during your sorting:",
+    "startSorting": "Start sorting",
+    "uploadingRecordings": "Uploading recordings...",
+    "recordings": "Recordings"
   },
   "analytics": {
     "searchByName": "Search by name",

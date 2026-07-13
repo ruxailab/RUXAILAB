@@ -120,6 +120,43 @@
               </v-card>
             </v-col>
           </v-row>
+
+          <v-card
+            v-if="hasRecordings(answer)"
+            variant="outlined"
+            rounded="lg"
+            class="pa-4 mt-4"
+          >
+            <h4 class="mb-3">{{ $t('CardSorting.recordings') }}</h4>
+            <v-row>
+              <v-col v-if="answer.screenRecordURL" cols="12" md="6">
+                <p class="text-caption text-medium-emphasis mb-1">
+                  {{ $t('CreateTask.taskPreview.screenRecord') }}
+                </p>
+                <video
+                  :src="answer.screenRecordURL"
+                  controls
+                  class="recording-player"
+                />
+              </v-col>
+              <v-col v-if="answer.webcamRecordURL" cols="12" md="6">
+                <p class="text-caption text-medium-emphasis mb-1">
+                  {{ $t('CreateTask.taskPreview.camera') }}
+                </p>
+                <video
+                  :src="answer.webcamRecordURL"
+                  controls
+                  class="recording-player"
+                />
+              </v-col>
+              <v-col v-if="answer.audioRecordURL" cols="12" md="6">
+                <p class="text-caption text-medium-emphasis mb-1">
+                  {{ $t('CreateTask.taskPreview.audioRecord') }}
+                </p>
+                <audio :src="answer.audioRecordURL" controls class="w-100" />
+              </v-col>
+            </v-row>
+          </v-card>
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -167,4 +204,16 @@ const getAnswerCategories = (answer) => {
 }
 
 const getInitials = (name) => name?.charAt(0)?.toUpperCase() || '?'
+
+const hasRecordings = (answer) =>
+  !!(answer?.screenRecordURL || answer?.webcamRecordURL || answer?.audioRecordURL)
 </script>
+
+<style scoped>
+.recording-player {
+  width: 100%;
+  max-height: 280px;
+  border-radius: 8px;
+  background: #000;
+}
+</style>

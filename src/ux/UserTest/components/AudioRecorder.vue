@@ -62,6 +62,10 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  userDocId: {
+    type: String,
+    default: '',
+  },
   showVisualizer: {
     type: Boolean,
     default: false,
@@ -91,6 +95,15 @@ const recordingTaskIndex = ref(null) // Store the task index when recording star
 // Computed properties
 const currentUserTestAnswer = computed(
   () => store.getters.currentUserTestAnswer,
+)
+const currentCardSortingAnswer = computed(
+  () => store.getters.currentCardSortingAnswer,
+)
+const resolvedUserDocId = computed(
+  () =>
+    props.userDocId ||
+    currentUserTestAnswer.value?.userDocId ||
+    currentCardSortingAnswer.value?.userDocId,
 )
 
 async function hasAudio() {
@@ -145,7 +158,7 @@ const startAudioRecording = async () => {
       const correctTaskIndex = recordingTaskIndex.value
       const storageReference = storageRef(
         storage,
-        `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${correctTaskIndex}_evaluator/${Date.now()}.webm`,
+        `tests/${props.testId}/${resolvedUserDocId.value}/task_${correctTaskIndex}_evaluator/${Date.now()}.webm`,
       )
       await uploadBytes(storageReference, audioBlob)
 
@@ -202,7 +215,7 @@ const startAudioRecording = async () => {
           const correctTaskIndex = recordingTaskIndex.value
           const storageReference = storageRef(
             storage,
-            `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${correctTaskIndex}_moderator/${Date.now()}.webm`,
+            `tests/${props.testId}/${resolvedUserDocId.value}/task_${correctTaskIndex}_moderator/${Date.now()}.webm`,
           )
           await uploadBytes(storageReference, blob)
           const downloadURL = await getDownloadURL(storageReference)

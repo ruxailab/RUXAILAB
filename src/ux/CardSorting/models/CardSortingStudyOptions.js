@@ -5,6 +5,9 @@ export class CardSortingStudyOptions {
     category_description,
     category_image,
     allow_create_categories,
+    hasScreenRecord,
+    hasCamRecord,
+    hasAudioRecord,
   } = {}) {
     this.card_description = card_description ?? false
     this.card_image = card_image ?? false
@@ -12,6 +15,9 @@ export class CardSortingStudyOptions {
     this.category_image = category_image ?? false
     // When true: open (no predefined categories) or hybrid (with predefined ones)
     this.allow_create_categories = allow_create_categories ?? false
+    this.hasScreenRecord = hasScreenRecord ?? false
+    this.hasCamRecord = hasCamRecord ?? false
+    this.hasAudioRecord = hasAudioRecord ?? false
   }
 
   toJson() {
@@ -21,6 +27,9 @@ export class CardSortingStudyOptions {
       category_description: !!this.category_description,
       category_image: !!this.category_image,
       allow_create_categories: !!this.allow_create_categories,
+      hasScreenRecord: !!this.hasScreenRecord,
+      hasCamRecord: !!this.hasCamRecord,
+      hasAudioRecord: !!this.hasAudioRecord,
     }
   }
 }
