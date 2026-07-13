@@ -23,14 +23,14 @@ export default [
         component: EditTestView,
       },
       {
-        path: '/cardSorting/report/:id',
+        path: '/cardSorting/progress/:id',
         name: 'CardSortingReportView',
         props: true,
         meta: { authorize: [0, 1] },
         component: ReportView,
       },
       {
-        path: '/cardSorting/answer/:id',
+        path: '/cardSorting/results/:id',
         name: 'CardSortingAnswerView',
         props: true,
         meta: { authorize: [0, 1] },
