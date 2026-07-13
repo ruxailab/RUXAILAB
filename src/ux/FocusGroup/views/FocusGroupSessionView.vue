@@ -1,5 +1,19 @@
 <template>
-  <v-container fluid class="pa-4 pa-md-6">
+  <!-- Lobby: branded welcome shown before the session is live and after it ends -->
+  <SessionLobby
+    v-if="!isLive"
+    :title="test?.testTitle"
+    :description="test?.testDescription"
+    :status="status"
+    :is-facilitator="isFacilitator"
+    :has-topics="hasTopics"
+    :participant-count="connectedCount"
+    :starting="starting"
+    @start="onStart"
+  />
+
+  <!-- Live discussion -->
+  <v-container v-else fluid class="pa-4 pa-md-6">
     <!-- Header -->
     <div class="d-flex align-center flex-wrap ga-3 mb-4">
       <v-btn
@@ -25,15 +39,6 @@
       </v-chip>
     </div>
 
-    <v-alert
-      v-if="!hasTopics"
-      type="warning"
-      variant="tonal"
-      class="mb-4"
-    >
-      {{ t('focusGroup.session.noTopicsWarning') }}
-    </v-alert>
-
     <!-- Facilitator controls -->
     <FacilitatorControls
       v-if="isFacilitator"
@@ -50,31 +55,21 @@
     <v-row>
       <!-- Main column -->
       <v-col cols="12" md="8">
-        <template v-if="isLive && currentTopic">
-          <TopicPanel
-            :topic="currentTopic"
-            :index="currentTopicIndex"
-            :total="topicCount"
-            class="mb-4"
-          />
+        <TopicPanel
+          v-if="currentTopic"
+          :topic="currentTopic"
+          :index="currentTopicIndex"
+          :total="topicCount"
+          class="mb-4"
+        />
 
-          <TopicDiscussion
-            :messages="currentMessages"
-            :current-user-id="user?.id"
-            :can-post="canPost"
-            :sending="sending"
-            @send="onSend"
-          />
-        </template>
-
-        <!-- Waiting / ended states -->
-        <v-card v-else class="d-flex align-center justify-center" style="min-height: 240px">
-          <div class="text-center text-medium-emphasis pa-6">
-            <v-icon size="56" class="mb-2">{{ placeholderIcon }}</v-icon>
-            <p class="text-subtitle-1 mb-1">{{ placeholderTitle }}</p>
-            <p class="text-body-2 mb-0">{{ placeholderSubtitle }}</p>
-          </div>
-        </v-card>
+        <TopicDiscussion
+          :messages="currentMessages"
+          :current-user-id="user?.id"
+          :can-post="canPost"
+          :sending="sending"
+          @send="onSend"
+        />
       </v-col>
 
       <!-- Sidebar -->
@@ -99,6 +94,7 @@ import {
   useFocusGroupSession,
   SESSION_STATUS,
 } from '@/ux/FocusGroup/composables/useFocusGroupSession'
+import SessionLobby from '@/ux/FocusGroup/components/session/SessionLobby.vue'
 import FacilitatorControls from '@/ux/FocusGroup/components/session/FacilitatorControls.vue'
 import TopicPanel from '@/ux/FocusGroup/components/session/TopicPanel.vue'
 import TopicDiscussion from '@/ux/FocusGroup/components/session/TopicDiscussion.vue'
@@ -130,6 +126,7 @@ const user = computed(() => store.getters.user)
 const test = computed(() => store.getters.test)
 
 const sending = ref(false)
+const starting = ref(false)
 
 // --- Discussion guide ---
 const discussionGuide = computed(() =>
@@ -169,6 +166,13 @@ const roleLabel = computed(() => {
   return t('focusGroup.session.roleObserver')
 })
 
+// --- Presence ---
+const connectedCount = computed(
+  () =>
+    Object.values(participants.value || {}).filter((p) => p?.connected === true)
+      .length,
+)
+
 // --- Discussion messages for the current topic (chronological) ---
 const currentMessages = computed(() => {
   const byTopic = messages.value?.[currentTopicId.value] ?? {}
@@ -199,27 +203,15 @@ const statusIcon = computed(() => {
   return getStatusIcon('pending')
 })
 
-// --- Waiting / ended placeholder ---
-const placeholderIcon = computed(() =>
-  status.value === SESSION_STATUS.ENDED
-    ? 'mdi-check-circle-outline'
-    : 'mdi-clock-outline',
-)
-const placeholderTitle = computed(() =>
-  status.value === SESSION_STATUS.ENDED
-    ? t('focusGroup.session.endedTitle')
-    : t('focusGroup.session.waitingTitle'),
-)
-const placeholderSubtitle = computed(() => {
-  if (status.value === SESSION_STATUS.ENDED)
-    return t('focusGroup.session.endedSubtitle')
-  return isFacilitator.value
-    ? t('focusGroup.session.waitingFacilitator')
-    : t('focusGroup.session.waitingParticipant')
-})
-
 // --- Facilitator actions ---
-const onStart = () => startSession(user.value?.id)
+const onStart = async () => {
+  starting.value = true
+  try {
+    await startSession(user.value?.id)
+  } finally {
+    starting.value = false
+  }
+}
 const onPrev = () => {
   if (currentTopicIndex.value > 0) goToTopic(currentTopicIndex.value - 1)
 }
