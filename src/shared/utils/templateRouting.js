@@ -17,11 +17,11 @@ export const getTemplateManagerPath = (template) => {
 
   if (!templateId || !testType) return null
 
-  return `/${encodeURIComponent(testType)}/${encodeURIComponent(studyType)}/template/manager/${encodeURIComponent(templateId)}`
+  return `/${encodeURIComponent(testType)}/${encodeURIComponent(studyType)}/template/dashboard/${encodeURIComponent(templateId)}`
 }
 
 export const getTemplatePreviewPath = (template) => {
   const managerPath = getTemplateManagerPath(template)
   if (!managerPath) return null
-  return managerPath.replace('/template/manager/', '/template/preview/')
+  return managerPath.replace('/template/dashboard/', '/template/preview/')
 }

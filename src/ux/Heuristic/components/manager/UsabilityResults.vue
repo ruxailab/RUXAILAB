@@ -73,7 +73,7 @@ const { t } = useI18n()
 // Navigate to answers section
 const navigateToAnswers = () => {
   if (props.test?.id) {
-    router.push(`/heuristic/answer/${props.test.id}`)
+    router.push(`/heuristic/results/${props.test.id}`)
   }
 }
 

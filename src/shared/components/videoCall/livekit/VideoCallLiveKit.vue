@@ -18,114 +18,115 @@
     <v-row class="video-row justify-center" no-gutters>
       <!-- Grid of Participants -->
       <v-col v-if="callStarted" cols="12">
-        <div class="videos-grid">
-          <!-- Local Video (not for observators) -->
-          <div v-if="!isObservator" class="video-wrapper">
-            <div class="video-container">
-              <video
-                :ref="setLocalVideoRef"
-                autoplay
-                muted
-                playsinline
-                class="video-element"
-              ></video>
-
-              <!-- Camera disabled overlay -->
-              <div v-if="!isCameraEnabled" class="camera-disabled-overlay">
-                <v-icon size="64" color="white" class="mb-2"
-                  >mdi-video-off</v-icon
-                >
-                <p class="text-white">
-                  {{ t('videoCall.session.cameraOff') }}
-                </p>
-              </div>
-
-              <!-- Microphone muted indicator -->
-              <div v-if="!isMicrophoneEnabled" class="mic-muted-indicator">
-                <v-icon size="24" color="white">mdi-microphone-off</v-icon>
-              </div>
-
-              <div class="video-label">
-                {{ t('videoCall.session.yourVideo') }} ({{
-                  user?.email?.split('@')[0]
-                }})
-              </div>
-            </div>
-          </div>
-
-          <!-- Remote Videos -->
-          <div
-            v-for="participant in remoteParticipants"
-            :key="participant.identity"
-            class="video-wrapper"
-          >
-            <div class="video-container">
-              <video
-                :ref="(el) => setRemoteVideoElement(participant.identity, el)"
-                autoplay
-                playsinline
-                class="video-element"
-              ></video>
-
-              <!-- Camera disabled overlay for remote peer -->
+        <div class="video-stage">
+          <!-- Spotlight: focused participant or shared screen -->
+          <div v-if="isFocusMode" class="spotlight-primary">
+            <div
+              :key="focusedTile.id"
+              class="spotlight-item tile-clickable"
+              @click="clearFocus"
+            >
               <div
-                v-if="!participant.hasCamera"
-                class="camera-disabled-overlay"
+                class="video-container"
+                :class="{
+                  'screen-share-container': focusedTile.type === 'screen',
+                }"
               >
-                <v-icon size="64" color="white" class="mb-2"
-                  >mdi-video-off</v-icon
+                <video
+                  :ref="(el) => attachTileRef(focusedTile, el)"
+                  autoplay
+                  :muted="focusedTile.muted"
+                  playsinline
+                  class="video-element"
+                  :class="{
+                    'screen-share-element': focusedTile.type === 'screen',
+                  }"
+                ></video>
+
+                <div
+                  v-if="focusedTile.type === 'camera' && !focusedTile.hasCamera"
+                  class="camera-disabled-overlay"
                 >
-                <p class="text-white">
-                  {{ t('videoCall.session.cameraOff') }}
-                </p>
-              </div>
+                  <v-icon size="64" color="white" class="mb-2"
+                    >mdi-video-off</v-icon
+                  >
+                  <p class="text-white">
+                    {{ t('videoCall.session.cameraOff') }}
+                  </p>
+                </div>
 
-              <!-- Microphone muted indicator for remote peer -->
+                <div
+                  v-if="
+                    focusedTile.type === 'camera' && !focusedTile.hasMicrophone
+                  "
+                  class="mic-muted-indicator"
+                >
+                  <v-icon size="24" color="white">mdi-microphone-off</v-icon>
+                </div>
+
+                <div class="video-label">{{ focusedTile.label }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tiles: full grid, or a compact filmstrip when focusing -->
+          <div
+            class="videos-grid"
+            :class="{ 'videos-filmstrip': isFocusMode }"
+            :style="gridStyleVars"
+          >
+            <div
+              v-for="tile in isFocusMode ? otherTiles : tiles"
+              :key="tile.id"
+              class="video-wrapper tile-clickable"
+              @click="focusTile(tile.id)"
+            >
               <div
-                v-if="!participant.hasMicrophone"
-                class="mic-muted-indicator"
+                class="video-container"
+                :class="{ 'screen-share-container': tile.type === 'screen' }"
               >
-                <v-icon size="24" color="white">mdi-microphone-off</v-icon>
-              </div>
+                <video
+                  :ref="(el) => attachTileRef(tile, el)"
+                  autoplay
+                  :muted="tile.muted"
+                  playsinline
+                  class="video-element"
+                  :class="{ 'screen-share-element': tile.type === 'screen' }"
+                ></video>
 
-              <div class="video-label">
-                {{ participant.name }}
-                <span v-if="participant.role === 'moderator'">
-                  ({{ t('videoCall.panel.moderator') }})
-                </span>
+                <div
+                  v-if="tile.type === 'camera' && !tile.hasCamera"
+                  class="camera-disabled-overlay"
+                >
+                  <v-icon size="64" color="white" class="mb-2"
+                    >mdi-video-off</v-icon
+                  >
+                  <p class="text-white">
+                    {{ t('videoCall.session.cameraOff') }}
+                  </p>
+                </div>
+
+                <div
+                  v-if="tile.type === 'camera' && !tile.hasMicrophone"
+                  class="mic-muted-indicator"
+                >
+                  <v-icon size="24" color="white">mdi-microphone-off</v-icon>
+                </div>
+
+                <div class="video-label">{{ tile.label }}</div>
               </div>
             </div>
-          </div>
 
-          <!-- Screen share tiles (local and remote) -->
-          <div
-            v-for="feed in screenShareFeeds"
-            :key="feed.key"
-            class="video-wrapper"
-          >
-            <div class="video-container screen-share-container">
-              <video
-                :ref="(el) => setScreenShareVideoElement(feed.key, el)"
-                autoplay
-                playsinline
-                class="video-element screen-share-element"
-              ></video>
-              <div class="video-label">
-                {{ t('videoCall.session.screenSharingLabel') }}
-                ({{ feed.name }})
-              </div>
+            <!-- Waiting Message if no peers -->
+            <div
+              v-if="showWaitingMessage"
+              class="d-flex align-center justify-center pa-4 text-grey"
+            >
+              <v-icon class="mr-2">mdi-account-clock</v-icon>
+              <span>{{
+                t('videoCall.session.waitingForParticipants')
+              }}</span>
             </div>
-          </div>
-
-          <!-- Waiting Message if no peers -->
-          <div
-            v-if="remoteParticipants.length === 0"
-            class="d-flex align-center justify-center pa-4 text-grey"
-          >
-            <v-icon class="mr-2">mdi-account-clock</v-icon>
-            <span>{{
-              t('videoCall.session.waitingForParticipants')
-            }}</span>
           </div>
         </div>
       </v-col>
@@ -798,6 +799,7 @@ import { Track } from 'livekit-client'
 import { database } from '@/app/plugins/firebase/index'
 import { ref as dbRef, get, onValue, update, remove } from 'firebase/database'
 import { useLiveKitRoom } from '../composables/useLiveKitRoom'
+import { useVideoFocus } from '../composables/useVideoFocus'
 
 const props = defineProps({
   roomId: String,
@@ -862,6 +864,95 @@ const {
 })
 
 const caller = computed(() => props.isModerator)
+
+// Unified list of tiles (local camera, remote cameras and screen shares)
+const tiles = computed(() => {
+  const list = []
+
+  if (!isObservator.value) {
+    list.push({
+      id: 'local-camera',
+      type: 'camera',
+      kind: 'local',
+      label: `${t('videoCall.session.yourVideo')} (${
+        props.user?.email?.split('@')[0] ?? ''
+      })`,
+      hasCamera: isCameraEnabled.value,
+      hasMicrophone: isMicrophoneEnabled.value,
+      muted: true,
+    })
+  }
+
+  remoteParticipants.value.forEach((participant) => {
+    const roleSuffix =
+      participant.role === 'moderator'
+        ? ` (${t('videoCall.panel.moderator')})`
+        : ''
+    list.push({
+      id: `camera:${participant.identity}`,
+      type: 'camera',
+      kind: 'remote',
+      identity: participant.identity,
+      label: `${participant.name}${roleSuffix}`,
+      hasCamera: participant.hasCamera,
+      hasMicrophone: participant.hasMicrophone,
+      muted: false,
+    })
+  })
+
+  screenShareFeeds.value.forEach((feed) => {
+    list.push({
+      id: `screen:${feed.key}`,
+      type: 'screen',
+      feedKey: feed.key,
+      label: `${t('videoCall.session.screenSharingLabel')} (${feed.name})`,
+      muted: !!feed.isLocal,
+    })
+  })
+
+  return list
+})
+
+const { focusedTile, otherTiles, isFocusMode, focusTile, clearFocus } =
+  useVideoFocus(tiles)
+
+const showWaitingMessage = computed(
+  () =>
+    !isFocusMode.value &&
+    remoteParticipants.value.length === 0 &&
+    screenShareFeeds.value.length === 0,
+)
+
+// Routes a video element to the correct LiveKit attach helper. Null (unmount)
+// is ignored so a re-mount in another slot doesn't clobber the active element.
+function attachTileRef(tile, el) {
+  if (!el || !tile) return
+  if (tile.type === 'screen') {
+    setScreenShareVideoElement(tile.feedKey, el)
+  } else if (tile.kind === 'local') {
+    setLocalVideoRef(el)
+  } else {
+    setRemoteVideoElement(tile.identity, el)
+  }
+}
+
+// Count of camera tiles currently visible (local + remotes)
+const cameraCount = computed(
+  () => (isObservator.value ? 0 : 1) + remoteParticipants.value.length,
+)
+
+// Number of grid columns, so tiles resize based on participant count
+const cameraColumns = computed(() => {
+  const count = cameraCount.value
+  if (count <= 1) return 1
+  if (count <= 4) return 2
+  if (count <= 9) return 3
+  return 4
+})
+
+const gridStyleVars = computed(() => ({
+  '--grid-cols': cameraColumns.value,
+}))
 
 // Organize participants by role (mirrors VideoCallMesh side panel)
 const participantsList = computed(() => {

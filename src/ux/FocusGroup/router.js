@@ -1,15 +1,24 @@
 import ManagerView from '@/ux/FocusGroup/views/ManagerView.vue'
+import EditFocusGroupView from '@/ux/FocusGroup/views/EditFocusGroupView.vue'
 import SettingsView from '@/shared/views/SettingsView.vue'
 import CooperatorsView from '@/shared/views/CooperatorsView.vue'
 
 export default [
   {
-    path: '/focusGroup/manager/:id',
+    path: '/focusGroup/dashboard/:id',
+    alias: '/focusGroup/manager/:id',
     name: 'FocusGroupManagerView',
     meta: { authorize: [0, 1] },
     component: ManagerView,
     props: true,
     children: [
+      {
+        path: '/focusGroup/edit/:id',
+        name: 'FocusGroupEditTest',
+        props: true,
+        meta: { authorize: [0, 1] },
+        component: EditFocusGroupView,
+      },
       {
         path: '/focusGroup/settings/:id',
         name: 'FocusGroupSettingsView',

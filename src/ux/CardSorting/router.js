@@ -8,7 +8,8 @@ import CardSortingAnswerView from '@/ux/CardSorting/views/CardSortingAnswerView.
 
 export default [
   {
-    path: '/cardSorting/manager/:id',
+    path: '/cardSorting/dashboard/:id',
+    alias: '/cardSorting/manager/:id',
     name: 'CardSortingManagerView',
     meta: { authorize: [0, 1] },
     component: ManagerView,
