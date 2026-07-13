@@ -2,8 +2,8 @@ import ManagerView from '@/ux/CardSorting/views/ManagerView.vue'
 import EditTestView from '@/ux/CardSorting/views/EditTestView.vue'
 import SettingsView from '@/shared/views/SettingsView.vue'
 import CooperatorsView from '@/shared/views/CooperatorsView.vue'
+import ReportView from '@/shared/views/ReportView.vue'
 import TestView from '@/ux/CardSorting/views/TestView.vue'
-import CardSortingResultsView from '@/ux/CardSorting/views/CardSortingResultsView.vue'
 import CardSortingAnswerView from '@/ux/CardSorting/views/CardSortingAnswerView.vue'
 
 export default [
@@ -26,7 +26,7 @@ export default [
         name: 'CardSortingReportView',
         props: true,
         meta: { authorize: [0, 1] },
-        component: CardSortingResultsView,
+        component: ReportView,
       },
       {
         path: '/cardSorting/answer/:id',

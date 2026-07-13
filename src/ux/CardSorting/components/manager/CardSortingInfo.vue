@@ -74,7 +74,7 @@ const submittedCount = computed(
 )
 
 const goToResults = () => {
-  router.push(`/cardSorting/report/${props.test.id}`)
+  router.push(`/cardSorting/answer/${props.test.id}`)
 }
 </script>
 

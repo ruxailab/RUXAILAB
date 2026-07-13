@@ -100,14 +100,29 @@
           <v-card-text>
             <v-checkbox
               v-model="options.category_description"
-              label="Show Category Description"
+              :label="$t('CardSorting.showCategoryDescription')"
               @update:model-value="onChange()"
             />
             <v-checkbox
               v-model="options.category_image"
-              label="Show Image"
+              :label="$t('CardSorting.showImage')"
               @update:model-value="onChange()"
             />
+            <v-divider class="my-3" />
+            <v-checkbox
+              v-model="options.allow_create_categories"
+              :label="$t('CardSorting.allowCreateCategories')"
+              @update:model-value="onChange()"
+            />
+            <p class="text-caption text-medium-emphasis mt-1">
+              {{
+                options.allow_create_categories
+                  ? categories.length > 0
+                    ? $t('CardSorting.hybridModeHint')
+                    : $t('CardSorting.openModeHint')
+                  : $t('CardSorting.closedModeHint')
+              }}
+            </p>
           </v-card-text>
         </v-card>
       </v-col>

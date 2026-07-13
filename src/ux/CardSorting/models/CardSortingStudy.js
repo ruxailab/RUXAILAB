@@ -19,6 +19,7 @@ const buildDefaultStructure = () => ({
       card_image: false,
       category_description: false,
       category_image: false,
+      allow_create_categories: false,
     },
   },
 })

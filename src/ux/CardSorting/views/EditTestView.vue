@@ -148,6 +148,8 @@ const submit = async () => {
         card_image: optionsCards.value.card_image,
         category_description: optionsCategories.value.category_description,
         category_image: optionsCategories.value.category_image,
+        allow_create_categories:
+          optionsCategories.value.allow_create_categories,
       },
     },
   }

@@ -468,9 +468,13 @@ const allHeaders = computed(() => [
 
 const answers = computed(() => store.getters.testAnswerDocument)
 const headers = computed(() => {
+  const type = answers.value?.type
   return allHeaders.value.filter((header) => {
     if (header.key === 'hidden') {
-      return answers.value.type !== STUDY_TYPES.USER ? false : true
+      return type === STUDY_TYPES.USER
+    }
+    if (header.key === 'totalTime') {
+      return type !== STUDY_TYPES.CARD_SORTING
     }
     return true
   })
@@ -518,6 +522,10 @@ const getReportTotalTime = (reportData, type) => {
     return formatTimeSpentFromMs(totalMs)
   }
 
+  if (type === STUDY_TYPES.CARD_SORTING) {
+    return '—'
+  }
+
   const tasks = reportData.tasks || {}
   const list = Array.isArray(tasks) ? tasks : Object.values(tasks)
   const totalMs = list.reduce(
@@ -527,20 +535,23 @@ const getReportTotalTime = (reportData, type) => {
   return formatTimeSpentFromMs(totalMs)
 }
 
+const getAnswersByType = (doc, type) => {
+  if (type === STUDY_TYPES.USER) return doc.taskAnswers || {}
+  if (type === STUDY_TYPES.CARD_SORTING) return doc.cardSortingAnswers || {}
+  return doc.heuristicAnswers || {}
+}
+
 const reports = computed(() => {
   const doc = answers.value
   if (!doc) return []
   const type = doc.type
-  const raw =
-    type === STUDY_TYPES.USER
-      ? doc.taskAnswers || {}
-      : doc.heuristicAnswers || {}
+  const raw = getAnswersByType(doc, type)
   return Object.values(raw).map((r) => ({
     id: r.userDocId,
     fullName: r.fullName || t('HeuristicsReport.headers.evaluator'),
     evaluator: getCooperatorEmail(r.userDocId),
     userDocId: r.userDocId,
-    progress: parseFloat(r.progress).toFixed(2),
+    progress: parseFloat(r.progress || 0).toFixed(2),
     totalTime: getReportTotalTime(r, type),
     status: checkIfIsSubmitted(r.submitted),
     lastUpdate: formatDate(r.lastUpdate),

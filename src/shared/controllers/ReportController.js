@@ -17,6 +17,7 @@ export default class ReportController extends Controller {
 
     if (testType === STUDY_TYPES.HEURISTIC) testType = 'heuristicAnswers'
     if (testType === STUDY_TYPES.USER) testType = 'taskAnswers'
+    if (testType === STUDY_TYPES.CARD_SORTING) testType = 'cardSortingAnswers'
 
     try {
       // 1 - Remover a referência no usuário

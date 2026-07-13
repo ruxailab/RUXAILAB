@@ -69,17 +69,26 @@ const cardTitles = computed(
   () =>
     (props.test?.testStructure?.cardSorting?.cards || []).map((c) => c.title),
 )
-const categoryTitles = computed(
-  () =>
-    (props.test?.testStructure?.cardSorting?.categories || []).map(
-      (c) => c.title,
-    ),
-)
 
 // Only submitted answers are counted towards the aggregated results
 const submittedAnswers = computed(() =>
   props.answers.filter((answer) => answer?.submitted),
 )
+
+const categoryTitles = computed(() => {
+  const predefined = (
+    props.test?.testStructure?.cardSorting?.categories || []
+  ).map((c) => c.title)
+  const fromAnswers = new Set(predefined)
+
+  submittedAnswers.value.forEach((answer) => {
+    Object.keys(answer?.sorting || {}).forEach((category) => {
+      if (category !== UNASSIGNED_KEY) fromAnswers.add(category)
+    })
+  })
+
+  return Array.from(fromAnswers)
+})
 
 const totalParticipants = computed(() => submittedAnswers.value.length)
 
