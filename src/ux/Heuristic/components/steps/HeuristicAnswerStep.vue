@@ -10,16 +10,6 @@
               }}
             </h1>
           </div>
-
-          <v-btn
-            variant="text"
-            color="primary"
-            prepend-icon="mdi-arrow-left"
-            class="answer-back-btn"
-            @click="$emit('back')"
-          >
-            {{ $t('HeuristicsTestView.cards.back') }}
-          </v-btn>
         </header>
 
         <v-divider v-if="currentQuestion" />
@@ -48,8 +38,7 @@
                 <span class="rail-copy">
                   <span class="rail-title">
                     {{
-                      question.title ||
-                      $t('HeuristicsTestView.unknownQuestion')
+                      question.title || $t('HeuristicsTestView.unknownQuestion')
                     }}
                   </span>
                   <span class="rail-status">
@@ -75,7 +64,9 @@
             <section class="question-description-box">
               <div class="description-title">
                 <v-icon size="20">mdi-clipboard-text-outline</v-icon>
-                <strong>{{ $t('HeuristicsTestView.answer.questionTitle') }}</strong>
+                <strong>{{
+                  $t('HeuristicsTestView.answer.questionTitle')
+                }}</strong>
                 <HelpBtn :question="currentQuestion" />
               </div>
               <p>
@@ -92,7 +83,9 @@
                 :selected-answer-mode="selectedAnswerMode"
                 :answer-mode-label="answerModeLabel(selectedAnswerMode)"
                 :has-configured-answer-control="hasConfiguredAnswerControl"
-                :answer="answerForQuestion(currentQuestionIndex)?.heuristicAnswer"
+                :answer="
+                  answerForQuestion(currentQuestionIndex)?.heuristicAnswer
+                "
                 :disabled="currentUserTestAnswer?.submitted"
                 :frequency-options="frequencyOptions"
                 :severity-options="severityOptions"
@@ -102,7 +95,8 @@
                     updateMetricAnswer(currentQuestionIndex, metric, value)
                 "
                 @update-custom-option="
-                  (value) => updateCustomOptionAnswer(currentQuestionIndex, value)
+                  (value) =>
+                    updateCustomOptionAnswer(currentQuestionIndex, value)
                 "
               />
 
@@ -171,7 +165,12 @@
                     )
                 "
                 @add-image="
-                  (imageUrl, metadata, sourceHeurisIndex, sourceQuestionIndex) =>
+                  (
+                    imageUrl,
+                    metadata,
+                    sourceHeurisIndex,
+                    sourceQuestionIndex,
+                  ) =>
                     $emit(
                       'add-image',
                       sourceHeurisIndex ?? heurisIndex,
@@ -192,7 +191,10 @@
               />
             </div>
 
-            <nav class="heuristic-bottom-menu" aria-label="Heuristic navigation">
+            <nav
+              class="heuristic-bottom-menu"
+              aria-label="Heuristic navigation"
+            >
               <v-btn
                 variant="outlined"
                 color="primary"
@@ -471,10 +473,7 @@ const setSharedAnswerMode = (mode) => {
   questions.forEach((_question, questionIndex) => {
     const existingAnswer =
       answerForQuestion(questionIndex)?.heuristicAnswer || {}
-    emitAnswer(
-      questionIndex,
-      sanitizeAnswerForMode(existingAnswer, mode),
-    )
+    emitAnswer(questionIndex, sanitizeAnswerForMode(existingAnswer, mode))
   })
 }
 
@@ -529,9 +528,8 @@ const isAnswerComplete = (answer, mode = selectedAnswerMode.value) => {
   }
 
   if (mode === 'frequencySeverity') {
-    const value = answer.value && typeof answer.value === 'object'
-      ? answer.value
-      : {}
+    const value =
+      answer.value && typeof answer.value === 'object' ? answer.value : {}
     return (
       isFilledValue(answer.frequency ?? value.frequency) &&
       isFilledValue(answer.severity ?? value.severity)
@@ -541,9 +539,9 @@ const isAnswerComplete = (answer, mode = selectedAnswerMode.value) => {
   if (mode === 'customOptions') {
     return Boolean(
       answer.custom?.text ||
-        isFilledValue(answer.custom?.value) ||
-        answer.text ||
-        isFilledValue(answer.value),
+      isFilledValue(answer.custom?.value) ||
+      answer.text ||
+      isFilledValue(answer.value),
     )
   }
 
@@ -746,8 +744,7 @@ watch(
   border-radius: 6px;
   color: #00213f;
   background:
-    linear-gradient(135deg, rgba(223, 232, 251, 0.62), #fff 58%),
-    #fff;
+    linear-gradient(135deg, rgba(223, 232, 251, 0.62), #fff 58%), #fff;
   box-shadow: 0 12px 28px rgba(0, 33, 63, 0.08);
 }
 
@@ -917,7 +914,6 @@ watch(
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     overflow-y: visible;
   }
-
 }
 
 @media (max-width: 640px) {

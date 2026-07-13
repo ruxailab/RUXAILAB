@@ -34,53 +34,19 @@
       </v-card>
     </v-dialog>
 
-    <!-- Persistent Save Status Indicator (Right Side) -->
-    <div
+    <AutoSaveStatusBanner
       v-if="!start && !currentUserTestAnswer?.submitted"
-      class="save-status-indicator"
-    >
-      <v-card
-        elevation="2"
-        class="status-card"
-        :color="saveStatusColor"
-        density="compact"
-      >
-        <v-card-text class="pa-2">
-          <div class="d-flex align-center justify-space-between">
-            <div class="d-flex align-center">
-              <v-icon size="small" class="mr-2">
-                {{ saveStatusIcon }}
-              </v-icon>
-              <span class="text-caption font-weight-medium">
-                {{ saveStatusMessage }}
-              </span>
-            </div>
-            <v-progress-circular
-              v-if="autoSaveInProgress"
-              indeterminate
-              size="16"
-              width="2"
-              color="white"
-              class="ml-2"
-            />
-            <v-icon
-              v-else-if="lastSaveTime && saveStatusType === 'success'"
-              size="small"
-              class="ml-2"
-            >
-              mdi-clock-outline
-            </v-icon>
-          </div>
-          <!-- Last save time -->
-          <div
-            v-if="lastSaveTime && saveStatusType === 'success'"
-            class="text-caption text-white text-right mt-1"
-          >
-            {{ formatLastSaveTime() }}
-          </div>
-        </v-card-text>
-      </v-card>
-    </div>
+      :message="saveStatusMessage"
+      :status-type="saveStatusType"
+      :is-saving="autoSaveInProgress"
+      :last-save-text="
+        lastSaveTime && saveStatusType === 'success' ? formatLastSaveTime() : ''
+      "
+      :show-action="saveStatusType === 'error'"
+      helper-message="Changes are saved automatically while you work."
+      @action="manualSaveAnswer"
+    />
+
     <v-dialog
       :model-value="fromlink && !noExistUser && !logined"
       width="500"
@@ -237,7 +203,9 @@
                   <v-stepper-item
                     value="2"
                     :title="$t('HeuristicsTestView.flow.heuristicEvaluation')"
-                    :complete="review == false || currentUserTestAnswer?.submitted"
+                    :complete="
+                      review == false || currentUserTestAnswer?.submitted
+                    "
                     color="white"
                     complete-icon="mdi-check"
                   />
@@ -309,7 +277,12 @@
                 "
                 @add-image="
                   (sourceHeurisIndex, questionIndex, imageUrl, metadata) =>
-                    addImage(imageUrl, sourceHeurisIndex, questionIndex, metadata)
+                    addImage(
+                      imageUrl,
+                      sourceHeurisIndex,
+                      questionIndex,
+                      metadata,
+                    )
                 "
                 @remove-image="
                   (sourceHeurisIndex, questionIndex, imageId) =>
@@ -391,6 +364,7 @@ import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { debounce } from 'lodash'
+import AutoSaveStatusBanner from '@/shared/components/AutoSaveStatusBanner.vue'
 import Snackbar from '@/shared/components/Snackbar'
 import HeuristicInstructionsStep from '@/ux/Heuristic/components/HeuristicInstructionsStep.vue'
 import HeuristicAnswerStep from '@/ux/Heuristic/components/steps/HeuristicAnswerStep.vue'
@@ -439,8 +413,6 @@ const lastSaveTime = ref(null)
 // Save status variables
 const saveStatusMessage = ref('All changes saved')
 const saveStatusType = ref('default') // default, saving, success, error
-const saveStatusIcon = ref('mdi-check-circle')
-const saveStatusColor = ref('primary')
 
 const test = computed(() => store.getters.test)
 
@@ -597,24 +569,6 @@ const heuristicStepperValue = computed(() => {
 const updateSaveStatus = (message, type = 'default') => {
   saveStatusMessage.value = message
   saveStatusType.value = type
-
-  switch (type) {
-    case 'saving':
-      saveStatusIcon.value = 'mdi-content-save'
-      saveStatusColor.value = 'warning'
-      break
-    case 'success':
-      saveStatusIcon.value = 'mdi-check-circle'
-      saveStatusColor.value = 'success'
-      break
-    case 'error':
-      saveStatusIcon.value = 'mdi-alert-circle'
-      saveStatusColor.value = 'error'
-      break
-    default:
-      saveStatusIcon.value = 'mdi-check-circle'
-      saveStatusColor.value = 'primary'
-  }
 }
 
 const formatLastSaveTime = () => {
@@ -1068,8 +1022,10 @@ const isAnswerEmpty = (answer) => {
       }
       if (answer.mode === 'frequencySeverity') {
         return (
-          (answer.frequency === null || answer.frequency === undefined) ||
-          (answer.severity === null || answer.severity === undefined)
+          answer.frequency === null ||
+          answer.frequency === undefined ||
+          answer.severity === null ||
+          answer.severity === undefined
         )
       }
       if (answer.mode === 'customOptions') {
@@ -1142,9 +1098,8 @@ const isAnswerCompleteForMode = (answer, mode = answerCompletionMode.value) => {
   }
 
   if (mode === 'frequencySeverity') {
-    const value = answer.value && typeof answer.value === 'object'
-      ? answer.value
-      : {}
+    const value =
+      answer.value && typeof answer.value === 'object' ? answer.value : {}
     return (
       isFilledAnswerValue(answer.frequency ?? value.frequency) &&
       isFilledAnswerValue(answer.severity ?? value.severity)
@@ -1154,9 +1109,9 @@ const isAnswerCompleteForMode = (answer, mode = answerCompletionMode.value) => {
   if (mode === 'customOptions') {
     return Boolean(
       answer.custom?.text ||
-        isFilledAnswerValue(answer.custom?.value) ||
-        answer.text ||
-        isFilledAnswerValue(answer.value),
+      isFilledAnswerValue(answer.custom?.value) ||
+      answer.text ||
+      isFilledAnswerValue(answer.value),
     )
   }
 
@@ -1175,9 +1130,7 @@ const calculateProgress = () => {
     if (heuQ?.heuristicQuestions) {
       heuQ.heuristicQuestions.forEach((question) => {
         // Check for valid answer content, not just object existence
-        const hasValidAnswer = isAnswerCompleteForMode(
-          question.heuristicAnswer,
-        )
+        const hasValidAnswer = isAnswerCompleteForMode(question.heuristicAnswer)
 
         if (hasValidAnswer) {
           answered++
@@ -1857,72 +1810,5 @@ onUnmounted(() => {
 
 .v-stepper-item {
   padding: 1rem;
-}
-
-/* Persistent Save Status Indicator */
-.save-status-indicator {
-  position: fixed;
-  right: 20px;
-  top: 20px;
-  z-index: 999;
-  width: 220px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.status-card {
-  background: linear-gradient(
-    135deg,
-    var(--v-success-base) 0%,
-    var(--v-success-darken-1) 100%
-  );
-  color: white !important;
-}
-
-.status-card[color='warning'] {
-  background: linear-gradient(
-    135deg,
-    var(--v-warning-base) 0%,
-    var(--v-warning-darken-1) 100%
-  );
-}
-
-.status-card[color='error'] {
-  background: linear-gradient(
-    135deg,
-    var(--v-error-base) 0%,
-    var(--v-error-darken-1) 100%
-  );
-}
-
-.status-card[color='primary'] {
-  background: linear-gradient(
-    135deg,
-    var(--v-primary-base) 0%,
-    var(--v-primary-darken-1) 100%
-  );
-}
-
-.status-card .text-caption {
-  color: rgba(255, 255, 255, 0.9) !important;
-}
-
-.status-card .v-icon {
-  color: white !important;
-}
-
-/* Animation for status changes */
-.status-card {
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0.8;
-    transform: translateY(-5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 </style>

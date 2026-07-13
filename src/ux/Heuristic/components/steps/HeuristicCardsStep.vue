@@ -157,8 +157,9 @@ defineEmits(['select-heuristic', 'finish-evaluation'])
 .heuristic-cards-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 1.5rem;
   margin-bottom: 0.75rem;
 }
 
