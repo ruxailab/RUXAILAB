@@ -319,7 +319,16 @@
       "messagePlaceholder": "Enter your invitation message",
       "cancel": "Cancel",
       "send": "Send",
-      "alreadySelected": "{email} has already been selected"
+      "alreadySelected": "{email} has already been selected",
+      "byEmail": "Invite by email",
+      "generateLink": "Generate invitation link"
+    },
+    "inviteLink": {
+      "title": "Generate invitation link",
+      "description": "Create a shareable invitation link. Anyone with this link can join the study using the selected role.",
+      "generate": "Generate link",
+      "generateNew": "Generate new link",
+      "copied": "Invitation link copied to clipboard."
     }
   },
   "navigation": {

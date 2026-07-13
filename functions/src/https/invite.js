@@ -1,4 +1,5 @@
 import { admin, functions } from '../f.firebase.js'
+import InviteUtils from '../utils/inviteUtils.js'
 
 export const resolveInvite = functions.onCall({
   handler: async (data) => {
@@ -118,6 +119,34 @@ export const validateInvite = functions.onCall({
           isPublic: !!dataInvite.isPublic,
         },
       }
+    } catch (err) {
+      throw err
+    }
+  },
+})
+
+export const generateInvitationLink = functions.onCall({
+  handler: async (data) => {
+    try {
+      const content = data.data || data
+      const { studyId, accessLevel, studyTitle } = content
+
+      if (!studyId || !accessLevel) {
+        throw new functions.https.HttpsError(
+          'invalid-argument',
+          'Missing required fields',
+        )
+      }
+
+      const inviteLink = await InviteUtils.generateInviteLink(
+        studyId,
+        null, // No email provided for public invites
+        studyTitle,
+        true, // isPublic
+        accessLevel,
+      )
+
+      return { inviteLink }
     } catch (err) {
       throw err
     }

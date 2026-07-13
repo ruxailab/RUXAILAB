@@ -4,16 +4,41 @@
   >
     <!-- Actions Slot -->
     <template v-if="!showIntroView" #actions>
-      <v-btn
-        color="primary"
-        size="large"
-        prepend-icon="mdi-account-plus"
-        variant="flat"
-        class="px-6"
-        @click="openDialog()"
-      >
-        {{ $t('HeuristicsCooperators.actions.send_invitation') }}
-      </v-btn>
+      <v-menu>
+        <template #activator="{ props }">
+          <v-btn
+            color="primary"
+            size="large"
+            prepend-icon="mdi-account-plus"
+            variant="flat"
+            class="px-6"
+            v-bind="props"
+          >
+            {{ $t('HeuristicsCooperators.actions.send_invitation') }}
+            <v-icon end>mdi-chevron-down</v-icon>
+          </v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item
+            prepend-icon="mdi-email-outline"
+            @click="showInviteDialog = true"
+          >
+            <v-list-item-title>
+              {{ $t('cooperators.invite.byEmail') }}
+            </v-list-item-title>
+          </v-list-item>
+
+          <v-list-item
+            prepend-icon="mdi-link-variant"
+            @click="showLinkInviteDialog = true"
+          >
+            <v-list-item-title>
+              {{ $t('cooperators.invite.generateLink') }}
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </template>
 
     <!-- Subtitle Slot -->
@@ -78,6 +103,12 @@
       @send-invitations="handleSendInvitations"
     />
 
+    <!-- Generate Invite Link -->
+    <GenerateInviteLinkDialog
+      v-model:show="showLinkInviteDialog"
+      :study-id="test?.id"
+    />
+
     <!-- Confirmation Dialog -->
     <ConfirmDialog
       v-model:show="confirmDialog.show"
@@ -107,7 +138,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, useSlots } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import Intro from '@/shared/components/introduction_cards/IntroCoops.vue'
 import AccessNotAllowed from '@/shared/views/AccessNotAllowed.vue'
@@ -116,6 +147,7 @@ import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import CooperatorTable from '@/shared/components/CooperatorTable.vue'
 import MessageDialog from '@/shared/components/dialogs/MessageDialog.vue'
 import InviteDialog from '@/shared/components/dialogs/InviteDialog.vue'
+import GenerateInviteLinkDialog from '@/shared/components/dialogs/GenerateInviteLinkDialog.vue'
 import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 import UIDGenerator from 'uid-generator'
 import {
@@ -158,7 +190,6 @@ defineEmits(['open-invite-dialog'])
 
 const store = useStore()
 const route = useRoute()
-const slots = useSlots()
 const { t } = useI18n()
 
 const { roleOptions, getCooperatorInviteValidationError } = useCooperatorUtils()
@@ -273,6 +304,7 @@ const messageModel = ref(false)
 const selectedUser = ref([])
 const cooperatorsUpdate = ref([])
 const showInviteDialog = ref(false)
+const showLinkInviteDialog = ref(false)
 const drawerOpen = ref(false)
 
 const showIntroView = computed(() => {
@@ -695,11 +727,6 @@ const executeInvitationCancellation = async (guest) => {
   }
   test.value.cooperators = cooperatorsEdit.value
   await store.dispatch('updateStudy', test.value)
-}
-
-const openDialog = async () => {
-  if (slots.dialog) drawerOpen.value = true
-  else showInviteDialog.value = true
 }
 
 watch(loading, (newVal) => {

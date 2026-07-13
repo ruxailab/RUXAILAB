@@ -16,7 +16,7 @@ export default class InviteUtils {
       .collection('invites')
       .add({
         studyId,
-        email: email.toLowerCase(),
+        email: email?.toLowerCase() || null,
         token,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
