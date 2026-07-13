@@ -20,10 +20,10 @@
                 size="large"
                 class="px-6 text-capitalize"
                 rounded="lg"
-                @click="dialog = true"
+                @click="openCreate"
               >
                 <v-icon start> mdi-plus-circle </v-icon>
-                {{ $t('CardSorting.addNewTask') }}
+                {{ $t('CardSorting.addNewCategory') }}
               </v-btn>
             </v-col>
           </v-row>
@@ -128,10 +128,13 @@
       </v-col>
     </v-row>
     <CardSortingForm
-      v-model:dialog="dialog"
+      :dialog="dialog"
+      type="category"
       :task="category"
       :options="options"
+      :is-edit="editedIndex > -1"
       @save="save"
+      @update:dialog="onDialogChange"
     />
   </v-container>
 </template>
@@ -188,6 +191,23 @@ const onChange = () => {
   emit('categories', categories.value)
 }
 
+const resetEditor = () => {
+  editedIndex.value = -1
+  category.value = new CardSortingStudyCategory()
+}
+
+const openCreate = () => {
+  resetEditor()
+  dialog.value = true
+}
+
+const onDialogChange = (isOpen) => {
+  dialog.value = isOpen
+  if (!isOpen) {
+    resetEditor()
+  }
+}
+
 const editItem = (item) => {
   editedIndex.value = categories.value.indexOf(item)
   category.value = new CardSortingStudyCategory({ ...item })
@@ -205,11 +225,11 @@ const save = (newCategoryRaw) => {
 
   if (editedIndex.value > -1) {
     categories.value[editedIndex.value] = newCategory
-    editedIndex.value = -1
   } else {
     categories.value.push(newCategory)
   }
 
+  resetEditor()
   onChange()
 }
 
