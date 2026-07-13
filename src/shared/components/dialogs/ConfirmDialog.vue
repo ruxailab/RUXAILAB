@@ -28,9 +28,11 @@
         </div>
       </v-card-title>
       <v-card-text class="py-4 px-6">
-        <p class="text-body-2 text-grey-darken-1">
+        <p v-if="message" class="text-body-2 text-grey-darken-1">
           {{ message }}
         </p>
+
+        <slot name="content" />
       </v-card-text>
       <v-card-actions class="px-6 pb-6 pt-0 d-flex justify-end ga-3">
         <!-- Optional third action -->

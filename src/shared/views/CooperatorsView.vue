@@ -127,7 +127,56 @@
       :loading="confirmDialog.loading"
       @confirm="handleConfirmAction"
       @cancel="handleCancelAction"
-    />
+    >
+      <template v-if="confirmDialog.action === 'changeRole'" #content>
+        <v-row class="align-center ma-2">
+          <v-chip
+            :color="
+              getRoleColor(
+                roleOptions.find(
+                  (r) => r.value === roleDialog.item?.accessLevel,
+                )?.title,
+              )
+            "
+            size="small"
+            variant="flat"
+          >
+            <v-icon start size="16">
+              {{
+                getRoleIcon(
+                  roleOptions.find(
+                    (r) => r.value === roleDialog.item?.accessLevel,
+                  )?.title,
+                )
+              }}
+            </v-icon>
+
+            {{
+              roleOptions.find((r) => r.value === roleDialog.item?.accessLevel)
+                ?.title
+            }}
+          </v-chip>
+
+          <v-icon class="mx-2">mdi-arrow-right</v-icon>
+
+          <v-select
+            v-model="roleDialog.newRole"
+            :items="
+              roleOptions.filter(
+                (r) => r.value !== roleDialog.item?.accessLevel,
+              )
+            "
+            item-title="title"
+            item-value="value"
+            return-object
+            density="compact"
+            variant="outlined"
+            hide-details
+            style="max-width: 220px"
+          />
+        </v-row>
+      </template>
+    </ConfirmDialog>
 
     <AccessNotAllowed v-if="!loading && verified" />
 
@@ -194,7 +243,12 @@ const store = useStore()
 const route = useRoute()
 const { t } = useI18n()
 
-const { roleOptions, getCooperatorInviteValidationError } = useCooperatorUtils()
+const {
+  roleOptions,
+  getCooperatorInviteValidationError,
+  getRoleColor,
+  getRoleIcon,
+} = useCooperatorUtils()
 
 useCooperatorActions() // Keep the hook call in case it has side effects
 
@@ -214,6 +268,11 @@ const confirmDialog = ref({
   data: null,
 })
 
+const roleDialog = ref({
+  item: null,
+  newRole: null,
+})
+
 const resetConfirmDialog = () => {
   confirmDialog.value = {
     show: false,
@@ -229,6 +288,11 @@ const resetConfirmDialog = () => {
     action: null,
     data: null,
   }
+
+  roleDialog.value = {
+    item: null,
+    newRole: null,
+  }
 }
 
 const handleConfirmAction = async () => {
@@ -237,7 +301,7 @@ const handleConfirmAction = async () => {
 
   try {
     if (action === 'changeRole') {
-      await executeRoleChange(data.item, data.newValue)
+      await executeRoleChange(roleDialog.value.item, roleDialog.value.newRole)
       showSuccess('Role updated successfully!')
     } else if (action === 'removeCooperator') {
       await executeCooperatorRemoval(data.coop)
@@ -478,34 +542,27 @@ const handleSendInvitations = async (invitationData) => {
   }
 }
 
-const changeRole = async (item, newValue) => {
-  const currentAccessLevelText = roleOptions.value.find(
-    (r) => r.value === item.accessLevel,
-  )?.title
-  const newAccessLevelText = newValue.title
+const changeRole = (item) => {
+  roleDialog.value = {
+    item,
+    newRole: roleOptions.value.find((r) => r.value !== item.accessLevel),
+  }
 
-  if (item.accessLevel !== newValue.value) {
-    confirmDialog.value = {
-      show: true,
-      title:
-        t('HeuristicsCooperators.messages.change_role_title') || 'Change Role',
-      subtitle:
-        t('pages.settings.action_cannot_be_undone') ||
-        "This action will update the user's permissions",
-      message: t('HeuristicsCooperators.messages.change_role', {
-        email: item.email,
-        old: currentAccessLevelText,
-        new: newAccessLevelText,
-      }),
-      confirmColor: 'primary',
-      confirmIcon: 'mdi-check',
-      icon: 'mdi-account-convert',
-      iconColor: 'primary',
-      type: 'info',
-      loading: false,
-      action: 'changeRole',
-      data: { item, newValue },
-    }
+  confirmDialog.value = {
+    show: true,
+    title:
+      t('HeuristicsCooperators.messages.change_role_title') || 'Change Role',
+    subtitle:
+      t('pages.settings.action_cannot_be_undone') ||
+      "This action will update the user's permissions",
+    message: '',
+    confirmColor: 'primary',
+    confirmIcon: 'mdi-check',
+    icon: 'mdi-account-convert',
+    iconColor: 'primary',
+    type: 'info',
+    loading: false,
+    action: 'changeRole',
   }
 }
 

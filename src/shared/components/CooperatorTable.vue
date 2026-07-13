@@ -5,7 +5,7 @@
       <v-col cols="12" md="5">
         <v-text-field
           v-model="filters.search"
-          label="Search cooperators"
+          :label="`${$t('cooperators.filter.search')}`"
           prepend-inner-icon="mdi-magnify"
           variant="outlined"
           density="comfortable"
@@ -19,7 +19,7 @@
           :items="roleOptions"
           item-title="title"
           item-value="title"
-          label="Filter by Role"
+          :label="`${$t('cooperators.filter.filterByRole')}`"
           variant="outlined"
           density="comfortable"
           hide-details
@@ -32,7 +32,7 @@
           :items="statusFilterOptions"
           item-title="title"
           item-value="value"
-          label="Filter by Status"
+          :label="`${$t('cooperators.filter.filterByStatus')}`"
           variant="outlined"
           density="comfortable"
           hide-details
@@ -76,32 +76,25 @@
 
         <!-- Role Column -->
         <template #item.accessLevel="{ item }">
-          <v-select
-            v-if="hasRoleColumn"
-            :ref="'select' + cooperators.indexOf(item)"
-            :key="dataTableKey"
-            :model-value="item.accessLevel"
-            :items="roleOptions"
-            item-title="title"
-            return-object
-            density="comfortable"
-            :disabled="!item.invited || item.accepted ? false : true"
-            variant="plain"
-            @update:model-value="onRoleChange(item, $event)"
+          <v-chip
+            :color="
+              getRoleColor(
+                roleOptions.find((r) => r.value === item.accessLevel)?.title,
+              )
+            "
+            size="small"
+            variant="flat"
           >
-            <template #selection="{ item: selectedItem }">
-              <v-chip
-                :color="getRoleColor(selectedItem.title)"
-                size="small"
-                variant="flat"
-              >
-                <v-icon start size="16">
-                  {{ getRoleIcon(selectedItem.title) }}
-                </v-icon>
-                {{ selectedItem.title }}
-              </v-chip>
-            </template>
-          </v-select>
+            <v-icon start size="16">
+              {{
+                getRoleIcon(
+                  roleOptions.find((r) => r.value === item.accessLevel)?.title,
+                )
+              }}
+            </v-icon>
+
+            {{ roleOptions.find((r) => r.value === item.accessLevel)?.title }}
+          </v-chip>
         </template>
 
         <!-- Test Date (only for accessibility tests) -->
@@ -134,6 +127,11 @@
           >
             {{ getStatusText(item.accepted) }}
           </v-chip>
+        </template>
+
+        <!-- Accepted Column -->
+        <template #item.acceptedDate="{ item }">
+          {{ item.acceptedDate ? formatDate(item.acceptedDate) : '-' }}
         </template>
 
         <!-- Session -->
@@ -192,6 +190,11 @@
                   {{ cancelText || 'Cancel invitation' }}
                 </v-list-item-title>
               </v-list-item>
+              <v-list-item v-if="item.invited" @click="onRoleChange(item)">
+                <v-list-item-title>
+                  {{ changeRole || 'Change role' }}
+                </v-list-item-title>
+              </v-list-item>
             </v-list>
           </v-menu>
         </template>
@@ -248,6 +251,10 @@ const props = defineProps({
     type: String,
     default: 'Cancel invitation',
   },
+  changeRole: {
+    type: String,
+    default: 'Change role',
+  },
   hasRoleColumn: {
     type: Boolean,
     default: true,
@@ -277,7 +284,6 @@ const {
 } = useCooperatorUtils()
 
 // Local state
-const dataTableKey = ref(0)
 const itemsPerPage = ref(10)
 const selectedCooperators = ref([])
 
@@ -309,8 +315,8 @@ const computedHeaders = computed(() => {
   }
 
   defaultHeaders.push(
-    { title: 'Invited', key: 'invited', sortable: true },
     { title: 'Status', key: 'accepted', sortable: true },
+    { title: 'Accepted Date', key: 'acceptedDate', sortable: true },
     { title: 'Actions', key: 'actions', sortable: false },
   )
 
@@ -354,9 +360,8 @@ const filteredCooperators = computed(() => {
 })
 
 // Event handlers
-const onRoleChange = (item, newValue) => {
-  emit('role-change', item, newValue)
-  dataTableKey.value++
+const onRoleChange = (item) => {
+  emit('role-change', item)
 }
 
 const onSendMessage = (item) => {

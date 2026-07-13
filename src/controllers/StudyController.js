@@ -87,6 +87,7 @@ export default class StudyController extends Controller {
 
   //ToDo: It seems an action from User Testing
   async acceptStudyCollaboration(payload) {
+    const today = Date.now()
     const userAnswer = new UserAnswer({
       answersDocId: payload.test.answersDocId,
       accessLevel: payload.cooperator.accessLevel,
@@ -97,7 +98,7 @@ export default class StudyController extends Controller {
       subType: payload.test.subType,
       testTitle: payload.test.testTitle,
       total: 0,
-      updateDate: Date.now(),
+      updateDate: today,
     })
 
     // Update answers inside collaborator. Only write the single myAnswers
@@ -115,6 +116,7 @@ export default class StudyController extends Controller {
       (c) => c.email === userToUpdate.email,
     )
     testToUpdate.cooperators[index].accepted = true
+    testToUpdate.cooperators[index].acceptedDate = today
     testToUpdate.cooperators[index].userDocId = userToUpdate.id
 
     // Update invitation on test to accepted

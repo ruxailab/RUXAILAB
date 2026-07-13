@@ -7,6 +7,7 @@ import CooperatorsView from '@/shared/views/CooperatorsView.vue'
 import CooperatorsModeratedView from './views/Moderators/CooperatorsModeratedView.vue'
 import UserAnswerView from './views/UserAnswerView.vue'
 import StorageView from '@/shared/views/StorageView.vue'
+import ParticipantsView from '@/shared/views/ParticipantsView.vue'
 
 export default [
   {
@@ -50,6 +51,13 @@ export default [
         props: true,
         meta: { authorize: [0, 1] },
         component: CooperatorsView,
+      },
+      {
+        path: '/userTest/unmoderated/participants/:id',
+        name: 'UserUnmoderatedParticipantsView',
+        props: true,
+        meta: { authorize: [0, 1] },
+        component: ParticipantsView,
       },
       {
         path: '/userTest/unmoderated/storage/:id/:token?',
