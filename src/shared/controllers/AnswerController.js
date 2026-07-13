@@ -67,6 +67,9 @@ export default class AnswerController extends Controller {
     if (testType === STUDY_TYPES.HEURISTIC) {
       fieldToUpdate[`heuristicAnswers.${payload.userDocId}`] =
         payload.toFirestore()
+    } else if (testType === STUDY_TYPES.CARD_SORTING) {
+      fieldToUpdate[`cardSortingAnswers.${payload.userDocId}`] =
+        payload.toFirestore()
     } else if (testType === STUDY_TYPES.USER) {
       if (!payload.userDocId) {
         const taskAnswer = (await this.getAnswerById(answersDocId)).taskAnswers // get taskAnswers

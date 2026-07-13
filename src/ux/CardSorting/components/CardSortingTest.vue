@@ -1,306 +1,295 @@
 <template>
-  <div>
-    <VRow class="pa-0 ma-0" dense>
-      <!-- Navigation Drawer -->
-      <v-navigation-drawer
-        v-model="drawer"
-        :rail="mini"
-        permanent
-        color="#3F3D56"
-      >
-        <!-- Navigation Header -->
-        <div v-if="!mini" class="header">
-          <v-list-item>
-            <v-row dense align="center" justify="space-around">
-              <v-col class="pa-0 ma-0" cols="8">
-                <text-clamp
-                  class="titleText"
-                  :text="test.testTitle"
-                  :max-lines="2"
+  <div class="cardsorting-flow">
+    <!-- Progress header -->
+    <v-container class="pt-4">
+      <div class="d-flex align-center justify-space-between mb-2">
+        <span class="text-caption text-medium-emphasis">
+          {{ $t('CardSorting.step') }} {{ currentPhaseIndex + 1 }} /
+          {{ phases.length }}
+        </span>
+        <span class="text-caption text-medium-emphasis">
+          {{ Math.round(progress) }}%
+        </span>
+      </div>
+      <v-progress-linear
+        :model-value="progress"
+        color="primary"
+        height="8"
+        rounded
+      />
+    </v-container>
+
+    <!-- CONSENT -->
+    <div v-if="currentPhase === 'consent'">
+      <ShowInfo :title="test.testTitle + ' - ' + $t('ModeratedTest.consentForm')">
+        <template #content>
+          <v-container class="pa-6">
+            <div class="rich-text mb-6" v-html="test.testStructure.consent" />
+            <v-row justify="center">
+              <v-col cols="12" md="6">
+                <v-text-field
+                  v-model="localAnswer.fullName"
+                  :label="$t('common.name')"
+                  variant="outlined"
+                  density="compact"
+                  :rules="[(v) => !!v || $t('CardSorting.nameRequired')]"
                 />
               </v-col>
-              <v-col>
-                <v-progress-circular
-                  rotate="-90"
-                  :model-value="calculateProgress()"
-                  color="#fca326"
-                  :size="50"
-                  class="mt-2"
+            </v-row>
+            <v-row justify="center">
+              <v-col cols="12" md="6">
+                <v-checkbox
+                  v-model="localAnswer.consentCompleted"
+                  :label="$t('CardSorting.acceptConsent')"
+                  :disabled="!localAnswer.fullName"
+                />
+              </v-col>
+            </v-row>
+            <v-row justify="center">
+              <v-col cols="auto">
+                <v-btn
+                  color="primary"
+                  rounded="pill"
+                  :disabled="!localAnswer.consentCompleted || !localAnswer.fullName"
+                  @click="next"
                 >
-                  {{ calculateProgress() }}%
-                </v-progress-circular>
-              </v-col>
-            </v-row>
-          </v-list-item>
-        </div>
-
-        <!-- Navigation Body -->
-        <v-list
-          class="nav-list"
-          density="compact"
-          max-height="85%"
-          style="overflow-y: auto; overflow-x: hidden; padding-bottom: 100px"
-        >
-          <div v-for="item in items" :key="item.id">
-            <!-- Pre Test -->
-            <!-- <v-list-group v-if="item.id === 0"
-              :class="{ 'disabled-group': localTestAnswer.consentCompleted && localTestAnswer.preTestCompleted && !localTestAnswer.submitted }"
-              :value="index === 0" @click="index = item.id">
-              <template #appendIcon>
-                <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">
-                  mdi-chevron-down
-                </v-icon>
-              </template>
-<template #activator="{ props }">
-                <v-list-item v-bind="props">
-                  <template #prepend>
-                    <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">
-                      {{ localTestAnswer.consentCompleted && localTestAnswer.preTestCompleted &&
-                        !localTestAnswer.submitted ? 'mdi-lock' : item.icon }}
-                    </v-icon>
-                  </template>
-<v-list-item-title :style="index === item.id ? 'color: white' : 'color:#fca326'">
-  {{ item.title }}
-</v-list-item-title>
-</v-list-item>
-</template>
-<v-tooltip v-for="(task, i) in item.value" :key="i" location="right">
-  <template #activator="{ props }">
-                  <v-list-item v-bind="props" link :disabled="isPreTestTaskDisabled(i)"
-                    :class="{ 'disabled-group': isPreTestTaskDisabled(i) }" @click="taskIndex = i">
-                    <template #prepend>
-                      <v-icon :color="taskIndex === i ? '#ffffff' : '#fca326'">
-                        {{ isPreTestTaskDisabled(i) ? 'mdi-lock' : task.icon }}
-                      </v-icon>
-                    </template>
-  <v-list-item-title :style="taskIndex === i ? 'color: white' : 'color:#fca326'">
-    {{ task.title }}
-  </v-list-item-title>
-  </v-list-item>
-  </template>
-  <span>{{ task.title }}</span>
-</v-tooltip>
-</v-list-group> -->
-
-            <!-- Tasks -->
-            <!-- <v-list-group v-if="item.id === 1"
-              :class="{ 'disabled-group': !localTestAnswer.consentCompelted || !localTestAnswer.preTestCompleted || (allTasksCompleted && !localTestAnswer.submitted) }"
-              :value="index === 1" @click="index = item.id">
-              <template #appendIcon>
-                <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">
-                  mdi-chevron-down
-                </v-icon>
-              </template>
-              <template #activator="{ props }">
-                <v-list-item v-bind="props">
-                  <template #prepend>
-                    <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">
-                      {{ (!localTestAnswer.consentCompleted || !localTestAnswer.preTestCompleted || (allTasksCompleted
-                        && !localTestAnswer.submitted)) ? 'mdi-lock' : item.icon }}
-                    </v-icon>
-                  </template>
-                  <v-list-item-title :style="index === item.id ? 'color: white' : 'color:#fca326'">
-                    {{ item.title }}
-                  </v-list-item-title>
-                </v-list-item>
-              </template>
-              <v-tooltip v-for="(task, i) in item.value" :key="i" location="right">
-                <template #activator="{ props }">
-                  <v-list-item v-bind="props" link :disabled="isTaskDisabled(i) && !localTestAnswer.submitted"
-                    :class="{ 'disabled-group': isTaskDisabled(i) && !localTestAnswer.submitted }"
-                    @click="taskIndex = i; startTimer()">
-                    <template #prepend>
-                      <v-icon :color="taskIndex === i ? '#ffffff' : '#fca326'">
-                        {{ isTaskDisabled(i) && !localTestAnswer.submitted ? 'mdi-lock' : task.icon }}
-                      </v-icon>
-                    </template>
-                    <v-list-item-title :style="taskIndex === i ? 'color: white' : 'color:#fca326'">
-                      {{ task.title }}
-                    </v-list-item-title>
-                  </v-list-item>
-                </template>
-                <span>{{ task.title }}</span>
-              </v-tooltip>
-            </v-list-group> -->
-
-            <!-- Post Test -->
-            <!-- <v-list-item v-if="item.id === 2" :disabled="!allTasksCompleted && !localTestAnswer.submitted"
-              :class="{ 'disabled-group': !allTasksCompleted && !localTestAnswer.submitted }" @click="index = item.id">
-              <template #prepend>
-                <v-icon :color="index === item.id ? '#ffffff' : '#fca326'">
-                  {{ !allTasksCompleted && !localTestAnswer.submitted ? 'mdi-lock' : item.icon }}
-                </v-icon>
-              </template>
-              <v-list-item-title :style="index === item.id ? 'color: white' : 'color:#fca326'">
-                {{ item.title }}
-              </v-list-item-title>
-            </v-list-item> -->
-          </div>
-        </v-list>
-
-        <!-- <div class="footer">
-            <v-spacer />
-            <v-btn icon class="mr-2 bg-orange" @click.stop="mini = !mini">
-              <v-icon v-if="mini" color="white" icon="mdi-chevron-right" />
-              <v-icon v-else color="white" icon="mdi-chevron-left" />
-            </v-btn>
-          </div> -->
-      </v-navigation-drawer>
-
-      <!-- Right View -->
-      <VCol ref="rightView" class="pa-0 ma-0 right-view">
-        <!-- Consent -->
-        <!-- <ShowInfo v-if="index === 0 && taskIndex === 0" :title="$t('UserTestView.titles.preTestConsent')">
-          <template #content>
-            <v-row class="fill-height" align="center" justify="center">
-              <v-col cols="12">
-                <v-row justify="center">
-                  <h1 style="color: #455a64;" class="mt-6">
-                    {{ test.testTitle }} - {{ $t('UserTestView.titles.preTest') }}
-                  </h1>
-                </v-row>
-              </v-col>
-            </v-row>
-            <v-divider class="my-8" />
-            <v-row>
-              <v-col cols="8" class="mx-auto py-0">
-                <div class="rich-text mb-6" v-html="test.testStructure.consent"></div>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="6" class="mx-auto">
-                <v-text-field v-model="fullName" label="Full Name" variant="outlined" density="compact"
-                  :rules="[v => !!v || 'Name is required']" />
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="6" class="mx-auto">
-                <v-radio-group v-model="localTestAnswer.consentCompleted" direction="horizontal">
-                  <v-radio label="I accept the consent terms" :value="true" :disabled="!fullName" />
-                  <v-radio label="I do not accept the consent terms" :value="false" />
-                </v-radio-group>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="6" class="mx-auto text-center">
-                <v-btn color="primary" :disabled="!localTestAnswer.consentCompleted || !fullName"
-                  @click="completeStep(taskIndex, 'consent'); taskIndex = 1">
-                  Continue
+                  {{ $t('buttons.continue') }}
                 </v-btn>
               </v-col>
             </v-row>
-          </template>
-        </ShowInfo> -->
+          </v-container>
+        </template>
+      </ShowInfo>
+    </div>
 
-        <!-- Tasks -->
-        <CardSortingTask v-if="index === 1" :test="test" />
-      </VCol>
-    </VRow>
+    <!-- PRE-TEST -->
+    <div v-else-if="currentPhase === 'preTest'">
+      <PreTestStep
+        :test-title="test.testTitle"
+        :pre-test="test.testStructure.preTest"
+        :pre-test-answer="localAnswer.preTestAnswer"
+        :pre-test-completed="localAnswer.preTestCompleted"
+        @update:pre-test-answer="localAnswer.preTestAnswer = $event"
+        @done="completePreTest"
+      />
+    </div>
+
+    <!-- SORTING -->
+    <div v-else-if="currentPhase === 'sorting'">
+      <CardSortingTask
+        v-model="localAnswer.sorting"
+        :test="test"
+        @update:pending="pendingCards = $event"
+      />
+      <v-container class="d-flex justify-space-between">
+        <v-btn
+          v-if="currentPhaseIndex > 0"
+          variant="outlined"
+          rounded="pill"
+          @click="prev"
+        >
+          {{ $t('buttons.back') }}
+        </v-btn>
+        <v-spacer />
+        <v-btn
+          color="primary"
+          rounded="pill"
+          :disabled="pendingCards > 0"
+          @click="next"
+        >
+          {{ pendingCards > 0
+            ? $t('CardSorting.allocateAll', { count: pendingCards })
+            : $t('buttons.continue') }}
+        </v-btn>
+      </v-container>
+    </div>
+
+    <!-- POST-TEST -->
+    <div v-else-if="currentPhase === 'postTest'">
+      <PostTestStep
+        :test-title="test.testTitle"
+        :post-test="test.testStructure.postTest"
+        :post-test-answer="localAnswer.postTestAnswer"
+        :post-test-completed="localAnswer.postTestCompleted"
+        @update:post-test-answer="localAnswer.postTestAnswer = $event"
+        @done="completePostTest"
+      />
+    </div>
+
+    <!-- FINISH -->
+    <div v-else-if="currentPhase === 'finish'">
+      <ShowInfo :title="test.testTitle">
+        <template #content>
+          <v-container class="pa-8 text-center">
+            <v-icon color="success" size="72" class="mb-4">
+              mdi-check-circle-outline
+            </v-icon>
+            <h2 class="text-h5 mb-4">{{ $t('CardSorting.thankYou') }}</h2>
+            <div
+              v-if="test.testStructure.finalMessage"
+              class="rich-text mb-6"
+              v-html="test.testStructure.finalMessage"
+            />
+            <v-btn
+              color="primary"
+              rounded="pill"
+              size="large"
+              :loading="submitting"
+              :disabled="localAnswer.submitted"
+              @click="submit"
+            >
+              {{ localAnswer.submitted
+                ? $t('CardSorting.answerSubmitted')
+                : $t('buttons.submit') }}
+            </v-btn>
+          </v-container>
+        </template>
+      </ShowInfo>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { computed, reactive, ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import CardSortingTask from '../components/CardSortingTask.vue'
-import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
+import ShowInfo from '@/shared/components/ShowInfo.vue'
+import PreTestStep from '@/ux/UserTest/components/steps/PreTestStep.vue'
+import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue'
+import CardSortingTask from './CardSortingTask.vue'
+import CardSortingEvaluatorAnswer from '../models/CardSortingEvaluatorAnswer'
+import { showError, showSuccess } from '@/shared/utils/toast'
 
-defineProps({
+const props = defineProps({
   test: {
     type: Object,
     required: true,
   },
 })
 
-// Stores
 const store = useStore()
+const router = useRouter()
 
-// Variables
-const drawer = ref(true)
-const mini = ref(false)
+const user = computed(() => store.getters.user)
+const currentCardSortingAnswer = computed(
+  () => store.getters.currentCardSortingAnswer,
+)
 
-const rightView = ref(null)
-const index = ref(1)
-const items = ref([])
+// Local participant answer (resumes previous progress when available)
+const localAnswer = reactive(
+  new CardSortingEvaluatorAnswer({
+    ...currentCardSortingAnswer.value,
+    userDocId: user.value?.id ?? null,
+    preTestAnswer: buildPreTestAnswer(),
+    postTestAnswer: buildPostTestAnswer(),
+  }),
+)
 
-const localTestAnswer = reactive(new UserStudyEvaluatorAnswer())
+const pendingCards = ref(0)
+const submitting = ref(false)
+const currentPhaseIndex = ref(0)
 
-// Methods
+// Build the ordered list of active phases, skipping empty ones
+const phases = computed(() => {
+  const structure = props.test?.testStructure || {}
+  const list = []
+  if (structure.consent) list.push('consent')
+  if ((structure.preTest?.length ?? 0) > 0) list.push('preTest')
+  list.push('sorting')
+  if ((structure.postTest?.length ?? 0) > 0) list.push('postTest')
+  list.push('finish')
+  return list
+})
 
-const mappingSteps = async () => {
+const currentPhase = computed(() => phases.value[currentPhaseIndex.value])
+
+const progress = computed(
+  () => (currentPhaseIndex.value / (phases.value.length - 1)) * 100,
+)
+
+function buildPreTestAnswer() {
+  const existing = currentCardSortingAnswer.value?.preTestAnswer
+  if (Array.isArray(existing) && existing.length) return existing
+  const preTest = props.test?.testStructure?.preTest || []
+  return preTest.map((_, index) => ({ preTestAnswerId: index, answer: '' }))
+}
+
+function buildPostTestAnswer() {
+  const existing = currentCardSortingAnswer.value?.postTestAnswer
+  if (Array.isArray(existing) && existing.length) return existing
+  const postTest = props.test?.testStructure?.postTest || []
+  return postTest.map((item, index) => ({
+    ...item,
+    postTestAnswerId: index,
+    answer: '',
+  }))
+}
+
+const savePartial = async () => {
+  if (!user.value) return
+  localAnswer.userDocId = user.value.id
+  localAnswer.invited = true
+  localAnswer.lastUpdate = Date.now()
+  localAnswer.progress = Math.round(progress.value)
+
+  await store.dispatch('saveTestAnswer', {
+    data: new CardSortingEvaluatorAnswer({ ...localAnswer }),
+    answersDocId: props.test.answersDocId,
+    testType: props.test.testType,
+  })
+}
+
+const next = async () => {
   try {
-    items.value = []
-
-    items.value.push({
-      title: 'Tasks',
-      icon: 'mdi-checkbox-blank-circle-outline',
-      value: {
-        title: 'Card Sorting',
-        icon: 'mdi-checkbox-blank-circle-outline',
-        id: 0,
-      },
-      id: 1,
-    })
+    await savePartial()
   } catch {
-    store.commit('SET_TOAST', {
-      type: 'error',
-      message: 'Failed to initialize test data. Please try again.',
-    })
+    showError('CardSorting.saveError')
+  }
+  if (currentPhaseIndex.value < phases.value.length - 1) {
+    currentPhaseIndex.value++
   }
 }
 
-const calculateProgress = () => {
+const prev = () => {
+  if (currentPhaseIndex.value > 0) currentPhaseIndex.value--
+}
+
+const completePreTest = () => {
+  localAnswer.preTestCompleted = true
+  next()
+}
+
+const completePostTest = () => {
+  localAnswer.postTestCompleted = true
+  next()
+}
+
+const submit = async () => {
   try {
-    if (!localTestAnswer) return 0
-    const totalSteps = 4
-    let completedSteps = 0
-
-    if (localTestAnswer.preTestCompleted) completedSteps++
-    if (localTestAnswer.consentCompleted) completedSteps++
-
-    let tasksCompleted = 0
-    if (items.value[1]?.value && Array.isArray(localTestAnswer.tasks)) {
-      for (let i = 0; i < items.value[1].value.length; i++) {
-        if (localTestAnswer.tasks[i]?.completed) {
-          tasksCompleted++
-        }
-      }
-      if (tasksCompleted === items.value[1].value.length) {
-        completedSteps++
-      }
-    }
-
-    if (localTestAnswer.postTestCompleted) completedSteps++
-
-    const progressPercentage = (completedSteps / totalSteps) * 100
-    localTestAnswer.progress = progressPercentage
-    return progressPercentage
+    submitting.value = true
+    localAnswer.submitted = true
+    localAnswer.progress = 100
+    await savePartial()
+    showSuccess('CardSorting.answerSubmitted')
+    router.push('/admin')
   } catch {
-    return 0
+    localAnswer.submitted = false
+    showError('CardSorting.saveError')
+  } finally {
+    submitting.value = false
   }
 }
 
-// Lifecycle Hooks
-onMounted(async () => {
-  await mappingSteps()
+onMounted(() => {
+  // Resume at the sorting phase if consent/pre-test were already completed
+  if (localAnswer.submitted) {
+    currentPhaseIndex.value = phases.value.indexOf('finish')
+  }
 })
 </script>
 
 <style scoped>
-.right-view::-webkit-scrollbar {
-  width: 9px;
-}
-
-.right-view::-webkit-scrollbar-track {
-  background: none;
-}
-
-.right-view::-webkit-scrollbar-thumb {
-  background: #ffcd86;
-  border-radius: 2px;
-}
-
-.right-view::-webkit-scrollbar-thumb:hover {
-  background: #fca326;
+.cardsorting-flow {
+  padding-bottom: 40px;
 }
 </style>

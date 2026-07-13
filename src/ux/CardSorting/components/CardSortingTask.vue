@@ -5,36 +5,42 @@
         <v-divider class="mb-5" />
 
         <v-container>
-          <VRow class="fill-height" align="center" justify="center">
-            <!-- Cards -->
-            <VCol :cols="12 / (categories.length + 1)" class="mb-0 pb-0">
+          <div class="d-flex align-center justify-center mb-4">
+            <p class="text-body-1 mb-0">
+              {{ assignedCount }} {{ $t('CardSorting.of') }}
+              {{ totalCards }} {{ $t('CardSorting.cards_low') }}
+            </p>
+          </div>
+          <v-progress-linear
+            :model-value="assignedCount"
+            color="primary"
+            height="10"
+            rounded
+            :max="totalCards"
+            class="mb-6"
+          />
+
+          <VRow class="fill-height" justify="center">
+            <!-- Unassigned cards pool -->
+            <VCol :cols="poolCols" class="mb-0 pb-0">
               <VCard class="card-category">
                 <VCardTitle class="d-flex justify-center align-center">
                   <VCol class="text-center">
-                    <p>
-                      {{ pendingAllocationCount }} {{ $t('CardSorting.of') }}
-                      {{ props.test.testStructure.cardSorting.cards.length }}
-                      {{ $t('CardSorting.cards_low') }}
-                    </p>
-                    <v-progress-linear
-                      v-model="pendingAllocationCount"
-                      color="primary"
-                      height="12"
-                      :max="props.test.testStructure.cardSorting.cards.length"
-                    />
+                    <h3>{{ $t('CardSorting.cards') }}</h3>
                   </VCol>
                 </VCardTitle>
 
                 <Draggable
-                  :list="cards"
+                  :list="pool"
                   item-key="title"
-                  class="list-group"
+                  class="list-group drop-zone"
                   group="cards"
+                  @change="onChange"
                 >
                   <template #item="{ element }">
                     <CardSortingCard
                       :element="element"
-                      :options="props.test.testStructure.cardSorting.options"
+                      :options="options"
                     />
                   </template>
                 </Draggable>
@@ -43,9 +49,9 @@
 
             <!-- Categories -->
             <VCol
-              v-for="(category, index) in categories"
-              :key="index"
-              :cols="12 / (categories.length + 1)"
+              v-for="category in categories"
+              :key="category.title"
+              :cols="poolCols"
               class="mb-0 pb-0"
             >
               <VCard class="card-category category">
@@ -53,11 +59,8 @@
                   <VCol class="text-center">
                     <h3>{{ category.title }}</h3>
                     <p
-                      v-if="
-                        category.description &&
-                        props.test.testStructure.cardSorting.options
-                          .category_description
-                      "
+                      v-if="category.description && options.category_description"
+                      class="text-caption"
                     >
                       {{ category.description }}
                     </p>
@@ -65,15 +68,16 @@
                 </VCardTitle>
 
                 <Draggable
-                  :list="localTestAnswer.tasks[category.title]"
+                  :list="categoryLists[category.title]"
                   item-key="title"
-                  class="list-group"
+                  class="list-group drop-zone"
                   group="cards"
+                  @change="onChange"
                 >
                   <template #item="{ element }">
                     <CardSortingCard
                       :element="element"
-                      :options="props.test.testStructure.cardSorting.options"
+                      :options="options"
                     />
                   </template>
                 </Draggable>
@@ -87,55 +91,101 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import Draggable from 'vuedraggable'
-import CardSortingCard from '../components/CardSortingCard.vue'
+import CardSortingCard from './CardSortingCard.vue'
 
-// Props
 const props = defineProps({
   test: {
     type: Object,
-    required: false,
+    required: true,
+  },
+  modelValue: {
+    type: Object,
+    default: () => ({}),
   },
 })
 
-// Variables
-const categories = ref([])
-const cards = ref([])
-const localTestAnswer = ref({
-  tasks: {},
+const emit = defineEmits(['update:modelValue', 'update:pending'])
+
+const UNASSIGNED_KEY = '__unassigned'
+
+// Source data from the study structure
+const cards = computed(
+  () => props.test?.testStructure?.cardSorting?.cards || [],
+)
+const categories = computed(
+  () => props.test?.testStructure?.cardSorting?.categories || [],
+)
+const options = computed(
+  () => props.test?.testStructure?.cardSorting?.options || {},
+)
+
+const totalCards = computed(() => cards.value.length)
+
+// Local drag-and-drop state
+const pool = ref([])
+const categoryLists = reactive({})
+
+const poolCols = computed(() => {
+  const columns = categories.value.length + 1
+  return Math.max(2, Math.floor(12 / columns))
 })
 
-// Computed
-const pendingAllocationCount = computed(() => {
-  return props.test.testStructure.cardSorting.cards.length - cards.value.length
-})
+const assignedCount = computed(() => totalCards.value - pool.value.length)
 
-// Methods
+const buildSorting = () => {
+  const sorting = {}
+  categories.value.forEach((category) => {
+    sorting[category.title] = (categoryLists[category.title] || []).map(
+      (card) => card.title,
+    )
+  })
+  sorting[UNASSIGNED_KEY] = pool.value.map((card) => card.title)
+  return sorting
+}
 
-// Lifecycle Hooks
-onMounted(async () => {
-  const cardSorting = props.test?.testStructure?.cardSorting
-  categories.value = Array.isArray(cardSorting?.categories)
-    ? [...cardSorting.categories]
-    : []
-  cards.value = Array.isArray(cardSorting?.cards) ? [...cardSorting.cards] : []
+const onChange = () => {
+  emit('update:modelValue', buildSorting())
+  emit('update:pending', pool.value.length)
+}
 
-  localTestAnswer.value.tasks = categories.value.reduce((acc, card) => {
-    acc[card.title] = []
-    return acc
-  }, {})
+const initialize = () => {
+  const cardByTitle = new Map(cards.value.map((card) => [card.title, card]))
+  const savedSorting = props.modelValue || {}
+  const hasSaved = Object.keys(savedSorting).length > 0
+
+  categories.value.forEach((category) => {
+    categoryLists[category.title] = []
+  })
+
+  if (hasSaved) {
+    const usedTitles = new Set()
+    categories.value.forEach((category) => {
+      const titles = savedSorting[category.title] || []
+      categoryLists[category.title] = titles
+        .filter((title) => cardByTitle.has(title))
+        .map((title) => {
+          usedTitles.add(title)
+          return cardByTitle.get(title)
+        })
+    })
+    // Any card not restored into a category goes back to the pool
+    pool.value = cards.value.filter((card) => !usedTitles.has(card.title))
+  } else {
+    pool.value = [...cards.value]
+  }
+
+  emit('update:pending', pool.value.length)
+}
+
+onMounted(() => {
+  initialize()
 })
 </script>
 
 <style scoped>
-.cards {
-  border-radius: 20px;
-  padding: 10px;
-  margin: 10px;
-}
-
 .card-category {
   border-radius: 20px;
   padding: 10px;
@@ -144,5 +194,9 @@ onMounted(async () => {
 
 .category {
   background-color: #f5f5f5;
+}
+
+.drop-zone {
+  min-height: 120px;
 }
 </style>
