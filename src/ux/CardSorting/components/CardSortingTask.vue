@@ -20,43 +20,37 @@
             class="mb-6"
           />
 
-          <div
-            v-if="allowCreateCategories"
-            class="d-flex justify-end mb-4"
-          >
-            <v-btn
-              color="primary"
-              variant="tonal"
-              rounded="pill"
-              prepend-icon="mdi-folder-plus-outline"
-              @click="openCreateDialog"
-            >
-              {{ $t('CardSorting.createCategory') }}
-            </v-btn>
-          </div>
-
-          <p
-            v-if="allowCreateCategories && localCategories.length === 0"
-            class="text-body-2 text-medium-emphasis text-center mb-4"
-          >
-            {{ $t('CardSorting.createCategoryHint') }}
-          </p>
-
-          <VRow class="fill-height" justify="center">
+          <div class="sorting-board">
             <!-- Unassigned cards pool -->
-            <VCol :cols="poolCols" class="mb-0 pb-0">
-              <VCard class="card-category">
-                <VCardTitle class="d-flex justify-center align-center">
-                  <VCol class="text-center">
-                    <h3>{{ $t('CardSorting.cards') }}</h3>
-                  </VCol>
-                </VCardTitle>
+            <div class="sorting-board__item">
+              <div class="sorting-column sorting-column--pool">
+                <div class="sorting-column__header">
+                  <div class="sorting-column__heading">
+                    <v-icon
+                      size="20"
+                      color="primary"
+                      class="sorting-column__heading-icon"
+                    >
+                      mdi-cards-outline
+                    </v-icon>
+                    <div class="sorting-column__title-wrap">
+                      <h3 class="sorting-column__title">
+                        {{ $t('CardSorting.unsortedCards') }}
+                      </h3>
+                    </div>
+                    <span class="sorting-column__badge">
+                      {{ pool.length }}
+                    </span>
+                  </div>
+                </div>
 
                 <Draggable
                   :list="pool"
                   item-key="title"
-                  class="list-group drop-zone"
+                  class="sorting-column__list"
                   group="cards"
+                  ghost-class="sorting-card-ghost"
+                  drag-class="sorting-card-drag"
                   @change="onChange"
                 >
                   <template #item="{ element }">
@@ -66,79 +60,144 @@
                     />
                   </template>
                 </Draggable>
-              </VCard>
-            </VCol>
+
+                <div
+                  v-if="pool.length === 0"
+                  class="sorting-column__empty"
+                >
+                  <v-icon size="28" class="sorting-column__empty-icon">
+                    mdi-check-circle-outline
+                  </v-icon>
+                  <p class="sorting-column__empty-text">
+                    {{ $t('CardSorting.allCardsSorted') }}
+                  </p>
+                </div>
+              </div>
+            </div>
 
             <!-- Categories -->
-            <VCol
+            <div
               v-for="category in localCategories"
               :key="category.id"
-              :cols="poolCols"
-              class="mb-0 pb-0"
+              class="sorting-board__item"
             >
-              <VCard class="card-category category">
-                <VCardTitle class="d-flex justify-center align-center">
-                  <VCol class="text-center">
-                    <div class="d-flex align-center justify-center ga-1">
-                      <h3 class="mb-0">{{ category.title }}</h3>
-                      <template v-if="allowCreateCategories && !category.isPredefined">
-                        <v-btn
-                          icon
-                          variant="text"
-                          size="x-small"
-                          color="primary"
-                          @click="openRenameDialog(category)"
-                        >
-                          <v-icon size="18">mdi-pencil</v-icon>
-                        </v-btn>
-                        <v-btn
-                          icon
-                          variant="text"
-                          size="x-small"
-                          color="error"
-                          @click="removeCategory(category)"
-                        >
-                          <v-icon size="18">mdi-delete-outline</v-icon>
-                        </v-btn>
-                      </template>
-                    </div>
-                    <p
-                      v-if="
-                        category.description && options.category_description
-                      "
-                      class="text-caption"
+              <div class="sorting-column">
+                <div class="sorting-column__header sorting-column__header--category">
+                  <div class="sorting-column__heading">
+                    <v-icon
+                      size="20"
+                      color="primary"
+                      class="sorting-column__heading-icon"
                     >
-                      {{ category.description }}
-                    </p>
+                      mdi-folder-outline
+                    </v-icon>
+                    <div class="sorting-column__title-wrap">
+                      <h3 class="sorting-column__title">
+                        {{ category.title }}
+                      </h3>
+                      <p
+                        v-if="
+                          category.description && options.category_description
+                        "
+                        class="sorting-column__description"
+                      >
+                        {{ category.description }}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="sorting-column__meta">
+                    <span class="sorting-column__count">
+                      {{ categoryCardCount(category.title) }}
+                      {{ $t('CardSorting.cards_low') }}
+                    </span>
                     <v-chip
                       v-if="allowCreateCategories && !category.isPredefined"
                       size="x-small"
                       color="primary"
                       variant="tonal"
-                      class="mt-1"
                     >
                       {{ $t('CardSorting.participantCategory') }}
                     </v-chip>
-                  </VCol>
-                </VCardTitle>
+                    <div
+                      v-if="allowCreateCategories && !category.isPredefined"
+                      class="sorting-column__actions"
+                    >
+                      <v-btn
+                        icon
+                        variant="text"
+                        size="x-small"
+                        color="primary"
+                        @click="openRenameDialog(category)"
+                      >
+                        <v-icon size="18">mdi-pencil</v-icon>
+                      </v-btn>
+                      <v-btn
+                        icon
+                        variant="text"
+                        size="x-small"
+                        color="error"
+                        @click="removeCategory(category)"
+                      >
+                        <v-icon size="18">mdi-delete-outline</v-icon>
+                      </v-btn>
+                    </div>
+                  </div>
+                </div>
 
                 <Draggable
                   :list="categoryLists[category.title]"
                   item-key="title"
-                  class="list-group drop-zone"
+                  class="sorting-column__list sorting-column__list--category"
                   group="cards"
+                  ghost-class="sorting-card-ghost"
+                  drag-class="sorting-card-drag"
                   @change="onChange"
                 >
                   <template #item="{ element }">
                     <CardSortingCard
                       :element="element"
                       :options="options"
+                      compact
                     />
                   </template>
                 </Draggable>
-              </VCard>
-            </VCol>
-          </VRow>
+
+                <div class="sorting-column__drop-hint">
+                  <v-icon size="22" class="sorting-column__drop-icon">
+                    mdi-inbox-arrow-down-outline
+                  </v-icon>
+                  <p class="sorting-column__drop-text">
+                    {{ $t('CardSorting.dropCardsHere') }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- New category placeholder -->
+            <div
+              v-if="allowCreateCategories"
+              class="sorting-board__item"
+            >
+              <button
+                type="button"
+                class="new-category-card"
+                @click="openCreateDialog"
+              >
+                <span class="new-category-card__icon-wrap">
+                  <v-icon size="28" color="primary">
+                    mdi-folder-plus-outline
+                  </v-icon>
+                </span>
+                <span class="new-category-card__title">
+                  {{ $t('CardSorting.newCategory') }}
+                </span>
+                <span class="new-category-card__subtitle">
+                  {{ $t('CardSorting.newCategoryHint') }}
+                </span>
+              </button>
+            </div>
+          </div>
         </v-container>
       </template>
     </ShowInfo>
@@ -228,12 +287,9 @@ const categoryNameInput = ref('')
 const categoryNameError = ref('')
 const editingCategory = ref(null)
 
-const poolCols = computed(() => {
-  const columns = localCategories.value.length + 1
-  return Math.max(2, Math.min(4, Math.floor(12 / Math.max(columns, 1))))
-})
-
 const assignedCount = computed(() => totalCards.value - pool.value.length)
+
+const categoryCardCount = (title) => (categoryLists[title] || []).length
 
 const buildSorting = () => {
   const sorting = {}
@@ -400,17 +456,237 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.card-category {
-  border-radius: 20px;
-  padding: 10px;
-  margin: 10px;
+.sorting-board {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: 16px;
 }
 
-.category {
-  background-color: #f5f5f5;
+.sorting-board__item {
+  flex: 1 1 240px;
+  max-width: 300px;
+  min-width: 0;
 }
 
-.drop-zone {
+@media (max-width: 599px) {
+  .sorting-board__item {
+    flex-basis: 100%;
+    max-width: 100%;
+  }
+}
+
+.sorting-column {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 280px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid rgba(0, 33, 63, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0, 33, 63, 0.05);
+}
+
+.sorting-column--pool {
+  background: #f8fafc;
+}
+
+.sorting-column__header {
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid rgba(0, 33, 63, 0.08);
+}
+
+.sorting-column__header--category {
+  background: rgba(0, 33, 63, 0.04);
+}
+
+.sorting-column__heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+  width: 100%;
+}
+
+.sorting-column__heading-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.sorting-column__title-wrap {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+.sorting-column__title {
+  margin: 0;
+  color: #00213f;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sorting-column__description {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sorting-column__badge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 8px;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #00213f;
+  border-radius: 999px;
+}
+
+.sorting-column__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.sorting-column__actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.sorting-column__count {
+  color: #6b7280;
+  font-size: 0.75rem;
+}
+
+.sorting-column__list {
+  flex: 1;
   min-height: 120px;
+  padding: 12px;
+}
+
+.sorting-column__list--category {
+  padding-bottom: 8px;
+}
+
+.sorting-column__empty,
+.sorting-column__drop-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0 12px 14px;
+  padding: 20px 12px;
+  text-align: center;
+  border: 2px dashed rgba(0, 33, 63, 0.18);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.sorting-column__empty-icon,
+.sorting-column__drop-icon {
+  color: rgba(0, 33, 63, 0.35);
+}
+
+.sorting-column__empty-text,
+.sorting-column__drop-text {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.new-category-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  margin: 0;
+  padding: 24px 20px;
+  cursor: pointer;
+  font-family: inherit;
+  background: rgba(0, 33, 63, 0.02);
+  border: 2px dashed rgba(0, 33, 63, 0.22);
+  border-radius: 16px;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.new-category-card:hover {
+  background: rgba(0, 33, 63, 0.05);
+  border-color: rgba(0, 33, 63, 0.4);
+  box-shadow: 0 4px 14px rgba(0, 33, 63, 0.08);
+}
+
+.new-category-card:focus-visible {
+  outline: 2px solid #00213f;
+  outline-offset: 2px;
+}
+
+.new-category-card__icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 4px;
+  background: rgba(0, 33, 63, 0.08);
+  border-radius: 14px;
+}
+
+.new-category-card__title {
+  color: #00213f;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.new-category-card__subtitle {
+  max-width: 160px;
+  color: #6b7280;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  text-align: center;
+}
+</style>
+
+<style>
+.sorting-card-ghost {
+  opacity: 0.45;
+}
+
+.sorting-card-drag {
+  opacity: 0.95;
+  transform: rotate(1deg);
+  box-shadow: 0 8px 20px rgba(0, 33, 63, 0.16) !important;
 }
 </style>
