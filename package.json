@@ -44,7 +44,7 @@
     "firebase-functions": "^6.6.0",
     "jspdf": "^3.0.3",
     "jspdf-autotable": "^5.0.7",
-    "livekit-client": "^2.20.0",
+    "livekit-client": "^2.20.1",
     "lodash": "^4.18.1",
     "nanoid": "^5.1.9",
     "process": "^0.11.10",
@@ -61,7 +61,7 @@
     "vuedraggable": "^4.1.0",
     "vuetify": "^3.12.9",
     "vuex": "^4.0.2",
-    "wavesurfer.js": "^7.12.8"
+    "wavesurfer.js": "^7.12.10"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
