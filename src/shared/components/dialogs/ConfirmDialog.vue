@@ -19,7 +19,10 @@
           <h3 class="text-h5 font-weight-bold text-grey-darken-4 mb-1">
             {{ title }}
           </h3>
-          <p v-if="subtitle" class="text-subtitle-2 text-grey-darken-1">
+          <p
+            v-if="subtitle"
+            class="text-subtitle-2 text-grey-darken-1 dialog-subtitle"
+          >
             {{ subtitle }}
           </p>
         </div>
@@ -166,5 +169,11 @@ const handleThird = () => {
   width: 48px;
   height: 48px;
   min-width: 48px;
+}
+
+.dialog-subtitle {
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 </style>

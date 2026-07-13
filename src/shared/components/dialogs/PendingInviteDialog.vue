@@ -5,7 +5,8 @@
     :subtitle="`${$t('invite.pendingSubtitle')}: ${invite?.studyTitle ?? ''}`"
     :message="$t('invite.pendingDescription')"
     :confirm-text="$t('invite.accept')"
-    :cancel-text="$t('invite.notNow')"
+    :cancel-text="$t('acceptInvitation.reject')"
+    :third-text="$t('invite.notNow')"
     confirm-color="primary"
     confirm-icon="mdi-check"
     icon="mdi-email-outline"
@@ -14,7 +15,8 @@
     :loading="loading"
     @update:show="show = $event"
     @confirm="acceptInvite"
-    @cancel="dismiss"
+    @cancel="reject"
+    @third="dismiss"
   />
 </template>
 <script setup>
@@ -72,6 +74,21 @@ const acceptInvite = async () => {
     })
   } finally {
     loading.value = false
+  }
+}
+
+const reject = async () => {
+  try {
+    await store.dispatch('markNotificationAsRead', {
+      notification,
+      user: user.value,
+    })
+
+    // remove possible invite token from localStorage
+    localStorage.removeItem('pendingInviteToken')
+  } finally {
+    dialogHandled.value = true
+    show.value = false
   }
 }
 
