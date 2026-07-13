@@ -82,7 +82,7 @@
     "@vue/vue3-jest": "^27.0.0",
     "babel-plugin-transform-require-context": "^0.1.1",
     "cypress": "^15.18.0",
-    "eslint": "^9.39.4",
+    "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-vue": "^10.9.2",
     "eslint-plugin-vuetify": "^2.7.2",
