@@ -8,6 +8,7 @@ export default class InviteUtils {
     studyTitle,
     isPublic,
     accessLevel,
+    requiredLogin,
   ) {
     const token = crypto.randomBytes(32).toString('hex')
 
@@ -24,6 +25,7 @@ export default class InviteUtils {
         studyTitle: studyTitle || null,
         isPublic: isPublic || false,
         accessLevel: accessLevel || null,
+        requiredLogin: requiredLogin || false,
       })
 
     return `${process.env.SITE_URL}/invite?token=${encodeURIComponent(token)}`

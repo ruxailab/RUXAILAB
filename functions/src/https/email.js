@@ -32,6 +32,7 @@ export const sendEmail = functions.onCall({
         content.data.testTitle,
         content.data.isPublic,
         content.data.accessLevel,
+        content.data.requiredLogin,
       )
 
       htmlTemplate = fs.readFileSync(templatePath, 'utf-8')

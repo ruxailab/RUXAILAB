@@ -107,6 +107,8 @@
     <GenerateInviteLinkDialog
       v-model:show="showLinkInviteDialog"
       :study-id="test?.id"
+      :study-title="test?.testTitle"
+      :requires-login="true"
     />
 
     <!-- Confirmation Dialog -->
@@ -380,6 +382,7 @@ const handleSendEmail = async (guest, customMessage = null) => {
       studyId: test.value.id,
       isPublic: false, // Assuming all invites are private for now
       accessLevel: guest.accessLevel,
+      requiredLogin: true,
     },
   })
 }

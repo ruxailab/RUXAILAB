@@ -44,6 +44,30 @@ export const resolveInvite = functions.onCall({
       )
     }
 
+    if (!invite.isPublic && invite.requiredLogin) {
+      const userSnap = await admin
+        .firestore()
+        .collection('users')
+        .doc(uid)
+        .get()
+
+      if (!userSnap.exists) {
+        throw new functions.https.HttpsError('not-found', 'User not found')
+      }
+
+      const user = userSnap.data()
+
+      const inviteEmail = invite.email?.toLowerCase().trim()
+      const userEmail = user.email?.toLowerCase().trim()
+
+      if (!userEmail || inviteEmail !== userEmail) {
+        throw new functions.https.HttpsError(
+          'permission-denied',
+          'This invitation is not assigned to this user',
+        )
+      }
+    }
+
     /**
      * Atomic accept
      */
@@ -60,6 +84,7 @@ export const resolveInvite = functions.onCall({
         studyTitle: invite.studyTitle,
         email: invite.email ?? null,
         isPublic: !!invite.isPublic,
+        requiredLogin: !!invite.requiredLogin,
       },
     }
   },
@@ -117,6 +142,7 @@ export const validateInvite = functions.onCall({
           studyTitle: dataInvite.studyTitle,
           email: dataInvite.email ?? null,
           isPublic: !!dataInvite.isPublic,
+          requiredLogin: !!dataInvite.requiredLogin,
         },
       }
     } catch (err) {
@@ -129,7 +155,7 @@ export const generateInvitationLink = functions.onCall({
   handler: async (data) => {
     try {
       const content = data.data || data
-      const { studyId, accessLevel, studyTitle } = content
+      const { studyId, accessLevel, studyTitle, requiredLogin } = content
 
       if (!studyId || !accessLevel) {
         throw new functions.https.HttpsError(
@@ -144,6 +170,7 @@ export const generateInvitationLink = functions.onCall({
         studyTitle,
         true, // isPublic
         accessLevel,
+        requiredLogin,
       )
 
       return { inviteLink }

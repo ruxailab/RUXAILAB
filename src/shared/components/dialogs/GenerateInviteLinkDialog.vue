@@ -80,6 +80,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  studyTitle: {
+    type: String,
+    required: true,
+  },
 })
 
 const emit = defineEmits(['update:show', 'generated'])
@@ -94,7 +98,9 @@ const generateLink = async () => {
 
     const result = await InviteController.generateInvitationLink({
       studyId: props.studyId,
+      studyTitle: props.studyTitle,
       accessLevel: selectedRole.value,
+      requiredLogin: props.requiresLogin,
     })
 
     inviteLink.value = result.inviteLink
