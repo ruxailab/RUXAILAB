@@ -494,10 +494,19 @@ const goToNotificationRedirect = async (notification) => {
     const accepted = await showAcceptDialog()
     if (!accepted) {
       await markAsRead(notification)
+
+      // remove possible invite token from localStorage
+      localStorage.removeItem('pendingInviteToken')
       return
     }
 
     try {
+      try {
+        await InviteController.resolveInvite(token.value, user.value.id)
+      } catch {
+        // Ignore error in case invitation comes from old system
+      }
+
       const study = await new StudyController().getStudy({
         id: notification.testId,
       })

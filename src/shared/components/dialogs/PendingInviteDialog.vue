@@ -115,6 +115,7 @@ const sendInviteNotification = async () => {
   )
 
   if (alreadyExists) {
+    localStorage.removeItem('pendingInviteToken')
     return
   }
 
@@ -136,6 +137,8 @@ const sendInviteNotification = async () => {
     userId: user.value.id,
     notification,
   })
+
+  localStorage.removeItem('pendingInviteToken')
 }
 
 /**

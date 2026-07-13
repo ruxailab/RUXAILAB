@@ -30,6 +30,23 @@
         </p>
       </v-card-text>
       <v-card-actions class="px-6 pb-6 pt-0 d-flex justify-end ga-3">
+        <!-- Optional third action -->
+        <v-btn
+          v-if="thirdText"
+          variant="text"
+          color="primary"
+          :disabled="loading"
+          class="text-none rounded-lg px-6"
+          height="44"
+          @click="handleThird"
+        >
+          <v-icon v-if="thirdIcon" start size="16">
+            {{ thirdIcon }}
+          </v-icon>
+
+          {{ thirdText }}
+        </v-btn>
+        <!----->
         <v-btn
           variant="outlined"
           color="grey-darken-2"
@@ -58,9 +75,6 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-const { t } = useI18n()
 
 const props = defineProps({
   show: {
@@ -84,6 +98,14 @@ const props = defineProps({
     default: '',
   },
   cancelText: {
+    type: String,
+    default: '',
+  },
+  thirdText: {
+    type: String,
+    default: '',
+  },
+  thirdIcon: {
     type: String,
     default: '',
   },
@@ -114,7 +136,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update:show', 'confirm', 'cancel'])
+const emit = defineEmits(['update:show', 'confirm', 'cancel', 'third'])
 
 const iconBackgroundClass = computed(() => {
   const classes = {
@@ -132,6 +154,10 @@ const handleConfirm = () => {
 const handleCancel = () => {
   emit('update:show', false)
   emit('cancel')
+}
+
+const handleThird = () => {
+  emit('third')
 }
 </script>
 
