@@ -1,79 +1,87 @@
 <template>
-  <v-card flat rounded="xl" class="pa-4">
-    <div class="d-flex flex-wrap align-center justify-space-between mb-3 ga-2">
-      <div>
-        <h3 class="text-h6 mb-1">{{ $t('CardSorting.similarityMatrix') }}</h3>
-        <p class="text-caption text-medium-emphasis mb-0">
-          {{ $t('CardSorting.similarityMatrixHint') }}
+  <v-row class="mb-8">
+    <v-col cols="12">
+      <v-card class="pa-8 elevation-4 rounded-xl chart-card">
+        <div class="d-flex flex-wrap justify-space-between align-center mb-6 ga-2">
+          <div>
+            <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
+              {{ $t('CardSorting.similarityMatrix') }}
+            </h3>
+            <p class="text-body-1 text-medium-emphasis mb-0">
+              {{ $t('CardSorting.similarityMatrixHint') }}
+            </p>
+          </div>
+          <v-btn-toggle
+            v-model="displayMode"
+            mandatory
+            density="compact"
+            color="primary"
+            variant="outlined"
+            divided
+          >
+            <v-btn value="absolute" size="small">
+              {{ $t('CardSorting.absoluteValues') }}
+            </v-btn>
+            <v-btn value="percentage" size="small">
+              {{ $t('CardSorting.percentageValues') }}
+            </v-btn>
+          </v-btn-toggle>
+        </div>
+
+        <div v-if="!hasData" class="text-center text-medium-emphasis py-10">
+          <v-icon size="48" color="grey-lighten-1">mdi-grid-off</v-icon>
+          <div class="text-body-2 mt-2">{{ $t('CardSorting.noAnswers') }}</div>
+        </div>
+
+        <div v-else class="matrix-scroll">
+          <v-table density="comfortable" class="matrix-table">
+            <thead>
+              <tr>
+                <th class="text-left sticky-corner">
+                  {{ $t('CardSorting.card') }}
+                </th>
+                <th
+                  v-for="card in cardTitles"
+                  :key="`h-${card}`"
+                  class="text-center header-cell"
+                >
+                  <span :title="card">{{ truncate(card) }}</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(rowCard, i) in cardTitles" :key="`r-${rowCard}`">
+                <td class="font-weight-medium sticky-label" :title="rowCard">
+                  {{ rowCard }}
+                </td>
+                <td
+                  v-for="(colCard, j) in cardTitles"
+                  :key="`c-${rowCard}-${colCard}`"
+                  class="text-center"
+                >
+                  <div
+                    class="matrix-cell"
+                    :class="{ 'matrix-cell--diagonal': i === j }"
+                    :style="cellStyle(absolute[i][j], percentage[i][j], i === j)"
+                  >
+                    {{ formatCell(absolute[i][j], percentage[i][j], i === j) }}
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </v-table>
+        </div>
+
+        <p v-if="hasData" class="text-caption text-medium-emphasis mt-3 mb-0">
+          {{
+            $t('CardSorting.similarityMatrixFooter', {
+              total: totalParticipants,
+            })
+          }}
         </p>
-      </div>
-      <v-btn-toggle
-        v-model="displayMode"
-        mandatory
-        density="compact"
-        color="primary"
-        variant="outlined"
-        divided
-      >
-        <v-btn value="absolute" size="small">
-          {{ $t('CardSorting.absoluteValues') }}
-        </v-btn>
-        <v-btn value="percentage" size="small">
-          {{ $t('CardSorting.percentageValues') }}
-        </v-btn>
-      </v-btn-toggle>
-    </div>
-
-    <div v-if="!hasData" class="text-center text-medium-emphasis py-10">
-      <v-icon size="48" color="grey-lighten-1">mdi-grid-off</v-icon>
-      <div class="text-body-2 mt-2">{{ $t('CardSorting.noAnswers') }}</div>
-    </div>
-
-    <div v-else class="matrix-scroll">
-      <v-table density="comfortable" class="matrix-table">
-        <thead>
-          <tr>
-            <th class="text-left sticky-corner">{{ $t('CardSorting.card') }}</th>
-            <th
-              v-for="card in cardTitles"
-              :key="`h-${card}`"
-              class="text-center header-cell"
-            >
-              <span :title="card">{{ truncate(card) }}</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(rowCard, i) in cardTitles" :key="`r-${rowCard}`">
-            <td class="font-weight-medium sticky-label" :title="rowCard">
-              {{ rowCard }}
-            </td>
-            <td
-              v-for="(colCard, j) in cardTitles"
-              :key="`c-${rowCard}-${colCard}`"
-              class="text-center"
-            >
-              <div
-                class="matrix-cell"
-                :class="{ 'matrix-cell--diagonal': i === j }"
-                :style="cellStyle(absolute[i][j], percentage[i][j], i === j)"
-              >
-                {{ formatCell(absolute[i][j], percentage[i][j], i === j) }}
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </v-table>
-    </div>
-
-    <p v-if="hasData" class="text-caption text-medium-emphasis mt-3 mb-0">
-      {{
-        $t('CardSorting.similarityMatrixFooter', {
-          total: totalParticipants,
-        })
-      }}
-    </p>
-  </v-card>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script setup>

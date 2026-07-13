@@ -43,23 +43,9 @@
       @refresh="onRefreshTimeline"
     />
 
-    <v-row>
-      <v-col cols="12">
-        <CardSortingMatrix :test="test" :answers="answers" />
-      </v-col>
-    </v-row>
-
-    <v-row>
-      <v-col cols="12">
-        <CardSortingSimilarityMatrix :test="test" :answers="answers" />
-      </v-col>
-    </v-row>
-
-    <v-row>
-      <v-col cols="12">
-        <CardSortingDendrogram :test="test" :answers="answers" />
-      </v-col>
-    </v-row>
+    <CardSortingMatrix :test="test" :answers="answers" />
+    <CardSortingSimilarityMatrix :test="test" :answers="answers" />
+    <CardSortingDendrogram :test="test" :answers="answers" />
   </div>
 </template>
 

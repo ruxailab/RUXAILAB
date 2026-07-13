@@ -1323,6 +1323,14 @@
         "camera": "Camera",
         "audio": "Audio"
       }
+    },
+    "taskPreview": {
+      "screenRecord": "Screen Record",
+      "screenRecordDesc": "Captures clicks, scrolling, and interactions to analyze user behavior.",
+      "camera": "Camera",
+      "cameraDesc": "Records facial expressions and reactions to understand user emotions.",
+      "audioRecord": "Audio Record",
+      "audioRecordDesc": "Captures verbal feedback and think-aloud protocols during the task."
     }
   },
   "UserTestView": {
