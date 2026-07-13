@@ -2234,6 +2234,8 @@
       "waitingTitle": "Waiting to start",
       "waitingFacilitator": "Start the session to begin guiding participants through your topics.",
       "waitingParticipant": "The facilitator will start the session shortly.",
+      "lobbyStartHint": "When you start, participants will join the discussion automatically.",
+      "inTheRoom": "{count} in the room",
       "endedTitle": "Session ended",
       "endedSubtitle": "Responses have been saved.",
       "sessionSaved": "Session responses saved.",

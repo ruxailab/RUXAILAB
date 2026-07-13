@@ -2136,6 +2136,8 @@
       "waitingTitle": "Esperando para comenzar",
       "waitingFacilitator": "Inicia la sesión para comenzar a guiar a los participantes por tus temas.",
       "waitingParticipant": "El facilitador iniciará la sesión en breve.",
+      "lobbyStartHint": "Cuando inicies, los participantes se unirán a la discusión automáticamente.",
+      "inTheRoom": "{count} en la sala",
       "endedTitle": "Sesión finalizada",
       "endedSubtitle": "Las respuestas se han guardado.",
       "sessionSaved": "Respuestas de la sesión guardadas.",
