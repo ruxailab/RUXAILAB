@@ -112,7 +112,9 @@ const navigator = computed(() => {
     study: test.value,
     user: user.value,
     type: 'userTest/moderated',
-    previewPath: `/testview/${test.value.id}/${user.value.id}`,
+    previewPath: user.value?.id
+      ? `/testview/${test.value.id}/${user.value.id}`
+      : null,
   })
 })
 
