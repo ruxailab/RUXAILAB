@@ -136,7 +136,7 @@ const createPathGenerators = (testId) => ({
   config: () => `/accessibility/manual/config/${testId}`,
   edit: () => `/accessibility/manual/edit/${testId}`,
   preview: () => `/accessibility/manual/preview/${testId}`,
-  result: () => `/accessibility/manual/result/${testId}`,
+  result: () => `/accessibility/manual/results/${testId}`,
   cooperative: () => `/accessibility/manual/cooperative/${testId}`,
 })
 

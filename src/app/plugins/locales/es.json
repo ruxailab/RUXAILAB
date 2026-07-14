@@ -447,11 +447,11 @@
     "accessLevel": "Nivel de Acceso",
     "actions": "Acciones",
     "drawer": {
-      "Manager": "Gerente",
+      "Dashboard": "Panel",
       "Test": "Prueba",
       "Preview": "Vista previa",
-      "Reports": "Informes",
-      "Answers": "Respuestas",
+      "Progress": "Progreso",
+      "Results": "Resultados",
       "Analytics": "Análisis",
       "Cooperators": "Personal",
       "Template": "Plantilla",
@@ -2061,8 +2061,24 @@
   "focusGroup": {
     "manager": {
       "title": "Grupo Focal",
-      "underConstruction": "El módulo de Grupo Focal está en desarrollo activo. La configuración de sesiones, la sala de discusión en vivo y los informes estarán disponibles pronto.",
-      "description": "Por ahora puedes gestionar colaboradores y la configuración del estudio. Usa el menú de navegación para invitar participantes y configurar tu estudio."
+      "underConstruction": "El módulo de Grupo Focal está en desarrollo activo. La sala de discusión en vivo y los informes estarán disponibles pronto.",
+      "description": "Puedes crear tu guía de discusión, gestionar colaboradores y configurar el estudio desde el menú de navegación."
+    },
+    "edit": {
+      "title": "Guía de Discusión",
+      "subtitle": "Define los temas y preguntas que el facilitador usará para guiar al grupo.",
+      "save": "Guardar guía",
+      "saved": "Guía de discusión guardada",
+      "noTopics": "Aún no hay temas. Agrega tu primer tema de discusión para comenzar.",
+      "addTopic": "Agregar tema",
+      "removeTopic": "Eliminar tema",
+      "topicTitle": "Tema",
+      "moveUp": "Mover arriba",
+      "moveDown": "Mover abajo",
+      "prompt": "Pregunta",
+      "addPrompt": "Agregar pregunta",
+      "removePrompt": "Eliminar pregunta",
+      "duration": "Minutos"
     }
   },
   "studyCreation": {

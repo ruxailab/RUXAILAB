@@ -11,21 +11,24 @@ import ParticipantsView from '@/shared/views/ParticipantsView.vue'
 
 export default [
   {
-    path: '/userTest/unmoderated/manager/:id/:token?',
+    path: '/userTest/unmoderated/dashboard/:id/:token?',
+    alias: '/userTest/unmoderated/manager/:id/:token?',
     name: 'UserUnmoderatedManagerView',
     meta: { authorize: [0, 1] },
     component: ManagerUnmoderatedView,
     props: true,
     children: [
       {
-        path: '/userTest/unmoderated/report/:id/:token?',
+        path: '/userTest/unmoderated/progress/:id/:token?',
+        alias: '/userTest/unmoderated/report/:id/:token?',
         name: 'UserUnmoderatedReportView',
         props: true,
         meta: { authorize: [0, 1] },
         component: ReportView,
       },
       {
-        path: '/userTest/unmoderated/answer/:id/:token?',
+        path: '/userTest/unmoderated/results/:id/:token?',
+        alias: '/userTest/unmoderated/answer/:id/:token?',
         name: 'UserUnmoderatedAnswersView',
         props: true,
         meta: { authorize: [0, 1] },
@@ -69,21 +72,24 @@ export default [
     ],
   },
   {
-    path: '/userTest/moderated/manager/:id/:token?',
+    path: '/userTest/moderated/dashboard/:id/:token?',
+    alias: '/userTest/moderated/manager/:id/:token?',
     name: 'UserModeratedManagerView',
     meta: { authorize: [0, 1] },
     component: ManagerMonderatedView,
     props: true,
     children: [
       {
-        path: '/userTest/moderated/report/:id/:token?',
+        path: '/userTest/moderated/progress/:id/:token?',
+        alias: '/userTest/moderated/report/:id/:token?',
         name: 'UserModeratedReportView',
         props: true,
         meta: { authorize: [0, 1] },
         component: ReportView,
       },
       {
-        path: '/userTest/moderated/answer/:id/:token?',
+        path: '/userTest/moderated/results/:id/:token?',
+        alias: '/userTest/moderated/answer/:id/:token?',
         name: 'UserModeratedAnswersView',
         props: true,
         meta: { authorize: [0, 1] },

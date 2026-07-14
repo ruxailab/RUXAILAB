@@ -8,7 +8,11 @@
 
       <!-- View -->
       <v-col class="background pa-0 ma-0">
-        <div v-if="$route.path.includes('manager')">
+        <div
+          v-if="
+            $route.path.includes('dashboard') || $route.path.includes('manager')
+          "
+        >
           <slot>
             <div>
               <ManagerBanner :title="test.testTitle" />

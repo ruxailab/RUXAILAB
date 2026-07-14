@@ -12,14 +12,16 @@ import ParticipantsView from '@/shared/views/ParticipantsView.vue'
 
 export default [
   {
-    path: '/heuristic/manager/:id/:token?',
+    path: '/heuristic/dashboard/:id/:token?',
+    alias: '/heuristic/manager/:id/:token?',
     name: 'HeuristicManagerView',
     meta: { authorize: [0, 1] },
     component: ManagerView,
     props: true,
     children: [
       {
-        path: '/heuristic/report/:id/:token?',
+        path: '/heuristic/progress/:id/:token?',
+        alias: '/heuristic/report/:id/:token?',
         name: 'HeuristicReportView',
         props: true,
         meta: { authorize: [0, 1] },
@@ -33,7 +35,8 @@ export default [
         component: FinalReportView,
       },
       {
-        path: '/heuristic/answer/:id/:token?',
+        path: '/heuristic/results/:id/:token?',
+        alias: '/heuristic/answer/:id/:token?',
         name: 'HeuristicAnswerView',
         props: true,
         meta: { authorize: [0, 1] },
