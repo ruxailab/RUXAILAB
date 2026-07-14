@@ -179,7 +179,7 @@ Then get the url, go to the .env file and add the following sentence:
 VUE_APP_FIREBASE_PYTHON_FUNCTION = 'url'
 ```
 
-If you want to deply the fuction, change your account from spark to blaze, run:
+If you want to deploy the function, change your account from spark to blaze, run:
 
 ```bash
    firebase deploy --only functions
