@@ -93,9 +93,7 @@ export function getAcceptedInvitationDestination({ study, user }) {
   const access = resolveStudyAccess(study, user)
   const studyType = normalizeStudyType(study?.testType)
   const answersByRole =
-    (studyType === STUDY_TYPES.USER && access.role === STUDY_ROLE.USER) ||
-    (studyType === STUDY_TYPES.HEURISTIC &&
-      access.role === STUDY_ROLE.EVALUATOR)
+    studyType === STUDY_TYPES.USER && access.role === STUDY_ROLE.USER
 
   if (answersByRole) {
     const userId = user?.id || user?.uid

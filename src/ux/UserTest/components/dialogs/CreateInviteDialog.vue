@@ -347,6 +347,7 @@ import EmailController from '@/shared/controllers/EmailController'
 import UIDGenerator from 'uid-generator'
 import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import {
   useCooperatorUtils,
   normalizeCooperatorInviteEntry,
@@ -355,6 +356,7 @@ import { showError, showSuccess } from '@/shared/utils/toast'
 import { useI18n } from 'vue-i18n'
 import { getAssignableRoleOptions } from '@/shared/utils/studyAccessPolicy'
 import { manageStudyMembership } from '@/shared/services/studyMembershipService'
+import { getAcceptedInvitationDestination } from '@/shared/utils/studyNavigation'
 
 const { t } = useI18n()
 
@@ -368,6 +370,7 @@ const emit = defineEmits(['update:dialog'])
 
 // Store
 const store = useStore()
+const router = useRouter()
 const uidgen = new UIDGenerator()
 
 // Composables
@@ -603,7 +606,22 @@ const notifyCooperator = async (guest) => {
 
   // For registered users with userDocId
   if (guest.userDocId) {
-    const path = '/testview'
+    const invitationStudy = {
+      ...test.value,
+      cooperators: [
+        ...(test.value.cooperators || []).filter(
+          (cooperator) => cooperator.userDocId !== guest.userDocId,
+        ),
+        { ...guest, accepted: true },
+      ],
+    }
+    const destination = getAcceptedInvitationDestination({
+      study: invitationStudy,
+      user: { id: guest.userDocId },
+    })
+    const path = destination
+      ? router.resolve(destination).href
+      : `/testview/${test.value.id}/${guest.userDocId}`
     try {
       await store.dispatch('addNotification', {
         userId: guest.userDocId,
@@ -611,7 +629,7 @@ const notifyCooperator = async (guest) => {
           accessLevel: guest.accessLevel || 2,
           title: `You have been invited to test ${test.value.testTitle}!`,
           description: inviteMessage.value,
-          redirectsTo: `${path}/${test.value.id}/${guest.userDocId}`,
+          redirectsTo: path,
           author: test.value.testAdmin?.email,
           type: 'Collaboration',
           read: false,
@@ -644,6 +662,7 @@ const notifyCooperator = async (guest) => {
         scheduledAt: guest.testDate,
         accessLevel: guest.accessLevel,
         token: guest.token || null,
+        invitationLink: `${globalThis.location.origin}/testview/${test.value.id}/${guest.token || guest.userDocId}`,
       },
     })
     showSuccess('Email invitation sent')

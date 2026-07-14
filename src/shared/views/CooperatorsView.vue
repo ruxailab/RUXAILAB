@@ -141,6 +141,7 @@ import {
   getSupportedRoleOptions,
 } from '@/shared/utils/studyAccessPolicy'
 import { manageStudyMembership } from '@/shared/services/studyMembershipService'
+import { getAcceptedInvitationDestination } from '@/shared/utils/studyNavigation'
 
 const uidgen = new UIDGenerator()
 const router = useRouter()
@@ -350,6 +351,7 @@ const handleSendEmail = async (guest, customMessage = null) => {
   const emailController = new EmailController()
   const inviteMessage =
     customMessage ?? guest?.inviteMessage ?? inviteMessages.value ?? ''
+  const invitationToken = guest?.token || guest?.userDocId
 
   await emailController.send({
     to: guest.email,
@@ -362,6 +364,7 @@ const handleSendEmail = async (guest, customMessage = null) => {
       testDescription: test.value.testDescription,
       adminEmail: test.value.testAdmin.email,
       adminName: userAuth.value.name || userAuth.value.email,
+      invitationLink: `${globalThis.location.origin}/testview/${test.value.id}/${invitationToken}`,
     },
   })
 }
@@ -546,10 +549,22 @@ const notifyCooperator = async (guest, customMessage = null) => {
       params: { id: test.value.id },
     })
 
-    const path =
-      guest.accessLevel == 0
-        ? managerRoute.href
-        : `/testview/${test.value.id}/${guest.userDocId}`
+    const invitationStudy = {
+      ...test.value,
+      cooperators: [
+        ...(test.value.cooperators || []).filter(
+          (cooperator) => cooperator.userDocId !== guest.userDocId,
+        ),
+        { ...guest, accepted: true },
+      ],
+    }
+    const destination = getAcceptedInvitationDestination({
+      study: invitationStudy,
+      user: { id: guest.userDocId },
+    })
+    const path = destination
+      ? router.resolve(destination).href
+      : managerRoute.href
 
     const payload = {
       userId: guest.userDocId,

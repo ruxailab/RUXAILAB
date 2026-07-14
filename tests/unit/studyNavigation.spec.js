@@ -135,7 +135,7 @@ describe('study navigation', () => {
     })
   })
 
-  it('sends an accepted heuristic Evaluator directly to the answer flow', () => {
+  it('sends an accepted heuristic Evaluator to the study dashboard', () => {
     const evaluator = { id: 'evaluator', accessLevel: 1 }
     const study = studyWith(
       'HEURISTIC',
@@ -146,9 +146,24 @@ describe('study navigation', () => {
     expect(
       getAcceptedInvitationDestination({ study, user: evaluator }),
     ).toEqual({
-      name: 'TestView',
-      params: { id: study.id, token: evaluator.id },
+      name: 'HeuristicManagerView',
+      params: { id: study.id },
     })
+  })
+
+  it('keeps Preview available to a heuristic Evaluator from the dashboard', () => {
+    const evaluator = { id: 'evaluator', accessLevel: 1 }
+    const study = studyWith(
+      'HEURISTIC',
+      evaluator.id,
+      STUDY_ROLE.EVALUATOR,
+    )
+
+    expect(titlesFor(study, evaluator, 'heuristic')).toEqual([
+      'Manager',
+      'Preview',
+      'Answers',
+    ])
   })
 
   it('shows every user-study Admin item, including Storage', () => {
