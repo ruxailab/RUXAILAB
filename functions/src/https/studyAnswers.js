@@ -3,6 +3,7 @@ import { admin, functions } from '../f.firebase.js'
 const ROLE = Object.freeze({
   ADMIN: 0,
   EVALUATOR: 1,
+  OBSERVATOR: 3,
   MANAGER: 4,
   USER: 5,
 })
@@ -29,7 +30,9 @@ const canAnswerStudy = ({ study, uid, isSuperAdmin = false }) => {
     study?.testAdmin?.userDocId === uid ||
     role === ROLE.ADMIN ||
     role === ROLE.MANAGER ||
-    (studyType === 'USER' && role === ROLE.USER) ||
+    (studyType === 'USER' &&
+      (role === ROLE.USER ||
+        (role === ROLE.OBSERVATOR && study?.subType === 'USER_MODERATED'))) ||
     (studyType === 'HEURISTIC' && role === ROLE.EVALUATOR)
   )
 }

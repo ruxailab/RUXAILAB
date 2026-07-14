@@ -3,7 +3,7 @@
     :title="!showIntroView ? $t('HeuristicsCooperators.title.cooperators') : ''"
   >
     <!-- Actions Slot -->
-    <template v-if="!showIntroView" #actions>
+    <template v-if="!showIntroView && canManageCooperators" #actions>
       <v-btn
         color="primary"
         size="large"
@@ -36,6 +36,7 @@
       :can-change-role="canChangeRole"
       :can-remove="canRemoveCooperator"
       :can-cancel-invitation="canCancelCooperatorInvitation"
+      :show-actions="canManageCooperators"
       :message-text="$t('HeuristicsCooperators.actions.send_message')"
       :reinvite-text="$t('HeuristicsCooperators.actions.reinvite')"
       :remove-text="$t('HeuristicsCooperators.actions.remove_cooperator')"
@@ -139,6 +140,8 @@ import {
   canManageCooperator,
   getAssignableRoleOptions,
   getSupportedRoleOptions,
+  hasStudyCapability,
+  STUDY_CAPABILITY,
 } from '@/shared/utils/studyAccessPolicy'
 import { manageStudyMembership } from '@/shared/services/studyMembershipService'
 import { getAcceptedInvitationDestination } from '@/shared/utils/studyNavigation'
@@ -300,6 +303,13 @@ const supportedRoleOptions = computed(() => getSupportedRoleOptions(test.value))
 const assignableRoleOptions = computed(() =>
   getAssignableRoleOptions(test.value, userAuth.value),
 )
+const canManageCooperators = computed(() =>
+  hasStudyCapability(
+    test.value,
+    userAuth.value,
+    STUDY_CAPABILITY.COOPERATORS_INVITE,
+  ),
+)
 
 const canChangeRole = (cooperator) =>
   assignableRoleOptions.value.some((role) =>
@@ -320,6 +330,10 @@ const canCancelCooperatorInvitation = (cooperator) =>
   })
 
 const openMessageDialog = (item) => {
+  if (!canManageCooperators.value) {
+    showError('AccessNotAllowed.noAccess')
+    return
+  }
   selectedUser.value = item
   messageModel.value = true
 }
@@ -680,6 +694,10 @@ const executeInvitationCancellation = async (guest) => {
 }
 
 const openDialog = async () => {
+  if (!canManageCooperators.value) {
+    showError('AccessNotAllowed.noAccess')
+    return
+  }
   if (slots.dialog) drawerOpen.value = true
   else showInviteDialog.value = true
 }

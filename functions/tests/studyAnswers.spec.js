@@ -140,6 +140,37 @@ describe('getMyStudyAnswer', () => {
     expect(result.taskAnswers.other).toBeUndefined()
   })
 
+  it('allows an Observator to read only their own answer for a moderated user study', async () => {
+    mockStudies.set(
+      'study-1',
+      userStudy({
+        subType: 'USER_MODERATED',
+        studyRoleMap: { caller: 3 },
+      }),
+    )
+    mockAnswers.set('answer-1', userAnswer())
+
+    await expect(
+      getMyStudyAnswer(request('caller', { studyId: 'study-1' })),
+    ).resolves.toMatchObject({
+      taskAnswers: {
+        caller: { userDocId: 'caller', progress: 40 },
+      },
+    })
+
+    mockStudies.set(
+      'study-1',
+      userStudy({
+        subType: 'USER_UNMODERATED',
+        studyRoleMap: { caller: 3 },
+      }),
+    )
+
+    await expect(
+      getMyStudyAnswer(request('caller', { studyId: 'study-1' })),
+    ).rejects.toThrow(expect.objectContaining({ code: 'permission-denied' }))
+  })
+
   it('allows a heuristic evaluator to read only their own heuristic answer', async () => {
     mockStudies.set(
       'study-1',

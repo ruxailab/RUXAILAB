@@ -44,7 +44,11 @@ service firebase.storage {
         study(studyId).isPublic == true ||
         roleFor(studyId) == 0 ||
         roleFor(studyId) == 4 ||
-        (study(studyId).testType == 'USER' && roleFor(studyId) == 5) ||
+        (study(studyId).testType == 'USER' && (
+          roleFor(studyId) == 5 ||
+          (roleFor(studyId) == 3 &&
+            study(studyId).subType == 'USER_MODERATED')
+        )) ||
         ((study(studyId).testType == 'HEURISTIC' ||
           study(studyId).testType == 'HEURISTICS') &&
           roleFor(studyId) == 1) ||

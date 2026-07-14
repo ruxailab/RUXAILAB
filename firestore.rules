@@ -72,7 +72,10 @@ service cloud.firestore {
         study.isPublic == true ||
         isAdmin(study) ||
         isManager(study) ||
-        (isUserStudy(study) && roleFor(study) == 5) ||
+        (isUserStudy(study) && (
+          roleFor(study) == 5 ||
+          (roleFor(study) == 3 && study.subType == 'USER_MODERATED')
+        )) ||
         (isHeuristicStudy(study) && roleFor(study) == 1)
       );
     }

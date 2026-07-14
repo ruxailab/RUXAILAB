@@ -11,6 +11,7 @@ import {
   isModeratedSessionViewer,
   resolveStudyAccess,
 } from '@/shared/utils/studyAccessPolicy'
+import { USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions'
 
 const owner = { id: 'owner', accessLevel: 1 }
 const manager = { id: 'manager', accessLevel: 1 }
@@ -149,6 +150,51 @@ describe('study access policy', () => {
     ).toBe(false)
     expect(
       hasStudyCapability(study, manager, STUDY_CAPABILITY.STORAGE_ACCESS),
+    ).toBe(false)
+  })
+
+  it('lets an Observator answer and view cooperators only for moderated user studies', () => {
+    const moderatedStudy = userStudy({
+      subType: USER_STUDY_SUBTYPES.MODERATED,
+    })
+    const unmoderatedStudy = userStudy({
+      subType: USER_STUDY_SUBTYPES.UNMODERATED,
+    })
+
+    expect(
+      hasStudyCapability(
+        moderatedStudy,
+        observator,
+        STUDY_CAPABILITY.COOPERATORS_VIEW,
+      ),
+    ).toBe(true)
+    expect(
+      hasStudyCapability(
+        unmoderatedStudy,
+        observator,
+        STUDY_CAPABILITY.COOPERATORS_VIEW,
+      ),
+    ).toBe(false)
+    expect(
+      hasStudyCapability(
+        moderatedStudy,
+        observator,
+        STUDY_CAPABILITY.COOPERATORS_VIEW,
+      ),
+    ).toBe(true)
+    expect(
+      hasStudyCapability(
+        moderatedStudy,
+        observator,
+        STUDY_CAPABILITY.STUDY_ANSWER,
+      ),
+    ).toBe(true)
+    expect(
+      hasStudyCapability(
+        unmoderatedStudy,
+        observator,
+        STUDY_CAPABILITY.STUDY_ANSWER,
+      ),
     ).toBe(false)
   })
 

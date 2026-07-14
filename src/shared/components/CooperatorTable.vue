@@ -156,7 +156,7 @@
         </template>
 
         <!-- Actions Column -->
-        <template #item.actions="{ item }">
+        <template v-if="showActions" #item.actions="{ item }">
           <v-menu>
             <template #activator="{ props }">
               <v-icon icon="mdi-dots-vertical" v-bind="props" />
@@ -228,6 +228,10 @@ const props = defineProps({
   showSessionColumn: {
     type: Boolean,
     default: false,
+  },
+  showActions: {
+    type: Boolean,
+    default: true,
   },
   baseHeaders: {
     type: Array,
@@ -343,8 +347,11 @@ const computedHeaders = computed(() => {
   defaultHeaders.push(
     { title: 'Invited', key: 'invited', sortable: true },
     { title: 'Status', key: 'accepted', sortable: true },
-    { title: 'Actions', key: 'actions', sortable: false },
   )
+
+  if (props.showActions) {
+    defaultHeaders.push({ title: 'Actions', key: 'actions', sortable: false })
+  }
 
   return props.baseHeaders.length > 0 ? props.baseHeaders : defaultHeaders
 })

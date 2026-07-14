@@ -1,5 +1,6 @@
 import {
   STUDY_TYPES,
+  USER_STUDY_SUBTYPES,
   normalizeStudyType,
 } from '@/shared/constants/methodDefinitions'
 
@@ -156,6 +157,16 @@ export function hasStudyCapability(study, user, capability) {
   }
 
   const studyType = normalizeStudyType(study?.testType)
+
+  if (
+    studyType === STUDY_TYPES.USER &&
+    study?.subType === USER_STUDY_SUBTYPES.MODERATED &&
+    access.role === R.OBSERVATOR &&
+    [C.COOPERATORS_VIEW, C.STUDY_ANSWER].includes(capability)
+  ) {
+    return true
+  }
+
   const roleCapabilities = STUDY_POLICIES[studyType]?.[access.role] ?? []
   return roleCapabilities.includes(capability)
 }

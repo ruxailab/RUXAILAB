@@ -207,6 +207,21 @@ describe('study navigation', () => {
     expect(titlesFor(study, user)).toEqual(['Manager', 'Answers'])
   })
 
+  it('adds Preview and Cooperators for a moderated Observator', () => {
+    const user = { id: 'observator', accessLevel: 1 }
+    const study = {
+      ...studyWith('USER', user.id, STUDY_ROLE.OBSERVATOR),
+      subType: USER_STUDY_SUBTYPES.MODERATED,
+    }
+
+    expect(titlesFor(study, user, 'userTest/moderated')).toEqual([
+      'Manager',
+      'Preview',
+      'Answers',
+      'Cooperators',
+    ])
+  })
+
   it('shows Preview for an Observator on a public study', () => {
     const user = { id: 'observator', accessLevel: 1 }
     const study = {
@@ -368,6 +383,13 @@ describe('study navigation', () => {
         study,
         user: observator,
         token: participant.id,
+      }),
+    ).toBeNull()
+    expect(
+      getTestViewAccessRedirect({
+        study,
+        user: observator,
+        token: observator.id,
       }),
     ).toBeNull()
     expect(

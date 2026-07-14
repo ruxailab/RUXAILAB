@@ -203,6 +203,36 @@ describe('Firestore study RBAC', () => {
     )
   })
 
+  it('allows an Observator to answer only a moderated user study', async () => {
+    await testEnv.withSecurityRulesDisabled((adminContext) =>
+      updateDoc(doc(adminContext.firestore(), 'tests/study-1'), {
+        subType: 'USER_MODERATED',
+      }),
+    )
+
+    await assertSucceeds(
+      updateDoc(doc(context('observator').firestore(), 'answers/answers-1'), {
+        'taskAnswers.observator': { progress: 50, submitted: false },
+      }),
+    )
+
+    await testEnv.withSecurityRulesDisabled(async (adminContext) => {
+      const db = adminContext.firestore()
+      await Promise.all([
+        updateDoc(doc(db, 'tests/study-1'), {
+          subType: 'USER_UNMODERATED',
+        }),
+        updateDoc(doc(db, 'answers/answers-1'), { taskAnswers: {} }),
+      ])
+    })
+
+    await assertFails(
+      updateDoc(doc(context('observator').firestore(), 'answers/answers-1'), {
+        'taskAnswers.observator': { progress: 50, submitted: false },
+      }),
+    )
+  })
+
   it('allows only the creator to clean up an unlinked answer container', async () => {
     await testEnv.withSecurityRulesDisabled((adminContext) =>
       setDoc(doc(adminContext.firestore(), 'answers/unlinked-answer'), {
@@ -331,6 +361,32 @@ describe('Storage study RBAC', () => {
     await assertSucceeds(getBytes(ownFile))
     await assertFails(uploadBytes(otherFile, new Uint8Array([1])))
     await assertFails(getBytes(otherFile))
+  })
+
+  it('allows an Observator to store media only for a moderated user study', async () => {
+    await testEnv.withSecurityRulesDisabled((adminContext) =>
+      updateDoc(doc(adminContext.firestore(), 'tests/study-1'), {
+        subType: 'USER_MODERATED',
+      }),
+    )
+
+    const moderatedFile = ref(
+      context('observator').storage(),
+      'tests/study-1/observator/recording.webm',
+    )
+    await assertSucceeds(uploadBytes(moderatedFile, new Uint8Array([1])))
+
+    await testEnv.withSecurityRulesDisabled((adminContext) =>
+      updateDoc(doc(adminContext.firestore(), 'tests/study-1'), {
+        subType: 'USER_UNMODERATED',
+      }),
+    )
+
+    const unmoderatedFile = ref(
+      context('observator').storage(),
+      'tests/study-1/observator/second-recording.webm',
+    )
+    await assertFails(uploadBytes(unmoderatedFile, new Uint8Array([1])))
   })
 
   it('does not require a users document for public participant storage access', async () => {
