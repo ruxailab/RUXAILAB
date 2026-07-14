@@ -186,9 +186,19 @@ describe('Firestore study RBAC', () => {
         'taskAnswers.user': { progress: 100 },
       }),
     )
-    await assertFails(
+    await assertSucceeds(
       updateDoc(doc(context('user').firestore(), 'answers/answers-1'), {
         'taskAnswers.user': { progress: 25 },
+      }),
+    )
+    await assertSucceeds(
+      updateDoc(doc(context('user').firestore(), 'answers/answers-1'), {
+        'taskAnswers.user': { progress: 100, submitted: true },
+      }),
+    )
+    await assertFails(
+      updateDoc(doc(context('user').firestore(), 'answers/answers-1'), {
+        'taskAnswers.user': { progress: 100, submitted: true },
       }),
     )
   })
@@ -256,7 +266,22 @@ describe('Firestore study RBAC', () => {
 
     await assertSucceeds(
       updateDoc(doc(context('evaluator').firestore(), 'answers/answers-1'), {
-        'heuristicAnswers.evaluator': { progress: 50 },
+        'heuristicAnswers.evaluator': { progress: 50, submitted: false },
+      }),
+    )
+    await assertSucceeds(
+      updateDoc(doc(context('evaluator').firestore(), 'answers/answers-1'), {
+        'heuristicAnswers.evaluator': { progress: 100, submitted: false },
+      }),
+    )
+    await assertSucceeds(
+      updateDoc(doc(context('evaluator').firestore(), 'answers/answers-1'), {
+        'heuristicAnswers.evaluator': { progress: 100, submitted: false },
+      }),
+    )
+    await assertSucceeds(
+      updateDoc(doc(context('evaluator').firestore(), 'answers/answers-1'), {
+        'heuristicAnswers.evaluator': { progress: 100, submitted: true },
       }),
     )
     await assertSucceeds(
@@ -265,6 +290,11 @@ describe('Firestore study RBAC', () => {
     await assertFails(
       updateDoc(doc(context('guest').firestore(), 'answers/answers-1'), {
         'heuristicAnswers.guest': { progress: 50 },
+      }),
+    )
+    await assertFails(
+      updateDoc(doc(context('evaluator').firestore(), 'answers/answers-1'), {
+        'heuristicAnswers.evaluator': { progress: 100, submitted: true },
       }),
     )
   })

@@ -162,7 +162,8 @@ service cloud.firestore {
               .affectedKeys().hasOnly([request.auth.uid]) &&
             (
               !(request.auth.uid in resource.data.taskAnswers) ||
-              resource.data.taskAnswers[request.auth.uid].progress != 100
+              resource.data.taskAnswers[request.auth.uid]
+                .get('submitted', false) != true
             )
           ) ||
           (
@@ -174,7 +175,8 @@ service cloud.firestore {
               .affectedKeys().hasOnly([request.auth.uid]) &&
             (
               !(request.auth.uid in resource.data.heuristicAnswers) ||
-              resource.data.heuristicAnswers[request.auth.uid].progress != 100
+              resource.data.heuristicAnswers[request.auth.uid]
+                .get('submitted', false) != true
             )
           )
         );
