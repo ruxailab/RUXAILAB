@@ -121,8 +121,14 @@
       </v-card>
     </v-dialog>
 
+    <EvaluatorInfoDisplay
+      v-if="showEvaluatorInfo"
+      :sections="evaluatorInfoSections"
+      @start="evaluatorInfoAcknowledged = true"
+    />
+
     <v-container
-      v-if="test && start && !testAlreadyStarted"
+      v-else-if="test && start && !testAlreadyStarted"
       class="start-container"
       fluid
     >
@@ -154,7 +160,7 @@
             variant="outlined"
             size="large"
             rounded
-            :disabled="!user || heuristics.length === 0"
+            :disabled="!user || heuristics.length === 0 || !answerInitialized"
             @click="startTest()"
           >
             {{ $t('HeuristicsTestView.actions.startTest') }}
@@ -234,13 +240,13 @@
                           <v-progress-circular
                             v-if="
                               perHeuristicProgress(
-                                currentUserTestAnswer.heuristicQuestions[i],
+                                currentUserTestAnswer?.heuristicQuestions?.[i],
                               ) != 100
                             "
                             rotate="-90"
                             :model-value="
                               perHeuristicProgress(
-                                currentUserTestAnswer.heuristicQuestions[i],
+                                currentUserTestAnswer?.heuristicQuestions?.[i],
                               )
                             "
                             :size="24"
@@ -277,13 +283,13 @@
                       <v-progress-circular
                         v-if="
                           perHeuristicProgress(
-                            currentUserTestAnswer.heuristicQuestions[i],
+                            currentUserTestAnswer?.heuristicQuestions?.[i],
                           ) != 100
                         "
                         rotate="-90"
                         :model-value="
                           perHeuristicProgress(
-                            currentUserTestAnswer.heuristicQuestions[i],
+                            currentUserTestAnswer?.heuristicQuestions?.[i],
                           )
                         "
                         :size="24"
@@ -606,6 +612,11 @@ import Heuristic from '@/ux/Heuristic/models/Heuristic'
 import { showSuccess, showError } from '@/shared/utils/toast'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import HeuristicAnswer from '../models/HeuristicAnswer'
+import EvaluatorInfoDisplay from '@/ux/Heuristic/components/EvaluatorInfoDisplay.vue'
+import {
+  resolveStudyAccess,
+  STUDY_ROLE,
+} from '@/shared/utils/studyAccessPolicy'
 
 const props = defineProps({
   id: { type: String, default: '' },
@@ -620,6 +631,7 @@ const logined = ref(null)
 const fromlink = ref(null)
 const drawer = ref(true)
 const start = ref(true)
+const evaluatorInfoAcknowledged = ref(false)
 const mini = ref(false)
 const index = ref(null)
 const noExistUser = ref(true)
@@ -632,6 +644,7 @@ const calculatedProgress = ref(0)
 const review = ref(true)
 const rightView = ref(null)
 const displayHeuristics = ref([])
+const answerInitialized = ref(false)
 
 // Auto-save status variables
 const autoSaveInProgress = ref(false)
@@ -644,6 +657,24 @@ const saveStatusIcon = ref('mdi-check-circle')
 const saveStatusColor = ref('primary')
 
 const test = computed(() => store.getters.test)
+const evaluatorInfoSections = computed(
+  () => test.value?.evaluatorInfo?.sections || [],
+)
+const showEvaluatorInfo = computed(() => {
+  if (
+    !test.value ||
+    !user.value ||
+    !start.value ||
+    testAlreadyStarted.value ||
+    evaluatorInfoAcknowledged.value ||
+    evaluatorInfoSections.value.length === 0
+  ) {
+    return false
+  }
+
+  const access = resolveStudyAccess(test.value, user.value)
+  return access.role === STUDY_ROLE.EVALUATOR || access.isPublicParticipant
+})
 
 const trackTimeEnabled = computed(() => test.value?.trackTime !== false)
 
@@ -694,7 +725,16 @@ const user = computed(() => {
   if (store.getters.user) setExistUser()
   return store.getters.user
 })
-const currentUserTestAnswer = ref({})
+const currentUserTestAnswer = ref(new HeuristicAnswer())
+
+const normalizeCurrentUserTestAnswer = (answer) => {
+  if (answer instanceof HeuristicAnswer) return answer
+
+  return new HeuristicAnswer({
+    ...(answer || {}),
+    userDocId: answer?.userDocId ?? user.value?.id ?? null,
+  })
+}
 const showSaveBtn = computed(() => {
   if (currentUserTestAnswer.value.submitted) return false
   return true
@@ -849,12 +889,7 @@ const startTest = async () => {
     return
   }
 
-  if (!isUserTestAdmin.value) {
-    await store.dispatch('acceptStudyCollaboration', {
-      test: test.value,
-      cooperator: user.value,
-    })
-  }
+  if (!answerInitialized.value) return
 
   start.value = false
 
@@ -1276,7 +1311,11 @@ const perHeuristicProgress = (item) => {
 }
 
 const autoSaveAnswer = async () => {
-  if (!currentUserTestAnswer.value || currentUserTestAnswer.value.submitted) {
+  if (
+    !answerInitialized.value ||
+    !currentUserTestAnswer.value ||
+    currentUserTestAnswer.value.submitted
+  ) {
     return
   }
 
@@ -1321,24 +1360,21 @@ const autoSaveAnswer = async () => {
 }
 
 const getOrderedHeuristicsForSave = () => {
-  if (
-    !currentUserTestAnswer.value?.heuristicQuestions ||
-    !test.value?.testStructure
-  ) {
-    return currentUserTestAnswer.value
+  const answer = normalizeCurrentUserTestAnswer(currentUserTestAnswer.value)
+
+  if (!answer.heuristicQuestions || !test.value?.testStructure) {
+    return answer
   }
 
   const baseOrder = test.value.testStructure.map((h) => h.id)
 
-  const orderedHeuristicQuestions = [
-    ...currentUserTestAnswer.value.heuristicQuestions,
-  ].sort(
+  const orderedHeuristicQuestions = [...answer.heuristicQuestions].sort(
     (a, b) =>
       baseOrder.indexOf(a.heuristicId) - baseOrder.indexOf(b.heuristicId),
   )
 
   return new HeuristicAnswer({
-    ...currentUserTestAnswer.value,
+    ...answer,
     heuristicQuestions: orderedHeuristicQuestions,
   })
 }
@@ -1440,7 +1476,7 @@ const signOut = () => {
 
 const populateWithHeuristicQuestions = () => {
   if (!heuristics.value || !test.value) {
-    return
+    return false
   }
 
   // Check if we need to initialize or just update the structure
@@ -1560,6 +1596,7 @@ const populateWithHeuristicQuestions = () => {
     verifyTimerState(heuristic)
     heuristic.timerStartedAt = null
   })
+  return true
 }
 
 const hasSavedAnswers = () => {
@@ -1673,10 +1710,13 @@ const restoreProgress = () => {
 
 const setTest = async () => {
   logined.value = true
+  answerInitialized.value = false
   await store.dispatch('getCurrentTestAnswerDoc')
-  currentUserTestAnswer.value = store.getters.currentUserTestAnswer || {}
+  currentUserTestAnswer.value = normalizeCurrentUserTestAnswer(
+    store.getters.currentUserTestAnswer,
+  )
   initializeHeuristicsOrder()
-  populateWithHeuristicQuestions()
+  answerInitialized.value = populateWithHeuristicQuestions()
   restoreProgress()
 }
 
@@ -1768,6 +1808,7 @@ watch(
 )
 
 onBeforeMount(async () => {
+  answerInitialized.value = false
   if (route.params.token) {
     fromlink.value = true
   }
@@ -1779,12 +1820,14 @@ onBeforeMount(async () => {
   await store.dispatch('getCurrentTestAnswerDoc')
 
   // Load answer data into local reactive state
-  currentUserTestAnswer.value = store.getters.currentUserTestAnswer || {}
+  currentUserTestAnswer.value = normalizeCurrentUserTestAnswer(
+    store.getters.currentUserTestAnswer,
+  )
 
   // Randomize only for fresh runs; keep deterministic order for resumed runs.
   initializeHeuristicsOrder()
 
-  populateWithHeuristicQuestions()
+  answerInitialized.value = populateWithHeuristicQuestions()
   // calculate progress before checking restore
   calculateProgress()
 

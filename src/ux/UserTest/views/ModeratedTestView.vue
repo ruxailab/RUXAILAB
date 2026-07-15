@@ -632,6 +632,10 @@ import VideoCallFactory from '@/shared/components/videoCall/VideoCallFactory.vue
 import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
+import {
+  canJoinModeratedUserSession,
+  isModeratedSessionViewer,
+} from '@/shared/utils/studyAccessPolicy'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
@@ -694,6 +698,13 @@ const currentUserAccessLevel = computed(() => {
 })
 
 const isObservator = computed(() => currentUserAccessLevel.value === 3)
+const sessionUserId = computed(() => route.params.token || null)
+const canJoinSession = computed(() =>
+  canJoinModeratedUserSession(test.value, user.value, sessionUserId.value),
+)
+const isSessionViewer = computed(() =>
+  isModeratedSessionViewer(test.value, user.value, sessionUserId.value),
+)
 
 const hasTestDashboardAccess = computed(() => {
   if (!user.value) return false
@@ -928,15 +939,8 @@ const startTest = async () => {
     return
   }
 
-  if (!isUserTestAdmin.value) {
-    await store.dispatch('acceptStudyCollaboration', {
-      test: test.value,
-      cooperator: user.value,
-    })
-  }
-
-  if (isObservator.value) {
-    // Hidin start screen and mount VideoCall component
+  if (isSessionViewer.value) {
+    // Hide start screen and mount VideoCall component for non-participant viewers.
     start.value = false
     displayVideoCallComponent.value = true
     return
@@ -1463,7 +1467,7 @@ onMounted(async () => {
       return
     }
 
-    if (user.value.id !== route.params.token && !isUserTestAdmin.value) {
+    if (!canJoinSession.value) {
       showError('errors.globalError')
       router.push('/admin')
       return

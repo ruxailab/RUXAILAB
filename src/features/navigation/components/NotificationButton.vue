@@ -113,6 +113,7 @@ import NotificationItem from '@/features/notifications/components/NotificationIt
 import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue'
 import InviteController from '@/shared/controllers/InviteController.js'
 import StudyController from '@/controllers/StudyController'
+import { getAcceptedInvitationDestination } from '@/shared/utils/studyNavigation'
 import { showError } from '@/shared/utils/toast'
 
 const store = useStore()
@@ -155,6 +156,8 @@ const showAcceptDialog = () => {
 
 /* actions */
 const goToNotificationRedirect = async (notification) => {
+  let redirectTo = notification.redirectsTo
+
   // Only show dialog for Collaboration type invitations
   if (notification.type === 'Collaboration') {
     const accepted = await showAcceptDialog()
@@ -180,10 +183,11 @@ const goToNotificationRedirect = async (notification) => {
         const study = await new StudyController().getStudy({
           id: notification.testId,
         })
-        await store.dispatch('acceptStudyCollaboration', {
-          test: study,
-          cooperator: user.value,
+        const destination = getAcceptedInvitationDestination({
+          study,
+          user: user.value,
         })
+        if (destination) redirectTo = router.resolve(destination).href
       } catch {
         showError('notifications.errors.acceptCollaborationFailed')
         return
@@ -200,11 +204,8 @@ const goToNotificationRedirect = async (notification) => {
     user: user.value,
   })
 
-  if (notification.redirectsTo && notification.redirectsTo !== '/') {
-    globalThis.open(
-      globalThis.location.origin + notification.redirectsTo,
-      '_blank',
-    )
+  if (redirectTo && redirectTo !== '/') {
+    globalThis.open(globalThis.location.origin + redirectTo, '_blank')
   }
 
   menuOpen.value = false

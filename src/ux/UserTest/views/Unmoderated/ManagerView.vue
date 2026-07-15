@@ -61,17 +61,19 @@
 <script setup>
 import ManagerDashboardLayout from '@/shared/components/manager/ManagerDashboardLayout.vue'
 import ManagerView from '@/shared/views/template/ManagerView.vue'
-import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
+import {
+  STUDY_CAPABILITY,
+  hasStudyCapability,
+} from '@/shared/utils/studyAccessPolicy'
+import {
+  buildStudyManagerCards,
+  buildStudyNavigator,
+} from '@/shared/utils/studyNavigation'
 import { computed, onMounted, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { getStatusIcon } from '@/shared/utils/statusUtils'
 import { useI18n } from 'vue-i18n'
-import {
-  getBottomCardsDefualt,
-  getNavigatorDefault,
-  getTopCardsDefualt,
-} from '@/shared/utils/managerDefault'
 
 // Manager components
 import StudyOverview from '@/ux/UserTest/components/manager/StudyOverview.vue'
@@ -89,36 +91,15 @@ const { t } = useI18n()
 const user = computed(() => store.getters.user)
 const test = computed(() => store.getters.test)
 
-const accessLevel = computed(() => {
-  const currentUser = user.value
-  const currentTest = test.value
-  if (!currentUser) return ACCESS_LEVEL.GUEST
-  if (currentUser.accessLevel === 0) return ACCESS_LEVEL.ADMIN
-  if (currentTest?.testAdmin?.userDocId === currentUser.id)
-    return ACCESS_LEVEL.ADMIN
-
-  const coop = currentTest?.cooperators?.find(
-    (c) => c.userDocId === currentUser.id,
-  )
-  if (coop?.accepted === true) return coop.accessLevel
-
-  // Fixed logic: Public studies allow guest access, private studies block non-collaborators
-  if (currentTest?.isPublic) {
-    return ACCESS_LEVEL.GUEST // Public studies: allow as guest
-  } else {
-    return null // Private studies: no access for non-collaborators
-  }
-})
-
 watchEffect(() => {
   if (user.value != null && test.value != null) {
-    // Allow ADMIN, EVALUATOR, and GUEST (for public studies)
-    const hasAccess =
-      accessLevel.value === ACCESS_LEVEL.ADMIN ||
-      accessLevel.value === ACCESS_LEVEL.EVALUATOR ||
-      accessLevel.value === ACCESS_LEVEL.GUEST
-
-    if (!hasAccess || accessLevel.value === null) {
+    if (
+      !hasStudyCapability(
+        test.value,
+        user.value,
+        STUDY_CAPABILITY.DASHBOARD_VIEW,
+      )
+    ) {
       router.push('/')
     }
   }
@@ -126,32 +107,29 @@ watchEffect(() => {
 
 const topCards = computed(() => {
   if (!test.value) return []
-  return getTopCardsDefualt(test.value, 'userTest/unmoderated')
+  return buildStudyManagerCards({
+    study: test.value,
+    user: user.value,
+    type: 'userTest/unmoderated',
+  }).topCards
 })
 
 const bottomCards = computed(() => {
   if (!test.value) return []
-  return getBottomCardsDefualt(test.value, 'userTest/unmoderated')
+  return buildStudyManagerCards({
+    study: test.value,
+    user: user.value,
+    type: 'userTest/unmoderated',
+  }).bottomCards
 })
 
 const navigator = computed(() => {
   if (!test.value) return []
-  const items = [
-    ...getNavigatorDefault(
-      test.value,
-      accessLevel.value,
-      route,
-      'userTest/unmoderated',
-    ),
-  ]
-
-  items.push({
-    title: 'Storage',
-    icon: 'mdi-database',
-    path: `/userTest/unmoderated/storage/${test.value.id}`,
+  return buildStudyNavigator({
+    study: test.value,
+    user: user.value,
+    type: 'userTest/unmoderated',
   })
-
-  return items
 })
 
 // Lifecycle
