@@ -2154,6 +2154,39 @@
       "addPrompt": "Agregar pregunta",
       "removePrompt": "Eliminar pregunta",
       "duration": "Minutos"
+    },
+    "dashboard": {
+      "typeLabel": "Grupo Focal",
+      "subtitle": "Gestiona tu guía de discusión, participantes y sesiones moderadas desde un solo panel."
+    },
+    "studyOverview": {
+      "topics": "Temas de Discusión",
+      "topicsSubtitle": "En la guía",
+      "totalDuration": "Duración Total",
+      "durationSubtitle": "Planificada",
+      "maxParticipants": "Máx. Participantes",
+      "perSession": "Por sesión",
+      "team": "Equipo",
+      "teamSubtitle": "Facilitadores y observadores"
+    },
+    "modules": {
+      "guideTitle": "Guía de Discusión",
+      "topicCount": "{count} temas",
+      "guideDescription": "{minutes} min planificados",
+      "untitledTopic": "Tema sin título",
+      "moreTopics": "+{count} más",
+      "guideEmpty": "Aún no hay temas. Agrega tu primer tema en el editor de la guía.",
+      "manageGuide": "Gestionar guía",
+      "configTitle": "Configuración de la Sesión",
+      "maxParticipantsLabel": "Máx. participantes por sesión",
+      "waitingRoom": "Sala de espera activada",
+      "consent": "Consentimiento requerido",
+      "backroom": "Observadores ocultos a los participantes",
+      "configure": "Configurar",
+      "liveSessionTitle": "Sesión en Vivo",
+      "liveSessionComingSoon": "La discusión moderada en vivo estará disponible pronto.",
+      "reportsTitle": "Resultados e Informes",
+      "reportsComingSoon": "Los resultados y el análisis de la sesión aparecerán aquí."
     }
   },
   "studyCreation": {
