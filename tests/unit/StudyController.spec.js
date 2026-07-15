@@ -1,5 +1,15 @@
 import StudyController from '@/controllers/StudyController'
 import { createControllerSpies} from './helpers/testUtils'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
+
+jest.mock('@/app/plugins/firebase/FirebaseFunctionsService', () => ({
+    FirebaseFunctionsController: {
+        callHttpsCallableFunction: jest.fn()
+    }
+}))
+
+const mockCallHttpsCallableFunction =
+    FirebaseFunctionsController.callHttpsCallableFunction
 
 jest.mock('firebase/firestore', () => ({
     doc: jest.fn(),
@@ -62,6 +72,7 @@ describe('StudyController', () => {
 
     beforeEach(() => {
         jest.clearAllMocks()
+        mockCallHttpsCallableFunction.mockResolvedValue({ data: { status: 'ok' } })
         
         // Setup mocks for injected dependencies
         const AnswerController = require('@/shared/controllers/AnswerController')
@@ -245,12 +256,38 @@ describe('StudyController', () => {
                 })
             }
 
-            spies.update.mockResolvedValueOnce({ id: 'study-123', testTitle: 'Updated Title' })
             await studyController.updateStudy(mockPayload)
 
-            expect(spies.update).toHaveBeenCalledWith('tests', 'study-123', {
-                testTitle: 'Updated Title'
-            })
+            expect(mockCallHttpsCallableFunction).toHaveBeenCalledWith(
+                'updateStudyWithAudit',
+                {
+                    studyId: 'study-123',
+                    study: { testTitle: 'Updated Title' }
+                }
+            )
+        })
+
+        it('should update study from a plain partial object', async () => {
+            const mockPayload = {
+                id: 'study-123',
+                configData: {
+                    complianceLevel: 'AA'
+                }
+            }
+
+            await studyController.updateStudy(mockPayload)
+
+            expect(mockCallHttpsCallableFunction).toHaveBeenCalledWith(
+                'updateStudyWithAudit',
+                {
+                    studyId: 'study-123',
+                    study: {
+                        configData: {
+                            complianceLevel: 'AA'
+                        }
+                    }
+                }
+            )
         })
 
         it('should throw error when update fails', async () => {
@@ -260,7 +297,7 @@ describe('StudyController', () => {
                 toFirestore: jest.fn().mockReturnValue({})
             }
 
-            spies.update.mockRejectedValueOnce(mockError)
+            mockCallHttpsCallableFunction.mockRejectedValueOnce(mockError)
             await expect(studyController.updateStudy(mockPayload)).rejects.toThrow(mockError)
         })
     })
@@ -294,11 +331,13 @@ describe('StudyController', () => {
                 cooperator: mockCooperatorPayload
             }
 
-            spies.mockUpdate = () => spies.update.mockResolvedValue()
-            spies.mockUpdate()
-            
-            // Expect to throw due to UserAnswer mock or succeed
-            await expect(studyController.acceptStudyCollaboration(mockPayload)).rejects.toThrow()
+            await expect(
+                studyController.acceptStudyCollaboration(mockPayload)
+            ).resolves.toEqual({ status: 'ok' })
+            expect(mockCallHttpsCallableFunction).toHaveBeenCalledWith(
+                'manageStudyMembership',
+                { studyId: 'study-123', action: 'accept' }
+            )
         })
     })
 

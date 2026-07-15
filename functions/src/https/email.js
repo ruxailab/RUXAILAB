@@ -27,7 +27,10 @@ export const sendEmail = functions.onCall({
       )
       htmlTemplate = fs.readFileSync(templatePath, 'utf-8')
       htmlTemplate = htmlTemplate
-        .replace('{{site}}', process.env.SITE_URL)
+        .replace(
+          /{{invitationLink}}/g,
+          content.data.invitationLink || process.env.SITE_URL,
+        )
         .replace('{{message}}', content.data.message)
         .replace(/{{testTitle}}/g, content.data.testTitle)
         .replace(/{{testDescription}}/g, content.data.testDescription)

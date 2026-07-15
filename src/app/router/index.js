@@ -8,6 +8,11 @@ import accessibilityRoutes from '@/ux/accessibility/router.js'
 import UserTestRoutes from '@/ux/UserTest/router.js'
 import FocusGroupRoutes from '@/ux/FocusGroup/router.js'
 import store from '@/store'
+import {
+  getStudyFallbackPath,
+  hasStudyCapability,
+  resolveStudyAccess,
+} from '@/shared/utils/studyAccessPolicy'
 
 const routes = [
   ...Public,
@@ -26,7 +31,12 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  const { authorize = [] } = to.meta || {}
+  const {
+    authorize = [],
+    studyCapability = null,
+    studyOwnerOnly = false,
+    studyRouteBase = '',
+  } = to.meta || {}
   let user = store.state.Auth.user
 
   // Special handling for accessibility preview routes - allow complete public access
@@ -57,6 +67,30 @@ router.beforeEach(async (to, from, next) => {
   if (authorize.length && to.path !== '/signin' && !to.params.token) {
     if (!user || !authorize.includes(user.accessLevel)) {
       return next(redirect())
+    }
+  }
+
+  if ((studyCapability || studyOwnerOnly) && to.params.id && user) {
+    const studyId = to.params.id
+    let study = store.getters.test
+
+    if (study?.id !== studyId) {
+      await store.dispatch('getStudy', { id: studyId })
+      study = store.getters.test
+    }
+
+    const denied =
+      study?.id !== studyId ||
+      (studyOwnerOnly
+        ? !resolveStudyAccess(study, user).isOwner
+        : !hasStudyCapability(study, user, studyCapability))
+
+    if (denied) {
+      store.commit('SET_TOAST', {
+        message: 'AccessNotAllowed.noAccess',
+        type: 'error',
+      })
+      return next(getStudyFallbackPath(study?.id === studyId ? study : null, user, studyRouteBase))
     }
   }
 

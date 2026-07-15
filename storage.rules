@@ -1,12 +1,87 @@
 rules_version = '2';
-
-// Craft rules based on data in your Firestore database
-// allow write: if firestore.get(
-//    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
 service firebase.storage {
   match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function currentUser() {
+      return firestore.get(
+        /databases/(default)/documents/users/$(request.auth.uid)
+      );
+    }
+
+    function isSuperAdmin() {
+      return signedIn() &&
+        currentUser().data != null &&
+        currentUser().data.accessLevel == 0;
+    }
+
+    function study(studyId) {
+      return firestore.get(
+        /databases/(default)/documents/tests/$(studyId)
+      ).data;
+    }
+
+    function roleFor(studyId) {
+      return signedIn() &&
+        study(studyId).studyRoleMap is map &&
+        request.auth.uid in study(studyId).studyRoleMap
+          ? study(studyId).studyRoleMap[request.auth.uid]
+          : null;
+    }
+
+    function canAccessStorage(studyId) {
+      return signedIn() && (
+        isSuperAdmin() ||
+        study(studyId).testAdmin.userDocId == request.auth.uid ||
+        roleFor(studyId) == 0
+      );
+    }
+
+    function canAnswerStudy(studyId) {
+      return signedIn() && (
+        study(studyId).isPublic == true ||
+        roleFor(studyId) == 0 ||
+        roleFor(studyId) == 4 ||
+        (study(studyId).testType == 'USER' && (
+          roleFor(studyId) == 5 ||
+          (roleFor(studyId) == 3 &&
+            study(studyId).subType == 'USER_MODERATED')
+        )) ||
+        ((study(studyId).testType == 'HEURISTIC' ||
+          study(studyId).testType == 'HEURISTICS') &&
+          roleFor(studyId) == 1) ||
+        study(studyId).testAdmin.userDocId == request.auth.uid
+      );
+    }
+
+    function canEditStudy(studyId) {
+      return signedIn() && (
+        isSuperAdmin() ||
+        study(studyId).testAdmin.userDocId == request.auth.uid ||
+        roleFor(studyId) in [0, 4]
+      );
+    }
+
+    match /tests/{studyId}/{userId}/{allPaths=**} {
+      allow read: if canAccessStorage(studyId) ||
+        (userId.matches('heuristic_.*') && canEditStudy(studyId)) ||
+        (request.auth.uid == userId && canAnswerStudy(studyId));
+      allow create, update: if
+        canAccessStorage(studyId) ||
+        (userId.matches('heuristic_.*') && canEditStudy(studyId)) ||
+        (request.auth.uid == userId && canAnswerStudy(studyId));
+      allow delete: if false;
+    }
+
+    match /template-csv/{fileName} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
     match /{allPaths=**} {
-      allow read, write: if true;
+      allow read, write: if false;
     }
   }
 }
