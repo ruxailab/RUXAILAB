@@ -8,6 +8,7 @@ export default class InviteUtils {
     studyTitle,
     isPublic,
     accessLevel,
+    requiredLogin,
   ) {
     const token = crypto.randomBytes(32).toString('hex')
 
@@ -16,7 +17,7 @@ export default class InviteUtils {
       .collection('invites')
       .add({
         studyId,
-        email: email.toLowerCase(),
+        email: email?.toLowerCase() || null,
         token,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
@@ -24,8 +25,12 @@ export default class InviteUtils {
         studyTitle: studyTitle || null,
         isPublic: isPublic || false,
         accessLevel: accessLevel || null,
+        requiredLogin: requiredLogin || false,
       })
 
-    return `${process.env.SITE_URL}/invite?token=${encodeURIComponent(token)}`
+    return {
+      inviteLink: `${process.env.SITE_URL}/invite?token=${encodeURIComponent(token)}`,
+      inviteToken: token,
+    }
   }
 }

@@ -506,11 +506,15 @@ const goToNotificationRedirect = async (notification) => {
     }
 
     try {
-      try {
-        let token = localStorage.getItem('pendingInviteToken')
-        await InviteController.resolveInvite(token, user.value.id)
-      } catch {
-        // Ignore error in case invitation comes from old system
+      const token =
+        localStorage.getItem('pendingInviteToken') || notification.inviteToken
+      // resolve invite in case it has token
+      if (token) {
+        try {
+          await InviteController.resolveInvite(token, user.value.id)
+        } catch {
+          // Ignore error and continue flow, as the invite might have already been resolved or expired
+        }
       }
 
       const study = await new StudyController().getStudy({

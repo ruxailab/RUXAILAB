@@ -22,4 +22,15 @@ export default class InviteController {
 
     return data.result
   }
+
+  static async generateInvitationLink(payload) {
+    const { data } = await axios.post(
+      `${process.env.VUE_APP_CLOUD_FUNCTIONS_URL}/generateInvitationLink`,
+      {
+        data: payload,
+      },
+    )
+
+    return data.result
+  }
 }

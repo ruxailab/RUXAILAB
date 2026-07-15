@@ -81,19 +81,6 @@
           </template>
 
           <template v-else>
-            <template v-if="canContinueAsGuest">
-              <v-divider class="mb-4" />
-
-              <v-btn
-                block
-                variant="outlined"
-                color="primary"
-                @click="continueAsGuest"
-              >
-                {{ $t('invite.continueAsGuest') }}
-              </v-btn>
-            </template>
-
             <template v-if="!user && !canContinueAsGuest">
               <v-alert type="info" variant="tonal" class="mb-4">
                 {{ $t('invite.loginRequired') }}
@@ -121,6 +108,18 @@
           >
             {{ $t('invite.createAccount') }}
           </v-btn>
+          <template v-if="canContinueAsGuest">
+            <v-divider class="mb-4" />
+
+            <v-btn
+              block
+              variant="outlined"
+              color="primary"
+              @click="continueAsGuest"
+            >
+              {{ $t('invite.continueAsGuest') }}
+            </v-btn>
+          </template>
         </div>
       </div>
     </div>
@@ -145,9 +144,9 @@ const unauthorized = ref(false)
 const invite = ref(null)
 
 const token = ref(null)
-const user = ref(null)
+const user = computed(() => store.getters.user)
 
-const canContinueAsGuest = computed(() => invite.value?.isPublic === true)
+const canContinueAsGuest = computed(() => invite.value?.requiredLogin !== true)
 
 const goToLogin = async () => {
   localStorage.setItem('pendingInviteToken', token.value)
@@ -173,7 +172,10 @@ const acceptInvite = async () => {
   try {
     loading.value = true
 
-    const result = await InviteController.resolveInvite(token.value)
+    const result = await InviteController.resolveInvite(
+      token.value,
+      user.value?.id,
+    )
 
     localStorage.removeItem('pendingInviteToken')
 
@@ -229,8 +231,6 @@ onMounted(async () => {
     /**
      * Restore authenticated user if possible
      */
-    user.value = store.state.Auth.user
-
     if (!user.value) {
       await store.dispatch('autoSignIn')
       user.value = store.state.Auth.user

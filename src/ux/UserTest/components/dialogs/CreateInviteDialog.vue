@@ -604,6 +604,16 @@ const submit = async (invited) => {
 const notifyCooperator = async (guest) => {
   if (!guest) return
 
+  // generate invite link
+  const inviteResult = await InviteController.generateInvitationLink({
+    studyId: test.value.id,
+    studyTitle: test.value.testTitle,
+    accessLevel: guest.accessLevel,
+    requiredLogin: true,
+    toEmail: guest.email,
+    isPublic: false,
+  })
+
   // For registered users with userDocId
   if (guest.userDocId) {
     const invitationStudy = {
@@ -635,6 +645,7 @@ const notifyCooperator = async (guest) => {
           read: false,
           testId: test.value.id,
           testDate: guest.testDate,
+          inviteToken: inviteResult.inviteToken,
         }),
       })
       showSuccess('Notification sent successfully')
@@ -661,9 +672,7 @@ const notifyCooperator = async (guest) => {
         studyId: test.value.id,
         scheduledAt: guest.testDate,
         accessLevel: guest.accessLevel,
-        isPublic: false, // Assuming all invites are private for now
-        token: guest.token || null,
-        invitationLink: `${globalThis.location.origin}/testview/${test.value.id}/${guest.token || guest.userDocId}`,
+        invitationLink: inviteResult.inviteLink,
       },
     })
     showSuccess('Email invitation sent')

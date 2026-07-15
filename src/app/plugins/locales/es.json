@@ -406,7 +406,16 @@
       "messagePlaceholder": "Escribe tu mensaje de invitación",
       "cancel": "Cancelar",
       "send": "Enviar",
-      "alreadySelected": "{email} ya fue seleccionado"
+      "alreadySelected": "{email} ya fue seleccionado",
+      "byEmail": "Invitar por correo electrónico",
+      "generateLink": "Generar enlace de invitación"
+    },
+    "inviteLink": {
+      "title": "Generar enlace de invitación",
+      "description": "Crea un enlace de invitación para compartir. Cualquier persona que tenga este enlace podrá unirse al estudio con el rol seleccionado.",
+      "generate": "Generar enlace",
+      "generateNew": "Generar nuevo enlace",
+      "copied": "Enlace de invitación copiado al portapapeles."
     }
   },
   "navigation": {

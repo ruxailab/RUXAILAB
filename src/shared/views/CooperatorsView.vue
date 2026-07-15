@@ -4,16 +4,41 @@
   >
     <!-- Actions Slot -->
     <template v-if="!showIntroView && canManageCooperators" #actions>
-      <v-btn
-        color="primary"
-        size="large"
-        prepend-icon="mdi-account-plus"
-        variant="flat"
-        class="px-6"
-        @click="openDialog()"
-      >
-        {{ $t('HeuristicsCooperators.actions.send_invitation') }}
-      </v-btn>
+      <v-menu>
+        <template #activator="{ props }">
+          <v-btn
+            color="primary"
+            size="large"
+            prepend-icon="mdi-account-plus"
+            variant="flat"
+            class="px-6"
+            v-bind="props"
+          >
+            {{ $t('HeuristicsCooperators.actions.send_invitation') }}
+            <v-icon end>mdi-chevron-down</v-icon>
+          </v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item
+            prepend-icon="mdi-email-outline"
+            @click="showInviteDialog = true"
+          >
+            <v-list-item-title>
+              {{ $t('cooperators.invite.byEmail') }}
+            </v-list-item-title>
+          </v-list-item>
+
+          <v-list-item
+            prepend-icon="mdi-link-variant"
+            @click="showLinkInviteDialog = true"
+          >
+            <v-list-item-title>
+              {{ $t('cooperators.invite.generateLink') }}
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </template>
 
     <!-- Subtitle Slot -->
@@ -85,6 +110,14 @@
       @send-invitations="handleSendInvitations"
     />
 
+    <!-- Generate Invite Link -->
+    <GenerateInviteLinkDialog
+      v-model:show="showLinkInviteDialog"
+      :study-id="test?.id"
+      :study-title="test?.testTitle"
+      :requires-login="true"
+    />
+
     <!-- Confirmation Dialog -->
     <ConfirmDialog
       v-model:show="confirmDialog.show"
@@ -114,7 +147,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, useSlots } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import Intro from '@/shared/components/introduction_cards/IntroCoops.vue'
 import AccessNotAllowed from '@/shared/views/AccessNotAllowed.vue'
@@ -123,6 +156,7 @@ import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import CooperatorTable from '@/shared/components/CooperatorTable.vue'
 import MessageDialog from '@/shared/components/dialogs/MessageDialog.vue'
 import InviteDialog from '@/shared/components/dialogs/InviteDialog.vue'
+import GenerateInviteLinkDialog from '@/shared/components/dialogs/GenerateInviteLinkDialog.vue'
 import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 import UIDGenerator from 'uid-generator'
 import {
@@ -146,6 +180,7 @@ import {
 } from '@/shared/utils/studyAccessPolicy'
 import { manageStudyMembership } from '@/shared/services/studyMembershipService'
 import { getAcceptedInvitationDestination } from '@/shared/utils/studyNavigation'
+import InviteController from '@/shared/controllers/InviteController.js'
 
 const uidgen = new UIDGenerator()
 const router = useRouter()
@@ -173,7 +208,6 @@ defineEmits(['open-invite-dialog'])
 
 const store = useStore()
 const route = useRoute()
-const slots = useSlots()
 const { t } = useI18n()
 
 useCooperatorActions() // Keep the hook call in case it has side effects
@@ -252,6 +286,7 @@ const sendNotification = async ({
   author,
   type,
   accessLevel,
+  inviteToken,
 } = {}) => {
   const notification = new Notification({
     title,
@@ -266,6 +301,7 @@ const sendNotification = async ({
     testId,
     type,
     accessLevel,
+    inviteToken,
   })
 
   try {
@@ -285,6 +321,7 @@ const verified = ref(false)
 const messageModel = ref(false)
 const selectedUser = ref([])
 const showInviteDialog = ref(false)
+const showLinkInviteDialog = ref(false)
 const drawerOpen = ref(false)
 
 const showIntroView = computed(() => {
@@ -375,11 +412,10 @@ const resolveUserByEmail = async (email) => {
   }
 }
 
-const handleSendEmail = async (guest, customMessage = null) => {
+const handleSendEmail = async (guest, customMessage = null, inviteLink) => {
   const emailController = new EmailController()
   const inviteMessage =
     customMessage ?? guest?.inviteMessage ?? inviteMessages.value ?? ''
-  const invitationToken = guest?.token || guest?.userDocId
 
   await emailController.send({
     to: guest.email,
@@ -393,9 +429,7 @@ const handleSendEmail = async (guest, customMessage = null) => {
       adminEmail: test.value.testAdmin.email,
       adminName: userAuth.value.name || userAuth.value.email,
       studyId: test.value.id,
-      isPublic: false, // Assuming all invites are private for now
-      accessLevel: guest.accessLevel,
-      invitationLink: `${globalThis.location.origin}/testview/${test.value.id}/${invitationToken}`,
+      invitationLink: inviteLink,
     },
   })
 }
@@ -571,10 +605,20 @@ const sendMenssages = async (guest, customMessage = null) => {
       guest.userDocId = resolvedGuest.userDocId
     }
 
-    await notifyCooperator(guest, messageToSend)
+    // generate invite link
+    const inviteResult = await InviteController.generateInvitationLink({
+      studyId: test.value.id,
+      studyTitle: test.value.testTitle,
+      accessLevel: guest.accessLevel,
+      requiredLogin: true,
+      toEmail: guest.email,
+      isPublic: false,
+    })
+
+    await notifyCooperator(guest, messageToSend, inviteResult.inviteToken)
     // Email is optional - don't let it block the notification
     try {
-      await handleSendEmail(guest, messageToSend)
+      await handleSendEmail(guest, messageToSend, inviteResult.inviteLink)
     } catch {
       // console.warn('Email sending failed (may be missing VUE_APP_CLOUD_FUNCTIONS_URL):', emailError.message)
     }
@@ -586,7 +630,7 @@ const sendMenssages = async (guest, customMessage = null) => {
   }
 }
 
-const notifyCooperator = async (guest, customMessage = null) => {
+const notifyCooperator = async (guest, customMessage = null, inviteToken) => {
   if (guest.userDocId) {
     // Check if it's an accessibility test (MANUAL or AUTOMATIC)
     //if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
@@ -631,6 +675,7 @@ const notifyCooperator = async (guest, customMessage = null) => {
         (r) => r.value === guest.accessLevel,
       )?.value,
       titleTemplate: 'HeuristicsCooperators.actions.send_invitation',
+      inviteToken: inviteToken,
     }
 
     if (customMessage) {
@@ -731,15 +776,6 @@ const executeInvitationCancellation = async (guest) => {
     targetEmail: guest.email,
   })
   await store.dispatch('getStudy', { id: test.value.id })
-}
-
-const openDialog = async () => {
-  if (!canManageCooperators.value) {
-    showError('AccessNotAllowed.noAccess')
-    return
-  }
-  if (slots.dialog) drawerOpen.value = true
-  else showInviteDialog.value = true
 }
 
 watch(loading, (newVal) => {
