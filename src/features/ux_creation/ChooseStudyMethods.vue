@@ -100,8 +100,7 @@ const methodsByCategory = {
         'studyCreation.methods.test.card_sorting_unmoderated.description',
       icon: 'mdi-card-multiple',
       color: 'error',
-      available: false,
-      comingSoon: true,
+      available: true,
     },
     {
       id: 'ab-testing',

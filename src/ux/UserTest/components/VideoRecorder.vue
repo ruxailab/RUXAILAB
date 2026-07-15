@@ -72,6 +72,15 @@ const { t } = useI18n()
 const currentUserTestAnswer = computed(
   () => store.getters.currentUserTestAnswer,
 )
+const currentCardSortingAnswer = computed(
+  () => store.getters.currentCardSortingAnswer,
+)
+const resolvedUserDocId = computed(
+  () =>
+    props.userDocId ||
+    currentUserTestAnswer.value?.userDocId ||
+    currentCardSortingAnswer.value?.userDocId,
+)
 
 const recording = ref(false)
 const videoStream = ref(null)
@@ -155,7 +164,7 @@ const startRecording = async () => {
         const correctTaskIndex = recordingTaskIndex.value
         const storageReference = storageRef(
           storage,
-          `tests/${props.testId}/${props.userDocId}/task_${correctTaskIndex}/video/${recordedVideo.value}`,
+          `tests/${props.testId}/${resolvedUserDocId.value}/task_${correctTaskIndex}/video/${recordedVideo.value}`,
         )
         await uploadBytes(storageReference, videoBlob)
 

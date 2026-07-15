@@ -1,14 +1,18 @@
 <template>
   <div>
     <Loading />
-    <StartScreenTest v-if="!isTestStarted && test" :test="test" @start="isTestStarted = true" />
-    <!-- <CardSortingTest v-if="isTestStarted" :test="test" /> -->
+    <StartScreenTest
+      v-if="!isTestStarted && test"
+      :test="test"
+      @start="isTestStarted = true"
+    />
+    <CardSortingTest v-if="isTestStarted && test" :test="test" />
   </div>
 </template>
 
 <script setup>
 import Loading from '@/shared/components/Loading.vue';
-// import CardSortingTest from '../components/CardSortingTest.vue';
+import CardSortingTest from '../components/CardSortingTest.vue';
 import StartScreenTest from '@/shared/components/template/StartScreenTest.vue'
 import { computed, onBeforeMount, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
