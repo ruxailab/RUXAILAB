@@ -1362,18 +1362,13 @@ const autoSaveAnswer = async () => {
 const getOrderedHeuristicsForSave = () => {
   const answer = normalizeCurrentUserTestAnswer(currentUserTestAnswer.value)
 
-  if (
-    !answer.heuristicQuestions ||
-    !test.value?.testStructure
-  ) {
+  if (!answer.heuristicQuestions || !test.value?.testStructure) {
     return answer
   }
 
   const baseOrder = test.value.testStructure.map((h) => h.id)
 
-  const orderedHeuristicQuestions = [
-    ...answer.heuristicQuestions,
-  ].sort(
+  const orderedHeuristicQuestions = [...answer.heuristicQuestions].sort(
     (a, b) =>
       baseOrder.indexOf(a.heuristicId) - baseOrder.indexOf(b.heuristicId),
   )

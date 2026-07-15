@@ -128,6 +128,7 @@ import UIDGenerator from 'uid-generator'
 import {
   getCooperatorInviteValidationError,
   normalizeCooperatorInviteEntry,
+  enrichCooperatorInviteEntry,
 } from '@/shared/composables/useCooperatorUtils'
 import { useCooperatorActions } from '@/shared/composables/useCooperatorActions'
 import { getMethodManagerView } from '../constants/methodDefinitions'
@@ -225,11 +226,10 @@ const handleConfirmAction = async () => {
       await executeInvitationCancellation(data.guest)
       showSuccess('Invitation cancelled successfully!')
     }
-  } catch (error) {
+  } catch {
     showError(
       `Failed to ${action === 'changeRole' ? 'update role' : action === 'removeCooperator' ? 'remove cooperator' : 'cancel invitation'}.`,
     )
-    console.error('Confirm action error:', error)
   } finally {
     resetConfirmDialog()
   }
@@ -361,6 +361,20 @@ const handleSendMessage = async ({ user, title, content }) => {
   }
 }
 
+const resolveUserByEmail = async (email) => {
+  if (!email) return null
+
+  try {
+    const response = await store.dispatch('findUserByEmail', {
+      email,
+    })
+
+    return response || null
+  } catch {
+    return null
+  }
+}
+
 const handleSendEmail = async (guest, customMessage = null) => {
   const emailController = new EmailController()
   const inviteMessage =
@@ -378,11 +392,13 @@ const handleSendEmail = async (guest, customMessage = null) => {
       testDescription: test.value.testDescription,
       adminEmail: test.value.testAdmin.email,
       adminName: userAuth.value.name || userAuth.value.email,
+      studyId: test.value.id,
+      isPublic: false, // Assuming all invites are private for now
+      accessLevel: guest.accessLevel,
       invitationLink: `${globalThis.location.origin}/testview/${test.value.id}/${invitationToken}`,
     },
   })
 }
-
 const handleSendInvitations = async (invitationData) => {
   if (!test.value) return
 
@@ -394,10 +410,12 @@ const handleSendInvitations = async (invitationData) => {
   const roleOption = assignableRoleOptions.value.find(
     (role) => role.value === selectedRole,
   )
+
   if (!roleOption) {
     showError('AccessNotAllowed.noAccess')
     return
   }
+
   if (
     !canManageCooperator(test.value, userAuth.value, null, {
       action: 'invite',
@@ -408,12 +426,23 @@ const handleSendInvitations = async (invitationData) => {
     return
   }
 
-  const normalizedInvites = selectedCoops.map((coop) => {
+  const normalizedInvites = []
+
+  for (const coop of selectedCoops) {
     const normalizedEntry = normalizeCooperatorInviteEntry(coop, users.value)
-    const coopEmail =
-      normalizedEntry?.email || (typeof coop === 'object' ? coop.email : coop)
-    return { ...normalizedEntry, email: coopEmail?.trim() || '' }
-  })
+
+    const enrichedEntry = normalizedEntry.userDocId
+      ? normalizedEntry
+      : await enrichCooperatorInviteEntry(normalizedEntry, {
+          resolveUserByEmail,
+        })
+
+    normalizedInvites.push({
+      ...normalizedEntry,
+      ...enrichedEntry,
+      email: enrichedEntry.email?.trim() || normalizedEntry.email?.trim() || '',
+    })
+  }
 
   for (const invite of normalizedInvites) {
     const validationError = getCooperatorInviteValidationError({
@@ -426,12 +455,10 @@ const handleSendInvitations = async (invitationData) => {
 
     if (validationError) {
       showError(validationError)
-      return
+      continue
     }
-  }
 
-  try {
-    for (const invite of normalizedInvites) {
+    try {
       const result = await manageStudyMembership({
         studyId: test.value.id,
         action: 'invite',
@@ -441,10 +468,16 @@ const handleSendInvitations = async (invitationData) => {
         inviteMessage,
         token: uidgen.generateSync(),
       })
-      newInvites.push(result.cooperator)
-    }
 
+      newInvites.push(result.cooperator)
+    } catch {
+      showError('errors.sendError')
+    }
+  }
+
+  try {
     await store.dispatch('getStudy', { id: test.value.id })
+
     await Promise.all(
       newInvites.map((guest) => sendMenssages(guest, guest.inviteMessage)),
     )
@@ -452,9 +485,9 @@ const handleSendInvitations = async (invitationData) => {
     showError('errors.sendError')
     return
   }
+
   showInviteDialog.value = false
 
-  // Show appropriate feedback
   if (newInvites.length > 0) {
     showSuccess(
       t('cooperators.inviteSent', {
@@ -530,6 +563,14 @@ const sendMenssages = async (guest, customMessage = null) => {
     customMessage ?? guest?.inviteMessage ?? inviteMessages.value ?? ''
 
   try {
+    const resolvedGuest = await enrichCooperatorInviteEntry(guest, {
+      resolveUserByEmail,
+    })
+
+    if (resolvedGuest.userDocId) {
+      guest.userDocId = resolvedGuest.userDocId
+    }
+
     await notifyCooperator(guest, messageToSend)
     // Email is optional - don't let it block the notification
     try {
@@ -588,8 +629,7 @@ const notifyCooperator = async (guest, customMessage = null) => {
       type: 'Collaboration',
       accessLevel: supportedRoleOptions.value.find(
         (r) => r.value === guest.accessLevel,
-      )
-        ?.value,
+      )?.value,
       titleTemplate: 'HeuristicsCooperators.actions.send_invitation',
     }
 

@@ -306,7 +306,10 @@ const roleOptionsFor = (cooperator) => {
   const currentRole = props.roleOptions.find(
     (role) => role.value === cooperator.accessLevel,
   )
-  if (currentRole && !options.some((role) => role.value === currentRole.value)) {
+  if (
+    currentRole &&
+    !options.some((role) => role.value === currentRole.value)
+  ) {
     options.push(currentRole)
   }
   return options

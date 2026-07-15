@@ -30,6 +30,16 @@ const router = createRouter({
   routes,
 })
 
+const INVITE_TOKEN_KEY = 'pendingInviteToken'
+
+const publicPages = [
+  '/signin',
+  '/signup',
+  '/verify-email',
+  '/forgot-password',
+  '/invite',
+]
+
 router.beforeEach(async (to, from, next) => {
   const {
     authorize = [],
@@ -39,32 +49,55 @@ router.beforeEach(async (to, from, next) => {
   } = to.meta || {}
   let user = store.state.Auth.user
 
-  // Special handling for accessibility preview routes - allow complete public access
+  /**
+   * 1. Store invite token ONLY when visiting the invite route
+   */
+  if (to.path === '/invite') {
+    const inviteToken = to.query.token
+
+    if (typeof inviteToken === 'string' && inviteToken.length > 0) {
+      localStorage.setItem(INVITE_TOKEN_KEY, inviteToken)
+    }
+  }
+
+  /**
+   * 2. Ensure user session is restored before applying route rules
+   */
+  if (!user) {
+    const authUser = await store.dispatch('autoSignIn')
+    user = store.state.Auth.user
+
+    // Redirect unverified users to email verification page
+    if (
+      authUser &&
+      authUser.emailVerified === false &&
+      !publicPages.includes(to.path)
+    ) {
+      return next('/verify-email')
+    }
+  }
+
+  /**
+   * 3. Allow full access for accessibility preview routes
+   */
   const isAccessibilityPreview =
     to.path.includes('/accessibility/') && to.path.includes('/preview/')
 
   if (isAccessibilityPreview) {
-    return next() // Allow immediate access without any checks
+    return next()
   }
 
-   // Allow access to public pages even if user is logged in but email not verified
-  const publicPages = ['/signin', '/signup', '/verify-email', '/forgot-password']
+  /**
+   * 4. Allow public pages without authentication
+   */
   if (publicPages.includes(to.path)) {
     return next()
   }
 
-  if (!user) {
-    const authUser = await store.dispatch('autoSignIn')
-    user = store.state.Auth.user
-    // If user is logged in but email not verified, redirect to verify-email
-    if (authUser && authUser.emailVerified === false && !publicPages.includes(to.path)) {
-      return next('/verify-email')
-  }
-}
-
-  if (to.path === '/') return next(redirect())
-
-  if (authorize.length && to.path !== '/signin' && !to.params.token) {
+  /**
+   * 5. Enforce role-based access control
+   */
+  if (authorize.length) {
     if (!user || !authorize.includes(user.accessLevel)) {
       return next(redirect())
     }
@@ -90,7 +123,13 @@ router.beforeEach(async (to, from, next) => {
         message: 'AccessNotAllowed.noAccess',
         type: 'error',
       })
-      return next(getStudyFallbackPath(study?.id === studyId ? study : null, user, studyRouteBase))
+      return next(
+        getStudyFallbackPath(
+          study?.id === studyId ? study : null,
+          user,
+          studyRouteBase,
+        ),
+      )
     }
   }
 
@@ -98,10 +137,15 @@ router.beforeEach(async (to, from, next) => {
 })
 
 function redirect() {
-  if (!store.state.Auth.user) return '/signin'
-  const level = store.state.Auth.user.accessLevel
+  const user = store.state.Auth.user
+
+  if (!user) return '/signin'
+
+  const level = user.accessLevel
+
   if (level === 0) return '/superadmin'
   if (level === 1) return '/admin'
+
   return '/signin'
 }
 

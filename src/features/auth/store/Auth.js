@@ -290,5 +290,9 @@ export default {
         throw err
       }
     },
+
+    async findUserByEmail(_, { email }) {
+      return userController.findByEmail(email)
+    },
   },
 }

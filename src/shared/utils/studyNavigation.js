@@ -50,10 +50,7 @@ export function getTestViewAccessRedirect({ study, user, token }) {
     return null
   }
 
-  if (
-    !study?.isPublic &&
-    !hasStudyCapability(study, user, C.STUDY_ANSWER)
-  ) {
+  if (!study?.isPublic && !hasStudyCapability(study, user, C.STUDY_ANSWER)) {
     return getStudyFallbackPath(study, user, routeBase)
   }
 

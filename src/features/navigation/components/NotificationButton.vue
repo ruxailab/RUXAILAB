@@ -111,6 +111,8 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import NotificationItem from '@/features/notifications/components/NotificationItem.vue'
 import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue'
+import InviteController from '@/shared/controllers/InviteController.js'
+import StudyController from '@/controllers/StudyController'
 import { getAcceptedInvitationDestination } from '@/shared/utils/studyNavigation'
 import { showError } from '@/shared/utils/toast'
 
@@ -165,15 +167,21 @@ const goToNotificationRedirect = async (notification) => {
         notification,
         user: user.value,
       })
+
+      // remove possible invite token from localStorage
+      localStorage.removeItem('pendingInviteToken')
       return
     }
 
     if (notification.testId) {
       try {
-        await store.dispatch('acceptStudyCollaboration', {
-          studyId: notification.testId,
-        })
-        const study = await store.dispatch('getStudy', {
+        try {
+          const token = localStorage.getItem('pendingInviteToken')
+          await InviteController.resolveInvite(token, user.value.id)
+        } catch {
+          // Ignore error in case invitation comes from old system
+        }
+        const study = await new StudyController().getStudy({
           id: notification.testId,
         })
         const destination = getAcceptedInvitationDestination({

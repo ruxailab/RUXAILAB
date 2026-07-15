@@ -658,9 +658,10 @@ const notifyCooperator = async (guest) => {
         testDescription: test.value.testDescription,
         adminEmail: test.value.testAdmin?.email,
         adminName: store.getters.user?.name || test.value.testAdmin?.email,
-        testId: test.value.id,
+        studyId: test.value.id,
         scheduledAt: guest.testDate,
         accessLevel: guest.accessLevel,
+        isPublic: false, // Assuming all invites are private for now
         token: guest.token || null,
         invitationLink: `${globalThis.location.origin}/testview/${test.value.id}/${guest.token || guest.userDocId}`,
       },

@@ -32,7 +32,10 @@
             </v-card-title>
 
             <v-card-text>
-              <div v-if="topicCount" class="text-body-2 text-medium-emphasis mb-3">
+              <div
+                v-if="topicCount"
+                class="text-body-2 text-medium-emphasis mb-3"
+              >
                 {{
                   t('focusGroup.modules.guideDescription', {
                     minutes: totalDuration,
@@ -75,7 +78,12 @@
 
             <v-card-actions>
               <v-spacer />
-              <v-btn variant="text" color="primary" size="small" @click="goToEdit">
+              <v-btn
+                variant="text"
+                color="primary"
+                size="small"
+                @click="goToEdit"
+              >
                 <v-icon start size="16">mdi-pencil-outline</v-icon>
                 {{ t('focusGroup.modules.manageGuide') }}
               </v-btn>
@@ -113,7 +121,11 @@
                       size="18"
                       class="me-2"
                     >
-                      {{ flag.enabled ? 'mdi-check-circle' : 'mdi-minus-circle-outline' }}
+                      {{
+                        flag.enabled
+                          ? 'mdi-check-circle'
+                          : 'mdi-minus-circle-outline'
+                      }}
                     </v-icon>
                   </template>
                   <v-list-item-title class="text-body-2">
@@ -125,7 +137,12 @@
 
             <v-card-actions>
               <v-spacer />
-              <v-btn variant="text" color="primary" size="small" @click="goToSettings">
+              <v-btn
+                variant="text"
+                color="primary"
+                size="small"
+                @click="goToSettings"
+              >
                 <v-icon start size="16">mdi-tune</v-icon>
                 {{ t('focusGroup.modules.configure') }}
               </v-btn>
@@ -219,7 +236,9 @@ const totalDuration = computed(() =>
     0,
   ),
 )
-const maxParticipants = computed(() => test.value?.config?.maxParticipants ?? '—')
+const maxParticipants = computed(
+  () => test.value?.config?.maxParticipants ?? '—',
+)
 
 const configFlags = computed(() => {
   const config = test.value?.config || {}

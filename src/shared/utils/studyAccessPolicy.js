@@ -54,11 +54,13 @@ const HEURISTIC_ROLES = Object.freeze([
 ])
 
 const USER_POLICY = Object.freeze({
-  [R.ADMIN]: Object.freeze(Object.values(C).filter(
-    (capability) =>
-      capability !== C.FINAL_REPORT_MANAGE &&
-      capability !== C.EVALUATOR_INFO_MANAGE,
-  )),
+  [R.ADMIN]: Object.freeze(
+    Object.values(C).filter(
+      (capability) =>
+        capability !== C.FINAL_REPORT_MANAGE &&
+        capability !== C.EVALUATOR_INFO_MANAGE,
+    ),
+  ),
   [R.MANAGER]: Object.freeze([
     C.DASHBOARD_VIEW,
     C.STUDY_EDIT,
@@ -76,9 +78,11 @@ const USER_POLICY = Object.freeze({
 })
 
 const HEURISTIC_POLICY = Object.freeze({
-  [R.ADMIN]: Object.freeze(Object.values(C).filter(
-    (capability) => capability !== C.ANSWERS_EXPORT_SUMMARY,
-  )),
+  [R.ADMIN]: Object.freeze(
+    Object.values(C).filter(
+      (capability) => capability !== C.ANSWERS_EXPORT_SUMMARY,
+    ),
+  ),
   [R.MANAGER]: Object.freeze([
     C.DASHBOARD_VIEW,
     C.STUDY_EDIT,

@@ -14,7 +14,11 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer />
-            <v-btn color="primary" :loading="accepting" @click="acceptInvitation">
+            <v-btn
+              color="primary"
+              :loading="accepting"
+              @click="acceptInvitation"
+            >
               Accept invitation
             </v-btn>
           </v-card-actions>

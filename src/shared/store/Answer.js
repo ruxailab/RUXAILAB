@@ -271,7 +271,10 @@ export default {
             )
           }
         } else {
-          console.error('[Answer Store] Failed to fetch answer document:', error)
+          console.error(
+            '[Answer Store] Failed to fetch answer document:',
+            error,
+          )
         }
         showError('errors.failedToLoadAnswers')
       } finally {

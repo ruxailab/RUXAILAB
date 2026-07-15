@@ -12,11 +12,7 @@ export async function exportStudySummary({
   notifyDenied,
 }) {
   if (
-    !hasStudyCapability(
-      study,
-      user,
-      STUDY_CAPABILITY.ANSWERS_EXPORT_SUMMARY,
-    )
+    !hasStudyCapability(study, user, STUDY_CAPABILITY.ANSWERS_EXPORT_SUMMARY)
   ) {
     notifyDenied('AccessNotAllowed.noAccess')
     return { status: 'denied' }

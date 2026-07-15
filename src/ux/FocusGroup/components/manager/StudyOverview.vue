@@ -65,7 +65,9 @@ const totalDuration = computed(() =>
   ),
 )
 
-const maxParticipants = computed(() => props.test?.config?.maxParticipants ?? '—')
+const maxParticipants = computed(
+  () => props.test?.config?.maxParticipants ?? '—',
+)
 
 const teamSize = computed(() => {
   const cooperators = props.test?.cooperators

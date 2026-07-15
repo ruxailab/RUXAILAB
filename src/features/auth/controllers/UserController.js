@@ -41,6 +41,27 @@ export default class UserController extends Controller {
     return new User(Object.assign({ id: res.id }, res.data()))
   }
 
+  async findByEmail(email) {
+    const normalizedEmail = email?.trim().toLowerCase()
+
+    if (!normalizedEmail) {
+      return null
+    }
+
+    const res = await super.query(COLLECTION, {
+      field: 'email',
+      condition: '==',
+      value: normalizedEmail,
+    })
+
+    if (res.empty) {
+      return null
+    }
+
+    const doc = res.docs[0]
+    return new User(Object.assign({ id: doc.id }, doc.data()))
+  }
+
   async getUserWithStudies(docId) {
     const res = await super.readOne(COLLECTION, docId)
     const user = new User({ id: res.id, ...res.data() })

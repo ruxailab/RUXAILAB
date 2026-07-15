@@ -37,6 +37,38 @@ export const normalizeCooperatorInviteEntry = (entry, registeredUsers = []) => {
   }
 }
 
+export const enrichCooperatorInviteEntry = async (entry, dependencies = {}) => {
+  if (!entry) {
+    return { email: '', userDocId: null }
+  }
+
+  const normalizedEntry = normalizeCooperatorInviteEntry(entry)
+
+  if (normalizedEntry.userDocId) {
+    return normalizedEntry
+  }
+
+  const email = normalizedEntry.email
+  if (!email) {
+    return normalizedEntry
+  }
+
+  const resolver = dependencies.resolveUserByEmail
+  if (typeof resolver !== 'function') {
+    return normalizedEntry
+  }
+
+  try {
+    const user = await resolver(email)
+    return {
+      ...normalizedEntry,
+      userDocId: user?.id || user?.userDocId || null,
+    }
+  } catch {
+    return normalizedEntry
+  }
+}
+
 export const getCooperatorInviteValidationError = ({
   email,
   currentUserEmail,

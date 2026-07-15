@@ -23,10 +23,11 @@ export default class AnswerController extends Controller {
   }
 
   async getMyStudyAnswer(studyId) {
-    const response = await FirebaseFunctionsController.callHttpsCallableFunction(
-      'getMyStudyAnswer',
-      { studyId },
-    )
+    const response =
+      await FirebaseFunctionsController.callHttpsCallableFunction(
+        'getMyStudyAnswer',
+        { studyId },
+      )
     return instantiateStudyAnswerByType(response.data.type, response.data)
   }
 
