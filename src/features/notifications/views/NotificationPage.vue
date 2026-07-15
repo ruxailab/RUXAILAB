@@ -293,6 +293,8 @@ import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitation
 import { useI18n } from 'vue-i18n'
 import { matchesSearch } from '@/shared/utils/searchUtils'
 import { getAcceptedInvitationDestination } from '@/shared/utils/studyNavigation'
+import InviteController from '@/shared/controllers/InviteController.js'
+import StudyController from '@/controllers/StudyController.js'
 
 const store = useStore()
 const router = useRouter()
@@ -505,7 +507,8 @@ const goToNotificationRedirect = async (notification) => {
 
     try {
       try {
-        await InviteController.resolveInvite(token.value, user.value.id)
+        let token = localStorage.getItem('pendingInviteToken')
+        await InviteController.resolveInvite(token, user.value.id)
       } catch {
         // Ignore error in case invitation comes from old system
       }

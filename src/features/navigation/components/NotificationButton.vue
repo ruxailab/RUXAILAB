@@ -176,7 +176,8 @@ const goToNotificationRedirect = async (notification) => {
     if (notification.testId) {
       try {
         try {
-          await InviteController.resolveInvite(token.value, user.value.id)
+          const token = localStorage.getItem('pendingInviteToken')
+          await InviteController.resolveInvite(token, user.value.id)
         } catch {
           // Ignore error in case invitation comes from old system
         }
