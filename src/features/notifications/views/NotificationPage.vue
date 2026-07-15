@@ -162,7 +162,6 @@
                 </div>
 
                 <!-- CONTENT -->
-                {{ n.inviteToken }}
                 <div class="flex-grow-1">
                   <div
                     class="d-flex flex-column flex-sm-row align-start align-sm-center justify-space-between gap-2 mb-1"
