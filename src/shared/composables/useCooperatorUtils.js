@@ -110,6 +110,10 @@ export function useCooperatorUtils() {
         return 'success'
       case 'observator':
         return 'info'
+      case 'manager':
+        return 'primary'
+      case 'user':
+        return 'secondary'
       case 'guest':
         return 'warning'
       default:
@@ -126,7 +130,11 @@ export function useCooperatorUtils() {
       case 'guest':
         return 'mdi-account'
       case 'observator':
-        return 'info'
+        return 'mdi-eye'
+      case 'manager':
+        return 'mdi-account-cog'
+      case 'user':
+        return 'mdi-account'
       default:
         return 'mdi-account'
     }

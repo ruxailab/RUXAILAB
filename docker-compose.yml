@@ -12,7 +12,8 @@ services:
 
   firebase-emulator:
     build:
-      context: ./firebase-emulator
+      context: .
+      dockerfile: firebase-emulator/Dockerfile
     ports:
       - '9099:9099'
       - '5001:5001'

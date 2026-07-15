@@ -22,6 +22,7 @@ export default class Study {
     status, // transformar em um ENUM
     endDate,
     creationDate,
+    studyRoleMap,
   } = {}) {
     /**
      * Defines the test id.
@@ -141,6 +142,14 @@ export default class Study {
      * @type {number}
      */
     this.endDate = endDate ?? null
+
+    /**
+     * Accepted membership lookup used by Firebase Security Rules.
+     * The legacy cooperator array remains the canonical UI representation.
+     *
+     * @type {Record<string, number>}
+     */
+    this.studyRoleMap = studyRoleMap ?? {}
   }
 
   /**
@@ -149,6 +158,20 @@ export default class Study {
    * @returns a map that represents the current model.
    */
   toFirestore() {
+    const studyRoleMap = (this.cooperators || []).reduce(
+      (roles, cooperator) => {
+        if (
+          cooperator?.accepted === true &&
+          cooperator?.userDocId &&
+          Number.isInteger(cooperator?.accessLevel)
+        ) {
+          roles[cooperator.userDocId] = cooperator.accessLevel
+        }
+        return roles
+      },
+      {},
+    )
+
     return {
       testTitle: this.testTitle,
       testDescription: this.testDescription,
@@ -168,6 +191,7 @@ export default class Study {
       status: this.status,
       endDate: this.endDate,
       subType: this.subType,
+      studyRoleMap,
     }
   }
 }

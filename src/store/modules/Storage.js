@@ -3,7 +3,6 @@
  * @module Storage
  */
 
-import { getStorage, ref as storageRef, deleteObject } from 'firebase/storage'
 import {
   increment,
   deleteField,
@@ -12,6 +11,7 @@ import {
   getDoc,
 } from 'firebase/firestore'
 import { db } from '@/app/plugins/firebase'
+import { deleteStudyStorageFile } from '@/shared/services/studyStorageService'
 
 export default {
   namespaced: true,
@@ -56,10 +56,9 @@ export default {
 
       commit('SET_DELETING', true)
       try {
-        const storage = getStorage()
         const storagePath = getStoragePathFromDownloadUrl(file.url)
-        const fileRef = storageRef(storage, storagePath)
-        await deleteObject(fileRef)
+        const studyId = storagePath.split('/')[1]
+        await deleteStudyStorageFile(studyId, storagePath)
 
         commit('ADD_DELETED_URL', file.url)
 
