@@ -38,7 +38,7 @@ export const ICONS = {
   REPORTS: 'mdi-file-chart-outline',
   ANALYSIS: 'mdi-chart-line-variant',
   USERS: 'mdi-account-multiple-outline',
-  MANAGER: 'mdi-home',
+  MANAGER: 'mdi-view-dashboard',
   DOCUMENT_EDIT: 'mdi-file-document-edit',
   DOCUMENT: 'mdi-file-document',
   PREVIEW: 'mdi-file-eye',

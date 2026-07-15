@@ -216,6 +216,95 @@
       "actions": "Acciones"
     }
   },
+  "auditTrail": {
+    "title": "Registro de auditoría",
+    "subtitle": "Cambios sensibles en la configuración, los colaboradores y el almacenamiento del estudio.",
+    "loadError": "No se pudo cargar el registro de auditoría.",
+    "noEvents": "Aún no se ha registrado ninguna actividad.",
+    "noMatchingEvents": "Ninguna actividad coincide con tus filtros.",
+    "filters": {
+      "activity": "Actividad",
+      "when": "Cuándo",
+      "person": "Persona",
+      "allActivity": "Toda la actividad",
+      "study": "Cambios del estudio",
+      "settings": "Cambios de configuración",
+      "team": "Acceso del equipo",
+      "files": "Cambios en archivos",
+      "anyTime": "Cualquier momento",
+      "last7Days": "Últimos 7 días",
+      "last30Days": "Últimos 30 días",
+      "anyone": "Cualquiera",
+      "clear": "Limpiar filtros"
+    },
+    "headers": {
+      "time": "Hora",
+      "action": "Acción",
+      "actor": "Actor",
+      "description": "Descripción"
+    },
+    "actions": {
+      "study": {
+        "edited": "Estudio editado",
+        "settingsChanged": "Configuración del estudio modificada"
+      },
+      "cooperator": {
+        "invited": "Colaborador invitado",
+        "invitationAccepted": "Invitación aceptada",
+        "roleChanged": "Rol de colaborador modificado",
+        "removed": "Colaborador eliminado",
+        "invitationCancelled": "Invitación cancelada"
+      },
+      "storage": {
+        "fileDeleted": "Archivo de almacenamiento eliminado"
+      }
+    },
+    "descriptions": {
+      "studyUpdated": "Se actualizó {target}",
+      "studyRenamed": "Se renombró el estudio de \"{before}\" a \"{after}\"",
+      "studyDescriptionUpdated": "Se actualizó la descripción del estudio",
+      "studyAccessChanged": "Se cambió el acceso de {before} a {after}",
+      "studyStatusChanged": "Se cambió el estado de {before} a {after}",
+      "fieldUpdated": "Se actualizó {field}",
+      "cooperatorInvited": "Se invitó a {target} como {role}",
+      "cooperatorInvitationAccepted": "{target} aceptó la invitación",
+      "cooperatorRoleChanged": "Se cambió el rol de {target} de {before} a {after}",
+      "cooperatorRemoved": "Se eliminó a {target} del estudio",
+      "cooperatorInvitationCancelled": "Se canceló la invitación para {target}",
+      "storageFileDeleted": "Se eliminó {target}"
+    },
+    "fields": {
+      "testTitle": "título",
+      "testDescription": "descripción",
+      "isPublic": "acceso público",
+      "status": "estado",
+      "testStatus": "estado de la prueba",
+      "endDate": "fecha de finalización",
+      "testStructure": "tareas",
+      "testOptions": "opciones",
+      "studyConclusion": "conclusión",
+      "evaluatorInfo": "información del evaluador"
+    },
+    "values": {
+      "enabled": "Activado",
+      "disabled": "Desactivado",
+      "empty": "Vacío",
+      "public": "Público",
+      "private": "Privado",
+      "draft": "Borrador",
+      "published": "Publicado",
+      "active": "Activo",
+      "closed": "Cerrado"
+    },
+    "roles": {
+      "admin": "Admin",
+      "evaluator": "Evaluador",
+      "guest": "Invitado",
+      "observator": "Observator",
+      "manager": "Manager",
+      "user": "User"
+    }
+  },
   "community": {
     "studies": {
       "title": "Estudios comunitarios",
@@ -433,6 +522,9 @@
     "accessLevel": "Nivel de Acceso",
     "actions": "Acciones",
     "drawer": {
+      "Manager": "Panel",
+      "Reports": "Progreso",
+      "Answers": "Resultados",
       "Dashboard": "Panel",
       "Test": "Prueba",
       "Preview": "Vista previa",
@@ -445,6 +537,7 @@
       "Answer Test": "Responder prueba",
       "Settings": "Configuración",
       "Storage": "Almacenamiento",
+      "Audit Trail": "Registro de auditoría",
       "name": "Nombre",
       "studiesCount": "Recuento de Estudios",
       "mediaSize": "Tamaño de Medios",
@@ -2170,6 +2263,39 @@
       "addPrompt": "Agregar pregunta",
       "removePrompt": "Eliminar pregunta",
       "duration": "Minutos"
+    },
+    "dashboard": {
+      "typeLabel": "Grupo Focal",
+      "subtitle": "Gestiona tu guía de discusión, participantes y sesiones moderadas desde un solo panel."
+    },
+    "studyOverview": {
+      "topics": "Temas de Discusión",
+      "topicsSubtitle": "En la guía",
+      "totalDuration": "Duración Total",
+      "durationSubtitle": "Planificada",
+      "maxParticipants": "Máx. Participantes",
+      "perSession": "Por sesión",
+      "team": "Equipo",
+      "teamSubtitle": "Facilitadores y observadores"
+    },
+    "modules": {
+      "guideTitle": "Guía de Discusión",
+      "topicCount": "{count} temas",
+      "guideDescription": "{minutes} min planificados",
+      "untitledTopic": "Tema sin título",
+      "moreTopics": "+{count} más",
+      "guideEmpty": "Aún no hay temas. Agrega tu primer tema en el editor de la guía.",
+      "manageGuide": "Gestionar guía",
+      "configTitle": "Configuración de la Sesión",
+      "maxParticipantsLabel": "Máx. participantes por sesión",
+      "waitingRoom": "Sala de espera activada",
+      "consent": "Consentimiento requerido",
+      "backroom": "Observadores ocultos a los participantes",
+      "configure": "Configurar",
+      "liveSessionTitle": "Sesión en Vivo",
+      "liveSessionComingSoon": "La discusión moderada en vivo estará disponible pronto.",
+      "reportsTitle": "Resultados e Informes",
+      "reportsComingSoon": "Los resultados y el análisis de la sesión aparecerán aquí."
     }
   },
   "studyCreation": {

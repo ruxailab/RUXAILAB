@@ -86,6 +86,12 @@
       </v-card>
     </v-dialog>
 
+    <EvaluatorInfoDisplay
+      v-if="showEvaluatorInfo"
+      :sections="evaluatorInfoSections"
+      @start="evaluatorInfoAcknowledged = true"
+    />
+
     <v-container v-if="test && start" fluid class="pa-0">
       <v-row
         :class="[
@@ -119,7 +125,7 @@
             variant="outlined"
             rounded
             class="mt-4"
-            :disabled="isStartTestDisabled"
+            :disabled="isStartTestDisabled || !answerInitialized"
             @click="openInstructionsPage"
           >
             {{ $t('HeuristicsTestView.actions.startTest') }}
@@ -375,6 +381,11 @@ import Heuristic from '@/ux/Heuristic/models/Heuristic'
 import { showSuccess, showError } from '@/shared/utils/toast'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import HeuristicAnswer from '../models/HeuristicAnswer'
+import EvaluatorInfoDisplay from '@/ux/Heuristic/components/EvaluatorInfoDisplay.vue'
+import {
+  resolveStudyAccess,
+  STUDY_ROLE,
+} from '@/shared/utils/studyAccessPolicy'
 
 const props = defineProps({
   id: { type: String, default: '' },
@@ -388,6 +399,7 @@ const { t } = useI18n()
 const logined = ref(null)
 const fromlink = ref(null)
 const start = ref(true)
+const evaluatorInfoAcknowledged = ref(false)
 const index = ref(1)
 const noExistUser = ref(true)
 const heurisIndex = ref(0)
@@ -405,6 +417,7 @@ const TEST_PAGES = {
   answers: 'heuristic_answer_page',
 }
 const currentPage = ref(TEST_PAGES.welcome)
+const answerInitialized = ref(false)
 
 // Auto-save status variables
 const autoSaveInProgress = ref(false)
@@ -415,6 +428,21 @@ const saveStatusMessage = ref('All changes saved')
 const saveStatusType = ref('default') // default, saving, success, error
 
 const test = computed(() => store.getters.test)
+const showEvaluatorInfo = computed(() => {
+  if (
+    !test.value ||
+    !user.value ||
+    !start.value ||
+    testAlreadyStarted.value ||
+    evaluatorInfoAcknowledged.value ||
+    evaluatorInfoSections.value.length === 0
+  ) {
+    return false
+  }
+
+  const access = resolveStudyAccess(test.value, user.value)
+  return access.role === STUDY_ROLE.EVALUATOR || access.isPublicParticipant
+})
 
 const evaluatorInfoSections = computed(() => {
   const sections = test.value?.evaluatorInfo?.sections
@@ -541,7 +569,24 @@ const user = computed(() => {
   if (store.getters.user) setExistUser()
   return store.getters.user
 })
-const currentUserTestAnswer = ref({})
+const currentUserTestAnswer = ref(new HeuristicAnswer())
+
+const normalizeCurrentUserTestAnswer = (answer) => {
+  if (answer instanceof HeuristicAnswer) return answer
+
+  return new HeuristicAnswer({
+    ...(answer || {}),
+    userDocId: answer?.userDocId ?? user.value?.id ?? null,
+  })
+}
+
+const testAlreadyStarted = computed(
+  () =>
+    Boolean(currentUserTestAnswer.value?.testStarted) ||
+    calculatedProgress.value > 0 ||
+    hasSavedAnswers(),
+)
+
 const showSaveBtn = computed(() => {
   if (currentUserTestAnswer.value.submitted) return false
   return true
@@ -684,7 +729,17 @@ const startTest = async () => {
     })
     return
   }
-  if (!isUserTestAdmin.value) {
+  if (!test.value?.testOptions?.length) {
+    showError('No answer options configured for this test.')
+    return
+  }
+
+  if (!answerInitialized.value) return
+
+  const invitedCooperator = test.value?.cooperators?.find(
+    (cooperator) => cooperator.userDocId === user.value?.id,
+  )
+  if (!isUserTestAdmin.value && invitedCooperator?.accepted !== true) {
     await store.dispatch('acceptStudyCollaboration', {
       test: test.value,
       cooperator: user.value,
@@ -1174,7 +1229,11 @@ const perHeuristicProgress = (item) => {
 }
 
 const autoSaveAnswer = async () => {
-  if (!currentUserTestAnswer.value || currentUserTestAnswer.value.submitted) {
+  if (
+    !answerInitialized.value ||
+    !currentUserTestAnswer.value ||
+    currentUserTestAnswer.value.submitted
+  ) {
     return
   }
 
@@ -1219,24 +1278,21 @@ const autoSaveAnswer = async () => {
 }
 
 const getOrderedHeuristicsForSave = () => {
-  if (
-    !currentUserTestAnswer.value?.heuristicQuestions ||
-    !test.value?.testStructure
-  ) {
-    return currentUserTestAnswer.value
+  const answer = normalizeCurrentUserTestAnswer(currentUserTestAnswer.value)
+
+  if (!answer.heuristicQuestions || !test.value?.testStructure) {
+    return answer
   }
 
   const baseOrder = test.value.testStructure.map((h) => h.id)
 
-  const orderedHeuristicQuestions = [
-    ...currentUserTestAnswer.value.heuristicQuestions,
-  ].sort(
+  const orderedHeuristicQuestions = [...answer.heuristicQuestions].sort(
     (a, b) =>
       baseOrder.indexOf(a.heuristicId) - baseOrder.indexOf(b.heuristicId),
   )
 
   return new HeuristicAnswer({
-    ...currentUserTestAnswer.value,
+    ...answer,
     heuristicQuestions: orderedHeuristicQuestions,
   })
 }
@@ -1338,7 +1394,7 @@ const signOut = () => {
 
 const populateWithHeuristicQuestions = () => {
   if (!heuristics.value || !test.value) {
-    return
+    return false
   }
 
   // Check if we need to initialize or just update the structure
@@ -1458,6 +1514,7 @@ const populateWithHeuristicQuestions = () => {
     verifyTimerState(heuristic)
     heuristic.timerStartedAt = null
   })
+  return true
 }
 
 const hasSavedAnswers = () => {
@@ -1586,10 +1643,13 @@ const restoreProgress = () => {
 
 const setTest = async () => {
   logined.value = true
+  answerInitialized.value = false
   await store.dispatch('getCurrentTestAnswerDoc')
-  currentUserTestAnswer.value = store.getters.currentUserTestAnswer || {}
+  currentUserTestAnswer.value = normalizeCurrentUserTestAnswer(
+    store.getters.currentUserTestAnswer,
+  )
   initializeHeuristicsOrder()
-  populateWithHeuristicQuestions()
+  answerInitialized.value = populateWithHeuristicQuestions()
   restoreProgress()
 }
 
@@ -1653,6 +1713,7 @@ watch(
 )
 
 onBeforeMount(async () => {
+  answerInitialized.value = false
   if (route.params.token) {
     fromlink.value = true
   }
@@ -1664,12 +1725,14 @@ onBeforeMount(async () => {
   await store.dispatch('getCurrentTestAnswerDoc')
 
   // Load answer data into local reactive state
-  currentUserTestAnswer.value = store.getters.currentUserTestAnswer || {}
+  currentUserTestAnswer.value = normalizeCurrentUserTestAnswer(
+    store.getters.currentUserTestAnswer,
+  )
 
   // Randomize only for fresh runs; keep deterministic order for resumed runs.
   initializeHeuristicsOrder()
 
-  populateWithHeuristicQuestions()
+  answerInitialized.value = populateWithHeuristicQuestions()
   // calculate progress before checking restore
   calculateProgress()
 
