@@ -342,18 +342,21 @@
 </template>
 
 <script setup>
-import Cooperators from '@/shared/models/Cooperators'
 import Notification from '@/shared/models/Notification'
 import EmailController from '@/shared/controllers/EmailController'
-import { computed, ref } from 'vue'
+import UIDGenerator from 'uid-generator'
+import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
-import { ACCESS_LEVEL } from '../../../../shared/utils/accessLevel'
+import { useRouter } from 'vue-router'
 import {
   useCooperatorUtils,
   normalizeCooperatorInviteEntry,
 } from '@/shared/composables/useCooperatorUtils'
 import { showError, showSuccess } from '@/shared/utils/toast'
 import { useI18n } from 'vue-i18n'
+import { getAssignableRoleOptions } from '@/shared/utils/studyAccessPolicy'
+import { manageStudyMembership } from '@/shared/services/studyMembershipService'
+import { getAcceptedInvitationDestination } from '@/shared/utils/studyNavigation'
 
 const { t } = useI18n()
 
@@ -367,9 +370,14 @@ const emit = defineEmits(['update:dialog'])
 
 // Store
 const store = useStore()
+const router = useRouter()
+const uidgen = new UIDGenerator()
 
 // Composables
-const { validateEmail: validateEmailFormat } = useCooperatorUtils()
+const {
+  validateEmail: validateEmailFormat,
+  getCooperatorInviteValidationError,
+} = useCooperatorUtils()
 
 // Helper functions
 const getDefaultTime = () => {
@@ -396,26 +404,9 @@ const comboboxModel = ref([])
 const emailInput = ref('')
 const inviteMessage = ref('')
 const loading = ref(false)
-const selectedRole = ref(ACCESS_LEVEL.ADMIN)
-
-const roleOptions = computed(() => [
-  {
-    label: t('UsabilityCooperators.roles.evaluator'),
-    value: ACCESS_LEVEL.EVALUATOR,
-    description: t('UsabilityCooperators.roles.evaluatorDesc'),
-  },
-  {
-    label: t('UsabilityCooperators.roles.observator'),
-    value: ACCESS_LEVEL.OBSERVATOR,
-    description: t('UsabilityCooperators.roles.observatorDesc'),
-  },
-])
+const selectedRole = ref(null)
 
 // Computed
-const users = computed(() =>
-  test.value?.cooperators ? [...test.value.cooperators] : [],
-)
-
 const minTime = computed(() => {
   const currentDate = new Date()
   currentDate.setDate(currentDate.getDate() - 1)
@@ -432,10 +423,32 @@ const minTime = computed(() => {
   }
 })
 
-const test = computed(() => store.getters.test)
-
 const cooperatorsEdit = computed(() =>
   test.value?.cooperators ? [...test.value.cooperators] : [],
+)
+
+const test = computed(() => store.getters.test)
+const currentUser = computed(() => store.getters.user)
+const users = computed(() => store.state.Users?.users || [])
+const roleOptions = computed(() =>
+  getAssignableRoleOptions(test.value, currentUser.value).map((role) => ({
+    ...role,
+    label: role.title,
+    description:
+      role.title === 'Observator'
+        ? 'Watches the session and reviews its answers.'
+        : `Collaborates as ${role.title}.`,
+  })),
+)
+
+watch(
+  roleOptions,
+  (options) => {
+    if (!options.some((option) => option.value === selectedRole.value)) {
+      selectedRole.value = options[0]?.value ?? null
+    }
+  },
+  { immediate: true },
 )
 
 const formattedDateTime = computed(() => {
@@ -464,7 +477,9 @@ const formattedDateTime = computed(() => {
 
 // Methods
 const isEmailAlreadySelected = (email) =>
-  comboboxModel.value.some((item) => item === email)
+  comboboxModel.value.some(
+    (item) => item?.email?.toLowerCase() === email.toLowerCase(),
+  )
 
 const removeEmail = (index) => {
   comboboxModel.value.splice(index, 1)
@@ -480,14 +495,13 @@ const addEmailToSelection = () => {
     return
   }
 
-  const validationError =
-    useCooperatorUtils().getCooperatorInviteValidationError({
-      email,
-      currentUserEmail: store.getters.user?.email,
-      studyOwnerEmail: test.value?.testAdmin?.email,
-      existingCooperators: cooperatorsEdit.value,
-      t,
-    })
+  const validationError = getCooperatorInviteValidationError({
+    email,
+    currentUserEmail: store.getters.user?.email,
+    studyOwnerEmail: test.value?.testAdmin?.email,
+    existingCooperators: cooperatorsEdit.value,
+    t,
+  })
 
   if (validationError) {
     showError(validationError)
@@ -539,36 +553,23 @@ const saveInvitation = async () => {
     }
 
     const timestamp = dateTime.toISOString()
-    // Loop through all selected emails/users
-    comboboxModel.value.forEach((item) => {
+    const invited = []
+    for (const item of comboboxModel.value) {
       const normalizedEntry = normalizeCooperatorInviteEntry(item, users.value)
-      const email =
-        normalizedEntry.email || (typeof item === 'object' ? item.email : item)
-      const userDocId =
-        normalizedEntry.userDocId || (typeof item === 'object' ? item.id : null)
 
-      // Prevent duplicate invites
-      const alreadyExists = cooperatorsEdit.value.some(
-        (c) => c.email === email && c.testDate === timestamp,
-      )
-
-      if (!alreadyExists) {
-        cooperatorsEdit.value.push(
-          new Cooperators({
-            userDocId,
-            email,
-            invited: true,
-            accepted: false,
-            accessLevel: selectedRole.value,
-            testDate: timestamp,
-            inviteMessage: inviteMessage.value,
-            updateDate: test.value.updateDate,
-            testAuthorEmail: test.value.testAdmin.email,
-          }),
-        )
-      }
-    })
-    await submit()
+      const result = await manageStudyMembership({
+        studyId: test.value.id,
+        action: 'invite',
+        targetUserId: normalizedEntry.userDocId,
+        targetEmail: normalizedEntry.email,
+        role: selectedRole.value,
+        inviteMessage: inviteMessage.value,
+        testDate: timestamp,
+        token: uidgen.generateSync(),
+      })
+      invited.push(result.cooperator)
+    }
+    await submit(invited)
   } catch (error) {
     showError(error.message)
   } finally {
@@ -576,18 +577,15 @@ const saveInvitation = async () => {
   }
 }
 
-const submit = async () => {
-  test.value.cooperators = [...cooperatorsEdit.value]
-  await store.dispatch('updateStudy', test.value)
-
+const submit = async (invited) => {
   // Ensure notifications / external emails are sent one by one
-  for (const guest of cooperatorsEdit.value) {
-    if (!guest.accepted) {
-      try {
-        await notifyCooperator(guest)
-      } catch {}
-    }
+  for (const guest of invited) {
+    try {
+      await notifyCooperator(guest)
+    } catch {}
   }
+
+  await store.dispatch('getStudy', { id: test.value.id })
 
   inviteForm.value.resetValidation()
 
@@ -598,7 +596,7 @@ const submit = async () => {
   inviteMessage.value = ''
   comboboxModel.value = []
   emailInput.value = ''
-  selectedRole.value = ACCESS_LEVEL.ADMIN
+  selectedRole.value = roleOptions.value[0]?.value ?? null
 
   emit('update:dialog', false)
 }
@@ -608,7 +606,22 @@ const notifyCooperator = async (guest) => {
 
   // For registered users with userDocId
   if (guest.userDocId) {
-    const path = '/testview'
+    const invitationStudy = {
+      ...test.value,
+      cooperators: [
+        ...(test.value.cooperators || []).filter(
+          (cooperator) => cooperator.userDocId !== guest.userDocId,
+        ),
+        { ...guest, accepted: true },
+      ],
+    }
+    const destination = getAcceptedInvitationDestination({
+      study: invitationStudy,
+      user: { id: guest.userDocId },
+    })
+    const path = destination
+      ? router.resolve(destination).href
+      : `/testview/${test.value.id}/${guest.userDocId}`
     try {
       await store.dispatch('addNotification', {
         userId: guest.userDocId,
@@ -616,7 +629,7 @@ const notifyCooperator = async (guest) => {
           accessLevel: guest.accessLevel || 2,
           title: `You have been invited to test ${test.value.testTitle}!`,
           description: inviteMessage.value,
-          redirectsTo: `${path}/${test.value.id}/${guest.userDocId}`,
+          redirectsTo: path,
           author: test.value.testAdmin?.email,
           type: 'Collaboration',
           read: false,
@@ -650,6 +663,8 @@ const notifyCooperator = async (guest) => {
         accessLevel: guest.accessLevel,
         isPublic: false, // Assuming all invites are private for now
         requiredLogin: true,
+        token: guest.token || null,
+        invitationLink: `${globalThis.location.origin}/testview/${test.value.id}/${guest.token || guest.userDocId}`,
       },
     })
     showSuccess('Email invitation sent')

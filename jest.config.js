@@ -5,7 +5,7 @@ module.exports = {
     '^.+\\.js$': 'babel-jest',
   },
   testMatch: ['**/*.spec.js'],
-  testPathIgnorePatterns: ['/e2e/', '/functions/'],
+  testPathIgnorePatterns: ['/e2e/', '/functions/', '/tests/rules/'],
   transformIgnorePatterns: ['/node_modules/(?!axios)'],
   moduleNameMapper: {
     '^axios$': '<rootDir>/node_modules/axios/dist/node/axios.cjs',

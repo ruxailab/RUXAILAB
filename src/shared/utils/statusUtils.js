@@ -20,6 +20,7 @@ export const getStatusColor = (status) => {
     // Success states
     active: 'success',
     completed: 'success',
+    finished: 'success',
     success: 'success',
     pass: 'success',
     accepted: 'success',
@@ -43,6 +44,7 @@ export const getStatusColor = (status) => {
     // Info states
     info: 'info',
     draft: 'info',
+    upcoming: 'info',
   }
 
   return statusMap[statusStr] || 'grey'
@@ -65,6 +67,7 @@ export const getStatusIcon = (status) => {
     // Success states
     active: 'mdi-play-circle',
     completed: 'mdi-check-circle',
+    finished: 'mdi-check-circle',
     success: 'mdi-check-circle',
     pass: 'mdi-check-circle',
     accepted: 'mdi-check-circle',
@@ -88,6 +91,7 @@ export const getStatusIcon = (status) => {
     // Info states
     info: 'mdi-information',
     draft: 'mdi-file-document-outline',
+    upcoming: 'mdi-calendar-clock',
   }
 
   return iconMap[statusStr] || 'mdi-help-circle'
@@ -109,6 +113,8 @@ export const getStatusText = (status) => {
   const textMap = {
     active: 'Active',
     completed: 'Completed',
+    finished: 'Finished',
+    upcoming: 'Upcoming',
     success: 'Success',
     pass: 'Pass',
     accepted: 'Accepted',

@@ -193,6 +193,7 @@ export default {
       try {
         const res = await studyController.getStudy(payload)
         commit('SET_TEST', res)
+        return res
       } catch (err) {
         commit('setError', {
           errorCode: 'studyError',

@@ -218,6 +218,95 @@
       "actions": "Actions"
     }
   },
+  "auditTrail": {
+    "title": "Audit Trail",
+    "subtitle": "Sensitive changes to study settings, cooperators, and storage.",
+    "loadError": "Unable to load the audit trail.",
+    "noEvents": "No activity has been recorded yet.",
+    "noMatchingEvents": "No activity matches your filters.",
+    "filters": {
+      "activity": "Activity",
+      "when": "When",
+      "person": "Person",
+      "allActivity": "All activity",
+      "study": "Study changes",
+      "settings": "Settings changes",
+      "team": "Team access",
+      "files": "File changes",
+      "anyTime": "Any time",
+      "last7Days": "Last 7 days",
+      "last30Days": "Last 30 days",
+      "anyone": "Anyone",
+      "clear": "Clear filters"
+    },
+    "headers": {
+      "time": "Time",
+      "action": "Action",
+      "actor": "Actor",
+      "description": "Description"
+    },
+    "actions": {
+      "study": {
+        "edited": "Study edited",
+        "settingsChanged": "Study settings changed"
+      },
+      "cooperator": {
+        "invited": "Cooperator invited",
+        "invitationAccepted": "Invitation accepted",
+        "roleChanged": "Cooperator role changed",
+        "removed": "Cooperator removed",
+        "invitationCancelled": "Invitation cancelled"
+      },
+      "storage": {
+        "fileDeleted": "Storage file deleted"
+      }
+    },
+    "descriptions": {
+      "studyUpdated": "Updated {target}",
+      "studyRenamed": "Renamed study from \"{before}\" to \"{after}\"",
+      "studyDescriptionUpdated": "Updated study description",
+      "studyAccessChanged": "Changed access from {before} to {after}",
+      "studyStatusChanged": "Changed status from {before} to {after}",
+      "fieldUpdated": "Updated {field}",
+      "cooperatorInvited": "Invited {target} as {role}",
+      "cooperatorInvitationAccepted": "{target} accepted the invitation",
+      "cooperatorRoleChanged": "Changed {target}'s role from {before} to {after}",
+      "cooperatorRemoved": "Removed {target} from the study",
+      "cooperatorInvitationCancelled": "Cancelled invitation for {target}",
+      "storageFileDeleted": "Deleted {target}"
+    },
+    "fields": {
+      "testTitle": "title",
+      "testDescription": "description",
+      "isPublic": "public access",
+      "status": "status",
+      "testStatus": "test status",
+      "endDate": "end date",
+      "testStructure": "tasks",
+      "testOptions": "options",
+      "studyConclusion": "conclusion",
+      "evaluatorInfo": "evaluator information"
+    },
+    "values": {
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "empty": "Empty",
+      "public": "Public",
+      "private": "Private",
+      "draft": "Draft",
+      "published": "Published",
+      "active": "Active",
+      "closed": "Closed"
+    },
+    "roles": {
+      "admin": "Admin",
+      "evaluator": "Evaluator",
+      "guest": "Guest",
+      "observator": "Observator",
+      "manager": "Manager",
+      "user": "User"
+    }
+  },
   "community": {
     "studies": {
       "title": "Community Studies",
@@ -457,6 +546,7 @@
       "Settings": "Settings",
       "Evaluator Info": "Evaluator Info",
       "Storage": "Storage",
+      "Audit Trail": "Audit Trail",
       "name": "Name",
       "studiesCount": "Studies Count",
       "mediaSize": "Media Size",
@@ -2171,6 +2261,39 @@
       "addPrompt": "Add prompt",
       "removePrompt": "Remove prompt",
       "duration": "Minutes"
+    },
+    "dashboard": {
+      "typeLabel": "Focus Group",
+      "subtitle": "Manage your discussion guide, participants, and moderated sessions from one dashboard."
+    },
+    "studyOverview": {
+      "topics": "Discussion Topics",
+      "topicsSubtitle": "In the guide",
+      "totalDuration": "Total Duration",
+      "durationSubtitle": "Planned",
+      "maxParticipants": "Max Participants",
+      "perSession": "Per session",
+      "team": "Team",
+      "teamSubtitle": "Facilitators & observers"
+    },
+    "modules": {
+      "guideTitle": "Discussion Guide",
+      "topicCount": "{count} topics",
+      "guideDescription": "{minutes} min planned",
+      "untitledTopic": "Untitled topic",
+      "moreTopics": "+{count} more",
+      "guideEmpty": "No topics yet. Add your first topic in the guide editor.",
+      "manageGuide": "Manage guide",
+      "configTitle": "Session Configuration",
+      "maxParticipantsLabel": "Max participants per session",
+      "waitingRoom": "Waiting room enabled",
+      "consent": "Consent required",
+      "backroom": "Observers hidden from participants",
+      "configure": "Configure",
+      "liveSessionTitle": "Live Session",
+      "liveSessionComingSoon": "Moderated live discussion is coming soon.",
+      "reportsTitle": "Results & Reports",
+      "reportsComingSoon": "Session results and analysis will appear here."
     }
   },
   "studyCreation": {
