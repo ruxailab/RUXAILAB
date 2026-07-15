@@ -109,11 +109,7 @@ describe('study navigation', () => {
       subType: USER_STUDY_SUBTYPES.UNMODERATED,
     }
     const guest = { id: 'guest', accessLevel: 1 }
-    const heuristicStudy = studyWith(
-      'HEURISTIC',
-      guest.id,
-      STUDY_ROLE.GUEST,
-    )
+    const heuristicStudy = studyWith('HEURISTIC', guest.id, STUDY_ROLE.GUEST)
 
     expect(
       getAcceptedInvitationDestination({
@@ -137,11 +133,7 @@ describe('study navigation', () => {
 
   it('sends an accepted heuristic Evaluator to the study dashboard', () => {
     const evaluator = { id: 'evaluator', accessLevel: 1 }
-    const study = studyWith(
-      'HEURISTIC',
-      evaluator.id,
-      STUDY_ROLE.EVALUATOR,
-    )
+    const study = studyWith('HEURISTIC', evaluator.id, STUDY_ROLE.EVALUATOR)
 
     expect(
       getAcceptedInvitationDestination({ study, user: evaluator }),
@@ -153,26 +145,22 @@ describe('study navigation', () => {
 
   it('keeps Preview available to a heuristic Evaluator from the dashboard', () => {
     const evaluator = { id: 'evaluator', accessLevel: 1 }
-    const study = studyWith(
-      'HEURISTIC',
-      evaluator.id,
-      STUDY_ROLE.EVALUATOR,
-    )
+    const study = studyWith('HEURISTIC', evaluator.id, STUDY_ROLE.EVALUATOR)
 
     expect(titlesFor(study, evaluator, 'heuristic')).toEqual([
-      'Manager',
+      'Dashboard',
       'Preview',
-      'Answers',
+      'Analytics',
     ])
   })
 
   it('shows every user-study Admin item, including Storage', () => {
     expect(titlesFor(studyWith('USER'), owner)).toEqual([
-      'Manager',
+      'Dashboard',
       'Test',
       'Preview',
-      'Reports',
-      'Answers',
+      'Progress',
+      'Analytics',
       'Cooperators',
       'Settings',
       'Storage',
@@ -185,10 +173,10 @@ describe('study navigation', () => {
     const study = studyWith('USER', user.id, STUDY_ROLE.MANAGER)
 
     expect(titlesFor(study, user)).toEqual([
-      'Manager',
+      'Dashboard',
       'Test',
       'Preview',
-      'Answers',
+      'Analytics',
       'Cooperators',
     ])
   })
@@ -204,7 +192,7 @@ describe('study navigation', () => {
     const user = { id: 'observator', accessLevel: 1 }
     const study = studyWith('USER', user.id, STUDY_ROLE.OBSERVATOR)
 
-    expect(titlesFor(study, user)).toEqual(['Manager', 'Answers'])
+    expect(titlesFor(study, user)).toEqual(['Dashboard', 'Analytics'])
   })
 
   it('adds Preview and Cooperators for a moderated Observator', () => {
@@ -215,9 +203,9 @@ describe('study navigation', () => {
     }
 
     expect(titlesFor(study, user, 'userTest/moderated')).toEqual([
-      'Manager',
+      'Dashboard',
       'Preview',
-      'Answers',
+      'Analytics',
       'Cooperators',
     ])
   })
@@ -230,9 +218,9 @@ describe('study navigation', () => {
     }
 
     expect(titlesFor(study, user)).toEqual([
-      'Manager',
+      'Dashboard',
       'Preview',
-      'Answers',
+      'Analytics',
     ])
   })
 
@@ -242,13 +230,13 @@ describe('study navigation', () => {
     const publicStudy = { ...privateStudy, isPublic: true }
 
     expect(titlesFor(privateStudy, user, 'heuristic')).toEqual([
-      'Manager',
-      'Answers',
+      'Dashboard',
+      'Analytics',
     ])
     expect(titlesFor(publicStudy, user, 'heuristic')).toEqual([
-      'Manager',
+      'Dashboard',
       'Preview',
-      'Answers',
+      'Analytics',
     ])
   })
 
@@ -257,10 +245,10 @@ describe('study navigation', () => {
     const study = studyWith('HEURISTIC', user.id, STUDY_ROLE.MANAGER)
 
     expect(titlesFor(study, user, 'heuristic')).toEqual([
-      'Manager',
+      'Dashboard',
       'Test',
       'Preview',
-      'Answers',
+      'Analytics',
       'Cooperators',
       'Final Report',
       'Evaluator Info',
