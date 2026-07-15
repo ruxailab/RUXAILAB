@@ -430,14 +430,12 @@ npx prettier --write src/your-file.vue
 
 #### Prettier Configuration
 
-RUXAILAB uses Prettier for consistent code formatting. While there's no `.prettierrc` file, Prettier uses sensible defaults:
+RUXAILAB uses Prettier for consistent code formatting. The configuration is defined in the `.prettierrc` file at the project root:
 
-- **Print Width**: 80 characters
-- **Tabs**: 2 spaces (no tabs)
-- **Quotes**: Double quotes for strings
-- **Semicolons**: Enabled
-- **Trailing Commas**: ES5 style (where valid in older JS)
-- **Arrow Functions**: Always add parentheses around parameters
+- **Quotes**: Single quotes for strings (`singleQuote: true`)
+- **Trailing Commas**: All trailing commas (`trailingComma: "all"`)
+- **Semicolons**: Disabled (`semi: false`)
+- **Arrow Functions**: Always add parentheses around parameters (`arrowParens: "always"`)
 
 #### ESLint Configuration
 
