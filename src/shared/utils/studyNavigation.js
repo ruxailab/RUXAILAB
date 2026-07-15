@@ -118,7 +118,7 @@ export function getAcceptedInvitationDestination({ study, user }) {
 
 const NAVIGATION_ITEMS = Object.freeze([
   {
-    title: 'Manager',
+    title: 'Dashboard',
     icon: ICONS.MANAGER,
     capability: C.DASHBOARD_VIEW,
     path: ({ type, id }) => `/${type}/manager/${id}`,
@@ -136,13 +136,13 @@ const NAVIGATION_ITEMS = Object.freeze([
     path: ({ id, previewPath }) => previewPath ?? `/testview/${id}`,
   },
   {
-    title: 'Reports',
+    title: 'Progress',
     icon: ICONS.BOOK,
     capability: C.REPORTS_VIEW,
     path: ({ type, id }) => `/${type}/report/${id}`,
   },
   {
-    title: 'Answers',
+    title: 'Analytics',
     icon: ICONS.ORDER,
     capability: C.ANSWERS_VIEW,
     path: ({ type, id }) => `/${type}/answer/${id}`,
