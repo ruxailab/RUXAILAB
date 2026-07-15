@@ -101,6 +101,8 @@ const generateLink = async () => {
       studyTitle: props.studyTitle,
       accessLevel: selectedRole.value,
       requiredLogin: props.requiresLogin,
+      toEmail: null, // No email provided for public invites
+      isPublic: true,
     })
 
     inviteLink.value = result.inviteLink

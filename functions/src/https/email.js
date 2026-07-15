@@ -3,7 +3,6 @@ import nodemailer from 'nodemailer'
 import * as fs from 'fs'
 import * as path from 'path'
 import { logger } from 'firebase-functions'
-import InviteUtils from '../utils/inviteUtils.js'
 
 export const sendEmail = functions.onCall({
   handler: async (data) => {
@@ -26,20 +25,12 @@ export const sendEmail = functions.onCall({
         process.cwd(),
         'src/templates/mails/invitations.html',
       )
-      const inviteLink = await InviteUtils.generateInviteLink(
-        content.data.studyId,
-        content.to,
-        content.data.testTitle,
-        content.data.isPublic,
-        content.data.accessLevel,
-        content.data.requiredLogin,
-      )
 
       htmlTemplate = fs.readFileSync(templatePath, 'utf-8')
       htmlTemplate = htmlTemplate
         .replace(
           /{{invitationLink}}/g,
-          inviteLink || content.data.invitationLink || process.env.SITE_URL,
+          content.data.invitationLink || process.env.SITE_URL,
         )
         .replace('{{message}}', content.data.message)
         .replace(/{{testTitle}}/g, content.data.testTitle)

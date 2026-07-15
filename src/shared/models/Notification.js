@@ -23,6 +23,7 @@ export default class Notification {
     accessLevel,
     readAt,
     type,
+    inviteToken,
   } = {}) {
     this.title = title ?? null
     this.titleTemplate = titleTemplate ?? null
@@ -38,6 +39,7 @@ export default class Notification {
     this.accessLevel = accessLevel ?? null
     this.readAt = readAt ?? null
     this.type = type ?? null
+    this.inviteToken = inviteToken ?? null
   }
 
   static toNotification(data) {
@@ -60,6 +62,7 @@ export default class Notification {
       accessLevel: this.accessLevel,
       readAt: this.readAt,
       type: this.type,
+      inviteToken: this.inviteToken,
     }
   }
 }

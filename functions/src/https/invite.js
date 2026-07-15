@@ -30,7 +30,8 @@ export const resolveInvite = functions.onCall({
 
     const expired = invite.expiresAt?.toMillis?.() < now
 
-    if (invite.acceptedAt) {
+    // private invites should be used only once, so if they have been accepted, they are not valid anymore
+    if (!invite.isPublic && invite.acceptedAt) {
       throw new functions.https.HttpsError(
         'failed-precondition',
         'Invite already used',
@@ -68,13 +69,22 @@ export const resolveInvite = functions.onCall({
       }
     }
 
-    /**
-     * Atomic accept
-     */
-    await ref.update({
-      acceptedAt: admin.firestore.FieldValue.serverTimestamp(),
-      acceptedBy: uid,
-    })
+    // if the invite is private save person who accepted it
+    if (!invite.isPublic) {
+      await ref.update({
+        acceptedAt: admin.firestore.FieldValue.serverTimestamp(),
+        acceptedBy: uid,
+      })
+    }
+
+    // if the invite is public, save all users that accepted it, and increment usage count
+    if (invite.isPublic && uid) {
+      await ref.update({
+        acceptedUsers: admin.firestore.FieldValue.arrayUnion(uid),
+        usageCount: admin.firestore.FieldValue.increment(1),
+        lastAcceptedAt: admin.firestore.FieldValue.serverTimestamp(),
+      })
+    }
 
     return {
       success: true,
@@ -120,7 +130,8 @@ export const validateInvite = functions.onCall({
       const now = Date.now()
       const expired = dataInvite.expiresAt?.toMillis?.() < now
 
-      if (dataInvite.acceptedAt) {
+      // private invites should be used only once, so if they have been accepted, they are not valid anymore
+      if (!dataInvite.isPublic && dataInvite.acceptedAt) {
         throw new functions.https.HttpsError(
           'failed-precondition',
           'Invite already used',
@@ -153,29 +164,40 @@ export const validateInvite = functions.onCall({
 
 export const generateInvitationLink = functions.onCall({
   handler: async (data) => {
-    try {
-      const content = data.data || data
-      const { studyId, accessLevel, studyTitle, requiredLogin } = content
+    const content = data.data || data
 
-      if (!studyId || !accessLevel) {
-        throw new functions.https.HttpsError(
-          'invalid-argument',
-          'Missing required fields',
-        )
-      }
+    const {
+      studyId,
+      accessLevel,
+      studyTitle,
+      requiredLogin,
+      toEmail,
+      isPublic,
+    } = content
 
-      const inviteLink = await InviteUtils.generateInviteLink(
-        studyId,
-        null, // No email provided for public invites
-        studyTitle,
-        true, // isPublic
-        accessLevel,
-        requiredLogin,
+    if (!studyId || accessLevel === undefined || accessLevel === null) {
+      throw new functions.https.HttpsError(
+        'invalid-argument',
+        'Missing required fields',
       )
-
-      return { inviteLink }
-    } catch (err) {
-      throw err
     }
+
+    if (!isPublic && !toEmail) {
+      throw new functions.https.HttpsError(
+        'invalid-argument',
+        'Missing recipient email',
+      )
+    }
+
+    const { inviteLink, inviteToken } = await InviteUtils.generateInviteLink(
+      studyId,
+      isPublic ? null : toEmail,
+      studyTitle,
+      isPublic,
+      accessLevel,
+      requiredLogin,
+    )
+
+    return { inviteLink, inviteToken }
   },
 })

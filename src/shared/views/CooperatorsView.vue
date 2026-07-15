@@ -180,6 +180,7 @@ import {
 } from '@/shared/utils/studyAccessPolicy'
 import { manageStudyMembership } from '@/shared/services/studyMembershipService'
 import { getAcceptedInvitationDestination } from '@/shared/utils/studyNavigation'
+import InviteController from '@/shared/controllers/InviteController.js'
 
 const uidgen = new UIDGenerator()
 const router = useRouter()
@@ -285,6 +286,7 @@ const sendNotification = async ({
   author,
   type,
   accessLevel,
+  inviteToken,
 } = {}) => {
   const notification = new Notification({
     title,
@@ -299,6 +301,7 @@ const sendNotification = async ({
     testId,
     type,
     accessLevel,
+    inviteToken,
   })
 
   try {
@@ -409,11 +412,10 @@ const resolveUserByEmail = async (email) => {
   }
 }
 
-const handleSendEmail = async (guest, customMessage = null) => {
+const handleSendEmail = async (guest, customMessage = null, inviteLink) => {
   const emailController = new EmailController()
   const inviteMessage =
     customMessage ?? guest?.inviteMessage ?? inviteMessages.value ?? ''
-  const invitationToken = guest?.token || guest?.userDocId
 
   await emailController.send({
     to: guest.email,
@@ -427,10 +429,7 @@ const handleSendEmail = async (guest, customMessage = null) => {
       adminEmail: test.value.testAdmin.email,
       adminName: userAuth.value.name || userAuth.value.email,
       studyId: test.value.id,
-      isPublic: false, // Assuming all invites are private for now
-      accessLevel: guest.accessLevel,
-      requiredLogin: true,
-      invitationLink: `${globalThis.location.origin}/testview/${test.value.id}/${invitationToken}`,
+      invitationLink: inviteLink,
     },
   })
 }
@@ -606,10 +605,20 @@ const sendMenssages = async (guest, customMessage = null) => {
       guest.userDocId = resolvedGuest.userDocId
     }
 
-    await notifyCooperator(guest, messageToSend)
+    // generate invite link
+    const inviteResult = await InviteController.generateInvitationLink({
+      studyId: test.value.id,
+      studyTitle: test.value.testTitle,
+      accessLevel: guest.accessLevel,
+      requiredLogin: true,
+      toEmail: guest.email,
+      isPublic: false,
+    })
+
+    await notifyCooperator(guest, messageToSend, inviteResult.inviteToken)
     // Email is optional - don't let it block the notification
     try {
-      await handleSendEmail(guest, messageToSend)
+      await handleSendEmail(guest, messageToSend, inviteResult.inviteLink)
     } catch {
       // console.warn('Email sending failed (may be missing VUE_APP_CLOUD_FUNCTIONS_URL):', emailError.message)
     }
@@ -621,7 +630,7 @@ const sendMenssages = async (guest, customMessage = null) => {
   }
 }
 
-const notifyCooperator = async (guest, customMessage = null) => {
+const notifyCooperator = async (guest, customMessage = null, inviteToken) => {
   if (guest.userDocId) {
     // Check if it's an accessibility test (MANUAL or AUTOMATIC)
     //if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
@@ -666,6 +675,7 @@ const notifyCooperator = async (guest, customMessage = null) => {
         (r) => r.value === guest.accessLevel,
       )?.value,
       titleTemplate: 'HeuristicsCooperators.actions.send_invitation',
+      inviteToken: inviteToken,
     }
 
     if (customMessage) {

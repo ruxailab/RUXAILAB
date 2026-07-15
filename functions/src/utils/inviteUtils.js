@@ -28,6 +28,9 @@ export default class InviteUtils {
         requiredLogin: requiredLogin || false,
       })
 
-    return `${process.env.SITE_URL}/invite?token=${encodeURIComponent(token)}`
+    return {
+      inviteLink: `${process.env.SITE_URL}/invite?token=${encodeURIComponent(token)}`,
+      inviteToken: token,
+    }
   }
 }
