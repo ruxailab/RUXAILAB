@@ -2,6 +2,7 @@ import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import { instantiateStudyByType, STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 
 const COLLECTION = 'tests'
+const ANSWERS_COLLECTION = 'answers'
 
 /**
  * Data access for Focus Group studies. Reads and persists the discussion guide
@@ -29,6 +30,16 @@ export default class FocusGroupController extends Controller {
     return this.update(COLLECTION, id, {
       config: typeof config.toFirestore === 'function' ? config.toFirestore() : config,
       updateDate: Date.now(),
+    })
+  }
+
+  /**
+   * Persist a finished live session into the study's answer document, keyed by
+   * session id under the `sessions` map.
+   */
+  async saveSessionAnswer(answersDocId, session) {
+    return this.update(ANSWERS_COLLECTION, answersDocId, {
+      [`sessions.${session.sessionId}`]: session,
     })
   }
 }
