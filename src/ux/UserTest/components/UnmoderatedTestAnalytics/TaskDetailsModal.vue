@@ -257,7 +257,7 @@
 </template>
 
 <script setup>
-import { computed, watch } from 'vue'
+import { computed } from 'vue'
 
 const mockObserverNotes = [
   {
@@ -418,13 +418,7 @@ const formatDuration = (duration) => {
   return `${minutes}m ${seconds}s`
 }
 
-watch(
-  () => props.userSession,
-  (newValue) => {
-    console.log('userSession updated:', newValue)
-  },
-  { immediate: true }, // also logs on first load
-)
+
 </script>
 
 <style scoped>
