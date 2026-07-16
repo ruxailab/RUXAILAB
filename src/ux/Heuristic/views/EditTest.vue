@@ -6,59 +6,18 @@
       </p>
     </template>
 
-    <div v-if="!isTemplate" class="save-status-indicator">
-      <v-card
-        elevation="2"
-        :class="['status-card', `status-card--${saveStatusType}`]"
-      >
-        <v-card-text class="status-card-content">
-          <div class="status-row">
-            <div class="status-copy">
-              <div class="status-title-row">
-                <div class="status-icon-wrap">
-                  <v-icon size="20">
-                    {{ saveStatusIcon }}
-                  </v-icon>
-                </div>
-                <div>
-                  <p class="status-eyebrow">Auto-save</p>
-                  <p class="status-message">
-                    {{ saveStatusMessage }}
-                  </p>
-                </div>
-              </div>
-              <p
-                v-if="lastSaveTime && saveStatusType === 'success'"
-                class="status-timestamp"
-              >
-                Updated {{ formatLastSaveTime() }}
-              </p>
-              <p v-else class="status-helper">
-                Changes are saved automatically while you edit.
-              </p>
-            </div>
-            <v-progress-circular
-              v-if="autoSaveInProgress"
-              indeterminate
-              size="24"
-              width="3"
-              class="status-spinner"
-            />
-          </div>
-
-          <v-btn
-            v-if="hasPendingChanges || saveStatusType === 'error'"
-            size="default"
-            variant="outlined"
-            class="mt-4 text-none status-action-btn"
-            :disabled="autoSaveInProgress"
-            @click="save({ showToast: true })"
-          >
-            Save now
-          </v-btn>
-        </v-card-text>
-      </v-card>
-    </div>
+    <AutoSaveStatusBanner
+      v-if="!isTemplate"
+      :message="saveStatusMessage"
+      :status-type="saveStatusType"
+      :is-saving="autoSaveInProgress"
+      :last-save-text="
+        lastSaveTime && saveStatusType === 'success' ? formatLastSaveTime() : ''
+      "
+      :show-action="hasPendingChanges || saveStatusType === 'error'"
+      helper-message="Changes are saved automatically while you edit."
+      @action="save({ showToast: true })"
+    />
 
     <v-container>
       <div>
@@ -124,6 +83,7 @@
 
 <script setup>
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
+import AutoSaveStatusBanner from '@/shared/components/AutoSaveStatusBanner.vue'
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useStore } from 'vuex'
 import { onBeforeRouteLeave } from 'vue-router'
@@ -159,7 +119,6 @@ const autoSaveInProgress = ref(false)
 const lastSaveTime = ref(null)
 const saveStatusMessage = ref('All changes saved')
 const saveStatusType = ref('default')
-const saveStatusIcon = ref('mdi-check-circle')
 const pendingChangeVersion = ref(0)
 let currentSavePromise = null
 
@@ -204,20 +163,6 @@ const handleResize = () => {
 const updateSaveStatus = (message, type = 'default') => {
   saveStatusMessage.value = message
   saveStatusType.value = type
-
-  switch (type) {
-    case 'saving':
-      saveStatusIcon.value = 'mdi-content-save'
-      break
-    case 'success':
-      saveStatusIcon.value = 'mdi-check-circle'
-      break
-    case 'error':
-      saveStatusIcon.value = 'mdi-alert-circle'
-      break
-    default:
-      saveStatusIcon.value = 'mdi-check-circle'
-  }
 }
 
 const formatLastSaveTime = () => {
@@ -453,118 +398,6 @@ onBeforeRouteLeave(async () => {
 </script>
 
 <style scoped>
-.save-status-indicator {
-  position: fixed;
-  top: 76px;
-  right: 20px;
-  z-index: 110;
-  width: min(360px, calc(100vw - 32px));
-}
-
-.status-card {
-  --status-accent: rgb(var(--v-theme-primary));
-  --status-soft: rgba(var(--v-theme-primary), 0.1);
-  background: rgba(255, 255, 255, 0.98);
-  border: 1px solid rgba(10, 33, 63, 0.08);
-  border-radius: 18px;
-  box-shadow: 0 18px 40px rgba(10, 33, 63, 0.16);
-  overflow: hidden;
-}
-
-.status-card::before {
-  content: '';
-  display: block;
-  height: 4px;
-  background: linear-gradient(90deg, var(--status-accent) 0%, #fca326 100%);
-}
-
-.status-card--saving {
-  --status-accent: rgb(var(--v-theme-warning));
-  --status-soft: rgba(var(--v-theme-warning), 0.14);
-}
-
-.status-card--success {
-  --status-accent: rgb(var(--v-theme-success));
-  --status-soft: rgba(var(--v-theme-success), 0.14);
-}
-
-.status-card--error {
-  --status-accent: rgb(var(--v-theme-error));
-  --status-soft: rgba(var(--v-theme-error), 0.14);
-}
-
-.status-card-content {
-  padding: 18px 20px 20px;
-}
-
-.status-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.status-copy {
-  flex: 1;
-  min-width: 0;
-}
-
-.status-title-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-}
-
-.status-icon-wrap {
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  background: var(--status-soft);
-  color: var(--status-accent);
-}
-
-.status-eyebrow {
-  margin: 0 0 4px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(10, 33, 63, 0.55);
-}
-
-.status-message {
-  margin: 0;
-  font-size: 18px;
-  line-height: 1.3;
-  font-weight: 700;
-  color: #0a213f;
-}
-
-.status-helper,
-.status-timestamp {
-  margin: 12px 0 0;
-  padding-left: 56px;
-  font-size: 14px;
-  line-height: 1.4;
-  color: rgba(10, 33, 63, 0.72);
-}
-
-.status-spinner {
-  color: var(--status-accent);
-}
-
-.status-action-btn {
-  margin-left: 56px;
-  border-color: rgba(10, 33, 63, 0.16);
-  color: #0a213f;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-}
-
 .mobile-tab-select {
   margin-bottom: 16px;
 }
@@ -573,33 +406,6 @@ onBeforeRouteLeave(async () => {
   .v-container {
     padding-left: 12px;
     padding-right: 12px;
-  }
-
-  .save-status-indicator {
-    top: auto;
-    bottom: 20px;
-    right: 16px;
-    left: 16px;
-    width: auto;
-  }
-
-  .status-card-content {
-    padding: 16px;
-  }
-
-  .status-message {
-    font-size: 17px;
-  }
-
-  .status-helper,
-  .status-timestamp,
-  .status-action-btn {
-    margin-left: 0;
-    padding-left: 0;
-  }
-
-  .status-row {
-    align-items: center;
   }
 }
 </style>

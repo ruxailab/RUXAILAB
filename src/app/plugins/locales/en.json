@@ -533,6 +533,9 @@
     "accessLevel": "Access Level",
     "actions": "Actions",
     "drawer": {
+      "Manager": "Dashboard",
+      "Reports": "Progress",
+      "Answers": "Results",
       "Dashboard": "Dashboard",
       "Test": "Test",
       "Session": "Session",
@@ -849,6 +852,8 @@
       "uploadSuccess": "Image uploaded successfully",
       "uploadError": "Failed to upload image",
       "imagesCount": "{count} image(s) attached",
+      "dropImage": "Drop screenshot or video here",
+      "imageFormats": "or click to select an image or video",
       "deleteImageTitle": "Delete Image",
       "deleteImageMessage": "Are you sure you want to delete this attached image?"
     },
@@ -895,12 +900,14 @@
       "settings": "Settings",
       "confirmUpload": "Confirm Upload",
       "timeTracking": "Time Tracking",
+      "answerMetrics": "Answer metrics",
       "enableWeights": "Enable Weights Feature"
     },
     "messages": {
       "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
       "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding.",
       "timeTrackingDescription": "Track the time each evaluator spends per heuristic during evaluation.",
+      "answerMetricsDescription": "Choose which default metrics evaluators will answer when no custom options are configured.",
       "settingsSaved": "Settings saved successfully.",
       "enableWeightsDescription": "Allow evaluators to assign weights to heuristics in this study"
     },
@@ -913,7 +920,9 @@
     },
     "labels": {
       "timeTrackingOn": "Time tracking enabled",
-      "timeTrackingOff": "Time tracking disabled"
+      "timeTrackingOff": "Time tracking disabled",
+      "frequency": "Frequency",
+      "severity": "Severity"
     }
   },
   "HeuristicsTestView": {
@@ -926,6 +935,7 @@
     },
     "errors": {
       "questionNotLoaded": "Question could not be loaded",
+      "noAnswerOptions": "No answer options configured for this test.",
       "noAnswerData": "No answer data found",
       "failedToSaveAnswer": "Failed to save answer. Please try again.",
       "failedToSubmitAnswer": "Failed to submit answer. Please try again."
@@ -936,6 +946,91 @@
     "headers": {
       "heuristics": "HEURISTICS"
     },
+    "flow": {
+      "instructions": "Instructions",
+      "evaluateHeuristic": "Evaluate the heuristic",
+      "finishEvaluation": "Finish evaluation",
+      "heuristicEvaluation": "Heuristic evaluation",
+      "finalSubmission": "Final submission",
+      "reviewHeuristics": "Heuristic evaluation"
+    },
+    "cards": {
+      "title": "Select a heuristic",
+      "description": "Review each heuristic's progress and choose one to answer its questions.",
+      "questionsCount": "{count} questions",
+      "open": "Evaluate heuristic",
+      "back": "Back to selection",
+      "storage": "Storage: {value}",
+      "noDescription": "Review this heuristic and answer its questions based on your evaluation."
+    },
+    "answer": {
+      "currentLocation": "Heuristic {heuristic} · Question {current} of {total}",
+      "responseType": "Response type",
+      "responseTypeHint": "Choose the answer format once. It will be used for every question in this heuristic.",
+      "assessment": "Assessment",
+      "assessmentHint": "Select the option that best reflects your evaluation for this question.",
+      "optionsAnalysis": "Options analysis",
+      "optionsAnalysisHint": "Evaluate the question using the configured options, severity, frequency, or both.",
+      "evidence": "Evidence and comments",
+      "evidenceSubtitle": "Write the reason for your evaluation and attach supporting evidence if needed.",
+      "evidenceHint": "Add comments, images, or an audio transcription as evidence.",
+      "commentEvidence": "Comment evidence",
+      "commentEvidenceSubtitle": "Explain what you observed. You can type your notes or record audio to create a comment.",
+      "commentEvidenceHint": "Add written observations or use audio transcription.",
+      "commentPrompt": "Optional: add any comment to justify your answer.",
+      "imageEvidence": "Image evidence",
+      "imageEvidenceSubtitle": "Attach screenshots or visual evidence that supports your analysis.",
+      "imageEvidenceHint": "Upload one or more images for this question.",
+      "imagePrompt": "Optional: add an image or video to justify your answer.",
+      "commentLabel": "Evaluation comment",
+      "commentPlaceholder": "What did you observe?",
+      "frequency": "Frequency",
+      "severity": "Severity",
+      "questionTitle": "Question",
+      "frequencyOccurrence": "Frequency of occurrence",
+      "severityRanking": "Severity ranking",
+      "chooseBestOption": "Choose the option that best fits your evaluation.",
+      "frequencyQuestion": "How often does this occur?",
+      "severityQuestion": "How critical is this?",
+      "questions": "Questions",
+      "answered": "Answered",
+      "pending": "Pending",
+      "questionNumber": "Question {number}",
+      "questionProgress": "Question {current} of {total}",
+      "previousQuestion": "Previous question",
+      "nextQuestion": "Next question",
+      "previousHeuristic": "Previous heuristic",
+      "nextHeuristic": "Next heuristic",
+      "backToHeuristicList": "Back to heuristic list",
+      "recordAudio": "Record audio",
+      "stopRecording": "Stop",
+      "speechUnsupported": "Speech transcription is not available in this browser.",
+      "modes": {
+        "frequencySeverity": "Frequency + severity",
+        "frequency": "Frequency",
+        "severity": "Severity",
+        "customOptions": "Options analysis"
+      },
+      "frequencyScale": {
+        "rare": "Rare",
+        "occasional": "Occasional",
+        "sometimes": "Sometimes",
+        "frequent": "Frequent",
+        "constant": "Constant"
+      },
+      "severityScale": {
+        "cosmetic": "Cosmetic",
+        "minor": "Minor",
+        "moderate": "Moderate",
+        "major": "Major",
+        "catastrophic": "Catastrophic"
+      }
+    },
+    "alerts": {
+      "testAlreadyCompleted": "Test Already Completed",
+      "testAlreadyCompletedMessage": "You have already completed and submitted this test. Thank you for your participation!",
+      "testConfigError": "Test Configuration Error"
+    },
     "actions": {
       "cancel": "Cancel",
       "submit": "Submit",
@@ -943,7 +1038,21 @@
       "continueAs": "Continue as {userEmail}",
       "notMail": "Not {userEmail}?",
       "changeAccount": "Change account",
-      "startTest": "Start Test"
+      "startTest": "Start Evaluation"
+    },
+    "InstructionsStep": {
+      "welcomeTitle": "Welcome to RUXAILAB!",
+      "defaultDescription": "You are going to participate in a heuristic evaluation that aims to identify possible usability problems in a digital application.",
+      "howItWorks": "How does this evaluation work?",
+      "phases": "You will review the interface using a set of usability heuristics. For each heuristic, answer the questions, select the option that best matches your evaluation, and add comments or evidence when you find a usability issue.",
+      "summary": "Here you can see a summary of the phases you will follow:",
+      "ready": "When you are ready, click the button to start. You can move at your own pace and stop at any time if you need to.",
+      "startButton": "Start Evaluation",
+      "steps": {
+        "instructions": "Instructions",
+        "evaluation": "Heuristic evaluation",
+        "submission": "Final submission"
+      }
     }
   },
   "EvaluatorInfoView": {

@@ -13,6 +13,8 @@ export default class HeuristicStudy extends Study {
     this.testWeights = params.testWeights ?? {}
     this.trackTime = params.trackTime ?? true
     this.useWeights = params.useWeights ?? false
+    this.useFrequency = params.useFrequency ?? true
+    this.useSeverity = params.useSeverity ?? true
     this.evaluatorInfo = params.evaluatorInfo ?? {
       enabled: false,
       sections: [],
@@ -25,6 +27,8 @@ export default class HeuristicStudy extends Study {
       testWeights: this.testWeights,
       trackTime: this.trackTime,
       useWeights: this.useWeights,
+      useFrequency: this.useFrequency,
+      useSeverity: this.useSeverity,
       evaluatorInfo: this.evaluatorInfo,
       heuristicComments: this.heuristicComments,
     })
