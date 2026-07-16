@@ -281,11 +281,6 @@ export default {
       }
     },
     async analyzeTimeStamp(task) {
-      console.log(
-        'Analyzing Timestamp..............................',
-        this.activeRegion.start,
-        this.activeRegion.end,
-      )
       this.overlay = { visible: true, text: 'Analyzing...' }
 
       try {
@@ -305,7 +300,7 @@ export default {
         }
 
         const data = response.data.data
-        console.log('Analysis Completed', data)
+
 
         const utterances_sentiment = data.utterances_sentiment
         const answerSentimentDocId = this.selectedAnswerSentiment.id
