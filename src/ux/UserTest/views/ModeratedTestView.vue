@@ -1057,9 +1057,6 @@ const callTimerSave = () => {
 }
 
 function handleTaskFinish(userCompleted) {
-  const currentTask = localTestAnswer.tasks[taskIndex.value]
-  if (currentTask) {
-  }
   completeStep(taskIndex.value, 'tasks', userCompleted)
   callTimerSave()
 }

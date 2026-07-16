@@ -1284,11 +1284,9 @@ const joinRoom = async () => {
         } catch (err) {
           console.error('Error adding ICE candidate:', err)
         }
-      } else {
+      } else if (peers[senderId]) {
         // Buffer candidate
-        if (peers[senderId]) {
-          peers[senderId].pendingCandidates.push(signal.candidate)
-        }
+        peers[senderId].pendingCandidates.push(signal.candidate)
       }
     }
 
