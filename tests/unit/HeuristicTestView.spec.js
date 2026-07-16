@@ -24,6 +24,13 @@ jest.mock('@/shared/utils/toast', () => ({
   showError: jest.fn(),
 }))
 
+jest.mock('@/ux/Heuristic/components/HeuristicInstructionsStep.vue', () => ({
+  name: 'HeuristicInstructionsStep',
+  props: ['disabled'],
+  emits: ['start'],
+  template: '<div />',
+}))
+
 jest.mock('@/ux/Heuristic/components/AddCommentBtn.vue', () => ({
   name: 'AddCommentBtn',
   template: '<div><slot name="answer" /></div>',
@@ -152,6 +159,9 @@ describe('HeuristicTestView', () => {
           'v-avatar': true,
           'v-spacer': true,
           'v-speed-dial': true,
+          'v-stepper': true,
+          'v-stepper-header': true,
+          'v-stepper-item': true,
         },
       },
     })
@@ -178,6 +188,16 @@ describe('HeuristicTestView', () => {
     )
     expect(readyStartButton.attributes('disabled')).toBeUndefined()
     await expect(readyStartButton.trigger('click')).resolves.toBeUndefined()
+
+    jest.advanceTimersByTime(1000)
+    await flushPromises()
+
+    const instructionsStep = wrapper.findComponent({
+      name: 'HeuristicInstructionsStep',
+    })
+    expect(instructionsStep.exists()).toBe(true)
+    instructionsStep.vm.$emit('start')
+    await flushPromises()
 
     jest.advanceTimersByTime(1500)
     await flushPromises()
