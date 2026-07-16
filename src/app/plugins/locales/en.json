@@ -218,6 +218,95 @@
       "actions": "Actions"
     }
   },
+  "auditTrail": {
+    "title": "Audit Trail",
+    "subtitle": "Sensitive changes to study settings, cooperators, and storage.",
+    "loadError": "Unable to load the audit trail.",
+    "noEvents": "No activity has been recorded yet.",
+    "noMatchingEvents": "No activity matches your filters.",
+    "filters": {
+      "activity": "Activity",
+      "when": "When",
+      "person": "Person",
+      "allActivity": "All activity",
+      "study": "Study changes",
+      "settings": "Settings changes",
+      "team": "Team access",
+      "files": "File changes",
+      "anyTime": "Any time",
+      "last7Days": "Last 7 days",
+      "last30Days": "Last 30 days",
+      "anyone": "Anyone",
+      "clear": "Clear filters"
+    },
+    "headers": {
+      "time": "Time",
+      "action": "Action",
+      "actor": "Actor",
+      "description": "Description"
+    },
+    "actions": {
+      "study": {
+        "edited": "Study edited",
+        "settingsChanged": "Study settings changed"
+      },
+      "cooperator": {
+        "invited": "Cooperator invited",
+        "invitationAccepted": "Invitation accepted",
+        "roleChanged": "Cooperator role changed",
+        "removed": "Cooperator removed",
+        "invitationCancelled": "Invitation cancelled"
+      },
+      "storage": {
+        "fileDeleted": "Storage file deleted"
+      }
+    },
+    "descriptions": {
+      "studyUpdated": "Updated {target}",
+      "studyRenamed": "Renamed study from \"{before}\" to \"{after}\"",
+      "studyDescriptionUpdated": "Updated study description",
+      "studyAccessChanged": "Changed access from {before} to {after}",
+      "studyStatusChanged": "Changed status from {before} to {after}",
+      "fieldUpdated": "Updated {field}",
+      "cooperatorInvited": "Invited {target} as {role}",
+      "cooperatorInvitationAccepted": "{target} accepted the invitation",
+      "cooperatorRoleChanged": "Changed {target}'s role from {before} to {after}",
+      "cooperatorRemoved": "Removed {target} from the study",
+      "cooperatorInvitationCancelled": "Cancelled invitation for {target}",
+      "storageFileDeleted": "Deleted {target}"
+    },
+    "fields": {
+      "testTitle": "title",
+      "testDescription": "description",
+      "isPublic": "public access",
+      "status": "status",
+      "testStatus": "test status",
+      "endDate": "end date",
+      "testStructure": "tasks",
+      "testOptions": "options",
+      "studyConclusion": "conclusion",
+      "evaluatorInfo": "evaluator information"
+    },
+    "values": {
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "empty": "Empty",
+      "public": "Public",
+      "private": "Private",
+      "draft": "Draft",
+      "published": "Published",
+      "active": "Active",
+      "closed": "Closed"
+    },
+    "roles": {
+      "admin": "Admin",
+      "evaluator": "Evaluator",
+      "guest": "Guest",
+      "observator": "Observator",
+      "manager": "Manager",
+      "user": "User"
+    }
+  },
   "community": {
     "studies": {
       "title": "Community Studies",
@@ -449,8 +538,12 @@
     "accessLevel": "Access Level",
     "actions": "Actions",
     "drawer": {
+      "Manager": "Dashboard",
+      "Reports": "Progress",
+      "Answers": "Results",
       "Dashboard": "Dashboard",
       "Test": "Test",
+      "Session": "Session",
       "Preview": "Preview",
       "Progress": "Progress",
       "Results": "Results",
@@ -462,6 +555,7 @@
       "Settings": "Settings",
       "Evaluator Info": "Evaluator Info",
       "Storage": "Storage",
+      "Audit Trail": "Audit Trail",
       "name": "Name",
       "studiesCount": "Studies Count",
       "mediaSize": "Media Size",
@@ -764,6 +858,8 @@
       "uploadSuccess": "Image uploaded successfully",
       "uploadError": "Failed to upload image",
       "imagesCount": "{count} image(s) attached",
+      "dropImage": "Drop screenshot or video here",
+      "imageFormats": "or click to select an image or video",
       "deleteImageTitle": "Delete Image",
       "deleteImageMessage": "Are you sure you want to delete this attached image?"
     },
@@ -810,12 +906,14 @@
       "settings": "Settings",
       "confirmUpload": "Confirm Upload",
       "timeTracking": "Time Tracking",
+      "answerMetrics": "Answer metrics",
       "enableWeights": "Enable Weights Feature"
     },
     "messages": {
       "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
       "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding.",
       "timeTrackingDescription": "Track the time each evaluator spends per heuristic during evaluation.",
+      "answerMetricsDescription": "Choose which default metrics evaluators will answer when no custom options are configured.",
       "settingsSaved": "Settings saved successfully.",
       "enableWeightsDescription": "Allow evaluators to assign weights to heuristics in this study"
     },
@@ -828,7 +926,9 @@
     },
     "labels": {
       "timeTrackingOn": "Time tracking enabled",
-      "timeTrackingOff": "Time tracking disabled"
+      "timeTrackingOff": "Time tracking disabled",
+      "frequency": "Frequency",
+      "severity": "Severity"
     }
   },
   "HeuristicsTestView": {
@@ -841,6 +941,7 @@
     },
     "errors": {
       "questionNotLoaded": "Question could not be loaded",
+      "noAnswerOptions": "No answer options configured for this test.",
       "noAnswerData": "No answer data found",
       "failedToSaveAnswer": "Failed to save answer. Please try again.",
       "failedToSubmitAnswer": "Failed to submit answer. Please try again."
@@ -851,6 +952,91 @@
     "headers": {
       "heuristics": "HEURISTICS"
     },
+    "flow": {
+      "instructions": "Instructions",
+      "evaluateHeuristic": "Evaluate the heuristic",
+      "finishEvaluation": "Finish evaluation",
+      "heuristicEvaluation": "Heuristic evaluation",
+      "finalSubmission": "Final submission",
+      "reviewHeuristics": "Heuristic evaluation"
+    },
+    "cards": {
+      "title": "Select a heuristic",
+      "description": "Review each heuristic's progress and choose one to answer its questions.",
+      "questionsCount": "{count} questions",
+      "open": "Evaluate heuristic",
+      "back": "Back to selection",
+      "storage": "Storage: {value}",
+      "noDescription": "Review this heuristic and answer its questions based on your evaluation."
+    },
+    "answer": {
+      "currentLocation": "Heuristic {heuristic} · Question {current} of {total}",
+      "responseType": "Response type",
+      "responseTypeHint": "Choose the answer format once. It will be used for every question in this heuristic.",
+      "assessment": "Assessment",
+      "assessmentHint": "Select the option that best reflects your evaluation for this question.",
+      "optionsAnalysis": "Options analysis",
+      "optionsAnalysisHint": "Evaluate the question using the configured options, severity, frequency, or both.",
+      "evidence": "Evidence and comments",
+      "evidenceSubtitle": "Write the reason for your evaluation and attach supporting evidence if needed.",
+      "evidenceHint": "Add comments, images, or an audio transcription as evidence.",
+      "commentEvidence": "Comment evidence",
+      "commentEvidenceSubtitle": "Explain what you observed. You can type your notes or record audio to create a comment.",
+      "commentEvidenceHint": "Add written observations or use audio transcription.",
+      "commentPrompt": "Optional: add any comment to justify your answer.",
+      "imageEvidence": "Image evidence",
+      "imageEvidenceSubtitle": "Attach screenshots or visual evidence that supports your analysis.",
+      "imageEvidenceHint": "Upload one or more images for this question.",
+      "imagePrompt": "Optional: add an image or video to justify your answer.",
+      "commentLabel": "Evaluation comment",
+      "commentPlaceholder": "What did you observe?",
+      "frequency": "Frequency",
+      "severity": "Severity",
+      "questionTitle": "Question",
+      "frequencyOccurrence": "Frequency of occurrence",
+      "severityRanking": "Severity ranking",
+      "chooseBestOption": "Choose the option that best fits your evaluation.",
+      "frequencyQuestion": "How often does this occur?",
+      "severityQuestion": "How critical is this?",
+      "questions": "Questions",
+      "answered": "Answered",
+      "pending": "Pending",
+      "questionNumber": "Question {number}",
+      "questionProgress": "Question {current} of {total}",
+      "previousQuestion": "Previous question",
+      "nextQuestion": "Next question",
+      "previousHeuristic": "Previous heuristic",
+      "nextHeuristic": "Next heuristic",
+      "backToHeuristicList": "Back to heuristic list",
+      "recordAudio": "Record audio",
+      "stopRecording": "Stop",
+      "speechUnsupported": "Speech transcription is not available in this browser.",
+      "modes": {
+        "frequencySeverity": "Frequency + severity",
+        "frequency": "Frequency",
+        "severity": "Severity",
+        "customOptions": "Options analysis"
+      },
+      "frequencyScale": {
+        "rare": "Rare",
+        "occasional": "Occasional",
+        "sometimes": "Sometimes",
+        "frequent": "Frequent",
+        "constant": "Constant"
+      },
+      "severityScale": {
+        "cosmetic": "Cosmetic",
+        "minor": "Minor",
+        "moderate": "Moderate",
+        "major": "Major",
+        "catastrophic": "Catastrophic"
+      }
+    },
+    "alerts": {
+      "testAlreadyCompleted": "Test Already Completed",
+      "testAlreadyCompletedMessage": "You have already completed and submitted this test. Thank you for your participation!",
+      "testConfigError": "Test Configuration Error"
+    },
     "actions": {
       "cancel": "Cancel",
       "submit": "Submit",
@@ -858,7 +1044,21 @@
       "continueAs": "Continue as {userEmail}",
       "notMail": "Not {userEmail}?",
       "changeAccount": "Change account",
-      "startTest": "Start Test"
+      "startTest": "Start Evaluation"
+    },
+    "InstructionsStep": {
+      "welcomeTitle": "Welcome to RUXAILAB!",
+      "defaultDescription": "You are going to participate in a heuristic evaluation that aims to identify possible usability problems in a digital application.",
+      "howItWorks": "How does this evaluation work?",
+      "phases": "You will review the interface using a set of usability heuristics. For each heuristic, answer the questions, select the option that best matches your evaluation, and add comments or evidence when you find a usability issue.",
+      "summary": "Here you can see a summary of the phases you will follow:",
+      "ready": "When you are ready, click the button to start. You can move at your own pace and stop at any time if you need to.",
+      "startButton": "Start Evaluation",
+      "steps": {
+        "instructions": "Instructions",
+        "evaluation": "Heuristic evaluation",
+        "submission": "Final submission"
+      }
     }
   },
   "EvaluatorInfoView": {
@@ -1338,6 +1538,14 @@
         "camera": "Camera",
         "audio": "Audio"
       }
+    },
+    "taskPreview": {
+      "screenRecord": "Screen Record",
+      "screenRecordDesc": "Captures clicks, scrolling, and interactions to analyze user behavior.",
+      "camera": "Camera",
+      "cameraDesc": "Records facial expressions and reactions to understand user emotions.",
+      "audioRecord": "Audio Record",
+      "audioRecordDesc": "Captures verbal feedback and think-aloud protocols during the task."
     }
   },
   "UserTestView": {
@@ -1845,6 +2053,8 @@
   "buttons": {
     "next": "Next",
     "previous": "Previous",
+    "continue": "Continue",
+    "back": "Back",
     "seeCode": "See the code",
     "username": "Username",
     "goToConsole": "Go to Console",
@@ -2080,22 +2290,101 @@
     }
   },
   "CardSorting": {
+    "title": "Card Sorting",
     "noCategory": "No category",
     "noCards": "No cards found",
     "of": "of",
     "cards": "Cards",
     "cards_low": "cards",
+    "unsortedCards": "Unsorted Cards",
+    "dropCardsHere": "Drop cards here",
+    "allCardsSorted": "All cards have been sorted",
+    "card": "Card",
     "currentCards": "Current Cards",
     "addNewCard": "Add New Card",
     "settings": "Settings",
     "configureCards": "Configure how cards will be displayed",
     "currentCategories": "Current Categories",
-    "addNewTask": "Add New Task",
+    "addNewTask": "Add New Category",
+    "addNewCategory": "Add New Category",
     "configureCategories": "Configure how categories will be displayed",
-    "newTask": "New task",
+    "showCategoryDescription": "Show Category Description",
+    "showCardDescription": "Show Card Description",
+    "showImage": "Show Image",
+    "allowCreateCategories": "Allow participants to create categories",
+    "closedModeHint": "Closed sorting: participants can only use the categories you define.",
+    "hybridModeHint": "Hybrid sorting: participants use your categories and can also create their own.",
+    "openModeHint": "Open sorting: no predefined categories — participants create all categories during the test.",
+    "createCategory": "Create category",
+    "newCategory": "New Category",
+    "newCategoryHint": "Name a group and start sorting",
+    "newCategoryFormHint": "Define a category that participants can use while sorting cards.",
+    "editCategory": "Edit Category",
+    "editCategoryHint": "Update the category name and optional details.",
+    "newCard": "New Card",
+    "newCardHint": "Create a card that participants will sort into categories.",
+    "editCard": "Edit Card",
+    "editCardHint": "Update the card name and optional details.",
+    "cardName": "Card name",
+    "cardNamePlaceholder": "e.g. Checkout, Search, Profile",
+    "categoryNamePlaceholder": "e.g. Navigation, Content, Settings",
+    "imageHint": "Upload an image to show with this item",
+    "renameCategory": "Rename category",
+    "categoryName": "Category name",
+    "categoryNameRequired": "Category name is required",
+    "categoryNameDuplicate": "A category with this name already exists",
+    "categoryNameInvalid": "This category name is not allowed",
+    "createCategoryHint": "Create at least one category to start sorting the cards.",
+    "participantCategory": "Created by you",
+    "customCategory": "Custom",
+    "newTask": "New Category",
     "customizeSettings": "Customize the settings and preferences of your test",
     "test": "Test",
-    "categories": "Categories"
+    "categories": "Categories",
+    "step": "Step",
+    "allocateAll": "Allocate all cards ({count} left)",
+    "thankYou": "Thank you for participating!",
+    "answerSubmitted": "Answer submitted",
+    "saveError": "Failed to save your answer. Please try again.",
+    "nameRequired": "Name is required",
+    "acceptConsent": "I accept the consent terms",
+    "results": "Results",
+    "resultsSubtitle": "Aggregated card sorting results across all participants",
+    "totalParticipants": "Participants",
+    "answers": "Answers",
+    "answersSubtitle": "Overview of card sorting results and individual participant answers",
+    "noAnswers": "No answers collected yet",
+    "anonymous": "Anonymous",
+    "submitted": "Submitted",
+    "inProgress": "In progress",
+    "emptyCategory": "No cards",
+    "notCategorized": "Not categorized",
+    "matrixHint": "Number of participants who placed each card in each category (based on {total} submitted answers)",
+    "categoryMatrix": "Card × Category Matrix",
+    "categoryMatrixHint": "How often each card was placed in each category",
+    "similarityMatrix": "Similarity Matrix",
+    "similarityMatrixHint": "How often two cards were placed in the same category by participants",
+    "similarityMatrixFooter": "Based on {total} submitted answers. Higher values mean cards were grouped together more often.",
+    "absoluteValues": "Absolute",
+    "percentageValues": "Percentage",
+    "dendrogram": "Dendrogram",
+    "dendrogramHint": "Hierarchical clustering of cards based on similarity (UPGMA). Cards that were frequently grouped together appear closer in the tree.",
+    "similarityScale": "Similarity",
+    "participantsDescription": "{total} total answers including in-progress",
+    "cardsDescription": "Cards defined in this study",
+    "categoriesDescription": "Categories used across the study",
+    "categoriesUsed": "{count} categories",
+    "studyStructure": "Study Structure",
+    "studyStructureSubtitle": "Cards and categories overview",
+    "viewResults": "View results",
+    "recording": "Recording",
+    "recordingTitle": "Recording options",
+    "recordingDescription": "Choose which media to capture while participants sort the cards. Recordings are saved with each answer for later review.",
+    "sortingPreview": "Sorting Preview",
+    "recordingInfo": "This session will record the following data during your sorting:",
+    "startSorting": "Start sorting",
+    "uploadingRecordings": "Uploading recordings...",
+    "recordings": "Recordings"
   },
   "analytics": {
     "searchByName": "Search by name",
@@ -2177,6 +2466,83 @@
       "addPrompt": "Add prompt",
       "removePrompt": "Remove prompt",
       "duration": "Minutes"
+    },
+    "dashboard": {
+      "typeLabel": "Focus Group",
+      "subtitle": "Manage your discussion guide, participants, and moderated sessions from one dashboard."
+    },
+    "studyOverview": {
+      "topics": "Discussion Topics",
+      "topicsSubtitle": "In the guide",
+      "totalDuration": "Total Duration",
+      "durationSubtitle": "Planned",
+      "maxParticipants": "Max Participants",
+      "perSession": "Per session",
+      "team": "Team",
+      "teamSubtitle": "Facilitators & observers"
+    },
+    "modules": {
+      "guideTitle": "Discussion Guide",
+      "topicCount": "{count} topics",
+      "guideDescription": "{minutes} min planned",
+      "untitledTopic": "Untitled topic",
+      "moreTopics": "+{count} more",
+      "guideEmpty": "No topics yet. Add your first topic in the guide editor.",
+      "manageGuide": "Manage guide",
+      "configTitle": "Session Configuration",
+      "maxParticipantsLabel": "Max participants per session",
+      "waitingRoom": "Waiting room enabled",
+      "consent": "Consent required",
+      "backroom": "Observers hidden from participants",
+      "configure": "Configure",
+      "liveSessionTitle": "Live Session",
+      "liveSessionComingSoon": "Moderated live discussion is coming soon.",
+      "liveSessionDescription": "Run a moderated discussion and guide participants through your topics in real time.",
+      "startSession": "Start session",
+      "joinSession": "Join session",
+      "reportsTitle": "Results & Reports",
+      "reportsComingSoon": "Session results and analysis will appear here."
+    },
+    "session": {
+      "title": "Live Session",
+      "backToDashboard": "Back to dashboard",
+      "status": {
+        "idle": "Not started",
+        "live": "Live",
+        "ended": "Ended"
+      },
+      "facilitatorControls": "Facilitator controls",
+      "notStarted": "The session has not started yet.",
+      "sessionEnded": "The session has ended.",
+      "startSession": "Start session",
+      "endSession": "End session",
+      "previous": "Previous",
+      "next": "Next topic",
+      "topicProgress": "Topic {current} of {total}",
+      "plannedMinutes": "{minutes} min planned",
+      "untitledTopic": "Untitled topic",
+      "prompts": "Prompts",
+      "noPrompts": "No prompts for this topic.",
+      "participants": "Participants",
+      "noParticipants": "No one has joined yet.",
+      "anonymous": "Anonymous",
+      "roleFacilitator": "Facilitator",
+      "roleParticipant": "Participant",
+      "roleObserver": "Observer",
+      "discussion": "Discussion",
+      "messagePlaceholder": "Share your thoughts...",
+      "noMessagesYet": "No messages yet. Start the discussion.",
+      "observerReadonly": "You are observing this discussion.",
+      "you": "You",
+      "waitingTitle": "Waiting to start",
+      "waitingFacilitator": "Start the session to begin guiding participants through your topics.",
+      "waitingParticipant": "The facilitator will start the session shortly.",
+      "lobbyStartHint": "When you start, participants will join the discussion automatically.",
+      "inTheRoom": "{count} in the room",
+      "endedTitle": "Session ended",
+      "endedSubtitle": "Responses have been saved.",
+      "sessionSaved": "Session responses saved.",
+      "noTopicsWarning": "Add topics to your discussion guide before starting a session."
     }
   },
   "studyCreation": {

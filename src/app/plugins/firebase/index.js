@@ -36,7 +36,10 @@ const firebaseApp = initializeApp(firebaseConfig)
 const auth = getAuth(firebaseApp)
 const db = getFirestore(firebaseApp)
 //const analytics = getAnalytics(firebaseApp)
-const fbFunctions = getFunctions(firebaseApp)
+const functionsRegion = process.env.VUE_APP_FIREBASE_FUNCTIONS_REGION?.trim()
+const fbFunctions = functionsRegion
+  ? getFunctions(firebaseApp, functionsRegion)
+  : getFunctions(firebaseApp)
 const storage = getStorage(firebaseApp, `gs://${firebaseConfig.storageBucket}`)
 const database = getDatabase(firebaseApp, firebaseConfig.databaseURL)
 

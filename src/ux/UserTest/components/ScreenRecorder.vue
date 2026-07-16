@@ -59,6 +59,10 @@ import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 const props = defineProps({
   testId: String,
   taskIndex: Number,
+  userDocId: {
+    type: String,
+    default: '',
+  },
 })
 
 const emit = defineEmits(['showLoading', 'stopShowLoading'])
@@ -66,6 +70,16 @@ const emit = defineEmits(['showLoading', 'stopShowLoading'])
 const store = useStore()
 const currentUserTestAnswer = computed(
   () => store.getters.currentUserTestAnswer,
+)
+const currentCardSortingAnswer = computed(
+  () => store.getters.currentCardSortingAnswer,
+)
+
+const resolvedUserDocId = computed(
+  () =>
+    props.userDocId ||
+    currentUserTestAnswer.value?.userDocId ||
+    currentCardSortingAnswer.value?.userDocId,
 )
 
 const { t } = useI18n()
@@ -105,7 +119,7 @@ const recordScreen = async () => {
       emit('showLoading')
       const videoBlob = new Blob(chunks.value, { type: 'video/webm' })
       const storage = getStorage()
-      const storagePath = `tests/${props.testId}/${currentUserTestAnswer.value.userDocId}/task_${recordingTaskIndex.value}/screen_record/${videoUrl.value}`
+      const storagePath = `tests/${props.testId}/${resolvedUserDocId.value}/task_${recordingTaskIndex.value}/screen_record/${videoUrl.value}`
       const storageReference = storageRef(storage, storagePath)
 
       await uploadBytes(storageReference, videoBlob)

@@ -148,6 +148,7 @@ const sendInviteNotification = async () => {
     descriptionParams: {
       testTitle: study.testTitle || 'Study',
     },
+    inviteToken: invite.value.token,
   })
 
   await store.dispatch('addNotification', {

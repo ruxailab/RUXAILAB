@@ -30,6 +30,40 @@
 
       <v-divider class="mb-6" />
 
+      <!-- Answer Metrics Section -->
+      <div class="mb-8">
+        <h2 class="text-h6 font-weight-medium mb-2">
+          {{ $t('HeuristicsSettings.titles.answerMetrics') }}
+        </h2>
+        <p class="text-body-2 text-medium-emphasis mb-3">
+          {{ $t('HeuristicsSettings.messages.answerMetricsDescription') }}
+        </p>
+        <v-row>
+          <v-col cols="12" md="6">
+            <v-switch
+              v-model="localUseFrequency"
+              color="primary"
+              hide-details
+              :disabled="props.isTemplate || testAnswerDocLength > 0"
+              :loading="loadingAnswerMetrics"
+              :label="$t('HeuristicsSettings.labels.frequency')"
+            />
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-switch
+              v-model="localUseSeverity"
+              color="primary"
+              hide-details
+              :disabled="props.isTemplate || testAnswerDocLength > 0"
+              :loading="loadingAnswerMetrics"
+              :label="$t('HeuristicsSettings.labels.severity')"
+            />
+          </v-col>
+        </v-row>
+      </div>
+
+      <v-divider class="mb-6" />
+
       <!-- Download CSV Template -->
       <div class="mb-8">
         <v-btn
@@ -167,6 +201,7 @@ const csvFile = ref(null)
 const myFile = ref(null)
 const loadingUpdate = ref(false)
 const loadingTrackTime = ref(false)
+const loadingAnswerMetrics = ref(false)
 const errorMessage = ref('')
 const errorVisible = ref(false)
 const confirmDialog = ref(false)
@@ -174,6 +209,8 @@ const confirmDialog = ref(false)
 const test = computed(() => store.getters.test)
 
 const localTrackTime = ref(test.value?.trackTime ?? true)
+const localUseFrequency = ref(test.value?.useFrequency ?? true)
+const localUseSeverity = ref(test.value?.useSeverity ?? true)
 
 watch(localTrackTime, async (newVal) => {
   loadingTrackTime.value = true
@@ -188,6 +225,23 @@ watch(localTrackTime, async (newVal) => {
     loadingTrackTime.value = false
   }
 })
+
+const saveAnswerMetrics = async () => {
+  loadingAnswerMetrics.value = true
+  try {
+    store.state.Tests.Test.useFrequency = localUseFrequency.value
+    store.state.Tests.Test.useSeverity = localUseSeverity.value
+    await store.dispatch('updateStudy', test.value)
+    await nextTick()
+    showSuccess(t('HeuristicsSettings.messages.settingsSaved'))
+  } catch (error) {
+    showError(error)
+  } finally {
+    loadingAnswerMetrics.value = false
+  }
+}
+
+watch([localUseFrequency, localUseSeverity], saveAnswerMetrics)
 
 const useWeights = computed({
   get: () => test.value.useWeights ?? false,

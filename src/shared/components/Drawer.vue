@@ -18,12 +18,12 @@
     <v-list v-if="items" density="compact">
       <v-list-item v-for="(item, n) in items" :key="n" @click="go(item)">
         <template #prepend>
-          <v-icon :color="$route.path == item.path ? '#fca326' : '#bababa'">
+          <v-icon :color="isActive(item) ? '#fca326' : '#bababa'">
             {{ item.icon }}
           </v-icon>
         </template>
         <v-list-item-title
-          :style="$route.path == item.path ? 'color: #fca326' : 'color:#bababa'"
+          :style="isActive(item) ? 'color: #fca326' : 'color:#bababa'"
         >
           {{ $t(`titles.drawer.${item.title}`) }}
         </v-list-item-title>
@@ -86,6 +86,12 @@ const go = (item) => {
   if (mobile.value) {
     drawerOpen.value = false
   }
+}
+
+const isActive = (item) => {
+  if (!item?.path) return false
+  if (route.path === item.path) return true
+  return router.resolve(item.path).name === route.name
 }
 
 const toggleDrawer = () => {

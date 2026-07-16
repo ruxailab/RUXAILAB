@@ -76,13 +76,15 @@
 
 <script setup>
 import {
-  getBottomCardsDefualt,
-  getNavigatorDefault,
-  getTopCardsDefualt,
-} from '@/shared/utils/managerDefault'
+  buildStudyManagerCards,
+  buildStudyNavigator,
+} from '@/shared/utils/studyNavigation'
+import {
+  STUDY_CAPABILITY,
+  hasStudyCapability,
+} from '@/shared/utils/studyAccessPolicy'
 import ManagerDashboardLayout from '@/shared/components/manager/ManagerDashboardLayout.vue'
 import ManagerView from '@/shared/views/template/ManagerView.vue'
-import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import { getStatusIcon } from '@/shared/utils/statusUtils'
 import { computed, onMounted, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -108,33 +110,15 @@ const router = useRouter()
 const user = computed(() => store.getters.user)
 const test = computed(() => store.getters.test)
 
-const accessLevel = computed(() => {
-  const currentUser = user.value
-  const currentTest = test.value
-
-  if (!currentUser) return ACCESS_LEVEL.GUEST
-  if (currentUser.accessLevel === 0) return ACCESS_LEVEL.ADMIN
-  if (currentTest?.testAdmin?.userDocId === currentUser.id)
-    return ACCESS_LEVEL.ADMIN
-
-  const coop = currentTest?.cooperators?.find(
-    (c) => c.userDocId === currentUser.id,
-  )
-  if (coop?.accepted === true) return coop.accessLevel
-
-  if (currentTest?.isPublic) return ACCESS_LEVEL.GUEST
-  return null
-})
-
 watchEffect(() => {
   if (user.value != null && test.value != null) {
-    const hasAccess =
-      accessLevel.value === ACCESS_LEVEL.ADMIN ||
-      accessLevel.value === ACCESS_LEVEL.EVALUATOR ||
-      accessLevel.value === ACCESS_LEVEL.GUEST ||
-      accessLevel.value === ACCESS_LEVEL.OBSERVATOR
-
-    if (!hasAccess || accessLevel.value === null) {
+    if (
+      !hasStudyCapability(
+        test.value,
+        user.value,
+        STUDY_CAPABILITY.DASHBOARD_VIEW,
+      )
+    ) {
       router.push('/')
     }
   }
@@ -142,47 +126,29 @@ watchEffect(() => {
 
 const topCards = computed(() => {
   if (!test.value) return []
-  return getTopCardsDefualt(test.value, 'heuristic')
+  return buildStudyManagerCards({
+    study: test.value,
+    user: user.value,
+    type: 'heuristic',
+  }).topCards
 })
 
 const bottomCards = computed(() => {
   if (!test.value) return []
-  return getBottomCardsDefualt(test.value, 'heuristic')
+  return buildStudyManagerCards({
+    study: test.value,
+    user: user.value,
+    type: 'heuristic',
+  }).bottomCards
 })
 
 const navigator = computed(() => {
   if (!test.value) return []
-  const items = [
-    ...getNavigatorDefault(test.value, accessLevel.value, route, 'heuristic'),
-  ]
-
-  if (accessLevel.value === 0 && test.value) {
-    items.push({
-      title: 'Final Report',
-      icon: 'mdi-file-document',
-      path: `/heuristic/finalreport/${test.value.id}`,
-    })
-  }
-
-  if (
-    (accessLevel.value === ACCESS_LEVEL.ADMIN ||
-      accessLevel.value === ACCESS_LEVEL.SUPER_ADMIN) &&
-    test.value
-  ) {
-    items.push({
-      title: 'Evaluator Info',
-      icon: 'mdi-book-information-variant',
-      path: `/heuristic/evaluatorinfo/${test.value.id}`,
-    })
-  }
-
-  items.push({
-    title: 'Storage',
-    icon: 'mdi-database',
-    path: `/heuristic/storage/${test.value.id}`,
+  return buildStudyNavigator({
+    study: test.value,
+    user: user.value,
+    type: 'heuristic',
   })
-
-  return items
 })
 
 // Methods para los componentes adicionales

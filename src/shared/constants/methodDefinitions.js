@@ -268,7 +268,7 @@ export const METHOD_DEFINITIONS = {
     color: '#3F51B5',
     description: 'Content organization through card sorting',
     category: METHOD_CATEGORIES.inquiry.id,
-    status: METHOD_STATUSES.IMPROVING.id,
+    status: METHOD_STATUSES.AVAILABLE.id,
   },
   COGNITIVE_WALKTHROUGH: {
     id: 'COGNITIVE_WALKTHROUGH',

@@ -2,16 +2,16 @@
   <div class="task-advanced-options">
     <div class="step-header mb-6">
       <h3 class="text-h6 font-weight-bold mb-2">
-        {{ $t('CreateTask.advanced.stepTitle') }}
+        {{ title || $t('CreateTask.advanced.stepTitle') }}
       </h3>
       <p class="text-body-2 text-grey-darken-1 mb-0">
-        {{ $t('CreateTask.advanced.stepDescription') }}
+        {{ description || $t('CreateTask.advanced.stepDescription') }}
       </p>
     </div>
 
     <div class="options-grid">
       <!-- Eye Tracking -->
-      <v-card class="option-card">
+      <v-card v-if="showEyeTracking" class="option-card">
         <v-card-text>
           <v-row align="center">
             <v-col cols="12" md="auto">
@@ -208,6 +208,18 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  showEyeTracking: {
+    type: Boolean,
+    default: true,
+  },
+  title: {
+    type: String,
+    default: '',
+  },
+  description: {
+    type: String,
+    default: '',
+  },
 })
 
 const emit = defineEmits(['update:modelValue', 'validate'])
@@ -217,7 +229,7 @@ const localTask = ref({ ...props.modelValue })
 
 const hasAnyRecording = computed(() => {
   return (
-    localTask.value.hasEye ||
+    (props.showEyeTracking && localTask.value.hasEye) ||
     localTask.value.hasScreenRecord ||
     localTask.value.hasCamRecord ||
     localTask.value.hasAudioRecord
@@ -227,7 +239,7 @@ const hasAnyRecording = computed(() => {
 const enabledFeatures = computed(() => {
   const features = []
 
-  if (localTask.value.hasEye) {
+  if (props.showEyeTracking && localTask.value.hasEye) {
     features.push({
       key: 'eye',
       label: 'Eye Tracking',

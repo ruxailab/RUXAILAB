@@ -170,6 +170,7 @@ import {
   USER_STUDY_SUBTYPES,
 } from '@/shared/constants/methodDefinitions'
 import { matchesSearch } from '@/shared/utils/searchUtils'
+import { getCommunityStudyDestination } from '@/shared/utils/studyNavigation'
 
 const store = useStore()
 const router = useRouter()
@@ -359,6 +360,15 @@ const goTo = (test) => {
 
 // Helper to navigate to community views
 const navigateToCommunityStudy = (test) => {
+  const destination = getCommunityStudyDestination({
+    study: test,
+    user: user.value,
+  })
+  if (destination) {
+    router.push(destination)
+    return
+  }
+
   switch (test.testType) {
     case STUDY_TYPES.HEURISTIC:
       router.push({ name: 'HeuristicManagerView', params: { id: test.id } })

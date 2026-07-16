@@ -25,10 +25,18 @@ export default {
       return study
     },
 
+    async endFocusGroupSession(_, { answersDocId, session }) {
+      if (!answersDocId || !session?.sessionId) return
+      await focusGroupController.saveSessionAnswer(answersDocId, session)
+    },
+
     async saveDiscussionGuide({ commit }, { studyId, discussionGuide }) {
       commit('setLoading', true)
       try {
-        await focusGroupController.updateDiscussionGuide(studyId, discussionGuide)
+        await focusGroupController.updateDiscussionGuide(
+          studyId,
+          discussionGuide,
+        )
         commit('SET_TOAST', {
           message: i18n.global.t('focusGroup.edit.saved'),
           type: 'success',

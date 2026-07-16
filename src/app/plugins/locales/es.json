@@ -216,6 +216,95 @@
       "actions": "Acciones"
     }
   },
+  "auditTrail": {
+    "title": "Registro de auditoría",
+    "subtitle": "Cambios sensibles en la configuración, los colaboradores y el almacenamiento del estudio.",
+    "loadError": "No se pudo cargar el registro de auditoría.",
+    "noEvents": "Aún no se ha registrado ninguna actividad.",
+    "noMatchingEvents": "Ninguna actividad coincide con tus filtros.",
+    "filters": {
+      "activity": "Actividad",
+      "when": "Cuándo",
+      "person": "Persona",
+      "allActivity": "Toda la actividad",
+      "study": "Cambios del estudio",
+      "settings": "Cambios de configuración",
+      "team": "Acceso del equipo",
+      "files": "Cambios en archivos",
+      "anyTime": "Cualquier momento",
+      "last7Days": "Últimos 7 días",
+      "last30Days": "Últimos 30 días",
+      "anyone": "Cualquiera",
+      "clear": "Limpiar filtros"
+    },
+    "headers": {
+      "time": "Hora",
+      "action": "Acción",
+      "actor": "Actor",
+      "description": "Descripción"
+    },
+    "actions": {
+      "study": {
+        "edited": "Estudio editado",
+        "settingsChanged": "Configuración del estudio modificada"
+      },
+      "cooperator": {
+        "invited": "Colaborador invitado",
+        "invitationAccepted": "Invitación aceptada",
+        "roleChanged": "Rol de colaborador modificado",
+        "removed": "Colaborador eliminado",
+        "invitationCancelled": "Invitación cancelada"
+      },
+      "storage": {
+        "fileDeleted": "Archivo de almacenamiento eliminado"
+      }
+    },
+    "descriptions": {
+      "studyUpdated": "Se actualizó {target}",
+      "studyRenamed": "Se renombró el estudio de \"{before}\" a \"{after}\"",
+      "studyDescriptionUpdated": "Se actualizó la descripción del estudio",
+      "studyAccessChanged": "Se cambió el acceso de {before} a {after}",
+      "studyStatusChanged": "Se cambió el estado de {before} a {after}",
+      "fieldUpdated": "Se actualizó {field}",
+      "cooperatorInvited": "Se invitó a {target} como {role}",
+      "cooperatorInvitationAccepted": "{target} aceptó la invitación",
+      "cooperatorRoleChanged": "Se cambió el rol de {target} de {before} a {after}",
+      "cooperatorRemoved": "Se eliminó a {target} del estudio",
+      "cooperatorInvitationCancelled": "Se canceló la invitación para {target}",
+      "storageFileDeleted": "Se eliminó {target}"
+    },
+    "fields": {
+      "testTitle": "título",
+      "testDescription": "descripción",
+      "isPublic": "acceso público",
+      "status": "estado",
+      "testStatus": "estado de la prueba",
+      "endDate": "fecha de finalización",
+      "testStructure": "tareas",
+      "testOptions": "opciones",
+      "studyConclusion": "conclusión",
+      "evaluatorInfo": "información del evaluador"
+    },
+    "values": {
+      "enabled": "Activado",
+      "disabled": "Desactivado",
+      "empty": "Vacío",
+      "public": "Público",
+      "private": "Privado",
+      "draft": "Borrador",
+      "published": "Publicado",
+      "active": "Activo",
+      "closed": "Cerrado"
+    },
+    "roles": {
+      "admin": "Admin",
+      "evaluator": "Evaluador",
+      "guest": "Invitado",
+      "observator": "Observator",
+      "manager": "Manager",
+      "user": "User"
+    }
+  },
   "community": {
     "studies": {
       "title": "Estudios comunitarios",
@@ -447,8 +536,12 @@
     "accessLevel": "Nivel de Acceso",
     "actions": "Acciones",
     "drawer": {
+      "Manager": "Panel",
+      "Reports": "Progreso",
+      "Answers": "Resultados",
       "Dashboard": "Panel",
       "Test": "Prueba",
+      "Session": "Sesión",
       "Preview": "Vista previa",
       "Progress": "Progreso",
       "Results": "Resultados",
@@ -459,6 +552,7 @@
       "Answer Test": "Responder prueba",
       "Settings": "Configuración",
       "Storage": "Almacenamiento",
+      "Audit Trail": "Registro de auditoría",
       "name": "Nombre",
       "studiesCount": "Recuento de Estudios",
       "mediaSize": "Tamaño de Medios",
@@ -749,6 +843,8 @@
       "uploadSuccess": "Imagen cargada exitosamente",
       "uploadError": "Error al cargar imagen",
       "imagesCount": "{count} imagen(es) adjunta(s)",
+      "dropImage": "Suelta la captura o vídeo aquí",
+      "imageFormats": "o haz clic para seleccionar una imagen o vídeo",
       "deleteImageTitle": "Eliminar imagen",
       "deleteImageMessage": "¿Seguro que quieres eliminar esta imagen adjunta?"
     },
@@ -801,12 +897,14 @@
       "settings": "Configuración",
       "confirmUpload": "Confirmar carga",
       "timeTracking": "Seguimiento de tiempo",
+      "answerMetrics": "Métricas de respuesta",
       "enableWeights": "Habilitar función de pesos"
     },
     "messages": {
       "acceptCsv": "Si aceptas, todas tus heurísticas actuales serán reemplazadas por las del archivo CSV.",
       "noCsvFileSelected": "No se ha seleccionado ningún archivo CSV. Por favor, selecciona uno antes de continuar.",
       "timeTrackingDescription": "Registra el tiempo que cada evaluador dedica por heurística durante la evaluación.",
+      "answerMetricsDescription": "Elige qué métricas responderán los evaluadores cuando no haya opciones personalizadas configuradas.",
       "settingsSaved": "Configuración guardada correctamente.",
       "enableWeightsDescription": "Permitir que los evaluadores asignen pesos a las heurísticas en este estudio"
     },
@@ -819,7 +917,9 @@
     },
     "labels": {
       "timeTrackingOn": "Seguimiento de tiempo activado",
-      "timeTrackingOff": "Seguimiento de tiempo desactivado"
+      "timeTrackingOff": "Seguimiento de tiempo desactivado",
+      "frequency": "Frecuencia",
+      "severity": "Severidad"
     }
   },
   "HeuristicsTestView": {
@@ -832,6 +932,7 @@
     },
     "errors": {
       "questionNotLoaded": "No se pudo cargar la pregunta",
+      "noAnswerOptions": "No hay opciones de respuesta configuradas para esta prueba.",
       "noAnswerData": "No se encontraron datos de respuesta",
       "failedToSaveAnswer": "Error al guardar la respuesta. Por favor, inténtelo de nuevo.",
       "failedToSubmitAnswer": "Error al enviar la respuesta. Por favor, inténtelo de nuevo."
@@ -842,6 +943,91 @@
     "headers": {
       "heuristics": "HEURÍSTICAS"
     },
+    "flow": {
+      "instructions": "Instrucciones",
+      "evaluateHeuristic": "Evalúa la heurística",
+      "finishEvaluation": "Finaliza la evaluación",
+      "heuristicEvaluation": "Evaluación heurística",
+      "finalSubmission": "Envío final",
+      "reviewHeuristics": "Evaluación heurística"
+    },
+    "cards": {
+      "title": "Selecciona una heurística",
+      "description": "Revisa el progreso de cada heurística y elige una para responder sus preguntas.",
+      "questionsCount": "{count} preguntas",
+      "open": "Evaluar heurística",
+      "back": "Volver a la selección",
+      "storage": "Storage: {value}",
+      "noDescription": "Revisa esta heurística y responde sus preguntas según tu evaluación."
+    },
+    "answer": {
+      "currentLocation": "Heurística {heuristic} · Pregunta {current} de {total}",
+      "responseType": "Tipo de respuesta",
+      "responseTypeHint": "Escoge el formato de respuesta una vez. Se usará en todas las preguntas de esta heurística.",
+      "assessment": "Evaluación",
+      "assessmentHint": "Selecciona la opción que mejor refleje tu evaluación para esta pregunta.",
+      "optionsAnalysis": "Análisis de opciones",
+      "optionsAnalysisHint": "Evalúa la pregunta usando las opciones configuradas, severidad, frecuencia o ambas.",
+      "evidence": "Evidencias y comentarios",
+      "evidenceSubtitle": "Escribe el motivo de tu evaluación y añade evidencias si hace falta.",
+      "evidenceHint": "Añade comentarios, imágenes o una transcripción de audio como evidencia.",
+      "commentEvidence": "Evidencia en comentarios",
+      "commentEvidenceSubtitle": "Explica qué has observado. Puedes escribir tus notas o grabar audio para crear un comentario.",
+      "commentEvidenceHint": "Añade observaciones escritas o usa la transcripción de audio.",
+      "commentPrompt": "Opcional: añade cualquier comentario para justificar tu respuesta.",
+      "imageEvidence": "Evidencia en imágenes",
+      "imageEvidenceSubtitle": "Adjunta capturas o evidencia visual que apoye tu análisis.",
+      "imageEvidenceHint": "Sube una o más imágenes para esta pregunta.",
+      "imagePrompt": "Opcional: añade una imagen o vídeo para justificar tu respuesta.",
+      "commentLabel": "Comentario de evaluación",
+      "commentPlaceholder": "¿Qué has observado?",
+      "frequency": "Frecuencia",
+      "severity": "Severidad",
+      "questionTitle": "Question",
+      "frequencyOccurrence": "Frequency of occurrence",
+      "severityRanking": "Severity ranking",
+      "chooseBestOption": "Escoge la opción que más se adapte a tu evaluación.",
+      "frequencyQuestion": "¿Con qué frecuencia ocurre?",
+      "severityQuestion": "¿Qué tan crítico es?",
+      "questions": "Preguntas",
+      "answered": "Respondida",
+      "pending": "Pendiente",
+      "questionNumber": "Pregunta {number}",
+      "questionProgress": "Pregunta {current} de {total}",
+      "previousQuestion": "Pregunta anterior",
+      "nextQuestion": "Pregunta siguiente",
+      "previousHeuristic": "Heurística anterior",
+      "nextHeuristic": "Heurística siguiente",
+      "backToHeuristicList": "Volver a la lista de heurísticas",
+      "recordAudio": "Grabar audio",
+      "stopRecording": "Detener",
+      "speechUnsupported": "La transcripción por voz no está disponible en este navegador.",
+      "modes": {
+        "frequencySeverity": "Frecuencia + severidad",
+        "frequency": "Frecuencia",
+        "severity": "Severidad",
+        "customOptions": "Análisis de opciones"
+      },
+      "frequencyScale": {
+        "rare": "Rara",
+        "occasional": "Ocasional",
+        "sometimes": "A veces",
+        "frequent": "Frecuente",
+        "constant": "Constante"
+      },
+      "severityScale": {
+        "cosmetic": "Cosmética",
+        "minor": "Menor",
+        "moderate": "Moderada",
+        "major": "Grave",
+        "catastrophic": "Catastrófica"
+      }
+    },
+    "alerts": {
+      "testAlreadyCompleted": "Prueba ya completada",
+      "testAlreadyCompletedMessage": "Ya has completado y enviado esta prueba. ¡Gracias por tu participación!",
+      "testConfigError": "Error de configuración de la prueba"
+    },
     "actions": {
       "cancel": "Cancelar",
       "submit": "Enviar",
@@ -849,7 +1035,21 @@
       "continueAs": "Continuar como {userEmail}",
       "notMail": "¿No es {userEmail}?",
       "changeAccount": "Cambiar cuenta",
-      "startTest": "Comenzar prueba"
+      "startTest": "Comenzar evaluación"
+    },
+    "InstructionsStep": {
+      "welcomeTitle": "¡Bienvenido a RUXAILAB!",
+      "defaultDescription": "Vas a participar en una evaluación heurística que tiene como objetivo identificar posibles problemas de usabilidad en una aplicación digital.",
+      "howItWorks": "¿Cómo funciona esta evaluación?",
+      "phases": "Revisarás la interfaz usando un conjunto de heurísticas de usabilidad. Para cada heurística, responde las preguntas, selecciona la opción que mejor refleje tu evaluación y añade comentarios o evidencias cuando encuentres un problema de usabilidad.",
+      "summary": "Aquí puedes ver un resumen de las fases que seguirás:",
+      "ready": "Cuando estés listo, haz clic en el botón para empezar. Puedes avanzar a tu ritmo y detenerte en cualquier momento si lo necesitas.",
+      "startButton": "Comenzar evaluación",
+      "steps": {
+        "instructions": "Instrucciones",
+        "evaluation": "Evaluación heurística",
+        "submission": "Envío final"
+      }
     }
   },
   "HeuristicsEditTest": {
@@ -1258,6 +1458,14 @@
         "camera": "Cámara",
         "audio": "Audio"
       }
+    },
+    "taskPreview": {
+      "screenRecord": "Grabación de pantalla",
+      "screenRecordDesc": "Captura clics, desplazamiento e interacciones para analizar el comportamiento del usuario.",
+      "camera": "Cámara",
+      "cameraDesc": "Registra expresiones faciales y reacciones para entender las emociones del usuario.",
+      "audioRecord": "Grabación de audio",
+      "audioRecordDesc": "Captura comentarios verbales y protocolos de pensamiento en voz alta durante la tarea."
     }
   },
   "UserTestView": {
@@ -1755,6 +1963,8 @@
   "buttons": {
     "next": "Siguiente",
     "previous": "Anterior",
+    "continue": "Continuar",
+    "back": "Volver",
     "seeCode": "Ver el código",
     "username": "Nombre de usuario",
     "goToConsole": "Ir a la consola",
@@ -1982,22 +2192,101 @@
     }
   },
   "CardSorting": {
+    "title": "Card Sorting",
     "noCategory": "Sin categoría",
     "noCards": "No se encontraron tarjetas",
     "of": "de",
     "cards": "Tarjetas",
     "cards_low": "tarjetas",
+    "unsortedCards": "Tarjetas sin ordenar",
+    "dropCardsHere": "Suelta las tarjetas aquí",
+    "allCardsSorted": "Todas las tarjetas han sido ordenadas",
+    "card": "Tarjeta",
     "currentCards": "Tarjetas actuales",
     "addNewCard": "Agregar nueva tarjeta",
     "settings": "Configuración",
     "configureCards": "Configura cómo se mostrarán las tarjetas",
     "currentCategories": "Categorías actuales",
-    "addNewTask": "Agregar nueva tarea",
+    "addNewTask": "Agregar nueva categoría",
+    "addNewCategory": "Agregar nueva categoría",
     "configureCategories": "Configura cómo se mostrarán las categorías",
-    "newTask": "Nueva tarea",
+    "showCategoryDescription": "Mostrar descripción de la categoría",
+    "showCardDescription": "Mostrar descripción de la tarjeta",
+    "showImage": "Mostrar imagen",
+    "allowCreateCategories": "Permitir que los participantes creen categorías",
+    "closedModeHint": "Sorting cerrado: los participantes solo pueden usar las categorías que definas.",
+    "hybridModeHint": "Sorting híbrido: los participantes usan tus categorías y también pueden crear las suyas.",
+    "openModeHint": "Sorting abierto: sin categorías predefinidas — los participantes crean todas las categorías durante la prueba.",
+    "createCategory": "Crear categoría",
+    "newCategory": "Nueva categoría",
+    "newCategoryHint": "Nombra un grupo y empieza a ordenar",
+    "newCategoryFormHint": "Define una categoría que los participantes puedan usar al ordenar las tarjetas.",
+    "editCategory": "Editar categoría",
+    "editCategoryHint": "Actualiza el nombre de la categoría y los detalles opcionales.",
+    "newCard": "Nueva tarjeta",
+    "newCardHint": "Crea una tarjeta que los participantes ordenarán en categorías.",
+    "editCard": "Editar tarjeta",
+    "editCardHint": "Actualiza el nombre de la tarjeta y los detalles opcionales.",
+    "cardName": "Nombre de la tarjeta",
+    "cardNamePlaceholder": "ej. Checkout, Búsqueda, Perfil",
+    "categoryNamePlaceholder": "ej. Navegación, Contenido, Ajustes",
+    "imageHint": "Sube una imagen para mostrar con este elemento",
+    "renameCategory": "Renombrar categoría",
+    "categoryName": "Nombre de la categoría",
+    "categoryNameRequired": "El nombre de la categoría es obligatorio",
+    "categoryNameDuplicate": "Ya existe una categoría con este nombre",
+    "categoryNameInvalid": "Este nombre de categoría no está permitido",
+    "createCategoryHint": "Crea al menos una categoría para empezar a ordenar las tarjetas.",
+    "participantCategory": "Creada por ti",
+    "customCategory": "Personalizada",
+    "newTask": "Nueva categoría",
     "customizeSettings": "Personaliza los ajustes y preferencias de tu prueba",
     "test": "Prueba",
-    "categories": "Categorías"
+    "categories": "Categorías",
+    "step": "Paso",
+    "allocateAll": "Coloca todas las tarjetas (faltan {count})",
+    "thankYou": "¡Gracias por participar!",
+    "answerSubmitted": "Respuesta enviada",
+    "saveError": "No se pudo guardar tu respuesta. Inténtalo de nuevo.",
+    "nameRequired": "El nombre es obligatorio",
+    "acceptConsent": "Acepto los términos del consentimiento",
+    "results": "Resultados",
+    "resultsSubtitle": "Resultados agregados del card sorting de todos los participantes",
+    "totalParticipants": "Participantes",
+    "answers": "Respuestas",
+    "answersSubtitle": "Resumen de resultados de card sorting y respuestas individuales por participante",
+    "noAnswers": "Aún no se han recopilado respuestas",
+    "anonymous": "Anónimo",
+    "submitted": "Enviado",
+    "inProgress": "En progreso",
+    "emptyCategory": "Sin tarjetas",
+    "notCategorized": "Sin categorizar",
+    "matrixHint": "Número de participantes que colocaron cada tarjeta en cada categoría (según {total} respuestas enviadas)",
+    "categoryMatrix": "Matriz Tarjeta × Categoría",
+    "categoryMatrixHint": "Con qué frecuencia cada tarjeta se colocó en cada categoría",
+    "similarityMatrix": "Matriz de similitud",
+    "similarityMatrixHint": "Con qué frecuencia dos tarjetas se colocaron en la misma categoría",
+    "similarityMatrixFooter": "Basado en {total} respuestas enviadas. Valores más altos indican que las tarjetas se agruparon juntas con más frecuencia.",
+    "absoluteValues": "Absoluto",
+    "percentageValues": "Porcentaje",
+    "dendrogram": "Dendrograma",
+    "dendrogramHint": "Agrupación jerárquica de tarjetas según similitud (UPGMA). Las tarjetas agrupadas con frecuencia aparecen más cerca en el árbol.",
+    "similarityScale": "Similitud",
+    "participantsDescription": "{total} respuestas totales incluyendo las en progreso",
+    "cardsDescription": "Tarjetas definidas en este estudio",
+    "categoriesDescription": "Categorías usadas en el estudio",
+    "categoriesUsed": "{count} categorías",
+    "studyStructure": "Estructura del estudio",
+    "studyStructureSubtitle": "Resumen de tarjetas y categorías",
+    "viewResults": "Ver resultados",
+    "recording": "Grabación",
+    "recordingTitle": "Opciones de grabación",
+    "recordingDescription": "Elige qué medios capturar mientras los participantes ordenan las tarjetas. Las grabaciones se guardan con cada respuesta para revisión posterior.",
+    "sortingPreview": "Vista previa del ordenamiento",
+    "recordingInfo": "Esta sesión grabará los siguientes datos durante tu ordenamiento:",
+    "startSorting": "Comenzar ordenamiento",
+    "uploadingRecordings": "Subiendo grabaciones...",
+    "recordings": "Grabaciones"
   },
   "analytics": {
     "searchByName": "Buscar por nombre",
@@ -2079,6 +2368,83 @@
       "addPrompt": "Agregar pregunta",
       "removePrompt": "Eliminar pregunta",
       "duration": "Minutos"
+    },
+    "dashboard": {
+      "typeLabel": "Grupo Focal",
+      "subtitle": "Gestiona tu guía de discusión, participantes y sesiones moderadas desde un solo panel."
+    },
+    "studyOverview": {
+      "topics": "Temas de Discusión",
+      "topicsSubtitle": "En la guía",
+      "totalDuration": "Duración Total",
+      "durationSubtitle": "Planificada",
+      "maxParticipants": "Máx. Participantes",
+      "perSession": "Por sesión",
+      "team": "Equipo",
+      "teamSubtitle": "Facilitadores y observadores"
+    },
+    "modules": {
+      "guideTitle": "Guía de Discusión",
+      "topicCount": "{count} temas",
+      "guideDescription": "{minutes} min planificados",
+      "untitledTopic": "Tema sin título",
+      "moreTopics": "+{count} más",
+      "guideEmpty": "Aún no hay temas. Agrega tu primer tema en el editor de la guía.",
+      "manageGuide": "Gestionar guía",
+      "configTitle": "Configuración de la Sesión",
+      "maxParticipantsLabel": "Máx. participantes por sesión",
+      "waitingRoom": "Sala de espera activada",
+      "consent": "Consentimiento requerido",
+      "backroom": "Observadores ocultos a los participantes",
+      "configure": "Configurar",
+      "liveSessionTitle": "Sesión en Vivo",
+      "liveSessionComingSoon": "La discusión moderada en vivo estará disponible pronto.",
+      "liveSessionDescription": "Dirige una discusión moderada y guía a los participantes por tus temas en tiempo real.",
+      "startSession": "Iniciar sesión",
+      "joinSession": "Unirse a la sesión",
+      "reportsTitle": "Resultados e Informes",
+      "reportsComingSoon": "Los resultados y el análisis de la sesión aparecerán aquí."
+    },
+    "session": {
+      "title": "Sesión en Vivo",
+      "backToDashboard": "Volver al panel",
+      "status": {
+        "idle": "No iniciada",
+        "live": "En vivo",
+        "ended": "Finalizada"
+      },
+      "facilitatorControls": "Controles del facilitador",
+      "notStarted": "La sesión aún no ha comenzado.",
+      "sessionEnded": "La sesión ha finalizado.",
+      "startSession": "Iniciar sesión",
+      "endSession": "Finalizar sesión",
+      "previous": "Anterior",
+      "next": "Siguiente tema",
+      "topicProgress": "Tema {current} de {total}",
+      "plannedMinutes": "{minutes} min planeados",
+      "untitledTopic": "Tema sin título",
+      "prompts": "Preguntas",
+      "noPrompts": "No hay preguntas para este tema.",
+      "participants": "Participantes",
+      "noParticipants": "Nadie se ha unido todavía.",
+      "anonymous": "Anónimo",
+      "roleFacilitator": "Facilitador",
+      "roleParticipant": "Participante",
+      "roleObserver": "Observador",
+      "discussion": "Discusión",
+      "messagePlaceholder": "Comparte tus ideas...",
+      "noMessagesYet": "Aún no hay mensajes. Inicia la discusión.",
+      "observerReadonly": "Estás observando esta discusión.",
+      "you": "Tú",
+      "waitingTitle": "Esperando para comenzar",
+      "waitingFacilitator": "Inicia la sesión para comenzar a guiar a los participantes por tus temas.",
+      "waitingParticipant": "El facilitador iniciará la sesión en breve.",
+      "lobbyStartHint": "Cuando inicies, los participantes se unirán a la discusión automáticamente.",
+      "inTheRoom": "{count} en la sala",
+      "endedTitle": "Sesión finalizada",
+      "endedSubtitle": "Las respuestas se han guardado.",
+      "sessionSaved": "Respuestas de la sesión guardadas.",
+      "noTopicsWarning": "Agrega temas a tu guía de discusión antes de iniciar una sesión."
     }
   },
   "studyCreation": {

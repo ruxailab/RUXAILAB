@@ -13,6 +13,12 @@ jest.mock('@/app/plugins/firebase', () => ({
   db: {},
 }))
 
+jest.mock('@/app/plugins/firebase/FirebaseFunctionsService', () => ({
+  FirebaseFunctionsController: {
+    callHttpsCallableFunction: jest.fn(),
+  },
+}))
+
 const mockGetById = jest.fn()
 const mockUpdate = jest.fn()
 
@@ -40,18 +46,29 @@ jest.mock('@/ux/UserTest/models/UserStudyEvaluatorAnswer', () => {
 
 const AnswerController =
   require('@/shared/controllers/AnswerController').default
+const {
+  FirebaseFunctionsController,
+} = require('@/app/plugins/firebase/FirebaseFunctionsService')
+const {
+  instantiateStudyAnswerByType,
+} = require('@/shared/constants/methodDefinitions')
 
 describe('AnswerController', () => {
   let answerController
 
   beforeEach(() => {
     jest.clearAllMocks()
+    instantiateStudyAnswerByType.mockImplementation((type, data) => data)
     answerController = new AnswerController()
   })
 
   describe('Structure', () => {
     it('should have getAnswerById method', () => {
       expect(typeof answerController.getAnswerById).toBe('function')
+    })
+
+    it('should have getMyStudyAnswer method', () => {
+      expect(typeof answerController.getMyStudyAnswer).toBe('function')
     })
 
     it('should have createAnswer method', () => {
@@ -119,6 +136,40 @@ describe('AnswerController', () => {
       )
 
       createSpy.mockRestore()
+    })
+  })
+
+  describe('getMyStudyAnswer', () => {
+    it('should call getMyStudyAnswer callable and instantiate the response', async () => {
+      FirebaseFunctionsController.callHttpsCallableFunction.mockResolvedValue({
+        data: {
+          id: 'answer-123',
+          type: 'USER',
+          taskAnswers: {
+            'user-123': { userDocId: 'user-123' },
+          },
+        },
+      })
+
+      const result = await answerController.getMyStudyAnswer('study-123')
+
+      expect(
+        FirebaseFunctionsController.callHttpsCallableFunction,
+      ).toHaveBeenCalledWith('getMyStudyAnswer', { studyId: 'study-123' })
+      expect(instantiateStudyAnswerByType).toHaveBeenCalledWith('USER', {
+        id: 'answer-123',
+        type: 'USER',
+        taskAnswers: {
+          'user-123': { userDocId: 'user-123' },
+        },
+      })
+      expect(result).toEqual({
+        id: 'answer-123',
+        type: 'USER',
+        taskAnswers: {
+          'user-123': { userDocId: 'user-123' },
+        },
+      })
     })
   })
 

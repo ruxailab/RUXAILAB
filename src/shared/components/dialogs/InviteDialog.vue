@@ -46,6 +46,8 @@
         <v-select
           v-model="selectedRole"
           :items="roleOptions"
+          item-title="title"
+          item-value="value"
           :label="roleLabel || t('cooperators.invite.role')"
           variant="outlined"
           density="comfortable"
@@ -143,7 +145,7 @@
         <v-btn
           color="primary"
           class="rounded-lg"
-          :disabled="selectedCoops.length === 0"
+          :disabled="selectedCoops.length === 0 || selectedRole === null"
           @click="onSend"
         >
           {{ sendText || t('cooperators.invite.send') }}
@@ -156,7 +158,6 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import {
-  useCooperatorUtils,
   getCooperatorInviteValidationError,
   normalizeCooperatorInviteEntry,
 } from '@/shared/composables/useCooperatorUtils'
@@ -203,18 +204,29 @@ const props = defineProps({
   messagePlaceholder: String,
   cancelText: String,
   sendText: String,
+  roleOptions: {
+    type: Array,
+    default: () => [],
+  },
 })
 
 const emit = defineEmits(['update:show', 'send-invitations'])
 
-// Use composables
-const { roleOptions } = useCooperatorUtils()
-
 // Local state
 const selectedCoops = ref([])
-const selectedRole = ref(1)
+const selectedRole = ref(null)
 const inviteMessage = ref('')
 const emailInput = ref('')
+
+watch(
+  () => props.roleOptions,
+  (roles) => {
+    if (!roles.some((role) => role.value === selectedRole.value)) {
+      selectedRole.value = roles[0]?.value ?? null
+    }
+  },
+  { immediate: true },
+)
 
 // Date and time for scheduling (accessibility tests)
 const date = ref(
@@ -311,7 +323,7 @@ const onSend = () => {
 const resetForm = () => {
   selectedCoops.value = []
   inviteMessage.value = ''
-  selectedRole.value = 1
+  selectedRole.value = props.roleOptions[0]?.value ?? null
   emailInput.value = ''
 }
 

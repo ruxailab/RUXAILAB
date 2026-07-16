@@ -5,9 +5,14 @@ import { formatTimeSpentFromMs } from '@/ux/Heuristic/utils/statistics'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
+import CardSortingEvaluatorAnswer from '@/ux/CardSorting/models/CardSortingEvaluatorAnswer'
 import { showError } from '@/shared/utils/toast'
 
 const answerController = new AnswerController()
+
+const isPermissionDenied = (error) =>
+  error?.code === 'permission-denied' ||
+  error?.message?.includes('PERMISSION_DENIED')
 
 export default {
   state: {
@@ -169,6 +174,28 @@ export default {
           answer.hidden !== true,
       )
     },
+    currentCardSortingAnswer(state, rootGetters) {
+      if (!state.testAnswerDocument) return {}
+      if (!rootGetters.test || !rootGetters.user) return {}
+
+      const cardSortingAnswers =
+        state.testAnswerDocument.cardSortingAnswers || {}
+      const existing = cardSortingAnswers[rootGetters.user.id]
+
+      return existing
+        ? CardSortingEvaluatorAnswer.toModel(existing)
+        : new CardSortingEvaluatorAnswer({ userDocId: rootGetters.user.id })
+    },
+    cardSortingAnswersList(state) {
+      const doc = state.testAnswerDocument
+      if (!doc?.cardSortingAnswers) return []
+      return Object.values(doc.cardSortingAnswers).filter(
+        (answer) =>
+          typeof answer === 'object' &&
+          answer !== null &&
+          answer.hidden !== true,
+      )
+    },
   },
   mutations: {
     SET_ANSWER_DOCUMENT(state, payload) {
@@ -253,7 +280,25 @@ export default {
           await answerController.getAnswerById(currentAnswersDocId)
         commit('SET_ANSWER_DOCUMENT', answerDoc)
       } catch (error) {
-        console.error('[Answer Store] Failed to fetch answer document:', error)
+        if (isPermissionDenied(error) && currentTest.id) {
+          try {
+            const answerDoc = await answerController.getMyStudyAnswer(
+              currentTest.id,
+            )
+            commit('SET_ANSWER_DOCUMENT', answerDoc)
+            return
+          } catch (fallbackError) {
+            console.error(
+              '[Answer Store] Failed to fetch own answer document:',
+              fallbackError,
+            )
+          }
+        } else {
+          console.error(
+            '[Answer Store] Failed to fetch answer document:',
+            error,
+          )
+        }
         showError('errors.failedToLoadAnswers')
       } finally {
         commit('setLoading', false)
@@ -306,6 +351,11 @@ export default {
               state.testAnswerDocument.taskAnswers = {}
             }
             state.testAnswerDocument.taskAnswers[userId] = payload.data
+          } else if (payload.testType === STUDY_TYPES.CARD_SORTING) {
+            if (!state.testAnswerDocument.cardSortingAnswers) {
+              state.testAnswerDocument.cardSortingAnswers = {}
+            }
+            state.testAnswerDocument.cardSortingAnswers[userId] = payload.data
           }
         }
 

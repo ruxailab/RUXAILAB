@@ -20,10 +20,10 @@
                 size="large"
                 class="px-6 text-capitalize"
                 rounded="lg"
-                @click="dialog = true"
+                @click="openCreate"
               >
                 <v-icon start> mdi-plus-circle </v-icon>
-                {{ $t('CardSorting.addNewTask') }}
+                {{ $t('CardSorting.addNewCategory') }}
               </v-btn>
             </v-col>
           </v-row>
@@ -100,23 +100,41 @@
           <v-card-text>
             <v-checkbox
               v-model="options.category_description"
-              label="Show Category Description"
+              :label="$t('CardSorting.showCategoryDescription')"
               @update:model-value="onChange()"
             />
             <v-checkbox
               v-model="options.category_image"
-              label="Show Image"
+              :label="$t('CardSorting.showImage')"
               @update:model-value="onChange()"
             />
+            <v-divider class="my-3" />
+            <v-checkbox
+              v-model="options.allow_create_categories"
+              :label="$t('CardSorting.allowCreateCategories')"
+              @update:model-value="onChange()"
+            />
+            <p class="text-caption text-medium-emphasis mt-1">
+              {{
+                options.allow_create_categories
+                  ? categories.length > 0
+                    ? $t('CardSorting.hybridModeHint')
+                    : $t('CardSorting.openModeHint')
+                  : $t('CardSorting.closedModeHint')
+              }}
+            </p>
           </v-card-text>
         </v-card>
       </v-col>
     </v-row>
     <CardSortingForm
-      v-model:dialog="dialog"
+      :dialog="dialog"
+      type="category"
       :task="category"
       :options="options"
+      :is-edit="editedIndex > -1"
       @save="save"
+      @update:dialog="onDialogChange"
     />
   </v-container>
 </template>
@@ -173,6 +191,23 @@ const onChange = () => {
   emit('categories', categories.value)
 }
 
+const resetEditor = () => {
+  editedIndex.value = -1
+  category.value = new CardSortingStudyCategory()
+}
+
+const openCreate = () => {
+  resetEditor()
+  dialog.value = true
+}
+
+const onDialogChange = (isOpen) => {
+  dialog.value = isOpen
+  if (!isOpen) {
+    resetEditor()
+  }
+}
+
 const editItem = (item) => {
   editedIndex.value = categories.value.indexOf(item)
   category.value = new CardSortingStudyCategory({ ...item })
@@ -190,11 +225,11 @@ const save = (newCategoryRaw) => {
 
   if (editedIndex.value > -1) {
     categories.value[editedIndex.value] = newCategory
-    editedIndex.value = -1
   } else {
     categories.value.push(newCategory)
   }
 
+  resetEditor()
   onChange()
 }
 

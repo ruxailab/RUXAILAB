@@ -21,7 +21,7 @@ jest.unstable_mockModule('nodemailer', () => ({
 
 jest.unstable_mockModule('fs', () => ({
   readFileSync: jest.fn().mockReturnValue(
-    'Template content resetLink: {{resetLink}}, site: {{site}}, message: {{message}}, testTitle: {{testTitle}} adminName: {{adminName}}.'
+    'Template content resetLink: {{resetLink}}, invitationLink: {{invitationLink}}, message: {{message}}, testTitle: {{testTitle}} adminName: {{adminName}}.'
   ),
 }));
 
@@ -52,6 +52,7 @@ describe('email.js -> sendEmail', () => {
           testDescription: 'Desc',
           adminEmail: 'admin@test.com',
           adminName: 'Admin',
+          invitationLink: 'http://test.com/testview/study-1/invite-token',
         },
       },
     };
@@ -59,6 +60,30 @@ describe('email.js -> sendEmail', () => {
     const res = await sendEmail(data);
     expect(res).toBe('Email sent successfully.');
     expect(nodemailerMock.default.createTransport).toHaveBeenCalled();
+  });
+
+  it('uses the study invitation link in invite emails', async () => {
+    await sendEmail({
+      data: {
+        template: 'invite',
+        to: 'user@test.com',
+        subject: 'You are invited',
+        data: {
+          message: 'Hello',
+          invitationLink: 'http://test.com/testview/study-1/invite-token',
+        },
+      },
+    });
+
+    const transport =
+      nodemailerMock.default.createTransport.mock.results[0].value
+    expect(transport.sendMail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        html: expect.stringContaining(
+          'http://test.com/testview/study-1/invite-token',
+        ),
+      }),
+    )
   });
 
   it('should send a password reset email correctly', async () => {

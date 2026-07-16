@@ -288,12 +288,16 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue'
 import { useI18n } from 'vue-i18n'
-import StudyController from '@/controllers/StudyController'
 import { matchesSearch } from '@/shared/utils/searchUtils'
+import { getAcceptedInvitationDestination } from '@/shared/utils/studyNavigation'
+import InviteController from '@/shared/controllers/InviteController.js'
+import StudyController from '@/controllers/StudyController.js'
 
 const store = useStore()
+const router = useRouter()
 const { t } = useI18n()
 
 // State
@@ -485,6 +489,7 @@ const handleNotificationClick = async (notification) => {
 
 const goToNotificationRedirect = async (notification) => {
   if (!notification?.redirectsTo) return
+  let redirectTo = notification.redirectsTo
 
   // For collaboration invitations, show dialog (check both type and action)
   if (
@@ -501,26 +506,32 @@ const goToNotificationRedirect = async (notification) => {
     }
 
     try {
-      try {
-        await InviteController.resolveInvite(token.value, user.value.id)
-      } catch {
-        // Ignore error in case invitation comes from old system
+      const token =
+        localStorage.getItem('pendingInviteToken') || notification.inviteToken
+      // resolve invite in case it has token
+      if (token) {
+        try {
+          await InviteController.resolveInvite(token, user.value.id)
+        } catch {
+          // Ignore error and continue flow, as the invite might have already been resolved or expired
+        }
       }
 
       const study = await new StudyController().getStudy({
         id: notification.testId,
       })
-
-      await store.dispatch('acceptStudyCollaboration', {
-        test: study,
-        cooperator: user.value,
+      const destination = getAcceptedInvitationDestination({
+        study,
+        user: user.value,
       })
+      if (destination) redirectTo = router.resolve(destination).href
 
       if (!notification.read) {
         await markAsRead(notification)
       }
     } catch {
       // Error handling without console.error for SonarCloud
+      return
     }
   }
 
@@ -530,7 +541,7 @@ const goToNotificationRedirect = async (notification) => {
   }
 
   // Open redirect URL
-  let url = notification.redirectsTo
+  let url = redirectTo
   if (!url.startsWith('http')) {
     const baseUrl = globalThis.location.origin
     const path = url.startsWith('/') ? url : '/' + url

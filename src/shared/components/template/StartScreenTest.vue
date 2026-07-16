@@ -38,7 +38,10 @@ defineProps({
 })
 
 // Emits
-defineEmits(['start'])
+const emit = defineEmits(['start'])
+
+// Methods
+const startTest = () => emit('start')
 </script>
 
 <style scoped>
