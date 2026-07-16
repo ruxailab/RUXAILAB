@@ -25,7 +25,7 @@ export default class InviteUtils {
         studyTitle: studyTitle || null,
         isPublic: isPublic || false,
         accessLevel: accessLevel || null,
-        requiredLogin: requiredLogin || false,
+        requiredLogin: requiredLogin || true,
       })
 
     return {

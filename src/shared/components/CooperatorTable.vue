@@ -311,20 +311,6 @@ const {
   formatTime,
 } = useCooperatorUtils()
 
-const roleOptionsFor = (cooperator) => {
-  const options = [...props.assignableRoleOptions]
-  const currentRole = props.roleOptions.find(
-    (role) => role.value === cooperator.accessLevel,
-  )
-  if (
-    currentRole &&
-    !options.some((role) => role.value === currentRole.value)
-  ) {
-    options.push(currentRole)
-  }
-  return options
-}
-
 // Local state
 const itemsPerPage = ref(10)
 const selectedCooperators = ref([])
@@ -359,7 +345,6 @@ const computedHeaders = computed(() => {
   defaultHeaders.push(
     { title: 'Status', key: 'accepted', sortable: true },
     { title: 'Accepted Date', key: 'acceptedDate', sortable: true },
-    { title: 'Actions', key: 'actions', sortable: false },
   )
 
   if (props.showActions) {

@@ -131,6 +131,7 @@ import { onMounted, ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import store from '@/store'
 import InviteController from '@/shared/controllers/InviteController.js'
+import StudyController from '@/controllers/StudyController'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -178,6 +179,14 @@ const acceptInvite = async () => {
     )
 
     localStorage.removeItem('pendingInviteToken')
+
+    const study = await new StudyController().getStudy({
+      id: result.invite.studyId,
+    })
+    await store.dispatch('acceptStudyCollaboration', {
+      test: study,
+      cooperator: user.value,
+    })
 
     router.replace(`/testview/${result.invite.studyId}`)
   } catch (err) {

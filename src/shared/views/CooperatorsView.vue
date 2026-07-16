@@ -115,7 +115,7 @@
       v-model:show="showLinkInviteDialog"
       :study-id="test?.id"
       :study-title="test?.testTitle"
-      :requires-login="true"
+      :required-login="true"
     />
 
     <!-- Confirmation Dialog -->
@@ -207,17 +207,9 @@ import MessageDialog from '@/shared/components/dialogs/MessageDialog.vue'
 import InviteDialog from '@/shared/components/dialogs/InviteDialog.vue'
 import GenerateInviteLinkDialog from '@/shared/components/dialogs/GenerateInviteLinkDialog.vue'
 import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
-import UIDGenerator from 'uid-generator'
-import {
-  getCooperatorInviteValidationError,
-  normalizeCooperatorInviteEntry,
-  enrichCooperatorInviteEntry,
-  useCooperatorUtils,
-} from '@/shared/composables/useCooperatorUtils'
-import { getMethodManagerView } from '../constants/methodDefinitions'
+import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
 import { useRouter, useRoute } from 'vue-router'
 import Notification from '@/shared/models/Notification'
-import EmailController from '../controllers/EmailController'
 import { useI18n } from 'vue-i18n'
 import { showSuccess, showError, showWarning } from '@/shared/utils/toast'
 import {
@@ -228,10 +220,7 @@ import {
   STUDY_CAPABILITY,
 } from '@/shared/utils/studyAccessPolicy'
 import { manageStudyMembership } from '@/shared/services/studyMembershipService'
-import { getAcceptedInvitationDestination } from '@/shared/utils/studyNavigation'
-import InviteController from '@/shared/controllers/InviteController.js'
 
-const uidgen = new UIDGenerator()
 const router = useRouter()
 
 const props = defineProps({
@@ -375,7 +364,6 @@ const sendNotification = async ({
 }
 
 let showIntroComponent = ref(true)
-const inviteMessages = ref('')
 const verified = ref(false)
 const messageModel = ref(false)
 const selectedUser = ref([])
@@ -471,122 +459,34 @@ const resolveUserByEmail = async (email) => {
   }
 }
 
-const handleSendEmail = async (guest, customMessage = null, inviteLink) => {
-  const emailController = new EmailController()
-  const inviteMessage =
-    customMessage ?? guest?.inviteMessage ?? inviteMessages.value ?? ''
-
-  await emailController.send({
-    to: guest.email,
-    subject: t('HeuristicsCooperators.actions.send_invitation'),
-    attachments: [],
-    template: 'invite',
-    data: {
-      message: inviteMessage,
-      testTitle: test.value.testTitle,
-      testDescription: test.value.testDescription,
-      adminEmail: test.value.testAdmin.email,
-      adminName: userAuth.value.name || userAuth.value.email,
-      studyId: test.value.id,
-      invitationLink: inviteLink,
-    },
-  })
-}
-const handleSendInvitations = async (invitationData) => {
-  if (!test.value) return
-
-  const { selectedCoops, selectedRole, inviteMessage } = invitationData
-  const newInvites = []
-
-  inviteMessages.value = inviteMessage
-
-  const roleOption = assignableRoleOptions.value.find(
-    (role) => role.value === selectedRole,
-  )
-
-  if (!roleOption) {
-    showError('AccessNotAllowed.noAccess')
-    return
-  }
-
-  if (
-    !canManageCooperator(test.value, userAuth.value, null, {
-      action: 'invite',
-      role: selectedRole,
-    })
-  ) {
-    showError('AccessNotAllowed.noAccess')
-    return
-  }
-
-  const normalizedInvites = []
-
-  for (const coop of selectedCoops) {
-    const normalizedEntry = normalizeCooperatorInviteEntry(coop, users.value)
-
-    const enrichedEntry = normalizedEntry.userDocId
-      ? normalizedEntry
-      : await enrichCooperatorInviteEntry(normalizedEntry, {
-          resolveUserByEmail,
-        })
-
-    normalizedInvites.push({
-      ...normalizedEntry,
-      ...enrichedEntry,
-      email: enrichedEntry.email?.trim() || normalizedEntry.email?.trim() || '',
-    })
-  }
-
-  for (const invite of normalizedInvites) {
-    const validationError = getCooperatorInviteValidationError({
-      email: invite.email,
-      currentUserEmail: userAuth.value?.email,
-      studyOwnerEmail: test.value?.testAdmin?.email,
-      existingCooperators: cooperatorsEdit.value,
-      t,
-    })
-
-    if (validationError) {
-      showError(validationError)
-      continue
-    }
-
-    try {
-      const result = await manageStudyMembership({
-        studyId: test.value.id,
-        action: 'invite',
-        targetUserId: invite.userDocId || null,
-        targetEmail: invite.email,
-        role: selectedRole,
-        inviteMessage,
-        token: uidgen.generateSync(),
-      })
-
-      newInvites.push(result.cooperator)
-    } catch {
-      showError('errors.sendError')
-    }
-  }
-
+const handleSendInvitations = async ({
+  selectedCoops,
+  selectedRole,
+  inviteMessage,
+}) => {
   try {
-    await store.dispatch('getStudy', { id: test.value.id })
+    const newInvites = await store.dispatch('sendInvitations', {
+      study: test.value,
+      user: userAuth.value,
+      selectedCoops,
+      selectedRole,
+      inviteMessage,
+      users: users.value,
+      router,
+      resolveUserByEmail,
+    })
 
-    await Promise.all(
-      newInvites.map((guest) => sendMenssages(guest, guest.inviteMessage)),
-    )
+    showInviteDialog.value = false
+
+    if (newInvites.length > 0) {
+      showSuccess(
+        t('cooperators.inviteSent', {
+          users: newInvites.map((guest) => guest.email).join(', '),
+        }),
+      )
+    }
   } catch {
     showError('errors.sendError')
-    return
-  }
-
-  showInviteDialog.value = false
-
-  if (newInvites.length > 0) {
-    showSuccess(
-      t('cooperators.inviteSent', {
-        users: newInvites.map((guest) => guest.email).join(', '),
-      }),
-    )
   }
 }
 
@@ -635,106 +535,20 @@ const executeRoleChange = async (item, newValue) => {
   await store.dispatch('getStudy', { id: test.value.id })
 }
 
-const sendMenssages = async (guest, customMessage = null) => {
-  const messageToSend =
-    customMessage ?? guest?.inviteMessage ?? inviteMessages.value ?? ''
-
+const reinvite = async (guest) => {
   try {
-    const resolvedGuest = await enrichCooperatorInviteEntry(guest, {
+    await store.dispatch('reinviteCooperator', {
+      study: test.value,
+      user: userAuth.value,
+      guest,
+      router,
       resolveUserByEmail,
     })
 
-    if (resolvedGuest.userDocId) {
-      guest.userDocId = resolvedGuest.userDocId
-    }
-
-    // generate invite link
-    const inviteResult = await InviteController.generateInvitationLink({
-      studyId: test.value.id,
-      studyTitle: test.value.testTitle,
-      accessLevel: guest.accessLevel,
-      requiredLogin: true,
-      toEmail: guest.email,
-      isPublic: false,
-    })
-
-    await notifyCooperator(guest, messageToSend, inviteResult.inviteToken)
-    // Email is optional - don't let it block the notification
-    try {
-      await handleSendEmail(guest, messageToSend, inviteResult.inviteLink)
-    } catch {
-      // console.warn('Email sending failed (may be missing VUE_APP_CLOUD_FUNCTIONS_URL):', emailError.message)
-    }
     showSuccess('pages.cooperators.invitationSent')
   } catch {
-    // console.error('sendMenssages error:', error)
     showError('errors.sendError')
-    return error
   }
-}
-
-const notifyCooperator = async (guest, customMessage = null, inviteToken) => {
-  if (guest.userDocId) {
-    // Check if it's an accessibility test (MANUAL or AUTOMATIC)
-    //if (test.value.testType === 'MANUAL' || test.value.testType === 'AUTOMATIC') {
-    //  notifyCooperatorAccessibility(guest);
-    //  return;
-    //}
-
-    // admin - 0, evaluator -1, guest - 2
-    const managerViewByMethod = getMethodManagerView(
-      test.value.testType,
-      test.value.subType,
-    )
-    const managerRoute = router.resolve({
-      name: managerViewByMethod,
-      params: { id: test.value.id },
-    })
-
-    const invitationStudy = {
-      ...test.value,
-      cooperators: [
-        ...(test.value.cooperators || []).filter(
-          (cooperator) => cooperator.userDocId !== guest.userDocId,
-        ),
-        { ...guest, accepted: true },
-      ],
-    }
-    const destination = getAcceptedInvitationDestination({
-      study: invitationStudy,
-      user: { id: guest.userDocId },
-    })
-    const path = destination
-      ? router.resolve(destination).href
-      : managerRoute.href
-
-    const payload = {
-      userId: guest.userDocId,
-      author: test.value.testAdmin.email,
-      testId: test.value.id,
-      redirectsTo: path,
-      type: 'Collaboration',
-      accessLevel: supportedRoleOptions.value.find(
-        (r) => r.value === guest.accessLevel,
-      )?.value,
-      titleTemplate: 'HeuristicsCooperators.actions.send_invitation',
-      inviteToken: inviteToken,
-    }
-
-    if (customMessage) {
-      payload.description = customMessage
-    } else {
-      payload.descriptionTemplate =
-        'HeuristicsCooperators.messages.invite_message'
-      payload.descriptionParams = { testTitle: test.value.testTitle || 'Test' }
-    }
-
-    await sendNotification(payload)
-  }
-}
-
-const reinvite = async (guest) => {
-  await sendMenssages(guest, guest?.inviteMessage ?? null)
 }
 
 const removeCoop = async (coop) => {

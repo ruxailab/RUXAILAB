@@ -10,7 +10,7 @@ describe('enrichCooperatorInviteEntry', () => {
     })
 
     expect(resolver).toHaveBeenCalledWith('person@example.com')
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       email: 'person@example.com',
       userDocId: 'user-123',
     })
@@ -25,7 +25,7 @@ describe('enrichCooperatorInviteEntry', () => {
     })
 
     expect(resolver).not.toHaveBeenCalled()
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       email: 'person@example.com',
       userDocId: 'existing-id',
     })

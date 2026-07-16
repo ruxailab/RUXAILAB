@@ -520,6 +520,12 @@ const goToNotificationRedirect = async (notification) => {
       const study = await new StudyController().getStudy({
         id: notification.testId,
       })
+
+      await store.dispatch('acceptStudyCollaboration', {
+        test: study,
+        cooperator: user.value,
+      })
+
       const destination = getAcceptedInvitationDestination({
         study,
         user: user.value,
