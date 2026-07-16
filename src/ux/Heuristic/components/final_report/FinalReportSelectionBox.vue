@@ -264,11 +264,6 @@ const submitPdf = async () => {
       payload: finalReportItem,
     }
 
-    console.log('=== PAYLOAD ENVIADO AL BACKEND ===')
-    console.log('Configuración del PDF:', pdfConfig)
-    console.log('Payload completo:', JSON.stringify(finalReportItem, null, 2))
-    console.log('==================================')
-
     const response = await axios.post(
       `${process.env.VUE_APP_LARAVEL_PDF}/generate-pdf`,
       payload,

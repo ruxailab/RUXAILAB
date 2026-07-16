@@ -383,7 +383,6 @@ function statistics() {
     answers().forEach((evaluator) => {
       // Skip evaluators who haven't submitted their evaluation
       if (!evaluator.submitted) {
-        console.log('Skipping evaluator (not submitted):', evaluator.userDocId)
         return
       }
 
@@ -447,16 +446,7 @@ function statistics() {
       })
     })
 
-    // Log statistics about included evaluators
-    const totalEvaluators = answers().length
-    const completedEvaluators = resultEvaluator.length
-    console.log('=== ESTADÍSTICAS DE EVALUADORES ===')
-    console.log(`Total de evaluadores: ${totalEvaluators}`)
-    console.log(`Evaluadores completados: ${completedEvaluators}`)
-    console.log(
-      `Evaluadores excluidos (no completados): ${totalEvaluators - completedEvaluators}`,
-    )
-    console.log('===================================')
+
 
     // Sort resultEvaluator based on lastUpdate
     resultEvaluator.sort((a, b) => b.lastUpdate - a.lastUpdate)

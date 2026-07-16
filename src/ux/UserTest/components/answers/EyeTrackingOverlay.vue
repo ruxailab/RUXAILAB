@@ -156,20 +156,6 @@ watch(
         t: p.timestamp - t0,
       }
 
-      // 🔥 LOG FIRST 5 POINTS
-      if (idx < 5) {
-        // eslint-disable-next-line no-console
-        console.log('[POINT RAW]', {
-          rawX,
-          rawY,
-          width: p.screen_width,
-          height: p.screen_height,
-          p,
-        })
-        // eslint-disable-next-line no-console
-        console.log('[POINT NORM]', norm)
-      }
-
       return norm
     })
 
