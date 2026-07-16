@@ -13,10 +13,12 @@
             {{ t('focusGroup.session.sessionEnded') }}
           </template>
           <template v-else>
-            {{ t('focusGroup.session.topicProgress', {
-              current: currentIndex + 1,
-              total,
-            }) }}
+            {{
+              t('focusGroup.session.topicProgress', {
+                current: currentIndex + 1,
+                total,
+              })
+            }}
           </template>
         </p>
       </div>
@@ -49,11 +51,7 @@
         >
           {{ t('focusGroup.session.next') }}
         </v-btn>
-        <v-btn
-          color="secondary"
-          prepend-icon="mdi-stop"
-          @click="$emit('end')"
-        >
+        <v-btn color="secondary" prepend-icon="mdi-stop" @click="$emit('end')">
           {{ t('focusGroup.session.endSession') }}
         </v-btn>
       </template>

@@ -8,7 +8,11 @@
     <v-divider />
 
     <!-- Message feed -->
-    <div ref="feed" class="flex-grow-1 overflow-y-auto pa-4" style="max-height: 420px">
+    <div
+      ref="feed"
+      class="flex-grow-1 overflow-y-auto pa-4"
+      style="max-height: 420px"
+    >
       <p
         v-if="!messages.length"
         class="text-body-2 text-medium-emphasis text-center my-8"
@@ -27,11 +31,17 @@
             class="text-caption text-medium-emphasis mb-1"
             :class="isOwn(message) ? 'text-right' : ''"
           >
-            {{ isOwn(message) ? t('focusGroup.session.you') : (message.name || t('focusGroup.session.anonymous')) }}
+            {{
+              isOwn(message)
+                ? t('focusGroup.session.you')
+                : message.name || t('focusGroup.session.anonymous')
+            }}
           </div>
           <div
             class="px-3 py-2 rounded-lg text-body-2"
-            :class="isOwn(message) ? 'bg-primary text-white' : 'bg-grey-lighten-3'"
+            :class="
+              isOwn(message) ? 'bg-primary text-white' : 'bg-grey-lighten-3'
+            "
             style="white-space: pre-wrap; word-break: break-word"
           >
             {{ message.text }}

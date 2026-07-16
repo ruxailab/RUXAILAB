@@ -30,11 +30,7 @@
           {{ t('focusGroup.session.title') }}
         </p>
       </div>
-      <v-chip
-        :color="statusColor"
-        variant="flat"
-        :prepend-icon="statusIcon"
-      >
+      <v-chip :color="statusColor" variant="flat" :prepend-icon="statusIcon">
         {{ t(`focusGroup.session.status.${status}`) }}
       </v-chip>
     </div>

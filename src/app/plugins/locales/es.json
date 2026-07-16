@@ -388,6 +388,11 @@
   "cooperators": {
     "updatedRole": "Rol actualizado a {role} para: {users}",
     "inviteSent": "Invitación enviada a: {users}",
+    "filter": {
+      "search": "Search...",
+      "filterByRole": "Filter by role",
+      "filterByStatus": "Filter by status"
+    },
     "validation": {
       "invalidEmail": "Por favor, introduce un correo electrónico válido.",
       "invalidFormat": "Por favor, introduce un correo electrónico válido.",
@@ -522,7 +527,7 @@
     "reports": "Informes",
     "answers": "Respuestas",
     "analytics": "Análisis",
-    "cooperators": "Colaboradores",
+    "cooperators": "Personal",
     "template": "Plantilla",
     "finalReport": "Informe final",
     "answerType": "Tipo de respuesta:",
@@ -541,7 +546,7 @@
       "Progress": "Progreso",
       "Results": "Resultados",
       "Analytics": "Análisis",
-      "Cooperators": "Colaboradores",
+      "Cooperators": "Personal",
       "Template": "Plantilla",
       "Final Report": "Informe final",
       "Answer Test": "Responder prueba",
@@ -551,7 +556,8 @@
       "name": "Nombre",
       "studiesCount": "Recuento de Estudios",
       "mediaSize": "Tamaño de Medios",
-      "toggleMiniMode": "Alternar modo mini"
+      "toggleMiniMode": "Alternar modo mini",
+      "Participants": "Participantes"
     },
     "heuristic": "Evaluación heurística de usabilidad"
   },
@@ -720,7 +726,7 @@
       "weights": "Pesos",
       "on": "ON",
       "off": "OFF",
-      "cooperators": "Colaboradores",
+      "cooperators": "Personal",
       "totalInvited": "Total invitados",
       "accepted": "Aceptados",
       "pending": "Pendientes",
@@ -1176,10 +1182,10 @@
   },
   "HeuristicsCooperators": {
     "title": {
-      "cooperators": "Colaboradores"
+      "cooperators": "Personal"
     },
     "subtitles": {
-      "manage_participants": "Gestiona a las personas que participan en tu estudio"
+      "manage_participants": "Gestiona los miembros del equipo de investigación"
     },
     "headers": {
       "email": "Correo electrónico",
@@ -1976,7 +1982,6 @@
     "help": "Ayuda",
     "delete": "Eliminar",
     "deleteAccount": "Eliminar cuenta",
-    "back": "Volver",
     "duplicateTest": "Duplicar prueba",
     "submit": "Enviar",
     "couldNotFinish": "No se pudo completar",
@@ -2088,7 +2093,7 @@
     "sendmessageanswer": "Para enviar un mensaje, ve a la página de administración de tu prueba. Selecciona 'Colaboradores' en la barra lateral izquierda. Haz clic en el ícono de tres puntos junto al colaborador al que deseas enviar un mensaje. Luego, elige 'Enviar un mensaje' y escribe tu mensaje con un título y contenido.",
     "testCreation": "Creación de pruebas",
     "templates": "Plantillas",
-    "cooperators": "Colaboradores",
+    "cooperators": "Personal",
     "analytics": "Análisis",
     "help_center": "Centro de ayuda",
     "howCanWeHelp": "¿Cómo podemos ayudarte?",

@@ -23,7 +23,12 @@
         :show-comments="false"
         @update-image="
           (imageUrl, sourceHeurisIndex, sourceQuestionIndex) =>
-            $emit('update-image', imageUrl, sourceHeurisIndex, sourceQuestionIndex)
+            $emit(
+              'update-image',
+              imageUrl,
+              sourceHeurisIndex,
+              sourceQuestionIndex,
+            )
         "
         @add-image="
           (imageUrl, metadata, sourceHeurisIndex, sourceQuestionIndex) =>
@@ -37,7 +42,12 @@
         "
         @remove-image="
           (imageId, sourceHeurisIndex, sourceQuestionIndex) =>
-            $emit('remove-image', imageId, sourceHeurisIndex, sourceQuestionIndex)
+            $emit(
+              'remove-image',
+              imageId,
+              sourceHeurisIndex,
+              sourceQuestionIndex,
+            )
         "
       >
         <template #answer>

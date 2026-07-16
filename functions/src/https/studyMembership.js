@@ -25,34 +25,33 @@ const normalizeStudyType = (type) => {
   return normalized === 'HEURISTICS' ? 'HEURISTIC' : normalized
 }
 
-const error = (code, message) =>
-  new functions.https.HttpsError(code, message)
+const error = (code, message) => new functions.https.HttpsError(code, message)
 
 const getData = (request) => request?.data || request || {}
 
 const sameEmail = (left, right) =>
   Boolean(
-    left && right && String(left).trim().toLowerCase() === String(right).trim().toLowerCase(),
+    left &&
+    right &&
+    String(left).trim().toLowerCase() === String(right).trim().toLowerCase(),
   )
 
 const isValidEmail = (email) =>
-  typeof email === 'string' &&
-  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
+  typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
 
 export async function resolveInviteTargetUserId({
   auth,
   targetUserId,
   targetEmail,
 }) {
-  const normalizedEmail = String(targetEmail || '').trim().toLowerCase()
+  const normalizedEmail = String(targetEmail || '')
+    .trim()
+    .toLowerCase()
 
   try {
     const user = await auth.getUserByEmail(normalizedEmail)
     if (targetUserId && targetUserId !== user.uid) {
-      throw error(
-        'invalid-argument',
-        'targetUserId does not match targetEmail',
-      )
+      throw error('invalid-argument', 'targetUserId does not match targetEmail')
     }
     return user.uid
   } catch (lookupError) {
@@ -63,17 +62,13 @@ export async function resolveInviteTargetUserId({
   }
 }
 
-export const findMatchingPendingInvitation = (
-  study,
-  { uid, email, token },
-) =>
+export const findMatchingPendingInvitation = (study, { uid, email, token }) =>
   study?.cooperators?.find((cooperator) => {
     if (cooperator?.accepted === true) return false
     const accountMatches =
       cooperator?.userDocId === uid || sameEmail(cooperator?.email, email)
     const tokenMatches =
-      token &&
-      (token === cooperator?.token || token === cooperator?.userDocId)
+      token && (token === cooperator?.token || token === cooperator?.userDocId)
     return accountMatches && tokenMatches
   }) ?? null
 
@@ -220,11 +215,14 @@ export const manageStudyMembership = functions.onCall({
         if (index < 0) {
           throw error('permission-denied', 'No invitation matches this account')
         }
+        const now = Date.now()
+
         const membership = {
           ...cooperators[index],
           userDocId: actorId,
           accepted: true,
-          updateDate: Date.now(),
+          updateDate: now,
+          acceptedDate: now,
         }
         cooperators[index] = membership
         studyRoleMap[actorId] = membership.accessLevel
@@ -273,7 +271,10 @@ export const manageStudyMembership = functions.onCall({
 
       if (action === 'invite') {
         if (target) {
-          throw error('already-exists', 'An invitation or membership already exists')
+          throw error(
+            'already-exists',
+            'An invitation or membership already exists',
+          )
         }
         const resolvedTargetUserId = await resolveInviteTargetUserId({
           auth: admin.auth(),
@@ -344,10 +345,16 @@ export const manageStudyMembership = functions.onCall({
       }
 
       if (action === 'remove' && target.accepted !== true) {
-        throw error('failed-precondition', 'Only accepted memberships can be removed')
+        throw error(
+          'failed-precondition',
+          'Only accepted memberships can be removed',
+        )
       }
       if (action === 'cancelInvitation' && target.accepted === true) {
-        throw error('failed-precondition', 'Accepted memberships cannot be cancelled')
+        throw error(
+          'failed-precondition',
+          'Accepted memberships cannot be cancelled',
+        )
       }
 
       cooperators.splice(targetIndex, 1)

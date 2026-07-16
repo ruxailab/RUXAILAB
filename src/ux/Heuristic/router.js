@@ -8,6 +8,7 @@ import HeuristicAnalyticsView from './views/HeuristicAnalyticsView.vue'
 import HeuristicAnswerView from './views/HeuristicAnswerView.vue'
 import EvaluatorInfoView from './views/EvaluatorInfoView.vue'
 import StorageView from '@/shared/views/StorageView.vue'
+import ParticipantsView from '@/shared/views/ParticipantsView.vue'
 import { STUDY_CAPABILITY as C } from '@/shared/utils/studyAccessPolicy'
 import AuditTrailView from '@/shared/views/AuditTrailView.vue'
 
@@ -69,6 +70,13 @@ export default [
         props: true,
         meta: studyMeta(C.COOPERATORS_VIEW),
         component: CooperatorsView,
+      },
+      {
+        path: '/heuristic/participants/:id',
+        name: 'HeuristicParticipantsView',
+        props: true,
+        meta: studyMeta(C.COOPERATORS_VIEW),
+        component: ParticipantsView,
       },
       {
         path: '/heuristic/evaluatorinfo/:id/:token?',

@@ -112,7 +112,7 @@ const requestCameraPermission = async () => {
 }
 
 const startRecording = async () => {
-  if(cameraPermissionDenied.value) {
+  if (cameraPermissionDenied.value) {
     const permissionGranted = await requestCameraPermission()
     if (!permissionGranted) {
       showError(t('errors.cameraPermissionDenied'))
@@ -139,12 +139,12 @@ const startRecording = async () => {
     }
   } catch (e) {
     recording.value = false
-    if(e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
+    if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
       cameraPermissionDenied.value = true
       showError(t('errors.cameraPermissionDenied'))
       return false
     }
-    console.error("Unexpected error while starting video recording:", e)
+    console.error('Unexpected error while starting video recording:', e)
     showError('errors.globalError')
     return false
   }

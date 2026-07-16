@@ -24,7 +24,10 @@
         {{ $t('HeuristicsTestView.errors.noAnswerOptions') }}
       </v-alert>
 
-      <div v-else-if="selectedAnswerMode === 'frequencySeverity'" class="response-grid">
+      <div
+        v-else-if="selectedAnswerMode === 'frequencySeverity'"
+        class="response-grid"
+      >
         <ResponseControl
           :label="$t('HeuristicsTestView.answer.frequency')"
           metric="frequency"

@@ -205,7 +205,11 @@ const uploadDroppedFile = (event) => {
   border-radius: 8px;
   color: #405166;
   background:
-    linear-gradient(135deg, rgba(223, 232, 251, 0.82), rgba(255, 255, 255, 0.94)),
+    linear-gradient(
+      135deg,
+      rgba(223, 232, 251, 0.82),
+      rgba(255, 255, 255, 0.94)
+    ),
     radial-gradient(circle at 16% 18%, rgba(0, 33, 63, 0.08), transparent 34%);
   cursor: pointer;
   text-align: center;
@@ -264,5 +268,4 @@ const uploadDroppedFile = (event) => {
   color: #697386;
   font-size: 0.84rem;
 }
-
 </style>

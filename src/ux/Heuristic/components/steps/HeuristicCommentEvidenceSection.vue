@@ -55,7 +55,9 @@
         open-by-default
         :show-images="false"
         :comment-label="$t('HeuristicsTestView.answer.commentLabel')"
-        :comment-placeholder="$t('HeuristicsTestView.answer.commentPlaceholder')"
+        :comment-placeholder="
+          $t('HeuristicsTestView.answer.commentPlaceholder')
+        "
         @update-comment="
           (comment, sourceHeurisIndex, sourceQuestionIndex) =>
             $emit(

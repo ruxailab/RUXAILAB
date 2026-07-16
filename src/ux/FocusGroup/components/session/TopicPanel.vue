@@ -21,7 +21,11 @@
         <template v-if="topic?.durationMinutes">
           <v-icon size="4">mdi-circle</v-icon>
           <span>
-            {{ t('focusGroup.session.plannedMinutes', { minutes: topic.durationMinutes }) }}
+            {{
+              t('focusGroup.session.plannedMinutes', {
+                minutes: topic.durationMinutes,
+              })
+            }}
           </span>
         </template>
       </v-card-subtitle>
@@ -31,11 +35,7 @@
       <div v-if="prompts.length">
         <p class="text-overline mb-1">{{ t('focusGroup.session.prompts') }}</p>
         <v-list density="compact" class="pa-0">
-          <v-list-item
-            v-for="(prompt, i) in prompts"
-            :key="i"
-            class="px-0"
-          >
+          <v-list-item v-for="(prompt, i) in prompts" :key="i" class="px-0">
             <template #prepend>
               <v-icon size="18" color="primary" class="me-2">
                 mdi-comment-question-outline

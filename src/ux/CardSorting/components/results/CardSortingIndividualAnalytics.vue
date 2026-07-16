@@ -206,7 +206,11 @@ const getAnswerCategories = (answer) => {
 const getInitials = (name) => name?.charAt(0)?.toUpperCase() || '?'
 
 const hasRecordings = (answer) =>
-  !!(answer?.screenRecordURL || answer?.webcamRecordURL || answer?.audioRecordURL)
+  !!(
+    answer?.screenRecordURL ||
+    answer?.webcamRecordURL ||
+    answer?.audioRecordURL
+  )
 </script>
 
 <style scoped>

@@ -1,5 +1,8 @@
 import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
-import { instantiateStudyByType, STUDY_TYPES } from '@/shared/constants/methodDefinitions'
+import {
+  instantiateStudyByType,
+  STUDY_TYPES,
+} from '@/shared/constants/methodDefinitions'
 
 const COLLECTION = 'tests'
 const ANSWERS_COLLECTION = 'answers'
@@ -28,7 +31,10 @@ export default class FocusGroupController extends Controller {
 
   async updateConfig(id, config) {
     return this.update(COLLECTION, id, {
-      config: typeof config.toFirestore === 'function' ? config.toFirestore() : config,
+      config:
+        typeof config.toFirestore === 'function'
+          ? config.toFirestore()
+          : config,
       updateDate: Date.now(),
     })
   }

@@ -163,7 +163,13 @@ export function useCommentImage(props, emit) {
         ...metadata,
       }
       localImages.value = [...localImages.value, newImage]
-      emit('addImage', imageUrl, metadata, sourceHeurisIndex, sourceQuestionIndex)
+      emit(
+        'addImage',
+        imageUrl,
+        metadata,
+        sourceHeurisIndex,
+        sourceQuestionIndex,
+      )
       if (localImages.value.length === 1) {
         emit('updateImage', imageUrl, sourceHeurisIndex, sourceQuestionIndex)
       }

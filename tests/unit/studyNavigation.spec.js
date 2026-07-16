@@ -150,7 +150,7 @@ describe('study navigation', () => {
     expect(titlesFor(study, evaluator, 'heuristic')).toEqual([
       'Dashboard',
       'Preview',
-      'Analytics',
+      'Results',
     ])
   })
 
@@ -160,8 +160,9 @@ describe('study navigation', () => {
       'Test',
       'Preview',
       'Progress',
-      'Analytics',
+      'Results',
       'Cooperators',
+      'Participants',
       'Settings',
       'Storage',
       'Audit Trail',
@@ -176,8 +177,9 @@ describe('study navigation', () => {
       'Dashboard',
       'Test',
       'Preview',
-      'Analytics',
+      'Results',
       'Cooperators',
+      'Participants',
     ])
   })
 
@@ -192,7 +194,7 @@ describe('study navigation', () => {
     const user = { id: 'observator', accessLevel: 1 }
     const study = studyWith('USER', user.id, STUDY_ROLE.OBSERVATOR)
 
-    expect(titlesFor(study, user)).toEqual(['Dashboard', 'Analytics'])
+    expect(titlesFor(study, user)).toEqual(['Dashboard', 'Results'])
   })
 
   it('adds Preview and Cooperators for a moderated Observator', () => {
@@ -205,8 +207,9 @@ describe('study navigation', () => {
     expect(titlesFor(study, user, 'userTest/moderated')).toEqual([
       'Dashboard',
       'Preview',
-      'Analytics',
+      'Results',
       'Cooperators',
+      'Participants',
     ])
   })
 
@@ -217,11 +220,7 @@ describe('study navigation', () => {
       isPublic: true,
     }
 
-    expect(titlesFor(study, user)).toEqual([
-      'Dashboard',
-      'Preview',
-      'Analytics',
-    ])
+    expect(titlesFor(study, user)).toEqual(['Dashboard', 'Preview', 'Results'])
   })
 
   it('shows Preview for a Guest only when the heuristic study is public', () => {
@@ -231,12 +230,12 @@ describe('study navigation', () => {
 
     expect(titlesFor(privateStudy, user, 'heuristic')).toEqual([
       'Dashboard',
-      'Analytics',
+      'Results',
     ])
     expect(titlesFor(publicStudy, user, 'heuristic')).toEqual([
       'Dashboard',
       'Preview',
-      'Analytics',
+      'Results',
     ])
   })
 
@@ -248,8 +247,9 @@ describe('study navigation', () => {
       'Dashboard',
       'Test',
       'Preview',
-      'Analytics',
+      'Results',
       'Cooperators',
+      'Participants',
       'Final Report',
       'Evaluator Info',
     ])

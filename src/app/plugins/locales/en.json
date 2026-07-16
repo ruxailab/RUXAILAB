@@ -390,6 +390,11 @@
   "cooperators": {
     "updatedRole": "Updated role to {role} for: {users}",
     "inviteSent": "Invitation sent to: {users}",
+    "filter": {
+      "search": "Search...",
+      "filterByRole": "Filter by role",
+      "filterByStatus": "Filter by status"
+    },
     "validation": {
       "invalidEmail": "Please enter a valid email address.",
       "invalidFormat": "Please enter a valid email address.",
@@ -524,7 +529,7 @@
     "reports": "Reports",
     "answers": "Answers",
     "analytics": "Analytics",
-    "cooperators": "Cooperators",
+    "cooperators": "Staff",
     "template": "Template",
     "finalReport": "Final Report",
     "answerType": "Answer type:",
@@ -543,7 +548,7 @@
       "Progress": "Progress",
       "Results": "Results",
       "Analytics": "Analytics",
-      "Cooperators": "Cooperators",
+      "Cooperators": "Staff",
       "Template": "Template",
       "Final Report": "Final Report",
       "Answer Test": "Answer Test",
@@ -554,7 +559,8 @@
       "name": "Name",
       "studiesCount": "Studies Count",
       "mediaSize": "Media Size",
-      "toggleMiniMode": "Toggle mini mode"
+      "toggleMiniMode": "Toggle mini mode",
+      "Participants": "Participants"
     },
     "heuristic": "Usability Heuristic Evaluation"
   },
@@ -728,7 +734,7 @@
       "weights": "Weights",
       "on": "ON",
       "off": "OFF",
-      "cooperators": "Cooperators",
+      "cooperators": "Staff",
       "totalInvited": "Total invited",
       "accepted": "Accepted",
       "pending": "Pending",
@@ -1255,10 +1261,10 @@
   },
   "HeuristicsCooperators": {
     "title": {
-      "cooperators": "Cooperators"
+      "cooperators": "Staff"
     },
     "subtitles": {
-      "manage_participants": "Manage people who participate in your study"
+      "manage_participants": "Manage members of the research team"
     },
     "headers": {
       "email": "Email",
@@ -2066,7 +2072,6 @@
     "help": "Help",
     "delete": "Delete",
     "deleteAccount": "Delete Account",
-    "back": "Back",
     "duplicateTest": "Duplicate Test",
     "submit": "Submit",
     "couldNotFinish": "Could not finish",
@@ -2177,7 +2182,7 @@
     "sendmessageanswer": "To send a message, navigate to the manager page of your test. Select 'Cooperators' from the left sidebar. Click on the three dots icon next to the cooperator you want to message. Then, choose 'Send a message' and write your message with a title and content.",
     "testCreation": "Test Creation",
     "templates": "Templates",
-    "cooperators": "Cooperators",
+    "cooperators": "Staff",
     "analytics": "Analytics",
     "help_center": "Help Center",
     "howCanWeHelp": "How can we help?",

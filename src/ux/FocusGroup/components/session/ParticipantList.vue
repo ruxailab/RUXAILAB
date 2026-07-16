@@ -16,11 +16,7 @@
       </p>
 
       <v-list v-else density="compact" class="pa-0">
-        <v-list-item
-          v-for="entry in entries"
-          :key="entry.id"
-          class="px-0"
-        >
+        <v-list-item v-for="entry in entries" :key="entry.id" class="px-0">
           <template #prepend>
             <v-badge
               :color="entry.connected ? 'success' : 'grey'"

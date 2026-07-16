@@ -17,6 +17,7 @@ export default class Cooperators {
     token,
     testDate,
     inviteMessage,
+    acceptedDate,
   } = {}) {
     /**
      * Defines the user document id.
@@ -94,6 +95,13 @@ export default class Cooperators {
      * @type {string}
      */
     this.inviteMessage = inviteMessage
+
+    /**
+     * Accepted date
+     *
+     * @type {number}
+     */
+    this.acceptedDate = acceptedDate
   }
 
   /**
@@ -123,6 +131,7 @@ export default class Cooperators {
       token: this.token ?? null,
       testDate: this.testDate ?? null,
       inviteMessage: this.inviteMessage ?? null,
+      acceptedDate: this.acceptedDate ?? null,
     }
   }
 }

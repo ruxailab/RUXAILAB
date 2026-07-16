@@ -84,6 +84,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  requiredLogin: {
+    type: String,
+    required: true,
+  },
 })
 
 const emit = defineEmits(['update:show', 'generated'])
@@ -100,7 +104,7 @@ const generateLink = async () => {
       studyId: props.studyId,
       studyTitle: props.studyTitle,
       accessLevel: selectedRole.value,
-      requiredLogin: props.requiresLogin,
+      requiredLogin: props.requiredLogin,
       toEmail: null, // No email provided for public invites
       isPublic: true,
     })

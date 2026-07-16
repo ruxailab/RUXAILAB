@@ -18,6 +18,7 @@ export const normalizeCooperatorInviteEntry = (entry, registeredUsers = []) => {
     return {
       email,
       userDocId: matchedUser?.id || matchedUser?.userDocId || null,
+      ...entry,
     }
   }
 
@@ -34,6 +35,7 @@ export const normalizeCooperatorInviteEntry = (entry, registeredUsers = []) => {
       matchedUser?.id ||
       matchedUser?.userDocId ||
       null,
+    ...entry,
   }
 }
 
