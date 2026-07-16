@@ -111,10 +111,6 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import NotificationItem from '@/features/notifications/components/NotificationItem.vue'
 import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue'
-import InviteController from '@/shared/controllers/InviteController.js'
-import StudyController from '@/controllers/StudyController'
-import { getAcceptedInvitationDestination } from '@/shared/utils/studyNavigation'
-import { showError } from '@/shared/utils/toast'
 
 const store = useStore()
 const router = useRouter()
@@ -158,54 +154,42 @@ const showAcceptDialog = () => {
 const goToNotificationRedirect = async (notification) => {
   let redirectTo = notification.redirectsTo
 
-  // Only show dialog for Collaboration type invitations
   if (notification.type === 'Collaboration') {
     const accepted = await showAcceptDialog()
 
     if (!accepted) {
-      await store.dispatch('markNotificationAsRead', {
+      await store.dispatch('rejectInvite', {
         notification,
         user: user.value,
       })
 
-      // remove possible invite token from localStorage
-      localStorage.removeItem('pendingInviteToken')
       return
     }
 
-    if (notification.testId) {
-      try {
-        const token =
-          localStorage.getItem('pendingInviteToken') || notification.inviteToken
-        // resolve invite in case it has token
-        if (token) {
-          try {
-            await InviteController.resolveInvite(token, user.value.id)
-          } catch {
-            // Ignore error and continue flow, as the invite might have already been resolved or expired
-          }
-        }
-        const study = await new StudyController().getStudy({
-          id: notification.testId,
-        })
+    if (!notification.testId) {
+      return
+    }
 
-        await store.dispatch('acceptStudyCollaboration', {
-          test: study,
-          cooperator: user.value,
-        })
+    try {
+      const token =
+        localStorage.getItem('pendingInviteToken') || notification.inviteToken
 
-        const destination = getAcceptedInvitationDestination({
-          study,
-          user: user.value,
-        })
-        if (destination) redirectTo = router.resolve(destination).href
-      } catch {
-        showError('notifications.errors.acceptCollaborationFailed')
-        return
+      const result = await store.dispatch('acceptInvite', {
+        token,
+        user: user.value,
+        studyId: notification.testId,
+        notification,
+      })
+
+      const destination = getAcceptedInvitationDestination({
+        study: result.study,
+        user: user.value,
+      })
+
+      if (destination) {
+        redirectTo = router.resolve(destination).href
       }
-    } else {
-      // Missing testId - cannot process collaboration
-      showError('notifications.errors.invalidCollaboration')
+    } catch {
       return
     }
   }

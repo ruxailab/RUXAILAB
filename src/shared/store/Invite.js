@@ -5,6 +5,7 @@
 import Notification from '@/shared/models/Notification'
 import EmailController from '@/shared/controllers/EmailController'
 import InviteController from '@/shared/controllers/InviteController.js'
+import StudyController from '@/controllers/StudyController'
 import {
   getCooperatorInviteValidationError,
   normalizeCooperatorInviteEntry,
@@ -277,6 +278,196 @@ export default {
         throw err
       } finally {
         commit('setLoading', false)
+      }
+    },
+
+    async acceptInvite(
+      { commit, dispatch },
+      { token, user, studyId, notification },
+    ) {
+      commit('setLoading', true)
+
+      try {
+        const result = await InviteController.resolveInvite(token, user?.id)
+
+        const resolvedStudyId = studyId || result.invite.studyId
+
+        const study = await new StudyController().getStudy({
+          id: resolvedStudyId,
+        })
+
+        await dispatch('acceptStudyCollaboration', {
+          test: study,
+          cooperator: user,
+        })
+
+        localStorage.removeItem('pendingInviteToken')
+
+        if (notification) {
+          await dispatch('markNotificationAsRead', {
+            notification,
+            user,
+          })
+        }
+
+        return {
+          ...result,
+          study,
+        }
+      } catch (err) {
+        commit('setError', {
+          errorCode: 'acceptInviteError',
+          message: err,
+        })
+
+        throw err
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+
+    async rejectInvite({ commit, dispatch }, { notification, user }) {
+      commit('setLoading', true)
+
+      try {
+        if (notification) {
+          await dispatch('markNotificationAsRead', {
+            notification,
+            user,
+          })
+        }
+
+        localStorage.removeItem('pendingInviteToken')
+      } catch (err) {
+        commit('setError', {
+          errorCode: 'rejectInviteError',
+          message: err,
+        })
+
+        throw err
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+
+    async dismissInvite({ commit, dispatch }, { invite, user, router }) {
+      commit('setLoading', true)
+
+      try {
+        const study = await new StudyController().getStudy({
+          id: invite.studyId,
+        })
+
+        const managerViewByMethod = getMethodManagerView(
+          study.testType,
+          study.subType,
+        )
+
+        const managerRoute = router.resolve({
+          name: managerViewByMethod,
+          params: { id: study.id },
+        })
+
+        const redirectsTo =
+          invite.accessLevel === 0
+            ? managerRoute.href
+            : `/testview/${study.id}/${user.id}`
+
+        const notifications = user?.notifications || []
+
+        const alreadyExists = notifications.some(
+          (notification) =>
+            !notification.read &&
+            notification.type === 'Collaboration' &&
+            notification.testId === study.id &&
+            notification.redirectsTo === redirectsTo,
+        )
+
+        if (alreadyExists) {
+          localStorage.removeItem('pendingInviteToken')
+          return
+        }
+
+        const notification = new Notification({
+          author: study.testAdmin.email,
+          read: false,
+          testId: study.id,
+          redirectsTo,
+          type: 'Collaboration',
+          accessLevel: invite.accessLevel,
+          titleTemplate: t('HeuristicsCooperators.actions.send_invitation'),
+          descriptionTemplate: t(
+            'HeuristicsCooperators.messages.invite_message',
+          ),
+          descriptionParams: {
+            testTitle: study.testTitle || 'Study',
+          },
+          inviteToken: invite.token,
+        })
+
+        await dispatch('addNotification', {
+          userId: user.id,
+          notification,
+        })
+
+        localStorage.removeItem('pendingInviteToken')
+      } catch (err) {
+        commit('setError', {
+          errorCode: 'dismissInviteError',
+          message: err,
+        })
+
+        throw err
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+
+    async loadInvite({ dispatch, rootGetters }, { token }) {
+      const result = await InviteController.validateInvite(token)
+
+      if (!result.valid) {
+        throw new Error(result.message || 'Invalid invitation')
+      }
+
+      let user = rootGetters.user
+
+      if (!user) {
+        await dispatch('autoSignIn', null, { root: true })
+        user = rootGetters.user
+      }
+
+      const unauthorized =
+        !result.invite.isPublic &&
+        user &&
+        result.invite.email &&
+        user.email &&
+        result.invite.email.toLowerCase() !== user.email.toLowerCase()
+
+      return {
+        invite: result.invite,
+        unauthorized: Boolean(unauthorized),
+      }
+    },
+
+    async loadPendingInvite({ dispatch }, { token }) {
+      if (!token) {
+        return null
+      }
+
+      try {
+        const result = await dispatch('loadInvite', {
+          token,
+        })
+
+        if (result.unauthorized) {
+          return null
+        }
+
+        return result.invite
+      } catch {
+        localStorage.removeItem('pendingInviteToken')
+        return null
       }
     },
   },

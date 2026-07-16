@@ -130,8 +130,6 @@
 import { onMounted, ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import store from '@/store'
-import InviteController from '@/shared/controllers/InviteController.js'
-import StudyController from '@/controllers/StudyController'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -173,22 +171,13 @@ const acceptInvite = async () => {
   try {
     loading.value = true
 
-    const result = await InviteController.resolveInvite(
-      token.value,
-      user.value?.id,
-    )
-
-    localStorage.removeItem('pendingInviteToken')
-
-    const study = await new StudyController().getStudy({
-      id: result.invite.studyId,
-    })
-    await store.dispatch('acceptStudyCollaboration', {
-      test: study,
-      cooperator: user.value,
+    const result = await store.dispatch('acceptInvite', {
+      token: token.value,
+      user: user.value,
+      studyId: invite.value.studyId,
     })
 
-    router.replace(`/testview/${result.invite.studyId}`)
+    router.replace(`/testview/${result.study.id}`)
   } catch (err) {
     error.value =
       err?.response?.data?.message || err?.message || t('invite.acceptFailed')
@@ -226,37 +215,14 @@ onMounted(async () => {
     }
 
     /**
-     * Validate invitation
+     * Validate invitation and restore authenticated user
      */
-    const result = await InviteController.validateInvite(token.value)
-
-    if (!result.valid) {
-      error.value = result.message || t('invite.unavailableDescription')
-      return
-    }
+    const result = await store.dispatch('loadInvite', {
+      token: token.value,
+    })
 
     invite.value = result.invite
-
-    /**
-     * Restore authenticated user if possible
-     */
-    if (!user.value) {
-      await store.dispatch('autoSignIn')
-      user.value = store.state.Auth.user
-    }
-
-    /**
-     * If a user is logged in, ensure the invitation belongs to that account.
-     */
-    if (
-      user.value &&
-      invite.value.email &&
-      user.value.email &&
-      invite.value.email.toLowerCase() !== user.value.email.toLowerCase()
-    ) {
-      unauthorized.value = true
-      return
-    }
+    unauthorized.value = result.unauthorized
   } catch (err) {
     error.value =
       err?.response?.data?.message || err?.message || t('invite.loadFailed')
