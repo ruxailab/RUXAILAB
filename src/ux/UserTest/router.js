@@ -67,7 +67,7 @@ export default [
         path: '/userTest/unmoderated/participants/:id',
         name: 'UserUnmoderatedParticipantsView',
         props: true,
-        meta: { authorize: [0, 1] },
+        meta: studyMeta(C.COOPERATORS_VIEW, 'userTest/unmoderated'),
         component: ParticipantsView,
       },
       {

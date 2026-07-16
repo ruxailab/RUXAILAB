@@ -75,7 +75,7 @@ export default [
         path: '/heuristic/participants/:id',
         name: 'HeuristicParticipantsView',
         props: true,
-        meta: { authorize: [0, 1] },
+        meta: studyMeta(C.COOPERATORS_VIEW),
         component: ParticipantsView,
       },
       {
