@@ -34,15 +34,24 @@
           <span class="text-body-2">{{
             t('manager.storage.storageUsed')
           }}</span>
-          <span class="text-body-2 font-weight-bold">{{
-            storageUsedFormatted
-          }}</span>
+          <span class="text-body-2 font-weight-bold">
+            <v-progress-circular
+              v-if="loading"
+              indeterminate
+              color="primary"
+              size="16"
+              width="2"
+              class="mr-1"
+            />
+            <span v-else>{{ storageUsedFormatted }}</span>
+          </span>
         </div>
         <v-progress-linear
           :model-value="storagePercentage"
           :color="storageColor"
           height="8"
           rounded
+          :indeterminate="loading"
         />
         <div class="text-caption text-medium-emphasis mt-1">
           {{
@@ -124,7 +133,7 @@
         variant="text"
         size="small"
         color="primary"
-        disabled
+        :disabled="loading || !canManageStorage"
         @click="manageStorage"
       >
         {{ t('manager.storage.manageStorage') }}
@@ -139,6 +148,11 @@ import { useRouter } from 'vue-router'
 import { formatBytes } from '@/shared/utils/formatUtils'
 import { useI18n } from 'vue-i18n'
 import { useStore } from 'vuex'
+import { useStorageFiles } from '@/shared/composables/useStorageFiles'
+import {
+  STUDY_CAPABILITY,
+  hasStudyCapability,
+} from '@/shared/utils/studyAccessPolicy'
 
 const props = defineProps({
   test: {
@@ -151,84 +165,76 @@ const router = useRouter()
 const store = useStore()
 const { t } = useI18n()
 
-// Storage quota (in bytes) - you can make this configurable
-const STORAGE_QUOTA = 5 * 1024 * 1024 * 1024 // 5GB default
+// Use the storage files composable to calculate sizes dynamically
+const { loading, files, usedBytes, typeBreakdown, storageQuotaBytes } =
+  useStorageFiles()
 
 // Read answers from the centralized Answer Vuex store getter
 const answers = computed(() => store.getters.allAnswersList)
 
-const totalMediaFiles = computed(() => {
-  let count = 0
-  answers.value.forEach((answer) => {
-    const tasks = Array.isArray(answer.tasks)
-      ? answer.tasks
-      : Object.values(answer.tasks || {})
-    tasks.forEach((task) => {
-      if (task.audioRecordURL) count++
-      if (task.webcamRecordURL) count++
-      if (task.screenRecordURL) count++
-    })
-  })
-  return count
-})
+const totalMediaFiles = computed(() => files.value.length)
 
-const videoCount = computed(() => {
-  let count = 0
-  answers.value.forEach((answer) => {
-    const tasks = Array.isArray(answer.tasks)
-      ? answer.tasks
-      : Object.values(answer.tasks || {})
-    tasks.forEach((task) => {
-      if (task.webcamRecordURL) count++
-    })
-  })
-  return count
-})
+const webcamBreakdown = computed(
+  () =>
+    typeBreakdown.value.find((b) => b.type === 'webcam') || {
+      count: 0,
+      size: 0,
+    },
+)
+const audioBreakdown = computed(
+  () =>
+    typeBreakdown.value.find((b) => b.type === 'audio') || {
+      count: 0,
+      size: 0,
+    },
+)
+const screenBreakdown = computed(
+  () =>
+    typeBreakdown.value.find((b) => b.type === 'screen') || {
+      count: 0,
+      size: 0,
+    },
+)
 
-const audioCount = computed(() => {
-  let count = 0
-  answers.value.forEach((answer) => {
-    const tasks = Array.isArray(answer.tasks)
-      ? answer.tasks
-      : Object.values(answer.tasks || {})
-    tasks.forEach((task) => {
-      if (task.audioRecordURL) count++
-    })
-  })
-  return count
-})
+const videoCount = computed(() => webcamBreakdown.value.count)
+const videoSizeFormatted = computed(() =>
+  formatBytes(webcamBreakdown.value.size),
+)
 
-const screenCount = computed(() => {
-  let count = 0
-  answers.value.forEach((answer) => {
-    const tasks = Array.isArray(answer.tasks)
-      ? answer.tasks
-      : Object.values(answer.tasks || {})
-    tasks.forEach((task) => {
-      if (task.screenRecordURL) count++
-    })
-  })
-  return count
-})
+const audioCount = computed(() => audioBreakdown.value.count)
+const audioSizeFormatted = computed(() =>
+  formatBytes(audioBreakdown.value.size),
+)
 
-// Mock storage calculations - you can replace with real data
-const estimatedStorageUsed = computed(() => {
-  // Estimate based on file counts and average sizes
-  const avgVideoSize = 50 * 1024 * 1024 // 50MB per video
-  const avgAudioSize = 10 * 1024 * 1024 // 10MB per audio
-  const avgScreenSize = 100 * 1024 * 1024 // 100MB per screen recording
+const screenCount = computed(() => screenBreakdown.value.count)
+const screenSizeFormatted = computed(() =>
+  formatBytes(screenBreakdown.value.size),
+)
+
+// Estimations for response/analytics data size
+const responseDataSize = computed(() => {
   const avgResponseSize = 10 * 1024 // 10KB per response
+  return formatBytes(answers.value.length * avgResponseSize)
+})
 
-  const videoStorage = videoCount.value * avgVideoSize
-  const audioStorage = audioCount.value * avgAudioSize
-  const screenStorage = screenCount.value * avgScreenSize
+const analyticsDataSize = computed(() => {
+  const estimatedAnalyticsSize = answers.value.length * 5 * 1024 // 5KB per answer
+  return formatBytes(estimatedAnalyticsSize)
+})
+
+// mediaDataSize is the actual sum of all media files
+const mediaDataSize = computed(() => formatBytes(usedBytes.value))
+
+// estimatedStorageUsed is a hybrid of actual media file sizes and estimated response/analytics document sizes
+const estimatedStorageUsed = computed(() => {
+  const avgResponseSize = 10 * 1024
   const responseStorage = answers.value.length * avgResponseSize
-
-  return videoStorage + audioStorage + screenStorage + responseStorage
+  const estimatedAnalyticsSize = answers.value.length * 5 * 1024
+  return usedBytes.value + responseStorage + estimatedAnalyticsSize
 })
 
 const storagePercentage = computed(() => {
-  return Math.min((estimatedStorageUsed.value / STORAGE_QUOTA) * 100, 100)
+  return Math.min((estimatedStorageUsed.value / storageQuotaBytes) * 100, 100)
 })
 
 const storageColor = computed(() => {
@@ -240,48 +246,17 @@ const storageColor = computed(() => {
 const storageUsedFormatted = computed(() =>
   formatBytes(estimatedStorageUsed.value),
 )
-const storageQuotaFormatted = computed(() => formatBytes(STORAGE_QUOTA))
+const storageQuotaFormatted = computed(() => formatBytes(storageQuotaBytes))
 
-const videoSizeFormatted = computed(() => {
-  const avgVideoSize = 50 * 1024 * 1024
-  return formatBytes(videoCount.value * avgVideoSize)
-})
-
-const audioSizeFormatted = computed(() => {
-  const avgAudioSize = 10 * 1024 * 1024
-  return formatBytes(audioCount.value * avgAudioSize)
-})
-
-const screenSizeFormatted = computed(() => {
-  const avgScreenSize = 100 * 1024 * 1024
-  return formatBytes(screenCount.value * avgScreenSize)
-})
-
-const responseDataSize = computed(() => {
-  const avgResponseSize = 10 * 1024
-  return formatBytes(answers.value.length * avgResponseSize)
-})
-
-const mediaDataSize = computed(() => {
-  const avgVideoSize = 50 * 1024 * 1024
-  const avgAudioSize = 10 * 1024 * 1024
-  const avgScreenSize = 100 * 1024 * 1024
-
-  const total =
-    videoCount.value * avgVideoSize +
-    audioCount.value * avgAudioSize +
-    screenCount.value * avgScreenSize
-  return formatBytes(total)
-})
-
-const analyticsDataSize = computed(() => {
-  // Estimate analytics data size based on interactions
-  const estimatedAnalyticsSize = answers.value.length * 5 * 1024 // 5KB per answer
-  return formatBytes(estimatedAnalyticsSize)
+const canManageStorage = computed(() => {
+  return hasStudyCapability(
+    props.test,
+    store.getters.user,
+    STUDY_CAPABILITY.STORAGE_ACCESS,
+  )
 })
 
 const manageStorage = () => {
-  // Navigate to storage management or show storage details
   const testType =
     props.test?.testType === 'USER_MODERATED' ? 'moderated' : 'unmoderated'
   router.push(`/userTest/${testType}/storage/${props.test.id}`)
