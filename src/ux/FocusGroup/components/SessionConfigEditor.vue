@@ -53,15 +53,43 @@
         />
       </v-col>
     </v-row>
+
+    <!-- Recording carries consent and data-protection obligations, so surface
+         them at the point the facilitator turns it on -->
+    <v-alert
+      v-if="isRecording"
+      type="info"
+      variant="tonal"
+      class="mt-4"
+      icon="mdi-shield-account-outline"
+    >
+      <div class="text-subtitle-1 font-weight-medium mb-2">
+        {{ t('focusGroup.config.privacyTitle') }}
+      </div>
+      <p class="text-body-2 mb-2">
+        {{ t('focusGroup.config.privacyIntro') }}
+      </p>
+      <ul class="text-body-2 ps-5">
+        <li>{{ t('focusGroup.config.privacyInform') }}</li>
+        <li>{{ t('focusGroup.config.privacyConsent') }}</li>
+        <li>{{ t('focusGroup.config.privacyRegulations') }}</li>
+        <li>{{ t('focusGroup.config.privacyStorage') }}</li>
+      </ul>
+    </v-alert>
   </v-card>
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
 const config = defineModel({ type: Object, required: true })
+
+const isRecording = computed(
+  () => config.value.recordAudio === true || config.value.recordVideo === true,
+)
 
 // Session capabilities, rendered as a selectable list so a facilitator picks
 // only what a given session needs.
