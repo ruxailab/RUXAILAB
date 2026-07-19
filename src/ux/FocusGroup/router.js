@@ -8,7 +8,7 @@ export default [
   {
     path: '/focusGroup/session/:id',
     name: 'FocusGroupSessionView',
-    meta: { authorize: [0, 1, 2, 3] },
+    meta: { authorize: [0, 1, 2, 3], layout: 'no-toolbar' },
     component: FocusGroupSessionView,
     props: true,
   },
