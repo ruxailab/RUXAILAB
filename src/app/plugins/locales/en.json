@@ -2464,7 +2464,8 @@
       "maxParticipantsHint": "Recommended between 3 and 8 for a focus group",
       "consentTitle": "Consent Form",
       "consentSubtitle": "Shown to every attendee before they join the session.",
-      "consentMissing": "Consent is required but no form has been written yet. Attendees will join without a consent step until you add the text below."
+      "consentMissing": "Consent is required but no form has been written yet. Attendees will join without a consent step until you add the text below.",
+      "consentDisabled": "Consent is turned off for this session, so this form will not be shown. Enable it under Session Features."
     },
     "manager": {
       "title": "Focus Group",
@@ -2472,10 +2473,15 @@
       "description": "You can build your discussion guide, manage cooperators, and configure study settings from the navigation menu."
     },
     "edit": {
-      "title": "Session Setup",
-      "subtitle": "Define the topics your facilitator will guide the group through, and choose what this session includes.",
+      "title": "Edit focus group",
+      "subtitle": "Customize the settings and preferences of your focus group.",
       "save": "Save changes",
       "saved": "Session setup saved",
+      "tabs": {
+        "configuration": "Session Configuration",
+        "consent": "Consent Form",
+        "guide": "Discussion Guide"
+      },
       "noTopics": "No topics yet. Add your first discussion topic to get started.",
       "addTopic": "Add topic",
       "removeTopic": "Remove topic",

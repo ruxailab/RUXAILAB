@@ -2366,7 +2366,8 @@
       "maxParticipantsHint": "Se recomienda entre 3 y 8 para un grupo focal",
       "consentTitle": "Formulario de Consentimiento",
       "consentSubtitle": "Se muestra a cada asistente antes de unirse a la sesión.",
-      "consentMissing": "Se requiere consentimiento, pero aún no has redactado el formulario. Los asistentes entrarán sin paso de consentimiento hasta que agregues el texto a continuación."
+      "consentMissing": "Se requiere consentimiento, pero aún no has redactado el formulario. Los asistentes entrarán sin paso de consentimiento hasta que agregues el texto a continuación.",
+      "consentDisabled": "El consentimiento está desactivado para esta sesión, por lo que este formulario no se mostrará. Actívalo en Funciones de la Sesión."
     },
     "manager": {
       "title": "Grupo Focal",
@@ -2374,10 +2375,15 @@
       "description": "Puedes crear tu guía de discusión, gestionar colaboradores y configurar el estudio desde el menú de navegación."
     },
     "edit": {
-      "title": "Configuración de la Sesión",
-      "subtitle": "Define los temas que el facilitador usará para guiar al grupo y elige qué incluye esta sesión.",
+      "title": "Editar grupo focal",
+      "subtitle": "Personaliza los ajustes y preferencias de tu grupo focal.",
       "save": "Guardar cambios",
       "saved": "Configuración de la sesión guardada",
+      "tabs": {
+        "configuration": "Configuración de la Sesión",
+        "consent": "Formulario de Consentimiento",
+        "guide": "Guía de Discusión"
+      },
       "noTopics": "Aún no hay temas. Agrega tu primer tema de discusión para comenzar.",
       "addTopic": "Agregar tema",
       "removeTopic": "Eliminar tema",
