@@ -2347,16 +2347,37 @@
     "sartAnalytics": "Análisis SART"
   },
   "focusGroup": {
+    "config": {
+      "title": "Funciones de la Sesión",
+      "subtitle": "Elige qué incluye esta sesión de grupo focal. Solo las funciones que selecciones estarán disponibles para el facilitador durante la sesión.",
+      "chat": "Chat de participantes",
+      "chatHint": "Permite que los participantes escriban en la discusión",
+      "recordAudio": "Grabar audio",
+      "recordAudioHint": "Captura el audio de la sesión para su análisis posterior",
+      "recordVideo": "Grabar video",
+      "recordVideoHint": "Captura el video de la sesión para su análisis posterior",
+      "requireConsent": "Requerir consentimiento",
+      "requireConsentHint": "Pide a los asistentes que acepten antes de participar",
+      "waitingRoom": "Sala de espera",
+      "waitingRoomHint": "Retén a los participantes antes de admitirlos",
+      "hideObservers": "Ocultar observadores",
+      "hideObserversHint": "Mantén a los observadores invisibles para los participantes",
+      "maxParticipants": "Máx. participantes",
+      "maxParticipantsHint": "Se recomienda entre 3 y 8 para un grupo focal",
+      "consentTitle": "Formulario de Consentimiento",
+      "consentSubtitle": "Se muestra a cada asistente antes de unirse a la sesión.",
+      "consentMissing": "Se requiere consentimiento, pero aún no has redactado el formulario. Los asistentes entrarán sin paso de consentimiento hasta que agregues el texto a continuación."
+    },
     "manager": {
       "title": "Grupo Focal",
       "underConstruction": "El módulo de Grupo Focal está en desarrollo activo. La sala de discusión en vivo y los informes estarán disponibles pronto.",
       "description": "Puedes crear tu guía de discusión, gestionar colaboradores y configurar el estudio desde el menú de navegación."
     },
     "edit": {
-      "title": "Guía de Discusión",
-      "subtitle": "Define los temas y preguntas que el facilitador usará para guiar al grupo.",
-      "save": "Guardar guía",
-      "saved": "Guía de discusión guardada",
+      "title": "Configuración de la Sesión",
+      "subtitle": "Define los temas que el facilitador usará para guiar al grupo y elige qué incluye esta sesión.",
+      "save": "Guardar cambios",
+      "saved": "Configuración de la sesión guardada",
       "noTopics": "Aún no hay temas. Agrega tu primer tema de discusión para comenzar.",
       "addTopic": "Agregar tema",
       "removeTopic": "Eliminar tema",
@@ -2395,6 +2416,9 @@
       "waitingRoom": "Sala de espera activada",
       "consent": "Consentimiento requerido",
       "backroom": "Observadores ocultos a los participantes",
+      "chat": "Chat de participantes activado",
+      "recordAudio": "Grabación de audio activada",
+      "recordVideo": "Grabación de video activada",
       "configure": "Configurar",
       "liveSessionTitle": "Sesión en Vivo",
       "liveSessionComingSoon": "La discusión moderada en vivo estará disponible pronto.",
@@ -2407,6 +2431,7 @@
     "session": {
       "title": "Sesión en Vivo",
       "backToDashboard": "Volver al panel",
+      "consentDeclined": "Rechazaste los términos de consentimiento, por lo que no te has unido a la sesión.",
       "status": {
         "idle": "No iniciada",
         "live": "En vivo",
