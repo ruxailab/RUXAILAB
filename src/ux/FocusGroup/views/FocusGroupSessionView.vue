@@ -171,15 +171,6 @@ const consentAccepted = ref(null)
 const hasConsented = computed(
   () => consents.value?.[user.value?.id]?.accepted === true,
 )
-// Mirrors the moderated test: consent is not role gated, everyone attending
-// agrees before taking part. Requires actual consent text, so a study that has
-// the flag on but no form authored is not blocked behind an empty screen.
-const needsConsent = computed(
-  () =>
-    sessionConfig.value.requireConsent === true &&
-    hasConsentText.value &&
-    !hasConsented.value,
-)
 
 // --- Discussion guide ---
 const discussionGuide = computed(() =>
@@ -223,6 +214,19 @@ const roleLabel = computed(() => {
   if (isParticipant.value) return t('focusGroup.session.roleParticipant')
   return t('focusGroup.session.roleObserver')
 })
+
+// Only participants consent. This matches the moderated test, where the
+// moderator is pinned to the video call and so never sees the consent step:
+// consent is for the people being researched, not the research team. Also
+// requires authored consent text, so a study with the flag on but no form is
+// not blocked behind an empty screen.
+const needsConsent = computed(
+  () =>
+    isParticipant.value &&
+    sessionConfig.value.requireConsent === true &&
+    hasConsentText.value &&
+    !hasConsented.value,
+)
 
 // --- Presence ---
 const connectedCount = computed(
