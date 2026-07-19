@@ -9,19 +9,6 @@
     <v-progress-circular indeterminate color="primary" size="48" />
   </div>
 
-  <!-- Consent gate: shown before the attendee joins when the study requires it -->
-  <ConsentStep
-    v-else-if="needsConsent"
-    :test-title="test?.testTitle"
-    :consent-text="consentText"
-    :full-name-model="fullName"
-    :consent-completed-model="consentAccepted"
-    @update:full-name-model="(val) => (fullName = val)"
-    @update:consent-completed-model="(val) => (consentAccepted = val)"
-    @continue="onConsentAccept"
-    @decline-consent="onConsentDecline"
-  />
-
   <!-- Lobby: branded welcome shown before the session is live and after it ends -->
   <SessionLobby
     v-else-if="!isLive"
@@ -34,6 +21,21 @@
     :starting="starting"
     @start="onStart"
   />
+
+  <!-- Consent gate: sits between the lobby and the discussion, mirroring the
+       moderated test where consent follows the welcome step -->
+  <v-container v-else-if="needsConsent" class="pa-6">
+    <ConsentStep
+      :test-title="test?.testTitle"
+      :consent-text="consentText"
+      :full-name-model="fullName"
+      :consent-completed-model="consentAccepted"
+      @update:full-name-model="(val) => (fullName = val)"
+      @update:consent-completed-model="(val) => (consentAccepted = val)"
+      @continue="onConsentAccept"
+      @decline-consent="onConsentDecline"
+    />
+  </v-container>
 
   <!-- Live discussion -->
   <v-container v-else fluid class="pa-4 pa-md-6">
@@ -103,7 +105,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
@@ -319,8 +321,7 @@ const goToDashboard = () => {
 // --- Consent handlers ---
 const joined = ref(false)
 
-// Idempotent: both the consent handler and the gate watcher can reach this, and
-// presence should only ever be claimed once per mount.
+// Idempotent, so presence is only ever claimed once per mount.
 const enterSession = async () => {
   if (joined.value || !user.value?.id) return
   joined.value = true
@@ -337,7 +338,6 @@ const onConsentAccept = async () => {
     name: fullName.value,
     accepted: true,
   })
-  await enterSession()
 }
 
 const onConsentDecline = async () => {
@@ -346,6 +346,9 @@ const onConsentDecline = async () => {
     name: fullName.value,
     accepted: false,
   })
+  // Drop out of the room rather than lingering as a present-but-unconsented
+  // attendee.
+  await leavePresence(user.value?.id)
   store.commit('SET_TOAST', {
     message: t('focusGroup.session.consentDeclined'),
     type: 'info',
@@ -353,19 +356,10 @@ const onConsentDecline = async () => {
   router.push(`/focusGroup/dashboard/${studyId}`).catch(() => {})
 }
 
-// Presence is only claimed once consent is settled, so a declining attendee never
-// shows up as present. Driven by a watcher because both the study config and the
-// consent records arrive asynchronously.
-watch(
-  [loaded, needsConsent],
-  ([isLoaded, gated]) => {
-    if (isLoaded && !gated) enterSession()
-  },
-  { immediate: true },
-)
-
 onMounted(async () => {
   await store.dispatch('getStudy', { id: studyId })
   subscribe()
+  // Presence is claimed on arrival so the lobby can show who is waiting.
+  await enterSession()
 })
 </script>
