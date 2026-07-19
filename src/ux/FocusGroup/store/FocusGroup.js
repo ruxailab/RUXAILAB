@@ -30,13 +30,21 @@ export default {
       await focusGroupController.saveSessionAnswer(answersDocId, session)
     },
 
-    async saveDiscussionGuide({ commit }, { studyId, discussionGuide }) {
+    /**
+     * Persist the Test screen in one go: the discussion guide and the session
+     * configuration are edited together, so they are saved together.
+     */
+    async saveFocusGroupSettings(
+      { commit },
+      { studyId, discussionGuide, config },
+    ) {
       commit('setLoading', true)
       try {
         await focusGroupController.updateDiscussionGuide(
           studyId,
           discussionGuide,
         )
+        await focusGroupController.updateConfig(studyId, config)
         commit('SET_TOAST', {
           message: i18n.global.t('focusGroup.edit.saved'),
           type: 'success',

@@ -14,6 +14,10 @@
       <DiscussionGuideEditor v-model="topics" />
     </v-card>
 
+    <v-card elevation="2" rounded="lg" class="pa-6 mt-6">
+      <SessionConfigEditor v-model="config" />
+    </v-card>
+
     <div class="d-flex justify-end mt-6">
       <v-btn
         color="primary"
@@ -31,7 +35,9 @@
 
 <script setup>
 import DiscussionGuideEditor from '@/ux/FocusGroup/components/DiscussionGuideEditor.vue'
+import SessionConfigEditor from '@/ux/FocusGroup/components/SessionConfigEditor.vue'
 import DiscussionTopic from '@/ux/FocusGroup/models/DiscussionTopic'
+import FocusGroupConfig from '@/ux/FocusGroup/models/FocusGroupConfig'
 import { computed, ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
@@ -40,20 +46,23 @@ const store = useStore()
 const route = useRoute()
 
 const topics = ref([])
+const config = ref(new FocusGroupConfig())
 const test = computed(() => store.getters.test)
 const loading = computed(() => store.state.loading)
 
 const hydrate = (study) => {
   if (!study) return
   topics.value = (study.discussionGuide ?? []).map((t) => new DiscussionTopic(t))
+  config.value = new FocusGroupConfig(study.config ?? {})
 }
 
 watch(test, hydrate)
 
 const save = async () => {
-  await store.dispatch('saveDiscussionGuide', {
+  await store.dispatch('saveFocusGroupSettings', {
     studyId: route.params.id,
     discussionGuide: topics.value,
+    config: config.value,
   })
 }
 
