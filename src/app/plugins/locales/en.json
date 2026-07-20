@@ -2700,6 +2700,7 @@
       "draftReady": "Draft ready: {title}. Review the preview and create the study, or ask for changes.",
       "errors": {
         "generationFailed": "Could not generate the study draft. Please try again.",
+        "generationFailedWithDetail": "Could not generate the study draft: {detail}",
         "invalidDraft": "The draft is incomplete or invalid.",
         "createFailed": "Could not create the study. Please try again."
       }

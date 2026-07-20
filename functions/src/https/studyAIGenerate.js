@@ -3,9 +3,9 @@ import { functions } from '../f.firebase.js'
 import { buildSystemPrompt } from '../ai/studyGeneration/systemPrompt.js'
 import { studyDraftJsonSchema } from '../ai/studyGeneration/responseSchema.js'
 import {
-  normalizeStudyDraft,
-  validateStudyDraft,
-} from '../ai/studyGeneration/validateDraft.js'
+  finalizeStudyDraft,
+  mergeUsage,
+} from '../ai/studyGeneration/finalizeStudyDraft.js'
 
 const error = (code, message) => new functions.https.HttpsError(code, message)
 
@@ -45,7 +45,6 @@ function logStage(stage, context = {}, startedAt = null) {
 }
 
 /**
- * Simple in-memory rate limit per uid (per function instance).
  * @param {string} uid
  */
 function assertRateLimit(uid) {
@@ -101,7 +100,6 @@ function sanitizeMessages(messages) {
 }
 
 /**
- * Maps chat history to OpenAI chat messages (frontend uses role "model").
  * @param {Array<{ role: string, text: string }>} messages
  * @param {string} systemPrompt
  */
@@ -116,12 +114,30 @@ function toOpenAIMessages(messages, systemPrompt) {
 }
 
 /**
- * Calls OpenRouter via the OpenAI SDK with JSON schema structured output.
+ * @param {unknown} err
+ * @returns {boolean}
+ */
+function isResponseFormatUnsupported(err) {
+  const message = String(err?.message || '').toLowerCase()
+  return (
+    err?.status === 400 ||
+    message.includes('400') ||
+    message.includes('response_format') ||
+    message.includes('json_schema') ||
+    message.includes('provider returned error')
+  )
+}
+
+/**
+ * Calls OpenRouter via the OpenAI SDK.
+ * Tries json_schema first; falls back to json_object for providers that reject schema.
+ *
  * @param {{
  *   apiKey: string,
  *   modelName: string,
  *   systemPrompt: string,
  *   messages: Array<{ role: string, text: string }>,
+ *   stagePrefix?: string,
  * }} params
  */
 async function callOpenRouterChatCompletion({
@@ -129,6 +145,7 @@ async function callOpenRouterChatCompletion({
   modelName,
   systemPrompt,
   messages,
+  stagePrefix = 'openrouter',
 }) {
   const requestStartedAt = Date.now()
   const client = new OpenAI({
@@ -139,32 +156,44 @@ async function callOpenRouterChatCompletion({
 
   const openAIMessages = toOpenAIMessages(messages, systemPrompt)
 
-  logStage('openrouter_request_start', {
+  logStage(`${stagePrefix}_request_start`, {
     modelName,
     baseURL: OPENROUTER_BASE_URL,
     messagesCount: openAIMessages.length,
     systemPromptChars: systemPrompt.length,
   })
 
-  const completion = await client.chat.completions.create({
-    model: modelName,
-    temperature: 0.3,
-    messages: openAIMessages,
-    response_format: {
+  const run = async (responseFormat) =>
+    client.chat.completions.create({
+      model: modelName,
+      temperature: 0.3,
+      messages: openAIMessages,
+      response_format: responseFormat,
+    })
+
+  let completion
+  try {
+    completion = await run({
       type: 'json_schema',
       json_schema: {
         name: 'StudyDraft',
         strict: false,
         schema: studyDraftJsonSchema,
       },
-    },
-  })
+    })
+  } catch (schemaErr) {
+    if (!isResponseFormatUnsupported(schemaErr)) throw schemaErr
+    logStage(`${stagePrefix}_schema_fallback`, {
+      message: schemaErr?.message,
+    })
+    completion = await run({ type: 'json_object' })
+  }
 
   const choice = completion?.choices?.[0]
   const text = choice?.message?.content || ''
 
   logStage(
-    'openrouter_http_response',
+    `${stagePrefix}_http_response`,
     {
       finishReason: choice?.finish_reason || null,
       responseChars: text.length,
@@ -191,12 +220,12 @@ async function callOpenRouterChatCompletion({
 
 /**
  * Callable: generateStudyDraft
- * Request: { messages, locale?, preferredMethod? }
- * Response: { draft, model, usage? }
+ * Generic for CARD_SORTING | USER | HEURISTIC | FOCUS_GROUP
+ * Pipeline: generate → normalize → validate → repair → revalidate → clarification
  */
 export const generateStudyDraft = functions.onCall({
   options: {
-    timeoutSeconds: 60,
+    timeoutSeconds: 120,
     memory: '512MiB',
   },
   handler: async (request) => {
@@ -245,78 +274,74 @@ export const generateStudyDraft = functions.onCall({
 
     const modelName = DEFAULT_MODEL
     const systemPrompt = buildSystemPrompt({ locale, preferredMethod })
-    logStage(
-      'system_prompt_ready',
-      { modelName, systemPromptChars: systemPrompt.length },
-      startedAt,
-    )
+    const latestUserText =
+      [...messages].reverse().find((message) => message.role === 'user')
+        ?.text || ''
 
     try {
-      logStage('before_openrouter_call', { modelName }, startedAt)
-      const result = await callOpenRouterChatCompletion({
+      logStage('before_generate_call', { modelName }, startedAt)
+      const generateResult = await callOpenRouterChatCompletion({
         apiKey,
         modelName,
         systemPrompt,
         messages,
+        stagePrefix: 'generate',
       })
       logStage(
-        'after_openrouter_call',
-        { responseChars: result.text?.length || 0 },
+        'after_generate_call',
+        { responseChars: generateResult.text?.length || 0 },
         startedAt,
       )
 
       let parsed
       try {
-        parsed = JSON.parse(result.text)
-        logStage(
-          'draft_json_parsed',
-          {
-            testType: parsed?.testType || null,
-            clarificationNeeded: parsed?.clarificationNeeded,
-          },
-          startedAt,
-        )
+        parsed = JSON.parse(generateResult.text)
       } catch (parseErr) {
         logStage(
-          'draft_json_parse_failed',
+          'generate_parse_failed',
           {
             message: parseErr?.message,
-            preview: String(result.text || '').slice(0, 200),
+            preview: String(generateResult.text || '').slice(0, 200),
           },
           startedAt,
         )
         throw error('internal', 'Failed to parse model JSON response')
       }
 
-      const draft = normalizeStudyDraft(parsed)
+      const finalized = await finalizeStudyDraft({
+        parsed,
+        locale,
+        userText: latestUserText,
+        repairFn: ({ systemPrompt: repairSystem, messages: repairMessages }) =>
+          callOpenRouterChatCompletion({
+            apiKey,
+            modelName,
+            systemPrompt: repairSystem,
+            messages: repairMessages,
+            stagePrefix: 'repair',
+          }),
+        log: (stage, context) => logStage(stage, context, startedAt),
+      })
+
+      const usage = mergeUsage([
+        generateResult.usage,
+        ...(finalized.usageParts || []),
+      ])
+
       logStage(
-        'draft_normalized',
+        'success',
         {
-          testType: draft?.testType || null,
-          structureIsArray: Array.isArray(draft?.testStructure),
+          testType: finalized.draft?.testType,
+          clarificationNeeded: finalized.draft?.clarificationNeeded,
+          repaired: finalized.repaired,
         },
         startedAt,
       )
 
-      const validation = validateStudyDraft(draft)
-      logStage(
-        'draft_validated',
-        { valid: validation.valid, errors: validation.errors },
-        startedAt,
-      )
-      if (!validation.valid) {
-        throw error(
-          'invalid-argument',
-          `Invalid study draft: ${validation.errors.join('; ')}`,
-        )
-      }
-
-      logStage('success', { testType: draft.testType, modelName }, startedAt)
-
       return {
-        draft,
+        draft: finalized.draft,
         model: modelName,
-        usage: result.usage,
+        usage,
       }
     } catch (err) {
       if (err instanceof functions.https.HttpsError) {
@@ -330,11 +355,16 @@ export const generateStudyDraft = functions.onCall({
       console.error('[generateStudyDraft] failed', {
         uid,
         stage: 'unhandled',
-        code: err?.code || err?.name,
+        code: err?.status || err?.code || err?.name,
         message: err?.message,
         elapsedMs: Date.now() - startedAt,
       })
-      throw error('internal', 'Study draft generation failed')
+      throw error(
+        'internal',
+        err?.message
+          ? `Study draft generation failed: ${err.message}`
+          : 'Study draft generation failed',
+      )
     }
   },
 })

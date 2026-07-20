@@ -141,7 +141,7 @@ const handleSend = async (text) => {
     let modelText
     if (nextDraft.clarificationNeeded) {
       modelText =
-        (nextDraft.clarificationQuestions || []).join('\n') ||
+        (nextDraft.clarificationQuestions || []).join('\n\n') ||
         t('studyCreation.ai.needClarification')
     } else {
       modelText = t('studyCreation.ai.draftReady', {
@@ -152,16 +152,38 @@ const handleSend = async (text) => {
     chatMessages.value.push({ role: 'model', text: modelText })
     apiMessages.value.push({ role: 'model', text: modelText })
   } catch (err) {
-    showError('studyCreation.ai.errors.generationFailed')
+    const detail = extractCallableErrorMessage(err)
+    const chatText = detail
+      ? t('studyCreation.ai.errors.generationFailedWithDetail', { detail })
+      : t('studyCreation.ai.errors.generationFailed')
+
+    showError(chatText)
     chatMessages.value.push({
       role: 'model',
-      text: t('studyCreation.ai.errors.generationFailed'),
+      text: chatText,
     })
     // Roll back last user turn from API history so retries stay consistent
     apiMessages.value.pop()
   } finally {
     isGenerating.value = false
   }
+}
+
+/**
+ * Extracts a human-readable message from Firebase callable / SDK errors.
+ * @param {unknown} err
+ * @returns {string}
+ */
+function extractCallableErrorMessage(err) {
+  if (!err) return ''
+  const raw = err.message || err.details || err.customData?.message || ''
+  if (!raw || typeof raw !== 'string') return ''
+
+  return raw
+    .replace(/^Firebase:\s*/i, '')
+    .replace(/\s*\([^)]*\)\.?\s*$/, '')
+    .replace(/^functions\/[\w-]+\s*/i, '')
+    .trim()
 }
 
 const requestAdjustments = () => {

@@ -1,15 +1,124 @@
 const AI_STUDY_TYPES = ['CARD_SORTING', 'USER', 'HEURISTIC', 'FOCUS_GROUP']
 const AI_USER_SUBTYPES = ['USER_MODERATED', 'USER_UNMODERATED']
 
+const DEFAULT_CARD_SORTING_OPTIONS = {
+  card_description: false,
+  card_image: false,
+  category_description: false,
+  category_image: false,
+  allow_create_categories: false,
+  hasScreenRecord: false,
+  hasCamRecord: false,
+  hasAudioRecord: false,
+}
+
 /**
- * Normalizes Gemini structured output so HEURISTIC uses array testStructure.
+ * Parses a value that may be a JSON string.
+ * @param {unknown} value
+ * @returns {unknown}
+ */
+function maybeParseJson(value) {
+  if (typeof value !== 'string') return value
+  const trimmed = value.trim()
+  if (!trimmed.startsWith('{') && !trimmed.startsWith('[')) return value
+  try {
+    return JSON.parse(trimmed)
+  } catch {
+    return value
+  }
+}
+
+/**
+ * Builds a Card Sorting testStructure from incomplete / alternate LLM shapes.
+ * @param {object} draft
+ * @returns {object}
+ */
+function normalizeCardSortingStructure(draft) {
+  let structure = maybeParseJson(draft.testStructure)
+
+  if (Array.isArray(structure)) {
+    structure = null
+  }
+
+  const rootCardSorting = maybeParseJson(draft.cardSorting)
+  const cardsFromRoot = Array.isArray(draft.cards) ? draft.cards : null
+  const categoriesFromRoot = Array.isArray(draft.categories)
+    ? draft.categories
+    : null
+
+  if (!structure || typeof structure !== 'object') {
+    structure = {}
+  }
+
+  let cardSorting = maybeParseJson(structure.cardSorting) || rootCardSorting
+
+  if (!cardSorting || typeof cardSorting !== 'object') {
+    cardSorting = {}
+  }
+
+  if (!Array.isArray(cardSorting.cards) && cardsFromRoot) {
+    cardSorting.cards = cardsFromRoot
+  }
+  if (!Array.isArray(cardSorting.categories) && categoriesFromRoot) {
+    cardSorting.categories = categoriesFromRoot
+  }
+
+  // Flat shape: cards/categories directly under testStructure
+  if (!Array.isArray(cardSorting.cards) && Array.isArray(structure.cards)) {
+    cardSorting.cards = structure.cards
+  }
+  if (
+    !Array.isArray(cardSorting.categories) &&
+    Array.isArray(structure.categories)
+  ) {
+    cardSorting.categories = structure.categories
+  }
+
+  cardSorting.cards = Array.isArray(cardSorting.cards) ? cardSorting.cards : []
+  cardSorting.categories = Array.isArray(cardSorting.categories)
+    ? cardSorting.categories
+    : []
+  cardSorting.options = {
+    ...DEFAULT_CARD_SORTING_OPTIONS,
+    ...(cardSorting.options && typeof cardSorting.options === 'object'
+      ? cardSorting.options
+      : {}),
+    ...(structure.options && typeof structure.options === 'object'
+      ? structure.options
+      : {}),
+  }
+
+  return {
+    welcomeMessage:
+      typeof structure.welcomeMessage === 'string'
+        ? structure.welcomeMessage
+        : '',
+    finalMessage:
+      typeof structure.finalMessage === 'string' ? structure.finalMessage : '',
+    consent: typeof structure.consent === 'string' ? structure.consent : '',
+    preTest: Array.isArray(structure.preTest) ? structure.preTest : [],
+    postTest: Array.isArray(structure.postTest) ? structure.postTest : [],
+    cardSorting,
+  }
+}
+
+/**
+ * Normalizes LLM structured output into the shapes expected by validators.
  * @param {object} draft
  * @returns {object}
  */
 export function normalizeStudyDraft(draft) {
   if (!draft || typeof draft !== 'object') return draft
 
-  const next = { ...draft }
+  const next = { ...maybeParseJson(draft) }
+  if (!next || typeof next !== 'object') return draft
+
+  if (typeof next.clarificationNeeded !== 'boolean') {
+    next.clarificationNeeded = false
+  }
+  if (!Array.isArray(next.clarificationQuestions)) {
+    next.clarificationQuestions = []
+  }
 
   if (next.testType === 'HEURISTIC') {
     if (Array.isArray(next.testStructure)) {
@@ -19,6 +128,54 @@ export function normalizeStudyDraft(draft) {
     } else if (Array.isArray(next.heuristics)) {
       next.testStructure = next.heuristics
       delete next.heuristics
+    }
+  }
+
+  if (next.testType === 'CARD_SORTING') {
+    next.subType = next.subType || 'CARD_SORTING'
+    next.testStructure = normalizeCardSortingStructure(next)
+    delete next.cardSorting
+    delete next.cards
+    delete next.categories
+  }
+
+  if (next.testType === 'USER') {
+    let structure = maybeParseJson(next.testStructure)
+    if (!structure || typeof structure !== 'object' || Array.isArray(structure)) {
+      structure = {}
+    }
+    if (!Array.isArray(structure.userTasks) && Array.isArray(next.userTasks)) {
+      structure.userTasks = next.userTasks
+      delete next.userTasks
+    }
+    next.testStructure = {
+      welcomeMessage:
+        typeof structure.welcomeMessage === 'string'
+          ? structure.welcomeMessage
+          : '',
+      finalMessage:
+        typeof structure.finalMessage === 'string' ? structure.finalMessage : '',
+      consent: typeof structure.consent === 'string' ? structure.consent : '',
+      preTest: Array.isArray(structure.preTest) ? structure.preTest : [],
+      postTest: Array.isArray(structure.postTest) ? structure.postTest : [],
+      userTasks: Array.isArray(structure.userTasks) ? structure.userTasks : [],
+    }
+  }
+
+  if (next.testType === 'FOCUS_GROUP') {
+    if (!Array.isArray(next.testStructure)) {
+      next.testStructure = []
+    }
+    if (!Array.isArray(next.discussionGuide)) {
+      next.discussionGuide = []
+    }
+    if (!next.config || typeof next.config !== 'object') {
+      next.config = {
+        enableWaitingRoom: true,
+        requireConsent: true,
+        hideObservers: true,
+        maxParticipants: 8,
+      }
     }
   }
 
@@ -183,4 +340,48 @@ function validateFocusGroup(draft) {
   })
 
   return { valid: errors.length === 0, errors }
+}
+
+/**
+ * Builds a clarification draft when the model returned incomplete content.
+ * Generic for all study methods.
+ *
+ * @param {object} draft
+ * @param {string[]} errors
+ * @param {string} [locale]
+ * @returns {object}
+ */
+export function buildClarificationFromErrors(draft, errors, locale = 'en-US') {
+  const isPt = String(locale || '').startsWith('pt')
+  const isEs = String(locale || '').startsWith('es')
+
+  const questions = isPt
+    ? [
+        `Não consegui montar um draft válido: ${errors.join('; ')}.`,
+        'Pode reformular o pedido com título e o conteúdo do método (cards/categorias, tasks, heurísticas ou tópicos do focus group)?',
+      ]
+    : isEs
+      ? [
+          `No pude completar un borrador válido: ${errors.join('; ')}.`,
+          '¿Puedes reformular la solicitud con título y el contenido del método (cards/categorías, tasks, heurísticas o temas del focus group)?',
+        ]
+      : [
+          `I could not finish a valid study draft: ${errors.join('; ')}.`,
+          'Please restate the study with a title and the method content (cards/categories, tasks, heuristics, or focus group topics).',
+        ]
+
+  return {
+    testType: draft?.testType || 'CARD_SORTING',
+    subType: draft?.subType ?? null,
+    testTitle: draft?.testTitle || '',
+    testDescription: draft?.testDescription || '',
+    isPublic: draft?.isPublic ?? false,
+    status: draft?.status || 'draft',
+    testOptions: [],
+    testStructure: draft?.testStructure ?? null,
+    discussionGuide: draft?.discussionGuide,
+    config: draft?.config,
+    clarificationNeeded: true,
+    clarificationQuestions: questions,
+  }
 }

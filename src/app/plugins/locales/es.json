@@ -2602,6 +2602,7 @@
       "draftReady": "Borrador listo: {title}. Revisa la vista previa y crea el estudio, o pide cambios.",
       "errors": {
         "generationFailed": "No se pudo generar el borrador. Inténtalo de nuevo.",
+        "generationFailedWithDetail": "No se pudo generar el borrador: {detail}",
         "invalidDraft": "El borrador está incompleto o no es válido.",
         "createFailed": "No se pudo crear el estudio. Inténtalo de nuevo."
       }
