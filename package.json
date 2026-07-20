@@ -51,7 +51,7 @@
     "process": "^0.11.10",
     "stream-browserify": "^3.0.0",
     "uid-generator": "^2.0.0",
-    "vue": "^3.5.38",
+    "vue": "^3.5.40",
     "vue-chartjs": "^5.3.4",
     "vue-i18n": "^11.4.6",
     "vue-loader": "^17.4.2",
@@ -60,7 +60,7 @@
     "vue3-quill": "^0.3.1",
     "vue3-text-clamp": "^0.1.2",
     "vuedraggable": "^4.1.0",
-    "vuetify": "^3.12.9",
+    "vuetify": "^3.12.10",
     "vuex": "^4.0.2",
     "wavesurfer.js": "^7.12.10"
   },
