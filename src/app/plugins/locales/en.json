@@ -2655,6 +2655,53 @@
           "Pre-configured settings",
           "Best practices included"
         ]
+      },
+      "ai": {
+        "title": "Create with AI",
+        "description": "Describe your study in natural language and let the agent build it",
+        "features": [
+          "Chat-based creation",
+          "Any supported method",
+          "Editable preview before save"
+        ]
+      }
+    },
+    "ai": {
+      "title": "Create study with AI",
+      "subtitle": "Describe the study you need. Review the draft, then create it.",
+      "stepLabel": "AI",
+      "welcome": "Tell me what study you want to create. For example: a closed card sorting with categories Living room and Kitchen, and cards TV and Sink.",
+      "placeholder": "Describe your study…",
+      "send": "Send",
+      "you": "You",
+      "assistant": "Assistant",
+      "thinking": "Generating draft…",
+      "previewEmpty": "The study preview will appear here once the draft is ready.",
+      "cards": "Cards",
+      "categories": "Categories",
+      "noCategories": "No predefined categories (open sorting)",
+      "mode": "Mode",
+      "modes": {
+        "closed": "Closed",
+        "open": "Open",
+        "hybrid": "Hybrid"
+      },
+      "tasks": "Tasks",
+      "heuristics": "Heuristics",
+      "questionsCount": "{count} questions",
+      "discussionGuide": "Discussion guide",
+      "back": "Back to categories",
+      "orCreateWithAi": "Or skip the wizard and create with AI",
+      "badge": "AI Agent",
+      "adjust": "Ask for changes",
+      "adjustHint": "Type your changes in the chat to refine the draft.",
+      "confirm": "Create study",
+      "needClarification": "I need a bit more information to create this study.",
+      "draftReady": "Draft ready: {title}. Review the preview and create the study, or ask for changes.",
+      "errors": {
+        "generationFailed": "Could not generate the study draft. Please try again.",
+        "invalidDraft": "The draft is incomplete or invalid.",
+        "createFailed": "Could not create the study. Please try again."
       }
     },
     "details": {

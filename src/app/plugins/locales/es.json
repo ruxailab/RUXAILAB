@@ -2557,6 +2557,53 @@
           "Configuraciones predefinidas",
           "Mejores prácticas incluidas"
         ]
+      },
+      "ai": {
+        "title": "Crear con IA",
+        "description": "Describe tu estudio en lenguaje natural y deja que el agente lo construya",
+        "features": [
+          "Creación por chat",
+          "Cualquier método soportado",
+          "Vista previa editable antes de guardar"
+        ]
+      }
+    },
+    "ai": {
+      "title": "Crear estudio con IA",
+      "subtitle": "Describe el estudio que necesitas. Revisa el borrador y luego créalo.",
+      "stepLabel": "IA",
+      "welcome": "Cuéntame qué estudio quieres crear. Por ejemplo: un card sorting cerrado con categorías Sala y Cocina, y tarjetas TV y Fregadero.",
+      "placeholder": "Describe tu estudio…",
+      "send": "Enviar",
+      "you": "Tú",
+      "assistant": "Asistente",
+      "thinking": "Generando borrador…",
+      "previewEmpty": "La vista previa aparecerá aquí cuando el borrador esté listo.",
+      "cards": "Tarjetas",
+      "categories": "Categorías",
+      "noCategories": "Sin categorías predefinidas (abierto)",
+      "mode": "Modo",
+      "modes": {
+        "closed": "Cerrado",
+        "open": "Abierto",
+        "hybrid": "Híbrido"
+      },
+      "tasks": "Tareas",
+      "heuristics": "Heurísticas",
+      "questionsCount": "{count} preguntas",
+      "discussionGuide": "Guía de discusión",
+      "back": "Volver a categorías",
+      "orCreateWithAi": "O salta el asistente y crea con IA",
+      "badge": "Agente IA",
+      "adjust": "Pedir cambios",
+      "adjustHint": "Escribe los cambios en el chat para refinar el borrador.",
+      "confirm": "Crear estudio",
+      "needClarification": "Necesito un poco más de información para crear este estudio.",
+      "draftReady": "Borrador listo: {title}. Revisa la vista previa y crea el estudio, o pide cambios.",
+      "errors": {
+        "generationFailed": "No se pudo generar el borrador. Inténtalo de nuevo.",
+        "invalidDraft": "El borrador está incompleto o no es válido.",
+        "createFailed": "No se pudo crear el estudio. Inténtalo de nuevo."
       }
     },
     "details": {

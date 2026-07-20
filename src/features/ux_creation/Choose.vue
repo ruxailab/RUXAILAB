@@ -52,6 +52,35 @@
         </v-col>
       </v-row>
 
+      <!-- AI creation shortcut -->
+      <v-row justify="center" class="mt-2 mb-2">
+        <v-col cols="12" class="text-center">
+          <p class="text-body-2 text-medium-emphasis mb-0">
+            {{ $t('studyCreation.ai.orCreateWithAi') }}
+          </p>
+        </v-col>
+      </v-row>
+
+      <v-row justify="center" class="mb-4">
+        <v-col cols="12" sm="8" md="4">
+          <SelectableCard
+            :selected="selectedCategory === 'ai'"
+            icon="mdi-robot-outline"
+            :title="$t('studyCreation.studyTypes.ai.title')"
+            text-class="pa-4 pa-sm-8 text-center"
+            :description="$t('studyCreation.studyTypes.ai.description')"
+            color="info"
+            @click="goToCreateWithAi"
+          >
+            <template #extra>
+              <v-chip color="info" variant="tonal" size="small">
+                {{ $t('studyCreation.ai.badge') }}
+              </v-chip>
+            </template>
+          </SelectableCard>
+        </v-col>
+      </v-row>
+
       <!-- Back Button -->
       <BackButton
         :label="$t('studyCreation.backToDashboard')"
@@ -99,6 +128,15 @@ const handleCategoryClick = (categoryId) => {
   router.push({
     name: category.hasSubMethods ? 'study-create-step2' : 'study-create-step3',
   })
+}
+
+const goToCreateWithAi = () => {
+  selectedCategory.value = 'ai'
+  store.commit('SET_STUDY_TYPE', 'ai')
+  store.commit('SET_STUDY_CATEGORY', null)
+  store.commit('SET_STUDY_METHOD', null)
+  store.commit('SET_SELECTED_TEMPLATE', null)
+  router.push({ name: 'study-create-with-ai' })
 }
 
 const goBack = () => {

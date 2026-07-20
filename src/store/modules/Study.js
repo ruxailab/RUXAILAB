@@ -22,6 +22,7 @@ export default {
     studyMethod: null,
     studyType: null,
     selectedTemplate: null,
+    aiStudyDraft: null,
   },
   getters: {
     tests(state) {
@@ -91,11 +92,18 @@ export default {
     SET_SELECTED_TEMPLATE(state, payload) {
       state.selectedTemplate = payload
     },
+    SET_AI_STUDY_DRAFT(state, payload) {
+      state.aiStudyDraft = payload
+    },
+    CLEAR_AI_STUDY_DRAFT(state) {
+      state.aiStudyDraft = null
+    },
     RESET_STUDY_DETAILS(state) {
-      ;((state.studyCategory = null),
-        (state.studyMethod = null),
-        (state.studyType = null),
-        (state.selectedTemplate = null))
+      state.studyCategory = null
+      state.studyMethod = null
+      state.studyType = null
+      state.selectedTemplate = null
+      state.aiStudyDraft = null
     },
     SET_CALIBRATION_CONFIG(state, payload) {
       if (state.Test) {
