@@ -18,12 +18,8 @@ const SUPPORTED_METHODS = [
 const MAX_MESSAGES = 12
 const RATE_LIMIT_WINDOW_MS = 60_000
 const RATE_LIMIT_MAX = 8
-const DEFAULT_MODEL =
-  process.env.OPENROUTER_STUDY_MODEL ||
-  process.env.STUDY_AI_MODEL ||
-  'tencent/hy3:free'
-const OPENROUTER_BASE_URL =
-  process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1'
+const DEFAULT_MODEL = process.env.OPENROUTER_STUDY_MODEL
+const OPENROUTER_BASE_URL = process.env.OPENROUTER_BASE_URL
 
 /** @type {Map<string, number[]>} */
 const rateLimitBuckets = new Map()
