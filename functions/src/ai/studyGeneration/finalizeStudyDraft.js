@@ -28,23 +28,14 @@ export async function finalizeStudyDraft({
   locale,
   userText,
   repairFn,
-  log = () => {},
 }) {
   let draft = normalizeStudyDraft(parsed)
   let validation = validateStudyDraft(draft)
   const usageParts = []
 
-  log('draft_normalized', summarizeDraft(draft))
-  log('draft_validated', {
-    valid: validation.valid,
-    errors: validation.errors,
-  })
-
   if (validation.valid) {
     return { draft, usageParts, repaired: false }
   }
-
-  log('repair_start', { errors: validation.errors })
 
   try {
     const repairResult = await repairFn({
@@ -67,9 +58,6 @@ export async function finalizeStudyDraft({
     try {
       repairedParsed = JSON.parse(repairResult.text)
     } catch {
-      log('repair_parse_failed', {
-        preview: String(repairResult.text || '').slice(0, 200),
-      })
       return {
         draft: buildClarificationFromErrors(draft, validation.errors, locale),
         usageParts,
@@ -79,11 +67,6 @@ export async function finalizeStudyDraft({
 
     draft = normalizeStudyDraft(repairedParsed)
     validation = validateStudyDraft(draft)
-    log('repair_validated', {
-      valid: validation.valid,
-      errors: validation.errors,
-      testType: draft?.testType || null,
-    })
 
     if (validation.valid) {
       return { draft, usageParts, repaired: true }
@@ -95,10 +78,6 @@ export async function finalizeStudyDraft({
       repaired: true,
     }
   } catch (repairErr) {
-    log('repair_failed', {
-      message: repairErr?.message,
-      code: repairErr?.code || repairErr?.name,
-    })
     return {
       draft: buildClarificationFromErrors(draft, validation.errors, locale),
       usageParts,
