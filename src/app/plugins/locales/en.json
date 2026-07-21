@@ -2669,13 +2669,39 @@
     "ai": {
       "title": "Create study with AI",
       "subtitle": "Describe the study you need. Review the draft, then create it.",
+      "firstStepSubtitle": "Start with your first question and I will transform it into a complete study chat.",
       "stepLabel": "AI",
       "welcome": "Tell me what study you want to create. For example: a closed card sorting with categories Living room and Kitchen, and cards TV and Sink.",
       "placeholder": "Describe your study…",
       "send": "Send",
+      "conversationStartersTitle": "Iniciadors de converses",
+      "starters": {
+        "cardSorting": {
+          "title": "Card sorting",
+          "prompt": "Create a closed card sorting for an e-commerce furniture website."
+        },
+        "userTest": {
+          "title": "User test",
+          "prompt": "Create an unmoderated usability test to validate checkout completion."
+        },
+        "heuristic": {
+          "title": "Heuristic evaluation",
+          "prompt": "Create a heuristic evaluation for a SaaS dashboard focused on navigation and clarity."
+        },
+        "focusGroup": {
+          "title": "Focus group",
+          "prompt": "Create a focus group to understand trust barriers in a banking mobile app."
+        }
+      },
       "you": "You",
       "assistant": "Assistant",
       "thinking": "Generating draft…",
+      "loadingStages": {
+        "connecting": "Connecting to our intelligence service",
+        "thinking": "Thinking",
+        "takingLonger": "This can take more time than we expected",
+        "stillWorking": "We are still working on your study"
+      },
       "previewEmpty": "The study preview will appear here once the draft is ready.",
       "cards": "Cards",
       "categories": "Categories",
@@ -2692,12 +2718,16 @@
       "discussionGuide": "Discussion guide",
       "back": "Back to categories",
       "orCreateWithAi": "Or skip the wizard and create with AI",
+      "orLabel": "OR",
       "badge": "AI Agent",
+      "experimental": "Experimental",
       "adjust": "Ask for changes",
       "adjustHint": "Type your changes in the chat to refine the draft.",
+      "goToPreview": "Go to preview",
       "confirm": "Create study",
       "needClarification": "I need a bit more information to create this study.",
       "draftReady": "Draft ready: {title}. Review the preview and create the study, or ask for changes.",
+      "completedToPreview": "We have gathered all the necessary information to create your study. Go to the preview page to create it!",
       "errors": {
         "generationFailed": "Could not generate the study draft. Please try again.",
         "generationFailedWithDetail": "Could not generate the study draft: {detail}",

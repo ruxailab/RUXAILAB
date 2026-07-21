@@ -1,40 +1,82 @@
 <template>
-  <v-container fluid class="create-study-view">
-    <v-container class="py-6">
+  <v-container
+    fluid
+    class="create-study-view"
+    :class="{ 'create-study-view--conversation': hasConversationStarted }"
+  >
+    <v-container class="py-6 create-study-view__content">
       <StepperHeader :current-step="4" :steps="steps" />
 
       <SectionHeader
+        v-if="!hasConversationStarted"
         :title="$t('studyCreation.ai.title')"
-        :subtitle="$t('studyCreation.ai.subtitle')"
+        :subtitle="$t('studyCreation.ai.firstStepSubtitle')"
       />
 
-      <v-row>
-        <v-col cols="12" md="6">
-          <StudyAIChat
-            :messages="chatMessages"
-            :loading="isGenerating"
-            @send="handleSend"
-          />
-        </v-col>
-        <v-col cols="12" md="6">
-          <StudyAIPreview
-            :draft="draft"
-            @update:draft="onDraftUpdate"
-          />
-        </v-col>
-      </v-row>
+      <transition name="ai-layout" mode="out-in">
+        <v-row
+          v-if="!hasConversationStarted"
+          key="ai-initial"
+          justify="center"
+          class="ai-initial-row"
+        >
+          <v-col cols="12" md="10" lg="8">
+            <StudyAIChat
+              :messages="chatMessages"
+              :loading="isGenerating"
+              :loading-message="currentLoadingMessage"
+              :composer-disabled="isConversationFinished"
+              :show-conversation="false"
+              :conversation-starters="conversationStarters"
+              @send="handleSend"
+            />
+          </v-col>
+        </v-row>
 
-      <div class="d-flex flex-wrap justify-space-between align-center ga-3 mt-6">
+        <v-row
+          v-else-if="!showFinalPreview"
+          key="ai-chat-only"
+          justify="center"
+          class="ai-initial-row"
+        >
+          <v-col cols="12" md="10" lg="8">
+            <StudyAIChat
+              :messages="chatMessages"
+              :loading="isGenerating"
+              :loading-message="currentLoadingMessage"
+              :composer-disabled="isConversationFinished"
+              :show-conversation="true"
+              :conversation-starters="conversationStarters"
+              @send="handleSend"
+            />
+          </v-col>
+        </v-row>
+
+        <v-row v-else key="ai-final-preview">
+          <v-col cols="12" md="6">
+            <StudyAIChat
+              :messages="chatMessages"
+              :loading="isGenerating"
+              :loading-message="currentLoadingMessage"
+              :composer-disabled="isConversationFinished"
+              :show-conversation="true"
+              :conversation-starters="conversationStarters"
+              @send="handleSend"
+            />
+          </v-col>
+          <v-col cols="12" md="6">
+            <StudyAIPreview :draft="draft" @update:draft="onDraftUpdate" />
+          </v-col>
+        </v-row>
+      </transition>
+
+      <div
+        v-if="showFinalPreview"
+        class="d-flex flex-wrap justify-space-between align-center ga-3 mt-6"
+      >
         <BackButton :label="$t('studyCreation.ai.back')" @back="goBack" />
 
         <div class="d-flex ga-3">
-          <v-btn
-            variant="outlined"
-            :disabled="!draft || draft.clarificationNeeded || isCreating"
-            @click="requestAdjustments"
-          >
-            {{ $t('studyCreation.ai.adjust') }}
-          </v-btn>
           <v-btn
             color="primary"
             :loading="isCreating"
@@ -45,12 +87,26 @@
           </v-btn>
         </div>
       </div>
+
+      <div
+        v-else-if="isConversationFinished"
+        class="d-flex justify-space-between align-center mt-6"
+      >
+        <BackButton :label="$t('studyCreation.ai.back')" @back="goBack" />
+        <v-btn color="primary" @click="goToPreview">
+          {{ $t('studyCreation.ai.goToPreview') }}
+        </v-btn>
+      </div>
+
+      <div v-else class="d-flex justify-start mt-6">
+        <BackButton :label="$t('studyCreation.ai.back')" @back="goBack" />
+      </div>
     </v-container>
   </v-container>
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -66,7 +122,7 @@ import {
   getMethodManagerView,
   instantiateStudyByType,
 } from '@/shared/constants/methodDefinitions'
-import { showError, showWarning } from '@/shared/utils/toast'
+import { showError } from '@/shared/utils/toast'
 
 const router = useRouter()
 const store = useStore()
@@ -78,6 +134,11 @@ const apiMessages = ref([])
 const draft = ref(null)
 const isGenerating = ref(false)
 const isCreating = ref(false)
+const hasConversationStarted = ref(false)
+const isConversationFinished = ref(false)
+const hasEnteredPreview = ref(false)
+const loadingMessageIndex = ref(0)
+const loadingTicker = ref(null)
 
 const steps = computed(() => [
   { value: 1, title: t('studyCreation.steps.category'), complete: true },
@@ -105,17 +166,85 @@ const canConfirm = computed(() => {
   return validateStudyDraft(draft.value).valid
 })
 
-onMounted(() => {
-  window.scrollTo({ top: 0, behavior: 'smooth' })
-  chatMessages.value = [
-    {
-      role: 'model',
-      text: t('studyCreation.ai.welcome'),
-    },
-  ]
-  const existing = store.state.Tests.aiStudyDraft
-  if (existing) draft.value = existing
+const showFinalPreview = computed(() => {
+  return (
+    hasEnteredPreview.value && isConversationFinished.value && !!draft.value
+  )
 })
+
+const loadingMessages = computed(() => [
+  t('studyCreation.ai.loadingStages.connecting'),
+  t('studyCreation.ai.loadingStages.thinking'),
+  t('studyCreation.ai.loadingStages.takingLonger'),
+  t('studyCreation.ai.loadingStages.stillWorking'),
+])
+
+const currentLoadingMessage = computed(() => {
+  const messages = loadingMessages.value
+  const raw = !messages.length
+    ? t('studyCreation.ai.thinking')
+    : messages[loadingMessageIndex.value % messages.length]
+
+  return String(raw).replace(/[\s.\u2026]+$/g, '')
+})
+
+watch(isGenerating, (loading) => {
+  if (loading) {
+    loadingMessageIndex.value = 0
+    if (loadingTicker.value) clearInterval(loadingTicker.value)
+    loadingTicker.value = setInterval(() => {
+      loadingMessageIndex.value += 1
+    }, 10000)
+    return
+  }
+
+  if (loadingTicker.value) {
+    clearInterval(loadingTicker.value)
+    loadingTicker.value = null
+  }
+})
+
+onBeforeUnmount(() => {
+  if (loadingTicker.value) {
+    clearInterval(loadingTicker.value)
+    loadingTicker.value = null
+  }
+})
+
+onMounted(() => {
+  const existing = store.state.Tests.aiStudyDraft
+  if (existing) {
+    draft.value = existing
+    hasConversationStarted.value = true
+    if (!existing.clarificationNeeded) {
+      isConversationFinished.value = true
+      hasEnteredPreview.value = true
+    }
+  }
+})
+
+const conversationStarters = computed(() => [
+  {
+    title: t('studyCreation.ai.starters.cardSorting.title'),
+    prompt: t('studyCreation.ai.starters.cardSorting.prompt'),
+    icon: 'mdi-view-grid-outline',
+  },
+  {
+    title: t('studyCreation.ai.starters.userTest.title'),
+    prompt: t('studyCreation.ai.starters.userTest.prompt'),
+    icon: 'mdi-account-group-outline',
+  },
+  {
+    title: t('studyCreation.ai.starters.heuristic.title'),
+    prompt: t('studyCreation.ai.starters.heuristic.prompt'),
+    icon: 'mdi-clipboard-check-outline',
+  },
+  {
+    title: t('studyCreation.ai.starters.focusGroup.title'),
+    prompt: t('studyCreation.ai.starters.focusGroup.prompt'),
+    icon: 'mdi-forum-outline',
+  },
+])
 
 const onDraftUpdate = (next) => {
   draft.value = next
@@ -123,6 +252,12 @@ const onDraftUpdate = (next) => {
 }
 
 const handleSend = async (text) => {
+  if (isConversationFinished.value) return
+
+  if (!hasConversationStarted.value) {
+    hasConversationStarted.value = true
+  }
+
   chatMessages.value.push({ role: 'user', text })
   apiMessages.value.push({ role: 'user', text })
   isGenerating.value = true
@@ -144,9 +279,8 @@ const handleSend = async (text) => {
         (nextDraft.clarificationQuestions || []).join('\n\n') ||
         t('studyCreation.ai.needClarification')
     } else {
-      modelText = t('studyCreation.ai.draftReady', {
-        title: nextDraft.testTitle || nextDraft.testType,
-      })
+      isConversationFinished.value = true
+      modelText = t('studyCreation.ai.completedToPreview')
     }
 
     chatMessages.value.push({ role: 'model', text: modelText })
@@ -186,8 +320,8 @@ function extractCallableErrorMessage(err) {
     .trim()
 }
 
-const requestAdjustments = () => {
-  showWarning('studyCreation.ai.adjustHint')
+const goToPreview = () => {
+  hasEnteredPreview.value = true
 }
 
 const confirmCreate = async () => {
@@ -233,6 +367,48 @@ const goBack = () => {
 .create-study-view {
   min-height: 100vh;
   background-color: #f8f9fa;
+}
+
+.create-study-view__content {
+  position: relative;
+}
+
+.create-study-view--conversation {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.create-study-view--conversation .create-study-view__content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.create-study-view--conversation .ai-initial-row,
+.create-study-view--conversation :deep(.v-row) {
+  flex: 1;
+  min-height: 0;
+}
+
+.create-study-view--conversation :deep(.v-col) {
+  min-height: 0;
+}
+
+.ai-initial-row {
+  margin-top: 8px;
+}
+
+.ai-layout-enter-active,
+.ai-layout-leave-active {
+  transition:
+    opacity 0.28s ease,
+    transform 0.28s ease;
+}
+
+.ai-layout-enter-from,
+.ai-layout-leave-to {
+  opacity: 0;
+  transform: translateY(10px) scale(0.99);
 }
 
 :deep(.v-stepper-header) {

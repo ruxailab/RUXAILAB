@@ -1,13 +1,15 @@
 /**
  * System prompt for the single RUXAILAB study-creation agent.
  */
-export function buildSystemPrompt({ locale = 'en-US', preferredMethod = null } = {}) {
-  const languageHint =
-    locale?.startsWith('pt')
-      ? 'Respond to clarification questions in Portuguese (Brazil).'
-      : locale?.startsWith('es')
-        ? 'Respond to clarification questions in Spanish.'
-        : 'Respond to clarification questions in English.'
+export function buildSystemPrompt({
+  locale = 'en-US',
+  preferredMethod = null,
+} = {}) {
+  const languageHint = locale?.startsWith('pt')
+    ? 'Respond to clarification questions in Portuguese (Brazil).'
+    : locale?.startsWith('es')
+      ? 'Respond to clarification questions in Spanish.'
+      : 'Respond to clarification questions in English.'
 
   const preferredHint = preferredMethod
     ? `The user already selected preferredMethod=${preferredMethod}. Prefer this method unless the request clearly requires another.`
