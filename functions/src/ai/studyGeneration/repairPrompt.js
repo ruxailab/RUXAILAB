@@ -12,10 +12,8 @@
  * }} params
  */
 export function buildRepairSystemPrompt({ locale = 'en-US' } = {}) {
-  const languageHint = locale?.startsWith('pt')
-    ? 'If you must ask clarification questions, write them in Portuguese (Brazil).'
-    : locale?.startsWith('es')
-      ? 'If you must ask clarification questions, write them in Spanish.'
+  const languageHint = locale?.startsWith('es')
+    ? 'If you must ask clarification questions, write them in Spanish.'
       : 'If you must ask clarification questions, write them in English.'
 
   return `You are repairing an invalid RUXAILAB study draft JSON.
