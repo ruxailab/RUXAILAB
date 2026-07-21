@@ -8,6 +8,7 @@ import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
 import StudyAnswer from '@/shared/models/StudyAnswer'
 import { getAuth } from 'firebase/auth'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
+import Participant from '../shared/models/Participant'
 
 const COLLECTION = 'tests'
 const answerController = new AnswerController()
@@ -163,6 +164,11 @@ export default class StudyController extends Controller {
     } catch (err) {
       throw err
     }
+  }
+
+  async getStudyParticipants({ studyId }) {
+    const response = await super.readAll(`tests/${studyId}/participants`)
+    return response.map((data) => Participant.toParticipant(data))
   }
 
   subscribeToStudy(studyId, callback) {

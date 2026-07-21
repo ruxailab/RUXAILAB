@@ -116,6 +116,73 @@ const prepareInvite = async ({ coop, users, resolveUserByEmail }) => {
   }
 }
 
+const sendParticipantInvitation = async ({
+  dispatch,
+  study,
+  user,
+  participant,
+  router,
+  inviteMessage,
+  resolveUserByEmail,
+  action = 'invite',
+}) => {
+  const resolvedParticipant = await enrichCooperatorInviteEntry(participant, {
+    resolveUserByEmail,
+  })
+
+  const inviteResult = await createInvitation({
+    study,
+    guest: {
+      ...resolvedParticipant,
+      accessLevel: resolvedParticipant.accessLevel,
+    },
+  })
+
+  const result = await manageStudyMembership({
+    studyId: study.id,
+    action: action,
+    membershipType: 'participant',
+    targetUserId: resolvedParticipant.userDocId || null,
+    targetEmail: resolvedParticipant.email,
+    role: resolvedParticipant.accessLevel,
+    inviteMessage: inviteMessage ?? resolvedParticipant.inviteMessage,
+    token: inviteResult.inviteToken,
+  })
+
+  const participantMembership = {
+    ...result.participant,
+    inviteMessage: inviteMessage ?? resolvedParticipant.inviteMessage,
+    email: resolvedParticipant.email,
+  }
+
+  if (participantMembership.userDocId) {
+    const notification = buildInvitationNotification({
+      study,
+      guest: participantMembership,
+      inviteToken: inviteResult.inviteToken,
+      router,
+    })
+
+    await dispatch('addNotification', {
+      userId: participantMembership.userDocId,
+      notification,
+    })
+  }
+
+  await sendInvitationEmail({
+    study,
+    user,
+    guest: participantMembership,
+    inviteLink: inviteResult.inviteLink,
+  })
+
+  return {
+    ...participantMembership,
+    inviteToken: inviteResult.inviteToken,
+    inviteLink: inviteResult.inviteLink,
+  }
+}
+
 /**
  * Sends the notification and email for a cooperator invitation.
  *
@@ -208,6 +275,7 @@ export default {
             currentUserEmail: user?.email,
             studyOwnerEmail: study?.testAdmin?.email,
             existingCooperators: study?.cooperators || [],
+            t,
           })
 
           if (validationError) {
@@ -222,6 +290,7 @@ export default {
             role: selectedRole,
             inviteMessage,
             token: invite.inviteToken,
+            membershipType: 'cooperator',
           })
 
           const guest = {
@@ -468,6 +537,148 @@ export default {
       } catch {
         localStorage.removeItem('pendingInviteToken')
         return null
+      }
+    },
+
+    async sendParticipantInvitations(
+      { commit, dispatch },
+      {
+        study,
+        user,
+        selectedParticipants,
+        selectedRole,
+        inviteMessage,
+        users,
+        router,
+        resolveUserByEmail,
+        studyParticipants,
+      },
+    ) {
+      commit('setLoading', true)
+
+      try {
+        const newInvites = []
+
+        for (const participant of selectedParticipants) {
+          const invite = await prepareInvite({
+            coop: participant,
+            users,
+            resolveUserByEmail,
+          })
+
+          const validationError = getCooperatorInviteValidationError({
+            email: invite.email,
+            currentUserEmail: user?.email,
+            studyOwnerEmail: study?.testAdmin?.email,
+            existingCooperators: studyParticipants || [],
+            t,
+          })
+
+          if (validationError) {
+            throw new Error(validationError)
+          }
+          const result = await sendParticipantInvitation({
+            dispatch,
+            study,
+            user,
+            participant: {
+              ...invite,
+              accessLevel: selectedRole,
+              inviteMessage,
+            },
+            router,
+            inviteMessage,
+            resolveUserByEmail,
+            action: 'invite',
+          })
+
+          newInvites.push(result)
+        }
+
+        return newInvites
+      } catch (err) {
+        commit('setError', {
+          errorCode: 'participantInviteError',
+          message: err,
+        })
+
+        throw err
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+
+    async reinviteParticipant(
+      { commit, dispatch },
+      { study, user, participant, router, resolveUserByEmail },
+    ) {
+      commit('setLoading', true)
+
+      try {
+        return await sendParticipantInvitation({
+          dispatch,
+          study,
+          user,
+          participant,
+          router,
+          resolveUserByEmail,
+          action: 'reinvite',
+        })
+      } catch (err) {
+        commit('setError', {
+          errorCode: 'participantInviteError',
+          message: err,
+        })
+
+        throw err
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+
+    async cancelParticipantInvitation({ commit }, { study, participant }) {
+      commit('setLoading', true)
+
+      try {
+        return await manageStudyMembership({
+          studyId: study.id,
+          action: 'cancelInvitation',
+          targetUserId: participant.userDocId || null,
+          targetEmail: participant.email || null,
+          membershipType: 'participant',
+        })
+      } catch (err) {
+        commit('setError', {
+          errorCode: 'participantInvitationCancellationError',
+          message: err,
+        })
+
+        throw err
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+
+    async removeParticipant({ commit }, { study, participant }) {
+      commit('setLoading', true)
+
+      try {
+        return await manageStudyMembership({
+          studyId: study.id,
+          action: 'remove',
+          targetUserId: participant.userDocId || null,
+          targetEmail: participant.email || null,
+          membershipType: 'participant',
+        })
+      } catch (err) {
+        commit('setError', {
+          errorCode: 'participantRemovalError',
+          message: err,
+        })
+
+        throw err
+      } finally {
+        commit('setLoading', false)
       }
     },
   },

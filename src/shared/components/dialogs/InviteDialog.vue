@@ -44,6 +44,7 @@
         </div>
 
         <v-select
+          v-if="roleOptions != null"
           v-model="selectedRole"
           :items="roleOptions"
           item-title="title"
@@ -208,6 +209,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  preDefinedRole: {
+    type: Array,
+    default: null,
+  },
 })
 
 const emit = defineEmits(['update:show', 'send-invitations'])
@@ -221,9 +226,20 @@ const emailInput = ref('')
 watch(
   () => props.roleOptions,
   (roles) => {
-    if (!roles.some((role) => role.value === selectedRole.value)) {
-      selectedRole.value = roles[0]?.value ?? null
+    if (
+      roles != null &&
+      !roles.some((role) => role.value === selectedRole.value)
+    ) {
+      selectedRole.value = roles[0]?.value ?? props.preDefinedRole.value ?? null
     }
+  },
+  { immediate: true },
+)
+
+watch(
+  () => props.preDefinedRole,
+  (predefinedRole) => {
+    if (predefinedRole != null) selectedRole.value = predefinedRole
   },
   { immediate: true },
 )
@@ -323,7 +339,8 @@ const onSend = () => {
 const resetForm = () => {
   selectedCoops.value = []
   inviteMessage.value = ''
-  selectedRole.value = props.roleOptions[0]?.value ?? null
+  selectedRole.value =
+    props.roleOptions != null ? props.roleOptions[0]?.value || null : null
   emailInput.value = ''
 }
 
