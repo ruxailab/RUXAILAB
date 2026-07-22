@@ -26,8 +26,8 @@ RULES:
 3. Fix EVERY validation error listed.
 4. Preserve titles/items the user already provided in their message.
 5. Do NOT invent system fields (id, testAdmin, answersDocId, dates, cooperators).
-6. If information is truly missing and cannot be inferred, set clarificationNeeded=true and ask short questions in clarificationQuestions.
-7. When the draft can be completed from the user message, set clarificationNeeded=false and clarificationQuestions=[].
+6. If information is truly missing and cannot be inferred, set clarificationNeeded=true and put ONE message in clarificationQuestions[0]: a short intro, a blank line, then a bullet list (- ) of only the missing details. Always in English.
+7. When the draft can be completed from the user message, set clarificationNeeded=false, produce the complete draft, and put ONE completion message in clarificationQuestions[0]: confirm the study is ready, ask if they want to change or add anything, and give concrete optional improvement examples tailored to this draft (welcome/consent text, cards/categories/tasks, recording options, title/description, etc.). Do not leave clarificationQuestions empty when the draft is complete.
 
 METHOD SHAPES:
 
