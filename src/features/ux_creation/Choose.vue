@@ -1,8 +1,12 @@
 <template>
   <v-container fluid class="create-study-view">
-    <v-container class="py-6">
+    <v-container class="py-0">
       <!-- Stepper Header -->
-      <StepperHeader :current-step="1" :steps="steps" />
+      <StepperHeader
+        :current-step="1"
+        :steps="steps"
+        @step-click="onStepperStepClick"
+      />
 
       <!-- Page Header -->
       <SectionHeader
@@ -88,15 +92,11 @@
           </div>
         </v-col>
       </v-row>
-
-      <!-- Back Button -->
-      <BackButton :label="$t('studyCreation.backToDashboard')" @back="goBack" />
     </v-container>
   </v-container>
 </template>
 
 <script setup>
-import BackButton from '@/features/ux_creation/components/BackButton.vue'
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue'
 import SelectableCard from '@/shared/components/cards/SelectableCard.vue'
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue'
@@ -114,11 +114,65 @@ const store = useStore()
 const { t } = useI18n()
 const selectedCategory = ref(null)
 
+const selectedCategoryId = computed(
+  () => selectedCategory.value || store.state.Tests.studyCategory,
+)
+const selectedCategoryMeta = computed(() =>
+  selectedCategoryId.value ? getCategoryById(selectedCategoryId.value) : null,
+)
+const requiresMethodSelection = computed(
+  () => !!selectedCategoryMeta.value?.hasSubMethods,
+)
+const hasCategorySelected = computed(
+  () => !!selectedCategoryMeta.value && selectedCategoryId.value !== 'ai',
+)
+const hasMethodSelected = computed(() => !!store.state.Tests.studyMethod)
+const hasStudyTypeSelected = computed(() => !!store.state.Tests.studyType)
+const hasTemplateWhenNeeded = computed(() => {
+  if (store.state.Tests.studyType !== 'template') return true
+  return !!store.state.Tests.selectedTemplate
+})
+
+const canOpenStep2 = computed(
+  () => hasCategorySelected.value && requiresMethodSelection.value,
+)
+const canOpenStep3 = computed(
+  () =>
+    hasCategorySelected.value &&
+    (!requiresMethodSelection.value || hasMethodSelected.value),
+)
+const canOpenStep4 = computed(
+  () =>
+    canOpenStep3.value &&
+    hasStudyTypeSelected.value &&
+    hasTemplateWhenNeeded.value,
+)
+
 const steps = computed(() => [
-  { value: 1, title: t('studyCreation.steps.category'), complete: false },
-  { value: 2, title: t('studyCreation.steps.methods'), complete: false },
-  { value: 3, title: t('studyCreation.steps.studyType'), complete: false },
-  { value: 4, title: t('studyCreation.steps.details'), complete: false },
+  {
+    value: 1,
+    title: t('studyCreation.steps.category'),
+    complete: false,
+    enabled: true,
+  },
+  {
+    value: 2,
+    title: t('studyCreation.steps.methods'),
+    complete: false,
+    enabled: canOpenStep2.value,
+  },
+  {
+    value: 3,
+    title: t('studyCreation.steps.studyType'),
+    complete: false,
+    enabled: canOpenStep3.value,
+  },
+  {
+    value: 4,
+    title: t('studyCreation.steps.details'),
+    complete: false,
+    enabled: canOpenStep4.value,
+  },
 ])
 
 const categories = computed(() =>
@@ -149,8 +203,18 @@ const goToCreateWithAi = () => {
   router.push({ name: 'study-create-with-ai' })
 }
 
-const goBack = () => {
-  router.push('/admin')
+const onStepperStepClick = (step) => {
+  if (!step?.value) return
+
+  const routeByStep = {
+    2: 'study-create-step2',
+    3: 'study-create-step3',
+    4: 'study-create-step4',
+  }
+
+  const targetRoute = routeByStep[step.value]
+  if (!targetRoute) return
+  router.push({ name: targetRoute })
 }
 </script>
 

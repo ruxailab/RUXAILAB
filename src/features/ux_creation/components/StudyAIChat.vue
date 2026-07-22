@@ -1,5 +1,12 @@
 <template>
-  <div class="study-ai-chat">
+  <div
+    class="study-ai-chat"
+    :class="
+      showConversation
+        ? 'study-ai-chat--conversation'
+        : 'study-ai-chat--starters'
+    "
+  >
     <transition name="chat-transform" mode="out-in">
       <div
         v-if="showConversation"
@@ -199,14 +206,41 @@ const onStarterClick = (text) => {
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-height: 0;
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+  background: transparent;
+}
+
+.study-ai-chat--starters {
   min-height: 470px;
+}
+
+.study-ai-chat--conversation {
+  position: relative;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.study-ai-chat--conversation .study-ai-chat__messages {
+  padding-bottom: 132px;
+}
+
+.study-ai-chat--conversation .study-ai-chat__composer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 16px;
   background: transparent;
 }
 
 .study-ai-chat__messages {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
-  padding: 8px 4px 12px;
+  padding: 8px 4px 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -342,7 +376,7 @@ const onStarterClick = (text) => {
   grid-template-columns: 1fr auto;
   gap: 12px;
   align-items: end;
-  padding: 12px 0 0;
+  padding: 12px 0 20px 0;
   border-top: 1px solid color-mix(in srgb, var(--rux-blue) 20%, transparent);
 }
 

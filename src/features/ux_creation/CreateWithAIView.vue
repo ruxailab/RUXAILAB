@@ -5,8 +5,6 @@
     :class="{ 'create-study-view--conversation': hasConversationStarted }"
   >
     <v-container class="py-6 create-study-view__content">
-      <StepperHeader :current-step="4" :steps="steps" />
-
       <SectionHeader
         v-if="!hasConversationStarted"
         :title="$t('studyCreation.ai.title')"
@@ -20,12 +18,12 @@
           justify="center"
           class="ai-initial-row"
         >
-          <v-col cols="12" md="10" lg="8">
+          <v-col cols="12" md="10" lg="8" class="ai-chat-col">
             <StudyAIChat
               :messages="chatMessages"
               :loading="isGenerating"
               :loading-message="currentLoadingMessage"
-              :composer-disabled="isConversationFinished"
+              :composer-disabled="false"
               :show-conversation="false"
               :conversation-starters="conversationStarters"
               @send="handleSend"
@@ -37,34 +35,32 @@
           v-else-if="!showFinalPreview"
           key="ai-chat-only"
           justify="center"
-          class="ai-initial-row"
+          class="ai-chat-row"
         >
-          <v-col cols="12" md="10" lg="8">
+          <v-col cols="12" md="10" lg="8" class="ai-chat-col mx-auto">
             <StudyAIChat
               :messages="chatMessages"
               :loading="isGenerating"
               :loading-message="currentLoadingMessage"
-              :composer-disabled="isConversationFinished"
+              :composer-disabled="false"
               :show-conversation="true"
               :conversation-starters="conversationStarters"
               @send="handleSend"
             />
+
+            <div
+              v-if="isConversationFinished"
+              class="d-flex justify-end align-center mt-6"
+            >
+              <v-btn color="primary" @click="goToPreview">
+                {{ $t('studyCreation.ai.goToPreview') }}
+              </v-btn>
+            </div>
           </v-col>
         </v-row>
 
-        <v-row v-else key="ai-final-preview">
-          <v-col cols="12" md="6">
-            <StudyAIChat
-              :messages="chatMessages"
-              :loading="isGenerating"
-              :loading-message="currentLoadingMessage"
-              :composer-disabled="isConversationFinished"
-              :show-conversation="true"
-              :conversation-starters="conversationStarters"
-              @send="handleSend"
-            />
-          </v-col>
-          <v-col cols="12" md="6">
+        <v-row v-else key="ai-final-preview" class="ai-final-row">
+          <v-col cols="12" md="10" lg="8" class="ai-preview-col mx-auto">
             <StudyAIPreview :draft="draft" @update:draft="onDraftUpdate" />
           </v-col>
         </v-row>
@@ -72,10 +68,8 @@
 
       <div
         v-if="showFinalPreview"
-        class="d-flex flex-wrap justify-space-between align-center ga-3 mt-6"
+        class="d-flex flex-wrap justify-end align-center ga-3 mt-6"
       >
-        <BackButton :label="$t('studyCreation.ai.back')" @back="goBack" />
-
         <div class="d-flex ga-3">
           <v-btn
             color="primary"
@@ -87,20 +81,6 @@
           </v-btn>
         </div>
       </div>
-
-      <div
-        v-else-if="isConversationFinished"
-        class="d-flex justify-space-between align-center mt-6"
-      >
-        <BackButton :label="$t('studyCreation.ai.back')" @back="goBack" />
-        <v-btn color="primary" @click="goToPreview">
-          {{ $t('studyCreation.ai.goToPreview') }}
-        </v-btn>
-      </div>
-
-      <div v-else class="d-flex justify-start mt-6">
-        <BackButton :label="$t('studyCreation.ai.back')" @back="goBack" />
-      </div>
     </v-container>
   </v-container>
 </template>
@@ -110,9 +90,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import BackButton from '@/features/ux_creation/components/BackButton.vue'
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue'
-import StepperHeader from '@/features/ux_creation/StepperHeader.vue'
 import StudyAIChat from '@/features/ux_creation/components/StudyAIChat.vue'
 import StudyAIPreview from '@/features/ux_creation/components/StudyAIPreview.vue'
 import { generateStudyDraft } from '@/ai/study-generation/StudyGenerationService'
@@ -122,6 +100,7 @@ import {
   getMethodManagerView,
   instantiateStudyByType,
 } from '@/shared/constants/methodDefinitions'
+import { getCategoryById } from '@/shared/constants/studyCategories.js'
 import { showError } from '@/shared/utils/toast'
 
 const router = useRouter()
@@ -139,12 +118,65 @@ const isConversationFinished = ref(false)
 const hasEnteredPreview = ref(false)
 const loadingMessageIndex = ref(0)
 const loadingTicker = ref(null)
+const lockedRootElements = ref([])
+const previousRootStyles = ref([])
+
+const selectedCategory = computed(() => store.state.Tests.studyCategory)
+const selectedCategoryMeta = computed(() =>
+  selectedCategory.value ? getCategoryById(selectedCategory.value) : null,
+)
+const requiresMethodSelection = computed(
+  () => !!selectedCategoryMeta.value?.hasSubMethods,
+)
+const hasCategorySelected = computed(() => !!selectedCategory.value)
+const hasMethodSelected = computed(() => !!store.state.Tests.studyMethod)
+const hasStudyTypeSelected = computed(() => !!store.state.Tests.studyType)
+const hasTemplateWhenNeeded = computed(() => {
+  if (store.state.Tests.studyType !== 'template') return true
+  return !!store.state.Tests.selectedTemplate
+})
+
+const canOpenStep2 = computed(
+  () =>
+    hasCategorySelected.value &&
+    requiresMethodSelection.value &&
+    selectedCategory.value !== 'ai',
+)
+const canOpenStep3 = computed(
+  () =>
+    hasCategorySelected.value &&
+    (!requiresMethodSelection.value || hasMethodSelected.value) &&
+    selectedCategory.value !== 'ai',
+)
 
 const steps = computed(() => [
-  { value: 1, title: t('studyCreation.steps.category'), complete: true },
-  { value: 2, title: t('studyCreation.steps.methods'), complete: false },
-  { value: 3, title: t('studyCreation.steps.studyType'), complete: false },
-  { value: 4, title: t('studyCreation.ai.stepLabel'), complete: false },
+  {
+    value: 1,
+    title: t('studyCreation.steps.category'),
+    complete: hasCategorySelected.value,
+    enabled: true,
+  },
+  {
+    value: 2,
+    title: t('studyCreation.steps.methods'),
+    complete: canOpenStep2.value && hasMethodSelected.value,
+    enabled: canOpenStep2.value,
+  },
+  {
+    value: 3,
+    title: t('studyCreation.steps.studyType'),
+    complete:
+      canOpenStep3.value &&
+      hasStudyTypeSelected.value &&
+      hasTemplateWhenNeeded.value,
+    enabled: canOpenStep3.value,
+  },
+  {
+    value: 4,
+    title: t('studyCreation.ai.stepLabel'),
+    complete: false,
+    enabled: true,
+  },
 ])
 
 const preferredMethod = computed(() => {
@@ -209,18 +241,49 @@ onBeforeUnmount(() => {
     clearInterval(loadingTicker.value)
     loadingTicker.value = null
   }
+
+  previousRootStyles.value.forEach(({ element, style }) => {
+    if (!element) return
+    element.style.overflow = style.overflow
+    element.style.overscrollBehavior = style.overscrollBehavior
+    element.style.height = style.height
+    element.style.maxHeight = style.maxHeight
+  })
+
+  previousRootStyles.value = []
+  lockedRootElements.value = []
 })
 
 onMounted(() => {
-  const existing = store.state.Tests.aiStudyDraft
-  if (existing) {
-    draft.value = existing
-    hasConversationStarted.value = true
-    if (!existing.clarificationNeeded) {
-      isConversationFinished.value = true
-      hasEnteredPreview.value = true
-    }
-  }
+  const selectors = [
+    'html',
+    'body',
+    '#app',
+    '.v-application',
+    '.v-main',
+    '.v-main__wrap',
+  ]
+
+  lockedRootElements.value = selectors
+    .map((selector) => document.querySelector(selector))
+    .filter(Boolean)
+
+  previousRootStyles.value = lockedRootElements.value.map((element) => ({
+    element,
+    style: {
+      overflow: element.style.overflow,
+      overscrollBehavior: element.style.overscrollBehavior,
+      height: element.style.height,
+      maxHeight: element.style.maxHeight,
+    },
+  }))
+
+  lockedRootElements.value.forEach((element) => {
+    element.style.overflow = 'hidden'
+    element.style.overscrollBehavior = 'none'
+    element.style.height = '100dvh'
+    element.style.maxHeight = '100dvh'
+  })
 })
 
 const conversationStarters = computed(() => [
@@ -252,8 +315,6 @@ const onDraftUpdate = (next) => {
 }
 
 const handleSend = async (text) => {
-  if (isConversationFinished.value) return
-
   if (!hasConversationStarted.value) {
     hasConversationStarted.value = true
   }
@@ -275,6 +336,7 @@ const handleSend = async (text) => {
 
     let modelText
     if (nextDraft.clarificationNeeded) {
+      isConversationFinished.value = false
       modelText =
         (nextDraft.clarificationQuestions || []).join('\n\n') ||
         t('studyCreation.ai.needClarification')
@@ -324,6 +386,21 @@ const goToPreview = () => {
   hasEnteredPreview.value = true
 }
 
+const onStepperStepClick = (step) => {
+  if (!step?.value || step.value === 4) return
+
+  store.commit('SET_STUDY_TYPE', null)
+  store.commit('CLEAR_AI_STUDY_DRAFT')
+
+  const routeByStep = {
+    1: 'study-create-step1',
+    2: 'study-create-step2',
+    3: 'study-create-step3',
+  }
+
+  router.push({ name: routeByStep[step.value] || 'study-create-step1' })
+}
+
 const confirmCreate = async () => {
   if (!canConfirm.value) return
 
@@ -355,22 +432,19 @@ const confirmCreate = async () => {
     isCreating.value = false
   }
 }
-
-const goBack = () => {
-  store.commit('SET_STUDY_TYPE', null)
-  store.commit('CLEAR_AI_STUDY_DRAFT')
-  router.push({ name: 'study-create-step1' })
-}
 </script>
 
 <style scoped>
 .create-study-view {
-  min-height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
   background-color: #f8f9fa;
 }
 
 .create-study-view__content {
   position: relative;
+  height: 100%;
+  overflow: hidden;
 }
 
 .create-study-view--conversation {
@@ -379,23 +453,38 @@ const goBack = () => {
 }
 
 .create-study-view--conversation .create-study-view__content {
-  height: 100%;
   display: flex;
   flex-direction: column;
 }
 
-.create-study-view--conversation .ai-initial-row,
-.create-study-view--conversation :deep(.v-row) {
+.ai-chat-row,
+.ai-final-row {
   flex: 1;
   min-height: 0;
+  overflow: hidden;
 }
 
 .create-study-view--conversation :deep(.v-col) {
   min-height: 0;
 }
 
+.ai-chat-col,
+.ai-preview-col,
+.ai-final-row {
+  min-height: 0;
+}
+
+.create-study-view--conversation .ai-chat-col {
+  display: flex;
+  overflow: hidden;
+}
+
 .ai-initial-row {
   margin-top: 8px;
+}
+
+.create-study-view--conversation .ai-initial-row {
+  margin-top: 24px;
 }
 
 .ai-layout-enter-active,

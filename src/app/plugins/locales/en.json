@@ -2727,7 +2727,7 @@
       "confirm": "Create study",
       "needClarification": "I need a bit more information to create this study.",
       "draftReady": "Draft ready: {title}. Review the preview and create the study, or ask for changes.",
-      "completedToPreview": "We have gathered all the necessary information to create your study. Go to the preview page to create it!",
+      "completedToPreview": "We have gathered all the necessary information to create your study. Do you want to add more details before moving to preview?",
       "errors": {
         "generationFailed": "Could not generate the study draft. Please try again.",
         "generationFailedWithDetail": "Could not generate the study draft: {detail}",
