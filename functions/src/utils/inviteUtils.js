@@ -9,6 +9,7 @@ export default class InviteUtils {
     isPublic,
     accessLevel,
     requiredLogin,
+    membershipType = 'cooperator',
   ) {
     const token = crypto.randomBytes(32).toString('hex')
 
@@ -26,6 +27,7 @@ export default class InviteUtils {
         isPublic: isPublic || false,
         accessLevel: accessLevel || null,
         requiredLogin: requiredLogin ?? true,
+        membershipType,
       })
 
     return {
@@ -87,6 +89,7 @@ export default class InviteUtils {
       updateDate: Date.now(),
       testAuthorEmail: study.testAdmin?.email || '',
       acceptedDate: null,
+      membershipType,
     }
 
     if (membershipType === 'participant') {

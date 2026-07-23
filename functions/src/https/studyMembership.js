@@ -234,7 +234,9 @@ export const manageStudyMembership = functions.onCall({
       const actorEmail = actor?.email || request?.auth?.token?.email || ''
 
       const isSuperAdmin = actor?.accessLevel === 0
-
+      const studyRoleMap = {
+        ...(study.studyRoleMap || {}),
+      }
       /*
        |--------------------------------------------------------------------------
        | PARTICIPANTS
@@ -260,6 +262,83 @@ export const manageStudyMembership = functions.onCall({
         })
 
         const target = targetDoc?.data() || null
+
+        /*
+         |--------------------------------------------------------------------------
+         | ACCEPT INVITATION
+         |--------------------------------------------------------------------------
+         */
+        if (action === 'accept') {
+          const targetDoc = participantsSnapshot.docs.find((doc) => {
+            const participant = doc.data()
+
+            return (
+              participant?.accepted !== true &&
+              (participant?.userDocId === actorId ||
+                sameEmail(participant?.email, actorEmail))
+            )
+          })
+
+          if (!targetDoc) {
+            throw error(
+              'permission-denied',
+              'No participant invitation matches this account',
+            )
+          }
+
+          const target = targetDoc.data()
+          const now = Date.now()
+
+          const participant = {
+            ...target,
+            userDocId: actorId,
+            accepted: true,
+            updateDate: now,
+            acceptedDate: now,
+          }
+
+          studyRoleMap[actorId] = participant.accessLevel
+
+          transaction.update(targetDoc.ref, participant)
+          transaction.update(studyRef, {
+            studyRoleMap,
+          })
+
+          transaction.update(actorRef, {
+            [`myAnswers.${studyId}`]: {
+              answersDocId: study.answersDocId,
+              accessLevel: participant.accessLevel,
+              progress: 0,
+              testAuthorEmail: study.testAdmin?.email || '',
+              testDocId: studyId,
+              testType: study.testType,
+              subType: study.subType || null,
+              testTitle: study.testTitle || '',
+              total: 0,
+              updateDate: Date.now(),
+            },
+          })
+
+          writeAuditEvent(transaction, studyRef, {
+            action: 'participant.invitationAccepted',
+            actorId,
+            target: actorId,
+            actorEmail,
+            targetLabel: participant.email || actorEmail || actorId,
+            targetType: 'participant',
+            details: {
+              role: participant.accessLevel,
+            },
+          })
+
+          return {
+            status: 'accepted',
+            participant: {
+              id: targetDoc.id,
+              ...participant,
+            },
+          }
+        }
 
         assertMembershipMutationAllowed({
           study,
@@ -405,34 +484,6 @@ export const manageStudyMembership = functions.onCall({
           throw error('not-found', 'Participant not found')
         }
 
-        if (action === 'assignRole') {
-          const participant = {
-            ...target,
-            accessLevel: role,
-            updateDate: Date.now(),
-          }
-
-          transaction.update(targetDoc.ref, participant)
-
-          writeAuditEvent(transaction, studyRef, {
-            action: 'participant.roleChanged',
-            actorId,
-            target: participant.userDocId || participant.email,
-            actorEmail,
-            targetLabel: participant.email || participant.userDocId,
-            targetType: 'participant',
-            details: {
-              previousRole: target.accessLevel,
-              role,
-            },
-          })
-
-          return {
-            status: 'role-assigned',
-            participant,
-          }
-        }
-
         if (action === 'remove' && target.accepted !== true) {
           throw error(
             'failed-precondition',
@@ -454,6 +505,18 @@ export const manageStudyMembership = functions.onCall({
           )
         }
 
+        if (target.userDocId) {
+          delete studyRoleMap[target.userDocId]
+        }
+        if (action === 'remove' && target.userDocId) {
+          transaction.update(db.collection('users').doc(target.userDocId), {
+            [`myAnswers.${studyId}`]: admin.firestore.FieldValue.delete(),
+          })
+        }
+
+        transaction.update(studyRef, {
+          studyRoleMap,
+        })
         transaction.delete(targetDoc.ref)
 
         writeAuditEvent(transaction, studyRef, {
@@ -487,10 +550,6 @@ export const manageStudyMembership = functions.onCall({
        */
 
       const cooperators = [...(study.cooperators || [])]
-
-      const studyRoleMap = {
-        ...(study.studyRoleMap || {}),
-      }
 
       /*
        |--------------------------------------------------------------------------

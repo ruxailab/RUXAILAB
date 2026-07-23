@@ -18,7 +18,7 @@ import i18n from '@/app/plugins/i18n'
 
 const t = i18n.global.t
 
-const createInvitation = async ({ study, guest }) => {
+const createInvitation = async ({ study, guest, membershipType }) => {
   return InviteController.generateInvitationLink({
     studyId: study.id,
     studyTitle: study.testTitle,
@@ -26,6 +26,7 @@ const createInvitation = async ({ study, guest }) => {
     requiredLogin: true,
     toEmail: guest.email,
     isPublic: false,
+    membershipType,
   })
 }
 
@@ -136,6 +137,7 @@ const sendParticipantInvitation = async ({
       ...resolvedParticipant,
       accessLevel: resolvedParticipant.accessLevel,
     },
+    membershipType: 'participant',
   })
 
   const result = await manageStudyMembership({
@@ -161,6 +163,7 @@ const sendParticipantInvitation = async ({
       guest: participantMembership,
       inviteToken: inviteResult.inviteToken,
       router,
+      membershipType: 'participant',
     })
 
     await dispatch('addNotification', {
@@ -205,6 +208,7 @@ const sendCooperatorInvitation = async ({
   const inviteResult = await createInvitation({
     study,
     guest: resolvedGuest,
+    membershipType: 'cooperator',
   })
 
   if (resolvedGuest.userDocId) {
@@ -352,7 +356,7 @@ export default {
 
     async acceptInvite(
       { commit, dispatch },
-      { token, user, studyId, notification },
+      { token, user, studyId, notification, membershipType = 'cooperator' },
     ) {
       commit('setLoading', true)
 
@@ -368,6 +372,7 @@ export default {
         await dispatch('acceptStudyCollaboration', {
           test: study,
           cooperator: user,
+          membershipType: membershipType,
         })
 
         localStorage.removeItem('pendingInviteToken')
@@ -595,6 +600,10 @@ export default {
           newInvites.push(result)
         }
 
+        await dispatch('getStudyParticipants', {
+          studyId: study.id,
+        })
+
         return newInvites
       } catch (err) {
         commit('setError', {
@@ -615,7 +624,7 @@ export default {
       commit('setLoading', true)
 
       try {
-        return await sendParticipantInvitation({
+        await sendParticipantInvitation({
           dispatch,
           study,
           user,
@@ -623,6 +632,10 @@ export default {
           router,
           resolveUserByEmail,
           action: 'reinvite',
+        })
+
+        await dispatch('getStudyParticipants', {
+          studyId: study.id,
         })
       } catch (err) {
         commit('setError', {
@@ -636,16 +649,23 @@ export default {
       }
     },
 
-    async cancelParticipantInvitation({ commit }, { study, participant }) {
+    async cancelParticipantInvitation(
+      { commit, dispatch },
+      { study, participant },
+    ) {
       commit('setLoading', true)
 
       try {
-        return await manageStudyMembership({
+        await manageStudyMembership({
           studyId: study.id,
           action: 'cancelInvitation',
           targetUserId: participant.userDocId || null,
           targetEmail: participant.email || null,
           membershipType: 'participant',
+        })
+
+        await dispatch('getStudyParticipants', {
+          studyId: study.id,
         })
       } catch (err) {
         commit('setError', {
@@ -659,16 +679,20 @@ export default {
       }
     },
 
-    async removeParticipant({ commit }, { study, participant }) {
+    async removeParticipant({ commit, dispatch }, { study, participant }) {
       commit('setLoading', true)
 
       try {
-        return await manageStudyMembership({
+        await manageStudyMembership({
           studyId: study.id,
           action: 'remove',
           targetUserId: participant.userDocId || null,
           targetEmail: participant.email || null,
           membershipType: 'participant',
+        })
+
+        await dispatch('getStudyParticipants', {
+          studyId: study.id,
         })
       } catch (err) {
         commit('setError', {

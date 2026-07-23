@@ -230,7 +230,7 @@ watch(
       roles != null &&
       !roles.some((role) => role.value === selectedRole.value)
     ) {
-      selectedRole.value = roles[0]?.value ?? props.preDefinedRole.value ?? null
+      selectedRole.value = getInitialRole()
     }
   },
   { immediate: true },
@@ -239,11 +239,12 @@ watch(
 watch(
   () => props.preDefinedRole,
   (predefinedRole) => {
-    if (predefinedRole != null) selectedRole.value = predefinedRole
+    if (predefinedRole != null) {
+      selectedRole.value = predefinedRole
+    }
   },
   { immediate: true },
 )
-
 // Date and time for scheduling (accessibility tests)
 const date = ref(
   new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
@@ -339,9 +340,16 @@ const onSend = () => {
 const resetForm = () => {
   selectedCoops.value = []
   inviteMessage.value = ''
-  selectedRole.value =
-    props.roleOptions != null ? props.roleOptions[0]?.value || null : null
+  selectedRole.value = getInitialRole()
   emailInput.value = ''
+}
+
+const getInitialRole = () => {
+  if (props.preDefinedRole != null) {
+    return props.preDefinedRole
+  }
+
+  return props.roleOptions?.[0]?.value ?? null
 }
 
 // Watch for dialog visibility to reset form
