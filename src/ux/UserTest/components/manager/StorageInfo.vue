@@ -166,13 +166,18 @@ const store = useStore()
 const { t } = useI18n()
 
 // Use the storage files composable to calculate sizes dynamically
-const { loading, files, usedBytes, typeBreakdown, storageQuotaBytes } =
-  useStorageFiles()
+const {
+  loading,
+  filteredFiles,
+  accountUsedBytes,
+  typeBreakdown,
+  storageQuotaBytes,
+} = useStorageFiles()
 
 // Read answers from the centralized Answer Vuex store getter
 const answers = computed(() => store.getters.allAnswersList)
 
-const totalMediaFiles = computed(() => files.value.length)
+const totalMediaFiles = computed(() => filteredFiles.value.length)
 
 const webcamBreakdown = computed(
   () =>
@@ -223,14 +228,14 @@ const analyticsDataSize = computed(() => {
 })
 
 // mediaDataSize is the actual sum of all media files
-const mediaDataSize = computed(() => formatBytes(usedBytes.value))
+const mediaDataSize = computed(() => formatBytes(accountUsedBytes.value))
 
 // estimatedStorageUsed is a hybrid of actual media file sizes and estimated response/analytics document sizes
 const estimatedStorageUsed = computed(() => {
   const avgResponseSize = 10 * 1024
   const responseStorage = answers.value.length * avgResponseSize
   const estimatedAnalyticsSize = answers.value.length * 5 * 1024
-  return usedBytes.value + responseStorage + estimatedAnalyticsSize
+  return accountUsedBytes.value + responseStorage + estimatedAnalyticsSize
 })
 
 const storagePercentage = computed(() => {
