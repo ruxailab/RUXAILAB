@@ -3127,5 +3127,16 @@
     "pendingDescription": "You have a pending invitation. Would you like to accept it now?",
     "notNow": "Not now",
     "loginRequired": "This invitation requires you to sign in or create an account before participating."
+  },
+  "errors": {
+    "boundary": {
+      "title": "Something went wrong",
+      "message": "An unexpected error occurred while loading this page. Your data has been preserved.",
+      "retry": "Retry",
+      "goToDashboard": "Go to Dashboard",
+      "showDetails": "Show error details",
+      "copyDetails": "Copy error details",
+      "copied": "Copied!"
+    }
   }
 }

@@ -3054,5 +3054,16 @@
     "pendingDescription": "Tienes una invitación pendiente. ¿Quieres aceptarla ahora?",
     "notNow": "Ahora no",
     "loginRequired": "Esta invitación requiere que inicies sesión o crees una cuenta antes de participar."
+  },
+  "errors": {
+    "boundary": {
+      "title": "Algo salió mal",
+      "message": "Ocurrió un error inesperado al cargar esta página. Sus datos han sido preservados.",
+      "retry": "Reintentar",
+      "goToDashboard": "Ir al Panel",
+      "showDetails": "Mostrar detalles del error",
+      "copyDetails": "Copiar detalles del error",
+      "copied": "¡Copiado!"
+    }
   }
 }
