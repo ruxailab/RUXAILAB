@@ -3056,6 +3056,11 @@
     "loginRequired": "Esta invitación requiere que inicies sesión o crees una cuenta antes de participar."
   },
   "errors": {
+    "globalError": "Ocurrió un error. Por favor intente de nuevo.",
+    "emailIsRequired": "El correo electrónico es requerido.",
+    "passwordRequired": "La contraseña es requerida.",
+    "invalidEmail": "Ingrese un correo electrónico válido.",
+    "incorrectCredential": "Correo o contraseña incorrectos, o la cuenta no existe.",
     "boundary": {
       "title": "Algo salió mal",
       "message": "Ocurrió un error inesperado al cargar esta página. Sus datos han sido preservados.",

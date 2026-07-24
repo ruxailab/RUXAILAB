@@ -3129,6 +3129,11 @@
     "loginRequired": "This invitation requires you to sign in or create an account before participating."
   },
   "errors": {
+    "globalError": "An error occurred. Please try again.",
+    "emailIsRequired": "Email is required.",
+    "passwordRequired": "Password is required.",
+    "invalidEmail": "Please enter a valid email address.",
+    "incorrectCredential": "Incorrect email or password, or account does not exist.",
     "boundary": {
       "title": "Something went wrong",
       "message": "An unexpected error occurred while loading this page. Your data has been preserved.",
