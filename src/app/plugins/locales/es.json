@@ -693,6 +693,8 @@
     "time": "Hora",
     "status": {
       "active": "Activo",
+      "pending": "Pendiente",  
+     "upcoming": "Próximo",
       "recruiting": "Reclutando",
       "paused": "Pausado",
       "finished": "Finalizado",
@@ -2732,6 +2734,9 @@
   },
   "tags": {
     "active": "Activo",
+     "finished": "Finalizado",
+     "pending": "Pendiente",  
+     "upcoming": "Próximo",
     "draft": "Borrador",
     "completed": "Completado",
     "archived": "Archivado",
