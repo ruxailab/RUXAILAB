@@ -8,6 +8,7 @@ import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
 import StudyAnswer from '@/shared/models/StudyAnswer'
 import { getAuth } from 'firebase/auth'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
+import Participant from '../shared/models/Participant'
 
 const COLLECTION = 'tests'
 const answerController = new AnswerController()
@@ -122,12 +123,15 @@ export default class StudyController extends Controller {
     }
   }
 
-  //ToDo: It seems an action from User Testing
   async acceptStudyCollaboration(payload) {
     const response =
       await FirebaseFunctionsController.callHttpsCallableFunction(
         'manageStudyMembership',
-        { studyId: payload.studyId ?? payload.test?.id, action: 'accept' },
+        {
+          studyId: payload.studyId ?? payload.test?.id,
+          action: 'accept',
+          membershipType: payload.membershipType,
+        },
       )
     return response.data
   }
@@ -163,6 +167,34 @@ export default class StudyController extends Controller {
     } catch (err) {
       throw err
     }
+  }
+
+  async getStudyParticipants({ studyId }) {
+    const response = await super.readAll(`tests/${studyId}/participants`)
+    return response.map((data) => Participant.toParticipant(data))
+  }
+
+  async getAcceptedParticipant({ studyId, userId }) {
+    if (!studyId || !userId) {
+      return null
+    }
+
+    const response = await super.query(`tests/${studyId}/participants`, {
+      field: 'userDocId',
+      value: userId,
+      condition: '==',
+    })
+
+    const participant = response.docs[0]
+
+    if (!participant || participant.data()?.accepted !== true) {
+      return null
+    }
+
+    return Participant.toParticipant({
+      id: participant.id,
+      ...participant.data(),
+    })
   }
 
   subscribeToStudy(studyId, callback) {

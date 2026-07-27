@@ -2,6 +2,8 @@ import { computed } from 'vue'
 import { getStatusColor, getStatusText } from '@/shared/utils/statusUtils'
 import { formatDate, formatTime } from '@/shared/utils/dateUtils'
 import { formatInitials } from '@/shared/utils/formatUtils'
+import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
+import { STUDY_ROLE } from '@/shared/utils/studyAccessPolicy'
 
 export const normalizeCooperatorInviteEntry = (entry, registeredUsers = []) => {
   if (!entry) {
@@ -18,7 +20,6 @@ export const normalizeCooperatorInviteEntry = (entry, registeredUsers = []) => {
     return {
       email,
       userDocId: matchedUser?.id || matchedUser?.userDocId || null,
-      ...entry,
     }
   }
 
@@ -69,6 +70,14 @@ export const enrichCooperatorInviteEntry = async (entry, dependencies = {}) => {
   } catch {
     return normalizedEntry
   }
+}
+
+export const getPredefinedParticipantUserRole = (study) => {
+  if (study?.testType == STUDY_TYPES.HEURISTIC) {
+    return STUDY_ROLE.EVALUATOR
+  }
+
+  return STUDY_ROLE.USER
 }
 
 export const getCooperatorInviteValidationError = ({

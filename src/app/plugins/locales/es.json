@@ -693,8 +693,8 @@
     "time": "Hora",
     "status": {
       "active": "Activo",
-      "pending": "Pendiente",  
-     "upcoming": "Próximo",
+      "pending": "Pendiente",
+      "upcoming": "Próximo",
       "recruiting": "Reclutando",
       "paused": "Pausado",
       "finished": "Finalizado",
@@ -2686,9 +2686,9 @@
   },
   "tags": {
     "active": "Activo",
-     "finished": "Finalizado",
-     "pending": "Pendiente",  
-     "upcoming": "Próximo",
+    "finished": "Finalizado",
+    "pending": "Pendiente",
+    "upcoming": "Próximo",
     "draft": "Borrador",
     "completed": "Completado",
     "archived": "Archivado",
@@ -3054,5 +3054,53 @@
     "pendingDescription": "Tienes una invitación pendiente. ¿Quieres aceptarla ahora?",
     "notNow": "Ahora no",
     "loginRequired": "Esta invitación requiere que inicies sesión o crees una cuenta antes de participar."
+  },
+  "Participants": {
+    "title": {
+      "participants": "Participantes"
+    },
+    "actions": {
+      "invite_participant": "Invitar participante",
+      "send_message": "Enviar mensaje",
+      "reinvite": "Reinvitar",
+      "remove_participant": "Eliminar participante",
+      "cancel_invitation": "Cancelar invitación",
+      "select_participant": "Seleccionar participante",
+      "cancel": "Cancelar",
+      "send": "Enviar",
+      "viewSessions": "Ver sesiones"
+    },
+    "invite": {
+      "byEmail": "Invitar por correo electrónico",
+      "generateLink": "Generar enlace de invitación",
+      "description": "Crea un enlace de invitación para compartir. Cualquier persona con este enlace puede unirse al estudio como participante."
+    },
+    "subtitles": {
+      "manage_participants": "Gestiona los participantes invitados a este estudio."
+    },
+    "headers": {
+      "email": "Correo electrónico",
+      "sessions": "Sesiones",
+      "status": "Estado",
+      "acceptedDate": "Fecha de aceptación",
+      "actions": "Acciones",
+      "title": "Asunto",
+      "content": "Mensaje"
+    },
+    "messages": {
+      "message_title_hint": "Introduce un título para tu mensaje",
+      "message_content_hint": "Introduce el contenido de tu mensaje",
+      "no_users": "No se encontraron usuarios",
+      "cancel_invitation_confirmation": "¿Estás seguro de que deseas cancelar la invitación de {email}?",
+      "remove_participant_confirmation": "Are you sure you want to remove {email} from this test? This action cannot be undone."
+    },
+    "filter": {
+      "search": "Buscar participantes",
+      "filterByStatus": "Filtrar por estado"
+    },
+    "status": {
+      "pending": "Pendiente",
+      "accepted": "Aceptado"
+    }
   }
 }
