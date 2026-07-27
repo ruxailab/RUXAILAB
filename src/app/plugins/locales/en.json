@@ -3145,7 +3145,8 @@
     },
     "invite": {
       "byEmail": "Invite by email",
-      "generateLink": "Generate invitation link"
+      "generateLink": "Generate invitation link",
+      "description": "Create a shareable invitation link. Anyone with this link can join the study as participant"
     },
     "subtitles": {
       "manage_participants": "Manage the participants invited to this study."

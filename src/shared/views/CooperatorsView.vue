@@ -116,6 +116,7 @@
       :study-id="test?.id"
       :study-title="test?.testTitle"
       :required-login="true"
+      :membership-type="'cooperator'"
     />
 
     <!-- Confirmation Dialog -->

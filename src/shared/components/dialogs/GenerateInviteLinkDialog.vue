@@ -13,10 +13,15 @@
 
       <v-card-text class="pt-5">
         <v-alert type="info" variant="tonal" class="mb-5">
-          {{ t('cooperators.inviteLink.description') }}
+          {{
+            preDefinedRole
+              ? t('Participants.invite.description')
+              : t('cooperators.inviteLink.description')
+          }}
         </v-alert>
 
         <v-select
+          v-if="!preDefinedRole"
           v-model="selectedRole"
           :items="roleOptions"
           :label="t('cooperators.invite.role')"
@@ -88,6 +93,14 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  preDefinedRole: {
+    type: Array,
+    default: null,
+  },
+  membershipType: {
+    type: String,
+    required: true,
+  },
 })
 
 const emit = defineEmits(['update:show', 'generated'])
@@ -107,6 +120,7 @@ const generateLink = async () => {
       requiredLogin: props.requiredLogin,
       toEmail: null, // No email provided for public invites
       isPublic: true,
+      membershipType: props.membershipType,
     })
 
     inviteLink.value = result.inviteLink
@@ -132,9 +146,16 @@ watch(
   (opened) => {
     if (!opened) {
       inviteLink.value = ''
-      selectedRole.value = 1
+      selectedRole.value = props.preDefinedRole ?? 1
       loading.value = false
     }
+  },
+)
+
+watch(
+  () => props.preDefinedRole,
+  (predefinedRole) => {
+    if (predefinedRole) selectedRole.value = predefinedRole
   },
 )
 </script>

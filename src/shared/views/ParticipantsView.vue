@@ -107,6 +107,8 @@
       :study-id="test?.id"
       :study-title="test?.testTitle"
       :required-login="true"
+      :pre-defined-role="preDefinedRole"
+      :membership-type="'participant'"
     />
 
     <!-- Confirmation Dialog -->
