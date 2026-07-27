@@ -1,7 +1,7 @@
 import { fbFunctions } from '@/app/plugins/firebase'
 import { connectFunctionsEmulator, httpsCallable } from 'firebase/functions'
 
-const USE_FUNCTIONS_EMULATOR = true
+const USE_FUNCTIONS_EMULATOR = false
 
 if (USE_FUNCTIONS_EMULATOR) {
   connectFunctionsEmulator(fbFunctions, '127.0.0.1', 5002)

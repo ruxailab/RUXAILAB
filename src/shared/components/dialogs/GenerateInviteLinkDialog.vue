@@ -72,7 +72,7 @@ import { useI18n } from 'vue-i18n'
 import InviteController from '@/shared/controllers/InviteController'
 import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
 import { showSuccess } from '@/shared/utils/toast'
-import { STUDY_ROLE, STUDY_ROLE_LABEL } from '@/shared/utils/studyAccessPolicy'
+import { STUDY_ROLE } from '@/shared/utils/studyAccessPolicy'
 
 const { t } = useI18n()
 const { roleOptions } = useCooperatorUtils()
