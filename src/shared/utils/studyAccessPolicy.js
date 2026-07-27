@@ -104,6 +104,13 @@ const HEURISTIC_POLICY = Object.freeze({
   [R.GUEST]: Object.freeze([C.DASHBOARD_VIEW, C.ANSWERS_VIEW]),
 })
 
+export const MEMBERSHIP_STATUS = Object.freeze({
+  PENDING: 'pending',
+  ACCEPTED: 'accepted',
+  REJECTED: 'rejected',
+  EXPIRED: 'expired',
+})
+
 const STUDY_POLICIES = Object.freeze({
   [STUDY_TYPES.USER]: USER_POLICY,
   [STUDY_TYPES.HEURISTIC]: HEURISTIC_POLICY,

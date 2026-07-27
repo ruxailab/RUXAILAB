@@ -3083,6 +3083,8 @@
       "sessions": "Sesiones",
       "status": "Estado",
       "acceptedDate": "Fecha de aceptación",
+      "rejectedDate": "Fecha de rechazo",
+      "expirationDate": "Fecha de expiración",
       "actions": "Acciones",
       "title": "Asunto",
       "content": "Mensaje"
@@ -3100,7 +3102,9 @@
     },
     "status": {
       "pending": "Pendiente",
-      "accepted": "Aceptado"
+      "accepted": "Aceptado",
+      "expired": "Expirado",
+      "rejected": "Rechazado"
     }
   }
 }

@@ -507,6 +507,7 @@ const goToNotificationRedirect = async (notification) => {
         notification,
         user: user.value,
         membershipType: invite.value.membershipType,
+        studyId: invite.value.studyId,
       })
 
       return

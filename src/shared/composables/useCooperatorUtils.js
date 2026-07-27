@@ -5,6 +5,10 @@ import { formatInitials } from '@/shared/utils/formatUtils'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import { STUDY_ROLE } from '@/shared/utils/studyAccessPolicy'
 
+import i18n from '@/app/plugins/i18n'
+
+const t = i18n.global.t
+
 export const normalizeCooperatorInviteEntry = (entry, registeredUsers = []) => {
   if (!entry) {
     return { email: '', userDocId: null }
@@ -135,9 +139,22 @@ export function useCooperatorUtils() {
 
   // Status filter options
   const statusFilterOptions = computed(() => [
-    { title: 'Invited', value: 'invited' },
-    { title: 'Accepted', value: 'accepted' },
-    { title: 'Pending', value: 'pending' },
+    {
+      title: t('Participants.status.pending'),
+      value: 'pending',
+    },
+    {
+      title: t('Participants.status.accepted'),
+      value: 'accepted',
+    },
+    {
+      title: t('Participants.status.rejected'),
+      value: 'rejected',
+    },
+    {
+      title: t('Participants.status.expired'),
+      value: 'expired',
+    },
   ])
 
   // Utility functions
