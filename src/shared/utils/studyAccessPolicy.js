@@ -31,6 +31,7 @@ export const STUDY_CAPABILITY = Object.freeze({
   STORAGE_ACCESS: 'storage.access',
   FINAL_REPORT_MANAGE: 'finalReport.manage',
   EVALUATOR_INFO_MANAGE: 'evaluatorInfo.manage',
+  SESSIONS_MANAGE: 'sessions.view',
 })
 
 const C = STUDY_CAPABILITY

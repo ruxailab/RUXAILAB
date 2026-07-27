@@ -560,7 +560,8 @@
       "studiesCount": "Studies Count",
       "mediaSize": "Media Size",
       "toggleMiniMode": "Toggle mini mode",
-      "Participants": "Participants"
+      "Participants": "Participants",
+      "Sessions": "Sessions"
     },
     "heuristic": "Usability Heuristic Evaluation"
   },
@@ -3178,6 +3179,102 @@
       "accepted": "Accepted",
       "expired": "Expired",
       "rejected": "Rejected"
+    }
+  },
+  "Sessions": {
+    "title": {
+      "sessions": "Sessions",
+      "createSession": "Create Session",
+      "placeholder": "Enter a title (optional). A default title will be generated if left empty.",
+      "title": "Title"
+    },
+    "description": {
+      "createSession": "Configure staff, participants and schedule for this session."
+    },
+    "actions": {
+      "createSession": "Create Session",
+      "cancel": "Cancel",
+      "deleteSession": "Delete session"
+    },
+    "confirm": {
+      "deleteTitle": "Delete session",
+      "deleteMessage": "Are you sure you want to delete this session?"
+    },
+    "headers": {
+      "title": "Title",
+      "start": "Start",
+      "actions": "Actions",
+      "staff": "Staff",
+      "participants": "Participants"
+    },
+    "filter": {
+      "search": "Search by title",
+      "startsAfter": "Starts after",
+      "startsBefore": "Starts before"
+    },
+    "empty": {
+      "title": "No sessions found",
+      "description": "Create a session or adjust your filters."
+    },
+    "staff": {
+      "title": "Staff",
+      "description": "Select cooperators that will participate in this session.",
+      "selectPlaceholder": "Select cooperator",
+      "added": "Added staff",
+      "roles": {
+        "facilitator": "Facilitator",
+        "observer": "Observer"
+      },
+      "noSelected": "No staff selected"
+    },
+    "participants": {
+      "title": "Participants",
+      "description": "Select existing participants or add new emails.",
+      "selectPlaceholder": "Select participant",
+      "emailPlaceholder": "Participant email",
+      "added": "Added participants",
+      "noSelected": "No participants selected"
+    },
+    "schedule": {
+      "title": "Schedule",
+      "description": "Choose when this session will happen.",
+      "datePlaceholder": "Select date",
+      "timePlaceholder": "Select time",
+      "dateRequired": "Date is required",
+      "timeRequired": "Time is required",
+      "noDateSelected": "No date/time selected"
+    },
+    "message": {
+      "title": "Message",
+      "description": "Add a custom message for this session.",
+      "placeholder": "Session message",
+      "required": "Message is required",
+      "maxLength": "Maximum 500 characters"
+    },
+    "preview": {
+      "title": "Session Preview",
+      "details": "Session details",
+      "staff": "Staff:",
+      "participants": "Participants:",
+      "schedule": "Schedule:",
+      "message": "Message:",
+      "noMessage": "No message yet"
+    },
+    "info": {
+      "title": "Session information",
+      "description": "Staff members can participate as facilitators or observers. All participants will have USER role."
+    },
+    "validation": {
+      "invalidDate": "Invalid date/time"
+    },
+    "success": {
+      "created": "Session created successfully",
+      "deleted": "Session deleted successfully"
+    },
+    "error": {
+      "createFailed": "Failed to create session",
+      "participantAlreadyAdded": "Participant already added",
+      "errorDelete": "Error deleting session"
     }
   }
 }

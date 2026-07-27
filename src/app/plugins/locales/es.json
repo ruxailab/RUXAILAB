@@ -557,7 +557,8 @@
       "studiesCount": "Recuento de Estudios",
       "mediaSize": "Tamaño de Medios",
       "toggleMiniMode": "Alternar modo mini",
-      "Participants": "Participantes"
+      "Participants": "Participantes",
+      "Sessions": "Sesiones"
     },
     "heuristic": "Evaluación heurística de usabilidad"
   },
@@ -3105,6 +3106,102 @@
       "accepted": "Aceptado",
       "expired": "Expirado",
       "rejected": "Rechazado"
+    }
+  },
+  "Sessions": {
+    "title": {
+      "sessions": "Sesiones",
+      "createSession": "Crear sesión",
+      "placeholder": "Ingrese un título (opcional). Se generará un título predeterminado si se deja vacío.",
+      "title": "Título"
+    },
+    "description": {
+      "createSession": "Configure el equipo, los participantes y el horario de esta sesión."
+    },
+    "actions": {
+      "createSession": "Crear sesión",
+      "cancel": "Cancelar",
+      "deleteSession": "Eliminar sesión"
+    },
+    "confirm": {
+      "deleteTitle": "Eliminar sesión",
+      "deleteMessage": "¿Está seguro de que desea eliminar esta sesión?"
+    },
+    "headers": {
+      "title": "Título",
+      "start": "Inicio",
+      "actions": "Acciones",
+      "staff": "Personal",
+      "participants": "Participantes"
+    },
+    "filter": {
+      "search": "Buscar por título",
+      "startsAfter": "Comienza después de",
+      "startsBefore": "Comienza antes de"
+    },
+    "empty": {
+      "title": "No se encontraron sesiones",
+      "description": "Cree una sesión o ajuste sus filtros."
+    },
+    "staff": {
+      "title": "Equipo",
+      "description": "Seleccione los cooperadores que participarán en esta sesión.",
+      "selectPlaceholder": "Seleccionar cooperador",
+      "added": "Equipo agregado",
+      "roles": {
+        "facilitator": "Facilitador",
+        "observer": "Observador"
+      },
+      "noSelected": "No hay equipo seleccionado"
+    },
+    "participants": {
+      "title": "Participantes",
+      "description": "Seleccione participantes existentes o agregue nuevos correos.",
+      "selectPlaceholder": "Seleccionar participante",
+      "emailPlaceholder": "Correo del participante",
+      "added": "Participantes agregados",
+      "noSelected": "No hay participantes seleccionados"
+    },
+    "schedule": {
+      "title": "Horario",
+      "description": "Seleccione cuándo ocurrirá esta sesión.",
+      "datePlaceholder": "Seleccionar fecha",
+      "timePlaceholder": "Seleccionar hora",
+      "dateRequired": "La fecha es obligatoria",
+      "timeRequired": "La hora es obligatoria",
+      "noDateSelected": "No se seleccionó fecha/hora"
+    },
+    "message": {
+      "title": "Mensaje",
+      "description": "Agregue un mensaje personalizado para esta sesión.",
+      "placeholder": "Mensaje de la sesión",
+      "required": "El mensaje es obligatorio",
+      "maxLength": "Máximo 500 caracteres"
+    },
+    "preview": {
+      "title": "Vista previa de la sesión",
+      "details": "Detalles de la sesión",
+      "staff": "Equipo:",
+      "participants": "Participantes:",
+      "schedule": "Horario:",
+      "message": "Mensaje:",
+      "noMessage": "Sin mensaje todavía"
+    },
+    "info": {
+      "title": "Información de la sesión",
+      "description": "Los miembros del equipo pueden participar como facilitadores u observadores. Todos los participantes tendrán el rol USER."
+    },
+    "validation": {
+      "invalidDate": "Fecha/hora inválida"
+    },
+    "success": {
+      "created": "Sesión creada correctamente",
+      "deleted": "Sesión eliminada correctamente"
+    },
+    "error": {
+      "createFailed": "Error al crear la sesión",
+      "participantAlreadyAdded": "El participante ya fue agregado",
+      "errorDelete": "Error al eliminar la sesión"
     }
   }
 }
