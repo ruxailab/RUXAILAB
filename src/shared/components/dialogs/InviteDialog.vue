@@ -223,6 +223,14 @@ const selectedRole = ref(null)
 const inviteMessage = ref('')
 const emailInput = ref('')
 
+const getInitialRole = () => {
+  if (props.preDefinedRole != null) {
+    return props.preDefinedRole
+  }
+
+  return props.roleOptions?.[0]?.value ?? null
+}
+
 watch(
   () => props.roleOptions,
   (roles) => {
@@ -342,14 +350,6 @@ const resetForm = () => {
   inviteMessage.value = ''
   selectedRole.value = getInitialRole()
   emailInput.value = ''
-}
-
-const getInitialRole = () => {
-  if (props.preDefinedRole != null) {
-    return props.preDefinedRole
-  }
-
-  return props.roleOptions?.[0]?.value ?? null
 }
 
 // Watch for dialog visibility to reset form
