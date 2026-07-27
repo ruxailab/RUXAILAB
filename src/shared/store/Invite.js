@@ -71,11 +71,8 @@ const buildInvitationNotification = ({ study, guest, inviteToken, router }) => {
     redirectsTo: path,
     type: 'Collaboration',
     accessLevel: guest.accessLevel,
-    titleTemplate: t('HeuristicsCooperators.actions.send_invitation'),
-    descriptionTemplate: t('HeuristicsCooperators.messages.invite_message'),
-    descriptionParams: {
-      testTitle: study.testTitle || 'Test',
-    },
+    title: t('invite.pendingSubtitle'),
+    description: `${t('HeuristicsCooperators.messages.invite_message')} ${study.testTitle}`,
     inviteToken,
     read: false,
   })
@@ -469,13 +466,8 @@ export default {
           redirectsTo,
           type: 'Collaboration',
           accessLevel: invite.accessLevel,
-          titleTemplate: t('HeuristicsCooperators.actions.send_invitation'),
-          descriptionTemplate: t(
-            'HeuristicsCooperators.messages.invite_message',
-          ),
-          descriptionParams: {
-            testTitle: study.testTitle || 'Study',
-          },
+          title: t('invite.pendingSubtitle'),
+          description: `${t('HeuristicsCooperators.messages.invite_message')} ${study.testTitle}`,
           inviteToken: invite.token,
         })
 

@@ -1303,7 +1303,7 @@
       "change_role_title": "Change Role",
       "message_title_hint": "Type a title for your message",
       "message_content_hint": "Type the content of your message",
-      "invite_message": "You have been invited to collaborate on '{testTitle}'",
+      "invite_message": "You have been invited to collaborate on",
       "message_sent_success": "Message sent successfully",
       "message_sent_error": "Failed to send message",
       "user_not_registered": "This user has not accepted the invitation yet or is not registered."

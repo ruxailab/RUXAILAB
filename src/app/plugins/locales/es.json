@@ -1222,7 +1222,7 @@
       "change_role_title": "Cambiar rol",
       "message_title_hint": "Escribe un título para tu mensaje",
       "message_content_hint": "Escribe el contenido de tu mensaje",
-      "invite_message": "Has sido invitado a colaborar en '{testTitle}'",
+      "invite_message": "Has sido invitado a colaborar en",
       "message_sent_success": "Mensaje enviado con éxito",
       "message_sent_error": "Error al enviar el mensaje",
       "user_not_registered": "Este usuario aún no ha aceptado la invitación o no está registrado."
