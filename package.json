@@ -53,7 +53,7 @@
     "uid-generator": "^2.0.0",
     "vue": "^3.5.40",
     "vue-chartjs": "^5.3.4",
-    "vue-i18n": "^11.4.7",
+    "vue-i18n": "^11.4.8",
     "vue-loader": "^17.4.2",
     "vue-router": "^4.6.4",
     "vue-toastification": "^2.0.0-rc.5",
