@@ -221,6 +221,7 @@ import {
   STUDY_CAPABILITY,
 } from '@/shared/utils/studyAccessPolicy'
 import { manageStudyMembership } from '@/shared/services/studyMembershipService'
+import { STUDY_ROLE } from '../utils/studyAccessPolicy'
 
 const router = useRouter()
 
@@ -386,7 +387,9 @@ const cooperatorsEdit = computed(() =>
 const loading = computed(() => store.getters.loading)
 const supportedRoleOptions = computed(() => getSupportedRoleOptions(test.value))
 const assignableRoleOptions = computed(() =>
-  getAssignableRoleOptions(test.value, userAuth.value),
+  getAssignableRoleOptions(test.value, userAuth.value).filter(
+    ({ value }) => value !== STUDY_ROLE.USER && value !== STUDY_ROLE.EVALUATOR,
+  ),
 )
 const canManageCooperators = computed(() =>
   hasStudyCapability(

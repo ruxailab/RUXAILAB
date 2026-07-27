@@ -23,7 +23,7 @@
         <v-select
           v-if="!preDefinedRole"
           v-model="selectedRole"
-          :items="roleOptions"
+          :items="visibleRoleOptions"
           :label="t('cooperators.invite.role')"
           variant="outlined"
           density="comfortable"
@@ -66,15 +66,28 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import InviteController from '@/shared/controllers/InviteController'
 import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
 import { showSuccess } from '@/shared/utils/toast'
+import { STUDY_ROLE, STUDY_ROLE_LABEL } from '@/shared/utils/studyAccessPolicy'
 
 const { t } = useI18n()
 const { roleOptions } = useCooperatorUtils()
+
+const COOPERATOR_HIDDEN_ROLES = [STUDY_ROLE.USER, STUDY_ROLE.EVALUATOR]
+
+const visibleRoleOptions = computed(() => {
+  if (props.membershipType !== 'cooperator') {
+    return roleOptions.value
+  }
+
+  return roleOptions.value.filter(
+    ({ value }) => !COOPERATOR_HIDDEN_ROLES.includes(value),
+  )
+})
 
 const props = defineProps({
   show: {
@@ -94,7 +107,7 @@ const props = defineProps({
     required: true,
   },
   preDefinedRole: {
-    type: Array,
+    type: Number,
     default: null,
   },
   membershipType: {
@@ -105,9 +118,20 @@ const props = defineProps({
 
 const emit = defineEmits(['update:show', 'generated'])
 
-const selectedRole = ref(1)
+const selectedRole = ref(null)
 const inviteLink = ref('')
 const loading = ref(false)
+
+const getInitialRole = () => {
+  if (
+    props.preDefinedRole !== null &&
+    visibleRoleOptions.value.some(({ value }) => value === props.preDefinedRole)
+  ) {
+    return props.preDefinedRole
+  }
+
+  return visibleRoleOptions.value[0]?.value ?? null
+}
 
 const generateLink = async () => {
   try {
@@ -144,9 +168,9 @@ const close = () => {
 watch(
   () => props.show,
   (opened) => {
-    if (!opened) {
+    if (opened) {
       inviteLink.value = ''
-      selectedRole.value = props.preDefinedRole ?? 1
+      selectedRole.value = getInitialRole()
       loading.value = false
     }
   },
@@ -155,7 +179,9 @@ watch(
 watch(
   () => props.preDefinedRole,
   (predefinedRole) => {
-    if (predefinedRole) selectedRole.value = predefinedRole
+    if (predefinedRole !== null && predefinedRole !== undefined) {
+      selectedRole.value = predefinedRole
+    }
   },
 )
 </script>
