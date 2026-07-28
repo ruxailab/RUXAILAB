@@ -1,8 +1,8 @@
 <template>
   <ConfirmDialog
     :show="modelValue"
-    :title="$t('invite.pendingTitle')"
-    :subtitle="$t('invite.pendingSubtitle')"
+    :title="title"
+    :subtitle="subtitle"
     :message="message || $t('acceptInvitation.message')"
     :confirm-text="submitLabel || $t('acceptInvitation.accept')"
     :cancel-text="cancelLabel || $t('acceptInvitation.reject')"
@@ -29,6 +29,10 @@ defineProps({
     default: false,
   },
   title: {
+    type: String,
+    default: '',
+  },
+  subtitle: {
     type: String,
     default: '',
   },

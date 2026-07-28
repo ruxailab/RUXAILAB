@@ -3128,20 +3128,52 @@
     "notNow": "Not now",
     "loginRequired": "This invitation requires you to sign in or create an account before participating."
   },
-  "errors": {
-    "globalError": "An error occurred. Please try again.",
-    "emailIsRequired": "Email is required.",
-    "passwordRequired": "Password is required.",
-    "invalidEmail": "Please enter a valid email address.",
-    "incorrectCredential": "Incorrect email or password, or account does not exist.",
-    "boundary": {
-      "title": "Something went wrong",
-      "message": "An unexpected error occurred while loading this page. Your data has been preserved.",
-      "retry": "Retry",
-      "goToDashboard": "Go to Dashboard",
-      "showDetails": "Show error details",
-      "copyDetails": "Copy error details",
-      "copied": "Copied!"
+  "Participants": {
+    "title": {
+      "participants": "Participants"
+    },
+    "actions": {
+      "invite_participant": "Invite participant",
+      "send_message": "Send message",
+      "reinvite": "Reinvite",
+      "remove_participant": "Remove participant",
+      "cancel_invitation": "Cancel invitation",
+      "select_participant": "Select participant",
+      "cancel": "Cancel",
+      "send": "Send",
+      "viewSessions": "View sessions"
+    },
+    "invite": {
+      "byEmail": "Invite by email",
+      "generateLink": "Generate invitation link",
+      "description": "Create a shareable invitation link. Anyone with this link can join the study as participant"
+    },
+    "subtitles": {
+      "manage_participants": "Manage the participants invited to this study."
+    },
+    "headers": {
+      "email": "Email",
+      "sessions": "Sessions",
+      "status": "Status",
+      "acceptedDate": "Accepted Date",
+      "actions": "Actions",
+      "title": "Subject",
+      "content": "Message"
+    },
+    "messages": {
+      "message_title_hint": "Enter a title for your message",
+      "message_content_hint": "Enter the content of your message",
+      "no_users": "No users found",
+      "cancel_invitation_confirmation": "Are you sure you want to cancel {email}'s invitation?",
+      "remove_participant_confirmation": "Are you sure you want to remove {email} from this test?"
+    },
+    "filter": {
+      "search": "Search participants",
+      "filterByStatus": "Filter by status"
+    },
+    "status": {
+      "pending": "Pending",
+      "accepted": "Accepted"
     }
   }
 }

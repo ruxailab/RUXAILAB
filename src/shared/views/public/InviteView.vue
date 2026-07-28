@@ -175,6 +175,7 @@ const acceptInvite = async () => {
       token: token.value,
       user: user.value,
       studyId: invite.value.studyId,
+      membershipType: invite.value.membershipType,
     })
 
     router.replace(`/testview/${result.study.id}`)

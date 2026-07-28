@@ -68,7 +68,6 @@
 </template>
 
 <script setup>
-import { useI18n } from 'vue-i18n'
 import { METHOD_DEFINITIONS } from '@/shared/constants/methodDefinitions.js'
 
 const props = defineProps({
@@ -79,7 +78,6 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['go-to-redirect', 'mark-as-read'])
-const { t } = useI18n()
 
 const onClick = () => emit('go-to-redirect', props.notification)
 
