@@ -3269,12 +3269,34 @@
     },
     "success": {
       "created": "Session created successfully",
-      "deleted": "Session deleted successfully"
+      "deleted": "Session deleted successfully",
+      "messageSent": "Message sent successfully."
     },
     "error": {
       "createFailed": "Failed to create session",
       "participantAlreadyAdded": "Participant already added",
-      "errorDelete": "Error deleting session"
+      "errorDelete": "Error deleting session",
+      "sendMessageFailed": "Unable to send the message."
+    },
+    "send": {
+      "title": "Send message",
+      "description": "Send a message to members of this session.",
+      "recipient": "Recipients",
+      "recipientDescription": "Choose who should receive this message.",
+      "staff": "Staff only",
+      "participants": "Participants only",
+      "all": "Staff and participants",
+      "specific": "Specific email",
+      "email": "Recipient email",
+      "emailRequired": "Please select an email.",
+      "message": "Message",
+      "messageDescription": "Write the message you want to send.",
+      "messageRequired": "Message is required.",
+      "placeholder": "Type your message...",
+      "preview": "Message preview",
+      "noMessage": "No message.",
+      "info": "The selected recipients will receive this message by email.",
+      "send": "Send message"
     }
   }
 }

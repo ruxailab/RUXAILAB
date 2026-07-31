@@ -56,21 +56,21 @@
                     {{ $t('Sessions.staff.description') }}
                   </p>
 
-                  <v-row class="ma-0">
-                    <v-autocomplete
-                      v-model="selectedStaffMember"
-                      :items="availableStaff"
-                      item-title="email"
-                      item-value="userDocId"
-                      return-object
-                      variant="outlined"
-                      density="comfortable"
-                      prepend-inner-icon="mdi-account-search"
-                      :placeholder="$t('Sessions.staff.selectPlaceholder')"
-                      color="primary"
-                      hide-details
-                    />
+                  <v-autocomplete
+                    v-model="selectedStaffMember"
+                    :items="availableStaff"
+                    item-title="email"
+                    item-value="userDocId"
+                    return-object
+                    variant="outlined"
+                    density="comfortable"
+                    prepend-inner-icon="mdi-account-search"
+                    :placeholder="$t('Sessions.staff.selectPlaceholder')"
+                    color="primary"
+                    hide-details
+                  />
 
+                  <v-row class="ma-0 mt-3 align-center">
                     <v-select
                       v-model="selectedStaffRole"
                       :items="staffRoleOptions"
@@ -78,8 +78,6 @@
                       item-value="value"
                       variant="outlined"
                       density="comfortable"
-                      class="ml-2"
-                      style="max-width: 160px"
                       hide-details
                     />
 
@@ -91,7 +89,7 @@
                       :disabled="!selectedStaffMember"
                       @click="addStaff"
                     >
-                      <v-icon> mdi-plus </v-icon>
+                      <v-icon>mdi-plus</v-icon>
                     </v-btn>
                   </v-row>
 
@@ -282,7 +280,7 @@
                   </v-row>
                 </div>
                 <!-- MESSAGE -->
-                <div class="field-group mb-6">
+                <div class="field-group">
                   <div class="field-label">
                     <v-icon class="mr-2" size="20">
                       mdi-message-text-outline
@@ -457,13 +455,14 @@
 
         <!-- ACTIONS -->
 
-        <v-divider class="my-6" />
+        <v-divider class="my-4" />
 
         <div class="d-flex justify-end gap-3">
           <v-btn
             variant="outlined"
             color="grey-darken-1"
             size="large"
+            class="mr-2"
             @click="$emit('update:dialog', false)"
           >
             {{ $t('Sessions.actions.cancel') }}
@@ -791,7 +790,7 @@ watch(
 }
 
 .bg-gradient-primary {
-  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  background: linear-gradient(135deg, #00213f 0%, #074082 100%);
 }
 
 .form-section {

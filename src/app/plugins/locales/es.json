@@ -3196,12 +3196,34 @@
     },
     "success": {
       "created": "Sesión creada correctamente",
-      "deleted": "Sesión eliminada correctamente"
+      "deleted": "Sesión eliminada correctamente",
+      "messageSent": "Mensaje enviado correctamente."
     },
     "error": {
       "createFailed": "Error al crear la sesión",
       "participantAlreadyAdded": "El participante ya fue agregado",
-      "errorDelete": "Error al eliminar la sesión"
+      "errorDelete": "Error al eliminar la sesión",
+      "sendMessageFailed": "No fue posible enviar el mensaje."
+    },
+    "send": {
+      "title": "Enviar mensaje",
+      "description": "Envía un mensaje a los miembros de esta sesión.",
+      "recipient": "Destinatarios",
+      "recipientDescription": "Seleccione quién debe recibir este mensaje.",
+      "staff": "Solo staff",
+      "participants": "Solo participantes",
+      "all": "Staff y participantes",
+      "specific": "Correo electrónico específico",
+      "email": "Correo electrónico",
+      "emailRequired": "Seleccione un correo electrónico.",
+      "message": "Mensaje",
+      "messageDescription": "Escriba el mensaje que desea enviar.",
+      "messageRequired": "El mensaje es obligatorio.",
+      "placeholder": "Escriba su mensaje...",
+      "preview": "Vista previa del mensaje",
+      "noMessage": "Sin mensaje.",
+      "info": "Los destinatarios seleccionados recibirán este mensaje por correo electrónico.",
+      "send": "Enviar mensaje"
     }
   }
 }

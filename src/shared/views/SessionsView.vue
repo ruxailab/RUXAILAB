@@ -15,6 +15,13 @@
       @update:dialog="createSessionDialog = $event"
     />
 
+    <SendSessionMessageDialog
+      :dialog="showSendMessageDialog"
+      :session="sessionToMessage"
+      :study="test"
+      @update:dialog="showSendMessageDialog = $event"
+    />
+
     <ConfirmDialog
       :show="showDeleteDialog"
       :title="$t('Sessions.confirm.deleteTitle')"
@@ -136,6 +143,11 @@
 
             <v-list>
               <v-list-item
+                prepend-icon="mdi-email-outline"
+                :title="$t('Sessions.send.title')"
+                @click="openSendMessageDialog(item)"
+              />
+              <v-list-item
                 prepend-icon="mdi-delete-outline"
                 :title="$t('Sessions.actions.deleteSession')"
                 @click="deleteSession(item)"
@@ -165,6 +177,7 @@ import CreateSessionDialog from '@/shared/components/dialogs/CreateSessionDialog
 import { matchesSearch } from '@/shared/utils/searchUtils'
 import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 import { showError, showSuccess } from '@/shared/utils/toast'
+import SendSessionMessageDialog from '@/shared/components/dialogs/SendSessionMessageDialog.vue'
 
 const { t } = useI18n()
 
@@ -187,6 +200,14 @@ const filters = ref({
   startAfter: null,
   startBefore: null,
 })
+
+const showSendMessageDialog = ref(false)
+const sessionToMessage = ref(null)
+
+const openSendMessageDialog = (session) => {
+  sessionToMessage.value = session
+  showSendMessageDialog.value = true
+}
 
 const headers = computed(() => [
   {
