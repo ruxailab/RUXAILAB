@@ -415,7 +415,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import Intro from '@/shared/components/introduction_cards/IntroReports.vue'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import {
@@ -433,10 +433,9 @@ import { showSuccess } from '../utils/toast'
 const store = useStore()
 const { t } = useI18n()
 const router = useRouter()
+const route = useRoute()
 
-defineProps({ id: { type: String, default: '' } })
-const emit = defineEmits(['goToCoops'])
-
+const props = defineProps({ id: { type: String, default: '' } })
 const dialog = ref(false)
 const loadingBtn = ref(false)
 const report = ref(null)
@@ -451,6 +450,8 @@ const loading = computed(() => store.getters.loading)
 const showIntroView = computed(() => {
   return reports.value.length > 0
 })
+
+const participants = computed(() => store.getters.participants || [])
 
 const allHeaders = computed(() => [
   { title: t('HeuristicsReport.headers.evaluator'), key: 'evaluator' },
@@ -488,8 +489,14 @@ const checkIfIsSubmitted = (status) =>
 const getCooperatorEmail = (userDocId) => {
   if (userDocId === user.value.id) return 'You'
   const cooperators = test.value.cooperators || []
-  const found = cooperators.find((c) => c?.userDocId === userDocId)
-  return found?.email || 'Unknown'
+  const staffFound = cooperators.find((c) => c?.userDocId === userDocId)
+  if (staffFound) return staffFound?.email || 'Unknown'
+
+  const participantFound = participants.value?.find(
+    (p) => p?.userDocId == userDocId,
+  )
+  if (participantFound) return participantFound?.email || 'Unknown'
+  return 'Unknown'
 }
 
 const formatDate = (timestamp) => {
@@ -670,6 +677,9 @@ onMounted(async () => {
   store.commit('setLoading', true)
   try {
     await store.dispatch('getCurrentTestAnswerDoc')
+
+    const studyId = props.id || route.params.id
+    await store.dispatch('getStudyParticipants', { studyId })
   } catch {
     // console.error('Error:', error)
   } finally {

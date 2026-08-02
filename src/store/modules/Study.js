@@ -22,6 +22,7 @@ export default {
     studyMethod: null,
     studyType: null,
     selectedTemplate: null,
+    participants: [],
   },
   getters: {
     tests(state) {
@@ -38,6 +39,9 @@ export default {
     },
     coops(state) {
       return state.Test.coop
+    },
+    participants(state) {
+      return state.participants
     },
   },
   mutations: {
@@ -107,6 +111,9 @@ export default {
       state.testStructure = null
       state.answersId = null
       state.module = 'test'
+    },
+    SET_PARTICIPANTS(state, payload) {
+      state.participants = payload
     },
   },
   actions: {
@@ -257,6 +264,28 @@ export default {
           errorCode: 'studyError',
           message: err,
         })
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+
+    async getStudyParticipants({ commit }, { studyId }) {
+      commit('setLoading', true)
+      try {
+        const participants = await studyController.getStudyParticipants({
+          studyId,
+        })
+
+        commit('SET_PARTICIPANTS', participants)
+
+        return participants
+      } catch (err) {
+        commit('setError', {
+          errorCode: 'getParticipantsError',
+          message: err,
+        })
+
+        throw err
       } finally {
         commit('setLoading', false)
       }

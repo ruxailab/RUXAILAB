@@ -99,6 +99,8 @@
     <!-- Dialog -->
     <AcceptInvitationDialog
       v-model="dialogVisible"
+      :title="$t('invite.pendingTitle')"
+      :subtitle="`${$t('invite.pendingSubtitle')}: ${invite?.studyTitle ?? ''}`"
       @cancel="onReject"
       @submit="onAccept"
     />
@@ -117,6 +119,8 @@ const router = useRouter()
 
 const menuOpen = ref(false)
 const activeIndex = ref(-1)
+
+const invite = ref(null)
 
 const user = computed(() => store.getters.user)
 
@@ -153,6 +157,11 @@ const showAcceptDialog = () => {
 /* actions */
 const goToNotificationRedirect = async (notification) => {
   let redirectTo = notification.redirectsTo
+  const result = await store.dispatch('loadInvite', {
+    token: notification.inviteToken,
+  })
+
+  invite.value = result.invite
 
   if (notification.type === 'Collaboration') {
     const accepted = await showAcceptDialog()
@@ -161,6 +170,7 @@ const goToNotificationRedirect = async (notification) => {
       await store.dispatch('rejectInvite', {
         notification,
         user: user.value,
+        membershipType: invite.value.membershipType,
       })
 
       return
@@ -170,28 +180,15 @@ const goToNotificationRedirect = async (notification) => {
       return
     }
 
-    try {
-      const token =
-        localStorage.getItem('pendingInviteToken') || notification.inviteToken
+    const token = notification.inviteToken
 
-      const result = await store.dispatch('acceptInvite', {
-        token,
-        user: user.value,
-        studyId: notification.testId,
-        notification,
-      })
-
-      const destination = getAcceptedInvitationDestination({
-        study: result.study,
-        user: user.value,
-      })
-
-      if (destination) {
-        redirectTo = router.resolve(destination).href
-      }
-    } catch {
-      return
-    }
+    await store.dispatch('acceptInvite', {
+      token,
+      user: user.value,
+      studyId: notification.testId,
+      notification,
+      membershipType: invite.value.membershipType,
+    })
   }
 
   await store.dispatch('markNotificationAsRead', {
