@@ -70,6 +70,16 @@
         </span>
       </div>
       <v-spacer />
+      <SessionTimer
+        v-if="currentTopic && timerFallbackMs > 0"
+        :timer="timerForTopic"
+        :fallback-ms="timerFallbackMs"
+        :is-facilitator="isFacilitator"
+        class="me-1"
+        @play="onTimerPlay"
+        @pause="onTimerPause"
+        @reset="onTimerReset"
+      />
       <v-chip
         :color="roleColor"
         variant="tonal"
@@ -389,6 +399,7 @@ import { useFocusGroupSession } from '@/ux/FocusGroup/composables/useFocusGroupS
 import SessionLobby from '@/ux/FocusGroup/components/session/SessionLobby.vue'
 import SessionVideoStage from '@/ux/FocusGroup/components/session/SessionVideoStage.vue'
 import TopicPanel from '@/ux/FocusGroup/components/session/TopicPanel.vue'
+import SessionTimer from '@/ux/FocusGroup/components/session/SessionTimer.vue'
 import CurrentQuestion from '@/ux/FocusGroup/components/session/CurrentQuestion.vue'
 import TopicDiscussion from '@/ux/FocusGroup/components/session/TopicDiscussion.vue'
 import ParticipantList from '@/ux/FocusGroup/components/session/ParticipantList.vue'
@@ -415,6 +426,7 @@ const {
   consents,
   currentPrompt,
   notes,
+  timer,
   loaded,
   isLive,
   isEnded,
@@ -427,6 +439,9 @@ const {
   askPrompt,
   clearPrompt,
   saveNotes,
+  playTimer,
+  pauseTimer,
+  resetTimer,
   sendMessage,
   subscribe,
   toSessionRecord,
@@ -475,6 +490,25 @@ const activePromptText = computed(() =>
     ? (currentPrompt.value?.text ?? '')
     : '',
 )
+
+// --- Topic timer ---
+const timerFallbackMs = computed(
+  () => (currentTopic.value?.durationMinutes || 0) * 60000,
+)
+// Only use the shared timer when it belongs to the current topic; otherwise the
+// display falls back to the topic's full planned duration (paused).
+const timerForTopic = computed(() =>
+  timer.value?.topicId === currentTopicId.value ? timer.value : null,
+)
+const onTimerPlay = (remainingMs) =>
+  playTimer({ topicId: currentTopicId.value, remainingMs })
+const onTimerPause = (remainingMs) =>
+  pauseTimer({ topicId: currentTopicId.value, remainingMs })
+const onTimerReset = () =>
+  resetTimer({
+    topicId: currentTopicId.value,
+    durationMs: timerFallbackMs.value,
+  })
 
 // --- Role resolution (mirrors ManagerView) ---
 const accessLevel = computed(() => {
