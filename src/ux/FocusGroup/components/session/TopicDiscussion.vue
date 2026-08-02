@@ -4,13 +4,6 @@
     class="d-flex flex-column"
     style="height: 100%; min-height: 0"
   >
-    <v-card-title>
-      <v-icon start color="primary">mdi-forum-outline</v-icon>
-      {{ t('focusGroup.session.discussion') }}
-    </v-card-title>
-
-    <v-divider />
-
     <!-- Message feed -->
     <div ref="feed" class="flex-grow-1 overflow-y-auto pa-4" style="min-height: 0">
       <p
