@@ -54,6 +54,10 @@ export function useFocusGroupSession(studyId) {
   const currentPrompt = computed(() => snapshot.value?.currentPrompt ?? null)
   // Observer/note-taker notes, kept per observer: { [userId]: [{ text, timestamp, taskName }] }
   const notes = computed(() => snapshot.value?.notes ?? {})
+  // Per-topic countdown timer. Clients tick locally from `endsAt`; only the
+  // facilitator's play/pause/reset write here, so there are no per-second writes.
+  // { topicId, running, endsAt, remainingMs } | null
+  const timer = computed(() => snapshot.value?.timer ?? null)
 
   const isLive = computed(() => status.value === SESSION_STATUS.LIVE)
   const isEnded = computed(() => status.value === SESSION_STATUS.ENDED)
@@ -165,6 +169,42 @@ export function useFocusGroupSession(studyId) {
     await set(notesRef, Array.isArray(noteList) ? noteList : [])
   }
 
+  // --- Topic timer (facilitator-controlled countdown) ---
+  const timerRef = () => dbRef(database, `${rootPath}/timer`)
+
+  /**
+   * Start or resume the countdown from `remainingMs`. An absolute `endsAt` is
+   * stored so every client can tick to the same target without further writes.
+   */
+  async function playTimer({ topicId, remainingMs }) {
+    await set(timerRef(), {
+      topicId,
+      running: true,
+      endsAt: Date.now() + remainingMs,
+      remainingMs,
+    })
+  }
+
+  /** Freeze the countdown, keeping the time left for a later resume. */
+  async function pauseTimer({ topicId, remainingMs }) {
+    await set(timerRef(), {
+      topicId,
+      running: false,
+      endsAt: null,
+      remainingMs,
+    })
+  }
+
+  /** Reset the countdown to the topic's full planned duration. */
+  async function resetTimer({ topicId, durationMs }) {
+    await set(timerRef(), {
+      topicId,
+      running: false,
+      endsAt: null,
+      remainingMs: durationMs,
+    })
+  }
+
   /**
    * Append a message to the current topic's discussion stream. Append-only, so
    * participants can post multiple times and the feed reads chronologically.
@@ -209,6 +249,7 @@ export function useFocusGroupSession(studyId) {
     consents,
     currentPrompt,
     notes,
+    timer,
     loaded,
     isLive,
     isEnded,
@@ -225,6 +266,9 @@ export function useFocusGroupSession(studyId) {
     askPrompt,
     clearPrompt,
     saveNotes,
+    playTimer,
+    pauseTimer,
+    resetTimer,
     sendMessage,
     toSessionRecord,
   }
