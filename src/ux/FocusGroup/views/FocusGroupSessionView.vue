@@ -51,10 +51,31 @@
             {{ t('focusGroup.session.title') }}
           </p>
         </div>
+        <v-chip
+          :color="roleColor"
+          variant="tonal"
+          :prepend-icon="roleIcon"
+          size="small"
+        >
+          {{ roleLabel }}
+        </v-chip>
         <v-chip :color="statusColor" variant="flat" :prepend-icon="statusIcon">
           {{ t(`focusGroup.session.status.${status}`) }}
         </v-chip>
       </div>
+
+      <!-- Observers watch silently; make that explicit so the perspective reads
+           differently from a participant's. -->
+      <v-alert
+        v-if="isObserver"
+        type="info"
+        variant="tonal"
+        density="comfortable"
+        icon="mdi-eye-outline"
+        class="mb-4"
+      >
+        {{ t('focusGroup.session.observerModeHint') }}
+      </v-alert>
 
       <SessionVideoStage
         v-if="videoEnabled"
@@ -73,6 +94,7 @@
         :topic="currentTopic"
         :index="currentTopicIndex"
         :total="topicCount"
+        :is-facilitator="isFacilitator"
         class="mb-4"
       />
 
@@ -424,6 +446,9 @@ const isFacilitator = computed(() => accessLevel.value === ACCESS_LEVEL.ADMIN)
 const isParticipant = computed(
   () => accessLevel.value === ACCESS_LEVEL.EVALUATOR,
 )
+const isObserver = computed(
+  () => accessLevel.value === ACCESS_LEVEL.OBSERVATOR,
+)
 // Facilitator and participants can post; observers read the discussion only.
 // Participant posting also depends on chat being enabled for this session.
 const canPost = computed(
@@ -435,6 +460,18 @@ const roleLabel = computed(() => {
   if (isFacilitator.value) return t('focusGroup.session.roleFacilitator')
   if (isParticipant.value) return t('focusGroup.session.roleParticipant')
   return t('focusGroup.session.roleObserver')
+})
+// Role badge styling, shared visual language with ParticipantList so a person's
+// own role in the header matches how they appear in the roster.
+const roleIcon = computed(() => {
+  if (isFacilitator.value) return 'mdi-account-star'
+  if (isObserver.value) return 'mdi-eye'
+  return 'mdi-account'
+})
+const roleColor = computed(() => {
+  if (isFacilitator.value) return 'blue'
+  if (isObserver.value) return 'orange'
+  return 'green'
 })
 
 // Only participants consent. This matches the moderated test, where the
