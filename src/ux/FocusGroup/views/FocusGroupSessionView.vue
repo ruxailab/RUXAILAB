@@ -362,6 +362,14 @@
               {{ t('focusGroup.session.waitingParticipant') }}
             </p>
           </div>
+
+          <div v-else-if="panelTab === 'notes'" class="fg-fill">
+            <ObservatorNotes
+              v-model="observerNotes"
+              :context-label="currentTopic?.title || ''"
+              @save="onSaveNotes"
+            />
+          </div>
         </div>
       </aside>
     </div>
@@ -384,6 +392,7 @@ import TopicPanel from '@/ux/FocusGroup/components/session/TopicPanel.vue'
 import CurrentQuestion from '@/ux/FocusGroup/components/session/CurrentQuestion.vue'
 import TopicDiscussion from '@/ux/FocusGroup/components/session/TopicDiscussion.vue'
 import ParticipantList from '@/ux/FocusGroup/components/session/ParticipantList.vue'
+import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
 import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue'
 
 const store = useStore()
@@ -405,6 +414,7 @@ const {
   messages,
   consents,
   currentPrompt,
+  notes,
   loaded,
   isLive,
   isEnded,
@@ -416,6 +426,7 @@ const {
   recordConsent,
   askPrompt,
   clearPrompt,
+  saveNotes,
   sendMessage,
   subscribe,
   toSessionRecord,
@@ -554,6 +565,13 @@ const panelTabs = computed(() => {
     icon: 'mdi-account-group',
     label: 'focusGroup.session.participants',
   })
+  // Observers/note-takers get a private notes pad, reusing the moderated tool.
+  if (isObserver.value)
+    tabs.push({
+      key: 'notes',
+      icon: 'mdi-notebook-edit-outline',
+      label: 'focusGroup.session.notes',
+    })
   return tabs
 })
 // Keep the active tab valid; prefer the discussion, else the first tab.
@@ -737,6 +755,25 @@ const onAsk = (prompt) => {
   askPrompt({ text: prompt.trim(), topicId: currentTopicId.value })
 }
 const onClearPrompt = () => clearPrompt()
+
+// --- Observer notes (reuses the moderated ObservatorNotes tool) ---
+const observerNotes = ref([])
+let notesSeeded = false
+// Seed once from any persisted notes so a refresh keeps the observer's pad.
+watch(
+  () => notes.value?.[user.value?.id],
+  (stored) => {
+    if (!notesSeeded && Array.isArray(stored) && stored.length) {
+      observerNotes.value = [...stored]
+      notesSeeded = true
+    }
+  },
+  { immediate: true },
+)
+const onSaveNotes = () => {
+  if (!user.value?.id) return
+  saveNotes({ userId: user.value.id, notes: observerNotes.value })
+}
 
 const goToDashboard = () => {
   disconnectCall()

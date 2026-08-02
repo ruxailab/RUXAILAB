@@ -2348,6 +2348,13 @@
     "no": "No",
     "sartAnalytics": "Análisis SART"
   },
+  "observatorNotes": {
+    "title": "Notas de la sesión",
+    "count": "{count} notas",
+    "empty": "Aún no hay notas.",
+    "emptyHint": "Empieza a escribir abajo para registrar observaciones.",
+    "placeholder": "Escribe una observación... (Cmd+Enter para guardar)"
+  },
   "focusGroup": {
     "config": {
       "title": "Funciones de la Sesión",
@@ -2471,6 +2478,7 @@
       "currentQuestion": "Pregunta actual",
       "clearQuestion": "Quitar pregunta",
       "guide": "Guía",
+      "notes": "Notas",
       "noPrompts": "No hay preguntas para este tema.",
       "participants": "Participantes",
       "noParticipants": "Nadie se ha unido todavía.",

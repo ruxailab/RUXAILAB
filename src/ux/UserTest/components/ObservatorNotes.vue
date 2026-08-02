@@ -5,11 +5,11 @@
     >
       <h3 class="text-h6 font-weight-bold display-flex align-center">
         <v-icon class="mr-2">mdi-notebook-edit-outline</v-icon>
-        Session Notes
+        {{ t('observatorNotes.title') }}
       </h3>
-      <v-chip size="small" color="primary" variant="outlined"
-        >{{ notes.length }} notes</v-chip
-      >
+      <v-chip size="small" color="primary" variant="outlined">
+        {{ t('observatorNotes.count', { count: notes.length }) }}
+      </v-chip>
     </div>
 
     <div ref="notesList" class="notes-list pa-4">
@@ -17,8 +17,8 @@
         <v-icon size="48" class="mb-2 opacity-50"
           >mdi-text-box-plus-outline</v-icon
         >
-        <p>No notes taken yet.</p>
-        <p class="text-caption">Start typing below to record observations.</p>
+        <p>{{ t('observatorNotes.empty') }}</p>
+        <p class="text-caption">{{ t('observatorNotes.emptyHint') }}</p>
       </div>
 
       <div
@@ -44,7 +44,7 @@
       <v-textarea
         v-model="newNote"
         variant="outlined"
-        placeholder="Type observation... (Cmd+Enter to save)"
+        :placeholder="t('observatorNotes.placeholder')"
         rows="3"
         auto-grow
         hide-details
@@ -70,6 +70,9 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   modelValue: {
@@ -78,6 +81,13 @@ const props = defineProps({
   },
   currentTaskIndex: Number,
   test: Object,
+  // Optional label to tag each note with (e.g. a Focus Group topic title). When
+  // provided it overrides the moderated-test task-name lookup, letting other
+  // modules reuse this component without a `testStructure.userTasks` shape.
+  contextLabel: {
+    type: String,
+    default: '',
+  },
 })
 
 const emit = defineEmits(['update:modelValue', 'save'])
@@ -93,6 +103,8 @@ const notes = computed({
 const reversedNotes = computed(() => [...notes.value].reverse())
 
 const currentTaskName = computed(() => {
+  // A caller-provided label wins, so the component works outside moderated tests.
+  if (props.contextLabel) return props.contextLabel
   if (!props.test?.testStructure?.userTasks) return 'General'
   // Check if we are in a task step
   // This logic depends on parent context, but passed taskIndex is a good proxy
