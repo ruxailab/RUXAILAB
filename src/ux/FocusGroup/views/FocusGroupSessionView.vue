@@ -95,7 +95,15 @@
         :index="currentTopicIndex"
         :total="topicCount"
         :is-facilitator="isFacilitator"
+        :current-prompt-text="activePromptText"
         class="mb-4"
+        @ask="onAsk"
+      />
+
+      <CurrentQuestion
+        :text="activePromptText"
+        :can-clear="isFacilitator"
+        @clear="onClearPrompt"
       />
 
       <TopicDiscussion
@@ -355,6 +363,7 @@ import {
 import SessionLobby from '@/ux/FocusGroup/components/session/SessionLobby.vue'
 import SessionVideoStage from '@/ux/FocusGroup/components/session/SessionVideoStage.vue'
 import TopicPanel from '@/ux/FocusGroup/components/session/TopicPanel.vue'
+import CurrentQuestion from '@/ux/FocusGroup/components/session/CurrentQuestion.vue'
 import TopicDiscussion from '@/ux/FocusGroup/components/session/TopicDiscussion.vue'
 import ParticipantList from '@/ux/FocusGroup/components/session/ParticipantList.vue'
 import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue'
@@ -377,6 +386,7 @@ const {
   participants,
   messages,
   consents,
+  currentPrompt,
   loaded,
   isLive,
   isEnded,
@@ -386,6 +396,8 @@ const {
   joinPresence,
   leavePresence,
   recordConsent,
+  askPrompt,
+  clearPrompt,
   sendMessage,
   subscribe,
   toSessionRecord,
@@ -426,6 +438,14 @@ const currentTopic = computed(
   () => discussionGuide.value[currentTopicIndex.value] ?? null,
 )
 const currentTopicId = computed(() => currentTopic.value?.id ?? null)
+
+// The active question shown to everyone, scoped to the current topic so a stale
+// prompt from a previous topic never leaks onto the next one.
+const activePromptText = computed(() =>
+  currentPrompt.value?.topicId === currentTopicId.value
+    ? (currentPrompt.value?.text ?? '')
+    : '',
+)
 
 // --- Role resolution (mirrors ManagerView) ---
 const accessLevel = computed(() => {
@@ -660,6 +680,13 @@ const onSend = async (text) => {
     sending.value = false
   }
 }
+
+// Facilitator surfaces a prompt as the current question (or retires it).
+const onAsk = (prompt) => {
+  if (!currentTopicId.value || !prompt?.trim()) return
+  askPrompt({ text: prompt.trim(), topicId: currentTopicId.value })
+}
+const onClearPrompt = () => clearPrompt()
 
 const goToDashboard = () => {
   disconnectCall()

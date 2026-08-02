@@ -61,6 +61,31 @@
             <v-list-item-title class="text-body-2 text-wrap">
               {{ prompt }}
             </v-list-item-title>
+
+            <!-- Surface a prompt to participants as the current question, or
+                 show which one is already live. -->
+            <template #append>
+              <v-chip
+                v-if="prompt === currentPromptText"
+                size="x-small"
+                color="success"
+                variant="flat"
+                prepend-icon="mdi-check"
+              >
+                {{ t('focusGroup.session.asked') }}
+              </v-chip>
+              <v-btn
+                v-else
+                size="small"
+                variant="tonal"
+                color="primary"
+                density="comfortable"
+                prepend-icon="mdi-send-outline"
+                @click="emit('ask', prompt)"
+              >
+                {{ t('focusGroup.session.ask') }}
+              </v-btn>
+            </template>
           </v-list-item>
         </v-list>
       </div>
@@ -83,7 +108,11 @@ const props = defineProps({
   total: { type: Number, default: 0 },
   // Prompts are the facilitator's private script; only they see the guide body.
   isFacilitator: { type: Boolean, default: false },
+  // Text of the prompt currently surfaced as the active question, to flag it.
+  currentPromptText: { type: String, default: '' },
 })
+
+const emit = defineEmits(['ask'])
 
 const prompts = computed(() =>
   Array.isArray(props.topic?.prompts) ? props.topic.prompts : [],
