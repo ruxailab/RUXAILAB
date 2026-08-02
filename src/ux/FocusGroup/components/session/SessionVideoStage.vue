@@ -1,5 +1,5 @@
 <template>
-  <div class="fg-video-stage mb-4">
+  <div class="fg-video-stage">
     <v-alert
       v-if="connectionError"
       type="error"
@@ -216,15 +216,23 @@ function attachTileRef(tile, el) {
 <!-- Reuse the moderated call's tile/spotlight styling verbatim. -->
 <style scoped src="@/shared/components/videoCall/videoCallShared.css"></style>
 
-<!-- FG sizing: the stage sits inline above the topic panel, not full-screen, so
-     bound its height locally (the shared --vc-* vars only exist in the moderated
-     full-viewport layout). -->
+<!-- FG sizing: the stage fills the main area of the live-session layout, so the
+     video grid grows and shrinks with the available space (and with the number
+     of participants) rather than being capped to a fixed height. -->
 <style scoped>
-.fg-video-stage .video-stage {
-  max-height: min(58vh, 560px);
+.fg-video-stage {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
-.fg-video-stage .video-stage:has(.spotlight-primary) {
-  height: min(58vh, 560px);
+.fg-video-stage .video-stage {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  /* Centre the grid so a lone tile sits in the middle of the stage rather than
+     floating at the top; taller grids stay scrollable. */
+  justify-content: center;
+  overflow-y: auto;
 }
 </style>
