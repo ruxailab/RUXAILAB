@@ -3158,7 +3158,8 @@
     "actions": {
       "createSession": "Crear sesión",
       "cancel": "Cancelar",
-      "deleteSession": "Eliminar sesión"
+      "deleteSession": "Eliminar sesión",
+      "editSession": "Editar sesión"
     },
     "confirm": {
       "deleteTitle": "Eliminar sesión",
@@ -3174,7 +3175,8 @@
     "filter": {
       "search": "Buscar por título",
       "startsAfter": "Comienza después de",
-      "startsBefore": "Comienza antes de"
+      "startsBefore": "Comienza antes de",
+      "selectRange": "Seleccionar rango"
     },
     "empty": {
       "title": "No se encontraron sesiones",

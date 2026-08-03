@@ -3231,7 +3231,8 @@
     "actions": {
       "createSession": "Create Session",
       "cancel": "Cancel",
-      "deleteSession": "Delete session"
+      "deleteSession": "Delete session",
+      "editSession": "Edit session"
     },
     "confirm": {
       "deleteTitle": "Delete session",
@@ -3247,7 +3248,8 @@
     "filter": {
       "search": "Search by title",
       "startsAfter": "Starts after",
-      "startsBefore": "Starts before"
+      "startsBefore": "Starts before",
+      "selectRange": "Select range"
     },
     "empty": {
       "title": "No sessions found",

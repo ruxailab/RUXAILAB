@@ -494,8 +494,16 @@ import { getPredefinedParticipantUserRole } from '../../composables/useCooperato
 const { t } = useI18n()
 
 // Props
-defineProps({
-  dialog: Boolean,
+const props = defineProps({
+  dialog: {
+    type: Boolean,
+    required: true,
+  },
+
+  session: {
+    type: Object,
+    default: null,
+  },
 })
 
 // Emits

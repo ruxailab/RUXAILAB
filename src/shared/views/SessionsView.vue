@@ -4,7 +4,7 @@
       <v-btn
         color="primary"
         prepend-icon="mdi-plus"
-        @click="createSessionDialog = true"
+        @click="openCreateSessionDialog()"
       >
         {{ $t('Sessions.actions.createSession') }}
       </v-btn>
@@ -12,6 +12,7 @@
 
     <CreateSessionDialog
       :dialog="createSessionDialog"
+      :session="sessionToEdit"
       @update:dialog="createSessionDialog = $event"
     />
 
@@ -55,26 +56,44 @@
             />
           </v-col>
 
+          <!-- 📅 Session date range filter -->
           <v-col cols="12" md="3">
-            <v-text-field
-              v-model="filters.startAfter"
-              type="datetime-local"
-              :label="$t('Sessions.filter.startsAfter')"
-              variant="outlined"
-              density="comfortable"
-              hide-details
-            />
-          </v-col>
+            <v-menu
+              :close-on-content-click="false"
+              transition="scale-transition"
+              max-width="290px"
+              min-width="290px"
+            >
+              <template #activator="{ props }">
+                <v-text-field
+                  v-bind="props"
+                  :label="$t('Sessions.filter.selectRange')"
+                  variant="outlined"
+                  density="comfortable"
+                  hide-details
+                  readonly
+                  prepend-inner-icon="mdi-calendar"
+                  clearable
+                  :model-value="
+                    selectedSessionDateRange.length > 1
+                      ? `${new Date(
+                          selectedSessionDateRange[0],
+                        ).toLocaleDateString()} - ${new Date(
+                          selectedSessionDateRange[
+                            selectedSessionDateRange.length - 1
+                          ],
+                        ).toLocaleDateString()}`
+                      : ''
+                  "
+                  @click:clear="selectedSessionDateRange = []"
+                />
+              </template>
 
-          <v-col cols="12" md="3">
-            <v-text-field
-              v-model="filters.startBefore"
-              type="datetime-local"
-              :label="$t('Sessions.filter.startsBefore')"
-              variant="outlined"
-              density="comfortable"
-              hide-details
-            />
+              <v-date-picker
+                v-model="selectedSessionDateRange"
+                multiple="range"
+              />
+            </v-menu>
           </v-col>
         </v-row>
       </v-card-text>
@@ -143,6 +162,12 @@
 
             <v-list>
               <v-list-item
+                prepend-icon="mdi-pencil-outline"
+                :title="$t('Sessions.actions.editSession')"
+                @click="openEditSessionDialog(item)"
+              />
+
+              <v-list-item
                 prepend-icon="mdi-email-outline"
                 :title="$t('Sessions.send.title')"
                 @click="openSendMessageDialog(item)"
@@ -195,11 +220,15 @@ const showDeleteDialog = ref(false)
 
 const sessionToDelete = ref(null)
 
+const sessionToEdit = ref(null)
+
 const filters = ref({
   search: '',
   startAfter: null,
   startBefore: null,
 })
+
+const selectedSessionDateRange = ref([])
 
 const showSendMessageDialog = ref(false)
 const sessionToMessage = ref(null)
@@ -244,19 +273,15 @@ const filteredSessions = computed(() => {
       return false
     }
 
-    const sessionDate = new Date(session.startDate)
+    const sessionDate = session.startDate?.toDate
+      ? session.startDate.toDate()
+      : new Date(session.startDate)
 
-    if (
-      filters.value.startAfter &&
-      sessionDate < new Date(filters.value.startAfter)
-    ) {
+    if (filters.value.startAfter && sessionDate < filters.value.startAfter) {
       return false
     }
 
-    if (
-      filters.value.startBefore &&
-      sessionDate > new Date(filters.value.startBefore)
-    ) {
+    if (filters.value.startBefore && sessionDate > filters.value.startBefore) {
       return false
     }
 
@@ -289,6 +314,16 @@ const getRemainingMembers = (members = []) => {
   return remaining > 0 ? remaining : 0
 }
 
+const openCreateSessionDialog = () => {
+  sessionToEdit.value = null
+  createSessionDialog.value = true
+}
+
+const openEditSessionDialog = (session) => {
+  sessionToEdit.value = session
+  createSessionDialog.value = true
+}
+
 const deleteSession = (session) => {
   sessionToDelete.value = session
   showDeleteDialog.value = true
@@ -315,10 +350,30 @@ watch(
   async (studyId) => {
     if (!studyId) return
 
+    selectedSessionDateRange.value = []
     await store.dispatch('fetchSessions', studyId)
   },
   {
     immediate: true,
   },
 )
+
+watch(selectedSessionDateRange, (range) => {
+  if (!range?.length) {
+    filters.value.startAfter = null
+    filters.value.startBefore = null
+    return
+  }
+
+  const startDate = new Date(range[0])
+
+  startDate.setHours(0, 0, 0, 0)
+
+  const endDate = new Date(range[range.length - 1])
+
+  endDate.setHours(23, 59, 59, 999)
+
+  filters.value.startAfter = startDate
+  filters.value.startBefore = endDate
+})
 </script>
