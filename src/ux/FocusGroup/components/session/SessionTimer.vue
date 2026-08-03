@@ -57,8 +57,14 @@ const running = computed(() => props.timer?.running === true)
 
 const remainingMs = computed(() => {
   if (props.timer) {
-    if (running.value && props.timer.endsAt)
-      return Math.max(0, props.timer.endsAt - now.value)
+    if (running.value && props.timer.endsAt) {
+      const left = props.timer.endsAt - now.value
+      // `now` only ticks once a second, so right after play it can lag behind the
+      // real clock and make `endsAt - now` overshoot the time we actually set.
+      // Cap at the stored remaining so the display never reads above the start.
+      const cap = props.timer.remainingMs ?? left
+      return Math.max(0, Math.min(cap, left))
+    }
     if (props.timer.remainingMs != null)
       return Math.max(0, props.timer.remainingMs)
   }
