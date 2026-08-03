@@ -44,6 +44,7 @@
         </div>
 
         <v-select
+          v-if="roleOptions != null"
           v-model="selectedRole"
           :items="roleOptions"
           item-title="title"
@@ -208,6 +209,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  preDefinedRole: {
+    type: Array,
+    default: null,
+  },
 })
 
 const emit = defineEmits(['update:show', 'send-invitations'])
@@ -218,16 +223,36 @@ const selectedRole = ref(null)
 const inviteMessage = ref('')
 const emailInput = ref('')
 
+const getInitialRole = () => {
+  if (props.preDefinedRole != null) {
+    return props.preDefinedRole
+  }
+
+  return props.roleOptions?.[0]?.value ?? null
+}
+
 watch(
   () => props.roleOptions,
   (roles) => {
-    if (!roles.some((role) => role.value === selectedRole.value)) {
-      selectedRole.value = roles[0]?.value ?? null
+    if (
+      roles != null &&
+      !roles.some((role) => role.value === selectedRole.value)
+    ) {
+      selectedRole.value = getInitialRole()
     }
   },
   { immediate: true },
 )
 
+watch(
+  () => props.preDefinedRole,
+  (predefinedRole) => {
+    if (predefinedRole != null) {
+      selectedRole.value = predefinedRole
+    }
+  },
+  { immediate: true },
+)
 // Date and time for scheduling (accessibility tests)
 const date = ref(
   new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
@@ -323,7 +348,7 @@ const onSend = () => {
 const resetForm = () => {
   selectedCoops.value = []
   inviteMessage.value = ''
-  selectedRole.value = props.roleOptions[0]?.value ?? null
+  selectedRole.value = getInitialRole()
   emailInput.value = ''
 }
 
