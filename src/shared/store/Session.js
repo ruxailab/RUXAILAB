@@ -3,12 +3,9 @@
  * @module Session
  */
 
-import i18n from '@/app/plugins/i18n'
 import SessionController from '@/shared/controllers/SessionController'
 import EmailController from '@/shared/controllers/EmailController'
 import Notification from '@/shared/models/Notification'
-
-const t = i18n.global.t
 
 export default {
   state: {
@@ -36,7 +33,7 @@ export default {
       )
     },
 
-    SET_LOADING(state, loading) {
+    setLoading(state, loading) {
       state.loading = loading
     },
   },
@@ -50,9 +47,9 @@ export default {
      * @param {Object} payload.session
      */
     async createSession({ commit }, payload) {
-      try {
-        commit('SET_LOADING', true)
+      commit('setLoading', true)
 
+      try {
         const result = await new SessionController().createSession(payload)
 
         if (!result.success) {
@@ -61,11 +58,14 @@ export default {
 
         return result.session
       } catch (error) {
-        console.error('createSession error:', error)
+        commit('setError', {
+          errorCode: 'sessionCreationError',
+          message: error,
+        })
 
-        throw new Error(error.message || t('Sessions.error.createFailed'))
+        throw error
       } finally {
-        commit('SET_LOADING', false)
+        commit('setLoading', false)
       }
     },
 
@@ -75,9 +75,9 @@ export default {
      * @param {string} studyId
      */
     async fetchSessions({ commit }, studyId) {
-      try {
-        commit('SET_LOADING', true)
+      commit('setLoading', true)
 
+      try {
         const result = await new SessionController().getSessions({
           studyId,
         })
@@ -90,21 +90,23 @@ export default {
 
         return result.sessions
       } catch (error) {
-        console.error('fetchSessions error:', error)
+        commit('setError', {
+          errorCode: 'sessionFetchError',
+          message: error,
+        })
 
         throw error
       } finally {
-        commit('SET_LOADING', false)
+        commit('setLoading', false)
       }
     },
-
     /**
      * Update session
      */
     async updateSession({ commit }, payload) {
-      try {
-        commit('SET_LOADING', true)
+      commit('setLoading', true)
 
+      try {
         const result = await new SessionController().updateSession(payload)
 
         if (!result.success) {
@@ -113,11 +115,14 @@ export default {
 
         return result
       } catch (error) {
-        console.error('updateSession error:', error)
+        commit('setError', {
+          errorCode: 'sessionUpdateError',
+          message: error,
+        })
 
         throw error
       } finally {
-        commit('SET_LOADING', false)
+        commit('setLoading', false)
       }
     },
 
@@ -125,6 +130,8 @@ export default {
      * Delete session
      */
     async deleteSession({ commit }, payload) {
+      commit('setLoading', true)
+
       try {
         const result = await new SessionController().deleteSession(payload)
 
@@ -134,22 +141,25 @@ export default {
 
         commit('REMOVE_SESSION', payload.sessionId)
       } catch (error) {
-        console.error('deleteSession error:', error)
+        commit('setError', {
+          errorCode: 'sessionDeletionError',
+          message: error,
+        })
 
         throw error
+      } finally {
+        commit('setLoading', false)
       }
-    },
-
-    /**
+    } /**
      * Sends a message to session members.
-     */
+     */,
     async sendMessageSessionMembers(
       { state, getters, dispatch, commit },
       payload,
     ) {
-      try {
-        commit('SET_LOADING', true)
+      commit('setLoading', true)
 
+      try {
         const session = state.sessions.find(
           (item) => item.id === payload.sessionId,
         )
@@ -184,7 +194,6 @@ export default {
             members = []
         }
 
-        // Remove duplicate recipients by email
         members = members.filter(
           (member, index, array) =>
             array.findIndex((item) => item.email === member.email) === index,
@@ -239,11 +248,14 @@ export default {
 
         return true
       } catch (error) {
-        console.error('sendMessageSessionMembers error:', error)
+        commit('setError', {
+          errorCode: 'sessionMessageError',
+          message: error,
+        })
 
-        throw new Error(error.message || t('Sessions.error.sendMessageFailed'))
+        throw error
       } finally {
-        commit('SET_LOADING', false)
+        commit('setLoading', false)
       }
     },
   },

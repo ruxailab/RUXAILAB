@@ -104,7 +104,7 @@
                       {{ $t('Sessions.staff.added') }}
                     </div>
 
-                    <v-chip-group>
+                    <v-chip-group column>
                       <v-chip
                         v-for="(staff, index) in sessionStaff"
                         :key="staff.userDocId"
@@ -183,7 +183,7 @@
                       {{ $t('Sessions.participants.added') }}
                     </div>
 
-                    <v-chip-group>
+                    <v-chip-group column>
                       <v-chip
                         v-for="(participant, index) in selectedParticipants"
                         :key="participant.email"
