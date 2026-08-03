@@ -31,6 +31,9 @@ export function useFocusGroupSession(studyId) {
   const rootRef = dbRef(database, rootPath)
 
   const snapshot = ref(null)
+  // False until the first RTDB value arrives, so consumers can hold off on
+  // gating decisions that would otherwise flash the wrong state on mount.
+  const loaded = ref(false)
   let unsubscribe = null
 
   const status = computed(() => snapshot.value?.status ?? SESSION_STATUS.IDLE)
@@ -44,6 +47,8 @@ export function useFocusGroupSession(studyId) {
   const participants = computed(() => snapshot.value?.participants ?? {})
   // Per-topic discussion messages: { [topicId]: { [messageId]: { userId, name, text, timestamp } } }
   const messages = computed(() => snapshot.value?.messages ?? {})
+  // Consent decisions: { [userId]: { name, accepted, timestamp } }
+  const consents = computed(() => snapshot.value?.consents ?? {})
 
   const isLive = computed(() => status.value === SESSION_STATUS.LIVE)
   const isEnded = computed(() => status.value === SESSION_STATUS.ENDED)
@@ -52,6 +57,7 @@ export function useFocusGroupSession(studyId) {
     if (unsubscribe) return
     unsubscribe = onValue(rootRef, (snap) => {
       snapshot.value = snap.val() || null
+      loaded.value = true
     })
   }
 
@@ -106,6 +112,20 @@ export function useFocusGroupSession(studyId) {
   }
 
   /**
+   * Record a consent decision for an attendee. Kept outside the presence node so
+   * it survives disconnects, and carried into the persisted session record as an
+   * audit trail of who agreed to take part.
+   */
+  async function recordConsent({ userId, name, accepted }) {
+    const consentRef = dbRef(database, `${rootPath}/consents/${userId}`)
+    await set(consentRef, {
+      name: name ?? '',
+      accepted: accepted === true,
+      timestamp: serverTimestamp(),
+    })
+  }
+
+  /**
    * Append a message to the current topic's discussion stream. Append-only, so
    * participants can post multiple times and the feed reads chronologically.
    */
@@ -130,6 +150,7 @@ export function useFocusGroupSession(studyId) {
       endedAt: endedAt.value,
       participants: participants.value,
       messages: messages.value,
+      consents: consents.value,
     }
   }
 
@@ -145,6 +166,8 @@ export function useFocusGroupSession(studyId) {
     endedAt,
     participants,
     messages,
+    consents,
+    loaded,
     isLive,
     isEnded,
     // lifecycle
@@ -156,6 +179,7 @@ export function useFocusGroupSession(studyId) {
     endSession,
     joinPresence,
     leavePresence,
+    recordConsent,
     sendMessage,
     toSessionRecord,
   }

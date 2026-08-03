@@ -1,7 +1,17 @@
 <template>
+  <!-- Hold rendering until the session state arrives, so the consent gate does
+       not flash for someone who has already agreed -->
+  <div
+    v-if="!loaded"
+    class="d-flex align-center justify-center"
+    style="height: 100vh"
+  >
+    <v-progress-circular indeterminate color="primary" size="48" />
+  </div>
+
   <!-- Lobby: branded welcome shown before the session is live and after it ends -->
   <SessionLobby
-    v-if="!isLive"
+    v-else-if="!isLive"
     :title="test?.testTitle"
     :description="test?.testDescription"
     :status="status"
@@ -11,6 +21,21 @@
     :starting="starting"
     @start="onStart"
   />
+
+  <!-- Consent gate: sits between the lobby and the discussion, mirroring the
+       moderated test where consent follows the welcome step -->
+  <v-container v-else-if="needsConsent" class="pa-6">
+    <ConsentStep
+      :test-title="test?.testTitle"
+      :consent-text="consentText"
+      :full-name-model="fullName"
+      :consent-completed-model="consentAccepted"
+      @update:full-name-model="(val) => (fullName = val)"
+      @update:consent-completed-model="(val) => (consentAccepted = val)"
+      @continue="onConsentAccept"
+      @decline-consent="onConsentDecline"
+    />
+  </v-container>
 
   <!-- Live discussion -->
   <v-container v-else fluid class="pa-4 pa-md-6">
@@ -95,6 +120,7 @@ import FacilitatorControls from '@/ux/FocusGroup/components/session/FacilitatorC
 import TopicPanel from '@/ux/FocusGroup/components/session/TopicPanel.vue'
 import TopicDiscussion from '@/ux/FocusGroup/components/session/TopicDiscussion.vue'
 import ParticipantList from '@/ux/FocusGroup/components/session/ParticipantList.vue'
+import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue'
 
 const store = useStore()
 const route = useRoute()
@@ -107,12 +133,15 @@ const {
   currentTopicIndex,
   participants,
   messages,
+  consents,
+  loaded,
   isLive,
   startSession,
   goToTopic,
   endSession,
   joinPresence,
   leavePresence,
+  recordConsent,
   sendMessage,
   subscribe,
   toSessionRecord,
@@ -123,6 +152,25 @@ const test = computed(() => store.getters.test)
 
 const sending = ref(false)
 const starting = ref(false)
+
+// --- Session configuration selected by the facilitator on the Test screen ---
+const sessionConfig = computed(() => test.value?.config ?? {})
+const consentText = computed(() => sessionConfig.value.consentText ?? '')
+// Quill stores empty content as markup such as "<p><br></p>", so strip tags
+// before treating the form as authored.
+const hasConsentText = computed(
+  () => consentText.value.replace(/<[^>]*>/g, '').trim().length > 0,
+)
+const allowParticipantChat = computed(
+  () => sessionConfig.value.allowParticipantChat !== false,
+)
+
+// --- Consent ---
+const fullName = ref('')
+const consentAccepted = ref(null)
+const hasConsented = computed(
+  () => consents.value?.[user.value?.id]?.accepted === true,
+)
 
 // --- Discussion guide ---
 const discussionGuide = computed(() =>
@@ -155,12 +203,30 @@ const isParticipant = computed(
   () => accessLevel.value === ACCESS_LEVEL.EVALUATOR,
 )
 // Facilitator and participants can post; observers read the discussion only.
-const canPost = computed(() => isFacilitator.value || isParticipant.value)
+// Participant posting also depends on chat being enabled for this session.
+const canPost = computed(
+  () =>
+    isFacilitator.value ||
+    (isParticipant.value && allowParticipantChat.value),
+)
 const roleLabel = computed(() => {
   if (isFacilitator.value) return t('focusGroup.session.roleFacilitator')
   if (isParticipant.value) return t('focusGroup.session.roleParticipant')
   return t('focusGroup.session.roleObserver')
 })
+
+// Only participants consent. This matches the moderated test, where the
+// moderator is pinned to the video call and so never sees the consent step:
+// consent is for the people being researched, not the research team. Also
+// requires authored consent text, so a study with the flag on but no form is
+// not blocked behind an empty screen.
+const needsConsent = computed(
+  () =>
+    isParticipant.value &&
+    sessionConfig.value.requireConsent === true &&
+    hasConsentText.value &&
+    !hasConsented.value,
+)
 
 // --- Presence ---
 const connectedCount = computed(
@@ -256,13 +322,48 @@ const goToDashboard = () => {
   router.push(`/focusGroup/dashboard/${studyId}`).catch(() => {})
 }
 
-onMounted(async () => {
-  await store.dispatch('getStudy', { id: studyId })
-  subscribe()
+// --- Consent handlers ---
+const joined = ref(false)
+
+// Idempotent, so presence is only ever claimed once per mount.
+const enterSession = async () => {
+  if (joined.value || !user.value?.id) return
+  joined.value = true
   await joinPresence({
     userId: user.value?.id,
     name: user.value?.name || user.value?.email || '',
     role: roleLabel.value,
   })
+}
+
+const onConsentAccept = async () => {
+  await recordConsent({
+    userId: user.value?.id,
+    name: fullName.value,
+    accepted: true,
+  })
+}
+
+const onConsentDecline = async () => {
+  await recordConsent({
+    userId: user.value?.id,
+    name: fullName.value,
+    accepted: false,
+  })
+  // Drop out of the room rather than lingering as a present-but-unconsented
+  // attendee.
+  await leavePresence(user.value?.id)
+  store.commit('SET_TOAST', {
+    message: t('focusGroup.session.consentDeclined'),
+    type: 'info',
+  })
+  router.push(`/focusGroup/dashboard/${studyId}`).catch(() => {})
+}
+
+onMounted(async () => {
+  await store.dispatch('getStudy', { id: studyId })
+  subscribe()
+  // Presence is claimed on arrival so the lobby can show who is waiting.
+  await enterSession()
 })
 </script>
