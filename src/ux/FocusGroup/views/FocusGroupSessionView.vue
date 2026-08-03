@@ -373,7 +373,7 @@
             </p>
           </div>
 
-          <div v-else-if="panelTab === 'notes'" class="fg-fill">
+          <div v-else-if="panelTab === 'notes'" class="fg-fill fg-notes">
             <ObservatorNotes
               v-model="observerNotes"
               :context-label="currentTopic?.title || ''"
@@ -1037,6 +1037,39 @@ onMounted(async () => {
   font-weight: 600;
   margin-bottom: 8px;
   color: rgba(var(--v-theme-on-surface), 0.6);
+}
+
+/* Make the reused ObservatorNotes tool read like the FG Discussion panel: it
+   ships its own header + footer chrome for the moderated sidebar, which doubles
+   up here since the panel tab bar already labels it. Scoped to the Notes tab
+   only, so the moderated-test styling is left untouched. */
+.fg-notes :deep(.observator-notes-container) {
+  border-left: none;
+  background: transparent;
+}
+
+/* The tab bar already says "Notes" (like Discussion, which has no sub-header). */
+.fg-notes :deep(.header) {
+  display: none;
+}
+
+.fg-notes :deep(.notes-list) {
+  padding: 16px !important;
+  background: transparent;
+}
+
+/* Echo the discussion message bubble: flat, softly tinted, rounded. */
+.fg-notes :deep(.note-item) {
+  border: none !important;
+  border-radius: 12px;
+  background: rgba(var(--v-theme-on-surface), 0.04) !important;
+  box-shadow: none !important;
+}
+
+/* Match the discussion composer: no grey slab, just a divider line on top. */
+.fg-notes :deep(.input-area) {
+  background: transparent !important;
+  border-top: 1px solid rgba(var(--v-border-color), 0.12);
 }
 
 /* Control dock (under the stage) */
