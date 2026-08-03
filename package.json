@@ -47,7 +47,7 @@
     "jspdf-autotable": "^5.0.7",
     "livekit-client": "^2.21.0",
     "lodash": "^4.18.1",
-    "nanoid": "^5.1.9",
+    "nanoid": "^6.0.0",
     "process": "^0.11.10",
     "stream-browserify": "^3.0.0",
     "uid-generator": "^2.0.0",
