@@ -3170,7 +3170,8 @@
       "start": "Inicio",
       "actions": "Acciones",
       "staff": "Personal",
-      "participants": "Participantes"
+      "participants": "Participantes",
+      "goToSession": "Ir a la sesión"
     },
     "filter": {
       "search": "Buscar por título",

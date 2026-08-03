@@ -3243,7 +3243,8 @@
       "start": "Start",
       "actions": "Actions",
       "staff": "Staff",
-      "participants": "Participants"
+      "participants": "Participants",
+      "goToSession": "Go to session"
     },
     "filter": {
       "search": "Search by title",

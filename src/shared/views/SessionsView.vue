@@ -154,6 +154,26 @@
           </div>
         </template>
 
+        <!-- Session -->
+        <template #item.session="{ item }">
+          <v-tooltip location="bottom">
+            <template #activator="{ props }">
+              <v-btn
+                v-if="item"
+                v-bind="props"
+                variant="text"
+                class="ml-1"
+                icon
+                @click="goToSession(item.id)"
+              >
+                <v-icon>mdi-file-document-arrow-right</v-icon>
+              </v-btn>
+            </template>
+
+            <span>{{ $t('cooperator.goToSession') }}</span>
+          </v-tooltip>
+        </template>
+
         <template #item.actions="{ item }">
           <v-menu>
             <template #activator="{ props }">
@@ -203,10 +223,13 @@ import { matchesSearch } from '@/shared/utils/searchUtils'
 import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 import { showError, showSuccess } from '@/shared/utils/toast'
 import SendSessionMessageDialog from '@/shared/components/dialogs/SendSessionMessageDialog.vue'
+import { useRouter } from 'vue-router'
 
 const { t } = useI18n()
 
 const store = useStore()
+
+const router = useRouter()
 
 const createSessionDialog = ref(false)
 
@@ -240,6 +263,11 @@ const openSendMessageDialog = (session) => {
 
 const headers = computed(() => [
   {
+    title: t('Sessions.headers.goToSession'),
+    key: 'session',
+    sortable: false,
+  },
+  {
     title: t('Sessions.headers.title'),
     key: 'title',
   },
@@ -247,6 +275,7 @@ const headers = computed(() => [
     title: t('Sessions.headers.start'),
     key: 'startDate',
   },
+
   {
     title: t('Sessions.headers.staff'),
     key: 'staff',
@@ -327,6 +356,10 @@ const openEditSessionDialog = (session) => {
 const deleteSession = (session) => {
   sessionToDelete.value = session
   showDeleteDialog.value = true
+}
+
+const goToSession = (coopId) => {
+  router.push(`/testview/${test.value.id}/${coopId}`)
 }
 
 const confirmDeleteSession = async () => {

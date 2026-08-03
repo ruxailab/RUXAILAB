@@ -148,26 +148,6 @@
           {{ item.expirationDate ? formatDate(item.expirationDate) : '-' }}
         </template>
 
-        <!-- Session -->
-        <template #item.session="{ item }">
-          <v-tooltip location="bottom">
-            <template #activator="{ props }">
-              <v-btn
-                v-if="item"
-                v-bind="props"
-                variant="text"
-                class="ml-1"
-                icon
-                @click="goToSession(item.userDocId)"
-              >
-                <v-icon>mdi-file-document-arrow-right</v-icon>
-              </v-btn>
-            </template>
-
-            <span>{{ $t('cooperator.goToSession') }}</span>
-          </v-tooltip>
-        </template>
-
         <!-- Actions Column -->
         <template v-if="showActions" #item.actions="{ item }">
           <v-menu>
@@ -234,14 +214,9 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
-import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
 import { matchesSearch } from '@/shared/utils/searchUtils'
 import { useI18n } from 'vue-i18n'
 import { MEMBERSHIP_STATUS } from '../utils/studyAccessPolicy'
-
-const router = useRouter()
-const store = useStore()
 
 const { t } = useI18n()
 
@@ -360,8 +335,6 @@ const filters = ref({
   role: null,
   status: null,
 })
-
-const study = computed(() => store.getters.test)
 
 const computedHeaders = computed(() => {
   const defaultHeaders = [
@@ -518,10 +491,6 @@ watch(
   },
   { deep: true },
 )
-
-const goToSession = (coopId) => {
-  router.push(`/testview/${study.value.id}/${coopId}`)
-}
 </script>
 
 <style scoped>
