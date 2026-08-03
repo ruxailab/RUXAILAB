@@ -1,5 +1,5 @@
 <template>
-  <v-card class="h-100">
+  <v-card class="h-100" variant="flat" border>
     <v-card-item>
       <template #prepend>
         <v-avatar color="primary" variant="tonal" size="40">
@@ -29,11 +29,28 @@
           </span>
         </template>
       </v-card-subtitle>
+
+      <!-- Prompts are the facilitator's script, so mark the guide as private. -->
+      <template v-if="isFacilitator" #append>
+        <v-chip
+          size="small"
+          color="primary"
+          variant="tonal"
+          prepend-icon="mdi-lock-outline"
+        >
+          {{ t('focusGroup.session.facilitatorGuideNote') }}
+        </v-chip>
+      </template>
     </v-card-item>
 
-    <v-card-text>
+    <!-- Facilitator only: the discussion prompts to steer the topic. Participants
+         and observers never see these — to them the topic is just its title. -->
+    <v-card-text v-if="isFacilitator">
       <div v-if="prompts.length">
-        <p class="text-overline mb-1">{{ t('focusGroup.session.prompts') }}</p>
+        <p class="text-overline mb-1 d-flex align-center ga-1">
+          <v-icon size="16" color="primary">mdi-script-text-outline</v-icon>
+          {{ t('focusGroup.session.yourPrompts') }}
+        </p>
         <v-list density="compact" class="pa-0">
           <v-list-item v-for="(prompt, i) in prompts" :key="i" class="px-0">
             <template #prepend>
@@ -64,6 +81,8 @@ const props = defineProps({
   topic: { type: Object, default: null },
   index: { type: Number, default: 0 },
   total: { type: Number, default: 0 },
+  // Prompts are the facilitator's private script; only they see the guide body.
+  isFacilitator: { type: Boolean, default: false },
 })
 
 const prompts = computed(() =>

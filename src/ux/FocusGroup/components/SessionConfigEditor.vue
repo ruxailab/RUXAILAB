@@ -101,6 +101,12 @@ const features = [
     hint: 'focusGroup.config.chatHint',
   },
   {
+    key: 'enableVideoCall',
+    icon: 'mdi-video-account',
+    label: 'focusGroup.config.videoCall',
+    hint: 'focusGroup.config.videoCallHint',
+  },
+  {
     key: 'recordAudio',
     icon: 'mdi-microphone-outline',
     label: 'focusGroup.config.recordAudio',

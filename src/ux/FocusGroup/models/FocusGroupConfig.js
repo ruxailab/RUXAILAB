@@ -12,6 +12,7 @@
  * @param {boolean} allowParticipantChat - Let participants post in the discussion.
  * @param {boolean} recordAudio - Capture session audio.
  * @param {boolean} recordVideo - Capture session video.
+ * @param {boolean} enableVideoCall - Run a live video call during the session.
  * @param {string} consentText - Rich text shown on the consent screen.
  */
 export default class FocusGroupConfig {
@@ -23,6 +24,7 @@ export default class FocusGroupConfig {
     allowParticipantChat,
     recordAudio,
     recordVideo,
+    enableVideoCall,
     consentText,
   } = {}) {
     this.enableWaitingRoom = enableWaitingRoom ?? true
@@ -32,6 +34,7 @@ export default class FocusGroupConfig {
     this.allowParticipantChat = allowParticipantChat ?? true
     this.recordAudio = recordAudio ?? false
     this.recordVideo = recordVideo ?? false
+    this.enableVideoCall = enableVideoCall ?? false
     this.consentText = consentText ?? ''
   }
 
@@ -44,6 +47,7 @@ export default class FocusGroupConfig {
       allowParticipantChat: this.allowParticipantChat,
       recordAudio: this.recordAudio,
       recordVideo: this.recordVideo,
+      enableVideoCall: this.enableVideoCall,
       consentText: this.consentText,
     }
   }

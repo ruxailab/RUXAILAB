@@ -37,86 +37,323 @@
     />
   </v-container>
 
-  <!-- Live discussion -->
-  <v-container v-else fluid class="pa-4 pa-md-6">
-    <!-- Header -->
-    <div class="d-flex align-center flex-wrap ga-3 mb-4">
-      <v-btn
-        icon="mdi-arrow-left"
-        variant="text"
-        :title="t('focusGroup.session.backToDashboard')"
-        @click="goToDashboard"
-      />
-      <div class="flex-grow-1">
-        <h1 class="text-h5 mb-0">
-          {{ test?.testTitle || t('focusGroup.dashboard.typeLabel') }}
-        </h1>
-        <p class="text-body-2 text-medium-emphasis mb-0">
-          {{ t('focusGroup.session.title') }}
-        </p>
+  <!-- Live discussion: full-bleed stage plus a fixed control bar and a
+       slide-in participants panel, mirroring the moderated session layout -->
+  <template v-else>
+    <div class="fg-stage" :class="{ 'panel-open': showPanel }">
+      <!-- Header -->
+      <div class="d-flex align-center flex-wrap ga-3 mb-4">
+        <div class="flex-grow-1">
+          <h1 class="text-h5 mb-0">
+            {{ test?.testTitle || t('focusGroup.dashboard.typeLabel') }}
+          </h1>
+          <p class="text-body-2 text-medium-emphasis mb-0">
+            {{ t('focusGroup.session.title') }}
+          </p>
+        </div>
+        <v-chip
+          :color="roleColor"
+          variant="tonal"
+          :prepend-icon="roleIcon"
+          size="small"
+        >
+          {{ roleLabel }}
+        </v-chip>
+        <v-chip :color="statusColor" variant="flat" :prepend-icon="statusIcon">
+          {{ t(`focusGroup.session.status.${status}`) }}
+        </v-chip>
       </div>
-      <v-chip :color="statusColor" variant="flat" :prepend-icon="statusIcon">
-        {{ t(`focusGroup.session.status.${status}`) }}
-      </v-chip>
+
+      <!-- Observers watch silently; make that explicit so the perspective reads
+           differently from a participant's. -->
+      <v-alert
+        v-if="isObserver"
+        type="info"
+        variant="tonal"
+        density="comfortable"
+        icon="mdi-eye-outline"
+        class="mb-4"
+      >
+        {{ t('focusGroup.session.observerModeHint') }}
+      </v-alert>
+
+      <SessionVideoStage
+        v-if="videoEnabled"
+        :remote-participants="remoteParticipants"
+        :screen-share-feeds="screenShareFeeds"
+        :local-state="localVideoState"
+        :connection-error="connectionError"
+        :presence-roles="participants"
+        :set-local-video="setLocalVideo"
+        :set-remote-video="setRemoteVideoElement"
+        :set-screen-video="setScreenShareVideoElement"
+      />
+
+      <TopicPanel
+        v-if="currentTopic"
+        :topic="currentTopic"
+        :index="currentTopicIndex"
+        :total="topicCount"
+        :is-facilitator="isFacilitator"
+        class="mb-4"
+      />
+
+      <TopicDiscussion
+        :messages="currentMessages"
+        :current-user-id="user?.id"
+        :can-post="canPost"
+        :sending="sending"
+        @send="onSend"
+      />
     </div>
 
-    <!-- Facilitator controls -->
-    <FacilitatorControls
-      v-if="isFacilitator"
-      class="mb-4"
-      :status="status"
-      :current-index="currentTopicIndex"
-      :total="topicCount"
-      @start="onStart"
-      @prev="onPrev"
-      @next="onNext"
-      @end="onEnd"
-    />
+    <!-- Bottom control bar -->
+    <div class="fg-control-bar">
+      <div class="fg-control-left">
+        <v-tooltip
+          location="top"
+          :text="t('focusGroup.session.backToDashboard')"
+        >
+          <template #activator="{ props: tip }">
+            <v-btn
+              v-bind="tip"
+              icon="mdi-arrow-left"
+              variant="text"
+              color="white"
+              @click="goToDashboard"
+            />
+          </template>
+        </v-tooltip>
+      </div>
 
-    <v-row>
-      <!-- Main column -->
-      <v-col cols="12" md="8">
-        <TopicPanel
-          v-if="currentTopic"
-          :topic="currentTopic"
-          :index="currentTopicIndex"
-          :total="topicCount"
-          class="mb-4"
-        />
+      <div class="fg-control-center">
+        <template v-if="showMediaControls">
+          <v-tooltip
+            location="top"
+            :text="
+              isMicrophoneEnabled
+                ? t('focusGroup.session.muteMicrophone')
+                : t('focusGroup.session.unmuteMicrophone')
+            "
+          >
+            <template #activator="{ props: tip }">
+              <v-btn
+                v-bind="tip"
+                class="fg-round"
+                :class="{ 'fg-round-off': !isMicrophoneEnabled }"
+                :icon="
+                  isMicrophoneEnabled ? 'mdi-microphone' : 'mdi-microphone-off'
+                "
+                @click="toggleMicrophone"
+              />
+            </template>
+          </v-tooltip>
+          <v-tooltip
+            location="top"
+            :text="
+              isCameraEnabled
+                ? t('focusGroup.session.turnCameraOff')
+                : t('focusGroup.session.turnCameraOn')
+            "
+          >
+            <template #activator="{ props: tip }">
+              <v-btn
+                v-bind="tip"
+                class="fg-round"
+                :class="{ 'fg-round-off': !isCameraEnabled }"
+                :icon="isCameraEnabled ? 'mdi-video' : 'mdi-video-off'"
+                @click="toggleCamera"
+              />
+            </template>
+          </v-tooltip>
+          <v-tooltip
+            v-if="isFacilitator"
+            location="top"
+            :text="
+              isSharingScreen
+                ? t('focusGroup.session.stopSharingScreen')
+                : t('focusGroup.session.shareScreen')
+            "
+          >
+            <template #activator="{ props: tip }">
+              <v-btn
+                v-bind="tip"
+                class="fg-round"
+                :class="{ 'fg-round-active': isSharingScreen }"
+                icon="mdi-monitor-share"
+                @click="toggleScreenShare"
+              />
+            </template>
+          </v-tooltip>
+          <div class="fg-control-divider" />
+        </template>
 
-        <TopicDiscussion
-          :messages="currentMessages"
-          :current-user-id="user?.id"
-          :can-post="canPost"
-          :sending="sending"
-          @send="onSend"
-        />
-      </v-col>
+        <template v-if="isFacilitator">
+          <v-btn
+            v-if="status === 'idle'"
+            class="fg-pill"
+            color="white"
+            variant="flat"
+            prepend-icon="mdi-play"
+            :disabled="topicCount === 0"
+            @click="onStart"
+          >
+            {{ t('focusGroup.session.startSession') }}
+          </v-btn>
 
-      <!-- Sidebar -->
-      <v-col cols="12" md="4">
-        <ParticipantList
-          :participants="participants"
-          :responded-ids="respondedIds"
+          <template v-else-if="status === 'live'">
+            <v-tooltip location="top" :text="t('focusGroup.session.previous')">
+              <template #activator="{ props: tip }">
+                <v-btn
+                  v-bind="tip"
+                  class="fg-round"
+                  icon="mdi-chevron-left"
+                  :disabled="currentTopicIndex <= 0"
+                  @click="onPrev"
+                />
+              </template>
+            </v-tooltip>
+            <span class="text-white text-body-2 mx-1">
+              {{
+                t('focusGroup.session.topicProgress', {
+                  current: currentTopicIndex + 1,
+                  total: topicCount,
+                })
+              }}
+            </span>
+            <v-tooltip location="top" :text="t('focusGroup.session.next')">
+              <template #activator="{ props: tip }">
+                <v-btn
+                  v-bind="tip"
+                  class="fg-round"
+                  icon="mdi-chevron-right"
+                  :disabled="currentTopicIndex >= topicCount - 1"
+                  @click="onNext"
+                />
+              </template>
+            </v-tooltip>
+            <v-btn
+              class="fg-pill fg-pill-danger ms-2"
+              prepend-icon="mdi-stop"
+              @click="onEnd"
+            >
+              {{ t('focusGroup.session.endSession') }}
+            </v-btn>
+          </template>
+
+          <span v-else class="text-white text-body-2">
+            {{ t('focusGroup.session.sessionEnded') }}
+          </span>
+        </template>
+
+        <span v-else class="text-white text-body-2 text-truncate">
+          {{
+            currentTopic?.title || t('focusGroup.session.waitingParticipant')
+          }}
+        </span>
+      </div>
+
+      <div class="fg-control-right">
+        <v-tooltip
+          location="top"
+          :text="
+            showPanel
+              ? t('focusGroup.session.hideParticipants')
+              : t('focusGroup.session.showParticipants')
+          "
+        >
+          <template #activator="{ props: tip }">
+            <v-btn
+              v-bind="tip"
+              class="fg-round"
+              :class="{ 'fg-round-active': showPanel }"
+              @click="togglePanel"
+            >
+              <v-badge
+                :content="connectedCount"
+                :model-value="connectedCount > 0"
+                color="success"
+              >
+                <v-icon>mdi-account-group</v-icon>
+              </v-badge>
+            </v-btn>
+          </template>
+        </v-tooltip>
+      </div>
+    </div>
+
+    <!-- Participants side panel -->
+    <div class="fg-side-panel" :class="{ 'fg-side-panel-open': showPanel }">
+      <div class="fg-side-panel-header">
+        <h3>{{ t('focusGroup.session.participants') }}</h3>
+        <v-btn
+          icon="mdi-close"
+          size="small"
+          variant="text"
+          @click="togglePanel"
         />
-      </v-col>
-    </v-row>
-  </v-container>
+      </div>
+
+      <div class="fg-side-panel-content">
+        <div class="fg-panel-section">
+          <h4>{{ t('focusGroup.session.sessionInfo') }}</h4>
+          <div class="d-flex align-center flex-wrap ga-2">
+            <v-chip
+              :color="statusColor"
+              size="small"
+              variant="flat"
+              :prepend-icon="statusIcon"
+            >
+              {{ t(`focusGroup.session.status.${status}`) }}
+            </v-chip>
+            <span
+              v-if="status === 'live'"
+              class="text-body-2 text-medium-emphasis"
+            >
+              {{
+                t('focusGroup.session.topicProgress', {
+                  current: currentTopicIndex + 1,
+                  total: topicCount,
+                })
+              }}
+            </span>
+          </div>
+        </div>
+
+        <div class="fg-panel-section">
+          <h4>
+            {{ t('focusGroup.session.participants') }}
+            <span class="text-medium-emphasis font-weight-regular">
+              ({{ connectedCount }}/{{ participantCount }})
+            </span>
+          </h4>
+          <ParticipantList
+            :participants="participants"
+            :responded-ids="respondedIds"
+            :current-user-id="user?.id"
+          />
+        </div>
+      </div>
+    </div>
+  </template>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+import { useDisplay } from 'vuetify'
+import { Track } from 'livekit-client'
 import { getStatusColor, getStatusIcon } from '@/shared/utils/statusUtils'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
+import { useLiveKitRoom } from '@/shared/components/videoCall/composables/useLiveKitRoom'
 import {
   useFocusGroupSession,
   SESSION_STATUS,
 } from '@/ux/FocusGroup/composables/useFocusGroupSession'
 import SessionLobby from '@/ux/FocusGroup/components/session/SessionLobby.vue'
-import FacilitatorControls from '@/ux/FocusGroup/components/session/FacilitatorControls.vue'
+import SessionVideoStage from '@/ux/FocusGroup/components/session/SessionVideoStage.vue'
 import TopicPanel from '@/ux/FocusGroup/components/session/TopicPanel.vue'
 import TopicDiscussion from '@/ux/FocusGroup/components/session/TopicDiscussion.vue'
 import ParticipantList from '@/ux/FocusGroup/components/session/ParticipantList.vue'
@@ -126,6 +363,12 @@ const store = useStore()
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
+const { mdAndUp } = useDisplay()
+
+// Participants panel: open by default on desktop, hidden on mobile so the
+// discussion stays front and centre.
+const showPanel = ref(mdAndUp.value)
+const togglePanel = () => (showPanel.value = !showPanel.value)
 
 const studyId = route.params.id
 const {
@@ -136,6 +379,7 @@ const {
   consents,
   loaded,
   isLive,
+  isEnded,
   startSession,
   goToTopic,
   endSession,
@@ -202,6 +446,9 @@ const isFacilitator = computed(() => accessLevel.value === ACCESS_LEVEL.ADMIN)
 const isParticipant = computed(
   () => accessLevel.value === ACCESS_LEVEL.EVALUATOR,
 )
+const isObserver = computed(
+  () => accessLevel.value === ACCESS_LEVEL.OBSERVATOR,
+)
 // Facilitator and participants can post; observers read the discussion only.
 // Participant posting also depends on chat being enabled for this session.
 const canPost = computed(
@@ -213,6 +460,18 @@ const roleLabel = computed(() => {
   if (isFacilitator.value) return t('focusGroup.session.roleFacilitator')
   if (isParticipant.value) return t('focusGroup.session.roleParticipant')
   return t('focusGroup.session.roleObserver')
+})
+// Role badge styling, shared visual language with ParticipantList so a person's
+// own role in the header matches how they appear in the roster.
+const roleIcon = computed(() => {
+  if (isFacilitator.value) return 'mdi-account-star'
+  if (isObserver.value) return 'mdi-eye'
+  return 'mdi-account'
+})
+const roleColor = computed(() => {
+  if (isFacilitator.value) return 'blue'
+  if (isObserver.value) return 'orange'
+  return 'green'
 })
 
 // Only participants consent. This matches the moderated test, where the
@@ -228,7 +487,92 @@ const needsConsent = computed(
     !hasConsented.value,
 )
 
+// --- Video call (LiveKit) ---
+// Reuses the moderated transport composable as-is; FG only owns the
+// presentation (tile stage + control bar buttons). Opt-in per study.
+const videoEnabled = computed(
+  () => sessionConfig.value.enableVideoCall === true,
+)
+
+const {
+  room: callRoom,
+  callStarted,
+  isObservator: isCallObservator,
+  isCameraEnabled,
+  isMicrophoneEnabled,
+  isSharingScreen,
+  remoteParticipants,
+  screenShareFeeds,
+  connectionError,
+  localVideoElement,
+  connect: connectCall,
+  disconnect: disconnectCall,
+  toggleCamera,
+  toggleMicrophone,
+  toggleScreenShare,
+  setRemoteVideoElement,
+  setScreenShareVideoElement,
+} = useLiveKitRoom({
+  testId: computed(() => studyId),
+  userId: computed(() => user.value?.id),
+  displayName: computed(() => user.value?.name || user.value?.email || ''),
+  accessLevel,
+  cooperators: computed(() => test.value?.cooperators || []),
+})
+
+const localVideoState = computed(() => ({
+  name: user.value?.name || user.value?.email?.split('@')[0] || '',
+  isObservator: isCallObservator.value,
+  isCameraEnabled: isCameraEnabled.value,
+  isMicrophoneEnabled: isMicrophoneEnabled.value,
+}))
+
+const showMediaControls = computed(
+  () => videoEnabled.value && callStarted.value && !isCallObservator.value,
+)
+
+// Mirrors setLocalVideoRef in the moderated view: reattach the camera track
+// when the local <video> element remounts (e.g. after a tile grid reflow).
+const setLocalVideo = (el) => {
+  if (localVideoElement.value === el) return
+  localVideoElement.value = el
+  if (!el || !callRoom.value) return
+  const camPub = callRoom.value.localParticipant?.getTrackPublication(
+    Track.Source.Camera,
+  )
+  if (camPub?.track) camPub.track.attach(el)
+}
+
+// Join once the discussion is actually reachable: session live, consent
+// settled, and the user resolved. The composable ignores repeat calls.
+const shouldConnectVideo = computed(
+  () =>
+    videoEnabled.value &&
+    isLive.value &&
+    !needsConsent.value &&
+    !!user.value?.id,
+)
+watch(
+  shouldConnectVideo,
+  async (ready) => {
+    if (!ready) return
+    try {
+      await connectCall()
+    } catch {
+      // Video is best-effort: the error surfaces via connectionError and the
+      // chat keeps working.
+    }
+  },
+  { immediate: true },
+)
+watch(isEnded, (ended) => {
+  if (ended) disconnectCall()
+})
+
 // --- Presence ---
+const participantCount = computed(
+  () => Object.keys(participants.value || {}).length,
+)
 const connectedCount = computed(
   () =>
     Object.values(participants.value || {}).filter((p) => p?.connected === true)
@@ -318,6 +662,7 @@ const onSend = async (text) => {
 }
 
 const goToDashboard = () => {
+  disconnectCall()
   leavePresence(user.value?.id)
   router.push(`/focusGroup/dashboard/${studyId}`).catch(() => {})
 }
@@ -367,3 +712,159 @@ onMounted(async () => {
   await enterSession()
 })
 </script>
+
+<style scoped>
+.fg-stage {
+  max-width: 1100px;
+  margin: 0 auto;
+  /* leave room for the fixed control bar */
+  padding: 24px 24px 132px;
+  transition: margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (min-width: 960px) {
+  .fg-stage.panel-open {
+    margin-right: 360px;
+  }
+}
+
+/* --- Bottom control bar --- */
+.fg-control-bar {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 720px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: 24px;
+  background: rgba(var(--v-theme-primary), 0.97);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+.fg-control-left,
+.fg-control-right {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+}
+
+.fg-control-center {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.fg-round {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  color: white !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.fg-round:hover {
+  background: rgba(255, 255, 255, 0.22) !important;
+}
+
+.fg-round-active {
+  background: #1976d2 !important;
+  border-color: #1976d2 !important;
+}
+
+.fg-round-off {
+  background: #f44336 !important;
+  border-color: #f44336 !important;
+}
+
+.fg-control-divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.25);
+  margin: 0 4px;
+}
+
+.fg-round.v-btn--disabled {
+  opacity: 0.4;
+}
+
+.fg-pill {
+  height: 44px !important;
+  border-radius: 22px !important;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.fg-pill-danger {
+  background: #f44336 !important;
+  color: white !important;
+}
+
+/* --- Slide-in participants panel --- */
+.fg-side-panel {
+  position: fixed;
+  top: 0;
+  right: -360px;
+  width: 360px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: rgb(var(--v-theme-surface));
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.25);
+  z-index: 1500;
+  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fg-side-panel-open {
+  right: 0;
+}
+
+.fg-side-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(var(--v-border-color), 0.12);
+}
+
+.fg-side-panel-header h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.fg-side-panel-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.fg-panel-section {
+  margin-bottom: 28px;
+}
+
+.fg-panel-section h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(var(--v-border-color), 0.12);
+}
+
+@media (max-width: 959px) {
+  .fg-side-panel {
+    width: 100%;
+    right: -100%;
+  }
+}
+</style>
