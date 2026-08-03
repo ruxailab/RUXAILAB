@@ -280,6 +280,8 @@
   <!-- DIALOG -->
   <AcceptInvitationDialog
     v-model="dialogVisible"
+    :title="$t('invite.pendingTitle')"
+    :subtitle="`${$t('invite.pendingSubtitle')}: ${invite?.studyTitle ?? ''}`"
     @cancel="onReject"
     @submit="onAccept"
   />
@@ -288,14 +290,11 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
 import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue'
 import { useI18n } from 'vue-i18n'
 import { matchesSearch } from '@/shared/utils/searchUtils'
-import { getAcceptedInvitationDestination } from '@/shared/utils/studyNavigation'
 
 const store = useStore()
-const router = useRouter()
 const { t } = useI18n()
 
 // State
@@ -305,6 +304,7 @@ const activeIndex = ref(-1)
 const loading = ref(true)
 const markingAllAsRead = ref(false)
 const refreshing = ref(false)
+const invite = ref(null)
 
 // Pagination
 const pageSize = ref(8)
@@ -476,6 +476,12 @@ function showAcceptDialog() {
 const handleNotificationClick = async (notification) => {
   if (!notification) return
 
+  const result = await store.dispatch('loadInvite', {
+    token: notification.inviteToken,
+  })
+
+  invite.value = result.invite
+
   // If notification has a redirect, use the existing flow
   if (notification.redirectsTo) {
     await goToNotificationRedirect(notification)
@@ -500,32 +506,19 @@ const goToNotificationRedirect = async (notification) => {
       await store.dispatch('rejectInvite', {
         notification,
         user: user.value,
+        membershipType: invite.value.membershipType,
       })
 
       return
     }
 
-    try {
-      const result = await store.dispatch('acceptInvite', {
-        token:
-          localStorage.getItem('pendingInviteToken') ||
-          notification.inviteToken,
-        user: user.value,
-        studyId: notification.testId,
-        notification,
-      })
-
-      const destination = getAcceptedInvitationDestination({
-        study: result.study,
-        user: user.value,
-      })
-
-      if (destination) {
-        redirectTo = router.resolve(destination).href
-      }
-    } catch {
-      return
-    }
+    await store.dispatch('acceptInvite', {
+      token: notification.inviteToken,
+      user: user.value,
+      studyId: notification.testId,
+      notification,
+      membershipType: invite.value.membershipType,
+    })
   }
 
   if (!notification.read) {
