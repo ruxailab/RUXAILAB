@@ -49,6 +49,9 @@ export function useFocusGroupSession(studyId) {
   const messages = computed(() => snapshot.value?.messages ?? {})
   // Consent decisions: { [userId]: { name, accepted, timestamp } }
   const consents = computed(() => snapshot.value?.consents ?? {})
+  // The prompt the facilitator has surfaced as the active question, scoped to a
+  // topic so advancing the guide retires it. { text, topicId, askedAt } | null
+  const currentPrompt = computed(() => snapshot.value?.currentPrompt ?? null)
 
   const isLive = computed(() => status.value === SESSION_STATUS.LIVE)
   const isEnded = computed(() => status.value === SESSION_STATUS.ENDED)
@@ -126,6 +129,32 @@ export function useFocusGroupSession(studyId) {
   }
 
   /**
+   * Surface a facilitator prompt to every attendee as the current question.
+   * Scoped to the topic so moving on naturally retires it; a new ask overwrites
+   * the previous one, keeping a single "current question" at a time.
+   */
+  async function askPrompt({ text, topicId }) {
+    await update(rootRef, {
+      currentPrompt: {
+        text: text ?? '',
+        topicId: topicId ?? null,
+        askedAt: serverTimestamp(),
+      },
+      lastUpdate: serverTimestamp(),
+    })
+  }
+
+  /**
+   * Retire the current question so no prompt is shown to participants.
+   */
+  async function clearPrompt() {
+    await update(rootRef, {
+      currentPrompt: null,
+      lastUpdate: serverTimestamp(),
+    })
+  }
+
+  /**
    * Append a message to the current topic's discussion stream. Append-only, so
    * participants can post multiple times and the feed reads chronologically.
    */
@@ -167,6 +196,7 @@ export function useFocusGroupSession(studyId) {
     participants,
     messages,
     consents,
+    currentPrompt,
     loaded,
     isLive,
     isEnded,
@@ -180,6 +210,8 @@ export function useFocusGroupSession(studyId) {
     joinPresence,
     leavePresence,
     recordConsent,
+    askPrompt,
+    clearPrompt,
     sendMessage,
     toSessionRecord,
   }
