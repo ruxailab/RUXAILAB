@@ -30,18 +30,6 @@ export default {
       state.sessions = sessions
     },
 
-    ADD_SESSION(state, session) {
-      state.sessions.push(session)
-    },
-
-    UPDATE_SESSION(state, session) {
-      const index = state.sessions.findIndex((item) => item.id === session.id)
-
-      if (index !== -1) {
-        state.sessions.splice(index, 1, session)
-      }
-    },
-
     REMOVE_SESSION(state, sessionId) {
       state.sessions = state.sessions.filter(
         (session) => session.id !== sessionId,
@@ -70,8 +58,6 @@ export default {
         if (!result.success) {
           throw result.error
         }
-
-        commit('ADD_SESSION', result.session)
 
         return result.session
       } catch (error) {
@@ -117,22 +103,21 @@ export default {
      */
     async updateSession({ commit }, payload) {
       try {
+        commit('SET_LOADING', true)
+
         const result = await new SessionController().updateSession(payload)
 
         if (!result.success) {
           throw result.error
         }
 
-        commit('UPDATE_SESSION', {
-          id: payload.sessionId,
-          ...payload.data,
-        })
-
         return result
       } catch (error) {
         console.error('updateSession error:', error)
 
         throw error
+      } finally {
+        commit('SET_LOADING', false)
       }
     },
 

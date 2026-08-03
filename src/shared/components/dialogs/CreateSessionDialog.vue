@@ -13,12 +13,18 @@
         <v-icon class="mr-3" size="28"> mdi-calendar-account </v-icon>
 
         <div>
-          <h2 class="text-h5 font-weight-bold mb-1">
-            {{ $t('Sessions.title.createSession') }}
-          </h2>
+          {{
+            isEditMode
+              ? $t('Sessions.title.editSession')
+              : $t('Sessions.title.createSession')
+          }}
 
           <p class="text-body-2 mb-0 opacity-90">
-            {{ $t('Sessions.description.createSession') }}
+            {{
+              isEditMode
+                ? $t('Sessions.description.editSession')
+                : $t('Sessions.description.createSession')
+            }}
           </p>
         </div>
       </v-card-title>
@@ -215,7 +221,7 @@
                       >
                         <template #activator="{ props }">
                           <v-text-field
-                            v-model="date"
+                            :model-value="formattedDate"
                             readonly
                             color="primary"
                             v-bind="props"
@@ -476,7 +482,11 @@
             prepend-icon="mdi-calendar-plus"
             @click="saveSession"
           >
-            {{ $t('Sessions.actions.createSession') }}
+            {{
+              isEditMode
+                ? $t('Sessions.actions.updateSession')
+                : $t('Sessions.actions.createSession')
+            }}
           </v-btn>
         </div>
       </v-card-text>
@@ -518,8 +528,7 @@ const valid = ref(false)
 const loading = ref(false)
 
 // Session data
-const date = ref(getDefaultDate())
-const hour = ref(getDefaultTime())
+const sessionDateTime = ref(new Date())
 const sessionMessage = ref('')
 const sessionTitle = ref('')
 
@@ -544,6 +553,54 @@ const test = computed(() => store.getters.test)
 const users = computed(() => store.state.Users?.users || [])
 
 const cooperators = computed(() => test.value?.cooperators || [])
+
+const isEditMode = computed(() => !!props.session)
+
+const date = computed({
+  get() {
+    return sessionDateTime.value
+  },
+
+  set(value) {
+    const newDate = new Date(value)
+
+    sessionDateTime.value.setFullYear(
+      newDate.getFullYear(),
+      newDate.getMonth(),
+      newDate.getDate(),
+    )
+
+    sessionDateTime.value = new Date(sessionDateTime.value)
+  },
+})
+
+const hour = computed({
+  get() {
+    return sessionDateTime.value.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    })
+  },
+
+  set(value) {
+    const [hours, minutes] = value.split(':').map(Number)
+
+    sessionDateTime.value.setHours(hours, minutes, 0, 0)
+
+    sessionDateTime.value = new Date(sessionDateTime.value)
+  },
+})
+
+const formattedDate = computed(() => {
+  if (!date.value) return ''
+
+  return new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }).format(date.value)
+})
 
 const availableStaff = computed(() =>
   cooperators.value.filter(
@@ -589,17 +646,11 @@ const minTime = computed(() => {
 })
 
 const formattedDateTime = computed(() => {
-  if (!date.value || !hour.value) {
+  if (isNaN(sessionDateTime.value.getTime())) {
     return ''
   }
 
-  const dateTime = new Date(`${date.value}T${hour.value}`)
-
-  if (isNaN(dateTime.getTime())) {
-    return ''
-  }
-
-  return dateTime.toLocaleString('en-US', {
+  return sessionDateTime.value.toLocaleString('en-US', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -612,14 +663,6 @@ const formattedDateTime = computed(() => {
 // Helpers
 function getSessionTitle() {
   return sessionTitle.value?.trim() || `${date.value}_Session`
-}
-
-function getDefaultTime() {
-  return new Date().toLocaleTimeString('en-GB', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  })
 }
 
 function getDefaultDate() {
@@ -722,37 +765,44 @@ async function saveSession() {
       return
     }
 
-    const dateTime = new Date(`${date.value}T${hour.value}:00`)
+    const sessionPayload = {
+      title: getSessionTitle(),
+      scheduledAt: sessionDateTime.value.toISOString(),
+      message: sessionMessage.value,
 
-    if (isNaN(dateTime.getTime())) {
-      throw new Error(t('Sessions.validation.invalidDate'))
+      staff: sessionStaff.value.map((staff) => ({
+        userDocId: staff.userDocId,
+        email: staff.email,
+        role: staff.role,
+      })),
+
+      participants: selectedParticipants.value.map((participant) => ({
+        userDocId: participant.userDocId || null,
+        email: participant.email,
+        role: getPredefinedParticipantUserRole(test.value),
+      })),
     }
 
-    const payload = {
-      studyId: test.value.id,
+    if (isEditMode.value) {
+      await store.dispatch('updateSession', {
+        studyId: test.value.id,
+        sessionId: props.session.id,
+        session: sessionPayload,
+      })
 
-      session: {
-        title: getSessionTitle(),
-        scheduledAt: dateTime.toISOString(),
-        message: sessionMessage.value,
-        staff: sessionStaff.value.map((staff) => ({
-          userDocId: staff.userDocId,
-          email: staff.email,
-          role: staff.role,
-        })),
-        participants: selectedParticipants.value.map((participant) => ({
-          userDocId: participant.userDocId,
-          email: participant.email,
-          role: getPredefinedParticipantUserRole(test.value),
-        })),
-      },
+      showSuccess(t('Sessions.success.updated'))
+    } else {
+      await store.dispatch('createSession', {
+        studyId: test.value.id,
+        session: sessionPayload,
+      })
+
+      showSuccess(t('Sessions.success.created'))
     }
-
-    await store.dispatch('createSession', payload)
-
-    showSuccess(t('Sessions.success.created'))
 
     resetForm()
+
+    await store.dispatch('fetchSessions', test.value.id)
 
     emit('update:dialog', false)
   } catch (error) {
@@ -763,9 +813,7 @@ async function saveSession() {
 }
 
 function resetForm() {
-  date.value = getDefaultDate()
-
-  hour.value = getDefaultTime()
+  sessionDateTime.value = new Date()
 
   sessionMessage.value = ''
 
@@ -788,6 +836,33 @@ watch(
     sessionStaff.value = []
 
     selectedParticipants.value = []
+  },
+)
+
+watch(
+  () => props.session,
+  (session) => {
+    if (!session) {
+      resetForm()
+      return
+    }
+
+    sessionTitle.value = session.title || ''
+
+    const scheduledDate = session.scheduledAt?.toDate
+      ? session.scheduledAt.toDate()
+      : new Date(session.scheduledAt)
+
+    sessionDateTime.value = new Date(scheduledDate)
+
+    sessionMessage.value = session.message || ''
+
+    sessionStaff.value = session.staff || []
+
+    selectedParticipants.value = session.participants || []
+  },
+  {
+    immediate: true,
   },
 )
 </script>

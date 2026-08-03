@@ -3150,16 +3150,19 @@
       "sessions": "Sesiones",
       "createSession": "Crear sesión",
       "placeholder": "Ingrese un título (opcional). Se generará un título predeterminado si se deja vacío.",
-      "title": "Título"
+      "title": "Título",
+      "editSession": "Editar sesión"
     },
     "description": {
-      "createSession": "Configure el equipo, los participantes y el horario de esta sesión."
+      "createSession": "Configure el equipo, los participantes y el horario de esta sesión.",
+      "editSession": "Actualiza los detalles de la sesión, participantes, personal, horario y mensaje."
     },
     "actions": {
       "createSession": "Crear sesión",
       "cancel": "Cancelar",
       "deleteSession": "Eliminar sesión",
-      "editSession": "Editar sesión"
+      "editSession": "Editar sesión",
+      "updateSession": "Actualizar sesión"
     },
     "confirm": {
       "deleteTitle": "Eliminar sesión",
@@ -3232,18 +3235,21 @@
       "description": "Los miembros del equipo pueden participar como facilitadores u observadores. Todos los participantes tendrán el rol USER."
     },
     "validation": {
-      "invalidDate": "Fecha/hora inválida"
+      "invalidDate": "Fecha/hora inválida",
+      "invalidSession": "Datos de sesión inválidos."
     },
     "success": {
       "created": "Sesión creada correctamente",
       "deleted": "Sesión eliminada correctamente",
-      "messageSent": "Mensaje enviado correctamente."
+      "messageSent": "Mensaje enviado correctamente.",
+      "updated": "Sesión actualizada correctamente."
     },
     "error": {
       "createFailed": "Error al crear la sesión",
       "participantAlreadyAdded": "El participante ya fue agregado",
       "errorDelete": "Error al eliminar la sesión",
-      "sendMessageFailed": "No fue posible enviar el mensaje."
+      "sendMessageFailed": "No fue posible enviar el mensaje.",
+      "updateFailed": "No se pudo actualizar la sesión."
     },
     "send": {
       "title": "Enviar mensaje",

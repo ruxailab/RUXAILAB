@@ -75,10 +75,10 @@ export default class SessionController extends Controller {
    * @param {string} params.sessionId
    * @param {Object} params.data
    */
-  async updateSession({ studyId, sessionId, data }) {
+  async updateSession({ studyId, sessionId, session }) {
     try {
       await super.update(`tests/${studyId}/sessions`, sessionId, {
-        ...data,
+        ...session,
         updatedAt: new Date(),
       })
 

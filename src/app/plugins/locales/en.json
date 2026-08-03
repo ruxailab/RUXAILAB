@@ -3223,16 +3223,19 @@
       "sessions": "Sessions",
       "createSession": "Create Session",
       "placeholder": "Enter a title (optional). A default title will be generated if left empty.",
-      "title": "Title"
+      "title": "Title",
+      "editSession": "Edit Session"
     },
     "description": {
-      "createSession": "Configure staff, participants and schedule for this session."
+      "createSession": "Configure staff, participants and schedule for this session.",
+      "editSession": "Update the session details, participants, staff, schedule and message."
     },
     "actions": {
       "createSession": "Create Session",
       "cancel": "Cancel",
       "deleteSession": "Delete session",
-      "editSession": "Edit session"
+      "editSession": "Edit session",
+      "updateSession": "Update Session"
     },
     "confirm": {
       "deleteTitle": "Delete session",
@@ -3305,18 +3308,21 @@
       "description": "Staff members can participate as facilitators or observers. All participants will have USER role."
     },
     "validation": {
-      "invalidDate": "Invalid date/time"
+      "invalidDate": "Invalid date/time",
+      "invalidSession": "Invalid session data."
     },
     "success": {
       "created": "Session created successfully",
       "deleted": "Session deleted successfully",
-      "messageSent": "Message sent successfully."
+      "messageSent": "Message sent successfully.",
+      "updated": "Session updated successfully."
     },
     "error": {
       "createFailed": "Failed to create session",
       "participantAlreadyAdded": "Participant already added",
       "errorDelete": "Error deleting session",
-      "sendMessageFailed": "Unable to send the message."
+      "sendMessageFailed": "Unable to send the message.",
+      "updateFailed": "Failed to update session."
     },
     "send": {
       "title": "Send message",

@@ -13,7 +13,7 @@
     <CreateSessionDialog
       :dialog="createSessionDialog"
       :session="sessionToEdit"
-      @update:dialog="createSessionDialog = $event"
+      @update:dialog="handleSessionDialog"
     />
 
     <SendSessionMessageDialog
@@ -44,7 +44,7 @@
     <v-card class="mt-4">
       <v-card-text>
         <v-row>
-          <v-col cols="12" md="6">
+          <v-col cols="12" lg="8" md="8" sm="6">
             <v-text-field
               v-model="filters.search"
               :label="$t('Sessions.filter.search')"
@@ -57,7 +57,7 @@
           </v-col>
 
           <!-- 📅 Session date range filter -->
-          <v-col cols="12" md="3">
+          <v-col cols="12" lg="4" md="4" sm="6">
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
@@ -103,6 +103,7 @@
         :items="filteredSessions"
         :loading="loading"
         :items-per-page="10"
+        :sort-by="[{ key: 'startDate', order: 'desc' }]"
       >
         <template #item.startDate="{ item }">
           {{ formatDate(item.startDate) }}
@@ -225,7 +226,7 @@ import { showError, showSuccess } from '@/shared/utils/toast'
 import SendSessionMessageDialog from '@/shared/components/dialogs/SendSessionMessageDialog.vue'
 import { useRouter } from 'vue-router'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const store = useStore()
 
@@ -325,7 +326,7 @@ const formatDate = (date) => {
     date = date.toDate()
   }
 
-  return new Intl.DateTimeFormat(undefined, {
+  return new Intl.DateTimeFormat(locale.value, {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(date))
@@ -351,6 +352,14 @@ const openCreateSessionDialog = () => {
 const openEditSessionDialog = (session) => {
   sessionToEdit.value = session
   createSessionDialog.value = true
+}
+
+const handleSessionDialog = (value) => {
+  createSessionDialog.value = value
+
+  if (!value) {
+    sessionToEdit.value = null
+  }
 }
 
 const deleteSession = (session) => {
