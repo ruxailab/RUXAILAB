@@ -144,7 +144,10 @@ const addNote = () => {
   const note = {
     text: newNote.value.trim(),
     timestamp: Date.now(),
-    taskIndex: props.currentTaskIndex,
+    // Fall back to null: this component is reused outside moderated tests (e.g.
+    // Focus Group) where there is no task index, and Realtime Database rejects
+    // `undefined` values on write.
+    taskIndex: props.currentTaskIndex ?? null,
     taskName: currentTaskName.value,
   }
 
