@@ -2449,16 +2449,49 @@
     "no": "No"
   },
   "focusGroup": {
+    "config": {
+      "title": "Session Features",
+      "subtitle": "Choose what this focus group session includes. Only the features you select will be available to the facilitator during the session.",
+      "chat": "Participant chat",
+      "chatHint": "Let participants post in the discussion",
+      "recordAudio": "Record audio",
+      "recordAudioHint": "Capture the session audio for later analysis",
+      "recordVideo": "Record video",
+      "recordVideoHint": "Capture the session video for later analysis",
+      "requireConsent": "Require consent",
+      "requireConsentHint": "Ask attendees to agree before taking part",
+      "waitingRoom": "Waiting room",
+      "waitingRoomHint": "Hold participants before admitting them",
+      "hideObservers": "Hide observers",
+      "hideObserversHint": "Keep observers invisible to participants",
+      "maxParticipants": "Max participants",
+      "maxParticipantsHint": "Recommended between 3 and 8 for a focus group",
+      "privacyTitle": "Privacy Notice",
+      "privacyIntro": "Recording features require explicit consent from participants. Make sure to:",
+      "privacyInform": "Clearly inform participants about data collection",
+      "privacyConsent": "Obtain proper consent before starting the session",
+      "privacyRegulations": "Follow data protection regulations (GDPR, etc.)",
+      "privacyStorage": "Secure storage and handling of recorded data",
+      "consentTitle": "Consent Form",
+      "consentSubtitle": "Shown to every attendee before they join the session.",
+      "consentMissing": "Consent is required but no form has been written yet. Attendees will join without a consent step until you add the text below.",
+      "consentDisabled": "Consent is turned off for this session, so this form will not be shown. Enable it under Session Features."
+    },
     "manager": {
       "title": "Focus Group",
       "underConstruction": "The Focus Group module is under active development. The live discussion room and reporting are coming soon.",
       "description": "You can build your discussion guide, manage cooperators, and configure study settings from the navigation menu."
     },
     "edit": {
-      "title": "Discussion Guide",
-      "subtitle": "Define the topics and prompts your facilitator will guide the group through.",
-      "save": "Save guide",
-      "saved": "Discussion guide saved",
+      "title": "Edit focus group",
+      "subtitle": "Customize the settings and preferences of your focus group.",
+      "save": "Save changes",
+      "saved": "Session setup saved",
+      "tabs": {
+        "configuration": "Session Configuration",
+        "consent": "Consent Form",
+        "guide": "Discussion Guide"
+      },
       "noTopics": "No topics yet. Add your first discussion topic to get started.",
       "addTopic": "Add topic",
       "removeTopic": "Remove topic",
@@ -2497,6 +2530,9 @@
       "waitingRoom": "Waiting room enabled",
       "consent": "Consent required",
       "backroom": "Observers hidden from participants",
+      "chat": "Participant chat enabled",
+      "recordAudio": "Audio recording enabled",
+      "recordVideo": "Video recording enabled",
       "configure": "Configure",
       "liveSessionTitle": "Live Session",
       "liveSessionComingSoon": "Moderated live discussion is coming soon.",
@@ -2509,6 +2545,7 @@
     "session": {
       "title": "Live Session",
       "backToDashboard": "Back to dashboard",
+      "consentDeclined": "You declined the consent terms, so you have not joined the session.",
       "status": {
         "idle": "Not started",
         "live": "Live",
