@@ -13,7 +13,7 @@ import path from 'path'
 const BASE_LOCALE = 'en'
 const ALL_LOCALES = ['en', 'es']
 const LOCALES_DIR = 'src/app/plugins/locales'
-const GIT_BIN = 'git'
+const GIT_BIN = process.platform === 'win32' ? 'git' : '/usr/bin/git'
 
 function gitDiff(args) {
   try {
