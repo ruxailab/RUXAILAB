@@ -64,7 +64,7 @@ export default [
         component: CooperatorsView,
       },
       {
-        path: '/userTest/unmoderated/participants/:id/:token?',
+        path: '/userTest/unmoderated/participants/:id',
         name: 'UserUnmoderatedParticipantsView',
         props: true,
         meta: studyMeta(C.COOPERATORS_VIEW, 'userTest/unmoderated'),

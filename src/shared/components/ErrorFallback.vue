@@ -49,9 +49,11 @@
                 {{ t('errors.boundary.goToDashboard') }}
               </v-btn>
             </div>
-
-            <!-- Expandable Error Details (for developers) -->
-            <v-expansion-panels variant="accordion" class="error-details-panel">
+            <v-expansion-panels
+              v-if="isDev"
+              variant="accordion"
+              class="error-details-panel"
+            >
               <v-expansion-panel rounded="lg">
                 <v-expansion-panel-title class="text-body-2 text-medium-emphasis">
                   <v-icon size="18" class="mr-2">mdi-bug-outline</v-icon>
@@ -137,6 +139,8 @@ defineEmits(['retry'])
 const router = useRouter()
 const { t } = useI18n()
 const copied = ref(false)
+
+const isDev = process.env.NODE_ENV !== 'production'
 
 function goToDashboard() {
   // Force a full navigation to clear the error state
@@ -234,7 +238,7 @@ function copyErrorDetails() {
   display: flex;
   gap: 8px;
   padding: 4px 0;
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .detail-label {

@@ -602,7 +602,16 @@
     "missingVariableTitles": "No se puede guardar: Algunas variables no tienen título",
     "failedToLoadAnswers": "Error al cargar respuestas",
     "failedToUpdateAnswer": "Error al actualizar respuesta",
-    "failedToSaveAnswerCooperator": "Error al guardar respuesta del cooperador"
+    "failedToSaveAnswerCooperator": "Error al guardar respuesta del cooperador",
+    "boundary": {
+      "title": "Algo salió mal",
+      "message": "Ocurrió un error inesperado al cargar esta página. Sus datos han sido preservados.",
+      "retry": "Reintentar",
+      "goToDashboard": "Ir al Panel",
+      "showDetails": "Mostrar detalles del error",
+      "copyDetails": "Copiar detalles del error",
+      "copied": "¡Copiado!"
+    }
   },
   "Introduction": {
     "title": "UX LAB Remoto",
@@ -1147,36 +1156,27 @@
     "placeholderMessage": "Hola, hagamos una prueba...",
     "inviteInfo": "La invitación con el enlace de la prueba será enviada al correo del evaluador en el horario programado",
     "send": "Enviar",
-
     "role": "Rol",
     "roleDescription": "Selecciona el rol para este participante.",
-
     "roles": {
       "evaluator": "Evaluador",
       "evaluatorDesc": "Participa en la prueba, comparte pantalla/video.",
       "observator": "Observador",
       "observatorDesc": "Observa la sesión en silencio y toma notas."
     },
-
     "selectParticipantDescription": "Selecciona el participante que deseas invitar a esta sesión de evaluación.",
     "emailPlaceholder": "Escribe un correo electrónico y presiona Enter",
     "addedParticipants": "Participantes añadidos",
     "noParticipantSelected": "Ningún participante seleccionado",
-
     "scheduleDescription": "Elige la fecha y hora de la sesión de evaluación.",
-
     "invitationPreview": "Vista previa de la invitación",
     "evaluationInvitation": "Invitación de evaluación",
-
     "to": "Para",
     "scheduled": "Programado",
     "message": "Mensaje",
-
     "noMessageYet": "Aún no se ha ingresado ningún mensaje...",
-
     "inviteInfoTitle": "Información",
     "inviteInfoDescription": "El participante recibirá una notificación por correo electrónico y podrá aceptar o rechazar la invitación.",
-
     "validation": {
       "invalidEmail": "Correo inválido: {email}",
       "dateRequired": "La fecha es obligatoria"
