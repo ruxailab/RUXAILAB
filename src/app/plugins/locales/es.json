@@ -3102,5 +3102,21 @@
       "pending": "Pendiente",
       "accepted": "Aceptado"
     }
+  },
+  "errors": {
+    "globalError": "Ocurrió un error. Por favor, inténtalo de nuevo.",
+    "emailIsRequired": "El correo electrónico es obligatorio.",
+    "passwordRequired": "La contraseña es obligatoria.",
+    "invalidEmail": "Por favor, introduce una dirección de correo electrónico válida.",
+    "incorrectCredential": "Correo o contraseña incorrectos, o la cuenta no existe.",
+    "boundary": {
+      "title": "Algo salió mal",
+      "message": "Ocurrió un error inesperado al cargar esta página. Sus datos han sido preservados.",
+      "retry": "Reintentar",
+      "goToDashboard": "Ir al Panel",
+      "showDetails": "Mostrar detalles del error",
+      "copyDetails": "Copiar detalles del error",
+      "copied": "¡Copiado!"
+    }
   }
 }
