@@ -154,6 +154,7 @@ export const validateInvite = functions.onCall({
           email: dataInvite.email ?? null,
           isPublic: !!dataInvite.isPublic,
           requiredLogin: !!dataInvite.requiredLogin,
+          membershipType: dataInvite.membershipType,
         },
       }
     } catch (err) {
@@ -173,6 +174,7 @@ export const generateInvitationLink = functions.onCall({
       requiredLogin,
       toEmail,
       isPublic,
+      membershipType,
     } = content
 
     if (!studyId || accessLevel === undefined || accessLevel === null) {
@@ -196,6 +198,7 @@ export const generateInvitationLink = functions.onCall({
       isPublic,
       accessLevel,
       requiredLogin,
+      membershipType,
     )
 
     return { inviteLink, inviteToken }

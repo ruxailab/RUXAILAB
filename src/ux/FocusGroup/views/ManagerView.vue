@@ -273,6 +273,21 @@ const configFlags = computed(() => {
       label: 'focusGroup.modules.backroom',
       enabled: config.hideObservers === true,
     },
+    {
+      key: 'chat',
+      label: 'focusGroup.modules.chat',
+      enabled: config.allowParticipantChat !== false,
+    },
+    {
+      key: 'recordAudio',
+      label: 'focusGroup.modules.recordAudio',
+      enabled: config.recordAudio === true,
+    },
+    {
+      key: 'recordVideo',
+      label: 'focusGroup.modules.recordVideo',
+      enabled: config.recordVideo === true,
+    },
   ]
 })
 

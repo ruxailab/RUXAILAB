@@ -62,13 +62,7 @@
 
                   <v-stepper-item
                     :value="
-                      hasPostTest
-                        ? hasPreTest
-                          ? 5
-                          : 4
-                        : hasPreTest
-                          ? 4
-                          : 3
+                      hasPostTest ? (hasPreTest ? 5 : 4) : hasPreTest ? 4 : 3
                     "
                     :title="$t('UserTestView.stepper.completion')"
                     :complete="stepperValue >= 4"
@@ -314,7 +308,14 @@
 </template>
 
 <script setup>
-import { computed, reactive, ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import {
+  computed,
+  reactive,
+  ref,
+  onMounted,
+  onBeforeUnmount,
+  nextTick,
+} from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import WelcomeStep from '@/ux/UserTest/components/steps/WelcomeStep.vue'

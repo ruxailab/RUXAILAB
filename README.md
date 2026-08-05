@@ -42,7 +42,7 @@ UX Remote LAB provides a collaborative environment for creators to share their p
 
 For commercial support, academic collaborations, and answers to common questions, please contact us by one of our communications channels:
 
-- [Discord Server](https://discord.gg/YnkDk9BNYK)
+- [Discord Server](https://discord.gg/Uz6sEsyp2G)
 - [Discussions](https://github.com/ruxailab/RUXAILAB/discussions)
 - Email: `ruxailab@gmail.com`
 

@@ -1,7 +1,17 @@
 <template>
+  <!-- Hold rendering until the session state arrives, so the consent gate does
+       not flash for someone who has already agreed -->
+  <div
+    v-if="!loaded"
+    class="d-flex align-center justify-center"
+    style="height: 100vh"
+  >
+    <v-progress-circular indeterminate color="primary" size="48" />
+  </div>
+
   <!-- Lobby: branded welcome shown before the session is live and after it ends -->
   <SessionLobby
-    v-if="!isLive"
+    v-else-if="!isLive"
     :title="test?.testTitle"
     :description="test?.testDescription"
     :status="status"
@@ -12,98 +22,380 @@
     @start="onStart"
   />
 
-  <!-- Live discussion -->
-  <v-container v-else fluid class="pa-4 pa-md-6">
-    <!-- Header -->
-    <div class="d-flex align-center flex-wrap ga-3 mb-4">
+  <!-- Consent gate: sits between the lobby and the discussion, mirroring the
+       moderated test where consent follows the welcome step -->
+  <v-container v-else-if="needsConsent" class="pa-6">
+    <ConsentStep
+      :test-title="test?.testTitle"
+      :consent-text="consentText"
+      :full-name-model="fullName"
+      :consent-completed-model="consentAccepted"
+      @update:full-name-model="(val) => (fullName = val)"
+      @update:consent-completed-model="(val) => (consentAccepted = val)"
+      @continue="onConsentAccept"
+      @decline-consent="onConsentDecline"
+    />
+  </v-container>
+
+  <!-- Live session — a fixed, full-viewport layout in the spirit of a video-call
+       app: a slim top bar, a stage that fills the screen and scales with the
+       number of people, its control dock beneath it, and a full-height tabbed
+       side panel. Nothing scrolls the page; the stage and each panel scroll on
+       their own. -->
+  <div v-else class="fg-live">
+    <header class="fg-topbar">
       <v-btn
         icon="mdi-arrow-left"
         variant="text"
+        density="comfortable"
         :title="t('focusGroup.session.backToDashboard')"
         @click="goToDashboard"
       />
-      <div class="flex-grow-1">
-        <h1 class="text-h5 mb-0">
+      <div class="fg-topbar-title">
+        <span class="fg-topbar-name">
           {{ test?.testTitle || t('focusGroup.dashboard.typeLabel') }}
-        </h1>
-        <p class="text-body-2 text-medium-emphasis mb-0">
-          {{ t('focusGroup.session.title') }}
-        </p>
+        </span>
+        <span class="fg-topbar-meta">
+          <span class="fg-live-dot" :class="`fg-live-dot--${status}`"></span>
+          {{ t(`focusGroup.session.status.${status}`) }}
+          <template v-if="currentTopic">
+            <span class="fg-meta-sep">•</span>
+            {{
+              t('focusGroup.session.topicProgress', {
+                current: currentTopicIndex + 1,
+                total: topicCount,
+              })
+            }}
+          </template>
+        </span>
       </div>
+      <v-spacer />
       <v-chip
-        :color="statusColor"
-        variant="flat"
-        :prepend-icon="statusIcon"
+        :color="roleColor"
+        variant="tonal"
+        :prepend-icon="roleIcon"
+        size="small"
       >
-        {{ t(`focusGroup.session.status.${status}`) }}
+        {{ roleLabel }}
       </v-chip>
+    </header>
+
+    <div class="fg-body">
+      <!-- Stage column: the stage plus its control dock, side by side with the
+           full-height panel. -->
+      <div class="fg-stage-col">
+        <main class="fg-stage-area">
+          <div v-if="isObserver" class="fg-observer-strip">
+            <v-icon size="16" class="me-1">mdi-eye-outline</v-icon>
+            {{ t('focusGroup.session.observerModeHint') }}
+          </div>
+
+          <CurrentQuestion
+            :text="activePromptText"
+            :can-clear="isFacilitator"
+            @clear="onClearPrompt"
+          />
+
+          <div class="fg-stage-body">
+            <SessionVideoStage
+              v-if="videoEnabled"
+              class="fg-fill"
+              :remote-participants="remoteParticipants"
+              :screen-share-feeds="screenShareFeeds"
+              :local-state="localVideoState"
+              :connection-error="connectionError"
+              :presence-roles="participants"
+              :set-local-video="setLocalVideo"
+              :set-remote-video="setRemoteVideoElement"
+              :set-screen-video="setScreenShareVideoElement"
+            />
+            <TopicDiscussion
+              v-else
+              class="fg-fill"
+              :messages="currentMessages"
+              :current-user-id="user?.id"
+              :can-post="canPost"
+              :sending="sending"
+              @send="onSend"
+            />
+          </div>
+        </main>
+
+        <!-- Control dock -->
+        <div class="fg-controls">
+          <div class="fg-control-bar">
+            <template v-if="showMediaControls">
+              <v-tooltip
+                location="top"
+                :text="
+                  isMicrophoneEnabled
+                    ? t('focusGroup.session.muteMicrophone')
+                    : t('focusGroup.session.unmuteMicrophone')
+                "
+              >
+                <template #activator="{ props: tip }">
+                  <v-btn
+                    v-bind="tip"
+                    class="fg-round"
+                    :class="{ 'fg-round-off': !isMicrophoneEnabled }"
+                    :icon="
+                      isMicrophoneEnabled
+                        ? 'mdi-microphone'
+                        : 'mdi-microphone-off'
+                    "
+                    @click="toggleMicrophone"
+                  />
+                </template>
+              </v-tooltip>
+              <v-tooltip
+                location="top"
+                :text="
+                  isCameraEnabled
+                    ? t('focusGroup.session.turnCameraOff')
+                    : t('focusGroup.session.turnCameraOn')
+                "
+              >
+                <template #activator="{ props: tip }">
+                  <v-btn
+                    v-bind="tip"
+                    class="fg-round"
+                    :class="{ 'fg-round-off': !isCameraEnabled }"
+                    :icon="isCameraEnabled ? 'mdi-video' : 'mdi-video-off'"
+                    @click="toggleCamera"
+                  />
+                </template>
+              </v-tooltip>
+              <v-tooltip
+                v-if="isFacilitator"
+                location="top"
+                :text="
+                  isSharingScreen
+                    ? t('focusGroup.session.stopSharingScreen')
+                    : t('focusGroup.session.shareScreen')
+                "
+              >
+                <template #activator="{ props: tip }">
+                  <v-btn
+                    v-bind="tip"
+                    class="fg-round"
+                    :class="{ 'fg-round-active': isSharingScreen }"
+                    icon="mdi-monitor-share"
+                    @click="toggleScreenShare"
+                  />
+                </template>
+              </v-tooltip>
+              <div class="fg-control-divider" />
+            </template>
+
+            <template v-if="isFacilitator">
+              <v-btn
+                v-if="status === 'idle'"
+                class="fg-pill"
+                color="white"
+                variant="flat"
+                prepend-icon="mdi-play"
+                :disabled="topicCount === 0"
+                @click="onStart"
+              >
+                {{ t('focusGroup.session.startSession') }}
+              </v-btn>
+
+              <template v-else-if="status === 'live'">
+                <v-tooltip
+                  location="top"
+                  :text="t('focusGroup.session.previous')"
+                >
+                  <template #activator="{ props: tip }">
+                    <v-btn
+                      v-bind="tip"
+                      class="fg-round"
+                      icon="mdi-chevron-left"
+                      :disabled="currentTopicIndex <= 0"
+                      @click="onPrev"
+                    />
+                  </template>
+                </v-tooltip>
+                <span class="text-white text-body-2 mx-1 fg-nowrap">
+                  {{
+                    t('focusGroup.session.topicProgress', {
+                      current: currentTopicIndex + 1,
+                      total: topicCount,
+                    })
+                  }}
+                </span>
+                <v-tooltip location="top" :text="t('focusGroup.session.next')">
+                  <template #activator="{ props: tip }">
+                    <v-btn
+                      v-bind="tip"
+                      class="fg-round"
+                      icon="mdi-chevron-right"
+                      :disabled="currentTopicIndex >= topicCount - 1"
+                      @click="onNext"
+                    />
+                  </template>
+                </v-tooltip>
+                <v-btn
+                  class="fg-pill fg-pill-danger ms-2"
+                  prepend-icon="mdi-stop"
+                  @click="onEnd"
+                >
+                  {{ t('focusGroup.session.endSession') }}
+                </v-btn>
+              </template>
+
+              <span v-else class="text-white text-body-2">
+                {{ t('focusGroup.session.sessionEnded') }}
+              </span>
+            </template>
+
+            <span v-else class="text-white text-body-2 text-truncate fg-nowrap">
+              {{
+                currentTopic?.title || t('focusGroup.session.waitingParticipant')
+              }}
+            </span>
+
+            <div class="fg-control-divider" />
+
+            <v-tooltip
+              v-if="videoEnabled"
+              location="top"
+              :text="t('focusGroup.session.discussion')"
+            >
+              <template #activator="{ props: tip }">
+                <v-btn
+                  v-bind="tip"
+                  class="fg-round"
+                  :class="{
+                    'fg-round-active': showPanel && panelTab === 'discussion',
+                  }"
+                  icon="mdi-message-text"
+                  @click="togglePanelTab('discussion')"
+                />
+              </template>
+            </v-tooltip>
+            <v-tooltip
+              location="top"
+              :text="t('focusGroup.session.participants')"
+            >
+              <template #activator="{ props: tip }">
+                <v-btn
+                  v-bind="tip"
+                  class="fg-round"
+                  :class="{
+                    'fg-round-active': showPanel && panelTab === 'people',
+                  }"
+                  @click="togglePanelTab('people')"
+                >
+                  <v-badge
+                    :content="connectedCount"
+                    :model-value="connectedCount > 0"
+                    color="success"
+                  >
+                    <v-icon>mdi-account-group</v-icon>
+                  </v-badge>
+                </v-btn>
+              </template>
+            </v-tooltip>
+          </div>
+        </div>
+      </div>
+
+      <!-- Full-height side panel -->
+      <aside v-if="showPanel" class="fg-panel">
+        <div class="fg-panel-tabs">
+          <button
+            v-for="tab in panelTabs"
+            :key="tab.key"
+            type="button"
+            class="fg-tab"
+            :class="{ 'fg-tab--active': panelTab === tab.key }"
+            @click="panelTab = tab.key"
+          >
+            <v-icon size="18">{{ tab.icon }}</v-icon>
+            <span>{{ t(tab.label) }}</span>
+          </button>
+          <v-spacer />
+          <v-btn
+            icon="mdi-close"
+            size="small"
+            variant="text"
+            @click="showPanel = false"
+          />
+        </div>
+
+        <div class="fg-panel-body">
+          <TopicDiscussion
+            v-if="panelTab === 'discussion'"
+            class="fg-fill"
+            :messages="currentMessages"
+            :current-user-id="user?.id"
+            :can-post="canPost"
+            :sending="sending"
+            @send="onSend"
+          />
+
+          <div v-else-if="panelTab === 'people'" class="fg-panel-scroll">
+            <div class="fg-panel-count">
+              {{ t('focusGroup.session.participants') }}
+              <span class="text-medium-emphasis">
+                {{ connectedCount }}/{{ participantCount }}
+              </span>
+            </div>
+            <ParticipantList
+              :participants="participants"
+              :responded-ids="respondedIds"
+              :current-user-id="user?.id"
+            />
+          </div>
+
+          <div v-else-if="panelTab === 'guide'" class="fg-panel-scroll">
+            <TopicPanel
+              v-if="currentTopic"
+              :topic="currentTopic"
+              :index="currentTopicIndex"
+              :total="topicCount"
+              :is-facilitator="true"
+              :current-prompt-text="activePromptText"
+              @ask="onAsk"
+            />
+            <p v-else class="text-body-2 text-medium-emphasis pa-2 mb-0">
+              {{ t('focusGroup.session.waitingParticipant') }}
+            </p>
+          </div>
+        </div>
+      </aside>
     </div>
-
-    <!-- Facilitator controls -->
-    <FacilitatorControls
-      v-if="isFacilitator"
-      class="mb-4"
-      :status="status"
-      :current-index="currentTopicIndex"
-      :total="topicCount"
-      @start="onStart"
-      @prev="onPrev"
-      @next="onNext"
-      @end="onEnd"
-    />
-
-    <v-row>
-      <!-- Main column -->
-      <v-col cols="12" md="8">
-        <TopicPanel
-          v-if="currentTopic"
-          :topic="currentTopic"
-          :index="currentTopicIndex"
-          :total="topicCount"
-          class="mb-4"
-        />
-
-        <TopicDiscussion
-          :messages="currentMessages"
-          :current-user-id="user?.id"
-          :can-post="canPost"
-          :sending="sending"
-          @send="onSend"
-        />
-      </v-col>
-
-      <!-- Sidebar -->
-      <v-col cols="12" md="4">
-        <ParticipantList
-          :participants="participants"
-          :responded-ids="respondedIds"
-        />
-      </v-col>
-    </v-row>
-  </v-container>
+  </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
-import { getStatusColor, getStatusIcon } from '@/shared/utils/statusUtils'
+import { useDisplay } from 'vuetify'
+import { Track } from 'livekit-client'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
-import {
-  useFocusGroupSession,
-  SESSION_STATUS,
-} from '@/ux/FocusGroup/composables/useFocusGroupSession'
+import { useLiveKitRoom } from '@/shared/components/videoCall/composables/useLiveKitRoom'
+import { useFocusGroupSession } from '@/ux/FocusGroup/composables/useFocusGroupSession'
 import SessionLobby from '@/ux/FocusGroup/components/session/SessionLobby.vue'
-import FacilitatorControls from '@/ux/FocusGroup/components/session/FacilitatorControls.vue'
+import SessionVideoStage from '@/ux/FocusGroup/components/session/SessionVideoStage.vue'
 import TopicPanel from '@/ux/FocusGroup/components/session/TopicPanel.vue'
+import CurrentQuestion from '@/ux/FocusGroup/components/session/CurrentQuestion.vue'
 import TopicDiscussion from '@/ux/FocusGroup/components/session/TopicDiscussion.vue'
 import ParticipantList from '@/ux/FocusGroup/components/session/ParticipantList.vue'
+import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue'
 
 const store = useStore()
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
+const { mdAndUp } = useDisplay()
+
+// Side panel: open by default on desktop, hidden on mobile so the stage stays
+// front and centre. The active tab is kept valid by a watcher below.
+const showPanel = ref(mdAndUp.value)
+const panelTab = ref('discussion')
 
 const studyId = route.params.id
 const {
@@ -111,12 +403,19 @@ const {
   currentTopicIndex,
   participants,
   messages,
+  consents,
+  currentPrompt,
+  loaded,
   isLive,
+  isEnded,
   startSession,
   goToTopic,
   endSession,
   joinPresence,
   leavePresence,
+  recordConsent,
+  askPrompt,
+  clearPrompt,
   sendMessage,
   subscribe,
   toSessionRecord,
@@ -128,6 +427,25 @@ const test = computed(() => store.getters.test)
 const sending = ref(false)
 const starting = ref(false)
 
+// --- Session configuration selected by the facilitator on the Test screen ---
+const sessionConfig = computed(() => test.value?.config ?? {})
+const consentText = computed(() => sessionConfig.value.consentText ?? '')
+// Quill stores empty content as markup such as "<p><br></p>", so strip tags
+// before treating the form as authored.
+const hasConsentText = computed(
+  () => consentText.value.replace(/<[^>]*>/g, '').trim().length > 0,
+)
+const allowParticipantChat = computed(
+  () => sessionConfig.value.allowParticipantChat !== false,
+)
+
+// --- Consent ---
+const fullName = ref('')
+const consentAccepted = ref(null)
+const hasConsented = computed(
+  () => consents.value?.[user.value?.id]?.accepted === true,
+)
+
 // --- Discussion guide ---
 const discussionGuide = computed(() =>
   Array.isArray(test.value?.discussionGuide) ? test.value.discussionGuide : [],
@@ -138,6 +456,14 @@ const currentTopic = computed(
   () => discussionGuide.value[currentTopicIndex.value] ?? null,
 )
 const currentTopicId = computed(() => currentTopic.value?.id ?? null)
+
+// The active question shown to everyone, scoped to the current topic so a stale
+// prompt from a previous topic never leaks onto the next one.
+const activePromptText = computed(() =>
+  currentPrompt.value?.topicId === currentTopicId.value
+    ? (currentPrompt.value?.text ?? '')
+    : '',
+)
 
 // --- Role resolution (mirrors ManagerView) ---
 const accessLevel = computed(() => {
@@ -158,15 +484,177 @@ const isFacilitator = computed(() => accessLevel.value === ACCESS_LEVEL.ADMIN)
 const isParticipant = computed(
   () => accessLevel.value === ACCESS_LEVEL.EVALUATOR,
 )
+const isObserver = computed(
+  () => accessLevel.value === ACCESS_LEVEL.OBSERVATOR,
+)
 // Facilitator and participants can post; observers read the discussion only.
-const canPost = computed(() => isFacilitator.value || isParticipant.value)
+// Participant posting also depends on chat being enabled for this session.
+const canPost = computed(
+  () =>
+    isFacilitator.value ||
+    (isParticipant.value && allowParticipantChat.value),
+)
 const roleLabel = computed(() => {
   if (isFacilitator.value) return t('focusGroup.session.roleFacilitator')
   if (isParticipant.value) return t('focusGroup.session.roleParticipant')
   return t('focusGroup.session.roleObserver')
 })
+// Role badge styling, shared visual language with ParticipantList so a person's
+// own role in the header matches how they appear in the roster.
+const roleIcon = computed(() => {
+  if (isFacilitator.value) return 'mdi-account-star'
+  if (isObserver.value) return 'mdi-eye'
+  return 'mdi-account'
+})
+const roleColor = computed(() => {
+  if (isFacilitator.value) return 'blue'
+  if (isObserver.value) return 'orange'
+  return 'green'
+})
+
+// Only participants consent. This matches the moderated test, where the
+// moderator is pinned to the video call and so never sees the consent step:
+// consent is for the people being researched, not the research team. Also
+// requires authored consent text, so a study with the flag on but no form is
+// not blocked behind an empty screen.
+const needsConsent = computed(
+  () =>
+    isParticipant.value &&
+    sessionConfig.value.requireConsent === true &&
+    hasConsentText.value &&
+    !hasConsented.value,
+)
+
+// --- Video call (LiveKit) ---
+// Reuses the moderated transport composable as-is; FG only owns the
+// presentation (tile stage + control bar buttons). Opt-in per study.
+const videoEnabled = computed(
+  () => sessionConfig.value.enableVideoCall === true,
+)
+
+// Side-panel tabs, in reading order: the facilitator's guide, the discussion
+// (a tab only when video owns the stage, otherwise the discussion IS the
+// stage), then the people roster.
+const panelTabs = computed(() => {
+  const tabs = []
+  if (isFacilitator.value)
+    tabs.push({
+      key: 'guide',
+      icon: 'mdi-script-text-outline',
+      label: 'focusGroup.session.guide',
+    })
+  if (videoEnabled.value)
+    tabs.push({
+      key: 'discussion',
+      icon: 'mdi-message-text-outline',
+      label: 'focusGroup.session.discussion',
+    })
+  tabs.push({
+    key: 'people',
+    icon: 'mdi-account-group',
+    label: 'focusGroup.session.participants',
+  })
+  return tabs
+})
+// Keep the active tab valid; prefer the discussion, else the first tab.
+watch(
+  panelTabs,
+  (tabs) => {
+    if (!tabs.some((item) => item.key === panelTab.value))
+      panelTab.value = tabs.some((item) => item.key === 'discussion')
+        ? 'discussion'
+        : (tabs[0]?.key ?? 'people')
+  },
+  { immediate: true },
+)
+const togglePanelTab = (tab) => {
+  if (showPanel.value && panelTab.value === tab) {
+    showPanel.value = false
+  } else {
+    panelTab.value = tab
+    showPanel.value = true
+  }
+}
+
+const {
+  room: callRoom,
+  callStarted,
+  isObservator: isCallObservator,
+  isCameraEnabled,
+  isMicrophoneEnabled,
+  isSharingScreen,
+  remoteParticipants,
+  screenShareFeeds,
+  connectionError,
+  localVideoElement,
+  connect: connectCall,
+  disconnect: disconnectCall,
+  toggleCamera,
+  toggleMicrophone,
+  toggleScreenShare,
+  setRemoteVideoElement,
+  setScreenShareVideoElement,
+} = useLiveKitRoom({
+  testId: computed(() => studyId),
+  userId: computed(() => user.value?.id),
+  displayName: computed(() => user.value?.name || user.value?.email || ''),
+  accessLevel,
+  cooperators: computed(() => test.value?.cooperators || []),
+})
+
+const localVideoState = computed(() => ({
+  name: user.value?.name || user.value?.email?.split('@')[0] || '',
+  isObservator: isCallObservator.value,
+  isCameraEnabled: isCameraEnabled.value,
+  isMicrophoneEnabled: isMicrophoneEnabled.value,
+}))
+
+const showMediaControls = computed(
+  () => videoEnabled.value && callStarted.value && !isCallObservator.value,
+)
+
+// Mirrors setLocalVideoRef in the moderated view: reattach the camera track
+// when the local <video> element remounts (e.g. after a tile grid reflow).
+const setLocalVideo = (el) => {
+  if (localVideoElement.value === el) return
+  localVideoElement.value = el
+  if (!el || !callRoom.value) return
+  const camPub = callRoom.value.localParticipant?.getTrackPublication(
+    Track.Source.Camera,
+  )
+  if (camPub?.track) camPub.track.attach(el)
+}
+
+// Join once the discussion is actually reachable: session live, consent
+// settled, and the user resolved. The composable ignores repeat calls.
+const shouldConnectVideo = computed(
+  () =>
+    videoEnabled.value &&
+    isLive.value &&
+    !needsConsent.value &&
+    !!user.value?.id,
+)
+watch(
+  shouldConnectVideo,
+  async (ready) => {
+    if (!ready) return
+    try {
+      await connectCall()
+    } catch {
+      // Video is best-effort: the error surfaces via connectionError and the
+      // chat keeps working.
+    }
+  },
+  { immediate: true },
+)
+watch(isEnded, (ended) => {
+  if (ended) disconnectCall()
+})
 
 // --- Presence ---
+const participantCount = computed(
+  () => Object.keys(participants.value || {}).length,
+)
 const connectedCount = computed(
   () =>
     Object.values(participants.value || {}).filter((p) => p?.connected === true)
@@ -190,18 +678,6 @@ const currentMessages = computed(() => {
 const respondedIds = computed(() => [
   ...new Set(currentMessages.value.map((m) => m.userId)),
 ])
-
-// --- Status chip ---
-const statusColor = computed(() => {
-  if (status.value === SESSION_STATUS.LIVE) return getStatusColor('active')
-  if (status.value === SESSION_STATUS.ENDED) return getStatusColor('finished')
-  return getStatusColor('pending')
-})
-const statusIcon = computed(() => {
-  if (status.value === SESSION_STATUS.LIVE) return getStatusIcon('active')
-  if (status.value === SESSION_STATUS.ENDED) return getStatusIcon('finished')
-  return getStatusIcon('pending')
-})
 
 // --- Facilitator actions ---
 const onStart = async () => {
@@ -255,18 +731,328 @@ const onSend = async (text) => {
   }
 }
 
+// Facilitator surfaces a prompt as the current question (or retires it).
+const onAsk = (prompt) => {
+  if (!currentTopicId.value || !prompt?.trim()) return
+  askPrompt({ text: prompt.trim(), topicId: currentTopicId.value })
+}
+const onClearPrompt = () => clearPrompt()
+
 const goToDashboard = () => {
+  disconnectCall()
   leavePresence(user.value?.id)
+  router.push(`/focusGroup/dashboard/${studyId}`).catch(() => {})
+}
+
+// --- Consent handlers ---
+const joined = ref(false)
+
+// Idempotent, so presence is only ever claimed once per mount.
+const enterSession = async () => {
+  if (joined.value || !user.value?.id) return
+  joined.value = true
+  await joinPresence({
+    userId: user.value?.id,
+    name: user.value?.name || user.value?.email || '',
+    role: roleLabel.value,
+  })
+}
+
+const onConsentAccept = async () => {
+  await recordConsent({
+    userId: user.value?.id,
+    name: fullName.value,
+    accepted: true,
+  })
+}
+
+const onConsentDecline = async () => {
+  await recordConsent({
+    userId: user.value?.id,
+    name: fullName.value,
+    accepted: false,
+  })
+  // Drop out of the room rather than lingering as a present-but-unconsented
+  // attendee.
+  await leavePresence(user.value?.id)
+  store.commit('SET_TOAST', {
+    message: t('focusGroup.session.consentDeclined'),
+    type: 'info',
+  })
   router.push(`/focusGroup/dashboard/${studyId}`).catch(() => {})
 }
 
 onMounted(async () => {
   await store.dispatch('getStudy', { id: studyId })
   subscribe()
-  await joinPresence({
-    userId: user.value?.id,
-    name: user.value?.name || user.value?.email || '',
-    role: roleLabel.value,
-  })
+  // Presence is claimed on arrival so the lobby can show who is waiting.
+  await enterSession()
 })
 </script>
+
+<style scoped>
+/* --- Live session shell: fixed viewport, page never scrolls --- */
+.fg-live {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: rgb(var(--v-theme-background));
+}
+
+/* Top bar */
+.fg-topbar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 60px;
+  padding: 0 16px;
+  border-bottom: 1px solid rgba(var(--v-border-color), 0.12);
+}
+
+.fg-topbar-title {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.fg-topbar-name {
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fg-topbar-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: rgba(var(--v-theme-on-surface), 0.6);
+}
+
+.fg-meta-sep {
+  opacity: 0.5;
+}
+
+.fg-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(var(--v-theme-on-surface), 0.4);
+}
+
+.fg-live-dot--live {
+  background: #2e7d32;
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.18);
+}
+
+/* Body: stage column + full-height panel */
+.fg-body {
+  position: relative;
+  flex: 1 1 auto;
+  display: flex;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.fg-stage-col {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.fg-stage-area {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: 16px;
+  gap: 12px;
+}
+
+.fg-observer-strip {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  color: rgb(var(--v-theme-info));
+  background: rgba(var(--v-theme-info), 0.1);
+}
+
+.fg-stage-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+}
+
+.fg-fill {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+}
+
+/* Side panel — matches the moderated video-call side panel: a distinct surface
+   that casts a shadow onto the stage, with a header band above the content. */
+.fg-panel {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 360px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: rgb(var(--v-theme-surface));
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.12);
+}
+
+.fg-panel-tabs {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 10px;
+  background: rgba(var(--v-theme-on-surface), 0.03);
+  border-bottom: 1px solid rgba(var(--v-border-color), 0.12);
+}
+
+.fg-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: rgba(var(--v-theme-on-surface), 0.6);
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.fg-tab:hover {
+  background: rgba(var(--v-theme-on-surface), 0.06);
+}
+
+.fg-tab--active {
+  color: rgb(var(--v-theme-primary));
+  background: rgba(var(--v-theme-primary), 0.1);
+}
+
+.fg-panel-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.fg-panel-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.fg-panel-count {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: rgba(var(--v-theme-on-surface), 0.6);
+}
+
+/* Control dock (under the stage) */
+.fg-controls {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+}
+
+.fg-control-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+  padding: 8px 14px;
+  border-radius: 20px;
+  background: rgba(var(--v-theme-primary), 0.97);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+}
+
+.fg-round {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  color: white !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  transition:
+    background 0.15s ease,
+    transform 0.1s ease;
+}
+
+.fg-round:hover {
+  background: rgba(255, 255, 255, 0.22) !important;
+}
+
+.fg-round:active {
+  transform: scale(0.94);
+}
+
+.fg-round-active {
+  background: #1976d2 !important;
+  border-color: #1976d2 !important;
+}
+
+.fg-round-off {
+  background: #f44336 !important;
+  border-color: #f44336 !important;
+}
+
+.fg-control-divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.25);
+  margin: 0 2px;
+}
+
+.fg-round.v-btn--disabled {
+  opacity: 0.4;
+}
+
+.fg-pill {
+  height: 44px !important;
+  border-radius: 22px !important;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.fg-pill-danger {
+  background: #f44336 !important;
+  color: white !important;
+}
+
+.fg-nowrap {
+  white-space: nowrap;
+}
+
+/* On narrow screens the panel overlays the stage instead of squeezing it. */
+@media (max-width: 860px) {
+  .fg-panel {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    flex-basis: auto;
+    z-index: 20;
+  }
+}
+</style>

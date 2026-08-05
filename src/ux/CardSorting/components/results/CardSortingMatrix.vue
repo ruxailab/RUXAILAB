@@ -2,7 +2,9 @@
   <v-row class="mb-8">
     <v-col cols="12">
       <v-card class="pa-8 elevation-4 rounded-xl chart-card">
-        <div class="d-flex flex-wrap justify-space-between align-center mb-6 ga-2">
+        <div
+          class="d-flex flex-wrap justify-space-between align-center mb-6 ga-2"
+        >
           <div>
             <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
               {{ $t('CardSorting.categoryMatrix') }}

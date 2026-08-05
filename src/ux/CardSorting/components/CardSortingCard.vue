@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="sorting-card"
-    :class="{ 'sorting-card--compact': compact }"
-  >
+  <div class="sorting-card" :class="{ 'sorting-card--compact': compact }">
     <div class="sorting-card__handle">
       <v-icon size="18" class="sorting-card__handle-icon">
         mdi-drag-vertical
@@ -15,17 +12,9 @@
           {{ element.title }}
         </p>
 
-        <v-tooltip
-          v-if="showTooltip"
-          :text="element.tooltip"
-          location="top"
-        >
+        <v-tooltip v-if="showTooltip" :text="element.tooltip" location="top">
           <template #activator="{ props: tooltipProps }">
-            <v-icon
-              v-bind="tooltipProps"
-              size="16"
-              class="sorting-card__info"
-            >
+            <v-icon v-bind="tooltipProps" size="16" class="sorting-card__info">
               mdi-information-outline
             </v-icon>
           </template>
@@ -37,12 +26,9 @@
         :src="element.image"
         :alt="element.title"
         class="sorting-card__image"
-      >
+      />
 
-      <p
-        v-if="showDescription"
-        class="sorting-card__description"
-      >
+      <p v-if="showDescription" class="sorting-card__description">
         {{ plainDescription }}
       </p>
     </div>
@@ -68,17 +54,11 @@ const props = defineProps({
 })
 
 const showTooltip = computed(
-  () =>
-    !props.compact &&
-    props.options.card_tooltip &&
-    !!props.element.tooltip,
+  () => !props.compact && props.options.card_tooltip && !!props.element.tooltip,
 )
 
 const showImage = computed(
-  () =>
-    !props.compact &&
-    props.options.card_image &&
-    !!props.element.image,
+  () => !props.compact && props.options.card_image && !!props.element.image,
 )
 
 const showDescription = computed(

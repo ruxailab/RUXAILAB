@@ -1,21 +1,14 @@
 /**
- * Represents the cooperators model.
+ * Represents the Participant model.
  */
-export default class Cooperators {
-  /**
-   * @param {Partial<Cooperators>} partial
-   */
+export default class Participant {
   constructor({
     userDocId,
     email,
     accessLevel,
-    invited,
-    accepted,
-    progress,
     updateDate,
     testAuthorEmail,
     token,
-    testDate,
     inviteMessage,
     acceptedDate,
   } = {}) {
@@ -34,60 +27,32 @@ export default class Cooperators {
     this.email = email
 
     /**
-     * Defines the cooperator access level.
+     * Defines the participant access level.
      *
      * @type {number}
      */
     this.accessLevel = accessLevel
 
     /**
-     * Defines whether the cooperator was invited.
-     *
-     * @type {boolean}
-     */
-    this.invited = invited
-
-    /**
-     * Defines whether the cooperator was accepted.
-     *
-     * @type {boolean}
-     */
-    this.accepted = accepted
-
-    /**
-     * Defines the cooperator progress.
-     *
-     * @type {number}
-     */
-    this.progress = progress
-
-    /**
-     * Defines a timestamp of the cooperator last updated date.
+     * Defines a timestamp of the participant last updated date.
      *
      * @type {number}
      */
     this.updateDate = updateDate
 
     /**
-     * Defines a timestamp of the cooperator last updated date.
+     * Defines the study author's email.
      *
-     * @type {String}
+     * @type {string}
      */
     this.testAuthorEmail = testAuthorEmail
 
     /**
-     * Defines a timestamp of the cooperator last updated date.
+     * Defines the invitation token.
      *
-     * @type {String}
+     * @type {string}
      */
     this.token = token
-
-    /**
-     * Defines the date of the test.
-     *
-     * @type {number}
-     */
-    this.testDate = testDate
 
     /**
      * Defines the invitation message.
@@ -97,7 +62,7 @@ export default class Cooperators {
     this.inviteMessage = inviteMessage
 
     /**
-     * Accepted date
+     * Defines the accepted date.
      *
      * @type {number}
      */
@@ -105,12 +70,13 @@ export default class Cooperators {
   }
 
   /**
-   * Creates a new cooperators model from the given map.
-   * @param {Partial<Cooperators>} map the map to be converted.
-   * @returns a new cooperators model.
+   * Creates a new Participant model from the given map.
+   *
+   * @param {Partial<Participant>} map the map to be converted.
+   * @returns a new Participant model.
    */
-  static toCooperators(map) {
-    return new Cooperators(map)
+  static toParticipant(map) {
+    return new Participant(map)
   }
 
   /**
@@ -123,13 +89,9 @@ export default class Cooperators {
       userDocId: this.userDocId ?? null,
       email: this.email ?? null,
       accessLevel: this.accessLevel ?? null,
-      invited: this.invited ?? false,
-      accepted: this.accepted ?? false,
-      progress: this.progress ?? 0,
       updateDate: this.updateDate ?? null,
       testAuthorEmail: this.testAuthorEmail ?? null,
       token: this.token ?? null,
-      testDate: this.testDate ?? null,
       inviteMessage: this.inviteMessage ?? null,
       acceptedDate: this.acceptedDate ?? null,
     }

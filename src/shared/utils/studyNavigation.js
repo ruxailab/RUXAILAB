@@ -142,7 +142,7 @@ const NAVIGATION_ITEMS = Object.freeze([
     path: ({ type, id }) => `/${type}/report/${id}`,
   },
   {
-    title: 'Analytics',
+    title: 'Results',
     icon: ICONS.ORDER,
     capability: C.ANSWERS_VIEW,
     path: ({ type, id }) => `/${type}/answer/${id}`,
@@ -152,6 +152,12 @@ const NAVIGATION_ITEMS = Object.freeze([
     icon: ICONS.ACCOUNT_GROUP,
     capability: C.COOPERATORS_VIEW,
     path: ({ type, id }) => `/${type}/cooperators/${id}`,
+  },
+  {
+    title: 'Participants',
+    icon: ICONS.USERS,
+    capability: C.COOPERATORS_VIEW,
+    path: ({ type, id }) => `/${type}/participants/${id}`,
   },
   {
     title: 'Settings',

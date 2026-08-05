@@ -388,6 +388,11 @@
   "cooperators": {
     "updatedRole": "Rol actualizado a {role} para: {users}",
     "inviteSent": "Invitación enviada a: {users}",
+    "filter": {
+      "search": "Search...",
+      "filterByRole": "Filter by role",
+      "filterByStatus": "Filter by status"
+    },
     "validation": {
       "invalidEmail": "Por favor, introduce un correo electrónico válido.",
       "invalidFormat": "Por favor, introduce un correo electrónico válido.",
@@ -522,7 +527,7 @@
     "reports": "Informes",
     "answers": "Respuestas",
     "analytics": "Análisis",
-    "cooperators": "Colaboradores",
+    "cooperators": "Personal",
     "template": "Plantilla",
     "finalReport": "Informe final",
     "answerType": "Tipo de respuesta:",
@@ -541,7 +546,7 @@
       "Progress": "Progreso",
       "Results": "Resultados",
       "Analytics": "Análisis",
-      "Cooperators": "Colaboradores",
+      "Cooperators": "Personal",
       "Template": "Plantilla",
       "Final Report": "Informe final",
       "Answer Test": "Responder prueba",
@@ -551,7 +556,8 @@
       "name": "Nombre",
       "studiesCount": "Recuento de Estudios",
       "mediaSize": "Tamaño de Medios",
-      "toggleMiniMode": "Alternar modo mini"
+      "toggleMiniMode": "Alternar modo mini",
+      "Participants": "Participantes"
     },
     "heuristic": "Evaluación heurística de usabilidad"
   },
@@ -687,6 +693,8 @@
     "time": "Hora",
     "status": {
       "active": "Activo",
+      "pending": "Pendiente",
+      "upcoming": "Próximo",
       "recruiting": "Reclutando",
       "paused": "Pausado",
       "finished": "Finalizado",
@@ -720,7 +728,7 @@
       "weights": "Pesos",
       "on": "ON",
       "off": "OFF",
-      "cooperators": "Colaboradores",
+      "cooperators": "Personal",
       "totalInvited": "Total invitados",
       "accepted": "Aceptados",
       "pending": "Pendientes",
@@ -1176,10 +1184,10 @@
   },
   "HeuristicsCooperators": {
     "title": {
-      "cooperators": "Colaboradores"
+      "cooperators": "Personal"
     },
     "subtitles": {
-      "manage_participants": "Gestiona a las personas que participan en tu estudio"
+      "manage_participants": "Gestiona los miembros del equipo de investigación"
     },
     "headers": {
       "email": "Correo electrónico",
@@ -1976,7 +1984,6 @@
     "help": "Ayuda",
     "delete": "Eliminar",
     "deleteAccount": "Eliminar cuenta",
-    "back": "Volver",
     "duplicateTest": "Duplicar prueba",
     "submit": "Enviar",
     "couldNotFinish": "No se pudo completar",
@@ -2088,7 +2095,7 @@
     "sendmessageanswer": "Para enviar un mensaje, ve a la página de administración de tu prueba. Selecciona 'Colaboradores' en la barra lateral izquierda. Haz clic en el ícono de tres puntos junto al colaborador al que deseas enviar un mensaje. Luego, elige 'Enviar un mensaje' y escribe tu mensaje con un título y contenido.",
     "testCreation": "Creación de pruebas",
     "templates": "Plantillas",
-    "cooperators": "Colaboradores",
+    "cooperators": "Personal",
     "analytics": "Análisis",
     "help_center": "Centro de ayuda",
     "howCanWeHelp": "¿Cómo podemos ayudarte?",
@@ -2342,16 +2349,51 @@
     "sartAnalytics": "Análisis SART"
   },
   "focusGroup": {
+    "config": {
+      "title": "Funciones de la Sesión",
+      "subtitle": "Elige qué incluye esta sesión de grupo focal. Solo las funciones que selecciones estarán disponibles para el facilitador durante la sesión.",
+      "chat": "Chat de participantes",
+      "chatHint": "Permite que los participantes escriban en la discusión",
+      "recordAudio": "Grabar audio",
+      "recordAudioHint": "Captura el audio de la sesión para su análisis posterior",
+      "recordVideo": "Grabar video",
+      "recordVideoHint": "Captura el video de la sesión para su análisis posterior",
+      "videoCall": "Videollamada",
+      "videoCallHint": "Realiza una videollamada en vivo durante la sesión",
+      "requireConsent": "Requerir consentimiento",
+      "requireConsentHint": "Pide a los asistentes que acepten antes de participar",
+      "waitingRoom": "Sala de espera",
+      "waitingRoomHint": "Retén a los participantes antes de admitirlos",
+      "hideObservers": "Ocultar observadores",
+      "hideObserversHint": "Mantén a los observadores invisibles para los participantes",
+      "maxParticipants": "Máx. participantes",
+      "maxParticipantsHint": "Se recomienda entre 3 y 8 para un grupo focal",
+      "privacyTitle": "Aviso de Privacidad",
+      "privacyIntro": "Las funciones de grabación requieren el consentimiento explícito de los participantes. Asegúrate de:",
+      "privacyInform": "Informar claramente a los participantes sobre la recopilación de datos",
+      "privacyConsent": "Obtener el consentimiento adecuado antes de iniciar la sesión",
+      "privacyRegulations": "Cumplir con las normativas de protección de datos (GDPR, etc.)",
+      "privacyStorage": "Almacenar y manejar de forma segura los datos grabados",
+      "consentTitle": "Formulario de Consentimiento",
+      "consentSubtitle": "Se muestra a cada asistente antes de unirse a la sesión.",
+      "consentMissing": "Se requiere consentimiento, pero aún no has redactado el formulario. Los asistentes entrarán sin paso de consentimiento hasta que agregues el texto a continuación.",
+      "consentDisabled": "El consentimiento está desactivado para esta sesión, por lo que este formulario no se mostrará. Actívalo en Funciones de la Sesión."
+    },
     "manager": {
       "title": "Grupo Focal",
       "underConstruction": "El módulo de Grupo Focal está en desarrollo activo. La sala de discusión en vivo y los informes estarán disponibles pronto.",
       "description": "Puedes crear tu guía de discusión, gestionar colaboradores y configurar el estudio desde el menú de navegación."
     },
     "edit": {
-      "title": "Guía de Discusión",
-      "subtitle": "Define los temas y preguntas que el facilitador usará para guiar al grupo.",
-      "save": "Guardar guía",
-      "saved": "Guía de discusión guardada",
+      "title": "Editar grupo focal",
+      "subtitle": "Personaliza los ajustes y preferencias de tu grupo focal.",
+      "save": "Guardar cambios",
+      "saved": "Configuración de la sesión guardada",
+      "tabs": {
+        "configuration": "Configuración de la Sesión",
+        "consent": "Formulario de Consentimiento",
+        "guide": "Guía de Discusión"
+      },
       "noTopics": "Aún no hay temas. Agrega tu primer tema de discusión para comenzar.",
       "addTopic": "Agregar tema",
       "removeTopic": "Eliminar tema",
@@ -2390,6 +2432,9 @@
       "waitingRoom": "Sala de espera activada",
       "consent": "Consentimiento requerido",
       "backroom": "Observadores ocultos a los participantes",
+      "chat": "Chat de participantes activado",
+      "recordAudio": "Grabación de audio activada",
+      "recordVideo": "Grabación de video activada",
       "configure": "Configurar",
       "liveSessionTitle": "Sesión en Vivo",
       "liveSessionComingSoon": "La discusión moderada en vivo estará disponible pronto.",
@@ -2402,6 +2447,7 @@
     "session": {
       "title": "Sesión en Vivo",
       "backToDashboard": "Volver al panel",
+      "consentDeclined": "Rechazaste los términos de consentimiento, por lo que no te has unido a la sesión.",
       "status": {
         "idle": "No iniciada",
         "live": "En vivo",
@@ -2418,6 +2464,13 @@
       "plannedMinutes": "{minutes} min planeados",
       "untitledTopic": "Tema sin título",
       "prompts": "Preguntas",
+      "yourPrompts": "Tus preguntas",
+      "facilitatorGuideNote": "Solo tú puedes ver esto",
+      "ask": "Preguntar",
+      "asked": "Preguntada",
+      "currentQuestion": "Pregunta actual",
+      "clearQuestion": "Quitar pregunta",
+      "guide": "Guía",
       "noPrompts": "No hay preguntas para este tema.",
       "participants": "Participantes",
       "noParticipants": "Nadie se ha unido todavía.",
@@ -2425,6 +2478,16 @@
       "roleFacilitator": "Facilitador",
       "roleParticipant": "Participante",
       "roleObserver": "Observador",
+      "observerModeHint": "Modo observador: sigues la discusión sin participar.",
+      "sessionInfo": "Sesión",
+      "showParticipants": "Mostrar participantes",
+      "hideParticipants": "Ocultar participantes",
+      "muteMicrophone": "Silenciar micrófono",
+      "unmuteMicrophone": "Activar micrófono",
+      "turnCameraOff": "Apagar cámara",
+      "turnCameraOn": "Encender cámara",
+      "shareScreen": "Compartir pantalla",
+      "stopSharingScreen": "Dejar de compartir",
       "discussion": "Discusión",
       "messagePlaceholder": "Comparte tus ideas...",
       "noMessagesYet": "Aún no hay mensajes. Inicia la discusión.",
@@ -2757,6 +2820,9 @@
   },
   "tags": {
     "active": "Activo",
+    "finished": "Finalizado",
+    "pending": "Pendiente",
+    "upcoming": "Próximo",
     "draft": "Borrador",
     "completed": "Completado",
     "archived": "Archivado",
@@ -3122,5 +3188,53 @@
     "pendingDescription": "Tienes una invitación pendiente. ¿Quieres aceptarla ahora?",
     "notNow": "Ahora no",
     "loginRequired": "Esta invitación requiere que inicies sesión o crees una cuenta antes de participar."
+  },
+  "Participants": {
+    "title": {
+      "participants": "Participantes"
+    },
+    "actions": {
+      "invite_participant": "Invitar participante",
+      "send_message": "Enviar mensaje",
+      "reinvite": "Reinvitar",
+      "remove_participant": "Eliminar participante",
+      "cancel_invitation": "Cancelar invitación",
+      "select_participant": "Seleccionar participante",
+      "cancel": "Cancelar",
+      "send": "Enviar",
+      "viewSessions": "Ver sesiones"
+    },
+    "invite": {
+      "byEmail": "Invitar por correo electrónico",
+      "generateLink": "Generar enlace de invitación",
+      "description": "Crea un enlace de invitación para compartir. Cualquier persona con este enlace puede unirse al estudio como participante."
+    },
+    "subtitles": {
+      "manage_participants": "Gestiona los participantes invitados a este estudio."
+    },
+    "headers": {
+      "email": "Correo electrónico",
+      "sessions": "Sesiones",
+      "status": "Estado",
+      "acceptedDate": "Fecha de aceptación",
+      "actions": "Acciones",
+      "title": "Asunto",
+      "content": "Mensaje"
+    },
+    "messages": {
+      "message_title_hint": "Introduce un título para tu mensaje",
+      "message_content_hint": "Introduce el contenido de tu mensaje",
+      "no_users": "No se encontraron usuarios",
+      "cancel_invitation_confirmation": "¿Estás seguro de que deseas cancelar la invitación de {email}?",
+      "remove_participant_confirmation": "Are you sure you want to remove {email} from this test? This action cannot be undone."
+    },
+    "filter": {
+      "search": "Buscar participantes",
+      "filterByStatus": "Filtrar por estado"
+    },
+    "status": {
+      "pending": "Pendiente",
+      "accepted": "Aceptado"
+    }
   }
 }

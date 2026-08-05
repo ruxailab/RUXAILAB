@@ -49,7 +49,9 @@
           />
 
           <div v-if="showDescription" class="mt-5">
-            <label class="text-subtitle-2 font-weight-medium text-grey-darken-3 d-block mb-2">
+            <label
+              class="text-subtitle-2 font-weight-medium text-grey-darken-3 d-block mb-2"
+            >
               {{ $t('common.description') }}
             </label>
             <quill-editor
@@ -60,7 +62,9 @@
           </div>
 
           <div v-if="showImage" class="mt-5">
-            <label class="text-subtitle-2 font-weight-medium text-grey-darken-3 d-block mb-2">
+            <label
+              class="text-subtitle-2 font-weight-medium text-grey-darken-3 d-block mb-2"
+            >
               {{ $t('common.image') }}
             </label>
             <v-file-input
@@ -85,7 +89,7 @@
                 :src="localTask.image"
                 :alt="localTask.title || $t('common.image')"
                 class="image-preview__img"
-              >
+              />
               <v-btn
                 icon
                 size="small"
@@ -165,7 +169,9 @@ const localTask = ref({
   image: '',
 })
 
-const requiredRule = [(v) => !!String(v || '').trim() || t('CardSorting.nameRequired')]
+const requiredRule = [
+  (v) => !!String(v || '').trim() || t('CardSorting.nameRequired'),
+]
 
 const isCategory = computed(() => props.type === 'category')
 
@@ -187,9 +193,7 @@ const dialogTitle = computed(() => {
       ? t('CardSorting.editCategory')
       : t('CardSorting.newCategory')
   }
-  return props.isEdit
-    ? t('CardSorting.editCard')
-    : t('CardSorting.newCard')
+  return props.isEdit ? t('CardSorting.editCard') : t('CardSorting.newCard')
 })
 
 const dialogSubtitle = computed(() => {
@@ -204,9 +208,7 @@ const dialogSubtitle = computed(() => {
 })
 
 const nameLabel = computed(() =>
-  isCategory.value
-    ? t('CardSorting.categoryName')
-    : t('CardSorting.cardName'),
+  isCategory.value ? t('CardSorting.categoryName') : t('CardSorting.cardName'),
 )
 
 const namePlaceholder = computed(() =>

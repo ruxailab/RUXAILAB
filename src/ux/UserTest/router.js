@@ -7,6 +7,7 @@ import CooperatorsView from '@/shared/views/CooperatorsView.vue'
 import CooperatorsModeratedView from './views/Moderators/CooperatorsModeratedView.vue'
 import UserAnswerView from './views/UserAnswerView.vue'
 import StorageView from '@/shared/views/StorageView.vue'
+import ParticipantsView from '@/shared/views/ParticipantsView.vue'
 import { STUDY_CAPABILITY as C } from '@/shared/utils/studyAccessPolicy'
 import AuditTrailView from '@/shared/views/AuditTrailView.vue'
 
@@ -61,6 +62,13 @@ export default [
         props: true,
         meta: studyMeta(C.COOPERATORS_VIEW, 'userTest/unmoderated'),
         component: CooperatorsView,
+      },
+      {
+        path: '/userTest/unmoderated/participants/:id/:token?',
+        name: 'UserUnmoderatedParticipantsView',
+        props: true,
+        meta: studyMeta(C.COOPERATORS_VIEW, 'userTest/unmoderated'),
+        component: ParticipantsView,
       },
       {
         path: '/userTest/unmoderated/storage/:id/:token?',

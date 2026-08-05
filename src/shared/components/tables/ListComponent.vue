@@ -72,12 +72,12 @@
     </template>
 
     <template #item.creationDate="{ item }">
-      {{ formatItemDate(item) }}
-    </template>
+  {{ formatItemDate(item) }}
+</template>
 
     <template #item.testDate="{ item }">
-      {{ formatDateTime(item.testDate, 'es') }}
-    </template>
+  {{ formatDateTime(item.testDate, store.getters['Language/lang']) }}
+</template>
 
     <!-- Owner Column -->
     <template #item.owner="{ item }">
@@ -180,7 +180,9 @@ const props = defineProps({
 
 const emit = defineEmits(['clicked', 'preview-clicked'])
 
+
 const { t } = useI18n()
+
 
 // Composables
 const typeRef = toRef(props, 'type')

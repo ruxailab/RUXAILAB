@@ -9,9 +9,9 @@ export function getSubmittedAnswers(answers = []) {
 }
 
 export function getCategoryTitles(test, submittedAnswers = []) {
-  const predefined = (
-    test?.testStructure?.cardSorting?.categories || []
-  ).map((c) => c.title)
+  const predefined = (test?.testStructure?.cardSorting?.categories || []).map(
+    (c) => c.title,
+  )
   const fromAnswers = new Set(predefined)
 
   submittedAnswers.forEach((answer) => {

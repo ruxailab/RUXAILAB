@@ -7,8 +7,8 @@
         <v-container>
           <div class="d-flex align-center justify-center mb-4">
             <p class="text-body-1 mb-0">
-              {{ assignedCount }} {{ $t('CardSorting.of') }}
-              {{ totalCards }} {{ $t('CardSorting.cards_low') }}
+              {{ assignedCount }} {{ $t('CardSorting.of') }} {{ totalCards }}
+              {{ $t('CardSorting.cards_low') }}
             </p>
           </div>
           <v-progress-linear
@@ -54,17 +54,11 @@
                   @change="onChange"
                 >
                   <template #item="{ element }">
-                    <CardSortingCard
-                      :element="element"
-                      :options="options"
-                    />
+                    <CardSortingCard :element="element" :options="options" />
                   </template>
                 </Draggable>
 
-                <div
-                  v-if="pool.length === 0"
-                  class="sorting-column__empty"
-                >
+                <div v-if="pool.length === 0" class="sorting-column__empty">
                   <v-icon size="28" class="sorting-column__empty-icon">
                     mdi-check-circle-outline
                   </v-icon>
@@ -82,7 +76,9 @@
               class="sorting-board__item"
             >
               <div class="sorting-column">
-                <div class="sorting-column__header sorting-column__header--category">
+                <div
+                  class="sorting-column__header sorting-column__header--category"
+                >
                   <div class="sorting-column__heading">
                     <v-icon
                       size="20"
@@ -175,10 +171,7 @@
             </div>
 
             <!-- New category placeholder -->
-            <div
-              v-if="allowCreateCategories"
-              class="sorting-board__item"
-            >
+            <div v-if="allowCreateCategories" class="sorting-board__item">
               <button
                 type="button"
                 class="new-category-card"
