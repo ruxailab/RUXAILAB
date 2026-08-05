@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{sessionTitle}}</title>
+  </head>
+
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+    "
+  >
+    <table
+      align="center"
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      border="0"
+      style="
+        max-width: 600px;
+        background: #ffffff;
+        border-radius: 8px;
+        overflow: hidden;
+      "
+    >
+      <thead>
+        <tr>
+          <th
+            scope="col"
+            style="
+              display: none;
+              visibility: hidden;
+              mso-hide: all;
+              font-size: 0;
+              line-height: 0;
+            "
+          >
+            Session invitation
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td style="text-align: center; padding: 20px; background: #222">
+            <img
+              src="https://raw.githubusercontent.com/ruxailab/RUXAILAB/develop/src/assets/logo_full_white.png"
+              alt="RUXAILAB"
+              style="display: block; margin: 0 auto; max-width: 180px"
+            />
+          </td>
+        </tr>
+
+        <tr>
+          <td
+            style="
+              padding: 30px;
+              color: #333;
+              font-size: 16px;
+              line-height: 1.6;
+            "
+          >
+            <p>Hello {{participantName}},</p>
+
+            <p>
+              You have been added to a session in the study
+              <strong>{{studyTitle}}</strong>.
+            </p>
+
+            <table
+              width="100%"
+              cellpadding="10"
+              cellspacing="0"
+              style="margin: 25px 0; background: #f8f8f8; border-radius: 6px"
+            >
+              <tr>
+                <td>
+                  <strong>Session</strong><br />
+                  {{sessionTitle}}
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <strong>Scheduled for</strong><br />
+                  {{scheduledAt}}
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <strong>Description</strong><br />
+                  {{sessionMessage}}
+                </td>
+              </tr>
+            </table>
+
+            <p>
+              Access the platform to view all session details and participate.
+            </p>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding: 0 30px 30px; text-align: center">
+            <a
+              href="{{sessionLink}}"
+              style="
+                display: inline-block;
+                padding: 14px 28px;
+                background: #1976d2;
+                color: #fff;
+                text-decoration: none;
+                border-radius: 6px;
+                font-size: 16px;
+                font-weight: bold;
+              "
+            >
+              Open Session
+            </a>
+          </td>
+        </tr>
+
+        <tr>
+          <td
+            style="
+              background: #f0f0f0;
+              padding: 20px;
+              text-align: center;
+              font-size: 12px;
+              color: #888;
+            "
+          >
+            © 2026 RUXAILAB - All rights reserved.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

@@ -13,6 +13,7 @@
     <CreateSessionDialog
       :dialog="createSessionDialog"
       :session="sessionToEdit"
+      :participants="participants"
       @update:dialog="handleSessionDialog"
     />
 
@@ -215,7 +216,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
@@ -224,13 +225,15 @@ import { matchesSearch } from '@/shared/utils/searchUtils'
 import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 import { showError, showSuccess } from '@/shared/utils/toast'
 import SendSessionMessageDialog from '@/shared/components/dialogs/SendSessionMessageDialog.vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const { t, locale } = useI18n()
 
 const store = useStore()
 
 const router = useRouter()
+
+const route = useRoute()
 
 const createSessionDialog = ref(false)
 
@@ -261,6 +264,8 @@ const openSendMessageDialog = (session) => {
   sessionToMessage.value = session
   showSendMessageDialog.value = true
 }
+
+const participants = computed(() => store.getters.participants)
 
 const headers = computed(() => [
   {
@@ -417,5 +422,19 @@ watch(selectedSessionDateRange, (range) => {
 
   filters.value.startAfter = startDate
   filters.value.startBefore = endDate
+})
+
+onMounted(async () => {
+  const studyId = route.params.id
+
+  if (!studyId) {
+    return
+  }
+
+  await store.dispatch('getStudy', {
+    id: studyId,
+  })
+
+  await store.dispatch('getStudyParticipants', { studyId })
 })
 </script>

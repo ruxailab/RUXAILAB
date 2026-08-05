@@ -46,7 +46,7 @@ export default {
      * @param {string} payload.studyId
      * @param {Object} payload.session
      */
-    async createSession({ commit }, payload) {
+    async createSession({ commit, dispatch }, payload) {
       commit('setLoading', true)
 
       try {
@@ -56,7 +56,17 @@ export default {
           throw result.error
         }
 
-        return result.session
+        const session = result.session
+
+        await dispatch('notifySessionMembers', {
+          session,
+          studyId: payload.studyId,
+          studyTitle: getters.test.title,
+          scheduledAt: session.scheduledAt,
+          members: [...(session.staff || []), ...(session.participants || [])],
+        })
+
+        return session
       } catch (error) {
         commit('setError', {
           errorCode: 'sessionCreationError',
@@ -103,14 +113,46 @@ export default {
     /**
      * Update session
      */
-    async updateSession({ commit }, payload) {
+    async updateSession({ state, commit, dispatch, getters }, payload) {
       commit('setLoading', true)
 
       try {
+        const previousSession = state.sessions.find(
+          (item) => item.id === payload.sessionId,
+        )
+
         const result = await new SessionController().updateSession(payload)
 
         if (!result.success) {
           throw result.error
+        }
+
+        const oldMembers = [
+          ...(previousSession?.staff || []),
+          ...(previousSession?.participants || []),
+        ]
+
+        const newMembers = [
+          ...(payload.session.staff || []),
+          ...(payload.session.participants || []),
+        ]
+
+        const addedMembers = newMembers.filter(
+          (member) => !oldMembers.some((old) => old.email === member.email),
+        )
+
+        if (addedMembers.length) {
+          await dispatch('notifySessionMembers', {
+            session: {
+              id: payload.sessionId,
+              title: payload.session.title,
+              message: payload.session.message,
+            },
+            studyId: payload.studyId,
+            studyTitle: payload.study.title,
+            scheduledAt: payload.session.scheduledAt,
+            members: addedMembers,
+          })
         }
 
         return result
@@ -125,7 +167,6 @@ export default {
         commit('setLoading', false)
       }
     },
-
     /**
      * Delete session
      */
@@ -257,6 +298,65 @@ export default {
       } finally {
         commit('setLoading', false)
       }
+    },
+
+    async notifySessionMembers(
+      { getters, dispatch },
+      { session, members, studyId, studyTitle, scheduledAt },
+    ) {
+      const user = getters.user
+      const author = user?.email || ''
+
+      const emailController = new EmailController()
+
+      const uniqueMembers = members.filter(
+        (member, index, array) =>
+          array.findIndex((item) => item.email === member.email) === index,
+      )
+
+      await Promise.all(
+        uniqueMembers.map(async (member) => {
+          const promises = []
+
+          if (member.userDocId) {
+            promises.push(
+              dispatch('addNotification', {
+                userId: member.userDocId,
+                notification: new Notification({
+                  title: session.title,
+                  description: message,
+                  author,
+                  redirectsTo: null,
+                  testId: studyId,
+                  type: 'Session',
+                  read: false,
+                }),
+              }),
+            )
+          }
+
+          if (member.email) {
+            promises.push(
+              emailController.send({
+                to: member.email,
+                subject: session.title,
+                attachments: [],
+                template: 'session-invite',
+                data: {
+                  participantName: member.email,
+                  studyTitle,
+                  sessionTitle: session.title,
+                  sessionMessage: session.message,
+                  scheduledAt,
+                  sessionLink: `${window.location.origin}/testview/${studyId}/${session.id}`,
+                },
+              }),
+            )
+          }
+
+          await Promise.all(promises)
+        }),
+      )
     },
   },
 }

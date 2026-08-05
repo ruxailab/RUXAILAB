@@ -514,6 +514,11 @@ const props = defineProps({
     type: Object,
     default: null,
   },
+
+  participants: {
+    type: Array,
+    default: () => [],
+  },
 })
 
 // Emits
@@ -550,7 +555,7 @@ const participantEmailInput = ref('')
 
 const test = computed(() => store.getters.test)
 
-const users = computed(() => store.state.Users?.users || [])
+const participants = computed(() => props.participants || [])
 
 const cooperators = computed(() => test.value?.cooperators || [])
 
@@ -612,7 +617,7 @@ const availableStaff = computed(() =>
 )
 
 const availableParticipants = computed(() =>
-  users.value.filter(
+  participants.value.filter(
     (user) =>
       !selectedParticipants.value.some(
         (participant) => participant.email === user.email,
@@ -788,6 +793,7 @@ async function saveSession() {
         studyId: test.value.id,
         sessionId: props.session.id,
         session: sessionPayload,
+        study: test.value,
       })
 
       showSuccess(t('Sessions.success.updated'))
@@ -795,6 +801,7 @@ async function saveSession() {
       await store.dispatch('createSession', {
         studyId: test.value.id,
         session: sessionPayload,
+        study: test.value,
       })
 
       showSuccess(t('Sessions.success.created'))
@@ -857,9 +864,10 @@ watch(
 
     sessionMessage.value = session.message || ''
 
-    sessionStaff.value = session.staff || []
-
-    selectedParticipants.value = session.participants || []
+    sessionStaff.value = (session.staff || []).map((item) => ({ ...item }))
+    selectedParticipants.value = (session.participants || []).map((item) => ({
+      ...item,
+    }))
   },
   {
     immediate: true,
