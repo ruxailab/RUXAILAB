@@ -84,6 +84,16 @@
           {{ item.acceptedDate ? formatDate(item.acceptedDate) : '-' }}
         </template>
 
+        <!-- Rejected Date -->
+        <template #item.rejectedDate="{ item }">
+          {{ item.rejectedDate ? formatDate(item.rejectedDate) : '-' }}
+        </template>
+
+        <!-- Expiration Date -->
+        <template #item.expirationDate="{ item }">
+          {{ item.expirationDate ? formatDate(item.expirationDate) : '-' }}
+        </template>
+
         <!-- Actions -->
         <template v-if="showActions" #item.actions="{ item }">
           <v-menu>
@@ -101,7 +111,7 @@
 
               <!-- Re-invite -->
               <v-list-item
-                v-if="item.status === 'pending'"
+                v-if="item.status != MEMBERSHIP_STATUS.ACCEPTED"
                 link
                 @click="onReinvite(item)"
               >
@@ -112,7 +122,9 @@
 
               <!-- Remove -->
               <v-list-item
-                v-if="item.acceptedDate && canRemove(item)"
+                v-if="
+                  item.status === MEMBERSHIP_STATUS.ACCEPTED && canRemove(item)
+                "
                 @click="onRemoveParticipant(item)"
               >
                 <v-list-item-title>
@@ -124,7 +136,10 @@
 
               <!-- Cancel Invitation -->
               <v-list-item
-                v-if="item.status === 'pending' && canCancelInvitation(item)"
+                v-if="
+                  item.status === MEMBERSHIP_STATUS.PENDING &&
+                  canCancelInvitation(item)
+                "
                 @click="onCancelInvitation(item)"
               >
                 <v-list-item-title>
@@ -145,6 +160,8 @@
 import { ref, computed } from 'vue'
 import { matchesSearch } from '@/shared/utils/searchUtils'
 import { useI18n } from 'vue-i18n'
+import { MEMBERSHIP_STATUS } from '../../utils/studyAccessPolicy'
+import { getStatusColor, getStatusText } from '../../utils/statusUtils'
 
 const { t } = useI18n()
 
@@ -217,14 +234,21 @@ const filters = ref({
 const statusFilterOptions = computed(() => [
   {
     title: t('Participants.status.pending'),
-    value: 'pending',
+    value: MEMBERSHIP_STATUS.PENDING,
   },
   {
     title: t('Participants.status.accepted'),
-    value: 'accepted',
+    value: MEMBERSHIP_STATUS.ACCEPTED,
+  },
+  {
+    title: t('Participants.status.expired'),
+    value: MEMBERSHIP_STATUS.EXPIRED,
+  },
+  {
+    title: t('Participants.status.rejected'),
+    value: MEMBERSHIP_STATUS.REJECTED,
   },
 ])
-
 const computedHeaders = computed(() => {
   const defaultHeaders = [
     {
@@ -245,6 +269,16 @@ const computedHeaders = computed(() => {
       key: 'acceptedDate',
       sortable: true,
     },
+    {
+      title: t('Participants.headers.rejectedDate'),
+      key: 'rejectedDate',
+      sortable: true,
+    },
+    {
+      title: t('Participants.headers.expirationDate'),
+      key: 'expirationDate',
+      sortable: true,
+    },
   )
 
   if (props.showActions) {
@@ -259,13 +293,31 @@ const computedHeaders = computed(() => {
 })
 
 const getParticipantStatus = (participant) => {
-  return participant.acceptedDate ? 'accepted' : 'pending'
+  if (
+    participant.status === MEMBERSHIP_STATUS.PENDING &&
+    participant.expirationDate &&
+    new Date(participant.expirationDate).getTime() < Date.now()
+  ) {
+    return MEMBERSHIP_STATUS.EXPIRED
+  }
+
+  if (participant.status) {
+    return participant.status
+  }
+
+  if (participant.acceptedDate) {
+    return MEMBERSHIP_STATUS.ACCEPTED
+  }
+
+  return MEMBERSHIP_STATUS.PENDING
 }
 
 const filteredParticipants = computed(() => {
   let result = props.participants.map((participant, index) => ({
     ...participant,
 
+    // Use the persisted status when available.
+    // Fallback for legacy participants without status.
     status: getParticipantStatus(participant),
 
     _rowKey: participant.id || `${participant.email || 'participant'}-${index}`,
@@ -294,24 +346,6 @@ const getInitials = (email) => {
   }
 
   return email.split('@')[0].slice(0, 2).toUpperCase()
-}
-
-const getStatusColor = (status) => {
-  const colors = {
-    pending: 'warning',
-    accepted: 'success',
-  }
-
-  return colors[status] || 'grey'
-}
-
-const getStatusText = (status) => {
-  const texts = {
-    pending: 'Pending',
-    accepted: 'Accepted',
-  }
-
-  return texts[status] || status
 }
 
 const formatDate = (date) => {

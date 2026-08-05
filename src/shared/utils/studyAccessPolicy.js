@@ -31,6 +31,7 @@ export const STUDY_CAPABILITY = Object.freeze({
   STORAGE_ACCESS: 'storage.access',
   FINAL_REPORT_MANAGE: 'finalReport.manage',
   EVALUATOR_INFO_MANAGE: 'evaluatorInfo.manage',
+  SESSIONS_MANAGE: 'sessions.view',
 })
 
 const C = STUDY_CAPABILITY
@@ -102,6 +103,13 @@ const HEURISTIC_POLICY = Object.freeze({
     C.ANSWERS_VIEW,
   ]),
   [R.GUEST]: Object.freeze([C.DASHBOARD_VIEW, C.ANSWERS_VIEW]),
+})
+
+export const MEMBERSHIP_STATUS = Object.freeze({
+  PENDING: 'pending',
+  ACCEPTED: 'accepted',
+  REJECTED: 'rejected',
+  EXPIRED: 'expired',
 })
 
 const STUDY_POLICIES = Object.freeze({

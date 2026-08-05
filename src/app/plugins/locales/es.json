@@ -557,7 +557,8 @@
       "studiesCount": "Recuento de Estudios",
       "mediaSize": "Tamaño de Medios",
       "toggleMiniMode": "Alternar modo mini",
-      "Participants": "Participantes"
+      "Participants": "Participantes",
+      "Sessions": "Sesiones"
     },
     "heuristic": "Evaluación heurística de usabilidad"
   },
@@ -1222,7 +1223,7 @@
       "change_role_title": "Cambiar rol",
       "message_title_hint": "Escribe un título para tu mensaje",
       "message_content_hint": "Escribe el contenido de tu mensaje",
-      "invite_message": "Has sido invitado a colaborar en '{testTitle}'",
+      "invite_message": "Has sido invitado a colaborar en",
       "message_sent_success": "Mensaje enviado con éxito",
       "message_sent_error": "Error al enviar el mensaje",
       "user_not_registered": "Este usuario aún no ha aceptado la invitación o no está registrado."
@@ -3139,6 +3140,8 @@
       "sessions": "Sesiones",
       "status": "Estado",
       "acceptedDate": "Fecha de aceptación",
+      "rejectedDate": "Fecha de rechazo",
+      "expirationDate": "Fecha de expiración",
       "actions": "Acciones",
       "title": "Asunto",
       "content": "Mensaje"
@@ -3156,7 +3159,136 @@
     },
     "status": {
       "pending": "Pendiente",
-      "accepted": "Aceptado"
+      "accepted": "Aceptado",
+      "expired": "Expirado",
+      "rejected": "Rechazado"
+    }
+  },
+  "Sessions": {
+    "title": {
+      "sessions": "Sesiones",
+      "createSession": "Crear sesión",
+      "placeholder": "Ingrese un título (opcional). Se generará un título predeterminado si se deja vacío.",
+      "title": "Título",
+      "editSession": "Editar sesión"
+    },
+    "description": {
+      "createSession": "Configure el equipo, los participantes y el horario de esta sesión.",
+      "editSession": "Actualiza los detalles de la sesión, participantes, personal, horario y mensaje."
+    },
+    "actions": {
+      "createSession": "Crear sesión",
+      "cancel": "Cancelar",
+      "deleteSession": "Eliminar sesión",
+      "editSession": "Editar sesión",
+      "updateSession": "Actualizar sesión"
+    },
+    "confirm": {
+      "deleteTitle": "Eliminar sesión",
+      "deleteMessage": "¿Está seguro de que desea eliminar esta sesión?"
+    },
+    "headers": {
+      "title": "Título",
+      "start": "Inicio",
+      "actions": "Acciones",
+      "staff": "Personal",
+      "participants": "Participantes",
+      "goToSession": "Ir a la sesión"
+    },
+    "filter": {
+      "search": "Buscar por título",
+      "startsAfter": "Comienza después de",
+      "startsBefore": "Comienza antes de",
+      "selectRange": "Seleccionar rango"
+    },
+    "empty": {
+      "title": "No se encontraron sesiones",
+      "description": "Cree una sesión o ajuste sus filtros."
+    },
+    "staff": {
+      "title": "Equipo",
+      "description": "Seleccione los cooperadores que participarán en esta sesión.",
+      "selectPlaceholder": "Seleccionar cooperador",
+      "added": "Equipo agregado",
+      "roles": {
+        "facilitator": "Facilitador",
+        "observer": "Observador"
+      },
+      "noSelected": "No hay equipo seleccionado"
+    },
+    "participants": {
+      "title": "Participantes",
+      "description": "Seleccione participantes existentes o agregue nuevos correos.",
+      "selectPlaceholder": "Seleccionar participante",
+      "emailPlaceholder": "Correo del participante",
+      "added": "Participantes agregados",
+      "noSelected": "No hay participantes seleccionados"
+    },
+    "schedule": {
+      "title": "Horario",
+      "description": "Seleccione cuándo ocurrirá esta sesión.",
+      "datePlaceholder": "Seleccionar fecha",
+      "timePlaceholder": "Seleccionar hora",
+      "dateRequired": "La fecha es obligatoria",
+      "timeRequired": "La hora es obligatoria",
+      "noDateSelected": "No se seleccionó fecha/hora"
+    },
+    "message": {
+      "title": "Mensaje",
+      "description": "Agregue un mensaje personalizado para esta sesión.",
+      "placeholder": "Mensaje de la sesión",
+      "required": "El mensaje es obligatorio",
+      "maxLength": "Máximo 500 caracteres"
+    },
+    "preview": {
+      "title": "Vista previa de la sesión",
+      "details": "Detalles de la sesión",
+      "staff": "Equipo:",
+      "participants": "Participantes:",
+      "schedule": "Horario:",
+      "message": "Mensaje:",
+      "noMessage": "Sin mensaje todavía"
+    },
+    "info": {
+      "title": "Información de la sesión",
+      "description": "Los miembros del equipo pueden participar como facilitadores u observadores. Todos los participantes tendrán el rol USER."
+    },
+    "validation": {
+      "invalidDate": "Fecha/hora inválida",
+      "invalidSession": "Datos de sesión inválidos."
+    },
+    "success": {
+      "created": "Sesión creada correctamente",
+      "deleted": "Sesión eliminada correctamente",
+      "messageSent": "Mensaje enviado correctamente.",
+      "updated": "Sesión actualizada correctamente."
+    },
+    "error": {
+      "createFailed": "Error al crear la sesión",
+      "participantAlreadyAdded": "El participante ya fue agregado",
+      "errorDelete": "Error al eliminar la sesión",
+      "sendMessageFailed": "No fue posible enviar el mensaje.",
+      "updateFailed": "No se pudo actualizar la sesión."
+    },
+    "send": {
+      "title": "Enviar mensaje",
+      "description": "Envía un mensaje a los miembros de esta sesión.",
+      "recipient": "Destinatarios",
+      "recipientDescription": "Seleccione quién debe recibir este mensaje.",
+      "staff": "Solo staff",
+      "participants": "Solo participantes",
+      "all": "Staff y participantes",
+      "specific": "Correo electrónico específico",
+      "email": "Correo electrónico",
+      "emailRequired": "Seleccione un correo electrónico.",
+      "message": "Mensaje",
+      "messageDescription": "Escriba el mensaje que desea enviar.",
+      "messageRequired": "El mensaje es obligatorio.",
+      "placeholder": "Escriba su mensaje...",
+      "preview": "Vista previa del mensaje",
+      "noMessage": "Sin mensaje.",
+      "info": "Los destinatarios seleccionados recibirán este mensaje por correo electrónico.",
+      "send": "Enviar mensaje"
     }
   }
 }

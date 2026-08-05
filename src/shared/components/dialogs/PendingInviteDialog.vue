@@ -67,6 +67,8 @@ const reject = async () => {
   try {
     await store.dispatch('rejectInvite', {
       user: user.value,
+      studyId: invite.value.studyId,
+      membershipType: invite.value.membershipType,
     })
   } finally {
     dialogHandled.value = true

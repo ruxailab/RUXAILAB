@@ -16,6 +16,7 @@ import notification from '@/features/notifications/store/notification'
 import CardStudy from '@/ux/CardSorting/stores/CardStudy'
 import FocusGroup from '@/ux/FocusGroup/store/FocusGroup'
 import Invite from '@/shared/store/Invite'
+import Session from '@/shared/store/Session'
 
 export default createStore({
   state: {
@@ -96,5 +97,6 @@ export default createStore({
     notification,
     FocusGroup,
     Invite,
+    Session,
   },
 })

@@ -11,6 +11,9 @@ export default class Participant {
     token,
     inviteMessage,
     acceptedDate,
+    rejectedDate,
+    expirationDate,
+    status,
   } = {}) {
     /**
      * Defines the user document id.
@@ -67,6 +70,27 @@ export default class Participant {
      * @type {number}
      */
     this.acceptedDate = acceptedDate
+
+    /**
+     * Defines the reject date.
+     *
+     * @type {number}
+     */
+    this.rejectedDate = rejectedDate
+
+    /**
+     * Defines the expiration date.
+     *
+     * @type {number}
+     */
+    this.expirationDate = expirationDate
+
+    /**
+     * Defines status
+     *
+     * @type {string}
+     */
+    this.status = status
   }
 
   /**
@@ -94,6 +118,9 @@ export default class Participant {
       token: this.token ?? null,
       inviteMessage: this.inviteMessage ?? null,
       acceptedDate: this.acceptedDate ?? null,
+      rejectedDate: this.rejectedDate ?? null,
+      expirationDate: this.expirationDate ?? null,
+      status: this.status ?? 'pending',
     }
   }
 }

@@ -191,16 +191,17 @@ export const generateInvitationLink = functions.onCall({
       )
     }
 
-    const { inviteLink, inviteToken } = await InviteUtils.generateInviteLink(
-      studyId,
-      isPublic ? null : toEmail,
-      studyTitle,
-      isPublic,
-      accessLevel,
-      requiredLogin,
-      membershipType,
-    )
+    const { inviteLink, inviteToken, expirationDate } =
+      await InviteUtils.generateInviteLink(
+        studyId,
+        isPublic ? null : toEmail,
+        studyTitle,
+        isPublic,
+        accessLevel,
+        requiredLogin,
+        membershipType,
+      )
 
-    return { inviteLink, inviteToken }
+    return { inviteLink, inviteToken, expirationDate }
   },
 })

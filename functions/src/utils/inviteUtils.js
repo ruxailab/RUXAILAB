@@ -1,6 +1,13 @@
 import crypto from 'crypto'
 import { admin } from '../f.firebase.js'
 
+export const INVITE_STATUS = {
+  ACCEPTED: 'accepted',
+  REJECTED: 'rejected',
+  EXPIRED: 'expired',
+  PENDING: 'pending',
+}
+
 export default class InviteUtils {
   static async generateInviteLink(
     studyId,
@@ -12,6 +19,7 @@ export default class InviteUtils {
     membershipType = 'cooperator',
   ) {
     const token = crypto.randomBytes(32).toString('hex')
+    const expirationDate = Date.now() + 7 * 24 * 60 * 60 * 1000
 
     await admin
       .firestore()
@@ -21,7 +29,7 @@ export default class InviteUtils {
         email: email?.toLowerCase() || null,
         token,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        expiresAt: new Date(expirationDate),
         acceptedAt: null,
         studyTitle: studyTitle || null,
         isPublic: isPublic || false,
@@ -33,6 +41,7 @@ export default class InviteUtils {
     return {
       inviteLink: `${process.env.SITE_URL}/invite?token=${encodeURIComponent(token)}`,
       inviteToken: token,
+      expirationDate: expirationDate,
     }
   }
 
@@ -79,6 +88,7 @@ export default class InviteUtils {
     testDate,
     study,
     membershipType = 'cooperator',
+    expirationDate,
   }) {
     const baseMembership = {
       userDocId: targetUserId,
@@ -90,6 +100,8 @@ export default class InviteUtils {
       testAuthorEmail: study.testAdmin?.email || '',
       acceptedDate: null,
       membershipType,
+      status: INVITE_STATUS.PENDING,
+      expirationDate: expirationDate || null,
     }
 
     if (membershipType === 'participant') {
@@ -103,5 +115,12 @@ export default class InviteUtils {
       testDate: testDate || null,
       progress: 0,
     }
+  }
+
+  static isAccepted(membership) {
+    return (
+      membership?.status === INVITE_STATUS.ACCEPTED ||
+      (!membership?.status && membership?.accepted === true)
+    )
   }
 }
