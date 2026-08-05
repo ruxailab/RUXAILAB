@@ -6,6 +6,8 @@
 import SessionController from '@/shared/controllers/SessionController'
 import EmailController from '@/shared/controllers/EmailController'
 import Notification from '@/shared/models/Notification'
+import { formatDateTime } from '../utils/dateUtils'
+import i18n from '@/app/plugins/i18n'
 
 export default {
   state: {
@@ -61,8 +63,11 @@ export default {
         await dispatch('notifySessionMembers', {
           session,
           studyId: payload.studyId,
-          studyTitle: getters.test.title,
-          scheduledAt: session.scheduledAt,
+          studyTitle: payload.study.testTitle,
+          scheduledAt: formatDateTime(
+            session.scheduledAt,
+            i18n.global.locale.value,
+          ),
           members: [...(session.staff || []), ...(session.participants || [])],
         })
 
@@ -149,8 +154,11 @@ export default {
               message: payload.session.message,
             },
             studyId: payload.studyId,
-            studyTitle: payload.study.title,
-            scheduledAt: payload.session.scheduledAt,
+            studyTitle: payload.study.testTitle,
+            scheduledAt: formatDateTime(
+              payload.session.scheduledAt,
+              i18n.global.locale.value,
+            ),
             members: addedMembers,
           })
         }
@@ -305,7 +313,8 @@ export default {
       { session, members, studyId, studyTitle, scheduledAt },
     ) {
       const user = getters.user
-      const author = user?.email || ''
+      const author = `${user.username || ''} ${user.email}`
+      const sessionLink = `${window.location.origin}/testview/${studyId}/${session.id}`
 
       const emailController = new EmailController()
 
@@ -324,9 +333,9 @@ export default {
                 userId: member.userDocId,
                 notification: new Notification({
                   title: session.title,
-                  description: message,
+                  description: session.message,
                   author,
-                  redirectsTo: null,
+                  redirectsTo: sessionLink,
                   testId: studyId,
                   type: 'Session',
                   read: false,
@@ -348,7 +357,8 @@ export default {
                   sessionTitle: session.title,
                   sessionMessage: session.message,
                   scheduledAt,
-                  sessionLink: `${window.location.origin}/testview/${studyId}/${session.id}`,
+                  sessionLink: sessionLink,
+                  invitedBy: author,
                 },
               }),
             )

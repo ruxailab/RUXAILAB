@@ -711,29 +711,55 @@ function removeStaff(index) {
 
 // Participants actions
 
-function addExistingParticipant(user) {
+async function addExistingParticipant(user) {
   if (!user) {
     return
   }
 
+  let userDocId = user.userDocId
+
+  if (!userDocId && user.email) {
+    try {
+      const foundUser = await store.dispatch('findUserByEmail', {
+        email: user.email,
+      })
+
+      userDocId = foundUser?.id || foundUser?.userDocId || null
+    } catch {
+      userDocId = null
+    }
+  }
+
   addParticipant({
-    userDocId: user.userDocId,
+    userDocId,
     email: user.email,
   })
 
   selectedParticipant.value = null
 }
 
-function addParticipantEmail() {
-  const email = participantEmailInput.value.trim()
+async function addParticipantEmail() {
+  const email = participantEmailInput.value.trim().toLowerCase()
 
   if (!email) {
     return
   }
 
-  addParticipant({
-    email,
-  })
+  try {
+    const user = await store.dispatch('findUserByEmail', {
+      email,
+    })
+
+    addParticipant({
+      userDocId: user?.id || user?.userDocId || null,
+      email,
+    })
+  } catch {
+    addParticipant({
+      userDocId: null,
+      email,
+    })
+  }
 
   participantEmailInput.value = ''
 }

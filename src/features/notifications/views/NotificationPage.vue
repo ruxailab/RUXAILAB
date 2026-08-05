@@ -476,11 +476,16 @@ function showAcceptDialog() {
 const handleNotificationClick = async (notification) => {
   if (!notification) return
 
-  const result = await store.dispatch('loadInvite', {
-    token: notification.inviteToken,
-  })
+  if (
+    notification.type === 'Collaboration' &&
+    notification.action === 'invitation'
+  ) {
+    const result = await store.dispatch('loadInvite', {
+      token: notification.inviteToken,
+    })
 
-  invite.value = result.invite
+    invite.value = result.invite
+  }
 
   // If notification has a redirect, use the existing flow
   if (notification.redirectsTo) {
