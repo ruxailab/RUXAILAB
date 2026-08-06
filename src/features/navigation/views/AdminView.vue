@@ -52,6 +52,10 @@
           <StorageSection />
         </div>
 
+        <div v-if="activeSection === 'agents'">
+          <AgentsSection />
+        </div>
+
         <div
           v-if="
             activeSection === 'community' &&
@@ -106,6 +110,7 @@ import StudiesSection from '../components/navbarSections/StudiesSection.vue'
 import CommunityStudies from '../components/navbarSections/CommunityStudiesSection.vue'
 import CommunityTemplatesSection from '../components/navbarSections/CommunityTemplatesSection.vue'
 import StorageSection from '../components/navbarSections/StorageSection.vue'
+import AgentsSection from '../components/navbarSections/AgentsSection.vue'
 
 // Utilities and constants
 import { USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions'
@@ -138,6 +143,8 @@ const currentPageTitle = computed(() => {
       return t('pages.navigation.templates')
     case 'storage':
       return t('navigation.storage')
+    case 'agents':
+      return t('navigation.agents')
     case 'notifications':
       return t('pages.navigation.notifications')
     case 'profile':
@@ -164,6 +171,8 @@ const currentPageIcon = computed(() => {
       return 'mdi-clipboard-text'
     case 'storage':
       return 'mdi-database'
+    case 'agents':
+      return 'mdi-robot-outline'
     case 'notifications':
       return 'mdi-bell'
     case 'profile':
