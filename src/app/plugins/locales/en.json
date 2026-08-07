@@ -1955,7 +1955,8 @@
         "completed": "Completed",
         "allStudies": "All Studies",
         "myStudies": "My Studies",
-        "whereICollaborate": "Where I Collaborate"
+        "whereICollaborate": "Where I Collaborate",
+        "whereIParticipate": "Where I Participate"
       }
     },
     "templates": {

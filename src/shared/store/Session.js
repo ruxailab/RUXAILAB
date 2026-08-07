@@ -52,7 +52,10 @@ export default {
       commit('setLoading', true)
 
       try {
-        const result = await new SessionController().createSession(payload)
+        const result = await new SessionController().createSession({
+          ...payload,
+          session: enrichSession(payload.session),
+        })
 
         if (!result.success) {
           throw result.error
@@ -118,7 +121,7 @@ export default {
     /**
      * Update session
      */
-    async updateSession({ state, commit, dispatch, getters }, payload) {
+    async updateSession({ state, commit, dispatch }, payload) {
       commit('setLoading', true)
 
       try {
@@ -126,8 +129,10 @@ export default {
           (item) => item.id === payload.sessionId,
         )
 
-        const result = await new SessionController().updateSession(payload)
-
+        const result = await new SessionController().updateSession({
+          ...payload,
+          session: enrichSession(payload.session),
+        })
         if (!result.success) {
           throw result.error
         }
@@ -368,5 +373,57 @@ export default {
         }),
       )
     },
+    /**
+     * Load sessions where the current user was invited.
+     */
+    async fetchUserSessions({ getters, commit }) {
+      commit('setLoading', true)
+
+      try {
+        const user = getters.user
+
+        const result = await new SessionController().getInvitedSessions({
+          email: user.email,
+          userId: user.id,
+        })
+
+        if (!result.success) {
+          throw result.error
+        }
+
+        commit('SET_SESSIONS', result.sessions)
+
+        return result.sessions
+      } catch (error) {
+        commit('setError', {
+          errorCode: 'sessionFetchError',
+          message: error,
+        })
+
+        throw error
+      } finally {
+        commit('setLoading', false)
+      }
+    },
   },
+}
+
+function enrichSession(session) {
+  return {
+    ...session,
+
+    staffIds: [
+      ...new Set(
+        (session.staff || []).map((staff) => staff.userDocId).filter(Boolean),
+      ),
+    ],
+
+    participantEmails: [
+      ...new Set(
+        (session.participants || [])
+          .map((participant) => participant.email?.trim().toLowerCase())
+          .filter(Boolean),
+      ),
+    ],
+  }
 }

@@ -1863,7 +1863,8 @@
         "completed": "Completado",
         "allStudies": "Todos los estudios",
         "myStudies": "Mis estudios",
-        "whereICollaborate": "Donde colaboro"
+        "whereICollaborate": "Donde colaboro",
+        "whereIParticipate": "Donde participo"
       }
     },
     "templates": {
