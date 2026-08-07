@@ -25,7 +25,7 @@
             class="ml-2"
             icon
             variant="outlined"
-            :disabled="!emailInput.trim()"
+            :disabled="!emailInput?.trim()"
             @click="addEmailToSelection"
             ><v-icon>mdi-plus</v-icon></v-btn
           >
@@ -295,7 +295,7 @@ const isCoopAlreadySelected = (emailToCheck) => {
 }
 
 const addEmailToSelection = () => {
-  const rawValue = emailInput.value.trim()
+  const rawValue = emailInput.value?.trim()
   if (!rawValue) return
 
   const validationError = getCooperatorInviteValidationError({
