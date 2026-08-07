@@ -561,6 +561,8 @@ const cooperators = computed(() => test.value?.cooperators || [])
 
 const isEditMode = computed(() => !!props.session)
 
+const user = computed(() => store.getters.user)
+
 const date = computed({
   get() {
     return sessionDateTime.value
@@ -607,11 +609,28 @@ const formattedDate = computed(() => {
   }).format(date.value)
 })
 
+const availableStaffUsers = computed(() => {
+  const users = [...cooperators.value]
+
+  const isTestAdmin = test.value?.testAdmin?.userDocId === user.value?.id
+
+  const alreadyExists = users.some((item) => item.userDocId === user.value?.id)
+
+  if (isTestAdmin && !alreadyExists) {
+    users.unshift({
+      userDocId: user.value.id,
+      email: user.value.email,
+    })
+  }
+
+  return users
+})
+
 const availableStaff = computed(() =>
-  cooperators.value.filter(
-    (cooperator) =>
+  availableStaffUsers.value.filter(
+    (candidate) =>
       !sessionStaff.value.some(
-        (staff) => staff.userDocId === cooperator.userDocId,
+        (staff) => staff.userDocId === candidate.userDocId,
       ),
   ),
 )
@@ -711,29 +730,55 @@ function removeStaff(index) {
 
 // Participants actions
 
-function addExistingParticipant(user) {
+async function addExistingParticipant(user) {
   if (!user) {
     return
   }
 
+  let userDocId = user.userDocId
+
+  if (!userDocId && user.email) {
+    try {
+      const foundUser = await store.dispatch('findUserByEmail', {
+        email: user.email,
+      })
+
+      userDocId = foundUser?.id || foundUser?.userDocId || null
+    } catch {
+      userDocId = null
+    }
+  }
+
   addParticipant({
-    userDocId: user.userDocId,
+    userDocId,
     email: user.email,
   })
 
   selectedParticipant.value = null
 }
 
-function addParticipantEmail() {
-  const email = participantEmailInput.value.trim()
+async function addParticipantEmail() {
+  const email = participantEmailInput.value.trim().toLowerCase()
 
   if (!email) {
     return
   }
 
-  addParticipant({
-    email,
-  })
+  try {
+    const user = await store.dispatch('findUserByEmail', {
+      email,
+    })
+
+    addParticipant({
+      userDocId: user?.id || user?.userDocId || null,
+      email,
+    })
+  } catch {
+    addParticipant({
+      userDocId: null,
+      email,
+    })
+  }
 
   participantEmailInput.value = ''
 }

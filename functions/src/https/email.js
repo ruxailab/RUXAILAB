@@ -102,6 +102,7 @@ export const sendEmail = functions.onCall({
           .replace(/{{sessionTitle}}/g, content.data.sessionTitle || '')
           .replace(/{{sessionMessage}}/g, content.data.sessionMessage || '')
           .replace(/{{scheduledAt}}/g, content.data.scheduledAt || '')
+          .replace(/{{invitedBy}}/g, content.data.invitedBy || '')
           .replace(
             /{{sessionLink}}/g,
             content.data.sessionLink || process.env.SITE_URL,

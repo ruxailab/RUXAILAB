@@ -7,30 +7,35 @@ describe('useDataTableConfig', () => {
       ref('sessions'),
       (key) => key,
     )
+
     const firstSession = {
       id: 'halo-study',
       email: 'first@example.com',
-      testDate: '2026-07-01T08:38:00.000Z',
+      scheduledAt: '2026-07-01T08:38:00.000Z',
     }
+
     const secondSession = {
       id: 'halo-study',
       email: 'second@example.com',
-      testDate: '2026-07-01T08:38:00.000Z',
+      scheduledAt: '2026-07-01T08:38:00.000Z',
     }
 
     expect(itemValue(firstSession)).not.toBe(itemValue(secondSession))
 
     const statusHeader = headers.value.find(({ key }) => key === 'status')
     const sessionDateHeader = headers.value.find(
-      ({ key }) => key === 'testDate',
+      ({ key }) => key === 'scheduledAt',
     )
 
-    expect(statusHeader.value({
-      ...firstSession,
-      testDate: '2000-01-01T00:00:00.000Z',
-    })).toBe('completed')
+    expect(
+      statusHeader.value({
+        ...firstSession,
+        scheduledAt: '2000-01-01T00:00:00.000Z',
+      }),
+    ).toBe('completed')
+
     expect(sessionDateHeader.value(firstSession)).toBe(
-      new Date(firstSession.testDate).getTime(),
+      new Date(firstSession.scheduledAt).getTime(),
     )
   })
 

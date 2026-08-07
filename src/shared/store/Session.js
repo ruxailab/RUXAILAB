@@ -6,6 +6,8 @@
 import SessionController from '@/shared/controllers/SessionController'
 import EmailController from '@/shared/controllers/EmailController'
 import Notification from '@/shared/models/Notification'
+import { formatDateTime } from '../utils/dateUtils'
+import i18n from '@/app/plugins/i18n'
 
 export default {
   state: {
@@ -50,7 +52,10 @@ export default {
       commit('setLoading', true)
 
       try {
-        const result = await new SessionController().createSession(payload)
+        const result = await new SessionController().createSession({
+          ...payload,
+          session: enrichSession(payload.session),
+        })
 
         if (!result.success) {
           throw result.error
@@ -61,8 +66,11 @@ export default {
         await dispatch('notifySessionMembers', {
           session,
           studyId: payload.studyId,
-          studyTitle: getters.test.title,
-          scheduledAt: session.scheduledAt,
+          studyTitle: payload.study.testTitle,
+          scheduledAt: formatDateTime(
+            session.scheduledAt,
+            i18n.global.locale.value,
+          ),
           members: [...(session.staff || []), ...(session.participants || [])],
         })
 
@@ -113,7 +121,7 @@ export default {
     /**
      * Update session
      */
-    async updateSession({ state, commit, dispatch, getters }, payload) {
+    async updateSession({ state, commit, dispatch }, payload) {
       commit('setLoading', true)
 
       try {
@@ -121,8 +129,10 @@ export default {
           (item) => item.id === payload.sessionId,
         )
 
-        const result = await new SessionController().updateSession(payload)
-
+        const result = await new SessionController().updateSession({
+          ...payload,
+          session: enrichSession(payload.session),
+        })
         if (!result.success) {
           throw result.error
         }
@@ -149,8 +159,11 @@ export default {
               message: payload.session.message,
             },
             studyId: payload.studyId,
-            studyTitle: payload.study.title,
-            scheduledAt: payload.session.scheduledAt,
+            studyTitle: payload.study.testTitle,
+            scheduledAt: formatDateTime(
+              payload.session.scheduledAt,
+              i18n.global.locale.value,
+            ),
             members: addedMembers,
           })
         }
@@ -305,7 +318,8 @@ export default {
       { session, members, studyId, studyTitle, scheduledAt },
     ) {
       const user = getters.user
-      const author = user?.email || ''
+      const author = `${user.username || ''} ${user.email}`
+      const sessionLink = `${window.location.origin}/testview/${studyId}/${session.id}`
 
       const emailController = new EmailController()
 
@@ -324,9 +338,9 @@ export default {
                 userId: member.userDocId,
                 notification: new Notification({
                   title: session.title,
-                  description: message,
+                  description: session.message,
                   author,
-                  redirectsTo: null,
+                  redirectsTo: sessionLink,
                   testId: studyId,
                   type: 'Session',
                   read: false,
@@ -348,7 +362,8 @@ export default {
                   sessionTitle: session.title,
                   sessionMessage: session.message,
                   scheduledAt,
-                  sessionLink: `${window.location.origin}/testview/${studyId}/${session.id}`,
+                  sessionLink: sessionLink,
+                  invitedBy: author,
                 },
               }),
             )
@@ -358,5 +373,57 @@ export default {
         }),
       )
     },
+    /**
+     * Load sessions where the current user was invited.
+     */
+    async fetchUserSessions({ getters, commit }) {
+      commit('setLoading', true)
+
+      try {
+        const user = getters.user
+
+        const result = await new SessionController().getInvitedSessions({
+          email: user.email,
+          userId: user.id,
+        })
+
+        if (!result.success) {
+          throw result.error
+        }
+
+        commit('SET_SESSIONS', result.sessions)
+
+        return result.sessions
+      } catch (error) {
+        commit('setError', {
+          errorCode: 'sessionFetchError',
+          message: error,
+        })
+
+        throw error
+      } finally {
+        commit('setLoading', false)
+      }
+    },
   },
+}
+
+function enrichSession(session) {
+  return {
+    ...session,
+
+    staffIds: [
+      ...new Set(
+        (session.staff || []).map((staff) => staff.userDocId).filter(Boolean),
+      ),
+    ],
+
+    participantEmails: [
+      ...new Set(
+        (session.participants || [])
+          .map((participant) => participant.email?.trim().toLowerCase())
+          .filter(Boolean),
+      ),
+    ],
+  }
 }
