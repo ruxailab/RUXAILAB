@@ -10,6 +10,24 @@
   >
     <template #content>
       <div class="test-content pa-4 rounded-xl">
+        <v-dialog :model-value="showUploadDialog" persistent max-width="560">
+          <v-card class="pa-6 text-center upload-dialog-card" rounded="xl">
+            <div class="d-flex justify-center mb-4">
+              <img
+                :src="redXLogo"
+                alt="RUXAILAB upload spinner"
+                class="upload-spinner"
+              />
+            </div>
+            <h3 class="text-h6 font-weight-bold mb-2 text-primary">
+              {{ t('UserTestView.TaskStep.uploadDialogTitle') }}
+            </h3>
+            <p class="text-body-1 text-grey-darken-2 mb-0">
+              {{ t('UserTestView.TaskStep.uploadDialogMessage') }}
+            </p>
+          </v-card>
+        </v-dialog>
+
         <!-- STAGE 1: Task preview -->
         <template v-if="stage === 1">
           <!-- Task Preview Information -->
@@ -500,6 +518,7 @@
 <script setup>
 import { ref, watch, nextTick, computed, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
+import redXLogo from '@/assets/logo_small_red.png'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import TipButton from '@/ux/UserTest/components/TipButton.vue'
 import AudioRecorder from '@/ux/UserTest/components/AudioRecorder.vue'
@@ -675,6 +694,9 @@ const elapsedTimeDisplay = ref('0:00')
 const uploadingCount = ref(0)
 const isWaitingForUploadToFinish = ref(false)
 const pendingFinalTime = ref(null)
+const showUploadDialog = computed(
+  () => isWaitingForUploadToFinish.value || uploadingCount.value > 0,
+)
 
 let taskStartTime = null
 let timerInterval = null
@@ -682,13 +704,11 @@ let finishTimeout = null
 
 function onShowLoading() {
   uploadingCount.value++
-  emit('show-loading')
 }
 
 function onStopShowLoading() {
   uploadingCount.value--
   if (uploadingCount.value < 0) uploadingCount.value = 0
-  emit('stop-show-loading')
 
   if (uploadingCount.value === 0 && isWaitingForUploadToFinish.value) {
     emitDoneOrCouldNotFinish(pendingFinalTime.value)
@@ -910,6 +930,17 @@ function onTimerStopped(elapsedTime) {
   line-height: 1.65;
 }
 
+.upload-dialog-card {
+  background: #fff;
+}
+
+.upload-spinner {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  animation: uploadSpinnerRotate 1.8s linear infinite;
+}
+
 .task-answer-block {
   display: grid;
   gap: 16px;
@@ -985,6 +1016,16 @@ function onTimerStopped(elapsedTime) {
   50% {
     transform: translateY(-2px);
     box-shadow: 0 12px 28px rgba(var(--v-theme-secondary), 0.12);
+  }
+}
+
+@keyframes uploadSpinnerRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
   }
 }
 

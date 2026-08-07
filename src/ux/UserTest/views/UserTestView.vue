@@ -410,7 +410,9 @@
           <TaskStep
             v-if="
               globalIndex === (hasEyeTracking ? 5 : 4) &&
-              test.testType === STUDY_TYPES.USER
+              test.testType === STUDY_TYPES.USER &&
+              test?.testStructure?.userTasks?.[taskIndex] &&
+              localTestAnswer?.tasks?.[taskIndex]
             "
             ref="taskStepComponent"
             v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
@@ -1131,7 +1133,7 @@ const completeStep = async (id, type, userCompleted = true) => {
         taskIndex.value = id + 1
         await showTaskTitleAnnouncement(taskIndex.value)
       } else {
-        taskIndex.value = id + 1 // to help saving methods
+        taskIndex.value = id
         const postTasksAnnouncement = getPostTasksAnnouncement()
         await safelyShowNextStepAnnouncement(
           postTasksAnnouncement.title,

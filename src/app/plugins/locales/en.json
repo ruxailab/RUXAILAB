@@ -1622,6 +1622,8 @@
       "observationLabel": "Observation (optional)",
       "cannotFinish": "I can not finish the task",
       "completed": "Task completed",
+      "uploadDialogTitle": "Uploading recording session",
+      "uploadDialogMessage": "We are uploading your recording session to the database. This may take a while.",
       "noQuestionnaire": "No post-task questionnaire required for this task type.",
       "validationError": "Please answer all questions before continuing.",
       "finishTask": "Finish task"
