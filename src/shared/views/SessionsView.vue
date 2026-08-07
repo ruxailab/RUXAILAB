@@ -14,6 +14,7 @@
       :dialog="createSessionDialog"
       :session="sessionToEdit"
       :participants="participants"
+      :participant-limit="1"
       @update:dialog="handleSessionDialog"
     />
 
