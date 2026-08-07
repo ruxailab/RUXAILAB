@@ -1,5 +1,12 @@
 <template>
   <div>
+    <StepAnnouncementOverlay
+      v-if="showStepAnnouncement"
+      ref="stepAnnouncementOverlay"
+      :kicker="nextStepAnnouncementKicker"
+      :title="nextStepAnnouncementTitle"
+    />
+
     <v-container fluid class="pa-0">
       <!-- Start Screen -->
       <v-row
@@ -456,12 +463,7 @@
             <PreTasksStep
               v-if="globalIndex === 3 && taskIndex === 0"
               :num-tasks="test?.testStructure?.userTasks?.length || 0"
-              @start-tasks="
-                () => {
-                  taskIndex = 0
-                  globalIndex = 4
-                }
-              "
+              @start-tasks="handleStartTasks"
             />
 
             <!-- Step 4: Task Step -->
@@ -515,8 +517,8 @@
               :post-test-answer="localTestAnswer.postTestAnswer"
               :post-test-completed="localTestAnswer.postTestCompleted"
               @done="
-                () => {
-                  completeStep(taskIndex, 'postTest')
+                async () => {
+                  await completeStep(taskIndex, 'postTest')
                   taskIndex = 3
                 }
               "
@@ -604,7 +606,15 @@ import {
   serverTimestamp,
 } from 'firebase/database'
 import { database } from '@/app/plugins/firebase/index'
-import { ref, computed, watch, onMounted, reactive, watchEffect } from 'vue'
+import {
+  ref,
+  computed,
+  watch,
+  onMounted,
+  reactive,
+  watchEffect,
+  nextTick,
+} from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -618,6 +628,7 @@ import TaskStep from '@/ux/UserTest/components/steps/TaskStep.vue'
 import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue'
 import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue'
 import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue'
+import StepAnnouncementOverlay from '@/ux/UserTest/components/StepAnnouncementOverlay.vue'
 import VideoCallFactory from '@/shared/components/videoCall/VideoCallFactory.vue'
 import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
@@ -631,6 +642,7 @@ import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { showError, showInfo, showWarning } from '@/shared/utils/toast'
 import { calculateProgress } from '../utils/testProgress'
+import { animateStepAnnouncement } from '@/shared/utils/animations'
 
 const store = useStore()
 const router = useRouter()
@@ -664,6 +676,10 @@ const submitDialog = ref(false)
 const notesDrawerOpen = ref(true)
 const moderatorInactive = ref(false)
 const moderatorDisconnectTimeout = ref(null)
+const showStepAnnouncement = ref(false)
+const stepAnnouncementOverlay = ref(null)
+const nextStepAnnouncementTitle = ref('')
+const nextStepAnnouncementKicker = ref('')
 
 // From video call to be used by recorders
 const remoteStream = ref(null)
@@ -1009,8 +1025,63 @@ const startTest = async () => {
 
 const handleWelcomeStart = async () => {
   await requestFullscreenIfAvailable()
+  await safelyShowNextStepAnnouncement(t('UserTestView.stepper.consent'), 1)
   displayVideoCallComponent.value = true
   globalIndex.value = 1
+}
+
+const showNextStepAnnouncement = async (title, stageNumber) => {
+  nextStepAnnouncementKicker.value = `Stage ${stageNumber}`
+  nextStepAnnouncementTitle.value = title
+  showStepAnnouncement.value = true
+
+  const safetyHideTimer = window.setTimeout(() => {
+    showStepAnnouncement.value = false
+  }, 4200)
+
+  try {
+    await nextTick()
+    await animateStepAnnouncement(stepAnnouncementOverlay.value, {
+      totalDuration: 3,
+    })
+  } finally {
+    window.clearTimeout(safetyHideTimer)
+    showStepAnnouncement.value = false
+  }
+}
+
+const safelyShowNextStepAnnouncement = async (title, stageNumber) => {
+  try {
+    await showNextStepAnnouncement(title, stageNumber)
+  } catch {
+    // Non-critical: users can continue even if announcement animation fails.
+  }
+}
+
+const getPostConsentAnnouncementTitle = () => {
+  if (validate(test.value?.testStructure?.preTest)) {
+    return t('UserTestView.stepper.preTest')
+  }
+  return t('UserTestView.stepper.tasks')
+}
+
+const getPostTasksAnnouncement = () => {
+  if (validate(test.value?.testStructure?.postTest)) {
+    return {
+      title: t('UserTestView.stepper.postTest'),
+      stage: 4,
+    }
+  }
+
+  return {
+    title: t('UserTestView.WelcomeStep.steps.submission'),
+    stage: 4,
+  }
+}
+
+const handleStartTasks = async () => {
+  taskIndex.value = 0
+  globalIndex.value = 4
 }
 
 const requestFullscreenIfAvailable = async () => {
@@ -1077,9 +1148,9 @@ const callTimerSave = () => {
   }
 }
 
-function handleTaskFinish(userCompleted) {
-  completeStep(taskIndex.value, 'tasks', userCompleted)
+async function handleTaskFinish(userCompleted) {
   callTimerSave()
+  await completeStep(taskIndex.value, 'tasks', userCompleted)
 }
 
 const startTimer = () => {
@@ -1159,6 +1230,7 @@ const completeStep = async (id, type, userCompleted = true) => {
   try {
     if (type === 'consent') {
       localTestAnswer.consentCompleted = true
+      await safelyShowNextStepAnnouncement(getPostConsentAnnouncementTitle(), 2)
       const preTestGroup = findStepGroup(STEP_GROUP_IDS.preTest)
       if (preTestGroup) {
         markSubStepComplete(STEP_GROUP_IDS.preTest, 0)
@@ -1176,6 +1248,7 @@ const completeStep = async (id, type, userCompleted = true) => {
     }
     if (type === 'preTest') {
       localTestAnswer.preTestCompleted = true
+      await safelyShowNextStepAnnouncement(t('UserTestView.stepper.tasks'), 3)
       markSubStepComplete(STEP_GROUP_IDS.preTest, 1)
       if (
         localTestAnswer.preTestCompleted &&
@@ -1208,6 +1281,11 @@ const completeStep = async (id, type, userCompleted = true) => {
         taskIndex.value = id + 1
         startTimer()
       } else {
+        const postTasksAnnouncement = getPostTasksAnnouncement()
+        await safelyShowNextStepAnnouncement(
+          postTasksAnnouncement.title,
+          postTasksAnnouncement.stage,
+        )
         globalIndex.value = 5
       }
       if (userCompleted) {
@@ -1222,6 +1300,10 @@ const completeStep = async (id, type, userCompleted = true) => {
     }
     if (type === 'postTest') {
       localTestAnswer.postTestCompleted = true
+      await safelyShowNextStepAnnouncement(
+        t('UserTestView.WelcomeStep.steps.submission'),
+        5,
+      )
       globalIndex.value = 6
       markSubStepComplete(STEP_GROUP_IDS.postTest, id)
     }

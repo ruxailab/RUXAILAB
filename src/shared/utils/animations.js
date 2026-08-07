@@ -188,3 +188,119 @@ const MODERATOR_LINES_PRESET = {
 export async function animateModeratorWelcomeText(targets) {
   return animateSplitTextLines(targets, MODERATOR_LINES_PRESET)
 }
+
+export async function animateStepAnnouncement(target, options = {}) {
+  if (!target) return
+
+  const root = target.$el || target
+  if (!root || typeof root.querySelector !== 'function') return
+
+  const {
+    totalDuration = 5,
+    enterDuration = 0.75,
+    exitDuration = 0.85,
+    easeIn = 'sine.out',
+    easeOut = 'sine.inOut',
+  } = options
+
+  const card = root.querySelector('.step-announcement-card')
+  const title = card?.querySelector('h1') || root.querySelector('h1')
+  const kicker = card?.querySelector('p') || root.querySelector('p')
+  const holdDuration = Math.max(0, totalDuration - enterDuration - exitDuration)
+
+  gsap.killTweensOf([root, card, title, kicker])
+
+  gsap.set(root, { autoAlpha: 0 })
+  if (card) gsap.set(card, { y: 16, scale: 0.992, autoAlpha: 0 })
+  if (title) gsap.set(title, { y: 8, autoAlpha: 0 })
+  if (kicker) gsap.set(kicker, { y: 6, autoAlpha: 0 })
+
+  await new Promise((resolve) => {
+    const timeline = gsap.timeline({ onComplete: resolve })
+
+    timeline.to(root, {
+      autoAlpha: 1,
+      duration: Math.min(0.55, enterDuration),
+      ease: easeIn,
+    })
+
+    if (card) {
+      timeline.to(
+        card,
+        {
+          y: 0,
+          scale: 1,
+          autoAlpha: 1,
+          duration: enterDuration,
+          ease: easeIn,
+        },
+        0.06,
+      )
+    }
+
+    if (title) {
+      timeline.to(
+        title,
+        {
+          y: 0,
+          autoAlpha: 1,
+          duration: enterDuration * 0.85,
+          ease: easeIn,
+        },
+        0.16,
+      )
+    }
+
+    if (kicker) {
+      timeline.to(
+        kicker,
+        {
+          y: 0,
+          autoAlpha: 1,
+          duration: enterDuration * 0.75,
+          ease: easeIn,
+        },
+        0.1,
+      )
+    }
+
+    if (holdDuration > 0) {
+      timeline.to({}, { duration: holdDuration })
+    }
+
+    timeline.to(
+      [title, kicker],
+      {
+        y: -4,
+        autoAlpha: 0,
+        duration: exitDuration * 0.8,
+        ease: easeOut,
+      },
+      '>',
+    )
+
+    if (card) {
+      timeline.to(
+        card,
+        {
+          y: -14,
+          scale: 0.994,
+          autoAlpha: 0,
+          duration: exitDuration,
+          ease: easeOut,
+        },
+        '<',
+      )
+    }
+
+    timeline.to(
+      root,
+      {
+        autoAlpha: 0,
+        duration: Math.min(0.7, exitDuration),
+        ease: easeOut,
+      },
+      '<',
+    )
+  })
+}

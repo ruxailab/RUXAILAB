@@ -1525,6 +1525,8 @@
       "tipDesc": "Puedes cambiar entre pestañas o cerrar la nueva ventana en cualquier momento. La grabación continuará hasta que completes la tarea.",
       "internalInterface": "Esta tarea se completará dentro de la interfaz actual.",
       "startTask": "Iniciar tarea",
+      "openTool": "Abrir herramienta",
+      "uploading": "Subiendo...",
       "description": "Descripción de la tarea",
       "needHelp": "¿Necesitas ayuda?",
       "needHelpDesc": "¿Tienes problemas? Obtén guía útil para completar esta tarea.",

@@ -1608,6 +1608,8 @@
       "tipDesc": "You can switch between tabs or close the new window at any time. The recording will continue until you complete the task.",
       "internalInterface": "This task will be completed within the current interface.",
       "startTask": "Start task",
+      "openTool": "Open tool",
+      "uploading": "Uploading...",
       "description": "Task Description",
       "needHelp": "Need Help?",
       "needHelpDesc": "Having trouble? Get helpful guidance to complete this task.",

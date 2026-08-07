@@ -1,5 +1,12 @@
 <template>
   <div v-if="test" class="user-test-bg">
+    <StepAnnouncementOverlay
+      v-if="showStepAnnouncement"
+      ref="stepAnnouncementOverlay"
+      :kicker="nextStepAnnouncementKicker"
+      :title="nextStepAnnouncementTitle"
+    />
+
     <div>
       <IrisTracker
         v-if="
@@ -96,7 +103,7 @@
           <h1 class="text-h2 font-weight-bold text-white">
             {{ test.testTitle }}
           </h1>
-          <p class="text-body-1 mb-5 text-white text-justify">
+          <p class="text-body mb-5 text-white text-justify">
             {{ test.testDescription }}
           </p>
           <v-btn
@@ -355,7 +362,7 @@
             :has-pre-test="hasPreTest"
             :has-post-test="hasPostTest"
             :welcome-message="test?.testStructure?.welcomeMessage"
-            @start="globalIndex = 1"
+            @start="handleWelcomeStart"
           />
 
           <ConsentStep
@@ -397,12 +404,7 @@
               taskIndex === 0
             "
             :num-tasks="test?.testStructure?.userTasks?.length || 0"
-            @start-tasks="
-              () => {
-                taskIndex = 0
-                globalIndex = hasEyeTracking ? 5 : 4
-              }
-            "
+            @start-tasks="handleStartTasks"
           />
 
           <TaskStep
@@ -480,8 +482,8 @@
             :post-test-answer="localTestAnswer.postTestAnswer"
             :post-test-completed="localTestAnswer.postTestCompleted"
             @done="
-              () => {
-                completeStep(taskIndex, 'postTest')
+              async () => {
+                await completeStep(taskIndex, 'postTest')
                 taskIndex = 3
               }
             "
@@ -537,8 +539,10 @@ import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import EyeTrackingCalibrationStep from '@/ux/UserTest/components/calibration/EyeTrackingCalibrationStep.vue'
 import { db } from '@/app/plugins/firebase'
 import IrisTracker from '../components/IrisTracker.vue'
+import StepAnnouncementOverlay from '@/ux/UserTest/components/StepAnnouncementOverlay.vue'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { calculateProgress } from '../utils/testProgress'
+import { animateStepAnnouncement } from '@/shared/utils/animations'
 
 const fullName = ref('')
 const logined = ref(null)
@@ -556,6 +560,10 @@ const isVisualizerVisible = ref(false)
 const doneTaskDisabled = ref(false)
 const anonymousUserDocId = ref(null)
 const calibrationPopup = ref(null)
+const showStepAnnouncement = ref(false)
+const stepAnnouncementOverlay = ref(null)
+const nextStepAnnouncementTitle = ref('')
+const nextStepAnnouncementKicker = ref('')
 
 const rightView = ref(null)
 const videoRecorder = ref(null)
@@ -884,6 +892,75 @@ const startTest = async () => {
   }, 1000)
 }
 
+const showNextStepAnnouncement = async (title, stageNumber) => {
+  nextStepAnnouncementKicker.value = `Stage ${stageNumber}`
+  nextStepAnnouncementTitle.value = title
+  showStepAnnouncement.value = true
+
+  const safetyHideTimer = window.setTimeout(() => {
+    showStepAnnouncement.value = false
+  }, 4200)
+
+  try {
+    await nextTick()
+    await animateStepAnnouncement(stepAnnouncementOverlay.value, {
+      totalDuration: 3,
+    })
+  } finally {
+    window.clearTimeout(safetyHideTimer)
+    showStepAnnouncement.value = false
+  }
+}
+
+const safelyShowNextStepAnnouncement = async (title, stageNumber) => {
+  try {
+    await showNextStepAnnouncement(title, stageNumber)
+  } catch {
+    // Non-critical: users can continue even if announcement animation fails.
+  }
+}
+
+const persistStepProgress = async () => {
+  try {
+    await savePartialAnswer()
+  } catch {
+    store.commit('SET_TOAST', {
+      type: 'error',
+      message: t('UserTestView.errors.failedToSaveAnswer'),
+    })
+  }
+}
+
+const handleWelcomeStart = async () => {
+  await safelyShowNextStepAnnouncement(t('UserTestView.stepper.consent'), 1)
+  globalIndex.value = 1
+}
+
+const handleStartTasks = async () => {
+  taskIndex.value = 0
+  globalIndex.value = hasEyeTracking.value ? 5 : 4
+}
+
+const getPostConsentAnnouncementTitle = () => {
+  if (hasPreTest.value) return t('UserTestView.stepper.preTest')
+  if (hasEyeTracking.value) return t('UserTestView.stepper.calibration')
+  return t('UserTestView.stepper.tasks')
+}
+
+const getPostTasksAnnouncement = () => {
+  if (hasPostTest.value) {
+    return {
+      title: t('UserTestView.stepper.postTest'),
+      stage: 4,
+    }
+  }
+
+  return {
+    title: t('UserTestView.WelcomeStep.steps.submission'),
+    stage: 4,
+  }
+}
+
 const requestFullscreenIfAvailable = async () => {
   if (document.fullscreenElement) return
 
@@ -927,16 +1004,16 @@ async function handleTaskFinish(userCompleted) {
       async (val) => {
         if (!val) {
           unwatch()
-          completeStep(taskIndex.value, 'tasks', userCompleted)
+          await completeStep(taskIndex.value, 'tasks', userCompleted)
           attachMediaToTasks(localTestAnswer, mediaUrls.value)
-          await savePartialAnswer()
+          await persistStepProgress()
         }
       },
     )
   } else {
-    completeStep(taskIndex.value, 'tasks', userCompleted)
+    await completeStep(taskIndex.value, 'tasks', userCompleted)
     attachMediaToTasks(localTestAnswer, mediaUrls.value)
-    await savePartialAnswer()
+    await persistStepProgress()
   }
 }
 
@@ -989,10 +1066,11 @@ const handleTipPressed = (idx) => {
   localTestAnswer.tasks[idx].tipPressCount = current + 1
 }
 
-const completeStep = (id, type, userCompleted = true) => {
+const completeStep = async (id, type, userCompleted = true) => {
   try {
     if (type === 'consent') {
       localTestAnswer.consentCompleted = true
+      await safelyShowNextStepAnnouncement(getPostConsentAnnouncementTitle(), 2)
       if (hasPreTest.value) {
         globalIndex.value = 2 // PreTest
       } else {
@@ -1000,14 +1078,15 @@ const completeStep = (id, type, userCompleted = true) => {
         globalIndex.value = hasEyeTracking.value ? 3 : 4
         localTestAnswer.preTestCompleted = true
       }
-      savePartialAnswer()
+      await persistStepProgress()
     }
 
     if (type === 'preTest') {
       localTestAnswer.preTestCompleted = true
+      await safelyShowNextStepAnnouncement(t('UserTestView.stepper.tasks'), 3)
       // With eye tracking: index 3 = Calibration; without eye tracking: index 3 = PreTasksStep
       globalIndex.value = 3
-      savePartialAnswer()
+      await persistStepProgress()
     }
 
     if (type === 'eyeCalibration') {
@@ -1040,14 +1119,17 @@ const completeStep = (id, type, userCompleted = true) => {
         taskIndex.value = id + 1
         startTimer()
       } else {
-        if (allTasksCompleted.value) {
-          taskIndex.value = id + 1 // to help saving methods
-          if (hasPostTest.value) {
-            globalIndex.value = hasEyeTracking.value ? 6 : 5 // PostTest
-          } else {
-            globalIndex.value = hasEyeTracking.value ? 7 : 6 // Finish
-            localTestAnswer.postTestCompleted = true
-          }
+        taskIndex.value = id + 1 // to help saving methods
+        const postTasksAnnouncement = getPostTasksAnnouncement()
+        await safelyShowNextStepAnnouncement(
+          postTasksAnnouncement.title,
+          postTasksAnnouncement.stage,
+        )
+        if (hasPostTest.value) {
+          globalIndex.value = hasEyeTracking.value ? 6 : 5 // PostTest
+        } else {
+          globalIndex.value = hasEyeTracking.value ? 7 : 6 // Finish
+          localTestAnswer.postTestCompleted = true
         }
       }
       if (userCompleted) {
@@ -1071,9 +1153,13 @@ const completeStep = (id, type, userCompleted = true) => {
 
     if (type === 'postTest') {
       localTestAnswer.postTestCompleted = true
+      await safelyShowNextStepAnnouncement(
+        t('UserTestView.WelcomeStep.steps.submission'),
+        5,
+      )
       // items.value[2].icon = 'mdi-check-circle-outline';
       globalIndex.value = hasEyeTracking.value ? 7 : 6 // Finish
-      savePartialAnswer()
+      await persistStepProgress()
     }
 
     calculateProgress(localTestAnswer)
