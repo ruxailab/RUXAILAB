@@ -90,7 +90,7 @@
 <script setup>
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import { onMounted, onBeforeUnmount, nextTick, ref } from 'vue'
-import { animateSplitTextLines } from '@/shared/utils/animations'
+import { animateModeratorWelcomeText } from '@/shared/utils/animations'
 defineProps({
   stepperValue: { type: Number, required: true },
 })
@@ -101,14 +101,8 @@ let cleanupSplitAnimation = () => {}
 
 onMounted(async () => {
   await nextTick()
-  cleanupSplitAnimation = await animateSplitTextLines(
+  cleanupSplitAnimation = await animateModeratorWelcomeText(
     welcomeContent.value?.querySelectorAll('.split'),
-    {
-      duration: 1.2,
-      stagger: 0.1,
-      yPercent: 100,
-      opacity: 0,
-    },
   )
 })
 

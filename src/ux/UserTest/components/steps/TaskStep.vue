@@ -128,12 +128,22 @@
                   </v-icon>
                   <div>
                     <p class="text-body-2 font-weight-medium mb-1">
-                      New Window Will Open
+                      Open in New Window
                     </p>
                     <p class="text-body-1 text-grey-darken-3 mb-4">
-                      When you start the task, a new window will open with the
-                      tool you need to use.
+                      Please open the tool manually before or during the task.
                     </p>
+
+                    <v-btn
+                      color="secondary"
+                      variant="outlined"
+                      size="small"
+                      prepend-icon="mdi-open-in-new"
+                      class="mb-3"
+                      @click="openTool"
+                    >
+                      {{ hasOpenedTool ? 'Open again' : 'Open tool' }}
+                    </v-btn>
 
                     <p class="text-body-1 text-grey-darken-3">
                       💡 <strong>Tip:</strong> You can switch between tabs or
@@ -245,7 +255,7 @@
                           class="text-caption text-grey-darken-3 mb-2"
                           style="line-height: 1.3"
                         >
-                          Accidentally closed the tool window? Reopen it here.
+                          Open or reopen the tool window when you need it.
                         </p>
                         <v-btn
                           color="secondary"
@@ -253,9 +263,9 @@
                           size="small"
                           block
                           prepend-icon="mdi-open-in-new"
-                          @click="reopenTool"
+                          @click="openTool"
                         >
-                          Reopen Tool
+                          {{ hasOpenedTool ? 'Reopen Tool' : 'Open Tool' }}
                         </v-btn>
                       </div>
                     </v-col>
@@ -634,6 +644,7 @@ const hasAnyRecording = computed(() => {
 })
 
 const stage = ref(1)
+const hasOpenedTool = ref(false)
 const audioRecorder = ref(null)
 const videoRecorder = ref(null)
 const screenRecorder = ref(null)
@@ -700,14 +711,6 @@ async function startTask() {
   taskStartTime = Date.now()
   timerInterval = setInterval(updateElapsedTime, 1000)
   nextTick(() => {
-    const link = props.task?.taskLink || props.taskLink
-    if (link) {
-      const url =
-        link.startsWith('http://') || link.startsWith('https://')
-          ? link
-          : `https://${link}`
-      window.open(url, '_blank')
-    }
     setTimeout(() => {
       const timer = document.querySelector('[ref=timerComponent]')
       if (timer && timer.startTimer) timer.startTimer()
@@ -716,7 +719,7 @@ async function startTask() {
   emit('stop-show-loading')
 }
 
-function reopenTool() {
+function openTool() {
   const link = props.task?.taskLink || props.taskLink
   if (link) {
     const url =
@@ -724,6 +727,7 @@ function reopenTool() {
         ? link
         : `https://${link}`
     window.open(url, '_blank')
+    hasOpenedTool.value = true
   }
 }
 
@@ -846,6 +850,7 @@ watch(
     taskStartTime = null
     elapsedTimeDisplay.value = '0:00'
     showPostForm.value = { userCompleted: undefined }
+    hasOpenedTool.value = false
   },
 )
 

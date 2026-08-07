@@ -416,23 +416,13 @@
             <ModeratorWelcomeStep
               v-if="globalIndex === 0 && isUserTestAdmin"
               :stepper-value="stepperValue"
-              @start="
-                () => {
-                  displayVideoCallComponent = true
-                  globalIndex = 1
-                }
-              "
+              @start="handleWelcomeStart"
             />
             <WelcomeStep
               v-else-if="globalIndex === 0 && !isUserTestAdmin"
               :stepper-value="stepperValue"
               :welcome-message="test?.testStructure?.welcomeMessage"
-              @start="
-                () => {
-                  displayVideoCallComponent = true
-                  globalIndex = 1
-                }
-              "
+              @start="handleWelcomeStart"
             />
 
             <!--Step 1: Consent -->
@@ -939,6 +929,8 @@ const startTest = async () => {
     return
   }
 
+  await requestFullscreenIfAvailable()
+
   if (isSessionViewer.value) {
     // Hide start screen and mount VideoCall component for non-participant viewers.
     start.value = false
@@ -1012,6 +1004,35 @@ const startTest = async () => {
 
     // Write lastUpdate timestamp when moderator disconnects (server-side timestamp)
     onDisconnect(roomRef).update({ lastUpdate: serverTimestamp() })
+  }
+}
+
+const handleWelcomeStart = async () => {
+  await requestFullscreenIfAvailable()
+  displayVideoCallComponent.value = true
+  globalIndex.value = 1
+}
+
+const requestFullscreenIfAvailable = async () => {
+  if (document.fullscreenElement) return
+
+  const root = document.documentElement
+  try {
+    if (root.requestFullscreen) {
+      await root.requestFullscreen()
+      return
+    }
+
+    const legacy =
+      root.webkitRequestFullscreen ||
+      root.mozRequestFullScreen ||
+      root.msRequestFullscreen
+
+    if (legacy) {
+      await legacy.call(root)
+    }
+  } catch {
+    // Ignore if blocked by browser/user settings and continue test flow.
   }
 }
 

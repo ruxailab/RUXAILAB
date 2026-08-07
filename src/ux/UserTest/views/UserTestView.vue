@@ -863,6 +863,8 @@ const startTest = async () => {
     return
   }
 
+  await requestFullscreenIfAvailable()
+
   if (!isUserTestAdmin.value && user.value) {
     await store.dispatch('acceptStudyCollaboration', {
       test: test.value,
@@ -880,6 +882,29 @@ const startTest = async () => {
   setTimeout(() => {
     start.value = false
   }, 1000)
+}
+
+const requestFullscreenIfAvailable = async () => {
+  if (document.fullscreenElement) return
+
+  const root = document.documentElement
+  try {
+    if (root.requestFullscreen) {
+      await root.requestFullscreen()
+      return
+    }
+
+    const legacy =
+      root.webkitRequestFullscreen ||
+      root.mozRequestFullScreen ||
+      root.msRequestFullscreen
+
+    if (legacy) {
+      await legacy.call(root)
+    }
+  } catch {
+    // Ignore if blocked by browser/user settings and continue test flow.
+  }
 }
 
 const callTimerSave = () => {

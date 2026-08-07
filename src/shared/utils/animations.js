@@ -90,3 +90,101 @@ export async function animateSplitTextLines(targets, options = {}) {
     }
   }
 }
+
+export async function animateSplitTextWords(targets, options = {}) {
+  const elements = Array.from(targets || []).filter(Boolean)
+  if (!elements.length) return () => {}
+
+  const {
+    duration = 2,
+    opacity = 0,
+    stagger = 0.1,
+    ease = 'sine.out',
+    container = null,
+  } = options
+
+  if (document?.fonts?.ready) {
+    await document.fonts.ready
+  }
+
+  if (container) {
+    gsap.set(container, { autoAlpha: 0 })
+  }
+
+  let SplitText
+  try {
+    const mod = await import('gsap/SplitText')
+    SplitText = mod.SplitText || mod.default
+    if (!SplitText) throw new Error('SplitText unavailable')
+    gsap.registerPlugin(SplitText)
+  } catch {
+    if (container) {
+      gsap.set(container, { autoAlpha: 1 })
+    }
+    gsap.set(elements, { opacity: 1 })
+    const fallback = gsap.from(elements, {
+      opacity,
+      duration,
+      ease,
+      stagger,
+    })
+    return () => fallback.kill()
+  }
+
+  const splits = elements.map((el) =>
+    SplitText.create(el, { type: 'words', aria: 'hidden' }),
+  )
+
+  const allWords = splits.flatMap((split) => split.words || [])
+  gsap.set(elements, { opacity: 1 })
+  if (container) {
+    gsap.set(container, { autoAlpha: 1 })
+  }
+
+  const animation = gsap.fromTo(
+    allWords,
+    { opacity },
+    {
+      opacity: 1,
+      duration,
+      ease,
+      stagger,
+    },
+  )
+
+  return () => {
+    if (animation && typeof animation.kill === 'function') animation.kill()
+    for (const split of splits) {
+      if (split && typeof split.revert === 'function') split.revert()
+    }
+    if (container) {
+      gsap.set(container, { clearProps: 'visibility,opacity' })
+    }
+    gsap.set(elements, { clearProps: 'opacity' })
+  }
+}
+
+const WELCOME_WORDS_PRESET = {
+  duration: 0.85,
+  stagger: 0.035,
+  opacity: 0,
+  ease: 'sine.out',
+}
+
+export async function animateWelcomeText(targets, container = null) {
+  return animateSplitTextWords(targets, {
+    ...WELCOME_WORDS_PRESET,
+    container,
+  })
+}
+
+const MODERATOR_LINES_PRESET = {
+  duration: 1.2,
+  stagger: 0.1,
+  yPercent: 100,
+  opacity: 0,
+}
+
+export async function animateModeratorWelcomeText(targets) {
+  return animateSplitTextLines(targets, MODERATOR_LINES_PRESET)
+}
