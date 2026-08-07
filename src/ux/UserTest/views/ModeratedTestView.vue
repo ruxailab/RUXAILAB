@@ -395,7 +395,7 @@
           <div v-show="displayVideoCallComponent" v-if="test">
             <VideoCallFactory
               :room-id="roomId"
-              :is-moderator="isUserTestAdmin"
+              :is-moderator="isModerator"
               :user="user"
               :access-level="currentUserAccessLevel"
               :current-global-index="globalIndex"
@@ -414,7 +414,7 @@
           <div v-show="!displayVideoCallComponent">
             <!--Step 0: Welcome - Different for Moderator vs Participant -->
             <ModeratorWelcomeStep
-              v-if="globalIndex === 0 && isUserTestAdmin"
+              v-if="globalIndex === 0 && isModerator"
               :stepper-value="stepperValue"
               @start="
                 () => {
@@ -424,7 +424,7 @@
               "
             />
             <WelcomeStep
-              v-else-if="globalIndex === 0 && !isUserTestAdmin"
+              v-else-if="globalIndex === 0 && !isModerator"
               :stepper-value="stepperValue"
               :welcome-message="test?.testStructure?.welcomeMessage"
               @start="
@@ -493,7 +493,7 @@
               :submitted="localTestAnswer.submitted"
               :done-task-disabled="doneTaskDisabled"
               :remote-stream="remoteStream"
-              :should-record-moderator="!isUserTestAdmin"
+              :should-record-moderator="!isModerator"
               @update:sus-answers="
                 (val) => {
                   localTestAnswer.tasks[taskIndex].susAnswers = Array.isArray(
@@ -632,10 +632,7 @@ import VideoCallFactory from '@/shared/components/videoCall/VideoCallFactory.vue
 import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
-import {
-  canJoinModeratedUserSession,
-  isModeratedSessionViewer,
-} from '@/shared/utils/studyAccessPolicy'
+import { isModeratedSessionViewer } from '@/shared/utils/studyAccessPolicy'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
@@ -675,6 +672,8 @@ const notesDrawerOpen = ref(true)
 const moderatorInactive = ref(false)
 const moderatorDisconnectTimeout = ref(null)
 
+const sessionId = computed(() => route.params.token || null)
+
 // From video call to be used by recorders
 const remoteStream = ref(null)
 
@@ -690,22 +689,60 @@ const isUserTestAdmin = computed(() => {
 })
 
 const currentUserAccessLevel = computed(() => {
-  if (isUserTestAdmin.value) return 0 // Admin implicit
-  const cooperator = test.value.cooperators?.find(
+  const cooperator = session.value?.staff?.find(
     (c) => c.userDocId === user.value?.id,
   )
-  return cooperator?.accessLevel ?? 2 // Default to Guest/Participant (2) if not found, but typically should be found
+
+  const participant = session.value?.participants?.find(
+    (p) => p.userDocId === user.value?.id,
+  )
+
+  if (cooperator) {
+    return cooperator.role || ACCESS_LEVEL.OBSERVATOR
+  }
+
+  if (participant) {
+    return participant.role || ACCESS_LEVEL.USER
+  }
+
+  return ACCESS_LEVEL.OBSERVATOR
 })
 
-const isObservator = computed(() => currentUserAccessLevel.value === 3)
-const sessionUserId = computed(() => route.params.token || null)
-const canJoinSession = computed(() =>
-  canJoinModeratedUserSession(test.value, user.value, sessionUserId.value),
-)
-const isSessionViewer = computed(() =>
-  isModeratedSessionViewer(test.value, user.value, sessionUserId.value),
-)
+const sessionFacilitator = computed(() => {
+  return session.value?.staff?.find((staff) => staff.role === 'FACILITATOR')
+})
 
+const sessionObserver = computed(() => {
+  const observator = session.value?.staff?.find(
+    (staff) => staff.role === 'OBSERVER',
+  )
+  return observator || null
+})
+
+const isModerator = computed(() => {
+  // If there is a FACILITATOR in the session, only they are the moderator.
+  if (sessionFacilitator.value) {
+    return sessionFacilitator.value.userDocId === user.value?.id
+  }
+
+  // Fallback: if there is no FACILITATOR, the testAdmin is the moderator.
+  return isUserTestAdmin.value
+})
+
+const isObservator = computed(() => {
+  // If there is an OBSERVER in the session, only they are the observer.
+  if (sessionObserver.value) {
+    return sessionObserver.value.userDocId === user.value?.id
+  }
+
+  // Fallback: if there is no OBSERVER, the testAdmin is the observer.
+  return currentUserAccessLevel.value === ACCESS_LEVEL.OBSERVATOR
+})
+
+const session = computed(() => store.getters.session)
+const isSessionViewer = computed(() =>
+  isModeratedSessionViewer(test.value, user.value, session.value),
+)
 const hasTestDashboardAccess = computed(() => {
   if (!user.value) return false
   return (
@@ -757,6 +794,18 @@ watch(
   },
 )
 
+watch(
+  session,
+  (newSession) => {
+    if (!newSession) return
+
+    testDate.value = newSession.scheduledAt
+
+    sessionCooperator.value = newSession
+  },
+  { immediate: true },
+)
+
 watchEffect(() => {
   const index = taskIndex.value
 
@@ -765,12 +814,7 @@ watchEffect(() => {
 
   const answers = localTestAnswer?.tasks?.[index]?.susAnswers
 
-  if (isUserTestAdmin.value) {
-    doneTaskDisabled.value = false
-    return
-  }
-
-  if (isUserTestAdmin.value) {
+  if (isModerator.value) {
     doneTaskDisabled.value = false
     return
   }
@@ -806,7 +850,7 @@ watch(
 
 // Methods
 const proceedToNextStep = async () => {
-  if (!isUserTestAdmin.value) return
+  if (!isModerator.value) return
 
   // Increment globalIndex before updating Firebase
   globalIndex.value = globalIndex.value + 1
@@ -823,7 +867,7 @@ const handleStepSelected = async ({
   globalIndex: newGlobalIndex,
   taskIndex: newTaskIndex,
 }) => {
-  if (!isUserTestAdmin.value) return
+  if (!isModerator.value) return
 
   globalIndex.value = newGlobalIndex
   taskIndex.value = newTaskIndex
@@ -963,7 +1007,7 @@ const startTest = async () => {
 
     // If data is null, the room has been deleted (e.g. by moderator ending call)
     if (!data) {
-      if (!isUserTestAdmin.value && displayVideoCallComponent.value) {
+      if (!isModerator.value && displayVideoCallComponent.value) {
         // displayVideoCallComponent.value = false // Avoid updating state before redirect to prevent unmount error
         // Optionally show start screen or just return to test flow
         // start.value = true
@@ -976,13 +1020,13 @@ const startTest = async () => {
     globalIndex.value = data.globalIndex !== undefined ? data.globalIndex : 0
     taskIndex.value = data.taskIndex !== undefined ? data.taskIndex : 0
 
-    if (!isUserTestAdmin.value) {
+    if (!isModerator.value) {
       // sync video call state
       if (data.showVideoCall !== undefined) {
         displayVideoCallComponent.value = data.showVideoCall
       }
     } else {
-      // Admin always stays in video call during session
+      // Moderator always stays in video call during session
       displayVideoCallComponent.value = true
     }
   })
@@ -993,7 +1037,7 @@ const startTest = async () => {
   }, 1000)
 
   // Initialize Room defaults for Moderator
-  if (isUserTestAdmin.value) {
+  if (isModerator.value) {
     // Check if valid data exists, otherwise init defaults
     const snapshot = await get(roomRef)
     const currentData = snapshot.val() || {}
@@ -1018,7 +1062,7 @@ const startTest = async () => {
 const MODERATOR_DISCONNECT_TIMEOUT_MS = 5 * 60 * 1000 // 5 minutes
 
 const handleModeratorStatusChange = (connected) => {
-  if (isUserTestAdmin.value) return // Moderator does not need this
+  if (isModerator.value) return // Moderator does not need this
 
   if (!connected) {
     // Moderator disconnected — start 5-min timeout
@@ -1213,7 +1257,7 @@ const completeStep = async (id, type, userCompleted = true) => {
     })
 
     // Update individual participant taskIndex (for tracking)
-    if (!isUserTestAdmin.value && user.value?.id) {
+    if (!isModerator.value && user.value?.id) {
       const participantRef = dbRef(
         database,
         `calls/${roomId.value}/participants/${user.value.id}`,
@@ -1355,7 +1399,7 @@ watchEffect(() => {
     isStartTestDisabled.value = true
     return
   }
-  if (isUserTestAdmin.value) {
+  if (isModerator.value) {
     if (localTestAnswer.submitted) {
       testDisabledReason.value = 'test-already-completed'
       isStartTestDisabled.value = true
@@ -1373,20 +1417,8 @@ watchEffect(() => {
     return
   }
   const now = new Date()
-  const userSessions = test.value.cooperators.filter(
-    (u) => u.userDocId === route.params.token,
-  )
-
-  const cooperator = userSessions
-    .filter((s) => {
-      const sessionDate = new Date(s.testDate)
-      const diffHours = (sessionDate - now) / (1000 * 60 * 60)
-      return diffHours >= 0 && diffHours <= 24
-    })
-    .sort((a, b) => new Date(a.testDate) - new Date(b.testDate))[0]
-
-  const sessionDate = cooperator?.testDate
-    ? new Date(cooperator.testDate)
+  const sessionDate = session.value?.scheduledAt
+    ? new Date(session.value.scheduledAt)
     : null
 
   // 🧩 Test already completed
@@ -1454,38 +1486,13 @@ onMounted(async () => {
     return
   }
 
-  if (route.params.token) {
-    if (route.params.token === test.value.id) {
-      showInfo(t('UserTestView.messages.useSessionLinkModerated'))
-      router.push('/managerview/' + test.value.id)
-      return
-    }
-
-    if (!canJoinSession.value) {
-      showError('errors.globalError')
-      router.push('/admin')
-      return
-    }
-
-    if (!isUserTestAdmin.value) {
-      sessionCooperator.value = test.value.cooperators.find(
-        (user) => user.userDocId === route.params.token,
-      )
-      if (sessionCooperator.value?.testDate) {
-        testDate.value = sessionCooperator.value.testDate
-      } else {
-        showWarning(t('UserTestView.warnings.sessionNotScheduled'))
-        return
-      }
-    }
-  } else {
+  if (!sessionId.value) {
     showInfo(t('UserTestView.messages.useSessionLink'))
     return
   }
 
   globalIndex.value = 0
 
-  // Initialize localTestAnswer with existing data from currentUserTestAnswer
   if (
     currentUserTestAnswer.value &&
     Object.keys(currentUserTestAnswer.value).length > 0
@@ -1498,7 +1505,7 @@ onMounted(async () => {
 
 // Auto-join if refresh happens during active call
 watch(
-  isUserTestAdmin,
+  isModerator,
   async (newValue) => {
     if (newValue && roomId.value) {
       const roomRef = dbRef(database, `rooms/${roomId.value}`)
@@ -1523,7 +1530,7 @@ onBeforeUnmount(async () => {
   // await set(roomRef, null)
 
   // Moderator: explicitly stamp lastUpdate on leave (covers SPA navigation)
-  if (isUserTestAdmin.value) {
+  if (isModerator.value) {
     await update(roomRef, { lastUpdate: serverTimestamp() })
   }
 

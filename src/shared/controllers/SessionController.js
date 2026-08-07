@@ -190,4 +190,14 @@ export default class SessionController extends Controller {
       }
     }
   }
+
+  async getSession(studyId, sessionId) {
+    const res = await super.readOne(`tests/${studyId}/sessions`, sessionId)
+    if (!res.exists()) return null
+
+    return {
+      id: res.id,
+      ...res.data(),
+    }
+  }
 }

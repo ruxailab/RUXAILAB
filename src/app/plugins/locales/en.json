@@ -3345,7 +3345,8 @@
       "participantAlreadyAdded": "Participant already added",
       "errorDelete": "Error deleting session",
       "sendMessageFailed": "Unable to send the message.",
-      "updateFailed": "Failed to update session."
+      "updateFailed": "Failed to update session.",
+      "participantLimitReached": "Participant limit reached"
     },
     "send": {
       "title": "Send message",

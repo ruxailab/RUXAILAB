@@ -16,17 +16,25 @@ export default {
     sessions: [],
 
     loading: false,
+
+    session: null,
   },
 
   getters: {
     sessions: (state) => state.sessions,
 
     sessionsLoading: (state) => state.loading,
+
+    session: (state) => state.session,
   },
 
   mutations: {
     SET_SESSIONS(state, sessions) {
       state.sessions = sessions
+    },
+
+    SET_SESSION(state, session) {
+      state.session = session
     },
 
     REMOVE_SESSION(state, sessionId) {
@@ -394,6 +402,30 @@ export default {
         commit('SET_SESSIONS', result.sessions)
 
         return result.sessions
+      } catch (error) {
+        commit('setError', {
+          errorCode: 'sessionFetchError',
+          message: error,
+        })
+
+        throw error
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+
+    async getSession({ commit }, { studyId, sessionId }) {
+      commit('setLoading', true)
+
+      try {
+        const session = await new SessionController().getSession(
+          studyId,
+          sessionId,
+        )
+
+        commit('SET_SESSION', session)
+
+        return session
       } catch (error) {
         commit('setError', {
           errorCode: 'sessionFetchError',

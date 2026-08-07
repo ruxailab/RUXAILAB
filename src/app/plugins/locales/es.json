@@ -3272,7 +3272,8 @@
       "participantAlreadyAdded": "El participante ya fue agregado",
       "errorDelete": "Error al eliminar la sesión",
       "sendMessageFailed": "No fue posible enviar el mensaje.",
-      "updateFailed": "No se pudo actualizar la sesión."
+      "updateFailed": "No se pudo actualizar la sesión.",
+      "participantLimitReached": "Límite de participantes alcanzado"
     },
     "send": {
       "title": "Enviar mensaje",

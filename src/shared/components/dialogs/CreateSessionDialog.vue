@@ -149,6 +149,7 @@
                     color="primary"
                     clearable
                     hide-details
+                    :disabled="participantLimitReached"
                     @update:model-value="addExistingParticipant"
                   />
 
@@ -163,6 +164,7 @@
                       prepend-inner-icon="mdi-email-outline"
                       color="primary"
                       clearable
+                      :disabled="participantLimitReached"
                       @keydown.enter.prevent="addParticipantEmail"
                     />
 
@@ -171,12 +173,19 @@
                       icon
                       variant="outlined"
                       color="primary"
-                      :disabled="!participantEmailInput.trim()"
+                      :disabled="
+                        participantLimitReached || !participantEmailInput.trim()
+                      "
                       @click="addParticipantEmail"
                     >
                       <v-icon> mdi-plus </v-icon>
                     </v-btn>
                   </v-row>
+
+                  <small v-if="participantLimitReached" class="text-error"
+                    >{{ $t('Sessions.error.participantLimitReached') }}
+                    {{ `(${props.participantLimit})` }}</small
+                  >
 
                   <div v-if="selectedParticipants.length" class="mt-3">
                     <div class="text-caption text-grey-darken-1 mb-2">
@@ -519,6 +528,11 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+
+  participantLimit: {
+    type: Number,
+    default: null,
+  },
 })
 
 // Emits
@@ -562,6 +576,12 @@ const cooperators = computed(() => test.value?.cooperators || [])
 const isEditMode = computed(() => !!props.session)
 
 const user = computed(() => store.getters.user)
+
+const participantLimitReached = computed(
+  () =>
+    props.participantLimit &&
+    selectedParticipants.value.length >= props.participantLimit,
+)
 
 const date = computed({
   get() {
@@ -784,6 +804,10 @@ async function addParticipantEmail() {
 }
 
 function addParticipant(participant) {
+  if (props.participantLimit && selectedParticipants.value.length >= 1) {
+    showError(t('Sessions.error.participantLimitReached'))
+  }
+
   const exists = selectedParticipants.value.some(
     (item) => item.email.toLowerCase() === participant.email.toLowerCase(),
   )

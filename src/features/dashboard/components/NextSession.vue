@@ -197,7 +197,7 @@ function getStudyType(data) {
 }
 
 const goto = (session) => {
-  const url = `/testview/${session.id}/${session.userDocId}`
+  const url = `/testview/${session.study.id}/${session.id}`
   router.push(url)
 }
 </script>
