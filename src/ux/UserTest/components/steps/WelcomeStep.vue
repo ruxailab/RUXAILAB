@@ -1,25 +1,28 @@
 <template>
   <ShowInfo>
     <template #content>
-      <div class="test-content pa-6 rounded-xl text-center fade-in">
-        <h2 class="text-h5 font-weight-bold mb-4 text-primary">
+      <div
+        ref="welcomeContent"
+        class="test-content pa-6 rounded-xl text-center"
+      >
+        <h2 class="split text-h5 font-weight-bold mb-4 text-primary">
           {{ $t('UserTestView.WelcomeStep.welcome') }}
         </h2>
         <div
           v-if="welcomeMessage"
-          class="text-body-1 mb-4 text-grey-darken-3"
+          class="split text-body-1 mb-4 text-grey-darken-3"
           v-html="welcomeMessage"
         ></div>
-        <p v-else class="text-body-1 mb-4 text-grey-darken-3">
+        <p v-else class="split text-body-1 mb-4 text-grey-darken-3">
           {{ $t('UserTestView.WelcomeStep.description') }}
         </p>
-        <h2 class="text-h5 font-weight-bold mb-4 text-primary">
+        <h2 class="split text-h5 font-weight-bold mb-4 text-primary">
           {{ $t('UserTestView.WelcomeStep.howItWorks') }}
         </h2>
-        <p class="text-body-1 mb-4 text-grey-darken-3">
+        <p class="split text-body-1 mb-4 text-grey-darken-3">
           {{ $t('UserTestView.WelcomeStep.phases') }}
         </p>
-        <p class="text-body-1 mb-4 text-grey-darken-3">
+        <p class="split text-body-1 mb-4 text-grey-darken-3">
           {{ $t('UserTestView.WelcomeStep.summary') }}
         </p>
         <v-stepper
@@ -98,7 +101,7 @@
           hide-actions
           class="my-6"
         />
-        <p class="text-body-1 mb-6 text-grey-darken-3">
+        <p class="split text-body-1 mb-6 text-grey-darken-3">
           {{ $t('UserTestView.WelcomeStep.ready') }}
         </p>
         <v-btn
@@ -117,8 +120,9 @@
 <script setup>
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import { VStepperVertical } from 'vuetify/labs/VStepperVertical'
-import { computed } from 'vue'
+import { computed, onMounted, onBeforeUnmount, nextTick, ref } from 'vue'
 import { useDisplay } from 'vuetify'
+import { animateSplitTextLines } from '@/shared/utils/animations'
 
 const props = defineProps({
   stepperValue: { type: Number, required: true },
@@ -129,26 +133,45 @@ const props = defineProps({
 })
 defineEmits(['start'])
 const { smAndDown } = useDisplay()
+const welcomeContent = ref(null)
+let cleanupSplitAnimation = () => {}
 
 const welcomeStepperValue = computed(() => Math.max(0, props.stepperValue + 1))
+
+onMounted(async () => {
+  await nextTick()
+  cleanupSplitAnimation = await animateSplitTextLines(
+    welcomeContent.value?.querySelectorAll('.split'),
+    {
+      duration: 1.2,
+      stagger: 0.1,
+      yPercent: 100,
+      opacity: 0,
+    },
+  )
+})
+
+onBeforeUnmount(() => {
+  if (typeof cleanupSplitAnimation === 'function') {
+    cleanupSplitAnimation()
+    cleanupSplitAnimation = () => {}
+  }
+})
 </script>
 
 <style scoped>
-.fade-in {
-  animation: fadeIn 2s ease-in-out;
-  animation-fill-mode: both;
+.split {
+  opacity: 0;
 }
 
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
+:deep(.line) {
+  display: block;
+  overflow: hidden;
+}
 
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+:deep(.line > *),
+:deep(.line) {
+  will-change: transform, opacity;
 }
 
 :deep(.v-stepper-vertical-item__avatar.v-avatar) {
