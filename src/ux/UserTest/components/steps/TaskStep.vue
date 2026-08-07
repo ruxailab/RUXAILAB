@@ -1,14 +1,17 @@
 <template>
-  <ShowInfo :title="task?.taskName || taskName">
+  <ShowInfo
+    :title="
+      stage === 1
+        ? t('UserTestView.TaskStep.beforeWeStart')
+        : stage === 2
+          ? t('UserTestView.TaskStep.taskInformation')
+          : task?.taskName || taskName
+    "
+  >
     <template #content>
       <div class="test-content pa-4 rounded-xl">
-        <!-- STAGE 1: Show title and description -->
+        <!-- STAGE 1: Task preview -->
         <template v-if="stage === 1">
-          <div
-            class="rich-text mb-4 task-description"
-            v-html="task?.taskDescription || taskDescription"
-          />
-
           <!-- Task Preview Information -->
           <v-card
             variant="outlined"
@@ -145,21 +148,6 @@
                 {{ t('UserTestView.TaskStep.newWindowDesc') }}
               </p>
 
-              <v-btn
-                color="secondary"
-                variant="outlined"
-                size="small"
-                prepend-icon="mdi-open-in-new"
-                class="mb-3"
-                @click="openTool"
-              >
-                {{
-                  hasOpenedTool
-                    ? t('UserTestView.TaskStep.reopenTool')
-                    : t('UserTestView.TaskStep.openTool')
-                }}
-              </v-btn>
-
               <p class="text-body-1 text-grey-darken-3 mb-0">
                 <strong>{{ t('UserTestView.TaskStep.tip') }}:</strong>
                 {{ t('UserTestView.TaskStep.tipDesc') }}
@@ -169,14 +157,35 @@
 
           <v-row justify="center" class="mt-6">
             <v-col cols="auto">
+              <v-btn color="primary" @click="goToStartTaskStage">
+                {{ t('buttons.next') }}
+              </v-btn>
+            </v-col>
+          </v-row>
+        </template>
+
+        <!-- STAGE 2: Task title and description -->
+        <template v-else-if="stage === 2">
+          <h2 class="text-h5 text-primary mb-4 text-left">
+            {{ task?.taskName || taskName }}
+          </h2>
+
+          <div
+            class="rich-text text-body-1 task-description task-information-description text-left"
+            v-html="task?.taskDescription || taskDescription"
+          />
+
+          <v-row justify="center" class="mt-6">
+            <v-col cols="auto">
               <v-btn color="primary" @click="startTask">
                 {{ t('UserTestView.TaskStep.startTask') }}
               </v-btn>
             </v-col>
           </v-row>
         </template>
-        <!-- STAGE 2: Task answer -->
-        <template v-else-if="stage === 2">
+
+        <!-- STAGE 3: Task answer -->
+        <template v-else-if="stage === 3">
           <!-- Task Description During Execution -->
           <v-card variant="outlined" bg-color="white" class="mb-4">
             <v-card-text :class="$vuetify.display.xs ? 'pa-2' : 'pa-3'">
@@ -355,8 +364,8 @@
             </v-col>
           </v-row>
         </template>
-        <!-- STAGE 3:POST-TASK form -->
-        <template v-else-if="stage === 3">
+        <!-- STAGE 4:POST-TASK form -->
+        <template v-else-if="stage === 4">
           <v-card class="mb-4" variant="outlined" bg-color="white">
             <v-card-text class="pa-4">
               <!-- SUS Form -->
@@ -691,7 +700,7 @@ function attemptFinish() {
     isWaitingForUploadToFinish.value = true
   } else {
     // Check for where uploads have not started yet
-    if (stage.value !== 3 && hasAnyRecording.value) {
+    if (stage.value !== 4 && hasAnyRecording.value) {
       isWaitingForUploadToFinish.value = true
       // Short timeout to alllow recorders to emit show-loading
       finishTimeout = setTimeout(() => {
@@ -713,6 +722,10 @@ function updateElapsedTime() {
   elapsedTimeDisplay.value = `${minutes}:${seconds.toString().padStart(2, '0')}`
 }
 
+function goToStartTaskStage() {
+  stage.value = 2
+}
+
 async function startTask() {
   emit('show-loading')
   emit('startTask')
@@ -721,7 +734,7 @@ async function startTask() {
     emit('stop-show-loading')
     return
   }
-  stage.value = 2
+  stage.value = 3
   taskStartTime = Date.now()
   timerInterval = setInterval(updateElapsedTime, 1000)
   nextTick(() => {
@@ -801,7 +814,7 @@ function handleShowPostForm(userCompleted) {
 
   // Show post-task form for all validated task types
   if (VALIDATION_REQUIRED_TYPES.has(props.task?.taskType)) {
-    stage.value = 3
+    stage.value = 4
   } else {
     attemptFinish()
   }
@@ -890,6 +903,11 @@ function onTimerStopped(elapsedTime) {
 <style scoped>
 .task-description {
   white-space: pre-line;
+}
+
+.task-information-description {
+  font-size: 1.6rem;
+  line-height: 1.65;
 }
 
 .task-answer-block {

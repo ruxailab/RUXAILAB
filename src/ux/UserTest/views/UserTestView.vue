@@ -892,8 +892,12 @@ const startTest = async () => {
   }, 1000)
 }
 
-const showNextStepAnnouncement = async (title, stageNumber) => {
-  nextStepAnnouncementKicker.value = `Stage ${stageNumber}`
+const showNextStepAnnouncement = async (
+  title,
+  stageNumber,
+  kickerOverride = '',
+) => {
+  nextStepAnnouncementKicker.value = kickerOverride || `Stage ${stageNumber}`
   nextStepAnnouncementTitle.value = title
   showStepAnnouncement.value = true
 
@@ -912,9 +916,13 @@ const showNextStepAnnouncement = async (title, stageNumber) => {
   }
 }
 
-const safelyShowNextStepAnnouncement = async (title, stageNumber) => {
+const safelyShowNextStepAnnouncement = async (
+  title,
+  stageNumber,
+  kickerOverride = '',
+) => {
   try {
-    await showNextStepAnnouncement(title, stageNumber)
+    await showNextStepAnnouncement(title, stageNumber, kickerOverride)
   } catch {
     // Non-critical: users can continue even if announcement animation fails.
   }
@@ -939,6 +947,19 @@ const handleWelcomeStart = async () => {
 const handleStartTasks = async () => {
   taskIndex.value = 0
   globalIndex.value = hasEyeTracking.value ? 5 : 4
+  await nextTick()
+  await showTaskTitleAnnouncement(0)
+}
+
+const showTaskTitleAnnouncement = async (idx) => {
+  const task = test.value?.testStructure?.userTasks?.[idx]
+  if (!task) return
+
+  const fallbackTitle = t('UserTestView.stepper.taskX', { num: idx + 1 })
+  const announcementTitle = task.taskName || fallbackTitle
+  const announcementKicker = fallbackTitle
+
+  await safelyShowNextStepAnnouncement(announcementTitle, 3, announcementKicker)
 }
 
 const getPostConsentAnnouncementTitle = () => {
@@ -1014,15 +1035,6 @@ async function handleTaskFinish(userCompleted) {
     await completeStep(taskIndex.value, 'tasks', userCompleted)
     attachMediaToTasks(localTestAnswer, mediaUrls.value)
     await persistStepProgress()
-  }
-}
-
-const startTimer = () => {
-  if (
-    timerComponent.value &&
-    typeof timerComponent.value.startTimer === 'function'
-  ) {
-    timerComponent.value.startTimer()
   }
 }
 
@@ -1117,7 +1129,7 @@ const completeStep = async (id, type, userCompleted = true) => {
 
       if (id < localTestAnswer.tasks.length - 1) {
         taskIndex.value = id + 1
-        startTimer()
+        await showTaskTitleAnnouncement(taskIndex.value)
       } else {
         taskIndex.value = id + 1 // to help saving methods
         const postTasksAnnouncement = getPostTasksAnnouncement()
@@ -1136,14 +1148,6 @@ const completeStep = async (id, type, userCompleted = true) => {
         store.commit('SET_TOAST', {
           type: 'success',
           message: t('UserTestView.messages.taskCompletedSuccess', {
-            taskName: test.value.testStructure.userTasks[id].taskName,
-          }),
-          timeout: 3000,
-        })
-      } else {
-        store.commit('SET_TOAST', {
-          type: 'warning',
-          message: t('UserTestView.messages.taskNotCompleted', {
             taskName: test.value.testStructure.userTasks[id].taskName,
           }),
           timeout: 3000,

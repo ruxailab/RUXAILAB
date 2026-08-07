@@ -1509,7 +1509,9 @@
       "form": "Formulario"
     },
     "TaskStep": {
-      "preview": "Vista previa de la tarea",
+      "beforeWeStart": "Antes de empezar",
+      "taskInformation": "Información de la tarea",
+      "preview": "Información de grabación",
       "recordingInfo": "Esta tarea registrará los siguientes datos durante tu interacción:",
       "screenRecord": "Grabación de pantalla",
       "screenRecordDesc": "Captura clics, desplazamiento e interacciones para analizar el comportamiento del usuario.",
@@ -1519,7 +1521,7 @@
       "audioRecordDesc": "Captura comentarios verbales y protocolos de pensamiento en voz alta durante la tarea.",
       "eyeTracker": "Seguimiento ocular",
       "eyeTrackerDesc": "Rastrea patrones de atención visual y comportamiento de la mirada durante la tarea.",
-      "newWindow": "Se abrirá una nueva ventana",
+      "newWindow": "Esta tarea necesita abrir un sitio web",
       "newWindowDesc": "Cuando comiences la tarea, deberás abrir pulsar un boton para abrir la herramienta que necesitas usar.",
       "tip": "Consejo",
       "tipDesc": "Puedes cambiar entre pestañas o cerrar la nueva ventana en cualquier momento. La grabación continuará hasta que completes la tarea.",
@@ -1665,6 +1667,8 @@
       "description": "Vas a completar",
       "tasksSuffix": "tareas relacionadas con el uso de la herramienta. No hay respuestas correctas o incorrectas; lo importante es cómo interactúas.",
       "instruction": "Cuando estés listo, haz clic en el botón para comenzar.",
+      "nextButton": "Siguiente",
+      "afterRecordingInstruction": "Cuando estés listo, pulsa el botón de abajo para comenzar.",
       "startButton": "Iniciar tareas",
       "recordingTitle": "Información de grabación",
       "recordingDescription": "Durante las tareas, podemos recopilar diferentes tipos de datos para entender tu interacción con el sistema. Dependiendo de la tarea específica, se pueden grabar los siguientes elementos:",
