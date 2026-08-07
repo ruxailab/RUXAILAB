@@ -204,7 +204,7 @@
           <v-row v-if="globalIndex >= 1" class="stepper-row sticky-stepper">
             <v-col cols="12">
               <v-stepper
-                :model-value="stepperValue"
+                :model-value="stepperValue + 1"
                 class="main-stepper rounded-xl elevation-3"
                 :class="{
                   'stepper-animate':
@@ -215,7 +215,7 @@
               >
                 <v-stepper-header>
                   <v-stepper-item
-                    value="1"
+                    :value="1"
                     :title="$t('UserTestView.stepper.consent')"
                     :complete="stepperValue >= 1"
                     color="white"
@@ -224,7 +224,7 @@
                   <v-divider />
                   <template v-if="hasPreTest">
                     <v-stepper-item
-                      value="2"
+                      :value="2"
                       :title="$t('UserTestView.stepper.preTest')"
                       :complete="stepperValue >= 2"
                       color="white"
