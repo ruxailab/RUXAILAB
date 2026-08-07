@@ -1,5 +1,5 @@
 <template>
-  <div v-if="test">
+  <div v-if="test" class="user-test-bg">
     <div>
       <IrisTracker
         v-if="
@@ -1375,6 +1375,41 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+.user-test-bg {
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.user-test-bg::before {
+  content: '';
+  position: fixed;
+  z-index: 0;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 140%;
+  margin-right: -450px;
+  margin-top: 100px;
+  background-image: url(../../../assets/logo_small_red.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: right top;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.user-test-bg > * {
+  position: relative;
+  z-index: 1;
+}
+
+.main-test-interface :deep(.v-card--variant-elevated),
+.main-test-interface :deep(.v-card--variant-flat) {
+  background: rgba(var(--v-theme-surface), 0) !important;
+}
+
 .start-screen {
   position: fixed;
   width: 100%;
@@ -1389,6 +1424,30 @@ onBeforeUnmount(() => {
     #303f9f 100%
   );
   transition: opacity 8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.start-screen::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 140%;
+  margin-right: -450px;
+  margin-top: 100px;
+  background-image: url(../../../assets/logo_small_red.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: right top;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.start-screen > * {
+  position: relative;
+  z-index: 1;
 }
 
 .start-screen.leaving,
@@ -1410,28 +1469,6 @@ onBeforeUnmount(() => {
   100% {
     background-position: 0% 50%;
   }
-}
-
-.start-screen::before {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 140%;
-  margin-right: -450px;
-  margin-top: 100px;
-  background-image: url(../../../assets/logo_small_red.png);
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: right top;
-  opacity: 0.2;
-}
-
-.start-screen.leaving::before {
-  opacity: 0;
 }
 
 /* Stepper sticky styles */

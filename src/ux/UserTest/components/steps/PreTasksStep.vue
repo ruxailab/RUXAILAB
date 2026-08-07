@@ -12,7 +12,7 @@
         <v-card
           variant="outlined"
           color="secondary"
-          class="my-6 mx-auto"
+          class="my-6 mx-auto recording-info-card"
           max-width="600"
         >
           <v-card-text class="pa-4">
@@ -89,3 +89,9 @@ const props = defineProps({
 })
 const emit = defineEmits(['startTasks'])
 </script>
+
+<style scoped>
+.recording-info-card {
+  background: #fff !important;
+}
+</style>

@@ -13,7 +13,7 @@
           <v-card
             variant="outlined"
             color="secondary"
-            class="my-6 mx-auto"
+            class="my-6 mx-auto task-preview-card"
             max-width="1000"
           >
             <v-card-text :class="$vuetify.display.xs ? 'pa-3' : 'pa-4'">
@@ -873,6 +873,10 @@ function onTimerStopped(elapsedTime) {
   white-space: pre-line;
 }
 
+.task-preview-card {
+  background: #fff !important;
+}
+
 .recording-features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -887,13 +891,13 @@ function onTimerStopped(elapsedTime) {
   padding: 16px;
   border: 1px solid rgba(var(--v-theme-secondary), 0.2);
   border-radius: 12px;
-  background: rgba(var(--v-theme-secondary), 0.02);
+  background: #fff;
   transition: all 0.2s ease;
 }
 
 .recording-feature-card:hover {
   border-color: rgba(var(--v-theme-secondary), 0.3);
-  background: rgba(var(--v-theme-secondary), 0.05);
+  background: #fff;
 }
 
 .feature-icon-container {
