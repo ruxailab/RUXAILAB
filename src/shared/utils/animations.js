@@ -31,10 +31,15 @@ export async function animateSplitTextLines(targets, options = {}) {
     opacity = 0,
     stagger = 0.1,
     ease = 'expo.out',
+    container = null,
   } = options
 
   if (document?.fonts?.ready) {
     await document.fonts.ready
+  }
+
+  if (container) {
+    gsap.set(container, { autoAlpha: 0 })
   }
 
   gsap.set(elements, { opacity: 1 })
@@ -46,6 +51,9 @@ export async function animateSplitTextLines(targets, options = {}) {
     if (!SplitText) throw new Error('SplitText unavailable')
     gsap.registerPlugin(SplitText)
   } catch {
+    if (container) {
+      gsap.set(container, { autoAlpha: 1 })
+    }
     const fallback = gsap.from(elements, {
       duration,
       y: 12,
@@ -54,6 +62,10 @@ export async function animateSplitTextLines(targets, options = {}) {
       ease: 'power1.out',
     })
     return () => fallback.kill()
+  }
+
+  if (container) {
+    gsap.set(container, { autoAlpha: 1 })
   }
 
   const splits = []
@@ -88,6 +100,10 @@ export async function animateSplitTextLines(targets, options = {}) {
     for (const split of splits) {
       if (split && typeof split.revert === 'function') split.revert()
     }
+    if (container) {
+      gsap.set(container, { clearProps: 'visibility,opacity' })
+    }
+    gsap.set(elements, { clearProps: 'opacity' })
   }
 }
 
@@ -164,16 +180,17 @@ export async function animateSplitTextWords(targets, options = {}) {
   }
 }
 
-const WELCOME_WORDS_PRESET = {
-  duration: 0.85,
-  stagger: 0.035,
+const WELCOME_LINES_PRESET = {
+  duration: 0.9,
+  stagger: 0.1,
+  yPercent: 100,
   opacity: 0,
-  ease: 'sine.out',
+  ease: 'expo.out',
 }
 
 export async function animateWelcomeText(targets, container = null) {
-  return animateSplitTextWords(targets, {
-    ...WELCOME_WORDS_PRESET,
+  return animateSplitTextLines(targets, {
+    ...WELCOME_LINES_PRESET,
     container,
   })
 }
@@ -212,8 +229,8 @@ export async function animateStepAnnouncement(target, options = {}) {
 
   gsap.set(root, { autoAlpha: 0 })
   if (card) gsap.set(card, { y: 16, scale: 0.992, autoAlpha: 0 })
-  if (title) gsap.set(title, { y: 8, autoAlpha: 0 })
-  if (kicker) gsap.set(kicker, { y: 6, autoAlpha: 0 })
+  if (title) gsap.set(title, { y: 24, autoAlpha: 0 })
+  if (kicker) gsap.set(kicker, { y: 34, autoAlpha: 0 })
 
   await new Promise((resolve) => {
     const timeline = gsap.timeline({ onComplete: resolve })
@@ -244,10 +261,10 @@ export async function animateStepAnnouncement(target, options = {}) {
         {
           y: 0,
           autoAlpha: 1,
-          duration: enterDuration * 0.85,
+          duration: enterDuration * 0.72,
           ease: easeIn,
         },
-        0.16,
+        0.12,
       )
     }
 
@@ -257,10 +274,10 @@ export async function animateStepAnnouncement(target, options = {}) {
         {
           y: 0,
           autoAlpha: 1,
-          duration: enterDuration * 0.75,
+          duration: enterDuration * 0.7,
           ease: easeIn,
         },
-        0.1,
+        0.28,
       )
     }
 

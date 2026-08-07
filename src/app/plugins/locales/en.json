@@ -1614,7 +1614,7 @@
       "needHelp": "Need Help?",
       "needHelpDesc": "Having trouble? Get helpful guidance to complete this task.",
       "externalTool": "External Tool",
-      "reopenDesc": "Accidentally closed the tool window? Reopen it here.",
+      "externalToolDesc": "Use the button below to open the tool in a new tab.",
       "reopenTool": "Reopen Tool",
       "answerLabel": "Answer",
       "observationLabel": "Observation (optional)",

@@ -211,8 +211,8 @@
                   <div v-if="task?.taskLink || taskLink" class="mb-3">
                     <v-card
                       variant="outlined"
-                      bg-color="white"
-                      class="pa-4 rounded-lg text-center"
+                      class="pa-4 rounded-lg text-center bg-white task-action-card"
+                      :class="{ 'task-action-card--attention': !hasOpenedTool }"
                     >
                       <div class="d-flex align-center justify-center mb-2">
                         <v-icon color="secondary" size="20" class="mr-2">
@@ -228,7 +228,7 @@
                         class="text-body-2 text-grey-darken-3 mb-3"
                         style="line-height: 1.5"
                       >
-                        {{ t('UserTestView.TaskStep.reopenDesc') }}
+                        {{ t('UserTestView.TaskStep.externalToolDesc') }}
                       </p>
                       <v-btn
                         color="secondary"
@@ -247,14 +247,10 @@
                     </v-card>
                   </div>
 
-                  <div
-                    v-if="task?.taskTip"
-                    class="help-section pa-4 rounded-lg text-center"
-                  >
+                  <div v-if="task?.taskTip" class="mb-3">
                     <v-card
                       variant="outlined"
-                      bg-color="white"
-                      class="pa-4 rounded-lg text-center"
+                      class="pa-4 rounded-lg text-center bg-white"
                     >
                       <div class="d-flex align-center justify-center mb-2">
                         <v-icon color="success" size="20" class="mr-2">
@@ -901,6 +897,18 @@ function onTimerStopped(elapsedTime) {
   gap: 16px;
 }
 
+.task-action-card {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.task-action-card--attention {
+  animation: taskActionAttention 1.8s ease-in-out infinite;
+  border-color: rgba(var(--v-theme-secondary), 0.5);
+}
+
 .recording-features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -947,6 +955,19 @@ function onTimerStopped(elapsedTime) {
 .feature-content p {
   line-height: 1.5;
   margin: 0;
+}
+
+@keyframes taskActionAttention {
+  0%,
+  100% {
+    transform: translateY(0);
+    box-shadow: 0 0 0 0 rgba(var(--v-theme-secondary), 0.15);
+  }
+
+  50% {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(var(--v-theme-secondary), 0.12);
+  }
 }
 
 @media (max-width: 768px) {
