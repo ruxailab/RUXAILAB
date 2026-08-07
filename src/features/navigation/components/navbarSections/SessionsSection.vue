@@ -317,7 +317,7 @@ const filteredSessions = computed(() => {
 })
 
 const goTo = (session) => {
-  router.push(`/testview/${session.id}/${user.value.id}`)
+  router.push(`/testview/${session.study.id}/${session.id}`)
 }
 </script>
 

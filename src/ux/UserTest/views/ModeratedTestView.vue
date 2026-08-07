@@ -632,10 +632,7 @@ import VideoCallFactory from '@/shared/components/videoCall/VideoCallFactory.vue
 import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
-import {
-  canJoinModeratedUserSession,
-  isModeratedSessionViewer,
-} from '@/shared/utils/studyAccessPolicy'
+import { isModeratedSessionViewer } from '@/shared/utils/studyAccessPolicy'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
@@ -675,6 +672,8 @@ const notesDrawerOpen = ref(true)
 const moderatorInactive = ref(false)
 const moderatorDisconnectTimeout = ref(null)
 
+const sessionId = computed(() => route.params.token || null)
+
 // From video call to be used by recorders
 const remoteStream = ref(null)
 
@@ -697,13 +696,10 @@ const currentUserAccessLevel = computed(() => {
   return cooperator?.accessLevel ?? 2 // Default to Guest/Participant (2) if not found, but typically should be found
 })
 
+const session = computed(() => store.getters.session)
 const isObservator = computed(() => currentUserAccessLevel.value === 3)
-const sessionUserId = computed(() => route.params.token || null)
-const canJoinSession = computed(() =>
-  canJoinModeratedUserSession(test.value, user.value, sessionUserId.value),
-)
 const isSessionViewer = computed(() =>
-  isModeratedSessionViewer(test.value, user.value, sessionUserId.value),
+  isModeratedSessionViewer(test.value, user.value, session.value),
 )
 
 const hasTestDashboardAccess = computed(() => {
@@ -755,6 +751,18 @@ watch(
   ([gi, ti, dvc, admin]) => {
     scrollToTop()
   },
+)
+
+watch(
+  session,
+  (newSession) => {
+    if (!newSession) return
+
+    testDate.value = newSession.scheduledAt
+
+    sessionCooperator.value = newSession
+  },
+  { immediate: true },
 )
 
 watchEffect(() => {
@@ -1373,20 +1381,8 @@ watchEffect(() => {
     return
   }
   const now = new Date()
-  const userSessions = test.value.cooperators.filter(
-    (u) => u.userDocId === route.params.token,
-  )
-
-  const cooperator = userSessions
-    .filter((s) => {
-      const sessionDate = new Date(s.testDate)
-      const diffHours = (sessionDate - now) / (1000 * 60 * 60)
-      return diffHours >= 0 && diffHours <= 24
-    })
-    .sort((a, b) => new Date(a.testDate) - new Date(b.testDate))[0]
-
-  const sessionDate = cooperator?.testDate
-    ? new Date(cooperator.testDate)
+  const sessionDate = session.value?.scheduledAt
+    ? new Date(session.value.scheduledAt)
     : null
 
   // 🧩 Test already completed
@@ -1454,38 +1450,13 @@ onMounted(async () => {
     return
   }
 
-  if (route.params.token) {
-    if (route.params.token === test.value.id) {
-      showInfo(t('UserTestView.messages.useSessionLinkModerated'))
-      router.push('/managerview/' + test.value.id)
-      return
-    }
-
-    if (!canJoinSession.value) {
-      showError('errors.globalError')
-      router.push('/admin')
-      return
-    }
-
-    if (!isUserTestAdmin.value) {
-      sessionCooperator.value = test.value.cooperators.find(
-        (user) => user.userDocId === route.params.token,
-      )
-      if (sessionCooperator.value?.testDate) {
-        testDate.value = sessionCooperator.value.testDate
-      } else {
-        showWarning(t('UserTestView.warnings.sessionNotScheduled'))
-        return
-      }
-    }
-  } else {
+  if (!sessionId.value) {
     showInfo(t('UserTestView.messages.useSessionLink'))
     return
   }
 
   globalIndex.value = 0
 
-  // Initialize localTestAnswer with existing data from currentUserTestAnswer
   if (
     currentUserTestAnswer.value &&
     Object.keys(currentUserTestAnswer.value).length > 0

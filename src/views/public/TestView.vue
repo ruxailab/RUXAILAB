@@ -130,6 +130,17 @@ const loadStudy = async () => {
   return loaded
 }
 
+const loadSession = async (loadedStudy) => {
+  if (!props.token || !loadedStudy?.id || props.token === userId.value) {
+    return null
+  }
+
+  return await store.dispatch('getSession', {
+    studyId: loadedStudy.id,
+    sessionId: props.token,
+  })
+}
+
 const denyAccess = async (destination = '/admin') => {
   accessError.value = ACCESS_ERROR_MESSAGE
   showError('AccessNotAllowed.noAccess')
@@ -205,17 +216,36 @@ onBeforeMount(async () => {
 
   try {
     const loadedStudy = await loadStudy()
-    if (loadedStudy) {
-      if (await loadInvitation(loadedStudy)) {
-        return
+
+    if (!loadedStudy) {
+      if (!(await loadInvitation())) {
+        await denyAccess()
       }
-      await handleLoadedStudy(loadedStudy)
       return
     }
 
-    if (!(await loadInvitation())) {
-      await denyAccess()
+    // Moderated session
+    if (
+      loadedStudy.testType === STUDY_TYPES.USER &&
+      loadedStudy.subType === USER_STUDY_SUBTYPES.MODERATED &&
+      props.token
+    ) {
+      const loadedSession = await loadSession(loadedStudy)
+
+      if (!loadedSession) {
+        await denyAccess()
+        return
+      }
+
+      return
     }
+
+    // Other study types / regular access flow
+    if (await loadInvitation(loadedStudy)) {
+      return
+    }
+
+    await handleLoadedStudy(loadedStudy)
   } finally {
     loading.value = false
   }
