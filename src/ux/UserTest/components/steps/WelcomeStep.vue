@@ -30,26 +30,26 @@
         >
           <v-stepper-header>
             <v-stepper-item
-              :value="0"
+              :value="1"
               :title="$t('UserTestView.WelcomeStep.steps.consent')"
             />
             <v-divider />
             <template v-if="hasPreTest">
               <v-stepper-item
-                :value="1"
+                :value="2"
                 :title="$t('UserTestView.WelcomeStep.steps.preQuestions')"
               />
               <v-divider />
             </template>
             <v-stepper-item
               v-if="hasEyeTracking"
-              :value="hasPreTest ? 2 : 1"
+              :value="hasPreTest ? 3 : 2"
               title="Calibration"
             />
             <v-divider v-if="hasEyeTracking" />
             <v-stepper-item
               :value="
-                hasPreTest ? (hasEyeTracking ? 3 : 2) : hasEyeTracking ? 2 : 1
+                hasPreTest ? (hasEyeTracking ? 4 : 3) : hasEyeTracking ? 3 : 2
               "
               :title="$t('UserTestView.WelcomeStep.steps.tasks')"
             />
@@ -57,7 +57,7 @@
             <template v-if="hasPostTest">
               <v-stepper-item
                 :value="
-                  hasPreTest ? (hasEyeTracking ? 4 : 3) : hasEyeTracking ? 3 : 2
+                  hasPreTest ? (hasEyeTracking ? 5 : 4) : hasEyeTracking ? 4 : 3
                 "
                 :title="$t('UserTestView.WelcomeStep.steps.postQuestions')"
               />
@@ -68,18 +68,18 @@
                 hasPostTest
                   ? hasPreTest
                     ? hasEyeTracking
+                      ? 6
+                      : 5
+                    : hasEyeTracking
+                      ? 5
+                      : 4
+                  : hasPreTest
+                    ? hasEyeTracking
                       ? 5
                       : 4
                     : hasEyeTracking
                       ? 4
                       : 3
-                  : hasPreTest
-                    ? hasEyeTracking
-                      ? 4
-                      : 3
-                    : hasEyeTracking
-                      ? 3
-                      : 2
               "
               :title="$t('UserTestView.WelcomeStep.steps.submission')"
             />
@@ -130,7 +130,7 @@ const props = defineProps({
 defineEmits(['start'])
 const { smAndDown } = useDisplay()
 
-const welcomeStepperValue = computed(() => Math.max(0, props.stepperValue + 1))
+const welcomeStepperValue = computed(() => Math.max(1, props.stepperValue + 2))
 </script>
 
 <style scoped>

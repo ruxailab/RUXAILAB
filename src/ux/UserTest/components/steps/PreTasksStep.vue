@@ -3,13 +3,23 @@
     <template #content>
       <div class="test-content pa-6 rounded-xl text-center">
         <template v-if="step === 0">
-          <p class="text-h4 mt-4 mb-6 text-grey-darken-3">
-            You are going to complete <strong>{{ numTasks }}</strong> tasks
-            related to using the tool.
-            <br />
-            There are no correct or incorrect answers: what matters is how you
-            interact.
-          </p>
+          <div
+            ref="splitContainer"
+            class="split-title mt-4 mb-6 text-grey-darken-3"
+          >
+            <div class="split-line-wrap">
+              <p ref="introLine1" class="split-line text-h4 mb-1">
+                You are going to complete <strong>{{ numTasks }}</strong> tasks
+                related to using the tool.
+              </p>
+            </div>
+            <div class="split-line-wrap">
+              <p ref="introLine2" class="split-line text-h4 mb-0">
+                There are no correct or incorrect answers: what matters is how
+                you interact.
+              </p>
+            </div>
+          </div>
 
           <v-btn color="primary" variant="flat" size="large" @click="step = 1">
             {{ $t('buttons.next') }}
@@ -94,7 +104,8 @@
 </template>
 <script setup>
 import ShowInfo from '@/shared/components/ShowInfo.vue'
-import { ref } from 'vue'
+import { gsap } from 'gsap'
+import { ref, nextTick, onMounted, watch } from 'vue'
 
 const { numTasks } = defineProps({
   numTasks: Number,
@@ -102,4 +113,56 @@ const { numTasks } = defineProps({
 defineEmits(['startTasks'])
 
 const step = ref(0)
+const splitContainer = ref(null)
+const introLine1 = ref(null)
+const introLine2 = ref(null)
+
+function animateIntroText() {
+  const lines = [introLine1.value, introLine2.value].filter(Boolean)
+  if (!lines.length) return
+
+  gsap.killTweensOf(lines)
+  if (splitContainer.value) {
+    gsap.set(splitContainer.value, { autoAlpha: 1 })
+  }
+
+  gsap.fromTo(
+    lines,
+    { yPercent: 110, autoAlpha: 0 },
+    {
+      yPercent: 0,
+      autoAlpha: 1,
+      duration: 0.65,
+      ease: 'expo.out',
+      stagger: 0.1,
+      clearProps: 'transform,opacity,visibility',
+    },
+  )
+}
+
+onMounted(async () => {
+  await nextTick()
+  animateIntroText()
+})
+
+watch(step, async (val) => {
+  if (val === 0) {
+    await nextTick()
+    animateIntroText()
+  }
+})
 </script>
+
+<style scoped>
+.split-title {
+  opacity: 0;
+}
+
+.split-line-wrap {
+  overflow: hidden;
+}
+
+.split-line {
+  line-height: 1.2;
+}
+</style>
