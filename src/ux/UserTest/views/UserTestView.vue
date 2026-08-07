@@ -206,8 +206,16 @@
         </v-col>
       </v-row>
 
-      <v-row v-else class="main-test-interface pa-0 ma-0">
-        <v-col ref="rightView" class="right-view pa-6">
+      <v-row
+        v-else
+        class="main-test-interface pa-0 ma-0"
+        :class="{ 'welcome-main-centered': globalIndex === 0 }"
+      >
+        <v-col
+          ref="rightView"
+          class="right-view pa-6"
+          :class="{ 'welcome-content-centered': globalIndex === 0 }"
+        >
           <v-row v-if="globalIndex >= 1" class="stepper-row sticky-stepper">
             <v-col cols="12">
               <v-stepper
@@ -1648,5 +1656,16 @@ onBeforeUnmount(() => {
 
 .v-stepper-item {
   padding: 1rem;
+}
+
+.welcome-main-centered {
+  min-height: 100vh;
+  align-items: center;
+}
+
+.welcome-content-centered {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 </style>

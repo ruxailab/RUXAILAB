@@ -4,6 +4,7 @@
       <div
         ref="welcomeContent"
         class="test-content pa-6 rounded-xl text-center"
+        :class="{ 'welcome-centered': localStep === 0 }"
       >
         <template v-if="localStep === 0">
           <h2 class="split welcome-title text-h4 mb-4 text-primary">
@@ -200,6 +201,13 @@ onBeforeUnmount(() => {
 .welcome-body {
   font-size: clamp(1.2rem, 1.65vw, 1.4rem) !important;
   line-height: 1.65;
+}
+
+.welcome-centered {
+  min-height: 62vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 :deep(.line) {
