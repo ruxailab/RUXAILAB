@@ -1624,6 +1624,8 @@
       "completed": "Task completed",
       "uploadDialogTitle": "Uploading recording session",
       "uploadDialogMessage": "We are uploading your recording session to the database. This may take a while.",
+      "setupDialogTitle": "Setting up task tools",
+      "setupDialogMessage": "We are setting up all the tools this task needs to be completed. This may take a while.",
       "noQuestionnaire": "No post-task questionnaire required for this task type.",
       "validationError": "Please answer all questions before continuing.",
       "finishTask": "Finish task"

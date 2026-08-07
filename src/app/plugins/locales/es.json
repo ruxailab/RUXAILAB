@@ -1541,6 +1541,8 @@
       "completed": "Tarea completada",
       "uploadDialogTitle": "Subiendo sesión de grabación",
       "uploadDialogMessage": "Estamos subiendo tu sesión de grabación a la base de datos. Esto puede tardar un momento.",
+      "setupDialogTitle": "Preparando herramientas de la tarea",
+      "setupDialogMessage": "Estamos preparando todas las herramientas que esta tarea necesita para completarse. Esto puede tardar un momento.",
       "noQuestionnaire": "No se requiere cuestionario posterior para este tipo de tarea.",
       "validationError": "Por favor, responde todas las preguntas antes de continuar.",
       "finishTask": "Finalizar tarea"

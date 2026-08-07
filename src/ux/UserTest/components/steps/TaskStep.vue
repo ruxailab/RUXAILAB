@@ -10,7 +10,11 @@
   >
     <template #content>
       <div class="test-content pa-4 rounded-xl">
-        <v-dialog :model-value="showUploadDialog" persistent max-width="560">
+        <v-dialog
+          :model-value="showTaskProgressDialog"
+          persistent
+          max-width="560"
+        >
           <v-card class="pa-6 text-center upload-dialog-card" rounded="xl">
             <div class="d-flex justify-center mb-4">
               <img
@@ -20,10 +24,10 @@
               />
             </div>
             <h3 class="text-h6 font-weight-bold mb-2 text-primary">
-              {{ t('UserTestView.TaskStep.uploadDialogTitle') }}
+              {{ taskProgressDialogTitle }}
             </h3>
             <p class="text-body-1 text-grey-darken-2 mb-0">
-              {{ t('UserTestView.TaskStep.uploadDialogMessage') }}
+              {{ taskProgressDialogMessage }}
             </p>
           </v-card>
         </v-dialog>
@@ -694,9 +698,25 @@ const elapsedTimeDisplay = ref('0:00')
 const uploadingCount = ref(0)
 const isWaitingForUploadToFinish = ref(false)
 const pendingFinalTime = ref(null)
+const isPreparingTaskTools = ref(false)
 const showUploadDialog = computed(
   () => isWaitingForUploadToFinish.value || uploadingCount.value > 0,
 )
+const showTaskProgressDialog = computed(
+  () => isPreparingTaskTools.value || showUploadDialog.value,
+)
+const taskProgressDialogTitle = computed(() => {
+  if (isPreparingTaskTools.value) {
+    return t('UserTestView.TaskStep.setupDialogTitle')
+  }
+  return t('UserTestView.TaskStep.uploadDialogTitle')
+})
+const taskProgressDialogMessage = computed(() => {
+  if (isPreparingTaskTools.value) {
+    return t('UserTestView.TaskStep.setupDialogMessage')
+  }
+  return t('UserTestView.TaskStep.uploadDialogMessage')
+})
 
 let taskStartTime = null
 let timerInterval = null
@@ -747,23 +767,27 @@ function goToStartTaskStage() {
 }
 
 async function startTask() {
-  emit('show-loading')
+  isPreparingTaskTools.value = true
   emit('startTask')
-  const mediaStarted = await startMediaRecorders()
-  if (!mediaStarted) {
-    emit('stop-show-loading')
-    return
+
+  try {
+    const mediaStarted = await startMediaRecorders()
+    if (!mediaStarted) {
+      return
+    }
+
+    stage.value = 3
+    taskStartTime = Date.now()
+    timerInterval = setInterval(updateElapsedTime, 1000)
+    nextTick(() => {
+      setTimeout(() => {
+        const timer = document.querySelector('[ref=timerComponent]')
+        if (timer && timer.startTimer) timer.startTimer()
+      }, 100)
+    })
+  } finally {
+    isPreparingTaskTools.value = false
   }
-  stage.value = 3
-  taskStartTime = Date.now()
-  timerInterval = setInterval(updateElapsedTime, 1000)
-  nextTick(() => {
-    setTimeout(() => {
-      const timer = document.querySelector('[ref=timerComponent]')
-      if (timer && timer.startTimer) timer.startTimer()
-    }, 100)
-  })
-  emit('stop-show-loading')
 }
 
 function openTool() {
@@ -850,6 +874,7 @@ function emitDoneOrCouldNotFinish(savedTime) {
   // Reset state for next task
   isWaitingForUploadToFinish.value = false
   uploadingCount.value = 0
+  isPreparingTaskTools.value = false
   showPostForm.value = { userCompleted: undefined }
   taskStartTime = null
   elapsedTimeDisplay.value = '0:00'
@@ -898,6 +923,7 @@ watch(
     elapsedTimeDisplay.value = '0:00'
     showPostForm.value = { userCompleted: undefined }
     hasOpenedTool.value = false
+    isPreparingTaskTools.value = false
   },
 )
 
@@ -926,8 +952,18 @@ function onTimerStopped(elapsedTime) {
 }
 
 .task-information-description {
-  font-size: 1.6rem;
+  font-size: clamp(1.2rem, 1.65vw, 1.4rem) !important;
   line-height: 1.65;
+  font-weight: 300 !important;
+}
+
+:deep(.task-information-description p),
+:deep(.task-information-description li),
+:deep(.task-information-description span),
+:deep(.task-information-description div) {
+  font-size: clamp(1.2rem, 1.65vw, 1.4rem) !important;
+  line-height: 1.65;
+  font-weight: 300 !important;
 }
 
 .upload-dialog-card {
