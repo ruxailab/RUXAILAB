@@ -4,159 +4,184 @@
       <div class="test-content pa-4 rounded-xl">
         <!-- STAGE 1: Show title and description -->
         <template v-if="stage === 1">
-          <div
-            class="rich-text mb-4 task-description"
-            v-html="task?.taskDescription || taskDescription"
-          />
-
-          <!-- Task Preview Information -->
-          <v-card
-            variant="outlined"
-            color="secondary"
-            class="my-6 mx-auto"
-            max-width="1000"
-          >
-            <v-card-text :class="$vuetify.display.xs ? 'pa-3' : 'pa-4'">
-              <div class="d-flex align-center mb-3">
-                <v-icon color="secondary" size="24" class="mr-2">
-                  mdi-play-circle-outline
-                </v-icon>
-                <h3 class="text-h6 font-weight-bold text-secondary">
-                  Task Preview
-                </h3>
-              </div>
-
-              <!-- Recording Information -->
-              <template v-if="hasAnyRecording">
-                <p class="text-body-1 text-left mb-4 text-grey-darken-3">
-                  This task will record the following data during your
-                  interaction:
-                </p>
-
-                <!-- Recording Features Grid -->
-                <div class="recording-features-grid mb-4">
-                  <!-- Screen Recording -->
-                  <div
-                    v-if="task?.hasScreenRecord"
-                    class="recording-feature-card"
-                  >
-                    <div class="feature-icon-container">
-                      <v-icon size="48" color="secondary">
-                        mdi-monitor-screenshot
-                      </v-icon>
-                    </div>
-                    <div class="feature-content">
-                      <h4
-                        class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
-                      >
-                        Screen Record
-                      </h4>
-                      <p class="text-body-2 text-grey-darken-3">
-                        Captures clicks, scrolling, and interactions to analyze
-                        user behavior.
-                      </p>
-                    </div>
-                  </div>
-
-                  <!-- Camera Recording -->
-                  <div v-if="task?.hasCamRecord" class="recording-feature-card">
-                    <div class="feature-icon-container">
-                      <v-icon size="48" color="secondary"> mdi-camera </v-icon>
-                    </div>
-                    <div class="feature-content">
-                      <h4
-                        class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
-                      >
-                        Camera
-                      </h4>
-                      <p class="text-body-2 text-grey-darken-3">
-                        Records facial expressions and reactions to understand
-                        user emotions.
-                      </p>
-                    </div>
-                  </div>
-
-                  <!-- Audio Recording -->
-                  <div
-                    v-if="task?.hasAudioRecord"
-                    class="recording-feature-card"
-                  >
-                    <div class="feature-icon-container">
-                      <v-icon size="48" color="secondary">
-                        mdi-microphone
-                      </v-icon>
-                    </div>
-                    <div class="feature-content">
-                      <h4
-                        class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
-                      >
-                        Audio Record
-                      </h4>
-                      <p class="text-body-2 text-grey-darken-3">
-                        Captures verbal feedback and think-aloud protocols
-                        during the task.
-                      </p>
-                    </div>
-                  </div>
-
-                  <!-- Eye Tracking -->
-                  <div v-if="task?.hasEye" class="recording-feature-card">
-                    <div class="feature-icon-container">
-                      <v-icon size="48" color="secondary"> mdi-eye </v-icon>
-                    </div>
-                    <div class="feature-content">
-                      <h4
-                        class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
-                      >
-                        Eye Tracker
-                      </h4>
-                      <p class="text-body-2 text-grey-darken-3">
-                        Tracks visual attention patterns and gaze behavior
-                        during the task.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </template>
-
-              <!-- Tool Window Information -->
-              <template v-if="task?.taskLink || taskLink">
-                <v-divider class="my-3" />
-                <div class="d-flex align-start mb-2">
-                  <v-icon color="secondary" size="20" class="mr-2 mt-1">
-                    mdi-open-in-new
+          <template v-if="stageOneStep === 0">
+            <!-- Task Preview Information -->
+            <v-card
+              variant="outlined"
+              color="secondary"
+              class="my-6 mx-auto"
+              max-width="1000"
+            >
+              <v-card-text :class="$vuetify.display.xs ? 'pa-3' : 'pa-4'">
+                <div class="d-flex align-center mb-3">
+                  <v-icon color="secondary" size="24" class="mr-2">
+                    mdi-play-circle-outline
                   </v-icon>
-                  <div>
-                    <p class="text-body-2 font-weight-medium mb-1">
-                      New Window Will Open
-                    </p>
-                    <p class="text-body-1 text-grey-darken-3 mb-4">
-                      When you start the task, a new window will open with the
-                      tool you need to use.
-                    </p>
-
-                    <p class="text-body-1 text-grey-darken-3">
-                      💡 <strong>Tip:</strong> You can switch between tabs or
-                      close the new window at any time. The recording will
-                      continue until you complete the task.
-                    </p>
-                  </div>
+                  <h3 class="text-h6 font-weight-bold text-secondary">
+                    Task Preview
+                  </h3>
                 </div>
-              </template>
 
-              <template v-else>
-                <p class="text-body-2 text-grey-darken-1 text-center">
-                  This task will be completed within the current interface.
-                </p>
-              </template>
-            </v-card-text>
-          </v-card>
+                <!-- Recording Information -->
+                <template v-if="hasAnyRecording">
+                  <p class="text-body-1 text-left mb-4 text-grey-darken-3">
+                    This task will record the following data during your
+                    interaction:
+                  </p>
 
-          <v-row justify="center" class="mt-6">
-            <v-col cols="auto">
-              <v-btn color="primary" @click="startTask"> Start task </v-btn>
-            </v-col>
-          </v-row>
+                  <!-- Recording Features Grid -->
+                  <div class="recording-features-grid mb-4">
+                    <!-- Screen Recording -->
+                    <div
+                      v-if="task?.hasScreenRecord"
+                      class="recording-feature-card"
+                    >
+                      <div class="feature-icon-container">
+                        <v-icon size="48" color="secondary">
+                          mdi-monitor-screenshot
+                        </v-icon>
+                      </div>
+                      <div class="feature-content">
+                        <h4
+                          class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
+                        >
+                          Screen Record
+                        </h4>
+                        <p class="text-body-2 text-grey-darken-3">
+                          Captures clicks, scrolling, and interactions to
+                          analyze user behavior.
+                        </p>
+                      </div>
+                    </div>
+
+                    <!-- Camera Recording -->
+                    <div
+                      v-if="task?.hasCamRecord"
+                      class="recording-feature-card"
+                    >
+                      <div class="feature-icon-container">
+                        <v-icon size="48" color="secondary">
+                          mdi-camera
+                        </v-icon>
+                      </div>
+                      <div class="feature-content">
+                        <h4
+                          class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
+                        >
+                          Camera
+                        </h4>
+                        <p class="text-body-2 text-grey-darken-3">
+                          Records facial expressions and reactions to understand
+                          user emotions.
+                        </p>
+                      </div>
+                    </div>
+
+                    <!-- Audio Recording -->
+                    <div
+                      v-if="task?.hasAudioRecord"
+                      class="recording-feature-card"
+                    >
+                      <div class="feature-icon-container">
+                        <v-icon size="48" color="secondary">
+                          mdi-microphone
+                        </v-icon>
+                      </div>
+                      <div class="feature-content">
+                        <h4
+                          class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
+                        >
+                          Audio Record
+                        </h4>
+                        <p class="text-body-2 text-grey-darken-3">
+                          Captures verbal feedback and think-aloud protocols
+                          during the task.
+                        </p>
+                      </div>
+                    </div>
+
+                    <!-- Eye Tracking -->
+                    <div v-if="task?.hasEye" class="recording-feature-card">
+                      <div class="feature-icon-container">
+                        <v-icon size="48" color="secondary">mdi-eye</v-icon>
+                      </div>
+                      <div class="feature-content">
+                        <h4
+                          class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
+                        >
+                          Eye Tracker
+                        </h4>
+                        <p class="text-body-2 text-grey-darken-3">
+                          Tracks visual attention patterns and gaze behavior
+                          during the task.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </v-card-text>
+            </v-card>
+
+            <!-- Tool Window Information (independent box) -->
+            <v-card
+              variant="outlined"
+              color="secondary"
+              class="mt-4 mx-auto"
+              max-width="1000"
+            >
+              <v-card-text :class="$vuetify.display.xs ? 'pa-3' : 'pa-4'">
+                <template v-if="task?.taskLink || taskLink">
+                  <div class="d-flex align-center mb-3">
+                    <v-icon color="secondary" size="24" class="mr-2">
+                      mdi-open-in-new
+                    </v-icon>
+                    <h3 class="text-h6 font-weight-bold text-secondary">
+                      New Window Will Open
+                    </h3>
+                  </div>
+
+                  <div class="d-flex align-start mb-2">
+                    <div>
+                      <p class="text-body-1 text-grey-darken-3 mb-4">
+                        {{ $t('UserTestView.TaskStep.newWindowDesc') }}
+                      </p>
+
+                      <p class="text-body-1 text-grey-darken-3">
+                        💡
+                        <strong>{{ $t('UserTestView.TaskStep.tip') }}:</strong>
+                        {{ $t('UserTestView.TaskStep.tipDesc') }}
+                      </p>
+                    </div>
+                  </div>
+                </template>
+
+                <template v-else>
+                  <p class="text-body-2 text-grey-darken-1 text-center">
+                    This task will be completed within the current interface.
+                  </p>
+                </template>
+              </v-card-text>
+            </v-card>
+
+            <v-row justify="center" class="mt-6">
+              <v-col cols="auto">
+                <v-btn color="primary" @click="stageOneStep = 1">Next</v-btn>
+              </v-col>
+            </v-row>
+          </template>
+
+          <template v-else>
+            <div
+              class="rich-text mb-4 task-description"
+              v-html="task?.taskDescription || taskDescription"
+            />
+
+            <v-row justify="center" class="mt-6">
+              <v-col cols="auto">
+                <v-btn color="primary" @click="startTask">Start task</v-btn>
+              </v-col>
+            </v-row>
+          </template>
         </template>
         <!-- STAGE 2: Task answer -->
         <template v-else-if="stage === 2">
@@ -634,6 +659,7 @@ const hasAnyRecording = computed(() => {
 })
 
 const stage = ref(1)
+const stageOneStep = ref(0)
 const audioRecorder = ref(null)
 const videoRecorder = ref(null)
 const screenRecorder = ref(null)
@@ -696,6 +722,7 @@ async function startTask() {
     emit('stop-show-loading')
     return
   }
+  stageOneStep.value = 0
   stage.value = 2
   taskStartTime = Date.now()
   timerInterval = setInterval(updateElapsedTime, 1000)
@@ -842,6 +869,7 @@ watch(
       finishTimeout = null
     }
     forceStopAllMedia()
+    stageOneStep.value = 0
     stage.value = 1
     taskStartTime = null
     elapsedTimeDisplay.value = '0:00'
