@@ -44,7 +44,7 @@ const goToDoc = () => {
 }
 
 const goToDisc = () => {
-  window.open('https://discord.gg/MFWNpwTq9q')
+  window.open('https://discord.gg/Uz6sEsyp2G')
 }
 
 const closeIntro = () => {
