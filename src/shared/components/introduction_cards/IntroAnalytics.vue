@@ -48,7 +48,7 @@ const goToDoc = () => {
 }
 
 const goToDisc = () => {
-  window.open('https://discord.gg/MFWNpwTq9q', '_blank', 'noopener')
+  window.open('https://discord.gg/Uz6sEsyp2G', '_blank', 'noopener')
 }
 
 const callFunc = (func) => {
