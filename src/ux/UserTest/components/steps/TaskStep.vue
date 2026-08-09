@@ -1,204 +1,225 @@
 <template>
-  <ShowInfo :title="task?.taskName || taskName">
+  <ShowInfo
+    :title="
+      stage === 1
+        ? t('UserTestView.TaskStep.beforeWeStart')
+        : stage === 2
+          ? t('UserTestView.TaskStep.taskInformation')
+          : task?.taskName || taskName
+    "
+  >
     <template #content>
       <div class="test-content pa-4 rounded-xl">
-        <div ref="stateContent" :key="`${stage}-${stageOneStep}`">
-          <!-- STAGE 1: Show title and description -->
-          <template v-if="stage === 1">
-            <template v-if="stageOneStep === 0">
-              <!-- Task Preview Information -->
-              <v-card
-                variant="outlined"
-                color="secondary"
-                class="my-6 mx-auto"
-                max-width="1000"
-              >
-                <v-card-text :class="$vuetify.display.xs ? 'pa-3' : 'pa-4'">
-                  <div class="d-flex align-center mb-3">
-                    <v-icon color="secondary" size="24" class="mr-2">
-                      mdi-play-circle-outline
-                    </v-icon>
-                    <h3 class="text-h6 font-weight-bold text-secondary">
-                      Task Preview
-                    </h3>
+        <v-dialog
+          :model-value="showTaskProgressDialog"
+          persistent
+          max-width="560"
+        >
+          <v-card class="pa-6 text-center upload-dialog-card" rounded="xl">
+            <div class="d-flex justify-center mb-4">
+              <img
+                :src="redXLogo"
+                alt="RUXAILAB upload spinner"
+                class="upload-spinner"
+              />
+            </div>
+            <h3 class="text-h6 font-weight-bold mb-2 text-primary">
+              {{ taskProgressDialogTitle }}
+            </h3>
+            <p class="text-body-1 text-grey-darken-2 mb-0">
+              {{ taskProgressDialogMessage }}
+            </p>
+          </v-card>
+        </v-dialog>
+
+        <!-- STAGE 1: Task preview -->
+        <template v-if="stage === 1">
+          <!-- Task Preview Information -->
+          <v-card
+            variant="outlined"
+            color="secondary"
+            bg-color="white"
+            class="my-6 mx-auto"
+            max-width="1000"
+          >
+            <v-card-text :class="$vuetify.display.xs ? 'pa-3' : 'pa-4'">
+              <div class="d-flex align-center mb-3">
+                <v-icon color="secondary" size="24" class="mr-2">
+                  mdi-play-circle-outline
+                </v-icon>
+                <h3 class="text-h6 font-weight-bold text-secondary">
+                  {{ t('UserTestView.TaskStep.preview') }}
+                </h3>
+              </div>
+
+              <!-- Recording Information -->
+              <template v-if="hasAnyRecording">
+                <p class="text-body-1 text-left mb-4 text-grey-darken-3">
+                  {{ t('UserTestView.TaskStep.recordingInfo') }}
+                </p>
+
+                <!-- Recording Features Grid -->
+                <div class="recording-features-grid mb-4">
+                  <!-- Screen Recording -->
+                  <div
+                    v-if="task?.hasScreenRecord"
+                    class="recording-feature-card"
+                  >
+                    <div class="feature-icon-container">
+                      <v-icon size="48" color="secondary">
+                        mdi-monitor-screenshot
+                      </v-icon>
+                    </div>
+                    <div class="feature-content">
+                      <h4
+                        class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
+                      >
+                        {{ t('UserTestView.TaskStep.screenRecord') }}
+                      </h4>
+                      <p class="text-body-2 text-grey-darken-3">
+                        {{ t('UserTestView.TaskStep.screenRecordDesc') }}
+                      </p>
+                    </div>
                   </div>
 
-                  <!-- Recording Information -->
-                  <template v-if="hasAnyRecording">
-                    <p class="text-body-1 text-left mb-4 text-grey-darken-3">
-                      This task will record the following data during your
-                      interaction:
-                    </p>
-
-                    <!-- Recording Features Grid -->
-                    <div class="recording-features-grid mb-4">
-                      <!-- Screen Recording -->
-                      <div
-                        v-if="task?.hasScreenRecord"
-                        class="recording-feature-card"
-                      >
-                        <div class="feature-icon-container">
-                          <v-icon size="48" color="secondary">
-                            mdi-monitor-screenshot
-                          </v-icon>
-                        </div>
-                        <div class="feature-content">
-                          <h4
-                            class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
-                          >
-                            Screen Record
-                          </h4>
-                          <p class="text-body-2 text-grey-darken-3">
-                            Captures clicks, scrolling, and interactions to
-                            analyze user behavior.
-                          </p>
-                        </div>
-                      </div>
-
-                      <!-- Camera Recording -->
-                      <div
-                        v-if="task?.hasCamRecord"
-                        class="recording-feature-card"
-                      >
-                        <div class="feature-icon-container">
-                          <v-icon size="48" color="secondary">
-                            mdi-camera
-                          </v-icon>
-                        </div>
-                        <div class="feature-content">
-                          <h4
-                            class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
-                          >
-                            Camera
-                          </h4>
-                          <p class="text-body-2 text-grey-darken-3">
-                            Records facial expressions and reactions to
-                            understand user emotions.
-                          </p>
-                        </div>
-                      </div>
-
-                      <!-- Audio Recording -->
-                      <div
-                        v-if="task?.hasAudioRecord"
-                        class="recording-feature-card"
-                      >
-                        <div class="feature-icon-container">
-                          <v-icon size="48" color="secondary">
-                            mdi-microphone
-                          </v-icon>
-                        </div>
-                        <div class="feature-content">
-                          <h4
-                            class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
-                          >
-                            Audio Record
-                          </h4>
-                          <p class="text-body-2 text-grey-darken-3">
-                            Captures verbal feedback and think-aloud protocols
-                            during the task.
-                          </p>
-                        </div>
-                      </div>
-
-                      <!-- Eye Tracking -->
-                      <div v-if="task?.hasEye" class="recording-feature-card">
-                        <div class="feature-icon-container">
-                          <v-icon size="48" color="secondary">mdi-eye</v-icon>
-                        </div>
-                        <div class="feature-content">
-                          <h4
-                            class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
-                          >
-                            Eye Tracker
-                          </h4>
-                          <p class="text-body-2 text-grey-darken-3">
-                            Tracks visual attention patterns and gaze behavior
-                            during the task.
-                          </p>
-                        </div>
-                      </div>
+                  <!-- Camera Recording -->
+                  <div v-if="task?.hasCamRecord" class="recording-feature-card">
+                    <div class="feature-icon-container">
+                      <v-icon size="48" color="secondary"> mdi-camera </v-icon>
                     </div>
-                  </template>
-                </v-card-text>
-              </v-card>
+                    <div class="feature-content">
+                      <h4
+                        class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
+                      >
+                        {{ t('UserTestView.TaskStep.camera') }}
+                      </h4>
+                      <p class="text-body-2 text-grey-darken-3">
+                        {{ t('UserTestView.TaskStep.cameraDesc') }}
+                      </p>
+                    </div>
+                  </div>
 
-              <!-- Tool Window Information (independent box) -->
-              <v-card
-                variant="outlined"
-                color="secondary"
-                class="mt-4 mx-auto"
-                max-width="1000"
-              >
-                <v-card-text :class="$vuetify.display.xs ? 'pa-3' : 'pa-4'">
-                  <template v-if="task?.taskLink || taskLink">
-                    <div class="d-flex align-center mb-3">
-                      <v-icon color="secondary" size="24" class="mr-2">
-                        mdi-open-in-new
+                  <!-- Audio Recording -->
+                  <div
+                    v-if="task?.hasAudioRecord"
+                    class="recording-feature-card"
+                  >
+                    <div class="feature-icon-container">
+                      <v-icon size="48" color="secondary">
+                        mdi-microphone
                       </v-icon>
-                      <h3 class="text-h6 font-weight-bold text-secondary">
-                        New Window Will Open
-                      </h3>
                     </div>
-
-                    <div class="d-flex align-start mb-2">
-                      <div>
-                        <p
-                          class="text-body-1 text-grey-darken-3 mb-4 new-window-copy"
-                        >
-                          {{ $t('UserTestView.TaskStep.newWindowManualDesc') }}
-                        </p>
-
-                        <p
-                          class="text-body-1 text-grey-darken-3 new-window-copy"
-                        >
-                          💡
-                          <strong
-                            >{{ $t('UserTestView.TaskStep.tip') }}:</strong
-                          >
-                          {{ $t('UserTestView.TaskStep.tipDesc') }}
-                        </p>
-                      </div>
+                    <div class="feature-content">
+                      <h4
+                        class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
+                      >
+                        {{ t('UserTestView.TaskStep.audioRecord') }}
+                      </h4>
+                      <p class="text-body-2 text-grey-darken-3">
+                        {{ t('UserTestView.TaskStep.audioRecordDesc') }}
+                      </p>
                     </div>
-                  </template>
+                  </div>
 
-                  <template v-else>
-                    <p class="text-body-2 text-grey-darken-1 text-center">
-                      This task will be completed within the current interface.
-                    </p>
-                  </template>
-                </v-card-text>
-              </v-card>
+                  <!-- Eye Tracking -->
+                  <div v-if="task?.hasEye" class="recording-feature-card">
+                    <div class="feature-icon-container">
+                      <v-icon size="48" color="secondary"> mdi-eye </v-icon>
+                    </div>
+                    <div class="feature-content">
+                      <h4
+                        class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
+                      >
+                        {{ t('UserTestView.TaskStep.eyeTracker') }}
+                      </h4>
+                      <p class="text-body-2 text-grey-darken-3">
+                        {{ t('UserTestView.TaskStep.eyeTrackerDesc') }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </template>
 
-              <v-row justify="center" class="mt-6">
-                <v-col cols="auto">
-                  <v-btn color="primary" @click="stageOneStep = 1">Next</v-btn>
-                </v-col>
-              </v-row>
-            </template>
+              <template v-else>
+                <p class="text-body-2 text-grey-darken-1 text-center">
+                  {{ t('UserTestView.TaskStep.internalInterface') }}
+                </p>
+              </template>
+            </v-card-text>
+          </v-card>
 
-            <template v-else>
-              <div
-                class="rich-text mb-4 task-description"
-                v-html="task?.taskDescription || taskDescription"
-              />
+          <v-card
+            v-if="task?.taskLink || taskLink"
+            variant="outlined"
+            color="secondary"
+            bg-color="white"
+            class="my-6 mx-auto"
+            max-width="1000"
+          >
+            <v-card-text :class="$vuetify.display.xs ? 'pa-3' : 'pa-4'">
+              <div class="d-flex align-center mb-3">
+                <v-icon color="secondary" size="24" class="mr-2">
+                  mdi-open-in-new
+                </v-icon>
+                <h3 class="text-h6 font-weight-bold text-secondary">
+                  {{ t('UserTestView.TaskStep.newWindow') }}
+                </h3>
+              </div>
 
-              <v-row justify="center" class="mt-6">
-                <v-col cols="auto">
-                  <v-btn color="primary" @click="startTask">Start task</v-btn>
-                </v-col>
-              </v-row>
-            </template>
-          </template>
-          <!-- STAGE 2: Task answer -->
-          <template v-else-if="stage === 2">
-            <!-- Task Description During Execution -->
-            <v-card variant="outlined" color="primary" class="mb-4">
-              <v-card-text :class="$vuetify.display.xs ? 'pa-2' : 'pa-3'">
-                <!-- Two Column Layout -->
-                <v-row>
-                  <!-- Left Column: Task Description -->
-                  <v-col cols="12" md="8">
+              <p class="text-body-1 text-grey-darken-3 mb-4">
+                {{ t('UserTestView.TaskStep.newWindowDesc') }}
+              </p>
+
+              <p class="text-body-1 text-grey-darken-3 mb-0">
+                <strong>{{ t('UserTestView.TaskStep.tip') }}:</strong>
+                {{ t('UserTestView.TaskStep.tipDesc') }}
+              </p>
+            </v-card-text>
+          </v-card>
+
+          <v-row justify="center" class="mt-6">
+            <v-col cols="auto">
+              <v-btn color="primary" @click="goToStartTaskStage">
+                {{ t('buttons.next') }}
+              </v-btn>
+            </v-col>
+          </v-row>
+        </template>
+
+        <!-- STAGE 2: Task title and description -->
+        <template v-else-if="stage === 2">
+          <h2 class="text-h5 text-primary mb-4 text-left">
+            {{ task?.taskName || taskName }}
+          </h2>
+
+          <div
+            class="rich-text text-body-1 task-description task-information-description text-left"
+            v-html="task?.taskDescription || taskDescription"
+          />
+
+          <v-row justify="center" class="mt-6">
+            <v-col cols="auto">
+              <v-btn color="primary" @click="startTask">
+                {{ t('UserTestView.TaskStep.startTask') }}
+              </v-btn>
+            </v-col>
+          </v-row>
+        </template>
+
+        <!-- STAGE 3: Task answer -->
+        <template v-else-if="stage === 3">
+          <!-- Task Description During Execution -->
+          <v-card variant="outlined" bg-color="white" class="mb-4">
+            <v-card-text :class="$vuetify.display.xs ? 'pa-2' : 'pa-3'">
+              <!-- Two Column Layout -->
+              <v-row>
+                <!-- Left Column: Task Description -->
+                <v-col cols="12" md="8">
+                  <v-card
+                    variant="outlined"
+                    bg-color="white"
+                    class="pa-4 rounded-lg"
+                  >
                     <div class="d-flex align-center mb-3">
                       <v-icon color="primary" size="20" class="mr-2">
                         mdi-clipboard-text-outline
@@ -206,273 +227,261 @@
                       <span
                         class="text-subtitle-2 font-weight-bold text-primary"
                       >
-                        Task Description
+                        {{ t('UserTestView.TaskStep.description') }}
                       </span>
                     </div>
                     <div
                       class="rich-text text-body-1 task-description"
                       v-html="task?.taskDescription || taskDescription"
                     />
-                  </v-col>
+                  </v-card>
+                </v-col>
 
-                  <!-- Right Column: Help & Actions -->
-                  <v-col cols="12" md="4">
-                    <v-row>
-                      <!-- Help Section -->
-                      <v-col v-if="task?.taskTip" cols="12" sm="6">
-                        <div
-                          class="help-section pa-2 text-center rounded h-100"
-                          style="
-                            background-color: rgba(76, 175, 80, 0.05);
-                            border: 1px solid rgba(76, 175, 80, 0.2);
-                          "
+                <!-- Right Column: Help & Actions -->
+                <v-col cols="12" md="4">
+                  <div v-if="task?.taskLink || taskLink" class="mb-3">
+                    <v-card
+                      variant="outlined"
+                      class="pa-4 rounded-lg text-center bg-white task-action-card"
+                      :class="{ 'task-action-card--attention': !hasOpenedTool }"
+                    >
+                      <div class="d-flex align-center justify-center mb-2">
+                        <v-icon color="secondary" size="20" class="mr-2">
+                          mdi-open-in-new
+                        </v-icon>
+                        <span
+                          class="text-subtitle-1 font-weight-bold text-secondary"
                         >
-                          <div class="d-flex align-center mb-1">
-                            <v-icon color="success" size="16" class="mr-1">
-                              mdi-help-circle-outline
-                            </v-icon>
-                            <span
-                              class="text-caption font-weight-medium text-success"
-                            >
-                              Need Help?
-                            </span>
-                          </div>
-                          <p
-                            class="text-caption text-grey-darken-3 mb-2"
-                            :style="
-                              $vuetify.display.xs
-                                ? 'font-size: 12px; line-height: 1.4'
-                                : 'font-size: 11px; line-height: 1.3'
-                            "
-                          >
-                            Having trouble? Get helpful guidance to complete
-                            this task.
-                          </p>
-                          <TipButton :task="task" @tip-pressed="onTipPressed" />
-                        </div>
-                      </v-col>
-
-                      <!-- Reopen Tool Section -->
-                      <v-col
-                        v-if="task?.taskLink || taskLink"
-                        cols="12"
-                        :sm="task?.taskTip ? 6 : 12"
+                          {{ t('UserTestView.TaskStep.externalTool') }}
+                        </span>
+                      </div>
+                      <p
+                        class="text-body-2 text-grey-darken-3 mb-3"
+                        style="line-height: 1.5"
                       >
-                        <div
-                          class="tool-section pa-2 rounded text-center h-100"
-                          style="
-                            background-color: rgba(121, 85, 72, 0.05);
-                            border: 1px solid rgba(121, 85, 72, 0.2);
-                          "
+                        {{ t('UserTestView.TaskStep.externalToolDesc') }}
+                      </p>
+                      <v-btn
+                        color="secondary"
+                        variant="outlined"
+                        size="small"
+                        block
+                        prepend-icon="mdi-open-in-new"
+                        @click="openTool"
+                      >
+                        {{
+                          hasOpenedTool
+                            ? t('UserTestView.TaskStep.reopenTool')
+                            : t('UserTestView.TaskStep.openTool')
+                        }}
+                      </v-btn>
+                    </v-card>
+                  </div>
+
+                  <div v-if="task?.taskTip" class="mb-3">
+                    <v-card
+                      variant="outlined"
+                      class="pa-4 rounded-lg text-center bg-white"
+                    >
+                      <div class="d-flex align-center justify-center mb-2">
+                        <v-icon color="success" size="20" class="mr-2">
+                          mdi-help-circle-outline
+                        </v-icon>
+                        <span
+                          class="text-subtitle-1 font-weight-bold text-success"
                         >
-                          <div class="d-flex align-center mb-1">
-                            <v-icon color="secondary" size="16" class="mr-1">
-                              mdi-open-in-new
-                            </v-icon>
-                            <span
-                              class="text-caption font-weight-medium text-secondary"
-                            >
-                              External Tool
-                            </span>
-                          </div>
-                          <p
-                            class="text-caption text-grey-darken-3 mb-2"
-                            style="line-height: 1.3"
-                          >
-                            {{
-                              hasOpenedTool
-                                ? $t('UserTestView.TaskStep.reopenDesc')
-                                : $t('UserTestView.TaskStep.openToolDesc')
-                            }}
-                          </p>
-                          <v-btn
-                            color="secondary"
-                            variant="outlined"
-                            size="small"
-                            block
-                            prepend-icon="mdi-open-in-new"
-                            @click="openTool"
-                          >
-                            {{
-                              hasOpenedTool
-                                ? $t('UserTestView.TaskStep.reopenTool')
-                                : $t('UserTestView.TaskStep.openTool')
-                            }}
-                          </v-btn>
-                        </div>
-                      </v-col>
-                    </v-row>
-                  </v-col>
-                </v-row>
-              </v-card-text>
-            </v-card>
+                          {{ t('UserTestView.TaskStep.needHelp') }}
+                        </span>
+                      </div>
+                      <p
+                        class="text-body-2 text-grey-darken-3 mb-3"
+                        style="line-height: 1.5"
+                      >
+                        {{ t('UserTestView.TaskStep.needHelpDesc') }}
+                      </p>
+                      <TipButton :task="task" @tip-pressed="onTipPressed" />
+                    </v-card>
+                  </div>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
 
-            <v-row class="mb-4 d-flex align-center">
-              <v-col v-if="isVisualizerVisible" cols="auto">
-                <AudioVisualizer />
-              </v-col>
-              <v-spacer />
-              <v-col cols="auto">
-                <Timer
-                  ref="timerComponent"
+          <v-row class="mb-4 d-flex align-center">
+            <v-col v-if="isVisualizerVisible" cols="auto">
+              <AudioVisualizer />
+            </v-col>
+            <v-spacer />
+            <v-col cols="auto">
+              <Timer
+                ref="timerComponent"
+                :task-index="taskIndex"
+                @timer-stopped="onTimerStopped"
+              />
+            </v-col>
+          </v-row>
+          <div class="mt-4 task-answer-block">
+            <v-textarea
+              v-if="task?.taskType === 'text-area' && !submitted"
+              :id="'id-' + (task?.taskName || taskName)"
+              v-model="localTaskAnswer"
+              class="task-textarea"
+              bg-color="white"
+              variant="outlined"
+              :label="t('UserTestView.TaskStep.answerLabel')"
+              rows="3"
+              @update:model-value="onUpdateTaskAnswer"
+            />
+            <v-textarea
+              v-if="!submitted"
+              :id="'id-' + (task?.taskName || taskName) + '-obs'"
+              v-model="localTaskObservations"
+              class="task-textarea"
+              bg-color="white"
+              variant="outlined"
+              :label="t('UserTestView.TaskStep.observationLabel')"
+              rows="3"
+              @update:model-value="onUpdateTaskObservations"
+            />
+          </div>
+          <v-row justify="space-between">
+            <v-col cols="12" sm="6">
+              <v-btn
+                color="error"
+                block
+                variant="outlined"
+                class="mr-2"
+                :disabled="isWaitingForUploadToFinish"
+                :class="{
+                  'mb-3': $vuetify.display.xs,
+                  'mr-2': $vuetify.display.smAndUp,
+                }"
+                @click="handleShowPostForm(false)"
+              >
+                {{
+                  isWaitingForUploadToFinish &&
+                  showPostForm.userCompleted === false
+                    ? t('UserTestView.TaskStep.uploading')
+                    : t('UserTestView.TaskStep.cannotFinish')
+                }}
+              </v-btn>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-btn
+                color="primary"
+                block
+                variant="flat"
+                class="ml-2"
+                :disabled="isWaitingForUploadToFinish"
+                :class="{ 'ml-2': $vuetify.display.smAndUp }"
+                @click="handleShowPostForm(true)"
+              >
+                {{
+                  isWaitingForUploadToFinish &&
+                  showPostForm.userCompleted === true
+                    ? t('UserTestView.TaskStep.uploading')
+                    : t('UserTestView.TaskStep.completed')
+                }}
+              </v-btn>
+            </v-col>
+          </v-row>
+        </template>
+        <!-- STAGE 4:POST-TASK form -->
+        <template v-else-if="stage === 4">
+          <v-card class="mb-4" variant="outlined" bg-color="white">
+            <v-card-text class="pa-4">
+              <!-- SUS Form -->
+              <div v-if="task?.taskType === 'sus'">
+                <SusForm
+                  v-model="localSusAnswers"
                   :task-index="taskIndex"
-                  @timer-stopped="onTimerStopped"
+                  @update:model-value="(val) => emit('update:susAnswers', val)"
                 />
-              </v-col>
-            </v-row>
-            <div class="mt-4">
-              <v-textarea
-                v-if="task?.taskType === 'text-area' && !submitted"
-                :id="'id-' + (task?.taskName || taskName)"
-                v-model="localTaskAnswer"
-                variant="outlined"
-                label="Answer"
-                rows="3"
-                @update:model-value="onUpdateTaskAnswer"
-              />
-              <v-textarea
-                v-if="!submitted"
-                :id="'id-' + (task?.taskName || taskName) + '-obs'"
-                v-model="localTaskObservations"
-                variant="outlined"
-                label="Observation (optional)"
-                rows="3"
-                @update:model-value="onUpdateTaskObservations"
-              />
-            </div>
-            <v-row justify="space-between">
-              <v-col cols="12" sm="6">
-                <v-btn
-                  color="error"
-                  block
-                  variant="outlined"
-                  class="mr-2"
-                  :disabled="isWaitingForUploadToFinish"
-                  :class="{
-                    'mb-3': $vuetify.display.xs,
-                    'mr-2': $vuetify.display.smAndUp,
-                  }"
-                  @click="handleShowPostForm(false)"
-                >
-                  {{
-                    isWaitingForUploadToFinish &&
-                    showPostForm.userCompleted === false
-                      ? 'Uploading...'
-                      : 'I can not finish the task'
-                  }}
-                </v-btn>
-              </v-col>
-              <v-col cols="12" sm="6">
-                <v-btn
-                  color="primary"
-                  block
-                  variant="flat"
-                  class="ml-2"
-                  :disabled="isWaitingForUploadToFinish"
-                  :class="{ 'ml-2': $vuetify.display.smAndUp }"
-                  @click="handleShowPostForm(true)"
-                >
-                  {{
-                    isWaitingForUploadToFinish &&
-                    showPostForm.userCompleted === true
-                      ? 'Uploading...'
-                      : 'Task completed'
-                  }}
-                </v-btn>
-              </v-col>
-            </v-row>
-          </template>
-          <!-- STAGE 3:POST-TASK form -->
-          <template v-else-if="stage === 3">
-            <!-- SUS Form -->
-            <div v-if="task?.taskType === 'sus'">
-              <SusForm
-                v-model="localSusAnswers"
-                :task-index="taskIndex"
-                @update:model-value="(val) => emit('update:susAnswers', val)"
-              />
-            </div>
+              </div>
 
-            <!-- NASA-TLX Form -->
-            <div v-else-if="task?.taskType === 'nasa-tlx'">
-              <nasaTlxForm
-                :nasa-tlx="nasaTlxAnswers"
-                @update:nasa-tlx="onUpdateNasaTlx"
-              />
-            </div>
+              <!-- NASA-TLX Form -->
+              <div v-else-if="task?.taskType === 'nasa-tlx'">
+                <nasaTlxForm
+                  :nasa-tlx="nasaTlxAnswers"
+                  @update:nasa-tlx="onUpdateNasaTlx"
+                />
+              </div>
 
-            <!-- SART Form -->
-            <div v-else-if="task?.taskType === 'sart'">
-              <sartForm :sart="sartAnswers" @update:sart="onUpdateSart" />
-            </div>
+              <!-- SART Form -->
+              <div v-else-if="task?.taskType === 'sart'">
+                <sartForm :sart="sartAnswers" @update:sart="onUpdateSart" />
+              </div>
 
-            <!-- TAM-1 Form -->
-            <div v-else-if="task?.taskType === 'tam-1'">
-              <TamForm1
-                v-model="localTamAnswers"
-                :task-index="taskIndex"
-                @update:model-value="(val) => emit('update:tamAnswers', val)"
-              />
-            </div>
+              <!-- TAM-1 Form -->
+              <div v-else-if="task?.taskType === 'tam-1'">
+                <TamForm1
+                  v-model="localTamAnswers"
+                  :task-index="taskIndex"
+                  @update:model-value="(val) => emit('update:tamAnswers', val)"
+                />
+              </div>
 
-            <!-- TAM-2 Form -->
-            <div v-else-if="task?.taskType === 'tam-2'">
-              <TamForm2
-                v-model="localTamAnswers"
-                :task-index="taskIndex"
-                @update:model-value="(val) => emit('update:tamAnswers', val)"
-              />
-            </div>
+              <!-- TAM-2 Form -->
+              <div v-else-if="task?.taskType === 'tam-2'">
+                <TamForm2
+                  v-model="localTamAnswers"
+                  :task-index="taskIndex"
+                  @update:model-value="(val) => emit('update:tamAnswers', val)"
+                />
+              </div>
 
-            <!-- TAM-3 Form -->
-            <div v-else-if="task?.taskType === 'tam-3'">
-              <TamForm3
-                v-model="localTamAnswers"
-                :task-index="taskIndex"
-                @update:model-value="(val) => emit('update:tamAnswers', val)"
-              />
-            </div>
+              <!-- TAM-3 Form -->
+              <div v-else-if="task?.taskType === 'tam-3'">
+                <TamForm3
+                  v-model="localTamAnswers"
+                  :task-index="taskIndex"
+                  @update:model-value="(val) => emit('update:tamAnswers', val)"
+                />
+              </div>
 
-            <!-- Other task types -->
-            <div v-else>
-              <v-alert type="info" variant="tonal" class="mb-4">
-                No post-task questionnaire required for this task type.
-              </v-alert>
-            </div>
-            <v-row justify="end">
-              <v-col cols="12">
-                <p
-                  v-if="
-                    (task?.taskType === 'sus' ||
-                      task?.taskType === 'tam-1' ||
-                      task?.taskType === 'tam-2' ||
-                      task?.taskType === 'tam-3' ||
-                      task?.taskType === 'sart' ||
-                      task?.taskType === 'nasa-tlx') &&
-                    doneTaskDisabled
-                  "
-                  class="text-error mb-4"
-                >
-                  Please answer all questions before continuing.
-                </p>
-                <v-btn
-                  color="primary"
-                  block
-                  variant="flat"
-                  class="ml-2"
-                  :disabled="
-                    shouldDisableFinishButton || isWaitingForUploadToFinish
-                  "
-                  @click="attemptFinish()"
-                >
-                  {{
-                    isWaitingForUploadToFinish ? 'Uploading...' : 'Finish task'
-                  }}
-                </v-btn>
-              </v-col>
-            </v-row>
-          </template>
-        </div>
+              <!-- Other task types -->
+              <div v-else>
+                <v-alert type="info" variant="tonal" class="mb-4">
+                  {{ t('UserTestView.TaskStep.noQuestionnaire') }}
+                </v-alert>
+              </div>
+              <v-row justify="end">
+                <v-col cols="12">
+                  <p
+                    v-if="
+                      (task?.taskType === 'sus' ||
+                        task?.taskType === 'tam-1' ||
+                        task?.taskType === 'tam-2' ||
+                        task?.taskType === 'tam-3' ||
+                        task?.taskType === 'sart' ||
+                        task?.taskType === 'nasa-tlx') &&
+                      doneTaskDisabled
+                    "
+                    class="text-error mb-4"
+                  >
+                    {{ t('UserTestView.TaskStep.validationError') }}
+                  </p>
+                  <v-btn
+                    color="primary"
+                    block
+                    variant="flat"
+                    class="ml-2"
+                    :disabled="
+                      shouldDisableFinishButton || isWaitingForUploadToFinish
+                    "
+                    @click="attemptFinish()"
+                  >
+                    {{
+                      isWaitingForUploadToFinish
+                        ? t('UserTestView.TaskStep.uploading')
+                        : t('UserTestView.TaskStep.finishTask')
+                    }}
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </template>
         <video v-if="videoUrl === ''" id="vpreview" class="d-none" autoplay />
       </div>
 
@@ -511,8 +520,9 @@
 </template>
 
 <script setup>
-import { ref, watch, nextTick, computed, onMounted, onBeforeUnmount } from 'vue'
-import { gsap } from 'gsap'
+import { ref, watch, nextTick, computed, onBeforeUnmount } from 'vue'
+import { useI18n } from 'vue-i18n'
+import redXLogo from '@/assets/logo_small_red.png'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import TipButton from '@/ux/UserTest/components/TipButton.vue'
 import AudioRecorder from '@/ux/UserTest/components/AudioRecorder.vue'
@@ -526,6 +536,8 @@ import TamForm1 from '@/ux/UserTest/components/TamForm1.vue'
 import TamForm2 from '@/ux/UserTest/components/TamForm2.vue'
 import TamForm3 from '@/ux/UserTest/components/TamForm3.vue'
 import sartForm from '@/ux/UserTest/components/sartForm.vue'
+
+const { t } = useI18n()
 
 const props = defineProps({
   task: Object,
@@ -678,9 +690,7 @@ const hasAnyRecording = computed(() => {
 })
 
 const stage = ref(1)
-const stageOneStep = ref(0)
 const hasOpenedTool = ref(false)
-const stateContent = ref(null)
 const audioRecorder = ref(null)
 const videoRecorder = ref(null)
 const screenRecorder = ref(null)
@@ -688,49 +698,37 @@ const elapsedTimeDisplay = ref('0:00')
 const uploadingCount = ref(0)
 const isWaitingForUploadToFinish = ref(false)
 const pendingFinalTime = ref(null)
+const isPreparingTaskTools = ref(false)
+const showUploadDialog = computed(
+  () => isWaitingForUploadToFinish.value || uploadingCount.value > 0,
+)
+const showTaskProgressDialog = computed(
+  () => isPreparingTaskTools.value || showUploadDialog.value,
+)
+const taskProgressDialogTitle = computed(() => {
+  if (isPreparingTaskTools.value) {
+    return t('UserTestView.TaskStep.setupDialogTitle')
+  }
+  return t('UserTestView.TaskStep.uploadDialogTitle')
+})
+const taskProgressDialogMessage = computed(() => {
+  if (isPreparingTaskTools.value) {
+    return t('UserTestView.TaskStep.setupDialogMessage')
+  }
+  return t('UserTestView.TaskStep.uploadDialogMessage')
+})
 
 let taskStartTime = null
 let timerInterval = null
 let finishTimeout = null
 
-function animateStateTransition() {
-  if (!stateContent.value) return
-  gsap.killTweensOf(stateContent.value)
-  gsap.fromTo(
-    stateContent.value,
-    { autoAlpha: 0, y: 6 },
-    {
-      autoAlpha: 1,
-      y: 0,
-      duration: 0.2,
-      ease: 'power1.out',
-      clearProps: 'opacity,visibility,transform',
-    },
-  )
-}
-
-onMounted(async () => {
-  await nextTick()
-  animateStateTransition()
-})
-
-watch(
-  () => [stage.value, stageOneStep.value],
-  async () => {
-    await nextTick()
-    animateStateTransition()
-  },
-)
-
 function onShowLoading() {
   uploadingCount.value++
-  emit('show-loading')
 }
 
 function onStopShowLoading() {
   uploadingCount.value--
   if (uploadingCount.value < 0) uploadingCount.value = 0
-  emit('stop-show-loading')
 
   if (uploadingCount.value === 0 && isWaitingForUploadToFinish.value) {
     emitDoneOrCouldNotFinish(pendingFinalTime.value)
@@ -742,7 +740,7 @@ function attemptFinish() {
     isWaitingForUploadToFinish.value = true
   } else {
     // Check for where uploads have not started yet
-    if (stage.value !== 3 && hasAnyRecording.value) {
+    if (stage.value !== 4 && hasAnyRecording.value) {
       isWaitingForUploadToFinish.value = true
       // Short timeout to alllow recorders to emit show-loading
       finishTimeout = setTimeout(() => {
@@ -764,25 +762,32 @@ function updateElapsedTime() {
   elapsedTimeDisplay.value = `${minutes}:${seconds.toString().padStart(2, '0')}`
 }
 
-async function startTask() {
-  emit('show-loading')
-  emit('startTask')
-  const mediaStarted = await startMediaRecorders()
-  if (!mediaStarted) {
-    emit('stop-show-loading')
-    return
-  }
-  stageOneStep.value = 0
+function goToStartTaskStage() {
   stage.value = 2
-  taskStartTime = Date.now()
-  timerInterval = setInterval(updateElapsedTime, 1000)
-  nextTick(() => {
-    setTimeout(() => {
-      const timer = document.querySelector('[ref=timerComponent]')
-      if (timer && timer.startTimer) timer.startTimer()
-    }, 100)
-  })
-  emit('stop-show-loading')
+}
+
+async function startTask() {
+  isPreparingTaskTools.value = true
+  emit('startTask')
+
+  try {
+    const mediaStarted = await startMediaRecorders()
+    if (!mediaStarted) {
+      return
+    }
+
+    stage.value = 3
+    taskStartTime = Date.now()
+    timerInterval = setInterval(updateElapsedTime, 1000)
+    nextTick(() => {
+      setTimeout(() => {
+        const timer = document.querySelector('[ref=timerComponent]')
+        if (timer && timer.startTimer) timer.startTimer()
+      }, 100)
+    })
+  } finally {
+    isPreparingTaskTools.value = false
+  }
 }
 
 function openTool() {
@@ -853,7 +858,7 @@ function handleShowPostForm(userCompleted) {
 
   // Show post-task form for all validated task types
   if (VALIDATION_REQUIRED_TYPES.has(props.task?.taskType)) {
-    stage.value = 3
+    stage.value = 4
   } else {
     attemptFinish()
   }
@@ -869,6 +874,7 @@ function emitDoneOrCouldNotFinish(savedTime) {
   // Reset state for next task
   isWaitingForUploadToFinish.value = false
   uploadingCount.value = 0
+  isPreparingTaskTools.value = false
   showPostForm.value = { userCompleted: undefined }
   taskStartTime = null
   elapsedTimeDisplay.value = '0:00'
@@ -912,12 +918,12 @@ watch(
       finishTimeout = null
     }
     forceStopAllMedia()
-    stageOneStep.value = 0
-    hasOpenedTool.value = false
     stage.value = 1
     taskStartTime = null
     elapsedTimeDisplay.value = '0:00'
     showPostForm.value = { userCompleted: undefined }
+    hasOpenedTool.value = false
+    isPreparingTaskTools.value = false
   },
 )
 
@@ -945,6 +951,49 @@ function onTimerStopped(elapsedTime) {
   white-space: pre-line;
 }
 
+.task-information-description {
+  font-size: clamp(1.2rem, 1.65vw, 1.4rem) !important;
+  line-height: 1.65;
+  font-weight: 300 !important;
+}
+
+:deep(.task-information-description p),
+:deep(.task-information-description li),
+:deep(.task-information-description span),
+:deep(.task-information-description div) {
+  font-size: clamp(1.2rem, 1.65vw, 1.4rem) !important;
+  line-height: 1.65;
+  font-weight: 300 !important;
+}
+
+.upload-dialog-card {
+  background: #fff;
+}
+
+.upload-spinner {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  animation: uploadSpinnerRotate 1.8s linear infinite;
+}
+
+.task-answer-block {
+  display: grid;
+  gap: 16px;
+}
+
+.task-action-card {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.task-action-card--attention {
+  animation: taskActionAttention 1.8s ease-in-out infinite;
+  border-color: rgba(var(--v-theme-secondary), 0.5);
+}
+
 .recording-features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -959,13 +1008,13 @@ function onTimerStopped(elapsedTime) {
   padding: 16px;
   border: 1px solid rgba(var(--v-theme-secondary), 0.2);
   border-radius: 12px;
-  background: rgba(var(--v-theme-secondary), 0.02);
+  background: #fff;
   transition: all 0.2s ease;
 }
 
 .recording-feature-card:hover {
   border-color: rgba(var(--v-theme-secondary), 0.3);
-  background: rgba(var(--v-theme-secondary), 0.05);
+  background: #fff;
 }
 
 .feature-icon-container {
@@ -993,9 +1042,27 @@ function onTimerStopped(elapsedTime) {
   margin: 0;
 }
 
-.new-window-copy {
-  font-weight: 300;
-  line-height: 1.6;
+@keyframes taskActionAttention {
+  0%,
+  100% {
+    transform: translateY(0);
+    box-shadow: 0 0 0 0 rgba(var(--v-theme-secondary), 0.15);
+  }
+
+  50% {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(var(--v-theme-secondary), 0.12);
+  }
+}
+
+@keyframes uploadSpinnerRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 768px) {

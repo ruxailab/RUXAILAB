@@ -2,7 +2,11 @@
   <v-container fluid class="create-study-view">
     <v-container class="py-6">
       <!-- Stepper Header -->
-      <StepperHeader :current-step="4" :steps="steps" />
+      <StepperHeader
+        :current-step="4"
+        :steps="steps"
+        @step-click="onStepperStepClick"
+      />
 
       <!-- Page Header -->
       <SectionHeader
@@ -285,6 +289,7 @@ import {
   normalizeStudyType,
   STUDY_TYPES,
 } from '@/shared/constants/methodDefinitions'
+import { getCategoryById } from '@/shared/constants/studyCategories.js'
 import StudyAdmin from '@/shared/models/StudyAdmin'
 import { showError, showWarning } from '@/shared/utils/toast'
 
@@ -310,11 +315,60 @@ const studyType = computed(() => store.state.Tests.studyType)
 const selectedTemplate = computed(() => store.state.Tests.selectedTemplate)
 const isLoading = ref(false)
 
+const selectedCategoryMeta = computed(() =>
+  category.value ? getCategoryById(category.value) : null,
+)
+const hasCategorySelected = computed(() => !!category.value)
+const requiresMethodSelection = computed(
+  () => !!selectedCategoryMeta.value?.hasSubMethods,
+)
+const hasMethodSelected = computed(() => !!method.value)
+const hasStudyTypeSelected = computed(() => !!studyType.value)
+const hasTemplateWhenNeeded = computed(() => {
+  if (studyType.value !== 'template') return true
+  return !!selectedTemplate.value
+})
+
+const canOpenStep2 = computed(
+  () => hasCategorySelected.value && requiresMethodSelection.value,
+)
+const canOpenStep3 = computed(
+  () =>
+    hasCategorySelected.value &&
+    (!requiresMethodSelection.value || hasMethodSelected.value),
+)
+const canOpenStep4 = computed(
+  () =>
+    canOpenStep3.value &&
+    hasStudyTypeSelected.value &&
+    hasTemplateWhenNeeded.value,
+)
+
 const steps = computed(() => [
-  { value: 1, title: t('studyCreation.steps.category'), complete: true },
-  { value: 2, title: t('studyCreation.steps.methods'), complete: true },
-  { value: 3, title: t('studyCreation.steps.studyType'), complete: true },
-  { value: 4, title: t('studyCreation.steps.details'), complete: false },
+  {
+    value: 1,
+    title: t('studyCreation.steps.category'),
+    complete: hasCategorySelected.value,
+    enabled: true,
+  },
+  {
+    value: 2,
+    title: t('studyCreation.steps.methods'),
+    complete: canOpenStep2.value && hasMethodSelected.value,
+    enabled: canOpenStep2.value,
+  },
+  {
+    value: 3,
+    title: t('studyCreation.steps.studyType'),
+    complete: canOpenStep3.value && hasStudyTypeSelected.value,
+    enabled: canOpenStep3.value,
+  },
+  {
+    value: 4,
+    title: t('studyCreation.steps.details'),
+    complete: false,
+    enabled: canOpenStep4.value,
+  },
 ])
 
 const isFormValid = computed(() => {
@@ -507,6 +561,20 @@ const submitAccessibility = async () => {
 
 const goBack = () => {
   router.push({ name: 'study-create-step3' })
+}
+
+const onStepperStepClick = (step) => {
+  if (!step?.value || step.value === 4) return
+
+  const routeByStep = {
+    1: 'study-create-step1',
+    2: 'study-create-step2',
+    3: 'study-create-step3',
+  }
+
+  const targetRoute = routeByStep[step.value]
+  if (!targetRoute) return
+  router.push({ name: targetRoute })
 }
 
 onMounted(() => {

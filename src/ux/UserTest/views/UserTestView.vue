@@ -1,5 +1,12 @@
 <template>
-  <div v-if="test">
+  <div v-if="test" class="user-test-bg">
+    <StepAnnouncementOverlay
+      v-if="showStepAnnouncement"
+      ref="stepAnnouncementOverlay"
+      :kicker="nextStepAnnouncementKicker"
+      :title="nextStepAnnouncementTitle"
+    />
+
     <div>
       <IrisTracker
         v-if="
@@ -96,7 +103,7 @@
           <h1 class="text-h2 font-weight-bold text-white">
             {{ test.testTitle }}
           </h1>
-          <p class="text-body-1 mb-5 text-white text-justify">
+          <p class="text-body mb-5 text-white text-justify">
             {{ test.testDescription }}
           </p>
           <v-btn
@@ -199,8 +206,16 @@
         </v-col>
       </v-row>
 
-      <v-row v-else class="main-test-interface pa-0 ma-0">
-        <v-col ref="rightView" class="right-view pa-6">
+      <v-row
+        v-else
+        class="main-test-interface pa-0 ma-0"
+        :class="{ 'welcome-main-centered': globalIndex === 0 }"
+      >
+        <v-col
+          ref="rightView"
+          class="right-view pa-6"
+          :class="{ 'welcome-content-centered': globalIndex === 0 }"
+        >
           <v-row v-if="globalIndex >= 1" class="stepper-row sticky-stepper">
             <v-col cols="12">
               <v-stepper
@@ -355,7 +370,7 @@
             :has-pre-test="hasPreTest"
             :has-post-test="hasPostTest"
             :welcome-message="test?.testStructure?.welcomeMessage"
-            @start="globalIndex = 1"
+            @start="handleWelcomeStart"
           />
 
           <ConsentStep
@@ -397,18 +412,15 @@
               taskIndex === 0
             "
             :num-tasks="test?.testStructure?.userTasks?.length || 0"
-            @start-tasks="
-              () => {
-                taskIndex = 0
-                globalIndex = hasEyeTracking ? 5 : 4
-              }
-            "
+            @start-tasks="handleStartTasks"
           />
 
           <TaskStep
             v-if="
               globalIndex === (hasEyeTracking ? 5 : 4) &&
-              test.testType === STUDY_TYPES.USER
+              test.testType === STUDY_TYPES.USER &&
+              test?.testStructure?.userTasks?.[taskIndex] &&
+              localTestAnswer?.tasks?.[taskIndex]
             "
             ref="taskStepComponent"
             v-model:post-answer="localTestAnswer.tasks[taskIndex].postAnswer"
@@ -480,8 +492,8 @@
             :post-test-answer="localTestAnswer.postTestAnswer"
             :post-test-completed="localTestAnswer.postTestCompleted"
             @done="
-              () => {
-                completeStep(taskIndex, 'postTest')
+              async () => {
+                await completeStep(taskIndex, 'postTest')
                 taskIndex = 3
               }
             "
@@ -537,8 +549,10 @@ import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import EyeTrackingCalibrationStep from '@/ux/UserTest/components/calibration/EyeTrackingCalibrationStep.vue'
 import { db } from '@/app/plugins/firebase'
 import IrisTracker from '../components/IrisTracker.vue'
+import StepAnnouncementOverlay from '@/ux/UserTest/components/StepAnnouncementOverlay.vue'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { calculateProgress } from '../utils/testProgress'
+import { animateStepAnnouncement } from '@/shared/utils/animations'
 
 const fullName = ref('')
 const logined = ref(null)
@@ -556,6 +570,10 @@ const isVisualizerVisible = ref(false)
 const doneTaskDisabled = ref(false)
 const anonymousUserDocId = ref(null)
 const calibrationPopup = ref(null)
+const showStepAnnouncement = ref(false)
+const stepAnnouncementOverlay = ref(null)
+const nextStepAnnouncementTitle = ref('')
+const nextStepAnnouncementKicker = ref('')
 
 const rightView = ref(null)
 const videoRecorder = ref(null)
@@ -863,6 +881,8 @@ const startTest = async () => {
     return
   }
 
+  await requestFullscreenIfAvailable()
+
   if (!isUserTestAdmin.value && user.value) {
     await store.dispatch('acceptStudyCollaboration', {
       test: test.value,
@@ -880,6 +900,119 @@ const startTest = async () => {
   setTimeout(() => {
     start.value = false
   }, 1000)
+}
+
+const showNextStepAnnouncement = async (
+  title,
+  stageNumber,
+  kickerOverride = '',
+) => {
+  nextStepAnnouncementKicker.value = kickerOverride || `Stage ${stageNumber}`
+  nextStepAnnouncementTitle.value = title
+  showStepAnnouncement.value = true
+
+  const safetyHideTimer = window.setTimeout(() => {
+    showStepAnnouncement.value = false
+  }, 4200)
+
+  try {
+    await nextTick()
+    await animateStepAnnouncement(stepAnnouncementOverlay.value, {
+      totalDuration: 3,
+    })
+  } finally {
+    window.clearTimeout(safetyHideTimer)
+    showStepAnnouncement.value = false
+  }
+}
+
+const safelyShowNextStepAnnouncement = async (
+  title,
+  stageNumber,
+  kickerOverride = '',
+) => {
+  try {
+    await showNextStepAnnouncement(title, stageNumber, kickerOverride)
+  } catch {
+    // Non-critical: users can continue even if announcement animation fails.
+  }
+}
+
+const persistStepProgress = async () => {
+  try {
+    await savePartialAnswer()
+  } catch {
+    store.commit('SET_TOAST', {
+      type: 'error',
+      message: t('UserTestView.errors.failedToSaveAnswer'),
+    })
+  }
+}
+
+const handleWelcomeStart = async () => {
+  await safelyShowNextStepAnnouncement(t('UserTestView.stepper.consent'), 1)
+  globalIndex.value = 1
+}
+
+const handleStartTasks = async () => {
+  taskIndex.value = 0
+  globalIndex.value = hasEyeTracking.value ? 5 : 4
+  await nextTick()
+  await showTaskTitleAnnouncement(0)
+}
+
+const showTaskTitleAnnouncement = async (idx) => {
+  const task = test.value?.testStructure?.userTasks?.[idx]
+  if (!task) return
+
+  const fallbackTitle = t('UserTestView.stepper.taskX', { num: idx + 1 })
+  const announcementTitle = task.taskName || fallbackTitle
+  const announcementKicker = fallbackTitle
+
+  await safelyShowNextStepAnnouncement(announcementTitle, 3, announcementKicker)
+}
+
+const getPostConsentAnnouncementTitle = () => {
+  if (hasPreTest.value) return t('UserTestView.stepper.preTest')
+  if (hasEyeTracking.value) return t('UserTestView.stepper.calibration')
+  return t('UserTestView.stepper.tasks')
+}
+
+const getPostTasksAnnouncement = () => {
+  if (hasPostTest.value) {
+    return {
+      title: t('UserTestView.stepper.postTest'),
+      stage: 4,
+    }
+  }
+
+  return {
+    title: t('UserTestView.WelcomeStep.steps.submission'),
+    stage: 4,
+  }
+}
+
+const requestFullscreenIfAvailable = async () => {
+  if (document.fullscreenElement) return
+
+  const root = document.documentElement
+  try {
+    if (root.requestFullscreen) {
+      await root.requestFullscreen()
+      return
+    }
+
+    const legacy =
+      root.webkitRequestFullscreen ||
+      root.mozRequestFullScreen ||
+      root.msRequestFullscreen
+
+    if (legacy) {
+      await legacy.call(root)
+    }
+  } catch {
+    // Ignore if blocked by browser/user settings and continue test flow.
+  }
 }
 
 const callTimerSave = () => {
@@ -902,25 +1035,16 @@ async function handleTaskFinish(userCompleted) {
       async (val) => {
         if (!val) {
           unwatch()
-          completeStep(taskIndex.value, 'tasks', userCompleted)
+          await completeStep(taskIndex.value, 'tasks', userCompleted)
           attachMediaToTasks(localTestAnswer, mediaUrls.value)
-          await savePartialAnswer()
+          await persistStepProgress()
         }
       },
     )
   } else {
-    completeStep(taskIndex.value, 'tasks', userCompleted)
+    await completeStep(taskIndex.value, 'tasks', userCompleted)
     attachMediaToTasks(localTestAnswer, mediaUrls.value)
-    await savePartialAnswer()
-  }
-}
-
-const startTimer = () => {
-  if (
-    timerComponent.value &&
-    typeof timerComponent.value.startTimer === 'function'
-  ) {
-    timerComponent.value.startTimer()
+    await persistStepProgress()
   }
 }
 
@@ -964,10 +1088,11 @@ const handleTipPressed = (idx) => {
   localTestAnswer.tasks[idx].tipPressCount = current + 1
 }
 
-const completeStep = (id, type, userCompleted = true) => {
+const completeStep = async (id, type, userCompleted = true) => {
   try {
     if (type === 'consent') {
       localTestAnswer.consentCompleted = true
+      await safelyShowNextStepAnnouncement(getPostConsentAnnouncementTitle(), 2)
       if (hasPreTest.value) {
         globalIndex.value = 2 // PreTest
       } else {
@@ -975,14 +1100,15 @@ const completeStep = (id, type, userCompleted = true) => {
         globalIndex.value = hasEyeTracking.value ? 3 : 4
         localTestAnswer.preTestCompleted = true
       }
-      savePartialAnswer()
+      await persistStepProgress()
     }
 
     if (type === 'preTest') {
       localTestAnswer.preTestCompleted = true
+      await safelyShowNextStepAnnouncement(t('UserTestView.stepper.tasks'), 3)
       // With eye tracking: index 3 = Calibration; without eye tracking: index 3 = PreTasksStep
       globalIndex.value = 3
-      savePartialAnswer()
+      await persistStepProgress()
     }
 
     if (type === 'eyeCalibration') {
@@ -1013,16 +1139,19 @@ const completeStep = (id, type, userCompleted = true) => {
 
       if (id < localTestAnswer.tasks.length - 1) {
         taskIndex.value = id + 1
-        startTimer()
+        await showTaskTitleAnnouncement(taskIndex.value)
       } else {
-        if (allTasksCompleted.value) {
-          taskIndex.value = id + 1 // to help saving methods
-          if (hasPostTest.value) {
-            globalIndex.value = hasEyeTracking.value ? 6 : 5 // PostTest
-          } else {
-            globalIndex.value = hasEyeTracking.value ? 7 : 6 // Finish
-            localTestAnswer.postTestCompleted = true
-          }
+        taskIndex.value = id
+        const postTasksAnnouncement = getPostTasksAnnouncement()
+        await safelyShowNextStepAnnouncement(
+          postTasksAnnouncement.title,
+          postTasksAnnouncement.stage,
+        )
+        if (hasPostTest.value) {
+          globalIndex.value = hasEyeTracking.value ? 6 : 5 // PostTest
+        } else {
+          globalIndex.value = hasEyeTracking.value ? 7 : 6 // Finish
+          localTestAnswer.postTestCompleted = true
         }
       }
       if (userCompleted) {
@@ -1033,22 +1162,18 @@ const completeStep = (id, type, userCompleted = true) => {
           }),
           timeout: 3000,
         })
-      } else {
-        store.commit('SET_TOAST', {
-          type: 'warning',
-          message: t('UserTestView.messages.taskNotCompleted', {
-            taskName: test.value.testStructure.userTasks[id].taskName,
-          }),
-          timeout: 3000,
-        })
       }
     } // closes if (type === 'tasks')
 
     if (type === 'postTest') {
       localTestAnswer.postTestCompleted = true
+      await safelyShowNextStepAnnouncement(
+        t('UserTestView.WelcomeStep.steps.submission'),
+        5,
+      )
       // items.value[2].icon = 'mdi-check-circle-outline';
       globalIndex.value = hasEyeTracking.value ? 7 : 6 // Finish
-      savePartialAnswer()
+      await persistStepProgress()
     }
 
     calculateProgress(localTestAnswer)
@@ -1375,6 +1500,41 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+.user-test-bg {
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.user-test-bg::before {
+  content: '';
+  position: fixed;
+  z-index: 0;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 140%;
+  margin-right: -450px;
+  margin-top: 100px;
+  background-image: url(../../../assets/logo_small_red.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: right top;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.user-test-bg > * {
+  position: relative;
+  z-index: 1;
+}
+
+.main-test-interface :deep(.v-card--variant-elevated),
+.main-test-interface :deep(.v-card--variant-flat) {
+  background: rgba(var(--v-theme-surface), 0) !important;
+}
+
 .start-screen {
   position: fixed;
   width: 100%;
@@ -1389,6 +1549,30 @@ onBeforeUnmount(() => {
     #303f9f 100%
   );
   transition: opacity 8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.start-screen::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 140%;
+  margin-right: -450px;
+  margin-top: 100px;
+  background-image: url(../../../assets/logo_small_red.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: right top;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.start-screen > * {
+  position: relative;
+  z-index: 1;
 }
 
 .start-screen.leaving,
@@ -1410,28 +1594,6 @@ onBeforeUnmount(() => {
   100% {
     background-position: 0% 50%;
   }
-}
-
-.start-screen::before {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 140%;
-  margin-right: -450px;
-  margin-top: 100px;
-  background-image: url(../../../assets/logo_small_red.png);
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: right top;
-  opacity: 0.2;
-}
-
-.start-screen.leaving::before {
-  opacity: 0;
 }
 
 /* Stepper sticky styles */
@@ -1494,5 +1656,16 @@ onBeforeUnmount(() => {
 
 .v-stepper-item {
   padding: 1rem;
+}
+
+.welcome-main-centered {
+  min-height: 100vh;
+  align-items: center;
+}
+
+.welcome-content-centered {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 </style>
