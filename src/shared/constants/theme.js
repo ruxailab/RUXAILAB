@@ -46,6 +46,7 @@ export const ICONS = {
   ORDER: 'mdi-order-bool-ascending-variant',
   ACCOUNT_GROUP: 'mdi-account-group',
   COG: 'mdi-cog',
+  MONITOR_DASHBOARD: 'mdi-monitor-dashboard',
 }
 
 /**

@@ -71,11 +71,8 @@ const buildInvitationNotification = ({ study, guest, inviteToken, router }) => {
     redirectsTo: path,
     type: 'Collaboration',
     accessLevel: guest.accessLevel,
-    titleTemplate: t('HeuristicsCooperators.actions.send_invitation'),
-    descriptionTemplate: t('HeuristicsCooperators.messages.invite_message'),
-    descriptionParams: {
-      testTitle: study.testTitle || 'Test',
-    },
+    title: t('invite.pendingSubtitle'),
+    description: `${t('HeuristicsCooperators.messages.invite_message')} ${study.testTitle}`,
     inviteToken,
     read: false,
   })
@@ -142,13 +139,14 @@ const sendParticipantInvitation = async ({
 
   const result = await manageStudyMembership({
     studyId: study.id,
-    action: action,
+    action,
     membershipType: 'participant',
     targetUserId: resolvedParticipant.userDocId || null,
     targetEmail: resolvedParticipant.email,
     role: resolvedParticipant.accessLevel,
     inviteMessage: inviteMessage ?? resolvedParticipant.inviteMessage,
     token: inviteResult.inviteToken,
+    expirationDate: inviteResult.expirationDate,
   })
 
   const participantMembership = {
@@ -163,7 +161,6 @@ const sendParticipantInvitation = async ({
       guest: participantMembership,
       inviteToken: inviteResult.inviteToken,
       router,
-      membershipType: 'participant',
     })
 
     await dispatch('addNotification', {
@@ -183,6 +180,7 @@ const sendParticipantInvitation = async ({
     ...participantMembership,
     inviteToken: inviteResult.inviteToken,
     inviteLink: inviteResult.inviteLink,
+    expirationDate: inviteResult.expirationDate,
   }
 }
 
@@ -199,16 +197,10 @@ const sendCooperatorInvitation = async ({
   user,
   guest,
   router,
-  resolveUserByEmail,
+  inviteResult,
 }) => {
   const resolvedGuest = await enrichCooperatorInviteEntry(guest, {
-    resolveUserByEmail,
-  })
-
-  const inviteResult = await createInvitation({
-    study,
-    guest: resolvedGuest,
-    membershipType: 'cooperator',
+    resolveUserByEmail: null,
   })
 
   if (resolvedGuest.userDocId) {
@@ -236,6 +228,7 @@ const sendCooperatorInvitation = async ({
     ...resolvedGuest,
     inviteToken: inviteResult.inviteToken,
     inviteLink: inviteResult.inviteLink,
+    expirationDate: inviteResult.expirationDate,
   }
 }
 
@@ -286,6 +279,19 @@ export default {
             throw new Error(validationError)
           }
 
+          /**
+           * Create the invitation first so the same token and
+           * expirationDate can be saved in the membership.
+           */
+          const inviteResult = await createInvitation({
+            study,
+            guest: {
+              ...invite,
+              accessLevel: selectedRole,
+            },
+            membershipType: 'cooperator',
+          })
+
           const result = await manageStudyMembership({
             studyId: study.id,
             action: 'invite',
@@ -293,7 +299,8 @@ export default {
             targetEmail: invite.email,
             role: selectedRole,
             inviteMessage,
-            token: invite.inviteToken,
+            token: inviteResult.inviteToken,
+            expirationDate: inviteResult.expirationDate,
             membershipType: 'cooperator',
           })
 
@@ -308,7 +315,7 @@ export default {
             user,
             guest,
             router,
-            resolveUserByEmail,
+            inviteResult,
           })
 
           newInvites.push(sentInvitation)
@@ -334,13 +341,35 @@ export default {
       commit('setLoading', true)
 
       try {
+        const resolvedGuest = await enrichCooperatorInviteEntry(guest, {
+          resolveUserByEmail,
+        })
+
+        const inviteResult = await createInvitation({
+          study,
+          guest: resolvedGuest,
+          membershipType: 'cooperator',
+        })
+
+        const result = await manageStudyMembership({
+          studyId: study.id,
+          action: 'reinvite',
+          targetUserId: resolvedGuest.userDocId || null,
+          targetEmail: resolvedGuest.email,
+          role: resolvedGuest.accessLevel,
+          inviteMessage: resolvedGuest.inviteMessage,
+          token: inviteResult.inviteToken,
+          expirationDate: inviteResult.expirationDate,
+          membershipType: 'cooperator',
+        })
+
         return await sendCooperatorInvitation({
           dispatch,
           study,
           user,
-          guest,
+          guest: result.cooperator,
           router,
-          resolveUserByEmail,
+          inviteResult,
         })
       } catch (err) {
         commit('setError', {
@@ -372,7 +401,7 @@ export default {
         await dispatch('acceptStudyCollaboration', {
           test: study,
           cooperator: user,
-          membershipType: membershipType,
+          membershipType,
         })
 
         localStorage.removeItem('pendingInviteToken')
@@ -400,10 +429,21 @@ export default {
       }
     },
 
-    async rejectInvite({ commit, dispatch }, { notification, user }) {
+    async rejectInvite(
+      { commit, dispatch },
+      { notification, user, studyId, membershipType = 'cooperator' },
+    ) {
       commit('setLoading', true)
 
       try {
+        await manageStudyMembership({
+          studyId,
+          action: 'reject',
+          targetUserId: user?.id || null,
+          targetEmail: user?.email || null,
+          membershipType,
+        })
+
         if (notification) {
           await dispatch('markNotificationAsRead', {
             notification,
@@ -469,13 +509,8 @@ export default {
           redirectsTo,
           type: 'Collaboration',
           accessLevel: invite.accessLevel,
-          titleTemplate: t('HeuristicsCooperators.actions.send_invitation'),
-          descriptionTemplate: t(
-            'HeuristicsCooperators.messages.invite_message',
-          ),
-          descriptionParams: {
-            testTitle: study.testTitle || 'Study',
-          },
+          title: t('invite.pendingSubtitle'),
+          description: `${t('HeuristicsCooperators.messages.invite_message')} ${study.testTitle}`,
           inviteToken: invite.token,
         })
 
@@ -582,6 +617,7 @@ export default {
           if (validationError) {
             throw new Error(validationError)
           }
+
           const result = await sendParticipantInvitation({
             dispatch,
             study,

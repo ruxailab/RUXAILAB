@@ -25,15 +25,15 @@
               activeSection === 'studies'
                 ? $t('pages.navigation.studiesSubtitle')
                 : activeSection === 'templates'
-                ? $t('pages.navigation.templatesSubtitle')
-                : ''
+                  ? $t('pages.navigation.templatesSubtitle')
+                  : ''
             }}
           </p>
         </div>
 
         <!-- 🔸 Dynamic rendering of sections -->
         <div v-if="activeSection === 'dashboard'">
-          <DashboardView :items="tests" :sessions="filteredModeratedSessions" />
+          <DashboardView :items="tests" :sessions="sessions" />
         </div>
 
         <div v-if="activeSection === 'studies'">
@@ -41,7 +41,7 @@
         </div>
 
         <div v-if="activeSection === 'sessions'">
-          <SessionsSection :sessions="filteredModeratedSessions" />
+          <SessionsSection :sessions="sessions" />
         </div>
 
         <div v-if="activeSection === 'templates'">
@@ -107,9 +107,6 @@ import CommunityStudies from '../components/navbarSections/CommunityStudiesSecti
 import CommunityTemplatesSection from '../components/navbarSections/CommunityTemplatesSection.vue'
 import StorageSection from '../components/navbarSections/StorageSection.vue'
 
-// Utilities and constants
-import { USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions'
-
 // 🔹 State management
 const store = useStore()
 const router = useRouter()
@@ -124,6 +121,8 @@ const activeSubSection = ref(null)
 // 🔸 Data
 
 let unsubscribeTests = null // Unsub function for real-time tests
+
+const sessions = computed(() => store.getters.sessions || [])
 
 // 🔹 Dynamic page title
 const currentPageTitle = computed(() => {
@@ -179,59 +178,6 @@ const currentPageIcon = computed(() => {
 
 // 🔸 Vuex getters
 const tests = computed(() => store.getters.tests || [])
-const user = computed(() => store.getters.user)
-
-/**
- * 🧮 Filters moderated sessions
- * Creates a list of sessions where the user is either the test admin
- * or a cooperator in a moderated session.
- */
-const filteredModeratedSessions = computed(() => {
-  const cooperatorArray = []
-  if (!tests.value) return []
-
-  tests.value.forEach((testObj) => {
-    if (!testObj) return
-
-    // User as cooperator
-    const cooperatorObj = testObj.cooperators?.find(
-      (coop) => coop.userDocId === user.value?.id,
-    )
-    if (cooperatorObj && testObj.subType === USER_STUDY_SUBTYPES.MODERATED) {
-      cooperatorArray.push({
-        ...cooperatorObj,
-        testTitle: testObj.testTitle,
-        testAdmin: testObj.testAdmin,
-        id: testObj.id,
-        testType: testObj.testType,
-        subType: testObj.subType,
-        testDescription: testObj.testDescription,
-        evaluator: cooperatorObj.email,
-      })
-    }
-
-    // User as test admin
-    if (
-      testObj.testAdmin?.userDocId === user.value?.id &&
-      testObj.subType === USER_STUDY_SUBTYPES.MODERATED
-    ) {
-      testObj.cooperators?.forEach((coop) => {
-        cooperatorArray.push({
-          ...coop,
-          testTitle: testObj.testTitle,
-          testAdmin: testObj.testAdmin,
-          id: testObj.id,
-          testType: testObj.testType,
-          subType: testObj.subType,
-          evaluator: coop.email,
-          testDescription: testObj.testDescription,
-        })
-      })
-    }
-  })
-
-  return cooperatorArray
-})
 
 /**
  * 🧭 Navigation logic
@@ -260,6 +206,7 @@ const getMyPersonalTests = () => store.dispatch('getTestsAdminByUser')
 const getPublicStudies = () => store.dispatch('getPublicStudies')
 const getMyTemplates = () => store.dispatch('getTemplatesOfUser')
 const getPublicTemplates = () => store.dispatch('getPublicTemplates')
+const loadSessions = () => store.dispatch('fetchUserSessions')
 
 /**
  * 🧭 Route watcher
@@ -271,7 +218,7 @@ watch([activeSection, activeSubSection], async ([section, sub]) => {
       await getMyPersonalTests()
       break
     case 'sessions':
-      // filterModeratedSessions()
+      await loadSessions()
       break
     case 'templates':
       await getMyTemplates()
@@ -291,7 +238,7 @@ watch([activeSection, activeSubSection], async ([section, sub]) => {
  */
 onMounted(async () => {
   // unsubscribeTests = await store.dispatch('bindMyTests');
-  await getMyPersonalTests()
+  await Promise.all([getMyPersonalTests(), loadSessions()])
 
   // Load navigation state from query params
   if (route.query.section) {

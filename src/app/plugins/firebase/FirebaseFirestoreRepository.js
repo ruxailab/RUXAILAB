@@ -13,6 +13,7 @@ import {
   limit,
   setDoc,
   deleteField,
+  collectionGroup,
 } from 'firebase/firestore'
 
 /**
@@ -164,6 +165,40 @@ export default class Controller {
 
   async delete(col, docId) {
     return deleteDoc(doc(db, col, docId))
+  }
+
+  /**
+   * Reads documents from a Firestore collection group.
+   *
+   * @param {string} collectionName
+   * @param {Array<Object>} conditions
+   * @returns {Promise<any[]>}
+   *
+   * @example
+   * await controller.readCollectionGroup('sessions', [
+   *   {
+   *     field: 'participantEmails',
+   *     operator: 'array-contains',
+   *     value: email,
+   *   },
+   * ])
+   */
+  async readCollectionGroup(collectionName, conditions = []) {
+    const constraints = conditions.map((condition) =>
+      where(condition.field, condition.operator, condition.value),
+    )
+
+    const q = query(collectionGroup(db, collectionName), ...constraints)
+
+    const snapshot = await getDocs(q)
+
+    return snapshot.docs.map((document) => ({
+      id: document.id,
+      ref: document.ref,
+      path: document.ref.path,
+      parentId: document.ref.parent.parent?.id,
+      ...document.data(),
+    }))
   }
 
   // Utility method to get deleteField for field removal
