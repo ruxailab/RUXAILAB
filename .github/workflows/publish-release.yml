@@ -28,26 +28,36 @@ jobs:
           RELEASE_URL: ${{ github.event.release.html_url }}
           IS_PRERELEASE: ${{ github.event.release.prerelease }}
         run: |
-          # Use the tag as part of the filename
           FILE_NAME=$(echo "$RELEASE_TAG" | tr '[:upper:]' '[:lower:]')
           FILE_PATH="blog/posts/ruxailab-${FILE_NAME}.md"
+          CURRENT_DATE=$(date +'%Y-%m-%d')
 
           echo "Creating blog post: $FILE_PATH"
 
-          # Different introduction for pre-releases and stable releases
           if [ "$IS_PRERELEASE" = "true" ]; then
-            INTRO="RUXAILAB ${RELEASE_NAME} is now available for testing. This pre-release includes the latest features, improvements, and fixes contributed to the platform and is intended for community validation before the final release."
+            SUMMARY="RUXAILAB ${RELEASE_TAG} is now available for testing. This pre-release includes the latest features, improvements, and fixes contributed by the RUXAILAB community.
+
+          This beta is part of the RUXAILAB 3.0 release cycle. We invite the community to test the new version and help us identify issues before the final release."
+
+            INTRO="**RUXAILAB ${RELEASE_TAG}** is now available as a pre-release. This version brings together the latest developments from the RUXAILAB community and provides an early opportunity to test the upcoming RUXAILAB 3.0."
           else
-            INTRO="RUXAILAB ${RELEASE_NAME} is now available. This release includes the latest features, improvements, and fixes contributed by the RUXAILAB community."
+            SUMMARY="RUXAILAB ${RELEASE_TAG} is now available. This release includes the latest features, improvements, and fixes contributed by the RUXAILAB community."
+
+            INTRO="**RUXAILAB ${RELEASE_TAG}** is now available. This release brings together the latest developments, improvements, and fixes from the RUXAILAB community."
           fi
 
-          # Generate Markdown post
           cat > "$FILE_PATH" <<EOF
+          ---
+          title: ${RELEASE_NAME}
+          date: ${CURRENT_DATE}
+          author: RUXAILAB
+          ---
+
+          ${SUMMARY}
+
           ---
 
           ${INTRO}
-
-          ---
 
           ${RELEASE_BODY}
 
@@ -55,7 +65,7 @@ jobs:
 
           You can find the complete release, source code, and additional information on GitHub.
 
-          **Release**: [${RELEASE_NAME}](${RELEASE_URL})
+          **Release**: [${RELEASE_TAG}](${RELEASE_URL})
 
           ---
 
