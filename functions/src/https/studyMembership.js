@@ -1,6 +1,6 @@
 import { admin, functions } from '../f.firebase.js'
 import { writeAuditEvent } from '../utils/auditTrail.js'
-import InviteUtils from '../utils/inviteUtils.js'
+import InviteUtils, { INVITE_STATUS } from '../utils/inviteUtils.js'
 
 const ROLE = Object.freeze({
   ADMIN: 0,
@@ -63,15 +63,50 @@ export async function resolveInviteTargetUserId({
   }
 }
 
-export const findMatchingPendingInvitation = (study, { uid, email, token }) =>
-  study?.cooperators?.find((cooperator) => {
-    if (cooperator?.accepted === true) return false
+const findMatchingPendingInvitation = async (study, { uid, email, token }) => {
+  const matches = (membership) => {
+    if (membership?.status === INVITE_STATUS.REJECTED) return false
+    if (InviteUtils.isAccepted(membership)) return false
+
     const accountMatches =
-      cooperator?.userDocId === uid || sameEmail(cooperator?.email, email)
+      membership?.userDocId === uid || sameEmail(membership?.email, email)
+
     const tokenMatches =
-      token && (token === cooperator?.token || token === cooperator?.userDocId)
+      token && (token === membership?.token || token === membership?.userDocId)
+
     return accountMatches && tokenMatches
-  }) ?? null
+  }
+
+  const cooperatorInvitation = study?.cooperators?.find(matches)
+
+  if (cooperatorInvitation) {
+    return {
+      ...cooperatorInvitation,
+      membershipType: 'cooperator',
+    }
+  }
+
+  const participantsSnapshot = await admin
+    .firestore()
+    .collection('tests')
+    .doc(study.id)
+    .collection('participants')
+    .get()
+
+  const participantDoc = participantsSnapshot.docs.find((doc) =>
+    matches(doc.data()),
+  )
+
+  if (participantDoc) {
+    return {
+      ...participantDoc.data(),
+      membershipType: 'participant',
+      id: participantDoc.id,
+    }
+  }
+
+  return null
+}
 
 const findTargetIndex = (cooperators, { targetUserId, targetEmail }) =>
   cooperators.findIndex(
@@ -81,11 +116,14 @@ const findTargetIndex = (cooperators, { targetUserId, targetEmail }) =>
   )
 
 const getActorRole = (study, actorId, isSuperAdmin) => {
-  if (isSuperAdmin || study?.testAdmin?.userDocId === actorId) return ROLE.ADMIN
+  if (isSuperAdmin || study?.testAdmin?.userDocId === actorId) {
+    return ROLE.ADMIN
+  }
+
   return (
     study?.cooperators?.find(
       (cooperator) =>
-        cooperator?.userDocId === actorId && cooperator?.accepted === true,
+        cooperator?.userDocId === actorId && InviteUtils.isAccepted(cooperator),
     )?.accessLevel ?? null
   )
 }
@@ -264,6 +302,64 @@ export const manageStudyMembership = functions.onCall({
         const target = targetDoc?.data() || null
 
         /*
+        |--------------------------------------------------------------------------
+        | REJECT INVITATION
+        |--------------------------------------------------------------------------
+        */
+
+        if (action === 'reject') {
+          const invitationDoc = participantsSnapshot.docs.find((doc) => {
+            const participant = doc.data()
+
+            return (
+              participant?.status === INVITE_STATUS.PENDING &&
+              (participant?.userDocId === actorId ||
+                sameEmail(participant?.email, actorEmail))
+            )
+          })
+
+          if (!invitationDoc) {
+            throw error(
+              'permission-denied',
+              'No participant invitation matches this account',
+            )
+          }
+
+          const invitation = invitationDoc.data()
+          const now = Date.now()
+
+          const participant = {
+            ...invitation,
+            userDocId: actorId,
+            status: INVITE_STATUS.REJECTED,
+            rejectedDate: now,
+            updateDate: now,
+          }
+
+          transaction.update(invitationDoc.ref, participant)
+
+          writeAuditEvent(transaction, studyRef, {
+            action: 'participant.invitationRejected',
+            actorId,
+            target: actorId,
+            actorEmail,
+            targetLabel: participant.email || actorEmail || actorId,
+            targetType: 'participant',
+            details: {
+              role: participant.accessLevel,
+            },
+          })
+
+          return {
+            status: INVITE_STATUS.REJECTED,
+            participant: {
+              id: invitationDoc.id,
+              ...participant,
+            },
+          }
+        }
+
+        /*
          |--------------------------------------------------------------------------
          | ACCEPT INVITATION
          |--------------------------------------------------------------------------
@@ -273,7 +369,7 @@ export const manageStudyMembership = functions.onCall({
             const participant = doc.data()
 
             return (
-              participant?.accepted !== true &&
+              !InviteUtils.isAccepted(participant) &&
               (participant?.userDocId === actorId ||
                 sameEmail(participant?.email, actorEmail))
             )
@@ -295,6 +391,7 @@ export const manageStudyMembership = functions.onCall({
             accepted: true,
             updateDate: now,
             acceptedDate: now,
+            status: INVITE_STATUS.ACCEPTED,
           }
 
           studyRoleMap[actorId] = participant.accessLevel
@@ -364,7 +461,7 @@ export const manageStudyMembership = functions.onCall({
             throw error('not-found', 'Participant not found')
           }
 
-          if (target.accepted === true) {
+          if (InviteUtils.isAccepted(target)) {
             throw error(
               'failed-precondition',
               'Accepted participants cannot be reinvited',
@@ -385,7 +482,9 @@ export const manageStudyMembership = functions.onCall({
                 : target.inviteMessage || null,
 
             updateDate: now,
-            acceptedDate: now,
+            status: INVITE_STATUS.PENDING,
+            expirationDate: data.expirationDate,
+            rejectedDate: null,
           }
 
           transaction.update(targetDoc.ref, participant)
@@ -447,6 +546,7 @@ export const manageStudyMembership = functions.onCall({
             token: data.token,
             study,
             membershipType: 'participant',
+            expirationDate: data.expirationDate,
           })
 
           const participantRef = participantsRef.doc()
@@ -484,14 +584,14 @@ export const manageStudyMembership = functions.onCall({
           throw error('not-found', 'Participant not found')
         }
 
-        if (action === 'remove' && target.accepted !== true) {
+        if (action === 'remove' && !InviteUtils.isAccepted(target)) {
           throw error(
             'failed-precondition',
             'Only accepted participants can be removed',
           )
         }
 
-        if (action === 'cancelInvitation' && target.accepted === true) {
+        if (action === 'cancelInvitation' && InviteUtils.isAccepted(target)) {
           throw error(
             'failed-precondition',
             'Accepted participants cannot be cancelled',
@@ -552,6 +652,58 @@ export const manageStudyMembership = functions.onCall({
       const cooperators = [...(study.cooperators || [])]
 
       /*
+      |--------------------------------------------------------------------------
+      | REJECT INVITATION
+      |--------------------------------------------------------------------------
+      */
+
+      if (action === 'reject') {
+        const index = cooperators.findIndex(
+          (cooperator) =>
+            cooperator?.status === INVITE_STATUS.PENDING &&
+            (cooperator?.userDocId === actorId ||
+              sameEmail(cooperator?.email, actorEmail)),
+        )
+
+        if (index < 0) {
+          throw error('permission-denied', 'No invitation matches this account')
+        }
+
+        const now = Date.now()
+
+        const membership = {
+          ...cooperators[index],
+          userDocId: actorId,
+          status: INVITE_STATUS.REJECTED,
+          rejectedDate: now,
+          updateDate: now,
+        }
+
+        cooperators[index] = membership
+
+        transaction.update(studyRef, {
+          cooperators,
+        })
+
+        writeAuditEvent(transaction, studyRef, {
+          action: 'cooperator.invitationRejected',
+          actorId,
+          target: actorId,
+          actorEmail,
+          targetLabel: membership.email || actorEmail || actorId,
+          targetType: 'cooperator',
+          details: {
+            role: membership.accessLevel,
+          },
+        })
+
+        return {
+          status: INVITE_STATUS.REJECTED,
+          cooperator: membership,
+        }
+      }
+
+      /*
        |--------------------------------------------------------------------------
        | ACCEPT INVITATION
        |--------------------------------------------------------------------------
@@ -560,7 +712,7 @@ export const manageStudyMembership = functions.onCall({
       if (action === 'accept') {
         const index = cooperators.findIndex(
           (cooperator) =>
-            cooperator?.accepted !== true &&
+            !InviteUtils.isAccepted(cooperator) &&
             (cooperator?.userDocId === actorId ||
               sameEmail(cooperator?.email, actorEmail)),
         )
@@ -577,6 +729,7 @@ export const manageStudyMembership = functions.onCall({
           accepted: true,
           updateDate: now,
           acceptedDate: now,
+          status: INVITE_STATUS.ACCEPTED,
         }
 
         cooperators[index] = membership
@@ -674,6 +827,7 @@ export const manageStudyMembership = functions.onCall({
           testDate: data.testDate,
           study,
           membershipType: 'cooperator',
+          expirationDate: data.expirationDate,
         })
 
         cooperators.push(membership)
@@ -719,7 +873,7 @@ export const manageStudyMembership = functions.onCall({
 
         cooperators[targetIndex] = membership
 
-        if (membership.accepted && membership.userDocId) {
+        if (InviteUtils.isAccepted(membership) && membership.userDocId) {
           studyRoleMap[membership.userDocId] = role
 
           const targetRef = db.collection('users').doc(membership.userDocId)
@@ -753,14 +907,14 @@ export const manageStudyMembership = functions.onCall({
         }
       }
 
-      if (action === 'remove' && target.accepted !== true) {
+      if (action === 'remove' && !InviteUtils.isAccepted(target)) {
         throw error(
           'failed-precondition',
           'Only accepted memberships can be removed',
         )
       }
 
-      if (action === 'cancelInvitation' && target.accepted === true) {
+      if (action === 'cancelInvitation' && InviteUtils.isAccepted(target)) {
         throw error(
           'failed-precondition',
           'Accepted memberships cannot be cancelled',
@@ -833,7 +987,7 @@ export const getStudyInvitation = functions.onCall({
     if (!studySnap.exists) throw error('not-found', 'Study not found')
 
     const study = studySnap.data()
-    const invitation = findMatchingPendingInvitation(study, {
+    const invitation = await findMatchingPendingInvitation(study, {
       uid,
       email: userSnap.data()?.email || request?.auth?.token?.email,
       token,

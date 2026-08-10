@@ -1,8 +1,12 @@
 <template>
   <v-container fluid class="create-study-view">
-    <v-container class="py-6">
+    <v-container class="">
       <!-- Stepper Header -->
-      <StepperHeader :current-step="3" :steps="steps" />
+      <StepperHeader
+        :current-step="3"
+        :steps="steps"
+        @step-click="onStepperStepClick"
+      />
 
       <!-- Page Header -->
       <SectionHeader
@@ -69,15 +73,11 @@
           />
         </v-col>
       </v-row>
-
-      <!-- Back Button -->
-      <BackButton :label="$t('studyCreation.backToMethods')" @back="goBack" />
     </v-container>
   </v-container>
 </template>
 
 <script setup>
-import BackButton from '@/features/ux_creation/components/BackButton.vue'
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue'
 import SelectableCard from '@/shared/components/cards/SelectableCard.vue'
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue'
@@ -92,12 +92,42 @@ const store = useStore()
 const { t, tm } = useI18n()
 const selectedOption = ref('')
 const studyMethod = computed(() => store.state.Tests.studyMethod)
+const selectedStudyType = computed(
+  () => selectedOption.value || store.state.Tests.studyType,
+)
+const hasTemplateWhenNeeded = computed(() => {
+  if (selectedStudyType.value !== 'template') return true
+  return !!store.state.Tests.selectedTemplate
+})
+const canOpenStep4 = computed(
+  () => !!selectedStudyType.value && hasTemplateWhenNeeded.value,
+)
 
 const steps = computed(() => [
-  { value: 1, title: t('studyCreation.steps.category'), complete: true },
-  { value: 2, title: t('studyCreation.steps.methods'), complete: true },
-  { value: 3, title: t('studyCreation.steps.studyType'), complete: false },
-  { value: 4, title: t('studyCreation.steps.details'), complete: false },
+  {
+    value: 1,
+    title: t('studyCreation.steps.category'),
+    complete: true,
+    enabled: true,
+  },
+  {
+    value: 2,
+    title: t('studyCreation.steps.methods'),
+    complete: true,
+    enabled: true,
+  },
+  {
+    value: 3,
+    title: t('studyCreation.steps.studyType'),
+    complete: false,
+    enabled: true,
+  },
+  {
+    value: 4,
+    title: t('studyCreation.steps.details'),
+    complete: false,
+    enabled: canOpenStep4.value,
+  },
 ])
 
 const options = computed(() => [
@@ -139,16 +169,25 @@ const selectTemplate = (template) => {
   router.push({ name: 'study-create-step4' })
 }
 
-const goBack = () => {
-  const method = store.state.Tests.studyMethod
+const onStepperStepClick = (step) => {
+  if (!step?.value || step.value === 3) return
 
-  store.commit('SET_STUDY_TYPE', null)
-  store.commit('SET_SELECTED_TEMPLATE', null)
-
-  if (method) {
-    router.push({ name: 'study-create-step2' })
-  } else {
+  if (step.value === 1) {
+    store.commit('SET_STUDY_TYPE', null)
+    store.commit('SET_SELECTED_TEMPLATE', null)
     router.push({ name: 'study-create-step1' })
+    return
+  }
+
+  if (step.value === 2) {
+    store.commit('SET_STUDY_TYPE', null)
+    store.commit('SET_SELECTED_TEMPLATE', null)
+    router.push({ name: 'study-create-step2' })
+    return
+  }
+
+  if (step.value === 4) {
+    router.push({ name: 'study-create-step4' })
   }
 }
 

@@ -1,19 +1,24 @@
 <template>
   <ShowInfo>
     <template #content>
-      <div class="moderator-content pa-6 rounded-xl text-center fade-in">
+      <div
+        ref="welcomeContent"
+        class="moderator-content pa-6 rounded-xl text-center"
+      >
         <div class="moderator-badge mb-4">
           <v-chip color="primary" size="large" class="px-4 py-2">
             <v-icon start size="20">mdi-account-star</v-icon>
-            {{ $t('UserTestView.ModeratorWelcomeStep.badge') }}
+            <span class="split">{{
+              $t('UserTestView.ModeratorWelcomeStep.badge')
+            }}</span>
           </v-chip>
         </div>
 
-        <h2 class="text-h4 font-weight-bold mb-4 text-primary">
+        <h2 class="split text-h4 font-weight-bold mb-4 text-primary">
           {{ $t('UserTestView.ModeratorWelcomeStep.welcome') }}
         </h2>
 
-        <p class="text-body-1 mb-6 text-grey-darken-1">
+        <p class="split text-body-1 mb-6 text-grey-darken-1">
           {{ $t('UserTestView.ModeratorWelcomeStep.description') }}
         </p>
 
@@ -84,28 +89,39 @@
 
 <script setup>
 import ShowInfo from '@/shared/components/ShowInfo.vue'
+import { onMounted, onBeforeUnmount, nextTick, ref } from 'vue'
+import { animateModeratorWelcomeText } from '@/shared/utils/animations'
 defineProps({
   stepperValue: { type: Number, required: true },
 })
 
 defineEmits(['start'])
+const welcomeContent = ref(null)
+let cleanupSplitAnimation = () => {}
+
+onMounted(async () => {
+  await nextTick()
+  cleanupSplitAnimation = await animateModeratorWelcomeText(
+    welcomeContent.value?.querySelectorAll('.split'),
+  )
+})
+
+onBeforeUnmount(() => {
+  if (typeof cleanupSplitAnimation === 'function') {
+    cleanupSplitAnimation()
+    cleanupSplitAnimation = () => {}
+  }
+})
 </script>
 
 <style scoped>
-.fade-in {
-  animation: fadeIn 2s ease-in-out;
-  animation-fill-mode: both;
+.split {
+  opacity: 0;
 }
 
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+:deep(.line) {
+  display: block;
+  overflow: hidden;
 }
 
 .moderator-content {

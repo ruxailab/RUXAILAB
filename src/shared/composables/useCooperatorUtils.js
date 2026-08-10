@@ -5,6 +5,10 @@ import { formatInitials } from '@/shared/utils/formatUtils'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import { STUDY_ROLE } from '@/shared/utils/studyAccessPolicy'
 
+import i18n from '@/app/plugins/i18n'
+
+const t = i18n.global.t
+
 export const normalizeCooperatorInviteEntry = (entry, registeredUsers = []) => {
   if (!entry) {
     return { email: '', userDocId: null }
@@ -12,7 +16,7 @@ export const normalizeCooperatorInviteEntry = (entry, registeredUsers = []) => {
 
   if (typeof entry === 'string') {
     const email = entry.trim()
-    const normalizedEmail = email.toLowerCase()
+    const normalizedEmail = email?.toLowerCase()
     const matchedUser = registeredUsers.find((user) => {
       return user?.email?.trim()?.toLowerCase() === normalizedEmail
     })
@@ -25,7 +29,7 @@ export const normalizeCooperatorInviteEntry = (entry, registeredUsers = []) => {
 
   const email = entry?.email?.trim() || entry?.value?.trim() || ''
   const matchedUser = registeredUsers.find((user) => {
-    return user?.email?.trim()?.toLowerCase() === email.trim().toLowerCase()
+    return user?.email?.trim()?.toLowerCase() === email?.trim()?.toLowerCase()
   })
 
   return {
@@ -91,21 +95,21 @@ export const getCooperatorInviteValidationError = ({
     return t('cooperators.validation.invalidEmail')
   }
 
-  const normalizedEmail = email.trim().toLowerCase()
+  const normalizedEmail = email?.trim()?.toLowerCase()
   if (!normalizedEmail.includes('@') || !normalizedEmail.includes('.')) {
     return t('cooperators.validation.invalidFormat')
   }
 
   if (
     currentUserEmail &&
-    normalizedEmail === currentUserEmail.trim().toLowerCase()
+    normalizedEmail === currentUserEmail?.trim()?.toLowerCase()
   ) {
     return t('cooperators.validation.inviteSelf')
   }
 
   if (
     studyOwnerEmail &&
-    normalizedEmail === studyOwnerEmail.trim().toLowerCase()
+    normalizedEmail === studyOwnerEmail?.trim()?.toLowerCase()
   ) {
     return t('cooperators.validation.inviteOwner')
   }
@@ -135,9 +139,22 @@ export function useCooperatorUtils() {
 
   // Status filter options
   const statusFilterOptions = computed(() => [
-    { title: 'Invited', value: 'invited' },
-    { title: 'Accepted', value: 'accepted' },
-    { title: 'Pending', value: 'pending' },
+    {
+      title: t('Participants.status.pending'),
+      value: 'pending',
+    },
+    {
+      title: t('Participants.status.accepted'),
+      value: 'accepted',
+    },
+    {
+      title: t('Participants.status.rejected'),
+      value: 'rejected',
+    },
+    {
+      title: t('Participants.status.expired'),
+      value: 'expired',
+    },
   ])
 
   // Utility functions
@@ -146,7 +163,7 @@ export function useCooperatorUtils() {
   }
 
   const getRoleColor = (role) => {
-    switch (role.toLowerCase()) {
+    switch (role?.toLowerCase()) {
       case 'administrator':
         return 'primary'
       case 'evaluator':
@@ -165,7 +182,7 @@ export function useCooperatorUtils() {
   }
 
   const getRoleIcon = (role) => {
-    switch (role.toLowerCase()) {
+    switch (role?.toLowerCase()) {
       case 'administrator':
         return 'mdi-crown'
       case 'evaluator':

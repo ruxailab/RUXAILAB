@@ -156,12 +156,20 @@ const showAcceptDialog = () => {
 
 /* actions */
 const goToNotificationRedirect = async (notification) => {
-  let redirectTo = notification.redirectsTo
-  const result = await store.dispatch('loadInvite', {
-    token: notification.inviteToken,
-  })
+  if (!notification) return
 
-  invite.value = result.invite
+  let redirectTo = notification.redirectsTo
+
+  if (
+    notification.type === 'Collaboration' &&
+    notification.action === 'invitation'
+  ) {
+    const result = await store.dispatch('loadInvite', {
+      token: notification.inviteToken,
+    })
+
+    invite.value = result.invite
+  }
 
   if (notification.type === 'Collaboration') {
     const accepted = await showAcceptDialog()
@@ -171,6 +179,7 @@ const goToNotificationRedirect = async (notification) => {
         notification,
         user: user.value,
         membershipType: invite.value.membershipType,
+        studyId: invite.value.studyId,
       })
 
       return

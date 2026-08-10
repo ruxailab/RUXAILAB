@@ -3,6 +3,7 @@ import Choose from '@/features/ux_creation/Choose.vue'
 import ChooseStudyMethods from '@/features/ux_creation/ChooseStudyMethods.vue'
 import ChooseStudyType from '@/features/ux_creation/ChooseStudyType.vue'
 import StudyDetailsForm from '@/features/ux_creation/StudyDetailsForm.vue'
+import CreateWithAIView from '@/features/ux_creation/CreateWithAIView.vue'
 import DashboardView from '@/features/dashboard/views/DashboardView.vue'
 import TemplateManagerView from '@/features/templates/views/TemplateManagerView.vue'
 
@@ -60,6 +61,12 @@ export default [
     name: 'study-create-step4',
     meta: { authorize: [1] },
     component: StudyDetailsForm,
+  },
+  {
+    path: '/create-with-ai',
+    name: 'study-create-with-ai',
+    meta: { authorize: [1] },
+    component: CreateWithAIView,
   },
   {
     path: '/:TestType/:StudyType/template/dashboard/:id',
