@@ -677,6 +677,8 @@ const showStepAnnouncement = ref(false)
 const stepAnnouncementOverlay = ref(null)
 const nextStepAnnouncementTitle = ref('')
 const nextStepAnnouncementKicker = ref('')
+const isProcessingRemoteStepAnnouncement = ref(false)
+const lastAnnouncedRemoteStepKey = ref(null)
 
 const sessionId = computed(() => route.params.token || null)
 
@@ -780,6 +782,14 @@ const stepperValue = computed(() => {
   if (globalIndex.value === 6) return 5 // Completion
   return 1 // Default to first step
 })
+
+// Scroll to top of the page when step changes
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+  if (rightView.value) {
+    rightView.value.scrollTop = 0
+  }
+}
 
 // Watchers
 watch(user, async () => {
@@ -975,6 +985,29 @@ const signOut = async () => {
   router.push('/signin')
 }
 
+const requestFullscreenIfAvailable = async () => {
+  if (document.fullscreenElement) return
+
+  const root = document.documentElement
+  try {
+    if (root.requestFullscreen) {
+      await root.requestFullscreen()
+      return
+    }
+
+    const legacy =
+      root.webkitRequestFullscreen ||
+      root.mozRequestFullScreen ||
+      root.msRequestFullscreen
+
+    if (legacy) {
+      await legacy.call(root)
+    }
+  } catch {
+    // Ignore if blocked by browser/user settings and continue test flow.
+  }
+}
+
 const startTest = async () => {
   // Check if the test has no tasks
   if (
@@ -1010,7 +1043,7 @@ const startTest = async () => {
   // Ensure only moderator can set this, and only on explicit end, NOT using onDisconnect
   // onDisconnect(roomRef).set(null)
 
-  onValue(roomRef, (snapshot) => {
+  onValue(roomRef, async (snapshot) => {
     const data = snapshot.val()
 
     // If data is null, the room has been deleted (e.g. by moderator ending call)
@@ -1025,14 +1058,93 @@ const startTest = async () => {
       return
     }
 
-    globalIndex.value = data.globalIndex !== undefined ? data.globalIndex : 0
-    taskIndex.value = data.taskIndex !== undefined ? data.taskIndex : 0
+    const nextGlobalIndex =
+      data.globalIndex !== undefined ? data.globalIndex : 0
+    const nextTaskIndex = data.taskIndex !== undefined ? data.taskIndex : 0
+    const nextShowVideoCall =
+      data.showVideoCall !== undefined
+        ? data.showVideoCall
+        : displayVideoCallComponent.value
+
+    const previousGlobalIndex = globalIndex.value
+    const previousTaskIndex = taskIndex.value
+
+    globalIndex.value = nextGlobalIndex
+    taskIndex.value = nextTaskIndex
 
     if (!isModerator.value) {
-      // sync video call state
-      if (data.showVideoCall !== undefined) {
-        displayVideoCallComponent.value = data.showVideoCall
+      const announcementKey = `${nextGlobalIndex}-${nextTaskIndex}`
+      const isConsentStage = nextGlobalIndex === 1 && nextTaskIndex === 0
+      const shouldAnnounceConsentStart =
+        isConsentStage &&
+        nextShowVideoCall === false &&
+        previousGlobalIndex !== nextGlobalIndex &&
+        !isProcessingRemoteStepAnnouncement.value &&
+        lastAnnouncedRemoteStepKey.value !== announcementKey
+
+      if (shouldAnnounceConsentStart) {
+        isProcessingRemoteStepAnnouncement.value = true
+        lastAnnouncedRemoteStepKey.value = announcementKey
+        displayVideoCallComponent.value = true
+
+        await safelyShowNextStepAnnouncement(
+          t('UserTestView.stepper.consent'),
+          1,
+        )
+
+        displayVideoCallComponent.value = false
+        isProcessingRemoteStepAnnouncement.value = false
+        return
       }
+
+      const isPreTestStage = nextGlobalIndex === 2 && nextTaskIndex === 0
+      const shouldAnnouncePreTestStart =
+        isPreTestStage &&
+        nextShowVideoCall === false &&
+        previousGlobalIndex !== nextGlobalIndex &&
+        !isProcessingRemoteStepAnnouncement.value &&
+        lastAnnouncedRemoteStepKey.value !== announcementKey
+
+      if (shouldAnnouncePreTestStart) {
+        isProcessingRemoteStepAnnouncement.value = true
+        lastAnnouncedRemoteStepKey.value = announcementKey
+        displayVideoCallComponent.value = true
+
+        await safelyShowNextStepAnnouncement(
+          t('UserTestView.stepper.preTest'),
+          2,
+        )
+
+        displayVideoCallComponent.value = false
+        isProcessingRemoteStepAnnouncement.value = false
+        return
+      }
+
+      const isTaskStage = nextGlobalIndex === 4
+      const taskChanged =
+        previousGlobalIndex !== nextGlobalIndex ||
+        previousTaskIndex !== nextTaskIndex
+      const shouldAnnounceTaskStart =
+        isTaskStage &&
+        nextShowVideoCall === false &&
+        taskChanged &&
+        !isProcessingRemoteStepAnnouncement.value &&
+        lastAnnouncedRemoteStepKey.value !== announcementKey
+
+      if (shouldAnnounceTaskStart) {
+        isProcessingRemoteStepAnnouncement.value = true
+        lastAnnouncedRemoteStepKey.value = announcementKey
+        displayVideoCallComponent.value = true
+
+        await showTaskTitleAnnouncement(nextTaskIndex)
+
+        displayVideoCallComponent.value = false
+        isProcessingRemoteStepAnnouncement.value = false
+        return
+      }
+
+      // sync video call state
+      displayVideoCallComponent.value = nextShowVideoCall
     } else {
       // Moderator always stays in video call during session
       displayVideoCallComponent.value = true
@@ -1102,13 +1214,6 @@ const safelyShowNextStepAnnouncement = async (title, stageNumber) => {
   }
 }
 
-const getPostConsentAnnouncementTitle = () => {
-  if (validate(test.value?.testStructure?.preTest)) {
-    return t('UserTestView.stepper.preTest')
-  }
-  return t('UserTestView.stepper.tasks')
-}
-
 const getPostTasksAnnouncement = () => {
   if (validate(test.value?.testStructure?.postTest)) {
     return {
@@ -1123,71 +1228,81 @@ const getPostTasksAnnouncement = () => {
   }
 }
 
+const showTaskTitleAnnouncement = async (idx) => {
+  const task = test.value?.testStructure?.userTasks?.[idx]
+  if (!task) return
+
+  const fallbackTitle = t('UserTestView.stepper.taskX', { num: idx + 1 })
+  const announcementTitle = task.taskName || fallbackTitle
+  const announcementKicker = fallbackTitle
+
+  await safelyShowNextStepAnnouncement(announcementTitle, 3, announcementKicker)
+}
+
+const showStageAnnouncementByGlobalIndex = async (
+  idx,
+  currentTaskIndex = 0,
+) => {
+  if (idx === 1) {
+    await safelyShowNextStepAnnouncement(t('UserTestView.stepper.consent'), 1)
+    return
+  }
+
+  if (idx === 2) {
+    await safelyShowNextStepAnnouncement(t('UserTestView.stepper.preTest'), 2)
+    return
+  }
+
+  if (idx === 3) {
+    await safelyShowNextStepAnnouncement(t('UserTestView.stepper.tasks'), 3)
+    return
+  }
+
+  if (idx === 4) {
+    await showTaskTitleAnnouncement(currentTaskIndex)
+    return
+  }
+
+  if (idx === 5) {
+    await safelyShowNextStepAnnouncement(t('UserTestView.stepper.postTest'), 4)
+    return
+  }
+
+  if (idx === 6) {
+    await safelyShowNextStepAnnouncement(
+      t('UserTestView.WelcomeStep.steps.submission'),
+      5,
+    )
+  }
+}
+
 const handleStartTasks = async () => {
   taskIndex.value = 0
   globalIndex.value = 4
-}
+  if (!isModerator.value) {
+    const announcementKey = `${nextGlobalIndex}-${nextTaskIndex}`
+    const stageChanged =
+      previousGlobalIndex !== nextGlobalIndex ||
+      previousTaskIndex !== nextTaskIndex
+    const isAnnounceableStage = nextGlobalIndex >= 1 && nextGlobalIndex <= 6
+    const shouldAnnounceRemoteStage =
+      isAnnounceableStage &&
+      nextShowVideoCall === false &&
+      stageChanged &&
+      !isProcessingRemoteStepAnnouncement.value &&
+      lastAnnouncedRemoteStepKey.value !== announcementKey
 
-const requestFullscreenIfAvailable = async () => {
-  if (document.fullscreenElement) return
+    if (shouldAnnounceRemoteStage) {
+      isProcessingRemoteStepAnnouncement.value = true
+      lastAnnouncedRemoteStepKey.value = announcementKey
+      displayVideoCallComponent.value = true
 
-  const root = document.documentElement
-  try {
-    if (root.requestFullscreen) {
-      await root.requestFullscreen()
+      await showStageAnnouncementByGlobalIndex(nextGlobalIndex, nextTaskIndex)
+
+      displayVideoCallComponent.value = false
+      isProcessingRemoteStepAnnouncement.value = false
       return
     }
-
-    const legacy =
-      root.webkitRequestFullscreen ||
-      root.mozRequestFullScreen ||
-      root.msRequestFullscreen
-
-    if (legacy) {
-      await legacy.call(root)
-    }
-  } catch {
-    // Ignore if blocked by browser/user settings and continue test flow.
-  }
-}
-
-const MODERATOR_DISCONNECT_TIMEOUT_MS = 5 * 60 * 1000 // 5 minutes
-
-const handleModeratorStatusChange = (connected) => {
-  if (isModerator.value) return // Moderator does not need this
-
-  if (!connected) {
-    // Moderator disconnected — start 5-min timeout
-    if (moderatorDisconnectTimeout.value)
-      clearTimeout(moderatorDisconnectTimeout.value)
-    moderatorDisconnectTimeout.value = setTimeout(() => {
-      moderatorInactive.value = true
-    }, MODERATOR_DISCONNECT_TIMEOUT_MS)
-  } else {
-    // Moderator reconnected — clear timeout and dismiss alert instantly
-    if (moderatorDisconnectTimeout.value) {
-      clearTimeout(moderatorDisconnectTimeout.value)
-      moderatorDisconnectTimeout.value = null
-    }
-    moderatorInactive.value = false
-  }
-}
-
-// Scroll to top of the page when step changes
-const scrollToTop = () => {
-  // For most browsers
-  window.scrollTo({ top: 0, behavior: 'smooth' })
-  // For rightView (in case of overflow)
-  if (rightView.value) {
-    rightView.value.scrollTop = 0
-  }
-}
-
-const callTimerSave = () => {
-  if (
-    timerComponent.value &&
-    typeof timerComponent.value.stopTimer === 'function'
-  ) {
     timerComponent.value.stopTimer()
   }
 }
@@ -1274,7 +1389,6 @@ const completeStep = async (id, type, userCompleted = true) => {
   try {
     if (type === 'consent') {
       localTestAnswer.consentCompleted = true
-      await safelyShowNextStepAnnouncement(getPostConsentAnnouncementTitle(), 2)
       const preTestGroup = findStepGroup(STEP_GROUP_IDS.preTest)
       if (preTestGroup) {
         markSubStepComplete(STEP_GROUP_IDS.preTest, 0)
@@ -1284,15 +1398,10 @@ const completeStep = async (id, type, userCompleted = true) => {
         ) {
           markGroupComplete(STEP_GROUP_IDS.preTest)
         }
-        globalIndex.value = 2
-      } else {
-        localTestAnswer.preTestCompleted = true
-        globalIndex.value = 3
       }
     }
     if (type === 'preTest') {
       localTestAnswer.preTestCompleted = true
-      await safelyShowNextStepAnnouncement(t('UserTestView.stepper.tasks'), 3)
       markSubStepComplete(STEP_GROUP_IDS.preTest, 1)
       if (
         localTestAnswer.preTestCompleted &&
@@ -1300,7 +1409,6 @@ const completeStep = async (id, type, userCompleted = true) => {
       ) {
         markGroupComplete(STEP_GROUP_IDS.preTest)
       }
-      globalIndex.value = 3
     }
     if (type === 'tasks') {
       if (!Array.isArray(localTestAnswer.tasks)) {
@@ -1324,13 +1432,6 @@ const completeStep = async (id, type, userCompleted = true) => {
       if (id < localTestAnswer.tasks.length - 1) {
         taskIndex.value = id + 1
         startTimer()
-      } else {
-        const postTasksAnnouncement = getPostTasksAnnouncement()
-        await safelyShowNextStepAnnouncement(
-          postTasksAnnouncement.title,
-          postTasksAnnouncement.stage,
-        )
-        globalIndex.value = 5
       }
       if (userCompleted) {
         store.commit('SET_TOAST', {
@@ -1344,11 +1445,6 @@ const completeStep = async (id, type, userCompleted = true) => {
     }
     if (type === 'postTest') {
       localTestAnswer.postTestCompleted = true
-      await safelyShowNextStepAnnouncement(
-        t('UserTestView.WelcomeStep.steps.submission'),
-        5,
-      )
-      globalIndex.value = 6
       markSubStepComplete(STEP_GROUP_IDS.postTest, id)
     }
 
