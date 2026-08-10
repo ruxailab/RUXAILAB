@@ -43,21 +43,30 @@ const fbFunctions = functionsRegion
 const storage = getStorage(firebaseApp, `gs://${firebaseConfig.storageBucket}`)
 const database = getDatabase(firebaseApp, firebaseConfig.databaseURL)
 
-if (process.env.VUE_APP_USE_EMULATORS === 'true') {
-  const EMULATOR_HOST =
-    process.env.VUE_APP_FIREBASE_EMULATOR_HOST || 'localhost'
-  const FIRESTORE_EMULATOR_PORT =
-    Number(process.env.VUE_APP_FIRESTORE_EMULATOR_PORT) || 8081
+const EMULATOR_HOST =
+  process.env.VUE_APP_FIREBASE_EMULATOR_HOST || 'localhost'
+
+if (process.env.VUE_APP_USE_AUTH_EMULATOR === 'true') {
   const AUTH_EMULATOR_PORT =
     Number(process.env.VUE_APP_AUTH_EMULATOR_PORT) || 9099
+  connectAuthEmulator(auth, `http://${EMULATOR_HOST}:${AUTH_EMULATOR_PORT}`)
+}
+
+if (process.env.VUE_APP_USE_FIRESTORE_EMULATOR === 'true') {
+  const FIRESTORE_EMULATOR_PORT =
+    Number(process.env.VUE_APP_FIRESTORE_EMULATOR_PORT) || 8081
+  connectFirestoreEmulator(db, EMULATOR_HOST, FIRESTORE_EMULATOR_PORT)
+}
+
+if (process.env.VUE_APP_USE_FUNCTIONS_EMULATOR === 'true') {
   const FUNCTIONS_EMULATOR_PORT =
     Number(process.env.VUE_APP_FUNCTIONS_EMULATOR_PORT) || 5002
+  connectFunctionsEmulator(fbFunctions, EMULATOR_HOST, FUNCTIONS_EMULATOR_PORT)
+}
+
+if (process.env.VUE_APP_USE_STORAGE_EMULATOR === 'true') {
   const STORAGE_EMULATOR_PORT =
     Number(process.env.VUE_APP_STORAGE_EMULATOR_PORT) || 9199
-
-  connectFirestoreEmulator(db, EMULATOR_HOST, FIRESTORE_EMULATOR_PORT)
-  connectAuthEmulator(auth, `http://${EMULATOR_HOST}:${AUTH_EMULATOR_PORT}`)
-  connectFunctionsEmulator(fbFunctions, EMULATOR_HOST, FUNCTIONS_EMULATOR_PORT)
   connectStorageEmulator(storage, EMULATOR_HOST, STORAGE_EMULATOR_PORT)
 }
 
