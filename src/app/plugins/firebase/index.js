@@ -55,10 +55,10 @@ if (process.env.VUE_APP_USE_EMULATORS === 'true') {
   const STORAGE_EMULATOR_PORT =
     Number(process.env.VUE_APP_STORAGE_EMULATOR_PORT) || 9199
 
-  // connectFirestoreEmulator(db, EMULATOR_HOST, FIRESTORE_EMULATOR_PORT)
-  // connectAuthEmulator(auth, `http://${EMULATOR_HOST}:${AUTH_EMULATOR_PORT}`)
+  connectFirestoreEmulator(db, EMULATOR_HOST, FIRESTORE_EMULATOR_PORT)
+  connectAuthEmulator(auth, `http://${EMULATOR_HOST}:${AUTH_EMULATOR_PORT}`)
   connectFunctionsEmulator(fbFunctions, EMULATOR_HOST, FUNCTIONS_EMULATOR_PORT)
-  // connectStorageEmulator(storage, EMULATOR_HOST, STORAGE_EMULATOR_PORT)
+  connectStorageEmulator(storage, EMULATOR_HOST, STORAGE_EMULATOR_PORT)
 }
 
 export { auth, db, fbFunctions, storage, database }
