@@ -70,21 +70,19 @@ import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import InviteController from '@/shared/controllers/InviteController'
-import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
 import { showSuccess } from '@/shared/utils/toast'
 import { STUDY_ROLE } from '@/shared/utils/studyAccessPolicy'
 
 const { t } = useI18n()
-const { roleOptions } = useCooperatorUtils()
 
 const COOPERATOR_HIDDEN_ROLES = [STUDY_ROLE.USER, STUDY_ROLE.EVALUATOR]
 
 const visibleRoleOptions = computed(() => {
   if (props.membershipType !== 'cooperator') {
-    return roleOptions.value
+    return props.roleOptions
   }
 
-  return roleOptions.value.filter(
+  return props.roleOptions.filter(
     ({ value }) => !COOPERATOR_HIDDEN_ROLES.includes(value),
   )
 })
@@ -113,6 +111,10 @@ const props = defineProps({
   membershipType: {
     type: String,
     required: true,
+  },
+  roleOptions: {
+    type: Array,
+    default: () => [],
   },
 })
 

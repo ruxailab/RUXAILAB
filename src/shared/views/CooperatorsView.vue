@@ -119,6 +119,7 @@
       :study-title="test?.testTitle"
       :required-login="true"
       :membership-type="'cooperator'"
+      :role-options="assignableRoleOptions"
     />
 
     <!-- Confirmation Dialog -->
@@ -143,7 +144,7 @@
           <v-chip
             :color="
               getRoleColor(
-                roleOptions.find(
+                assignableRoleOptions.find(
                   (r) => r.value === roleDialog.item?.accessLevel,
                 )?.title,
               )
@@ -154,7 +155,7 @@
             <v-icon start size="16">
               {{
                 getRoleIcon(
-                  roleOptions.find(
+                  assignableRoleOptions.find(
                     (r) => r.value === roleDialog.item?.accessLevel,
                   )?.title,
                 )
@@ -162,8 +163,9 @@
             </v-icon>
 
             {{
-              roleOptions.find((r) => r.value === roleDialog.item?.accessLevel)
-                ?.title
+              assignableRoleOptions.find(
+                (r) => r.value === roleDialog.item?.accessLevel,
+              )?.title
             }}
           </v-chip>
 
@@ -172,7 +174,7 @@
           <v-select
             v-model="roleDialog.newRole"
             :items="
-              roleOptions.filter(
+              assignableRoleOptions.filter(
                 (r) => r.value !== roleDialog.item?.accessLevel,
               )
             "
@@ -253,7 +255,7 @@ const store = useStore()
 const route = useRoute()
 const { t } = useI18n()
 
-const { roleOptions, getRoleColor, getRoleIcon } = useCooperatorUtils()
+const { getRoleColor, getRoleIcon } = useCooperatorUtils()
 
 const confirmDialog = ref({
   show: false,
@@ -546,7 +548,9 @@ const handleSendInvitations = async ({
 const changeRole = (item) => {
   roleDialog.value = {
     item,
-    newRole: roleOptions.value.find((r) => r.value !== item.accessLevel),
+    newRole: assignableRoleOptions.value.find(
+      (r) => r.value !== item.accessLevel,
+    ),
   }
 
   confirmDialog.value = {

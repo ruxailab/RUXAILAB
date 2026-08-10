@@ -188,8 +188,6 @@ const goToNotificationRedirect = async (notification) => {
 
     const token = notification.inviteToken
 
-    console.log('Accepting invite:', invite.value)
-
     await store.dispatch('acceptInvite', {
       token,
       user: user.value,
