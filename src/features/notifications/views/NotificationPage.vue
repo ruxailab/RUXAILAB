@@ -489,10 +489,7 @@ const goToNotificationRedirect = async (notification) => {
   if (!notification?.redirectsTo) return
 
   let redirectTo = notification.redirectsTo
-  if (
-    notification.type === 'Collaboration' &&
-    notification.action === 'invitation'
-  ) {
+  if (notification.type === 'Collaboration') {
     const result = await store.dispatch('loadInvite', {
       token: notification.inviteToken,
     })
