@@ -8,7 +8,7 @@
           <v-tabs
             v-model="tab"
             bg-color="transparent"
-            color="#FCA326"
+            color="#FB5C6C"
             slider-size="4"
           >
             <v-tab value="0">
@@ -41,7 +41,10 @@
           <div class="ma-0 pa-0">
             <GeneralAnalytics v-if="tab === '0'" />
             <UserAnalytics v-if="tab === '1'" />
-            <SentimentAnalysisView v-if="tab === '2'" />
+            <SentimentAnalysisView
+              v-if="tab === '2'"
+              :task-definitions="testStructure.userTasks || []"
+            />
             <SusAnalytics v-if="tab === '3'" />
             <NasaTlxAnalytics v-if="tab === '4'" />
             <TamAnalytics v-if="tab === '5'" />
