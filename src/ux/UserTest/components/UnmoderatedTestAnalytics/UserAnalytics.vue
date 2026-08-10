@@ -233,11 +233,6 @@
               >
                 <v-list-item-title>Task Details</v-list-item-title>
               </v-list-item>
-              <!--
-              <v-list-item @click="toggleHideSession(item)" :prepend-icon="item.hidden ? 'mdi-eye' : 'mdi-eye-off'">
-                <v-list-item-title>{{ item.hidden ? 'Show' : 'Hide' }}</v-list-item-title>
-              </v-list-item>
-              -->
             </v-list>
           </v-menu>
         </template>
@@ -252,12 +247,17 @@
       transition="dialog-bottom-transition"
     >
       <v-card>
-        <v-toolbar color="orange" class="pl-3">
+        <v-toolbar color="primary" class="pl-3">
           <span class="text-h5">Test Details</span>
           <v-spacer />
-          <v-btn icon @click="showDialog = false"
-            ><v-icon>mdi-close</v-icon></v-btn
+          <v-btn
+            color="white"
+            variant="text"
+            prepend-icon="mdi-close"
+            @click="showDialog = false"
           >
+            Close
+          </v-btn>
         </v-toolbar>
         <v-card-text class="dialog-body">
           <v-container fluid class="py-0">
@@ -361,180 +361,205 @@
               >
                 <div class="section-card">
                   <div class="section-title d-flex align-center">
-                    Tasks
-                    <span class="text-caption font-weight-regular ml-2"
-                      >({{ testStructure.userTasks.length }})</span
-                    >
+                    <span>
+                      Tasks
+                      <span class="text-caption font-weight-regular ml-2"
+                        >({{ testStructure.userTasks.length }})</span
+                      >
+                    </span>
                   </div>
                   <v-divider class="my-2" />
-                  <div class="d-flex flex-wrap gap-2 mb-3">
-                    <v-chip
-                      v-for="(t, i) in testStructure.userTasks"
-                      :key="'task-chip-' + i"
-                      :color="taskSelect === i ? 'primary' : 'grey'"
-                      variant="tonal"
-                      size="small"
-                      class="cursor-pointer"
-                      @click="taskSelect = i"
-                    >
-                      {{ i + 1 }}. {{ t.taskName }}
-                    </v-chip>
-                  </div>
-
-                  <div
-                    v-if="dialogItem.tasks?.[taskSelect]"
-                    class="task-detail"
+                  <v-data-table
+                    :headers="[
+                      {
+                        title: '#',
+                        key: 'taskNumber',
+                        sortable: false,
+                        width: 72,
+                      },
+                      { title: 'Task', key: 'taskName', sortable: false },
+                      {
+                        title: 'Answer type',
+                        key: 'taskTypeLabel',
+                        sortable: false,
+                        width: 170,
+                      },
+                      {
+                        title: 'Tip',
+                        key: 'tipUsage',
+                        sortable: false,
+                        width: 130,
+                      },
+                      {
+                        title: 'Completion',
+                        key: 'statusLabel',
+                        sortable: false,
+                        width: 150,
+                      },
+                      {
+                        title: 'Answer',
+                        key: 'answerPreview',
+                        sortable: false,
+                      },
+                      {
+                        title: 'Observations',
+                        key: 'observationPreview',
+                        sortable: false,
+                      },
+                      {
+                        title: 'Recordings',
+                        key: 'recordings',
+                        sortable: false,
+                        width: 180,
+                      },
+                      {
+                        title: 'Time',
+                        key: 'timeLabel',
+                        sortable: false,
+                        width: 110,
+                      },
+                    ]"
+                    :items="taskSummaryRows"
+                    :items-per-page="10"
+                    class="elevation-0"
+                    hide-default-footer
+                    item-value="taskIndex"
+                    @click:row="
+                      (_, row) => selectTask(row.item.taskIndex, true)
+                    "
                   >
-                    <div class="mb-2 d-flex flex-wrap gap-2">
-                      <v-chip
-                        v-if="dialogItem.tasks[taskSelect].completed"
-                        size="x-small"
-                        color="success"
-                        variant="tonal"
-                      >
-                        <v-icon size="14" start>mdi-check-circle</v-icon>
-                        Completed
+                    <template #item.taskNumber="{ item }">
+                      <v-chip size="small" variant="tonal" color="primary">
+                        {{ item.taskNumber }}
                       </v-chip>
-                      <v-chip
-                        v-else
-                        size="x-small"
-                        color="error"
-                        variant="tonal"
-                      >
-                        <v-icon size="14" start>mdi-close-circle</v-icon> Not
-                        Completed
-                      </v-chip>
-                      <v-chip
-                        v-if="dialogItem.tasks[taskSelect].taskTime"
-                        size="x-small"
-                        color="info"
-                        variant="tonal"
-                      >
-                        <v-icon size="14" start>mdi-timer-outline</v-icon>
-                        {{
-                          formatTime(
-                            Math.floor(
-                              (dialogItem.tasks[taskSelect].taskTime || 0) /
-                                1000,
-                            ),
-                          )
-                        }}
-                      </v-chip>
-                    </div>
+                    </template>
 
-                    <div
-                      v-if="testStructure.userTasks?.[taskSelect]?.postQuestion"
-                      class="mb-4"
-                    >
-                      <div class="qa-question mb-1">Post Question</div>
-                      <div class="qa-answer">
-                        {{ dialogItem.tasks[taskSelect].postAnswer || '-' }}
+                    <template #item.taskName="{ item }">
+                      <button
+                        class="task-row-button"
+                        type="button"
+                        @click.stop="selectTask(item.taskIndex, true)"
+                      >
+                        <div class="font-weight-medium text-grey-900">
+                          {{ item.taskName }}
+                        </div>
+                        <div class="text-caption text-grey-600">
+                          {{ item.taskType || 'Task' }}
+                        </div>
+                      </button>
+                    </template>
+
+                    <template #item.taskTypeLabel="{ item }">
+                      <v-chip size="small" variant="tonal" color="secondary">
+                        <v-icon size="14" start>{{ item.taskTypeIcon }}</v-icon>
+                        {{ item.taskTypeLabel }}
+                      </v-chip>
+                    </template>
+
+                    <template #item.tipUsage="{ item }">
+                      <v-chip
+                        v-if="item.hasTipAvailable"
+                        size="small"
+                        variant="tonal"
+                        :color="item.tipPressCount > 0 ? 'warning' : 'grey'"
+                      >
+                        <v-icon size="14" start>
+                          {{
+                            item.tipPressCount > 0
+                              ? 'mdi-lightbulb-on-outline'
+                              : 'mdi-lightbulb-outline'
+                          }}
+                        </v-icon>
+                        {{ item.tipUsage }}
+                      </v-chip>
+                      <span v-else class="text-grey-500 text-body-2">-</span>
+                    </template>
+
+                    <template #item.statusLabel="{ item }">
+                      <v-chip
+                        size="small"
+                        variant="tonal"
+                        :color="item.statusColor"
+                      >
+                        <v-icon size="14" start>
+                          {{
+                            item.completed
+                              ? 'mdi-check-circle'
+                              : 'mdi-progress-close'
+                          }}
+                        </v-icon>
+                        {{ item.statusLabel }}
+                      </v-chip>
+                    </template>
+
+                    <template #item.answerPreview="{ item }">
+                      <div class="table-preview text-grey-900">
+                        {{ item.answerPreview }}
                       </div>
-                    </div>
+                    </template>
 
-                    <!-- Media -->
-                    <v-expansion-panels multiple class="media-panels">
-                      <v-expansion-panel
-                        v-if="
-                          dialogItem.tasks[taskSelect].webcamRecordURL ||
-                          dialogItem.tasks[taskSelect].irisTrackingData > 0
-                        "
-                        readonly
-                        hide-actions
-                        class="cursor-pointer"
-                        @click.stop="openSessionAnalyticsDialog"
-                      >
-                        <v-expansion-panel-title>
-                          Task Analytics
-                        </v-expansion-panel-title>
-                      </v-expansion-panel>
+                    <template #item.observationPreview="{ item }">
+                      <div class="d-flex flex-column gap-1">
+                        <v-chip
+                          v-if="item.hasObservations"
+                          size="x-small"
+                          color="warning"
+                          variant="tonal"
+                          class="align-self-start"
+                        >
+                          Observations added
+                        </v-chip>
+                        <span class="table-preview text-grey-900">
+                          {{ item.observationPreview }}
+                        </span>
+                      </div>
+                    </template>
 
-                      <v-expansion-panel
-                        v-if="dialogItem.tasks[taskSelect].webcamRecordURL"
-                      >
-                        <v-expansion-panel-title expand-icon="mdi-chevron-down"
-                          >Webcam Recording</v-expansion-panel-title
+                    <template #item.recordings="{ item }">
+                      <div class="d-flex flex-wrap gap-1 recording-chip-wrap">
+                        <v-chip
+                          v-for="recording in item.recordings"
+                          :key="`${item.taskIndex}-${recording.key}`"
+                          size="x-small"
+                          color="info"
+                          variant="tonal"
                         >
-                        <v-expansion-panel-text>
-                          <video
-                            :src="dialogItem.tasks[taskSelect].webcamRecordURL"
-                            controls
-                            class="media-video"
-                            aria-label="Webcam recording"
-                          >
-                            <track
-                              v-if="
-                                dialogItem.tasks[taskSelect].webcamCaptionsURL
-                              "
-                              kind="captions"
-                              srclang="en"
-                              label="English"
-                              :src="
-                                dialogItem.tasks[taskSelect].webcamCaptionsURL
-                              "
-                            />
-                          </video>
-                        </v-expansion-panel-text>
-                      </v-expansion-panel>
-                      <v-expansion-panel
-                        v-if="dialogItem.tasks[taskSelect].screenRecordURL"
-                      >
-                        <v-expansion-panel-title expand-icon="mdi-chevron-down"
-                          >Screen Recording</v-expansion-panel-title
+                          <v-icon size="13" start>{{ recording.icon }}</v-icon>
+                          {{ recording.label }}
+                        </v-chip>
+                        <span
+                          v-if="!item.recordings.length"
+                          class="text-grey-500 text-body-2"
                         >
-                        <v-expansion-panel-text>
-                          <video
-                            :src="dialogItem.tasks[taskSelect].screenRecordURL"
-                            controls
-                            class="media-video"
-                            aria-label="Screen recording"
-                          >
-                            <track
-                              v-if="
-                                dialogItem.tasks[taskSelect].screenCaptionsURL
-                              "
-                              kind="captions"
-                              srclang="en"
-                              label="English"
-                              :src="
-                                dialogItem.tasks[taskSelect].screenCaptionsURL
-                              "
-                            />
-                          </video>
-                        </v-expansion-panel-text>
-                      </v-expansion-panel>
-                      <v-expansion-panel
-                        v-if="dialogItem.tasks[taskSelect].audioRecordURL"
-                      >
-                        <v-expansion-panel-title expand-icon="mdi-chevron-down"
-                          >Audio Recording</v-expansion-panel-title
-                        >
-                        <v-expansion-panel-text>
-                          <audio
-                            :src="dialogItem.tasks[taskSelect].audioRecordURL"
-                            controls
-                            class="w-100"
-                          />
-                        </v-expansion-panel-text>
-                      </v-expansion-panel>
-                    </v-expansion-panels>
-                    <!-- Diálogo que chama o componente em tela cheia -->
-                    <v-dialog v-model="showSessionAnalytics" fullscreen>
-                      <SessionAnalytics
-                        :tasks="dialogItem.tasks"
-                        :task-select="taskSelect"
-                        @close="showSessionAnalytics = false"
-                      />
-                    </v-dialog>
-                    <SessionAnalyticsDialog
-                      v-model="showSessionAnalyticsDialog"
-                      :user-id="dialogItem.userDocId"
-                      :task-answer="dialogItem.tasks[taskSelect]"
-                      :selected-task="taskSelect"
-                      :test-answer="answers[dialogItem.userDocId]"
-                      :from-eye-tracking="true"
+                          -
+                        </span>
+                      </div>
+                    </template>
+
+                    <template #item.timeLabel="{ item }">
+                      <div class="font-weight-medium text-grey-900">
+                        {{ item.timeLabel }}
+                      </div>
+                    </template>
+                  </v-data-table>
+
+                  <v-dialog v-model="showSessionAnalytics" fullscreen>
+                    <SessionAnalytics
+                      :tasks="dialogItem.tasks"
+                      :task-select="taskSelect"
+                      @close="showSessionAnalytics = false"
                     />
-                  </div>
+                  </v-dialog>
+                  <SessionAnalyticsDialog
+                    v-model="showSessionAnalyticsDialog"
+                    :user-id="dialogItem.userDocId"
+                    :task-answer="taskSummaryRows[taskSelect]?.rawTaskAnswer"
+                    :selected-task="taskSelect"
+                    :selected-task-name="taskSummaryRows[taskSelect]?.taskName"
+                    :task-definitions="testStructure.userTasks || []"
+                    :test-answer="answers[dialogItem.userDocId]"
+                    :from-eye-tracking="true"
+                  />
                 </div>
               </v-col>
             </v-row>
@@ -648,6 +673,195 @@ const filteredSessions = computed(() => {
 // Dynamic task columns + headers + table data
 const taskColumns = computed(() => testStructure.value?.userTasks || [])
 
+const getTaskTypeLabel = (taskType) => {
+  const labels = {
+    'no-answer': 'No answer',
+    'text-area': t('switches.textArea'),
+    'post-test': t('switches.postTest'),
+    'post-form': t('switches.postForm'),
+    'nasa-tlx': t('switches.nasa'),
+    sus: t('sus'),
+    'tam-1': 'TAM-1',
+    'tam-2': 'TAM-2',
+    'tam-3': 'TAM-3',
+    sart: t('switches.sart'),
+  }
+
+  return labels[taskType] || taskType || '-'
+}
+
+const getTaskTypeIcon = (taskType) => {
+  const icons = {
+    'no-answer': 'mdi-minus-circle-outline',
+    'text-area': 'mdi-text-box-outline',
+    'post-test': 'mdi-clipboard-check-outline',
+    'post-form': 'mdi-form-select',
+    'nasa-tlx': 'mdi-rocket-launch-outline',
+    sus: 'mdi-account-check-outline',
+    'tam-1': 'mdi-chart-line',
+    'tam-2': 'mdi-chart-box-outline',
+    'tam-3': 'mdi-chart-donut-outline',
+    sart: 'mdi-chart-areaspline',
+  }
+
+  return icons[taskType] || 'mdi-help-circle-outline'
+}
+
+const resolveTaskAnswer = (sessionTasks, index, taskDefinition) => {
+  if (!sessionTasks) return null
+  return (
+    sessionTasks[index] ??
+    sessionTasks[`${index}`] ??
+    sessionTasks[taskDefinition?.taskId] ??
+    null
+  )
+}
+
+const getQuestionnairePreview = (taskAnswer, taskType) => {
+  if (!taskAnswer) return '-'
+
+  const questionnaireValueMap = {
+    'nasa-tlx': taskAnswer.nasaTlxAnswers,
+    sus: taskAnswer.susAnswers,
+    'tam-1': taskAnswer.tamAnswers,
+    'tam-2': taskAnswer.tamAnswers,
+    'tam-3': taskAnswer.tamAnswers,
+    sart: taskAnswer.sartAnswers,
+  }
+
+  const questionnaireValue = questionnaireValueMap[taskType]
+  if (!questionnaireValue) return '-'
+
+  if (Array.isArray(questionnaireValue)) {
+    const answered = questionnaireValue.filter(
+      (value) => value !== undefined && value !== null && value !== '',
+    ).length
+    return answered > 0 ? `${answered} answered` : '-'
+  }
+
+  if (typeof questionnaireValue === 'object') {
+    return Object.keys(questionnaireValue).length > 0
+      ? 'Questionnaire captured'
+      : '-'
+  }
+
+  return 'Questionnaire captured'
+}
+
+const getTaskAnswerPreview = (taskAnswer, taskDefinition) => {
+  if (!taskAnswer) return '-'
+
+  if (taskDefinition?.postQuestion) {
+    return taskAnswer.postAnswer || '-'
+  }
+
+  if (taskDefinition?.taskType === 'text-area') {
+    return taskAnswer.taskAnswer || '-'
+  }
+
+  if (
+    ['sus', 'nasa-tlx', 'tam-1', 'tam-2', 'tam-3', 'sart'].includes(
+      taskDefinition?.taskType,
+    )
+  ) {
+    return getQuestionnairePreview(taskAnswer, taskDefinition?.taskType)
+  }
+
+  if (taskDefinition?.taskType === 'post-form') {
+    return taskAnswer.postAnswer || taskAnswer.taskAnswer || '-'
+  }
+
+  return taskAnswer.taskAnswer || taskAnswer.postAnswer || '-'
+}
+
+const getTaskObservationPreview = (taskAnswer) => {
+  const observation = String(taskAnswer?.taskObservations || '').trim()
+  return observation || '-'
+}
+
+const getTaskRecordings = (taskAnswer, taskDefinition) => {
+  const recordings = [
+    {
+      key: 'audio',
+      label: 'Audio',
+      icon: 'mdi-microphone',
+      active:
+        !!taskDefinition?.hasAudioRecord ||
+        !!taskAnswer?.audioRecordURL ||
+        !!taskAnswer?.moderatorAudioURL,
+    },
+    {
+      key: 'screen',
+      label: 'Screen',
+      icon: 'mdi-monitor-screenshot',
+      active:
+        !!taskDefinition?.hasScreenRecord || !!taskAnswer?.screenRecordURL,
+    },
+    {
+      key: 'webcam',
+      label: 'Webcam',
+      icon: 'mdi-camera',
+      active: !!taskDefinition?.hasCamRecord || !!taskAnswer?.webcamRecordURL,
+    },
+    {
+      key: 'eye',
+      label: 'Eye',
+      icon: 'mdi-eye',
+      active:
+        !!taskDefinition?.hasEye ||
+        (Array.isArray(taskAnswer?.irisTrackingData) &&
+          taskAnswer.irisTrackingData.length > 0),
+    },
+  ]
+
+  return recordings.filter((recording) => recording.active)
+}
+
+const taskSummaryRows = computed(() => {
+  const userTasks = testStructure.value?.userTasks || []
+  const sessionTasks = dialogItem.value?.tasks || {}
+
+  return userTasks.map((taskDefinition, index) => {
+    const taskAnswer = resolveTaskAnswer(sessionTasks, index, taskDefinition)
+    const observationText = getTaskObservationPreview(taskAnswer)
+    const completed = !!taskAnswer?.completed
+    const attempted = !!taskAnswer?.attempted
+    const taskTimeSeconds = Math.floor((taskAnswer?.taskTime || 0) / 1000)
+    const tipPressCount = Number(taskAnswer?.tipPressCount || 0)
+    const hasTipAvailable = !!taskDefinition?.taskTip
+
+    return {
+      taskIndex: index,
+      taskNumber: index + 1,
+      taskName: taskDefinition?.taskName || `Task ${index + 1}`,
+      taskType: taskDefinition?.taskType || '',
+      taskTypeLabel: getTaskTypeLabel(taskDefinition?.taskType),
+      taskTypeIcon: getTaskTypeIcon(taskDefinition?.taskType),
+      answerPreview: getTaskAnswerPreview(taskAnswer, taskDefinition),
+      observationPreview: observationText,
+      hasObservations: observationText !== '-',
+      tipPressCount,
+      hasTipAvailable,
+      tipUsage:
+        tipPressCount > 0
+          ? `${tipPressCount} press${tipPressCount === 1 ? '' : 'es'}`
+          : 'Not used',
+      recordings: getTaskRecordings(taskAnswer, taskDefinition),
+      completed,
+      attempted,
+      statusLabel: completed
+        ? t('analytics.completed')
+        : attempted
+          ? t('analytics.notCompleted')
+          : '-',
+      statusColor: completed ? 'success' : attempted ? 'warning' : 'grey',
+      timeSeconds: taskTimeSeconds,
+      timeLabel: formatTime(taskTimeSeconds),
+      rawTaskAnswer: taskAnswer,
+    }
+  })
+})
+
 const tableHeaders = computed(() => {
   const dynamicTaskHeaders = taskColumns.value.map((t, i) => ({
     title: `T${i + 1}`,
@@ -728,6 +942,14 @@ const tableData = computed(() => {
 
 const openSessionAnalyticsDialog = () => {
   showSessionAnalyticsDialog.value = true
+}
+
+const selectTask = (selectedTaskIndex, openAnalytics = false) => {
+  taskSelect.value = selectedTaskIndex
+
+  if (openAnalytics) {
+    openSessionAnalyticsDialog()
+  }
 }
 
 const viewAnswers = (item) => {
@@ -935,5 +1157,29 @@ watch(
   height: 40px;
   font-weight: 600;
   letter-spacing: 0.3px;
+}
+
+.task-row-button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+}
+
+.table-preview {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.recording-chip-wrap {
+  min-height: 28px;
 }
 </style>

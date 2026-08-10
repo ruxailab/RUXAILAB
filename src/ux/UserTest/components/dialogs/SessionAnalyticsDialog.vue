@@ -11,7 +11,7 @@
           <v-icon>mdi-close</v-icon>
         </v-btn>
         <v-toolbar-title>
-          Task Analysis: {{ taskAnswer?.taskName || 'Untitled Task' }}
+          Task Analysis: {{ displayTaskName }}
         </v-toolbar-title>
       </v-toolbar>
 
@@ -63,11 +63,12 @@
           <v-col cols="12" md="6">
             <v-tabs v-model="rightTab" bg-color="grey-lighten-4" grow>
               <!-- <v-tab value="general">General</v-tab> -->
-              <v-tab v-if="taskAnswer?.irisTrackingData.length > 0" value="eye"
-                >Eye Tracker</v-tab
+              <v-tab v-if="hasEyeTrackingData" value="eye">Eye Tracker</v-tab>
+              <v-tab v-if="hasSentimentData" value="sentimental"
+                >Sentiment Analysis</v-tab
               >
-              <v-tab v-if="taskAnswer?.webcamRecordURL" value="sentimental"
-                >Sentimental</v-tab
+              <v-tab v-if="hasTranscriptionData" value="transcript"
+                >Transcriptions</v-tab
               >
               <!-- <v-tab value="transcript">Transcripción</v-tab>
                             <v-tab value="notes">Notas</v-tab> -->
@@ -81,10 +82,7 @@
                                 <NotesStats :totalNotes="taskAnswer?.notesCount ?? mockNotesCount" class="mb-4" />
                             </v-window-item> -->
 
-              <v-window-item
-                v-if="taskAnswer?.irisTrackingData.length > 0"
-                value="eye"
-              >
+              <v-window-item v-if="hasEyeTrackingData" value="eye">
                 <EyeTrackingStats
                   :iris-data="taskAnswer?.irisTrackingData"
                   :user-id="userId"
@@ -102,16 +100,50 @@
                 />
               </v-window-item>
 
-              <v-window-item
-                v-if="taskAnswer?.webcamRecordURL"
-                value="sentimental"
-              >
+              <v-window-item v-if="hasSentimentData" value="sentimental">
                 <FacialSentimentPanel
                   :video-element="mainVideo1"
                   :webcam-video-url="taskAnswer?.webcamRecordURL"
                   :test-answer="testAnswer"
                   :selected-task="selectedTask"
                 />
+              </v-window-item>
+
+              <v-window-item v-if="hasTranscriptionData" value="transcript">
+                <v-sheet class="pa-4 rounded-lg" color="grey-lighten-5">
+                  <h4 class="text-subtitle-1 mb-3">Audio Sources</h4>
+                  <div class="d-flex flex-column ga-3">
+                    <audio
+                      v-if="taskAnswer?.audioRecordURL"
+                      controls
+                      :src="taskAnswer?.audioRecordURL"
+                    />
+                    <audio
+                      v-if="taskAnswer?.moderatorAudioURL"
+                      controls
+                      :src="taskAnswer?.moderatorAudioURL"
+                    />
+                    <p
+                      v-if="
+                        !taskAnswer?.audioRecordURL &&
+                        !taskAnswer?.moderatorAudioURL
+                      "
+                      class="text-body-2 text-medium-emphasis mb-0"
+                    >
+                      No audio files available for this task.
+                    </p>
+                  </div>
+
+                  <div
+                    v-if="taskAnswer?.transcript"
+                    class="mt-4 text-body-2 text-grey-darken-2"
+                  >
+                    <h4 class="text-subtitle-1 mb-2">Transcript</h4>
+                    <p class="mb-0" style="white-space: pre-wrap">
+                      {{ taskAnswer.transcript }}
+                    </p>
+                  </div>
+                </v-sheet>
               </v-window-item>
 
               <!-- <v-window-item value="transcript">
@@ -144,7 +176,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
+import { ref, watch, onMounted, onBeforeUnmount, computed } from 'vue'
 import { useManagedListeners } from '@/shared/composables/useManagedListeners'
 import SessionTimeline from '../sessions/SessionTimeline.vue'
 import EyeTrackingStats from '../sessions/EyeTrackingStats.vue'
@@ -157,6 +189,8 @@ const props = defineProps({
   fromEyeTracking: { type: Boolean, default: false },
   userId: { type: String, default: '' },
   selectedTask: { type: Number, default: 0 },
+  selectedTaskName: { type: String, default: '' },
+  taskDefinitions: { type: Array, default: () => [] },
   testAnswer: { type: Object, default: null },
 })
 const emit = defineEmits(['update:modelValue'])
@@ -172,6 +206,53 @@ let rafId = null
 const predictedData = ref(null)
 const selectedView = ref('precision')
 const videoReady = ref(false)
+
+const hasEyeTrackingData = computed(
+  () =>
+    Array.isArray(props.taskAnswer?.irisTrackingData) &&
+    props.taskAnswer.irisTrackingData.length > 0,
+)
+
+const hasSentimentData = computed(() =>
+  Boolean(props.taskAnswer?.webcamRecordURL),
+)
+
+const hasTranscriptionData = computed(
+  () =>
+    Boolean(props.taskAnswer?.audioRecordURL) ||
+    Boolean(props.taskAnswer?.moderatorAudioURL) ||
+    Boolean(props.taskAnswer?.latestTranscriptionDocId) ||
+    Boolean(props.taskAnswer?.transcript),
+)
+
+const preferredTab = computed(() => {
+  if (hasEyeTrackingData.value) return 'eye'
+  if (hasSentimentData.value) return 'sentimental'
+  if (hasTranscriptionData.value) return 'transcript'
+  return 'eye'
+})
+
+const displayTaskName = computed(() => {
+  const nameFromAnswer = String(props.taskAnswer?.taskName || '').trim()
+  if (nameFromAnswer) return nameFromAnswer
+
+  const nameFromSelection = String(props.selectedTaskName || '').trim()
+  if (nameFromSelection) return nameFromSelection
+
+  const selectedIndex = Number(props.selectedTask)
+  if (
+    Number.isInteger(selectedIndex) &&
+    selectedIndex >= 0 &&
+    props.taskDefinitions?.[selectedIndex]?.taskName
+  ) {
+    const nameFromDefinition = String(
+      props.taskDefinitions[selectedIndex].taskName,
+    ).trim()
+    if (nameFromDefinition) return nameFromDefinition
+  }
+
+  return 'Untitled Task'
+})
 
 const mockEyeTracking = { accuracy: 92, fixations: 34 }
 
@@ -220,9 +301,24 @@ managedListeners.addCleanup(() => cancelAnimationFrame(rafId))
 
 watch(
   () => props.modelValue,
-  (val) => (open.value = val),
+  (val) => {
+    open.value = val
+    if (val) {
+      rightTab.value = preferredTab.value
+    }
+  },
 )
 watch(open, (val) => emit('update:modelValue', val))
+
+watch(
+  () => props.taskAnswer,
+  () => {
+    if (open.value) {
+      rightTab.value = preferredTab.value
+    }
+  },
+  { deep: true },
+)
 
 onMounted(() => {
   const video = mainVideo2.value

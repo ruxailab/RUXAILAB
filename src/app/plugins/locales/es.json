@@ -1350,6 +1350,10 @@
       "sart": "Técnica de Calificación de Conciencia Situacional - mide la conciencia situacional"
     },
     "answerTypePreview": {
+      "textArea": {
+        "placeholder": "Los participantes proporcionarán su retroalimentación aquí...",
+        "submitButton": "Enviar retroalimentación"
+      },
       "postTest": {
         "title": "Comentarios posteriores a la prueba",
         "q1": "Califica tu experiencia",

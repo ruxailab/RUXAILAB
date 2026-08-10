@@ -117,48 +117,57 @@ const recordScreen = async () => {
 
     mediaRecorder.value.onstop = async () => {
       emit('showLoading')
-      const videoBlob = new Blob(chunks.value, { type: 'video/webm' })
-      const storage = getStorage()
-      const storagePath = `tests/${props.testId}/${resolvedUserDocId.value}/task_${recordingTaskIndex.value}/screen_record/${videoUrl.value}`
-      const storageReference = storageRef(storage, storagePath)
+      try {
+        const videoBlob = new Blob(chunks.value, { type: 'video/webm' })
+        const storage = getStorage()
+        const storagePath = `tests/${props.testId}/${resolvedUserDocId.value}/task_${recordingTaskIndex.value}/screen_record/${videoUrl.value}`
+        const storageReference = storageRef(storage, storagePath)
 
-      await uploadBytes(storageReference, videoBlob)
-      videoUrl.value = await getDownloadURL(storageReference)
+        await uploadBytes(storageReference, videoBlob)
+        videoUrl.value = await getDownloadURL(storageReference)
 
-      // Use the task index from when recording started, not the current one
-      const correctTaskIndex = recordingTaskIndex.value
+        // Use the task index from when recording started, not the current one
+        const correctTaskIndex = recordingTaskIndex.value
 
-      await store.dispatch('updateTaskMediaUrl', {
-        taskIndex: correctTaskIndex,
-        mediaType: MEDIA_FIELD_MAP.screen,
-        url: videoUrl.value,
-        size: videoBlob.size,
-      })
+        await store.dispatch('updateTaskMediaUrl', {
+          taskIndex: correctTaskIndex,
+          mediaType: MEDIA_FIELD_MAP.screen,
+          url: videoUrl.value,
+          size: videoBlob.size,
+          userId: resolvedUserDocId.value,
+        })
 
-      // Add safety check before setting the property
-      if (
-        currentUserTestAnswer.value.tasks &&
-        currentUserTestAnswer.value.tasks[correctTaskIndex]
-      ) {
-        currentUserTestAnswer.value.tasks[correctTaskIndex].screenRecordURL =
-          videoUrl.value
-        currentUserTestAnswer.value.tasks[correctTaskIndex].screenSize =
-          videoBlob.size
-      } else {
+        // Add safety check before setting the property
+        if (
+          currentUserTestAnswer.value.tasks &&
+          currentUserTestAnswer.value.tasks[correctTaskIndex]
+        ) {
+          currentUserTestAnswer.value.tasks[correctTaskIndex].screenRecordURL =
+            videoUrl.value
+          currentUserTestAnswer.value.tasks[correctTaskIndex].screenSize =
+            videoBlob.size
+        } else {
+          console.error(
+            'Task not found at index:',
+            correctTaskIndex,
+            'Available tasks:',
+            currentUserTestAnswer.value.tasks?.length,
+          )
+        }
+      } catch (error) {
         console.error(
-          'Task not found at index:',
-          correctTaskIndex,
-          'Available tasks:',
-          currentUserTestAnswer.value.tasks?.length,
+          'Unexpected error while stopping screen recording:',
+          error,
         )
+      } finally {
+        // Stop all tracks
+        if (videoStream.value) {
+          videoStream.value.getTracks().forEach((track) => track.stop())
+        }
+        isRecording.value = false
+        isCapturing.value = false
+        emit('stopShowLoading')
       }
-
-      // Stop all tracks
-      videoStream.value.getTracks().forEach((track) => track.stop())
-      isRecording.value = false
-      isCapturing.value = false
-
-      emit('stopShowLoading')
     }
 
     isRecording.value = true

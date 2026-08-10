@@ -1432,6 +1432,10 @@
       "sart": "Situation Awareness Rating Technique - measures situational awareness"
     },
     "answerTypePreview": {
+      "textArea": {
+        "placeholder": "Participants will provide their feedback here...",
+        "submitButton": "Submit Feedback"
+      },
       "postTest": {
         "title": "Post Test Feedback",
         "q1": "Rate your experience",
