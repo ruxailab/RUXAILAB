@@ -450,4 +450,43 @@ describe('Storage study RBAC', () => {
     )
     await assertFails(uploadBytes(unsupportedUserRecording, new Uint8Array([1])))
   })
+
+  it('lets a Focus Group facilitator upload a stimulus and every session role read it, but denies writes from non-facilitators', async () => {
+    await testEnv.withSecurityRulesDisabled((adminContext) =>
+      updateDoc(doc(adminContext.firestore(), 'tests/study-1'), {
+        testType: 'FOCUS_GROUP',
+        studyRoleMap: { admin: 0, manager: 4, user: 1, observator: 3 },
+      }),
+    )
+
+    const facilitatorUpload = ref(
+      context('admin').storage(),
+      'tests/study-1/stimulus_1/homepage.png',
+    )
+    await assertSucceeds(uploadBytes(facilitatorUpload, new Uint8Array([1])))
+
+    const participantRead = ref(
+      context('user').storage(),
+      'tests/study-1/stimulus_1/homepage.png',
+    )
+    await assertSucceeds(getBytes(participantRead))
+
+    const observerRead = ref(
+      context('observator').storage(),
+      'tests/study-1/stimulus_1/homepage.png',
+    )
+    await assertSucceeds(getBytes(observerRead))
+
+    const strangerRead = ref(
+      context('stranger').storage(),
+      'tests/study-1/stimulus_1/homepage.png',
+    )
+    await assertFails(getBytes(strangerRead))
+
+    const participantUpload = ref(
+      context('user').storage(),
+      'tests/study-1/stimulus_2/blocked.png',
+    )
+    await assertFails(uploadBytes(participantUpload, new Uint8Array([1])))
+  })
 })
