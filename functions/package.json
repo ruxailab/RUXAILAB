@@ -6,6 +6,7 @@
     "lint": "eslint .",
     "serve": "firebase emulators:start --only functions",
     "serve:dev": "cross-env NODE_ENV=development ENV_FILE=.env.development firebase emulators:start --only functions --project develop",
+    "serve:emulators": "cross-env NODE_ENV=development ENV_FILE=.env.development firebase emulators:start --project develop",
     "serve:heuristic": "cross-env NODE_ENV=development ENV_FILE=.env.development firebase emulators:start --only functions --project develop",
     "serve:prod": "cross-env NODE_ENV=production ENV_FILE=.env.production firebase emulators:start --only functions --project prod",
     "shell": "firebase functions:shell",
@@ -27,6 +28,7 @@
     "firebase-admin": "^13.2.0",
     "firebase-functions": "^6.3.2",
     "nodemailer": "^6.9.5",
+    "openai": "^6.48.0",
     "puppeteer-core": "^24.43.1"
   },
   "devDependencies": {

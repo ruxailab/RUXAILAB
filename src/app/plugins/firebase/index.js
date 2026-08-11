@@ -45,29 +45,43 @@ const storage = getStorage(firebaseApp, `gs://${firebaseConfig.storageBucket}`)
 const database = getDatabase(firebaseApp, firebaseConfig.databaseURL)
 
 const useAllEmulators = process.env.VUE_APP_USE_EMULATORS === 'true'
-const useFunctionsEmulator =
-  useAllEmulators || process.env.VUE_APP_USE_FUNCTIONS_EMULATOR === 'true'
+const EMULATOR_HOST =
+  process.env.VUE_APP_FIREBASE_EMULATOR_HOST || 'localhost'
 
-if (useAllEmulators) {
-  const EMULATOR_HOST =
-    process.env.VUE_APP_FIREBASE_EMULATOR_HOST || 'localhost'
-  const FIRESTORE_EMULATOR_PORT =
-    Number(process.env.VUE_APP_FIRESTORE_EMULATOR_PORT) || 8081
+if (
+  useAllEmulators ||
+  process.env.VUE_APP_USE_AUTH_EMULATOR === 'true'
+) {
   const AUTH_EMULATOR_PORT =
     Number(process.env.VUE_APP_AUTH_EMULATOR_PORT) || 9099
-  const STORAGE_EMULATOR_PORT =
-    Number(process.env.VUE_APP_STORAGE_EMULATOR_PORT) || 9199
-
-  connectFirestoreEmulator(db, EMULATOR_HOST, FIRESTORE_EMULATOR_PORT)
   connectAuthEmulator(auth, `http://${EMULATOR_HOST}:${AUTH_EMULATOR_PORT}`)
-  connectStorageEmulator(storage, EMULATOR_HOST, STORAGE_EMULATOR_PORT)
 }
 
-if (useFunctionsEmulator) {
-  const emulatorHost = process.env.VUE_APP_FIREBASE_EMULATOR_HOST || 'localhost'
-  const emulatorPort =
+if (
+  useAllEmulators ||
+  process.env.VUE_APP_USE_FIRESTORE_EMULATOR === 'true'
+) {
+  const FIRESTORE_EMULATOR_PORT =
+    Number(process.env.VUE_APP_FIRESTORE_EMULATOR_PORT) || 8081
+  connectFirestoreEmulator(db, EMULATOR_HOST, FIRESTORE_EMULATOR_PORT)
+}
+
+if (
+  useAllEmulators ||
+  process.env.VUE_APP_USE_FUNCTIONS_EMULATOR === 'true'
+) {
+  const FUNCTIONS_EMULATOR_PORT =
     Number(process.env.VUE_APP_FUNCTIONS_EMULATOR_PORT) || 5002
-  connectFunctionsEmulator(fbFunctions, emulatorHost, emulatorPort)
+  connectFunctionsEmulator(fbFunctions, EMULATOR_HOST, FUNCTIONS_EMULATOR_PORT)
+}
+
+if (
+  useAllEmulators ||
+  process.env.VUE_APP_USE_STORAGE_EMULATOR === 'true'
+) {
+  const STORAGE_EMULATOR_PORT =
+    Number(process.env.VUE_APP_STORAGE_EMULATOR_PORT) || 9199
+  connectStorageEmulator(storage, EMULATOR_HOST, STORAGE_EMULATOR_PORT)
 }
 
 export { auth, db, fbFunctions, storage, database }

@@ -74,24 +74,35 @@ export function useDataTableConfig(type, t, options = {}) {
     ]
 
     if (currentType === 'sessions') {
-      baseHeaders.push({
-        title: t('common.table.evaluator'),
-        key: 'evaluator',
-        sortable: true,
-        value: (item) => item.email ?? '',
-      })
-      baseHeaders.push({
-        title: t('common.table.status'),
-        key: 'status',
-        sortable: true,
-        value: (item) => getSessionStatus(item.testDate).status,
-      })
-      baseHeaders.push({
-        title: t('common.table.sessionDate'),
-        key: 'testDate',
-        sortable: true,
-        value: (item) => toSortableTimestamp(item.testDate),
-      })
+      if (currentType === 'sessions') {
+        baseHeaders.push({
+          title: t('Sessions.headers.staff'),
+          key: 'staff',
+          sortable: false,
+          align: 'start',
+        })
+
+        baseHeaders.push({
+          title: t('common.table.participants'),
+          key: 'participants',
+          sortable: false,
+          align: 'start',
+        })
+
+        baseHeaders.push({
+          title: t('common.table.status'),
+          key: 'status',
+          sortable: true,
+          value: (item) => getSessionStatus(item.scheduledAt).status,
+        })
+
+        baseHeaders.push({
+          title: t('common.table.sessionDate'),
+          key: 'scheduledAt',
+          sortable: true,
+          value: (item) => toSortableTimestamp(item.scheduledAt),
+        })
+      }
     }
 
     if (

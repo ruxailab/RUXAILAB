@@ -86,7 +86,8 @@ export const formatDateTime = (date, locale = 'en') => {
       hour: '2-digit',
       minute: '2-digit',
     })
-  } catch {
+  } catch (e) {
+    console.error('Error formatting date-time:', e)
     return INVALID_DATE_FALLBACK
   }
 }

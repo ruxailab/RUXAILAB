@@ -2,7 +2,6 @@
   <!-- 🔍 Search + Filters for sessions -->
   <v-card class="mb-4 pa-4 elevation-2 overflow-hidden">
     <div class="d-flex align-center mb-3 flex-wrap button-bar">
-      <!-- Search input -->
       <v-text-field
         v-model="searchSessions"
         prepend-inner-icon="mdi-magnify"
@@ -13,26 +12,16 @@
         class="flex-grow-1"
       />
 
-      <!-- Reset filters button -->
       <v-btn
         color="primary"
         class="search-btn"
         prepend-icon="mdi-filter-remove"
         :disabled="!hasActiveSessionFilters"
-        @click="
-          () => {
-            searchSessions = ''
-            selectedSessionStatusFilter = ['all']
-            selectedSessionOwnershipFilter = 'all'
-            selectedSessionEvaluatorFilter = 'all'
-            selectedSessionDateRange = []
-          }
-        "
+        @click="resetSessionFilters"
       >
         {{ t('pages.sessions.reset') }}
       </v-btn>
 
-      <!-- Toggle filters visibility -->
       <v-btn
         :color="showFilters ? 'primary' : 'grey'"
         variant="tonal"
@@ -40,19 +29,21 @@
         size="small"
         @click="toggleFilters"
       >
-        <v-icon>{{
-          showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant'
-        }}</v-icon>
+        <v-icon>
+          {{ showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant' }}
+        </v-icon>
       </v-btn>
     </div>
 
-    <!-- Expandable section with filters -->
     <v-expand-transition>
       <div v-show="showFilters">
         <v-row dense>
-          <!-- 👤 Ownership filter -->
-          <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">{{ t('pages.sessions.ownership') }}</div>
+          <!-- Ownership filter -->
+          <v-col cols="12" sm="6" md="4">
+            <div class="filter-label">
+              {{ t('pages.sessions.ownership') }}
+            </div>
+
             <v-select
               v-model="selectedSessionOwnershipFilter"
               :items="ownershipOptions"
@@ -64,25 +55,12 @@
             />
           </v-col>
 
-          <!-- 👥 Evaluator filter -->
-          <v-col cols="12" sm="6" md="3">
-            <div class="filter-label">{{ t('pages.sessions.evaluator') }}</div>
-            <v-select
-              v-model="selectedSessionEvaluatorFilter"
-              :items="evaluatorOptions"
-              item-title="text"
-              item-value="value"
-              density="compact"
-              variant="outlined"
-              hide-details
-            />
-          </v-col>
-
-          <!-- 📅 Session date range filter -->
-          <v-col cols="12" sm="6" md="3">
+          <!-- Date filter -->
+          <v-col cols="12" sm="6" md="4">
             <div class="filter-label">
               {{ t('pages.sessions.sessionDate') }}
             </div>
+
             <v-menu
               :close-on-content-click="false"
               transition="scale-transition"
@@ -110,7 +88,7 @@
                   prepend-inner-icon="mdi-calendar"
                 />
               </template>
-              <!-- Vuetify date picker (supports range mode) -->
+
               <v-date-picker
                 v-model="selectedSessionDateRange"
                 multiple="range"
@@ -118,11 +96,12 @@
             </v-menu>
           </v-col>
 
-          <!-- ⚙️ Status filter -->
-          <v-col cols="12" sm="6" md="3">
+          <!-- Status filter -->
+          <v-col cols="12" sm="6" md="4">
             <div class="filter-label">
               {{ t('pages.sessions.statusLabel') }}
             </div>
+
             <v-select
               v-model="selectedSessionStatusFilter"
               :items="sessionStatusOptions"
@@ -140,16 +119,16 @@
     </v-expand-transition>
   </v-card>
 
-  <!-- 🧾 Session list -->
+  <!-- Session list -->
   <List
     v-if="filteredSessions.length > 0"
     :items="filteredSessions"
     type="sessions"
-    :sort-by="[{ key: 'testDate', order: 'desc' }]"
+    :sort-by="[{ key: 'scheduledAt', order: 'desc' }]"
     @clicked="goTo"
   />
 
-  <!-- 🕓 Empty state (no sessions found) -->
+  <!-- Empty state -->
   <div v-else class="empty-state">
     <div v-if="hasActiveSessionFilters">
       <v-icon
@@ -158,9 +137,16 @@
         color="grey-lighten-1"
         class="mb-2"
       />
-      <div class="text-h6 mt-2">{{ t('common.table.noSearchResults') }}</div>
-      <div class="text-body-2">{{ t('common.table.tryAdjustingSearch') }}</div>
+
+      <div class="text-h6 mt-2">
+        {{ t('common.table.noSearchResults') }}
+      </div>
+
+      <div class="text-body-2">
+        {{ t('common.table.tryAdjustingSearch') }}
+      </div>
     </div>
+
     <div v-else>
       <v-icon
         icon="mdi-clock-remove-outline"
@@ -168,23 +154,22 @@
         color="grey-lighten-1"
         class="mb-2"
       />
-      <p class="text-h6">{{ t('pages.sessions.noActiveSessions') }}</p>
+
+      <p class="text-h6">
+        {{ t('pages.sessions.noActiveSessions') }}
+      </p>
     </div>
   </div>
 </template>
 
 <script setup>
-// ===== Imports =====
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+
 import List from '@/shared/components/tables/ListComponent.vue'
-import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
-import {
-  getSessionStatus,
-  SESSION_STATUSES,
-} from '@/shared/utils/sessionsUtils'
+import { getSessionStatus } from '@/shared/utils/sessionsUtils'
 import { matchesSearch } from '@/shared/utils/searchUtils'
 
 const { t } = useI18n()
@@ -196,160 +181,159 @@ const props = defineProps({
   },
 })
 
-// ===== State and setup =====
 const store = useStore()
 const router = useRouter()
-const activeSection = ref('dashboard')
 
-// ===== Filter options =====
+const user = computed(() => store.getters.user)
 
-// Ownership dropdown options
-const ownershipOptions = computed(() => [
-  { value: 'all', text: t('pages.sessions.filters.allStudies') },
-  { value: 'mine', text: t('pages.sessions.filters.myStudies') },
-  { value: 'cooperator', text: t('pages.sessions.filters.whereICollaborate') },
-])
-
-// Filter visibility toggle
 const showFilters = ref(false)
-const toggleFilters = () => (showFilters.value = !showFilters.value)
-
-// Selected filter states
-const selectedSessionOwnershipFilter = ref('all')
-const selectedSessionEvaluatorFilter = ref('all')
-const selectedSessionStatusFilter = ref(['all'])
-const selectedSessionDateRange = ref([])
 const searchSessions = ref('')
 
-// Dynamically build evaluator dropdown based on sessions
-const evaluatorOptions = computed(() => {
-  const evaluatorsSet = new Set()
-  props.sessions.forEach((s) => evaluatorsSet.add(s.evaluator))
-  return [
-    { text: t('common.all'), value: 'all' },
-    ...Array.from(evaluatorsSet).map((ev) => ({ text: ev, value: ev })),
-  ]
-})
+const selectedSessionOwnershipFilter = ref('all')
+const selectedSessionStatusFilter = ref(['all'])
+const selectedSessionDateRange = ref([])
 
-// Session status options
-const sessionStatusOptions = computed(() => [
-  { value: 'all', text: t('pages.sessions.filters.allStatuses') },
-  { value: 'today', text: t('pages.sessions.filters.today') },
-  { value: 'upcoming', text: t('pages.sessions.filters.upcoming') },
-  { value: 'completed', text: t('pages.sessions.filters.completed') },
+const toggleFilters = () => {
+  showFilters.value = !showFilters.value
+}
+
+const ownershipOptions = computed(() => [
+  {
+    value: 'all',
+    text: t('pages.sessions.filters.allStudies'),
+  },
+  {
+    value: 'whereICollaborate',
+    text: t('pages.sessions.filters.whereICollaborate'),
+  },
+  {
+    value: 'whereIParticipate',
+    text: t('pages.sessions.filters.whereIParticipate'),
+  },
 ])
 
-// Whether filters are currently active (to enable/disable reset button)
+const sessionStatusOptions = computed(() => [
+  {
+    value: 'all',
+    text: t('pages.sessions.filters.allStatuses'),
+  },
+  {
+    value: 'today',
+    text: t('pages.sessions.filters.today'),
+  },
+  {
+    value: 'upcoming',
+    text: t('pages.sessions.filters.upcoming'),
+  },
+  {
+    value: 'completed',
+    text: t('pages.sessions.filters.completed'),
+  },
+])
+
+const resetSessionFilters = () => {
+  searchSessions.value = ''
+  selectedSessionOwnershipFilter.value = 'all'
+  selectedSessionStatusFilter.value = ['all']
+  selectedSessionDateRange.value = []
+}
+
 const hasActiveSessionFilters = computed(() => {
   return (
     searchSessions.value.length > 0 ||
+    selectedSessionOwnershipFilter.value !== 'all' ||
     (selectedSessionStatusFilter.value.length > 1 &&
       !selectedSessionStatusFilter.value.includes('all')) ||
-    (selectedSessionEvaluatorFilter.value !== 'all' &&
-      selectedSessionEvaluatorFilter.value?.length > 0) ||
-    selectedSessionOwnershipFilter.value !== 'all' ||
-    selectedSessionDateRange.value.length === 2
+    selectedSessionDateRange.value.length > 0
   )
 })
 
-// ===== Main session filtering logic =====
-const user = computed(() => store.getters.user)
+const getSessionOwnership = (session) => {
+  const currentId = user.value?.id
+  const currentEmail = user.value?.email?.toLowerCase()
+
+  const isStaff = session.staff?.some(
+    (staff) =>
+      staff.userDocId === currentId ||
+      staff.email?.toLowerCase() === currentEmail,
+  )
+
+  const isParticipant = session.participants?.some(
+    (participant) =>
+      participant.userDocId === currentId ||
+      participant.email?.toLowerCase() === currentEmail,
+  )
+
+  if (isStaff) {
+    return 'whereICollaborate'
+  }
+
+  if (isParticipant) {
+    return 'whereIParticipate'
+  }
+
+  return 'other'
+}
 
 const filteredSessions = computed(() => {
   return props.sessions.filter((session) => {
-    // 🔍 Search filter
     const matchesSearchQuery = matchesSearch(
-      session.testTitle,
+      `${session.title || ''} ${session.study?.title || ''}`,
       searchSessions.value,
     )
 
-    // ⚙️ Status filter (based on test date)
-    const sessionStatus = getSessionStatus(session.testDate).status
-    const matchesStatus =
-      !selectedSessionStatusFilter.value.length ||
-      selectedSessionStatusFilter.value.includes('all') ||
-      selectedSessionStatusFilter.value.includes(sessionStatus)
+    const status = getSessionStatus(session.scheduledAt).status
 
-    // 👤 Ownership filter
-    const isMine = session.testAdmin.userDocId === user.value?.id
-    const isCooperator = session.userDocId === user.value?.id
-    const ownership = isMine ? 'mine' : isCooperator ? 'cooperator' : 'other'
+    const matchesStatus =
+      selectedSessionStatusFilter.value.includes('all') ||
+      selectedSessionStatusFilter.value.includes(status)
+
+    const ownership = getSessionOwnership(session)
+
     const matchesOwnership =
       selectedSessionOwnershipFilter.value === 'all' ||
       selectedSessionOwnershipFilter.value === ownership
 
-    // 👥 Evaluator filter
-    const matchesEvaluator =
-      selectedSessionEvaluatorFilter.value === 'all' ||
-      selectedSessionEvaluatorFilter.value === session.evaluator
+    let matchesDate = true
 
-    // 📅 Date range filter
-    let inDateRange = true
-    if (selectedSessionDateRange.value.length > 1 && session.testDate) {
-      const date = new Date(session.testDate)
+    if (selectedSessionDateRange.value.length > 1 && session.scheduledAt) {
+      const sessionDate = new Date(session.scheduledAt)
+
       const start = new Date(selectedSessionDateRange.value[0])
+
       const end = new Date(
         selectedSessionDateRange.value[
           selectedSessionDateRange.value.length - 1
         ],
       )
-      inDateRange = date >= start && date <= end
+
+      matchesDate = sessionDate >= start && sessionDate <= end
     }
 
-    // ✅ Final inclusion condition
     return (
-      matchesSearchQuery &&
-      matchesStatus &&
-      matchesOwnership &&
-      matchesEvaluator &&
-      inDateRange
+      matchesSearchQuery && matchesStatus && matchesOwnership && matchesDate
     )
   })
 })
 
-// ===== Navigation logic =====
-const goTo = (test) => {
-  // Open MANUAL accessibility test view
-  if (test.testType === STUDY_TYPES.ACCESSIBILITY_MANUAL) {
-    const baseUrl =
-      activeSection.value === 'studies' ? test.testDocId || test.id : test.id
-    router.push(`/accessibility/manual/${baseUrl}`)
-    return
-  }
-
-  // Open AUTOMATIC accessibility test view
-  if (test.testType === STUDY_TYPES.ACCESSIBILITY_AUTOMATIC) {
-    const baseUrl =
-      activeSection.value === 'studies' ? test.testDocId || test.id : test.id
-    router.push(`/accessibility/automatic/${baseUrl}`)
-    return
-  }
-
-  // Navigate to live session view if available today
-  const canNavigateToSession = (testDate) =>
-    getSessionStatus(testDate) === SESSION_STATUSES.TODAY
-  if (canNavigateToSession(test.testDate)) {
-    router.push(`testview/${test.id}/${user.value.id}`)
-  }
+const goTo = (session) => {
+  router.push(`/testview/${session.study.id}/${session.id}`)
 }
 </script>
 
 <style scoped>
-/* 🧾 Empty state styling */
 .empty-state {
   text-align: center;
   padding: 4rem 2rem;
-  background-color: white;
+  background: white;
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Filter section button bar */
 .button-bar {
   gap: 14px;
 }
 
-/* Reset/Search button styling */
 .search-btn {
   min-width: 140px;
   height: 40px;
@@ -357,30 +341,12 @@ const goTo = (test) => {
   letter-spacing: 0.3px;
 }
 
-/* Filter label (small uppercase label above inputs) */
 .filter-label {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 4px;
-  line-height: 1.15;
   color: #475569;
-}
-
-/* Compact filter fields */
-.filter-field :deep(.v-field__input) {
-  min-height: 36px;
-}
-
-/* Utility class to truncate text to 2 lines */
-.truncate-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  min-height: calc(11px * 1.15 * 2);
-  max-height: calc(11px * 1.15 * 2);
 }
 </style>

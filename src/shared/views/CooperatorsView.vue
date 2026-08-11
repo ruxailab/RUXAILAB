@@ -47,8 +47,10 @@
         {{ $t('HeuristicsCooperators.subtitles.manage_participants') }}
       </p>
     </template>
+
     <!-- Main Content -->
     <Intro v-if="showIntroView" @close-intro="showIntroComponent = false" />
+
     <CooperatorTable
       v-else
       :has-role-column="hasRoleColumn"
@@ -219,6 +221,7 @@ import {
   getSupportedRoleOptions,
   hasStudyCapability,
   STUDY_CAPABILITY,
+  MEMBERSHIP_STATUS,
 } from '@/shared/utils/studyAccessPolicy'
 import { manageStudyMembership } from '@/shared/services/studyMembershipService'
 import { STUDY_ROLE } from '../utils/studyAccessPolicy'
@@ -252,7 +255,6 @@ const { t } = useI18n()
 
 const { roleOptions, getRoleColor, getRoleIcon } = useCooperatorUtils()
 
-// Confirmation dialog state
 const confirmDialog = ref({
   show: false,
   title: '',
@@ -295,6 +297,20 @@ const resetConfirmDialog = () => {
   }
 }
 
+/**
+ * New memberships use `status`.
+ *
+ * Legacy memberships do not have `status` and still rely on `accepted`.
+ * These helpers preserve compatibility with both data structures.
+ */
+const isPendingCooperator = (cooperator) =>
+  cooperator?.status === MEMBERSHIP_STATUS.PENDING ||
+  (!cooperator?.status && cooperator?.accepted !== true)
+
+const isAcceptedCooperator = (cooperator) =>
+  cooperator?.status === MEMBERSHIP_STATUS.ACCEPTED ||
+  (!cooperator?.status && cooperator?.accepted === true)
+
 const handleConfirmAction = async () => {
   const { action, data } = confirmDialog.value
   confirmDialog.value.loading = true
@@ -312,7 +328,13 @@ const handleConfirmAction = async () => {
     }
   } catch {
     showError(
-      `Failed to ${action === 'changeRole' ? 'update role' : action === 'removeCooperator' ? 'remove cooperator' : 'cancel invitation'}.`,
+      `Failed to ${
+        action === 'changeRole'
+          ? 'update role'
+          : action === 'removeCooperator'
+            ? 'remove cooperator'
+            : 'cancel invitation'
+      }.`,
     )
   } finally {
     resetConfirmDialog()
@@ -354,18 +376,15 @@ const sendNotification = async ({
     inviteToken,
   })
 
-  try {
-    await store.dispatch('addNotification', {
-      userId,
-      notification,
-    })
-    return true
-  } catch (error) {
-    throw error
-  }
+  await store.dispatch('addNotification', {
+    userId,
+    notification,
+  })
+
+  return true
 }
 
-let showIntroComponent = ref(true)
+const showIntroComponent = ref(true)
 const verified = ref(false)
 const messageModel = ref(false)
 const selectedUser = ref([])
@@ -373,24 +392,29 @@ const showInviteDialog = ref(false)
 const showLinkInviteDialog = ref(false)
 const drawerOpen = ref(false)
 
-const showIntroView = computed(() => {
-  return cooperatorsEdit.value.length <= 0 && showIntroComponent.value
-})
-
 const dialog = computed(() => store.getters.getDialogLeaveStatus)
 const test = computed(() => store.getters.test)
 const userAuth = computed(() => store.getters.user)
 const users = computed(() => store.state.Users?.users || [])
+
 const cooperatorsEdit = computed(() =>
   test.value?.cooperators ? [...test.value.cooperators] : [],
 )
+
+const showIntroView = computed(() => {
+  return cooperatorsEdit.value.length <= 0 && showIntroComponent.value
+})
+
 const loading = computed(() => store.getters.loading)
+
 const supportedRoleOptions = computed(() => getSupportedRoleOptions(test.value))
+
 const assignableRoleOptions = computed(() =>
   getAssignableRoleOptions(test.value, userAuth.value).filter(
     ({ value }) => value !== STUDY_ROLE.USER && value !== STUDY_ROLE.EVALUATOR,
   ),
 )
+
 const canManageCooperators = computed(() =>
   hasStudyCapability(
     test.value,
@@ -399,47 +423,72 @@ const canManageCooperators = computed(() =>
   ),
 )
 
-const canChangeRole = (cooperator) =>
-  assignableRoleOptions.value.some((role) =>
+/**
+ * Role changes are allowed for accepted members and pending invitations.
+ *
+ * This preserves the previous behavior, where invited cooperators could
+ * still have their role changed before accepting the invitation.
+ */
+const canChangeRole = (cooperator) => {
+  if (!isAcceptedCooperator(cooperator) && !isPendingCooperator(cooperator)) {
+    return false
+  }
+
+  return assignableRoleOptions.value.some((role) =>
     canManageCooperator(test.value, userAuth.value, cooperator, {
       action: 'assignRole',
       role: role.value,
     }),
   )
+}
 
-const canRemoveCooperator = (cooperator) =>
-  canManageCooperator(test.value, userAuth.value, cooperator, {
+const canRemoveCooperator = (cooperator) => {
+  if (!isAcceptedCooperator(cooperator)) {
+    return false
+  }
+
+  return canManageCooperator(test.value, userAuth.value, cooperator, {
     action: 'remove',
   })
+}
 
-const canCancelCooperatorInvitation = (cooperator) =>
-  canManageCooperator(test.value, userAuth.value, cooperator, {
+const canCancelCooperatorInvitation = (cooperator) => {
+  if (!isPendingCooperator(cooperator)) {
+    return false
+  }
+
+  return canManageCooperator(test.value, userAuth.value, cooperator, {
     action: 'cancelInvitation',
   })
+}
 
 const openMessageDialog = (item) => {
   if (!canManageCooperators.value) {
     showError('AccessNotAllowed.noAccess')
     return
   }
+
   selectedUser.value = item
   messageModel.value = true
 }
 
 const handleSendMessage = async ({ user, title, content }) => {
   messageModel.value = false
+
   if (user.userDocId && test.value) {
     const author = userAuth.value.email
+
     try {
       await sendNotification({
         userId: user.userDocId,
-        title: title,
-        author: author,
+        title,
+        author,
         description: content,
         redirectsTo: null,
         testId: test.value.id,
         type: 'Message',
       })
+
       showSuccess('HeuristicsCooperators.messages.message_sent_success')
     } catch {
       showError('HeuristicsCooperators.messages.message_sent_error')
@@ -536,7 +585,10 @@ const executeRoleChange = async (item, newValue) => {
     targetEmail: item.email,
     role: newValue.value,
   })
-  await store.dispatch('getStudy', { id: test.value.id })
+
+  await store.dispatch('getStudy', {
+    id: test.value.id,
+  })
 }
 
 const reinvite = async (guest) => {
@@ -594,7 +646,10 @@ const executeCooperatorRemoval = async (coop) => {
     targetUserId: coop.userDocId || null,
     targetEmail: coop.email,
   })
-  await store.dispatch('getStudy', { id: test.value.id })
+
+  await store.dispatch('getStudy', {
+    id: test.value.id,
+  })
 }
 
 const cancelInvitation = async (guest) => {
@@ -636,7 +691,10 @@ const executeInvitationCancellation = async (guest) => {
     targetUserId: guest.userDocId || null,
     targetEmail: guest.email,
   })
-  await store.dispatch('getStudy', { id: test.value.id })
+
+  await store.dispatch('getStudy', {
+    id: test.value.id,
+  })
 }
 
 watch(loading, (newVal) => {
@@ -650,7 +708,9 @@ onMounted(async () => {
 
   if (testId) {
     try {
-      await store.dispatch('getStudy', { id: testId })
+      await store.dispatch('getStudy', {
+        id: testId,
+      })
     } catch (error) {
       return error
     }
