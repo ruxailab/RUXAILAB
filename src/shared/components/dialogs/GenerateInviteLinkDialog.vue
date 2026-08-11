@@ -142,13 +142,12 @@ const generateLink = async () => {
     const result = await InviteController.generateInvitationLink({
       studyId: props.studyId,
       studyTitle: props.studyTitle,
-      accessLevel: selectedRole.value,
+      accessLevel: selectedRole.value ?? props.preDefinedRole,
       requiredLogin: props.requiredLogin,
       toEmail: null, // No email provided for public invites
       isPublic: true,
       membershipType: props.membershipType,
     })
-
     inviteLink.value = result.inviteLink
 
     emit('generated', result.inviteLink)

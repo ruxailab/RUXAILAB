@@ -131,6 +131,9 @@ export default class StudyController extends Controller {
           studyId: payload.studyId ?? payload.test?.id,
           action: 'accept',
           membershipType: payload.membershipType,
+          targetUserId: payload?.cooperator.id,
+          targetEmail: payload?.cooperator.email,
+          role: payload.role,
         },
       )
     return response.data

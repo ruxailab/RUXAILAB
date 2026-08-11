@@ -494,13 +494,12 @@ const goToNotificationRedirect = async (notification) => {
       token: notification.inviteToken,
     })
 
-    invite.value = result.invite
+    if (result != null) {
+      invite.value = result.invite
+    }
   }
 
-  if (
-    notification.type === 'Collaboration' ||
-    notification.action === 'invitation'
-  ) {
+  if (notification.type === 'Collaboration' && invite.value) {
     const accepted = await showAcceptDialog()
 
     if (!accepted) {
