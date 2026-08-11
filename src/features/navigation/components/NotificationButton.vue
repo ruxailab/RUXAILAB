@@ -160,10 +160,7 @@ const goToNotificationRedirect = async (notification) => {
 
   let redirectTo = notification.redirectsTo
 
-  if (
-    notification.type === 'Collaboration' &&
-    notification.action === 'invitation'
-  ) {
+  if (notification.type === 'Collaboration') {
     const result = await store.dispatch('loadInvite', {
       token: notification.inviteToken,
     })
@@ -190,6 +187,8 @@ const goToNotificationRedirect = async (notification) => {
     }
 
     const token = notification.inviteToken
+
+    console.log('Accepting invite:', invite.value)
 
     await store.dispatch('acceptInvite', {
       token,
