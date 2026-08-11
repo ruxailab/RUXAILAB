@@ -765,6 +765,7 @@
     },
     "managerView": {
       "heuristicStudy": "Estudio Heurístico",
+      "aiAgents": "Agentes de IA",
       "freePlan": "Plan Gratuito",
       "generalStatistics": "Estadísticas Generales",
       "modules": "Módulos"

@@ -5,7 +5,9 @@
         <v-icon size="24" color="primary" class="mr-2"
           >mdi-robot-outline</v-icon
         >
-        <v-card-title class="text-h6 text-primary pa-0">AI Agents</v-card-title>
+        <v-card-title class="text-h6 text-primary pa-0">
+          {{ $t('Dashboard.managerView.aiAgents') }}
+        </v-card-title>
       </div>
       <v-chip color="primary" size="small" variant="tonal">
         {{ activeCount }} activos

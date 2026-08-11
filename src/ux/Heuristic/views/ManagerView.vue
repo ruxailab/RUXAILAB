@@ -93,6 +93,7 @@ import { getStatusIcon } from '@/shared/utils/statusUtils'
 import { computed, onMounted, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
 // Componentes del manager
 import StudyOverview from '@/ux/Heuristic/components/manager/StudyOverview.vue'
@@ -110,6 +111,7 @@ import HeuristicAgentsCard from '@/ux/Heuristic/ai-agents/components/HeuristicAg
 const store = useStore()
 const route = useRoute()
 const router = useRouter()
+const { t } = useI18n()
 
 // Computed
 const user = computed(() => store.getters.user)
@@ -156,7 +158,7 @@ const navigator = computed(() => {
   })
 
   items.push({
-    title: 'AI Agents',
+    title: t('Dashboard.managerView.aiAgents'),
     icon: 'mdi-robot-outline',
     path: `/heuristic/ai-agents/${test.value.id}`,
   })
