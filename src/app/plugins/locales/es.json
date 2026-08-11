@@ -2540,7 +2540,14 @@
       "endedTitle": "Sesión finalizada",
       "endedSubtitle": "Las respuestas se han guardado.",
       "sessionSaved": "Respuestas de la sesión guardadas.",
-      "noTopicsWarning": "Agrega temas a tu guía de discusión antes de iniciar una sesión."
+      "noTopicsWarning": "Agrega temas a tu guía de discusión antes de iniciar una sesión.",
+      "stimuli": "Estímulos",
+      "noStimuli": "Aún no hay estímulos en la biblioteca. Agrega algunos desde la pantalla de prueba.",
+      "present": "Presentar",
+      "presenting": "Presentando",
+      "presentingStimulus": "Presentando:",
+      "stopPresenting": "Dejar de presentar",
+      "openStimulusLink": "Abrir enlace del estímulo"
     },
     "stimulus": {
       "empty": "Aún no hay estímulos. Sube una imagen o video, o agrega un enlace abajo.",
