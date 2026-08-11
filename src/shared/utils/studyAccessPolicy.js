@@ -142,19 +142,29 @@ export function resolveStudyAccess(study, user) {
   const userId = getUserId(user)
   const isOwner = isStudyOwner(study, userId)
   const isSuperAdmin = user?.accessLevel === 0
-  let membership = findAcceptedMembership(study, userId)
+
+  const membership = findAcceptedMembership(study, userId)
+
+  const roleFromMap =
+    userId && study?.studyRoleMap?.[userId] !== undefined
+      ? study.studyRoleMap[userId]
+      : null
+
   let role = null
 
-  if (isOwner || isSuperAdmin) role = R.ADMIN
-  else if (membership) role = membership.accessLevel ?? null
-  else if (study?.studyRoleMap?.[userId] !== undefined) {
-    role = study.studyRoleMap[userId] ?? null
+  if (isOwner || isSuperAdmin) {
+    role = R.ADMIN
+  } else if (membership) {
+    role = membership.accessLevel ?? null
+  } else if (roleFromMap !== null) {
+    role = roleFromMap
   }
+
   return {
     role,
     isOwner,
     isSuperAdmin,
-    isAcceptedMember: Boolean(membership),
+    isAcceptedMember: Boolean(membership || roleFromMap !== null),
     isPublicParticipant: Boolean(userId && study?.isPublic),
     membership,
   }
