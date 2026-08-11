@@ -244,7 +244,7 @@ const saveAnswerMetrics = async () => {
 watch([localUseFrequency, localUseSeverity], saveAnswerMetrics)
 
 const useWeights = computed({
-  get: () => test.value.useWeights ?? false,
+  get: () => test.value?.useWeights ?? false,
   set: (value) => {
     store.commit('SET_TEST', {
       ...test.value,

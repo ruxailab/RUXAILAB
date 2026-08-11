@@ -20,6 +20,7 @@ export default class HeuristicStudy extends Study {
       sections: [],
     }
     this.heuristicComments = params.heuristicComments ?? {}
+    this.heuristicAgentIds = params.heuristicAgentIds ?? []
   }
 
   toFirestore() {
@@ -31,6 +32,7 @@ export default class HeuristicStudy extends Study {
       useSeverity: this.useSeverity,
       evaluatorInfo: this.evaluatorInfo,
       heuristicComments: this.heuristicComments,
+      heuristicAgentIds: this.heuristicAgentIds,
     })
   }
 }

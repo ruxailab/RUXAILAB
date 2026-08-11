@@ -22,6 +22,15 @@ module.exports = {
     allowedHosts: 'all',
     client: {
       webSocketURL: 'auto://0.0.0.0:0/ws',
+      overlay: {
+        errors: true,
+        warnings: false,
+        runtimeErrors: (error) =>
+          !error?.message?.includes(
+            'ResizeObserver loop completed with undelivered notifications',
+          ) &&
+          !error?.message?.includes('ResizeObserver loop limit exceeded'),
+      },
     },
   },
 

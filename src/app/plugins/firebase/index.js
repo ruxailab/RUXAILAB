@@ -36,29 +36,38 @@ const firebaseApp = initializeApp(firebaseConfig)
 const auth = getAuth(firebaseApp)
 const db = getFirestore(firebaseApp)
 //const analytics = getAnalytics(firebaseApp)
-const functionsRegion = process.env.VUE_APP_FIREBASE_FUNCTIONS_REGION?.trim()
-const fbFunctions = functionsRegion
-  ? getFunctions(firebaseApp, functionsRegion)
-  : getFunctions(firebaseApp)
+// Must match functions/src/f.firebase.js. Calling a callable in the wrong
+// region returns a 404 that browsers often report as a CORS failure.
+const functionsRegion =
+  process.env.VUE_APP_FIREBASE_FUNCTIONS_REGION || 'europe-west6'
+const fbFunctions = getFunctions(firebaseApp, functionsRegion)
 const storage = getStorage(firebaseApp, `gs://${firebaseConfig.storageBucket}`)
 const database = getDatabase(firebaseApp, firebaseConfig.databaseURL)
 
-if (process.env.VUE_APP_USE_EMULATORS === 'true') {
+const useAllEmulators = process.env.VUE_APP_USE_EMULATORS === 'true'
+const useFunctionsEmulator =
+  useAllEmulators || process.env.VUE_APP_USE_FUNCTIONS_EMULATOR === 'true'
+
+if (useAllEmulators) {
   const EMULATOR_HOST =
     process.env.VUE_APP_FIREBASE_EMULATOR_HOST || 'localhost'
   const FIRESTORE_EMULATOR_PORT =
     Number(process.env.VUE_APP_FIRESTORE_EMULATOR_PORT) || 8081
   const AUTH_EMULATOR_PORT =
     Number(process.env.VUE_APP_AUTH_EMULATOR_PORT) || 9099
-  const FUNCTIONS_EMULATOR_PORT =
-    Number(process.env.VUE_APP_FUNCTIONS_EMULATOR_PORT) || 5002
   const STORAGE_EMULATOR_PORT =
     Number(process.env.VUE_APP_STORAGE_EMULATOR_PORT) || 9199
 
   connectFirestoreEmulator(db, EMULATOR_HOST, FIRESTORE_EMULATOR_PORT)
   connectAuthEmulator(auth, `http://${EMULATOR_HOST}:${AUTH_EMULATOR_PORT}`)
-  connectFunctionsEmulator(fbFunctions, EMULATOR_HOST, FUNCTIONS_EMULATOR_PORT)
   connectStorageEmulator(storage, EMULATOR_HOST, STORAGE_EMULATOR_PORT)
+}
+
+if (useFunctionsEmulator) {
+  const emulatorHost = process.env.VUE_APP_FIREBASE_EMULATOR_HOST || 'localhost'
+  const emulatorPort =
+    Number(process.env.VUE_APP_FUNCTIONS_EMULATOR_PORT) || 5002
+  connectFunctionsEmulator(fbFunctions, emulatorHost, emulatorPort)
 }
 
 export { auth, db, fbFunctions, storage, database }

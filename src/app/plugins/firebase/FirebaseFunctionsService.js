@@ -13,11 +13,11 @@ export class FirebaseFunctionsController {
    *
    * @param {string} functionName The function that will be called.
    * @param {unknown} data Any data that might be passed to the function.
+   * @param {object} [options] Optional Firebase callable configuration.
    * @returns A promise that awaits for the function return.
    */
-  static async callHttpsCallableFunction(functionName, data) {
-    const f = httpsCallable(fbFunctions, functionName)
-
+  static async callHttpsCallableFunction(functionName, data, options) {
+    const f = httpsCallable(fbFunctions, functionName, options)
     return f(data)
   }
 }
