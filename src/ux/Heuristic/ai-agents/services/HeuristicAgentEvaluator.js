@@ -20,11 +20,135 @@ const flattenQuestions = (testStructure) =>
     })),
   )
 
+const reportProgress = (onProgress, index, total, status) => {
+  if (typeof onProgress !== 'function') return
+  onProgress({ index: index + 1, total, status })
+}
+
+const collectDecisions = async ({
+  provider,
+  agent,
+  test,
+  webTree,
+  questions,
+  answerMode,
+  onProgress,
+}) => {
+  const decisions = []
+  const heuristics = test.testStructure || []
+  for (let index = 0; index < heuristics.length; index += 1) {
+    const heuristicQuestions = questions.filter(
+      (question) => question.heuristicIndex === index,
+    )
+    if (!heuristicQuestions.length) continue
+
+    reportProgress(onProgress, index, heuristics.length, 'running')
+    const result = await provider.evaluate({
+      agent: agent.toFirestore(),
+      page: webTree,
+      questions: heuristicQuestions,
+      options: test.testOptions || [],
+      answerMode,
+      responseSchema: {
+        type: 'array',
+        items: ['heuristicId', 'questionId', 'answer', 'comment', 'evidence'],
+      },
+    })
+    if (!Array.isArray(result)) {
+      throw new TypeError('AI provider returned an invalid response.')
+    }
+    decisions.push(...result)
+    reportProgress(onProgress, index, heuristics.length, 'completed')
+  }
+  return decisions
+}
+
+const buildQuestionAnswer = ({
+  question,
+  questionIndex,
+  heuristic,
+  heuristicIndex,
+  decisions,
+  answerMode,
+  options,
+  now,
+}) => {
+  const heuristicId = heuristic.id ?? heuristicIndex
+  const questionId = question.id ?? questionIndex
+  const decision = decisions.get(`${heuristicId}:${questionId}`)
+  if (!decision) {
+    throw new Error(
+      `AI response is missing question ${heuristicId}:${questionId}.`,
+    )
+  }
+
+  const matchedOption =
+    answerMode === HEURISTIC_ANSWER_MODE.CUSTOM_OPTIONS
+      ? options.find((option) => option.value === decision.answer)
+      : null
+  const answer = buildCanonicalHeuristicAnswer({
+    mode: answerMode,
+    option: matchedOption,
+    frequency: decision.frequency,
+    severity: decision.severity,
+  })
+  if (
+    answer?.value == null ||
+    (answerMode === HEURISTIC_ANSWER_MODE.FREQUENCY_SEVERITY &&
+      (answer.frequency == null || answer.severity == null))
+  ) {
+    throw new Error(`AI returned no answer for ${heuristicId}:${questionId}.`)
+  }
+
+  const evidence = Array.isArray(decision.evidence)
+    ? decision.evidence.filter(Boolean).join('\n')
+    : decision.evidence
+  const comment = [decision.comment, evidence].filter(Boolean).join('\n\n')
+  const comments = comment
+    ? [
+        {
+          id: `ai-${heuristicId}-${questionId}`,
+          text: comment,
+          createdAt: now(),
+        },
+      ]
+    : []
+  return new HeuristicQuestionAnswer({
+    heuristicId: questionId,
+    heuristicAnswer: answer,
+    heuristicComment: comment,
+    comments,
+  })
+}
+
+const buildHeuristicAnswers = (test, decisions, answerMode, now) =>
+  test.testStructure.map((heuristic, heuristicIndex) => {
+    const answers = (heuristic.questions || []).map((question, questionIndex) =>
+      buildQuestionAnswer({
+        question,
+        questionIndex,
+        heuristic,
+        heuristicIndex,
+        decisions,
+        answerMode,
+        options: test.testOptions || [],
+        now,
+      }),
+    )
+    return new Heuristic({
+      heuristicId: heuristic.id ?? heuristicIndex,
+      heuristicTitle: heuristic.title || heuristic.name || '',
+      heuristicQuestions: answers,
+      heuristicTotal: answers.length,
+      timeSpent: '00:00',
+    })
+  })
+
 /** Turns a provider's structured decisions into the normal human evaluator format. */
 export default class HeuristicAgentEvaluator {
   constructor({ provider, saveAnswer = null, now = () => Date.now() } = {}) {
     if (!provider || typeof provider.evaluate !== 'function') {
-      throw new Error('The AI provider must implement evaluate(context).')
+      throw new TypeError('The AI provider must implement evaluate(context).')
     }
     this.provider = provider
     this.saveAnswer = saveAnswer
@@ -49,110 +173,24 @@ export default class HeuristicAgentEvaluator {
     const answerMode = resolveHeuristicAnswerMode(test)
     if (!answerMode)
       throw new Error('The test has no configured answer mechanism.')
-    const decisions = []
-    const heuristics = test.testStructure || []
-    for (let index = 0; index < heuristics.length; index += 1) {
-      const heuristicQuestions = questions.filter(
-        (question) => question.heuristicIndex === index,
-      )
-      if (!heuristicQuestions.length) continue
-      if (typeof onProgress === 'function') {
-        onProgress({
-          index: index + 1,
-          total: heuristics.length,
-          status: 'running',
-        })
-      }
-      const result = await this.provider.evaluate({
-        agent: agent.toFirestore(),
-        page: webTree,
-        questions: heuristicQuestions,
-        options: test.testOptions || [],
-        answerMode,
-        responseSchema: {
-          type: 'array',
-          items: ['heuristicId', 'questionId', 'answer', 'comment', 'evidence'],
-        },
-      })
-      if (!Array.isArray(result))
-        throw new Error('AI provider returned an invalid response.')
-      decisions.push(...result)
-      if (typeof onProgress === 'function') {
-        onProgress({
-          index: index + 1,
-          total: heuristics.length,
-          status: 'completed',
-        })
-      }
-    }
+    const decisions = await collectDecisions({
+      provider: this.provider,
+      agent,
+      test,
+      webTree,
+      questions,
+      answerMode,
+      onProgress,
+    })
 
     const byQuestion = new Map(
       decisions.map((item) => [`${item.heuristicId}:${item.questionId}`, item]),
     )
-    const heuristicQuestions = test.testStructure.map(
-      (heuristic, heuristicIndex) => {
-        const answers = (heuristic.questions || []).map(
-          (question, questionIndex) => {
-            const heuristicId = heuristic.id ?? heuristicIndex
-            const questionId = question.id ?? questionIndex
-            const decision = byQuestion.get(`${heuristicId}:${questionId}`)
-            if (!decision)
-              throw new Error(
-                `AI response is missing question ${heuristicId}:${questionId}.`,
-              )
-
-            const matchedOption =
-              answerMode === HEURISTIC_ANSWER_MODE.CUSTOM_OPTIONS
-                ? (test.testOptions || []).find(
-                    (option) => option.value === decision.answer,
-                  )
-                : null
-            const answer = buildCanonicalHeuristicAnswer({
-              mode: answerMode,
-              option: matchedOption,
-              frequency: decision.frequency,
-              severity: decision.severity,
-            })
-            if (
-              !answer ||
-              answer.value == null ||
-              (answerMode === HEURISTIC_ANSWER_MODE.FREQUENCY_SEVERITY &&
-                (answer.frequency == null || answer.severity == null))
-            )
-              throw new Error(
-                `AI returned no answer for ${heuristicId}:${questionId}.`,
-              )
-
-            const evidence = Array.isArray(decision.evidence)
-              ? decision.evidence.filter(Boolean).join('\n')
-              : decision.evidence
-            const comment = [decision.comment, evidence]
-              .filter(Boolean)
-              .join('\n\n')
-            return new HeuristicQuestionAnswer({
-              heuristicId: questionId,
-              heuristicAnswer: answer,
-              heuristicComment: comment,
-              comments: comment
-                ? [
-                    {
-                      id: `ai-${heuristicId}-${questionId}`,
-                      text: comment,
-                      createdAt: this.now(),
-                    },
-                  ]
-                : [],
-            })
-          },
-        )
-        return new Heuristic({
-          heuristicId: heuristic.id ?? heuristicIndex,
-          heuristicTitle: heuristic.title || heuristic.name || '',
-          heuristicQuestions: answers,
-          heuristicTotal: answers.length,
-          timeSpent: '00:00',
-        })
-      },
+    const heuristicQuestions = buildHeuristicAnswers(
+      test,
+      byQuestion,
+      answerMode,
+      this.now,
     )
 
     return new HeuristicAnswer({
@@ -169,7 +207,7 @@ export default class HeuristicAgentEvaluator {
   /** Evaluate and persist through an injected callback (store action, API or repository). */
   async evaluateAndSave(context) {
     if (typeof this.saveAnswer !== 'function') {
-      throw new Error(
+      throw new TypeError(
         'A saveAnswer callback is required to persist the evaluation.',
       )
     }

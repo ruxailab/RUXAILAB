@@ -242,7 +242,7 @@ const runEvaluations = async () => {
           agent, userId: userId.value, test: test.value, webTree: tree,
           answerId: `ai-agent:${encodeURIComponent(agent.id)}:${urlKey}`,
           onProgress: ({ index, total, status }) => {
-            progress[url] = { status, current: status === 'completed' ? index : index, total }
+            progress[url] = { status, current: index, total }
           },
         })
         progress[url] = { ...progress[url], status: 'completed', current: progress[url].total }

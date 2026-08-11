@@ -25,7 +25,7 @@ export default class WebTreeBuilder {
 
   fromHtml(html, { url = '' } = {}) {
     if (typeof DOMParser === 'undefined') {
-      throw new Error('DOMParser is not available in this environment.')
+      throw new TypeError('DOMParser is not available in this environment.')
     }
     const document = new DOMParser().parseFromString(html, 'text/html')
     return this.fromDocument(document, { url })
@@ -33,7 +33,7 @@ export default class WebTreeBuilder {
 
   fromDocument(document, { url = document?.location?.href || '' } = {}) {
     if (!document?.documentElement)
-      throw new Error('A valid Document is required.')
+      throw new TypeError('A valid Document is required.')
 
     const state = { count: 0, truncated: false }
     const root = this._visit(document.documentElement, 0, state)
@@ -50,7 +50,7 @@ export default class WebTreeBuilder {
 
   async fromUrl(url, { fetcher = globalThis.fetch, requestInit = {} } = {}) {
     if (typeof fetcher !== 'function')
-      throw new Error('A fetch implementation is required.')
+      throw new TypeError('A fetch implementation is required.')
 
     let response
     try {

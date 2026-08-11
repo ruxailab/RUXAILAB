@@ -59,12 +59,20 @@ const openRouterHeaders = (apiKey) => ({
   'X-OpenRouter-Title': 'RUXAILAB',
 })
 
+const stripMarkdownFence = (content) => {
+  const trimmed = content.trim()
+  if (!trimmed.startsWith('```')) return trimmed
+
+  let body = trimmed.slice(3)
+  if (body.toLowerCase().startsWith('json')) body = body.slice(4)
+  body = body.trimStart()
+  if (body.endsWith('```')) body = body.slice(0, -3)
+  return body.trim()
+}
+
 const parseJsonContent = (content) => {
   if (typeof content !== 'string') return null
-  const trimmed = content.trim()
-  const withoutFence = trimmed
-    .replace(/^```(?:json)?\s*/i, '')
-    .replace(/\s*```$/i, '')
+  const withoutFence = stripMarkdownFence(content)
   const candidates = [withoutFence]
   const firstBrace = withoutFence.indexOf('{')
   const lastBrace = withoutFence.lastIndexOf('}')
@@ -84,6 +92,24 @@ const parseJsonContent = (content) => {
 const isValidMetric = (value) =>
   Number.isInteger(value) && value >= 0 && value <= 4
 
+const isDecisionAnswerValid = (decision, validAnswers, answerMode) => {
+  switch (answerMode) {
+    case 'customOptions':
+      return validAnswers.has(String(decision?.answer))
+    case 'frequency':
+      return isValidMetric(decision?.frequency)
+    case 'severity':
+      return isValidMetric(decision?.severity)
+    case 'frequencySeverity':
+      return (
+        isValidMetric(decision?.frequency) &&
+        isValidMetric(decision?.severity)
+      )
+    default:
+      return false
+  }
+}
+
 const validateDecisions = (decisions, questions, options, answerMode) => {
   if (!Array.isArray(decisions)) return false
   const expected = new Set(
@@ -97,18 +123,11 @@ const validateDecisions = (decisions, questions, options, answerMode) => {
   const received = new Set()
   for (const decision of decisions) {
     const key = `${decision?.heuristicId}:${decision?.questionId}`
-    const hasValidAnswer =
-      answerMode === 'customOptions'
-        ? validAnswers.has(String(decision?.answer))
-        : answerMode === 'frequency'
-          ? isValidMetric(decision?.frequency)
-          : answerMode === 'severity'
-            ? isValidMetric(decision?.severity)
-            : answerMode === 'frequencySeverity'
-              ? isValidMetric(decision?.frequency) &&
-                isValidMetric(decision?.severity)
-              : false
-    if (!expected.has(key) || received.has(key) || !hasValidAnswer) {
+    if (
+      !expected.has(key) ||
+      received.has(key) ||
+      !isDecisionAnswerValid(decision, validAnswers, answerMode)
+    ) {
       return false
     }
     received.add(key)
@@ -167,45 +186,43 @@ const normalizeDecisions = (rawDecisions, questions, options, answerMode) => {
   })
 }
 
-const evaluateQuestionBatch = async ({
-  agent,
-  apiKey,
-  model,
-  page,
-  questions,
-  options,
-  answerMode,
-}) => {
+const usesFrequency = (answerMode) =>
+  answerMode === 'frequency' || answerMode === 'frequencySeverity'
+
+const usesSeverity = (answerMode) =>
+  answerMode === 'severity' || answerMode === 'frequencySeverity'
+
+const buildAnswerSchema = (options, answerMode) => {
   const answerValues = options.map((option) => option?.value ?? option)
+  if (answerMode === 'customOptions') {
+    return {
+      properties: { answer: { enum: answerValues } },
+      required: ['answer'],
+    }
+  }
+
+  const properties = {}
+  const required = []
+  if (usesFrequency(answerMode)) {
+    properties.frequency = { type: 'integer', minimum: 0, maximum: 4 }
+    required.push('frequency')
+  }
+  if (usesSeverity(answerMode)) {
+    properties.severity = { type: 'integer', minimum: 0, maximum: 4 }
+    required.push('severity')
+  }
+  return { properties, required }
+}
+
+const buildResponseSchema = (questions, options, answerMode) => {
   const heuristicIds = [
     ...new Set(questions.map((question) => question.heuristicId)),
   ]
   const questionIds = [
     ...new Set(questions.map((question) => question.questionId)),
   ]
-  const answerProperties =
-    answerMode === 'customOptions'
-      ? { answer: { enum: answerValues } }
-      : {
-          ...(answerMode === 'frequency' || answerMode === 'frequencySeverity'
-            ? { frequency: { type: 'integer', minimum: 0, maximum: 4 } }
-            : {}),
-          ...(answerMode === 'severity' || answerMode === 'frequencySeverity'
-            ? { severity: { type: 'integer', minimum: 0, maximum: 4 } }
-            : {}),
-        }
-  const requiredAnswerFields =
-    answerMode === 'customOptions'
-      ? ['answer']
-      : [
-          ...(answerMode === 'frequency' || answerMode === 'frequencySeverity'
-            ? ['frequency']
-            : []),
-          ...(answerMode === 'severity' || answerMode === 'frequencySeverity'
-            ? ['severity']
-            : []),
-        ]
-  const responseSchema = {
+  const answerSchema = buildAnswerSchema(options, answerMode)
+  return {
     name: 'heuristic_decisions',
     strict: true,
     schema: {
@@ -220,7 +237,7 @@ const evaluateQuestionBatch = async ({
             properties: {
               heuristicId: { enum: heuristicIds },
               questionId: { enum: questionIds },
-              ...answerProperties,
+              ...answerSchema.properties,
               comment: { type: 'string' },
               evidence: {
                 type: 'array',
@@ -231,7 +248,7 @@ const evaluateQuestionBatch = async ({
             required: [
               'heuristicId',
               'questionId',
-              ...requiredAnswerFields,
+              ...answerSchema.required,
               'comment',
               'evidence',
             ],
@@ -243,7 +260,19 @@ const evaluateQuestionBatch = async ({
       additionalProperties: false,
     },
   }
-  const openRouterRequest = {
+}
+
+const buildOpenRouterRequest = ({
+  agent,
+  apiKey,
+  model,
+  page,
+  questions,
+  options,
+  answerMode,
+}) => {
+  const responseSchema = buildResponseSchema(questions, options, answerMode)
+  return {
     method: 'POST',
     headers: openRouterHeaders(apiKey),
     body: JSON.stringify({
@@ -266,7 +295,9 @@ const evaluateQuestionBatch = async ({
       ],
     }),
   }
+}
 
+const requestOpenRouter = async (openRouterRequest) => {
   let response
   let errorPayload = null
   for (let attempt = 0; attempt < 3; attempt += 1) {
@@ -274,7 +305,7 @@ const evaluateQuestionBatch = async ({
       `${OPENROUTER_BASE_URL}/chat/completions`,
       openRouterRequest,
     )
-    if (response.ok) break
+    if (response.ok) return { response, errorPayload }
 
     const details = await response.text()
     try {
@@ -288,49 +319,82 @@ const evaluateQuestionBatch = async ({
     if (response.status !== 429 || errorType === 'insufficient_quota') break
     if (attempt < 2) await wait(1000 * 2 ** attempt)
   }
+  return { response, errorPayload }
+}
 
-  if (!response.ok) {
-    const errorType =
-      errorPayload?.error?.type || errorPayload?.error?.code || ''
-    if (response.status === 429 && errorType === 'insufficient_quota') {
-      fail(
-        'resource-exhausted',
-        'La cuenta de OpenRouter no tiene crédito disponible. Añade saldo o revisa los límites de tu API key.',
-      )
-    }
-    if (response.status === 429) {
-      fail(
-        'resource-exhausted',
-        'OpenRouter ha alcanzado el límite temporal de peticiones o tokens. Espera unos minutos o revisa los límites de tu API key.',
-      )
-    }
+const handleOpenRouterError = (response, errorPayload) => {
+  if (response.ok) return
+  const errorType = errorPayload?.error?.type || errorPayload?.error?.code || ''
+  if (response.status === 429 && errorType === 'insufficient_quota') {
     fail(
-      'unavailable',
-      errorPayload?.error?.message ||
-        `El proveedor de IA respondió con HTTP ${response.status}.`,
+      'resource-exhausted',
+      'La cuenta de OpenRouter no tiene crédito disponible. Añade saldo o revisa los límites de tu API key.',
     )
   }
+  if (response.status === 429) {
+    fail(
+      'resource-exhausted',
+      'OpenRouter ha alcanzado el límite temporal de peticiones o tokens. Espera unos minutos o revisa los límites de tu API key.',
+    )
+  }
+  fail(
+    'unavailable',
+    errorPayload?.error?.message ||
+      `El proveedor de IA respondió con HTTP ${response.status}.`,
+  )
+}
 
+const parseOpenRouterResult = async (response, model) => {
   const payload = await response.json()
   const choice = payload.choices?.[0]
   const result = parseJsonContent(choice?.message?.content)
-  if (!result) {
-    console.error('Invalid AI JSON response', {
-      model,
-      finishReason: choice?.finish_reason || null,
-      contentLength: choice?.message?.content?.length || 0,
-    })
-    if (choice?.finish_reason === 'length') {
-      fail(
-        'resource-exhausted',
-        'Una parte de la evaluación fue truncada. Reduce el tamaño del árbol web o utiliza un modelo con más capacidad.',
-      )
-    }
+  if (result) return { choice, result }
+
+  console.error('Invalid AI JSON response', {
+    model,
+    finishReason: choice?.finish_reason || null,
+    contentLength: choice?.message?.content?.length || 0,
+  })
+  if (choice?.finish_reason === 'length') {
     fail(
-      'data-loss',
-      'El proveedor devolvió una respuesta que no es JSON válido.',
+      'resource-exhausted',
+      'Una parte de la evaluación fue truncada. Reduce el tamaño del árbol web o utiliza un modelo con más capacidad.',
     )
   }
+  fail(
+    'data-loss',
+    'El proveedor devolvió una respuesta que no es JSON válido.',
+  )
+}
+
+const getResponseKeys = (result) => {
+  if (!result || typeof result !== 'object' || Array.isArray(result)) return []
+  return Object.keys(result).slice(0, 10)
+}
+
+const evaluateQuestionBatch = async ({
+  agent,
+  apiKey,
+  model,
+  page,
+  questions,
+  options,
+  answerMode,
+}) => {
+  const openRouterRequest = {
+    ...buildOpenRouterRequest({
+      agent,
+      apiKey,
+      model,
+      page,
+      questions,
+      options,
+      answerMode,
+    }),
+  }
+  const { response, errorPayload } = await requestOpenRouter(openRouterRequest)
+  handleOpenRouterError(response, errorPayload)
+  const { choice, result } = await parseOpenRouterResult(response, model)
   const decisions = normalizeDecisions(
     extractDecisionArray(result),
     questions,
@@ -342,10 +406,7 @@ const evaluateQuestionBatch = async ({
       model,
       expected: questions.length,
       received: Array.isArray(decisions) ? decisions.length : null,
-      responseKeys:
-        result && typeof result === 'object' && !Array.isArray(result)
-          ? Object.keys(result).slice(0, 10)
-          : [],
+      responseKeys: getResponseKeys(result),
       finishReason: choice?.finish_reason || null,
     })
     fail(
