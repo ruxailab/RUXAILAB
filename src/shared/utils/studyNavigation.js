@@ -160,6 +160,15 @@ const NAVIGATION_ITEMS = Object.freeze([
     path: ({ type, id }) => `/${type}/participants/${id}`,
   },
   {
+    title: 'Sessions',
+    icon: ICONS.MONITOR_DASHBOARD,
+    capability: C.SESSIONS_MANAGE,
+    visible: (study) =>
+      normalizeStudyType(study?.testType) === STUDY_TYPES.USER &&
+      study?.subType === USER_STUDY_SUBTYPES.MODERATED,
+    path: ({ type, id }) => `/${type}/sessions/${id}`,
+  },
+  {
     title: 'Settings',
     icon: ICONS.COG,
     capability: C.SETTINGS_MANAGE,
@@ -190,9 +199,12 @@ export function buildStudyNavigator({ study, user, type, previewPath }) {
   if (!hasStudyCapability(study, user, C.DASHBOARD_VIEW)) return []
 
   const context = { type, id: study.id, previewPath }
-  const items = NAVIGATION_ITEMS.filter((item) =>
-    hasStudyCapability(study, user, item.capability),
-  ).map(({ title, icon, path }) => ({
+  const items = NAVIGATION_ITEMS.filter((item) => {
+    const hasCapability = hasStudyCapability(study, user, item.capability)
+    const isVisible = item.visible ? item.visible(study) : true
+
+    return hasCapability && isVisible
+  }).map(({ title, icon, path }) => ({
     title,
     icon,
     path: path(context),

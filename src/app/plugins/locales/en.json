@@ -545,6 +545,7 @@
       "Dashboard": "Dashboard",
       "Test": "Test",
       "Session": "Session",
+      "Sessions": "Sessions",
       "Preview": "Preview",
       "Progress": "Progress",
       "Results": "Results",
@@ -1594,7 +1595,9 @@
       "form": "Form"
     },
     "TaskStep": {
-      "preview": "Task Preview",
+      "beforeWeStart": "Before we start",
+      "taskInformation": "Task Information",
+      "preview": "Recording information",
       "recordingInfo": "This task will record the following data during your interaction:",
       "screenRecord": "Screen Record",
       "screenRecordDesc": "Captures clicks, scrolling, and interactions to analyze user behavior.",
@@ -1604,22 +1607,31 @@
       "audioRecordDesc": "Captures verbal feedback and think-aloud protocols during the task.",
       "eyeTracker": "Eye Tracker",
       "eyeTrackerDesc": "Tracks visual attention patterns and gaze behavior during the task.",
-      "newWindow": "New Window Will Open",
-      "newWindowDesc": "When you start the task, a new window will open with the tool you need to use.",
+      "newWindow": "This task needs to open a website",
+      "newWindowDesc": "When you start the task, you should press a button to open the tool you need to use.",
+      "newWindowManualDesc": "This task uses an external tool. Open it when you are ready and return to this tab to continue.",
       "tip": "Tip",
       "tipDesc": "You can switch between tabs or close the new window at any time. The recording will continue until you complete the task.",
       "internalInterface": "This task will be completed within the current interface.",
       "startTask": "Start task",
+      "openTool": "Open tool",
+      "uploading": "Uploading...",
       "description": "Task Description",
       "needHelp": "Need Help?",
       "needHelpDesc": "Having trouble? Get helpful guidance to complete this task.",
       "externalTool": "External Tool",
+      "externalToolDesc": "Use the button below to open the tool in a new tab.",
+      "openToolDesc": "Open the tool in a new tab, complete the task, then return here.",
       "reopenDesc": "Accidentally closed the tool window? Reopen it here.",
       "reopenTool": "Reopen Tool",
       "answerLabel": "Answer",
       "observationLabel": "Observation (optional)",
       "cannotFinish": "I can not finish the task",
       "completed": "Task completed",
+      "uploadDialogTitle": "Uploading recording session",
+      "uploadDialogMessage": "We are uploading your recording session to the database. This may take a while.",
+      "setupDialogTitle": "Setting up task tools",
+      "setupDialogMessage": "We are setting up all the tools this task needs to be completed. This may take a while.",
       "noQuestionnaire": "No post-task questionnaire required for this task type.",
       "validationError": "Please answer all questions before continuing.",
       "finishTask": "Finish task"
@@ -1757,6 +1769,8 @@
       "description": "You are going to complete",
       "tasksSuffix": "tasks related to using the tool. There are no correct or incorrect answers: what matters is how you interact.",
       "instruction": "When you are ready, click the button to begin.",
+      "nextButton": "Next",
+      "afterRecordingInstruction": "When you are ready, click the button below to begin.",
       "startButton": "Start tasks",
       "recordingTitle": "Recording Information",
       "recordingDescription": "During the tasks, we may collect different types of data to understand your interaction with the system. Depending on the specific task, the following may be recorded:",
@@ -1956,7 +1970,8 @@
         "completed": "Completed",
         "allStudies": "All Studies",
         "myStudies": "My Studies",
-        "whereICollaborate": "Where I Collaborate"
+        "whereICollaborate": "Where I Collaborate",
+        "whereIParticipate": "Where I Participate"
       }
     },
     "templates": {
@@ -2722,6 +2737,84 @@
           "Pre-configured settings",
           "Best practices included"
         ]
+      },
+      "ai": {
+        "title": "Create with AI",
+        "description": "Describe your study in natural language and let the agent build it",
+        "features": [
+          "Chat-based creation",
+          "Any supported method",
+          "Editable preview before save"
+        ]
+      }
+    },
+    "ai": {
+      "title": "Create study with AI",
+      "subtitle": "Describe the study you need. Review the draft, then create it.",
+      "firstStepSubtitle": "Start with your first question and I will transform it into a complete study chat.",
+      "stepLabel": "AI",
+      "welcome": "Tell me what study you want to create. For example: a closed card sorting with categories Living room and Kitchen, and cards TV and Sink.",
+      "placeholder": "Describe your study…",
+      "send": "Send",
+      "conversationStartersTitle": "Iniciadors de converses",
+      "starters": {
+        "cardSorting": {
+          "title": "Card sorting",
+          "prompt": "Create a closed card sorting for an e-commerce furniture website."
+        },
+        "userTest": {
+          "title": "User test",
+          "prompt": "Create an unmoderated usability test to validate checkout completion."
+        },
+        "heuristic": {
+          "title": "Heuristic evaluation",
+          "prompt": "Create a heuristic evaluation for a SaaS dashboard focused on navigation and clarity."
+        },
+        "focusGroup": {
+          "title": "Focus group",
+          "prompt": "Create a focus group to understand trust barriers in a banking mobile app."
+        }
+      },
+      "you": "You",
+      "assistant": "Assistant",
+      "thinking": "Generating draft…",
+      "loadingStages": {
+        "connecting": "Connecting to our intelligence service",
+        "thinking": "Thinking",
+        "takingLonger": "This can take more time than we expected",
+        "stillWorking": "We are still working on your study"
+      },
+      "previewEmpty": "The study preview will appear here once the draft is ready.",
+      "cards": "Cards",
+      "categories": "Categories",
+      "noCategories": "No predefined categories (open sorting)",
+      "mode": "Mode",
+      "modes": {
+        "closed": "Closed",
+        "open": "Open",
+        "hybrid": "Hybrid"
+      },
+      "tasks": "Tasks",
+      "heuristics": "Heuristics",
+      "questionsCount": "{count} questions",
+      "discussionGuide": "Discussion guide",
+      "back": "Back to categories",
+      "orCreateWithAi": "Or skip the wizard and create with AI",
+      "orLabel": "OR",
+      "badge": "AI Agent",
+      "experimental": "Experimental",
+      "adjust": "Ask for changes",
+      "adjustHint": "Type your changes in the chat to refine the draft.",
+      "goToPreview": "Go to preview",
+      "confirm": "Create study",
+      "needClarification": "I need a bit more information to create this study.",
+      "draftReady": "Draft ready: {title}. Review the preview and create the study, or ask for changes.",
+      "completedToPreview": "We have gathered all the necessary information to create your study. Do you want to add more details before moving to preview?",
+      "errors": {
+        "generationFailed": "Could not generate the study draft. Please try again.",
+        "generationFailedWithDetail": "Could not generate the study draft: {detail}",
+        "invalidDraft": "The draft is incomplete or invalid.",
+        "createFailed": "Could not create the study. Please try again."
       }
     },
     "details": {
@@ -3214,6 +3307,8 @@
       "sessions": "Sessions",
       "status": "Status",
       "acceptedDate": "Accepted Date",
+      "rejectedDate": "Rejected Date",
+      "expirationDate": "Expiration Date",
       "actions": "Actions",
       "title": "Subject",
       "content": "Message"
@@ -3231,7 +3326,130 @@
     },
     "status": {
       "pending": "Pending",
-      "accepted": "Accepted"
+      "accepted": "Accepted",
+      "expired": "Expired",
+      "rejected": "Rejected"
+    }
+  },
+  "Sessions": {
+    "title": {
+      "sessions": "Sessions",
+      "editSession": "Edit session",
+      "createSession": "Create session",
+      "title": "Session title",
+      "placeholder": "Enter a session title"
+    },
+    "description": {
+      "editSession": "Update the details, schedule, and message for this session.",
+      "createSession": "Create a moderated session, add staff and participants, and schedule it."
+    },
+    "staff": {
+      "title": "Staff",
+      "description": "Select the people who will run or observe this session.",
+      "selectPlaceholder": "Select staff members",
+      "added": "Added staff",
+      "noSelected": "No staff selected",
+      "roles": {
+        "facilitator": "Facilitator",
+        "observer": "Observer"
+      }
+    },
+    "participants": {
+      "title": "Participants",
+      "description": "Add the participants invited to this session.",
+      "selectPlaceholder": "Select participants",
+      "emailPlaceholder": "Type an email address and press Enter",
+      "added": "Added participants",
+      "noSelected": "No participants selected"
+    },
+    "schedule": {
+      "title": "Schedule",
+      "description": "Choose when the session will take place.",
+      "datePlaceholder": "Select a date",
+      "dateRequired": "Date is required",
+      "timePlaceholder": "Select a time",
+      "timeRequired": "Time is required",
+      "noDateSelected": "No date selected"
+    },
+    "message": {
+      "title": "Invitation message",
+      "description": "Write the message participants will receive for this session.",
+      "placeholder": "Write your message here...",
+      "required": "Message is required",
+      "maxLength": "Message must be 1000 characters or less"
+    },
+    "preview": {
+      "title": "Preview",
+      "details": "Details",
+      "staff": "Staff",
+      "participants": "Participants",
+      "schedule": "Schedule",
+      "message": "Message",
+      "noMessage": "No message yet"
+    },
+    "info": {
+      "title": "Information",
+      "description": "Invitations and updates will be sent using the configured session details."
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "createSession": "Create session",
+      "updateSession": "Update session",
+      "deleteSession": "Delete session",
+      "editSession": "Edit session"
+    },
+    "success": {
+      "created": "Session created successfully",
+      "updated": "Session updated successfully",
+      "deleted": "Session deleted successfully",
+      "messageSent": "Message sent successfully"
+    },
+    "error": {
+      "participantLimitReached": "The participant limit for this session has been reached.",
+      "participantAlreadyAdded": "This participant has already been added.",
+      "createFailed": "Failed to save the session.",
+      "sendMessageFailed": "Failed to send the message.",
+      "errorDelete": "Failed to delete the session."
+    },
+    "send": {
+      "title": "Send session message",
+      "description": "Send an update or reminder about this session.",
+      "recipient": "Recipient",
+      "recipientDescription": "Choose who should receive this message.",
+      "staff": "Staff",
+      "participants": "Participants",
+      "all": "All",
+      "specific": "Specific email",
+      "email": "Email",
+      "emailRequired": "Email is required",
+      "message": "Message",
+      "messageDescription": "Write the message that will be sent.",
+      "placeholder": "Write your message here...",
+      "messageRequired": "Message is required",
+      "preview": "Message preview",
+      "noMessage": "No message yet",
+      "info": "The selected recipients will receive this message by email.",
+      "send": "Send"
+    },
+    "headers": {
+      "goToSession": "Go to session",
+      "title": "Title",
+      "start": "Start",
+      "staff": "Staff",
+      "participants": "Participants",
+      "actions": "Actions"
+    },
+    "confirm": {
+      "deleteTitle": "Delete session",
+      "deleteMessage": "Are you sure you want to delete this session? This action cannot be undone."
+    },
+    "filter": {
+      "search": "Search sessions",
+      "selectRange": "Select range"
+    },
+    "empty": {
+      "title": "No sessions found",
+      "description": "Create a session to start inviting staff and participants."
     }
   }
 }

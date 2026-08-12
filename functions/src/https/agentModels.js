@@ -17,11 +17,11 @@ export const listAgentModels = functions.onCall({
   options: { timeoutSeconds: 30, memory: '256MiB' },
   handler: async (request) => {
     if (!request.auth) fail('unauthenticated', 'Debes iniciar sesión.')
-    const apiKey = process.env.OPENROUTER_API_KEY
+    const apiKey = process.env.AGENTS_RESPONSE_OPENROUTER_API_KEY
     if (!apiKey) {
       fail(
         'failed-precondition',
-        'OPENROUTER_API_KEY no está configurada en Functions.',
+        'AGENTS_RESPONSE_OPENROUTER_API_KEY no está configurada en Functions.',
       )
     }
 

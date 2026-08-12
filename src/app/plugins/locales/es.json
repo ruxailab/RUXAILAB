@@ -543,6 +543,7 @@
       "Dashboard": "Panel",
       "Test": "Prueba",
       "Session": "Sesión",
+      "Sessions": "Sesiónes",
       "Preview": "Vista previa",
       "Progress": "Progreso",
       "Results": "Resultados",
@@ -1511,7 +1512,9 @@
       "form": "Formulario"
     },
     "TaskStep": {
-      "preview": "Vista previa de la tarea",
+      "beforeWeStart": "Antes de empezar",
+      "taskInformation": "Información de la tarea",
+      "preview": "Información de grabación",
       "recordingInfo": "Esta tarea registrará los siguientes datos durante tu interacción:",
       "screenRecord": "Grabación de pantalla",
       "screenRecordDesc": "Captura clics, desplazamiento e interacciones para analizar el comportamiento del usuario.",
@@ -1521,22 +1524,31 @@
       "audioRecordDesc": "Captura comentarios verbales y protocolos de pensamiento en voz alta durante la tarea.",
       "eyeTracker": "Seguimiento ocular",
       "eyeTrackerDesc": "Rastrea patrones de atención visual y comportamiento de la mirada durante la tarea.",
-      "newWindow": "Se abrirá una nueva ventana",
-      "newWindowDesc": "Cuando comiences la tarea, se abrirá una nueva ventana con la herramienta que necesitas usar.",
+      "newWindow": "Esta tarea necesita abrir un sitio web",
+      "newWindowDesc": "Cuando comiences la tarea, deberás abrir pulsar un boton para abrir la herramienta que necesitas usar.",
+      "newWindowManualDesc": "Esta tarea usa una herramienta externa. Ábrela cuando estés listo y vuelve a esta pestaña para continuar.",
       "tip": "Consejo",
       "tipDesc": "Puedes cambiar entre pestañas o cerrar la nueva ventana en cualquier momento. La grabación continuará hasta que completes la tarea.",
       "internalInterface": "Esta tarea se completará dentro de la interfaz actual.",
       "startTask": "Iniciar tarea",
+      "openTool": "Abrir herramienta",
+      "uploading": "Subiendo...",
       "description": "Descripción de la tarea",
       "needHelp": "¿Necesitas ayuda?",
       "needHelpDesc": "¿Tienes problemas? Obtén guía útil para completar esta tarea.",
       "externalTool": "Herramienta externa",
+      "externalToolDesc": "Usa el botón de abajo para abrir la herramienta en una nueva pestaña.",
+      "openToolDesc": "Abre la herramienta en una nueva pestaña, completa la tarea y luego vuelve aquí.",
       "reopenDesc": "¿Cerraste accidentalmente la ventana de la herramienta? Ábrela aquí de nuevo.",
       "reopenTool": "Reabrir herramienta",
       "answerLabel": "Respuesta",
       "observationLabel": "Observación (opcional)",
       "cannotFinish": "No puedo finalizar la tarea",
       "completed": "Tarea completada",
+      "uploadDialogTitle": "Subiendo sesión de grabación",
+      "uploadDialogMessage": "Estamos subiendo tu sesión de grabación a la base de datos. Esto puede tardar un momento.",
+      "setupDialogTitle": "Preparando herramientas de la tarea",
+      "setupDialogMessage": "Estamos preparando todas las herramientas que esta tarea necesita para completarse. Esto puede tardar un momento.",
       "noQuestionnaire": "No se requiere cuestionario posterior para este tipo de tarea.",
       "validationError": "Por favor, responde todas las preguntas antes de continuar.",
       "finishTask": "Finalizar tarea"
@@ -1665,6 +1677,8 @@
       "description": "Vas a completar",
       "tasksSuffix": "tareas relacionadas con el uso de la herramienta. No hay respuestas correctas o incorrectas; lo importante es cómo interactúas.",
       "instruction": "Cuando estés listo, haz clic en el botón para comenzar.",
+      "nextButton": "Siguiente",
+      "afterRecordingInstruction": "Cuando estés listo, pulsa el botón de abajo para comenzar.",
       "startButton": "Iniciar tareas",
       "recordingTitle": "Información de grabación",
       "recordingDescription": "Durante las tareas, podemos recopilar diferentes tipos de datos para entender tu interacción con el sistema. Dependiendo de la tarea específica, se pueden grabar los siguientes elementos:",
@@ -1864,7 +1878,8 @@
         "completed": "Completado",
         "allStudies": "Todos los estudios",
         "myStudies": "Mis estudios",
-        "whereICollaborate": "Donde colaboro"
+        "whereICollaborate": "Donde colaboro",
+        "whereIParticipate": "Donde participo"
       }
     },
     "templates": {
@@ -2622,6 +2637,84 @@
           "Configuraciones predefinidas",
           "Mejores prácticas incluidas"
         ]
+      },
+      "ai": {
+        "title": "Crear con IA",
+        "description": "Describe tu estudio en lenguaje natural y deja que el agente lo construya",
+        "features": [
+          "Creación por chat",
+          "Cualquier método soportado",
+          "Vista previa editable antes de guardar"
+        ]
+      }
+    },
+    "ai": {
+      "title": "Crear estudio con IA",
+      "subtitle": "Describe el estudio que necesitas. Revisa el borrador y luego créalo.",
+      "firstStepSubtitle": "Empieza con tu primera pregunta y lo convertiré en un chat para construir el estudio.",
+      "stepLabel": "IA",
+      "welcome": "Cuéntame qué estudio quieres crear. Por ejemplo: un card sorting cerrado con categorías Sala y Cocina, y tarjetas TV y Fregadero.",
+      "placeholder": "Describe tu estudio…",
+      "send": "Enviar",
+      "conversationStartersTitle": "Iniciadors de converses",
+      "starters": {
+        "cardSorting": {
+          "title": "Card sorting",
+          "prompt": "Crea un card sorting cerrado para una web de e-commerce de muebles."
+        },
+        "userTest": {
+          "title": "Test de usuario",
+          "prompt": "Crea un test de usabilidad no moderado para validar la finalización del checkout."
+        },
+        "heuristic": {
+          "title": "Evaluación heurística",
+          "prompt": "Crea una evaluación heurística para un dashboard SaaS centrada en navegación y claridad."
+        },
+        "focusGroup": {
+          "title": "Focus group",
+          "prompt": "Crea un focus group para entender barreras de confianza en una app bancaria móvil."
+        }
+      },
+      "you": "Tú",
+      "assistant": "Asistente",
+      "thinking": "Generando borrador…",
+      "loadingStages": {
+        "connecting": "Conectando con nuestro servicio de inteligencia",
+        "thinking": "Pensando",
+        "takingLonger": "Esto puede tardar más de lo esperado",
+        "stillWorking": "Seguimos trabajando en tu estudio"
+      },
+      "previewEmpty": "La vista previa aparecerá aquí cuando el borrador esté listo.",
+      "cards": "Tarjetas",
+      "categories": "Categorías",
+      "noCategories": "Sin categorías predefinidas (abierto)",
+      "mode": "Modo",
+      "modes": {
+        "closed": "Cerrado",
+        "open": "Abierto",
+        "hybrid": "Híbrido"
+      },
+      "tasks": "Tareas",
+      "heuristics": "Heurísticas",
+      "questionsCount": "{count} preguntas",
+      "discussionGuide": "Guía de discusión",
+      "back": "Volver a categorías",
+      "orCreateWithAi": "O salta el asistente y crea con IA",
+      "orLabel": "OR",
+      "badge": "Agente IA",
+      "experimental": "Experimental",
+      "adjust": "Pedir cambios",
+      "adjustHint": "Escribe los cambios en el chat para refinar el borrador.",
+      "goToPreview": "Ir a la vista previa",
+      "confirm": "Crear estudio",
+      "needClarification": "Necesito un poco más de información para crear este estudio.",
+      "draftReady": "Borrador listo: {title}. Revisa la vista previa y crea el estudio, o pide cambios.",
+      "completedToPreview": "Hemos reunido toda la información necesaria para crear tu estudio. Ve a la vista previa para crearlo.",
+      "errors": {
+        "generationFailed": "No se pudo generar el borrador. Inténtalo de nuevo.",
+        "generationFailedWithDetail": "No se pudo generar el borrador: {detail}",
+        "invalidDraft": "El borrador está incompleto o no es válido.",
+        "createFailed": "No se pudo crear el estudio. Inténtalo de nuevo."
       }
     },
     "details": {
@@ -3141,6 +3234,8 @@
       "sessions": "Sesiones",
       "status": "Estado",
       "acceptedDate": "Fecha de aceptación",
+      "rejectedDate": "Fecha de rechazo",
+      "expirationDate": "Fecha de vencimiento",
       "actions": "Acciones",
       "title": "Asunto",
       "content": "Mensaje"
@@ -3158,7 +3253,130 @@
     },
     "status": {
       "pending": "Pendiente",
-      "accepted": "Aceptado"
+      "accepted": "Aceptado",
+      "expired": "Vencido",
+      "rejected": "Rechazado"
+    }
+  },
+  "Sessions": {
+    "title": {
+      "sessions": "Sesiones",
+      "editSession": "Editar sesión",
+      "createSession": "Crear sesión",
+      "title": "Título de la sesión",
+      "placeholder": "Introduce un título para la sesión"
+    },
+    "description": {
+      "editSession": "Actualiza los detalles, la fecha y el mensaje de esta sesión.",
+      "createSession": "Crea una sesión moderada, añade personal y participantes, y prográmala."
+    },
+    "staff": {
+      "title": "Personal",
+      "description": "Selecciona las personas que facilitarán u observarán esta sesión.",
+      "selectPlaceholder": "Selecciona miembros del personal",
+      "added": "Personal añadido",
+      "noSelected": "No hay personal seleccionado",
+      "roles": {
+        "facilitator": "Facilitador",
+        "observer": "Observador"
+      }
+    },
+    "participants": {
+      "title": "Participantes",
+      "description": "Añade los participantes invitados a esta sesión.",
+      "selectPlaceholder": "Selecciona participantes",
+      "emailPlaceholder": "Escribe un correo electrónico y pulsa Enter",
+      "added": "Participantes añadidos",
+      "noSelected": "No hay participantes seleccionados"
+    },
+    "schedule": {
+      "title": "Programación",
+      "description": "Elige cuándo tendrá lugar la sesión.",
+      "datePlaceholder": "Selecciona una fecha",
+      "dateRequired": "La fecha es obligatoria",
+      "timePlaceholder": "Selecciona una hora",
+      "timeRequired": "La hora es obligatoria",
+      "noDateSelected": "No se ha seleccionado fecha"
+    },
+    "message": {
+      "title": "Mensaje de invitación",
+      "description": "Escribe el mensaje que recibirán los participantes para esta sesión.",
+      "placeholder": "Escribe tu mensaje aquí...",
+      "required": "El mensaje es obligatorio",
+      "maxLength": "El mensaje debe tener 1000 caracteres o menos"
+    },
+    "preview": {
+      "title": "Vista previa",
+      "details": "Detalles",
+      "staff": "Personal",
+      "participants": "Participantes",
+      "schedule": "Programación",
+      "message": "Mensaje",
+      "noMessage": "Todavía no hay mensaje"
+    },
+    "info": {
+      "title": "Información",
+      "description": "Las invitaciones y actualizaciones se enviarán usando los detalles configurados para la sesión."
+    },
+    "actions": {
+      "cancel": "Cancelar",
+      "createSession": "Crear sesión",
+      "updateSession": "Actualizar sesión",
+      "deleteSession": "Eliminar sesión",
+      "editSession": "Editar sesión"
+    },
+    "success": {
+      "created": "Sesión creada correctamente",
+      "updated": "Sesión actualizada correctamente",
+      "deleted": "Sesión eliminada correctamente",
+      "messageSent": "Mensaje enviado correctamente"
+    },
+    "error": {
+      "participantLimitReached": "Se ha alcanzado el límite de participantes para esta sesión.",
+      "participantAlreadyAdded": "Este participante ya ha sido añadido.",
+      "createFailed": "No se pudo guardar la sesión.",
+      "sendMessageFailed": "No se pudo enviar el mensaje.",
+      "errorDelete": "No se pudo eliminar la sesión."
+    },
+    "send": {
+      "title": "Enviar mensaje de sesión",
+      "description": "Envía una actualización o recordatorio sobre esta sesión.",
+      "recipient": "Destinatario",
+      "recipientDescription": "Elige quién debe recibir este mensaje.",
+      "staff": "Personal",
+      "participants": "Participantes",
+      "all": "Todos",
+      "specific": "Correo específico",
+      "email": "Correo electrónico",
+      "emailRequired": "El correo electrónico es obligatorio",
+      "message": "Mensaje",
+      "messageDescription": "Escribe el mensaje que se enviará.",
+      "placeholder": "Escribe tu mensaje aquí...",
+      "messageRequired": "El mensaje es obligatorio",
+      "preview": "Vista previa del mensaje",
+      "noMessage": "Todavía no hay mensaje",
+      "info": "Los destinatarios seleccionados recibirán este mensaje por correo electrónico.",
+      "send": "Enviar"
+    },
+    "headers": {
+      "goToSession": "Ir a la sesión",
+      "title": "Título",
+      "start": "Inicio",
+      "staff": "Personal",
+      "participants": "Participantes",
+      "actions": "Acciones"
+    },
+    "confirm": {
+      "deleteTitle": "Eliminar sesión",
+      "deleteMessage": "¿Estás seguro de que deseas eliminar esta sesión? Esta acción no se puede deshacer."
+    },
+    "filter": {
+      "search": "Buscar sesiones",
+      "selectRange": "Seleccionar rango"
+    },
+    "empty": {
+      "title": "No se encontraron sesiones",
+      "description": "Crea una sesión para comenzar a invitar personal y participantes."
     }
   }
 }
