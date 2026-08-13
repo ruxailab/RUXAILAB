@@ -538,6 +538,7 @@
     "studies": "Studies",
     "accessLevel": "Access Level",
     "actions": "Actions",
+    "anonymous": "Anonymous Participant",
     "drawer": {
       "Manager": "Dashboard",
       "Reports": "Progress",
@@ -1555,6 +1556,13 @@
     }
   },
   "UserTestView": {
+    "anonymousParticipant": {
+      "identifier": "Participant ID",
+      "saveIdentifier": "Please save this identifier for your records. You may need it to identify your participation in this study.",
+      "downloadIdentifier": "Download participant ID",
+      "protocol": "Participant Identification",
+      "issuedAt": "Issued on"
+    },
     "loading": "Loading...",
     "titles": {
       "preTestConsent": "Pre Test - Consent",
