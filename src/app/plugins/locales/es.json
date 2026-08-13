@@ -420,7 +420,8 @@
       "description": "Crea un enlace de invitación para compartir. Cualquier persona que tenga este enlace podrá unirse al estudio con el rol seleccionado.",
       "generate": "Generar enlace",
       "generateNew": "Generar nuevo enlace",
-      "copied": "Enlace de invitación copiado al portapapeles."
+      "copied": "Enlace de invitación copiado al portapapeles.",
+      "requireLogin": "Requerir inicio de sesión para participar"
     }
   },
   "navigation": {

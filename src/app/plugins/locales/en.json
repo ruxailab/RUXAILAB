@@ -422,7 +422,8 @@
       "description": "Create a shareable invitation link. Anyone with this link can join the study using the selected role.",
       "generate": "Generate link",
       "generateNew": "Generate new link",
-      "copied": "Invitation link copied to clipboard."
+      "copied": "Invitation link copied to clipboard.",
+      "requireLogin": "Require login to participate"
     }
   },
   "navigation": {

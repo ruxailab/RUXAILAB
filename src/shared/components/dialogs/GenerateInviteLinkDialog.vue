@@ -29,6 +29,13 @@
           density="comfortable"
           :disabled="loading"
         />
+        <v-checkbox
+          v-model="requiredLoginValue"
+          :label="t('cooperators.inviteLink.requireLogin')"
+          :disabled="loading || requiredLogin"
+          class="mt-0"
+          hide-details
+        />
 
         <v-text-field
           v-if="inviteLink"
@@ -101,7 +108,7 @@ const props = defineProps({
     required: true,
   },
   requiredLogin: {
-    type: String,
+    type: Boolean,
     required: true,
   },
   preDefinedRole: {
@@ -123,6 +130,7 @@ const emit = defineEmits(['update:show', 'generated'])
 const selectedRole = ref(null)
 const inviteLink = ref('')
 const loading = ref(false)
+const requiredLoginValue = ref(true)
 
 const getInitialRole = () => {
   if (
@@ -143,7 +151,7 @@ const generateLink = async () => {
       studyId: props.studyId,
       studyTitle: props.studyTitle,
       accessLevel: selectedRole.value ?? props.preDefinedRole,
-      requiredLogin: props.requiredLogin,
+      requiredLogin: requiredLoginValue.value,
       toEmail: null, // No email provided for public invites
       isPublic: true,
       membershipType: props.membershipType,

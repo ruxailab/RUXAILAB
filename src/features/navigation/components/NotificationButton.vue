@@ -204,8 +204,18 @@ const goToNotificationRedirect = async (notification) => {
     user: user.value,
   })
 
-  if (redirectTo && redirectTo !== '/') {
-    globalThis.open(globalThis.location.origin + redirectTo, '_blank')
+  let url = redirectTo
+
+  if (!url.startsWith('http')) {
+    const baseUrl = globalThis.location.origin
+    const path = url.startsWith('/') ? url : `/${url}`
+    url = baseUrl + path
+  }
+
+  try {
+    globalThis.open(url, '_blank')
+  } catch {
+    // Ignore browser popup errors
   }
 
   menuOpen.value = false
