@@ -317,7 +317,8 @@ const filteredSessions = computed(() => {
 })
 
 const goTo = (session) => {
-  router.push(`/testview/${session.study.id}/${session.id}`)
+  const route = router.resolve(`/testview/${session.study.id}/${session.id}`)
+  window.open(route.href, '_blank')
 }
 </script>
 

@@ -374,7 +374,8 @@ const deleteSession = (session) => {
 }
 
 const goToSession = (coopId) => {
-  router.push(`/testview/${test.value.id}/${coopId}`)
+  const route = router.resolve(`/testview/${test.value.id}/${coopId}`)
+  window.open(route.href, '_blank')
 }
 
 const confirmDeleteSession = async () => {
