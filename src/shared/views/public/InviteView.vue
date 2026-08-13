@@ -131,6 +131,10 @@ import { onMounted, ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import store from '@/store'
 import { useI18n } from 'vue-i18n'
+import {
+  getMethodManagerView,
+  normalizeStudyType,
+} from '@/shared/constants/methodDefinitions'
 
 const { t } = useI18n()
 
@@ -178,7 +182,32 @@ const acceptInvite = async () => {
       membershipType: invite.value.membershipType,
     })
 
-    router.replace(`/testview/${result.study.id}`)
+    const testId = result.study.id
+
+    if (invite.value.membershipType === 'participant') {
+      router.push({
+        name: 'TestView',
+        params: {
+          id: testId,
+        },
+      })
+
+      return
+    }
+
+    const normalizedTestType = normalizeStudyType(result.study.testType)
+
+    const methodView = getMethodManagerView(
+      normalizedTestType,
+      result.study.subType,
+    )
+
+    router.push({
+      name: methodView,
+      params: {
+        id: testId,
+      },
+    })
   } catch (err) {
     error.value =
       err?.response?.data?.message || err?.message || t('invite.acceptFailed')

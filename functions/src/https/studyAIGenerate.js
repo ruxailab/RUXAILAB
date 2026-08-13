@@ -194,7 +194,7 @@ export const generateStudyDraft = functions.onCall({
 
     const apiKey = process.env.CHAT_BUILDER_OPENROUTER_API_KEY
     if (!apiKey) {
-      throw error('failed-precondition', 'OPENROUTER_API_KEY is not configured')
+      throw error('failed-precondition', 'CHAT_BUILDER_OPENROUTER_API_KEY is not configured')
     }
 
     const locale = request?.data?.locale || 'en-US'

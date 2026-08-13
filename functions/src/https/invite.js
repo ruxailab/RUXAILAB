@@ -95,6 +95,8 @@ export const resolveInvite = functions.onCall({
         email: invite.email ?? null,
         isPublic: !!invite.isPublic,
         requiredLogin: !!invite.requiredLogin,
+        accessLevel: invite.accessLevel,
+        membershipType: invite.membershipType,
       },
     }
   },
@@ -132,17 +134,33 @@ export const validateInvite = functions.onCall({
 
       // private invites should be used only once, so if they have been accepted, they are not valid anymore
       if (!dataInvite.isPublic && dataInvite.acceptedAt) {
-        throw new functions.https.HttpsError(
-          'failed-precondition',
-          'Invite already used',
-        )
+        return {
+          valid: false,
+          invite: {
+            id: doc.id,
+            studyId: dataInvite.studyId,
+            studyTitle: dataInvite.studyTitle,
+            email: dataInvite.email ?? null,
+            isPublic: !!dataInvite.isPublic,
+            requiredLogin: !!dataInvite.requiredLogin,
+            membershipType: dataInvite.membershipType,
+          },
+        }
       }
 
       if (expired) {
-        throw new functions.https.HttpsError(
-          'failed-precondition',
-          'Invite expired',
-        )
+        return {
+          valid: false,
+          invite: {
+            id: doc.id,
+            studyId: dataInvite.studyId,
+            studyTitle: dataInvite.studyTitle,
+            email: dataInvite.email ?? null,
+            isPublic: !!dataInvite.isPublic,
+            requiredLogin: !!dataInvite.requiredLogin,
+            membershipType: dataInvite.membershipType,
+          },
+        }
       }
 
       return {

@@ -54,13 +54,7 @@ export default [
     meta: { authorize: [] },
     component: Help,
     props: { showAllOnLoad: true },
-  } /*
-  {
-    path: '/',
-    name: 'Landing',
-    meta: { authorize: [] },
-    component: LandingPage,
-  },*/,
+  },
   {
     path: '/:catchAll(.*)',
     name: 'Page not Found',

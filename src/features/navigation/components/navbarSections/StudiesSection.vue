@@ -201,6 +201,7 @@ import {
   USER_STUDY_SUBTYPES,
 } from '@/shared/constants/methodDefinitions'
 import { matchesSearch } from '@/shared/utils/searchUtils'
+import { STUDY_ROLE } from '@/shared/utils/studyAccessPolicy'
 
 // ===== Setup =====
 const store = useStore()
@@ -379,6 +380,15 @@ const filteredTests = computed(() => {
 
 // ===== Navigation =====
 const goTo = (test) => {
+  const userId = user.value?.id
+  const studyId = test.id
+  const userRole = test.studyRoleMap?.[userId]
+
+  if (userRole === STUDY_ROLE.USER) {
+    router.push(`/testview/${studyId}/${userId}`)
+    return
+  }
+
   // Handle manual/automatic studies
   if (test.testType === STUDY_TYPES.ACCESSIBILITY_MANUAL) {
     router.push(`/accessibility/manual/${test.testDocId || test.id}`)
