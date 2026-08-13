@@ -202,6 +202,7 @@ import {
 } from '@/shared/constants/methodDefinitions'
 import { matchesSearch } from '@/shared/utils/searchUtils'
 import { STUDY_ROLE } from '@/shared/utils/studyAccessPolicy'
+import { showInfo } from '@/shared/utils/toast'
 
 // ===== Setup =====
 const store = useStore()
@@ -385,8 +386,16 @@ const goTo = (test) => {
   const userRole = test.studyRoleMap?.[userId]
 
   if (userRole === STUDY_ROLE.USER) {
-    router.push(`/testview/${studyId}/${userId}`)
-    return
+    if (
+      test.testType == STUDY_TYPES.USER &&
+      test.subType == USER_STUDY_SUBTYPES.MODERATED
+    ) {
+      showInfo(t('UserTestView.messages.useSessionLink'))
+      return
+    } else {
+      router.push(`/testview/${studyId}/${userId}`)
+      return
+    }
   }
 
   // Handle manual/automatic studies

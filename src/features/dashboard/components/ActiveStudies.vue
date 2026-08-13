@@ -154,12 +154,14 @@ import {
   getMethodIcon,
   getMethodManagerView,
   STUDY_TYPES,
+  USER_STUDY_SUBTYPES,
 } from '@/shared/constants/methodDefinitions'
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import { STUDY_ROLE } from '../../../shared/utils/studyAccessPolicy'
+import { showInfo } from '@/shared/utils/toast'
 
 const { t } = useI18n()
 
@@ -344,6 +346,14 @@ const goToStudy = async (study) => {
 
   if (study.testType === STUDY_TYPES.ACCESSIBILITY_AUTOMATIC) {
     router.push({ name: 'AccessibilityReport', params: { id: study.id } })
+    return
+  }
+
+  if (
+    study.testType == STUDY_TYPES.USER &&
+    study.subType == USER_STUDY_SUBTYPES.MODERATED
+  ) {
+    showInfo(t('UserTestView.messages.useSessionLink'))
     return
   }
 

@@ -6,6 +6,7 @@ import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import { STUDY_ROLE } from '@/shared/utils/studyAccessPolicy'
 
 import i18n from '@/app/plugins/i18n'
+import { USER_STUDY_SUBTYPES } from '../constants/methodDefinitions'
 
 const t = i18n.global.t
 
@@ -82,6 +83,19 @@ export const getPredefinedParticipantUserRole = (study) => {
   }
 
   return STUDY_ROLE.USER
+}
+
+export const getRequiredLoginConfig = (study) => {
+  // for heuristic and moderated studies, we require login to access the study
+  if (
+    study?.testType == STUDY_TYPES.HEURISTIC ||
+    (study?.testType == STUDY_TYPES.USER &&
+      study.subType == USER_STUDY_SUBTYPES.MODERATED)
+  ) {
+    return true
+  }
+
+  return false
 }
 
 export const getCooperatorInviteValidationError = ({
