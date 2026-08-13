@@ -137,10 +137,22 @@ export default {
           (item) => item.id === payload.sessionId,
         )
 
+        const previousScheduledAt = normalizeDate(previousSession?.scheduledAt)
+        const newScheduledAt = normalizeDate(payload.session?.scheduledAt)
+
+        const scheduleChanged =
+          previousScheduledAt?.getTime() !== newScheduledAt?.getTime()
+
+        const descriptionChanged =
+          (previousSession?.message || '') !== (payload.session?.message || '')
+
+        const sessionDetailsChanged = scheduleChanged || descriptionChanged
+
         const result = await new SessionController().updateSession({
           ...payload,
           session: enrichSession(payload.session),
         })
+
         if (!result.success) {
           throw result.error
         }
@@ -159,7 +171,22 @@ export default {
           (member) => !oldMembers.some((old) => old.email === member.email),
         )
 
-        if (addedMembers.length) {
+        if (sessionDetailsChanged) {
+          await dispatch('notifySessionMembers', {
+            session: {
+              id: payload.sessionId,
+              title: payload.session.title,
+              message: payload.session.message,
+            },
+            studyId: payload.studyId,
+            studyTitle: payload.study.testTitle,
+            scheduledAt: formatDateTime(
+              payload.session.scheduledAt,
+              i18n.global.locale.value,
+            ),
+            members: newMembers,
+          })
+        } else if (addedMembers.length) {
           await dispatch('notifySessionMembers', {
             session: {
               id: payload.sessionId,
@@ -438,6 +465,28 @@ export default {
       }
     },
   },
+}
+
+function normalizeDate(value) {
+  if (!value) {
+    return null
+  }
+
+  if (typeof value.toDate === 'function') {
+    return value.toDate()
+  }
+
+  if (typeof value.toMillis === 'function') {
+    return new Date(value.toMillis())
+  }
+
+  if (value instanceof Date) {
+    return value
+  }
+
+  const date = new Date(value)
+
+  return Number.isNaN(date.getTime()) ? null : date
 }
 
 function enrichSession(session) {
