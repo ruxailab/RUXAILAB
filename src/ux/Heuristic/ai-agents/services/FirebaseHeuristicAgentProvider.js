@@ -9,7 +9,7 @@ export default class FirebaseHeuristicAgentProvider {
   static async listModels() {
     const response =
       await FirebaseFunctionsController.callHttpsCallableFunction(
-        'listHeuristicAgentModels',
+        'listAgentModels',
       )
     return response.data.models || []
   }

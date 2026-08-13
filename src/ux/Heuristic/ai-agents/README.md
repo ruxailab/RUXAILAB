@@ -27,7 +27,7 @@ fetcher. The builder also accepts same-origin HTML or a browser `Document` direc
 
 The included Firebase Functions implement the production flow through OpenRouter. Configure
 `OPENROUTER_API_KEY` and optionally `OPENROUTER_MODEL` in the Functions environment, then
-deploy `listHeuristicAgentModels`, `fetchHeuristicPage` and `evaluateHeuristicPage`. Activate
+deploy `listAgentModels`, `fetchHeuristicPage` and `evaluateHeuristicPage`. Activate
 an agent in a heuristic test, enter the target URL and press **Evaluar**. The resulting answer
 is stored in the existing `heuristicAnswers` map. Never expose the key in a `VUE_APP_*`
 variable because those values are bundled into the browser application.

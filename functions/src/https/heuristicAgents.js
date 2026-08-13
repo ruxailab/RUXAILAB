@@ -562,41 +562,6 @@ export const fetchHeuristicPage = functions.onCall({
   },
 })
 
-export const listHeuristicAgentModels = functions.onCall({
-  options: { timeoutSeconds: 30, memory: '256MiB' },
-  handler: async (request) => {
-    if (!request.auth) fail('unauthenticated', 'Debes iniciar sesión.')
-    const { apiKey } = getOpenRouterConfig()
-    const response = await fetch(`${OPENROUTER_BASE_URL}/models`, {
-      headers: openRouterHeaders(apiKey),
-      signal: AbortSignal.timeout(15_000),
-    })
-    if (!response.ok) {
-      fail(
-        'unavailable',
-        `No se pudo cargar el catálogo de OpenRouter (HTTP ${response.status}).`,
-      )
-    }
-    const payload = await response.json()
-    const models = (payload.data || [])
-      .filter((model) => model?.id && model?.name)
-      .map((model) => ({
-        id: model.id,
-        name: model.name,
-        contextLength: model.context_length || null,
-        promptPrice: model.pricing?.prompt || null,
-        completionPrice: model.pricing?.completion || null,
-        supportsStructuredOutput: (model.supported_parameters || []).some(
-          (parameter) =>
-            parameter === 'response_format' ||
-            parameter === 'structured_outputs',
-        ),
-      }))
-      .sort((left, right) => left.name.localeCompare(right.name))
-    return { models }
-  },
-})
-
 export const evaluateHeuristicPage = functions.onCall({
   options: { timeoutSeconds: 300, memory: '512MiB' },
   handler: async (request) => {
