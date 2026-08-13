@@ -1,7 +1,7 @@
 import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import AIAgent, { AGENT_VISIBILITY } from '../models/AIAgent'
 
-const COLLECTION = 'heuristicAgents'
+const COLLECTION = 'agents'
 
 export default class AIAgentController extends Controller {
   async createAgent(data, ownerId) {

@@ -18,8 +18,8 @@ const SUPPORTED_METHODS = [
 const MAX_MESSAGES = 12
 const RATE_LIMIT_WINDOW_MS = 60_000
 const RATE_LIMIT_MAX = 8
-const DEFAULT_MODEL = process.env.OPENROUTER_STUDY_MODEL
-const OPENROUTER_BASE_URL = process.env.OPENROUTER_BASE_URL
+const DEFAULT_MODEL = process.env.CHAT_BUILDER_OPENROUTER_STUDY_MODEL
+const OPENROUTER_BASE_URL = process.env.CHAT_BUILDER_OPENROUTER_BASE_URL
 
 /** @type {Map<string, number[]>} */
 const rateLimitBuckets = new Map()
@@ -192,9 +192,9 @@ export const generateStudyDraft = functions.onCall({
 
     assertRateLimit(uid)
 
-    const apiKey = process.env.OPENROUTER_API_KEY
+    const apiKey = process.env.CHAT_BUILDER_OPENROUTER_API_KEY
     if (!apiKey) {
-      throw error('failed-precondition', 'OPENROUTER_API_KEY is not configured')
+      throw error('failed-precondition', 'CHAT_BUILDER_OPENROUTER_API_KEY is not configured')
     }
 
     const locale = request?.data?.locale || 'en-US'

@@ -360,43 +360,68 @@ export const manageStudyMembership = functions.onCall({
         }
 
         /*
-         |--------------------------------------------------------------------------
-         | ACCEPT INVITATION
-         |--------------------------------------------------------------------------
-         */
+        |--------------------------------------------------------------------------
+        | ACCEPT INVITATION
+        |--------------------------------------------------------------------------
+        */
         if (action === 'accept') {
           const targetDoc = participantsSnapshot.docs.find((doc) => {
             const participant = doc.data()
 
             return (
               !InviteUtils.isAccepted(participant) &&
-              (participant?.userDocId === actorId ||
+              (participant?.userDocId === targetUserId ||
+                participant?.userDocId === actorId ||
                 sameEmail(participant?.email, actorEmail))
             )
           })
 
-          if (!targetDoc) {
-            throw error(
-              'permission-denied',
-              'No participant invitation matches this account',
-            )
-          }
-
-          const target = targetDoc.data()
           const now = Date.now()
+          let participant
+          let participantId
 
-          const participant = {
-            ...target,
-            userDocId: actorId,
-            accepted: true,
-            updateDate: now,
-            acceptedDate: now,
-            status: INVITE_STATUS.ACCEPTED,
+          if (targetDoc) {
+            // Existing private invitation
+            participant = {
+              ...targetDoc.data(),
+              userDocId: actorId,
+              accepted: true,
+              updateDate: now,
+              acceptedDate: now,
+              status: INVITE_STATUS.ACCEPTED,
+            }
+
+            participantId = targetDoc.id
+
+            transaction.update(targetDoc.ref, participant)
+          } else {
+            // Public invitation
+            if (!targetUserId) {
+              throw error(
+                'permission-denied',
+                'A user ID is required to accept a public participant invitation',
+              )
+            }
+
+            participant = {
+              userDocId: targetUserId,
+              email: actorEmail || null,
+              accessLevel: role,
+              accepted: true,
+              acceptedDate: now,
+              updateDate: now,
+              status: INVITE_STATUS.ACCEPTED,
+            }
+
+            const participantRef = participantsRef.doc()
+
+            participantId = participantRef.id
+
+            transaction.set(participantRef, participant)
           }
 
           studyRoleMap[actorId] = participant.accessLevel
 
-          transaction.update(targetDoc.ref, participant)
           transaction.update(studyRef, {
             studyRoleMap,
           })
@@ -412,7 +437,7 @@ export const manageStudyMembership = functions.onCall({
               subType: study.subType || null,
               testTitle: study.testTitle || '',
               total: 0,
-              updateDate: Date.now(),
+              updateDate: now,
             },
           })
 
@@ -431,7 +456,7 @@ export const manageStudyMembership = functions.onCall({
           return {
             status: 'accepted',
             participant: {
-              id: targetDoc.id,
+              id: participantId,
               ...participant,
             },
           }
@@ -704,11 +729,10 @@ export const manageStudyMembership = functions.onCall({
       }
 
       /*
-       |--------------------------------------------------------------------------
-       | ACCEPT INVITATION
-       |--------------------------------------------------------------------------
-       */
-
+      |--------------------------------------------------------------------------
+      | ACCEPT INVITATION
+      |--------------------------------------------------------------------------
+      */
       if (action === 'accept') {
         const index = cooperators.findIndex(
           (cooperator) =>
@@ -717,22 +741,47 @@ export const manageStudyMembership = functions.onCall({
               sameEmail(cooperator?.email, actorEmail)),
         )
 
-        if (index < 0) {
-          throw error('permission-denied', 'No invitation matches this account')
-        }
-
         const now = Date.now()
 
-        const membership = {
-          ...cooperators[index],
-          userDocId: actorId,
-          accepted: true,
-          updateDate: now,
-          acceptedDate: now,
-          status: INVITE_STATUS.ACCEPTED,
-        }
+        let membership
 
-        cooperators[index] = membership
+        if (index >= 0) {
+          // Existing invitation
+          membership = {
+            ...cooperators[index],
+            userDocId: actorId,
+            accepted: true,
+            updateDate: now,
+            acceptedDate: now,
+            status: INVITE_STATUS.ACCEPTED,
+          }
+
+          cooperators[index] = membership
+        } else {
+          console.log('accepting public invitation', role)
+          // Public invite: create the cooperator membership
+          const accessLevel = role
+
+          if (accessLevel === null) {
+            throw error(
+              'invalid-argument',
+              'A role is required to accept a public invitation',
+            )
+          }
+
+          membership = {
+            userDocId: actorId,
+            email: actorEmail || null,
+            accessLevel,
+            accepted: true,
+            status: INVITE_STATUS.ACCEPTED,
+            createdDate: now,
+            updateDate: now,
+            acceptedDate: now,
+          }
+
+          cooperators.push(membership)
+        }
 
         studyRoleMap[actorId] = membership.accessLevel
 
@@ -752,7 +801,7 @@ export const manageStudyMembership = functions.onCall({
             subType: study.subType || null,
             testTitle: study.testTitle || '',
             total: 0,
-            updateDate: Date.now(),
+            updateDate: now,
           },
         })
 
@@ -765,6 +814,7 @@ export const manageStudyMembership = functions.onCall({
           targetType: 'cooperator',
           details: {
             role: membership.accessLevel,
+            publicInvite: index < 0,
           },
         })
 

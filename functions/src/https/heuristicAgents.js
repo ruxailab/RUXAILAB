@@ -39,11 +39,13 @@ const fail = (code, message) => {
 }
 
 const getOpenRouterConfig = () => {
-  const apiKey = process.env.OPENROUTER_API_KEY
+  const apiKey =
+    process.env.AGENTS_RESPONSE_OPENROUTER_API_KEY ||
+    process.env.OPENROUTER_API_KEY
   if (!apiKey) {
     fail(
       'failed-precondition',
-      'OPENROUTER_API_KEY no está configurada en Functions.',
+      'AGENTS_RESPONSE_OPENROUTER_API_KEY no está configurada en Functions.',
     )
   }
   return {
@@ -586,7 +588,7 @@ export const evaluateHeuristicPage = functions.onCall({
     }
     const agentSnapshot = await admin
       .firestore()
-      .collection('heuristicAgents')
+      .collection('agents')
       .doc(agentId)
       .get()
     if (!agentSnapshot.exists) fail('not-found', 'El agente no existe.')
