@@ -95,7 +95,14 @@ router.beforeEach(async (to, from, next) => {
   }
 
   /**
-   * 5. Enforce role-based access control
+   * 5. Redirect root path based on resolved auth state
+   */
+  if (to.path === '/') {
+    return next(redirect())
+  }
+
+  /**
+   * 6. Enforce role-based access control
    */
   if (authorize.length) {
     if (!user || !authorize.includes(user.accessLevel)) {

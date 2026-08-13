@@ -24,6 +24,10 @@ import { onMounted, ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
+import {
+  getMethodManagerView,
+  normalizeStudyType,
+} from '@/shared/constants/methodDefinitions'
 
 const router = useRouter()
 const store = useStore()
@@ -52,10 +56,30 @@ const acceptInvite = async () => {
     dialogHandled.value = true
     show.value = false
 
+    const testId = result.study.id
+
+    if (invite.value.membershipType === 'participant') {
+      router.push({
+        name: 'TestView',
+        params: {
+          id: testId,
+        },
+      })
+
+      return
+    }
+
+    const normalizedTestType = normalizeStudyType(result.study.testType)
+
+    const methodView = getMethodManagerView(
+      normalizedTestType,
+      result.study.subType,
+    )
+
     router.push({
-      name: 'TestView',
+      name: methodView,
       params: {
-        id: result.study.id,
+        id: testId,
       },
     })
   } finally {

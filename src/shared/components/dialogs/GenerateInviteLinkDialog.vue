@@ -70,21 +70,19 @@ import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import InviteController from '@/shared/controllers/InviteController'
-import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
 import { showSuccess } from '@/shared/utils/toast'
 import { STUDY_ROLE } from '@/shared/utils/studyAccessPolicy'
 
 const { t } = useI18n()
-const { roleOptions } = useCooperatorUtils()
 
 const COOPERATOR_HIDDEN_ROLES = [STUDY_ROLE.USER, STUDY_ROLE.EVALUATOR]
 
 const visibleRoleOptions = computed(() => {
   if (props.membershipType !== 'cooperator') {
-    return roleOptions.value
+    return props.roleOptions
   }
 
-  return roleOptions.value.filter(
+  return props.roleOptions.filter(
     ({ value }) => !COOPERATOR_HIDDEN_ROLES.includes(value),
   )
 })
@@ -114,6 +112,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  roleOptions: {
+    type: Array,
+    default: () => [],
+  },
 })
 
 const emit = defineEmits(['update:show', 'generated'])
@@ -140,13 +142,12 @@ const generateLink = async () => {
     const result = await InviteController.generateInvitationLink({
       studyId: props.studyId,
       studyTitle: props.studyTitle,
-      accessLevel: selectedRole.value,
+      accessLevel: selectedRole.value ?? props.preDefinedRole,
       requiredLogin: props.requiredLogin,
       toEmail: null, // No email provided for public invites
       isPublic: true,
       membershipType: props.membershipType,
     })
-
     inviteLink.value = result.inviteLink
 
     emit('generated', result.inviteLink)

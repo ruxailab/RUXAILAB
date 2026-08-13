@@ -17,6 +17,7 @@ export const dashboardNavigationItems = [
     icon: 'mdi-clipboard-text',
   },
   { id: 'storage', title: 'navigation.storage', icon: 'mdi-database' },
+  { id: 'agents', title: 'navigation.agents', icon: 'mdi-robot-outline' },
   { id: 'notifications', title: 'common.notifications', icon: 'mdi-bell' },
   { id: 'profile', title: 'profile.title', icon: 'mdi-account-circle' },
   {

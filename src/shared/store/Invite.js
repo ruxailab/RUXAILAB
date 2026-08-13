@@ -402,6 +402,7 @@ export default {
           test: study,
           cooperator: user,
           membershipType,
+          role: result.invite.accessLevel,
         })
 
         localStorage.removeItem('pendingInviteToken')
@@ -536,7 +537,7 @@ export default {
       const result = await InviteController.validateInvite(token)
 
       if (!result.valid) {
-        throw new Error(result.message || 'Invalid invitation')
+        return null
       }
 
       let user = rootGetters.user

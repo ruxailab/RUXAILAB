@@ -159,6 +159,7 @@ import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+import { STUDY_ROLE } from '../../../shared/utils/studyAccessPolicy'
 
 const { t } = useI18n()
 
@@ -317,7 +318,11 @@ const canManageStudy = (study) => {
   if (currentUser.accessLevel === 0) return true
   if (study.testAdmin?.userDocId === currentUser.id) return true
   const coop = study.cooperators?.find((c) => c.userDocId === currentUser.id)
-  return coop?.accessLevel === 0 || coop?.accessLevel === 1
+  return (
+    coop?.accessLevel === STUDY_ROLE.ADMIN ||
+    coop?.accessLevel === STUDY_ROLE.EVALUATOR ||
+    coop?.accessLevel === STUDY_ROLE.MANAGER
+  )
 }
 
 const goToStudy = async (study) => {
