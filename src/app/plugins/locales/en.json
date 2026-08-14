@@ -2475,6 +2475,13 @@
     "answers": "Answers",
     "no": "No"
   },
+  "observatorNotes": {
+    "title": "Session Notes",
+    "count": "{count} notes",
+    "empty": "No notes taken yet.",
+    "emptyHint": "Start typing below to record observations.",
+    "placeholder": "Type observation... (Cmd+Enter to save)"
+  },
   "focusGroup": {
     "config": {
       "title": "Session Features",
@@ -2598,6 +2605,10 @@
       "currentQuestion": "Current question",
       "clearQuestion": "Clear question",
       "guide": "Guide",
+      "notes": "Notes",
+      "startTimer": "Start timer",
+      "pauseTimer": "Pause timer",
+      "resetTimer": "Reset timer",
       "noPrompts": "No prompts for this topic.",
       "participants": "Participants",
       "noParticipants": "No one has joined yet.",
