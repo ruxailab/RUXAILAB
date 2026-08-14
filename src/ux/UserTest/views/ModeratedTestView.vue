@@ -1069,86 +1069,41 @@ const startTest = async () => {
     const previousGlobalIndex = globalIndex.value
     const previousTaskIndex = taskIndex.value
 
-    globalIndex.value = nextGlobalIndex
-    taskIndex.value = nextTaskIndex
-
     if (!isModerator.value) {
       const announcementKey = `${nextGlobalIndex}-${nextTaskIndex}`
-      const isConsentStage = nextGlobalIndex === 1 && nextTaskIndex === 0
-      const shouldAnnounceConsentStart =
-        isConsentStage &&
-        nextShowVideoCall === false &&
-        previousGlobalIndex !== nextGlobalIndex &&
-        !isProcessingRemoteStepAnnouncement.value &&
-        lastAnnouncedRemoteStepKey.value !== announcementKey
-
-      if (shouldAnnounceConsentStart) {
-        isProcessingRemoteStepAnnouncement.value = true
-        lastAnnouncedRemoteStepKey.value = announcementKey
-        displayVideoCallComponent.value = true
-
-        await safelyShowNextStepAnnouncement(
-          t('UserTestView.stepper.consent'),
-          1,
-        )
-
-        displayVideoCallComponent.value = false
-        isProcessingRemoteStepAnnouncement.value = false
-        return
-      }
-
-      const isPreTestStage = nextGlobalIndex === 2 && nextTaskIndex === 0
-      const shouldAnnouncePreTestStart =
-        isPreTestStage &&
-        nextShowVideoCall === false &&
-        previousGlobalIndex !== nextGlobalIndex &&
-        !isProcessingRemoteStepAnnouncement.value &&
-        lastAnnouncedRemoteStepKey.value !== announcementKey
-
-      if (shouldAnnouncePreTestStart) {
-        isProcessingRemoteStepAnnouncement.value = true
-        lastAnnouncedRemoteStepKey.value = announcementKey
-        displayVideoCallComponent.value = true
-
-        await safelyShowNextStepAnnouncement(
-          t('UserTestView.stepper.preTest'),
-          2,
-        )
-
-        displayVideoCallComponent.value = false
-        isProcessingRemoteStepAnnouncement.value = false
-        return
-      }
-
-      const isTaskStage = nextGlobalIndex === 4
-      const taskChanged =
+      const stageChanged =
         previousGlobalIndex !== nextGlobalIndex ||
         previousTaskIndex !== nextTaskIndex
-      const shouldAnnounceTaskStart =
-        isTaskStage &&
+      const isAnnounceableStage = nextGlobalIndex >= 1 && nextGlobalIndex <= 6
+      const shouldAnnounceRemoteStage =
+        isAnnounceableStage &&
         nextShowVideoCall === false &&
-        taskChanged &&
+        stageChanged &&
         !isProcessingRemoteStepAnnouncement.value &&
         lastAnnouncedRemoteStepKey.value !== announcementKey
 
-      if (shouldAnnounceTaskStart) {
+      if (shouldAnnounceRemoteStage) {
         isProcessingRemoteStepAnnouncement.value = true
         lastAnnouncedRemoteStepKey.value = announcementKey
         displayVideoCallComponent.value = true
 
-        await showTaskTitleAnnouncement(nextTaskIndex)
+        await showStageAnnouncementByGlobalIndex(
+          nextGlobalIndex,
+          nextTaskIndex,
+        )
 
         displayVideoCallComponent.value = false
         isProcessingRemoteStepAnnouncement.value = false
-        return
+      } else {
+        displayVideoCallComponent.value = nextShowVideoCall
       }
-
-      // sync video call state
-      displayVideoCallComponent.value = nextShowVideoCall
     } else {
       // Moderator always stays in video call during session
       displayVideoCallComponent.value = true
     }
+
+    globalIndex.value = nextGlobalIndex
+    taskIndex.value = nextTaskIndex
   })
 
   // Wait for the animation to finish before changing the state
@@ -1186,8 +1141,12 @@ const handleWelcomeStart = async () => {
   globalIndex.value = 1
 }
 
-const showNextStepAnnouncement = async (title, stageNumber) => {
-  nextStepAnnouncementKicker.value = `Stage ${stageNumber}`
+const showNextStepAnnouncement = async (
+  title,
+  stageNumber,
+  kickerOverride = '',
+) => {
+  nextStepAnnouncementKicker.value = kickerOverride || `Stage ${stageNumber}`
   nextStepAnnouncementTitle.value = title
   showStepAnnouncement.value = true
 
@@ -1206,9 +1165,13 @@ const showNextStepAnnouncement = async (title, stageNumber) => {
   }
 }
 
-const safelyShowNextStepAnnouncement = async (title, stageNumber) => {
+const safelyShowNextStepAnnouncement = async (
+  title,
+  stageNumber,
+  kickerOverride = '',
+) => {
   try {
-    await showNextStepAnnouncement(title, stageNumber)
+    await showNextStepAnnouncement(title, stageNumber, kickerOverride)
   } catch {
     // Non-critical: users can continue even if announcement animation fails.
   }
@@ -1277,34 +1240,9 @@ const showStageAnnouncementByGlobalIndex = async (
 }
 
 const handleStartTasks = async () => {
+  await showTaskTitleAnnouncement(0)
   taskIndex.value = 0
   globalIndex.value = 4
-  if (!isModerator.value) {
-    const announcementKey = `${nextGlobalIndex}-${nextTaskIndex}`
-    const stageChanged =
-      previousGlobalIndex !== nextGlobalIndex ||
-      previousTaskIndex !== nextTaskIndex
-    const isAnnounceableStage = nextGlobalIndex >= 1 && nextGlobalIndex <= 6
-    const shouldAnnounceRemoteStage =
-      isAnnounceableStage &&
-      nextShowVideoCall === false &&
-      stageChanged &&
-      !isProcessingRemoteStepAnnouncement.value &&
-      lastAnnouncedRemoteStepKey.value !== announcementKey
-
-    if (shouldAnnounceRemoteStage) {
-      isProcessingRemoteStepAnnouncement.value = true
-      lastAnnouncedRemoteStepKey.value = announcementKey
-      displayVideoCallComponent.value = true
-
-      await showStageAnnouncementByGlobalIndex(nextGlobalIndex, nextTaskIndex)
-
-      displayVideoCallComponent.value = false
-      isProcessingRemoteStepAnnouncement.value = false
-      return
-    }
-    timerComponent.value.stopTimer()
-  }
 }
 
 async function handleTaskFinish(userCompleted) {
@@ -1430,7 +1368,9 @@ const completeStep = async (id, type, userCompleted = true) => {
         markGroupComplete(STEP_GROUP_IDS.tasks)
       }
       if (id < localTestAnswer.tasks.length - 1) {
+        await showTaskTitleAnnouncement(id + 1)
         taskIndex.value = id + 1
+        lastAnnouncedRemoteStepKey.value = `${globalIndex.value}-${taskIndex.value}`
         startTimer()
       }
       if (userCompleted) {
