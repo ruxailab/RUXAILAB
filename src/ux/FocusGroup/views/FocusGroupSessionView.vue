@@ -529,8 +529,13 @@ const isFacilitator = computed(() => accessLevel.value === ACCESS_LEVEL.ADMIN)
 const isParticipant = computed(
   () => accessLevel.value === ACCESS_LEVEL.EVALUATOR,
 )
+// Anyone who is neither running the session nor taking part in it observes it:
+// a dedicated OBSERVATOR cooperator, but also any signed-in viewer who opens
+// the session link without a posting role. This mirrors roleLabel, so the
+// "Observer" badge and the observer tools (notes pad, observing strip) always
+// agree instead of the badge showing while the tools stay hidden.
 const isObserver = computed(
-  () => accessLevel.value === ACCESS_LEVEL.OBSERVATOR,
+  () => !isFacilitator.value && !isParticipant.value,
 )
 // Facilitator and participants can post; observers read the discussion only.
 // Participant posting also depends on chat being enabled for this session.
