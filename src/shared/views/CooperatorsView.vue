@@ -109,6 +109,7 @@
       :role-label="$t('HeuristicsCooperators.headers.role')"
       :cancel-text="$t('HeuristicsCooperators.actions.cancel')"
       :send-text="$t('HeuristicsCooperators.actions.send')"
+      :loading="loading"
       @send-invitations="handleSendInvitations"
     />
 
@@ -201,7 +202,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import Intro from '@/shared/components/introduction_cards/IntroCoops.vue'
 import AccessNotAllowed from '@/shared/views/AccessNotAllowed.vue'
@@ -520,6 +521,7 @@ const handleSendInvitations = async ({
   inviteMessage,
 }) => {
   try {
+    showInviteDialog.value = false
     const newInvites = await store.dispatch('sendInvitations', {
       study: test.value,
       user: userAuth.value,
@@ -531,7 +533,9 @@ const handleSendInvitations = async ({
       resolveUserByEmail,
     })
 
-    showInviteDialog.value = false
+    await store.dispatch('getStudy', {
+      id: test.value.id,
+    })
 
     if (newInvites.length > 0) {
       showSuccess(
@@ -700,12 +704,6 @@ const executeInvitationCancellation = async (guest) => {
     id: test.value.id,
   })
 }
-
-watch(loading, (newVal) => {
-  if (!newVal) {
-    showIntroComponent.value = cooperatorsEdit.value.length === 0
-  }
-})
 
 onMounted(async () => {
   const testId = props.id || route.params.id
