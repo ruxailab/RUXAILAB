@@ -106,7 +106,7 @@
       v-model:show="showLinkInviteDialog"
       :study-id="test?.id"
       :study-title="test?.testTitle"
-      :required-login="true"
+      :required-login="requiredLoginOption"
       :pre-defined-role="preDefinedRole"
       :membership-type="'participant'"
     />
@@ -153,7 +153,10 @@ import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 import GenerateInviteLinkDialog from '@/shared/components/dialogs/GenerateInviteLinkDialog.vue'
 import ParticipantTable from '@/shared/components/tables/ParticipantTable.vue'
 import InviteDialog from '@/shared/components/dialogs/InviteDialog.vue'
-import { getPredefinedParticipantUserRole } from '@/shared/composables/useCooperatorUtils'
+import {
+  getPredefinedParticipantUserRole,
+  getRequiredLoginConfig,
+} from '@/shared/composables/useCooperatorUtils'
 import Notification from '@/shared/models/Notification'
 
 const router = useRouter()
@@ -278,6 +281,8 @@ const dialog = computed(() => store.getters.getDialogLeaveStatus)
 const preDefinedRole = computed(() =>
   getPredefinedParticipantUserRole(test.value),
 )
+
+const requiredLoginOption = computed(() => getRequiredLoginConfig(test.value))
 
 const participants = computed(() => store.getters.participants)
 

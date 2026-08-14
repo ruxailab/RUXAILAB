@@ -30,7 +30,12 @@ export function getStudyRouteBase(study) {
   return ''
 }
 
-export function getTestViewAccessRedirect({ study, user, token }) {
+export function getTestViewAccessRedirect({
+  study,
+  user,
+  token,
+  invitation = null,
+}) {
   if (!study) return '/admin'
 
   const studyType = normalizeStudyType(study?.testType)
@@ -39,18 +44,29 @@ export function getTestViewAccessRedirect({ study, user, token }) {
     studyType === STUDY_TYPES.USER &&
     study?.subType === USER_STUDY_SUBTYPES.MODERATED
 
+  const isAnonymousInvitation =
+    invitation?.requiredLogin === false && invitation?.studyId == study?.id
+
   if (isModeratedUserStudy && !token && !study?.isPublic) {
     return getStudyFallbackPath(study, user, routeBase)
   }
 
   if (isModeratedUserStudy && token) {
-    if (!canJoinModeratedUserSession(study, user, token)) {
+    if (
+      !isAnonymousInvitation &&
+      !canJoinModeratedUserSession(study, user, token)
+    ) {
       return getStudyFallbackPath(study, user, routeBase)
     }
+
     return null
   }
 
-  if (!study?.isPublic && !hasStudyCapability(study, user, C.STUDY_ANSWER)) {
+  if (
+    !study?.isPublic &&
+    !isAnonymousInvitation &&
+    !hasStudyCapability(study, user, C.STUDY_ANSWER)
+  ) {
     return getStudyFallbackPath(study, user, routeBase)
   }
 
