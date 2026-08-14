@@ -146,6 +146,7 @@
         <v-btn
           color="primary"
           class="rounded-lg"
+          :loading="loading"
           :disabled="selectedCoops.length === 0 || selectedRole === null"
           @click="onSend"
         >
@@ -212,6 +213,10 @@ const props = defineProps({
   preDefinedRole: {
     type: Array,
     default: null,
+  },
+  loading: {
+    type: Boolean,
+    default: false,
   },
 })
 
@@ -342,7 +347,6 @@ const onSend = () => {
   }
 
   emit('send-invitations', invitationData)
-  resetForm()
 }
 
 const resetForm = () => {
