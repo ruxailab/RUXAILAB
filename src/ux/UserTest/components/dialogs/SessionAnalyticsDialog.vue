@@ -110,39 +110,39 @@
               </v-window-item>
 
               <v-window-item v-if="hasTranscriptionData" value="transcript">
-                <v-sheet class="pa-4 rounded-lg" color="grey-lighten-5">
-                  <h4 class="text-subtitle-1 mb-3">Audio Sources</h4>
-                  <div class="d-flex flex-column ga-3">
-                    <audio
-                      v-if="taskAnswer?.audioRecordURL"
-                      controls
-                      :src="taskAnswer?.audioRecordURL"
-                    />
-                    <audio
-                      v-if="taskAnswer?.moderatorAudioURL"
-                      controls
-                      :src="taskAnswer?.moderatorAudioURL"
-                    />
-                    <p
-                      v-if="
-                        !taskAnswer?.audioRecordURL &&
-                        !taskAnswer?.moderatorAudioURL
-                      "
-                      class="text-body-2 text-medium-emphasis mb-0"
-                    >
-                      No audio files available for this task.
-                    </p>
-                  </div>
-
-                  <div
-                    v-if="taskAnswer?.transcript"
-                    class="mt-4 text-body-2 text-grey-darken-2"
+                <v-sheet class="rounded-lg" color="grey-lighten-5">
+                  <v-alert
+                    v-if="!canTranscribe"
+                    type="info"
+                    variant="tonal"
+                    density="comfortable"
+                    class="ma-4 mb-0"
                   >
-                    <h4 class="text-subtitle-1 mb-2">Transcript</h4>
-                    <p class="mb-0" style="white-space: pre-wrap">
-                      {{ taskAnswer.transcript }}
-                    </p>
-                  </div>
+                    {{ transcriptionUnavailableMessage }}
+                  </v-alert>
+
+                  <TimelinePanel
+                    v-if="canTranscribe"
+                    :key="`timeline-${userId}:${resolvedTaskId}`"
+                    :answers-doc-id="answersDocId"
+                    :user-doc-id="userId"
+                    :task-id="resolvedTaskId"
+                    :audio-url-evaluator="taskAnswer?.audioRecordURL"
+                    :audio-url-moderator="taskAnswer?.moderatorAudioURL"
+                    :show-inline-result="false"
+                    @saved="onTranscriptionSaved"
+                  />
+
+                  <TranscriptionsPanel
+                    v-if="canLoadTranscriptions"
+                    :key="transcriptionPanelKey"
+                    :answers-doc-id="answersDocId"
+                    :user-doc-id="userId"
+                    :task-id="resolvedTaskId"
+                    :latest-transcription-id="
+                      taskAnswer?.latestTranscriptionDocId
+                    "
+                  />
                 </v-sheet>
               </v-window-item>
 
@@ -182,6 +182,8 @@ import SessionTimeline from '../sessions/SessionTimeline.vue'
 import EyeTrackingStats from '../sessions/EyeTrackingStats.vue'
 import FacialSentimentPanel from '../sentimentAnalysis/FacialSentimentPanel.vue'
 import EyeTrackingOverlay from '../answers/EyeTrackingOverlay.vue'
+import TimelinePanel from '@/ux/UserTest/components/transcription/TimeLinePanel.vue'
+import TranscriptionsPanel from '@/ux/UserTest/components/transcription/TranscriptionsPanel.vue'
 
 const props = defineProps({
   modelValue: { type: Boolean, required: true },
@@ -192,6 +194,9 @@ const props = defineProps({
   selectedTaskName: { type: String, default: '' },
   taskDefinitions: { type: Array, default: () => [] },
   testAnswer: { type: Object, default: null },
+  answersDocId: { type: String, default: '' },
+  taskId: { type: [String, Number], default: null },
+  hasAudioRecord: { type: Boolean, default: false },
 })
 const emit = defineEmits(['update:modelValue'])
 
@@ -206,6 +211,7 @@ let rafId = null
 const predictedData = ref(null)
 const selectedView = ref('precision')
 const videoReady = ref(false)
+const transcriptionRefreshKey = ref(0)
 
 const hasEyeTrackingData = computed(
   () =>
@@ -219,11 +225,52 @@ const hasSentimentData = computed(() =>
 
 const hasTranscriptionData = computed(
   () =>
+    Boolean(props.hasAudioRecord) ||
     Boolean(props.taskAnswer?.audioRecordURL) ||
     Boolean(props.taskAnswer?.moderatorAudioURL) ||
     Boolean(props.taskAnswer?.latestTranscriptionDocId) ||
-    Boolean(props.taskAnswer?.transcript),
+    Number(props.taskAnswer?.transcriptionsCount) > 0,
 )
+
+const resolvedTaskId = computed(() => {
+  if (props.taskId != null && props.taskId !== '') {
+    return String(props.taskId)
+  }
+  return String(props.selectedTask ?? '')
+})
+
+const canLoadTranscriptions = computed(
+  () =>
+    Boolean(props.answersDocId) &&
+    Boolean(props.userId) &&
+    Boolean(resolvedTaskId.value),
+)
+
+const hasAudioFiles = computed(
+  () =>
+    Boolean(props.taskAnswer?.audioRecordURL) ||
+    Boolean(props.taskAnswer?.moderatorAudioURL),
+)
+
+const canTranscribe = computed(
+  () => canLoadTranscriptions.value && hasAudioFiles.value,
+)
+
+const transcriptionUnavailableMessage = computed(() => {
+  if (!hasAudioFiles.value) {
+    return 'No audio files available for this task.'
+  }
+  return 'Missing session identifiers to generate a transcription.'
+})
+
+const transcriptionPanelKey = computed(
+  () =>
+    `transcriptions-${props.userId}:${resolvedTaskId.value}:${transcriptionRefreshKey.value}`,
+)
+
+const onTranscriptionSaved = () => {
+  transcriptionRefreshKey.value += 1
+}
 
 const preferredTab = computed(() => {
   if (hasEyeTrackingData.value) return 'eye'

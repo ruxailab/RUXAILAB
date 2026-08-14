@@ -556,6 +556,11 @@
                     :task-answer="taskSummaryRows[taskSelect]?.rawTaskAnswer"
                     :selected-task="taskSelect"
                     :selected-task-name="taskSummaryRows[taskSelect]?.taskName"
+                    :task-id="taskSummaryRows[taskSelect]?.taskId"
+                    :has-audio-record="
+                      taskSummaryRows[taskSelect]?.hasAudioRecord
+                    "
+                    :answers-doc-id="answersDocId"
                     :task-definitions="testStructure.userTasks || []"
                     :test-answer="answers[dialogItem.userDocId]"
                     :from-eye-tracking="true"
@@ -591,6 +596,12 @@ const { t } = useI18n()
 const store = useStore()
 const testStructure = computed(() => store.state.Tests.Test.testStructure || {})
 const answers = computed(() => store.getters.visibleUserAnswers || {})
+const answersDocId = computed(
+  () =>
+    store.getters.test?.answersDocId ||
+    store.state.Answer.testAnswerDocument?.id ||
+    '',
+)
 
 const showDialog = ref(false)
 const dialogItem = ref(null)
@@ -707,6 +718,19 @@ const getTaskTypeIcon = (taskType) => {
   return icons[taskType] || 'mdi-help-circle-outline'
 }
 
+const resolveTaskKey = (sessionTasks, index, taskDefinition) => {
+  if (!sessionTasks) return String(index)
+  if (sessionTasks[index] != null) return String(index)
+  if (sessionTasks[`${index}`] != null) return String(index)
+  if (
+    taskDefinition?.taskId != null &&
+    sessionTasks[taskDefinition.taskId] != null
+  ) {
+    return String(taskDefinition.taskId)
+  }
+  return String(index)
+}
+
 const resolveTaskAnswer = (sessionTasks, index, taskDefinition) => {
   if (!sessionTasks) return null
   return (
@@ -812,6 +836,14 @@ const getTaskRecordings = (taskAnswer, taskDefinition) => {
         (Array.isArray(taskAnswer?.irisTrackingData) &&
           taskAnswer.irisTrackingData.length > 0),
     },
+    {
+      key: 'transcript',
+      label: 'Transcript',
+      icon: 'mdi-text-to-speech',
+      active:
+        !!taskAnswer?.latestTranscriptionDocId ||
+        Number(taskAnswer?.transcriptionsCount) > 0,
+    },
   ]
 
   return recordings.filter((recording) => recording.active)
@@ -832,6 +864,7 @@ const taskSummaryRows = computed(() => {
 
     return {
       taskIndex: index,
+      taskId: resolveTaskKey(sessionTasks, index, taskDefinition),
       taskNumber: index + 1,
       taskName: taskDefinition?.taskName || `Task ${index + 1}`,
       taskType: taskDefinition?.taskType || '',
@@ -840,6 +873,7 @@ const taskSummaryRows = computed(() => {
       answerPreview: getTaskAnswerPreview(taskAnswer, taskDefinition),
       observationPreview: observationText,
       hasObservations: observationText !== '-',
+      hasAudioRecord: !!taskDefinition?.hasAudioRecord,
       tipPressCount,
       hasTipAvailable,
       tipUsage:
