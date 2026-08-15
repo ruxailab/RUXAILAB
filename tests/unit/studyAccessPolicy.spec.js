@@ -151,9 +151,9 @@ describe('study access policy', () => {
     expect(
       hasStudyCapability(study, manager, STUDY_CAPABILITY.STORAGE_ACCESS),
     ).toBe(false)
-    expect(
-      hasStudyCapability(study, manager, STUDY_CAPABILITY.LOGS_VIEW),
-    ).toBe(true)
+    expect(hasStudyCapability(study, manager, STUDY_CAPABILITY.LOGS_VIEW)).toBe(
+      true,
+    )
     expect(
       hasStudyCapability(study, observator, STUDY_CAPABILITY.LOGS_VIEW),
     ).toBe(true)

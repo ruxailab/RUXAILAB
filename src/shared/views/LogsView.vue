@@ -123,7 +123,9 @@
                 @keyup.space.prevent="selectedEvent = event"
               >
                 <td>{{ formatDateTime(event.occurredAt) }}</td>
-                <td><v-chip size="small">{{ event.level }}</v-chip></td>
+                <td>
+                  <v-chip size="small">{{ event.level }}</v-chip>
+                </td>
                 <td>
                   <div class="font-weight-medium">{{ event.message }}</div>
                   <div class="text-caption text-medium-emphasis">
@@ -131,7 +133,11 @@
                   </div>
                 </td>
                 <td>{{ event.participantLabel }}</td>
-                <td><v-chip size="small" variant="tonal">{{ event.layer }}</v-chip></td>
+                <td>
+                  <v-chip size="small" variant="tonal">{{
+                    event.layer
+                  }}</v-chip>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -221,10 +227,22 @@
         </div>
         <v-divider />
         <v-list>
-          <v-list-item title="Participant" :subtitle="selectedEvent.participantLabel" />
-          <v-list-item title="Occurred" :subtitle="formatDateTime(selectedEvent.occurredAt)" />
-          <v-list-item title="Received" :subtitle="formatDateTime(selectedEvent.receivedAt)" />
-          <v-list-item title="Delivery delay" :subtitle="deliveryDelay(selectedEvent)" />
+          <v-list-item
+            title="Participant"
+            :subtitle="selectedEvent.participantLabel"
+          />
+          <v-list-item
+            title="Occurred"
+            :subtitle="formatDateTime(selectedEvent.occurredAt)"
+          />
+          <v-list-item
+            title="Received"
+            :subtitle="formatDateTime(selectedEvent.receivedAt)"
+          />
+          <v-list-item
+            title="Delivery delay"
+            :subtitle="deliveryDelay(selectedEvent)"
+          />
           <v-list-item
             v-if="selectedEvent.timeQuality"
             title="Time quality"
@@ -240,7 +258,7 @@
         <div class="pa-4">
           <div class="text-subtitle-1 font-weight-bold mb-2">Event details</div>
           <dl v-if="detailEntries.length" class="detail-grid">
-            <template v-for="([key, value]) in detailEntries" :key="key">
+            <template v-for="[key, value] in detailEntries" :key="key">
               <dt>{{ readableKey(key) }}</dt>
               <dd>{{ value }}</dd>
             </template>
@@ -267,7 +285,8 @@ import {
 
 const props = defineProps({ id: { type: String, required: true } })
 const { smAndDown } = useDisplay()
-const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'local time'
+const timezone =
+  Intl.DateTimeFormat().resolvedOptions().timeZone || 'local time'
 const eventTypes = [
   'STUDY_VIEW_OPENED',
   'ANSWER_EDITED',
@@ -302,7 +321,8 @@ let participantTimer
 const currentPage = computed(() => pages.value[pageIndex.value] || null)
 const currentEvents = computed(() => currentPage.value?.events || [])
 const visibleRange = computed(() => {
-  if (!currentEvents.value.length) return totalCount.value === 0 ? '0 of 0' : '0 shown'
+  if (!currentEvents.value.length)
+    return totalCount.value === 0 ? '0 of 0' : '0 shown'
   const start = (currentPage.value.number - 1) * pageSize.value + 1
   const end = start + currentEvents.value.length - 1
   return totalCount.value === null
@@ -323,7 +343,10 @@ const queryError = (error) =>
     ? 'This filter combination is unavailable because its Firestore index is not deployed.'
     : 'Activity logs could not be loaded. Check your access and try again.'
 
-const replaceFirstPage = async ({ recount = false, forceCount = false } = {}) => {
+const replaceFirstPage = async ({
+  recount = false,
+  forceCount = false,
+} = {}) => {
   loading.value = true
   errorMessage.value = ''
   const countKey = filterKey()
@@ -336,7 +359,11 @@ const replaceFirstPage = async ({ recount = false, forceCount = false } = {}) =>
     })
     const shouldCount = recount && (forceCount || !countCache.has(countKey))
     const countPromise = shouldCount
-      ? getStudyLogCount({ db, studyId: props.id, filters: appliedFilters.value })
+      ? getStudyLogCount({
+          db,
+          studyId: props.id,
+          filters: appliedFilters.value,
+        })
       : Promise.resolve(countCache.get(countKey) ?? totalCount.value)
     const [pageResult, countResult] = await Promise.allSettled([
       pagePromise,
@@ -432,7 +459,12 @@ const searchParticipants = (prefix) => {
 const toDate = (value) => value?.toDate?.() || (value ? new Date(value) : null)
 const formatDateTime = (value) => {
   const date = toDate(value)
-  return date ? new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'medium' }).format(date) : 'Unavailable'
+  return date
+    ? new Intl.DateTimeFormat(undefined, {
+        dateStyle: 'medium',
+        timeStyle: 'medium',
+      }).format(date)
+    : 'Unavailable'
 }
 const formatTime = (value) =>
   new Intl.DateTimeFormat(undefined, { timeStyle: 'short' }).format(value)
@@ -454,12 +486,38 @@ onBeforeUnmount(() => clearTimeout(participantTimer))
 </script>
 
 <style scoped>
-.table-scroll { overflow-x: auto; }
-.log-table { width: 100%; border-collapse: collapse; }
-.log-table th, .log-table td { padding: 14px 16px; text-align: left; border-bottom: 1px solid rgba(0, 0, 0, 0.12); }
-.log-row { cursor: pointer; }
-.log-row:hover, .log-row:focus-visible { background: rgba(var(--v-theme-primary), 0.06); outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: -2px; }
-.detail-grid { display: grid; grid-template-columns: minmax(120px, auto) 1fr; gap: 8px 16px; }
-.detail-grid dt { font-weight: 600; }
-.detail-grid dd { margin: 0; overflow-wrap: anywhere; }
+.table-scroll {
+  overflow-x: auto;
+}
+.log-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.log-table th,
+.log-table td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+.log-row {
+  cursor: pointer;
+}
+.log-row:hover,
+.log-row:focus-visible {
+  background: rgba(var(--v-theme-primary), 0.06);
+  outline: 2px solid rgb(var(--v-theme-primary));
+  outline-offset: -2px;
+}
+.detail-grid {
+  display: grid;
+  grid-template-columns: minmax(120px, auto) 1fr;
+  gap: 8px 16px;
+}
+.detail-grid dt {
+  font-weight: 600;
+}
+.detail-grid dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
 </style>

@@ -49,7 +49,8 @@ export const createStudyLoggingRuntime = ({
   const consentAccepted = async () => {
     consentPending = true
     const acknowledgement = await request('CONSENT_ACCEPTED')
-    if (!['accepted', 'duplicate'].includes(acknowledgement?.status)) return null
+    if (!['accepted', 'duplicate'].includes(acknowledgement?.status))
+      return null
     consentPending = false
     consentRequired = false
     logger.setEnabled(true)
@@ -70,7 +71,8 @@ export const createStudyLoggingRuntime = ({
   const editHandlers = {
     focusin(event) {
       const fieldRef = editField(event.target)
-      if (fieldRef) editTracker.begin(fieldRef, String(event.target.value || '').length)
+      if (fieldRef)
+        editTracker.begin(fieldRef, String(event.target.value || '').length)
     },
     input(event) {
       const fieldRef = editField(event.target)

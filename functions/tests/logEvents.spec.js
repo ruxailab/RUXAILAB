@@ -42,24 +42,30 @@ const verifiedRequest = (eventType, taskRef) =>
   })
 
 const useUserStudy = async (answer = {}) => {
-  await admin.firestore().doc('tests/study-1').update({
-    testType: 'USER',
-    subType: 'USER_UNMODERATED',
-    'studyRoleMap.participant': 5,
-    testStructure: { userTasks: [{ id: 'task-1' }] },
-  })
-  await admin.firestore().doc('answers/answer-1').set({
-    type: 'USER',
-    studyId: 'study-1',
-    taskAnswers: {
-      participant: {
-        consentCompleted: true,
-        submitted: false,
-        tasks: [{ attempted: false, completed: false, taskTime: 0 }],
-        ...answer,
+  await admin
+    .firestore()
+    .doc('tests/study-1')
+    .update({
+      testType: 'USER',
+      subType: 'USER_UNMODERATED',
+      'studyRoleMap.participant': 5,
+      testStructure: { userTasks: [{ id: 'task-1' }] },
+    })
+  await admin
+    .firestore()
+    .doc('answers/answer-1')
+    .set({
+      type: 'USER',
+      studyId: 'study-1',
+      taskAnswers: {
+        participant: {
+          consentCompleted: true,
+          submitted: false,
+          tasks: [{ attempted: false, completed: false, taskTime: 0 }],
+          ...answer,
+        },
       },
-    },
-  })
+    })
 }
 
 const viewBatch = (batchId = 'batch-1', eventId = 'event-1') => ({
@@ -103,16 +109,18 @@ afterAll(async () => {
 beforeEach(async () => {
   process.env.LOG_ACTOR_HASH_SALT = 'logging-test-secret'
   await testEnv.clearFirestore()
-  await admin.firestore().collection('tests').doc('study-1').set({
-    testType: 'HEURISTIC',
-    answersDocId: 'answer-1',
-    isPublic: false,
-    testAdmin: { userDocId: 'owner' },
-    studyRoleMap: { participant: 1, researcher: 2 },
-    testStructure: [
-      { heuristicQuestions: [{ id: 'question-1' }] },
-    ],
-  })
+  await admin
+    .firestore()
+    .collection('tests')
+    .doc('study-1')
+    .set({
+      testType: 'HEURISTIC',
+      answersDocId: 'answer-1',
+      isPublic: false,
+      testAdmin: { userDocId: 'owner' },
+      studyRoleMap: { participant: 1, researcher: 2 },
+      testStructure: [{ heuristicQuestions: [{ id: 'question-1' }] }],
+    })
 })
 
 describe('authenticated logging commands', () => {
@@ -168,9 +176,7 @@ describe('authenticated logging commands', () => {
 
   it('reuses a participant label while concurrent new participants receive distinct labels', async () => {
     await logEvents.run(participantRequest(viewBatch()))
-    await logEvents.run(
-      participantRequest(viewBatch('batch-2', 'event-2')),
-    )
+    await logEvents.run(participantRequest(viewBatch('batch-2', 'event-2')))
 
     await admin.firestore().doc('tests/study-1').update({
       'studyRoleMap.participant-2': 1,
@@ -189,10 +195,12 @@ describe('authenticated logging commands', () => {
       .firestore()
       .collection('tests/study-1/studySessions')
       .get()
-    expect(sessions.docs.map((item) => item.data().participantLabel).sort())
-      .toEqual(['P-001', 'P-002', 'P-003'])
     expect(
-      sessions.docs.find((item) => item.data().participantLabel === 'P-001')
+      sessions.docs.map((item) => item.data().participantLabel).sort(),
+    ).toEqual(['P-001', 'P-002', 'P-003'])
+    expect(
+      sessions.docs
+        .find((item) => item.data().participantLabel === 'P-001')
         .data().clientEventCount,
     ).toBe(2)
     await expect(
@@ -237,11 +245,14 @@ describe('authenticated logging commands', () => {
       subType: 'USER_UNMODERATED',
       'studyRoleMap.participant': 5,
     })
-    await admin.firestore().doc('answers/answer-1').set({
-      type: 'USER',
-      studyId: 'study-1',
-      taskAnswers: { participant: { consentCompleted: false } },
-    })
+    await admin
+      .firestore()
+      .doc('answers/answer-1')
+      .set({
+        type: 'USER',
+        studyId: 'study-1',
+        taskAnswers: { participant: { consentCompleted: false } },
+      })
 
     await expect(
       logEvents.run(participantRequest(viewBatch())),
@@ -266,9 +277,7 @@ describe('authenticated logging commands', () => {
       .firestore()
     const researcherDb = testEnv.authenticatedContext('researcher').firestore()
 
-    await assertFails(
-      getDocs(collection(participantDb, 'tests/study-1/logs')),
-    )
+    await assertFails(getDocs(collection(participantDb, 'tests/study-1/logs')))
     await assertSucceeds(
       getDocs(collection(researcherDb, 'tests/study-1/studySessions')),
     )
@@ -476,13 +485,18 @@ describe('client-observed batch delivery', () => {
       logEvents.run(participantRequest(viewBatch('batch-3', 'event-3'))),
     ])
 
-    expect(results.filter((result) => result.status === 'fulfilled')).toHaveLength(1)
-    expect(results.filter((result) => result.status === 'rejected')).toHaveLength(1)
-    expect(results.find((result) => result.status === 'rejected').reason)
-      .toMatchObject({
-        code: 'resource-exhausted',
-        details: { scope: 'batch', reasonCode: 'BUDGET_EXHAUSTED' },
-      })
+    expect(
+      results.filter((result) => result.status === 'fulfilled'),
+    ).toHaveLength(1)
+    expect(
+      results.filter((result) => result.status === 'rejected'),
+    ).toHaveLength(1)
+    expect(
+      results.find((result) => result.status === 'rejected').reason,
+    ).toMatchObject({
+      code: 'resource-exhausted',
+      details: { scope: 'batch', reasonCode: 'BUDGET_EXHAUSTED' },
+    })
     const [storedLogs, storedSessions] = await Promise.all([
       admin.firestore().collection('tests/study-1/logs').get(),
       admin.firestore().collection('tests/study-1/studySessions').get(),
@@ -540,13 +554,16 @@ describe('verified lifecycle events', () => {
   it('derives task outcome and bounded duration from committed answer state', async () => {
     await useUserStudy()
     await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
-    await admin.firestore().doc('answers/answer-1').update({
-      'taskAnswers.participant.tasks.0': {
-        attempted: true,
-        completed: false,
-        taskTime: 4321,
-      },
-    })
+    await admin
+      .firestore()
+      .doc('answers/answer-1')
+      .update({
+        'taskAnswers.participant.tasks.0': {
+          attempted: true,
+          completed: false,
+          taskTime: 4321,
+        },
+      })
 
     await expect(
       requestLogEvent.run(
@@ -610,11 +627,14 @@ describe('verified lifecycle events', () => {
   })
 
   it('verifies submission for a taskless method without a consent gate', async () => {
-    await admin.firestore().doc('answers/answer-1').set({
-      type: 'HEURISTIC',
-      studyId: 'study-1',
-      heuristicAnswers: { participant: { submitted: true } },
-    })
+    await admin
+      .firestore()
+      .doc('answers/answer-1')
+      .set({
+        type: 'HEURISTIC',
+        studyId: 'study-1',
+        heuristicAnswers: { participant: { submitted: true } },
+      })
 
     await expect(
       requestLogEvent.run(verifiedRequest('STUDY_SUBMITTED')),
@@ -714,7 +734,9 @@ describe('verified lifecycle events', () => {
       ),
     })
     await expect(
-      logEvents.run(participantRequest(viewBatch('expired-batch', 'expired-event'))),
+      logEvents.run(
+        participantRequest(viewBatch('expired-batch', 'expired-event')),
+      ),
     ).rejects.toMatchObject({
       details: {
         scope: 'events',

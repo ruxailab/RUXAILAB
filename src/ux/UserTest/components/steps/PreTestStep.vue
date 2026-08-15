@@ -25,7 +25,10 @@
             class="mb-7"
           />
 
-          <div v-if="!hasQuestions" class="question-shell mx-auto mb-8 text-center">
+          <div
+            v-if="!hasQuestions"
+            class="question-shell mx-auto mb-8 text-center"
+          >
             <p class="text-body-1 text-medium-emphasis">
               No pre-test questions configured for this study.
             </p>

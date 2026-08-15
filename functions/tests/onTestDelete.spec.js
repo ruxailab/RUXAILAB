@@ -1,4 +1,11 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from '@jest/globals'
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+} from '@jest/globals'
 import { admin } from '../src/f.firebase.js'
 import { onTestDelete } from '../src/triggers/onTestDelete.js'
 

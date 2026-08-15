@@ -71,10 +71,7 @@ export const createIndexedDbQueueStore = ({
   }
 }
 
-export const cleanupStudyLoggingForOwner = async (
-  ownerUid,
-  queueStore,
-) => {
+export const cleanupStudyLoggingForOwner = async (ownerUid, queueStore) => {
   if (!ownerUid) return
   try {
     await (queueStore || createIndexedDbQueueStore()).cleanupOwner(ownerUid)
@@ -86,7 +83,11 @@ export const cleanupStudyLoggingForOwner = async (
 const sanitizeDetails = (eventType, details) => {
   if (eventType === 'STUDY_VIEW_OPENED') return {}
   if (eventType !== 'ANSWER_EDITED') return null
-  if (!/^(heuristic:\d+:question:\d+:(comment|answer)|(preTest|postTest|task):\d+:(answer|comment))$/.test(details?.fieldRef)) {
+  if (
+    !/^(heuristic:\d+:question:\d+:(comment|answer)|(preTest|postTest|task):\d+:(answer|comment))$/.test(
+      details?.fieldRef,
+    )
+  ) {
     return null
   }
   return {
@@ -300,8 +301,7 @@ export const createStudyLogger = ({
           ...current.claim,
           inFlight: false,
           attemptCount,
-          nextAttemptAt:
-            now() + retryWindow / 2 + random() * (retryWindow / 2),
+          nextAttemptAt: now() + retryWindow / 2 + random() * (retryWindow / 2),
         }
         return current
       })

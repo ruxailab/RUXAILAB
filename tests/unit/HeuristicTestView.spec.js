@@ -148,12 +148,19 @@ describe('HeuristicTestView', () => {
           'v-row': { template: '<div><slot /></div>' },
           'v-col': { template: '<div><slot /></div>' },
           'v-list': { template: '<div><slot /></div>' },
-          'v-list-item': { template: '<div><slot name="prepend" /><slot /></div>' },
+          'v-list-item': {
+            template: '<div><slot name="prepend" /><slot /></div>',
+          },
           'v-list-item-title': { template: '<div><slot /></div>' },
-          'v-navigation-drawer': { template: '<div><slot /><slot name="append" /></div>' },
+          'v-navigation-drawer': {
+            template: '<div><slot /><slot name="append" /></div>',
+          },
           'v-layout': { template: '<div><slot /></div>' },
           'v-main': { template: '<main><slot /></main>' },
-          'v-tooltip': { template: '<div><slot name="activator" :props="{}" /><slot /></div>' },
+          'v-tooltip': {
+            template:
+              '<div><slot name="activator" :props="{}" /><slot /></div>',
+          },
           'v-progress-circular': true,
           'v-progress-linear': true,
           'v-progress': true,

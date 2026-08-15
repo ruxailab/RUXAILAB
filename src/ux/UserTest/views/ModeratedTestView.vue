@@ -654,12 +654,7 @@ const { t } = useI18n()
 let studyLogging = null
 
 const initializeStudyLogging = () => {
-  if (
-    studyLogging ||
-    isModerator.value ||
-    !user.value?.id ||
-    !test.value?.id
-  ) {
+  if (studyLogging || isModerator.value || !user.value?.id || !test.value?.id) {
     return studyLogging
   }
   studyLogging = createStudyLoggingRuntime({

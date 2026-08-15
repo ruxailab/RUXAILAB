@@ -77,9 +77,7 @@ beforeEach(async () => {
           level: 'warning',
           source: 'logging-service',
           message: 'Task attempt finished',
-          occurredAt: Timestamp.fromDate(
-            new Date('2026-08-13T12:00:00.000Z'),
-          ),
+          occurredAt: Timestamp.fromDate(new Date('2026-08-13T12:00:00.000Z')),
           details: { taskRef: 'task:0', outcome: 'not_completed' },
         }),
       ),
@@ -106,9 +104,9 @@ describe('Log Explorer query boundary', () => {
       pageSize: 2,
       after: first.lastCursor,
     })
-    expect(second.events.map(({ participantLabel }) => participantLabel)).toEqual([
-      'P-002',
-    ])
+    expect(
+      second.events.map(({ participantLabel }) => participantLabel),
+    ).toEqual(['P-002'])
     expect(second.hasNextPage).toBe(false)
   })
 
