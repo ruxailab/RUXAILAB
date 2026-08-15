@@ -52,6 +52,34 @@ export const createIndexedDbQueueStore = ({
         transaction.onabort = () => reject(transaction.error)
       })
     },
+    async cleanupOwner(ownerUid) {
+      const db = await database
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction('queues', 'readwrite')
+        const request = transaction.objectStore('queues').openCursor()
+        request.onsuccess = () => {
+          const cursor = request.result
+          if (!cursor) return
+          if (cursor.value.ownerUid === ownerUid) cursor.delete()
+          cursor.continue()
+        }
+        transaction.oncomplete = () => resolve()
+        transaction.onerror = () => reject(transaction.error)
+        transaction.onabort = () => reject(transaction.error)
+      })
+    },
+  }
+}
+
+export const cleanupStudyLoggingForOwner = async (
+  ownerUid,
+  queueStore,
+) => {
+  if (!ownerUid) return
+  try {
+    await (queueStore || createIndexedDbQueueStore()).cleanupOwner(ownerUid)
+  } catch {
+    // Logging cleanup is fail-open for the primary logout flow.
   }
 }
 

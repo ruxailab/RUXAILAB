@@ -1,4 +1,7 @@
-import { createStudyLogger } from '@/shared/services/studyLoggingClient'
+import {
+  cleanupStudyLoggingForOwner,
+  createStudyLogger,
+} from '@/shared/services/studyLoggingClient'
 
 const createQueueStore = () => {
   const records = new Map()
@@ -16,6 +19,12 @@ const createQueueStore = () => {
       })
       lock = result.catch(() => {})
       return result
+    },
+    cleanupOwner(ownerUid) {
+      for (const [key, queue] of records) {
+        if (queue.ownerUid === ownerUid) records.delete(key)
+      }
+      return Promise.resolve()
     },
   }
 }
@@ -151,6 +160,31 @@ describe('browser study logging client', () => {
     expect(submitBatch).toHaveBeenCalledTimes(1)
   })
 
+  it('drains a deleted study queue when ingestion returns generic ineligibility', async () => {
+    const submitBatch = jest.fn().mockRejectedValue(
+      Object.assign(new Error('study unavailable'), {
+        details: {
+          retryable: false,
+          scope: 'batch',
+          reasonCode: 'NOT_ELIGIBLE',
+        },
+      }),
+    )
+    const logger = createStudyLogger({
+      ownerUid: 'participant',
+      studyId: 'deleted-study',
+      submitBatch,
+      queueStore: createQueueStore(),
+      createId: () => 'stable-id',
+    })
+
+    await logger.record('STUDY_VIEW_OPENED', {})
+    await expect(logger.flush()).resolves.toEqual({ status: 'discarded' })
+    await logger.flush()
+
+    expect(submitBatch).toHaveBeenCalledTimes(1)
+  })
+
   it('downgrades malformed permanent details and retries the complete original batch', async () => {
     let now = 1000
     const ids = ['event-1', 'event-2', 'batch-1']
@@ -238,5 +272,47 @@ describe('browser study logging client', () => {
     await firstAccount.cleanup()
     await firstAccount.flush()
     expect(submitBatch).not.toHaveBeenCalled()
+  })
+
+  it('removes every queue owned by the account that logs out', async () => {
+    const queueStore = createQueueStore()
+    const departingSubmit = jest.fn()
+    const otherSubmit = jest.fn(({ batchId }) => ({
+      status: 'accepted',
+      batchId,
+    }))
+    const firstStudy = createStudyLogger({
+      ownerUid: 'participant-1',
+      studyId: 'study-1',
+      submitBatch: departingSubmit,
+      queueStore,
+      createId: () => 'event-1',
+    })
+    const secondStudy = createStudyLogger({
+      ownerUid: 'participant-1',
+      studyId: 'study-2',
+      submitBatch: departingSubmit,
+      queueStore,
+      createId: () => 'event-2',
+    })
+    const otherAccount = createStudyLogger({
+      ownerUid: 'participant-2',
+      studyId: 'study-1',
+      submitBatch: otherSubmit,
+      queueStore,
+      createId: () => 'event-3',
+    })
+
+    await firstStudy.record('STUDY_VIEW_OPENED', {})
+    await secondStudy.record('STUDY_VIEW_OPENED', {})
+    await otherAccount.record('STUDY_VIEW_OPENED', {})
+    await cleanupStudyLoggingForOwner('participant-1', queueStore)
+
+    await firstStudy.flush()
+    await secondStudy.flush()
+    await otherAccount.flush()
+
+    expect(departingSubmit).not.toHaveBeenCalled()
+    expect(otherSubmit).toHaveBeenCalledTimes(1)
   })
 })

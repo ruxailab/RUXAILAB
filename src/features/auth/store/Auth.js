@@ -7,6 +7,7 @@ import AuthController from '@/features/auth/controllers/AuthController.js'
 import UserController from '@/features/auth/controllers/UserController'
 import i18n from '@/app/plugins/i18n'
 import { showError } from '@/shared/utils/toast'
+import { cleanupStudyLoggingForOwner } from '@/shared/services/studyLoggingClient'
 
 const authController = new AuthController()
 const userController = new UserController()
@@ -186,9 +187,11 @@ export default {
       }
     },
 
-    async logout({ commit }, { silent = false } = {}) {
+    async logout({ commit, state }, { silent = false } = {}) {
       try {
+        const ownerUid = state.user?.id
         await authController.signOut()
+        await cleanupStudyLoggingForOwner(ownerUid)
         commit('SET_USER', null)
 
         if (!silent) {

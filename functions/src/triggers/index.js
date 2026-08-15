@@ -1,4 +1,5 @@
 export { onTestCreate } from './onTestCreate.js'
 export { onTestUpdate } from './onTestUpdate.js'
+export { onTestDelete } from './onTestDelete.js'
 export { onStorageUpdate } from './onStorageUpdate.js'
 export { onStorageDelete } from './onStorageUpdate.js'

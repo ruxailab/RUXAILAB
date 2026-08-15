@@ -33,8 +33,8 @@ function onCall({ handler, options = {} }) {
   )
 }
 
-function onTrigger({ path, event, handler }) {
-  const baseOptions = { region: getRegion() }
+function onTrigger({ path, event, handler, opts = {} }) {
+  const baseOptions = { region: getRegion(), ...opts }
 
   const firestoreEvents = {
     created: (p, h) =>
