@@ -230,6 +230,19 @@ describe('authenticated logging commands', () => {
       })
     }
 
+    await expect(
+      logEvents.run(
+        participantRequest({ ...viewBatch(), unexpected: true }, 'stranger'),
+      ),
+    ).rejects.toMatchObject({
+      code: 'permission-denied',
+      details: {
+        retryable: false,
+        scope: 'batch',
+        reasonCode: 'NOT_ELIGIBLE',
+      },
+    })
+
     for (const name of ['studySessions', 'logs', 'logBatches', 'loggingMeta']) {
       const snapshot = await admin
         .firestore()
@@ -338,6 +351,7 @@ describe('client-observed batch delivery', () => {
         participantRequest({
           studyId: 'study-1',
           batchId: 'batch-1',
+          unexpected: true,
           events: [
             {
               eventId: 'changed-event',
@@ -458,6 +472,11 @@ describe('client-observed batch delivery', () => {
               eventId: 'null-time',
               occurredAt: null,
             },
+            {
+              ...viewBatch().events[0],
+              eventId: 'out-of-range-time',
+              occurredAt: '+010000-01-01T00:00:00.000Z',
+            },
           ],
         }),
       ),
@@ -468,6 +487,10 @@ describe('client-observed batch delivery', () => {
         invalidEvents: expect.arrayContaining([
           { eventId: 'event-1', reasonCode: 'INVALID_EVENT_DETAILS' },
           { eventId: 'null-time', reasonCode: 'INVALID_OCCURRED_AT' },
+          {
+            eventId: 'out-of-range-time',
+            reasonCode: 'INVALID_OCCURRED_AT',
+          },
         ]),
       },
     })
