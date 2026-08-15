@@ -229,6 +229,7 @@ const validateClientBatch = (payload, study) => {
       typeof event?.occurredAt === 'string'
         ? new Date(event.occurredAt)
         : new Date(Number.NaN)
+    const occurrenceYear = occurredAt.getUTCFullYear()
     const policy = CLIENT_EVENT_POLICIES[event?.eventType]
     const validDetails =
       isRecord(event?.details) && policy?.detailKeys.length === 0
@@ -249,7 +250,11 @@ const validateClientBatch = (payload, study) => {
       !validDetails
     ) {
       reasonCode = 'INVALID_EVENT_DETAILS'
-    } else if (Number.isNaN(occurredAt.getTime())) {
+    } else if (
+      Number.isNaN(occurredAt.getTime()) ||
+      occurrenceYear < 1 ||
+      occurrenceYear > 9999
+    ) {
       reasonCode = 'INVALID_OCCURRED_AT'
     }
 
@@ -284,17 +289,8 @@ async function submitLogEvents(request) {
   const requestData = dataFor(request)
   const studyId = safeId(requestData.studyId)
   const batchId = safeId(requestData.batchId)
-  const envelopeKeys = Object.keys(requestData).sort().join(',')
   if (!studyId || !batchId) {
     reject({ code: 'permission-denied', reasonCode: 'NOT_ELIGIBLE' })
-  }
-  if (envelopeKeys !== 'batchId,events,studyId') {
-    reject({
-      code: 'invalid-argument',
-      reasonCode: 'MALFORMED_ENVELOPE',
-      studyId,
-      batchId,
-    })
   }
 
   const db = admin.firestore()
@@ -324,6 +320,16 @@ async function submitLogEvents(request) {
       reject({
         code: 'failed-precondition',
         reasonCode: 'CONSENT_REQUIRED',
+        studyId,
+        batchId,
+      })
+    }
+    if (
+      Object.keys(requestData).sort().join(',') !== 'batchId,events,studyId'
+    ) {
+      reject({
+        code: 'invalid-argument',
+        reasonCode: 'MALFORMED_ENVELOPE',
         studyId,
         batchId,
       })
