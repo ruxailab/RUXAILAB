@@ -12,6 +12,7 @@ export const createStudyLoggingRuntime = ({
   callFunction,
   createLogger = createStudyLogger,
   eventTarget = typeof window === 'undefined' ? null : window,
+  visibilityTarget = typeof document === 'undefined' ? null : document,
   setIntervalFn = setInterval,
   clearIntervalFn = clearInterval,
 } = {}) => {
@@ -42,7 +43,7 @@ export const createStudyLoggingRuntime = ({
     if (opened || consentRequired) return null
     opened = true
     const eventId = await logger.record('STUDY_VIEW_OPENED', {})
-    void logger.flush({ online: true })
+    void logger.flush()
     return eventId
   }
 
@@ -78,11 +79,29 @@ export const createStudyLoggingRuntime = ({
 
   const editField = (target) =>
     target?.closest?.('[data-study-field-ref]')?.dataset?.studyFieldRef
+  const activeFields = new Set()
+  const finishField = async (fieldRef) => {
+    if (!activeFields.delete(fieldRef)) return null
+    return editTracker.finish(fieldRef)
+  }
+  const finishActiveEdits = () =>
+    Promise.all([...activeFields].map((fieldRef) => finishField(fieldRef)))
+  const finishAndFlush = async () => {
+    await finishActiveEdits()
+    return logger.flush()
+  }
+  const onVisibilityChange = () => {
+    if (visibilityTarget?.hidden) return finishAndFlush()
+    return null
+  }
+  visibilityTarget?.addEventListener('visibilitychange', onVisibilityChange)
   const editHandlers = {
     focusin(event) {
       const fieldRef = editField(event.target)
-      if (fieldRef)
+      if (fieldRef) {
+        activeFields.add(fieldRef)
         editTracker.begin(fieldRef, String(event.target.value || '').length)
+      }
     },
     input(event) {
       const fieldRef = editField(event.target)
@@ -94,8 +113,8 @@ export const createStudyLoggingRuntime = ({
     async focusout(event) {
       const fieldRef = editField(event.target)
       if (!fieldRef) return null
-      const eventId = await editTracker.finish(fieldRef)
-      if (eventId) void logger.flush({ online: true })
+      const eventId = await finishField(fieldRef)
+      if (eventId) void logger.flush()
       return eventId
     },
   }
@@ -106,15 +125,20 @@ export const createStudyLoggingRuntime = ({
     consentAccepted,
     resumeAfterConsent,
     taskFinished(taskIndex) {
+      void finishAndFlush()
       return request('TASK_ATTEMPT_FINISHED', `task:${taskIndex}`)
     },
     submitted() {
-      void logger.flush({ online: true })
+      void finishAndFlush()
       return request('STUDY_SUBMITTED')
     },
     destroy() {
       clearIntervalFn(retryInterval)
       eventTarget?.removeEventListener('online', onOnline)
+      visibilityTarget?.removeEventListener(
+        'visibilitychange',
+        onVisibilityChange,
+      )
     },
   }
 }

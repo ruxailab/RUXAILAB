@@ -11,12 +11,20 @@ const createHarness = ({ consentRequired = false } = {}) => {
     data: { status: 'accepted' },
   })
   const listeners = new Map()
+  const visibilityListeners = new Map()
   let intervalHandler
   const eventTarget = {
     addEventListener: jest.fn((name, handler) => listeners.set(name, handler)),
     removeEventListener: jest.fn((name) => listeners.delete(name)),
   }
   const clearIntervalFn = jest.fn()
+  const visibilityTarget = {
+    hidden: true,
+    addEventListener: jest.fn((name, handler) =>
+      visibilityListeners.set(name, handler),
+    ),
+    removeEventListener: jest.fn((name) => visibilityListeners.delete(name)),
+  }
   const runtime = createStudyLoggingRuntime({
     ownerUid: 'participant',
     studyId: 'study-1',
@@ -24,6 +32,7 @@ const createHarness = ({ consentRequired = false } = {}) => {
     callFunction,
     createLogger: () => logger,
     eventTarget,
+    visibilityTarget,
     setIntervalFn: jest.fn((handler) => {
       intervalHandler = handler
       return 42
@@ -35,6 +44,7 @@ const createHarness = ({ consentRequired = false } = {}) => {
     logger,
     callFunction,
     listeners,
+    visibilityListeners,
     clearIntervalFn,
     runInterval: () => intervalHandler(),
   }
@@ -87,6 +97,58 @@ describe('study logging runtime', () => {
 
     expect(logger.flush).toHaveBeenCalledWith()
     expect(logger.flush).not.toHaveBeenCalledWith({ online: true })
+  })
+
+  it('reserves the immediate retry override for a real online transition', async () => {
+    const { runtime, logger, listeners } = createHarness()
+
+    await runtime.open()
+    expect(logger.flush).toHaveBeenLastCalledWith()
+
+    await listeners.get('online')()
+    expect(logger.flush).toHaveBeenLastCalledWith({ online: true })
+  })
+
+  it('finishes a focused edit before best-effort hidden-page delivery', async () => {
+    const { runtime, logger, visibilityListeners } = createHarness()
+    document.body.innerHTML = `
+      <div data-study-field-ref="preTest:0:answer">
+        <input value="old" />
+      </div>
+    `
+    const input = document.querySelector('input')
+    runtime.editHandlers.focusin({ target: input })
+    input.value = 'private answer'
+    runtime.editHandlers.input({ target: input, inputType: 'insertText' })
+
+    await visibilityListeners.get('visibilitychange')()
+
+    expect(logger.record).toHaveBeenCalledWith(
+      'ANSWER_EDITED',
+      expect.objectContaining({ fieldRef: 'preTest:0:answer' }),
+    )
+    expect(logger.flush).toHaveBeenCalledWith()
+  })
+
+  it('finishes a focused edit when task navigation requests its lifecycle event', async () => {
+    const { runtime, logger } = createHarness()
+    document.body.innerHTML = `
+      <div data-study-field-ref="task:0:comment">
+        <input value="old" />
+      </div>
+    `
+    const input = document.querySelector('input')
+    runtime.editHandlers.focusin({ target: input })
+    input.value = 'private answer'
+    runtime.editHandlers.input({ target: input, inputType: 'insertText' })
+
+    await runtime.taskFinished(0)
+    await Promise.resolve()
+
+    expect(logger.record).toHaveBeenCalledWith(
+      'ANSWER_EDITED',
+      expect.objectContaining({ fieldRef: 'task:0:comment' }),
+    )
   })
 
   it('flushes observations without delaying verified lifecycle requests', async () => {
