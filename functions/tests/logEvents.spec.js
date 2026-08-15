@@ -1,281 +1,465 @@
-import { jest } from '@jest/globals'
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from '@jest/globals'
+import {
+  initializeTestEnvironment,
+  assertFails,
+  assertSucceeds,
+} from '@firebase/rules-unit-testing'
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  setDoc,
+} from 'firebase/firestore'
+import { admin } from '../src/f.firebase.js'
+import { logEvents } from '../src/https/logEvents.js'
 
-const mockCommit = jest.fn()
-const mockBatchSet = jest.fn()
-const mockBatchCreate = jest.fn()
-const mockTestGet = jest.fn()
-const mockLogDoc = jest.fn()
-const mockBatchDoc = jest.fn()
-const mockCollection = jest.fn()
+const projectId = 'demo-ruxailab-logging'
+let testEnv
+jest.setTimeout(30000)
 
-const mockTestRef = {
-  get: mockTestGet,
-  collection: mockCollection,
-}
+const participantRequest = (data, uid = 'participant') => ({
+  auth: uid ? { uid } : null,
+  data,
+})
 
-const mockTestsCollection = {
-  doc: jest.fn(() => mockTestRef),
-}
-
-const mockDb = {
-  collection: jest.fn((name) => {
-    if (name === 'tests') return mockTestsCollection
-    return null
-  }),
-  batch: jest.fn(() => ({
-    set: mockBatchSet,
-    create: mockBatchCreate,
-    commit: mockCommit,
-  })),
-}
-
-jest.unstable_mockModule('../src/f.firebase.js', () => ({
-  admin: {
-    firestore: Object.assign(jest.fn(() => mockDb), {
-      FieldValue: {
-        serverTimestamp: jest.fn(() => 'mock-server-timestamp'),
-      },
-    }),
-  },
-  functions: {
-    onCall: jest.fn((opts) => opts?.handler || opts),
-    https: {
-      HttpsError: class HttpsError extends Error {
-        constructor(code, message) {
-          super(message)
-          this.code = code
-        }
-      },
+const viewBatch = (batchId = 'batch-1', eventId = 'event-1') => ({
+  studyId: 'study-1',
+  batchId,
+  events: [
+    {
+      eventId,
+      eventType: 'STUDY_VIEW_OPENED',
+      occurredAt: '2026-08-14T10:00:00.000Z',
+      details: {},
     },
+  ],
+})
+
+const answerEdited = (eventId = 'edit-1', overrides = {}) => ({
+  eventId,
+  eventType: 'ANSWER_EDITED',
+  occurredAt: '2026-08-14T10:01:00.000Z',
+  details: {
+    fieldRef: 'heuristic:0:question:0:comment',
+    editSpanMs: 1400,
+    editOperations: 3,
+    pasteOperations: 1,
+    initialLength: 4,
+    resultingLength: 12,
   },
-}))
+  ...overrides,
+})
 
-jest.unstable_mockModule('../src/utils/logger.js', () => ({
-  default: {
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-  },
-}))
+beforeAll(async () => {
+  if (!admin.apps.length) admin.initializeApp({ projectId })
+  testEnv = await initializeTestEnvironment({ projectId })
+})
 
-const { logEvents } = await import('../src/https/logEvents.js')
+afterAll(async () => {
+  await testEnv.cleanup()
+  await admin.app().delete()
+})
 
-describe('logEvents.js -> logEvents', () => {
-  const savedSalt = process.env.LOG_ACTOR_HASH_SALT
-
-  beforeEach(() => {
-    jest.clearAllMocks()
-    process.env.LOG_ACTOR_HASH_SALT = 'test-salt'
-
-    mockCollection.mockImplementation((name) => {
-      if (name === 'logs') {
-        return { doc: mockLogDoc }
-      }
-      if (name === 'logBatches') {
-        return { doc: mockBatchDoc }
-      }
-      return null
-    })
-
-    mockLogDoc.mockReturnValue({ path: 'tests/test-1/logs/generated-log-id' })
-    mockBatchDoc.mockReturnValue({
-      path: 'tests/test-1/logBatches/batch-1',
-    })
-    mockCommit.mockResolvedValue()
-    mockTestGet.mockResolvedValue({
-      exists: true,
-      data: () => ({
-        answersDocId: 'answers-1',
-        testType: 'USER',
-        subType: 'USER_UNMODERATED',
-        testAdmin: { userDocId: 'admin-1' },
-        cooperators: [{ userDocId: 'user-1', accessLevel: 1 }],
-      }),
-    })
+beforeEach(async () => {
+  process.env.LOG_ACTOR_HASH_SALT = 'logging-test-secret'
+  await testEnv.clearFirestore()
+  await admin.firestore().collection('tests').doc('study-1').set({
+    testType: 'HEURISTIC',
+    answersDocId: 'answer-1',
+    isPublic: false,
+    testAdmin: { userDocId: 'owner' },
+    studyRoleMap: { participant: 1, researcher: 2 },
+    testStructure: [
+      { heuristicQuestions: [{ id: 'question-1' }] },
+    ],
   })
+})
 
-  afterEach(() => {
-    if (savedSalt !== undefined) {
-      process.env.LOG_ACTOR_HASH_SALT = savedSalt
-    } else {
-      delete process.env.LOG_ACTOR_HASH_SALT
-    }
-  })
+describe('authenticated logging commands', () => {
+  it('initializes a Study Session and exposes its first view observation to an authorized researcher', async () => {
+    await expect(
+      logEvents.run(participantRequest(viewBatch())),
+    ).resolves.toEqual({ status: 'accepted', batchId: 'batch-1' })
 
-  const buildPayload = (events, overrides = {}) => {
-    const defaultEvent = {
-      type: 'TASK_COMPLETED',
+    const sessions = await admin
+      .firestore()
+      .collection('tests/study-1/studySessions')
+      .get()
+    expect(sessions.docs).toHaveLength(1)
+    expect(sessions.docs[0].id).toMatch(/^[a-f0-9]{64}$/)
+    expect(sessions.docs[0].data()).toMatchObject({
+      participantLabel: 'P-001',
+      clientEventCount: 1,
+    })
+
+    const meta = await admin
+      .firestore()
+      .doc('tests/study-1/loggingMeta/state')
+      .get()
+    expect(meta.data()).toEqual({ nextParticipantNumber: 2 })
+
+    const researcherDb = testEnv.authenticatedContext('researcher').firestore()
+    const page = await assertSucceeds(
+      getDocs(
+        query(
+          collection(researcherDb, 'tests/study-1/logs'),
+          orderBy('occurredAt', 'desc'),
+          orderBy('__name__', 'desc'),
+          limit(20),
+        ),
+      ),
+    )
+    expect(page.docs).toHaveLength(1)
+    expect(page.docs[0].data()).toMatchObject({
+      eventId: 'event-1',
+      batchId: 'batch-1',
+      participantLabel: 'P-001',
+      actorRole: 'evaluator',
+      eventType: 'STUDY_VIEW_OPENED',
       layer: 'methodological',
       level: 'info',
-    }
-    return {
-      data: {
-        testId: 'test-1',
-        batchId: 'batch-1',
-        events: events === undefined ? [defaultEvent] : events,
-        ...overrides,
-      },
-    }
-  }
+      source: 'study-client',
+      message: 'Study view opened',
+      details: {},
+      timeQuality: 'client-unverified',
+    })
+    expect(page.docs[0].data()).not.toHaveProperty('uid')
+  })
 
-  it('writes a validated log batch into a study logs subcollection', async () => {
-    const result = await logEvents({
-      auth: { uid: 'user-1' },
-      data: {
-        testId: 'test-1',
-        answersDocId: 'answers-1',
-        batchId: 'batch-1',
-        clientTimestamp: '2026-06-12T00:00:00.000Z',
-        sessionId: 'session-1',
-        events: [
-          {
-            type: 'ANSWER_CHANGED',
-            layer: 'methodological',
-            level: 'info',
-            source: 'client',
-            traceId: 'H0-Q2',
-            message: 'Answer changed by evaluator@example.com',
-            details: {
-              heuristicIndex: 0,
-              questionIndex: 2,
-              email: 'evaluator@example.com',
-              fullName: 'Evaluator Name',
+  it('reuses a participant label while concurrent new participants receive distinct labels', async () => {
+    await logEvents.run(participantRequest(viewBatch()))
+    await logEvents.run(
+      participantRequest(viewBatch('batch-2', 'event-2')),
+    )
+
+    await admin.firestore().doc('tests/study-1').update({
+      'studyRoleMap.participant-2': 1,
+      'studyRoleMap.participant-3': 1,
+    })
+    await Promise.all([
+      logEvents.run(
+        participantRequest(viewBatch('batch-3', 'event-3'), 'participant-2'),
+      ),
+      logEvents.run(
+        participantRequest(viewBatch('batch-4', 'event-4'), 'participant-3'),
+      ),
+    ])
+
+    const sessions = await admin
+      .firestore()
+      .collection('tests/study-1/studySessions')
+      .get()
+    expect(sessions.docs.map((item) => item.data().participantLabel).sort())
+      .toEqual(['P-001', 'P-002', 'P-003'])
+    expect(
+      sessions.docs.find((item) => item.data().participantLabel === 'P-001')
+        .data().clientEventCount,
+    ).toBe(2)
+    await expect(
+      admin.firestore().doc('tests/study-1/loggingMeta/state').get(),
+    ).resolves.toMatchObject({ exists: true })
+    const meta = await admin
+      .firestore()
+      .doc('tests/study-1/loggingMeta/state')
+      .get()
+    expect(meta.data()).toEqual({ nextParticipantNumber: 4 })
+  })
+
+  it('denies ineligible callers generically without creating logging state', async () => {
+    for (const [uid, expectedCode] of [
+      [null, 'unauthenticated'],
+      ['stranger', 'permission-denied'],
+    ]) {
+      await expect(
+        logEvents.run(participantRequest(viewBatch(), uid)),
+      ).rejects.toMatchObject({
+        code: expectedCode,
+        details: {
+          retryable: false,
+          scope: 'batch',
+          reasonCode: 'NOT_ELIGIBLE',
+        },
+      })
+    }
+
+    for (const name of ['studySessions', 'logs', 'logBatches', 'loggingMeta']) {
+      const snapshot = await admin
+        .firestore()
+        .collection(`tests/study-1/${name}`)
+        .get()
+      expect(snapshot.empty).toBe(true)
+    }
+  })
+
+  it('creates no logging state for a consent-gated study before committed acceptance', async () => {
+    await admin.firestore().doc('tests/study-1').update({
+      testType: 'USER',
+      subType: 'USER_UNMODERATED',
+      'studyRoleMap.participant': 5,
+    })
+    await admin.firestore().doc('answers/answer-1').set({
+      type: 'USER',
+      studyId: 'study-1',
+      taskAnswers: { participant: { consentCompleted: false } },
+    })
+
+    await expect(
+      logEvents.run(participantRequest(viewBatch())),
+    ).rejects.toMatchObject({
+      code: 'failed-precondition',
+      details: { scope: 'batch', reasonCode: 'CONSENT_REQUIRED' },
+    })
+
+    const state = await Promise.all(
+      ['studySessions', 'logs', 'logBatches', 'loggingMeta'].map((name) =>
+        admin.firestore().collection(`tests/study-1/${name}`).get(),
+      ),
+    )
+    expect(state.every((snapshot) => snapshot.empty)).toBe(true)
+  })
+
+  it('allows only logs.view reads and forbids every direct logging write', async () => {
+    await admin.firestore().doc('tests/study-1').update({ isPublic: true })
+    await logEvents.run(participantRequest(viewBatch(), 'public-participant'))
+    const participantDb = testEnv
+      .authenticatedContext('public-participant')
+      .firestore()
+    const researcherDb = testEnv.authenticatedContext('researcher').firestore()
+
+    await assertFails(
+      getDocs(collection(participantDb, 'tests/study-1/logs')),
+    )
+    await assertSucceeds(
+      getDocs(collection(researcherDb, 'tests/study-1/studySessions')),
+    )
+    await assertFails(
+      getDoc(doc(researcherDb, 'tests/study-1/logBatches/hidden')),
+    )
+    await assertFails(
+      getDoc(doc(researcherDb, 'tests/study-1/loggingMeta/state')),
+    )
+    await assertFails(
+      setDoc(doc(researcherDb, 'tests/study-1/logs/forged'), {
+        eventType: 'STUDY_VIEW_OPENED',
+      }),
+    )
+    await assertFails(
+      setDoc(doc(researcherDb, 'tests/study-1/studySessions/forged'), {
+        participantLabel: 'P-999',
+      }),
+    )
+  })
+})
+
+describe('client-observed batch delivery', () => {
+  it('atomically stores a valid multi-event batch and charges its full observation count once', async () => {
+    await expect(
+      logEvents.run(
+        participantRequest({
+          ...viewBatch(),
+          events: [viewBatch().events[0], answerEdited()],
+        }),
+      ),
+    ).resolves.toEqual({ status: 'accepted', batchId: 'batch-1' })
+
+    const [sessions, logs, batches] = await Promise.all([
+      admin.firestore().collection('tests/study-1/studySessions').get(),
+      admin.firestore().collection('tests/study-1/logs').get(),
+      admin.firestore().collection('tests/study-1/logBatches').get(),
+    ])
+    expect(sessions.docs[0].data().clientEventCount).toBe(2)
+    expect(logs.docs).toHaveLength(2)
+    expect(batches.docs[0].data()).toMatchObject({ eventCount: 2 })
+    const edit = logs.docs.find(
+      (item) => item.data().eventType === 'ANSWER_EDITED',
+    )
+    expect(edit.data()).toMatchObject({
+      level: 'info',
+      source: 'study-client',
+      message: 'Answer field edited',
+      details: answerEdited().details,
+    })
+    expect(JSON.stringify(edit.data())).not.toContain('answer content')
+  })
+
+  it('lets the first accepted batch body win and ignores every replay body', async () => {
+    await logEvents.run(participantRequest(viewBatch()))
+    await expect(
+      logEvents.run(
+        participantRequest({
+          studyId: 'study-1',
+          batchId: 'batch-1',
+          events: [
+            {
+              eventId: 'changed-event',
+              eventType: 'FORGED_SERVER_EVENT',
+              occurredAt: 'not-a-time',
+              details: { rawText: 'must be ignored' },
             },
-          },
-          {
-            type: 'REVISION_PATTERN',
-            layer: 'technical',
-            level: 'warn',
-            details: { changedFields: 4 },
-          },
+          ],
+        }),
+      ),
+    ).resolves.toEqual({ status: 'duplicate', batchId: 'batch-1' })
+
+    const [logs, sessions] = await Promise.all([
+      admin.firestore().collection('tests/study-1/logs').get(),
+      admin.firestore().collection('tests/study-1/studySessions').get(),
+    ])
+    expect(logs.docs).toHaveLength(1)
+    expect(logs.docs[0].data().eventId).toBe('event-1')
+    expect(sessions.docs[0].data().clientEventCount).toBe(1)
+  })
+
+  it('rejects reuse of an accepted Event ID without partially writing its new batch', async () => {
+    await logEvents.run(participantRequest(viewBatch()))
+
+    await expect(
+      logEvents.run(
+        participantRequest({
+          studyId: 'study-1',
+          batchId: 'batch-2',
+          events: [viewBatch().events[0], answerEdited('edit-2')],
+        }),
+      ),
+    ).rejects.toMatchObject({
+      code: 'invalid-argument',
+      details: {
+        retryable: false,
+        scope: 'events',
+        invalidEvents: [
+          { eventId: 'event-1', reasonCode: 'EVENT_ID_CONFLICT' },
         ],
       },
     })
 
-    expect(result).toEqual({
-      status: 'ok',
-      written: 2,
-      batchId: 'batch-1',
-    })
-    expect(mockBatchSet).toHaveBeenCalledTimes(2)
-    expect(mockBatchCreate).toHaveBeenCalledTimes(1)
-    expect(mockCommit).toHaveBeenCalledTimes(1)
-
-    const firstLog = mockBatchSet.mock.calls[0][1]
-    expect(firstLog).toMatchObject({
-      type: 'ANSWER_CHANGED',
-      layer: 'methodological',
-      level: 'info',
-      source: 'client',
-      traceId: 'H0-Q2',
-      testId: 'test-1',
-      answersDocId: 'answers-1',
-      studyType: 'USER',
-      subType: 'USER_UNMODERATED',
-      actorRole: 'evaluator',
-      actorType: 'cooperator',
-      sessionId: 'session-1',
-      batchId: 'batch-1',
-      timestamp: 'mock-server-timestamp',
-      schemaVersion: 1,
-    })
-    expect(firstLog.actorHash).toHaveLength(64)
-    expect(firstLog.message).toBe('Answer changed by [redacted-email]')
-    expect(firstLog.details.email).toBeUndefined()
-    expect(firstLog.details.fullName).toBeUndefined()
+    const [logs, batches, sessions] = await Promise.all([
+      admin.firestore().collection('tests/study-1/logs').get(),
+      admin.firestore().collection('tests/study-1/logBatches').get(),
+      admin.firestore().collection('tests/study-1/studySessions').get(),
+    ])
+    expect(logs.docs).toHaveLength(1)
+    expect(batches.docs).toHaveLength(1)
+    expect(sessions.docs[0].data().clientEventCount).toBe(1)
   })
 
-  it('skips duplicate batches when the idempotency marker already exists', async () => {
-    mockCommit.mockRejectedValueOnce(
-      Object.assign(new Error('document already exists'), { code: 6 }),
+  it('returns every independently invalid Event ID and writes none of the batch', async () => {
+    await expect(
+      logEvents.run(
+        participantRequest({
+          studyId: 'study-1',
+          batchId: 'batch-invalid',
+          events: [
+            {
+              ...viewBatch().events[0],
+              eventId: 'bad-type',
+              eventType: 'STUDY_SUBMITTED',
+            },
+            answerEdited('bad-details', {
+              details: { ...answerEdited().details, rawText: 'private text' },
+            }),
+            {
+              ...viewBatch().events[0],
+              eventId: 'bad-time',
+              occurredAt: 'not-a-time',
+            },
+          ],
+        }),
+      ),
+    ).rejects.toMatchObject({
+      code: 'invalid-argument',
+      details: {
+        retryable: false,
+        scope: 'events',
+        invalidEvents: [
+          { eventId: 'bad-type', reasonCode: 'UNKNOWN_EVENT_TYPE' },
+          { eventId: 'bad-details', reasonCode: 'INVALID_EVENT_DETAILS' },
+          { eventId: 'bad-time', reasonCode: 'INVALID_OCCURRED_AT' },
+        ],
+      },
+    })
+
+    const state = await Promise.all(
+      ['studySessions', 'logs', 'logBatches', 'loggingMeta'].map((name) =>
+        admin.firestore().collection(`tests/study-1/${name}`).get(),
+      ),
     )
+    expect(state.every((snapshot) => snapshot.empty)).toBe(true)
+  })
 
-    const result = await logEvents({
-      auth: { uid: 'user-1' },
-      ...buildPayload(),
+  it('scopes Event and Batch identities to the server-derived Study Session', async () => {
+    await admin.firestore().doc('tests/study-1').update({
+      'studyRoleMap.participant-2': 1,
     })
 
-    expect(result).toEqual({
-      status: 'duplicate',
-      written: 0,
-      batchId: 'batch-1',
-    })
+    await Promise.all([
+      logEvents.run(participantRequest(viewBatch(), 'participant')),
+      logEvents.run(participantRequest(viewBatch(), 'participant-2')),
+    ])
+
+    const [logs, batches] = await Promise.all([
+      admin.firestore().collection('tests/study-1/logs').get(),
+      admin.firestore().collection('tests/study-1/logBatches').get(),
+    ])
+    expect(logs.docs).toHaveLength(2)
+    expect(batches.docs).toHaveLength(2)
+    expect(new Set(logs.docs.map((item) => item.data().sessionId)).size).toBe(2)
   })
 
-  it('rejects unauthenticated callers', async () => {
-    await expect(logEvents(buildPayload())).rejects.toMatchObject({
-      code: 'unauthenticated',
-    })
+  it('accepts one concurrent copy of a batch and acknowledges the other as duplicate', async () => {
+    const results = await Promise.all([
+      logEvents.run(participantRequest(viewBatch())),
+      logEvents.run(participantRequest(viewBatch())),
+    ])
+
+    expect(results.map((result) => result.status).sort()).toEqual([
+      'accepted',
+      'duplicate',
+    ])
+    const [logs, sessions] = await Promise.all([
+      admin.firestore().collection('tests/study-1/logs').get(),
+      admin.firestore().collection('tests/study-1/studySessions').get(),
+    ])
+    expect(logs.docs).toHaveLength(1)
+    expect(sessions.docs[0].data().clientEventCount).toBe(1)
   })
 
-  it('rejects users who are not attached to the study', async () => {
-    await expect(
-      logEvents({
-        auth: { uid: 'stranger-1' },
-        ...buildPayload(),
-      }),
-    ).rejects.toMatchObject({ code: 'permission-denied' })
-  })
+  it('cannot exceed the observation budget through concurrent distinct batches', async () => {
+    await logEvents.run(participantRequest(viewBatch()))
+    const sessions = await admin
+      .firestore()
+      .collection('tests/study-1/studySessions')
+      .get()
+    await sessions.docs[0].ref.update({ clientEventCount: 999 })
 
-  it('rejects oversized batches before writing anything', async () => {
-    const events = Array.from({ length: 26 }, () => ({
-      type: 'ANSWER_CHANGED',
-      layer: 'methodological',
-      level: 'info',
-    }))
-    await expect(
-      logEvents({
-        auth: { uid: 'user-1' },
-        ...buildPayload(events),
-      }),
-    ).rejects.toMatchObject({ code: 'invalid-argument' })
+    const results = await Promise.allSettled([
+      logEvents.run(participantRequest(viewBatch('batch-2', 'event-2'))),
+      logEvents.run(participantRequest(viewBatch('batch-3', 'event-3'))),
+    ])
 
-    expect(mockDb.batch).not.toHaveBeenCalled()
-  })
-
-  it('treats cooperator accessLevel 0 as admin role, not falsy', async () => {
-    mockTestGet.mockResolvedValueOnce({
-      exists: true,
-      data: () => ({
-        answersDocId: 'answers-1',
-        testType: 'USER',
-        subType: 'USER_UNMODERATED',
-        testAdmin: { userDocId: 'other-admin' },
-        cooperators: [{ userDocId: 'user-1', accessLevel: 0 }],
-      }),
-    })
-
-    const result = await logEvents({
-      auth: { uid: 'user-1' },
-      ...buildPayload(),
-    })
-
-    expect(result.status).toBe('ok')
-    expect(mockBatchSet.mock.calls[0][1].actorRole).toBe('admin')
-  })
-
-  it.each([
-    ['non-object log events', ['not-an-object']],
-    ['invalid type pattern', [{ type: 'lowercase_invalid', layer: 'technical', level: 'info' }]],
-    ['invalid layer', [{ type: 'TASK_COMPLETED', layer: 'nonexistent', level: 'info' }]],
-    ['invalid level', [{ type: 'TASK_COMPLETED', layer: 'technical', level: 'critical' }]],
-  ])('rejects %s', async (_, events) => {
-    await expect(
-      logEvents({
-        auth: { uid: 'user-1' },
-        ...buildPayload(events),
-      }),
-    ).rejects.toMatchObject({ code: 'invalid-argument' })
-  })
-
-  it('throws internal error when LOG_ACTOR_HASH_SALT is not configured', async () => {
-    delete process.env.LOG_ACTOR_HASH_SALT
-
-    await expect(
-      logEvents({
-        auth: { uid: 'user-1' },
-        ...buildPayload(),
-      }),
-    ).rejects.toMatchObject({ code: 'internal' })
+    expect(results.filter((result) => result.status === 'fulfilled')).toHaveLength(1)
+    expect(results.filter((result) => result.status === 'rejected')).toHaveLength(1)
+    expect(results.find((result) => result.status === 'rejected').reason)
+      .toMatchObject({
+        code: 'resource-exhausted',
+        details: { scope: 'batch', reasonCode: 'BUDGET_EXHAUSTED' },
+      })
+    const [storedLogs, storedSessions] = await Promise.all([
+      admin.firestore().collection('tests/study-1/logs').get(),
+      admin.firestore().collection('tests/study-1/studySessions').get(),
+    ])
+    expect(storedLogs.docs).toHaveLength(2)
+    expect(storedSessions.docs[0].data().clientEventCount).toBe(1000)
   })
 })
