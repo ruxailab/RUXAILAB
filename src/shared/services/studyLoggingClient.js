@@ -139,17 +139,24 @@ const freshQueue = (key, ownerUid, studyId) => ({
 })
 
 const sweepExpired = (queue, now) => {
-  queue.events = queue.events.filter(
-    (event) => now - event.queuedAt <= QUEUE_LIFETIME_MS,
-  )
-  if (
-    queue.claim &&
-    queue.claim.eventIds.some(
-      (eventId) => !queue.events.some((event) => event.eventId === eventId),
-    )
-  ) {
-    queue.claim = null
+  const expired = (event) => now - event.queuedAt > QUEUE_LIFETIME_MS
+  if (queue.claim) {
+    const claimedIds = new Set(queue.claim.eventIds)
+    const invalidClaim =
+      queue.claim.eventIds.some(
+        (eventId) => !queue.events.some((event) => event.eventId === eventId),
+      ) ||
+      queue.events.some(
+        (event) => claimedIds.has(event.eventId) && expired(event),
+      )
+    if (invalidClaim) {
+      queue.events = queue.events.filter(
+        (event) => !claimedIds.has(event.eventId),
+      )
+      queue.claim = null
+    }
   }
+  queue.events = queue.events.filter((event) => !expired(event))
 }
 
 const callableDetails = (caught) =>

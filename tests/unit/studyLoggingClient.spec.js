@@ -258,7 +258,7 @@ describe('browser study logging client', () => {
     expect(submitBatch.mock.calls[1][0]).toEqual(submitBatch.mock.calls[0][0])
   })
 
-  it('repacks fresh survivors when one event in a claimed batch expires', async () => {
+  it('discards an uncertain claimed batch when one of its events expires', async () => {
     let now = 0
     const lifetime = 7 * 24 * 60 * 60 * 1000
     const ids = ['event-1', 'event-2', 'batch-1', 'batch-2']
@@ -286,14 +286,8 @@ describe('browser study logging client', () => {
     await new Promise((resolve) => setTimeout(resolve, 0))
 
     now = lifetime + 500
-    await expect(logger.flush()).resolves.toMatchObject({
-      status: 'accepted',
-      batchId: 'batch-2',
-    })
-    expect(submitBatch.mock.calls[1][0]).toMatchObject({
-      batchId: 'batch-2',
-      events: [{ eventId: 'event-2' }],
-    })
+    await expect(logger.flush()).resolves.toEqual({ status: 'deferred' })
+    expect(submitBatch).toHaveBeenCalledTimes(1)
   })
 
   it('never claims another account queue and cleanup removes the departing account records', async () => {
