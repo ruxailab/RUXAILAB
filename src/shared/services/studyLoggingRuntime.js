@@ -54,6 +54,12 @@ export const createStudyLoggingRuntime = ({
     consentPending = false
     consentRequired = false
     logger.setEnabled(true)
+    return acknowledgement
+  }
+
+  const resumeAfterConsent = async () => {
+    const acknowledgement = await consentAccepted()
+    if (!acknowledgement) return null
     return open()
   }
 
@@ -61,9 +67,13 @@ export const createStudyLoggingRuntime = ({
     if (consentPending) await consentAccepted()
     return logger.flush({ online: true })
   }
+  const retry = async () => {
+    if (consentPending) await consentAccepted()
+    return logger.flush()
+  }
   eventTarget?.addEventListener('online', onOnline)
   const retryInterval = setIntervalFn(() => {
-    void onOnline()
+    void retry()
   }, RETRY_POLL_MS)
 
   const editField = (target) =>
@@ -94,6 +104,7 @@ export const createStudyLoggingRuntime = ({
     open,
     editHandlers,
     consentAccepted,
+    resumeAfterConsent,
     taskFinished(taskIndex) {
       return request('TASK_ATTEMPT_FINISHED', `task:${taskIndex}`)
     },

@@ -11,6 +11,7 @@ const createHarness = ({ consentRequired = false } = {}) => {
     data: { status: 'accepted' },
   })
   const listeners = new Map()
+  let intervalHandler
   const eventTarget = {
     addEventListener: jest.fn((name, handler) => listeners.set(name, handler)),
     removeEventListener: jest.fn((name) => listeners.delete(name)),
@@ -23,10 +24,20 @@ const createHarness = ({ consentRequired = false } = {}) => {
     callFunction,
     createLogger: () => logger,
     eventTarget,
-    setIntervalFn: jest.fn(() => 42),
+    setIntervalFn: jest.fn((handler) => {
+      intervalHandler = handler
+      return 42
+    }),
     clearIntervalFn,
   })
-  return { runtime, logger, callFunction, listeners, clearIntervalFn }
+  return {
+    runtime,
+    logger,
+    callFunction,
+    listeners,
+    clearIntervalFn,
+    runInterval: () => intervalHandler(),
+  }
 }
 
 describe('study logging runtime', () => {
@@ -44,7 +55,7 @@ describe('study logging runtime', () => {
       eventType: 'CONSENT_ACCEPTED',
     })
     expect(logger.setEnabled).toHaveBeenCalledWith(true)
-    expect(logger.record).toHaveBeenCalledWith('STUDY_VIEW_OPENED', {})
+    expect(logger.record).not.toHaveBeenCalled()
   })
 
   it('retries an unacknowledged consent gate when connectivity returns', async () => {
@@ -58,7 +69,24 @@ describe('study logging runtime', () => {
     await listeners.get('online')()
 
     expect(callFunction).toHaveBeenCalledTimes(2)
+    expect(logger.record).not.toHaveBeenCalled()
+  })
+
+  it('records a route opening only when consent was already committed before entry', async () => {
+    const { runtime, logger } = createHarness({ consentRequired: true })
+
+    await runtime.resumeAfterConsent()
+
     expect(logger.record).toHaveBeenCalledWith('STUDY_VIEW_OPENED', {})
+  })
+
+  it('respects queued-event backoff during periodic retries', async () => {
+    const { logger, runInterval } = createHarness()
+
+    await runInterval()
+
+    expect(logger.flush).toHaveBeenCalledWith()
+    expect(logger.flush).not.toHaveBeenCalledWith({ online: true })
   })
 
   it('flushes observations without delaying verified lifecycle requests', async () => {

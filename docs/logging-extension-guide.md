@@ -39,6 +39,9 @@ the vocabulary in `CONTEXT.md`, and the TDD contract with the new policy.
 Logging follows a successful primary save and remains fire-and-forget:
 
 - call `consentAccepted()` after committed consent;
+- call `resumeAfterConsent()` only when entering a route where consent was
+  already committed, so the new route opening is observed without recreating
+  a pre-consent entry;
 - call `taskFinished(index)` after a committed attempted task;
 - call `submitted()` after committed final submission;
 - mark text controls with `data-study-field-ref` to opt into metadata-only edit

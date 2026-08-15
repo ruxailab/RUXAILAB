@@ -663,7 +663,7 @@ const initializeStudyLogging = () => {
     consentRequired: true,
     callFunction: FirebaseFunctionsController.callHttpsCallableFunction,
   })
-  if (localTestAnswer.consentCompleted) void studyLogging.consentAccepted()
+  if (localTestAnswer.consentCompleted) void studyLogging.resumeAfterConsent()
   return studyLogging
 }
 const handleLoggingFocusin = (event) =>
