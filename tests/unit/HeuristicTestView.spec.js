@@ -24,6 +24,12 @@ jest.mock('@/shared/utils/toast', () => ({
   showError: jest.fn(),
 }))
 
+jest.mock('@/app/plugins/firebase/FirebaseFunctionsService', () => ({
+  FirebaseFunctionsController: {
+    callHttpsCallableFunction: jest.fn(),
+  },
+}))
+
 jest.mock('@/ux/Heuristic/components/HeuristicInstructionsStep.vue', () => ({
   name: 'HeuristicInstructionsStep',
   props: ['disabled'],
