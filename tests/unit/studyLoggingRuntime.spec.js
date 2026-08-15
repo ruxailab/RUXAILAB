@@ -45,6 +45,7 @@ const createHarness = ({ consentRequired = false } = {}) => {
     callFunction,
     listeners,
     visibilityListeners,
+    visibilityTarget,
     clearIntervalFn,
     runInterval: () => intervalHandler(),
   }
@@ -128,6 +129,39 @@ describe('study logging runtime', () => {
       expect.objectContaining({ fieldRef: 'preTest:0:answer' }),
     )
     expect(logger.flush).toHaveBeenCalledWith()
+  })
+
+  it('restarts tracking a focused field when the page becomes visible', async () => {
+    const { runtime, logger, visibilityListeners, visibilityTarget } =
+      createHarness()
+    document.body.innerHTML = `
+      <div data-study-field-ref="preTest:0:answer">
+        <input value="old" />
+      </div>
+    `
+    const input = document.querySelector('input')
+    runtime.editHandlers.focusin({ target: input })
+    input.value = 'private answer'
+    runtime.editHandlers.input({ target: input, inputType: 'insertText' })
+    await visibilityListeners.get('visibilitychange')()
+    logger.record.mockClear()
+
+    visibilityTarget.hidden = false
+    visibilityTarget.activeElement = input
+    visibilityListeners.get('visibilitychange')()
+    input.value = 'private answer!'
+    runtime.editHandlers.input({ target: input, inputType: 'insertText' })
+    await runtime.editHandlers.focusout({ target: input })
+
+    expect(logger.record).toHaveBeenCalledWith(
+      'ANSWER_EDITED',
+      expect.objectContaining({
+        fieldRef: 'preTest:0:answer',
+        editOperations: 1,
+        initialLength: 14,
+        resultingLength: 15,
+      }),
+    )
   })
 
   it('finishes a focused edit when task navigation requests its lifecycle event', async () => {

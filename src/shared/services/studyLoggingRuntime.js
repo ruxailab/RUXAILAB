@@ -98,6 +98,12 @@ export const createStudyLoggingRuntime = ({
   }
   const onVisibilityChange = () => {
     if (visibilityTarget?.hidden) return finishAndFlush()
+    const target = visibilityTarget?.activeElement
+    const fieldRef = editField(target)
+    if (fieldRef) {
+      activeFields.add(fieldRef)
+      editTracker.begin(fieldRef, String(target.value || '').length)
+    }
     return null
   }
   const onLogout = (event) => {
