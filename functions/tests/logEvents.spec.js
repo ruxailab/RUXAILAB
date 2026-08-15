@@ -23,7 +23,7 @@ import {
   setDoc,
 } from 'firebase/firestore'
 import { admin } from '../src/f.firebase.js'
-import { logEvents } from '../src/https/logEvents.js'
+import { logEvents, requestLogEvent } from '../src/https/logEvents.js'
 
 const projectId = 'demo-ruxailab-logging'
 let testEnv
@@ -33,6 +33,34 @@ const participantRequest = (data, uid = 'participant') => ({
   auth: uid ? { uid } : null,
   data,
 })
+
+const verifiedRequest = (eventType, taskRef) =>
+  participantRequest({
+    studyId: 'study-1',
+    eventType,
+    ...(taskRef ? { taskRef } : {}),
+  })
+
+const useUserStudy = async (answer = {}) => {
+  await admin.firestore().doc('tests/study-1').update({
+    testType: 'USER',
+    subType: 'USER_UNMODERATED',
+    'studyRoleMap.participant': 5,
+    testStructure: { userTasks: [{ id: 'task-1' }] },
+  })
+  await admin.firestore().doc('answers/answer-1').set({
+    type: 'USER',
+    studyId: 'study-1',
+    taskAnswers: {
+      participant: {
+        consentCompleted: true,
+        submitted: false,
+        tasks: [{ attempted: false, completed: false, taskTime: 0 }],
+        ...answer,
+      },
+    },
+  })
+}
 
 const viewBatch = (batchId = 'batch-1', eventId = 'event-1') => ({
   studyId: 'study-1',
@@ -461,5 +489,239 @@ describe('client-observed batch delivery', () => {
     ])
     expect(storedLogs.docs).toHaveLength(2)
     expect(storedSessions.docs[0].data().clientEventCount).toBe(1000)
+  })
+})
+
+describe('verified lifecycle events', () => {
+  it('initializes a consent-gated session only from committed consent and is idempotent', async () => {
+    await useUserStudy({ consentCompleted: false })
+
+    await expect(
+      requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED')),
+    ).rejects.toMatchObject({
+      code: 'failed-precondition',
+      details: { reasonCode: 'UNVERIFIED_TRANSITION' },
+    })
+
+    await admin.firestore().doc('answers/answer-1').update({
+      'taskAnswers.participant.consentCompleted': true,
+    })
+    await expect(
+      requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED')),
+    ).resolves.toEqual({ status: 'accepted' })
+    await expect(
+      requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED')),
+    ).resolves.toEqual({ status: 'duplicate' })
+
+    const [sessions, logs] = await Promise.all([
+      admin.firestore().collection('tests/study-1/studySessions').get(),
+      admin.firestore().collection('tests/study-1/logs').get(),
+    ])
+    expect(sessions.docs).toHaveLength(1)
+    expect(sessions.docs[0].data()).toMatchObject({
+      participantLabel: 'P-001',
+      clientEventCount: 0,
+    })
+    expect(sessions.docs[0].data().consentAcceptedAt).toBeDefined()
+    expect(logs.docs).toHaveLength(1)
+    expect(logs.docs[0].data()).toMatchObject({
+      eventId: 'CONSENT_ACCEPTED',
+      eventType: 'CONSENT_ACCEPTED',
+      participantLabel: 'P-001',
+      layer: 'methodological',
+      level: 'info',
+      source: 'logging-service',
+      message: 'Consent accepted',
+      details: {},
+    })
+    expect(logs.docs[0].data()).not.toHaveProperty('timeQuality')
+  })
+
+  it('derives task outcome and bounded duration from committed answer state', async () => {
+    await useUserStudy()
+    await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
+    await admin.firestore().doc('answers/answer-1').update({
+      'taskAnswers.participant.tasks.0': {
+        attempted: true,
+        completed: false,
+        taskTime: 4321,
+      },
+    })
+
+    await expect(
+      requestLogEvent.run(
+        participantRequest({
+          studyId: 'study-1',
+          eventType: 'TASK_ATTEMPT_FINISHED',
+          taskRef: 'task:0',
+          outcome: 'completed',
+        }),
+      ),
+    ).rejects.toMatchObject({
+      code: 'invalid-argument',
+      details: { reasonCode: 'MALFORMED_REQUEST' },
+    })
+    await expect(
+      requestLogEvent.run(verifiedRequest('TASK_ATTEMPT_FINISHED', 'task:0')),
+    ).resolves.toEqual({ status: 'accepted' })
+    await expect(
+      requestLogEvent.run(verifiedRequest('TASK_ATTEMPT_FINISHED', 'task:0')),
+    ).resolves.toEqual({ status: 'duplicate' })
+
+    const logs = await admin
+      .firestore()
+      .collection('tests/study-1/logs')
+      .where('eventType', '==', 'TASK_ATTEMPT_FINISHED')
+      .get()
+    expect(logs.docs).toHaveLength(1)
+    expect(logs.docs[0].data()).toMatchObject({
+      eventId: 'TASK_ATTEMPT_FINISHED:task:0',
+      level: 'warning',
+      source: 'logging-service',
+      details: {
+        taskRef: 'task:0',
+        outcome: 'not_completed',
+        taskDurationMs: 4321,
+      },
+    })
+  })
+
+  it('rejects forged or premature verified transitions without partial state', async () => {
+    await useUserStudy()
+
+    for (const request of [
+      verifiedRequest('TASK_ATTEMPT_FINISHED', 'task:0'),
+      verifiedRequest('TASK_ATTEMPT_FINISHED', 'task:9'),
+      verifiedRequest('STUDY_SUBMITTED'),
+    ]) {
+      await expect(requestLogEvent.run(request)).rejects.toMatchObject({
+        code: 'failed-precondition',
+        details: { reasonCode: 'UNVERIFIED_TRANSITION' },
+      })
+    }
+
+    for (const name of ['studySessions', 'logs', 'loggingMeta']) {
+      const snapshot = await admin
+        .firestore()
+        .collection(`tests/study-1/${name}`)
+        .get()
+      expect(snapshot.empty).toBe(true)
+    }
+  })
+
+  it('verifies submission for a taskless method without a consent gate', async () => {
+    await admin.firestore().doc('answers/answer-1').set({
+      type: 'HEURISTIC',
+      studyId: 'study-1',
+      heuristicAnswers: { participant: { submitted: true } },
+    })
+
+    await expect(
+      requestLogEvent.run(verifiedRequest('STUDY_SUBMITTED')),
+    ).resolves.toEqual({ status: 'accepted' })
+
+    const [sessions, logs] = await Promise.all([
+      admin.firestore().collection('tests/study-1/studySessions').get(),
+      admin.firestore().collection('tests/study-1/logs').get(),
+    ])
+    expect(sessions.docs[0].data().submittedAt).toBeDefined()
+    expect(logs.docs[0].data()).toMatchObject({
+      eventId: 'STUDY_SUBMITTED',
+      eventType: 'STUDY_SUBMITTED',
+      details: {},
+    })
+  })
+
+  it('records deterministic submission after the client observation budget is exhausted', async () => {
+    await useUserStudy({ submitted: true })
+    await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
+    const sessions = await admin
+      .firestore()
+      .collection('tests/study-1/studySessions')
+      .get()
+    await sessions.docs[0].ref.update({ clientEventCount: 1000 })
+
+    await expect(
+      requestLogEvent.run(verifiedRequest('STUDY_SUBMITTED')),
+    ).resolves.toEqual({ status: 'accepted' })
+    const updatedSession = await sessions.docs[0].ref.get()
+    expect(updatedSession.data().clientEventCount).toBe(1000)
+  })
+
+  it('accepts delayed pre-submission observations within the closed-session bounds', async () => {
+    await useUserStudy({ submitted: true })
+    await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
+    await requestLogEvent.run(verifiedRequest('STUDY_SUBMITTED'))
+    const sessions = await admin
+      .firestore()
+      .collection('tests/study-1/studySessions')
+      .get()
+    const submittedAt = sessions.docs[0].data().submittedAt.toDate()
+
+    await expect(
+      logEvents.run(
+        participantRequest({
+          ...viewBatch('delayed-batch', 'delayed-event'),
+          events: [
+            {
+              ...viewBatch().events[0],
+              eventId: 'delayed-event',
+              occurredAt: submittedAt.toISOString(),
+            },
+          ],
+        }),
+      ),
+    ).resolves.toEqual({ status: 'accepted', batchId: 'delayed-batch' })
+  })
+
+  it('rejects observations outside occurrence or receipt cutoff bounds by Event ID', async () => {
+    await useUserStudy({ submitted: true })
+    await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
+    await requestLogEvent.run(verifiedRequest('STUDY_SUBMITTED'))
+    const sessions = await admin
+      .firestore()
+      .collection('tests/study-1/studySessions')
+      .get()
+    const submittedAt = sessions.docs[0].data().submittedAt.toDate()
+    await expect(
+      logEvents.run(
+        participantRequest({
+          ...viewBatch('late-batch', 'late-event'),
+          events: [
+            {
+              ...viewBatch().events[0],
+              eventId: 'late-event',
+              occurredAt: new Date(
+                submittedAt.getTime() + 5 * 60 * 1000 + 1,
+              ).toISOString(),
+            },
+          ],
+        }),
+      ),
+    ).rejects.toMatchObject({
+      code: 'invalid-argument',
+      details: {
+        scope: 'events',
+        invalidEvents: [
+          { eventId: 'late-event', reasonCode: 'SESSION_CLOSED' },
+        ],
+      },
+    })
+
+    await sessions.docs[0].ref.update({
+      submittedAt: admin.firestore.Timestamp.fromDate(
+        new Date(Date.now() - 7 * 24 * 60 * 60 * 1000 - 1),
+      ),
+    })
+    await expect(
+      logEvents.run(participantRequest(viewBatch('expired-batch', 'expired-event'))),
+    ).rejects.toMatchObject({
+      details: {
+        scope: 'events',
+        invalidEvents: [
+          { eventId: 'expired-event', reasonCode: 'SESSION_CLOSED' },
+        ],
+      },
+    })
   })
 })
