@@ -119,7 +119,7 @@ beforeEach(async () => {
       isPublic: false,
       testAdmin: { userDocId: 'owner' },
       studyRoleMap: { participant: 1, researcher: 2 },
-      testStructure: [{ heuristicQuestions: [{ id: 'question-1' }] }],
+      testStructure: [{ questions: [{ id: 'question-1' }] }],
     })
 })
 

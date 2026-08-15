@@ -152,7 +152,7 @@ const fieldExists = (study, fieldRef) => {
       parts[2] === 'question' &&
       ['comment', 'answer'].includes(field) &&
       Boolean(
-        study.testStructure?.[Number(heuristicIndex)]?.heuristicQuestions?.[
+        study.testStructure?.[Number(heuristicIndex)]?.questions?.[
           Number(questionIndex)
         ],
       )
