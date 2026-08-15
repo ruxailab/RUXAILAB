@@ -80,6 +80,7 @@
 
             <div class="answer-blocks">
               <HeuristicOptionsAnalysisSection
+                :data-study-field-ref="`heuristic:${heurisIndex}:question:${currentQuestionIndex}:answer`"
                 :selected-answer-mode="selectedAnswerMode"
                 :answer-mode-label="answerModeLabel(selectedAnswerMode)"
                 :has-configured-answer-control="hasConfiguredAnswerControl"
@@ -102,6 +103,7 @@
 
               <HeuristicCommentEvidenceSection
                 :key="`comments-${currentQuestionIndex}`"
+                :data-study-field-ref="`heuristic:${heurisIndex}:question:${currentQuestionIndex}:comment`"
                 :heuris-index="heurisIndex"
                 :question-index="currentQuestionIndex"
                 :answer-heu="answerForQuestion(currentQuestionIndex)"

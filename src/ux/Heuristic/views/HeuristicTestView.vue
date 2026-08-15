@@ -1,5 +1,9 @@
 <template>
-  <div>
+  <div
+    @focusin.capture="handleLoggingFocusin"
+    @input.capture="handleLoggingInput"
+    @focusout.capture="handleLoggingFocusout"
+  >
     <Snackbar />
     <!-- Submit Alert Dialog -->
     <v-dialog v-model="dialog" width="600" persistent>
@@ -386,6 +390,8 @@ import {
   resolveStudyAccess,
   STUDY_ROLE,
 } from '@/shared/utils/studyAccessPolicy'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
+import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
 
 const props = defineProps({
   id: { type: String, default: '' },
@@ -396,6 +402,24 @@ const store = useStore()
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+let studyLogging = null
+
+const initializeStudyLogging = () => {
+  if (studyLogging || !user.value?.id || !test.value?.id) return studyLogging
+  studyLogging = createStudyLoggingRuntime({
+    ownerUid: user.value.id,
+    studyId: test.value.id,
+    callFunction: FirebaseFunctionsController.callHttpsCallableFunction,
+  })
+  if (!currentUserTestAnswer.value?.submitted) void studyLogging.open()
+  return studyLogging
+}
+const handleLoggingFocusin = (event) =>
+  initializeStudyLogging()?.editHandlers.focusin(event)
+const handleLoggingInput = (event) =>
+  initializeStudyLogging()?.editHandlers.input(event)
+const handleLoggingFocusout = (event) =>
+  initializeStudyLogging()?.editHandlers.focusout(event)
 const logined = ref(null)
 const fromlink = ref(null)
 const start = ref(true)
@@ -1365,6 +1389,7 @@ const submitAnswer = async () => {
       answersDocId: test.value.answersDocId,
       testType: test.value.testType,
     })
+    void initializeStudyLogging()?.submitted()
     showSuccess('alerts.genericSuccess')
     setTimeout(() => {
       if (hasTestDashboardAccess.value) {
@@ -1650,6 +1675,7 @@ const setTest = async () => {
   )
   initializeHeuristicsOrder()
   answerInitialized.value = populateWithHeuristicQuestions()
+  initializeStudyLogging()
   restoreProgress()
 }
 
@@ -1744,6 +1770,7 @@ onBeforeMount(async () => {
 })
 
 onUnmounted(() => {
+  studyLogging?.destroy()
   // Save progress when component is destroyed
   if (calculatedProgress.value > 0 && !currentUserTestAnswer.value?.submitted) {
     if (trackTimeEnabled.value) pauseTimer(heurisIndex.value)

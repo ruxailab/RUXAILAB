@@ -47,6 +47,7 @@
             <div v-if="currentItem.textField" class="answer-field-wrap mx-auto">
               <v-text-field
                 v-model="localAnswers[step].answer"
+                :data-study-field-ref="`preTest:${step}:answer`"
                 :placeholder="'Type your answer here…'"
                 variant="outlined"
                 density="comfortable"

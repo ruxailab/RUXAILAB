@@ -1,5 +1,9 @@
 <template>
-  <div>
+  <div
+    @focusin.capture="handleLoggingFocusin"
+    @input.capture="handleLoggingInput"
+    @focusout.capture="handleLoggingFocusout"
+  >
     <StepAnnouncementOverlay
       v-if="showStepAnnouncement"
       ref="stepAnnouncementOverlay"
@@ -640,11 +644,39 @@ import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { showError, showInfo, showWarning } from '@/shared/utils/toast'
 import { calculateProgress } from '../utils/testProgress'
 import { animateStepAnnouncement } from '@/shared/utils/animations'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
+import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
 
 const store = useStore()
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+let studyLogging = null
+
+const initializeStudyLogging = () => {
+  if (
+    studyLogging ||
+    isModerator.value ||
+    !user.value?.id ||
+    !test.value?.id
+  ) {
+    return studyLogging
+  }
+  studyLogging = createStudyLoggingRuntime({
+    ownerUid: user.value.id,
+    studyId: test.value.id,
+    consentRequired: true,
+    callFunction: FirebaseFunctionsController.callHttpsCallableFunction,
+  })
+  if (localTestAnswer.consentCompleted) void studyLogging.consentAccepted()
+  return studyLogging
+}
+const handleLoggingFocusin = (event) =>
+  initializeStudyLogging()?.editHandlers.focusin(event)
+const handleLoggingInput = (event) =>
+  initializeStudyLogging()?.editHandlers.input(event)
+const handleLoggingFocusout = (event) =>
+  initializeStudyLogging()?.editHandlers.focusout(event)
 // Data variables
 
 onBeforeUnmount(() => {
@@ -922,6 +954,7 @@ const handleSubmit = async () => {
   try {
     localTestAnswer.submitted = true
     await saveAnswer()
+    void initializeStudyLogging()?.submitted()
     if (hasTestDashboardAccess.value) {
       await router.push(`/userTest/moderated/dashboard/${test.value.id}`)
     } else {
@@ -1416,6 +1449,7 @@ const completeStep = async (id, type, userCompleted = true) => {
         return
       }
       localTestAnswer.tasks[id].completed = userCompleted
+      localTestAnswer.tasks[id].attempted = true
       markSubStepComplete(STEP_GROUP_IDS.tasks, id)
       allTasksCompleted.value = true
 
@@ -1471,6 +1505,12 @@ const completeStep = async (id, type, userCompleted = true) => {
 
     calculateProgress(localTestAnswer)
     await saveAnswer()
+    if (type === 'consent') {
+      void initializeStudyLogging()?.consentAccepted()
+    }
+    if (type === 'tasks') {
+      void initializeStudyLogging()?.taskFinished(id)
+    }
   } catch (error) {
     console.error('Error in completeStep:', error) // eslint-disable-line no-console
     store.commit('SET_TOAST', {
@@ -1700,6 +1740,7 @@ onMounted(async () => {
   }
 
   await mappingSteps()
+  initializeStudyLogging()
 })
 
 // Auto-join if refresh happens during active call
@@ -1723,6 +1764,7 @@ watch(
 )
 
 onBeforeUnmount(async () => {
+  studyLogging?.destroy()
   const roomRef = dbRef(database, `rooms/${roomId.value}`)
   off(roomRef)
   // Do NOT delete the room on unmount (refresh/navigate away). Only explicit end should delete.
