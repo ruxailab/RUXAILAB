@@ -68,6 +68,25 @@ export const createIndexedDbQueueStore = ({
         transaction.onabort = () => reject(transaction.error)
       })
     },
+    async sweepExpired(now) {
+      const db = await database
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction('queues', 'readwrite')
+        const request = transaction.objectStore('queues').openCursor()
+        request.onsuccess = () => {
+          const cursor = request.result
+          if (!cursor) return
+          const queue = cursor.value
+          sweepExpired(queue, now)
+          if (queue.events.length) cursor.update(queue)
+          else cursor.delete()
+          cursor.continue()
+        }
+        transaction.oncomplete = () => resolve()
+        transaction.onerror = () => reject(transaction.error)
+        transaction.onabort = () => reject(transaction.error)
+      })
+    },
   }
 }
 
@@ -77,6 +96,17 @@ export const cleanupStudyLoggingForOwner = async (ownerUid, queueStore) => {
     await (queueStore || createIndexedDbQueueStore()).cleanupOwner(ownerUid)
   } catch {
     // Logging cleanup is fail-open for the primary logout flow.
+  }
+}
+
+export const sweepExpiredStudyLogging = async (
+  queueStore,
+  now = Date.now(),
+) => {
+  try {
+    await (queueStore || createIndexedDbQueueStore()).sweepExpired(now)
+  } catch {
+    // Logging maintenance is fail-open for application startup.
   }
 }
 

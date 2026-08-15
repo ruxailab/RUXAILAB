@@ -151,6 +151,16 @@ describe('study logging runtime', () => {
     )
   })
 
+  it('attempts an owner-matched flush when explicit logout begins', async () => {
+    const { logger, listeners } = createHarness()
+
+    await listeners.get('study-logging-logout')({
+      detail: { ownerUid: 'participant' },
+    })
+
+    expect(logger.flush).toHaveBeenCalledWith()
+  })
+
   it('flushes observations without delaying verified lifecycle requests', async () => {
     const { runtime, logger, callFunction, clearIntervalFn } = createHarness()
 

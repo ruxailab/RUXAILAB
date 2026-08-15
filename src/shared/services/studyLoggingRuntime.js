@@ -4,6 +4,12 @@ import {
 } from '@/shared/services/studyLoggingClient'
 
 const RETRY_POLL_MS = 5000
+const LOGOUT_EVENT = 'study-logging-logout'
+
+export const requestStudyLoggingLogout = (ownerUid) => {
+  if (!ownerUid || typeof window === 'undefined') return
+  window.dispatchEvent(new CustomEvent(LOGOUT_EVENT, { detail: { ownerUid } }))
+}
 
 export const createStudyLoggingRuntime = ({
   ownerUid,
@@ -94,7 +100,14 @@ export const createStudyLoggingRuntime = ({
     if (visibilityTarget?.hidden) return finishAndFlush()
     return null
   }
+  const onLogout = (event) => {
+    if (event?.detail?.ownerUid !== ownerUid) return null
+    const delivery = logger.flush()
+    if (activeFields.size) void finishAndFlush()
+    return delivery
+  }
   visibilityTarget?.addEventListener('visibilitychange', onVisibilityChange)
+  eventTarget?.addEventListener(LOGOUT_EVENT, onLogout)
   const editHandlers = {
     focusin(event) {
       const fieldRef = editField(event.target)
@@ -135,6 +148,7 @@ export const createStudyLoggingRuntime = ({
     destroy() {
       clearIntervalFn(retryInterval)
       eventTarget?.removeEventListener('online', onOnline)
+      eventTarget?.removeEventListener(LOGOUT_EVENT, onLogout)
       visibilityTarget?.removeEventListener(
         'visibilitychange',
         onVisibilityChange,

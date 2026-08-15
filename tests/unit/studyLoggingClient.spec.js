@@ -1,6 +1,7 @@
 import {
   cleanupStudyLoggingForOwner,
   createStudyLogger,
+  sweepExpiredStudyLogging,
 } from '@/shared/services/studyLoggingClient'
 
 const createQueueStore = () => {
@@ -23,6 +24,16 @@ const createQueueStore = () => {
     cleanupOwner(ownerUid) {
       for (const [key, queue] of records) {
         if (queue.ownerUid === ownerUid) records.delete(key)
+      }
+      return Promise.resolve()
+    },
+    sweepExpired(now) {
+      const lifetime = 7 * 24 * 60 * 60 * 1000
+      for (const [key, queue] of records) {
+        queue.events = queue.events.filter(
+          (event) => now - event.queuedAt <= lifetime,
+        )
+        if (!queue.events.length) records.delete(key)
       }
       return Promise.resolve()
     },
@@ -314,5 +325,40 @@ describe('browser study logging client', () => {
 
     expect(departingSubmit).not.toHaveBeenCalled()
     expect(otherSubmit).toHaveBeenCalledTimes(1)
+  })
+
+  it('sweeps expired abandoned queues at application startup', async () => {
+    const queueStore = createQueueStore()
+    const expiredSubmit = jest.fn()
+    const freshSubmit = jest.fn(({ batchId }) => ({
+      status: 'accepted',
+      batchId,
+    }))
+    const expired = createStudyLogger({
+      ownerUid: 'participant-1',
+      studyId: 'abandoned-study',
+      submitBatch: expiredSubmit,
+      queueStore,
+      now: () => 0,
+      createId: () => 'expired-id',
+    })
+    const currentTime = 7 * 24 * 60 * 60 * 1000 + 1
+    const fresh = createStudyLogger({
+      ownerUid: 'participant-2',
+      studyId: 'current-study',
+      submitBatch: freshSubmit,
+      queueStore,
+      now: () => currentTime,
+      createId: () => 'fresh-id',
+    })
+
+    await expired.record('STUDY_VIEW_OPENED', {})
+    await fresh.record('STUDY_VIEW_OPENED', {})
+    await sweepExpiredStudyLogging(queueStore, currentTime)
+    await expired.flush()
+    await fresh.flush()
+
+    expect(expiredSubmit).not.toHaveBeenCalled()
+    expect(freshSubmit).toHaveBeenCalledTimes(1)
   })
 })
