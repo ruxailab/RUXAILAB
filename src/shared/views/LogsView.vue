@@ -375,7 +375,7 @@ const replaceFirstPage = async ({
     if (countResult.status === 'fulfilled' && countResult.value !== undefined) {
       totalCount.value = countResult.value
       countCache.set(countKey, countResult.value)
-    } else if (!countCache.has(countKey)) {
+    } else {
       totalCount.value = null
     }
     updatedAt.value = new Date()
