@@ -144,8 +144,8 @@ const sweepExpired = (queue, now) => {
   )
   if (
     queue.claim &&
-    !queue.claim.eventIds.some((eventId) =>
-      queue.events.some((event) => event.eventId === eventId),
+    queue.claim.eventIds.some(
+      (eventId) => !queue.events.some((event) => event.eventId === eventId),
     )
   ) {
     queue.claim = null

@@ -258,6 +258,44 @@ describe('browser study logging client', () => {
     expect(submitBatch.mock.calls[1][0]).toEqual(submitBatch.mock.calls[0][0])
   })
 
+  it('repacks fresh survivors when one event in a claimed batch expires', async () => {
+    let now = 0
+    const lifetime = 7 * 24 * 60 * 60 * 1000
+    const ids = ['event-1', 'event-2', 'batch-1', 'batch-2']
+    const queueStore = createQueueStore()
+    const submitBatch = jest
+      .fn()
+      .mockImplementationOnce(() => new Promise(() => {}))
+      .mockImplementationOnce(({ batchId }) => ({
+        status: 'accepted',
+        batchId,
+      }))
+    const logger = createStudyLogger({
+      ownerUid: 'participant',
+      studyId: 'study-1',
+      submitBatch,
+      queueStore,
+      now: () => now,
+      createId: () => ids.shift(),
+    })
+
+    await logger.record('STUDY_VIEW_OPENED', {})
+    now = 1000
+    await logger.record('STUDY_VIEW_OPENED', {})
+    void logger.flush()
+    await new Promise((resolve) => setTimeout(resolve, 0))
+
+    now = lifetime + 500
+    await expect(logger.flush()).resolves.toMatchObject({
+      status: 'accepted',
+      batchId: 'batch-2',
+    })
+    expect(submitBatch.mock.calls[1][0]).toMatchObject({
+      batchId: 'batch-2',
+      events: [{ eventId: 'event-2' }],
+    })
+  })
+
   it('never claims another account queue and cleanup removes the departing account records', async () => {
     const ids = ['event-1']
     const queueStore = createQueueStore()

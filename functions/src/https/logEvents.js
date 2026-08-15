@@ -86,6 +86,9 @@ const dataFor = (request) => request?.data || request || {}
 const safeId = (value) =>
   typeof value === 'string' && ID_PATTERN.test(value) ? value : null
 
+const isRecord = (value) =>
+  value !== null && typeof value === 'object' && !Array.isArray(value)
+
 const normalizeStudyType = (type) => {
   const normalized = String(type || '').toUpperCase()
   return normalized === 'HEURISTICS' ? 'HEURISTIC' : normalized
@@ -222,12 +225,16 @@ const validateClientBatch = (payload, study) => {
         batchId: payload.batchId,
       })
     }
-    const occurredAt = new Date(event?.occurredAt)
+    const occurredAt =
+      typeof event?.occurredAt === 'string'
+        ? new Date(event.occurredAt)
+        : new Date(Number.NaN)
     const policy = CLIENT_EVENT_POLICIES[event?.eventType]
     const validDetails =
-      policy?.detailKeys.length === 0
-        ? event?.details && Object.keys(event.details).length === 0
+      isRecord(event?.details) && policy?.detailKeys.length === 0
+        ? Object.keys(event.details).length === 0
         : event?.eventType === 'ANSWER_EDITED' &&
+          isRecord(event?.details) &&
           validAnswerEdit(event?.details, study)
     let reasonCode
     if (seenEventIds.has(eventId)) {
@@ -277,8 +284,17 @@ async function submitLogEvents(request) {
   const requestData = dataFor(request)
   const studyId = safeId(requestData.studyId)
   const batchId = safeId(requestData.batchId)
+  const envelopeKeys = Object.keys(requestData).sort().join(',')
   if (!studyId || !batchId) {
     reject({ code: 'permission-denied', reasonCode: 'NOT_ELIGIBLE' })
+  }
+  if (envelopeKeys !== 'batchId,events,studyId') {
+    reject({
+      code: 'invalid-argument',
+      reasonCode: 'MALFORMED_ENVELOPE',
+      studyId,
+      batchId,
+    })
   }
 
   const db = admin.firestore()
