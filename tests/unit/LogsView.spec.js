@@ -50,6 +50,12 @@ describe('LogsView', () => {
             emits: ['click'],
             template: '<button @click="$emit(\'click\')"><slot /></button>',
           },
+          VSelect: {
+            props: ['label'],
+            emits: ['update:modelValue'],
+            template:
+              '<button :data-label="label" @click="$emit(\'update:modelValue\', 10)">{{ label }}</button>',
+          },
         },
       },
     })
@@ -62,6 +68,11 @@ describe('LogsView', () => {
       .trigger('click')
     await flushPromises()
 
+    expect(wrapper.text()).toContain('1–1 shown')
+    expect(wrapper.text()).not.toContain('1–1 of 100')
+
+    await wrapper.find('[data-label="Rows"]').trigger('click')
+    await flushPromises()
     expect(wrapper.text()).toContain('1–1 shown')
     expect(wrapper.text()).not.toContain('1–1 of 100')
     wrapper.unmount()
