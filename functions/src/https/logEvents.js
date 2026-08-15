@@ -64,7 +64,11 @@ const rejectEvents = ({ invalidEvents, studyId, batchId }) => {
   throw error('invalid-argument', 'Log batch was rejected', details)
 }
 
-const rejectVerified = ({ code = 'failed-precondition', reasonCode, studyId }) => {
+const rejectVerified = ({
+  code = 'failed-precondition',
+  reasonCode,
+  studyId,
+}) => {
   logger.warn('Verified log event rejected', {
     rejectionScope: 'batch',
     reasonCodes: [reasonCode],
@@ -129,7 +133,10 @@ const consentAccepted = async (transaction, db, study, uid) => {
   const answer = await transaction.get(
     db.collection('answers').doc(study.answersDocId),
   )
-  return answer.exists && answer.data()?.taskAnswers?.[uid]?.consentCompleted === true
+  return (
+    answer.exists &&
+    answer.data()?.taskAnswers?.[uid]?.consentCompleted === true
+  )
 }
 
 const nonNegativeInteger = (value, maximum) =>
@@ -229,7 +236,8 @@ const validateClientBatch = (payload, study) => {
       reasonCode = 'UNKNOWN_EVENT_TYPE'
     } else if (
       keys.some(
-        (key) => !['eventId', 'eventType', 'occurredAt', 'details'].includes(key),
+        (key) =>
+          !['eventId', 'eventType', 'occurredAt', 'details'].includes(key),
       ) ||
       !validDetails
     ) {
@@ -328,19 +336,20 @@ async function submitLogEvents(request) {
     const receiptExpired =
       submittedAt !== undefined &&
       Date.now() > submittedAt + POST_SUBMISSION_RECEIPT_GRACE_MS
-    const closedEvents = submittedAt === undefined
-      ? []
-      : events
-        .filter(
-          (event) =>
-            receiptExpired ||
-            event.occurredAt.getTime() >
-              submittedAt + POST_SUBMISSION_OCCURRENCE_GRACE_MS,
-        )
-        .map((event) => ({
-          eventId: event.eventId,
-          reasonCode: 'SESSION_CLOSED',
-        }))
+    const closedEvents =
+      submittedAt === undefined
+        ? []
+        : events
+            .filter(
+              (event) =>
+                receiptExpired ||
+                event.occurredAt.getTime() >
+                  submittedAt + POST_SUBMISSION_OCCURRENCE_GRACE_MS,
+            )
+            .map((event) => ({
+              eventId: event.eventId,
+              reasonCode: 'SESSION_CLOSED',
+            }))
     const invalidEvents = [...conflicts]
     for (const item of closedEvents) {
       if (!invalidEvents.some(({ eventId }) => eventId === item.eventId)) {
@@ -410,9 +419,10 @@ async function submitLogEvents(request) {
 
 const verifiedEventFor = ({ requestData, study, participantAnswer }) => {
   const keys = Object.keys(requestData).sort()
-  const expectedKeys = requestData.eventType === 'TASK_ATTEMPT_FINISHED'
-    ? ['eventType', 'studyId', 'taskRef']
-    : ['eventType', 'studyId']
+  const expectedKeys =
+    requestData.eventType === 'TASK_ATTEMPT_FINISHED'
+      ? ['eventType', 'studyId', 'taskRef']
+      : ['eventType', 'studyId']
   if (keys.join(',') !== expectedKeys.sort().join(',')) {
     rejectVerified({
       code: 'invalid-argument',
