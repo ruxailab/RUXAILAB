@@ -435,6 +435,48 @@ describe('client-observed batch delivery', () => {
     expect(state.every((snapshot) => snapshot.empty)).toBe(true)
   })
 
+  it('rejects extra envelope fields, non-map details, and coerced occurrence times', async () => {
+    await expect(
+      logEvents.run(
+        participantRequest({
+          ...viewBatch(),
+          unexpected: true,
+        }),
+      ),
+    ).rejects.toMatchObject({
+      details: expect.objectContaining({ reasonCode: 'MALFORMED_ENVELOPE' }),
+    })
+
+    await expect(
+      logEvents.run(
+        participantRequest({
+          ...viewBatch(),
+          events: [
+            { ...viewBatch().events[0], details: [] },
+            {
+              ...viewBatch().events[0],
+              eventId: 'null-time',
+              occurredAt: null,
+            },
+          ],
+        }),
+      ),
+    ).rejects.toMatchObject({
+      details: {
+        retryable: false,
+        scope: 'events',
+        invalidEvents: expect.arrayContaining([
+          { eventId: 'event-1', reasonCode: 'INVALID_EVENT_DETAILS' },
+          { eventId: 'null-time', reasonCode: 'INVALID_OCCURRED_AT' },
+        ]),
+      },
+    })
+
+    await expect(
+      admin.firestore().collection('tests/study-1/logs').get(),
+    ).resolves.toMatchObject({ empty: true })
+  })
+
   it('scopes Event and Batch identities to the server-derived Study Session', async () => {
     await admin.firestore().doc('tests/study-1').update({
       'studyRoleMap.participant-2': 1,
