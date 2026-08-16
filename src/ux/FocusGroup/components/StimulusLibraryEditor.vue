@@ -159,6 +159,12 @@ const linkUrl = ref('')
 const typeIcon = (type) =>
   type === 'video' ? 'mdi-video-outline' : 'mdi-link-variant'
 
+// A protocol-less href (e.g. "randomurl.com") resolves as relative to the
+// current page instead of an external site, so the "Open link" affordance
+// silently navigates within the app. Default to https:// when missing.
+const normalizeUrl = (url) =>
+  /^[a-z][a-z0-9+.-]*:\/\//i.test(url) ? url : `https://${url}`
+
 const persist = (nextStimuli) =>
   store.dispatch('updateStimuli', {
     studyId: props.studyId,
@@ -202,7 +208,7 @@ const addLink = async () => {
     const stimulus = new Stimulus({
       type: 'url',
       name: linkName.value.trim() || linkUrl.value.trim(),
-      url: linkUrl.value.trim(),
+      url: normalizeUrl(linkUrl.value.trim()),
     })
     await persist([...stimuli.value, stimulus])
     linkName.value = ''
