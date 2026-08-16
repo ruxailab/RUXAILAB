@@ -43,7 +43,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
 import {
   getStorage,
@@ -254,6 +254,18 @@ const stopAudioRecording = () => {
     mediaRecorder.value.remote.stop()
   }
 }
+
+onBeforeUnmount(() => {
+  if (audioStream.value) {
+    audioStream.value.getTracks().forEach((track) => track.stop())
+  }
+  if (mediaRecorder.value?.local && mediaRecorder.value.local.state !== 'inactive') {
+    mediaRecorder.value.local.stop()
+  }
+  if (mediaRecorder.value?.remote && mediaRecorder.value.remote.state !== 'inactive') {
+    mediaRecorder.value.remote.stop()
+  }
+})
 
 defineExpose({ startAudioRecording, stopAudioRecording })
 </script>

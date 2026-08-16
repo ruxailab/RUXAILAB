@@ -922,11 +922,14 @@ const handleSubmit = async () => {
   try {
     localTestAnswer.submitted = true
     await saveAnswer()
-    if (hasTestDashboardAccess.value) {
-      await router.push(`/userTest/moderated/dashboard/${test.value.id}`)
-    } else {
-      await router.push({ name: 'Admin' })
-    }
+    
+    // Return to the call/session screen instead of navigating away
+    displayVideoCallComponent.value = true
+    
+    store.commit('SET_TOAST', {
+      type: 'success',
+      message: t('finishTest.submitMessage') || 'Submitted',
+    })
   } catch {
     store.commit('SET_TOAST', {
       type: 'error',

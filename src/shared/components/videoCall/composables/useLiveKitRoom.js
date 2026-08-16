@@ -392,6 +392,17 @@ export function useLiveKitRoom({
 
   async function disconnect() {
     if (room.value) {
+      if (room.value.localParticipant) {
+        try {
+          await room.value.localParticipant.setCameraEnabled(false)
+        } catch (e) {}
+        try {
+          await room.value.localParticipant.setMicrophoneEnabled(false)
+        } catch (e) {}
+        try {
+          await room.value.localParticipant.setScreenShareEnabled(false)
+        } catch (e) {}
+      }
       await room.value.disconnect()
       room.value = null
     }

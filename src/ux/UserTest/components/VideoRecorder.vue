@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import {
@@ -210,10 +210,19 @@ const startRecording = async () => {
 }
 
 const stopRecording = () => {
-  if (mediaRecorder.value) {
+  if (mediaRecorder.value && mediaRecorder.value.state !== 'inactive') {
     mediaRecorder.value.stop()
   }
 }
+
+onBeforeUnmount(() => {
+  if (videoStream.value) {
+    videoStream.value.getTracks().forEach((track) => track.stop())
+  }
+  if (mediaRecorder.value && mediaRecorder.value.state !== 'inactive') {
+    mediaRecorder.value.stop()
+  }
+})
 
 defineExpose({ startRecording, stopRecording })
 </script>
