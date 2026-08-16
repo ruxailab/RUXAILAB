@@ -347,6 +347,7 @@ export function useFocusGroupSession(roomId) {
       participants: participants.value,
       messages: messages.value,
       consents: consents.value,
+      notes: notes.value,
     }
   }
 
