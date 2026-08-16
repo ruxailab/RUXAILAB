@@ -35,12 +35,13 @@ export default {
 
     /**
      * Post-session review: read back every finished session's discussion,
-     * notes, and (if recorded) video, keyed by session id.
+     * notes, and (if recorded) video, plus the facilitator's theme board —
+     * one read since both live on the same answers document.
      */
     async getFocusGroupSessionAnswers(_, answersDocId) {
-      if (!answersDocId) return {}
+      if (!answersDocId) return { sessions: {}, themes: [] }
       const answer = await answerController.getAnswerById(answersDocId)
-      return answer.sessions ?? {}
+      return { sessions: answer.sessions ?? {}, themes: answer.themes ?? [] }
     },
 
     /**
