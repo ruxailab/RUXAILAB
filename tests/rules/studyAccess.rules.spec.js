@@ -469,7 +469,8 @@ describe('Storage study RBAC', () => {
       context('user').storage(),
       'tests/study-1/stimulus_1/homepage.png',
     )
-    await assertSucceeds(getBytes(participantRead))
+    const downloaded = await getBytes(participantRead)
+    expect(new Uint8Array(downloaded)).toEqual(new Uint8Array([1]))
 
     const observerRead = ref(
       context('observator').storage(),

@@ -23,7 +23,16 @@ export default class Stimulus {
     if (typeof crypto !== 'undefined' && crypto.randomUUID) {
       return `stimulus-${crypto.randomUUID()}`
     }
-    return `stimulus-${Date.now()}-${Math.random().toString(36).slice(2)}`
+    if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+      const array = new Uint32Array(2)
+      crypto.getRandomValues(array)
+      return `stimulus-${Date.now()}-${array[0].toString(36)}${array[1].toString(36)}`
+    }
+    // No Web Crypto available (e.g. the Jest test environment). This id is
+    // never security-sensitive, only unique-per-session, so a counter is a
+    // fine last resort and avoids reaching for a non-cryptographic PRNG.
+    Stimulus.fallbackIdCounter = (Stimulus.fallbackIdCounter ?? 0) + 1
+    return `stimulus-${Date.now()}-${Stimulus.fallbackIdCounter.toString(36)}`
   }
 
   toFirestore() {

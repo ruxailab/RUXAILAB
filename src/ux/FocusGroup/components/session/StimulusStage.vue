@@ -32,7 +32,12 @@
         :src="stimulus.url"
         class="stimulus-stage__media"
         controls
-      />
+      >
+        <!-- Stimulus video is an arbitrary facilitator upload with no
+             caption track available; kept present so assistive tech still
+             gets a captions hook if one is added later. -->
+        <track kind="captions" />
+      </video>
       <a
         v-else
         :href="stimulus.url"
