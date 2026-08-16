@@ -59,4 +59,17 @@ export default class FocusGroupController extends Controller {
       [`sessions.${session.sessionId}`]: session,
     })
   }
+
+  /**
+   * Persist the facilitator's manual theme structuring (replaces the whole
+   * `themes` array — themes are edited as one drag-and-drop board, not
+   * field-by-field).
+   */
+  async saveThemes(answersDocId, themes) {
+    return this.update(ANSWERS_COLLECTION, answersDocId, {
+      themes: themes.map((theme) =>
+        typeof theme.toFirestore === 'function' ? theme.toFirestore() : theme,
+      ),
+    })
+  }
 }

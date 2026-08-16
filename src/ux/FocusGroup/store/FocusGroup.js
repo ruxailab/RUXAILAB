@@ -44,6 +44,15 @@ export default {
     },
 
     /**
+     * Persist the facilitator's manual theme board immediately (drag-and-drop
+     * is a live edit, not batched behind a Save button).
+     */
+    async saveFocusGroupThemes(_, { answersDocId, themes }) {
+      if (!answersDocId) return
+      await focusGroupController.saveThemes(answersDocId, themes)
+    },
+
+    /**
      * Persist the Test screen in one go: the discussion guide and the session
      * configuration are edited together, so they are saved together.
      */
