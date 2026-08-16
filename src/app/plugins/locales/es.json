@@ -2727,7 +2727,13 @@
       "participantCount": "{count} participantes",
       "observerNotesTitle": "Notas del observador",
       "recordingsTitle": "Grabaciones",
-      "recordingLabel": "{topic} — {kind}"
+      "recordingLabel": "{topic} — {kind}",
+      "themesTitle": "Temas",
+      "themesHint": "Arrastra respuestas desde Sin clasificar a un tema para agruparlas.",
+      "newThemeLabel": "Nombre del nuevo tema",
+      "addTheme": "Añadir tema",
+      "unsorted": "Sin clasificar",
+      "removeTheme": "Eliminar tema"
     },
     "session": {
       "title": "Sesión en Vivo",

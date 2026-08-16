@@ -2819,7 +2819,13 @@
       "participantCount": "{count} participants",
       "observerNotesTitle": "Observer notes",
       "recordingsTitle": "Recordings",
-      "recordingLabel": "{topic} — {kind}"
+      "recordingLabel": "{topic} — {kind}",
+      "themesTitle": "Themes",
+      "themesHint": "Drag responses from Unsorted into a theme to group them.",
+      "newThemeLabel": "New theme name",
+      "addTheme": "Add theme",
+      "unsorted": "Unsorted",
+      "removeTheme": "Remove theme"
     },
     "session": {
       "title": "Live Session",

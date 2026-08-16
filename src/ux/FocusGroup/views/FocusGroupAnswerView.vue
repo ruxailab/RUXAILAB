@@ -95,6 +95,7 @@
             v-if="recordingEntries.length"
             variant="outlined"
             rounded="lg"
+            class="mb-4"
           >
             <v-card-title>{{ $t('focusGroup.answers.recordingsTitle') }}</v-card-title>
             <v-list density="compact">
@@ -116,6 +117,16 @@
               </v-list-item>
             </v-list>
           </v-card>
+
+          <v-card variant="outlined" rounded="lg">
+            <v-card-title>{{ $t('focusGroup.answers.themesTitle') }}</v-card-title>
+            <v-card-subtitle>
+              {{ $t('focusGroup.answers.themesHint') }}
+            </v-card-subtitle>
+            <v-card-text>
+              <ThematicEditor v-model="themes" :session="selectedSession" />
+            </v-card-text>
+          </v-card>
         </v-col>
       </v-row>
     </v-container>
@@ -123,10 +134,11 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
+import ThematicEditor from '@/ux/FocusGroup/components/ThematicEditor.vue'
 import {
   sortSessionsByStartedAt,
   flattenTopicMessages,
@@ -137,8 +149,10 @@ const route = useRoute()
 
 const test = computed(() => store.getters.test)
 const rawSessions = ref({})
+const themes = ref([])
 const loading = ref(true)
 const selectedSessionId = ref(null)
+let themesLoaded = false
 
 const sessions = computed(() => sortSessionsByStartedAt(rawSessions.value))
 const selectedSession = computed(
@@ -177,13 +191,27 @@ const recordingEntries = computed(() => {
   return entries
 })
 
+// Persist the theme board immediately on every drag-and-drop change, the
+// same "no Save button" pattern used elsewhere (stimulus library, breakout
+// state) — skipped for the initial load, which isn't a user edit.
+watch(themes, (nextThemes) => {
+  if (!themesLoaded) return
+  store.dispatch('saveFocusGroupThemes', {
+    answersDocId: test.value?.answersDocId,
+    themes: nextThemes,
+  })
+})
+
 onMounted(async () => {
   if (!test.value) await store.dispatch('getStudy', { id: route.params.id })
   try {
-    rawSessions.value = await store.dispatch(
+    const answer = await store.dispatch(
       'getFocusGroupSessionAnswers',
       test.value?.answersDocId,
     )
+    rawSessions.value = answer.sessions
+    themes.value = answer.themes
+    themesLoaded = true
     const first = sortSessionsByStartedAt(rawSessions.value)[0]
     selectedSessionId.value = first?.sessionId ?? null
   } finally {
