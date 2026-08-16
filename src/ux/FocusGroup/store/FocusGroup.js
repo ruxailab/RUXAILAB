@@ -1,8 +1,10 @@
 import FocusGroupController from '@/ux/FocusGroup/controllers/FocusGroupController'
 import { deleteStudyStorageFile } from '@/shared/services/studyStorageService'
+import AnswerController from '@/shared/controllers/AnswerController'
 import i18n from '@/app/plugins/i18n'
 
 const focusGroupController = new FocusGroupController()
+const answerController = new AnswerController()
 
 export default {
   state: {
@@ -29,6 +31,16 @@ export default {
     async endFocusGroupSession(_, { answersDocId, session }) {
       if (!answersDocId || !session?.sessionId) return
       await focusGroupController.saveSessionAnswer(answersDocId, session)
+    },
+
+    /**
+     * Post-session review: read back every finished session's discussion,
+     * notes, and (if recorded) video, keyed by session id.
+     */
+    async getFocusGroupSessionAnswers(_, answersDocId) {
+      if (!answersDocId) return {}
+      const answer = await answerController.getAnswerById(answersDocId)
+      return answer.sessions ?? {}
     },
 
     /**
