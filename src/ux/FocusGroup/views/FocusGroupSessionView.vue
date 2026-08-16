@@ -355,6 +355,8 @@
               :participants="participants"
               :responded-ids="respondedIds"
               :current-user-id="user?.id"
+              :participation="participationByUser"
+              :is-facilitator="isFacilitator"
             />
           </div>
 
@@ -396,6 +398,7 @@ import { Track } from 'livekit-client'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import { useLiveKitRoom } from '@/shared/components/videoCall/composables/useLiveKitRoom'
 import { useFocusGroupSession } from '@/ux/FocusGroup/composables/useFocusGroupSession'
+import { computeParticipation } from '@/ux/FocusGroup/utils/participation'
 import SessionLobby from '@/ux/FocusGroup/components/session/SessionLobby.vue'
 import SessionVideoStage from '@/ux/FocusGroup/components/session/SessionVideoStage.vue'
 import TopicPanel from '@/ux/FocusGroup/components/session/TopicPanel.vue'
@@ -735,6 +738,10 @@ const currentMessages = computed(() => {
 const respondedIds = computed(() => [
   ...new Set(currentMessages.value.map((m) => m.userId)),
 ])
+
+// Facilitator-only signal: each participant's share of the session's
+// messages so far (across all topics, not just the current one).
+const participationByUser = computed(() => computeParticipation(messages.value))
 
 // --- Facilitator actions ---
 const onStart = async () => {

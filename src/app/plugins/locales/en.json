@@ -2620,6 +2620,8 @@
       "sessionInfo": "Session",
       "showParticipants": "Show participants",
       "hideParticipants": "Hide participants",
+      "participationPercent": "{percent}%",
+      "participationHint": "Share of session messages from this participant",
       "muteMicrophone": "Mute microphone",
       "unmuteMicrophone": "Unmute microphone",
       "turnCameraOff": "Turn off camera",
