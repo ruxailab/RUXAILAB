@@ -510,6 +510,20 @@
               @save="onSaveNotes"
             />
           </div>
+
+          <div v-else-if="panelTab === 'backroom'" class="fg-fill">
+            <p class="text-caption text-medium-emphasis pa-2 mb-0">
+              {{ t('focusGroup.session.backroomHint') }}
+            </p>
+            <TopicDiscussion
+              class="fg-fill"
+              :messages="backroomMessages"
+              :current-user-id="user?.id"
+              :can-post="canPostBackroom"
+              :sending="backroomSending"
+              @send="onSendBackroom"
+            />
+          </div>
         </div>
       </aside>
     </div>
@@ -823,6 +837,13 @@ const panelTabs = computed(() => {
       icon: 'mdi-notebook-edit-outline',
       label: 'focusGroup.session.notes',
     })
+  // Private facilitator+observer channel — participants never see it exists.
+  if (isFacilitator.value || isObserver.value)
+    tabs.push({
+      key: 'backroom',
+      icon: 'mdi-shield-lock-outline',
+      label: 'focusGroup.session.backroom',
+    })
   return tabs
 })
 // Keep the active tab valid; prefer the discussion, else the first tab.
@@ -1052,6 +1073,40 @@ const activeMessages = computed(() => {
     }))
     .sort((a, b) => a.timestamp - b.timestamp)
 })
+
+// --- Observer backroom ---
+// A private facilitator+observer channel, separate from the main discussion.
+// Reuses the exact per-topic messages plumbing above via a synthetic topic
+// id — participants never see this tab, so they never see the id either.
+const BACKROOM_TOPIC_ID = 'backroom'
+const canPostBackroom = computed(() => isFacilitator.value || isObserver.value)
+const backroomMessages = computed(() => {
+  const byTopic = messages.value?.[BACKROOM_TOPIC_ID] ?? {}
+  return Object.entries(byTopic)
+    .map(([id, value]) => ({
+      id,
+      userId: value?.userId ?? '',
+      name: value?.name ?? '',
+      text: value?.text ?? '',
+      timestamp: value?.timestamp ?? 0,
+    }))
+    .sort((a, b) => a.timestamp - b.timestamp)
+})
+const backroomSending = ref(false)
+const onSendBackroom = async (text) => {
+  if (!text?.trim() || !canPostBackroom.value) return
+  backroomSending.value = true
+  try {
+    await sendMessage({
+      topicId: BACKROOM_TOPIC_ID,
+      userId: user.value?.id,
+      name: user.value?.name || user.value?.email || '',
+      text: text.trim(),
+    })
+  } finally {
+    backroomSending.value = false
+  }
+}
 
 // --- Facilitator actions ---
 const onStart = async () => {
