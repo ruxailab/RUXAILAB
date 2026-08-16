@@ -2717,7 +2717,17 @@
       "startSession": "Iniciar sesión",
       "joinSession": "Unirse a la sesión",
       "reportsTitle": "Resultados e Informes",
-      "reportsComingSoon": "Los resultados y el análisis de la sesión aparecerán aquí."
+      "reportsDescription": "Revisa la discusión, las notas y las grabaciones de cada sesión finalizada.",
+      "viewAnswers": "Ver respuestas"
+    },
+    "answers": {
+      "title": "Respuestas de la Sesión",
+      "subtitle": "Revisa lo discutido, anotado y (si se grabó) capturado en cada sesión finalizada.",
+      "empty": "Todavía no se ha realizado ninguna sesión.",
+      "participantCount": "{count} participantes",
+      "observerNotesTitle": "Notas del observador",
+      "recordingsTitle": "Grabaciones",
+      "recordingLabel": "{topic} — {kind}"
     },
     "session": {
       "title": "Sesión en Vivo",

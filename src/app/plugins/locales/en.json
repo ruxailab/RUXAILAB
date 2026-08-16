@@ -2809,7 +2809,17 @@
       "startSession": "Start session",
       "joinSession": "Join session",
       "reportsTitle": "Results & Reports",
-      "reportsComingSoon": "Session results and analysis will appear here."
+      "reportsDescription": "Review each session's discussion, notes, and recordings after it ends.",
+      "viewAnswers": "View answers"
+    },
+    "answers": {
+      "title": "Session Answers",
+      "subtitle": "Review what was discussed, noted, and (if recorded) captured in each finished session.",
+      "empty": "No sessions have been run yet.",
+      "participantCount": "{count} participants",
+      "observerNotesTitle": "Observer notes",
+      "recordingsTitle": "Recordings",
+      "recordingLabel": "{topic} — {kind}"
     },
     "session": {
       "title": "Live Session",

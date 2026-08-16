@@ -207,8 +207,6 @@ const NAVIGATION_ITEMS = Object.freeze([
     group: 'analysis',
     icon: ICONS.ORDER,
     capability: C.ANSWERS_VIEW,
-    // Focus Group analytics ship on a separate branch — hide until merged.
-    visible: (study) => !isFocusGroupStudy(study),
     path: ({ type, id }) => `/${type}/answer/${id}`,
   },
   {
