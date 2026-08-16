@@ -516,6 +516,20 @@ const resolvedStimulus = computed(() => {
   return stimuli.value.find((item) => item.id === stimulusId) ?? null
 })
 
+// `test.stimuli` is fetched once on mount, not live-synced. A stimulus added
+// to the library after a participant/observer already joined the session is
+// invisible to them until something refreshes the study — so a presented id
+// that isn't resolvable locally means the library is stale, not that nothing
+// was presented. Re-fetch once to pick it up.
+watch(
+  () => currentStimulus.value?.stimulusId,
+  (stimulusId) => {
+    if (!stimulusId) return
+    const known = stimuli.value.some((item) => item.id === stimulusId)
+    if (!known) store.dispatch('getStudy', { id: studyId })
+  },
+)
+
 // The active question shown to everyone, scoped to the current topic so a stale
 // prompt from a previous topic never leaks onto the next one.
 const activePromptText = computed(() =>
