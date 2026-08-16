@@ -100,6 +100,15 @@
             {{ t('focusGroup.session.observerModeHint') }}
           </div>
 
+          <div v-if="isInBreakout" class="fg-observer-strip">
+            <v-icon size="16" class="me-1">mdi-call-split</v-icon>
+            {{ t('focusGroup.session.breakoutInGroup', { name: myBreakoutGroupName }) }}
+          </div>
+          <div v-if="isInBreakout && breakout?.broadcast?.text" class="fg-observer-strip">
+            <v-icon size="16" class="me-1">mdi-bullhorn-outline</v-icon>
+            {{ breakout.broadcast.text }}
+          </div>
+
           <CurrentQuestion
             :text="activePromptText"
             :can-clear="isFacilitator"
@@ -129,7 +138,7 @@
             <TopicDiscussion
               v-else
               class="fg-fill"
-              :messages="currentMessages"
+              :messages="activeMessages"
               :current-user-id="user?.id"
               :can-post="canPost"
               :sending="sending"
@@ -345,7 +354,7 @@
           <TopicDiscussion
             v-if="panelTab === 'discussion'"
             class="fg-fill"
-            :messages="currentMessages"
+            :messages="activeMessages"
             :current-user-id="user?.id"
             :can-post="canPost"
             :sending="sending"
@@ -393,6 +402,22 @@
             />
           </div>
 
+          <div v-else-if="panelTab === 'breakout'" class="fg-panel-scroll">
+            <BreakoutPanel
+              :breakout="breakout"
+              :eligible-participants="eligibleBreakoutParticipants"
+              :timer="timer"
+              :messages="messages"
+              @start="onStartBreakout"
+              @reassign="onReassignBreakout"
+              @broadcast="onBroadcastBreakout"
+              @recall="onRecallBreakout"
+              @play="onBreakoutTimerPlay"
+              @pause="onBreakoutTimerPause"
+              @reset="onBreakoutTimerReset"
+            />
+          </div>
+
           <div v-else-if="panelTab === 'notes'" class="fg-fill fg-notes">
             <ObservatorNotes
               v-model="observerNotes"
@@ -427,8 +452,13 @@ import StimulusPanel from '@/ux/FocusGroup/components/session/StimulusPanel.vue'
 import StimulusStage from '@/ux/FocusGroup/components/session/StimulusStage.vue'
 import TopicDiscussion from '@/ux/FocusGroup/components/session/TopicDiscussion.vue'
 import ParticipantList from '@/ux/FocusGroup/components/session/ParticipantList.vue'
+import BreakoutPanel from '@/ux/FocusGroup/components/session/BreakoutPanel.vue'
 import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
 import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue'
+import {
+  splitIntoGroups,
+  reassignParticipant,
+} from '@/ux/FocusGroup/utils/breakoutGroups'
 
 const store = useStore()
 const route = useRoute()
@@ -452,6 +482,7 @@ const {
   notes,
   timer,
   currentStimulus,
+  breakout,
   loaded,
   isLive,
   isEnded,
@@ -470,6 +501,7 @@ const {
   pauseTimer,
   resetTimer,
   sendMessage,
+  setBreakoutState,
   subscribe,
   toSessionRecord,
 } = useFocusGroupSession(studyId)
@@ -640,6 +672,16 @@ const stageMode = computed(() => {
   return 'discussion'
 })
 
+// A participant assigned to an active breakout group connects to that
+// group's own LiveKit room instead of the main one; the facilitator and
+// observers always stay in the main room. `myBreakoutGroupId` is declared
+// further below (breakout section) — safe here since this getter is lazy.
+const effectiveRoomId = computed(() =>
+  myBreakoutGroupId.value
+    ? `${studyId}-breakout-${myBreakoutGroupId.value}`
+    : studyId,
+)
+
 // Side-panel tabs, in reading order: the facilitator's guide, the discussion
 // (a tab only when video owns the stage, otherwise the discussion IS the
 // stage), then the people roster.
@@ -656,6 +698,14 @@ const panelTabs = computed(() => {
       key: 'stimuli',
       icon: 'mdi-image-multiple-outline',
       label: 'focusGroup.session.stimuli',
+    })
+  // Breakout rooms split video/audio into isolated LiveKit rooms, so they
+  // only make sense when the session has video enabled.
+  if (isFacilitator.value && videoEnabled.value)
+    tabs.push({
+      key: 'breakout',
+      icon: 'mdi-call-split',
+      label: 'focusGroup.session.breakout',
     })
   if (videoEnabled.value)
     tabs.push({
@@ -700,6 +750,7 @@ const togglePanelTab = (tab) => {
 const {
   room: callRoom,
   callStarted,
+  isConnecting: isCallConnecting,
   isObservator: isCallObservator,
   isCameraEnabled,
   isMicrophoneEnabled,
@@ -716,7 +767,7 @@ const {
   setRemoteVideoElement,
   setScreenShareVideoElement,
 } = useLiveKitRoom({
-  testId: computed(() => studyId),
+  testId: effectiveRoomId,
   userId: computed(() => user.value?.id),
   displayName: computed(() => user.value?.name || user.value?.email || ''),
   accessLevel,
@@ -776,6 +827,19 @@ watch(
 watch(isEnded, (ended) => {
   if (ended) disconnectCall()
 })
+// Entering or leaving a breakout group changes which LiveKit room this
+// client should be in; move the existing call across rather than waiting
+// for a fresh mount. No-ops if a call was never started.
+watch(effectiveRoomId, async (next, previous) => {
+  if (!previous || next === previous) return
+  if (!callStarted.value && !isCallConnecting.value) return
+  await disconnectCall()
+  try {
+    await connectCall()
+  } catch {
+    // Best-effort, same as the initial connect above.
+  }
+})
 
 // --- Presence ---
 const participantCount = computed(
@@ -816,6 +880,76 @@ const participationByUser = computed(() =>
   }),
 )
 
+// --- Breakout rooms ---
+// Only participants get split into groups; the facilitator stays in the main
+// room to monitor/broadcast/recall, and observers stay put too (they watch,
+// they don't work in groups).
+const eligibleBreakoutParticipants = computed(() =>
+  Object.entries(participants.value || {})
+    .filter(([, p]) => p?.role === t('focusGroup.session.roleParticipant'))
+    .map(([id, p]) => ({ id, name: p?.name || '' })),
+)
+const myBreakoutGroupId = computed(() => {
+  if (!isParticipant.value || !breakout.value?.active) return null
+  const groups = breakout.value.groups ?? {}
+  const entry = Object.entries(groups).find(([, group]) =>
+    (group.participantIds ?? []).includes(user.value?.id),
+  )
+  return entry?.[0] ?? null
+})
+const isInBreakout = computed(() => myBreakoutGroupId.value !== null)
+const myBreakoutGroupName = computed(
+  () => breakout.value?.groups?.[myBreakoutGroupId.value]?.name ?? '',
+)
+
+const onStartBreakout = (groupCount) => {
+  const groups = splitIntoGroups(
+    eligibleBreakoutParticipants.value.map((p) => p.id),
+    groupCount,
+  )
+  setBreakoutState({ active: true, groups, broadcast: null })
+}
+const onReassignBreakout = ({ userId, groupId }) => {
+  if (!breakout.value) return
+  const groups = reassignParticipant(breakout.value.groups, userId, groupId)
+  setBreakoutState({ ...breakout.value, groups })
+}
+const onBroadcastBreakout = (text) => {
+  if (!breakout.value) return
+  setBreakoutState({
+    ...breakout.value,
+    broadcast: { text, sentAt: Date.now() },
+  })
+}
+const onRecallBreakout = () => {
+  setBreakoutState({ active: false, groups: {}, broadcast: null })
+}
+const onBreakoutTimerPlay = (remainingMs) =>
+  playTimer({ topicId: 'breakout', remainingMs })
+const onBreakoutTimerPause = (remainingMs) =>
+  pauseTimer({ topicId: 'breakout', remainingMs })
+const onBreakoutTimerReset = () =>
+  resetTimer({ topicId: 'breakout', durationMs: 10 * 60 * 1000 })
+
+// The stage/panel discussion swaps to a participant's breakout-group chat
+// while they're in one, reusing the exact per-topic messages plumbing above
+// via a synthetic topic id — no new RTDB shape, no new UI component.
+const activeChatTopicId = computed(() =>
+  isInBreakout.value ? `breakout-${myBreakoutGroupId.value}` : currentTopicId.value,
+)
+const activeMessages = computed(() => {
+  const byTopic = messages.value?.[activeChatTopicId.value] ?? {}
+  return Object.entries(byTopic)
+    .map(([id, value]) => ({
+      id,
+      userId: value?.userId ?? '',
+      name: value?.name ?? '',
+      text: value?.text ?? '',
+      timestamp: value?.timestamp ?? 0,
+    }))
+    .sort((a, b) => a.timestamp - b.timestamp)
+})
+
 // --- Facilitator actions ---
 const onStart = async () => {
   starting.value = true
@@ -854,11 +988,11 @@ const onEnd = async () => {
 
 // --- Post a message to the current topic discussion ---
 const onSend = async (text) => {
-  if (!currentTopicId.value || !text?.trim()) return
+  if (!activeChatTopicId.value || !text?.trim()) return
   sending.value = true
   try {
     await sendMessage({
-      topicId: currentTopicId.value,
+      topicId: activeChatTopicId.value,
       userId: user.value?.id,
       name: user.value?.name || user.value?.email || '',
       text: text.trim(),
