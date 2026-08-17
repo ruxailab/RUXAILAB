@@ -1,5 +1,6 @@
 import {
   afterAll,
+  afterEach,
   beforeAll,
   beforeEach,
   describe,
@@ -24,9 +25,13 @@ import {
 } from 'firebase/firestore'
 import { admin } from '../src/f.firebase.js'
 import { logEvents, requestLogEvent } from '../src/https/logEvents.js'
+import logger from '../src/utils/logger.js'
 
 const projectId = 'demo-ruxailab-logging'
+const compareStrings = (left, right) => left.localeCompare(right)
+const savedLogActorHashSalt = process.env.LOG_ACTOR_HASH_SALT
 let testEnv
+let ownedAdminApp
 jest.setTimeout(30000)
 
 const participantRequest = (data, uid = 'participant') => ({
@@ -97,14 +102,21 @@ const answerEdited = (eventId = 'edit-1', overrides = {}) => ({
 })
 
 beforeAll(async () => {
-  if (!admin.apps.length) admin.initializeApp({ projectId })
+  if (!admin.apps.length) ownedAdminApp = admin.initializeApp({ projectId })
   testEnv = await initializeTestEnvironment({ projectId })
 })
 
 afterAll(async () => {
   await testEnv.cleanup()
-  await admin.app().delete()
+  if (ownedAdminApp) await ownedAdminApp.delete()
+  if (savedLogActorHashSalt === undefined) {
+    delete process.env.LOG_ACTOR_HASH_SALT
+  } else {
+    process.env.LOG_ACTOR_HASH_SALT = savedLogActorHashSalt
+  }
 })
+
+afterEach(() => jest.restoreAllMocks())
 
 beforeEach(async () => {
   process.env.LOG_ACTOR_HASH_SALT = 'logging-test-secret'
@@ -124,6 +136,18 @@ beforeEach(async () => {
 })
 
 describe('authenticated logging commands', () => {
+  it('reports a missing actor hash salt as an operational failure', async () => {
+    const errorLog = jest.spyOn(logger, 'error').mockImplementation(() => {})
+    delete process.env.LOG_ACTOR_HASH_SALT
+
+    await expect(
+      logEvents.run(participantRequest(viewBatch())),
+    ).rejects.toMatchObject({ code: 'internal' })
+    expect(errorLog).toHaveBeenCalledWith(
+      'LOG_ACTOR_HASH_SALT environment variable is not configured',
+    )
+  })
+
   it('initializes a Study Session and exposes its first view observation to an authorized researcher', async () => {
     await expect(
       logEvents.run(participantRequest(viewBatch())),
@@ -196,7 +220,9 @@ describe('authenticated logging commands', () => {
       .collection('tests/study-1/studySessions')
       .get()
     expect(
-      sessions.docs.map((item) => item.data().participantLabel).sort(),
+      sessions.docs
+        .map((item) => item.data().participantLabel)
+        .sort(compareStrings),
     ).toEqual(['P-001', 'P-002', 'P-003'])
     expect(
       sessions.docs
@@ -525,10 +551,9 @@ describe('client-observed batch delivery', () => {
       logEvents.run(participantRequest(viewBatch())),
     ])
 
-    expect(results.map((result) => result.status).sort()).toEqual([
-      'accepted',
-      'duplicate',
-    ])
+    expect(results.map((result) => result.status).sort(compareStrings)).toEqual(
+      ['accepted', 'duplicate'],
+    )
     const [logs, sessions] = await Promise.all([
       admin.firestore().collection('tests/study-1/logs').get(),
       admin.firestore().collection('tests/study-1/studySessions').get(),
