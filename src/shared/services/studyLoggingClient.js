@@ -224,23 +224,31 @@ export const createStudyLogger = ({
       queuedAt,
     }
     try {
+      let batchReady = false
       await mutate((current) => {
         const queue = current || freshQueue(key, ownerUid, studyId)
         sweepExpired(queue, queuedAt)
         queue.events.push(event)
+        batchReady = !queue.claim && queue.events.length >= MAX_BATCH_SIZE
         return queue
       })
+      if (batchReady) void flush()
       return eventId
     } catch {
       return null
     }
   }
 
-  const updateClaim = async (batchId, change) =>
-    mutate((queue) => {
-      if (!queue?.claim || queue.claim.batchId !== batchId) return queue
-      return change(queue)
-    })
+  const updateClaim = async (batchId, change) => {
+    try {
+      return await mutate((queue) => {
+        if (!queue?.claim || queue.claim.batchId !== batchId) return queue
+        return change(queue)
+      })
+    } catch {
+      return null
+    }
+  }
 
   const flush = async ({ online = false } = {}) => {
     if (!loggingEnabled) return { status: 'disabled' }

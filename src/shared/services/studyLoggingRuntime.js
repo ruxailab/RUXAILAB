@@ -96,6 +96,15 @@ export const createStudyLoggingRuntime = ({
     await finishActiveEdits()
     return logger.flush()
   }
+  const finishFlushAndRequest = async (eventType, taskRef) => {
+    try {
+      await finishActiveEdits()
+    } catch {
+      // Logging remains fail-open for the primary study workflow.
+    }
+    void logger.flush()
+    return request(eventType, taskRef)
+  }
   const onVisibilityChange = () => {
     if (visibilityTarget?.hidden) return finishAndFlush()
     const target = visibilityTarget?.activeElement
@@ -132,9 +141,7 @@ export const createStudyLoggingRuntime = ({
     async focusout(event) {
       const fieldRef = editField(event.target)
       if (!fieldRef) return null
-      const eventId = await finishField(fieldRef)
-      if (eventId) void logger.flush()
-      return eventId
+      return finishField(fieldRef)
     },
   }
 
@@ -144,12 +151,13 @@ export const createStudyLoggingRuntime = ({
     consentAccepted,
     resumeAfterConsent,
     taskFinished(taskIndex) {
-      void finishAndFlush()
-      return request('TASK_ATTEMPT_FINISHED', `task:${taskIndex}`)
+      return finishFlushAndRequest(
+        'TASK_ATTEMPT_FINISHED',
+        `task:${taskIndex}`,
+      )
     },
     submitted() {
-      void finishAndFlush()
-      return request('STUDY_SUBMITTED')
+      return finishFlushAndRequest('STUDY_SUBMITTED')
     },
     destroy() {
       clearIntervalFn(retryInterval)

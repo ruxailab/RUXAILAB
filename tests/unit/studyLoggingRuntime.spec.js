@@ -185,6 +185,27 @@ describe('study logging runtime', () => {
     )
   })
 
+  it('queues a completed field edit without sending a request on blur', async () => {
+    const { runtime, logger } = createHarness()
+    document.body.innerHTML = `
+      <div data-study-field-ref="preTest:0:answer">
+        <input value="old" />
+      </div>
+    `
+    const input = document.querySelector('input')
+    runtime.editHandlers.focusin({ target: input })
+    input.value = 'private answer'
+    runtime.editHandlers.input({ target: input, inputType: 'insertText' })
+
+    await runtime.editHandlers.focusout({ target: input })
+
+    expect(logger.record).toHaveBeenCalledWith(
+      'ANSWER_EDITED',
+      expect.objectContaining({ fieldRef: 'preTest:0:answer' }),
+    )
+    expect(logger.flush).not.toHaveBeenCalled()
+  })
+
   it('attempts an owner-matched flush when explicit logout begins', async () => {
     const { logger, listeners } = createHarness()
 
@@ -214,6 +235,23 @@ describe('study logging runtime', () => {
     })
     expect(logger.flush).toHaveBeenCalled()
     expect(clearIntervalFn).toHaveBeenCalledWith(42)
+  })
+
+  it('initiates submission flushing before requesting the verified event', async () => {
+    const { runtime, logger, callFunction } = createHarness()
+    const calls = []
+    logger.flush.mockImplementation(() => {
+      calls.push('flush')
+      return Promise.resolve({ status: 'accepted' })
+    })
+    callFunction.mockImplementation(() => {
+      calls.push('request')
+      return Promise.resolve({ data: { status: 'accepted' } })
+    })
+
+    await runtime.submitted()
+
+    expect(calls).toEqual(['flush', 'request'])
   })
 
   it('turns delegated text edits into metadata without retaining the value', async () => {

@@ -43,6 +43,62 @@ const createQueueStore = () => {
 const eventIds = ['event-1', 'event-2', 'batch-1', 'batch-2']
 
 describe('browser study logging client', () => {
+  it('submits automatically when the queue reaches the batch limit', async () => {
+    let nextId = 0
+    const submitBatch = jest.fn(({ batchId }) => ({
+      status: 'accepted',
+      batchId,
+    }))
+    const logger = createStudyLogger({
+      ownerUid: 'participant',
+      studyId: 'study-1',
+      submitBatch,
+      queueStore: createQueueStore(),
+      createId: () => `id-${++nextId}`,
+    })
+
+    for (let index = 0; index < 25; index += 1) {
+      await logger.record('STUDY_VIEW_OPENED', {})
+    }
+    await new Promise((resolve) => setTimeout(resolve, 0))
+
+    expect(submitBatch).toHaveBeenCalledTimes(1)
+    expect(submitBatch.mock.calls[0][0].events).toHaveLength(25)
+  })
+
+  it('contains queue failures after the server acknowledges a batch', async () => {
+    const queueStore = createQueueStore()
+    const mutate = queueStore.mutate.bind(queueStore)
+    let mutationCount = 0
+    queueStore.mutate = (...args) => {
+      mutationCount += 1
+      return mutationCount >= 3
+        ? Promise.reject(new Error('IndexedDB unavailable'))
+        : mutate(...args)
+    }
+    const submitBatch = jest.fn(({ batchId }) => ({
+      status: 'accepted',
+      batchId,
+    }))
+    const logger = createStudyLogger({
+      ownerUid: 'participant',
+      studyId: 'study-1',
+      submitBatch,
+      queueStore,
+      createId: jest
+        .fn()
+        .mockReturnValueOnce('event-1')
+        .mockReturnValueOnce('batch-1'),
+    })
+
+    await logger.record('STUDY_VIEW_OPENED', {})
+
+    await expect(logger.flush()).resolves.toEqual({
+      status: 'accepted',
+      batchId: 'batch-1',
+    })
+  })
+
   it('preserves stable Event and Batch IDs across a bounded temporary retry', async () => {
     let now = Date.parse('2026-08-14T10:00:00.000Z')
     const calls = []
