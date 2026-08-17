@@ -76,7 +76,7 @@ export default {
         // Send verification email
         try {
           await authController.sendVerificationEmail(user.email, user.email)
-        } catch {}
+        } catch { }
 
         commit('SET_TOAST', {
           message: i18n.global.t('auth.signupSuccess'),

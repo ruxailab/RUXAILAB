@@ -70,6 +70,16 @@
         </span>
       </div>
       <v-spacer />
+      <SessionTimer
+        v-if="currentTopic && timerFallbackMs > 0"
+        :timer="timerForTopic"
+        :fallback-ms="timerFallbackMs"
+        :is-facilitator="isFacilitator"
+        class="me-1"
+        @play="onTimerPlay"
+        @pause="onTimerPause"
+        @reset="onTimerReset"
+      />
       <v-chip
         :color="roleColor"
         variant="tonal"
@@ -362,6 +372,14 @@
               {{ t('focusGroup.session.waitingParticipant') }}
             </p>
           </div>
+
+          <div v-else-if="panelTab === 'notes'" class="fg-fill fg-notes">
+            <ObservatorNotes
+              v-model="observerNotes"
+              :context-label="currentTopic?.title || ''"
+              @save="onSaveNotes"
+            />
+          </div>
         </div>
       </aside>
     </div>
@@ -381,9 +399,11 @@ import { useFocusGroupSession } from '@/ux/FocusGroup/composables/useFocusGroupS
 import SessionLobby from '@/ux/FocusGroup/components/session/SessionLobby.vue'
 import SessionVideoStage from '@/ux/FocusGroup/components/session/SessionVideoStage.vue'
 import TopicPanel from '@/ux/FocusGroup/components/session/TopicPanel.vue'
+import SessionTimer from '@/ux/FocusGroup/components/session/SessionTimer.vue'
 import CurrentQuestion from '@/ux/FocusGroup/components/session/CurrentQuestion.vue'
 import TopicDiscussion from '@/ux/FocusGroup/components/session/TopicDiscussion.vue'
 import ParticipantList from '@/ux/FocusGroup/components/session/ParticipantList.vue'
+import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
 import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue'
 
 const store = useStore()
@@ -405,6 +425,8 @@ const {
   messages,
   consents,
   currentPrompt,
+  notes,
+  timer,
   loaded,
   isLive,
   isEnded,
@@ -416,6 +438,10 @@ const {
   recordConsent,
   askPrompt,
   clearPrompt,
+  saveNotes,
+  playTimer,
+  pauseTimer,
+  resetTimer,
   sendMessage,
   subscribe,
   toSessionRecord,
@@ -465,6 +491,25 @@ const activePromptText = computed(() =>
     : '',
 )
 
+// --- Topic timer ---
+const timerFallbackMs = computed(
+  () => (currentTopic.value?.durationMinutes || 0) * 60000,
+)
+// Only use the shared timer when it belongs to the current topic; otherwise the
+// display falls back to the topic's full planned duration (paused).
+const timerForTopic = computed(() =>
+  timer.value?.topicId === currentTopicId.value ? timer.value : null,
+)
+const onTimerPlay = (remainingMs) =>
+  playTimer({ topicId: currentTopicId.value, remainingMs })
+const onTimerPause = (remainingMs) =>
+  pauseTimer({ topicId: currentTopicId.value, remainingMs })
+const onTimerReset = () =>
+  resetTimer({
+    topicId: currentTopicId.value,
+    durationMs: timerFallbackMs.value,
+  })
+
 // --- Role resolution (mirrors ManagerView) ---
 const accessLevel = computed(() => {
   const currentUser = user.value
@@ -484,8 +529,13 @@ const isFacilitator = computed(() => accessLevel.value === ACCESS_LEVEL.ADMIN)
 const isParticipant = computed(
   () => accessLevel.value === ACCESS_LEVEL.EVALUATOR,
 )
+// Anyone who is neither running the session nor taking part in it observes it:
+// a dedicated OBSERVATOR cooperator, but also any signed-in viewer who opens
+// the session link without a posting role. This mirrors roleLabel, so the
+// "Observer" badge and the observer tools (notes pad, observing strip) always
+// agree instead of the badge showing while the tools stay hidden.
 const isObserver = computed(
-  () => accessLevel.value === ACCESS_LEVEL.OBSERVATOR,
+  () => !isFacilitator.value && !isParticipant.value,
 )
 // Facilitator and participants can post; observers read the discussion only.
 // Participant posting also depends on chat being enabled for this session.
@@ -554,6 +604,13 @@ const panelTabs = computed(() => {
     icon: 'mdi-account-group',
     label: 'focusGroup.session.participants',
   })
+  // Observers/note-takers get a private notes pad, reusing the moderated tool.
+  if (isObserver.value)
+    tabs.push({
+      key: 'notes',
+      icon: 'mdi-notebook-edit-outline',
+      label: 'focusGroup.session.notes',
+    })
   return tabs
 })
 // Keep the active tab valid; prefer the discussion, else the first tab.
@@ -737,6 +794,25 @@ const onAsk = (prompt) => {
   askPrompt({ text: prompt.trim(), topicId: currentTopicId.value })
 }
 const onClearPrompt = () => clearPrompt()
+
+// --- Observer notes (reuses the moderated ObservatorNotes tool) ---
+const observerNotes = ref([])
+let notesSeeded = false
+// Seed once from any persisted notes so a refresh keeps the observer's pad.
+watch(
+  () => notes.value?.[user.value?.id],
+  (stored) => {
+    if (!notesSeeded && Array.isArray(stored) && stored.length) {
+      observerNotes.value = [...stored]
+      notesSeeded = true
+    }
+  },
+  { immediate: true },
+)
+const onSaveNotes = () => {
+  if (!user.value?.id) return
+  saveNotes({ userId: user.value.id, notes: observerNotes.value })
+}
 
 const goToDashboard = () => {
   disconnectCall()
@@ -966,6 +1042,39 @@ onMounted(async () => {
   font-weight: 600;
   margin-bottom: 8px;
   color: rgba(var(--v-theme-on-surface), 0.6);
+}
+
+/* Make the reused ObservatorNotes tool read like the FG Discussion panel: it
+   ships its own header + footer chrome for the moderated sidebar, which doubles
+   up here since the panel tab bar already labels it. Scoped to the Notes tab
+   only, so the moderated-test styling is left untouched. */
+.fg-notes :deep(.observator-notes-container) {
+  border-left: none;
+  background: transparent;
+}
+
+/* The tab bar already says "Notes" (like Discussion, which has no sub-header). */
+.fg-notes :deep(.header) {
+  display: none;
+}
+
+.fg-notes :deep(.notes-list) {
+  padding: 16px !important;
+  background: transparent;
+}
+
+/* Echo the discussion message bubble: flat, softly tinted, rounded. */
+.fg-notes :deep(.note-item) {
+  border: none !important;
+  border-radius: 12px;
+  background: rgba(var(--v-theme-on-surface), 0.04) !important;
+  box-shadow: none !important;
+}
+
+/* Match the discussion composer: no grey slab, just a divider line on top. */
+.fg-notes :deep(.input-area) {
+  background: transparent !important;
+  border-top: 1px solid rgba(var(--v-border-color), 0.12);
 }
 
 /* Control dock (under the stage) */

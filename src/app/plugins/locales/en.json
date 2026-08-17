@@ -585,6 +585,7 @@
       "analytics": "Take a deep look into your test and see what people are saying about it.",
       "invite": "Invite evaluators to answer your test!",
       "cooperators": "Add cooperators who can help you improve your project and gather data for your studies.",
+      "participants": "Add participants to your study to help you collect valuable data and insights from real users.",
       "start": "Get started!",
       "edit": "Create and customize your tasks and heuristics for your research needs.",
       "finalReport": "Prepare the final report for your heuristic evaluation by selecting the elements you want to include."
@@ -2504,6 +2505,13 @@
     "answers": "Answers",
     "no": "No"
   },
+  "observatorNotes": {
+    "title": "Session Notes",
+    "count": "{count} notes",
+    "empty": "No notes taken yet.",
+    "emptyHint": "Start typing below to record observations.",
+    "placeholder": "Type observation... (Cmd+Enter to save)"
+  },
   "focusGroup": {
     "config": {
       "title": "Session Features",
@@ -2627,6 +2635,10 @@
       "currentQuestion": "Current question",
       "clearQuestion": "Clear question",
       "guide": "Guide",
+      "notes": "Notes",
+      "startTimer": "Start timer",
+      "pauseTimer": "Pause timer",
+      "resetTimer": "Reset timer",
       "noPrompts": "No prompts for this topic.",
       "participants": "Participants",
       "noParticipants": "No one has joined yet.",
@@ -3489,6 +3501,22 @@
     "empty": {
       "title": "No sessions found",
       "description": "Create a session to start inviting staff and participants."
+    }
+  },
+  "errors": {
+    "globalError": "An error occurred. Please try again.",
+    "emailIsRequired": "Email is required.",
+    "passwordRequired": "Password is required.",
+    "invalidEmail": "Please enter a valid email address.",
+    "incorrectCredential": "Incorrect email or password, or account does not exist.",
+    "boundary": {
+      "title": "Something went wrong",
+      "message": "An unexpected error occurred while loading this page. Your data has been preserved.",
+      "retry": "Retry",
+      "goToDashboard": "Go to Dashboard",
+      "showDetails": "Show error details",
+      "copyDetails": "Copy error details",
+      "copied": "Copied!"
     }
   }
 }
