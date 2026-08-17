@@ -8,6 +8,7 @@ const MAX_TASK_DURATION_MS = 24 * 60 * 60 * 1000
 const POST_SUBMISSION_OCCURRENCE_GRACE_MS = 5 * 60 * 1000
 const POST_SUBMISSION_RECEIPT_GRACE_MS = 7 * 24 * 60 * 60 * 1000
 const ID_PATTERN = /^[A-Za-z0-9_-]{3,160}$/
+const compareStrings = (left, right) => left.localeCompare(right)
 const CLIENT_EVENT_POLICIES = Object.freeze({
   STUDY_VIEW_OPENED: {
     message: 'Study view opened',
@@ -120,7 +121,10 @@ const actorRoleFor = ({ study, uid, isSuperAdmin }) => {
 
 const sessionIdFor = (studyId, uid) => {
   const secret = process.env.LOG_ACTOR_HASH_SALT
-  if (!secret) throw error('internal', 'Logging service is unavailable')
+  if (!secret) {
+    logger.error('LOG_ACTOR_HASH_SALT environment variable is not configured')
+    throw error('internal', 'Logging service is unavailable')
+  }
   return crypto
     .createHash('sha256')
     .update(`${secret}:${studyId}:${uid}`)
@@ -178,10 +182,13 @@ const fieldExists = (study, fieldRef) => {
 }
 
 const validAnswerEdit = (details, study) => {
-  const keys = Object.keys(details || {}).sort()
+  const keys = Object.keys(details || {}).sort(compareStrings)
   if (
     keys.join(',') !==
-    CLIENT_EVENT_POLICIES.ANSWER_EDITED.detailKeys.slice().sort().join(',')
+    CLIENT_EVENT_POLICIES.ANSWER_EDITED.detailKeys
+      .slice()
+      .sort(compareStrings)
+      .join(',')
   ) {
     return false
   }
@@ -325,7 +332,8 @@ async function submitLogEvents(request) {
       })
     }
     if (
-      Object.keys(requestData).sort().join(',') !== 'batchId,events,studyId'
+      Object.keys(requestData).sort(compareStrings).join(',') !==
+      'batchId,events,studyId'
     ) {
       reject({
         code: 'invalid-argument',
@@ -440,12 +448,12 @@ async function submitLogEvents(request) {
 }
 
 const verifiedEventFor = ({ requestData, study, participantAnswer }) => {
-  const keys = Object.keys(requestData).sort()
+  const keys = Object.keys(requestData).sort(compareStrings)
   const expectedKeys =
     requestData.eventType === 'TASK_ATTEMPT_FINISHED'
       ? ['eventType', 'studyId', 'taskRef']
       : ['eventType', 'studyId']
-  if (keys.join(',') !== expectedKeys.sort().join(',')) {
+  if (keys.join(',') !== expectedKeys.sort(compareStrings).join(',')) {
     rejectVerified({
       code: 'invalid-argument',
       reasonCode: 'MALFORMED_REQUEST',
