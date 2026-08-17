@@ -588,7 +588,8 @@
       "participants": "Add participants to your study to help you collect valuable data and insights from real users.",
       "start": "Get started!",
       "edit": "Create and customize your tasks and heuristics for your research needs.",
-      "finalReport": "Prepare the final report for your heuristic evaluation by selecting the elements you want to include."
+      "finalReport": "Prepare the final report for your heuristic evaluation by selecting the elements you want to include.",
+      "sessions": "Sessions are scheduled study meetings where staff and participants come together to conduct and complete the study."
     }
   },
   "errors": {
