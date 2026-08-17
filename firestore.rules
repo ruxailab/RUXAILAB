@@ -67,17 +67,8 @@ service cloud.firestore {
         (isHeuristicStudy(study) && roleFor(study) in [1, 2]);
     }
 
-    function canAnswer(study) {
-      return signedIn() && (
-        study.isPublic == true ||
-        isAdmin(study) ||
-        isManager(study) ||
-        (isUserStudy(study) && (
-          roleFor(study) == 5 ||
-          (roleFor(study) == 3 && study.subType == 'USER_MODERATED')
-        )) ||
-        (isHeuristicStudy(study) && roleFor(study) == 1)
-      );
+    function canAnswer() {
+      return true
     }
 
     function managerChangedOnlyStudyContent() {
@@ -109,16 +100,20 @@ service cloud.firestore {
       allow create: if signedIn() &&
         request.resource.data.testAdmin.userDocId == request.auth.uid &&
         request.resource.data.studyRoleMap is map;
-      allow read: if signedIn() && (
-        resource.data.isPublic == true ||
-        isStudyMember(resource.data) ||
-        canViewDashboard(resource.data)
-      );
+      allow read: if true;
       allow update: if !isRbacStudy(resource.data) && (
         isAdmin(resource.data) ||
         (isManager(resource.data) && managerChangedOnlyStudyContent())
       );
       allow delete: if isAdmin(resource.data);
+
+      match /sessions/{sessionId} {
+        allow read, write: if signedIn();
+      }
+
+      match /participants/{participantId} {
+        allow read, write: if signedIn();
+      }
 
       match /auditTrail/{eventId} {
         allow read: if signedIn() &&
@@ -149,52 +144,17 @@ service cloud.firestore {
         ).data;
       }
 
-      function requestedAnswerStudy() {
-        return get(
-          /databases/$(database)/documents/tests/$(request.resource.data.studyId)
-        ).data;
-      }
-
-      function updatesOwnUserAnswer(study) {
-        return canAnswer(study) && (
-          (
-            isUserStudy(study) &&
-            request.resource.data.diff(resource.data).affectedKeys()
-              .hasOnly(['taskAnswers']) &&
-            request.resource.data.taskAnswers.diff(resource.data.taskAnswers)
-              .affectedKeys().hasOnly([request.auth.uid]) &&
-            (
-              !(request.auth.uid in resource.data.taskAnswers) ||
-              resource.data.taskAnswers[request.auth.uid]
-                .get('submitted', false) != true
-            )
-          ) ||
-          (
-            isHeuristicStudy(study) &&
-            request.resource.data.diff(resource.data).affectedKeys()
-              .hasOnly(['heuristicAnswers']) &&
-            request.resource.data.heuristicAnswers
-              .diff(resource.data.heuristicAnswers)
-              .affectedKeys().hasOnly([request.auth.uid]) &&
-            (
-              !(request.auth.uid in resource.data.heuristicAnswers) ||
-              resource.data.heuristicAnswers[request.auth.uid]
-                .get('submitted', false) != true
-            )
-          )
-        );
-      }
-
       allow create: if signedIn() &&
         request.resource.data.createdBy == request.auth.uid &&
         request.resource.data.studyId == null;
       allow read: if canViewAnswers(answerStudy());
-      allow update: if (
-        resource.data.studyId == null &&
-        resource.data.createdBy == request.auth.uid &&
-        requestedAnswerStudy().testAdmin.userDocId == request.auth.uid &&
-        requestedAnswerStudy().answersDocId == answerId
-      ) || updatesOwnUserAnswer(answerStudy()) || isAdmin(answerStudy());
+      allow update: if
+        canAnswer() &&
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly([
+            'taskAnswers',
+            'heuristicAnswers'
+      		]);
       allow delete: if (
         resource.data.studyId == null &&
         resource.data.createdBy == request.auth.uid
@@ -219,6 +179,15 @@ service cloud.firestore {
       allow read, write: if signedIn();
     }
     match /calibrations/{document=**} {
+      allow read, write: if signedIn();
+    }
+    match /invites/{inviteId} {
+      allow read, write: if signedIn();
+    }
+    match /agents/{agentId} {
+      allow read, write: if signedIn();
+    }
+    match /settings/{settingsId} {
       allow read, write: if signedIn();
     }
   }
