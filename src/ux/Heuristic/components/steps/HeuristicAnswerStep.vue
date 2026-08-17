@@ -80,7 +80,7 @@
 
             <div class="answer-blocks">
               <HeuristicOptionsAnalysisSection
-                :data-study-field-ref="`heuristic:${heurisIndex}:question:${currentQuestionIndex}:answer`"
+                :data-study-field-ref="`heuristic:${canonicalHeuristicIndex}:question:${currentQuestionIndex}:answer`"
                 :selected-answer-mode="selectedAnswerMode"
                 :answer-mode-label="answerModeLabel(selectedAnswerMode)"
                 :has-configured-answer-control="hasConfiguredAnswerControl"
@@ -103,7 +103,7 @@
 
               <HeuristicCommentEvidenceSection
                 :key="`comments-${currentQuestionIndex}`"
-                :data-study-field-ref="`heuristic:${heurisIndex}:question:${currentQuestionIndex}:comment`"
+                :data-study-field-ref="`heuristic:${canonicalHeuristicIndex}:question:${currentQuestionIndex}:comment`"
                 :heuris-index="heurisIndex"
                 :question-index="currentQuestionIndex"
                 :answer-heu="answerForQuestion(currentQuestionIndex)"
@@ -314,6 +314,15 @@ const questions = computed(() =>
 const currentQuestion = computed(
   () => questions.value[currentQuestionIndex.value] || null,
 )
+
+const canonicalHeuristicIndex = computed(() => {
+  const testStructure = props.test?.testStructure
+  if (!Array.isArray(testStructure)) return props.heurisIndex
+  const index = testStructure.findIndex(
+    (heuristic) => heuristic?.id === props.heuristic?.id,
+  )
+  return index >= 0 ? index : props.heurisIndex
+})
 
 const heuristicNavigationItems = computed(() =>
   props.heuristics.map((heuristic, index) => ({
