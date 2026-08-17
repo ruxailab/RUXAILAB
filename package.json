@@ -89,6 +89,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-vue": "^10.10.0",
     "eslint-plugin-vuetify": "^2.7.2",
+    "fake-indexeddb": "^6.2.5",
     "globals": "^17.9.0",
     "husky": "^9.1.7",
     "jsdoc": "^4.0.5",
