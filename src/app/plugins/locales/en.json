@@ -2294,6 +2294,7 @@
       "mediaDeviceUnavailable": "The {device} is unavailable. You can still join the call without it."
     },
     "panel": {
+      "bringParticipantsBack": "Bring Participants Back",
       "toolsPanelTitle": "Tools Panel",
       "sessionControl": "Session Control",
       "joinRoomInfo": "Join room controls are now in the main interface above",

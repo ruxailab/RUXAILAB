@@ -2194,6 +2194,7 @@
       "autoStartWhenModeratorOpensRoom": "La videollamada comenzara automaticamente cuando el moderador abra la sala."
     },
     "panel": {
+      "bringParticipantsBack": "Traer a los participantes de vuelta",
       "toolsPanelTitle": "Panel de herramientas",
       "sessionControl": "Control de sesion",
       "joinRoomInfo": "Los controles para unirse estan ahora en la interfaz principal superior",
