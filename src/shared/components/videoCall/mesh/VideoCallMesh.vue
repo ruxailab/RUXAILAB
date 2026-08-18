@@ -113,9 +113,7 @@
               class="d-flex align-center justify-center pa-4 text-grey"
             >
               <v-icon class="mr-2">mdi-account-clock</v-icon>
-              <span>{{
-                t('videoCall.session.waitingForParticipants')
-              }}</span>
+              <span>{{ t('videoCall.session.waitingForParticipants') }}</span>
             </div>
           </div>
         </div>
@@ -126,7 +124,10 @@
         v-if="caller && !callStarted && !isObservator && localStream"
         cols="12"
       >
-        <div class="videos-grid" :style="{ '--grid-cols': 1 }">
+        <div
+          class="videos-grid single-video-grid"
+          :style="{ '--grid-cols': 1 }"
+        >
           <div class="video-wrapper">
             <div class="video-container">
               <video
@@ -484,9 +485,7 @@
               <span class="participant-name">
                 {{
                   participant.name +
-                  (participant.isSelf
-                    ? ` (${t('videoCall.panel.you')})`
-                    : '')
+                  (participant.isSelf ? ` (${t('videoCall.panel.you')})` : '')
                 }}
                 <v-chip
                   v-if="participant.role === 'observator'"
@@ -978,8 +977,7 @@ const callStarted = computed(
 
 // Count of camera tiles currently visible (local + remotes)
 const cameraCount = computed(
-  () =>
-    (isObservator.value ? 0 : 1) + Object.keys(remoteStreams.value).length,
+  () => (isObservator.value ? 0 : 1) + Object.keys(remoteStreams.value).length,
 )
 
 // Number of grid columns, so tiles resize based on participant count
@@ -1098,35 +1096,38 @@ watch([localVideo, localStream], ([videoEl, stream]) => {
 })
 
 onMounted(async () => {
-  // Moderator gets media preview but doesn't join room yet
+  // Moderator preview should appear immediately in the lobby when the test starts.
   if (props.isModerator) {
-    // Do NOT initialize local media here  wait for startCall()
-  } else {
-    // Participants and observators wait for room to be opened by moderator
-    const showVideoCallRef = dbRef(
-      database,
-      `rooms/${props.roomId}/showVideoCall`,
-    )
-
-    // Check initial value first
-    const initialSnapshot = await get(showVideoCallRef)
-    const shouldShow = initialSnapshot.val()
-    if (shouldShow && !roomReady.value) {
-      roomReady.value = true
-      await joinRoom()
+    if (!localStream.value) {
+      await initLocalMedia()
     }
-
-    // Then listen for changes
-    onValue(showVideoCallRef, (snapshot) => {
-      const shouldShow = snapshot.val()
-      if (shouldShow) {
-        if (!roomReady.value) {
-          roomReady.value = true
-          joinRoom()
-        }
-      }
-    })
+    return
   }
+
+  // Participants and observators wait for room to be opened by moderator
+  const showVideoCallRef = dbRef(
+    database,
+    `rooms/${props.roomId}/showVideoCall`,
+  )
+
+  // Check initial value first
+  const initialSnapshot = await get(showVideoCallRef)
+  const shouldShow = initialSnapshot.val()
+  if (shouldShow && !roomReady.value) {
+    roomReady.value = true
+    await joinRoom()
+  }
+
+  // Then listen for changes
+  onValue(showVideoCallRef, (snapshot) => {
+    const shouldShow = snapshot.val()
+    if (shouldShow) {
+      if (!roomReady.value) {
+        roomReady.value = true
+        joinRoom()
+      }
+    }
+  })
 })
 
 onBeforeUnmount(() => {
@@ -1405,7 +1406,9 @@ const createPeerConnection = (targetUserId, isInitiator) => {
       if (!peer.stream) {
         peer.stream = event.streams?.[0] || new MediaStream()
       }
-      if (!peer.stream.getTracks().some((existing) => existing.id === track.id)) {
+      if (
+        !peer.stream.getTracks().some((existing) => existing.id === track.id)
+      ) {
         peer.stream.addTrack(track)
       }
       return
@@ -1415,7 +1418,9 @@ const createPeerConnection = (targetUserId, isInitiator) => {
       if (!peer.stream) {
         peer.stream = event.streams?.[0] || new MediaStream()
       }
-      if (!peer.stream.getTracks().some((existing) => existing.id === track.id)) {
+      if (
+        !peer.stream.getTracks().some((existing) => existing.id === track.id)
+      ) {
         peer.stream.addTrack(track)
       }
     }

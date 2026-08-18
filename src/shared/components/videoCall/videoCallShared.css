@@ -81,6 +81,28 @@
   justify-content: center;
 }
 
+.videos-grid.single-video-grid {
+  max-width: 100%;
+}
+
+.videos-grid.single-video-grid .video-wrapper {
+  width: min(100%, 1400px);
+}
+
+.videos-grid.single-video-grid .video-container {
+  width: min(100%, 1300px) !important;
+  height: clamp(520px, 76vh, 900px) !important;
+  min-height: 520px !important;
+  max-height: none !important;
+  aspect-ratio: auto !important;
+}
+
+.videos-grid.single-video-grid .video-element {
+  width: min(100%, 1300px) !important;
+  height: clamp(520px, 76vh, 900px) !important;
+  object-fit: cover !important;
+}
+
 .videos-filmstrip .video-wrapper {
   width: auto;
 }

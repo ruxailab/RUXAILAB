@@ -211,7 +211,9 @@
 
           <!--Sticky Stepper to follow Progress-->
           <v-row
-            v-if="globalIndex >= 1 || displayVideoCallComponent"
+            v-if="
+              !isModerator && (globalIndex >= 1 || displayVideoCallComponent)
+            "
             class="stepper-row sticky-stepper"
           >
             <v-col cols="12">
@@ -303,7 +305,9 @@
           <!-- Stepper secundario para tareas -->
           <v-row
             v-if="
-              globalIndex === 4 && test?.testStructure?.userTasks?.length > 1
+              !isModerator &&
+              globalIndex === 4 &&
+              test?.testStructure?.userTasks?.length > 1
             "
             class="task-stepper-row"
             justify="center"
@@ -1087,10 +1091,7 @@ const startTest = async () => {
         lastAnnouncedRemoteStepKey.value = announcementKey
         displayVideoCallComponent.value = true
 
-        await showStageAnnouncementByGlobalIndex(
-          nextGlobalIndex,
-          nextTaskIndex,
-        )
+        await showStageAnnouncementByGlobalIndex(nextGlobalIndex, nextTaskIndex)
 
         displayVideoCallComponent.value = false
         isProcessingRemoteStepAnnouncement.value = false
