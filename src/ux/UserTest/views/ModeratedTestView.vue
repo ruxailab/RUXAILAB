@@ -929,11 +929,7 @@ const handleSubmit = async () => {
   try {
     localTestAnswer.submitted = true
     await saveAnswer()
-    if (hasTestDashboardAccess.value) {
-      await router.push(`/userTest/moderated/dashboard/${test.value.id}`)
-    } else {
-      await router.push({ name: 'Admin' })
-    }
+    displayVideoCallComponent.value = true
   } catch {
     store.commit('SET_TOAST', {
       type: 'error',
@@ -1315,7 +1311,7 @@ const handleStartTasks = async () => {
 }
 
 async function handleTaskFinish(userCompleted) {
-  callTimerSave()
+  // callTimerSave()
   await completeStep(taskIndex.value, 'tasks', userCompleted)
 }
 
