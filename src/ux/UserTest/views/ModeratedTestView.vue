@@ -403,6 +403,7 @@
             <VideoCallFactory
               :room-id="roomId"
               :is-moderator="isModerator"
+              :is-observator="isObservator"
               :user="user"
               :access-level="currentUserAccessLevel"
               :current-global-index="globalIndex"
@@ -738,6 +739,9 @@ const isModerator = computed(() => {
 })
 
 const isObservator = computed(() => {
+  if (isModerator.value) {
+    return false
+  }
   // If there is an OBSERVER in the session, only they are the observer.
   if (sessionObserver.value) {
     return sessionObserver.value.userDocId === user.value?.id
@@ -748,9 +752,12 @@ const isObservator = computed(() => {
 })
 
 const session = computed(() => store.getters.session)
-const isSessionViewer = computed(() =>
-  isModeratedSessionViewer(test.value, user.value, session.value),
-)
+const isSessionViewer = computed(() => {
+  if (isModerator.value) {
+    return false
+  }
+  return isModeratedSessionViewer(test.value, user.value, session.value)
+})
 const hasTestDashboardAccess = computed(() => {
   if (!user.value) return false
   return (

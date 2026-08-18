@@ -113,9 +113,7 @@
               class="d-flex align-center justify-center pa-4 text-grey"
             >
               <v-icon class="mr-2">mdi-account-clock</v-icon>
-              <span>{{
-                t('videoCall.session.waitingForParticipants')
-              }}</span>
+              <span>{{ t('videoCall.session.waitingForParticipants') }}</span>
             </div>
           </div>
         </div>
@@ -484,9 +482,7 @@
               <span class="participant-name">
                 {{
                   participant.name +
-                  (participant.isSelf
-                    ? ` (${t('videoCall.panel.you')})`
-                    : '')
+                  (participant.isSelf ? ` (${t('videoCall.panel.you')})` : '')
                 }}
                 <v-chip
                   v-if="participant.role === 'observator'"
@@ -884,6 +880,7 @@ import { useVideoFocus } from '../composables/useVideoFocus'
 const props = defineProps({
   roomId: String,
   isModerator: Boolean,
+  isObservator: Boolean,
   user: Object,
   accessLevel: Number,
   currentGlobalIndex: Number,
@@ -938,7 +935,7 @@ watch(
 
 // Computed
 const isObservator = computed(
-  () => props.accessLevel === ACCESS_LEVEL.OBSERVATOR,
+  () => props.isObservator || props.accessLevel === ACCESS_LEVEL.OBSERVATOR,
 )
 const remoteStreams = computed(() => {
   const streams = {}
@@ -978,8 +975,7 @@ const callStarted = computed(
 
 // Count of camera tiles currently visible (local + remotes)
 const cameraCount = computed(
-  () =>
-    (isObservator.value ? 0 : 1) + Object.keys(remoteStreams.value).length,
+  () => (isObservator.value ? 0 : 1) + Object.keys(remoteStreams.value).length,
 )
 
 // Number of grid columns, so tiles resize based on participant count
@@ -1405,7 +1401,9 @@ const createPeerConnection = (targetUserId, isInitiator) => {
       if (!peer.stream) {
         peer.stream = event.streams?.[0] || new MediaStream()
       }
-      if (!peer.stream.getTracks().some((existing) => existing.id === track.id)) {
+      if (
+        !peer.stream.getTracks().some((existing) => existing.id === track.id)
+      ) {
         peer.stream.addTrack(track)
       }
       return
@@ -1415,7 +1413,9 @@ const createPeerConnection = (targetUserId, isInitiator) => {
       if (!peer.stream) {
         peer.stream = event.streams?.[0] || new MediaStream()
       }
-      if (!peer.stream.getTracks().some((existing) => existing.id === track.id)) {
+      if (
+        !peer.stream.getTracks().some((existing) => existing.id === track.id)
+      ) {
         peer.stream.addTrack(track)
       }
     }
