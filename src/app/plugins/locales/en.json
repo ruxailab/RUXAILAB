@@ -3431,7 +3431,9 @@
       "participantAlreadyAdded": "This participant has already been added.",
       "createFailed": "Failed to save the session.",
       "sendMessageFailed": "Failed to send the message.",
-      "errorDelete": "Failed to delete the session."
+      "errorDelete": "Failed to delete the session.",
+      "facilitatorRequired": "At least one facilitator is required.",
+      "participantRequired": "At least one participant is required."
     },
     "send": {
       "title": "Send session message",

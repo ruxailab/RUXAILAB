@@ -3358,7 +3358,9 @@
       "participantAlreadyAdded": "Este participante ya ha sido añadido.",
       "createFailed": "No se pudo guardar la sesión.",
       "sendMessageFailed": "No se pudo enviar el mensaje.",
-      "errorDelete": "No se pudo eliminar la sesión."
+      "errorDelete": "No se pudo eliminar la sesión.",
+      "facilitatorRequired": "Se requiere al menos un facilitador.",
+      "participantRequired": "Se requiere al menos un participante."
     },
     "send": {
       "title": "Enviar mensaje de sesión",

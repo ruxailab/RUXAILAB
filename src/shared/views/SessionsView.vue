@@ -17,6 +17,7 @@
       :session="sessionToEdit"
       :participants="participants"
       :participant-limit="1"
+      :require-facilitator-and-participant="true"
       @update:dialog="handleSessionDialog"
     />
 
