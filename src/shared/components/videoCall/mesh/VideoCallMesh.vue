@@ -804,6 +804,18 @@
             </div>
           </div>
         </div>
+
+        <v-btn
+          v-if="isModerator"
+          color="primary"
+          variant="outlined"
+          size="small"
+          class="mt-2"
+          @click="returnToVideoCall"
+        >
+          <v-icon start>mdi-video</v-icon>
+          {{ $t('videoCall.panel.bringParticipantsBack') }}
+        </v-btn>
       </div>
     </div>
 
@@ -877,12 +889,14 @@ import {
   update,
   onChildAdded,
 } from 'firebase/database'
+import { useStore } from 'vuex'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import { useVideoFocus } from '../composables/useVideoFocus'
 
 const props = defineProps({
   roomId: String,
   isModerator: Boolean,
+  isObservator: Boolean,
   user: Object,
   accessLevel: Number,
   currentGlobalIndex: Number,
@@ -898,6 +912,7 @@ const emit = defineEmits([
   'moderatorStatusChange',
 ])
 const { t } = useI18n()
+const store = useStore()
 
 // Local State
 const localVideo = ref(null)
@@ -937,7 +952,7 @@ watch(
 
 // Computed
 const isObservator = computed(
-  () => props.accessLevel === ACCESS_LEVEL.OBSERVATOR,
+  () => props.isObservator || props.accessLevel === ACCESS_LEVEL.OBSERVATOR,
 )
 const remoteStreams = computed(() => {
   const streams = {}
@@ -1474,6 +1489,21 @@ const closePeerConnection = (userId) => {
 // --- UI & Helper Methods ---
 
 const caller = computed(() => props.isModerator)
+
+const returnToVideoCall = async () => {
+  try {
+    const roomRef = dbRef(database, `rooms/${props.roomId}`)
+
+    await update(roomRef, {
+      showVideoCall: true,
+    })
+  } catch {
+    store.commit('SET_TOAST', {
+      type: 'error',
+      message: 'Failed to bring participant back to the video call.',
+    })
+  }
+}
 
 function toggleCamera() {
   if (!localStream.value) return

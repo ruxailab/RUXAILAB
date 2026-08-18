@@ -2215,6 +2215,7 @@
       "autoStartWhenModeratorOpensRoom": "La videollamada comenzara automaticamente cuando el moderador abra la sala."
     },
     "panel": {
+      "bringParticipantsBack": "Traer a los participantes de vuelta",
       "toolsPanelTitle": "Panel de herramientas",
       "sessionControl": "Control de sesion",
       "joinRoomInfo": "Los controles para unirse estan ahora en la interfaz principal superior",
@@ -3379,7 +3380,9 @@
       "participantAlreadyAdded": "Este participante ya ha sido añadido.",
       "createFailed": "No se pudo guardar la sesión.",
       "sendMessageFailed": "No se pudo enviar el mensaje.",
-      "errorDelete": "No se pudo eliminar la sesión."
+      "errorDelete": "No se pudo eliminar la sesión.",
+      "facilitatorRequired": "Se requiere al menos un facilitador.",
+      "participantRequired": "Se requiere al menos un participante."
     },
     "send": {
       "title": "Enviar mensaje de sesión",
