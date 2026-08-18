@@ -582,7 +582,8 @@
       "participants": "Agrega participantes a tu estudio para ayudarte a recopilar datos valiosos y obtener información de usuarios reales.",
       "start": "¡Comienza!",
       "edit": "Crea y personaliza tus tareas y heurísticas para tus necesidades de investigación.",
-      "finalReport": "Prepara el informe final para tu evaluación heurística seleccionando los elementos que deseas incluir."
+      "finalReport": "Prepara el informe final para tu evaluación heurística seleccionando los elementos que deseas incluir.",
+      "sessions": "Las sesiones son encuentros programados del estudio en los que el equipo y los participantes se reúnen para realizar y completar el estudio."
     },
     "overallAnalyticsDescription": "Ver los análisis agregados de su prueba.",
     "individualAnalytics": "Análisis individual",
