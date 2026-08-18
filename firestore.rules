@@ -68,16 +68,16 @@ service cloud.firestore {
     }
 
     function canAnswer(study) {
-      return signedIn() && (
-        study.isPublic == true ||
-        isAdmin(study) ||
-        isManager(study) ||
-        (isUserStudy(study) && (
-          roleFor(study) == 5 ||
-          (roleFor(study) == 3 && study.subType == 'USER_MODERATED')
-        )) ||
-        (isHeuristicStudy(study) && roleFor(study) == 1)
-      );
+      return study.isPublic == true ||
+        (signedIn() && (
+          isAdmin(study) ||
+          isManager(study) ||
+          (isUserStudy(study) && (
+            roleFor(study) == 5 ||
+            (roleFor(study) == 3 && study.subType == 'USER_MODERATED')
+          )) ||
+          (isHeuristicStudy(study) && roleFor(study) == 1)
+        ));
     }
 
     function managerChangedOnlyStudyContent() {
@@ -114,7 +114,7 @@ service cloud.firestore {
         isStudyMember(resource.data) ||
         canViewDashboard(resource.data)
       );
-      allow update: if !isRbacStudy(resource.data) && (
+      allow update: if (
         isAdmin(resource.data) ||
         (isManager(resource.data) && managerChangedOnlyStudyContent())
       );
@@ -140,6 +140,10 @@ service cloud.firestore {
         );
         allow write: if false;
       }
+      
+      match /participants/{participantId} {
+        allow read: if signedIn();
+      }
     }
 
     match /answers/{answerId} {
@@ -161,25 +165,26 @@ service cloud.firestore {
             isUserStudy(study) &&
             request.resource.data.diff(resource.data).affectedKeys()
               .hasOnly(['taskAnswers']) &&
-            request.resource.data.taskAnswers.diff(resource.data.taskAnswers)
-              .affectedKeys().hasOnly([request.auth.uid]) &&
             (
-              !(request.auth.uid in resource.data.taskAnswers) ||
-              resource.data.taskAnswers[request.auth.uid]
-                .get('submitted', false) != true
+              (!signedIn() && request.resource.data.taskAnswers.diff(resource.data.taskAnswers).affectedKeys().size() == 1) ||
+              (signedIn() && request.resource.data.taskAnswers.diff(resource.data.taskAnswers).affectedKeys().hasOnly([request.auth.uid]) &&
+              (
+                !(request.auth.uid in resource.data.taskAnswers) ||
+                resource.data.taskAnswers[request.auth.uid].get('submitted', false) != true
+              ))
             )
           ) ||
           (
             isHeuristicStudy(study) &&
             request.resource.data.diff(resource.data).affectedKeys()
               .hasOnly(['heuristicAnswers']) &&
-            request.resource.data.heuristicAnswers
-              .diff(resource.data.heuristicAnswers)
-              .affectedKeys().hasOnly([request.auth.uid]) &&
             (
-              !(request.auth.uid in resource.data.heuristicAnswers) ||
-              resource.data.heuristicAnswers[request.auth.uid]
-                .get('submitted', false) != true
+              (!signedIn() && request.resource.data.heuristicAnswers.diff(resource.data.heuristicAnswers).affectedKeys().size() == 1) ||
+              (signedIn() && request.resource.data.heuristicAnswers.diff(resource.data.heuristicAnswers).affectedKeys().hasOnly([request.auth.uid]) &&
+              (
+                !(request.auth.uid in resource.data.heuristicAnswers) ||
+                resource.data.heuristicAnswers[request.auth.uid].get('submitted', false) != true
+              ))
             )
           )
         );
@@ -219,6 +224,12 @@ service cloud.firestore {
       allow read, write: if signedIn();
     }
     match /calibrations/{document=**} {
+      allow read, write: if signedIn();
+    }
+    match /settings/{settingId} {
+      allow read: if signedIn();
+    }
+    match /{path=**}/sessions/{sessionId} {
       allow read, write: if signedIn();
     }
   }

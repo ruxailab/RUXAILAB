@@ -40,20 +40,20 @@ service firebase.storage {
     }
 
     function canAnswerStudy(studyId) {
-      return signedIn() && (
-        study(studyId).isPublic == true ||
-        roleFor(studyId) == 0 ||
-        roleFor(studyId) == 4 ||
-        (study(studyId).testType == 'USER' && (
-          roleFor(studyId) == 5 ||
-          (roleFor(studyId) == 3 &&
-            study(studyId).subType == 'USER_MODERATED')
-        )) ||
-        ((study(studyId).testType == 'HEURISTIC' ||
-          study(studyId).testType == 'HEURISTICS') &&
-          roleFor(studyId) == 1) ||
-        study(studyId).testAdmin.userDocId == request.auth.uid
-      );
+      return study(studyId).isPublic == true ||
+        (signedIn() && (
+          roleFor(studyId) == 0 ||
+          roleFor(studyId) == 4 ||
+          (study(studyId).testType == 'USER' && (
+            roleFor(studyId) == 5 ||
+            (roleFor(studyId) == 3 &&
+              study(studyId).subType == 'USER_MODERATED')
+          )) ||
+          ((study(studyId).testType == 'HEURISTIC' ||
+            study(studyId).testType == 'HEURISTICS') &&
+            roleFor(studyId) == 1) ||
+          study(studyId).testAdmin.userDocId == request.auth.uid
+        ));
     }
 
     function canEditStudy(studyId) {
@@ -67,11 +67,13 @@ service firebase.storage {
     match /tests/{studyId}/{userId}/{allPaths=**} {
       allow read: if canAccessStorage(studyId) ||
         (userId.matches('heuristic_.*') && canEditStudy(studyId)) ||
-        (request.auth.uid == userId && canAnswerStudy(studyId));
+        (signedIn() && request.auth.uid == userId && canAnswerStudy(studyId)) ||
+        (!signedIn() && study(studyId).isPublic == true);
       allow create, update: if
         canAccessStorage(studyId) ||
         (userId.matches('heuristic_.*') && canEditStudy(studyId)) ||
-        (request.auth.uid == userId && canAnswerStudy(studyId));
+        (signedIn() && request.auth.uid == userId && canAnswerStudy(studyId)) ||
+        (!signedIn() && study(studyId).isPublic == true);
       allow delete: if false;
     }
 
