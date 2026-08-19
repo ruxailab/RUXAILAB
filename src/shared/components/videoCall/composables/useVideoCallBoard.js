@@ -1,4 +1,5 @@
 import { computed } from 'vue'
+import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import { useVideoFocus } from './useVideoFocus'
 
 export function useVideoCallBoard({
@@ -10,6 +11,7 @@ export function useVideoCallBoard({
   localStream,
   remoteEntries,
   screenShareFeeds,
+  staffParticipants = computed(() => []),
   buildRemoteTile,
   buildParticipantItem,
 }) {
@@ -77,15 +79,31 @@ export function useVideoCallBoard({
 
   const participantsList = computed(() => {
     const list = []
+    const seen = new Set()
 
-    list.push(
+    const addEntry = (entry) => {
+      if (!entry || !entry.id) return
+      if (seen.has(entry.id)) return
+      seen.add(entry.id)
+      list.push(entry)
+    }
+
+    const localRole = isObservator.value
+      ? 'observator'
+      : user?.accessLevel === ACCESS_LEVEL.ADMIN || user?.isModerator
+        ? 'moderator'
+        : user?.accessLevel === ACCESS_LEVEL.OBSERVATOR
+          ? 'observator'
+          : 'participant'
+
+    addEntry(
       buildParticipantItem(
         {
           id: user?.id,
           email: user?.email,
           name: user?.email?.split('@')[0] || 'You',
           isSelf: true,
-          role: isObservator.value ? 'observator' : 'participant',
+          role: localRole,
           connected: true,
           hasCamera: !isObservator.value && isCameraEnabled.value,
           hasMicrophone: !isObservator.value && isMicrophoneEnabled.value,
@@ -94,8 +112,37 @@ export function useVideoCallBoard({
       ),
     )
 
+    staffParticipants.value.forEach((staffMember) => {
+      if (!staffMember || !staffMember.id || staffMember.id === user?.id) return
+      addEntry(
+        buildParticipantItem(
+          {
+            ...staffMember,
+            id: staffMember.id,
+            name:
+              staffMember.name ||
+              staffMember.email?.split('@')[0] ||
+              'Staff member',
+            email: staffMember.email,
+            role:
+              staffMember.role ||
+              (staffMember.accessLevel === ACCESS_LEVEL.OBSERVATOR
+                ? 'observator'
+                : staffMember.accessLevel === ACCESS_LEVEL.ADMIN
+                  ? 'moderator'
+                  : 'participant'),
+            connected: Boolean(staffMember.connected),
+            hasCamera: staffMember.hasCamera ?? true,
+            hasMicrophone: staffMember.hasMicrophone ?? true,
+          },
+          false,
+        ),
+      )
+    })
+
     remoteEntries.value.forEach((remote) => {
-      list.push(buildParticipantItem(remote, false))
+      if (remote?.id === user?.id) return
+      addEntry(buildParticipantItem(remote, false))
     })
 
     return list

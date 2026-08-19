@@ -1140,6 +1140,31 @@ const buildParticipantItem = (remote, isSelf) => {
   }
 }
 
+const staffParticipants = computed(() => {
+  if (!props.test?.cooperators) return []
+
+  return props.test.cooperators.map((cooperator) => {
+    const role =
+      cooperator.accessLevel === ACCESS_LEVEL.OBSERVATOR
+        ? 'observator'
+        : cooperator.accessLevel === ACCESS_LEVEL.ADMIN
+          ? 'moderator'
+          : 'participant'
+
+    return {
+      id: cooperator.userDocId || cooperator.email,
+      email: cooperator.email,
+      name:
+        cooperator.email?.split('@')[0] || cooperator.name || 'Staff member',
+      role,
+      connected: !!participants.value[cooperator.userDocId]?.connected,
+      hasCamera: true,
+      hasMicrophone: true,
+      accessLevel: cooperator.accessLevel,
+    }
+  })
+})
+
 const {
   tiles,
   focusedTile,
@@ -1155,10 +1180,16 @@ const {
   isObservator,
   isCameraEnabled,
   isMicrophoneEnabled,
-  user: computed(() => props.user),
+  user: computed(() => ({
+    ...props.user,
+    accessLevel:
+      props.accessLevel ?? (props.isModerator ? ACCESS_LEVEL.ADMIN : 0),
+    isModerator: props.isModerator,
+  })),
   localStream,
   remoteEntries,
   screenShareFeeds,
+  staffParticipants,
   buildRemoteTile,
   buildParticipantItem,
 })
