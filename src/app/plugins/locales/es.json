@@ -3227,7 +3227,11 @@
     "pendingSubtitle": "Has sido invitado a participar en un estudio",
     "pendingDescription": "Tienes una invitación pendiente. ¿Quieres aceptarla ahora?",
     "notNow": "Ahora no",
-    "loginRequired": "Esta invitación requiere que inicies sesión o crees una cuenta antes de participar."
+    "loginRequired": "Esta invitación requiere que inicies sesión o crees una cuenta antes de participar.",
+    "participantInviteTitle": "Estás invitado a participar",
+    "cooperatorInviteTitle": "Has sido invitado como miembro del equipo",
+    "participantInviteMessage": "Has sido invitado a participar en este estudio.",
+    "cooperatorInviteMessage": "Has sido invitado a colaborar en este estudio como miembro del equipo."
   },
   "Participants": {
     "title": {

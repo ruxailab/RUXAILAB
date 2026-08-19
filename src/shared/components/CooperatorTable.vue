@@ -165,7 +165,11 @@
 
               <!-- Re-invite rejected or expired -->
               <v-list-item
-                v-if="item.status === 'rejected' || item.status === 'expired'"
+                v-if="
+                  item.status == 'pending' ||
+                  item.status === 'rejected' ||
+                  item.status === 'expired'
+                "
                 link
                 @click="onReinvite(item)"
               >

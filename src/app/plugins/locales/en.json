@@ -3300,7 +3300,11 @@
     "pendingSubtitle": "You have been invited to participate in a study",
     "pendingDescription": "You have a pending invitation. Would you like to accept it now?",
     "notNow": "Not now",
-    "loginRequired": "This invitation requires you to sign in or create an account before participating."
+    "loginRequired": "This invitation requires you to sign in or create an account before participating.",
+    "participantInviteTitle": "You're invited to participate",
+    "cooperatorInviteTitle": "You've been invited as staff",
+    "participantInviteMessage": "You’ve been invited to take part in this study.",
+    "cooperatorInviteMessage": "You’ve been invited to collaborate on this study as a staff member."
   },
   "Participants": {
     "title": {

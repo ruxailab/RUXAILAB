@@ -34,6 +34,8 @@ export const sendEmail = functions.onCall({
             /{{invitationLink}}/g,
             content.data.invitationLink || process.env.SITE_URL,
           )
+          .replace(/{{title}}/g, content.data.title || '')
+          .replace(/{{description}}/g, content.data.description || '')
           .replace(/{{message}}/g, content.data.message || '')
           .replace(/{{testTitle}}/g, content.data.testTitle || '')
           .replace(/{{testDescription}}/g, content.data.testDescription || '')

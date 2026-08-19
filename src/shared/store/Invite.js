@@ -30,7 +30,13 @@ const createInvitation = async ({ study, guest, membershipType }) => {
   })
 }
 
-const buildInvitationNotification = ({ study, guest, inviteToken, router }) => {
+const buildInvitationNotification = ({
+  study,
+  guest,
+  inviteToken,
+  router,
+  membershipType,
+}) => {
   const managerViewByMethod = getMethodManagerView(
     study.testType,
     study.subType,
@@ -65,29 +71,63 @@ const buildInvitationNotification = ({ study, guest, inviteToken, router }) => {
     ? router.resolve(destination).href
     : managerRoute.href
 
+  const { title, description } = getInvitationTexts(
+    membershipType,
+    study.testTitle,
+  )
+
   return new Notification({
     author: study.testAdmin.email,
     testId: study.id,
     redirectsTo: path,
     type: 'Collaboration',
     accessLevel: guest.accessLevel,
-    title: t('invite.pendingSubtitle'),
-    description: `${t('HeuristicsCooperators.messages.invite_message')} ${study.testTitle}`,
+    title,
+    description,
+    inviteMessage: guest.inviteMessage,
     inviteToken,
     read: false,
   })
 }
 
-const sendInvitationEmail = async ({ study, user, guest, inviteLink }) => {
+const getInvitationTexts = (membershipType, studyTitle) => {
+  const isParticipant = membershipType === 'participant'
+
+  return {
+    title: `${
+      isParticipant
+        ? t('invite.participantInviteTitle')
+        : t('invite.cooperatorInviteTitle')
+    } · ${studyTitle}`,
+
+    description: isParticipant
+      ? t('invite.participantInviteMessage')
+      : t('invite.cooperatorInviteMessage'),
+  }
+}
+
+const sendInvitationEmail = async ({
+  study,
+  user,
+  guest,
+  inviteLink,
+  membershipType,
+}) => {
   const emailController = new EmailController()
+  const { title, description } = getInvitationTexts(
+    membershipType,
+    study.testTitle,
+  )
 
   return emailController.send({
     to: guest.email,
-    subject: t('invite.pendingSubtitle'),
+    subject: title,
     attachments: [],
     template: 'invite',
     data: {
-      message: guest.inviteMessage || '',
+      title,
+      description,
+      message: guest.inviteMessage,
       testTitle: study.testTitle,
       testDescription: study.testDescription,
       adminEmail: study.testAdmin.email,
@@ -161,6 +201,7 @@ const sendParticipantInvitation = async ({
       guest: participantMembership,
       inviteToken: inviteResult.inviteToken,
       router,
+      membershipType: 'participant',
     })
 
     await dispatch('addNotification', {
@@ -174,6 +215,7 @@ const sendParticipantInvitation = async ({
     user,
     guest: participantMembership,
     inviteLink: inviteResult.inviteLink,
+    membershipType: 'participant',
   })
 
   return {
@@ -209,6 +251,7 @@ const sendCooperatorInvitation = async ({
       guest: resolvedGuest,
       inviteToken: inviteResult.inviteToken,
       router,
+      membershipType: 'cooperator',
     })
 
     await dispatch('addNotification', {
@@ -222,6 +265,7 @@ const sendCooperatorInvitation = async ({
     user,
     guest: resolvedGuest,
     inviteLink: inviteResult.inviteLink,
+    membershipType: 'cooperator',
   })
 
   return {
@@ -503,6 +547,11 @@ export default {
           return
         }
 
+        const membershipType = invite.membershipType || 'cooperator'
+        const { title, description } = getInvitationTexts(
+          membershipType,
+          study.testTitle,
+        )
         const notification = new Notification({
           author: study.testAdmin.email,
           read: false,
@@ -510,8 +559,8 @@ export default {
           redirectsTo,
           type: 'Collaboration',
           accessLevel: invite.accessLevel,
-          title: t('invite.pendingSubtitle'),
-          description: `${t('HeuristicsCooperators.messages.invite_message')} ${study.testTitle}`,
+          title,
+          description,
           inviteToken: invite.token,
         })
 
