@@ -523,10 +523,7 @@ const staffParticipants = computed(() => {
     : props.test?.cooperators || []
 
   return staffEntries.map((member) => {
-    const presenceStatus =
-      member.presenceStatus ??
-      member.status ??
-      (member.connected === false ? 'disconnected' : 'connected')
+    const presenceStatus = member.presenceStatus ?? member.status ?? null
 
     const role =
       member.role === 'observator' ||
@@ -541,7 +538,7 @@ const staffParticipants = computed(() => {
       ...member,
       id: member.userDocId || member.id || member.email,
       role,
-      connected: presenceStatus === 'connected',
+      connected: member.connected ?? null,
       presenceStatus,
       presenceUpdatedAt: member.presenceUpdatedAt ?? null,
       hasCamera: member.hasCamera ?? true,
@@ -597,16 +594,13 @@ const panelParticipantList = computed(() => {
     if (!memberKey || seen.has(memberKey)) continue
 
     seen.add(memberKey)
-    const presenceStatus =
-      member.presenceStatus ??
-      member.status ??
-      (member.connected === false ? 'disconnected' : 'connected')
+    const presenceStatus = member.presenceStatus ?? member.status ?? null
 
     dedupedList.push({
       ...member,
       id: member.userDocId || member.id || member.email || member.name,
       role: member.role || 'participant',
-      connected: presenceStatus === 'connected',
+      connected: member.connected ?? null,
       presenceStatus,
       presenceUpdatedAt: member.presenceUpdatedAt ?? null,
       isSelf:
@@ -773,6 +767,27 @@ async function startCall() {
 }
 
 async function endCall() {
+  if (room.value?.localParticipant) {
+    const localParticipant = room.value.localParticipant
+
+    if (localParticipant.isCameraEnabled) {
+      await localParticipant.setCameraEnabled(false)
+    }
+    if (localParticipant.isMicrophoneEnabled) {
+      await localParticipant.setMicrophoneEnabled(false)
+    }
+
+    for (const publication of localParticipant.videoTrackPublications.values()) {
+      publication.track?.stop()
+    }
+    for (const publication of localParticipant.audioTrackPublications.values()) {
+      publication.track?.stop()
+    }
+    for (const publication of localParticipant.screenShareTrackPublications.values()) {
+      publication.track?.stop()
+    }
+  }
+
   if (!props.isModerator) {
     await disconnect()
     router.push('/admin')

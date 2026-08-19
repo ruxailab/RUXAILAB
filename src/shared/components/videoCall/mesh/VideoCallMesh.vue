@@ -714,7 +714,11 @@ const joinRoom = async () => {
     },
   }
 
-  await update(myRef, participantPayload)
+  if (!props.isModerator) {
+    await update(myRef, participantPayload)
+  } else {
+    await remove(myRef)
+  }
 
   if (props.isModerator) {
     const moderatorStaffRef = dbRef(
@@ -900,12 +904,16 @@ const leaveRoom = () => {
   )
   const now = Date.now()
 
-  update(myRef, {
-    connected: false,
-    presenceStatus: 'disconnected',
-    presenceUpdatedAt: now,
-    updatedAt: now,
-  })
+  if (!props.isModerator) {
+    update(myRef, {
+      connected: false,
+      presenceStatus: 'disconnected',
+      presenceUpdatedAt: now,
+      updatedAt: now,
+    })
+  } else {
+    remove(myRef)
+  }
 
   if (props.isModerator) {
     update(dbRef(database, `calls/${props.roomId}/staff/${props.user.id}`), {
@@ -1428,6 +1436,17 @@ const router = useRouter() // Ensure router is available
 
 const endCall = async () => {
   isSessionEnded.value = true
+
+  if (localStream.value) {
+    localStream.value.getTracks().forEach((track) => track.stop())
+    localStream.value = null
+  }
+
+  if (screenStream.value) {
+    screenStream.value.getTracks().forEach((track) => track.stop())
+    screenStream.value = null
+  }
+
   if (localPresenceDisconnect) {
     await localPresenceDisconnect.cancel()
     localPresenceDisconnect = null

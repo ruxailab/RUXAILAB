@@ -135,10 +135,7 @@ export const normalizeRoomParticipantsMap = (participants = {}) => {
     .map(([userId, member]) => {
       if (!member || typeof member !== 'object') return null
 
-      const normalizedStatus = normalizePresenceStatus(
-        member,
-        SESSION_PRESENCE_STATUS.WAITING,
-      )
+      const normalizedStatus = member.presenceStatus ?? member.status ?? null
       const canonicalRole = getCanonicalRole(member, 'participant')
 
       return {
@@ -159,7 +156,7 @@ export const normalizeRoomParticipantsMap = (participants = {}) => {
               ? 'OBSERVATOR'
               : 5),
         isModerator: canonicalRole === 'moderator',
-        connected: normalizedStatus === SESSION_PRESENCE_STATUS.CONNECTED,
+        connected: member.connected ?? null,
         presenceStatus: normalizedStatus,
         presenceUpdatedAt: member.presenceUpdatedAt ?? null,
         media: member.media ?? {
@@ -182,10 +179,7 @@ export const normalizeSessionMember = (
   const memberId = member.userDocId || member.id || member.email
   if (!memberId) return null
 
-  const presenceStatus = normalizePresenceStatus(
-    member,
-    SESSION_PRESENCE_STATUS.WAITING,
-  )
+  const presenceStatus = member.presenceStatus ?? member.status ?? null
   const role = getCanonicalRole(member, fallbackType)
 
   return {
@@ -206,7 +200,7 @@ export const normalizeSessionMember = (
         : role === 'observator'
           ? 'OBSERVATOR'
           : 5),
-    connected: presenceStatus === SESSION_PRESENCE_STATUS.CONNECTED,
+    connected: member.connected ?? null,
     presenceStatus,
     isStaff: fallbackType === 'staff',
     isModerator: role === 'moderator',

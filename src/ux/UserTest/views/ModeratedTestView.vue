@@ -419,7 +419,7 @@
               @set-remote-stream="remoteStream = $event"
               @proceed-to-next-step="proceedToNextStep"
               @step-selected="handleStepSelected"
-              @call-ended="displayVideoCallComponent = false"
+              @call-ended="handleCallEnded"
               @moderator-status-change="handleModeratorStatusChange"
             />
           </div>
@@ -611,6 +611,7 @@ import {
   get,
   onDisconnect,
   serverTimestamp,
+  remove,
 } from 'firebase/database'
 import { database } from '@/app/plugins/firebase/index'
 import {
@@ -749,10 +750,7 @@ const normalizeSessionMember = (member, fallbackType = 'participant') => {
   const memberId = member.userDocId || member.id || member.email
   if (!memberId) return null
 
-  const presenceStatus =
-    member.presenceStatus ??
-    member.status ??
-    (member.connected === false ? 'disconnected' : 'connected')
+  const presenceStatus = member.presenceStatus ?? member.status ?? null
 
   return {
     id: memberId,
@@ -764,7 +762,7 @@ const normalizeSessionMember = (member, fallbackType = 'participant') => {
       member.email?.split('@')[0] ||
       fallbackType,
     role: normalizeSessionRole(member.role || member.accessLevel),
-    connected: presenceStatus === 'connected',
+    connected: member.connected ?? null,
     presenceStatus,
     presenceUpdatedAt: member.presenceUpdatedAt ?? null,
     isStaff: fallbackType === 'staff',
@@ -1110,6 +1108,32 @@ const requestFullscreenIfAvailable = async () => {
   }
 }
 
+const cleanupRoomStateForReuse = async (roomKey) => {
+  if (!roomKey) return
+
+  const callRef = dbRef(database, `calls/${roomKey}`)
+  const roomRef = dbRef(database, `rooms/${roomKey}`)
+
+  await Promise.allSettled([
+    get(callRef).then((snapshot) => {
+      if (snapshot.exists()) return remove(callRef)
+      return null
+    }),
+    get(roomRef).then((snapshot) => {
+      if (snapshot.exists()) return remove(roomRef)
+      return null
+    }),
+  ])
+}
+
+const handleCallEnded = async () => {
+  displayVideoCallComponent.value = false
+
+  if (isModerator.value && roomId.value) {
+    await cleanupRoomStateForReuse(roomId.value)
+  }
+}
+
 const startTest = async () => {
   // Check if the test has no tasks
   if (
@@ -1171,6 +1195,7 @@ const startTest = async () => {
   const roomRef = dbRef(database, `rooms/${roomId.value}`)
 
   if (isModerator.value) {
+    await cleanupRoomStateForReuse(roomId.value)
     const callRef = dbRef(database, `calls/${roomId.value}`)
     onValue(callRef, (snapshot) => {
       const nextCallState = snapshot.val() || {}
@@ -1234,7 +1259,28 @@ const startTest = async () => {
               const memberId = member?.userDocId || member?.id || member?.email
               if (!memberId) return null
 
+              const memberConnected = Object.prototype.hasOwnProperty.call(
+                defaults,
+                'connected',
+              )
+                ? defaults.connected
+                : undefined
+              const memberPresenceStatus = Object.prototype.hasOwnProperty.call(
+                defaults,
+                'presenceStatus',
+              )
+                ? defaults.presenceStatus
+                : undefined
+
+              const sanitizedMember = { ...member }
+              delete sanitizedMember.connected
+              delete sanitizedMember.presenceStatus
+              delete sanitizedMember.presenceUpdatedAt
+              delete sanitizedMember.updatedAt
+              delete sanitizedMember.status
+
               const normalizedMember = {
+                ...sanitizedMember,
                 userDocId: member.userDocId || member.id || member.email,
                 email: member.email || null,
                 name:
@@ -1246,17 +1292,22 @@ const startTest = async () => {
                 accessLevel: member.accessLevel ?? member.role ?? 5,
                 isModerator:
                   member.role === 'FACILITATOR' || member.isModerator === true,
-                connected: defaults.connected ?? true,
-                presenceStatus: defaults.presenceStatus ?? 'connected',
-                presenceUpdatedAt:
-                  defaults.presenceStatus === 'disconnected'
-                    ? null
-                    : Date.now(),
                 joinedAt: member.joinedAt ?? Date.now(),
                 media: member.media ?? {
                   cameraEnabled: true,
                   microphoneEnabled: true,
                 },
+                ...(memberConnected !== undefined
+                  ? { connected: memberConnected }
+                  : {}),
+                ...(memberPresenceStatus !== undefined
+                  ? { presenceStatus: memberPresenceStatus }
+                  : {}),
+                ...(memberPresenceStatus === 'disconnected'
+                  ? { presenceUpdatedAt: null }
+                  : memberPresenceStatus === 'connected'
+                    ? { presenceUpdatedAt: Date.now() }
+                    : {}),
               }
 
               return [memberId, normalizedMember]
@@ -1295,7 +1346,7 @@ const startTest = async () => {
               const memberId = member?.userDocId || member?.id || member?.email
               return memberId && memberId !== moderatorEntry.userDocId
             }),
-            { connected: true, presenceStatus: 'connected' },
+            {},
           ),
         },
         participants: toMemberMap(participantMembersWithoutStaff, {
@@ -1929,13 +1980,10 @@ watch(
 onBeforeUnmount(async () => {
   const roomRef = dbRef(database, `rooms/${roomId.value}`)
   off(roomRef)
-  // Do NOT delete the room on unmount (refresh/navigate away). Only explicit end should delete.
-  // await set(roomRef, null)
 
-  // Moderator: explicitly stamp lastUpdate on leave (covers SPA navigation)
-  if (isModerator.value) {
-    await update(roomRef, { lastUpdate: serverTimestamp() })
-  }
+  // Never re-create or mutate room metadata during unmount. The room is deleted
+  // only in the explicit end-call flow, and any leftover timestamp writes would
+  // reintroduce stale `lastUpdate` values after the branch was already removed.
 
   if (moderatorDisconnectTimeout.value) {
     clearTimeout(moderatorDisconnectTimeout.value)

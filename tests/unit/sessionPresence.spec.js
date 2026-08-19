@@ -173,7 +173,7 @@ describe('session presence helpers', () => {
 
     expect(normalized).toHaveLength(2)
     expect(normalized.find((member) => member.isModerator)?.email).toBe('marcgc21@gmail.com')
-    expect(normalized.find((member) => !member.isModerator)?.presenceStatus).toBe('connected')
+    expect(normalized.find((member) => !member.isModerator)?.presenceStatus).toBeNull()
     expect(normalized.every((member) => member.connected === true)).toBe(true)
   })
 
@@ -190,7 +190,7 @@ describe('session presence helpers', () => {
     })
 
     expect(normalized).toHaveLength(1)
-    expect(normalized[0].connected).toBe(true)
+    expect(normalized[0].connected).toBe(false)
     expect(normalized[0].presenceStatus).toBe('connected')
     expect(normalized[0].isModerator).toBe(true)
   })
@@ -212,10 +212,8 @@ describe('session presence helpers', () => {
     expect(Object.prototype.hasOwnProperty.call(normalized[0], 'status')).toBe(false)
   })
 
-  it('does not invent a presenceUpdatedAt when the RTDB field is missing', () => {
+  it('does not invent presence fields when the RTDB fields are absent', () => {
     const participant = {
-      connected: false,
-      presenceStatus: 'disconnected',
       joinedAt: 1712345678901,
       updatedAt: 1712345678902,
     }
@@ -223,6 +221,59 @@ describe('session presence helpers', () => {
     const normalized = normalizeRoomParticipantsMap({ user123: participant })
 
     expect(normalized).toHaveLength(1)
+    expect(normalized[0].presenceStatus).toBeNull()
+    expect(normalized[0].connected).toBeNull()
     expect(normalized[0].presenceUpdatedAt).toBeNull()
+  })
+
+  it('does not force other staff members to connected when the call object is created', () => {
+    const staff = [
+      { userDocId: 'staff-1', email: 'staff1@test.com', role: 'SUPPORT' },
+      {
+        userDocId: 'staff-2',
+        email: 'staff2@test.com',
+        role: 'FACILITATOR',
+        connected: true,
+        presenceStatus: 'connected',
+      },
+    ]
+
+    const entries = normalizeRoomParticipantsMap(
+      Object.fromEntries(
+        staff.map((member) => [member.userDocId, { ...member, joinedAt: Date.now() }]),
+      ),
+    )
+
+    expect(entries).toHaveLength(2)
+    expect(entries.find((member) => member.userDocId === 'staff-1')?.presenceStatus).toBeNull()
+    expect(entries.find((member) => member.userDocId === 'staff-2')?.presenceStatus).toBe('connected')
+    expect(entries.find((member) => member.userDocId === 'staff-1')?.connected).toBeNull()
+  })
+
+  it('does not copy stale presence fields from staff members into the call seed', () => {
+    const staffEntry = {
+      userDocId: 'staff-9',
+      email: 'staff9@test.com',
+      role: 'SUPPORT',
+      connected: true,
+      presenceStatus: 'connected',
+      presenceUpdatedAt: 123456,
+    }
+
+    const seeded = {
+      ...staffEntry,
+      userDocId: 'staff-9',
+      name: 'staff9',
+      joinedAt: Date.now(),
+      media: { cameraEnabled: true, microphoneEnabled: true },
+    }
+
+    delete seeded.connected
+    delete seeded.presenceStatus
+    delete seeded.presenceUpdatedAt
+
+    expect(seeded.connected).toBeUndefined()
+    expect(seeded.presenceStatus).toBeUndefined()
+    expect(seeded.presenceUpdatedAt).toBeUndefined()
   })
 })
