@@ -121,7 +121,7 @@
 
       <!-- Moderator Preview (before opening room) -->
       <v-col
-        v-if="caller && !callStarted && !isObservator && localStream"
+        v-if="caller && !roomOpen && !isObservator && localStream"
         cols="12"
       >
         <div
@@ -162,26 +162,6 @@
           </div>
         </div>
       </v-col>
-
-      <!-- Observator waiting message (before call starts) -->
-      <v-col
-        v-if="isObservator && !callStarted"
-        cols="12"
-        class="d-flex justify-center align-center"
-      >
-        <div class="observator-notice">
-          <v-icon size="64" color="primary" class="mb-4">mdi-eye</v-icon>
-          <h3 class="text-h5 mb-2">
-            {{ t('videoCall.session.observatorMode') }}
-          </h3>
-          <p class="text-body-1">
-            {{ t('videoCall.session.waitingForModeratorToStartSession') }}
-          </p>
-          <p class="text-body-2 text-grey mt-2">
-            {{ t('videoCall.session.observeAllFeedsNotice') }}
-          </p>
-        </div>
-      </v-col>
     </v-row>
 
     <!-- Participant/Observator Waiting State (only when not started) -->
@@ -210,185 +190,27 @@
       </v-col>
     </v-row>
 
-    <!-- Fixed Bottom Control Bar -->
-    <div class="bottom-control-bar">
-      <div class="control-bar-layout">
-        <!-- Left side - spacer -->
-        <div class="control-bar-left"></div>
-
-        <!-- Center - main controls -->
-        <div v-if="!isObservator" class="control-buttons-container">
-          <!-- Camera toggle button -->
-          <v-tooltip location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                :class="{
-                  'control-btn-disabled': !isCameraEnabled,
-                  'control-btn-enabled': isCameraEnabled,
-                }"
-                class="control-btn"
-                icon
-                size="large"
-                @click="toggleCamera"
-              >
-                <v-icon size="28">{{
-                  isCameraEnabled ? 'mdi-video' : 'mdi-video-off'
-                }}</v-icon>
-              </v-btn>
-            </template>
-            <span>{{
-              isCameraEnabled ? 'Turn off camera' : 'Turn on camera'
-            }}</span>
-          </v-tooltip>
-
-          <!-- Microphone toggle button -->
-          <v-tooltip location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                :class="{
-                  'control-btn-disabled': !isMicrophoneEnabled,
-                  'control-btn-enabled': isMicrophoneEnabled,
-                }"
-                class="control-btn"
-                icon
-                size="large"
-                @click="toggleMicrophone"
-              >
-                <v-icon size="28">{{
-                  isMicrophoneEnabled ? 'mdi-microphone' : 'mdi-microphone-off'
-                }}</v-icon>
-              </v-btn>
-            </template>
-            <span>{{
-              isMicrophoneEnabled ? 'Mute microphone' : 'Unmute microphone'
-            }}</span>
-          </v-tooltip>
-
-          <!-- Screen share button -->
-          <v-tooltip location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                :class="{
-                  'control-btn-active': isSharingScreen,
-                  'control-btn-enabled': !isSharingScreen,
-                }"
-                class="control-btn"
-                icon
-                size="large"
-                @click="handleScreenShare"
-              >
-                <v-icon size="28">{{
-                  isSharingScreen ? 'mdi-monitor-off' : 'mdi-monitor-screenshot'
-                }}</v-icon>
-              </v-btn>
-            </template>
-            <span>{{
-              isSharingScreen ? 'Stop sharing screen' : 'Share screen'
-            }}</span>
-          </v-tooltip>
-        </div>
-
-        <!-- Right side - panel toggles -->
-        <div class="control-bar-right">
-          <!-- Open Room button (for moderator) -->
-          <v-tooltip v-if="caller && !callStarted" location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                color="success"
-                class="control-btn control-btn-primary me-2"
-                size="large"
-                @click="startCall"
-              >
-                <v-icon start size="20">mdi-video-plus</v-icon>
-                Open Room
-              </v-btn>
-            </template>
-            <span>Start the video call session</span>
-          </v-tooltip>
-
-          <!-- End Call button (for moderator when call is active) -->
-          <v-tooltip v-if="caller && callStarted" location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                color="error"
-                class="control-btn control-btn-danger me-2"
-                size="large"
-                @click="endCall"
-              >
-                <v-icon start size="20">mdi-phone-hangup</v-icon>
-                End Call
-              </v-btn>
-            </template>
-            <span>End the video call session</span>
-          </v-tooltip>
-
-          <!-- Leave Call button (for participants and observers when call is active) -->
-          <v-tooltip
-            v-if="(isObservator || !caller) && callStarted"
-            location="top"
-          >
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                color="error"
-                class="control-btn control-btn-danger me-2"
-                size="large"
-                @click="endCall"
-              >
-                <v-icon start size="20">mdi-phone-hangup</v-icon>
-                Leave Call
-              </v-btn>
-            </template>
-            <span>Leave the video call session</span>
-          </v-tooltip>
-
-          <!-- Stepper menu button -->
-          <v-tooltip location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                :class="{
-                  'control-btn-active': showStepperPanel,
-                  'control-btn-enabled': !showStepperPanel,
-                }"
-                class="control-btn"
-                icon
-                size="large"
-                @click="toggleStepperPanel"
-              >
-                <v-icon size="28">mdi-format-list-numbered</v-icon>
-              </v-btn>
-            </template>
-            <span>{{ showStepperPanel ? 'Hide steps' : 'Show steps' }}</span>
-          </v-tooltip>
-
-          <!-- Side panel toggle button -->
-          <v-tooltip location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                :class="{
-                  'control-btn-active': showSidePanel,
-                  'control-btn-enabled': !showSidePanel,
-                }"
-                class="control-btn"
-                icon
-                size="large"
-                @click="toggleSidePanel"
-              >
-                <v-icon size="28">mdi-account-group</v-icon>
-              </v-btn>
-            </template>
-            <span>{{ showSidePanel ? 'Hide panel' : 'Show panel' }}</span>
-          </v-tooltip>
-        </div>
-      </div>
-    </div>
+    <VideoCallControlBar
+      :caller="caller"
+      :is-observator="isObservator"
+      :call-started="callStarted"
+      :is-camera-enabled="isCameraEnabled"
+      :is-microphone-enabled="isMicrophoneEnabled"
+      :is-sharing-screen="isSharingScreen"
+      :show-stepper-panel="showStepperPanel"
+      :show-side-panel="showSidePanel"
+      :notes-drawer-open="props.notesDrawerOpen"
+      :notes-count="props.notesCount"
+      :toggle-camera="toggleCamera"
+      :toggle-microphone="toggleMicrophone"
+      :toggle-screen-share="handleScreenShare"
+      :start-call="startCall"
+      :leave-call="leaveCall"
+      :end-call="endCall"
+      :toggle-stepper-panel="toggleStepperPanel"
+      :toggle-side-panel="toggleSidePanel"
+      :toggle-notes-drawer="props.toggleNotesDrawer"
+    />
 
     <VideoCallPanels
       :show-side-panel="showSidePanel"
@@ -477,9 +299,10 @@ import {
   onChildAdded,
 } from 'firebase/database'
 import { useStore } from 'vuex'
-import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
+import { ACCESS_LEVEL, normalizeAccessLevel } from '@/shared/utils/accessLevel'
 import { useVideoCallBoard } from '../composables/useVideoCallBoard'
 import VideoCallPanels from '../VideoCallPanels.vue'
+import VideoCallControlBar from '../VideoCallControlBar.vue'
 import { normalizeSessionMember } from '@/ux/UserTest/utils/sessionPresence'
 
 const props = defineProps({
@@ -494,6 +317,9 @@ const props = defineProps({
   localTestAnswer: Object,
   sessionStaff: Array,
   sessionParticipants: Array,
+  notesDrawerOpen: Boolean,
+  notesCount: Number,
+  toggleNotesDrawer: Function,
 })
 
 const emit = defineEmits([
@@ -545,9 +371,10 @@ watch(
 )
 
 // Computed
-const isObservator = computed(
-  () => props.isObservator || props.accessLevel === ACCESS_LEVEL.OBSERVATOR,
-)
+const isObservator = computed(() => {
+  if (props.isObservator) return true
+  return normalizeAccessLevel(props.accessLevel) === ACCESS_LEVEL.OBSERVATOR
+})
 const remoteStreams = computed(() => {
   const streams = {}
   for (const [userId, peer] of Object.entries(peers)) {
@@ -580,8 +407,7 @@ const screenShareFeeds = computed(() => {
   return feeds
 })
 const callStarted = computed(
-  () =>
-    roomReady.value && (Object.keys(peers).length > 0 || !!localStream.value),
+  () => roomReady.value && (roomOpen.value || Object.keys(peers).length > 0),
 )
 
 // Helper to get name
@@ -622,10 +448,11 @@ const currentStepperValue = computed(() => {
 // --- Initialization ---
 
 const roomReady = ref(false)
+const roomOpen = ref(false)
 
 // Watch for localVideo ref and ensure stream is attached
 watch([localVideo, localStream], ([videoEl, stream]) => {
-  if (videoEl && stream && !isObservator.value) {
+  if (videoEl && stream) {
     videoEl.srcObject = stream
   }
 })
@@ -674,14 +501,17 @@ onBeforeUnmount(() => {
 // --- Signaling & Mesh Logic ---
 
 const joinRoom = async () => {
-  // 1. Get Local Media (if not observator and don't have it yet)
-  if (!isObservator.value && !localStream.value) {
+  // 1. Get local media for every staff member and participant.
+  if (!localStream.value) {
     await initLocalMedia()
   }
   const isObserverMember = isObservator.value
-  const myMemberRef = isObserverMember
-    ? dbRef(database, `calls/${props.roomId}/staff/${props.user.id}`)
-    : dbRef(database, `calls/${props.roomId}/participants/${props.user.id}`)
+  const memberBranch =
+    props.isModerator || isObserverMember ? 'staff' : 'participants'
+  const myMemberRef = dbRef(
+    database,
+    `calls/${props.roomId}/${memberBranch}/${props.user.id}`,
+  )
 
   // Restore media settings from DB if available (persistence)
   const snapshot = await get(myMemberRef)
@@ -726,17 +556,13 @@ const joinRoom = async () => {
     await remove(
       dbRef(database, `calls/${props.roomId}/participants/${props.user.id}`),
     )
-    const moderatorStaffRef = dbRef(
-      database,
-      `calls/${props.roomId}/staff/${props.user.id}`,
-    )
-    await update(moderatorStaffRef, {
+    await update(myMemberRef, {
       ...memberPayload,
       role: 'FACILITATOR',
       isModerator: true,
     })
 
-    const moderatorDisconnect = onDisconnect(moderatorStaffRef)
+    const moderatorDisconnect = onDisconnect(myMemberRef)
     moderatorDisconnect.update({
       connected: false,
       presenceStatus: 'disconnected',
@@ -886,7 +712,7 @@ const sendSignal = async (targetUserId, payload) => {
 // Let's restart the listener part logic.
 // See `joinRoom` function for corrected logic below (I will use child_added there).
 
-const leaveRoom = () => {
+const leaveRoom = async () => {
   if (isSessionEnded.value) return
 
   // Stop media
@@ -898,21 +724,24 @@ const leaveRoom = () => {
   const now = Date.now()
 
   if (props.isModerator) {
-    remove(
+    await remove(
       dbRef(database, `calls/${props.roomId}/participants/${props.user.id}`),
     )
-    update(dbRef(database, `calls/${props.roomId}/staff/${props.user.id}`), {
-      connected: false,
-      presenceStatus: 'disconnected',
-      presenceUpdatedAt: now,
-      updatedAt: now,
-    })
+    await update(
+      dbRef(database, `calls/${props.roomId}/staff/${props.user.id}`),
+      {
+        connected: false,
+        presenceStatus: 'disconnected',
+        presenceUpdatedAt: now,
+        updatedAt: now,
+      },
+    )
   } else {
     const myMemberRef = isObservator.value
       ? dbRef(database, `calls/${props.roomId}/staff/${props.user.id}`)
       : dbRef(database, `calls/${props.roomId}/participants/${props.user.id}`)
 
-    update(myMemberRef, {
+    await update(myMemberRef, {
       connected: false,
       presenceStatus: 'disconnected',
       presenceUpdatedAt: now,
@@ -921,7 +750,9 @@ const leaveRoom = () => {
     })
   }
 
-  remove(dbRef(database, `calls/${props.roomId}/signals/${props.user.id}`)) // Clean my inbox
+  await remove(
+    dbRef(database, `calls/${props.roomId}/signals/${props.user.id}`),
+  ) // Clean my inbox
 }
 
 const initLocalMedia = async () => {
@@ -955,15 +786,14 @@ const createPeerConnection = (targetUserId, isInitiator) => {
     pendingCandidates: [],
   }
 
-  // Add local tracks ONLY if not an observator
-  // Observators receive-only to save bandwidth
-  if (!isObservator.value && localStream.value) {
+  // Publish local media so staff members can see each other.
+  if (localStream.value) {
     localStream.value.getTracks().forEach((track) => {
       pc.addTrack(track, localStream.value)
     })
   }
 
-  if (!isObservator.value && screenStream.value) {
+  if (screenStream.value) {
     const screenTrack = screenStream.value.getVideoTracks()[0]
     if (screenTrack) {
       peers[targetUserId].screenSender = pc.addTrack(
@@ -971,12 +801,6 @@ const createPeerConnection = (targetUserId, isInitiator) => {
         screenStream.value,
       )
     }
-  }
-
-  // If observator, set up receive-only transceivers
-  if (isObservator.value) {
-    pc.addTransceiver('video', { direction: 'recvonly' })
-    pc.addTransceiver('audio', { direction: 'recvonly' })
   }
 
   pc.ontrack = (event) => {
@@ -1208,8 +1032,9 @@ const buildParticipantItem = (remote, isSelf) => {
     isSelf: false,
     role,
     connected: !!peers[remote.userId],
-    hasCamera: role !== 'observator',
-    hasMicrophone: role !== 'observator',
+    hasCamera: participants.value[remote.userId]?.media?.cameraEnabled ?? true,
+    hasMicrophone:
+      participants.value[remote.userId]?.media?.microphoneEnabled ?? true,
   }
 }
 
@@ -1390,6 +1215,7 @@ const startCall = async () => {
     if (!localStream.value) {
       await initLocalMedia()
     }
+    roomOpen.value = true
     // Set flag first so others can join
     await update(dbRef(database, `rooms/${props.roomId}`), {
       showVideoCall: true,
@@ -1403,8 +1229,36 @@ const startCall = async () => {
 }
 const router = useRouter() // Ensure router is available
 
+const leaveCall = async () => {
+  roomOpen.value = false
+
+  if (localStream.value) {
+    localStream.value.getTracks().forEach((track) => track.stop())
+    localStream.value = null
+  }
+
+  if (screenStream.value) {
+    screenStream.value.getTracks().forEach((track) => track.stop())
+    screenStream.value = null
+  }
+
+  if (localPresenceDisconnect) {
+    await localPresenceDisconnect.cancel()
+    localPresenceDisconnect = null
+  }
+  if (moderatorPresenceDisconnect) {
+    await moderatorPresenceDisconnect.cancel()
+    moderatorPresenceDisconnect = null
+  }
+
+  await leaveRoom()
+  isSessionEnded.value = true
+  router.push('/admin')
+}
+
 const endCall = async () => {
   isSessionEnded.value = true
+  roomOpen.value = false
 
   if (localStream.value) {
     localStream.value.getTracks().forEach((track) => track.stop())

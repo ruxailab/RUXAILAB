@@ -1,5 +1,5 @@
 import { computed } from 'vue'
-import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
+import { ACCESS_LEVEL, normalizeAccessLevel } from '@/shared/utils/accessLevel'
 import { useVideoFocus } from './useVideoFocus'
 
 export function useVideoCallBoard({
@@ -18,20 +18,16 @@ export function useVideoCallBoard({
   const tiles = computed(() => {
     const list = []
 
-    if (!isObservator.value) {
-      list.push({
-        id: 'local-camera',
-        type: 'camera',
-        kind: 'local',
-        label: `${t('videoCall.session.yourVideo')} (${
-          user?.email?.split('@')[0] ?? ''
-        })`,
-        hasCamera: isCameraEnabled.value,
-        hasMicrophone: isMicrophoneEnabled.value,
-        muted: true,
-        ...(localStream?.value ? { stream: localStream.value } : {}),
-      })
-    }
+    list.push({
+      id: 'local-camera',
+      type: 'camera',
+      kind: 'local',
+      label: `${t('videoCall.session.yourVideo')} (${user?.email?.split('@')[0] ?? ''})`,
+      hasCamera: isCameraEnabled.value,
+      hasMicrophone: isMicrophoneEnabled.value,
+      muted: true,
+      ...(localStream?.value ? { stream: localStream.value } : {}),
+    })
 
     remoteEntries.value.forEach((remote) => {
       list.push(buildRemoteTile(remote))
@@ -61,9 +57,7 @@ export function useVideoCallBoard({
       screenShareFeeds.value.length === 0,
   )
 
-  const cameraCount = computed(
-    () => (isObservator.value ? 0 : 1) + remoteEntries.value.length,
-  )
+  const cameraCount = computed(() => 1 + remoteEntries.value.length)
 
   const cameraColumns = computed(() => {
     const count = cameraCount.value
@@ -88,11 +82,12 @@ export function useVideoCallBoard({
       list.push(entry)
     }
 
+    const normalizedUserAccessLevel = normalizeAccessLevel(user?.accessLevel)
     const localRole = isObservator.value
       ? 'observator'
-      : user?.accessLevel === ACCESS_LEVEL.ADMIN || user?.isModerator
+      : normalizedUserAccessLevel === ACCESS_LEVEL.ADMIN || user?.isModerator
         ? 'moderator'
-        : user?.accessLevel === ACCESS_LEVEL.OBSERVATOR
+        : normalizedUserAccessLevel === ACCESS_LEVEL.OBSERVATOR
           ? 'observator'
           : 'participant'
 
@@ -126,9 +121,11 @@ export function useVideoCallBoard({
             email: staffMember.email,
             role:
               staffMember.role ||
-              (staffMember.accessLevel === ACCESS_LEVEL.OBSERVATOR
+              (normalizeAccessLevel(staffMember.accessLevel) ===
+              ACCESS_LEVEL.OBSERVATOR
                 ? 'observator'
-                : staffMember.accessLevel === ACCESS_LEVEL.ADMIN
+                : normalizeAccessLevel(staffMember.accessLevel) ===
+                    ACCESS_LEVEL.ADMIN
                   ? 'moderator'
                   : 'participant'),
             connected: Boolean(staffMember.connected),

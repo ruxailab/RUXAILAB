@@ -2,11 +2,8 @@ import { ref, computed, nextTick, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Room, RoomEvent, Track, ConnectionState } from 'livekit-client'
 import { getLiveKitCredentials } from '../services/livekitTokenProvider'
-import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
-import {
-  roleFromAccessLevel,
-  VIDEO_CALL_ROLES,
-} from './videoCallRoles'
+import { ACCESS_LEVEL, normalizeAccessLevel } from '@/shared/utils/accessLevel'
+import { roleFromAccessLevel, VIDEO_CALL_ROLES } from './videoCallRoles'
 
 const MEDIA_DEVICE_ERROR_KEYS = {
   NotFoundError: 'mediaDeviceNotFound',
@@ -64,7 +61,7 @@ export function useLiveKitRoom({
   const isSharingScreen = ref(false)
 
   const isObservator = computed(
-    () => accessLevel.value === ACCESS_LEVEL.OBSERVATOR,
+    () => normalizeAccessLevel(accessLevel.value) === ACCESS_LEVEL.OBSERVATOR,
   )
 
   const callStarted = computed(
@@ -242,11 +239,7 @@ export function useLiveKitRoom({
   function handleParticipantConnected(participant) {
     participant.trackPublications.forEach((publication) => {
       if (publication.track) {
-        handleTrackSubscribed(
-          publication.track,
-          publication,
-          participant,
-        )
+        handleTrackSubscribed(publication.track, publication, participant)
       }
     })
     syncRemoteParticipants()
@@ -436,7 +429,8 @@ export function useLiveKitRoom({
     const enabled = !room.value.localParticipant.isScreenShareEnabled
 
     if (enabled && !navigator.mediaDevices?.getDisplayMedia) {
-      console.warn( // eslint-disable-line no-console
+      console.warn(
+        // eslint-disable-line no-console
         getMediaDevicesUnavailableMessage('screenShareDevice', t),
       )
       return
@@ -444,11 +438,9 @@ export function useLiveKitRoom({
 
     try {
       await room.value.localParticipant.setScreenShareEnabled(enabled)
-      isSharingScreen.value =
-        room.value.localParticipant.isScreenShareEnabled
+      isSharingScreen.value = room.value.localParticipant.isScreenShareEnabled
     } catch (error) {
-      isSharingScreen.value =
-        room.value.localParticipant.isScreenShareEnabled
+      isSharingScreen.value = room.value.localParticipant.isScreenShareEnabled
       logMediaDeviceError(error, 'screenShareDevice', t)
     }
   }

@@ -128,26 +128,6 @@
           </div>
         </div>
       </v-col>
-
-      <!-- Observator waiting message (before call starts) -->
-      <v-col
-        v-if="isObservator && !callStarted"
-        cols="12"
-        class="d-flex justify-center align-center"
-      >
-        <div class="observator-notice">
-          <v-icon size="64" color="primary" class="mb-4">mdi-eye</v-icon>
-          <h3 class="text-h5 mb-2">
-            {{ t('videoCall.session.observatorMode') }}
-          </h3>
-          <p class="text-body-1">
-            {{ t('videoCall.session.waitingForModeratorToStartSession') }}
-          </p>
-          <p class="text-body-2 text-grey mt-2">
-            {{ t('videoCall.session.observeAllFeedsNotice') }}
-          </p>
-        </div>
-      </v-col>
     </v-row>
 
     <!-- Participant/Observator Waiting State (only when not started) -->
@@ -176,186 +156,27 @@
       </v-col>
     </v-row>
 
-    <!-- Fixed Bottom Control Bar -->
-    <div class="bottom-control-bar">
-      <div class="control-bar-layout">
-        <!-- Left side - spacer -->
-        <div class="control-bar-left"></div>
-
-        <!-- Center - main controls -->
-        <div v-if="!isObservator" class="control-buttons-container">
-          <!-- Camera toggle button -->
-          <v-tooltip location="top">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                v-bind="tooltipProps"
-                :class="{
-                  'control-btn-disabled': !isCameraEnabled,
-                  'control-btn-enabled': isCameraEnabled,
-                }"
-                class="control-btn"
-                icon
-                size="large"
-                @click="toggleCamera"
-              >
-                <v-icon size="28">{{
-                  isCameraEnabled ? 'mdi-video' : 'mdi-video-off'
-                }}</v-icon>
-              </v-btn>
-            </template>
-            <span>{{
-              isCameraEnabled ? 'Turn off camera' : 'Turn on camera'
-            }}</span>
-          </v-tooltip>
-
-          <!-- Microphone toggle button -->
-          <v-tooltip location="top">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                v-bind="tooltipProps"
-                :class="{
-                  'control-btn-disabled': !isMicrophoneEnabled,
-                  'control-btn-enabled': isMicrophoneEnabled,
-                }"
-                class="control-btn"
-                icon
-                size="large"
-                @click="toggleMicrophone"
-              >
-                <v-icon size="28">{{
-                  isMicrophoneEnabled ? 'mdi-microphone' : 'mdi-microphone-off'
-                }}</v-icon>
-              </v-btn>
-            </template>
-            <span>{{
-              isMicrophoneEnabled ? 'Mute microphone' : 'Unmute microphone'
-            }}</span>
-          </v-tooltip>
-
-          <!-- Screen share button -->
-          <v-tooltip location="top">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                v-bind="tooltipProps"
-                :class="{
-                  'control-btn-active': isSharingScreen,
-                  'control-btn-enabled': !isSharingScreen,
-                }"
-                class="control-btn"
-                icon
-                size="large"
-                @click="toggleScreenShare"
-              >
-                <v-icon size="28">{{
-                  isSharingScreen ? 'mdi-monitor-off' : 'mdi-monitor-screenshot'
-                }}</v-icon>
-              </v-btn>
-            </template>
-            <span>{{
-              isSharingScreen ? 'Stop sharing screen' : 'Share screen'
-            }}</span>
-          </v-tooltip>
-        </div>
-
-        <!-- Right side - panel toggles -->
-        <div class="control-bar-right">
-          <!-- Open Room button (for moderator) -->
-          <v-tooltip v-if="caller && !callStarted" location="top">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                v-bind="tooltipProps"
-                color="success"
-                class="control-btn control-btn-primary me-2"
-                size="large"
-                :loading="isConnecting"
-                @click="startCall"
-              >
-                <v-icon start size="20">mdi-video-plus</v-icon>
-                Open Room
-              </v-btn>
-            </template>
-            <span>Start the video call session</span>
-          </v-tooltip>
-
-          <!-- End Call button (for moderator when call is active) -->
-          <v-tooltip v-if="caller && callStarted" location="top">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                v-bind="tooltipProps"
-                color="error"
-                class="control-btn control-btn-danger me-2"
-                size="large"
-                @click="endCall"
-              >
-                <v-icon start size="20">mdi-phone-hangup</v-icon>
-                End Call
-              </v-btn>
-            </template>
-            <span>End the video call session</span>
-          </v-tooltip>
-
-          <!-- Leave Call button (for participants and observers when call is active) -->
-          <v-tooltip
-            v-if="(isObservator || !caller) && callStarted"
-            location="top"
-          >
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                v-bind="tooltipProps"
-                color="error"
-                class="control-btn control-btn-danger me-2"
-                size="large"
-                @click="endCall"
-              >
-                <v-icon start size="20">mdi-phone-hangup</v-icon>
-                Leave Call
-              </v-btn>
-            </template>
-            <span>Leave the video call session</span>
-          </v-tooltip>
-
-          <!-- Stepper menu button -->
-          <v-tooltip location="top">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                v-bind="tooltipProps"
-                :class="{
-                  'control-btn-active': showStepperPanel,
-                  'control-btn-enabled': !showStepperPanel,
-                }"
-                class="control-btn"
-                icon
-                size="large"
-                @click="toggleStepperPanel"
-              >
-                <v-icon size="28">mdi-format-list-numbered</v-icon>
-              </v-btn>
-            </template>
-            <span>{{ showStepperPanel ? 'Hide steps' : 'Show steps' }}</span>
-          </v-tooltip>
-
-          <!-- Side panel toggle button -->
-          <v-tooltip location="top">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                v-bind="tooltipProps"
-                :class="{
-                  'control-btn-active': showSidePanel,
-                  'control-btn-enabled': !showSidePanel,
-                }"
-                class="control-btn"
-                icon
-                size="large"
-                @click="toggleSidePanel"
-              >
-                <v-icon size="28">mdi-account-group</v-icon>
-              </v-btn>
-            </template>
-            <span>{{ showSidePanel ? 'Hide panel' : 'Show panel' }}</span>
-          </v-tooltip>
-        </div>
-      </div>
-    </div>
+    <VideoCallControlBar
+      :caller="caller"
+      :is-observator="isObservator"
+      :call-started="callStarted"
+      :is-camera-enabled="isCameraEnabled"
+      :is-microphone-enabled="isMicrophoneEnabled"
+      :is-sharing-screen="isSharingScreen"
+      :show-stepper-panel="showStepperPanel"
+      :show-side-panel="showSidePanel"
+      :notes-drawer-open="props.notesDrawerOpen"
+      :notes-count="props.notesCount"
+      :toggle-camera="toggleCamera"
+      :toggle-microphone="toggleMicrophone"
+      :toggle-screen-share="toggleScreenShare"
+      :start-call="startCall"
+      :leave-call="leaveCall"
+      :end-call="endCall"
+      :toggle-stepper-panel="toggleStepperPanel"
+      :toggle-side-panel="toggleSidePanel"
+      :toggle-notes-drawer="props.toggleNotesDrawer"
+    />
 
     <VideoCallPanels
       :show-side-panel="showSidePanel"
@@ -398,6 +219,7 @@ import { ref as dbRef, get, onValue, update, remove } from 'firebase/database'
 import { useLiveKitRoom } from '../composables/useLiveKitRoom'
 import { useVideoFocus } from '../composables/useVideoFocus'
 import VideoCallPanels from '../VideoCallPanels.vue'
+import VideoCallControlBar from '../VideoCallControlBar.vue'
 import { normalizeSessionMember } from '@/ux/UserTest/utils/sessionPresence'
 
 const props = defineProps({
@@ -411,6 +233,9 @@ const props = defineProps({
   localTestAnswer: Object,
   sessionStaff: Array,
   sessionParticipants: Array,
+  notesDrawerOpen: Boolean,
+  notesCount: Number,
+  toggleNotesDrawer: Function,
 })
 
 const emit = defineEmits([
@@ -748,6 +573,32 @@ async function startCall() {
   } catch {
     // Failed to open room
   }
+}
+
+async function leaveCall() {
+  if (room.value?.localParticipant) {
+    const localParticipant = room.value.localParticipant
+
+    if (localParticipant.isCameraEnabled) {
+      await localParticipant.setCameraEnabled(false)
+    }
+    if (localParticipant.isMicrophoneEnabled) {
+      await localParticipant.setMicrophoneEnabled(false)
+    }
+
+    for (const publication of localParticipant.videoTrackPublications.values()) {
+      publication.track?.stop()
+    }
+    for (const publication of localParticipant.audioTrackPublications.values()) {
+      publication.track?.stop()
+    }
+    for (const publication of localParticipant.screenShareTrackPublications.values()) {
+      publication.track?.stop()
+    }
+  }
+
+  await disconnect()
+  router.push('/admin')
 }
 
 async function endCall() {

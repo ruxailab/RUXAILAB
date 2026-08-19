@@ -35,6 +35,9 @@ const props = defineProps({
   localTestAnswer: Object,
   sessionStaff: Array,
   sessionParticipants: Array,
+  notesDrawerOpen: Boolean,
+  notesCount: Number,
+  toggleNotesDrawer: Function,
 })
 
 const emit = defineEmits([

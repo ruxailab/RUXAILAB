@@ -6,8 +6,20 @@ import {
   getPresenceStateFromMember,
   normalizeSessionMember,
 } from '@/ux/UserTest/utils/sessionPresence'
+import {
+  ACCESS_LEVEL,
+  normalizeAccessLevel,
+  isObserverAccessLevel,
+} from '@/shared/utils/accessLevel'
 
 describe('session presence helpers', () => {
+  it('normalizes string observer access levels and role names used by the RTDB', () => {
+    expect(normalizeAccessLevel('OBSERVATOR')).toBe(ACCESS_LEVEL.OBSERVATOR)
+    expect(normalizeAccessLevel('OBSERVER')).toBe(ACCESS_LEVEL.OBSERVATOR)
+    expect(isObserverAccessLevel('OBSERVER')).toBe(true)
+    expect(isObserverAccessLevel(ACCESS_LEVEL.OBSERVATOR)).toBe(true)
+  })
+
   it('defaults a participant without explicit presence to waiting instead of connected', () => {
     expect(normalizePresenceStatus({ email: 'p1@test.com' })).toBe('waiting')
   })
