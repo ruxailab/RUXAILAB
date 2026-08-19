@@ -128,7 +128,10 @@ export const sendEmail = functions.onCall({
           .replace(/{{title}}/g, content.data.title || '')
           .replace(/{{message}}/g, content.data.message || '')
           .replace(/{{author}}/g, content.data.author || '')
-          .replace(/{{actionText}}/g, content.data.actionText || '')
+          .replace(
+            /{{actionText}}/g,
+            content.data.actionText || 'Go to RUXAILAB',
+          )
           .replace(
             /{{actionLink}}/g,
             content.data.actionLink || process.env.SITE_URL,

@@ -3466,7 +3466,9 @@
       "cooperatorInviteTitle": "You've been invited to a session as staff",
       "cooperatorInviteMessage": "You've been invited to collaborate as staff in a study session",
       "updateTitle": "Session details changed",
-      "updateMessage": "The details of your session have been updated"
+      "updateMessage": "The details of your session have been updated",
+      "messageTitle": "New message from the session organizer",
+      "messageDescription": "The session organizer has sent you a new message."
     },
     "headers": {
       "goToSession": "Go to session",

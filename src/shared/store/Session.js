@@ -316,9 +316,12 @@ export default {
         )
 
         const user = getters.user
-        const author = user?.email || ''
+        const author = `${user?.username || ''} ${user?.email || ''}`.trim()
 
         const emailController = new EmailController()
+
+        const title = `${t('Sessions.notify.messageTitle')} · ${session.title}`
+        const description = t('Sessions.notify.messageDescription')
 
         await Promise.all(
           members.map(async (member) => {
@@ -329,7 +332,7 @@ export default {
                 dispatch('addNotification', {
                   userId: member.userDocId,
                   notification: new Notification({
-                    title: session.title || 'Session message',
+                    title,
                     description: payload.message,
                     author,
                     redirectsTo: null,
@@ -345,14 +348,14 @@ export default {
               promises.push(
                 emailController.send({
                   to: member.email,
-                  subject: session.title || 'Session message',
+                  subject: title,
                   attachments: [],
                   template: 'message',
                   data: {
+                    title,
                     message: payload.message,
-                    sessionTitle: session.title,
-                    sessionId: session.id,
-                    studyId: payload.studyId,
+                    description,
+                    author,
                   },
                 }),
               )

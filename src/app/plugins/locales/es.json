@@ -3393,7 +3393,9 @@
       "cooperatorInviteTitle": "Has sido invitado/a a una sesión como parte del equipo",
       "cooperatorInviteMessage": "Has sido invitado/a a colaborar como parte del equipo en una sesión del estudio",
       "updateTitle": "Los detalles de la sesión han cambiado",
-      "updateMessage": "Los detalles de tu sesión han sido actualizados"
+      "updateMessage": "Los detalles de tu sesión han sido actualizados",
+      "messageTitle": "Nuevo mensaje del organizador de la sesión",
+      "messageDescription": "El organizador de la sesión te ha enviado un nuevo mensaje."
     },
     "headers": {
       "goToSession": "Ir a la sesión",

@@ -793,5 +793,64 @@ export default {
         commit('setLoading', false)
       }
     },
+
+    async sendMemberMessage(
+      { commit, dispatch },
+      { user, study, title, content, author },
+    ) {
+      commit('setLoading', true)
+
+      try {
+        if (!user?.userDocId) {
+          throw new Error('User is not registered')
+        }
+
+        const messageAuthor = author || ''
+
+        const notification = new Notification({
+          title,
+          description: content,
+          author: messageAuthor,
+          redirectsTo: null,
+          testId: study?.id || null,
+          type: 'Message',
+          read: false,
+        })
+
+        await dispatch('addNotification', {
+          userId: user.userDocId,
+          notification,
+        })
+
+        if (user.email) {
+          const emailController = new EmailController()
+
+          await emailController.send({
+            to: user.email,
+            subject: `New message about "${study?.testTitle || 'your study'}"`,
+            attachments: [],
+            template: 'message',
+            data: {
+              title,
+              message: content,
+              author: messageAuthor,
+              actionText: 'Open RUXAILAB',
+              actionLink: process.env.SITE_URL,
+            },
+          })
+        }
+
+        return true
+      } catch (error) {
+        commit('setError', {
+          errorCode: 'cooperatorMessageError',
+          message: error,
+        })
+
+        throw error
+      } finally {
+        commit('setLoading', false)
+      }
+    },
   },
 }
