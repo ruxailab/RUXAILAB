@@ -159,10 +159,12 @@ const goToNotificationRedirect = async (notification) => {
   if (!notification) return
 
   let redirectTo = notification.redirectsTo
+  const inviteToken =
+    notification.inviteToken ?? localStorage.getItem('pendingInviteToken')
 
-  if (notification.type === 'Collaboration') {
+  if (notification.type === 'Collaboration' && inviteToken) {
     const result = await store.dispatch('loadInvite', {
-      token: notification.inviteToken,
+      token: inviteToken,
     })
 
     if (result != null) {
