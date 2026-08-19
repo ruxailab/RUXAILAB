@@ -808,8 +808,8 @@ export default {
         const messageAuthor = author || ''
 
         const notification = new Notification({
-          title,
-          description: content,
+          title: `New message about "${study?.testTitle || 'your study'}"`,
+          description: `${title} - ${content}`,
           author: messageAuthor,
           redirectsTo: null,
           testId: study?.id || null,
