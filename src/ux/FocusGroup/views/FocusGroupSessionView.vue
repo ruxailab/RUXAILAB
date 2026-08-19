@@ -107,8 +107,15 @@
           />
 
           <div class="fg-stage-body">
+            <StimulusStage
+              v-if="stageMode === 'stimulus'"
+              class="fg-fill"
+              :stimulus="resolvedStimulus"
+              :can-clear="isFacilitator"
+              @clear="onClearStimulus"
+            />
             <SessionVideoStage
-              v-if="videoEnabled"
+              v-else-if="stageMode === 'video'"
               class="fg-fill"
               :remote-participants="remoteParticipants"
               :screen-share-feeds="screenShareFeeds"
@@ -373,6 +380,16 @@
             </p>
           </div>
 
+          <div v-else-if="panelTab === 'stimuli'" class="fg-panel-scroll">
+            <StimulusPanel
+              :stimuli="stimuli"
+              :current-topic-id="currentTopicId"
+              :presented-stimulus-id="currentStimulus?.stimulusId ?? null"
+              @present="onPresentStimulus"
+              @clear="onClearStimulus"
+            />
+          </div>
+
           <div v-else-if="panelTab === 'notes'" class="fg-fill fg-notes">
             <ObservatorNotes
               v-model="observerNotes"
@@ -401,6 +418,8 @@ import SessionVideoStage from '@/ux/FocusGroup/components/session/SessionVideoSt
 import TopicPanel from '@/ux/FocusGroup/components/session/TopicPanel.vue'
 import SessionTimer from '@/ux/FocusGroup/components/session/SessionTimer.vue'
 import CurrentQuestion from '@/ux/FocusGroup/components/session/CurrentQuestion.vue'
+import StimulusPanel from '@/ux/FocusGroup/components/session/StimulusPanel.vue'
+import StimulusStage from '@/ux/FocusGroup/components/session/StimulusStage.vue'
 import TopicDiscussion from '@/ux/FocusGroup/components/session/TopicDiscussion.vue'
 import ParticipantList from '@/ux/FocusGroup/components/session/ParticipantList.vue'
 import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
@@ -427,6 +446,7 @@ const {
   currentPrompt,
   notes,
   timer,
+  currentStimulus,
   loaded,
   isLive,
   isEnded,
@@ -438,6 +458,8 @@ const {
   recordConsent,
   askPrompt,
   clearPrompt,
+  presentStimulus,
+  clearStimulus,
   saveNotes,
   playTimer,
   pauseTimer,
@@ -482,6 +504,31 @@ const currentTopic = computed(
   () => discussionGuide.value[currentTopicIndex.value] ?? null,
 )
 const currentTopicId = computed(() => currentTopic.value?.id ?? null)
+
+// --- Stimuli ---
+const stimuli = computed(() =>
+  Array.isArray(test.value?.stimuli) ? test.value.stimuli : [],
+)
+// The client resolves the presented stimulus locally: RTDB only syncs the id.
+const resolvedStimulus = computed(() => {
+  const stimulusId = currentStimulus.value?.stimulusId
+  if (!stimulusId) return null
+  return stimuli.value.find((item) => item.id === stimulusId) ?? null
+})
+
+// `test.stimuli` is fetched once on mount, not live-synced. A stimulus added
+// to the library after a participant/observer already joined the session is
+// invisible to them until something refreshes the study — so a presented id
+// that isn't resolvable locally means the library is stale, not that nothing
+// was presented. Re-fetch once to pick it up.
+watch(
+  () => currentStimulus.value?.stimulusId,
+  (stimulusId) => {
+    if (!stimulusId) return
+    const known = stimuli.value.some((item) => item.id === stimulusId)
+    if (!known) store.dispatch('getStudy', { id: studyId })
+  },
+)
 
 // The active question shown to everyone, scoped to the current topic so a stale
 // prompt from a previous topic never leaks onto the next one.
@@ -582,6 +629,15 @@ const videoEnabled = computed(
   () => sessionConfig.value.enableVideoCall === true,
 )
 
+// A presented stimulus takes over the stage from the video call or discussion,
+// the same way a screen share would — everyone should be looking at the same
+// thing. Camera tiles simply hide while a stimulus is up (no PiP yet).
+const stageMode = computed(() => {
+  if (resolvedStimulus.value) return 'stimulus'
+  if (videoEnabled.value) return 'video'
+  return 'discussion'
+})
+
 // Side-panel tabs, in reading order: the facilitator's guide, the discussion
 // (a tab only when video owns the stage, otherwise the discussion IS the
 // stage), then the people roster.
@@ -592,6 +648,12 @@ const panelTabs = computed(() => {
       key: 'guide',
       icon: 'mdi-script-text-outline',
       label: 'focusGroup.session.guide',
+    })
+  if (isFacilitator.value && stimuli.value.length > 0)
+    tabs.push({
+      key: 'stimuli',
+      icon: 'mdi-image-multiple-outline',
+      label: 'focusGroup.session.stimuli',
     })
   if (videoEnabled.value)
     tabs.push({
@@ -794,6 +856,11 @@ const onAsk = (prompt) => {
   askPrompt({ text: prompt.trim(), topicId: currentTopicId.value })
 }
 const onClearPrompt = () => clearPrompt()
+
+// Facilitator presents a stimulus to everyone (or stops presenting).
+const onPresentStimulus = (stimulusId) =>
+  presentStimulus({ stimulusId, topicId: currentTopicId.value })
+const onClearStimulus = () => clearStimulus()
 
 // --- Observer notes (reuses the moderated ObservatorNotes tool) ---
 const observerNotes = ref([])
