@@ -228,8 +228,7 @@ const hasTranscriptionData = computed(
     Boolean(props.hasAudioRecord) ||
     Boolean(props.taskAnswer?.audioRecordURL) ||
     Boolean(props.taskAnswer?.moderatorAudioURL) ||
-    Boolean(props.taskAnswer?.latestTranscriptionDocId) ||
-    Number(props.taskAnswer?.transcriptionsCount) > 0,
+    Boolean(props.taskAnswer?.latestTranscriptionDocId),
 )
 
 const resolvedTaskId = computed(() => {

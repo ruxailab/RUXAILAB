@@ -246,10 +246,9 @@ const userOptions = computed(() => {
 
 const taskOptions = computed(() => {
   const list = tasksForSelectedUser.value || [] // [ [key, task], ... ]
-  return list.map(([key, task]) => ({
+  return list.map(([key]) => ({
     value: String(key),
     label: `Task ${key}`,
-    subtitle: `${task?.transcriptionsCount ?? 0} runs`,
   }))
 })
 

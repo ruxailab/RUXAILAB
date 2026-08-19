@@ -239,7 +239,6 @@ async function transcribeSession() {
       userDocId: props.userDocId,
       taskId: String(props.taskId),
       latestId: result.id,
-      inc: 1,
     })
 
     snackbar.value = {

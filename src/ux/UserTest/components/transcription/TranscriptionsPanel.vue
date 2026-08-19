@@ -201,17 +201,13 @@ async function confirmDelete() {
     // refetch to get the new list
     await fetchSelectedTaskTranscriptions()
 
-    // recompute meta from refreshed list
-    const newCount = transcriptionsArray.value.length
-    const newLatestId = transcriptionsArray.value[0]?.id ?? null // we already sort desc in controller
+    const newLatestId = transcriptionsArray.value[0]?.id ?? null
 
-    // update task meta on the Answer doc
     await answerController.setTaskTranscriptionMeta({
       answersDocId: props.answersDocId,
       userDocId: props.userDocId,
       taskId: String(props.taskId),
       latestTranscriptionDocId: newLatestId,
-      transcriptionsCount: newCount,
     })
   } catch {
   } finally {

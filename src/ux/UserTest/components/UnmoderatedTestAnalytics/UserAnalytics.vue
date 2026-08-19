@@ -840,9 +840,7 @@ const getTaskRecordings = (taskAnswer, taskDefinition) => {
       key: 'transcript',
       label: 'Transcript',
       icon: 'mdi-text-to-speech',
-      active:
-        !!taskAnswer?.latestTranscriptionDocId ||
-        Number(taskAnswer?.transcriptionsCount) > 0,
+      active: !!taskAnswer?.latestTranscriptionDocId,
     },
   ]
 

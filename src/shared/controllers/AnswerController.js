@@ -10,8 +10,6 @@ const COLLECTION = 'answers'
 
 const userController = new UserController()
 
-import { increment } from 'firebase/firestore'
-
 export default class AnswerController extends Controller {
   async getAnswerById(payload) {
     const res = await super.readOne(COLLECTION, payload)
@@ -116,13 +114,11 @@ export default class AnswerController extends Controller {
     userDocId,
     taskId,
     latestId,
-    inc = 1,
   }) {
     const base = `taskAnswers.${userDocId}.tasks.${taskId}`
 
     const update = {
       [`${base}.latestTranscriptionDocId`]: latestId,
-      [`${base}.transcriptionsCount`]: increment(inc),
     }
     return super.update(COLLECTION, answersDocId, update)
   }
@@ -132,13 +128,11 @@ export default class AnswerController extends Controller {
     userDocId,
     taskId,
     latestTranscriptionDocId,
-    transcriptionsCount,
   }) {
     const base = `taskAnswers.${userDocId}.tasks.${taskId}`
 
     const update = {
       [`${base}.latestTranscriptionDocId`]: latestTranscriptionDocId,
-      [`${base}.transcriptionsCount`]: transcriptionsCount,
     }
     return super.update(COLLECTION, answersDocId, update)
   }
