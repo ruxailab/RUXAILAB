@@ -139,7 +139,10 @@ export const sendEmail = functions.onCall({
     }
 
     const mail = {
-      from: process.env.SMTP_USER || 'no-reply@ruxailab.com',
+      from: {
+        name: 'RUXAILAB',
+        address: process.env.SMTP_USER || 'no-reply@ruxailab.com',
+      },
       to: content.to,
       subject: content.subject,
       html: htmlTemplate,
