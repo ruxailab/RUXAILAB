@@ -226,6 +226,21 @@ describe('session presence helpers', () => {
     expect(normalized[0].presenceUpdatedAt).toBeNull()
   })
 
+  it('defaults absent staff presence to disconnected instead of inventing a connected state', () => {
+    const staffMember = normalizeSessionMember(
+      { userDocId: 'staff-9', email: 'staff9@test.com', role: 'OBSERVER' },
+      'staff',
+    )
+
+    expect(staffMember).toMatchObject({
+      role: 'observator',
+      connected: false,
+      presenceStatus: 'disconnected',
+      isStaff: true,
+      presenceUpdatedAt: null,
+    })
+  })
+
   it('does not force other staff members to connected when the call object is created', () => {
     const staff = [
       { userDocId: 'staff-1', email: 'staff1@test.com', role: 'SUPPORT' },

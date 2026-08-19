@@ -750,7 +750,11 @@ const normalizeSessionMember = (member, fallbackType = 'participant') => {
   const memberId = member.userDocId || member.id || member.email
   if (!memberId) return null
 
-  const presenceStatus = member.presenceStatus ?? member.status ?? null
+  const isStaffMember = fallbackType === 'staff'
+  const presenceStatus =
+    member.presenceStatus ??
+    member.status ??
+    (isStaffMember ? 'disconnected' : null)
 
   return {
     id: memberId,
@@ -762,10 +766,10 @@ const normalizeSessionMember = (member, fallbackType = 'participant') => {
       member.email?.split('@')[0] ||
       fallbackType,
     role: normalizeSessionRole(member.role || member.accessLevel),
-    connected: member.connected ?? null,
+    connected: member.connected ?? (isStaffMember ? false : null),
     presenceStatus,
     presenceUpdatedAt: member.presenceUpdatedAt ?? null,
-    isStaff: fallbackType === 'staff',
+    isStaff: isStaffMember,
     accessLevel: member.accessLevel ?? member.role,
   }
 }

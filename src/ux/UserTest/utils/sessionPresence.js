@@ -179,7 +179,11 @@ export const normalizeSessionMember = (
   const memberId = member.userDocId || member.id || member.email
   if (!memberId) return null
 
-  const presenceStatus = member.presenceStatus ?? member.status ?? null
+  const isStaffMember = fallbackType === 'staff'
+  const presenceStatus =
+    member.presenceStatus ??
+    member.status ??
+    (isStaffMember ? SESSION_PRESENCE_STATUS.DISCONNECTED : null)
   const role = getCanonicalRole(member, fallbackType)
 
   return {
@@ -200,9 +204,9 @@ export const normalizeSessionMember = (
         : role === 'observator'
           ? 'OBSERVATOR'
           : 5),
-    connected: member.connected ?? null,
+    connected: member.connected ?? (isStaffMember ? false : null),
     presenceStatus,
-    isStaff: fallbackType === 'staff',
+    isStaff: isStaffMember,
     isModerator: role === 'moderator',
     presenceUpdatedAt: member.presenceUpdatedAt ?? null,
   }

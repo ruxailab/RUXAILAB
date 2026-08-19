@@ -433,11 +433,12 @@ const safeParticipantList = computed(() =>
 const getPresenceState = (member) => {
   const rawStatus =
     member?.presenceStatus ??
+    member?.status ??
     (member?.connected === true
       ? 'connected'
       : member?.connected === false
         ? 'disconnected'
-        : 'waiting')
+        : 'disconnected')
 
   const normalized = String(rawStatus).trim().toLowerCase()
 

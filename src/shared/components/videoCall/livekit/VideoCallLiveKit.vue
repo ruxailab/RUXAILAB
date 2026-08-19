@@ -294,8 +294,11 @@
             <span>End the video call session</span>
           </v-tooltip>
 
-          <!-- End Call button (for participant when call is active) -->
-          <v-tooltip v-if="!caller && callStarted" location="top">
+          <!-- Leave Call button (for participants and observers when call is active) -->
+          <v-tooltip
+            v-if="(isObservator || !caller) && callStarted"
+            location="top"
+          >
             <template #activator="{ props: tooltipProps }">
               <v-btn
                 v-bind="tooltipProps"
@@ -395,6 +398,7 @@ import { ref as dbRef, get, onValue, update, remove } from 'firebase/database'
 import { useLiveKitRoom } from '../composables/useLiveKitRoom'
 import { useVideoFocus } from '../composables/useVideoFocus'
 import VideoCallPanels from '../VideoCallPanels.vue'
+import { normalizeSessionMember } from '@/ux/UserTest/utils/sessionPresence'
 
 const props = defineProps({
   roomId: String,
@@ -522,30 +526,15 @@ const staffParticipants = computed(() => {
     ? props.sessionStaff
     : props.test?.cooperators || []
 
-  return staffEntries.map((member) => {
-    const presenceStatus = member.presenceStatus ?? member.status ?? null
-
-    const role =
-      member.role === 'observator' ||
-      member.accessLevel === ACCESS_LEVEL.OBSERVATOR
-        ? 'observator'
-        : member.role === 'moderator' ||
-            member.accessLevel === ACCESS_LEVEL.ADMIN
-          ? 'moderator'
-          : 'participant'
-
-    return {
+  return staffEntries
+    .map((member) => normalizeSessionMember(member, 'staff'))
+    .filter(Boolean)
+    .map((member) => ({
       ...member,
-      id: member.userDocId || member.id || member.email,
-      role,
-      connected: member.connected ?? null,
-      presenceStatus,
-      presenceUpdatedAt: member.presenceUpdatedAt ?? null,
       hasCamera: member.hasCamera ?? true,
       hasMicrophone: member.hasMicrophone ?? true,
       accessLevel: member.accessLevel ?? member.role,
-    }
-  })
+    }))
 })
 
 const normalizeMemberKeys = (member) => {
@@ -586,28 +575,23 @@ const panelParticipantList = computed(() => {
     : []) {
     if (!member) continue
 
-    const memberId =
-      member.userDocId || member.id || member.email || member.name
+    const normalized = normalizeSessionMember(member, 'participant')
+    if (!normalized) continue
+
+    const memberId = normalized.userDocId || normalized.id || normalized.email
     if (!memberId) continue
 
     const memberKey = String(memberId).trim().toLowerCase()
     if (!memberKey || seen.has(memberKey)) continue
 
     seen.add(memberKey)
-    const presenceStatus = member.presenceStatus ?? member.status ?? null
-
     dedupedList.push({
-      ...member,
-      id: member.userDocId || member.id || member.email || member.name,
-      role: member.role || 'participant',
-      connected: member.connected ?? null,
-      presenceStatus,
-      presenceUpdatedAt: member.presenceUpdatedAt ?? null,
+      ...normalized,
       isSelf:
-        (member.userDocId || member.id || member.email) ===
+        (normalized.userDocId || normalized.id || normalized.email) ===
         (props.user?.id || props.user?.email),
-      hasCamera: member.hasCamera ?? true,
-      hasMicrophone: member.hasMicrophone ?? true,
+      hasCamera: normalized.hasCamera ?? true,
+      hasMicrophone: normalized.hasMicrophone ?? true,
     })
   }
 

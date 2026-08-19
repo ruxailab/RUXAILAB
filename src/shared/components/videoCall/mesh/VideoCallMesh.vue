@@ -327,8 +327,11 @@
             <span>End the video call session</span>
           </v-tooltip>
 
-          <!-- End Call button (for participant when call is active) -->
-          <v-tooltip v-if="!caller && callStarted" location="top">
+          <!-- Leave Call button (for participants and observers when call is active) -->
+          <v-tooltip
+            v-if="(isObservator || !caller) && callStarted"
+            location="top"
+          >
             <template #activator="{ props }">
               <v-btn
                 v-bind="props"
@@ -477,6 +480,7 @@ import { useStore } from 'vuex'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import { useVideoCallBoard } from '../composables/useVideoCallBoard'
 import VideoCallPanels from '../VideoCallPanels.vue'
+import { normalizeSessionMember } from '@/ux/UserTest/utils/sessionPresence'
 
 const props = defineProps({
   roomId: String,
@@ -674,14 +678,13 @@ const joinRoom = async () => {
   if (!isObservator.value && !localStream.value) {
     await initLocalMedia()
   }
-  // 2. Register self in participants list
-  const myRef = dbRef(
-    database,
-    `calls/${props.roomId}/participants/${props.user.id}`,
-  )
+  const isObserverMember = isObservator.value
+  const myMemberRef = isObserverMember
+    ? dbRef(database, `calls/${props.roomId}/staff/${props.user.id}`)
+    : dbRef(database, `calls/${props.roomId}/participants/${props.user.id}`)
 
   // Restore media settings from DB if available (persistence)
-  const snapshot = await get(myRef)
+  const snapshot = await get(myMemberRef)
   const existingData = snapshot.val()
   if (existingData && existingData.media) {
     isCameraEnabled.value = existingData.media.cameraEnabled
@@ -699,9 +702,14 @@ const joinRoom = async () => {
 
   const presenceNow = Date.now()
 
-  const participantPayload = {
+  const memberPayload = {
     email: props.user.email,
     name: props.user.email?.split('@')[0],
+    role: props.isModerator
+      ? 'FACILITATOR'
+      : isObserverMember
+        ? 'OBSERVER'
+        : 'PARTICIPANT',
     joinedAt: presenceNow,
     connected: true,
     presenceStatus: 'connected',
@@ -714,30 +722,18 @@ const joinRoom = async () => {
     },
   }
 
-  if (!props.isModerator) {
-    await update(myRef, participantPayload)
-  } else {
-    await remove(myRef)
-  }
-
   if (props.isModerator) {
+    await remove(
+      dbRef(database, `calls/${props.roomId}/participants/${props.user.id}`),
+    )
     const moderatorStaffRef = dbRef(
       database,
       `calls/${props.roomId}/staff/${props.user.id}`,
     )
     await update(moderatorStaffRef, {
-      email: props.user.email,
-      name: props.user.email?.split('@')[0],
+      ...memberPayload,
       role: 'FACILITATOR',
       isModerator: true,
-      joinedAt: presenceNow,
-      connected: true,
-      presenceStatus: 'connected',
-      presenceUpdatedAt: presenceNow,
-      media: {
-        cameraEnabled: isCameraEnabled.value,
-        microphoneEnabled: isMicrophoneEnabled.value,
-      },
     })
 
     const moderatorDisconnect = onDisconnect(moderatorStaffRef)
@@ -747,10 +743,12 @@ const joinRoom = async () => {
       presenceUpdatedAt: Date.now(),
     })
     moderatorPresenceDisconnect = moderatorDisconnect
+  } else {
+    await update(myMemberRef, memberPayload)
   }
 
   // Mark as disconnected on close tab, but do NOT remove (to persist media settings)
-  const myDisconnect = onDisconnect(myRef)
+  const myDisconnect = onDisconnect(myMemberRef)
   myDisconnect.update({
     connected: false,
     presenceStatus: 'disconnected',
@@ -897,30 +895,29 @@ const leaveRoom = () => {
   }
   // Close all connections
   Object.values(peers).forEach((p) => p.connection.close())
-  // Remove self (mark as disconnected)
-  const myRef = dbRef(
-    database,
-    `calls/${props.roomId}/participants/${props.user.id}`,
-  )
   const now = Date.now()
 
-  if (!props.isModerator) {
-    update(myRef, {
+  if (props.isModerator) {
+    remove(
+      dbRef(database, `calls/${props.roomId}/participants/${props.user.id}`),
+    )
+    update(dbRef(database, `calls/${props.roomId}/staff/${props.user.id}`), {
       connected: false,
       presenceStatus: 'disconnected',
       presenceUpdatedAt: now,
       updatedAt: now,
     })
   } else {
-    remove(myRef)
-  }
+    const myMemberRef = isObservator.value
+      ? dbRef(database, `calls/${props.roomId}/staff/${props.user.id}`)
+      : dbRef(database, `calls/${props.roomId}/participants/${props.user.id}`)
 
-  if (props.isModerator) {
-    update(dbRef(database, `calls/${props.roomId}/staff/${props.user.id}`), {
+    update(myMemberRef, {
       connected: false,
       presenceStatus: 'disconnected',
       presenceUpdatedAt: now,
       updatedAt: now,
+      role: isObservator.value ? 'OBSERVER' : 'PARTICIPANT',
     })
   }
 
@@ -1221,34 +1218,15 @@ const staffParticipants = computed(() => {
     ? props.sessionStaff
     : props.test?.cooperators || []
 
-  return staffEntries.map((member) => {
-    const presenceStatus =
-      member.presenceStatus ??
-      member.status ??
-      (member.connected === false ? 'disconnected' : 'connected')
-
-    const role =
-      member.role === 'observator' ||
-      member.accessLevel === ACCESS_LEVEL.OBSERVATOR
-        ? 'observator'
-        : member.role === 'moderator' ||
-            member.accessLevel === ACCESS_LEVEL.ADMIN
-          ? 'moderator'
-          : 'participant'
-
-    return {
+  return staffEntries
+    .map((member) => normalizeSessionMember(member, 'staff'))
+    .filter(Boolean)
+    .map((member) => ({
       ...member,
-      id: member.userDocId || member.id || member.email,
-      role,
-      connected: presenceStatus === 'connected',
-      presenceStatus,
-      presenceUpdatedAt:
-        member.presenceUpdatedAt ?? member.updatedAt ?? member.joinedAt ?? null,
       hasCamera: member.hasCamera ?? true,
       hasMicrophone: member.hasMicrophone ?? true,
       accessLevel: member.accessLevel ?? member.role,
-    }
-  })
+    }))
 })
 
 const normalizeMemberKeys = (member) => {
@@ -1289,32 +1267,23 @@ const panelParticipantList = computed(() => {
     : []) {
     if (!member) continue
 
-    const memberId =
-      member.userDocId || member.id || member.email || member.name
+    const normalized = normalizeSessionMember(member, 'participant')
+    if (!normalized) continue
+
+    const memberId = normalized.userDocId || normalized.id || normalized.email
     if (!memberId) continue
 
     const memberKey = String(memberId).trim().toLowerCase()
     if (!memberKey || seen.has(memberKey)) continue
 
     seen.add(memberKey)
-    const presenceStatus =
-      member.presenceStatus ??
-      member.status ??
-      (member.connected === false ? 'disconnected' : 'connected')
-
     dedupedList.push({
-      id: member.userDocId || member.id || member.email || member.name,
-      email: member.email,
-      name: member.name || member.email?.split('@')[0] || 'Participant',
-      role: member.role || 'participant',
-      connected: presenceStatus === 'connected',
-      presenceStatus,
-      presenceUpdatedAt: member.presenceUpdatedAt ?? null,
+      ...normalized,
       isSelf:
-        (member.userDocId || member.id || member.email) ===
+        (normalized.userDocId || normalized.id || normalized.email) ===
         (props.user?.id || props.user?.email),
-      hasCamera: member.hasCamera ?? true,
-      hasMicrophone: member.hasMicrophone ?? true,
+      hasCamera: normalized.hasCamera ?? true,
+      hasMicrophone: normalized.hasMicrophone ?? true,
     })
   }
 
