@@ -97,47 +97,18 @@
                 </v-chip>
               </span>
               <div class="participant-status">
-                <v-chip
-                  size="x-small"
-                  :color="member.connected ? 'green' : 'grey'"
-                >
-                  {{
-                    member.connected
-                      ? t('videoCall.panel.connected')
-                      : t('videoCall.panel.disconnected')
-                  }}
+                <v-chip size="x-small" :color="getPresenceState(member).color">
+                  {{ getPresenceState(member).label }}
                 </v-chip>
                 <v-chip
-                  v-if="caller && !isObservator"
+                  v-if="member.presenceUpdatedAt"
                   size="x-small"
-                  :color="member.isMuted ? 'red' : 'green'"
+                  color="grey"
                   class="ml-1"
                 >
-                  {{ member.isMuted ? 'Muted' : 'Unmuted' }}
+                  {{ formatPresenceUpdatedAt(member.presenceUpdatedAt) }}
                 </v-chip>
               </div>
-            </div>
-            <div v-if="caller && !isObservator" class="participant-actions">
-              <v-btn
-                size="x-small"
-                variant="text"
-                @click="toggleMemberMute(member.id)"
-              >
-                {{
-                  getMemberActionState(member.id, 'muted') ? 'Unmute' : 'Mute'
-                }}
-              </v-btn>
-              <v-btn
-                size="x-small"
-                variant="text"
-                @click="toggleMemberScreenShare(member.id)"
-              >
-                {{
-                  getMemberActionState(member.id, 'screenBlocked')
-                    ? 'Allow screen'
-                    : 'Block screen'
-                }}
-              </v-btn>
             </div>
           </div>
         </div>
@@ -173,6 +144,7 @@
                   participant.name +
                   (participant.isSelf ? ` (${t('videoCall.panel.you')})` : '')
                 }}
+
                 <v-chip
                   v-if="participant.role === 'observator'"
                   size="x-small"
@@ -181,6 +153,7 @@
                 >
                   {{ t('videoCall.panel.observator') }}
                 </v-chip>
+
                 <v-chip
                   v-else-if="participant.role === 'moderator'"
                   size="x-small"
@@ -189,67 +162,24 @@
                 >
                   {{ t('videoCall.panel.moderator') }}
                 </v-chip>
+                {{ participant }}
               </span>
               <div class="participant-status">
                 <v-chip
                   size="x-small"
-                  :color="participant.connected ? 'green' : 'grey'"
+                  :color="getPresenceState(participant).color"
                 >
-                  {{
-                    participant.connected
-                      ? t('videoCall.panel.connected')
-                      : t('videoCall.panel.disconnected')
-                  }}
+                  {{ getPresenceState(participant).label }}
                 </v-chip>
                 <v-chip
-                  v-if="participant.isSelf && !isObservator"
+                  v-if="participant.presenceUpdatedAt"
                   size="x-small"
-                  :color="participant.hasCamera ? 'green' : 'red'"
+                  color="grey"
                   class="ml-1"
                 >
-                  {{
-                    participant.hasCamera
-                      ? t('videoCall.panel.camera')
-                      : t('videoCall.panel.noCamera')
-                  }}
-                </v-chip>
-                <v-chip
-                  v-if="participant.isSelf && !isObservator"
-                  size="x-small"
-                  :color="participant.hasMicrophone ? 'green' : 'red'"
-                  class="ml-1"
-                >
-                  {{
-                    participant.hasMicrophone
-                      ? t('videoCall.panel.microphone')
-                      : t('videoCall.panel.noMicrophone')
-                  }}
+                  {{ formatPresenceUpdatedAt(participant.presenceUpdatedAt) }}
                 </v-chip>
               </div>
-            </div>
-            <div v-if="caller && !isObservator" class="participant-actions">
-              <v-btn
-                size="x-small"
-                variant="text"
-                @click="toggleMemberMute(participant.id)"
-              >
-                {{
-                  getMemberActionState(participant.id, 'muted')
-                    ? 'Unmute'
-                    : 'Mute'
-                }}
-              </v-btn>
-              <v-btn
-                size="x-small"
-                variant="text"
-                @click="toggleMemberScreenShare(participant.id)"
-              >
-                {{
-                  getMemberActionState(participant.id, 'screenBlocked')
-                    ? 'Allow screen'
-                    : 'Block screen'
-                }}
-              </v-btn>
             </div>
           </div>
         </div>
@@ -461,7 +391,7 @@
 </template>
 
 <script setup>
-import { computed, reactive } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps({
   showSidePanel: Boolean,
@@ -499,20 +429,58 @@ const safeParticipantList = computed(() =>
   Array.isArray(props.participantList) ? props.participantList : [],
 )
 
-const participantActionState = reactive({})
+const getPresenceState = (member) => {
+  const rawStatus =
+    member?.presenceStatus ??
+    (member?.connected === true
+      ? 'connected'
+      : member?.connected === false
+        ? 'disconnected'
+        : 'waiting')
 
-const getMemberActionState = (memberId, actionKey) => {
-  return Boolean(participantActionState[`${memberId}-${actionKey}`])
+  const normalized = String(rawStatus).trim().toLowerCase()
+
+  if (
+    normalized === 'waiting' ||
+    normalized === 'lobby' ||
+    normalized === 'pending'
+  ) {
+    return { color: 'orange', label: 'waiting' }
+  }
+
+  if (
+    normalized === 'connected' ||
+    normalized === 'in-room' ||
+    normalized === 'joined'
+  ) {
+    return { color: 'green', label: 'connected' }
+  }
+
+  if (
+    normalized === 'disconnected' ||
+    normalized === 'offline' ||
+    normalized === 'left' ||
+    normalized === 'exited'
+  ) {
+    return { color: 'grey', label: 'disconnected' }
+  }
+
+  return { color: 'grey', label: normalized || 'waiting' }
 }
 
-const toggleMemberMute = (memberId) => {
-  const key = `${memberId}-muted`
-  participantActionState[key] = !getMemberActionState(memberId, 'muted')
-}
+const formatPresenceUpdatedAt = (value) => {
+  if (!value) return ''
 
-const toggleMemberScreenShare = (memberId) => {
-  const key = `${memberId}-screenBlocked`
-  participantActionState[key] = !getMemberActionState(memberId, 'screenBlocked')
+  const date = value instanceof Date ? value : new Date(value)
+  if (Number.isNaN(date.getTime())) return String(value)
+
+  return date.toLocaleString([], {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 }
 </script>
 

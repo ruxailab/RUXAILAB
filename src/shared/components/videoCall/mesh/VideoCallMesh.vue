@@ -506,6 +506,9 @@ const localVideo = ref(null)
 const localStream = ref(null)
 const screenStream = ref(null)
 const isSharingScreen = ref(false)
+const isSessionEnded = ref(false)
+let localPresenceDisconnect = null
+let moderatorPresenceDisconnect = null
 
 // Camera and microphone controls
 const isCameraEnabled = ref(true)
@@ -659,7 +662,9 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
-  leaveRoom()
+  if (!isSessionEnded.value) {
+    leaveRoom()
+  }
 })
 
 // --- Signaling & Mesh Logic ---
@@ -692,21 +697,62 @@ const joinRoom = async () => {
     if (aTrack) aTrack.enabled = isMicrophoneEnabled.value
   }
 
-  await update(myRef, {
+  const presenceNow = Date.now()
+
+  const participantPayload = {
     email: props.user.email,
     name: props.user.email?.split('@')[0],
-    joinedAt: Date.now(),
+    joinedAt: presenceNow,
     connected: true,
+    presenceStatus: 'connected',
+    presenceUpdatedAt: presenceNow,
     isModerator: props.isModerator,
     taskIndex: props.isModerator ? 0 : props.currentTaskIndex,
     media: {
       cameraEnabled: isCameraEnabled.value,
       microphoneEnabled: isMicrophoneEnabled.value,
     },
-  })
+  }
+
+  await update(myRef, participantPayload)
+
+  if (props.isModerator) {
+    const moderatorStaffRef = dbRef(
+      database,
+      `calls/${props.roomId}/staff/${props.user.id}`,
+    )
+    await update(moderatorStaffRef, {
+      email: props.user.email,
+      name: props.user.email?.split('@')[0],
+      role: 'FACILITATOR',
+      isModerator: true,
+      joinedAt: presenceNow,
+      connected: true,
+      presenceStatus: 'connected',
+      presenceUpdatedAt: presenceNow,
+      media: {
+        cameraEnabled: isCameraEnabled.value,
+        microphoneEnabled: isMicrophoneEnabled.value,
+      },
+    })
+
+    const moderatorDisconnect = onDisconnect(moderatorStaffRef)
+    moderatorDisconnect.update({
+      connected: false,
+      presenceStatus: 'disconnected',
+      presenceUpdatedAt: Date.now(),
+    })
+    moderatorPresenceDisconnect = moderatorDisconnect
+  }
 
   // Mark as disconnected on close tab, but do NOT remove (to persist media settings)
-  onDisconnect(myRef).update({ connected: false })
+  const myDisconnect = onDisconnect(myRef)
+  myDisconnect.update({
+    connected: false,
+    presenceStatus: 'disconnected',
+    presenceUpdatedAt: Date.now(),
+  })
+  localPresenceDisconnect = myDisconnect
 
   // 3. Listen to participants to initiate connections
   const participantsRef = dbRef(database, `calls/${props.roomId}/participants`)
@@ -839,6 +885,8 @@ const sendSignal = async (targetUserId, payload) => {
 // See `joinRoom` function for corrected logic below (I will use child_added there).
 
 const leaveRoom = () => {
+  if (isSessionEnded.value) return
+
   // Stop media
   if (localStream.value) {
     localStream.value.getTracks().forEach((t) => t.stop())
@@ -850,7 +898,23 @@ const leaveRoom = () => {
     database,
     `calls/${props.roomId}/participants/${props.user.id}`,
   )
-  update(myRef, { connected: false })
+  const now = Date.now()
+
+  update(myRef, {
+    connected: false,
+    presenceStatus: 'disconnected',
+    presenceUpdatedAt: now,
+    updatedAt: now,
+  })
+
+  if (props.isModerator) {
+    update(dbRef(database, `calls/${props.roomId}/staff/${props.user.id}`), {
+      connected: false,
+      presenceStatus: 'disconnected',
+      presenceUpdatedAt: now,
+      updatedAt: now,
+    })
+  }
 
   remove(dbRef(database, `calls/${props.roomId}/signals/${props.user.id}`)) // Clean my inbox
 }
@@ -1150,6 +1214,11 @@ const staffParticipants = computed(() => {
     : props.test?.cooperators || []
 
   return staffEntries.map((member) => {
+    const presenceStatus =
+      member.presenceStatus ??
+      member.status ??
+      (member.connected === false ? 'disconnected' : 'connected')
+
     const role =
       member.role === 'observator' ||
       member.accessLevel === ACCESS_LEVEL.OBSERVATOR
@@ -1160,19 +1229,15 @@ const staffParticipants = computed(() => {
           : 'participant'
 
     return {
+      ...member,
       id: member.userDocId || member.id || member.email,
-      email: member.email,
-      name:
-        member.name ||
-        member.email?.split('@')[0] ||
-        member.displayName ||
-        'Staff member',
       role,
-      connected:
-        !!participants.value[member.userDocId || member.id || member.email]
-          ?.connected,
-      hasCamera: true,
-      hasMicrophone: true,
+      connected: presenceStatus === 'connected',
+      presenceStatus,
+      presenceUpdatedAt:
+        member.presenceUpdatedAt ?? member.updatedAt ?? member.joinedAt ?? null,
+      hasCamera: member.hasCamera ?? true,
+      hasMicrophone: member.hasMicrophone ?? true,
       accessLevel: member.accessLevel ?? member.role,
     }
   })
@@ -1224,12 +1289,19 @@ const panelParticipantList = computed(() => {
     if (!memberKey || seen.has(memberKey)) continue
 
     seen.add(memberKey)
+    const presenceStatus =
+      member.presenceStatus ??
+      member.status ??
+      (member.connected === false ? 'disconnected' : 'connected')
+
     dedupedList.push({
       id: member.userDocId || member.id || member.email || member.name,
       email: member.email,
       name: member.name || member.email?.split('@')[0] || 'Participant',
       role: member.role || 'participant',
-      connected: member.connected ?? true,
+      connected: presenceStatus === 'connected',
+      presenceStatus,
+      presenceUpdatedAt: member.presenceUpdatedAt ?? null,
       isSelf:
         (member.userDocId || member.id || member.email) ===
         (props.user?.id || props.user?.email),
@@ -1355,23 +1427,33 @@ const startCall = async () => {
 const router = useRouter() // Ensure router is available
 
 const endCall = async () => {
+  isSessionEnded.value = true
+  if (localPresenceDisconnect) {
+    await localPresenceDisconnect.cancel()
+    localPresenceDisconnect = null
+  }
+  if (moderatorPresenceDisconnect) {
+    await moderatorPresenceDisconnect.cancel()
+    moderatorPresenceDisconnect = null
+  }
+
   if (caller.value) {
     try {
-      // Remove both the call interactions and the room state
+      // Remove the session data first. Calling leaveRoom() afterwards would write
+      // disconnected values back into the deleted call tree and re-create it.
       await remove(dbRef(database, `calls/${props.roomId}`))
-      // Also remove the room to clean up global state (taskIndex, etc.)
       await remove(dbRef(database, `rooms/${props.roomId}`))
     } catch (error) {
       console.error('Error ending call:', error) // eslint-disable-line no-console
     }
     emit('call-ended')
-    leaveRoom()
     router.push('/admin')
-  } else {
-    // Non-moderator: can just leave locally
-    leaveRoom()
-    router.push('/admin')
+    return
   }
+
+  // Non-moderator: can just leave locally
+  leaveRoom()
+  router.push('/admin')
 }
 
 // Screen Sharing (Mesh Compatible)

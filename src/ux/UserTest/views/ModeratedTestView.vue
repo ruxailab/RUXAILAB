@@ -647,6 +647,7 @@ import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { showError, showInfo, showWarning } from '@/shared/utils/toast'
 import { calculateProgress } from '../utils/testProgress'
 import { animateStepAnnouncement } from '@/shared/utils/animations'
+import { removeStaffDuplicates } from '@/ux/UserTest/utils/sessionPresence'
 
 const store = useStore()
 const router = useRouter()
@@ -686,6 +687,7 @@ const nextStepAnnouncementTitle = ref('')
 const nextStepAnnouncementKicker = ref('')
 const isProcessingRemoteStepAnnouncement = ref(false)
 const lastAnnouncedRemoteStepKey = ref(null)
+const lastWaitingParticipantsNotificationCount = ref(0)
 
 const sessionId = computed(() => route.params.token || null)
 
@@ -747,6 +749,11 @@ const normalizeSessionMember = (member, fallbackType = 'participant') => {
   const memberId = member.userDocId || member.id || member.email
   if (!memberId) return null
 
+  const presenceStatus =
+    member.presenceStatus ??
+    member.status ??
+    (member.connected === false ? 'disconnected' : 'connected')
+
   return {
     id: memberId,
     userDocId: member.userDocId || member.id || member.email,
@@ -757,20 +764,34 @@ const normalizeSessionMember = (member, fallbackType = 'participant') => {
       member.email?.split('@')[0] ||
       fallbackType,
     role: normalizeSessionRole(member.role || member.accessLevel),
-    connected: member.connected ?? true,
+    connected: presenceStatus === 'connected',
+    presenceStatus,
+    presenceUpdatedAt: member.presenceUpdatedAt ?? null,
     isStaff: fallbackType === 'staff',
     accessLevel: member.accessLevel ?? member.role,
   }
 }
 
+const callState = ref({ staff: {}, participants: {} })
+
 const sessionStaffMembers = computed(() => {
-  return (session.value?.staff || [])
+  const staffSource =
+    Object.keys(callState.value.staff || {}).length > 0
+      ? Object.values(callState.value.staff || {})
+      : session.value?.staff || []
+
+  return staffSource
     .map((member) => normalizeSessionMember(member, 'staff'))
     .filter(Boolean)
 })
 
 const sessionParticipantsMembers = computed(() => {
-  return (session.value?.participants || [])
+  const participantsSource =
+    Object.keys(callState.value.participants || {}).length > 0
+      ? Object.values(callState.value.participants || {})
+      : session.value?.participants || []
+
+  return participantsSource
     .map((member) => normalizeSessionMember(member, 'participant'))
     .filter(Boolean)
 })
@@ -1118,8 +1139,174 @@ const startTest = async () => {
     startScreen.classList.add('leaving')
   }
 
+  if (!isModerator.value && user.value?.id) {
+    const participantRef = dbRef(
+      database,
+      `calls/${roomId.value}/participants/${user.value.id}`,
+    )
+    const now = Date.now()
+
+    await update(participantRef, {
+      userDocId: user.value.id,
+      email: user.value.email || null,
+      name:
+        user.value.email?.split('@')[0] ||
+        user.value.displayName ||
+        'participant',
+      role: 'participant',
+      accessLevel: currentUserAccessLevel.value ?? 5,
+      isModerator: false,
+      connected: false,
+      presenceStatus: 'waiting',
+      presenceUpdatedAt: now,
+      joinedAt: now,
+      media: {
+        cameraEnabled: true,
+        microphoneEnabled: true,
+      },
+    })
+  }
+
   // listen for changes
   const roomRef = dbRef(database, `rooms/${roomId.value}`)
+
+  if (isModerator.value) {
+    const callRef = dbRef(database, `calls/${roomId.value}`)
+    onValue(callRef, (snapshot) => {
+      const nextCallState = snapshot.val() || {}
+      const participants = nextCallState.participants || {}
+      const waitingParticipantsCount = Object.values(participants).filter(
+        (member) => {
+          const status =
+            member?.presenceStatus ??
+            member?.status ??
+            (member?.connected === false ? 'disconnected' : 'connected')
+
+          return status === 'waiting'
+        },
+      ).length
+
+      if (waitingParticipantsCount > 0) {
+        if (
+          waitingParticipantsCount !==
+          lastWaitingParticipantsNotificationCount.value
+        ) {
+          const message =
+            waitingParticipantsCount === 1
+              ? 'One participant is waiting to enter.'
+              : 'More than one users are waiting to join.'
+
+          showInfo(message)
+          lastWaitingParticipantsNotificationCount.value =
+            waitingParticipantsCount
+        }
+      } else {
+        lastWaitingParticipantsNotificationCount.value = 0
+      }
+
+      callState.value = {
+        staff: nextCallState.staff || {},
+        participants,
+      }
+    })
+
+    const callSnapshot = await get(callRef)
+
+    if (!callSnapshot.exists()) {
+      const staffMembers = Array.isArray(session.value?.staff)
+        ? session.value.staff
+        : []
+      const participantMembers = Array.isArray(session.value?.participants)
+        ? session.value.participants
+        : []
+      const participantMembersWithoutStaff = removeStaffDuplicates(
+        participantMembers,
+        [
+          ...staffMembers,
+          { userDocId: user.value?.id, email: user.value?.email },
+        ],
+      )
+
+      const toMemberMap = (members, defaults = {}) =>
+        Object.fromEntries(
+          members
+            .map((member) => {
+              const memberId = member?.userDocId || member?.id || member?.email
+              if (!memberId) return null
+
+              const normalizedMember = {
+                userDocId: member.userDocId || member.id || member.email,
+                email: member.email || null,
+                name:
+                  member.name ||
+                  member.displayName ||
+                  member.email?.split('@')[0] ||
+                  memberId,
+                role: member.role || 'participant',
+                accessLevel: member.accessLevel ?? member.role ?? 5,
+                isModerator:
+                  member.role === 'FACILITATOR' || member.isModerator === true,
+                connected: defaults.connected ?? true,
+                presenceStatus: defaults.presenceStatus ?? 'connected',
+                presenceUpdatedAt:
+                  defaults.presenceStatus === 'disconnected'
+                    ? null
+                    : Date.now(),
+                joinedAt: member.joinedAt ?? Date.now(),
+                media: member.media ?? {
+                  cameraEnabled: true,
+                  microphoneEnabled: true,
+                },
+              }
+
+              return [memberId, normalizedMember]
+            })
+            .filter(Boolean),
+        )
+
+      const moderatorEntry = {
+        userDocId: user.value?.id || 'moderator',
+        email: user.value?.email || null,
+        name:
+          user.value?.email?.split('@')[0] ||
+          user.value?.displayName ||
+          'moderator',
+        role: 'FACILITATOR',
+        accessLevel: 'ADMIN',
+        isModerator: true,
+        connected: true,
+        presenceStatus: 'connected',
+        presenceUpdatedAt: Date.now(),
+        joinedAt: Date.now(),
+        media: {
+          cameraEnabled: true,
+          microphoneEnabled: true,
+        },
+      }
+
+      const payload = {
+        createdAt: Date.now(),
+        startedAt: Date.now(),
+        status: 'active',
+        staff: {
+          [moderatorEntry.userDocId]: moderatorEntry,
+          ...toMemberMap(
+            staffMembers.filter((member) => {
+              const memberId = member?.userDocId || member?.id || member?.email
+              return memberId && memberId !== moderatorEntry.userDocId
+            }),
+            { connected: true, presenceStatus: 'connected' },
+          ),
+        },
+        participants: toMemberMap(participantMembersWithoutStaff, {
+          connected: false,
+          presenceStatus: 'disconnected',
+        }),
+      }
+
+      await set(callRef, payload)
+    }
+  }
 
   // Ensure only moderator can set this, and only on explicit end, NOT using onDisconnect
   // onDisconnect(roomRef).set(null)
@@ -1207,8 +1394,8 @@ const startTest = async () => {
 
     await update(roomRef, updates)
 
-    // Write lastUpdate timestamp when moderator disconnects (server-side timestamp)
-    onDisconnect(roomRef).update({ lastUpdate: serverTimestamp() })
+    // Avoid leaving a room-level onDisconnect update behind. The moderator's
+    // explicit end flow must delete the room branch completely.
   }
 }
 

@@ -523,6 +523,11 @@ const staffParticipants = computed(() => {
     : props.test?.cooperators || []
 
   return staffEntries.map((member) => {
+    const presenceStatus =
+      member.presenceStatus ??
+      member.status ??
+      (member.connected === false ? 'disconnected' : 'connected')
+
     const role =
       member.role === 'observator' ||
       member.accessLevel === ACCESS_LEVEL.OBSERVATOR
@@ -533,17 +538,14 @@ const staffParticipants = computed(() => {
           : 'participant'
 
     return {
+      ...member,
       id: member.userDocId || member.id || member.email,
-      email: member.email,
-      name:
-        member.name ||
-        member.email?.split('@')[0] ||
-        member.displayName ||
-        'Staff member',
       role,
-      connected: true,
-      hasCamera: true,
-      hasMicrophone: true,
+      connected: presenceStatus === 'connected',
+      presenceStatus,
+      presenceUpdatedAt: member.presenceUpdatedAt ?? null,
+      hasCamera: member.hasCamera ?? true,
+      hasMicrophone: member.hasMicrophone ?? true,
       accessLevel: member.accessLevel ?? member.role,
     }
   })
@@ -595,12 +597,18 @@ const panelParticipantList = computed(() => {
     if (!memberKey || seen.has(memberKey)) continue
 
     seen.add(memberKey)
+    const presenceStatus =
+      member.presenceStatus ??
+      member.status ??
+      (member.connected === false ? 'disconnected' : 'connected')
+
     dedupedList.push({
+      ...member,
       id: member.userDocId || member.id || member.email || member.name,
-      email: member.email,
-      name: member.name || member.email?.split('@')[0] || 'Participant',
       role: member.role || 'participant',
-      connected: member.connected ?? true,
+      connected: presenceStatus === 'connected',
+      presenceStatus,
+      presenceUpdatedAt: member.presenceUpdatedAt ?? null,
       isSelf:
         (member.userDocId || member.id || member.email) ===
         (props.user?.id || props.user?.email),
@@ -772,6 +780,8 @@ async function endCall() {
   }
 
   try {
+    // Remove the live call state before disconnecting; otherwise the local
+    // disconnect writes can re-create the deleted call node in RTDB.
     await remove(dbRef(database, `calls/${props.roomId}`))
     await remove(dbRef(database, `rooms/${props.roomId}`))
   } catch (error) {
