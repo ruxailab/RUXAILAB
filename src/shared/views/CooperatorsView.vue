@@ -456,10 +456,6 @@ const canRemoveCooperator = (cooperator) => {
 }
 
 const canCancelCooperatorInvitation = (cooperator) => {
-  if (!isPendingCooperator(cooperator)) {
-    return false
-  }
-
   return canManageCooperator(test.value, userAuth.value, cooperator, {
     action: 'cancelInvitation',
   })

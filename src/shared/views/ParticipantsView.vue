@@ -58,7 +58,7 @@
       :show-session-column="showSessionColumn"
       :show-actions="canManageParticipants"
       :can-remove="canRemoveParticipant"
-      :can-cancel-invitation="canCancelParticipantInvitation"
+      :can-cancel-invitation="true"
       :message-text="$t('Participants.actions.send_message')"
       :reinvite-text="$t('Participants.actions.reinvite')"
       :remove-text="$t('Participants.actions.remove_participant')"

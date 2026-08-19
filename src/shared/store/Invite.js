@@ -564,6 +564,8 @@ export default {
           inviteToken: invite.token,
         })
 
+        console.log('INVITE')
+
         await dispatch('addNotification', {
           userId: user.id,
           notification,
