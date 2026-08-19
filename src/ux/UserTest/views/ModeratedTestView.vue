@@ -349,10 +349,8 @@
 
           <!-- Observator Notes Drawer -->
           <v-navigation-drawer
-            v-if="isObservator"
-            v-model="notesDrawerOpen"
+            v-if="isObservator && notesDrawerOpen"
             location="right"
-            persistent
             width="400"
             elevation="3"
             style="

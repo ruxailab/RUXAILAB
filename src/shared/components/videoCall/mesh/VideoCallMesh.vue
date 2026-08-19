@@ -7,7 +7,7 @@
     <!-- Videos Row -->
     <v-row class="video-row justify-center" no-gutters>
       <!-- Grid of Participants -->
-      <v-col v-if="callStarted" cols="12">
+      <v-col v-if="callStarted || (caller && roomReady)" cols="12">
         <div class="video-stage">
           <!-- Spotlight: focused participant or shared screen -->
           <div v-if="isFocusMode" class="spotlight-primary">
@@ -121,7 +121,13 @@
 
       <!-- Moderator Preview (before opening room) -->
       <v-col
-        v-if="caller && !roomOpen && !isObservator && localStream"
+        v-if="
+          caller &&
+          !roomOpen &&
+          !isObservator &&
+          localStream &&
+          Object.keys(peers).length === 0
+        "
         cols="12"
       >
         <div
@@ -406,8 +412,10 @@ const screenShareFeeds = computed(() => {
 
   return feeds
 })
-const callStarted = computed(
-  () => roomReady.value && (roomOpen.value || Object.keys(peers).length > 0),
+const callStarted = computed(() =>
+  props.isModerator
+    ? roomOpen.value
+    : roomReady.value && (roomOpen.value || Object.keys(peers).length > 0),
 )
 
 // Helper to get name
@@ -449,6 +457,7 @@ const currentStepperValue = computed(() => {
 
 const roomReady = ref(false)
 const roomOpen = ref(false)
+const roomJoined = ref(false)
 
 // Watch for localVideo ref and ensure stream is attached
 watch([localVideo, localStream], ([videoEl, stream]) => {
@@ -463,6 +472,8 @@ onMounted(async () => {
     if (!localStream.value) {
       await initLocalMedia()
     }
+    roomReady.value = true
+    await joinRoom()
     return
   }
 
@@ -475,7 +486,10 @@ onMounted(async () => {
   // Check initial value first
   const initialSnapshot = await get(showVideoCallRef)
   const shouldShow = initialSnapshot.val()
-  if (shouldShow && !roomReady.value) {
+  if (props.isObservator && !roomReady.value) {
+    roomReady.value = true
+    await joinRoom()
+  } else if (shouldShow && !roomReady.value) {
     roomReady.value = true
     await joinRoom()
   }
@@ -501,6 +515,9 @@ onBeforeUnmount(() => {
 // --- Signaling & Mesh Logic ---
 
 const joinRoom = async () => {
+  if (roomJoined.value) return
+  roomJoined.value = true
+
   // 1. Get local media for every staff member and participant.
   if (!localStream.value) {
     await initLocalMedia()
@@ -516,9 +533,14 @@ const joinRoom = async () => {
   // Restore media settings from DB if available (persistence)
   const snapshot = await get(myMemberRef)
   const existingData = snapshot.val()
-  if (existingData && existingData.media) {
+  if (existingData?.media && !isObservator.value) {
     isCameraEnabled.value = existingData.media.cameraEnabled
     isMicrophoneEnabled.value = existingData.media.microphoneEnabled
+  }
+
+  if (isObservator.value) {
+    isCameraEnabled.value = true
+    isMicrophoneEnabled.value = true
   }
 
   // Enforce restored state on tracks
@@ -582,10 +604,14 @@ const joinRoom = async () => {
   })
   localPresenceDisconnect = myDisconnect
 
-  // 3. Listen to participants to initiate connections
+  // 3. Listen to staff and participants to initiate connections
   const participantsRef = dbRef(database, `calls/${props.roomId}/participants`)
-  onValue(participantsRef, (snapshot) => {
-    const val = snapshot.val() || {}
+  const staffRef = dbRef(database, `calls/${props.roomId}/staff`)
+  let participantMembers = {}
+  let staffMembers = {}
+
+  const syncMembers = () => {
+    const val = { ...participantMembers, ...staffMembers }
     participants.value = val
 
     // Check for new peers to connect to
@@ -626,6 +652,15 @@ const joinRoom = async () => {
         closePeerConnection(userId)
       }
     })
+  }
+
+  onValue(participantsRef, (snapshot) => {
+    participantMembers = snapshot.val() || {}
+    syncMembers()
+  })
+  onValue(staffRef, (snapshot) => {
+    staffMembers = snapshot.val() || {}
+    syncMembers()
   })
 
   // 4. Listen for Signals (Offers/Answers/Candidates) targeted at ME
@@ -936,9 +971,10 @@ function toggleMicrophone() {
 async function updateParticipantStatus() {
   if (!props.user?.id || !props.roomId) return
   try {
+    const memberBranch = isObservator.value ? 'staff' : 'participants'
     const participantRef = dbRef(
       database,
-      `calls/${props.roomId}/participants/${props.user.id}`,
+      `calls/${props.roomId}/${memberBranch}/${props.user.id}`,
     )
     await update(participantRef, {
       media: {
@@ -966,17 +1002,28 @@ function isRemoteMicrophoneEnabled(userId) {
 }
 
 const remoteEntries = computed(() =>
-  Object.keys(remoteStreams.value).map((userId) => ({
-    id: userId,
-    userId,
-    name: getPeerName(userId),
-    email: participants.value[userId]?.email || undefined,
-    role: participants.value[userId]?.role || 'participant',
-    connected: !!peers[userId],
-    hasCamera: isRemoteCameraEnabled(userId),
-    hasMicrophone: isRemoteMicrophoneEnabled(userId),
-    stream: remoteStreams.value[userId],
-  })),
+  Object.keys(remoteStreams.value)
+    .filter((userId) => {
+      if (!props.isModerator || !roomOpen.value) return true
+
+      const member = participants.value[userId]
+      return (
+        member?.role !== 'OBSERVER' &&
+        member?.role !== 'observator' &&
+        normalizeAccessLevel(member?.accessLevel) !== ACCESS_LEVEL.OBSERVATOR
+      )
+    })
+    .map((userId) => ({
+      id: userId,
+      userId,
+      name: getPeerName(userId),
+      email: participants.value[userId]?.email || undefined,
+      role: participants.value[userId]?.role || 'participant',
+      connected: !!peers[userId],
+      hasCamera: isRemoteCameraEnabled(userId),
+      hasMicrophone: isRemoteMicrophoneEnabled(userId),
+      stream: remoteStreams.value[userId],
+    })),
 )
 
 const buildRemoteTile = (remote) => ({
@@ -1004,8 +1051,8 @@ const buildParticipantItem = (remote, isSelf) => {
           ? 'moderator'
           : 'participant',
       connected: true,
-      hasCamera: !isObservator.value && isCameraEnabled.value,
-      hasMicrophone: !isObservator.value && isMicrophoneEnabled.value,
+      hasCamera: isCameraEnabled.value,
+      hasMicrophone: isMicrophoneEnabled.value,
     }
   }
 
