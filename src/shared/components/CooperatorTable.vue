@@ -165,11 +165,7 @@
 
               <!-- Re-invite rejected or expired -->
               <v-list-item
-                v-if="
-                  item.status == 'pending' ||
-                  item.status === 'rejected' ||
-                  item.status === 'expired'
-                "
+                v-if="item.status != MEMBERSHIP_STATUS.ACCEPTED"
                 link
                 @click="onReinvite(item)"
               >
@@ -180,7 +176,9 @@
 
               <!-- Remove accepted cooperator -->
               <v-list-item
-                v-if="item.status === 'accepted' && canRemove(item)"
+                v-if="
+                  item.status === MEMBERSHIP_STATUS.ACCEPTED && canRemove(item)
+                "
                 @click="onRemoveCooperator(item)"
               >
                 <v-list-item-title>
@@ -190,7 +188,12 @@
 
               <!-- Cancel pending invitation -->
               <v-list-item
-                v-if="item.status === 'pending' && canCancelInvitation(item)"
+                v-if="
+                  (item.status === MEMBERSHIP_STATUS.PENDING ||
+                    item.status === MEMBERSHIP_STATUS.REJECTED ||
+                    item.status === MEMBERSHIP_STATUS.EXPIRED) &&
+                  canCancelInvitation(item)
+                "
                 @click="onCancelInvitation(item)"
               >
                 <v-list-item-title>
@@ -200,7 +203,10 @@
 
               <!-- Change role -->
               <v-list-item
-                v-if="canChangeRole(item) || item.status === 'pending'"
+                v-if="
+                  canChangeRole(item) ||
+                  item.status === MEMBERSHIP_STATUS.PENDING
+                "
                 @click="onRoleChange(item)"
               >
                 <v-list-item-title>
