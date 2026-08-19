@@ -3387,6 +3387,14 @@
       "info": "Los destinatarios seleccionados recibirán este mensaje por correo electrónico.",
       "send": "Enviar"
     },
+    "notify": {
+      "participantInviteTitle": "Estás invitado/a a una sesión",
+      "participantInviteMessage": "Has sido invitado/a a una sesión como participante del estudio",
+      "cooperatorInviteTitle": "Has sido invitado/a a una sesión como parte del equipo",
+      "cooperatorInviteMessage": "Has sido invitado/a a colaborar como parte del equipo en una sesión del estudio",
+      "updateTitle": "Cambio en el horario de la sesión",
+      "updateMessage": "Los detalles de tu sesión han sido actualizados"
+    },
     "headers": {
       "goToSession": "Ir a la sesión",
       "title": "Título",

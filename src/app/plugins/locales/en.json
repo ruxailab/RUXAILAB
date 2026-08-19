@@ -3460,6 +3460,14 @@
       "info": "The selected recipients will receive this message by email.",
       "send": "Send"
     },
+    "notify": {
+      "participantInviteTitle": "You're invited to a session",
+      "participantInviteMessage": "You've been invited to a session as a study participant",
+      "cooperatorInviteTitle": "You've been invited to a session as staff",
+      "cooperatorInviteMessage": "You've been invited to collaborate as staff in a study session",
+      "updateTitle": "Session schedule change",
+      "updateMessage": "The details of your session have been updated"
+    },
     "headers": {
       "goToSession": "Go to session",
       "title": "Title",

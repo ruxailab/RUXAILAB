@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>{{sessionTitle}}</title>
+    <title>{{title}}</title>
   </head>
 
   <body
@@ -20,9 +20,11 @@
       cellspacing="0"
       border="0"
       style="
+        width: 100%;
         max-width: 600px;
+        margin: 30px auto;
         background: #ffffff;
-        border-radius: 8px;
+        border-radius: 10px;
         overflow: hidden;
       "
     >
@@ -38,85 +40,167 @@
               line-height: 0;
             "
           >
-            Session invitation
+            RUXAILAB Session Notification
           </th>
         </tr>
       </thead>
 
       <tbody>
+        <!-- Logo -->
         <tr>
-          <td style="text-align: center; padding: 20px; background: #222">
+          <td style="text-align: center; padding: 24px; background: #222222">
             <img
               src="https://raw.githubusercontent.com/ruxailab/RUXAILAB/develop/src/assets/logo_full_white.png"
               alt="RUXAILAB"
-              style="display: block; margin: 0 auto; max-width: 180px"
+              style="
+                display: block;
+                margin: 0 auto;
+                max-width: 180px;
+                height: auto;
+              "
             />
           </td>
         </tr>
 
+        <!-- Main content -->
         <tr>
           <td
             style="
-              padding: 30px;
-              color: #333;
+              padding: 40px 36px 20px;
+              color: #333333;
               font-size: 16px;
               line-height: 1.6;
             "
           >
-            <p>Hello {{participantName}},</p>
-
-            <p>
-              You have been added to a session in the study
-              <strong>{{studyTitle}}</strong>.
+            <p style="margin: 0 0 10px; font-size: 14px; color: #777777">
+              RUXAILAB
             </p>
 
-            <p style="margin-bottom: 24px; color: #555">
-              <strong>Invited by:</strong> {{invitedBy}}
-            </p>
+            <h1
+              style="
+                margin: 0 0 18px;
+                font-size: 24px;
+                line-height: 1.3;
+                color: #222222;
+              "
+            >
+              {{title}}
+            </h1>
 
+            <p style="margin: 0 0 28px; color: #555555">{{description}}</p>
+
+            <!-- Session details -->
             <table
               width="100%"
-              cellpadding="10"
+              cellpadding="0"
               cellspacing="0"
-              style="margin: 25px 0; background: #f8f8f8; border-radius: 6px"
+              border="0"
+              style="
+                margin: 0 0 28px;
+                background: #f8f8f8;
+                border: 1px solid #eeeeee;
+                border-radius: 8px;
+              "
             >
               <tr>
-                <td>
-                  <strong>Session</strong><br />
-                  {{sessionTitle}}
+                <td style="padding: 22px">
+                  <p
+                    style="
+                      margin: 0 0 6px;
+                      font-size: 12px;
+                      font-weight: bold;
+                      text-transform: uppercase;
+                      letter-spacing: 0.5px;
+                      color: #888888;
+                    "
+                  >
+                    Session
+                  </p>
+
+                  <p
+                    style="
+                      margin: 0;
+                      font-size: 18px;
+                      font-weight: bold;
+                      line-height: 1.4;
+                      color: #222222;
+                    "
+                  >
+                    {{sessionTitle}}
+                  </p>
                 </td>
               </tr>
 
               <tr>
-                <td>
-                  <strong>Scheduled for</strong><br />
-                  {{scheduledAt}}
+                <td style="padding: 0 22px 22px; border-top: 1px solid #eeeeee">
+                  <p
+                    style="
+                      margin: 18px 0 6px;
+                      font-size: 12px;
+                      font-weight: bold;
+                      text-transform: uppercase;
+                      letter-spacing: 0.5px;
+                      color: #888888;
+                    "
+                  >
+                    Scheduled for
+                  </p>
+
+                  <p style="margin: 0; font-size: 16px; color: #333333">
+                    {{scheduledAt}}
+                  </p>
                 </td>
               </tr>
 
               <tr>
-                <td>
-                  <strong>Description</strong><br />
-                  {{sessionMessage}}
+                <td style="padding: 0 22px 22px; border-top: 1px solid #eeeeee">
+                  <p
+                    style="
+                      margin: 18px 0 6px;
+                      font-size: 12px;
+                      font-weight: bold;
+                      text-transform: uppercase;
+                      letter-spacing: 0.5px;
+                      color: #888888;
+                    "
+                  >
+                    Description
+                  </p>
+
+                  <p
+                    style="
+                      margin: 0;
+                      font-size: 15px;
+                      line-height: 1.5;
+                      color: #555555;
+                    "
+                  >
+                    {{sessionMessage}}
+                  </p>
                 </td>
               </tr>
             </table>
 
-            <p>
-              Access the platform to view all session details and participate.
+            <p style="margin: 0 0 8px; font-size: 14px; color: #666666">
+              <strong>Study:</strong> {{studyTitle}}
+            </p>
+
+            <p style="margin: 0; font-size: 14px; color: #666666">
+              <strong>Organized by:</strong> {{invitedBy}}
             </p>
           </td>
         </tr>
 
+        <!-- Action -->
         <tr>
-          <td style="padding: 0 30px 30px; text-align: center">
+          <td style="padding: 12px 36px 40px; text-align: center">
             <a
               href="{{sessionLink}}"
               style="
                 display: inline-block;
-                padding: 14px 28px;
+                padding: 14px 30px;
                 background: #1976d2;
-                color: #fff;
+                color: #ffffff;
                 text-decoration: none;
                 border-radius: 6px;
                 font-size: 16px;
@@ -128,17 +212,23 @@
           </td>
         </tr>
 
+        <!-- Footer -->
         <tr>
           <td
             style="
               background: #f0f0f0;
-              padding: 20px;
+              padding: 22px 30px;
               text-align: center;
               font-size: 12px;
-              color: #888;
+              line-height: 1.5;
+              color: #888888;
             "
           >
-            © 2026 RUXAILAB - All rights reserved.
+            <p style="margin: 0 0 8px">
+              You can access the session at any time from RUXAILAB.
+            </p>
+
+            <p style="margin: 0">&copy; 2026 RUXAILAB - All rights reserved.</p>
           </td>
         </tr>
       </tbody>

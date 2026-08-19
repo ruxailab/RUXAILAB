@@ -99,7 +99,8 @@ export const sendEmail = functions.onCall({
         htmlTemplate = fs.readFileSync(templatePath, 'utf-8')
 
         htmlTemplate = htmlTemplate
-          .replace(/{{participantName}}/g, content.data.participantName || '')
+          .replace(/{{title}}/g, content.data.title || '')
+          .replace(/{{description}}/g, content.data.description || '')
           .replace(/{{studyTitle}}/g, content.data.studyTitle || '')
           .replace(/{{sessionTitle}}/g, content.data.sessionTitle || '')
           .replace(/{{sessionMessage}}/g, content.data.sessionMessage || '')
