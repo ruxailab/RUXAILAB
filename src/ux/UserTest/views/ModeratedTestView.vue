@@ -1140,7 +1140,6 @@ const startTest = async () => {
 
 const handleWelcomeStart = async () => {
   await requestFullscreenIfAvailable()
-  await safelyShowNextStepAnnouncement(t('UserTestView.stepper.consent'), 1)
   displayVideoCallComponent.value = true
   globalIndex.value = 1
 }
