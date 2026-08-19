@@ -102,6 +102,7 @@
                 border-radius: 8px;
               "
             >
+              <!-- Session title -->
               <tr>
                 <td style="padding: 22px">
                   <p
@@ -131,6 +132,7 @@
                 </td>
               </tr>
 
+              <!-- Scheduled date -->
               <tr>
                 <td style="padding: 0 22px 22px; border-top: 1px solid #eeeeee">
                   <p
@@ -151,40 +153,84 @@
                   </p>
                 </td>
               </tr>
-
-              <tr>
-                <td style="padding: 0 22px 22px; border-top: 1px solid #eeeeee">
-                  <p
-                    style="
-                      margin: 18px 0 6px;
-                      font-size: 12px;
-                      font-weight: bold;
-                      text-transform: uppercase;
-                      letter-spacing: 0.5px;
-                      color: #888888;
-                    "
-                  >
-                    Description
-                  </p>
-
-                  <p
-                    style="
-                      margin: 0;
-                      font-size: 15px;
-                      line-height: 1.5;
-                      color: #555555;
-                    "
-                  >
-                    {{sessionMessage}}
-                  </p>
-                </td>
-              </tr>
             </table>
 
-            <p style="margin: 0 0 8px; font-size: 14px; color: #666666">
-              <strong>Study:</strong> {{studyTitle}}
-            </p>
+            <!-- Study information -->
+            <div style="margin-bottom: 28px">
+              <p
+                style="
+                  margin: 0 0 6px;
+                  font-size: 12px;
+                  font-weight: bold;
+                  text-transform: uppercase;
+                  letter-spacing: 0.5px;
+                  color: #888888;
+                "
+              >
+                Study
+              </p>
 
+              <p
+                style="
+                  margin: 0 0 8px;
+                  font-size: 18px;
+                  font-weight: bold;
+                  line-height: 1.4;
+                  color: #222222;
+                "
+              >
+                {{studyTitle}}
+              </p>
+
+              <p
+                style="
+                  margin: 0;
+                  font-size: 14px;
+                  line-height: 1.6;
+                  color: #666666;
+                "
+              >
+                {{testDescription}}
+              </p>
+            </div>
+
+            <!-- Organizer message -->
+            <div style="margin-bottom: 28px">
+              <p
+                style="
+                  margin: 0 0 10px;
+                  font-size: 12px;
+                  font-weight: bold;
+                  text-transform: uppercase;
+                  letter-spacing: 0.5px;
+                  color: #888888;
+                "
+              >
+                Message from the organizer
+              </p>
+
+              <div
+                style="
+                  padding: 16px 18px;
+                  background: #f7f7f7;
+                  border-left: 4px solid #4caf50;
+                  border-radius: 4px;
+                "
+              >
+                <p
+                  style="
+                    margin: 0;
+                    font-size: 14px;
+                    line-height: 1.6;
+                    color: #555555;
+                  "
+                >
+                  {{sessionMessage}}
+                </p>
+              </div>
+            </div>
+
+            <!-- Organizer -->
             <p style="margin: 0; font-size: 14px; color: #666666">
               <strong>Organized by:</strong> {{invitedBy}}
             </p>

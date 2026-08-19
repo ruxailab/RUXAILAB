@@ -77,6 +77,7 @@ export default {
           session,
           studyId: payload.studyId,
           studyTitle: payload.study.testTitle,
+          studyDescription: payload.study.testDescription,
           scheduledAt: formatDateTime(
             session.scheduledAt,
             i18n.global.locale.value,
@@ -199,6 +200,7 @@ export default {
             },
             studyId: payload.studyId,
             studyTitle: payload.study.testTitle,
+            studyDescription: payload.study.testDescription,
             scheduledAt: formatDateTime(
               payload.session.scheduledAt,
               i18n.global.locale.value,
@@ -215,6 +217,7 @@ export default {
             },
             studyId: payload.studyId,
             studyTitle: payload.study.testTitle,
+            studyDescription: payload.study.testDescription,
             scheduledAt: formatDateTime(
               payload.session.scheduledAt,
               i18n.global.locale.value,
@@ -377,7 +380,15 @@ export default {
      */
     async notifySessionMembers(
       { getters, dispatch },
-      { session, members, studyId, studyTitle, scheduledAt, event = 'invite' },
+      {
+        session,
+        members,
+        studyId,
+        studyTitle,
+        studyDescription,
+        scheduledAt,
+        event = 'invite',
+      },
     ) {
       const user = getters.user
       const author = `${user.username || ''} ${user.email}`.trim()
@@ -430,6 +441,7 @@ export default {
                   message: session.message,
                   participantName: member.name || member.email,
                   studyTitle,
+                  studyDescription,
                   sessionTitle: session.title,
                   sessionMessage: session.message,
                   scheduledAt,

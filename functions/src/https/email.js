@@ -102,6 +102,7 @@ export const sendEmail = functions.onCall({
           .replace(/{{title}}/g, content.data.title || '')
           .replace(/{{description}}/g, content.data.description || '')
           .replace(/{{studyTitle}}/g, content.data.studyTitle || '')
+          .replace(/{{testDescription}}/g, content.data.studyDescription || '')
           .replace(/{{sessionTitle}}/g, content.data.sessionTitle || '')
           .replace(/{{sessionMessage}}/g, content.data.sessionMessage || '')
           .replace(/{{scheduledAt}}/g, content.data.scheduledAt || '')
