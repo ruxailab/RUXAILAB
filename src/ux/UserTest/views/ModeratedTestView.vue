@@ -414,6 +414,8 @@
               :current-task-index="taskIndex"
               :test="test"
               :local-test-answer="localTestAnswer"
+              :session-staff="sessionStaffMembers"
+              :session-participants="sessionParticipantsMembers"
               @set-remote-stream="remoteStream = $event"
               @proceed-to-next-step="proceedToNextStep"
               @step-selected="handleStepSelected"
@@ -699,6 +701,78 @@ const user = computed(() => {
 })
 const isUserTestAdmin = computed(() => {
   return test.value?.testAdmin?.userDocId === user.value?.id
+})
+
+const normalizeSessionRole = (role) => {
+  if (role === 'FACILITATOR' || role === ACCESS_LEVEL.ADMIN) return 'moderator'
+  if (role === 'OBSERVER' || role === ACCESS_LEVEL.OBSERVATOR) {
+    return 'observator'
+  }
+  return 'participant'
+}
+
+const normalizeMemberKey = (member) => {
+  if (!member) return []
+
+  const rawValues = [
+    member.userDocId,
+    member.id,
+    member.email,
+    member.name,
+    member.displayName,
+  ]
+
+  const normalized = new Set()
+
+  rawValues.forEach((value) => {
+    if (value == null || !String(value).trim()) return
+
+    const str = String(value).trim().toLowerCase()
+    normalized.add(str)
+    normalized.add(str.replace(/[^a-z0-9]/g, ''))
+
+    const localPart = str.includes('@') ? str.split('@')[0] : str
+    if (localPart) {
+      normalized.add(localPart)
+      normalized.add(localPart.replace(/[^a-z0-9]/g, ''))
+    }
+  })
+
+  return [...normalized]
+}
+
+const normalizeSessionMember = (member, fallbackType = 'participant') => {
+  if (!member) return null
+
+  const memberId = member.userDocId || member.id || member.email
+  if (!memberId) return null
+
+  return {
+    id: memberId,
+    userDocId: member.userDocId || member.id || member.email,
+    email: member.email,
+    name:
+      member.name ||
+      member.displayName ||
+      member.email?.split('@')[0] ||
+      fallbackType,
+    role: normalizeSessionRole(member.role || member.accessLevel),
+    connected: member.connected ?? true,
+    isStaff: fallbackType === 'staff',
+    accessLevel: member.accessLevel ?? member.role,
+  }
+}
+
+const sessionStaffMembers = computed(() => {
+  return (session.value?.staff || [])
+    .map((member) => normalizeSessionMember(member, 'staff'))
+    .filter(Boolean)
+})
+
+const sessionParticipantsMembers = computed(() => {
+  return (session.value?.participants || [])
+    .map((member) => normalizeSessionMember(member, 'participant'))
+    .filter(Boolean)
 })
 
 const currentUserAccessLevel = computed(() => {

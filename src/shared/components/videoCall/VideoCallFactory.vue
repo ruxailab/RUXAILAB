@@ -4,6 +4,8 @@
     v-bind="props"
     :is-moderator="isModerator"
     :is-observator="isObservator"
+    :session-staff="sessionStaff"
+    :session-participants="sessionParticipants"
     @set-remote-stream="emit('setRemoteStream', $event)"
     @proceed-to-next-step="emit('proceedToNextStep')"
     @step-selected="emit('stepSelected', $event)"
@@ -31,6 +33,8 @@ const props = defineProps({
   currentTaskIndex: Number,
   test: Object,
   localTestAnswer: Object,
+  sessionStaff: Array,
+  sessionParticipants: Array,
 })
 
 const emit = defineEmits([

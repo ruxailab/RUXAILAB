@@ -361,6 +361,8 @@
       :is-observator="isObservator"
       :call-started="callStarted"
       :participants-list="participantsList"
+      :staff-list="staffParticipants"
+      :participant-list="panelParticipantList"
       :current-stepper-value="currentStepperValue"
       :task-dropdown-items="taskDropdownItems"
       :current-task-index="currentTaskIndex"
@@ -403,6 +405,8 @@ const props = defineProps({
   currentTaskIndex: Number,
   test: Object,
   localTestAnswer: Object,
+  sessionStaff: Array,
+  sessionParticipants: Array,
 })
 
 const emit = defineEmits([
@@ -514,28 +518,98 @@ const buildParticipantItem = (remote, isSelf) => {
 }
 
 const staffParticipants = computed(() => {
-  if (!props.test?.cooperators) return []
+  const staffEntries = Array.isArray(props.sessionStaff)
+    ? props.sessionStaff
+    : props.test?.cooperators || []
 
-  return props.test.cooperators.map((cooperator) => {
+  return staffEntries.map((member) => {
     const role =
-      cooperator.accessLevel === ACCESS_LEVEL.OBSERVATOR
+      member.role === 'observator' ||
+      member.accessLevel === ACCESS_LEVEL.OBSERVATOR
         ? 'observator'
-        : cooperator.accessLevel === ACCESS_LEVEL.ADMIN
+        : member.role === 'moderator' ||
+            member.accessLevel === ACCESS_LEVEL.ADMIN
           ? 'moderator'
           : 'participant'
 
     return {
-      id: cooperator.userDocId || cooperator.email,
-      email: cooperator.email,
+      id: member.userDocId || member.id || member.email,
+      email: member.email,
       name:
-        cooperator.email?.split('@')[0] || cooperator.name || 'Staff member',
+        member.name ||
+        member.email?.split('@')[0] ||
+        member.displayName ||
+        'Staff member',
       role,
       connected: true,
       hasCamera: true,
       hasMicrophone: true,
-      accessLevel: cooperator.accessLevel,
+      accessLevel: member.accessLevel ?? member.role,
     }
   })
+})
+
+const normalizeMemberKeys = (member) => {
+  if (!member) return []
+
+  const rawValues = [
+    member.userDocId,
+    member.id,
+    member.email,
+    member.name,
+    member.displayName,
+  ]
+  const normalized = new Set()
+
+  rawValues.forEach((value) => {
+    if (value == null || !String(value).trim()) return
+
+    const str = String(value).trim().toLowerCase()
+    normalized.add(str)
+    normalized.add(str.replace(/[^a-z0-9]/g, ''))
+
+    const localPart = str.includes('@') ? str.split('@')[0] : str
+    if (localPart) {
+      normalized.add(localPart)
+      normalized.add(localPart.replace(/[^a-z0-9]/g, ''))
+    }
+  })
+
+  return [...normalized]
+}
+
+const panelParticipantList = computed(() => {
+  const dedupedList = []
+  const seen = new Set()
+
+  for (const member of Array.isArray(props.sessionParticipants)
+    ? props.sessionParticipants
+    : []) {
+    if (!member) continue
+
+    const memberId =
+      member.userDocId || member.id || member.email || member.name
+    if (!memberId) continue
+
+    const memberKey = String(memberId).trim().toLowerCase()
+    if (!memberKey || seen.has(memberKey)) continue
+
+    seen.add(memberKey)
+    dedupedList.push({
+      id: member.userDocId || member.id || member.email || member.name,
+      email: member.email,
+      name: member.name || member.email?.split('@')[0] || 'Participant',
+      role: member.role || 'participant',
+      connected: member.connected ?? true,
+      isSelf:
+        (member.userDocId || member.id || member.email) ===
+        (props.user?.id || props.user?.email),
+      hasCamera: member.hasCamera ?? true,
+      hasMicrophone: member.hasMicrophone ?? true,
+    })
+  }
+
+  return dedupedList
 })
 
 const {

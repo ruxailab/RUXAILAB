@@ -61,10 +61,91 @@
           </div>
         </div>
 
-        <div class="panel-section">
+        <div v-if="safeStaffList.length" class="panel-section">
+          <h4>Staff</h4>
+          <div
+            v-for="member in safeStaffList"
+            :key="member.id"
+            class="participant-item"
+          >
+            <v-avatar
+              size="32"
+              :color="member.role === 'moderator' ? 'blue' : 'orange'"
+            >
+              <v-icon color="white">{{
+                member.role === 'moderator' ? 'mdi-account-star' : 'mdi-eye'
+              }}</v-icon>
+            </v-avatar>
+            <div class="participant-info">
+              <span class="participant-name">
+                {{ member.name }}
+                <v-chip
+                  v-if="member.role === 'observator'"
+                  size="x-small"
+                  color="orange"
+                  class="ml-1"
+                >
+                  {{ t('videoCall.panel.observator') }}
+                </v-chip>
+                <v-chip
+                  v-else-if="member.role === 'moderator'"
+                  size="x-small"
+                  color="blue"
+                  class="ml-1"
+                >
+                  {{ t('videoCall.panel.moderator') }}
+                </v-chip>
+              </span>
+              <div class="participant-status">
+                <v-chip
+                  size="x-small"
+                  :color="member.connected ? 'green' : 'grey'"
+                >
+                  {{
+                    member.connected
+                      ? t('videoCall.panel.connected')
+                      : t('videoCall.panel.disconnected')
+                  }}
+                </v-chip>
+                <v-chip
+                  v-if="caller && !isObservator"
+                  size="x-small"
+                  :color="member.isMuted ? 'red' : 'green'"
+                  class="ml-1"
+                >
+                  {{ member.isMuted ? 'Muted' : 'Unmuted' }}
+                </v-chip>
+              </div>
+            </div>
+            <div v-if="caller && !isObservator" class="participant-actions">
+              <v-btn
+                size="x-small"
+                variant="text"
+                @click="toggleMemberMute(member.id)"
+              >
+                {{
+                  getMemberActionState(member.id, 'muted') ? 'Unmute' : 'Mute'
+                }}
+              </v-btn>
+              <v-btn
+                size="x-small"
+                variant="text"
+                @click="toggleMemberScreenShare(member.id)"
+              >
+                {{
+                  getMemberActionState(member.id, 'screenBlocked')
+                    ? 'Allow screen'
+                    : 'Block screen'
+                }}
+              </v-btn>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="safeParticipantList.length" class="panel-section">
           <h4>{{ t('videoCall.panel.participants') }}</h4>
           <div
-            v-for="participant in participantsList"
+            v-for="participant in safeParticipantList"
             :key="participant.id"
             class="participant-item"
           >
@@ -146,63 +227,31 @@
                 </v-chip>
               </div>
             </div>
+            <div v-if="caller && !isObservator" class="participant-actions">
+              <v-btn
+                size="x-small"
+                variant="text"
+                @click="toggleMemberMute(participant.id)"
+              >
+                {{
+                  getMemberActionState(participant.id, 'muted')
+                    ? 'Unmute'
+                    : 'Mute'
+                }}
+              </v-btn>
+              <v-btn
+                size="x-small"
+                variant="text"
+                @click="toggleMemberScreenShare(participant.id)"
+              >
+                {{
+                  getMemberActionState(participant.id, 'screenBlocked')
+                    ? 'Allow screen'
+                    : 'Block screen'
+                }}
+              </v-btn>
+            </div>
           </div>
-        </div>
-
-        <div v-if="!isObservator" class="panel-section">
-          <h4>{{ t('videoCall.panel.settings') }}</h4>
-          <v-list density="compact">
-            <v-list-item @click="toggleCamera">
-              <template #prepend>
-                <v-icon :color="isCameraEnabled ? 'green' : 'red'">
-                  {{ isCameraEnabled ? 'mdi-video' : 'mdi-video-off' }}
-                </v-icon>
-              </template>
-              <v-list-item-title>
-                {{
-                  isCameraEnabled
-                    ? t('videoCall.panel.disableCamera')
-                    : t('videoCall.panel.enableCamera')
-                }}
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item @click="toggleMicrophone">
-              <template #prepend>
-                <v-icon :color="isMicrophoneEnabled ? 'green' : 'red'">
-                  {{
-                    isMicrophoneEnabled
-                      ? 'mdi-microphone'
-                      : 'mdi-microphone-off'
-                  }}
-                </v-icon>
-              </template>
-              <v-list-item-title>
-                {{
-                  isMicrophoneEnabled
-                    ? t('videoCall.panel.muteMicrophone')
-                    : t('videoCall.panel.unmuteMicrophone')
-                }}
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item v-if="callStarted" @click="toggleScreenShare">
-              <template #prepend>
-                <v-icon :color="isSharingScreen ? 'blue' : 'grey'">
-                  {{
-                    isSharingScreen
-                      ? 'mdi-monitor-off'
-                      : 'mdi-monitor-screenshot'
-                  }}
-                </v-icon>
-              </template>
-              <v-list-item-title>
-                {{
-                  isSharingScreen
-                    ? t('videoCall.panel.stopScreenShare')
-                    : t('videoCall.panel.shareScreen')
-                }}
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
         </div>
       </div>
     </div>
@@ -412,15 +461,19 @@
 </template>
 
 <script setup>
+import { computed, reactive } from 'vue'
+
 const props = defineProps({
   showSidePanel: Boolean,
   showStepperPanel: Boolean,
   caller: Boolean,
   isObservator: Boolean,
   callStarted: Boolean,
-  participantsList: Array,
+  participantsList: { type: Array, default: () => [] },
+  staffList: { type: Array, default: () => [] },
+  participantList: { type: Array, default: () => [] },
   currentStepperValue: Number,
-  taskDropdownItems: Array,
+  taskDropdownItems: { type: Array, default: () => [] },
   currentTaskIndex: Number,
   test: Object,
   isCameraEnabled: Boolean,
@@ -438,6 +491,29 @@ const props = defineProps({
   toggleMicrophone: Function,
   toggleScreenShare: Function,
 })
+
+const safeStaffList = computed(() =>
+  Array.isArray(props.staffList) ? props.staffList : [],
+)
+const safeParticipantList = computed(() =>
+  Array.isArray(props.participantList) ? props.participantList : [],
+)
+
+const participantActionState = reactive({})
+
+const getMemberActionState = (memberId, actionKey) => {
+  return Boolean(participantActionState[`${memberId}-${actionKey}`])
+}
+
+const toggleMemberMute = (memberId) => {
+  const key = `${memberId}-muted`
+  participantActionState[key] = !getMemberActionState(memberId, 'muted')
+}
+
+const toggleMemberScreenShare = (memberId) => {
+  const key = `${memberId}-screenBlocked`
+  participantActionState[key] = !getMemberActionState(memberId, 'screenBlocked')
+}
 </script>
 
 <style scoped src="./videoCallShared.css"></style>
