@@ -841,6 +841,67 @@ export const manageStudyMembership = functions.onCall({
       })
 
       /*
+      |--------------------------------------------------------------------------
+      | REINVITE COOPERATOR
+      |--------------------------------------------------------------------------
+      */
+      if (action === 'reinvite') {
+        if (!target) {
+          throw error('not-found', 'Cooperator not found')
+        }
+
+        if (InviteUtils.isAccepted(target)) {
+          throw error(
+            'failed-precondition',
+            'Accepted cooperators cannot be reinvited',
+          )
+        }
+
+        const now = Date.now()
+
+        const membership = {
+          ...target,
+
+          // Generate/use a new invitation token
+          token: data.token || null,
+
+          // Keep the new message when provided
+          inviteMessage:
+            data.inviteMessage !== undefined
+              ? data.inviteMessage
+              : target.inviteMessage || null,
+
+          updateDate: now,
+          status: INVITE_STATUS.PENDING,
+          expirationDate: data.expirationDate,
+          rejectedDate: null,
+        }
+
+        cooperators[targetIndex] = membership
+
+        transaction.update(studyRef, {
+          cooperators,
+        })
+
+        writeAuditEvent(transaction, studyRef, {
+          action: 'cooperator.reinvited',
+          actorId,
+          target: membership.userDocId || membership.email,
+          actorEmail,
+          targetLabel: membership.email || membership.userDocId,
+          targetType: 'cooperator',
+          details: {
+            role: membership.accessLevel,
+          },
+        })
+
+        return {
+          status: 'reinvited',
+          cooperator: membership,
+        }
+      }
+
+      /*
        |--------------------------------------------------------------------------
        | INVITE COOPERATOR
        |--------------------------------------------------------------------------
