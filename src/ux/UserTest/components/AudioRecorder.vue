@@ -46,11 +46,11 @@
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import {
-  getStorage,
   ref as storageRef,
   uploadBytes,
   getDownloadURL,
 } from 'firebase/storage'
+import { storage } from '@/app/plugins/firebase'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 
 const props = defineProps({
@@ -154,7 +154,6 @@ const startAudioRecording = async () => {
       const audioBlob = new Blob(recordedChunks.value.local, {
         type: 'audio/webm',
       })
-      const storage = getStorage()
       const correctTaskIndex = recordingTaskIndex.value
       const storageReference = storageRef(
         storage,
@@ -211,7 +210,6 @@ const startAudioRecording = async () => {
           const blob = new Blob(recordedChunks.value.remote, {
             type: 'audio/webm',
           })
-          const storage = getStorage()
           const correctTaskIndex = recordingTaskIndex.value
           const storageReference = storageRef(
             storage,
