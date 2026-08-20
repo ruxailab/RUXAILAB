@@ -567,6 +567,7 @@
       "AI Agents": "Agentes IA",
       "Storage": "Almacenamiento",
       "Audit Trail": "Registro de auditoría",
+      "AI Agents": "Agentes de IA",
       "name": "Nombre",
       "studiesCount": "Recuento de Estudios",
       "mediaSize": "Tamaño de Medios",
@@ -789,6 +790,7 @@
     },
     "managerView": {
       "heuristicStudy": "Estudio Heurístico",
+      "aiAgents": "Agentes de IA",
       "freePlan": "Plan Gratuito",
       "generalStatistics": "Estadísticas Generales",
       "modules": "Módulos"

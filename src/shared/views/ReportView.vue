@@ -488,6 +488,9 @@ const checkIfIsSubmitted = (status) =>
 
 const getCooperatorEmail = (userDocId) => {
   if (userDocId === user.value.id) return 'You'
+  if (userDocId?.startsWith('ai-agent:')) {
+    return `AI Agent (${decodeURIComponent(userDocId.slice('ai-agent:'.length))})`
+  }
   const cooperators = test.value.cooperators || []
   const staffFound = cooperators.find((c) => c?.userDocId === userDocId)
   if (staffFound) return staffFound?.email || 'Unknown'

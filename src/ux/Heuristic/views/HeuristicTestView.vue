@@ -377,6 +377,7 @@ import HeuristicAnswerStep from '@/ux/Heuristic/components/steps/HeuristicAnswer
 import HeuristicCardsStep from '@/ux/Heuristic/components/steps/HeuristicCardsStep.vue'
 import HeuristicFinishStep from '@/ux/Heuristic/components/steps/HeuristicFinishStep.vue'
 import HeuristicQuestionAnswer from '@/ux/Heuristic/models/HeuristicQuestionAnswer'
+import { resolveHeuristicAnswerMode } from '@/ux/Heuristic/utils/heuristicAnswerMode'
 import Heuristic from '@/ux/Heuristic/models/Heuristic'
 import { showSuccess, showError } from '@/shared/utils/toast'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
@@ -729,8 +730,8 @@ const startTest = async () => {
     })
     return
   }
-  if (!test.value?.testOptions?.length) {
-    showError('No answer options configured for this test.')
+  if (!answerCompletionMode.value) {
+    showError(t('HeuristicsTestView.errors.noAnswerOptions'))
     return
   }
 
@@ -1125,17 +1126,9 @@ const isAnswerEmpty = (answer) => {
   return false
 }
 
-const answerCompletionMode = computed(() => {
-  if (Array.isArray(test.value?.testOptions) && test.value.testOptions.length) {
-    return 'customOptions'
-  }
-  const requiresFrequency = test.value?.useFrequency !== false
-  const requiresSeverity = test.value?.useSeverity !== false
-  if (requiresFrequency && requiresSeverity) return 'frequencySeverity'
-  if (requiresFrequency) return 'frequency'
-  if (requiresSeverity) return 'severity'
-  return null
-})
+const answerCompletionMode = computed(() =>
+  resolveHeuristicAnswerMode(test.value),
+)
 
 const isFilledAnswerValue = (value) =>
   value !== undefined && value !== null && value !== ''
