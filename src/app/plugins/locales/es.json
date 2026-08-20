@@ -377,7 +377,16 @@
     "minutesAgo": "hace {count}m",
     "hoursAgo": "hace {count}h",
     "daysAgo": "hace {count}d",
-    "newNotification": "Tienes una nueva notificación."
+    "newNotification": "Tienes una nueva notificación.",
+    "notificationsPage": {
+      "types": {
+        "session": "Sesión",
+        "message": "Mensaje",
+        "collaboration": "Colaboración",
+        "notification": "Notificación",
+        "participant": "Participante"
+      }
+    }
   },
   "notifications": {
     "errors": {
@@ -3248,7 +3257,11 @@
     "pendingSubtitle": "Has sido invitado a participar en un estudio",
     "pendingDescription": "Tienes una invitación pendiente. ¿Quieres aceptarla ahora?",
     "notNow": "Ahora no",
-    "loginRequired": "Esta invitación requiere que inicies sesión o crees una cuenta antes de participar."
+    "loginRequired": "Esta invitación requiere que inicies sesión o crees una cuenta antes de participar.",
+    "participantInviteTitle": "Estás invitado a participar",
+    "cooperatorInviteTitle": "Has sido invitado como miembro del equipo",
+    "participantInviteMessage": "Has sido invitado a participar en este estudio.",
+    "cooperatorInviteMessage": "Has sido invitado a colaborar en este estudio como miembro del equipo."
   },
   "Participants": {
     "title": {
@@ -3403,6 +3416,16 @@
       "noMessage": "Todavía no hay mensaje",
       "info": "Los destinatarios seleccionados recibirán este mensaje por correo electrónico.",
       "send": "Enviar"
+    },
+    "notify": {
+      "participantInviteTitle": "Estás invitado/a a una sesión",
+      "participantInviteMessage": "Has sido invitado/a a una sesión como participante del estudio",
+      "cooperatorInviteTitle": "Has sido invitado/a a una sesión como parte del equipo",
+      "cooperatorInviteMessage": "Has sido invitado/a a colaborar como parte del equipo en una sesión del estudio",
+      "updateTitle": "Los detalles de la sesión han cambiado",
+      "updateMessage": "Los detalles de tu sesión han sido actualizados",
+      "messageTitle": "Nuevo mensaje del organizador de la sesión",
+      "messageDescription": "El organizador de la sesión te ha enviado un nuevo mensaje."
     },
     "headers": {
       "goToSession": "Ir a la sesión",

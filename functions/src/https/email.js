@@ -34,6 +34,8 @@ export const sendEmail = functions.onCall({
             /{{invitationLink}}/g,
             content.data.invitationLink || process.env.SITE_URL,
           )
+          .replace(/{{title}}/g, content.data.title || '')
+          .replace(/{{description}}/g, content.data.description || '')
           .replace(/{{message}}/g, content.data.message || '')
           .replace(/{{testTitle}}/g, content.data.testTitle || '')
           .replace(/{{testDescription}}/g, content.data.testDescription || '')
@@ -97,8 +99,10 @@ export const sendEmail = functions.onCall({
         htmlTemplate = fs.readFileSync(templatePath, 'utf-8')
 
         htmlTemplate = htmlTemplate
-          .replace(/{{participantName}}/g, content.data.participantName || '')
+          .replace(/{{title}}/g, content.data.title || '')
+          .replace(/{{description}}/g, content.data.description || '')
           .replace(/{{studyTitle}}/g, content.data.studyTitle || '')
+          .replace(/{{testDescription}}/g, content.data.studyDescription || '')
           .replace(/{{sessionTitle}}/g, content.data.sessionTitle || '')
           .replace(/{{sessionMessage}}/g, content.data.sessionMessage || '')
           .replace(/{{scheduledAt}}/g, content.data.scheduledAt || '')
@@ -124,7 +128,10 @@ export const sendEmail = functions.onCall({
           .replace(/{{title}}/g, content.data.title || '')
           .replace(/{{message}}/g, content.data.message || '')
           .replace(/{{author}}/g, content.data.author || '')
-          .replace(/{{actionText}}/g, content.data.actionText || '')
+          .replace(
+            /{{actionText}}/g,
+            content.data.actionText || 'Go to RUXAILAB',
+          )
           .replace(
             /{{actionLink}}/g,
             content.data.actionLink || process.env.SITE_URL,
@@ -135,7 +142,10 @@ export const sendEmail = functions.onCall({
     }
 
     const mail = {
-      from: process.env.SMTP_USER || 'no-reply@ruxailab.com',
+      from: {
+        name: 'RUXAILAB',
+        address: process.env.SMTP_USER || 'no-reply@ruxailab.com',
+      },
       to: content.to,
       subject: content.subject,
       html: htmlTemplate,

@@ -379,7 +379,14 @@
     "minutesAgo": "{count}m ago",
     "hoursAgo": "{count}h ago",
     "daysAgo": "{count}d ago",
-    "newNotification": "You have a new notification."
+    "newNotification": "You have a new notification.",
+    "types": {
+      "session": "Session",
+      "message": "Message",
+      "collaboration": "Collaboration",
+      "notification": "Notification",
+      "participant": "Participant"
+    }
   },
   "notifications": {
     "errors": {
@@ -3330,7 +3337,11 @@
     "pendingSubtitle": "You have been invited to participate in a study",
     "pendingDescription": "You have a pending invitation. Would you like to accept it now?",
     "notNow": "Not now",
-    "loginRequired": "This invitation requires you to sign in or create an account before participating."
+    "loginRequired": "This invitation requires you to sign in or create an account before participating.",
+    "participantInviteTitle": "You're invited to participate",
+    "cooperatorInviteTitle": "You've been invited as staff",
+    "participantInviteMessage": "You’ve been invited to take part in this study.",
+    "cooperatorInviteMessage": "You’ve been invited to collaborate on this study as a staff member."
   },
   "Participants": {
     "title": {
@@ -3485,6 +3496,16 @@
       "noMessage": "No message yet",
       "info": "The selected recipients will receive this message by email.",
       "send": "Send"
+    },
+    "notify": {
+      "participantInviteTitle": "You're invited to a session",
+      "participantInviteMessage": "You've been invited to a session as a study participant",
+      "cooperatorInviteTitle": "You've been invited to a session as staff",
+      "cooperatorInviteMessage": "You've been invited to collaborate as staff in a study session",
+      "updateTitle": "Session details changed",
+      "updateMessage": "The details of your session have been updated",
+      "messageTitle": "New message from the session organizer",
+      "messageDescription": "The session organizer has sent you a new message."
     },
     "headers": {
       "goToSession": "Go to session",
