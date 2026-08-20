@@ -1168,6 +1168,7 @@ const startTest = async () => {
       currentUserAccessLevel.value,
     )
     const now = Date.now()
+    const isParticipant = !isObservator.value && !isModerator.value
 
     await update(memberRef, {
       userDocId: currentUserId,
@@ -1182,7 +1183,7 @@ const startTest = async () => {
         : (normalizedAccessLevel ?? 5),
       isModerator: false,
       connected: true,
-      presenceStatus: 'connected',
+      presenceStatus: isParticipant ? 'waiting' : 'connected',
       presenceUpdatedAt: now,
       joinedAt: now,
       media: {
