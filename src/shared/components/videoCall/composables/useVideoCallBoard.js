@@ -1,6 +1,5 @@
 import { computed } from 'vue'
 import { ACCESS_LEVEL, normalizeAccessLevel } from '@/shared/utils/accessLevel'
-import { useVideoFocus } from './useVideoFocus'
 
 export function useVideoCallBoard({
   t,
@@ -38,8 +37,10 @@ export function useVideoCallBoard({
         id: `screen:${feed.key}`,
         type: 'screen',
         feedKey: feed.key,
-        label: `${t('videoCall.session.screenSharingLabel')} (${feed.name})`,
-        muted: !!feed.isLocal,
+        label:
+          feed.label ||
+          `${t('videoCall.session.screenSharingLabel')} (${feed.name || ''})`,
+        muted: true,
         ...(feed.stream ? { stream: feed.stream } : {}),
       })
     })
@@ -47,8 +48,13 @@ export function useVideoCallBoard({
     return list
   })
 
-  const { focusedTile, otherTiles, isFocusMode, focusTile, clearFocus } =
-    useVideoFocus(tiles)
+  const focusedTile = computed(
+    () => tiles.value.find((tile) => tile.type === 'screen') || null,
+  )
+  const otherTiles = computed(() =>
+    tiles.value.filter((tile) => tile.type !== 'screen'),
+  )
+  const isFocusMode = computed(() => !!focusedTile.value)
 
   const showWaitingMessage = computed(
     () =>
@@ -150,8 +156,6 @@ export function useVideoCallBoard({
     focusedTile,
     otherTiles,
     isFocusMode,
-    focusTile,
-    clearFocus,
     showWaitingMessage,
     cameraCount,
     cameraColumns,

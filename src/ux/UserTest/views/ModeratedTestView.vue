@@ -1395,6 +1395,12 @@ const startTest = async () => {
     const previousTaskIndex = taskIndex.value
 
     if (!isModerator.value) {
+      if (isObservator.value) {
+        // Observers stay in the call lobby and do not follow the test steps.
+        displayVideoCallComponent.value = true
+        return
+      }
+
       const announcementKey = `${nextGlobalIndex}-${nextTaskIndex}`
       const stageChanged =
         previousGlobalIndex !== nextGlobalIndex ||
@@ -1416,9 +1422,6 @@ const startTest = async () => {
 
         displayVideoCallComponent.value = false
         isProcessingRemoteStepAnnouncement.value = false
-      } else if (isObservator.value) {
-        // Observers stay in the lobby while waiting for the moderator.
-        displayVideoCallComponent.value = true
       } else {
         displayVideoCallComponent.value = nextShowVideoCall
       }
@@ -1427,8 +1430,10 @@ const startTest = async () => {
       displayVideoCallComponent.value = true
     }
 
-    globalIndex.value = nextGlobalIndex
-    taskIndex.value = nextTaskIndex
+    if (!isObservator.value) {
+      globalIndex.value = nextGlobalIndex
+      taskIndex.value = nextTaskIndex
+    }
   })
 
   // Wait for the animation to finish before changing the state
@@ -2065,6 +2070,8 @@ onBeforeUnmount(async () => {
 .sticky-stepper {
   position: sticky;
   top: 0;
+  margin-bottom: 24px;
+
   z-index: 10;
   background: transparent;
 }

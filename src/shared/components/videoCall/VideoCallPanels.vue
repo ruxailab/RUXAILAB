@@ -188,6 +188,7 @@
     </div>
 
     <div
+      v-if="!isObservator"
       class="stepper-panel"
       :class="{ 'stepper-panel-open': showStepperPanel }"
     >

@@ -11,11 +11,7 @@
         <div class="video-stage">
           <!-- Spotlight: focused participant or shared screen -->
           <div v-if="isFocusMode" class="spotlight-primary">
-            <div
-              :key="focusedTile.id"
-              class="spotlight-item tile-clickable"
-              @click="clearFocus"
-            >
+            <div :key="focusedTile.id" class="spotlight-item">
               <div
                 class="video-container"
                 :class="{
@@ -31,6 +27,8 @@
                   :class="{
                     'screen-share-element': focusedTile.type === 'screen',
                   }"
+                  @loadedmetadata="playVideo"
+                  @canplay="playVideo"
                 ></video>
 
                 <div
@@ -62,14 +60,15 @@
           <!-- Tiles: full grid, or a compact filmstrip when focusing -->
           <div
             class="videos-grid"
-            :class="{ 'videos-filmstrip': isFocusMode }"
+            :class="{
+              'videos-filmstrip': isFocusMode,
+              'videos-single': !isFocusMode && tiles.length === 1,
+            }"
             :style="gridStyleVars"
           >
             <div
               v-for="tile in isFocusMode ? otherTiles : tiles"
               :key="tile.id"
-              class="video-wrapper tile-clickable"
-              @click="focusTile(tile.id)"
             >
               <div
                 class="video-container"
@@ -82,6 +81,8 @@
                   playsinline
                   class="video-element"
                   :class="{ 'screen-share-element': tile.type === 'screen' }"
+                  @loadedmetadata="playVideo"
+                  @canplay="playVideo"
                 ></video>
 
                 <div
@@ -109,7 +110,7 @@
 
             <!-- Waiting Message if no peers -->
             <div
-              v-if="showWaitingMessage"
+              v-if="showWaitingMessage && tiles.length > 1"
               class="d-flex align-center justify-center pa-4 text-grey"
             >
               <v-icon class="mr-2">mdi-account-clock</v-icon>
@@ -126,15 +127,16 @@
           !roomOpen &&
           !isObservator &&
           localStream &&
+          !roomReady &&
           Object.keys(peers).length === 0
         "
         cols="12"
       >
         <div
-          class="videos-grid single-video-grid"
+          class="videos-grid video-preview-grid"
           :style="{ '--grid-cols': 1 }"
         >
-          <div class="video-wrapper">
+          <div>
             <div class="video-container">
               <video
                 ref="localVideo"
@@ -415,7 +417,9 @@ const screenShareFeeds = computed(() => {
 const callStarted = computed(() =>
   props.isModerator
     ? roomOpen.value
-    : roomReady.value && (roomOpen.value || Object.keys(peers).length > 0),
+    : isObservator.value
+      ? roomReady.value
+      : roomReady.value && (roomOpen.value || Object.keys(peers).length > 0),
 )
 
 // Helper to get name
@@ -425,6 +429,13 @@ const getPeerName = (userId) => {
   // Fallback to finding in test cooperators
   const coop = props.test?.cooperators?.find((c) => c.userDocId === userId)
   return coop?.email || 'Participant'
+}
+
+function playVideo(event) {
+  const video = event.currentTarget
+  if (!video || !video.paused) return
+
+  video.play().catch(() => {})
 }
 
 // Computed property for task dropdown items
@@ -684,6 +695,15 @@ const joinRoom = async () => {
     }
     const pc = peers[senderId].connection
 
+    if (signal.type === 'screen-share-state') {
+      peers[senderId].screenShareExpected = signal.active === true
+      if (!peers[senderId].screenShareExpected) {
+        peers[senderId].screenStream = null
+      }
+      remove(snapshot.ref)
+      return
+    }
+
     if (signal.type === 'offer') {
       const desc = new RTCSessionDescription({ type: 'offer', sdp: signal.sdp })
       try {
@@ -819,6 +839,8 @@ const createPeerConnection = (targetUserId, isInitiator) => {
     screenStream: null,
     screenSender: null,
     pendingCandidates: [],
+    screenShareExpected: false,
+    needsNegotiation: false,
   }
 
   // Publish local media so staff members can see each other.
@@ -844,9 +866,12 @@ const createPeerConnection = (targetUserId, isInitiator) => {
     if (!peer || !track) return
 
     if (track.kind === 'video') {
+      const isExistingCameraTrack = peer.stream
+        ?.getTracks()
+        .some((existingTrack) => existingTrack.id === track.id)
       const isScreenTrack =
-        /screen|window|monitor|display/i.test(track.label) ||
-        (peer.stream?.getVideoTracks().length ?? 0) > 0
+        /screen|window|monitor|display/i.test(track.label || '') ||
+        (peer.screenShareExpected === true && !isExistingCameraTrack)
 
       if (isScreenTrack) {
         if (!peer.screenStream) {
@@ -889,29 +914,23 @@ const createPeerConnection = (targetUserId, isInitiator) => {
   }
 
   if (isInitiator) {
-    pc.onnegotiationneeded = async () => {
-      try {
-        const offer = await pc.createOffer()
-        await pc.setLocalDescription(offer)
-        sendSignal(targetUserId, { type: 'offer', sdp: offer.sdp })
-      } catch {
-        // Error on negotiation
-      }
-    }
+    pc.onnegotiationneeded = () => negotiatePeer(targetUserId, pc, true)
 
     // Manually trigger offer creation for initiator
     // negotiationneeded might not fire immediately
     setTimeout(async () => {
       if (pc.signalingState === 'stable' && !pc.currentRemoteDescription) {
-        try {
-          const offer = await pc.createOffer()
-          await pc.setLocalDescription(offer)
-          sendSignal(targetUserId, { type: 'offer', sdp: offer.sdp })
-        } catch {
-          // Error creating initial offer
-        }
+        await negotiatePeer(targetUserId, pc, true)
       }
     }, 100)
+  }
+
+  if (!isInitiator) {
+    pc.onnegotiationneeded = () => {
+      if (!peers[targetUserId].needsNegotiation) return
+      peers[targetUserId].needsNegotiation = false
+      negotiatePeer(targetUserId, pc, false)
+    }
   }
 
   // Listen for specific signals from this sender?
@@ -1004,6 +1023,9 @@ function isRemoteMicrophoneEnabled(userId) {
 const remoteEntries = computed(() =>
   Object.keys(remoteStreams.value)
     .filter((userId) => {
+      const peer = peers[userId]
+      if (!peer?.stream?.getVideoTracks().length) return false
+
       if (!props.isModerator || !roomOpen.value) return true
 
       const member = participants.value[userId]
@@ -1167,8 +1189,6 @@ const {
   focusedTile,
   otherTiles,
   isFocusMode,
-  focusTile,
-  clearFocus,
   showWaitingMessage,
   gridStyleVars,
   participantsList,
@@ -1373,7 +1393,10 @@ async function startScreenShare() {
     for (const userId in peers) {
       const peer = peers[userId]
       if (!peer?.connection || !videoTrack) continue
+      peer.needsNegotiation = true
       peer.screenSender = peer.connection.addTrack(videoTrack, stream)
+      peer.screenShareExpected = true
+      await sendSignal(userId, { type: 'screen-share-state', active: true })
     }
   } catch {
     isSharingScreen.value = false
@@ -1392,11 +1415,30 @@ async function stopScreenShare() {
     if (!peer?.connection) continue
 
     if (peer.screenSender) {
+      peer.needsNegotiation = true
       peer.connection.removeTrack(peer.screenSender)
       peer.screenSender = null
+      peer.screenShareExpected = false
+      await sendSignal(userId, { type: 'screen-share-state', active: false })
     }
 
     peer.screenStream = null
+  }
+}
+
+async function negotiatePeer(userId, connection, isInitialOffer) {
+  if (connection.signalingState !== 'stable') return
+
+  try {
+    const offer = await connection.createOffer()
+    await connection.setLocalDescription(offer)
+    await sendSignal(userId, {
+      type: 'offer',
+      sdp: offer.sdp,
+      isInitialOffer,
+    })
+  } catch (error) {
+    console.error('Error renegotiating screen share:', error) // eslint-disable-line no-console
   }
 }
 

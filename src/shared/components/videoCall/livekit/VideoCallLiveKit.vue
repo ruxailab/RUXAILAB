@@ -21,11 +21,7 @@
         <div class="video-stage">
           <!-- Spotlight: focused participant or shared screen -->
           <div v-if="isFocusMode" class="spotlight-primary">
-            <div
-              :key="focusedTile.id"
-              class="spotlight-item tile-clickable"
-              @click="clearFocus"
-            >
+            <div :key="focusedTile.id" class="spotlight-item">
               <div
                 class="video-container"
                 :class="{
@@ -78,8 +74,6 @@
             <div
               v-for="tile in isFocusMode ? otherTiles : tiles"
               :key="tile.id"
-              class="video-wrapper tile-clickable"
-              @click="focusTile(tile.id)"
             >
               <div
                 class="video-container"
@@ -217,7 +211,6 @@ import { Track } from 'livekit-client'
 import { database } from '@/app/plugins/firebase/index'
 import { ref as dbRef, get, onValue, update, remove } from 'firebase/database'
 import { useLiveKitRoom } from '../composables/useLiveKitRoom'
-import { useVideoFocus } from '../composables/useVideoFocus'
 import VideoCallPanels from '../VideoCallPanels.vue'
 import VideoCallControlBar from '../VideoCallControlBar.vue'
 import { normalizeSessionMember } from '@/ux/UserTest/utils/sessionPresence'
@@ -428,8 +421,6 @@ const {
   focusedTile,
   otherTiles,
   isFocusMode,
-  focusTile,
-  clearFocus,
   showWaitingMessage,
   gridStyleVars,
   participantsList,

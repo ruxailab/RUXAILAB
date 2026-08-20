@@ -165,7 +165,7 @@
           <span>{{ props.notesDrawerOpen ? 'Hide notes' : 'Show notes' }}</span>
         </v-tooltip>
 
-        <v-tooltip location="top">
+        <v-tooltip v-if="!props.isObservator" location="top">
           <template #activator="{ props: tooltipProps }">
             <v-btn
               v-bind="tooltipProps"
