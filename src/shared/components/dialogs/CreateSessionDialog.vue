@@ -741,7 +741,12 @@ const formattedDateTime = computed(() => {
 
 // Helpers
 function getSessionTitle() {
-  return sessionTitle.value?.trim() || `${date.value}_Session`
+  const day = String(date.value.getDate()).padStart(2, '0')
+  const month = String(date.value.getMonth() + 1).padStart(2, '0')
+  const year = date.value.getFullYear()
+
+  const formattedDate = `${day}-${month}-${year}`
+  return sessionTitle.value?.trim() || `${formattedDate}_Session`
 }
 
 function getDefaultDate() {
