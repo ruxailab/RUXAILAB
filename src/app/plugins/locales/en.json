@@ -379,7 +379,14 @@
     "minutesAgo": "{count}m ago",
     "hoursAgo": "{count}h ago",
     "daysAgo": "{count}d ago",
-    "newNotification": "You have a new notification."
+    "newNotification": "You have a new notification.",
+    "types": {
+      "session": "Session",
+      "message": "Message",
+      "collaboration": "Collaboration",
+      "notification": "Notification",
+      "participant": "Participant"
+    }
   },
   "notifications": {
     "errors": {
@@ -588,7 +595,8 @@
       "participants": "Add participants to your study to help you collect valuable data and insights from real users.",
       "start": "Get started!",
       "edit": "Create and customize your tasks and heuristics for your research needs.",
-      "finalReport": "Prepare the final report for your heuristic evaluation by selecting the elements you want to include."
+      "finalReport": "Prepare the final report for your heuristic evaluation by selecting the elements you want to include.",
+      "sessions": "Sessions are scheduled study meetings where staff and participants come together to conduct and complete the study."
     }
   },
   "errors": {
@@ -2293,6 +2301,7 @@
       "mediaDeviceUnavailable": "The {device} is unavailable. You can still join the call without it."
     },
     "panel": {
+      "bringParticipantsBack": "Bring Participants Back",
       "toolsPanelTitle": "Tools Panel",
       "sessionControl": "Session Control",
       "joinRoomInfo": "Join room controls are now in the main interface above",
@@ -3298,7 +3307,11 @@
     "pendingSubtitle": "You have been invited to participate in a study",
     "pendingDescription": "You have a pending invitation. Would you like to accept it now?",
     "notNow": "Not now",
-    "loginRequired": "This invitation requires you to sign in or create an account before participating."
+    "loginRequired": "This invitation requires you to sign in or create an account before participating.",
+    "participantInviteTitle": "You're invited to participate",
+    "cooperatorInviteTitle": "You've been invited as staff",
+    "participantInviteMessage": "You’ve been invited to take part in this study.",
+    "cooperatorInviteMessage": "You’ve been invited to collaborate on this study as a staff member."
   },
   "Participants": {
     "title": {
@@ -3430,7 +3443,9 @@
       "participantAlreadyAdded": "This participant has already been added.",
       "createFailed": "Failed to save the session.",
       "sendMessageFailed": "Failed to send the message.",
-      "errorDelete": "Failed to delete the session."
+      "errorDelete": "Failed to delete the session.",
+      "facilitatorRequired": "At least one facilitator is required.",
+      "participantRequired": "At least one participant is required."
     },
     "send": {
       "title": "Send session message",
@@ -3451,6 +3466,16 @@
       "noMessage": "No message yet",
       "info": "The selected recipients will receive this message by email.",
       "send": "Send"
+    },
+    "notify": {
+      "participantInviteTitle": "You're invited to a session",
+      "participantInviteMessage": "You've been invited to a session as a study participant",
+      "cooperatorInviteTitle": "You've been invited to a session as staff",
+      "cooperatorInviteMessage": "You've been invited to collaborate as staff in a study session",
+      "updateTitle": "Session details changed",
+      "updateMessage": "The details of your session have been updated",
+      "messageTitle": "New message from the session organizer",
+      "messageDescription": "The session organizer has sent you a new message."
     },
     "headers": {
       "goToSession": "Go to session",

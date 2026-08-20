@@ -15,6 +15,7 @@ import { getMethodManagerView } from '@/shared/constants/methodDefinitions'
 import { getAcceptedInvitationDestination } from '@/shared/utils/studyNavigation'
 import { manageStudyMembership } from '@/shared/services/studyMembershipService'
 import i18n from '@/app/plugins/i18n'
+import { NOTIFICATION_TYPES } from '../../features/notifications/utils/notificationUtils'
 
 const t = i18n.global.t
 
@@ -30,7 +31,13 @@ const createInvitation = async ({ study, guest, membershipType }) => {
   })
 }
 
-const buildInvitationNotification = ({ study, guest, inviteToken, router }) => {
+const buildInvitationNotification = ({
+  study,
+  guest,
+  inviteToken,
+  router,
+  membershipType,
+}) => {
   const managerViewByMethod = getMethodManagerView(
     study.testType,
     study.subType,
@@ -65,29 +72,65 @@ const buildInvitationNotification = ({ study, guest, inviteToken, router }) => {
     ? router.resolve(destination).href
     : managerRoute.href
 
+  const { title, description } = getInvitationTexts(
+    membershipType,
+    study.testTitle,
+  )
+
   return new Notification({
     author: study.testAdmin.email,
     testId: study.id,
     redirectsTo: path,
-    type: 'Collaboration',
+    type:
+      membershipType == 'cooperator'
+        ? NOTIFICATION_TYPES.COLLABORATION
+        : NOTIFICATION_TYPES.PARTICIPANT,
     accessLevel: guest.accessLevel,
-    title: t('invite.pendingSubtitle'),
-    description: `${t('HeuristicsCooperators.messages.invite_message')} ${study.testTitle}`,
+    title,
+    description,
     inviteToken,
     read: false,
   })
 }
 
-const sendInvitationEmail = async ({ study, user, guest, inviteLink }) => {
+const getInvitationTexts = (membershipType, studyTitle) => {
+  const isParticipant = membershipType === 'participant'
+
+  return {
+    title: `${
+      isParticipant
+        ? t('invite.participantInviteTitle')
+        : t('invite.cooperatorInviteTitle')
+    } · ${studyTitle}`,
+
+    description: isParticipant
+      ? t('invite.participantInviteMessage')
+      : t('invite.cooperatorInviteMessage'),
+  }
+}
+
+const sendInvitationEmail = async ({
+  study,
+  user,
+  guest,
+  inviteLink,
+  membershipType,
+}) => {
   const emailController = new EmailController()
+  const { title, description } = getInvitationTexts(
+    membershipType,
+    study.testTitle,
+  )
 
   return emailController.send({
     to: guest.email,
-    subject: t('invite.pendingSubtitle'),
+    subject: title,
     attachments: [],
     template: 'invite',
     data: {
-      message: guest.inviteMessage || '',
+      title,
+      description,
+      message: guest.inviteMessage,
       testTitle: study.testTitle,
       testDescription: study.testDescription,
       adminEmail: study.testAdmin.email,
@@ -161,6 +204,7 @@ const sendParticipantInvitation = async ({
       guest: participantMembership,
       inviteToken: inviteResult.inviteToken,
       router,
+      membershipType: 'participant',
     })
 
     await dispatch('addNotification', {
@@ -174,6 +218,7 @@ const sendParticipantInvitation = async ({
     user,
     guest: participantMembership,
     inviteLink: inviteResult.inviteLink,
+    membershipType: 'participant',
   })
 
   return {
@@ -209,6 +254,7 @@ const sendCooperatorInvitation = async ({
       guest: resolvedGuest,
       inviteToken: inviteResult.inviteToken,
       router,
+      membershipType: 'cooperator',
     })
 
     await dispatch('addNotification', {
@@ -222,6 +268,7 @@ const sendCooperatorInvitation = async ({
     user,
     guest: resolvedGuest,
     inviteLink: inviteResult.inviteLink,
+    membershipType: 'cooperator',
   })
 
   return {
@@ -493,7 +540,8 @@ export default {
         const alreadyExists = notifications.some(
           (notification) =>
             !notification.read &&
-            notification.type === 'Collaboration' &&
+            (notification.type === NOTIFICATION_TYPES.COLLABORATION ||
+              notification.type === NOTIFICATION_TYPES.PARTICIPANT) &&
             notification.testId === study.id &&
             notification.redirectsTo === redirectsTo,
         )
@@ -503,15 +551,23 @@ export default {
           return
         }
 
+        const membershipType = invite.membershipType || 'cooperator'
+        const { title, description } = getInvitationTexts(
+          membershipType,
+          study.testTitle,
+        )
         const notification = new Notification({
           author: study.testAdmin.email,
           read: false,
           testId: study.id,
           redirectsTo,
-          type: 'Collaboration',
+          type:
+            membershipType == 'cooperator'
+              ? NOTIFICATION_TYPES.COLLABORATION
+              : NOTIFICATION_TYPES.PARTICIPANT,
           accessLevel: invite.accessLevel,
-          title: t('invite.pendingSubtitle'),
-          description: `${t('HeuristicsCooperators.messages.invite_message')} ${study.testTitle}`,
+          title,
+          description,
           inviteToken: invite.token,
         })
 
@@ -738,6 +794,65 @@ export default {
         })
 
         throw err
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+
+    async sendMemberMessage(
+      { commit, dispatch },
+      { user, study, title, content, author },
+    ) {
+      commit('setLoading', true)
+
+      try {
+        if (!user?.userDocId) {
+          throw new Error('User is not registered')
+        }
+
+        const messageAuthor = author || ''
+
+        const notification = new Notification({
+          title: `New message about "${study?.testTitle || 'your study'}"`,
+          description: `${title} - ${content}`,
+          author: messageAuthor,
+          redirectsTo: null,
+          testId: study?.id || null,
+          type: NOTIFICATION_TYPES.MESSAGE,
+          read: false,
+        })
+
+        await dispatch('addNotification', {
+          userId: user.userDocId,
+          notification,
+        })
+
+        if (user.email) {
+          const emailController = new EmailController()
+
+          await emailController.send({
+            to: user.email,
+            subject: `New message about "${study?.testTitle || 'your study'}"`,
+            attachments: [],
+            template: 'message',
+            data: {
+              title,
+              message: content,
+              author: messageAuthor,
+              actionText: 'Open RUXAILAB',
+              actionLink: process.env.SITE_URL,
+            },
+          })
+        }
+
+        return true
+      } catch (error) {
+        commit('setError', {
+          errorCode: 'cooperatorMessageError',
+          message: error,
+        })
+
+        throw error
       } finally {
         commit('setLoading', false)
       }

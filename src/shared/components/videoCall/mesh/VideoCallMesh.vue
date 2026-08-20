@@ -113,9 +113,7 @@
               class="d-flex align-center justify-center pa-4 text-grey"
             >
               <v-icon class="mr-2">mdi-account-clock</v-icon>
-              <span>{{
-                t('videoCall.session.waitingForParticipants')
-              }}</span>
+              <span>{{ t('videoCall.session.waitingForParticipants') }}</span>
             </div>
           </div>
         </div>
@@ -484,9 +482,7 @@
               <span class="participant-name">
                 {{
                   participant.name +
-                  (participant.isSelf
-                    ? ` (${t('videoCall.panel.you')})`
-                    : '')
+                  (participant.isSelf ? ` (${t('videoCall.panel.you')})` : '')
                 }}
                 <v-chip
                   v-if="participant.role === 'observator'"
@@ -805,6 +801,18 @@
             </div>
           </div>
         </div>
+
+        <v-btn
+          v-if="isModerator"
+          color="primary"
+          variant="outlined"
+          size="small"
+          class="mt-2"
+          @click="returnToVideoCall"
+        >
+          <v-icon start>mdi-video</v-icon>
+          {{ $t('videoCall.panel.bringParticipantsBack') }}
+        </v-btn>
       </div>
     </div>
 
@@ -878,12 +886,14 @@ import {
   update,
   onChildAdded,
 } from 'firebase/database'
+import { useStore } from 'vuex'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import { useVideoFocus } from '../composables/useVideoFocus'
 
 const props = defineProps({
   roomId: String,
   isModerator: Boolean,
+  isObservator: Boolean,
   user: Object,
   accessLevel: Number,
   currentGlobalIndex: Number,
@@ -899,6 +909,7 @@ const emit = defineEmits([
   'moderatorStatusChange',
 ])
 const { t } = useI18n()
+const store = useStore()
 
 // Local State
 const localVideo = ref(null)
@@ -938,7 +949,7 @@ watch(
 
 // Computed
 const isObservator = computed(
-  () => props.accessLevel === ACCESS_LEVEL.OBSERVATOR,
+  () => props.isObservator || props.accessLevel === ACCESS_LEVEL.OBSERVATOR,
 )
 const remoteStreams = computed(() => {
   const streams = {}
@@ -978,8 +989,7 @@ const callStarted = computed(
 
 // Count of camera tiles currently visible (local + remotes)
 const cameraCount = computed(
-  () =>
-    (isObservator.value ? 0 : 1) + Object.keys(remoteStreams.value).length,
+  () => (isObservator.value ? 0 : 1) + Object.keys(remoteStreams.value).length,
 )
 
 // Number of grid columns, so tiles resize based on participant count
@@ -1405,7 +1415,9 @@ const createPeerConnection = (targetUserId, isInitiator) => {
       if (!peer.stream) {
         peer.stream = event.streams?.[0] || new MediaStream()
       }
-      if (!peer.stream.getTracks().some((existing) => existing.id === track.id)) {
+      if (
+        !peer.stream.getTracks().some((existing) => existing.id === track.id)
+      ) {
         peer.stream.addTrack(track)
       }
       return
@@ -1415,7 +1427,9 @@ const createPeerConnection = (targetUserId, isInitiator) => {
       if (!peer.stream) {
         peer.stream = event.streams?.[0] || new MediaStream()
       }
-      if (!peer.stream.getTracks().some((existing) => existing.id === track.id)) {
+      if (
+        !peer.stream.getTracks().some((existing) => existing.id === track.id)
+      ) {
         peer.stream.addTrack(track)
       }
     }
@@ -1469,6 +1483,21 @@ const closePeerConnection = (userId) => {
 // --- UI & Helper Methods ---
 
 const caller = computed(() => props.isModerator)
+
+const returnToVideoCall = async () => {
+  try {
+    const roomRef = dbRef(database, `rooms/${props.roomId}`)
+
+    await update(roomRef, {
+      showVideoCall: true,
+    })
+  } catch {
+    store.commit('SET_TOAST', {
+      type: 'error',
+      message: 'Failed to bring participant back to the video call.',
+    })
+  }
+}
 
 function toggleCamera() {
   if (!localStream.value) return

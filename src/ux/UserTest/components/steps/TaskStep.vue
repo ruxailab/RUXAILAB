@@ -491,6 +491,7 @@
         :test-id="testId"
         :task-index="taskIndex"
         :remote-stream="remoteStream"
+        :user-doc-id="userDocId"
         :should-record-moderator="shouldRecordModerator"
         @show-loading="onShowLoading"
         @stop-show-loading="onStopShowLoading"
@@ -502,6 +503,7 @@
         ref="screenRecorder"
         :test-id="testId"
         :task-index="taskIndex"
+        :user-doc-id="userDocId"
         @show-loading="onShowLoading"
         @stop-show-loading="onStopShowLoading"
       />

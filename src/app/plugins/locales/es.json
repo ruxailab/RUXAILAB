@@ -377,7 +377,16 @@
     "minutesAgo": "hace {count}m",
     "hoursAgo": "hace {count}h",
     "daysAgo": "hace {count}d",
-    "newNotification": "Tienes una nueva notificación."
+    "newNotification": "Tienes una nueva notificación.",
+    "notificationsPage": {
+      "types": {
+        "session": "Sesión",
+        "message": "Mensaje",
+        "collaboration": "Colaboración",
+        "notification": "Notificación",
+        "participant": "Participante"
+      }
+    }
   },
   "notifications": {
     "errors": {
@@ -582,7 +591,8 @@
       "participants": "Agrega participantes a tu estudio para ayudarte a recopilar datos valiosos y obtener información de usuarios reales.",
       "start": "¡Comienza!",
       "edit": "Crea y personaliza tus tareas y heurísticas para tus necesidades de investigación.",
-      "finalReport": "Prepara el informe final para tu evaluación heurística seleccionando los elementos que deseas incluir."
+      "finalReport": "Prepara el informe final para tu evaluación heurística seleccionando los elementos que deseas incluir.",
+      "sessions": "Las sesiones son encuentros programados del estudio en los que el equipo y los participantes se reúnen para realizar y completar el estudio."
     },
     "overallAnalyticsDescription": "Ver los análisis agregados de su prueba.",
     "individualAnalytics": "Análisis individual",
@@ -2193,6 +2203,7 @@
       "autoStartWhenModeratorOpensRoom": "La videollamada comenzara automaticamente cuando el moderador abra la sala."
     },
     "panel": {
+      "bringParticipantsBack": "Traer a los participantes de vuelta",
       "toolsPanelTitle": "Panel de herramientas",
       "sessionControl": "Control de sesion",
       "joinRoomInfo": "Los controles para unirse estan ahora en la interfaz principal superior",
@@ -3225,7 +3236,11 @@
     "pendingSubtitle": "Has sido invitado a participar en un estudio",
     "pendingDescription": "Tienes una invitación pendiente. ¿Quieres aceptarla ahora?",
     "notNow": "Ahora no",
-    "loginRequired": "Esta invitación requiere que inicies sesión o crees una cuenta antes de participar."
+    "loginRequired": "Esta invitación requiere que inicies sesión o crees una cuenta antes de participar.",
+    "participantInviteTitle": "Estás invitado a participar",
+    "cooperatorInviteTitle": "Has sido invitado como miembro del equipo",
+    "participantInviteMessage": "Has sido invitado a participar en este estudio.",
+    "cooperatorInviteMessage": "Has sido invitado a colaborar en este estudio como miembro del equipo."
   },
   "Participants": {
     "title": {
@@ -3357,7 +3372,9 @@
       "participantAlreadyAdded": "Este participante ya ha sido añadido.",
       "createFailed": "No se pudo guardar la sesión.",
       "sendMessageFailed": "No se pudo enviar el mensaje.",
-      "errorDelete": "No se pudo eliminar la sesión."
+      "errorDelete": "No se pudo eliminar la sesión.",
+      "facilitatorRequired": "Se requiere al menos un facilitador.",
+      "participantRequired": "Se requiere al menos un participante."
     },
     "send": {
       "title": "Enviar mensaje de sesión",
@@ -3378,6 +3395,16 @@
       "noMessage": "Todavía no hay mensaje",
       "info": "Los destinatarios seleccionados recibirán este mensaje por correo electrónico.",
       "send": "Enviar"
+    },
+    "notify": {
+      "participantInviteTitle": "Estás invitado/a a una sesión",
+      "participantInviteMessage": "Has sido invitado/a a una sesión como participante del estudio",
+      "cooperatorInviteTitle": "Has sido invitado/a a una sesión como parte del equipo",
+      "cooperatorInviteMessage": "Has sido invitado/a a colaborar como parte del equipo en una sesión del estudio",
+      "updateTitle": "Los detalles de la sesión han cambiado",
+      "updateMessage": "Los detalles de tu sesión han sido actualizados",
+      "messageTitle": "Nuevo mensaje del organizador de la sesión",
+      "messageDescription": "El organizador de la sesión te ha enviado un nuevo mensaje."
     },
     "headers": {
       "goToSession": "Ir a la sesión",
