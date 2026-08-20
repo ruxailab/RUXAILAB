@@ -58,7 +58,7 @@
       :show-session-column="showSessionColumn"
       :show-actions="canManageParticipants"
       :can-remove="canRemoveParticipant"
-      :can-cancel-invitation="true"
+      :can-cancel-invitation="canCancelParticipantInvitation"
       :message-text="$t('Participants.actions.send_message')"
       :reinvite-text="$t('Participants.actions.reinvite')"
       :remove-text="$t('Participants.actions.remove_participant')"
@@ -164,7 +164,7 @@ import {
   getPredefinedParticipantUserRole,
   getRequiredLoginConfig,
 } from '@/shared/composables/useCooperatorUtils'
-import Notification from '@/shared/models/Notification'
+import { canManageCooperator } from '@/shared/utils/studyAccessPolicy'
 
 const router = useRouter()
 const route = useRoute()
@@ -344,6 +344,12 @@ const handleSendMessage = async ({ user, title, content }) => {
   } catch {
     showError('HeuristicsCooperators.messages.message_sent_error')
   }
+}
+
+const canCancelParticipantInvitation = (cooperator) => {
+  return canManageCooperator(test.value, userAuth.value, cooperator, {
+    action: 'cancelInvitation',
+  })
 }
 
 const handleSendInvitations = async ({

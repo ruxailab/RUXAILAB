@@ -379,7 +379,14 @@
     "minutesAgo": "{count}m ago",
     "hoursAgo": "{count}h ago",
     "daysAgo": "{count}d ago",
-    "newNotification": "You have a new notification."
+    "newNotification": "You have a new notification.",
+    "types": {
+      "session": "Session",
+      "message": "Message",
+      "collaboration": "Collaboration",
+      "notification": "Notification",
+      "participant": "Participant"
+    }
   },
   "notifications": {
     "errors": {

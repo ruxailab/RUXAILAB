@@ -8,6 +8,7 @@ import EmailController from '@/shared/controllers/EmailController'
 import Notification from '@/shared/models/Notification'
 import { formatDateTime } from '../utils/dateUtils'
 import i18n from '@/app/plugins/i18n'
+import { NOTIFICATION_TYPES } from '../../features/notifications/utils/notificationUtils'
 
 const t = i18n.global.t
 
@@ -337,7 +338,7 @@ export default {
                     author,
                     redirectsTo: null,
                     testId: payload.studyId,
-                    type: 'Message',
+                    type: NOTIFICATION_TYPES.MESSAGE,
                     read: false,
                   }),
                 }),
@@ -424,7 +425,7 @@ export default {
                   author,
                   redirectsTo: sessionLink,
                   testId: studyId,
-                  type: 'Session',
+                  type: NOTIFICATION_TYPES.SESSION,
                   read: false,
                 }),
               }),

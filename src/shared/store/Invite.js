@@ -15,6 +15,7 @@ import { getMethodManagerView } from '@/shared/constants/methodDefinitions'
 import { getAcceptedInvitationDestination } from '@/shared/utils/studyNavigation'
 import { manageStudyMembership } from '@/shared/services/studyMembershipService'
 import i18n from '@/app/plugins/i18n'
+import { NOTIFICATION_TYPES } from '../../features/notifications/utils/notificationUtils'
 
 const t = i18n.global.t
 
@@ -80,11 +81,13 @@ const buildInvitationNotification = ({
     author: study.testAdmin.email,
     testId: study.id,
     redirectsTo: path,
-    type: 'Collaboration',
+    type:
+      membershipType == 'cooperator'
+        ? NOTIFICATION_TYPES.COLLABORATION
+        : NOTIFICATION_TYPES.PARTICIPANT,
     accessLevel: guest.accessLevel,
     title,
     description,
-    inviteMessage: guest.inviteMessage,
     inviteToken,
     read: false,
   })
@@ -537,7 +540,8 @@ export default {
         const alreadyExists = notifications.some(
           (notification) =>
             !notification.read &&
-            notification.type === 'Collaboration' &&
+            (notification.type === NOTIFICATION_TYPES.COLLABORATION ||
+              notification.type === NOTIFICATION_TYPES.PARTICIPANT) &&
             notification.testId === study.id &&
             notification.redirectsTo === redirectsTo,
         )
@@ -557,14 +561,15 @@ export default {
           read: false,
           testId: study.id,
           redirectsTo,
-          type: 'Collaboration',
+          type:
+            membershipType == 'cooperator'
+              ? NOTIFICATION_TYPES.COLLABORATION
+              : NOTIFICATION_TYPES.PARTICIPANT,
           accessLevel: invite.accessLevel,
           title,
           description,
           inviteToken: invite.token,
         })
-
-        console.log('INVITE')
 
         await dispatch('addNotification', {
           userId: user.id,
@@ -813,7 +818,7 @@ export default {
           author: messageAuthor,
           redirectsTo: null,
           testId: study?.id || null,
-          type: 'Message',
+          type: NOTIFICATION_TYPES.MESSAGE,
           read: false,
         })
 

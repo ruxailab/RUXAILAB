@@ -7,10 +7,6 @@
         flat
         :class="{ 'pa-3': $vuetify.display.smAndDown }"
       >
-        <div
-          class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center"
-        ></div>
-
         <!-- TABS FOR DESKTOP -->
         <v-tabs
           v-if="!$vuetify.display.smAndDown"
@@ -30,6 +26,7 @@
               />
             </div>
           </v-tab>
+
           <v-tab value="unread" class="text-capitalize">
             <div class="d-flex align-center gap-2">
               <span>{{ $t('common.unread') }}</span>
@@ -42,6 +39,7 @@
               />
             </div>
           </v-tab>
+
           <v-tab value="inbox" class="text-capitalize">
             <div class="d-flex align-center gap-2">
               <span>{{ $t('common.inbox') }}</span>
@@ -57,7 +55,7 @@
           variant="outlined"
           density="compact"
           hide-details
-          placeholder="Search notifications..."
+          :placeholder="$t('notificationsPage.searchPlaceholder')"
           class="flex-grow-1"
           clearable
           @click:clear="search = ''"
@@ -77,7 +75,7 @@
         @click:clear="search = ''"
       />
 
-      <!-- MARK ALL AS READ BUTTON (Below search, visible on unread and inbox) -->
+      <!-- MARK ALL AS READ -->
       <div
         v-if="['unread', 'inbox'].includes(activeTab)"
         class="d-flex justify-end mb-4"
@@ -115,7 +113,7 @@
 
         <!-- NOTIFICATIONS LIST -->
         <template v-else>
-          <!-- EMPTY STATES -->
+          <!-- EMPTY STATE -->
           <v-alert
             v-if="paginatedNotifications.length === 0"
             type="info"
@@ -126,9 +124,11 @@
             <template #title>
               <div class="d-flex align-center gap-2">
                 <span>{{ emptyStateTitle }}</span>
-                <v-icon v-if="search" color="info">mdi-magnify-remove</v-icon>
+
+                <v-icon v-if="search" color="info"> mdi-magnify-remove </v-icon>
               </div>
             </template>
+
             <template #text>
               {{ emptyStateMessage }}
             </template>
@@ -136,118 +136,21 @@
 
           <!-- LIST VIEW -->
           <div v-else>
-            <div
-              v-for="(n, index) in paginatedNotifications"
-              :key="n.id"
-              class="notification-item pa-3 mb-3"
+            <NotificationItem
+              v-for="(notification, index) in paginatedNotifications"
+              :key="notification.id"
+              :notification="notification"
               :class="{
-                unread: !n.read,
                 active: activeIndex === index,
               }"
-              @click="handleNotificationClick(n)"
-            >
-              <div class="d-flex align-start ga-4">
-                <!-- AVATAR/ICON -->
-                <div class="position-relative">
-                  <v-avatar
-                    size="44"
-                    :color="getTypeIcon(n.type).color + '-lighten-5'"
-                    class="elevation-1"
-                  >
-                    <v-icon :color="getTypeIcon(n.type).color">
-                      {{ getTypeIcon(n.type).icon }}
-                    </v-icon>
-                  </v-avatar>
-                  <div v-if="!n.read" class="unread-dot" />
-                </div>
-
-                <!-- CONTENT -->
-                <div class="flex-grow-1">
-                  <div
-                    class="d-flex flex-column flex-sm-row align-start align-sm-center justify-space-between gap-2 mb-1"
-                  >
-                    <div class="d-flex align-center flex-wrap gap-2">
-                      <span class="font-weight-medium text-body-1">{{
-                        n.title ||
-                        (n.titleTemplate
-                          ? $t(n.titleTemplate, n.titleParams || {})
-                          : $t('notificationsPage.notification'))
-                      }}</span>
-                      <v-chip
-                        v-if="n.type"
-                        size="x-small"
-                        label
-                        :color="getTypeIcon(n.type).color"
-                        variant="flat"
-                        density="compact"
-                        class="text-capitalize ml-2"
-                      >
-                        {{ n.type }}
-                      </v-chip>
-                      <v-chip
-                        v-if="n.important"
-                        size="x-small"
-                        label
-                        color="warning"
-                        variant="flat"
-                        density="compact"
-                        prepend-icon="mdi-star"
-                      >
-                        {{ $t('notificationsPage.important') }}
-                      </v-chip>
-                    </div>
-                    <div class="d-flex align-center gap-2">
-                      <span class="text-caption text-grey-darken-2">
-                        {{ relativeTime(n.createdDate) }}
-                      </span>
-                      <v-btn
-                        icon
-                        size="x-small"
-                        variant="text"
-                        :aria-label="
-                          n.read
-                            ? $t('notificationsPage.markAsUnread')
-                            : $t('notificationsPage.markAsRead')
-                        "
-                        @click.stop="toggleRead(n)"
-                      >
-                        <v-icon size="18" :color="n.read ? 'grey' : 'primary'">
-                          {{
-                            n.read
-                              ? 'mdi-email-outline'
-                              : 'mdi-email-open-outline'
-                          }}
-                        </v-icon>
-                        <v-tooltip activator="parent">
-                          {{
-                            n.read
-                              ? $t('notificationsPage.markAsUnread')
-                              : $t('notificationsPage.markAsRead')
-                          }}
-                        </v-tooltip>
-                      </v-btn>
-                    </div>
-                  </div>
-                  <div
-                    class="text-body-2 text-grey-darken-1 mb-2 notification-description line-clamp-2"
-                  >
-                    {{
-                      n.description ||
-                      (n.descriptionTemplate
-                        ? $t(n.descriptionTemplate, n.descriptionParams || {})
-                        : $t('notificationsPage.newNotification'))
-                    }}
-                  </div>
-                  <div v-if="n.author" class="text-caption text-grey-darken-2">
-                    <v-icon size="small">mdi-account-outline</v-icon>
-                    {{ n.author }}
-                  </div>
-                </div>
-              </div>
-            </div>
+              class="mb-3"
+              @go-to-redirect="handleNotificationClick"
+              @mark-as-read="toggleRead"
+            />
           </div>
         </template>
 
+        <!-- REFRESH -->
         <v-btn
           color="primary"
           variant="tonal"
@@ -258,6 +161,7 @@
           @click="refreshNotifications"
         >
           {{ $t('notificationsPage.refresh') }}
+
           <template #loader>
             <v-progress-circular indeterminate size="16" width="2" />
           </template>
@@ -290,9 +194,11 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useStore } from 'vuex'
-import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue'
 import { useI18n } from 'vue-i18n'
+import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue'
+import NotificationItem from '@/features/notifications/components/NotificationItem.vue'
 import { matchesSearch } from '@/shared/utils/searchUtils'
+import { NOTIFICATION_TYPES } from '../utils/notificationUtils'
 
 const store = useStore()
 const { t } = useI18n()
@@ -316,15 +222,16 @@ const allPage = ref(1)
 const dialogVisible = ref(false)
 let resolveDialog
 
-// Computed Properties
+// Computed
 const user = computed(() => store.getters.user)
 
 const totalCount = computed(() => user.value?.notifications?.length || 0)
+
 const unreadCount = computed(
   () => user.value?.notifications?.filter((n) => !n.read).length || 0,
 )
 
-// Mobile tab items
+// Mobile tabs
 const mobileTabItems = computed(() => [
   {
     title: `${t('common.all')} (${totalCount.value})`,
@@ -336,31 +243,36 @@ const mobileTabItems = computed(() => [
     value: 'unread',
     prependIcon: 'mdi-email-outline',
   },
-  { title: t('common.inbox'), value: 'inbox', prependIcon: 'mdi-inbox' },
+  {
+    title: t('common.inbox'),
+    value: 'inbox',
+    prependIcon: 'mdi-inbox',
+  },
 ])
 
+// Sorted notifications
 const sortedNotifications = computed(() => {
   if (!user.value?.notifications) return []
 
   return [...user.value.notifications].sort((a, b) => {
     const aDate = new Date(a.createdDate)
     const bDate = new Date(b.createdDate)
+
     return bDate - aDate
   })
 })
 
-// Filtered notifications for search only
+// Filtered notifications
 const filteredNotifications = computed(() => {
   let list = sortedNotifications.value
 
-  // Apply tab filter
   if (activeTab.value === 'unread') {
     list = list.filter((n) => !n.read)
   }
 
-  // Apply search filter
   if (search.value.trim()) {
     const query = search.value.trim()
+
     list = list.filter(
       (n) =>
         matchesSearch(n.title, query) ||
@@ -372,10 +284,9 @@ const filteredNotifications = computed(() => {
   return list
 })
 
-// Get paginated notifications based on active tab
+// Paginated notifications
 const paginatedNotifications = computed(() => {
   let list = []
-  let start = 0
   let page = 1
 
   if (activeTab.value === 'unread') {
@@ -389,70 +300,79 @@ const paginatedNotifications = computed(() => {
     list = filteredNotifications.value
   }
 
-  start = (page - 1) * pageSize.value
+  const start = (page - 1) * pageSize.value
   const end = start + pageSize.value
+
   return list.slice(start, end)
 })
 
-// Get current pagination info
+// Current page
 const currentPage = computed({
   get() {
-    if (activeTab.value === 'unread') return unreadPage.value
-    if (activeTab.value === 'inbox') return inboxPage.value
+    if (activeTab.value === 'unread') {
+      return unreadPage.value
+    }
+
+    if (activeTab.value === 'inbox') {
+      return inboxPage.value
+    }
+
     return allPage.value
   },
+
   set(value) {
-    if (activeTab.value === 'unread') unreadPage.value = value
-    else if (activeTab.value === 'inbox') inboxPage.value = value
-    else allPage.value = value
+    if (activeTab.value === 'unread') {
+      unreadPage.value = value
+    } else if (activeTab.value === 'inbox') {
+      inboxPage.value = value
+    } else {
+      allPage.value = value
+    }
   },
 })
 
+// Number of pages
 const currentPages = computed(() => {
-  if (activeTab.value === 'unread')
+  if (activeTab.value === 'unread') {
     return Math.ceil(filteredNotifications.value.length / pageSize.value)
-  if (activeTab.value === 'inbox')
+  }
+
+  if (activeTab.value === 'inbox') {
     return Math.ceil(sortedNotifications.value.length / pageSize.value)
+  }
+
   return Math.ceil(filteredNotifications.value.length / pageSize.value)
 })
 
 // Empty states
 const emptyStateTitle = computed(() => {
-  if (search.value.trim()) return t('notificationsPage.noResultsFound')
-  if (activeTab.value === 'unread') return t('notificationsPage.allCaughtUp')
+  if (search.value.trim()) {
+    return t('notificationsPage.noResultsFound')
+  }
+
+  if (activeTab.value === 'unread') {
+    return t('notificationsPage.allCaughtUp')
+  }
+
   return t('notificationsPage.noNotificationsYet')
 })
 
 const emptyStateMessage = computed(() => {
-  if (search.value.trim()) return t('notificationsPage.tryDifferentKeywords')
-  if (activeTab.value === 'unread') return t('notificationsPage.allReadMessage')
+  if (search.value.trim()) {
+    return t('notificationsPage.tryDifferentKeywords')
+  }
+
+  if (activeTab.value === 'unread') {
+    return t('notificationsPage.allReadMessage')
+  }
+
   return t('notificationsPage.newActivitiesMessage')
 })
 
-// Helper functions
-const relativeTime = (date) => {
-  const diff = (Date.now() - new Date(date)) / 1000
-  if (diff < 60) return t('notificationsPage.justNow')
-  if (diff < 3600)
-    return t('notificationsPage.minutesAgo', { count: Math.floor(diff / 60) })
-  if (diff < 86400)
-    return t('notificationsPage.hoursAgo', { count: Math.floor(diff / 3600) })
-  return t('notificationsPage.daysAgo', { count: Math.floor(diff / 86400) })
-}
-
-const getTypeIcon = (type) => {
-  const icons = {
-    Study: { icon: 'mdi-flask-outline', color: 'primary' },
-    Session: { icon: 'mdi-account-group-outline', color: 'green' },
-    System: { icon: 'mdi-alert-circle-outline', color: 'orange' },
-    Collaboration: { icon: 'mdi-account-multiple-outline', color: 'purple' },
-  }
-  return icons[type] || { icon: 'mdi-bell-outline', color: 'grey' }
-}
-
-// Dialog methods
+// Dialog
 const onAccept = () => {
   dialogVisible.value = false
+
   if (resolveDialog) {
     resolveDialog(true)
   }
@@ -460,39 +380,45 @@ const onAccept = () => {
 
 const onReject = () => {
   dialogVisible.value = false
+
   if (resolveDialog) {
     resolveDialog(false)
   }
 }
 
-function showAcceptDialog() {
+const showAcceptDialog = () => {
   dialogVisible.value = true
+
   return new Promise((resolve) => {
     resolveDialog = resolve
   })
 }
 
-// Notification methods
+// Notification click
 const handleNotificationClick = async (notification) => {
   if (!notification) return
 
-  // If notification has a redirect, use the existing flow
   if (notification.redirectsTo) {
     await goToNotificationRedirect(notification)
   } else if (!notification.read) {
-    // Mark as read if unread
     await toggleRead(notification)
   }
 }
 
+// Redirect
 const goToNotificationRedirect = async (notification) => {
   if (!notification?.redirectsTo) return
 
   let redirectTo = notification.redirectsTo
+
   const inviteToken =
     notification.inviteToken ?? localStorage.getItem('pendingInviteToken')
 
-  if (notification.type === 'Collaboration' && inviteToken) {
+  if (
+    (notification.type === NOTIFICATION_TYPES.COLLABORATION ||
+      notification.type === NOTIFICATION_TYPES.PARTICIPANT) &&
+    inviteToken
+  ) {
     const result = await store.dispatch('loadInvite', {
       token: inviteToken,
     })
@@ -502,7 +428,11 @@ const goToNotificationRedirect = async (notification) => {
     }
   }
 
-  if (notification.type === 'Collaboration' && invite.value) {
+  if (
+    (notification.type === NOTIFICATION_TYPES.COLLABORATION ||
+      notification.type === NOTIFICATION_TYPES.PARTICIPANT) &&
+    invite.value
+  ) {
     const accepted = await showAcceptDialog()
 
     if (!accepted) {
@@ -534,6 +464,7 @@ const goToNotificationRedirect = async (notification) => {
   if (!url.startsWith('http')) {
     const baseUrl = globalThis.location.origin
     const path = url.startsWith('/') ? url : `/${url}`
+
     url = baseUrl + path
   }
 
@@ -544,6 +475,7 @@ const goToNotificationRedirect = async (notification) => {
   }
 }
 
+// Mark as read
 const markAsRead = async (notification) => {
   if (!notification || notification.read) return
 
@@ -557,16 +489,19 @@ const markAsRead = async (notification) => {
   }
 }
 
+// NotificationItem action
 const toggleRead = async (notification) => {
   await markAsRead(notification)
 }
 
+// Mark all as read
 const markAllAsRead = async () => {
   const unread = user.value.notifications.filter((n) => !n.read)
 
   if (unread.length === 0) return
 
   markingAllAsRead.value = true
+
   try {
     await Promise.all(
       unread.map((notification) =>
@@ -583,8 +518,10 @@ const markAllAsRead = async () => {
   }
 }
 
+// Refresh
 const refreshNotifications = async () => {
   refreshing.value = true
+
   try {
     globalThis.location.reload()
   } catch {
@@ -596,33 +533,41 @@ const refreshNotifications = async () => {
 
 // Keyboard navigation
 const handleKeyDown = (e) => {
-  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+    return
+  }
 
   switch (e.key) {
     case 'j':
     case 'ArrowDown':
       e.preventDefault()
+
       if (activeIndex.value < filteredNotifications.value.length - 1) {
         activeIndex.value++
       }
+
       break
 
     case 'k':
     case 'ArrowUp':
       e.preventDefault()
+
       if (activeIndex.value > 0) {
         activeIndex.value--
       }
+
       break
 
     case 'Enter':
       e.preventDefault()
+
       if (
         activeIndex.value >= 0 &&
         filteredNotifications.value[activeIndex.value]
       ) {
         handleNotificationClick(filteredNotifications.value[activeIndex.value])
       }
+
       break
 
     case 'r':
@@ -630,6 +575,7 @@ const handleKeyDown = (e) => {
         e.preventDefault()
         refreshNotifications()
       }
+
       break
 
     case 'Escape':
@@ -668,13 +614,13 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.notification-description {
-  white-space: pre-line;
-}
+/* Page layout */
 
-/* 💅 Basic styles for layout and filters */
-.button-bar {
-  gap: 14px;
+.notification-card-clean {
+  border-radius: 12px;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  overflow: hidden;
 }
 
 .refresh-btn {
@@ -686,51 +632,7 @@ onUnmounted(() => {
   color: white !important;
 }
 
-.tab-btn {
-  min-width: 100px;
-  height: 36px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-}
-
-.notification-card-clean {
-  border-radius: 12px;
-  border-top-left-radius: 0 !important;
-  border-bottom-left-radius: 0 !important;
-  overflow: hidden;
-}
-
-.notification-item {
-  position: relative;
-  border-radius: 8px;
-  border-top-left-radius: 0 !important;
-  border-bottom-left-radius: 0 !important;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  background: white;
-  overflow: hidden;
-}
-
-.notification-item:hover {
-  border-color: rgba(var(--v-theme-primary), 0.3);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transform: translateY(-1px);
-}
-
-.notification-item.unread {
-  background: rgba(var(--v-theme-primary), 0.02);
-}
-
-.notification-item.unread::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 4px;
-  background-color: rgb(var(--v-theme-primary));
-}
+/* Keyboard active state */
 
 .notification-item.active {
   outline: 2px solid rgba(var(--v-theme-primary), 0.3);
@@ -738,40 +640,8 @@ onUnmounted(() => {
   background: rgba(var(--v-theme-primary), 0.02);
 }
 
-.unread-dot {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  width: 10px;
-  height: 10px;
-  background: #1976d2;
-  border-radius: 50%;
-  border: 2px solid white;
-  animation: pulse 2s infinite;
-}
+/* Responsive */
 
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  line-clamp: 2;
-  -moz-box-orient: vertical;
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(25, 118, 210, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 6px rgba(25, 118, 210, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(25, 118, 210, 0);
-  }
-}
-
-/* Responsive adjustments */
 @media (max-width: 600px) {
   .rounded-xl {
     border-radius: 12px !important;
@@ -791,23 +661,12 @@ onUnmounted(() => {
     padding: 0 8px;
   }
 
-  .button-bar {
-    gap: 8px;
-  }
-
   .refresh-btn {
     min-width: 80px;
     font-size: 0.8rem;
   }
-
-  .tab-btn {
-    min-width: 70px;
-    font-size: 0.75rem;
-    padding: 0 12px;
-  }
 }
 
-/* Tablet adjustments */
 @media (min-width: 601px) and (max-width: 960px) {
   .rounded-xl {
     border-radius: 14px !important;

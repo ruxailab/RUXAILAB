@@ -40,11 +40,12 @@
         </v-btn>
       </template>
 
-      <!-- 📬 Dropdown -->
+      <!-- Dropdown -->
       <v-card class="notification-dropdown" elevation="6">
-        <!-- Header -->
         <div class="dropdown-header">
-          <span class="text-h6">{{ $t('common.notifications') }}</span>
+          <span class="text-h6">
+            {{ $t('common.notifications') }}
+          </span>
 
           <div class="actions">
             <v-btn
@@ -70,7 +71,6 @@
 
         <v-divider />
 
-        <!-- Content -->
         <div class="dropdown-content">
           <template v-if="unreadNotifications.length">
             <NotificationItem
@@ -80,14 +80,17 @@
               :class="{ active: index === activeIndex }"
               style="margin-bottom: 10px"
               @go-to-redirect="goToNotificationRedirect"
-              @mark-as-read="goToNotificationRedirect"
+              @mark-as-read="markNotificationAsRead"
             />
           </template>
 
-          <!-- Empty -->
           <div v-else class="empty-state">
-            <v-icon size="40" color="grey">mdi-bell-check</v-icon>
-            <div class="empty-title">{{ $t('common.caughtUp') }}</div>
+            <v-icon size="40" color="grey"> mdi-bell-check </v-icon>
+
+            <div class="empty-title">
+              {{ $t('common.caughtUp') }}
+            </div>
+
             <div class="empty-subtitle">
               {{ $t('common.noNewNotifications') }}
             </div>
@@ -108,11 +111,13 @@
 </template>
 
 <script setup>
-import { computed, ref, watch, onUnmounted } from 'vue'
+import { computed, ref, watch, onMounted, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+
 import NotificationItem from '@/features/notifications/components/NotificationItem.vue'
 import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue'
+import { NOTIFICATION_TYPES } from '../../notifications/utils/notificationUtils'
 
 const store = useStore()
 const router = useRouter()
@@ -121,48 +126,92 @@ const menuOpen = ref(false)
 const activeIndex = ref(-1)
 
 const invite = ref(null)
+const dialogVisible = ref(false)
+
+let resolveDialog
 
 const user = computed(() => store.getters.user)
 
 const unreadNotifications = computed(() =>
-  [...user.value.notifications]
-    .filter((n) => !n.read)
+  [...(user.value.notifications || [])]
+    .filter((notification) => !notification.read)
     .sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate))
     .slice(0, 6),
 )
 
 const unreadCount = computed(
-  () => user.value.notifications.filter((n) => !n.read).length,
+  () =>
+    (user.value.notifications || []).filter(
+      (notification) => !notification.read,
+    ).length,
 )
 
-/* Dialog  */
-const dialogVisible = ref(false)
-let resolveDialog
+/**
+ * Notification type
+ *
+ * The notification itself should keep its original type string.
+ * The visual configuration is handled by NotificationItem.
+ */
+const isCollaborationNotification = (notification) => {
+  if (!notification) return false
+
+  if (
+    notification.type === NOTIFICATION_TYPES.COLLABORATION ||
+    notification.type === NOTIFICATION_TYPES.PARTICIPANT
+  ) {
+    return true
+  }
+  return false
+}
+
+/* Dialog */
 
 const onAccept = () => {
   dialogVisible.value = false
-  resolveDialog(true)
+  resolveDialog?.(true)
+  resolveDialog = null
 }
 
 const onReject = () => {
   dialogVisible.value = false
-  resolveDialog(false)
+  resolveDialog?.(false)
+  resolveDialog = null
 }
 
 const showAcceptDialog = () => {
   dialogVisible.value = true
-  return new Promise((resolve) => (resolveDialog = resolve))
+
+  return new Promise((resolve) => {
+    resolveDialog = resolve
+  })
 }
 
-/* actions */
+/* Actions */
+
+const markNotificationAsRead = async (notification) => {
+  if (!notification) return
+
+  await store.dispatch('markNotificationAsRead', {
+    notification,
+    user: user.value,
+  })
+}
+
 const goToNotificationRedirect = async (notification) => {
   if (!notification) return
 
+  const isCollaboration = isCollaborationNotification(notification)
+
   let redirectTo = notification.redirectsTo
+
   const inviteToken =
     notification.inviteToken ?? localStorage.getItem('pendingInviteToken')
 
-  if (notification.type === 'Collaboration' && inviteToken) {
+  /*
+   * Collaboration notifications require accepting/rejecting
+   * the invitation before following the redirect.
+   */
+  if (isCollaboration && inviteToken) {
     const result = await store.dispatch('loadInvite', {
       token: inviteToken,
     })
@@ -172,7 +221,7 @@ const goToNotificationRedirect = async (notification) => {
     }
   }
 
-  if (notification.type === 'Collaboration' && invite.value) {
+  if (isCollaboration && invite.value) {
     const accepted = await showAcceptDialog()
 
     if (!accepted) {
@@ -190,10 +239,8 @@ const goToNotificationRedirect = async (notification) => {
       return
     }
 
-    const token = notification.inviteToken
-
     await store.dispatch('acceptInvite', {
-      token,
+      token: notification.inviteToken,
       user: user.value,
       studyId: notification.testId,
       notification,
@@ -201,16 +248,19 @@ const goToNotificationRedirect = async (notification) => {
     })
   }
 
-  await store.dispatch('markNotificationAsRead', {
-    notification,
-    user: user.value,
-  })
+  await markNotificationAsRead(notification)
+
+  if (!redirectTo) {
+    menuOpen.value = false
+    return
+  }
 
   let url = redirectTo
 
   if (!url.startsWith('http')) {
     const baseUrl = globalThis.location.origin
     const path = url.startsWith('/') ? url : `/${url}`
+
     url = baseUrl + path
   }
 
@@ -224,45 +274,67 @@ const goToNotificationRedirect = async (notification) => {
 }
 
 const markAllAsRead = async () => {
-  const unread = user.value.notifications.filter((n) => !n.read)
-  if (unread.length === 0) return
+  const unread = (user.value.notifications || []).filter(
+    (notification) => !notification.read,
+  )
+
+  if (!unread.length) return
 
   await store.dispatch('markAllNotificationsAsRead', user.value)
 }
 
 const goToNotificationPage = () => {
   menuOpen.value = false
-  router.push({ path: '/admin', query: { section: 'notifications' } })
+
+  router.push({
+    path: '/admin',
+    query: {
+      section: 'notifications',
+    },
+  })
 }
 
-/* keyboard  */
-const handleKey = (e) => {
+/* Keyboard */
+
+const handleKey = (event) => {
   if (!menuOpen.value) return
 
-  if (e.key === 'j')
+  if (event.key === 'j') {
     activeIndex.value = Math.min(
       activeIndex.value + 1,
       unreadNotifications.value.length - 1,
     )
-  if (e.key === 'k') activeIndex.value = Math.max(activeIndex.value - 1, 0)
-  if (e.key === 'Enter' && unreadNotifications.value[activeIndex.value]) {
+  }
+
+  if (event.key === 'k') {
+    activeIndex.value = Math.max(activeIndex.value - 1, 0)
+  }
+
+  if (event.key === 'Enter' && unreadNotifications.value[activeIndex.value]) {
     goToNotificationRedirect(unreadNotifications.value[activeIndex.value])
   }
-  if (e.key === 'Escape') menuOpen.value = false
+
+  if (event.key === 'Escape') {
+    menuOpen.value = false
+  }
 }
+
+onMounted(() => {
+  globalThis.addEventListener('keydown', handleKey)
+})
 
 onUnmounted(() => {
   globalThis.removeEventListener('keydown', handleKey)
 })
 
-/* Reset keyboard index on open */
 watch(menuOpen, (open) => {
-  if (open) activeIndex.value = 0
+  if (open) {
+    activeIndex.value = unreadNotifications.value.length ? 0 : -1
+  }
 })
 </script>
 
 <style scoped>
-/* Pulse animation */
 .notification-bell.pulse {
   position: relative;
   z-index: 1;
@@ -283,13 +355,13 @@ watch(menuOpen, (open) => {
     transform: scale(1);
     opacity: 1;
   }
+
   100% {
     transform: scale(1.8);
     opacity: 0;
   }
 }
 
-/* Dropdown */
 .notification-dropdown {
   border-radius: 14px;
   max-height: 70vh;
@@ -303,11 +375,6 @@ watch(menuOpen, (open) => {
   padding: 12px 16px;
 }
 
-.dropdown-header .title {
-  font-weight: 600;
-  font-size: 15px;
-}
-
 .dropdown-header .actions {
   display: flex;
   gap: 6px;
@@ -319,7 +386,6 @@ watch(menuOpen, (open) => {
   padding: 8px;
 }
 
-/* Empty */
 .empty-state {
   text-align: center;
   padding: 24px 12px;
