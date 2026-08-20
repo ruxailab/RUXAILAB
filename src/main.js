@@ -35,5 +35,16 @@ app.use(quillEditor)
 
 app.config.globalProperties.$toast = useToast()
 
+// Global error handler — catches unhandled errors from any component
+app.config.errorHandler = (err, instance, info) => {
+  console.error('[Global Error Handler]', {
+    message: err.message,
+    stack: err.stack,
+    component: instance?.$options?.name || 'Unknown',
+    info,
+    timestamp: new Date().toISOString(),
+  })
+}
+
 // Mount the app
 app.mount('#app')

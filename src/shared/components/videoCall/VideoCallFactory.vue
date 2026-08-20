@@ -2,6 +2,8 @@
   <component
     :is="activeComponent"
     v-bind="props"
+    :is-moderator="isModerator"
+    :is-observator="isObservator"
     @set-remote-stream="emit('setRemoteStream', $event)"
     @proceed-to-next-step="emit('proceedToNextStep')"
     @step-selected="emit('stepSelected', $event)"
@@ -22,6 +24,7 @@ import {
 const props = defineProps({
   roomId: String,
   isModerator: Boolean,
+  isObservator: Boolean,
   user: Object,
   accessLevel: Number,
   currentGlobalIndex: Number,

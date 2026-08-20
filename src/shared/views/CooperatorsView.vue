@@ -109,6 +109,7 @@
       :role-label="$t('HeuristicsCooperators.headers.role')"
       :cancel-text="$t('HeuristicsCooperators.actions.cancel')"
       :send-text="$t('HeuristicsCooperators.actions.send')"
+      :loading="loading"
       @send-invitations="handleSendInvitations"
     />
 
@@ -201,7 +202,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import Intro from '@/shared/components/introduction_cards/IntroCoops.vue'
 import AccessNotAllowed from '@/shared/views/AccessNotAllowed.vue'
@@ -214,7 +215,6 @@ import GenerateInviteLinkDialog from '@/shared/components/dialogs/GenerateInvite
 import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 import { useCooperatorUtils } from '@/shared/composables/useCooperatorUtils'
 import { useRouter, useRoute } from 'vue-router'
-import Notification from '@/shared/models/Notification'
 import { useI18n } from 'vue-i18n'
 import { showSuccess, showError, showWarning } from '@/shared/utils/toast'
 import {
@@ -347,45 +347,6 @@ const handleCancelAction = () => {
   resetConfirmDialog()
 }
 
-const sendNotification = async ({
-  userId,
-  title,
-  titleTemplate,
-  titleParams,
-  description,
-  descriptionTemplate,
-  descriptionParams,
-  redirectsTo = '/',
-  testId = null,
-  author,
-  type,
-  accessLevel,
-  inviteToken,
-} = {}) => {
-  const notification = new Notification({
-    title,
-    titleTemplate,
-    titleParams,
-    description,
-    descriptionTemplate,
-    descriptionParams,
-    redirectsTo,
-    author,
-    read: false,
-    testId,
-    type,
-    accessLevel,
-    inviteToken,
-  })
-
-  await store.dispatch('addNotification', {
-    userId,
-    notification,
-  })
-
-  return true
-}
-
 const showIntroComponent = ref(true)
 const verified = ref(false)
 const messageModel = ref(false)
@@ -455,10 +416,6 @@ const canRemoveCooperator = (cooperator) => {
 }
 
 const canCancelCooperatorInvitation = (cooperator) => {
-  if (!isPendingCooperator(cooperator)) {
-    return false
-  }
-
   return canManageCooperator(test.value, userAuth.value, cooperator, {
     action: 'cancelInvitation',
   })
@@ -477,26 +434,23 @@ const openMessageDialog = (item) => {
 const handleSendMessage = async ({ user, title, content }) => {
   messageModel.value = false
 
-  if (user.userDocId && test.value) {
-    const author = userAuth.value.email
-
-    try {
-      await sendNotification({
-        userId: user.userDocId,
-        title,
-        author,
-        description: content,
-        redirectsTo: null,
-        testId: test.value.id,
-        type: 'Message',
-      })
-
-      showSuccess('HeuristicsCooperators.messages.message_sent_success')
-    } catch {
-      showError('HeuristicsCooperators.messages.message_sent_error')
-    }
-  } else {
+  if (!user.userDocId || !test.value) {
     showWarning('HeuristicsCooperators.messages.user_not_registered')
+    return
+  }
+
+  try {
+    await store.dispatch('sendMemberMessage', {
+      user,
+      study: test.value,
+      title,
+      content,
+      author: userAuth.value?.email,
+    })
+
+    showSuccess('HeuristicsCooperators.messages.message_sent_success')
+  } catch {
+    showError('HeuristicsCooperators.messages.message_sent_error')
   }
 }
 
@@ -520,6 +474,7 @@ const handleSendInvitations = async ({
   inviteMessage,
 }) => {
   try {
+    showInviteDialog.value = false
     const newInvites = await store.dispatch('sendInvitations', {
       study: test.value,
       user: userAuth.value,
@@ -531,7 +486,9 @@ const handleSendInvitations = async ({
       resolveUserByEmail,
     })
 
-    showInviteDialog.value = false
+    await store.dispatch('getStudy', {
+      id: test.value.id,
+    })
 
     if (newInvites.length > 0) {
       showSuccess(
@@ -700,12 +657,6 @@ const executeInvitationCancellation = async (guest) => {
     id: test.value.id,
   })
 }
-
-watch(loading, (newVal) => {
-  if (!newVal) {
-    showIntroComponent.value = cooperatorsEdit.value.length === 0
-  }
-})
 
 onMounted(async () => {
   const testId = props.id || route.params.id

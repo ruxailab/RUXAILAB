@@ -209,7 +209,6 @@ describe('study navigation', () => {
 
     expect(titlesFor(study, user, 'userTest/moderated')).toEqual([
       'Dashboard',
-      'Preview',
       'Results',
       'Logs',
       'Cooperators',

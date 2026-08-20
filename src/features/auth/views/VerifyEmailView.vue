@@ -72,7 +72,7 @@
 
       <!-- Sign Out Link -->
       <div class="sign-out-link">
-        <button class="link-btn" @click="logout">
+        <button class="link-btn" @click="handleLogout">
           {{ $t('auth.signOut') }}
         </button>
       </div>
@@ -118,7 +118,10 @@ export default {
   },
 
   methods: {
-    ...mapActions(['sendVerificationEmail', 'logout']),
+    ...mapActions({
+      sendVerificationEmail: 'sendVerificationEmail',
+      logoutAction: 'logout',
+    }),
 
     async checkEmailVerificationStatus() {
       try {
@@ -176,9 +179,9 @@ export default {
       this.$router.push('/admin')
     },
 
-    async logout() {
+    async handleLogout() {
       try {
-        await this.logout()
+        await this.logoutAction()
         this.$router.push('/signin')
       } catch {}
     },
