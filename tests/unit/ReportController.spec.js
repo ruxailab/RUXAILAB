@@ -1,5 +1,6 @@
 import ReportController from '@/shared/controllers/ReportController'
 import { createControllerSpies, createMockDoc } from './helpers/testUtils'
+import { deleteTranscriptionsByUser } from '@/app/services/transcription/TranscriptionService'
 
 jest.mock('firebase/firestore', () => ({
     doc: jest.fn(),
@@ -17,8 +18,13 @@ jest.mock('@/app/plugins/firebase', () => ({
 jest.mock('@/shared/constants/methodDefinitions', () => ({
     STUDY_TYPES: {
         HEURISTIC: 'HEURISTIC',
-        USER: 'USER'
+        USER: 'USER',
+        CARD_SORTING: 'CARD_SORTING'
     }
+}))
+
+jest.mock('@/app/services/transcription/TranscriptionService', () => ({
+    deleteTranscriptionsByUser: jest.fn()
 }))
 
 describe('ReportController', () => {
@@ -35,6 +41,11 @@ describe('ReportController', () => {
         reportController = new ReportController()
         spies = createControllerSpies(reportController)
         consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+        deleteTranscriptionsByUser.mockResolvedValue({
+            deletedCount: 0,
+            answersDocId: 'answer-789',
+            userDocId: 'user-123'
+        })
     })
 
     afterEach(() => {
@@ -61,14 +72,20 @@ describe('ReportController', () => {
             const result = await reportController.removeReport({ report: mockReport, test: mockTestHeuristic })
 
             expect(spies.update).toHaveBeenCalledWith('answers', 'answer-789', { 'heuristicAnswers.user-123': 'DELETE_FIELD_SENTINEL' })
+            expect(deleteTranscriptionsByUser).not.toHaveBeenCalled()
             expect(result).toEqual({ success: true })
         })
 
-        it('should use taskAnswers for USER test type', async () => {
+        it('should use taskAnswers for USER test type and cascade transcriptions', async () => {
             setupMocks()
             const result = await reportController.removeReport({ report: mockReport, test: mockTestUser })
 
             expect(spies.update).toHaveBeenCalledWith('answers', 'answer-789', { 'taskAnswers.user-123': 'DELETE_FIELD_SENTINEL' })
+            expect(deleteTranscriptionsByUser).toHaveBeenCalledWith({
+                answersDocId: 'answer-789',
+                userDocId: 'user-123',
+                studyId: 'test-456'
+            })
             expect(result).toEqual({ success: true })
         })
 
@@ -100,6 +117,16 @@ describe('ReportController', () => {
             spies.readOne.mockRejectedValue(mockError)
 
             const result = await reportController.removeReport({ report: mockReport, test: mockTestHeuristic })
+
+            expect(result).toEqual({ success: false, error: mockError })
+        })
+
+        it('should return error when transcription cascade fails for USER study', async () => {
+            setupMocks()
+            const mockError = new Error('Cascade failed')
+            deleteTranscriptionsByUser.mockRejectedValue(mockError)
+
+            const result = await reportController.removeReport({ report: mockReport, test: mockTestUser })
 
             expect(result).toEqual({ success: false, error: mockError })
         })

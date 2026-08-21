@@ -61,7 +61,7 @@ export default class Transcription {
      * @param {number} params.evaluator.segments[].end - The end time of the segment (in seconds).
      * @param {string} params.evaluator.segments[].text - The text of the segment.
      */
-    constructor({ id = null, answersDocId, userDocId, taskId, provider, model, createdAt, moderator, evaluator } = {}) {
+    constructor({ id = null, answersDocId, userDocId, taskId, provider, model, createdAt, updatedAt = null, moderator, evaluator } = {}) {
 
         /**
          * The unique ID of the document (optional)
@@ -105,6 +105,12 @@ export default class Transcription {
          * @type {Timestamp}
          */
         this.createdAt = createdAt;
+
+        /**
+         * The timestamp when the transcription was last updated.
+         * @type {Timestamp|null}
+         */
+        this.updatedAt = updatedAt;
 
         /**
          * An object containing the transcription for moderator's Audio.
@@ -161,6 +167,7 @@ export default class Transcription {
             provider: data.provider,
             model: data.model,
             createdAt: data.createdAt,
+            updatedAt: data.updatedAt ?? null,
             moderator: {
                 language: data.moderator.language,
                 transcript: data.moderator.transcript,
@@ -218,6 +225,7 @@ export default class Transcription {
             provider: this.provider,
             model: this.model,
             createdAt: this.createdAt,
+            updatedAt: this.updatedAt,
             moderator: {
                 language: this.moderator.language,
                 transcript: this.moderator.transcript,

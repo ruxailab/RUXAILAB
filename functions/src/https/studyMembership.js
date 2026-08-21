@@ -1,4 +1,4 @@
-import { admin, functions } from '../f.firebase.js'
+import { admin, functions } from '../core/firebase/f.firebase.js'
 import { writeAuditEvent } from '../utils/auditTrail.js'
 import InviteUtils, { INVITE_STATUS } from '../utils/inviteUtils.js'
 
