@@ -249,7 +249,7 @@ describe('buildTranscriptionAnalytics', () => {
 })
 
 describe('UpsertTranscriptionAnalyticsService', () => {
-  it('updates the transcription and rebuilds aggregates from answer pointers', async () => {
+  it('rebuilds aggregates from answer pointers using preferTranscription metrics', async () => {
     const analyticsRepository = {
       set: jest.fn().mockResolvedValue(undefined),
     }
@@ -260,11 +260,11 @@ describe('UpsertTranscriptionAnalyticsService', () => {
         answersDocId: 'answer-1',
         userDocId: 'evaluator-1',
         taskId: '0',
-        sessionDuration: 0,
-        wordsSpoken: 0,
-        speakingTime: 0,
-        speechRate: 0,
-        keywords: {},
+        sessionDuration: 2,
+        wordsSpoken: 2,
+        speakingTime: 2,
+        speechRate: 60,
+        keywords: { checkout: 1, produto: 1 },
       }),
     }
     const answerRepository = {
@@ -294,6 +294,11 @@ describe('UpsertTranscriptionAnalyticsService', () => {
         answersDocId: 'answer-1',
         userDocId: 'evaluator-1',
         taskId: '0',
+        sessionDuration: 2,
+        wordsSpoken: 2,
+        speakingTime: 2,
+        speechRate: 60,
+        keywords: { checkout: 1, produto: 1 },
         evaluator: {
           transcript: 'produto checkout',
           segments: [{ start: 0, end: 2, text: 'produto checkout' }],
@@ -305,16 +310,7 @@ describe('UpsertTranscriptionAnalyticsService', () => {
       },
     })
 
-    expect(transcriptionRepository.update).toHaveBeenCalledWith(
-      'tr-1',
-      expect.objectContaining({
-        wordsSpoken: 2,
-        speakingTime: 2,
-        sessionDuration: 2,
-        keywords: { checkout: 1, produto: 1 },
-        updatedAt: 'ts',
-      }),
-    )
+    expect(transcriptionRepository.update).not.toHaveBeenCalled()
     expect(analyticsRepository.set).toHaveBeenCalledWith(
       expect.any(TranscriptionAnalytics),
     )

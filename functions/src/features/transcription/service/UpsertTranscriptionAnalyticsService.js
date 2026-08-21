@@ -1,9 +1,8 @@
-import { computeTranscriptMetrics } from './computeTranscriptMetrics.js'
-import { extractKeywords } from './extractKeywords.js'
 import { RebuildTranscriptionAnalyticsService } from './RebuildTranscriptionAnalyticsService.js'
 
 /**
- * Persist per-transcription analytics and rebuild answer-level aggregates.
+ * Rebuild answer-level aggregates from a transcription that already carries metrics.
+ * Per-doc analytics are persisted by TranscribeTaskService before this runs.
  */
 export class UpsertTranscriptionAnalyticsService {
   /**
@@ -19,8 +18,6 @@ export class UpsertTranscriptionAnalyticsService {
     answerRepository,
     FieldValue,
   }) {
-    this.transcriptionRepository = transcriptionRepository
-    this.FieldValue = FieldValue
     this.rebuildService = new RebuildTranscriptionAnalyticsService({
       analyticsRepository,
       transcriptionRepository,
@@ -31,31 +28,14 @@ export class UpsertTranscriptionAnalyticsService {
 
   /**
    * @param {object} params
-   * @param {object} params.transcription - Transcription toJSON() or domain-like object
+   * @param {object} params.transcription - Transcription toJSON() already including analytics fields
    * @returns {Promise<object>}
    */
   async execute({ transcription }) {
-    const metrics = computeTranscriptMetrics(transcription)
-    const keywords = extractKeywords(transcription)
-
-    const analyticsFields = {
-      sessionDuration: metrics.sessionDuration,
-      wordsSpoken: metrics.wordsSpoken,
-      speakingTime: metrics.speakingTime,
-      speechRate: metrics.speechRate,
-      keywords,
-    }
-
-    await this.transcriptionRepository.update(transcription.id, {
-      ...analyticsFields,
-      updatedAt: this.FieldValue.serverTimestamp(),
-    })
-
     return this.rebuildService.execute({
       answersDocId: transcription.answersDocId,
       preferTranscription: {
         ...transcription,
-        ...analyticsFields,
         id: transcription.id,
         answersDocId: transcription.answersDocId,
         userDocId: transcription.userDocId,

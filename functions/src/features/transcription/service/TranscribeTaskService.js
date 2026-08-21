@@ -2,6 +2,8 @@ import { fail } from '../../../core/errors.js'
 import { TranscriptionProvider } from '../models/TranscriptionProvider.js'
 import { TranscriptSide } from '../models/TranscriptSide.js'
 import { Transcription } from '../models/Transcription.js'
+import { computeTranscriptMetrics } from './computeTranscriptMetrics.js'
+import { extractKeywords } from './extractKeywords.js'
 import { transcribeAudio } from './transcribeAudio.js'
 import { ROLE, assertStudyAccess } from '../../../shared/auth/index.js'
 
@@ -129,7 +131,7 @@ export class TranscribeTaskService {
       existingTranscription = await this.transcriptionRepository.get(existingTranscriptionDocId)
     }
 
-    const transcription = Transcription.create({
+    const draft = Transcription.create({
       id: existingTranscription?.id ?? null,
       answersDocId,
       userDocId,
@@ -140,6 +142,13 @@ export class TranscribeTaskService {
       updatedAt: now,
       evaluator: TranscriptSide.create(evaluatorRaw),
       moderator: TranscriptSide.create(moderatorRaw),
+    })
+
+    // Compute analytics before persist so re-transcribe never zeros metrics mid-flight.
+    const metrics = computeTranscriptMetrics(draft)
+    const transcription = draft.withAnalytics({
+      ...metrics,
+      keywords: extractKeywords(draft),
     })
 
     let saved

@@ -228,20 +228,16 @@ describe('transcriptionTask', () => {
         taskId: '0',
         provider: 'whisper',
         model: 'medium',
+        wordsSpoken: expect.any(Number),
+        speakingTime: 2,
+        sessionDuration: 1,
+        keywords: expect.any(Object),
       }),
     )
     expect(mockAnswerUpdate).toHaveBeenCalledWith({
       'taskAnswers.evaluator-1.tasks.0.transcriptionDocId': 'tr-1',
     })
-    expect(mockTranscriptionUpdate).toHaveBeenCalledWith(
-      expect.objectContaining({
-        wordsSpoken: expect.any(Number),
-        speakingTime: 2,
-        sessionDuration: 1,
-        keywords: expect.any(Object),
-        updatedAt: 'mock-server-timestamp',
-      }),
-    )
+    expect(mockTranscriptionUpdate).not.toHaveBeenCalled()
     expect(mockAnalyticsSet).toHaveBeenCalledWith(
       expect.objectContaining({
         general: expect.objectContaining({
@@ -265,6 +261,8 @@ describe('transcriptionTask', () => {
       id: 'tr-1',
       provider: 'whisper',
       model: 'medium',
+      speakingTime: 2,
+      sessionDuration: 1,
     })
   })
 
@@ -320,10 +318,14 @@ describe('transcriptionTask', () => {
         taskId: '0',
         createdAt: 'created-at-original',
         updatedAt: 'mock-server-timestamp',
+        speakingTime: 2,
+        sessionDuration: 1,
+        wordsSpoken: expect.any(Number),
+        keywords: expect.any(Object),
       }),
       { merge: true },
     )
-    expect(mockTranscriptionUpdate).toHaveBeenCalled()
+    expect(mockTranscriptionUpdate).not.toHaveBeenCalled()
     expect(mockAnswerUpdate).not.toHaveBeenCalled()
     expect(mockAnalyticsSet).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -340,6 +342,8 @@ describe('transcriptionTask', () => {
       id: 'tr-existing',
       provider: 'whisper',
       model: 'medium',
+      speakingTime: 2,
+      sessionDuration: 1,
     })
   })
 
@@ -392,7 +396,7 @@ describe('transcriptionTask', () => {
     expect(mockAnswerUpdate).toHaveBeenCalledWith({
       'taskAnswers.evaluator-1.tasks.0.transcriptionDocId': 'tr-2',
     })
-    expect(mockTranscriptionUpdate).toHaveBeenCalled()
+    expect(mockTranscriptionUpdate).not.toHaveBeenCalled()
     expect(mockAnalyticsSet).toHaveBeenCalledWith(
       expect.objectContaining({
         tasks: {
