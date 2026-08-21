@@ -55,3 +55,25 @@ export async function deleteTranscription(payload) {
     )
   return response?.data ?? response
 }
+
+/**
+ * Delete all transcription documents for a user answer and rebuild analytics.
+ *
+ * @param {Object} payload
+ * @param {string} payload.answersDocId
+ * @param {string} payload.userDocId
+ * @param {string} [payload.studyId]
+ * @returns {Promise<{
+ *   deletedCount: number,
+ *   answersDocId: string,
+ *   userDocId: string,
+ * }>}
+ */
+export async function deleteTranscriptionsByUser(payload) {
+  const response =
+    await FirebaseFunctionsController.callHttpsCallableFunction(
+      'transcriptionDeleteByUser',
+      payload,
+    )
+  return response?.data ?? response
+}

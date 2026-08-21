@@ -78,4 +78,24 @@ export class FirestoreCollectionRepository {
   async delete(id) {
     await this.doc(id).delete()
   }
+
+  /**
+   * Delete many documents via Firestore writeBatch (max 500 ops per commit).
+   *
+   * @param {string[]} ids
+   * @returns {Promise<number>} number of ids submitted for delete
+   */
+  async deleteMany(ids) {
+    const uniqueIds = [...new Set((ids || []).filter(Boolean).map(String))]
+    const CHUNK = 450
+    for (let i = 0; i < uniqueIds.length; i += CHUNK) {
+      const chunk = uniqueIds.slice(i, i + CHUNK)
+      const batch = this.db.batch()
+      for (const id of chunk) {
+        batch.delete(this.doc(id))
+      }
+      await batch.commit()
+    }
+    return uniqueIds.length
+  }
 }

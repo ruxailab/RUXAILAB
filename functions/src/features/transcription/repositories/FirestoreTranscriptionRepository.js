@@ -39,4 +39,20 @@ export class FirestoreTranscriptionRepository extends FirestoreCollectionReposit
     items.sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt))
     return items
   }
+
+  /**
+   * List all transcriptions for a specific answer document and user.
+   *
+   * @param {string} answersDocId
+   * @param {string} userDocId
+   * @returns {Promise<Transcription[]>}
+   */
+  async listByAnswerUser(answersDocId, userDocId) {
+    const snap = await this.collectionRef
+      .where('answersDocId', '==', answersDocId)
+      .where('userDocId', '==', userDocId)
+      .get()
+
+    return snap.docs.map((doc) => this.fromFirestore(doc.data(), doc.id))
+  }
 }
