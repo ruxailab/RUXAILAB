@@ -224,14 +224,14 @@
             class="step-item"
             :class="{
               'step-active': currentStepperValue === 0,
-              'step-completed': currentStepperValue >= 1,
+              'step-completed': completedSteps.consent,
               'step-clickable': caller,
             }"
             @click="caller && goToStep('consent')"
           >
             <div class="step-indicator">
               <div class="step-number">
-                <v-icon v-if="currentStepperValue >= 1" color="white" size="16"
+                <v-icon v-if="completedSteps.consent" color="white" size="16"
                   >mdi-check</v-icon
                 >
                 <span v-else>1</span>
@@ -248,14 +248,14 @@
             class="step-item"
             :class="{
               'step-active': currentStepperValue === 1,
-              'step-completed': currentStepperValue >= 2,
+              'step-completed': completedSteps.preTest,
               'step-clickable': caller,
             }"
             @click="caller && goToStep('pretest')"
           >
             <div class="step-indicator">
               <div class="step-number">
-                <v-icon v-if="currentStepperValue >= 2" color="white" size="16"
+                <v-icon v-if="completedSteps.preTest" color="white" size="16"
                   >mdi-check</v-icon
                 >
                 <span v-else>2</span>
@@ -272,14 +272,14 @@
             class="step-item"
             :class="{
               'step-active': currentStepperValue === 2,
-              'step-completed': currentStepperValue >= 3,
+              'step-completed': completedSteps.tasks,
               'step-clickable': caller,
             }"
             @click="caller && goToStep('tasks')"
           >
             <div class="step-indicator">
               <div class="step-number">
-                <v-icon v-if="currentStepperValue >= 3" color="white" size="16"
+                <v-icon v-if="completedSteps.tasks" color="white" size="16"
                   >mdi-check</v-icon
                 >
                 <span v-else>3</span>
@@ -317,7 +317,7 @@
                         <v-icon
                           size="20"
                           :color="
-                            item.raw.index < currentTaskIndex
+                            item.raw.completed
                               ? 'success'
                               : item.raw.index === currentTaskIndex
                                 ? 'primary'
@@ -325,7 +325,7 @@
                           "
                         >
                           {{
-                            item.raw.index < currentTaskIndex
+                            item.raw.completed
                               ? 'mdi-check-circle'
                               : item.raw.index === currentTaskIndex
                                 ? 'mdi-play-circle'
@@ -344,14 +344,14 @@
             class="step-item"
             :class="{
               'step-active': currentStepperValue === 3,
-              'step-completed': currentStepperValue >= 4,
+              'step-completed': completedSteps.postTest,
               'step-clickable': caller,
             }"
             @click="caller && goToStep('posttest')"
           >
             <div class="step-indicator">
               <div class="step-number">
-                <v-icon v-if="currentStepperValue >= 4" color="white" size="16"
+                <v-icon v-if="completedSteps.postTest" color="white" size="16"
                   >mdi-check</v-icon
                 >
                 <span v-else>4</span>
@@ -368,14 +368,14 @@
             class="step-item"
             :class="{
               'step-active': currentStepperValue === 4,
-              'step-completed': currentStepperValue === 5,
+              'step-completed': completedSteps.completion,
               'step-clickable': caller,
             }"
             @click="caller && goToStep('completion')"
           >
             <div class="step-indicator">
               <div class="step-number">
-                <v-icon v-if="currentStepperValue === 5" color="white" size="16"
+                <v-icon v-if="completedSteps.completion" color="white" size="16"
                   >mdi-check</v-icon
                 >
                 <span v-else>5</span>
@@ -428,6 +428,16 @@ const props = defineProps({
   toggleCamera: Function,
   toggleMicrophone: Function,
   toggleScreenShare: Function,
+  completedSteps: {
+    type: Object,
+    default: () => ({
+      consent: false,
+      preTest: false,
+      tasks: false,
+      postTest: false,
+      completion: false,
+    }),
+  },
 })
 
 const safeStaffList = computed(() =>

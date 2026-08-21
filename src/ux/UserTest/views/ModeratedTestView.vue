@@ -231,13 +231,13 @@
                   <v-stepper-item
                     :value="1"
                     :title="$t('UserTestView.stepper.consent')"
-                    :complete="stepperValue > 1"
+                    :complete="completedSteps.consent"
                     :color="
-                      stepperValue == 1
-                        ? 'warning'
-                        : stepperValue < 1
-                          ? 'primary'
-                          : 'success'
+                      completedSteps.consent
+                        ? 'success'
+                        : stepperValue === 1
+                          ? 'warning'
+                          : 'primary'
                     "
                     complete-icon="mdi-check"
                   />
@@ -245,13 +245,13 @@
                   <v-stepper-item
                     :value="2"
                     :title="$t('UserTestView.stepper.preTest')"
-                    :complete="stepperValue > 2"
+                    :complete="completedSteps.preTest"
                     :color="
-                      stepperValue == 2
-                        ? 'warning'
-                        : stepperValue < 1
-                          ? 'primary'
-                          : 'success'
+                      completedSteps.preTest
+                        ? 'success'
+                        : stepperValue === 2
+                          ? 'warning'
+                          : 'primary'
                     "
                     complete-icon="mdi-check"
                   />
@@ -259,13 +259,13 @@
                   <v-stepper-item
                     :value="3"
                     :title="$t('UserTestView.stepper.tasks')"
-                    :complete="stepperValue > 3"
+                    :complete="completedSteps.tasks"
                     :color="
-                      stepperValue == 3
-                        ? 'warning'
-                        : stepperValue < 3
-                          ? 'primary'
-                          : 'success'
+                      completedSteps.tasks
+                        ? 'success'
+                        : stepperValue === 3
+                          ? 'warning'
+                          : 'primary'
                     "
                     complete-icon="mdi-check"
                   />
@@ -273,13 +273,13 @@
                   <v-stepper-item
                     :value="4"
                     :title="$t('UserTestView.stepper.postTest')"
-                    :complete="stepperValue > 4"
+                    :complete="completedSteps.postTest"
                     :color="
-                      stepperValue == 4
-                        ? 'warning'
-                        : stepperValue < 4
-                          ? 'primary'
-                          : 'success'
+                      completedSteps.postTest
+                        ? 'success'
+                        : stepperValue === 4
+                          ? 'warning'
+                          : 'primary'
                     "
                     complete-icon="mdi-check"
                   />
@@ -287,13 +287,13 @@
                   <v-stepper-item
                     :value="5"
                     :title="$t('UserTestView.stepper.completion')"
-                    :complete="stepperValue > 5"
+                    :complete="completedSteps.completion"
                     :color="
-                      stepperValue == 5
-                        ? 'warning'
-                        : stepperValue < 5
-                          ? 'primary'
-                          : 'success'
+                      completedSteps.completion
+                        ? 'success'
+                        : stepperValue === 5
+                          ? 'warning'
+                          : 'primary'
                     "
                     complete-icon="mdi-check"
                   />
@@ -382,6 +382,7 @@
               :notes-drawer-open="notesDrawerOpen"
               :notes-count="localTestAnswer.sessionNotes?.length || 0"
               :toggle-notes-drawer="toggleNotesDrawer"
+              :completed-steps="completedSteps"
               @set-remote-stream="remoteStream = $event"
               @proceed-to-next-step="proceedToNextStep"
               @step-selected="handleStepSelected"
@@ -865,6 +866,37 @@ const stepperValue = computed(() => {
   if (globalIndex.value === 5) return 4 // Post-test
   if (globalIndex.value === 6) return 5 // Completion
   return 1 // Default to first step
+})
+
+const completedSteps = computed(() => {
+  if (isModerator.value) {
+    const participants = Object.values(callState.value?.participants || {})
+
+    // Get the participant's progress
+    const participant = participants.find(
+      (member) => member?.role === 'PARTICIPANT',
+    )
+
+    return (
+      participant?.progress ?? {
+        consent: false,
+        preTest: false,
+        tasks: false,
+        postTest: false,
+        completion: false,
+      }
+    )
+  }
+  return {
+    consent: localTestAnswer.consentCompleted === true,
+    preTest: localTestAnswer.preTestCompleted === true,
+    tasks:
+      Array.isArray(localTestAnswer.tasks) &&
+      localTestAnswer.tasks.length > 0 &&
+      localTestAnswer.tasks.every((task) => task?.completed === true),
+    postTest: localTestAnswer.postTestCompleted === true,
+    completion: localTestAnswer.submitted === true,
+  }
 })
 
 // Scroll to top of the page when step changes
@@ -1767,6 +1799,7 @@ const completeStep = async (id, type, userCompleted = true) => {
       // validation: type === 'tasks' ? id + 1 : taskIndex.value
       await update(participantRef, {
         taskIndex: taskIndex.value,
+        progress: completedSteps.value,
       })
     }
 

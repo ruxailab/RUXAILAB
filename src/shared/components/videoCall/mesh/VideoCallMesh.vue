@@ -255,6 +255,7 @@
       :toggle-camera="toggleCamera"
       :toggle-microphone="toggleMicrophone"
       :toggle-screen-share="handleScreenShare"
+      :completed-steps="completedSteps"
     />
     <!-- Join Room Dialog for Participants -->
     <v-dialog v-model="showJoinDialog" max-width="400" persistent>
@@ -345,6 +346,16 @@ const props = defineProps({
   notesDrawerOpen: Boolean,
   notesCount: Number,
   toggleNotesDrawer: Function,
+  completedSteps: {
+    type: Object,
+    default: () => ({
+      consent: false,
+      preTest: false,
+      tasks: false,
+      postTest: false,
+      completion: false,
+    }),
+  },
 })
 
 const emit = defineEmits([
