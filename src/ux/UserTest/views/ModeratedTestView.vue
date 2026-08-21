@@ -1458,6 +1458,16 @@ const startTest = async () => {
     const previousGlobalIndex = globalIndex.value
     const previousTaskIndex = taskIndex.value
 
+    if (
+      !isModerator.value &&
+      !isObservator.value &&
+      globalIndex.value === 1 &&
+      nextGlobalIndex === 0
+    ) {
+      displayVideoCallComponent.value = true
+      return
+    }
+
     if (!isModerator.value) {
       if (isObservator.value) {
         // Observers stay in the call lobby and do not follow the test steps.
