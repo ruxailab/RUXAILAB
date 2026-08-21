@@ -134,7 +134,7 @@
           <span>Leave the video call session</span>
         </v-tooltip>
 
-        <v-tooltip v-if="props.isObservator" location="top">
+        <v-tooltip v-if="canUseNotes" location="top">
           <template #activator="{ props: tooltipProps }">
             <v-btn
               v-bind="tooltipProps"
@@ -268,10 +268,12 @@ const canLeaveCall = computed(
   () => props.isObservator || (props.callStarted && !props.caller),
 )
 
+const canUseNotes = computed(() => props.isObservator || props.caller)
+
 const overflowActions = computed(() => {
   const actions = []
 
-  if (props.isObservator) {
+  if (canUseNotes.value) {
     actions.push({
       key: 'notes',
       icon: props.notesDrawerOpen
@@ -281,7 +283,9 @@ const overflowActions = computed(() => {
       active: props.notesDrawerOpen,
       handler: props.toggleNotesDrawer,
     })
-  } else {
+  }
+
+  if (!props.isObservator) {
     actions.push({
       key: 'steps',
       icon: 'mdi-format-list-numbered',

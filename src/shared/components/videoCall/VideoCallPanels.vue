@@ -95,7 +95,6 @@
                 >
                   {{ t('videoCall.panel.moderator') }}
                 </v-chip>
-                {{ member }}
               </span>
               <div class="participant-status">
                 <v-chip size="x-small" :color="getPresenceState(member).color">
@@ -163,7 +162,6 @@
                 >
                   {{ t('videoCall.panel.moderator') }}
                 </v-chip>
-                {{ participant }}
               </span>
               <div class="participant-status">
                 <v-chip

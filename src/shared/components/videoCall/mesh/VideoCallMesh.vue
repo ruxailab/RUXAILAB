@@ -120,15 +120,16 @@
         </div>
       </v-col>
 
-      <!-- Moderator Preview (before opening room) -->
+      <!-- Local Preview (before entering room) -->
       <v-col
         v-if="
-          caller &&
-          !roomOpen &&
           !isObservator &&
           localStream &&
-          !roomReady &&
-          Object.keys(peers).length === 0
+          ((caller &&
+            !roomOpen &&
+            !roomReady &&
+            Object.keys(peers).length === 0) ||
+            (!caller && !callStarted))
         "
         cols="12"
       >
@@ -192,7 +193,7 @@
             {{ t('videoCall.session.waitingForModerator') }}
           </h3>
           <p class="text-body-2 text-grey">
-            {{ t('videoCall.session.autoStartWhenModeratorOpensRoom') }}
+            {{ t('videoCall.session.moderatorWillAdmitParticipant') }}
           </p>
         </div>
       </v-col>
@@ -346,7 +347,9 @@ const screenStream = ref(null)
 const isSharingScreen = ref(false)
 const isSessionEnded = ref(false)
 let localPresenceDisconnect = null
-let moderatorPresenceDisconnect = null
+let localSignalsDisconnect = null
+let moderatorCallDisconnect = null
+let moderatorRoomDisconnect = null
 
 // Camera and microphone controls
 const isCameraEnabled = ref(true)
@@ -489,6 +492,10 @@ onMounted(async () => {
   }
 
   // Participants and observators wait for room to be opened by moderator
+  if (!isObservator.value && !localStream.value) {
+    await initLocalMedia()
+  }
+
   const showVideoCallRef = dbRef(
     database,
     `rooms/${props.roomId}/showVideoCall`,
@@ -594,26 +601,37 @@ const joinRoom = async () => {
       role: 'FACILITATOR',
       isModerator: true,
     })
-
-    const moderatorDisconnect = onDisconnect(myMemberRef)
-    moderatorDisconnect.update({
-      connected: false,
-      presenceStatus: 'disconnected',
-      presenceUpdatedAt: Date.now(),
-    })
-    moderatorPresenceDisconnect = moderatorDisconnect
   } else {
     await update(myMemberRef, memberPayload)
   }
 
-  // Mark as disconnected on close tab, but do NOT remove (to persist media settings)
+  const mySignalsRef = dbRef(
+    database,
+    `calls/${props.roomId}/signals/${props.user.id}`,
+  )
+
+  if (props.isModerator) {
+    const callDisconnect = onDisconnect(
+      dbRef(database, `calls/${props.roomId}`),
+    )
+    callDisconnect.remove()
+    moderatorCallDisconnect = callDisconnect
+
+    const roomDisconnect = onDisconnect(
+      dbRef(database, `rooms/${props.roomId}`),
+    )
+    roomDisconnect.remove()
+    moderatorRoomDisconnect = roomDisconnect
+  }
+
+  // Remove stale per-user RTDB state if the browser tab closes unexpectedly.
   const myDisconnect = onDisconnect(myMemberRef)
-  myDisconnect.update({
-    connected: false,
-    presenceStatus: 'disconnected',
-    presenceUpdatedAt: Date.now(),
-  })
+  myDisconnect.remove()
   localPresenceDisconnect = myDisconnect
+
+  const signalsDisconnect = onDisconnect(mySignalsRef)
+  signalsDisconnect.remove()
+  localSignalsDisconnect = signalsDisconnect
 
   // 3. Listen to staff and participants to initiate connections
   const participantsRef = dbRef(database, `calls/${props.roomId}/participants`)
@@ -675,10 +693,6 @@ const joinRoom = async () => {
   })
 
   // 4. Listen for Signals (Offers/Answers/Candidates) targeted at ME
-  const mySignalsRef = dbRef(
-    database,
-    `calls/${props.roomId}/signals/${props.user.id}`,
-  )
   onChildAdded(mySignalsRef, async (snapshot) => {
     const signal = snapshot.val()
     // signal structure expected: { senderId: '...', ...payload } from my push logic?
@@ -776,34 +790,21 @@ const leaveRoom = async () => {
   }
   // Close all connections
   Object.values(peers).forEach((p) => p.connection.close())
-  const now = Date.now()
+
+  const memberBranch =
+    props.isModerator || isObservator.value ? 'staff' : 'participants'
+  const myMemberRef = dbRef(
+    database,
+    `calls/${props.roomId}/${memberBranch}/${props.user.id}`,
+  )
 
   if (props.isModerator) {
     await remove(
       dbRef(database, `calls/${props.roomId}/participants/${props.user.id}`),
     )
-    await update(
-      dbRef(database, `calls/${props.roomId}/staff/${props.user.id}`),
-      {
-        connected: false,
-        presenceStatus: 'disconnected',
-        presenceUpdatedAt: now,
-        updatedAt: now,
-      },
-    )
-  } else {
-    const myMemberRef = isObservator.value
-      ? dbRef(database, `calls/${props.roomId}/staff/${props.user.id}`)
-      : dbRef(database, `calls/${props.roomId}/participants/${props.user.id}`)
-
-    await update(myMemberRef, {
-      connected: false,
-      presenceStatus: 'disconnected',
-      presenceUpdatedAt: now,
-      updatedAt: now,
-      role: isObservator.value ? 'OBSERVER' : 'PARTICIPANT',
-    })
   }
+
+  await remove(myMemberRef)
 
   await remove(
     dbRef(database, `calls/${props.roomId}/signals/${props.user.id}`),
@@ -866,12 +867,14 @@ const createPeerConnection = (targetUserId, isInitiator) => {
     if (!peer || !track) return
 
     if (track.kind === 'video') {
+      const cameraTrackCount = peer.stream?.getVideoTracks().length ?? 0
       const isExistingCameraTrack = peer.stream
         ?.getTracks()
         .some((existingTrack) => existingTrack.id === track.id)
       const isScreenTrack =
         /screen|window|monitor|display/i.test(track.label || '') ||
-        (peer.screenShareExpected === true && !isExistingCameraTrack)
+        peer.screenShareExpected === true ||
+        (cameraTrackCount > 0 && !isExistingCameraTrack)
 
       if (isScreenTrack) {
         if (!peer.screenStream) {
@@ -1313,9 +1316,17 @@ const leaveCall = async () => {
     await localPresenceDisconnect.cancel()
     localPresenceDisconnect = null
   }
-  if (moderatorPresenceDisconnect) {
-    await moderatorPresenceDisconnect.cancel()
-    moderatorPresenceDisconnect = null
+  if (localSignalsDisconnect) {
+    await localSignalsDisconnect.cancel()
+    localSignalsDisconnect = null
+  }
+  if (moderatorCallDisconnect) {
+    await moderatorCallDisconnect.cancel()
+    moderatorCallDisconnect = null
+  }
+  if (moderatorRoomDisconnect) {
+    await moderatorRoomDisconnect.cancel()
+    moderatorRoomDisconnect = null
   }
 
   await leaveRoom()
@@ -1341,9 +1352,17 @@ const endCall = async () => {
     await localPresenceDisconnect.cancel()
     localPresenceDisconnect = null
   }
-  if (moderatorPresenceDisconnect) {
-    await moderatorPresenceDisconnect.cancel()
-    moderatorPresenceDisconnect = null
+  if (localSignalsDisconnect) {
+    await localSignalsDisconnect.cancel()
+    localSignalsDisconnect = null
+  }
+  if (moderatorCallDisconnect) {
+    await moderatorCallDisconnect.cancel()
+    moderatorCallDisconnect = null
+  }
+  if (moderatorRoomDisconnect) {
+    await moderatorRoomDisconnect.cancel()
+    moderatorRoomDisconnect = null
   }
 
   if (caller.value) {

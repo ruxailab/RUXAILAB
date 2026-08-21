@@ -124,6 +124,37 @@
       </v-col>
     </v-row>
 
+    <v-row
+      v-if="!caller && !callStarted && !isObservator && waitingPreviewStream"
+      class="video-row justify-center"
+      no-gutters
+    >
+      <v-col cols="12">
+        <div
+          class="videos-grid video-preview-grid"
+          :style="{ '--grid-cols': 1 }"
+        >
+          <div>
+            <div class="video-container">
+              <video
+                ref="waitingPreviewVideo"
+                autoplay
+                muted
+                playsinline
+                class="video-element"
+              ></video>
+
+              <div class="video-label">
+                {{ t('videoCall.session.yourPreview') }} ({{
+                  user?.email?.split('@')[0]
+                }})
+              </div>
+            </div>
+          </div>
+        </div>
+      </v-col>
+    </v-row>
+
     <!-- Participant/Observator Waiting State (only when not started) -->
     <v-row
       v-if="!caller && !callStarted && !isObservator"
@@ -144,7 +175,7 @@
             {{ t('videoCall.session.waitingForModerator') }}
           </h3>
           <p class="text-body-2 text-grey">
-            {{ t('videoCall.session.autoStartWhenModeratorOpensRoom') }}
+            {{ t('videoCall.session.moderatorWillAdmitParticipant') }}
           </p>
         </div>
       </v-col>
@@ -204,7 +235,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { Track } from 'livekit-client'
@@ -245,6 +276,8 @@ const router = useRouter()
 const roomReady = ref(false)
 const showSidePanel = ref(false)
 const showStepperPanel = ref(false)
+const waitingPreviewVideo = ref(null)
+const waitingPreviewStream = ref(null)
 
 const testId = computed(() => props.roomId)
 const userId = computed(() => props.user?.id)
@@ -491,6 +524,34 @@ function setLocalVideoRef(el) {
   if (camPub?.track) camPub.track.attach(el)
 }
 
+watch([waitingPreviewVideo, waitingPreviewStream], ([videoEl, stream]) => {
+  if (videoEl && stream) {
+    videoEl.srcObject = stream
+  }
+})
+
+async function initWaitingPreview() {
+  if (waitingPreviewStream.value || !navigator.mediaDevices?.getUserMedia) {
+    return
+  }
+
+  try {
+    waitingPreviewStream.value = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: false,
+    })
+  } catch {
+    waitingPreviewStream.value = null
+  }
+}
+
+function stopWaitingPreview() {
+  if (waitingPreviewStream.value) {
+    waitingPreviewStream.value.getTracks().forEach((track) => track.stop())
+    waitingPreviewStream.value = null
+  }
+}
+
 function toggleSidePanel() {
   showSidePanel.value = !showSidePanel.value
   if (showSidePanel.value) showStepperPanel.value = false
@@ -547,6 +608,7 @@ function proceedToNextStep() {
 async function joinLiveKitRoom() {
   if (!roomReady.value) return
   try {
+    stopWaitingPreview()
     await connect()
   } catch {
     // connectionError is set in composable
@@ -637,6 +699,10 @@ async function endCall() {
 onMounted(async () => {
   if (props.isModerator) return
 
+  if (!isObservator.value) {
+    await initWaitingPreview()
+  }
+
   const showVideoCallRef = dbRef(
     database,
     `rooms/${props.roomId}/showVideoCall`,
@@ -657,6 +723,7 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(async () => {
+  stopWaitingPreview()
   await disconnect()
 })
 </script>

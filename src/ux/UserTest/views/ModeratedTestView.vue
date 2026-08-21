@@ -349,7 +349,7 @@
 
           <!-- Observator Notes Drawer -->
           <v-navigation-drawer
-            v-if="isObservator && notesDrawerOpen"
+            v-if="(isObservator || isModerator) && notesDrawerOpen"
             location="right"
             width="400"
             elevation="3"
@@ -668,6 +668,7 @@ const nextStepAnnouncementKicker = ref('')
 const isProcessingRemoteStepAnnouncement = ref(false)
 const lastAnnouncedRemoteStepKey = ref(null)
 const lastWaitingParticipantsNotificationCount = ref(0)
+const hasSeenRoomState = ref(false)
 
 const sessionId = computed(() => route.params.token || null)
 
@@ -1242,127 +1243,133 @@ const startTest = async () => {
       }
     })
 
-    const callSnapshot = await get(callRef)
+    if (isModerator.value) {
+      const callSnapshot = await get(callRef)
 
-    if (!callSnapshot.exists()) {
-      const staffMembers = Array.isArray(session.value?.staff)
-        ? session.value.staff
-        : []
-      const participantMembers = Array.isArray(session.value?.participants)
-        ? session.value.participants
-        : []
-      const participantMembersWithoutStaff = removeStaffDuplicates(
-        participantMembers,
-        [
-          ...staffMembers,
-          { userDocId: user.value?.id, email: user.value?.email },
-        ],
-      )
-
-      const toMemberMap = (members, defaults = {}) =>
-        Object.fromEntries(
-          members
-            .map((member) => {
-              const memberId = member?.userDocId || member?.id || member?.email
-              if (!memberId) return null
-
-              const memberConnected = Object.prototype.hasOwnProperty.call(
-                defaults,
-                'connected',
-              )
-                ? defaults.connected
-                : undefined
-              const memberPresenceStatus = Object.prototype.hasOwnProperty.call(
-                defaults,
-                'presenceStatus',
-              )
-                ? defaults.presenceStatus
-                : undefined
-
-              const sanitizedMember = { ...member }
-              delete sanitizedMember.connected
-              delete sanitizedMember.presenceStatus
-              delete sanitizedMember.presenceUpdatedAt
-              delete sanitizedMember.updatedAt
-              delete sanitizedMember.status
-
-              const normalizedMember = {
-                ...sanitizedMember,
-                userDocId: member.userDocId || member.id || member.email,
-                email: member.email || null,
-                name:
-                  member.name ||
-                  member.displayName ||
-                  member.email?.split('@')[0] ||
-                  memberId,
-                role: member.role || 'participant',
-                accessLevel: member.accessLevel ?? member.role ?? 5,
-                isModerator:
-                  member.role === 'FACILITATOR' || member.isModerator === true,
-                joinedAt: member.joinedAt ?? Date.now(),
-                media: member.media ?? {
-                  cameraEnabled: true,
-                  microphoneEnabled: true,
-                },
-                ...(memberConnected !== undefined
-                  ? { connected: memberConnected }
-                  : {}),
-                ...(memberPresenceStatus !== undefined
-                  ? { presenceStatus: memberPresenceStatus }
-                  : {}),
-                ...(memberPresenceStatus === 'disconnected'
-                  ? { presenceUpdatedAt: null }
-                  : memberPresenceStatus === 'connected'
-                    ? { presenceUpdatedAt: Date.now() }
-                    : {}),
-              }
-
-              return [memberId, normalizedMember]
-            })
-            .filter(Boolean),
+      if (!callSnapshot.exists()) {
+        const staffMembers = Array.isArray(session.value?.staff)
+          ? session.value.staff
+          : []
+        const participantMembers = Array.isArray(session.value?.participants)
+          ? session.value.participants
+          : []
+        const participantMembersWithoutStaff = removeStaffDuplicates(
+          participantMembers,
+          [
+            ...staffMembers,
+            { userDocId: user.value?.id, email: user.value?.email },
+          ],
         )
 
-      const moderatorEntry = {
-        userDocId: user.value?.id || 'moderator',
-        email: user.value?.email || null,
-        name:
-          user.value?.email?.split('@')[0] ||
-          user.value?.displayName ||
-          'moderator',
-        role: 'FACILITATOR',
-        accessLevel: 'ADMIN',
-        isModerator: true,
-        connected: true,
-        presenceStatus: 'connected',
-        presenceUpdatedAt: Date.now(),
-        joinedAt: Date.now(),
-        media: {
-          cameraEnabled: true,
-          microphoneEnabled: true,
-        },
-      }
+        const toMemberMap = (members, defaults = {}) =>
+          Object.fromEntries(
+            members
+              .map((member) => {
+                const memberId =
+                  member?.userDocId || member?.id || member?.email
+                if (!memberId) return null
 
-      const payload = {
-        createdAt: Date.now(),
-        startedAt: Date.now(),
-        status: 'active',
-        staff: {
-          [moderatorEntry.userDocId]: moderatorEntry,
-          ...toMemberMap(
-            staffMembers.filter((member) => {
-              const memberId = member?.userDocId || member?.id || member?.email
-              return memberId && memberId !== moderatorEntry.userDocId
-            }),
-            {},
-          ),
-        },
-        participants: toMemberMap(participantMembersWithoutStaff, {
-          connected: false,
-          presenceStatus: 'disconnected',
-        }),
-      }
+                const memberConnected = Object.prototype.hasOwnProperty.call(
+                  defaults,
+                  'connected',
+                )
+                  ? defaults.connected
+                  : undefined
+                const memberPresenceStatus =
+                  Object.prototype.hasOwnProperty.call(
+                    defaults,
+                    'presenceStatus',
+                  )
+                    ? defaults.presenceStatus
+                    : undefined
 
-      await set(callRef, payload)
+                const sanitizedMember = { ...member }
+                delete sanitizedMember.connected
+                delete sanitizedMember.presenceStatus
+                delete sanitizedMember.presenceUpdatedAt
+                delete sanitizedMember.updatedAt
+                delete sanitizedMember.status
+
+                const normalizedMember = {
+                  ...sanitizedMember,
+                  userDocId: member.userDocId || member.id || member.email,
+                  email: member.email || null,
+                  name:
+                    member.name ||
+                    member.displayName ||
+                    member.email?.split('@')[0] ||
+                    memberId,
+                  role: member.role || 'participant',
+                  accessLevel: member.accessLevel ?? member.role ?? 5,
+                  isModerator:
+                    member.role === 'FACILITATOR' ||
+                    member.isModerator === true,
+                  joinedAt: member.joinedAt ?? Date.now(),
+                  media: member.media ?? {
+                    cameraEnabled: true,
+                    microphoneEnabled: true,
+                  },
+                  ...(memberConnected !== undefined
+                    ? { connected: memberConnected }
+                    : {}),
+                  ...(memberPresenceStatus !== undefined
+                    ? { presenceStatus: memberPresenceStatus }
+                    : {}),
+                  ...(memberPresenceStatus === 'disconnected'
+                    ? { presenceUpdatedAt: null }
+                    : memberPresenceStatus === 'connected'
+                      ? { presenceUpdatedAt: Date.now() }
+                      : {}),
+                }
+
+                return [memberId, normalizedMember]
+              })
+              .filter(Boolean),
+          )
+
+        const moderatorEntry = {
+          userDocId: user.value?.id || 'moderator',
+          email: user.value?.email || null,
+          name:
+            user.value?.email?.split('@')[0] ||
+            user.value?.displayName ||
+            'moderator',
+          role: 'FACILITATOR',
+          accessLevel: 'ADMIN',
+          isModerator: true,
+          connected: true,
+          presenceStatus: 'connected',
+          presenceUpdatedAt: Date.now(),
+          joinedAt: Date.now(),
+          media: {
+            cameraEnabled: true,
+            microphoneEnabled: true,
+          },
+        }
+
+        const payload = {
+          createdAt: Date.now(),
+          startedAt: Date.now(),
+          status: 'active',
+          staff: {
+            [moderatorEntry.userDocId]: moderatorEntry,
+            ...toMemberMap(
+              staffMembers.filter((member) => {
+                const memberId =
+                  member?.userDocId || member?.id || member?.email
+                return memberId && memberId !== moderatorEntry.userDocId
+              }),
+              {},
+            ),
+          },
+          participants: toMemberMap(participantMembersWithoutStaff, {
+            connected: false,
+            presenceStatus: 'disconnected',
+          }),
+        }
+
+        await set(callRef, payload)
+      }
     }
   }
 
@@ -1374,6 +1381,11 @@ const startTest = async () => {
 
     // If data is null, the room has been deleted (e.g. by moderator ending call)
     if (!data) {
+      if (isObservator.value && !hasSeenRoomState.value) {
+        displayVideoCallComponent.value = true
+        return
+      }
+
       if (!isModerator.value && displayVideoCallComponent.value) {
         // displayVideoCallComponent.value = false // Avoid updating state before redirect to prevent unmount error
         // Optionally show start screen or just return to test flow
@@ -1383,6 +1395,8 @@ const startTest = async () => {
       }
       return
     }
+
+    hasSeenRoomState.value = true
 
     const nextGlobalIndex =
       data.globalIndex !== undefined ? data.globalIndex : 0
