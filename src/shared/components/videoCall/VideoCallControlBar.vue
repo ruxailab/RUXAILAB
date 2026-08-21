@@ -264,9 +264,7 @@ const props = defineProps({
   toggleNotesDrawer: Function,
 })
 
-const canLeaveCall = computed(
-  () => props.isObservator || (props.callStarted && !props.caller),
-)
+const canLeaveCall = computed(() => props.isObservator || !props.caller)
 
 const canUseNotes = computed(() => props.isObservator || props.caller)
 
