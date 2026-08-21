@@ -14,6 +14,7 @@ import {
   setDoc,
   deleteField,
   collectionGroup,
+  writeBatch,
 } from 'firebase/firestore'
 
 /**
@@ -199,6 +200,17 @@ export default class Controller {
       parentId: document.ref.parent.parent?.id,
       ...document.data(),
     }))
+  }
+
+  async batchUpdate(updates) {
+    const batch = writeBatch(db)
+
+    updates.forEach(({ col, docId, payload }) => {
+      const ref = doc(db, `${col}/${docId}`)
+      batch.update(ref, payload)
+    })
+
+    return batch.commit()
   }
 
   // Utility method to get deleteField for field removal

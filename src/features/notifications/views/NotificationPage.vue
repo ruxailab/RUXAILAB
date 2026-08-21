@@ -145,27 +145,10 @@
               }"
               class="mb-3"
               @go-to-redirect="handleNotificationClick"
-              @mark-as-read="toggleRead"
+              @toggle-read="toggleRead"
             />
           </div>
         </template>
-
-        <!-- REFRESH -->
-        <v-btn
-          color="primary"
-          variant="tonal"
-          size="small"
-          prepend-icon="mdi-refresh"
-          :loading="refreshing"
-          class="refresh-btn"
-          @click="refreshNotifications"
-        >
-          {{ $t('notificationsPage.refresh') }}
-
-          <template #loader>
-            <v-progress-circular indeterminate size="16" width="2" />
-          </template>
-        </v-btn>
 
         <!-- PAGINATION -->
         <v-pagination
@@ -209,7 +192,6 @@ const search = ref('')
 const activeIndex = ref(-1)
 const loading = ref(true)
 const markingAllAsRead = ref(false)
-const refreshing = ref(false)
 const invite = ref(null)
 
 // Pagination
@@ -225,10 +207,10 @@ let resolveDialog
 // Computed
 const user = computed(() => store.getters.user)
 
-const totalCount = computed(() => user.value?.notifications?.length || 0)
+const totalCount = computed(() => notifications.value?.length || 0)
 
 const unreadCount = computed(
-  () => user.value?.notifications?.filter((n) => !n.read).length || 0,
+  () => notifications.value?.filter((n) => !n.read).length || 0,
 )
 
 // Mobile tabs
@@ -250,21 +232,11 @@ const mobileTabItems = computed(() => [
   },
 ])
 
-// Sorted notifications
-const sortedNotifications = computed(() => {
-  if (!user.value?.notifications) return []
-
-  return [...user.value.notifications].sort((a, b) => {
-    const aDate = new Date(a.createdDate)
-    const bDate = new Date(b.createdDate)
-
-    return bDate - aDate
-  })
-})
+const notifications = computed(() => store.getters.notifications ?? [])
 
 // Filtered notifications
 const filteredNotifications = computed(() => {
-  let list = sortedNotifications.value
+  let list = notifications.value
 
   if (activeTab.value === 'unread') {
     list = list.filter((n) => !n.read)
@@ -294,7 +266,7 @@ const paginatedNotifications = computed(() => {
     list = filteredNotifications.value
   } else if (activeTab.value === 'inbox') {
     page = inboxPage.value
-    list = sortedNotifications.value
+    list = notifications.value
   } else {
     page = allPage.value
     list = filteredNotifications.value
@@ -338,7 +310,7 @@ const currentPages = computed(() => {
   }
 
   if (activeTab.value === 'inbox') {
-    return Math.ceil(sortedNotifications.value.length / pageSize.value)
+    return Math.ceil(notifications.value.length / pageSize.value)
   }
 
   return Math.ceil(filteredNotifications.value.length / pageSize.value)
@@ -479,56 +451,42 @@ const goToNotificationRedirect = async (notification) => {
 const markAsRead = async (notification) => {
   if (!notification || notification.read) return
 
-  try {
-    await store.dispatch('markNotificationAsRead', {
-      notification,
-      user: user.value,
-    })
-  } catch {
-    // Error handling without console.error for SonarCloud
-  }
+  await store.dispatch('markNotificationAsRead', {
+    notificationId: notification.id,
+    userId: user.value?.id,
+  })
+}
+// Mar as unread
+const markAsUnread = async (notification) => {
+  if (!notification) return
+
+  await store.dispatch('markNotificationAsUnread', {
+    notificationId: notification.id,
+    userId: user.value?.id,
+  })
 }
 
 // NotificationItem action
 const toggleRead = async (notification) => {
-  await markAsRead(notification)
+  if (notification.read) {
+    await markAsUnread(notification)
+  } else {
+    await markAsRead(notification)
+  }
 }
 
 // Mark all as read
 const markAllAsRead = async () => {
-  const unread = user.value.notifications.filter((n) => !n.read)
-
-  if (unread.length === 0) return
+  const unread = notifications.value?.filter((n) => !n.read)
+  if (!unread?.length) return
 
   markingAllAsRead.value = true
 
-  try {
-    await Promise.all(
-      unread.map((notification) =>
-        store.dispatch('markNotificationAsRead', {
-          notification,
-          user: user.value,
-        }),
-      ),
-    )
-  } catch {
-    // Error handling without console.error for SonarCloud
-  } finally {
-    markingAllAsRead.value = false
-  }
-}
-
-// Refresh
-const refreshNotifications = async () => {
-  refreshing.value = true
-
-  try {
-    globalThis.location.reload()
-  } catch {
-    // Error handling without console.error for SonarCloud
-  } finally {
-    refreshing.value = false
-  }
+  await store.dispatch('markAllNotificationsAsRead', {
+    userId: user.value.id,
+    notifications: notifications.value,
+  })
+  markingAllAsRead.value = false
 }
 
 // Keyboard navigation
@@ -567,15 +525,6 @@ const handleKeyDown = (e) => {
       ) {
         handleNotificationClick(filteredNotifications.value[activeIndex.value])
       }
-
-      break
-
-    case 'r':
-      if (e.ctrlKey || e.metaKey) {
-        e.preventDefault()
-        refreshNotifications()
-      }
-
       break
 
     case 'Escape':
@@ -623,15 +572,6 @@ onUnmounted(() => {
   overflow: hidden;
 }
 
-.refresh-btn {
-  min-width: 140px;
-  height: 40px;
-  font-weight: bold;
-  letter-spacing: 0.3px;
-  background-color: #768898 !important;
-  color: white !important;
-}
-
 /* Keyboard active state */
 
 .notification-item.active {
@@ -659,11 +599,6 @@ onUnmounted(() => {
   .v-btn--size-small {
     font-size: 0.75rem;
     padding: 0 8px;
-  }
-
-  .refresh-btn {
-    min-width: 80px;
-    font-size: 0.8rem;
   }
 }
 

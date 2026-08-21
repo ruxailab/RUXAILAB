@@ -21,7 +21,6 @@ export default class UserController extends Controller {
       accessLevel: 1,
       myTests: {},
       myAnswers: {},
-      notifications: [],
       storageUsageMB: 0,
     }).toFirestore()
     return super.set(COLLECTION, payload.id, user)
@@ -155,96 +154,6 @@ export default class UserController extends Controller {
   async reauthenticateUser(user, email, password) {
     const credential = EmailAuthProvider.credential(email, password)
     await reauthenticateWithCredential(user, credential)
-  }
-
-  async addNotification(payload) {
-    const userToUpdate = await this.getById(payload.userId)
-    userToUpdate.notifications.push(payload.notification.toFirestore())
-    // Only write the notifications field to avoid overwriting other fields
-    // (e.g. myTests) with a stale in-memory copy.
-    return this.update(payload.userId, {
-      notifications: userToUpdate.notifications,
-    })
-  }
-
-  async markNotificationAsRead(payload) {
-    const userToUpdate = new User(payload.user)
-
-    // Find the notification in the notifications array
-    const notificationIndex = userToUpdate.notifications.findIndex(
-      (n) => n.createdDate === payload.notification.createdDate,
-    )
-
-    if (notificationIndex !== -1) {
-      // Mark notification as read
-      userToUpdate.notifications[notificationIndex].read = true
-      userToUpdate.notifications[notificationIndex].readAt = Date.now()
-
-      // Only write the notifications field. Writing the full document with
-      // toFirestore() would overwrite myTests with the stale in-memory copy.
-      await this.update(userToUpdate.id, {
-        notifications: userToUpdate.notifications,
-      })
-      return userToUpdate
-    } else {
-      // Notification was not found in the array
-      throw new Error('Notification not found.')
-    }
-  }
-
-  async markAllNotificationsAsRead(user) {
-    const userToUpdate = new User(user)
-
-    let hasUnread = false
-    userToUpdate.notifications.forEach((n) => {
-      if (!n.read) {
-        n.read = true
-        n.readAt = Date.now()
-        hasUnread = true
-      }
-    })
-
-    if (!hasUnread) return userToUpdate
-
-    // Only write the notifications field. Writing the full document with
-    // toFirestore() would overwrite myTests with the stale in-memory copy.
-    await this.update(userToUpdate.id, {
-      notifications: userToUpdate.notifications,
-    })
-    // Return the updated user object (in memory) so the store can commit it immediately
-    return userToUpdate
-  }
-
-  async removeNotificationsForTest(testId, cooperators) {
-    try {
-      for (let cooperator = 0; cooperator < cooperators.length; cooperator++) {
-        const userDocID = cooperators[cooperator].userDocId
-
-        // Lê o documento do usuário diretamente
-        const userDoc = await super.readOne('users', userDocID)
-
-        // Verifica se o documento do usuário existe
-        if (userDoc.exists()) {
-          const userData = userDoc.data()
-          const userId = userDoc.id
-
-          // Verificar se o usuário tem notificações
-          if (userData.notifications && userData.notifications.length > 0) {
-            // Filtrar notificações que têm o testId correspondente
-            userData.notifications = userData.notifications.filter(
-              (notification) => notification.testId !== testId,
-            )
-            // Atualizar o documento do usuário com as notificações filtradas
-            await super.update('users', userId, {
-              notifications: userData.notifications,
-            })
-          }
-        } else {
-        }
-      }
-    } catch (error) {
-      throw error
-    }
   }
 
   async removeTestFromUser(userId, testIdToRemove) {

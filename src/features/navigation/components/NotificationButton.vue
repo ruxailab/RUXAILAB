@@ -1,5 +1,5 @@
 <template>
-  <div v-if="Array.isArray(user.notifications)">
+  <div v-if="Array.isArray(notifications)">
     <v-menu
       v-model="menuOpen"
       location="bottom end"
@@ -80,7 +80,7 @@
               :class="{ active: index === activeIndex }"
               style="margin-bottom: 10px"
               @go-to-redirect="goToNotificationRedirect"
-              @mark-as-read="markNotificationAsRead"
+              @toggle-read="toggleRead"
             />
           </template>
 
@@ -132,18 +132,15 @@ let resolveDialog
 
 const user = computed(() => store.getters.user)
 
+const notifications = computed(() => store.getters.notifications ?? [])
+
 const unreadNotifications = computed(() =>
-  [...(user.value.notifications || [])]
-    .filter((notification) => !notification.read)
-    .sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate))
-    .slice(0, 6),
+  notifications.value?.filter((notification) => !notification.read),
 )
 
 const unreadCount = computed(
   () =>
-    (user.value.notifications || []).filter(
-      (notification) => !notification.read,
-    ).length,
+    notifications.value?.filter((notification) => !notification.read).length,
 )
 
 /**
@@ -192,8 +189,17 @@ const markNotificationAsRead = async (notification) => {
   if (!notification) return
 
   await store.dispatch('markNotificationAsRead', {
-    notification,
-    user: user.value,
+    notificationId: notification.id,
+    userId: user.value?.id,
+  })
+}
+
+const markNotificationAsUnread = async (notification) => {
+  if (!notification) return
+
+  await store.dispatch('markNotificationAsUnread', {
+    notificationId: notification.id,
+    userId: user.value?.id,
   })
 }
 
@@ -273,14 +279,22 @@ const goToNotificationRedirect = async (notification) => {
   menuOpen.value = false
 }
 
+const toggleRead = async (notification) => {
+  if (notification.read) {
+    await markNotificationAsUnread(notification)
+  } else {
+    await markNotificationAsRead(notification)
+  }
+}
+
 const markAllAsRead = async () => {
-  const unread = (user.value.notifications || []).filter(
-    (notification) => !notification.read,
-  )
+  const unread = notifications.value?.filter((n) => !n.read)
+  if (!unread?.length) return
 
-  if (!unread.length) return
-
-  await store.dispatch('markAllNotificationsAsRead', user.value)
+  await store.dispatch('markAllNotificationsAsRead', {
+    userId: user.value.id,
+    notifications: notifications.value,
+  })
 }
 
 const goToNotificationPage = () => {
