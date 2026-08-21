@@ -689,7 +689,18 @@ const joinRoom = async () => {
   const syncMembers = () => {
     debugParticipantMembers.value = participantMembers
     debugStaffMembers.value = staffMembers
-    const val = { ...participantMembers, ...staffMembers }
+    const addBranch = (members, branch) =>
+      Object.fromEntries(
+        Object.entries(members).map(([userId, member]) => [
+          userId,
+          { ...member, __callBranch: branch },
+        ]),
+      )
+
+    const val = {
+      ...addBranch(participantMembers, 'participants'),
+      ...addBranch(staffMembers, 'staff'),
+    }
     participants.value = val
     const myMember = val[props.user.id]
 
@@ -702,6 +713,11 @@ const joinRoom = async () => {
       // Only connect if they are actually connected
       const pData = val[userId]
       if (!pData || !pData.connected) {
+        if (peers[userId]) closePeerConnection(userId)
+        return
+      }
+
+      if (pData.__callBranch === 'participants' && !roomOpen.value) {
         if (peers[userId]) closePeerConnection(userId)
         return
       }
