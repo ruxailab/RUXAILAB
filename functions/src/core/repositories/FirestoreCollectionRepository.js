@@ -1,0 +1,98 @@
+/**
+ * @template T
+ * @param {object} data
+ * @param {string} id
+ * @returns {{ id: string } & object}
+ */
+const identityFromFirestore = (data, id) => ({ id, ...data })
+
+/**
+ * @template T
+ * @param {T} item
+ * @returns {object}
+ */
+const identityToFirestore = (item) => {
+  if (item == null || typeof item !== 'object') return item
+  const { id: _id, ...rest } = item
+  return rest
+}
+
+/**
+ * Thin Firestore collection CRUD used by shared and feature repositories.
+ * Optionally maps documents to/from domain models via fromFirestore / toFirestore.
+ *
+ * @template T
+ */
+export class FirestoreCollectionRepository {
+  /**
+   * @param {string} collectionName
+   * @param {FirebaseFirestore.Firestore} db
+   * @param {(data: object, id: string) => T} [fromFirestore]
+   * @param {(item: T) => object} [toFirestore]
+   */
+  constructor(collectionName, db, fromFirestore, toFirestore) {
+    if (!db) {
+      throw new Error('Firestore db instance is required')
+    }
+    this.db = db
+    this.collectionRef = db.collection(collectionName)
+    this.fromFirestore = fromFirestore || identityFromFirestore
+    this.toFirestore = toFirestore || identityToFirestore
+  }
+
+  /**
+   * @param {string} id
+   * @returns {FirebaseFirestore.DocumentReference}
+   */
+  doc(id) {
+    return this.collectionRef.doc(id)
+  }
+
+  /**
+   * @param {string} id
+   * @returns {Promise<T | null>}
+   */
+  async get(id) {
+    const snap = await this.doc(id).get()
+    if (!snap.exists) return null
+    return this.fromFirestore(snap.data(), snap.id)
+  }
+
+  /**
+   * @param {T} item
+   * @returns {Promise<string>} created document id
+   */
+  async create(item) {
+    const ref = await this.collectionRef.add(this.toFirestore(item))
+    return ref.id
+  }
+
+  /**
+   * @param {string} id
+   * @param {T} item
+   * @param {FirebaseFirestore.SetOptions} [options]
+   * @returns {Promise<void>}
+   */
+  async set(id, item, options = { merge: true }) {
+    await this.doc(id).set(this.toFirestore(item), options)
+  }
+
+  /**
+   * Partial field update (plain Firestore payload; not mapped through the model).
+   *
+   * @param {string} id
+   * @param {object} data
+   * @returns {Promise<void>}
+   */
+  async update(id, data) {
+    await this.doc(id).update(data)
+  }
+
+  /**
+   * @param {string} id
+   * @returns {Promise<void>}
+   */
+  async delete(id) {
+    await this.doc(id).delete()
+  }
+}

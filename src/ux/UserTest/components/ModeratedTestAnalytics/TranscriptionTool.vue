@@ -97,6 +97,7 @@
                   :answers-doc-id="testDocument?.answersDocId"
                   :user-doc-id="selectedUserID"
                   :task-id="selectedTaskId"
+                  :study-id="testDocument?.id"
                   :audio-url-evaluator="selectedTask?.audioRecordURL"
                   :audio-url-moderator="selectedTask?.moderatorAudioURL"
                 />

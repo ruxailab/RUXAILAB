@@ -1,4 +1,4 @@
-import { admin } from '../f.firebase.js'
+import { admin } from '../core/firebase/f.firebase.js'
 
 export function buildAuditEvent({
   action,

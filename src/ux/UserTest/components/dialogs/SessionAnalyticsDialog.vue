@@ -127,6 +127,7 @@
                     :answers-doc-id="answersDocId"
                     :user-doc-id="userId"
                     :task-id="resolvedTaskId"
+                    :study-id="testAnswer?.studyId || null"
                     :audio-url-evaluator="taskAnswer?.audioRecordURL"
                     :audio-url-moderator="taskAnswer?.moderatorAudioURL"
                     :show-inline-result="false"
