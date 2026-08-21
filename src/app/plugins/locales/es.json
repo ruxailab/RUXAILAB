@@ -1694,6 +1694,7 @@
       "observeAllFeedsNotice": "Podras observar todas las transmisiones de video sin enviar la tuya.",
       "waitingForParticipants": "Esperando participantes...",
       "waitingForModerator": "Esperando al moderador...",
+      "moderatorWillAdmitParticipant": "El moderador te dejara entrar pronto a la sesion.",
       "autoStartWhenModeratorOpensRoom": "La videollamada comenzara automaticamente cuando el moderador abra la sala."
     },
     "WelcomeStep": {
@@ -2221,6 +2222,7 @@
       "observeAllFeedsNotice": "Podras observar todas las transmisiones de video sin enviar la tuya.",
       "waitingForParticipants": "Esperando participantes...",
       "waitingForModerator": "Esperando al moderador...",
+      "moderatorWillAdmitParticipant": "El moderador te dejara entrar pronto a la sesion.",
       "autoStartWhenModeratorOpensRoom": "La videollamada comenzara automaticamente cuando el moderador abra la sala."
     },
     "panel": {
