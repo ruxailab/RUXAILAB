@@ -4,48 +4,6 @@
     class="video-call-container mt-6"
     :class="{ 'panel-open': showSidePanel }"
   >
-    <pre
-      style="
-        position: relative;
-        z-index: 2000;
-        max-height: 280px;
-        overflow: auto;
-        margin: 8px;
-        padding: 12px;
-        color: #d7ffd9;
-        background: #172219;
-        border: 1px solid #4caf50;
-        font-size: 12px;
-        text-align: left;
-        white-space: pre-wrap;
-      "
-      >{{
-        JSON.stringify(
-          {
-            isModerator: props.isModerator,
-            isObservator,
-            roomOpen,
-            roomReady,
-            roomJoined,
-            callStarted,
-            peerIds: Object.keys(peers),
-            participants: debugParticipantMembers,
-            staff: debugStaffMembers,
-            mergedPeerMembers: participants,
-            remoteEntries,
-            tiles: tiles.map((tile) => ({
-              id: tile.id,
-              kind: tile.kind,
-              userId: tile.userId,
-              label: tile.label,
-              hasStream: Boolean(tile.stream),
-            })),
-          },
-          null,
-          2,
-        )
-      }}</pre>
-
     <!-- Videos Row -->
     <v-row class="video-row justify-center" no-gutters>
       <!-- Grid of Participants -->
@@ -66,7 +24,7 @@
                 }"
               >
                 <video
-                  :ref="(el) => attachVideoElement(el, focusedTile.stream)"
+                  :ref="(el) => bindTileVideoElement(el, focusedTile)"
                   autoplay
                   :muted="focusedTile.muted"
                   playsinline
@@ -122,7 +80,7 @@
                 :class="{ 'screen-share-container': tile.type === 'screen' }"
               >
                 <video
-                  :ref="(el) => attachVideoElement(el, tile.stream)"
+                  :ref="(el) => bindTileVideoElement(el, tile)"
                   autoplay
                   :muted="tile.muted"
                   playsinline
@@ -502,6 +460,10 @@ function attachVideoElement(video, stream) {
   }
 }
 
+function bindTileVideoElement(video, tile) {
+  attachVideoElement(video, tile?.stream)
+}
+
 // Computed property for task dropdown items
 const taskDropdownItems = computed(() => {
   if (!props.test?.testStructure?.userTasks) return []
@@ -689,7 +651,16 @@ const joinRoom = async () => {
 
   // Remove stale per-user RTDB state if the browser tab closes unexpectedly.
   const myDisconnect = onDisconnect(myMemberRef)
-  myDisconnect.remove()
+  if (isObserverMember) {
+    myDisconnect.update({
+      connected: false,
+      presenceStatus: 'disconnected',
+      presenceUpdatedAt: Date.now(),
+      updatedAt: Date.now(),
+    })
+  } else {
+    myDisconnect.remove()
+  }
   localPresenceDisconnect = myDisconnect
 
   const signalsDisconnect = onDisconnect(mySignalsRef)
@@ -791,12 +762,15 @@ const joinRoom = async () => {
     if (signal.type === 'offer') {
       const desc = new RTCSessionDescription({ type: 'offer', sdp: signal.sdp })
       try {
+        if (pc.signalingState === 'have-local-offer') {
+          await pc.setLocalDescription({ type: 'rollback' })
+        }
         await pc.setRemoteDescription(desc)
         const answer = await pc.createAnswer()
         await pc.setLocalDescription(answer)
-        sendSignal(senderId, { type: 'answer', sdp: answer.sdp })
-      } catch {
-        // console.error('Error handling offer logic:', err)
+        await sendSignal(senderId, { type: 'answer', sdp: answer.sdp })
+      } catch (error) {
+        console.error('Error handling offer logic:', error)
       }
 
       // Process pending candidates
