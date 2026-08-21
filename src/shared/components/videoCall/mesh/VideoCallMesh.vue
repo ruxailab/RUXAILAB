@@ -66,7 +66,7 @@
                 }"
               >
                 <video
-                  :srcObject="focusedTile.stream"
+                  :ref="(el) => attachVideoElement(el, focusedTile.stream)"
                   autoplay
                   :muted="focusedTile.muted"
                   playsinline
@@ -122,7 +122,7 @@
                 :class="{ 'screen-share-container': tile.type === 'screen' }"
               >
                 <video
-                  :srcObject="tile.stream"
+                  :ref="(el) => attachVideoElement(el, tile.stream)"
                   autoplay
                   :muted="tile.muted"
                   playsinline
@@ -339,7 +339,16 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive, onMounted, onBeforeUnmount, watch } from 'vue'
+import {
+  ref,
+  shallowRef,
+  computed,
+  reactive,
+  markRaw,
+  onMounted,
+  onBeforeUnmount,
+  watch,
+} from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { database } from '@/app/plugins/firebase/index'
@@ -412,6 +421,7 @@ const peers = reactive({}) // userId -> { connection, stream, screenStream, scre
 const participants = ref({}) // userId -> user info (name, etc)
 const debugParticipantMembers = ref({})
 const debugStaffMembers = ref({})
+const remoteStreamVersion = ref(0)
 
 // Watch for moderator connected status changes and emit to parent
 watch(
@@ -435,13 +445,7 @@ const isObservator = computed(() => {
   if (props.isObservator) return true
   return normalizeAccessLevel(props.accessLevel) === ACCESS_LEVEL.OBSERVATOR
 })
-const remoteStreams = computed(() => {
-  const streams = {}
-  for (const [userId, peer] of Object.entries(peers)) {
-    if (peer.stream) streams[userId] = peer.stream
-  }
-  return streams
-})
+const remoteStreams = shallowRef({})
 
 const screenShareFeeds = computed(() => {
   const feeds = []
@@ -486,6 +490,16 @@ function playVideo(event) {
   if (!video || !video.paused) return
 
   video.play().catch(() => {})
+}
+
+function attachVideoElement(video, stream) {
+  if (!video || !stream) return
+  if (video.srcObject !== stream) {
+    video.srcObject = stream
+  }
+  if (video.paused) {
+    video.play().catch(() => {})
+  }
 }
 
 // Computed property for task dropdown items
@@ -693,6 +707,9 @@ const joinRoom = async () => {
     debugStaffMembers.value = staffMembers
     const val = { ...participantMembers, ...staffMembers }
     participants.value = val
+    const myMember = val[props.user.id]
+
+    if (!myMember) return
 
     // Check for new peers to connect to
     Object.keys(val).forEach((userId) => {
@@ -705,24 +722,26 @@ const joinRoom = async () => {
         return
       }
 
+      // The newer member initiates. If timestamps are unavailable or equal,
+      // the user ID provides a stable tie-breaker.
+      const otherJoinedAt = Number(pData.joinedAt) || 0
+      const myJoinedAt = Number(myMember.joinedAt) || 0
+      const shouldInitiate =
+        myJoinedAt > otherJoinedAt ||
+        (myJoinedAt === otherJoinedAt && props.user.id > userId)
+
+      if (peers[userId] && peers[userId].isInitiator !== shouldInitiate) {
+        closePeerConnection(userId)
+      }
+
       if (!peers[userId]) {
-        // Found a peer we look not connected to.
-        // Rule: Initiator is the one with lexicographically smaller ID (or simply: if I am newer? No, consistent sort is better)
-        // Actually, simplest Mesh strategy:
-        // "I connect to everyone ALREADY in the room".
-        // When I join, I see existing users -> I offer.
-        // They see me -> They wait for offer.
-        // How to distinguish? 'joinedAt' timestamp.
-        const otherJoinedAt = pData.joinedAt
-        const myJoinedAt = val[props.user.id]?.joinedAt
-
-        // If I joined AFTER them, I initiate.
-        // If timestamps equal (rare), fall back to ID comparison.
-        const shouldInitiate =
-          myJoinedAt > otherJoinedAt ||
-          (myJoinedAt === otherJoinedAt && props.user.id > userId)
-
         createPeerConnection(userId, shouldInitiate)
+      } else if (
+        shouldInitiate &&
+        peers[userId].connection.signalingState === 'stable' &&
+        !peers[userId].connection.currentRemoteDescription
+      ) {
+        negotiatePeer(userId, peers[userId].connection, true)
       }
     })
 
@@ -903,6 +922,7 @@ const createPeerConnection = (targetUserId, isInitiator) => {
     pendingCandidates: [],
     screenShareExpected: false,
     needsNegotiation: false,
+    isInitiator,
   }
 
   // Publish local media so staff members can see each other.
@@ -927,6 +947,17 @@ const createPeerConnection = (targetUserId, isInitiator) => {
     const peer = peers[targetUserId]
     if (!peer || !track) return
 
+    const publishRemoteStream = () => {
+      if (!peer.stream) return
+      remoteStreams.value = {
+        ...remoteStreams.value,
+        [targetUserId]: peer.stream,
+      }
+      remoteStreamVersion.value += 1
+    }
+
+    track.onunmute = publishRemoteStream
+
     if (track.kind === 'video') {
       const cameraTrackCount = peer.stream?.getVideoTracks().length ?? 0
       const isExistingCameraTrack = peer.stream
@@ -949,25 +980,27 @@ const createPeerConnection = (targetUserId, isInitiator) => {
       }
 
       if (!peer.stream) {
-        peer.stream = event.streams?.[0] || new MediaStream()
+        peer.stream = markRaw(event.streams?.[0] || new MediaStream())
       }
       if (
         !peer.stream.getTracks().some((existing) => existing.id === track.id)
       ) {
         peer.stream.addTrack(track)
       }
+      publishRemoteStream()
       return
     }
 
     if (track.kind === 'audio') {
       if (!peer.stream) {
-        peer.stream = event.streams?.[0] || new MediaStream()
+        peer.stream = markRaw(event.streams?.[0] || new MediaStream())
       }
       if (
         !peer.stream.getTracks().some((existing) => existing.id === track.id)
       ) {
         peer.stream.addTrack(track)
       }
+      publishRemoteStream()
     }
   }
 
@@ -1006,6 +1039,12 @@ const closePeerConnection = (userId) => {
     peers[userId].connection.close()
     delete peers[userId]
   }
+  if (remoteStreams.value[userId]) {
+    const nextStreams = { ...remoteStreams.value }
+    delete nextStreams[userId]
+    remoteStreams.value = nextStreams
+  }
+  remoteStreamVersion.value += 1
 }
 
 // --- UI Methods ---
@@ -1084,25 +1123,30 @@ function isRemoteMicrophoneEnabled(userId) {
   return p?.microphoneEnabled !== false
 }
 
-const remoteEntries = computed(() =>
-  Object.keys(remoteStreams.value)
+const remoteEntries = computed(() => {
+  remoteStreamVersion.value
+
+  return Object.keys(peers)
     .filter((userId) => {
       const peer = peers[userId]
       if (!peer?.stream?.getVideoTracks().length) return false
       return true
     })
-    .map((userId) => ({
-      id: userId,
-      userId,
-      name: getPeerName(userId),
-      email: participants.value[userId]?.email || undefined,
-      role: participants.value[userId]?.role || 'participant',
-      connected: !!peers[userId],
-      hasCamera: isRemoteCameraEnabled(userId),
-      hasMicrophone: isRemoteMicrophoneEnabled(userId),
-      stream: remoteStreams.value[userId],
-    })),
-)
+    .map((userId) => {
+      const peer = peers[userId]
+      return {
+        id: userId,
+        userId,
+        name: getPeerName(userId),
+        email: participants.value[userId]?.email || undefined,
+        role: participants.value[userId]?.role || 'participant',
+        connected: !!peer,
+        hasCamera: isRemoteCameraEnabled(userId),
+        hasMicrophone: isRemoteMicrophoneEnabled(userId),
+        stream: peer.stream,
+      }
+    })
+})
 
 const buildRemoteTile = (remote) => ({
   id: `camera:${remote.userId}`,

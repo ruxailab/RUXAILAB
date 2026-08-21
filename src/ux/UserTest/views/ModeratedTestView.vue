@@ -954,6 +954,25 @@ watch(
 )
 
 // Methods
+const handleModeratorStatusChange = (connected) => {
+  if (isModerator.value) return
+
+  if (moderatorDisconnectTimeout.value) {
+    clearTimeout(moderatorDisconnectTimeout.value)
+    moderatorDisconnectTimeout.value = null
+  }
+
+  if (connected === false) {
+    moderatorDisconnectTimeout.value = setTimeout(() => {
+      moderatorInactive.value = true
+      moderatorDisconnectTimeout.value = null
+    }, 1000)
+    return
+  }
+
+  moderatorInactive.value = false
+}
+
 const proceedToNextStep = async () => {
   if (!isModerator.value) return
 
