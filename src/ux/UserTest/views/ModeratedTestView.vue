@@ -353,13 +353,7 @@
             location="right"
             width="400"
             elevation="3"
-            style="
-              position: fixed;
-              top: 0;
-              right: 0;
-              height: 100%;
-              z-index: 1005;
-            "
+            class="video-tool-drawer"
           >
             <ObservatorNotes
               v-if="localTestAnswer"
@@ -367,6 +361,7 @@
               :current-task-index="taskIndex"
               :test="test"
               @save="saveAnswer"
+              @close="toggleNotesDrawer"
             />
           </v-navigation-drawer>
 

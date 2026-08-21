@@ -2,7 +2,9 @@
   <v-container
     fluid
     class="video-call-container mt-6"
-    :class="{ 'panel-open': showSidePanel }"
+    :class="{
+      'panel-open': showSidePanel || showStepperPanel || props.notesDrawerOpen,
+    }"
   >
     <v-alert
       v-if="connectionError"
@@ -200,7 +202,7 @@
       :end-call="endCall"
       :toggle-stepper-panel="toggleStepperPanel"
       :toggle-side-panel="toggleSidePanel"
-      :toggle-notes-drawer="props.toggleNotesDrawer"
+      :toggle-notes-drawer="handleToggleNotesDrawer"
     />
 
     <VideoCallPanels
@@ -555,12 +557,26 @@ function stopWaitingPreview() {
 
 function toggleSidePanel() {
   showSidePanel.value = !showSidePanel.value
-  if (showSidePanel.value) showStepperPanel.value = false
+  if (showSidePanel.value) {
+    showStepperPanel.value = false
+    if (props.notesDrawerOpen) props.toggleNotesDrawer?.()
+  }
 }
 
 function toggleStepperPanel() {
   showStepperPanel.value = !showStepperPanel.value
-  if (showStepperPanel.value) showSidePanel.value = false
+  if (showStepperPanel.value) {
+    showSidePanel.value = false
+    if (props.notesDrawerOpen) props.toggleNotesDrawer?.()
+  }
+}
+
+function handleToggleNotesDrawer() {
+  if (!props.notesDrawerOpen) {
+    showSidePanel.value = false
+    showStepperPanel.value = false
+  }
+  props.toggleNotesDrawer?.()
 }
 
 function closePanels() {

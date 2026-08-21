@@ -1,7 +1,13 @@
 <template>
   <div>
-    <div class="side-panel" :class="{ 'side-panel-open': showSidePanel }">
-      <div class="side-panel-header">
+    <v-navigation-drawer
+      v-if="showSidePanel"
+      location="right"
+      width="400"
+      elevation="3"
+      class="video-tool-drawer"
+    >
+      <div class="side-panel-header video-tool-header">
         <h3>{{ t('videoCall.panel.toolsPanelTitle') }}</h3>
         <v-btn
           icon
@@ -183,14 +189,16 @@
           </div>
         </div>
       </div>
-    </div>
+    </v-navigation-drawer>
 
-    <div
-      v-if="!isObservator"
-      class="stepper-panel"
-      :class="{ 'stepper-panel-open': showStepperPanel }"
+    <v-navigation-drawer
+      v-if="!isObservator && showStepperPanel"
+      location="right"
+      width="400"
+      elevation="3"
+      class="video-tool-drawer"
     >
-      <div class="stepper-panel-header">
+      <div class="stepper-panel-header video-tool-header">
         <h3>Test Progress</h3>
         <v-btn
           icon
@@ -380,7 +388,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </v-navigation-drawer>
 
     <div
       v-if="showSidePanel || showStepperPanel"
