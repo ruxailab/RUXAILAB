@@ -792,9 +792,12 @@ const currentUserAccessLevel = computed(() => {
     cooperator?.role ??
     participant?.accessLevel ??
     participant?.role ??
-    ACCESS_LEVEL.OBSERVATOR
+    (isUserTestAdmin.value ? ACCESS_LEVEL.ADMIN : ACCESS_LEVEL.OBSERVATOR)
 
-  return normalizeAccessLevel(rawValue) ?? ACCESS_LEVEL.OBSERVATOR
+  return (
+    normalizeAccessLevel(rawValue) ??
+    (isUserTestAdmin.value ? ACCESS_LEVEL.ADMIN : ACCESS_LEVEL.OBSERVATOR)
+  )
 })
 
 const sessionFacilitator = computed(() => {

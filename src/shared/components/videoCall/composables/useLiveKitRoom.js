@@ -364,10 +364,8 @@ export function useLiveKitRoom({
       room.value = lkRoom
       isConnected.value = true
 
-      if (!isObservator.value) {
-        await nextTick()
-        await enableLocalMedia(lkRoom)
-      }
+      await nextTick()
+      await enableLocalMedia(lkRoom)
 
       await startRoomAudio(lkRoom)
 
@@ -396,7 +394,7 @@ export function useLiveKitRoom({
   }
 
   async function toggleCamera() {
-    if (!room.value || isObservator.value) return
+    if (!room.value) return
     const enabled = !room.value.localParticipant.isCameraEnabled
     try {
       await room.value.localParticipant.setCameraEnabled(enabled)
@@ -412,7 +410,7 @@ export function useLiveKitRoom({
   }
 
   async function toggleMicrophone() {
-    if (!room.value || isObservator.value) return
+    if (!room.value) return
     const enabled = !room.value.localParticipant.isMicrophoneEnabled
     try {
       await room.value.localParticipant.setMicrophoneEnabled(enabled)
@@ -429,10 +427,7 @@ export function useLiveKitRoom({
     const enabled = !room.value.localParticipant.isScreenShareEnabled
 
     if (enabled && !navigator.mediaDevices?.getDisplayMedia) {
-      console.warn(
-        // eslint-disable-line no-console
-        getMediaDevicesUnavailableMessage('screenShareDevice', t),
-      )
+      console.warn(getMediaDevicesUnavailableMessage('screenShareDevice', t))
       return
     }
 

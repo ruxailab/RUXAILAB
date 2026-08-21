@@ -119,30 +119,25 @@
 }
 
 .video-preview-grid {
+  width: min(72%, 900px) !important;
+  max-width: 900px !important;
   height: 80% !important;
   max-height: 80% !important;
+  margin: 0 auto !important;
   overflow: visible !important;
 }
 
 .video-preview-grid .video-container {
-  height: auto !important;
-}
-
-.video-preview-grid .video-container {
+  width: 100% !important;
   height: auto !important;
   aspect-ratio: 4 / 3 !important;
+  margin: 0 auto !important;
   border-radius: 0 !important;
+  overflow: visible !important;
 }
 
 .video-preview-grid .video-element {
   height: 100% !important;
-}
-
-.video-preview-grid .video-container {
-  overflow: visible !important;
-}
-
-.video-preview-grid .video-element {
   object-fit: contain !important;
   background-color: transparent;
 }

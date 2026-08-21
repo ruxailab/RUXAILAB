@@ -4,10 +4,57 @@
     class="video-call-container mt-6"
     :class="{ 'panel-open': showSidePanel }"
   >
+    <pre
+      style="
+        position: relative;
+        z-index: 2000;
+        max-height: 280px;
+        overflow: auto;
+        margin: 8px;
+        padding: 12px;
+        color: #d7ffd9;
+        background: #172219;
+        border: 1px solid #4caf50;
+        font-size: 12px;
+        text-align: left;
+        white-space: pre-wrap;
+      "
+      >{{
+        JSON.stringify(
+          {
+            isModerator: props.isModerator,
+            isObservator,
+            roomOpen,
+            roomReady,
+            roomJoined,
+            callStarted,
+            peerIds: Object.keys(peers),
+            participants: debugParticipantMembers,
+            staff: debugStaffMembers,
+            mergedPeerMembers: participants,
+            remoteEntries,
+            tiles: tiles.map((tile) => ({
+              id: tile.id,
+              kind: tile.kind,
+              userId: tile.userId,
+              label: tile.label,
+              hasStream: Boolean(tile.stream),
+            })),
+          },
+          null,
+          2,
+        )
+      }}</pre>
+
     <!-- Videos Row -->
     <v-row class="video-row justify-center" no-gutters>
       <!-- Grid of Participants -->
-      <v-col v-if="callStarted || (caller && roomReady)" cols="12">
+      <v-col
+        v-if="
+          callStarted || (caller && roomReady) || (isObservator && roomReady)
+        "
+        cols="12"
+      >
         <div class="video-stage">
           <!-- Spotlight: focused participant or shared screen -->
           <div v-if="isFocusMode" class="spotlight-primary">
@@ -123,13 +170,13 @@
       <!-- Local Preview (before entering room) -->
       <v-col
         v-if="
-          !isObservator &&
           localStream &&
           ((caller &&
             !roomOpen &&
             !roomReady &&
             Object.keys(peers).length === 0) ||
-            (!caller && !callStarted))
+            (isObservator && !roomOpen && !roomReady) ||
+            (!caller && !callStarted && !isObservator))
         "
         cols="12"
       >
@@ -363,6 +410,8 @@ const showJoinDialog = ref(false) // Legacy support, maybe unused in Mesh
 // Mesh State
 const peers = reactive({}) // userId -> { connection, stream, screenStream, screenSender, pendingCandidates }
 const participants = ref({}) // userId -> user info (name, etc)
+const debugParticipantMembers = ref({})
+const debugStaffMembers = ref({})
 
 // Watch for moderator connected status changes and emit to parent
 watch(
@@ -418,11 +467,9 @@ const screenShareFeeds = computed(() => {
   return feeds
 })
 const callStarted = computed(() =>
-  props.isModerator
+  props.isModerator || isObservator.value
     ? roomOpen.value
-    : isObservator.value
-      ? roomReady.value
-      : roomReady.value && (roomOpen.value || Object.keys(peers).length > 0),
+    : roomReady.value && (roomOpen.value || Object.keys(peers).length > 0),
 )
 
 // Helper to get name
@@ -491,8 +538,8 @@ onMounted(async () => {
     return
   }
 
-  // Participants and observators wait for room to be opened by moderator
-  if (!isObservator.value && !localStream.value) {
+  // Participants and observers both need their local preview available when the room is active.
+  if (!localStream.value) {
     await initLocalMedia()
   }
 
@@ -504,6 +551,7 @@ onMounted(async () => {
   // Check initial value first
   const initialSnapshot = await get(showVideoCallRef)
   const shouldShow = initialSnapshot.val()
+  roomOpen.value = Boolean(shouldShow)
   if (props.isObservator && !roomReady.value) {
     roomReady.value = true
     await joinRoom()
@@ -515,6 +563,7 @@ onMounted(async () => {
   // Then listen for changes
   onValue(showVideoCallRef, (snapshot) => {
     const shouldShow = snapshot.val()
+    roomOpen.value = Boolean(shouldShow)
     if (shouldShow) {
       if (!roomReady.value) {
         roomReady.value = true
@@ -536,7 +585,7 @@ const joinRoom = async () => {
   if (roomJoined.value) return
   roomJoined.value = true
 
-  // 1. Get local media for every staff member and participant.
+  // 1. Create the local preview for all users before the room opens; the board hides observer self-view once the call is active.
   if (!localStream.value) {
     await initLocalMedia()
   }
@@ -640,6 +689,8 @@ const joinRoom = async () => {
   let staffMembers = {}
 
   const syncMembers = () => {
+    debugParticipantMembers.value = participantMembers
+    debugStaffMembers.value = staffMembers
     const val = { ...participantMembers, ...staffMembers }
     participants.value = val
 
@@ -804,7 +855,17 @@ const leaveRoom = async () => {
     )
   }
 
-  await remove(myMemberRef)
+  if (isObservator.value) {
+    await update(myMemberRef, {
+      connected: false,
+      presenceStatus: 'disconnected',
+      presenceUpdatedAt: Date.now(),
+      updatedAt: Date.now(),
+      role: 'OBSERVER',
+    })
+  } else {
+    await remove(myMemberRef)
+  }
 
   await remove(
     dbRef(database, `calls/${props.roomId}/signals/${props.user.id}`),
@@ -1028,15 +1089,7 @@ const remoteEntries = computed(() =>
     .filter((userId) => {
       const peer = peers[userId]
       if (!peer?.stream?.getVideoTracks().length) return false
-
-      if (!props.isModerator || !roomOpen.value) return true
-
-      const member = participants.value[userId]
-      return (
-        member?.role !== 'OBSERVER' &&
-        member?.role !== 'observator' &&
-        normalizeAccessLevel(member?.accessLevel) !== ACCESS_LEVEL.OBSERVATOR
-      )
+      return true
     })
     .map((userId) => ({
       id: userId,
@@ -1198,6 +1251,7 @@ const {
 } = useVideoCallBoard({
   t,
   isObservator,
+  callStarted,
   isCameraEnabled,
   isMicrophoneEnabled,
   user: computed(() => ({

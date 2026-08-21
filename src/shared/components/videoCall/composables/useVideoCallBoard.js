@@ -1,9 +1,10 @@
-import { computed } from 'vue'
+import { computed, unref } from 'vue'
 import { ACCESS_LEVEL, normalizeAccessLevel } from '@/shared/utils/accessLevel'
 
 export function useVideoCallBoard({
   t,
   isObservator,
+  callStarted = computed(() => false),
   isCameraEnabled,
   isMicrophoneEnabled,
   user,
@@ -14,21 +15,71 @@ export function useVideoCallBoard({
   buildRemoteTile,
   buildParticipantItem,
 }) {
+  const currentUser = computed(() => unref(user) || {})
+  const isCurrentUserModerator = computed(
+    () =>
+      Boolean(currentUser.value.isModerator) ||
+      normalizeAccessLevel(currentUser.value.accessLevel) ===
+        ACCESS_LEVEL.ADMIN,
+  )
+
+  const isObserverRole = (entry) => {
+    if (!entry) return false
+
+    const role = String(entry?.role ?? '')
+      .trim()
+      .toLowerCase()
+    const accessLevel = normalizeAccessLevel(entry?.accessLevel ?? entry?.role)
+
+    return (
+      role === 'observer' ||
+      role === 'observator' ||
+      accessLevel === ACCESS_LEVEL.OBSERVATOR ||
+      entry?.isObserver === true
+    )
+  }
+
+  const shouldRenderRemoteEntry = (entry) => !isObserverRole(entry)
+
+  const visibleRemoteEntries = computed(() =>
+    remoteEntries.value.filter((remote) => {
+      if (!remote) return false
+      if (remote.id === currentUser.value.id) return false
+
+      const remoteIsObserver = isObserverRole(remote)
+
+      if (isCurrentUserModerator.value) {
+        return true
+      }
+
+      if (remoteIsObserver) {
+        return !callStarted.value
+      }
+
+      return true
+    }),
+  )
+
   const tiles = computed(() => {
     const list = []
 
-    list.push({
-      id: 'local-camera',
-      type: 'camera',
-      kind: 'local',
-      label: `${t('videoCall.session.yourVideo')} (${user?.email?.split('@')[0] ?? ''})`,
-      hasCamera: isCameraEnabled.value,
-      hasMicrophone: isMicrophoneEnabled.value,
-      muted: true,
-      ...(localStream?.value ? { stream: localStream.value } : {}),
-    })
+    const shouldShowLocalCamera =
+      isCurrentUserModerator.value || !isObservator.value || !callStarted.value
 
-    remoteEntries.value.forEach((remote) => {
+    if (shouldShowLocalCamera) {
+      list.push({
+        id: 'local-camera',
+        type: 'camera',
+        kind: 'local',
+        label: `${t('videoCall.session.yourVideo')} (${currentUser.value.email?.split('@')[0] ?? ''})`,
+        hasCamera: isCameraEnabled.value,
+        hasMicrophone: isMicrophoneEnabled.value,
+        muted: true,
+        ...(localStream?.value ? { stream: localStream.value } : {}),
+      })
+    }
+
+    visibleRemoteEntries.value.forEach((remote) => {
       list.push(buildRemoteTile(remote))
     })
 
@@ -59,11 +110,13 @@ export function useVideoCallBoard({
   const showWaitingMessage = computed(
     () =>
       !isFocusMode.value &&
-      remoteEntries.value.length === 0 &&
+      visibleRemoteEntries.value.length === 0 &&
       screenShareFeeds.value.length === 0,
   )
 
-  const cameraCount = computed(() => 1 + remoteEntries.value.length)
+  const cameraCount = computed(
+    () => tiles.value.filter((tile) => tile.type === 'camera').length,
+  )
 
   const cameraColumns = computed(() => {
     const count = cameraCount.value
@@ -88,7 +141,9 @@ export function useVideoCallBoard({
       list.push(entry)
     }
 
-    const normalizedUserAccessLevel = normalizeAccessLevel(user?.accessLevel)
+    const normalizedUserAccessLevel = normalizeAccessLevel(
+      currentUser.value.accessLevel,
+    )
     const localRole = isObservator.value
       ? 'observator'
       : normalizedUserAccessLevel === ACCESS_LEVEL.ADMIN || user?.isModerator
@@ -100,9 +155,9 @@ export function useVideoCallBoard({
     addEntry(
       buildParticipantItem(
         {
-          id: user?.id,
-          email: user?.email,
-          name: user?.email?.split('@')[0] || 'You',
+          id: currentUser.value.id,
+          email: currentUser.value.email,
+          name: currentUser.value.email?.split('@')[0] || 'You',
           isSelf: true,
           role: localRole,
           connected: true,
@@ -114,7 +169,14 @@ export function useVideoCallBoard({
     )
 
     staffParticipants.value.forEach((staffMember) => {
-      if (!staffMember || !staffMember.id || staffMember.id === user?.id) return
+      if (
+        !staffMember ||
+        !staffMember.id ||
+        staffMember.id === currentUser.value.id ||
+        isObserverRole(staffMember)
+      ) {
+        return
+      }
       addEntry(
         buildParticipantItem(
           {
@@ -144,7 +206,7 @@ export function useVideoCallBoard({
     })
 
     remoteEntries.value.forEach((remote) => {
-      if (remote?.id === user?.id) return
+      if (remote?.id === currentUser.value.id || isObserverRole(remote)) return
       addEntry(buildParticipantItem(remote, false))
     })
 

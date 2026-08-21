@@ -125,7 +125,7 @@
     </v-row>
 
     <v-row
-      v-if="!caller && !callStarted && !isObservator && waitingPreviewStream"
+      v-if="!caller && !callStarted && waitingPreviewStream"
       class="video-row justify-center"
       no-gutters
     >
@@ -157,7 +157,7 @@
 
     <!-- Participant/Observator Waiting State (only when not started) -->
     <v-row
-      v-if="!caller && !callStarted && !isObservator"
+      v-if="!caller && !callStarted"
       class="participant-controls-row"
       justify="center"
       no-gutters
@@ -355,8 +355,8 @@ const buildParticipantItem = (remote, isSelf) => {
           ? 'moderator'
           : 'participant',
       connected: true,
-      hasCamera: !isObservator.value && isCameraEnabled.value,
-      hasMicrophone: !isObservator.value && isMicrophoneEnabled.value,
+      hasCamera: isCameraEnabled.value,
+      hasMicrophone: isMicrophoneEnabled.value,
     }
   }
 
@@ -460,6 +460,7 @@ const {
 } = useVideoCallBoard({
   t,
   isObservator,
+  callStarted,
   isCameraEnabled,
   isMicrophoneEnabled,
   user: computed(() => ({
