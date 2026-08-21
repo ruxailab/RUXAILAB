@@ -263,7 +263,7 @@ describe('AnswerController', () => {
         'answers',
         'answer-123',
         expect.objectContaining({
-          'taskAnswers.user-456.tasks.task-1.latestTranscriptionDocId':
+          'taskAnswers.user-456.tasks.task-1.transcriptionDocId':
             'transcription-789',
         }),
       )
@@ -284,14 +284,14 @@ describe('AnswerController', () => {
         answersDocId: 'answer-123',
         userDocId: 'user-456',
         taskId: 'task-1',
-        latestTranscriptionDocId: 'transcription-789',
+        transcriptionDocId: 'transcription-789',
       })
 
       expect(updateSpy).toHaveBeenCalledWith(
         'answers',
         'answer-123',
         expect.objectContaining({
-          'taskAnswers.user-456.tasks.task-1.latestTranscriptionDocId':
+          'taskAnswers.user-456.tasks.task-1.transcriptionDocId':
             'transcription-789',
         }),
       )

@@ -18,14 +18,14 @@ export class FirestoreAnswerRepository extends FirestoreCollectionRepository {
    * @param {string} transcriptionDocId
    * @returns {Promise<void>}
    */
-  async setLatestTranscriptionDocId(
+  async setTranscriptionDocId(
     answersDocId,
     userDocId,
     taskId,
     transcriptionDocId,
   ) {
     await this.update(answersDocId, {
-      [`taskAnswers.${userDocId}.tasks.${taskId}.latestTranscriptionDocId`]:
+      [`taskAnswers.${userDocId}.tasks.${taskId}.transcriptionDocId`]:
         transcriptionDocId,
     })
   }

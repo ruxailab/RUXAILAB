@@ -34,7 +34,7 @@
                 >Transcription {{ transcriptionsArray.length - i }}</span
               >
               <v-chip
-                v-if="run.id === latestTranscriptionId"
+                v-if="run.id === transcriptionDocId"
                 size="x-small"
                 color="success"
                 >Latest</v-chip
@@ -58,8 +58,8 @@
         <v-expansion-panel-text>
           <!-- meta -->
           <div class="text-caption text-medium-emphasis mb-3">
-            {{ formatDate(run.createdAt) }} · Provider: {{ run.provider }} ·
-            Model: {{ run.model }}
+            {{ formatDate(run.updatedAt || run.createdAt) }} · Provider:
+            {{ run.provider }} · Model: {{ run.model }}
           </div>
 
           <!-- languages -->
@@ -122,7 +122,7 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  latestTranscriptionId: {
+  transcriptionDocId: {
     type: String,
     required: false,
     default: null,
@@ -207,7 +207,7 @@ async function confirmDelete() {
       answersDocId: props.answersDocId,
       userDocId: props.userDocId,
       taskId: String(props.taskId),
-      latestTranscriptionDocId: newLatestId,
+      transcriptionDocId: newLatestId,
     })
   } catch {
   } finally {

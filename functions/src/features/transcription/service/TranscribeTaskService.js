@@ -122,28 +122,45 @@ export class TranscribeTaskService {
     ])
 
     const now = this.FieldValue.serverTimestamp()
+    const existingTranscriptionDocId = task.transcriptionDocId || null
+
+    let existingTranscription = null
+    if (existingTranscriptionDocId) {
+      existingTranscription = await this.transcriptionRepository.get(existingTranscriptionDocId)
+    }
+
     const transcription = Transcription.create({
+      id: existingTranscription?.id ?? null,
       answersDocId,
       userDocId,
       taskId,
       provider: transcriptionProvider.name,
       model: transcriptionProvider.model,
-      createdAt: now,
+      createdAt: existingTranscription?.createdAt ?? now,
       updatedAt: now,
       evaluator: TranscriptSide.create(evaluatorRaw),
       moderator: TranscriptSide.create(moderatorRaw),
     })
 
-    const transcriptionId =
-      await this.transcriptionRepository.create(transcription)
-    const saved = transcription.withId(transcriptionId)
+    let saved
+    if (existingTranscription) {
+      await this.transcriptionRepository.set(
+        existingTranscriptionDocId,
+        transcription,
+      )
+      saved = transcription.withId(existingTranscriptionDocId)
+    } else {
+      const transcriptionId =
+        await this.transcriptionRepository.create(transcription)
+      saved = transcription.withId(transcriptionId)
 
-    await this.answerRepository.setLatestTranscriptionDocId(
-      answersDocId,
-      userDocId,
-      saved.taskId,
-      saved.id,
-    )
+      await this.answerRepository.setTranscriptionDocId(
+        answersDocId,
+        userDocId,
+        saved.taskId,
+        saved.id,
+      )
+    }
 
     return saved.toJSON()
   }

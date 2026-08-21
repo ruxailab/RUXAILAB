@@ -140,9 +140,7 @@
                     :answers-doc-id="answersDocId"
                     :user-doc-id="userId"
                     :task-id="resolvedTaskId"
-                    :latest-transcription-id="
-                      taskAnswer?.latestTranscriptionDocId
-                    "
+                    :transcription-doc-id="taskAnswer?.transcriptionDocId"
                   />
                 </v-sheet>
               </v-window-item>
@@ -229,7 +227,7 @@ const hasTranscriptionData = computed(
     Boolean(props.hasAudioRecord) ||
     Boolean(props.taskAnswer?.audioRecordURL) ||
     Boolean(props.taskAnswer?.moderatorAudioURL) ||
-    Boolean(props.taskAnswer?.latestTranscriptionDocId),
+    Boolean(props.taskAnswer?.transcriptionDocId),
 )
 
 const resolvedTaskId = computed(() => {

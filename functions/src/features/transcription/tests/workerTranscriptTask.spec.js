@@ -5,6 +5,8 @@ const mockAnswerUpdate = jest.fn()
 const mockUserGet = jest.fn()
 const mockStudyGet = jest.fn()
 const mockTranscriptionAdd = jest.fn()
+const mockTranscriptionGet = jest.fn()
+const mockTranscriptionSet = jest.fn()
 const mockTestsWhereGet = jest.fn()
 
 const mockDb = {
@@ -39,6 +41,10 @@ const mockDb = {
     if (collectionName === 'transcriptions') {
       return {
         add: mockTranscriptionAdd,
+        doc: jest.fn(() => ({
+          get: mockTranscriptionGet,
+          set: mockTranscriptionSet,
+        })),
       }
     }
     throw new Error(`Unexpected collection: ${collectionName}`)
@@ -94,8 +100,9 @@ const request = (uid, data) => ({
   data,
 })
 
-const snap = (exists, data) => ({
+const snap = (exists, data, id = null) => ({
   exists,
+  id,
   data: () => data,
 })
 
@@ -193,8 +200,9 @@ describe('workerTranscriptTask', () => {
         }),
       }),
     )
+    expect(mockTranscriptionSet).not.toHaveBeenCalled()
     expect(mockAnswerUpdate).toHaveBeenCalledWith({
-      'taskAnswers.evaluator-1.tasks.0.latestTranscriptionDocId': 'tr-1',
+      'taskAnswers.evaluator-1.tasks.0.transcriptionDocId': 'tr-1',
     })
     expect(result).toMatchObject({
       id: 'tr-1',
@@ -203,6 +211,114 @@ describe('workerTranscriptTask', () => {
       evaluator: { language: 'en' },
       moderator: { language: 'en' },
     })
+  })
+
+  it('updates existing transcription when transcriptionDocId is present', async () => {
+    mockAnswerGet.mockResolvedValue(
+      snap(true, {
+        studyId: 'study-1',
+        taskAnswers: {
+          'evaluator-1': {
+            tasks: {
+              '0': {
+                audioRecordURL: 'https://cdn/eval.webm',
+                moderatorAudioURL: 'https://cdn/mod.webm',
+                transcriptionDocId: 'tr-existing',
+              },
+            },
+          },
+        },
+      }),
+    )
+    mockTranscriptionGet.mockResolvedValue(
+      snap(
+        true,
+        {
+          answersDocId: 'answer-1',
+          userDocId: 'evaluator-1',
+          taskId: '0',
+          provider: 'whisper',
+          model: 'medium',
+          createdAt: 'created-at-original',
+          evaluator: { language: 'en', transcript: '', segments: [] },
+          moderator: { language: 'en', transcript: '', segments: [] },
+        },
+        'tr-existing',
+      ),
+    )
+    mockTranscriptionSet.mockResolvedValue(undefined)
+
+    const result = await workerTranscriptTask(
+      request('owner', {
+        answersDocId: 'answer-1',
+        userDocId: 'evaluator-1',
+        taskId: '0',
+        provider: 'whisper',
+        studyId: 'study-1',
+      }),
+    )
+
+    expect(mockTranscriptionAdd).not.toHaveBeenCalled()
+    expect(mockTranscriptionSet).toHaveBeenCalledWith(
+      expect.objectContaining({
+        answersDocId: 'answer-1',
+        userDocId: 'evaluator-1',
+        taskId: '0',
+        provider: 'whisper',
+        model: 'medium',
+        createdAt: 'created-at-original',
+        updatedAt: 'mock-server-timestamp',
+        evaluator: expect.objectContaining({
+          language: 'en',
+          segments: [{ startTimeSec: 0, endTimeSec: 1, text: 'hello' }],
+        }),
+      }),
+      { merge: true },
+    )
+    expect(mockAnswerUpdate).not.toHaveBeenCalled()
+    expect(result).toMatchObject({
+      id: 'tr-existing',
+      provider: 'whisper',
+      model: 'medium',
+    })
+  })
+
+  it('creates a new transcription when transcriptionDocId points to a missing doc', async () => {
+    mockAnswerGet.mockResolvedValue(
+      snap(true, {
+        studyId: 'study-1',
+        taskAnswers: {
+          'evaluator-1': {
+            tasks: {
+              '0': {
+                audioRecordURL: 'https://cdn/eval.webm',
+                moderatorAudioURL: 'https://cdn/mod.webm',
+                transcriptionDocId: 'tr-missing',
+              },
+            },
+          },
+        },
+      }),
+    )
+    mockTranscriptionGet.mockResolvedValue(snap(false, null))
+    mockTranscriptionAdd.mockResolvedValue({ id: 'tr-2' })
+
+    const result = await workerTranscriptTask(
+      request('owner', {
+        answersDocId: 'answer-1',
+        userDocId: 'evaluator-1',
+        taskId: '0',
+        provider: 'whisper',
+        studyId: 'study-1',
+      }),
+    )
+
+    expect(mockTranscriptionAdd).toHaveBeenCalled()
+    expect(mockTranscriptionSet).not.toHaveBeenCalled()
+    expect(mockAnswerUpdate).toHaveBeenCalledWith({
+      'taskAnswers.evaluator-1.tasks.0.transcriptionDocId': 'tr-2',
+    })
+    expect(result).toMatchObject({ id: 'tr-2' })
   })
 
   it('rejects invalid provider', async () => {

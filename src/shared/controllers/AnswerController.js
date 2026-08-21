@@ -118,7 +118,7 @@ export default class AnswerController extends Controller {
     const base = `taskAnswers.${userDocId}.tasks.${taskId}`
 
     const update = {
-      [`${base}.latestTranscriptionDocId`]: latestId,
+      [`${base}.transcriptionDocId`]: latestId,
     }
     return super.update(COLLECTION, answersDocId, update)
   }
@@ -127,12 +127,12 @@ export default class AnswerController extends Controller {
     answersDocId,
     userDocId,
     taskId,
-    latestTranscriptionDocId,
+    transcriptionDocId,
   }) {
     const base = `taskAnswers.${userDocId}.tasks.${taskId}`
 
     const update = {
-      [`${base}.latestTranscriptionDocId`]: latestTranscriptionDocId,
+      [`${base}.transcriptionDocId`]: transcriptionDocId,
     }
     return super.update(COLLECTION, answersDocId, update)
   }

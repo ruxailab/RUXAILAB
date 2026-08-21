@@ -3,7 +3,7 @@ import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunc
 /**
  * Orchestrates task-level transcription via Cloud Function.
  * The function downloads evaluator/moderator audios from the answer task,
- * calls the Whisper API, persists to Firestore, and updates latestTranscriptionDocId.
+ * calls the Whisper API, persists to Firestore, and updates transcriptionDocId.
  *
  * @param {Object} payload
  * @param {string} payload.answersDocId

@@ -108,9 +108,7 @@
                   :answers-doc-id="testDocument?.answersDocId"
                   :user-doc-id="selectedUserID"
                   :task-id="selectedTaskId"
-                  :latest-transcription-id="
-                    selectedTask?.latestTranscriptionDocId
-                  "
+                  :transcription-doc-id="selectedTask?.transcriptionDocId"
                 />
 
                 <ExportPanel
@@ -149,7 +147,7 @@
                 :answers-doc-id="testDocument?.answersDocId"
                 :user-doc-id="selectedUserID"
                 :task-id="selectedTaskId"
-                :latestTranscriptionId="selectedTask?.latestTranscriptionDocId"
+                :transcription-doc-id="selectedTask?.transcriptionDocId"
               />
               <ExportPanel
                 v-if="tab === 'export'"
