@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import { admin } from '../f.firebase.js'
+import { admin } from '../core/firebase/f.firebase.js'
 
 export const INVITE_STATUS = {
   ACCEPTED: 'accepted',

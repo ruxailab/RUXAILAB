@@ -1,4 +1,4 @@
-import { admin, functions } from '../f.firebase.js'
+import { admin, functions } from '../core/firebase/f.firebase.js'
 import nodemailer from 'nodemailer'
 import * as fs from 'fs'
 import * as path from 'path'
