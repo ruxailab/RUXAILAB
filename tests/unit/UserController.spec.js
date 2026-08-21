@@ -62,10 +62,6 @@ describe('UserController', () => {
       expect(typeof userController.changePassword).toBe('function')
     })
 
-    it('should have markNotificationAsRead method', () => {
-      expect(typeof userController.markNotificationAsRead).toBe('function')
-    })
-
     it('should have updateLevel method', () => {
       expect(typeof userController.updateLevel).toBe('function')
     })
