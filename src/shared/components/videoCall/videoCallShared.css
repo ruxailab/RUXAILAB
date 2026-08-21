@@ -246,7 +246,9 @@
   transform: translateX(-50%);
   width: 800px;
   max-width: calc(100vw - 32px);
+  height: 72px;
   min-height: 72px;
+  max-height: 72px;
   box-sizing: border-box;
   flex: 0 0 800px;
   background: rgba(var(--v-theme-primary), 0.95);
@@ -270,6 +272,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  height: 100%;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -300,6 +303,11 @@
 .control-btn {
   width: 48px !important;
   height: 48px !important;
+  min-width: 48px !important;
+  max-width: 48px !important;
+  min-height: 48px !important;
+  max-height: 48px !important;
+  flex: 0 0 48px !important;
   border-radius: 50% !important;
   transition: all 0.2s ease !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
@@ -343,7 +351,12 @@
 
 .control-btn-primary {
   width: auto !important;
+  min-width: max-content !important;
+  max-width: none !important;
   height: 48px !important;
+  min-height: 48px !important;
+  max-height: 48px !important;
+  flex: 0 0 auto !important;
   border-radius: 24px !important;
   padding: 0 20px !important;
   background: #4caf50 !important;
@@ -362,7 +375,12 @@
 
 .control-btn-danger {
   width: auto !important;
+  min-width: max-content !important;
+  max-width: none !important;
   height: 48px !important;
+  min-height: 48px !important;
+  max-height: 48px !important;
+  flex: 0 0 auto !important;
   border-radius: 24px !important;
   padding: 0 20px !important;
   background: #f44336 !important;
@@ -377,6 +395,14 @@
   background: #d32f2f !important;
   transform: scale(1.05) !important;
   box-shadow: 0 6px 16px rgba(244, 67, 54, 0.4) !important;
+}
+
+.control-overflow-menu {
+  display: none !important;
+}
+
+.control-overflow-list {
+  min-width: 180px;
 }
 
 .participant-controls-row {
@@ -796,18 +822,35 @@
     right: -100%;
   }
 
+  .side-panel.side-panel-open,
+  .stepper-panel.stepper-panel-open {
+    right: 0;
+  }
+
   .panel-overlay {
     display: block;
   }
 
   .control-bar-left {
-    flex: 0 0 60px;
+    flex: 0 0 0;
   }
 
   .control-bar-right {
-    flex: 0 0 60px;
+    flex: 0 0 auto;
     flex-direction: row;
-    gap: 12px;
+    gap: 8px;
+  }
+
+  .control-buttons-container {
+    gap: 10px;
+  }
+
+  .secondary-control-btn {
+    display: none !important;
+  }
+
+  .control-overflow-menu {
+    display: inline-flex !important;
   }
 
   .bottom-control-bar {
@@ -856,11 +899,6 @@
     bottom: 10px;
     padding: 8px 16px;
   }
-
-  .control-btn {
-    width: 42px !important;
-    height: 42px !important;
-  }
 }
 
 @media (max-height: 620px) {
@@ -875,16 +913,5 @@
 
   .video-stage {
     gap: 0;
-  }
-
-  .control-btn {
-    width: 38px !important;
-    height: 38px !important;
-  }
-
-  .control-btn-primary,
-  .control-btn-danger {
-    height: 40px !important;
-    padding: 0 14px !important;
   }
 }

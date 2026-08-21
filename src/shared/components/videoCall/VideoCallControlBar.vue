@@ -142,7 +142,7 @@
                 'control-btn-active': props.notesDrawerOpen,
                 'control-btn-enabled': !props.notesDrawerOpen,
               }"
-              class="control-btn"
+              class="control-btn secondary-control-btn"
               icon
               size="large"
               @click="props.toggleNotesDrawer"
@@ -173,7 +173,7 @@
                 'control-btn-active': props.showStepperPanel,
                 'control-btn-enabled': !props.showStepperPanel,
               }"
-              class="control-btn"
+              class="control-btn secondary-control-btn"
               icon
               size="large"
               @click="props.toggleStepperPanel"
@@ -194,7 +194,7 @@
                 'control-btn-active': props.showSidePanel,
                 'control-btn-enabled': !props.showSidePanel,
               }"
-              class="control-btn"
+              class="control-btn secondary-control-btn"
               icon
               size="large"
               @click="props.toggleSidePanel"
@@ -204,6 +204,36 @@
           </template>
           <span>{{ props.showSidePanel ? 'Hide panel' : 'Show panel' }}</span>
         </v-tooltip>
+
+        <v-menu
+          location="top end"
+          offset="12"
+          content-class="control-overflow-menu-content"
+        >
+          <template #activator="{ props: menuProps }">
+            <v-btn
+              v-bind="menuProps"
+              class="control-btn control-btn-enabled control-overflow-menu"
+              icon
+              size="large"
+            >
+              <v-icon size="28">mdi-dots-horizontal</v-icon>
+            </v-btn>
+          </template>
+          <v-list density="compact" class="control-overflow-list">
+            <v-list-item
+              v-for="action in overflowActions"
+              :key="action.key"
+              :active="action.active"
+              @click="runOverflowAction(action)"
+            >
+              <template #prepend>
+                <v-icon>{{ action.icon }}</v-icon>
+              </template>
+              <v-list-item-title>{{ action.label }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </div>
     </div>
   </div>
@@ -237,6 +267,46 @@ const props = defineProps({
 const canLeaveCall = computed(
   () => props.isObservator || (props.callStarted && !props.caller),
 )
+
+const overflowActions = computed(() => {
+  const actions = []
+
+  if (props.isObservator) {
+    actions.push({
+      key: 'notes',
+      icon: props.notesDrawerOpen
+        ? 'mdi-notebook-edit'
+        : 'mdi-notebook-outline',
+      label: props.notesDrawerOpen ? 'Hide notes' : 'Show notes',
+      active: props.notesDrawerOpen,
+      handler: props.toggleNotesDrawer,
+    })
+  } else {
+    actions.push({
+      key: 'steps',
+      icon: 'mdi-format-list-numbered',
+      label: props.showStepperPanel ? 'Hide steps' : 'Show steps',
+      active: props.showStepperPanel,
+      handler: props.toggleStepperPanel,
+    })
+  }
+
+  actions.push({
+    key: 'participants',
+    icon: 'mdi-account-group',
+    label: props.showSidePanel ? 'Hide panel' : 'Show panel',
+    active: props.showSidePanel,
+    handler: props.toggleSidePanel,
+  })
+
+  return actions
+})
+
+function runOverflowAction(action) {
+  if (typeof action.handler === 'function') {
+    action.handler()
+  }
+}
 </script>
 
 <style scoped src="./videoCallShared.css"></style>
