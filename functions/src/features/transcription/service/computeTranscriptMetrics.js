@@ -52,7 +52,6 @@ const round2 = (value) => Math.round(value * 100) / 100
  * @param {object} transcription
  * @param {object} [transcription.evaluator]
  * @param {object} [transcription.moderator]
- * @param {number} [fallbackSessionDurationSec]
  * @returns {{
  *   sessionDuration: number,
  *   wordsSpoken: number,
@@ -60,10 +59,7 @@ const round2 = (value) => Math.round(value * 100) / 100
  *   speechRate: number,
  * }}
  */
-export const computeTranscriptMetrics = (
-  transcription,
-  fallbackSessionDurationSec = 0,
-) => {
+export const computeTranscriptMetrics = (transcription) => {
   const evaluator = transcription?.evaluator ?? null
   const moderator = transcription?.moderator ?? null
 
@@ -80,9 +76,7 @@ export const computeTranscriptMetrics = (
     0,
   )
   const sessionDuration = round2(
-    sessionDurationFromAudio > 0
-      ? sessionDurationFromAudio
-      : Number(fallbackSessionDurationSec) || 0,
+    sessionDurationFromAudio > 0 ? sessionDurationFromAudio : 0,
   )
 
   const speechRate =

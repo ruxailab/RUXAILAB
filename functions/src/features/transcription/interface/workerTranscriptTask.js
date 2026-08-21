@@ -34,17 +34,22 @@ export const workerTranscriptTask = functions.onCall({
     const FieldValue = admin.firestore.FieldValue
     const input = request.data || {}
 
+    const answerRepository = new FirestoreAnswerRepository(db)
+    const transcriptionRepository = new FirestoreTranscriptionRepository(db)
+
     const service = new TranscribeTaskService({
       userRepository: new FirestoreUserRepository(db),
-      answerRepository: new FirestoreAnswerRepository(db),
+      answerRepository,
       studyRepository: new FirestoreStudyRepository(db),
-      transcriptionRepository: new FirestoreTranscriptionRepository(db),
+      transcriptionRepository,
       FieldValue,
       transcriptionApiBaseUrl: process.env.TRANSCRIPTION_API_BASE_URL,
     })
 
     const analyticsService = new UpsertTranscriptionAnalyticsService({
       analyticsRepository: new FirestoreTranscriptionAnalyticsRepository(db, input.answersDocId),
+      transcriptionRepository,
+      answerRepository,
       FieldValue,
     })
 

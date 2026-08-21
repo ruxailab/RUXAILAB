@@ -7,6 +7,7 @@ const mockStudyGet = jest.fn()
 const mockTranscriptionAdd = jest.fn()
 const mockTranscriptionGet = jest.fn()
 const mockTranscriptionSet = jest.fn()
+const mockTranscriptionUpdate = jest.fn()
 const mockTestsWhereGet = jest.fn()
 const mockAnalyticsGet = jest.fn()
 const mockAnalyticsSet = jest.fn()
@@ -53,9 +54,10 @@ const mockDb = {
     if (collectionName === 'transcriptions') {
       return {
         add: mockTranscriptionAdd,
-        doc: jest.fn(() => ({
-          get: mockTranscriptionGet,
+        doc: jest.fn((id) => ({
+          get: () => mockTranscriptionGet(id),
           set: mockTranscriptionSet,
+          update: mockTranscriptionUpdate,
         })),
       }
     }
@@ -153,6 +155,27 @@ describe('workerTranscriptTask', () => {
     mockAnswerUpdate.mockResolvedValue(undefined)
     mockAnalyticsGet.mockResolvedValue(snap(false, null))
     mockAnalyticsSet.mockResolvedValue(undefined)
+    mockTranscriptionUpdate.mockResolvedValue(undefined)
+    mockTranscriptionGet.mockImplementation(async (id) =>
+      snap(
+        true,
+        {
+          answersDocId: 'answer-1',
+          userDocId: 'evaluator-1',
+          taskId: '0',
+          provider: 'whisper',
+          model: 'medium',
+          evaluator: { language: 'en', transcript: '', segments: [] },
+          moderator: { language: 'en', transcript: '', segments: [] },
+          sessionDuration: 0,
+          wordsSpoken: 0,
+          speakingTime: 0,
+          speechRate: 0,
+          keywords: {},
+        },
+        id || 'tr-1',
+      ),
+    )
 
     global.fetch = jest.fn(async (_url, options) => {
       const body = JSON.parse(options.body)
@@ -186,7 +209,7 @@ describe('workerTranscriptTask', () => {
     ).rejects.toMatchObject({ code: 'unauthenticated' })
   })
 
-  it('orchestrates transcription and persists result', async () => {
+  it('orchestrates transcription and persists analytics on transcription + aggregate', async () => {
     const result = await workerTranscriptTask(
       request('owner', {
         answersDocId: 'answer-1',
@@ -205,33 +228,33 @@ describe('workerTranscriptTask', () => {
         taskId: '0',
         provider: 'whisper',
         model: 'medium',
-        evaluator: expect.objectContaining({
-          language: 'en',
-          segments: [{ startTimeSec: 0, endTimeSec: 1, text: 'hello' }],
-        }),
-        moderator: expect.objectContaining({
-          language: 'en',
-        }),
       }),
     )
-    expect(mockTranscriptionSet).not.toHaveBeenCalled()
     expect(mockAnswerUpdate).toHaveBeenCalledWith({
       'taskAnswers.evaluator-1.tasks.0.transcriptionDocId': 'tr-1',
     })
+    expect(mockTranscriptionUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        wordsSpoken: expect.any(Number),
+        speakingTime: 2,
+        sessionDuration: 1,
+        keywords: expect.any(Object),
+        updatedAt: 'mock-server-timestamp',
+      }),
+    )
     expect(mockAnalyticsSet).toHaveBeenCalledWith(
       expect.objectContaining({
         general: expect.objectContaining({
           wordsSpoken: expect.any(Number),
           speakingTime: 2,
           sessionDuration: 1,
+          keywords: expect.any(Object),
         }),
         tasks: {
           task0: expect.objectContaining({
-            transcriptionDocId: 'tr-1',
-            userDocId: 'evaluator-1',
             speakingTime: 2,
             sessionDuration: 1,
-            keywords: [],
+            keywords: expect.any(Object),
           }),
         },
         updatedAt: 'mock-server-timestamp',
@@ -242,8 +265,6 @@ describe('workerTranscriptTask', () => {
       id: 'tr-1',
       provider: 'whisper',
       model: 'medium',
-      evaluator: { language: 'en' },
-      moderator: { language: 'en' },
     })
   })
 
@@ -264,7 +285,7 @@ describe('workerTranscriptTask', () => {
         },
       }),
     )
-    mockTranscriptionGet.mockResolvedValue(
+    mockTranscriptionGet.mockImplementation(async (id) =>
       snap(
         true,
         {
@@ -277,10 +298,9 @@ describe('workerTranscriptTask', () => {
           evaluator: { language: 'en', transcript: '', segments: [] },
           moderator: { language: 'en', transcript: '', segments: [] },
         },
-        'tr-existing',
+        id || 'tr-existing',
       ),
     )
-    mockTranscriptionSet.mockResolvedValue(undefined)
 
     const result = await workerTranscriptTask(
       request('owner', {
@@ -298,23 +318,19 @@ describe('workerTranscriptTask', () => {
         answersDocId: 'answer-1',
         userDocId: 'evaluator-1',
         taskId: '0',
-        provider: 'whisper',
-        model: 'medium',
         createdAt: 'created-at-original',
         updatedAt: 'mock-server-timestamp',
-        evaluator: expect.objectContaining({
-          language: 'en',
-          segments: [{ startTimeSec: 0, endTimeSec: 1, text: 'hello' }],
-        }),
       }),
       { merge: true },
     )
+    expect(mockTranscriptionUpdate).toHaveBeenCalled()
     expect(mockAnswerUpdate).not.toHaveBeenCalled()
     expect(mockAnalyticsSet).toHaveBeenCalledWith(
       expect.objectContaining({
         tasks: {
           task0: expect.objectContaining({
-            transcriptionDocId: 'tr-existing',
+            speakingTime: expect.any(Number),
+            keywords: expect.any(Object),
           }),
         },
       }),
@@ -344,7 +360,22 @@ describe('workerTranscriptTask', () => {
         },
       }),
     )
-    mockTranscriptionGet.mockResolvedValue(snap(false, null))
+    mockTranscriptionGet.mockImplementation(async (id) => {
+      if (id === 'tr-missing') return snap(false, null, id)
+      return snap(
+        true,
+        {
+          answersDocId: 'answer-1',
+          userDocId: 'evaluator-1',
+          taskId: '0',
+          provider: 'whisper',
+          model: 'medium',
+          evaluator: { language: 'en', transcript: '', segments: [] },
+          moderator: { language: 'en', transcript: '', segments: [] },
+        },
+        id,
+      )
+    })
     mockTranscriptionAdd.mockResolvedValue({ id: 'tr-2' })
 
     const result = await workerTranscriptTask(
@@ -358,15 +389,15 @@ describe('workerTranscriptTask', () => {
     )
 
     expect(mockTranscriptionAdd).toHaveBeenCalled()
-    expect(mockTranscriptionSet).not.toHaveBeenCalled()
     expect(mockAnswerUpdate).toHaveBeenCalledWith({
       'taskAnswers.evaluator-1.tasks.0.transcriptionDocId': 'tr-2',
     })
+    expect(mockTranscriptionUpdate).toHaveBeenCalled()
     expect(mockAnalyticsSet).toHaveBeenCalledWith(
       expect.objectContaining({
         tasks: {
           task0: expect.objectContaining({
-            transcriptionDocId: 'tr-2',
+            keywords: expect.any(Object),
           }),
         },
       }),
@@ -375,29 +406,59 @@ describe('workerTranscriptTask', () => {
     expect(result).toMatchObject({ id: 'tr-2' })
   })
 
-  it('merges analytics when another task already exists', async () => {
-    mockAnalyticsGet.mockResolvedValue(
+  it('sums analytics across latest transcription pointers for multiple tasks', async () => {
+    mockAnswerGet.mockResolvedValue(
       snap(true, {
-        general: {
-          sessionDuration: 5,
-          wordsSpoken: 10,
-          speakingTime: 4,
-          speechRate: 150,
-          keywords: [],
-        },
-        tasks: {
-          task1: {
-            transcriptionDocId: 'tr-old',
-            userDocId: 'evaluator-1',
-            sessionDuration: 5,
-            wordsSpoken: 10,
-            speakingTime: 4,
-            speechRate: 150,
-            keywords: [],
+        studyId: 'study-1',
+        taskAnswers: {
+          'evaluator-1': {
+            tasks: {
+              '0': {
+                audioRecordURL: 'https://cdn/eval.webm',
+                moderatorAudioURL: 'https://cdn/mod.webm',
+                transcriptionDocId: 'tr-1',
+              },
+              '1': {
+                transcriptionDocId: 'tr-old',
+              },
+            },
           },
         },
       }),
     )
+    mockTranscriptionGet.mockImplementation(async (id) => {
+      if (id === 'tr-old') {
+        return snap(
+          true,
+          {
+            answersDocId: 'answer-1',
+            userDocId: 'evaluator-1',
+            taskId: '1',
+            sessionDuration: 5,
+            wordsSpoken: 10,
+            speakingTime: 4,
+            speechRate: 150,
+            keywords: { produto: 2 },
+            evaluator: { language: 'en', transcript: '', segments: [] },
+            moderator: { language: 'en', transcript: '', segments: [] },
+          },
+          'tr-old',
+        )
+      }
+      return snap(
+        true,
+        {
+          answersDocId: 'answer-1',
+          userDocId: 'evaluator-1',
+          taskId: '0',
+          provider: 'whisper',
+          model: 'medium',
+          evaluator: { language: 'en', transcript: '', segments: [] },
+          moderator: { language: 'en', transcript: '', segments: [] },
+        },
+        id || 'tr-1',
+      )
+    })
 
     await workerTranscriptTask(
       request('owner', {
@@ -413,10 +474,13 @@ describe('workerTranscriptTask', () => {
       expect.objectContaining({
         tasks: expect.objectContaining({
           task0: expect.objectContaining({
-            transcriptionDocId: 'tr-1',
+            speakingTime: 2,
           }),
           task1: expect.objectContaining({
-            transcriptionDocId: 'tr-old',
+            sessionDuration: 5,
+            wordsSpoken: 10,
+            speakingTime: 4,
+            keywords: { produto: 2 },
           }),
         }),
         general: expect.objectContaining({

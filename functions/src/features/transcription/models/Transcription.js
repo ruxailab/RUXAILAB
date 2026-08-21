@@ -14,6 +14,11 @@ export class Transcription {
    * @param {string} params.model
    * @param {TranscriptSide|object} params.evaluator
    * @param {TranscriptSide|object} params.moderator
+   * @param {number} [params.sessionDuration]
+   * @param {number} [params.wordsSpoken]
+   * @param {number} [params.speakingTime]
+   * @param {number} [params.speechRate]
+   * @param {Record<string, number>} [params.keywords]
    * @param {unknown} [params.createdAt]
    * @param {unknown} [params.updatedAt]
    */
@@ -26,6 +31,11 @@ export class Transcription {
     model,
     evaluator,
     moderator,
+    sessionDuration = 0,
+    wordsSpoken = 0,
+    speakingTime = 0,
+    speechRate = 0,
+    keywords = {},
     createdAt = null,
     updatedAt = null,
   }) {
@@ -43,6 +53,14 @@ export class Transcription {
       moderator instanceof TranscriptSide
         ? moderator
         : TranscriptSide.create(moderator)
+    this.sessionDuration = Number(sessionDuration) || 0
+    this.wordsSpoken = Number(wordsSpoken) || 0
+    this.speakingTime = Number(speakingTime) || 0
+    this.speechRate = Number(speechRate) || 0
+    this.keywords =
+      keywords && typeof keywords === 'object' && !Array.isArray(keywords)
+        ? { ...keywords }
+        : {}
     this.createdAt = createdAt
     this.updatedAt = updatedAt
   }
@@ -74,6 +92,11 @@ export class Transcription {
       updatedAt: data.updatedAt ?? null,
       evaluator: TranscriptSide.fromFirestore(data.evaluator),
       moderator: TranscriptSide.fromFirestore(data.moderator),
+      sessionDuration: data.sessionDuration ?? 0,
+      wordsSpoken: data.wordsSpoken ?? 0,
+      speakingTime: data.speakingTime ?? 0,
+      speechRate: data.speechRate ?? 0,
+      keywords: data.keywords ?? {},
     })
   }
 
@@ -92,6 +115,11 @@ export class Transcription {
       updatedAt: this.updatedAt,
       evaluator: this.evaluator.toFirestore(),
       moderator: this.moderator.toFirestore(),
+      sessionDuration: this.sessionDuration,
+      wordsSpoken: this.wordsSpoken,
+      speakingTime: this.speakingTime,
+      speechRate: this.speechRate,
+      keywords: this.keywords,
     }
   }
 
@@ -109,6 +137,11 @@ export class Transcription {
       model: this.model,
       evaluator: this.evaluator.toJSON(),
       moderator: this.moderator.toJSON(),
+      sessionDuration: this.sessionDuration,
+      wordsSpoken: this.wordsSpoken,
+      speakingTime: this.speakingTime,
+      speechRate: this.speechRate,
+      keywords: this.keywords,
     }
   }
 
@@ -122,6 +155,23 @@ export class Transcription {
       id,
       evaluator: this.evaluator,
       moderator: this.moderator,
+    })
+  }
+
+  /**
+   * @param {object} analytics
+   * @returns {Transcription}
+   */
+  withAnalytics(analytics = {}) {
+    return Transcription.create({
+      ...this,
+      evaluator: this.evaluator,
+      moderator: this.moderator,
+      sessionDuration: analytics.sessionDuration ?? this.sessionDuration,
+      wordsSpoken: analytics.wordsSpoken ?? this.wordsSpoken,
+      speakingTime: analytics.speakingTime ?? this.speakingTime,
+      speechRate: analytics.speechRate ?? this.speechRate,
+      keywords: analytics.keywords ?? this.keywords,
     })
   }
 }
