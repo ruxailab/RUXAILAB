@@ -24,5 +24,34 @@ import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunc
  * }>}
  */
 export async function transcribeTask(payload) {
-  return await FirebaseFunctionsController.callHttpsCallableFunction('workerTranscriptTask', payload)
+  const response =
+    await FirebaseFunctionsController.callHttpsCallableFunction(
+      'transcriptionTask',
+      payload,
+      { timeout: 540_000 },
+    )
+  return response?.data ?? response
+}
+
+/**
+ * Delete a transcription document and rebuild answer-level analytics.
+ *
+ * @param {Object} payload
+ * @param {string} payload.transcriptionId
+ * @param {string} [payload.studyId]
+ * @returns {Promise<{
+ *   id: string,
+ *   answersDocId: string,
+ *   userDocId: string,
+ *   taskId: string,
+ *   transcriptionDocId: string|null,
+ * }>}
+ */
+export async function deleteTranscription(payload) {
+  const response =
+    await FirebaseFunctionsController.callHttpsCallableFunction(
+      'transcriptionDelete',
+      payload,
+    )
+  return response?.data ?? response
 }

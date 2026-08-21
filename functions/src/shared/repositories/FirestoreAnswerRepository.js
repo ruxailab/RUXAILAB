@@ -15,7 +15,7 @@ export class FirestoreAnswerRepository extends FirestoreCollectionRepository {
    * @param {string} answersDocId
    * @param {string} userDocId
    * @param {string} taskId
-   * @param {string} transcriptionDocId
+   * @param {string|null} transcriptionDocId
    * @returns {Promise<void>}
    */
   async setTranscriptionDocId(

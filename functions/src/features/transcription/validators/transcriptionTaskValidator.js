@@ -1,7 +1,7 @@
 /**
- * Request validator document for workerTranscriptTask.
+ * Request validator document for transcriptionTask.
  */
-export const workerTranscriptTaskValidator = {
+export const transcriptionTaskValidator = {
   answersDocId: { type: 'string', required: true },
   userDocId: { type: 'string', required: true },
   taskId: { type: ['string', 'number'], required: true },

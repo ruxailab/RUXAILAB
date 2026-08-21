@@ -105,8 +105,8 @@ jest.unstable_mockModule('../../../core/firebase/index.js', async () => {
   }
 })
 
-const { workerTranscriptTask } = await import(
-  '../interface/workerTranscriptTask.js'
+const { transcriptionTask } = await import(
+  '../interface/transcriptionTask.js'
 )
 
 const request = (uid, data) => ({
@@ -120,7 +120,7 @@ const snap = (exists, data, id = null) => ({
   data: () => data,
 })
 
-describe('workerTranscriptTask', () => {
+describe('transcriptionTask', () => {
   const originalFetch = global.fetch
   const savedBaseUrl = process.env.TRANSCRIPTION_API_BASE_URL
 
@@ -198,7 +198,7 @@ describe('workerTranscriptTask', () => {
 
   it('requires authentication', async () => {
     await expect(
-      workerTranscriptTask(
+      transcriptionTask(
         request(null, {
           answersDocId: 'answer-1',
           userDocId: 'evaluator-1',
@@ -210,7 +210,7 @@ describe('workerTranscriptTask', () => {
   })
 
   it('orchestrates transcription and persists analytics on transcription + aggregate', async () => {
-    const result = await workerTranscriptTask(
+    const result = await transcriptionTask(
       request('owner', {
         answersDocId: 'answer-1',
         userDocId: 'evaluator-1',
@@ -302,7 +302,7 @@ describe('workerTranscriptTask', () => {
       ),
     )
 
-    const result = await workerTranscriptTask(
+    const result = await transcriptionTask(
       request('owner', {
         answersDocId: 'answer-1',
         userDocId: 'evaluator-1',
@@ -378,7 +378,7 @@ describe('workerTranscriptTask', () => {
     })
     mockTranscriptionAdd.mockResolvedValue({ id: 'tr-2' })
 
-    const result = await workerTranscriptTask(
+    const result = await transcriptionTask(
       request('owner', {
         answersDocId: 'answer-1',
         userDocId: 'evaluator-1',
@@ -460,7 +460,7 @@ describe('workerTranscriptTask', () => {
       )
     })
 
-    await workerTranscriptTask(
+    await transcriptionTask(
       request('owner', {
         answersDocId: 'answer-1',
         userDocId: 'evaluator-1',
@@ -495,7 +495,7 @@ describe('workerTranscriptTask', () => {
 
   it('rejects invalid provider', async () => {
     await expect(
-      workerTranscriptTask(
+      transcriptionTask(
         request('owner', {
           answersDocId: 'answer-1',
           userDocId: 'evaluator-1',

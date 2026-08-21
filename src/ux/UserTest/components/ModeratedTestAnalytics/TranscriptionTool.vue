@@ -100,15 +100,18 @@
                   :study-id="testDocument?.id"
                   :audio-url-evaluator="selectedTask?.audioRecordURL"
                   :audio-url-moderator="selectedTask?.moderatorAudioURL"
+                  @saved="onTranscriptionSaved"
                 />
 
                 <TranscriptionsPanel
                   v-else-if="tab === 'transcriptions'"
-                  :key="`transcriptions-${selectedUserID}:${selectedTaskId}`"
+                  :key="`transcriptions-${selectedUserID}:${selectedTaskId}:${transcriptionRefreshKey}`"
                   :answers-doc-id="testDocument?.answersDocId"
                   :user-doc-id="selectedUserID"
                   :task-id="selectedTaskId"
-                  :transcription-doc-id="selectedTask?.transcriptionDocId"
+                  :transcription-doc-id="
+                    latestTranscriptionDocId || selectedTask?.transcriptionDocId
+                  "
                 />
 
                 <ExportPanel
@@ -186,6 +189,13 @@ const store = useStore()
 const selectedUserID = ref(null)
 const selectedTaskId = ref(null)
 const tab = ref('timeline')
+const transcriptionRefreshKey = ref(0)
+const latestTranscriptionDocId = ref(null)
+
+const onTranscriptionSaved = (result) => {
+  latestTranscriptionDocId.value = result?.id ?? null
+  transcriptionRefreshKey.value += 1
+}
 
 const testDocument = computed(() => store.getters.test)
 const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
@@ -266,6 +276,7 @@ watch(
 watch(
   tasksForSelectedUser,
   (pairs) => {
+    latestTranscriptionDocId.value = null
     const has = Array.isArray(pairs) && pairs.length
     if (!has) {
       selectedTaskId.value = null

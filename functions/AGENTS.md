@@ -55,7 +55,7 @@ features/<feature>/
 
 ## Callable entrypoint pattern
 
-Follow the `workerTranscriptTask` style:
+Follow the `transcriptionTask` style:
 
 1. Middlewares: `mapHttpsError`, `requireAuth`, `validateRequest(...)`.
 2. In the handler: build `db`, instantiate repositories + service, call `service.execute(...)`.

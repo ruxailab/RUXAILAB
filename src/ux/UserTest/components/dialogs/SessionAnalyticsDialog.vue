@@ -123,14 +123,15 @@
 
                   <TimelinePanel
                     v-if="canTranscribe"
-                    :key="`timeline-${userId}:${resolvedTaskId}`"
+                    :key="timelinePanelKey"
                     :answers-doc-id="answersDocId"
                     :user-doc-id="userId"
                     :task-id="resolvedTaskId"
                     :study-id="testAnswer?.studyId || null"
                     :audio-url-evaluator="taskAnswer?.audioRecordURL"
                     :audio-url-moderator="taskAnswer?.moderatorAudioURL"
-                    :show-inline-result="false"
+                    :show-inline-result="true"
+                    :show-inline-empty-state="false"
                     @saved="onTranscriptionSaved"
                   />
 
@@ -140,7 +141,10 @@
                     :answers-doc-id="answersDocId"
                     :user-doc-id="userId"
                     :task-id="resolvedTaskId"
-                    :transcription-doc-id="taskAnswer?.transcriptionDocId"
+                    :transcription-doc-id="
+                      latestTranscriptionDocId || taskAnswer?.transcriptionDocId
+                    "
+                    @deleted="onTranscriptionDeleted"
                   />
                 </v-sheet>
               </v-window-item>
@@ -211,6 +215,7 @@ const predictedData = ref(null)
 const selectedView = ref('precision')
 const videoReady = ref(false)
 const transcriptionRefreshKey = ref(0)
+const latestTranscriptionDocId = ref(null)
 
 const hasEyeTrackingData = computed(
   () =>
@@ -261,12 +266,23 @@ const transcriptionUnavailableMessage = computed(() => {
   return 'Missing session identifiers to generate a transcription.'
 })
 
+const timelinePanelKey = computed(
+  () =>
+    `timeline-${props.userId}:${resolvedTaskId.value}:${transcriptionRefreshKey.value}`,
+)
+
 const transcriptionPanelKey = computed(
   () =>
     `transcriptions-${props.userId}:${resolvedTaskId.value}:${transcriptionRefreshKey.value}`,
 )
 
-const onTranscriptionSaved = () => {
+const onTranscriptionSaved = (result) => {
+  latestTranscriptionDocId.value = result?.id ?? null
+  transcriptionRefreshKey.value += 1
+}
+
+const onTranscriptionDeleted = (result) => {
+  latestTranscriptionDocId.value = result?.transcriptionDocId ?? null
   transcriptionRefreshKey.value += 1
 }
 
@@ -343,6 +359,14 @@ const close = () => (open.value = false)
 
 const managedListeners = useManagedListeners()
 managedListeners.addCleanup(() => cancelAnimationFrame(rafId))
+
+watch(
+  () => [props.userId, resolvedTaskId.value],
+  () => {
+    latestTranscriptionDocId.value = null
+    transcriptionRefreshKey.value = 0
+  },
+)
 
 watch(
   () => props.modelValue,

@@ -69,7 +69,7 @@
       />
 
       <v-alert
-        v-else
+        v-else-if="showInlineEmptyState"
         type="info"
         variant="tonal"
         density="comfortable"
@@ -109,6 +109,7 @@ const props = defineProps({
   audioUrlModerator: { type: String, default: null },
   showMediaPlayers: { type: Boolean, default: true },
   showInlineResult: { type: Boolean, default: true },
+  showInlineEmptyState: { type: Boolean, default: true },
 })
 
 const emit = defineEmits(['saved'])

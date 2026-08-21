@@ -14,12 +14,12 @@ import { FirestoreTranscriptionRepository } from '../repositories/FirestoreTrans
 import { FirestoreTranscriptionAnalyticsRepository } from '../repositories/FirestoreTranscriptionAnalyticsRepository.js'
 import { TranscribeTaskService } from '../service/TranscribeTaskService.js'
 import { UpsertTranscriptionAnalyticsService } from '../service/UpsertTranscriptionAnalyticsService.js'
-import { workerTranscriptTaskValidator } from '../validators/workerTranscriptTaskValidator.js'
+import { transcriptionTaskValidator } from '../validators/transcriptionTaskValidator.js'
 
 /**
  * Callable entry point: authenticates the caller and delegates to TranscribeTaskService.
  */
-export const workerTranscriptTask = functions.onCall({
+export const transcriptionTask = functions.onCall({
   options: {
     timeoutSeconds: 540,
     memory: '256MiB',
@@ -27,7 +27,7 @@ export const workerTranscriptTask = functions.onCall({
   middlewares: [
     mapHttpsError(functions, 'Task transcription failed'),
     requireAuth,
-    validateRequest(workerTranscriptTaskValidator),
+    validateRequest(transcriptionTaskValidator),
   ],
   handler: async (request) => {
     const db = admin.firestore()

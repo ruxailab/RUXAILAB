@@ -129,6 +129,8 @@ const props = defineProps({
   },
 })
 
+const emit = defineEmits(['deleted'])
+
 const loading = ref(true)
 const transcriptionsArray = ref([])
 
@@ -144,10 +146,9 @@ const hasRuns = computed(
 
 // Controllers
 import TranscriptionController from '@/ai/transcriptions/TranscriptionController'
-import AnswerController from '@/shared/controllers/AnswerController'
+import { deleteTranscription } from '@/app/services/transcription/TranscriptionService'
 
 const transcriptionController = new TranscriptionController()
-const answerController = new AnswerController()
 
 watch(
   () => [props.answersDocId, props.userDocId, props.taskId],
@@ -188,27 +189,16 @@ function askDelete(run) {
   confirmOpen.value = true
 }
 
-/** Confirm → delete → refresh → update meta */
+/** Confirm → delete via Cloud Function → refresh list */
 async function confirmDelete() {
   if (!runToDelete.value) return
   deletingId.value = runToDelete.value.id
   try {
-    await transcriptionController.deleteById(runToDelete.value.id)
-
-    // refetch to get the new list
-    await fetchSelectedTaskTranscriptions()
-
-    // refetch to get the new list
-    await fetchSelectedTaskTranscriptions()
-
-    const newLatestId = transcriptionsArray.value[0]?.id ?? null
-
-    await answerController.setTaskTranscriptionMeta({
-      answersDocId: props.answersDocId,
-      userDocId: props.userDocId,
-      taskId: String(props.taskId),
-      transcriptionDocId: newLatestId,
+    const result = await deleteTranscription({
+      transcriptionId: runToDelete.value.id,
     })
+    await fetchSelectedTaskTranscriptions()
+    emit('deleted', result)
   } catch {
   } finally {
     confirmOpen.value = false
