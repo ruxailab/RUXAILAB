@@ -619,15 +619,32 @@
     "failedToLoadAnswers": "Error al cargar respuestas",
     "failedToUpdateAnswer": "Error al actualizar respuesta",
     "failedToSaveAnswerCooperator": "Error al guardar respuesta del cooperador",
-    "boundary": {
-      "title": "Algo salió mal",
-      "message": "Ocurrió un error inesperado al cargar esta página. Sus datos han sido preservados.",
-      "retry": "Reintentar",
-      "goToDashboard": "Ir al Panel",
-      "showDetails": "Mostrar detalles del error",
-      "copyDetails": "Copiar detalles del error",
-      "copied": "¡Copiado!"
+    "screenShare": {
+      "unsupported": "Compartir pantalla no está disponible en este navegador. Usa Chrome, Edge o Firefox actualizado en un ordenador.",
+      "cancelled": "Se canceló el uso compartido de pantalla. Comparte toda la pantalla para continuar.",
+      "wrongSurface": "Compartiste una pestaña del navegador. Comparte toda la pantalla para que podamos ver la herramienta que vas a usar.",
+      "error": "No pudimos iniciar la grabación de pantalla. Inténtalo de nuevo."
     }
+  },
+  "screenShare": {
+    "howTo": "Cómo compartir tu pantalla",
+    "lead": "Cuando aparezca la ventana del navegador, elige Toda la pantalla. Si compartes solo una pestaña, a menudo se graba la página incorrecta.",
+    "step1": "Haz clic en Compartir pantalla. Tu navegador abrirá una ventana para elegir qué compartir.",
+    "step2": "Selecciona Toda la pantalla — no una pestaña ni una sola ventana.",
+    "step3": "Haz clic en Compartir para continuar. Mantén el uso compartido hasta terminar la tarea.",
+    "dontShareTab": "No compartas una pestaña del navegador. Esta tarea abre otra página y esa pestaña no se grabaría.",
+    "macHint": "En Mac, si no aparece nada, permite Grabación de pantalla para tu navegador en Ajustes del Sistema → Privacidad y seguridad.",
+    "shareButton": "Compartir pantalla",
+    "backButton": "Volver",
+    "pickerTitle": "Elige qué compartir",
+    "pickerTab": "Pestaña",
+    "pickerWindow": "Ventana",
+    "pickerEntireScreen": "Toda la pantalla",
+    "pickerShare": "Compartir",
+    "pickerCancel": "Cancelar",
+    "demoDontPick": "No esto",
+    "demoChooseThis": "Elige esto",
+    "demoAlt": "Animación que muestra cómo elegir Toda la pantalla en el diálogo de compartir del navegador."
   },
   "Introduction": {
     "title": "UX LAB Remoto",
@@ -1366,6 +1383,10 @@
       "sart": "Técnica de Calificación de Conciencia Situacional - mide la conciencia situacional"
     },
     "answerTypePreview": {
+      "textArea": {
+        "placeholder": "Los participantes proporcionarán su retroalimentación aquí...",
+        "submitButton": "Enviar retroalimentación"
+      },
       "postTest": {
         "title": "Comentarios posteriores a la prueba",
         "q1": "Califica tu experiencia",
@@ -1537,7 +1558,7 @@
       "preview": "Información de grabación",
       "recordingInfo": "Esta tarea registrará los siguientes datos durante tu interacción:",
       "screenRecord": "Grabación de pantalla",
-      "screenRecordDesc": "Captura clics, desplazamiento e interacciones para analizar el comportamiento del usuario.",
+      "screenRecordDesc": "Graba cómo usas la herramienta. Deberás compartir toda la pantalla.",
       "camera": "Cámara",
       "cameraDesc": "Registra expresiones faciales y reacciones para entender las emociones del usuario.",
       "audioRecord": "Grabación de audio",
@@ -1673,6 +1694,7 @@
       "observeAllFeedsNotice": "Podras observar todas las transmisiones de video sin enviar la tuya.",
       "waitingForParticipants": "Esperando participantes...",
       "waitingForModerator": "Esperando al moderador...",
+      "moderatorWillAdmitParticipant": "El moderador te dejara entrar pronto a la sesion.",
       "autoStartWhenModeratorOpensRoom": "La videollamada comenzara automaticamente cuando el moderador abra la sala."
     },
     "WelcomeStep": {
@@ -2200,6 +2222,7 @@
       "observeAllFeedsNotice": "Podras observar todas las transmisiones de video sin enviar la tuya.",
       "waitingForParticipants": "Esperando participantes...",
       "waitingForModerator": "Esperando al moderador...",
+      "moderatorWillAdmitParticipant": "El moderador te dejara entrar pronto a la sesion.",
       "autoStartWhenModeratorOpensRoom": "La videollamada comenzara automaticamente cuando el moderador abra la sala."
     },
     "panel": {

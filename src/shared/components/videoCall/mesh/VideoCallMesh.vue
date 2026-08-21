@@ -7,15 +7,16 @@
     <!-- Videos Row -->
     <v-row class="video-row justify-center" no-gutters>
       <!-- Grid of Participants -->
-      <v-col v-if="callStarted" cols="12">
+      <v-col
+        v-if="
+          callStarted || (caller && roomReady) || (isObservator && roomReady)
+        "
+        cols="12"
+      >
         <div class="video-stage">
           <!-- Spotlight: focused participant or shared screen -->
           <div v-if="isFocusMode" class="spotlight-primary">
-            <div
-              :key="focusedTile.id"
-              class="spotlight-item tile-clickable"
-              @click="clearFocus"
-            >
+            <div :key="focusedTile.id" class="spotlight-item">
               <div
                 class="video-container"
                 :class="{
@@ -23,7 +24,7 @@
                 }"
               >
                 <video
-                  :srcObject="focusedTile.stream"
+                  :ref="(el) => bindTileVideoElement(el, focusedTile)"
                   autoplay
                   :muted="focusedTile.muted"
                   playsinline
@@ -31,6 +32,8 @@
                   :class="{
                     'screen-share-element': focusedTile.type === 'screen',
                   }"
+                  @loadedmetadata="playVideo"
+                  @canplay="playVideo"
                 ></video>
 
                 <div
@@ -62,26 +65,29 @@
           <!-- Tiles: full grid, or a compact filmstrip when focusing -->
           <div
             class="videos-grid"
-            :class="{ 'videos-filmstrip': isFocusMode }"
+            :class="{
+              'videos-filmstrip': isFocusMode,
+              'videos-single': !isFocusMode && tiles.length === 1,
+            }"
             :style="gridStyleVars"
           >
             <div
               v-for="tile in isFocusMode ? otherTiles : tiles"
               :key="tile.id"
-              class="video-wrapper tile-clickable"
-              @click="focusTile(tile.id)"
             >
               <div
                 class="video-container"
                 :class="{ 'screen-share-container': tile.type === 'screen' }"
               >
                 <video
-                  :srcObject="tile.stream"
+                  :ref="(el) => bindTileVideoElement(el, tile)"
                   autoplay
                   :muted="tile.muted"
                   playsinline
                   class="video-element"
                   :class="{ 'screen-share-element': tile.type === 'screen' }"
+                  @loadedmetadata="playVideo"
+                  @canplay="playVideo"
                 ></video>
 
                 <div
@@ -109,7 +115,7 @@
 
             <!-- Waiting Message if no peers -->
             <div
-              v-if="showWaitingMessage"
+              v-if="showWaitingMessage && tiles.length > 1"
               class="d-flex align-center justify-center pa-4 text-grey"
             >
               <v-icon class="mr-2">mdi-account-clock</v-icon>
@@ -119,13 +125,24 @@
         </div>
       </v-col>
 
-      <!-- Moderator Preview (before opening room) -->
+      <!-- Local Preview (before entering room) -->
       <v-col
-        v-if="caller && !callStarted && !isObservator && localStream"
+        v-if="
+          localStream &&
+          ((caller &&
+            !roomOpen &&
+            !roomReady &&
+            Object.keys(peers).length === 0) ||
+            (isObservator && !roomOpen && !roomReady) ||
+            (!caller && !callStarted && !isObservator))
+        "
         cols="12"
       >
-        <div class="videos-grid" :style="{ '--grid-cols': 1 }">
-          <div class="video-wrapper">
+        <div
+          class="videos-grid video-preview-grid"
+          :style="{ '--grid-cols': 1 }"
+        >
+          <div>
             <div class="video-container">
               <video
                 ref="localVideo"
@@ -159,26 +176,6 @@
           </div>
         </div>
       </v-col>
-
-      <!-- Observator waiting message (before call starts) -->
-      <v-col
-        v-if="isObservator && !callStarted"
-        cols="12"
-        class="d-flex justify-center align-center"
-      >
-        <div class="observator-notice">
-          <v-icon size="64" color="primary" class="mb-4">mdi-eye</v-icon>
-          <h3 class="text-h5 mb-2">
-            {{ t('videoCall.session.observatorMode') }}
-          </h3>
-          <p class="text-body-1">
-            {{ t('videoCall.session.waitingForModeratorToStartSession') }}
-          </p>
-          <p class="text-body-2 text-grey mt-2">
-            {{ t('videoCall.session.observeAllFeedsNotice') }}
-          </p>
-        </div>
-      </v-col>
     </v-row>
 
     <!-- Participant/Observator Waiting State (only when not started) -->
@@ -201,633 +198,62 @@
             {{ t('videoCall.session.waitingForModerator') }}
           </h3>
           <p class="text-body-2 text-grey">
-            {{ t('videoCall.session.autoStartWhenModeratorOpensRoom') }}
+            {{ t('videoCall.session.moderatorWillAdmitParticipant') }}
           </p>
         </div>
       </v-col>
     </v-row>
 
-    <!-- Fixed Bottom Control Bar -->
-    <div class="bottom-control-bar">
-      <div class="control-bar-layout">
-        <!-- Left side - spacer -->
-        <div class="control-bar-left"></div>
+    <VideoCallControlBar
+      :caller="caller"
+      :is-observator="isObservator"
+      :call-started="callStarted"
+      :is-camera-enabled="isCameraEnabled"
+      :is-microphone-enabled="isMicrophoneEnabled"
+      :is-sharing-screen="isSharingScreen"
+      :show-stepper-panel="showStepperPanel"
+      :show-side-panel="showSidePanel"
+      :notes-drawer-open="props.notesDrawerOpen"
+      :notes-count="props.notesCount"
+      :toggle-camera="toggleCamera"
+      :toggle-microphone="toggleMicrophone"
+      :toggle-screen-share="handleScreenShare"
+      :start-call="startCall"
+      :leave-call="leaveCall"
+      :end-call="endCall"
+      :toggle-stepper-panel="toggleStepperPanel"
+      :toggle-side-panel="toggleSidePanel"
+      :toggle-notes-drawer="props.toggleNotesDrawer"
+    />
 
-        <!-- Center - main controls -->
-        <div v-if="!isObservator" class="control-buttons-container">
-          <!-- Camera toggle button -->
-          <v-tooltip location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                :class="{
-                  'control-btn-disabled': !isCameraEnabled,
-                  'control-btn-enabled': isCameraEnabled,
-                }"
-                class="control-btn"
-                icon
-                size="large"
-                @click="toggleCamera"
-              >
-                <v-icon size="28">{{
-                  isCameraEnabled ? 'mdi-video' : 'mdi-video-off'
-                }}</v-icon>
-              </v-btn>
-            </template>
-            <span>{{
-              isCameraEnabled ? 'Turn off camera' : 'Turn on camera'
-            }}</span>
-          </v-tooltip>
-
-          <!-- Microphone toggle button -->
-          <v-tooltip location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                :class="{
-                  'control-btn-disabled': !isMicrophoneEnabled,
-                  'control-btn-enabled': isMicrophoneEnabled,
-                }"
-                class="control-btn"
-                icon
-                size="large"
-                @click="toggleMicrophone"
-              >
-                <v-icon size="28">{{
-                  isMicrophoneEnabled ? 'mdi-microphone' : 'mdi-microphone-off'
-                }}</v-icon>
-              </v-btn>
-            </template>
-            <span>{{
-              isMicrophoneEnabled ? 'Mute microphone' : 'Unmute microphone'
-            }}</span>
-          </v-tooltip>
-
-          <!-- Screen share button -->
-          <v-tooltip location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                :class="{
-                  'control-btn-active': isSharingScreen,
-                  'control-btn-enabled': !isSharingScreen,
-                }"
-                class="control-btn"
-                icon
-                size="large"
-                @click="handleScreenShare"
-              >
-                <v-icon size="28">{{
-                  isSharingScreen ? 'mdi-monitor-off' : 'mdi-monitor-screenshot'
-                }}</v-icon>
-              </v-btn>
-            </template>
-            <span>{{
-              isSharingScreen ? 'Stop sharing screen' : 'Share screen'
-            }}</span>
-          </v-tooltip>
-        </div>
-
-        <!-- Right side - panel toggles -->
-        <div class="control-bar-right">
-          <!-- Open Room button (for moderator) -->
-          <v-tooltip v-if="caller && !callStarted" location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                color="success"
-                class="control-btn control-btn-primary me-2"
-                size="large"
-                @click="startCall"
-              >
-                <v-icon start size="20">mdi-video-plus</v-icon>
-                Open Room
-              </v-btn>
-            </template>
-            <span>Start the video call session</span>
-          </v-tooltip>
-
-          <!-- End Call button (for moderator when call is active) -->
-          <v-tooltip v-if="caller && callStarted" location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                color="error"
-                class="control-btn control-btn-danger me-2"
-                size="large"
-                @click="endCall"
-              >
-                <v-icon start size="20">mdi-phone-hangup</v-icon>
-                End Call
-              </v-btn>
-            </template>
-            <span>End the video call session</span>
-          </v-tooltip>
-
-          <!-- End Call button (for participant when call is active) -->
-          <v-tooltip v-if="!caller && callStarted" location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                color="error"
-                class="control-btn control-btn-danger me-2"
-                size="large"
-                @click="endCall"
-              >
-                <v-icon start size="20">mdi-phone-hangup</v-icon>
-                Leave Call
-              </v-btn>
-            </template>
-            <span>Leave the video call session</span>
-          </v-tooltip>
-
-          <!-- Stepper menu button -->
-          <v-tooltip location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                :class="{
-                  'control-btn-active': showStepperPanel,
-                  'control-btn-enabled': !showStepperPanel,
-                }"
-                class="control-btn"
-                icon
-                size="large"
-                @click="toggleStepperPanel"
-              >
-                <v-icon size="28">mdi-format-list-numbered</v-icon>
-              </v-btn>
-            </template>
-            <span>{{ showStepperPanel ? 'Hide steps' : 'Show steps' }}</span>
-          </v-tooltip>
-
-          <!-- Side panel toggle button -->
-          <v-tooltip location="top">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                :class="{
-                  'control-btn-active': showSidePanel,
-                  'control-btn-enabled': !showSidePanel,
-                }"
-                class="control-btn"
-                icon
-                size="large"
-                @click="toggleSidePanel"
-              >
-                <v-icon size="28">mdi-account-group</v-icon>
-              </v-btn>
-            </template>
-            <span>{{ showSidePanel ? 'Hide panel' : 'Show panel' }}</span>
-          </v-tooltip>
-        </div>
-      </div>
-    </div>
-
-    <!-- Side Panel -->
-    <div class="side-panel" :class="{ 'side-panel-open': showSidePanel }">
-      <div class="side-panel-header">
-        <h3>{{ t('videoCall.panel.toolsPanelTitle') }}</h3>
-        <v-btn
-          icon
-          size="small"
-          variant="text"
-          class="close-btn"
-          @click="toggleSidePanel"
-        >
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </div>
-
-      <div class="side-panel-content">
-        <!-- Session Controls Section -->
-        <div class="panel-section">
-          <h4>{{ t('videoCall.panel.sessionControl') }}</h4>
-
-          <!-- Connection controls when call is not started -->
-          <div v-if="!callStarted" class="session-controls">
-            <!-- Note: Join Room controls moved to main interface for better visibility -->
-            <div v-if="!caller" class="participant-info">
-              <p class="text-body-2 mb-0">
-                <v-icon start size="16">mdi-information</v-icon>
-                {{ t('videoCall.panel.joinRoomInfo') }}
-              </p>
-            </div>
-          </div>
-
-          <!-- Call controls when call is active -->
-          <div v-else class="session-controls">
-            <!-- Proceed to next step (only for moderator) -->
-            <v-btn
-              v-if="caller"
-              color="success"
-              size="large"
-              block
-              class="mb-3"
-              @click="proceedToNextStep"
-            >
-              <v-icon start>mdi-arrow-right</v-icon>
-              {{ t('videoCall.panel.proceedNextStep') }}
-            </v-btn>
-
-            <!-- End call button -->
-            <v-btn
-              v-if="!isObservator"
-              color="error"
-              size="large"
-              block
-              variant="outlined"
-              @click="endCall"
-            >
-              <v-icon start>mdi-phone-hangup</v-icon>
-              {{ t('videoCall.panel.endCall') }}
-            </v-btn>
-
-            <!-- Call status -->
-            <div class="status-message">
-              <v-chip color="green" size="small" class="mb-2">
-                <v-icon start size="16">mdi-phone</v-icon>
-                {{ t('videoCall.panel.activeCall') }}
-              </v-chip>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel-section">
-          <h4>{{ t('videoCall.panel.participants') }}</h4>
-          <div
-            v-for="participant in participantsList"
-            :key="participant.id"
-            class="participant-item"
-          >
-            <v-avatar
-              size="32"
-              :color="
-                participant.role === 'moderator'
-                  ? 'blue'
-                  : participant.role === 'observator'
-                    ? 'orange'
-                    : 'green'
-              "
-            >
-              <v-icon color="white">{{
-                participant.role === 'moderator'
-                  ? 'mdi-account-star'
-                  : participant.role === 'observator'
-                    ? 'mdi-eye'
-                    : 'mdi-account'
-              }}</v-icon>
-            </v-avatar>
-            <div class="participant-info">
-              <span class="participant-name">
-                {{
-                  participant.name +
-                  (participant.isSelf ? ` (${t('videoCall.panel.you')})` : '')
-                }}
-                <v-chip
-                  v-if="participant.role === 'observator'"
-                  size="x-small"
-                  color="orange"
-                  class="ml-1"
-                >
-                  {{ t('videoCall.panel.observator') }}
-                </v-chip>
-                <v-chip
-                  v-else-if="participant.role === 'moderator'"
-                  size="x-small"
-                  color="blue"
-                  class="ml-1"
-                >
-                  {{ t('videoCall.panel.moderator') }}
-                </v-chip>
-              </span>
-              <div class="participant-status">
-                <v-chip
-                  size="x-small"
-                  :color="participant.connected ? 'green' : 'grey'"
-                >
-                  {{
-                    participant.connected
-                      ? t('videoCall.panel.connected')
-                      : t('videoCall.panel.disconnected')
-                  }}
-                </v-chip>
-                <v-chip
-                  v-if="participant.isSelf && !isObservator"
-                  size="x-small"
-                  :color="participant.hasCamera ? 'green' : 'red'"
-                  class="ml-1"
-                >
-                  {{
-                    participant.hasCamera
-                      ? t('videoCall.panel.camera')
-                      : t('videoCall.panel.noCamera')
-                  }}
-                </v-chip>
-                <v-chip
-                  v-if="participant.isSelf && !isObservator"
-                  size="x-small"
-                  :color="participant.hasMicrophone ? 'green' : 'red'"
-                  class="ml-1"
-                >
-                  {{
-                    participant.hasMicrophone
-                      ? t('videoCall.panel.microphone')
-                      : t('videoCall.panel.noMicrophone')
-                  }}
-                </v-chip>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div v-if="!isObservator" class="panel-section">
-          <h4>{{ t('videoCall.panel.settings') }}</h4>
-          <v-list density="compact">
-            <v-list-item @click="toggleCamera">
-              <template #prepend>
-                <v-icon :color="isCameraEnabled ? 'green' : 'red'">
-                  {{ isCameraEnabled ? 'mdi-video' : 'mdi-video-off' }}
-                </v-icon>
-              </template>
-              <v-list-item-title>
-                {{
-                  isCameraEnabled
-                    ? t('videoCall.panel.disableCamera')
-                    : t('videoCall.panel.enableCamera')
-                }}
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item @click="toggleMicrophone">
-              <template #prepend>
-                <v-icon :color="isMicrophoneEnabled ? 'green' : 'red'">
-                  {{
-                    isMicrophoneEnabled
-                      ? 'mdi-microphone'
-                      : 'mdi-microphone-off'
-                  }}
-                </v-icon>
-              </template>
-              <v-list-item-title>
-                {{
-                  isMicrophoneEnabled
-                    ? t('videoCall.panel.muteMicrophone')
-                    : t('videoCall.panel.unmuteMicrophone')
-                }}
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item v-if="callStarted" @click="handleScreenShare">
-              <template #prepend>
-                <v-icon :color="isSharingScreen ? 'blue' : 'grey'">
-                  {{
-                    isSharingScreen
-                      ? 'mdi-monitor-off'
-                      : 'mdi-monitor-screenshot'
-                  }}
-                </v-icon>
-              </template>
-              <v-list-item-title>
-                {{
-                  isSharingScreen
-                    ? t('videoCall.panel.stopScreenShare')
-                    : t('videoCall.panel.shareScreen')
-                }}
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </div>
-      </div>
-    </div>
-
-    <!-- Stepper Panel -->
-    <div
-      class="stepper-panel"
-      :class="{ 'stepper-panel-open': showStepperPanel }"
-    >
-      <div class="stepper-panel-header">
-        <h3>Test Progress</h3>
-        <v-btn
-          icon
-          size="small"
-          variant="text"
-          class="close-btn"
-          @click="toggleStepperPanel"
-        >
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </div>
-
-      <div class="stepper-panel-content">
-        <!-- Moderator indicator -->
-        <div v-if="!caller" class="moderator-notice">
-          <v-chip size="small" color="orange" class="mb-4">
-            <v-icon start size="16">mdi-information</v-icon>
-            {{ t('videoCall.panel.moderatorOnlySteps') }}
-          </v-chip>
-        </div>
-
-        <!-- Custom Stepper -->
-        <div class="custom-stepper">
-          <!-- Consent Step -->
-          <div
-            class="step-item"
-            :class="{
-              'step-active': currentStepperValue === 0,
-              'step-completed': currentStepperValue >= 1,
-              'step-clickable': caller,
-            }"
-            @click="caller && goToStep('consent')"
-          >
-            <div class="step-indicator">
-              <div class="step-number">
-                <v-icon v-if="currentStepperValue >= 1" color="white" size="16"
-                  >mdi-check</v-icon
-                >
-                <span v-else>1</span>
-              </div>
-              <div v-if="currentStepperValue >= 1" class="step-line"></div>
-            </div>
-            <div class="step-content">
-              <h4 class="step-title">Consent</h4>
-              <p class="step-description">User consent and agreement</p>
-            </div>
-          </div>
-
-          <!-- Pre-test Step -->
-          <div
-            class="step-item"
-            :class="{
-              'step-active': currentStepperValue === 1,
-              'step-completed': currentStepperValue >= 2,
-              'step-clickable': caller,
-            }"
-            @click="caller && goToStep('pretest')"
-          >
-            <div class="step-indicator">
-              <div class="step-number">
-                <v-icon v-if="currentStepperValue >= 2" color="white" size="16"
-                  >mdi-check</v-icon
-                >
-                <span v-else>2</span>
-              </div>
-              <div v-if="currentStepperValue >= 2" class="step-line"></div>
-            </div>
-            <div class="step-content">
-              <h4 class="step-title">Pre-test</h4>
-              <p class="step-description">Initial questionnaire</p>
-            </div>
-          </div>
-
-          <!-- Tasks Step -->
-          <div
-            class="step-item"
-            :class="{
-              'step-active': currentStepperValue === 2,
-              'step-completed': currentStepperValue >= 3,
-              'step-clickable': caller,
-            }"
-            @click="caller && goToStep('tasks')"
-          >
-            <div class="step-indicator">
-              <div class="step-number">
-                <v-icon v-if="currentStepperValue >= 3" color="white" size="16"
-                  >mdi-check</v-icon
-                >
-                <span v-else>3</span>
-              </div>
-              <div v-if="currentStepperValue >= 3" class="step-line"></div>
-            </div>
-            <div class="step-content">
-              <h4 class="step-title">Tasks</h4>
-              <p class="step-description">User testing tasks</p>
-
-              <!-- Task dropdown when active and moderator -->
-              <div
-                v-if="
-                  currentStepperValue === 2 &&
-                  caller &&
-                  test?.testStructure?.userTasks
-                "
-                class="tasks-dropdown mt-3"
-              >
-                <v-select
-                  :items="taskDropdownItems"
-                  :model-value="currentTaskIndex"
-                  item-title="title"
-                  item-value="index"
-                  variant="outlined"
-                  density="compact"
-                  hide-details
-                  class="task-selector"
-                  placeholder="Select a task"
-                  prepend-inner-icon="mdi-format-list-bulleted"
-                  @update:model-value="goToSpecificTask"
-                >
-                  <template #item="{ props, item }">
-                    <v-list-item v-bind="props" :title="item.raw.title">
-                      <template #prepend>
-                        <v-icon
-                          size="20"
-                          :color="
-                            item.raw.index < currentTaskIndex
-                              ? 'success'
-                              : item.raw.index === currentTaskIndex
-                                ? 'primary'
-                                : 'grey'
-                          "
-                        >
-                          {{
-                            item.raw.index < currentTaskIndex
-                              ? 'mdi-check-circle'
-                              : item.raw.index === currentTaskIndex
-                                ? 'mdi-play-circle'
-                                : 'mdi-circle-outline'
-                          }}
-                        </v-icon>
-                      </template>
-                    </v-list-item>
-                  </template>
-                </v-select>
-              </div>
-            </div>
-          </div>
-
-          <!-- Post-test Step -->
-          <div
-            class="step-item"
-            :class="{
-              'step-active': currentStepperValue === 3,
-              'step-completed': currentStepperValue >= 4,
-              'step-clickable': caller,
-            }"
-            @click="caller && goToStep('posttest')"
-          >
-            <div class="step-indicator">
-              <div class="step-number">
-                <v-icon v-if="currentStepperValue >= 4" color="white" size="16"
-                  >mdi-check</v-icon
-                >
-                <span v-else>4</span>
-              </div>
-              <div v-if="currentStepperValue >= 4" class="step-line"></div>
-            </div>
-            <div class="step-content">
-              <h4 class="step-title">Post-test</h4>
-              <p class="step-description">Final questionnaire</p>
-            </div>
-          </div>
-
-          <!-- Completion Step -->
-          <div
-            class="step-item"
-            :class="{
-              'step-active': currentStepperValue === 4,
-              'step-completed': currentStepperValue === 5,
-              'step-clickable': caller,
-            }"
-            @click="caller && goToStep('completion')"
-          >
-            <div class="step-indicator">
-              <div class="step-number">
-                <v-icon v-if="currentStepperValue === 5" color="white" size="16"
-                  >mdi-check</v-icon
-                >
-                <span v-else>5</span>
-              </div>
-            </div>
-            <div class="step-content">
-              <h4 class="step-title">Completion</h4>
-              <p class="step-description">Test finished</p>
-            </div>
-          </div>
-        </div>
-
-        <v-btn
-          v-if="isModerator"
-          color="primary"
-          variant="outlined"
-          size="small"
-          class="mt-2"
-          @click="returnToVideoCall"
-        >
-          <v-icon start>mdi-video</v-icon>
-          {{ $t('videoCall.panel.bringParticipantsBack') }}
-        </v-btn>
-      </div>
-    </div>
-
-    <!-- Overlay for panels (mobile) -->
-    <div
-      v-if="showSidePanel || showStepperPanel"
-      class="panel-overlay"
-      @click="
-        () => {
-          showSidePanel = false
-          showStepperPanel = false
-        }
-      "
-    ></div>
-
+    <VideoCallPanels
+      :show-side-panel="showSidePanel"
+      :show-stepper-panel="showStepperPanel"
+      :caller="caller"
+      :is-observator="isObservator"
+      :call-started="callStarted"
+      :participants-list="participantsList"
+      :staff-list="staffParticipants"
+      :participant-list="panelParticipantList"
+      :current-stepper-value="currentStepperValue"
+      :task-dropdown-items="taskDropdownItems"
+      :current-task-index="currentTaskIndex"
+      :test="test"
+      :is-camera-enabled="isCameraEnabled"
+      :is-microphone-enabled="isMicrophoneEnabled"
+      :is-sharing-screen="isSharingScreen"
+      :t="t"
+      :toggle-side-panel="toggleSidePanel"
+      :toggle-stepper-panel="toggleStepperPanel"
+      :close-panels="closePanels"
+      :proceed-to-next-step="proceedToNextStep"
+      :go-to-step="goToStep"
+      :go-to-specific-task="goToSpecificTask"
+      :end-call="endCall"
+      :toggle-camera="toggleCamera"
+      :toggle-microphone="toggleMicrophone"
+      :toggle-screen-share="handleScreenShare"
+    />
     <!-- Join Room Dialog for Participants -->
     <v-dialog v-model="showJoinDialog" max-width="400" persistent>
       <v-card class="rounded-xl pa-6 text-center">
@@ -871,7 +297,16 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive, onMounted, onBeforeUnmount, watch } from 'vue'
+import {
+  ref,
+  shallowRef,
+  computed,
+  reactive,
+  markRaw,
+  onMounted,
+  onBeforeUnmount,
+  watch,
+} from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { database } from '@/app/plugins/firebase/index'
@@ -887,8 +322,11 @@ import {
   onChildAdded,
 } from 'firebase/database'
 import { useStore } from 'vuex'
-import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
-import { useVideoFocus } from '../composables/useVideoFocus'
+import { ACCESS_LEVEL, normalizeAccessLevel } from '@/shared/utils/accessLevel'
+import { useVideoCallBoard } from '../composables/useVideoCallBoard'
+import VideoCallPanels from '../VideoCallPanels.vue'
+import VideoCallControlBar from '../VideoCallControlBar.vue'
+import { normalizeSessionMember } from '@/ux/UserTest/utils/sessionPresence'
 
 const props = defineProps({
   roomId: String,
@@ -900,6 +338,11 @@ const props = defineProps({
   currentTaskIndex: Number,
   test: Object,
   localTestAnswer: Object,
+  sessionStaff: Array,
+  sessionParticipants: Array,
+  notesDrawerOpen: Boolean,
+  notesCount: Number,
+  toggleNotesDrawer: Function,
 })
 
 const emit = defineEmits([
@@ -916,6 +359,11 @@ const localVideo = ref(null)
 const localStream = ref(null)
 const screenStream = ref(null)
 const isSharingScreen = ref(false)
+const isSessionEnded = ref(false)
+let localPresenceDisconnect = null
+let localSignalsDisconnect = null
+let moderatorCallDisconnect = null
+let moderatorRoomDisconnect = null
 
 // Camera and microphone controls
 const isCameraEnabled = ref(true)
@@ -929,6 +377,9 @@ const showJoinDialog = ref(false) // Legacy support, maybe unused in Mesh
 // Mesh State
 const peers = reactive({}) // userId -> { connection, stream, screenStream, screenSender, pendingCandidates }
 const participants = ref({}) // userId -> user info (name, etc)
+const debugParticipantMembers = ref({})
+const debugStaffMembers = ref({})
+const remoteStreamVersion = ref(0)
 
 // Watch for moderator connected status changes and emit to parent
 watch(
@@ -948,16 +399,11 @@ watch(
 )
 
 // Computed
-const isObservator = computed(
-  () => props.isObservator || props.accessLevel === ACCESS_LEVEL.OBSERVATOR,
-)
-const remoteStreams = computed(() => {
-  const streams = {}
-  for (const [userId, peer] of Object.entries(peers)) {
-    if (peer.stream) streams[userId] = peer.stream
-  }
-  return streams
+const isObservator = computed(() => {
+  if (props.isObservator) return true
+  return normalizeAccessLevel(props.accessLevel) === ACCESS_LEVEL.OBSERVATOR
 })
+const remoteStreams = shallowRef({})
 
 const screenShareFeeds = computed(() => {
   const feeds = []
@@ -982,84 +428,11 @@ const screenShareFeeds = computed(() => {
 
   return feeds
 })
-const callStarted = computed(
-  () =>
-    roomReady.value && (Object.keys(peers).length > 0 || !!localStream.value),
+const callStarted = computed(() =>
+  props.isModerator || isObservator.value
+    ? roomOpen.value
+    : roomReady.value && (roomOpen.value || Object.keys(peers).length > 0),
 )
-
-// Count of camera tiles currently visible (local + remotes)
-const cameraCount = computed(
-  () => (isObservator.value ? 0 : 1) + Object.keys(remoteStreams.value).length,
-)
-
-// Number of grid columns, so tiles resize based on participant count
-const cameraColumns = computed(() => {
-  const count = cameraCount.value
-  if (count <= 1) return 1
-  if (count <= 4) return 2
-  if (count <= 9) return 3
-  return 4
-})
-
-const gridStyleVars = computed(() => ({
-  '--grid-cols': cameraColumns.value,
-}))
-
-// Organize participants by role
-const participantsList = computed(() => {
-  const list = []
-
-  // Add self first
-  list.push({
-    id: props.user.id,
-    name: props.user.email?.split('@')[0] || 'You',
-    email: props.user.email,
-    isSelf: true,
-    role: isObservator.value
-      ? 'observator'
-      : props.isModerator
-        ? 'moderator'
-        : 'participant',
-    connected: true,
-    hasCamera: !isObservator.value && isCameraEnabled.value,
-    hasMicrophone: !isObservator.value && isMicrophoneEnabled.value,
-  })
-
-  // Add others from participants
-  Object.keys(participants.value).forEach((userId) => {
-    if (userId === props.user.id) return
-
-    const p = participants.value[userId]
-    const coop = props.test?.cooperators?.find((c) => c.userDocId === userId)
-
-    // Determine role
-    let role = 'participant'
-    if (coop) {
-      if (coop.accessLevel === ACCESS_LEVEL.OBSERVATOR) {
-        role = 'observator'
-      } else if (coop.accessLevel === ACCESS_LEVEL.ADMIN) {
-        role = 'moderator'
-      }
-    }
-
-    list.push({
-      id: userId,
-      name:
-        p.name ||
-        p.email?.split('@')[0] ||
-        coop?.email?.split('@')[0] ||
-        'Unknown',
-      email: p.email || coop?.email,
-      isSelf: false,
-      role: role,
-      connected: !!peers[userId],
-      hasCamera: role !== 'observator',
-      hasMicrophone: role !== 'observator',
-    })
-  })
-
-  return list
-})
 
 // Helper to get name
 const getPeerName = (userId) => {
@@ -1068,6 +441,27 @@ const getPeerName = (userId) => {
   // Fallback to finding in test cooperators
   const coop = props.test?.cooperators?.find((c) => c.userDocId === userId)
   return coop?.email || 'Participant'
+}
+
+function playVideo(event) {
+  const video = event.currentTarget
+  if (!video || !video.paused) return
+
+  video.play().catch(() => {})
+}
+
+function attachVideoElement(video, stream) {
+  if (!video || !stream) return
+  if (video.srcObject !== stream) {
+    video.srcObject = stream
+  }
+  if (video.paused) {
+    video.play().catch(() => {})
+  }
+}
+
+function bindTileVideoElement(video, tile) {
+  attachVideoElement(video, tile?.stream)
 }
 
 // Computed property for task dropdown items
@@ -1099,69 +493,97 @@ const currentStepperValue = computed(() => {
 // --- Initialization ---
 
 const roomReady = ref(false)
+const roomOpen = ref(false)
+const roomJoined = ref(false)
 
 // Watch for localVideo ref and ensure stream is attached
 watch([localVideo, localStream], ([videoEl, stream]) => {
-  if (videoEl && stream && !isObservator.value) {
+  if (videoEl && stream) {
     videoEl.srcObject = stream
   }
 })
 
 onMounted(async () => {
-  // Moderator gets media preview but doesn't join room yet
+  // Moderator preview should appear immediately in the lobby when the test starts.
   if (props.isModerator) {
-    // Do NOT initialize local media here  wait for startCall()
-  } else {
-    // Participants and observators wait for room to be opened by moderator
-    const showVideoCallRef = dbRef(
-      database,
-      `rooms/${props.roomId}/showVideoCall`,
-    )
-
-    // Check initial value first
-    const initialSnapshot = await get(showVideoCallRef)
-    const shouldShow = initialSnapshot.val()
-    if (shouldShow && !roomReady.value) {
-      roomReady.value = true
-      await joinRoom()
+    if (!localStream.value) {
+      await initLocalMedia()
     }
-
-    // Then listen for changes
-    onValue(showVideoCallRef, (snapshot) => {
-      const shouldShow = snapshot.val()
-      if (shouldShow) {
-        if (!roomReady.value) {
-          roomReady.value = true
-          joinRoom()
-        }
-      }
-    })
+    roomReady.value = true
+    await joinRoom()
+    return
   }
+
+  // Participants and observers both need their local preview available when the room is active.
+  if (!localStream.value) {
+    await initLocalMedia()
+  }
+
+  const showVideoCallRef = dbRef(
+    database,
+    `rooms/${props.roomId}/showVideoCall`,
+  )
+
+  // Check initial value first
+  const initialSnapshot = await get(showVideoCallRef)
+  const shouldShow = initialSnapshot.val()
+  roomOpen.value = Boolean(shouldShow)
+  if (props.isObservator && !roomReady.value) {
+    roomReady.value = true
+    await joinRoom()
+  } else if (shouldShow && !roomReady.value) {
+    roomReady.value = true
+    await joinRoom()
+  }
+
+  // Then listen for changes
+  onValue(showVideoCallRef, (snapshot) => {
+    const shouldShow = snapshot.val()
+    roomOpen.value = Boolean(shouldShow)
+    if (shouldShow) {
+      if (!roomReady.value) {
+        roomReady.value = true
+        joinRoom()
+      }
+    }
+  })
 })
 
 onBeforeUnmount(() => {
-  leaveRoom()
+  if (!isSessionEnded.value) {
+    leaveRoom()
+  }
 })
 
 // --- Signaling & Mesh Logic ---
 
 const joinRoom = async () => {
-  // 1. Get Local Media (if not observator and don't have it yet)
-  if (!isObservator.value && !localStream.value) {
+  if (roomJoined.value) return
+  roomJoined.value = true
+
+  // 1. Create the local preview for all users before the room opens; the board hides observer self-view once the call is active.
+  if (!localStream.value) {
     await initLocalMedia()
   }
-  // 2. Register self in participants list
-  const myRef = dbRef(
+  const isObserverMember = isObservator.value
+  const memberBranch =
+    props.isModerator || isObserverMember ? 'staff' : 'participants'
+  const myMemberRef = dbRef(
     database,
-    `calls/${props.roomId}/participants/${props.user.id}`,
+    `calls/${props.roomId}/${memberBranch}/${props.user.id}`,
   )
 
   // Restore media settings from DB if available (persistence)
-  const snapshot = await get(myRef)
+  const snapshot = await get(myMemberRef)
   const existingData = snapshot.val()
-  if (existingData && existingData.media) {
+  if (existingData?.media && !isObservator.value) {
     isCameraEnabled.value = existingData.media.cameraEnabled
     isMicrophoneEnabled.value = existingData.media.microphoneEnabled
+  }
+
+  if (isObservator.value) {
+    isCameraEnabled.value = true
+    isMicrophoneEnabled.value = true
   }
 
   // Enforce restored state on tracks
@@ -1173,27 +595,92 @@ const joinRoom = async () => {
     if (aTrack) aTrack.enabled = isMicrophoneEnabled.value
   }
 
-  await update(myRef, {
+  const presenceNow = Date.now()
+
+  const memberPayload = {
     email: props.user.email,
     name: props.user.email?.split('@')[0],
-    joinedAt: Date.now(),
+    role: props.isModerator
+      ? 'FACILITATOR'
+      : isObserverMember
+        ? 'OBSERVER'
+        : 'PARTICIPANT',
+    joinedAt: presenceNow,
     connected: true,
+    presenceStatus: 'connected',
+    presenceUpdatedAt: presenceNow,
     isModerator: props.isModerator,
     taskIndex: props.isModerator ? 0 : props.currentTaskIndex,
     media: {
       cameraEnabled: isCameraEnabled.value,
       microphoneEnabled: isMicrophoneEnabled.value,
     },
-  })
+  }
 
-  // Mark as disconnected on close tab, but do NOT remove (to persist media settings)
-  onDisconnect(myRef).update({ connected: false })
+  if (props.isModerator) {
+    await remove(
+      dbRef(database, `calls/${props.roomId}/participants/${props.user.id}`),
+    )
+    await update(myMemberRef, {
+      ...memberPayload,
+      role: 'FACILITATOR',
+      isModerator: true,
+    })
+  } else {
+    await update(myMemberRef, memberPayload)
+  }
 
-  // 3. Listen to participants to initiate connections
+  const mySignalsRef = dbRef(
+    database,
+    `calls/${props.roomId}/signals/${props.user.id}`,
+  )
+
+  if (props.isModerator) {
+    const callDisconnect = onDisconnect(
+      dbRef(database, `calls/${props.roomId}`),
+    )
+    callDisconnect.remove()
+    moderatorCallDisconnect = callDisconnect
+
+    const roomDisconnect = onDisconnect(
+      dbRef(database, `rooms/${props.roomId}`),
+    )
+    roomDisconnect.remove()
+    moderatorRoomDisconnect = roomDisconnect
+  }
+
+  // Remove stale per-user RTDB state if the browser tab closes unexpectedly.
+  const myDisconnect = onDisconnect(myMemberRef)
+  if (isObserverMember) {
+    myDisconnect.update({
+      connected: false,
+      presenceStatus: 'disconnected',
+      presenceUpdatedAt: Date.now(),
+      updatedAt: Date.now(),
+    })
+  } else {
+    myDisconnect.remove()
+  }
+  localPresenceDisconnect = myDisconnect
+
+  const signalsDisconnect = onDisconnect(mySignalsRef)
+  signalsDisconnect.remove()
+  localSignalsDisconnect = signalsDisconnect
+
+  // 3. Listen to staff and participants to initiate connections
   const participantsRef = dbRef(database, `calls/${props.roomId}/participants`)
-  onValue(participantsRef, (snapshot) => {
-    const val = snapshot.val() || {}
+  const staffRef = dbRef(database, `calls/${props.roomId}/staff`)
+  let participantMembers = {}
+  let staffMembers = {}
+
+  const syncMembers = () => {
+    debugParticipantMembers.value = participantMembers
+    debugStaffMembers.value = staffMembers
+    const val = { ...participantMembers, ...staffMembers }
     participants.value = val
+    const myMember = val[props.user.id]
+
+    if (!myMember) return
 
     // Check for new peers to connect to
     Object.keys(val).forEach((userId) => {
@@ -1206,24 +693,26 @@ const joinRoom = async () => {
         return
       }
 
+      // The newer member initiates. If timestamps are unavailable or equal,
+      // the user ID provides a stable tie-breaker.
+      const otherJoinedAt = Number(pData.joinedAt) || 0
+      const myJoinedAt = Number(myMember.joinedAt) || 0
+      const shouldInitiate =
+        myJoinedAt > otherJoinedAt ||
+        (myJoinedAt === otherJoinedAt && props.user.id > userId)
+
+      if (peers[userId] && peers[userId].isInitiator !== shouldInitiate) {
+        closePeerConnection(userId)
+      }
+
       if (!peers[userId]) {
-        // Found a peer we look not connected to.
-        // Rule: Initiator is the one with lexicographically smaller ID (or simply: if I am newer? No, consistent sort is better)
-        // Actually, simplest Mesh strategy:
-        // "I connect to everyone ALREADY in the room".
-        // When I join, I see existing users -> I offer.
-        // They see me -> They wait for offer.
-        // How to distinguish? 'joinedAt' timestamp.
-        const otherJoinedAt = pData.joinedAt
-        const myJoinedAt = val[props.user.id]?.joinedAt
-
-        // If I joined AFTER them, I initiate.
-        // If timestamps equal (rare), fall back to ID comparison.
-        const shouldInitiate =
-          myJoinedAt > otherJoinedAt ||
-          (myJoinedAt === otherJoinedAt && props.user.id > userId)
-
         createPeerConnection(userId, shouldInitiate)
+      } else if (
+        shouldInitiate &&
+        peers[userId].connection.signalingState === 'stable' &&
+        !peers[userId].connection.currentRemoteDescription
+      ) {
+        negotiatePeer(userId, peers[userId].connection, true)
       }
     })
 
@@ -1233,13 +722,18 @@ const joinRoom = async () => {
         closePeerConnection(userId)
       }
     })
+  }
+
+  onValue(participantsRef, (snapshot) => {
+    participantMembers = snapshot.val() || {}
+    syncMembers()
+  })
+  onValue(staffRef, (snapshot) => {
+    staffMembers = snapshot.val() || {}
+    syncMembers()
   })
 
   // 4. Listen for Signals (Offers/Answers/Candidates) targeted at ME
-  const mySignalsRef = dbRef(
-    database,
-    `calls/${props.roomId}/signals/${props.user.id}`,
-  )
   onChildAdded(mySignalsRef, async (snapshot) => {
     const signal = snapshot.val()
     // signal structure expected: { senderId: '...', ...payload } from my push logic?
@@ -1256,15 +750,27 @@ const joinRoom = async () => {
     }
     const pc = peers[senderId].connection
 
+    if (signal.type === 'screen-share-state') {
+      peers[senderId].screenShareExpected = signal.active === true
+      if (!peers[senderId].screenShareExpected) {
+        peers[senderId].screenStream = null
+      }
+      remove(snapshot.ref)
+      return
+    }
+
     if (signal.type === 'offer') {
       const desc = new RTCSessionDescription({ type: 'offer', sdp: signal.sdp })
       try {
+        if (pc.signalingState === 'have-local-offer') {
+          await pc.setLocalDescription({ type: 'rollback' })
+        }
         await pc.setRemoteDescription(desc)
         const answer = await pc.createAnswer()
         await pc.setLocalDescription(answer)
-        sendSignal(senderId, { type: 'answer', sdp: answer.sdp })
-      } catch {
-        // console.error('Error handling offer logic:', err)
+        await sendSignal(senderId, { type: 'answer', sdp: answer.sdp })
+      } catch (error) {
+        console.error('Error handling offer logic:', error)
       }
 
       // Process pending candidates
@@ -1319,21 +825,44 @@ const sendSignal = async (targetUserId, payload) => {
 // Let's restart the listener part logic.
 // See `joinRoom` function for corrected logic below (I will use child_added there).
 
-const leaveRoom = () => {
+const leaveRoom = async () => {
+  if (isSessionEnded.value) return
+
   // Stop media
   if (localStream.value) {
     localStream.value.getTracks().forEach((t) => t.stop())
   }
   // Close all connections
   Object.values(peers).forEach((p) => p.connection.close())
-  // Remove self (mark as disconnected)
-  const myRef = dbRef(
-    database,
-    `calls/${props.roomId}/participants/${props.user.id}`,
-  )
-  update(myRef, { connected: false })
 
-  remove(dbRef(database, `calls/${props.roomId}/signals/${props.user.id}`)) // Clean my inbox
+  const memberBranch =
+    props.isModerator || isObservator.value ? 'staff' : 'participants'
+  const myMemberRef = dbRef(
+    database,
+    `calls/${props.roomId}/${memberBranch}/${props.user.id}`,
+  )
+
+  if (props.isModerator) {
+    await remove(
+      dbRef(database, `calls/${props.roomId}/participants/${props.user.id}`),
+    )
+  }
+
+  if (isObservator.value) {
+    await update(myMemberRef, {
+      connected: false,
+      presenceStatus: 'disconnected',
+      presenceUpdatedAt: Date.now(),
+      updatedAt: Date.now(),
+      role: 'OBSERVER',
+    })
+  } else {
+    await remove(myMemberRef)
+  }
+
+  await remove(
+    dbRef(database, `calls/${props.roomId}/signals/${props.user.id}`),
+  ) // Clean my inbox
 }
 
 const initLocalMedia = async () => {
@@ -1365,17 +894,19 @@ const createPeerConnection = (targetUserId, isInitiator) => {
     screenStream: null,
     screenSender: null,
     pendingCandidates: [],
+    screenShareExpected: false,
+    needsNegotiation: false,
+    isInitiator,
   }
 
-  // Add local tracks ONLY if not an observator
-  // Observators receive-only to save bandwidth
-  if (!isObservator.value && localStream.value) {
+  // Publish local media so staff members can see each other.
+  if (localStream.value) {
     localStream.value.getTracks().forEach((track) => {
       pc.addTrack(track, localStream.value)
     })
   }
 
-  if (!isObservator.value && screenStream.value) {
+  if (screenStream.value) {
     const screenTrack = screenStream.value.getVideoTracks()[0]
     if (screenTrack) {
       peers[targetUserId].screenSender = pc.addTrack(
@@ -1385,21 +916,31 @@ const createPeerConnection = (targetUserId, isInitiator) => {
     }
   }
 
-  // If observator, set up receive-only transceivers
-  if (isObservator.value) {
-    pc.addTransceiver('video', { direction: 'recvonly' })
-    pc.addTransceiver('audio', { direction: 'recvonly' })
-  }
-
   pc.ontrack = (event) => {
     const track = event.track
     const peer = peers[targetUserId]
     if (!peer || !track) return
 
+    const publishRemoteStream = () => {
+      if (!peer.stream) return
+      remoteStreams.value = {
+        ...remoteStreams.value,
+        [targetUserId]: peer.stream,
+      }
+      remoteStreamVersion.value += 1
+    }
+
+    track.onunmute = publishRemoteStream
+
     if (track.kind === 'video') {
+      const cameraTrackCount = peer.stream?.getVideoTracks().length ?? 0
+      const isExistingCameraTrack = peer.stream
+        ?.getTracks()
+        .some((existingTrack) => existingTrack.id === track.id)
       const isScreenTrack =
-        /screen|window|monitor|display/i.test(track.label) ||
-        (peer.stream?.getVideoTracks().length ?? 0) > 0
+        /screen|window|monitor|display/i.test(track.label || '') ||
+        peer.screenShareExpected === true ||
+        (cameraTrackCount > 0 && !isExistingCameraTrack)
 
       if (isScreenTrack) {
         if (!peer.screenStream) {
@@ -1413,25 +954,27 @@ const createPeerConnection = (targetUserId, isInitiator) => {
       }
 
       if (!peer.stream) {
-        peer.stream = event.streams?.[0] || new MediaStream()
+        peer.stream = markRaw(event.streams?.[0] || new MediaStream())
       }
       if (
         !peer.stream.getTracks().some((existing) => existing.id === track.id)
       ) {
         peer.stream.addTrack(track)
       }
+      publishRemoteStream()
       return
     }
 
     if (track.kind === 'audio') {
       if (!peer.stream) {
-        peer.stream = event.streams?.[0] || new MediaStream()
+        peer.stream = markRaw(event.streams?.[0] || new MediaStream())
       }
       if (
         !peer.stream.getTracks().some((existing) => existing.id === track.id)
       ) {
         peer.stream.addTrack(track)
       }
+      publishRemoteStream()
     }
   }
 
@@ -1442,29 +985,23 @@ const createPeerConnection = (targetUserId, isInitiator) => {
   }
 
   if (isInitiator) {
-    pc.onnegotiationneeded = async () => {
-      try {
-        const offer = await pc.createOffer()
-        await pc.setLocalDescription(offer)
-        sendSignal(targetUserId, { type: 'offer', sdp: offer.sdp })
-      } catch {
-        // Error on negotiation
-      }
-    }
+    pc.onnegotiationneeded = () => negotiatePeer(targetUserId, pc, true)
 
     // Manually trigger offer creation for initiator
     // negotiationneeded might not fire immediately
     setTimeout(async () => {
       if (pc.signalingState === 'stable' && !pc.currentRemoteDescription) {
-        try {
-          const offer = await pc.createOffer()
-          await pc.setLocalDescription(offer)
-          sendSignal(targetUserId, { type: 'offer', sdp: offer.sdp })
-        } catch {
-          // Error creating initial offer
-        }
+        await negotiatePeer(targetUserId, pc, true)
       }
     }, 100)
+  }
+
+  if (!isInitiator) {
+    pc.onnegotiationneeded = () => {
+      if (!peers[targetUserId].needsNegotiation) return
+      peers[targetUserId].needsNegotiation = false
+      negotiatePeer(targetUserId, pc, false)
+    }
   }
 
   // Listen for specific signals from this sender?
@@ -1476,6 +1013,12 @@ const closePeerConnection = (userId) => {
     peers[userId].connection.close()
     delete peers[userId]
   }
+  if (remoteStreams.value[userId]) {
+    const nextStreams = { ...remoteStreams.value }
+    delete nextStreams[userId]
+    remoteStreams.value = nextStreams
+  }
+  remoteStreamVersion.value += 1
 }
 
 // --- UI Methods ---
@@ -1524,9 +1067,10 @@ function toggleMicrophone() {
 async function updateParticipantStatus() {
   if (!props.user?.id || !props.roomId) return
   try {
+    const memberBranch = isObservator.value ? 'staff' : 'participants'
     const participantRef = dbRef(
       database,
-      `calls/${props.roomId}/participants/${props.user.id}`,
+      `calls/${props.roomId}/${memberBranch}/${props.user.id}`,
     )
     await update(participantRef, {
       media: {
@@ -1553,61 +1097,194 @@ function isRemoteMicrophoneEnabled(userId) {
   return p?.microphoneEnabled !== false
 }
 
-// Unified list of tiles (local camera, remote cameras and screen shares)
-const tiles = computed(() => {
-  const list = []
+const remoteEntries = computed(() => {
+  remoteStreamVersion.value
 
-  if (!isObservator.value) {
-    list.push({
-      id: 'local-camera',
-      type: 'camera',
-      kind: 'local',
-      label: `${t('videoCall.session.yourVideo')} (${
-        props.user?.email?.split('@')[0] ?? ''
-      })`,
+  return Object.keys(peers)
+    .filter((userId) => {
+      const peer = peers[userId]
+      if (!peer?.stream?.getVideoTracks().length) return false
+      return true
+    })
+    .map((userId) => {
+      const peer = peers[userId]
+      return {
+        id: userId,
+        userId,
+        name: getPeerName(userId),
+        email: participants.value[userId]?.email || undefined,
+        role: participants.value[userId]?.role || 'participant',
+        connected: !!peer,
+        hasCamera: isRemoteCameraEnabled(userId),
+        hasMicrophone: isRemoteMicrophoneEnabled(userId),
+        stream: peer.stream,
+      }
+    })
+})
+
+const buildRemoteTile = (remote) => ({
+  id: `camera:${remote.userId}`,
+  type: 'camera',
+  kind: 'remote',
+  userId: remote.userId,
+  label: remote.name,
+  hasCamera: remote.hasCamera,
+  hasMicrophone: remote.hasMicrophone,
+  muted: false,
+  stream: remote.stream,
+})
+
+const buildParticipantItem = (remote, isSelf) => {
+  if (isSelf) {
+    return {
+      id: props.user.id,
+      name: props.user.email?.split('@')[0] || 'You',
+      email: props.user.email,
+      isSelf: true,
+      role: isObservator.value
+        ? 'observator'
+        : props.isModerator
+          ? 'moderator'
+          : 'participant',
+      connected: true,
       hasCamera: isCameraEnabled.value,
       hasMicrophone: isMicrophoneEnabled.value,
-      muted: true,
-      stream: localStream.value,
+    }
+  }
+
+  const coop = props.test?.cooperators?.find(
+    (c) => c.userDocId === remote.userId,
+  )
+  let role = 'participant'
+  if (coop) {
+    if (coop.accessLevel === ACCESS_LEVEL.OBSERVATOR) {
+      role = 'observator'
+    } else if (coop.accessLevel === ACCESS_LEVEL.ADMIN) {
+      role = 'moderator'
+    }
+  }
+
+  return {
+    id: remote.userId,
+    name:
+      participants.value[remote.userId]?.name ||
+      participants.value[remote.userId]?.email?.split('@')[0] ||
+      coop?.email?.split('@')[0] ||
+      'Unknown',
+    email: participants.value[remote.userId]?.email || coop?.email,
+    isSelf: false,
+    role,
+    connected: !!peers[remote.userId],
+    hasCamera: participants.value[remote.userId]?.media?.cameraEnabled ?? true,
+    hasMicrophone:
+      participants.value[remote.userId]?.media?.microphoneEnabled ?? true,
+  }
+}
+
+const staffParticipants = computed(() => {
+  const staffEntries = Array.isArray(props.sessionStaff)
+    ? props.sessionStaff
+    : props.test?.cooperators || []
+
+  return staffEntries
+    .map((member) => normalizeSessionMember(member, 'staff'))
+    .filter(Boolean)
+    .map((member) => ({
+      ...member,
+      hasCamera: member.hasCamera ?? true,
+      hasMicrophone: member.hasMicrophone ?? true,
+      accessLevel: member.accessLevel ?? member.role,
+    }))
+})
+
+const normalizeMemberKeys = (member) => {
+  if (!member) return []
+
+  const rawValues = [
+    member.userDocId,
+    member.id,
+    member.email,
+    member.name,
+    member.displayName,
+  ]
+  const normalized = new Set()
+
+  rawValues.forEach((value) => {
+    if (value == null || !String(value).trim()) return
+
+    const str = String(value).trim().toLowerCase()
+    normalized.add(str)
+    normalized.add(str.replace(/[^a-z0-9]/g, ''))
+
+    const localPart = str.includes('@') ? str.split('@')[0] : str
+    if (localPart) {
+      normalized.add(localPart)
+      normalized.add(localPart.replace(/[^a-z0-9]/g, ''))
+    }
+  })
+
+  return [...normalized]
+}
+
+const panelParticipantList = computed(() => {
+  const dedupedList = []
+  const seen = new Set()
+
+  for (const member of Array.isArray(props.sessionParticipants)
+    ? props.sessionParticipants
+    : []) {
+    if (!member) continue
+
+    const normalized = normalizeSessionMember(member, 'participant')
+    if (!normalized) continue
+
+    const memberId = normalized.userDocId || normalized.id || normalized.email
+    if (!memberId) continue
+
+    const memberKey = String(memberId).trim().toLowerCase()
+    if (!memberKey || seen.has(memberKey)) continue
+
+    seen.add(memberKey)
+    dedupedList.push({
+      ...normalized,
+      isSelf:
+        (normalized.userDocId || normalized.id || normalized.email) ===
+        (props.user?.id || props.user?.email),
+      hasCamera: normalized.hasCamera ?? true,
+      hasMicrophone: normalized.hasMicrophone ?? true,
     })
   }
 
-  Object.keys(remoteStreams.value).forEach((userId) => {
-    list.push({
-      id: `camera:${userId}`,
-      type: 'camera',
-      kind: 'remote',
-      userId,
-      label: getPeerName(userId),
-      hasCamera: isRemoteCameraEnabled(userId),
-      hasMicrophone: isRemoteMicrophoneEnabled(userId),
-      muted: false,
-      stream: remoteStreams.value[userId],
-    })
-  })
-
-  screenShareFeeds.value.forEach((feed) => {
-    list.push({
-      id: `screen:${feed.key}`,
-      type: 'screen',
-      label: feed.label,
-      muted: feed.key === 'local-screen',
-      stream: feed.stream,
-    })
-  })
-
-  return list
+  return dedupedList
 })
 
-const { focusedTile, otherTiles, isFocusMode, focusTile, clearFocus } =
-  useVideoFocus(tiles)
-
-const showWaitingMessage = computed(
-  () =>
-    !isFocusMode.value &&
-    Object.keys(remoteStreams.value).length === 0 &&
-    screenShareFeeds.value.length === 0,
-)
+const {
+  tiles,
+  focusedTile,
+  otherTiles,
+  isFocusMode,
+  showWaitingMessage,
+  gridStyleVars,
+  participantsList,
+} = useVideoCallBoard({
+  t,
+  isObservator,
+  callStarted,
+  isCameraEnabled,
+  isMicrophoneEnabled,
+  user: computed(() => ({
+    ...props.user,
+    accessLevel:
+      props.accessLevel ?? (props.isModerator ? ACCESS_LEVEL.ADMIN : 0),
+    isModerator: props.isModerator,
+  })),
+  localStream,
+  remoteEntries,
+  screenShareFeeds,
+  staffParticipants,
+  buildRemoteTile,
+  buildParticipantItem,
+})
 
 function toggleSidePanel() {
   showSidePanel.value = !showSidePanel.value
@@ -1617,6 +1294,11 @@ function toggleSidePanel() {
 function toggleStepperPanel() {
   showStepperPanel.value = !showStepperPanel.value
   if (showStepperPanel.value) showSidePanel.value = false
+}
+
+function closePanels() {
+  showSidePanel.value = false
+  showStepperPanel.value = false
 }
 
 // Navigation Maps
@@ -1675,6 +1357,7 @@ const startCall = async () => {
     if (!localStream.value) {
       await initLocalMedia()
     }
+    roomOpen.value = true
     // Set flag first so others can join
     await update(dbRef(database, `rooms/${props.roomId}`), {
       showVideoCall: true,
@@ -1688,24 +1371,89 @@ const startCall = async () => {
 }
 const router = useRouter() // Ensure router is available
 
+const leaveCall = async () => {
+  roomOpen.value = false
+
+  if (localStream.value) {
+    localStream.value.getTracks().forEach((track) => track.stop())
+    localStream.value = null
+  }
+
+  if (screenStream.value) {
+    screenStream.value.getTracks().forEach((track) => track.stop())
+    screenStream.value = null
+  }
+
+  if (localPresenceDisconnect) {
+    await localPresenceDisconnect.cancel()
+    localPresenceDisconnect = null
+  }
+  if (localSignalsDisconnect) {
+    await localSignalsDisconnect.cancel()
+    localSignalsDisconnect = null
+  }
+  if (moderatorCallDisconnect) {
+    await moderatorCallDisconnect.cancel()
+    moderatorCallDisconnect = null
+  }
+  if (moderatorRoomDisconnect) {
+    await moderatorRoomDisconnect.cancel()
+    moderatorRoomDisconnect = null
+  }
+
+  await leaveRoom()
+  isSessionEnded.value = true
+  router.push('/admin')
+}
+
 const endCall = async () => {
+  isSessionEnded.value = true
+  roomOpen.value = false
+
+  if (localStream.value) {
+    localStream.value.getTracks().forEach((track) => track.stop())
+    localStream.value = null
+  }
+
+  if (screenStream.value) {
+    screenStream.value.getTracks().forEach((track) => track.stop())
+    screenStream.value = null
+  }
+
+  if (localPresenceDisconnect) {
+    await localPresenceDisconnect.cancel()
+    localPresenceDisconnect = null
+  }
+  if (localSignalsDisconnect) {
+    await localSignalsDisconnect.cancel()
+    localSignalsDisconnect = null
+  }
+  if (moderatorCallDisconnect) {
+    await moderatorCallDisconnect.cancel()
+    moderatorCallDisconnect = null
+  }
+  if (moderatorRoomDisconnect) {
+    await moderatorRoomDisconnect.cancel()
+    moderatorRoomDisconnect = null
+  }
+
   if (caller.value) {
     try {
-      // Remove both the call interactions and the room state
+      // Remove the session data first. Calling leaveRoom() afterwards would write
+      // disconnected values back into the deleted call tree and re-create it.
       await remove(dbRef(database, `calls/${props.roomId}`))
-      // Also remove the room to clean up global state (taskIndex, etc.)
       await remove(dbRef(database, `rooms/${props.roomId}`))
     } catch (error) {
       console.error('Error ending call:', error) // eslint-disable-line no-console
     }
     emit('call-ended')
-    leaveRoom()
     router.push('/admin')
-  } else {
-    // Non-moderator: can just leave locally
-    leaveRoom()
-    router.push('/admin')
+    return
   }
+
+  // Non-moderator: can just leave locally
+  leaveRoom()
+  router.push('/admin')
 }
 
 // Screen Sharing (Mesh Compatible)
@@ -1736,7 +1484,10 @@ async function startScreenShare() {
     for (const userId in peers) {
       const peer = peers[userId]
       if (!peer?.connection || !videoTrack) continue
+      peer.needsNegotiation = true
       peer.screenSender = peer.connection.addTrack(videoTrack, stream)
+      peer.screenShareExpected = true
+      await sendSignal(userId, { type: 'screen-share-state', active: true })
     }
   } catch {
     isSharingScreen.value = false
@@ -1755,11 +1506,30 @@ async function stopScreenShare() {
     if (!peer?.connection) continue
 
     if (peer.screenSender) {
+      peer.needsNegotiation = true
       peer.connection.removeTrack(peer.screenSender)
       peer.screenSender = null
+      peer.screenShareExpected = false
+      await sendSignal(userId, { type: 'screen-share-state', active: false })
     }
 
     peer.screenStream = null
+  }
+}
+
+async function negotiatePeer(userId, connection, isInitialOffer) {
+  if (connection.signalingState !== 'stable') return
+
+  try {
+    const offer = await connection.createOffer()
+    await connection.setLocalDescription(offer)
+    await sendSignal(userId, {
+      type: 'offer',
+      sdp: offer.sdp,
+      isInitialOffer,
+    })
+  } catch (error) {
+    console.error('Error renegotiating screen share:', error) // eslint-disable-line no-console
   }
 }
 

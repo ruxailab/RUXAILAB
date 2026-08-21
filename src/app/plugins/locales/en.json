@@ -620,7 +620,33 @@
     "failedToLoadAnswers": "Failed to load answers. Please try again.",
     "failedToUpdateAnswer": "Failed to update answer. Please try again.",
     "failedToRemoveCooperator": "Failed to remove cooperator. Please try again.",
-    "failedToSaveAnswerCooperator": "Failed to save cooperator answer"
+    "failedToSaveAnswerCooperator": "Failed to save cooperator answer",
+    "screenShare": {
+      "unsupported": "Screen sharing is not available in this browser. Please use an updated Chrome, Edge, or Firefox on a computer.",
+      "cancelled": "Screen sharing was cancelled. Please share your entire screen to continue.",
+      "wrongSurface": "You shared a browser tab. Please share your entire screen so we can see the tool you will use.",
+      "error": "We could not start screen recording. Please try again."
+    }
+  },
+  "screenShare": {
+    "howTo": "How to share your screen",
+    "lead": "When the browser window appears, choose Entire screen. Sharing only a tab often records the wrong page.",
+    "step1": "Click Share screen. Your browser will open a sharing window.",
+    "step2": "Select Entire screen — not a tab or a single window.",
+    "step3": "Click Share to continue. Keep sharing until you finish the task.",
+    "dontShareTab": "Do not share a browser tab. This task opens another page, and that tab would not be recorded.",
+    "macHint": "On Mac, if nothing appears, allow Screen Recording for your browser in System Settings → Privacy & Security.",
+    "shareButton": "Share screen",
+    "backButton": "Back",
+    "pickerTitle": "Choose what to share",
+    "pickerTab": "Browser tab",
+    "pickerWindow": "Window",
+    "pickerEntireScreen": "Entire screen",
+    "pickerShare": "Share",
+    "pickerCancel": "Cancel",
+    "demoDontPick": "Not this",
+    "demoChooseThis": "Choose this",
+    "demoAlt": "Animation showing how to choose Entire screen in the browser sharing dialog."
   },
   "Introduction": {
     "title": "UX Remote LAB",
@@ -1446,6 +1472,10 @@
       "sart": "Situation Awareness Rating Technique - measures situational awareness"
     },
     "answerTypePreview": {
+      "textArea": {
+        "placeholder": "Participants will provide their feedback here...",
+        "submitButton": "Submit Feedback"
+      },
       "postTest": {
         "title": "Post Test Feedback",
         "q1": "Rate your experience",
@@ -1618,7 +1648,7 @@
       "preview": "Recording information",
       "recordingInfo": "This task will record the following data during your interaction:",
       "screenRecord": "Screen Record",
-      "screenRecordDesc": "Captures clicks, scrolling, and interactions to analyze user behavior.",
+      "screenRecordDesc": "Records how you use the tool. You will need to share your entire screen.",
       "camera": "Camera",
       "cameraDesc": "Records facial expressions and reactions to understand user emotions.",
       "audioRecord": "Audio Record",
@@ -1731,6 +1761,7 @@
       "observeAllFeedsNotice": "You will be able to observe all video feeds without sending your own.",
       "waitingForParticipants": "Waiting for participants...",
       "waitingForModerator": "Waiting for moderator...",
+      "moderatorWillAdmitParticipant": "The moderator will let you enter the session soon.",
       "autoStartWhenModeratorOpensRoom": "The video call will start automatically when the moderator opens the room.",
       "cameraDevice": "camera",
       "microphoneDevice": "microphone",
@@ -2289,6 +2320,7 @@
       "observeAllFeedsNotice": "You will be able to observe all video feeds without sending your own.",
       "waitingForParticipants": "Waiting for participants...",
       "waitingForModerator": "Waiting for moderator...",
+      "moderatorWillAdmitParticipant": "The moderator will let you enter the session soon.",
       "autoStartWhenModeratorOpensRoom": "The video call will start automatically when the moderator opens the room.",
       "cameraDevice": "camera",
       "microphoneDevice": "microphone",

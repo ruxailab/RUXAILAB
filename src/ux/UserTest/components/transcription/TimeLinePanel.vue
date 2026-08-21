@@ -16,7 +16,7 @@
     <!---------------------------------------------------------->
     <!------------------- Media Players ------------------------>
     <!---------------------------------------------------------->
-    <div>
+    <div v-if="showMediaPlayers">
       <div v-if="audioUrlEvaluator">
         <h4>🎧 Evaluator Audio</h4>
         <audio :src="audioUrlEvaluator" controls style="width: 100%" />
@@ -75,22 +75,22 @@
     <!--------------------- Transcription ---------------------->
     <!---------------------------------------------------------->
 
-    <!-- Runs list -->
-    <TranscriptionList
-      v-if="transcriptSegments.length"
-      :transcript-segments="transcriptSegments"
-    />
+    <template v-if="showInlineResult">
+      <TranscriptionList
+        v-if="transcriptSegments.length"
+        :transcript-segments="transcriptSegments"
+      />
 
-    <!-- Empty state -->
-    <v-alert
-      v-else
-      type="info"
-      variant="tonal"
-      density="comfortable"
-      class="mb-4"
-    >
-      No transcriptions yet for this task.
-    </v-alert>
+      <v-alert
+        v-else
+        type="info"
+        variant="tonal"
+        density="comfortable"
+        class="mb-4"
+      >
+        No transcriptions yet for this task.
+      </v-alert>
+    </template>
   </div>
 
   <v-snackbar
@@ -120,7 +120,11 @@ const props = defineProps({
   taskId: { type: [String, Number], required: true },
   audioUrlEvaluator: { type: String, default: null },
   audioUrlModerator: { type: String, default: null },
+  showMediaPlayers: { type: Boolean, default: true },
+  showInlineResult: { type: Boolean, default: true },
 })
+
+const emit = defineEmits(['saved'])
 
 const isTranscribing = ref(false)
 const transcriptSegments = ref([])
@@ -154,6 +158,14 @@ const answerController = new AnswerController()
 
 async function transcribeSession() {
   if (!props.audioUrlEvaluator && !props.audioUrlModerator) {
+    return
+  }
+  if (!props.answersDocId || !props.userDocId || props.taskId == null) {
+    snackbar.value = {
+      visible: true,
+      text: 'Missing session identifiers to save the transcription.',
+      color: 'red',
+    }
     return
   }
   isTranscribing.value = true
@@ -198,7 +210,7 @@ async function transcribeSession() {
     const result = await transcriptionController.create({
       answersDocId: props.answersDocId,
       userDocId: props.userDocId,
-      taskId: props.taskId,
+      taskId: String(props.taskId),
       provider,
       model,
       evaluator: {
@@ -225,7 +237,7 @@ async function transcribeSession() {
     await answerController.updateTaskTranscriptionMeta({
       answersDocId: props.answersDocId,
       userDocId: props.userDocId,
-      taskId: props.taskId,
+      taskId: String(props.taskId),
       latestId: result.id,
       inc: 1,
     })
@@ -236,7 +248,7 @@ async function transcribeSession() {
       color: 'green',
     }
 
-    // TODO: Add Snackbar or notification to inform user of success
+    emit('saved', result)
   } catch {
     snackbar.value = {
       visible: true,
@@ -269,7 +281,7 @@ async function transcribeAudio(provider, model, audioUrl, role) {
 
     return { language: data.language, segments, transcript: data.transcript }
   } catch {
-    return emptyTranscriptionResult()
+    return { language: null, segments: [], transcript: '' }
   }
 }
 
