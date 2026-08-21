@@ -1,4 +1,3 @@
-import { fail } from '../../../core/errors.js'
 import { computeTranscriptMetrics } from './computeTranscriptMetrics.js'
 import { extractKeywords } from './extractKeywords.js'
 import {
