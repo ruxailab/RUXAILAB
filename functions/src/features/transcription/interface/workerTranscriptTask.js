@@ -11,7 +11,9 @@ import {
   FirestoreStudyRepository,
 } from '../../../shared/repositories/index.js'
 import { FirestoreTranscriptionRepository } from '../repositories/FirestoreTranscriptionRepository.js'
+import { FirestoreTranscriptionAnalyticsRepository } from '../repositories/FirestoreTranscriptionAnalyticsRepository.js'
 import { TranscribeTaskService } from '../service/TranscribeTaskService.js'
+import { UpsertTranscriptionAnalyticsService } from '../service/UpsertTranscriptionAnalyticsService.js'
 import { workerTranscriptTaskValidator } from '../validators/workerTranscriptTaskValidator.js'
 
 /**
@@ -29,18 +31,25 @@ export const workerTranscriptTask = functions.onCall({
   ],
   handler: async (request) => {
     const db = admin.firestore()
+    const FieldValue = admin.firestore.FieldValue
+    const input = request.data || {}
+
     const service = new TranscribeTaskService({
       userRepository: new FirestoreUserRepository(db),
       answerRepository: new FirestoreAnswerRepository(db),
       studyRepository: new FirestoreStudyRepository(db),
       transcriptionRepository: new FirestoreTranscriptionRepository(db),
-      FieldValue: admin.firestore.FieldValue,
+      FieldValue,
       transcriptionApiBaseUrl: process.env.TRANSCRIPTION_API_BASE_URL,
     })
 
-    return service.execute({
-      uid: request.auth.uid,
-      input: request.data || {},
+    const analyticsService = new UpsertTranscriptionAnalyticsService({
+      analyticsRepository: new FirestoreTranscriptionAnalyticsRepository(db, input.answersDocId),
+      FieldValue,
     })
+
+    const saved = await service.execute({ uid: request.auth.uid, input })
+    await analyticsService.execute({ transcription: saved })
+    return saved
   },
 })

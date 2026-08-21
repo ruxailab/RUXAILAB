@@ -8,8 +8,20 @@ const mockTranscriptionAdd = jest.fn()
 const mockTranscriptionGet = jest.fn()
 const mockTranscriptionSet = jest.fn()
 const mockTestsWhereGet = jest.fn()
+const mockAnalyticsGet = jest.fn()
+const mockAnalyticsSet = jest.fn()
 
 const mockDb = {
+  doc: jest.fn((documentPath) => {
+    if (/^answers\/[^/]+\/analytics\/[^/]+$/.test(documentPath)) {
+      return {
+        get: mockAnalyticsGet,
+        set: mockAnalyticsSet,
+        delete: jest.fn(),
+      }
+    }
+    throw new Error(`Unexpected doc path: ${documentPath}`)
+  }),
   collection: jest.fn((collectionName) => {
     if (collectionName === 'answers') {
       return {
@@ -139,6 +151,8 @@ describe('workerTranscriptTask', () => {
     )
     mockTranscriptionAdd.mockResolvedValue({ id: 'tr-1' })
     mockAnswerUpdate.mockResolvedValue(undefined)
+    mockAnalyticsGet.mockResolvedValue(snap(false, null))
+    mockAnalyticsSet.mockResolvedValue(undefined)
 
     global.fetch = jest.fn(async (_url, options) => {
       const body = JSON.parse(options.body)
@@ -204,6 +218,26 @@ describe('workerTranscriptTask', () => {
     expect(mockAnswerUpdate).toHaveBeenCalledWith({
       'taskAnswers.evaluator-1.tasks.0.transcriptionDocId': 'tr-1',
     })
+    expect(mockAnalyticsSet).toHaveBeenCalledWith(
+      expect.objectContaining({
+        general: expect.objectContaining({
+          wordsSpoken: expect.any(Number),
+          speakingTime: 2,
+          sessionDuration: 1,
+        }),
+        tasks: {
+          task0: expect.objectContaining({
+            transcriptionDocId: 'tr-1',
+            userDocId: 'evaluator-1',
+            speakingTime: 2,
+            sessionDuration: 1,
+            keywords: [],
+          }),
+        },
+        updatedAt: 'mock-server-timestamp',
+      }),
+      { merge: true },
+    )
     expect(result).toMatchObject({
       id: 'tr-1',
       provider: 'whisper',
@@ -276,6 +310,16 @@ describe('workerTranscriptTask', () => {
       { merge: true },
     )
     expect(mockAnswerUpdate).not.toHaveBeenCalled()
+    expect(mockAnalyticsSet).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tasks: {
+          task0: expect.objectContaining({
+            transcriptionDocId: 'tr-existing',
+          }),
+        },
+      }),
+      { merge: true },
+    )
     expect(result).toMatchObject({
       id: 'tr-existing',
       provider: 'whisper',
@@ -318,7 +362,71 @@ describe('workerTranscriptTask', () => {
     expect(mockAnswerUpdate).toHaveBeenCalledWith({
       'taskAnswers.evaluator-1.tasks.0.transcriptionDocId': 'tr-2',
     })
+    expect(mockAnalyticsSet).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tasks: {
+          task0: expect.objectContaining({
+            transcriptionDocId: 'tr-2',
+          }),
+        },
+      }),
+      { merge: true },
+    )
     expect(result).toMatchObject({ id: 'tr-2' })
+  })
+
+  it('merges analytics when another task already exists', async () => {
+    mockAnalyticsGet.mockResolvedValue(
+      snap(true, {
+        general: {
+          sessionDuration: 5,
+          wordsSpoken: 10,
+          speakingTime: 4,
+          speechRate: 150,
+          keywords: [],
+        },
+        tasks: {
+          task1: {
+            transcriptionDocId: 'tr-old',
+            userDocId: 'evaluator-1',
+            sessionDuration: 5,
+            wordsSpoken: 10,
+            speakingTime: 4,
+            speechRate: 150,
+            keywords: [],
+          },
+        },
+      }),
+    )
+
+    await workerTranscriptTask(
+      request('owner', {
+        answersDocId: 'answer-1',
+        userDocId: 'evaluator-1',
+        taskId: '0',
+        provider: 'whisper',
+        studyId: 'study-1',
+      }),
+    )
+
+    expect(mockAnalyticsSet).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tasks: expect.objectContaining({
+          task0: expect.objectContaining({
+            transcriptionDocId: 'tr-1',
+          }),
+          task1: expect.objectContaining({
+            transcriptionDocId: 'tr-old',
+          }),
+        }),
+        general: expect.objectContaining({
+          sessionDuration: 6,
+          speakingTime: 6,
+          wordsSpoken: expect.any(Number),
+        }),
+      }),
+      { merge: true },
+    )
   })
 
   it('rejects invalid provider', async () => {

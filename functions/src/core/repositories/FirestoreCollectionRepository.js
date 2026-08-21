@@ -1,21 +1,7 @@
-/**
- * @template T
- * @param {object} data
- * @param {string} id
- * @returns {{ id: string } & object}
- */
-const identityFromFirestore = (data, id) => ({ id, ...data })
-
-/**
- * @template T
- * @param {T} item
- * @returns {object}
- */
-const identityToFirestore = (item) => {
-  if (item == null || typeof item !== 'object') return item
-  const { id: _id, ...rest } = item
-  return rest
-}
+import {
+  identityFromFirestore,
+  identityToFirestore,
+} from './firestoreMappers.js'
 
 /**
  * Thin Firestore collection CRUD used by shared and feature repositories.
@@ -31,9 +17,6 @@ export class FirestoreCollectionRepository {
    * @param {(item: T) => object} [toFirestore]
    */
   constructor(collectionName, db, fromFirestore, toFirestore) {
-    if (!db) {
-      throw new Error('Firestore db instance is required')
-    }
     this.db = db
     this.collectionRef = db.collection(collectionName)
     this.fromFirestore = fromFirestore || identityFromFirestore

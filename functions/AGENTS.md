@@ -51,7 +51,6 @@ features/<feature>/
 4. **Do not** mix feature A with deep internal imports from feature B; share via `shared/` (domain) or `core/` (infra).
 5. **Do not** create “god files” (huge handlers with validation + auth + Firestore + business rules).
 6. **Do not** invent a parallel structure (`controllers/`, `usecases/`, etc.) — use the pattern above.
-7. **Do not** expand legacy `src/helpers/` or `src/repositories/` with new feature code; create/extend under `features/` or `shared/`.
 8. Entrypoints in `src/https/index.js` (or `functions/index.js`) must only **re-export** the feature; implementation lives in `features/<feature>/interface/`.
 
 ## Callable entrypoint pattern
