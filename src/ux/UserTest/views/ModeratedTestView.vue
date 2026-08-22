@@ -753,23 +753,35 @@ const normalizeSessionMember = (member, fallbackType = 'participant') => {
 const callState = ref({ staff: {}, participants: {} })
 
 const sessionStaffMembers = computed(() => {
-  const staffSource =
-    Object.keys(callState.value.staff || {}).length > 0
-      ? Object.values(callState.value.staff || {})
-      : session.value?.staff || []
+  const staffMembers = [
+    ...(session.value?.staff || []),
+    ...Object.values(callState.value.staff || {}),
+  ]
+  const staffById = new Map()
 
-  return staffSource
+  staffMembers.forEach((member) => {
+    const memberId = member?.userDocId || member?.id || member?.email
+    if (memberId) staffById.set(memberId, member)
+  })
+
+  return [...staffById.values()]
     .map((member) => normalizeSessionMember(member, 'staff'))
     .filter(Boolean)
 })
 
 const sessionParticipantsMembers = computed(() => {
-  const participantsSource =
-    Object.keys(callState.value.participants || {}).length > 0
-      ? Object.values(callState.value.participants || {})
-      : session.value?.participants || []
+  const participantMembers = [
+    ...(session.value?.participants || []),
+    ...Object.values(callState.value.participants || {}),
+  ]
+  const participantsById = new Map()
 
-  return participantsSource
+  participantMembers.forEach((member) => {
+    const memberId = member?.userDocId || member?.id || member?.email
+    if (memberId) participantsById.set(memberId, member)
+  })
+
+  return [...participantsById.values()]
     .map((member) => normalizeSessionMember(member, 'participant'))
     .filter(Boolean)
 })
@@ -1425,7 +1437,12 @@ const startTest = async () => {
           }),
         }
 
-        await set(callRef, payload)
+        await update(callRef, {
+          createdAt: payload.createdAt,
+          startedAt: payload.startedAt,
+          status: payload.status,
+          [`staff/${moderatorEntry.userDocId}`]: moderatorEntry,
+        })
       }
     }
   }
