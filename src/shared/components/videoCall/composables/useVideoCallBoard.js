@@ -122,17 +122,14 @@ export function useVideoCallBoard({
     () => tiles.value.filter((tile) => tile.type === 'camera').length,
   )
 
-  const cameraColumns = computed(() => {
+  const tileCols = computed(() => {
     const count = cameraCount.value
-    if (count <= 1) return 1
-    if (count <= 4) return 2
-    if (count <= 9) return 3
-    return 4
+    if (count <= 1) return 12
+    if (count === 3) return 4
+    if (count <= 4) return 6
+    if (count <= 9) return 4
+    return 3
   })
-
-  const gridStyleVars = computed(() => ({
-    '--grid-cols': cameraColumns.value,
-  }))
 
   const participantsList = computed(() => {
     const list = []
@@ -224,8 +221,7 @@ export function useVideoCallBoard({
     isFocusMode,
     showWaitingMessage,
     cameraCount,
-    cameraColumns,
-    gridStyleVars,
+    tileCols,
     participantsList,
   }
 }

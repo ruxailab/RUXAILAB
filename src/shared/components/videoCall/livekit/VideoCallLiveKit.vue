@@ -21,64 +21,118 @@
       <!-- Grid of Participants -->
       <v-col v-if="callStarted" cols="12">
         <div class="video-stage">
-          <!-- Spotlight: focused participant or shared screen -->
-          <div v-if="isFocusMode" class="spotlight-primary">
-            <div :key="focusedTile.id" class="spotlight-item">
-              <div
-                class="video-container"
-                :class="{
-                  'screen-share-container': focusedTile.type === 'screen',
-                }"
-              >
-                <video
-                  :ref="(el) => attachTileRef(focusedTile, el)"
-                  autoplay
-                  :muted="focusedTile.muted"
-                  playsinline
-                  class="video-element"
-                  :class="{
-                    'screen-share-element': focusedTile.type === 'screen',
-                  }"
-                ></video>
-
-                <div
-                  v-if="focusedTile.type === 'camera' && !focusedTile.hasCamera"
-                  class="camera-disabled-overlay"
+          <v-row v-if="isFocusMode" class="h-100 ma-0" no-gutters>
+            <v-col cols="2" class="h-100 overflow-y-auto pa-3">
+              <v-row class="ma-0 flex-column flex-nowrap" no-gutters>
+                <v-col
+                  v-for="tile in otherTiles"
+                  :key="tile.id"
+                  cols="12"
+                  class="pb-3"
                 >
-                  <v-icon size="64" color="white" class="mb-2"
-                    >mdi-video-off</v-icon
+                  <div
+                    class="video-container"
+                    :class="{
+                      'screen-share-container': tile.type === 'screen',
+                    }"
                   >
-                  <p class="text-white">
-                    {{ t('videoCall.session.cameraOff') }}
-                  </p>
-                </div>
+                    <video
+                      :ref="(el) => attachTileRef(tile, el)"
+                      autoplay
+                      :muted="tile.muted"
+                      playsinline
+                      class="video-element"
+                      :class="{
+                        'screen-share-element': tile.type === 'screen',
+                      }"
+                    ></video>
 
+                    <div
+                      v-if="tile.type === 'camera' && !tile.hasCamera"
+                      class="camera-disabled-overlay"
+                    >
+                      <v-icon size="64" color="white" class="mb-2"
+                        >mdi-video-off</v-icon
+                      >
+                      <p class="text-white">
+                        {{ t('videoCall.session.cameraOff') }}
+                      </p>
+                    </div>
+
+                    <div
+                      v-if="tile.type === 'camera' && !tile.hasMicrophone"
+                      class="mic-muted-indicator"
+                    >
+                      <v-icon size="24" color="white"
+                        >mdi-microphone-off</v-icon
+                      >
+                    </div>
+
+                    <div class="video-label">{{ tile.label }}</div>
+                  </div>
+                </v-col>
+              </v-row>
+            </v-col>
+
+            <v-col cols="10" class="h-100 pa-3">
+              <div :key="focusedTile.id" class="h-100">
                 <div
-                  v-if="
-                    focusedTile.type === 'camera' && !focusedTile.hasMicrophone
-                  "
-                  class="mic-muted-indicator"
+                  class="video-container"
+                  :class="{
+                    'screen-share-container': focusedTile.type === 'screen',
+                  }"
                 >
-                  <v-icon size="24" color="white">mdi-microphone-off</v-icon>
+                  <video
+                    :ref="(el) => attachTileRef(focusedTile, el)"
+                    autoplay
+                    :muted="focusedTile.muted"
+                    playsinline
+                    class="video-element"
+                    :class="{
+                      'screen-share-element': focusedTile.type === 'screen',
+                    }"
+                  ></video>
+
+                  <div
+                    v-if="
+                      focusedTile.type === 'camera' && !focusedTile.hasCamera
+                    "
+                    class="camera-disabled-overlay"
+                  >
+                    <v-icon size="64" color="white" class="mb-2"
+                      >mdi-video-off</v-icon
+                    >
+                    <p class="text-white">
+                      {{ t('videoCall.session.cameraOff') }}
+                    </p>
+                  </div>
+
+                  <div
+                    v-if="
+                      focusedTile.type === 'camera' &&
+                      !focusedTile.hasMicrophone
+                    "
+                    class="mic-muted-indicator"
+                  >
+                    <v-icon size="24" color="white">mdi-microphone-off</v-icon>
+                  </div>
+
+                  <div class="video-label">{{ focusedTile.label }}</div>
                 </div>
-
-                <div class="video-label">{{ focusedTile.label }}</div>
               </div>
-            </div>
-          </div>
+            </v-col>
+          </v-row>
 
-          <!-- Tiles: full grid, or a compact filmstrip when focusing -->
-          <div
-            class="videos-grid"
-            :class="{ 'videos-filmstrip': isFocusMode }"
-            :style="gridStyleVars"
-          >
-            <div
-              v-for="tile in isFocusMode ? otherTiles : tiles"
+          <v-row v-else class="h-100 ma-0" align="stretch" no-gutters>
+            <v-col
+              v-for="tile in tiles"
               :key="tile.id"
+              :cols="tileCols"
+              class="pa-2"
+              :class="{ 'h-100': tiles.length === 3 }"
             >
               <div
-                class="video-container"
+                class="video-container h-100"
                 :class="{ 'screen-share-container': tile.type === 'screen' }"
               >
                 <video
@@ -111,17 +165,18 @@
 
                 <div class="video-label">{{ tile.label }}</div>
               </div>
-            </div>
+            </v-col>
 
             <!-- Waiting Message if no peers -->
-            <div
+            <v-col
               v-if="showWaitingMessage"
+              cols="12"
               class="d-flex align-center justify-center pa-4 text-grey"
             >
               <v-icon class="mr-2">mdi-account-clock</v-icon>
               <span>{{ t('videoCall.session.waitingForParticipants') }}</span>
-            </div>
-          </div>
+            </v-col>
+          </v-row>
         </div>
       </v-col>
     </v-row>
@@ -461,7 +516,7 @@ const {
   otherTiles,
   isFocusMode,
   showWaitingMessage,
-  gridStyleVars,
+  tileCols,
   participantsList,
 } = useVideoCallBoard({
   t,
