@@ -1245,9 +1245,17 @@ const startTest = async () => {
 
   // listen for changes
   const roomRef = dbRef(database, `rooms/${roomId.value}`)
+  const callRef = dbRef(database, `calls/${roomId.value}`)
+
+  onValue(callRef, (snapshot) => {
+    const nextCallState = snapshot.val() || {}
+    callState.value = {
+      staff: nextCallState.staff || {},
+      participants: nextCallState.participants || {},
+    }
+  })
 
   if (isModerator.value || observerUser) {
-    const callRef = dbRef(database, `calls/${roomId.value}`)
     const existingCallSnapshot = await get(callRef)
 
     if (!existingCallSnapshot.exists()) {
