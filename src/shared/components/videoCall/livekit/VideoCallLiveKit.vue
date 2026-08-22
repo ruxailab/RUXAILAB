@@ -210,8 +210,6 @@
       :show-stepper-panel="showStepperPanel"
       :caller="caller"
       :is-observator="isObservator"
-      :call-started="callStarted"
-      :participants-list="participantsList"
       :staff-list="staffParticipants"
       :participant-list="panelParticipantList"
       :current-stepper-value="currentStepperValue"
@@ -225,13 +223,8 @@
       :toggle-side-panel="toggleSidePanel"
       :toggle-stepper-panel="toggleStepperPanel"
       :close-panels="closePanels"
-      :proceed-to-next-step="proceedToNextStep"
       :go-to-step="goToStep"
       :go-to-specific-task="goToSpecificTask"
-      :end-call="endCall"
-      :toggle-camera="toggleCamera"
-      :toggle-microphone="toggleMicrophone"
-      :toggle-screen-share="toggleScreenShare"
       :completed-steps="completedSteps"
     />
   </v-container>

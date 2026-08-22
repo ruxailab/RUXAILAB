@@ -233,8 +233,6 @@
       :show-stepper-panel="showStepperPanel"
       :caller="caller"
       :is-observator="isObservator"
-      :call-started="callStarted"
-      :participants-list="participantsList"
       :staff-list="staffParticipants"
       :participant-list="panelParticipantList"
       :current-stepper-value="currentStepperValue"
@@ -248,13 +246,8 @@
       :toggle-side-panel="toggleSidePanel"
       :toggle-stepper-panel="toggleStepperPanel"
       :close-panels="closePanels"
-      :proceed-to-next-step="proceedToNextStep"
       :go-to-step="goToStep"
       :go-to-specific-task="goToSpecificTask"
-      :end-call="endCall"
-      :toggle-camera="toggleCamera"
-      :toggle-microphone="toggleMicrophone"
-      :toggle-screen-share="handleScreenShare"
       :completed-steps="completedSteps"
     />
     <!-- Join Room Dialog for Participants -->
@@ -570,6 +563,25 @@ onBeforeUnmount(() => {
 
 // --- Signaling & Mesh Logic ---
 
+const resolveCurrentMemberKey = async (branch) => {
+  const branchRef = dbRef(database, `calls/${props.roomId}/${branch}`)
+  const snapshot = await get(branchRef)
+  const members = snapshot.val() || {}
+  const currentKeys = new Set(normalizeMemberKeys(props.user))
+
+  const match = Object.entries(members).find(([memberKey, member]) => {
+    const memberKeys = normalizeMemberKeys({
+      ...member,
+      id: member?.id || memberKey,
+      userDocId: member?.userDocId || memberKey,
+    })
+
+    return memberKeys.some((key) => currentKeys.has(key))
+  })
+
+  return match?.[0] || props.user.id
+}
+
 const joinRoom = async () => {
   if (roomJoined.value) return
   roomJoined.value = true
@@ -581,9 +593,10 @@ const joinRoom = async () => {
   const isObserverMember = isObservator.value
   const memberBranch =
     props.isModerator || isObserverMember ? 'staff' : 'participants'
+  const memberKey = await resolveCurrentMemberKey(memberBranch)
   const myMemberRef = dbRef(
     database,
-    `calls/${props.roomId}/${memberBranch}/${props.user.id}`,
+    `calls/${props.roomId}/${memberBranch}/${memberKey}`,
   )
 
   // Restore media settings from DB if available (persistence)
@@ -866,9 +879,10 @@ const leaveRoom = async () => {
 
   const memberBranch =
     props.isModerator || isObservator.value ? 'staff' : 'participants'
+  const memberKey = await resolveCurrentMemberKey(memberBranch)
   const myMemberRef = dbRef(
     database,
-    `calls/${props.roomId}/${memberBranch}/${props.user.id}`,
+    `calls/${props.roomId}/${memberBranch}/${memberKey}`,
   )
 
   if (props.isModerator) {

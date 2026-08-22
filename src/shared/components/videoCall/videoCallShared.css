@@ -107,6 +107,8 @@
   display: grid;
   grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
   height: 80%;
+  min-height: 0;
+  overflow: hidden;
   gap: 12px;
 }
 
@@ -255,7 +257,10 @@
   flex-direction: column;
   gap: 12px;
   height: 100%;
-  overflow: hidden;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   align-items: stretch;
   justify-content: flex-start;
   align-content: flex-start;
@@ -862,6 +867,7 @@
     flex-direction: row;
     overflow-x: auto;
     overflow-y: hidden;
+    overscroll-behavior-x: contain;
     padding: 0 0 12px;
   }
 

@@ -348,22 +348,31 @@
           </v-row>
 
           <!-- Observator Notes Drawer -->
-          <v-navigation-drawer
-            v-if="(isObservator || isModerator) && notesDrawerOpen"
-            location="right"
-            width="400"
-            elevation="3"
-            class="video-tool-drawer"
+          <VideoToolDrawer
+            v-if="isObservator || isModerator"
+            :model-value="notesDrawerOpen"
+            :title="t('observatorNotes.title')"
+            close-label="Close notes"
+            @close="closeNotesDrawer"
           >
+            <template #header-actions>
+              <v-chip size="small" color="white" variant="outlined">
+                {{
+                  t('observatorNotes.count', {
+                    count: localTestAnswer.sessionNotes?.length || 0,
+                  })
+                }}
+              </v-chip>
+            </template>
             <ObservatorNotes
               v-if="localTestAnswer"
               v-model="localTestAnswer.sessionNotes"
               :current-task-index="taskIndex"
               :test="test"
+              :show-header="false"
               @save="saveAnswer"
-              @close="toggleNotesDrawer"
             />
-          </v-navigation-drawer>
+          </VideoToolDrawer>
 
           <!-- Video Call Component -->
           <div v-show="displayVideoCallComponent" v-if="test">
@@ -572,7 +581,6 @@
 import {
   ref as dbRef,
   onValue,
-  off,
   update,
   set,
   get,
@@ -605,6 +613,7 @@ import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue'
 import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue'
 import StepAnnouncementOverlay from '@/ux/UserTest/components/StepAnnouncementOverlay.vue'
 import VideoCallFactory from '@/shared/components/videoCall/VideoCallFactory.vue'
+import VideoToolDrawer from '@/shared/components/videoCall/VideoToolDrawer.vue'
 import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import {
@@ -654,6 +663,10 @@ const notesDrawerOpen = ref(false)
 
 function toggleNotesDrawer() {
   notesDrawerOpen.value = !notesDrawerOpen.value
+}
+
+function closeNotesDrawer() {
+  notesDrawerOpen.value = false
 }
 const moderatorInactive = ref(false)
 const moderatorDisconnectTimeout = ref(null)
@@ -720,6 +733,20 @@ const normalizeMemberKey = (member) => {
   return [...normalized]
 }
 
+const hasSharedMemberKey = (left, right) => {
+  const rightKeys = new Set(normalizeMemberKey(right))
+  return normalizeMemberKey(left).some((key) => rightKeys.has(key))
+}
+
+const setMemberByIdentity = (map, member) => {
+  const keys = normalizeMemberKey(member)
+  if (!keys.length) return
+
+  const existingKey = keys.find((key) => map.has(key))
+  const mapKey = existingKey || keys[0]
+  map.set(mapKey, member)
+}
+
 const normalizeSessionMember = (member, fallbackType = 'participant') => {
   if (!member) return null
 
@@ -751,6 +778,19 @@ const normalizeSessionMember = (member, fallbackType = 'participant') => {
 }
 
 const callState = ref({ staff: {}, participants: {} })
+let callStateUnsubscribe = null
+let waitingParticipantsUnsubscribe = null
+let roomUnsubscribe = null
+
+function stopRealtimeListeners() {
+  callStateUnsubscribe?.()
+  waitingParticipantsUnsubscribe?.()
+  roomUnsubscribe?.()
+  callStateUnsubscribe = null
+  waitingParticipantsUnsubscribe = null
+  roomUnsubscribe = null
+  lastWaitingParticipantsNotificationCount.value = 0
+}
 
 const sessionStaffMembers = computed(() => {
   const staffMembers = [
@@ -760,8 +800,7 @@ const sessionStaffMembers = computed(() => {
   const staffById = new Map()
 
   staffMembers.forEach((member) => {
-    const memberId = member?.userDocId || member?.id || member?.email
-    if (memberId) staffById.set(memberId, member)
+    setMemberByIdentity(staffById, member)
   })
 
   return [...staffById.values()]
@@ -1169,8 +1208,172 @@ const cleanupRoomStateForReuse = async (roomKey) => {
   ])
 }
 
+const getCallMemberId = (member) =>
+  member?.userDocId || member?.id || member?.email
+
+const buildCallMember = (member, defaults = {}) => {
+  const memberId = getCallMemberId(member)
+  if (!memberId) return null
+
+  const sanitizedMember = { ...member }
+  delete sanitizedMember.connected
+  delete sanitizedMember.presenceStatus
+  delete sanitizedMember.presenceUpdatedAt
+  delete sanitizedMember.updatedAt
+  delete sanitizedMember.status
+
+  const role = defaults.role || member.role || 'participant'
+  const accessLevel =
+    defaults.accessLevel ?? member.accessLevel ?? member.role ?? 5
+  const presenceStatus = defaults.presenceStatus ?? 'disconnected'
+
+  return {
+    ...sanitizedMember,
+    userDocId: member.userDocId || member.id || member.email,
+    email: member.email || null,
+    name:
+      member.name ||
+      member.displayName ||
+      member.email?.split('@')[0] ||
+      memberId,
+    role,
+    accessLevel,
+    isModerator:
+      defaults.isModerator === true ||
+      member.isModerator === true ||
+      role === 'FACILITATOR',
+    joinedAt: member.joinedAt ?? Date.now(),
+    connected: defaults.connected ?? false,
+    presenceStatus,
+    presenceUpdatedAt: presenceStatus === 'connected' ? Date.now() : null,
+    media: member.media ?? {
+      cameraEnabled: true,
+      microphoneEnabled: true,
+    },
+  }
+}
+
+const addMissingCallMembers = (
+  updates,
+  existingMembers,
+  branch,
+  members,
+  defaults,
+) => {
+  const existingList = Object.values(existingMembers || {})
+
+  members.forEach((member) => {
+    const memberId = getCallMemberId(member)
+    if (!memberId) return
+
+    const alreadyExists = existingList.some((existingMember) =>
+      hasSharedMemberKey(existingMember, member),
+    )
+    if (alreadyExists) return
+
+    const callMember = buildCallMember(member, defaults)
+    if (callMember) updates[`${branch}/${memberId}`] = callMember
+  })
+}
+
+const moveMatchingCallMember = (
+  updates,
+  existingMembers,
+  branch,
+  member,
+  targetKey,
+  defaults,
+) => {
+  if (!targetKey) return
+
+  const match = Object.entries(existingMembers || {}).find(
+    ([memberKey, existingMember]) =>
+      memberKey !== targetKey && hasSharedMemberKey(existingMember, member),
+  )
+  if (!match) return
+
+  const [existingKey, existingMember] = match
+  updates[`${branch}/${targetKey}`] = {
+    ...existingMember,
+    ...buildCallMember(member, defaults),
+  }
+  updates[`${branch}/${existingKey}`] = null
+}
+
+const syncCallRoster = async (callRef, currentUserId) => {
+  const snapshot = await get(callRef)
+  const existingCall = snapshot.val() || {}
+  const staffMembers = Array.isArray(session.value?.staff)
+    ? session.value.staff
+    : []
+  const participantMembers = Array.isArray(session.value?.participants)
+    ? session.value.participants
+    : []
+  const currentModeratorMember =
+    isModerator.value && currentUserId
+      ? {
+          userDocId: currentUserId,
+          email: user.value?.email || null,
+          name:
+            user.value?.email?.split('@')[0] ||
+            user.value?.displayName ||
+            'moderator',
+          role: 'FACILITATOR',
+          accessLevel: 'ADMIN',
+          isModerator: true,
+        }
+      : null
+  const allStaffMembers = currentModeratorMember
+    ? [...staffMembers, currentModeratorMember]
+    : staffMembers
+  const participantMembersWithoutStaff = removeStaffDuplicates(
+    participantMembers,
+    allStaffMembers,
+  )
+  const updates = {}
+
+  if (!existingCall.createdAt) updates.createdAt = Date.now()
+  if (!existingCall.startedAt) updates.startedAt = Date.now()
+  if (!existingCall.status) updates.status = 'active'
+
+  if (currentModeratorMember) {
+    moveMatchingCallMember(
+      updates,
+      existingCall.staff,
+      'staff',
+      currentModeratorMember,
+      currentUserId,
+      {
+        connected: false,
+        presenceStatus: 'disconnected',
+        role: 'FACILITATOR',
+        accessLevel: 'ADMIN',
+        isModerator: true,
+      },
+    )
+  }
+
+  addMissingCallMembers(updates, existingCall.staff, 'staff', allStaffMembers, {
+    connected: false,
+    presenceStatus: 'disconnected',
+  })
+  addMissingCallMembers(
+    updates,
+    existingCall.participants,
+    'participants',
+    participantMembersWithoutStaff,
+    {
+      connected: false,
+      presenceStatus: 'disconnected',
+    },
+  )
+
+  if (Object.keys(updates).length) await update(callRef, updates)
+}
+
 const handleCallEnded = async () => {
   displayVideoCallComponent.value = false
+  stopRealtimeListeners()
 
   if (isModerator.value && roomId.value) {
     await cleanupRoomStateForReuse(roomId.value)
@@ -1214,11 +1417,15 @@ const startTest = async () => {
 
   const currentUserId =
     user.value?.id || user.value?.userDocId || user.value?.uid
+  const roomRef = dbRef(database, `rooms/${roomId.value}`)
+  const callRef = dbRef(database, `calls/${roomId.value}`)
 
   if (staffUser) {
     displayVideoCallComponent.value = true
     start.value = false
   }
+
+  await syncCallRoster(callRef, currentUserId)
 
   if (!isModerator.value && currentUserId) {
     const isObserverMember = observerUser
@@ -1256,10 +1463,8 @@ const startTest = async () => {
   }
 
   // listen for changes
-  const roomRef = dbRef(database, `rooms/${roomId.value}`)
-  const callRef = dbRef(database, `calls/${roomId.value}`)
-
-  onValue(callRef, (snapshot) => {
+  callStateUnsubscribe?.()
+  callStateUnsubscribe = onValue(callRef, (snapshot) => {
     const nextCallState = snapshot.val() || {}
     callState.value = {
       staff: nextCallState.staff || {},
@@ -1274,7 +1479,8 @@ const startTest = async () => {
       await cleanupRoomStateForReuse(roomId.value)
     }
 
-    onValue(callRef, (snapshot) => {
+    waitingParticipantsUnsubscribe?.()
+    waitingParticipantsUnsubscribe = onValue(callRef, (snapshot) => {
       const nextCallState = snapshot.val() || {}
       const participants = nextCallState.participants || {}
       const waitingParticipantsCount = Object.values(participants).filter(
@@ -1424,9 +1630,7 @@ const startTest = async () => {
             [moderatorEntry.userDocId]: moderatorEntry,
             ...toMemberMap(
               staffMembers.filter((member) => {
-                const memberId =
-                  member?.userDocId || member?.id || member?.email
-                return memberId && memberId !== moderatorEntry.userDocId
+                return !hasSharedMemberKey(member, moderatorEntry)
               }),
               {},
             ),
@@ -1450,7 +1654,8 @@ const startTest = async () => {
   // Ensure only moderator can set this, and only on explicit end, NOT using onDisconnect
   // onDisconnect(roomRef).set(null)
 
-  onValue(roomRef, async (snapshot) => {
+  roomUnsubscribe?.()
+  roomUnsubscribe = onValue(roomRef, async (snapshot) => {
     const data = snapshot.val()
 
     // If data is null, the room has been deleted (e.g. by moderator ending call)
@@ -2092,8 +2297,7 @@ watch(
 )
 
 onBeforeUnmount(async () => {
-  const roomRef = dbRef(database, `rooms/${roomId.value}`)
-  off(roomRef)
+  stopRealtimeListeners()
 
   // Never re-create or mutate room metadata during unmount. The room is deleted
   // only in the explicit end-call flow, and any leftover timestamp writes would

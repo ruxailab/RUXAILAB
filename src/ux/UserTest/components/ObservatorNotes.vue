@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div class="video-tool-header d-flex align-center justify-space-between">
+    <div
+      v-if="showHeader"
+      class="video-tool-header d-flex align-center justify-space-between"
+    >
       <h3 class="text-h6 font-weight-bold display-flex align-center">
         <v-icon class="mr-2">mdi-notebook-edit-outline</v-icon>
         {{ t('observatorNotes.title') }}
@@ -94,6 +97,10 @@ const props = defineProps({
   contextLabel: {
     type: String,
     default: '',
+  },
+  showHeader: {
+    type: Boolean,
+    default: true,
   },
 })
 

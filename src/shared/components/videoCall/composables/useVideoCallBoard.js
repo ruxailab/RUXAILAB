@@ -1,5 +1,6 @@
 import { computed, unref } from 'vue'
 import { ACCESS_LEVEL, normalizeAccessLevel } from '@/shared/utils/accessLevel'
+import { getMemberIdentityKeys } from '@/ux/UserTest/utils/sessionPresence'
 
 export function useVideoCallBoard({
   t,
@@ -39,12 +40,15 @@ export function useVideoCallBoard({
     )
   }
 
-  const shouldRenderRemoteEntry = (entry) => !isObserverRole(entry)
+  const isCurrentUserEntry = (entry) => {
+    const currentKeys = new Set(getMemberIdentityKeys(currentUser.value))
+    return getMemberIdentityKeys(entry).some((key) => currentKeys.has(key))
+  }
 
   const visibleRemoteEntries = computed(() =>
     remoteEntries.value.filter((remote) => {
       if (!remote) return false
-      if (remote.id === currentUser.value.id) return false
+      if (isCurrentUserEntry(remote)) return false
 
       const remoteIsObserver = isObserverRole(remote)
 
@@ -172,7 +176,7 @@ export function useVideoCallBoard({
       if (
         !staffMember ||
         !staffMember.id ||
-        staffMember.id === currentUser.value.id ||
+        isCurrentUserEntry(staffMember) ||
         isObserverRole(staffMember)
       ) {
         return
@@ -206,7 +210,7 @@ export function useVideoCallBoard({
     })
 
     remoteEntries.value.forEach((remote) => {
-      if (remote?.id === currentUser.value.id || isObserverRole(remote)) return
+      if (isCurrentUserEntry(remote) || isObserverRole(remote)) return
       addEntry(buildParticipantItem(remote, false))
     })
 
