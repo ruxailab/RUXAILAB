@@ -3,258 +3,669 @@ import { admin, functions } from '../f.firebase.js'
 import logger from '../utils/logger.js'
 
 const MAX_EVENTS_PER_BATCH = 25
-const MAX_STRING_LENGTH = 240
-const MAX_TRACE_ID_LENGTH = 120
-const MAX_DETAILS_DEPTH = 4
-const MAX_ARRAY_ITEMS = 20
-const MAX_OBJECT_KEYS = 40
-
-const ALLOWED_LAYERS = new Set(['technical', 'methodological', 'ai'])
-const ALLOWED_LEVELS = new Set(['info', 'warn', 'error'])
-
-// Mirrors src/shared/utils/accessLevel.js — must stay in sync
-const COOPERATOR_ROLE_MAP = new Map([
+const CLIENT_EVENT_BUDGET = 1000
+const MAX_TASK_DURATION_MS = 24 * 60 * 60 * 1000
+const POST_SUBMISSION_OCCURRENCE_GRACE_MS = 5 * 60 * 1000
+const POST_SUBMISSION_RECEIPT_GRACE_MS = 7 * 24 * 60 * 60 * 1000
+const ID_PATTERN = /^[A-Za-z0-9_-]{3,160}$/
+const compareStrings = (left, right) => left.localeCompare(right)
+const CLIENT_EVENT_POLICIES = Object.freeze({
+  STUDY_VIEW_OPENED: {
+    message: 'Study view opened',
+    detailKeys: [],
+  },
+  ANSWER_EDITED: {
+    message: 'Answer field edited',
+    detailKeys: [
+      'fieldRef',
+      'editSpanMs',
+      'editOperations',
+      'pasteOperations',
+      'initialLength',
+      'resultingLength',
+    ],
+  },
+})
+const ROLE_NAMES = new Map([
   [0, 'admin'],
   [1, 'evaluator'],
   [2, 'guest'],
   [3, 'observator'],
+  [4, 'manager'],
+  [5, 'user'],
 ])
-const TYPE_PATTERN = /^[A-Z][A-Z0-9_]{1,63}$/
-const SAFE_ID_PATTERN = /^[A-Za-z0-9:_-]{3,160}$/
-const SENSITIVE_KEY_PATTERN = /email|fullName|displayName|phone|token|secret/i
-const EMAIL_PATTERN = /\b[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,63}\b/g
 
-function httpsError(code, message) {
-  return new functions.https.HttpsError(code, message)
+const error = (code, message, details) => {
+  const rejection = new functions.https.HttpsError(code, message, details)
+  rejection.loggingRejection = true
+  return rejection
 }
 
-function getRequestData(request) {
-  return request?.data || request || {}
+const reject = ({ code, reasonCode, studyId, batchId }) => {
+  const details = { retryable: false, scope: 'batch', reasonCode }
+  logger.warn('Log batch rejected', {
+    rejectionScope: 'batch',
+    reasonCodes: [reasonCode],
+    ...(studyId ? { studyId } : {}),
+    ...(batchId ? { batchId } : {}),
+  })
+  throw error(code, 'Log batch was rejected', details)
 }
 
-function getAuthUid(request) {
-  return request?.auth?.uid || null
-}
-
-function assertSafeId(value, fieldName) {
-  if (typeof value !== 'string' || !SAFE_ID_PATTERN.test(value)) {
-    throw httpsError('invalid-argument', `${fieldName} is invalid`)
-  }
-  return value
-}
-
-function sanitizeString(value, maxLength = MAX_STRING_LENGTH) {
-  if (value === undefined || value === null) return ''
-  return String(value).replace(EMAIL_PATTERN, '[redacted-email]').slice(0, maxLength)
-}
-
-function sanitizeDetails(value, depth = 0) {
-  if (value === null || value === undefined) return null
-
-  if (depth >= MAX_DETAILS_DEPTH) {
-    return '[truncated]'
-  }
-
-  if (Array.isArray(value)) {
-    return value
-      .slice(0, MAX_ARRAY_ITEMS)
-      .map((item) => sanitizeDetails(item, depth + 1))
-  }
-
-  if (typeof value === 'object') {
-    return Object.fromEntries(
-      Object.entries(value)
-        .filter(([key]) => !SENSITIVE_KEY_PATTERN.test(key))
-        .slice(0, MAX_OBJECT_KEYS)
-        .map(([key, item]) => [
-          sanitizeString(key, 80),
-          sanitizeDetails(item, depth + 1),
-        ]),
-    )
-  }
-
-  if (typeof value === 'number') return Number.isFinite(value) ? value : null
-  if (typeof value === 'boolean') return value
-  return sanitizeString(value)
-}
-
-function validateEvent(event) {
-  if (!event || typeof event !== 'object' || Array.isArray(event)) {
-    throw httpsError('invalid-argument', 'Each log event must be an object')
-  }
-
-  if (typeof event.type !== 'string' || !TYPE_PATTERN.test(event.type)) {
-    throw httpsError('invalid-argument', 'Log event type is invalid')
-  }
-
-  if (!ALLOWED_LAYERS.has(event.layer)) {
-    throw httpsError('invalid-argument', 'Log event layer is invalid')
-  }
-
-  if (!ALLOWED_LEVELS.has(event.level)) {
-    throw httpsError('invalid-argument', 'Log event level is invalid')
-  }
-
-  return {
-    type: event.type,
-    layer: event.layer,
-    level: event.level,
-    source: sanitizeString(event.source ?? 'client', 80),
-    traceId: sanitizeString(event.traceId ?? '', MAX_TRACE_ID_LENGTH),
-    message: sanitizeString(event.message ?? event.type),
-    details: sanitizeDetails(event.details ?? {}),
-  }
-}
-
-function validatePayload(payload) {
-  const testId = assertSafeId(payload.testId, 'testId')
-  const batchId = assertSafeId(payload.batchId, 'batchId')
-  const answersDocId =
-    payload.answersDocId === undefined || payload.answersDocId === null
-      ? ''
-      : assertSafeId(payload.answersDocId, 'answersDocId')
-
-  if (!Array.isArray(payload.events) || payload.events.length === 0) {
-    throw httpsError('invalid-argument', 'events must contain at least one log event')
-  }
-
-  if (payload.events.length > MAX_EVENTS_PER_BATCH) {
-    throw httpsError(
-      'invalid-argument',
-      `events cannot contain more than ${MAX_EVENTS_PER_BATCH} items`,
-    )
-  }
-
-  return {
-    testId,
+const rejectEvents = ({ invalidEvents, studyId, batchId }) => {
+  const details = { retryable: false, scope: 'events', invalidEvents }
+  logger.warn('Log batch rejected', {
+    rejectionScope: 'events',
+    reasonCodes: [...new Set(invalidEvents.map((item) => item.reasonCode))],
+    batchSize: invalidEvents.length,
+    invalidEventCount: invalidEvents.length,
+    studyId,
     batchId,
-    answersDocId,
-    clientTimestamp: sanitizeString(payload.clientTimestamp ?? '', 80),
-    sessionId: sanitizeString(payload.sessionId ?? '', 120),
-    events: payload.events.map(validateEvent),
-  }
+  })
+  throw error('invalid-argument', 'Log batch was rejected', details)
 }
 
-function createActorHash(uid, testId) {
-  const salt = process.env.LOG_ACTOR_HASH_SALT
-  if (!salt) {
-    logger.error('LOG_ACTOR_HASH_SALT environment variable is not configured')
-    throw httpsError('internal', 'Logging service is misconfigured')
-  }
-  return crypto.createHash('sha256').update(`${salt}:${testId}:${uid}`).digest('hex')
+const rejectVerified = ({
+  code = 'failed-precondition',
+  reasonCode,
+  studyId,
+}) => {
+  logger.warn('Verified log event rejected', {
+    rejectionScope: 'batch',
+    reasonCodes: [reasonCode],
+    ...(studyId ? { studyId } : {}),
+  })
+  throw error(code, 'Verified log event was rejected', {
+    retryable: false,
+    scope: 'batch',
+    reasonCode,
+  })
 }
 
-function resolveActorRole(testData, uid) {
-  if (testData?.testAdmin?.userDocId === uid) return 'admin'
+const dataFor = (request) => request?.data || request || {}
 
-  const cooperator = (testData?.cooperators || []).find(
-    (item) => item?.userDocId === uid,
-  )
+const safeId = (value) =>
+  typeof value === 'string' && ID_PATTERN.test(value) ? value : null
 
-  if (cooperator) {
-    // accessLevel is stored as a number (0=admin, 1=evaluator, 2=guest, 3=observer).
-    // Using ?? so accessLevel=0 is not incorrectly treated as falsy.
-    const level = cooperator.accessLevel ?? null
-    return COOPERATOR_ROLE_MAP.get(level) ?? 'cooperator'
-  }
+const isRecord = (value) =>
+  value !== null && typeof value === 'object' && !Array.isArray(value)
 
-  return null
+const normalizeStudyType = (type) => {
+  const normalized = String(type || '').toUpperCase()
+  return normalized === 'HEURISTICS' ? 'HEURISTIC' : normalized
 }
 
-function isDuplicateBatchError(error) {
+const roleFor = (study, uid) => study?.studyRoleMap?.[uid] ?? null
+
+const canAnswerStudy = ({ study, uid, isSuperAdmin }) => {
+  const type = normalizeStudyType(study?.testType)
+  const role = roleFor(study, uid)
+
+  if (!['USER', 'HEURISTIC'].includes(type)) return false
   return (
-    error?.code === 6 ||
-    error?.code === 'already-exists' ||
-    String(error?.message || '').toLowerCase().includes('already exists')
+    study?.isPublic === true ||
+    isSuperAdmin ||
+    study?.testAdmin?.userDocId === uid ||
+    role === 0 ||
+    role === 4 ||
+    (type === 'USER' &&
+      (role === 5 || (role === 3 && study?.subType === 'USER_MODERATED'))) ||
+    (type === 'HEURISTIC' && role === 1)
   )
+}
+
+const actorRoleFor = ({ study, uid, isSuperAdmin }) => {
+  if (isSuperAdmin || study?.testAdmin?.userDocId === uid) return 'admin'
+  return ROLE_NAMES.get(roleFor(study, uid))
+}
+
+const sessionIdFor = (studyId, uid) => {
+  const secret = process.env.LOG_ACTOR_HASH_SALT
+  if (!secret) {
+    logger.error('LOG_ACTOR_HASH_SALT environment variable is not configured')
+    throw error('internal', 'Logging service is unavailable')
+  }
+  return crypto
+    .createHash('sha256')
+    .update(`${secret}:${studyId}:${uid}`)
+    .digest('hex')
+}
+
+const documentIdFor = (sessionId, requestId) =>
+  crypto.createHash('sha256').update(`${sessionId}:${requestId}`).digest('hex')
+
+const consentAccepted = async (transaction, db, study, uid) => {
+  if (normalizeStudyType(study.testType) !== 'USER') return true
+  if (!study.answersDocId) return false
+  const answer = await transaction.get(
+    db.collection('answers').doc(study.answersDocId),
+  )
+  return (
+    answer.exists &&
+    answer.data()?.taskAnswers?.[uid]?.consentCompleted === true
+  )
+}
+
+const nonNegativeInteger = (value, maximum) =>
+  Number.isInteger(value) && value >= 0 && value <= maximum
+
+const fieldExists = (study, fieldRef) => {
+  const type = normalizeStudyType(study.testType)
+  const parts = String(fieldRef || '').split(':')
+  if (type === 'HEURISTIC') {
+    const [, heuristicIndex, , questionIndex, field] = parts
+    return (
+      parts[0] === 'heuristic' &&
+      parts[2] === 'question' &&
+      ['comment', 'answer'].includes(field) &&
+      Boolean(
+        study.testStructure?.[Number(heuristicIndex)]?.questions?.[
+          Number(questionIndex)
+        ],
+      )
+    )
+  }
+  if (type === 'USER') {
+    const [section, index, field] = parts
+    const collections = {
+      preTest: study.testStructure?.preTest,
+      postTest: study.testStructure?.postTest,
+      task: study.testStructure?.userTasks,
+    }
+    return (
+      ['preTest', 'postTest', 'task'].includes(section) &&
+      ['answer', 'comment'].includes(field) &&
+      Boolean(collections[section]?.[Number(index)])
+    )
+  }
+  return false
+}
+
+const validAnswerEdit = (details, study) => {
+  const keys = Object.keys(details || {}).sort(compareStrings)
+  if (
+    keys.join(',') !==
+    CLIENT_EVENT_POLICIES.ANSWER_EDITED.detailKeys
+      .slice()
+      .sort(compareStrings)
+      .join(',')
+  ) {
+    return false
+  }
+  return (
+    fieldExists(study, details.fieldRef) &&
+    nonNegativeInteger(details.editSpanMs, 24 * 60 * 60 * 1000) &&
+    nonNegativeInteger(details.editOperations, 10000) &&
+    nonNegativeInteger(details.pasteOperations, 10000) &&
+    details.pasteOperations <= details.editOperations &&
+    nonNegativeInteger(details.initialLength, 1000000) &&
+    nonNegativeInteger(details.resultingLength, 1000000)
+  )
+}
+
+const validateClientBatch = (payload, study) => {
+  if (
+    !Array.isArray(payload.events) ||
+    payload.events.length < 1 ||
+    payload.events.length > MAX_EVENTS_PER_BATCH
+  ) {
+    reject({
+      code: 'invalid-argument',
+      reasonCode: 'MALFORMED_ENVELOPE',
+      studyId: payload.studyId,
+      batchId: payload.batchId,
+    })
+  }
+
+  const invalidEvents = []
+  const seenEventIds = new Set()
+  const events = []
+
+  for (const event of payload.events) {
+    const keys = event && typeof event === 'object' ? Object.keys(event) : []
+    const eventId = safeId(event?.eventId)
+    if (!eventId) {
+      reject({
+        code: 'invalid-argument',
+        reasonCode: 'MALFORMED_ENVELOPE',
+        studyId: payload.studyId,
+        batchId: payload.batchId,
+      })
+    }
+    const occurredAt =
+      typeof event?.occurredAt === 'string'
+        ? new Date(event.occurredAt)
+        : new Date(Number.NaN)
+    const occurrenceYear = occurredAt.getUTCFullYear()
+    const policy = CLIENT_EVENT_POLICIES[event?.eventType]
+    const validDetails =
+      isRecord(event?.details) && policy?.detailKeys.length === 0
+        ? Object.keys(event.details).length === 0
+        : event?.eventType === 'ANSWER_EDITED' &&
+          isRecord(event?.details) &&
+          validAnswerEdit(event?.details, study)
+    let reasonCode
+    if (seenEventIds.has(eventId)) {
+      reasonCode = 'DUPLICATE_EVENT_ID'
+    } else if (!policy) {
+      reasonCode = 'UNKNOWN_EVENT_TYPE'
+    } else if (
+      keys.some(
+        (key) =>
+          !['eventId', 'eventType', 'occurredAt', 'details'].includes(key),
+      ) ||
+      !validDetails
+    ) {
+      reasonCode = 'INVALID_EVENT_DETAILS'
+    } else if (
+      Number.isNaN(occurredAt.getTime()) ||
+      occurrenceYear < 1 ||
+      occurrenceYear > 9999
+    ) {
+      reasonCode = 'INVALID_OCCURRED_AT'
+    }
+
+    seenEventIds.add(eventId)
+    if (reasonCode) {
+      invalidEvents.push({ eventId, reasonCode })
+    } else {
+      events.push({
+        eventId,
+        eventType: event.eventType,
+        occurredAt,
+        details: event.details,
+        message: policy.message,
+      })
+    }
+  }
+
+  if (invalidEvents.length) {
+    rejectEvents({
+      invalidEvents,
+      studyId: payload.studyId,
+      batchId: payload.batchId,
+    })
+  }
+  return events
+}
+
+async function submitLogEvents(request) {
+  const uid = request?.auth?.uid
+  if (!uid) reject({ code: 'unauthenticated', reasonCode: 'NOT_ELIGIBLE' })
+
+  const requestData = dataFor(request)
+  const studyId = safeId(requestData.studyId)
+  const batchId = safeId(requestData.batchId)
+  if (!studyId || !batchId) {
+    reject({ code: 'permission-denied', reasonCode: 'NOT_ELIGIBLE' })
+  }
+
+  const db = admin.firestore()
+  const studyRef = db.collection('tests').doc(studyId)
+  const userRef = db.collection('users').doc(uid)
+  const sessionId = sessionIdFor(studyId, uid)
+  const sessionRef = studyRef.collection('studySessions').doc(sessionId)
+  const metaRef = studyRef.collection('loggingMeta').doc('state')
+  const batchRef = studyRef
+    .collection('logBatches')
+    .doc(documentIdFor(sessionId, batchId))
+
+  return db.runTransaction(async (transaction) => {
+    const [studySnap, userSnap, batchSnap] = await Promise.all([
+      transaction.get(studyRef),
+      transaction.get(userRef),
+      transaction.get(batchRef),
+    ])
+    const study = studySnap.exists ? studySnap.data() : null
+    const isSuperAdmin = userSnap.exists && userSnap.data()?.accessLevel === 0
+
+    if (!study || !canAnswerStudy({ study, uid, isSuperAdmin })) {
+      reject({ code: 'permission-denied', reasonCode: 'NOT_ELIGIBLE' })
+    }
+    if (batchSnap.exists) return { status: 'duplicate', batchId }
+    if (!(await consentAccepted(transaction, db, study, uid))) {
+      reject({
+        code: 'failed-precondition',
+        reasonCode: 'CONSENT_REQUIRED',
+        studyId,
+        batchId,
+      })
+    }
+    if (
+      Object.keys(requestData).sort(compareStrings).join(',') !==
+      'batchId,events,studyId'
+    ) {
+      reject({
+        code: 'invalid-argument',
+        reasonCode: 'MALFORMED_ENVELOPE',
+        studyId,
+        batchId,
+      })
+    }
+
+    const events = validateClientBatch(
+      { ...requestData, studyId, batchId },
+      study,
+    )
+    const eventRefs = events.map((event) =>
+      studyRef.collection('logs').doc(documentIdFor(sessionId, event.eventId)),
+    )
+    const [sessionSnap, metaSnap, ...eventSnaps] = await Promise.all([
+      transaction.get(sessionRef),
+      transaction.get(metaRef),
+      ...eventRefs.map((eventRef) => transaction.get(eventRef)),
+    ])
+    const conflicts = eventSnaps
+      .map((snapshot, index) =>
+        snapshot.exists
+          ? { eventId: events[index].eventId, reasonCode: 'EVENT_ID_CONFLICT' }
+          : null,
+      )
+      .filter(Boolean)
+    const submittedAt = sessionSnap.data()?.submittedAt?.toMillis?.()
+    const receiptExpired =
+      submittedAt !== undefined &&
+      Date.now() > submittedAt + POST_SUBMISSION_RECEIPT_GRACE_MS
+    const closedEvents =
+      submittedAt === undefined
+        ? []
+        : events
+            .filter(
+              (event) =>
+                receiptExpired ||
+                event.occurredAt.getTime() >
+                  submittedAt + POST_SUBMISSION_OCCURRENCE_GRACE_MS,
+            )
+            .map((event) => ({
+              eventId: event.eventId,
+              reasonCode: 'SESSION_CLOSED',
+            }))
+    const invalidEvents = [...conflicts]
+    for (const item of closedEvents) {
+      if (!invalidEvents.some(({ eventId }) => eventId === item.eventId)) {
+        invalidEvents.push(item)
+      }
+    }
+    if (invalidEvents.length) {
+      rejectEvents({ invalidEvents, studyId, batchId })
+    }
+    const now = admin.firestore.FieldValue.serverTimestamp()
+    let participantLabel
+
+    if (sessionSnap.exists) {
+      participantLabel = sessionSnap.data().participantLabel
+      const nextCount = sessionSnap.data().clientEventCount + events.length
+      if (nextCount > CLIENT_EVENT_BUDGET) {
+        reject({
+          code: 'resource-exhausted',
+          reasonCode: 'BUDGET_EXHAUSTED',
+          studyId,
+          batchId,
+        })
+      }
+      transaction.update(sessionRef, { clientEventCount: nextCount })
+    } else {
+      const participantNumber = metaSnap.exists
+        ? metaSnap.data().nextParticipantNumber
+        : 1
+      participantLabel = `P-${String(participantNumber).padStart(3, '0')}`
+      transaction.set(metaRef, {
+        nextParticipantNumber: participantNumber + 1,
+      })
+      transaction.set(sessionRef, {
+        participantLabel,
+        createdAt: now,
+        clientEventCount: events.length,
+      })
+    }
+
+    const actorRole = actorRoleFor({ study, uid, isSuperAdmin })
+    for (const [index, event] of events.entries()) {
+      const eventRef = eventRefs[index]
+      transaction.create(eventRef, {
+        eventId: event.eventId,
+        batchId,
+        sessionId,
+        participantLabel,
+        ...(actorRole ? { actorRole } : {}),
+        eventType: event.eventType,
+        layer: 'methodological',
+        level: 'info',
+        source: 'study-client',
+        message: event.message,
+        occurredAt: admin.firestore.Timestamp.fromDate(event.occurredAt),
+        receivedAt: now,
+        timeQuality: 'client-unverified',
+        details: event.details,
+      })
+    }
+    transaction.create(batchRef, {
+      acceptedAt: now,
+      eventCount: events.length,
+    })
+    return { status: 'accepted', batchId }
+  })
+}
+
+const verifiedEventFor = ({ requestData, study, participantAnswer }) => {
+  const keys = Object.keys(requestData).sort(compareStrings)
+  const expectedKeys =
+    requestData.eventType === 'TASK_ATTEMPT_FINISHED'
+      ? ['eventType', 'studyId', 'taskRef']
+      : ['eventType', 'studyId']
+  if (keys.join(',') !== expectedKeys.sort(compareStrings).join(',')) {
+    rejectVerified({
+      code: 'invalid-argument',
+      reasonCode: 'MALFORMED_REQUEST',
+      studyId: requestData.studyId,
+    })
+  }
+
+  if (requestData.eventType === 'CONSENT_ACCEPTED') {
+    if (
+      normalizeStudyType(study.testType) !== 'USER' ||
+      participantAnswer?.consentCompleted !== true
+    ) {
+      rejectVerified({
+        reasonCode: 'UNVERIFIED_TRANSITION',
+        studyId: requestData.studyId,
+      })
+    }
+    return {
+      eventId: 'CONSENT_ACCEPTED',
+      eventType: 'CONSENT_ACCEPTED',
+      level: 'info',
+      message: 'Consent accepted',
+      details: {},
+      sessionField: 'consentAcceptedAt',
+    }
+  }
+
+  if (requestData.eventType === 'TASK_ATTEMPT_FINISHED') {
+    const match = /^task:(0|[1-9]\d*)$/.exec(requestData.taskRef || '')
+    const taskIndex = match ? Number(match[1]) : -1
+    const controlledTask = study.testStructure?.userTasks?.[taskIndex]
+    const answer = participantAnswer?.tasks?.[taskIndex]
+    if (
+      normalizeStudyType(study.testType) !== 'USER' ||
+      !controlledTask ||
+      answer?.attempted !== true
+    ) {
+      rejectVerified({
+        reasonCode: 'UNVERIFIED_TRANSITION',
+        studyId: requestData.studyId,
+      })
+    }
+    const outcome = answer.completed === true ? 'completed' : 'not_completed'
+    const duration = answer.taskTime
+    return {
+      eventId: `TASK_ATTEMPT_FINISHED:${requestData.taskRef}`,
+      eventType: 'TASK_ATTEMPT_FINISHED',
+      level: outcome === 'completed' ? 'info' : 'warning',
+      message: 'Task attempt finished',
+      details: {
+        taskRef: requestData.taskRef,
+        outcome,
+        ...(nonNegativeInteger(duration, MAX_TASK_DURATION_MS)
+          ? { taskDurationMs: duration }
+          : {}),
+      },
+    }
+  }
+
+  if (
+    requestData.eventType === 'STUDY_SUBMITTED' &&
+    participantAnswer?.submitted === true
+  ) {
+    return {
+      eventId: 'STUDY_SUBMITTED',
+      eventType: 'STUDY_SUBMITTED',
+      level: 'info',
+      message: 'Study submitted',
+      details: {},
+      sessionField: 'submittedAt',
+    }
+  }
+
+  rejectVerified({
+    reasonCode: 'UNVERIFIED_TRANSITION',
+    studyId: requestData.studyId,
+  })
+}
+
+const participantAnswerFor = (answerDocument, studyType, uid) =>
+  studyType === 'USER'
+    ? answerDocument?.taskAnswers?.[uid]
+    : answerDocument?.heuristicAnswers?.[uid]
+
+async function submitVerifiedEvent(request) {
+  const uid = request?.auth?.uid
+  if (!uid) reject({ code: 'unauthenticated', reasonCode: 'NOT_ELIGIBLE' })
+
+  const requestData = dataFor(request)
+  const studyId = safeId(requestData.studyId)
+  if (!studyId) {
+    reject({ code: 'permission-denied', reasonCode: 'NOT_ELIGIBLE' })
+  }
+
+  const db = admin.firestore()
+  const studyRef = db.collection('tests').doc(studyId)
+  const userRef = db.collection('users').doc(uid)
+  const sessionId = sessionIdFor(studyId, uid)
+  const sessionRef = studyRef.collection('studySessions').doc(sessionId)
+  const metaRef = studyRef.collection('loggingMeta').doc('state')
+
+  return db.runTransaction(async (transaction) => {
+    const [studySnap, userSnap] = await Promise.all([
+      transaction.get(studyRef),
+      transaction.get(userRef),
+    ])
+    const study = studySnap.exists ? studySnap.data() : null
+    const isSuperAdmin = userSnap.exists && userSnap.data()?.accessLevel === 0
+    if (!study || !canAnswerStudy({ study, uid, isSuperAdmin })) {
+      reject({ code: 'permission-denied', reasonCode: 'NOT_ELIGIBLE' })
+    }
+
+    const studyType = normalizeStudyType(study.testType)
+    if (!study.answersDocId) {
+      rejectVerified({ reasonCode: 'UNVERIFIED_TRANSITION', studyId })
+    }
+    const answerRef = db.collection('answers').doc(study.answersDocId)
+    const answerSnap = await transaction.get(answerRef)
+    const participantAnswer = participantAnswerFor(
+      answerSnap.exists ? answerSnap.data() : null,
+      studyType,
+      uid,
+    )
+    const event = verifiedEventFor({
+      requestData: { ...requestData, studyId },
+      study,
+      participantAnswer,
+    })
+    const eventRef = studyRef
+      .collection('logs')
+      .doc(documentIdFor(sessionId, `verified:${event.eventId}`))
+    const [sessionSnap, metaSnap, eventSnap] = await Promise.all([
+      transaction.get(sessionRef),
+      transaction.get(metaRef),
+      transaction.get(eventRef),
+    ])
+
+    if (
+      studyType === 'USER' &&
+      event.eventType !== 'CONSENT_ACCEPTED' &&
+      !sessionSnap.data()?.consentAcceptedAt
+    ) {
+      rejectVerified({ reasonCode: 'UNVERIFIED_TRANSITION', studyId })
+    }
+    if (eventSnap.exists) return { status: 'duplicate' }
+
+    const now = admin.firestore.FieldValue.serverTimestamp()
+    let participantLabel
+    if (sessionSnap.exists) {
+      participantLabel = sessionSnap.data().participantLabel
+      if (event.sessionField) {
+        transaction.update(sessionRef, { [event.sessionField]: now })
+      }
+    } else {
+      const participantNumber = metaSnap.exists
+        ? metaSnap.data().nextParticipantNumber
+        : 1
+      participantLabel = `P-${String(participantNumber).padStart(3, '0')}`
+      transaction.set(metaRef, {
+        nextParticipantNumber: participantNumber + 1,
+      })
+      transaction.set(sessionRef, {
+        participantLabel,
+        createdAt: now,
+        clientEventCount: 0,
+        ...(event.sessionField ? { [event.sessionField]: now } : {}),
+      })
+    }
+
+    const actorRole = actorRoleFor({ study, uid, isSuperAdmin })
+    transaction.create(eventRef, {
+      eventId: event.eventId,
+      sessionId,
+      participantLabel,
+      ...(actorRole ? { actorRole } : {}),
+      eventType: event.eventType,
+      layer: 'methodological',
+      level: event.level,
+      source: 'logging-service',
+      message: event.message,
+      occurredAt: now,
+      receivedAt: now,
+      details: event.details,
+    })
+    return { status: 'accepted' }
+  })
 }
 
 export const logEvents = functions.onCall({
   handler: async (request) => {
-    const uid = getAuthUid(request)
-    if (!uid) {
-      throw httpsError('unauthenticated', 'Authentication is required')
-    }
-
-    const payload = validatePayload(getRequestData(request))
-    const db = admin.firestore()
-    const testRef = db.collection('tests').doc(payload.testId)
-    const testSnap = await testRef.get()
-
-    if (!testSnap.exists) {
-      throw httpsError('not-found', 'Study not found')
-    }
-
-    const testData = testSnap.data()
-    const actorRole = resolveActorRole(testData, uid)
-
-    if (!actorRole) {
-      throw httpsError('permission-denied', 'User cannot write logs for this study')
-    }
-
-    const timestamp = admin.firestore.FieldValue.serverTimestamp()
-    const actorHash = createActorHash(uid, payload.testId)
-    const batch = db.batch()
-    const batchRef = testRef.collection('logBatches').doc(payload.batchId)
-    const answersDocId = payload.answersDocId || testData.answersDocId || ''
-
-    for (const event of payload.events) {
-      const logRef = testRef.collection('logs').doc()
-      batch.set(logRef, {
-        ...event,
-        testId: payload.testId,
-        answersDocId,
-        studyType: testData.testType || '',
-        subType: testData.subType || '',
-        actorHash,
-        actorType: actorRole === 'admin' ? 'researcher' : 'cooperator',
-        actorRole,
-        sessionId: payload.sessionId,
-        batchId: payload.batchId,
-        clientTimestamp: payload.clientTimestamp,
-        timestamp,
-        schemaVersion: 1,
-      })
-    }
-
-    batch.create(batchRef, {
-      batchId: payload.batchId,
-      testId: payload.testId,
-      answersDocId,
-      actorHash,
-      eventCount: payload.events.length,
-      createdAt: timestamp,
-      schemaVersion: 1,
-    })
-
     try {
-      await batch.commit()
-    } catch (error) {
-      if (isDuplicateBatchError(error)) {
-        logger.warn('Duplicate log batch skipped', {
-          testId: payload.testId,
-          batchId: payload.batchId,
-        })
-        return {
-          status: 'duplicate',
-          written: 0,
-          batchId: payload.batchId,
-        }
-      }
-
-      logger.error('Failed to write log batch', {
-        errorCode: error?.code,
-        errorMessage: error?.message,
-        testId: payload.testId,
-        batchId: payload.batchId,
+      return await submitLogEvents(request)
+    } catch (caught) {
+      if (caught?.loggingRejection) throw caught
+      logger.error('Unexpected log ingestion failure', {
+        errorCode: caught?.code,
       })
-      throw httpsError('internal', 'Failed to write log batch')
+      throw error('internal', 'Logging service is unavailable')
     }
+  },
+})
 
-    return {
-      status: 'ok',
-      written: payload.events.length,
-      batchId: payload.batchId,
+export const requestLogEvent = functions.onCall({
+  handler: async (request) => {
+    try {
+      return await submitVerifiedEvent(request)
+    } catch (caught) {
+      if (caught?.loggingRejection) throw caught
+      logger.error('Unexpected verified event failure', {
+        errorCode: caught?.code,
+      })
+      throw error('internal', 'Logging service is unavailable')
     }
   },
 })
