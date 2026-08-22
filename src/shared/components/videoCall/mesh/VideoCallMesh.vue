@@ -128,11 +128,18 @@
               :key="tile.id"
               :cols="tileCols"
               class="pa-2"
-              :class="{ 'h-100': tiles.length === 3 }"
+              :class="{
+                'h-100': tiles.length === 3,
+                'mx-auto d-flex align-center': tiles.length === 1,
+              }"
             >
               <div
-                class="video-container h-100"
-                :class="{ 'screen-share-container': tile.type === 'screen' }"
+                class="video-container"
+                :class="{
+                  'h-100': tiles.length !== 1,
+                  'video-container-single': tiles.length === 1,
+                  'screen-share-container': tile.type === 'screen',
+                }"
               >
                 <video
                   :ref="(el) => bindTileVideoElement(el, tile)"
