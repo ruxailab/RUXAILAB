@@ -62,6 +62,7 @@
     "vue3-text-clamp": "^0.1.2",
     "vuedraggable": "^4.1.0",
     "vuetify": "^3.13.1",
+    "vuewordcloud": "^19.0.0",
     "vuex": "^4.0.2",
     "wavesurfer.js": "^7.12.11"
   },

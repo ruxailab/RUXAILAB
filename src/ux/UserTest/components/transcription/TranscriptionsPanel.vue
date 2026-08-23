@@ -144,7 +144,10 @@ const hasRuns = computed(
 
 // Controllers
 import TranscriptionController from '@/ai/transcriptions/TranscriptionController'
+import AnswerController from '@/shared/controllers/AnswerController'
+
 const transcriptionController = new TranscriptionController()
+const answerController = new AnswerController()
 
 watch(
   () => [props.answersDocId, props.userDocId, props.taskId],
