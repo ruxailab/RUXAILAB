@@ -999,10 +999,9 @@ const handleWelcomeStart = async () => {
 }
 
 const handleStartTasks = async () => {
+  await showTaskTitleAnnouncement(0)
   taskIndex.value = 0
   globalIndex.value = hasEyeTracking.value ? 5 : 4
-  await nextTick()
-  await showTaskTitleAnnouncement(0)
 }
 
 const showTaskTitleAnnouncement = async (idx) => {
@@ -1182,8 +1181,8 @@ const completeStep = async (id, type, userCompleted = true) => {
       allTasksCompleted.value = allTasksAttempted
 
       if (id < localTestAnswer.tasks.length - 1) {
+        await showTaskTitleAnnouncement(id + 1)
         taskIndex.value = id + 1
-        await showTaskTitleAnnouncement(taskIndex.value)
       } else {
         taskIndex.value = id
         const postTasksAnnouncement = getPostTasksAnnouncement()

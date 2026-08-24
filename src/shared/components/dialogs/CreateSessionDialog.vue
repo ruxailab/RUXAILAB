@@ -120,6 +120,14 @@
                       </v-chip>
                     </v-chip-group>
                   </div>
+                  <div
+                    v-if="
+                      props.requireFacilitatorAndParticipant && !hasFacilitator
+                    "
+                    class="text-error text-caption mt-2"
+                  >
+                    {{ $t('Sessions.error.facilitatorRequired') }}
+                  </div>
                 </div>
 
                 <!-- PARTICIPANTS -->
@@ -205,6 +213,14 @@
                         {{ participant.email }}
                       </v-chip>
                     </v-chip-group>
+                  </div>
+                  <div
+                    v-if="
+                      props.requireFacilitatorAndParticipant && !hasParticipant
+                    "
+                    class="text-error text-caption mt-2"
+                  >
+                    {{ $t('Sessions.error.participantRequired') }}
                   </div>
                 </div>
 
@@ -487,7 +503,7 @@
             color="primary"
             size="large"
             :loading="loading"
-            :disabled="!valid"
+            :disabled="!valid || !sessionMembersValid"
             prepend-icon="mdi-calendar-plus"
             @click="saveSession"
           >
@@ -532,6 +548,11 @@ const props = defineProps({
   participantLimit: {
     type: Number,
     default: null,
+  },
+
+  requireFacilitatorAndParticipant: {
+    type: Boolean,
+    default: false,
   },
 })
 
@@ -580,8 +601,22 @@ const user = computed(() => store.getters.user)
 const participantLimitReached = computed(
   () =>
     props.participantLimit &&
-    selectedParticipants.value.length >= props.participantLimit,
+    selectedParticipants.value.length > props.participantLimit,
 )
+
+const hasFacilitator = computed(() =>
+  sessionStaff.value.some((staff) => staff.role === 'FACILITATOR'),
+)
+
+const hasParticipant = computed(() => selectedParticipants.value.length > 0)
+
+const sessionMembersValid = computed(() => {
+  if (!props.requireFacilitatorAndParticipant) {
+    return true
+  }
+
+  return hasFacilitator.value && hasParticipant.value
+})
 
 const date = computed({
   get() {
@@ -706,7 +741,12 @@ const formattedDateTime = computed(() => {
 
 // Helpers
 function getSessionTitle() {
-  return sessionTitle.value?.trim() || `${date.value}_Session`
+  const day = String(date.value.getDate()).padStart(2, '0')
+  const month = String(date.value.getMonth() + 1).padStart(2, '0')
+  const year = date.value.getFullYear()
+
+  const formattedDate = `${day}-${month}-${year}`
+  return sessionTitle.value?.trim() || `${formattedDate}_Session`
 }
 
 function getDefaultDate() {
@@ -804,8 +844,12 @@ async function addParticipantEmail() {
 }
 
 function addParticipant(participant) {
-  if (props.participantLimit && selectedParticipants.value.length >= 1) {
+  if (
+    props.participantLimit &&
+    selectedParticipants.value.length >= props.participantLimit
+  ) {
     showError(t('Sessions.error.participantLimitReached'))
+    return
   }
 
   const exists = selectedParticipants.value.some(
@@ -832,6 +876,18 @@ function removeParticipant(index) {
 async function saveSession() {
   try {
     loading.value = true
+
+    if (props.requireFacilitatorAndParticipant) {
+      if (!hasFacilitator.value) {
+        showError(t('Sessions.error.facilitatorRequired'))
+        return
+      }
+
+      if (!hasParticipant.value) {
+        showError(t('Sessions.error.participantRequired'))
+        return
+      }
+    }
 
     const validation = await sessionForm.value.validate()
 

@@ -151,42 +151,48 @@ const startAudioRecording = async () => {
 
     mediaRecorder.value.local.onstop = async () => {
       emit('showLoading')
-      const audioBlob = new Blob(recordedChunks.value.local, {
-        type: 'audio/webm',
-      })
-      const storage = getStorage()
-      const correctTaskIndex = recordingTaskIndex.value
-      const storageReference = storageRef(
-        storage,
-        `tests/${props.testId}/${resolvedUserDocId.value}/task_${correctTaskIndex}_evaluator/${Date.now()}.webm`,
-      )
-      await uploadBytes(storageReference, audioBlob)
+      try {
+        const audioBlob = new Blob(recordedChunks.value.local, {
+          type: 'audio/webm',
+        })
+        const storage = getStorage()
+        const correctTaskIndex = recordingTaskIndex.value
+        const storageReference = storageRef(
+          storage,
+          `tests/${props.testId}/${resolvedUserDocId.value}/task_${correctTaskIndex}_evaluator/${Date.now()}.webm`,
+        )
+        await uploadBytes(storageReference, audioBlob)
 
-      recordedAudio.value = await getDownloadURL(storageReference)
+        recordedAudio.value = await getDownloadURL(storageReference)
 
-      await store.dispatch('updateTaskMediaUrl', {
-        taskIndex: correctTaskIndex,
-        mediaType: MEDIA_FIELD_MAP.audio,
-        url: recordedAudio.value,
-        size: audioBlob.size,
-      })
+        await store.dispatch('updateTaskMediaUrl', {
+          taskIndex: correctTaskIndex,
+          mediaType: MEDIA_FIELD_MAP.audio,
+          url: recordedAudio.value,
+          size: audioBlob.size,
+          userId: resolvedUserDocId.value,
+        })
 
-      if (audioStream.value) {
-        audioStream.value.getTracks().forEach((track) => track.stop())
-        audioStream.value = null
+        // Size
+        if (
+          currentUserTestAnswer.value.tasks &&
+          currentUserTestAnswer.value.tasks[recordingTaskIndex.value]
+        ) {
+          currentUserTestAnswer.value.tasks[
+            recordingTaskIndex.value
+          ].audioSize = new Blob(recordedChunks.value.local).size
+        }
+      } catch (error) {
+        console.error('Error while processing audio recording:', error)
+      } finally {
+        if (audioStream.value) {
+          audioStream.value.getTracks().forEach((track) => track.stop())
+          audioStream.value = null
+        }
+        emit('recordingStarted', false)
+        emit('stopShowLoading')
+        recordingAudio.value = false
       }
-
-      emit('recordingStarted', false)
-      // Size
-      if (
-        currentUserTestAnswer.value.tasks &&
-        currentUserTestAnswer.value.tasks[recordingTaskIndex.value]
-      ) {
-        currentUserTestAnswer.value.tasks[recordingTaskIndex.value].audioSize =
-          new Blob(recordedChunks.value.local).size
-      }
-      emit('stopShowLoading')
-      recordingAudio.value = false
     }
 
     mediaRecorder.value.local.start()
@@ -208,24 +214,32 @@ const startAudioRecording = async () => {
           }
         }
         mediaRecorder.value.remote.onstop = async () => {
-          const blob = new Blob(recordedChunks.value.remote, {
-            type: 'audio/webm',
-          })
-          const storage = getStorage()
-          const correctTaskIndex = recordingTaskIndex.value
-          const storageReference = storageRef(
-            storage,
-            `tests/${props.testId}/${resolvedUserDocId.value}/task_${correctTaskIndex}_moderator/${Date.now()}.webm`,
-          )
-          await uploadBytes(storageReference, blob)
-          const downloadURL = await getDownloadURL(storageReference)
+          try {
+            const blob = new Blob(recordedChunks.value.remote, {
+              type: 'audio/webm',
+            })
+            const storage = getStorage()
+            const correctTaskIndex = recordingTaskIndex.value
+            const storageReference = storageRef(
+              storage,
+              `tests/${props.testId}/${resolvedUserDocId.value}/task_${correctTaskIndex}_moderator/${Date.now()}.webm`,
+            )
+            await uploadBytes(storageReference, blob)
+            const downloadURL = await getDownloadURL(storageReference)
 
-          await store.dispatch('updateTaskMediaUrl', {
-            taskIndex: correctTaskIndex,
-            mediaType: MEDIA_FIELD_MAP.moderator,
-            url: downloadURL,
-            size: blob.size,
-          })
+            await store.dispatch('updateTaskMediaUrl', {
+              taskIndex: correctTaskIndex,
+              mediaType: MEDIA_FIELD_MAP.moderator,
+              url: downloadURL,
+              size: blob.size,
+              userId: resolvedUserDocId.value,
+            })
+          } catch (error) {
+            console.error(
+              'Error while processing moderator audio recording:',
+              error,
+            )
+          }
         }
 
         mediaRecorder.value.remote.start()

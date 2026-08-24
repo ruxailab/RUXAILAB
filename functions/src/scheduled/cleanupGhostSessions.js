@@ -1,5 +1,5 @@
 import { onSchedule } from 'firebase-functions/v2/scheduler'
-import { admin } from '../f.firebase.js'
+import { admin } from '../core/firebase/f.firebase.js'
 import logger from '../utils/logger.js'
 
 // Run every 6 hours

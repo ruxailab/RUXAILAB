@@ -2,7 +2,7 @@ import { jest } from '@jest/globals'
 
 const serverTimestamp = jest.fn(() => 'server-time')
 
-jest.unstable_mockModule('../src/f.firebase.js', () => ({
+jest.unstable_mockModule('../src/core/firebase/f.firebase.js', () => ({
   admin: {
     firestore: Object.assign(jest.fn(), {
       FieldValue: { serverTimestamp, delete: jest.fn() },
