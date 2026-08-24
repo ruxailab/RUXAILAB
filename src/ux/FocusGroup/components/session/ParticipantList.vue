@@ -43,6 +43,15 @@
           >
             mdi-message-text
           </v-icon>
+          <v-chip
+            v-if="isFacilitator && entry.isParticipant"
+            size="x-small"
+            variant="tonal"
+            :color="participationColor(entry.participation)"
+            :title="t('focusGroup.session.participationHint')"
+          >
+            {{ t('focusGroup.session.participationPercent', { percent: entry.participation }) }}
+          </v-chip>
         </div>
       </div>
     </div>
@@ -61,6 +70,10 @@ const props = defineProps({
   // ids that have submitted a response for the current topic
   respondedIds: { type: Array, default: () => [] },
   currentUserId: { type: String, default: '' },
+  // { userId: percent } — each participant's share of session messages.
+  // Facilitator-only signal, so it's only rendered when isFacilitator is set.
+  participation: { type: Object, default: () => ({}) },
+  isFacilitator: { type: Boolean, default: false },
 })
 
 // The role is stored as a localized label, so colour by matching the known
@@ -71,6 +84,16 @@ const roleStyle = (role) => {
   if (role === t('focusGroup.session.roleObserver'))
     return { color: 'orange', icon: 'mdi-eye' }
   return { color: 'green', icon: 'mdi-account' }
+}
+
+// Below this share of the session's messages, a participant is flagged as
+// low-engagement so the facilitator can draw them into the discussion.
+const LOW_PARTICIPATION_THRESHOLD = 15
+
+const participationColor = (percent) => {
+  if (percent === 0) return 'error'
+  if (percent < LOW_PARTICIPATION_THRESHOLD) return 'warning'
+  return 'grey'
 }
 
 const entries = computed(() =>
@@ -84,6 +107,8 @@ const entries = computed(() =>
       connected: value?.connected === true,
       color: style.color,
       icon: style.icon,
+      isParticipant: role === t('focusGroup.session.roleParticipant'),
+      participation: props.participation[id] ?? 0,
     }
   }),
 )

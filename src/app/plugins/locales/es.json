@@ -2555,6 +2555,8 @@
       "sessionInfo": "Sesión",
       "showParticipants": "Mostrar participantes",
       "hideParticipants": "Ocultar participantes",
+      "participationPercent": "{percent}%",
+      "participationHint": "Proporción de la actividad de la sesión de este participante (mensajes y tiempo hablando)",
       "muteMicrophone": "Silenciar micrófono",
       "unmuteMicrophone": "Activar micrófono",
       "turnCameraOff": "Apagar cámara",

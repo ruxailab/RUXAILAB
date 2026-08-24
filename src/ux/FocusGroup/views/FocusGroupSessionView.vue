@@ -362,6 +362,8 @@
               :participants="participants"
               :responded-ids="respondedIds"
               :current-user-id="user?.id"
+              :participation="participationByUser"
+              :is-facilitator="isFacilitator"
             />
           </div>
 
@@ -413,6 +415,8 @@ import { Track } from 'livekit-client'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import { useLiveKitRoom } from '@/shared/components/videoCall/composables/useLiveKitRoom'
 import { useFocusGroupSession } from '@/ux/FocusGroup/composables/useFocusGroupSession'
+import { useSpeakingTime } from '@/ux/FocusGroup/composables/useSpeakingTime'
+import { computeParticipation } from '@/ux/FocusGroup/utils/participation'
 import SessionLobby from '@/ux/FocusGroup/components/session/SessionLobby.vue'
 import SessionVideoStage from '@/ux/FocusGroup/components/session/SessionVideoStage.vue'
 import TopicPanel from '@/ux/FocusGroup/components/session/TopicPanel.vue'
@@ -721,6 +725,11 @@ const {
   cooperators: computed(() => test.value?.cooperators || []),
 })
 
+// Accumulated LiveKit active-speaker time per identity, feeding the
+// facilitator-only participation indicator alongside message counts — see
+// participationByUser below.
+const { speakingMs } = useSpeakingTime(callRoom)
+
 const localVideoState = computed(() => ({
   name: user.value?.name || user.value?.email?.split('@')[0] || '',
   isObservator: isCallObservator.value,
@@ -797,6 +806,14 @@ const currentMessages = computed(() => {
 const respondedIds = computed(() => [
   ...new Set(currentMessages.value.map((m) => m.userId)),
 ])
+
+// Facilitator-only signal: each participant's share of the session's
+// overall activity — messages sent (all topics) blended with LiveKit
+// speaking time, so a participant who mostly talks isn't invisible next to
+// one who mostly types.
+const participationByUser = computed(() =>
+  computeParticipation({ messages: messages.value, speakingMs: speakingMs.value }),
+)
 
 // --- Facilitator actions ---
 const onStart = async () => {
