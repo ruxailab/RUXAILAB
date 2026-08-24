@@ -1,5 +1,30 @@
 <template>
   <div>
+    <v-dialog v-model="showScreenSharePrompt" persistent max-width="640">
+      <v-card class="pa-4 pa-sm-6" rounded="xl">
+        <ScreenShareInstructions compact />
+        <v-card-actions class="px-0 pt-5 pb-0">
+          <v-btn
+            variant="text"
+            :disabled="isRequestingScreenShare"
+            @click="cancelScreenSharePrompt"
+          >
+            {{ $t('screenShare.backButton') }}
+          </v-btn>
+          <v-spacer />
+          <v-btn
+            color="primary"
+            variant="flat"
+            :loading="isRequestingScreenShare"
+            prepend-icon="mdi-monitor-share"
+            @click="confirmScreenShare"
+          >
+            {{ $t('screenShare.shareButton') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <SubmitDialog
       :model-value="dialog"
       :title="$t('HeuristicsTestView.messages.submitTest')"
@@ -201,6 +226,11 @@
                           </div>
                         </div>
                       </div>
+
+                      <ScreenShareInstructions
+                        v-if="recordingFlags.hasScreenRecord"
+                        class="mt-4"
+                      />
                     </v-card-text>
                   </v-card>
 
@@ -210,7 +240,7 @@
                       variant="flat"
                       size="large"
                       :loading="startingRecording"
-                      @click="startSortingWithRecording"
+                      @click="onStartSorting"
                     >
                       {{ $t('CardSorting.startSorting') }}
                     </v-btn>
@@ -327,6 +357,7 @@ import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import AudioRecorder from '@/ux/UserTest/components/AudioRecorder.vue'
 import ScreenRecorder from '@/ux/UserTest/components/ScreenRecorder.vue'
+import ScreenShareInstructions from '@/ux/UserTest/components/ScreenShareInstructions.vue'
 import VideoRecorder from '@/ux/UserTest/components/VideoRecorder.vue'
 import CardSortingTask from './CardSortingTask.vue'
 import CardSortingEvaluatorAnswer from '../models/CardSortingEvaluatorAnswer'
@@ -356,6 +387,8 @@ const submitting = ref(false)
 const dialog = ref(false)
 const sortingStarted = ref(false)
 const startingRecording = ref(false)
+const showScreenSharePrompt = ref(false)
+const isRequestingScreenShare = ref(false)
 const uploadingCount = ref(0)
 const isWaitingForUploadToFinish = ref(false)
 let finishTimeout = null
@@ -500,7 +533,22 @@ function forceStopAllMedia() {
   screenRecorder.value?.stopRecording?.()
 }
 
-async function startMediaRecorders() {
+async function startMediaRecorders({
+  skipScreen = false,
+  screenOnly = false,
+} = {}) {
+  if (
+    !skipScreen &&
+    recordingFlags.value.hasScreenRecord &&
+    screenRecorder.value
+  ) {
+    const screenStarted = await screenRecorder.value.captureScreen({
+      requireEntireScreen: false,
+    })
+    if (!screenStarted) return false
+  }
+  if (screenOnly) return true
+
   if (recordingFlags.value.hasAudioRecord && audioRecorder.value) {
     await audioRecorder.value.startAudioRecording()
   }
@@ -508,18 +556,44 @@ async function startMediaRecorders() {
     const videoStarted = await videoRecorder.value.startRecording()
     if (!videoStarted) return false
   }
-  if (recordingFlags.value.hasScreenRecord && screenRecorder.value) {
-    await screenRecorder.value.captureScreen()
-  }
   return true
 }
 
-async function startSortingWithRecording() {
+function onStartSorting() {
+  if (recordingFlags.value.hasScreenRecord) {
+    showScreenSharePrompt.value = true
+    return
+  }
+  startSortingWithRecording()
+}
+
+function cancelScreenSharePrompt() {
+  if (isRequestingScreenShare.value) return
+  showScreenSharePrompt.value = false
+}
+
+async function confirmScreenShare() {
+  isRequestingScreenShare.value = true
+  try {
+    await nextTick()
+    const screenStarted = await startMediaRecorders({ screenOnly: true })
+    if (!screenStarted) return
+    showScreenSharePrompt.value = false
+    await startSortingWithRecording({ skipScreen: true })
+  } finally {
+    isRequestingScreenShare.value = false
+  }
+}
+
+async function startSortingWithRecording({ skipScreen = false } = {}) {
   startingRecording.value = true
   try {
     await nextTick()
-    const mediaStarted = await startMediaRecorders()
-    if (!mediaStarted) return
+    const mediaStarted = await startMediaRecorders({ skipScreen })
+    if (!mediaStarted) {
+      screenRecorder.value?.abortCapture?.()
+      return
+    }
     sortingStarted.value = true
   } finally {
     startingRecording.value = false

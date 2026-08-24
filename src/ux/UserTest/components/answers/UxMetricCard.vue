@@ -1,25 +1,44 @@
 <template>
-  <v-card :class="['pa-6', 'elevation-3', 'rounded-xl', 'h-100', 'ux-metric-card', { 'disabled-card': disabled }]">
+  <v-card
+    :class="[
+      'pa-6',
+      'elevation-3',
+      'rounded-xl',
+      'h-100',
+      'ux-metric-card',
+      { 'disabled-card': disabled },
+    ]"
+  >
     <div class="d-flex align-center mb-4 position-relative">
       <v-avatar
         :color="disabled ? 'grey-lighten-1' : color"
         size="56"
         class="me-4"
       >
-        <v-icon
-          color="white"
-          size="28"
-        >
+        <v-icon color="white" size="28">
           {{ icon }}
         </v-icon>
       </v-avatar>
       <div class="flex-grow-1">
-        <div :class="['text-h4', 'font-weight-bold', disabled ? 'text-grey' : `text-${color}`]">
+        <div
+          :class="[
+            'text-h4',
+            'font-weight-bold',
+            disabled ? 'text-grey' : `text-${color}`,
+          ]"
+        >
           <slot name="value">
             {{ value }}
           </slot>
         </div>
-        <p :class="['text-body-1', 'font-weight-medium', 'mb-0', disabled ? 'text-grey-lighten-1' : '']">
+        <p
+          :class="[
+            'text-body-1',
+            'font-weight-medium',
+            'mb-0',
+            disabled ? 'text-grey-lighten-1' : '',
+          ]"
+        >
           <slot name="label">
             {{ label }}
           </slot>
@@ -31,17 +50,23 @@
         size="small"
         variant="outlined"
         class="position-absolute coming-soon-chip"
-        style="top: 8px; right: 8px; z-index: 1;"
+        style="top: 8px; right: 8px; z-index: 1"
       >
         {{ comingSoon ? comingSoonText : 'Coming Soon' }}
       </v-chip>
     </div>
-    <p :class="['text-body-2', disabled ? 'text-grey-lighten-1' : 'text-medium-emphasis']">
+    <p
+      :class="[
+        'text-body-2',
+        disabled ? 'text-grey-lighten-1' : 'text-medium-emphasis',
+      ]"
+    >
       <slot name="description">
         {{ description }}
       </slot>
     </p>
     <v-progress-linear
+      v-if="showProgress"
       :model-value="progress"
       :color="disabled ? 'grey-lighten-2' : color"
       height="8"
@@ -53,16 +78,17 @@
 
 <script setup>
 const props = defineProps({
-    value: { type: [String, Number], required: true },
-    label: { type: String, required: true },
-    color: { type: String, required: true },
-    icon: { type: String, required: true },
-    description: { type: String, default: '' },
-    progress: { type: Number, default: 0 },
-    comingSoon: { type: Boolean, default: false },
-    comingSoonText: { type: String, default: 'Coming Soon' },
-    disabled: { type: Boolean, default: false },
-});
+  value: { type: [String, Number], required: true },
+  label: { type: String, required: true },
+  color: { type: String, required: true },
+  icon: { type: String, required: true },
+  description: { type: String, default: '' },
+  progress: { type: Number, default: 0 },
+  showProgress: { type: Boolean, default: true },
+  comingSoon: { type: Boolean, default: false },
+  comingSoonText: { type: String, default: 'Coming Soon' },
+  disabled: { type: Boolean, default: false },
+})
 </script>
 
 <style scoped>

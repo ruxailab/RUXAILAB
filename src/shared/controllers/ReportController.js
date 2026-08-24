@@ -1,9 +1,11 @@
 import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import { STUDY_TYPES } from '../constants/methodDefinitions'
+import { deleteTranscriptionsByUser } from '@/app/services/transcription/TranscriptionService'
 
 export default class ReportController extends Controller {
   /**
    * Remove o report de um usuário e do documento de respostas.
+   * For USER studies, also deletes associated transcription documents.
    *
    * @param {Object} params
    * @param {Object} params.report - O report a ser removido.
@@ -14,6 +16,7 @@ export default class ReportController extends Controller {
     const userToRemoveId = report.userDocId
     let testType = test.testType
     const testId = test.id
+    const isUserStudy = testType === STUDY_TYPES.USER
 
     if (testType === STUDY_TYPES.HEURISTIC) testType = 'heuristicAnswers'
     if (testType === STUDY_TYPES.USER) testType = 'taskAnswers'
@@ -33,6 +36,15 @@ export default class ReportController extends Controller {
       if (answerDoc.exists()) {
         await this.update('answers', answerId, {
           [`${testType}.${userToRemoveId}`]: this.getDeleteField(),
+        })
+      }
+
+      // 3 - Cascade transcriptions for User Test reports
+      if (isUserStudy) {
+        await deleteTranscriptionsByUser({
+          answersDocId: answerId,
+          userDocId: userToRemoveId,
+          studyId: testId,
         })
       }
 
