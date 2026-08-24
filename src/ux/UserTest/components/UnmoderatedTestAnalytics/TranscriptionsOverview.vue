@@ -383,9 +383,7 @@ const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
 
 const answersDocId = computed(
   () =>
-    store.getters.test?.answersDocId ||
-    testAnswerDocument.value?.id ||
-    null,
+    store.getters.test?.answersDocId || testAnswerDocument.value?.id || null,
 )
 
 const hasActiveSearch = computed(
@@ -573,9 +571,7 @@ const taskFilterOptions = computed(() => [
 const userFilterOptions = computed(() => {
   const options = [{ title: 'All Users', value: ALL_USERS }]
 
-  for (const [userDocId, session] of Object.entries(
-    visibleUserAnswers.value,
-  )) {
+  for (const [userDocId, session] of Object.entries(visibleUserAnswers.value)) {
     const title =
       session?.fullName ||
       session?.email ||
@@ -591,9 +587,7 @@ const userFilterOptions = computed(() => {
 const userTranscriptionPointers = computed(() => {
   const pointers = []
 
-  for (const [userDocId, session] of Object.entries(
-    visibleUserAnswers.value,
-  )) {
+  for (const [userDocId, session] of Object.entries(visibleUserAnswers.value)) {
     const sessionTasks = session?.tasks || {}
 
     for (const [taskId, taskAnswer] of Object.entries(sessionTasks)) {

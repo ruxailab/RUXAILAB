@@ -126,10 +126,7 @@ export const aggregateTranscriptionMetrics = (transcriptions = []) => {
     general.sessionDuration += finalized.sessionDuration
     general.wordsSpoken += finalized.wordsSpoken
     general.speakingTime += finalized.speakingTime
-    general.keywords = mergeKeywordMaps([
-      general.keywords,
-      finalized.keywords,
-    ])
+    general.keywords = mergeKeywordMaps([general.keywords, finalized.keywords])
   }
 
   const generalFinalized = finalizeSpeechRate(general)

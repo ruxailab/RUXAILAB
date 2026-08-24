@@ -56,7 +56,9 @@ export function useFocusGroupSession(studyId) {
   const notes = computed(() => snapshot.value?.notes ?? {})
   // The stimulus the facilitator is currently presenting, scoped to a topic so
   // advancing the guide can retire it. { stimulusId, topicId, presentedAt } | null
-  const currentStimulus = computed(() => snapshot.value?.currentStimulus ?? null)
+  const currentStimulus = computed(
+    () => snapshot.value?.currentStimulus ?? null,
+  )
   // Per-topic countdown timer. Clients tick locally from `endsAt`; only the
   // facilitator's play/pause/reset write here, so there are no per-second writes.
   // { topicId, running, endsAt, remainingMs } | null

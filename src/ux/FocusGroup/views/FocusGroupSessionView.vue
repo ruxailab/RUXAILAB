@@ -267,7 +267,8 @@
 
             <span v-else class="text-white text-body-2 text-truncate fg-nowrap">
               {{
-                currentTopic?.title || t('focusGroup.session.waitingParticipant')
+                currentTopic?.title ||
+                t('focusGroup.session.waitingParticipant')
               }}
             </span>
 
@@ -585,15 +586,12 @@ const isParticipant = computed(
 // the session link without a posting role. This mirrors roleLabel, so the
 // "Observer" badge and the observer tools (notes pad, observing strip) always
 // agree instead of the badge showing while the tools stay hidden.
-const isObserver = computed(
-  () => !isFacilitator.value && !isParticipant.value,
-)
+const isObserver = computed(() => !isFacilitator.value && !isParticipant.value)
 // Facilitator and participants can post; observers read the discussion only.
 // Participant posting also depends on chat being enabled for this session.
 const canPost = computed(
   () =>
-    isFacilitator.value ||
-    (isParticipant.value && allowParticipantChat.value),
+    isFacilitator.value || (isParticipant.value && allowParticipantChat.value),
 )
 const roleLabel = computed(() => {
   if (isFacilitator.value) return t('focusGroup.session.roleFacilitator')
@@ -812,7 +810,10 @@ const respondedIds = computed(() => [
 // speaking time, so a participant who mostly talks isn't invisible next to
 // one who mostly types.
 const participationByUser = computed(() =>
-  computeParticipation({ messages: messages.value, speakingMs: speakingMs.value }),
+  computeParticipation({
+    messages: messages.value,
+    speakingMs: speakingMs.value,
+  }),
 )
 
 // --- Facilitator actions ---

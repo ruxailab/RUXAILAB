@@ -10,11 +10,7 @@
   >
     <template #content>
       <div class="test-content pa-4 rounded-xl">
-        <v-dialog
-          v-model="showScreenSharePrompt"
-          persistent
-          max-width="640"
-        >
+        <v-dialog v-model="showScreenSharePrompt" persistent max-width="640">
           <v-card class="pa-4 pa-sm-6" rounded="xl">
             <ScreenShareInstructions
               compact

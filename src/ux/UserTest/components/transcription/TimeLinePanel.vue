@@ -185,10 +185,7 @@ async function transcribeSession() {
       model: selectedModel.value,
     })
 
-    transcriptSegments.value = mergeSegments(
-      result.evaluator,
-      result.moderator,
-    )
+    transcriptSegments.value = mergeSegments(result.evaluator, result.moderator)
 
     snackbar.value = {
       visible: true,

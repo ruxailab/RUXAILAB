@@ -16,11 +16,7 @@
       {{ t('screenShare.lead') }}
     </p>
 
-    <div
-      class="picker-demo"
-      role="img"
-      :aria-label="t('screenShare.demoAlt')"
-    >
+    <div class="picker-demo" role="img" :aria-label="t('screenShare.demoAlt')">
       <div class="picker-window">
         <div class="picker-title">
           {{ t('screenShare.pickerTitle') }}
@@ -42,7 +38,9 @@
         <div class="picker-stage">
           <div class="picker-surface picker-surface--wrong">
             <div class="surface-preview surface-preview--tab">
-              <span class="surface-label">{{ t('screenShare.pickerTab') }}</span>
+              <span class="surface-label">{{
+                t('screenShare.pickerTab')
+              }}</span>
             </div>
             <div class="surface-badge surface-badge--wrong">
               {{ t('screenShare.demoDontPick') }}

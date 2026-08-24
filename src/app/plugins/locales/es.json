@@ -624,6 +624,15 @@
       "cancelled": "Se canceló el uso compartido de pantalla. Comparte toda la pantalla para continuar.",
       "wrongSurface": "Compartiste una pestaña del navegador. Comparte toda la pantalla para que podamos ver la herramienta que vas a usar.",
       "error": "No pudimos iniciar la grabación de pantalla. Inténtalo de nuevo."
+    },
+    "boundary": {
+      "title": "Algo salió mal",
+      "message": "Ocurrió un error inesperado al cargar esta página. Sus datos han sido preservados.",
+      "retry": "Reintentar",
+      "goToDashboard": "Ir al Panel",
+      "showDetails": "Mostrar detalles del error",
+      "copyDetails": "Copiar detalles del error",
+      "copied": "¡Copiado!"
     }
   },
   "screenShare": {
@@ -3473,22 +3482,6 @@
     "empty": {
       "title": "No se encontraron sesiones",
       "description": "Crea una sesión para comenzar a invitar personal y participantes."
-    }
-  },
-  "errors": {
-    "globalError": "Ocurrió un error. Por favor, inténtalo de nuevo.",
-    "emailIsRequired": "El correo electrónico es obligatorio.",
-    "passwordRequired": "La contraseña es obligatoria.",
-    "invalidEmail": "Por favor, introduce una dirección de correo electrónico válida.",
-    "incorrectCredential": "Correo o contraseña incorrectos, o la cuenta no existe.",
-    "boundary": {
-      "title": "Algo salió mal",
-      "message": "Ocurrió un error inesperado al cargar esta página. Sus datos han sido preservados.",
-      "retry": "Reintentar",
-      "goToDashboard": "Ir al Panel",
-      "showDetails": "Mostrar detalles del error",
-      "copyDetails": "Copiar detalles del error",
-      "copied": "¡Copiado!"
     }
   }
 }

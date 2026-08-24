@@ -131,7 +131,11 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
-import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
+import {
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from 'firebase/storage'
 import { storage } from '@/app/plugins/firebase'
 import Stimulus from '@/ux/FocusGroup/models/Stimulus'
 

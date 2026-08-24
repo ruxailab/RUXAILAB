@@ -108,7 +108,9 @@ const hasConsentText = computed(
 
 const hydrate = (study) => {
   if (!study) return
-  topics.value = (study.discussionGuide ?? []).map((t) => new DiscussionTopic(t))
+  topics.value = (study.discussionGuide ?? []).map(
+    (t) => new DiscussionTopic(t),
+  )
   config.value = new FocusGroupConfig(study.config ?? {})
 }
 

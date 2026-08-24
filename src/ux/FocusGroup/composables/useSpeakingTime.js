@@ -30,7 +30,10 @@ export function useSpeakingTime(roomRef) {
 
   function detach() {
     if (attachedRoom) {
-      attachedRoom.off(RoomEvent.ActiveSpeakersChanged, handleActiveSpeakersChanged)
+      attachedRoom.off(
+        RoomEvent.ActiveSpeakersChanged,
+        handleActiveSpeakersChanged,
+      )
       attachedRoom = null
     }
   }

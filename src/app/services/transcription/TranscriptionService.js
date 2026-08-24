@@ -24,12 +24,11 @@ import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunc
  * }>}
  */
 export async function transcribeTask(payload) {
-  const response =
-    await FirebaseFunctionsController.callHttpsCallableFunction(
-      'transcriptionTask',
-      payload,
-      { timeout: 540_000 },
-    )
+  const response = await FirebaseFunctionsController.callHttpsCallableFunction(
+    'transcriptionTask',
+    payload,
+    { timeout: 540_000 },
+  )
   return response?.data ?? response
 }
 
@@ -48,11 +47,10 @@ export async function transcribeTask(payload) {
  * }>}
  */
 export async function deleteTranscription(payload) {
-  const response =
-    await FirebaseFunctionsController.callHttpsCallableFunction(
-      'transcriptionDelete',
-      payload,
-    )
+  const response = await FirebaseFunctionsController.callHttpsCallableFunction(
+    'transcriptionDelete',
+    payload,
+  )
   return response?.data ?? response
 }
 
@@ -70,10 +68,9 @@ export async function deleteTranscription(payload) {
  * }>}
  */
 export async function deleteTranscriptionsByUser(payload) {
-  const response =
-    await FirebaseFunctionsController.callHttpsCallableFunction(
-      'transcriptionDeleteByUser',
-      payload,
-    )
+  const response = await FirebaseFunctionsController.callHttpsCallableFunction(
+    'transcriptionDeleteByUser',
+    payload,
+  )
   return response?.data ?? response
 }

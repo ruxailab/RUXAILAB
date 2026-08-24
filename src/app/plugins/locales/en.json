@@ -626,6 +626,15 @@
       "cancelled": "Screen sharing was cancelled. Please share your entire screen to continue.",
       "wrongSurface": "You shared a browser tab. Please share your entire screen so we can see the tool you will use.",
       "error": "We could not start screen recording. Please try again."
+    },
+    "boundary": {
+      "title": "Something went wrong",
+      "message": "An unexpected error occurred while loading this page. Your data has been preserved.",
+      "retry": "Retry",
+      "goToDashboard": "Go to Dashboard",
+      "showDetails": "Show error details",
+      "copyDetails": "Copy error details",
+      "copied": "Copied!"
     }
   },
   "screenShare": {
@@ -3553,22 +3562,6 @@
     "empty": {
       "title": "No sessions found",
       "description": "Create a session to start inviting staff and participants."
-    }
-  },
-  "errors": {
-    "globalError": "An error occurred. Please try again.",
-    "emailIsRequired": "Email is required.",
-    "passwordRequired": "Password is required.",
-    "invalidEmail": "Please enter a valid email address.",
-    "incorrectCredential": "Incorrect email or password, or account does not exist.",
-    "boundary": {
-      "title": "Something went wrong",
-      "message": "An unexpected error occurred while loading this page. Your data has been preserved.",
-      "retry": "Retry",
-      "goToDashboard": "Go to Dashboard",
-      "showDetails": "Show error details",
-      "copyDetails": "Copy error details",
-      "copied": "Copied!"
     }
   }
 }

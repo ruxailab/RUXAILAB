@@ -50,7 +50,11 @@
             :color="participationColor(entry.participation)"
             :title="t('focusGroup.session.participationHint')"
           >
-            {{ t('focusGroup.session.participationPercent', { percent: entry.participation }) }}
+            {{
+              t('focusGroup.session.participationPercent', {
+                percent: entry.participation,
+              })
+            }}
           </v-chip>
         </div>
       </div>
