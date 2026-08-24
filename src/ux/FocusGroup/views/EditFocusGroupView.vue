@@ -20,6 +20,9 @@
           <v-tab @click="index = 2">
             {{ $t('focusGroup.edit.tabs.guide') }}
           </v-tab>
+          <v-tab @click="index = 3">
+            {{ $t('focusGroup.edit.tabs.stimuli') }}
+          </v-tab>
         </v-tabs>
 
         <v-col cols="12">
@@ -59,6 +62,16 @@
               <DiscussionGuideEditor v-model="topics" />
             </v-card>
           </div>
+
+          <!-- STIMULI -->
+          <div v-if="index === 3">
+            <v-card elevation="2" rounded="lg" class="pa-6">
+              <StimulusLibraryEditor
+                :study-id="route.params.id"
+                :topics="topics"
+              />
+            </v-card>
+          </div>
         </v-col>
       </div>
     </v-container>
@@ -68,6 +81,7 @@
 <script setup>
 import DiscussionGuideEditor from '@/ux/FocusGroup/components/DiscussionGuideEditor.vue'
 import SessionConfigEditor from '@/ux/FocusGroup/components/SessionConfigEditor.vue'
+import StimulusLibraryEditor from '@/ux/FocusGroup/components/StimulusLibraryEditor.vue'
 import DiscussionTopic from '@/ux/FocusGroup/models/DiscussionTopic'
 import FocusGroupConfig from '@/ux/FocusGroup/models/FocusGroupConfig'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'

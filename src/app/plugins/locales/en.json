@@ -2567,7 +2567,8 @@
       "tabs": {
         "configuration": "Session Configuration",
         "consent": "Consent Form",
-        "guide": "Discussion Guide"
+        "guide": "Discussion Guide",
+        "stimuli": "Stimuli"
       },
       "noTopics": "No topics yet. Add your first discussion topic to get started.",
       "addTopic": "Add topic",
@@ -2680,7 +2681,29 @@
       "endedTitle": "Session ended",
       "endedSubtitle": "Responses have been saved.",
       "sessionSaved": "Session responses saved.",
-      "noTopicsWarning": "Add topics to your discussion guide before starting a session."
+      "noTopicsWarning": "Add topics to your discussion guide before starting a session.",
+      "stimuli": "Stimuli",
+      "noStimuli": "No stimuli in the library yet. Add some from the Test screen.",
+      "present": "Present",
+      "presenting": "Presenting",
+      "presentingStimulus": "Presenting:",
+      "stopPresenting": "Stop presenting",
+      "openStimulusLink": "Open stimulus link"
+    },
+    "stimulus": {
+      "empty": "No stimuli yet. Upload an image or video, or add a link below.",
+      "types": {
+        "image": "Image",
+        "video": "Video",
+        "url": "Link"
+      },
+      "topic": "Topic",
+      "remove": "Remove stimulus",
+      "dropHint": "Drag and drop an image or video, or click to upload",
+      "addLinkTitle": "Add a link",
+      "linkName": "Name",
+      "linkUrl": "URL",
+      "addLink": "Add link"
     }
   },
   "studyCreation": {
