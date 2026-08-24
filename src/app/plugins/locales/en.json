@@ -379,7 +379,14 @@
     "minutesAgo": "{count}m ago",
     "hoursAgo": "{count}h ago",
     "daysAgo": "{count}d ago",
-    "newNotification": "You have a new notification."
+    "newNotification": "You have a new notification.",
+    "types": {
+      "session": "Session",
+      "message": "Message",
+      "collaboration": "Collaboration",
+      "notification": "Notification",
+      "participant": "Participant"
+    }
   },
   "notifications": {
     "errors": {
@@ -613,7 +620,42 @@
     "failedToLoadAnswers": "Failed to load answers. Please try again.",
     "failedToUpdateAnswer": "Failed to update answer. Please try again.",
     "failedToRemoveCooperator": "Failed to remove cooperator. Please try again.",
-    "failedToSaveAnswerCooperator": "Failed to save cooperator answer"
+    "failedToSaveAnswerCooperator": "Failed to save cooperator answer",
+    "screenShare": {
+      "unsupported": "Screen sharing is not available in this browser. Please use an updated Chrome, Edge, or Firefox on a computer.",
+      "cancelled": "Screen sharing was cancelled. Please share your entire screen to continue.",
+      "wrongSurface": "You shared a browser tab. Please share your entire screen so we can see the tool you will use.",
+      "error": "We could not start screen recording. Please try again."
+    },
+    "boundary": {
+      "title": "Something went wrong",
+      "message": "An unexpected error occurred while loading this page. Your data has been preserved.",
+      "retry": "Retry",
+      "goToDashboard": "Go to Dashboard",
+      "showDetails": "Show error details",
+      "copyDetails": "Copy error details",
+      "copied": "Copied!"
+    }
+  },
+  "screenShare": {
+    "howTo": "How to share your screen",
+    "lead": "When the browser window appears, choose Entire screen. Sharing only a tab often records the wrong page.",
+    "step1": "Click Share screen. Your browser will open a sharing window.",
+    "step2": "Select Entire screen — not a tab or a single window.",
+    "step3": "Click Share to continue. Keep sharing until you finish the task.",
+    "dontShareTab": "Do not share a browser tab. This task opens another page, and that tab would not be recorded.",
+    "macHint": "On Mac, if nothing appears, allow Screen Recording for your browser in System Settings → Privacy & Security.",
+    "shareButton": "Share screen",
+    "backButton": "Back",
+    "pickerTitle": "Choose what to share",
+    "pickerTab": "Browser tab",
+    "pickerWindow": "Window",
+    "pickerEntireScreen": "Entire screen",
+    "pickerShare": "Share",
+    "pickerCancel": "Cancel",
+    "demoDontPick": "Not this",
+    "demoChooseThis": "Choose this",
+    "demoAlt": "Animation showing how to choose Entire screen in the browser sharing dialog."
   },
   "Introduction": {
     "title": "UX Remote LAB",
@@ -1439,6 +1481,10 @@
       "sart": "Situation Awareness Rating Technique - measures situational awareness"
     },
     "answerTypePreview": {
+      "textArea": {
+        "placeholder": "Participants will provide their feedback here...",
+        "submitButton": "Submit Feedback"
+      },
       "postTest": {
         "title": "Post Test Feedback",
         "q1": "Rate your experience",
@@ -1611,7 +1657,7 @@
       "preview": "Recording information",
       "recordingInfo": "This task will record the following data during your interaction:",
       "screenRecord": "Screen Record",
-      "screenRecordDesc": "Captures clicks, scrolling, and interactions to analyze user behavior.",
+      "screenRecordDesc": "Records how you use the tool. You will need to share your entire screen.",
       "camera": "Camera",
       "cameraDesc": "Records facial expressions and reactions to understand user emotions.",
       "audioRecord": "Audio Record",
@@ -1724,6 +1770,7 @@
       "observeAllFeedsNotice": "You will be able to observe all video feeds without sending your own.",
       "waitingForParticipants": "Waiting for participants...",
       "waitingForModerator": "Waiting for moderator...",
+      "moderatorWillAdmitParticipant": "The moderator will let you enter the session soon.",
       "autoStartWhenModeratorOpensRoom": "The video call will start automatically when the moderator opens the room.",
       "cameraDevice": "camera",
       "microphoneDevice": "microphone",
@@ -2282,6 +2329,7 @@
       "observeAllFeedsNotice": "You will be able to observe all video feeds without sending your own.",
       "waitingForParticipants": "Waiting for participants...",
       "waitingForModerator": "Waiting for moderator...",
+      "moderatorWillAdmitParticipant": "The moderator will let you enter the session soon.",
       "autoStartWhenModeratorOpensRoom": "The video call will start automatically when the moderator opens the room.",
       "cameraDevice": "camera",
       "microphoneDevice": "microphone",
@@ -2528,7 +2576,8 @@
       "tabs": {
         "configuration": "Session Configuration",
         "consent": "Consent Form",
-        "guide": "Discussion Guide"
+        "guide": "Discussion Guide",
+        "stimuli": "Stimuli"
       },
       "noTopics": "No topics yet. Add your first discussion topic to get started.",
       "addTopic": "Add topic",
@@ -2622,6 +2671,8 @@
       "sessionInfo": "Session",
       "showParticipants": "Show participants",
       "hideParticipants": "Hide participants",
+      "participationPercent": "{percent}%",
+      "participationHint": "Share of session activity from this participant (messages and speaking time)",
       "muteMicrophone": "Mute microphone",
       "unmuteMicrophone": "Unmute microphone",
       "turnCameraOff": "Turn off camera",
@@ -2641,7 +2692,29 @@
       "endedTitle": "Session ended",
       "endedSubtitle": "Responses have been saved.",
       "sessionSaved": "Session responses saved.",
-      "noTopicsWarning": "Add topics to your discussion guide before starting a session."
+      "noTopicsWarning": "Add topics to your discussion guide before starting a session.",
+      "stimuli": "Stimuli",
+      "noStimuli": "No stimuli in the library yet. Add some from the Test screen.",
+      "present": "Present",
+      "presenting": "Presenting",
+      "presentingStimulus": "Presenting:",
+      "stopPresenting": "Stop presenting",
+      "openStimulusLink": "Open stimulus link"
+    },
+    "stimulus": {
+      "empty": "No stimuli yet. Upload an image or video, or add a link below.",
+      "types": {
+        "image": "Image",
+        "video": "Video",
+        "url": "Link"
+      },
+      "topic": "Topic",
+      "remove": "Remove stimulus",
+      "dropHint": "Drag and drop an image or video, or click to upload",
+      "addLinkTitle": "Add a link",
+      "linkName": "Name",
+      "linkUrl": "URL",
+      "addLink": "Add link"
     }
   },
   "studyCreation": {
@@ -3300,7 +3373,11 @@
     "pendingSubtitle": "You have been invited to participate in a study",
     "pendingDescription": "You have a pending invitation. Would you like to accept it now?",
     "notNow": "Not now",
-    "loginRequired": "This invitation requires you to sign in or create an account before participating."
+    "loginRequired": "This invitation requires you to sign in or create an account before participating.",
+    "participantInviteTitle": "You're invited to participate",
+    "cooperatorInviteTitle": "You've been invited as staff",
+    "participantInviteMessage": "You’ve been invited to take part in this study.",
+    "cooperatorInviteMessage": "You’ve been invited to collaborate on this study as a staff member."
   },
   "Participants": {
     "title": {
@@ -3456,6 +3533,16 @@
       "info": "The selected recipients will receive this message by email.",
       "send": "Send"
     },
+    "notify": {
+      "participantInviteTitle": "You're invited to a session",
+      "participantInviteMessage": "You've been invited to a session as a study participant",
+      "cooperatorInviteTitle": "You've been invited to a session as staff",
+      "cooperatorInviteMessage": "You've been invited to collaborate as staff in a study session",
+      "updateTitle": "Session details changed",
+      "updateMessage": "The details of your session have been updated",
+      "messageTitle": "New message from the session organizer",
+      "messageDescription": "The session organizer has sent you a new message."
+    },
     "headers": {
       "goToSession": "Go to session",
       "title": "Title",
@@ -3475,22 +3562,6 @@
     "empty": {
       "title": "No sessions found",
       "description": "Create a session to start inviting staff and participants."
-    }
-  },
-  "errors": {
-    "globalError": "An error occurred. Please try again.",
-    "emailIsRequired": "Email is required.",
-    "passwordRequired": "Password is required.",
-    "invalidEmail": "Please enter a valid email address.",
-    "incorrectCredential": "Incorrect email or password, or account does not exist.",
-    "boundary": {
-      "title": "Something went wrong",
-      "message": "An unexpected error occurred while loading this page. Your data has been preserved.",
-      "retry": "Retry",
-      "goToDashboard": "Go to Dashboard",
-      "showDetails": "Show error details",
-      "copyDetails": "Copy error details",
-      "copied": "Copied!"
     }
   }
 }

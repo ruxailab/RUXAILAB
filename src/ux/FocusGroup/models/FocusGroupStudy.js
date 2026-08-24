@@ -2,6 +2,7 @@ import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import Study from '@/shared/models/Study'
 import DiscussionTopic from './DiscussionTopic'
 import FocusGroupConfig from './FocusGroupConfig'
+import Stimulus from './Stimulus'
 
 /**
  * Represents a Focus Group study.
@@ -21,12 +22,16 @@ export default class FocusGroupStudy extends Study {
       params.config instanceof FocusGroupConfig
         ? params.config
         : new FocusGroupConfig(params.config ?? {})
+    this.stimuli = (params.stimuli ?? []).map((stimulus) =>
+      stimulus instanceof Stimulus ? stimulus : new Stimulus(stimulus),
+    )
   }
 
   toFirestore() {
     return Object.assign(super.toFirestore(), {
       discussionGuide: this.discussionGuide.map((topic) => topic.toFirestore()),
       config: this.config.toFirestore(),
+      stimuli: this.stimuli.map((stimulus) => stimulus.toFirestore()),
     })
   }
 }

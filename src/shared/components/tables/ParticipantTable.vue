@@ -137,7 +137,9 @@
               <!-- Cancel Invitation -->
               <v-list-item
                 v-if="
-                  item.status === MEMBERSHIP_STATUS.PENDING &&
+                  (item.status === MEMBERSHIP_STATUS.PENDING ||
+                    item.status === MEMBERSHIP_STATUS.REJECTED ||
+                    item.status === MEMBERSHIP_STATUS.EXPIRED) &&
                   canCancelInvitation(item)
                 "
                 @click="onCancelInvitation(item)"

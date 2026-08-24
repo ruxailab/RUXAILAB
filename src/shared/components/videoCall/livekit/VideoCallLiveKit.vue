@@ -2,7 +2,9 @@
   <v-container
     fluid
     class="video-call-container mt-6"
-    :class="{ 'panel-open': showSidePanel }"
+    :class="{
+      'panel-open': showSidePanel || showStepperPanel || props.notesDrawerOpen,
+    }"
   >
     <v-alert
       v-if="connectionError"
@@ -19,71 +21,126 @@
       <!-- Grid of Participants -->
       <v-col v-if="callStarted" cols="12">
         <div class="video-stage">
-          <!-- Spotlight: focused participant or shared screen -->
-          <div v-if="isFocusMode" class="spotlight-primary">
-            <div
-              :key="focusedTile.id"
-              class="spotlight-item tile-clickable"
-              @click="clearFocus"
+          <v-row v-if="isFocusMode" class="h-100 ma-0" no-gutters>
+            <v-col cols="2" class="h-100 overflow-y-auto pa-3">
+              <v-row class="ma-0 flex-column flex-nowrap" no-gutters>
+                <v-col
+                  v-for="tile in otherTiles"
+                  :key="tile.id"
+                  cols="12"
+                  class="pb-3"
+                >
+                  <div
+                    class="video-container"
+                    :class="{
+                      'screen-share-container': tile.type === 'screen',
+                    }"
+                  >
+                    <video
+                      :ref="(el) => attachTileRef(tile, el)"
+                      autoplay
+                      :muted="tile.muted"
+                      playsinline
+                      class="video-element"
+                      :class="{
+                        'screen-share-element': tile.type === 'screen',
+                      }"
+                    ></video>
+
+                    <div
+                      v-if="tile.type === 'camera' && !tile.hasCamera"
+                      class="camera-disabled-overlay"
+                    >
+                      <v-icon size="64" color="white" class="mb-2"
+                        >mdi-video-off</v-icon
+                      >
+                      <p class="text-white">
+                        {{ t('videoCall.session.cameraOff') }}
+                      </p>
+                    </div>
+
+                    <div
+                      v-if="tile.type === 'camera' && !tile.hasMicrophone"
+                      class="mic-muted-indicator"
+                    >
+                      <v-icon size="24" color="white"
+                        >mdi-microphone-off</v-icon
+                      >
+                    </div>
+
+                    <div class="video-label">{{ tile.label }}</div>
+                  </div>
+                </v-col>
+              </v-row>
+            </v-col>
+
+            <v-col cols="10" class="h-100 pa-3">
+              <div :key="focusedTile.id" class="h-100">
+                <div
+                  class="video-container"
+                  :class="{
+                    'screen-share-container': focusedTile.type === 'screen',
+                  }"
+                >
+                  <video
+                    :ref="(el) => attachTileRef(focusedTile, el)"
+                    autoplay
+                    :muted="focusedTile.muted"
+                    playsinline
+                    class="video-element"
+                    :class="{
+                      'screen-share-element': focusedTile.type === 'screen',
+                    }"
+                  ></video>
+
+                  <div
+                    v-if="
+                      focusedTile.type === 'camera' && !focusedTile.hasCamera
+                    "
+                    class="camera-disabled-overlay"
+                  >
+                    <v-icon size="64" color="white" class="mb-2"
+                      >mdi-video-off</v-icon
+                    >
+                    <p class="text-white">
+                      {{ t('videoCall.session.cameraOff') }}
+                    </p>
+                  </div>
+
+                  <div
+                    v-if="
+                      focusedTile.type === 'camera' &&
+                      !focusedTile.hasMicrophone
+                    "
+                    class="mic-muted-indicator"
+                  >
+                    <v-icon size="24" color="white">mdi-microphone-off</v-icon>
+                  </div>
+
+                  <div class="video-label">{{ focusedTile.label }}</div>
+                </div>
+              </div>
+            </v-col>
+          </v-row>
+
+          <v-row v-else class="h-100 ma-0" align="stretch" no-gutters>
+            <v-col
+              v-for="tile in tiles"
+              :key="tile.id"
+              :cols="tileCols"
+              class="pa-2"
+              :class="{
+                'h-100': tiles.length === 3,
+                'mx-auto d-flex align-center': tiles.length === 1,
+              }"
             >
               <div
                 class="video-container"
                 :class="{
-                  'screen-share-container': focusedTile.type === 'screen',
+                  'h-100': tiles.length !== 1,
+                  'video-container-single': tiles.length === 1,
+                  'screen-share-container': tile.type === 'screen',
                 }"
-              >
-                <video
-                  :ref="(el) => attachTileRef(focusedTile, el)"
-                  autoplay
-                  :muted="focusedTile.muted"
-                  playsinline
-                  class="video-element"
-                  :class="{
-                    'screen-share-element': focusedTile.type === 'screen',
-                  }"
-                ></video>
-
-                <div
-                  v-if="focusedTile.type === 'camera' && !focusedTile.hasCamera"
-                  class="camera-disabled-overlay"
-                >
-                  <v-icon size="64" color="white" class="mb-2"
-                    >mdi-video-off</v-icon
-                  >
-                  <p class="text-white">
-                    {{ t('videoCall.session.cameraOff') }}
-                  </p>
-                </div>
-
-                <div
-                  v-if="
-                    focusedTile.type === 'camera' && !focusedTile.hasMicrophone
-                  "
-                  class="mic-muted-indicator"
-                >
-                  <v-icon size="24" color="white">mdi-microphone-off</v-icon>
-                </div>
-
-                <div class="video-label">{{ focusedTile.label }}</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Tiles: full grid, or a compact filmstrip when focusing -->
-          <div
-            class="videos-grid"
-            :class="{ 'videos-filmstrip': isFocusMode }"
-            :style="gridStyleVars"
-          >
-            <div
-              v-for="tile in isFocusMode ? otherTiles : tiles"
-              :key="tile.id"
-              class="video-wrapper tile-clickable"
-              @click="focusTile(tile.id)"
-            >
-              <div
-                class="video-container"
-                :class="{ 'screen-share-container': tile.type === 'screen' }"
               >
                 <video
                   :ref="(el) => attachTileRef(tile, el)"
@@ -115,46 +172,56 @@
 
                 <div class="video-label">{{ tile.label }}</div>
               </div>
-            </div>
+            </v-col>
 
             <!-- Waiting Message if no peers -->
-            <div
+            <v-col
               v-if="showWaitingMessage"
+              cols="12"
               class="d-flex align-center justify-center pa-4 text-grey"
             >
               <v-icon class="mr-2">mdi-account-clock</v-icon>
-              <span>{{
-                t('videoCall.session.waitingForParticipants')
-              }}</span>
-            </div>
-          </div>
+              <span>{{ t('videoCall.session.waitingForParticipants') }}</span>
+            </v-col>
+          </v-row>
         </div>
       </v-col>
+    </v-row>
 
-      <!-- Observator waiting message (before call starts) -->
-      <v-col
-        v-if="isObservator && !callStarted"
-        cols="12"
-        class="d-flex justify-center align-center"
-      >
-        <div class="observator-notice">
-          <v-icon size="64" color="primary" class="mb-4">mdi-eye</v-icon>
-          <h3 class="text-h5 mb-2">
-            {{ t('videoCall.session.observatorMode') }}
-          </h3>
-          <p class="text-body-1">
-            {{ t('videoCall.session.waitingForModeratorToStartSession') }}
-          </p>
-          <p class="text-body-2 text-grey mt-2">
-            {{ t('videoCall.session.observeAllFeedsNotice') }}
-          </p>
+    <v-row
+      v-if="!caller && !callStarted && waitingPreviewStream"
+      class="video-row justify-center"
+      no-gutters
+    >
+      <v-col cols="12">
+        <div
+          class="videos-grid video-preview-grid"
+          :style="{ '--grid-cols': 1 }"
+        >
+          <div>
+            <div class="video-container">
+              <video
+                ref="waitingPreviewVideo"
+                autoplay
+                muted
+                playsinline
+                class="video-element"
+              ></video>
+
+              <div class="video-label">
+                {{ t('videoCall.session.yourPreview') }} ({{
+                  user?.email?.split('@')[0]
+                }})
+              </div>
+            </div>
+          </div>
         </div>
       </v-col>
     </v-row>
 
     <!-- Participant/Observator Waiting State (only when not started) -->
     <v-row
-      v-if="!caller && !callStarted && !isObservator"
+      v-if="!caller && !callStarted"
       class="participant-controls-row"
       justify="center"
       no-gutters
@@ -172,634 +239,70 @@
             {{ t('videoCall.session.waitingForModerator') }}
           </h3>
           <p class="text-body-2 text-grey">
-            {{ t('videoCall.session.autoStartWhenModeratorOpensRoom') }}
+            {{ t('videoCall.session.moderatorWillAdmitParticipant') }}
           </p>
         </div>
       </v-col>
     </v-row>
 
-    <!-- Fixed Bottom Control Bar -->
-    <div class="bottom-control-bar">
-      <div class="control-bar-layout">
-        <!-- Left side - spacer -->
-        <div class="control-bar-left"></div>
+    <VideoCallControlBar
+      :caller="caller"
+      :is-observator="isObservator"
+      :call-started="callStarted"
+      :is-camera-enabled="isCameraEnabled"
+      :is-microphone-enabled="isMicrophoneEnabled"
+      :is-sharing-screen="isSharingScreen"
+      :show-stepper-panel="showStepperPanel"
+      :show-side-panel="showSidePanel"
+      :notes-drawer-open="props.notesDrawerOpen"
+      :notes-count="props.notesCount"
+      :toggle-camera="toggleCamera"
+      :toggle-microphone="toggleMicrophone"
+      :toggle-screen-share="toggleScreenShare"
+      :start-call="startCall"
+      :leave-call="leaveCall"
+      :end-call="endCall"
+      :toggle-stepper-panel="toggleStepperPanel"
+      :toggle-side-panel="toggleSidePanel"
+      :toggle-notes-drawer="handleToggleNotesDrawer"
+    />
 
-        <!-- Center - main controls -->
-        <div v-if="!isObservator" class="control-buttons-container">
-          <!-- Camera toggle button -->
-          <v-tooltip location="top">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                v-bind="tooltipProps"
-                :class="{
-                  'control-btn-disabled': !isCameraEnabled,
-                  'control-btn-enabled': isCameraEnabled,
-                }"
-                class="control-btn"
-                icon
-                size="large"
-                @click="toggleCamera"
-              >
-                <v-icon size="28">{{
-                  isCameraEnabled ? 'mdi-video' : 'mdi-video-off'
-                }}</v-icon>
-              </v-btn>
-            </template>
-            <span>{{
-              isCameraEnabled ? 'Turn off camera' : 'Turn on camera'
-            }}</span>
-          </v-tooltip>
-
-          <!-- Microphone toggle button -->
-          <v-tooltip location="top">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                v-bind="tooltipProps"
-                :class="{
-                  'control-btn-disabled': !isMicrophoneEnabled,
-                  'control-btn-enabled': isMicrophoneEnabled,
-                }"
-                class="control-btn"
-                icon
-                size="large"
-                @click="toggleMicrophone"
-              >
-                <v-icon size="28">{{
-                  isMicrophoneEnabled ? 'mdi-microphone' : 'mdi-microphone-off'
-                }}</v-icon>
-              </v-btn>
-            </template>
-            <span>{{
-              isMicrophoneEnabled ? 'Mute microphone' : 'Unmute microphone'
-            }}</span>
-          </v-tooltip>
-
-          <!-- Screen share button -->
-          <v-tooltip location="top">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                v-bind="tooltipProps"
-                :class="{
-                  'control-btn-active': isSharingScreen,
-                  'control-btn-enabled': !isSharingScreen,
-                }"
-                class="control-btn"
-                icon
-                size="large"
-                @click="toggleScreenShare"
-              >
-                <v-icon size="28">{{
-                  isSharingScreen ? 'mdi-monitor-off' : 'mdi-monitor-screenshot'
-                }}</v-icon>
-              </v-btn>
-            </template>
-            <span>{{
-              isSharingScreen ? 'Stop sharing screen' : 'Share screen'
-            }}</span>
-          </v-tooltip>
-        </div>
-
-        <!-- Right side - panel toggles -->
-        <div class="control-bar-right">
-          <!-- Open Room button (for moderator) -->
-          <v-tooltip v-if="caller && !callStarted" location="top">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                v-bind="tooltipProps"
-                color="success"
-                class="control-btn control-btn-primary me-2"
-                size="large"
-                :loading="isConnecting"
-                @click="startCall"
-              >
-                <v-icon start size="20">mdi-video-plus</v-icon>
-                Open Room
-              </v-btn>
-            </template>
-            <span>Start the video call session</span>
-          </v-tooltip>
-
-          <!-- End Call button (for moderator when call is active) -->
-          <v-tooltip v-if="caller && callStarted" location="top">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                v-bind="tooltipProps"
-                color="error"
-                class="control-btn control-btn-danger me-2"
-                size="large"
-                @click="endCall"
-              >
-                <v-icon start size="20">mdi-phone-hangup</v-icon>
-                End Call
-              </v-btn>
-            </template>
-            <span>End the video call session</span>
-          </v-tooltip>
-
-          <!-- End Call button (for participant when call is active) -->
-          <v-tooltip v-if="!caller && callStarted" location="top">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                v-bind="tooltipProps"
-                color="error"
-                class="control-btn control-btn-danger me-2"
-                size="large"
-                @click="endCall"
-              >
-                <v-icon start size="20">mdi-phone-hangup</v-icon>
-                Leave Call
-              </v-btn>
-            </template>
-            <span>Leave the video call session</span>
-          </v-tooltip>
-
-          <!-- Stepper menu button -->
-          <v-tooltip location="top">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                v-bind="tooltipProps"
-                :class="{
-                  'control-btn-active': showStepperPanel,
-                  'control-btn-enabled': !showStepperPanel,
-                }"
-                class="control-btn"
-                icon
-                size="large"
-                @click="toggleStepperPanel"
-              >
-                <v-icon size="28">mdi-format-list-numbered</v-icon>
-              </v-btn>
-            </template>
-            <span>{{ showStepperPanel ? 'Hide steps' : 'Show steps' }}</span>
-          </v-tooltip>
-
-          <!-- Side panel toggle button -->
-          <v-tooltip location="top">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                v-bind="tooltipProps"
-                :class="{
-                  'control-btn-active': showSidePanel,
-                  'control-btn-enabled': !showSidePanel,
-                }"
-                class="control-btn"
-                icon
-                size="large"
-                @click="toggleSidePanel"
-              >
-                <v-icon size="28">mdi-account-group</v-icon>
-              </v-btn>
-            </template>
-            <span>{{ showSidePanel ? 'Hide panel' : 'Show panel' }}</span>
-          </v-tooltip>
-        </div>
-      </div>
-    </div>
-
-    <!-- Side Panel -->
-    <div class="side-panel" :class="{ 'side-panel-open': showSidePanel }">
-      <div class="side-panel-header">
-        <h3>{{ t('videoCall.panel.toolsPanelTitle') }}</h3>
-        <v-btn
-          icon
-          size="small"
-          variant="text"
-          class="close-btn"
-          @click="toggleSidePanel"
-        >
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </div>
-
-      <div class="side-panel-content">
-        <!-- Session Controls Section -->
-        <div class="panel-section">
-          <h4>{{ t('videoCall.panel.sessionControl') }}</h4>
-
-          <!-- Connection controls when call is not started -->
-          <div v-if="!callStarted" class="session-controls">
-            <div v-if="!caller" class="participant-info">
-              <p class="text-body-2 mb-0">
-                <v-icon start size="16">mdi-information</v-icon>
-                {{ t('videoCall.panel.joinRoomInfo') }}
-              </p>
-            </div>
-          </div>
-
-          <!-- Call controls when call is active -->
-          <div v-else class="session-controls">
-            <!-- Proceed to next step (only for moderator) -->
-            <v-btn
-              v-if="caller"
-              color="success"
-              size="large"
-              block
-              class="mb-3"
-              @click="proceedToNextStep"
-            >
-              <v-icon start>mdi-arrow-right</v-icon>
-              {{ t('videoCall.panel.proceedNextStep') }}
-            </v-btn>
-
-            <!-- End call button -->
-            <v-btn
-              v-if="!isObservator"
-              color="error"
-              size="large"
-              block
-              variant="outlined"
-              @click="endCall"
-            >
-              <v-icon start>mdi-phone-hangup</v-icon>
-              {{ t('videoCall.panel.endCall') }}
-            </v-btn>
-
-            <!-- Call status -->
-            <div class="status-message">
-              <v-chip color="green" size="small" class="mb-2">
-                <v-icon start size="16">mdi-phone</v-icon>
-                {{ t('videoCall.panel.activeCall') }}
-              </v-chip>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel-section">
-          <h4>{{ t('videoCall.panel.participants') }}</h4>
-          <div
-            v-for="participant in participantsList"
-            :key="participant.id"
-            class="participant-item"
-          >
-            <v-avatar
-              size="32"
-              :color="
-                participant.role === 'moderator'
-                  ? 'blue'
-                  : participant.role === 'observator'
-                    ? 'orange'
-                    : 'green'
-              "
-            >
-              <v-icon color="white">{{
-                participant.role === 'moderator'
-                  ? 'mdi-account-star'
-                  : participant.role === 'observator'
-                    ? 'mdi-eye'
-                    : 'mdi-account'
-              }}</v-icon>
-            </v-avatar>
-            <div class="participant-info">
-              <span class="participant-name">
-                {{
-                  participant.name +
-                  (participant.isSelf
-                    ? ` (${t('videoCall.panel.you')})`
-                    : '')
-                }}
-                <v-chip
-                  v-if="participant.role === 'observator'"
-                  size="x-small"
-                  color="orange"
-                  class="ml-1"
-                >
-                  {{ t('videoCall.panel.observator') }}
-                </v-chip>
-                <v-chip
-                  v-else-if="participant.role === 'moderator'"
-                  size="x-small"
-                  color="blue"
-                  class="ml-1"
-                >
-                  {{ t('videoCall.panel.moderator') }}
-                </v-chip>
-              </span>
-              <div class="participant-status">
-                <v-chip
-                  size="x-small"
-                  :color="participant.connected ? 'green' : 'grey'"
-                >
-                  {{
-                    participant.connected
-                      ? t('videoCall.panel.connected')
-                      : t('videoCall.panel.disconnected')
-                  }}
-                </v-chip>
-                <v-chip
-                  v-if="participant.isSelf && !isObservator"
-                  size="x-small"
-                  :color="participant.hasCamera ? 'green' : 'red'"
-                  class="ml-1"
-                >
-                  {{
-                    participant.hasCamera
-                      ? t('videoCall.panel.camera')
-                      : t('videoCall.panel.noCamera')
-                  }}
-                </v-chip>
-                <v-chip
-                  v-if="participant.isSelf && !isObservator"
-                  size="x-small"
-                  :color="participant.hasMicrophone ? 'green' : 'red'"
-                  class="ml-1"
-                >
-                  {{
-                    participant.hasMicrophone
-                      ? t('videoCall.panel.microphone')
-                      : t('videoCall.panel.noMicrophone')
-                  }}
-                </v-chip>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div v-if="!isObservator" class="panel-section">
-          <h4>{{ t('videoCall.panel.settings') }}</h4>
-          <v-list density="compact">
-            <v-list-item @click="toggleCamera">
-              <template #prepend>
-                <v-icon :color="isCameraEnabled ? 'green' : 'red'">
-                  {{ isCameraEnabled ? 'mdi-video' : 'mdi-video-off' }}
-                </v-icon>
-              </template>
-              <v-list-item-title>
-                {{
-                  isCameraEnabled
-                    ? t('videoCall.panel.disableCamera')
-                    : t('videoCall.panel.enableCamera')
-                }}
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item @click="toggleMicrophone">
-              <template #prepend>
-                <v-icon :color="isMicrophoneEnabled ? 'green' : 'red'">
-                  {{
-                    isMicrophoneEnabled
-                      ? 'mdi-microphone'
-                      : 'mdi-microphone-off'
-                  }}
-                </v-icon>
-              </template>
-              <v-list-item-title>
-                {{
-                  isMicrophoneEnabled
-                    ? t('videoCall.panel.muteMicrophone')
-                    : t('videoCall.panel.unmuteMicrophone')
-                }}
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item v-if="callStarted" @click="toggleScreenShare">
-              <template #prepend>
-                <v-icon :color="isSharingScreen ? 'blue' : 'grey'">
-                  {{
-                    isSharingScreen
-                      ? 'mdi-monitor-off'
-                      : 'mdi-monitor-screenshot'
-                  }}
-                </v-icon>
-              </template>
-              <v-list-item-title>
-                {{
-                  isSharingScreen
-                    ? t('videoCall.panel.stopScreenShare')
-                    : t('videoCall.panel.shareScreen')
-                }}
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </div>
-      </div>
-    </div>
-
-    <!-- Stepper Panel -->
-    <div
-      class="stepper-panel"
-      :class="{ 'stepper-panel-open': showStepperPanel }"
-    >
-      <div class="stepper-panel-header">
-        <h3>Test Progress</h3>
-        <v-btn
-          icon
-          size="small"
-          variant="text"
-          class="close-btn"
-          @click="toggleStepperPanel"
-        >
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </div>
-
-      <div class="stepper-panel-content">
-        <!-- Moderator indicator -->
-        <div v-if="!caller" class="moderator-notice">
-          <v-chip size="small" color="orange" class="mb-4">
-            <v-icon start size="16">mdi-information</v-icon>
-            {{ t('videoCall.panel.moderatorOnlySteps') }}
-          </v-chip>
-        </div>
-
-        <!-- Custom Stepper -->
-        <div class="custom-stepper">
-          <!-- Consent Step -->
-          <div
-            class="step-item"
-            :class="{
-              'step-active': currentStepperValue === 0,
-              'step-completed': currentStepperValue >= 1,
-              'step-clickable': caller,
-            }"
-            @click="caller && goToStep('consent')"
-          >
-            <div class="step-indicator">
-              <div class="step-number">
-                <v-icon v-if="currentStepperValue >= 1" color="white" size="16"
-                  >mdi-check</v-icon
-                >
-                <span v-else>1</span>
-              </div>
-              <div v-if="currentStepperValue >= 1" class="step-line"></div>
-            </div>
-            <div class="step-content">
-              <h4 class="step-title">Consent</h4>
-              <p class="step-description">User consent and agreement</p>
-            </div>
-          </div>
-
-          <!-- Pre-test Step -->
-          <div
-            class="step-item"
-            :class="{
-              'step-active': currentStepperValue === 1,
-              'step-completed': currentStepperValue >= 2,
-              'step-clickable': caller,
-            }"
-            @click="caller && goToStep('pretest')"
-          >
-            <div class="step-indicator">
-              <div class="step-number">
-                <v-icon v-if="currentStepperValue >= 2" color="white" size="16"
-                  >mdi-check</v-icon
-                >
-                <span v-else>2</span>
-              </div>
-              <div v-if="currentStepperValue >= 2" class="step-line"></div>
-            </div>
-            <div class="step-content">
-              <h4 class="step-title">Pre-test</h4>
-              <p class="step-description">Initial questionnaire</p>
-            </div>
-          </div>
-
-          <!-- Tasks Step -->
-          <div
-            class="step-item"
-            :class="{
-              'step-active': currentStepperValue === 2,
-              'step-completed': currentStepperValue >= 3,
-              'step-clickable': caller,
-            }"
-            @click="caller && goToStep('tasks')"
-          >
-            <div class="step-indicator">
-              <div class="step-number">
-                <v-icon v-if="currentStepperValue >= 3" color="white" size="16"
-                  >mdi-check</v-icon
-                >
-                <span v-else>3</span>
-              </div>
-              <div v-if="currentStepperValue >= 3" class="step-line"></div>
-            </div>
-            <div class="step-content">
-              <h4 class="step-title">Tasks</h4>
-              <p class="step-description">User testing tasks</p>
-
-              <!-- Task dropdown when active and moderator -->
-              <div
-                v-if="
-                  currentStepperValue === 2 &&
-                  caller &&
-                  test?.testStructure?.userTasks
-                "
-                class="tasks-dropdown mt-3"
-              >
-                <v-select
-                  :items="taskDropdownItems"
-                  :model-value="currentTaskIndex"
-                  item-title="title"
-                  item-value="index"
-                  variant="outlined"
-                  density="compact"
-                  hide-details
-                  class="task-selector"
-                  placeholder="Select a task"
-                  prepend-inner-icon="mdi-format-list-bulleted"
-                  @update:model-value="goToSpecificTask"
-                >
-                  <template #item="{ props: itemProps, item }">
-                    <v-list-item v-bind="itemProps" :title="item.raw.title">
-                      <template #prepend>
-                        <v-icon
-                          size="20"
-                          :color="
-                            item.raw.index < currentTaskIndex
-                              ? 'success'
-                              : item.raw.index === currentTaskIndex
-                                ? 'primary'
-                                : 'grey'
-                          "
-                        >
-                          {{
-                            item.raw.index < currentTaskIndex
-                              ? 'mdi-check-circle'
-                              : item.raw.index === currentTaskIndex
-                                ? 'mdi-play-circle'
-                                : 'mdi-circle-outline'
-                          }}
-                        </v-icon>
-                      </template>
-                    </v-list-item>
-                  </template>
-                </v-select>
-              </div>
-            </div>
-          </div>
-
-          <!-- Post-test Step -->
-          <div
-            class="step-item"
-            :class="{
-              'step-active': currentStepperValue === 3,
-              'step-completed': currentStepperValue >= 4,
-              'step-clickable': caller,
-            }"
-            @click="caller && goToStep('posttest')"
-          >
-            <div class="step-indicator">
-              <div class="step-number">
-                <v-icon v-if="currentStepperValue >= 4" color="white" size="16"
-                  >mdi-check</v-icon
-                >
-                <span v-else>4</span>
-              </div>
-              <div v-if="currentStepperValue >= 4" class="step-line"></div>
-            </div>
-            <div class="step-content">
-              <h4 class="step-title">Post-test</h4>
-              <p class="step-description">Final questionnaire</p>
-            </div>
-          </div>
-
-          <!-- Completion Step -->
-          <div
-            class="step-item"
-            :class="{
-              'step-active': currentStepperValue === 4,
-              'step-completed': currentStepperValue === 5,
-              'step-clickable': caller,
-            }"
-            @click="caller && goToStep('completion')"
-          >
-            <div class="step-indicator">
-              <div class="step-number">
-                <v-icon v-if="currentStepperValue === 5" color="white" size="16"
-                  >mdi-check</v-icon
-                >
-                <span v-else>5</span>
-              </div>
-            </div>
-            <div class="step-content">
-              <h4 class="step-title">Completion</h4>
-              <p class="step-description">Test finished</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Overlay for panels (mobile) -->
-    <div
-      v-if="showSidePanel || showStepperPanel"
-      class="panel-overlay"
-      @click="
-        () => {
-          showSidePanel = false
-          showStepperPanel = false
-        }
-      "
-    ></div>
+    <VideoCallPanels
+      :show-side-panel="showSidePanel"
+      :show-stepper-panel="showStepperPanel"
+      :caller="caller"
+      :is-observator="isObservator"
+      :staff-list="staffParticipants"
+      :participant-list="panelParticipantList"
+      :current-stepper-value="currentStepperValue"
+      :task-dropdown-items="taskDropdownItems"
+      :current-task-index="currentTaskIndex"
+      :test="test"
+      :is-camera-enabled="isCameraEnabled"
+      :is-microphone-enabled="isMicrophoneEnabled"
+      :is-sharing-screen="isSharingScreen"
+      :t="t"
+      :toggle-side-panel="toggleSidePanel"
+      :toggle-stepper-panel="toggleStepperPanel"
+      :close-panels="closePanels"
+      :go-to-step="goToStep"
+      :go-to-specific-task="goToSpecificTask"
+      :completed-steps="completedSteps"
+    />
   </v-container>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { Track } from 'livekit-client'
 import { database } from '@/app/plugins/firebase/index'
 import { ref as dbRef, get, onValue, update, remove } from 'firebase/database'
 import { useLiveKitRoom } from '../composables/useLiveKitRoom'
-import { useVideoFocus } from '../composables/useVideoFocus'
+import VideoCallPanels from '../VideoCallPanels.vue'
+import VideoCallControlBar from '../VideoCallControlBar.vue'
+import { normalizeSessionMember } from '@/ux/UserTest/utils/sessionPresence'
 
 const props = defineProps({
   roomId: String,
@@ -810,6 +313,21 @@ const props = defineProps({
   currentTaskIndex: Number,
   test: Object,
   localTestAnswer: Object,
+  sessionStaff: Array,
+  sessionParticipants: Array,
+  notesDrawerOpen: Boolean,
+  notesCount: Number,
+  toggleNotesDrawer: Function,
+  completedSteps: {
+    type: Object,
+    default: () => ({
+      consent: false,
+      preTest: false,
+      tasks: false,
+      postTest: false,
+      completion: false,
+    }),
+  },
 })
 
 const emit = defineEmits([
@@ -826,6 +344,8 @@ const router = useRouter()
 const roomReady = ref(false)
 const showSidePanel = ref(false)
 const showStepperPanel = ref(false)
+const waitingPreviewVideo = ref(null)
+const waitingPreviewStream = ref(null)
 
 const testId = computed(() => props.roomId)
 const userId = computed(() => props.user?.id)
@@ -865,63 +385,164 @@ const {
 
 const caller = computed(() => props.isModerator)
 
-// Unified list of tiles (local camera, remote cameras and screen shares)
-const tiles = computed(() => {
-  const list = []
+const remoteEntries = computed(() =>
+  remoteParticipants.value.map((participant) => ({
+    ...participant,
+    id: participant.identity,
+    email: participant.email,
+    name: participant.name || participant.identity,
+  })),
+)
 
-  if (!isObservator.value) {
-    list.push({
-      id: 'local-camera',
-      type: 'camera',
-      kind: 'local',
-      label: `${t('videoCall.session.yourVideo')} (${
-        props.user?.email?.split('@')[0] ?? ''
-      })`,
+const buildRemoteTile = (remote) => {
+  const roleSuffix =
+    remote.role === 'moderator' ? ` (${t('videoCall.panel.moderator')})` : ''
+
+  return {
+    id: `camera:${remote.identity}`,
+    type: 'camera',
+    kind: 'remote',
+    identity: remote.identity,
+    label: `${remote.name}${roleSuffix}`,
+    hasCamera: remote.hasCamera,
+    hasMicrophone: remote.hasMicrophone,
+    muted: false,
+  }
+}
+
+const buildParticipantItem = (remote, isSelf) => {
+  if (isSelf) {
+    return {
+      id: props.user?.id,
+      name: props.user?.email?.split('@')[0] || 'You',
+      email: props.user?.email,
+      isSelf: true,
+      role: isObservator.value
+        ? 'observator'
+        : props.isModerator
+          ? 'moderator'
+          : 'participant',
+      connected: true,
       hasCamera: isCameraEnabled.value,
       hasMicrophone: isMicrophoneEnabled.value,
-      muted: true,
+    }
+  }
+
+  return {
+    id: remote.identity,
+    name: remote.name,
+    email: remote.email,
+    isSelf: false,
+    role: remote.role,
+    connected: remote.isConnected,
+    hasCamera: remote.hasCamera,
+    hasMicrophone: remote.hasMicrophone,
+  }
+}
+
+const staffParticipants = computed(() => {
+  const staffEntries = Array.isArray(props.sessionStaff)
+    ? props.sessionStaff
+    : props.test?.cooperators || []
+
+  return staffEntries
+    .map((member) => normalizeSessionMember(member, 'staff'))
+    .filter(Boolean)
+    .map((member) => ({
+      ...member,
+      hasCamera: member.hasCamera ?? true,
+      hasMicrophone: member.hasMicrophone ?? true,
+      accessLevel: member.accessLevel ?? member.role,
+    }))
+})
+
+const normalizeMemberKeys = (member) => {
+  if (!member) return []
+
+  const rawValues = [
+    member.userDocId,
+    member.id,
+    member.email,
+    member.name,
+    member.displayName,
+  ]
+  const normalized = new Set()
+
+  rawValues.forEach((value) => {
+    if (value == null || !String(value).trim()) return
+
+    const str = String(value).trim().toLowerCase()
+    normalized.add(str)
+    normalized.add(str.replace(/[^a-z0-9]/g, ''))
+
+    const localPart = str.includes('@') ? str.split('@')[0] : str
+    if (localPart) {
+      normalized.add(localPart)
+      normalized.add(localPart.replace(/[^a-z0-9]/g, ''))
+    }
+  })
+
+  return [...normalized]
+}
+
+const panelParticipantList = computed(() => {
+  const dedupedList = []
+  const seen = new Set()
+
+  for (const member of Array.isArray(props.sessionParticipants)
+    ? props.sessionParticipants
+    : []) {
+    if (!member) continue
+
+    const normalized = normalizeSessionMember(member, 'participant')
+    if (!normalized) continue
+
+    const memberId = normalized.userDocId || normalized.id || normalized.email
+    if (!memberId) continue
+
+    const memberKey = String(memberId).trim().toLowerCase()
+    if (!memberKey || seen.has(memberKey)) continue
+
+    seen.add(memberKey)
+    dedupedList.push({
+      ...normalized,
+      isSelf:
+        (normalized.userDocId || normalized.id || normalized.email) ===
+        (props.user?.id || props.user?.email),
+      hasCamera: normalized.hasCamera ?? true,
+      hasMicrophone: normalized.hasMicrophone ?? true,
     })
   }
 
-  remoteParticipants.value.forEach((participant) => {
-    const roleSuffix =
-      participant.role === 'moderator'
-        ? ` (${t('videoCall.panel.moderator')})`
-        : ''
-    list.push({
-      id: `camera:${participant.identity}`,
-      type: 'camera',
-      kind: 'remote',
-      identity: participant.identity,
-      label: `${participant.name}${roleSuffix}`,
-      hasCamera: participant.hasCamera,
-      hasMicrophone: participant.hasMicrophone,
-      muted: false,
-    })
-  })
-
-  screenShareFeeds.value.forEach((feed) => {
-    list.push({
-      id: `screen:${feed.key}`,
-      type: 'screen',
-      feedKey: feed.key,
-      label: `${t('videoCall.session.screenSharingLabel')} (${feed.name})`,
-      muted: !!feed.isLocal,
-    })
-  })
-
-  return list
+  return dedupedList
 })
 
-const { focusedTile, otherTiles, isFocusMode, focusTile, clearFocus } =
-  useVideoFocus(tiles)
-
-const showWaitingMessage = computed(
-  () =>
-    !isFocusMode.value &&
-    remoteParticipants.value.length === 0 &&
-    screenShareFeeds.value.length === 0,
-)
+const {
+  tiles,
+  focusedTile,
+  otherTiles,
+  isFocusMode,
+  showWaitingMessage,
+  tileCols,
+  participantsList,
+} = useVideoCallBoard({
+  t,
+  isObservator,
+  callStarted,
+  isCameraEnabled,
+  isMicrophoneEnabled,
+  user: computed(() => ({
+    ...props.user,
+    accessLevel:
+      props.accessLevel ?? (props.isModerator ? ACCESS_LEVEL.ADMIN : 0),
+    isModerator: props.isModerator,
+  })),
+  remoteEntries,
+  screenShareFeeds,
+  staffParticipants,
+  buildRemoteTile,
+  buildParticipantItem,
+})
 
 // Routes a video element to the correct LiveKit attach helper. Null (unmount)
 // is ignored so a re-mount in another slot doesn't clobber the active element.
@@ -935,58 +556,6 @@ function attachTileRef(tile, el) {
     setRemoteVideoElement(tile.identity, el)
   }
 }
-
-// Count of camera tiles currently visible (local + remotes)
-const cameraCount = computed(
-  () => (isObservator.value ? 0 : 1) + remoteParticipants.value.length,
-)
-
-// Number of grid columns, so tiles resize based on participant count
-const cameraColumns = computed(() => {
-  const count = cameraCount.value
-  if (count <= 1) return 1
-  if (count <= 4) return 2
-  if (count <= 9) return 3
-  return 4
-})
-
-const gridStyleVars = computed(() => ({
-  '--grid-cols': cameraColumns.value,
-}))
-
-// Organize participants by role (mirrors VideoCallMesh side panel)
-const participantsList = computed(() => {
-  const list = []
-
-  list.push({
-    id: props.user?.id,
-    name: props.user?.email?.split('@')[0] || 'You',
-    email: props.user?.email,
-    isSelf: true,
-    role: isObservator.value
-      ? 'observator'
-      : props.isModerator
-        ? 'moderator'
-        : 'participant',
-    connected: true,
-    hasCamera: !isObservator.value && isCameraEnabled.value,
-    hasMicrophone: !isObservator.value && isMicrophoneEnabled.value,
-  })
-
-  remoteParticipants.value.forEach((p) => {
-    list.push({
-      id: p.identity,
-      name: p.name,
-      isSelf: false,
-      role: p.role,
-      connected: p.isConnected,
-      hasCamera: p.hasCamera,
-      hasMicrophone: p.hasMicrophone,
-    })
-  })
-
-  return list
-})
 
 // Computed property for task dropdown items
 const taskDropdownItems = computed(() => {
@@ -1024,14 +593,61 @@ function setLocalVideoRef(el) {
   if (camPub?.track) camPub.track.attach(el)
 }
 
+watch([waitingPreviewVideo, waitingPreviewStream], ([videoEl, stream]) => {
+  if (videoEl && stream) {
+    videoEl.srcObject = stream
+  }
+})
+
+async function initWaitingPreview() {
+  if (waitingPreviewStream.value || !navigator.mediaDevices?.getUserMedia) {
+    return
+  }
+
+  try {
+    waitingPreviewStream.value = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: false,
+    })
+  } catch {
+    waitingPreviewStream.value = null
+  }
+}
+
+function stopWaitingPreview() {
+  if (waitingPreviewStream.value) {
+    waitingPreviewStream.value.getTracks().forEach((track) => track.stop())
+    waitingPreviewStream.value = null
+  }
+}
+
 function toggleSidePanel() {
   showSidePanel.value = !showSidePanel.value
-  if (showSidePanel.value) showStepperPanel.value = false
+  if (showSidePanel.value) {
+    showStepperPanel.value = false
+    if (props.notesDrawerOpen) props.toggleNotesDrawer?.()
+  }
 }
 
 function toggleStepperPanel() {
   showStepperPanel.value = !showStepperPanel.value
-  if (showStepperPanel.value) showSidePanel.value = false
+  if (showStepperPanel.value) {
+    showSidePanel.value = false
+    if (props.notesDrawerOpen) props.toggleNotesDrawer?.()
+  }
+}
+
+function handleToggleNotesDrawer() {
+  if (!props.notesDrawerOpen) {
+    showSidePanel.value = false
+    showStepperPanel.value = false
+  }
+  props.toggleNotesDrawer?.()
+}
+
+function closePanels() {
+  showSidePanel.value = false
+  showStepperPanel.value = false
 }
 
 function goToStep(stepType) {
@@ -1075,6 +691,7 @@ function proceedToNextStep() {
 async function joinLiveKitRoom() {
   if (!roomReady.value) return
   try {
+    stopWaitingPreview()
     await connect()
   } catch {
     // connectionError is set in composable
@@ -1094,7 +711,54 @@ async function startCall() {
   }
 }
 
+async function leaveCall() {
+  if (room.value?.localParticipant) {
+    const localParticipant = room.value.localParticipant
+
+    if (localParticipant.isCameraEnabled) {
+      await localParticipant.setCameraEnabled(false)
+    }
+    if (localParticipant.isMicrophoneEnabled) {
+      await localParticipant.setMicrophoneEnabled(false)
+    }
+
+    for (const publication of localParticipant.videoTrackPublications.values()) {
+      publication.track?.stop()
+    }
+    for (const publication of localParticipant.audioTrackPublications.values()) {
+      publication.track?.stop()
+    }
+    for (const publication of localParticipant.screenShareTrackPublications.values()) {
+      publication.track?.stop()
+    }
+  }
+
+  await disconnect()
+  router.push('/admin')
+}
+
 async function endCall() {
+  if (room.value?.localParticipant) {
+    const localParticipant = room.value.localParticipant
+
+    if (localParticipant.isCameraEnabled) {
+      await localParticipant.setCameraEnabled(false)
+    }
+    if (localParticipant.isMicrophoneEnabled) {
+      await localParticipant.setMicrophoneEnabled(false)
+    }
+
+    for (const publication of localParticipant.videoTrackPublications.values()) {
+      publication.track?.stop()
+    }
+    for (const publication of localParticipant.audioTrackPublications.values()) {
+      publication.track?.stop()
+    }
+    for (const publication of localParticipant.screenShareTrackPublications.values()) {
+      publication.track?.stop()
+    }
+  }
+
   if (!props.isModerator) {
     await disconnect()
     router.push('/admin')
@@ -1102,6 +766,8 @@ async function endCall() {
   }
 
   try {
+    // Remove the live call state before disconnecting; otherwise the local
+    // disconnect writes can re-create the deleted call node in RTDB.
     await remove(dbRef(database, `calls/${props.roomId}`))
     await remove(dbRef(database, `rooms/${props.roomId}`))
   } catch (error) {
@@ -1115,6 +781,10 @@ async function endCall() {
 
 onMounted(async () => {
   if (props.isModerator) return
+
+  if (!isObservator.value) {
+    await initWaitingPreview()
+  }
 
   const showVideoCallRef = dbRef(
     database,
@@ -1136,6 +806,7 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(async () => {
+  stopWaitingPreview()
   await disconnect()
 })
 </script>

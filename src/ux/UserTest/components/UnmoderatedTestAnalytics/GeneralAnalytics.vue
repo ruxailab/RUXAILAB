@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-background">
+  <div class="bg-background pa-1">
     <!-- Filtros dinámicos -->
     <v-card class="mb-4 pa-4 elevation-2 overflow-hidden">
       <div class="d-flex align-center mb-3 flex-wrap button-bar">
@@ -163,9 +163,6 @@
               <div class="text-h2 font-weight-bold text-primary mb-2">
                 {{ parseFloat(getConclusionAverage()).toFixed(2) }}%
               </div>
-              <p class="text-body-1 text-medium-emphasis">
-                {{ $t('analytics.perfectCompletionRate') }}
-              </p>
             </div>
             <div class="text-end">
               <v-chip color="success" variant="flat" size="small" class="mb-2">
@@ -212,93 +209,74 @@
       <v-col cols="12" lg="6">
         <v-row class="h-100">
           <v-col cols="6">
-            <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
-              <div class="d-flex align-center mb-4">
-                <v-avatar color="primary" size="48" class="me-3">
-                  <v-icon color="white" size="24"> mdi-clock-fast </v-icon>
-                </v-avatar>
-                <div>
-                  <div class="text-h5 font-weight-bold text-primary">
-                    {{ calculateAverageTime().formatedTime }}
-                  </div>
-                  <p class="text-body-2 text-medium-emphasis mb-0">
-                    {{ $t('analytics.avgTimePerTask') }}
-                  </p>
-                </div>
-              </div>
-              <p class="text-caption text-medium-emphasis">
-                {{ $t('analytics.efficientTaskCompletion') }}
-              </p>
-            </v-card>
+            <UxMetricCard
+              :value="calculateAverageTime().formatedTime"
+              :label="$t('analytics.avgTimePerTask')"
+              color="primary"
+              icon="mdi-clock-fast"
+              :description="$t('analytics.efficientTaskCompletion')"
+              :progress="Math.min(calculateEfficiency().score * 10, 100)"
+              :show-progress="false"
+            />
           </v-col>
           <v-col cols="6">
-            <v-card
+            <UxMetricCard
               v-if="testStructure?.userTasks && taskAnswers.length"
-              class="pa-6 elevation-3 rounded-xl h-100 stat-card"
+              :value="findLongestTask().averageTime.formatedTime"
+              :label="$t('analytics.longestTask')"
+              color="error"
+              icon="mdi-timer-alert"
+              :description="`${$t('analytics.taskLabel')}: ${findLongestTask().taskName}`"
+              :progress="Math.min(longestTaskProgressValue, 100)"
+              :show-progress="false"
             >
-              <div class="d-flex align-center mb-4">
-                <v-avatar color="error" size="48" class="me-3">
-                  <v-icon color="white" size="24"> mdi-timer-alert </v-icon>
-                </v-avatar>
-                <div>
-                  <div class="text-h5 font-weight-bold text-error">
-                    {{ findLongestTask().averageTime.formatedTime }}
-                  </div>
-                  <p class="text-body-2 text-medium-emphasis mb-0">
-                    {{ $t('analytics.longestTask') }}
-                  </p>
-                </div>
-              </div>
-              <p class="text-caption text-medium-emphasis">
-                {{ $t('analytics.taskLabel') }}:
-                <strong>"{{ findLongestTask().taskName }}"</strong>
-              </p>
-            </v-card>
+              <template #description>
+                <span class="text-caption text-medium-emphasis">
+                  {{ $t('analytics.taskLabel') }}:
+                  <strong>"{{ findLongestTask().taskName }}"</strong>
+                </span>
+              </template>
+            </UxMetricCard>
           </v-col>
           <v-col cols="6">
-            <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
-              <div class="d-flex align-center mb-4">
-                <v-avatar color="success" size="48" class="me-3">
-                  <v-icon color="white" size="24"> mdi-check-circle </v-icon>
-                </v-avatar>
-                <div>
-                  <div class="text-h5 font-weight-bold text-success">
-                    {{ getTotalAnswers() }}
-                  </div>
-                  <p class="text-body-2 text-medium-emphasis mb-0">
-                    {{ $t('analytics.totalAnswers') }}
-                  </p>
+            <UxMetricCard
+              :value="getTotalAnswers()"
+              :label="$t('analytics.totalAnswers')"
+              color="success"
+              icon="mdi-check-circle"
+              :description="`+${getTasksTodayCount()}/${$t('analytics.day')}`"
+              :progress="
+                Math.min(
+                  (getTotalAnswers() /
+                    Math.max(filteredSessions.length || 1, 1)) *
+                    100,
+                  100,
+                )
+              "
+              :show-progress="false"
+            >
+              <template #description>
+                <div class="d-flex align-center text-caption text-success">
+                  <v-icon color="success" size="16" class="me-1">
+                    mdi-trending-up
+                  </v-icon>
+                  <span
+                    >+{{ getTasksTodayCount() }}/{{ $t('analytics.day') }}</span
+                  >
                 </div>
-              </div>
-              <div class="d-flex align-center">
-                <v-icon color="success" size="16" class="me-1">
-                  mdi-trending-up
-                </v-icon>
-                <span class="text-caption text-success"
-                  >+{{ getTasksTodayCount() }}/{{ $t('analytics.day') }}</span
-                >
-              </div>
-            </v-card>
+              </template>
+            </UxMetricCard>
           </v-col>
           <v-col cols="6">
-            <v-card class="pa-6 elevation-3 rounded-xl h-100 stat-card">
-              <div class="d-flex align-center mb-4">
-                <v-avatar color="accent" size="48" class="me-3">
-                  <v-icon color="white" size="24"> mdi-account-circle </v-icon>
-                </v-avatar>
-                <div>
-                  <div class="text-body-1 font-weight-bold text-accent">
-                    {{ $t('analytics.evaluator') }}
-                  </div>
-                  <p class="text-body-2 text-medium-emphasis mb-0">
-                    {{ $t('analytics.latestUser') }}
-                  </p>
-                </div>
-              </div>
-              <p class="text-caption text-medium-emphasis">
-                {{ getFormattedDate(getLatestResponse().lastUpdate) }}
-              </p>
-            </v-card>
+            <UxMetricCard
+              :value="$t('analytics.evaluator')"
+              :label="$t('analytics.latestUser')"
+              color="accent"
+              icon="mdi-account-circle"
+              :description="getFormattedDate(getLatestResponse().lastUpdate)"
+              :progress="100"
+              :show-progress="false"
+            />
           </v-col>
         </v-row>
       </v-col>
@@ -729,15 +707,8 @@ const findLongestTask = () => {
     }
   }
 
-  const taskMap = {}
-  if (testStructure.value && Array.isArray(testStructure.value.userTasks)) {
-    testStructure.value.userTasks.forEach((task) => {
-      taskMap[task.taskId] = task
-    })
-  }
-
   return {
-    taskName: taskMap[longestTask]?.taskName || 'Task',
+    taskName: resolveTaskName(longestTask),
     averageTime: formatTimeDetailedFromMs(longestAverageTime),
   }
 }
@@ -1066,15 +1037,7 @@ const getTasksPerformance = () => {
     let success = 0
     let errors = 0
     let total = 0
-    let taskName = taskId
-
-    // Buscar el nombre de la tarea si está en testStructure
-    if (testStructure.value && testStructure.value.userTasks) {
-      const found = testStructure.value.userTasks.find(
-        (t) => t.taskId === taskId,
-      )
-      if (found) taskName = found.taskName
-    }
+    const taskName = resolveTaskName(taskId)
 
     filteredSessions.value.forEach((answer) => {
       if (answer.tasks && answer.tasks[taskId]) {
@@ -1098,6 +1061,25 @@ const getTasksPerformance = () => {
     })
   })
   return result
+}
+
+const resolveTaskName = (taskId) => {
+  const tasks = Array.isArray(testStructure.value?.userTasks)
+    ? testStructure.value.userTasks
+    : []
+
+  if (!tasks.length) return taskId || 'Task'
+
+  const byId = tasks.find((task) => task?.taskId === taskId)
+  if (byId?.taskName) return byId.taskName
+
+  const numericIndex = Number(taskId)
+  if (Number.isInteger(numericIndex) && numericIndex >= 0) {
+    const byIndex = tasks[numericIndex]
+    if (byIndex?.taskName) return byIndex.taskName
+  }
+
+  return taskId || 'Task'
 }
 
 const createTaskCharts = async () => {

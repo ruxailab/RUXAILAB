@@ -1,53 +1,10 @@
 <template>
-  <div>
-    <!-- <v-col>
-      <v-row>
-        <v-tooltip
-          v-if="!isCapturing"
-          location="bottom"
-        >
-          <template #activator="{ props }">
-            <v-btn
-              class="ml-4 my-2 mr-auto"
-              elevation="0"
-              icon
-              v-bind="props"
-              @click="captureScreen"
-            >
-              <v-icon>mdi-monitor-screenshot</v-icon>
-            </v-btn>
-          </template>
-          <span>Capture Screen</span>
-        </v-tooltip>
-        <v-tooltip
-          v-if="isCapturing"
-          location="bottom"
-        >
-          <template #activator="{ props }">
-            <v-btn
-              class="ml-4 my-2 mr-auto"
-              :color="!isRecording ? 'grey-darken-1' : 'red lighten-1'"
-              elevation="0"
-              icon
-              v-bind="props"
-              @click="recordScreen"
-            >
-              <v-icon>
-                {{ isRecording ? 'mdi-stop' : 'mdi-monitor-screenshot' }}
-              </v-icon>
-            </v-btn>
-          </template>
-          <span>{{ isRecording ? 'Stop Recording' : 'Record Screen' }}</span>
-        </v-tooltip>
-      </v-row>
-    </v-col> -->
-  </div>
+  <div />
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
-import { useI18n } from 'vue-i18n'
 import {
   ref as storageRef,
   uploadBytes,
@@ -55,6 +12,11 @@ import {
 } from 'firebase/storage'
 import { storage } from '@/app/plugins/firebase'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
+import { showError } from '@/shared/utils/toast'
+import {
+  startScreenShareStream,
+  stopMediaStream,
+} from '@/shared/utils/screenShareCapture'
 
 const props = defineProps({
   testId: String,
@@ -82,41 +44,60 @@ const resolvedUserDocId = computed(
     currentCardSortingAnswer.value?.userDocId,
 )
 
-const { t } = useI18n()
-
 const isCapturing = ref(false)
 const isRecording = ref(false)
 const videoUrl = ref('')
 const videoStream = ref(null)
 const mediaRecorder = ref(null)
 const chunks = ref([])
-const recordingTaskIndex = ref(null) // Store the task index when recording starts
+const recordingTaskIndex = ref(null)
 
-const captureScreen = async () => {
+const captureScreen = async ({ requireEntireScreen = false } = {}) => {
+  const result = await startScreenShareStream({ requireEntireScreen })
+  if (!result.ok) {
+    showError(`errors.screenShare.${result.reason}`)
+    return false
+  }
+
+  recordingTaskIndex.value = props.taskIndex
+  videoStream.value = result.stream
+  isCapturing.value = true
+
+  const [videoTrack] = result.stream.getVideoTracks()
+  if (videoTrack) {
+    videoTrack.onended = () => {
+      if (isRecording.value) stopRecording()
+    }
+  }
+
   try {
-    recordingTaskIndex.value = props.taskIndex // Store the current task index when recording starts
-    videoStream.value = await navigator.mediaDevices.getDisplayMedia({
-      cursor: true,
-    })
-    isCapturing.value = true
     await recordScreen()
-  } catch (err) {
-    console.error(err)
+    return true
+  } catch (error) {
+    console.error('Unexpected error while starting screen recording:', error)
+    abortCapture()
+    showError('errors.screenShare.error')
+    return false
   }
 }
 
 const recordScreen = async () => {
-  if (!isRecording.value) {
-    chunks.value = []
-    mediaRecorder.value = new MediaRecorder(videoStream.value)
-    mediaRecorder.value.start()
+  if (isRecording.value) {
+    mediaRecorder.value.stop()
+    return
+  }
 
-    mediaRecorder.value.ondataavailable = (e) => {
-      chunks.value.push(e.data)
-    }
+  chunks.value = []
+  mediaRecorder.value = new MediaRecorder(videoStream.value)
+  mediaRecorder.value.start()
 
-    mediaRecorder.value.onstop = async () => {
-      emit('showLoading')
+  mediaRecorder.value.ondataavailable = (e) => {
+    chunks.value.push(e.data)
+  }
+
+  mediaRecorder.value.onstop = async () => {
+    emit('showLoading')
+    try {
       const videoBlob = new Blob(chunks.value, { type: 'video/webm' })
       const storagePath = `tests/${props.testId}/${resolvedUserDocId.value}/task_${recordingTaskIndex.value}/screen_record/${Date.now()}.webm`
       const storageReference = storageRef(storage, storagePath)
@@ -124,7 +105,6 @@ const recordScreen = async () => {
       await uploadBytes(storageReference, videoBlob)
       videoUrl.value = await getDownloadURL(storageReference)
 
-      // Use the task index from when recording started, not the current one
       const correctTaskIndex = recordingTaskIndex.value
 
       await store.dispatch('updateTaskMediaUrl', {
@@ -132,9 +112,9 @@ const recordScreen = async () => {
         mediaType: MEDIA_FIELD_MAP.screen,
         url: videoUrl.value,
         size: videoBlob.size,
+        userId: resolvedUserDocId.value,
       })
 
-      // Add safety check before setting the property
       if (
         currentUserTestAnswer.value.tasks &&
         currentUserTestAnswer.value.tasks[correctTaskIndex]
@@ -151,28 +131,46 @@ const recordScreen = async () => {
           currentUserTestAnswer.value.tasks?.length,
         )
       }
-
-      // Stop all tracks
-      videoStream.value.getTracks().forEach((track) => track.stop())
+    } catch (error) {
+      console.error('Unexpected error while stopping screen recording:', error)
+    } finally {
+      stopMediaStream(videoStream.value)
+      videoStream.value = null
       isRecording.value = false
       isCapturing.value = false
-
       emit('stopShowLoading')
     }
-
-    isRecording.value = true
-  } else {
-    mediaRecorder.value.stop()
   }
+
+  isRecording.value = true
 }
 
 const stopRecording = () => {
-  if (isRecording.value) {
+  if (isRecording.value && mediaRecorder.value?.state !== 'inactive') {
     mediaRecorder.value.stop()
   }
 }
 
-defineExpose({ captureScreen, stopRecording })
-</script>
+const abortCapture = () => {
+  try {
+    if (mediaRecorder.value) {
+      mediaRecorder.value.ondataavailable = null
+      mediaRecorder.value.onstop = () => {}
+      if (mediaRecorder.value.state !== 'inactive') {
+        mediaRecorder.value.stop()
+      }
+    }
+  } catch (error) {
+    console.error('Unexpected error while aborting screen recording:', error)
+  }
 
-<style scoped></style>
+  stopMediaStream(videoStream.value)
+  videoStream.value = null
+  mediaRecorder.value = null
+  chunks.value = []
+  isRecording.value = false
+  isCapturing.value = false
+}
+
+defineExpose({ captureScreen, stopRecording, abortCapture })
+</script>

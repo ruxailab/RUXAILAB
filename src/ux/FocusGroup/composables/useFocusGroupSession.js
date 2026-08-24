@@ -54,6 +54,11 @@ export function useFocusGroupSession(studyId) {
   const currentPrompt = computed(() => snapshot.value?.currentPrompt ?? null)
   // Observer/note-taker notes, kept per observer: { [userId]: [{ text, timestamp, taskName }] }
   const notes = computed(() => snapshot.value?.notes ?? {})
+  // The stimulus the facilitator is currently presenting, scoped to a topic so
+  // advancing the guide can retire it. { stimulusId, topicId, presentedAt } | null
+  const currentStimulus = computed(
+    () => snapshot.value?.currentStimulus ?? null,
+  )
   // Per-topic countdown timer. Clients tick locally from `endsAt`; only the
   // facilitator's play/pause/reset write here, so there are no per-second writes.
   // { topicId, running, endsAt, remainingMs } | null
@@ -161,6 +166,31 @@ export function useFocusGroupSession(studyId) {
   }
 
   /**
+   * Present a stimulus to every attendee. Scoped to the topic so moving on
+   * naturally retires it; a new presentation overwrites the previous one.
+   */
+  async function presentStimulus({ stimulusId, topicId }) {
+    await update(rootRef, {
+      currentStimulus: {
+        stimulusId: stimulusId ?? null,
+        topicId: topicId ?? null,
+        presentedAt: serverTimestamp(),
+      },
+      lastUpdate: serverTimestamp(),
+    })
+  }
+
+  /**
+   * Stop presenting so no stimulus is shown to participants.
+   */
+  async function clearStimulus() {
+    await update(rootRef, {
+      currentStimulus: null,
+      lastUpdate: serverTimestamp(),
+    })
+  }
+
+  /**
    * Persist an observer's notes. Kept under their own user id so each observer
    * keeps a private, timestamped, topic-tagged record that survives a refresh.
    */
@@ -250,6 +280,7 @@ export function useFocusGroupSession(studyId) {
     currentPrompt,
     notes,
     timer,
+    currentStimulus,
     loaded,
     isLive,
     isEnded,
@@ -265,6 +296,8 @@ export function useFocusGroupSession(studyId) {
     recordConsent,
     askPrompt,
     clearPrompt,
+    presentStimulus,
+    clearStimulus,
     saveNotes,
     playTimer,
     pauseTimer,

@@ -10,6 +10,34 @@
   >
     <template #content>
       <div class="test-content pa-4 rounded-xl">
+        <v-dialog v-model="showScreenSharePrompt" persistent max-width="640">
+          <v-card class="pa-4 pa-sm-6" rounded="xl">
+            <ScreenShareInstructions
+              compact
+              :has-external-link="hasExternalLink"
+            />
+            <v-card-actions class="px-0 pt-5 pb-0">
+              <v-btn
+                variant="text"
+                :disabled="isRequestingScreenShare"
+                @click="cancelScreenSharePrompt"
+              >
+                {{ t('screenShare.backButton') }}
+              </v-btn>
+              <v-spacer />
+              <v-btn
+                color="primary"
+                variant="flat"
+                :loading="isRequestingScreenShare"
+                prepend-icon="mdi-monitor-share"
+                @click="confirmScreenShare"
+              >
+                {{ t('screenShare.shareButton') }}
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
         <v-dialog
           :model-value="showTaskProgressDialog"
           persistent
@@ -138,6 +166,12 @@
                     </div>
                   </div>
                 </div>
+
+                <ScreenShareInstructions
+                  v-if="task?.hasScreenRecord"
+                  class="mt-4"
+                  :has-external-link="hasExternalLink"
+                />
               </template>
 
               <template v-else>
@@ -531,6 +565,7 @@ import AudioRecorder from '@/ux/UserTest/components/AudioRecorder.vue'
 import AudioVisualizer from '@/ux/UserTest/components/AudioVisualizer.vue'
 import VideoRecorder from '@/ux/UserTest/components/VideoRecorder.vue'
 import ScreenRecorder from '@/ux/UserTest/components/ScreenRecorder.vue'
+import ScreenShareInstructions from '@/ux/UserTest/components/ScreenShareInstructions.vue'
 import Timer from '@/ux/UserTest/components/Timer.vue'
 import SusForm from '@/ux/UserTest/SusForm.vue'
 import nasaTlxForm from '@/ux/UserTest/components/nasaTlxForm.vue'
@@ -691,6 +726,10 @@ const hasAnyRecording = computed(() => {
   )
 })
 
+const hasExternalLink = computed(
+  () => !!(props.task?.taskLink || props.taskLink),
+)
+
 const stage = ref(1)
 const hasOpenedTool = ref(false)
 const audioRecorder = ref(null)
@@ -701,6 +740,8 @@ const uploadingCount = ref(0)
 const isWaitingForUploadToFinish = ref(false)
 const pendingFinalTime = ref(null)
 const isPreparingTaskTools = ref(false)
+const showScreenSharePrompt = ref(false)
+const isRequestingScreenShare = ref(false)
 const showUploadDialog = computed(
   () => isWaitingForUploadToFinish.value || uploadingCount.value > 0,
 )
@@ -769,12 +810,40 @@ function goToStartTaskStage() {
 }
 
 async function startTask() {
-  isPreparingTaskTools.value = true
   emit('startTask')
 
+  if (props.task?.hasScreenRecord) {
+    showScreenSharePrompt.value = true
+    return
+  }
+
+  await proceedWithTaskStart({ skipScreen: true })
+}
+
+function cancelScreenSharePrompt() {
+  if (isRequestingScreenShare.value) return
+  showScreenSharePrompt.value = false
+}
+
+async function confirmScreenShare() {
+  isRequestingScreenShare.value = true
   try {
-    const mediaStarted = await startMediaRecorders()
+    await nextTick()
+    const screenStarted = await startMediaRecorders({ screenOnly: true })
+    if (!screenStarted) return
+    showScreenSharePrompt.value = false
+    await proceedWithTaskStart({ skipScreen: true })
+  } finally {
+    isRequestingScreenShare.value = false
+  }
+}
+
+async function proceedWithTaskStart({ skipScreen = false } = {}) {
+  isPreparingTaskTools.value = true
+  try {
+    const mediaStarted = await startMediaRecorders({ skipScreen })
     if (!mediaStarted) {
+      screenRecorder.value?.abortCapture?.()
       return
     }
 
@@ -806,7 +875,18 @@ function openTool() {
 
 const showPostForm = ref({ userCompleted: undefined })
 
-async function startMediaRecorders() {
+async function startMediaRecorders({
+  skipScreen = false,
+  screenOnly = false,
+} = {}) {
+  if (!skipScreen && props.task?.hasScreenRecord && screenRecorder.value) {
+    const screenStarted = await screenRecorder.value.captureScreen({
+      requireEntireScreen: hasExternalLink.value,
+    })
+    if (!screenStarted) return false
+  }
+  if (screenOnly) return true
+
   if (props.task?.hasAudioRecord && audioRecorder.value) {
     await audioRecorder.value.startAudioRecording()
   }
@@ -815,9 +895,6 @@ async function startMediaRecorders() {
     if (!videoStarted) {
       return false
     }
-  }
-  if (props.task?.hasScreenRecord && screenRecorder.value) {
-    await screenRecorder.value.captureScreen()
   }
   return true
 }
@@ -926,6 +1003,8 @@ watch(
     showPostForm.value = { userCompleted: undefined }
     hasOpenedTool.value = false
     isPreparingTaskTools.value = false
+    showScreenSharePrompt.value = false
+    isRequestingScreenShare.value = false
   },
 )
 

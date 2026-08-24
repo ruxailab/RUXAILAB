@@ -150,6 +150,11 @@ const NAVIGATION_ITEMS = Object.freeze([
     icon: ICONS.PREVIEW,
     capability: C.STUDY_ANSWER,
     path: ({ id, previewPath }) => previewPath ?? `/testview/${id}`,
+    visible: (study) =>
+      !(
+        normalizeStudyType(study?.testType) == STUDY_TYPES.USER &&
+        study?.subType === USER_STUDY_SUBTYPES.MODERATED
+      ),
   },
   {
     title: 'Progress',

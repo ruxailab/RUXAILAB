@@ -164,7 +164,7 @@ import {
   getPredefinedParticipantUserRole,
   getRequiredLoginConfig,
 } from '@/shared/composables/useCooperatorUtils'
-import Notification from '@/shared/models/Notification'
+import { canManageCooperator } from '@/shared/utils/studyAccessPolicy'
 
 const router = useRouter()
 const route = useRoute()
@@ -325,67 +325,31 @@ const openMessageDialog = (participant) => {
 
 const handleSendMessage = async ({ user, title, content }) => {
   messageModel.value = false
-  if (user.userDocId && test.value) {
-    const author = userAuth.value.email
-    try {
-      await sendNotification({
-        userId: user.userDocId,
-        title: title,
-        author: author,
-        description: content,
-        redirectsTo: null,
-        testId: test.value.id,
-        type: 'Message',
-      })
-      showSuccess('HeuristicsCooperators.messages.message_sent_success')
-    } catch {
-      showError('HeuristicsCooperators.messages.message_sent_error')
-    }
-  } else {
+
+  if (!user.userDocId || !test.value) {
     showWarning('HeuristicsCooperators.messages.user_not_registered')
+    return
+  }
+
+  try {
+    await store.dispatch('sendMemberMessage', {
+      user,
+      study: test.value,
+      title,
+      content,
+      author: userAuth.value?.email,
+    })
+
+    showSuccess('HeuristicsCooperators.messages.message_sent_success')
+  } catch {
+    showError('HeuristicsCooperators.messages.message_sent_error')
   }
 }
 
-const sendNotification = async ({
-  userId,
-  title,
-  titleTemplate,
-  titleParams,
-  description,
-  descriptionTemplate,
-  descriptionParams,
-  redirectsTo = '/',
-  testId = null,
-  author,
-  type,
-  accessLevel,
-  inviteToken,
-} = {}) => {
-  const notification = new Notification({
-    title,
-    titleTemplate,
-    titleParams,
-    description,
-    descriptionTemplate,
-    descriptionParams,
-    redirectsTo,
-    author,
-    read: false,
-    testId,
-    type,
-    accessLevel,
-    inviteToken,
+const canCancelParticipantInvitation = (cooperator) => {
+  return canManageCooperator(test.value, userAuth.value, cooperator, {
+    action: 'cancelInvitation',
   })
-
-  try {
-    await store.dispatch('addNotification', {
-      userId,
-      notification,
-    })
-    return true
-  } catch (error) {
-    throw error
-  }
 }
 
 const handleSendInvitations = async ({
