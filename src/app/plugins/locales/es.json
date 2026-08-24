@@ -1079,7 +1079,8 @@
     "alerts": {
       "testAlreadyCompleted": "Prueba ya completada",
       "testAlreadyCompletedMessage": "Ya has completado y enviado esta prueba. ¡Gracias por tu participación!",
-      "testConfigError": "Error de configuración de la prueba"
+      "testConfigError": "Error de configuración de la prueba",
+      "noAnswerOptionsConfigured": "Nenhuma opção de resposta foi configurada para este teste."
     },
     "actions": {
       "cancel": "Cancelar",

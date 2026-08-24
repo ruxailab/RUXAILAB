@@ -1088,7 +1088,8 @@
     "alerts": {
       "testAlreadyCompleted": "Test Already Completed",
       "testAlreadyCompletedMessage": "You have already completed and submitted this test. Thank you for your participation!",
-      "testConfigError": "Test Configuration Error"
+      "testConfigError": "Test Configuration Error",
+      "noAnswerOptionsConfigured": "No answer options have been configured for this test."
     },
     "actions": {
       "cancel": "Cancel",
