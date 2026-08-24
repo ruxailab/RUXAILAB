@@ -2580,6 +2580,7 @@
       "breakoutGroupCountHint": "Cada grupo necesita al menos 2 personas, por lo que el máximo es la mitad del número de participantes.",
       "breakoutStart": "Iniciar salas de grupos",
       "breakoutNoParticipants": "Todavía no se ha unido ningún participante.",
+      "breakoutTooFewParticipants": "Se necesitan al menos 4 participantes para dividir en grupos.",
       "breakoutRecall": "Reunir a todos",
       "breakoutPeek": "Ver",
       "breakoutEmptyGroup": "Nadie asignado todavía.",

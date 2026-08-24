@@ -346,29 +346,37 @@
                   <p class="text-body-2 text-medium-emphasis mb-2">
                     {{ t('focusGroup.session.breakoutIntro') }}
                   </p>
-                  <v-text-field
-                    v-model.number="quickBreakoutGroupCount"
-                    type="number"
-                    :min="1"
-                    :max="maxBreakoutGroups"
-                    density="compact"
-                    variant="outlined"
-                    persistent-hint
-                    :hint="t('focusGroup.session.breakoutGroupCountHint')"
-                    :label="t('focusGroup.session.breakoutGroupCount')"
-                    class="mb-3"
-                  />
-                  <v-btn
-                    color="primary"
-                    variant="flat"
-                    block
-                    prepend-icon="mdi-call-split"
-                    class="text-none"
-                    :disabled="eligibleBreakoutParticipants.length === 0"
-                    @click="onStartBreakout(quickBreakoutGroupCount)"
-                  >
-                    {{ t('focusGroup.session.breakoutStart') }}
-                  </v-btn>
+                  <template v-if="canStartBreakout">
+                    <v-text-field
+                      v-model.number="quickBreakoutGroupCount"
+                      type="number"
+                      :min="2"
+                      :max="maxBreakoutGroups"
+                      density="compact"
+                      variant="outlined"
+                      persistent-hint
+                      :hint="t('focusGroup.session.breakoutGroupCountHint')"
+                      :label="t('focusGroup.session.breakoutGroupCount')"
+                      class="mb-3"
+                    />
+                    <v-btn
+                      color="primary"
+                      variant="flat"
+                      block
+                      prepend-icon="mdi-call-split"
+                      class="text-none"
+                      @click="onStartBreakout(quickBreakoutGroupCount)"
+                    >
+                      {{ t('focusGroup.session.breakoutStart') }}
+                    </v-btn>
+                  </template>
+                  <p v-else class="text-caption text-medium-emphasis mb-0">
+                    {{
+                      eligibleBreakoutParticipants.length === 0
+                        ? t('focusGroup.session.breakoutNoParticipants')
+                        : t('focusGroup.session.breakoutTooFewParticipants')
+                    }}
+                  </p>
                 </template>
                 <template v-else>
                   <p class="text-body-2 mb-3">
@@ -985,6 +993,9 @@ const eligibleBreakoutParticipants = computed(() =>
 const maxBreakoutGroups = computed(() =>
   maxGroupCount(eligibleBreakoutParticipants.value.map((p) => p.id)),
 )
+// A "split" into 1 group is a no-op — everyone stays together — so it takes
+// at least 2 groups of 2 (4 participants) for the feature to mean anything.
+const canStartBreakout = computed(() => maxBreakoutGroups.value >= 2)
 const quickBreakoutGroupCount = ref(2)
 watch(maxBreakoutGroups, (max) => {
   if (quickBreakoutGroupCount.value > max) quickBreakoutGroupCount.value = max

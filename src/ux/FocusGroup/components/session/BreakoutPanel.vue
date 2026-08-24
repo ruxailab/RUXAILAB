@@ -5,30 +5,35 @@
       <p class="text-body-2 text-medium-emphasis mb-3">
         {{ t('focusGroup.session.breakoutIntro') }}
       </p>
-      <v-text-field
-        v-model.number="groupCount"
-        type="number"
-        :min="1"
-        :max="maxGroups"
-        density="compact"
-        variant="outlined"
-        persistent-hint
-        :hint="t('focusGroup.session.breakoutGroupCountHint')"
-        :label="t('focusGroup.session.breakoutGroupCount')"
-        class="mb-3"
-      />
-      <v-btn
-        color="primary"
-        variant="flat"
-        prepend-icon="mdi-call-split"
-        class="text-none"
-        :disabled="eligibleParticipants.length === 0"
-        @click="emit('start', groupCount)"
-      >
-        {{ t('focusGroup.session.breakoutStart') }}
-      </v-btn>
-      <p v-if="eligibleParticipants.length === 0" class="text-caption text-medium-emphasis mt-2 mb-0">
-        {{ t('focusGroup.session.breakoutNoParticipants') }}
+      <template v-if="canSplit">
+        <v-text-field
+          v-model.number="groupCount"
+          type="number"
+          :min="2"
+          :max="maxGroups"
+          density="compact"
+          variant="outlined"
+          persistent-hint
+          :hint="t('focusGroup.session.breakoutGroupCountHint')"
+          :label="t('focusGroup.session.breakoutGroupCount')"
+          class="mb-3"
+        />
+        <v-btn
+          color="primary"
+          variant="flat"
+          prepend-icon="mdi-call-split"
+          class="text-none"
+          @click="emit('start', groupCount)"
+        >
+          {{ t('focusGroup.session.breakoutStart') }}
+        </v-btn>
+      </template>
+      <p v-else class="text-caption text-medium-emphasis mb-0">
+        {{
+          eligibleParticipants.length === 0
+            ? t('focusGroup.session.breakoutNoParticipants')
+            : t('focusGroup.session.breakoutTooFewParticipants')
+        }}
       </p>
     </div>
 
@@ -174,6 +179,9 @@ const emit = defineEmits([
 const maxGroups = computed(() =>
   maxGroupCount(props.eligibleParticipants.map((p) => p.id)),
 )
+// A "split" into 1 group is a no-op — everyone stays together — so it takes
+// at least 2 groups of 2 (4 participants) for the feature to mean anything.
+const canSplit = computed(() => maxGroups.value >= 2)
 const groupCount = ref(2)
 // Keep the field valid as the eligible list changes (e.g. someone leaves)
 // rather than letting it silently exceed what's now selectable.
