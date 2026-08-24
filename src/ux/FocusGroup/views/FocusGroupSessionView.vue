@@ -614,10 +614,22 @@ const videoEnabled = computed(
   () => sessionConfig.value.enableVideoCall === true,
 )
 
+// Resolves which breakout group (if any) the current participant is in.
+// Declared here, ahead of `effectiveRoomId` below, because the eager
+// `watch(effectiveRoomId, ...)` further down evaluates its getter during
+// setup — a reference to a later `const` would throw a TDZ ReferenceError.
+const myBreakoutGroupId = computed(() => {
+  if (!isParticipant.value || !breakout.value?.active) return null
+  const groups = breakout.value.groups ?? {}
+  const entry = Object.entries(groups).find(([, group]) =>
+    (group.participantIds ?? []).includes(user.value?.id),
+  )
+  return entry?.[0] ?? null
+})
+
 // A participant assigned to an active breakout group connects to that
 // group's own LiveKit room instead of the main one; the facilitator and
-// observers always stay in the main room. `myBreakoutGroupId` is declared
-// further below (breakout section) — safe here since this getter is lazy.
+// observers always stay in the main room.
 const effectiveRoomId = computed(() =>
   myBreakoutGroupId.value
     ? `${studyId}-breakout-${myBreakoutGroupId.value}`
@@ -809,14 +821,6 @@ const eligibleBreakoutParticipants = computed(() =>
     .filter(([, p]) => p?.role === t('focusGroup.session.roleParticipant'))
     .map(([id, p]) => ({ id, name: p?.name || '' })),
 )
-const myBreakoutGroupId = computed(() => {
-  if (!isParticipant.value || !breakout.value?.active) return null
-  const groups = breakout.value.groups ?? {}
-  const entry = Object.entries(groups).find(([, group]) =>
-    (group.participantIds ?? []).includes(user.value?.id),
-  )
-  return entry?.[0] ?? null
-})
 const isInBreakout = computed(() => myBreakoutGroupId.value !== null)
 const myBreakoutGroupName = computed(
   () => breakout.value?.groups?.[myBreakoutGroupId.value]?.name ?? '',
