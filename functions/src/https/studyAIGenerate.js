@@ -1,5 +1,5 @@
 import OpenAI from 'openai'
-import { functions } from '../f.firebase.js'
+import { functions } from '../core/firebase/f.firebase.js'
 import { buildSystemPrompt } from '../ai/studyGeneration/systemPrompt/index.js'
 import { studyDraftJsonSchema } from '../ai/studyGeneration/responseSchema.js'
 import {

@@ -11,3 +11,8 @@ export * from './studyStorage.js'
 export * from './studyAnswers.js'
 export * from './agentModels.js'
 export * from './studyAIGenerate.js'
+export {
+  transcriptionTask,
+  transcriptionDelete,
+  transcriptionDeleteByUser,
+} from '../features/transcription/index.js'

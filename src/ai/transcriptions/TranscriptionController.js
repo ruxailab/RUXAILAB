@@ -181,15 +181,4 @@ export default class TranscriptionController extends Controller {
     transcriptions.sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt))
     return transcriptions
   }
-
-  /**
-   * Deletes a Transcription document from Firestore by its document ID.
-   *
-   * @param {string} id - The unique ID of the Transcription document to delete.
-   * @returns {Promise<void>} - Returns a Promise that resolves when the document is successfully deleted.
-   * @throws {Error} - Throws an error if there is an issue deleting the document from Firestore.
-   */
-  async deleteById(id) {
-    return super.delete(COLLECTION, id)
-  }
 }
