@@ -12,12 +12,16 @@ const userController = new UserController()
 
 export default class AnswerController extends Controller {
   async getAnswerById(payload) {
+    if (!payload) return null
+
     const res = await super.readOne(COLLECTION, payload)
-    const answer = instantiateStudyAnswerByType(res.data().type, {
+    if (!res.exists()) return null
+
+    const data = res.data()
+    return instantiateStudyAnswerByType(data.type, {
       id: res.id,
-      ...res.data(),
+      ...data,
     })
-    return answer
   }
 
   async getMyStudyAnswer(studyId) {
