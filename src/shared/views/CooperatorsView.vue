@@ -49,7 +49,7 @@
     </template>
 
     <!-- Main Content -->
-    <Intro v-if="showIntroView" @close-intro="showIntroComponent = false" />
+    <Intro v-if="showIntroView" @close-intro="dismissIntro" />
 
     <CooperatorTable
       v-else
@@ -347,7 +347,7 @@ const handleCancelAction = () => {
   resetConfirmDialog()
 }
 
-const showIntroComponent = ref(true)
+const introDismissed = ref(false)
 const verified = ref(false)
 const messageModel = ref(false)
 const selectedUser = ref([])
@@ -365,7 +365,7 @@ const cooperatorsEdit = computed(() =>
 )
 
 const showIntroView = computed(() => {
-  return cooperatorsEdit.value.length <= 0 && showIntroComponent.value
+  return cooperatorsEdit.value.length <= 0 && !introDismissed.value
 })
 
 const loading = computed(() => store.getters.loading)
@@ -431,6 +431,10 @@ const openMessageDialog = (item) => {
   messageModel.value = true
 }
 
+const dismissIntro = () => {
+  introDismissed.value = true
+}
+
 const handleSendMessage = async ({ user, title, content }) => {
   messageModel.value = false
 
@@ -475,6 +479,7 @@ const handleSendInvitations = async ({
 }) => {
   try {
     showInviteDialog.value = false
+    introDismissed.value = true
     const newInvites = await store.dispatch('sendInvitations', {
       study: test.value,
       user: userAuth.value,
