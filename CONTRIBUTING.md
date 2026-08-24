@@ -32,9 +32,10 @@ RUXAILAB is a Vue.js-based platform for usability testing and heuristic evaluati
 
 ### Prerequisites
 
-- **Node.js** ≤ 24.12.0
+- **Node.js** ≥ 22.22.1 (Active LTS 22 or current 24). Required by `lint-staged` on pre-commit; Node 20 is not supported.
 - **Python** 3.11.8
 - **npm** (comes with Node.js)
+- **Git** ≥ 2.32.0
 - **Docker** (optional, for Firebase Emulators)
 
 ### Option 1: Docker with Firebase Emulators (Recommended for Local Development)
@@ -363,12 +364,18 @@ To ensure your issue gets the correct labels:
 
 This project uses **Husky** and **lint-staged** to automatically format and lint code before each commit. This ensures code quality standards are maintained.
 
+`lint-staged` v17 requires **Node.js ≥ 22.22.1**. If you see an `engines` error when committing, upgrade Node (do not use 20.x or 22.22.0 and below). Check with `node -v`.
+
+The hook does **not** affect `npm run serve`, production builds, or `npm test` in CI. It only runs locally on `git commit`.
+
 ### How It Works
 
 When you commit changes, the following automatically runs:
 
 1. **Husky** intercepts the commit
-2. **lint-staged** runs linting and formatting on staged files:
+2. `i18n-diff-guard.mjs` checks locale files
+3. `npm test` runs the unit suite
+4. **lint-staged** runs linting and formatting on staged files:
    - **ESLint** checks for code quality issues
    - **Prettier** formats code for consistency
 

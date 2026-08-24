@@ -1,5 +1,5 @@
 import { FieldValue } from 'firebase-admin/firestore'
-import { admin, functions } from '../f.firebase.js'
+import { admin, functions } from '../core/firebase/f.firebase.js'
 
 export const consertUserTestTypeToSubType = functions.onRequest({
   handler: async (req, res) => {

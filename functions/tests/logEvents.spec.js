@@ -23,7 +23,7 @@ import {
   query,
   setDoc,
 } from 'firebase/firestore'
-import { admin } from '../src/f.firebase.js'
+import { admin } from '../src/core/firebase/f.firebase.js'
 import { logEvents, requestLogEvent } from '../src/https/logEvents.js'
 import logger from '../src/utils/logger.js'
 

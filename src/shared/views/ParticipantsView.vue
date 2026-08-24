@@ -1,7 +1,9 @@
 <template>
-  <PageWrapper :title="$t('Participants.title.participants')">
+  <PageWrapper
+    :title="!showIntroView ? $t('Participants.title.participants') : ''"
+  >
     <!-- Actions Slot -->
-    <template v-if="canManageParticipants" #actions>
+    <template v-if="!showIntroView && canManageParticipants" #actions>
       <v-menu>
         <template #activator="{ props }">
           <v-btn
@@ -40,13 +42,16 @@
     </template>
 
     <!-- Subtitle Slot -->
-    <template #subtitle>
+    <template v-if="!showIntroView" #subtitle>
       <p class="text-body-1 text-grey-darken-1">
         {{ $t('Participants.subtitles.manage_participants') }}
       </p>
     </template>
 
+    <Intro v-if="showIntroView" @close-intro="showIntroComponent = false" />
+
     <ParticipantTable
+      v-else
       :participants="participants"
       :loading="loading"
       :show-date-columns="showDateColumns"
@@ -98,6 +103,7 @@
       :no-data-text="$t('Participants.messages.no_users')"
       :cancel-text="$t('Participants.actions.cancel')"
       :send-text="$t('Participants.actions.send')"
+      :loading="loading"
       @send-invitations="handleSendInvitations"
     />
 
@@ -146,6 +152,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { showSuccess, showError, showWarning } from '@/shared/utils/toast'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
+import Intro from '@/shared/components/introduction_cards/IntroParticipants.vue'
 import AccessNotAllowed from '@/shared/views/AccessNotAllowed.vue'
 import LeaveAlert from '@/shared/components/dialogs/LeaveAlert.vue'
 import MessageDialog from '@/shared/components/dialogs/MessageDialog.vue'
@@ -157,7 +164,7 @@ import {
   getPredefinedParticipantUserRole,
   getRequiredLoginConfig,
 } from '@/shared/composables/useCooperatorUtils'
-import Notification from '@/shared/models/Notification'
+import { canManageCooperator } from '@/shared/utils/studyAccessPolicy'
 
 const router = useRouter()
 const route = useRoute()
@@ -286,6 +293,10 @@ const requiredLoginOption = computed(() => getRequiredLoginConfig(test.value))
 
 const participants = computed(() => store.getters.participants)
 
+const showIntroView = computed(() => {
+  return participants.value.length <= 0 && showIntroComponent.value
+})
+
 /*
 |--------------------------------------------------------------------------
 | Permissions
@@ -314,67 +325,31 @@ const openMessageDialog = (participant) => {
 
 const handleSendMessage = async ({ user, title, content }) => {
   messageModel.value = false
-  if (user.userDocId && test.value) {
-    const author = userAuth.value.email
-    try {
-      await sendNotification({
-        userId: user.userDocId,
-        title: title,
-        author: author,
-        description: content,
-        redirectsTo: null,
-        testId: test.value.id,
-        type: 'Message',
-      })
-      showSuccess('HeuristicsCooperators.messages.message_sent_success')
-    } catch {
-      showError('HeuristicsCooperators.messages.message_sent_error')
-    }
-  } else {
+
+  if (!user.userDocId || !test.value) {
     showWarning('HeuristicsCooperators.messages.user_not_registered')
+    return
+  }
+
+  try {
+    await store.dispatch('sendMemberMessage', {
+      user,
+      study: test.value,
+      title,
+      content,
+      author: userAuth.value?.email,
+    })
+
+    showSuccess('HeuristicsCooperators.messages.message_sent_success')
+  } catch {
+    showError('HeuristicsCooperators.messages.message_sent_error')
   }
 }
 
-const sendNotification = async ({
-  userId,
-  title,
-  titleTemplate,
-  titleParams,
-  description,
-  descriptionTemplate,
-  descriptionParams,
-  redirectsTo = '/',
-  testId = null,
-  author,
-  type,
-  accessLevel,
-  inviteToken,
-} = {}) => {
-  const notification = new Notification({
-    title,
-    titleTemplate,
-    titleParams,
-    description,
-    descriptionTemplate,
-    descriptionParams,
-    redirectsTo,
-    author,
-    read: false,
-    testId,
-    type,
-    accessLevel,
-    inviteToken,
+const canCancelParticipantInvitation = (cooperator) => {
+  return canManageCooperator(test.value, userAuth.value, cooperator, {
+    action: 'cancelInvitation',
   })
-
-  try {
-    await store.dispatch('addNotification', {
-      userId,
-      notification,
-    })
-    return true
-  } catch (error) {
-    throw error
-  }
 }
 
 const handleSendInvitations = async ({
@@ -383,6 +358,9 @@ const handleSendInvitations = async ({
   inviteMessage,
 }) => {
   try {
+    showInviteDialog.value = false
+    showIntroComponent.value = false
+
     const newInvites = await store.dispatch('sendParticipantInvitations', {
       study: test.value,
       user: userAuth.value,
@@ -394,8 +372,6 @@ const handleSendInvitations = async ({
       resolveUserByEmail,
       studyParticipants: participants.value,
     })
-
-    showInviteDialog.value = false
 
     if (newInvites.length > 0) {
       showSuccess(

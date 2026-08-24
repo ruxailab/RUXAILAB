@@ -377,7 +377,16 @@
     "minutesAgo": "hace {count}m",
     "hoursAgo": "hace {count}h",
     "daysAgo": "hace {count}d",
-    "newNotification": "Tienes una nueva notificación."
+    "newNotification": "Tienes una nueva notificación.",
+    "notificationsPage": {
+      "types": {
+        "session": "Sesión",
+        "message": "Mensaje",
+        "collaboration": "Colaboración",
+        "notification": "Notificación",
+        "participant": "Participante"
+      }
+    }
   },
   "notifications": {
     "errors": {
@@ -579,9 +588,11 @@
       "analytics": "Examina en profundidad tu prueba y descubre qué dicen las personas al respecto.",
       "invite": "¡Invita a evaluadores a responder tu prueba!",
       "cooperators": "Agrega colaboradores que puedan ayudarte a mejorar tu proyecto y recopilar datos para tus estudios.",
+      "participants": "Agrega participantes a tu estudio para ayudarte a recopilar datos valiosos y obtener información de usuarios reales.",
       "start": "¡Comienza!",
       "edit": "Crea y personaliza tus tareas y heurísticas para tus necesidades de investigación.",
-      "finalReport": "Prepara el informe final para tu evaluación heurística seleccionando los elementos que deseas incluir."
+      "finalReport": "Prepara el informe final para tu evaluación heurística seleccionando los elementos que deseas incluir.",
+      "sessions": "Las sesiones son encuentros programados del estudio en los que el equipo y los participantes se reúnen para realizar y completar el estudio."
     },
     "overallAnalyticsDescription": "Ver los análisis agregados de su prueba.",
     "individualAnalytics": "Análisis individual",
@@ -607,7 +618,33 @@
     "missingVariableTitles": "No se puede guardar: Algunas variables no tienen título",
     "failedToLoadAnswers": "Error al cargar respuestas",
     "failedToUpdateAnswer": "Error al actualizar respuesta",
-    "failedToSaveAnswerCooperator": "Error al guardar respuesta del cooperador"
+    "failedToSaveAnswerCooperator": "Error al guardar respuesta del cooperador",
+    "screenShare": {
+      "unsupported": "Compartir pantalla no está disponible en este navegador. Usa Chrome, Edge o Firefox actualizado en un ordenador.",
+      "cancelled": "Se canceló el uso compartido de pantalla. Comparte toda la pantalla para continuar.",
+      "wrongSurface": "Compartiste una pestaña del navegador. Comparte toda la pantalla para que podamos ver la herramienta que vas a usar.",
+      "error": "No pudimos iniciar la grabación de pantalla. Inténtalo de nuevo."
+    }
+  },
+  "screenShare": {
+    "howTo": "Cómo compartir tu pantalla",
+    "lead": "Cuando aparezca la ventana del navegador, elige Toda la pantalla. Si compartes solo una pestaña, a menudo se graba la página incorrecta.",
+    "step1": "Haz clic en Compartir pantalla. Tu navegador abrirá una ventana para elegir qué compartir.",
+    "step2": "Selecciona Toda la pantalla — no una pestaña ni una sola ventana.",
+    "step3": "Haz clic en Compartir para continuar. Mantén el uso compartido hasta terminar la tarea.",
+    "dontShareTab": "No compartas una pestaña del navegador. Esta tarea abre otra página y esa pestaña no se grabaría.",
+    "macHint": "En Mac, si no aparece nada, permite Grabación de pantalla para tu navegador en Ajustes del Sistema → Privacidad y seguridad.",
+    "shareButton": "Compartir pantalla",
+    "backButton": "Volver",
+    "pickerTitle": "Elige qué compartir",
+    "pickerTab": "Pestaña",
+    "pickerWindow": "Ventana",
+    "pickerEntireScreen": "Toda la pantalla",
+    "pickerShare": "Compartir",
+    "pickerCancel": "Cancelar",
+    "demoDontPick": "No esto",
+    "demoChooseThis": "Elige esto",
+    "demoAlt": "Animación que muestra cómo elegir Toda la pantalla en el diálogo de compartir del navegador."
   },
   "Introduction": {
     "title": "UX LAB Remoto",
@@ -1152,36 +1189,27 @@
     "placeholderMessage": "Hola, hagamos una prueba...",
     "inviteInfo": "La invitación con el enlace de la prueba será enviada al correo del evaluador en el horario programado",
     "send": "Enviar",
-
     "role": "Rol",
     "roleDescription": "Selecciona el rol para este participante.",
-
     "roles": {
       "evaluator": "Evaluador",
       "evaluatorDesc": "Participa en la prueba, comparte pantalla/video.",
       "observator": "Observador",
       "observatorDesc": "Observa la sesión en silencio y toma notas."
     },
-
     "selectParticipantDescription": "Selecciona el participante que deseas invitar a esta sesión de evaluación.",
     "emailPlaceholder": "Escribe un correo electrónico y presiona Enter",
     "addedParticipants": "Participantes añadidos",
     "noParticipantSelected": "Ningún participante seleccionado",
-
     "scheduleDescription": "Elige la fecha y hora de la sesión de evaluación.",
-
     "invitationPreview": "Vista previa de la invitación",
     "evaluationInvitation": "Invitación de evaluación",
-
     "to": "Para",
     "scheduled": "Programado",
     "message": "Mensaje",
-
     "noMessageYet": "Aún no se ha ingresado ningún mensaje...",
-
     "inviteInfoTitle": "Información",
     "inviteInfoDescription": "El participante recibirá una notificación por correo electrónico y podrá aceptar o rechazar la invitación.",
-
     "validation": {
       "invalidEmail": "Correo inválido: {email}",
       "dateRequired": "La fecha es obligatoria"
@@ -1355,6 +1383,10 @@
       "sart": "Técnica de Calificación de Conciencia Situacional - mide la conciencia situacional"
     },
     "answerTypePreview": {
+      "textArea": {
+        "placeholder": "Los participantes proporcionarán su retroalimentación aquí...",
+        "submitButton": "Enviar retroalimentación"
+      },
       "postTest": {
         "title": "Comentarios posteriores a la prueba",
         "q1": "Califica tu experiencia",
@@ -1526,7 +1558,7 @@
       "preview": "Información de grabación",
       "recordingInfo": "Esta tarea registrará los siguientes datos durante tu interacción:",
       "screenRecord": "Grabación de pantalla",
-      "screenRecordDesc": "Captura clics, desplazamiento e interacciones para analizar el comportamiento del usuario.",
+      "screenRecordDesc": "Graba cómo usas la herramienta. Deberás compartir toda la pantalla.",
       "camera": "Cámara",
       "cameraDesc": "Registra expresiones faciales y reacciones para entender las emociones del usuario.",
       "audioRecord": "Grabación de audio",
@@ -1662,6 +1694,7 @@
       "observeAllFeedsNotice": "Podras observar todas las transmisiones de video sin enviar la tuya.",
       "waitingForParticipants": "Esperando participantes...",
       "waitingForModerator": "Esperando al moderador...",
+      "moderatorWillAdmitParticipant": "El moderador te dejara entrar pronto a la sesion.",
       "autoStartWhenModeratorOpensRoom": "La videollamada comenzara automaticamente cuando el moderador abra la sala."
     },
     "WelcomeStep": {
@@ -2189,9 +2222,11 @@
       "observeAllFeedsNotice": "Podras observar todas las transmisiones de video sin enviar la tuya.",
       "waitingForParticipants": "Esperando participantes...",
       "waitingForModerator": "Esperando al moderador...",
+      "moderatorWillAdmitParticipant": "El moderador te dejara entrar pronto a la sesion.",
       "autoStartWhenModeratorOpensRoom": "La videollamada comenzara automaticamente cuando el moderador abra la sala."
     },
     "panel": {
+      "bringParticipantsBack": "Traer a los participantes de vuelta",
       "toolsPanelTitle": "Panel de herramientas",
       "sessionControl": "Control de sesion",
       "joinRoomInfo": "Los controles para unirse estan ahora en la interfaz principal superior",
@@ -2374,6 +2409,13 @@
     "no": "No",
     "sartAnalytics": "Análisis SART"
   },
+  "observatorNotes": {
+    "title": "Notas de la sesión",
+    "count": "{count} notas",
+    "empty": "Aún no hay notas.",
+    "emptyHint": "Empieza a escribir abajo para registrar observaciones.",
+    "placeholder": "Escribe una observación... (Cmd+Enter para guardar)"
+  },
   "focusGroup": {
     "config": {
       "title": "Funciones de la Sesión",
@@ -2497,6 +2539,10 @@
       "currentQuestion": "Pregunta actual",
       "clearQuestion": "Quitar pregunta",
       "guide": "Guía",
+      "notes": "Notas",
+      "startTimer": "Iniciar temporizador",
+      "pauseTimer": "Pausar temporizador",
+      "resetTimer": "Reiniciar temporizador",
       "noPrompts": "No hay preguntas para este tema.",
       "participants": "Participantes",
       "noParticipants": "Nadie se ha unido todavía.",
@@ -3213,7 +3259,11 @@
     "pendingSubtitle": "Has sido invitado a participar en un estudio",
     "pendingDescription": "Tienes una invitación pendiente. ¿Quieres aceptarla ahora?",
     "notNow": "Ahora no",
-    "loginRequired": "Esta invitación requiere que inicies sesión o crees una cuenta antes de participar."
+    "loginRequired": "Esta invitación requiere que inicies sesión o crees una cuenta antes de participar.",
+    "participantInviteTitle": "Estás invitado a participar",
+    "cooperatorInviteTitle": "Has sido invitado como miembro del equipo",
+    "participantInviteMessage": "Has sido invitado a participar en este estudio.",
+    "cooperatorInviteMessage": "Has sido invitado a colaborar en este estudio como miembro del equipo."
   },
   "Participants": {
     "title": {
@@ -3345,7 +3395,9 @@
       "participantAlreadyAdded": "Este participante ya ha sido añadido.",
       "createFailed": "No se pudo guardar la sesión.",
       "sendMessageFailed": "No se pudo enviar el mensaje.",
-      "errorDelete": "No se pudo eliminar la sesión."
+      "errorDelete": "No se pudo eliminar la sesión.",
+      "facilitatorRequired": "Se requiere al menos un facilitador.",
+      "participantRequired": "Se requiere al menos un participante."
     },
     "send": {
       "title": "Enviar mensaje de sesión",
@@ -3367,6 +3419,16 @@
       "info": "Los destinatarios seleccionados recibirán este mensaje por correo electrónico.",
       "send": "Enviar"
     },
+    "notify": {
+      "participantInviteTitle": "Estás invitado/a a una sesión",
+      "participantInviteMessage": "Has sido invitado/a a una sesión como participante del estudio",
+      "cooperatorInviteTitle": "Has sido invitado/a a una sesión como parte del equipo",
+      "cooperatorInviteMessage": "Has sido invitado/a a colaborar como parte del equipo en una sesión del estudio",
+      "updateTitle": "Los detalles de la sesión han cambiado",
+      "updateMessage": "Los detalles de tu sesión han sido actualizados",
+      "messageTitle": "Nuevo mensaje del organizador de la sesión",
+      "messageDescription": "El organizador de la sesión te ha enviado un nuevo mensaje."
+    },
     "headers": {
       "goToSession": "Ir a la sesión",
       "title": "Título",
@@ -3386,6 +3448,22 @@
     "empty": {
       "title": "No se encontraron sesiones",
       "description": "Crea una sesión para comenzar a invitar personal y participantes."
+    }
+  },
+  "errors": {
+    "globalError": "Ocurrió un error. Por favor, inténtalo de nuevo.",
+    "emailIsRequired": "El correo electrónico es obligatorio.",
+    "passwordRequired": "La contraseña es obligatoria.",
+    "invalidEmail": "Por favor, introduce una dirección de correo electrónico válida.",
+    "incorrectCredential": "Correo o contraseña incorrectos, o la cuenta no existe.",
+    "boundary": {
+      "title": "Algo salió mal",
+      "message": "Ocurrió un error inesperado al cargar esta página. Sus datos han sido preservados.",
+      "retry": "Reintentar",
+      "goToDashboard": "Ir al Panel",
+      "showDetails": "Mostrar detalles del error",
+      "copyDetails": "Copiar detalles del error",
+      "copied": "¡Copiado!"
     }
   }
 }

@@ -152,6 +152,10 @@ service cloud.firestore {
         );
         allow write: if false;
       }
+
+      match /participants/{participantId} {
+        allow read: if signedIn();
+      }
     }
 
     match /answers/{answerId} {
@@ -232,6 +236,12 @@ service cloud.firestore {
     }
     match /calibrations/{document=**} {
       allow read, write: if signedIn();
+    }
+    match /settings/{settingId} {
+      allow read: if signedIn();
+    }
+    match /{path=**}/sessions/{sessionId} {
+      allow read: if signedIn();
     }
   }
 }

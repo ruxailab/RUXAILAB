@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 
-jest.unstable_mockModule('../src/f.firebase.js', () => ({
+jest.unstable_mockModule('../src/core/firebase/f.firebase.js', () => ({
   admin: {
     auth: jest.fn().mockReturnValue({
       generatePasswordResetLink: jest.fn().mockResolvedValue('https://reset.link'),

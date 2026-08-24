@@ -1,15 +1,25 @@
 <template>
-  <div class="observator-notes-container">
+  <div>
     <div
-      class="header pa-4 bg-grey-lighten-4 d-flex align-center justify-space-between"
+      v-if="showHeader"
+      class="video-tool-header d-flex align-center justify-space-between"
     >
       <h3 class="text-h6 font-weight-bold display-flex align-center">
         <v-icon class="mr-2">mdi-notebook-edit-outline</v-icon>
-        Session Notes
+        {{ t('observatorNotes.title') }}
       </h3>
-      <v-chip size="small" color="primary" variant="outlined"
-        >{{ notes.length }} notes</v-chip
+      <v-chip size="small" color="white" variant="outlined">
+        {{ t('observatorNotes.count', { count: notes.length }) }}
+      </v-chip>
+      <v-btn
+        icon
+        size="small"
+        variant="text"
+        aria-label="Close notes"
+        @click="emit('close')"
       >
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
     </div>
 
     <div ref="notesList" class="notes-list pa-4">
@@ -17,8 +27,8 @@
         <v-icon size="48" class="mb-2 opacity-50"
           >mdi-text-box-plus-outline</v-icon
         >
-        <p>No notes taken yet.</p>
-        <p class="text-caption">Start typing below to record observations.</p>
+        <p>{{ t('observatorNotes.empty') }}</p>
+        <p class="text-caption">{{ t('observatorNotes.emptyHint') }}</p>
       </div>
 
       <div
@@ -44,7 +54,7 @@
       <v-textarea
         v-model="newNote"
         variant="outlined"
-        placeholder="Type observation... (Cmd+Enter to save)"
+        :placeholder="t('observatorNotes.placeholder')"
         rows="3"
         auto-grow
         hide-details
@@ -70,6 +80,9 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   modelValue: {
@@ -78,9 +91,20 @@ const props = defineProps({
   },
   currentTaskIndex: Number,
   test: Object,
+  // Optional label to tag each note with (e.g. a Focus Group topic title). When
+  // provided it overrides the moderated-test task-name lookup, letting other
+  // modules reuse this component without a `testStructure.userTasks` shape.
+  contextLabel: {
+    type: String,
+    default: '',
+  },
+  showHeader: {
+    type: Boolean,
+    default: true,
+  },
 })
 
-const emit = defineEmits(['update:modelValue', 'save'])
+const emit = defineEmits(['update:modelValue', 'save', 'close'])
 
 const newNote = ref('')
 const notesList = ref(null)
@@ -93,6 +117,8 @@ const notes = computed({
 const reversedNotes = computed(() => [...notes.value].reverse())
 
 const currentTaskName = computed(() => {
+  // A caller-provided label wins, so the component works outside moderated tests.
+  if (props.contextLabel) return props.contextLabel
   if (!props.test?.testStructure?.userTasks) return 'General'
   // Check if we are in a task step
   // This logic depends on parent context, but passed taskIndex is a good proxy
@@ -132,7 +158,10 @@ const addNote = () => {
   const note = {
     text: newNote.value.trim(),
     timestamp: Date.now(),
-    taskIndex: props.currentTaskIndex,
+    // Fall back to null: this component is reused outside moderated tests (e.g.
+    // Focus Group) where there is no task index, and Realtime Database rejects
+    // `undefined` values on write.
+    taskIndex: props.currentTaskIndex ?? null,
     taskName: currentTaskName.value,
   }
 
@@ -153,16 +182,9 @@ const addNote = () => {
 </script>
 
 <style scoped>
-.observator-notes-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background: white;
-  border-left: 1px solid #e0e0e0;
-}
-
 .notes-list {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
 }
 

@@ -97,18 +97,20 @@
                   :answers-doc-id="testDocument?.answersDocId"
                   :user-doc-id="selectedUserID"
                   :task-id="selectedTaskId"
+                  :study-id="testDocument?.id"
                   :audio-url-evaluator="selectedTask?.audioRecordURL"
                   :audio-url-moderator="selectedTask?.moderatorAudioURL"
+                  @saved="onTranscriptionSaved"
                 />
 
                 <TranscriptionsPanel
                   v-else-if="tab === 'transcriptions'"
-                  :key="`transcriptions-${selectedUserID}:${selectedTaskId}`"
+                  :key="`transcriptions-${selectedUserID}:${selectedTaskId}:${transcriptionRefreshKey}`"
                   :answers-doc-id="testDocument?.answersDocId"
                   :user-doc-id="selectedUserID"
                   :task-id="selectedTaskId"
-                  :latest-transcription-id="
-                    selectedTask?.latestTranscriptionDocId
+                  :transcription-doc-id="
+                    latestTranscriptionDocId || selectedTask?.transcriptionDocId
                   "
                 />
 
@@ -148,7 +150,7 @@
                 :answers-doc-id="testDocument?.answersDocId"
                 :user-doc-id="selectedUserID"
                 :task-id="selectedTaskId"
-                :latestTranscriptionId="selectedTask?.latestTranscriptionDocId"
+                :transcription-doc-id="selectedTask?.transcriptionDocId"
               />
               <ExportPanel
                 v-if="tab === 'export'"
@@ -187,6 +189,13 @@ const store = useStore()
 const selectedUserID = ref(null)
 const selectedTaskId = ref(null)
 const tab = ref('timeline')
+const transcriptionRefreshKey = ref(0)
+const latestTranscriptionDocId = ref(null)
+
+const onTranscriptionSaved = (result) => {
+  latestTranscriptionDocId.value = result?.id ?? null
+  transcriptionRefreshKey.value += 1
+}
 
 const testDocument = computed(() => store.getters.test)
 const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
@@ -246,10 +255,9 @@ const userOptions = computed(() => {
 
 const taskOptions = computed(() => {
   const list = tasksForSelectedUser.value || [] // [ [key, task], ... ]
-  return list.map(([key, task]) => ({
+  return list.map(([key]) => ({
     value: String(key),
     label: `Task ${key}`,
-    subtitle: `${task?.transcriptionsCount ?? 0} runs`,
   }))
 })
 
@@ -268,6 +276,7 @@ watch(
 watch(
   tasksForSelectedUser,
   (pairs) => {
+    latestTranscriptionDocId.value = null
     const has = Array.isArray(pairs) && pairs.length
     if (!has) {
       selectedTaskId.value = null
