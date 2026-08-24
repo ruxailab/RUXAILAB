@@ -67,6 +67,10 @@ service cloud.firestore {
         (isHeuristicStudy(study) && roleFor(study) in [1, 2]);
     }
 
+    function canViewLogs(study) {
+      return isRbacStudy(study) && canViewAnswers(study);
+    }
+
     function canAnswer(study) {
       return signedIn() && (
         study.isPublic == true ||
@@ -128,14 +132,22 @@ service cloud.firestore {
       }
 
       match /logs/{logId} {
-        allow read: if canViewDashboard(
+        allow read: if canViewLogs(
           get(/databases/$(database)/documents/tests/$(studyId)).data
         );
         allow write: if false;
       }
 
       match /logBatches/{batchId} {
-        allow read: if canViewDashboard(
+        allow read, write: if false;
+      }
+
+      match /loggingMeta/{metadataId} {
+        allow read, write: if false;
+      }
+
+      match /studySessions/{sessionId} {
+        allow read: if canViewLogs(
           get(/databases/$(database)/documents/tests/$(studyId)).data
         );
         allow write: if false;
