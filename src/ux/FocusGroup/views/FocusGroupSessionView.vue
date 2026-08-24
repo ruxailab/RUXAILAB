@@ -315,6 +315,82 @@
                 </v-btn>
               </template>
             </v-tooltip>
+            <v-menu
+              v-if="isFacilitator && videoEnabled"
+              location="top"
+              :close-on-content-click="false"
+            >
+              <template #activator="{ props: menuProps }">
+                <v-tooltip location="top" :text="t('focusGroup.session.breakout')">
+                  <template #activator="{ props: tip }">
+                    <v-btn
+                      v-bind="{ ...tip, ...menuProps }"
+                      class="fg-round"
+                      :class="{ 'fg-round-active': breakout?.active }"
+                      icon="mdi-call-split"
+                    />
+                  </template>
+                </v-tooltip>
+              </template>
+
+              <v-card min-width="260" class="pa-3">
+                <template v-if="!breakout?.active">
+                  <p class="text-body-2 text-medium-emphasis mb-2">
+                    {{ t('focusGroup.session.breakoutIntro') }}
+                  </p>
+                  <v-text-field
+                    v-model.number="quickBreakoutGroupCount"
+                    type="number"
+                    :min="1"
+                    :max="Math.max(1, eligibleBreakoutParticipants.length)"
+                    density="compact"
+                    variant="outlined"
+                    hide-details
+                    :label="t('focusGroup.session.breakoutGroupCount')"
+                    class="mb-3"
+                  />
+                  <v-btn
+                    color="primary"
+                    variant="flat"
+                    block
+                    prepend-icon="mdi-call-split"
+                    class="text-none"
+                    :disabled="eligibleBreakoutParticipants.length === 0"
+                    @click="onStartBreakout(quickBreakoutGroupCount)"
+                  >
+                    {{ t('focusGroup.session.breakoutStart') }}
+                  </v-btn>
+                </template>
+                <template v-else>
+                  <p class="text-body-2 mb-3">
+                    {{
+                      t('focusGroup.session.breakoutActiveSummary', {
+                        count: Object.keys(breakout.groups || {}).length,
+                      })
+                    }}
+                  </p>
+                  <v-btn
+                    variant="tonal"
+                    block
+                    class="text-none mb-2"
+                    prepend-icon="mdi-cog-outline"
+                    @click="togglePanelTab('breakout')"
+                  >
+                    {{ t('focusGroup.session.breakoutManage') }}
+                  </v-btn>
+                  <v-btn
+                    variant="tonal"
+                    color="error"
+                    block
+                    class="text-none"
+                    prepend-icon="mdi-call-merge"
+                    @click="onRecallBreakout"
+                  >
+                    {{ t('focusGroup.session.breakoutRecall') }}
+                  </v-btn>
+                </template>
+              </v-card>
+            </v-menu>
           </div>
         </div>
       </div>
@@ -821,6 +897,10 @@ const eligibleBreakoutParticipants = computed(() =>
     .filter(([, p]) => p?.role === t('focusGroup.session.roleParticipant'))
     .map(([id, p]) => ({ id, name: p?.name || '' })),
 )
+// Backs the quick-start menu on the control bar, a shortcut for starting a
+// split without opening the side panel; the panel's own BreakoutPanel form
+// still exists for managing an already-active split.
+const quickBreakoutGroupCount = ref(2)
 const isInBreakout = computed(() => myBreakoutGroupId.value !== null)
 const myBreakoutGroupName = computed(
   () => breakout.value?.groups?.[myBreakoutGroupId.value]?.name ?? '',

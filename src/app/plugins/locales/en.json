@@ -2680,6 +2680,8 @@
       "breakoutBroadcastPlaceholder": "Message for everyone",
       "breakoutBroadcastSend": "Send",
       "breakoutInGroup": "You're in {name}",
+      "breakoutActiveSummary": "{count} breakout groups are active.",
+      "breakoutManage": "Manage groups",
       "messagePlaceholder": "Share your thoughts...",
       "noMessagesYet": "No messages yet. Start the discussion.",
       "observerReadonly": "You are observing this discussion.",
