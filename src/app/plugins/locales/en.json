@@ -2674,6 +2674,7 @@
       "breakoutGroupCountHint": "Each group needs at least 2 people, so this is capped at half the participant count.",
       "breakoutStart": "Start breakout rooms",
       "breakoutNoParticipants": "No participants have joined yet.",
+      "breakoutTooFewParticipants": "Need at least 4 participants to split into groups.",
       "breakoutRecall": "Recall everyone",
       "breakoutPeek": "Peek",
       "breakoutEmptyGroup": "No one assigned yet.",
