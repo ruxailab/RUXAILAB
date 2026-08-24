@@ -323,15 +323,23 @@ export function useLiveKitRoom({
       return
     }
 
+    // Request whatever the user last chose rather than forcing both tracks
+    // on. On the first-ever connect the refs still hold their `true`
+    // defaults, so a fresh join still starts with camera/mic on; but a
+    // reconnect (e.g. moving into a breakout group) must not silently
+    // override a mute the user set earlier in the same call.
+    const wantCamera = isCameraEnabled.value
+    const wantMicrophone = isMicrophoneEnabled.value
+
     try {
-      await lkRoom.localParticipant.setCameraEnabled(true)
+      await lkRoom.localParticipant.setCameraEnabled(wantCamera)
     } catch (error) {
       isCameraEnabled.value = false
       logMediaDeviceError(error, 'cameraDevice', t)
     }
 
     try {
-      await lkRoom.localParticipant.setMicrophoneEnabled(true)
+      await lkRoom.localParticipant.setMicrophoneEnabled(wantMicrophone)
     } catch (error) {
       isMicrophoneEnabled.value = false
       logMediaDeviceError(error, 'microphoneDevice', t)
