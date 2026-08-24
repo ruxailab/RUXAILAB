@@ -1,7 +1,7 @@
 <template>
   <v-row class="mb-6">
     <!-- Total Studies Card -->
-    <v-col cols="6" sm="6" md="3">
+    <v-col cols="4" sm="4" md="4">
       <v-card elevation="2" rounded="lg" class="stats-card">
         <v-card-text>
           <v-row>
@@ -12,7 +12,8 @@
             </v-col>
             <v-col cols="12" sm class="text-left text-sm-right pt-0 pt-sm-3">
               <!--STUDIES WHERE USER IS TESTADMIN -->
-              <div class="stats-value">{{ totalStudies }}/50</div>
+              <!-- <div class="stats-value">{{ totalStudies }}/50</div> -->
+              <div class="stats-value">{{ totalStudies }}</div>
               <div class="stats-label">{{ $t('Dashboard.studies') }}</div>
             </v-col>
           </v-row>
@@ -21,7 +22,7 @@
     </v-col>
 
     <!-- Storage Quota Card -->
-    <v-col cols="6" sm="6" md="3">
+    <v-col cols="4" sm="4" md="4">
       <v-card elevation="2" rounded="lg" class="stats-card">
         <v-card-text class="pa-4">
           <v-row>
@@ -43,7 +44,7 @@
     </v-col>
 
     <!-- Current Plan Card -->
-    <v-col cols="6" sm="6" md="3">
+    <!-- <v-col cols="6" sm="6" md="3">
       <v-card elevation="2" rounded="lg" class="stats-card">
         <v-card-text class="pa-4">
           <v-row>
@@ -59,10 +60,10 @@
           </v-row>
         </v-card-text>
       </v-card>
-    </v-col>
+    </v-col> -->
 
     <!-- Total Participants Card -->
-    <v-col cols="6" sm="6" md="3">
+    <v-col cols="4" sm="4" md="4">
       <v-card elevation="2" rounded="lg" class="stats-card">
         <v-card-text class="pa-4">
           <v-row>
@@ -73,7 +74,8 @@
             </v-col>
             <!-- COOPERATORS FROM STUDIES WHERE USER IS TESTADMIN -->
             <v-col cols="12" sm class="text-left text-sm-right pt-0 pt-sm-3">
-              <div class="stats-value">{{ totalParticipants }}/5</div>
+              <!-- <div class="stats-value">{{ totalParticipants }}/5</div> -->
+              <div class="stats-value">{{ totalParticipants }}</div>
               <div class="stats-label">
                 {{ $t('Dashboard.participantsLabel') }}
               </div>
@@ -106,9 +108,11 @@ const props = defineProps({
 const formattedStorage = computed(() => {
   if (props.usedStorage >= 1000) {
     const gb = (props.usedStorage / 1000).toFixed(2)
-    return `${gb}GB/0.5GB`
+    // return `${gb}GB/0.5GB`
+    return `${gb}GB`
   }
-  return `${props.usedStorage.toFixed(2)}MB/500MB`
+  // return `${props.usedStorage.toFixed(2)}MB/500MB`
+  return `${props.usedStorage.toFixed(2)}MB`
 })
 </script>
 

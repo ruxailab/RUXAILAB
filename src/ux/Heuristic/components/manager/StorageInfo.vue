@@ -28,25 +28,21 @@
     </div>
 
     <!-- Información adicional -->
-    <div class="additional-info">
+    <!-- <div class="additional-info">
       <div class="info-subtitle text-caption text-grey-darken-1">
         {{ $t('Dashboard.cards.limitAvailable') }}
       </div>
       <div class="info-value text-body-2 font-weight-medium">
         {{ storageLimit }}
       </div>
-    </div>
+    </div> -->
   </v-card>
 </template>
 
 <script setup>
 import { computed, ref, watch } from 'vue'
-import {
-  getMetadata,
-  listAll,
-  ref as storageRef,
-} from 'firebase/storage'
-import { useI18n } from 'vue-i18n'
+import { getMetadata, listAll, ref as storageRef } from 'firebase/storage'
+// import { useI18n } from 'vue-i18n'
 import { useStore } from 'vuex'
 import { storage } from '@/app/plugins/firebase'
 import { formatBytes } from '@/shared/utils/formatUtils'
@@ -58,7 +54,7 @@ const props = defineProps({
   },
 })
 
-const { t } = useI18n()
+// const { t } = useI18n()
 const store = useStore()
 const storageUsedBytes = ref(0)
 const loadingStorage = ref(false)
@@ -119,10 +115,10 @@ const storageUsed = computed(() =>
   storageLoadFailed.value ? '-' : formatBytes(storageUsedBytes.value),
 )
 
-const storageLimit = computed(() => {
-  // Límite estándar para estudios
-  return `2${t('common.units.gb')}`
-})
+// const storageLimit = computed(() => {
+//   // Límite estándar para estudios
+//   return `2${t('common.units.gb')}`
+// })
 </script>
 
 <style scoped>
