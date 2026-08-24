@@ -2671,6 +2671,7 @@
       "breakout": "Breakout",
       "breakoutIntro": "Split participants into smaller groups, each with their own video room and chat.",
       "breakoutGroupCount": "Number of groups",
+      "breakoutGroupCountHint": "Each group needs at least 2 people, so this is capped at half the participant count.",
       "breakoutStart": "Start breakout rooms",
       "breakoutNoParticipants": "No participants have joined yet.",
       "breakoutRecall": "Recall everyone",

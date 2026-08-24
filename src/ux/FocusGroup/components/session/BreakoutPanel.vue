@@ -9,10 +9,11 @@
         v-model.number="groupCount"
         type="number"
         :min="1"
-        :max="Math.max(1, eligibleParticipants.length)"
+        :max="maxGroups"
         density="compact"
         variant="outlined"
-        hide-details
+        persistent-hint
+        :hint="t('focusGroup.session.breakoutGroupCountHint')"
         :label="t('focusGroup.session.breakoutGroupCount')"
         class="mb-3"
       />
@@ -141,9 +142,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import SessionTimer from '@/ux/FocusGroup/components/session/SessionTimer.vue'
+import { maxGroupCount } from '@/ux/FocusGroup/utils/breakoutGroups'
 
 const { t } = useI18n()
 
@@ -169,7 +171,15 @@ const emit = defineEmits([
   'reset',
 ])
 
+const maxGroups = computed(() =>
+  maxGroupCount(props.eligibleParticipants.map((p) => p.id)),
+)
 const groupCount = ref(2)
+// Keep the field valid as the eligible list changes (e.g. someone leaves)
+// rather than letting it silently exceed what's now selectable.
+watch(maxGroups, (max) => {
+  if (groupCount.value > max) groupCount.value = max
+})
 const broadcastText = ref('')
 const peekedGroupId = ref(null)
 
