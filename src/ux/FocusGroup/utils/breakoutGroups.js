@@ -5,9 +5,24 @@
  */
 
 /**
+ * The largest group count that still gives every group at least 2 people.
+ * A round-robin split with fewer than 2 per group routinely strands someone
+ * alone (e.g. 4 participants into 3 groups yields 2/1/1), which defeats the
+ * point of a breakout discussion, so callers should treat this as the max
+ * selectable group count.
+ *
+ * @param {string[]} participantIds
+ * @returns {number}
+ */
+export function maxGroupCount(participantIds) {
+  return Math.max(1, Math.floor((participantIds ?? []).length / 2))
+}
+
+/**
  * Splits participant ids round-robin into `groupCount` groups, so group
- * sizes differ by at most one. Clamped to at least 1 group and at most one
- * group per participant (no empty groups from an oversized group count).
+ * sizes differ by at most one. Clamped to at least 1 group and at most
+ * `maxGroupCount` groups, so no group ever ends up with a single, isolated
+ * participant.
  *
  * @param {string[]} participantIds
  * @param {number} groupCount
@@ -15,7 +30,7 @@
  */
 export function splitIntoGroups(participantIds, groupCount) {
   const ids = participantIds ?? []
-  const count = Math.max(1, Math.min(groupCount || 1, ids.length || 1))
+  const count = Math.max(1, Math.min(groupCount || 1, maxGroupCount(ids)))
 
   const groups = {}
   for (let i = 0; i < count; i += 1) {

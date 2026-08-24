@@ -350,10 +350,11 @@
                     v-model.number="quickBreakoutGroupCount"
                     type="number"
                     :min="1"
-                    :max="Math.max(1, eligibleBreakoutParticipants.length)"
+                    :max="maxBreakoutGroups"
                     density="compact"
                     variant="outlined"
-                    hide-details
+                    persistent-hint
+                    :hint="t('focusGroup.session.breakoutGroupCountHint')"
                     :label="t('focusGroup.session.breakoutGroupCount')"
                     class="mb-3"
                   />
@@ -534,6 +535,7 @@ import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue'
 import {
   splitIntoGroups,
   reassignParticipant,
+  maxGroupCount,
 } from '@/ux/FocusGroup/utils/breakoutGroups'
 
 const store = useStore()
@@ -980,7 +982,13 @@ const eligibleBreakoutParticipants = computed(() =>
 // Backs the quick-start menu on the control bar, a shortcut for starting a
 // split without opening the side panel; the panel's own BreakoutPanel form
 // still exists for managing an already-active split.
+const maxBreakoutGroups = computed(() =>
+  maxGroupCount(eligibleBreakoutParticipants.value.map((p) => p.id)),
+)
 const quickBreakoutGroupCount = ref(2)
+watch(maxBreakoutGroups, (max) => {
+  if (quickBreakoutGroupCount.value > max) quickBreakoutGroupCount.value = max
+})
 const isInBreakout = computed(() => myBreakoutGroupId.value !== null)
 const myBreakoutGroupName = computed(
   () => breakout.value?.groups?.[myBreakoutGroupId.value]?.name ?? '',

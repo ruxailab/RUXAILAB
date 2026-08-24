@@ -2577,6 +2577,7 @@
       "breakout": "Grupos",
       "breakoutIntro": "Divide a los participantes en grupos más pequeños, cada uno con su propia sala de video y chat.",
       "breakoutGroupCount": "Número de grupos",
+      "breakoutGroupCountHint": "Cada grupo necesita al menos 2 personas, por lo que el máximo es la mitad del número de participantes.",
       "breakoutStart": "Iniciar salas de grupos",
       "breakoutNoParticipants": "Todavía no se ha unido ningún participante.",
       "breakoutRecall": "Reunir a todos",

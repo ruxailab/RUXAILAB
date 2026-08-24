@@ -1,7 +1,21 @@
 import {
   splitIntoGroups,
   reassignParticipant,
+  maxGroupCount,
 } from '@/ux/FocusGroup/utils/breakoutGroups'
+
+describe('maxGroupCount', () => {
+  it('caps at one group per two participants, so no group is ever a singleton', () => {
+    expect(maxGroupCount(['a', 'b', 'c', 'd'])).toBe(2)
+    expect(maxGroupCount(['a', 'b', 'c', 'd', 'e'])).toBe(2)
+    expect(maxGroupCount(['a', 'b', 'c', 'd', 'e', 'f'])).toBe(3)
+  })
+
+  it('clamps to at least 1 for 0 or 1 participants', () => {
+    expect(maxGroupCount([])).toBe(1)
+    expect(maxGroupCount(['a'])).toBe(1)
+  })
+})
 
 describe('splitIntoGroups', () => {
   it('splits evenly when participants divide cleanly by the group count', () => {
@@ -17,9 +31,19 @@ describe('splitIntoGroups', () => {
     expect(groups['group-2'].participantIds).toEqual(['b', 'd'])
   })
 
+  it('clamps a requested count that would strand someone in a group alone', () => {
+    // 4 participants into 3 groups would yield 2/1/1 — clamp down to 2 groups
+    // of 2 instead of ever isolating a single participant.
+    const groups = splitIntoGroups(['a', 'b', 'c', 'd'], 3)
+    expect(Object.keys(groups)).toHaveLength(2)
+    Object.values(groups).forEach((group) => {
+      expect(group.participantIds.length).toBeGreaterThanOrEqual(2)
+    })
+  })
+
   it('clamps the group count to the number of participants (no empty groups)', () => {
     const groups = splitIntoGroups(['a', 'b'], 5)
-    expect(Object.keys(groups)).toHaveLength(2)
+    expect(Object.keys(groups)).toHaveLength(1)
     Object.values(groups).forEach((group) => {
       expect(group.participantIds.length).toBeGreaterThan(0)
     })
