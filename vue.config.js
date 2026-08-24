@@ -22,6 +22,14 @@ module.exports = {
     allowedHosts: 'all',
     client: {
       webSocketURL: 'auto://0.0.0.0:0/ws',
+      overlay: {
+        // Benign browser advisory (the browser recovers on its own the next
+        // frame); it isn't a bug and shouldn't block the dev overlay.
+        runtimeErrors: (error) =>
+          !/ResizeObserver loop (limit exceeded|completed with undelivered notifications)/.test(
+            error.message,
+          ),
+      },
     },
   },
 
