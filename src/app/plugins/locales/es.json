@@ -2586,6 +2586,8 @@
       "breakoutBroadcastPlaceholder": "Mensaje para todos",
       "breakoutBroadcastSend": "Enviar",
       "breakoutInGroup": "Estás en {name}",
+      "breakoutActiveSummary": "{count} grupos de trabajo están activos.",
+      "breakoutManage": "Gestionar grupos",
       "messagePlaceholder": "Comparte tus ideas...",
       "noMessagesYet": "Aún no hay mensajes. Inicia la discusión.",
       "observerReadonly": "Estás observando esta discusión.",
