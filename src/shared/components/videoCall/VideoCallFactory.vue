@@ -6,6 +6,7 @@
     :is-observator="isObservator"
     :session-staff="sessionStaff"
     :session-participants="sessionParticipants"
+    :completed-steps="completedSteps"
     @set-remote-stream="emit('setRemoteStream', $event)"
     @proceed-to-next-step="emit('proceedToNextStep')"
     @step-selected="emit('stepSelected', $event)"
@@ -38,6 +39,16 @@ const props = defineProps({
   notesDrawerOpen: Boolean,
   notesCount: Number,
   toggleNotesDrawer: Function,
+  completedSteps: {
+    type: Object,
+    default: () => ({
+      consent: false,
+      preTest: false,
+      tasks: false,
+      postTest: true,
+      completion: false,
+    }),
+  },
 })
 
 const emit = defineEmits([
