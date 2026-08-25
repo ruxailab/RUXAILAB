@@ -278,8 +278,7 @@ const fetchAllAnswers = async () => {
             userDocId: val.userDocId || key,
           }))
         }
-      } catch (e) {
-        console.error(e)
+      } catch {
         showError('Error fetching answers', { testTitle: test.testTitle })
       }
     }
