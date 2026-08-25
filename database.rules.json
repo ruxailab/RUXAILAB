@@ -4,6 +4,17 @@
       "$studyId": {
         ".read": "auth != null",
 
+        "status": { ".write": "auth != null" },
+        "currentTopicIndex": { ".write": "auth != null" },
+        "facilitatorId": { ".write": "auth != null" },
+        "sessionId": { ".write": "auth != null" },
+        "startedAt": { ".write": "auth != null" },
+        "endedAt": { ".write": "auth != null" },
+        "lastUpdate": { ".write": "auth != null" },
+        "currentPrompt": { ".write": "auth != null" },
+        "currentStimulus": { ".write": "auth != null" },
+        "timer": { ".write": "auth != null" },
+
         "consents": {
           "$uid": {
             ".write": "auth != null && auth.uid === $uid"

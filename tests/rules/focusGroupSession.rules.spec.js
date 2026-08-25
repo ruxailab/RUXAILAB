@@ -4,7 +4,7 @@ import {
   assertSucceeds,
   initializeTestEnvironment,
 } from '@firebase/rules-unit-testing'
-import { get, ref, set } from 'firebase/database'
+import { get, ref, set, update } from 'firebase/database'
 
 const projectId = 'demo-ruxailab-rbac'
 const studyId = 'study-1'
@@ -67,6 +67,20 @@ describe('Focus Group session RTDB rules', () => {
   it('lets a signed-in session member read the whole session tree', async () => {
     await assertSucceeds(
       get(ref(context('participant').database(), `focusGroupSessions/${studyId}`)),
+    )
+  })
+
+  it('lets the facilitator start a session via a single multi-field update', async () => {
+    await assertSucceeds(
+      update(ref(context('facilitator').database(), `focusGroupSessions/${studyId}`), {
+        status: 'live',
+        currentTopicIndex: 0,
+        facilitatorId: 'facilitator',
+        sessionId: 'session-1',
+        startedAt: 0,
+        endedAt: null,
+        lastUpdate: 0,
+      }),
     )
   })
 
