@@ -891,6 +891,9 @@ const {
   displayName: computed(() => user.value?.name || user.value?.email || ''),
   accessLevel,
   cooperators: computed(() => test.value?.cooperators || []),
+  // Attendees join a Focus Group session muted/camera-off and opt in,
+  // rather than immediately broadcasting to everyone on connect.
+  autoEnableMedia: false,
 })
 
 // Accumulated LiveKit active-speaker time per identity, feeding the
