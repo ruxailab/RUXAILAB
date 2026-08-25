@@ -406,6 +406,8 @@
             <ModeratorWelcomeStep
               v-if="globalIndex === 0 && isModerator"
               :stepper-value="stepperValue"
+              :staff-members="sessionStaffMembers"
+              :participant-members="sessionParticipantsMembers"
               @start="handleWelcomeStart"
             />
             <WelcomeStep
@@ -1421,7 +1423,14 @@ const startTest = async () => {
   const callRef = dbRef(database, `calls/${roomId.value}`)
 
   if (staffUser) {
-    displayVideoCallComponent.value = true
+    if (isModerator.value) {
+      // Moderator sees the welcome step first (globalIndex = 0)
+      globalIndex.value = 0
+      displayVideoCallComponent.value = false
+    } else {
+      // Observers go directly to the video call
+      displayVideoCallComponent.value = true
+    }
     start.value = false
   }
 

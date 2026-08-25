@@ -156,6 +156,10 @@ service cloud.firestore {
       match /participants/{participantId} {
         allow read: if signedIn();
       }
+
+      match /sessions/{sessionId} {
+        allow read, write: if signedIn();
+      }
     }
 
     match /answers/{answerId} {
