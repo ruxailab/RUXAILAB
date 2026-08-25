@@ -958,13 +958,18 @@
       "confirmUpload": "Confirmar carga",
       "timeTracking": "Seguimiento de tiempo",
       "answerMetrics": "Métricas de respuesta",
-      "enableWeights": "Habilitar función de pesos"
+      "enableWeights": "Habilitar función de pesos",
+      "studyType": "Tipo de estudio",
+      "csv": "Plantilla CSV"
     },
     "messages": {
       "acceptCsv": "Si aceptas, todas tus heurísticas actuales serán reemplazadas por las del archivo CSV.",
       "noCsvFileSelected": "No se ha seleccionado ningún archivo CSV. Por favor, selecciona uno antes de continuar.",
       "timeTrackingDescription": "Registra el tiempo que cada evaluador dedica por heurística durante la evaluación.",
       "answerMetricsDescription": "Elige qué métricas responderán los evaluadores cuando no haya opciones personalizadas configuradas.",
+      "settingsDescription": "Elige cómo trabajarán los evaluadores en este estudio heurístico.",
+      "studyTypeDescription": "Selecciona el método de evaluación que mejor encaje con tu estudio.",
+      "csvDescription": "Descarga una plantilla o reemplaza las heurísticas actuales con un archivo CSV.",
       "settingsSaved": "Configuración guardada correctamente.",
       "enableWeightsDescription": "Permitir que los evaluadores asignen pesos a las heurísticas en este estudio"
     },
@@ -974,6 +979,16 @@
     "actions": {
       "downloadCsvTemplate": "Descargar plantilla CSV",
       "update": "Actualizar"
+    },
+    "modes": {
+      "traditional": "Tradicional",
+      "detailed": "Detallado",
+      "weights": "Pesos"
+    },
+    "modeDescriptions": {
+      "traditional": "Los evaluadores responden las métricas de Frecuencia y Severidad para cada heurística.",
+      "detailed": "Crea preguntas más detalladas y elige respuestas prefijadas para apoyar el cálculo heurístico.",
+      "weights": "Los evaluadores asignan un peso relativo a cada heurística durante la evaluación."
     },
     "labels": {
       "timeTrackingOn": "Seguimiento de tiempo activado",
@@ -1119,6 +1134,7 @@
     "titles": {
       "heuristics": "Heurísticas",
       "options": "Opciones",
+      "heuristicAnswers": "Respuestas heurísticas",
       "weights": "Pesos",
       "settings": "Configuración"
     },

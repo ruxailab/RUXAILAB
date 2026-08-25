@@ -967,13 +967,18 @@
       "confirmUpload": "Confirm Upload",
       "timeTracking": "Time Tracking",
       "answerMetrics": "Answer metrics",
-      "enableWeights": "Enable Weights Feature"
+      "enableWeights": "Enable Weights Feature",
+      "studyType": "Study type",
+      "csv": "CSV template"
     },
     "messages": {
       "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
       "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding.",
       "timeTrackingDescription": "Track the time each evaluator spends per heuristic during evaluation.",
       "answerMetricsDescription": "Choose which default metrics evaluators will answer when no custom options are configured.",
+      "settingsDescription": "Choose how evaluators will work through this heuristic study.",
+      "studyTypeDescription": "Select the evaluation method that best matches your study.",
+      "csvDescription": "Download a template or replace the current heuristics with a CSV file.",
       "settingsSaved": "Settings saved successfully.",
       "enableWeightsDescription": "Allow evaluators to assign weights to heuristics in this study"
     },
@@ -983,6 +988,16 @@
     "actions": {
       "downloadCsvTemplate": "Download CSV template",
       "update": "Update"
+    },
+    "modes": {
+      "traditional": "Traditional",
+      "detailed": "Detailed",
+      "weights": "Weights"
+    },
+    "modeDescriptions": {
+      "traditional": "Evaluators answer the Frequency and Severity metrics for each heuristic.",
+      "detailed": "Create granular questions for each heuristic and choose predefined answers to support the heuristic calculation.",
+      "weights": "Evaluators assign a relative weight to each heuristic during the evaluation."
     },
     "labels": {
       "timeTrackingOn": "Time tracking enabled",
@@ -1156,6 +1171,7 @@
     "titles": {
       "heuristics": "Heuristics",
       "options": "Options",
+      "heuristicAnswers": "Heuristic answers",
       "weights": "Weights",
       "settings": "Settings",
       "evaluatorInfo": "Evaluator Info"
