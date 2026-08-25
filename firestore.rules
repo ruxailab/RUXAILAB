@@ -139,7 +139,8 @@ service cloud.firestore {
       allow update: if request.resource.data.diff(resource.data).affectedKeys()
           .hasOnly([
             'taskAnswers',
-            'heuristicAnswers'
+            'heuristicAnswers',
+            'studyId'
       		]);
       allow delete: if (
         signedIn() &&
