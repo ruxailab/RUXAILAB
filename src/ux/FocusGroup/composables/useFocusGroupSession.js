@@ -114,11 +114,16 @@ export function useFocusGroupSession(studyId) {
     })
   }
 
-  async function joinPresence({ userId, name, role }) {
+  // `accessLevel` is the numeric ACCESS_LEVEL the RTDB security rules key
+  // off (0 facilitator, 1 participant, 3 observer) — kept separate from the
+  // display-only `role` label, which is locale-translated text and cannot be
+  // used to gate access.
+  async function joinPresence({ userId, name, role, accessLevel }) {
     const presenceRef = dbRef(database, `${rootPath}/participants/${userId}`)
     await set(presenceRef, {
       name: name ?? '',
       role: role ?? '',
+      accessLevel: accessLevel ?? null,
       connected: true,
       joinedAt: serverTimestamp(),
     })
