@@ -583,6 +583,7 @@ const {
   timer,
   currentStimulus,
   breakout,
+  backroomMessages: rtdbBackroomMessages,
   loaded,
   isLive,
   isEnded,
@@ -602,7 +603,9 @@ const {
   resetTimer,
   sendMessage,
   setBreakoutState,
+  sendBackroomMessage,
   subscribe,
+  subscribeBackroom,
   toSessionRecord,
 } = useFocusGroupSession(studyId)
 
@@ -1078,14 +1081,15 @@ const activeMessages = computed(() => {
 })
 
 // --- Observer backroom ---
-// A private facilitator+observer channel, separate from the main discussion.
-// Reuses the exact per-topic messages plumbing above via a synthetic topic
-// id — participants never see this tab, so they never see the id either.
-const BACKROOM_TOPIC_ID = 'backroom'
+// A private facilitator+observer channel, separate from the main discussion,
+// backed by its own top-level RTDB path (focusGroupBackroom/{studyId} — see
+// useFocusGroupSession.js) rather than nested under the main session tree,
+// so its read access can actually be denied to participants and not just
+// hidden by the UI. Only subscribed for facilitator/observer — see the
+// subscribeBackroom() call in onMounted below.
 const canPostBackroom = computed(() => isFacilitator.value || isObserver.value)
 const backroomMessages = computed(() => {
-  const byTopic = messages.value?.[BACKROOM_TOPIC_ID] ?? {}
-  return Object.entries(byTopic)
+  return Object.entries(rtdbBackroomMessages.value ?? {})
     .map(([id, value]) => ({
       id,
       userId: value?.userId ?? '',
@@ -1100,8 +1104,7 @@ const onSendBackroom = async (text) => {
   if (!text?.trim() || !canPostBackroom.value) return
   backroomSending.value = true
   try {
-    await sendMessage({
-      topicId: BACKROOM_TOPIC_ID,
+    await sendBackroomMessage({
       userId: user.value?.id,
       name: user.value?.name || user.value?.email || '',
       text: text.trim(),
@@ -1242,6 +1245,11 @@ const onConsentDecline = async () => {
 onMounted(async () => {
   await store.dispatch('getStudy', { id: studyId })
   subscribe()
+  // Only facilitator/observer can actually read this path (see
+  // database.rules.json) — participants never subscribe, both because they
+  // have nothing to read there and to avoid a permission_denied listener
+  // error on every participant's client.
+  if (isFacilitator.value || isObserver.value) subscribeBackroom()
   // Presence is claimed on arrival so the lobby can show who is waiting.
   await enterSession()
 })

@@ -51,9 +51,12 @@ beforeEach(async () => {
 // (useFocusGroupSession.js), so `.read` can only be granted at that node, not
 // selectively revoked deeper in the tree — RTDB read grants cascade down and
 // cannot be overridden by a stricter rule on a descendant. That means reads
-// here are sign-in-gated only; the privacy of the backroom/notes/recordings
-// subtrees is enforced on the WRITE side (who can post/own data), same as
-// before this branch's UI already hid them from the wrong audience.
+// under this parent are sign-in-gated only; the notes/recordings subtrees'
+// privacy is enforced on the WRITE side (who can post/own data) the same way.
+// The backroom is the one exception: it lives at its own top-level path
+// (focusGroupBackroom/$studyId, subscribed separately — see
+// useFocusGroupSession.js) specifically so its READ can be genuinely denied
+// to a participant, not just hidden by the UI.
 describe('Focus Group session RTDB rules', () => {
   it('denies a signed-out client anywhere in the session tree', async () => {
     await assertFails(
@@ -84,19 +87,25 @@ describe('Focus Group session RTDB rules', () => {
     )
   })
 
-  it('lets the facilitator and observer post backroom messages, but denies the participant', async () => {
+  it('lets the facilitator and observer read and write the backroom, and denies the participant both ways', async () => {
     const backroom = (uid) =>
-      ref(context(uid).database(), `focusGroupSessions/${studyId}/messages/backroom/msg-1`)
+      ref(context(uid).database(), `focusGroupBackroom/${studyId}/msg-1`)
 
     await assertSucceeds(
       set(backroom('facilitator'), { userId: 'facilitator', text: 'hi', timestamp: 0 }),
     )
+    await assertSucceeds(get(backroom('facilitator')))
+    await assertSucceeds(get(backroom('observer')))
     await assertSucceeds(
       set(backroom('observer'), { userId: 'observer', text: 'hi back', timestamp: 0 }),
     )
+
     await assertFails(
       set(backroom('participant'), { userId: 'participant', text: 'sneaking in', timestamp: 0 }),
     )
+    // The bug this path structure fixes: a participant reading it directly
+    // (bypassing the UI, which merely hides the tab) must be denied too.
+    await assertFails(get(backroom('participant')))
   })
 
   it('lets any session member post to a regular (non-backroom) topic', async () => {
