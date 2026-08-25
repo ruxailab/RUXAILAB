@@ -435,6 +435,13 @@
   },
   "navigation": {
     "dashboard": "Panel",
+    "groups": {
+      "overview": "Resumen",
+      "evaluation": "Evaluación",
+      "people": "Personas",
+      "analysis": "Análisis",
+      "administration": "Administración"
+    },
     "studies": "Estudios",
     "sessions": "Sesiones",
     "templates": "Plantillas",

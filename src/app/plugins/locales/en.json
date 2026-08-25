@@ -435,6 +435,13 @@
   },
   "navigation": {
     "dashboard": "Dashboard",
+    "groups": {
+      "overview": "Overview",
+      "evaluation": "Evaluation",
+      "people": "People",
+      "analysis": "Analysis",
+      "administration": "Administration"
+    },
     "studies": "Studies",
     "sessions": "Sessions",
     "templates": "Templates",
