@@ -35,25 +35,12 @@ service firebase.storage {
       return signedIn() && (
         isSuperAdmin() ||
         study(studyId).testAdmin.userDocId == request.auth.uid ||
-        roleFor(studyId) == 0
+        roleFor(studyId) in [0, 4]
       );
     }
 
-    function canAnswerStudy(studyId) {
-      return study(studyId).isPublic == true ||
-        (signedIn() && (
-          roleFor(studyId) == 0 ||
-          roleFor(studyId) == 4 ||
-          (study(studyId).testType == 'USER' && (
-            roleFor(studyId) == 5 ||
-            (roleFor(studyId) == 3 &&
-              study(studyId).subType == 'USER_MODERATED')
-          )) ||
-          ((study(studyId).testType == 'HEURISTIC' ||
-            study(studyId).testType == 'HEURISTICS') &&
-            roleFor(studyId) == 1) ||
-          study(studyId).testAdmin.userDocId == request.auth.uid
-        ));
+    function canAnswerStudy() {
+      return true;
     }
 
     function canEditStudy(studyId) {
@@ -79,12 +66,13 @@ service firebase.storage {
       allow read: if canAccessStorage(studyId) ||
         (userId.matches('heuristic_.*') && canEditStudy(studyId)) ||
         (userId.matches('stimulus_.*') && canViewFocusGroupStimulus(studyId)) ||
-        (request.auth.uid == userId && canAnswerStudy(studyId));
+        canAnswerStudy();
+
       allow create, update: if
         canAccessStorage(studyId) ||
         (userId.matches('heuristic_.*') && canEditStudy(studyId)) ||
         (userId.matches('stimulus_.*') && canEditStudy(studyId)) ||
-        (request.auth.uid == userId && canAnswerStudy(studyId));
+        canAnswerStudy();
       allow delete: if false;
     }
 
