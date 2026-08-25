@@ -35,12 +35,12 @@ service firebase.storage {
       return signedIn() && (
         isSuperAdmin() ||
         study(studyId).testAdmin.userDocId == request.auth.uid ||
-        roleFor(studyId) == 0
+        roleFor(studyId) in [0, 4]
       );
     }
 
     function canAnswerStudy() {
-      return true
+      return true;
     }
 
     function canEditStudy(studyId) {
@@ -66,13 +66,13 @@ service firebase.storage {
       allow read: if canAccessStorage(studyId) ||
         (userId.matches('heuristic_.*') && canEditStudy(studyId)) ||
         (userId.matches('stimulus_.*') && canViewFocusGroupStimulus(studyId)) ||
-        (request.auth.uid == userId && canAnswerStudy());
+        canAnswerStudy();
 
       allow create, update: if
         canAccessStorage(studyId) ||
         (userId.matches('heuristic_.*') && canEditStudy(studyId)) ||
         (userId.matches('stimulus_.*') && canEditStudy(studyId)) ||
-        (request.auth.uid == userId && canAnswerStudy());
+        canAnswerStudy();
       allow delete: if false;
     }
 
