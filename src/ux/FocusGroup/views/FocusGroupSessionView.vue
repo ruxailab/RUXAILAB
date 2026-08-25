@@ -1242,14 +1242,26 @@ const onConsentDecline = async () => {
   router.push(`/focusGroup/dashboard/${studyId}`).catch(() => {})
 }
 
+// Only facilitator/observer can actually read this path (see
+// database.rules.json) — participants never subscribe, both because they
+// have nothing to read there and to avoid a permission_denied listener
+// error on every participant's client. A watcher rather than a one-time
+// mount-time check: isObserver/isFacilitator depend on accessLevel, which
+// resolves once `user` (the auth getter) and the fetched study are both
+// populated — not guaranteed to have settled by the exact synchronous
+// instant onMounted reaches this line, so a plain `if` check here could
+// permanently miss a role that resolves a tick later.
+watch(
+  () => isFacilitator.value || isObserver.value,
+  (canReadBackroom) => {
+    if (canReadBackroom) subscribeBackroom()
+  },
+  { immediate: true },
+)
+
 onMounted(async () => {
   await store.dispatch('getStudy', { id: studyId })
   subscribe()
-  // Only facilitator/observer can actually read this path (see
-  // database.rules.json) — participants never subscribe, both because they
-  // have nothing to read there and to avoid a permission_denied listener
-  // error on every participant's client.
-  if (isFacilitator.value || isObserver.value) subscribeBackroom()
   // Presence is claimed on arrival so the lobby can show who is waiting.
   await enterSession()
 })
