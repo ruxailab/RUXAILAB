@@ -2,52 +2,37 @@
   "rules": {
     "focusGroupSessions": {
       "$studyId": {
-        "status": { ".read": "auth != null", ".write": "auth != null" },
-        "currentTopicIndex": { ".read": "auth != null", ".write": "auth != null" },
-        "facilitatorId": { ".read": "auth != null", ".write": "auth != null" },
-        "sessionId": { ".read": "auth != null", ".write": "auth != null" },
-        "startedAt": { ".read": "auth != null", ".write": "auth != null" },
-        "endedAt": { ".read": "auth != null", ".write": "auth != null" },
-        "lastUpdate": { ".read": "auth != null", ".write": "auth != null" },
-        "currentPrompt": { ".read": "auth != null", ".write": "auth != null" },
-        "currentStimulus": { ".read": "auth != null", ".write": "auth != null" },
-        "timer": { ".read": "auth != null", ".write": "auth != null" },
+        ".read": "auth != null",
 
         "consents": {
           "$uid": {
-            ".read": "auth != null",
             ".write": "auth != null && auth.uid === $uid"
           }
         },
 
         "notes": {
           "$uid": {
-            ".read": "auth != null && auth.uid === $uid",
             ".write": "auth != null && auth.uid === $uid"
           }
         },
 
         "participants": {
           "$uid": {
-            ".read": "auth != null",
             ".write": "auth != null && auth.uid === $uid"
           }
         },
 
         "messages": {
           "backroom": {
-            ".read": "auth != null && (root.child('focusGroupSessions/' + $studyId + '/participants/' + auth.uid + '/accessLevel').val() === 0 || root.child('focusGroupSessions/' + $studyId + '/participants/' + auth.uid + '/accessLevel').val() === 3)",
             ".write": "auth != null && (root.child('focusGroupSessions/' + $studyId + '/participants/' + auth.uid + '/accessLevel').val() === 0 || root.child('focusGroupSessions/' + $studyId + '/participants/' + auth.uid + '/accessLevel').val() === 3)"
           },
           "$topicId": {
-            ".read": "auth != null",
             ".write": "auth != null"
           }
         },
 
         "recordings": {
           "$uid": {
-            ".read": "auth != null && (auth.uid === $uid || root.child('focusGroupSessions/' + $studyId + '/participants/' + auth.uid + '/accessLevel').val() === 0)",
             ".write": "auth != null && auth.uid === $uid"
           }
         }
