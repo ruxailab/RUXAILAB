@@ -1,4 +1,4 @@
-import { admin, functions } from '../f.firebase.js'
+import { admin, functions } from '../core/firebase/f.firebase.js'
 
 const error = (code, message) =>
   new functions.https.HttpsError(code, message)

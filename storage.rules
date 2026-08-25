@@ -51,14 +51,28 @@ service firebase.storage {
       );
     }
 
+    function isFocusGroupStudy(studyId) {
+      return study(studyId).testType == 'FOCUS_GROUP';
+    }
+
+    // Focus Group roles (studyRoleMap scale): 0 facilitator, 1 participant,
+    // 3 observer, 4 co-facilitator. All of them may view a presented stimulus.
+    function canViewFocusGroupStimulus(studyId) {
+      return signedIn() && isFocusGroupStudy(studyId) &&
+        roleFor(studyId) in [0, 1, 3, 4];
+    }
+
     match /tests/{studyId}/{userId}/{allPaths=**} {
       allow read: if canAccessStorage(studyId) ||
         (userId.matches('heuristic_.*') && canEditStudy(studyId)) ||
-        canAnswerStudy();
+        (userId.matches('stimulus_.*') && canViewFocusGroupStimulus(studyId)) ||
+        (request.auth.uid == userId && canAnswerStudy());
+
       allow create, update: if
         canAccessStorage(studyId) ||
         (userId.matches('heuristic_.*') && canEditStudy(studyId)) ||
-        canAnswerStudy();
+        (userId.matches('stimulus_.*') && canEditStudy(studyId)) ||
+        (request.auth.uid == userId && canAnswerStudy());
       allow delete: if false;
     }
 

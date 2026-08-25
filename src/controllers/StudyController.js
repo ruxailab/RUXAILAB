@@ -87,9 +87,6 @@ export default class StudyController extends Controller {
             userController.removeTestFromUser(cooperator.userDocId, payload.id),
           )
         }
-        promises.push(
-          userController.removeNotificationsForTest(payload.id, cooperators),
-        )
         await Promise.all(promises)
       }
       // Remove only the deleted test from the admin's myTests/myAnswers via a

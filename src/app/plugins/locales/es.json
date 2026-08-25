@@ -435,6 +435,13 @@
   },
   "navigation": {
     "dashboard": "Panel",
+    "groups": {
+      "overview": "Resumen",
+      "evaluation": "Evaluación",
+      "people": "Personas",
+      "analysis": "Análisis",
+      "administration": "Administración"
+    },
     "studies": "Estudios",
     "sessions": "Sesiones",
     "templates": "Plantillas",
@@ -619,6 +626,12 @@
     "failedToLoadAnswers": "Error al cargar respuestas",
     "failedToUpdateAnswer": "Error al actualizar respuesta",
     "failedToSaveAnswerCooperator": "Error al guardar respuesta del cooperador",
+    "screenShare": {
+      "unsupported": "Compartir pantalla no está disponible en este navegador. Usa Chrome, Edge o Firefox actualizado en un ordenador.",
+      "cancelled": "Se canceló el uso compartido de pantalla. Comparte toda la pantalla para continuar.",
+      "wrongSurface": "Compartiste una pestaña del navegador. Comparte toda la pantalla para que podamos ver la herramienta que vas a usar.",
+      "error": "No pudimos iniciar la grabación de pantalla. Inténtalo de nuevo."
+    },
     "boundary": {
       "title": "Algo salió mal",
       "message": "Ocurrió un error inesperado al cargar esta página. Sus datos han sido preservados.",
@@ -628,6 +641,26 @@
       "copyDetails": "Copiar detalles del error",
       "copied": "¡Copiado!"
     }
+  },
+  "screenShare": {
+    "howTo": "Cómo compartir tu pantalla",
+    "lead": "Cuando aparezca la ventana del navegador, elige Toda la pantalla. Si compartes solo una pestaña, a menudo se graba la página incorrecta.",
+    "step1": "Haz clic en Compartir pantalla. Tu navegador abrirá una ventana para elegir qué compartir.",
+    "step2": "Selecciona Toda la pantalla — no una pestaña ni una sola ventana.",
+    "step3": "Haz clic en Compartir para continuar. Mantén el uso compartido hasta terminar la tarea.",
+    "dontShareTab": "No compartas una pestaña del navegador. Esta tarea abre otra página y esa pestaña no se grabaría.",
+    "macHint": "En Mac, si no aparece nada, permite Grabación de pantalla para tu navegador en Ajustes del Sistema → Privacidad y seguridad.",
+    "shareButton": "Compartir pantalla",
+    "backButton": "Volver",
+    "pickerTitle": "Elige qué compartir",
+    "pickerTab": "Pestaña",
+    "pickerWindow": "Ventana",
+    "pickerEntireScreen": "Toda la pantalla",
+    "pickerShare": "Compartir",
+    "pickerCancel": "Cancelar",
+    "demoDontPick": "No esto",
+    "demoChooseThis": "Elige esto",
+    "demoAlt": "Animación que muestra cómo elegir Toda la pantalla en el diálogo de compartir del navegador."
   },
   "Introduction": {
     "title": "UX LAB Remoto",
@@ -1053,7 +1086,8 @@
     "alerts": {
       "testAlreadyCompleted": "Prueba ya completada",
       "testAlreadyCompletedMessage": "Ya has completado y enviado esta prueba. ¡Gracias por tu participación!",
-      "testConfigError": "Error de configuración de la prueba"
+      "testConfigError": "Error de configuración de la prueba",
+      "noAnswerOptionsConfigured": "Nenhuma opção de resposta foi configurada para este teste."
     },
     "actions": {
       "cancel": "Cancelar",
@@ -1366,6 +1400,10 @@
       "sart": "Técnica de Calificación de Conciencia Situacional - mide la conciencia situacional"
     },
     "answerTypePreview": {
+      "textArea": {
+        "placeholder": "Los participantes proporcionarán su retroalimentación aquí...",
+        "submitButton": "Enviar retroalimentación"
+      },
       "postTest": {
         "title": "Comentarios posteriores a la prueba",
         "q1": "Califica tu experiencia",
@@ -1537,7 +1575,7 @@
       "preview": "Información de grabación",
       "recordingInfo": "Esta tarea registrará los siguientes datos durante tu interacción:",
       "screenRecord": "Grabación de pantalla",
-      "screenRecordDesc": "Captura clics, desplazamiento e interacciones para analizar el comportamiento del usuario.",
+      "screenRecordDesc": "Graba cómo usas la herramienta. Deberás compartir toda la pantalla.",
       "camera": "Cámara",
       "cameraDesc": "Registra expresiones faciales y reacciones para entender las emociones del usuario.",
       "audioRecord": "Grabación de audio",
@@ -1673,6 +1711,7 @@
       "observeAllFeedsNotice": "Podras observar todas las transmisiones de video sin enviar la tuya.",
       "waitingForParticipants": "Esperando participantes...",
       "waitingForModerator": "Esperando al moderador...",
+      "moderatorWillAdmitParticipant": "El moderador te dejara entrar pronto a la sesion.",
       "autoStartWhenModeratorOpensRoom": "La videollamada comenzara automaticamente cuando el moderador abra la sala."
     },
     "WelcomeStep": {
@@ -2200,6 +2239,7 @@
       "observeAllFeedsNotice": "Podras observar todas las transmisiones de video sin enviar la tuya.",
       "waitingForParticipants": "Esperando participantes...",
       "waitingForModerator": "Esperando al moderador...",
+      "moderatorWillAdmitParticipant": "El moderador te dejara entrar pronto a la sesion.",
       "autoStartWhenModeratorOpensRoom": "La videollamada comenzara automaticamente cuando el moderador abra la sala."
     },
     "panel": {
@@ -2437,7 +2477,8 @@
       "tabs": {
         "configuration": "Configuración de la Sesión",
         "consent": "Formulario de Consentimiento",
-        "guide": "Guía de Discusión"
+        "guide": "Guía de Discusión",
+        "stimuli": "Estímulos"
       },
       "noTopics": "Aún no hay temas. Agrega tu primer tema de discusión para comenzar.",
       "addTopic": "Agregar tema",
@@ -2531,6 +2572,8 @@
       "sessionInfo": "Sesión",
       "showParticipants": "Mostrar participantes",
       "hideParticipants": "Ocultar participantes",
+      "participationPercent": "{percent}%",
+      "participationHint": "Proporción de la actividad de la sesión de este participante (mensajes y tiempo hablando)",
       "muteMicrophone": "Silenciar micrófono",
       "unmuteMicrophone": "Activar micrófono",
       "turnCameraOff": "Apagar cámara",
@@ -2550,7 +2593,29 @@
       "endedTitle": "Sesión finalizada",
       "endedSubtitle": "Las respuestas se han guardado.",
       "sessionSaved": "Respuestas de la sesión guardadas.",
-      "noTopicsWarning": "Agrega temas a tu guía de discusión antes de iniciar una sesión."
+      "noTopicsWarning": "Agrega temas a tu guía de discusión antes de iniciar una sesión.",
+      "stimuli": "Estímulos",
+      "noStimuli": "Aún no hay estímulos en la biblioteca. Agrega algunos desde la pantalla de prueba.",
+      "present": "Presentar",
+      "presenting": "Presentando",
+      "presentingStimulus": "Presentando:",
+      "stopPresenting": "Dejar de presentar",
+      "openStimulusLink": "Abrir enlace del estímulo"
+    },
+    "stimulus": {
+      "empty": "Aún no hay estímulos. Sube una imagen o video, o agrega un enlace abajo.",
+      "types": {
+        "image": "Imagen",
+        "video": "Video",
+        "url": "Enlace"
+      },
+      "topic": "Tema",
+      "remove": "Eliminar estímulo",
+      "dropHint": "Arrastra y suelta una imagen o video, o haz clic para subir",
+      "addLinkTitle": "Agregar un enlace",
+      "linkName": "Nombre",
+      "linkUrl": "URL",
+      "addLink": "Agregar enlace"
     }
   },
   "studyCreation": {
@@ -3425,22 +3490,6 @@
     "empty": {
       "title": "No se encontraron sesiones",
       "description": "Crea una sesión para comenzar a invitar personal y participantes."
-    }
-  },
-  "errors": {
-    "globalError": "Ocurrió un error. Por favor, inténtalo de nuevo.",
-    "emailIsRequired": "El correo electrónico es obligatorio.",
-    "passwordRequired": "La contraseña es obligatoria.",
-    "invalidEmail": "Por favor, introduce una dirección de correo electrónico válida.",
-    "incorrectCredential": "Correo o contraseña incorrectos, o la cuenta no existe.",
-    "boundary": {
-      "title": "Algo salió mal",
-      "message": "Ocurrió un error inesperado al cargar esta página. Sus datos han sido preservados.",
-      "retry": "Reintentar",
-      "goToDashboard": "Ir al Panel",
-      "showDetails": "Mostrar detalles del error",
-      "copyDetails": "Copiar detalles del error",
-      "copied": "¡Copiado!"
     }
   }
 }

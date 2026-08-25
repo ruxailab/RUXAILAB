@@ -16,7 +16,7 @@
             </p>
           </div>
         </div>
-        <v-chip
+        <!-- <v-chip
           size="small"
           color="rgba(255,255,255,0.2)"
           variant="outlined"
@@ -24,7 +24,7 @@
         >
           <v-icon start size="16">mdi-flask</v-icon>
           {{ t('manager.storage.beta') }}
-        </v-chip>
+        </v-chip> -->
       </div>
     </div>
 
@@ -54,12 +54,13 @@
           :indeterminate="loading"
         />
         <div class="text-caption text-medium-emphasis mt-1">
-          {{
+          <!-- {{
             t('manager.storage.storageQuota', {
               used: storageUsedFormatted,
               quota: storageQuotaFormatted,
             })
-          }}
+          }} -->
+          {{ storageUsedFormatted }}
         </div>
       </div>
 
@@ -251,7 +252,7 @@ const storageColor = computed(() => {
 const storageUsedFormatted = computed(() =>
   formatBytes(estimatedStorageUsed.value),
 )
-const storageQuotaFormatted = computed(() => formatBytes(storageQuotaBytes))
+// const storageQuotaFormatted = computed(() => formatBytes(storageQuotaBytes))
 
 const canManageStorage = computed(() => {
   return hasStudyCapability(

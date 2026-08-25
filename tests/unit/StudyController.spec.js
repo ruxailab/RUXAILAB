@@ -37,7 +37,6 @@ jest.mock('@/shared/controllers/AnswerController', () => {
 jest.mock('@/features/auth/controllers/UserController', () => {
   return jest.fn().mockImplementation(() => ({
     removeTestFromUser: jest.fn(),
-    removeNotificationsForTest: jest.fn(),
     update: jest.fn(),
     getById: jest.fn(),
   }))
@@ -86,7 +85,6 @@ describe('StudyController', () => {
 
     mockUserController = {
       removeTestFromUser: jest.fn().mockResolvedValue(),
-      removeNotificationsForTest: jest.fn().mockResolvedValue(),
       update: jest.fn().mockResolvedValue(),
       getById: jest.fn().mockResolvedValue(),
     }

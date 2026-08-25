@@ -176,6 +176,30 @@
               {{ $t('HeuristicsTestView.messages.noHeuristicsConfigured') }}
             </span>
           </v-alert>
+
+          <v-alert
+            v-else-if="testDisabledReason === 'no-answer-options'"
+            type="error"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="
+              background-color: rgba(255, 255, 255, 0.1);
+              border-color: white;
+            "
+          >
+            <template #prepend>
+              <v-icon color="white">mdi-alert-circle</v-icon>
+            </template>
+
+            <span class="text-white">
+              <strong>
+                {{ $t('HeuristicsTestView.alerts.testConfigError') }}
+              </strong>
+              <br />
+              {{ $t('HeuristicsTestView.alerts.noAnswerOptionsConfigured') }}
+            </span>
+          </v-alert>
         </v-col>
         <v-col v-else cols="12" class="pa-6">
           <HeuristicInstructionsStep
@@ -453,8 +477,21 @@ const trackTimeEnabled = computed(() => test.value?.trackTime !== false)
 
 const testDisabledReason = computed(() => {
   if (currentUserTestAnswer.value?.submitted) return 'already-completed'
+
   if (heuristics.value.length === 0) return 'no-heuristics'
+
+  const hasCustomOptions =
+    Array.isArray(test.value?.testOptions) && test.value.testOptions.length > 0
+
+  const frequencyEnabled = test.value?.useFrequency !== false
+  const severityEnabled = test.value?.useSeverity !== false
+
+  if (!hasCustomOptions && !frequencyEnabled && !severityEnabled) {
+    return 'no-answer-options'
+  }
+
   if (!user.value) return 'login-required'
+
   return null
 })
 
@@ -727,10 +764,6 @@ const startTest = async () => {
       errorCode: 400,
       message: t('HeuristicsTestView.messages.noHeuristics'),
     })
-    return
-  }
-  if (!test.value?.testOptions?.length) {
-    showError('No answer options configured for this test.')
     return
   }
 

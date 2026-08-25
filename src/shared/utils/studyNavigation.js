@@ -135,18 +135,21 @@ export function getAcceptedInvitationDestination({ study, user }) {
 const NAVIGATION_ITEMS = Object.freeze([
   {
     title: 'Dashboard',
+    group: 'overview',
     icon: ICONS.MANAGER,
     capability: C.DASHBOARD_VIEW,
     path: ({ type, id }) => `/${type}/manager/${id}`,
   },
   {
     title: 'Test',
+    group: 'evaluation',
     icon: ICONS.DOCUMENT_EDIT,
     capability: C.STUDY_EDIT,
     path: ({ type, id }) => `/${type}/edit/${id}`,
   },
   {
     title: 'Preview',
+    group: 'evaluation',
     icon: ICONS.PREVIEW,
     capability: C.STUDY_ANSWER,
     path: ({ id, previewPath }) => previewPath ?? `/testview/${id}`,
@@ -158,30 +161,35 @@ const NAVIGATION_ITEMS = Object.freeze([
   },
   {
     title: 'Progress',
+    group: 'evaluation',
     icon: ICONS.BOOK,
     capability: C.REPORTS_VIEW,
     path: ({ type, id }) => `/${type}/report/${id}`,
   },
   {
     title: 'Results',
+    group: 'analysis',
     icon: ICONS.ORDER,
     capability: C.ANSWERS_VIEW,
     path: ({ type, id }) => `/${type}/answer/${id}`,
   },
   {
     title: 'Cooperators',
+    group: 'people',
     icon: ICONS.ACCOUNT_GROUP,
     capability: C.COOPERATORS_VIEW,
     path: ({ type, id }) => `/${type}/cooperators/${id}`,
   },
   {
     title: 'Participants',
+    group: 'people',
     icon: ICONS.USERS,
     capability: C.COOPERATORS_VIEW,
     path: ({ type, id }) => `/${type}/participants/${id}`,
   },
   {
     title: 'Sessions',
+    group: 'people',
     icon: ICONS.MONITOR_DASHBOARD,
     capability: C.SESSIONS_MANAGE,
     visible: (study) =>
@@ -191,24 +199,28 @@ const NAVIGATION_ITEMS = Object.freeze([
   },
   {
     title: 'Settings',
+    group: 'administration',
     icon: ICONS.COG,
     capability: C.SETTINGS_MANAGE,
     path: ({ type, id }) => `/${type}/settings/${id}`,
   },
   {
     title: 'Storage',
+    group: 'administration',
     icon: 'mdi-database',
     capability: C.STORAGE_ACCESS,
     path: ({ type, id }) => `/${type}/storage/${id}`,
   },
   {
     title: 'Final Report',
+    group: 'analysis',
     icon: 'mdi-file-document',
     capability: C.FINAL_REPORT_MANAGE,
     path: ({ id }) => `/heuristic/finalreport/${id}`,
   },
   {
     title: 'Evaluator Info',
+    group: 'people',
     icon: 'mdi-book-information-variant',
     capability: C.EVALUATOR_INFO_MANAGE,
     path: ({ id }) => `/heuristic/evaluatorinfo/${id}`,
@@ -225,8 +237,9 @@ export function buildStudyNavigator({ study, user, type, previewPath }) {
     const isVisible = item.visible ? item.visible(study) : true
 
     return hasCapability && isVisible
-  }).map(({ title, icon, path }) => ({
+  }).map(({ title, group, icon, path }) => ({
     title,
+    group,
     icon,
     path: path(context),
   }))
@@ -234,6 +247,7 @@ export function buildStudyNavigator({ study, user, type, previewPath }) {
   if (resolveStudyAccess(study, user).isOwner) {
     items.push({
       title: 'Audit Trail',
+      group: 'administration',
       icon: 'mdi-history',
       path: `/${type}/audit/${study.id}`,
     })

@@ -24,6 +24,9 @@ const studyWith = (testType, userId, role) => ({
 const titlesFor = (study, user, type = 'userTest/unmoderated') =>
   buildStudyNavigator({ study, user, type }).map((item) => item.title)
 
+const groupsFor = (study, user, type = 'userTest/unmoderated') =>
+  buildStudyNavigator({ study, user, type }).map((item) => item.group)
+
 describe('study navigation', () => {
   it('opens a public community study as an answer, without visiting Manager', () => {
     const publicStudy = { ...studyWith('USER'), isPublic: true }
@@ -166,6 +169,21 @@ describe('study navigation', () => {
       'Settings',
       'Storage',
       'Audit Trail',
+    ])
+  })
+
+  it('groups study navigation by the user task', () => {
+    expect(groupsFor(studyWith('USER'), owner)).toEqual([
+      'overview',
+      'evaluation',
+      'evaluation',
+      'evaluation',
+      'analysis',
+      'people',
+      'people',
+      'administration',
+      'administration',
+      'administration',
     ])
   })
 

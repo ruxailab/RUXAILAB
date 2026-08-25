@@ -1,4 +1,4 @@
-import { admin, functions } from '../f.firebase.js'
+import { admin, functions } from '../core/firebase/f.firebase.js'
 import logger from '../utils/logger.js'
 
 const calibrationCorsOrigins = (process.env.EYE_LAB_CORS_ORIGINS || '')
@@ -7,7 +7,7 @@ const calibrationCorsOrigins = (process.env.EYE_LAB_CORS_ORIGINS || '')
   .filter(Boolean)
 
 export const receiveCalibration = functions.onRequest({
-  opts: {
+  options: {
     cors: calibrationCorsOrigins,
   },
   handler: async (req, res) => {
@@ -68,7 +68,7 @@ export const receiveCalibration = functions.onRequest({
 })
 
 export const getCalibrationConfig = functions.onRequest({
-  opts: {
+  options: {
     cors: calibrationCorsOrigins,
   },
   handler: async (req, res) => {
