@@ -511,8 +511,8 @@
             />
           </div>
 
-          <div v-else-if="panelTab === 'backroom'" class="fg-fill">
-            <p class="text-caption text-medium-emphasis pa-2 mb-0">
+          <div v-else-if="panelTab === 'backroom'" class="fg-fill d-flex flex-column">
+            <p class="text-caption text-medium-emphasis pa-2 mb-0 flex-grow-0">
               {{ t('focusGroup.session.backroomHint') }}
             </p>
             <TopicDiscussion
