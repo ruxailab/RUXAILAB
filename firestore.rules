@@ -147,6 +147,10 @@ service cloud.firestore {
         resource.data.studyId == null &&
         resource.data.createdBy == request.auth.uid
       ) || isAdmin(answerStudy());
+
+       match /analytics/{analyticsId} {
+          allow read: if true;
+        }
     }
 
     // Existing non-study modules retain authenticated access. Their
