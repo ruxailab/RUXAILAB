@@ -546,6 +546,7 @@
     "anonymous": "Participante Anónimo",
     "answers": "Respuestas",
     "analytics": "Análisis",
+    "lastUpdate": "Última actualización",
     "cooperators": "Personal",
     "template": "Plantilla",
     "finalReport": "Informe final",
@@ -867,6 +868,7 @@
     "placeholders": {
       "titleHeuristic": "Título de la heurística",
       "titleYourHeuristic": "Titula tu heurística",
+      "descriptionYourHeuristic": "Descripción de tu heurística",
       "titleYourQuestion": "Titula tu pregunta",
       "titleQuestion": "Título de la pregunta",
       "titleNewQuestion": "Título de la nueva pregunta",
@@ -880,6 +882,7 @@
       "changeWeights": "Ten en cuenta que al cambiar el orden de las heurísticas, los pesos NO cambian automáticamente, debes ajustarlos manualmente.",
       "noDescriptions": "No hay descripciones disponibles",
       "startAddingQuestions": "Comienza agregando tu primera pregunta a esta heurística",
+      "optionalFirstQuestion": "Opcional: puedes agregar una pregunta más tarde",
       "cantDeleteAllQuestions": "Lo siento, no puedes eliminar todas las preguntas de una heurística",
       "studyHasAnswers": "Este estudio tiene respuestas"
     },
@@ -920,6 +923,15 @@
     }
   },
   "HeuristicsAnalytics": {
+    "title": "Análisis",
+    "traditional": "Tradicional",
+    "detailed": "Detallada",
+    "question": "Pregunta",
+    "heuristicLevelEvidence": "En las evaluaciones tradicionales, la evidencia se agrupa por heurística.",
+    "evidenceItems": "elementos de evidencia",
+    "noComments": "No hay comentarios para esta selección",
+    "noImages": "No hay imágenes para esta selección",
+    "evidence": "Evidencia de la heurística",
     "dataTable": "Tabla de datos",
     "chart": "Gráfico",
     "userUploadedContent": "Contenido subido por el usuario",
@@ -1144,16 +1156,39 @@
   "HeuristicsTestAnswer": {
     "titles": {
       "answers": "Respuestas",
-      "statistics": "Estadísticas",
+      "statistics": "General",
       "evaluators": "Evaluadores",
       "heuristics": "Heurísticas",
-      "analytics": "Análisis"
+      "analytics": "Análisis",
+      "totalTime": "Tiempo total",
+      "lastUpdate": "Última actualización"
     },
     "statistics": {
       "usabilityPercentage": "Porcentaje de usabilidad",
       "max": "Máximo",
       "min": "Mínimo",
       "std": "Desviación estándar"
+    },
+    "summary": {
+      "coverage": {
+        "title": "Cobertura de la evaluación",
+        "subtitle": "Progreso de todas las respuestas heurísticas",
+        "heuristics": "Heurísticas",
+        "responses": "Respuestas",
+        "answered": "Respondidas",
+        "pending": "Pendientes"
+      },
+      "stats": {
+        "max": "Máx.",
+        "min": "Mín.",
+        "stdDev": "Desv. estándar",
+        "evaluators": "Evaluadores"
+      },
+      "charts": {
+        "responsesByOption": {
+          "title": "Tipo de respuesta"
+        }
+      }
     },
     "evaluators": {
       "headers": {

@@ -179,6 +179,29 @@ const tabItems = computed(() => {
   return items
 })
 
+watch(
+  [showOptionsTab, showWeightsTab],
+  (
+    [newShowOptionsTab, newShowWeightsTab],
+    [oldShowOptionsTab, oldShowWeightsTab],
+  ) => {
+    const oldWeightsTabIndex = oldShowOptionsTab ? 2 : 1
+    const oldSettingsTabIndex = oldShowWeightsTab
+      ? oldWeightsTabIndex + 1
+      : oldShowOptionsTab
+        ? 2
+        : 1
+
+    if (index.value !== oldSettingsTabIndex) return
+
+    index.value = newShowWeightsTab
+      ? (newShowOptionsTab ? 2 : 1) + 1
+      : newShowOptionsTab
+        ? 2
+        : 1
+  },
+)
+
 const isMobile = computed(() => windowWidth.value < 960)
 
 const handleResize = () => {
