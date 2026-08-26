@@ -139,13 +139,18 @@ service cloud.firestore {
       allow update: if request.resource.data.diff(resource.data).affectedKeys()
           .hasOnly([
             'taskAnswers',
-            'heuristicAnswers'
+            'heuristicAnswers',
+            'studyId'
       		]);
       allow delete: if (
         signedIn() &&
         resource.data.studyId == null &&
         resource.data.createdBy == request.auth.uid
       ) || isAdmin(answerStudy());
+
+       match /analytics/{analyticsId} {
+          allow read: if true;
+        }
     }
 
     // Existing non-study modules retain authenticated access. Their
