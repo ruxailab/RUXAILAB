@@ -25,7 +25,7 @@
             {{ test.testTitle }}
           </h1>
           <p class="text-body-1 mb-5 text-white text-justify">
-            {{ test.testDescription }}
+            {{ truncateDescription(test.testDescription) }}
           </p>
           <v-btn
             color="white"
@@ -678,6 +678,11 @@ const isProcessingRemoteStepAnnouncement = ref(false)
 const lastAnnouncedRemoteStepKey = ref(null)
 const lastWaitingParticipantsNotificationCount = ref(0)
 const hasSeenRoomState = ref(false)
+
+const truncateDescription = (description) => {
+  if (!description || description.length <= 150) return description
+  return `${description.slice(0, 147)}...`
+}
 
 const sessionId = computed(() => route.params.token || null)
 

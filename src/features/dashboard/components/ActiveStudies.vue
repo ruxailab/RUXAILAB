@@ -57,7 +57,7 @@
 
         <!-- Studies list -->
         <v-col
-          v-for="study in studies.filter((s) => s)"
+          v-for="study in displayedStudies.filter((s) => s)"
           :key="study.id"
           cols="12"
           md="6"
@@ -96,7 +96,7 @@
               </h4>
               <div class="description-wrapper">
                 <p class="text-body-2 text-medium-emphasis mb-3">
-                  {{ study.description }}
+                  {{ truncateDescription(study.description) }}
                 </p>
               </div>
 
@@ -180,7 +180,7 @@ const loading = ref(false)
 const studiesWithAnswers = ref([])
 const user = computed(() => store.getters.user)
 
-const studies = computed(() => studiesWithAnswers.value)
+const displayedStudies = computed(() => studiesWithAnswers.value)
 
 const hasNoStudies = computed(() => {
   return !loading.value && studiesWithAnswers.value.length === 0
@@ -255,8 +255,16 @@ async function loadAnswers() {
 
 const calculateProgress = (answers) => {
   if (!answers || answers.length === 0) return 0
-  const sum = answers.reduce((acc, val) => acc + (Number(val?.progress) || 0), 0)
+  const sum = answers.reduce(
+    (acc, val) => acc + (Number(val?.progress) || 0),
+    0,
+  )
   return sum / answers.length
+}
+
+const truncateDescription = (description) => {
+  if (!description || description.length <= 150) return description
+  return `${description.slice(0, 147)}...`
 }
 
 const daysLeft = (date) => {

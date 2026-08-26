@@ -2978,6 +2978,7 @@
       "validation": {
         "enterTitle": "Enter a Title",
         "max200Characters": "Max 200 characters",
+        "max150Characters": "Max 150 characters",
         "max600Characters": "Max 600 characters",
         "enterWebsiteName": "Enter website name",
         "enterWebsiteUrl": "Enter website URL",

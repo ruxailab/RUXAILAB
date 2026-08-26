@@ -610,6 +610,11 @@ const submit = async () => {
   const title = object.value.testTitle
   let localDraft = null
 
+  if ((object.value.testDescription || '').length > 150) {
+    showWarning('studyCreation.details.validation.max150Characters')
+    return false
+  }
+
   if (title.length > 0 && title.length < 200) {
     loading.value = true
     isSubmitting.value = true

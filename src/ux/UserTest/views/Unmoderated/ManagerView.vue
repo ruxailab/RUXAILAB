@@ -10,7 +10,10 @@
         v-if="test"
         :test="test"
         :title="test.testTitle || t('manager.dashboard.defaultTitle')"
-        :subtitle="test.testDescription || t('manager.dashboard.defaultTitle')"
+        :subtitle="
+          truncateDescription(test.testDescription) ||
+          t('manager.dashboard.defaultTitle')
+        "
         icon="mdi-chart-box-outline"
         :type-label="t('manager.dashboard.unmoderatedStudy')"
         type-icon="mdi-account-check-outline"
@@ -90,6 +93,11 @@ const { t } = useI18n()
 // Computed
 const user = computed(() => store.getters.user)
 const test = computed(() => store.getters.test)
+
+const truncateDescription = (description) => {
+  if (!description || description.length <= 150) return description
+  return `${description.slice(0, 147)}...`
+}
 
 watchEffect(() => {
   if (user.value != null && test.value != null) {

@@ -67,13 +67,15 @@
                           $t('studyCreation.details.enterDescription')
                         "
                         variant="outlined"
-                        :counter="600"
-                        maxlength="600"
-                        :error="test.description?.length === 600"
+                        :counter="DESCRIPTION_MAX_LENGTH"
+                        :maxlength="DESCRIPTION_MAX_LENGTH"
+                        :error="
+                          test.description?.length > DESCRIPTION_MAX_LENGTH
+                        "
                         :error-messages="
-                          test.description?.length === 600
+                          test.description?.length > DESCRIPTION_MAX_LENGTH
                             ? $t(
-                                'studyCreation.details.validation.max600Characters',
+                                'studyCreation.details.validation.max150Characters',
                               )
                             : []
                         "
@@ -314,6 +316,7 @@ const method = computed(() => store.state.Tests.studyMethod)
 const studyType = computed(() => store.state.Tests.studyType)
 const selectedTemplate = computed(() => store.state.Tests.selectedTemplate)
 const isLoading = ref(false)
+const DESCRIPTION_MAX_LENGTH = 150
 
 const selectedCategoryMeta = computed(() =>
   category.value ? getCategoryById(category.value) : null,
@@ -375,7 +378,7 @@ const isFormValid = computed(() => {
   return (
     test.value.title &&
     test.value.title.length <= 200 &&
-    test.value.description.length <= 600
+    test.value.description.length <= DESCRIPTION_MAX_LENGTH
   )
 })
 
@@ -406,8 +409,8 @@ const validate = () => {
     showWarning('studyCreation.details.validation.max200Characters')
     return
   }
-  if (test.value.description.length > 600) {
-    showWarning('studyCreation.details.validation.max600Characters')
+  if (test.value.description.length > DESCRIPTION_MAX_LENGTH) {
+    showWarning('studyCreation.details.validation.max150Characters')
     return
   }
   handleTestType()

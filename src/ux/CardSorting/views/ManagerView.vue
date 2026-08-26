@@ -17,7 +17,9 @@
         v-else
         :test="test"
         :title="test.testTitle || $t('CardSorting.title')"
-        :subtitle="test.testDescription || $t('CardSorting.title')"
+        :subtitle="
+          truncateDescription(test.testDescription) || $t('CardSorting.title')
+        "
         icon="mdi-cards"
         :type-label="$t('CardSorting.title')"
         type-icon="mdi-cards"
@@ -63,6 +65,11 @@ const route = useRoute()
 // Computed
 const user = computed(() => store.getters.user)
 const test = computed(() => store.getters.test)
+
+const truncateDescription = (description) => {
+  if (!description || description.length <= 150) return description
+  return `${description.slice(0, 147)}...`
+}
 
 const accessLevel = computed(() => {
   const currentUser = user.value

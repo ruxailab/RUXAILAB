@@ -12,7 +12,7 @@
           {{ test.testTitle }}
         </h1>
         <p class="text-body-1 mb-5 text-white text-justify">
-          {{ test.testDescription }}
+          {{ truncateDescription(test.testDescription) }}
         </p>
         <v-btn
           color="white"
@@ -39,6 +39,11 @@ defineProps({
 
 // Emits
 const emit = defineEmits(['start'])
+
+const truncateDescription = (description) => {
+  if (!description || description.length <= 150) return description
+  return `${description.slice(0, 147)}...`
+}
 
 // Methods
 const startTest = () => emit('start')
