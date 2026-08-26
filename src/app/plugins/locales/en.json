@@ -2136,7 +2136,7 @@
       "fine_tune_configuration": "Fine-tune your test configuration",
       "public_access": "Public Access",
       "allow_users_view": "Allow users to view this test",
-      "test_status": "Test Status",
+      "test_status": "Study Status",
       "select_status": "Select Status",
       "end_date": "End Date",
       "select_end_date": "Select End Date",
