@@ -3,7 +3,7 @@
     fluid
     class="video-call-container mt-6"
     :class="{
-      'panel-open': showSidePanel || showStepperPanel || props.notesDrawerOpen,
+      'panel-open': showSidePanel || showStepperPanel || notesDrawerOpen,
     }"
   >
     <v-alert
@@ -55,7 +55,7 @@
                         >mdi-video-off</v-icon
                       >
                       <p class="text-white">
-                        {{ t('videoCall.session.cameraOff') }}
+                        {{ $t('videoCall.session.cameraOff') }}
                       </p>
                     </div>
 
@@ -103,7 +103,7 @@
                       >mdi-video-off</v-icon
                     >
                     <p class="text-white">
-                      {{ t('videoCall.session.cameraOff') }}
+                      {{ $t('videoCall.session.cameraOff') }}
                     </p>
                   </div>
 
@@ -159,7 +159,7 @@
                     >mdi-video-off</v-icon
                   >
                   <p class="text-white">
-                    {{ t('videoCall.session.cameraOff') }}
+                    {{ $t('videoCall.session.cameraOff') }}
                   </p>
                 </div>
 
@@ -181,7 +181,7 @@
               class="d-flex align-center justify-center pa-4 text-grey"
             >
               <v-icon class="mr-2">mdi-account-clock</v-icon>
-              <span>{{ t('videoCall.session.waitingForParticipants') }}</span>
+              <span>{{ $t('videoCall.session.waitingForParticipants') }}</span>
             </v-col>
           </v-row>
         </div>
@@ -209,7 +209,7 @@
               ></video>
 
               <div class="video-label">
-                {{ t('videoCall.session.yourPreview') }} ({{
+                {{ $t('videoCall.session.yourPreview') }} ({{
                   user?.email?.split('@')[0]
                 }})
               </div>
@@ -236,10 +236,10 @@
             class="mb-4"
           ></v-progress-circular>
           <h3 class="text-h6 mb-2">
-            {{ t('videoCall.session.waitingForModerator') }}
+            {{ $t('videoCall.session.waitingForModerator') }}
           </h3>
           <p class="text-body-2 text-grey">
-            {{ t('videoCall.session.moderatorWillAdmitParticipant') }}
+            {{ $t('videoCall.session.moderatorWillAdmitParticipant') }}
           </p>
         </div>
       </v-col>
@@ -254,8 +254,8 @@
       :is-sharing-screen="isSharingScreen"
       :show-stepper-panel="showStepperPanel"
       :show-side-panel="showSidePanel"
-      :notes-drawer-open="props.notesDrawerOpen"
-      :notes-count="props.notesCount"
+      :notes-drawer-open="notesDrawerOpen"
+      :notes-count="notesCount"
       :toggle-camera="toggleCamera"
       :toggle-microphone="toggleMicrophone"
       :toggle-screen-share="toggleScreenShare"
@@ -281,7 +281,6 @@
       :is-camera-enabled="isCameraEnabled"
       :is-microphone-enabled="isMicrophoneEnabled"
       :is-sharing-screen="isSharingScreen"
-      :t="t"
       :toggle-side-panel="toggleSidePanel"
       :toggle-stepper-panel="toggleStepperPanel"
       :close-panels="closePanels"
@@ -300,9 +299,11 @@ import { Track } from 'livekit-client'
 import { database } from '@/app/plugins/firebase/index'
 import { ref as dbRef, get, onValue, update, remove } from 'firebase/database'
 import { useLiveKitRoom } from '../composables/useLiveKitRoom'
+import { useVideoCallBoard } from '../composables/useVideoCallBoard'
 import VideoCallPanels from '../VideoCallPanels.vue'
 import VideoCallControlBar from '../VideoCallControlBar.vue'
 import { normalizeSessionMember } from '@/ux/UserTest/utils/sessionPresence'
+import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 
 const props = defineProps({
   roomId: String,

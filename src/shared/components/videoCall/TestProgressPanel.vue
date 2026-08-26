@@ -3,7 +3,7 @@
     <div v-if="!caller" class="moderator-notice">
       <v-chip size="small" color="orange" class="mb-4">
         <v-icon start size="16">mdi-information</v-icon>
-        {{ t('videoCall.panel.moderatorOnlySteps') }}
+        {{ $t('videoCall.panel.moderatorOnlySteps') }}
       </v-chip>
     </div>
 
@@ -185,7 +185,6 @@ defineProps({
   taskDropdownItems: { type: Array, default: () => [] },
   currentTaskIndex: Number,
   test: Object,
-  t: Function,
   goToStep: Function,
   goToSpecificTask: Function,
   completedSteps: {

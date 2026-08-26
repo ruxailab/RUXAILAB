@@ -2,13 +2,12 @@
   <div>
     <VideoToolDrawer
       :model-value="showSidePanel"
-      :title="t('videoCall.panel.toolsPanelTitle')"
+      :title="$t('videoCall.panel.toolsPanelTitle')"
       @close="closePanels"
     >
       <ToolsPanel
         :staff-list="staffList"
         :participant-list="participantList"
-        :t="t"
       />
     </VideoToolDrawer>
 
@@ -24,7 +23,6 @@
         :task-dropdown-items="taskDropdownItems"
         :current-task-index="currentTaskIndex"
         :test="test"
-        :t="t"
         :go-to-step="goToStep"
         :go-to-specific-task="goToSpecificTask"
         :completed-steps="completedSteps"
@@ -55,7 +53,6 @@ defineProps({
   taskDropdownItems: { type: Array, default: () => [] },
   currentTaskIndex: Number,
   test: Object,
-  t: Function,
   toggleSidePanel: Function,
   toggleStepperPanel: Function,
   closePanels: Function,
