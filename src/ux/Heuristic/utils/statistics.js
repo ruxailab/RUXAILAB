@@ -151,7 +151,10 @@ function isQuestionWithoutReply(answer) {
 function summarizeQuestion(question) {
   const answer = question?.heuristicAnswer || {}
   const warning = answer.warning === true
-  const value = toFiniteNumber(answer.value)
+  const value =
+    answer.value && typeof answer.value === 'object'
+      ? toFiniteNumber(answer.severity)
+      : toFiniteNumber(answer.value)
   const images = getQuestionImages(question)
   const comments = getQuestionComments(question)
 
@@ -374,89 +377,6 @@ function statistics() {
 
   if (!test || !testAnswerDocument) {
     return []
-  }
-
-  if (testAnswerDocument.type === STUDY_TYPES.HEURISTIC) {
-    const resultEvaluator = []
-
-    // Get Evaluator answers - only include submitted evaluations
-    answers().forEach((evaluator) => {
-      // Skip evaluators who haven't submitted their evaluation
-      if (!evaluator.submitted) {
-        return
-      }
-
-      let SelectEvaluator = resultEvaluator.find(
-        (e) => e.userDocId == evaluator.userDocId,
-      )
-
-      if (!SelectEvaluator) {
-        resultEvaluator.push({
-          userDocId: evaluator.userDocId,
-          id: evaluator.userDocId,
-          heuristics: [],
-          result: 0,
-          lastUpdate: evaluator.lastUpdate,
-        })
-        SelectEvaluator = resultEvaluator[resultEvaluator.length - 1]
-      } else {
-        // Update lastUpdate if evaluator already exists
-        SelectEvaluator.lastUpdate = evaluator.lastUpdate
-      }
-
-      // Get Heuristics for evaluators
-      let heurisIndex = 1
-      evaluator.heuristicQuestions.forEach((heuristic) => {
-        let noAplication = 0
-        let noReply = 0
-        let qNotApplicable = 0
-        let res = heuristic.heuristicQuestions.reduce(
-          (totalQuestions, question) => {
-            if (question.heuristicAnswer.value === null) {
-              noAplication++
-            }
-            if (
-              question.heuristicAnswer.value === 0 ||
-              question.heuristicAnswer.value === '0'
-            ) {
-              qNotApplicable++
-            }
-
-            if (
-              question.heuristicAnswer.value === '' ||
-              Object.values(question.heuristicAnswer).length < 3
-            )
-              noReply++
-            return totalQuestions + Number(question.heuristicAnswer.value)
-          },
-          0,
-        )
-
-        if (noAplication == heuristic.heuristicQuestions.length) res = null
-
-        SelectEvaluator.heuristics.push({
-          id: `H${heurisIndex}`,
-          result: res == -1 ? 0 : res,
-          totalQuestions: heuristic.heuristicTotal,
-          totalNoAplication: noAplication,
-          totalNoReply: noReply,
-          timeSpentMs: parseTimeSpentToMs(heuristic.timeSpent),
-        })
-        heurisIndex++
-      })
-    })
-
-
-
-    // Sort resultEvaluator based on lastUpdate
-    resultEvaluator.sort((a, b) => b.lastUpdate - a.lastUpdate)
-
-    // Calc Final result
-    resultEvaluator.forEach((ev) => {
-      ev.result = calcFinalResult(ev.heuristics)
-    })
-
-    return resultEvaluator
   }
 
   return answers()

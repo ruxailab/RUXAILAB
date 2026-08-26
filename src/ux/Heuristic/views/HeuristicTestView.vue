@@ -1438,18 +1438,19 @@ const populateWithHeuristicQuestions = () => {
     // Initialize with empty questions if no data exists
     let totalQuestions = 0
     const heuristicQuestions = heuristics.value.map((heu) => {
-      const questions =
-        heu.questions?.map(
-          (h) =>
-            new HeuristicQuestionAnswer({
-              heuristicId: h.id,
-              heuristicAnswer: null,
-              heuristicComment: '',
-              answerImageUrl: '',
-              comments: [],
-              images: [],
-            }),
-        ) || []
+      const questions = (
+        heu.questions?.length ? heu.questions : [{ id: heu.id }]
+      ).map(
+        (h) =>
+          new HeuristicQuestionAnswer({
+            heuristicId: h.id,
+            heuristicAnswer: null,
+            heuristicComment: '',
+            answerImageUrl: '',
+            comments: [],
+            images: [],
+          }),
+      )
       totalQuestions += questions.length
       return new Heuristic({
         heuristicTitle: heu.title || t('HeuristicsTestView.unknownHeuristic'),
@@ -1478,53 +1479,54 @@ const populateWithHeuristicQuestions = () => {
         const existingQuestions = existingHeuristic.heuristicQuestions || []
 
         // Create or update questions
-        const questions =
-          heu.questions?.map((h, qIndex) => {
-            // Try to find existing answer for this question by heuristicId
-            let existingQuestion = existingQuestions.find(
-              (q) => q.heuristicId === h.id,
-            )
+        const questions = (
+          heu.questions?.length ? heu.questions : [{ id: heu.id }]
+        ).map((h, qIndex) => {
+          // Try to find existing answer for this question by heuristicId
+          let existingQuestion = existingQuestions.find(
+            (q) => q.heuristicId === h.id,
+          )
 
-            // If not found by id, try by index
-            if (!existingQuestion && existingQuestions[qIndex]) {
-              existingQuestion = existingQuestions[qIndex]
+          // If not found by id, try by index
+          if (!existingQuestion && existingQuestions[qIndex]) {
+            existingQuestion = existingQuestions[qIndex]
+          }
+
+          if (existingQuestion) {
+            // Check if the saved answer is actually empty
+            let restoredAnswer = existingQuestion.heuristicAnswer
+            if (restoredAnswer && isAnswerEmpty(restoredAnswer)) {
+              restoredAnswer = null
+            } else if (restoredAnswer) {
+              // Create a copy to avoid reference issues
+              restoredAnswer = JSON.parse(JSON.stringify(restoredAnswer))
             }
 
-            if (existingQuestion) {
-              // Check if the saved answer is actually empty
-              let restoredAnswer = existingQuestion.heuristicAnswer
-              if (restoredAnswer && isAnswerEmpty(restoredAnswer)) {
-                restoredAnswer = null
-              } else if (restoredAnswer) {
-                // Create a copy to avoid reference issues
-                restoredAnswer = JSON.parse(JSON.stringify(restoredAnswer))
-              }
-
-              // Return existing question with saved data
-              return new HeuristicQuestionAnswer({
-                heuristicId: h.id,
-                heuristicAnswer: restoredAnswer,
-                heuristicComment: existingQuestion.heuristicComment || '',
-                answerImageUrl: existingQuestion.answerImageUrl || '',
-                comments: Array.isArray(existingQuestion.comments)
-                  ? existingQuestion.comments
-                  : [],
-                images: Array.isArray(existingQuestion.images)
-                  ? existingQuestion.images
-                  : [],
-              })
-            } else {
-              // Create new question
-              return new HeuristicQuestionAnswer({
-                heuristicId: h.id,
-                heuristicAnswer: null,
-                heuristicComment: '',
-                answerImageUrl: '',
-                comments: [],
-                images: [],
-              })
-            }
-          }) || []
+            // Return existing question with saved data
+            return new HeuristicQuestionAnswer({
+              heuristicId: h.id,
+              heuristicAnswer: restoredAnswer,
+              heuristicComment: existingQuestion.heuristicComment || '',
+              answerImageUrl: existingQuestion.answerImageUrl || '',
+              comments: Array.isArray(existingQuestion.comments)
+                ? existingQuestion.comments
+                : [],
+              images: Array.isArray(existingQuestion.images)
+                ? existingQuestion.images
+                : [],
+            })
+          } else {
+            // Create new question
+            return new HeuristicQuestionAnswer({
+              heuristicId: h.id,
+              heuristicAnswer: null,
+              heuristicComment: '',
+              answerImageUrl: '',
+              comments: [],
+              images: [],
+            })
+          }
+        })
 
         totalQuestions += questions.length
 

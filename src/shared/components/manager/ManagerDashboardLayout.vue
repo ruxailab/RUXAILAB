@@ -148,12 +148,6 @@ defineProps({
   min-height: 240px !important;
   display: flex !important;
   align-items: center !important;
-  transition: all 0.3s ease;
-}
-
-.dashboard-header:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
 }
 
 .gradient-header {
@@ -224,16 +218,10 @@ defineProps({
   backdrop-filter: blur(10px) !important;
   background: rgba(255, 255, 255, 0.2) !important;
   border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  transition: all 0.3s ease;
-}
-
-.dashboard-chip:hover {
-  background: rgba(255, 255, 255, 0.25) !important;
-  transform: translateY(-1px);
 }
 
 .section-header {
-  margin: 48px 0 32px 0;
+  margin: 0 0 32px 0;
   text-align: center;
 }
 
@@ -261,7 +249,7 @@ defineProps({
 }
 
 .dashboard-main-row {
-  align-items: stretch !important;
+  align-items: flex-start !important;
   margin: 0 !important;
   min-height: 320px !important;
 }
@@ -270,12 +258,13 @@ defineProps({
   padding: 0 12px !important;
   display: flex !important;
   flex-direction: column !important;
+  justify-content: flex-start !important;
   min-height: 320px !important;
 }
 
 .study-overview-column {
   display: flex !important;
-  align-items: center !important;
+  align-items: flex-start !important;
   min-height: 320px !important;
 }
 
@@ -284,7 +273,7 @@ defineProps({
   margin-top: 0 !important;
   flex: 1 !important;
   display: flex !important;
-  align-items: center !important;
+  align-items: flex-start !important;
 }
 
 .study-overview-wrapper :deep(.v-row) {
@@ -307,13 +296,7 @@ defineProps({
   border-radius: 16px !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
   border: 1px solid rgba(0, 0, 0, 0.06) !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   overflow: hidden;
-}
-
-.modules-section :deep(.v-card:hover) {
-  transform: translateY(-4px) !important;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12) !important;
 }
 
 .modules-section :deep(.v-card-title) {
@@ -358,11 +341,6 @@ defineProps({
   background: transparent !important;
   border-bottom: 0 !important;
   padding: 0 0 0 12px !important;
-}
-
-.modules-section :deep(.clickable-header:hover .header-icon),
-.modules-section :deep(.clickable-header:hover .clickable-title) {
-  color: white !important;
 }
 
 .modules-section :deep(.clickable-header .v-chip) {

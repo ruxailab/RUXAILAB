@@ -306,7 +306,18 @@ const hasConfiguredAnswerControl = computed(() =>
 )
 
 const questions = computed(() =>
-  Array.isArray(props.heuristic?.questions) ? props.heuristic.questions : [],
+  Array.isArray(props.heuristic?.questions) && props.heuristic.questions.length
+    ? props.heuristic.questions
+    : [
+        {
+          id: props.heuristic?.id,
+          title:
+            props.heuristic?.title || t('HeuristicsTestView.unknownHeuristic'),
+          descriptions: props.heuristic?.description
+            ? [{ text: props.heuristic.description }]
+            : [],
+        },
+      ],
 )
 
 const currentQuestion = computed(

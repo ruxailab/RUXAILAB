@@ -4,295 +4,158 @@
 
     <ShowInfo v-if="answers != null && !intro && test">
       <template #content>
-        <div class="ma-0 pa-0">
-          <v-card flat rounded="xl" style="background: #f5f7ff">
-            <v-row v-if="resultHeuristics" class="ma-0 pa-0">
-              <!--Heuristics List-->
-              <v-col class="ma-0 pa-0" cols="2">
-                <v-list border rounded density="compact" height="560px">
-                  <v-list-subheader>{{
-                    $t('Dashboard.cards.heuristics')
-                  }}</v-list-subheader>
-                  <v-divider />
-                  <v-list
-                    color="#fca326"
-                    density="compact"
-                    height="470px"
-                    class="list-scroll"
-                  >
-                    <v-list-item
-                      v-for="(item, i) in test.testStructure"
-                      :key="i"
-                      :value="i"
-                      :active="i === heuristicSelect"
-                      @click="heuristicSelect = i"
-                    >
-                      <template v-if="i === heuristicSelect" #prepend>
-                        <v-icon>mdi-chevron-right</v-icon>
-                      </template>
-                      <v-list-item-title>
-                        {{ `H${item.id + 1} - ${item.title}` }}
-                      </v-list-item-title>
-                    </v-list-item>
-                  </v-list>
-                </v-list>
-              </v-col>
-              <v-divider vertical inset />
-              <!--Questions List-->
-              <v-col
-                v-if="
-                  heuristicSelect !== null &&
-                  test.testStructure[heuristicSelect]
-                "
-                class="ma-0 pa-0"
-                cols="3"
+        <v-card flat rounded="xl">
+          <v-row>
+            <v-col cols="12" md="4">
+              <v-select
+                v-model="heuristicSelect"
+                :items="heuristicItems"
+                item-title="title"
+                item-value="value"
+                :label="$t('Dashboard.cards.heuristics')"
+                variant="outlined"
+                prepend-inner-icon="mdi-format-list-bulleted"
+                hide-details
+              />
+              <v-select
+                v-if="!isTraditional && selectedHeuristic?.questions?.length"
+                v-model="questionSelect"
+                class="mt-3"
+                :items="questionItems"
+                item-title="title"
+                item-value="value"
+                :label="$t('HeuristicsAnalytics.question')"
+                variant="outlined"
+                prepend-inner-icon="mdi-help-circle-outline"
+                hide-details
+              />
+              <v-alert
+                v-else
+                class="mt-3"
+                type="info"
+                variant="tonal"
+                density="compact"
               >
-                <v-list border rounded density="compact" height="560px">
-                  <v-list-subheader>
-                    {{ test.testStructure[heuristicSelect].title }} - Questions
-                  </v-list-subheader>
-                  <v-divider />
-                  <v-list
-                    density="compact"
-                    height="470px"
-                    color="#fca326"
-                    class="list-scroll"
-                  >
-                    <v-list-item
-                      :value="-1"
-                      :active="questionSelect === -1"
-                      @click="questionSelect = -1"
-                    >
-                      <template v-if="questionSelect === -1" #prepend>
-                        <v-icon>mdi-chevron-right</v-icon>
-                      </template>
-                      <v-list-item-title>{{
-                        $t('HeuristicsAnalytics.dataTable')
-                      }}</v-list-item-title>
-                    </v-list-item>
+                {{ $t('HeuristicsAnalytics.heuristicLevelEvidence') }}
+              </v-alert>
 
-                    <v-list-item
-                      v-for="(item, i) in test.testStructure[heuristicSelect]
-                        .questions"
-                      :key="i"
-                      :value="i"
-                      :active="i === questionSelect"
-                      @click="questionSelect = i"
-                    >
-                      <template v-if="i === questionSelect" #prepend>
-                        <v-icon>mdi-chevron-right</v-icon>
-                      </template>
-                      <v-list-item-title>
-                        {{ `Q${item.id + 1} - ${item.title}` }}
-                      </v-list-item-title>
-                    </v-list-item>
-                  </v-list>
-                </v-list>
-              </v-col>
-              <!--Content-->
-              <v-col
-                v-if="
-                  questionSelect !== null &&
-                  heuristicSelect !== null &&
-                  test.testStructure[heuristicSelect]
-                "
-                class="ma-0 pa-0"
-                cols="7"
-              >
-                <v-card border rounded flat height="560px" elevation-0>
-                  <v-list-subheader v-if="questionSelect != -1" class="pa-2">
-                    {{
-                      test.testStructure[heuristicSelect].questions[
-                        questionSelect
-                      ].title
-                    }}
-                  </v-list-subheader>
-                  <v-list-subheader v-else class="pa-2">
-                    {{ $t('HeuristicsAnalytics.dataTable') }}
-                  </v-list-subheader>
-                  <v-divider />
-                  <!-- DATA TABLE CONTENT TYPE -->
-                  <v-row v-if="questionSelect == -1">
-                    <v-col>
-                      <v-text-field
-                        v-model="search"
-                        class="mx-3"
-                        append-icon="mdi-magnify"
-                        label="Search"
-                      />
-                      <v-data-table
-                        class="elevation-1"
-                        :headers="headersHeuristic"
-                        :items="itemsHeuristic"
-                        :search="search"
-                        height="375px"
-                        density="compact"
-                      >
-                        <template
-                          v-for="header in headersHeuristic"
-                          :key="header.value"
-                          #[`item.${header.value}`]="{ item }"
-                        >
-                          <div
-                            v-if="item[header.value]?.uid"
-                            :key="item[header.value].uid"
-                          >
-                            {{ item[header.value].uid }}
-                          </div>
-                          <div
-                            v-else-if="item[header.value]?.heuristicAnswer"
-                            :key="item[header.value].heuristicAnswer.value"
-                          >
-                            <div
-                              v-if="
-                                item[header.value].heuristicAnswer.value == null
-                              "
-                            >
-                              -
-                            </div>
-                            <div v-else>
-                              <v-chip
-                                :class="[
-                                  'answer-chip',
-                                  getAnswerChipClass(
-                                    item[header.value].heuristicAnswer.value,
-                                  ),
-                                ]"
-                                variant="flat"
-                              >
-                                {{ item[header.value].heuristicAnswer.value }}
-                              </v-chip>
-                            </div>
-                          </div>
-                          <div v-else>-</div>
+              <v-row class="mt-2" dense>
+                <v-col cols="4">
+                  <v-sheet class="pa-3 text-center" border rounded>
+                    <div class="text-h5 font-weight-bold">
+                      {{ evidenceSummary.comments }}
+                    </div>
+                    <div class="text-caption">{{ $t('common.comments') }}</div>
+                  </v-sheet>
+                </v-col>
+                <v-col cols="4">
+                  <v-sheet class="pa-3 text-center" border rounded>
+                    <div class="text-h5 font-weight-bold">
+                      {{ evidenceSummary.images }}
+                    </div>
+                    <div class="text-caption">{{ $t('common.images') }}</div>
+                  </v-sheet>
+                </v-col>
+                <v-col cols="4">
+                  <v-sheet class="pa-3 text-center" border rounded>
+                    <div class="text-h5 font-weight-bold">
+                      {{ evidenceSummary.evaluators }}
+                    </div>
+                    <div class="text-caption">
+                      {{ $t('HeuristicsTestAnswer.summary.stats.evaluators') }}
+                    </div>
+                  </v-sheet>
+                </v-col>
+              </v-row>
+            </v-col>
+
+            <v-col cols="12" md="8">
+              <v-card variant="outlined" rounded="lg">
+                <v-card-title class="d-flex align-center">
+                  <span>{{ selectedContentTitle }}</span>
+                  <v-spacer />
+                  <v-chip size="small" color="primary" variant="tonal">
+                    {{ evidenceSummary?.evidence || 0 }}
+                    {{ $t('HeuristicsAnalytics.evidenceItems') }}
+                  </v-chip>
+                </v-card-title>
+                <v-divider />
+                <v-tabs v-model="ind" color="primary">
+                  <v-tab value="comments">
+                    <v-icon start>mdi-comment-text-outline</v-icon>
+                    {{ $t('common.comments') }}
+                  </v-tab>
+                  <v-tab value="images">
+                    <v-icon start>mdi-image-multiple-outline</v-icon>
+                    {{ $t('common.images') }}
+                  </v-tab>
+                  <v-tab v-if="!isTraditional" value="chart">
+                    <v-icon start>mdi-chart-bar</v-icon>
+                    {{ $t('HeuristicsAnalytics.chart') }}
+                  </v-tab>
+                </v-tabs>
+                <v-window v-model="ind" class="pa-4">
+                  <v-window-item value="comments">
+                    <v-list v-if="commentItems.length" lines="three">
+                      <v-list-item v-for="item in commentItems" :key="item.id">
+                        <template #prepend>
+                          <v-avatar color="primary" variant="tonal">
+                            <v-icon>mdi-account-outline</v-icon>
+                          </v-avatar>
                         </template>
-                      </v-data-table>
-                    </v-col>
-                  </v-row>
-                  <v-row v-else class="ma-0 pa-0">
-                    <v-card width="100%" height="560px">
-                      <v-tabs
-                        v-model="ind"
-                        bg-color="transparent"
-                        color="grey-darken-2"
-                        class="mt-2"
-                        align-tabs="center"
+                        <v-list-item-title>{{
+                          item.evaluator
+                        }}</v-list-item-title>
+                        <v-list-item-subtitle class="text-wrap mt-1">
+                          {{ item.text }}
+                        </v-list-item-subtitle>
+                        <template #append>
+                          <span class="text-caption">{{ item.date }}</span>
+                        </template>
+                      </v-list-item>
+                    </v-list>
+                    <v-empty-state
+                      v-else
+                      icon="mdi-comment-off-outline"
+                      :title="$t('HeuristicsAnalytics.noComments')"
+                    />
+                  </v-window-item>
+                  <v-window-item value="images">
+                    <v-row v-if="imageItems.length" dense>
+                      <v-col
+                        v-for="item in imageItems"
+                        :key="item.id"
+                        cols="12"
+                        sm="6"
+                        lg="4"
                       >
-                        <v-tab
-                          class="tab-text"
-                          style="text-transform: none !important"
-                          @click="ind = 0"
-                        >
-                          {{ $t('common.comments') }}
-                        </v-tab>
-                        <v-tab
-                          class="tab-text"
-                          style="text-transform: none !important"
-                          @click="ind = 1"
-                        >
-                          {{ $t('HeuristicsAnalytics.chart') }}
-                        </v-tab>
-                      </v-tabs>
-                      <v-col v-if="ind == 1">
-                        <v-row justify="center">
-                          <v-col cols="10">
-                            <BarChart
-                              v-if="questionGraph"
-                              :labels="questionGraph.label"
-                              :data="questionGraph.data"
-                              legend="Quantity"
-                            />
-                          </v-col>
-                        </v-row>
+                        <v-card variant="outlined">
+                          <v-img :src="item.url" height="180" cover />
+                          <v-card-subtitle>{{
+                            item.evaluator
+                          }}</v-card-subtitle>
+                        </v-card>
                       </v-col>
-                      <v-col v-if="ind == 0">
-                        <v-row
-                          class="list-scroll"
-                          style="height: 430px"
-                          justify="center"
-                        >
-                          <v-col cols="10">
-                            <v-timeline density="compact" align="start">
-                              <v-timeline-item
-                                v-for="(
-                                  itemData, index
-                                ) in processedItemsHeuristic"
-                                :key="index"
-                                fill-dot
-                                dot-color="#fca326"
-                                icon="mdi-message-reply-text"
-                              >
-                                <v-card
-                                  v-if="itemData.hasContent"
-                                  class="elevation-2"
-                                >
-                                  <!-- Display all comments -->
-                                  <template v-if="itemData.comments.length > 0">
-                                    <v-card-text
-                                      v-for="(
-                                        comment, cIndex
-                                      ) in itemData.comments"
-                                      :key="'comment-' + cIndex"
-                                      :class="{
-                                        'border-b':
-                                          cIndex < itemData.comments.length - 1,
-                                      }"
-                                    >
-                                      <v-icon size="small" class="mr-1"
-                                        >mdi-comment</v-icon
-                                      >
-                                      {{ comment.text || comment }}
-                                      <div
-                                        v-if="
-                                          comment.createdAt &&
-                                          comment.createdAt > 0
-                                        "
-                                        class="text-caption text-grey mt-1"
-                                      >
-                                        {{ formatDate(comment.createdAt) }}
-                                      </div>
-                                    </v-card-text>
-                                  </template>
-                                  <!-- Display all images -->
-                                  <v-row
-                                    v-if="itemData.images.length > 0"
-                                    class="pa-2"
-                                  >
-                                    <v-col
-                                      v-for="(
-                                        attachment, iIndex
-                                      ) in itemData.images"
-                                      :key="'attachment-' + iIndex"
-                                      cols="6"
-                                      sm="4"
-                                    >
-                                      <img
-                                        height="200"
-                                        :src="attachment.url || attachment"
-                                        :alt="
-                                          attachment.alt ||
-                                          $t(
-                                            'HeuristicsAnalytics.userUploadedAttachment',
-                                          )
-                                        "
-                                        class="rounded"
-                                        style="object-fit: cover; width: 100%"
-                                      />
-                                    </v-col>
-                                  </v-row>
-                                </v-card>
-                              </v-timeline-item>
-                            </v-timeline>
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                    </v-card>
-                  </v-row>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-card>
-        </div>
+                    </v-row>
+                    <v-empty-state
+                      v-else
+                      icon="mdi-image-off-outline"
+                      :title="$t('HeuristicsAnalytics.noImages')"
+                    />
+                  </v-window-item>
+                  <v-window-item v-if="!isTraditional" value="chart">
+                    <BarChart
+                      v-if="questionGraph"
+                      :labels="questionGraph.label"
+                      :data="questionGraph.data"
+                      legend="Quantity"
+                    />
+                  </v-window-item>
+                </v-window>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-card>
       </template>
     </ShowInfo>
   </div>
@@ -302,23 +165,32 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import BarChart from '@/ux/Heuristic/components/charts/BarChart.vue'
 import IntroAnalytics from '@/shared/components/introduction_cards/IntroAnalytics.vue'
 
 const store = useStore()
 const route = useRoute()
+const { t } = useI18n()
 
 const emit = defineEmits(['goToCoops'])
 
 const search = ref('')
-const ind = ref(0)
+const ind = ref('comments')
 const resultHeuristics = ref([])
 const heuristicSelect = ref(null)
 const questionSelect = ref(null)
 const intro = ref(null)
 
 const test = computed(() => store.getters.test)
+const isTraditional = computed(
+  () =>
+    !test.value?.useWeights &&
+    !test.value?.testOptions?.length &&
+    test.value?.useFrequency !== false &&
+    test.value?.useSeverity !== false,
+)
 
 const answers = computed(() => {
   if (!store.getters.testAnswerDocument) {
@@ -326,6 +198,26 @@ const answers = computed(() => {
   }
   return store.getters.testAnswerDocument.heuristicAnswers
 })
+
+const heuristicItems = computed(() =>
+  (test.value?.testStructure || []).map((heuristic, index) => ({
+    title: `H${heuristic.id + 1} - ${heuristic.title}`,
+    value: index,
+  })),
+)
+
+const selectedHeuristic = computed(() =>
+  heuristicSelect.value === null
+    ? null
+    : test.value?.testStructure?.[heuristicSelect.value],
+)
+
+const questionItems = computed(() =>
+  (selectedHeuristic.value?.questions || []).map((question, index) => ({
+    title: `Q${question.id + 1} - ${question.title}`,
+    value: index,
+  })),
+)
 
 const headersHeuristic = computed(() => {
   const header = [
@@ -353,12 +245,14 @@ const itemsHeuristic = computed(() => {
   const items = []
   if (heuristicSelect.value !== null) {
     Object.values(answers.value).forEach((answer) => {
+      const heuristicAnswer =
+        answer?.heuristicQuestions?.[heuristicSelect.value]
       items.push({
         uid: { uid: answer.userDocId },
         ...Object.fromEntries(
-          Object.entries(
-            answer.heuristicQuestions[heuristicSelect.value].heuristicQuestions,
-          ).map(([id, val]) => [id.toString(), val]),
+          Object.entries(heuristicAnswer?.heuristicQuestions || {}).map(
+            ([id, val]) => [id.toString(), val],
+          ),
         ),
       })
     })
@@ -371,9 +265,13 @@ const processedItemsHeuristic = computed(() => {
     return []
   }
   return itemsHeuristic.value.map((result) => {
-    const questionAnswer = result[questionSelect.value]
-    const comments = getCommentsFromAnswer(questionAnswer)
-    const images = getImagesFromAnswer(questionAnswer)
+    const questionAnswers = isTraditional.value
+      ? Object.values(result)
+          .filter((value) => value?.heuristicAnswer)
+          .flatMap((value) => [value])
+      : [result[questionSelect.value]]
+    const comments = questionAnswers.flatMap(getCommentsFromAnswer)
+    const images = questionAnswers.flatMap(getImagesFromAnswer)
     return {
       result,
       comments,
@@ -381,6 +279,42 @@ const processedItemsHeuristic = computed(() => {
       hasContent: comments.length > 0 || images.length > 0,
     }
   })
+})
+
+const commentItems = computed(() =>
+  processedItemsHeuristic.value.flatMap((item, evaluatorIndex) =>
+    item.comments.map((comment, commentIndex) => ({
+      id: `${evaluatorIndex}-comment-${commentIndex}`,
+      evaluator: item.result?.uid?.uid || `Ev${evaluatorIndex + 1}`,
+      text: comment.text || comment,
+      date: comment.createdAt ? formatDate(comment.createdAt) : '',
+    })),
+  ),
+)
+
+const imageItems = computed(() =>
+  processedItemsHeuristic.value.flatMap((item, evaluatorIndex) =>
+    item.images.map((image, imageIndex) => ({
+      id: `${evaluatorIndex}-image-${imageIndex}`,
+      evaluator: item.result?.uid?.uid || `Ev${evaluatorIndex + 1}`,
+      url: image.url || image,
+    })),
+  ),
+)
+
+const evidenceSummary = computed(() => ({
+  comments: commentItems.value.length,
+  images: imageItems.value.length,
+  evaluators: processedItemsHeuristic.value.length,
+  evidence: commentItems.value.length + imageItems.value.length,
+}))
+
+const selectedContentTitle = computed(() => {
+  if (isTraditional.value) return selectedHeuristic.value?.title || '-'
+  if (questionSelect.value === -1) return t('HeuristicsAnalytics.dataTable')
+  return (
+    selectedHeuristic.value?.questions?.[questionSelect.value]?.title || '-'
+  )
 })
 
 const getCommentsFromAnswer = (questionAnswer) => {
@@ -432,7 +366,9 @@ const getImagesFromAnswer = (questionAnswer) => {
 }
 
 const questionGraph = computed(() => {
-  const { testOptions: options } = test.value
+  const options = Array.isArray(test.value?.testOptions)
+    ? test.value.testOptions
+    : []
 
   const graph = {
     label: [...options.map((op) => op.text)],
@@ -440,11 +376,11 @@ const questionGraph = computed(() => {
   }
 
   if (heuristicSelect.value !== null && questionSelect.value !== null) {
-    Object.values(answers.value).forEach((userAnswer) => {
+    Object.values(answers.value || {}).forEach((userAnswer) => {
       const question =
-        userAnswer.heuristicQuestions[heuristicSelect.value].heuristicQuestions[
-          questionSelect.value
-        ]
+        userAnswer?.heuristicQuestions?.[heuristicSelect.value]
+          ?.heuristicQuestions?.[questionSelect.value]
+      if (!question?.heuristicAnswer) return
 
       const optionSelect = options.find(
         (op) => op.text === question.heuristicAnswer.text,
@@ -496,11 +432,12 @@ watch(
 )
 
 watch(heuristicSelect, () => {
-  questionSelect.value = -1
+  questionSelect.value = isTraditional.value ? 0 : -1
+  ind.value = 'comments'
 })
 
 watch(questionSelect, () => {
-  ind.value = 0
+  ind.value = 'comments'
 })
 
 onMounted(async () => {
