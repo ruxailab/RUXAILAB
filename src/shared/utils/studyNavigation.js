@@ -216,6 +216,8 @@ const NAVIGATION_ITEMS = Object.freeze([
     group: 'analysis',
     icon: 'mdi-file-document',
     capability: C.FINAL_REPORT_MANAGE,
+    visible: (study) =>
+      normalizeStudyType(study?.testType) === STUDY_TYPES.HEURISTIC,
     path: ({ id }) => `/heuristic/finalreport/${id}`,
   },
   {
@@ -223,6 +225,8 @@ const NAVIGATION_ITEMS = Object.freeze([
     group: 'people',
     icon: 'mdi-book-information-variant',
     capability: C.EVALUATOR_INFO_MANAGE,
+    visible: (study) =>
+      normalizeStudyType(study?.testType) === STUDY_TYPES.HEURISTIC,
     path: ({ id }) => `/heuristic/evaluatorinfo/${id}`,
   },
 ])
