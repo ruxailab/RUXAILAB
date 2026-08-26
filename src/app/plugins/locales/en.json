@@ -912,6 +912,7 @@
     "validation": {
       "nameRequired": "Name is mandatory",
       "questionRequired": "The question must be filled",
+      "max100Characters": "Maximum 100 characters",
       "textRequired": "Text is required",
       "positiveValue": "Value must be a positive number",
       "addQuestion": "Please add at least one question to your heuristic"
