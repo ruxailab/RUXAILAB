@@ -712,53 +712,39 @@ async function startCall() {
   }
 }
 
-async function leaveCall() {
-  if (room.value?.localParticipant) {
-    const localParticipant = room.value.localParticipant
+async function stopLocalMediaTracks() {
+  const localParticipant = room.value?.localParticipant
+  if (!localParticipant) return
 
-    if (localParticipant.isCameraEnabled) {
-      await localParticipant.setCameraEnabled(false)
-    }
-    if (localParticipant.isMicrophoneEnabled) {
-      await localParticipant.setMicrophoneEnabled(false)
-    }
-
-    for (const publication of localParticipant.videoTrackPublications.values()) {
-      publication.track?.stop()
-    }
-    for (const publication of localParticipant.audioTrackPublications.values()) {
-      publication.track?.stop()
-    }
-    for (const publication of localParticipant.screenShareTrackPublications.values()) {
-      publication.track?.stop()
-    }
+  if (localParticipant.isCameraEnabled) {
+    await localParticipant.setCameraEnabled(false)
   }
+  if (localParticipant.isMicrophoneEnabled) {
+    await localParticipant.setMicrophoneEnabled(false)
+  }
+  if (localParticipant.isScreenShareEnabled) {
+    await localParticipant.setScreenShareEnabled(false)
+  }
+
+  // Screen share publications live in videoTrackPublications (LiveKit has no
+  // screenShareTrackPublications map).
+  for (const publication of localParticipant.videoTrackPublications.values()) {
+    publication.track?.stop()
+  }
+  for (const publication of localParticipant.audioTrackPublications.values()) {
+    publication.track?.stop()
+  }
+}
+
+async function leaveCall() {
+  await stopLocalMediaTracks()
 
   await disconnect()
   router.push('/admin')
 }
 
 async function endCall() {
-  if (room.value?.localParticipant) {
-    const localParticipant = room.value.localParticipant
-
-    if (localParticipant.isCameraEnabled) {
-      await localParticipant.setCameraEnabled(false)
-    }
-    if (localParticipant.isMicrophoneEnabled) {
-      await localParticipant.setMicrophoneEnabled(false)
-    }
-
-    for (const publication of localParticipant.videoTrackPublications.values()) {
-      publication.track?.stop()
-    }
-    for (const publication of localParticipant.audioTrackPublications.values()) {
-      publication.track?.stop()
-    }
-    for (const publication of localParticipant.screenShareTrackPublications.values()) {
-      publication.track?.stop()
-    }
-  }
+  await stopLocalMediaTracks()
 
   if (!props.isModerator) {
     await disconnect()
