@@ -17,8 +17,10 @@
         icon="mdi-chart-box-outline"
         :type-label="t('manager.dashboard.unmoderatedStudy')"
         type-icon="mdi-account-check-outline"
-        :status-icon="getStatusIcon(test.testStatus)"
-        :status-text="test.testStatus || t('manager.dashboard.active')"
+        :status-icon="getStatusIcon(test.status)"
+        :status-text="
+          getStatusText(test.status) || t('manager.dashboard.active')
+        "
         :modules-title="t('manager.managementModules.title')"
         :modules-description="t('manager.managementModules.description')"
       >
@@ -75,7 +77,7 @@ import {
 import { computed, onMounted, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import { getStatusIcon } from '@/shared/utils/statusUtils'
+import { getStatusIcon, getStatusText } from '@/shared/utils/statusUtils'
 import { useI18n } from 'vue-i18n'
 
 // Manager components

@@ -24,7 +24,7 @@
         :type-label="$t('CardSorting.title')"
         type-icon="mdi-cards"
         :status-icon="getStatusIcon(test.status)"
-        :status-text="test.status || 'active'"
+        :status-text="getStatusText(test.status) || 'active'"
         :modules-title="$t('manager.managementModules.title')"
         :modules-description="$t('manager.managementModules.description')"
       >
@@ -48,7 +48,7 @@ import ManagerDashboardLayout from '@/shared/components/manager/ManagerDashboard
 import CardSortingOverview from '../components/manager/CardSortingOverview.vue'
 import CardSortingInfo from '../components/manager/CardSortingInfo.vue'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
-import { getStatusIcon } from '@/shared/utils/statusUtils'
+import { getStatusIcon, getStatusText } from '@/shared/utils/statusUtils'
 import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'

@@ -14,12 +14,8 @@
         icon="mdi-chart-box-outline"
         :type-label="$t('manager.dashboard.moderatedStudy')"
         type-icon="mdi-account-supervisor-circle"
-        :status-icon="getStatusIcon(test.testStatus)"
-        :status-text="
-          test.testStatus
-            ? $t(`manager.dashboard.${test.testStatus}`)
-            : $t('manager.dashboard.active')
-        "
+        :status-icon="getStatusIcon(test.status)"
+        :status-text="getStatusText(test.status)"
         :modules-title="$t('manager.managementModules.title')"
         :modules-description="$t('manager.managementModules.description')"
       >
@@ -69,7 +65,7 @@ import {
 } from '@/shared/utils/studyNavigation'
 import ManagerDashboardLayout from '@/shared/components/manager/ManagerDashboardLayout.vue'
 import ManagerView from '@/shared/views/template/ManagerView.vue'
-import { getStatusIcon } from '@/shared/utils/statusUtils'
+import { getStatusIcon, getStatusText } from '@/shared/utils/statusUtils'
 import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'

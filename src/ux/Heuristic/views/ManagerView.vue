@@ -26,8 +26,8 @@
         icon="mdi-clipboard-search-outline"
         :type-label="$t('Dashboard.managerView.heuristicStudy')"
         type-icon="mdi-clipboard-search-outline"
-        :status-icon="getStatusIcon(test.testStatus)"
-        :status-text="test.testStatus || 'active'"
+        :status-icon="getStatusIcon(test.status)"
+        :status-text="getStatusText(test.status) || 'active'"
         :modules-title="$t('manager.managementModules.title')"
         :modules-description="$t('manager.managementModules.description')"
       >
@@ -80,7 +80,7 @@ import {
 } from '@/shared/utils/studyAccessPolicy'
 import ManagerDashboardLayout from '@/shared/components/manager/ManagerDashboardLayout.vue'
 import ManagerView from '@/shared/views/template/ManagerView.vue'
-import { getStatusIcon } from '@/shared/utils/statusUtils'
+import { getStatusIcon, getStatusText } from '@/shared/utils/statusUtils'
 import { computed, onMounted, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
