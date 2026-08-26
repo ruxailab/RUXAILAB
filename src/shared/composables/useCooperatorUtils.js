@@ -78,7 +78,10 @@ export const enrichCooperatorInviteEntry = async (entry, dependencies = {}) => {
 }
 
 export const getPredefinedParticipantUserRole = (study) => {
-  if (study?.testType == STUDY_TYPES.HEURISTIC) {
+  if (
+    study?.testType == STUDY_TYPES.HEURISTIC ||
+    study?.testType == STUDY_TYPES.CARD_SORTING
+  ) {
     return STUDY_ROLE.EVALUATOR
   }
 
