@@ -1201,7 +1201,9 @@
       "totalTime": "Total time",
       "lastUpdate": "Last update",
       "averageTime": "Average time per evaluator",
-      "timeStdDev": "Time standard deviation"
+      "timeStdDev": "Time standard deviation",
+      "averageScore": "Average Score",
+      "standardDeviation": "Standard Deviation"
     },
     "statistics": {
       "usabilityPercentage": "Usability Percentage",
@@ -1268,6 +1270,7 @@
         "heuristicsData": "Heuristics Data",
         "answersByEvaluator": "Response Values by Evaluator",
         "answersByHeuristics": "Answers by Heuristics",
+        "timeByHeuristics": "Time by Heuristics",
         "graphic": "Graphic",
         "weights": "Weights"
       },

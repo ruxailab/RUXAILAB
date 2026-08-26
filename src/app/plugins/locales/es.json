@@ -1161,7 +1161,9 @@
       "heuristics": "Heurísticas",
       "analytics": "Análisis",
       "totalTime": "Tiempo total",
-      "lastUpdate": "Última actualización"
+      "lastUpdate": "Última actualización",
+      "averageScore": "Puntuación Promedio",
+      "standardDeviation": "Desviación Estándar"
     },
     "statistics": {
       "usabilityPercentage": "Porcentaje de usabilidad",
@@ -1204,6 +1206,7 @@
         "heuristicsData": "Datos de heurísticas",
         "answersByEvaluator": "Respuestas por evaluador",
         "answersByHeuristics": "Respuestas por heurísticas",
+        "timeByHeuristics": "Tiempo por heurísticas",
         "graphic": "Gráfico",
         "weights": "Pesos"
       },
