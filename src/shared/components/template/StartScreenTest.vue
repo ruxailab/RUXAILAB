@@ -19,10 +19,24 @@
           variant="outlined"
           rounded
           size="x-large"
+          :disabled="disabled"
           @click="startTest"
         >
           {{ $t('buttons.startTest') }}
         </v-btn>
+        <v-alert
+          v-if="alertMessage"
+          type="error"
+          variant="outlined"
+          class="mt-4"
+          color="white"
+          style="
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: white;
+          "
+        >
+          <span class="text-white">{{ alertMessage }}</span>
+        </v-alert>
       </v-col>
     </v-row>
   </div>
@@ -34,6 +48,14 @@ defineProps({
   test: {
     type: Object,
     required: true,
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  alertMessage: {
+    type: String,
+    default: '',
   },
 })
 

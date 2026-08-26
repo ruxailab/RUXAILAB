@@ -91,14 +91,14 @@
                       <h3 class="sorting-column__title">
                         {{ category.title }}
                       </h3>
-                      <p
+                      <div
                         v-if="
                           category.description && options.category_description
                         "
                         class="sorting-column__description"
                       >
-                        {{ category.description }}
-                      </p>
+                        <CategoryDescription :html="category.description" />
+                      </div>
                     </div>
                   </div>
 
@@ -234,11 +234,53 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, defineComponent, h, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import Draggable from 'vuedraggable'
 import CardSortingCard from './CardSortingCard.vue'
+
+const ALLOWED_DESCRIPTION_TAGS = new Set([
+  'P',
+  'STRONG',
+  'B',
+  'EM',
+  'I',
+  'U',
+  'BR',
+  'UL',
+  'OL',
+  'LI',
+])
+
+const renderDescriptionNodes = (nodes) =>
+  Array.from(nodes).flatMap((node) => {
+    if (node.nodeType === Node.TEXT_NODE) return node.textContent
+    if (node.nodeType !== Node.ELEMENT_NODE) return []
+
+    const tag = node.tagName.toUpperCase()
+    if (!ALLOWED_DESCRIPTION_TAGS.has(tag)) {
+      return renderDescriptionNodes(node.childNodes)
+    }
+
+    return h(tag.toLowerCase(), {}, renderDescriptionNodes(node.childNodes))
+  })
+
+const CategoryDescription = defineComponent({
+  props: {
+    html: {
+      type: String,
+      required: true,
+    },
+  },
+  setup(props) {
+    return () => {
+      const template = document.createElement('template')
+      template.innerHTML = props.html
+      return renderDescriptionNodes(template.content.childNodes)
+    }
+  },
+})
 
 const props = defineProps({
   test: {

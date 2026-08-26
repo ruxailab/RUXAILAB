@@ -2326,6 +2326,7 @@
     }
   },
   "CardSorting": {
+    "invalidConfiguration": "Este estudio debe tener al menos una categoría y una tarjeta antes de poder iniciarse.",
     "title": "Card Sorting",
     "noCategory": "Sin categoría",
     "noCards": "No se encontraron tarjetas",

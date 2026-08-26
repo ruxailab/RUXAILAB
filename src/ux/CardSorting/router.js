@@ -6,7 +6,7 @@ import ParticipantsView from '@/shared/views/ParticipantsView.vue'
 import ReportView from '@/shared/views/ReportView.vue'
 import StorageView from '@/shared/views/StorageView.vue'
 import AuditTrailView from '@/shared/views/AuditTrailView.vue'
-import TestView from '@/ux/CardSorting/views/TestView.vue'
+import TestView from '@/views/public/TestView.vue'
 import CardSortingAnswerView from '@/ux/CardSorting/views/CardSortingAnswerView.vue'
 
 export default [

@@ -2418,6 +2418,7 @@
     }
   },
   "CardSorting": {
+    "invalidConfiguration": "This study must have at least one category and one card before it can be started.",
     "title": "Card Sorting",
     "noCategory": "No category",
     "noCards": "No cards found",

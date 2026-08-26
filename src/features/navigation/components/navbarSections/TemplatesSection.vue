@@ -149,6 +149,10 @@ const methodOptions = computed(() => [
     title: t('pages.templates.filters.userModerated'),
     value: METHOD_DEFINITIONS.USER_MODERATED.id,
   },
+  {
+    title: t('methods.definitions.CARD_SORTING'),
+    value: METHOD_DEFINITIONS.CARD_SORTING.id,
+  },
   { title: t('pages.templates.filters.manualAccessibility'), value: 'MANUAL' },
   {
     title: t('pages.templates.filters.automaticAccessibility'),
@@ -199,6 +203,8 @@ const filteredTemplates = computed(() =>
       (method === METHOD_DEFINITIONS.USER_MODERATED.id &&
         testType === STUDY_TYPES.USER &&
         subType === USER_STUDY_SUBTYPES.MODERATED) ||
+      (method === METHOD_DEFINITIONS.CARD_SORTING.id &&
+        testType === STUDY_TYPES.CARD_SORTING) ||
       (method === 'MANUAL' && testType === 'MANUAL') ||
       (method === 'AUTOMATIC' && testType === 'AUTOMATIC')
 

@@ -32,6 +32,11 @@ jest.mock('@/ux/Heuristic/views/HeuristicTestView.vue', () => ({
   template: '<div />',
 }))
 
+jest.mock('@/ux/CardSorting/components/CardSortingTest.vue', () => ({
+  name: 'CardSortingTest',
+  template: '<div />',
+}))
+
 const mountTestView = ({ store, router, route, props = {} }) =>
   shallowMount(TestView, {
     props: {
