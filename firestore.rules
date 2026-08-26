@@ -64,16 +64,7 @@ service cloud.firestore {
         (signedIn() && request.auth.uid == userId);
 
       match /notifications/{notificationId} {
-        allow read: if signedIn() &&
-          request.auth.uid == userId;
-
-        allow create: if false;
-
-        allow update: if signedIn() &&
-          request.auth.uid == userId;
-
-        allow delete: if signedIn() &&
-          request.auth.uid == userId;
+        allow read, write, delete: if signedIn()
       }
     }
 
