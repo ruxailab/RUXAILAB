@@ -131,6 +131,7 @@ service cloud.firestore {
           .hasOnly([
             'taskAnswers',
             'heuristicAnswers',
+            'cardSortingAnswers',
             'studyId'
       		]);
       allow delete: if (

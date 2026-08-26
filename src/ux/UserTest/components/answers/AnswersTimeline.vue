@@ -13,14 +13,13 @@
           </div>
           <div class="d-flex ga-2">
             <v-btn
+              v-if="showExport"
               variant="outlined"
               size="small"
               color="primary"
               @click="$emit('export')"
             >
-              <v-icon start>
-                mdi-download
-              </v-icon>
+              <v-icon start> mdi-download </v-icon>
               Export
             </v-btn>
             <v-btn
@@ -29,9 +28,7 @@
               color="primary"
               @click="$emit('refresh')"
             >
-              <v-icon start>
-                mdi-refresh
-              </v-icon>
+              <v-icon start> mdi-refresh </v-icon>
               Refresh
             </v-btn>
           </div>
@@ -47,8 +44,9 @@
 <script setup>
 import DateChart from '@/ux/UserTest/components/answers/DateChart.vue'
 
-const props = defineProps({
-    taskAnswers: { type: Array, default: () => [] }
+defineProps({
+  taskAnswers: { type: Array, default: () => [] },
+  showExport: { type: Boolean, default: true },
 })
 
 defineEmits(['refresh', 'export'])
@@ -56,14 +54,14 @@ defineEmits(['refresh', 'export'])
 
 <style scoped>
 .chart-container-large {
-    height: 400px;
-    width: 100%;
-    position: relative;
+  height: 400px;
+  width: 100%;
+  position: relative;
 }
 
 @media (max-width: 600px) {
-    .chart-container-large {
-        height: 300px;
-    }
+  .chart-container-large {
+    height: 300px;
+  }
 }
 </style>
