@@ -3571,5 +3571,12 @@
       "title": "No sessions found",
       "description": "Create a session to start inviting staff and participants."
     }
+  },
+  "sessionAnalytics": {
+    "title": "Session Analytics",
+    "evaluators": "Evaluators",
+    "tasksForUser": "Tasks for User {id}",
+    "selectParticipant": "Select a participant to view their tasks.",
+    "close": "Close"
   }
 }

@@ -3491,5 +3491,12 @@
       "title": "No se encontraron sesiones",
       "description": "Crea una sesión para comenzar a invitar personal y participantes."
     }
+  },
+  "sessionAnalytics": {
+    "title": "Analíticas de Sesión",
+    "evaluators": "Evaluadores",
+    "tasksForUser": "Tareas para el Usuario {id}",
+    "selectParticipant": "Selecciona un participante para ver sus tareas.",
+    "close": "Cerrar"
   }
 }
