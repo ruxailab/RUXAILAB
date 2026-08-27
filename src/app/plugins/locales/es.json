@@ -2653,6 +2653,8 @@
       "breakoutInGroup": "Estás en {name}",
       "breakoutActiveSummary": "{count} grupos de trabajo están activos.",
       "breakoutManage": "Gestionar grupos",
+      "backroom": "Sala privada",
+      "backroomHint": "Privado para el facilitador y los observadores: los participantes nunca ven esto.",
       "messagePlaceholder": "Comparte tus ideas...",
       "noMessagesYet": "Aún no hay mensajes. Inicia la discusión.",
       "observerReadonly": "Estás observando esta discusión.",

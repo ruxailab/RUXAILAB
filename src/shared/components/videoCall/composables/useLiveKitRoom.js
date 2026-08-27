@@ -48,6 +48,11 @@ export function useLiveKitRoom({
   cooperators,
   onRemoteModeratorStream,
   onModeratorStatusChange,
+  // Moderated User Test calls join with camera/mic already on, matching its
+  // existing (already-shipped) behavior. Focus Group sessions pass false so
+  // attendees join muted and opt in — kept as a param rather than flipping
+  // the shared default so this only changes Focus Group's join behavior.
+  autoEnableMedia = true,
 }) {
   const { t } = useI18n()
 
@@ -320,6 +325,13 @@ export function useLiveKitRoom({
     if (!navigator.mediaDevices) {
       isCameraEnabled.value = false
       isMicrophoneEnabled.value = false
+      return
+    }
+
+    if (!autoEnableMedia) {
+      // Join muted/camera-off; the attendee opts in via the control bar.
+      isCameraEnabled.value = lkRoom.localParticipant.isCameraEnabled
+      isMicrophoneEnabled.value = lkRoom.localParticipant.isMicrophoneEnabled
       return
     }
 

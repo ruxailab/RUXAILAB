@@ -2745,6 +2745,8 @@
       "breakoutInGroup": "You're in {name}",
       "breakoutActiveSummary": "{count} breakout groups are active.",
       "breakoutManage": "Manage groups",
+      "backroom": "Backroom",
+      "backroomHint": "Private to the facilitator and observers — participants never see this.",
       "messagePlaceholder": "Share your thoughts...",
       "noMessagesYet": "No messages yet. Start the discussion.",
       "observerReadonly": "You are observing this discussion.",
