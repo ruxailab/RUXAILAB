@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="{ 'no-scroll-container': isScrollLocked }">
     <Snackbar />
     <!-- Submit Alert Dialog -->
     <v-dialog v-model="dialog" width="600" persistent>
@@ -424,6 +424,10 @@ const logined = ref(null)
 const fromlink = ref(null)
 const start = ref(true)
 const evaluatorInfoAcknowledged = ref(false)
+
+const isScrollLocked = computed(() => {
+  return start.value || heurisIndex.value === 0
+})
 const index = ref(1)
 const noExistUser = ref(true)
 const heurisIndex = ref(0)

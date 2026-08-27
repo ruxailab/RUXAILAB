@@ -37,3 +37,19 @@ export default {
 }
 </script>
 
+<style>
+html {
+  overflow-y: scroll !important;
+}
+
+html, body {
+  overscroll-behavior-y: none;
+}
+
+.no-scroll-container {
+  height: 100vh !important;
+  max-height: 100vh !important;
+  overflow: hidden !important;
+}
+</style>
+
