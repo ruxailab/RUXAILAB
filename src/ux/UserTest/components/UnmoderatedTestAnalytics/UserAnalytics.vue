@@ -537,13 +537,6 @@
                     </template>
                   </v-data-table>
 
-                  <v-dialog v-model="showSessionAnalytics" fullscreen>
-                    <SessionAnalytics
-                      :tasks="dialogItem.tasks"
-                      :task-select="taskSelect"
-                      @close="showSessionAnalytics = false"
-                    />
-                  </v-dialog>
                   <SessionAnalyticsDialog
                     v-model="showSessionAnalyticsDialog"
                     :user-id="dialogItem.userDocId"
@@ -580,7 +573,6 @@ import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import { formatTime } from '@/shared/utils/timeUtils'
 import TaskDetailsModal from './TaskDetailsModal.vue'
-import SessionAnalytics from '../SessionAnalytics.vue'
 import SessionAnalyticsDialog from '../dialogs/SessionAnalyticsDialog.vue'
 import { useI18n } from 'vue-i18n'
 import { useFilterDefinitions } from './useFilterDefinitions'
@@ -604,7 +596,6 @@ const testTasks = ref([])
 const taskAnswers = ref([])
 const showTaskDetailsModal = ref(false)
 const selectedUserSession = ref(null)
-const showSessionAnalytics = ref(false)
 const showSessionAnalyticsDialog = ref(false)
 
 // Búsqueda por nombre / email
