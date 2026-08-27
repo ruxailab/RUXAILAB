@@ -225,13 +225,7 @@
             </template>
             <v-list density="compact" class="py-0">
               <v-list-item prepend-icon="mdi-eye" @click="viewAnswers(item)">
-                <v-list-item-title>Test detail</v-list-item-title>
-              </v-list-item>
-              <v-list-item
-                prepend-icon="mdi-clipboard-list"
-                @click="showTaskDetails(item)"
-              >
-                <v-list-item-title>Task Details</v-list-item-title>
+                <v-list-item-title>Task detail</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
