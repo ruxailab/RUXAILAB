@@ -23,12 +23,10 @@ module.exports = {
     client: {
       webSocketURL: 'auto://0.0.0.0:0/ws',
       overlay: {
-        // Benign browser advisory (the browser recovers on its own the next
-        // frame); it isn't a bug and shouldn't block the dev overlay.
-        runtimeErrors: (error) =>
-          !/ResizeObserver loop (limit exceeded|completed with undelivered notifications)/.test(
-            error.message,
-          ),
+        warnings: true,
+        // Benign browser warning (not a real error) fired by ResizeObserver
+        // when menus/overlays resize rapidly (e.g. Vuetify v-menu).
+        runtimeErrors: (error) => !/ResizeObserver loop/.test(error.message),
       },
     },
   },

@@ -19,7 +19,10 @@
       <div class="session-header mb-4 text-center">
         <h3 class="session-title mb-2">{{ nextSession.testTitle }}</h3>
         <p class="session-description text-body-2 text-grey-darken-1 mb-3">
-          {{ nextSession.testDescription || 'No description available' }}
+          {{
+            truncateDescription(nextSession.testDescription) ||
+            'No description available'
+          }}
         </p>
         <v-chip
           :color="getStatus(nextSession).variant"
@@ -158,6 +161,11 @@ const props = defineProps({
 })
 
 const router = useRouter()
+
+const truncateDescription = (description) => {
+  if (!description || description.length <= 150) return description
+  return `${description.slice(0, 147)}...`
+}
 
 const getStatus = () => {
   return getSessionStatus(props.nextSession.testDate)

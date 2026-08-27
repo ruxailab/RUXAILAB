@@ -4,6 +4,11 @@ import {
   getMethodCategory,
   getMethodDefinition,
 } from '../constants/methodDefinitions'
+import {
+  getStatusColor,
+  getStatusIcon,
+  getStatusText,
+} from '@/shared/utils/statusUtils'
 
 export function useItemFormatting(type) {
   const { t, ...i18n } = useI18n()
@@ -95,19 +100,9 @@ export function useItemFormatting(type) {
     // status
     if (study.status) {
       tags.push({
-        label: t(`tags.${study.status}`),
-        color:
-          study.status === 'active'
-            ? 'green'
-            : study.status === 'draft'
-              ? 'orange'
-              : 'grey',
-        icon:
-          study.status === 'active'
-            ? 'mdi-check-circle'
-            : study.status === 'draft'
-              ? 'mdi-pencil'
-              : 'mdi-clock-outline',
+        label: getStatusText(study.status),
+        color: getStatusColor(study.status),
+        icon: getStatusIcon(study.status),
       })
     }
 

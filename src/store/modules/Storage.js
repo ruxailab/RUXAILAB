@@ -158,6 +158,24 @@ async function queueFileReferenceRemoval(batch, file) {
     }
   }
 
+  if (
+    file.answerCollection === 'cardSortingAnswers' &&
+    file.answersDocId &&
+    file.userDocId &&
+    file.urlField
+  ) {
+    const answerRef = doc(db, 'answers', file.answersDocId)
+    const updatePayload = {
+      [`cardSortingAnswers.${file.userDocId}.${file.urlField}`]: deleteField(),
+    }
+    if (file.sizeField) {
+      updatePayload[`cardSortingAnswers.${file.userDocId}.${file.sizeField}`] =
+        deleteField()
+    }
+    batch.update(answerRef, updatePayload)
+    hasBatchUpdates = true
+  }
+
   return hasBatchUpdates
 }
 

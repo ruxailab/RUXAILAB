@@ -4,7 +4,10 @@
       v-if="test"
       :test="test"
       :title="test.testTitle || t('focusGroup.dashboard.typeLabel')"
-      :subtitle="test.testDescription || t('focusGroup.dashboard.subtitle')"
+      :subtitle="
+        truncateDescription(test.testDescription) ||
+        t('focusGroup.dashboard.subtitle')
+      "
       icon="mdi-account-group"
       :type-label="t('focusGroup.dashboard.typeLabel')"
       type-icon="mdi-account-group"
@@ -228,6 +231,11 @@ const PREVIEW_TOPIC_LIMIT = 4
 
 const user = computed(() => store.getters.user)
 const test = computed(() => store.getters.test)
+
+const truncateDescription = (description) => {
+  if (!description || description.length <= 150) return description
+  return `${description.slice(0, 147)}...`
+}
 
 // Status chip reflects the study's `status` field (set in Settings).
 // Fall back to 'active' for unset/legacy values so the chip always shows a

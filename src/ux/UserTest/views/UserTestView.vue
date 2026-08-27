@@ -104,7 +104,7 @@
             {{ test.testTitle }}
           </h1>
           <p class="text-body mb-5 text-white text-justify">
-            {{ test.testDescription }}
+            {{ truncateDescription(test.testDescription) }}
           </p>
 
           <!-- Anonymous participant identification -->
@@ -608,6 +608,11 @@ const showStepAnnouncement = ref(false)
 const stepAnnouncementOverlay = ref(null)
 const nextStepAnnouncementTitle = ref('')
 const nextStepAnnouncementKicker = ref('')
+
+const truncateDescription = (description) => {
+  if (!description || description.length <= 150) return description
+  return `${description.slice(0, 147)}...`
+}
 
 const rightView = ref(null)
 const videoRecorder = ref(null)

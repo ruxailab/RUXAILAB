@@ -310,8 +310,8 @@ function validateHeuristic(draft) {
       errors.push(`testStructure[${hIndex}].title is required`)
     }
     const questions = heuristic?.questions
-    if (!Array.isArray(questions) || questions.length < 1) {
-      errors.push(`testStructure[${hIndex}].questions must have at least 1 item`)
+    if (!Array.isArray(questions)) {
+      errors.push(`testStructure[${hIndex}].questions must be an array`)
       return
     }
     questions.forEach((question, qIndex) => {

@@ -1,5 +1,6 @@
 import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
+import { arrayUnion, arrayRemove } from 'firebase/firestore'
 import UserController from '../../features/auth/controllers/UserController'
 import {
   instantiateStudyAnswerByType,
@@ -139,5 +140,33 @@ export default class AnswerController extends Controller {
       [`${base}.transcriptionDocId`]: transcriptionDocId,
     }
     return super.update(COLLECTION, answersDocId, update)
+  }
+
+  async addTaskMarker({ answersDocId, userDocId, taskId, marker }) {
+    const fieldPath = `taskAnswers.${userDocId}.tasks.${taskId}.markers`
+    return super.update(COLLECTION, answersDocId, {
+      [fieldPath]: arrayUnion(marker),
+    })
+  }
+
+  async removeTaskMarker({ answersDocId, userDocId, taskId, marker }) {
+    const fieldPath = `taskAnswers.${userDocId}.tasks.${taskId}.markers`
+    return super.update(COLLECTION, answersDocId, {
+      [fieldPath]: arrayRemove(marker),
+    })
+  }
+
+  async addTaskSegment({ answersDocId, userDocId, taskId, segment }) {
+    const fieldPath = `taskAnswers.${userDocId}.tasks.${taskId}.segments`
+    return super.update(COLLECTION, answersDocId, {
+      [fieldPath]: arrayUnion(segment),
+    })
+  }
+
+  async removeTaskSegment({ answersDocId, userDocId, taskId, segment }) {
+    const fieldPath = `taskAnswers.${userDocId}.tasks.${taskId}.segments`
+    return super.update(COLLECTION, answersDocId, {
+      [fieldPath]: arrayRemove(segment),
+    })
   }
 }

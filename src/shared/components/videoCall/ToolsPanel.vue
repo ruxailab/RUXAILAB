@@ -24,7 +24,7 @@
               color="orange"
               class="ml-1"
             >
-              {{ t('videoCall.panel.observator') }}
+              {{ $t('videoCall.panel.observator') }}
             </v-chip>
             <v-chip
               v-else-if="member.role === 'moderator'"
@@ -32,7 +32,7 @@
               color="blue"
               class="ml-1"
             >
-              {{ t('videoCall.panel.moderator') }}
+              {{ $t('videoCall.panel.moderator') }}
             </v-chip>
           </span>
           <div class="participant-status">
@@ -53,7 +53,7 @@
     </div>
 
     <div v-if="safeParticipantList.length" class="panel-section">
-      <h4>{{ t('videoCall.panel.participants') }}</h4>
+      <h4>{{ $t('videoCall.panel.participants') }}</h4>
       <div
         v-for="participant in safeParticipantList"
         :key="participant.id"
@@ -81,7 +81,7 @@
           <span class="participant-name">
             {{
               participant.name +
-              (participant.isSelf ? ` (${t('videoCall.panel.you')})` : '')
+              (participant.isSelf ? ` (${$t('videoCall.panel.you')})` : '')
             }}
 
             <v-chip
@@ -90,7 +90,7 @@
               color="orange"
               class="ml-1"
             >
-              {{ t('videoCall.panel.observator') }}
+              {{ $t('videoCall.panel.observator') }}
             </v-chip>
 
             <v-chip
@@ -99,7 +99,7 @@
               color="blue"
               class="ml-1"
             >
-              {{ t('videoCall.panel.moderator') }}
+              {{ $t('videoCall.panel.moderator') }}
             </v-chip>
           </span>
           <div class="participant-status">
@@ -127,7 +127,6 @@ import { computed } from 'vue'
 const props = defineProps({
   staffList: { type: Array, default: () => [] },
   participantList: { type: Array, default: () => [] },
-  t: Function,
 })
 
 const safeStaffList = computed(() =>

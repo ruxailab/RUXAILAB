@@ -38,7 +38,6 @@
             :rules="[rules.required]"
             :label="$t('auth.SIGNIN.password')"
             :type="showPassword ? 'text' : 'password'"
-            placeholder="••••••••"
             prepend-inner-icon="mdi-lock-outline"
             :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
             variant="outlined"

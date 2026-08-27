@@ -106,40 +106,54 @@
             cols="12"
             sm="6"
             md="3"
+            class="coming-soon-wrapper"
           >
-            <UxMetricCard
-              :value="card.metric"
-              :label="card.title"
-              :color="card.color"
-              :icon="card.icon"
-              :description="card.description"
-              :progress="card.progress"
+            <v-chip
+              color="warning"
+              size="small"
+              variant="outlined"
+              class="coming-soon-badge"
             >
-              <template #value>
-                <div
-                  class="summary-highlight-value mb-2"
-                  :class="card.valueClass"
-                >
-                  {{ card.value }}
-                </div>
-                <div class="summary-highlight-metric" :class="card.metricClass">
-                  {{ card.metric }}
-                </div>
-              </template>
+              Coming Soon
+            </v-chip>
+            <div class="coming-soon-overlay h-100">
+              <UxMetricCard
+                :value="card.metric"
+                :label="card.title"
+                :color="card.color"
+                :icon="card.icon"
+                :description="card.description"
+                :progress="card.progress"
+              >
+                <template #value>
+                  <div
+                    class="summary-highlight-value mb-2"
+                    :class="card.valueClass"
+                  >
+                    {{ card.value }}
+                  </div>
+                  <div
+                    class="summary-highlight-metric"
+                    :class="card.metricClass"
+                  >
+                    {{ card.metric }}
+                  </div>
+                </template>
 
-              <template #label>
-                <span
-                  class="text-overline font-weight-bold text-medium-emphasis"
-                >
-                  {{ card.title }}
-                </span>
-              </template>
-              <template #description>
-                <span class="kpi-description-clamp">
-                  {{ card.description }}
-                </span>
-              </template>
-            </UxMetricCard>
+                <template #label>
+                  <span
+                    class="text-overline font-weight-bold text-medium-emphasis"
+                  >
+                    {{ card.title }}
+                  </span>
+                </template>
+                <template #description>
+                  <span class="kpi-description-clamp">
+                    {{ card.description }}
+                  </span>
+                </template>
+              </UxMetricCard>
+            </div>
           </v-col>
         </v-row>
 
@@ -157,101 +171,128 @@
             v-if="showFacialSignal"
             cols="12"
             :md="showSingleSignal ? 12 : 6"
+            class="coming-soon-wrapper"
           >
-            <SelectionPieChart
-              question-title="Facial Sentiment"
-              :options="sentimentOptions"
-              :counts="facialSentimentCounts"
-              canvas-id="facial-sentiment-chart"
-              :chart-colors="sentimentChartColors"
-              :show-percentages="true"
-            />
+            <v-chip
+              color="warning"
+              size="small"
+              variant="outlined"
+              class="coming-soon-badge"
+            >
+              Coming Soon
+            </v-chip>
+            <div class="coming-soon-overlay">
+              <SelectionPieChart
+                question-title="Facial Sentiment"
+                :options="sentimentOptions"
+                :counts="facialSentimentCounts"
+                canvas-id="facial-sentiment-chart"
+                :chart-colors="sentimentChartColors"
+                :show-percentages="true"
+              />
+            </div>
           </v-col>
 
           <v-col
             v-if="showTextSignal"
             cols="12"
             :md="showSingleSignal ? 12 : 6"
+            class="coming-soon-wrapper"
           >
-            <SelectionPieChart
-              question-title="Text Sentiment"
-              :options="sentimentOptions"
-              :counts="textSentimentCounts"
-              canvas-id="text-sentiment-chart"
-              :chart-colors="sentimentChartColors"
-              :show-percentages="true"
-            />
+            <v-chip
+              color="warning"
+              size="small"
+              variant="outlined"
+              class="coming-soon-badge"
+            >
+              Coming Soon
+            </v-chip>
+            <div class="coming-soon-overlay">
+              <SelectionPieChart
+                question-title="Text Sentiment"
+                :options="sentimentOptions"
+                :counts="textSentimentCounts"
+                canvas-id="text-sentiment-chart"
+                :chart-colors="sentimentChartColors"
+                :show-percentages="true"
+              />
+            </div>
           </v-col>
         </v-row>
 
         <v-card elevation="2" style="border-radius: 12px" class="mb-4 pa-6">
           <div class="mb-4 d-flex justify-space-between align-center">
             <h4 class="font-weight-bold mb-2">Sentiment by Task</h4>
+            <v-chip color="warning" size="small" variant="outlined">
+              Coming Soon
+            </v-chip>
           </div>
 
-          <v-alert
-            v-if="sentimentByTask.length === 0"
-            type="info"
-            variant="tonal"
-            class="mb-0"
-          >
-            No tasks with webcam or audio recording enabled in this test.
-          </v-alert>
+          <div class="coming-soon-overlay">
+            <v-alert
+              v-if="sentimentByTask.length === 0"
+              type="info"
+              variant="tonal"
+              class="mb-0"
+            >
+              No tasks with webcam or audio recording enabled in this test.
+            </v-alert>
 
-          <v-data-table
-            v-else
-            :headers="visibleTaskSentimentHeaders"
-            :items="filteredSentimentByTask"
-            :items-per-page="10"
-            class="elevation-0"
-          >
-            <template #item.task="{ item }">
-              <div class="font-weight-medium">Task {{ item.number }}</div>
-              <div class="text-body-2 text-medium-emphasis">
-                {{ item.name }}
-              </div>
-            </template>
-
-            <template #item.facial="{ item }">
-              <div class="sentiment-table-cell py-2">
-                <v-progress-linear
-                  :model-value="item.facialPositive"
-                  color="success"
-                  bg-color="error"
-                  bg-opacity="0.2"
-                  height="10"
-                  rounded
-                  class="mb-2"
-                />
-                <div
-                  class="d-flex justify-space-between text-caption text-medium-emphasis"
-                >
-                  <span>Positive {{ item.facialPositive }}%</span>
-                  <span>Negative {{ item.facialNegative }}%</span>
+            <v-data-table
+              v-else
+              :headers="visibleTaskSentimentHeaders"
+              :items="filteredSentimentByTask"
+              :items-per-page="10"
+              class="elevation-0"
+            >
+              <template #item.task="{ item }">
+                <div class="font-weight-medium">Task {{ item.number }}</div>
+                <div class="text-body-2 text-medium-emphasis">
+                  {{ item.name }}
                 </div>
-              </div>
-            </template>
+              </template>
 
-            <template #item.text="{ item }">
-              <div class="sentiment-table-cell py-2">
-                <v-progress-linear
-                  :model-value="item.textPositive"
-                  color="success"
-                  bg-color="error"
-                  bg-opacity="0.2"
-                  height="10"
-                  rounded
-                  class="mb-2"
-                />
-                <div
-                  class="d-flex justify-space-between text-caption text-medium-emphasis"
-                >
-                  <span>Positive {{ item.textPositive }}%</span>
-                  <span>Negative {{ item.textNegative }}%</span>
+              <template #item.facial="{ item }">
+                <div class="sentiment-table-cell py-2">
+                  <v-progress-linear
+                    :model-value="item.facialPositive"
+                    color="success"
+                    bg-color="error"
+                    bg-opacity="0.2"
+                    height="10"
+                    rounded
+                    class="mb-2"
+                  />
+                  <div
+                    class="d-flex justify-space-between text-caption text-medium-emphasis"
+                  >
+                    <span>Positive {{ item.facialPositive }}%</span>
+                    <span>Negative {{ item.facialNegative }}%</span>
+                  </div>
                 </div>
-              </div>
-            </template>
-          </v-data-table>
+              </template>
+
+              <template #item.text="{ item }">
+                <div class="sentiment-table-cell py-2">
+                  <v-progress-linear
+                    :model-value="item.textPositive"
+                    color="success"
+                    bg-color="error"
+                    bg-opacity="0.2"
+                    height="10"
+                    rounded
+                    class="mb-2"
+                  />
+                  <div
+                    class="d-flex justify-space-between text-caption text-medium-emphasis"
+                  >
+                    <span>Positive {{ item.textPositive }}%</span>
+                    <span>Negative {{ item.textNegative }}%</span>
+                  </div>
+                </div>
+              </template>
+            </v-data-table>
+          </div>
         </v-card>
       </div>
     </div>
@@ -523,6 +564,36 @@ const showSingleSignal = computed(
 </script>
 
 <style scoped>
+.coming-soon-wrapper {
+  position: relative;
+}
+
+.coming-soon-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 2;
+}
+
+.coming-soon-overlay {
+  position: relative;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.coming-soon-overlay::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(248, 249, 250, 0.8);
+  backdrop-filter: blur(0.5px);
+  border-radius: 12px;
+  z-index: 1;
+}
+
 .summary-highlight-value {
   font-size: 1.55rem;
   font-weight: 700;

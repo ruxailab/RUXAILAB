@@ -4,27 +4,27 @@
       <div class="control-bar-left"></div>
 
       <div class="control-buttons-container">
-        <template v-if="!props.isObservator">
+        <template v-if="!isObservator">
           <v-tooltip location="top">
             <template #activator="{ props: tooltipProps }">
               <v-btn
                 v-bind="tooltipProps"
                 :class="{
-                  'control-btn-disabled': !props.isCameraEnabled,
-                  'control-btn-enabled': props.isCameraEnabled,
+                  'control-btn-disabled': !isCameraEnabled,
+                  'control-btn-enabled': isCameraEnabled,
                 }"
                 class="control-btn"
                 icon
                 size="large"
-                @click="props.toggleCamera"
+                @click="toggleCamera"
               >
                 <v-icon size="28">{{
-                  props.isCameraEnabled ? 'mdi-video' : 'mdi-video-off'
+                  isCameraEnabled ? 'mdi-video' : 'mdi-video-off'
                 }}</v-icon>
               </v-btn>
             </template>
             <span>{{
-              props.isCameraEnabled ? 'Turn off camera' : 'Turn on camera'
+              isCameraEnabled ? 'Turn off camera' : 'Turn on camera'
             }}</span>
           </v-tooltip>
 
@@ -33,23 +33,23 @@
               <v-btn
                 v-bind="tooltipProps"
                 :class="{
-                  'control-btn-disabled': !props.isMicrophoneEnabled,
-                  'control-btn-enabled': props.isMicrophoneEnabled,
+                  'control-btn-disabled': !isMicrophoneEnabled,
+                  'control-btn-enabled': isMicrophoneEnabled,
                 }"
                 class="control-btn"
                 icon
                 size="large"
-                @click="props.toggleMicrophone"
+                @click="toggleMicrophone"
               >
                 <v-icon size="28">{{
-                  props.isMicrophoneEnabled
+                  isMicrophoneEnabled
                     ? 'mdi-microphone'
                     : 'mdi-microphone-off'
                 }}</v-icon>
               </v-btn>
             </template>
             <span>{{
-              props.isMicrophoneEnabled
+              isMicrophoneEnabled
                 ? 'Mute microphone'
                 : 'Unmute microphone'
             }}</span>
@@ -60,37 +60,37 @@
               <v-btn
                 v-bind="tooltipProps"
                 :class="{
-                  'control-btn-active': props.isSharingScreen,
-                  'control-btn-enabled': !props.isSharingScreen,
+                  'control-btn-active': isSharingScreen,
+                  'control-btn-enabled': !isSharingScreen,
                 }"
                 class="control-btn"
                 icon
                 size="large"
-                @click="props.toggleScreenShare"
+                @click="toggleScreenShare"
               >
                 <v-icon size="28">{{
-                  props.isSharingScreen
+                  isSharingScreen
                     ? 'mdi-monitor-off'
                     : 'mdi-monitor-screenshot'
                 }}</v-icon>
               </v-btn>
             </template>
             <span>{{
-              props.isSharingScreen ? 'Stop sharing screen' : 'Share screen'
+              isSharingScreen ? 'Stop sharing screen' : 'Share screen'
             }}</span>
           </v-tooltip>
         </template>
       </div>
 
       <div class="control-bar-right">
-        <v-tooltip v-if="props.caller && !props.callStarted" location="top">
+        <v-tooltip v-if="caller && !callStarted" location="top">
           <template #activator="{ props: tooltipProps }">
             <v-btn
               v-bind="tooltipProps"
               color="success"
               class="control-btn control-btn-primary me-2"
               size="large"
-              @click="props.startCall"
+              @click="startCall"
             >
               <v-icon start size="20">mdi-video-plus</v-icon>
               Open Room
@@ -99,14 +99,14 @@
           <span>Start the video call session</span>
         </v-tooltip>
 
-        <v-tooltip v-if="props.caller && props.callStarted" location="top">
+        <v-tooltip v-if="caller && callStarted" location="top">
           <template #activator="{ props: tooltipProps }">
             <v-btn
               v-bind="tooltipProps"
               color="error"
               class="control-btn control-btn-danger me-2"
               size="large"
-              @click="props.endCall"
+              @click="endCall"
             >
               <v-icon start size="20">mdi-phone-hangup</v-icon>
               End Call
@@ -116,7 +116,7 @@
         </v-tooltip>
 
         <v-tooltip
-          v-if="(props.isObservator || !props.caller) && canLeaveCall"
+          v-if="(isObservator || !caller) && canLeaveCall"
           location="top"
         >
           <template #activator="{ props: tooltipProps }">
@@ -125,7 +125,7 @@
               color="error"
               class="control-btn control-btn-danger me-2"
               size="large"
-              @click="props.leaveCall"
+              @click="leaveCall"
             >
               <v-icon start size="20">mdi-phone-hangup</v-icon>
               Leave Call
@@ -139,22 +139,22 @@
             <v-btn
               v-bind="tooltipProps"
               :class="{
-                'control-btn-active': props.notesDrawerOpen,
-                'control-btn-enabled': !props.notesDrawerOpen,
+                'control-btn-active': notesDrawerOpen,
+                'control-btn-enabled': !notesDrawerOpen,
               }"
               class="control-btn secondary-control-btn"
               icon
               size="large"
-              @click="props.toggleNotesDrawer"
+              @click="toggleNotesDrawer"
             >
               <v-badge
-                :content="props.notesCount"
-                :model-value="props.notesCount > 0"
+                :content="notesCount"
+                :model-value="notesCount > 0"
                 color="error"
               >
                 <v-icon size="28">
                   {{
-                    props.notesDrawerOpen
+                    notesDrawerOpen
                       ? 'mdi-notebook-edit'
                       : 'mdi-notebook-outline'
                   }}
@@ -162,27 +162,27 @@
               </v-badge>
             </v-btn>
           </template>
-          <span>{{ props.notesDrawerOpen ? 'Hide notes' : 'Show notes' }}</span>
+          <span>{{ notesDrawerOpen ? 'Hide notes' : 'Show notes' }}</span>
         </v-tooltip>
 
-        <v-tooltip v-if="!props.isObservator" location="top">
+        <v-tooltip v-if="!isObservator" location="top">
           <template #activator="{ props: tooltipProps }">
             <v-btn
               v-bind="tooltipProps"
               :class="{
-                'control-btn-active': props.showStepperPanel,
-                'control-btn-enabled': !props.showStepperPanel,
+                'control-btn-active': showStepperPanel,
+                'control-btn-enabled': !showStepperPanel,
               }"
               class="control-btn secondary-control-btn"
               icon
               size="large"
-              @click="props.toggleStepperPanel"
+              @click="toggleStepperPanel"
             >
               <v-icon size="28">mdi-format-list-numbered</v-icon>
             </v-btn>
           </template>
           <span>{{
-            props.showStepperPanel ? 'Hide steps' : 'Show steps'
+            showStepperPanel ? 'Hide steps' : 'Show steps'
           }}</span>
         </v-tooltip>
 
@@ -191,18 +191,18 @@
             <v-btn
               v-bind="tooltipProps"
               :class="{
-                'control-btn-active': props.showSidePanel,
-                'control-btn-enabled': !props.showSidePanel,
+                'control-btn-active': showSidePanel,
+                'control-btn-enabled': !showSidePanel,
               }"
               class="control-btn secondary-control-btn"
               icon
               size="large"
-              @click="props.toggleSidePanel"
+              @click="toggleSidePanel"
             >
               <v-icon size="28">mdi-account-group</v-icon>
             </v-btn>
           </template>
-          <span>{{ props.showSidePanel ? 'Hide panel' : 'Show panel' }}</span>
+          <span>{{ showSidePanel ? 'Hide panel' : 'Show panel' }}</span>
         </v-tooltip>
 
         <v-menu
