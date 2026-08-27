@@ -24,12 +24,11 @@ module.exports = {
       webSocketURL: 'auto://0.0.0.0:0/ws',
       overlay: {
         errors: true,
-        warnings: false,
+        warnings: true,
+        // Benign browser warning (not a real error) fired by ResizeObserver
+        // when menus/overlays resize rapidly (e.g. Vuetify v-menu).
         runtimeErrors: (error) =>
-          !error?.message?.includes(
-            'ResizeObserver loop completed with undelivered notifications',
-          ) &&
-          !error?.message?.includes('ResizeObserver loop limit exceeded'),
+          !/ResizeObserver loop/.test(error?.message ?? ''),
       },
     },
   },

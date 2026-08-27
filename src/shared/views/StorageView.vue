@@ -60,13 +60,13 @@
                   {{ t('storage.storageAnalysis') }}
                 </div>
                 <div class="text-caption text-medium-emphasis">
-                  {{ t('storage.accountStorage') }}
+                  {{ t('storage.studyStorageUsed') }}
                 </div>
               </div>
               <div class="d-flex align-center ga-2">
                 <div class="text-right">
                   <div class="text-subtitle-2 font-weight-bold">
-                    {{ formatBytes(accountUsedBytes) }}
+                    {{ formatBytes(studyUsedBytes) }}
                   </div>
                   <!-- <div class="text-caption text-medium-emphasis">
                     / {{ formatBytes(storageQuotaBytes) }}
@@ -88,8 +88,8 @@
               </div>
             </div>
             <v-progress-linear
-              :model-value="accountUsagePercentage"
-              :color="usageColor"
+              :model-value="studyUsagePercentage"
+              :color="studyUsageColor"
               height="8"
               rounded
             />
@@ -530,9 +530,9 @@ const {
   isVideo,
   typeFilterOptions,
   filteredFiles,
-  accountUsedBytes,
-  accountUsagePercentage,
-  usageColor,
+  studyUsedBytes,
+  studyUsagePercentage,
+  studyUsageColor,
   typeBreakdown,
   unknownSizeCount,
   summaryMetrics,
@@ -543,7 +543,7 @@ const {
   executeDelete,
 } = useStorageFiles()
 
-const recordingTypes = ['webcam', 'screen', 'audio']
+const recordingTypes = ['webcam', 'screen', 'video', 'audio']
 
 const recordingBreakdown = computed(() =>
   recordingTypes
