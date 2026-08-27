@@ -29,5 +29,8 @@ The included Firebase Functions implement the production flow through OpenRouter
 `AGENTS_RESPONSE_OPENROUTER_API_KEY` and optionally `OPENROUTER_MODEL` in the Functions environment, then
 deploy `listAgentModels`, `fetchHeuristicPage` and `evaluateHeuristicPage`. Activate
 an agent in a heuristic test, enter the target URL and press **Evaluar**. The resulting answer
-is stored in the existing `heuristicAnswers` map. Never expose the key in a `VUE_APP_*`
+is stored in the existing `heuristicAnswers` map. When visual proof is useful, the agent may
+request a screenshot of a specific element. The backend captures it, stores it in Firebase
+Storage, and attaches it to the corresponding answer; screenshot failures do not discard the
+text evaluation. Never expose the key in a `VUE_APP_*`
 variable because those values are bundled into the browser application.

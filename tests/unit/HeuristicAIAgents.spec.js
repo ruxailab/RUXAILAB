@@ -69,6 +69,11 @@ describe('Heuristic AI agents', () => {
           answer: 2,
           comment: 'The label is unclear.',
           evidence: ['button[aria-label="Save"]'],
+          screenshot: {
+            url: 'https://example.com/evidence.png',
+            selector: 'button[aria-label="Save"]',
+            createdAt: 40,
+          },
         },
       ]),
     }
@@ -108,6 +113,15 @@ describe('Heuristic AI agents', () => {
       answer.toFirestore().heuristicQuestions[0].heuristicQuestions[0]
         .comments[0].text,
     ).toContain('button[aria-label="Save"]')
+    expect(
+      answer.toFirestore().heuristicQuestions[0].heuristicQuestions[0].images,
+    ).toEqual([
+      {
+        id: 'ai-screenshot-h1-q1',
+        url: 'https://example.com/evidence.png',
+        createdAt: 40,
+      },
+    ])
   })
 
   it.each([

@@ -113,11 +113,23 @@ const buildQuestionAnswer = ({
         },
       ]
     : []
+  const screenshot = decision.screenshot
+  const images = screenshot?.url
+    ? [
+        {
+          id: `ai-screenshot-${heuristicId}-${questionId}`,
+          url: screenshot.url,
+          createdAt: screenshot.createdAt || now(),
+        },
+      ]
+    : []
   return new HeuristicQuestionAnswer({
     heuristicId: questionId,
     heuristicAnswer: answer,
     heuristicComment: comment,
+    answerImageUrl: images[0]?.url || '',
     comments,
+    images,
   })
 }
 

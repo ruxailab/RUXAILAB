@@ -1,4 +1,5 @@
 import dns from 'node:dns/promises'
+import { randomUUID } from 'node:crypto'
 import { existsSync } from 'node:fs'
 import net from 'node:net'
 import puppeteer from 'puppeteer-core'
@@ -11,6 +12,10 @@ const MAX_TREE_CHARS = 500_000
 // 2,400 tokens and leave an incomplete JSON document (finish_reason=length).
 const MAX_COMPLETION_TOKENS = 4_000
 const QUESTIONS_PER_BATCH = 4
+const SINGLE_QUESTION_RETRIES = 2
+const FALLBACK_QUESTION_CONCURRENCY = 2
+const MAX_SCREENSHOTS_PER_EVALUATION = 6
+const MAX_SCREENSHOT_SELECTOR_LENGTH = 500
 const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1'
 const LOCAL_CHROME_PATHS = [
   '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
@@ -137,11 +142,28 @@ const validateDecisions = (decisions, questions, options, answerMode) => {
   return received.size === expected.size
 }
 
-const extractDecisionArray = (result) => {
+const extractDecisionArray = (result, expectedCount) => {
   if (Array.isArray(result)) return result
   if (!result || typeof result !== 'object') return null
   if (Array.isArray(result.decisions)) return result.decisions
-  return Object.values(result).find((value) => Array.isArray(value)) || null
+  // Some OpenRouter routes ignore the requested wrapper for a single item and
+  // return the decision object directly. Do not mistake `evidence` for the
+  // decisions array.
+  if (
+    expectedCount === 1 &&
+    'heuristicId' in result &&
+    'questionId' in result
+  ) {
+    return [result]
+  }
+  return (
+    Object.values(result).find(
+      (value) =>
+        Array.isArray(value) &&
+        value.length === expectedCount &&
+        value.every((item) => item && typeof item === 'object'),
+    ) || null
+  )
 }
 
 const normalizeDecisions = (rawDecisions, questions, options, answerMode) => {
@@ -167,6 +189,12 @@ const normalizeDecisions = (rawDecisions, questions, options, answerMode) => {
       evidence: Array.isArray(decision.evidence)
         ? decision.evidence.map(String).slice(0, 3)
         : [],
+      screenshotSelector:
+        typeof decision.screenshotSelector === 'string'
+          ? decision.screenshotSelector
+              .trim()
+              .slice(0, MAX_SCREENSHOT_SELECTOR_LENGTH)
+          : '',
     }
 
     if (answerMode === 'customOptions') {
@@ -246,6 +274,10 @@ const buildResponseSchema = (questions, options, answerMode) => {
                 maxItems: 3,
                 items: { type: 'string' },
               },
+              screenshotSelector: {
+                type: 'string',
+                maxLength: MAX_SCREENSHOT_SELECTOR_LENGTH,
+              },
             },
             required: [
               'heuristicId',
@@ -253,6 +285,7 @@ const buildResponseSchema = (questions, options, answerMode) => {
               ...answerSchema.required,
               'comment',
               'evidence',
+              'screenshotSelector',
             ],
             additionalProperties: false,
           },
@@ -288,7 +321,7 @@ const buildOpenRouterRequest = ({
       messages: [
         {
           role: 'system',
-          content: `${agent.systemPrompt || 'Actúa como evaluador experto en usabilidad.'}\nResponde únicamente con el JSON exigido por el esquema. Conserva exactamente los heuristicId y questionId recibidos y crea una sola decisión por pregunta. El modo de respuesta es "${answerMode}". Si es customOptions, usa en answer únicamente uno de los valores proporcionados en options. Para frequency o severity usa una escala entera de 0 a 4 y completa solo los campos exigidos por el esquema. Basa toda afirmación en evidencias del árbol web. Sé conciso: limita comment a dos frases y evidence a un máximo de tres fragmentos breves por pregunta.`,
+          content: `${agent.systemPrompt || 'Actúa como evaluador experto en usabilidad.'}\nResponde únicamente con el JSON exigido por el esquema. Conserva exactamente los heuristicId y questionId recibidos y crea una sola decisión por pregunta. El modo de respuesta es "${answerMode}". Si es customOptions, usa en answer únicamente uno de los valores proporcionados en options. Para frequency o severity usa una escala entera de 0 a 4 y completa solo los campos exigidos por el esquema. Basa toda afirmación en evidencias del árbol web. Sé conciso: limita comment a dos frases y evidence a un máximo de tres fragmentos breves por pregunta. Usa screenshotSelector solo cuando una captura aporte evidencia visual necesaria para validar el comentario; debe ser un selector CSS específico construible con los atributos del árbol web. En caso contrario devuelve una cadena vacía.`,
         },
         {
           role: 'user',
@@ -374,7 +407,7 @@ const getResponseKeys = (result) => {
   return Object.keys(result).slice(0, 10)
 }
 
-const evaluateQuestionBatch = async ({
+const requestQuestionBatch = async ({
   agent,
   apiKey,
   model,
@@ -398,7 +431,7 @@ const evaluateQuestionBatch = async ({
   handleOpenRouterError(response, errorPayload)
   const { choice, result } = await parseOpenRouterResult(response, model)
   const decisions = normalizeDecisions(
-    extractDecisionArray(result),
+    extractDecisionArray(result, questions.length),
     questions,
     options,
     answerMode,
@@ -417,6 +450,62 @@ const evaluateQuestionBatch = async ({
     )
   }
   return decisions
+}
+
+const isRecoverableModelError = (error) =>
+  error instanceof functions.https.HttpsError &&
+  ['data-loss', 'resource-exhausted'].includes(error.code)
+
+const evaluateSingleQuestion = async (context) => {
+  let lastError
+  for (let attempt = 0; attempt <= SINGLE_QUESTION_RETRIES; attempt += 1) {
+    try {
+      return await requestQuestionBatch(context)
+    } catch (error) {
+      lastError = error
+      if (!isRecoverableModelError(error) || attempt === SINGLE_QUESTION_RETRIES)
+        throw error
+      await wait(500 * 2 ** attempt)
+    }
+  }
+  throw lastError
+}
+
+const evaluateQuestionsIndividually = async (context) => {
+  const results = new Array(context.questions.length)
+  let nextIndex = 0
+  const worker = async () => {
+    while (nextIndex < context.questions.length) {
+      const index = nextIndex
+      nextIndex += 1
+      results[index] = await evaluateSingleQuestion({
+        ...context,
+        questions: [context.questions[index]],
+      })
+    }
+  }
+  const workerCount = Math.min(
+    FALLBACK_QUESTION_CONCURRENCY,
+    context.questions.length,
+  )
+  await Promise.all(Array.from({ length: workerCount }, worker))
+  return results.flat()
+}
+
+const evaluateQuestionBatch = async (context) => {
+  try {
+    return await requestQuestionBatch(context)
+  } catch (error) {
+    if (!isRecoverableModelError(error)) throw error
+    if (context.questions.length === 1) {
+      return evaluateSingleQuestion(context)
+    }
+    console.warn('Retrying invalid AI batch as individual questions', {
+      count: context.questions.length,
+      reason: error.message,
+    })
+    return evaluateQuestionsIndividually(context)
+  }
 }
 
 const isPrivateIp = (address) => {
@@ -552,6 +641,122 @@ const fetchPage = async (rawUrl) => {
   }
 }
 
+const safeStorageSegment = (value) =>
+  String(value ?? 'unknown')
+    .replace(/[^a-zA-Z0-9_-]/g, '_')
+    .slice(0, 100)
+
+const uploadEvidenceScreenshot = async ({
+  buffer,
+  testId,
+  agentId,
+  decision,
+}) => {
+  const bucket = admin.storage().bucket()
+  const token = randomUUID()
+  const fileName = `${Date.now()}-${randomUUID()}.png`
+  const storagePath = [
+    'tests',
+    safeStorageSegment(testId),
+    `heuristic_ai_${safeStorageSegment(agentId)}`,
+    `${safeStorageSegment(decision.heuristicId)}-${safeStorageSegment(decision.questionId)}`,
+    fileName,
+  ].join('/')
+  await bucket.file(storagePath).save(buffer, {
+    resumable: false,
+    metadata: {
+      contentType: 'image/png',
+      metadata: { firebaseStorageDownloadTokens: token },
+    },
+  })
+  const url =
+    `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/` +
+    `${encodeURIComponent(storagePath)}?alt=media&token=${token}`
+  return { url, storagePath, size: buffer.length }
+}
+
+/** Captures only evidence explicitly requested by the model, without failing the evaluation. */
+const attachEvidenceScreenshots = async ({
+  decisions,
+  pageUrl,
+  testId,
+  agentId,
+}) => {
+  const candidates = decisions
+    .filter((decision) => decision.screenshotSelector)
+    .slice(0, MAX_SCREENSHOTS_PER_EVALUATION)
+  if (!candidates.length || !pageUrl) return decisions
+
+  let browser
+  try {
+    const target = await validatePublicUrl(pageUrl)
+    const browserRuntime = await resolveBrowserRuntime()
+    browser = await puppeteer.launch({
+      args: browserRuntime.args,
+      defaultViewport: { width: 1440, height: 1000, deviceScaleFactor: 1 },
+      executablePath: browserRuntime.executablePath,
+      headless: true,
+    })
+    const browserPage = await browser.newPage()
+    const allowedHosts = new Map()
+    await browserPage.setRequestInterception(true)
+    browserPage.on('request', async (interceptedRequest) => {
+      const requestUrl = interceptedRequest.url()
+      if (/^(data|blob):/.test(requestUrl)) {
+        interceptedRequest.continue()
+        return
+      }
+      try {
+        const parsed = new URL(requestUrl)
+        if (!allowedHosts.has(parsed.hostname)) {
+          await validatePublicUrl(parsed.href)
+          allowedHosts.set(parsed.hostname, true)
+        }
+        interceptedRequest.continue()
+      } catch {
+        interceptedRequest.abort('blockedbyclient')
+      }
+    })
+    await browserPage.goto(target.href, {
+      waitUntil: 'domcontentloaded',
+      timeout: 25_000,
+    })
+    await browserPage
+      .waitForNetworkIdle({ idleTime: 750, timeout: 8_000 })
+      .catch(() => {})
+
+    for (const decision of candidates) {
+      try {
+        const element = await browserPage.$(decision.screenshotSelector)
+        if (!element) continue
+        await element.scrollIntoView()
+        const buffer = await element.screenshot({ type: 'png' })
+        const uploaded = await uploadEvidenceScreenshot({
+          buffer,
+          testId,
+          agentId,
+          decision,
+        })
+        decision.screenshot = {
+          ...uploaded,
+          selector: decision.screenshotSelector,
+          createdAt: Date.now(),
+        }
+      } catch (error) {
+        console.warn('AI evidence screenshot skipped', {
+          selector: decision.screenshotSelector,
+          message: error.message,
+        })
+      }
+    }
+  } catch (error) {
+    console.warn('AI evidence capture unavailable', error.message)
+  } finally {
+    await browser?.close()
+  }
+  return decisions
+}
+
 export const fetchHeuristicPage = functions.onCall({
   options: { timeoutSeconds: 60, memory: '1GiB' },
   handler: async (request) => {
@@ -565,7 +770,7 @@ export const fetchHeuristicPage = functions.onCall({
 })
 
 export const evaluateHeuristicPage = functions.onCall({
-  options: { timeoutSeconds: 300, memory: '512MiB' },
+  options: { timeoutSeconds: 300, memory: '1GiB' },
   handler: async (request) => {
     if (!request.auth) fail('unauthenticated', 'Debes iniciar sesión.')
     const { agentId, testId, page, questions, options, answerMode } =
@@ -639,6 +844,12 @@ export const evaluateHeuristicPage = functions.onCall({
         'No se pudieron reunir todas las respuestas del agente.',
       )
     }
+    await attachEvidenceScreenshots({
+      decisions,
+      pageUrl: page.url,
+      testId,
+      agentId,
+    })
     return { decisions, model }
   },
 })
