@@ -63,6 +63,11 @@ export function useFocusGroupSession(studyId) {
   // facilitator's play/pause/reset write here, so there are no per-second writes.
   // { topicId, running, endsAt, remainingMs } | null
   const timer = computed(() => snapshot.value?.timer ?? null)
+  // Breakout room state. `groups` and the round-robin split are computed
+  // client-side (see utils/breakoutGroups.js) and written here as a whole
+  // object, the same pattern as `currentStimulus`/`currentPrompt`.
+  // { active, groups: { [groupId]: { name, participantIds } }, broadcast: { text, sentAt } | null } | null
+  const breakout = computed(() => snapshot.value?.breakout ?? null)
 
   const isLive = computed(() => status.value === SESSION_STATUS.LIVE)
   const isEnded = computed(() => status.value === SESSION_STATUS.ENDED)
@@ -250,6 +255,19 @@ export function useFocusGroupSession(studyId) {
   }
 
   /**
+   * Replace the breakout state wholesale — starting a split, reassigning a
+   * participant, broadcasting a message, or recalling everyone are all just
+   * different next-states computed client-side (see utils/breakoutGroups.js)
+   * and written here, the same pattern as `presentStimulus`/`askPrompt`.
+   */
+  async function setBreakoutState(nextBreakout) {
+    await update(rootRef, {
+      breakout: nextBreakout,
+      lastUpdate: serverTimestamp(),
+    })
+  }
+
+  /**
    * Snapshot of the finished session, shaped for Firestore persistence.
    */
   function toSessionRecord() {
@@ -281,6 +299,7 @@ export function useFocusGroupSession(studyId) {
     notes,
     timer,
     currentStimulus,
+    breakout,
     loaded,
     isLive,
     isEnded,
@@ -303,6 +322,7 @@ export function useFocusGroupSession(studyId) {
     pauseTimer,
     resetTimer,
     sendMessage,
+    setBreakoutState,
     toSessionRecord,
   }
 }
