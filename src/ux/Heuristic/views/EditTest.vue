@@ -125,7 +125,6 @@ let currentSavePromise = null
 const showSettingsTab = computed(() => !props.isTemplate)
 const test = computed(() => store.getters.test)
 const showWeightsTab = computed(() => test.value?.useWeights ?? false)
-const showWeightsTab = computed(() => test.value.useWeights ?? false)
 const showOptionsTab = computed(
   () =>
     !showWeightsTab.value &&
