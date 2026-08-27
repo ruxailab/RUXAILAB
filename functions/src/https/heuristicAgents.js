@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto'
 import { existsSync } from 'node:fs'
 import net from 'node:net'
 import puppeteer from 'puppeteer-core'
-import { admin, functions } from '../f.firebase.js'
+import { admin, functions } from '../core/firebase/f.firebase.js'
 
 const MAX_HTML_BYTES = 1_000_000
 const MAX_TREE_CHARS = 500_000
