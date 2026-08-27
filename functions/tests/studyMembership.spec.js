@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals'
 
-jest.unstable_mockModule('../src/f.firebase.js', () => ({
+jest.unstable_mockModule('../src/core/firebase/f.firebase.js', () => ({
   admin: {
     firestore: Object.assign(jest.fn(), {
       FieldValue: { delete: jest.fn() },
@@ -29,9 +29,7 @@ const {
 const study = (testType, actorRole) => ({
   testType,
   testAdmin: { userDocId: 'owner' },
-  cooperators: [
-    { userDocId: 'actor', accessLevel: actorRole, accepted: true },
-  ],
+  cooperators: [{ userDocId: 'actor', accessLevel: actorRole, accepted: true }],
 })
 
 describe('study membership authorization', () => {
@@ -76,6 +74,35 @@ describe('study membership authorization', () => {
     expect(() =>
       assertMembershipMutationAllowed({
         study: study('USER', 4),
+        actorId: 'actor',
+        action: 'invite',
+        role: 4,
+      }),
+    ).toThrow(expect.objectContaining({ code: 'permission-denied' }))
+  })
+
+  it('allows a Card Sorting Manager to invite Evaluator and Guest only', () => {
+    expect(() =>
+      assertMembershipMutationAllowed({
+        study: study('CARD_SORTING', 4),
+        actorId: 'actor',
+        action: 'invite',
+        role: 1,
+      }),
+    ).not.toThrow()
+
+    expect(() =>
+      assertMembershipMutationAllowed({
+        study: study('CARD_SORTING', 4),
+        actorId: 'actor',
+        action: 'invite',
+        role: 2,
+      }),
+    ).not.toThrow()
+
+    expect(() =>
+      assertMembershipMutationAllowed({
+        study: study('CARD_SORTING', 4),
         actorId: 'actor',
         action: 'invite',
         role: 4,

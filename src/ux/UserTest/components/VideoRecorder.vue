@@ -45,11 +45,11 @@ import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import {
-  getStorage,
   ref as storageRef,
   uploadBytes,
   getDownloadURL,
 } from 'firebase/storage'
+import { storage } from '@/app/plugins/firebase'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { showError } from '@/shared/utils/toast'
 
@@ -157,7 +157,6 @@ const startRecording = async () => {
           const videoBlob = new Blob(recordedChunks.value, {
             type: 'video/webm',
           })
-          const storage = getStorage()
           const correctTaskIndex = recordingTaskIndex.value
           const storageReference = storageRef(
             storage,

@@ -435,6 +435,13 @@
   },
   "navigation": {
     "dashboard": "Panel",
+    "groups": {
+      "overview": "Resumen",
+      "evaluation": "Evaluación",
+      "people": "Personas",
+      "analysis": "Análisis",
+      "administration": "Administración"
+    },
     "studies": "Estudios",
     "sessions": "Sesiones",
     "templates": "Plantillas",
@@ -539,6 +546,7 @@
     "anonymous": "Participante Anónimo",
     "answers": "Respuestas",
     "analytics": "Análisis",
+    "lastUpdate": "Última actualización",
     "cooperators": "Personal",
     "template": "Plantilla",
     "finalReport": "Informe final",
@@ -624,6 +632,15 @@
       "cancelled": "Se canceló el uso compartido de pantalla. Comparte toda la pantalla para continuar.",
       "wrongSurface": "Compartiste una pestaña del navegador. Comparte toda la pantalla para que podamos ver la herramienta que vas a usar.",
       "error": "No pudimos iniciar la grabación de pantalla. Inténtalo de nuevo."
+    },
+    "boundary": {
+      "title": "Algo salió mal",
+      "message": "Ocurrió un error inesperado al cargar esta página. Sus datos han sido preservados.",
+      "retry": "Reintentar",
+      "goToDashboard": "Ir al Panel",
+      "showDetails": "Mostrar detalles del error",
+      "copyDetails": "Copiar detalles del error",
+      "copied": "¡Copiado!"
     }
   },
   "screenShare": {
@@ -851,6 +868,7 @@
     "placeholders": {
       "titleHeuristic": "Título de la heurística",
       "titleYourHeuristic": "Titula tu heurística",
+      "descriptionYourHeuristic": "Descripción de tu heurística",
       "titleYourQuestion": "Titula tu pregunta",
       "titleQuestion": "Título de la pregunta",
       "titleNewQuestion": "Título de la nueva pregunta",
@@ -864,12 +882,14 @@
       "changeWeights": "Ten en cuenta que al cambiar el orden de las heurísticas, los pesos NO cambian automáticamente, debes ajustarlos manualmente.",
       "noDescriptions": "No hay descripciones disponibles",
       "startAddingQuestions": "Comienza agregando tu primera pregunta a esta heurística",
+      "optionalFirstQuestion": "Opcional: puedes agregar una pregunta más tarde",
       "cantDeleteAllQuestions": "Lo siento, no puedes eliminar todas las preguntas de una heurística",
       "studyHasAnswers": "Este estudio tiene respuestas"
     },
     "validation": {
       "nameRequired": "El nombre es obligatorio",
       "questionRequired": "La pregunta debe estar completada",
+      "max100Characters": "Máximo 100 caracteres",
       "textRequired": "Se requiere texto",
       "positiveValue": "El valor debe ser un número positivo",
       "addQuestion": "Por favor, agrega al menos una pregunta a tu heurística"
@@ -904,6 +924,15 @@
     }
   },
   "HeuristicsAnalytics": {
+    "title": "Análisis",
+    "traditional": "Tradicional",
+    "detailed": "Detallada",
+    "question": "Pregunta",
+    "heuristicLevelEvidence": "En las evaluaciones tradicionales, la evidencia se agrupa por heurística.",
+    "evidenceItems": "elementos de evidencia",
+    "noComments": "No hay comentarios para esta selección",
+    "noImages": "No hay imágenes para esta selección",
+    "evidence": "Evidencia de la heurística",
     "dataTable": "Tabla de datos",
     "chart": "Gráfico",
     "userUploadedContent": "Contenido subido por el usuario",
@@ -942,13 +971,18 @@
       "confirmUpload": "Confirmar carga",
       "timeTracking": "Seguimiento de tiempo",
       "answerMetrics": "Métricas de respuesta",
-      "enableWeights": "Habilitar función de pesos"
+      "enableWeights": "Habilitar función de pesos",
+      "studyType": "Tipo de estudio",
+      "csv": "Plantilla CSV"
     },
     "messages": {
       "acceptCsv": "Si aceptas, todas tus heurísticas actuales serán reemplazadas por las del archivo CSV.",
       "noCsvFileSelected": "No se ha seleccionado ningún archivo CSV. Por favor, selecciona uno antes de continuar.",
       "timeTrackingDescription": "Registra el tiempo que cada evaluador dedica por heurística durante la evaluación.",
       "answerMetricsDescription": "Elige qué métricas responderán los evaluadores cuando no haya opciones personalizadas configuradas.",
+      "settingsDescription": "Elige cómo trabajarán los evaluadores en este estudio heurístico.",
+      "studyTypeDescription": "Selecciona el método de evaluación que mejor encaje con tu estudio.",
+      "csvDescription": "Descarga una plantilla o reemplaza las heurísticas actuales con un archivo CSV.",
       "settingsSaved": "Configuración guardada correctamente.",
       "enableWeightsDescription": "Permitir que los evaluadores asignen pesos a las heurísticas en este estudio"
     },
@@ -958,6 +992,16 @@
     "actions": {
       "downloadCsvTemplate": "Descargar plantilla CSV",
       "update": "Actualizar"
+    },
+    "modes": {
+      "traditional": "Tradicional",
+      "detailed": "Detallado",
+      "weights": "Pesos"
+    },
+    "modeDescriptions": {
+      "traditional": "Los evaluadores responden las métricas de Frecuencia y Severidad para cada heurística.",
+      "detailed": "Crea preguntas más detalladas y elige respuestas prefijadas para apoyar el cálculo heurístico.",
+      "weights": "Los evaluadores asignan un peso relativo a cada heurística durante la evaluación."
     },
     "labels": {
       "timeTrackingOn": "Seguimiento de tiempo activado",
@@ -1070,7 +1114,8 @@
     "alerts": {
       "testAlreadyCompleted": "Prueba ya completada",
       "testAlreadyCompletedMessage": "Ya has completado y enviado esta prueba. ¡Gracias por tu participación!",
-      "testConfigError": "Error de configuración de la prueba"
+      "testConfigError": "Error de configuración de la prueba",
+      "noAnswerOptionsConfigured": "Nenhuma opção de resposta foi configurada para este teste."
     },
     "actions": {
       "cancel": "Cancelar",
@@ -1102,6 +1147,7 @@
     "titles": {
       "heuristics": "Heurísticas",
       "options": "Opciones",
+      "heuristicAnswers": "Respuestas heurísticas",
       "weights": "Pesos",
       "settings": "Configuración"
     },
@@ -1111,16 +1157,41 @@
   "HeuristicsTestAnswer": {
     "titles": {
       "answers": "Respuestas",
-      "statistics": "Estadísticas",
+      "statistics": "General",
       "evaluators": "Evaluadores",
       "heuristics": "Heurísticas",
-      "analytics": "Análisis"
+      "analytics": "Análisis",
+      "totalTime": "Tiempo total",
+      "lastUpdate": "Última actualización",
+      "averageScore": "Puntuación Promedio",
+      "standardDeviation": "Desviación Estándar"
     },
     "statistics": {
       "usabilityPercentage": "Porcentaje de usabilidad",
       "max": "Máximo",
       "min": "Mínimo",
       "std": "Desviación estándar"
+    },
+    "summary": {
+      "coverage": {
+        "title": "Cobertura de la evaluación",
+        "subtitle": "Progreso de todas las respuestas heurísticas",
+        "heuristics": "Heurísticas",
+        "responses": "Respuestas",
+        "answered": "Respondidas",
+        "pending": "Pendientes"
+      },
+      "stats": {
+        "max": "Máx.",
+        "min": "Mín.",
+        "stdDev": "Desv. estándar",
+        "evaluators": "Evaluadores"
+      },
+      "charts": {
+        "responsesByOption": {
+          "title": "Tipo de respuesta"
+        }
+      }
     },
     "evaluators": {
       "headers": {
@@ -1136,6 +1207,7 @@
         "heuristicsData": "Datos de heurísticas",
         "answersByEvaluator": "Respuestas por evaluador",
         "answersByHeuristics": "Respuestas por heurísticas",
+        "timeByHeuristics": "Tiempo por heurísticas",
         "graphic": "Gráfico",
         "weights": "Pesos"
       },
@@ -2254,6 +2326,7 @@
     }
   },
   "CardSorting": {
+    "invalidConfiguration": "Este estudio debe tener al menos una categoría y una tarjeta antes de poder iniciarse.",
     "title": "Card Sorting",
     "noCategory": "Sin categoría",
     "noCards": "No se encontraron tarjetas",
@@ -2460,7 +2533,8 @@
       "tabs": {
         "configuration": "Configuración de la Sesión",
         "consent": "Formulario de Consentimiento",
-        "guide": "Guía de Discusión"
+        "guide": "Guía de Discusión",
+        "stimuli": "Estímulos"
       },
       "noTopics": "Aún no hay temas. Agrega tu primer tema de discusión para comenzar.",
       "addTopic": "Agregar tema",
@@ -2554,6 +2628,8 @@
       "sessionInfo": "Sesión",
       "showParticipants": "Mostrar participantes",
       "hideParticipants": "Ocultar participantes",
+      "participationPercent": "{percent}%",
+      "participationHint": "Proporción de la actividad de la sesión de este participante (mensajes y tiempo hablando)",
       "muteMicrophone": "Silenciar micrófono",
       "unmuteMicrophone": "Activar micrófono",
       "turnCameraOff": "Apagar cámara",
@@ -2573,7 +2649,29 @@
       "endedTitle": "Sesión finalizada",
       "endedSubtitle": "Las respuestas se han guardado.",
       "sessionSaved": "Respuestas de la sesión guardadas.",
-      "noTopicsWarning": "Agrega temas a tu guía de discusión antes de iniciar una sesión."
+      "noTopicsWarning": "Agrega temas a tu guía de discusión antes de iniciar una sesión.",
+      "stimuli": "Estímulos",
+      "noStimuli": "Aún no hay estímulos en la biblioteca. Agrega algunos desde la pantalla de prueba.",
+      "present": "Presentar",
+      "presenting": "Presentando",
+      "presentingStimulus": "Presentando:",
+      "stopPresenting": "Dejar de presentar",
+      "openStimulusLink": "Abrir enlace del estímulo"
+    },
+    "stimulus": {
+      "empty": "Aún no hay estímulos. Sube una imagen o video, o agrega un enlace abajo.",
+      "types": {
+        "image": "Imagen",
+        "video": "Video",
+        "url": "Enlace"
+      },
+      "topic": "Tema",
+      "remove": "Eliminar estímulo",
+      "dropHint": "Arrastra y suelta una imagen o video, o haz clic para subir",
+      "addLinkTitle": "Agregar un enlace",
+      "linkName": "Nombre",
+      "linkUrl": "URL",
+      "addLink": "Agregar enlace"
     }
   },
   "studyCreation": {
@@ -2793,6 +2891,7 @@
       "validation": {
         "enterTitle": "Ingresa un título",
         "max200Characters": "Máximo 200 caracteres",
+        "max150Characters": "Máximo 150 caracteres",
         "max600Characters": "Máximo 600 caracteres",
         "enterWebsiteName": "Ingresa el nombre del sitio web",
         "enterWebsiteUrl": "Ingresa la URL del sitio web",
@@ -3448,22 +3547,6 @@
     "empty": {
       "title": "No se encontraron sesiones",
       "description": "Crea una sesión para comenzar a invitar personal y participantes."
-    }
-  },
-  "errors": {
-    "globalError": "Ocurrió un error. Por favor, inténtalo de nuevo.",
-    "emailIsRequired": "El correo electrónico es obligatorio.",
-    "passwordRequired": "La contraseña es obligatoria.",
-    "invalidEmail": "Por favor, introduce una dirección de correo electrónico válida.",
-    "incorrectCredential": "Correo o contraseña incorrectos, o la cuenta no existe.",
-    "boundary": {
-      "title": "Algo salió mal",
-      "message": "Ocurrió un error inesperado al cargar esta página. Sus datos han sido preservados.",
-      "retry": "Reintentar",
-      "goToDashboard": "Ir al Panel",
-      "showDetails": "Mostrar detalles del error",
-      "copyDetails": "Copiar detalles del error",
-      "copied": "¡Copiado!"
     }
   }
 }

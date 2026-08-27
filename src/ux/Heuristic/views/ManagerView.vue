@@ -20,19 +20,14 @@
         :test="test"
         :title="test.testTitle || $t('Dashboard.managerView.heuristicStudy')"
         :subtitle="
-          test.testDescription || $t('Dashboard.managerView.heuristicStudy')
+          truncateDescription(test.testDescription) ||
+          $t('Dashboard.managerView.heuristicStudy')
         "
         icon="mdi-clipboard-search-outline"
         :type-label="$t('Dashboard.managerView.heuristicStudy')"
         type-icon="mdi-clipboard-search-outline"
-        :status-icon="getStatusIcon(test.testStatus)"
-        :status-text="test.testStatus || 'active'"
-        :extra-chips="[
-          {
-            icon: 'mdi-crown-outline',
-            label: $t('Dashboard.managerView.freePlan'),
-          },
-        ]"
+        :status-icon="getStatusIcon(test.status)"
+        :status-text="getStatusText(test.status) || 'active'"
         :modules-title="$t('manager.managementModules.title')"
         :modules-description="$t('manager.managementModules.description')"
       >
@@ -85,7 +80,7 @@ import {
 } from '@/shared/utils/studyAccessPolicy'
 import ManagerDashboardLayout from '@/shared/components/manager/ManagerDashboardLayout.vue'
 import ManagerView from '@/shared/views/template/ManagerView.vue'
-import { getStatusIcon } from '@/shared/utils/statusUtils'
+import { getStatusIcon, getStatusText } from '@/shared/utils/statusUtils'
 import { computed, onMounted, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -109,6 +104,11 @@ const router = useRouter()
 // Computed
 const user = computed(() => store.getters.user)
 const test = computed(() => store.getters.test)
+
+const truncateDescription = (description) => {
+  if (!description || description.length <= 150) return description
+  return `${description.slice(0, 147)}...`
+}
 
 watchEffect(() => {
   if (user.value != null && test.value != null) {

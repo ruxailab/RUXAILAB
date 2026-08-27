@@ -35,49 +35,8 @@ service cloud.firestore {
       return roleFor(study) == 4;
     }
 
-    function isStudyMember(study) {
-      return
-        (study.testType == 'USER' && roleFor(study) in [0, 3, 4, 5]) ||
-        ((study.testType == 'HEURISTIC' || study.testType == 'HEURISTICS') &&
-          roleFor(study) in [0, 1, 2, 4]);
-    }
-
-    function isUserStudy(study) {
-      return study.testType == 'USER';
-    }
-
-    function isHeuristicStudy(study) {
-      return study.testType == 'HEURISTIC' ||
-        study.testType == 'HEURISTICS';
-    }
-
-    function isRbacStudy(study) {
-      return isUserStudy(study) || isHeuristicStudy(study);
-    }
-
-    function canViewDashboard(study) {
-      return isAdmin(study) || isManager(study) ||
-        (isUserStudy(study) && roleFor(study) == 3) ||
-        (isHeuristicStudy(study) && roleFor(study) in [1, 2]);
-    }
-
-    function canViewAnswers(study) {
-      return isAdmin(study) || isManager(study) ||
-        (isUserStudy(study) && roleFor(study) == 3) ||
-        (isHeuristicStudy(study) && roleFor(study) in [1, 2]);
-    }
-
-    function canAnswer(study) {
-      return signedIn() && (
-        study.isPublic == true ||
-        isAdmin(study) ||
-        isManager(study) ||
-        (isUserStudy(study) && (
-          roleFor(study) == 5 ||
-          (roleFor(study) == 3 && study.subType == 'USER_MODERATED')
-        )) ||
-        (isHeuristicStudy(study) && roleFor(study) == 1)
-      );
+    function canViewLogs(study) {
+      return isAdmin(study);
     }
 
     function managerChangedOnlyStudyContent() {
@@ -103,22 +62,29 @@ service cloud.firestore {
       );
       allow delete: if isSuperAdmin() ||
         (signedIn() && request.auth.uid == userId);
+
+      match /notifications/{notificationId} {
+        allow read, write, delete: if signedIn()
+      }
     }
 
     match /tests/{studyId} {
       allow create: if signedIn() &&
         request.resource.data.testAdmin.userDocId == request.auth.uid &&
         request.resource.data.studyRoleMap is map;
-      allow read: if signedIn() && (
-        resource.data.isPublic == true ||
-        isStudyMember(resource.data) ||
-        canViewDashboard(resource.data)
-      );
-      allow update: if !isRbacStudy(resource.data) && (
-        isAdmin(resource.data) ||
-        (isManager(resource.data) && managerChangedOnlyStudyContent())
-      );
+      allow read: if true;
+      allow update: if isAdmin(resource.data) ||
+        (isManager(resource.data) && managerChangedOnlyStudyContent());
       allow delete: if isAdmin(resource.data);
+
+      match /sessions/{sessionId} {
+        allow write: if signedIn();
+        allow read: if true;
+      }
+
+      match /participants/{participantId} {
+        allow read, write: if signedIn();
+      }
 
       match /auditTrail/{eventId} {
         allow read: if signedIn() &&
@@ -128,21 +94,25 @@ service cloud.firestore {
       }
 
       match /logs/{logId} {
-        allow read: if canViewDashboard(
+        allow read: if canViewLogs(
           get(/databases/$(database)/documents/tests/$(studyId)).data
         );
         allow write: if false;
       }
 
       match /logBatches/{batchId} {
-        allow read: if canViewDashboard(
+        allow read, write: if false;
+      }
+
+      match /loggingMeta/{metadataId} {
+        allow read, write: if false;
+      }
+
+      match /studySessions/{sessionId} {
+        allow read: if canViewLogs(
           get(/databases/$(database)/documents/tests/$(studyId)).data
         );
         allow write: if false;
-      }
-
-      match /participants/{participantId} {
-        allow read: if signedIn();
       }
     }
 
@@ -153,56 +123,26 @@ service cloud.firestore {
         ).data;
       }
 
-      function requestedAnswerStudy() {
-        return get(
-          /databases/$(database)/documents/tests/$(request.resource.data.studyId)
-        ).data;
-      }
-
-      function updatesOwnUserAnswer(study) {
-        return canAnswer(study) && (
-          (
-            isUserStudy(study) &&
-            request.resource.data.diff(resource.data).affectedKeys()
-              .hasOnly(['taskAnswers']) &&
-            request.resource.data.taskAnswers.diff(resource.data.taskAnswers)
-              .affectedKeys().hasOnly([request.auth.uid]) &&
-            (
-              !(request.auth.uid in resource.data.taskAnswers) ||
-              resource.data.taskAnswers[request.auth.uid]
-                .get('submitted', false) != true
-            )
-          ) ||
-          (
-            isHeuristicStudy(study) &&
-            request.resource.data.diff(resource.data).affectedKeys()
-              .hasOnly(['heuristicAnswers']) &&
-            request.resource.data.heuristicAnswers
-              .diff(resource.data.heuristicAnswers)
-              .affectedKeys().hasOnly([request.auth.uid]) &&
-            (
-              !(request.auth.uid in resource.data.heuristicAnswers) ||
-              resource.data.heuristicAnswers[request.auth.uid]
-                .get('submitted', false) != true
-            )
-          )
-        );
-      }
-
       allow create: if signedIn() &&
         request.resource.data.createdBy == request.auth.uid &&
         request.resource.data.studyId == null;
-      allow read: if canViewAnswers(answerStudy());
-      allow update: if (
-        resource.data.studyId == null &&
-        resource.data.createdBy == request.auth.uid &&
-        requestedAnswerStudy().testAdmin.userDocId == request.auth.uid &&
-        requestedAnswerStudy().answersDocId == answerId
-      ) || updatesOwnUserAnswer(answerStudy()) || isAdmin(answerStudy());
+      allow read: if true;
+      allow update: if request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly([
+            'taskAnswers',
+            'heuristicAnswers',
+            'cardSortingAnswers',
+            'studyId'
+      		]);
       allow delete: if (
+        signedIn() &&
         resource.data.studyId == null &&
         resource.data.createdBy == request.auth.uid
       ) || isAdmin(answerStudy());
+
+       match /analytics/{analyticsId} {
+          allow read: if true;
+        }
     }
 
     // Existing non-study modules retain authenticated access. Their
@@ -225,11 +165,19 @@ service cloud.firestore {
     match /calibrations/{document=**} {
       allow read, write: if signedIn();
     }
+    match /invites/{inviteId} {
+      allow write: if signedIn();
+      allow read: if true;
+    }
+    match /agents/{agentId} {
+      allow read, write: if signedIn();
+    }
     match /settings/{settingId} {
       allow read: if signedIn();
     }
     match /{path=**}/sessions/{sessionId} {
-      allow read: if signedIn();
+      allow write: if signedIn();
+      allow read: if true;
     }
   }
 }

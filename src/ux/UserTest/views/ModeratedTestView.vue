@@ -25,7 +25,7 @@
             {{ test.testTitle }}
           </h1>
           <p class="text-body-1 mb-5 text-white text-justify">
-            {{ test.testDescription }}
+            {{ truncateDescription(test.testDescription) }}
           </p>
           <v-btn
             color="white"
@@ -231,13 +231,13 @@
                   <v-stepper-item
                     :value="1"
                     :title="$t('UserTestView.stepper.consent')"
-                    :complete="stepperValue > 1"
+                    :complete="completedSteps.consent"
                     :color="
-                      stepperValue == 1
-                        ? 'warning'
-                        : stepperValue < 1
-                          ? 'primary'
-                          : 'success'
+                      completedSteps.consent
+                        ? 'success'
+                        : stepperValue === 1
+                          ? 'warning'
+                          : 'primary'
                     "
                     complete-icon="mdi-check"
                   />
@@ -245,13 +245,13 @@
                   <v-stepper-item
                     :value="2"
                     :title="$t('UserTestView.stepper.preTest')"
-                    :complete="stepperValue > 2"
+                    :complete="completedSteps.preTest"
                     :color="
-                      stepperValue == 2
-                        ? 'warning'
-                        : stepperValue < 1
-                          ? 'primary'
-                          : 'success'
+                      completedSteps.preTest
+                        ? 'success'
+                        : stepperValue === 2
+                          ? 'warning'
+                          : 'primary'
                     "
                     complete-icon="mdi-check"
                   />
@@ -259,13 +259,13 @@
                   <v-stepper-item
                     :value="3"
                     :title="$t('UserTestView.stepper.tasks')"
-                    :complete="stepperValue > 3"
+                    :complete="completedSteps.tasks"
                     :color="
-                      stepperValue == 3
-                        ? 'warning'
-                        : stepperValue < 3
-                          ? 'primary'
-                          : 'success'
+                      completedSteps.tasks
+                        ? 'success'
+                        : stepperValue === 3
+                          ? 'warning'
+                          : 'primary'
                     "
                     complete-icon="mdi-check"
                   />
@@ -273,13 +273,13 @@
                   <v-stepper-item
                     :value="4"
                     :title="$t('UserTestView.stepper.postTest')"
-                    :complete="stepperValue > 4"
+                    :complete="completedSteps.postTest"
                     :color="
-                      stepperValue == 4
-                        ? 'warning'
-                        : stepperValue < 4
-                          ? 'primary'
-                          : 'success'
+                      completedSteps.postTest
+                        ? 'success'
+                        : stepperValue === 4
+                          ? 'warning'
+                          : 'primary'
                     "
                     complete-icon="mdi-check"
                   />
@@ -287,13 +287,13 @@
                   <v-stepper-item
                     :value="5"
                     :title="$t('UserTestView.stepper.completion')"
-                    :complete="stepperValue > 5"
+                    :complete="completedSteps.completion"
                     :color="
-                      stepperValue == 5
-                        ? 'warning'
-                        : stepperValue < 5
-                          ? 'primary'
-                          : 'success'
+                      completedSteps.completion
+                        ? 'success'
+                        : stepperValue === 5
+                          ? 'warning'
+                          : 'primary'
                     "
                     complete-icon="mdi-check"
                   />
@@ -348,27 +348,31 @@
           </v-row>
 
           <!-- Observator Notes Drawer -->
-          <v-navigation-drawer
-            v-if="(isObservator || isModerator) && notesDrawerOpen"
-            location="right"
-            width="400"
-            elevation="3"
-            style="
-              position: fixed;
-              top: 0;
-              right: 0;
-              height: 100%;
-              z-index: 1005;
-            "
+          <VideoToolDrawer
+            v-if="isObservator || isModerator"
+            :model-value="notesDrawerOpen"
+            :title="t('observatorNotes.title')"
+            close-label="Close notes"
+            @close="closeNotesDrawer"
           >
+            <template #header-actions>
+              <v-chip size="small" color="white" variant="outlined">
+                {{
+                  t('observatorNotes.count', {
+                    count: localTestAnswer.sessionNotes?.length || 0,
+                  })
+                }}
+              </v-chip>
+            </template>
             <ObservatorNotes
               v-if="localTestAnswer"
               v-model="localTestAnswer.sessionNotes"
               :current-task-index="taskIndex"
               :test="test"
+              :show-header="false"
               @save="saveAnswer"
             />
-          </v-navigation-drawer>
+          </VideoToolDrawer>
 
           <!-- Video Call Component -->
           <div v-show="displayVideoCallComponent" v-if="test">
@@ -387,6 +391,7 @@
               :notes-drawer-open="notesDrawerOpen"
               :notes-count="localTestAnswer.sessionNotes?.length || 0"
               :toggle-notes-drawer="toggleNotesDrawer"
+              :completed-steps="completedSteps"
               @set-remote-stream="remoteStream = $event"
               @proceed-to-next-step="proceedToNextStep"
               @step-selected="handleStepSelected"
@@ -576,7 +581,6 @@
 import {
   ref as dbRef,
   onValue,
-  off,
   update,
   set,
   get,
@@ -609,6 +613,7 @@ import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue'
 import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue'
 import StepAnnouncementOverlay from '@/ux/UserTest/components/StepAnnouncementOverlay.vue'
 import VideoCallFactory from '@/shared/components/videoCall/VideoCallFactory.vue'
+import VideoToolDrawer from '@/shared/components/videoCall/VideoToolDrawer.vue'
 import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
 import {
@@ -659,6 +664,10 @@ const notesDrawerOpen = ref(false)
 function toggleNotesDrawer() {
   notesDrawerOpen.value = !notesDrawerOpen.value
 }
+
+function closeNotesDrawer() {
+  notesDrawerOpen.value = false
+}
 const moderatorInactive = ref(false)
 const moderatorDisconnectTimeout = ref(null)
 const showStepAnnouncement = ref(false)
@@ -669,6 +678,11 @@ const isProcessingRemoteStepAnnouncement = ref(false)
 const lastAnnouncedRemoteStepKey = ref(null)
 const lastWaitingParticipantsNotificationCount = ref(0)
 const hasSeenRoomState = ref(false)
+
+const truncateDescription = (description) => {
+  if (!description || description.length <= 150) return description
+  return `${description.slice(0, 147)}...`
+}
 
 const sessionId = computed(() => route.params.token || null)
 
@@ -724,6 +738,20 @@ const normalizeMemberKey = (member) => {
   return [...normalized]
 }
 
+const hasSharedMemberKey = (left, right) => {
+  const rightKeys = new Set(normalizeMemberKey(right))
+  return normalizeMemberKey(left).some((key) => rightKeys.has(key))
+}
+
+const setMemberByIdentity = (map, member) => {
+  const keys = normalizeMemberKey(member)
+  if (!keys.length) return
+
+  const existingKey = keys.find((key) => map.has(key))
+  const mapKey = existingKey || keys[0]
+  map.set(mapKey, member)
+}
+
 const normalizeSessionMember = (member, fallbackType = 'participant') => {
   if (!member) return null
 
@@ -755,25 +783,49 @@ const normalizeSessionMember = (member, fallbackType = 'participant') => {
 }
 
 const callState = ref({ staff: {}, participants: {} })
+let callStateUnsubscribe = null
+let waitingParticipantsUnsubscribe = null
+let roomUnsubscribe = null
+
+function stopRealtimeListeners() {
+  callStateUnsubscribe?.()
+  waitingParticipantsUnsubscribe?.()
+  roomUnsubscribe?.()
+  callStateUnsubscribe = null
+  waitingParticipantsUnsubscribe = null
+  roomUnsubscribe = null
+  lastWaitingParticipantsNotificationCount.value = 0
+}
 
 const sessionStaffMembers = computed(() => {
-  const staffSource =
-    Object.keys(callState.value.staff || {}).length > 0
-      ? Object.values(callState.value.staff || {})
-      : session.value?.staff || []
+  const staffMembers = [
+    ...(session.value?.staff || []),
+    ...Object.values(callState.value.staff || {}),
+  ]
+  const staffById = new Map()
 
-  return staffSource
+  staffMembers.forEach((member) => {
+    setMemberByIdentity(staffById, member)
+  })
+
+  return [...staffById.values()]
     .map((member) => normalizeSessionMember(member, 'staff'))
     .filter(Boolean)
 })
 
 const sessionParticipantsMembers = computed(() => {
-  const participantsSource =
-    Object.keys(callState.value.participants || {}).length > 0
-      ? Object.values(callState.value.participants || {})
-      : session.value?.participants || []
+  const participantMembers = [
+    ...(session.value?.participants || []),
+    ...Object.values(callState.value.participants || {}),
+  ]
+  const participantsById = new Map()
 
-  return participantsSource
+  participantMembers.forEach((member) => {
+    const memberId = member?.userDocId || member?.id || member?.email
+    if (memberId) participantsById.set(memberId, member)
+  })
+
+  return [...participantsById.values()]
     .map((member) => normalizeSessionMember(member, 'participant'))
     .filter(Boolean)
 })
@@ -870,6 +922,37 @@ const stepperValue = computed(() => {
   if (globalIndex.value === 5) return 4 // Post-test
   if (globalIndex.value === 6) return 5 // Completion
   return 1 // Default to first step
+})
+
+const completedSteps = computed(() => {
+  if (isModerator.value) {
+    const participants = Object.values(callState.value?.participants || {})
+
+    // Get the participant's progress
+    const participant = participants.find(
+      (member) => member?.role === 'PARTICIPANT',
+    )
+
+    return (
+      participant?.progress ?? {
+        consent: false,
+        preTest: false,
+        tasks: false,
+        postTest: false,
+        completion: false,
+      }
+    )
+  }
+  return {
+    consent: localTestAnswer.consentCompleted === true,
+    preTest: localTestAnswer.preTestCompleted === true,
+    tasks:
+      Array.isArray(localTestAnswer.tasks) &&
+      localTestAnswer.tasks.length > 0 &&
+      localTestAnswer.tasks.every((task) => task?.completed === true),
+    postTest: localTestAnswer.postTestCompleted === true,
+    completion: localTestAnswer.submitted === true,
+  }
 })
 
 // Scroll to top of the page when step changes
@@ -1130,8 +1213,172 @@ const cleanupRoomStateForReuse = async (roomKey) => {
   ])
 }
 
+const getCallMemberId = (member) =>
+  member?.userDocId || member?.id || member?.email
+
+const buildCallMember = (member, defaults = {}) => {
+  const memberId = getCallMemberId(member)
+  if (!memberId) return null
+
+  const sanitizedMember = { ...member }
+  delete sanitizedMember.connected
+  delete sanitizedMember.presenceStatus
+  delete sanitizedMember.presenceUpdatedAt
+  delete sanitizedMember.updatedAt
+  delete sanitizedMember.status
+
+  const role = defaults.role || member.role || 'participant'
+  const accessLevel =
+    defaults.accessLevel ?? member.accessLevel ?? member.role ?? 5
+  const presenceStatus = defaults.presenceStatus ?? 'disconnected'
+
+  return {
+    ...sanitizedMember,
+    userDocId: member.userDocId || member.id || member.email,
+    email: member.email || null,
+    name:
+      member.name ||
+      member.displayName ||
+      member.email?.split('@')[0] ||
+      memberId,
+    role,
+    accessLevel,
+    isModerator:
+      defaults.isModerator === true ||
+      member.isModerator === true ||
+      role === 'FACILITATOR',
+    joinedAt: member.joinedAt ?? Date.now(),
+    connected: defaults.connected ?? false,
+    presenceStatus,
+    presenceUpdatedAt: presenceStatus === 'connected' ? Date.now() : null,
+    media: member.media ?? {
+      cameraEnabled: true,
+      microphoneEnabled: true,
+    },
+  }
+}
+
+const addMissingCallMembers = (
+  updates,
+  existingMembers,
+  branch,
+  members,
+  defaults,
+) => {
+  const existingList = Object.values(existingMembers || {})
+
+  members.forEach((member) => {
+    const memberId = getCallMemberId(member)
+    if (!memberId) return
+
+    const alreadyExists = existingList.some((existingMember) =>
+      hasSharedMemberKey(existingMember, member),
+    )
+    if (alreadyExists) return
+
+    const callMember = buildCallMember(member, defaults)
+    if (callMember) updates[`${branch}/${memberId}`] = callMember
+  })
+}
+
+const moveMatchingCallMember = (
+  updates,
+  existingMembers,
+  branch,
+  member,
+  targetKey,
+  defaults,
+) => {
+  if (!targetKey) return
+
+  const match = Object.entries(existingMembers || {}).find(
+    ([memberKey, existingMember]) =>
+      memberKey !== targetKey && hasSharedMemberKey(existingMember, member),
+  )
+  if (!match) return
+
+  const [existingKey, existingMember] = match
+  updates[`${branch}/${targetKey}`] = {
+    ...existingMember,
+    ...buildCallMember(member, defaults),
+  }
+  updates[`${branch}/${existingKey}`] = null
+}
+
+const syncCallRoster = async (callRef, currentUserId) => {
+  const snapshot = await get(callRef)
+  const existingCall = snapshot.val() || {}
+  const staffMembers = Array.isArray(session.value?.staff)
+    ? session.value.staff
+    : []
+  const participantMembers = Array.isArray(session.value?.participants)
+    ? session.value.participants
+    : []
+  const currentModeratorMember =
+    isModerator.value && currentUserId
+      ? {
+          userDocId: currentUserId,
+          email: user.value?.email || null,
+          name:
+            user.value?.email?.split('@')[0] ||
+            user.value?.displayName ||
+            'moderator',
+          role: 'FACILITATOR',
+          accessLevel: 'ADMIN',
+          isModerator: true,
+        }
+      : null
+  const allStaffMembers = currentModeratorMember
+    ? [...staffMembers, currentModeratorMember]
+    : staffMembers
+  const participantMembersWithoutStaff = removeStaffDuplicates(
+    participantMembers,
+    allStaffMembers,
+  )
+  const updates = {}
+
+  if (!existingCall.createdAt) updates.createdAt = Date.now()
+  if (!existingCall.startedAt) updates.startedAt = Date.now()
+  if (!existingCall.status) updates.status = 'active'
+
+  if (currentModeratorMember) {
+    moveMatchingCallMember(
+      updates,
+      existingCall.staff,
+      'staff',
+      currentModeratorMember,
+      currentUserId,
+      {
+        connected: false,
+        presenceStatus: 'disconnected',
+        role: 'FACILITATOR',
+        accessLevel: 'ADMIN',
+        isModerator: true,
+      },
+    )
+  }
+
+  addMissingCallMembers(updates, existingCall.staff, 'staff', allStaffMembers, {
+    connected: false,
+    presenceStatus: 'disconnected',
+  })
+  addMissingCallMembers(
+    updates,
+    existingCall.participants,
+    'participants',
+    participantMembersWithoutStaff,
+    {
+      connected: false,
+      presenceStatus: 'disconnected',
+    },
+  )
+
+  if (Object.keys(updates).length) await update(callRef, updates)
+}
+
 const handleCallEnded = async () => {
   displayVideoCallComponent.value = false
+  stopRealtimeListeners()
 
   if (isModerator.value && roomId.value) {
     await cleanupRoomStateForReuse(roomId.value)
@@ -1175,11 +1422,15 @@ const startTest = async () => {
 
   const currentUserId =
     user.value?.id || user.value?.userDocId || user.value?.uid
+  const roomRef = dbRef(database, `rooms/${roomId.value}`)
+  const callRef = dbRef(database, `calls/${roomId.value}`)
 
   if (staffUser) {
     displayVideoCallComponent.value = true
     start.value = false
   }
+
+  await syncCallRoster(callRef, currentUserId)
 
   if (!isModerator.value && currentUserId) {
     const isObserverMember = observerUser
@@ -1217,17 +1468,24 @@ const startTest = async () => {
   }
 
   // listen for changes
-  const roomRef = dbRef(database, `rooms/${roomId.value}`)
+  callStateUnsubscribe?.()
+  callStateUnsubscribe = onValue(callRef, (snapshot) => {
+    const nextCallState = snapshot.val() || {}
+    callState.value = {
+      staff: nextCallState.staff || {},
+      participants: nextCallState.participants || {},
+    }
+  })
 
   if (isModerator.value || observerUser) {
-    const callRef = dbRef(database, `calls/${roomId.value}`)
     const existingCallSnapshot = await get(callRef)
 
     if (!existingCallSnapshot.exists()) {
       await cleanupRoomStateForReuse(roomId.value)
     }
 
-    onValue(callRef, (snapshot) => {
+    waitingParticipantsUnsubscribe?.()
+    waitingParticipantsUnsubscribe = onValue(callRef, (snapshot) => {
       const nextCallState = snapshot.val() || {}
       const participants = nextCallState.participants || {}
       const waitingParticipantsCount = Object.values(participants).filter(
@@ -1377,9 +1635,7 @@ const startTest = async () => {
             [moderatorEntry.userDocId]: moderatorEntry,
             ...toMemberMap(
               staffMembers.filter((member) => {
-                const memberId =
-                  member?.userDocId || member?.id || member?.email
-                return memberId && memberId !== moderatorEntry.userDocId
+                return !hasSharedMemberKey(member, moderatorEntry)
               }),
               {},
             ),
@@ -1390,7 +1646,12 @@ const startTest = async () => {
           }),
         }
 
-        await set(callRef, payload)
+        await update(callRef, {
+          createdAt: payload.createdAt,
+          startedAt: payload.startedAt,
+          status: payload.status,
+          [`staff/${moderatorEntry.userDocId}`]: moderatorEntry,
+        })
       }
     }
   }
@@ -1398,7 +1659,8 @@ const startTest = async () => {
   // Ensure only moderator can set this, and only on explicit end, NOT using onDisconnect
   // onDisconnect(roomRef).set(null)
 
-  onValue(roomRef, async (snapshot) => {
+  roomUnsubscribe?.()
+  roomUnsubscribe = onValue(roomRef, async (snapshot) => {
     const data = snapshot.val()
 
     // If data is null, the room has been deleted (e.g. by moderator ending call)
@@ -1430,6 +1692,16 @@ const startTest = async () => {
 
     const previousGlobalIndex = globalIndex.value
     const previousTaskIndex = taskIndex.value
+
+    if (
+      !isModerator.value &&
+      !isObservator.value &&
+      globalIndex.value === 1 &&
+      nextGlobalIndex === 0
+    ) {
+      displayVideoCallComponent.value = true
+      return
+    }
 
     if (!isModerator.value) {
       if (isObservator.value) {
@@ -1772,6 +2044,7 @@ const completeStep = async (id, type, userCompleted = true) => {
       // validation: type === 'tasks' ? id + 1 : taskIndex.value
       await update(participantRef, {
         taskIndex: taskIndex.value,
+        progress: completedSteps.value,
       })
     }
 
@@ -2029,8 +2302,7 @@ watch(
 )
 
 onBeforeUnmount(async () => {
-  const roomRef = dbRef(database, `rooms/${roomId.value}`)
-  off(roomRef)
+  stopRealtimeListeners()
 
   // Never re-create or mutate room metadata during unmount. The room is deleted
   // only in the explicit end-call flow, and any leftover timestamp writes would

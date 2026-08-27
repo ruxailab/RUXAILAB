@@ -425,9 +425,9 @@ export function useStorageFiles() {
   const accountUsedBytes = computed(
     () => Number(user.value?.storageUsageMB || 0) * 1024 * 1024,
   )
-  const accountFreeBytes = computed(() =>
-    Math.max(storageQuotaBytes - accountUsedBytes.value, 0),
-  )
+  // const accountFreeBytes = computed(() =>
+  //   Math.max(storageQuotaBytes - accountUsedBytes.value, 0),
+  // )
   const accountUsagePercentage = computed(() =>
     Math.min((accountUsedBytes.value / storageQuotaBytes) * 100, 100),
   )
@@ -453,7 +453,8 @@ export function useStorageFiles() {
 
   const largestType = computed(() =>
     typeBreakdown.value.reduce(
-      (largest, item) => (!largest || item.size > largest.size ? item : largest),
+      (largest, item) =>
+        !largest || item.size > largest.size ? item : largest,
       null,
     ),
   )
@@ -470,14 +471,14 @@ export function useStorageFiles() {
       icon: 'mdi-database',
       color: 'primary',
     },
-    {
-      key: 'free',
-      title: t('storage.freeSpace'),
-      value: formatBytes(accountFreeBytes.value),
-      subtitle: t('storage.accountQuota'),
-      icon: 'mdi-database-check',
-      color: 'success',
-    },
+    // {
+    //   key: 'free',
+    //   title: t('storage.freeSpace'),
+    //   value: formatBytes(accountFreeBytes.value),
+    //   subtitle: t('storage.accountQuota'),
+    //   icon: 'mdi-database-check',
+    //   color: 'success',
+    // },
     {
       key: 'files',
       title: t('storage.totalFiles'),

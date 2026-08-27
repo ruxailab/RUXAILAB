@@ -105,6 +105,8 @@ const HEURISTIC_POLICY = Object.freeze({
   [R.GUEST]: Object.freeze([C.DASHBOARD_VIEW, C.ANSWERS_VIEW]),
 })
 
+const CARD_SORTING_POLICY = HEURISTIC_POLICY
+
 export const MEMBERSHIP_STATUS = Object.freeze({
   PENDING: 'pending',
   ACCEPTED: 'accepted',
@@ -115,16 +117,19 @@ export const MEMBERSHIP_STATUS = Object.freeze({
 const STUDY_POLICIES = Object.freeze({
   [STUDY_TYPES.USER]: USER_POLICY,
   [STUDY_TYPES.HEURISTIC]: HEURISTIC_POLICY,
+  [STUDY_TYPES.CARD_SORTING]: CARD_SORTING_POLICY,
 })
 
 const SUPPORTED_ROLES = Object.freeze({
   [STUDY_TYPES.USER]: USER_ROLES,
   [STUDY_TYPES.HEURISTIC]: HEURISTIC_ROLES,
+  [STUDY_TYPES.CARD_SORTING]: HEURISTIC_ROLES,
 })
 
 const MANAGER_ASSIGNABLE_ROLES = Object.freeze({
   [STUDY_TYPES.USER]: Object.freeze([R.USER, R.OBSERVATOR]),
   [STUDY_TYPES.HEURISTIC]: Object.freeze([R.EVALUATOR, R.GUEST]),
+  [STUDY_TYPES.CARD_SORTING]: Object.freeze([R.EVALUATOR, R.GUEST]),
 })
 
 const getUserId = (user) => user?.id ?? user?.uid ?? null

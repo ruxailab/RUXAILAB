@@ -435,6 +435,13 @@
   },
   "navigation": {
     "dashboard": "Dashboard",
+    "groups": {
+      "overview": "Overview",
+      "evaluation": "Evaluation",
+      "people": "People",
+      "analysis": "Analysis",
+      "administration": "Administration"
+    },
     "studies": "Studies",
     "sessions": "Sessions",
     "templates": "Templates",
@@ -626,6 +633,15 @@
       "cancelled": "Screen sharing was cancelled. Please share your entire screen to continue.",
       "wrongSurface": "You shared a browser tab. Please share your entire screen so we can see the tool you will use.",
       "error": "We could not start screen recording. Please try again."
+    },
+    "boundary": {
+      "title": "Something went wrong",
+      "message": "An unexpected error occurred while loading this page. Your data has been preserved.",
+      "retry": "Retry",
+      "goToDashboard": "Go to Dashboard",
+      "showDetails": "Show error details",
+      "copyDetails": "Copy error details",
+      "copied": "Copied!"
     }
   },
   "screenShare": {
@@ -826,6 +842,15 @@
     }
   },
   "HeuristicsAnalytics": {
+    "title": "Analytics",
+    "traditional": "Traditional",
+    "detailed": "Detailed",
+    "question": "Question",
+    "heuristicLevelEvidence": "Evidence is grouped by heuristic in Traditional evaluations.",
+    "evidenceItems": "evidence items",
+    "noComments": "No comments for this selection",
+    "noImages": "No images for this selection",
+    "evidence": "Heuristic evidence",
     "dataTable": "Data Table",
     "chart": "Chart",
     "userUploadedContent": "User uploaded content",
@@ -866,6 +891,7 @@
     "placeholders": {
       "titleHeuristic": "Title Heuristic",
       "titleYourHeuristic": "Title your heuristic",
+      "descriptionYourHeuristic": "Description of your heuristic",
       "titleYourQuestion": "Title your Question",
       "titleQuestion": "Title Question",
       "titleNewQuestion": "Title new question",
@@ -879,12 +905,14 @@
       "changeWeights": "Be aware that by changing the order of the heuristics, the weights DO NOT change automatically, you must change them manually.",
       "noDescriptions": "No descriptions available",
       "startAddingQuestions": "Start by adding your first question to this heuristic",
+      "optionalFirstQuestion": "Optional: you can add a question later",
       "cantDeleteAllQuestions": "Sorry, you cannot delete all questions from a heuristic",
       "studyHasAnswers": "This study has answers"
     },
     "validation": {
       "nameRequired": "Name is mandatory",
       "questionRequired": "The question must be filled",
+      "max100Characters": "Maximum 100 characters",
       "textRequired": "Text is required",
       "positiveValue": "Value must be a positive number",
       "addQuestion": "Please add at least one question to your heuristic"
@@ -951,13 +979,18 @@
       "confirmUpload": "Confirm Upload",
       "timeTracking": "Time Tracking",
       "answerMetrics": "Answer metrics",
-      "enableWeights": "Enable Weights Feature"
+      "enableWeights": "Enable Weights Feature",
+      "studyType": "Study type",
+      "csv": "CSV template"
     },
     "messages": {
       "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
       "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding.",
       "timeTrackingDescription": "Track the time each evaluator spends per heuristic during evaluation.",
       "answerMetricsDescription": "Choose which default metrics evaluators will answer when no custom options are configured.",
+      "settingsDescription": "Choose how evaluators will work through this heuristic study.",
+      "studyTypeDescription": "Select the evaluation method that best matches your study.",
+      "csvDescription": "Download a template or replace the current heuristics with a CSV file.",
       "settingsSaved": "Settings saved successfully.",
       "enableWeightsDescription": "Allow evaluators to assign weights to heuristics in this study"
     },
@@ -967,6 +1000,16 @@
     "actions": {
       "downloadCsvTemplate": "Download CSV template",
       "update": "Update"
+    },
+    "modes": {
+      "traditional": "Traditional",
+      "detailed": "Detailed",
+      "weights": "Weights"
+    },
+    "modeDescriptions": {
+      "traditional": "Evaluators answer the Frequency and Severity metrics for each heuristic.",
+      "detailed": "Create granular questions for each heuristic and choose predefined answers to support the heuristic calculation.",
+      "weights": "Evaluators assign a relative weight to each heuristic during the evaluation."
     },
     "labels": {
       "timeTrackingOn": "Time tracking enabled",
@@ -1079,7 +1122,8 @@
     "alerts": {
       "testAlreadyCompleted": "Test Already Completed",
       "testAlreadyCompletedMessage": "You have already completed and submitted this test. Thank you for your participation!",
-      "testConfigError": "Test Configuration Error"
+      "testConfigError": "Test Configuration Error",
+      "noAnswerOptionsConfigured": "No answer options have been configured for this test."
     },
     "actions": {
       "cancel": "Cancel",
@@ -1139,6 +1183,7 @@
     "titles": {
       "heuristics": "Heuristics",
       "options": "Options",
+      "heuristicAnswers": "Heuristic answers",
       "weights": "Weights",
       "settings": "Settings",
       "evaluatorInfo": "Evaluator Info"
@@ -1149,14 +1194,17 @@
   "HeuristicsTestAnswer": {
     "titles": {
       "answers": "Answers",
-      "statistics": "Statistics",
+      "statistics": "General",
       "evaluators": "Evaluators",
       "heuristics": "Heuristics",
       "analytics": "Analytics",
       "evaluatorNumber": "Evaluator {n}",
       "totalTime": "Total time",
+      "lastUpdate": "Last update",
       "averageTime": "Average time per evaluator",
-      "timeStdDev": "Time standard deviation"
+      "timeStdDev": "Time standard deviation",
+      "averageScore": "Average Score",
+      "standardDeviation": "Standard Deviation"
     },
     "statistics": {
       "usabilityPercentage": "Usability Percentage",
@@ -1183,6 +1231,14 @@
           "average": "Average warning threshold"
         },
         "details": ""
+      },
+      "coverage": {
+        "title": "Evaluation coverage",
+        "subtitle": "Progress across all heuristic answers",
+        "heuristics": "Heuristics",
+        "responses": "Responses",
+        "answered": "Answered",
+        "pending": "Pending"
       },
       "charts": {
         "imagesByHeuristic": {
@@ -1215,6 +1271,7 @@
         "heuristicsData": "Heuristics Data",
         "answersByEvaluator": "Response Values by Evaluator",
         "answersByHeuristics": "Answers by Heuristics",
+        "timeByHeuristics": "Time by Heuristics",
         "graphic": "Graphic",
         "weights": "Weights"
       },
@@ -2080,7 +2137,7 @@
       "fine_tune_configuration": "Fine-tune your test configuration",
       "public_access": "Public Access",
       "allow_users_view": "Allow users to view this test",
-      "test_status": "Test Status",
+      "test_status": "Study Status",
       "select_status": "Select Status",
       "end_date": "End Date",
       "select_end_date": "Select End Date",
@@ -2361,6 +2418,7 @@
     }
   },
   "CardSorting": {
+    "invalidConfiguration": "This study must have at least one category and one card before it can be started.",
     "title": "Card Sorting",
     "noCategory": "No category",
     "noCards": "No cards found",
@@ -2567,7 +2625,8 @@
       "tabs": {
         "configuration": "Session Configuration",
         "consent": "Consent Form",
-        "guide": "Discussion Guide"
+        "guide": "Discussion Guide",
+        "stimuli": "Stimuli"
       },
       "noTopics": "No topics yet. Add your first discussion topic to get started.",
       "addTopic": "Add topic",
@@ -2661,6 +2720,8 @@
       "sessionInfo": "Session",
       "showParticipants": "Show participants",
       "hideParticipants": "Hide participants",
+      "participationPercent": "{percent}%",
+      "participationHint": "Share of session activity from this participant (messages and speaking time)",
       "muteMicrophone": "Mute microphone",
       "unmuteMicrophone": "Unmute microphone",
       "turnCameraOff": "Turn off camera",
@@ -2680,7 +2741,29 @@
       "endedTitle": "Session ended",
       "endedSubtitle": "Responses have been saved.",
       "sessionSaved": "Session responses saved.",
-      "noTopicsWarning": "Add topics to your discussion guide before starting a session."
+      "noTopicsWarning": "Add topics to your discussion guide before starting a session.",
+      "stimuli": "Stimuli",
+      "noStimuli": "No stimuli in the library yet. Add some from the Test screen.",
+      "present": "Present",
+      "presenting": "Presenting",
+      "presentingStimulus": "Presenting:",
+      "stopPresenting": "Stop presenting",
+      "openStimulusLink": "Open stimulus link"
+    },
+    "stimulus": {
+      "empty": "No stimuli yet. Upload an image or video, or add a link below.",
+      "types": {
+        "image": "Image",
+        "video": "Video",
+        "url": "Link"
+      },
+      "topic": "Topic",
+      "remove": "Remove stimulus",
+      "dropHint": "Drag and drop an image or video, or click to upload",
+      "addLinkTitle": "Add a link",
+      "linkName": "Name",
+      "linkUrl": "URL",
+      "addLink": "Add link"
     }
   },
   "studyCreation": {
@@ -2900,6 +2983,7 @@
       "validation": {
         "enterTitle": "Enter a Title",
         "max200Characters": "Max 200 characters",
+        "max150Characters": "Max 150 characters",
         "max600Characters": "Max 600 characters",
         "enterWebsiteName": "Enter website name",
         "enterWebsiteUrl": "Enter website URL",
@@ -3528,22 +3612,6 @@
     "empty": {
       "title": "No sessions found",
       "description": "Create a session to start inviting staff and participants."
-    }
-  },
-  "errors": {
-    "globalError": "An error occurred. Please try again.",
-    "emailIsRequired": "Email is required.",
-    "passwordRequired": "Password is required.",
-    "invalidEmail": "Please enter a valid email address.",
-    "incorrectCredential": "Incorrect email or password, or account does not exist.",
-    "boundary": {
-      "title": "Something went wrong",
-      "message": "An unexpected error occurred while loading this page. Your data has been preserved.",
-      "retry": "Retry",
-      "goToDashboard": "Go to Dashboard",
-      "showDetails": "Show error details",
-      "copyDetails": "Copy error details",
-      "copied": "Copied!"
     }
   }
 }

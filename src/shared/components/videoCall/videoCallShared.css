@@ -13,6 +13,66 @@
   transition: margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+:global(.video-tool-drawer) {
+  position: fixed !important;
+  top: calc(50% - 64px) !important;
+  right: 16px !important;
+  left: auto !important;
+  bottom: auto !important;
+  height: 70dvh !important;
+  min-height: 70dvh !important;
+  max-height: 70dvh !important;
+  transform: translateY(-50%) !important;
+  border-radius: 16px !important;
+  border: 3px solid rgb(var(--v-theme-primary)) !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  z-index: 1600 !important;
+}
+
+:global(.video-tool-drawer .v-navigation-drawer__content) {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  overflow-y: auto;
+}
+
+:global(.video-tool-header) {
+  min-height: 56px !important;
+  padding: 10px 16px !important;
+  background: #0c2d49 !important;
+  border-bottom: 1px solid #0c2d49 !important;
+  box-sizing: border-box !important;
+}
+
+:global(.video-tool-header h3) {
+  margin: 0 !important;
+  color: #fff !important;
+  font-size: 1.15rem !important;
+  font-weight: 600 !important;
+  line-height: 1.25 !important;
+}
+
+:global(.video-tool-header .v-icon),
+:global(.video-tool-header .v-btn) {
+  color: #fff !important;
+}
+
+@media (max-width: 768px) {
+  :global(.video-tool-drawer) {
+    top: 64px !important;
+    right: auto !important;
+    bottom: 64px !important;
+    left: 10% !important;
+    transform: none !important;
+    height: calc(100dvh - 128px) !important;
+    min-height: calc(100dvh - 128px) !important;
+    max-height: calc(100dvh - 128px) !important;
+    width: 80% !important;
+    max-width: 80% !important;
+  }
+}
+
 /* Adjust content when panel is open on desktop */
 @media (min-width: 769px) {
   .video-call-container.panel-open {
@@ -43,29 +103,6 @@
   padding: 0 !important;
 }
 
-.video-stage:has(.spotlight-primary) {
-  display: grid;
-  grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
-  height: 80%;
-  gap: 12px;
-}
-
-.video-stage:has(.videos-single) {
-  position: relative;
-  display: block;
-  height: 80%;
-  aspect-ratio: auto;
-}
-
-.video-stage:has(.videos-single) > .videos-grid.videos-single {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  height: auto !important;
-  transform: translate(-50%, -50%);
-  overflow: visible;
-}
-
 .videos-grid {
   display: grid;
   grid-template-columns: repeat(var(--grid-cols, 2), minmax(0, 1fr));
@@ -78,44 +115,6 @@
   margin: 0 !important;
   padding: 12px !important;
   box-sizing: border-box;
-}
-
-.videos-grid:not(.videos-single):not(.videos-filmstrip) {
-  gap: 12px;
-  height: 80%;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
-}
-
-.videos-grid:not(.videos-single) .video-container {
-  width: min(100%, 520px);
-  justify-self: center;
-  height: auto;
-}
-
-.videos-grid:not(.videos-single) .video-container {
-  width: 100%;
-  margin: 0 auto;
-  height: auto;
-  aspect-ratio: 4 / 3;
-}
-
-.videos-grid.videos-single {
-  grid-template-columns: minmax(0, 1fr);
-  width: min(72%, 900px);
-  max-width: 900px;
-  margin: 0 !important;
-  align-content: stretch;
-  justify-self: center;
-}
-
-.videos-grid.videos-single .video-container {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 4 / 3;
-  border-radius: 0;
-  overflow: visible;
 }
 
 .video-preview-grid {
@@ -142,35 +141,27 @@
   background-color: transparent;
 }
 
+.video-container.video-container-single {
+  width: min(72vw, 900px);
+  height: auto;
+  aspect-ratio: 4 / 3;
+  margin: 0 auto;
+}
+
+.video-container.video-container-single .video-element {
+  object-fit: contain;
+}
+
 .video-element {
   width: 100%;
   height: 100%;
   aspect-ratio: 4 / 3;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
   background-color: transparent;
   border: 3px solid rgb(var(--v-theme-primary));
   border-radius: 16px;
   box-sizing: border-box;
-}
-
-.spotlight-primary {
-  grid-column: 2;
-  grid-row: 1;
-  min-width: 0;
-  height: 100%;
-  padding: 12px;
-  box-sizing: border-box;
-}
-
-.spotlight-item,
-.spotlight-item .video-container {
-  width: 100%;
-  height: 100%;
-}
-
-.spotlight-item .video-container {
-  aspect-ratio: auto;
 }
 
 .spotlight-item .screen-share-container {
@@ -186,43 +177,6 @@
   aspect-ratio: auto;
   object-fit: contain;
   border-radius: 16px;
-}
-
-.videos-grid.videos-filmstrip {
-  grid-column: 1;
-  grid-row: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  height: 100%;
-  overflow: hidden;
-  align-items: stretch;
-  justify-content: flex-start;
-  align-content: flex-start;
-  padding: 12px !important;
-  box-sizing: border-box;
-}
-
-.videos-grid.videos-filmstrip > div {
-  flex: 0 0 auto;
-  width: 100%;
-  height: auto;
-}
-
-.videos-grid.videos-filmstrip > div .video-container {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 4 / 3;
-}
-
-.videos-grid.videos-filmstrip > div .video-element {
-  width: 100%;
-  height: 100%;
-}
-
-.videos-grid.videos-filmstrip .video-container {
-  width: 100%;
-  aspect-ratio: 4 / 3;
 }
 
 .screen-share-container .screen-share-element {
@@ -505,6 +459,8 @@
   overflow: hidden;
   z-index: 1500;
   flex-direction: column;
+  display: flex;
+  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .side-panel-open {
@@ -541,7 +497,7 @@
   position: fixed;
   top: 0;
   right: -350px;
-  width: 350px;
+  width: 400px;
   height: 100vh;
   background: white;
   box-shadow: -4px 0 20px rgba(0, 0, 0, 0.3);
@@ -778,35 +734,6 @@
 }
 
 @media (max-width: 768px) {
-  .video-stage:has(.spotlight-primary) {
-    display: flex;
-    flex-direction: column;
-    height: 80%;
-  }
-
-  .video-stage:has(.spotlight-primary) .spotlight-primary,
-  .video-stage:has(.spotlight-primary) .videos-grid.videos-filmstrip {
-    width: 100%;
-    height: auto;
-    grid-column: auto;
-  }
-
-  .video-stage:has(.spotlight-primary) .spotlight-primary {
-    order: 1;
-  }
-
-  .video-stage:has(.spotlight-primary) .videos-grid.videos-filmstrip {
-    order: 2;
-    flex-direction: row;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: 0 0 12px;
-  }
-
-  .videos-grid.videos-filmstrip > div {
-    width: 180px;
-  }
-
   .side-panel {
     width: 100%;
     right: -100%;

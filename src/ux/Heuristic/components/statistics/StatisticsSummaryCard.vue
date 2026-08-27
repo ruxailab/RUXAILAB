@@ -5,13 +5,114 @@
     class="summary-root"
     :class="{ 'summary-root--single': isSingleEvaluator }"
   >
-    <v-card-title class="summary-title">
-      {{ summaryTitle }}
-    </v-card-title>
-    <v-divider class="summary-divider" />
+    <v-row v-if="traditionalMetrics" class="ma-0 pa-4 summary-grid" dense>
+      <v-col cols="12" md="6">
+        <UxMetricCard
+          :value="traditionalMetrics.frequency.average"
+          :label="t('HeuristicsTestView.answer.frequency')"
+          color="info"
+          icon="mdi-repeat"
+          :progress="metricProgress(traditionalMetrics.frequency.average)"
+        >
+          <template #description>
+            <v-row dense>
+              <v-col cols="4">
+                <div class="text-caption text-medium-emphasis">
+                  {{ t('HeuristicsTestAnswer.summary.stats.max') }}
+                </div>
+                <div class="font-weight-bold">
+                  {{ traditionalMetrics.frequency.max }}
+                </div>
+              </v-col>
+              <v-col cols="4">
+                <div class="text-caption text-medium-emphasis">
+                  {{ t('HeuristicsTestAnswer.summary.stats.min') }}
+                </div>
+                <div class="font-weight-bold">
+                  {{ traditionalMetrics.frequency.min }}
+                </div>
+              </v-col>
+              <v-col cols="4">
+                <div class="text-caption text-medium-emphasis">
+                  {{ t('HeuristicsTestAnswer.summary.stats.stdDev') }}
+                </div>
+                <div class="font-weight-bold">
+                  {{ traditionalMetrics.frequency.sd }}
+                </div>
+              </v-col>
+            </v-row>
+          </template>
+        </UxMetricCard>
+      </v-col>
+      <v-col cols="12" md="6">
+        <UxMetricCard
+          :value="traditionalMetrics.severity.average"
+          :label="t('HeuristicsTestView.answer.severity')"
+          color="warning"
+          icon="mdi-alert-circle-outline"
+          :progress="metricProgress(traditionalMetrics.severity.average)"
+        >
+          <template #description>
+            <v-row dense>
+              <v-col cols="4">
+                <div class="text-caption text-medium-emphasis">
+                  {{ t('HeuristicsTestAnswer.summary.stats.max') }}
+                </div>
+                <div class="font-weight-bold">
+                  {{ traditionalMetrics.severity.max }}
+                </div>
+              </v-col>
+              <v-col cols="4">
+                <div class="text-caption text-medium-emphasis">
+                  {{ t('HeuristicsTestAnswer.summary.stats.min') }}
+                </div>
+                <div class="font-weight-bold">
+                  {{ traditionalMetrics.severity.min }}
+                </div>
+              </v-col>
+              <v-col cols="4">
+                <div class="text-caption text-medium-emphasis">
+                  {{ t('HeuristicsTestAnswer.summary.stats.stdDev') }}
+                </div>
+                <div class="font-weight-bold">
+                  {{ traditionalMetrics.severity.sd }}
+                </div>
+              </v-col>
+            </v-row>
+          </template>
+        </UxMetricCard>
+      </v-col>
+      <v-col cols="12" sm="4">
+        <UxMetricCard
+          :value="traditionalMetrics.evaluators"
+          :label="t('HeuristicsTestAnswer.summary.stats.evaluators')"
+          color="success"
+          icon="mdi-account-group"
+          :show-progress="false"
+        />
+      </v-col>
+      <v-col cols="12" sm="4">
+        <UxMetricCard
+          :value="traditionalMetrics.comments"
+          :label="t('common.comments')"
+          color="secondary"
+          icon="mdi-comment-text-outline"
+          :show-progress="false"
+        />
+      </v-col>
+      <v-col cols="12" sm="4">
+        <UxMetricCard
+          :value="traditionalMetrics.images"
+          :label="t('common.images')"
+          color="primary"
+          icon="mdi-image-multiple-outline"
+          :show-progress="false"
+        />
+      </v-col>
+    </v-row>
 
     <v-row class="ma-0 pa-4 summary-grid" dense>
-      <v-col cols="12" md="12">
+      <v-col v-if="!traditionalMetrics" cols="12" md="12">
         <v-card flat rounded="lg" class="stat-tile stat-tile--hero pa-5 h-100">
           <div class="d-flex align-center justify-space-between mb-2">
             <div class="d-flex align-center ga-3">
@@ -158,27 +259,27 @@
             </div>
           </div>
 
-          <div v-if="imageTotalsByHeuristic.length" class="images-chart-center">
-            <div class="image-stat-grid">
-              <div
+          <div v-if="imageTotalsByHeuristic.length">
+            <v-list lines="two" density="comfortable" bg-color="transparent">
+              <v-list-item
                 v-for="item in imageTotalsByHeuristic"
                 :key="item.heuristic"
-                class="image-stat-item"
+                :title="item.heuristic"
+                :subtitle="`${item.totalImages} ${t('common.images')}`"
               >
-                <div class="image-stat-header">
-                  <span class="image-stat-tag">{{ item.heuristic }}</span>
-                  <span class="image-stat-count">{{ item.totalImages }}</span>
-                </div>
-                <div class="image-stat-track">
-                  <div
-                    class="image-stat-fill"
-                    :style="{
-                      width: `${toRatio(item.totalImages, maxImagesTotal)}%`,
-                    }"
-                  />
-                </div>
-              </div>
-            </div>
+                <template #prepend>
+                  <v-avatar color="primary" variant="tonal" size="40">
+                    <v-icon>mdi-image-multiple-outline</v-icon>
+                  </v-avatar>
+                </template>
+                <v-progress-linear
+                  :model-value="toRatio(item.totalImages, maxImagesTotal)"
+                  color="primary"
+                  height="8"
+                  rounded
+                />
+              </v-list-item>
+            </v-list>
           </div>
 
           <div v-else class="text-body-2 text-medium-emphasis">
@@ -189,42 +290,93 @@
         </v-card>
       </v-col>
 
+      <v-col
+        v-if="!traditionalMetrics && optionResponseTotals.length"
+        cols="12"
+        lg="5"
+      >
+        <v-card flat rounded="lg" class="summary-panel pa-5">
+          <div class="text-subtitle-1 font-weight-bold mb-4">
+            {{
+              t('HeuristicsTestAnswer.summary.charts.responsesByOption.title')
+            }}
+          </div>
+          <SelectionPieChart
+            question-title=""
+            :options="optionResponseTotals.map((item) => item.text)"
+            :counts="
+              optionResponseTotals.reduce(
+                (counts, item) => ({ ...counts, [item.text]: item.total }),
+                {},
+              )
+            "
+            canvas-id="summary-options-pie"
+            :show-percentages="true"
+          />
+        </v-card>
+      </v-col>
+
       <v-col cols="12" lg="5">
         <v-card flat rounded="lg" class="summary-panel pa-5 h-100">
           <div class="d-flex align-center justify-space-between mb-4">
             <div>
               <div class="text-subtitle-1 font-weight-bold">
-                {{
-                  t(
-                    'HeuristicsTestAnswer.summary.charts.responsesByOption.title',
-                  )
-                }}
+                {{ t('HeuristicsTestAnswer.summary.coverage.title') }}
               </div>
               <div class="text-caption text-medium-emphasis">
-                {{
-                  t(
-                    'HeuristicsTestAnswer.summary.charts.responsesByOption.subtitle',
-                  )
-                }}
+                {{ t('HeuristicsTestAnswer.summary.coverage.subtitle') }}
               </div>
             </div>
+            <v-progress-circular
+              :model-value="evaluationOverview.coverage"
+              :size="64"
+              :width="6"
+              color="primary"
+            >
+              {{ evaluationOverview.coverage }}%
+            </v-progress-circular>
           </div>
-
-          <SelectionPieChart
-            v-if="optionLabels.length"
-            question-title=""
-            :options="optionLabels"
-            :counts="optionCounts"
-            canvas-id="summary-options-pie"
-            :chart-colors="optionColors"
-            :show-percentages="true"
+          <v-progress-linear
+            :model-value="evaluationOverview.coverage"
+            color="primary"
+            height="8"
+            rounded
+            class="mb-5"
           />
-
-          <div v-else class="text-body-2 text-medium-emphasis">
-            {{
-              t('HeuristicsTestAnswer.summary.charts.responsesByOption.empty')
-            }}
-          </div>
+          <v-row dense>
+            <v-col cols="6">
+              <div class="mini-label">
+                {{ t('HeuristicsTestAnswer.summary.coverage.heuristics') }}
+              </div>
+              <div class="mini-value">
+                {{ evaluationOverview.totalHeuristics }}
+              </div>
+            </v-col>
+            <v-col cols="6">
+              <div class="mini-label">
+                {{ t('HeuristicsTestAnswer.summary.coverage.responses') }}
+              </div>
+              <div class="mini-value">
+                {{ evaluationOverview.totalResponses }}
+              </div>
+            </v-col>
+            <v-col cols="6">
+              <div class="mini-label">
+                {{ t('HeuristicsTestAnswer.summary.coverage.answered') }}
+              </div>
+              <div class="mini-value">
+                {{ evaluationOverview.answeredResponses }}
+              </div>
+            </v-col>
+            <v-col cols="6">
+              <div class="mini-label">
+                {{ t('HeuristicsTestAnswer.summary.coverage.pending') }}
+              </div>
+              <div class="mini-value">
+                {{ evaluationOverview.pendingResponses }}
+              </div>
+            </v-col>
+          </v-row>
         </v-card>
       </v-col>
     </v-row>
@@ -232,13 +384,12 @@
 </template>
 
 <script setup>
-
-
 // Receives the final result object from the parent
 // { average, max, min, sd }
 import { computed } from 'vue'
 import SelectionPieChart from '@/shared/components/charts/SelectionPieChart.vue'
 import { useI18n } from 'vue-i18n'
+import UxMetricCard from '@/ux/UserTest/components/answers/UxMetricCard.vue'
 
 const { t } = useI18n()
 
@@ -248,6 +399,20 @@ const props = defineProps({
     required: true,
     default: () => ({ average: '0%', max: '0%', min: '0%', sd: '0%' }),
   },
+  traditionalMetrics: {
+    type: Object,
+    default: null,
+  },
+  evaluationOverview: {
+    type: Object,
+    default: () => ({
+      totalHeuristics: 0,
+      totalResponses: 0,
+      answeredResponses: 0,
+      pendingResponses: 0,
+      coverage: 0,
+    }),
+  },
   imageTotalsByHeuristic: {
     type: Array,
     default: () => [],
@@ -256,26 +421,11 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-  testTitle: {
-    type: String,
-    default: '',
-  },
   evaluatorIdentity: {
     type: String,
     default: '',
   },
 })
-
-
-
-const optionColors = [
-  '#8EA8C3',
-  '#C7AE79',
-  '#D8DEE8',
-  '#A9C5A9',
-  '#B7A7D8',
-  '#D8B08B',
-]
 
 const toPercent = (value) => {
   const parsed = parseFloat(
@@ -292,6 +442,8 @@ const toRatio = (value, total) => {
   if (!total) return 0
   return (safeValue * 100) / total
 }
+
+const metricProgress = (value) => Math.max(0, Math.min(100, Number(value) * 25))
 
 const evaluatorsCount = computed(() => Number(props.result?.evaluators) || 0)
 
@@ -350,22 +502,6 @@ const maxImagesTotal = computed(() => {
     ),
   )
 })
-
-const optionLabels = computed(() =>
-  props.optionResponseTotals.map((item) => item.text),
-)
-
-const optionCounts = computed(() =>
-  props.optionResponseTotals.reduce((accumulator, item) => {
-    accumulator[item.text] = Number(item.total) || 0
-    return accumulator
-  }, {}),
-)
-
-const summaryTitle = computed(
-  () =>
-    `${t('HeuristicsTestAnswer.summary.title')} : ${props.testTitle || '-'}`,
-)
 </script>
 
 <style scoped>
@@ -375,19 +511,6 @@ const summaryTitle = computed(
 
 .summary-root--single .stat-tile--hero {
   background: linear-gradient(180deg, #fefefe 0%, #f8fbff 100%);
-}
-
-.summary-title {
-  justify-content: center;
-  font-size: 2rem;
-  font-weight: 500;
-  color: #4b5563;
-  padding-top: 1.25rem;
-  padding-bottom: 1rem;
-}
-
-.summary-divider {
-  opacity: 0.4;
 }
 
 .summary-grid {
@@ -517,67 +640,6 @@ const summaryTitle = computed(
   line-height: 1.05;
 }
 
-.images-chart-center {
-  width: 100%;
-  flex: 1;
-  margin-top: 12px;
-}
-
-.image-stat-grid {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-
-.image-stat-item {
-  border: 1px solid rgba(148, 163, 184, 0.18);
-  border-radius: 10px;
-  padding: 10px;
-  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.image-stat-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-}
-
-.image-stat-tag {
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  color: #355c89;
-  font-family: 'Courier New', monospace;
-}
-
-.image-stat-count {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #1e293b;
-  line-height: 1;
-}
-
-.image-stat-track {
-  position: relative;
-  height: 6px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
-  overflow: hidden;
-  flex-grow: 1;
-}
-
-.image-stat-fill {
-  height: 100%;
-  border-radius: 999px;
-  transition: width 0.25s ease;
-  background: linear-gradient(90deg, #6d8fb3 0%, #adc4da 100%);
-}
-
 .text-slate-700 {
   color: #334155;
 }
@@ -632,25 +694,9 @@ const summaryTitle = computed(
 }
 
 @media (max-width: 960px) {
-  .image-stat-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
-
-  .image-stat-item {
-    padding: 8px;
-  }
 }
 
 @media (max-width: 600px) {
-  .summary-title {
-    font-size: 1.5rem;
-  }
-
-  .image-stat-grid {
-    grid-template-columns: 1fr;
-  }
-
   .summary-header-chips {
     align-items: flex-start;
     flex-direction: column;

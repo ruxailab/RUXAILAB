@@ -6,11 +6,11 @@
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import {
-  getStorage,
   ref as storageRef,
   uploadBytes,
   getDownloadURL,
 } from 'firebase/storage'
+import { storage } from '@/app/plugins/firebase'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { showError } from '@/shared/utils/toast'
 import {
@@ -99,8 +99,7 @@ const recordScreen = async () => {
     emit('showLoading')
     try {
       const videoBlob = new Blob(chunks.value, { type: 'video/webm' })
-      const storage = getStorage()
-      const storagePath = `tests/${props.testId}/${resolvedUserDocId.value}/task_${recordingTaskIndex.value}/screen_record/${videoUrl.value}`
+      const storagePath = `tests/${props.testId}/${resolvedUserDocId.value}/task_${recordingTaskIndex.value}/screen_record/${Date.now()}.webm`
       const storageReference = storageRef(storage, storagePath)
 
       await uploadBytes(storageReference, videoBlob)
@@ -133,10 +132,7 @@ const recordScreen = async () => {
         )
       }
     } catch (error) {
-      console.error(
-        'Unexpected error while stopping screen recording:',
-        error,
-      )
+      console.error('Unexpected error while stopping screen recording:', error)
     } finally {
       stopMediaStream(videoStream.value)
       videoStream.value = null

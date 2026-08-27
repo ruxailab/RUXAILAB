@@ -6,11 +6,7 @@
   >
     <template #subtitle>
       <div class="d-flex align-center flex-wrap ga-2 mt-2 mb-4">
-        <v-icon
-          icon="mdi-database"
-          size="small"
-          class="text-medium-emphasis"
-        />
+        <v-icon icon="mdi-database" size="small" class="text-medium-emphasis" />
         <span class="text-body-1 text-grey-darken-1">
           {{ t('storage.studyDescription') }}
         </span>
@@ -44,7 +40,9 @@
                     </div>
                   </div>
                 </div>
-                <div class="text-caption text-medium-emphasis mt-2 summary-subtitle">
+                <div
+                  class="text-caption text-medium-emphasis mt-2 summary-subtitle"
+                >
                   {{ metric.subtitle }}
                 </div>
               </v-card-text>
@@ -70,9 +68,9 @@
                   <div class="text-subtitle-2 font-weight-bold">
                     {{ formatBytes(accountUsedBytes) }}
                   </div>
-                  <div class="text-caption text-medium-emphasis">
+                  <!-- <div class="text-caption text-medium-emphasis">
                     / {{ formatBytes(storageQuotaBytes) }}
-                  </div>
+                  </div> -->
                 </div>
                 <v-btn
                   :icon="
@@ -83,7 +81,9 @@
                   variant="text"
                   size="small"
                   :aria-label="t('storage.storageAnalysis')"
-                  @click="isStorageAnalysisExpanded = !isStorageAnalysisExpanded"
+                  @click="
+                    isStorageAnalysisExpanded = !isStorageAnalysisExpanded
+                  "
                 />
               </div>
             </div>
@@ -111,14 +111,18 @@
                           <v-icon :icon="item.icon" size="16" />
                         </v-avatar>
                         <div class="breakdown-copy">
-                          <div class="breakdown-title text-body-2 font-weight-medium">
+                          <div
+                            class="breakdown-title text-body-2 font-weight-medium"
+                          >
                             {{ fileTypeLabel(item.type) }}
                           </div>
                           <div class="text-caption text-medium-emphasis">
                             {{ t('storage.fileCount', { count: item.count }) }}
                           </div>
                         </div>
-                        <div class="breakdown-size text-body-2 font-weight-bold">
+                        <div
+                          class="breakdown-size text-body-2 font-weight-bold"
+                        >
                           {{ formatBytes(item.size) }}
                         </div>
                       </div>
@@ -151,10 +155,7 @@
       </v-col>
     </v-row>
 
-    <v-card
-      class="files-card rounded-lg d-none d-sm-block"
-      elevation="2"
-    >
+    <v-card class="files-card rounded-lg d-none d-sm-block" elevation="2">
       <v-card-title class="files-header px-6 py-4">
         <span class="text-h6 font-weight-bold">
           {{ t('storage.mediaFiles') }}
@@ -217,7 +218,9 @@
         </template>
 
         <template #[`item.size`]="{ item }">
-          {{ item.sizeKnown ? formatBytes(item.size) : t('storage.unknownSize') }}
+          {{
+            item.sizeKnown ? formatBytes(item.size) : t('storage.unknownSize')
+          }}
         </template>
 
         <template #[`item.actions`]="{ item }">
@@ -354,7 +357,9 @@
               <div class="text-caption font-weight-bold text-medium-emphasis">
                 {{ t('storage.headers.date') }}
               </div>
-              <div class="text-body-2 mt-1">{{ formatFileDate(item.date) }}</div>
+              <div class="text-body-2 mt-1">
+                {{ formatFileDate(item.date) }}
+              </div>
             </v-sheet>
           </v-col>
           <v-col cols="6">
@@ -516,7 +521,7 @@ const {
   previewFile,
   deleteDialog,
   fileToDelete,
-  storageQuotaBytes,
+  // storageQuotaBytes,
   isDeleting,
   studyTitle,
   headers,

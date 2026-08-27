@@ -39,6 +39,17 @@ export default class FocusGroupController extends Controller {
     })
   }
 
+  async updateStimuli(id, stimuli) {
+    return this.update(COLLECTION, id, {
+      stimuli: stimuli.map((stimulus) =>
+        typeof stimulus.toFirestore === 'function'
+          ? stimulus.toFirestore()
+          : stimulus,
+      ),
+      updateDate: Date.now(),
+    })
+  }
+
   /**
    * Persist a finished live session into the study's answer document, keyed by
    * session id under the `sessions` map.

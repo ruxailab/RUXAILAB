@@ -1,19 +1,6 @@
 <template>
   <div class="pa-4">
     <!---------------------------------------------------------->
-    <!-------------------------- Debug ------------------------->
-    <!---------------------------------------------------------->
-    <!-- <div>Answer Doc ID: {{ answersDocId }}</div>
-    <div>User Doc ID: {{ userDocId }}</div>
-    <div>Task ID: {{ taskId }}</div> -->
-    <!-- <h3>Timeline</h3>
-    <div>Task ID: {{ taskId }}</div>
-    <div>Task Key: {{ taskKey }}</div>
-    <div>Evaluator Audio URL: {{ audioUrlEvaluator }}</div>
-    <div>Moderator Audio URL: {{ audioUrlModerator }}</div>
-    <div v-else>No transcription selected yet.</div> -->
-    <!-- fetch/use the transcription doc by id here -->
-    <!---------------------------------------------------------->
     <!------------------- Media Players ------------------------>
     <!---------------------------------------------------------->
     <div v-if="showMediaPlayers">
@@ -82,7 +69,7 @@
       />
 
       <v-alert
-        v-else
+        v-else-if="showInlineEmptyState"
         type="info"
         variant="tonal"
         density="comfortable"
@@ -110,18 +97,19 @@
 <script setup>
 import { ref, computed } from 'vue'
 
-// Services
-import { transcribe } from '@/app/services/transcription/TranscriptionService'
+import { transcribeTask } from '@/app/services/transcription/TranscriptionService'
+import TranscriptionList from '@/ux/UserTest/components/transcription/TranscriptionList.vue'
 
-// JS props (no types)
 const props = defineProps({
   answersDocId: { type: String, default: null },
   userDocId: { type: String, default: null },
   taskId: { type: [String, Number], required: true },
+  studyId: { type: String, default: null },
   audioUrlEvaluator: { type: String, default: null },
   audioUrlModerator: { type: String, default: null },
   showMediaPlayers: { type: Boolean, default: true },
   showInlineResult: { type: Boolean, default: true },
+  showInlineEmptyState: { type: Boolean, default: true },
 })
 
 const emit = defineEmits(['saved'])
@@ -132,11 +120,10 @@ const transcriptSegments = ref([])
 const snackbar = ref({
   visible: false,
   text: '',
-  color: '', // Use a valid color name or hex code
+  color: '',
 })
 
-// UI selections
-const selectedProvider = ref('whisper') // default
+const selectedProvider = ref('whisper')
 
 const providers = [
   { label: 'Whisper (local)', value: 'whisper' },
@@ -147,14 +134,24 @@ const selectedModel = computed(() =>
   selectedProvider.value === 'openai' ? 'whisper-1' : 'medium',
 )
 
-import TranscriptionList from '@/ux/UserTest/components/transcription/TranscriptionList.vue'
+function mergeSegments(evaluator, moderator) {
+  const withRole = (segments, role) =>
+    (segments ?? []).map((segment) => ({ ...segment, role }))
 
-// Controllers
-import TranscriptionController from '@/ai/transcriptions/TranscriptionController'
-const transcriptionController = new TranscriptionController()
+  return [
+    ...withRole(evaluator?.segments, 'evaluator'),
+    ...withRole(moderator?.segments, 'moderator'),
+  ].sort((a, b) => a.start - b.start)
+}
 
-import AnswerController from '@/shared/controllers/AnswerController'
-const answerController = new AnswerController()
+function errorMessage(err) {
+  return (
+    err?.message ||
+    err?.details ||
+    err?.code ||
+    'Error during transcription. Please try again.'
+  )
+}
 
 async function transcribeSession() {
   if (!props.audioUrlEvaluator && !props.audioUrlModerator) {
@@ -168,79 +165,27 @@ async function transcribeSession() {
     }
     return
   }
-  isTranscribing.value = true
 
-  // const provider = 'whisper'
-  // const model = 'tiny' // You can change the model as needed
-  // const provider = "openai"
-  // const model = "whisper-1"
-  const provider = selectedProvider.value
-  const model = selectedModel.value
+  isTranscribing.value = true
+  transcriptSegments.value = []
+
+  snackbar.value = {
+    visible: true,
+    text: 'Transcribing session, please wait...',
+    color: 'orange',
+  }
 
   try {
-    // Show snackbar notificationz
-    snackbar.value = {
-      visible: true,
-      text: 'Transcribing session, please wait...',
-      color: 'orange',
-    }
-
-    // Clear previous segments
-    transcriptSegments.value = []
-
-    const [evaluator, moderator] = await Promise.all([
-      transcribeAudio(provider, model, props.audioUrlEvaluator, 'evaluator'),
-      transcribeAudio(provider, model, props.audioUrlModerator, 'moderator'),
-    ])
-    const evaluatorSegs = evaluator.segments ?? []
-    const moderatorSegs = moderator.segments ?? []
-
-    // Combine and sort segments by start time
-    transcriptSegments.value = [...evaluatorSegs, ...moderatorSegs].sort(
-      (a, b) => a.start - b.start,
-    )
-
-    snackbar.value = {
-      visible: true,
-      text: 'Transcription completed successfully!',
-      color: 'green',
-    }
-
-    // TODO: Save transcription to backend and get a transcription ID
-    const result = await transcriptionController.create({
+    const result = await transcribeTask({
       answersDocId: props.answersDocId,
       userDocId: props.userDocId,
       taskId: String(props.taskId),
-      provider,
-      model,
-      evaluator: {
-        language: evaluator.language,
-        transcript: evaluator.transcript,
-        segments: evaluatorSegs.map((seg) => ({
-          start: seg.start,
-          end: seg.end,
-          text: seg.text,
-        })),
-      },
-      moderator: {
-        language: moderator.language,
-        transcript: moderator.transcript,
-        segments: moderatorSegs.map((seg) => ({
-          start: seg.start,
-          end: seg.end,
-          text: seg.text,
-        })),
-      },
+      studyId: props.studyId || undefined,
+      provider: selectedProvider.value,
+      model: selectedModel.value,
     })
 
-    // result.id should be the new transcription id
-    await answerController.updateTaskTranscriptionMeta({
-      answersDocId: props.answersDocId,
-      userDocId: props.userDocId,
-      taskId: String(props.taskId),
-      latestId: result.id,
-      inc: 1,
-    })
+    transcriptSegments.value = mergeSegments(result.evaluator, result.moderator)
 
     snackbar.value = {
       visible: true,
@@ -249,41 +194,14 @@ async function transcribeSession() {
     }
 
     emit('saved', result)
-  } catch {
+  } catch (err) {
     snackbar.value = {
       visible: true,
-      text: 'Error during transcription. Please try again.',
+      text: errorMessage(err),
       color: 'red',
     }
   } finally {
     isTranscribing.value = false
   }
 }
-
-async function transcribeAudio(provider, model, audioUrl, role) {
-  try {
-    if (!audioUrl) return { language: null, segments: [], transcript: '' }
-
-    const data = await transcribe({ audio_url: audioUrl, provider, model })
-
-    if (data.status !== 'success' || !data.segments) {
-      throw new Error(
-        `Transcription failed for ${role}: ${
-          data.message || 'No segments found'
-        }`,
-      )
-    }
-
-    const segments = data.segments.map((segment) => ({
-      ...segment,
-      role,
-    }))
-
-    return { language: data.language, segments, transcript: data.transcript }
-  } catch {
-    return { language: null, segments: [], transcript: '' }
-  }
-}
-
-// You can now use props.transcriptionId to load timeline data for the selected task
 </script>

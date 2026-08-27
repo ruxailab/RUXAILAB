@@ -314,6 +314,8 @@ const filteredTests = computed(() => {
         (method === METHOD_DEFINITIONS.USER_MODERATED.id &&
           testType === STUDY_TYPES.USER &&
           subType === USER_STUDY_SUBTYPES.MODERATED) ||
+        (method === METHOD_DEFINITIONS.CARD_SORTING.id &&
+          testType === STUDY_TYPES.CARD_SORTING) ||
         (method === 'MANUAL' && testType === 'MANUAL') ||
         (method === 'AUTOMATIC' && testType === 'AUTOMATIC')
     }

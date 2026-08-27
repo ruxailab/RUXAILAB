@@ -2,7 +2,9 @@
   <v-container
     fluid
     class="video-call-container mt-6"
-    :class="{ 'panel-open': showSidePanel }"
+    :class="{
+      'panel-open': showSidePanel || showStepperPanel || notesDrawerOpen,
+    }"
   >
     <v-alert
       v-if="connectionError"
@@ -19,65 +21,126 @@
       <!-- Grid of Participants -->
       <v-col v-if="callStarted" cols="12">
         <div class="video-stage">
-          <!-- Spotlight: focused participant or shared screen -->
-          <div v-if="isFocusMode" class="spotlight-primary">
-            <div :key="focusedTile.id" class="spotlight-item">
-              <div
-                class="video-container"
-                :class="{
-                  'screen-share-container': focusedTile.type === 'screen',
-                }"
-              >
-                <video
-                  :ref="(el) => attachTileRef(focusedTile, el)"
-                  autoplay
-                  :muted="focusedTile.muted"
-                  playsinline
-                  class="video-element"
-                  :class="{
-                    'screen-share-element': focusedTile.type === 'screen',
-                  }"
-                ></video>
-
-                <div
-                  v-if="focusedTile.type === 'camera' && !focusedTile.hasCamera"
-                  class="camera-disabled-overlay"
+          <v-row v-if="isFocusMode" class="h-100 ma-0" no-gutters>
+            <v-col cols="2" class="h-100 overflow-y-auto pa-3">
+              <v-row class="ma-0 flex-column flex-nowrap" no-gutters>
+                <v-col
+                  v-for="tile in otherTiles"
+                  :key="tile.id"
+                  cols="12"
+                  class="pb-3"
                 >
-                  <v-icon size="64" color="white" class="mb-2"
-                    >mdi-video-off</v-icon
+                  <div
+                    class="video-container"
+                    :class="{
+                      'screen-share-container': tile.type === 'screen',
+                    }"
                   >
-                  <p class="text-white">
-                    {{ t('videoCall.session.cameraOff') }}
-                  </p>
-                </div>
+                    <video
+                      :ref="(el) => attachTileRef(tile, el)"
+                      autoplay
+                      :muted="tile.muted"
+                      playsinline
+                      class="video-element"
+                      :class="{
+                        'screen-share-element': tile.type === 'screen',
+                      }"
+                    ></video>
 
+                    <div
+                      v-if="tile.type === 'camera' && !tile.hasCamera"
+                      class="camera-disabled-overlay"
+                    >
+                      <v-icon size="64" color="white" class="mb-2"
+                        >mdi-video-off</v-icon
+                      >
+                      <p class="text-white">
+                        {{ $t('videoCall.session.cameraOff') }}
+                      </p>
+                    </div>
+
+                    <div
+                      v-if="tile.type === 'camera' && !tile.hasMicrophone"
+                      class="mic-muted-indicator"
+                    >
+                      <v-icon size="24" color="white"
+                        >mdi-microphone-off</v-icon
+                      >
+                    </div>
+
+                    <div class="video-label">{{ tile.label }}</div>
+                  </div>
+                </v-col>
+              </v-row>
+            </v-col>
+
+            <v-col cols="10" class="h-100 pa-3">
+              <div :key="focusedTile.id" class="h-100">
                 <div
-                  v-if="
-                    focusedTile.type === 'camera' && !focusedTile.hasMicrophone
-                  "
-                  class="mic-muted-indicator"
+                  class="video-container"
+                  :class="{
+                    'screen-share-container': focusedTile.type === 'screen',
+                  }"
                 >
-                  <v-icon size="24" color="white">mdi-microphone-off</v-icon>
+                  <video
+                    :ref="(el) => attachTileRef(focusedTile, el)"
+                    autoplay
+                    :muted="focusedTile.muted"
+                    playsinline
+                    class="video-element"
+                    :class="{
+                      'screen-share-element': focusedTile.type === 'screen',
+                    }"
+                  ></video>
+
+                  <div
+                    v-if="
+                      focusedTile.type === 'camera' && !focusedTile.hasCamera
+                    "
+                    class="camera-disabled-overlay"
+                  >
+                    <v-icon size="64" color="white" class="mb-2"
+                      >mdi-video-off</v-icon
+                    >
+                    <p class="text-white">
+                      {{ $t('videoCall.session.cameraOff') }}
+                    </p>
+                  </div>
+
+                  <div
+                    v-if="
+                      focusedTile.type === 'camera' &&
+                      !focusedTile.hasMicrophone
+                    "
+                    class="mic-muted-indicator"
+                  >
+                    <v-icon size="24" color="white">mdi-microphone-off</v-icon>
+                  </div>
+
+                  <div class="video-label">{{ focusedTile.label }}</div>
                 </div>
-
-                <div class="video-label">{{ focusedTile.label }}</div>
               </div>
-            </div>
-          </div>
+            </v-col>
+          </v-row>
 
-          <!-- Tiles: full grid, or a compact filmstrip when focusing -->
-          <div
-            class="videos-grid"
-            :class="{ 'videos-filmstrip': isFocusMode }"
-            :style="gridStyleVars"
-          >
-            <div
-              v-for="tile in isFocusMode ? otherTiles : tiles"
+          <v-row v-else class="h-100 ma-0" align="stretch" no-gutters>
+            <v-col
+              v-for="tile in tiles"
               :key="tile.id"
+              :cols="tileCols"
+              class="pa-2"
+              :class="{
+                'h-100': tiles.length === 3,
+                'mx-auto d-flex align-center': tiles.length === 1,
+              }"
             >
               <div
                 class="video-container"
-                :class="{ 'screen-share-container': tile.type === 'screen' }"
+                :class="{
+                  'h-100': tiles.length !== 1,
+                  'video-container-single': tiles.length === 1,
+                  'screen-share-container': tile.type === 'screen',
+                }"
               >
                 <video
                   :ref="(el) => attachTileRef(tile, el)"
@@ -96,7 +159,7 @@
                     >mdi-video-off</v-icon
                   >
                   <p class="text-white">
-                    {{ t('videoCall.session.cameraOff') }}
+                    {{ $t('videoCall.session.cameraOff') }}
                   </p>
                 </div>
 
@@ -109,17 +172,18 @@
 
                 <div class="video-label">{{ tile.label }}</div>
               </div>
-            </div>
+            </v-col>
 
             <!-- Waiting Message if no peers -->
-            <div
+            <v-col
               v-if="showWaitingMessage"
+              cols="12"
               class="d-flex align-center justify-center pa-4 text-grey"
             >
               <v-icon class="mr-2">mdi-account-clock</v-icon>
-              <span>{{ t('videoCall.session.waitingForParticipants') }}</span>
-            </div>
-          </div>
+              <span>{{ $t('videoCall.session.waitingForParticipants') }}</span>
+            </v-col>
+          </v-row>
         </div>
       </v-col>
     </v-row>
@@ -145,7 +209,7 @@
               ></video>
 
               <div class="video-label">
-                {{ t('videoCall.session.yourPreview') }} ({{
+                {{ $t('videoCall.session.yourPreview') }} ({{
                   user?.email?.split('@')[0]
                 }})
               </div>
@@ -172,10 +236,10 @@
             class="mb-4"
           ></v-progress-circular>
           <h3 class="text-h6 mb-2">
-            {{ t('videoCall.session.waitingForModerator') }}
+            {{ $t('videoCall.session.waitingForModerator') }}
           </h3>
           <p class="text-body-2 text-grey">
-            {{ t('videoCall.session.moderatorWillAdmitParticipant') }}
+            {{ $t('videoCall.session.moderatorWillAdmitParticipant') }}
           </p>
         </div>
       </v-col>
@@ -190,8 +254,8 @@
       :is-sharing-screen="isSharingScreen"
       :show-stepper-panel="showStepperPanel"
       :show-side-panel="showSidePanel"
-      :notes-drawer-open="props.notesDrawerOpen"
-      :notes-count="props.notesCount"
+      :notes-drawer-open="notesDrawerOpen"
+      :notes-count="notesCount"
       :toggle-camera="toggleCamera"
       :toggle-microphone="toggleMicrophone"
       :toggle-screen-share="toggleScreenShare"
@@ -200,7 +264,7 @@
       :end-call="endCall"
       :toggle-stepper-panel="toggleStepperPanel"
       :toggle-side-panel="toggleSidePanel"
-      :toggle-notes-drawer="props.toggleNotesDrawer"
+      :toggle-notes-drawer="handleToggleNotesDrawer"
     />
 
     <VideoCallPanels
@@ -208,8 +272,6 @@
       :show-stepper-panel="showStepperPanel"
       :caller="caller"
       :is-observator="isObservator"
-      :call-started="callStarted"
-      :participants-list="participantsList"
       :staff-list="staffParticipants"
       :participant-list="panelParticipantList"
       :current-stepper-value="currentStepperValue"
@@ -219,17 +281,12 @@
       :is-camera-enabled="isCameraEnabled"
       :is-microphone-enabled="isMicrophoneEnabled"
       :is-sharing-screen="isSharingScreen"
-      :t="t"
       :toggle-side-panel="toggleSidePanel"
       :toggle-stepper-panel="toggleStepperPanel"
       :close-panels="closePanels"
-      :proceed-to-next-step="proceedToNextStep"
       :go-to-step="goToStep"
       :go-to-specific-task="goToSpecificTask"
-      :end-call="endCall"
-      :toggle-camera="toggleCamera"
-      :toggle-microphone="toggleMicrophone"
-      :toggle-screen-share="toggleScreenShare"
+      :completed-steps="completedSteps"
     />
   </v-container>
 </template>
@@ -242,9 +299,11 @@ import { Track } from 'livekit-client'
 import { database } from '@/app/plugins/firebase/index'
 import { ref as dbRef, get, onValue, update, remove } from 'firebase/database'
 import { useLiveKitRoom } from '../composables/useLiveKitRoom'
+import { useVideoCallBoard } from '../composables/useVideoCallBoard'
 import VideoCallPanels from '../VideoCallPanels.vue'
 import VideoCallControlBar from '../VideoCallControlBar.vue'
 import { normalizeSessionMember } from '@/ux/UserTest/utils/sessionPresence'
+import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 
 const props = defineProps({
   roomId: String,
@@ -260,6 +319,16 @@ const props = defineProps({
   notesDrawerOpen: Boolean,
   notesCount: Number,
   toggleNotesDrawer: Function,
+  completedSteps: {
+    type: Object,
+    default: () => ({
+      consent: false,
+      preTest: false,
+      tasks: false,
+      postTest: false,
+      completion: false,
+    }),
+  },
 })
 
 const emit = defineEmits([
@@ -455,7 +524,7 @@ const {
   otherTiles,
   isFocusMode,
   showWaitingMessage,
-  gridStyleVars,
+  tileCols,
   participantsList,
 } = useVideoCallBoard({
   t,
@@ -555,12 +624,26 @@ function stopWaitingPreview() {
 
 function toggleSidePanel() {
   showSidePanel.value = !showSidePanel.value
-  if (showSidePanel.value) showStepperPanel.value = false
+  if (showSidePanel.value) {
+    showStepperPanel.value = false
+    if (props.notesDrawerOpen) props.toggleNotesDrawer?.()
+  }
 }
 
 function toggleStepperPanel() {
   showStepperPanel.value = !showStepperPanel.value
-  if (showStepperPanel.value) showSidePanel.value = false
+  if (showStepperPanel.value) {
+    showSidePanel.value = false
+    if (props.notesDrawerOpen) props.toggleNotesDrawer?.()
+  }
+}
+
+function handleToggleNotesDrawer() {
+  if (!props.notesDrawerOpen) {
+    showSidePanel.value = false
+    showStepperPanel.value = false
+  }
+  props.toggleNotesDrawer?.()
 }
 
 function closePanels() {
@@ -629,53 +712,39 @@ async function startCall() {
   }
 }
 
-async function leaveCall() {
-  if (room.value?.localParticipant) {
-    const localParticipant = room.value.localParticipant
+async function stopLocalMediaTracks() {
+  const localParticipant = room.value?.localParticipant
+  if (!localParticipant) return
 
-    if (localParticipant.isCameraEnabled) {
-      await localParticipant.setCameraEnabled(false)
-    }
-    if (localParticipant.isMicrophoneEnabled) {
-      await localParticipant.setMicrophoneEnabled(false)
-    }
-
-    for (const publication of localParticipant.videoTrackPublications.values()) {
-      publication.track?.stop()
-    }
-    for (const publication of localParticipant.audioTrackPublications.values()) {
-      publication.track?.stop()
-    }
-    for (const publication of localParticipant.screenShareTrackPublications.values()) {
-      publication.track?.stop()
-    }
+  if (localParticipant.isCameraEnabled) {
+    await localParticipant.setCameraEnabled(false)
   }
+  if (localParticipant.isMicrophoneEnabled) {
+    await localParticipant.setMicrophoneEnabled(false)
+  }
+  if (localParticipant.isScreenShareEnabled) {
+    await localParticipant.setScreenShareEnabled(false)
+  }
+
+  // Screen share publications live in videoTrackPublications (LiveKit has no
+  // screenShareTrackPublications map).
+  for (const publication of localParticipant.videoTrackPublications.values()) {
+    publication.track?.stop()
+  }
+  for (const publication of localParticipant.audioTrackPublications.values()) {
+    publication.track?.stop()
+  }
+}
+
+async function leaveCall() {
+  await stopLocalMediaTracks()
 
   await disconnect()
   router.push('/admin')
 }
 
 async function endCall() {
-  if (room.value?.localParticipant) {
-    const localParticipant = room.value.localParticipant
-
-    if (localParticipant.isCameraEnabled) {
-      await localParticipant.setCameraEnabled(false)
-    }
-    if (localParticipant.isMicrophoneEnabled) {
-      await localParticipant.setMicrophoneEnabled(false)
-    }
-
-    for (const publication of localParticipant.videoTrackPublications.values()) {
-      publication.track?.stop()
-    }
-    for (const publication of localParticipant.audioTrackPublications.values()) {
-      publication.track?.stop()
-    }
-    for (const publication of localParticipant.screenShareTrackPublications.values()) {
-      publication.track?.stop()
-    }
-  }
+  await stopLocalMediaTracks()
 
   if (!props.isModerator) {
     await disconnect()

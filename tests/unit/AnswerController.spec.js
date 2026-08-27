@@ -6,7 +6,6 @@ jest.mock('firebase/firestore', () => ({
   getDoc: jest.fn(),
   addDoc: jest.fn(),
   deleteDoc: jest.fn(),
-  increment: jest.fn((val) => ({ _increment: val })),
 }))
 
 jest.mock('@/app/plugins/firebase', () => ({
@@ -258,14 +257,13 @@ describe('AnswerController', () => {
         userDocId: 'user-456',
         taskId: 'task-1',
         latestId: 'transcription-789',
-        inc: 1,
       })
 
       expect(updateSpy).toHaveBeenCalledWith(
         'answers',
         'answer-123',
         expect.objectContaining({
-          'taskAnswers.user-456.tasks.task-1.latestTranscriptionDocId':
+          'taskAnswers.user-456.tasks.task-1.transcriptionDocId':
             'transcription-789',
         }),
       )
@@ -286,17 +284,15 @@ describe('AnswerController', () => {
         answersDocId: 'answer-123',
         userDocId: 'user-456',
         taskId: 'task-1',
-        latestTranscriptionDocId: 'transcription-789',
-        transcriptionsCount: 5,
+        transcriptionDocId: 'transcription-789',
       })
 
       expect(updateSpy).toHaveBeenCalledWith(
         'answers',
         'answer-123',
         expect.objectContaining({
-          'taskAnswers.user-456.tasks.task-1.latestTranscriptionDocId':
+          'taskAnswers.user-456.tasks.task-1.transcriptionDocId':
             'transcription-789',
-          'taskAnswers.user-456.tasks.task-1.transcriptionsCount': 5,
         }),
       )
 

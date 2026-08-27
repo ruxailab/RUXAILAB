@@ -36,6 +36,8 @@
           <v-select
             v-model="selectedTaskFilter"
             :items="taskFilterOptions"
+            item-title="title"
+            item-value="value"
             density="compact"
             variant="outlined"
             hide-details
@@ -48,6 +50,8 @@
           <v-select
             v-model="selectedUserFilter"
             :items="userFilterOptions"
+            item-title="title"
+            item-value="value"
             density="compact"
             variant="outlined"
             hide-details
@@ -57,245 +61,294 @@
       </v-row>
     </v-card>
 
-    <v-row dense class="mb-4">
-      <v-col
-        v-for="card in summaryCards"
-        :key="card.label"
-        cols="12"
-        sm="6"
-        md="3"
+    <v-alert
+      v-if="loadError"
+      type="error"
+      variant="tonal"
+      class="mb-4"
+      closable
+      @click:close="loadError = null"
+    >
+      {{ loadError }}
+    </v-alert>
+
+    <div v-if="loading || userMetricsLoading" class="mb-4">
+      <v-row dense class="mb-4">
+        <v-col v-for="n in 4" :key="`skel-card-${n}`" cols="12" sm="6" md="3">
+          <v-skeleton-loader type="card" />
+        </v-col>
+      </v-row>
+      <v-skeleton-loader type="article, table" />
+    </div>
+
+    <template v-else>
+      <v-alert
+        v-if="!hasAnalyticsData"
+        type="info"
+        variant="tonal"
+        class="mb-4"
       >
-        <UxMetricCard
-          :value="card.value"
-          :label="card.label"
-          :color="card.color"
-          :icon="card.icon"
-          :description="card.description"
-          :progress="card.progress"
-        />
-      </v-col>
-    </v-row>
+        No transcription analytics yet. Run task transcriptions to populate
+        metrics.
+      </v-alert>
 
-    <v-row dense class="mb-4">
-      <v-col cols="12" md="4">
-        <SelectionPieChart
-          question-title="Feedback Tone"
-          :options="sentimentOptions"
-          :counts="sentimentCounts"
-          canvas-id="transcriptions-sentiment-chart"
-          :chart-colors="sentimentChartColors"
-        />
-      </v-col>
+      <v-row dense class="mb-4">
+        <v-col
+          v-for="card in summaryCards"
+          :key="card.label"
+          cols="12"
+          sm="6"
+          md="3"
+        >
+          <UxMetricCard
+            :value="card.value"
+            :label="card.label"
+            :color="card.color"
+            :icon="card.icon"
+            :description="card.description"
+            :progress="card.progress"
+            :show-progress="false"
+          />
+        </v-col>
+      </v-row>
 
-      <v-col cols="12" md="8">
-        <v-card elevation="2" style="border-radius: 12px" class="h-100 pa-6">
-          <div class="d-flex justify-space-between align-center">
-            <h4 class="font-weight-bold">Top Keywords</h4>
-          </div>
-          <div>
-            <div class="word-cloud-wrap">
-              <VueWordCloud
-                :words="filteredKeywordCloudWords"
-                :color="([, weight]) => getKeywordColor(weight)"
-                font-family="Roboto"
-                :font-size-ratio="4"
-                style="height: 240px; width: 100%"
-              />
+      <v-row dense class="mb-4">
+        <v-col cols="12" md="4">
+          <SelectionPieChart
+            question-title="Feedback Tone"
+            :options="sentimentOptions"
+            :counts="sentimentCounts"
+            canvas-id="transcriptions-sentiment-chart"
+            :chart-colors="sentimentChartColors"
+          />
+        </v-col>
+
+        <v-col cols="12" md="8">
+          <v-card elevation="2" style="border-radius: 12px" class="h-100 pa-6">
+            <div class="d-flex justify-space-between align-center">
+              <h4 class="font-weight-bold">Top Keywords</h4>
             </div>
-            <div class="d-flex flex-wrap ga-2 mt-3">
+            <div v-if="filteredTopKeywords.length === 0" class="mt-4">
+              <v-alert type="info" variant="tonal" density="comfortable">
+                No keywords match the current filters.
+              </v-alert>
+            </div>
+            <div v-else>
+              <div class="word-cloud-wrap">
+                <VueWordCloud
+                  :words="filteredKeywordCloudWords"
+                  :color="([, weight]) => getKeywordColor(weight)"
+                  font-family="Roboto"
+                  :font-size-ratio="4"
+                  style="height: 240px; width: 100%"
+                />
+              </div>
+              <div class="d-flex flex-wrap ga-2 mt-3">
+                <v-chip
+                  v-for="keyword in filteredTopKeywords"
+                  :key="keyword.word"
+                  size="x-small"
+                  color="primary"
+                  variant="tonal"
+                >
+                  {{ keyword.word }} ({{ keyword.count }})
+                </v-chip>
+              </div>
+            </div>
+          </v-card>
+        </v-col>
+      </v-row>
+
+      <v-card elevation="2" style="border-radius: 12px" class="mb-4 pa-6">
+        <div class="mb-4 d-flex justify-space-between align-center">
+          <h4 class="font-weight-bold mb-2">
+            <v-icon start color="primary">mdi-table</v-icon>
+            Task-Level Transcription Analytics
+          </h4>
+        </div>
+        <div>
+          <v-alert
+            v-if="filteredTaskStats.length === 0"
+            type="info"
+            variant="tonal"
+            class="mb-0"
+          >
+            {{ emptyTaskTableMessage }}
+          </v-alert>
+
+          <v-data-table
+            v-else
+            :headers="taskTableHeaders"
+            :items="filteredTaskStats"
+            :items-per-page="10"
+            class="elevation-0"
+          >
+            <template #item.taskName="{ item }">
+              <div class="font-weight-medium">{{ item.taskName }}</div>
+            </template>
+
+            <template #item.duration="{ item }">
+              <v-chip size="small" color="primary" variant="tonal">
+                {{ item.duration }}
+              </v-chip>
+            </template>
+
+            <template #item.words="{ item }">
+              <span class="font-weight-medium">{{ item.words }}</span>
+            </template>
+
+            <template #item.speakingTime="{ item }">
+              <v-chip size="x-small" color="success" variant="tonal">
+                {{ item.speakingTime }}
+              </v-chip>
+            </template>
+
+            <template #item.speechRate="{ item }">
+              <v-chip size="x-small" color="warning" variant="tonal">
+                {{ item.speechRate }}
+              </v-chip>
+            </template>
+          </v-data-table>
+        </div>
+      </v-card>
+
+      <v-row dense class="mb-4">
+        <v-col cols="12" md="6">
+          <v-card elevation="2" style="border-radius: 12px" class="h-100 pa-6">
+            <div class="mb-4 d-flex justify-space-between align-center">
+              <h4 class="font-weight-bold mb-2">UX Signals</h4>
               <v-chip
-                v-for="keyword in filteredTopKeywords"
-                :key="keyword.word"
-                size="x-small"
                 color="primary"
-                variant="tonal"
+                size="small"
+                variant="outlined"
+                class="chip-responsive mb-2"
               >
-                {{ keyword.word }} ({{ keyword.count }})
+                <v-icon
+                  icon="mdi-clock-outline"
+                  size="small"
+                  class="d-none d-sm-inline me-1"
+                />
+                Coming Soon
               </v-chip>
             </div>
-          </div>
-        </v-card>
-      </v-col>
-    </v-row>
-
-    <v-card elevation="2" style="border-radius: 12px" class="mb-4 pa-6">
-      <div class="mb-4 d-flex justify-space-between align-center">
-        <h4 class="font-weight-bold mb-2">
-          <v-icon start color="primary">mdi-table</v-icon>
-          Task-Level Transcription Analytics
-        </h4>
-      </div>
-      <div>
-        <v-alert
-          v-if="filteredTaskStats.length === 0"
-          type="info"
-          variant="tonal"
-          class="mb-0"
-        >
-          No tasks with audio recording enabled in this test.
-        </v-alert>
-
-        <v-data-table
-          v-else
-          :headers="taskTableHeaders"
-          :items="filteredTaskStats"
-          :items-per-page="10"
-          class="elevation-0"
-        >
-          <template #item.taskName="{ item }">
-            <div class="font-weight-medium">{{ item.taskName }}</div>
-          </template>
-
-          <template #item.duration="{ item }">
-            <v-chip size="small" color="primary" variant="tonal">
-              {{ item.duration }}
-            </v-chip>
-          </template>
-
-          <template #item.words="{ item }">
-            <span class="font-weight-medium">{{ item.words }}</span>
-          </template>
-
-          <template #item.longPauses="{ item }">
-            <v-chip size="x-small" color="warning" variant="tonal">
-              {{ item.longPauses }}
-            </v-chip>
-          </template>
-
-          <template #item.negativeStatements="{ item }">
-            <v-chip size="x-small" color="error" variant="tonal">
-              {{ item.negativeStatements }}
-            </v-chip>
-          </template>
-
-          <template #item.sentiment="{ item }">
-            <v-chip size="x-small" :color="item.sentimentColor" variant="tonal">
-              {{ item.sentiment }}
-            </v-chip>
-          </template>
-        </v-data-table>
-      </div>
-    </v-card>
-
-    <v-row dense class="mb-4">
-      <v-col cols="12" md="6">
-        <v-card elevation="2" style="border-radius: 12px" class="h-100 pa-6">
-          <div class="mb-4 d-flex justify-space-between align-center">
-            <h4 class="font-weight-bold mb-2">UX Signals</h4>
-            <v-chip
-              color="primary"
-              size="small"
-              variant="outlined"
-              class="chip-responsive mb-2"
-            >
-              <v-icon
-                icon="mdi-clock-outline"
-                size="small"
-                class="d-none d-sm-inline me-1"
-              />
-              Coming Soon
-            </v-chip>
-          </div>
-          <div class="coming-soon-overlay">
-            <v-expansion-panels
-              v-model="openSignalPanels"
-              multiple
-              variant="accordion"
-              elevation="0"
-            >
-              <v-expansion-panel
-                v-for="(signal, index) in uxSignals"
-                :key="signal.label"
-                :value="index"
+            <div class="coming-soon-overlay">
+              <v-expansion-panels
+                v-model="openSignalPanels"
+                multiple
+                variant="accordion"
+                elevation="0"
               >
-                <v-expansion-panel-title>
-                  <div
-                    class="d-flex align-center justify-space-between w-100 pr-2"
-                  >
-                    <div class="d-flex align-center ga-2">
-                      <v-icon :color="signal.color" size="18">{{
-                        signal.icon
-                      }}</v-icon>
-                      <span class="font-weight-medium">{{ signal.label }}</span>
-                    </div>
-                    <v-chip size="small" :color="signal.color" variant="tonal">
-                      {{ signal.count }}
-                    </v-chip>
-                  </div>
-                </v-expansion-panel-title>
-
-                <v-expansion-panel-text>
-                  <div
-                    v-for="item in signal.items"
-                    :key="`${signal.label}-${item.time}-${item.quote}`"
-                    class="signal-item py-2"
-                  >
-                    <div class="d-flex align-center ga-2 mb-1">
-                      <v-chip size="x-small" color="grey" variant="tonal">
-                        {{ item.time }}
+                <v-expansion-panel
+                  v-for="(signal, index) in uxSignals"
+                  :key="signal.label"
+                  :value="index"
+                >
+                  <v-expansion-panel-title>
+                    <div
+                      class="d-flex align-center justify-space-between w-100 pr-2"
+                    >
+                      <div class="d-flex align-center ga-2">
+                        <v-icon :color="signal.color" size="18">{{
+                          signal.icon
+                        }}</v-icon>
+                        <span class="font-weight-medium">{{
+                          signal.label
+                        }}</span>
+                      </div>
+                      <v-chip
+                        size="small"
+                        :color="signal.color"
+                        variant="tonal"
+                      >
+                        {{ signal.count }}
                       </v-chip>
-                      <span class="text-caption text-medium-emphasis">{{
-                        item.task
-                      }}</span>
                     </div>
-                    <div class="text-body-2 text-grey-darken-2">
-                      "{{ item.quote }}"
-                    </div>
-                  </div>
-                </v-expansion-panel-text>
-              </v-expansion-panel>
-            </v-expansion-panels>
-          </div>
-        </v-card>
-      </v-col>
+                  </v-expansion-panel-title>
 
-      <v-col cols="12" md="6">
-        <v-card elevation="2" style="border-radius: 12px" class="h-100 pa-6">
-          <div class="mb-4 d-flex justify-space-between align-center">
-            <h4 class="font-weight-bold mb-2">AI Session Summary</h4>
-            <v-chip
-              color="primary"
-              size="small"
-              variant="outlined"
-              class="chip-responsive mb-2"
-            >
-              <v-icon
-                icon="mdi-clock-outline"
+                  <v-expansion-panel-text>
+                    <div
+                      v-for="item in signal.items"
+                      :key="`${signal.label}-${item.time}-${item.quote}`"
+                      class="signal-item py-2"
+                    >
+                      <div class="d-flex align-center ga-2 mb-1">
+                        <v-chip size="x-small" color="grey" variant="tonal">
+                          {{ item.time }}
+                        </v-chip>
+                        <span class="text-caption text-medium-emphasis">{{
+                          item.task
+                        }}</span>
+                      </div>
+                      <div class="text-body-2 text-grey-darken-2">
+                        "{{ item.quote }}"
+                      </div>
+                    </div>
+                  </v-expansion-panel-text>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </div>
+          </v-card>
+        </v-col>
+
+        <v-col cols="12" md="6">
+          <v-card elevation="2" style="border-radius: 12px" class="h-100 pa-6">
+            <div class="mb-4 d-flex justify-space-between align-center">
+              <h4 class="font-weight-bold mb-2">AI Session Summary</h4>
+              <v-chip
+                color="primary"
                 size="small"
-                class="d-none d-sm-inline me-1"
-              />
-              Coming Soon
-            </v-chip>
-          </div>
-          <div class="coming-soon-overlay">
-            <p class="text-body-2 mb-3">
-              The participant completed all tasks with generally
-              neutral-positive sentiment. Most hesitation appeared around
-              navigation and checkout-related wording. Positive feedback
-              concentrated on search and filtering interactions.
-            </p>
-            <v-alert
-              type="info"
-              variant="tonal"
-              density="comfortable"
-              class="text-body-2"
-            >
-              AI-generated analysis: review with video and transcript evidence
-              before final conclusions.
-            </v-alert>
-          </div>
-        </v-card>
-      </v-col>
-    </v-row>
+                variant="outlined"
+                class="chip-responsive mb-2"
+              >
+                <v-icon
+                  icon="mdi-clock-outline"
+                  size="small"
+                  class="d-none d-sm-inline me-1"
+                />
+                Coming Soon
+              </v-chip>
+            </div>
+            <div class="coming-soon-overlay">
+              <p class="text-body-2 mb-3">
+                The participant completed all tasks with generally
+                neutral-positive sentiment. Most hesitation appeared around
+                navigation and checkout-related wording. Positive feedback
+                concentrated on search and filtering interactions.
+              </p>
+              <v-alert
+                type="info"
+                variant="tonal"
+                density="comfortable"
+                class="text-body-2"
+              >
+                AI-generated analysis: review with video and transcript evidence
+                before final conclusions.
+              </v-alert>
+            </div>
+          </v-card>
+        </v-col>
+      </v-row>
+    </template>
   </div>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import VueWordCloud from 'vuewordcloud'
 import UxMetricCard from '../answers/UxMetricCard.vue'
 import SelectionPieChart from '../answers/SelectionPieChart.vue'
+import TranscriptionAnalyticsController from '@/ai/transcriptions/TranscriptionAnalyticsController'
+import {
+  aggregateTranscriptionMetrics,
+  emptyMetricsBucket,
+  formatSeconds,
+  keywordsToSortedList,
+  toTaskAnalyticsKey,
+} from '@/ai/transcriptions/transcriptionAnalyticsUtils'
+
+const ALL_TASKS = 'all'
+const ALL_USERS = 'all'
 
 const props = defineProps({
   taskNames: {
@@ -309,26 +362,41 @@ const props = defineProps({
 })
 
 const store = useStore()
+const analyticsController = new TranscriptionAnalyticsController()
+
 const openSignalPanels = ref([])
 const searchTerm = ref('')
-const selectedTaskFilter = ref('All Tasks')
-const selectedUserFilter = ref('All Users')
+const selectedTaskFilter = ref(ALL_TASKS)
+const selectedUserFilter = ref(ALL_USERS)
+
+const loading = ref(false)
+const loadError = ref(null)
+const aggregatedAnalytics = ref(null)
+const userTranscriptionMetrics = ref([])
+const userMetricsLoading = ref(false)
 
 const visibleUserAnswers = computed(
   () => store.getters.visibleUserAnswers || {},
 )
 
+const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
+
+const answersDocId = computed(
+  () =>
+    store.getters.test?.answersDocId || testAnswerDocument.value?.id || null,
+)
+
 const hasActiveSearch = computed(
   () =>
     !!searchTerm.value.trim() ||
-    selectedTaskFilter.value !== 'All Tasks' ||
-    selectedUserFilter.value !== 'All Users',
+    selectedTaskFilter.value !== ALL_TASKS ||
+    selectedUserFilter.value !== ALL_USERS,
 )
 
 const resetSearch = () => {
   searchTerm.value = ''
-  selectedTaskFilter.value = 'All Tasks'
-  selectedUserFilter.value = 'All Users'
+  selectedTaskFilter.value = ALL_TASKS
+  selectedUserFilter.value = ALL_USERS
 }
 
 const triggerSearch = () => {
@@ -339,44 +407,8 @@ const taskTableHeaders = [
   { title: 'Task', key: 'taskName', sortable: false },
   { title: 'Duration', key: 'duration', sortable: false },
   { title: 'Words', key: 'words', sortable: false },
-  { title: 'Long Pauses', key: 'longPauses', sortable: false },
-  { title: 'Negative Statements', key: 'negativeStatements', sortable: false },
-  { title: 'Sentiment', key: 'sentiment', sortable: false },
-]
-
-const summaryCards = [
-  {
-    label: 'Session Duration',
-    value: '12m 34s',
-    color: 'primary',
-    icon: 'mdi-timer-outline',
-    description: 'Total time from first interaction to task completion.',
-    progress: 78,
-  },
-  {
-    label: 'Words Spoken',
-    value: '1,247',
-    color: 'info',
-    icon: 'mdi-microphone-message',
-    description: 'Approximate number of words detected in the session.',
-    progress: 64,
-  },
-  {
-    label: 'Speaking Time',
-    value: '8m 42s',
-    color: 'success',
-    icon: 'mdi-account-voice',
-    description: 'Amount of time with active participant speech.',
-    progress: 69,
-  },
-  {
-    label: 'Speech Rate',
-    value: '143 wpm',
-    color: 'warning',
-    icon: 'mdi-speedometer',
-    description: 'Average words-per-minute across speaking segments.',
-    progress: 72,
-  },
+  { title: 'Speaking Time', key: 'speakingTime', sortable: false },
+  { title: 'Speech Rate', key: 'speechRate', sortable: false },
 ]
 
 const sentimentOptions = ['Positive', 'Neutral', 'Negative']
@@ -505,19 +537,174 @@ const uxSignals = [
   },
 ]
 
-const topKeywords = [
-  { word: 'checkout', count: 14 },
-  { word: 'product', count: 12 },
-  { word: 'search', count: 9 },
-  { word: 'price', count: 8 },
-  { word: 'shipping', count: 6 },
-]
+const audioTaskRows = computed(() => {
+  const sourceTasks = Array.isArray(props.taskDefinitions)
+    ? props.taskDefinitions
+    : []
+
+  const audioTasks = sourceTasks.filter((task) => Boolean(task?.hasAudioRecord))
+
+  return audioTasks.map((task, index) => {
+    const sourceIndex = sourceTasks.indexOf(task)
+    const taskIndex = sourceIndex >= 0 ? sourceIndex : index
+    // Prefer array index to match answers.taskAnswers.*.tasks keys / transcription.taskId.
+    const taskId = String(taskIndex)
+
+    return {
+      taskId,
+      taskIndex,
+      taskNumber: taskIndex + 1,
+      taskName: task?.taskName || `Task ${taskIndex + 1}`,
+      analyticsKey: toTaskAnalyticsKey(taskId),
+    }
+  })
+})
+
+const taskFilterOptions = computed(() => [
+  { title: 'All Tasks', value: ALL_TASKS },
+  ...audioTaskRows.value.map((task) => ({
+    title: `Task ${task.taskNumber}: ${task.taskName}`,
+    value: task.taskId,
+  })),
+])
+
+const userFilterOptions = computed(() => {
+  const options = [{ title: 'All Users', value: ALL_USERS }]
+
+  for (const [userDocId, session] of Object.entries(visibleUserAnswers.value)) {
+    const title =
+      session?.fullName ||
+      session?.email ||
+      session?.userDocId ||
+      userDocId ||
+      'User'
+    options.push({ title, value: String(userDocId) })
+  }
+
+  return options
+})
+
+const userTranscriptionPointers = computed(() => {
+  const pointers = []
+
+  for (const [userDocId, session] of Object.entries(visibleUserAnswers.value)) {
+    const sessionTasks = session?.tasks || {}
+
+    for (const [taskId, taskAnswer] of Object.entries(sessionTasks)) {
+      const transcriptionDocId = taskAnswer?.transcriptionDocId
+      if (!transcriptionDocId) continue
+
+      pointers.push({
+        userDocId: String(userDocId),
+        taskId: String(taskId),
+        transcriptionDocId: String(transcriptionDocId),
+      })
+    }
+  }
+
+  return pointers
+})
+
+const userScopedAnalytics = computed(() => {
+  if (selectedUserFilter.value === ALL_USERS) return null
+
+  const metrics = userTranscriptionMetrics.value.filter(
+    (item) => String(item.userDocId) === String(selectedUserFilter.value),
+  )
+
+  return aggregateTranscriptionMetrics(metrics)
+})
+
+const activeMetrics = computed(() => {
+  if (selectedUserFilter.value !== ALL_USERS) {
+    if (!userScopedAnalytics.value) return emptyMetricsBucket()
+
+    if (selectedTaskFilter.value !== ALL_TASKS) {
+      const key = toTaskAnalyticsKey(selectedTaskFilter.value)
+      return userScopedAnalytics.value.tasks[key] || emptyMetricsBucket()
+    }
+
+    return userScopedAnalytics.value.general
+  }
+
+  const agg = aggregatedAnalytics.value
+  if (!agg) return emptyMetricsBucket()
+
+  if (selectedTaskFilter.value !== ALL_TASKS) {
+    const key = toTaskAnalyticsKey(selectedTaskFilter.value)
+    return agg.tasks?.[key] || emptyMetricsBucket()
+  }
+
+  return agg.general || emptyMetricsBucket()
+})
+
+const hasAnalyticsData = computed(() => {
+  if (selectedUserFilter.value !== ALL_USERS) {
+    return userTranscriptionMetrics.value.length > 0
+  }
+
+  const agg = aggregatedAnalytics.value
+  if (!agg) return false
+
+  const general = agg.general || emptyMetricsBucket()
+  const hasTasks = Object.keys(agg.tasks || {}).length > 0
+  return (
+    hasTasks ||
+    general.sessionDuration > 0 ||
+    general.wordsSpoken > 0 ||
+    general.speakingTime > 0 ||
+    Object.keys(general.keywords || {}).length > 0
+  )
+})
+
+const summaryCards = computed(() => {
+  const metrics = activeMetrics.value
+
+  return [
+    {
+      label: 'Session Duration',
+      value: formatSeconds(metrics.sessionDuration),
+      color: 'primary',
+      icon: 'mdi-timer-outline',
+      description: 'Total time from first interaction to task completion.',
+      progress: 0,
+    },
+    {
+      label: 'Words Spoken',
+      value: Number(metrics.wordsSpoken || 0).toLocaleString(),
+      color: 'info',
+      icon: 'mdi-microphone-message',
+      description: 'Approximate number of words detected in the session.',
+      progress: 0,
+    },
+    {
+      label: 'Speaking Time',
+      value: formatSeconds(metrics.speakingTime),
+      color: 'success',
+      icon: 'mdi-account-voice',
+      description: 'Amount of time with active participant speech.',
+      progress: 0,
+    },
+    {
+      label: 'Speech Rate',
+      value: `${Number(metrics.speechRate || 0)} wpm`,
+      color: 'warning',
+      icon: 'mdi-speedometer',
+      description: 'Average words-per-minute across speaking segments.',
+      progress: 0,
+    },
+  ]
+})
+
+const topKeywords = computed(() =>
+  keywordsToSortedList(activeMetrics.value.keywords),
+)
 
 const filteredTopKeywords = computed(() => {
   const term = searchTerm.value.trim().toLowerCase()
-  if (!term) return topKeywords
+  if (!term) return topKeywords.value
 
-  return topKeywords.filter((keyword) =>
+  return topKeywords.value.filter((keyword) =>
     keyword.word.toLowerCase().includes(term),
   )
 })
@@ -533,85 +720,132 @@ const getKeywordColor = (weight) => {
   return '#90CAF9'
 }
 
-const statTemplates = [
-  {
-    duration: '2m 14s',
-    words: 186,
-    longPauses: 2,
-    negativeStatements: 1,
-    sentiment: 'Neutral',
-    sentimentColor: 'info',
-  },
-  {
-    duration: '3m 05s',
-    words: 242,
-    longPauses: 3,
-    negativeStatements: 2,
-    sentiment: 'Negative',
-    sentimentColor: 'error',
-  },
-  {
-    duration: '2m 41s',
-    words: 209,
-    longPauses: 1,
-    negativeStatements: 0,
-    sentiment: 'Positive',
-    sentimentColor: 'success',
-  },
-]
-
-const taskStats = computed(() => {
-  const sourceTasks = Array.isArray(props.taskDefinitions)
-    ? props.taskDefinitions
-    : []
-
-  const audioTasks = sourceTasks.filter((task) => Boolean(task?.hasAudioRecord))
-
-  const names = audioTasks.length
-    ? audioTasks.map((task, index) => task?.taskName || `Task ${index + 1}`)
-    : []
-
-  return names.map((taskName, index) => {
-    const template = statTemplates[index % statTemplates.length]
-    return {
-      taskNumber: index + 1,
-      taskName,
-      ...template,
-    }
-  })
+const taskBucketSource = computed(() => {
+  if (selectedUserFilter.value !== ALL_USERS) {
+    return userScopedAnalytics.value?.tasks || {}
+  }
+  return aggregatedAnalytics.value?.tasks || {}
 })
 
-const taskFilterOptions = computed(() => [
-  'All Tasks',
-  ...taskStats.value.map((task) => `Task ${task.taskNumber}`),
-])
+const taskStats = computed(() => {
+  const buckets = taskBucketSource.value
 
-const userFilterOptions = computed(() => {
-  const users = Object.values(visibleUserAnswers.value)
-    .map((session, index) => {
-      return (
-        session.fullName ||
-        session.email ||
-        session.userDocId ||
-        `User ${index + 1}`
-      )
-    })
-    .filter(Boolean)
-
-  return ['All Users', ...new Set(users)]
+  return audioTaskRows.value.map((task) => {
+    const bucket = buckets[task.analyticsKey] || emptyMetricsBucket()
+    return {
+      taskId: task.taskId,
+      taskNumber: task.taskNumber,
+      taskName: task.taskName,
+      duration: formatSeconds(bucket.sessionDuration),
+      words: Number(bucket.wordsSpoken || 0).toLocaleString(),
+      speakingTime: formatSeconds(bucket.speakingTime),
+      speechRate: `${Number(bucket.speechRate || 0)} wpm`,
+      keywords: bucket.keywords || {},
+      hasData:
+        bucket.sessionDuration > 0 ||
+        bucket.wordsSpoken > 0 ||
+        bucket.speakingTime > 0 ||
+        Object.keys(bucket.keywords || {}).length > 0,
+    }
+  })
 })
 
 const filteredTaskStats = computed(() => {
   const term = searchTerm.value.trim().toLowerCase()
 
   return taskStats.value.filter((task) => {
-    const matchesSearch = !term || task.taskName.toLowerCase().includes(term)
     const matchesTask =
-      selectedTaskFilter.value === 'All Tasks' ||
-      selectedTaskFilter.value === `Task ${task.taskNumber}`
+      selectedTaskFilter.value === ALL_TASKS ||
+      String(selectedTaskFilter.value) === String(task.taskId)
 
-    return matchesSearch && matchesTask
+    if (!matchesTask) return false
+
+    if (!term) return true
+
+    const matchesName = task.taskName.toLowerCase().includes(term)
+    const matchesKeyword = Object.keys(task.keywords || {}).some((word) =>
+      word.toLowerCase().includes(term),
+    )
+
+    return matchesName || matchesKeyword
   })
+})
+
+const emptyTaskTableMessage = computed(() => {
+  if (audioTaskRows.value.length === 0) {
+    return 'No tasks with audio recording enabled in this test.'
+  }
+  if (!hasAnalyticsData.value) {
+    return 'No transcription analytics available for the selected filters.'
+  }
+  return 'No tasks match the current search or filters.'
+})
+
+const loadAggregatedAnalytics = async () => {
+  if (!answersDocId.value) {
+    aggregatedAnalytics.value = null
+    return
+  }
+
+  loading.value = true
+  loadError.value = null
+
+  try {
+    aggregatedAnalytics.value = await analyticsController.getByAnswersDocId(
+      answersDocId.value,
+    )
+  } catch (error) {
+    console.error('Failed to load transcription analytics:', error)
+    loadError.value =
+      error?.message || 'Failed to load transcription analytics.'
+    aggregatedAnalytics.value = null
+  } finally {
+    loading.value = false
+  }
+}
+
+const loadUserTranscriptionMetrics = async (userDocId) => {
+  if (!userDocId || userDocId === ALL_USERS) {
+    userTranscriptionMetrics.value = []
+    return
+  }
+
+  const ids = userTranscriptionPointers.value
+    .filter((pointer) => pointer.userDocId === String(userDocId))
+    .map((pointer) => pointer.transcriptionDocId)
+
+  if (ids.length === 0) {
+    userTranscriptionMetrics.value = []
+    return
+  }
+
+  userMetricsLoading.value = true
+  try {
+    userTranscriptionMetrics.value =
+      await analyticsController.getMetricsByIds(ids)
+  } catch (error) {
+    console.error('Failed to load user transcription metrics:', error)
+    loadError.value =
+      error?.message || 'Failed to load user transcription metrics.'
+    userTranscriptionMetrics.value = []
+  } finally {
+    userMetricsLoading.value = false
+  }
+}
+
+watch(answersDocId, async () => {
+  await loadAggregatedAnalytics()
+  if (selectedUserFilter.value !== ALL_USERS) {
+    await loadUserTranscriptionMetrics(selectedUserFilter.value)
+  }
+})
+
+watch(selectedUserFilter, (userDocId) => {
+  loadUserTranscriptionMetrics(userDocId)
+})
+
+onMounted(() => {
+  loadAggregatedAnalytics()
 })
 </script>
 

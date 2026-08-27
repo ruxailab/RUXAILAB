@@ -48,7 +48,7 @@
       </p>
     </template>
 
-    <Intro v-if="showIntroView" @close-intro="showIntroComponent = false" />
+    <Intro v-if="showIntroView" @close-intro="dismissIntro" />
 
     <ParticipantTable
       v-else
@@ -146,7 +146,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -196,7 +196,7 @@ defineEmits(['open-invite-dialog'])
 |--------------------------------------------------------------------------
 */
 
-const showIntroComponent = ref(true)
+const introDismissed = ref(false)
 const verified = ref(false)
 
 const messageModel = ref(false)
@@ -294,7 +294,7 @@ const requiredLoginOption = computed(() => getRequiredLoginConfig(test.value))
 const participants = computed(() => store.getters.participants)
 
 const showIntroView = computed(() => {
-  return participants.value.length <= 0 && showIntroComponent.value
+  return participants.value.length <= 0 && !introDismissed.value
 })
 
 /*
@@ -321,6 +321,10 @@ const canManageParticipants = computed(() => {
 const openMessageDialog = (participant) => {
   selectedUser.value = participant
   messageModel.value = true
+}
+
+const dismissIntro = () => {
+  introDismissed.value = true
 }
 
 const handleSendMessage = async ({ user, title, content }) => {
@@ -359,7 +363,7 @@ const handleSendInvitations = async ({
 }) => {
   try {
     showInviteDialog.value = false
-    showIntroComponent.value = false
+    introDismissed.value = true
 
     const newInvites = await store.dispatch('sendParticipantInvitations', {
       study: test.value,
@@ -470,12 +474,6 @@ const cancelParticipantInvitation = (participant) => {
 | Lifecycle
 |--------------------------------------------------------------------------
 */
-
-watch(loading, (newValue) => {
-  if (!newValue) {
-    showIntroComponent.value = participants.value.length === 0
-  }
-})
 
 onMounted(async () => {
   const studyId = props.id || route.params.id
