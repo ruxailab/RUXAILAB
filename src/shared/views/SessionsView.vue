@@ -1,6 +1,8 @@
 <template>
-  <PageWrapper :title="$t('Sessions.title.sessions')">
-    <template #actions>
+  <PageWrapper :title="!showIntroView ? $t('Sessions.title.sessions') : ''">
+    <Intro v-if="showIntroView" @close-intro="dismissIntro" />
+
+    <template v-if="!showIntroView" #actions>
       <v-btn
         color="primary"
         prepend-icon="mdi-plus"
@@ -15,6 +17,7 @@
       :session="sessionToEdit"
       :participants="participants"
       :participant-limit="1"
+      :require-facilitator-and-participant="true"
       @update:dialog="handleSessionDialog"
     />
 
@@ -43,7 +46,7 @@
       @cancel="showDeleteDialog = false"
     />
 
-    <v-card class="mt-4">
+    <v-card v-if="!showIntroView" class="mt-4">
       <v-card-text>
         <v-row>
           <v-col cols="12" lg="8" md="8" sm="6">
@@ -227,6 +230,7 @@ import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 import { showError, showSuccess } from '@/shared/utils/toast'
 import SendSessionMessageDialog from '@/shared/components/dialogs/SendSessionMessageDialog.vue'
 import { useRouter, useRoute } from 'vue-router'
+import Intro from '@/shared/components/introduction_cards/IntroSessions.vue'
 
 const { t, locale } = useI18n()
 
@@ -261,10 +265,16 @@ const selectedSessionDateRange = ref([])
 const showSendMessageDialog = ref(false)
 const sessionToMessage = ref(null)
 
+const introDismissed = ref(false)
+
 const openSendMessageDialog = (session) => {
   sessionToMessage.value = session
   showSendMessageDialog.value = true
 }
+
+const showIntroView = computed(() => {
+  return sessions.value.length <= 0 && !introDismissed.value
+})
 
 const participants = computed(() => store.getters.participants)
 
@@ -350,7 +360,12 @@ const getRemainingMembers = (members = []) => {
   return remaining > 0 ? remaining : 0
 }
 
+const dismissIntro = () => {
+  introDismissed.value = true
+}
+
 const openCreateSessionDialog = () => {
+  dismissIntro()
   sessionToEdit.value = null
   createSessionDialog.value = true
 }
@@ -362,6 +377,7 @@ const openEditSessionDialog = (session) => {
 
 const handleSessionDialog = (value) => {
   createSessionDialog.value = value
+  dismissIntro()
 
   if (!value) {
     sessionToEdit.value = null
@@ -374,7 +390,8 @@ const deleteSession = (session) => {
 }
 
 const goToSession = (coopId) => {
-  router.push(`/testview/${test.value.id}/${coopId}`)
+  const route = router.resolve(`/testview/${test.value.id}/${coopId}`)
+  window.open(route.href, '_blank')
 }
 
 const confirmDeleteSession = async () => {

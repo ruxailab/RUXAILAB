@@ -1,4 +1,4 @@
-import { admin, functions } from '../f.firebase.js'
+import { admin, functions } from '../core/firebase/f.firebase.js'
 import { writeAuditEvent } from '../utils/auditTrail.js'
 import InviteUtils, { INVITE_STATUS } from '../utils/inviteUtils.js'
 
@@ -14,11 +14,13 @@ const ROLE = Object.freeze({
 const SUPPORTED_ROLES = Object.freeze({
   USER: [ROLE.ADMIN, ROLE.MANAGER, ROLE.USER, ROLE.OBSERVATOR],
   HEURISTIC: [ROLE.ADMIN, ROLE.MANAGER, ROLE.EVALUATOR, ROLE.GUEST],
+  CARD_SORTING: [ROLE.ADMIN, ROLE.MANAGER, ROLE.EVALUATOR, ROLE.GUEST],
 })
 
 const MANAGER_ROLES = Object.freeze({
   USER: [ROLE.USER, ROLE.OBSERVATOR],
   HEURISTIC: [ROLE.EVALUATOR, ROLE.GUEST],
+  CARD_SORTING: [ROLE.EVALUATOR, ROLE.GUEST],
 })
 
 const normalizeStudyType = (type) => {
@@ -841,6 +843,67 @@ export const manageStudyMembership = functions.onCall({
       })
 
       /*
+      |--------------------------------------------------------------------------
+      | REINVITE COOPERATOR
+      |--------------------------------------------------------------------------
+      */
+      if (action === 'reinvite') {
+        if (!target) {
+          throw error('not-found', 'Cooperator not found')
+        }
+
+        if (InviteUtils.isAccepted(target)) {
+          throw error(
+            'failed-precondition',
+            'Accepted cooperators cannot be reinvited',
+          )
+        }
+
+        const now = Date.now()
+
+        const membership = {
+          ...target,
+
+          // Generate/use a new invitation token
+          token: data.token || null,
+
+          // Keep the new message when provided
+          inviteMessage:
+            data.inviteMessage !== undefined
+              ? data.inviteMessage
+              : target.inviteMessage || null,
+
+          updateDate: now,
+          status: INVITE_STATUS.PENDING,
+          expirationDate: data.expirationDate,
+          rejectedDate: null,
+        }
+
+        cooperators[targetIndex] = membership
+
+        transaction.update(studyRef, {
+          cooperators,
+        })
+
+        writeAuditEvent(transaction, studyRef, {
+          action: 'cooperator.reinvited',
+          actorId,
+          target: membership.userDocId || membership.email,
+          actorEmail,
+          targetLabel: membership.email || membership.userDocId,
+          targetType: 'cooperator',
+          details: {
+            role: membership.accessLevel,
+          },
+        })
+
+        return {
+          status: 'reinvited',
+          cooperator: membership,
+        }
+      }
+
+      /*
        |--------------------------------------------------------------------------
        | INVITE COOPERATOR
        |--------------------------------------------------------------------------
@@ -1016,49 +1079,5 @@ export const manageStudyMembership = functions.onCall({
         status: action === 'remove' ? 'removed' : 'invitation-cancelled',
       }
     })
-  },
-})
-
-export const getStudyInvitation = functions.onCall({
-  handler: async (request) => {
-    const uid = request?.auth?.uid
-    if (!uid) throw error('unauthenticated', 'Authentication is required')
-
-    const { studyId, token } = getData(request)
-    if (!studyId || !token) {
-      throw error('invalid-argument', 'studyId and token are required')
-    }
-
-    const db = admin.firestore()
-    const [studySnap, userSnap] = await Promise.all([
-      db.collection('tests').doc(studyId).get(),
-      db.collection('users').doc(uid).get(),
-    ])
-    if (!studySnap.exists) throw error('not-found', 'Study not found')
-
-    const study = studySnap.data()
-    const invitation = await findMatchingPendingInvitation(study, {
-      uid,
-      email: userSnap.data()?.email || request?.auth?.token?.email,
-      token,
-    })
-    if (!invitation) {
-      throw error('permission-denied', 'No invitation matches this account')
-    }
-
-    return {
-      study: {
-        id: studyId,
-        testType: study.testType,
-        subType: study.subType || null,
-        testTitle: study.testTitle || '',
-        testDescription: study.testDescription || '',
-        testAdminEmail: study.testAdmin?.email || '',
-      },
-      invitation: {
-        accessLevel: invitation.accessLevel,
-        testDate: invitation.testDate || null,
-      },
-    }
   },
 })

@@ -1,160 +1,158 @@
 <template>
-  <v-card elevation="2" class="pa-6">
-    <div>
-      <!-- Header Section -->
-      <h1 class="text-h4 font-weight-bold text-on-surface mb-4">
+  <v-card elevation="2" class="rounded-lg">
+    <v-card-title class="pa-6 pb-2">
+      <div class="text-h5 font-weight-bold">
         {{ $t('HeuristicsSettings.titles.settings') }}
-      </h1>
+      </div>
+      <div class="text-body-2 text-medium-emphasis mt-1">
+        {{ $t('HeuristicsSettings.messages.settingsDescription') }}
+      </div>
+    </v-card-title>
+
+    <v-card-text class="pa-6 pt-2">
       <v-divider class="mb-6" />
 
-      <!-- Enable Weights Feature Toggle -->
-      <div class="mb-8">
-        <div class="d-flex align-center justify-space-between">
-          <div>
-            <h3 class="text-h6 font-weight-medium mb-1">
-              {{ $t('HeuristicsSettings.titles.enableWeights') }}
-            </h3>
-            <p class="text-body-2 text-grey-darken-1">
-              {{ $t('HeuristicsSettings.messages.enableWeightsDescription') }}
-            </p>
-          </div>
-          <v-switch
-            v-model="useWeights"
-            :disabled="props.isTemplate"
+      <v-card variant="outlined" class="mb-6">
+        <v-card-item>
+          <v-card-title class="text-h6">
+            {{ $t('HeuristicsSettings.titles.studyType') }}
+          </v-card-title>
+          <v-card-subtitle>
+            {{ $t('HeuristicsSettings.messages.studyTypeDescription') }}
+          </v-card-subtitle>
+        </v-card-item>
+        <v-card-text>
+          <v-radio-group
+            :model-value="studyMode"
+            :disabled="props.isTemplate || testAnswerDocLength > 0"
+            :loading="loadingStudyMode"
             color="primary"
-            inset
-            class="ms-4"
+            hide-details
+            @update:model-value="changeStudyMode"
+          >
+            <v-row dense>
+              <v-col
+                v-for="mode in studyModes"
+                :key="mode.value"
+                cols="12"
+                md="4"
+              >
+                <v-card
+                  variant="outlined"
+                  class="pa-4 h-100"
+                  :color="studyMode === mode.value ? 'primary' : undefined"
+                  @click="changeStudyMode(mode.value)"
+                >
+                  <v-radio :value="mode.value" class="mb-2">
+                    <template #label>
+                      <span class="font-weight-medium">{{ mode.title }}</span>
+                    </template>
+                  </v-radio>
+                  <p class="text-body-2 text-medium-emphasis mb-0">
+                    {{ mode.description }}
+                  </p>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-radio-group>
+        </v-card-text>
+      </v-card>
+
+      <v-card variant="outlined" class="mb-6">
+        <v-card-item>
+          <v-card-title class="text-h6">
+            {{ $t('HeuristicsSettings.titles.timeTracking') }}
+          </v-card-title>
+          <v-card-subtitle>
+            {{ $t('HeuristicsSettings.messages.timeTrackingDescription') }}
+          </v-card-subtitle>
+        </v-card-item>
+        <v-card-text>
+          <v-switch
+            v-model="localTrackTime"
+            color="primary"
+            hide-details
+            :loading="loadingTrackTime"
+            :label="
+              localTrackTime
+                ? $t('HeuristicsSettings.labels.timeTrackingOn')
+                : $t('HeuristicsSettings.labels.timeTrackingOff')
+            "
           />
-        </div>
-      </div>
+        </v-card-text>
+      </v-card>
 
-      <v-divider class="mb-6" />
+      <v-card variant="outlined">
+        <v-card-item>
+          <v-card-title class="text-h6">
+            {{ $t('HeuristicsSettings.titles.csv') }}
+          </v-card-title>
+          <v-card-subtitle>
+            {{ $t('HeuristicsSettings.messages.csvDescription') }}
+          </v-card-subtitle>
+        </v-card-item>
+        <v-card-text>
+          <v-btn
+            color="accent"
+            variant="elevated"
+            class="text-none mb-4"
+            @click="downloadTemplate"
+          >
+            <v-icon start>mdi-download</v-icon>
+            {{ $t('HeuristicsSettings.actions.downloadCsvTemplate') }}
+          </v-btn>
 
-      <!-- Answer Metrics Section -->
-      <div class="mb-8">
-        <h2 class="text-h6 font-weight-medium mb-2">
-          {{ $t('HeuristicsSettings.titles.answerMetrics') }}
-        </h2>
-        <p class="text-body-2 text-medium-emphasis mb-3">
-          {{ $t('HeuristicsSettings.messages.answerMetricsDescription') }}
-        </p>
-        <v-row>
-          <v-col cols="12" md="6">
-            <v-switch
-              v-model="localUseFrequency"
-              color="primary"
-              hide-details
-              :disabled="props.isTemplate || testAnswerDocLength > 0"
-              :loading="loadingAnswerMetrics"
-              :label="$t('HeuristicsSettings.labels.frequency')"
-            />
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-switch
-              v-model="localUseSeverity"
-              color="primary"
-              hide-details
-              :disabled="props.isTemplate || testAnswerDocLength > 0"
-              :loading="loadingAnswerMetrics"
-              :label="$t('HeuristicsSettings.labels.severity')"
-            />
-          </v-col>
-        </v-row>
-      </div>
+          <v-divider class="mb-4" />
 
-      <v-divider class="mb-6" />
+          <v-row align="center" dense>
+            <v-col cols="12" md="8">
+              <v-file-input
+                ref="myFile"
+                v-model="csvFile"
+                accept=".csv"
+                :label="$t('HeuristicsSettings.placeHolders.importCsv')"
+                variant="outlined"
+                density="comfortable"
+                prepend-icon=""
+                prepend-inner-icon="mdi-paperclip"
+                show-size
+                truncate-length="15"
+                :disabled="props.isTemplate || testAnswerDocLength > 0"
+                counter
+                hide-details
+              />
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-btn
+                :loading="loadingUpdate"
+                :disabled="
+                  props.isTemplate || loadingUpdate || testAnswerDocLength > 0
+                "
+                color="primary"
+                variant="elevated"
+                class="text-none"
+                block
+                @click="changeToJSON"
+              >
+                <v-icon start>mdi-cloud-upload</v-icon>
+                {{ $t('HeuristicsSettings.actions.update') }}
+              </v-btn>
+            </v-col>
+          </v-row>
 
-      <!-- Download CSV Template -->
-      <div class="mb-8">
-        <v-btn
-          color="accent"
-          variant="elevated"
-          size="large"
-          class="text-none"
-          @click="downloadTemplate"
-        >
-          {{ $t('HeuristicsSettings.actions.downloadCsvTemplate') }}
-        </v-btn>
-      </div>
-
-      <!-- Time Tracking Section -->
-      <div class="mb-8">
-        <h2 class="text-h6 font-weight-medium mb-2">
-          {{ $t('HeuristicsSettings.titles.timeTracking') }}
-        </h2>
-        <p class="text-body-2 text-medium-emphasis mb-3">
-          {{ $t('HeuristicsSettings.messages.timeTrackingDescription') }}
-        </p>
-        <v-switch
-          v-model="localTrackTime"
-          color="primary"
-          hide-details
-          :loading="loadingTrackTime"
-          :label="
-            localTrackTime
-              ? $t('HeuristicsSettings.labels.timeTrackingOn')
-              : $t('HeuristicsSettings.labels.timeTrackingOff')
-          "
-        />
-      </div>
-
-      <v-divider class="mb-6" />
-
-      <!-- File Upload Section -->
-      <div>
-        <div class="d-flex align-stretch mb-4 file-upload-container">
-          <!-- File Input -->
-          <div class="flex-grow-1 me-2">
-            <v-file-input
-              ref="myFile"
-              v-model="csvFile"
-              accept=".csv"
-              :label="$t('HeuristicsSettings.placeHolders.importCsv')"
-              variant="outlined"
-              density="comfortable"
-              prepend-icon=""
-              prepend-inner-icon="mdi-paperclip"
-              show-size
-              truncate-length="15"
-              :disabled="props.isTemplate || testAnswerDocLength > 0"
-              counter
-              class="file-input-field"
-              hide-details
-            >
-            </v-file-input>
-          </div>
-
-          <!-- Update Button -->
-          <div class="d-flex align-center">
-            <v-btn
-              :loading="loadingUpdate"
-              :disabled="
-                props.isTemplate || loadingUpdate || testAnswerDocLength > 0
-              "
-              color="primary"
-              variant="elevated"
-              class="text-none update-button"
-              height="56"
-              @click="changeToJSON"
-            >
-              <v-icon start> mdi-cloud-upload </v-icon>
-              {{ $t('HeuristicsSettings.actions.update') }}
-            </v-btn>
-          </div>
-        </div>
-
-        <v-alert
-          v-if="errorMessage"
-          v-model="errorVisible"
-          type="error"
-          density="compact"
-          class="mt-2"
-          closable
-        >
-          {{ errorMessage }}
-        </v-alert>
-      </div>
-    </div>
+          <v-alert
+            v-if="errorMessage"
+            v-model="errorVisible"
+            type="error"
+            density="compact"
+            class="mt-4"
+            closable
+          >
+            {{ errorMessage }}
+          </v-alert>
+        </v-card-text>
+      </v-card>
+    </v-card-text>
 
     <!-- Confirmation Dialog -->
     <v-dialog v-model="confirmDialog" max-width="500">
@@ -202,6 +200,7 @@ const myFile = ref(null)
 const loadingUpdate = ref(false)
 const loadingTrackTime = ref(false)
 const loadingAnswerMetrics = ref(false)
+const loadingStudyMode = ref(false)
 const errorMessage = ref('')
 const errorVisible = ref(false)
 const confirmDialog = ref(false)
@@ -211,6 +210,30 @@ const test = computed(() => store.getters.test)
 const localTrackTime = ref(test.value?.trackTime ?? true)
 const localUseFrequency = ref(test.value?.useFrequency ?? true)
 const localUseSeverity = ref(test.value?.useSeverity ?? true)
+
+const studyMode = computed(() => {
+  if (test.value?.useWeights) return 'weights'
+  if (localUseFrequency.value && localUseSeverity.value) return 'traditional'
+  return 'detailed'
+})
+
+const studyModes = computed(() => [
+  {
+    value: 'traditional',
+    title: t('HeuristicsSettings.modes.traditional'),
+    description: t('HeuristicsSettings.modeDescriptions.traditional'),
+  },
+  {
+    value: 'detailed',
+    title: t('HeuristicsSettings.modes.detailed'),
+    description: t('HeuristicsSettings.modeDescriptions.detailed'),
+  },
+  {
+    value: 'weights',
+    title: t('HeuristicsSettings.modes.weights'),
+    description: t('HeuristicsSettings.modeDescriptions.weights'),
+  },
+])
 
 watch(localTrackTime, async (newVal) => {
   loadingTrackTime.value = true
@@ -252,6 +275,41 @@ const useWeights = computed({
     })
   },
 })
+const changeStudyMode = async (mode) => {
+  if (!test.value || mode === studyMode.value) return
+
+  loadingStudyMode.value = true
+  const modeSettings = {
+    traditional: {
+      useWeights: false,
+      useFrequency: true,
+      useSeverity: true,
+    },
+    detailed: {
+      useWeights: false,
+      useFrequency: false,
+      useSeverity: false,
+    },
+    weights: {
+      useWeights: true,
+      useFrequency: false,
+      useSeverity: false,
+    },
+  }
+
+  try {
+    const settings = modeSettings[mode]
+    store.commit('SET_TEST', { ...test.value, ...settings })
+    localUseFrequency.value = settings.useFrequency
+    localUseSeverity.value = settings.useSeverity
+    await store.dispatch('updateStudy', store.getters.test)
+    showSuccess(t('HeuristicsSettings.messages.settingsSaved'))
+  } catch (error) {
+    showError(error)
+  } finally {
+    loadingStudyMode.value = false
+  }
+}
 
 const testAnswerDocLength = computed(() => {
   const doc = store.getters.testAnswerDocument

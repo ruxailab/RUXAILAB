@@ -220,7 +220,14 @@ defineEmits(['select-heuristic', 'finish-evaluation'])
 }
 
 .heuristic-card-copy {
+  flex: 1 1 auto;
   min-width: 0;
+}
+
+.heuristic-card-copy h2 {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .heuristic-card-kicker {

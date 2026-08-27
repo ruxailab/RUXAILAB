@@ -202,6 +202,7 @@ import {
 } from '@/shared/constants/methodDefinitions'
 import { matchesSearch } from '@/shared/utils/searchUtils'
 import { STUDY_ROLE } from '@/shared/utils/studyAccessPolicy'
+import { showInfo } from '@/shared/utils/toast'
 
 // ===== Setup =====
 const store = useStore()
@@ -313,6 +314,8 @@ const filteredTests = computed(() => {
         (method === METHOD_DEFINITIONS.USER_MODERATED.id &&
           testType === STUDY_TYPES.USER &&
           subType === USER_STUDY_SUBTYPES.MODERATED) ||
+        (method === METHOD_DEFINITIONS.CARD_SORTING.id &&
+          testType === STUDY_TYPES.CARD_SORTING) ||
         (method === 'MANUAL' && testType === 'MANUAL') ||
         (method === 'AUTOMATIC' && testType === 'AUTOMATIC')
     }
@@ -385,8 +388,16 @@ const goTo = (test) => {
   const userRole = test.studyRoleMap?.[userId]
 
   if (userRole === STUDY_ROLE.USER) {
-    router.push(`/testview/${studyId}/${userId}`)
-    return
+    if (
+      test.testType == STUDY_TYPES.USER &&
+      test.subType == USER_STUDY_SUBTYPES.MODERATED
+    ) {
+      showInfo(t('UserTestView.messages.useSessionLink'))
+      return
+    } else {
+      router.push(`/testview/${studyId}/${userId}`)
+      return
+    }
   }
 
   // Handle manual/automatic studies

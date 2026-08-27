@@ -1,4 +1,4 @@
-import { functions } from '../f.firebase.js'
+import { functions } from '../core/firebase/f.firebase.js'
 
 const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1'
 

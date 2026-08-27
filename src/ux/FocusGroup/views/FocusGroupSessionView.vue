@@ -70,6 +70,16 @@
         </span>
       </div>
       <v-spacer />
+      <SessionTimer
+        v-if="currentTopic && timerFallbackMs > 0"
+        :timer="timerForTopic"
+        :fallback-ms="timerFallbackMs"
+        :is-facilitator="isFacilitator"
+        class="me-1"
+        @play="onTimerPlay"
+        @pause="onTimerPause"
+        @reset="onTimerReset"
+      />
       <v-chip
         :color="roleColor"
         variant="tonal"
@@ -97,8 +107,15 @@
           />
 
           <div class="fg-stage-body">
+            <StimulusStage
+              v-if="stageMode === 'stimulus'"
+              class="fg-fill"
+              :stimulus="resolvedStimulus"
+              :can-clear="isFacilitator"
+              @clear="onClearStimulus"
+            />
             <SessionVideoStage
-              v-if="videoEnabled"
+              v-else-if="stageMode === 'video'"
               class="fg-fill"
               :remote-participants="remoteParticipants"
               :screen-share-feeds="screenShareFeeds"
@@ -250,7 +267,8 @@
 
             <span v-else class="text-white text-body-2 text-truncate fg-nowrap">
               {{
-                currentTopic?.title || t('focusGroup.session.waitingParticipant')
+                currentTopic?.title ||
+                t('focusGroup.session.waitingParticipant')
               }}
             </span>
 
@@ -345,6 +363,8 @@
               :participants="participants"
               :responded-ids="respondedIds"
               :current-user-id="user?.id"
+              :participation="participationByUser"
+              :is-facilitator="isFacilitator"
             />
           </div>
 
@@ -362,6 +382,24 @@
               {{ t('focusGroup.session.waitingParticipant') }}
             </p>
           </div>
+
+          <div v-else-if="panelTab === 'stimuli'" class="fg-panel-scroll">
+            <StimulusPanel
+              :stimuli="stimuli"
+              :current-topic-id="currentTopicId"
+              :presented-stimulus-id="currentStimulus?.stimulusId ?? null"
+              @present="onPresentStimulus"
+              @clear="onClearStimulus"
+            />
+          </div>
+
+          <div v-else-if="panelTab === 'notes'" class="fg-fill fg-notes">
+            <ObservatorNotes
+              v-model="observerNotes"
+              :context-label="currentTopic?.title || ''"
+              @save="onSaveNotes"
+            />
+          </div>
         </div>
       </aside>
     </div>
@@ -378,12 +416,18 @@ import { Track } from 'livekit-client'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import { useLiveKitRoom } from '@/shared/components/videoCall/composables/useLiveKitRoom'
 import { useFocusGroupSession } from '@/ux/FocusGroup/composables/useFocusGroupSession'
+import { useSpeakingTime } from '@/ux/FocusGroup/composables/useSpeakingTime'
+import { computeParticipation } from '@/ux/FocusGroup/utils/participation'
 import SessionLobby from '@/ux/FocusGroup/components/session/SessionLobby.vue'
 import SessionVideoStage from '@/ux/FocusGroup/components/session/SessionVideoStage.vue'
 import TopicPanel from '@/ux/FocusGroup/components/session/TopicPanel.vue'
+import SessionTimer from '@/ux/FocusGroup/components/session/SessionTimer.vue'
 import CurrentQuestion from '@/ux/FocusGroup/components/session/CurrentQuestion.vue'
+import StimulusPanel from '@/ux/FocusGroup/components/session/StimulusPanel.vue'
+import StimulusStage from '@/ux/FocusGroup/components/session/StimulusStage.vue'
 import TopicDiscussion from '@/ux/FocusGroup/components/session/TopicDiscussion.vue'
 import ParticipantList from '@/ux/FocusGroup/components/session/ParticipantList.vue'
+import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
 import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue'
 
 const store = useStore()
@@ -405,6 +449,9 @@ const {
   messages,
   consents,
   currentPrompt,
+  notes,
+  timer,
+  currentStimulus,
   loaded,
   isLive,
   isEnded,
@@ -416,6 +463,12 @@ const {
   recordConsent,
   askPrompt,
   clearPrompt,
+  presentStimulus,
+  clearStimulus,
+  saveNotes,
+  playTimer,
+  pauseTimer,
+  resetTimer,
   sendMessage,
   subscribe,
   toSessionRecord,
@@ -457,6 +510,31 @@ const currentTopic = computed(
 )
 const currentTopicId = computed(() => currentTopic.value?.id ?? null)
 
+// --- Stimuli ---
+const stimuli = computed(() =>
+  Array.isArray(test.value?.stimuli) ? test.value.stimuli : [],
+)
+// The client resolves the presented stimulus locally: RTDB only syncs the id.
+const resolvedStimulus = computed(() => {
+  const stimulusId = currentStimulus.value?.stimulusId
+  if (!stimulusId) return null
+  return stimuli.value.find((item) => item.id === stimulusId) ?? null
+})
+
+// `test.stimuli` is fetched once on mount, not live-synced. A stimulus added
+// to the library after a participant/observer already joined the session is
+// invisible to them until something refreshes the study — so a presented id
+// that isn't resolvable locally means the library is stale, not that nothing
+// was presented. Re-fetch once to pick it up.
+watch(
+  () => currentStimulus.value?.stimulusId,
+  (stimulusId) => {
+    if (!stimulusId) return
+    const known = stimuli.value.some((item) => item.id === stimulusId)
+    if (!known) store.dispatch('getStudy', { id: studyId })
+  },
+)
+
 // The active question shown to everyone, scoped to the current topic so a stale
 // prompt from a previous topic never leaks onto the next one.
 const activePromptText = computed(() =>
@@ -464,6 +542,25 @@ const activePromptText = computed(() =>
     ? (currentPrompt.value?.text ?? '')
     : '',
 )
+
+// --- Topic timer ---
+const timerFallbackMs = computed(
+  () => (currentTopic.value?.durationMinutes || 0) * 60000,
+)
+// Only use the shared timer when it belongs to the current topic; otherwise the
+// display falls back to the topic's full planned duration (paused).
+const timerForTopic = computed(() =>
+  timer.value?.topicId === currentTopicId.value ? timer.value : null,
+)
+const onTimerPlay = (remainingMs) =>
+  playTimer({ topicId: currentTopicId.value, remainingMs })
+const onTimerPause = (remainingMs) =>
+  pauseTimer({ topicId: currentTopicId.value, remainingMs })
+const onTimerReset = () =>
+  resetTimer({
+    topicId: currentTopicId.value,
+    durationMs: timerFallbackMs.value,
+  })
 
 // --- Role resolution (mirrors ManagerView) ---
 const accessLevel = computed(() => {
@@ -484,15 +581,17 @@ const isFacilitator = computed(() => accessLevel.value === ACCESS_LEVEL.ADMIN)
 const isParticipant = computed(
   () => accessLevel.value === ACCESS_LEVEL.EVALUATOR,
 )
-const isObserver = computed(
-  () => accessLevel.value === ACCESS_LEVEL.OBSERVATOR,
-)
+// Anyone who is neither running the session nor taking part in it observes it:
+// a dedicated OBSERVATOR cooperator, but also any signed-in viewer who opens
+// the session link without a posting role. This mirrors roleLabel, so the
+// "Observer" badge and the observer tools (notes pad, observing strip) always
+// agree instead of the badge showing while the tools stay hidden.
+const isObserver = computed(() => !isFacilitator.value && !isParticipant.value)
 // Facilitator and participants can post; observers read the discussion only.
 // Participant posting also depends on chat being enabled for this session.
 const canPost = computed(
   () =>
-    isFacilitator.value ||
-    (isParticipant.value && allowParticipantChat.value),
+    isFacilitator.value || (isParticipant.value && allowParticipantChat.value),
 )
 const roleLabel = computed(() => {
   if (isFacilitator.value) return t('focusGroup.session.roleFacilitator')
@@ -532,6 +631,15 @@ const videoEnabled = computed(
   () => sessionConfig.value.enableVideoCall === true,
 )
 
+// A presented stimulus takes over the stage from the video call or discussion,
+// the same way a screen share would — everyone should be looking at the same
+// thing. Camera tiles simply hide while a stimulus is up (no PiP yet).
+const stageMode = computed(() => {
+  if (resolvedStimulus.value) return 'stimulus'
+  if (videoEnabled.value) return 'video'
+  return 'discussion'
+})
+
 // Side-panel tabs, in reading order: the facilitator's guide, the discussion
 // (a tab only when video owns the stage, otherwise the discussion IS the
 // stage), then the people roster.
@@ -542,6 +650,12 @@ const panelTabs = computed(() => {
       key: 'guide',
       icon: 'mdi-script-text-outline',
       label: 'focusGroup.session.guide',
+    })
+  if (isFacilitator.value && stimuli.value.length > 0)
+    tabs.push({
+      key: 'stimuli',
+      icon: 'mdi-image-multiple-outline',
+      label: 'focusGroup.session.stimuli',
     })
   if (videoEnabled.value)
     tabs.push({
@@ -554,6 +668,13 @@ const panelTabs = computed(() => {
     icon: 'mdi-account-group',
     label: 'focusGroup.session.participants',
   })
+  // Observers/note-takers get a private notes pad, reusing the moderated tool.
+  if (isObserver.value)
+    tabs.push({
+      key: 'notes',
+      icon: 'mdi-notebook-edit-outline',
+      label: 'focusGroup.session.notes',
+    })
   return tabs
 })
 // Keep the active tab valid; prefer the discussion, else the first tab.
@@ -601,6 +722,11 @@ const {
   accessLevel,
   cooperators: computed(() => test.value?.cooperators || []),
 })
+
+// Accumulated LiveKit active-speaker time per identity, feeding the
+// facilitator-only participation indicator alongside message counts — see
+// participationByUser below.
+const { speakingMs } = useSpeakingTime(callRoom)
 
 const localVideoState = computed(() => ({
   name: user.value?.name || user.value?.email?.split('@')[0] || '',
@@ -679,6 +805,17 @@ const respondedIds = computed(() => [
   ...new Set(currentMessages.value.map((m) => m.userId)),
 ])
 
+// Facilitator-only signal: each participant's share of the session's
+// overall activity — messages sent (all topics) blended with LiveKit
+// speaking time, so a participant who mostly talks isn't invisible next to
+// one who mostly types.
+const participationByUser = computed(() =>
+  computeParticipation({
+    messages: messages.value,
+    speakingMs: speakingMs.value,
+  }),
+)
+
 // --- Facilitator actions ---
 const onStart = async () => {
   starting.value = true
@@ -737,6 +874,30 @@ const onAsk = (prompt) => {
   askPrompt({ text: prompt.trim(), topicId: currentTopicId.value })
 }
 const onClearPrompt = () => clearPrompt()
+
+// Facilitator presents a stimulus to everyone (or stops presenting).
+const onPresentStimulus = (stimulusId) =>
+  presentStimulus({ stimulusId, topicId: currentTopicId.value })
+const onClearStimulus = () => clearStimulus()
+
+// --- Observer notes (reuses the moderated ObservatorNotes tool) ---
+const observerNotes = ref([])
+let notesSeeded = false
+// Seed once from any persisted notes so a refresh keeps the observer's pad.
+watch(
+  () => notes.value?.[user.value?.id],
+  (stored) => {
+    if (!notesSeeded && Array.isArray(stored) && stored.length) {
+      observerNotes.value = [...stored]
+      notesSeeded = true
+    }
+  },
+  { immediate: true },
+)
+const onSaveNotes = () => {
+  if (!user.value?.id) return
+  saveNotes({ userId: user.value.id, notes: observerNotes.value })
+}
 
 const goToDashboard = () => {
   disconnectCall()
@@ -966,6 +1127,39 @@ onMounted(async () => {
   font-weight: 600;
   margin-bottom: 8px;
   color: rgba(var(--v-theme-on-surface), 0.6);
+}
+
+/* Make the reused ObservatorNotes tool read like the FG Discussion panel: it
+   ships its own header + footer chrome for the moderated sidebar, which doubles
+   up here since the panel tab bar already labels it. Scoped to the Notes tab
+   only, so the moderated-test styling is left untouched. */
+.fg-notes :deep(.observator-notes-container) {
+  border-left: none;
+  background: transparent;
+}
+
+/* The tab bar already says "Notes" (like Discussion, which has no sub-header). */
+.fg-notes :deep(.header) {
+  display: none;
+}
+
+.fg-notes :deep(.notes-list) {
+  padding: 16px !important;
+  background: transparent;
+}
+
+/* Echo the discussion message bubble: flat, softly tinted, rounded. */
+.fg-notes :deep(.note-item) {
+  border: none !important;
+  border-radius: 12px;
+  background: rgba(var(--v-theme-on-surface), 0.04) !important;
+  box-shadow: none !important;
+}
+
+/* Match the discussion composer: no grey slab, just a divider line on top. */
+.fg-notes :deep(.input-area) {
+  background: transparent !important;
+  border-top: 1px solid rgba(var(--v-border-color), 0.12);
 }
 
 /* Control dock (under the stage) */

@@ -34,7 +34,7 @@
                 >Transcription {{ transcriptionsArray.length - i }}</span
               >
               <v-chip
-                v-if="run.id === latestTranscriptionId"
+                v-if="run.id === transcriptionDocId"
                 size="x-small"
                 color="success"
                 >Latest</v-chip
@@ -58,8 +58,8 @@
         <v-expansion-panel-text>
           <!-- meta -->
           <div class="text-caption text-medium-emphasis mb-3">
-            {{ formatDate(run.createdAt) }} · Provider: {{ run.provider }} ·
-            Model: {{ run.model }}
+            {{ formatDate(run.updatedAt || run.createdAt) }} · Provider:
+            {{ run.provider }} · Model: {{ run.model }}
           </div>
 
           <!-- languages -->
@@ -122,12 +122,14 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  latestTranscriptionId: {
+  transcriptionDocId: {
     type: String,
     required: false,
     default: null,
   },
 })
+
+const emit = defineEmits(['deleted'])
 
 const loading = ref(true)
 const transcriptionsArray = ref([])
@@ -144,6 +146,8 @@ const hasRuns = computed(
 
 // Controllers
 import TranscriptionController from '@/ai/transcriptions/TranscriptionController'
+import { deleteTranscription } from '@/app/services/transcription/TranscriptionService'
+
 const transcriptionController = new TranscriptionController()
 
 watch(
@@ -185,31 +189,16 @@ function askDelete(run) {
   confirmOpen.value = true
 }
 
-/** Confirm → delete → refresh → update meta */
+/** Confirm → delete via Cloud Function → refresh list */
 async function confirmDelete() {
   if (!runToDelete.value) return
   deletingId.value = runToDelete.value.id
   try {
-    await transcriptionController.deleteById(runToDelete.value.id)
-
-    // refetch to get the new list
-    await fetchSelectedTaskTranscriptions()
-
-    // refetch to get the new list
-    await fetchSelectedTaskTranscriptions()
-
-    // recompute meta from refreshed list
-    const newCount = transcriptionsArray.value.length
-    const newLatestId = transcriptionsArray.value[0]?.id ?? null // we already sort desc in controller
-
-    // update task meta on the Answer doc
-    await answerController.setTaskTranscriptionMeta({
-      answersDocId: props.answersDocId,
-      userDocId: props.userDocId,
-      taskId: String(props.taskId),
-      latestTranscriptionDocId: newLatestId,
-      transcriptionsCount: newCount,
+    const result = await deleteTranscription({
+      transcriptionId: runToDelete.value.id,
     })
+    await fetchSelectedTaskTranscriptions()
+    emit('deleted', result)
   } catch {
   } finally {
     confirmOpen.value = false

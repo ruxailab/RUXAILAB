@@ -1,7 +1,9 @@
 <template>
-  <PageWrapper :title="$t('Participants.title.participants')">
+  <PageWrapper
+    :title="!showIntroView ? $t('Participants.title.participants') : ''"
+  >
     <!-- Actions Slot -->
-    <template v-if="canManageParticipants" #actions>
+    <template v-if="!showIntroView && canManageParticipants" #actions>
       <v-menu>
         <template #activator="{ props }">
           <v-btn
@@ -40,13 +42,16 @@
     </template>
 
     <!-- Subtitle Slot -->
-    <template #subtitle>
+    <template v-if="!showIntroView" #subtitle>
       <p class="text-body-1 text-grey-darken-1">
         {{ $t('Participants.subtitles.manage_participants') }}
       </p>
     </template>
 
+    <Intro v-if="showIntroView" @close-intro="dismissIntro" />
+
     <ParticipantTable
+      v-else
       :participants="participants"
       :loading="loading"
       :show-date-columns="showDateColumns"
@@ -98,6 +103,7 @@
       :no-data-text="$t('Participants.messages.no_users')"
       :cancel-text="$t('Participants.actions.cancel')"
       :send-text="$t('Participants.actions.send')"
+      :loading="loading"
       @send-invitations="handleSendInvitations"
     />
 
@@ -106,7 +112,7 @@
       v-model:show="showLinkInviteDialog"
       :study-id="test?.id"
       :study-title="test?.testTitle"
-      :required-login="true"
+      :required-login="requiredLoginOption"
       :pre-defined-role="preDefinedRole"
       :membership-type="'participant'"
     />
@@ -140,12 +146,13 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { showSuccess, showError, showWarning } from '@/shared/utils/toast'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
+import Intro from '@/shared/components/introduction_cards/IntroParticipants.vue'
 import AccessNotAllowed from '@/shared/views/AccessNotAllowed.vue'
 import LeaveAlert from '@/shared/components/dialogs/LeaveAlert.vue'
 import MessageDialog from '@/shared/components/dialogs/MessageDialog.vue'
@@ -153,8 +160,11 @@ import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 import GenerateInviteLinkDialog from '@/shared/components/dialogs/GenerateInviteLinkDialog.vue'
 import ParticipantTable from '@/shared/components/tables/ParticipantTable.vue'
 import InviteDialog from '@/shared/components/dialogs/InviteDialog.vue'
-import { getPredefinedParticipantUserRole } from '@/shared/composables/useCooperatorUtils'
-import Notification from '@/shared/models/Notification'
+import {
+  getPredefinedParticipantUserRole,
+  getRequiredLoginConfig,
+} from '@/shared/composables/useCooperatorUtils'
+import { canManageCooperator } from '@/shared/utils/studyAccessPolicy'
 
 const router = useRouter()
 const route = useRoute()
@@ -186,7 +196,7 @@ defineEmits(['open-invite-dialog'])
 |--------------------------------------------------------------------------
 */
 
-const showIntroComponent = ref(true)
+const introDismissed = ref(false)
 const verified = ref(false)
 
 const messageModel = ref(false)
@@ -279,7 +289,13 @@ const preDefinedRole = computed(() =>
   getPredefinedParticipantUserRole(test.value),
 )
 
+const requiredLoginOption = computed(() => getRequiredLoginConfig(test.value))
+
 const participants = computed(() => store.getters.participants)
+
+const showIntroView = computed(() => {
+  return participants.value.length <= 0 && !introDismissed.value
+})
 
 /*
 |--------------------------------------------------------------------------
@@ -307,69 +323,37 @@ const openMessageDialog = (participant) => {
   messageModel.value = true
 }
 
+const dismissIntro = () => {
+  introDismissed.value = true
+}
+
 const handleSendMessage = async ({ user, title, content }) => {
   messageModel.value = false
-  if (user.userDocId && test.value) {
-    const author = userAuth.value.email
-    try {
-      await sendNotification({
-        userId: user.userDocId,
-        title: title,
-        author: author,
-        description: content,
-        redirectsTo: null,
-        testId: test.value.id,
-        type: 'Message',
-      })
-      showSuccess('HeuristicsCooperators.messages.message_sent_success')
-    } catch {
-      showError('HeuristicsCooperators.messages.message_sent_error')
-    }
-  } else {
+
+  if (!user.userDocId || !test.value) {
     showWarning('HeuristicsCooperators.messages.user_not_registered')
+    return
+  }
+
+  try {
+    await store.dispatch('sendMemberMessage', {
+      user,
+      study: test.value,
+      title,
+      content,
+      author: userAuth.value?.email,
+    })
+
+    showSuccess('HeuristicsCooperators.messages.message_sent_success')
+  } catch {
+    showError('HeuristicsCooperators.messages.message_sent_error')
   }
 }
 
-const sendNotification = async ({
-  userId,
-  title,
-  titleTemplate,
-  titleParams,
-  description,
-  descriptionTemplate,
-  descriptionParams,
-  redirectsTo = '/',
-  testId = null,
-  author,
-  type,
-  accessLevel,
-  inviteToken,
-} = {}) => {
-  const notification = new Notification({
-    title,
-    titleTemplate,
-    titleParams,
-    description,
-    descriptionTemplate,
-    descriptionParams,
-    redirectsTo,
-    author,
-    read: false,
-    testId,
-    type,
-    accessLevel,
-    inviteToken,
+const canCancelParticipantInvitation = (cooperator) => {
+  return canManageCooperator(test.value, userAuth.value, cooperator, {
+    action: 'cancelInvitation',
   })
-
-  try {
-    await store.dispatch('addNotification', {
-      userId,
-      notification,
-    })
-    return true
-  } catch (error) {
-    throw error
-  }
 }
 
 const handleSendInvitations = async ({
@@ -378,6 +362,9 @@ const handleSendInvitations = async ({
   inviteMessage,
 }) => {
   try {
+    showInviteDialog.value = false
+    introDismissed.value = true
+
     const newInvites = await store.dispatch('sendParticipantInvitations', {
       study: test.value,
       user: userAuth.value,
@@ -389,8 +376,6 @@ const handleSendInvitations = async ({
       resolveUserByEmail,
       studyParticipants: participants.value,
     })
-
-    showInviteDialog.value = false
 
     if (newInvites.length > 0) {
       showSuccess(
@@ -489,12 +474,6 @@ const cancelParticipantInvitation = (participant) => {
 | Lifecycle
 |--------------------------------------------------------------------------
 */
-
-watch(loading, (newValue) => {
-  if (!newValue) {
-    showIntroComponent.value = participants.value.length === 0
-  }
-})
 
 onMounted(async () => {
   const studyId = props.id || route.params.id

@@ -104,8 +104,41 @@
             {{ test.testTitle }}
           </h1>
           <p class="text-body mb-5 text-white text-justify">
-            {{ test.testDescription }}
+            {{ truncateDescription(test.testDescription) }}
           </p>
+
+          <!-- Anonymous participant identification -->
+          <v-alert
+            v-if="!user && anonymousUserDocId"
+            type="info"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+          >
+            <div class="text-caption text-white text-uppercase mb-1">
+              {{ $t('UserTestView.anonymousParticipant.identifier') }}
+            </div>
+
+            <div class="text-h6 font-weight-bold text-white">
+              {{ anonymousUserDocId }}
+            </div>
+
+            <div class="text-body-2 text-white mt-1">
+              {{ $t('UserTestView.anonymousParticipant.saveIdentifier') }}
+            </div>
+
+            <v-btn
+              variant="outlined"
+              color="white"
+              size="small"
+              class="mt-3"
+              prepend-icon="mdi-download"
+              @click="handleDownloadAnonymousIdentifier"
+            >
+              {{ $t('UserTestView.anonymousParticipant.downloadIdentifier') }}
+            </v-btn>
+          </v-alert>
+
           <v-btn
             color="white"
             variant="outlined"
@@ -553,6 +586,7 @@ import StepAnnouncementOverlay from '@/ux/UserTest/components/StepAnnouncementOv
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { calculateProgress } from '../utils/testProgress'
 import { animateStepAnnouncement } from '@/shared/utils/animations'
+import { downloadAnonymousParticipantIdentifier } from '@/shared/utils/anonymousParticipantUtils'
 
 const fullName = ref('')
 const logined = ref(null)
@@ -574,6 +608,11 @@ const showStepAnnouncement = ref(false)
 const stepAnnouncementOverlay = ref(null)
 const nextStepAnnouncementTitle = ref('')
 const nextStepAnnouncementKicker = ref('')
+
+const truncateDescription = (description) => {
+  if (!description || description.length <= 150) return description
+  return `${description.slice(0, 147)}...`
+}
 
 const rightView = ref(null)
 const videoRecorder = ref(null)
@@ -741,6 +780,16 @@ function toggleTracking(value) {
   isRecording.value = value
 }
 
+const handleDownloadAnonymousIdentifier = () => {
+  if (!anonymousUserDocId.value) return
+
+  downloadAnonymousParticipantIdentifier({
+    identifier: anonymousUserDocId.value,
+    title: `${t('UserTestView.anonymousParticipant.protocol')} - ${test.value.testTitle}`,
+    description: t('UserTestView.anonymousParticipant.saveIdentifier'),
+    issuedAt: `${t('UserTestView.anonymousParticipant.issuedAt')}: ${new Date().toLocaleString()}`,
+  })
+}
 const savePartialAnswer = async () => {
   try {
     calculateProgress(localTestAnswer)
@@ -955,10 +1004,9 @@ const handleWelcomeStart = async () => {
 }
 
 const handleStartTasks = async () => {
+  await showTaskTitleAnnouncement(0)
   taskIndex.value = 0
   globalIndex.value = hasEyeTracking.value ? 5 : 4
-  await nextTick()
-  await showTaskTitleAnnouncement(0)
 }
 
 const showTaskTitleAnnouncement = async (idx) => {
@@ -1138,8 +1186,8 @@ const completeStep = async (id, type, userCompleted = true) => {
       allTasksCompleted.value = allTasksAttempted
 
       if (id < localTestAnswer.tasks.length - 1) {
+        await showTaskTitleAnnouncement(id + 1)
         taskIndex.value = id + 1
-        await showTaskTitleAnnouncement(taskIndex.value)
       } else {
         taskIndex.value = id
         const postTasksAnnouncement = getPostTasksAnnouncement()

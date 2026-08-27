@@ -10,12 +10,17 @@
         v-if="test"
         :test="test"
         :title="test.testTitle || t('manager.dashboard.defaultTitle')"
-        :subtitle="test.testDescription || t('manager.dashboard.defaultTitle')"
+        :subtitle="
+          truncateDescription(test.testDescription) ||
+          t('manager.dashboard.defaultTitle')
+        "
         icon="mdi-chart-box-outline"
         :type-label="t('manager.dashboard.unmoderatedStudy')"
         type-icon="mdi-account-check-outline"
-        :status-icon="getStatusIcon(test.testStatus)"
-        :status-text="test.testStatus || t('manager.dashboard.active')"
+        :status-icon="getStatusIcon(test.status)"
+        :status-text="
+          getStatusText(test.status) || t('manager.dashboard.active')
+        "
         :modules-title="t('manager.managementModules.title')"
         :modules-description="t('manager.managementModules.description')"
       >
@@ -72,7 +77,7 @@ import {
 import { computed, onMounted, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import { getStatusIcon } from '@/shared/utils/statusUtils'
+import { getStatusIcon, getStatusText } from '@/shared/utils/statusUtils'
 import { useI18n } from 'vue-i18n'
 
 // Manager components
@@ -90,6 +95,11 @@ const { t } = useI18n()
 // Computed
 const user = computed(() => store.getters.user)
 const test = computed(() => store.getters.test)
+
+const truncateDescription = (description) => {
+  if (!description || description.length <= 150) return description
+  return `${description.slice(0, 147)}...`
+}
 
 watchEffect(() => {
   if (user.value != null && test.value != null) {

@@ -24,7 +24,7 @@
     </tr>
   </table>
 </div>
- 
+
 ## About
 
 UX Remote LAB is an open-source platform designed to collect usability feedback from users. It allows you to gather user reviews, analyze them, and create comprehensive reports to better understand your application's usability. Additionally, it offers heuristic tests, enabling experts to evaluate your application's compliance with usability principles.
@@ -48,7 +48,7 @@ For commercial support, academic collaborations, and answers to common questions
 
 ### Development Environment
 
-- Node.js version: ≤ 24.12.0
+- Node.js version: ≥ 22.22.1 (required for pre-commit `lint-staged`; Node 20 is not supported)
 - Vue.js version: 3.5.26
 - Vue CLI version: 5.0.8
 - Vuetify version: 3.11.6

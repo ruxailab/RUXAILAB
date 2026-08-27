@@ -25,7 +25,7 @@
             class="ml-2"
             icon
             variant="outlined"
-            :disabled="!emailInput.trim()"
+            :disabled="!emailInput?.trim()"
             @click="addEmailToSelection"
             ><v-icon>mdi-plus</v-icon></v-btn
           >
@@ -146,6 +146,7 @@
         <v-btn
           color="primary"
           class="rounded-lg"
+          :loading="loading"
           :disabled="selectedCoops.length === 0 || selectedRole === null"
           @click="onSend"
         >
@@ -212,6 +213,10 @@ const props = defineProps({
   preDefinedRole: {
     type: Array,
     default: null,
+  },
+  loading: {
+    type: Boolean,
+    default: false,
   },
 })
 
@@ -295,7 +300,7 @@ const isCoopAlreadySelected = (emailToCheck) => {
 }
 
 const addEmailToSelection = () => {
-  const rawValue = emailInput.value.trim()
+  const rawValue = emailInput.value?.trim()
   if (!rawValue) return
 
   const validationError = getCooperatorInviteValidationError({
@@ -342,7 +347,6 @@ const onSend = () => {
   }
 
   emit('send-invitations', invitationData)
-  resetForm()
 }
 
 const resetForm = () => {

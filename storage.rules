@@ -35,25 +35,12 @@ service firebase.storage {
       return signedIn() && (
         isSuperAdmin() ||
         study(studyId).testAdmin.userDocId == request.auth.uid ||
-        roleFor(studyId) == 0
+        roleFor(studyId) in [0, 4]
       );
     }
 
-    function canAnswerStudy(studyId) {
-      return signedIn() && (
-        study(studyId).isPublic == true ||
-        roleFor(studyId) == 0 ||
-        roleFor(studyId) == 4 ||
-        (study(studyId).testType == 'USER' && (
-          roleFor(studyId) == 5 ||
-          (roleFor(studyId) == 3 &&
-            study(studyId).subType == 'USER_MODERATED')
-        )) ||
-        ((study(studyId).testType == 'HEURISTIC' ||
-          study(studyId).testType == 'HEURISTICS') &&
-          roleFor(studyId) == 1) ||
-        study(studyId).testAdmin.userDocId == request.auth.uid
-      );
+    function canAnswerStudy() {
+      return true;
     }
 
     function canEditStudy(studyId) {
@@ -64,14 +51,28 @@ service firebase.storage {
       );
     }
 
+    function isFocusGroupStudy(studyId) {
+      return study(studyId).testType == 'FOCUS_GROUP';
+    }
+
+    // Focus Group roles (studyRoleMap scale): 0 facilitator, 1 participant,
+    // 3 observer, 4 co-facilitator. All of them may view a presented stimulus.
+    function canViewFocusGroupStimulus(studyId) {
+      return signedIn() && isFocusGroupStudy(studyId) &&
+        roleFor(studyId) in [0, 1, 3, 4];
+    }
+
     match /tests/{studyId}/{userId}/{allPaths=**} {
       allow read: if canAccessStorage(studyId) ||
         (userId.matches('heuristic_.*') && canEditStudy(studyId)) ||
-        (request.auth.uid == userId && canAnswerStudy(studyId));
+        (userId.matches('stimulus_.*') && canViewFocusGroupStimulus(studyId)) ||
+        canAnswerStudy();
+
       allow create, update: if
         canAccessStorage(studyId) ||
         (userId.matches('heuristic_.*') && canEditStudy(studyId)) ||
-        (request.auth.uid == userId && canAnswerStudy(studyId));
+        (userId.matches('stimulus_.*') && canEditStudy(studyId)) ||
+        canAnswerStudy();
       allow delete: if false;
     }
 

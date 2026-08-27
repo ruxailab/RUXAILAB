@@ -73,7 +73,7 @@ export default [
         component: CooperatorsView,
       },
       {
-        path: '/heuristic/participants/:id/:token?',
+        path: '/heuristic/participants/:id',
         name: 'HeuristicParticipantsView',
         props: true,
         meta: studyMeta(C.COOPERATORS_VIEW),

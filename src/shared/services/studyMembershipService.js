@@ -7,11 +7,3 @@ export async function manageStudyMembership(payload) {
   )
   return response.data
 }
-
-export async function getStudyInvitation(payload) {
-  const response = await FirebaseFunctionsController.callHttpsCallableFunction(
-    'getStudyInvitation',
-    payload,
-  )
-  return response.data
-}

@@ -58,9 +58,18 @@
           <v-textarea
             :model-value="test.testDescription"
             :label="$t('common.description')"
+            :rules="descriptionRules"
             variant="outlined"
             rows="4"
             density="comfortable"
+            counter="150"
+            maxlength="150"
+            :error="(test.testDescription || '').length > 150"
+            :error-messages="
+              (test.testDescription || '').length > 150
+                ? [t('studyCreation.details.validation.max150Characters')]
+                : []
+            "
             :placeholder="$t('studyCreation.details.enterDescription')"
             hide-details="auto"
             class="modern-input"
@@ -105,6 +114,11 @@ const titleRequired = computed(() => [
   (v) =>
     (v && v.length <= 200) ||
     t('studyCreation.details.validation.max200Characters'),
+])
+const descriptionRules = computed(() => [
+  (v) =>
+    (v || '').length <= 150 ||
+    t('studyCreation.details.validation.max150Characters'),
 ])
 const typeRequired = computed(() => [(v) => !!v || t('errors.fieldRequired')])
 

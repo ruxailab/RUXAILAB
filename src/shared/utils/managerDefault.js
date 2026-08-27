@@ -44,11 +44,6 @@ export const getNavigatorDefault = (test, accessLevel, route, type) => {
         path: `/${type}/participants/${test.id}`,
       },
       {
-        title: 'Sessions',
-        icon: ICONS.USERS,
-        path: `/${type}/sessions/${test.id}`,
-      },
-      {
         title: 'Settings',
         icon: ICONS.COG,
         path: `/${type}/settings/${test.id}`,

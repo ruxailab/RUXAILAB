@@ -8,6 +8,9 @@ import EmailController from '@/shared/controllers/EmailController'
 import Notification from '@/shared/models/Notification'
 import { formatDateTime } from '../utils/dateUtils'
 import i18n from '@/app/plugins/i18n'
+import { NOTIFICATION_TYPES } from '../../features/notifications/utils/notificationUtils'
+
+const t = i18n.global.t
 
 export default {
   state: {
@@ -75,11 +78,22 @@ export default {
           session,
           studyId: payload.studyId,
           studyTitle: payload.study.testTitle,
+          studyDescription: payload.study.testDescription,
           scheduledAt: formatDateTime(
             session.scheduledAt,
             i18n.global.locale.value,
           ),
-          members: [...(session.staff || []), ...(session.participants || [])],
+          members: [
+            ...(session.staff || []).map((member) => ({
+              ...member,
+              membershipType: 'cooperator',
+            })),
+            ...(session.participants || []).map((member) => ({
+              ...member,
+              membershipType: 'participant',
+            })),
+          ],
+          event: 'invite',
         })
 
         return session
@@ -126,6 +140,7 @@ export default {
         commit('setLoading', false)
       }
     },
+
     /**
      * Update session
      */
@@ -137,10 +152,22 @@ export default {
           (item) => item.id === payload.sessionId,
         )
 
+        const previousScheduledAt = normalizeDate(previousSession?.scheduledAt)
+        const newScheduledAt = normalizeDate(payload.session?.scheduledAt)
+
+        const scheduleChanged =
+          previousScheduledAt?.getTime() !== newScheduledAt?.getTime()
+
+        const descriptionChanged =
+          (previousSession?.message || '') !== (payload.session?.message || '')
+
+        const sessionDetailsChanged = scheduleChanged || descriptionChanged
+
         const result = await new SessionController().updateSession({
           ...payload,
           session: enrichSession(payload.session),
         })
+
         if (!result.success) {
           throw result.error
         }
@@ -151,15 +178,21 @@ export default {
         ]
 
         const newMembers = [
-          ...(payload.session.staff || []),
-          ...(payload.session.participants || []),
+          ...(payload.session.staff || []).map((member) => ({
+            ...member,
+            membershipType: 'cooperator',
+          })),
+          ...(payload.session.participants || []).map((member) => ({
+            ...member,
+            membershipType: 'participant',
+          })),
         ]
 
         const addedMembers = newMembers.filter(
           (member) => !oldMembers.some((old) => old.email === member.email),
         )
 
-        if (addedMembers.length) {
+        if (sessionDetailsChanged) {
           await dispatch('notifySessionMembers', {
             session: {
               id: payload.sessionId,
@@ -168,11 +201,30 @@ export default {
             },
             studyId: payload.studyId,
             studyTitle: payload.study.testTitle,
+            studyDescription: payload.study.testDescription,
+            scheduledAt: formatDateTime(
+              payload.session.scheduledAt,
+              i18n.global.locale.value,
+            ),
+            members: newMembers,
+            event: 'update',
+          })
+        } else if (addedMembers.length) {
+          await dispatch('notifySessionMembers', {
+            session: {
+              id: payload.sessionId,
+              title: payload.session.title,
+              message: payload.session.message,
+            },
+            studyId: payload.studyId,
+            studyTitle: payload.study.testTitle,
+            studyDescription: payload.study.testDescription,
             scheduledAt: formatDateTime(
               payload.session.scheduledAt,
               i18n.global.locale.value,
             ),
             members: addedMembers,
+            event: 'invite',
           })
         }
 
@@ -188,6 +240,7 @@ export default {
         commit('setLoading', false)
       }
     },
+
     /**
      * Delete session
      */
@@ -212,9 +265,11 @@ export default {
       } finally {
         commit('setLoading', false)
       }
-    } /**
+    },
+
+    /**
      * Sends a message to session members.
-     */,
+     */
     async sendMessageSessionMembers(
       { state, getters, dispatch, commit },
       payload,
@@ -262,9 +317,12 @@ export default {
         )
 
         const user = getters.user
-        const author = user?.email || ''
+        const author = `${user?.username || ''} ${user?.email || ''}`.trim()
 
         const emailController = new EmailController()
+
+        const title = `${t('Sessions.notify.messageTitle')} · ${session.title}`
+        const description = t('Sessions.notify.messageDescription')
 
         await Promise.all(
           members.map(async (member) => {
@@ -275,12 +333,12 @@ export default {
                 dispatch('addNotification', {
                   userId: member.userDocId,
                   notification: new Notification({
-                    title: session.title || 'Session message',
+                    title,
                     description: payload.message,
                     author,
                     redirectsTo: null,
                     testId: payload.studyId,
-                    type: 'Message',
+                    type: NOTIFICATION_TYPES.MESSAGE,
                     read: false,
                   }),
                 }),
@@ -291,14 +349,14 @@ export default {
               promises.push(
                 emailController.send({
                   to: member.email,
-                  subject: session.title || 'Session message',
+                  subject: title,
                   attachments: [],
                   template: 'message',
                   data: {
+                    title,
                     message: payload.message,
-                    sessionTitle: session.title,
-                    sessionId: session.id,
-                    studyId: payload.studyId,
+                    description,
+                    author,
                   },
                 }),
               )
@@ -321,12 +379,23 @@ export default {
       }
     },
 
+    /**
+     * Sends session invitation/update notifications and emails.
+     */
     async notifySessionMembers(
       { getters, dispatch },
-      { session, members, studyId, studyTitle, scheduledAt },
+      {
+        session,
+        members,
+        studyId,
+        studyTitle,
+        studyDescription,
+        scheduledAt,
+        event = 'invite',
+      },
     ) {
       const user = getters.user
-      const author = `${user.username || ''} ${user.email}`
+      const author = `${user.username || ''} ${user.email}`.trim()
       const sessionLink = `${window.location.origin}/testview/${studyId}/${session.id}`
 
       const emailController = new EmailController()
@@ -338,6 +407,12 @@ export default {
 
       await Promise.all(
         uniqueMembers.map(async (member) => {
+          const { title, description } = getSessionTexts(
+            event,
+            member.membershipType,
+            session.title,
+          )
+
           const promises = []
 
           if (member.userDocId) {
@@ -345,12 +420,12 @@ export default {
               dispatch('addNotification', {
                 userId: member.userDocId,
                 notification: new Notification({
-                  title: session.title,
-                  description: session.message,
+                  title,
+                  description,
                   author,
                   redirectsTo: sessionLink,
                   testId: studyId,
-                  type: 'Session',
+                  type: NOTIFICATION_TYPES.SESSION,
                   read: false,
                 }),
               }),
@@ -361,16 +436,20 @@ export default {
             promises.push(
               emailController.send({
                 to: member.email,
-                subject: session.title,
+                subject: title,
                 attachments: [],
                 template: 'session-invite',
                 data: {
-                  participantName: member.email,
+                  title,
+                  description,
+                  message: session.message,
+                  participantName: member.name || member.email,
                   studyTitle,
+                  studyDescription,
                   sessionTitle: session.title,
                   sessionMessage: session.message,
                   scheduledAt,
-                  sessionLink: sessionLink,
+                  sessionLink,
                   invitedBy: author,
                 },
               }),
@@ -381,6 +460,7 @@ export default {
         }),
       )
     },
+
     /**
      * Load sessions where the current user was invited.
      */
@@ -438,6 +518,56 @@ export default {
       }
     },
   },
+}
+
+const getSessionTexts = (event, membershipType, sessionTitle) => {
+  const isParticipant = membershipType === 'participant'
+
+  const texts = {
+    invite: {
+      title: isParticipant
+        ? t('Sessions.notify.participantInviteTitle')
+        : t('Sessions.notify.cooperatorInviteTitle'),
+
+      description: isParticipant
+        ? t('Sessions.notify.participantInviteMessage')
+        : t('Sessions.notify.cooperatorInviteMessage'),
+    },
+
+    update: {
+      title: t('Sessions.notify.updateTitle'),
+      description: t('Sessions.notify.updateMessage'),
+    },
+  }
+
+  const selectedTexts = texts[event] || texts.invite
+
+  return {
+    title: `${selectedTexts.title} · ${sessionTitle}`,
+    description: selectedTexts.description,
+  }
+}
+
+function normalizeDate(value) {
+  if (!value) {
+    return null
+  }
+
+  if (typeof value.toDate === 'function') {
+    return value.toDate()
+  }
+
+  if (typeof value.toMillis === 'function') {
+    return new Date(value.toMillis())
+  }
+
+  if (value instanceof Date) {
+    return value
+  }
+
+  const date = new Date(value)
+
+  return Number.isNaN(date.getTime()) ? null : date
 }
 
 function enrichSession(session) {

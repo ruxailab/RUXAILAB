@@ -67,6 +67,12 @@
               >
                 {{ heuristic.id + 1 }} - {{ heuristic.title }}
               </h3>
+              <p
+                v-if="heuristic.description"
+                class="text-body-2 text-ternary ma-0 mt-1 heuristic-description"
+              >
+                {{ heuristic.description }}
+              </p>
               <p class="text-body-2 text-ternary ma-0 mt-1 question-count">
                 {{ heuristic.questions.length }}
                 {{ $t('HeuristicsTable.titles.questions') }}
@@ -227,10 +233,6 @@
                           >
                             {{ question.title }}
                           </h5>
-                          <!-- Optional: Add question description/subtitle if needed -->
-                          <!-- <p class="text-body-2 text-ternary ma-0 mt-1 question-desc">
-                                {{ question.description || 'No description' }}
-                              </p> -->
                         </div>
                       </div>
 
@@ -480,15 +482,32 @@
               variant="outlined"
               density="comfortable"
               :rules="nameRequired"
+              :counter="TITLE_MAX_LENGTH"
+              :maxlength="TITLE_MAX_LENGTH"
               class="mb-4"
               autofocus
             />
+            <v-textarea
+              v-model="heuristicForm.description"
+              :label="
+                $t('HeuristicsTable.placeholders.descriptionYourHeuristic')
+              "
+              variant="outlined"
+              density="comfortable"
+              rows="3"
+              auto-grow
+              class="mb-4"
+            />
             <v-text-field
-              v-model="heuristicForm.questions[0].title"
+              v-model="heuristicForm.questionTitle"
               :label="$t('HeuristicsTable.placeholders.titleYourQuestion')"
               variant="outlined"
               density="comfortable"
-              :rules="questionRequired"
+              :hint="$t('HeuristicsTable.messages.optionalFirstQuestion')"
+              :rules="questionTitleMaxLength"
+              :counter="TITLE_MAX_LENGTH"
+              :maxlength="TITLE_MAX_LENGTH"
+              persistent-hint
             />
           </v-form>
         </v-card-text>
@@ -519,6 +538,8 @@
               variant="outlined"
               density="comfortable"
               :rules="questionRequired"
+              :counter="TITLE_MAX_LENGTH"
+              :maxlength="TITLE_MAX_LENGTH"
               autofocus
             />
             <v-alert v-else-if="dialogQuestion" type="error" class="mt-4">
@@ -567,7 +588,20 @@
               variant="outlined"
               density="comfortable"
               :rules="itemEdit ? itemEdit.rule : []"
+              :counter="TITLE_MAX_LENGTH"
+              :maxlength="TITLE_MAX_LENGTH"
               autofocus
+            />
+            <v-textarea
+              v-if="itemEdit?.type === 'heuristic' && !isDialogClosing"
+              v-model="itemEdit.descriptionEdit"
+              :label="
+                $t('HeuristicsTable.placeholders.descriptionYourHeuristic')
+              "
+              variant="outlined"
+              density="comfortable"
+              rows="3"
+              auto-grow
             />
             <v-alert v-else-if="dialogEdit" type="error" class="mt-4">
               {{ $t('HeuristicsTable.errors.failedToLoadEditForm') }}
@@ -669,6 +703,7 @@ const isProcessing = ref(false)
 const questionHeuristicIndex = ref(null)
 const itemsPerPage = ref(5)
 const isDialogClosing = ref(false)
+const TITLE_MAX_LENGTH = 100
 
 // Delete confirmation dialog state
 const dialogDelete = ref(false)
@@ -693,9 +728,20 @@ const headers = ref([
 
 const nameRequired = ref([
   (v) => !!v || t('HeuristicsTable.validation.nameRequired'),
+  (v) =>
+    (v || '').length <= TITLE_MAX_LENGTH ||
+    t('HeuristicsTable.validation.max100Characters'),
 ])
 const questionRequired = ref([
   (v) => !!v || t('HeuristicsTable.validation.questionRequired'),
+  (v) =>
+    (v || '').length <= TITLE_MAX_LENGTH ||
+    t('HeuristicsTable.validation.max100Characters'),
+])
+const questionTitleMaxLength = ref([
+  (v) =>
+    (v || '').length <= TITLE_MAX_LENGTH ||
+    t('HeuristicsTable.validation.max100Characters'),
 ])
 
 const test = computed(() => store.getters.test)
@@ -751,8 +797,10 @@ watch(dialogHeuris, (newVal) => {
     heuristicForm.value = {
       id: heuristics.value[heuristics.value.length - 1].id + 1,
       title: '',
+      description: '',
       total: 0,
-      questions: [{ id: 0, title: '', comparison: [], descriptions: [] }],
+      questionTitle: '',
+      questions: [],
     }
     heuristicForm.value.total = heuristicForm.value.questions.length
   }
@@ -775,7 +823,9 @@ onMounted(() => {
       : 0,
     total: 0,
     title: '',
-    questions: [{ id: 0, title: '', descriptions: [], comparison: [] }],
+    description: '',
+    questionTitle: '',
+    questions: [],
   }
   store.commit('SET_HEURISTICS', heuristics.value)
   heuristicForm.value.total = heuristicForm.value.questions.length
@@ -878,6 +928,8 @@ const editHeuris = (item) => {
     titleEdit: item.title || '',
     rule: nameRequired.value,
     id: item.id,
+    type: 'heuristic',
+    descriptionEdit: item.description || '',
   }
   itemSelect.value = heuristicIndex
   dialogEdit.value = true
@@ -953,7 +1005,27 @@ const addHeuris = () => {
   if (props.isTemplate) return
   if (formHeurisRef.value.validate()) {
     dialogHeuris.value = false
-    const newHeuristics = [...heuristics.value, { ...heuristicForm.value }]
+    const questionTitle = heuristicForm.value.questionTitle.trim()
+    const questions = questionTitle
+      ? [
+          {
+            id: 0,
+            title: questionTitle,
+            comparison: [],
+            descriptions: [],
+          },
+        ]
+      : []
+    const newHeuristics = [
+      ...heuristics.value,
+      {
+        id: heuristicForm.value.id,
+        title: heuristicForm.value.title,
+        description: heuristicForm.value.description,
+        total: questions.length,
+        questions,
+      },
+    ]
     store.dispatch('setHeuristics', newHeuristics)
     itemSelect.value = newHeuristics.length - 1
     formHeurisRef.value.resetValidation()
@@ -1036,6 +1108,8 @@ const validateEdit = () => {
     const newHeuristics = [...heuristics.value]
     if (itemEdit.value.title === t('HeuristicsTable.titles.editHeuristic')) {
       newHeuristics[itemSelect.value].title = itemEdit.value.titleEdit
+      newHeuristics[itemSelect.value].description =
+        itemEdit.value.descriptionEdit || ''
     } else {
       const questionIndex = newHeuristics[itemSelect.value].questions.findIndex(
         (q) => q.id === itemEdit.value.id,

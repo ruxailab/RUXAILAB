@@ -1,12 +1,12 @@
 import { flushPromises, shallowMount } from '@vue/test-utils'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import TestView from '@/views/public/TestView.vue'
 import { showError } from '@/shared/utils/toast'
-import { getStudyInvitation } from '@/shared/services/studyMembershipService'
 
 jest.mock('vue-router', () => ({
   useRouter: jest.fn(),
+  useRoute: jest.fn(),
 }))
 
 jest.mock('vuex', () => ({
@@ -15,11 +15,6 @@ jest.mock('vuex', () => ({
 
 jest.mock('@/shared/utils/toast', () => ({
   showError: jest.fn(),
-}))
-
-jest.mock('@/shared/services/studyMembershipService', () => ({
-  getStudyInvitation: jest.fn(),
-  manageStudyMembership: jest.fn(),
 }))
 
 jest.mock('@/ux/UserTest/views/UserTestView.vue', () => ({
@@ -37,7 +32,12 @@ jest.mock('@/ux/Heuristic/views/HeuristicTestView.vue', () => ({
   template: '<div />',
 }))
 
-const mountTestView = ({ store, router, props = {} }) =>
+jest.mock('@/ux/CardSorting/components/CardSortingTest.vue', () => ({
+  name: 'CardSortingTest',
+  template: '<div />',
+}))
+
+const mountTestView = ({ store, router, route, props = {} }) =>
   shallowMount(TestView, {
     props: {
       id: 'study-1',
@@ -64,35 +64,57 @@ const mountTestView = ({ store, router, props = {} }) =>
 describe('TestView', () => {
   let store
   let router
+  let route
 
   beforeEach(() => {
     store = {
-      dispatch: jest.fn().mockResolvedValue(undefined),
+      dispatch: jest.fn().mockResolvedValue(null),
       getters: {
         test: null,
-        user: { id: 'user-1', accessLevel: 1 },
+        user: {
+          id: 'user-1',
+          accessLevel: 1,
+        },
       },
     }
+
     router = {
-      currentRoute: { value: { fullPath: '/testview/study-1' } },
+      currentRoute: {
+        value: {
+          fullPath: '/testview/study-1',
+        },
+      },
       replace: jest.fn().mockResolvedValue(undefined),
+    }
+
+    route = {
+      query: {},
     }
 
     useStore.mockReturnValue(store)
     useRouter.mockReturnValue(router)
+    useRoute.mockReturnValue(route)
+
     showError.mockClear()
-    getStudyInvitation.mockClear()
   })
 
-  it('shows no-access feedback and redirects instead of rendering a blank page', async () => {
-    const wrapper = mountTestView({ store, router })
+  it('shows no-access feedback and redirects when the study cannot be loaded', async () => {
+    const wrapper = mountTestView({
+      store,
+      router,
+      route,
+    })
 
     await flushPromises()
 
-    expect(store.dispatch).toHaveBeenCalledWith('getStudy', { id: 'study-1' })
-    expect(getStudyInvitation).not.toHaveBeenCalled()
+    expect(store.dispatch).toHaveBeenCalledWith('getStudy', {
+      id: 'study-1',
+    })
+
     expect(showError).toHaveBeenCalledWith('AccessNotAllowed.noAccess')
+
     expect(router.replace).toHaveBeenCalledWith('/admin')
+
     expect(wrapper.text()).toContain(
       "You do not have access to the page you're trying to access.",
     )

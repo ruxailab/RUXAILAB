@@ -551,22 +551,33 @@ const getAnswersByType = (doc, type) => {
   return doc.heuristicAnswers || {}
 }
 
+const isAnonymousParticipant = (userDocId) => {
+  const participant = participants.value.find((p) => p?.userDocId === userDocId)
+  return !participant?.email
+}
+
 const reports = computed(() => {
   const doc = answers.value
   if (!doc) return []
   const type = doc.type
   const raw = getAnswersByType(doc, type)
-  return Object.values(raw).map((r) => ({
-    id: r.userDocId,
-    fullName: r.fullName || t('HeuristicsReport.headers.evaluator'),
-    evaluator: getCooperatorEmail(r.userDocId),
-    userDocId: r.userDocId,
-    progress: parseFloat(r.progress || 0).toFixed(2),
-    totalTime: getReportTotalTime(r, type),
-    status: checkIfIsSubmitted(r.submitted),
-    lastUpdate: formatDate(r.lastUpdate),
-    hidden: r.hidden ?? false,
-  }))
+  return Object.values(raw).map((r) => {
+    const anonymous = isAnonymousParticipant(r.userDocId)
+
+    return {
+      id: r.userDocId,
+      fullName: anonymous
+        ? t('titles.anonymous')
+        : r.fullName || t('HeuristicsReport.headers.evaluator'),
+      evaluator: anonymous ? r.userDocId : getCooperatorEmail(r.userDocId),
+      userDocId: r.userDocId,
+      progress: parseFloat(r.progress || 0).toFixed(2),
+      totalTime: getReportTotalTime(r, type),
+      status: checkIfIsSubmitted(r.submitted),
+      lastUpdate: formatDate(r.lastUpdate),
+      hidden: r.hidden ?? false,
+    }
+  })
 })
 
 const filteredReports = computed(() => {

@@ -29,7 +29,7 @@
           class="pb-0 mb-0"
         >
           <v-tab>{{ $t('HeuristicsEditTest.titles.heuristics') }}</v-tab>
-          <v-tab>{{ $t('HeuristicsEditTest.titles.options') }}</v-tab>
+          <v-tab v-if="showOptionsTab">{{ optionsTabTitle }}</v-tab>
           <v-tab v-if="showWeightsTab">{{
             $t('HeuristicsEditTest.titles.weights')
           }}</v-tab>
@@ -62,17 +62,17 @@
             @change="handleEditorChange"
           />
           <OptionsTable
-            v-if="index == 1"
+            v-if="showOptionsTab && index == optionsTabIndex"
             :is-template="isTemplate"
             @change="handleEditorChange"
           />
           <WeightTable
-            v-if="showWeightsTab && index == 2"
+            v-if="showWeightsTab && index == weightsTabIndex"
             :is-template="isTemplate"
             @change="handleEditorChange"
           />
           <HeuristicsSettings
-            v-if="showSettingsTab && (showWeightsTab ? index == 3 : index == 2)"
+            v-if="showSettingsTab && index == settingsTabIndex"
             :is-template="isTemplate"
           />
         </div>
@@ -125,6 +125,26 @@ let currentSavePromise = null
 const showSettingsTab = computed(() => !props.isTemplate)
 const test = computed(() => store.getters.test)
 const showWeightsTab = computed(() => test.value?.useWeights ?? false)
+const showWeightsTab = computed(() => test.value.useWeights ?? false)
+const showOptionsTab = computed(
+  () =>
+    !showWeightsTab.value &&
+    !(test.value?.useFrequency !== false && test.value?.useSeverity !== false),
+)
+const optionsTabIndex = computed(() => 1)
+const weightsTabIndex = computed(() => (showOptionsTab.value ? 2 : 1))
+const settingsTabIndex = computed(() =>
+  showWeightsTab.value
+    ? weightsTabIndex.value + 1
+    : showOptionsTab.value
+      ? 2
+      : 1,
+)
+const optionsTabTitle = computed(() =>
+  showOptionsTab.value
+    ? t('HeuristicsEditTest.titles.heuristicAnswers')
+    : t('HeuristicsEditTest.titles.options'),
+)
 const pageTitle = computed(() =>
   props.isTemplate
     ? t('HeuristicsEditTest.previewPageTitle')
@@ -137,22 +157,51 @@ const pageSubtitle = computed(() =>
 )
 
 const tabItems = computed(() => {
-  const items = [
-    { title: 'HEURISTICS', value: 0 },
-    { title: 'OPTIONS', value: 1 },
-  ]
+  const items = [{ title: t('HeuristicsEditTest.titles.heuristics'), value: 0 }]
+
+  if (showOptionsTab.value) {
+    items.push({ title: optionsTabTitle.value, value: optionsTabIndex.value })
+  }
 
   if (showWeightsTab.value) {
-    items.push({ title: 'WEIGHTS', value: 2 })
+    items.push({
+      title: t('HeuristicsEditTest.titles.weights'),
+      value: weightsTabIndex.value,
+    })
   }
 
   if (showSettingsTab.value) {
-    const settingsIndex = showWeightsTab.value ? 3 : 2
-    items.push({ title: 'SETTINGS', value: settingsIndex })
+    items.push({
+      title: t('HeuristicsEditTest.titles.settings'),
+      value: settingsTabIndex.value,
+    })
   }
 
   return items
 })
+
+watch(
+  [showOptionsTab, showWeightsTab],
+  (
+    [newShowOptionsTab, newShowWeightsTab],
+    [oldShowOptionsTab, oldShowWeightsTab],
+  ) => {
+    const oldWeightsTabIndex = oldShowOptionsTab ? 2 : 1
+    const oldSettingsTabIndex = oldShowWeightsTab
+      ? oldWeightsTabIndex + 1
+      : oldShowOptionsTab
+        ? 2
+        : 1
+
+    if (index.value !== oldSettingsTabIndex) return
+
+    index.value = newShowWeightsTab
+      ? (newShowOptionsTab ? 2 : 1) + 1
+      : newShowOptionsTab
+        ? 2
+        : 1
+  },
+)
 
 const isMobile = computed(() => windowWidth.value < 960)
 
