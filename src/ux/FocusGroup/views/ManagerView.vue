@@ -214,7 +214,7 @@
 import ManagerView from '@/shared/views/template/ManagerView.vue'
 import ManagerDashboardLayout from '@/shared/components/manager/ManagerDashboardLayout.vue'
 import StudyOverview from '@/ux/FocusGroup/components/manager/StudyOverview.vue'
-import { ICONS } from '@/shared/constants/theme'
+import { buildStudyNavigator } from '@/shared/utils/studyNavigation'
 import { getStatusIcon } from '@/shared/utils/statusUtils'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import { computed, onMounted, watchEffect } from 'vue'
@@ -323,6 +323,7 @@ watchEffect(() => {
     const hasAccess =
       accessLevel.value === ACCESS_LEVEL.ADMIN ||
       accessLevel.value === ACCESS_LEVEL.EVALUATOR ||
+      accessLevel.value === ACCESS_LEVEL.OBSERVATOR ||
       accessLevel.value === ACCESS_LEVEL.GUEST
 
     if (!hasAccess || accessLevel.value === null) {
@@ -331,37 +332,16 @@ watchEffect(() => {
   }
 })
 
-// Trimmed navigator — only routes that exist in the module today.
-// Reports / Answers links are added as those views are built.
+// Grouped, capability-gated sidebar shared with the other study types, so the
+// facilitator sees Staff / Participants / Storage / Audit and observers see only
+// what their role allows — the items resolve to real Focus Group routes only.
 const navigator = computed(() => {
-  if (!test.value) return []
-  return [
-    {
-      title: 'Dashboard',
-      icon: ICONS.MANAGER,
-      path: `/focusGroup/dashboard/${route.params.id}`,
-    },
-    {
-      title: 'Test',
-      icon: ICONS.DOCUMENT_EDIT,
-      path: `/focusGroup/edit/${test.value.id}`,
-    },
-    {
-      title: 'Session',
-      icon: 'mdi-video-outline',
-      path: `/focusGroup/session/${test.value.id}`,
-    },
-    {
-      title: 'Cooperators',
-      icon: ICONS.ACCOUNT_GROUP,
-      path: `/focusGroup/cooperators/${test.value.id}`,
-    },
-    {
-      title: 'Settings',
-      icon: ICONS.COG,
-      path: `/focusGroup/settings/${test.value.id}`,
-    },
-  ]
+  if (!test.value || !user.value) return []
+  return buildStudyNavigator({
+    study: test.value,
+    user: user.value,
+    type: 'focusGroup',
+  })
 })
 
 const goToEdit = () => {
