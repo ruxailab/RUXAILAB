@@ -27,3 +27,11 @@ is Node-based and declares Node 22 in `functions/package.json`.
 
 Before deploying Functions, confirm with maintainers whether the invalid entry
 should be removed or replaced with `"runtime": "nodejs22"`.
+
+## Moderated Session Collection-Group Indexes
+
+The `/admin` route queries every `sessions` subcollection with
+`array-contains` filters on `participantEmails` and `staffIds`. Firestore does
+not create collection-group-scoped single-field indexes automatically, so this
+branch adds both required indexes to `firestore.indexes.json`. Without them,
+loading `/admin` fails with a `COLLECTION_GROUP_CONTAINS` index error.
