@@ -29,12 +29,22 @@ export const SESSION_STATUS = {
 export function useFocusGroupSession(studyId) {
   const rootPath = `focusGroupSessions/${studyId}`
   const rootRef = dbRef(database, rootPath)
+  // Deliberately its OWN top-level RTDB path, not nested under rootPath.
+  // The rest of the session is read through one onValue(rootRef) listener,
+  // and RTDB read grants only cascade DOWNWARD from an ancestor — a
+  // .read rule on a nested child can't be more restrictive than its
+  // parent's. Keeping the backroom out of that tree entirely is what lets
+  // its rules actually deny a participant's read, not just its write.
+  const backroomPath = `focusGroupBackroom/${studyId}`
+  const backroomRef = dbRef(database, backroomPath)
 
   const snapshot = ref(null)
   // False until the first RTDB value arrives, so consumers can hold off on
   // gating decisions that would otherwise flash the wrong state on mount.
   const loaded = ref(false)
   let unsubscribe = null
+  const backroomMessages = ref({})
+  let unsubscribeBackroom = null
 
   const status = computed(() => snapshot.value?.status ?? SESSION_STATUS.IDLE)
   const currentTopicIndex = computed(
@@ -54,10 +64,20 @@ export function useFocusGroupSession(studyId) {
   const currentPrompt = computed(() => snapshot.value?.currentPrompt ?? null)
   // Observer/note-taker notes, kept per observer: { [userId]: [{ text, timestamp, taskName }] }
   const notes = computed(() => snapshot.value?.notes ?? {})
+  // The stimulus the facilitator is currently presenting, scoped to a topic so
+  // advancing the guide can retire it. { stimulusId, topicId, presentedAt } | null
+  const currentStimulus = computed(
+    () => snapshot.value?.currentStimulus ?? null,
+  )
   // Per-topic countdown timer. Clients tick locally from `endsAt`; only the
   // facilitator's play/pause/reset write here, so there are no per-second writes.
   // { topicId, running, endsAt, remainingMs } | null
   const timer = computed(() => snapshot.value?.timer ?? null)
+  // Breakout room state. `groups` and the round-robin split are computed
+  // client-side (see utils/breakoutGroups.js) and written here as a whole
+  // object, the same pattern as `currentStimulus`/`currentPrompt`.
+  // { active, groups: { [groupId]: { name, participantIds } }, broadcast: { text, sentAt } | null } | null
+  const breakout = computed(() => snapshot.value?.breakout ?? null)
 
   const isLive = computed(() => status.value === SESSION_STATUS.LIVE)
   const isEnded = computed(() => status.value === SESSION_STATUS.ENDED)
@@ -75,6 +95,25 @@ export function useFocusGroupSession(studyId) {
       unsubscribe()
       unsubscribe = null
     }
+  }
+
+  // Only the facilitator/observer role can actually read this path (see
+  // database.rules.json) — the caller should only invoke this for those
+  // roles, both to avoid a noisy permission_denied listener error for
+  // everyone else and because a participant has nothing to read here.
+  function subscribeBackroom() {
+    if (unsubscribeBackroom) return
+    unsubscribeBackroom = onValue(backroomRef, (snap) => {
+      backroomMessages.value = snap.val() || {}
+    })
+  }
+
+  function stopBackroom() {
+    if (unsubscribeBackroom) {
+      unsubscribeBackroom()
+      unsubscribeBackroom = null
+    }
+    backroomMessages.value = {}
   }
 
   async function startSession(facilitator) {
@@ -104,11 +143,16 @@ export function useFocusGroupSession(studyId) {
     })
   }
 
-  async function joinPresence({ userId, name, role }) {
+  // `accessLevel` is the numeric ACCESS_LEVEL the RTDB security rules key
+  // off (0 facilitator, 1 participant, 3 observer) — kept separate from the
+  // display-only `role` label, which is locale-translated text and cannot be
+  // used to gate access.
+  async function joinPresence({ userId, name, role, accessLevel }) {
     const presenceRef = dbRef(database, `${rootPath}/participants/${userId}`)
     await set(presenceRef, {
       name: name ?? '',
       role: role ?? '',
+      accessLevel: accessLevel ?? null,
       connected: true,
       joinedAt: serverTimestamp(),
     })
@@ -156,6 +200,31 @@ export function useFocusGroupSession(studyId) {
   async function clearPrompt() {
     await update(rootRef, {
       currentPrompt: null,
+      lastUpdate: serverTimestamp(),
+    })
+  }
+
+  /**
+   * Present a stimulus to every attendee. Scoped to the topic so moving on
+   * naturally retires it; a new presentation overwrites the previous one.
+   */
+  async function presentStimulus({ stimulusId, topicId }) {
+    await update(rootRef, {
+      currentStimulus: {
+        stimulusId: stimulusId ?? null,
+        topicId: topicId ?? null,
+        presentedAt: serverTimestamp(),
+      },
+      lastUpdate: serverTimestamp(),
+    })
+  }
+
+  /**
+   * Stop presenting so no stimulus is shown to participants.
+   */
+  async function clearStimulus() {
+    await update(rootRef, {
+      currentStimulus: null,
       lastUpdate: serverTimestamp(),
     })
   }
@@ -220,6 +289,33 @@ export function useFocusGroupSession(studyId) {
   }
 
   /**
+   * Replace the breakout state wholesale — starting a split, reassigning a
+   * participant, broadcasting a message, or recalling everyone are all just
+   * different next-states computed client-side (see utils/breakoutGroups.js)
+   * and written here, the same pattern as `presentStimulus`/`askPrompt`.
+   */
+  async function setBreakoutState(nextBreakout) {
+    await update(rootRef, {
+      breakout: nextBreakout,
+      lastUpdate: serverTimestamp(),
+    })
+  }
+
+  /**
+   * Post to the private facilitator/observer backroom. Separate from
+   * sendMessage because it targets backroomRef, not rootPath/messages — see
+   * the comment on backroomPath above for why.
+   */
+  async function sendBackroomMessage({ userId, name, text }) {
+    await push(backroomRef, {
+      userId: userId ?? '',
+      name: name ?? '',
+      text: text ?? '',
+      timestamp: serverTimestamp(),
+    })
+  }
+
+  /**
    * Snapshot of the finished session, shaped for Firestore persistence.
    */
   function toSessionRecord() {
@@ -234,7 +330,10 @@ export function useFocusGroupSession(studyId) {
     }
   }
 
-  onUnmounted(stop)
+  onUnmounted(() => {
+    stop()
+    stopBackroom()
+  })
 
   return {
     // reactive state
@@ -250,12 +349,17 @@ export function useFocusGroupSession(studyId) {
     currentPrompt,
     notes,
     timer,
+    currentStimulus,
+    breakout,
+    backroomMessages,
     loaded,
     isLive,
     isEnded,
     // lifecycle
     subscribe,
     stop,
+    subscribeBackroom,
+    stopBackroom,
     // actions
     startSession,
     goToTopic,
@@ -265,11 +369,15 @@ export function useFocusGroupSession(studyId) {
     recordConsent,
     askPrompt,
     clearPrompt,
+    presentStimulus,
+    clearStimulus,
     saveNotes,
     playTimer,
     pauseTimer,
     resetTimer,
     sendMessage,
+    setBreakoutState,
+    sendBackroomMessage,
     toSessionRecord,
   }
 }

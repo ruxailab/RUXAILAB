@@ -1,6 +1,6 @@
 <template>
   <PageWrapper :title="!showIntroView ? $t('Sessions.title.sessions') : ''">
-    <Intro v-if="showIntroView" @close-intro="showIntroComponent = false" />
+    <Intro v-if="showIntroView" @close-intro="dismissIntro" />
 
     <template v-if="!showIntroView" #actions>
       <v-btn
@@ -265,7 +265,7 @@ const selectedSessionDateRange = ref([])
 const showSendMessageDialog = ref(false)
 const sessionToMessage = ref(null)
 
-const showIntroComponent = ref(true)
+const introDismissed = ref(false)
 
 const openSendMessageDialog = (session) => {
   sessionToMessage.value = session
@@ -273,7 +273,7 @@ const openSendMessageDialog = (session) => {
 }
 
 const showIntroView = computed(() => {
-  return sessions.value.length <= 0 && showIntroComponent.value
+  return sessions.value.length <= 0 && !introDismissed.value
 })
 
 const participants = computed(() => store.getters.participants)
@@ -360,7 +360,12 @@ const getRemainingMembers = (members = []) => {
   return remaining > 0 ? remaining : 0
 }
 
+const dismissIntro = () => {
+  introDismissed.value = true
+}
+
 const openCreateSessionDialog = () => {
+  dismissIntro()
   sessionToEdit.value = null
   createSessionDialog.value = true
 }
@@ -372,7 +377,7 @@ const openEditSessionDialog = (session) => {
 
 const handleSessionDialog = (value) => {
   createSessionDialog.value = value
-  showIntroComponent.value = false
+  dismissIntro()
 
   if (!value) {
     sessionToEdit.value = null
@@ -417,12 +422,6 @@ watch(
     immediate: true,
   },
 )
-
-watch(loading, (newValue) => {
-  if (!newValue) {
-    showIntroComponent.value = sessions.value.length === 0
-  }
-})
 
 watch(selectedSessionDateRange, (range) => {
   if (!range?.length) {

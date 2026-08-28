@@ -1,15 +1,25 @@
 <template>
-  <div class="observator-notes-container">
+  <div>
     <div
-      class="header pa-4 bg-grey-lighten-4 d-flex align-center justify-space-between"
+      v-if="showHeader"
+      class="video-tool-header d-flex align-center justify-space-between"
     >
       <h3 class="text-h6 font-weight-bold display-flex align-center">
         <v-icon class="mr-2">mdi-notebook-edit-outline</v-icon>
         {{ t('observatorNotes.title') }}
       </h3>
-      <v-chip size="small" color="primary" variant="outlined">
+      <v-chip size="small" color="white" variant="outlined">
         {{ t('observatorNotes.count', { count: notes.length }) }}
       </v-chip>
+      <v-btn
+        icon
+        size="small"
+        variant="text"
+        aria-label="Close notes"
+        @click="emit('close')"
+      >
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
     </div>
 
     <div ref="notesList" class="notes-list pa-4">
@@ -88,9 +98,13 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  showHeader: {
+    type: Boolean,
+    default: true,
+  },
 })
 
-const emit = defineEmits(['update:modelValue', 'save'])
+const emit = defineEmits(['update:modelValue', 'save', 'close'])
 
 const newNote = ref('')
 const notesList = ref(null)
@@ -168,16 +182,9 @@ const addNote = () => {
 </script>
 
 <style scoped>
-.observator-notes-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background: white;
-  border-left: 1px solid #e0e0e0;
-}
-
 .notes-list {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
 }
 

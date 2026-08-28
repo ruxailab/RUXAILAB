@@ -251,6 +251,10 @@ const methodOptions = computed(() => [
     text: t('community.method.unmoderatedUserTest'),
   },
   {
+    value: METHOD_DEFINITIONS.CARD_SORTING.id,
+    text: t('methods.definitions.CARD_SORTING'),
+  },
+  {
     value: METHOD_DEFINITIONS.ACCESSIBILITY_MANUAL.id,
     text: t('community.method.accessibilityManual'),
   },
@@ -288,7 +292,9 @@ const filteredTests = computed(() => {
           subType === USER_STUDY_SUBTYPES.UNMODERATED) ||
         (method === METHOD_DEFINITIONS.USER_MODERATED.id &&
           testType === STUDY_TYPES.USER &&
-          subType === USER_STUDY_SUBTYPES.MODERATED)
+          subType === USER_STUDY_SUBTYPES.MODERATED) ||
+        (method === METHOD_DEFINITIONS.CARD_SORTING.id &&
+          testType === STUDY_TYPES.CARD_SORTING)
     }
 
     // Filter by status

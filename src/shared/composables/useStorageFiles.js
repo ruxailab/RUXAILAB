@@ -299,6 +299,60 @@ export function useStorageFiles() {
     return result
   }
 
+  const extractCardSortingFiles = (answerDoc) => {
+    const result = []
+    const answers = normalizeCollection(
+      answerDoc?.cardSortingAnswers,
+      'userDocId',
+    )
+
+    answers.forEach((answer, answerIndex) => {
+      const evaluator =
+        answer.fullName || answer.email || answer.userDocId || undefined
+      const media = [
+        {
+          type: 'webcam',
+          url: answer.webcamRecordURL,
+          size: answer.webcamSize,
+          urlField: 'webcamRecordURL',
+          sizeField: 'webcamSize',
+        },
+        {
+          type: 'screen',
+          url: answer.screenRecordURL,
+          size: answer.screenSize,
+          urlField: 'screenRecordURL',
+          sizeField: 'screenSize',
+        },
+        {
+          type: 'audio',
+          url: answer.audioRecordURL,
+          size: answer.audioSize,
+          urlField: 'audioRecordURL',
+          sizeField: 'audioSize',
+        },
+      ]
+
+      media.forEach((item, mediaIndex) => {
+        if (!item.url) return
+        result.push(
+          createFile({
+            ...item,
+            id: `card-sorting-${answerIndex}-${mediaIndex}`,
+            date: answer.lastUpdate,
+            evaluator,
+            fallbackName: `${item.type}-${answerIndex + 1}`,
+            answersDocId: study.value?.answersDocId,
+            userDocId: answer.userDocId,
+            answerCollection: 'cardSortingAnswers',
+          }),
+        )
+      })
+    })
+
+    return result
+  }
+
   const enrichFileMetadata = async (file) => {
     if (!file?.url) return null
 
@@ -361,6 +415,7 @@ export function useStorageFiles() {
       const discovered = [
         ...extractUserTestFiles(answerDocument.value),
         ...extractHeuristicFiles(answerDocument.value),
+        ...extractCardSortingFiles(answerDocument.value),
       ]
       const uniqueFiles = Array.from(
         new Map(discovered.map((file) => [file.url, file])).values(),
@@ -425,11 +480,14 @@ export function useStorageFiles() {
   const accountUsedBytes = computed(
     () => Number(user.value?.storageUsageMB || 0) * 1024 * 1024,
   )
-  const accountFreeBytes = computed(() =>
-    Math.max(storageQuotaBytes - accountUsedBytes.value, 0),
-  )
+  // const accountFreeBytes = computed(() =>
+  //   Math.max(storageQuotaBytes - accountUsedBytes.value, 0),
+  // )
   const accountUsagePercentage = computed(() =>
     Math.min((accountUsedBytes.value / storageQuotaBytes) * 100, 100),
+  )
+  const studyUsagePercentage = computed(() =>
+    Math.min((usedBytes.value / storageQuotaBytes) * 100, 100),
   )
   const usageColor = computed(() => {
     if (accountUsagePercentage.value >= 90) return 'error'
@@ -453,7 +511,8 @@ export function useStorageFiles() {
 
   const largestType = computed(() =>
     typeBreakdown.value.reduce(
-      (largest, item) => (!largest || item.size > largest.size ? item : largest),
+      (largest, item) =>
+        !largest || item.size > largest.size ? item : largest,
       null,
     ),
   )
@@ -470,14 +529,14 @@ export function useStorageFiles() {
       icon: 'mdi-database',
       color: 'primary',
     },
-    {
-      key: 'free',
-      title: t('storage.freeSpace'),
-      value: formatBytes(accountFreeBytes.value),
-      subtitle: t('storage.accountQuota'),
-      icon: 'mdi-database-check',
-      color: 'success',
-    },
+    // {
+    //   key: 'free',
+    //   title: t('storage.freeSpace'),
+    //   value: formatBytes(accountFreeBytes.value),
+    //   subtitle: t('storage.accountQuota'),
+    //   icon: 'mdi-database-check',
+    //   color: 'success',
+    // },
     {
       key: 'files',
       title: t('storage.totalFiles'),
@@ -566,6 +625,9 @@ export function useStorageFiles() {
     accountUsedBytes,
     accountUsagePercentage,
     usageColor,
+    studyUsedBytes: usedBytes,
+    studyUsagePercentage,
+    studyUsageColor: usageColor,
     typeBreakdown,
     unknownSizeCount,
     summaryMetrics,

@@ -1,4 +1,4 @@
-import { admin } from './src/f.firebase.js'
+import { admin } from './src/core/firebase/f.firebase.js'
 
 admin.initializeApp()
 

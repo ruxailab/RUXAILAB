@@ -1,9 +1,21 @@
 <template>
   <component
     :is="activeComponent"
-    v-bind="props"
+    :room-id="roomId"
     :is-moderator="isModerator"
     :is-observator="isObservator"
+    :user="user"
+    :access-level="accessLevel"
+    :current-global-index="currentGlobalIndex"
+    :current-task-index="currentTaskIndex"
+    :test="test"
+    :local-test-answer="localTestAnswer"
+    :session-staff="sessionStaff"
+    :session-participants="sessionParticipants"
+    :notes-drawer-open="notesDrawerOpen"
+    :notes-count="notesCount"
+    :toggle-notes-drawer="toggleNotesDrawer"
+    :completed-steps="completedSteps"
     @set-remote-stream="emit('setRemoteStream', $event)"
     @proceed-to-next-step="emit('proceedToNextStep')"
     @step-selected="emit('stepSelected', $event)"
@@ -31,6 +43,21 @@ const props = defineProps({
   currentTaskIndex: Number,
   test: Object,
   localTestAnswer: Object,
+  sessionStaff: Array,
+  sessionParticipants: Array,
+  notesDrawerOpen: Boolean,
+  notesCount: Number,
+  toggleNotesDrawer: Function,
+  completedSteps: {
+    type: Object,
+    default: () => ({
+      consent: false,
+      preTest: false,
+      tasks: false,
+      postTest: true,
+      completion: false,
+    }),
+  },
 })
 
 const emit = defineEmits([

@@ -25,6 +25,8 @@ export default class TaskAnswer {
     screenSize,
     audioSize,
     webcamSize,
+    markers,
+    segments,
   } = {}) {
     this.taskId = taskId ?? null
     this.taskAnswer = taskAnswer ?? ''
@@ -55,6 +57,8 @@ export default class TaskAnswer {
     this.screenSize = screenSize ?? null
     this.audioSize = audioSize ?? null
     this.webcamSize = webcamSize ?? null
+    this.markers = markers ?? []
+    this.segments = segments ?? []
   }
 
   static toModel(data) {
@@ -103,6 +107,8 @@ export default class TaskAnswer {
       screenSize: this.screenSize,
       audioSize: this.audioSize,
       webcamSize: this.webcamSize,
+      markers: this.markers,
+      segments: this.segments,
     }
   }
 }

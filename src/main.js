@@ -11,6 +11,15 @@ import { sweepExpiredStudyLogging } from '@/shared/services/studyLoggingClient'
 import 'vue-toastification/dist/index.css'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
+// Harmless browser warning triggered by menus/overlays resizing rapidly (e.g. Vuetify v-menu).
+// Suppress it so it doesn't trip the webpack-dev-server error overlay.
+const resizeObserverLoopErrRe = /ResizeObserver loop/
+window.addEventListener('error', (event) => {
+  if (resizeObserverLoopErrRe.test(event.message)) {
+    event.stopImmediatePropagation()
+  }
+})
+
 const app = createApp(App)
 
 void sweepExpiredStudyLogging()

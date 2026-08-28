@@ -40,6 +40,7 @@
     <AnswersTimeline
       v-if="answers.length"
       :task-answers="answers"
+      :show-export="false"
       @refresh="onRefreshTimeline"
     />
 

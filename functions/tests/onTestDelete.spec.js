@@ -6,7 +6,7 @@ import {
   expect,
   it,
 } from '@jest/globals'
-import { admin } from '../src/f.firebase.js'
+import { admin } from '../src/core/firebase/f.firebase.js'
 import { onTestDelete } from '../src/triggers/onTestDelete.js'
 
 const projectId = 'demo-ruxailab-delete-logging'

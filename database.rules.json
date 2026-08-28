@@ -1,0 +1,73 @@
+{
+  "rules": {
+    "focusGroupSessions": {
+      "$studyId": {
+        ".read": "auth != null",
+
+        "status": { ".write": "auth != null" },
+        "currentTopicIndex": { ".write": "auth != null" },
+        "facilitatorId": { ".write": "auth != null" },
+        "sessionId": { ".write": "auth != null" },
+        "startedAt": { ".write": "auth != null" },
+        "endedAt": { ".write": "auth != null" },
+        "lastUpdate": { ".write": "auth != null" },
+        "currentPrompt": { ".write": "auth != null" },
+        "currentStimulus": { ".write": "auth != null" },
+        "timer": { ".write": "auth != null" },
+
+        "consents": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid"
+          }
+        },
+
+        "notes": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid"
+          }
+        },
+
+        "participants": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid"
+          }
+        },
+
+        "messages": {
+          "$topicId": {
+            ".write": "auth != null"
+          }
+        },
+
+        "recordings": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid"
+          }
+        }
+      }
+    },
+
+    // A separate top-level path, deliberately NOT nested under
+    // focusGroupSessions/$studyId — see the comment on backroomPath in
+    // useFocusGroupSession.js for why: RTDB read grants cascade downward
+    // from an ancestor and can't be revoked by a stricter rule on a
+    // descendant, so a subtree nested under a broadly-readable parent can
+    // never actually be read-private. This path is its own subtree, so its
+    // .read rule is the only word on who can read it.
+    "focusGroupBackroom": {
+      "$studyId": {
+        ".read": "auth != null && (root.child('focusGroupSessions/' + $studyId + '/participants/' + auth.uid + '/accessLevel').val() === 0 || root.child('focusGroupSessions/' + $studyId + '/participants/' + auth.uid + '/accessLevel').val() === 3)",
+        ".write": "auth != null && (root.child('focusGroupSessions/' + $studyId + '/participants/' + auth.uid + '/accessLevel').val() === 0 || root.child('focusGroupSessions/' + $studyId + '/participants/' + auth.uid + '/accessLevel').val() === 3)"
+      }
+    },
+
+    "rooms": {
+      ".read": true,
+      ".write": true
+    },
+    "calls": {
+      ".read": true,
+      ".write": true
+    }
+  }
+}

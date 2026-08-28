@@ -230,9 +230,27 @@ function attachTileRef(tile, el) {
   flex: 1 1 auto;
   min-height: 0;
   max-height: none;
-  /* Centre the grid so a lone tile sits in the middle of the stage rather than
-     floating at the top; taller grids stay scrollable. */
-  justify-content: center;
+  height: 100%;
   overflow-y: auto;
+}
+
+/* The shared grid centres rows with a fixed 4:3 tile size, which clips the
+   top/bottom rows once tiles no longer fit the available height (a CSS
+   "unsafe centering" overflow that can't be scrolled back into view). Instead,
+   let rows share the stage's height evenly like Google Meet does — tiles
+   shrink as more people join rather than overflowing, and object-fit: contain
+   on the <video> keeps every stream fully visible, uncropped. */
+.fg-video-stage .videos-grid:not(.videos-single):not(.videos-filmstrip) {
+  height: 100%;
+  grid-auto-rows: minmax(0, 1fr);
+  align-content: stretch;
+  justify-content: stretch;
+  align-items: stretch;
+}
+
+.fg-video-stage .videos-grid:not(.videos-single) .video-container {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
 }
 </style>

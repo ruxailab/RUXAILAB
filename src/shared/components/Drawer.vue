@@ -16,25 +16,34 @@
 -->
     <!-- Navigation options -->
     <v-list v-if="items" density="compact">
-      <v-list-item v-for="(item, n) in items" :key="n" @click="go(item)">
-        <template #prepend>
-          <v-icon :color="isActive(item) ? '#fca326' : '#bababa'">
-            {{ item.icon }}
-          </v-icon>
-        </template>
-        <v-list-item-title
-          :style="isActive(item) ? 'color: #fca326' : 'color:#bababa'"
+      <template v-for="group in groupedItems" :key="group.id">
+        <v-list-subheader v-if="group.title" class="navigation-group">
+          {{ $t(`navigation.groups.${group.title}`) }}
+        </v-list-subheader>
+        <v-list-item
+          v-for="item in group.items"
+          :key="item.path"
+          @click="go(item)"
         >
-          {{ $t(`titles.drawer.${item.title}`) }}
-        </v-list-item-title>
-      </v-list-item>
+          <template #prepend>
+            <v-icon :color="isActive(item) ? '#ff5c6d' : '#bababa'">
+              {{ item.icon }}
+            </v-icon>
+          </template>
+          <v-list-item-title
+            :style="isActive(item) ? 'color: #ff5c6d' : 'color:#bababa'"
+          >
+            {{ $t(`titles.drawer.${item.title}`) }}
+          </v-list-item-title>
+        </v-list-item>
+      </template>
     </v-list>
 
     <div v-if="mdAndUp" class="footer">
       <v-btn
         icon
         size="small"
-        class="mr-2 bg-orange"
+        class="mr-2 coral-button"
         :aria-label="$t('titles.drawer.toggleMiniMode')"
         @click.stop="toggleMiniMode"
       >
@@ -52,7 +61,7 @@ import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { useDisplay } from 'vuetify'
 
-defineProps({
+const props = defineProps({
   items: {
     type: Array,
     default: () => [],
@@ -67,6 +76,37 @@ const { mdAndUp, mobile } = useDisplay()
 const drawerOpen = ref(false)
 const miniMode = ref(false)
 const test = computed(() => store.state.Tests.Test)
+
+const groupedItems = computed(() => {
+  const groupOrder = [
+    'overview',
+    'evaluation',
+    'people',
+    'analysis',
+    'administration',
+  ]
+  const groups = new Map()
+
+  for (const item of props.items) {
+    const groupId = item.group || `ungrouped-${groups.size}`
+    const group = groups.get(groupId) || {
+      id: groupId,
+      title: item.group,
+      items: [],
+    }
+    group.items.push(item)
+    groups.set(groupId, group)
+  }
+
+  return [...groups.values()].sort((firstGroup, secondGroup) => {
+    const firstIndex = groupOrder.indexOf(firstGroup.id)
+    const secondIndex = groupOrder.indexOf(secondGroup.id)
+    return (
+      (firstIndex === -1 ? groupOrder.length : firstIndex) -
+      (secondIndex === -1 ? groupOrder.length : secondIndex)
+    )
+  })
+})
 
 const initialDrawerState = computed(() => {
   return mdAndUp.value
@@ -111,10 +151,28 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.navigation-group {
+  color: #bababa !important;
+  position: relative;
+}
+
+.navigation-group::after {
+  position: absolute;
+  right: 16px;
+  bottom: 0;
+  left: 16px;
+  border-bottom: 1px solid #bababa;
+  content: '';
+}
+
 .footer {
   position: absolute;
   bottom: 10px;
   width: auto;
   padding: 10px;
+}
+
+.coral-button {
+  background-color: #ff5c6d !important;
 }
 </style>

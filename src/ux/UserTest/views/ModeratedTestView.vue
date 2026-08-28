@@ -29,7 +29,7 @@
             {{ test.testTitle }}
           </h1>
           <p class="text-body-1 mb-5 text-white text-justify">
-            {{ test.testDescription }}
+            {{ truncateDescription(test.testDescription) }}
           </p>
           <v-btn
             color="white"
@@ -215,7 +215,9 @@
 
           <!--Sticky Stepper to follow Progress-->
           <v-row
-            v-if="globalIndex >= 1 || displayVideoCallComponent"
+            v-if="
+              !isModerator && (globalIndex >= 1 || displayVideoCallComponent)
+            "
             class="stepper-row sticky-stepper"
           >
             <v-col cols="12">
@@ -233,13 +235,13 @@
                   <v-stepper-item
                     :value="1"
                     :title="$t('UserTestView.stepper.consent')"
-                    :complete="stepperValue > 1"
+                    :complete="completedSteps.consent"
                     :color="
-                      stepperValue == 1
-                        ? 'warning'
-                        : stepperValue < 1
-                          ? 'primary'
-                          : 'success'
+                      completedSteps.consent
+                        ? 'success'
+                        : stepperValue === 1
+                          ? 'warning'
+                          : 'primary'
                     "
                     complete-icon="mdi-check"
                   />
@@ -247,13 +249,13 @@
                   <v-stepper-item
                     :value="2"
                     :title="$t('UserTestView.stepper.preTest')"
-                    :complete="stepperValue > 2"
+                    :complete="completedSteps.preTest"
                     :color="
-                      stepperValue == 2
-                        ? 'warning'
-                        : stepperValue < 1
-                          ? 'primary'
-                          : 'success'
+                      completedSteps.preTest
+                        ? 'success'
+                        : stepperValue === 2
+                          ? 'warning'
+                          : 'primary'
                     "
                     complete-icon="mdi-check"
                   />
@@ -261,13 +263,13 @@
                   <v-stepper-item
                     :value="3"
                     :title="$t('UserTestView.stepper.tasks')"
-                    :complete="stepperValue > 3"
+                    :complete="completedSteps.tasks"
                     :color="
-                      stepperValue == 3
-                        ? 'warning'
-                        : stepperValue < 3
-                          ? 'primary'
-                          : 'success'
+                      completedSteps.tasks
+                        ? 'success'
+                        : stepperValue === 3
+                          ? 'warning'
+                          : 'primary'
                     "
                     complete-icon="mdi-check"
                   />
@@ -275,13 +277,13 @@
                   <v-stepper-item
                     :value="4"
                     :title="$t('UserTestView.stepper.postTest')"
-                    :complete="stepperValue > 4"
+                    :complete="completedSteps.postTest"
                     :color="
-                      stepperValue == 4
-                        ? 'warning'
-                        : stepperValue < 4
-                          ? 'primary'
-                          : 'success'
+                      completedSteps.postTest
+                        ? 'success'
+                        : stepperValue === 4
+                          ? 'warning'
+                          : 'primary'
                     "
                     complete-icon="mdi-check"
                   />
@@ -289,13 +291,13 @@
                   <v-stepper-item
                     :value="5"
                     :title="$t('UserTestView.stepper.completion')"
-                    :complete="stepperValue > 5"
+                    :complete="completedSteps.completion"
                     :color="
-                      stepperValue == 5
-                        ? 'warning'
-                        : stepperValue < 5
-                          ? 'primary'
-                          : 'success'
+                      completedSteps.completion
+                        ? 'success'
+                        : stepperValue === 5
+                          ? 'warning'
+                          : 'primary'
                     "
                     complete-icon="mdi-check"
                   />
@@ -307,7 +309,9 @@
           <!-- Stepper secundario para tareas -->
           <v-row
             v-if="
-              globalIndex === 4 && test?.testStructure?.userTasks?.length > 1
+              !isModerator &&
+              globalIndex === 4 &&
+              test?.testStructure?.userTasks?.length > 1
             "
             class="task-stepper-row"
             justify="center"
@@ -348,59 +352,31 @@
           </v-row>
 
           <!-- Observator Notes Drawer -->
-          <v-navigation-drawer
-            v-if="isObservator"
-            v-model="notesDrawerOpen"
-            location="right"
-            persistent
-            width="400"
-            elevation="3"
-            style="
-              position: fixed;
-              top: 0;
-              right: 0;
-              height: 100%;
-              z-index: 1005;
-            "
+          <VideoToolDrawer
+            v-if="isObservator || isModerator"
+            :model-value="notesDrawerOpen"
+            :title="t('observatorNotes.title')"
+            close-label="Close notes"
+            @close="closeNotesDrawer"
           >
+            <template #header-actions>
+              <v-chip size="small" color="white" variant="outlined">
+                {{
+                  t('observatorNotes.count', {
+                    count: localTestAnswer.sessionNotes?.length || 0,
+                  })
+                }}
+              </v-chip>
+            </template>
             <ObservatorNotes
               v-if="localTestAnswer"
               v-model="localTestAnswer.sessionNotes"
               :current-task-index="taskIndex"
               :test="test"
+              :show-header="false"
               @save="saveAnswer"
             />
-          </v-navigation-drawer>
-
-          <!-- Notes Toggle Button (for Observators) -->
-          <v-btn
-            v-if="isObservator"
-            icon
-            size="large"
-            color="primary"
-            elevation="4"
-            class="notes-toggle-btn"
-            :style="{
-              position: 'fixed',
-              top: '80px',
-              right: notesDrawerOpen ? '420px' : '20px',
-              zIndex: 1006,
-              transition: 'right 0.3s ease',
-            }"
-            @click="notesDrawerOpen = !notesDrawerOpen"
-          >
-            <v-badge
-              :content="localTestAnswer.sessionNotes?.length || 0"
-              :model-value="(localTestAnswer.sessionNotes?.length || 0) > 0"
-              color="error"
-            >
-              <v-icon>
-                {{
-                  notesDrawerOpen ? 'mdi-notebook-edit' : 'mdi-notebook-outline'
-                }}
-              </v-icon>
-            </v-badge>
-          </v-btn>
+          </VideoToolDrawer>
 
           <!-- Video Call Component -->
           <div v-show="displayVideoCallComponent" v-if="test">
@@ -414,10 +390,16 @@
               :current-task-index="taskIndex"
               :test="test"
               :local-test-answer="localTestAnswer"
+              :session-staff="sessionStaffMembers"
+              :session-participants="sessionParticipantsMembers"
+              :notes-drawer-open="notesDrawerOpen"
+              :notes-count="localTestAnswer.sessionNotes?.length || 0"
+              :toggle-notes-drawer="toggleNotesDrawer"
+              :completed-steps="completedSteps"
               @set-remote-stream="remoteStream = $event"
               @proceed-to-next-step="proceedToNextStep"
               @step-selected="handleStepSelected"
-              @call-ended="displayVideoCallComponent = false"
+              @call-ended="handleCallEnded"
               @moderator-status-change="handleModeratorStatusChange"
             />
           </div>
@@ -603,12 +585,10 @@
 import {
   ref as dbRef,
   onValue,
-  off,
   update,
   set,
   get,
-  onDisconnect,
-  serverTimestamp,
+  remove,
 } from 'firebase/database'
 import { database } from '@/app/plugins/firebase/index'
 import {
@@ -635,9 +615,14 @@ import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue'
 import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue'
 import StepAnnouncementOverlay from '@/ux/UserTest/components/StepAnnouncementOverlay.vue'
 import VideoCallFactory from '@/shared/components/videoCall/VideoCallFactory.vue'
+import VideoToolDrawer from '@/shared/components/videoCall/VideoToolDrawer.vue'
 import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
-import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
+import {
+  ACCESS_LEVEL,
+  isObserverAccessLevel,
+  normalizeAccessLevel,
+} from '@/shared/utils/accessLevel'
 import { isModeratedSessionViewer } from '@/shared/utils/studyAccessPolicy'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
@@ -647,6 +632,7 @@ import { calculateProgress } from '../utils/testProgress'
 import { animateStepAnnouncement } from '@/shared/utils/animations'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
+import { removeStaffDuplicates } from '@/ux/UserTest/utils/sessionPresence'
 
 const store = useStore()
 const router = useRouter()
@@ -698,7 +684,15 @@ const preTestIndex = ref(null)
 const taskStepComponent = ref(null)
 const allTasksCompleted = ref(false)
 const submitDialog = ref(false)
-const notesDrawerOpen = ref(true)
+const notesDrawerOpen = ref(false)
+
+function toggleNotesDrawer() {
+  notesDrawerOpen.value = !notesDrawerOpen.value
+}
+
+function closeNotesDrawer() {
+  notesDrawerOpen.value = false
+}
 const moderatorInactive = ref(false)
 const moderatorDisconnectTimeout = ref(null)
 const showStepAnnouncement = ref(false)
@@ -707,6 +701,13 @@ const nextStepAnnouncementTitle = ref('')
 const nextStepAnnouncementKicker = ref('')
 const isProcessingRemoteStepAnnouncement = ref(false)
 const lastAnnouncedRemoteStepKey = ref(null)
+const lastWaitingParticipantsNotificationCount = ref(0)
+const hasSeenRoomState = ref(false)
+
+const truncateDescription = (description) => {
+  if (!description || description.length <= 150) return description
+  return `${description.slice(0, 147)}...`
+}
 
 const sessionId = computed(() => route.params.token || null)
 
@@ -724,6 +725,136 @@ const isUserTestAdmin = computed(() => {
   return test.value?.testAdmin?.userDocId === user.value?.id
 })
 
+const normalizeSessionRole = (role) => {
+  if (role === 'FACILITATOR' || role === ACCESS_LEVEL.ADMIN) return 'moderator'
+  if (role === 'OBSERVER' || role === ACCESS_LEVEL.OBSERVATOR) {
+    return 'observator'
+  }
+  return 'participant'
+}
+
+const normalizeMemberKey = (member) => {
+  if (!member) return []
+
+  const rawValues = [
+    member.userDocId,
+    member.id,
+    member.email,
+    member.name,
+    member.displayName,
+  ]
+
+  const normalized = new Set()
+
+  rawValues.forEach((value) => {
+    if (value == null || !String(value).trim()) return
+
+    const str = String(value).trim().toLowerCase()
+    normalized.add(str)
+    normalized.add(str.replace(/[^a-z0-9]/g, ''))
+
+    const localPart = str.includes('@') ? str.split('@')[0] : str
+    if (localPart) {
+      normalized.add(localPart)
+      normalized.add(localPart.replace(/[^a-z0-9]/g, ''))
+    }
+  })
+
+  return [...normalized]
+}
+
+const hasSharedMemberKey = (left, right) => {
+  const rightKeys = new Set(normalizeMemberKey(right))
+  return normalizeMemberKey(left).some((key) => rightKeys.has(key))
+}
+
+const setMemberByIdentity = (map, member) => {
+  const keys = normalizeMemberKey(member)
+  if (!keys.length) return
+
+  const existingKey = keys.find((key) => map.has(key))
+  const mapKey = existingKey || keys[0]
+  map.set(mapKey, member)
+}
+
+const normalizeSessionMember = (member, fallbackType = 'participant') => {
+  if (!member) return null
+
+  const memberId = member.userDocId || member.id || member.email
+  if (!memberId) return null
+
+  const isStaffMember = fallbackType === 'staff'
+  const presenceStatus =
+    member.presenceStatus ??
+    member.status ??
+    (isStaffMember ? 'disconnected' : null)
+
+  return {
+    id: memberId,
+    userDocId: member.userDocId || member.id || member.email,
+    email: member.email,
+    name:
+      member.name ||
+      member.displayName ||
+      member.email?.split('@')[0] ||
+      fallbackType,
+    role: normalizeSessionRole(member.role || member.accessLevel),
+    connected: member.connected ?? (isStaffMember ? false : null),
+    presenceStatus,
+    presenceUpdatedAt: member.presenceUpdatedAt ?? null,
+    isStaff: isStaffMember,
+    accessLevel: member.accessLevel ?? member.role,
+  }
+}
+
+const callState = ref({ staff: {}, participants: {} })
+let callStateUnsubscribe = null
+let waitingParticipantsUnsubscribe = null
+let roomUnsubscribe = null
+
+function stopRealtimeListeners() {
+  callStateUnsubscribe?.()
+  waitingParticipantsUnsubscribe?.()
+  roomUnsubscribe?.()
+  callStateUnsubscribe = null
+  waitingParticipantsUnsubscribe = null
+  roomUnsubscribe = null
+  lastWaitingParticipantsNotificationCount.value = 0
+}
+
+const sessionStaffMembers = computed(() => {
+  const staffMembers = [
+    ...(session.value?.staff || []),
+    ...Object.values(callState.value.staff || {}),
+  ]
+  const staffById = new Map()
+
+  staffMembers.forEach((member) => {
+    setMemberByIdentity(staffById, member)
+  })
+
+  return [...staffById.values()]
+    .map((member) => normalizeSessionMember(member, 'staff'))
+    .filter(Boolean)
+})
+
+const sessionParticipantsMembers = computed(() => {
+  const participantMembers = [
+    ...(session.value?.participants || []),
+    ...Object.values(callState.value.participants || {}),
+  ]
+  const participantsById = new Map()
+
+  participantMembers.forEach((member) => {
+    const memberId = member?.userDocId || member?.id || member?.email
+    if (memberId) participantsById.set(memberId, member)
+  })
+
+  return [...participantsById.values()]
+    .map((member) => normalizeSessionMember(member, 'participant'))
+    .filter(Boolean)
+})
+
 const currentUserAccessLevel = computed(() => {
   const cooperator = session.value?.staff?.find(
     (c) => c.userDocId === user.value?.id,
@@ -733,15 +864,17 @@ const currentUserAccessLevel = computed(() => {
     (p) => p.userDocId === user.value?.id,
   )
 
-  if (cooperator) {
-    return cooperator.role || ACCESS_LEVEL.OBSERVATOR
-  }
+  const rawValue =
+    cooperator?.accessLevel ??
+    cooperator?.role ??
+    participant?.accessLevel ??
+    participant?.role ??
+    (isUserTestAdmin.value ? ACCESS_LEVEL.ADMIN : ACCESS_LEVEL.OBSERVATOR)
 
-  if (participant) {
-    return participant.role || ACCESS_LEVEL.USER
-  }
-
-  return ACCESS_LEVEL.OBSERVATOR
+  return (
+    normalizeAccessLevel(rawValue) ??
+    (isUserTestAdmin.value ? ACCESS_LEVEL.ADMIN : ACCESS_LEVEL.OBSERVATOR)
+  )
 })
 
 const sessionFacilitator = computed(() => {
@@ -769,13 +902,12 @@ const isObservator = computed(() => {
   if (isModerator.value) {
     return false
   }
-  // If there is an OBSERVER in the session, only they are the observer.
+
   if (sessionObserver.value) {
     return sessionObserver.value.userDocId === user.value?.id
   }
 
-  // Fallback: if there is no OBSERVER, the testAdmin is the observer.
-  return currentUserAccessLevel.value === ACCESS_LEVEL.OBSERVATOR
+  return isObserverAccessLevel(currentUserAccessLevel.value)
 })
 
 const session = computed(() => store.getters.session)
@@ -815,6 +947,37 @@ const stepperValue = computed(() => {
   if (globalIndex.value === 5) return 4 // Post-test
   if (globalIndex.value === 6) return 5 // Completion
   return 1 // Default to first step
+})
+
+const completedSteps = computed(() => {
+  if (isModerator.value) {
+    const participants = Object.values(callState.value?.participants || {})
+
+    // Get the participant's progress
+    const participant = participants.find(
+      (member) => member?.role === 'PARTICIPANT',
+    )
+
+    return (
+      participant?.progress ?? {
+        consent: false,
+        preTest: false,
+        tasks: false,
+        postTest: false,
+        completion: false,
+      }
+    )
+  }
+  return {
+    consent: localTestAnswer.consentCompleted === true,
+    preTest: localTestAnswer.preTestCompleted === true,
+    tasks:
+      Array.isArray(localTestAnswer.tasks) &&
+      localTestAnswer.tasks.length > 0 &&
+      localTestAnswer.tasks.every((task) => task?.completed === true),
+    postTest: localTestAnswer.postTestCompleted === true,
+    completion: localTestAnswer.submitted === true,
+  }
 })
 
 // Scroll to top of the page when step changes
@@ -899,6 +1062,25 @@ watch(
 )
 
 // Methods
+const handleModeratorStatusChange = (connected) => {
+  if (isModerator.value) return
+
+  if (moderatorDisconnectTimeout.value) {
+    clearTimeout(moderatorDisconnectTimeout.value)
+    moderatorDisconnectTimeout.value = null
+  }
+
+  if (connected === false) {
+    moderatorDisconnectTimeout.value = setTimeout(() => {
+      moderatorInactive.value = true
+      moderatorDisconnectTimeout.value = null
+    }, 1000)
+    return
+  }
+
+  moderatorInactive.value = false
+}
+
 const proceedToNextStep = async () => {
   if (!isModerator.value) return
 
@@ -1039,6 +1221,196 @@ const requestFullscreenIfAvailable = async () => {
   }
 }
 
+const cleanupRoomStateForReuse = async (roomKey) => {
+  if (!roomKey) return
+
+  const callRef = dbRef(database, `calls/${roomKey}`)
+  const roomRef = dbRef(database, `rooms/${roomKey}`)
+
+  await Promise.allSettled([
+    get(callRef).then((snapshot) => {
+      if (snapshot.exists()) return remove(callRef)
+      return null
+    }),
+    get(roomRef).then((snapshot) => {
+      if (snapshot.exists()) return remove(roomRef)
+      return null
+    }),
+  ])
+}
+
+const getCallMemberId = (member) =>
+  member?.userDocId || member?.id || member?.email
+
+const buildCallMember = (member, defaults = {}) => {
+  const memberId = getCallMemberId(member)
+  if (!memberId) return null
+
+  const sanitizedMember = { ...member }
+  delete sanitizedMember.connected
+  delete sanitizedMember.presenceStatus
+  delete sanitizedMember.presenceUpdatedAt
+  delete sanitizedMember.updatedAt
+  delete sanitizedMember.status
+
+  const role = defaults.role || member.role || 'participant'
+  const accessLevel =
+    defaults.accessLevel ?? member.accessLevel ?? member.role ?? 5
+  const presenceStatus = defaults.presenceStatus ?? 'disconnected'
+
+  return {
+    ...sanitizedMember,
+    userDocId: member.userDocId || member.id || member.email,
+    email: member.email || null,
+    name:
+      member.name ||
+      member.displayName ||
+      member.email?.split('@')[0] ||
+      memberId,
+    role,
+    accessLevel,
+    isModerator:
+      defaults.isModerator === true ||
+      member.isModerator === true ||
+      role === 'FACILITATOR',
+    joinedAt: member.joinedAt ?? Date.now(),
+    connected: defaults.connected ?? false,
+    presenceStatus,
+    presenceUpdatedAt: presenceStatus === 'connected' ? Date.now() : null,
+    media: member.media ?? {
+      cameraEnabled: true,
+      microphoneEnabled: true,
+    },
+  }
+}
+
+const addMissingCallMembers = (
+  updates,
+  existingMembers,
+  branch,
+  members,
+  defaults,
+) => {
+  const existingList = Object.values(existingMembers || {})
+
+  members.forEach((member) => {
+    const memberId = getCallMemberId(member)
+    if (!memberId) return
+
+    const alreadyExists = existingList.some((existingMember) =>
+      hasSharedMemberKey(existingMember, member),
+    )
+    if (alreadyExists) return
+
+    const callMember = buildCallMember(member, defaults)
+    if (callMember) updates[`${branch}/${memberId}`] = callMember
+  })
+}
+
+const moveMatchingCallMember = (
+  updates,
+  existingMembers,
+  branch,
+  member,
+  targetKey,
+  defaults,
+) => {
+  if (!targetKey) return
+
+  const match = Object.entries(existingMembers || {}).find(
+    ([memberKey, existingMember]) =>
+      memberKey !== targetKey && hasSharedMemberKey(existingMember, member),
+  )
+  if (!match) return
+
+  const [existingKey, existingMember] = match
+  updates[`${branch}/${targetKey}`] = {
+    ...existingMember,
+    ...buildCallMember(member, defaults),
+  }
+  updates[`${branch}/${existingKey}`] = null
+}
+
+const syncCallRoster = async (callRef, currentUserId) => {
+  const snapshot = await get(callRef)
+  const existingCall = snapshot.val() || {}
+  const staffMembers = Array.isArray(session.value?.staff)
+    ? session.value.staff
+    : []
+  const participantMembers = Array.isArray(session.value?.participants)
+    ? session.value.participants
+    : []
+  const currentModeratorMember =
+    isModerator.value && currentUserId
+      ? {
+          userDocId: currentUserId,
+          email: user.value?.email || null,
+          name:
+            user.value?.email?.split('@')[0] ||
+            user.value?.displayName ||
+            'moderator',
+          role: 'FACILITATOR',
+          accessLevel: 'ADMIN',
+          isModerator: true,
+        }
+      : null
+  const allStaffMembers = currentModeratorMember
+    ? [...staffMembers, currentModeratorMember]
+    : staffMembers
+  const participantMembersWithoutStaff = removeStaffDuplicates(
+    participantMembers,
+    allStaffMembers,
+  )
+  const updates = {}
+
+  if (!existingCall.createdAt) updates.createdAt = Date.now()
+  if (!existingCall.startedAt) updates.startedAt = Date.now()
+  if (!existingCall.status) updates.status = 'active'
+
+  if (currentModeratorMember) {
+    moveMatchingCallMember(
+      updates,
+      existingCall.staff,
+      'staff',
+      currentModeratorMember,
+      currentUserId,
+      {
+        connected: false,
+        presenceStatus: 'disconnected',
+        role: 'FACILITATOR',
+        accessLevel: 'ADMIN',
+        isModerator: true,
+      },
+    )
+  }
+
+  addMissingCallMembers(updates, existingCall.staff, 'staff', allStaffMembers, {
+    connected: false,
+    presenceStatus: 'disconnected',
+  })
+  addMissingCallMembers(
+    updates,
+    existingCall.participants,
+    'participants',
+    participantMembersWithoutStaff,
+    {
+      connected: false,
+      presenceStatus: 'disconnected',
+    },
+  )
+
+  if (Object.keys(updates).length) await update(callRef, updates)
+}
+
+const handleCallEnded = async () => {
+  displayVideoCallComponent.value = false
+  stopRealtimeListeners()
+
+  if (isModerator.value && roomId.value) {
+    await cleanupRoomStateForReuse(roomId.value)
+  }
+}
+
 const startTest = async () => {
   // Check if the test has no tasks
   if (
@@ -1055,7 +1427,13 @@ const startTest = async () => {
 
   await requestFullscreenIfAvailable()
 
-  if (isSessionViewer.value) {
+  const observerUser =
+    isObservator.value ||
+    isObserverAccessLevel(currentUserAccessLevel.value) ||
+    normalizeSessionRole(currentUserAccessLevel.value) === 'observator'
+  const staffUser = isModerator.value || observerUser
+
+  if (isSessionViewer.value && !staffUser) {
     // Hide start screen and mount VideoCall component for non-participant viewers.
     start.value = false
     displayVideoCallComponent.value = true
@@ -1068,17 +1446,256 @@ const startTest = async () => {
     startScreen.classList.add('leaving')
   }
 
-  // listen for changes
+  const currentUserId =
+    user.value?.id || user.value?.userDocId || user.value?.uid
   const roomRef = dbRef(database, `rooms/${roomId.value}`)
+  const callRef = dbRef(database, `calls/${roomId.value}`)
+
+  if (staffUser) {
+    displayVideoCallComponent.value = true
+    start.value = false
+  }
+
+  await syncCallRoster(callRef, currentUserId)
+
+  if (!isModerator.value && currentUserId) {
+    const isObserverMember = observerUser
+
+    const memberRef = isObserverMember
+      ? dbRef(database, `calls/${roomId.value}/staff/${currentUserId}`)
+      : dbRef(database, `calls/${roomId.value}/participants/${currentUserId}`)
+    const normalizedAccessLevel = normalizeAccessLevel(
+      currentUserAccessLevel.value,
+    )
+    const now = Date.now()
+    const isParticipant = !isObservator.value && !isModerator.value
+
+    await update(memberRef, {
+      userDocId: currentUserId,
+      email: user.value.email || null,
+      name:
+        user.value.email?.split('@')[0] ||
+        user.value.displayName ||
+        (isObserverMember ? 'observer' : 'participant'),
+      role: isObserverMember ? 'OBSERVER' : 'PARTICIPANT',
+      accessLevel: isObserverMember
+        ? 'OBSERVATOR'
+        : (normalizedAccessLevel ?? 5),
+      isModerator: false,
+      connected: true,
+      presenceStatus: isParticipant ? 'waiting' : 'connected',
+      presenceUpdatedAt: now,
+      joinedAt: now,
+      media: {
+        cameraEnabled: !isObserverMember,
+        microphoneEnabled: !isObserverMember,
+      },
+    })
+  }
+
+  // listen for changes
+  callStateUnsubscribe?.()
+  callStateUnsubscribe = onValue(callRef, (snapshot) => {
+    const nextCallState = snapshot.val() || {}
+    callState.value = {
+      staff: nextCallState.staff || {},
+      participants: nextCallState.participants || {},
+    }
+  })
+
+  if (isModerator.value || observerUser) {
+    const existingCallSnapshot = await get(callRef)
+
+    if (!existingCallSnapshot.exists()) {
+      await cleanupRoomStateForReuse(roomId.value)
+    }
+
+    waitingParticipantsUnsubscribe?.()
+    waitingParticipantsUnsubscribe = onValue(callRef, (snapshot) => {
+      const nextCallState = snapshot.val() || {}
+      const participants = nextCallState.participants || {}
+      const waitingParticipantsCount = Object.values(participants).filter(
+        (member) => {
+          const status =
+            member?.presenceStatus ??
+            member?.status ??
+            (member?.connected === false ? 'disconnected' : 'connected')
+
+          return status === 'waiting'
+        },
+      ).length
+
+      if (waitingParticipantsCount > 0) {
+        if (
+          waitingParticipantsCount !==
+          lastWaitingParticipantsNotificationCount.value
+        ) {
+          const message =
+            waitingParticipantsCount === 1
+              ? 'One participant is waiting to enter.'
+              : 'More than one users are waiting to join.'
+
+          showInfo(message)
+          lastWaitingParticipantsNotificationCount.value =
+            waitingParticipantsCount
+        }
+      } else {
+        lastWaitingParticipantsNotificationCount.value = 0
+      }
+
+      callState.value = {
+        staff: nextCallState.staff || {},
+        participants,
+      }
+    })
+
+    if (isModerator.value) {
+      const callSnapshot = await get(callRef)
+
+      if (!callSnapshot.exists()) {
+        const staffMembers = Array.isArray(session.value?.staff)
+          ? session.value.staff
+          : []
+        const participantMembers = Array.isArray(session.value?.participants)
+          ? session.value.participants
+          : []
+        const participantMembersWithoutStaff = removeStaffDuplicates(
+          participantMembers,
+          [
+            ...staffMembers,
+            { userDocId: user.value?.id, email: user.value?.email },
+          ],
+        )
+
+        const toMemberMap = (members, defaults = {}) =>
+          Object.fromEntries(
+            members
+              .map((member) => {
+                const memberId =
+                  member?.userDocId || member?.id || member?.email
+                if (!memberId) return null
+
+                const memberConnected = Object.prototype.hasOwnProperty.call(
+                  defaults,
+                  'connected',
+                )
+                  ? defaults.connected
+                  : undefined
+                const memberPresenceStatus =
+                  Object.prototype.hasOwnProperty.call(
+                    defaults,
+                    'presenceStatus',
+                  )
+                    ? defaults.presenceStatus
+                    : undefined
+
+                const sanitizedMember = { ...member }
+                delete sanitizedMember.connected
+                delete sanitizedMember.presenceStatus
+                delete sanitizedMember.presenceUpdatedAt
+                delete sanitizedMember.updatedAt
+                delete sanitizedMember.status
+
+                const normalizedMember = {
+                  ...sanitizedMember,
+                  userDocId: member.userDocId || member.id || member.email,
+                  email: member.email || null,
+                  name:
+                    member.name ||
+                    member.displayName ||
+                    member.email?.split('@')[0] ||
+                    memberId,
+                  role: member.role || 'participant',
+                  accessLevel: member.accessLevel ?? member.role ?? 5,
+                  isModerator:
+                    member.role === 'FACILITATOR' ||
+                    member.isModerator === true,
+                  joinedAt: member.joinedAt ?? Date.now(),
+                  media: member.media ?? {
+                    cameraEnabled: true,
+                    microphoneEnabled: true,
+                  },
+                  ...(memberConnected !== undefined
+                    ? { connected: memberConnected }
+                    : {}),
+                  ...(memberPresenceStatus !== undefined
+                    ? { presenceStatus: memberPresenceStatus }
+                    : {}),
+                  ...(memberPresenceStatus === 'disconnected'
+                    ? { presenceUpdatedAt: null }
+                    : memberPresenceStatus === 'connected'
+                      ? { presenceUpdatedAt: Date.now() }
+                      : {}),
+                }
+
+                return [memberId, normalizedMember]
+              })
+              .filter(Boolean),
+          )
+
+        const moderatorEntry = {
+          userDocId: user.value?.id || 'moderator',
+          email: user.value?.email || null,
+          name:
+            user.value?.email?.split('@')[0] ||
+            user.value?.displayName ||
+            'moderator',
+          role: 'FACILITATOR',
+          accessLevel: 'ADMIN',
+          isModerator: true,
+          connected: true,
+          presenceStatus: 'connected',
+          presenceUpdatedAt: Date.now(),
+          joinedAt: Date.now(),
+          media: {
+            cameraEnabled: true,
+            microphoneEnabled: true,
+          },
+        }
+
+        const payload = {
+          createdAt: Date.now(),
+          startedAt: Date.now(),
+          status: 'active',
+          staff: {
+            [moderatorEntry.userDocId]: moderatorEntry,
+            ...toMemberMap(
+              staffMembers.filter((member) => {
+                return !hasSharedMemberKey(member, moderatorEntry)
+              }),
+              {},
+            ),
+          },
+          participants: toMemberMap(participantMembersWithoutStaff, {
+            connected: false,
+            presenceStatus: 'disconnected',
+          }),
+        }
+
+        await update(callRef, {
+          createdAt: payload.createdAt,
+          startedAt: payload.startedAt,
+          status: payload.status,
+          [`staff/${moderatorEntry.userDocId}`]: moderatorEntry,
+        })
+      }
+    }
+  }
 
   // Ensure only moderator can set this, and only on explicit end, NOT using onDisconnect
   // onDisconnect(roomRef).set(null)
 
-  onValue(roomRef, async (snapshot) => {
+  roomUnsubscribe?.()
+  roomUnsubscribe = onValue(roomRef, async (snapshot) => {
     const data = snapshot.val()
 
     // If data is null, the room has been deleted (e.g. by moderator ending call)
     if (!data) {
+      if (isObservator.value && !hasSeenRoomState.value) {
+        displayVideoCallComponent.value = true
+        return
+      }
+
       if (!isModerator.value && displayVideoCallComponent.value) {
         // displayVideoCallComponent.value = false // Avoid updating state before redirect to prevent unmount error
         // Optionally show start screen or just return to test flow
@@ -1088,6 +1705,8 @@ const startTest = async () => {
       }
       return
     }
+
+    hasSeenRoomState.value = true
 
     const nextGlobalIndex =
       data.globalIndex !== undefined ? data.globalIndex : 0
@@ -1100,85 +1719,55 @@ const startTest = async () => {
     const previousGlobalIndex = globalIndex.value
     const previousTaskIndex = taskIndex.value
 
-    globalIndex.value = nextGlobalIndex
-    taskIndex.value = nextTaskIndex
+    if (
+      !isModerator.value &&
+      !isObservator.value &&
+      globalIndex.value === 1 &&
+      nextGlobalIndex === 0
+    ) {
+      displayVideoCallComponent.value = true
+      return
+    }
 
     if (!isModerator.value) {
+      if (isObservator.value) {
+        // Observers stay in the call lobby and do not follow the test steps.
+        displayVideoCallComponent.value = true
+        return
+      }
+
       const announcementKey = `${nextGlobalIndex}-${nextTaskIndex}`
-      const isConsentStage = nextGlobalIndex === 1 && nextTaskIndex === 0
-      const shouldAnnounceConsentStart =
-        isConsentStage &&
-        nextShowVideoCall === false &&
-        previousGlobalIndex !== nextGlobalIndex &&
-        !isProcessingRemoteStepAnnouncement.value &&
-        lastAnnouncedRemoteStepKey.value !== announcementKey
-
-      if (shouldAnnounceConsentStart) {
-        isProcessingRemoteStepAnnouncement.value = true
-        lastAnnouncedRemoteStepKey.value = announcementKey
-        displayVideoCallComponent.value = true
-
-        await safelyShowNextStepAnnouncement(
-          t('UserTestView.stepper.consent'),
-          1,
-        )
-
-        displayVideoCallComponent.value = false
-        isProcessingRemoteStepAnnouncement.value = false
-        return
-      }
-
-      const isPreTestStage = nextGlobalIndex === 2 && nextTaskIndex === 0
-      const shouldAnnouncePreTestStart =
-        isPreTestStage &&
-        nextShowVideoCall === false &&
-        previousGlobalIndex !== nextGlobalIndex &&
-        !isProcessingRemoteStepAnnouncement.value &&
-        lastAnnouncedRemoteStepKey.value !== announcementKey
-
-      if (shouldAnnouncePreTestStart) {
-        isProcessingRemoteStepAnnouncement.value = true
-        lastAnnouncedRemoteStepKey.value = announcementKey
-        displayVideoCallComponent.value = true
-
-        await safelyShowNextStepAnnouncement(
-          t('UserTestView.stepper.preTest'),
-          2,
-        )
-
-        displayVideoCallComponent.value = false
-        isProcessingRemoteStepAnnouncement.value = false
-        return
-      }
-
-      const isTaskStage = nextGlobalIndex === 4
-      const taskChanged =
+      const stageChanged =
         previousGlobalIndex !== nextGlobalIndex ||
         previousTaskIndex !== nextTaskIndex
-      const shouldAnnounceTaskStart =
-        isTaskStage &&
+      const isAnnounceableStage = nextGlobalIndex >= 1 && nextGlobalIndex <= 6
+      const shouldAnnounceRemoteStage =
+        isAnnounceableStage &&
         nextShowVideoCall === false &&
-        taskChanged &&
+        stageChanged &&
         !isProcessingRemoteStepAnnouncement.value &&
         lastAnnouncedRemoteStepKey.value !== announcementKey
 
-      if (shouldAnnounceTaskStart) {
+      if (shouldAnnounceRemoteStage) {
         isProcessingRemoteStepAnnouncement.value = true
         lastAnnouncedRemoteStepKey.value = announcementKey
         displayVideoCallComponent.value = true
 
-        await showTaskTitleAnnouncement(nextTaskIndex)
+        await showStageAnnouncementByGlobalIndex(nextGlobalIndex, nextTaskIndex)
 
         displayVideoCallComponent.value = false
         isProcessingRemoteStepAnnouncement.value = false
-        return
+      } else {
+        displayVideoCallComponent.value = nextShowVideoCall
       }
-
-      // sync video call state
-      displayVideoCallComponent.value = nextShowVideoCall
     } else {
       // Moderator always stays in video call during session
       displayVideoCallComponent.value = true
+    }
+
+    if (!isObservator.value) {
+      globalIndex.value = nextGlobalIndex
+      taskIndex.value = nextTaskIndex
     }
   })
 
@@ -1205,20 +1794,23 @@ const startTest = async () => {
 
     await update(roomRef, updates)
 
-    // Write lastUpdate timestamp when moderator disconnects (server-side timestamp)
-    onDisconnect(roomRef).update({ lastUpdate: serverTimestamp() })
+    // Avoid leaving a room-level onDisconnect update behind. The moderator's
+    // explicit end flow must delete the room branch completely.
   }
 }
 
 const handleWelcomeStart = async () => {
   await requestFullscreenIfAvailable()
-  await safelyShowNextStepAnnouncement(t('UserTestView.stepper.consent'), 1)
   displayVideoCallComponent.value = true
   globalIndex.value = 1
 }
 
-const showNextStepAnnouncement = async (title, stageNumber) => {
-  nextStepAnnouncementKicker.value = `Stage ${stageNumber}`
+const showNextStepAnnouncement = async (
+  title,
+  stageNumber,
+  kickerOverride = '',
+) => {
+  nextStepAnnouncementKicker.value = kickerOverride || `Stage ${stageNumber}`
   nextStepAnnouncementTitle.value = title
   showStepAnnouncement.value = true
 
@@ -1237,9 +1829,13 @@ const showNextStepAnnouncement = async (title, stageNumber) => {
   }
 }
 
-const safelyShowNextStepAnnouncement = async (title, stageNumber) => {
+const safelyShowNextStepAnnouncement = async (
+  title,
+  stageNumber,
+  kickerOverride = '',
+) => {
   try {
-    await showNextStepAnnouncement(title, stageNumber)
+    await showNextStepAnnouncement(title, stageNumber, kickerOverride)
   } catch {
     // Non-critical: users can continue even if announcement animation fails.
   }
@@ -1308,34 +1904,9 @@ const showStageAnnouncementByGlobalIndex = async (
 }
 
 const handleStartTasks = async () => {
+  await showTaskTitleAnnouncement(0)
   taskIndex.value = 0
   globalIndex.value = 4
-  if (!isModerator.value) {
-    const announcementKey = `${nextGlobalIndex}-${nextTaskIndex}`
-    const stageChanged =
-      previousGlobalIndex !== nextGlobalIndex ||
-      previousTaskIndex !== nextTaskIndex
-    const isAnnounceableStage = nextGlobalIndex >= 1 && nextGlobalIndex <= 6
-    const shouldAnnounceRemoteStage =
-      isAnnounceableStage &&
-      nextShowVideoCall === false &&
-      stageChanged &&
-      !isProcessingRemoteStepAnnouncement.value &&
-      lastAnnouncedRemoteStepKey.value !== announcementKey
-
-    if (shouldAnnounceRemoteStage) {
-      isProcessingRemoteStepAnnouncement.value = true
-      lastAnnouncedRemoteStepKey.value = announcementKey
-      displayVideoCallComponent.value = true
-
-      await showStageAnnouncementByGlobalIndex(nextGlobalIndex, nextTaskIndex)
-
-      displayVideoCallComponent.value = false
-      isProcessingRemoteStepAnnouncement.value = false
-      return
-    }
-    timerComponent.value.stopTimer()
-  }
 }
 
 async function handleTaskFinish(userCompleted) {
@@ -1462,7 +2033,9 @@ const completeStep = async (id, type, userCompleted = true) => {
         markGroupComplete(STEP_GROUP_IDS.tasks)
       }
       if (id < localTestAnswer.tasks.length - 1) {
+        await showTaskTitleAnnouncement(id + 1)
         taskIndex.value = id + 1
+        lastAnnouncedRemoteStepKey.value = `${globalIndex.value}-${taskIndex.value}`
         startTimer()
       }
       if (userCompleted) {
@@ -1498,6 +2071,7 @@ const completeStep = async (id, type, userCompleted = true) => {
       // validation: type === 'tasks' ? id + 1 : taskIndex.value
       await update(participantRef, {
         taskIndex: taskIndex.value,
+        progress: completedSteps.value,
       })
     }
 
@@ -1761,17 +2335,13 @@ watch(
   { immediate: true },
 )
 
-onBeforeUnmount(async () => {
+onBeforeUnmount(() => {
   studyLogging?.destroy()
-  const roomRef = dbRef(database, `rooms/${roomId.value}`)
-  off(roomRef)
-  // Do NOT delete the room on unmount (refresh/navigate away). Only explicit end should delete.
-  // await set(roomRef, null)
+  stopRealtimeListeners()
 
-  // Moderator: explicitly stamp lastUpdate on leave (covers SPA navigation)
-  if (isModerator.value) {
-    await update(roomRef, { lastUpdate: serverTimestamp() })
-  }
+  // Never re-create or mutate room metadata during unmount. The room is deleted
+  // only in the explicit end-call flow, and any leftover timestamp writes would
+  // reintroduce stale `lastUpdate` values after the branch was already removed.
 
   if (moderatorDisconnectTimeout.value) {
     clearTimeout(moderatorDisconnectTimeout.value)
@@ -1844,6 +2414,8 @@ onBeforeUnmount(async () => {
 .sticky-stepper {
   position: sticky;
   top: 0;
+  margin-bottom: 24px;
+
   z-index: 10;
   background: transparent;
 }

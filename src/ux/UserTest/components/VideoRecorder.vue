@@ -45,11 +45,11 @@ import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import {
-  getStorage,
   ref as storageRef,
   uploadBytes,
   getDownloadURL,
 } from 'firebase/storage'
+import { storage } from '@/app/plugins/firebase'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { showError } from '@/shared/utils/toast'
 
@@ -153,48 +153,57 @@ const startRecording = async () => {
     if (mediaRecorder.value) {
       mediaRecorder.value.onstop = async () => {
         emit('showLoading')
-        const videoBlob = new Blob(recordedChunks.value, {
-          type: 'video/webm',
-        })
-        const storage = getStorage()
-        const correctTaskIndex = recordingTaskIndex.value
-        const storageReference = storageRef(
-          storage,
-          `tests/${props.testId}/${resolvedUserDocId.value}/task_${correctTaskIndex}/video/${recordedVideo.value}`,
-        )
-        await uploadBytes(storageReference, videoBlob)
-
-        recordedVideo.value = await getDownloadURL(storageReference)
-
-        await store.dispatch('updateTaskMediaUrl', {
-          taskIndex: correctTaskIndex,
-          mediaType: MEDIA_FIELD_MAP.webcam,
-          url: recordedVideo.value,
-          size: videoBlob.size,
-        })
-
-        // Add safety check before setting the property
-        if (
-          currentUserTestAnswer.value.tasks &&
-          currentUserTestAnswer.value.tasks[correctTaskIndex]
-        ) {
-          currentUserTestAnswer.value.tasks[correctTaskIndex].webcamRecordURL =
-            recordedVideo.value
-          currentUserTestAnswer.value.tasks[correctTaskIndex].webcamSize =
-            videoBlob.size
-        } else {
-          console.error(
-            'Task not found at index:',
-            correctTaskIndex,
-            'Available tasks:',
-            currentUserTestAnswer.value.tasks?.length,
+        try {
+          const videoBlob = new Blob(recordedChunks.value, {
+            type: 'video/webm',
+          })
+          const correctTaskIndex = recordingTaskIndex.value
+          const storageReference = storageRef(
+            storage,
+            `tests/${props.testId}/${resolvedUserDocId.value}/task_${correctTaskIndex}/video/${recordedVideo.value}`,
           )
+          await uploadBytes(storageReference, videoBlob)
+
+          recordedVideo.value = await getDownloadURL(storageReference)
+
+          await store.dispatch('updateTaskMediaUrl', {
+            taskIndex: correctTaskIndex,
+            mediaType: MEDIA_FIELD_MAP.webcam,
+            url: recordedVideo.value,
+            size: videoBlob.size,
+            userId: resolvedUserDocId.value,
+          })
+
+          // Add safety check before setting the property
+          if (
+            currentUserTestAnswer.value.tasks &&
+            currentUserTestAnswer.value.tasks[correctTaskIndex]
+          ) {
+            currentUserTestAnswer.value.tasks[
+              correctTaskIndex
+            ].webcamRecordURL = recordedVideo.value
+            currentUserTestAnswer.value.tasks[correctTaskIndex].webcamSize =
+              videoBlob.size
+          } else {
+            console.error(
+              'Task not found at index:',
+              correctTaskIndex,
+              'Available tasks:',
+              currentUserTestAnswer.value.tasks?.length,
+            )
+          }
+        } catch (error) {
+          console.error(
+            'Unexpected error while stopping video recording:',
+            error,
+          )
+        } finally {
+          if (videoStream.value) {
+            videoStream.value.getTracks().forEach((track) => track.stop())
+          }
+          recording.value = false
+          emit('stopShowLoading')
         }
-
-        videoStream.value.getTracks().forEach((track) => track.stop())
-        recording.value = false
-
-        emit('stopShowLoading')
       }
     }
 

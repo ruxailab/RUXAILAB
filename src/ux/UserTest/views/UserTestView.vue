@@ -110,7 +110,7 @@
             {{ test.testTitle }}
           </h1>
           <p class="text-body mb-5 text-white text-justify">
-            {{ test.testDescription }}
+            {{ truncateDescription(test.testDescription) }}
           </p>
 
           <!-- Anonymous participant identification -->
@@ -617,6 +617,11 @@ const stepAnnouncementOverlay = ref(null)
 const nextStepAnnouncementTitle = ref('')
 const nextStepAnnouncementKicker = ref('')
 
+const truncateDescription = (description) => {
+  if (!description || description.length <= 150) return description
+  return `${description.slice(0, 147)}...`
+}
+
 const rightView = ref(null)
 const videoRecorder = ref(null)
 const taskStepComponent = ref(null)
@@ -1027,10 +1032,9 @@ const handleWelcomeStart = async () => {
 }
 
 const handleStartTasks = async () => {
+  await showTaskTitleAnnouncement(0)
   taskIndex.value = 0
   globalIndex.value = hasEyeTracking.value ? 5 : 4
-  await nextTick()
-  await showTaskTitleAnnouncement(0)
 }
 
 const showTaskTitleAnnouncement = async (idx) => {
@@ -1214,8 +1218,8 @@ const completeStep = async (id, type, userCompleted = true) => {
       allTasksCompleted.value = allTasksAttempted
 
       if (id < localTestAnswer.tasks.length - 1) {
+        await showTaskTitleAnnouncement(id + 1)
         taskIndex.value = id + 1
-        await showTaskTitleAnnouncement(taskIndex.value)
       } else {
         taskIndex.value = id
         const postTasksAnnouncement = getPostTasksAnnouncement()

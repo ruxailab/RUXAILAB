@@ -48,7 +48,7 @@ For commercial support, academic collaborations, and answers to common questions
 
 ### Development Environment
 
-- Node.js version: ≤ 24.12.0
+- Node.js version: ≥ 22.22.1 (required for pre-commit `lint-staged`; Node 20 is not supported)
 - Vue.js version: 3.5.26
 - Vue CLI version: 5.0.8
 - Vuetify version: 3.11.6

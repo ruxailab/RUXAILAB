@@ -1,40 +1,24 @@
 <template>
-  <v-card flat rounded="xl" style="background: #f5f7ff" class="pb-3">
-    <v-card-title class="subtitleView">
-      {{ $t('HeuristicsTestAnswer.titles.evaluators') }}
-    </v-card-title>
-    <v-divider />
-    <v-tabs
-      bg-color="transparent"
-      color="grey-darken-2"
-      class="mt-2"
-      align-tabs="center"
-    >
-      <v-tab
-        class="tab-text"
-        style="text-transform: none !important"
-        @click="localInd = 0"
-      >
+  <v-card flat rounded="xl" class="evaluator-results-card pb-5">
+    <v-tabs bg-color="transparent" color="#FB5C6C" slider-size="4" class="mt-2">
+      <v-tab @click="localInd = 0">
         {{ $t('HeuristicsTestAnswer.evaluators.headers.table') }}
       </v-tab>
-      <v-tab
-        class="tab-text"
-        style="text-transform: none !important"
-        @click="localInd = 1"
-      >
+      <v-tab @click="localInd = 1">
         {{ $t('HeuristicsTestAnswer.evaluators.headers.graphic') }}
       </v-tab>
     </v-tabs>
 
     <v-row justify="center">
       <!-- Table view -->
-      <v-col v-if="localInd == 0" cols="10">
+      <v-col v-if="localInd == 0" cols="12" lg="11" xl="10">
         <v-data-table
+          v-if="!isTraditional"
           density="compact"
           :headers="statistics.header"
           :items="statistics.items"
           :items-per-page="15"
-          class="elevation-0 cardStyle mx-2 mt-3 mb-6"
+          class="evaluator-results-table mt-4 mb-6"
         >
           <template #item.result="{ item }">
             <v-chip
@@ -48,6 +32,26 @@
             </v-chip>
           </template>
           <template #item.answered="{ item }"> {{ item.answered }}% </template>
+        </v-data-table>
+
+        <v-data-table
+          v-else
+          density="compact"
+          :headers="traditionalStatistics.header"
+          :items="traditionalStatistics.items"
+          :items-per-page="15"
+          class="evaluator-results-table mt-4 mb-6"
+        >
+          <template #item.frequencyAverage="{ item }">
+            <v-chip color="info" variant="tonal" size="small">
+              {{ item.frequencyAverage }}
+            </v-chip>
+          </template>
+          <template #item.severityAverage="{ item }">
+            <v-chip color="warning" variant="tonal" size="small">
+              {{ item.severityAverage }}
+            </v-chip>
+          </template>
         </v-data-table>
 
         <v-btn
@@ -77,7 +81,7 @@
         <v-card
           v-else
           flat
-          class="mx-auto mt-10 mb-10 py-6 px-3 if-card"
+          class="mx-auto mt-10 mb-10 py-6 px-3"
           align="center"
           width="970px"
         >
@@ -105,6 +109,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  isTraditional: {
+    type: Boolean,
+    default: false,
+  },
+  traditionalStatistics: {
+    type: Object,
+    default: () => ({ header: [], items: [] }),
+  },
 })
 
 const emit = defineEmits(['download-csv'])
@@ -117,3 +129,15 @@ const getColorPorcentage = (value) => {
   return 'green'
 }
 </script>
+
+<style scoped>
+.evaluator-results-card {
+  background: rgb(var(--v-theme-surface));
+}
+
+.evaluator-results-table {
+  overflow: hidden;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.12);
+  border-radius: 12px;
+}
+</style>

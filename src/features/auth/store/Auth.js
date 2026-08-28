@@ -78,7 +78,7 @@ export default {
         // Send verification email
         try {
           await authController.sendVerificationEmail(user.email, user.email)
-        } catch { }
+        } catch {}
 
         commit('SET_TOAST', {
           message: i18n.global.t('auth.signupSuccess'),
@@ -95,7 +95,7 @@ export default {
       }
     },
 
-    async signin({ commit }, payload) {
+    async signin({ commit, dispatch }, payload) {
       commit('setLoading', true)
 
       try {
@@ -116,13 +116,14 @@ export default {
         }
 
         const dbUser = await userController.getById(user.uid)
-
         commit('SET_USER', dbUser)
 
         commit('SET_TOAST', {
           message: i18n.global.t('auth.loginSuccess'),
           type: 'success',
         })
+
+        dispatch('subscribeToNotifications', user.uid)
       } catch (err) {
         if (err.message === 'EMAIL_NOT_VERIFIED') {
           throw err
@@ -139,7 +140,7 @@ export default {
      * @action signInWithGoogle
      * @returns {void}
      */
-    async signInWithGoogle({ commit }, payload) {
+    async signInWithGoogle({ commit, dispatch }, payload) {
       try {
         const { user } = await authController.signInWithGoogle(
           payload.rememberMe,
@@ -171,6 +172,7 @@ export default {
           message: i18n.global.t('auth.loginSuccess'),
           type: 'success',
         })
+        dispatch('subscribeToNotifications', user.uid)
       } catch (err) {
         const silentErrors = [
           'auth/popup-closed-by-user',
@@ -215,7 +217,7 @@ export default {
       }
     },
 
-    async autoSignIn({ commit }) {
+    async autoSignIn({ commit, dispatch }) {
       try {
         const user = await authController.autoSignIn()
         if (!user) return
@@ -229,6 +231,7 @@ export default {
 
         const dbUser = await userController.getById(user.uid)
         commit('SET_USER', dbUser)
+        dispatch('subscribeToNotifications', user.uid)
       } catch (e) {
         commit('SET_TOAST', {
           message: i18n.global.t('errors.globalError'),
