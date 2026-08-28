@@ -18,3 +18,12 @@ If broader access is approved, update the policy consistently in:
 - `firestore.rules`
 - `src/shared/utils/studyAccessPolicy.js`
 - the related unit and Firestore rules tests
+
+## Firebase Functions Deployment Configuration
+
+Firebase CLI 15.1 reports the current `firebase.json` Functions configuration
+as invalid because it contains `"runtimes": "python312"`. The Functions package
+is Node-based and declares Node 22 in `functions/package.json`.
+
+Before deploying Functions, confirm with maintainers whether the invalid entry
+should be removed or replaced with `"runtime": "nodejs22"`.
