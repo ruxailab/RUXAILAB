@@ -9,6 +9,10 @@ import Notification from '@/shared/models/Notification'
 import { formatDateTime } from '../utils/dateUtils'
 import i18n from '@/app/plugins/i18n'
 import { NOTIFICATION_TYPES } from '../../features/notifications/utils/notificationUtils'
+import {
+  STUDY_TYPES,
+  normalizeStudyType,
+} from '@/shared/constants/methodDefinitions'
 
 const t = i18n.global.t
 
@@ -396,7 +400,16 @@ export default {
     ) {
       const user = getters.user
       const author = `${user.username || ''} ${user.email}`.trim()
-      const sessionLink = `${window.location.origin}/testview/${studyId}/${session.id}`
+      // A Focus Group session runs in its own live room, joined by its session
+      // id; other study types use the per-participant testview token. Pick the
+      // link that lands the invitee in the right place.
+      const study = getters.test
+      const isFocusGroup =
+        study?.id === studyId &&
+        normalizeStudyType(study?.testType) === STUDY_TYPES.FOCUS_GROUP
+      const sessionLink = isFocusGroup
+        ? `${window.location.origin}/focusGroup/session/${studyId}?session=${session.id}`
+        : `${window.location.origin}/testview/${studyId}/${session.id}`
 
       const emailController = new EmailController()
 
