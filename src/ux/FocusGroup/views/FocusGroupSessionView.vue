@@ -22,6 +22,29 @@
     @start="onStart"
   />
 
+  <!-- Session membership gate: a live session launched for a specific roster
+       turns away anyone not named on it, before consent or the room itself -->
+  <v-container
+    v-else-if="sessionAccessBlocked"
+    class="d-flex align-center justify-center"
+    style="height: 100vh"
+  >
+    <div class="text-center" style="max-width: 420px">
+      <v-icon size="48" color="medium-emphasis" class="mb-3">
+        mdi-account-cancel-outline
+      </v-icon>
+      <h2 class="text-h6 mb-2">
+        {{ t('focusGroup.session.notAMemberTitle') }}
+      </h2>
+      <p class="text-body-2 text-medium-emphasis mb-4">
+        {{ t('focusGroup.session.notAMemberHint') }}
+      </p>
+      <v-btn color="primary" variant="tonal" @click="goToDashboard">
+        {{ t('focusGroup.session.backToDashboard') }}
+      </v-btn>
+    </div>
+  </v-container>
+
   <!-- Consent gate: sits between the lobby and the discussion, mirroring the
        moderated test where consent follows the welcome step -->
   <v-container v-else-if="needsConsent" class="pa-6">
@@ -572,6 +595,14 @@ const showPanel = ref(mdAndUp.value)
 const panelTab = ref('discussion')
 
 const studyId = route.params.id
+// The scheduled session being run, from the launch link. Each session gets its
+// OWN live room — `${studyId}-${sessionId}` — so two sessions of the same study
+// can run at once without sharing presence, chat, video, or breakout state. No
+// `?session=` means the legacy open room keyed by the study alone. Read once at
+// setup: launching a session always arrives from the Sessions list (a separate
+// route), so the view re-mounts fresh per session.
+const sessionId = route.query.session || null
+const roomId = sessionId ? `${studyId}-${sessionId}` : studyId
 const {
   status,
   currentTopicIndex,
@@ -607,7 +638,7 @@ const {
   subscribe,
   subscribeBackroom,
   toSessionRecord,
-} = useFocusGroupSession(studyId)
+} = useFocusGroupSession(roomId)
 
 const user = computed(() => store.getters.user)
 const test = computed(() => store.getters.test)
@@ -712,9 +743,60 @@ const accessLevel = computed(() => {
   return ACCESS_LEVEL.GUEST
 })
 
+// --- Session membership: the launched session defines who takes part ---
+// This live room IS a specific scheduled session (see `roomId`), so its roster
+// is loaded once from Firestore by `sessionId`. Its staff + participant lists
+// drive both who may enter and who counts as a participant. No session id means
+// the legacy open room, where membership isn't enforced. Declared before the
+// role computeds because `isParticipant` consults the roster.
+const activeSession = ref(null)
+// The roster load is async; hold the membership gate closed-open decision until
+// it resolves so a member never flashes the "not part of this session" notice.
+const rosterLoaded = ref(false)
+onMounted(async () => {
+  if (!sessionId) {
+    rosterLoaded.value = true
+    return
+  }
+  try {
+    activeSession.value = await store.dispatch('getSession', {
+      studyId,
+      sessionId,
+    })
+  } catch {
+    activeSession.value = null
+  } finally {
+    rosterLoaded.value = true
+  }
+})
+
+// Is the current user named in a roster list — by account id, or by invite
+// email (participantEmails is a plain string array, so it's wrapped first)?
+const namedInRoster = (list) => {
+  const uid = user.value?.id || user.value?.uid
+  const email = (user.value?.email || '').toLowerCase()
+  return (list || []).some((member) => {
+    const entry = typeof member === 'string' ? { email: member } : member
+    return (
+      (entry?.userDocId && entry.userDocId === uid) ||
+      (entry?.email && email && entry.email.toLowerCase() === email)
+    )
+  })
+}
+// A participant invited to this session counts as a participant even when they
+// aren't a study cooperator — participants live in their own list, not the
+// cooperators one (matching how the other study types separate the two).
+const isRosterParticipant = computed(
+  () =>
+    !!activeSession.value &&
+    (namedInRoster(activeSession.value.participants) ||
+      namedInRoster(activeSession.value.participantEmails)),
+)
+
 const isFacilitator = computed(() => accessLevel.value === ACCESS_LEVEL.ADMIN)
 const isParticipant = computed(
-  () => accessLevel.value === ACCESS_LEVEL.EVALUATOR,
+  () =>
+    accessLevel.value === ACCESS_LEVEL.EVALUATOR || isRosterParticipant.value,
 )
 // Anyone who is neither running the session nor taking part in it observes it:
 // a dedicated OBSERVATOR cooperator, but also any signed-in viewer who opens
@@ -722,6 +804,26 @@ const isParticipant = computed(
 // "Observer" badge and the observer tools (notes pad, observing strip) always
 // agree instead of the badge showing while the tools stay hidden.
 const isObserver = computed(() => !isFacilitator.value && !isParticipant.value)
+
+// A user belongs to this session when named in its staff or participant roster.
+// The facilitator always has access; a legacy open room isn't gated.
+const isSessionMember = computed(() => {
+  if (isFacilitator.value) return true
+  const session = activeSession.value
+  if (!session) return true
+  return (
+    namedInRoster(session.staff) ||
+    namedInRoster(session.participants) ||
+    namedInRoster(session.participantEmails)
+  )
+})
+
+// Block entry when this room is a scheduled session and the viewer isn't on its
+// roster: they see a "not part of this session" notice instead of joining.
+const sessionAccessBlocked = computed(
+  () => !!sessionId && rosterLoaded.value && !isSessionMember.value,
+)
+
 // Facilitator and participants can post; observers read the discussion only.
 // Participant posting also depends on chat being enabled for this session.
 const canPost = computed(
@@ -793,8 +895,8 @@ const myBreakoutGroupId = computed(() => {
 // observers always stay in the main room.
 const effectiveRoomId = computed(() =>
   myBreakoutGroupId.value
-    ? `${studyId}-breakout-${myBreakoutGroupId.value}`
-    : studyId,
+    ? `${roomId}-breakout-${myBreakoutGroupId.value}`
+    : roomId,
 )
 
 // Side-panel tabs, in reading order: the facilitator's guide, the discussion
@@ -928,13 +1030,18 @@ const setLocalVideo = (el) => {
 }
 
 // Join once the discussion is actually reachable: session live, consent
-// settled, and the user resolved. The composable ignores repeat calls.
+// settled, the user resolved, and — for a scheduled session — the roster
+// resolved and this viewer on it. Gating the connect (not just the presence)
+// is what keeps a blocked participant out of the LiveKit room, so the
+// facilitator never sees them. The composable ignores repeat calls.
 const shouldConnectVideo = computed(
   () =>
     videoEnabled.value &&
     isLive.value &&
     !needsConsent.value &&
-    !!user.value?.id,
+    !!user.value?.id &&
+    (!sessionId || rosterLoaded.value) &&
+    !sessionAccessBlocked.value,
 )
 watch(
   shouldConnectVideo,
@@ -1209,6 +1316,10 @@ const joined = ref(false)
 // Idempotent, so presence is only ever claimed once per mount.
 const enterSession = async () => {
   if (joined.value || !user.value?.id) return
+  // Wait for a scheduled session's roster to resolve, then only claim presence
+  // if this viewer is on it — a blocked participant never appears in the room.
+  if (sessionId && !rosterLoaded.value) return
+  if (sessionAccessBlocked.value) return
   joined.value = true
   await joinPresence({
     userId: user.value?.id,
@@ -1217,6 +1328,21 @@ const enterSession = async () => {
     accessLevel: accessLevel.value,
   })
 }
+// The roster loads a beat after mount, so the mount-time enterSession() may
+// bail out early; retry once it resolves in this viewer's favour.
+watch(rosterLoaded, (resolved) => {
+  if (resolved && !sessionAccessBlocked.value) enterSession()
+})
+
+// The roster loads a beat after mount, so a non-member may have already claimed
+// presence and connected; drop them the moment the gate resolves against them.
+watch(sessionAccessBlocked, (blocked) => {
+  if (blocked && joined.value) {
+    joined.value = false
+    leavePresence(user.value?.id)
+    disconnectCall()
+  }
+})
 
 const onConsentAccept = async () => {
   await recordConsent({
