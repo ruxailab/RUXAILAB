@@ -37,3 +37,11 @@ branch adds both required indexes to `firestore.indexes.json`. Without them,
 loading `/admin` fails with a `COLLECTION_GROUP_CONTAINS` index error.
 The overrides retain Firestore's normal collection-scoped ascending,
 descending, and array indexes for both fields.
+
+Deploy these indexes and wait for their Firestore operations to become
+`SUCCESSFUL` before releasing frontend code that issues the queries. The
+current `AdminView` loads studies and moderated sessions in one `Promise.all`,
+so a missing or building session index rejects the mounted hook and replaces
+the entire dashboard with the global error fallback. A future UX improvement
+should contain that failure within the sessions section and offer a retry while
+preserving access to the rest of the dashboard.
