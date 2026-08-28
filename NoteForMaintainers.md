@@ -35,6 +35,12 @@ The `/admin` route queries every `sessions` subcollection with
 not create collection-group-scoped single-field indexes automatically, so this
 branch adds both required indexes to `firestore.indexes.json`. Without them,
 loading `/admin` fails with a `COLLECTION_GROUP_CONTAINS` index error.
+
+Despite the route and component names, `/admin` is the normal authenticated
+researcher dashboard (`authorize: [1]`), not the Super Admin console at
+`/superadmin` (`authorize: [0]`). A missing or building index can therefore
+affect every researcher entering the main dashboard during the rollout window.
+
 The overrides retain Firestore's normal collection-scoped ascending,
 descending, and array indexes for both fields.
 
