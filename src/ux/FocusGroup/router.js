@@ -8,6 +8,36 @@ import SessionsView from '@/shared/views/SessionsView.vue'
 import StorageView from '@/shared/views/StorageView.vue'
 import AuditTrailView from '@/shared/views/AuditTrailView.vue'
 
+// Every management view lives at /focusGroup/{segment}/:id and is facilitator-
+// only, so build them from one list rather than repeating the same route block.
+const MANAGER_CHILDREN = [
+  { segment: 'edit', name: 'FocusGroupEditTest', component: EditFocusGroupView },
+  { segment: 'settings', name: 'FocusGroupSettingsView', component: SettingsView },
+  {
+    segment: 'cooperators',
+    name: 'FocusGroupCooperatorsView',
+    component: CooperatorsView,
+  },
+  {
+    segment: 'participants',
+    name: 'FocusGroupParticipantsView',
+    component: ParticipantsView,
+  },
+  { segment: 'sessions', name: 'FocusGroupSessionsView', component: SessionsView },
+  { segment: 'storage', name: 'FocusGroupStorageView', component: StorageView },
+  {
+    segment: 'audit',
+    name: 'FocusGroupAuditTrailView',
+    component: AuditTrailView,
+  },
+].map(({ segment, name, component }) => ({
+  path: `/focusGroup/${segment}/:id`,
+  name,
+  props: true,
+  meta: { authorize: [0, 1] },
+  component,
+}))
+
 export default [
   {
     path: '/focusGroup/session/:id',
@@ -25,56 +55,6 @@ export default [
     meta: { authorize: [0, 1, 3] },
     component: ManagerView,
     props: true,
-    children: [
-      {
-        path: '/focusGroup/edit/:id',
-        name: 'FocusGroupEditTest',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: EditFocusGroupView,
-      },
-      {
-        path: '/focusGroup/settings/:id',
-        name: 'FocusGroupSettingsView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: SettingsView,
-      },
-      {
-        path: '/focusGroup/cooperators/:id',
-        name: 'FocusGroupCooperatorsView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: CooperatorsView,
-      },
-      {
-        path: '/focusGroup/participants/:id',
-        name: 'FocusGroupParticipantsView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: ParticipantsView,
-      },
-      {
-        path: '/focusGroup/sessions/:id',
-        name: 'FocusGroupSessionsView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: SessionsView,
-      },
-      {
-        path: '/focusGroup/storage/:id',
-        name: 'FocusGroupStorageView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: StorageView,
-      },
-      {
-        path: '/focusGroup/audit/:id',
-        name: 'FocusGroupAuditTrailView',
-        props: true,
-        meta: { authorize: [0, 1] },
-        component: AuditTrailView,
-      },
-    ],
+    children: MANAGER_CHILDREN,
   },
 ]
