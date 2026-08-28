@@ -148,7 +148,7 @@ describe('authenticated logging commands', () => {
     )
   })
 
-  it('initializes a Study Session and exposes its first view observation to an authorized researcher', async () => {
+  it('initializes a Study Session and exposes its first view observation to an Admin', async () => {
     await expect(
       logEvents.run(participantRequest(viewBatch())),
     ).resolves.toEqual({ status: 'accepted', batchId: 'batch-1' })
@@ -170,11 +170,11 @@ describe('authenticated logging commands', () => {
       .get()
     expect(meta.data()).toEqual({ nextParticipantNumber: 2 })
 
-    const researcherDb = testEnv.authenticatedContext('researcher').firestore()
+    const adminDb = testEnv.authenticatedContext('owner').firestore()
     const page = await assertSucceeds(
       getDocs(
         query(
-          collection(researcherDb, 'tests/study-1/logs'),
+          collection(adminDb, 'tests/study-1/logs'),
           orderBy('occurredAt', 'desc'),
           orderBy('__name__', 'desc'),
           limit(20),
@@ -308,31 +308,35 @@ describe('authenticated logging commands', () => {
     expect(state.every((snapshot) => snapshot.empty)).toBe(true)
   })
 
-  it('allows only logs.view reads and forbids every direct logging write', async () => {
+  it('allows only Admin log reads and forbids every direct logging write', async () => {
     await admin.firestore().doc('tests/study-1').update({ isPublic: true })
     await logEvents.run(participantRequest(viewBatch(), 'public-participant'))
     const participantDb = testEnv
       .authenticatedContext('public-participant')
       .firestore()
+    const adminDb = testEnv.authenticatedContext('owner').firestore()
     const researcherDb = testEnv.authenticatedContext('researcher').firestore()
 
     await assertFails(getDocs(collection(participantDb, 'tests/study-1/logs')))
     await assertSucceeds(
+      getDocs(collection(adminDb, 'tests/study-1/studySessions')),
+    )
+    await assertFails(
       getDocs(collection(researcherDb, 'tests/study-1/studySessions')),
     )
     await assertFails(
-      getDoc(doc(researcherDb, 'tests/study-1/logBatches/hidden')),
+      getDoc(doc(adminDb, 'tests/study-1/logBatches/hidden')),
     )
     await assertFails(
-      getDoc(doc(researcherDb, 'tests/study-1/loggingMeta/state')),
+      getDoc(doc(adminDb, 'tests/study-1/loggingMeta/state')),
     )
     await assertFails(
-      setDoc(doc(researcherDb, 'tests/study-1/logs/forged'), {
+      setDoc(doc(adminDb, 'tests/study-1/logs/forged'), {
         eventType: 'STUDY_VIEW_OPENED',
       }),
     )
     await assertFails(
-      setDoc(doc(researcherDb, 'tests/study-1/studySessions/forged'), {
+      setDoc(doc(adminDb, 'tests/study-1/studySessions/forged'), {
         participantLabel: 'P-999',
       }),
     )

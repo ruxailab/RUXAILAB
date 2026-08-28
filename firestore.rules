@@ -68,7 +68,7 @@ service cloud.firestore {
     }
 
     function canViewLogs(study) {
-      return isRbacStudy(study) && canViewAnswers(study);
+      return isAdmin(study);
     }
 
     function canAnswer(study) {

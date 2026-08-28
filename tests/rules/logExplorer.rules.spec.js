@@ -87,7 +87,7 @@ beforeEach(async () => {
 
 describe('Log Explorer query boundary', () => {
   it('orders complete history stably and advances with a document cursor', async () => {
-    const db = testEnv.authenticatedContext('researcher').firestore()
+    const db = testEnv.authenticatedContext('owner').firestore()
 
     const first = await getStudyLogPage({ db, studyId: 'study-1', pageSize: 2 })
     expect(first.events.map(({ message }) => message)).toEqual([
@@ -111,7 +111,7 @@ describe('Log Explorer query boundary', () => {
   })
 
   it('applies approved filters and local calendar bounds before pagination', async () => {
-    const db = testEnv.authenticatedContext('researcher').firestore()
+    const db = testEnv.authenticatedContext('owner').firestore()
     const range = localDateRange('2026-08-13', '2026-08-13')
     const page = await getStudyLogPage({
       db,
@@ -134,16 +134,20 @@ describe('Log Explorer query boundary', () => {
     })
   })
 
-  it('does not expose the same query to a study participant', async () => {
-    const db = testEnv.authenticatedContext('participant').firestore()
+  it('does not expose the same query to non-Admin study roles', async () => {
+    const participantDb = testEnv.authenticatedContext('participant').firestore()
+    const researcherDb = testEnv.authenticatedContext('researcher').firestore()
 
     await expect(
-      getStudyLogPage({ db, studyId: 'study-1' }),
+      getStudyLogPage({ db: participantDb, studyId: 'study-1' }),
+    ).rejects.toMatchObject({ code: 'permission-denied' })
+    await expect(
+      getStudyLogPage({ db: researcherDb, studyId: 'study-1' }),
     ).rejects.toMatchObject({ code: 'permission-denied' })
   })
 
   it('counts applied filters and bounds participant-label suggestions', async () => {
-    const db = testEnv.authenticatedContext('researcher').firestore()
+    const db = testEnv.authenticatedContext('owner').firestore()
 
     await expect(
       getStudyLogCount({
