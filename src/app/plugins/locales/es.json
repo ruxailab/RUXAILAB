@@ -415,6 +415,16 @@
       "emailPlaceholder": "Correo del colaborador",
       "emailInputPlaceholder": "Escribe un correo electrónico",
       "role": "Rol",
+      "roleHelp": "¿Qué hace cada rol?",
+      "roleDescriptions": {
+        "admin": "Gestiona el estudio, su configuración, el staff, las respuestas y los informes.",
+        "manager": "Ayuda a gestionar el estudio y el staff, pero no puede cambiar la configuración restringida.",
+        "evaluator": "Responde al estudio y puede consultar los resultados de la evaluación.",
+        "guest": "Puede ver el dashboard y los resultados sin editar ni responder el estudio.",
+        "observator": "Puede observar el dashboard y los resultados sin enviar respuestas.",
+        "user": "Puede participar en el estudio y enviar respuestas.",
+        "default": "Este rol tiene permisos específicos para este estudio."
+      },
       "date": "Fecha",
       "time": "Hora",
       "message": "Mensaje de invitación",
