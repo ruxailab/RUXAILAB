@@ -103,6 +103,7 @@
     "text": "Texto",
     "value": "Valor",
     "save": "Guardar",
+    "completed": "Completado",
     "editDelete": "Editar/Eliminar",
     "type": "Tipo",
     "noNotifications": "Aún no tienes notificaciones",
@@ -437,7 +438,7 @@
     "dashboard": "Panel",
     "groups": {
       "overview": "Resumen",
-      "evaluation": "Evaluación",
+      "evaluation": "Estudio",
       "people": "Personas",
       "analysis": "Análisis",
       "administration": "Administración"
@@ -560,7 +561,7 @@
       "Reports": "Progreso",
       "Answers": "Resultados",
       "Dashboard": "Panel",
-      "Test": "Prueba",
+      "Test": "Editar",
       "Session": "Sesión",
       "Sessions": "Sesiónes",
       "Preview": "Vista previa",

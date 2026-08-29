@@ -107,6 +107,7 @@
     "text": "Text",
     "value": "Value",
     "save": "Save",
+    "completed": "Completed",
     "saving": "Saving...",
     "editDelete": "Edit/Delete",
     "type": "Type",
@@ -437,7 +438,7 @@
     "dashboard": "Dashboard",
     "groups": {
       "overview": "Overview",
-      "evaluation": "Evaluation",
+      "evaluation": "Study",
       "people": "People",
       "analysis": "Analysis",
       "administration": "Administration"
@@ -559,7 +560,7 @@
       "Reports": "Progress",
       "Answers": "Results",
       "Dashboard": "Dashboard",
-      "Test": "Test",
+      "Test": "Edit",
       "Session": "Session",
       "Sessions": "Sessions",
       "Preview": "Preview",
