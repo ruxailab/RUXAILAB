@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="{ 'no-scroll-container': isScrollLocked }">
     <StepAnnouncementOverlay
       v-if="showStepAnnouncement"
       ref="stepAnnouncementOverlay"
@@ -649,6 +649,10 @@ const testDate = ref(null)
 const start = ref(true)
 const globalIndex = ref(null)
 const taskIndex = ref(0)
+
+const isScrollLocked = computed(() => {
+  return start.value || globalIndex.value === 0 || showStepAnnouncement.value
+})
 const localTestAnswer = reactive(new UserStudyEvaluatorAnswer())
 const rightView = ref(null) // For scroll effect
 const fullName = ref('') // For consent form component

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="test" class="user-test-bg">
+  <div v-if="test" class="user-test-bg" :class="{ 'no-scroll-container': isScrollLocked }">
     <StepAnnouncementOverlay
       v-if="showStepAnnouncement"
       ref="stepAnnouncementOverlay"
@@ -608,6 +608,10 @@ const showStepAnnouncement = ref(false)
 const stepAnnouncementOverlay = ref(null)
 const nextStepAnnouncementTitle = ref('')
 const nextStepAnnouncementKicker = ref('')
+
+const isScrollLocked = computed(() => {
+  return start.value || globalIndex.value === 0 || showStepAnnouncement.value
+})
 
 const truncateDescription = (description) => {
   if (!description || description.length <= 150) return description
