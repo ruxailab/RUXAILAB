@@ -14,11 +14,11 @@
         </div>
       </v-col>
       <v-spacer />
-      <v-col cols="auto">
+      <v-col v-if="hasResults" cols="auto">
         <v-btn
           variant="outlined"
           :disabled="isAnalyzing"
-          @click="reanalyzeVideo()"
+          @click="startAnalysis()"
         >
           <span class="sr-only">Re-analyze Video</span>
           <v-icon>mdi-refresh</v-icon>
@@ -26,17 +26,53 @@
       </v-col>
       <v-col cols="auto">
         <v-chip
-          :color="isAnalyzing ? 'grey' : 'primary'"
+          :color="statusChipColor"
           variant="flat"
           append-icon="mdi-face-recognition"
         >
-          {{ isAnalyzing ? 'Analyzing...' : 'Analysis Complete' }}
+          {{ statusLabel }}
         </v-chip>
       </v-col>
     </v-row>
 
+    <!-- Idle: wait for user to start -->
+    <v-row
+      v-if="!isAnalyzing && !hasResults"
+      justify="center"
+      align="center"
+      class="my-12"
+    >
+      <v-col cols="12" md="8" class="text-center">
+        <v-icon size="64" color="grey-darken-1" class="mb-3">
+          mdi-face-recognition
+        </v-icon>
+        <div class="text-body-1 font-weight-medium mb-1">
+          Ready to analyze facial emotions
+        </div>
+        <div class="text-body-2 text-grey-darken-1 mb-6">
+          Processing starts only when you click the button below. This may take
+          1–2 minutes.
+        </div>
+        <v-btn
+          color="primary"
+          size="large"
+          :disabled="!canStartAnalysis"
+          @click="startAnalysis()"
+        >
+          <v-icon start>mdi-play</v-icon>
+          Start Facial Sentiment Analysis
+        </v-btn>
+        <div
+          v-if="!canStartAnalysis"
+          class="mt-3 text-body-2 text-grey-darken-1"
+        >
+          Webcam recording is not available for this task.
+        </div>
+      </v-col>
+    </v-row>
+
     <!-- Loading -->
-    <v-row v-if="isAnalyzing" justify="center" align="center" class="my-12">
+    <v-row v-else-if="isAnalyzing" justify="center" align="center" class="my-12">
       <v-col cols="auto" class="text-center">
         <v-progress-circular indeterminate size="64" color="primary" />
         <div class="mt-3 text-body-1 font-weight-medium">
@@ -48,7 +84,6 @@
       </v-col>
     </v-row>
 
-    <!-- Result -->
     <!-- Result -->
     <v-row v-else>
       <!-- Summary Metrics -->
@@ -148,7 +183,8 @@ const props = defineProps({
   selectedTask: { type: Number, default: 0 },
 })
 
-const isAnalyzing = ref(true)
+const isAnalyzing = ref(false)
+const hasResults = ref(false)
 const summaryMetrics = ref([])
 const insights = ref([])
 const radarData = ref({
@@ -190,9 +226,34 @@ const radarOptions = ref({
 
 const test = computed(() => store.getters.test)
 
-onMounted(() => {
-  checkExistingResults()
+const canStartAnalysis = computed(
+  () => Boolean(extractVideoNameFromUrl(props.webcamVideoUrl)),
+)
+
+const statusLabel = computed(() => {
+  if (isAnalyzing.value) return 'Analyzing...'
+  if (hasResults.value) return 'Analysis Complete'
+  return 'Waiting to start'
 })
+
+const statusChipColor = computed(() => {
+  if (isAnalyzing.value) return 'grey'
+  if (hasResults.value) return 'primary'
+  return 'blue-grey'
+})
+
+onMounted(() => {
+  loadExistingResults()
+})
+
+watch(
+  () => [props.selectedTask, props.webcamVideoUrl, props.testAnswer],
+  () => {
+    if (!isAnalyzing.value) {
+      loadExistingResults()
+    }
+  },
+)
 
 watch(
   () => radarData.value.datasets[0].data,
@@ -202,21 +263,28 @@ watch(
   },
 )
 
-function checkExistingResults() {
+function resetResultsUi() {
+  hasResults.value = false
+  summaryMetrics.value = []
+  insights.value = []
+  radarData.value.datasets[0].data = [0, 0, 0, 0, 0, 0, 0]
+}
+
+function loadExistingResults() {
   const existingResults =
     props.testAnswer?.tasks?.[props.selectedTask]?.facialSentimentResults
   if (existingResults) {
     updateUI(existingResults)
-    isAnalyzing.value = false // Stop analyzing if results already exist
-  } else {
-    const videoPath = extractVideoNameFromUrl(props.webcamVideoUrl)
-    if (videoPath) {
-      analyzeVideo(videoPath)
-    }
+    hasResults.value = true
+    isAnalyzing.value = false
+    return
   }
+
+  resetResultsUi()
+  isAnalyzing.value = false
 }
 
-function reanalyzeVideo() {
+function startAnalysis() {
   const videoPath = extractVideoNameFromUrl(props.webcamVideoUrl)
   if (videoPath) {
     analyzeVideo(videoPath)
@@ -245,6 +313,7 @@ const analyzeVideo = async (videoPath) => {
 
     const data = res.data.emotions
     updateUI(data)
+    hasResults.value = true
 
     // clone the full testAnswer and insert sentiment for the selected task
     const clonedTestAnswer = JSON.parse(JSON.stringify(props.testAnswer || {}))
