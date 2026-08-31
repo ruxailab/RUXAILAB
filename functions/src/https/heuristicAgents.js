@@ -16,6 +16,8 @@ const SINGLE_QUESTION_RETRIES = 2
 const FALLBACK_QUESTION_CONCURRENCY = 2
 const MAX_SCREENSHOTS_PER_EVALUATION = 6
 const MAX_SCREENSHOT_SELECTOR_LENGTH = 500
+const PAGE_NAVIGATION_TIMEOUT_MS = 25_000
+const MIN_RENDERED_HTML_CHARS = 80
 const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1'
 const LOCAL_CHROME_PATHS = [
   '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
@@ -600,14 +602,28 @@ const fetchPage = async (rawUrl) => {
         request.abort('blockedbyclient')
       }
     })
-    const response = await page.goto(target.href, {
-      waitUntil: 'domcontentloaded',
-      timeout: 25_000,
-    })
-    if (!response)
-      fail('unavailable', 'La web no devolvió una respuesta navegable.')
-    if (!response.ok())
-      fail('unavailable', `La web respondió con HTTP ${response.status()}.`)
+    let response
+    let navigationTimedOut = false
+    try {
+      response = await page.goto(target.href, {
+        waitUntil: 'domcontentloaded',
+        timeout: PAGE_NAVIGATION_TIMEOUT_MS,
+      })
+    } catch (error) {
+      if (error?.name !== 'TimeoutError') throw error
+
+      // Some sites keep the main navigation open because of streaming or
+      // stalled resources even though Chromium has already built a usable DOM.
+      // Preserve that DOM instead of turning a slow page into a 503.
+      navigationTimedOut = true
+      await page.evaluate(() => window.stop()).catch(() => {})
+    }
+    if (!navigationTimedOut) {
+      if (!response)
+        fail('unavailable', 'La web no devolvió una respuesta navegable.')
+      if (!response.ok())
+        fail('unavailable', `La web respondió con HTTP ${response.status()}.`)
+    }
 
     await page
       .waitForNetworkIdle({ idleTime: 750, timeout: 8_000 })
@@ -625,13 +641,27 @@ const fetchPage = async (rawUrl) => {
       .catch(() => {})
 
     const html = await page.content()
+    if (
+      navigationTimedOut &&
+      html.replace(/\s+/g, '').length < MIN_RENDERED_HTML_CHARS
+    ) {
+      fail(
+        'deadline-exceeded',
+        'La web no generó contenido utilizable antes de agotar el tiempo de carga.',
+      )
+    }
     if (Buffer.byteLength(html, 'utf8') > MAX_HTML_BYTES) {
       fail(
         'resource-exhausted',
         'La página renderizada supera el tamaño máximo permitido.',
       )
     }
-    return { html, finalUrl: page.url(), rendered: true }
+    return {
+      html,
+      finalUrl: page.url(),
+      rendered: true,
+      navigationTimedOut,
+    }
   } catch (error) {
     if (error instanceof functions.https.HttpsError) throw error
     console.error('Browser rendering failed', error)
@@ -788,9 +818,6 @@ export const evaluateHeuristicPage = functions.onCall({
     }
 
     const test = await getAuthorizedTest(testId, request.auth.uid)
-    if (!(test.heuristicAgentIds || []).includes(agentId)) {
-      fail('failed-precondition', 'El agente no está activo en este test.')
-    }
     const agentSnapshot = await admin
       .firestore()
       .collection('agents')

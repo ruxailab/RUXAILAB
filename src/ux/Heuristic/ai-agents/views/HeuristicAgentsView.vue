@@ -2,10 +2,10 @@
   <v-container class="pa-6" fluid>
     <div class="d-flex align-center ga-3 mb-2">
       <v-icon color="primary" size="34">mdi-robot-outline</v-icon>
-      <h1 class="text-h4 font-weight-bold">Análisis con agentes</h1>
+      <h1 class="text-h4 font-weight-bold">{{ $t('heuristicAgents.title') }}</h1>
     </div>
     <p class="text-body-1 text-medium-emphasis mb-6">
-      Indica una web, selecciona sus páginas y deja que un agente complete la evaluación heurística.
+      {{ $t('heuristicAgents.subtitle') }}
     </p>
 
     <v-alert v-if="message" :type="messageType" closable class="mb-5" @click:close="message = ''">
@@ -16,15 +16,15 @@
       <div class="d-flex align-center ga-3 mb-3">
         <v-avatar color="primary" size="32"><span class="text-body-2 font-weight-bold">1</span></v-avatar>
         <div>
-          <h2 class="text-h5">Introduce la web</h2>
-          <p class="text-body-2 text-medium-emphasis mb-0">Buscaremos la página principal y sus enlaces internos.</p>
+          <h2 class="text-h5">{{ $t('heuristicAgents.web.title') }}</h2>
+          <p class="text-body-2 text-medium-emphasis mb-0">{{ $t('heuristicAgents.web.subtitle') }}</p>
         </div>
       </div>
       <v-row align="center">
         <v-col cols="12" md="9">
           <v-text-field
             v-model="pageUrl"
-            label="URL de la web"
+            :label="$t('heuristicAgents.web.url')"
             placeholder="https://test.com"
             prepend-inner-icon="mdi-link"
             :disabled="running"
@@ -33,26 +33,34 @@
         </v-col>
         <v-col cols="12" md="3">
           <v-btn block color="primary" prepend-icon="mdi-magnify" :loading="discovering" :disabled="running || !pageUrl" @click="discoverPages">
-            Buscar páginas
+            {{ $t('heuristicAgents.web.search') }}
           </v-btn>
         </v-col>
       </v-row>
     </v-card>
 
-    <v-card v-if="pages.length" class="pa-6 mb-6" rounded="lg" elevation="2">
+    <v-card class="pa-6 mb-6" rounded="lg" elevation="2">
       <div class="d-flex flex-wrap align-center justify-space-between ga-3 mb-4">
         <div class="d-flex align-center ga-3">
           <v-avatar color="primary" size="32"><span class="text-body-2 font-weight-bold">2</span></v-avatar>
           <div>
-            <h2 class="text-h5">Selecciona las páginas</h2>
-            <p class="text-body-2 text-medium-emphasis mb-0">{{ selectedUrls.length }} de {{ pages.length }} seleccionadas</p>
+            <h2 class="text-h5">{{ $t('heuristicAgents.pages.title') }}</h2>
+            <p class="text-body-2 text-medium-emphasis mb-0">{{ $t('heuristicAgents.pages.selected', { selected: selectedUrls.length, total: pages.length }) }}</p>
           </div>
         </div>
-        <v-btn size="small" variant="text" :disabled="running" @click="toggleAllPages">
-          {{ allPagesSelected ? 'Deseleccionar todas' : 'Seleccionar todas' }}
+        <v-btn size="small" variant="text" :disabled="running || !pages.length" @click="toggleAllPages">
+          {{ allPagesSelected ? $t('heuristicAgents.pages.deselectAll') : $t('heuristicAgents.pages.selectAll') }}
         </v-btn>
       </div>
-      <v-list class="url-list border rounded-lg">
+      <v-alert
+        v-if="!pages.length"
+        type="info"
+        variant="tonal"
+        icon="mdi-link-variant"
+      >
+        {{ $t('heuristicAgents.pages.empty') }}
+      </v-alert>
+      <v-list v-else class="url-list border rounded-lg">
         <v-list-item v-for="page in pages" :key="page.url">
           <template #prepend>
             <v-checkbox-btn v-model="selectedUrls" :value="page.url" :disabled="running" />
@@ -73,66 +81,41 @@
       <div class="d-flex align-center ga-3 mb-4">
         <v-avatar color="primary" size="32"><span class="text-body-2 font-weight-bold">3</span></v-avatar>
         <div>
-          <h2 class="text-h5">Elige un agente y analiza</h2>
-          <p class="text-body-2 text-medium-emphasis mb-0">Cada página se guardará como una evaluación independiente.</p>
+          <h2 class="text-h5">{{ $t('heuristicAgents.run.title') }}</h2>
+          <p class="text-body-2 text-medium-emphasis mb-0">{{ $t('heuristicAgents.run.subtitle') }}</p>
         </div>
       </div>
       <v-row align="center">
         <v-col cols="12" md="8">
           <v-select
             v-model="selectedAgentId"
-            :items="activeAgents"
+            :items="agents"
             item-title="name"
             item-value="id"
-            label="Agente"
+            :label="$t('heuristicAgents.run.agent')"
             prepend-inner-icon="mdi-robot-outline"
             :disabled="running"
-            no-data-text="No hay agentes activos para este estudio"
-            hint="Puedes activar agentes en la configuración inferior."
+            :loading="loading"
+            :no-data-text="$t('heuristicAgents.run.noAgents')"
+            :hint="$t('heuristicAgents.run.agentHint')"
             persistent-hint
           />
         </v-col>
         <v-col cols="12" md="4">
           <v-btn block size="large" color="primary" prepend-icon="mdi-play" :loading="running" :disabled="!canRun" @click="runEvaluations">
-            Analizar {{ selectedUrls.length || 0 }} página(s)
+            {{ $t('heuristicAgents.run.analyze', { count: selectedUrls.length || 0 }) }}
           </v-btn>
         </v-col>
       </v-row>
       <v-progress-linear v-if="running" :model-value="totalProgress" color="primary" class="mt-4" />
       <div v-if="results.length" class="d-flex align-center justify-space-between ga-3 mt-5">
         <v-alert type="success" variant="tonal" class="flex-grow-1 mb-0">
-          {{ results.length }} análisis guardados como evaluadores independientes.
+          {{ $t('heuristicAgents.run.saved', { count: results.length }) }}
         </v-alert>
-        <v-btn color="primary" prepend-icon="mdi-chart-box-outline" @click="viewResults">Ver resultados</v-btn>
+        <v-btn color="primary" prepend-icon="mdi-chart-box-outline" @click="viewResults">{{ $t('heuristicAgents.run.viewResults') }}</v-btn>
       </div>
     </v-card>
 
-    <v-expansion-panels variant="accordion">
-      <v-expansion-panel>
-        <v-expansion-panel-title>
-          <div class="d-flex align-center ga-3">
-            <v-icon color="primary">mdi-cog-outline</v-icon>
-            <div>
-              <div class="font-weight-medium">Configurar agentes del estudio</div>
-              <div class="text-caption text-medium-emphasis">{{ activeAgents.length }} agente(s) activo(s)</div>
-            </div>
-          </div>
-        </v-expansion-panel-title>
-        <v-expansion-panel-text>
-          <p class="text-body-2 text-medium-emphasis mb-4">
-            Activa aquí los agentes que aparecerán en el selector. Los agentes se crean desde el módulo general “Agentes”.
-          </p>
-          <v-data-table :headers="agentHeaders" :items="agents" :loading="loading" item-value="id" no-data-text="No hay agentes. Crea uno desde el menú general.">
-            <template #item.visibility="{ item }">
-              <v-chip size="small" variant="tonal">{{ visibilityLabel(item.visibility) }}</v-chip>
-            </template>
-            <template #item.active="{ item }">
-              <v-switch :model-value="isActive(item.id)" color="primary" hide-details :loading="savingId === item.id" :disabled="Boolean(savingId) || running" aria-label="Activar agente en este estudio" @update:model-value="toggleAgent(item.id, $event)" />
-            </template>
-          </v-data-table>
-        </v-expansion-panel-text>
-      </v-expansion-panel>
-    </v-expansion-panels>
   </v-container>
 </template>
 
@@ -140,6 +123,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 import HeuristicAgentController from '../controllers/HeuristicAgentController'
 import HeuristicPageLoader from '../services/HeuristicPageLoader'
 import FirebaseHeuristicAgentProvider from '../services/FirebaseHeuristicAgentProvider'
@@ -152,9 +136,9 @@ const answerController = new AnswerController()
 const pageLoader = new HeuristicPageLoader()
 const store = useStore()
 const router = useRouter()
+const { t } = useI18n()
 const agents = ref([])
 const loading = ref(true)
-const savingId = ref(null)
 const discovering = ref(false)
 const running = ref(false)
 const message = ref('')
@@ -168,27 +152,17 @@ const progress = reactive({})
 const PAGE_EVALUATION_CONCURRENCY = 2
 const userId = computed(() => store.getters.user?.id || '')
 const test = computed(() => store.getters.test)
-const activeIds = computed(() => test.value?.heuristicAgentIds || [])
-const activeAgents = computed(() => agents.value.filter((agent) => activeIds.value.includes(agent.id)))
 const canRun = computed(() => !running.value && !discovering.value && selectedAgentId.value && selectedUrls.value.length > 0)
 const allPagesSelected = computed(
   () => pages.value.length > 0 && selectedUrls.value.length === pages.value.length,
 )
-const agentHeaders = [
-  { title: 'Nombre', key: 'name' },
-  { title: 'Modelo', key: 'model' },
-  { title: 'Estado', key: 'visibility' },
-  { title: 'Activo en el estudio', key: 'active', sortable: false },
-]
-const visibilityLabel = (value) => ({ private: 'Privado', shared: 'Compartido', public: 'Público' })[value] || value
-const isActive = (id) => activeIds.value.includes(id)
 const notify = (text, type = 'success') => { message.value = text; messageType.value = type }
 const statusColor = (status) => ({ completed: 'success', error: 'error', running: 'primary', pending: 'grey' })[status]
 const progressLabel = (item) => {
-  if (item.status === 'completed') return 'Completado'
-  if (item.status === 'error') return 'Error'
-  if (item.status === 'running') return `Heurística ${item.current}/${item.total}`
-  return 'Pendiente'
+  if (item.status === 'completed') return t('heuristicAgents.status.completed')
+  if (item.status === 'error') return t('heuristicAgents.status.error')
+  if (item.status === 'running') return t('heuristicAgents.status.running', { current: item.current, total: item.total })
+  return t('heuristicAgents.status.pending')
 }
 const totalProgress = computed(() => {
   const selected = selectedUrls.value.map((url) => progress[url]).filter(Boolean)
@@ -212,8 +186,8 @@ const discoverPages = async () => {
     // Start with the requested page only. Selecting every discovered link can
     // launch dozens of Chromium instances and exhaust the Functions emulator.
     selectedUrls.value = pages.value.slice(0, 1).map((page) => page.url)
-    notify(`Se han encontrado ${pages.value.length} URL(s).`)
-  } catch (error) { notify(`No se pudieron buscar las URLs: ${error.message}`, 'error') }
+    notify(t('heuristicAgents.messages.urlsFound', { count: pages.value.length }))
+  } catch (error) { notify(t('heuristicAgents.messages.discoverError', { error: error.message }), 'error') }
   finally { discovering.value = false }
 }
 
@@ -260,11 +234,11 @@ const runEvaluations = async () => {
     if (results.value.length) await store.dispatch('getCurrentTestAnswerDoc')
     const failed = urls.filter((url) => progress[url]?.status === 'error')
     if (!failed.length) {
-      notify('Todos los análisis seleccionados se han guardado correctamente.')
+      notify(t('heuristicAgents.messages.allSaved'))
     } else if (results.value.length) {
-      notify(`${results.value.length} análisis guardados y ${failed.length} con error. Revisa las páginas marcadas.`, 'warning')
+      notify(t('heuristicAgents.messages.partiallySaved', { saved: results.value.length, failed: failed.length }), 'warning')
     } else {
-      notify('No se pudo analizar ninguna página. Revisa los errores de las páginas marcadas.', 'error')
+      notify(t('heuristicAgents.messages.noneSaved'), 'error')
     }
   } finally { running.value = false }
 }
@@ -272,16 +246,8 @@ const runEvaluations = async () => {
 const loadAgents = async () => {
   loading.value = true
   try { agents.value = await controller.listAvailable(userId.value) }
-  catch (error) { notify(`No se pudieron cargar los agentes: ${error.message}`, 'error') }
+  catch (error) { notify(t('heuristicAgents.messages.loadAgentsError', { error: error.message }), 'error') }
   finally { loading.value = false }
-}
-const toggleAgent = async (agentId, enabled) => {
-  savingId.value = agentId
-  const previous = [...activeIds.value]
-  test.value.heuristicAgentIds = enabled ? [...new Set([...previous, agentId])] : previous.filter((id) => id !== agentId)
-  try { await store.dispatch('updateStudy', test.value); notify(enabled ? 'Agente activado.' : 'Agente desactivado.') }
-  catch (error) { test.value.heuristicAgentIds = previous; notify(`No se pudo actualizar el estudio: ${error.message}`, 'error') }
-  finally { savingId.value = null }
 }
 const viewResults = () => router.push(`/heuristic/results/${test.value.id}`)
 onMounted(loadAgents)

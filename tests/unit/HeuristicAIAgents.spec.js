@@ -97,6 +97,8 @@ describe('Heuristic AI agents', () => {
     expect(answer.submitted).toBe(true)
     expect(answer.progress).toBe(100)
     expect(answer.userDocId).toBe('ai-agent:agent-1')
+    expect(answer.evaluationTimeMs).toBe(0)
+    expect(answer.toFirestore().evaluationTimeMs).toBe(0)
     expect(
       answer.heuristicQuestions[0].heuristicQuestions[0].heuristicAnswer,
     ).toEqual({

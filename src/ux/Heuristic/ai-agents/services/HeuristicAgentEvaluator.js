@@ -175,6 +175,7 @@ export default class HeuristicAgentEvaluator {
     onProgress = null,
     answerId = null,
   }) {
+    const startedAt = this.now()
     if (!agent?.canBeUsedBy(userId))
       throw new Error('User cannot use this agent.')
     if (!test?.testStructure?.length)
@@ -213,6 +214,7 @@ export default class HeuristicAgentEvaluator {
       userDocId:
         answerId || `ai-agent:${encodeURIComponent(agent.id || agent.name)}`,
       lastUpdate: this.now(),
+      evaluationTimeMs: Math.max(0, this.now() - startedAt),
     })
   }
 

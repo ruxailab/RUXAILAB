@@ -9,26 +9,21 @@
           {{ $t('Dashboard.managerView.aiAgents') }}
         </v-card-title>
       </div>
-      <v-chip color="primary" size="small" variant="tonal">
-        {{ activeCount }} activos
-      </v-chip>
     </div>
     <p class="text-body-2 text-medium-emphasis mb-4">
-      Crea y comparte evaluadores de IA para responder este test heurístico.
+      {{ $t('heuristicAgents.card.description') }}
     </p>
     <v-btn color="primary" variant="tonal" prepend-icon="mdi-arrow-right">
-      Gestionar agentes
+      {{ $t('heuristicAgents.card.open') }}
     </v-btn>
   </v-card>
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 const props = defineProps({ test: { type: Object, required: true } })
 const router = useRouter()
-const activeCount = computed(() => props.test?.heuristicAgentIds?.length || 0)
 const open = () => router.push(`/heuristic/ai-agents/${props.test.id}`)
 </script>
 
