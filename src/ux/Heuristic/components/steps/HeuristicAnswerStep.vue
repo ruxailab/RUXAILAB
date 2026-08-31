@@ -1,7 +1,7 @@
 <template>
   <ShowInfo hide-col class="heuristic-answer-panel">
     <template #content>
-      <div class="heuristic-answer-workspace">
+      <div class="heuristic-answer-workspace mt-2">
         <header v-if="currentQuestion" class="answer-header">
           <div class="answer-heading">
             <h1>
@@ -383,8 +383,15 @@ const answerForQuestion = (questionIndex) =>
   props.currentUserTestAnswer?.heuristicQuestions?.[props.heurisIndex]
     ?.heuristicQuestions?.[questionIndex] || null
 
-const questionDescription = (question) =>
-  question?.descriptions?.find((description) => description?.text)?.text || ''
+const questionDescription = (question) => {
+  if (typeof question?.descriptions === 'string') {
+    return question.descriptions
+  }
+
+  return (
+    question?.descriptions?.find((description) => description?.text)?.text || ''
+  )
+}
 
 const answerModeLabel = (mode) =>
   answerModes.value.find((item) => item.value === mode)?.title || ''
@@ -435,11 +442,31 @@ const optionText = (options, value) =>
   options.find((option) => option.value === value)?.text || String(value)
 
 const emitAnswer = (questionIndex, answer) => {
-  emit('update-answer', questionIndex, {
+  const nextAnswer = {
     ...answer,
     text: answerText(answer),
     value: answerValue(answer),
-  })
+  }
+
+  if (nextAnswer.mode === 'customOptions' && nextAnswer.custom) {
+    nextAnswer.custom = normalizeCustomOption(nextAnswer.custom)
+  }
+
+  emit('update-answer', questionIndex, nextAnswer)
+}
+
+const normalizeCustomOption = (option) => {
+  if (!option || typeof option !== 'object') return null
+
+  const normalized = {
+    text: option.text ?? '',
+    value: option.value ?? null,
+    timestamp: option.timestamp ?? Date.now(),
+  }
+
+  if (option.description) normalized.description = option.description
+
+  return normalized
 }
 
 const sanitizeAnswerForMode = (answer, mode) => {
@@ -448,15 +475,17 @@ const sanitizeAnswerForMode = (answer, mode) => {
     mode,
   }
 
-  if (
-    mode === 'customOptions' &&
-    !nextAnswer.custom &&
-    (nextAnswer.text || nextAnswer.value !== undefined)
-  ) {
-    nextAnswer.custom = {
-      text: nextAnswer.text,
-      value: nextAnswer.value,
-      timestamp: nextAnswer.timestamp,
+  if (mode === 'customOptions') {
+    const customOption = normalizeCustomOption(
+      nextAnswer.custom ?? {
+        text: nextAnswer.text,
+        value: nextAnswer.value,
+        timestamp: nextAnswer.timestamp,
+      },
+    )
+
+    if (customOption) {
+      nextAnswer.custom = customOption
     }
   }
 
@@ -512,15 +541,11 @@ const updateMetricAnswer = (questionIndex, metric, value) => {
 }
 
 const updateCustomOptionAnswer = (questionIndex, option) => {
+  const normalizedOption = normalizeCustomOption(option)
+
   emitAnswer(questionIndex, {
     ...baseAnswer(questionIndex, 'customOptions'),
-    custom: option
-      ? {
-          text: option.text,
-          value: option.value,
-          timestamp: option.timestamp,
-        }
-      : null,
+    custom: normalizedOption,
   })
 }
 
