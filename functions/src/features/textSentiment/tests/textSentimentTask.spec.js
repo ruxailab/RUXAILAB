@@ -146,6 +146,41 @@ const textPayload = {
   Neutral: 25,
   Negative: 25,
   sampleCount: 4,
+  regionsCount: 4,
+  regions: [
+    {
+      idx: 0,
+      start: 0,
+      end: 1,
+      transcript: 'great',
+      sentiment: 'Positive',
+      confidence: 0.9,
+    },
+    {
+      idx: 1,
+      start: 1,
+      end: 2,
+      transcript: 'nice',
+      sentiment: 'Positive',
+      confidence: 0.8,
+    },
+    {
+      idx: 2,
+      start: 2,
+      end: 3,
+      transcript: 'ok',
+      sentiment: 'Neutral',
+      confidence: 0.7,
+    },
+    {
+      idx: 3,
+      start: 3,
+      end: 4,
+      transcript: 'hard',
+      sentiment: 'Negative',
+      confidence: 0.6,
+    },
+  ],
 }
 
 describe('aggregateUtteranceSentiment', () => {
@@ -156,12 +191,12 @@ describe('aggregateUtteranceSentiment', () => {
     expect(mapUtteranceLabel('unknown')).toBeNull()
   })
 
-  it('aggregates utterance labels into percentages', () => {
+  it('aggregates utterance labels into percentages and regions', () => {
     const result = aggregateUtteranceSentiment([
-      { label: 'POS' },
-      { label: 'POS' },
-      { label: 'NEU' },
-      { label: 'NEG' },
+      { label: 'POS', text: 'great', confidence: 0.9, timestamp: [0, 1] },
+      { label: 'POS', text: 'nice', confidence: 0.8, timestamp: [1, 2] },
+      { label: 'NEU', text: 'ok', confidence: 0.7, timestamp: [2, 3] },
+      { label: 'NEG', text: 'hard', confidence: 0.6, timestamp: [3, 4] },
     ])
     expect(result.toJSON()).toEqual(textPayload)
   })

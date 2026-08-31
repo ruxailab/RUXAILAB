@@ -181,6 +181,7 @@
                 <v-window-item v-if="hasSentimentData" value="sentimental">
                   <FacialSentimentPanel
                     v-if="hasWebcamMedia"
+                    :key="`facial-${resolvedTaskId}-${taskAnswer?.sentimentDocId || 'new'}`"
                     :video-element="mainVideo1"
                     :webcam-video-url="taskAnswer?.webcamRecordURL"
                     :sentiment-doc-id="taskAnswer?.sentimentDocId"
@@ -195,6 +196,7 @@
                   />
                   <TextSentimentPanel
                     v-if="hasTaskAudio"
+                    :key="`text-${resolvedTaskId}-${taskAnswer?.sentimentDocId || 'new'}`"
                     :audio-url="taskAnswer?.audioRecordURL"
                     :sentiment-doc-id="taskAnswer?.sentimentDocId"
                     :legacy-text-results="taskAnswer?.textSentimentResults"

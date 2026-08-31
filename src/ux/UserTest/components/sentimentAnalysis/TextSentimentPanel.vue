@@ -7,9 +7,7 @@
   >
     <v-row class="mb-4" align="center" justify="space-between">
       <v-col cols="auto">
-        <h3 class="text-h5 font-weight-bold mb-1">
-          Transcription Sentiment Analysis
-        </h3>
+        <h3 class="text-h5 font-weight-bold mb-1">Text Sentiment Analysis</h3>
         <div class="text-body-2 text-grey">
           Tone insights based on spoken feedback in the task audio
         </div>
@@ -43,11 +41,11 @@
       class="my-12"
     >
       <v-col cols="12" md="8" class="text-center">
-        <div class="idle-icon-wrap mb-4">
-          <v-icon size="72" color="primary" icon="mdi-microphone-message" />
-        </div>
+        <v-icon size="64" color="grey-darken-1" class="mb-3">
+          mdi-microphone-message
+        </v-icon>
         <div class="text-body-1 font-weight-medium mb-1">
-          Ready to analyze transcription sentiment
+          Ready to analyze text sentiment
         </div>
         <div class="text-body-2 text-grey-darken-1 mb-6">
           Processing starts only when you click the button below. This may take
@@ -60,7 +58,7 @@
           @click="startAnalysis()"
         >
           <v-icon start>mdi-play</v-icon>
-          Start Transcription Sentiment Analysis
+          Start Text Sentiment Analysis
         </v-btn>
         <div
           v-if="!canStartAnalysis"
@@ -84,7 +82,7 @@
       <v-col cols="auto" class="text-center">
         <v-progress-circular indeterminate size="64" color="primary" />
         <div class="mt-3 text-body-1 font-weight-medium">
-          Analyzing transcription sentiment...
+          Analyzing text sentiment...
         </div>
         <div class="mt-1 text-body-2 text-grey-darken-1">
           This may take 1–2 minutes
@@ -129,11 +127,7 @@
           <h4 class="text-subtitle-1 font-weight-medium mb-3">
             Sentiment Distribution
           </h4>
-          <div
-            v-for="bar in distributionBars"
-            :key="bar.label"
-            class="mb-3"
-          >
+          <div v-for="bar in distributionBars" :key="bar.label" class="mb-3">
             <div class="d-flex justify-space-between text-body-2 mb-1">
               <span>{{ bar.label }}</span>
               <span class="font-weight-medium">{{ bar.value }}%</span>
@@ -169,6 +163,41 @@
           </v-row>
         </v-card>
       </v-col>
+
+      <v-col v-if="regions.length > 0" cols="12">
+        <v-card class="pa-4" elevation="2" rounded="xl">
+          <h4 class="text-subtitle-1 font-weight-medium mb-3">
+            Transcript Regions ({{ regions.length }})
+          </h4>
+          <v-list density="comfortable" class="pa-0 regions-list">
+            <template
+              v-for="(region, index) in regions"
+              :key="region.idx ?? index"
+            >
+              <v-list-item class="px-0">
+                <template #prepend>
+                  <div class="text-center mr-3" style="min-width: 48px">
+                    <v-icon :color="regionToneColor(region.sentiment)">
+                      {{ regionToneIcon(region.sentiment) }}
+                    </v-icon>
+                    <div class="text-caption">
+                      {{ formatConfidence(region.confidence) }}
+                    </div>
+                  </div>
+                </template>
+                <v-list-item-title class="text-wrap">
+                  {{ region.transcript || '—' }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ formatTime(region.start) }} - {{ formatTime(region.end) }}
+                  · {{ formatRegionSentiment(region.sentiment) }}
+                </v-list-item-subtitle>
+              </v-list-item>
+              <v-divider v-if="index < regions.length - 1" />
+            </template>
+          </v-list>
+        </v-card>
+      </v-col>
     </v-row>
   </v-card>
 </template>
@@ -177,10 +206,10 @@
 import { ref, watch, onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
 import { analyzeTextSentimentTask } from '@/app/services/textSentiment/TextSentimentService'
-import SentimentController from '@/ai/sentiment/SentimentController'
+import { formatTime } from '@/shared/utils/timeUtils'
+import { useSentimentPanel } from './useSentimentPanel'
 
 const store = useStore()
-const sentimentController = new SentimentController()
 const emit = defineEmits(['saved'])
 const props = defineProps({
   audioUrl: { type: String, default: null },
@@ -194,12 +223,16 @@ const props = defineProps({
   studyId: { type: String, default: null },
 })
 
+const { resolveTaskFromTestAnswer, resolveSentimentDocId, loadSentimentDocument } =
+  useSentimentPanel(props)
+
 const isAnalyzing = ref(false)
 const hasResults = ref(false)
 const analysisError = ref(null)
 const summaryMetrics = ref([])
 const insights = ref([])
 const distributionBars = ref([])
+const regions = ref([])
 
 const canStartAnalysis = computed(
   () =>
@@ -240,6 +273,7 @@ watch(
       loadExistingResults()
     }
   },
+  { deep: true },
 )
 
 function resetResultsUi() {
@@ -248,24 +282,7 @@ function resetResultsUi() {
   summaryMetrics.value = []
   insights.value = []
   distributionBars.value = []
-}
-
-function resolveTaskFromTestAnswer() {
-  const tasks = props.testAnswer?.tasks
-  if (!tasks || typeof tasks !== 'object') return null
-
-  if (props.taskId != null && props.taskId !== '') {
-    const byTaskId = tasks[props.taskId] ?? tasks[String(props.taskId)]
-    if (byTaskId) return byTaskId
-  }
-
-  return tasks[props.selectedTask] ?? tasks[String(props.selectedTask)] ?? null
-}
-
-function resolveSentimentDocId() {
-  if (props.sentimentDocId) return props.sentimentDocId
-  const task = resolveTaskFromTestAnswer()
-  return task?.sentimentDocId || null
+  regions.value = []
 }
 
 function resolveLegacyTextResults() {
@@ -279,9 +296,9 @@ async function loadExistingResults() {
 
   if (sentimentDocId) {
     try {
-      const sentiment = await sentimentController.getById(sentimentDocId)
+      const sentiment = await loadSentimentDocument()
       const existingResults = sentiment?.text ?? null
-      if (existingResults) {
+      if (existingResults && typeof existingResults === 'object') {
         updateUI(existingResults)
         hasResults.value = true
         isAnalyzing.value = false
@@ -337,7 +354,7 @@ async function startAnalysis() {
   } catch (err) {
     console.error('Text sentiment analysis failed:', err.message || err)
     analysisError.value =
-      err?.message || 'Failed to process transcription sentiment analysis.'
+      err?.message || 'Failed to process text sentiment analysis.'
   } finally {
     isAnalyzing.value = false
   }
@@ -348,6 +365,7 @@ function updateUI(data) {
   const neutral = Number(data.Neutral) || 0
   const negative = Number(data.Negative) || 0
   const sampleCount = Number(data.sampleCount) || 0
+  regions.value = Array.isArray(data.regions) ? data.regions : []
 
   const scores = [
     ['Positive', positive],
@@ -397,7 +415,57 @@ function updateUI(data) {
   generateInsights({ positive, neutral, negative, sampleCount, dominant })
 }
 
-function generateInsights({ positive, neutral, negative, sampleCount, dominant }) {
+function formatConfidence(confidence) {
+  const value = Number(confidence)
+  if (!Number.isFinite(value)) return '—'
+  const percent = value <= 1 ? value * 100 : value
+  return `${percent.toFixed(1)}%`
+}
+
+function normalizeRegionTone(sentiment) {
+  const key = String(sentiment || '')
+    .trim()
+    .toUpperCase()
+  if (key === 'POS' || key === 'POSITIVE') return 'Positive'
+  if (key === 'NEU' || key === 'NEUTRAL') return 'Neutral'
+  if (key === 'NEG' || key === 'NEGATIVE') return 'Negative'
+  if (
+    sentiment === 'Positive' ||
+    sentiment === 'Neutral' ||
+    sentiment === 'Negative'
+  ) {
+    return sentiment
+  }
+  return sentiment || ''
+}
+
+function formatRegionSentiment(sentiment) {
+  return normalizeRegionTone(sentiment) || '—'
+}
+
+function regionToneColor(sentiment) {
+  const tone = normalizeRegionTone(sentiment)
+  if (tone === 'Positive') return 'green'
+  if (tone === 'Neutral') return 'blue'
+  if (tone === 'Negative') return 'red'
+  return 'grey'
+}
+
+function regionToneIcon(sentiment) {
+  const tone = normalizeRegionTone(sentiment)
+  if (tone === 'Positive') return 'mdi-emoticon-happy-outline'
+  if (tone === 'Neutral') return 'mdi-emoticon-neutral-outline'
+  if (tone === 'Negative') return 'mdi-emoticon-sad-outline'
+  return 'mdi-emoticon-outline'
+}
+
+function generateInsights({
+  positive,
+  neutral,
+  negative,
+  sampleCount,
+  dominant,
+}) {
   insights.value = []
 
   const toneMessages = {
@@ -482,13 +550,8 @@ function getToneType(tone) {
 </script>
 
 <style scoped>
-.idle-icon-wrap {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-  background: rgba(var(--v-theme-primary), 0.1);
+.regions-list {
+  max-height: 360px;
+  overflow-y: auto;
 }
 </style>

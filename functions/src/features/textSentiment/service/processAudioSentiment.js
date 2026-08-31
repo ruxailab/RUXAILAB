@@ -59,5 +59,6 @@ export async function processAudioSentiment({
     fail('internal', 'Text sentiment response did not include utterances.')
   }
 
-  return aggregateUtteranceSentiment(utterances)
+  const timeOffsetSec = (Number(startTimeMs) || 0) / 1000
+  return aggregateUtteranceSentiment(utterances, timeOffsetSec)
 }

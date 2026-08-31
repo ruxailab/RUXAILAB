@@ -9,8 +9,8 @@ import {
   FirestoreUserRepository,
   FirestoreAnswerRepository,
   FirestoreStudyRepository,
+  FirestoreSentimentRepository,
 } from '../../../shared/repositories/index.js'
-import { FirestoreSentimentRepository } from '../../sentiment/index.js'
 import { FirestoreSentimentAnalyticsRepository } from '../repositories/FirestoreSentimentAnalyticsRepository.js'
 import { AnalyzeFacialSentimentTaskService } from '../service/AnalyzeFacialSentimentTaskService.js'
 import { UpsertSentimentAnalyticsService } from '../service/UpsertSentimentAnalyticsService.js'

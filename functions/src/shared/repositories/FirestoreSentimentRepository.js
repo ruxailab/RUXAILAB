@@ -1,4 +1,4 @@
-import { FirestoreCollectionRepository } from '../../../core/repositories/FirestoreCollectionRepository.js'
+import { FirestoreCollectionRepository } from '../../core/repositories/FirestoreCollectionRepository.js'
 import { Sentiment } from '../models/Sentiment.js'
 
 /**

@@ -1,7 +1,7 @@
 import { fail } from '../../../core/errors.js'
 import { processAudioSentiment } from './processAudioSentiment.js'
 import { ROLE, assertStudyAccess } from '../../../shared/auth/index.js'
-import { Sentiment } from '../../sentiment/models/Sentiment.js'
+import { Sentiment } from '../../../shared/models/Sentiment.js'
 
 /**
  * Analyze text/transcription sentiment for a task audio recording and persist
@@ -13,7 +13,7 @@ export class AnalyzeTextSentimentTaskService {
    * @param {import('../../../shared/repositories/FirestoreUserRepository.js').FirestoreUserRepository} deps.userRepository
    * @param {import('../../../shared/repositories/FirestoreAnswerRepository.js').FirestoreAnswerRepository} deps.answerRepository
    * @param {import('../../../shared/repositories/FirestoreStudyRepository.js').FirestoreStudyRepository} deps.studyRepository
-   * @param {import('../../sentiment/repositories/FirestoreSentimentRepository.js').FirestoreSentimentRepository} deps.sentimentRepository
+   * @param {import('../../../shared/repositories/FirestoreSentimentRepository.js').FirestoreSentimentRepository} deps.sentimentRepository
    * @param {object} deps.FieldValue
    * @param {string} deps.textSentimentApiBaseUrl
    */

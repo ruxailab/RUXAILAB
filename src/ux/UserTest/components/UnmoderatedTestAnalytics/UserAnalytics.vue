@@ -834,7 +834,9 @@ const getTaskRecordings = (taskAnswer, taskDefinition) => {
 
 const taskSummaryRows = computed(() => {
   const userTasks = testStructure.value?.userTasks || []
-  const sessionTasks = dialogItem.value?.tasks || {}
+  const liveTasks =
+    answers.value?.[dialogItem.value?.userDocId]?.tasks || null
+  const sessionTasks = liveTasks || dialogItem.value?.tasks || {}
 
   return userTasks.map((taskDefinition, index) => {
     const taskAnswer = resolveTaskAnswer(sessionTasks, index, taskDefinition)

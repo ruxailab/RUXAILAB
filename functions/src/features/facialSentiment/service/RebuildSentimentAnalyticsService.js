@@ -12,7 +12,7 @@ export class RebuildSentimentAnalyticsService {
    * @param {object} deps
    * @param {import('../repositories/FirestoreSentimentAnalyticsRepository.js').FirestoreSentimentAnalyticsRepository} deps.analyticsRepository
    * @param {import('../../../shared/repositories/FirestoreAnswerRepository.js').FirestoreAnswerRepository} deps.answerRepository
-   * @param {import('../../sentiment/repositories/FirestoreSentimentRepository.js').FirestoreSentimentRepository} deps.sentimentRepository
+   * @param {import('../../../shared/repositories/FirestoreSentimentRepository.js').FirestoreSentimentRepository} deps.sentimentRepository
    * @param {object} deps.FieldValue
    */
   constructor({

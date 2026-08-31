@@ -178,7 +178,7 @@ import {
 } from 'chart.js'
 import { useStore } from 'vuex'
 import { analyzeFacialSentimentTask } from '@/app/services/facialSentiment/FacialSentimentService'
-import SentimentController from '@/ai/sentiment/SentimentController'
+import { useSentimentPanel } from './useSentimentPanel'
 
 ChartJS.register(
   Title,
@@ -190,7 +190,6 @@ ChartJS.register(
 )
 
 const store = useStore()
-const sentimentController = new SentimentController()
 const emit = defineEmits(['saved'])
 const props = defineProps({
   videoElement: { type: HTMLVideoElement, default: null },
@@ -204,6 +203,9 @@ const props = defineProps({
   taskId: { type: [String, Number], default: null },
   studyId: { type: String, default: null },
 })
+
+const { resolveTaskFromTestAnswer, resolveSentimentDocId, loadSentimentDocument } =
+  useSentimentPanel(props)
 
 const isAnalyzing = ref(false)
 const hasResults = ref(false)
@@ -286,6 +288,7 @@ watch(
       loadExistingResults()
     }
   },
+  { deep: true },
 )
 
 watch(
@@ -304,24 +307,6 @@ function resetResultsUi() {
   radarData.value.datasets[0].data = [0, 0, 0, 0, 0, 0, 0]
 }
 
-function resolveTaskFromTestAnswer() {
-  const tasks = props.testAnswer?.tasks
-  if (!tasks || typeof tasks !== 'object') return null
-
-  if (props.taskId != null && props.taskId !== '') {
-    const byTaskId = tasks[props.taskId] ?? tasks[String(props.taskId)]
-    if (byTaskId) return byTaskId
-  }
-
-  return tasks[props.selectedTask] ?? tasks[String(props.selectedTask)] ?? null
-}
-
-function resolveSentimentDocId() {
-  if (props.sentimentDocId) return props.sentimentDocId
-  const task = resolveTaskFromTestAnswer()
-  return task?.sentimentDocId || null
-}
-
 function resolveLegacyFacialResults() {
   if (props.legacyFacialResults) return props.legacyFacialResults
   const task = resolveTaskFromTestAnswer()
@@ -333,7 +318,7 @@ async function loadExistingResults() {
 
   if (sentimentDocId) {
     try {
-      const sentiment = await sentimentController.getById(sentimentDocId)
+      const sentiment = await loadSentimentDocument()
       const existingResults = sentiment?.facial ?? null
       if (existingResults) {
         updateUI(existingResults)
