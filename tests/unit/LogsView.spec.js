@@ -161,4 +161,48 @@ describe('LogsView', () => {
     expect(wrapper.text()).not.toContain('1–1 of 100')
     wrapper.unmount()
   })
+
+  it('presents answer-edit details in researcher-facing language', async () => {
+    getParticipantLabels.mockResolvedValue([])
+    getStudyLogPage.mockResolvedValue({
+      ...page,
+      events: [
+        {
+          eventType: 'ANSWER_EDITED',
+          level: 'info',
+          layer: 'methodological',
+          source: 'study-client',
+          message: 'Answer field edited',
+          participantLabel: 'P-002',
+          occurredAt: new Date('2026-08-31T04:12:32.000Z'),
+          receivedAt: new Date('2026-08-31T04:12:38.161Z'),
+          details: {
+            fieldRef: 'heuristic:1:question:0:comment',
+            editSpanMs: 474,
+            editOperations: 6,
+            pasteOperations: 0,
+            initialLength: 0,
+            resultingLength: 6,
+          },
+        },
+      ],
+    })
+    getStudyLogCount.mockResolvedValue(1)
+
+    const wrapper = mount(LogsView, { props: { id: 'study-1' } })
+    await flushPromises()
+    await wrapper.find('tbody tr').trigger('click')
+
+    expect(wrapper.text()).toContain('Heuristic 2 · Question 1 · Comment field')
+    expect(wrapper.text()).toContain('Input changes')
+    expect(wrapper.text()).toContain('6 input events')
+    expect(wrapper.text()).toContain('Editing time')
+    expect(wrapper.text()).toContain('474 ms')
+    expect(wrapper.text()).toContain(
+      'Counts summarize browser input activity; response text is never logged.',
+    )
+    expect(wrapper.text()).not.toContain('heuristic:1:question:0:comment')
+    expect(wrapper.text()).not.toContain('Edit Operations')
+    wrapper.unmount()
+  })
 })

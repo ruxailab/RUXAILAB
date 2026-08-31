@@ -393,10 +393,14 @@
           aria-labelledby="event-specific-heading"
         >
           <h3 id="event-specific-heading">Event-specific data</h3>
+          <p v-if="selectedEvent.eventType === 'ANSWER_EDITED'">
+            Counts summarize browser input activity; response text is never
+            logged.
+          </p>
           <dl v-if="detailEntries.length" class="detail-grid">
             <template v-for="[key, value] in detailEntries" :key="key">
-              <dt>{{ readableKey(key) }}</dt>
-              <dd>{{ value }}</dd>
+              <dt>{{ detailLabel(key) }}</dt>
+              <dd>{{ formatDetailValue(key, value) }}</dd>
             </template>
           </dl>
           <p v-else>No event-specific details.</p>
@@ -658,8 +662,48 @@ const deliveryDelay = (event) => {
   if (!occurred || !received) return 'Unavailable'
   return `${Math.max(0, received - occurred).toLocaleString()} ms`
 }
-const readableKey = (key) =>
+const DETAIL_LABELS = Object.freeze({
+  fieldRef: 'Field',
+  editSpanMs: 'Editing time',
+  editOperations: 'Input changes',
+  pasteOperations: 'Paste actions',
+  initialLength: 'Starting length',
+  resultingLength: 'Final length',
+})
+const detailLabel = (key) =>
+  DETAIL_LABELS[key] ||
   key.replace(/([A-Z])/g, ' $1').replace(/^./, (value) => value.toUpperCase())
+const pluralized = (value, unit) =>
+  `${Number(value).toLocaleString()} ${unit}${Number(value) === 1 ? '' : 's'}`
+const formatFieldRef = (value) => {
+  const heuristic = /^heuristic:(\d+):question:(\d+):(answer|comment)$/.exec(
+    value,
+  )
+  if (heuristic) {
+    return `Heuristic ${Number(heuristic[1]) + 1} · Question ${Number(heuristic[2]) + 1} · ${formatIdentifier(heuristic[3])} field`
+  }
+
+  const studyField = /^(preTest|postTest|task):(\d+):(answer|comment)$/.exec(
+    value,
+  )
+  if (!studyField) return value
+  const scope = {
+    preTest: 'Pre-test question',
+    postTest: 'Post-test question',
+    task: 'Task',
+  }[studyField[1]]
+  return `${scope} ${Number(studyField[2]) + 1} · ${formatIdentifier(studyField[3])} field`
+}
+const formatDetailValue = (key, value) => {
+  if (key === 'fieldRef') return formatFieldRef(value)
+  if (key === 'editSpanMs') return `${Number(value).toLocaleString()} ms`
+  if (key === 'editOperations') return pluralized(value, 'input event')
+  if (key === 'pasteOperations') return pluralized(value, 'paste event')
+  if (key === 'initialLength' || key === 'resultingLength') {
+    return pluralized(value, 'character')
+  }
+  return value
+}
 
 watch(pageSize, () => replaceFirstPage())
 onMounted(async () => {
