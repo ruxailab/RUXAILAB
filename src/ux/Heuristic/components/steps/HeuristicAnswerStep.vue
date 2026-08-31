@@ -1,7 +1,7 @@
 <template>
   <ShowInfo hide-col class="heuristic-answer-panel">
     <template #content>
-      <div class="heuristic-answer-workspace">
+      <div class="heuristic-answer-workspace mt-2">
         <header v-if="currentQuestion" class="answer-header">
           <div class="answer-heading">
             <h1>
