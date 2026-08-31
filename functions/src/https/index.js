@@ -16,3 +16,4 @@ export {
   transcriptionDelete,
   transcriptionDeleteByUser,
 } from '../features/transcription/index.js'
+export { facialSentimentTask } from '../features/facialSentiment/index.js'

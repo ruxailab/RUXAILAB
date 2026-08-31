@@ -29,4 +29,25 @@ export class FirestoreAnswerRepository extends FirestoreCollectionRepository {
         transcriptionDocId,
     })
   }
+
+  /**
+   * Persist facial sentiment emotions on a task answer.
+   *
+   * @param {string} answersDocId
+   * @param {string} userDocId
+   * @param {string} taskId
+   * @param {Record<string, number>|null} facialSentimentResults
+   * @returns {Promise<void>}
+   */
+  async setFacialSentimentResults(
+    answersDocId,
+    userDocId,
+    taskId,
+    facialSentimentResults,
+  ) {
+    await this.update(answersDocId, {
+      [`taskAnswers.${userDocId}.tasks.${taskId}.facialSentimentResults`]:
+        facialSentimentResults,
+    })
+  }
 }

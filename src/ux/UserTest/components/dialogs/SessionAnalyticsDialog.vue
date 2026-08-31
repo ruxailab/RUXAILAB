@@ -184,6 +184,10 @@
                     :webcam-video-url="taskAnswer?.webcamRecordURL"
                     :test-answer="testAnswer"
                     :selected-task="selectedTask"
+                    :answers-doc-id="answersDocId"
+                    :user-doc-id="userId"
+                    :task-id="resolvedTaskId"
+                    :study-id="testAnswer?.studyId || null"
                   />
                 </v-window-item>
 

@@ -66,8 +66,17 @@
           v-if="!canStartAnalysis"
           class="mt-3 text-body-2 text-grey-darken-1"
         >
-          Webcam recording is not available for this task.
+          Webcam recording or session identifiers are not available for this
+          task.
         </div>
+        <v-alert
+          v-if="analysisError"
+          type="error"
+          variant="tonal"
+          class="mt-4 text-left"
+        >
+          {{ analysisError }}
+        </v-alert>
       </v-col>
     </v-row>
 
@@ -86,6 +95,11 @@
 
     <!-- Result -->
     <v-row v-else>
+      <v-col v-if="analysisError" cols="12">
+        <v-alert type="error" variant="tonal">
+          {{ analysisError }}
+        </v-alert>
+      </v-col>
       <!-- Summary Metrics -->
       <v-col
         v-for="metric in summaryMetrics"
@@ -162,9 +176,8 @@ import {
   PointElement,
   LineElement,
 } from 'chart.js'
-import axios from 'axios'
 import { useStore } from 'vuex'
-import UserStudyEvaluatorAnswer from '../../models/UserStudyEvaluatorAnswer'
+import { analyzeFacialSentimentTask } from '@/app/services/facialSentiment/FacialSentimentService'
 
 ChartJS.register(
   Title,
@@ -176,15 +189,21 @@ ChartJS.register(
 )
 
 const store = useStore()
+const emit = defineEmits(['saved'])
 const props = defineProps({
   videoElement: { type: HTMLVideoElement, default: null },
   webcamVideoUrl: { type: String, default: null },
   testAnswer: { type: Object, default: null },
   selectedTask: { type: Number, default: 0 },
+  answersDocId: { type: String, default: '' },
+  userDocId: { type: String, default: '' },
+  taskId: { type: [String, Number], default: null },
+  studyId: { type: String, default: null },
 })
 
 const isAnalyzing = ref(false)
 const hasResults = ref(false)
+const analysisError = ref(null)
 const summaryMetrics = ref([])
 const insights = ref([])
 const radarData = ref({
@@ -224,10 +243,13 @@ const radarOptions = ref({
   },
 })
 
-const test = computed(() => store.getters.test)
-
 const canStartAnalysis = computed(
-  () => Boolean(extractVideoNameFromUrl(props.webcamVideoUrl)),
+  () =>
+    Boolean(props.webcamVideoUrl) &&
+    Boolean(props.answersDocId) &&
+    Boolean(props.userDocId) &&
+    props.taskId != null &&
+    props.taskId !== '',
 )
 
 const statusLabel = computed(() => {
@@ -265,6 +287,7 @@ watch(
 
 function resetResultsUi() {
   hasResults.value = false
+  analysisError.value = null
   summaryMetrics.value = []
   insights.value = []
   radarData.value.datasets[0].data = [0, 0, 0, 0, 0, 0, 0]
@@ -277,6 +300,7 @@ function loadExistingResults() {
     updateUI(existingResults)
     hasResults.value = true
     isAnalyzing.value = false
+    analysisError.value = null
     return
   }
 
@@ -284,52 +308,38 @@ function loadExistingResults() {
   isAnalyzing.value = false
 }
 
-function startAnalysis() {
-  const videoPath = extractVideoNameFromUrl(props.webcamVideoUrl)
-  if (videoPath) {
-    analyzeVideo(videoPath)
+async function startAnalysis() {
+  if (!canStartAnalysis.value) {
+    analysisError.value =
+      'Missing session identifiers or webcam recording for this task.'
+    return
   }
-}
 
-function extractVideoNameFromUrl(url) {
-  try {
-    const path = url.split('/o/')[1].split('?')[0]
-    return decodeURIComponent(path)
-  } catch {
-    console.warn('URL inválida:', url)
-    return null
-  }
-}
-
-const analyzeVideo = async (videoPath) => {
   try {
     isAnalyzing.value = true
-    const res = await axios.post(
-      process.env.VUE_APP_FACIAL_SENTIMENT_API_BASE_URL + '/process_video',
-      {
-        video_name: videoPath,
-      },
-    )
+    analysisError.value = null
 
-    const data = res.data.emotions
-    updateUI(data)
+    const result = await analyzeFacialSentimentTask({
+      answersDocId: props.answersDocId,
+      userDocId: props.userDocId,
+      taskId: String(props.taskId),
+      studyId: props.studyId || undefined,
+    })
+
+    const emotions = result?.emotions
+    if (!emotions) {
+      throw new Error('Facial sentiment response did not include emotions.')
+    }
+
+    updateUI(emotions)
     hasResults.value = true
 
-    // clone the full testAnswer and insert sentiment for the selected task
-    const clonedTestAnswer = JSON.parse(JSON.stringify(props.testAnswer || {}))
-    clonedTestAnswer.tasks = clonedTestAnswer.tasks || []
-    clonedTestAnswer.tasks[props.selectedTask] =
-      clonedTestAnswer.tasks[props.selectedTask] || {}
-    clonedTestAnswer.tasks[props.selectedTask].facialSentimentResults = data
-
-    await store.dispatch('saveTestAnswer', {
-      data: new UserStudyEvaluatorAnswer(clonedTestAnswer),
-      answersDocId: test.value.answersDocId,
-      testType: test.value.testType,
-    })
     await store.dispatch('getCurrentTestAnswerDoc')
+    emit('saved', result)
   } catch (err) {
-    console.error('❌ Erro ao enviar caminho do vídeo:', err.message || err)
+    console.error('Facial sentiment analysis failed:', err.message || err)
+    analysisError.value =
+      err?.message || 'Failed to process facial sentiment analysis.'
   } finally {
     isAnalyzing.value = false
   }
