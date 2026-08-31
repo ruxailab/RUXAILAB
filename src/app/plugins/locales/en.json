@@ -632,6 +632,7 @@
     "incorrectPassword": "Incorrect password",
     "incorrectCredential": "Incorrect username or password.",
     "globalError": "An error has occurred, sorry for the inconvenience.",
+    "cameraNotAvailable": "No camera was detected. The test will continue without webcam recording.",
     "cameraPermissionDenied": "Camera permission denied. Please allow camera access in your browser settings.",
     "sendError": "Failed to send invitation. Please try again",
     "missingVariableTitles": "Cannot save: Some variables are missing titles",
