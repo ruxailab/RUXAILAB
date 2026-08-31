@@ -26,9 +26,13 @@ export function getStudyRouteBase(study) {
     return 'userTest/moderated'
   }
   if (studyType === STUDY_TYPES.USER) return 'userTest/unmoderated'
+  if (studyType === STUDY_TYPES.FOCUS_GROUP) return 'focusGroup'
 
   return ''
 }
+
+const isFocusGroupStudy = (study) =>
+  normalizeStudyType(study?.testType) === STUDY_TYPES.FOCUS_GROUP
 
 export function getTestViewAccessRedirect({
   study,
@@ -148,12 +152,23 @@ const NAVIGATION_ITEMS = Object.freeze([
     path: ({ type, id }) => `/${type}/edit/${id}`,
   },
   {
+    // Focus Group's live session is its run surface, so it takes the slot the
+    // other methods use for Preview; facilitators and observers both enter here.
+    title: 'Session',
+    group: 'evaluation',
+    icon: 'mdi-video-outline',
+    capability: C.DASHBOARD_VIEW,
+    visible: isFocusGroupStudy,
+    path: ({ type, id }) => `/${type}/session/${id}`,
+  },
+  {
     title: 'Preview',
     group: 'evaluation',
     icon: ICONS.PREVIEW,
     capability: C.STUDY_ANSWER,
     path: ({ id, previewPath }) => previewPath ?? `/testview/${id}`,
     visible: (study) =>
+      !isFocusGroupStudy(study) &&
       !(
         normalizeStudyType(study?.testType) == STUDY_TYPES.USER &&
         study?.subType === USER_STUDY_SUBTYPES.MODERATED
@@ -164,6 +179,8 @@ const NAVIGATION_ITEMS = Object.freeze([
     group: 'evaluation',
     icon: ICONS.BOOK,
     capability: C.REPORTS_VIEW,
+    // No report view exists for Focus Group yet — hide until it does.
+    visible: (study) => !isFocusGroupStudy(study),
     path: ({ type, id }) => `/${type}/report/${id}`,
   },
   {
@@ -171,6 +188,8 @@ const NAVIGATION_ITEMS = Object.freeze([
     group: 'analysis',
     icon: ICONS.ORDER,
     capability: C.ANSWERS_VIEW,
+    // Focus Group analytics ship on a separate branch — hide until merged.
+    visible: (study) => !isFocusGroupStudy(study),
     path: ({ type, id }) => `/${type}/answer/${id}`,
   },
   {
@@ -192,9 +211,13 @@ const NAVIGATION_ITEMS = Object.freeze([
     group: 'people',
     icon: ICONS.MONITOR_DASHBOARD,
     capability: C.SESSIONS_MANAGE,
+    // Moderated user tests pair one facilitator with one participant per
+    // session; Focus Group sessions gather a facilitator with many. Both
+    // define who takes part through the same sessions surface.
     visible: (study) =>
-      normalizeStudyType(study?.testType) === STUDY_TYPES.USER &&
-      study?.subType === USER_STUDY_SUBTYPES.MODERATED,
+      (normalizeStudyType(study?.testType) === STUDY_TYPES.USER &&
+        study?.subType === USER_STUDY_SUBTYPES.MODERATED) ||
+      isFocusGroupStudy(study),
     path: ({ type, id }) => `/${type}/sessions/${id}`,
   },
   {

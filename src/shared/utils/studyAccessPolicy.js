@@ -37,6 +37,13 @@ export const STUDY_CAPABILITY = Object.freeze({
 const C = STUDY_CAPABILITY
 const R = STUDY_ROLE
 
+export const MEMBERSHIP_STATUS = Object.freeze({
+  PENDING: 'pending',
+  ACCEPTED: 'accepted',
+  REJECTED: 'rejected',
+  EXPIRED: 'expired',
+})
+
 export const STUDY_ROLE_LABEL = Object.freeze({
   [R.ADMIN]: 'Admin',
   [R.EVALUATOR]: 'Evaluator',
@@ -107,29 +114,44 @@ const HEURISTIC_POLICY = Object.freeze({
 
 const CARD_SORTING_POLICY = HEURISTIC_POLICY
 
-export const MEMBERSHIP_STATUS = Object.freeze({
-  PENDING: 'pending',
-  ACCEPTED: 'accepted',
-  REJECTED: 'rejected',
-  EXPIRED: 'expired',
+// Focus Group uses the classic ACCESS_LEVEL scale: the facilitator is the Admin,
+// attendees are Evaluators, and note-takers are Observators — the three roles the
+// live session actually resolves. Guest is intentionally excluded: it is not a
+// functional session role, and the security rules do not grant it study access.
+const FOCUS_GROUP_ROLES = Object.freeze([R.ADMIN, R.EVALUATOR, R.OBSERVATOR])
+
+const FOCUS_GROUP_POLICY = Object.freeze({
+  [R.ADMIN]: Object.freeze(
+    Object.values(C).filter(
+      (capability) =>
+        capability !== C.FINAL_REPORT_MANAGE &&
+        capability !== C.EVALUATOR_INFO_MANAGE &&
+        capability !== C.ANSWERS_EXPORT_SUMMARY,
+    ),
+  ),
+  [R.EVALUATOR]: Object.freeze([C.STUDY_ANSWER]),
+  [R.OBSERVATOR]: Object.freeze([C.DASHBOARD_VIEW, C.ANSWERS_VIEW]),
 })
 
 const STUDY_POLICIES = Object.freeze({
   [STUDY_TYPES.USER]: USER_POLICY,
   [STUDY_TYPES.HEURISTIC]: HEURISTIC_POLICY,
   [STUDY_TYPES.CARD_SORTING]: CARD_SORTING_POLICY,
+  [STUDY_TYPES.FOCUS_GROUP]: FOCUS_GROUP_POLICY,
 })
 
 const SUPPORTED_ROLES = Object.freeze({
   [STUDY_TYPES.USER]: USER_ROLES,
   [STUDY_TYPES.HEURISTIC]: HEURISTIC_ROLES,
   [STUDY_TYPES.CARD_SORTING]: HEURISTIC_ROLES,
+  [STUDY_TYPES.FOCUS_GROUP]: FOCUS_GROUP_ROLES,
 })
 
 const MANAGER_ASSIGNABLE_ROLES = Object.freeze({
   [STUDY_TYPES.USER]: Object.freeze([R.USER, R.OBSERVATOR]),
   [STUDY_TYPES.HEURISTIC]: Object.freeze([R.EVALUATOR, R.GUEST]),
   [STUDY_TYPES.CARD_SORTING]: Object.freeze([R.EVALUATOR, R.GUEST]),
+  [STUDY_TYPES.FOCUS_GROUP]: Object.freeze([R.EVALUATOR, R.OBSERVATOR]),
 })
 
 const getUserId = (user) => user?.id ?? user?.uid ?? null

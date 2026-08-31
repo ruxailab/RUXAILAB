@@ -26,8 +26,12 @@ export const SESSION_STATUS = {
  *
  * @param {string} studyId - Study document id, used as the session room id.
  */
-export function useFocusGroupSession(studyId) {
-  const rootPath = `focusGroupSessions/${studyId}`
+export function useFocusGroupSession(roomId) {
+  // `roomId` isolates the RTDB tree per live room: `${studyId}-${sessionId}` for
+  // a scheduled session (so concurrent sessions of the same study never share
+  // presence, chat, or breakout state) or just the study id for a legacy open
+  // room. It reuses the wildcard security rules, which key off this level.
+  const rootPath = `focusGroupSessions/${roomId}`
   const rootRef = dbRef(database, rootPath)
   // Deliberately its OWN top-level RTDB path, not nested under rootPath.
   // The rest of the session is read through one onValue(rootRef) listener,
@@ -35,7 +39,7 @@ export function useFocusGroupSession(studyId) {
   // .read rule on a nested child can't be more restrictive than its
   // parent's. Keeping the backroom out of that tree entirely is what lets
   // its rules actually deny a participant's read, not just its write.
-  const backroomPath = `focusGroupBackroom/${studyId}`
+  const backroomPath = `focusGroupBackroom/${roomId}`
   const backroomRef = dbRef(database, backroomPath)
 
   const snapshot = ref(null)

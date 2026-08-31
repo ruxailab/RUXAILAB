@@ -2743,6 +2743,8 @@
       "roleParticipant": "Participant",
       "roleObserver": "Observer",
       "observerModeHint": "Observer mode — you're following the discussion without taking part.",
+      "notAMemberTitle": "You're not part of this session",
+      "notAMemberHint": "This session is running for a specific group of people, and your account isn't on its list. Check with the facilitator if you think this is a mistake.",
       "sessionInfo": "Session",
       "showParticipants": "Show participants",
       "hideParticipants": "Hide participants",
