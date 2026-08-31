@@ -1560,30 +1560,44 @@
       "externalFormTitle": "External Form",
       "externalFormDescription": "Participants will be redirected to complete an external form after the task.",
       "openExternalForm": "Open External Form",
-      "nasaTlxTitle": "NASA Task Load Index",
-      "mentalDemand": "Mental Demand",
-      "physicalDemand": "Physical Demand",
-      "lowHigh": "Low - High",
-      "moreDimensions": "+ 4 more dimensions",
-      "susTitle": "System Usability Scale",
-      "susStatement1": "1. I think that I would like to use this system frequently.",
-      "stronglyDisagree": "Strongly Disagree",
-      "stronglyAgree": "Strongly Agree",
-      "moreStatements": "+ 9 more statements",
-      "sartTitle": "Situation Awareness Rating Technique",
-      "instability": "Instability of Situation",
-      "complexity": "Complexity of Situation",
-      "veryStable": "Very Stable",
-      "veryUnstable": "Very Unstable",
-      "verySimple": "Very Simple",
-      "veryComplex": "Very Complex",
-      "moreSartDimensions": "+ 8 more SART dimensions",
-      "tam1Title": "TAM-1: Technology Acceptance Model (Basic)",
-      "tam1Subtitle": "10 items across 2 dimensions",
-      "perceivedUsefulness": "Perceived Usefulness (5 items)",
-      "perceivedEaseOfUse": "Perceived Ease of Use (5 items)",
-      "tam1Statement1": "1. Using the system improves my job performance.",
-      "tam1Statement6": "6. The system is easy to use.",
+      "nasaTlx": {
+        "title": "NASA Task Load Index",
+        "range": "Low - High",
+        "moreDimensions": "+ 4 more dimensions",
+        "mental": "Mental Demand",
+        "physical": "Physical Demand"
+      },
+
+      "sus": {
+        "title": "System Usability Scale",
+        "q1": "1. I think that I would like to use this system frequently.",
+        "disagree": "Strongly Disagree",
+        "agree": "Strongly Agree",
+        "moreStatements": "+ 9 more statements"
+      },
+
+      "tam": {
+        "tam1": "TAM-1: Technology Acceptance Model (Basic)",
+        "items2": "10 items across 2 dimensions",
+        "pu": "Perceived Usefulness (5 items)",
+        "q1": "1. Using the system improves my job performance.",
+        "eu": "Perceived Ease of Use (5 items)",
+        "q6": "6. The system is easy to use.",
+        "tam2": "TAM-2: Technology Acceptance Model (Extended)",
+        "items7": "25 items across 7 dimensions",
+        "likertNote": "Participants rate {count} statements on a 5-point Likert scale (Strongly Disagree - Strongly Agree)"
+      },
+
+      "sart": {
+        "title": "Situation Awareness Rating Technique",
+        "instability": "Instability of Situation",
+        "complexity": "Complexity of Situation",
+        "stable": "Very Stable",
+        "unstable": "Very Unstable",
+        "simple": "Very Simple",
+        "complex": "Very Complex",
+        "moreDimensions": "+ 8 more SART dimensions"
+      },
       "tam2Title": "TAM-2: Technology Acceptance Model (Extended)",
       "tam2Subtitle": "25 items across 7 dimensions",
       "tam2Description": "Participants rate 25 statements on a 5-point Likert scale (Strongly Disagree - Strongly Agree)",
@@ -2231,7 +2245,8 @@
     "audioRecord": "Audio Record",
     "postForm": "Post Form",
     "nasa": "NASA-TLX",
-    "sart": "SART"
+    "sart": "SART",
+    "sus": "SUS"
   },
   "inputs": {
     "consentForm": "Consent Form",
