@@ -51,3 +51,13 @@ so a missing or building session index rejects the mounted hook and replaces
 the entire dashboard with the global error fallback. A future UX improvement
 should contain that failure within the sessions section and offer a retry while
 preserving access to the rest of the dashboard.
+
+## Log Explorer Visual Scope
+
+The redesigned Log Explorer follows the supplied logging-dashboard mockups for
+study context, density, filters, and event inspection while preserving the
+current RUXAILAB navigation and theme. The mockups also show Overview analytics
+and Export tabs, but those capabilities are not backed by the current logging
+query contract and are intentionally not presented as inactive or fake UI in
+this PR. They should be implemented separately with explicit product,
+privacy, and export-format requirements.

@@ -1,272 +1,406 @@
 <template>
-  <v-container fluid class="pa-4 pa-md-6">
-    <div class="d-flex flex-wrap align-center justify-space-between ga-3 mb-4">
-      <div>
-        <h1 class="text-h4 font-weight-bold">Activity logs</h1>
-        <p class="text-body-2 text-medium-emphasis mb-0">
-          Times are shown in {{ timezone }}.
-        </p>
-      </div>
-      <div class="d-flex align-center ga-3">
-        <span v-if="updatedAt" class="text-caption text-medium-emphasis">
-          Updated {{ formatTime(updatedAt) }}
+  <v-container fluid class="logs-page">
+    <div class="logs-shell">
+      <header class="study-context">
+        <div class="study-context__icon" aria-hidden="true">
+          <v-icon size="30">mdi-text-box-search-outline</v-icon>
+        </div>
+        <div class="study-context__copy">
+          <div class="study-context__eyebrow">Log explorer</div>
+          <h1>{{ studyTitle }}</h1>
+          <p>Study activity and delivery trace</p>
+          <div class="study-context__chips">
+            <span class="context-chip">
+              <v-icon size="15">{{ studyTypeIcon }}</v-icon>
+              {{ studyTypeLabel }}
+            </span>
+            <span v-if="totalCount !== null" class="context-chip">
+              <v-icon size="15">mdi-format-list-bulleted</v-icon>
+              {{ totalCount.toLocaleString() }}
+              {{ totalCount === 1 ? 'event' : 'events' }}
+            </span>
+          </div>
+        </div>
+        <div class="study-context__time">
+          <v-icon size="18">mdi-clock-outline</v-icon>
+          <span>Times shown in {{ timezone }}</span>
+        </div>
+      </header>
+
+      <div class="delivery-notice" role="status">
+        <v-icon size="20" aria-hidden="true">mdi-information-outline</v-icon>
+        <span>
+          Activity delivery is asynchronous and may be delayed or incomplete.
         </span>
-        <v-btn
-          prepend-icon="mdi-refresh"
-          variant="outlined"
-          :loading="loading"
-          @click="refresh"
-        >
-          Refresh
-        </v-btn>
       </div>
-    </div>
 
-    <v-alert type="warning" variant="tonal" class="mb-4">
-      Activity delivery is asynchronous, may be delayed, and may be incomplete.
-    </v-alert>
-
-    <v-card variant="outlined" class="mb-4">
-      <v-card-text>
-        <v-row dense>
-          <v-col cols="12" sm="6" lg="3">
-            <v-autocomplete
-              v-model="draft.participantLabel"
-              :items="participantLabels"
-              label="Participant"
-              clearable
-              hide-details="auto"
-              @update:search="searchParticipants"
-            />
-          </v-col>
-          <v-col cols="12" sm="6" lg="3">
-            <v-select
-              v-model="draft.eventType"
-              :items="eventTypes"
-              label="Event type"
-              clearable
-              hide-details="auto"
-            />
-          </v-col>
-          <v-col cols="12" sm="6" lg="3">
-            <v-select
-              v-model="draft.level"
-              :items="levels"
-              label="Level"
-              clearable
-              hide-details="auto"
-            />
-          </v-col>
-          <v-col cols="12" sm="6" lg="3">
-            <v-select
-              v-model="draft.source"
-              :items="sources"
-              label="Source"
-              clearable
-              hide-details="auto"
-            />
-          </v-col>
-          <v-col cols="12" sm="6" lg="3">
-            <v-text-field
-              v-model="draft.startDate"
-              type="date"
-              label="From date"
-              hide-details="auto"
-            />
-          </v-col>
-          <v-col cols="12" sm="6" lg="3">
-            <v-text-field
-              v-model="draft.endDate"
-              type="date"
-              label="Through date"
-              hide-details="auto"
-            />
-          </v-col>
-          <v-col cols="12" lg="6" class="d-flex align-end ga-2">
-            <v-btn color="primary" :loading="loading" @click="applyFilters">
-              Apply filters
-            </v-btn>
-            <v-btn variant="text" :disabled="loading" @click="clearFilters">
-              Clear
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-card-text>
-    </v-card>
-
-    <v-alert v-if="errorMessage" type="error" variant="tonal" class="mb-4">
-      {{ errorMessage }}
-    </v-alert>
-
-    <v-card variant="outlined">
-      <v-progress-linear v-if="loading" indeterminate color="primary" />
-      <template v-if="currentEvents.length">
-        <div v-if="!smAndDown" class="table-scroll">
-          <table class="log-table">
-            <thead>
-              <tr>
-                <th>Occurrence</th>
-                <th>Level</th>
-                <th>Message</th>
-                <th>Participant</th>
-                <th>Layer</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="(event, index) in currentEvents"
-                :key="index"
-                tabindex="0"
-                class="log-row"
-                @click="selectedEvent = event"
-                @keyup.enter="selectedEvent = event"
-                @keyup.space.prevent="selectedEvent = event"
-              >
-                <td>{{ formatDateTime(event.occurredAt) }}</td>
-                <td>
-                  <v-chip size="small">{{ event.level }}</v-chip>
-                </td>
-                <td>
-                  <div class="font-weight-medium">{{ event.message }}</div>
-                  <div class="text-caption text-medium-emphasis">
-                    {{ event.eventType }}
-                  </div>
-                </td>
-                <td>{{ event.participantLabel }}</td>
-                <td>
-                  <v-chip size="small" variant="tonal">{{
-                    event.layer
-                  }}</v-chip>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      <section class="filter-surface" aria-labelledby="log-filter-heading">
+        <div class="surface-heading">
+          <h2 id="log-filter-heading">Filters</h2>
+          <span v-if="activeFilterCount" class="filter-count">
+            {{ activeFilterCount }} active
+          </span>
+          <v-btn
+            class="mobile-filter-toggle"
+            variant="text"
+            size="small"
+            :prepend-icon="
+              filtersExpanded ? 'mdi-chevron-up' : 'mdi-tune-variant'
+            "
+            :aria-expanded="filtersExpanded"
+            @click="filtersExpanded = !filtersExpanded"
+          >
+            {{ filtersExpanded ? 'Hide' : 'Show' }}
+          </v-btn>
         </div>
 
-        <v-list v-else lines="three">
-          <v-list-item
-            v-for="(event, index) in currentEvents"
-            :key="index"
-            tabindex="0"
-            @click="selectedEvent = event"
-            @keyup.enter="selectedEvent = event"
-            @keyup.space.prevent="selectedEvent = event"
-          >
-            <template #prepend>
-              <v-icon>mdi-text-box-search-outline</v-icon>
-            </template>
-            <v-list-item-title>{{ event.message }}</v-list-item-title>
-            <v-list-item-subtitle>
-              {{ event.level }} · {{ event.participantLabel }} ·
-              {{ formatDateTime(event.occurredAt) }}
-            </v-list-item-subtitle>
-          </v-list-item>
-        </v-list>
-      </template>
+        <div v-show="filtersExpanded" class="filter-layout">
+          <fieldset class="filter-group filter-group--primary">
+            <legend>Activity</legend>
+            <div class="primary-filter-grid">
+              <v-autocomplete
+                v-model="draft.participantLabel"
+                :items="participantLabels"
+                label="Participant"
+                prepend-inner-icon="mdi-account-outline"
+                clearable
+                density="compact"
+                variant="outlined"
+                hide-details="auto"
+                @update:search="searchParticipants"
+              />
+              <v-select
+                v-model="draft.eventType"
+                :items="eventTypes"
+                item-title="title"
+                item-value="value"
+                label="Event type"
+                prepend-inner-icon="mdi-shape-outline"
+                clearable
+                density="compact"
+                variant="outlined"
+                hide-details="auto"
+              />
+              <v-select
+                v-model="draft.level"
+                :items="levels"
+                label="Level"
+                prepend-inner-icon="mdi-alert-circle-outline"
+                clearable
+                density="compact"
+                variant="outlined"
+                hide-details="auto"
+              />
+              <v-select
+                v-model="draft.source"
+                :items="sources"
+                item-title="title"
+                item-value="value"
+                label="Source"
+                prepend-inner-icon="mdi-source-branch"
+                clearable
+                density="compact"
+                variant="outlined"
+                hide-details="auto"
+              />
+            </div>
+          </fieldset>
 
-      <v-empty-state
-        v-else-if="!loading && !errorMessage"
-        icon="mdi-text-box-search-outline"
-        title="No activity found"
-        text="No events match the applied filters."
-      />
+          <div class="filter-lower-row">
+            <fieldset class="filter-group filter-group--dates">
+              <legend>Date range</legend>
+              <div class="date-filter-grid">
+                <v-text-field
+                  v-model="draft.startDate"
+                  type="date"
+                  label="From date"
+                  density="compact"
+                  variant="outlined"
+                  hide-details="auto"
+                />
+                <v-text-field
+                  v-model="draft.endDate"
+                  type="date"
+                  label="Through date"
+                  density="compact"
+                  variant="outlined"
+                  hide-details="auto"
+                />
+              </div>
+            </fieldset>
 
-      <v-divider />
-      <v-card-actions class="flex-wrap ga-2">
-        <v-select
-          v-model="pageSize"
-          :items="[10, 20, 50]"
-          label="Rows"
-          density="compact"
-          hide-details
-          style="max-width: 110px"
-        />
-        <v-spacer />
-        <span class="text-body-2">{{ visibleRange }}</span>
-        <v-btn
-          icon="mdi-chevron-left"
-          variant="text"
-          aria-label="Previous page"
-          :disabled="loading || pageIndex === 0"
-          @click="previousPage"
-        />
-        <v-btn
-          icon="mdi-chevron-right"
-          variant="text"
-          aria-label="Next page"
-          :disabled="loading || !currentPage?.hasNextPage"
-          @click="nextPage"
-        />
-      </v-card-actions>
-    </v-card>
+            <div class="filter-actions">
+              <v-btn
+                color="primary"
+                prepend-icon="mdi-filter-outline"
+                :loading="loading"
+                @click="applyFilters"
+              >
+                Apply filters
+              </v-btn>
+              <v-btn
+                variant="text"
+                :disabled="loading || !hasDraftFilters"
+                @click="clearFilters"
+              >
+                Clear
+              </v-btn>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <v-alert
+        v-if="errorMessage"
+        type="error"
+        variant="tonal"
+        density="compact"
+        class="logs-error"
+      >
+        {{ errorMessage }}
+      </v-alert>
+
+      <section class="events-surface" aria-labelledby="log-events-heading">
+        <div class="events-toolbar">
+          <div class="events-title-row">
+            <h2 id="log-events-heading">Recorded activity</h2>
+            <span class="range-label">{{ visibleRange }}</span>
+          </div>
+          <div class="refresh-area">
+            <span v-if="updatedAt" class="updated-at">
+              Updated {{ formatTime(updatedAt) }}
+            </span>
+            <v-btn
+              prepend-icon="mdi-refresh"
+              variant="outlined"
+              size="small"
+              :loading="loading"
+              @click="refresh"
+            >
+              Refresh
+            </v-btn>
+          </div>
+        </div>
+
+        <v-progress-linear v-if="loading" indeterminate color="secondary" />
+
+        <template v-if="currentEvents.length">
+          <div v-if="!smAndDown" class="table-scroll">
+            <table class="log-table">
+              <thead>
+                <tr>
+                  <th scope="col">Occurrence</th>
+                  <th scope="col">Level</th>
+                  <th scope="col">Event</th>
+                  <th scope="col">Participant</th>
+                  <th scope="col">Source</th>
+                  <th scope="col">Layer</th>
+                  <th scope="col"><span class="sr-only">Open details</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="(event, index) in currentEvents"
+                  :key="event.eventId || index"
+                  tabindex="0"
+                  role="button"
+                  class="log-row"
+                  :class="`log-row--${event.level || 'info'}`"
+                  :aria-label="`View details for ${event.message}`"
+                  @click="selectedEvent = event"
+                  @keyup.enter="selectedEvent = event"
+                  @keyup.space.prevent="selectedEvent = event"
+                >
+                  <td class="occurrence-cell">
+                    <span>{{ formatDate(event.occurredAt) }}</span>
+                    <strong>{{ formatClock(event.occurredAt) }}</strong>
+                  </td>
+                  <td>
+                    <span
+                      class="level-badge"
+                      :class="`level-badge--${event.level || 'info'}`"
+                    >
+                      <v-icon size="14">{{ levelIcon(event.level) }}</v-icon>
+                      {{ event.level }}
+                    </span>
+                  </td>
+                  <td class="message-cell">
+                    <div>{{ event.message }}</div>
+                    <span>{{ formatEventType(event.eventType) }}</span>
+                  </td>
+                  <td>
+                    <span class="participant-label">
+                      {{ event.participantLabel }}
+                    </span>
+                  </td>
+                  <td class="source-cell">
+                    {{ formatIdentifier(event.source) || 'Unavailable' }}
+                  </td>
+                  <td>
+                    <span class="layer-badge">{{ event.layer }}</span>
+                  </td>
+                  <td class="open-cell">
+                    <v-icon size="19">mdi-chevron-right</v-icon>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div v-else class="mobile-event-list">
+            <button
+              v-for="(event, index) in currentEvents"
+              :key="event.eventId || index"
+              type="button"
+              class="mobile-event"
+              :class="`mobile-event--${event.level || 'info'}`"
+              @click="selectedEvent = event"
+            >
+              <span class="mobile-event__topline">
+                <span
+                  class="level-badge"
+                  :class="`level-badge--${event.level || 'info'}`"
+                >
+                  <v-icon size="14">{{ levelIcon(event.level) }}</v-icon>
+                  {{ event.level }}
+                </span>
+                <span>{{ formatDateTime(event.occurredAt) }}</span>
+              </span>
+              <strong>{{ event.message }}</strong>
+              <span class="mobile-event__type">
+                {{ formatEventType(event.eventType) }}
+              </span>
+              <span class="mobile-event__meta">
+                {{ event.participantLabel }} ·
+                {{ formatIdentifier(event.source) || 'Unavailable' }}
+              </span>
+            </button>
+          </div>
+        </template>
+
+        <div v-else-if="!loading && !errorMessage" class="empty-logs">
+          <div class="empty-logs__icon">
+            <v-icon size="34">mdi-text-box-search-outline</v-icon>
+          </div>
+          <h3>No activity found</h3>
+          <p>No events match the applied filters.</p>
+        </div>
+
+        <div class="pagination-bar">
+          <v-select
+            v-model="pageSize"
+            :items="[10, 20, 50]"
+            label="Rows"
+            density="compact"
+            variant="outlined"
+            hide-details
+            class="rows-select"
+          />
+          <span>{{ visibleRange }}</span>
+          <div class="pagination-actions">
+            <v-btn
+              icon="mdi-chevron-left"
+              variant="text"
+              size="small"
+              aria-label="Previous page"
+              :disabled="loading || pageIndex === 0"
+              @click="previousPage"
+            />
+            <v-btn
+              icon="mdi-chevron-right"
+              variant="text"
+              size="small"
+              aria-label="Next page"
+              :disabled="loading || !currentPage?.hasNextPage"
+              @click="nextPage"
+            />
+          </div>
+        </div>
+      </section>
+    </div>
 
     <v-navigation-drawer
       :model-value="Boolean(selectedEvent)"
       location="right"
       temporary
-      :width="smAndDown ? '100%' : 440"
+      :width="smAndDown ? '100%' : 460"
+      class="event-drawer"
       @update:model-value="(value) => !value && (selectedEvent = null)"
     >
       <template v-if="selectedEvent">
-        <div class="d-flex align-start pa-4 ga-2">
-          <div class="flex-grow-1">
-            <div class="text-h6">{{ selectedEvent.message }}</div>
-            <div class="d-flex flex-wrap ga-1 mt-2">
-              <v-chip size="small">{{ selectedEvent.eventType }}</v-chip>
-              <v-chip size="small">{{ selectedEvent.level }}</v-chip>
-              <v-chip size="small">{{ selectedEvent.layer }}</v-chip>
-              <v-chip size="small">{{ selectedEvent.source }}</v-chip>
-            </div>
+        <div class="drawer-heading">
+          <div class="drawer-heading__icon">
+            <v-icon size="22">{{ levelIcon(selectedEvent.level) }}</v-icon>
+          </div>
+          <div class="drawer-heading__copy">
+            <div class="surface-kicker">Event details</div>
+            <h2>{{ selectedEvent.message }}</h2>
           </div>
           <v-btn
             icon="mdi-close"
             variant="text"
+            size="small"
             aria-label="Close details"
             @click="selectedEvent = null"
           />
         </div>
-        <v-divider />
-        <v-list>
-          <v-list-item
-            title="Participant"
-            :subtitle="selectedEvent.participantLabel"
-          />
-          <v-list-item
-            title="Occurred"
-            :subtitle="formatDateTime(selectedEvent.occurredAt)"
-          />
-          <v-list-item
-            title="Received"
-            :subtitle="formatDateTime(selectedEvent.receivedAt)"
-          />
-          <v-list-item
-            title="Delivery delay"
-            :subtitle="deliveryDelay(selectedEvent)"
-          />
-          <v-list-item
-            v-if="selectedEvent.timeQuality"
-            title="Time quality"
-            :subtitle="selectedEvent.timeQuality"
-          />
-          <v-list-item
-            v-if="selectedEvent.actorRole"
-            title="Actor role"
-            :subtitle="selectedEvent.actorRole"
-          />
-        </v-list>
-        <v-divider />
-        <div class="pa-4">
-          <div class="text-subtitle-1 font-weight-bold mb-2">Event details</div>
+
+        <div class="drawer-badges">
+          <span
+            class="level-badge"
+            :class="`level-badge--${selectedEvent.level || 'info'}`"
+            >{{ selectedEvent.level }}</span
+          >
+          <span class="layer-badge">{{ selectedEvent.layer }}</span>
+          <span class="drawer-source">
+            {{ formatIdentifier(selectedEvent.source) }}
+          </span>
+        </div>
+
+        <dl class="event-summary">
+          <div>
+            <dt>Participant</dt>
+            <dd>{{ selectedEvent.participantLabel }}</dd>
+          </div>
+          <div>
+            <dt>Event type</dt>
+            <dd>{{ formatEventType(selectedEvent.eventType) }}</dd>
+          </div>
+          <div>
+            <dt>Occurred</dt>
+            <dd>{{ formatDateTime(selectedEvent.occurredAt) }}</dd>
+          </div>
+          <div>
+            <dt>Received</dt>
+            <dd>{{ formatDateTime(selectedEvent.receivedAt) }}</dd>
+          </div>
+          <div>
+            <dt>Delivery delay</dt>
+            <dd>{{ deliveryDelay(selectedEvent) }}</dd>
+          </div>
+          <div v-if="selectedEvent.timeQuality">
+            <dt>Time quality</dt>
+            <dd>{{ selectedEvent.timeQuality }}</dd>
+          </div>
+          <div v-if="selectedEvent.actorRole">
+            <dt>Actor role</dt>
+            <dd>{{ selectedEvent.actorRole }}</dd>
+          </div>
+        </dl>
+
+        <section
+          class="drawer-details"
+          aria-labelledby="event-specific-heading"
+        >
+          <h3 id="event-specific-heading">Event-specific data</h3>
           <dl v-if="detailEntries.length" class="detail-grid">
             <template v-for="[key, value] in detailEntries" :key="key">
               <dt>{{ readableKey(key) }}</dt>
               <dd>{{ value }}</dd>
             </template>
           </dl>
-          <p v-else class="text-body-2 text-medium-emphasis mb-0">
-            No event-specific details.
-          </p>
-        </div>
+          <p v-else>No event-specific details.</p>
+        </section>
       </template>
     </v-navigation-drawer>
   </v-container>
@@ -274,6 +408,7 @@
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { useStore } from 'vuex'
 import { useDisplay } from 'vuetify'
 import { db } from '@/app/plugins/firebase'
 import {
@@ -284,18 +419,27 @@ import {
 } from '@/shared/services/studyLogQuery'
 
 const props = defineProps({ id: { type: String, required: true } })
-const { smAndDown } = useDisplay()
+const store = useStore()
+const { smAndDown, xs } = useDisplay()
 const timezone =
   Intl.DateTimeFormat().resolvedOptions().timeZone || 'local time'
-const eventTypes = [
+const formatIdentifier = (value = '') =>
+  value
+    .toLowerCase()
+    .split(/[_-]/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+const filterOptions = (values) =>
+  values.map((value) => ({ title: formatIdentifier(value), value }))
+const eventTypes = filterOptions([
   'STUDY_VIEW_OPENED',
   'ANSWER_EDITED',
   'CONSENT_ACCEPTED',
   'TASK_ATTEMPT_FINISHED',
   'STUDY_SUBMITTED',
-]
+])
 const levels = ['info', 'warning', 'error']
-const sources = ['study-client', 'logging-service']
+const sources = filterOptions(['study-client', 'logging-service'])
 const emptyFilters = () => ({
   participantLabel: null,
   eventType: null,
@@ -316,8 +460,30 @@ const loading = ref(false)
 const errorMessage = ref('')
 const updatedAt = ref(null)
 const selectedEvent = ref(null)
+const filtersExpanded = ref(true)
 let participantTimer
 
+const study = computed(() => store.getters.test || {})
+const studyTitle = computed(
+  () => study.value.testTitle || study.value.title || 'Study activity',
+)
+const studyTypeLabel = computed(() => {
+  if (study.value.testType === 'HEURISTIC') return 'Heuristic evaluation'
+  if (study.value.subType === 'USER_MODERATED') return 'Moderated user test'
+  if (study.value.testType === 'USER') return 'Unmoderated user test'
+  return 'Research study'
+})
+const studyTypeIcon = computed(() =>
+  study.value.testType === 'HEURISTIC'
+    ? 'mdi-clipboard-search-outline'
+    : 'mdi-account-check-outline',
+)
+const hasDraftFilters = computed(() => Object.values(draft).some(Boolean))
+const activeFilterCount = computed(
+  () =>
+    Object.keys(appliedFilters.value).filter((key) => key !== 'endBefore')
+      .length,
+)
 const currentPage = computed(() => pages.value[pageIndex.value] || null)
 const currentEvents = computed(() => currentPage.value?.events || [])
 const visibleRange = computed(() => {
@@ -409,7 +575,6 @@ const clearFilters = async () => {
   appliedFilters.value = {}
   await replaceFirstPage({ recount: true })
 }
-
 const refresh = () => replaceFirstPage({ recount: true, forceCount: true })
 
 const nextPage = async () => {
@@ -441,7 +606,6 @@ const nextPage = async () => {
 const previousPage = () => {
   if (pageIndex.value > 0) pageIndex.value--
 }
-
 const searchParticipants = (prefix) => {
   clearTimeout(participantTimer)
   participantTimer = setTimeout(async () => {
@@ -467,8 +631,27 @@ const formatDateTime = (value) => {
       }).format(date)
     : 'Unavailable'
 }
+const formatDate = (value) => {
+  const date = toDate(value)
+  return date
+    ? new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(date)
+    : 'Unavailable'
+}
+const formatClock = (value) => {
+  const date = toDate(value)
+  return date
+    ? new Intl.DateTimeFormat(undefined, { timeStyle: 'medium' }).format(date)
+    : ''
+}
 const formatTime = (value) =>
   new Intl.DateTimeFormat(undefined, { timeStyle: 'short' }).format(value)
+const formatEventType = formatIdentifier
+const levelIcon = (level) =>
+  ({
+    warning: 'mdi-alert-outline',
+    error: 'mdi-alert-circle-outline',
+    info: 'mdi-information-outline',
+  })[level] || 'mdi-information-outline'
 const deliveryDelay = (event) => {
   const occurred = toDate(event.occurredAt)
   const received = toDate(event.receivedAt)
@@ -480,6 +663,7 @@ const readableKey = (key) =>
 
 watch(pageSize, () => replaceFirstPage())
 onMounted(async () => {
+  if (xs?.value) filtersExpanded.value = false
   searchParticipants('')
   await replaceFirstPage({ recount: true })
 })
@@ -487,38 +671,602 @@ onBeforeUnmount(() => clearTimeout(participantTimer))
 </script>
 
 <style scoped>
+.logs-page {
+  --logs-navy: #00213f;
+  --logs-coral: #ff425a;
+  --logs-surface: #ffffff;
+  --logs-soft: #f5f7fb;
+  --logs-border: #d7dce7;
+  --logs-muted: #657187;
+  min-height: 100%;
+  padding: 20px clamp(16px, 2.5vw, 40px) 40px;
+  color: #172033;
+}
+.logs-shell {
+  width: 100%;
+  max-width: 1560px;
+  margin: 0 auto;
+}
+.study-context {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  min-height: 132px;
+  padding: 20px 24px;
+  border-radius: 8px;
+  background: linear-gradient(112deg, #00213f 0%, #40263c 56%, #ff425a 140%);
+  color: #ffffff;
+  box-shadow: 0 10px 26px rgba(0, 33, 63, 0.14);
+}
+.study-context__icon,
+.drawer-heading__icon {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.14);
+}
+.study-context__copy {
+  min-width: 0;
+}
+.study-context__eyebrow,
+.surface-kicker {
+  margin-bottom: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+.study-context__eyebrow {
+  color: rgba(255, 255, 255, 0.72);
+}
+.study-context h1 {
+  overflow-wrap: anywhere;
+  margin: 0;
+  font-size: clamp(1.55rem, 2vw, 2rem);
+  line-height: 1.18;
+}
+.study-context p {
+  margin: 3px 0 10px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.88rem;
+}
+.study-context__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.context-chip {
+  display: inline-flex;
+  min-height: 26px;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.study-context__time {
+  display: flex;
+  max-width: 240px;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.8rem;
+  text-align: right;
+}
+.delivery-notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 38px;
+  margin: 12px 0;
+  padding: 8px 12px;
+  border-left: 3px solid var(--logs-coral);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.66);
+  color: #4b5568;
+  font-size: 0.84rem;
+}
+.delivery-notice .v-icon {
+  color: var(--logs-navy);
+}
+.filter-surface,
+.events-surface {
+  border: 1px solid var(--logs-border);
+  border-radius: 8px;
+  background: var(--logs-surface);
+}
+.filter-surface {
+  margin-bottom: 12px;
+  padding: 14px 18px 16px;
+}
+.surface-heading,
+.events-toolbar,
+.events-title-row,
+.refresh-area,
+.pagination-bar,
+.pagination-actions {
+  display: flex;
+  align-items: center;
+}
+.surface-heading,
+.events-toolbar {
+  justify-content: space-between;
+}
+.surface-kicker {
+  color: var(--logs-muted);
+}
+.surface-heading h2,
+.events-toolbar h2,
+.drawer-heading h2 {
+  margin: 0;
+  color: var(--logs-navy);
+  font-size: 1.02rem;
+  line-height: 1.3;
+}
+.filter-count,
+.range-label {
+  color: var(--logs-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.filter-count {
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(255, 66, 90, 0.1);
+  color: #b41f37;
+}
+.mobile-filter-toggle {
+  display: none;
+}
+.filter-layout {
+  display: grid;
+  gap: 10px;
+  margin-top: 8px;
+}
+.filter-group {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.filter-group legend {
+  margin-bottom: 5px;
+  color: var(--logs-muted);
+  font-size: 0.69rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.primary-filter-grid,
+.date-filter-grid,
+.filter-lower-row {
+  display: grid;
+  gap: 10px;
+}
+.primary-filter-grid {
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
+}
+.filter-lower-row {
+  grid-template-columns: minmax(360px, 1fr) auto;
+  align-items: end;
+}
+.date-filter-grid {
+  grid-template-columns: repeat(2, minmax(170px, 240px));
+}
+.filter-layout :deep(.v-field) {
+  border-radius: 6px;
+  background: var(--logs-soft);
+}
+.filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+}
+.filter-actions .v-btn {
+  min-height: 40px;
+}
+.logs-error {
+  margin-bottom: 14px;
+  border-radius: 6px;
+}
+.events-surface {
+  overflow: hidden;
+}
+.events-toolbar {
+  min-height: 60px;
+  padding: 11px 18px;
+}
+.events-title-row {
+  gap: 10px;
+}
+.refresh-area {
+  gap: 12px;
+}
+.updated-at {
+  color: var(--logs-muted);
+  font-size: 0.78rem;
+}
 .table-scroll {
   overflow-x: auto;
+  border-top: 1px solid var(--logs-border);
 }
 .log-table {
   width: 100%;
+  min-width: 980px;
   border-collapse: collapse;
 }
-.log-table th,
-.log-table td {
-  padding: 14px 16px;
+.log-table th {
+  padding: 9px 12px;
+  background: var(--logs-soft);
+  color: var(--logs-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0;
   text-align: left;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  text-transform: uppercase;
+}
+.log-table td {
+  padding: 11px 12px;
+  border-top: 1px solid #e8ebf1;
+  color: #344054;
+  font-size: 0.84rem;
+  vertical-align: middle;
 }
 .log-row {
+  position: relative;
   cursor: pointer;
+  transition: background-color 140ms ease;
+}
+.log-row td:first-child {
+  border-left: 3px solid #65809a;
+}
+.log-row--warning td:first-child {
+  border-left-color: #d97706;
+}
+.log-row--error td:first-child {
+  border-left-color: var(--logs-coral);
 }
 .log-row:hover,
 .log-row:focus-visible {
-  background: rgba(var(--v-theme-primary), 0.06);
-  outline: 2px solid rgb(var(--v-theme-primary));
+  outline: 0;
+  background: #f8fafc;
+  box-shadow: inset 0 0 0 2px rgba(0, 33, 63, 0.32);
+}
+.occurrence-cell span,
+.occurrence-cell strong {
+  display: block;
+  white-space: nowrap;
+}
+.occurrence-cell span {
+  color: var(--logs-muted);
+  font-size: 0.75rem;
+}
+.occurrence-cell strong {
+  color: var(--logs-navy);
+  font-size: 0.82rem;
+}
+.message-cell {
+  min-width: 260px;
+}
+.message-cell div {
+  color: #172033;
+  font-weight: 600;
+}
+.message-cell span {
+  color: var(--logs-muted);
+  font-size: 0.73rem;
+}
+.level-badge,
+.layer-badge,
+.participant-label,
+.drawer-source {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.level-badge {
+  padding: 5px 7px;
+  background: #e8f2fb;
+  color: #155b8e;
+  text-transform: uppercase;
+}
+.level-badge--warning {
+  background: #fff4dc;
+  color: #9a5a00;
+}
+.level-badge--error {
+  background: #ffeaed;
+  color: #b41f37;
+}
+.layer-badge,
+.participant-label,
+.drawer-source {
+  padding: 5px 7px;
+  background: #eef0f5;
+  color: #4b5568;
+}
+.participant-label {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+.source-cell {
+  color: #536176;
+  font-size: 0.76rem !important;
+}
+.open-cell {
+  width: 40px;
+  color: var(--logs-muted) !important;
+  text-align: right !important;
+}
+.mobile-event-list {
+  border-top: 1px solid var(--logs-border);
+}
+.mobile-event {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 7px;
+  padding: 16px;
+  border: 0;
+  border-bottom: 1px solid #e8ebf1;
+  border-left: 3px solid #65809a;
+  background: #ffffff;
+  color: #172033;
+  font: inherit;
+  text-align: left;
+}
+.mobile-event--warning {
+  border-left-color: #d97706;
+}
+.mobile-event--error {
+  border-left-color: var(--logs-coral);
+}
+.mobile-event:focus-visible {
+  outline: 2px solid var(--logs-navy);
   outline-offset: -2px;
+}
+.mobile-event__topline,
+.mobile-event__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--logs-muted);
+  font-size: 0.72rem;
+}
+.mobile-event__type {
+  color: var(--logs-muted);
+  font-size: 0.76rem;
+}
+.empty-logs {
+  display: grid;
+  min-height: 164px;
+  place-items: center;
+  align-content: center;
+  padding: 24px;
+  border-top: 1px solid var(--logs-border);
+  text-align: center;
+}
+.empty-logs__icon {
+  display: grid;
+  width: 50px;
+  height: 50px;
+  margin-bottom: 9px;
+  place-items: center;
+  border-radius: 8px;
+  background: #eef1f6;
+  color: var(--logs-muted);
+}
+.empty-logs h3 {
+  margin: 0 0 4px;
+  color: var(--logs-navy);
+  font-size: 1rem;
+}
+.empty-logs p {
+  margin: 0;
+  color: var(--logs-muted);
+  font-size: 0.84rem;
+}
+.pagination-bar {
+  min-height: 56px;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--logs-border);
+  color: var(--logs-muted);
+  font-size: 0.78rem;
+}
+.rows-select {
+  max-width: 104px;
+  margin-right: auto;
+}
+.pagination-actions {
+  gap: 2px;
+}
+.event-drawer {
+  border-left: 1px solid var(--logs-border);
+}
+.drawer-heading {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: start;
+  padding: 22px 20px 16px;
+  background: var(--logs-navy);
+  color: #ffffff;
+}
+.drawer-heading__icon {
+  width: 44px;
+  height: 44px;
+}
+.drawer-heading .surface-kicker,
+.drawer-heading h2 {
+  color: #ffffff;
+}
+.drawer-heading h2 {
+  overflow-wrap: anywhere;
+}
+.drawer-heading .v-btn {
+  color: #ffffff;
+}
+.drawer-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--logs-border);
+}
+.event-summary {
+  margin: 0;
+  padding: 6px 20px;
+}
+.event-summary > div {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid #e8ebf1;
+}
+.event-summary dt,
+.detail-grid dt {
+  color: var(--logs-muted);
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+.event-summary dd,
+.detail-grid dd {
+  overflow-wrap: anywhere;
+  margin: 0;
+  color: #263248;
+  font-size: 0.82rem;
+}
+.drawer-details {
+  padding: 20px;
+}
+.drawer-details h3 {
+  margin: 0 0 14px;
+  color: var(--logs-navy);
+  font-size: 0.95rem;
+}
+.drawer-details > p {
+  color: var(--logs-muted);
+  font-size: 0.82rem;
 }
 .detail-grid {
   display: grid;
   grid-template-columns: minmax(120px, auto) 1fr;
-  gap: 8px 16px;
+  gap: 10px 16px;
 }
-.detail-grid dt {
-  font-weight: 600;
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
-.detail-grid dd {
-  margin: 0;
-  overflow-wrap: anywhere;
+@media (max-width: 959px) {
+  .logs-page {
+    padding: 16px 14px 32px;
+  }
+  .study-context {
+    grid-template-columns: auto minmax(0, 1fr);
+    min-height: auto;
+    padding: 20px;
+  }
+  .study-context__time {
+    grid-column: 2;
+    max-width: none;
+    text-align: left;
+  }
+  .primary-filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .filter-lower-row {
+    grid-template-columns: 1fr;
+  }
+  .date-filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 599px) {
+  .logs-page {
+    padding: 12px 10px 28px;
+  }
+  .study-context {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 18px;
+  }
+  .study-context__icon {
+    width: 44px;
+    height: 44px;
+  }
+  .study-context__time {
+    grid-column: 1;
+  }
+  .filter-surface {
+    padding: 13px 12px;
+  }
+  .surface-heading {
+    min-height: 38px;
+  }
+  .surface-heading h2 {
+    margin-right: auto;
+  }
+  .mobile-filter-toggle {
+    display: inline-flex;
+  }
+  .filter-actions,
+  .filter-actions .v-btn {
+    width: 100%;
+  }
+  .filter-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .primary-filter-grid,
+  .date-filter-grid {
+    grid-template-columns: 1fr;
+  }
+  .events-toolbar {
+    align-items: flex-start;
+    gap: 12px;
+    flex-direction: column;
+  }
+  .refresh-area {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .pagination-bar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .rows-select {
+    flex: 0 0 96px;
+  }
+  .event-summary > div,
+  .detail-grid {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .log-row {
+    transition: none;
+  }
 }
 </style>

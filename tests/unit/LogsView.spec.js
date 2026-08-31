@@ -7,7 +7,18 @@ import {
 } from '@/shared/services/studyLogQuery'
 
 jest.mock('vuetify', () => ({
-  useDisplay: () => ({ smAndDown: false }),
+  useDisplay: () => ({ smAndDown: false, xs: { value: false } }),
+}))
+
+jest.mock('vuex', () => ({
+  useStore: () => ({
+    getters: {
+      test: {
+        testTitle: 'Heuristic logging testing',
+        testType: 'HEURISTIC',
+      },
+    },
+  }),
 }))
 
 jest.mock('@/app/plugins/firebase', () => ({ db: {} }))
@@ -35,6 +46,79 @@ const page = {
 }
 
 describe('LogsView', () => {
+  it('shows readable filter labels while preserving canonical values', async () => {
+    getParticipantLabels.mockResolvedValue([])
+    getStudyLogPage.mockResolvedValue(page)
+    getStudyLogCount.mockResolvedValue(1)
+
+    const wrapper = mount(LogsView, {
+      props: { id: 'study-1' },
+      global: {
+        stubs: {
+          VBtn: {
+            name: 'VBtn',
+            emits: ['click'],
+            template: '<button @click="$emit(\'click\')"><slot /></button>',
+          },
+          VSelect: {
+            name: 'VSelect',
+            props: ['items', 'itemTitle', 'itemValue', 'label'],
+            emits: ['update:modelValue'],
+            template: '<div />',
+          },
+        },
+      },
+    })
+    await flushPromises()
+
+    const selects = wrapper.findAllComponents({ name: 'VSelect' })
+    const eventType = selects.find(
+      (select) => select.props('label') === 'Event type',
+    )
+    const source = selects.find((select) => select.props('label') === 'Source')
+
+    expect(eventType.props()).toMatchObject({
+      itemTitle: 'title',
+      itemValue: 'value',
+      items: [
+        { title: 'Study View Opened', value: 'STUDY_VIEW_OPENED' },
+        { title: 'Answer Edited', value: 'ANSWER_EDITED' },
+        { title: 'Consent Accepted', value: 'CONSENT_ACCEPTED' },
+        {
+          title: 'Task Attempt Finished',
+          value: 'TASK_ATTEMPT_FINISHED',
+        },
+        { title: 'Study Submitted', value: 'STUDY_SUBMITTED' },
+      ],
+    })
+    expect(source.props()).toMatchObject({
+      itemTitle: 'title',
+      itemValue: 'value',
+      items: [
+        { title: 'Study Client', value: 'study-client' },
+        { title: 'Logging Service', value: 'logging-service' },
+      ],
+    })
+
+    eventType.vm.$emit('update:modelValue', 'STUDY_VIEW_OPENED')
+    source.vm.$emit('update:modelValue', 'study-client')
+    await wrapper
+      .findAll('button')
+      .find((button) => button.text().includes('Apply filters'))
+      .trigger('click')
+    await flushPromises()
+
+    expect(getStudyLogPage).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        filters: {
+          eventType: 'STUDY_VIEW_OPENED',
+          source: 'study-client',
+        },
+      }),
+    )
+    wrapper.unmount()
+  })
+
   it('falls back to the visible range when a forced count refresh fails', async () => {
     getParticipantLabels.mockResolvedValue([])
     getStudyLogPage.mockResolvedValue(page)
