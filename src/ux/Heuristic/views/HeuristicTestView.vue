@@ -259,6 +259,7 @@
                 :heuristics="heuristics"
                 :current-user-test-answer="currentUserTestAnswer"
                 :calculated-progress="calculatedProgress"
+                :is-traditional="isTraditional"
                 :per-heuristic-progress="perHeuristicProgress"
                 :heuristic-description="heuristicDescription"
                 :heuristic-storage="heuristicStorage"
@@ -480,6 +481,13 @@ const evaluatorInfoSections = computed(() => {
 })
 
 const trackTimeEnabled = computed(() => test.value?.trackTime !== false)
+
+const isTraditional = computed(
+  () =>
+    !test.value?.testOptions?.length &&
+    test.value?.useFrequency !== false &&
+    test.value?.useSeverity !== false,
+)
 
 const testDisabledReason = computed(() => {
   if (currentUserTestAnswer.value?.submitted) return 'already-completed'

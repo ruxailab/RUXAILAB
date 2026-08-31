@@ -20,6 +20,13 @@ export default {
     },
   },
   mutations: {
+    CLEAR_HEURISTIC_STATE(state) {
+      state.heuristicStructure = []
+      state.heuristics = []
+      state.testWeights = {}
+      state.scoresPercentage = []
+      state.currentImageUrl = ''
+    },
     SET_HEURISTICS(state, payload) {
       state.heuristics = [...payload]
     },

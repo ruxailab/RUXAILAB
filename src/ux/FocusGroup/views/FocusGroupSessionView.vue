@@ -510,6 +510,20 @@
               @save="onSaveNotes"
             />
           </div>
+
+          <div v-else-if="panelTab === 'backroom'" class="fg-fill d-flex flex-column">
+            <p class="text-caption text-medium-emphasis pa-2 mb-0 flex-grow-0">
+              {{ t('focusGroup.session.backroomHint') }}
+            </p>
+            <TopicDiscussion
+              class="fg-fill"
+              :messages="backroomMessages"
+              :current-user-id="user?.id"
+              :can-post="canPostBackroom"
+              :sending="backroomSending"
+              @send="onSendBackroom"
+            />
+          </div>
         </div>
       </aside>
     </div>
@@ -569,6 +583,7 @@ const {
   timer,
   currentStimulus,
   breakout,
+  backroomMessages: rtdbBackroomMessages,
   loaded,
   isLive,
   isEnded,
@@ -588,7 +603,9 @@ const {
   resetTimer,
   sendMessage,
   setBreakoutState,
+  sendBackroomMessage,
   subscribe,
+  subscribeBackroom,
   toSessionRecord,
 } = useFocusGroupSession(studyId)
 
@@ -823,6 +840,13 @@ const panelTabs = computed(() => {
       icon: 'mdi-notebook-edit-outline',
       label: 'focusGroup.session.notes',
     })
+  // Private facilitator+observer channel — participants never see it exists.
+  if (isFacilitator.value || isObserver.value)
+    tabs.push({
+      key: 'backroom',
+      icon: 'mdi-shield-lock-outline',
+      label: 'focusGroup.session.backroom',
+    })
   return tabs
 })
 // Keep the active tab valid; prefer the discussion, else the first tab.
@@ -870,6 +894,9 @@ const {
   displayName: computed(() => user.value?.name || user.value?.email || ''),
   accessLevel,
   cooperators: computed(() => test.value?.cooperators || []),
+  // Attendees join a Focus Group session muted/camera-off and opt in,
+  // rather than immediately broadcasting to everyone on connect.
+  autoEnableMedia: false,
 })
 
 // Accumulated LiveKit active-speaker time per identity, feeding the
@@ -1053,6 +1080,40 @@ const activeMessages = computed(() => {
     .sort((a, b) => a.timestamp - b.timestamp)
 })
 
+// --- Observer backroom ---
+// A private facilitator+observer channel, separate from the main discussion,
+// backed by its own top-level RTDB path (focusGroupBackroom/{studyId} — see
+// useFocusGroupSession.js) rather than nested under the main session tree,
+// so its read access can actually be denied to participants and not just
+// hidden by the UI. Only subscribed for facilitator/observer — see the
+// subscribeBackroom() call in onMounted below.
+const canPostBackroom = computed(() => isFacilitator.value || isObserver.value)
+const backroomMessages = computed(() => {
+  return Object.entries(rtdbBackroomMessages.value ?? {})
+    .map(([id, value]) => ({
+      id,
+      userId: value?.userId ?? '',
+      name: value?.name ?? '',
+      text: value?.text ?? '',
+      timestamp: value?.timestamp ?? 0,
+    }))
+    .sort((a, b) => a.timestamp - b.timestamp)
+})
+const backroomSending = ref(false)
+const onSendBackroom = async (text) => {
+  if (!text?.trim() || !canPostBackroom.value) return
+  backroomSending.value = true
+  try {
+    await sendBackroomMessage({
+      userId: user.value?.id,
+      name: user.value?.name || user.value?.email || '',
+      text: text.trim(),
+    })
+  } finally {
+    backroomSending.value = false
+  }
+}
+
 // --- Facilitator actions ---
 const onStart = async () => {
   starting.value = true
@@ -1153,6 +1214,7 @@ const enterSession = async () => {
     userId: user.value?.id,
     name: user.value?.name || user.value?.email || '',
     role: roleLabel.value,
+    accessLevel: accessLevel.value,
   })
 }
 
@@ -1179,6 +1241,23 @@ const onConsentDecline = async () => {
   })
   router.push(`/focusGroup/dashboard/${studyId}`).catch(() => {})
 }
+
+// Only facilitator/observer can actually read this path (see
+// database.rules.json) — participants never subscribe, both because they
+// have nothing to read there and to avoid a permission_denied listener
+// error on every participant's client. A watcher rather than a one-time
+// mount-time check: isObserver/isFacilitator depend on accessLevel, which
+// resolves once `user` (the auth getter) and the fetched study are both
+// populated — not guaranteed to have settled by the exact synchronous
+// instant onMounted reaches this line, so a plain `if` check here could
+// permanently miss a role that resolves a tick later.
+watch(
+  () => isFacilitator.value || isObserver.value,
+  (canReadBackroom) => {
+    if (canReadBackroom) subscribeBackroom()
+  },
+  { immediate: true },
+)
 
 onMounted(async () => {
   await store.dispatch('getStudy', { id: studyId })

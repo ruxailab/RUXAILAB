@@ -1,7 +1,19 @@
 <template>
   <div class="response-control">
     <div class="response-label-row">
-      <span>{{ $t('HeuristicsTestView.answer.optionsAnalysis') }}</span>
+      <div class="response-label">
+        <span>{{ $t('HeuristicsTestView.answer.optionsAnalysis') }}</span>
+        <v-btn
+          v-if="optionsWithDescriptions.length"
+          icon="mdi-information-outline"
+          size="x-small"
+          variant="text"
+          color="primary"
+          title="View response descriptions"
+          aria-label="View response descriptions"
+          @click="showDescriptions = true"
+        />
+      </div>
       <small>{{ placeholder }}</small>
     </div>
 
@@ -17,15 +29,45 @@
         :disabled="disabled"
         @click="$emit('change', option)"
       >
-        <span class="option-number">{{ option.value }}</span>
-        <span class="option-text">{{ option.text }}</span>
+        <span class="option-action">{{ option.text }}</span>
       </button>
     </div>
+
+    <v-dialog v-model="showDescriptions" max-width="620">
+      <v-card rounded="lg">
+        <v-card-title class="d-flex align-center ga-2">
+          <v-icon color="primary">mdi-information-outline</v-icon>
+          Response descriptions
+        </v-card-title>
+        <v-divider />
+        <v-card-text>
+          <v-list class="pa-0" lines="three">
+            <v-list-item
+              v-for="option in optionsWithDescriptions"
+              :key="option.timestamp ?? option.value ?? option.text"
+            >
+              <v-list-item-title class="font-weight-bold">
+                {{ option.text }}
+              </v-list-item-title>
+              <v-list-item-subtitle class="text-wrap mt-1">
+                {{ option.description }}
+              </v-list-item-subtitle>
+            </v-list-item>
+          </v-list>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn variant="text" @click="showDescriptions = false">
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 const props = defineProps({
   placeholder: { type: String, default: '' },
@@ -36,6 +78,8 @@ const props = defineProps({
 
 defineEmits(['change'])
 
+const showDescriptions = ref(false)
+
 const sortedOptions = computed(() =>
   [...props.options].sort((a, b) => {
     const aValue = Number(a.value)
@@ -45,6 +89,10 @@ const sortedOptions = computed(() =>
     }
     return String(a.value).localeCompare(String(b.value))
   }),
+)
+
+const optionsWithDescriptions = computed(() =>
+  sortedOptions.value.filter((option) => option.description?.trim()),
 )
 
 const selectedOptionData = computed(() => props.answer?.custom || null)
@@ -81,6 +129,12 @@ const selectedOption = computed(() =>
   font-family: 'Roboto Mono', monospace;
   font-size: 0.88rem;
   font-weight: 800;
+}
+
+.response-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
 }
 
 .response-label-row small {
@@ -149,18 +203,11 @@ const selectedOption = computed(() =>
     0 10px 22px rgba(0, 33, 63, 0.1);
 }
 
-.option-number {
-  color: #151b2a;
-  font-size: 1.28rem;
-  font-weight: 800;
-  line-height: 1;
-}
-
-.option-text {
+.option-action {
   overflow-wrap: anywhere;
-  font-family: 'Roboto Mono', monospace;
-  font-size: 0.78rem;
+  font-size: 0.9rem;
   font-weight: 600;
+  line-height: 1.35;
   text-align: center;
 }
 

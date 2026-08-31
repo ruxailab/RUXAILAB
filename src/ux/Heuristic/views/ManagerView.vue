@@ -85,7 +85,7 @@ import {
 import ManagerDashboardLayout from '@/shared/components/manager/ManagerDashboardLayout.vue'
 import ManagerView from '@/shared/views/template/ManagerView.vue'
 import { getStatusIcon, getStatusText } from '@/shared/utils/statusUtils'
-import { computed, onMounted, watchEffect } from 'vue'
+import { computed, watch, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 
@@ -167,9 +167,24 @@ const navigator = computed(() => {
 // Methods para los componentes adicionales
 const viewAllActivity = () => {}
 
-// Lifecycle
-onMounted(async () => {
-  await store.dispatch('getStudy', { id: route.params.id })
+let studyLoadVersion = 0
+
+const loadStudy = async (studyId) => {
+  const loadVersion = ++studyLoadVersion
+  store.commit('CLEAN_TEST')
+  store.commit('CLEAR_HEURISTIC_STATE')
+
+  if (!studyId) return
+
+  const study = await store.dispatch('getStudy', { id: studyId })
+  if (loadVersion !== studyLoadVersion || !study) return
+
   await store.dispatch('getCurrentTestAnswerDoc')
-})
+}
+
+watch(
+  () => route.params.id,
+  (studyId) => loadStudy(studyId),
+  { immediate: true },
+)
 </script>
