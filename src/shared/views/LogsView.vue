@@ -395,7 +395,8 @@
           <h3 id="event-specific-heading">Event-specific data</h3>
           <p v-if="selectedEvent.eventType === 'ANSWER_EDITED'">
             Counts summarize browser input activity; response text is never
-            logged.
+            logged. Active input span runs from the first to the last input
+            event, not the total time spent on the question.
           </p>
           <dl v-if="detailEntries.length" class="detail-grid">
             <template v-for="[key, value] in detailEntries" :key="key">
@@ -656,15 +657,23 @@ const levelIcon = (level) =>
     error: 'mdi-alert-circle-outline',
     info: 'mdi-information-outline',
   })[level] || 'mdi-information-outline'
+const formatDuration = (milliseconds) => {
+  const value = Number(milliseconds)
+  if (!Number.isFinite(value)) return 'Unavailable'
+  if (value < 1000) return `${value.toLocaleString()} ms`
+  return `${(value / 1000).toLocaleString(undefined, {
+    maximumFractionDigits: 1,
+  })} s`
+}
 const deliveryDelay = (event) => {
   const occurred = toDate(event.occurredAt)
   const received = toDate(event.receivedAt)
   if (!occurred || !received) return 'Unavailable'
-  return `${Math.max(0, received - occurred).toLocaleString()} ms`
+  return formatDuration(Math.max(0, received - occurred))
 }
 const DETAIL_LABELS = Object.freeze({
   fieldRef: 'Field',
-  editSpanMs: 'Editing time',
+  editSpanMs: 'Active input span',
   editOperations: 'Input changes',
   pasteOperations: 'Paste actions',
   initialLength: 'Starting length',
@@ -696,7 +705,7 @@ const formatFieldRef = (value) => {
 }
 const formatDetailValue = (key, value) => {
   if (key === 'fieldRef') return formatFieldRef(value)
-  if (key === 'editSpanMs') return `${Number(value).toLocaleString()} ms`
+  if (key === 'editSpanMs') return formatDuration(value)
   if (key === 'editOperations') return pluralized(value, 'input event')
   if (key === 'pasteOperations') return pluralized(value, 'paste event')
   if (key === 'initialLength' || key === 'resultingLength') {
@@ -1204,8 +1213,10 @@ onBeforeUnmount(() => clearTimeout(participantTimer))
   font-size: 0.95rem;
 }
 .drawer-details > p {
+  margin: 0 0 18px;
   color: var(--logs-muted);
   font-size: 0.82rem;
+  line-height: 1.5;
 }
 .detail-grid {
   display: grid;

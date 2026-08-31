@@ -178,7 +178,7 @@ describe('LogsView', () => {
           receivedAt: new Date('2026-08-31T04:12:38.161Z'),
           details: {
             fieldRef: 'heuristic:1:question:0:comment',
-            editSpanMs: 474,
+            editSpanMs: 1448,
             editOperations: 6,
             pasteOperations: 0,
             initialLength: 0,
@@ -196,10 +196,15 @@ describe('LogsView', () => {
     expect(wrapper.text()).toContain('Heuristic 2 · Question 1 · Comment field')
     expect(wrapper.text()).toContain('Input changes')
     expect(wrapper.text()).toContain('6 input events')
-    expect(wrapper.text()).toContain('Editing time')
-    expect(wrapper.text()).toContain('474 ms')
+    expect(wrapper.text()).toContain('Active input span')
+    expect(wrapper.text()).toContain('1.4 s')
+    expect(wrapper.text()).toContain('Delivery delay')
+    expect(wrapper.text()).toContain('6.2 s')
     expect(wrapper.text()).toContain(
       'Counts summarize browser input activity; response text is never logged.',
+    )
+    expect(wrapper.text()).toContain(
+      'Active input span runs from the first to the last input event, not the total time spent on the question.',
     )
     expect(wrapper.text()).not.toContain('heuristic:1:question:0:comment')
     expect(wrapper.text()).not.toContain('Edit Operations')
