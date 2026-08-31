@@ -8,12 +8,19 @@ export class UpsertSentimentAnalyticsService {
    * @param {object} deps
    * @param {import('../repositories/FirestoreSentimentAnalyticsRepository.js').FirestoreSentimentAnalyticsRepository} deps.analyticsRepository
    * @param {import('../../../shared/repositories/FirestoreAnswerRepository.js').FirestoreAnswerRepository} deps.answerRepository
+   * @param {import('../../sentiment/repositories/FirestoreSentimentRepository.js').FirestoreSentimentRepository} deps.sentimentRepository
    * @param {object} deps.FieldValue
    */
-  constructor({ analyticsRepository, answerRepository, FieldValue }) {
+  constructor({
+    analyticsRepository,
+    answerRepository,
+    sentimentRepository,
+    FieldValue,
+  }) {
     this.rebuildService = new RebuildSentimentAnalyticsService({
       analyticsRepository,
       answerRepository,
+      sentimentRepository,
       FieldValue,
     })
   }
@@ -23,16 +30,27 @@ export class UpsertSentimentAnalyticsService {
    * @param {string} params.answersDocId
    * @param {string} params.userDocId
    * @param {string|number} params.taskId
-   * @param {object} params.emotions
+   * @param {string} [params.sentimentDocId]
+   * @param {object} [params.emotions]
+   * @param {object} [params.text]
    * @returns {Promise<object>}
    */
-  async execute({ answersDocId, userDocId, taskId, emotions }) {
+  async execute({
+    answersDocId,
+    userDocId,
+    taskId,
+    sentimentDocId = null,
+    emotions = null,
+    text = null,
+  }) {
     return this.rebuildService.execute({
       answersDocId,
       preferResult: {
+        id: sentimentDocId,
         userDocId,
         taskId,
         emotions,
+        text,
       },
     })
   }

@@ -1,4 +1,8 @@
 import { jest } from '@jest/globals'
+import {
+  aggregateUtteranceSentiment,
+  mapUtteranceLabel,
+} from '../service/aggregateUtteranceSentiment.js'
 
 const mockAnswerGet = jest.fn()
 const mockAnswerUpdate = jest.fn()
@@ -121,9 +125,7 @@ jest.unstable_mockModule('../../../core/firebase/index.js', async () => {
   }
 })
 
-const { facialSentimentTask } = await import(
-  '../interface/facialSentimentTask.js'
-)
+const { textSentimentTask } = await import('../interface/textSentimentTask.js')
 
 const request = (uid, data) => ({
   auth: uid ? { uid } : null,
@@ -136,27 +138,44 @@ const snap = (exists, data, id = null) => ({
   data: () => data,
 })
 
-const emotionsPayload = {
-  Happy: 40,
-  Sad: 10,
-  Angry: 5,
-  Surprised: 15,
-  Neutral: 20,
-  Disgusted: 5,
-  Fearful: 5,
+const audioUrl =
+  'https://firebasestorage.googleapis.com/v0/b/bucket/o/tests%2Faudio.webm?alt=media'
+
+const textPayload = {
+  Positive: 50,
+  Neutral: 25,
+  Negative: 25,
+  sampleCount: 4,
 }
 
-const webcamUrl =
-  'https://firebasestorage.googleapis.com/v0/b/bucket/o/tests%2Fvid.webm?alt=media'
+describe('aggregateUtteranceSentiment', () => {
+  it('maps POS / NEU / NEG labels', () => {
+    expect(mapUtteranceLabel('POS')).toBe('Positive')
+    expect(mapUtteranceLabel('neu')).toBe('Neutral')
+    expect(mapUtteranceLabel('NEG')).toBe('Negative')
+    expect(mapUtteranceLabel('unknown')).toBeNull()
+  })
 
-describe('facialSentimentTask', () => {
+  it('aggregates utterance labels into percentages', () => {
+    const result = aggregateUtteranceSentiment([
+      { label: 'POS' },
+      { label: 'POS' },
+      { label: 'NEU' },
+      { label: 'NEG' },
+    ])
+    expect(result.toJSON()).toEqual(textPayload)
+  })
+})
+
+describe('textSentimentTask', () => {
   const originalFetch = global.fetch
-  const savedBaseUrl = process.env.FACIAL_SENTIMENT_API_BASE_URL
+  const savedBaseUrl = process.env.TRANSCRIPTION_SENTIMENT_API_BASE_URL
 
   beforeEach(() => {
     jest.clearAllMocks()
     sentimentStore.clear()
-    process.env.FACIAL_SENTIMENT_API_BASE_URL = 'http://facial.test'
+    process.env.TRANSCRIPTION_SENTIMENT_API_BASE_URL =
+      'http://sentiment.test/audio-transcript-sentiment'
 
     mockAnswerGet.mockResolvedValue(
       snap(true, {
@@ -165,7 +184,7 @@ describe('facialSentimentTask', () => {
           'evaluator-1': {
             tasks: {
               '0': {
-                webcamRecordURL: webcamUrl,
+                audioRecordURL: audioUrl,
               },
             },
           },
@@ -187,19 +206,27 @@ describe('facialSentimentTask', () => {
     global.fetch = jest.fn(async () => ({
       ok: true,
       json: async () => ({
-        emotions: emotionsPayload,
+        status: 'success',
+        data: {
+          utterances_sentiment: [
+            { label: 'POS', text: 'great', confidence: 0.9, timestamp: [0, 1] },
+            { label: 'POS', text: 'nice', confidence: 0.8, timestamp: [1, 2] },
+            { label: 'NEU', text: 'ok', confidence: 0.7, timestamp: [2, 3] },
+            { label: 'NEG', text: 'hard', confidence: 0.6, timestamp: [3, 4] },
+          ],
+        },
       }),
     }))
   })
 
   afterEach(() => {
     global.fetch = originalFetch
-    process.env.FACIAL_SENTIMENT_API_BASE_URL = savedBaseUrl
+    process.env.TRANSCRIPTION_SENTIMENT_API_BASE_URL = savedBaseUrl
   })
 
   it('requires authentication', async () => {
     await expect(
-      facialSentimentTask(
+      textSentimentTask(
         request(null, {
           answersDocId: 'answer-1',
           userDocId: 'evaluator-1',
@@ -209,7 +236,7 @@ describe('facialSentimentTask', () => {
     ).rejects.toMatchObject({ code: 'unauthenticated' })
   })
 
-  it('fails when webcam recording is missing', async () => {
+  it('fails when audio recording is missing', async () => {
     mockAnswerGet.mockResolvedValue(
       snap(true, {
         studyId: 'study-1',
@@ -224,7 +251,7 @@ describe('facialSentimentTask', () => {
     )
 
     await expect(
-      facialSentimentTask(
+      textSentimentTask(
         request('owner', {
           answersDocId: 'answer-1',
           userDocId: 'evaluator-1',
@@ -248,7 +275,7 @@ describe('facialSentimentTask', () => {
     )
 
     await expect(
-      facialSentimentTask(
+      textSentimentTask(
         request('owner', {
           answersDocId: 'answer-1',
           userDocId: 'evaluator-1',
@@ -259,8 +286,8 @@ describe('facialSentimentTask', () => {
     ).rejects.toMatchObject({ code: 'not-found' })
   })
 
-  it('analyzes video, stores sentiment doc + sentimentDocId, and rebuilds analytics', async () => {
-    const result = await facialSentimentTask(
+  it('analyzes audio, stores sentiment doc + sentimentDocId, and rebuilds analytics', async () => {
+    const result = await textSentimentTask(
       request('owner', {
         answersDocId: 'answer-1',
         userDocId: 'evaluator-1',
@@ -270,10 +297,14 @@ describe('facialSentimentTask', () => {
     )
 
     expect(global.fetch).toHaveBeenCalledWith(
-      'http://facial.test/process_video',
+      'http://sentiment.test/audio-transcript-sentiment/process',
       expect.objectContaining({
         method: 'POST',
-        body: JSON.stringify({ video_name: 'tests/vid.webm' }),
+        body: JSON.stringify({
+          url: audioUrl,
+          start_time_ms: 0,
+          end_time_ms: 12 * 60 * 60 * 1000,
+        }),
       }),
     )
     expect(mockSentimentAdd).toHaveBeenCalledWith(
@@ -281,8 +312,8 @@ describe('facialSentimentTask', () => {
         answersDocId: 'answer-1',
         userDocId: 'evaluator-1',
         taskId: '0',
-        facial: emotionsPayload,
-        text: null,
+        facial: null,
+        text: textPayload,
       }),
     )
     expect(mockAnswerUpdate).toHaveBeenCalledWith({
@@ -292,8 +323,9 @@ describe('facialSentimentTask', () => {
       expect.objectContaining({
         general: expect.objectContaining({
           bySignal: expect.objectContaining({
-            facial: expect.objectContaining({
-              sampleCount: 1,
+            text: expect.objectContaining({
+              sampleCount: 4,
+              Positive: 50,
             }),
           }),
         }),
@@ -306,8 +338,7 @@ describe('facialSentimentTask', () => {
       userDocId: 'evaluator-1',
       taskId: '0',
       sentimentDocId: 'sent-1',
-      videoName: 'tests/vid.webm',
-      emotions: emotionsPayload,
+      text: textPayload,
     })
   })
 
@@ -317,15 +348,20 @@ describe('facialSentimentTask', () => {
       userDocId: 'evaluator-1',
       taskId: '0',
       facial: {
-        Happy: 1,
+        Happy: 40,
         Sad: 0,
         Angry: 0,
         Surprised: 0,
-        Neutral: 99,
+        Neutral: 60,
         Disgusted: 0,
         Fearful: 0,
       },
-      text: { Positive: 10, Neutral: 80, Negative: 10, sampleCount: 1 },
+      text: {
+        Positive: 10,
+        Neutral: 80,
+        Negative: 10,
+        sampleCount: 1,
+      },
       createdAt: 'old',
       updatedAt: 'old',
     })
@@ -337,7 +373,7 @@ describe('facialSentimentTask', () => {
           'evaluator-1': {
             tasks: {
               '0': {
-                webcamRecordURL: webcamUrl,
+                audioRecordURL: audioUrl,
                 sentimentDocId: 'sent-existing',
               },
             },
@@ -346,7 +382,7 @@ describe('facialSentimentTask', () => {
       }),
     )
 
-    await facialSentimentTask(
+    await textSentimentTask(
       request('owner', {
         answersDocId: 'answer-1',
         userDocId: 'evaluator-1',
@@ -359,8 +395,8 @@ describe('facialSentimentTask', () => {
     expect(mockSentimentSet).toHaveBeenCalledWith(
       'sent-existing',
       expect.objectContaining({
-        facial: emotionsPayload,
-        text: expect.objectContaining({ Positive: 10 }),
+        text: textPayload,
+        facial: expect.objectContaining({ Happy: 40 }),
       }),
     )
     expect(mockAnswerUpdate).not.toHaveBeenCalled()

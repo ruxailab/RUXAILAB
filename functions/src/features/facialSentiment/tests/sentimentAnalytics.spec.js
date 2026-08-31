@@ -1,6 +1,7 @@
 import {
   buildSentimentAnalytics,
   collectSentimentContributions,
+  collectSentimentDocIds,
   facialEmotionsToBucket,
   toTaskAnalyticsKey,
 } from '../service/buildSentimentAnalytics.js'
@@ -179,27 +180,47 @@ describe('buildSentimentAnalytics', () => {
   })
 })
 
-describe('collectSentimentContributions', () => {
-  it('reads facialSentimentResults from the answers document', () => {
-    const contributions = collectSentimentContributions({
+describe('collectSentimentDocIds', () => {
+  it('collects sentimentDocId pointers from the answers document', () => {
+    const ids = collectSentimentDocIds({
       taskAnswers: {
         Ev1: {
           tasks: {
-            '0': {
-              facialSentimentResults: {
-                Happy: 50,
-                Surprised: 0,
-                Neutral: 50,
-                Sad: 0,
-                Angry: 0,
-                Disgusted: 0,
-                Fearful: 0,
-              },
-            },
+            '0': { sentimentDocId: 'sent-a' },
+            '1': {},
+          },
+        },
+        Ev2: {
+          tasks: {
+            '0': { sentimentDocId: 'sent-b' },
           },
         },
       },
     })
+
+    expect(ids.sort()).toEqual(['sent-a', 'sent-b'])
+  })
+})
+
+describe('collectSentimentContributions', () => {
+  it('reads facial and text from sentiment documents', () => {
+    const contributions = collectSentimentContributions([
+      {
+        id: 'sent-a',
+        userDocId: 'Ev1',
+        taskId: '0',
+        facial: {
+          Happy: 50,
+          Surprised: 0,
+          Neutral: 50,
+          Sad: 0,
+          Angry: 0,
+          Disgusted: 0,
+          Fearful: 0,
+        },
+        text: null,
+      },
+    ])
 
     expect(contributions).toHaveLength(1)
     expect(contributions[0]).toMatchObject({
@@ -210,25 +231,23 @@ describe('collectSentimentContributions', () => {
 
   it('prefers an in-memory result for the same user/task', () => {
     const contributions = collectSentimentContributions(
-      {
-        taskAnswers: {
-          Ev1: {
-            tasks: {
-              '0': {
-                facialSentimentResults: {
-                  Happy: 10,
-                  Surprised: 0,
-                  Neutral: 90,
-                  Sad: 0,
-                  Angry: 0,
-                  Disgusted: 0,
-                  Fearful: 0,
-                },
-              },
-            },
+      [
+        {
+          id: 'sent-a',
+          userDocId: 'Ev1',
+          taskId: '0',
+          facial: {
+            Happy: 10,
+            Surprised: 0,
+            Neutral: 90,
+            Sad: 0,
+            Angry: 0,
+            Disgusted: 0,
+            Fearful: 0,
           },
+          text: null,
         },
-      },
+      ],
       {
         userDocId: 'Ev1',
         taskId: '0',

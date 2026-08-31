@@ -1,14 +1,13 @@
 import { fail } from '../../../core/errors.js'
-import { processFacialVideo } from './processFacialVideo.js'
-import { extractVideoNameFromUrl } from './extractVideoNameFromUrl.js'
+import { processAudioSentiment } from './processAudioSentiment.js'
 import { ROLE, assertStudyAccess } from '../../../shared/auth/index.js'
 import { Sentiment } from '../../sentiment/models/Sentiment.js'
 
 /**
- * Analyze facial sentiment for a task webcam recording and persist
- * emotions on the shared sentiment document (facial + text).
+ * Analyze text/transcription sentiment for a task audio recording and persist
+ * the Positive/Neutral/Negative bucket on the shared sentiment document.
  */
-export class AnalyzeFacialSentimentTaskService {
+export class AnalyzeTextSentimentTaskService {
   /**
    * @param {object} deps
    * @param {import('../../../shared/repositories/FirestoreUserRepository.js').FirestoreUserRepository} deps.userRepository
@@ -16,7 +15,7 @@ export class AnalyzeFacialSentimentTaskService {
    * @param {import('../../../shared/repositories/FirestoreStudyRepository.js').FirestoreStudyRepository} deps.studyRepository
    * @param {import('../../sentiment/repositories/FirestoreSentimentRepository.js').FirestoreSentimentRepository} deps.sentimentRepository
    * @param {object} deps.FieldValue
-   * @param {string} deps.facialSentimentApiBaseUrl
+   * @param {string} deps.textSentimentApiBaseUrl
    */
   constructor({
     userRepository,
@@ -24,14 +23,14 @@ export class AnalyzeFacialSentimentTaskService {
     studyRepository,
     sentimentRepository,
     FieldValue,
-    facialSentimentApiBaseUrl,
+    textSentimentApiBaseUrl,
   }) {
     this.userRepository = userRepository
     this.answerRepository = answerRepository
     this.studyRepository = studyRepository
     this.sentimentRepository = sentimentRepository
     this.FieldValue = FieldValue
-    this.facialSentimentApiBaseUrl = facialSentimentApiBaseUrl
+    this.textSentimentApiBaseUrl = textSentimentApiBaseUrl
   }
 
   /**
@@ -48,11 +47,11 @@ export class AnalyzeFacialSentimentTaskService {
       studyId = null,
     } = input || {}
 
-    const baseUrl = (this.facialSentimentApiBaseUrl || '').replace(/\/$/, '')
+    const baseUrl = (this.textSentimentApiBaseUrl || '').replace(/\/$/, '')
     if (!baseUrl) {
       fail(
         'failed-precondition',
-        'FACIAL_SENTIMENT_API_BASE_URL is not configured',
+        'TRANSCRIPTION_SENTIMENT_API_BASE_URL is not configured',
       )
     }
 
@@ -82,7 +81,7 @@ export class AnalyzeFacialSentimentTaskService {
 
     assertStudyAccess(study, uid, isSuperAdmin, {
       allowedRoles: [ROLE.ADMIN, ROLE.MANAGER],
-      message: 'Facial sentiment analysis is not permitted',
+      message: 'Text sentiment analysis is not permitted',
     })
 
     const normalizedTaskId = String(taskId)
@@ -92,21 +91,16 @@ export class AnalyzeFacialSentimentTaskService {
       fail('not-found', 'Task not found for the given userDocId/taskId')
     }
 
-    const webcamRecordURL = task.webcamRecordURL || null
-    if (!webcamRecordURL) {
-      fail('failed-precondition', 'No webcam recording available for this task')
+    const audioRecordURL = task.audioRecordURL || null
+    if (!audioRecordURL) {
+      fail('failed-precondition', 'No audio recording available for this task')
     }
 
-    const videoName = extractVideoNameFromUrl(webcamRecordURL)
-    if (!videoName) {
-      fail('failed-precondition', 'Could not resolve video path from webcam URL')
-    }
-
-    const emotions = await processFacialVideo({
+    const textResults = await processAudioSentiment({
       baseUrl,
-      videoName,
+      audioUrl: audioRecordURL,
     })
-    const emotionsPayload = emotions.toJSON()
+    const textPayload = textResults.toJSON()
 
     const now = this.FieldValue.serverTimestamp()
     const existingSentimentDocId = task.sentimentDocId || null
@@ -119,7 +113,7 @@ export class AnalyzeFacialSentimentTaskService {
 
     let saved
     if (existingSentiment) {
-      const updated = existingSentiment.withFacial(emotionsPayload, now)
+      const updated = existingSentiment.withText(textPayload, now)
       await this.sentimentRepository.set(existingSentimentDocId, updated, {
         merge: false,
       })
@@ -129,8 +123,8 @@ export class AnalyzeFacialSentimentTaskService {
         answersDocId,
         userDocId,
         taskId: normalizedTaskId,
-        facial: emotionsPayload,
-        text: null,
+        facial: null,
+        text: textPayload,
         createdAt: now,
         updatedAt: now,
       })
@@ -149,8 +143,7 @@ export class AnalyzeFacialSentimentTaskService {
       userDocId,
       taskId: normalizedTaskId,
       sentimentDocId: saved.id,
-      videoName,
-      emotions: emotionsPayload,
+      text: textPayload,
       sentiment: saved.toJSON(),
     }
   }

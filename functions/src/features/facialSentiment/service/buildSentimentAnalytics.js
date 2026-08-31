@@ -42,33 +42,53 @@ export const facialEmotionsToBucket = (facialSentimentResults) => {
 }
 
 /**
- * Collect facial sentiment contributions from an answers document.
- * Optionally override one user/task with an in-memory result (just saved).
+ * Collect sentimentDocId pointers from an answers document.
  *
  * @param {object|null|undefined} answerData
- * @param {{ userDocId: string, taskId: string|number, emotions: object }|null} [preferResult]
+ * @returns {string[]}
+ */
+export const collectSentimentDocIds = (answerData) => {
+  const ids = new Set()
+  const taskAnswers = answerData?.taskAnswers || {}
+
+  for (const userAnswer of Object.values(taskAnswers)) {
+    const tasks = userAnswer?.tasks || {}
+    for (const task of Object.values(tasks)) {
+      if (task?.sentimentDocId) {
+        ids.add(String(task.sentimentDocId))
+      }
+    }
+  }
+
+  return [...ids]
+}
+
+/**
+ * Map sentiment documents into analytics contributions.
+ * Optionally override one user/task with an in-memory result (just saved).
+ *
+ * @param {Array<object|null|undefined>} sentimentDocs
+ * @param {{ userDocId: string, taskId: string|number, emotions?: object, facial?: object, text?: object }|null} [preferResult]
  * @returns {Array<{ userDocId: string, taskId: string, facial: object|null, text: object|null }>}
  */
 export const collectSentimentContributions = (
-  answerData,
+  sentimentDocs = [],
   preferResult = null,
 ) => {
   const contributions = []
-  const taskAnswers = answerData?.taskAnswers || {}
 
-  for (const [userDocId, userAnswer] of Object.entries(taskAnswers)) {
-    const tasks = userAnswer?.tasks || {}
-    for (const [taskId, task] of Object.entries(tasks)) {
-      const facial = task?.facialSentimentResults || null
-      const text = task?.textSentimentResults || null
-      if (!facial && !text) continue
-      contributions.push({
-        userDocId,
-        taskId: String(taskId),
-        facial,
-        text,
-      })
-    }
+  for (const doc of sentimentDocs) {
+    if (!doc) continue
+    const facial = doc.facial && typeof doc.facial === 'object' ? doc.facial : null
+    const text = doc.text && typeof doc.text === 'object' ? doc.text : null
+    if (!facial && !text) continue
+    if (doc.userDocId == null || doc.taskId == null) continue
+    contributions.push({
+      userDocId: String(doc.userDocId),
+      taskId: String(doc.taskId),
+      facial,
+      text,
+    })
   }
 
   if (preferResult?.userDocId != null && preferResult?.taskId != null) {
@@ -119,7 +139,6 @@ export const buildSentimentAnalytics = (contributions = []) => {
       taskBuckets[key].facial.push(facialBucket)
     }
 
-    // Text sentiment placeholder: accept already-normalized buckets or skip.
     if (item.text && typeof item.text === 'object') {
       const textBucket = SentimentBucket.fromFirestore({
         Positive: item.text.Positive,

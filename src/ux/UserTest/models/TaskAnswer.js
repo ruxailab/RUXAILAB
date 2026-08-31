@@ -21,7 +21,7 @@ export default class TaskAnswer {
     nasaTlxAnswers,
     tamAnswers,
     sartAnswers,
-    facialSentimentResults,
+    sentimentDocId,
     screenSize,
     audioSize,
     webcamSize,
@@ -53,7 +53,7 @@ export default class TaskAnswer {
     } else {
       this.sartAnswers = new SartAnswer()
     }
-    this.facialSentimentResults = facialSentimentResults ?? null
+    this.sentimentDocId = sentimentDocId ?? null
     this.screenSize = screenSize ?? null
     this.audioSize = audioSize ?? null
     this.webcamSize = webcamSize ?? null
@@ -103,7 +103,7 @@ export default class TaskAnswer {
         this.sartAnswers instanceof SartAnswer
           ? this.sartAnswers.toFirestore()
           : this.sartAnswers,
-      facialSentimentResults: this.facialSentimentResults,
+      sentimentDocId: this.sentimentDocId,
       screenSize: this.screenSize,
       audioSize: this.audioSize,
       webcamSize: this.webcamSize,

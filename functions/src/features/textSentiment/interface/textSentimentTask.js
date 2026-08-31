@@ -11,23 +11,25 @@ import {
   FirestoreStudyRepository,
 } from '../../../shared/repositories/index.js'
 import { FirestoreSentimentRepository } from '../../sentiment/index.js'
-import { FirestoreSentimentAnalyticsRepository } from '../repositories/FirestoreSentimentAnalyticsRepository.js'
-import { AnalyzeFacialSentimentTaskService } from '../service/AnalyzeFacialSentimentTaskService.js'
-import { UpsertSentimentAnalyticsService } from '../service/UpsertSentimentAnalyticsService.js'
-import { facialSentimentTaskValidator } from '../validators/facialSentimentTaskValidator.js'
+import {
+  FirestoreSentimentAnalyticsRepository,
+  UpsertSentimentAnalyticsService,
+} from '../../facialSentiment/index.js'
+import { AnalyzeTextSentimentTaskService } from '../service/AnalyzeTextSentimentTaskService.js'
+import { textSentimentTaskValidator } from '../validators/textSentimentTaskValidator.js'
 
 /**
- * Callable entry point: authenticates the caller and delegates to AnalyzeFacialSentimentTaskService.
+ * Callable entry point: authenticates the caller and delegates to AnalyzeTextSentimentTaskService.
  */
-export const facialSentimentTask = functions.onCall({
+export const textSentimentTask = functions.onCall({
   options: {
     timeoutSeconds: 540,
     memory: '256MiB',
   },
   middlewares: [
-    mapHttpsError(functions, 'Facial sentiment analysis failed'),
+    mapHttpsError(functions, 'Text sentiment analysis failed'),
     requireAuth,
-    validateRequest(facialSentimentTaskValidator),
+    validateRequest(textSentimentTaskValidator),
   ],
   handler: async (request) => {
     const db = admin.firestore()
@@ -37,13 +39,13 @@ export const facialSentimentTask = functions.onCall({
     const answerRepository = new FirestoreAnswerRepository(db)
     const sentimentRepository = new FirestoreSentimentRepository(db)
 
-    const service = new AnalyzeFacialSentimentTaskService({
+    const service = new AnalyzeTextSentimentTaskService({
       userRepository: new FirestoreUserRepository(db),
       answerRepository,
       studyRepository: new FirestoreStudyRepository(db),
       sentimentRepository,
       FieldValue,
-      facialSentimentApiBaseUrl: process.env.FACIAL_SENTIMENT_API_BASE_URL,
+      textSentimentApiBaseUrl: process.env.TRANSCRIPTION_SENTIMENT_API_BASE_URL,
     })
 
     const saved = await service.execute({ uid: request.auth.uid, input })
@@ -63,7 +65,7 @@ export const facialSentimentTask = functions.onCall({
       userDocId: saved.userDocId,
       taskId: saved.taskId,
       sentimentDocId: saved.sentimentDocId,
-      emotions: saved.emotions,
+      text: saved.text,
     })
 
     return saved

@@ -1,10 +1,10 @@
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 
 /**
- * Orchestrates task-level facial sentiment analysis via Cloud Function.
- * The function resolves the webcam recording from the answer task,
- * calls the facial sentiment API, and stores results on a sentiment document
- * pointed by sentimentDocId on the task under answers/{answersDocId}.
+ * Orchestrates task-level text/transcription sentiment analysis via Cloud Function.
+ * The function resolves the audio recording from the answer task,
+ * calls the transcription sentiment API, and stores results on a sentiment
+ * document pointed by sentimentDocId on the task under answers/{answersDocId}.
  *
  * @param {Object} payload
  * @param {string} payload.answersDocId
@@ -16,13 +16,12 @@ import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunc
  *   userDocId: string,
  *   taskId: string,
  *   sentimentDocId: string,
- *   emotions: Record<string, number>,
- *   videoName: string|null,
+ *   text: { Positive: number, Neutral: number, Negative: number, sampleCount: number },
  * }>}
  */
-export async function analyzeFacialSentimentTask(payload) {
+export async function analyzeTextSentimentTask(payload) {
   const response = await FirebaseFunctionsController.callHttpsCallableFunction(
-    'facialSentimentTask',
+    'textSentimentTask',
     payload,
     { timeout: 540_000 },
   )
