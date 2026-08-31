@@ -243,6 +243,7 @@
 <script setup>
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { resolveHeuristicAnswerMode } from '@/ux/Heuristic/utils/heuristicAnswerMode'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import HelpBtn from '@/ux/Heuristic/components/QuestionHelpBtn.vue'
 import HeuristicCommentEvidenceSection from '@/ux/Heuristic/components/steps/HeuristicCommentEvidenceSection.vue'
@@ -290,16 +291,9 @@ const customOptions = computed(() =>
   Array.isArray(props.test?.testOptions) ? props.test.testOptions : [],
 )
 
-const useFrequency = computed(() => props.test?.useFrequency !== false)
-const useSeverity = computed(() => props.test?.useSeverity !== false)
-
-const selectedAnswerMode = computed(() => {
-  if (customOptions.value.length) return 'customOptions'
-  if (useFrequency.value && useSeverity.value) return 'frequencySeverity'
-  if (useFrequency.value) return 'frequency'
-  if (useSeverity.value) return 'severity'
-  return null
-})
+const selectedAnswerMode = computed(() =>
+  resolveHeuristicAnswerMode(props.test),
+)
 
 const hasConfiguredAnswerControl = computed(() =>
   Boolean(selectedAnswerMode.value),

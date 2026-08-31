@@ -1,5 +1,25 @@
 {
   "language": "Language",
+  "agents": {
+    "list": { "title": "Available agents", "subtitle": "Your agents and public agents you can use.", "empty": "No agents are available yet" },
+    "actions": { "create": "Create agent", "edit": "Edit agent", "delete": "Delete agent", "cancel": "Cancel", "save": "Save changes" },
+    "dialog": { "createTitle": "Create agent", "editTitle": "Edit agent" },
+    "fields": { "name": "Name", "model": "Model", "description": "Description", "instructions": "Agent instructions", "instructionsHint": "Define the profile, criteria, and how answers should be justified.", "visibility": "Visibility", "origin": "Source", "userIds": "User IDs", "userIdsHint": "Comma-separated" },
+    "owner": { "you": "Created by you", "community": "Community" },
+    "visibility": { "private": "Private", "shared": "Shared", "public": "Public", "privateOption": "Private — only me", "sharedOption": "Shared — selected users", "publicOption": "Public — all users" },
+    "models": { "empty": "No models found" },
+    "validation": { "required": "This field is required." },
+    "messages": { "created": "Agent created successfully.", "updated": "Agent updated successfully.", "deleted": "Agent deleted.", "loadError": "Agents could not be loaded: {error}", "modelsError": "Models could not be loaded: {error}", "saveError": "The agent could not be saved: {error}", "deleteError": "The agent could not be deleted: {error}", "confirmDelete": "Delete agent “{name}”?" }
+  },
+  "heuristicAgents": {
+    "title": "Agent analysis", "subtitle": "Enter a website, select its pages, and let an agent complete the heuristic evaluation.",
+    "web": { "title": "Enter the website", "subtitle": "We will find the home page and its internal links.", "url": "Website URL", "search": "Find pages" },
+    "pages": { "title": "Select pages", "selected": "{selected} of {total} selected", "selectAll": "Select all", "deselectAll": "Deselect all", "empty": "Enter a website URL and find its pages to select them here." },
+    "run": { "title": "Choose an agent and analyze", "subtitle": "Each page will be saved as a separate evaluation.", "agent": "Agent", "noAgents": "No agents are available", "agentHint": "Create or edit agents from the main Agents section.", "analyze": "Analyze {count} page(s)", "saved": "{count} analyses saved as independent evaluators.", "viewResults": "View results" },
+    "status": { "completed": "Completed", "error": "Error", "running": "Heuristic {current}/{total}", "pending": "Pending" },
+    "messages": { "urlsFound": "{count} URL(s) found.", "discoverError": "URLs could not be found: {error}", "allSaved": "All selected analyses were saved successfully.", "partiallySaved": "{saved} analyses saved and {failed} failed. Check the marked pages.", "noneSaved": "No pages could be analyzed. Check the errors on the marked pages.", "loadAgentsError": "Agents could not be loaded: {error}" },
+    "card": { "description": "Use an AI evaluator to answer this heuristic test.", "open": "Open agent analysis" }
+  },
   "auth": {
     "signupSuccess": "Sign up successful",
     "logoutSuccess": "Logout successful",
@@ -586,6 +606,7 @@
       "AI Agents": "AI Agents",
       "Storage": "Storage",
       "Audit Trail": "Audit Trail",
+      "AI Agents": "AI Agents",
       "name": "Name",
       "studiesCount": "Studies Count",
       "mediaSize": "Media Size",
@@ -841,6 +862,7 @@
     },
     "managerView": {
       "heuristicStudy": "Heuristic Study",
+      "aiAgents": "AI Agents",
       "freePlan": "Free Plan",
       "generalStatistics": "General Statistics",
       "modules": "Modules"
@@ -1302,9 +1324,11 @@
       "evaluator": "Evaluator",
       "last_update": "Last Update",
       "progress": "Progress",
+      "total_time": "Total time",
       "status": "Status",
       "actions": "Actions"
     },
+    "labels": { "ai_agent": "AI agent" },
     "messages": {
       "confirm_delete_report": "Are you sure you want to delete this report?",
       "reports_loading": "Loading Reports",

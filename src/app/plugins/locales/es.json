@@ -1,5 +1,25 @@
 {
   "language": "Idioma",
+  "agents": {
+    "list": { "title": "Agentes disponibles", "subtitle": "Tus agentes y los agentes públicos que puedes utilizar.", "empty": "Todavía no hay agentes disponibles" },
+    "actions": { "create": "Crear agente", "edit": "Editar agente", "delete": "Eliminar agente", "cancel": "Cancelar", "save": "Guardar cambios" },
+    "dialog": { "createTitle": "Crear agente", "editTitle": "Editar agente" },
+    "fields": { "name": "Nombre", "model": "Modelo", "description": "Descripción", "instructions": "Instrucciones del agente", "instructionsHint": "Define el perfil, los criterios y la forma de justificar las respuestas.", "visibility": "Visibilidad", "origin": "Origen", "userIds": "IDs de usuarios", "userIdsHint": "Separados por comas" },
+    "owner": { "you": "Creado por ti", "community": "Comunidad" },
+    "visibility": { "private": "Privado", "shared": "Compartido", "public": "Público", "privateOption": "Privado — solo yo", "sharedOption": "Compartido — usuarios concretos", "publicOption": "Público — todos los usuarios" },
+    "models": { "empty": "No se encontraron modelos" },
+    "validation": { "required": "Este campo es obligatorio." },
+    "messages": { "created": "Agente creado correctamente.", "updated": "Agente actualizado correctamente.", "deleted": "Agente eliminado.", "loadError": "No se pudieron cargar los agentes: {error}", "modelsError": "No se pudieron cargar los modelos: {error}", "saveError": "No se pudo guardar el agente: {error}", "deleteError": "No se pudo eliminar el agente: {error}", "confirmDelete": "¿Eliminar el agente “{name}”?" }
+  },
+  "heuristicAgents": {
+    "title": "Análisis con agentes", "subtitle": "Indica una web, selecciona sus páginas y deja que un agente complete la evaluación heurística.",
+    "web": { "title": "Introduce la web", "subtitle": "Buscaremos la página principal y sus enlaces internos.", "url": "URL de la web", "search": "Buscar páginas" },
+    "pages": { "title": "Selecciona las páginas", "selected": "{selected} de {total} seleccionadas", "selectAll": "Seleccionar todas", "deselectAll": "Deseleccionar todas", "empty": "Introduce la URL de una web y busca sus páginas para seleccionarlas aquí." },
+    "run": { "title": "Elige un agente y analiza", "subtitle": "Cada página se guardará como una evaluación independiente.", "agent": "Agente", "noAgents": "No hay agentes disponibles", "agentHint": "Crea o edita agentes desde la sección general Agentes.", "analyze": "Analizar {count} página(s)", "saved": "{count} análisis guardados como evaluadores independientes.", "viewResults": "Ver resultados" },
+    "status": { "completed": "Completado", "error": "Error", "running": "Heurística {current}/{total}", "pending": "Pendiente" },
+    "messages": { "urlsFound": "Se han encontrado {count} URL(s).", "discoverError": "No se pudieron buscar las URLs: {error}", "allSaved": "Todos los análisis seleccionados se han guardado correctamente.", "partiallySaved": "{saved} análisis guardados y {failed} con error. Revisa las páginas marcadas.", "noneSaved": "No se pudo analizar ninguna página. Revisa los errores de las páginas marcadas.", "loadAgentsError": "No se pudieron cargar los agentes: {error}" },
+    "card": { "description": "Utiliza un evaluador de IA para responder este test heurístico.", "open": "Abrir análisis con agentes" }
+  },
   "auth": {
     "signupSuccess": "Registro exitoso",
     "logoutSuccess": "Cierre de sesión exitoso",
@@ -586,6 +606,7 @@
       "AI Agents": "Agentes IA",
       "Storage": "Almacenamiento",
       "Audit Trail": "Registro de auditoría",
+      "AI Agents": "Agentes de IA",
       "name": "Nombre",
       "studiesCount": "Recuento de Estudios",
       "mediaSize": "Tamaño de Medios",
@@ -834,6 +855,7 @@
     },
     "managerView": {
       "heuristicStudy": "Estudio Heurístico",
+      "aiAgents": "Agentes de IA",
       "freePlan": "Plan Gratuito",
       "generalStatistics": "Estadísticas Generales",
       "modules": "Módulos"
@@ -1238,9 +1260,11 @@
       "evaluator": "Evaluador",
       "last_update": "Última actualización",
       "progress": "Progreso",
+      "total_time": "Tiempo total",
       "status": "Estado",
       "actions": "Comportamiento"
     },
+    "labels": { "ai_agent": "Agente de IA" },
     "messages": {
       "confirm_delete_report": "¿Estás seguro de que deseas eliminar este informe?",
       "reports_loading": "Cargando informes",
