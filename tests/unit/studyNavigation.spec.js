@@ -154,7 +154,6 @@ describe('study navigation', () => {
       'Dashboard',
       'Preview',
       'Results',
-      'Logs',
     ])
   })
 
@@ -181,6 +180,7 @@ describe('study navigation', () => {
       'evaluation',
       'evaluation',
       'analysis',
+      'administration',
       'people',
       'people',
       'administration',
@@ -198,7 +198,6 @@ describe('study navigation', () => {
       'Test',
       'Preview',
       'Results',
-      'Logs',
       'Cooperators',
       'Participants',
     ])
@@ -215,7 +214,7 @@ describe('study navigation', () => {
     const user = { id: 'observator', accessLevel: 1 }
     const study = studyWith('USER', user.id, STUDY_ROLE.OBSERVATOR)
 
-    expect(titlesFor(study, user)).toEqual(['Dashboard', 'Results', 'Logs'])
+    expect(titlesFor(study, user)).toEqual(['Dashboard', 'Results'])
   })
 
   it('adds Preview and Cooperators for a moderated Observator', () => {
@@ -228,7 +227,6 @@ describe('study navigation', () => {
     expect(titlesFor(study, user, 'userTest/moderated')).toEqual([
       'Dashboard',
       'Results',
-      'Logs',
       'Cooperators',
       'Participants',
     ])
@@ -241,12 +239,7 @@ describe('study navigation', () => {
       isPublic: true,
     }
 
-    expect(titlesFor(study, user)).toEqual([
-      'Dashboard',
-      'Preview',
-      'Results',
-      'Logs',
-    ])
+    expect(titlesFor(study, user)).toEqual(['Dashboard', 'Preview', 'Results'])
   })
 
   it('shows Preview for a Guest only when the heuristic study is public', () => {
@@ -257,13 +250,11 @@ describe('study navigation', () => {
     expect(titlesFor(privateStudy, user, 'heuristic')).toEqual([
       'Dashboard',
       'Results',
-      'Logs',
     ])
     expect(titlesFor(publicStudy, user, 'heuristic')).toEqual([
       'Dashboard',
       'Preview',
       'Results',
-      'Logs',
     ])
   })
 
@@ -276,7 +267,6 @@ describe('study navigation', () => {
       'Test',
       'Preview',
       'Results',
-      'Logs',
       'Cooperators',
       'Participants',
       'Final Report',
