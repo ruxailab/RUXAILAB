@@ -210,4 +210,50 @@ describe('LogsView', () => {
     expect(wrapper.text()).not.toContain('Edit Operations')
     wrapper.unmount()
   })
+
+  it('gives each pseudonymous participant a stable visual identity', async () => {
+    getParticipantLabels.mockResolvedValue(['P-001', 'P-002'])
+    getStudyLogPage.mockResolvedValue({
+      ...page,
+      events: [
+        { ...page.events[0], eventId: 'event-1' },
+        {
+          ...page.events[0],
+          eventId: 'event-2',
+          participantLabel: 'P-002',
+        },
+        { ...page.events[0], eventId: 'event-3' },
+      ],
+    })
+    getStudyLogCount.mockResolvedValue(3)
+
+    const wrapper = mount(LogsView, { props: { id: 'study-1' } })
+    await flushPromises()
+
+    const headings = wrapper
+      .findAll('thead th')
+      .map((heading) => heading.text())
+    expect(headings.slice(0, 4)).toEqual([
+      'Occurrence',
+      'Participant',
+      'Event',
+      'Level',
+    ])
+
+    const tokens = wrapper.findAll('tbody .participant-token')
+    expect(tokens.map((token) => token.text())).toEqual([
+      '01P-001',
+      '02P-002',
+      '01P-001',
+    ])
+    expect(tokens[0].classes()).toContain('participant-token--tone-1')
+    expect(tokens[1].classes()).toContain('participant-token--tone-2')
+    expect(tokens[2].classes()).toContain('participant-token--tone-1')
+
+    await wrapper.find('tbody tr').trigger('click')
+    expect(wrapper.find('.event-summary .participant-token').text()).toBe(
+      '01P-001',
+    )
+    wrapper.unmount()
+  })
 })

@@ -187,14 +187,23 @@
         <template v-if="currentEvents.length">
           <div v-if="!smAndDown" class="table-scroll">
             <table class="log-table">
+              <colgroup>
+                <col class="occurrence-column" />
+                <col class="participant-column" />
+                <col class="event-column" />
+                <col class="level-column" />
+                <col class="source-column" />
+                <col class="layer-column" />
+                <col class="open-column" />
+              </colgroup>
               <thead>
                 <tr>
                   <th scope="col">Occurrence</th>
-                  <th scope="col">Level</th>
-                  <th scope="col">Event</th>
                   <th scope="col">Participant</th>
-                  <th scope="col">Source</th>
-                  <th scope="col">Layer</th>
+                  <th scope="col">Event</th>
+                  <th scope="col">Level</th>
+                  <th scope="col" class="source-column">Source</th>
+                  <th scope="col" class="layer-column">Layer</th>
                   <th scope="col"><span class="sr-only">Open details</span></th>
                 </tr>
               </thead>
@@ -206,7 +215,7 @@
                   role="button"
                   class="log-row"
                   :class="`log-row--${event.level || 'info'}`"
-                  :aria-label="`View details for ${event.message}`"
+                  :aria-label="`View details for ${event.message}, participant ${event.participantLabel}, ${formatDateTime(event.occurredAt)}`"
                   @click="selectedEvent = event"
                   @keyup.enter="selectedEvent = event"
                   @keyup.space.prevent="selectedEvent = event"
@@ -217,11 +226,18 @@
                   </td>
                   <td>
                     <span
-                      class="level-badge"
-                      :class="`level-badge--${event.level || 'info'}`"
+                      class="participant-token"
+                      :class="participantTone(event.participantLabel)"
                     >
-                      <v-icon size="14">{{ levelIcon(event.level) }}</v-icon>
-                      {{ event.level }}
+                      <span
+                        class="participant-token__anchor"
+                        aria-hidden="true"
+                      >
+                        {{ participantNumber(event.participantLabel) }}
+                      </span>
+                      <span class="participant-token__label">
+                        {{ event.participantLabel }}
+                      </span>
                     </span>
                   </td>
                   <td class="message-cell">
@@ -229,15 +245,19 @@
                     <span>{{ formatEventType(event.eventType) }}</span>
                   </td>
                   <td>
-                    <span class="participant-label">
-                      {{ event.participantLabel }}
+                    <span
+                      class="level-indicator"
+                      :class="`level-indicator--${event.level || 'info'}`"
+                    >
+                      <v-icon size="14">{{ levelIcon(event.level) }}</v-icon>
+                      {{ event.level }}
                     </span>
                   </td>
-                  <td class="source-cell">
+                  <td class="source-cell source-column">
                     {{ formatIdentifier(event.source) || 'Unavailable' }}
                   </td>
-                  <td>
-                    <span class="layer-badge">{{ event.layer }}</span>
+                  <td class="layer-column">
+                    <span class="layer-label">{{ event.layer }}</span>
                   </td>
                   <td class="open-cell">
                     <v-icon size="19">mdi-chevron-right</v-icon>
@@ -258,21 +278,32 @@
             >
               <span class="mobile-event__topline">
                 <span
-                  class="level-badge"
-                  :class="`level-badge--${event.level || 'info'}`"
+                  class="participant-token"
+                  :class="participantTone(event.participantLabel)"
                 >
-                  <v-icon size="14">{{ levelIcon(event.level) }}</v-icon>
-                  {{ event.level }}
+                  <span class="participant-token__anchor" aria-hidden="true">
+                    {{ participantNumber(event.participantLabel) }}
+                  </span>
+                  <span class="participant-token__label">
+                    {{ event.participantLabel }}
+                  </span>
                 </span>
                 <span>{{ formatDateTime(event.occurredAt) }}</span>
               </span>
               <strong>{{ event.message }}</strong>
-              <span class="mobile-event__type">
-                {{ formatEventType(event.eventType) }}
-              </span>
               <span class="mobile-event__meta">
-                {{ event.participantLabel }} ·
-                {{ formatIdentifier(event.source) || 'Unavailable' }}
+                <span>{{ formatEventType(event.eventType) }}</span>
+                <span
+                  class="level-indicator"
+                  :class="`level-indicator--${event.level || 'info'}`"
+                >
+                  <v-icon size="14">{{ levelIcon(event.level) }}</v-icon>
+                  {{ event.level }}
+                </span>
+              </span>
+              <span class="mobile-event__context">
+                {{ formatIdentifier(event.source) || 'Unavailable' }} ·
+                {{ event.layer }}
               </span>
             </button>
           </div>
@@ -360,7 +391,19 @@
         <dl class="event-summary">
           <div>
             <dt>Participant</dt>
-            <dd>{{ selectedEvent.participantLabel }}</dd>
+            <dd>
+              <span
+                class="participant-token"
+                :class="participantTone(selectedEvent.participantLabel)"
+              >
+                <span class="participant-token__anchor" aria-hidden="true">
+                  {{ participantNumber(selectedEvent.participantLabel) }}
+                </span>
+                <span class="participant-token__label">
+                  {{ selectedEvent.participantLabel }}
+                </span>
+              </span>
+            </dd>
           </div>
           <div>
             <dt>Event type</dt>
@@ -436,6 +479,21 @@ const formatIdentifier = (value = '') =>
     .join(' ')
 const filterOptions = (values) =>
   values.map((value) => ({ title: formatIdentifier(value), value }))
+const participantSequence = (label = '') => /\d+/.exec(label)?.[0]
+const participantNumber = (label) => {
+  const sequence = participantSequence(label)
+  return sequence ? String(Number(sequence)).padStart(2, '0') : '--'
+}
+const participantTone = (label) => {
+  const sequence = participantSequence(label)
+  const seed = sequence
+    ? Number(sequence)
+    : [...String(label)].reduce(
+        (total, character) => total + character.charCodeAt(0),
+        0,
+      )
+  return `participant-token--tone-${seed % 6}`
+}
 const eventTypes = filterOptions([
   'STUDY_VIEW_OPENED',
   'ANSWER_EDITED',
@@ -953,11 +1011,30 @@ onBeforeUnmount(() => clearTimeout(participantTimer))
 }
 .log-table {
   width: 100%;
-  min-width: 980px;
+  min-width: 960px;
+  table-layout: fixed;
   border-collapse: collapse;
 }
+.occurrence-column {
+  width: 126px;
+}
+.participant-column {
+  width: 150px;
+}
+.level-column {
+  width: 96px;
+}
+.source-column {
+  width: 142px;
+}
+.layer-column {
+  width: 132px;
+}
+.open-column {
+  width: 44px;
+}
 .log-table th {
-  padding: 9px 12px;
+  padding: 9px 14px;
   background: var(--logs-soft);
   color: var(--logs-muted);
   font-size: 0.7rem;
@@ -967,7 +1044,7 @@ onBeforeUnmount(() => clearTimeout(participantTimer))
   text-transform: uppercase;
 }
 .log-table td {
-  padding: 11px 12px;
+  padding: 10px 14px;
   border-top: 1px solid #e8ebf1;
   color: #344054;
   font-size: 0.84rem;
@@ -1004,22 +1081,27 @@ onBeforeUnmount(() => clearTimeout(participantTimer))
 }
 .occurrence-cell strong {
   color: var(--logs-navy);
-  font-size: 0.82rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
 }
 .message-cell {
-  min-width: 260px;
+  min-width: 0;
 }
 .message-cell div {
   color: #172033;
-  font-weight: 600;
+  font-size: 0.84rem;
+  font-weight: 650;
+  line-height: 1.3;
 }
 .message-cell span {
+  display: block;
+  margin-top: 3px;
   color: var(--logs-muted);
   font-size: 0.73rem;
 }
 .level-badge,
 .layer-badge,
-.participant-label,
 .drawer-source {
   display: inline-flex;
   align-items: center;
@@ -1044,23 +1126,127 @@ onBeforeUnmount(() => clearTimeout(participantTimer))
   color: #b41f37;
 }
 .layer-badge,
-.participant-label,
 .drawer-source {
   padding: 5px 7px;
   background: #eef0f5;
   color: #4b5568;
 }
-.participant-label {
+.participant-token {
+  --participant-accent: #315d7f;
+  --participant-border: #bfd0dd;
+  --participant-tint: #eaf2f7;
+  display: inline-flex;
+  height: 30px;
+  align-items: stretch;
+  overflow: hidden;
+  border: 1px solid var(--participant-border);
+  border-radius: 5px;
+  background: var(--participant-tint);
+  color: #263248;
+  line-height: 1;
+  white-space: nowrap;
+}
+.participant-token__anchor,
+.participant-token__label {
+  display: inline-flex;
+  align-items: center;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+.participant-token__anchor {
+  min-width: 31px;
+  justify-content: center;
+  background: var(--participant-accent);
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+.participant-token__label {
+  padding: 0 9px 0 8px;
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.015em;
+}
+.participant-token--tone-0 {
+  --participant-accent: #315d7f;
+  --participant-border: #bfd0dd;
+  --participant-tint: #eaf2f7;
+}
+.participant-token--tone-1 {
+  --participant-accent: #68516f;
+  --participant-border: #d7c8db;
+  --participant-tint: #f2edf3;
+}
+.participant-token--tone-2 {
+  --participant-accent: #32665f;
+  --participant-border: #bed8d2;
+  --participant-tint: #e8f3f0;
+}
+.participant-token--tone-3 {
+  --participant-accent: #76583c;
+  --participant-border: #ddcdbb;
+  --participant-tint: #f5efe8;
+}
+.participant-token--tone-4 {
+  --participant-accent: #495f78;
+  --participant-border: #c7d1dc;
+  --participant-tint: #edf1f5;
+}
+.participant-token--tone-5 {
+  --participant-accent: #59643d;
+  --participant-border: #d1d7bd;
+  --participant-tint: #f0f2e8;
+}
+.level-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #536176;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.level-indicator--warning,
+.level-indicator--error {
+  padding: 5px 7px;
+  border-radius: 4px;
+}
+.level-indicator--warning {
+  background: #fff4dc;
+  color: #8b5100;
+}
+.level-indicator--error {
+  background: #ffeaed;
+  color: #a91e34;
+}
+.layer-label {
+  color: #536176;
+  font-size: 0.72rem;
+  font-weight: 600;
 }
 .source-cell {
   color: #536176;
   font-size: 0.76rem !important;
+  white-space: nowrap;
 }
 .open-cell {
   width: 40px;
   color: var(--logs-muted) !important;
   text-align: right !important;
+}
+.open-cell .v-icon {
+  border-radius: 50%;
+  transition:
+    color 140ms ease,
+    background-color 140ms ease,
+    transform 140ms ease;
+}
+.log-row:hover .open-cell .v-icon,
+.log-row:focus-visible .open-cell .v-icon {
+  background: #e7edf3;
+  color: var(--logs-navy);
+  transform: translateX(2px);
 }
 .mobile-event-list {
   border-top: 1px solid var(--logs-border);
@@ -1098,9 +1284,9 @@ onBeforeUnmount(() => clearTimeout(participantTimer))
   color: var(--logs-muted);
   font-size: 0.72rem;
 }
-.mobile-event__type {
+.mobile-event__context {
   color: var(--logs-muted);
-  font-size: 0.76rem;
+  font-size: 0.7rem;
 }
 .empty-logs {
   display: grid;
@@ -1233,6 +1419,15 @@ onBeforeUnmount(() => clearTimeout(participantTimer))
   white-space: nowrap;
   border: 0;
 }
+@media (min-width: 960px) and (max-width: 1279px) {
+  .log-table {
+    min-width: 760px;
+  }
+  .source-column,
+  .layer-column {
+    display: none;
+  }
+}
 @media (max-width: 959px) {
   .logs-page {
     padding: 16px 14px 32px;
@@ -1320,7 +1515,8 @@ onBeforeUnmount(() => clearTimeout(participantTimer))
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .log-row {
+  .log-row,
+  .open-cell .v-icon {
     transition: none;
   }
 }
