@@ -118,7 +118,7 @@
             {{ test.testTitle }}
           </h1>
           <p class="text-body-1 mb-5 text-white text-justify">
-            {{ truncateDescription(test.testDescription) }}
+            {{ test.testDescription }}
           </p>
           <v-btn
             color="white"
@@ -259,7 +259,6 @@
                 :heuristics="heuristics"
                 :current-user-test-answer="currentUserTestAnswer"
                 :calculated-progress="calculatedProgress"
-                :is-traditional="isTraditional"
                 :per-heuristic-progress="perHeuristicProgress"
                 :heuristic-description="heuristicDescription"
                 :heuristic-storage="heuristicStorage"
@@ -384,6 +383,22 @@
             <span>{{ $t('HeuristicsTestView.actions.submit') }}</span>
           </div>
         </v-tooltip>
+        <v-tooltip key="exit-tooltip" location="left">
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              icon
+              size="small"
+              color="error"
+              @click="exitEvaluation"
+            >
+              <v-icon>mdi-exit-to-app</v-icon>
+            </v-btn>
+          </template>
+          <div>
+            <span>{{ $t('navigation.exitTest') }}</span>
+          </div>
+        </v-tooltip>
       </v-speed-dial>
     </v-btn>
   </div>
@@ -444,11 +459,6 @@ const TEST_PAGES = {
 const currentPage = ref(TEST_PAGES.welcome)
 const answerInitialized = ref(false)
 
-const truncateDescription = (description) => {
-  if (!description || description.length <= 150) return description
-  return `${description.slice(0, 147)}...`
-}
-
 // Auto-save status variables
 const autoSaveInProgress = ref(false)
 const lastSaveTime = ref(null)
@@ -480,13 +490,6 @@ const evaluatorInfoSections = computed(() => {
 })
 
 const trackTimeEnabled = computed(() => test.value?.trackTime !== false)
-
-const isTraditional = computed(
-  () =>
-    !test.value?.testOptions?.length &&
-    test.value?.useFrequency !== false &&
-    test.value?.useSeverity !== false,
-)
 
 const testDisabledReason = computed(() => {
   if (currentUserTestAnswer.value?.submitted) return 'already-completed'
@@ -1425,6 +1428,14 @@ const submitAnswer = async () => {
     updateSaveStatus('Submission failed', 'error')
   } finally {
     autoSaveInProgress.value = false
+  }
+}
+
+const exitEvaluation = () => {
+  if (hasTestDashboardAccess.value) {
+    router.push(`/heuristic/dashboard/${test.value.id}`)
+  } else {
+    router.push('/admin')
   }
 }
 
