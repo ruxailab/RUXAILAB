@@ -5,6 +5,7 @@ import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import HeuristicTestView from '@/ux/Heuristic/views/HeuristicTestView.vue'
 import HeuristicAnswer from '@/ux/Heuristic/models/HeuristicAnswer'
+import HeuristicAnswerStep from '@/ux/Heuristic/components/steps/HeuristicAnswerStep.vue'
 
 jest.mock('vue-router', () => ({
   useRouter: jest.fn(),
@@ -76,6 +77,54 @@ describe('HeuristicTestView', () => {
     jest.useRealTimers()
   })
 
+  it('keeps custom option value and timestamp when emitting answer payloads', async () => {
+    const wrapper = shallowMount(HeuristicAnswerStep, {
+      props: {
+        heuristic: {
+          id: 'h1',
+          title: 'Heuristic 1',
+          questions: [{ id: 0, title: 'Q1', descriptions: [{ text: 'Desc' }] }],
+        },
+        heuristics: [{ id: 'h1', title: 'Heuristic 1' }],
+        heurisIndex: 0,
+        currentUserTestAnswer: {
+          heuristicQuestions: [{ heuristicQuestions: [{}] }],
+          submitted: false,
+        },
+        test: {
+          useFrequency: false,
+          useSeverity: false,
+          testOptions: [{ text: 'Moderate', value: 2 }],
+        },
+      },
+      global: {
+        mocks: {
+          $t: (key) => key,
+        },
+        stubs: {
+          ShowInfo: { template: '<div><slot name="content" /></div>' },
+          HelpBtn: true,
+          HeuristicOptionsAnalysisSection: true,
+          HeuristicCommentEvidenceSection: true,
+          HeuristicImageEvidenceSection: true,
+          'v-icon': true,
+          'v-btn': buttonStub,
+          'v-divider': true,
+        },
+      },
+    })
+
+    wrapper.vm.updateCustomOptionAnswer(0, { text: 'Moderate', value: 2 })
+
+    const emitted = wrapper.emitted('update-answer')?.slice(-1)?.[0]?.[1]
+    expect(emitted).toMatchObject({
+      custom: { text: 'Moderate', value: 2 },
+      value: 2,
+      text: 'Moderate',
+    })
+    expect(emitted.custom.timestamp).toBeDefined()
+  })
+
   it('waits for answer initialization before starting and auto-saving', async () => {
     const answerRequest = deferred()
     const study = {
@@ -142,12 +191,19 @@ describe('HeuristicTestView', () => {
           'v-row': { template: '<div><slot /></div>' },
           'v-col': { template: '<div><slot /></div>' },
           'v-list': { template: '<div><slot /></div>' },
-          'v-list-item': { template: '<div><slot name="prepend" /><slot /></div>' },
+          'v-list-item': {
+            template: '<div><slot name="prepend" /><slot /></div>',
+          },
           'v-list-item-title': { template: '<div><slot /></div>' },
-          'v-navigation-drawer': { template: '<div><slot /><slot name="append" /></div>' },
+          'v-navigation-drawer': {
+            template: '<div><slot /><slot name="append" /></div>',
+          },
           'v-layout': { template: '<div><slot /></div>' },
           'v-main': { template: '<main><slot /></main>' },
-          'v-tooltip': { template: '<div><slot name="activator" :props="{}" /><slot /></div>' },
+          'v-tooltip': {
+            template:
+              '<div><slot name="activator" :props="{}" /><slot /></div>',
+          },
           'v-progress-circular': true,
           'v-progress-linear': true,
           'v-progress': true,

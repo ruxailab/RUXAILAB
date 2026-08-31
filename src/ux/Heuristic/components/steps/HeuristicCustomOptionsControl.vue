@@ -100,15 +100,22 @@ const selectedOptionData = computed(() => props.answer?.custom || null)
 const selectedOption = computed(() =>
   sortedOptions.value.find((option) => {
     if (!selectedOptionData.value) return false
-    if (selectedOptionData.value.timestamp) {
-      return option.timestamp === selectedOptionData.value.timestamp
+
+    const selectedTimestamp = selectedOptionData.value.timestamp
+    const hasTimestamp =
+      selectedTimestamp !== null && selectedTimestamp !== undefined
+
+    if (hasTimestamp && option.timestamp !== undefined) {
+      return option.timestamp === selectedTimestamp
     }
+
     if (
       selectedOptionData.value.value !== null &&
       selectedOptionData.value.value !== undefined
     ) {
       return option.value === selectedOptionData.value.value
     }
+
     return option.text === selectedOptionData.value.text
   }),
 )
