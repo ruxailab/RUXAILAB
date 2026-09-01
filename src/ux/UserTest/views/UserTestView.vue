@@ -595,6 +595,7 @@ import { animateStepAnnouncement } from '@/shared/utils/animations'
 import { downloadAnonymousParticipantIdentifier } from '@/shared/utils/anonymousParticipantUtils'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
+import { taskDestination } from '@/ux/UserTest/utils/unmoderatedNavigation'
 
 const fullName = ref('')
 const logined = ref(null)
@@ -836,18 +837,10 @@ const savePartialAnswer = async () => {
         testType: test.value.testType,
       })
     } else {
-      const updatedAnswer = UserStudyEvaluatorAnswer.toModel({
-        ...currentUserTestAnswer.value,
-        fullName: localTestAnswer.fullName,
-        progress: localTestAnswer.progress,
-        submitted: localTestAnswer.submitted,
-        preTestAnswer: localTestAnswer.preTestAnswer,
-        postTestAnswer: localTestAnswer.postTestAnswer,
-        tasks: {
-          ...currentUserTestAnswer.value.tasks,
-          ...localTestAnswer.tasks,
-        },
-      })
+      const updatedAnswer = UserStudyEvaluatorAnswer.mergeProgress(
+        currentUserTestAnswer.value,
+        localTestAnswer,
+      )
 
       Object.assign(currentUserTestAnswer.value, updatedAnswer)
 
@@ -1018,11 +1011,13 @@ const safelyShowNextStepAnnouncement = async (
 const persistStepProgress = async () => {
   try {
     await savePartialAnswer()
+    return true
   } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSaveAnswer'),
     })
+    return false
   }
 }
 
@@ -1179,7 +1174,8 @@ const completeStep = async (id, type, userCompleted = true) => {
         globalIndex.value = hasEyeTracking.value ? 3 : 4
         localTestAnswer.preTestCompleted = true
       }
-      await persistStepProgress()
+      const consentSaved = await persistStepProgress()
+      if (!consentSaved) return
       void initializeStudyLogging()?.consentAccepted()
     }
 
@@ -1217,20 +1213,32 @@ const completeStep = async (id, type, userCompleted = true) => {
       }
       allTasksCompleted.value = allTasksAttempted
 
-      if (id < localTestAnswer.tasks.length - 1) {
-        await showTaskTitleAnnouncement(id + 1)
-        taskIndex.value = id + 1
+      const destination = taskDestination({
+        taskIndex: id,
+        taskCount: localTestAnswer.tasks.length,
+        hasEyeTracking: hasEyeTracking.value,
+        hasPostTest: hasPostTest.value,
+        postTestCompleted: localTestAnswer.postTestCompleted,
+      })
+
+      if (destination.kind === 'task') {
+        await showTaskTitleAnnouncement(destination.taskIndex)
+        taskIndex.value = destination.taskIndex
       } else {
         taskIndex.value = id
-        const postTasksAnnouncement = getPostTasksAnnouncement()
+        const postTasksAnnouncement =
+          destination.kind === 'postTest'
+            ? getPostTasksAnnouncement()
+            : {
+                title: t('UserTestView.WelcomeStep.steps.submission'),
+                stage: 4,
+              }
         await safelyShowNextStepAnnouncement(
           postTasksAnnouncement.title,
           postTasksAnnouncement.stage,
         )
-        if (hasPostTest.value) {
-          globalIndex.value = hasEyeTracking.value ? 6 : 5 // PostTest
-        } else {
-          globalIndex.value = hasEyeTracking.value ? 7 : 6 // Finish
+        globalIndex.value = destination.globalIndex
+        if (!hasPostTest.value) {
           localTestAnswer.postTestCompleted = true
         }
       }
@@ -1607,7 +1615,7 @@ onBeforeUnmount(() => {
   pointer-events: none;
 }
 
-.user-test-bg > * {
+.user-test-bg > :not(.step-announcement-overlay) {
   position: relative;
   z-index: 1;
 }

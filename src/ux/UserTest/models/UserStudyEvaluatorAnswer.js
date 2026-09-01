@@ -16,7 +16,8 @@ export default class UserStudyEvaluatorAnswer {
     userDocId,
     lastUpdate,
     invited,
-    hidden
+    hidden,
+    sessionNotes,
   } = {}) {
     this.preTestAnswer = preTestAnswer ?? []
     this.consent = consent ?? ''
@@ -32,9 +33,8 @@ export default class UserStudyEvaluatorAnswer {
     this.userDocId = userDocId ?? null
     this.lastUpdate = lastUpdate ?? null
     this.invited = invited ?? false
-    this.invited = invited ?? false
     this.hidden = hidden ?? false
-    this.sessionNotes = [] // [{ text, timestamp, taskIndex, authorId }]
+    this.sessionNotes = sessionNotes ?? [] // [{ text, timestamp, taskIndex, authorId }]
   }
   static toModel(data) {
     return new UserStudyEvaluatorAnswer({
@@ -47,6 +47,28 @@ export default class UserStudyEvaluatorAnswer {
       ),
     })
   }
+
+  static mergeProgress(saved = {}, current = {}) {
+    return UserStudyEvaluatorAnswer.toModel({
+      ...saved,
+      consent: current.consent,
+      consentCompleted: current.consentCompleted,
+      preTestCompleted: current.preTestCompleted,
+      preTestAnswer: current.preTestAnswer,
+      postTestCompleted: current.postTestCompleted,
+      postTestAnswer: current.postTestAnswer,
+      submitted: current.submitted,
+      progress: current.progress,
+      fullName: current.fullName,
+      userDocId: current.userDocId,
+      invited: current.invited,
+      tasks: {
+        ...(saved.tasks || {}),
+        ...(current.tasks || {}),
+      },
+    })
+  }
+
   toFirestore() {
     return {
       preTestAnswer: this.preTestAnswer,
@@ -59,7 +81,9 @@ export default class UserStudyEvaluatorAnswer {
       tasks: Object.fromEntries(
         Object.entries(this.tasks).map(([key, value]) => [
           key,
-          (value instanceof TaskAnswer ? value : new TaskAnswer(value)).toFirestore(),
+          (
+            value instanceof TaskAnswer ? value : new TaskAnswer(value)
+          ).toFirestore(),
         ]),
       ),
       progress: this.progress,
@@ -69,7 +93,7 @@ export default class UserStudyEvaluatorAnswer {
       lastUpdate: this.lastUpdate,
       invited: this.invited,
       hidden: this.hidden,
-      sessionNotes: this.sessionNotes
+      sessionNotes: this.sessionNotes,
     }
   }
 }
