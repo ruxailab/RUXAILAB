@@ -125,6 +125,51 @@ describe('HeuristicTestView', () => {
     expect(emitted.custom.timestamp).toBeDefined()
   })
 
+  it('handles non-array question descriptions without crashing', () => {
+    const wrapper = shallowMount(HeuristicAnswerStep, {
+      props: {
+        heuristic: {
+          id: 'h1',
+          title: 'Heuristic 1',
+          questions: [{ id: 0, title: 'Q1', descriptions: { text: 'Desc' } }],
+        },
+        heuristics: [{ id: 'h1', title: 'Heuristic 1' }],
+        heurisIndex: 0,
+        currentUserTestAnswer: {
+          heuristicQuestions: [{ heuristicQuestions: [{}] }],
+          submitted: false,
+        },
+        test: {
+          useFrequency: false,
+          useSeverity: false,
+          testOptions: [{ text: 'Moderate', value: 2 }],
+        },
+      },
+      global: {
+        mocks: {
+          $t: (key) => key,
+        },
+        stubs: {
+          ShowInfo: { template: '<div><slot name="content" /></div>' },
+          HelpBtn: true,
+          HeuristicOptionsAnalysisSection: true,
+          HeuristicCommentEvidenceSection: true,
+          HeuristicImageEvidenceSection: true,
+          'v-icon': true,
+          'v-btn': buttonStub,
+          'v-divider': true,
+        },
+      },
+    })
+
+    expect(() =>
+      wrapper.vm.questionDescription({ descriptions: { text: 'Desc' } }),
+    ).not.toThrow()
+    expect(
+      wrapper.vm.questionDescription({ descriptions: { text: 'Desc' } }),
+    ).toBe('Desc')
+  })
+
   it('waits for answer initialization before starting and auto-saving', async () => {
     const answerRequest = deferred()
     const study = {

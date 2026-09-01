@@ -520,9 +520,21 @@ const heuristicDescription = (heuristic) => {
     heuristic.description || heuristic.text || heuristic.subtitle
   if (directDescription) return directDescription
 
-  const firstQuestionDescription = heuristic.questions
-    ?.flatMap((question) => question.descriptions || [])
-    ?.find((description) => description?.text)
+  const questionDescriptions = (
+    Array.isArray(heuristic.questions) ? heuristic.questions : []
+  ).flatMap((question) => {
+    const descriptions = Array.isArray(question?.descriptions)
+      ? question.descriptions
+      : question?.descriptions && typeof question.descriptions === 'object'
+        ? [question.descriptions]
+        : []
+
+    return descriptions
+  })
+
+  const firstQuestionDescription = questionDescriptions.find(
+    (description) => description?.text,
+  )
 
   return (
     firstQuestionDescription?.text ||
