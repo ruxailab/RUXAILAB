@@ -84,6 +84,7 @@
     "loading": "Loading Test",
     "continueAs": "Continue as",
     "notUser": "Not {userEmail}?",
+    "completed": "Completed",
     "name": "Name",
     "changeAccount": "Change account",
     "editAndInvite": "Edit and invite people to your test",
