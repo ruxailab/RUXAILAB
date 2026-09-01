@@ -12,6 +12,13 @@ import {
 import { auth } from '@/app/plugins/firebase'
 import axios from 'axios'
 import EmailController from '@/shared/controllers/EmailController'
+import {
+  canTrackBrowserSession,
+  endBrowserSession,
+  isBrowserSessionAlive,
+  isSessionScoped,
+  startBrowserSession,
+} from '@/shared/utils/authSessionPersistence'
 
 /**
  * Controller for authentication operations
@@ -28,30 +35,78 @@ export default class AuthController {
   }
 
   /**
+   * Stores the auth state where the lifetime the user asked for can be honoured.
+   *
+   * "Remember me" keeps the sign-in until it is revoked. Without it the sign-in
+   * is still shared across the tabs of the browser, and a session cookie is
+   * what ends it once the browser closes. Browsers that refuse that cookie
+   * leave us unable to tell a second tab apart from a restarted browser, so
+   * there we keep the tab-scoped persistence rather than signing the user in
+   * for longer than they asked for.
+   * @param {boolean} rememberMe - Whether to keep the user signed in
+   * @returns {Promise<boolean>} - Whether the sign-in is scoped to the session
+   */
+  async applyPersistence(rememberMe) {
+    const sessionScoped = !rememberMe && canTrackBrowserSession()
+
+    await setPersistence(
+      auth,
+      rememberMe || sessionScoped
+        ? browserLocalPersistence
+        : browserSessionPersistence,
+    )
+
+    return sessionScoped
+  }
+
+  /**
+   * Records how long a completed sign-in should last.
+   *
+   * Only a successful sign-in may move these markers, so that a failed attempt
+   * cannot shorten or extend the session the user already has.
+   * @param {boolean} sessionScoped - Whether the sign-in ends with the browser
+   * @returns {Promise}
+   */
+  async scopeSignIn(sessionScoped) {
+    if (!sessionScoped) return endBrowserSession()
+
+    // Cookies answered the probe before sign-in, so this only fails if access
+    // was withdrawn in between. Leaving the sign-in with nothing to expire it
+    // would outlast what the user asked for, so drop back to the tab.
+    if (!startBrowserSession()) {
+      await setPersistence(auth, browserSessionPersistence)
+    }
+  }
+
+  /**
    * Signs in a user with email and password
    * @param {string} email - User email
    * @param {string} password - User password
+   * @param {boolean} rememberMe - Whether to keep the user signed in
    * @returns {Promise} - Firebase auth user credential
    */
   async signIn(email, password, rememberMe) {
-    await setPersistence(
-      auth,
-      rememberMe ? browserLocalPersistence : browserSessionPersistence,
-    )
-    return signInWithEmailAndPassword(auth, email, password)
+    const sessionScoped = await this.applyPersistence(rememberMe)
+    const credential = await signInWithEmailAndPassword(auth, email, password)
+
+    await this.scopeSignIn(sessionScoped)
+
+    return credential
   }
 
   /**
    * Signs in a user with Google
+   * @param {boolean} rememberMe - Whether to keep the user signed in
    * @returns {Promise} - Firebase auth user credential
    */
   async signInWithGoogle(rememberMe) {
-    await setPersistence(
-      auth,
-      rememberMe ? browserLocalPersistence : browserSessionPersistence,
-    )
+    const sessionScoped = await this.applyPersistence(rememberMe)
     const provider = new GoogleAuthProvider()
-    return signInWithPopup(auth, provider)
+    const credential = await signInWithPopup(auth, provider)
+
+    await this.scopeSignIn(sessionScoped)
+
+    return credential
   }
 
   /**
@@ -67,7 +122,26 @@ export default class AuthController {
    * @returns {Promise} - Firebase auth signOut promise
    */
   async signOut() {
+    endBrowserSession()
     return signOut(auth)
+  }
+
+  /**
+   * Drops a sign-in made without "Remember me" once its browser session is over.
+   *
+   * The stored auth state outlives the browser, so the session cookie written
+   * at sign-in is what marks the session as still running. Once the browser
+   * deletes it, the sign-in has to go with it.
+   * @param {Object|null} user - User reported by the Firebase observer
+   * @returns {Promise<Object|null>} - The user, or null once signed out
+   */
+  async enforceBrowserSession(user) {
+    if (!user || !isSessionScoped() || isBrowserSessionAlive()) return user
+
+    await signOut(auth)
+    endBrowserSession()
+
+    return null
   }
 
   /**
@@ -78,9 +152,13 @@ export default class AuthController {
     return new Promise((resolve, reject) => {
       const unsubscribe = onAuthStateChanged(
         auth,
-        (user) => {
+        async (user) => {
           unsubscribe()
-          resolve(user)
+          try {
+            resolve(await this.enforceBrowserSession(user))
+          } catch (error) {
+            reject(error)
+          }
         },
         (error) => {
           unsubscribe()

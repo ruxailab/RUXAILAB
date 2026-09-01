@@ -41,12 +41,24 @@ jest.mock('axios', () => ({
   post: jest.fn(),
 }))
 
+const SESSION_COOKIE = 'ruxailab_browser_session'
+
+const endBrowserSession = () => {
+  document.cookie = `${SESSION_COOKIE}=; path=/; max-age=0`
+  localStorage.clear()
+}
+
 describe('AuthController', () => {
   let authController
 
   beforeEach(() => {
     jest.clearAllMocks()
+    endBrowserSession()
     authController = new AuthController()
+  })
+
+  afterEach(() => {
+    endBrowserSession()
   })
 
   describe('signUp', () => {
@@ -96,13 +108,71 @@ describe('AuthController', () => {
       )
     })
 
-    it('should set session persistence when rememberMe is false', async () => {
+    it('should not scope the sign-in to a browser session when rememberMe is true', async () => {
+      setPersistence.mockResolvedValue()
+      signInWithEmailAndPassword.mockResolvedValue({ user: {} })
+
+      await authController.signIn('test@example.com', 'password123', true)
+
+      expect(document.cookie).not.toContain(SESSION_COOKIE)
+    })
+
+    it('should share the sign-in across tabs when rememberMe is false', async () => {
+      setPersistence.mockResolvedValue()
+      signInWithEmailAndPassword.mockResolvedValue({ user: {} })
+
+      await authController.signIn('test@example.com', 'password123', false)
+
+      // Local persistence is what every tab of the browser can read; the
+      // session cookie is what expires it once the browser is closed.
+      expect(setPersistence).toHaveBeenCalledWith(expect.anything(), 'local')
+      expect(document.cookie).toContain(`${SESSION_COOKIE}=1`)
+    })
+
+    it('should fall back to session persistence when cookies are blocked', async () => {
+      const cookie = jest
+        .spyOn(document, 'cookie', 'set')
+        .mockImplementation(() => {})
+
       setPersistence.mockResolvedValue()
       signInWithEmailAndPassword.mockResolvedValue({ user: {} })
 
       await authController.signIn('test@example.com', 'password123', false)
 
       expect(setPersistence).toHaveBeenCalledWith(expect.anything(), 'session')
+
+      cookie.mockRestore()
+    })
+
+    it('should fall back to session persistence when the marker cannot be stored', async () => {
+      // Cookies answer the probe, but writing the marker afterwards fails, so
+      // the sign-in would have nothing left to expire it.
+      const realSetItem = Storage.prototype.setItem
+      const setItem = jest
+        .spyOn(Storage.prototype, 'setItem')
+        .mockImplementation(function (key, value) {
+          if (key === 'ruxailab.auth.session-scoped') {
+            throw new Error('storage disabled')
+          }
+          return realSetItem.call(this, key, value)
+        })
+
+      setPersistence.mockResolvedValue()
+      signInWithEmailAndPassword.mockResolvedValue({ user: {} })
+
+      await authController.signIn('test@example.com', 'password123', false)
+
+      expect(setPersistence).toHaveBeenNthCalledWith(
+        1,
+        expect.anything(),
+        'local',
+      )
+      expect(setPersistence).toHaveBeenLastCalledWith(
+        expect.anything(),
+        'session',
+      )
+
+      setItem.mockRestore()
     })
 
     it('should throw error when signIn fails', async () => {
@@ -114,6 +184,23 @@ describe('AuthController', () => {
       await expect(
         authController.signIn('test@example.com', 'wrong', false),
       ).rejects.toThrow(mockError)
+    })
+
+    it('should not scope an existing sign-in when the attempt fails', async () => {
+      setPersistence.mockResolvedValue()
+      signInWithEmailAndPassword.mockResolvedValue({ user: {} })
+
+      await authController.signIn('test@example.com', 'password123', true)
+
+      signInWithEmailAndPassword.mockRejectedValue(new Error('Invalid'))
+
+      await expect(
+        authController.signIn('test@example.com', 'wrong', false),
+      ).rejects.toThrow('Invalid')
+
+      // The remembered sign-in must not start expiring with the browser just
+      // because somebody mistyped a password on the sign-in page.
+      expect(document.cookie).not.toContain(SESSION_COOKIE)
     })
   })
 
@@ -132,13 +219,14 @@ describe('AuthController', () => {
       expect(result).toEqual(mockCredential)
     })
 
-    it('should set session persistence when rememberMe is false', async () => {
+    it('should share the sign-in across tabs when rememberMe is false', async () => {
       setPersistence.mockResolvedValue()
       signInWithPopup.mockResolvedValue({ user: {} })
 
       await authController.signInWithGoogle(false)
 
-      expect(setPersistence).toHaveBeenCalledWith(expect.anything(), 'session')
+      expect(setPersistence).toHaveBeenCalledWith(expect.anything(), 'local')
+      expect(document.cookie).toContain(`${SESSION_COOKIE}=1`)
     })
 
     it('should throw error when Google sign-in fails', async () => {
@@ -169,6 +257,17 @@ describe('AuthController', () => {
 
       await expect(authController.signOut()).rejects.toThrow(mockError)
     })
+
+    it('should clear the browser session markers', async () => {
+      setPersistence.mockResolvedValue()
+      signInWithEmailAndPassword.mockResolvedValue({ user: {} })
+      signOut.mockResolvedValue()
+
+      await authController.signIn('test@example.com', 'password123', false)
+      await authController.signOut()
+
+      expect(document.cookie).not.toContain(SESSION_COOKIE)
+    })
   })
 
   describe('getCurrentUser', () => {
@@ -193,23 +292,76 @@ describe('AuthController', () => {
   })
 
   describe('autoSignIn', () => {
-    it('should call onAuthStateChanged', async () => {
-      const mockUser = {
-        uid: 'auto-user',
-        email: 'auto@example.com',
-      }
+    const mockUser = {
+      uid: 'auto-user',
+      email: 'auto@example.com',
+    }
 
+    const observeUser = (user) => {
       onAuthStateChanged.mockImplementation((auth, callback) => {
         const unsubscribe = jest.fn()
 
-        setTimeout(() => callback(mockUser), 0)
+        setTimeout(() => callback(user), 0)
 
         return unsubscribe
       })
+    }
+
+    const signInWithoutRememberMe = async () => {
+      setPersistence.mockResolvedValue()
+      signInWithEmailAndPassword.mockResolvedValue({ user: mockUser })
+
+      await authController.signIn('test@example.com', 'password123', false)
+    }
+
+    it('should call onAuthStateChanged', async () => {
+      observeUser(mockUser)
 
       await authController.autoSignIn()
 
       expect(onAuthStateChanged).toHaveBeenCalled()
+    })
+
+    it('should restore a session-scoped sign-in while the browser session lasts', async () => {
+      await signInWithoutRememberMe()
+      observeUser(mockUser)
+
+      // A second tab of the same browser still has the session cookie.
+      await expect(authController.autoSignIn()).resolves.toEqual(mockUser)
+      expect(signOut).not.toHaveBeenCalled()
+    })
+
+    it('should sign out a session-scoped user once the browser session ended', async () => {
+      await signInWithoutRememberMe()
+
+      // Closing the browser is what deletes a cookie with no expiry date,
+      // while the stored auth state survives it.
+      document.cookie = `${SESSION_COOKIE}=; path=/; max-age=0`
+
+      observeUser(mockUser)
+      signOut.mockResolvedValue()
+
+      await expect(authController.autoSignIn()).resolves.toBeNull()
+      expect(signOut).toHaveBeenCalled()
+    })
+
+    it('should keep a remembered user signed in without a session cookie', async () => {
+      setPersistence.mockResolvedValue()
+      signInWithEmailAndPassword.mockResolvedValue({ user: mockUser })
+
+      await authController.signIn('test@example.com', 'password123', true)
+
+      observeUser(mockUser)
+
+      await expect(authController.autoSignIn()).resolves.toEqual(mockUser)
+      expect(signOut).not.toHaveBeenCalled()
+    })
+
+    it('should resolve null when nobody is signed in', async () => {
+      observeUser(null)
+
+      await expect(authController.autoSignIn()).resolves.toBeNull()
+      expect(signOut).not.toHaveBeenCalled()
     })
   })
 
