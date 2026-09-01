@@ -633,6 +633,7 @@ import { animateStepAnnouncement } from '@/shared/utils/animations'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
 import { removeStaffDuplicates } from '@/ux/UserTest/utils/sessionPresence'
+import { moderatedSessionTimingReason } from '@/ux/UserTest/utils/moderatedSessionAvailability'
 
 const store = useStore()
 const router = useRouter()
@@ -2227,11 +2228,6 @@ watchEffect(() => {
     }
     return
   }
-  const now = new Date()
-  const sessionDate = session.value?.scheduledAt
-    ? new Date(session.value.scheduledAt)
-    : null
-
   // 🧩 Test already completed
   if (localTestAnswer.submitted) {
     testDisabledReason.value = 'test-already-completed'
@@ -2256,33 +2252,14 @@ watchEffect(() => {
     return
   }
 
-  // 🧩 Check session date
-  if (sessionDate) {
-    const diffHours = (sessionDate.getTime() - now.getTime()) / (1000 * 60 * 60)
-
-    if (diffHours < 0) {
-      testDisabledReason.value = 'test-expired'
-      isStartTestDisabled.value = true
-      return
-    }
-
-    if (diffHours > 24) {
-      testDisabledReason.value = 'test-session-too-far'
-      isStartTestDisabled.value = true
-      return
-    }
-    testDisabledReason.value = null
-    return false
-  }
-
-  // 🧩 Test expired (fallback endDate)
-  if (test.value.endDate) {
-    const endDate = new Date(test.value.endDate)
-    if (now > endDate) {
-      testDisabledReason.value = 'test-expired'
-      isStartTestDisabled.value = true
-      return
-    }
+  const timingReason = moderatedSessionTimingReason({
+    scheduledAt: session.value?.scheduledAt,
+    studyEndDate: test.value.endDate,
+  })
+  if (timingReason) {
+    testDisabledReason.value = timingReason
+    isStartTestDisabled.value = true
+    return
   }
 
   testDisabledReason.value = null
