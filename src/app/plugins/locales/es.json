@@ -980,13 +980,20 @@
     "messages": {
       "acceptCsv": "Si aceptas, todas tus heurísticas actuales serán reemplazadas por las del archivo CSV.",
       "noCsvFileSelected": "No se ha seleccionado ningún archivo CSV. Por favor, selecciona uno antes de continuar.",
+      "invalidFileType": "Tipo de archivo no válido. Por favor, sube un archivo CSV.",
+      "emptyCsvFile": "El archivo CSV está vacío o no contiene datos válidos.",
+      "updateFailed": "No se pudieron actualizar las heurísticas desde el archivo CSV.",
       "timeTrackingDescription": "Registra el tiempo que cada evaluador dedica por heurística durante la evaluación.",
       "answerMetricsDescription": "Elige qué métricas responderán los evaluadores cuando no haya opciones personalizadas configuradas.",
       "settingsDescription": "Elige cómo trabajarán los evaluadores en este estudio heurístico.",
       "studyTypeDescription": "Selecciona el método de evaluación que mejor encaje con tu estudio.",
       "csvDescription": "Descarga una plantilla o reemplaza las heurísticas actuales con un archivo CSV.",
       "settingsSaved": "Configuración guardada correctamente.",
-      "enableWeightsDescription": "Permitir que los evaluadores asignen pesos a las heurísticas en este estudio"
+      "enableWeightsDescription": "Permitir que los evaluadores asignen pesos a las heurísticas en este estudio",
+      "templateNotFound": "No se encontró la plantilla CSV.",
+      "unauthorizedAccess": "No tienes permisos para acceder a la plantilla CSV.",
+      "downloadCanceled": "La descarga de la plantilla CSV fue cancelada.",
+      "unknownError": "Se produjo un error desconocido al acceder a la plantilla CSV."
     },
     "placeHolders": {
       "importCsv": "Importa tu archivo CSV de prueba aquí."

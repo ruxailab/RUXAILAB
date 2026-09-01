@@ -6,6 +6,7 @@ import { useI18n } from 'vue-i18n'
 import HeuristicTestView from '@/ux/Heuristic/views/HeuristicTestView.vue'
 import HeuristicAnswer from '@/ux/Heuristic/models/HeuristicAnswer'
 import HeuristicAnswerStep from '@/ux/Heuristic/components/steps/HeuristicAnswerStep.vue'
+import HeuristicsSettings from '@/ux/Heuristic/components/HeuristicsSettings.vue'
 
 jest.mock('vue-router', () => ({
   useRouter: jest.fn(),
@@ -168,6 +169,73 @@ describe('HeuristicTestView', () => {
     expect(
       wrapper.vm.questionDescription({ descriptions: { text: 'Desc' } }),
     ).toBe('Desc')
+  })
+
+  it('infers legacy study mode from options and weights', async () => {
+    const store = {
+      getters: reactive({
+        test: {
+          useWeights: false,
+          useFrequency: undefined,
+          useSeverity: undefined,
+          testOptions: [{ text: 'Moderate', value: 2 }],
+          trackTime: true,
+        },
+        testAnswerDocument: {},
+      }),
+      state: {
+        Tests: {
+          Test: {
+            useWeights: false,
+            useFrequency: undefined,
+            useSeverity: undefined,
+            testOptions: [{ text: 'Moderate', value: 2 }],
+            trackTime: true,
+          },
+        },
+      },
+      dispatch: jest.fn().mockResolvedValue(),
+      commit: jest.fn(),
+    }
+
+    useStore.mockReturnValue(store)
+
+    const wrapper = shallowMount(HeuristicsSettings, {
+      props: { isTemplate: false },
+      global: {
+        stubs: {
+          'v-card': true,
+          'v-card-title': true,
+          'v-card-item': true,
+          'v-card-subtitle': true,
+          'v-card-text': true,
+          'v-divider': true,
+          'v-radio-group': true,
+          'v-row': true,
+          'v-col': true,
+          'v-radio': true,
+          'v-switch': true,
+          'v-file-input': true,
+          'v-btn': buttonStub,
+          'v-alert': true,
+          'v-dialog': true,
+          'v-icon': true,
+        },
+      },
+    })
+
+    expect(wrapper.vm.studyMode).toBe('detailed')
+
+    store.getters.test = {
+      ...store.getters.test,
+      useWeights: true,
+      useFrequency: false,
+      useSeverity: false,
+      testOptions: [],
+    }
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.vm.studyMode).toBe('weights')
   })
 
   it('waits for answer initialization before starting and auto-saving', async () => {

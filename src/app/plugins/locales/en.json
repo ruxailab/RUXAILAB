@@ -988,13 +988,20 @@
     "messages": {
       "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
       "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding.",
+      "invalidFileType": "Invalid file type. Please upload a CSV file.",
+      "emptyCsvFile": "The CSV file is empty or has no valid data.",
+      "updateFailed": "Failed to update heuristics from the CSV file.",
       "timeTrackingDescription": "Track the time each evaluator spends per heuristic during evaluation.",
       "answerMetricsDescription": "Choose which default metrics evaluators will answer when no custom options are configured.",
       "settingsDescription": "Choose how evaluators will work through this heuristic study.",
       "studyTypeDescription": "Select the evaluation method that best matches your study.",
       "csvDescription": "Download a template or replace the current heuristics with a CSV file.",
       "settingsSaved": "Settings saved successfully.",
-      "enableWeightsDescription": "Allow evaluators to assign weights to heuristics in this study"
+      "enableWeightsDescription": "Allow evaluators to assign weights to heuristics in this study",
+      "templateNotFound": "The CSV template could not be found.",
+      "unauthorizedAccess": "You do not have permission to access the CSV template.",
+      "downloadCanceled": "The CSV template download was canceled.",
+      "unknownError": "An unknown error occurred while accessing the CSV template."
     },
     "placeHolders": {
       "importCsv": "Import your CSV testfile here."
