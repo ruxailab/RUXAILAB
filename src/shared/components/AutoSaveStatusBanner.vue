@@ -1,5 +1,9 @@
 <template>
-  <div class="save-status-indicator" :class="{ 'status-mini': shifted }">
+  <div
+    v-if="shouldShowBanner"
+    class="save-status-indicator"
+    :class="{ 'status-mini': shifted }"
+  >
     <v-card
       elevation="2"
       :class="['status-card', `status-card--${statusType}`]"
@@ -49,7 +53,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 
 const props = defineProps({
   message: {
@@ -98,6 +102,11 @@ const props = defineProps({
 
 defineEmits(['action'])
 
+let successDismissTimer = null
+const bannerVisible = ref(false)
+
+const shouldShowBanner = computed(() => bannerVisible.value)
+
 const statusIcon = computed(() => {
   switch (props.statusType) {
     case 'saving':
@@ -106,6 +115,44 @@ const statusIcon = computed(() => {
       return 'mdi-alert-circle'
     default:
       return 'mdi-check-circle'
+  }
+})
+
+const syncBannerVisibility = () => {
+  if (
+    props.isSaving ||
+    props.statusType === 'saving' ||
+    props.statusType === 'error'
+  ) {
+    bannerVisible.value = true
+    return
+  }
+
+  if (props.statusType === 'success') {
+    bannerVisible.value = true
+    if (successDismissTimer) {
+      clearTimeout(successDismissTimer)
+    }
+    successDismissTimer = setTimeout(() => {
+      bannerVisible.value = false
+    }, 1800)
+    return
+  }
+
+  bannerVisible.value = false
+}
+
+watch(
+  () => [props.statusType, props.isSaving],
+  () => {
+    syncBannerVisibility()
+  },
+  { immediate: true },
+)
+
+onBeforeUnmount(() => {
+  if (successDismissTimer) {
+    clearTimeout(successDismissTimer)
   }
 })
 </script>
