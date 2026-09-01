@@ -2113,7 +2113,11 @@
         "public": "Public",
         "private": "Private",
         "saved": "Template configuration updated successfully",
-        "saveError": "Failed to update template configuration"
+        "saveError": "Failed to update template configuration",
+        "delete": "Delete template",
+        "deleteConfirm": "Are you sure you want to delete this template? Studies created from it will remain available.",
+        "deleteSuccess": "Template deleted successfully",
+        "deleteError": "Failed to delete the template"
       }
     },
     "createTest": {

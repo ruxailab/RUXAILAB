@@ -2029,7 +2029,11 @@
         "public": "P?blico",
         "private": "Privado",
         "saved": "La configuraci?n de la plantilla se actualiz? correctamente",
-        "saveError": "No se pudo actualizar la configuraci?n de la plantilla"
+        "saveError": "No se pudo actualizar la configuraci?n de la plantilla",
+        "delete": "Eliminar plantilla",
+        "deleteConfirm": "¿Estás seguro de que deseas eliminar esta plantilla? Los estudios creados a partir de ella seguirán funcionando normalmente.",
+        "deleteSuccess": "Plantilla eliminada correctamente",
+        "deleteError": "No se pudo eliminar la plantilla"
       }
     },
     "createTest": {
