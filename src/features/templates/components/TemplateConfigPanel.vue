@@ -1,4 +1,21 @@
 <template>
+  <ConfirmDialog
+    :show="showDeleteDialog"
+    :title="$t('pages.templates.config.delete')"
+    :message="$t('pages.templates.config.deleteConfirm')"
+    :confirm-text="$t('common.delete')"
+    :cancel-text="$t('common.cancel')"
+    confirm-color="error"
+    confirm-icon="mdi-delete-outline"
+    icon="mdi-alert-circle-outline"
+    icon-color="error"
+    type="error"
+    :loading="isSaving"
+    @update:show="showDeleteDialog = $event"
+    @confirm="confirmDeleteTemplate"
+    @cancel="showDeleteDialog = false"
+  />
+
   <v-card class="pa-5" elevation="2">
     <h2 class="text-h6 mb-4">{{ $t('pages.templates.config.title') }}</h2>
 
@@ -39,7 +56,16 @@
       readonly
     />
 
-    <div class="d-flex justify-end mt-4">
+    <div class="d-flex justify-end mt-4" style="gap: 12px">
+      <v-btn
+        color="error"
+        variant="text"
+        :disabled="isSaving"
+        @click="showDeleteDialog = true"
+      >
+        {{ $t('pages.templates.config.delete') }}
+      </v-btn>
+
       <v-btn
         color="primary"
         variant="elevated"
@@ -57,6 +83,8 @@
 import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
+import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 import { showSuccess, showError } from '@/shared/utils/toast'
 
 const props = defineProps({
@@ -67,11 +95,13 @@ const props = defineProps({
 })
 
 const store = useStore()
+const router = useRouter()
 const { t } = useI18n()
 
 const localVersion = ref('')
 const visibility = ref('private')
 const isSaving = ref(false)
+const showDeleteDialog = ref(false)
 
 const visibilityOptions = computed(() => [
   { title: t('pages.templates.config.public'), value: 'public' },
@@ -133,6 +163,23 @@ const saveConfig = async () => {
     showSuccess('pages.templates.config.saved')
   } catch {
     showError('pages.templates.config.saveError')
+  } finally {
+    isSaving.value = false
+  }
+}
+
+const confirmDeleteTemplate = async () => {
+  if (!props.template?.id) return
+
+  isSaving.value = true
+  showDeleteDialog.value = false
+
+  try {
+    await store.dispatch('deleteTemplate', props.template.id)
+    showSuccess('pages.templates.config.deleteSuccess')
+    await router.push({ path: '/admin' })
+  } catch {
+    showError('pages.templates.config.deleteError')
   } finally {
     isSaving.value = false
   }

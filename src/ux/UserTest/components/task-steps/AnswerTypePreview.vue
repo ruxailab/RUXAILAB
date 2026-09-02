@@ -313,7 +313,6 @@
           </div>
         </div>
         <div class="text-caption text-grey-darken-1 mt-3">
-          {{ $t('CreateTask.answerTypePreview.tam2Description') }}
           {{ $t('CreateTask.answerTypePreview.tam.likertNote', { count: 25 }) }}
         </div>
       </div>

@@ -893,10 +893,8 @@ async function startMediaRecorders({
     await audioRecorder.value.startAudioRecording()
   }
   if (props.task?.hasCamRecord && videoRecorder.value) {
-    const videoStarted = await videoRecorder.value.startRecording()
-    if (!videoStarted) {
-      return false
-    }
+    // Camera is optional: missing device / denied permission must not block the task
+    await videoRecorder.value.startRecording()
   }
   return true
 }

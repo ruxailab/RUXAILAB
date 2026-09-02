@@ -79,6 +79,7 @@
       "mb": "MB",
       "gb": "GB"
     },
+    "completed": "Completado",
     "hidden": "Oculto",
     "loading": "Cargando prueba",
     "continueAs": "Continuar como",
@@ -560,10 +561,11 @@
       "Reports": "Progreso",
       "Answers": "Resultados",
       "Dashboard": "Panel",
-      "Test": "Prueba",
+      "Test": "Editar Estudio",
       "Session": "Sesión",
       "Sessions": "Sesiónes",
       "Preview": "Vista previa",
+      "Answer": "Responder",
       "Progress": "Progreso",
       "Results": "Resultados",
       "Analytics": "Análisis",
@@ -622,6 +624,7 @@
     "incorrectPassword": "Contraseña incorrecta",
     "incorrectCredential": "Nombre de usuario o contraseña incorrectos.",
     "globalError": "Ha ocurrido un error, disculpa las molestias.",
+    "cameraNotAvailable": "No se detectó ninguna cámara. La prueba continuará sin grabación de webcam.",
     "cameraPermissionDenied": "Se requiere acceso a la cámara para continuar. Por favor, permita el acceso a la cámara en la configuración de su navegador.",
     "sendError": "No se pudo enviar la invitación. Por favor, intenta de nuevo.",
     "missingVariableTitles": "No se puede guardar: Algunas variables no tienen título",
@@ -890,7 +893,6 @@
     "validation": {
       "nameRequired": "El nombre es obligatorio",
       "questionRequired": "La pregunta debe estar completada",
-      "max100Characters": "Máximo 100 caracteres",
       "textRequired": "Se requiere texto",
       "positiveValue": "El valor debe ser un número positivo",
       "addQuestion": "Por favor, agrega al menos una pregunta a tu heurística"
@@ -979,13 +981,20 @@
     "messages": {
       "acceptCsv": "Si aceptas, todas tus heurísticas actuales serán reemplazadas por las del archivo CSV.",
       "noCsvFileSelected": "No se ha seleccionado ningún archivo CSV. Por favor, selecciona uno antes de continuar.",
+      "invalidFileType": "Tipo de archivo no válido. Por favor, sube un archivo CSV.",
+      "emptyCsvFile": "El archivo CSV está vacío o no contiene datos válidos.",
+      "updateFailed": "No se pudieron actualizar las heurísticas desde el archivo CSV.",
       "timeTrackingDescription": "Registra el tiempo que cada evaluador dedica por heurística durante la evaluación.",
       "answerMetricsDescription": "Elige qué métricas responderán los evaluadores cuando no haya opciones personalizadas configuradas.",
       "settingsDescription": "Elige cómo trabajarán los evaluadores en este estudio heurístico.",
       "studyTypeDescription": "Selecciona el método de evaluación que mejor encaje con tu estudio.",
       "csvDescription": "Descarga una plantilla o reemplaza las heurísticas actuales con un archivo CSV.",
       "settingsSaved": "Configuración guardada correctamente.",
-      "enableWeightsDescription": "Permitir que los evaluadores asignen pesos a las heurísticas en este estudio"
+      "enableWeightsDescription": "Permitir que los evaluadores asignen pesos a las heurísticas en este estudio",
+      "templateNotFound": "No se encontró la plantilla CSV.",
+      "unauthorizedAccess": "No tienes permisos para acceder a la plantilla CSV.",
+      "downloadCanceled": "La descarga de la plantilla CSV fue cancelada.",
+      "unknownError": "Se produjo un error desconocido al acceder a la plantilla CSV."
     },
     "placeHolders": {
       "importCsv": "Importa tu archivo CSV de prueba aquí."
@@ -1163,9 +1172,7 @@
       "heuristics": "Heurísticas",
       "analytics": "Análisis",
       "totalTime": "Tiempo total",
-      "lastUpdate": "Última actualización",
-      "averageScore": "Puntuación Promedio",
-      "standardDeviation": "Desviación Estándar"
+      "lastUpdate": "Última actualización"
     },
     "statistics": {
       "usabilityPercentage": "Porcentaje de usabilidad",
@@ -1208,7 +1215,6 @@
         "heuristicsData": "Datos de heurísticas",
         "answersByEvaluator": "Respuestas por evaluador",
         "answersByHeuristics": "Respuestas por heurísticas",
-        "timeByHeuristics": "Tiempo por heurísticas",
         "graphic": "Gráfico",
         "weights": "Pesos"
       },
@@ -2024,7 +2030,11 @@
         "public": "P?blico",
         "private": "Privado",
         "saved": "La configuraci?n de la plantilla se actualiz? correctamente",
-        "saveError": "No se pudo actualizar la configuraci?n de la plantilla"
+        "saveError": "No se pudo actualizar la configuraci?n de la plantilla",
+        "delete": "Eliminar plantilla",
+        "deleteConfirm": "¿Estás seguro de que deseas eliminar esta plantilla? Los estudios creados a partir de ella seguirán funcionando normalmente.",
+        "deleteSuccess": "Plantilla eliminada correctamente",
+        "deleteError": "No se pudo eliminar la plantilla"
       }
     },
     "createTest": {
@@ -2327,7 +2337,6 @@
     }
   },
   "CardSorting": {
-    "invalidConfiguration": "Este estudio debe tener al menos una categoría y una tarjeta antes de poder iniciarse.",
     "title": "Card Sorting",
     "noCategory": "Sin categoría",
     "noCards": "No se encontraron tarjetas",
@@ -2638,24 +2647,6 @@
       "shareScreen": "Compartir pantalla",
       "stopSharingScreen": "Dejar de compartir",
       "discussion": "Discusión",
-      "breakout": "Grupos",
-      "breakoutIntro": "Divide a los participantes en grupos más pequeños, cada uno con su propia sala de video y chat.",
-      "breakoutGroupCount": "Número de grupos",
-      "breakoutGroupCountHint": "Cada grupo necesita al menos 2 personas, por lo que el máximo es la mitad del número de participantes.",
-      "breakoutStart": "Iniciar salas de grupos",
-      "breakoutNoParticipants": "Todavía no se ha unido ningún participante.",
-      "breakoutTooFewParticipants": "Se necesitan al menos 4 participantes para dividir en grupos.",
-      "breakoutRecall": "Reunir a todos",
-      "breakoutPeek": "Ver",
-      "breakoutEmptyGroup": "Nadie asignado todavía.",
-      "breakoutBroadcastTitle": "Difundir a todos los grupos",
-      "breakoutBroadcastPlaceholder": "Mensaje para todos",
-      "breakoutBroadcastSend": "Enviar",
-      "breakoutInGroup": "Estás en {name}",
-      "breakoutActiveSummary": "{count} grupos de trabajo están activos.",
-      "breakoutManage": "Gestionar grupos",
-      "backroom": "Sala privada",
-      "backroomHint": "Privado para el facilitador y los observadores: los participantes nunca ven esto.",
       "messagePlaceholder": "Comparte tus ideas...",
       "noMessagesYet": "Aún no hay mensajes. Inicia la discusión.",
       "observerReadonly": "Estás observando esta discusión.",
@@ -2910,7 +2901,6 @@
       "validation": {
         "enterTitle": "Ingresa un título",
         "max200Characters": "Máximo 200 caracteres",
-        "max150Characters": "Máximo 150 caracteres",
         "max600Characters": "Máximo 600 caracteres",
         "enterWebsiteName": "Ingresa el nombre del sitio web",
         "enterWebsiteUrl": "Ingresa la URL del sitio web",

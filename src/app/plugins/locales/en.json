@@ -84,6 +84,7 @@
     "loading": "Loading Test",
     "continueAs": "Continue as",
     "notUser": "Not {userEmail}?",
+    "completed": "Completed",
     "name": "Name",
     "changeAccount": "Change account",
     "editAndInvite": "Edit and invite people to your test",
@@ -468,7 +469,7 @@
     "tagline": "UX Research Platform",
     "appNavigation": "App Navigation",
     "createNewStudy": "Create New Study",
-    "exitTest": "Exit Test",
+    "exitTest": "Exit Study",
     "signOut": "Sign Out",
     "previousStep": "Previous Step",
     "nextStep": "Next Step",
@@ -559,10 +560,11 @@
       "Reports": "Progress",
       "Answers": "Results",
       "Dashboard": "Dashboard",
-      "Test": "Test",
+      "Test": "Edit Study",
       "Session": "Session",
       "Sessions": "Sessions",
       "Preview": "Preview",
+      "Answer": "Answer",
       "Progress": "Progress",
       "Results": "Results",
       "Analytics": "Analytics",
@@ -622,6 +624,7 @@
     "incorrectPassword": "Incorrect password",
     "incorrectCredential": "Incorrect username or password.",
     "globalError": "An error has occurred, sorry for the inconvenience.",
+    "cameraNotAvailable": "No camera was detected. The test will continue without webcam recording.",
     "cameraPermissionDenied": "Camera permission denied. Please allow camera access in your browser settings.",
     "sendError": "Failed to send invitation. Please try again",
     "missingVariableTitles": "Cannot save: Some variables are missing titles",
@@ -913,7 +916,6 @@
     "validation": {
       "nameRequired": "Name is mandatory",
       "questionRequired": "The question must be filled",
-      "max100Characters": "Maximum 100 characters",
       "textRequired": "Text is required",
       "positiveValue": "Value must be a positive number",
       "addQuestion": "Please add at least one question to your heuristic"
@@ -987,13 +989,20 @@
     "messages": {
       "acceptCsv": "If you accept, all your present heuristics will be replaced by the ones in the .csv file",
       "noCsvFileSelected": "No csv file selected. \nPlease select one before proceeding.",
+      "invalidFileType": "Invalid file type. Please upload a CSV file.",
+      "emptyCsvFile": "The CSV file is empty or has no valid data.",
+      "updateFailed": "Failed to update heuristics from the CSV file.",
       "timeTrackingDescription": "Track the time each evaluator spends per heuristic during evaluation.",
       "answerMetricsDescription": "Choose which default metrics evaluators will answer when no custom options are configured.",
       "settingsDescription": "Choose how evaluators will work through this heuristic study.",
       "studyTypeDescription": "Select the evaluation method that best matches your study.",
       "csvDescription": "Download a template or replace the current heuristics with a CSV file.",
       "settingsSaved": "Settings saved successfully.",
-      "enableWeightsDescription": "Allow evaluators to assign weights to heuristics in this study"
+      "enableWeightsDescription": "Allow evaluators to assign weights to heuristics in this study",
+      "templateNotFound": "The CSV template could not be found.",
+      "unauthorizedAccess": "You do not have permission to access the CSV template.",
+      "downloadCanceled": "The CSV template download was canceled.",
+      "unknownError": "An unknown error occurred while accessing the CSV template."
     },
     "placeHolders": {
       "importCsv": "Import your CSV testfile here."
@@ -1203,9 +1212,7 @@
       "totalTime": "Total time",
       "lastUpdate": "Last update",
       "averageTime": "Average time per evaluator",
-      "timeStdDev": "Time standard deviation",
-      "averageScore": "Average Score",
-      "standardDeviation": "Standard Deviation"
+      "timeStdDev": "Time standard deviation"
     },
     "statistics": {
       "usabilityPercentage": "Usability Percentage",
@@ -1272,7 +1279,6 @@
         "heuristicsData": "Heuristics Data",
         "answersByEvaluator": "Response Values by Evaluator",
         "answersByHeuristics": "Answers by Heuristics",
-        "timeByHeuristics": "Time by Heuristics",
         "graphic": "Graphic",
         "weights": "Weights"
       },
@@ -2108,7 +2114,11 @@
         "public": "Public",
         "private": "Private",
         "saved": "Template configuration updated successfully",
-        "saveError": "Failed to update template configuration"
+        "saveError": "Failed to update template configuration",
+        "delete": "Delete template",
+        "deleteConfirm": "Are you sure you want to delete this template? Studies created from it will remain available.",
+        "deleteSuccess": "Template deleted successfully",
+        "deleteError": "Failed to delete the template"
       }
     },
     "createTest": {
@@ -2138,7 +2148,7 @@
       "fine_tune_configuration": "Fine-tune your test configuration",
       "public_access": "Public Access",
       "allow_users_view": "Allow users to view this test",
-      "test_status": "Study Status",
+      "test_status": "Test Status",
       "select_status": "Select Status",
       "end_date": "End Date",
       "select_end_date": "Select End Date",
@@ -2419,7 +2429,6 @@
     }
   },
   "CardSorting": {
-    "invalidConfiguration": "This study must have at least one category and one card before it can be started.",
     "title": "Card Sorting",
     "noCategory": "No category",
     "noCards": "No cards found",
@@ -2730,24 +2739,6 @@
       "shareScreen": "Share screen",
       "stopSharingScreen": "Stop sharing",
       "discussion": "Discussion",
-      "breakout": "Breakout",
-      "breakoutIntro": "Split participants into smaller groups, each with their own video room and chat.",
-      "breakoutGroupCount": "Number of groups",
-      "breakoutGroupCountHint": "Each group needs at least 2 people, so this is capped at half the participant count.",
-      "breakoutStart": "Start breakout rooms",
-      "breakoutNoParticipants": "No participants have joined yet.",
-      "breakoutTooFewParticipants": "Need at least 4 participants to split into groups.",
-      "breakoutRecall": "Recall everyone",
-      "breakoutPeek": "Peek",
-      "breakoutEmptyGroup": "No one assigned yet.",
-      "breakoutBroadcastTitle": "Broadcast to all groups",
-      "breakoutBroadcastPlaceholder": "Message for everyone",
-      "breakoutBroadcastSend": "Send",
-      "breakoutInGroup": "You're in {name}",
-      "breakoutActiveSummary": "{count} breakout groups are active.",
-      "breakoutManage": "Manage groups",
-      "backroom": "Backroom",
-      "backroomHint": "Private to the facilitator and observers — participants never see this.",
       "messagePlaceholder": "Share your thoughts...",
       "noMessagesYet": "No messages yet. Start the discussion.",
       "observerReadonly": "You are observing this discussion.",
@@ -3002,7 +2993,6 @@
       "validation": {
         "enterTitle": "Enter a Title",
         "max200Characters": "Max 200 characters",
-        "max150Characters": "Max 150 characters",
         "max600Characters": "Max 600 characters",
         "enterWebsiteName": "Enter website name",
         "enterWebsiteUrl": "Enter website URL",

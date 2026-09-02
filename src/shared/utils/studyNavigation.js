@@ -148,7 +148,7 @@ const NAVIGATION_ITEMS = Object.freeze([
     path: ({ type, id }) => `/${type}/edit/${id}`,
   },
   {
-    title: 'Preview',
+    title: 'Answer',
     group: 'evaluation',
     icon: ICONS.PREVIEW,
     capability: C.STUDY_ANSWER,

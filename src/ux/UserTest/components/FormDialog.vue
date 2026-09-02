@@ -24,27 +24,10 @@
           ref="form"
           :task="localTask"
           @update:task="Object.assign(localTask, $event)"
+          @update:dialog="($event) => $emit('update:dialog', $event)"
           @validate="submit"
         />
       </v-card-text>
-      <v-divider />
-      <v-card-actions>
-        <v-spacer />
-        <v-btn
-          color="red-lighten-1"
-          variant="text"
-          @click="($emit('update:dialog', false), reset())"
-        >
-          {{ $t('buttons.cancel') }}
-        </v-btn>
-        <v-btn
-          class="text-white bg-orange"
-          :disabled="isTemplate"
-          @click="validate"
-        >
-          {{ $t('common.save') }}
-        </v-btn>
-      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
@@ -83,10 +66,6 @@ watch(
 const form = ref(null)
 
 // Emit validated task on submit
-const validate = () => {
-  form.value?.valida()
-}
-
 const submit = (task) => {
   emit('addTask', task)
   emit('update:dialog', false)

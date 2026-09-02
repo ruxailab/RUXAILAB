@@ -3,7 +3,7 @@
     <Snackbar />
     <Loading />
 
-    <v-row v-if="test" class="nav pa-0 ma-0" dense>
+    <v-row class="nav pa-0 ma-0" dense>
       <Drawer :items="navigator" />
 
       <!-- View -->
@@ -39,7 +39,7 @@
           </slot>
         </div>
 
-        <router-view />
+        <router-view :key="$route.fullPath" />
       </v-col>
     </v-row>
   </v-container>

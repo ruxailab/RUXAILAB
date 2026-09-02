@@ -1,7 +1,7 @@
 <template>
   <ShowInfo hide-col class="heuristic-answer-panel">
     <template #content>
-      <div class="heuristic-answer-workspace">
+      <div class="heuristic-answer-workspace mt-2">
         <header v-if="currentQuestion" class="answer-header">
           <div class="answer-heading">
             <h1>
@@ -14,8 +14,14 @@
 
         <v-divider v-if="currentQuestion" />
 
-        <div v-if="currentQuestion" class="answer-question-card">
-          <aside class="question-side-menu">
+        <div
+          v-if="currentQuestion"
+          :class="[
+            'answer-question-card',
+            { 'answer-question-card--traditional': isTraditionalEvaluation },
+          ]"
+        >
+          <aside v-if="!isTraditionalEvaluation" class="question-side-menu">
             <div class="side-menu-heading">
               <strong>{{ $t('HeuristicsTestView.answer.questions') }}</strong>
             </div>
@@ -62,12 +68,11 @@
 
           <div class="answer-content">
             <section class="question-description-box">
-              <div class="description-title">
+              <div v-if="!isTraditionalEvaluation" class="description-title">
                 <v-icon size="20">mdi-clipboard-text-outline</v-icon>
                 <strong>{{
                   $t('HeuristicsTestView.answer.questionTitle')
                 }}</strong>
-                <HelpBtn :question="currentQuestion" />
               </div>
               <p>
                 {{
@@ -243,10 +248,9 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
-import HelpBtn from '@/ux/Heuristic/components/QuestionHelpBtn.vue'
 import HeuristicCommentEvidenceSection from '@/ux/Heuristic/components/steps/HeuristicCommentEvidenceSection.vue'
 import HeuristicImageEvidenceSection from '@/ux/Heuristic/components/steps/HeuristicImageEvidenceSection.vue'
 import HeuristicOptionsAnalysisSection from '@/ux/Heuristic/components/steps/HeuristicOptionsAnalysisSection.vue'
@@ -294,6 +298,13 @@ const customOptions = computed(() =>
 
 const useFrequency = computed(() => props.test?.useFrequency !== false)
 const useSeverity = computed(() => props.test?.useSeverity !== false)
+const isTraditionalEvaluation = computed(
+  () =>
+    !props.test?.useWeights &&
+    customOptions.value.length === 0 &&
+    useFrequency.value &&
+    useSeverity.value,
+)
 
 const selectedAnswerMode = computed(() => {
   if (customOptions.value.length) return 'customOptions'
@@ -394,8 +405,21 @@ const answerForQuestion = (questionIndex) =>
   props.currentUserTestAnswer?.heuristicQuestions?.[props.heurisIndex]
     ?.heuristicQuestions?.[questionIndex] || null
 
-const questionDescription = (question) =>
-  question?.descriptions?.find((description) => description?.text)?.text || ''
+const questionDescription = (question) => {
+  if (!question) return ''
+
+  if (typeof question.descriptions === 'string') {
+    return question.descriptions
+  }
+
+  const descriptions = Array.isArray(question.descriptions)
+    ? question.descriptions
+    : question.descriptions && typeof question.descriptions === 'object'
+      ? [question.descriptions]
+      : []
+
+  return descriptions.find((description) => description?.text)?.text || ''
+}
 
 const answerModeLabel = (mode) =>
   answerModes.value.find((item) => item.value === mode)?.title || ''
@@ -504,7 +528,7 @@ const goToQuestion = (questionIndex) => {
   currentQuestionIndex.value = questionIndex
 }
 
-const goToHeuristic = (heuristicIndex) => {
+const goToHeuristic = async (heuristicIndex) => {
   if (
     heuristicIndex < 0 ||
     heuristicIndex >= heuristicNavigationItems.value.length ||
@@ -513,6 +537,8 @@ const goToHeuristic = (heuristicIndex) => {
     return
   }
   emit('select-heuristic', heuristicIndex)
+  await nextTick()
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 const updateMetricAnswer = (questionIndex, metric, value) => {
@@ -529,7 +555,7 @@ const updateCustomOptionAnswer = (questionIndex, option) => {
       ? {
           text: option.text,
           value: option.value,
-          timestamp: option.timestamp,
+          timestamp: option.timestamp ?? new Date().toISOString(),
         }
       : null,
   })
@@ -721,6 +747,10 @@ watch(
   gap: 1.6rem;
   padding: 1.45rem 1rem 0;
   background: transparent;
+}
+
+.answer-question-card--traditional {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .question-side-menu {
