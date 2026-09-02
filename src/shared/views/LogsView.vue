@@ -441,6 +441,12 @@
             logged. Active input span runs from the first to the last input
             event, not the total time spent on the question.
           </p>
+          <p
+            v-else-if="selectedEvent.eventType === 'QUESTION_RESPONSE_UPDATED'"
+          >
+            One update groups changes made during the same question interaction.
+            Selected ratings and comment text are never logged.
+          </p>
           <dl v-if="detailEntries.length" class="detail-grid">
             <template v-for="[key, value] in detailEntries" :key="key">
               <dt>{{ detailLabel(key) }}</dt>
@@ -494,13 +500,20 @@ const participantTone = (label) => {
       )
   return `participant-token--tone-${seed % 6}`
 }
-const eventTypes = filterOptions([
-  'STUDY_VIEW_OPENED',
-  'ANSWER_EDITED',
-  'CONSENT_ACCEPTED',
-  'TASK_ATTEMPT_FINISHED',
-  'STUDY_SUBMITTED',
-])
+const EVENT_TYPES_BY_STUDY = Object.freeze({
+  HEURISTIC: [
+    'STUDY_VIEW_OPENED',
+    'QUESTION_RESPONSE_UPDATED',
+    'STUDY_SUBMITTED',
+  ],
+  USER: [
+    'STUDY_VIEW_OPENED',
+    'ANSWER_EDITED',
+    'CONSENT_ACCEPTED',
+    'TASK_ATTEMPT_FINISHED',
+    'STUDY_SUBMITTED',
+  ],
+})
 const levels = ['info', 'warning', 'error']
 const sources = filterOptions(['study-client', 'logging-service'])
 const emptyFilters = () => ({
@@ -527,6 +540,9 @@ const filtersExpanded = ref(true)
 let participantTimer
 
 const study = computed(() => store.getters.test || {})
+const eventTypes = computed(() =>
+  filterOptions(EVENT_TYPES_BY_STUDY[study.value.testType] || []),
+)
 const studyTitle = computed(
   () => study.value.testTitle || study.value.title || 'Study activity',
 )
@@ -558,9 +574,23 @@ const visibleRange = computed(() => {
     ? `${start}–${end} shown`
     : `${start}–${end} of ${totalCount.value.toLocaleString()}`
 })
-const detailEntries = computed(() =>
-  Object.entries(selectedEvent.value?.details || {}),
-)
+const detailEntries = computed(() => {
+  const event = selectedEvent.value
+  const details = event?.details || {}
+  if (event?.eventType !== 'QUESTION_RESPONSE_UPDATED') {
+    return Object.entries(details)
+  }
+  return [
+    ['questionRef', details.questionRef],
+    ['changedFields', details.changedFields],
+    ['interactionSpanMs', details.interactionSpanMs],
+    ['frequencyChanges', details.frequencyChanges],
+    ['severityChanges', details.severityChanges],
+    ['answerChanges', details.answerChanges],
+    ['commentInputChanges', details.commentInputChanges],
+    ['commentTextLogged', false],
+  ].filter(([key, value]) => !key.endsWith('Changes') || Number(value) > 0)
+})
 
 const filterKey = () =>
   JSON.stringify(appliedFilters.value, (_key, value) =>
@@ -730,7 +760,18 @@ const deliveryDelay = (event) => {
   return formatDuration(Math.max(0, received - occurred))
 }
 const DETAIL_LABELS = Object.freeze({
+  taskRef: 'Task',
+  outcome: 'Outcome',
+  taskDurationMs: 'Task duration',
   fieldRef: 'Field',
+  questionRef: 'Question',
+  changedFields: 'Changed',
+  interactionSpanMs: 'Interaction span',
+  frequencyChanges: 'Frequency changes',
+  severityChanges: 'Severity changes',
+  answerChanges: 'Option changes',
+  commentInputChanges: 'Comment input changes',
+  commentTextLogged: 'Comment text',
   editSpanMs: 'Active input span',
   editOperations: 'Input changes',
   pasteOperations: 'Paste actions',
@@ -742,6 +783,12 @@ const detailLabel = (key) =>
   key.replace(/([A-Z])/g, ' $1').replace(/^./, (value) => value.toUpperCase())
 const pluralized = (value, unit) =>
   `${Number(value).toLocaleString()} ${unit}${Number(value) === 1 ? '' : 's'}`
+const formatQuestionRef = (value) => {
+  const match = /^heuristic:(\d+):question:(\d+)$/.exec(value)
+  return match
+    ? `Heuristic ${Number(match[1]) + 1} · Question ${Number(match[2]) + 1}`
+    : value
+}
 const formatFieldRef = (value) => {
   const heuristic = /^heuristic:(\d+):question:(\d+):(answer|comment)$/.exec(
     value,
@@ -761,9 +808,27 @@ const formatFieldRef = (value) => {
   }[studyField[1]]
   return `${scope} ${Number(studyField[2]) + 1} · ${formatIdentifier(studyField[3])} field`
 }
+const formatTaskRef = (value) => {
+  const match = /^task:(\d+)$/.exec(value)
+  return match ? `Task ${Number(match[1]) + 1}` : value
+}
 const formatDetailValue = (key, value) => {
+  if (key === 'taskRef') return formatTaskRef(value)
+  if (key === 'outcome') return formatIdentifier(value)
+  if (key === 'taskDurationMs') return formatDuration(value)
   if (key === 'fieldRef') return formatFieldRef(value)
-  if (key === 'editSpanMs') return formatDuration(value)
+  if (key === 'questionRef') return formatQuestionRef(value)
+  if (key === 'changedFields') {
+    return value.map(formatIdentifier).join(', ')
+  }
+  if (key === 'editSpanMs' || key === 'interactionSpanMs') {
+    return formatDuration(value)
+  }
+  if (['frequencyChanges', 'severityChanges', 'answerChanges'].includes(key)) {
+    return pluralized(value, 'change')
+  }
+  if (key === 'commentInputChanges') return pluralized(value, 'input event')
+  if (key === 'commentTextLogged') return 'Never logged'
   if (key === 'editOperations') return pluralized(value, 'input event')
   if (key === 'pasteOperations') return pluralized(value, 'paste event')
   if (key === 'initialLength' || key === 'resultingLength') {

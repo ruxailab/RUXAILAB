@@ -6,6 +6,11 @@ import {
   getStudyLogPage,
 } from '@/shared/services/studyLogQuery'
 
+const mockStudy = {
+  testTitle: 'Heuristic logging testing',
+  testType: 'HEURISTIC',
+}
+
 jest.mock('vuetify', () => ({
   useDisplay: () => ({ smAndDown: false, xs: { value: false } }),
 }))
@@ -13,10 +18,7 @@ jest.mock('vuetify', () => ({
 jest.mock('vuex', () => ({
   useStore: () => ({
     getters: {
-      test: {
-        testTitle: 'Heuristic logging testing',
-        testType: 'HEURISTIC',
-      },
+      test: mockStudy,
     },
   }),
 }))
@@ -46,7 +48,15 @@ const page = {
 }
 
 describe('LogsView', () => {
-  it('shows readable filter labels while preserving canonical values', async () => {
+  beforeEach(() => {
+    Object.assign(mockStudy, {
+      testTitle: 'Heuristic logging testing',
+      testType: 'HEURISTIC',
+    })
+    delete mockStudy.subType
+  })
+
+  it('shows only heuristic event types with readable filter labels', async () => {
     getParticipantLabels.mockResolvedValue([])
     getStudyLogPage.mockResolvedValue(page)
     getStudyLogCount.mockResolvedValue(1)
@@ -82,11 +92,9 @@ describe('LogsView', () => {
       itemValue: 'value',
       items: [
         { title: 'Study View Opened', value: 'STUDY_VIEW_OPENED' },
-        { title: 'Answer Edited', value: 'ANSWER_EDITED' },
-        { title: 'Consent Accepted', value: 'CONSENT_ACCEPTED' },
         {
-          title: 'Task Attempt Finished',
-          value: 'TASK_ATTEMPT_FINISHED',
+          title: 'Question Response Updated',
+          value: 'QUESTION_RESPONSE_UPDATED',
         },
         { title: 'Study Submitted', value: 'STUDY_SUBMITTED' },
       ],
@@ -116,6 +124,45 @@ describe('LogsView', () => {
         },
       }),
     )
+    wrapper.unmount()
+  })
+
+  it('shows only user-test event types', async () => {
+    Object.assign(mockStudy, {
+      testType: 'USER',
+      subType: 'USER_UNMODERATED',
+    })
+    getParticipantLabels.mockResolvedValue([])
+    getStudyLogPage.mockResolvedValue(page)
+    getStudyLogCount.mockResolvedValue(1)
+
+    const wrapper = mount(LogsView, {
+      props: { id: 'study-1' },
+      global: {
+        stubs: {
+          VSelect: {
+            name: 'VSelect',
+            props: ['items', 'itemTitle', 'itemValue', 'label'],
+            template: '<div />',
+          },
+        },
+      },
+    })
+    await flushPromises()
+
+    const eventType = wrapper
+      .findAllComponents({ name: 'VSelect' })
+      .find((select) => select.props('label') === 'Event type')
+    expect(eventType.props('items')).toEqual([
+      { title: 'Study View Opened', value: 'STUDY_VIEW_OPENED' },
+      { title: 'Answer Edited', value: 'ANSWER_EDITED' },
+      { title: 'Consent Accepted', value: 'CONSENT_ACCEPTED' },
+      {
+        title: 'Task Attempt Finished',
+        value: 'TASK_ATTEMPT_FINISHED',
+      },
+      { title: 'Study Submitted', value: 'STUDY_SUBMITTED' },
+    ])
     wrapper.unmount()
   })
 
@@ -208,6 +255,84 @@ describe('LogsView', () => {
     )
     expect(wrapper.text()).not.toContain('heuristic:1:question:0:comment')
     expect(wrapper.text()).not.toContain('Edit Operations')
+    wrapper.unmount()
+  })
+
+  it('presents unmoderated task details in researcher-facing language', async () => {
+    getParticipantLabels.mockResolvedValue([])
+    getStudyLogPage.mockResolvedValue({
+      ...page,
+      events: [
+        {
+          ...page.events[0],
+          eventType: 'TASK_ATTEMPT_FINISHED',
+          level: 'warning',
+          message: 'Task attempt finished',
+          details: {
+            taskRef: 'task:0',
+            outcome: 'not_completed',
+            taskDurationMs: 16000,
+          },
+        },
+      ],
+    })
+    getStudyLogCount.mockResolvedValue(1)
+
+    const wrapper = mount(LogsView, { props: { id: 'study-1' } })
+    await flushPromises()
+    await wrapper.find('tbody tr').trigger('click')
+
+    expect(wrapper.text()).toContain('Task 1')
+    expect(wrapper.text()).toContain('Not Completed')
+    expect(wrapper.text()).toContain('Task duration')
+    expect(wrapper.text()).toContain('16 s')
+    expect(wrapper.text()).not.toContain('task:0')
+    expect(wrapper.text()).not.toContain('not_completed')
+    wrapper.unmount()
+  })
+
+  it('presents grouped heuristic response details without response values', async () => {
+    getParticipantLabels.mockResolvedValue([])
+    getStudyLogPage.mockResolvedValue({
+      ...page,
+      events: [
+        {
+          ...page.events[0],
+          eventType: 'QUESTION_RESPONSE_UPDATED',
+          message: 'Question response updated',
+          details: {
+            questionRef: 'heuristic:1:question:2',
+            changedFields: ['frequency', 'severity', 'comment'],
+            interactionSpanMs: 18400,
+            frequencyChanges: 1,
+            severityChanges: 2,
+            answerChanges: 0,
+            commentInputChanges: 26,
+          },
+        },
+      ],
+    })
+    getStudyLogCount.mockResolvedValue(1)
+
+    const wrapper = mount(LogsView, { props: { id: 'study-1' } })
+    await flushPromises()
+    await wrapper.find('tbody tr').trigger('click')
+
+    expect(wrapper.text()).toContain('Heuristic 2 · Question 3')
+    expect(wrapper.text()).toContain('Changed')
+    expect(wrapper.text()).toContain('Frequency, Severity, Comment')
+    expect(wrapper.text()).toContain('Interaction span')
+    expect(wrapper.text()).toContain('18.4 s')
+    expect(wrapper.text()).toContain('Frequency changes')
+    expect(wrapper.text()).toContain('1 change')
+    expect(wrapper.text()).toContain('Severity changes')
+    expect(wrapper.text()).toContain('2 changes')
+    expect(wrapper.text()).toContain('Comment input changes')
+    expect(wrapper.text()).toContain('26 input events')
+    expect(wrapper.text()).toContain('Comment text')
+    expect(wrapper.text()).toContain('Never logged')
+    expect(wrapper.text()).not.toContain('heuristic:1:question:2')
+    expect(wrapper.text()).not.toContain('Answer changes')
     wrapper.unmount()
   })
 

@@ -112,6 +112,18 @@ export const sweepExpiredStudyLogging = async (
 
 const sanitizeDetails = (eventType, details) => {
   if (eventType === 'STUDY_VIEW_OPENED') return {}
+  if (eventType === 'QUESTION_RESPONSE_UPDATED') {
+    if (!/^heuristic:\d+:question:\d+$/.test(details?.questionRef)) return null
+    return {
+      questionRef: details.questionRef,
+      changedFields: [...(details.changedFields || [])],
+      interactionSpanMs: details.interactionSpanMs,
+      frequencyChanges: details.frequencyChanges,
+      severityChanges: details.severityChanges,
+      answerChanges: details.answerChanges,
+      commentInputChanges: details.commentInputChanges,
+    }
+  }
   if (eventType !== 'ANSWER_EDITED') return null
   if (
     !/^(heuristic:\d+:question:\d+:(comment|answer)|(preTest|postTest|task):\d+:(answer|comment))$/.test(
@@ -407,6 +419,56 @@ export const createAnswerEditTracker = ({ logger, now = Date.now }) => {
         initialLength: edit.initialLength,
         resultingLength: edit.resultingLength,
       })
+    },
+  }
+}
+
+const QUESTION_RESPONSE_FIELDS = Object.freeze({
+  frequency: 'frequencyChanges',
+  severity: 'severityChanges',
+  answer: 'answerChanges',
+  comment: 'commentInputChanges',
+})
+
+export const createQuestionResponseTracker = ({ logger, now = Date.now }) => {
+  const responses = new Map()
+  return {
+    change(questionRef, field) {
+      const countKey = QUESTION_RESPONSE_FIELDS[field]
+      if (!countKey) return
+      const changedAt = now()
+      const response = responses.get(questionRef) || {
+        firstChangeAt: changedAt,
+        lastChangeAt: changedAt,
+        frequencyChanges: 0,
+        severityChanges: 0,
+        answerChanges: 0,
+        commentInputChanges: 0,
+      }
+      response.lastChangeAt = changedAt
+      response[countKey] += 1
+      responses.set(questionRef, response)
+    },
+    async finish(questionRef) {
+      const response = responses.get(questionRef)
+      responses.delete(questionRef)
+      if (!response) return null
+      const changedFields = Object.entries(QUESTION_RESPONSE_FIELDS)
+        .filter(([, countKey]) => response[countKey] > 0)
+        .map(([field]) => field)
+      return logger.record(
+        'QUESTION_RESPONSE_UPDATED',
+        {
+          questionRef,
+          changedFields,
+          interactionSpanMs: response.lastChangeAt - response.firstChangeAt,
+          frequencyChanges: response.frequencyChanges,
+          severityChanges: response.severityChanges,
+          answerChanges: response.answerChanges,
+          commentInputChanges: response.commentInputChanges,
+        },
+        new Date(response.lastChangeAt).toISOString(),
+      )
     },
   }
 }

@@ -43,6 +43,45 @@ const createQueueStore = () => {
 const eventIds = ['event-1', 'event-2', 'batch-1', 'batch-2']
 
 describe('browser study logging client', () => {
+  it('queues a structured heuristic question response without answer values', async () => {
+    const submitBatch = jest.fn(({ batchId }) => ({
+      status: 'accepted',
+      batchId,
+    }))
+    const ids = ['response-1', 'batch-1']
+    const logger = createStudyLogger({
+      ownerUid: 'participant',
+      studyId: 'study-1',
+      submitBatch,
+      queueStore: createQueueStore(),
+      createId: () => ids.shift(),
+    })
+    const details = {
+      questionRef: 'heuristic:1:question:2',
+      changedFields: ['frequency', 'severity', 'comment'],
+      interactionSpanMs: 18400,
+      frequencyChanges: 1,
+      severityChanges: 2,
+      answerChanges: 0,
+      commentInputChanges: 26,
+    }
+
+    await logger.record('QUESTION_RESPONSE_UPDATED', details)
+    await logger.flush()
+
+    expect(submitBatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        events: [
+          expect.objectContaining({
+            eventType: 'QUESTION_RESPONSE_UPDATED',
+            details,
+          }),
+        ],
+      }),
+    )
+    expect(JSON.stringify(submitBatch.mock.calls)).not.toContain('comment text')
+  })
+
   it('submits automatically when the queue reaches the batch limit', async () => {
     let nextId = 0
     const submitBatch = jest.fn(({ batchId }) => ({

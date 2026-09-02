@@ -3,6 +3,7 @@
     @focusin.capture="handleLoggingFocusin"
     @input.capture="handleLoggingInput"
     @focusout.capture="handleLoggingFocusout"
+    @click.capture="handleLoggingClick"
   >
     <Snackbar />
     <!-- Submit Alert Dialog -->
@@ -280,6 +281,7 @@
                 @back="showHeuristicCards = true"
                 @select-heuristic="handleHeurisClick"
                 @finish-evaluation="review = false"
+                @response-change="handleHeuristicResponseChange"
                 @update-answer="
                   (questionIndex, value) =>
                     updateHeuristicAnswer(heurisIndex, questionIndex, value)
@@ -449,6 +451,7 @@ const initializeStudyLogging = () => {
   studyLogging = createStudyLoggingRuntime({
     ownerUid: user.value.id,
     studyId: test.value.id,
+    studyType: 'HEURISTIC',
     callFunction: FirebaseFunctionsController.callHttpsCallableFunction,
   })
   if (!currentUserTestAnswer.value?.submitted) void studyLogging.open()
@@ -460,6 +463,10 @@ const handleLoggingInput = (event) =>
   initializeStudyLogging()?.editHandlers.input(event)
 const handleLoggingFocusout = (event) =>
   initializeStudyLogging()?.editHandlers.focusout(event)
+const handleLoggingClick = (event) =>
+  studyLogging?.interactionHandlers.click(event)
+const handleHeuristicResponseChange = (questionRef, field) =>
+  initializeStudyLogging()?.responseChanged(questionRef, field)
 const logined = ref(null)
 const fromlink = ref(null)
 const start = ref(true)

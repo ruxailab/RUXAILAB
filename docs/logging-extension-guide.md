@@ -47,6 +47,12 @@ Logging follows a successful primary save and remains fire-and-forget:
 - mark text controls with `data-study-field-ref` to opt into metadata-only edit
   aggregation.
 
+Heuristic studies use one `QUESTION_RESPONSE_UPDATED` event per question
+interaction. Call `responseChanged(questionRef, field)` only after a real
+frequency, severity, or configured-option change; delegated comment inputs are
+counted by the runtime. Leaving the question, hiding the page, or submitting
+finishes the group. Never pass selected values or comment text to logging.
+
 Do not add telemetry to participant loading state, notifications, or error
 handling. On unmount call `destroy()` to release browser listeners. Verify that
 logging failures do not alter the primary workflow and that no test assertion

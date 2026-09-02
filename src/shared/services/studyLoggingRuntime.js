@@ -1,5 +1,6 @@
 import {
   createAnswerEditTracker,
+  createQuestionResponseTracker,
   createStudyLogger,
 } from '@/shared/services/studyLoggingClient'
 
@@ -14,6 +15,7 @@ export const requestStudyLoggingLogout = (ownerUid) => {
 export const createStudyLoggingRuntime = ({
   ownerUid,
   studyId,
+  studyType = 'USER',
   consentRequired = false,
   callFunction,
   createLogger = createStudyLogger,
@@ -29,8 +31,12 @@ export const createStudyLoggingRuntime = ({
     submitBatch: (payload) => callFunction('logEvents', payload),
   })
   const editTracker = createAnswerEditTracker({ logger })
+  const responseTracker = createQuestionResponseTracker({ logger })
+  const isHeuristic = String(studyType).toUpperCase() === 'HEURISTIC'
   let consentPending = false
   let opened = false
+  let activeQuestionRef = null
+  let pendingResponseDelivery = Promise.resolve()
 
   const request = async (eventType, taskRef) => {
     try {
@@ -40,7 +46,11 @@ export const createStudyLoggingRuntime = ({
         ...(taskRef ? { taskRef } : {}),
       })
       return response?.data || response
-    } catch {
+    } catch (caught) {
+      const details = caught?.details || caught?.data?.details
+      if (details?.retryable === false) {
+        return { status: 'rejected', retryable: false }
+      }
       return null
     }
   }
@@ -56,8 +66,10 @@ export const createStudyLoggingRuntime = ({
   const consentAccepted = async () => {
     consentPending = true
     const acknowledgement = await request('CONSENT_ACCEPTED')
-    if (!['accepted', 'duplicate'].includes(acknowledgement?.status))
+    if (!['accepted', 'duplicate'].includes(acknowledgement?.status)) {
+      if (acknowledgement?.retryable === false) consentPending = false
       return null
+    }
     consentPending = false
     consentRequired = false
     logger.setEnabled(true)
@@ -85,13 +97,35 @@ export const createStudyLoggingRuntime = ({
 
   const editField = (target) =>
     target?.closest?.('[data-study-field-ref]')?.dataset?.studyFieldRef
+  const questionRefFor = (fieldRef) =>
+    /^(heuristic:\d+:question:\d+):(answer|comment)$/.exec(fieldRef || '')?.[1]
+  const activateQuestion = (questionRef) => {
+    if (activeQuestionRef === questionRef) return null
+    const previous = activeQuestionRef
+    activeQuestionRef = questionRef
+    return previous ? responseTracker.finish(previous) : null
+  }
+  const finishQuestionResponse = () => {
+    const questionRef = activeQuestionRef
+    activeQuestionRef = null
+    if (questionRef) {
+      const delivery = responseTracker.finish(questionRef)
+      pendingResponseDelivery = Promise.all([
+        pendingResponseDelivery,
+        delivery,
+      ]).then(() => undefined)
+    }
+    return pendingResponseDelivery
+  }
   const activeFields = new Set()
   const finishField = async (fieldRef) => {
     if (!activeFields.delete(fieldRef)) return null
     return editTracker.finish(fieldRef)
   }
   const finishActiveEdits = () =>
-    Promise.all([...activeFields].map((fieldRef) => finishField(fieldRef)))
+    isHeuristic
+      ? finishQuestionResponse()
+      : Promise.all([...activeFields].map((fieldRef) => finishField(fieldRef)))
   const finishAndFlush = async () => {
     await finishActiveEdits()
     return logger.flush()
@@ -107,6 +141,7 @@ export const createStudyLoggingRuntime = ({
   }
   const onVisibilityChange = () => {
     if (visibilityTarget?.hidden) return finishAndFlush()
+    if (isHeuristic) return null
     const target = visibilityTarget?.activeElement
     const fieldRef = editField(target)
     if (fieldRef) {
@@ -118,7 +153,7 @@ export const createStudyLoggingRuntime = ({
   const onLogout = (event) => {
     if (event?.detail?.ownerUid !== ownerUid) return null
     const delivery = logger.flush()
-    if (activeFields.size) void finishAndFlush()
+    if (activeFields.size || activeQuestionRef) void finishAndFlush()
     return delivery
   }
   visibilityTarget?.addEventListener('visibilitychange', onVisibilityChange)
@@ -126,6 +161,7 @@ export const createStudyLoggingRuntime = ({
   const editHandlers = {
     focusin(event) {
       const fieldRef = editField(event.target)
+      if (isHeuristic) return activateQuestion(questionRefFor(fieldRef))
       if (fieldRef) {
         activeFields.add(fieldRef)
         editTracker.begin(fieldRef, String(event.target.value || '').length)
@@ -134,32 +170,55 @@ export const createStudyLoggingRuntime = ({
     input(event) {
       const fieldRef = editField(event.target)
       if (!fieldRef) return
+      if (isHeuristic) {
+        const questionRef = questionRefFor(fieldRef)
+        activateQuestion(questionRef)
+        if (questionRef && fieldRef.endsWith(':comment')) {
+          responseTracker.change(questionRef, 'comment')
+        }
+        return
+      }
       editTracker.input(fieldRef, String(event.target.value || '').length, {
         pasted: event.inputType === 'insertFromPaste',
       })
     },
     async focusout(event) {
       const fieldRef = editField(event.target)
+      if (isHeuristic) return null
       if (!fieldRef) return null
       return finishField(fieldRef)
+    },
+  }
+  const interactionHandlers = {
+    click(event) {
+      if (!isHeuristic) return null
+      const questionRef = questionRefFor(editField(event.target))
+      return questionRef
+        ? activateQuestion(questionRef)
+        : finishQuestionResponse()
     },
   }
 
   return {
     open,
     editHandlers,
+    interactionHandlers,
+    responseChanged(questionRef, field) {
+      if (!isHeuristic) return null
+      const pending = activateQuestion(questionRef)
+      responseTracker.change(questionRef, field)
+      return pending
+    },
     consentAccepted,
     resumeAfterConsent,
     taskFinished(taskIndex) {
-      return finishFlushAndRequest(
-        'TASK_ATTEMPT_FINISHED',
-        `task:${taskIndex}`,
-      )
+      return finishFlushAndRequest('TASK_ATTEMPT_FINISHED', `task:${taskIndex}`)
     },
     submitted() {
       return finishFlushAndRequest('STUDY_SUBMITTED')
     },
     destroy() {
+      if (activeQuestionRef) void finishAndFlush()
       clearIntervalFn(retryInterval)
       eventTarget?.removeEventListener('online', onOnline)
       eventTarget?.removeEventListener(LOGOUT_EVENT, onLogout)

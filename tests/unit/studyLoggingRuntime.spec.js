@@ -1,6 +1,9 @@
 import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
 
-const createHarness = ({ consentRequired = false } = {}) => {
+const createHarness = ({
+  consentRequired = false,
+  studyType = 'USER',
+} = {}) => {
   const logger = {
     record: jest.fn().mockResolvedValue('event-1'),
     flush: jest.fn().mockResolvedValue({ status: 'accepted' }),
@@ -28,6 +31,7 @@ const createHarness = ({ consentRequired = false } = {}) => {
   const runtime = createStudyLoggingRuntime({
     ownerUid: 'participant',
     studyId: 'study-1',
+    studyType,
     consentRequired,
     callFunction,
     createLogger: () => logger,
@@ -81,6 +85,20 @@ describe('study logging runtime', () => {
 
     expect(callFunction).toHaveBeenCalledTimes(2)
     expect(logger.record).not.toHaveBeenCalled()
+  })
+
+  it('does not retry a permanently rejected consent transition', async () => {
+    const { runtime, callFunction, listeners } = createHarness({
+      consentRequired: true,
+    })
+    callFunction.mockRejectedValue({
+      details: { retryable: false, reasonCode: 'UNVERIFIED_TRANSITION' },
+    })
+
+    await runtime.consentAccepted()
+    await listeners.get('online')()
+
+    expect(callFunction).toHaveBeenCalledTimes(1)
   })
 
   it('records a route opening only when consent was already committed before entry', async () => {
@@ -280,6 +298,43 @@ describe('study logging runtime', () => {
     )
     expect(JSON.stringify(logger.record.mock.calls)).not.toContain(
       'private answer',
+    )
+  })
+
+  it('groups heuristic ratings and comment inputs into one question update', async () => {
+    const { runtime, logger } = createHarness({ studyType: 'HEURISTIC' })
+    document.body.innerHTML = `
+      <section data-study-field-ref="heuristic:1:question:2:comment">
+        <textarea></textarea>
+      </section>
+      <button id="leave-question"></button>
+    `
+    const input = document.querySelector('textarea')
+    const questionRef = 'heuristic:1:question:2'
+
+    runtime.responseChanged(questionRef, 'frequency')
+    runtime.responseChanged(questionRef, 'severity')
+    runtime.responseChanged(questionRef, 'severity')
+    runtime.editHandlers.input({ target: input, inputType: 'insertText' })
+    runtime.editHandlers.input({ target: input, inputType: 'insertText' })
+    await runtime.interactionHandlers.click({
+      target: document.querySelector('#leave-question'),
+    })
+
+    expect(logger.record).toHaveBeenCalledWith(
+      'QUESTION_RESPONSE_UPDATED',
+      expect.objectContaining({
+        questionRef,
+        changedFields: ['frequency', 'severity', 'comment'],
+        frequencyChanges: 1,
+        severityChanges: 2,
+        commentInputChanges: 2,
+      }),
+      expect.any(String),
+    )
+    expect(logger.record).not.toHaveBeenCalledWith(
+      'ANSWER_EDITED',
+      expect.anything(),
     )
   })
 })

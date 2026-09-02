@@ -277,6 +277,7 @@ const emit = defineEmits([
   'remove-image',
   'select-heuristic',
   'finish-evaluation',
+  'response-change',
 ])
 
 const recordingQuestionIndex = ref(null)
@@ -541,16 +542,21 @@ const goToHeuristic = async (heuristicIndex) => {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
+const responseRef = (questionIndex) =>
+  `heuristic:${canonicalHeuristicIndex.value}:question:${questionIndex}`
+
 const updateMetricAnswer = (questionIndex, metric, value) => {
-  emitAnswer(questionIndex, {
-    ...baseAnswer(questionIndex, selectedAnswerMode.value),
-    [metric]: value,
-  })
+  const answer = baseAnswer(questionIndex, selectedAnswerMode.value)
+  emitAnswer(questionIndex, { ...answer, [metric]: value })
+  if (answer[metric] !== value) {
+    emit('response-change', responseRef(questionIndex), metric)
+  }
 }
 
 const updateCustomOptionAnswer = (questionIndex, option) => {
+  const answer = baseAnswer(questionIndex, 'customOptions')
   emitAnswer(questionIndex, {
-    ...baseAnswer(questionIndex, 'customOptions'),
+    ...answer,
     custom: option
       ? {
           text: option.text,
@@ -559,6 +565,9 @@ const updateCustomOptionAnswer = (questionIndex, option) => {
         }
       : null,
   })
+  if (answer.custom?.value !== option?.value) {
+    emit('response-change', responseRef(questionIndex), 'answer')
+  }
 }
 
 const isFilledValue = (value) =>

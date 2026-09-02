@@ -1,5 +1,6 @@
 import { shallowMount } from '@vue/test-utils'
 import HeuristicAnswerStep from '@/ux/Heuristic/components/steps/HeuristicAnswerStep.vue'
+import HeuristicOptionsAnalysisSection from '@/ux/Heuristic/components/steps/HeuristicOptionsAnalysisSection.vue'
 
 jest.mock('vue-i18n', () => ({
   useI18n: () => ({ t: (key) => key }),
@@ -41,15 +42,19 @@ describe('HeuristicAnswerStep logging fields', () => {
       },
     })
 
-    expect(
-      wrapper
-        .find('heuristic-options-analysis-section-stub')
-        .attributes('data-study-field-ref'),
-    ).toBe('heuristic:1:question:0:answer')
+    const options = wrapper.findComponent(HeuristicOptionsAnalysisSection)
+    expect(options.attributes('data-study-field-ref')).toBe(
+      'heuristic:1:question:0:answer',
+    )
     expect(
       wrapper
         .find('heuristic-comment-evidence-section-stub')
         .attributes('data-study-field-ref'),
     ).toBe('heuristic:1:question:0:comment')
+
+    options.vm.$emit('update-metric', 'severity', 2)
+    expect(wrapper.emitted('response-change')).toEqual([
+      ['heuristic:1:question:0', 'severity'],
+    ])
   })
 })

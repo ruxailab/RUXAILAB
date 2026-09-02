@@ -101,6 +101,22 @@ const answerEdited = (eventId = 'edit-1', overrides = {}) => ({
   ...overrides,
 })
 
+const questionResponseUpdated = (eventId = 'response-1', overrides = {}) => ({
+  eventId,
+  eventType: 'QUESTION_RESPONSE_UPDATED',
+  occurredAt: '2026-08-14T10:01:18.400Z',
+  details: {
+    questionRef: 'heuristic:0:question:0',
+    changedFields: ['frequency', 'severity', 'comment'],
+    interactionSpanMs: 18400,
+    frequencyChanges: 1,
+    severityChanges: 2,
+    answerChanges: 0,
+    commentInputChanges: 26,
+  },
+  ...overrides,
+})
+
 beforeAll(async () => {
   if (!admin.apps.length) ownedAdminApp = admin.initializeApp({ projectId })
   testEnv = await initializeTestEnvironment({ projectId })
@@ -324,12 +340,8 @@ describe('authenticated logging commands', () => {
     await assertFails(
       getDocs(collection(researcherDb, 'tests/study-1/studySessions')),
     )
-    await assertFails(
-      getDoc(doc(adminDb, 'tests/study-1/logBatches/hidden')),
-    )
-    await assertFails(
-      getDoc(doc(adminDb, 'tests/study-1/loggingMeta/state')),
-    )
+    await assertFails(getDoc(doc(adminDb, 'tests/study-1/logBatches/hidden')))
+    await assertFails(getDoc(doc(adminDb, 'tests/study-1/loggingMeta/state')))
     await assertFails(
       setDoc(doc(adminDb, 'tests/study-1/logs/forged'), {
         eventType: 'STUDY_VIEW_OPENED',
@@ -344,6 +356,46 @@ describe('authenticated logging commands', () => {
 })
 
 describe('client-observed batch delivery', () => {
+  it('accepts a grouped heuristic question response without response values', async () => {
+    await logEvents.run(
+      participantRequest({
+        ...viewBatch(),
+        events: [questionResponseUpdated()],
+      }),
+    )
+
+    const logs = await admin.firestore().collection('tests/study-1/logs').get()
+    expect(logs.docs[0].data()).toMatchObject({
+      eventType: 'QUESTION_RESPONSE_UPDATED',
+      message: 'Question response updated',
+      details: questionResponseUpdated().details,
+    })
+    expect(JSON.stringify(logs.docs[0].data())).not.toContain('comment text')
+  })
+
+  it('rejects grouped heuristic responses from user-test studies', async () => {
+    await useUserStudy()
+
+    await expect(
+      logEvents.run(
+        participantRequest({
+          ...viewBatch(),
+          events: [questionResponseUpdated()],
+        }),
+      ),
+    ).rejects.toMatchObject({
+      code: 'invalid-argument',
+      details: {
+        invalidEvents: [
+          {
+            eventId: 'response-1',
+            reasonCode: 'INVALID_EVENT_DETAILS',
+          },
+        ],
+      },
+    })
+  })
+
   it('atomically stores a valid multi-event batch and charges its full observation count once', async () => {
     await expect(
       logEvents.run(

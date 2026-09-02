@@ -1,4 +1,7 @@
-import { createAnswerEditTracker } from '@/shared/services/studyLoggingClient'
+import {
+  createAnswerEditTracker,
+  createQuestionResponseTracker,
+} from '@/shared/services/studyLoggingClient'
 
 describe('answer edit aggregation', () => {
   it('records one metadata-only summary from first to last changed input', async () => {
@@ -32,5 +35,57 @@ describe('answer edit aggregation', () => {
     await tracker.finish('heuristic:0:question:0:comment')
 
     expect(logger.record).not.toHaveBeenCalled()
+  })
+})
+
+describe('heuristic question response aggregation', () => {
+  it('records one privacy-safe summary for all response fields changed together', async () => {
+    let now = 1000
+    const logger = { record: jest.fn().mockResolvedValue('event-1') }
+    const tracker = createQuestionResponseTracker({ logger, now: () => now })
+    const questionRef = 'heuristic:1:question:2'
+
+    tracker.change(questionRef, 'frequency')
+    now = 3000
+    tracker.change(questionRef, 'severity')
+    now = 9400
+    tracker.change(questionRef, 'severity')
+    for (let index = 0; index < 26; index += 1) {
+      now = 19400
+      tracker.change(questionRef, 'comment')
+    }
+    await tracker.finish(questionRef)
+
+    expect(logger.record).toHaveBeenCalledWith(
+      'QUESTION_RESPONSE_UPDATED',
+      {
+        questionRef,
+        changedFields: ['frequency', 'severity', 'comment'],
+        interactionSpanMs: 18400,
+        frequencyChanges: 1,
+        severityChanges: 2,
+        answerChanges: 0,
+        commentInputChanges: 26,
+      },
+      '1970-01-01T00:00:19.400Z',
+    )
+    expect(JSON.stringify(logger.record.mock.calls)).not.toContain(
+      'comment text',
+    )
+
+    logger.record.mockClear()
+    now = 25000
+    tracker.change(questionRef, 'severity')
+    await tracker.finish(questionRef)
+    expect(logger.record).toHaveBeenCalledWith(
+      'QUESTION_RESPONSE_UPDATED',
+      expect.objectContaining({
+        changedFields: ['severity'],
+        frequencyChanges: 0,
+        severityChanges: 1,
+        commentInputChanges: 0,
+      }),
+      '1970-01-01T00:00:25.000Z',
+    )
   })
 })
