@@ -12,6 +12,7 @@ import {
   hasStudyCapability,
   resolveStudyAccess,
 } from '@/shared/utils/studyAccessPolicy'
+import { buildSignInPath } from '@/shared/utils/authRedirect'
 
 const C = STUDY_CAPABILITY
 
@@ -35,6 +36,7 @@ export function getTestViewAccessRedirect({
   user,
   token,
   invitation = null,
+  redirectTo = '',
 }) {
   if (!study) return '/admin'
 
@@ -46,6 +48,16 @@ export function getTestViewAccessRedirect({
 
   const isAnonymousInvitation =
     invitation?.requiredLogin === false && invitation?.studyId == study?.id
+
+  /*
+   * Signing in is what identifies a participant, and a study being public only
+   * says who may answer it, not that answers can be anonymous. An invitation
+   * that waives login is the one way in without an account; everybody else
+   * signs in first and is brought back to the study afterwards.
+   */
+  if (!user && !isAnonymousInvitation) {
+    return buildSignInPath(redirectTo)
+  }
 
   if (isModeratedUserStudy && !token && !study?.isPublic) {
     return getStudyFallbackPath(study, user, routeBase)
