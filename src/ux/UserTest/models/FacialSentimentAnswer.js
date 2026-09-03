@@ -1,5 +1,13 @@
 export class FacialSentimentAnswer {
   constructor({
+    Happy = null,
+    Sad = null,
+    Angry = null,
+    Surprised = null,
+    Neutral = null,
+    Disgusted = null,
+    Fearful = null,
+    // Legacy camelCase support
     angry = null,
     disgusted = null,
     fearful = null,
@@ -8,24 +16,24 @@ export class FacialSentimentAnswer {
     sad = null,
     surprised = null,
   } = {}) {
-    this.angry = angry
-    this.disgusted = disgusted
-    this.fearful = fearful
-    this.happy = happy
-    this.neutral = neutral
-    this.sad = sad
-    this.surprised = surprised
+    this.Happy = Happy ?? happy
+    this.Sad = Sad ?? sad
+    this.Angry = Angry ?? angry
+    this.Surprised = Surprised ?? surprised
+    this.Neutral = Neutral ?? neutral
+    this.Disgusted = Disgusted ?? disgusted
+    this.Fearful = Fearful ?? fearful
   }
 
   toFirestore() {
     return {
-      angry: this.angry,
-      disgusted: this.disgusted,
-      fearful: this.fearful,
-      happy: this.happy,
-      neutral: this.neutral,
-      sad: this.sad,
-      surprised: this.surprised,
+      Happy: this.Happy,
+      Sad: this.Sad,
+      Angry: this.Angry,
+      Surprised: this.Surprised,
+      Neutral: this.Neutral,
+      Disgusted: this.Disgusted,
+      Fearful: this.Fearful,
     }
   }
 

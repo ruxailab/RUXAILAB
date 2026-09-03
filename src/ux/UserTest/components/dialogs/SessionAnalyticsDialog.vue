@@ -180,10 +180,32 @@
 
                 <v-window-item v-if="hasSentimentData" value="sentimental">
                   <FacialSentimentPanel
+                    v-if="hasWebcamMedia"
+                    :key="`facial-${resolvedTaskId}-${taskAnswer?.sentimentDocId || 'new'}`"
                     :video-element="mainVideo1"
                     :webcam-video-url="taskAnswer?.webcamRecordURL"
+                    :sentiment-doc-id="taskAnswer?.sentimentDocId"
+                    :legacy-facial-results="taskAnswer?.facialSentimentResults"
                     :test-answer="testAnswer"
                     :selected-task="selectedTask"
+                    :answers-doc-id="answersDocId"
+                    :user-doc-id="userId"
+                    :task-id="resolvedTaskId"
+                    :study-id="testAnswer?.studyId || null"
+                    class="mb-4"
+                  />
+                  <TextSentimentPanel
+                    v-if="hasTaskAudio"
+                    :key="`text-${resolvedTaskId}-${taskAnswer?.sentimentDocId || 'new'}`"
+                    :audio-url="taskAnswer?.audioRecordURL"
+                    :sentiment-doc-id="taskAnswer?.sentimentDocId"
+                    :legacy-text-results="taskAnswer?.textSentimentResults"
+                    :test-answer="testAnswer"
+                    :selected-task="selectedTask"
+                    :answers-doc-id="answersDocId"
+                    :user-doc-id="userId"
+                    :task-id="resolvedTaskId"
+                    :study-id="testAnswer?.studyId || null"
                   />
                 </v-window-item>
 
@@ -358,6 +380,7 @@ import { formatTime } from '@/shared/utils/timeUtils'
 import SessionTimeline from '../sessions/SessionTimeline.vue'
 import EyeTrackingStats from '../sessions/EyeTrackingStats.vue'
 import FacialSentimentPanel from '../sentimentAnalysis/FacialSentimentPanel.vue'
+import TextSentimentPanel from '../sentimentAnalysis/TextSentimentPanel.vue'
 import EyeTrackingOverlay from '../answers/EyeTrackingOverlay.vue'
 import TimelinePanel from '@/ux/UserTest/components/transcription/TimeLinePanel.vue'
 import TranscriptionsPanel from '@/ux/UserTest/components/transcription/TranscriptionsPanel.vue'
@@ -553,8 +576,10 @@ const hasEyeTrackingData = computed(
     props.taskAnswer.irisTrackingData.length > 0,
 )
 
-const hasSentimentData = computed(() =>
-  Boolean(props.taskAnswer?.webcamRecordURL),
+const hasTaskAudio = computed(() => Boolean(props.taskAnswer?.audioRecordURL))
+
+const hasSentimentData = computed(
+  () => Boolean(props.taskAnswer?.webcamRecordURL) || hasTaskAudio.value,
 )
 
 const hasTranscriptionData = computed(

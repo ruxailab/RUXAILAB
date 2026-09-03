@@ -29,4 +29,20 @@ export class FirestoreAnswerRepository extends FirestoreCollectionRepository {
         transcriptionDocId,
     })
   }
+
+  /**
+   * Pointer to the sentiment document for a task answer (facial + text).
+   *
+   * @param {string} answersDocId
+   * @param {string} userDocId
+   * @param {string} taskId
+   * @param {string|null} sentimentDocId
+   * @returns {Promise<void>}
+   */
+  async setSentimentDocId(answersDocId, userDocId, taskId, sentimentDocId) {
+    await this.update(answersDocId, {
+      [`taskAnswers.${userDocId}.tasks.${taskId}.sentimentDocId`]:
+        sentimentDocId,
+    })
+  }
 }
