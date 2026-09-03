@@ -60,8 +60,8 @@ export default class UserStudyEvaluatorAnswer {
       submitted: current.submitted,
       progress: current.progress,
       fullName: current.fullName,
-      userDocId: current.userDocId,
-      invited: current.invited,
+      userDocId: current.userDocId ?? saved.userDocId,
+      invited: current.invited || saved.invited,
       tasks: {
         ...(saved.tasks || {}),
         ...(current.tasks || {}),

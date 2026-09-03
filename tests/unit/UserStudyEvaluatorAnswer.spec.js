@@ -30,4 +30,18 @@ describe('UserStudyEvaluatorAnswer', () => {
     })
     expect(merged.tasks[0].attempted).toBe(true)
   })
+
+  it('preserves saved participant identity when current progress omits it', () => {
+    const saved = new UserStudyEvaluatorAnswer({
+      userDocId: 'participant-1',
+      invited: true,
+    })
+    const current = new UserStudyEvaluatorAnswer({ consentCompleted: true })
+
+    expect(UserStudyEvaluatorAnswer.mergeProgress(saved, current)).toMatchObject({
+      userDocId: 'participant-1',
+      invited: true,
+      consentCompleted: true,
+    })
+  })
 })

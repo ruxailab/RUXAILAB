@@ -35,53 +35,8 @@ service cloud.firestore {
       return roleFor(study) == 4;
     }
 
-    function isStudyMember(study) {
-      return
-        (study.testType == 'USER' && roleFor(study) in [0, 3, 4, 5]) ||
-        ((study.testType == 'HEURISTIC' || study.testType == 'HEURISTICS') &&
-          roleFor(study) in [0, 1, 2, 4]);
-    }
-
-    function isUserStudy(study) {
-      return study.testType == 'USER';
-    }
-
-    function isHeuristicStudy(study) {
-      return study.testType == 'HEURISTIC' ||
-        study.testType == 'HEURISTICS';
-    }
-
-    function isRbacStudy(study) {
-      return isUserStudy(study) || isHeuristicStudy(study);
-    }
-
-    function canViewDashboard(study) {
-      return isAdmin(study) || isManager(study) ||
-        (isUserStudy(study) && roleFor(study) == 3) ||
-        (isHeuristicStudy(study) && roleFor(study) in [1, 2]);
-    }
-
-    function canViewAnswers(study) {
-      return isAdmin(study) || isManager(study) ||
-        (isUserStudy(study) && roleFor(study) == 3) ||
-        (isHeuristicStudy(study) && roleFor(study) in [1, 2]);
-    }
-
     function canViewLogs(study) {
       return isAdmin(study);
-    }
-
-    function canAnswer(study) {
-      return signedIn() && (
-        study.isPublic == true ||
-        isAdmin(study) ||
-        isManager(study) ||
-        (isUserStudy(study) && (
-          roleFor(study) == 5 ||
-          (roleFor(study) == 3 && study.subType == 'USER_MODERATED')
-        )) ||
-        (isHeuristicStudy(study) && roleFor(study) == 1)
-      );
     }
 
     function managerChangedOnlyStudyContent() {
@@ -178,7 +133,7 @@ service cloud.firestore {
             'heuristicAnswers',
             'cardSortingAnswers',
             'studyId'
-          ]);
+      		]);
       allow delete: if (
         signedIn() &&
         resource.data.studyId == null &&
