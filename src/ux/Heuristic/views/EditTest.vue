@@ -19,7 +19,7 @@
       @action="save({ showToast: true })"
     />
 
-    <v-container v-if="isCurrentStudy">
+    <v-container>
       <div>
         <v-tabs
           v-if="!isMobile"
@@ -86,7 +86,7 @@ import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import AutoSaveStatusBanner from '@/shared/components/AutoSaveStatusBanner.vue'
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useStore } from 'vuex'
-import { onBeforeRouteLeave, useRoute } from 'vue-router'
+import { onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { debounce } from 'lodash'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
@@ -109,7 +109,6 @@ const props = defineProps({
 })
 
 const store = useStore()
-const route = useRoute()
 const { t } = useI18n()
 const studyController = new StudyController()
 
@@ -125,7 +124,6 @@ let currentSavePromise = null
 
 const showSettingsTab = computed(() => !props.isTemplate)
 const test = computed(() => store.getters.test)
-const isCurrentStudy = computed(() => test.value?.id === route.params.id)
 const showWeightsTab = computed(() => test.value?.useWeights ?? false)
 const showOptionsTab = computed(
   () =>

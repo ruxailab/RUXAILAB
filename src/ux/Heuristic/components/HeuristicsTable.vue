@@ -482,8 +482,6 @@
               variant="outlined"
               density="comfortable"
               :rules="nameRequired"
-              :counter="TITLE_MAX_LENGTH"
-              :maxlength="TITLE_MAX_LENGTH"
               class="mb-4"
               autofocus
             />
@@ -504,9 +502,6 @@
               variant="outlined"
               density="comfortable"
               :hint="$t('HeuristicsTable.messages.optionalFirstQuestion')"
-              :rules="questionTitleMaxLength"
-              :counter="TITLE_MAX_LENGTH"
-              :maxlength="TITLE_MAX_LENGTH"
               persistent-hint
             />
           </v-form>
@@ -538,8 +533,6 @@
               variant="outlined"
               density="comfortable"
               :rules="questionRequired"
-              :counter="TITLE_MAX_LENGTH"
-              :maxlength="TITLE_MAX_LENGTH"
               autofocus
             />
             <v-alert v-else-if="dialogQuestion" type="error" class="mt-4">
@@ -588,8 +581,6 @@
               variant="outlined"
               density="comfortable"
               :rules="itemEdit ? itemEdit.rule : []"
-              :counter="TITLE_MAX_LENGTH"
-              :maxlength="TITLE_MAX_LENGTH"
               autofocus
             />
             <v-textarea
@@ -703,7 +694,6 @@ const isProcessing = ref(false)
 const questionHeuristicIndex = ref(null)
 const itemsPerPage = ref(5)
 const isDialogClosing = ref(false)
-const TITLE_MAX_LENGTH = 100
 
 // Delete confirmation dialog state
 const dialogDelete = ref(false)
@@ -728,20 +718,9 @@ const headers = ref([
 
 const nameRequired = ref([
   (v) => !!v || t('HeuristicsTable.validation.nameRequired'),
-  (v) =>
-    (v || '').length <= TITLE_MAX_LENGTH ||
-    t('HeuristicsTable.validation.max100Characters'),
 ])
 const questionRequired = ref([
   (v) => !!v || t('HeuristicsTable.validation.questionRequired'),
-  (v) =>
-    (v || '').length <= TITLE_MAX_LENGTH ||
-    t('HeuristicsTable.validation.max100Characters'),
-])
-const questionTitleMaxLength = ref([
-  (v) =>
-    (v || '').length <= TITLE_MAX_LENGTH ||
-    t('HeuristicsTable.validation.max100Characters'),
 ])
 
 const test = computed(() => store.getters.test)

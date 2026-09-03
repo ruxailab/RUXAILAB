@@ -146,13 +146,13 @@ describe('study navigation', () => {
     })
   })
 
-  it('keeps Preview available to a heuristic Evaluator from the dashboard', () => {
+  it('keeps Answer available to a heuristic Evaluator from the dashboard', () => {
     const evaluator = { id: 'evaluator', accessLevel: 1 }
     const study = studyWith('HEURISTIC', evaluator.id, STUDY_ROLE.EVALUATOR)
 
     expect(titlesFor(study, evaluator, 'heuristic')).toEqual([
       'Dashboard',
-      'Preview',
+      'Answer',
       'Results',
     ])
   })
@@ -161,7 +161,7 @@ describe('study navigation', () => {
     expect(titlesFor(studyWith('USER'), owner)).toEqual([
       'Dashboard',
       'Test',
-      'Preview',
+      'Answer',
       'Progress',
       'Results',
       'Cooperators',
@@ -194,7 +194,7 @@ describe('study navigation', () => {
     expect(titlesFor(study, user)).toEqual([
       'Dashboard',
       'Test',
-      'Preview',
+      'Answer',
       'Results',
       'Cooperators',
       'Participants',
@@ -208,14 +208,14 @@ describe('study navigation', () => {
     expect(titlesFor(study, user)).not.toContain('Audit Trail')
   })
 
-  it('keeps Preview hidden for a private-study Observator', () => {
+  it('keeps Answer hidden for a private-study Observator', () => {
     const user = { id: 'observator', accessLevel: 1 }
     const study = studyWith('USER', user.id, STUDY_ROLE.OBSERVATOR)
 
     expect(titlesFor(study, user)).toEqual(['Dashboard', 'Results'])
   })
 
-  it('adds Preview and Cooperators for a moderated Observator', () => {
+  it('adds Answer and Cooperators for a moderated Observator', () => {
     const user = { id: 'observator', accessLevel: 1 }
     const study = {
       ...studyWith('USER', user.id, STUDY_ROLE.OBSERVATOR),
@@ -230,17 +230,17 @@ describe('study navigation', () => {
     ])
   })
 
-  it('shows Preview for an Observator on a public study', () => {
+  it('shows Answer for an Observator on a public study', () => {
     const user = { id: 'observator', accessLevel: 1 }
     const study = {
       ...studyWith('USER', user.id, STUDY_ROLE.OBSERVATOR),
       isPublic: true,
     }
 
-    expect(titlesFor(study, user)).toEqual(['Dashboard', 'Preview', 'Results'])
+    expect(titlesFor(study, user)).toEqual(['Dashboard', 'Answer', 'Results'])
   })
 
-  it('shows Preview for a Guest only when the heuristic study is public', () => {
+  it('shows Answer for a Guest only when the heuristic study is public', () => {
     const user = { id: 'guest', accessLevel: 1 }
     const privateStudy = studyWith('HEURISTIC', user.id, STUDY_ROLE.GUEST)
     const publicStudy = { ...privateStudy, isPublic: true }
@@ -251,7 +251,7 @@ describe('study navigation', () => {
     ])
     expect(titlesFor(publicStudy, user, 'heuristic')).toEqual([
       'Dashboard',
-      'Preview',
+      'Answer',
       'Results',
     ])
   })
@@ -263,7 +263,7 @@ describe('study navigation', () => {
     expect(titlesFor(study, user, 'heuristic')).toEqual([
       'Dashboard',
       'Test',
-      'Preview',
+      'Answer',
       'Results',
       'Cooperators',
       'Participants',
