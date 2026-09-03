@@ -457,6 +457,7 @@ describe('client-observed batch delivery', () => {
 
   it('rejects reuse of an accepted Event ID without partially writing its new batch', async () => {
     await logEvents.run(participantRequest(viewBatch()))
+    const warnLog = jest.spyOn(logger, 'warn').mockImplementation(() => {})
 
     await expect(
       logEvents.run(
@@ -476,6 +477,10 @@ describe('client-observed batch delivery', () => {
         ],
       },
     })
+    expect(warnLog).toHaveBeenCalledWith(
+      'Log batch rejected',
+      expect.objectContaining({ batchSize: 2, invalidEventCount: 1 }),
+    )
 
     const [logs, batches, sessions] = await Promise.all([
       admin.firestore().collection('tests/study-1/logs').get(),
@@ -488,6 +493,7 @@ describe('client-observed batch delivery', () => {
   })
 
   it('returns every independently invalid Event ID and writes none of the batch', async () => {
+    const warnLog = jest.spyOn(logger, 'warn').mockImplementation(() => {})
     await expect(
       logEvents.run(
         participantRequest({
@@ -507,6 +513,7 @@ describe('client-observed batch delivery', () => {
               eventId: 'bad-time',
               occurredAt: 'not-a-time',
             },
+            { ...viewBatch().events[0], eventId: 'valid-event' },
           ],
         }),
       ),
@@ -522,6 +529,10 @@ describe('client-observed batch delivery', () => {
         ],
       },
     })
+    expect(warnLog).toHaveBeenCalledWith(
+      'Log batch rejected',
+      expect.objectContaining({ batchSize: 4, invalidEventCount: 3 }),
+    )
 
     const state = await Promise.all(
       ['studySessions', 'logs', 'logBatches', 'loggingMeta'].map((name) =>

@@ -64,12 +64,12 @@ const reject = ({ code, reasonCode, studyId, batchId }) => {
   throw error(code, 'Log batch was rejected', details)
 }
 
-const rejectEvents = ({ invalidEvents, studyId, batchId }) => {
+const rejectEvents = ({ invalidEvents, batchSize, studyId, batchId }) => {
   const details = { retryable: false, scope: 'events', invalidEvents }
   logger.warn('Log batch rejected', {
     rejectionScope: 'events',
     reasonCodes: [...new Set(invalidEvents.map((item) => item.reasonCode))],
-    batchSize: invalidEvents.length,
+    batchSize,
     invalidEventCount: invalidEvents.length,
     studyId,
     batchId,
@@ -337,6 +337,7 @@ const validateClientBatch = (payload, study) => {
   if (invalidEvents.length) {
     rejectEvents({
       invalidEvents,
+      batchSize: payload.events.length,
       studyId: payload.studyId,
       batchId: payload.batchId,
     })
@@ -442,7 +443,12 @@ async function submitLogEvents(request) {
       }
     }
     if (invalidEvents.length) {
-      rejectEvents({ invalidEvents, studyId, batchId })
+      rejectEvents({
+        invalidEvents,
+        batchSize: events.length,
+        studyId,
+        batchId,
+      })
     }
     const now = admin.firestore.FieldValue.serverTimestamp()
     let participantLabel

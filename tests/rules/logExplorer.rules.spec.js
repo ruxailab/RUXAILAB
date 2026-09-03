@@ -97,6 +97,7 @@ describe('Log Explorer query boundary', () => {
     expect(first.events[0]).not.toHaveProperty('sessionId')
     expect(first.events[0]).not.toHaveProperty('eventId')
     expect(first.events[0]).not.toHaveProperty('batchId')
+    expect(first.events[0]).toHaveProperty('rowKey', 'log-b')
 
     const second = await getStudyLogPage({
       db,

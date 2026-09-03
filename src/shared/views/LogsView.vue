@@ -209,8 +209,8 @@
               </thead>
               <tbody>
                 <tr
-                  v-for="(event, index) in currentEvents"
-                  :key="event.eventId || index"
+                  v-for="event in currentEvents"
+                  :key="event.rowKey"
                   tabindex="0"
                   role="button"
                   class="log-row"
@@ -269,8 +269,8 @@
 
           <div v-else class="mobile-event-list">
             <button
-              v-for="(event, index) in currentEvents"
-              :key="event.eventId || index"
+              v-for="event in currentEvents"
+              :key="event.rowKey"
               type="button"
               class="mobile-event"
               :class="`mobile-event--${event.level || 'info'}`"

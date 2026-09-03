@@ -42,11 +42,14 @@ const filterConstraints = (filters = {}) => {
 
 const visibleEvent = (snapshot) => {
   const stored = snapshot.data()
-  return Object.fromEntries(
-    VISIBLE_FIELDS.flatMap((field) =>
-      stored[field] === undefined ? [] : [[field, stored[field]]],
+  return {
+    rowKey: snapshot.id,
+    ...Object.fromEntries(
+      VISIBLE_FIELDS.flatMap((field) =>
+        stored[field] === undefined ? [] : [[field, stored[field]]],
+      ),
     ),
-  )
+  }
 }
 
 export const getStudyLogPage = async ({

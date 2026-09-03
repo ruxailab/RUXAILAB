@@ -35,6 +35,7 @@ jest.mock('@/shared/services/studyLogQuery', () => ({
 const page = {
   events: [
     {
+      rowKey: 'log-1',
       eventType: 'STUDY_VIEW_OPENED',
       level: 'info',
       layer: 'methodological',
@@ -379,6 +380,62 @@ describe('LogsView', () => {
     expect(wrapper.find('.event-summary .participant-token').text()).toBe(
       '01P-001',
     )
+    wrapper.unmount()
+  })
+
+  it('keeps focus attached to the same event when refresh inserts a row', async () => {
+    const original = {
+      ...page.events[0],
+      rowKey: 'log-original',
+      message: 'Original first event',
+      occurredAt: new Date('2026-08-14T10:00:00.000Z'),
+    }
+    const newest = {
+      ...page.events[0],
+      rowKey: 'log-newest',
+      message: 'Newest event',
+      occurredAt: new Date('2026-08-14T11:00:00.000Z'),
+    }
+    getParticipantLabels.mockResolvedValue([])
+    getStudyLogPage
+      .mockResolvedValueOnce({
+        events: [original],
+        hasNextPage: false,
+        lastCursor: null,
+      })
+      .mockResolvedValueOnce({
+        events: [newest, original],
+        hasNextPage: false,
+        lastCursor: null,
+      })
+    getStudyLogCount.mockResolvedValue(3)
+
+    const wrapper = mount(LogsView, {
+      props: { id: 'study-1' },
+      attachTo: document.body,
+      global: {
+        config: { warnHandler: () => {} },
+        stubs: {
+          VBtn: {
+            emits: ['click'],
+            template: '<button @click="$emit(\'click\')"><slot /></button>',
+          },
+        },
+      },
+    })
+    await flushPromises()
+
+    const focusedRow = wrapper.findAll('tbody tr')[0].element
+    focusedRow.focus()
+    expect(document.activeElement).toBe(focusedRow)
+
+    await wrapper
+      .findAll('button')
+      .find((button) => button.text().includes('Refresh'))
+      .trigger('click')
+    await flushPromises()
+
+    expect(document.activeElement.textContent).toContain('Original first event')
     wrapper.unmount()
   })
 })
