@@ -25,7 +25,10 @@
             class="mb-7"
           />
 
-          <div v-if="!hasQuestions" class="question-shell mx-auto mb-8 text-center">
+          <div
+            v-if="!hasQuestions"
+            class="question-shell mx-auto mb-8 text-center"
+          >
             <p class="text-body-1 text-medium-emphasis">
               No pre-test questions configured for this study.
             </p>
@@ -47,6 +50,7 @@
             <div v-if="currentItem.textField" class="answer-field-wrap mx-auto">
               <v-text-field
                 v-model="localAnswers[step].answer"
+                :data-study-field-ref="`preTest:${step}:answer`"
                 :placeholder="'Type your answer here…'"
                 variant="outlined"
                 density="comfortable"

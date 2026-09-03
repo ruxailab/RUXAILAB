@@ -85,6 +85,7 @@
 
             <div class="answer-blocks">
               <HeuristicOptionsAnalysisSection
+                :data-study-field-ref="`heuristic:${canonicalHeuristicIndex}:question:${currentQuestionIndex}:answer`"
                 :selected-answer-mode="selectedAnswerMode"
                 :answer-mode-label="answerModeLabel(selectedAnswerMode)"
                 :has-configured-answer-control="hasConfiguredAnswerControl"
@@ -107,6 +108,7 @@
 
               <HeuristicCommentEvidenceSection
                 :key="`comments-${currentQuestionIndex}`"
+                :data-study-field-ref="`heuristic:${canonicalHeuristicIndex}:question:${currentQuestionIndex}:comment`"
                 :heuris-index="heurisIndex"
                 :question-index="currentQuestionIndex"
                 :answer-heu="answerForQuestion(currentQuestionIndex)"
@@ -275,6 +277,7 @@ const emit = defineEmits([
   'remove-image',
   'select-heuristic',
   'finish-evaluation',
+  'response-change',
 ])
 
 const recordingQuestionIndex = ref(null)
@@ -334,6 +337,15 @@ const questions = computed(() =>
 const currentQuestion = computed(
   () => questions.value[currentQuestionIndex.value] || null,
 )
+
+const canonicalHeuristicIndex = computed(() => {
+  const testStructure = props.test?.testStructure
+  if (!Array.isArray(testStructure)) return props.heurisIndex
+  const index = testStructure.findIndex(
+    (heuristic) => heuristic?.id === props.heuristic?.id,
+  )
+  return index >= 0 ? index : props.heurisIndex
+})
 
 const heuristicNavigationItems = computed(() =>
   props.heuristics.map((heuristic, index) => ({
@@ -530,16 +542,21 @@ const goToHeuristic = async (heuristicIndex) => {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
+const responseRef = (questionIndex) =>
+  `heuristic:${canonicalHeuristicIndex.value}:question:${questionIndex}`
+
 const updateMetricAnswer = (questionIndex, metric, value) => {
-  emitAnswer(questionIndex, {
-    ...baseAnswer(questionIndex, selectedAnswerMode.value),
-    [metric]: value,
-  })
+  const answer = baseAnswer(questionIndex, selectedAnswerMode.value)
+  emitAnswer(questionIndex, { ...answer, [metric]: value })
+  if (answer[metric] !== value) {
+    emit('response-change', responseRef(questionIndex), metric)
+  }
 }
 
 const updateCustomOptionAnswer = (questionIndex, option) => {
+  const answer = baseAnswer(questionIndex, 'customOptions')
   emitAnswer(questionIndex, {
-    ...baseAnswer(questionIndex, 'customOptions'),
+    ...answer,
     custom: option
       ? {
           text: option.text,
@@ -548,6 +565,9 @@ const updateCustomOptionAnswer = (questionIndex, option) => {
         }
       : null,
   })
+  if (answer.custom?.value !== option?.value) {
+    emit('response-change', responseRef(questionIndex), 'answer')
+  }
 }
 
 const isFilledValue = (value) =>

@@ -25,6 +25,18 @@ const CLIENT_EVENT_POLICIES = Object.freeze({
       'resultingLength',
     ],
   },
+  QUESTION_RESPONSE_UPDATED: {
+    message: 'Question response updated',
+    detailKeys: [
+      'questionRef',
+      'changedFields',
+      'interactionSpanMs',
+      'frequencyChanges',
+      'severityChanges',
+      'answerChanges',
+      'commentInputChanges',
+    ],
+  },
 })
 const ROLE_NAMES = new Map([
   [0, 'admin'],
@@ -52,12 +64,12 @@ const reject = ({ code, reasonCode, studyId, batchId }) => {
   throw error(code, 'Log batch was rejected', details)
 }
 
-const rejectEvents = ({ invalidEvents, studyId, batchId }) => {
+const rejectEvents = ({ invalidEvents, batchSize, studyId, batchId }) => {
   const details = { retryable: false, scope: 'events', invalidEvents }
   logger.warn('Log batch rejected', {
     rejectionScope: 'events',
     reasonCodes: [...new Set(invalidEvents.map((item) => item.reasonCode))],
-    batchSize: invalidEvents.length,
+    batchSize,
     invalidEventCount: invalidEvents.length,
     studyId,
     batchId,
@@ -203,6 +215,45 @@ const validAnswerEdit = (details, study) => {
   )
 }
 
+const RESPONSE_FIELD_COUNTS = Object.freeze({
+  frequency: 'frequencyChanges',
+  severity: 'severityChanges',
+  answer: 'answerChanges',
+  comment: 'commentInputChanges',
+})
+
+const validQuestionResponse = (details, study) => {
+  const keys = Object.keys(details || {}).sort(compareStrings)
+  if (
+    keys.join(',') !==
+    CLIENT_EVENT_POLICIES.QUESTION_RESPONSE_UPDATED.detailKeys
+      .slice()
+      .sort(compareStrings)
+      .join(',')
+  ) {
+    return false
+  }
+  const changedFields = details.changedFields
+  if (!Array.isArray(changedFields)) return false
+  const uniqueFields = new Set(changedFields)
+  return (
+    normalizeStudyType(study.testType) === 'HEURISTIC' &&
+    /^heuristic:\d+:question:\d+$/.test(details.questionRef) &&
+    fieldExists(study, `${details.questionRef}:comment`) &&
+    changedFields.length > 0 &&
+    changedFields.length === uniqueFields.size &&
+    changedFields.every((field) => RESPONSE_FIELD_COUNTS[field]) &&
+    nonNegativeInteger(details.interactionSpanMs, 24 * 60 * 60 * 1000) &&
+    Object.entries(RESPONSE_FIELD_COUNTS).every(([field, countKey]) => {
+      const count = details[countKey]
+      return (
+        nonNegativeInteger(count, 10000) &&
+        (changedFields.includes(field) ? count > 0 : count === 0)
+      )
+    })
+  )
+}
+
 const validateClientBatch = (payload, study) => {
   if (
     !Array.isArray(payload.events) ||
@@ -242,8 +293,12 @@ const validateClientBatch = (payload, study) => {
       isRecord(event?.details) && policy?.detailKeys.length === 0
         ? Object.keys(event.details).length === 0
         : event?.eventType === 'ANSWER_EDITED' &&
-          isRecord(event?.details) &&
-          validAnswerEdit(event?.details, study)
+            isRecord(event?.details) &&
+            validAnswerEdit(event?.details, study)
+          ? true
+          : event?.eventType === 'QUESTION_RESPONSE_UPDATED' &&
+            isRecord(event?.details) &&
+            validQuestionResponse(event?.details, study)
     let reasonCode
     if (seenEventIds.has(eventId)) {
       reasonCode = 'DUPLICATE_EVENT_ID'
@@ -282,6 +337,7 @@ const validateClientBatch = (payload, study) => {
   if (invalidEvents.length) {
     rejectEvents({
       invalidEvents,
+      batchSize: payload.events.length,
       studyId: payload.studyId,
       batchId: payload.batchId,
     })
@@ -387,7 +443,12 @@ async function submitLogEvents(request) {
       }
     }
     if (invalidEvents.length) {
-      rejectEvents({ invalidEvents, studyId, batchId })
+      rejectEvents({
+        invalidEvents,
+        batchSize: events.length,
+        studyId,
+        batchId,
+      })
     }
     const now = admin.firestore.FieldValue.serverTimestamp()
     let participantLabel

@@ -20,6 +20,7 @@ export const STUDY_CAPABILITY = Object.freeze({
   REPORTS_VIEW: 'reports.view',
   REPORTS_DELETE: 'reports.delete',
   ANSWERS_VIEW: 'answers.view',
+  LOGS_VIEW: 'logs.view',
   ANSWERS_EXPORT_SUMMARY: 'answers.exportSummary',
   COOPERATORS_VIEW: 'cooperators.view',
   COOPERATORS_INVITE: 'cooperators.invite',
@@ -75,7 +76,10 @@ const USER_POLICY = Object.freeze({
     C.COOPERATORS_REMOVE,
   ]),
   [R.USER]: Object.freeze([C.STUDY_ANSWER]),
-  [R.OBSERVATOR]: Object.freeze([C.DASHBOARD_VIEW, C.ANSWERS_VIEW]),
+  [R.OBSERVATOR]: Object.freeze([
+    C.DASHBOARD_VIEW,
+    C.ANSWERS_VIEW,
+  ]),
 })
 
 const HEURISTIC_POLICY = Object.freeze({

@@ -11,6 +11,7 @@ import StorageView from '@/shared/views/StorageView.vue'
 import ParticipantsView from '@/shared/views/ParticipantsView.vue'
 import { STUDY_CAPABILITY as C } from '@/shared/utils/studyAccessPolicy'
 import AuditTrailView from '@/shared/views/AuditTrailView.vue'
+import LogsView from '@/shared/views/LogsView.vue'
 
 const studyMeta = (studyCapability) => ({
   authorize: [0, 1],
@@ -49,6 +50,13 @@ export default [
         props: true,
         meta: studyMeta(C.ANSWERS_VIEW),
         component: HeuristicAnswerView,
+      },
+      {
+        path: '/heuristic/logs/:id/:token?',
+        name: 'HeuristicLogsView',
+        props: true,
+        meta: studyMeta(C.LOGS_VIEW),
+        component: LogsView,
       },
       {
         path: '/heuristic/edit/:id/:token?',

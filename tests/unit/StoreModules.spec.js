@@ -7,10 +7,13 @@ jest.mock('@/controllers/StudyController', () => {
 })
 
 jest.mock('@/features/auth/controllers/AuthController', () => {
-  return jest.fn().mockImplementation(() => ({
-    signOut: jest.fn(),
+  const signOut = jest.fn()
+  const Controller = jest.fn().mockImplementation(() => ({
+    signOut,
     autoSignIn: jest.fn(),
   }))
+  Controller.signOut = signOut
+  return Controller
 })
 
 jest.mock('@/features/auth/controllers/UserController', () => {
@@ -19,11 +22,21 @@ jest.mock('@/features/auth/controllers/UserController', () => {
   }))
 })
 
+jest.mock('@/shared/services/studyLoggingClient', () => ({
+  cleanupStudyLoggingForOwner: jest.fn(),
+}))
+
+jest.mock('@/shared/services/studyLoggingRuntime', () => ({
+  requestStudyLoggingLogout: jest.fn(),
+}))
+
 import TestModule from '@/store/modules/Study'
 import AuthModule from '@/features/auth/store/Auth'
 
 import TestController from '@/controllers/StudyController'
 import AuthController from '@/features/auth/controllers/AuthController'
+import { cleanupStudyLoggingForOwner } from '@/shared/services/studyLoggingClient'
+import { requestStudyLoggingLogout } from '@/shared/services/studyLoggingRuntime'
 
 /**
  * This is a simplified test that verifies error handling basics in the store modules.
@@ -72,6 +85,21 @@ describe('Store Modules Error Handling Structure', () => {
       expect(actionStr).toContain('catch (err)')
       expect(actionStr).toContain('SET_TOAST')
       expect(actionStr).toContain('setLoading')
+    })
+
+    it('removes the departing account logging queues on logout', async () => {
+      const commit = jest.fn()
+
+      await AuthModule.actions.logout(
+        { commit, state: { user: { id: 'participant-1' } } },
+        { silent: true },
+      )
+
+      expect(cleanupStudyLoggingForOwner).toHaveBeenCalledWith('participant-1')
+      expect(requestStudyLoggingLogout).toHaveBeenCalledWith('participant-1')
+      expect(
+        requestStudyLoggingLogout.mock.invocationCallOrder[0],
+      ).toBeLessThan(AuthController.signOut.mock.invocationCallOrder[0])
     })
 
     it('has error handling in autoSignIn action', () => {

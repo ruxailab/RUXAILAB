@@ -1,5 +1,9 @@
 <template>
-  <div>
+  <div
+    @focusin.capture="handleLoggingFocusin"
+    @input.capture="handleLoggingInput"
+    @focusout.capture="handleLoggingFocusout"
+  >
     <StepAnnouncementOverlay
       v-if="showStepAnnouncement"
       ref="stepAnnouncementOverlay"
@@ -584,8 +588,6 @@ import {
   update,
   set,
   get,
-  onDisconnect,
-  serverTimestamp,
   remove,
 } from 'firebase/database'
 import { database } from '@/app/plugins/firebase/index'
@@ -628,12 +630,36 @@ import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { showError, showInfo, showWarning } from '@/shared/utils/toast'
 import { calculateProgress } from '../utils/testProgress'
 import { animateStepAnnouncement } from '@/shared/utils/animations'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
+import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
 import { removeStaffDuplicates } from '@/ux/UserTest/utils/sessionPresence'
+import { moderatedSessionTimingReason } from '@/ux/UserTest/utils/moderatedSessionAvailability'
 
 const store = useStore()
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+let studyLogging = null
+
+const initializeStudyLogging = () => {
+  if (studyLogging || isModerator.value || !user.value?.id || !test.value?.id) {
+    return studyLogging
+  }
+  studyLogging = createStudyLoggingRuntime({
+    ownerUid: user.value.id,
+    studyId: test.value.id,
+    consentRequired: true,
+    callFunction: FirebaseFunctionsController.callHttpsCallableFunction,
+  })
+  if (localTestAnswer.consentCompleted) void studyLogging.resumeAfterConsent()
+  return studyLogging
+}
+const handleLoggingFocusin = (event) =>
+  initializeStudyLogging()?.editHandlers.focusin(event)
+const handleLoggingInput = (event) =>
+  initializeStudyLogging()?.editHandlers.input(event)
+const handleLoggingFocusout = (event) =>
+  initializeStudyLogging()?.editHandlers.focusout(event)
 // Data variables
 
 onBeforeUnmount(() => {
@@ -1113,6 +1139,7 @@ const handleSubmit = async () => {
   try {
     localTestAnswer.submitted = true
     await saveAnswer()
+    void initializeStudyLogging()?.submitted()
     displayVideoCallComponent.value = true
   } catch {
     store.commit('SET_TOAST', {
@@ -1992,6 +2019,7 @@ const completeStep = async (id, type, userCompleted = true) => {
         return
       }
       localTestAnswer.tasks[id].completed = userCompleted
+      localTestAnswer.tasks[id].attempted = true
       markSubStepComplete(STEP_GROUP_IDS.tasks, id)
       allTasksCompleted.value = true
 
@@ -2050,6 +2078,12 @@ const completeStep = async (id, type, userCompleted = true) => {
 
     calculateProgress(localTestAnswer)
     await saveAnswer()
+    if (type === 'consent') {
+      void initializeStudyLogging()?.consentAccepted()
+    }
+    if (type === 'tasks') {
+      void initializeStudyLogging()?.taskFinished(id)
+    }
   } catch (error) {
     console.error('Error in completeStep:', error) // eslint-disable-line no-console
     store.commit('SET_TOAST', {
@@ -2194,11 +2228,6 @@ watchEffect(() => {
     }
     return
   }
-  const now = new Date()
-  const sessionDate = session.value?.scheduledAt
-    ? new Date(session.value.scheduledAt)
-    : null
-
   // 🧩 Test already completed
   if (localTestAnswer.submitted) {
     testDisabledReason.value = 'test-already-completed'
@@ -2223,33 +2252,14 @@ watchEffect(() => {
     return
   }
 
-  // 🧩 Check session date
-  if (sessionDate) {
-    const diffHours = (sessionDate.getTime() - now.getTime()) / (1000 * 60 * 60)
-
-    if (diffHours < 0) {
-      testDisabledReason.value = 'test-expired'
-      isStartTestDisabled.value = true
-      return
-    }
-
-    if (diffHours > 24) {
-      testDisabledReason.value = 'test-session-too-far'
-      isStartTestDisabled.value = true
-      return
-    }
-    testDisabledReason.value = null
-    return false
-  }
-
-  // 🧩 Test expired (fallback endDate)
-  if (test.value.endDate) {
-    const endDate = new Date(test.value.endDate)
-    if (now > endDate) {
-      testDisabledReason.value = 'test-expired'
-      isStartTestDisabled.value = true
-      return
-    }
+  const timingReason = moderatedSessionTimingReason({
+    scheduledAt: session.value?.scheduledAt,
+    studyEndDate: test.value.endDate,
+  })
+  if (timingReason) {
+    testDisabledReason.value = timingReason
+    isStartTestDisabled.value = true
+    return
   }
 
   testDisabledReason.value = null
@@ -2279,6 +2289,7 @@ onMounted(async () => {
   }
 
   await mappingSteps()
+  initializeStudyLogging()
 })
 
 // Auto-join if refresh happens during active call
@@ -2301,7 +2312,8 @@ watch(
   { immediate: true },
 )
 
-onBeforeUnmount(async () => {
+onBeforeUnmount(() => {
+  studyLogging?.destroy()
   stopRealtimeListeners()
 
   // Never re-create or mutate room metadata during unmount. The room is deleted
