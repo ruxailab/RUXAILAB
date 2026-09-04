@@ -48,6 +48,11 @@ export function useLiveKitRoom({
   cooperators,
   onRemoteModeratorStream,
   onModeratorStatusChange,
+  // Moderated User Test calls join with camera/mic already on, matching its
+  // existing (already-shipped) behavior. Focus Group sessions pass false so
+  // attendees join muted and opt in — kept as a param rather than flipping
+  // the shared default so this only changes Focus Group's join behavior.
+  autoEnableMedia = true,
 }) {
   const { t } = useI18n()
 
@@ -323,15 +328,30 @@ export function useLiveKitRoom({
       return
     }
 
+    if (!autoEnableMedia) {
+      // Join muted/camera-off; the attendee opts in via the control bar.
+      isCameraEnabled.value = lkRoom.localParticipant.isCameraEnabled
+      isMicrophoneEnabled.value = lkRoom.localParticipant.isMicrophoneEnabled
+      return
+    }
+
+    // Request whatever the user last chose rather than forcing both tracks
+    // on. On the first-ever connect the refs still hold their `true`
+    // defaults, so a fresh join still starts with camera/mic on; but a
+    // reconnect (e.g. moving into a breakout group) must not silently
+    // override a mute the user set earlier in the same call.
+    const wantCamera = isCameraEnabled.value
+    const wantMicrophone = isMicrophoneEnabled.value
+
     try {
-      await lkRoom.localParticipant.setCameraEnabled(true)
+      await lkRoom.localParticipant.setCameraEnabled(wantCamera)
     } catch (error) {
       isCameraEnabled.value = false
       logMediaDeviceError(error, 'cameraDevice', t)
     }
 
     try {
-      await lkRoom.localParticipant.setMicrophoneEnabled(true)
+      await lkRoom.localParticipant.setMicrophoneEnabled(wantMicrophone)
     } catch (error) {
       isMicrophoneEnabled.value = false
       logMediaDeviceError(error, 'microphoneDevice', t)

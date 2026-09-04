@@ -365,7 +365,6 @@ const editItem = (item) => {
     typeof option.value.hasValue === 'boolean'
       ? option.value.hasValue
       : option.value.value !== null
-  warning.value = option.value.warning ?? false
   dialog.value = true
 }
 

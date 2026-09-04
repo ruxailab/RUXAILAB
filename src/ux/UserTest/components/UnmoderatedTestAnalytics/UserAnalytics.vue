@@ -225,13 +225,7 @@
             </template>
             <v-list density="compact" class="py-0">
               <v-list-item prepend-icon="mdi-eye" @click="viewAnswers(item)">
-                <v-list-item-title>Test detail</v-list-item-title>
-              </v-list-item>
-              <v-list-item
-                prepend-icon="mdi-clipboard-list"
-                @click="showTaskDetails(item)"
-              >
-                <v-list-item-title>Task Details</v-list-item-title>
+                <v-list-item-title>Task detail</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -543,13 +537,6 @@
                     </template>
                   </v-data-table>
 
-                  <v-dialog v-model="showSessionAnalytics" fullscreen>
-                    <SessionAnalytics
-                      :tasks="dialogItem.tasks"
-                      :task-select="taskSelect"
-                      @close="showSessionAnalytics = false"
-                    />
-                  </v-dialog>
                   <SessionAnalyticsDialog
                     v-model="showSessionAnalyticsDialog"
                     :user-id="dialogItem.userDocId"
@@ -586,7 +573,6 @@ import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import { formatTime } from '@/shared/utils/timeUtils'
 import TaskDetailsModal from './TaskDetailsModal.vue'
-import SessionAnalytics from '../SessionAnalytics.vue'
 import SessionAnalyticsDialog from '../dialogs/SessionAnalyticsDialog.vue'
 import { useI18n } from 'vue-i18n'
 import { useFilterDefinitions } from './useFilterDefinitions'
@@ -610,7 +596,6 @@ const testTasks = ref([])
 const taskAnswers = ref([])
 const showTaskDetailsModal = ref(false)
 const selectedUserSession = ref(null)
-const showSessionAnalytics = ref(false)
 const showSessionAnalyticsDialog = ref(false)
 
 // Búsqueda por nombre / email
@@ -849,7 +834,9 @@ const getTaskRecordings = (taskAnswer, taskDefinition) => {
 
 const taskSummaryRows = computed(() => {
   const userTasks = testStructure.value?.userTasks || []
-  const sessionTasks = dialogItem.value?.tasks || {}
+  const liveTasks =
+    answers.value?.[dialogItem.value?.userDocId]?.tasks || null
+  const sessionTasks = liveTasks || dialogItem.value?.tasks || {}
 
   return userTasks.map((taskDefinition, index) => {
     const taskAnswer = resolveTaskAnswer(sessionTasks, index, taskDefinition)

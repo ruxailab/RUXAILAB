@@ -21,10 +21,12 @@ export default class TaskAnswer {
     nasaTlxAnswers,
     tamAnswers,
     sartAnswers,
-    facialSentimentResults,
+    sentimentDocId,
     screenSize,
     audioSize,
     webcamSize,
+    markers,
+    segments,
   } = {}) {
     this.taskId = taskId ?? null
     this.taskAnswer = taskAnswer ?? ''
@@ -51,10 +53,12 @@ export default class TaskAnswer {
     } else {
       this.sartAnswers = new SartAnswer()
     }
-    this.facialSentimentResults = facialSentimentResults ?? null
+    this.sentimentDocId = sentimentDocId ?? null
     this.screenSize = screenSize ?? null
     this.audioSize = audioSize ?? null
     this.webcamSize = webcamSize ?? null
+    this.markers = markers ?? []
+    this.segments = segments ?? []
   }
 
   static toModel(data) {
@@ -99,10 +103,12 @@ export default class TaskAnswer {
         this.sartAnswers instanceof SartAnswer
           ? this.sartAnswers.toFirestore()
           : this.sartAnswers,
-      facialSentimentResults: this.facialSentimentResults,
+      sentimentDocId: this.sentimentDocId,
       screenSize: this.screenSize,
       audioSize: this.audioSize,
       webcamSize: this.webcamSize,
+      markers: this.markers,
+      segments: this.segments,
     }
   }
 }

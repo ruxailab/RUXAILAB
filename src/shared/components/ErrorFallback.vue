@@ -1,16 +1,12 @@
 <template>
   <v-container class="error-fallback-container" fluid>
     <v-row justify="center" align="center" class="fill-height">
-      <v-col cols="12" sm="8" md="6" lg="5">
+      <v-col cols="12" sm="10" md="9" lg="8" xl="7">
         <v-card class="error-card" elevation="0" rounded="xl">
           <v-card-text class="text-center pa-8">
             <!-- Error Icon -->
             <div class="error-icon-wrapper mb-6">
-              <v-icon
-                size="72"
-                color="warning"
-                class="error-icon"
-              >
+              <v-icon size="72" color="warning" class="error-icon">
                 mdi-alert-circle-outline
               </v-icon>
             </div>
@@ -49,56 +45,64 @@
                 {{ t('errors.boundary.goToDashboard') }}
               </v-btn>
             </div>
-            <v-expansion-panels
-              v-if="isDev"
-              variant="accordion"
-              class="error-details-panel"
-            >
-              <v-expansion-panel rounded="lg">
-                <v-expansion-panel-title class="text-body-2 text-medium-emphasis">
-                  <v-icon size="18" class="mr-2">mdi-bug-outline</v-icon>
-                  {{ t('errors.boundary.showDetails') }}
-                </v-expansion-panel-title>
-                <v-expansion-panel-text>
-                  <div class="error-details-content text-left">
-                    <div class="detail-row">
-                      <span class="detail-label">Error:</span>
-                      <span class="detail-value">{{ error?.message || 'Unknown error' }}</span>
-                    </div>
-                    <div class="detail-row">
-                      <span class="detail-label">Route:</span>
-                      <span class="detail-value">{{ errorRoute || 'N/A' }}</span>
-                    </div>
-                    <div class="detail-row">
-                      <span class="detail-label">Component:</span>
-                      <span class="detail-value">{{ errorComponent || 'N/A' }}</span>
-                    </div>
-                    <div class="detail-row">
-                      <span class="detail-label">Info:</span>
-                      <span class="detail-value">{{ errorInfo || 'N/A' }}</span>
-                    </div>
-                    <div class="detail-row">
-                      <span class="detail-label">Time:</span>
-                      <span class="detail-value">{{ errorTimestamp || 'N/A' }}</span>
-                    </div>
-
-                    <v-divider class="my-3" />
-
-                    <v-btn
-                      variant="tonal"
-                      size="small"
-                      color="primary"
-                      rounded="lg"
-                      prepend-icon="mdi-content-copy"
-                      block
-                      @click="copyErrorDetails"
-                    >
-                      {{ copied ? t('errors.boundary.copied') : t('errors.boundary.copyDetails') }}
-                    </v-btn>
+            <v-card variant="tonal" class="error-details-panel text-left">
+              <v-card-title class="text-body-2 text-medium-emphasis">
+                <v-icon size="18" class="mr-2">mdi-bug-outline</v-icon>
+                {{ t('errors.boundary.showDetails') }}
+              </v-card-title>
+              <v-card-text>
+                <div class="error-details-content">
+                  <div class="detail-row">
+                    <span class="detail-label">Error:</span>
+                    <span class="detail-value">{{
+                      error?.message || 'Unknown error'
+                    }}</span>
                   </div>
-                </v-expansion-panel-text>
-              </v-expansion-panel>
-            </v-expansion-panels>
+                  <div class="detail-row">
+                    <span class="detail-label">Route:</span>
+                    <span class="detail-value">{{ errorRoute || 'N/A' }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="detail-label">Component:</span>
+                    <span class="detail-value">{{
+                      errorComponent || 'N/A'
+                    }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="detail-label">Info:</span>
+                    <span class="detail-value">{{ errorInfo || 'N/A' }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="detail-label">Time:</span>
+                    <span class="detail-value">{{
+                      errorTimestamp || 'N/A'
+                    }}</span>
+                  </div>
+                  <div class="detail-row detail-row--stack">
+                    <span class="detail-label">Stack:</span>
+                    <pre class="detail-value">{{ error?.stack || 'N/A' }}</pre>
+                  </div>
+
+                  <v-divider class="my-3" />
+
+                  <v-btn
+                    variant="tonal"
+                    size="small"
+                    color="primary"
+                    rounded="lg"
+                    prepend-icon="mdi-content-copy"
+                    block
+                    @click="copyErrorDetails"
+                  >
+                    {{
+                      copied
+                        ? t('errors.boundary.copied')
+                        : t('errors.boundary.copyDetails')
+                    }}
+                  </v-btn>
+                </div>
+              </v-card-text>
+            </v-card>
           </v-card-text>
         </v-card>
       </v-col>
@@ -139,9 +143,6 @@ defineEmits(['retry'])
 const router = useRouter()
 const { t } = useI18n()
 const copied = ref(false)
-
-const isDev = process.env.NODE_ENV !== 'production'
-
 function goToDashboard() {
   // Force a full navigation to clear the error state
   window.location.href = router.resolve({ path: '/' }).href
@@ -179,6 +180,8 @@ function copyErrorDetails() {
 }
 
 .error-card {
+  width: 100%;
+  overflow: hidden;
   border: 1px solid rgba(0, 0, 0, 0.08);
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
@@ -227,9 +230,11 @@ function copyErrorDetails() {
 
 .error-details-panel {
   max-width: 100%;
+  overflow: hidden;
 }
 
 .error-details-content {
+  min-width: 0;
   font-family: 'Roboto Mono', monospace;
   font-size: 0.8rem;
 }
@@ -249,6 +254,36 @@ function copyErrorDetails() {
 }
 
 .detail-value {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
   color: #1f2937;
+}
+
+.detail-row--stack .detail-value {
+  max-height: 16rem;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 600px) {
+  .error-fallback-container {
+    padding: 1rem;
+  }
+
+  .error-card :deep(.v-card-text) {
+    padding: 1.5rem !important;
+  }
+
+  .detail-row {
+    display: block;
+  }
+
+  .detail-label {
+    display: block;
+    min-width: 0;
+    margin-bottom: 0.2rem;
+  }
 }
 </style>
