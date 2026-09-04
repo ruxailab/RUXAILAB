@@ -1914,7 +1914,32 @@
     "start": "Start calibration",
     "inProgress": "Calibration in progress...",
     "completed": "Calibration completed!",
-    "continue": "Continue to the test"
+    "continue": "Continue to the test",
+    "stats": {
+      "eyeTrackingAnalytics": "Eye Tracking Analytics",
+      "gazePrecisionAndPredictionInsights": "Gaze precision and prediction insights",
+      "analyzing": "Analyzing...",
+      "analysisFailed": "Analysis Failed",
+      "analysisCompleted": "Analysis Completed",
+      "analyzingGazeData": "Analyzing gaze data...",
+      "analysisMayTakeSeconds": "This may take a few seconds",
+      "couldNotProcessGazeData": "Could not process gaze data. Please try again later.",
+      "predictionOverview": "Prediction Overview",
+      "predictionPoints": "Prediction Points",
+      "heatmap": "Heatmap",
+      "freeEye": "Free Eye",
+      "keyInsights": "Key Insights",
+      "sessionStatistics": "Session Statistics",
+      "predictedGazeDataOverview": "Overview of the predicted gaze data",
+      "averageGaze": "Average Gaze",
+      "horizontalRange": "Horizontal Range",
+      "verticalRange": "Vertical Range",
+      "predictionRate": "Prediction Rate",
+      "calibrationPoints": "Calibration Points",
+      "calibrationTargetError": "Prediction error for each calibration target",
+      "point": "Point {number}",
+      "meanError": "Mean Error"
+    }
   },
   "EyeTrackingConfig": {
     "titles": {
