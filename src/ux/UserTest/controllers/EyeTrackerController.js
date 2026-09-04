@@ -108,6 +108,9 @@ export default class EyeTrackerController extends Controller {
       irisData: irisData,
       calibId: lastCalib.sessionId,
       model: lastCalib.model,
+      timestamp: lastCalib.timestamp,
+      fixed_points: lastCalib.fixedPoints,
+      calib_points: lastCalib.calibPoints,
     })
 
     return response
@@ -138,6 +141,9 @@ export default class EyeTrackerController extends Controller {
       screen_height: data.screenHeight,
       model_name: data.model,
       calib_id: data.calibId,
+      timestamp: data.timestamp,
+      fixed_points: data.fixed_points,
+      calib_points: data.calib_points,
     })
 
     const response = await axios.post(
@@ -149,6 +155,9 @@ export default class EyeTrackerController extends Controller {
         iris_tracking_data: data.irisData,
         calib_id: data.calibId,
         model_name: data.model,
+        timestamp: data.timestamp,
+        fixed_points: data.fixed_points,
+        calib_points: data.calib_points,
       },
       { headers: { 'Content-Type': 'application/json' } },
     )

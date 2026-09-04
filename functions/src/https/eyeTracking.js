@@ -24,10 +24,27 @@ export const receiveCalibration = functions.onRequest({
         model,
         study_id,
         user_id,
+        timestamp,
+        fixed_points,
+        calib_points,
       } = req.body
 
       if (!session_id) {
-        return res.status(400).json({ error: 'session_id is required' })
+        return res.status(400).json({
+          error: 'session_id is required',
+        })
+      }
+
+      if (!Array.isArray(fixed_points)) {
+        return res.status(400).json({
+          error: 'fixed_points must be an array',
+        })
+      }
+
+      if (!Array.isArray(calib_points)) {
+        return res.status(400).json({
+          error: 'calib_points must be an array',
+        })
       }
 
       const db = admin.firestore()
@@ -41,28 +58,38 @@ export const receiveCalibration = functions.onRequest({
         screenWidth: screen_width,
         k,
         model,
-        userId: user_id,
-        studyId: study_id,
+        userId: user_id || null,
+        studyId: study_id || null,
+        timestamp: timestamp || null,
+        fixedPoints: fixed_points,
+        calibPoints: calib_points,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
       }
 
       await calibRef.set(calibrationData)
 
-      const userDocRef = db.collection('users').doc(user_id)
-      const userDoc = await userDocRef.get()
+      // Only update the user when a valid userId was provided -  this is used only to reload user doc snapshot
+      if (user_id) {
+        const userDocRef = db.collection('users').doc(user_id)
+        const userDoc = await userDocRef.get()
 
-      if (userDoc.exists) {
-        await userDocRef.update({
-          lastCalibrationId: calibId,
-        })
+        if (userDoc.exists) {
+          await userDocRef.update({
+            lastCalibrationId: calibId,
+          })
+        }
       }
 
-      return res
-        .status(200)
-        .json({ message: 'Calibration saved and user updated successfully' })
+      return res.status(200).json({
+        message: 'Calibration saved successfully',
+        calibrationId: calibId,
+      })
     } catch (error) {
       logger.error('Error saving calibration:', { error })
-      return res.status(500).json({ error: error.message })
+
+      return res.status(500).json({
+        error: error instanceof Error ? error.message : 'Unknown error',
+      })
     }
   },
 })
