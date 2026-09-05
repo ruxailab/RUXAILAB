@@ -65,6 +65,12 @@
 
       <v-row v-if="selectedOption === 'template'" justify="center" class="mb-8">
         <v-col cols="12" lg="10" xl="8">
+          <BackButton
+            :label="$t('studyCreation.backToStudyType')"
+            adjust="start"
+            class="mb-4"
+            @back="clearStudyTypeSelection"
+          />
           <CommunityTemplatesSection
             :selection-mode="true"
             :include-my-templates="true"
@@ -81,6 +87,7 @@
 import SectionHeader from '@/features/ux_creation/SectionHeader.vue'
 import SelectableCard from '@/shared/components/cards/SelectableCard.vue'
 import StepperHeader from '@/features/ux_creation/StepperHeader.vue'
+import BackButton from '@/features/ux_creation/components/BackButton.vue'
 import CommunityTemplatesSection from '@/features/navigation/components/navbarSections/CommunityTemplatesSection.vue'
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -161,6 +168,15 @@ const selectOption = (optionId) => {
   if (optionId === 'blank') {
     router.push({ name: 'study-create-step4' })
   }
+}
+
+// Selecting 'template' swaps the option cards out for the template list, so
+// without this the user cannot get back to 'blank' -- worse when the list is
+// empty, which is the case on any install with no community templates yet.
+const clearStudyTypeSelection = () => {
+  selectedOption.value = ''
+  store.commit('SET_STUDY_TYPE', null)
+  store.commit('SET_SELECTED_TEMPLATE', null)
 }
 
 const selectTemplate = (template) => {
