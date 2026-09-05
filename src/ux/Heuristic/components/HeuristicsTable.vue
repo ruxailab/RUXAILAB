@@ -50,7 +50,7 @@
           :class="{ expanded: itemSelect === index }"
         >
           <!-- Heuristic Header -->
-          <v-card-title class="d-flex align-center pa-4 heuristic-header">
+          <v-card-title class="d-flex pa-4 heuristic-header">
             <v-btn
               :icon="
                 itemSelect === index ? 'mdi-chevron-up' : 'mdi-chevron-down'
@@ -1119,6 +1119,58 @@ const updateDescription = () => {
 </script>
 
 <style scoped>
+/* Desktop/default layout: clamp title (1 line), description (2 lines), keep actions visible */
+.heuristic-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+}
+
+.heuristic-info {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.heuristic-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  margin: 0;
+  min-width: 0;
+}
+
+.heuristic-description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  margin: 0;
+  min-width: 0;
+}
+
+.heuristic-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  min-width: max-content;
+  justify-content: flex-end;
+}
+
+.heuristic-actions .action-btn {
+  flex-shrink: 0;
+}
+
 /* Responsive styles for mobile devices */
 @media (max-width: 768px) {
   /* Make header section stack vertically */
