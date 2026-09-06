@@ -60,8 +60,7 @@
               class="me-3 toggle-btn"
               @click="toggleHeuristic(index)"
             />
-
-            <div class="flex-grow-1 heuristic-info">
+            <div class="heuristic-info">
               <h3
                 class="text-h6 font-weight-medium text-on-surface heuristic-title"
               >
@@ -78,7 +77,6 @@
                 {{ $t('HeuristicsTable.titles.questions') }}
               </p>
             </div>
-
             <div class="d-flex gap-2 heuristic-actions">
               <v-btn
                 icon="mdi-arrow-up"
@@ -1154,6 +1152,7 @@ const updateDescription = () => {
   overflow: hidden;
   text-overflow: ellipsis;
   word-break: break-word;
+  white-space: normal;
   margin: 0;
   min-width: 0;
 }
