@@ -64,6 +64,7 @@
               <v-radio-group
                 v-model="localAnswers[step].answer"
                 hide-details="auto"
+                class="options-center"
                 @update:model-value="updateAnswer(step, $event)"
               >
                 <v-radio
@@ -199,5 +200,10 @@ watch(
 .answer-input :deep(.v-field__input) {
   font-size: 1.25rem;
   text-align: center;
+}
+
+.options-center :deep(.v-selection-control-group) {
+  width: fit-content;
+  margin-inline: auto;
 }
 </style>
