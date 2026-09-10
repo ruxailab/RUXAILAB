@@ -1618,7 +1618,10 @@
       "testConfigErrorMessage": "Esta prueba no tiene tareas configuradas. Por favor, contacta al administrador.",
       "consentDecline": "Prueba finalizada debido al rechazo del consentimiento. Gracias por tu tiempo.",
       "sessionTooFar": "Sesión demasiado lejana",
-      "sessionTooFarMessage": "La sesión programada es en más de 24 horas. Por favor regrese más cerca de la fecha de la sesión."
+      "sessionTooFarMessage": "La sesión programada es en más de 24 horas. Por favor regrese más cerca de la fecha de la sesión.",
+      "moderatorDisconnected": "Moderador Desconectado",
+      "moderatorOfflineWaitOrContact": "El moderador parece estar desconectado. Por favor, espere o contacte con soporte.",
+      "moderatorOfflineWait": "El moderador parece estar desconectado. Por favor espere."
     },
     "stepper": {
       "consent": "Consentimiento",

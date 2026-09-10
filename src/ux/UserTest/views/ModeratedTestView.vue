@@ -182,8 +182,11 @@
               <v-icon color="white"> mdi-wifi-off </v-icon>
             </template>
             <span class="text-white">
-              <strong>Moderator Disconnected</strong><br />
-              The moderator seems to be offline. Please wait or contact support.
+              <strong>{{
+                $t('UserTestView.alerts.moderatorDisconnected')
+              }}</strong
+              ><br />
+              {{ $t('UserTestView.alerts.moderatorOfflineWaitOrContact') }}
             </span>
           </v-alert>
         </v-col>
@@ -204,8 +207,10 @@
               <v-icon size="small">mdi-wifi-off</v-icon>
             </template>
             <div class="text-caption">
-              <strong>Moderator Disconnected:</strong>
-              The moderator seems to be offline. Please wait.
+              <strong
+                >{{ $t('UserTestView.alerts.moderatorDisconnected') }}:</strong
+              >
+              {{ $t('UserTestView.alerts.moderatorOfflineWait') }}
             </div>
           </v-alert>
 
@@ -578,16 +583,7 @@
 </template>
 
 <script setup>
-import {
-  ref as dbRef,
-  onValue,
-  update,
-  set,
-  get,
-  onDisconnect,
-  serverTimestamp,
-  remove,
-} from 'firebase/database'
+import { ref as dbRef, onValue, update, get, remove } from 'firebase/database'
 import { database } from '@/app/plugins/firebase/index'
 import {
   ref,
@@ -892,13 +888,6 @@ const isSessionViewer = computed(() => {
   }
   return isModeratedSessionViewer(test.value, user.value, session.value)
 })
-const hasTestDashboardAccess = computed(() => {
-  if (!user.value) return false
-  return (
-    currentUserAccessLevel.value === ACCESS_LEVEL.ADMIN ||
-    currentUserAccessLevel.value === ACCESS_LEVEL.EVALUATOR
-  )
-})
 
 const timerComponent = computed(() => {
   // Get timer ref from TaskStep
@@ -977,7 +966,7 @@ watch(
     displayVideoCallComponent.value,
     isUserTestAdmin.value,
   ],
-  ([gi, ti, dvc, admin]) => {
+  () => {
     scrollToTop()
   },
 )
@@ -1098,9 +1087,16 @@ const handleConsentDecline = async () => {
     timeout: 5000,
   })
 
-  // Clean up room data
-  const roomRef = dbRef(database, `rooms/${roomId.value}`)
-  await set(roomRef, null)
+  // Clean up only the individual participant's presence node
+  const currentUserId =
+    user.value?.id || user.value?.userDocId || user.value?.uid
+  if (currentUserId && roomId.value) {
+    const memberRef = dbRef(
+      database,
+      `calls/${roomId.value}/participants/${currentUserId}`,
+    )
+    await remove(memberRef)
+  }
 
   // Navigate back to admin
   setTimeout(() => {
@@ -1812,20 +1808,6 @@ const safelyShowNextStepAnnouncement = async (
     await showNextStepAnnouncement(title, stageNumber, kickerOverride)
   } catch {
     // Non-critical: users can continue even if announcement animation fails.
-  }
-}
-
-const getPostTasksAnnouncement = () => {
-  if (validate(test.value?.testStructure?.postTest)) {
-    return {
-      title: t('UserTestView.stepper.postTest'),
-      stage: 4,
-    }
-  }
-
-  return {
-    title: t('UserTestView.WelcomeStep.steps.submission'),
-    stage: 4,
   }
 }
 
