@@ -394,8 +394,21 @@ const answerForQuestion = (questionIndex) =>
   props.currentUserTestAnswer?.heuristicQuestions?.[props.heurisIndex]
     ?.heuristicQuestions?.[questionIndex] || null
 
-const questionDescription = (question) =>
-  question?.descriptions?.find((description) => description?.text)?.text || ''
+const questionDescription = (question) => {
+  if (!question) return ''
+
+  if (typeof question.descriptions === 'string') {
+    return question.descriptions
+  }
+
+  const descriptions = Array.isArray(question.descriptions)
+    ? question.descriptions
+    : question.descriptions && typeof question.descriptions === 'object'
+      ? [question.descriptions]
+      : []
+
+  return descriptions.find((description) => description?.text)?.text || ''
+}
 
 const answerModeLabel = (mode) =>
   answerModes.value.find((item) => item.value === mode)?.title || ''
