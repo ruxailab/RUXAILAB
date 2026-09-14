@@ -149,6 +149,10 @@ _Avoid_: Clock correctness, delivery delay
 One non-content summary of a participant's changed free-text field interaction. It records the controlled field identity, the span from first to last input, input-operation count, paste-operation count, initial length, and resulting length. It does not record dwell time, an ordered operation history, character-level additions or deletions, text fragments, or enough information to reconstruct an answer version.
 _Avoid_: Answer history, revision content
 
+**Question Response Updated Event**:
+The heuristic-only, client-observed `QUESTION_RESPONSE_UPDATED` occurrence that groups frequency, severity, configured-option, and comment-input changes made during one question interaction. It records the controlled question reference, changed field names, first-to-last interaction span, and per-field change counts. Revisiting and changing the question later creates another event. It never stores selected ratings, configured-option values, comment text, or answer snapshots.
+_Avoid_: One event per rating click, heuristic answer value, Raw Answer Revision
+
 **Log Delivery Queue**:
 A client-side, metadata-only queue that batches completed Log Events for idempotent delivery. Input activity updates local counters without making a network request; queued events are flushed periodically, when the batch limit is reached, at meaningful lifecycle boundaries, and best-effort when the page becomes hidden. Failed batches remain queued for retry.
 _Avoid_: Answer cache, real-time log stream

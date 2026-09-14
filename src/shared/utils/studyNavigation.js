@@ -174,6 +174,13 @@ const NAVIGATION_ITEMS = Object.freeze([
     path: ({ type, id }) => `/${type}/answer/${id}`,
   },
   {
+    title: 'Logs',
+    group: 'administration',
+    icon: 'mdi-text-box-search-outline',
+    capability: C.LOGS_VIEW,
+    path: ({ type, id }) => `/${type}/logs/${id}`,
+  },
+  {
     title: 'Cooperators',
     group: 'people',
     icon: ICONS.ACCOUNT_GROUP,

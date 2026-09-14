@@ -101,6 +101,22 @@ const answerEdited = (eventId = 'edit-1', overrides = {}) => ({
   ...overrides,
 })
 
+const questionResponseUpdated = (eventId = 'response-1', overrides = {}) => ({
+  eventId,
+  eventType: 'QUESTION_RESPONSE_UPDATED',
+  occurredAt: '2026-08-14T10:01:18.400Z',
+  details: {
+    questionRef: 'heuristic:0:question:0',
+    changedFields: ['frequency', 'severity', 'comment'],
+    interactionSpanMs: 18400,
+    frequencyChanges: 1,
+    severityChanges: 2,
+    answerChanges: 0,
+    commentInputChanges: 26,
+  },
+  ...overrides,
+})
+
 beforeAll(async () => {
   if (!admin.apps.length) ownedAdminApp = admin.initializeApp({ projectId })
   testEnv = await initializeTestEnvironment({ projectId })
@@ -148,7 +164,7 @@ describe('authenticated logging commands', () => {
     )
   })
 
-  it('initializes a Study Session and exposes its first view observation to an authorized researcher', async () => {
+  it('initializes a Study Session and exposes its first view observation to an Admin', async () => {
     await expect(
       logEvents.run(participantRequest(viewBatch())),
     ).resolves.toEqual({ status: 'accepted', batchId: 'batch-1' })
@@ -170,11 +186,11 @@ describe('authenticated logging commands', () => {
       .get()
     expect(meta.data()).toEqual({ nextParticipantNumber: 2 })
 
-    const researcherDb = testEnv.authenticatedContext('researcher').firestore()
+    const adminDb = testEnv.authenticatedContext('owner').firestore()
     const page = await assertSucceeds(
       getDocs(
         query(
-          collection(researcherDb, 'tests/study-1/logs'),
+          collection(adminDb, 'tests/study-1/logs'),
           orderBy('occurredAt', 'desc'),
           orderBy('__name__', 'desc'),
           limit(20),
@@ -308,31 +324,31 @@ describe('authenticated logging commands', () => {
     expect(state.every((snapshot) => snapshot.empty)).toBe(true)
   })
 
-  it('allows only logs.view reads and forbids every direct logging write', async () => {
+  it('allows only Admin log reads and forbids every direct logging write', async () => {
     await admin.firestore().doc('tests/study-1').update({ isPublic: true })
     await logEvents.run(participantRequest(viewBatch(), 'public-participant'))
     const participantDb = testEnv
       .authenticatedContext('public-participant')
       .firestore()
+    const adminDb = testEnv.authenticatedContext('owner').firestore()
     const researcherDb = testEnv.authenticatedContext('researcher').firestore()
 
     await assertFails(getDocs(collection(participantDb, 'tests/study-1/logs')))
     await assertSucceeds(
+      getDocs(collection(adminDb, 'tests/study-1/studySessions')),
+    )
+    await assertFails(
       getDocs(collection(researcherDb, 'tests/study-1/studySessions')),
     )
+    await assertFails(getDoc(doc(adminDb, 'tests/study-1/logBatches/hidden')))
+    await assertFails(getDoc(doc(adminDb, 'tests/study-1/loggingMeta/state')))
     await assertFails(
-      getDoc(doc(researcherDb, 'tests/study-1/logBatches/hidden')),
-    )
-    await assertFails(
-      getDoc(doc(researcherDb, 'tests/study-1/loggingMeta/state')),
-    )
-    await assertFails(
-      setDoc(doc(researcherDb, 'tests/study-1/logs/forged'), {
+      setDoc(doc(adminDb, 'tests/study-1/logs/forged'), {
         eventType: 'STUDY_VIEW_OPENED',
       }),
     )
     await assertFails(
-      setDoc(doc(researcherDb, 'tests/study-1/studySessions/forged'), {
+      setDoc(doc(adminDb, 'tests/study-1/studySessions/forged'), {
         participantLabel: 'P-999',
       }),
     )
@@ -340,6 +356,46 @@ describe('authenticated logging commands', () => {
 })
 
 describe('client-observed batch delivery', () => {
+  it('accepts a grouped heuristic question response without response values', async () => {
+    await logEvents.run(
+      participantRequest({
+        ...viewBatch(),
+        events: [questionResponseUpdated()],
+      }),
+    )
+
+    const logs = await admin.firestore().collection('tests/study-1/logs').get()
+    expect(logs.docs[0].data()).toMatchObject({
+      eventType: 'QUESTION_RESPONSE_UPDATED',
+      message: 'Question response updated',
+      details: questionResponseUpdated().details,
+    })
+    expect(JSON.stringify(logs.docs[0].data())).not.toContain('comment text')
+  })
+
+  it('rejects grouped heuristic responses from user-test studies', async () => {
+    await useUserStudy()
+
+    await expect(
+      logEvents.run(
+        participantRequest({
+          ...viewBatch(),
+          events: [questionResponseUpdated()],
+        }),
+      ),
+    ).rejects.toMatchObject({
+      code: 'invalid-argument',
+      details: {
+        invalidEvents: [
+          {
+            eventId: 'response-1',
+            reasonCode: 'INVALID_EVENT_DETAILS',
+          },
+        ],
+      },
+    })
+  })
+
   it('atomically stores a valid multi-event batch and charges its full observation count once', async () => {
     await expect(
       logEvents.run(
@@ -401,6 +457,7 @@ describe('client-observed batch delivery', () => {
 
   it('rejects reuse of an accepted Event ID without partially writing its new batch', async () => {
     await logEvents.run(participantRequest(viewBatch()))
+    const warnLog = jest.spyOn(logger, 'warn').mockImplementation(() => {})
 
     await expect(
       logEvents.run(
@@ -420,6 +477,10 @@ describe('client-observed batch delivery', () => {
         ],
       },
     })
+    expect(warnLog).toHaveBeenCalledWith(
+      'Log batch rejected',
+      expect.objectContaining({ batchSize: 2, invalidEventCount: 1 }),
+    )
 
     const [logs, batches, sessions] = await Promise.all([
       admin.firestore().collection('tests/study-1/logs').get(),
@@ -432,6 +493,7 @@ describe('client-observed batch delivery', () => {
   })
 
   it('returns every independently invalid Event ID and writes none of the batch', async () => {
+    const warnLog = jest.spyOn(logger, 'warn').mockImplementation(() => {})
     await expect(
       logEvents.run(
         participantRequest({
@@ -451,6 +513,7 @@ describe('client-observed batch delivery', () => {
               eventId: 'bad-time',
               occurredAt: 'not-a-time',
             },
+            { ...viewBatch().events[0], eventId: 'valid-event' },
           ],
         }),
       ),
@@ -466,6 +529,10 @@ describe('client-observed batch delivery', () => {
         ],
       },
     })
+    expect(warnLog).toHaveBeenCalledWith(
+      'Log batch rejected',
+      expect.objectContaining({ batchSize: 4, invalidEventCount: 3 }),
+    )
 
     const state = await Promise.all(
       ['studySessions', 'logs', 'logBatches', 'loggingMeta'].map((name) =>
