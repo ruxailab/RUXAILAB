@@ -100,9 +100,44 @@
             {{ t('focusGroup.session.observerModeHint') }}
           </div>
 
-          <div v-if="isInBreakout" class="fg-observer-strip">
+          <!-- Staff: hop between breakout rooms + see raised hands. -->
+          <BreakoutRoomsBar
+            v-if="isStaff && breakout?.active"
+            :breakout="breakout"
+            :visiting-group-id="visitingGroupId"
+            @visit="onVisitGroup"
+            @return-to-main="onReturnToMain"
+          />
+
+          <div
+            v-if="isInBreakout"
+            class="fg-observer-strip d-flex align-center"
+          >
             <v-icon size="16" class="me-1">mdi-call-split</v-icon>
-            {{ t('focusGroup.session.breakoutInGroup', { name: myBreakoutGroupName }) }}
+            <span class="flex-grow-1">
+              {{
+                t('focusGroup.session.breakoutInGroup', {
+                  name: myBreakoutGroupName,
+                })
+              }}
+            </span>
+            <v-btn
+              size="x-small"
+              variant="tonal"
+              :color="myGroupHelpPending ? 'success' : 'error'"
+              :prepend-icon="
+                myGroupHelpPending ? 'mdi-check' : 'mdi-hand-back-left'
+              "
+              class="text-none ms-2"
+              :disabled="myGroupHelpPending"
+              @click="onCallFacilitator"
+            >
+              {{
+                myGroupHelpPending
+                  ? t('focusGroup.session.breakoutHelpSent')
+                  : t('focusGroup.session.breakoutCallFacilitator')
+              }}
+            </v-btn>
           </div>
           <div v-if="isInBreakout && breakout?.broadcast?.text" class="fg-observer-strip">
             <v-icon size="16" class="me-1">mdi-bullhorn-outline</v-icon>
@@ -552,6 +587,7 @@ import StimulusStage from '@/ux/FocusGroup/components/session/StimulusStage.vue'
 import TopicDiscussion from '@/ux/FocusGroup/components/session/TopicDiscussion.vue'
 import ParticipantList from '@/ux/FocusGroup/components/session/ParticipantList.vue'
 import BreakoutPanel from '@/ux/FocusGroup/components/session/BreakoutPanel.vue'
+import BreakoutRoomsBar from '@/ux/FocusGroup/components/session/BreakoutRoomsBar.vue'
 import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
 import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue'
 import {
@@ -604,6 +640,7 @@ const {
   sendMessage,
   setBreakoutState,
   sendBackroomMessage,
+  setBreakoutHelp,
   subscribe,
   subscribeBackroom,
   toSessionRecord,
@@ -788,14 +825,27 @@ const myBreakoutGroupId = computed(() => {
   return entry?.[0] ?? null
 })
 
-// A participant assigned to an active breakout group connects to that
-// group's own LiveKit room instead of the main one; the facilitator and
-// observers always stay in the main room.
-const effectiveRoomId = computed(() =>
-  myBreakoutGroupId.value
-    ? `${studyId}-breakout-${myBreakoutGroupId.value}`
-    : studyId,
+// Staff (facilitator/observer) can drop into any breakout group's room to
+// check in on it; this holds the group they're currently visiting, null when
+// they're in the main room. Only meaningful for staff — participants are
+// routed by their assignment (`myBreakoutGroupId`) instead.
+const visitingGroupId = ref(null)
+// A visit only makes sense while a breakout is live, so clear it on recall so
+// the room falls back to the main one automatically.
+watch(
+  () => breakout.value?.active,
+  (active) => {
+    if (!active) visitingGroupId.value = null
+  },
 )
+
+// A participant assigned to an active breakout group connects to that group's
+// own LiveKit room; a staff member visiting a group connects to that room too;
+// everyone else stays in the main room.
+const effectiveRoomId = computed(() => {
+  const groupId = myBreakoutGroupId.value ?? visitingGroupId.value
+  return groupId ? `${studyId}-breakout-${groupId}` : studyId
+})
 
 // Side-panel tabs, in reading order: the facilitator's guide, the discussion
 // (a tab only when video owns the stage, otherwise the discussion IS the
@@ -1060,6 +1110,63 @@ const onBreakoutTimerPause = (remainingMs) =>
   pauseTimer({ topicId: 'breakout', remainingMs })
 const onBreakoutTimerReset = () =>
   resetTimer({ topicId: 'breakout', durationMs: 10 * 60 * 1000 })
+
+// --- Staff room visits + "call the facilitator" alerts ---
+// Both facilitator and observer count as staff who can drop into rooms.
+const isStaff = computed(() => isFacilitator.value || isObserver.value)
+
+// A staff member drops into a group's room; the facilitator answering a call
+// also clears that group's raised hand in the same action.
+const onVisitGroup = (groupId) => {
+  visitingGroupId.value = groupId
+  if (isFacilitator.value && breakout.value?.groups?.[groupId]?.help) {
+    setBreakoutHelp({ groupId, help: null })
+  }
+}
+const onReturnToMain = () => {
+  visitingGroupId.value = null
+}
+
+// The current participant's own group has a pending call, so the button can
+// read "notified" instead of letting them stack duplicate requests.
+const myGroupHelpPending = computed(
+  () => !!breakout.value?.groups?.[myBreakoutGroupId.value]?.help,
+)
+const onCallFacilitator = () => {
+  if (!myBreakoutGroupId.value || myGroupHelpPending.value) return
+  setBreakoutHelp({
+    groupId: myBreakoutGroupId.value,
+    help: {
+      requestedBy: user.value?.id ?? '',
+      name: user.value?.name || user.value?.email || '',
+      at: Date.now(),
+    },
+  })
+}
+
+// Nudge the facilitator when a room newly raises its hand, so they notice even
+// while looking at another panel; the rooms bar keeps the standing indicator.
+watch(
+  () =>
+    Object.entries(breakout.value?.groups ?? {})
+      .filter(([, group]) => group?.help)
+      .map(([groupId]) => groupId)
+      .join(','),
+  (nowIds, wasIds) => {
+    if (!isFacilitator.value) return
+    const previous = new Set((wasIds || '').split(',').filter(Boolean))
+    Object.entries(breakout.value?.groups ?? {}).forEach(([groupId, group]) => {
+      if (group?.help && !previous.has(groupId)) {
+        store.commit('SET_TOAST', {
+          message: t('focusGroup.session.breakoutHelpRequested', {
+            group: group.name,
+          }),
+          type: 'warning',
+        })
+      }
+    })
+  },
+)
 
 // The stage/panel discussion swaps to a participant's breakout-group chat
 // while they're in one, reusing the exact per-topic messages plumbing above

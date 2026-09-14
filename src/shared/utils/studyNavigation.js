@@ -148,7 +148,7 @@ const NAVIGATION_ITEMS = Object.freeze([
     path: ({ type, id }) => `/${type}/edit/${id}`,
   },
   {
-    title: 'Preview',
+    title: 'Answer',
     group: 'evaluation',
     icon: ICONS.PREVIEW,
     capability: C.STUDY_ANSWER,
@@ -172,6 +172,13 @@ const NAVIGATION_ITEMS = Object.freeze([
     icon: ICONS.ORDER,
     capability: C.ANSWERS_VIEW,
     path: ({ type, id }) => `/${type}/answer/${id}`,
+  },
+  {
+    title: 'Logs',
+    group: 'administration',
+    icon: 'mdi-text-box-search-outline',
+    capability: C.LOGS_VIEW,
+    path: ({ type, id }) => `/${type}/logs/${id}`,
   },
   {
     title: 'Cooperators',

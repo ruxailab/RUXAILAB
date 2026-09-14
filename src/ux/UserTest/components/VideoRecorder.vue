@@ -51,7 +51,7 @@ import {
 } from 'firebase/storage'
 import { storage } from '@/app/plugins/firebase'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
-import { showError } from '@/shared/utils/toast'
+import { showError, showWarning } from '@/shared/utils/toast'
 
 const props = defineProps({
   testId: {
@@ -116,12 +116,16 @@ const startRecording = async () => {
     const permissionGranted = await requestCameraPermission()
     if (!permissionGranted) {
       showError(t('errors.cameraPermissionDenied'))
-      return false
+      // Allow the test to continue without webcam recording
+      return true
     }
   }
   try {
     const cameraAvailable = await hasCamera()
-    if (!cameraAvailable) return
+    if (!cameraAvailable) {
+      showWarning(t('errors.cameraNotAvailable'))
+      return true
+    }
 
     recording.value = true
     recordingTaskIndex.value = props.taskIndex // Store the current task index when recording starts
@@ -139,14 +143,19 @@ const startRecording = async () => {
     }
   } catch (e) {
     recording.value = false
+    if (e.name === 'NotFoundError' || e.name === 'DevicesNotFoundError') {
+      showWarning(t('errors.cameraNotAvailable'))
+      return true
+    }
     if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
       cameraPermissionDenied.value = true
       showError(t('errors.cameraPermissionDenied'))
-      return false
+      // Allow the test to continue without webcam recording
+      return true
     }
     console.error('Unexpected error while starting video recording:', e)
-    showError('errors.globalError')
-    return false
+    showError(t('errors.globalError'))
+    return true
   }
 
   try {
@@ -211,10 +220,12 @@ const startRecording = async () => {
       mediaRecorder.value.start()
       return true
     }
-    return false
+    showWarning(t('errors.cameraNotAvailable'))
+    return true
   } catch (e) {
     console.error(e)
-    showError('errors.globalError')
+    showError(t('errors.globalError'))
+    return true
   }
 }
 

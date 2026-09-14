@@ -4,7 +4,7 @@
 
     <ShowInfo v-if="answers != null && !intro && test">
       <template #content>
-        <v-card flat rounded="xl" class="pa-2">
+        <v-card flat rounded="xl">
           <v-row>
             <v-col cols="12" md="4">
               <v-select
@@ -311,9 +311,7 @@ const evidenceSummary = computed(() => ({
 
 const selectedContentTitle = computed(() => {
   if (isTraditional.value) return selectedHeuristic.value?.title || '-'
-  if (questionSelect.value === null) {
-    return selectedHeuristic.value?.title || '-'
-  }
+  if (questionSelect.value === -1) return t('HeuristicsAnalytics.dataTable')
   return (
     selectedHeuristic.value?.questions?.[questionSelect.value]?.title || '-'
   )
@@ -434,7 +432,7 @@ watch(
 )
 
 watch(heuristicSelect, () => {
-  questionSelect.value = isTraditional.value ? 0 : null
+  questionSelect.value = isTraditional.value ? 0 : -1
   ind.value = 'comments'
 })
 

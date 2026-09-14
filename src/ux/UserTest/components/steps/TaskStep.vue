@@ -359,6 +359,7 @@
               v-if="task?.taskType === 'text-area' && !submitted"
               :id="'id-' + (task?.taskName || taskName)"
               v-model="localTaskAnswer"
+              :data-study-field-ref="`task:${taskIndex}:answer`"
               class="task-textarea"
               bg-color="white"
               variant="outlined"
@@ -370,6 +371,7 @@
               v-if="!submitted"
               :id="'id-' + (task?.taskName || taskName) + '-obs'"
               v-model="localTaskObservations"
+              :data-study-field-ref="`task:${taskIndex}:comment`"
               class="task-textarea"
               bg-color="white"
               variant="outlined"
@@ -891,10 +893,8 @@ async function startMediaRecorders({
     await audioRecorder.value.startAudioRecording()
   }
   if (props.task?.hasCamRecord && videoRecorder.value) {
-    const videoStarted = await videoRecorder.value.startRecording()
-    if (!videoStarted) {
-      return false
-    }
+    // Camera is optional: missing device / denied permission must not block the task
+    await videoRecorder.value.startRecording()
   }
   return true
 }

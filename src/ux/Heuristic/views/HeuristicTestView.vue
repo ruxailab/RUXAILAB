@@ -1,5 +1,10 @@
 <template>
-  <div>
+  <div
+    @focusin.capture="handleLoggingFocusin"
+    @input.capture="handleLoggingInput"
+    @focusout.capture="handleLoggingFocusout"
+    @click.capture="handleLoggingClick"
+  >
     <Snackbar />
     <!-- Submit Alert Dialog -->
     <v-dialog v-model="dialog" width="600" persistent>
@@ -118,7 +123,7 @@
             {{ test.testTitle }}
           </h1>
           <p class="text-body-1 mb-5 text-white text-justify">
-            {{ truncateDescription(test.testDescription) }}
+            {{ test.testDescription }}
           </p>
           <v-btn
             color="white"
@@ -259,7 +264,6 @@
                 :heuristics="heuristics"
                 :current-user-test-answer="currentUserTestAnswer"
                 :calculated-progress="calculatedProgress"
-                :is-traditional="isTraditional"
                 :per-heuristic-progress="perHeuristicProgress"
                 :heuristic-description="heuristicDescription"
                 :heuristic-storage="heuristicStorage"
@@ -277,6 +281,7 @@
                 @back="showHeuristicCards = true"
                 @select-heuristic="handleHeurisClick"
                 @finish-evaluation="review = false"
+                @response-change="handleHeuristicResponseChange"
                 @update-answer="
                   (questionIndex, value) =>
                     updateHeuristicAnswer(heurisIndex, questionIndex, value)
@@ -384,6 +389,22 @@
             <span>{{ $t('HeuristicsTestView.actions.submit') }}</span>
           </div>
         </v-tooltip>
+        <v-tooltip key="exit-tooltip" location="left">
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              icon
+              size="small"
+              color="error"
+              @click="exitEvaluation"
+            >
+              <v-icon>mdi-exit-to-app</v-icon>
+            </v-btn>
+          </template>
+          <div>
+            <span>{{ $t('navigation.exitTest') }}</span>
+          </div>
+        </v-tooltip>
       </v-speed-dial>
     </v-btn>
   </div>
@@ -412,6 +433,8 @@ import {
   resolveStudyAccess,
   STUDY_ROLE,
 } from '@/shared/utils/studyAccessPolicy'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
+import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
 
 const props = defineProps({
   id: { type: String, default: '' },
@@ -422,6 +445,29 @@ const store = useStore()
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+let studyLogging = null
+
+const initializeStudyLogging = () => {
+  if (studyLogging || !user.value?.id || !test.value?.id) return studyLogging
+  studyLogging = createStudyLoggingRuntime({
+    ownerUid: user.value.id,
+    studyId: test.value.id,
+    studyType: 'HEURISTIC',
+    callFunction: FirebaseFunctionsController.callHttpsCallableFunction,
+  })
+  if (!currentUserTestAnswer.value?.submitted) void studyLogging.open()
+  return studyLogging
+}
+const handleLoggingFocusin = (event) =>
+  initializeStudyLogging()?.editHandlers.focusin(event)
+const handleLoggingInput = (event) =>
+  initializeStudyLogging()?.editHandlers.input(event)
+const handleLoggingFocusout = (event) =>
+  initializeStudyLogging()?.editHandlers.focusout(event)
+const handleLoggingClick = (event) =>
+  studyLogging?.interactionHandlers.click(event)
+const handleHeuristicResponseChange = (questionRef, field) =>
+  initializeStudyLogging()?.responseChanged(questionRef, field)
 const logined = ref(null)
 const fromlink = ref(null)
 const start = ref(true)
@@ -444,11 +490,6 @@ const TEST_PAGES = {
 }
 const currentPage = ref(TEST_PAGES.welcome)
 const answerInitialized = ref(false)
-
-const truncateDescription = (description) => {
-  if (!description || description.length <= 150) return description
-  return `${description.slice(0, 147)}...`
-}
 
 // Auto-save status variables
 const autoSaveInProgress = ref(false)
@@ -482,13 +523,6 @@ const evaluatorInfoSections = computed(() => {
 
 const trackTimeEnabled = computed(() => test.value?.trackTime !== false)
 
-const isTraditional = computed(
-  () =>
-    !test.value?.testOptions?.length &&
-    test.value?.useFrequency !== false &&
-    test.value?.useSeverity !== false,
-)
-
 const testDisabledReason = computed(() => {
   if (currentUserTestAnswer.value?.submitted) return 'already-completed'
 
@@ -518,9 +552,21 @@ const heuristicDescription = (heuristic) => {
     heuristic.description || heuristic.text || heuristic.subtitle
   if (directDescription) return directDescription
 
-  const firstQuestionDescription = heuristic.questions
-    ?.flatMap((question) => question.descriptions || [])
-    ?.find((description) => description?.text)
+  const questionDescriptions = (
+    Array.isArray(heuristic.questions) ? heuristic.questions : []
+  ).flatMap((question) => {
+    const descriptions = Array.isArray(question?.descriptions)
+      ? question.descriptions
+      : question?.descriptions && typeof question.descriptions === 'object'
+        ? [question.descriptions]
+        : []
+
+    return descriptions
+  })
+
+  const firstQuestionDescription = questionDescriptions.find(
+    (description) => description?.text,
+  )
 
   return (
     firstQuestionDescription?.text ||
@@ -1408,6 +1454,7 @@ const submitAnswer = async () => {
       answersDocId: test.value.answersDocId,
       testType: test.value.testType,
     })
+    void initializeStudyLogging()?.submitted()
     showSuccess('alerts.genericSuccess')
     setTimeout(() => {
       if (hasTestDashboardAccess.value) {
@@ -1422,6 +1469,14 @@ const submitAnswer = async () => {
     updateSaveStatus('Submission failed', 'error')
   } finally {
     autoSaveInProgress.value = false
+  }
+}
+
+const exitEvaluation = () => {
+  if (hasTestDashboardAccess.value) {
+    router.push(`/heuristic/dashboard/${test.value.id}`)
+  } else {
+    router.push('/admin')
   }
 }
 
@@ -1695,6 +1750,7 @@ const setTest = async () => {
   )
   initializeHeuristicsOrder()
   answerInitialized.value = populateWithHeuristicQuestions()
+  initializeStudyLogging()
   restoreProgress()
 }
 
@@ -1789,6 +1845,7 @@ onBeforeMount(async () => {
 })
 
 onUnmounted(() => {
+  studyLogging?.destroy()
   // Save progress when component is destroyed
   if (calculatedProgress.value > 0 && !currentUserTestAnswer.value?.submitted) {
     if (trackTimeEnabled.value) pauseTimer(heurisIndex.value)

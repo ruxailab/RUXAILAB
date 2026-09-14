@@ -1,24 +1,96 @@
 {
   "language": "Idioma",
   "agents": {
-    "list": { "title": "Agentes disponibles", "subtitle": "Tus agentes y los agentes públicos que puedes utilizar.", "empty": "Todavía no hay agentes disponibles" },
-    "actions": { "create": "Crear agente", "edit": "Editar agente", "delete": "Eliminar agente", "cancel": "Cancelar", "save": "Guardar cambios" },
+    "list": {
+      "title": "Agentes disponibles",
+      "subtitle": "Tus agentes y los agentes públicos que puedes utilizar.",
+      "empty": "Todavía no hay agentes disponibles"
+    },
+    "actions": {
+      "create": "Crear agente",
+      "edit": "Editar agente",
+      "delete": "Eliminar agente",
+      "cancel": "Cancelar",
+      "save": "Guardar cambios"
+    },
     "dialog": { "createTitle": "Crear agente", "editTitle": "Editar agente" },
-    "fields": { "name": "Nombre", "model": "Modelo", "description": "Descripción", "instructions": "Instrucciones del agente", "instructionsHint": "Define el perfil, los criterios y la forma de justificar las respuestas.", "visibility": "Visibilidad", "origin": "Origen", "userIds": "IDs de usuarios", "userIdsHint": "Separados por comas" },
+    "fields": {
+      "name": "Nombre",
+      "model": "Modelo",
+      "description": "Descripción",
+      "instructions": "Instrucciones del agente",
+      "instructionsHint": "Define el perfil, los criterios y la forma de justificar las respuestas.",
+      "visibility": "Visibilidad",
+      "origin": "Origen",
+      "userIds": "IDs de usuarios",
+      "userIdsHint": "Separados por comas"
+    },
     "owner": { "you": "Creado por ti", "community": "Comunidad" },
-    "visibility": { "private": "Privado", "shared": "Compartido", "public": "Público", "privateOption": "Privado — solo yo", "sharedOption": "Compartido — usuarios concretos", "publicOption": "Público — todos los usuarios" },
+    "visibility": {
+      "private": "Privado",
+      "shared": "Compartido",
+      "public": "Público",
+      "privateOption": "Privado — solo yo",
+      "sharedOption": "Compartido — usuarios concretos",
+      "publicOption": "Público — todos los usuarios"
+    },
     "models": { "empty": "No se encontraron modelos" },
     "validation": { "required": "Este campo es obligatorio." },
-    "messages": { "created": "Agente creado correctamente.", "updated": "Agente actualizado correctamente.", "deleted": "Agente eliminado.", "loadError": "No se pudieron cargar los agentes: {error}", "modelsError": "No se pudieron cargar los modelos: {error}", "saveError": "No se pudo guardar el agente: {error}", "deleteError": "No se pudo eliminar el agente: {error}", "confirmDelete": "¿Eliminar el agente “{name}”?" }
+    "messages": {
+      "created": "Agente creado correctamente.",
+      "updated": "Agente actualizado correctamente.",
+      "deleted": "Agente eliminado.",
+      "loadError": "No se pudieron cargar los agentes: {error}",
+      "modelsError": "No se pudieron cargar los modelos: {error}",
+      "saveError": "No se pudo guardar el agente: {error}",
+      "deleteError": "No se pudo eliminar el agente: {error}",
+      "confirmDelete": "¿Eliminar el agente “{name}”?"
+    }
   },
   "heuristicAgents": {
-    "title": "Análisis con agentes", "subtitle": "Indica una web, selecciona sus páginas y deja que un agente complete la evaluación heurística.",
-    "web": { "title": "Introduce la web", "subtitle": "Buscaremos la página principal y sus enlaces internos.", "url": "URL de la web", "search": "Buscar páginas" },
-    "pages": { "title": "Selecciona las páginas", "selected": "{selected} de {total} seleccionadas", "selectAll": "Seleccionar todas", "deselectAll": "Deseleccionar todas", "empty": "Introduce la URL de una web y busca sus páginas para seleccionarlas aquí." },
-    "run": { "title": "Elige un agente y analiza", "subtitle": "Cada página se guardará como una evaluación independiente.", "agent": "Agente", "noAgents": "No hay agentes disponibles", "agentHint": "Crea o edita agentes desde la sección general Agentes.", "analyze": "Analizar {count} página(s)", "saved": "{count} análisis guardados como evaluadores independientes.", "viewResults": "Ver resultados" },
-    "status": { "completed": "Completado", "error": "Error", "running": "Heurística {current}/{total}", "pending": "Pendiente" },
-    "messages": { "urlsFound": "Se han encontrado {count} URL(s).", "discoverError": "No se pudieron buscar las URLs: {error}", "allSaved": "Todos los análisis seleccionados se han guardado correctamente.", "partiallySaved": "{saved} análisis guardados y {failed} con error. Revisa las páginas marcadas.", "noneSaved": "No se pudo analizar ninguna página. Revisa los errores de las páginas marcadas.", "loadAgentsError": "No se pudieron cargar los agentes: {error}" },
-    "card": { "description": "Utiliza un evaluador de IA para responder este test heurístico.", "open": "Abrir análisis con agentes" }
+    "title": "Análisis con agentes",
+    "subtitle": "Indica una web, selecciona sus páginas y deja que un agente complete la evaluación heurística.",
+    "web": {
+      "title": "Introduce la web",
+      "subtitle": "Buscaremos la página principal y sus enlaces internos.",
+      "url": "URL de la web",
+      "search": "Buscar páginas"
+    },
+    "pages": {
+      "title": "Selecciona las páginas",
+      "selected": "{selected} de {total} seleccionadas",
+      "selectAll": "Seleccionar todas",
+      "deselectAll": "Deseleccionar todas",
+      "empty": "Introduce la URL de una web y busca sus páginas para seleccionarlas aquí."
+    },
+    "run": {
+      "title": "Elige un agente y analiza",
+      "subtitle": "Cada página se guardará como una evaluación independiente.",
+      "agent": "Agente",
+      "noAgents": "No hay agentes disponibles",
+      "agentHint": "Crea o edita agentes desde la sección general Agentes.",
+      "analyze": "Analizar {count} página(s)",
+      "saved": "{count} análisis guardados como evaluadores independientes.",
+      "viewResults": "Ver resultados"
+    },
+    "status": {
+      "completed": "Completado",
+      "error": "Error",
+      "running": "Heurística {current}/{total}",
+      "pending": "Pendiente"
+    },
+    "messages": {
+      "urlsFound": "Se han encontrado {count} URL(s).",
+      "discoverError": "No se pudieron buscar las URLs: {error}",
+      "allSaved": "Todos los análisis seleccionados se han guardado correctamente.",
+      "partiallySaved": "{saved} análisis guardados y {failed} con error. Revisa las páginas marcadas.",
+      "noneSaved": "No se pudo analizar ninguna página. Revisa los errores de las páginas marcadas.",
+      "loadAgentsError": "No se pudieron cargar los agentes: {error}"
+    },
+    "card": {
+      "description": "Utiliza un evaluador de IA para responder este test heurístico.",
+      "open": "Abrir análisis con agentes"
+    }
   },
   "auth": {
     "signupSuccess": "Registro exitoso",
@@ -99,6 +171,7 @@
       "mb": "MB",
       "gb": "GB"
     },
+    "completed": "Completado",
     "hidden": "Oculto",
     "loading": "Cargando prueba",
     "continueAs": "Continuar como",
@@ -123,7 +196,6 @@
     "text": "Texto",
     "value": "Valor",
     "save": "Guardar",
-    "completed": "Completado",
     "editDelete": "Editar/Eliminar",
     "type": "Tipo",
     "noNotifications": "Aún no tienes notificaciones",
@@ -435,16 +507,6 @@
       "emailPlaceholder": "Correo del colaborador",
       "emailInputPlaceholder": "Escribe un correo electrónico",
       "role": "Rol",
-      "roleHelp": "¿Qué hace cada rol?",
-      "roleDescriptions": {
-        "admin": "Gestiona el estudio, su configuración, el staff, las respuestas y los informes.",
-        "manager": "Ayuda a gestionar el estudio y el staff, pero no puede cambiar la configuración restringida.",
-        "evaluator": "Responde al estudio y puede consultar los resultados de la evaluación.",
-        "guest": "Puede ver el dashboard y los resultados sin editar ni responder el estudio.",
-        "observator": "Puede observar el dashboard y los resultados sin enviar respuestas.",
-        "user": "Puede participar en el estudio y enviar respuestas.",
-        "default": "Este rol tiene permisos específicos para este estudio."
-      },
       "date": "Fecha",
       "time": "Hora",
       "message": "Mensaje de invitación",
@@ -468,7 +530,7 @@
     "dashboard": "Panel",
     "groups": {
       "overview": "Resumen",
-      "evaluation": "Estudio",
+      "evaluation": "Evaluación",
       "people": "Personas",
       "analysis": "Análisis",
       "administration": "Administración"
@@ -591,10 +653,11 @@
       "Reports": "Progreso",
       "Answers": "Resultados",
       "Dashboard": "Panel",
-      "Test": "Editar",
+      "Test": "Editar Estudio",
       "Session": "Sesión",
       "Sessions": "Sesiónes",
       "Preview": "Vista previa",
+      "Answer": "Responder",
       "Progress": "Progreso",
       "Results": "Resultados",
       "Analytics": "Análisis",
@@ -603,10 +666,10 @@
       "Final Report": "Informe final",
       "Answer Test": "Responder prueba",
       "Settings": "Configuración",
-      "AI Agents": "Agentes IA",
       "Storage": "Almacenamiento",
       "Audit Trail": "Registro de auditoría",
       "AI Agents": "Agentes de IA",
+      "Logs": "Registros",
       "name": "Nombre",
       "studiesCount": "Recuento de Estudios",
       "mediaSize": "Tamaño de Medios",
@@ -653,6 +716,7 @@
     "incorrectPassword": "Contraseña incorrecta",
     "incorrectCredential": "Nombre de usuario o contraseña incorrectos.",
     "globalError": "Ha ocurrido un error, disculpa las molestias.",
+    "cameraNotAvailable": "No se detectó ninguna cámara. La prueba continuará sin grabación de webcam.",
     "cameraPermissionDenied": "Se requiere acceso a la cámara para continuar. Por favor, permita el acceso a la cámara en la configuración de su navegador.",
     "sendError": "No se pudo enviar la invitación. Por favor, intenta de nuevo.",
     "missingVariableTitles": "No se puede guardar: Algunas variables no tienen título",
@@ -922,7 +986,6 @@
     "validation": {
       "nameRequired": "El nombre es obligatorio",
       "questionRequired": "La pregunta debe estar completada",
-      "max100Characters": "Máximo 100 caracteres",
       "textRequired": "Se requiere texto",
       "positiveValue": "El valor debe ser un número positivo",
       "addQuestion": "Por favor, agrega al menos una pregunta a tu heurística"
@@ -1011,13 +1074,20 @@
     "messages": {
       "acceptCsv": "Si aceptas, todas tus heurísticas actuales serán reemplazadas por las del archivo CSV.",
       "noCsvFileSelected": "No se ha seleccionado ningún archivo CSV. Por favor, selecciona uno antes de continuar.",
+      "invalidFileType": "Tipo de archivo no válido. Por favor, sube un archivo CSV.",
+      "emptyCsvFile": "El archivo CSV está vacío o no contiene datos válidos.",
+      "updateFailed": "No se pudieron actualizar las heurísticas desde el archivo CSV.",
       "timeTrackingDescription": "Registra el tiempo que cada evaluador dedica por heurística durante la evaluación.",
       "answerMetricsDescription": "Elige qué métricas responderán los evaluadores cuando no haya opciones personalizadas configuradas.",
       "settingsDescription": "Elige cómo trabajarán los evaluadores en este estudio heurístico.",
       "studyTypeDescription": "Selecciona el método de evaluación que mejor encaje con tu estudio.",
       "csvDescription": "Descarga una plantilla o reemplaza las heurísticas actuales con un archivo CSV.",
       "settingsSaved": "Configuración guardada correctamente.",
-      "enableWeightsDescription": "Permitir que los evaluadores asignen pesos a las heurísticas en este estudio"
+      "enableWeightsDescription": "Permitir que los evaluadores asignen pesos a las heurísticas en este estudio",
+      "templateNotFound": "No se encontró la plantilla CSV.",
+      "unauthorizedAccess": "No tienes permisos para acceder a la plantilla CSV.",
+      "downloadCanceled": "La descarga de la plantilla CSV fue cancelada.",
+      "unknownError": "Se produjo un error desconocido al acceder a la plantilla CSV."
     },
     "placeHolders": {
       "importCsv": "Importa tu archivo CSV de prueba aquí."
@@ -1195,9 +1265,7 @@
       "heuristics": "Heurísticas",
       "analytics": "Análisis",
       "totalTime": "Tiempo total",
-      "lastUpdate": "Última actualización",
-      "averageScore": "Puntuación Promedio",
-      "standardDeviation": "Desviación Estándar"
+      "lastUpdate": "Última actualización"
     },
     "statistics": {
       "usabilityPercentage": "Porcentaje de usabilidad",
@@ -1240,7 +1308,6 @@
         "heuristicsData": "Datos de heurísticas",
         "answersByEvaluator": "Respuestas por evaluador",
         "answersByHeuristics": "Respuestas por heurísticas",
-        "timeByHeuristics": "Tiempo por heurísticas",
         "graphic": "Gráfico",
         "weights": "Pesos"
       },
@@ -2058,7 +2125,11 @@
         "public": "P?blico",
         "private": "Privado",
         "saved": "La configuraci?n de la plantilla se actualiz? correctamente",
-        "saveError": "No se pudo actualizar la configuraci?n de la plantilla"
+        "saveError": "No se pudo actualizar la configuraci?n de la plantilla",
+        "delete": "Eliminar plantilla",
+        "deleteConfirm": "¿Estás seguro de que deseas eliminar esta plantilla? Los estudios creados a partir de ella seguirán funcionando normalmente.",
+        "deleteSuccess": "Plantilla eliminada correctamente",
+        "deleteError": "No se pudo eliminar la plantilla"
       }
     },
     "createTest": {
@@ -2361,7 +2432,6 @@
     }
   },
   "CardSorting": {
-    "invalidConfiguration": "Este estudio debe tener al menos una categoría y una tarjeta antes de poder iniciarse.",
     "title": "Card Sorting",
     "noCategory": "Sin categoría",
     "noCards": "No se encontraron tarjetas",
@@ -2690,6 +2760,11 @@
       "breakoutManage": "Gestionar grupos",
       "backroom": "Sala privada",
       "backroomHint": "Privado para el facilitador y los observadores: los participantes nunca ven esto.",
+      "breakoutStaffRoomsTitle": "Salas de grupos",
+      "breakoutReturnToMain": "Volver a la sala principal",
+      "breakoutCallFacilitator": "Llamar al facilitador",
+      "breakoutHelpSent": "Facilitador notificado",
+      "breakoutHelpRequested": "{group} está solicitando al facilitador",
       "messagePlaceholder": "Comparte tus ideas...",
       "noMessagesYet": "Aún no hay mensajes. Inicia la discusión.",
       "observerReadonly": "Estás observando esta discusión.",
@@ -2944,7 +3019,6 @@
       "validation": {
         "enterTitle": "Ingresa un título",
         "max200Characters": "Máximo 200 caracteres",
-        "max150Characters": "Máximo 150 caracteres",
         "max600Characters": "Máximo 600 caracteres",
         "enterWebsiteName": "Ingresa el nombre del sitio web",
         "enterWebsiteUrl": "Ingresa la URL del sitio web",

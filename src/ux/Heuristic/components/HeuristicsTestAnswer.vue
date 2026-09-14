@@ -65,8 +65,14 @@
               v-if="tab == 2"
               :has-enough-data="evaluatorStatistics.items.length > 1"
               :heuristics-evaluator="heuristicsEvaluator"
+              :heuristics-statistics="heuristicsStatistics"
               :time-by-heuristics="timeByHeuristics"
               :track-time="trackTime"
+              :weights-statistics="weightsStatistics"
+              :relative="relative"
+              :usability-total-fix="usabilityTotalFix"
+              :heuristics-length="heuristicsLength"
+              :max-value="maxValue"
               @go-to-heuristic="goToDataHeuristic"
             />
             <!-- Tab 4 - Analytics -->
@@ -167,9 +173,7 @@ const testWeights = computed(() => store.state.Tests.Test.testWeights || [])
 
 const heuristicsEvaluator = computed(() => {
   const table = {
-    // Fresh array each run — avoid mutating the shared header constant across recomputations,
-    // which previously caused average/sd columns to land before evaluator columns.
-    header: [...heuristicsEvaluatorHeader],
+    header: heuristicsEvaluatorHeader,
     items: [],
   }
   const options =
@@ -216,38 +220,6 @@ const heuristicsEvaluator = computed(() => {
       evaluatorIndex++
     })
   }
-
-  if (!table.header.find((h) => h.value === 'averageScore')) {
-    table.header.push({
-      title: t('HeuristicsTestAnswer.titles.averageScore'),
-      align: 'center',
-      value: 'averageScore',
-    })
-  }
-  if (!table.header.find((h) => h.value === 'standardDeviation')) {
-    table.header.push({
-      title: t('HeuristicsTestAnswer.titles.standardDeviation'),
-      align: 'center',
-      value: 'standardDeviation',
-    })
-  }
-
-  table.items.forEach((item) => {
-    const results = Object.entries(item)
-      .filter(([key]) => key.startsWith('Ev'))
-      .map(([, value]) => value)
-      .filter((value) => value !== undefined && value !== null)
-
-    item.averageScore = results.length
-      ? (
-          results.reduce((total, value) => total + value, 0) / results.length
-        ).toFixed(2)
-      : '0.00'
-    item.standardDeviation = results.length
-      ? standardDeviation(results).toFixed(2)
-      : '0.00'
-  })
-
   return table
 })
 
