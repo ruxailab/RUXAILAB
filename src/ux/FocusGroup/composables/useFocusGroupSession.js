@@ -316,6 +316,20 @@ export function useFocusGroupSession(studyId) {
   }
 
   /**
+   * Raise or clear a single group's "call the facilitator" flag. Written as a
+   * targeted deep update (not the whole breakout object) so a participant's
+   * call never races the facilitator's group edits, and pass `help: null` to
+   * clear it once a facilitator has responded.
+   */
+  async function setBreakoutHelp({ groupId, help }) {
+    if (!groupId) return
+    await update(rootRef, {
+      [`breakout/groups/${groupId}/help`]: help ?? null,
+      lastUpdate: serverTimestamp(),
+    })
+  }
+
+  /**
    * Snapshot of the finished session, shaped for Firestore persistence.
    */
   function toSessionRecord() {
@@ -378,6 +392,7 @@ export function useFocusGroupSession(studyId) {
     sendMessage,
     setBreakoutState,
     sendBackroomMessage,
+    setBreakoutHelp,
     toSessionRecord,
   }
 }
