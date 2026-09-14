@@ -71,6 +71,7 @@ import {
 } from '@/shared/constants/methodDefinitions'
 
 import { getTestViewAccessRedirect } from '@/shared/utils/studyNavigation'
+import { isSignInPath } from '@/shared/utils/authRedirect'
 import { showError } from '@/shared/utils/toast'
 
 const props = defineProps({
@@ -222,10 +223,20 @@ const handleLoadedStudy = async (loadedStudy) => {
     user: user.value,
     token: props.token,
     invitation: invitation.value,
+    redirectTo: route.fullPath,
   })
 
   if (!destination) {
     return true
+  }
+
+  /*
+   * Being asked to sign in is not an access denial: the participant simply has
+   * not identified themselves yet, and the study is waiting for them.
+   */
+  if (!isSignInPath(destination)) {
+    accessError.value = ACCESS_ERROR_MESSAGE
+    showError('AccessNotAllowed.noAccess')
   }
 
   await redirectIfNeeded(destination)
@@ -315,12 +326,7 @@ onBeforeMount(async () => {
          * to enter the study without STUDY_ANSWER capability.
          */
         if (isAnonymousInvitation.value) {
-          const hasAccessThroughInvitation =
-            await handleLoadedStudy(loadedStudy)
-
-          if (!hasAccessThroughInvitation) {
-            await denyAccess()
-          }
+          await handleLoadedStudy(loadedStudy)
 
           return
         }
@@ -332,11 +338,7 @@ onBeforeMount(async () => {
          * Let the normal access policy determine whether
          * the current user can enter the study.
          */
-        const hasAccess = await handleLoadedStudy(loadedStudy)
-
-        if (!hasAccess) {
-          await denyAccess()
-        }
+        await handleLoadedStudy(loadedStudy)
 
         return
       }
@@ -347,11 +349,7 @@ onBeforeMount(async () => {
      *
      * Fall back to the normal study access flow.
      */
-    const hasAccess = await handleLoadedStudy(loadedStudy)
-
-    if (!hasAccess) {
-      await denyAccess()
-    }
+    await handleLoadedStudy(loadedStudy)
   } finally {
     loading.value = false
   }
