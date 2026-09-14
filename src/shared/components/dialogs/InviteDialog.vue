@@ -43,17 +43,60 @@
           </v-chip>
         </div>
 
-        <v-select
-          v-if="roleOptions != null"
-          v-model="selectedRole"
-          :items="roleOptions"
-          item-title="title"
-          item-value="value"
-          :label="roleLabel || t('cooperators.invite.role')"
-          variant="outlined"
-          density="comfortable"
-          class="mt-4"
-        />
+        <div v-if="roleOptions != null" class="d-flex align-center mt-4 ga-2">
+          <v-select
+            v-model="selectedRole"
+            :items="roleOptions"
+            item-title="title"
+            item-value="value"
+            :label="roleLabel || t('cooperators.invite.role')"
+            variant="outlined"
+            density="comfortable"
+            class="flex-grow-1"
+            hide-details
+          />
+          <v-btn
+            icon="mdi-information-outline"
+            variant="tonal"
+            color="primary"
+            :aria-label="t('cooperators.invite.roleHelp')"
+            :title="t('cooperators.invite.roleHelp')"
+            @click="roleHelpDialog = true"
+          />
+        </div>
+
+        <v-dialog v-model="roleHelpDialog" max-width="620">
+          <v-card rounded="lg">
+            <v-card-title class="d-flex align-center ga-2">
+              <v-icon color="primary">mdi-account-details-outline</v-icon>
+              {{ t('cooperators.invite.roleHelp') }}
+            </v-card-title>
+            <v-divider />
+            <v-card-text>
+              <v-list class="pa-0" lines="three">
+                <v-list-item v-for="role in roleOptions" :key="role.value">
+                  <template #prepend>
+                    <v-icon :color="roleColor(role.value)">
+                      {{ roleIcon(role.value) }}
+                    </v-icon>
+                  </template>
+                  <v-list-item-title class="font-weight-bold">
+                    {{ role.title }}
+                  </v-list-item-title>
+                  <v-list-item-subtitle class="text-wrap mt-1">
+                    {{ roleDescription(role.value) }}
+                  </v-list-item-subtitle>
+                </v-list-item>
+              </v-list>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer />
+              <v-btn variant="text" @click="roleHelpDialog = false">
+                {{ t('common.close') }}
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
 
         <!-- Date/Time Selection (only for accessibility tests) -->
         <v-row v-if="showDateTimeSelection" class="mt-4">
@@ -227,6 +270,41 @@ const selectedCoops = ref([])
 const selectedRole = ref(null)
 const inviteMessage = ref('')
 const emailInput = ref('')
+const roleHelpDialog = ref(false)
+
+const roleDescription = (role) =>
+  t(
+    `cooperators.invite.roleDescriptions.${
+      {
+        0: 'admin',
+        1: 'evaluator',
+        2: 'guest',
+        3: 'observator',
+        4: 'manager',
+        5: 'user',
+      }[role] || 'default'
+    }`,
+  )
+
+const roleIcon = (role) =>
+  ({
+    0: 'mdi-crown-outline',
+    1: 'mdi-account-check-outline',
+    2: 'mdi-account-outline',
+    3: 'mdi-eye-outline',
+    4: 'mdi-account-cog-outline',
+    5: 'mdi-account-outline',
+  })[role] || 'mdi-account-outline'
+
+const roleColor = (role) =>
+  ({
+    0: 'primary',
+    1: 'success',
+    2: 'warning',
+    3: 'info',
+    4: 'primary',
+    5: 'secondary',
+  })[role] || 'grey'
 
 const getInitialRole = () => {
   if (props.preDefinedRole != null) {

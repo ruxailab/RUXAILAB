@@ -1,11 +1,12 @@
 <template>
   <div v-if="test" class="user-test-bg">
-    <StepAnnouncementOverlay
-      v-if="showStepAnnouncement"
-      ref="stepAnnouncementOverlay"
-      :kicker="nextStepAnnouncementKicker"
-      :title="nextStepAnnouncementTitle"
-    />
+    <div v-if="showStepAnnouncement" class="step-announcement-container">
+      <StepAnnouncementOverlay
+        ref="stepAnnouncementOverlay"
+        :kicker="nextStepAnnouncementKicker"
+        :title="nextStepAnnouncementTitle"
+      />
+    </div>
 
     <div>
       <IrisTracker
@@ -956,8 +957,11 @@ const showNextStepAnnouncement = async (
   stageNumber,
   kickerOverride = '',
 ) => {
+  scrollToTop()
+
   nextStepAnnouncementKicker.value = kickerOverride || `Stage ${stageNumber}`
   nextStepAnnouncementTitle.value = title
+
   showStepAnnouncement.value = true
 
   const safetyHideTimer = window.setTimeout(() => {
@@ -966,12 +970,18 @@ const showNextStepAnnouncement = async (
 
   try {
     await nextTick()
+
     await animateStepAnnouncement(stepAnnouncementOverlay.value, {
       totalDuration: 3,
     })
   } finally {
     window.clearTimeout(safetyHideTimer)
     showStepAnnouncement.value = false
+
+    // Garante que, quando o conteúdo voltar,
+    // ele continua no início da página.
+    await nextTick()
+    scrollToTop()
   }
 }
 
@@ -1481,9 +1491,12 @@ watch(
 
 // Scroll to top of the page when step changes
 const scrollToTop = () => {
-  // For most browsers
-  window.scrollTo({ top: 0, behavior: 'smooth' })
-  // For rightView (in case of overflow)
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: 'auto',
+  })
+
   if (rightView.value) {
     rightView.value.scrollTop = 0
   }
@@ -1715,5 +1728,20 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.step-announcement-container {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #00213f;
 }
 </style>

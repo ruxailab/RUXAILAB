@@ -37,7 +37,13 @@
             lg="4"
           >
             <v-card
-              class="heuristic-card h-100"
+              :class="[
+                'heuristic-card',
+                'h-100',
+                {
+                  'heuristic-card--completed': heuristicProgress(i) >= 100,
+                },
+              ]"
               elevation="0"
               role="button"
               tabindex="0"
@@ -48,7 +54,7 @@
               <div class="heuristic-card-accent" />
               <v-card-title class="heuristic-card-title">
                 <div class="heuristic-card-copy">
-                  <div class="heuristic-card-kicker">
+                  <div v-if="!isTraditional" class="heuristic-card-kicker">
                     {{
                       $t('HeuristicsTestView.cards.questionsCount', {
                         count: heuristic.questions?.length || 0,
@@ -64,24 +70,20 @@
                 </div>
                 <v-progress-circular
                   rotate="-90"
-                  :model-value="
-                    perHeuristicProgress(
-                      currentUserTestAnswer.heuristicQuestions[i],
-                    )
-                  "
+                  :model-value="heuristicProgress(i)"
                   :size="52"
                   :width="5"
-                  color="primary"
+                  :color="heuristicProgress(i) >= 100 ? 'success' : 'primary'"
                   class="heuristic-card-progress"
                 >
-                  <span class="text-caption font-weight-bold">
-                    {{
-                      Math.round(
-                        perHeuristicProgress(
-                          currentUserTestAnswer.heuristicQuestions[i],
-                        ),
-                      )
-                    }}%
+                  <span
+                    v-if="heuristicProgress(heuristic, i) >= 100"
+                    class="heuristic-card-completed-icon"
+                  >
+                    <v-icon size="24">mdi-check</v-icon>
+                  </span>
+                  <span v-else class="text-caption font-weight-bold">
+                    {{ Math.round(heuristicProgress(i)) }}%
                   </span>
                 </v-progress-circular>
               </v-card-title>
@@ -90,6 +92,9 @@
                 <p class="heuristic-card-description">
                   {{ heuristicDescription(heuristic) }}
                 </p>
+              </v-card-text>
+
+              <v-card-actions class="heuristic-card-actions">
                 <div class="heuristic-card-storage">
                   <v-icon size="16">mdi-database-outline</v-icon>
                   <span>
@@ -102,6 +107,17 @@
                     }}
                   </span>
                 </div>
+                <v-chip
+                  v-if="heuristicProgress(i) >= 100"
+                  color="success"
+                  variant="tonal"
+                  size="small"
+                  class="heuristic-card-status"
+                >
+                  <v-icon start size="16">mdi-check-circle</v-icon>
+                  {{ $t('common.completed') }}
+                </v-chip>
+                <v-spacer />
                 <v-btn
                   color="primary"
                   variant="text"
@@ -110,7 +126,7 @@
                   {{ $t('HeuristicsTestView.cards.open') }}
                   <v-icon end>mdi-chevron-right</v-icon>
                 </v-btn>
-              </v-card-text>
+              </v-card-actions>
             </v-card>
           </v-col>
         </v-row>
@@ -133,16 +149,30 @@
 <script setup>
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 
-defineProps({
+const props = defineProps({
   heuristics: { type: Array, required: true },
   currentUserTestAnswer: { type: Object, required: true },
   calculatedProgress: { type: Number, required: true },
+  isTraditional: { type: Boolean, default: false },
   perHeuristicProgress: { type: Function, required: true },
   heuristicDescription: { type: Function, required: true },
   heuristicStorage: { type: Function, required: true },
 })
 
 defineEmits(['select-heuristic', 'finish-evaluation'])
+
+const heuristicProgress = (index) =>
+  Math.min(
+    100,
+    Math.max(
+      0,
+      Number(
+        props.perHeuristicProgress(
+          props.currentUserTestAnswer.heuristicQuestions[index],
+        ),
+      ) || 0,
+    ),
+  )
 </script>
 
 <style scoped>
@@ -185,6 +215,8 @@ defineEmits(['select-heuristic', 'finish-evaluation'])
 
 .heuristic-card {
   position: relative;
+  width: 100%;
+  min-width: 0;
   overflow: hidden;
   cursor: pointer;
   border: 1px solid rgba(0, 33, 63, 0.12);
@@ -206,6 +238,14 @@ defineEmits(['select-heuristic', 'finish-evaluation'])
   transform: translateY(-3px);
 }
 
+.heuristic-card--completed {
+  border-color: rgba(67, 160, 71, 0.45);
+}
+
+.heuristic-card--completed .heuristic-card-accent {
+  background: linear-gradient(90deg, #43a047, #66bb6a);
+}
+
 .heuristic-card-accent {
   height: 5px;
   background: linear-gradient(90deg, #00213f, #ff4d67);
@@ -216,6 +256,7 @@ defineEmits(['select-heuristic', 'finish-evaluation'])
   display: flex;
   gap: 1rem;
   justify-content: space-between;
+  min-width: 0;
   padding: 1.25rem 1.25rem 0.75rem;
 }
 
@@ -228,6 +269,11 @@ defineEmits(['select-heuristic', 'finish-evaluation'])
   white-space: normal;
   overflow-wrap: anywhere;
   word-break: break-word;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
 }
 
 .heuristic-card-kicker {
@@ -245,10 +291,14 @@ defineEmits(['select-heuristic', 'finish-evaluation'])
   flex: 0 0 auto;
 }
 
+.heuristic-card-completed-icon {
+  color: #43a047;
+}
+
 .heuristic-card-body {
   display: flex;
   flex-direction: column;
-  height: calc(100% - 92px);
+  min-height: 0;
   padding: 0 1.25rem 1.25rem !important;
 }
 
@@ -258,6 +308,15 @@ defineEmits(['select-heuristic', 'finish-evaluation'])
   font-size: 0.95rem;
   line-height: 1.45;
   margin-bottom: 1rem;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
 }
 
 .heuristic-card-storage {
@@ -275,9 +334,44 @@ defineEmits(['select-heuristic', 'finish-evaluation'])
   font-weight: 700;
 }
 
+.heuristic-card-actions {
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  min-width: 0;
+  padding: 0 1.25rem 1.25rem;
+}
+
+.heuristic-card-actions .heuristic-card-storage {
+  margin-bottom: 0;
+}
+
 .heuristic-card-action {
-  align-self: flex-start;
   font-weight: 700;
   letter-spacing: 0.08em;
+}
+
+.heuristic-card-status {
+  font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  .heuristic-card-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .heuristic-card-actions :deep(.v-spacer) {
+    display: none;
+  }
+
+  .heuristic-card-title {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .heuristic-card-progress {
+    align-self: flex-end;
+  }
 }
 </style>

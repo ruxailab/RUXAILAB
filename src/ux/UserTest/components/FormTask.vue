@@ -72,12 +72,45 @@
       </v-card-text>
     </div>
 
-    <v-stepper-actions
-      :prev-text="$t('buttons.previous')"
-      :next-text="$t('buttons.next')"
-      @click:prev="goToPreviousStep"
-      @click:next="goToNextStep"
-    />
+    <div class="stepper-actions">
+      <div class="stepper-actions__left">
+        <v-btn
+          color="red-lighten-1"
+          variant="text"
+          @click="$emit('update:dialog', false)"
+        >
+          {{ $t('buttons.cancel') }}
+        </v-btn>
+
+        <v-btn
+          v-if="Number.parseInt(step, 10) > 1"
+          variant="outlined"
+          class="ml-2"
+          @click="goToPreviousStep"
+        >
+          {{ $t('buttons.previous') }}
+        </v-btn>
+      </div>
+
+      <div class="stepper-actions__right">
+        <v-btn
+          v-if="Number.parseInt(step, 10) < 4"
+          color="primary"
+          @click="goToNextStep"
+        >
+          {{ $t('buttons.next') }}
+        </v-btn>
+
+        <v-btn
+          v-else
+          class="text-white bg-orange"
+          :disabled="props.task?.isTemplate"
+          @click="valida()"
+        >
+          {{ $t('common.save') }}
+        </v-btn>
+      </div>
+    </div>
   </v-stepper>
 </template>
 
@@ -103,7 +136,12 @@ const taskBasicInfoRef = ref(null)
 const taskConfigurationRef = ref(null)
 const taskAdvancedRef = ref(null)
 
-const emit = defineEmits(['validate', 'update:task', 'complete'])
+const emit = defineEmits([
+  'validate',
+  'update:task',
+  'complete',
+  'update:dialog',
+])
 
 const step = ref('1')
 const localTask = ref({ ...props.task })
@@ -192,5 +230,23 @@ defineExpose({ valida, resetVal })
 .stepper-content {
   min-height: 400px;
   padding: 16px;
+}
+
+.stepper-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 16px 16px;
+}
+
+.stepper-actions__left,
+.stepper-actions__right {
+  display: flex;
+  align-items: center;
+}
+
+.stepper-actions__right {
+  margin-left: auto;
 }
 </style>

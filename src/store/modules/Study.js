@@ -117,6 +117,8 @@ export default {
     CLEAN_TEST(state) {
       state.Test = null
       state.testStructure = null
+      state.heuristics = null
+      state.testWeights = null
       state.answersId = null
       state.module = 'test'
     },
