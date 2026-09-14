@@ -250,6 +250,7 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { resolveHeuristicAnswerMode } from '@/ux/Heuristic/utils/heuristicAnswerMode'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import HeuristicCommentEvidenceSection from '@/ux/Heuristic/components/steps/HeuristicCommentEvidenceSection.vue'
 import HeuristicImageEvidenceSection from '@/ux/Heuristic/components/steps/HeuristicImageEvidenceSection.vue'
@@ -297,6 +298,9 @@ const customOptions = computed(() =>
   Array.isArray(props.test?.testOptions) ? props.test.testOptions : [],
 )
 
+const selectedAnswerMode = computed(() =>
+  resolveHeuristicAnswerMode(props.test),
+)
 const useFrequency = computed(() => props.test?.useFrequency !== false)
 const useSeverity = computed(() => props.test?.useSeverity !== false)
 const isTraditionalEvaluation = computed(
@@ -306,14 +310,6 @@ const isTraditionalEvaluation = computed(
     useFrequency.value &&
     useSeverity.value,
 )
-
-const selectedAnswerMode = computed(() => {
-  if (customOptions.value.length) return 'customOptions'
-  if (useFrequency.value && useSeverity.value) return 'frequencySeverity'
-  if (useFrequency.value) return 'frequency'
-  if (useSeverity.value) return 'severity'
-  return null
-})
 
 const hasConfiguredAnswerControl = computed(() =>
   Boolean(selectedAnswerMode.value),

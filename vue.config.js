@@ -23,10 +23,12 @@ module.exports = {
     client: {
       webSocketURL: 'auto://0.0.0.0:0/ws',
       overlay: {
+        errors: true,
         warnings: true,
         // Benign browser warning (not a real error) fired by ResizeObserver
         // when menus/overlays resize rapidly (e.g. Vuetify v-menu).
-        runtimeErrors: (error) => !/ResizeObserver loop/.test(error.message),
+        runtimeErrors: (error) =>
+          !/ResizeObserver loop/.test(error?.message ?? ''),
       },
     },
   },
