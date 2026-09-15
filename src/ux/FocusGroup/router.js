@@ -7,34 +7,73 @@ import ParticipantsView from '@/shared/views/ParticipantsView.vue'
 import SessionsView from '@/shared/views/SessionsView.vue'
 import StorageView from '@/shared/views/StorageView.vue'
 import AuditTrailView from '@/shared/views/AuditTrailView.vue'
+import { STUDY_CAPABILITY as C } from '@/shared/utils/studyAccessPolicy'
 
-// Every management view lives at /focusGroup/{segment}/:id and is facilitator-
-// only, so build them from one list rather than repeating the same route block.
+// `authorize` alone only checks the account-wide accessLevel, not this
+// person's role in THIS study — anyone signed in could otherwise open any
+// Focus Group's management URLs directly. `studyCapability` adds the real,
+// per-study check (same pattern as the Heuristic/UserTest routers).
+const studyMeta = (studyCapability) => ({
+  authorize: [0, 1, 3],
+  studyCapability,
+  studyRouteBase: 'focusGroup',
+})
+
+// Every management view lives at /focusGroup/{segment}/:id, gated by the
+// capability its sidebar entry uses — built from one list rather than
+// repeating the same route block.
 const MANAGER_CHILDREN = [
-  { segment: 'edit', name: 'FocusGroupEditTest', component: EditFocusGroupView },
-  { segment: 'settings', name: 'FocusGroupSettingsView', component: SettingsView },
+  {
+    segment: 'edit',
+    name: 'FocusGroupEditTest',
+    component: EditFocusGroupView,
+    capability: C.STUDY_EDIT,
+  },
+  {
+    segment: 'settings',
+    name: 'FocusGroupSettingsView',
+    component: SettingsView,
+    capability: C.SETTINGS_MANAGE,
+  },
   {
     segment: 'cooperators',
     name: 'FocusGroupCooperatorsView',
     component: CooperatorsView,
+    capability: C.COOPERATORS_VIEW,
   },
   {
     segment: 'participants',
     name: 'FocusGroupParticipantsView',
     component: ParticipantsView,
+    capability: C.COOPERATORS_VIEW,
   },
-  { segment: 'sessions', name: 'FocusGroupSessionsView', component: SessionsView },
-  { segment: 'storage', name: 'FocusGroupStorageView', component: StorageView },
   {
+    segment: 'sessions',
+    name: 'FocusGroupSessionsView',
+    component: SessionsView,
+    capability: C.SESSIONS_MANAGE,
+  },
+  {
+    segment: 'storage',
+    name: 'FocusGroupStorageView',
+    component: StorageView,
+    capability: C.STORAGE_ACCESS,
+  },
+  {
+    // Owner-only, matching the navigator (buildStudyNavigator only lists
+    // Audit Trail for the study owner) and the other study routers' pattern.
     segment: 'audit',
     name: 'FocusGroupAuditTrailView',
     component: AuditTrailView,
+    ownerOnly: true,
   },
-].map(({ segment, name, component }) => ({
+].map(({ segment, name, component, capability, ownerOnly }) => ({
   path: `/focusGroup/${segment}/:id`,
   name,
   props: true,
-  meta: { authorize: [0, 1] },
+  meta: ownerOnly
+    ? { authorize: [0, 1], studyOwnerOnly: true, studyRouteBase: 'focusGroup' }
+    : studyMeta(capability),
   component,
 }))
 
@@ -52,7 +91,7 @@ export default [
     name: 'FocusGroupManagerView',
     // Observers (3) reach the dashboard too — the sidebar then shows only what
     // their role allows. The management children below stay facilitator-only.
-    meta: { authorize: [0, 1, 3] },
+    meta: studyMeta(C.DASHBOARD_VIEW),
     component: ManagerView,
     props: true,
     children: MANAGER_CHILDREN,
