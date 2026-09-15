@@ -2825,7 +2825,9 @@
       "newThemeLabel": "New theme name",
       "addTheme": "Add theme",
       "unsorted": "Unsorted",
-      "removeTheme": "Remove theme"
+      "removeTheme": "Remove theme",
+      "allSorted": "All responses are sorted into a theme.",
+      "dropHere": "Drop responses here"
     },
     "session": {
       "title": "Live Session",

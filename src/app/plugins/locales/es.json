@@ -2733,7 +2733,9 @@
       "newThemeLabel": "Nombre del nuevo tema",
       "addTheme": "Añadir tema",
       "unsorted": "Sin clasificar",
-      "removeTheme": "Eliminar tema"
+      "removeTheme": "Eliminar tema",
+      "allSorted": "Todas las respuestas están clasificadas en un tema.",
+      "dropHere": "Suelta respuestas aquí"
     },
     "session": {
       "title": "Sesión en Vivo",
