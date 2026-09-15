@@ -92,6 +92,16 @@ describe('study navigation', () => {
     })
   })
 
+  it('sends a Focus Group participant to the session route, not the dashboard-less TestView', () => {
+    const user = { id: 'participant', accessLevel: 1 }
+    const study = studyWith('FOCUS_GROUP', user.id, STUDY_ROLE.EVALUATOR)
+
+    expect(getCommunityStudyDestination({ study, user })).toEqual({
+      name: 'FocusGroupSessionView',
+      params: { id: study.id },
+    })
+  })
+
   it('sends an accepted Manager invitation to the study dashboard', () => {
     const user = { id: 'manager', accessLevel: 1 }
     const study = {

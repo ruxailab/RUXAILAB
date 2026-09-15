@@ -114,6 +114,20 @@ export function getCommunityStudyDestination({ study, user }) {
     }
   }
 
+  // A Focus Group participant reaches their actual session through the
+  // session-specific invite link (`notifySessionMembers` sends
+  // `/focusGroup/session/{id}?session={sessionId}` directly) — this generic,
+  // non-session-specific path has no session id to route with. TestView has
+  // no Focus Group rendering at all, so send them to the session route
+  // itself rather than an empty shell; without `?session=` it's the legacy
+  // open room, gated the same way any direct visit to it already is.
+  if (
+    study.testType === STUDY_TYPES.FOCUS_GROUP &&
+    hasStudyCapability(study, user, C.STUDY_ANSWER)
+  ) {
+    return { name: 'FocusGroupSessionView', params: { id: studyId } }
+  }
+
   if (study.isPublic || hasStudyCapability(study, user, C.STUDY_ANSWER)) {
     return { name: 'TestView', params: { id: studyId } }
   }
