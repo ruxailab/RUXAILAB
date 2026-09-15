@@ -19,12 +19,14 @@ export const SESSION_STATUS = {
 /**
  * Live-session state for a Focus Group, synced through Realtime Database.
  *
- * Namespaced under `focusGroupSessions/{studyId}` so it never collides with the
+ * Namespaced under `focusGroupSessions/{roomId}` so it never collides with the
  * `rooms/{studyId}` tree owned by the video-call components. Encapsulates the
  * facilitator controls (start / advance topic / end), participant presence, and
  * per-topic response capture behind a small reactive surface.
  *
- * @param {string} studyId - Study document id, used as the session room id.
+ * @param {string} roomId - The live room id: the study id alone for the legacy
+ *   open room, or `${studyId}-${sessionId}` for a scheduled session's own
+ *   isolated room.
  */
 export function useFocusGroupSession(roomId) {
   // `roomId` isolates the RTDB tree per live room: `${studyId}-${sessionId}` for
