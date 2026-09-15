@@ -1,13 +1,39 @@
 <template>
-  <!-- Hold rendering until the session state arrives, so the consent gate does
-       not flash for someone who has already agreed -->
+  <!-- Hold rendering until the session state arrives (and, for a scheduled
+       session, until its roster has resolved) — otherwise a non-member could
+       flash the lobby or the room itself before the membership gate below
+       ever gets a chance to run -->
   <div
-    v-if="!loaded"
+    v-if="!loaded || (sessionId && !rosterLoaded)"
     class="d-flex align-center justify-center"
     style="height: 100vh"
   >
     <v-progress-circular indeterminate color="primary" size="48" />
   </div>
+
+  <!-- Session membership gate: checked before the lobby/room so a non-member
+       is turned away regardless of whether the session has started yet —
+       otherwise an idle scheduled session would show the lobby to anyone -->
+  <v-container
+    v-else-if="sessionAccessBlocked"
+    class="d-flex align-center justify-center"
+    style="height: 100vh"
+  >
+    <div class="text-center" style="max-width: 420px">
+      <v-icon size="48" color="medium-emphasis" class="mb-3">
+        mdi-account-cancel-outline
+      </v-icon>
+      <h2 class="text-h6 mb-2">
+        {{ t('focusGroup.session.notAMemberTitle') }}
+      </h2>
+      <p class="text-body-2 text-medium-emphasis mb-4">
+        {{ t('focusGroup.session.notAMemberHint') }}
+      </p>
+      <v-btn color="primary" variant="tonal" @click="goToDashboard">
+        {{ t('focusGroup.session.backToDashboard') }}
+      </v-btn>
+    </div>
+  </v-container>
 
   <!-- Lobby: branded welcome shown before the session is live and after it ends -->
   <SessionLobby
@@ -100,9 +126,44 @@
             {{ t('focusGroup.session.observerModeHint') }}
           </div>
 
-          <div v-if="isInBreakout" class="fg-observer-strip">
+          <!-- Staff: hop between breakout rooms + see raised hands. -->
+          <BreakoutRoomsBar
+            v-if="isStaff && breakout?.active"
+            :breakout="breakout"
+            :visiting-group-id="visitingGroupId"
+            @visit="onVisitGroup"
+            @return-to-main="onReturnToMain"
+          />
+
+          <div
+            v-if="isInBreakout"
+            class="fg-observer-strip d-flex align-center"
+          >
             <v-icon size="16" class="me-1">mdi-call-split</v-icon>
-            {{ t('focusGroup.session.breakoutInGroup', { name: myBreakoutGroupName }) }}
+            <span class="flex-grow-1">
+              {{
+                t('focusGroup.session.breakoutInGroup', {
+                  name: myBreakoutGroupName,
+                })
+              }}
+            </span>
+            <v-btn
+              size="x-small"
+              variant="tonal"
+              :color="myGroupHelpPending ? 'success' : 'error'"
+              :prepend-icon="
+                myGroupHelpPending ? 'mdi-check' : 'mdi-hand-back-left'
+              "
+              class="text-none ms-2"
+              :disabled="myGroupHelpPending"
+              @click="onCallFacilitator"
+            >
+              {{
+                myGroupHelpPending
+                  ? t('focusGroup.session.breakoutHelpSent')
+                  : t('focusGroup.session.breakoutCallFacilitator')
+              }}
+            </v-btn>
           </div>
           <div v-if="isInBreakout && breakout?.broadcast?.text" class="fg-observer-strip">
             <v-icon size="16" class="me-1">mdi-bullhorn-outline</v-icon>
@@ -532,7 +593,7 @@
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute, useRouter, onBeforeRouteUpdate } from 'vue-router'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
@@ -552,6 +613,7 @@ import StimulusStage from '@/ux/FocusGroup/components/session/StimulusStage.vue'
 import TopicDiscussion from '@/ux/FocusGroup/components/session/TopicDiscussion.vue'
 import ParticipantList from '@/ux/FocusGroup/components/session/ParticipantList.vue'
 import BreakoutPanel from '@/ux/FocusGroup/components/session/BreakoutPanel.vue'
+import BreakoutRoomsBar from '@/ux/FocusGroup/components/session/BreakoutRoomsBar.vue'
 import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
 import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue'
 import {
@@ -572,6 +634,29 @@ const showPanel = ref(mdAndUp.value)
 const panelTab = ref('discussion')
 
 const studyId = route.params.id
+// The scheduled session being run, from the launch link. Each session gets its
+// OWN live room — `${studyId}-${sessionId}` — so two sessions of the same study
+// can run at once without sharing presence, chat, video, or breakout state. No
+// `?session=` means the legacy open room keyed by the study alone. Read once at
+// setup: launching a session always arrives from the Sessions list (a separate
+// route), so the view re-mounts fresh per session.
+const sessionId = route.query.session || null
+const roomId = sessionId ? `${studyId}-${sessionId}` : studyId
+
+// `sessionId`/`roomId` above are captured once at setup, not reactive — and
+// Vue Router reuses this component instance when only the `?session=` query
+// changes (same route, same :id param), so navigating from one session's
+// live link straight to another's would otherwise leave every subscription
+// (RTDB room, roster, LiveKit call) pointed at the OLD session while the URL
+// shows the new one. Force a hard reload in that one case so everything
+// re-initializes cleanly, rather than teaching every piece of state here to
+// react to a changing session id.
+onBeforeRouteUpdate((to) => {
+  if (to.query.session !== route.query.session) {
+    window.location.assign(to.fullPath)
+    return false
+  }
+})
 const {
   status,
   currentTopicIndex,
@@ -604,10 +689,11 @@ const {
   sendMessage,
   setBreakoutState,
   sendBackroomMessage,
+  setBreakoutHelp,
   subscribe,
   subscribeBackroom,
   toSessionRecord,
-} = useFocusGroupSession(studyId)
+} = useFocusGroupSession(roomId)
 
 const user = computed(() => store.getters.user)
 const test = computed(() => store.getters.test)
@@ -712,9 +798,81 @@ const accessLevel = computed(() => {
   return ACCESS_LEVEL.GUEST
 })
 
-const isFacilitator = computed(() => accessLevel.value === ACCESS_LEVEL.ADMIN)
+// --- Session membership: the launched session defines who takes part ---
+// This live room IS a specific scheduled session (see `roomId`), so its roster
+// is loaded once from Firestore by `sessionId`. Its staff + participant lists
+// drive both who may enter and who counts as a participant. No session id means
+// the legacy open room, where membership isn't enforced. Declared before the
+// role computeds because `isParticipant` consults the roster.
+const activeSession = ref(null)
+// The roster load is async; hold the membership gate closed-open decision until
+// it resolves so a member never flashes the "not part of this session" notice.
+const rosterLoaded = ref(false)
+onMounted(async () => {
+  if (!sessionId) {
+    rosterLoaded.value = true
+    return
+  }
+  try {
+    activeSession.value = await store.dispatch('getSession', {
+      studyId,
+      sessionId,
+    })
+  } catch {
+    activeSession.value = null
+  } finally {
+    rosterLoaded.value = true
+  }
+})
+
+// Is the current user named in a roster list — by account id, or by invite
+// email (participantEmails is a plain string array, so it's wrapped first)?
+const namedInRoster = (list) => {
+  const uid = user.value?.id || user.value?.uid
+  const email = (user.value?.email || '').toLowerCase()
+  return (list || []).some((member) => {
+    const entry = typeof member === 'string' ? { email: member } : member
+    return (
+      (entry?.userDocId && entry.userDocId === uid) ||
+      (entry?.email && email && entry.email.toLowerCase() === email)
+    )
+  })
+}
+// A participant invited to this session counts as a participant even when they
+// aren't a study cooperator — participants live in their own list, not the
+// cooperators one (matching how the other study types separate the two).
+const isRosterParticipant = computed(
+  () =>
+    !!activeSession.value &&
+    (namedInRoster(activeSession.value.participants) ||
+      namedInRoster(activeSession.value.participantEmails)),
+)
+
+// A cooperator assigned to run THIS session (staff[].role, set per-session in
+// the Sessions dialog) takes that role here regardless of their overall
+// cooperator accessLevel — the session's own roster is the source of truth
+// for who facilitates/observes a given session, not just their study-wide role.
+const sessionStaffRole = computed(() => {
+  const entry = (activeSession.value?.staff || []).find((member) => {
+    const uid = user.value?.id || user.value?.uid
+    const email = (user.value?.email || '').toLowerCase()
+    return (
+      (member?.userDocId && member.userDocId === uid) ||
+      (member?.email && email && member.email.toLowerCase() === email)
+    )
+  })
+  return entry?.role ?? null
+})
+
+const isFacilitator = computed(
+  () =>
+    accessLevel.value === ACCESS_LEVEL.ADMIN ||
+    sessionStaffRole.value === 'FACILITATOR',
+)
 const isParticipant = computed(
-  () => accessLevel.value === ACCESS_LEVEL.EVALUATOR,
+  () =>
+    sessionStaffRole.value !== 'OBSERVER' &&
+    (accessLevel.value === ACCESS_LEVEL.EVALUATOR || isRosterParticipant.value),
 )
 // Anyone who is neither running the session nor taking part in it observes it:
 // a dedicated OBSERVATOR cooperator, but also any signed-in viewer who opens
@@ -722,6 +880,42 @@ const isParticipant = computed(
 // "Observer" badge and the observer tools (notes pad, observing strip) always
 // agree instead of the badge showing while the tools stay hidden.
 const isObserver = computed(() => !isFacilitator.value && !isParticipant.value)
+
+// Only the actual study owner (or a platform super-admin) bypasses the
+// roster unconditionally — the "selected roster only" contract still applies
+// to a co-facilitator: a cooperator with study-wide ADMIN access who was NOT
+// assigned to THIS session is a member only via `sessionStaffRole` below,
+// same as anyone else. `isFacilitator` (used for the UI once someone is
+// already in) stays broader on purpose; this is deliberately narrower.
+const isStudyOwner = computed(() => {
+  const currentUser = user.value
+  if (!currentUser) return false
+  if (currentUser.accessLevel === 0) return true
+  return test.value?.testAdmin?.userDocId === currentUser.id
+})
+
+// A user belongs to this session when named in its staff or participant
+// roster. The study owner always has access; a legacy open room (no session
+// id at all) isn't gated — but a scheduled session that failed to load or was
+// deleted fails CLOSED, not open, so a broken lookup can't be used to sneak in.
+const isSessionMember = computed(() => {
+  if (isStudyOwner.value) return true
+  if (!sessionId) return true
+  const session = activeSession.value
+  if (!session) return false
+  return (
+    namedInRoster(session.staff) ||
+    namedInRoster(session.participants) ||
+    namedInRoster(session.participantEmails)
+  )
+})
+
+// Block entry when this room is a scheduled session and the viewer isn't on its
+// roster: they see a "not part of this session" notice instead of joining.
+const sessionAccessBlocked = computed(
+  () => !!sessionId && rosterLoaded.value && !isSessionMember.value,
+)
+
 // Facilitator and participants can post; observers read the discussion only.
 // Participant posting also depends on chat being enabled for this session.
 const canPost = computed(
@@ -788,14 +982,27 @@ const myBreakoutGroupId = computed(() => {
   return entry?.[0] ?? null
 })
 
-// A participant assigned to an active breakout group connects to that
-// group's own LiveKit room instead of the main one; the facilitator and
-// observers always stay in the main room.
-const effectiveRoomId = computed(() =>
-  myBreakoutGroupId.value
-    ? `${studyId}-breakout-${myBreakoutGroupId.value}`
-    : studyId,
+// Staff (facilitator/observer) can drop into any breakout group's room to
+// check in on it; this holds the group they're currently visiting, null when
+// they're in the main room. Only meaningful for staff — participants are
+// routed by their assignment (`myBreakoutGroupId`) instead.
+const visitingGroupId = ref(null)
+// A visit only makes sense while a breakout is live, so clear it on recall so
+// the room falls back to the main one automatically.
+watch(
+  () => breakout.value?.active,
+  (active) => {
+    if (!active) visitingGroupId.value = null
+  },
 )
+
+// A participant assigned to an active breakout group connects to that group's
+// own LiveKit room; a staff member visiting a group connects to that room too;
+// everyone else stays in the main room.
+const effectiveRoomId = computed(() => {
+  const groupId = myBreakoutGroupId.value ?? visitingGroupId.value
+  return groupId ? `${roomId}-breakout-${groupId}` : roomId
+})
 
 // Side-panel tabs, in reading order: the facilitator's guide, the discussion
 // (a tab only when video owns the stage, otherwise the discussion IS the
@@ -928,13 +1135,18 @@ const setLocalVideo = (el) => {
 }
 
 // Join once the discussion is actually reachable: session live, consent
-// settled, and the user resolved. The composable ignores repeat calls.
+// settled, the user resolved, and — for a scheduled session — the roster
+// resolved and this viewer on it. Gating the connect (not just the presence)
+// is what keeps a blocked participant out of the LiveKit room, so the
+// facilitator never sees them. The composable ignores repeat calls.
 const shouldConnectVideo = computed(
   () =>
     videoEnabled.value &&
     isLive.value &&
     !needsConsent.value &&
-    !!user.value?.id,
+    !!user.value?.id &&
+    (!sessionId || rosterLoaded.value) &&
+    !sessionAccessBlocked.value,
 )
 watch(
   shouldConnectVideo,
@@ -1060,6 +1272,63 @@ const onBreakoutTimerPause = (remainingMs) =>
   pauseTimer({ topicId: 'breakout', remainingMs })
 const onBreakoutTimerReset = () =>
   resetTimer({ topicId: 'breakout', durationMs: 10 * 60 * 1000 })
+
+// --- Staff room visits + "call the facilitator" alerts ---
+// Both facilitator and observer count as staff who can drop into rooms.
+const isStaff = computed(() => isFacilitator.value || isObserver.value)
+
+// A staff member drops into a group's room; the facilitator answering a call
+// also clears that group's raised hand in the same action.
+const onVisitGroup = (groupId) => {
+  visitingGroupId.value = groupId
+  if (isFacilitator.value && breakout.value?.groups?.[groupId]?.help) {
+    setBreakoutHelp({ groupId, help: null })
+  }
+}
+const onReturnToMain = () => {
+  visitingGroupId.value = null
+}
+
+// The current participant's own group has a pending call, so the button can
+// read "notified" instead of letting them stack duplicate requests.
+const myGroupHelpPending = computed(
+  () => !!breakout.value?.groups?.[myBreakoutGroupId.value]?.help,
+)
+const onCallFacilitator = () => {
+  if (!myBreakoutGroupId.value || myGroupHelpPending.value) return
+  setBreakoutHelp({
+    groupId: myBreakoutGroupId.value,
+    help: {
+      requestedBy: user.value?.id ?? '',
+      name: user.value?.name || user.value?.email || '',
+      at: Date.now(),
+    },
+  })
+}
+
+// Nudge the facilitator when a room newly raises its hand, so they notice even
+// while looking at another panel; the rooms bar keeps the standing indicator.
+watch(
+  () =>
+    Object.entries(breakout.value?.groups ?? {})
+      .filter(([, group]) => group?.help)
+      .map(([groupId]) => groupId)
+      .join(','),
+  (nowIds, wasIds) => {
+    if (!isFacilitator.value) return
+    const previous = new Set((wasIds || '').split(',').filter(Boolean))
+    Object.entries(breakout.value?.groups ?? {}).forEach(([groupId, group]) => {
+      if (group?.help && !previous.has(groupId)) {
+        store.commit('SET_TOAST', {
+          message: t('focusGroup.session.breakoutHelpRequested', {
+            group: group.name,
+          }),
+          type: 'warning',
+        })
+      }
+    })
+  },
+)
 
 // The stage/panel discussion swaps to a participant's breakout-group chat
 // while they're in one, reusing the exact per-topic messages plumbing above
@@ -1209,6 +1478,10 @@ const joined = ref(false)
 // Idempotent, so presence is only ever claimed once per mount.
 const enterSession = async () => {
   if (joined.value || !user.value?.id) return
+  // Wait for a scheduled session's roster to resolve, then only claim presence
+  // if this viewer is on it — a blocked participant never appears in the room.
+  if (sessionId && !rosterLoaded.value) return
+  if (sessionAccessBlocked.value) return
   joined.value = true
   await joinPresence({
     userId: user.value?.id,
@@ -1217,6 +1490,21 @@ const enterSession = async () => {
     accessLevel: accessLevel.value,
   })
 }
+// The roster loads a beat after mount, so the mount-time enterSession() may
+// bail out early; retry once it resolves in this viewer's favour.
+watch(rosterLoaded, (resolved) => {
+  if (resolved && !sessionAccessBlocked.value) enterSession()
+})
+
+// The roster loads a beat after mount, so a non-member may have already claimed
+// presence and connected; drop them the moment the gate resolves against them.
+watch(sessionAccessBlocked, (blocked) => {
+  if (blocked && joined.value) {
+    joined.value = false
+    leavePresence(user.value?.id)
+    disconnectCall()
+  }
+})
 
 const onConsentAccept = async () => {
   await recordConsent({

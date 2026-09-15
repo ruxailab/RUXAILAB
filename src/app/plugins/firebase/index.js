@@ -43,8 +43,7 @@ const fbFunctions = functionsRegion
 const storage = getStorage(firebaseApp, `gs://${firebaseConfig.storageBucket}`)
 const database = getDatabase(firebaseApp, firebaseConfig.databaseURL)
 
-const EMULATOR_HOST =
-  process.env.VUE_APP_FIREBASE_EMULATOR_HOST || 'localhost'
+const EMULATOR_HOST = process.env.VUE_APP_FIREBASE_EMULATOR_HOST || 'localhost'
 
 if (process.env.VUE_APP_USE_AUTH_EMULATOR === 'true') {
   const AUTH_EMULATOR_PORT =

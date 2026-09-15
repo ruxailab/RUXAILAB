@@ -16,7 +16,7 @@
       :dialog="createSessionDialog"
       :session="sessionToEdit"
       :participants="participants"
-      :participant-limit="1"
+      :participant-limit="sessionParticipantLimit"
       :require-facilitator-and-participant="true"
       @update:dialog="handleSessionDialog"
     />
@@ -231,6 +231,10 @@ import { showError, showSuccess } from '@/shared/utils/toast'
 import SendSessionMessageDialog from '@/shared/components/dialogs/SendSessionMessageDialog.vue'
 import { useRouter, useRoute } from 'vue-router'
 import Intro from '@/shared/components/introduction_cards/IntroSessions.vue'
+import {
+  STUDY_TYPES,
+  normalizeStudyType,
+} from '@/shared/constants/methodDefinitions'
 
 const { t, locale } = useI18n()
 
@@ -243,6 +247,17 @@ const route = useRoute()
 const createSessionDialog = ref(false)
 
 const test = computed(() => store.getters.test)
+
+// A moderated user-test session pairs one facilitator with one participant; a
+// Focus Group session gathers a facilitator with many, capped by the study's
+// configured maximum. This drives both the create dialog's limit and where
+// "go to session" sends people.
+const isFocusGroup = computed(
+  () => normalizeStudyType(test.value?.testType) === STUDY_TYPES.FOCUS_GROUP,
+)
+const sessionParticipantLimit = computed(() =>
+  isFocusGroup.value ? (test.value?.config?.maxParticipants ?? null) : 1,
+)
 
 const sessions = computed(() => store.getters.sessions)
 
@@ -389,8 +404,14 @@ const deleteSession = (session) => {
   showDeleteDialog.value = true
 }
 
-const goToSession = (coopId) => {
-  const route = router.resolve(`/testview/${test.value.id}/${coopId}`)
+const goToSession = (sessionId) => {
+  // Focus Group runs one live room per study; launching a session makes it the
+  // active one (the live view reads `?session=` and admits only its members).
+  if (isFocusGroup.value) {
+    router.push(`/focusGroup/session/${test.value.id}?session=${sessionId}`)
+    return
+  }
+  const route = router.resolve(`/testview/${test.value.id}/${sessionId}`)
   window.open(route.href, '_blank')
 }
 

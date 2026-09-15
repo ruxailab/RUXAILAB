@@ -1,5 +1,10 @@
 <template>
-  <div>
+  <div
+    @focusin.capture="handleLoggingFocusin"
+    @input.capture="handleLoggingInput"
+    @focusout.capture="handleLoggingFocusout"
+    @click.capture="handleLoggingClick"
+  >
     <Snackbar />
     <!-- Submit Alert Dialog -->
     <v-dialog v-model="dialog" width="600" persistent>
@@ -276,6 +281,7 @@
                 @back="showHeuristicCards = true"
                 @select-heuristic="handleHeurisClick"
                 @finish-evaluation="review = false"
+                @response-change="handleHeuristicResponseChange"
                 @update-answer="
                   (questionIndex, value) =>
                     updateHeuristicAnswer(heurisIndex, questionIndex, value)
@@ -417,6 +423,7 @@ import HeuristicAnswerStep from '@/ux/Heuristic/components/steps/HeuristicAnswer
 import HeuristicCardsStep from '@/ux/Heuristic/components/steps/HeuristicCardsStep.vue'
 import HeuristicFinishStep from '@/ux/Heuristic/components/steps/HeuristicFinishStep.vue'
 import HeuristicQuestionAnswer from '@/ux/Heuristic/models/HeuristicQuestionAnswer'
+import { resolveHeuristicAnswerMode } from '@/ux/Heuristic/utils/heuristicAnswerMode'
 import Heuristic from '@/ux/Heuristic/models/Heuristic'
 import { showSuccess, showError } from '@/shared/utils/toast'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
@@ -426,6 +433,8 @@ import {
   resolveStudyAccess,
   STUDY_ROLE,
 } from '@/shared/utils/studyAccessPolicy'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
+import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
 
 const props = defineProps({
   id: { type: String, default: '' },
@@ -436,6 +445,29 @@ const store = useStore()
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+let studyLogging = null
+
+const initializeStudyLogging = () => {
+  if (studyLogging || !user.value?.id || !test.value?.id) return studyLogging
+  studyLogging = createStudyLoggingRuntime({
+    ownerUid: user.value.id,
+    studyId: test.value.id,
+    studyType: 'HEURISTIC',
+    callFunction: FirebaseFunctionsController.callHttpsCallableFunction,
+  })
+  if (!currentUserTestAnswer.value?.submitted) void studyLogging.open()
+  return studyLogging
+}
+const handleLoggingFocusin = (event) =>
+  initializeStudyLogging()?.editHandlers.focusin(event)
+const handleLoggingInput = (event) =>
+  initializeStudyLogging()?.editHandlers.input(event)
+const handleLoggingFocusout = (event) =>
+  initializeStudyLogging()?.editHandlers.focusout(event)
+const handleLoggingClick = (event) =>
+  studyLogging?.interactionHandlers.click(event)
+const handleHeuristicResponseChange = (questionRef, field) =>
+  initializeStudyLogging()?.responseChanged(questionRef, field)
 const logined = ref(null)
 const fromlink = ref(null)
 const start = ref(true)
@@ -792,6 +824,10 @@ const startTest = async () => {
       errorCode: 400,
       message: t('HeuristicsTestView.messages.noHeuristics'),
     })
+    return
+  }
+  if (!answerCompletionMode.value) {
+    showError(t('HeuristicsTestView.errors.noAnswerOptions'))
     return
   }
 
@@ -1186,17 +1222,9 @@ const isAnswerEmpty = (answer) => {
   return false
 }
 
-const answerCompletionMode = computed(() => {
-  if (Array.isArray(test.value?.testOptions) && test.value.testOptions.length) {
-    return 'customOptions'
-  }
-  const requiresFrequency = test.value?.useFrequency !== false
-  const requiresSeverity = test.value?.useSeverity !== false
-  if (requiresFrequency && requiresSeverity) return 'frequencySeverity'
-  if (requiresFrequency) return 'frequency'
-  if (requiresSeverity) return 'severity'
-  return null
-})
+const answerCompletionMode = computed(() =>
+  resolveHeuristicAnswerMode(test.value),
+)
 
 const isFilledAnswerValue = (value) =>
   value !== undefined && value !== null && value !== ''
@@ -1426,6 +1454,7 @@ const submitAnswer = async () => {
       answersDocId: test.value.answersDocId,
       testType: test.value.testType,
     })
+    void initializeStudyLogging()?.submitted()
     showSuccess('alerts.genericSuccess')
     setTimeout(() => {
       if (hasTestDashboardAccess.value) {
@@ -1721,6 +1750,7 @@ const setTest = async () => {
   )
   initializeHeuristicsOrder()
   answerInitialized.value = populateWithHeuristicQuestions()
+  initializeStudyLogging()
   restoreProgress()
 }
 
@@ -1815,6 +1845,7 @@ onBeforeMount(async () => {
 })
 
 onUnmounted(() => {
+  studyLogging?.destroy()
   // Save progress when component is destroyed
   if (calculatedProgress.value > 0 && !currentUserTestAnswer.value?.submitted) {
     if (trackTimeEnabled.value) pauseTimer(heurisIndex.value)

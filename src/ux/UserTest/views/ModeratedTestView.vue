@@ -1,5 +1,9 @@
 <template>
-  <div>
+  <div
+    @focusin.capture="handleLoggingFocusin"
+    @input.capture="handleLoggingInput"
+    @focusout.capture="handleLoggingFocusout"
+  >
     <StepAnnouncementOverlay
       v-if="showStepAnnouncement"
       ref="stepAnnouncementOverlay"
@@ -182,8 +186,11 @@
               <v-icon color="white"> mdi-wifi-off </v-icon>
             </template>
             <span class="text-white">
-              <strong>Moderator Disconnected</strong><br />
-              The moderator seems to be offline. Please wait or contact support.
+              <strong>{{
+                $t('UserTestView.alerts.moderatorDisconnected')
+              }}</strong
+              ><br />
+              {{ $t('UserTestView.alerts.moderatorOfflineWaitOrContact') }}
             </span>
           </v-alert>
         </v-col>
@@ -204,8 +211,10 @@
               <v-icon size="small">mdi-wifi-off</v-icon>
             </template>
             <div class="text-caption">
-              <strong>Moderator Disconnected:</strong>
-              The moderator seems to be offline. Please wait.
+              <strong
+                >{{ $t('UserTestView.alerts.moderatorDisconnected') }}:</strong
+              >
+              {{ $t('UserTestView.alerts.moderatorOfflineWait') }}
             </div>
           </v-alert>
 
@@ -578,16 +587,7 @@
 </template>
 
 <script setup>
-import {
-  ref as dbRef,
-  onValue,
-  update,
-  set,
-  get,
-  onDisconnect,
-  serverTimestamp,
-  remove,
-} from 'firebase/database'
+import { ref as dbRef, onValue, update, get, remove } from 'firebase/database'
 import { database } from '@/app/plugins/firebase/index'
 import {
   ref,
@@ -628,12 +628,36 @@ import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { showError, showInfo, showWarning } from '@/shared/utils/toast'
 import { calculateProgress } from '../utils/testProgress'
 import { animateStepAnnouncement } from '@/shared/utils/animations'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
+import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
 import { removeStaffDuplicates } from '@/ux/UserTest/utils/sessionPresence'
+import { moderatedSessionTimingReason } from '@/ux/UserTest/utils/moderatedSessionAvailability'
 
 const store = useStore()
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+let studyLogging = null
+
+const initializeStudyLogging = () => {
+  if (studyLogging || isModerator.value || !user.value?.id || !test.value?.id) {
+    return studyLogging
+  }
+  studyLogging = createStudyLoggingRuntime({
+    ownerUid: user.value.id,
+    studyId: test.value.id,
+    consentRequired: true,
+    callFunction: FirebaseFunctionsController.callHttpsCallableFunction,
+  })
+  if (localTestAnswer.consentCompleted) void studyLogging.resumeAfterConsent()
+  return studyLogging
+}
+const handleLoggingFocusin = (event) =>
+  initializeStudyLogging()?.editHandlers.focusin(event)
+const handleLoggingInput = (event) =>
+  initializeStudyLogging()?.editHandlers.input(event)
+const handleLoggingFocusout = (event) =>
+  initializeStudyLogging()?.editHandlers.focusout(event)
 // Data variables
 
 onBeforeUnmount(() => {
@@ -892,13 +916,6 @@ const isSessionViewer = computed(() => {
   }
   return isModeratedSessionViewer(test.value, user.value, session.value)
 })
-const hasTestDashboardAccess = computed(() => {
-  if (!user.value) return false
-  return (
-    currentUserAccessLevel.value === ACCESS_LEVEL.ADMIN ||
-    currentUserAccessLevel.value === ACCESS_LEVEL.EVALUATOR
-  )
-})
 
 const timerComponent = computed(() => {
   // Get timer ref from TaskStep
@@ -977,7 +994,7 @@ watch(
     displayVideoCallComponent.value,
     isUserTestAdmin.value,
   ],
-  ([gi, ti, dvc, admin]) => {
+  () => {
     scrollToTop()
   },
 )
@@ -1098,9 +1115,16 @@ const handleConsentDecline = async () => {
     timeout: 5000,
   })
 
-  // Clean up room data
-  const roomRef = dbRef(database, `rooms/${roomId.value}`)
-  await set(roomRef, null)
+  // Clean up only the individual participant's presence node
+  const currentUserId =
+    user.value?.id || user.value?.userDocId || user.value?.uid
+  if (currentUserId && roomId.value) {
+    const memberRef = dbRef(
+      database,
+      `calls/${roomId.value}/participants/${currentUserId}`,
+    )
+    await remove(memberRef)
+  }
 
   // Navigate back to admin
   setTimeout(() => {
@@ -1113,6 +1137,7 @@ const handleSubmit = async () => {
   try {
     localTestAnswer.submitted = true
     await saveAnswer()
+    void initializeStudyLogging()?.submitted()
     displayVideoCallComponent.value = true
   } catch {
     store.commit('SET_TOAST', {
@@ -1815,20 +1840,6 @@ const safelyShowNextStepAnnouncement = async (
   }
 }
 
-const getPostTasksAnnouncement = () => {
-  if (validate(test.value?.testStructure?.postTest)) {
-    return {
-      title: t('UserTestView.stepper.postTest'),
-      stage: 4,
-    }
-  }
-
-  return {
-    title: t('UserTestView.WelcomeStep.steps.submission'),
-    stage: 4,
-  }
-}
-
 const showTaskTitleAnnouncement = async (idx) => {
   const task = test.value?.testStructure?.userTasks?.[idx]
   if (!task) return
@@ -1992,6 +2003,7 @@ const completeStep = async (id, type, userCompleted = true) => {
         return
       }
       localTestAnswer.tasks[id].completed = userCompleted
+      localTestAnswer.tasks[id].attempted = true
       markSubStepComplete(STEP_GROUP_IDS.tasks, id)
       allTasksCompleted.value = true
 
@@ -2050,6 +2062,12 @@ const completeStep = async (id, type, userCompleted = true) => {
 
     calculateProgress(localTestAnswer)
     await saveAnswer()
+    if (type === 'consent') {
+      void initializeStudyLogging()?.consentAccepted()
+    }
+    if (type === 'tasks') {
+      void initializeStudyLogging()?.taskFinished(id)
+    }
   } catch (error) {
     console.error('Error in completeStep:', error) // eslint-disable-line no-console
     store.commit('SET_TOAST', {
@@ -2194,11 +2212,6 @@ watchEffect(() => {
     }
     return
   }
-  const now = new Date()
-  const sessionDate = session.value?.scheduledAt
-    ? new Date(session.value.scheduledAt)
-    : null
-
   // 🧩 Test already completed
   if (localTestAnswer.submitted) {
     testDisabledReason.value = 'test-already-completed'
@@ -2223,33 +2236,14 @@ watchEffect(() => {
     return
   }
 
-  // 🧩 Check session date
-  if (sessionDate) {
-    const diffHours = (sessionDate.getTime() - now.getTime()) / (1000 * 60 * 60)
-
-    if (diffHours < 0) {
-      testDisabledReason.value = 'test-expired'
-      isStartTestDisabled.value = true
-      return
-    }
-
-    if (diffHours > 24) {
-      testDisabledReason.value = 'test-session-too-far'
-      isStartTestDisabled.value = true
-      return
-    }
-    testDisabledReason.value = null
-    return false
-  }
-
-  // 🧩 Test expired (fallback endDate)
-  if (test.value.endDate) {
-    const endDate = new Date(test.value.endDate)
-    if (now > endDate) {
-      testDisabledReason.value = 'test-expired'
-      isStartTestDisabled.value = true
-      return
-    }
+  const timingReason = moderatedSessionTimingReason({
+    scheduledAt: session.value?.scheduledAt,
+    studyEndDate: test.value.endDate,
+  })
+  if (timingReason) {
+    testDisabledReason.value = timingReason
+    isStartTestDisabled.value = true
+    return
   }
 
   testDisabledReason.value = null
@@ -2279,6 +2273,7 @@ onMounted(async () => {
   }
 
   await mappingSteps()
+  initializeStudyLogging()
 })
 
 // Auto-join if refresh happens during active call
@@ -2301,7 +2296,8 @@ watch(
   { immediate: true },
 )
 
-onBeforeUnmount(async () => {
+onBeforeUnmount(() => {
+  studyLogging?.destroy()
   stopRealtimeListeners()
 
   // Never re-create or mutate room metadata during unmount. The room is deleted

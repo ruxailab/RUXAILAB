@@ -81,6 +81,35 @@ describe('study membership authorization', () => {
     ).toThrow(expect.objectContaining({ code: 'permission-denied' }))
   })
 
+  it('allows a Focus Group Admin to invite Evaluator and Observator, but not Manager', () => {
+    expect(() =>
+      assertMembershipMutationAllowed({
+        study: study('FOCUS_GROUP', 0),
+        actorId: 'actor',
+        action: 'invite',
+        role: 1, // Evaluator — the FG attendee role the frontend actually sends
+      }),
+    ).not.toThrow()
+
+    expect(() =>
+      assertMembershipMutationAllowed({
+        study: study('FOCUS_GROUP', 0),
+        actorId: 'actor',
+        action: 'invite',
+        role: 3, // Observator
+      }),
+    ).not.toThrow()
+
+    expect(() =>
+      assertMembershipMutationAllowed({
+        study: study('FOCUS_GROUP', 0),
+        actorId: 'actor',
+        action: 'invite',
+        role: 4, // Manager — no frontend capability policy for it yet
+      }),
+    ).toThrow(expect.objectContaining({ code: 'permission-denied' }))
+  })
+
   it('allows a Card Sorting Manager to invite Evaluator and Guest only', () => {
     expect(() =>
       assertMembershipMutationAllowed({

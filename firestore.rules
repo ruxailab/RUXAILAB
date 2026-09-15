@@ -159,6 +159,9 @@ service cloud.firestore {
     match /audioSentiment/{document=**} {
       allow read, write: if signedIn();
     }
+    match /sentiment/{document=**} {
+      allow read, write: if signedIn();
+    }
     match /transcriptions/{document=**} {
       allow read, write: if signedIn();
     }
