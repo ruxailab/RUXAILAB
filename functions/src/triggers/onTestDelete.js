@@ -4,7 +4,7 @@ import logger from '../utils/logger.js'
 export const onTestDelete = functions.onTrigger({
   path: 'tests/{docId}',
   event: 'deleted',
-  opts: { retry: true },
+  opts: { retry: false },
   handler: async (event) => {
     const studyId = event.params?.docId
     if (!studyId || studyId.includes('/')) {
