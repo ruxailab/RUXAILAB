@@ -115,12 +115,16 @@
       <v-row dense class="mb-4">
         <v-col cols="12" md="4">
           <SelectionPieChart
+            v-if="hasSentimentData"
             question-title="Feedback Tone"
             :options="sentimentOptions"
             :counts="sentimentCounts"
             canvas-id="transcriptions-sentiment-chart"
             :chart-colors="sentimentChartColors"
           />
+          <v-alert v-else type="info" variant="tonal" density="comfortable">
+            No sentiment data available yet.
+          </v-alert>
         </v-col>
 
         <v-col cols="12" md="8">
@@ -413,11 +417,12 @@ const taskTableHeaders = [
 
 const sentimentOptions = ['Positive', 'Neutral', 'Negative']
 
-const sentimentCounts = {
-  Positive: 48,
-  Neutral: 34,
-  Negative: 18,
-}
+const sentimentCounts = computed(
+  () => activeMetrics.value?.sentiment || { Positive: 0, Neutral: 0, Negative: 0 },
+)
+const hasSentimentData = computed(() =>
+  Object.values(sentimentCounts.value).some((v) => v > 0),
+)
 
 const sentimentChartColors = ['#22C55E', '#0EA5E9', '#EF4444']
 
