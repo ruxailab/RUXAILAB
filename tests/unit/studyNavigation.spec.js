@@ -82,6 +82,26 @@ describe('study navigation', () => {
     ).toEqual({ name: 'UserUnmoderatedManagerView', params: { id: study.id } })
   })
 
+  it('sends a dashboard-capable Focus Group member to their manager view', () => {
+    const user = { id: 'observer', accessLevel: 1 }
+    const study = studyWith('FOCUS_GROUP', user.id, STUDY_ROLE.OBSERVATOR)
+
+    expect(getCommunityStudyDestination({ study, user })).toEqual({
+      name: 'FocusGroupManagerView',
+      params: { id: study.id },
+    })
+  })
+
+  it('sends a Focus Group participant to the session route, not the dashboard-less TestView', () => {
+    const user = { id: 'participant', accessLevel: 1 }
+    const study = studyWith('FOCUS_GROUP', user.id, STUDY_ROLE.EVALUATOR)
+
+    expect(getCommunityStudyDestination({ study, user })).toEqual({
+      name: 'FocusGroupSessionView',
+      params: { id: study.id },
+    })
+  })
+
   it('sends an accepted Manager invitation to the study dashboard', () => {
     const user = { id: 'manager', accessLevel: 1 }
     const study = {
@@ -164,6 +184,7 @@ describe('study navigation', () => {
       'Answer',
       'Progress',
       'Results',
+      'Logs',
       'Cooperators',
       'Participants',
       'Settings',
@@ -179,6 +200,7 @@ describe('study navigation', () => {
       'evaluation',
       'evaluation',
       'analysis',
+      'administration',
       'people',
       'people',
       'administration',
@@ -420,5 +442,102 @@ describe('study navigation', () => {
         token: null,
       }),
     ).toBe('/userTest/unmoderated/manager/study-1')
+  })
+  describe('signed out participants', () => {
+    const signInFor = (path) => `/signin?redirect=${encodeURIComponent(path)}`
+
+    it('sends a signed out visitor to sign in and back to a public study', () => {
+      const study = { ...studyWith('HEURISTIC'), isPublic: true }
+
+      // A public study says who may answer it, not that answers may be
+      // anonymous, so the participant still identifies themselves first.
+      expect(
+        getTestViewAccessRedirect({
+          study,
+          user: null,
+          token: null,
+          redirectTo: '/testview/study-1',
+        }),
+      ).toBe(signInFor('/testview/study-1'))
+    })
+
+    it('sends a signed out visitor to sign in and back to a private study', () => {
+      expect(
+        getTestViewAccessRedirect({
+          study: studyWith('HEURISTIC'),
+          user: null,
+          token: null,
+          redirectTo: '/testview/study-1',
+        }),
+      ).toBe(signInFor('/testview/study-1'))
+    })
+
+    it('sends a signed out visitor to sign in from a moderated study link', () => {
+      const study = {
+        ...studyWith('USER'),
+        subType: USER_STUDY_SUBTYPES.MODERATED,
+      }
+
+      expect(
+        getTestViewAccessRedirect({
+          study,
+          user: null,
+          token: 'participant',
+          redirectTo: '/testview/study-1/participant',
+        }),
+      ).toBe(signInFor('/testview/study-1/participant'))
+    })
+
+    it('lets an invitation that waives login through without signing in', () => {
+      const study = { ...studyWith('HEURISTIC'), isPublic: true }
+
+      expect(
+        getTestViewAccessRedirect({
+          study,
+          user: null,
+          token: null,
+          invitation: { requiredLogin: false, studyId: study.id },
+          redirectTo: '/testview/study-1',
+        }),
+      ).toBeNull()
+    })
+
+    it('still asks for sign in when the invitation requires login', () => {
+      const study = { ...studyWith('HEURISTIC'), isPublic: true }
+
+      expect(
+        getTestViewAccessRedirect({
+          study,
+          user: null,
+          token: null,
+          invitation: { requiredLogin: true, studyId: study.id },
+          redirectTo: '/testview/study-1',
+        }),
+      ).toBe(signInFor('/testview/study-1'))
+    })
+
+    it('still asks for sign in when the invitation belongs to another study', () => {
+      const study = { ...studyWith('HEURISTIC'), isPublic: true }
+
+      expect(
+        getTestViewAccessRedirect({
+          study,
+          user: null,
+          token: null,
+          invitation: { requiredLogin: false, studyId: 'another-study' },
+          redirectTo: '/testview/study-1',
+        }),
+      ).toBe(signInFor('/testview/study-1'))
+    })
+
+    it('falls back to a plain sign in when there is no path to return to', () => {
+      expect(
+        getTestViewAccessRedirect({
+          study: studyWith('HEURISTIC'),
+          user: null,
+          token: null,
+        }),
+      ).toBe('/signin')
+    })
   })
 })

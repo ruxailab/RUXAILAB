@@ -19,15 +19,21 @@ export const SESSION_STATUS = {
 /**
  * Live-session state for a Focus Group, synced through Realtime Database.
  *
- * Namespaced under `focusGroupSessions/{studyId}` so it never collides with the
+ * Namespaced under `focusGroupSessions/{roomId}` so it never collides with the
  * `rooms/{studyId}` tree owned by the video-call components. Encapsulates the
  * facilitator controls (start / advance topic / end), participant presence, and
  * per-topic response capture behind a small reactive surface.
  *
- * @param {string} studyId - Study document id, used as the session room id.
+ * @param {string} roomId - The live room id: the study id alone for the legacy
+ *   open room, or `${studyId}-${sessionId}` for a scheduled session's own
+ *   isolated room.
  */
-export function useFocusGroupSession(studyId) {
-  const rootPath = `focusGroupSessions/${studyId}`
+export function useFocusGroupSession(roomId) {
+  // `roomId` isolates the RTDB tree per live room: `${studyId}-${sessionId}` for
+  // a scheduled session (so concurrent sessions of the same study never share
+  // presence, chat, or breakout state) or just the study id for a legacy open
+  // room. It reuses the wildcard security rules, which key off this level.
+  const rootPath = `focusGroupSessions/${roomId}`
   const rootRef = dbRef(database, rootPath)
   // Deliberately its OWN top-level RTDB path, not nested under rootPath.
   // The rest of the session is read through one onValue(rootRef) listener,
@@ -35,7 +41,7 @@ export function useFocusGroupSession(studyId) {
   // .read rule on a nested child can't be more restrictive than its
   // parent's. Keeping the backroom out of that tree entirely is what lets
   // its rules actually deny a participant's read, not just its write.
-  const backroomPath = `focusGroupBackroom/${studyId}`
+  const backroomPath = `focusGroupBackroom/${roomId}`
   const backroomRef = dbRef(database, backroomPath)
 
   const snapshot = ref(null)
@@ -316,6 +322,20 @@ export function useFocusGroupSession(studyId) {
   }
 
   /**
+   * Raise or clear a single group's "call the facilitator" flag. Written as a
+   * targeted deep update (not the whole breakout object) so a participant's
+   * call never races the facilitator's group edits, and pass `help: null` to
+   * clear it once a facilitator has responded.
+   */
+  async function setBreakoutHelp({ groupId, help }) {
+    if (!groupId) return
+    await update(rootRef, {
+      [`breakout/groups/${groupId}/help`]: help ?? null,
+      lastUpdate: serverTimestamp(),
+    })
+  }
+
+  /**
    * Snapshot of the finished session, shaped for Firestore persistence.
    */
   function toSessionRecord() {
@@ -378,6 +398,7 @@ export function useFocusGroupSession(studyId) {
     sendMessage,
     setBreakoutState,
     sendBackroomMessage,
+    setBreakoutHelp,
     toSessionRecord,
   }
 }

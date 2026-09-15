@@ -889,6 +889,14 @@ async function saveSession() {
       }
     }
 
+    // `addParticipant` only stops adding past the limit — a session edited
+    // after its study's maxParticipants was lowered can still carry more
+    // participants than that, so re-check here too before it saves.
+    if (participantLimitReached.value) {
+      showError(t('Sessions.error.participantLimitReached'))
+      return
+    }
+
     const validation = await sessionForm.value.validate()
 
     if (!validation.valid) {

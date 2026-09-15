@@ -1,5 +1,11 @@
 <template>
-  <div v-if="test" class="user-test-bg">
+  <div
+    v-if="test"
+    class="user-test-bg"
+    @focusin.capture="handleLoggingFocusin"
+    @input.capture="handleLoggingInput"
+    @focusout.capture="handleLoggingFocusout"
+  >
     <div v-if="showStepAnnouncement" class="step-announcement-container">
       <StepAnnouncementOverlay
         ref="stepAnnouncementOverlay"
@@ -588,6 +594,9 @@ import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { calculateProgress } from '../utils/testProgress'
 import { animateStepAnnouncement } from '@/shared/utils/animations'
 import { downloadAnonymousParticipantIdentifier } from '@/shared/utils/anonymousParticipantUtils'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
+import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
+import { taskDestination } from '@/ux/UserTest/utils/unmoderatedNavigation'
 
 const fullName = ref('')
 const logined = ref(null)
@@ -638,6 +647,25 @@ const localTestAnswer = reactive(new UserStudyEvaluatorAnswer())
 const store = useStore()
 const router = useRouter()
 const { t } = useI18n()
+let studyLogging = null
+
+const initializeStudyLogging = () => {
+  if (studyLogging || !user.value?.id || !test.value?.id) return studyLogging
+  studyLogging = createStudyLoggingRuntime({
+    ownerUid: user.value.id,
+    studyId: test.value.id,
+    consentRequired: true,
+    callFunction: FirebaseFunctionsController.callHttpsCallableFunction,
+  })
+  if (localTestAnswer.consentCompleted) void studyLogging.resumeAfterConsent()
+  return studyLogging
+}
+const handleLoggingFocusin = (event) =>
+  initializeStudyLogging()?.editHandlers.focusin(event)
+const handleLoggingInput = (event) =>
+  initializeStudyLogging()?.editHandlers.input(event)
+const handleLoggingFocusout = (event) =>
+  initializeStudyLogging()?.editHandlers.focusout(event)
 
 const mediaUrls = computed(() => store.getters.mediaUrls)
 const test = computed(() => store.getters.test)
@@ -810,18 +838,10 @@ const savePartialAnswer = async () => {
         testType: test.value.testType,
       })
     } else {
-      const updatedAnswer = UserStudyEvaluatorAnswer.toModel({
-        ...currentUserTestAnswer.value,
-        fullName: localTestAnswer.fullName,
-        progress: localTestAnswer.progress,
-        submitted: localTestAnswer.submitted,
-        preTestAnswer: localTestAnswer.preTestAnswer,
-        postTestAnswer: localTestAnswer.postTestAnswer,
-        tasks: {
-          ...currentUserTestAnswer.value.tasks,
-          ...localTestAnswer.tasks,
-        },
-      })
+      const updatedAnswer = UserStudyEvaluatorAnswer.mergeProgress(
+        currentUserTestAnswer.value,
+        localTestAnswer,
+      )
 
       Object.assign(currentUserTestAnswer.value, updatedAnswer)
 
@@ -859,6 +879,7 @@ const submitAnswer = async () => {
     isLoading.value = true
     localTestAnswer.submitted = true
     await saveAnswer()
+    void initializeStudyLogging()?.submitted()
   } catch {
     store.commit('SET_TOAST', {
       type: 'error',
@@ -1000,11 +1021,13 @@ const safelyShowNextStepAnnouncement = async (
 const persistStepProgress = async () => {
   try {
     await savePartialAnswer()
+    return true
   } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSaveAnswer'),
     })
+    return false
   }
 }
 
@@ -1083,6 +1106,7 @@ const callTimerSave = () => {
 }
 
 async function handleTaskFinish(userCompleted) {
+  const finishedTaskIndex = taskIndex.value
   callTimerSave()
 
   await nextTick()
@@ -1096,6 +1120,7 @@ async function handleTaskFinish(userCompleted) {
           await completeStep(taskIndex.value, 'tasks', userCompleted)
           attachMediaToTasks(localTestAnswer, mediaUrls.value)
           await persistStepProgress()
+          void initializeStudyLogging()?.taskFinished(finishedTaskIndex)
         }
       },
     )
@@ -1103,6 +1128,7 @@ async function handleTaskFinish(userCompleted) {
     await completeStep(taskIndex.value, 'tasks', userCompleted)
     attachMediaToTasks(localTestAnswer, mediaUrls.value)
     await persistStepProgress()
+    void initializeStudyLogging()?.taskFinished(finishedTaskIndex)
   }
 }
 
@@ -1158,7 +1184,9 @@ const completeStep = async (id, type, userCompleted = true) => {
         globalIndex.value = hasEyeTracking.value ? 3 : 4
         localTestAnswer.preTestCompleted = true
       }
-      await persistStepProgress()
+      const consentSaved = await persistStepProgress()
+      if (!consentSaved) return
+      void initializeStudyLogging()?.consentAccepted()
     }
 
     if (type === 'preTest') {
@@ -1195,20 +1223,32 @@ const completeStep = async (id, type, userCompleted = true) => {
       }
       allTasksCompleted.value = allTasksAttempted
 
-      if (id < localTestAnswer.tasks.length - 1) {
-        await showTaskTitleAnnouncement(id + 1)
-        taskIndex.value = id + 1
+      const destination = taskDestination({
+        taskIndex: id,
+        taskCount: localTestAnswer.tasks.length,
+        hasEyeTracking: hasEyeTracking.value,
+        hasPostTest: hasPostTest.value,
+        postTestCompleted: localTestAnswer.postTestCompleted,
+      })
+
+      if (destination.kind === 'task') {
+        await showTaskTitleAnnouncement(destination.taskIndex)
+        taskIndex.value = destination.taskIndex
       } else {
         taskIndex.value = id
-        const postTasksAnnouncement = getPostTasksAnnouncement()
+        const postTasksAnnouncement =
+          destination.kind === 'postTest'
+            ? getPostTasksAnnouncement()
+            : {
+                title: t('UserTestView.WelcomeStep.steps.submission'),
+                stage: 4,
+              }
         await safelyShowNextStepAnnouncement(
           postTasksAnnouncement.title,
           postTasksAnnouncement.stage,
         )
-        if (hasPostTest.value) {
-          globalIndex.value = hasEyeTracking.value ? 6 : 5 // PostTest
-        } else {
-          globalIndex.value = hasEyeTracking.value ? 7 : 6 // Finish
+        globalIndex.value = destination.globalIndex
+        if (!hasPostTest.value) {
           localTestAnswer.postTestCompleted = true
         }
       }
@@ -1526,6 +1566,7 @@ onMounted(async () => {
   await setTest()
   await autoComplete()
   calculateProgress(localTestAnswer)
+  initializeStudyLogging()
   if (!user.value?.id) return
 
   let firstSnapshot = true
@@ -1551,6 +1592,7 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
+  studyLogging?.destroy()
   if (
     videoRecorder.value &&
     typeof videoRecorder.value.stopRecording === 'function'
@@ -1586,7 +1628,7 @@ onBeforeUnmount(() => {
   pointer-events: none;
 }
 
-.user-test-bg > * {
+.user-test-bg > :not(.step-announcement-overlay) {
   position: relative;
   z-index: 1;
 }

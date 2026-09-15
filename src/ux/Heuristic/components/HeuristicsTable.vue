@@ -50,7 +50,7 @@
           :class="{ expanded: itemSelect === index }"
         >
           <!-- Heuristic Header -->
-          <v-card-title class="d-flex align-center pa-4 heuristic-header">
+          <v-card-title class="d-flex pa-4 heuristic-header">
             <v-btn
               :icon="
                 itemSelect === index ? 'mdi-chevron-up' : 'mdi-chevron-down'
@@ -60,8 +60,7 @@
               class="me-3 toggle-btn"
               @click="toggleHeuristic(index)"
             />
-
-            <div class="flex-grow-1 heuristic-info">
+            <div class="heuristic-info">
               <h3
                 class="text-h6 font-weight-medium text-on-surface heuristic-title"
               >
@@ -78,7 +77,6 @@
                 {{ $t('HeuristicsTable.titles.questions') }}
               </p>
             </div>
-
             <div class="d-flex gap-2 heuristic-actions">
               <v-btn
                 icon="mdi-arrow-up"
@@ -1119,6 +1117,59 @@ const updateDescription = () => {
 </script>
 
 <style scoped>
+/* Desktop/default layout: clamp title (1 line), description (2 lines), keep actions visible */
+.heuristic-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+}
+
+.heuristic-info {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.heuristic-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  margin: 0;
+  min-width: 0;
+}
+
+.heuristic-description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  white-space: normal;
+  margin: 0;
+  min-width: 0;
+}
+
+.heuristic-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  min-width: max-content;
+  justify-content: flex-end;
+}
+
+.heuristic-actions .action-btn {
+  flex-shrink: 0;
+}
+
 /* Responsive styles for mobile devices */
 @media (max-width: 768px) {
   /* Make header section stack vertically */
