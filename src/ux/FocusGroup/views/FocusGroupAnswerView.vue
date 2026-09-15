@@ -9,35 +9,45 @@
     <v-container class="pa-0">
       <div
         v-if="!loading && !sessions.length"
-        class="text-center py-8 text-medium-emphasis"
+        class="text-center py-12 text-medium-emphasis"
       >
-        <v-icon icon="mdi-history" size="48" class="mb-2" />
+        <v-avatar color="primary" variant="tonal" size="64" class="mb-3">
+          <v-icon icon="mdi-history" size="32" />
+        </v-avatar>
         <p class="text-body-2 mb-0">{{ $t('focusGroup.answers.empty') }}</p>
       </div>
 
       <v-row v-else>
         <v-col cols="12" md="4">
-          <v-list density="compact" class="pa-0">
-            <v-list-item
-              v-for="session in sessions"
-              :key="session.sessionId"
-              :active="session.sessionId === selectedSessionId"
-              rounded="lg"
-              class="mb-1"
-              @click="selectedSessionId = session.sessionId"
-            >
-              <v-list-item-title>
-                {{ formatDate(session.startedAt) }}
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                {{
-                  $t('focusGroup.answers.participantCount', {
-                    count: participantCount(session),
-                  })
-                }}
-              </v-list-item-subtitle>
-            </v-list-item>
-          </v-list>
+          <v-card variant="outlined" rounded="lg">
+            <v-list density="compact" class="pa-2">
+              <v-list-item
+                v-for="session in sessions"
+                :key="session.sessionId"
+                :active="session.sessionId === selectedSessionId"
+                color="primary"
+                rounded="lg"
+                class="mb-1"
+                @click="selectedSessionId = session.sessionId"
+              >
+                <template #prepend>
+                  <v-avatar color="primary" variant="tonal" size="36">
+                    <v-icon icon="mdi-calendar-clock-outline" size="18" />
+                  </v-avatar>
+                </template>
+                <v-list-item-title class="font-weight-medium">
+                  {{ formatDate(session.startedAt) }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{
+                    $t('focusGroup.answers.participantCount', {
+                      count: participantCount(session),
+                    })
+                  }}
+                </v-list-item-subtitle>
+              </v-list-item>
+            </v-list>
+          </v-card>
         </v-col>
 
         <v-col v-if="selectedSession" cols="12" md="8">
@@ -48,19 +58,38 @@
             rounded="lg"
             class="mb-4"
           >
-            <v-card-title>{{ topic.title || $t('focusGroup.modules.untitledTopic') }}</v-card-title>
+            <v-card-title class="d-flex align-center ga-2">
+              <v-icon icon="mdi-forum-outline" color="primary" size="20" />
+              <span>{{ topic.title || $t('focusGroup.modules.untitledTopic') }}</span>
+              <v-spacer />
+              <v-chip size="small" variant="tonal">
+                {{ flattenTopicMessages(selectedSession.messages, topic.id).length }}
+              </v-chip>
+            </v-card-title>
+            <v-divider />
             <v-card-text>
               <div
                 v-for="message in flattenTopicMessages(selectedSession.messages, topic.id)"
                 :key="message.id"
-                class="mb-2"
+                class="d-flex ga-3 mb-3"
               >
-                <strong>{{ message.name || $t('focusGroup.session.anonymous') }}:</strong>
-                {{ message.text }}
+                <v-avatar color="primary" variant="tonal" size="32">
+                  <span class="text-caption font-weight-medium">
+                    {{ initial(message.name) }}
+                  </span>
+                </v-avatar>
+                <div class="flex-grow-1 min-width-0">
+                  <div class="text-caption text-medium-emphasis mb-1">
+                    {{ message.name || $t('focusGroup.session.anonymous') }}
+                  </div>
+                  <div class="px-3 py-2 rounded-lg bg-grey-lighten-4 text-body-2">
+                    {{ message.text }}
+                  </div>
+                </div>
               </div>
               <p
                 v-if="!flattenTopicMessages(selectedSession.messages, topic.id).length"
-                class="text-medium-emphasis mb-0"
+                class="text-medium-emphasis text-center my-4 mb-0"
               >
                 {{ $t('focusGroup.session.noMessagesYet') }}
               </p>
@@ -73,7 +102,15 @@
             rounded="lg"
             class="mb-4"
           >
-            <v-card-title>{{ $t('focusGroup.answers.observerNotesTitle') }}</v-card-title>
+            <v-card-title class="d-flex align-center ga-2">
+              <v-icon
+                icon="mdi-notebook-edit-outline"
+                color="primary"
+                size="20"
+              />
+              <span>{{ $t('focusGroup.answers.observerNotesTitle') }}</span>
+            </v-card-title>
+            <v-divider />
             <v-card-text>
               <div
                 v-for="entry in observerNoteEntries"
@@ -83,9 +120,15 @@
                 <div
                   v-for="(note, index) in entry.notes"
                   :key="index"
-                  class="text-body-2 mb-1"
+                  class="d-flex ga-2 mb-2"
                 >
-                  {{ note.text }}
+                  <v-icon
+                    icon="mdi-note-text-outline"
+                    size="16"
+                    color="medium-emphasis"
+                    class="mt-1"
+                  />
+                  <span class="text-body-2">{{ note.text }}</span>
                 </div>
               </div>
             </v-card-text>
@@ -97,7 +140,11 @@
             rounded="lg"
             class="mb-4"
           >
-            <v-card-title>{{ $t('focusGroup.answers.recordingsTitle') }}</v-card-title>
+            <v-card-title class="d-flex align-center ga-2">
+              <v-icon icon="mdi-play-circle-outline" color="primary" size="20" />
+              <span>{{ $t('focusGroup.answers.recordingsTitle') }}</span>
+            </v-card-title>
+            <v-divider />
             <v-list density="compact">
               <v-list-item
                 v-for="recording in recordingEntries"
@@ -105,7 +152,18 @@
                 :href="recording.url"
                 target="_blank"
                 rel="noopener"
+                rounded="lg"
               >
+                <template #prepend>
+                  <v-icon
+                    :icon="
+                      recording.kind === 'audio'
+                        ? 'mdi-microphone'
+                        : 'mdi-video-outline'
+                    "
+                    size="18"
+                  />
+                </template>
                 <v-list-item-title>
                   {{
                     $t('focusGroup.answers.recordingLabel', {
@@ -119,10 +177,14 @@
           </v-card>
 
           <v-card variant="outlined" rounded="lg">
-            <v-card-title>{{ $t('focusGroup.answers.themesTitle') }}</v-card-title>
+            <v-card-title class="d-flex align-center ga-2">
+              <v-icon icon="mdi-shape-outline" color="primary" size="20" />
+              <span>{{ $t('focusGroup.answers.themesTitle') }}</span>
+            </v-card-title>
             <v-card-subtitle>
               {{ $t('focusGroup.answers.themesHint') }}
             </v-card-subtitle>
+            <v-divider class="mt-2" />
             <v-card-text>
               <ThematicEditor v-model="themes" :session="selectedSession" />
             </v-card-text>
@@ -135,10 +197,11 @@
 
 <script setup>
 import { computed, ref, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import ThematicEditor from '@/ux/FocusGroup/components/ThematicEditor.vue'
+import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import {
   sortSessionsByStartedAt,
   flattenTopicMessages,
@@ -146,8 +209,49 @@ import {
 
 const store = useStore()
 const route = useRoute()
+const router = useRouter()
 
 const test = computed(() => store.getters.test)
+const user = computed(() => store.getters.user)
+
+// Session answers — the participants' own words, observer notes, and themes
+// derived from them — are for the people running or watching the study, not
+// the participants themselves (and not an unrelated signed-in stranger,
+// even on a public study). An explicit allow-list, not "not a participant",
+// so anyone with no real relationship to the study is denied by default.
+// Hiding the "Answers" sidebar item (ManagerView's navigator) is a UX
+// nicety, not the boundary — this redirect is, since the URL is still
+// reachable directly.
+const accessLevel = computed(() => {
+  const currentUser = user.value
+  const currentTest = test.value
+  if (!currentUser || !currentTest) return null
+  if (currentUser.accessLevel === 0) return ACCESS_LEVEL.ADMIN
+  if (currentTest.testAdmin?.userDocId === currentUser.id)
+    return ACCESS_LEVEL.ADMIN
+  const coop = currentTest.cooperators?.find(
+    (c) => c.userDocId === currentUser.id,
+  )
+  return coop?.accepted === true ? coop.accessLevel : null
+})
+const isFacilitator = computed(() => accessLevel.value === ACCESS_LEVEL.ADMIN)
+const isObserver = computed(
+  () => accessLevel.value === ACCESS_LEVEL.OBSERVATOR,
+)
+watch(
+  [test, user],
+  () => {
+    if (!test.value || !user.value) return
+    if (!isFacilitator.value && !isObserver.value) {
+      store.commit('SET_TOAST', {
+        message: 'AccessNotAllowed.noAccess',
+        type: 'error',
+      })
+      router.replace(`/focusGroup/dashboard/${test.value.id}`)
+    }
+  },
+  { immediate: true },
+)
 const rawSessions = ref({})
 const themes = ref([])
 const loading = ref(true)
@@ -167,6 +271,8 @@ const participantCount = (session) =>
 
 const formatDate = (timestamp) =>
   timestamp ? new Date(timestamp).toLocaleString() : ''
+
+const initial = (name) => (name ? name.trim().charAt(0).toUpperCase() : '?')
 
 // notes: { [userId]: [{ text, timestamp, topicId }] }
 const observerNoteEntries = computed(() =>
