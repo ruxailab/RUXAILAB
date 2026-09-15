@@ -1,29 +1,19 @@
 <template>
-  <!-- Hold rendering until the session state arrives, so the consent gate does
-       not flash for someone who has already agreed -->
+  <!-- Hold rendering until the session state arrives (and, for a scheduled
+       session, until its roster has resolved) — otherwise a non-member could
+       flash the lobby or the room itself before the membership gate below
+       ever gets a chance to run -->
   <div
-    v-if="!loaded"
+    v-if="!loaded || (sessionId && !rosterLoaded)"
     class="d-flex align-center justify-center"
     style="height: 100vh"
   >
     <v-progress-circular indeterminate color="primary" size="48" />
   </div>
 
-  <!-- Lobby: branded welcome shown before the session is live and after it ends -->
-  <SessionLobby
-    v-else-if="!isLive"
-    :title="test?.testTitle"
-    :description="test?.testDescription"
-    :status="status"
-    :is-facilitator="isFacilitator"
-    :has-topics="hasTopics"
-    :participant-count="connectedCount"
-    :starting="starting"
-    @start="onStart"
-  />
-
-  <!-- Session membership gate: a live session launched for a specific roster
-       turns away anyone not named on it, before consent or the room itself -->
+  <!-- Session membership gate: checked before the lobby/room so a non-member
+       is turned away regardless of whether the session has started yet —
+       otherwise an idle scheduled session would show the lobby to anyone -->
   <v-container
     v-else-if="sessionAccessBlocked"
     class="d-flex align-center justify-center"
@@ -44,6 +34,19 @@
       </v-btn>
     </div>
   </v-container>
+
+  <!-- Lobby: branded welcome shown before the session is live and after it ends -->
+  <SessionLobby
+    v-else-if="!isLive"
+    :title="test?.testTitle"
+    :description="test?.testDescription"
+    :status="status"
+    :is-facilitator="isFacilitator"
+    :has-topics="hasTopics"
+    :participant-count="connectedCount"
+    :starting="starting"
+    @start="onStart"
+  />
 
   <!-- Consent gate: sits between the lobby and the discussion, mirroring the
        moderated test where consent follows the welcome step -->
@@ -590,7 +593,7 @@
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute, useRouter, onBeforeRouteUpdate } from 'vue-router'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
@@ -639,6 +642,21 @@ const studyId = route.params.id
 // route), so the view re-mounts fresh per session.
 const sessionId = route.query.session || null
 const roomId = sessionId ? `${studyId}-${sessionId}` : studyId
+
+// `sessionId`/`roomId` above are captured once at setup, not reactive — and
+// Vue Router reuses this component instance when only the `?session=` query
+// changes (same route, same :id param), so navigating from one session's
+// live link straight to another's would otherwise leave every subscription
+// (RTDB room, roster, LiveKit call) pointed at the OLD session while the URL
+// shows the new one. Force a hard reload in that one case so everything
+// re-initializes cleanly, rather than teaching every piece of state here to
+// react to a changing session id.
+onBeforeRouteUpdate((to) => {
+  if (to.query.session !== route.query.session) {
+    window.location.assign(to.fullPath)
+    return false
+  }
+})
 const {
   status,
   currentTopicIndex,
@@ -830,10 +848,31 @@ const isRosterParticipant = computed(
       namedInRoster(activeSession.value.participantEmails)),
 )
 
-const isFacilitator = computed(() => accessLevel.value === ACCESS_LEVEL.ADMIN)
+// A cooperator assigned to run THIS session (staff[].role, set per-session in
+// the Sessions dialog) takes that role here regardless of their overall
+// cooperator accessLevel — the session's own roster is the source of truth
+// for who facilitates/observes a given session, not just their study-wide role.
+const sessionStaffRole = computed(() => {
+  const entry = (activeSession.value?.staff || []).find((member) => {
+    const uid = user.value?.id || user.value?.uid
+    const email = (user.value?.email || '').toLowerCase()
+    return (
+      (member?.userDocId && member.userDocId === uid) ||
+      (member?.email && email && member.email.toLowerCase() === email)
+    )
+  })
+  return entry?.role ?? null
+})
+
+const isFacilitator = computed(
+  () =>
+    accessLevel.value === ACCESS_LEVEL.ADMIN ||
+    sessionStaffRole.value === 'FACILITATOR',
+)
 const isParticipant = computed(
   () =>
-    accessLevel.value === ACCESS_LEVEL.EVALUATOR || isRosterParticipant.value,
+    sessionStaffRole.value !== 'OBSERVER' &&
+    (accessLevel.value === ACCESS_LEVEL.EVALUATOR || isRosterParticipant.value),
 )
 // Anyone who is neither running the session nor taking part in it observes it:
 // a dedicated OBSERVATOR cooperator, but also any signed-in viewer who opens
@@ -842,12 +881,15 @@ const isParticipant = computed(
 // agree instead of the badge showing while the tools stay hidden.
 const isObserver = computed(() => !isFacilitator.value && !isParticipant.value)
 
-// A user belongs to this session when named in its staff or participant roster.
-// The facilitator always has access; a legacy open room isn't gated.
+// A user belongs to this session when named in its staff or participant
+// roster. The facilitator always has access; a legacy open room (no session
+// id at all) isn't gated — but a scheduled session that failed to load or was
+// deleted fails CLOSED, not open, so a broken lookup can't be used to sneak in.
 const isSessionMember = computed(() => {
   if (isFacilitator.value) return true
+  if (!sessionId) return true
   const session = activeSession.value
-  if (!session) return true
+  if (!session) return false
   return (
     namedInRoster(session.staff) ||
     namedInRoster(session.participants) ||
