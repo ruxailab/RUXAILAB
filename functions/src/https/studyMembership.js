@@ -11,18 +11,25 @@ const ROLE = Object.freeze({
   USER: 5,
 })
 
+// Focus Group uses the Heuristic/CardSorting role shape (EVALUATOR for
+// attendees), not the USER-study one — its participants are invited as
+// EVALUATOR(1), matching the frontend's FOCUS_GROUP_ROLES/FOCUS_GROUP_POLICY
+// in studyAccessPolicy.js. MANAGER is deliberately left out here too: the
+// frontend has no capability policy for a Focus Group manager yet, so
+// advertising it as assignable would let an invite succeed server-side while
+// leaving that person with a dashboard that immediately redirects them away.
 const SUPPORTED_ROLES = Object.freeze({
   USER: [ROLE.ADMIN, ROLE.MANAGER, ROLE.USER, ROLE.OBSERVATOR],
   HEURISTIC: [ROLE.ADMIN, ROLE.MANAGER, ROLE.EVALUATOR, ROLE.GUEST],
   CARD_SORTING: [ROLE.ADMIN, ROLE.MANAGER, ROLE.EVALUATOR, ROLE.GUEST],
-  FOCUS_GROUP: [ROLE.ADMIN, ROLE.MANAGER, ROLE.USER, ROLE.OBSERVATOR],
+  FOCUS_GROUP: [ROLE.ADMIN, ROLE.EVALUATOR, ROLE.OBSERVATOR],
 })
 
 const MANAGER_ROLES = Object.freeze({
   USER: [ROLE.USER, ROLE.OBSERVATOR],
   HEURISTIC: [ROLE.EVALUATOR, ROLE.GUEST],
   CARD_SORTING: [ROLE.EVALUATOR, ROLE.GUEST],
-  FOCUS_GROUP: [ROLE.USER, ROLE.OBSERVATOR],
+  FOCUS_GROUP: [ROLE.EVALUATOR, ROLE.OBSERVATOR],
 })
 
 const normalizeStudyType = (type) => {
