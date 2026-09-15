@@ -127,12 +127,15 @@ service cloud.firestore {
         request.resource.data.createdBy == request.auth.uid &&
         request.resource.data.studyId == null;
       allow read: if true;
-      allow update: if request.resource.data.diff(resource.data).affectedKeys()
+      allow update: if signedIn() &&
+        request.resource.data.diff(resource.data).affectedKeys()
           .hasOnly([
             'taskAnswers',
             'heuristicAnswers',
             'cardSortingAnswers',
-            'studyId'
+            'studyId',
+            'sessions',
+            'themes'
       		]);
       allow delete: if (
         signedIn() &&
