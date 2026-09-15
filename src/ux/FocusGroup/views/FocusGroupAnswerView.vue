@@ -17,40 +17,48 @@
         <p class="text-body-2 mb-0">{{ $t('focusGroup.answers.empty') }}</p>
       </div>
 
-      <v-row v-else>
-        <v-col cols="12" md="4">
-          <v-card variant="outlined" rounded="lg">
-            <v-list density="compact" class="pa-2">
-              <v-list-item
-                v-for="session in sessions"
-                :key="session.sessionId"
-                :active="session.sessionId === selectedSessionId"
-                color="primary"
-                rounded="lg"
-                class="mb-1"
-                @click="selectedSessionId = session.sessionId"
-              >
-                <template #prepend>
-                  <v-avatar color="primary" variant="tonal" size="36">
-                    <v-icon icon="mdi-calendar-clock-outline" size="18" />
-                  </v-avatar>
-                </template>
-                <v-list-item-title class="font-weight-medium">
-                  {{ formatDate(session.startedAt) }}
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  {{
-                    $t('focusGroup.answers.participantCount', {
-                      count: participantCount(session),
-                    })
-                  }}
-                </v-list-item-subtitle>
-              </v-list-item>
-            </v-list>
-          </v-card>
-        </v-col>
+      <div v-else>
+        <!-- Session picker: a compact horizontal row, not a dedicated sidebar
+             column — a session list is rarely more than a handful of items,
+             so giving it a permanent third of the page wastes space that the
+             actual content (what people said) needs more. -->
+        <div
+          v-if="sessions.length > 1"
+          class="d-flex ga-2 mb-5 overflow-x-auto pb-1"
+        >
+          <v-chip
+            v-for="session in sessions"
+            :key="session.sessionId"
+            :color="session.sessionId === selectedSessionId ? 'primary' : undefined"
+            :variant="session.sessionId === selectedSessionId ? 'flat' : 'outlined'"
+            size="large"
+            class="text-none flex-shrink-0"
+            @click="selectedSessionId = session.sessionId"
+          >
+            <v-icon start size="16">mdi-calendar-clock-outline</v-icon>
+            {{ formatDate(session.startedAt) }}
+            <v-chip size="x-small" variant="flat" color="grey-lighten-2" class="ml-2">
+              {{ participantCount(session) }}
+            </v-chip>
+          </v-chip>
+        </div>
+        <div
+          v-else-if="selectedSession"
+          class="d-flex align-center ga-2 mb-5 text-medium-emphasis"
+        >
+          <v-icon icon="mdi-calendar-clock-outline" size="18" />
+          <span class="text-body-2">
+            {{ formatDate(selectedSession.startedAt) }}
+            <span class="mx-1">•</span>
+            {{
+              $t('focusGroup.answers.participantCount', {
+                count: participantCount(selectedSession),
+              })
+            }}
+          </span>
+        </div>
 
-        <v-col v-if="selectedSession" cols="12" md="8">
+        <template v-if="selectedSession">
           <v-card
             v-for="topic in topics"
             :key="topic.id"
@@ -189,8 +197,8 @@
               <ThematicEditor v-model="themes" :session="selectedSession" />
             </v-card-text>
           </v-card>
-        </v-col>
-      </v-row>
+        </template>
+      </div>
     </v-container>
   </PageWrapper>
 </template>
