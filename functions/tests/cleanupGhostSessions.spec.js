@@ -30,4 +30,30 @@ describe('shouldDeleteFocusGroupRoom', () => {
   it('sweeps a room that was created but never started (no lastUpdate)', () => {
     expect(shouldDeleteFocusGroupRoom({}, cutoff)).toBe(true)
   })
+
+  it('never sweeps a stale-looking idle room someone is actually connected to', () => {
+    expect(
+      shouldDeleteFocusGroupRoom(
+        {
+          status: 'idle',
+          lastUpdate: 0,
+          participants: { uid1: { connected: true } },
+        },
+        cutoff,
+      ),
+    ).toBe(false)
+  })
+
+  it('sweeps an idle room once everyone has disconnected', () => {
+    expect(
+      shouldDeleteFocusGroupRoom(
+        {
+          status: 'idle',
+          lastUpdate: 0,
+          participants: { uid1: { connected: false } },
+        },
+        cutoff,
+      ),
+    ).toBe(true)
+  })
 })

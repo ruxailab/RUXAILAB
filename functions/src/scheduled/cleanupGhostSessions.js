@@ -5,8 +5,12 @@ import logger from '../utils/logger.js'
 /**
  * Whether a Focus Group RTDB room is safe to sweep: never while `live` (the
  * per-message chat doesn't bump `lastUpdate`, so a long quiet discussion must
- * not be mistaken for a ghost), only once it's `ended` (already migrated to
- * Firestore) or was never started, and only past the cutoff.
+ * not be mistaken for a ghost), never while anyone is actually connected
+ * (joining an idle scheduled lobby doesn't bump `lastUpdate` either — only a
+ * facilitator/topic action does — so someone can be genuinely waiting in a
+ * room that still looks stale by that field alone), only once it's `ended`
+ * (already migrated to Firestore) or was never started, and only past the
+ * cutoff.
  *
  * @param {Object} roomData - The room's RTDB value ({} for a missing node).
  * @param {number} cutoffTime - Epoch ms; a room idle since before this is stale.
@@ -14,8 +18,14 @@ import logger from '../utils/logger.js'
  */
 export function shouldDeleteFocusGroupRoom(roomData, cutoffTime) {
   const lastUpdate = roomData?.lastUpdate || 0
+  const hasConnectedParticipant = Object.values(
+    roomData?.participants || {},
+  ).some((participant) => participant?.connected === true)
+
   return (
-    roomData?.status !== 'live' && (lastUpdate === 0 || lastUpdate < cutoffTime)
+    roomData?.status !== 'live' &&
+    !hasConnectedParticipant &&
+    (lastUpdate === 0 || lastUpdate < cutoffTime)
   )
 }
 
