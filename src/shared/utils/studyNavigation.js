@@ -97,6 +97,9 @@ export function getCommunityStudyDestination({ study, user }) {
     if (study.testType === STUDY_TYPES.HEURISTIC) {
       return { name: 'HeuristicManagerView', params: { id: studyId } }
     }
+    if (study.testType === STUDY_TYPES.FOCUS_GROUP) {
+      return { name: 'FocusGroupManagerView', params: { id: studyId } }
+    }
     if (
       study.testType === STUDY_TYPES.USER &&
       study.subType === USER_STUDY_SUBTYPES.UNMODERATED
@@ -162,16 +165,6 @@ const NAVIGATION_ITEMS = Object.freeze([
     icon: ICONS.DOCUMENT_EDIT,
     capability: C.STUDY_EDIT,
     path: ({ type, id }) => `/${type}/edit/${id}`,
-  },
-  {
-    // Focus Group's live session is its run surface, so it takes the slot the
-    // other methods use for Preview; facilitators and observers both enter here.
-    title: 'Session',
-    group: 'evaluation',
-    icon: 'mdi-video-outline',
-    capability: C.DASHBOARD_VIEW,
-    visible: isFocusGroupStudy,
-    path: ({ type, id }) => `/${type}/session/${id}`,
   },
   {
     title: 'Answer',
