@@ -1789,7 +1789,10 @@
       "testConfigErrorMessage": "This test has no tasks configured. Please contact the administrator.",
       "consentDecline": "Test ended due to consent decline. Thank you for your time.",
       "sessionTooFar": "Session Too Far",
-      "sessionTooFarMessage": "The scheduled session is more than 24 hours away. Please come back closer to the session date."
+      "sessionTooFarMessage": "The scheduled session is more than 24 hours away. Please come back closer to the session date.",
+      "moderatorDisconnected": "Moderator Disconnected",
+      "moderatorOfflineWaitOrContact": "The moderator seems to be offline. Please wait or contact support.",
+      "moderatorOfflineWait": "The moderator seems to be offline. Please wait."
     },
     "stepper": {
       "consent": "Consent",
