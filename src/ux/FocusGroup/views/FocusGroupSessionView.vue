@@ -881,12 +881,25 @@ const isParticipant = computed(
 // agree instead of the badge showing while the tools stay hidden.
 const isObserver = computed(() => !isFacilitator.value && !isParticipant.value)
 
+// Only the actual study owner (or a platform super-admin) bypasses the
+// roster unconditionally — the "selected roster only" contract still applies
+// to a co-facilitator: a cooperator with study-wide ADMIN access who was NOT
+// assigned to THIS session is a member only via `sessionStaffRole` below,
+// same as anyone else. `isFacilitator` (used for the UI once someone is
+// already in) stays broader on purpose; this is deliberately narrower.
+const isStudyOwner = computed(() => {
+  const currentUser = user.value
+  if (!currentUser) return false
+  if (currentUser.accessLevel === 0) return true
+  return test.value?.testAdmin?.userDocId === currentUser.id
+})
+
 // A user belongs to this session when named in its staff or participant
-// roster. The facilitator always has access; a legacy open room (no session
+// roster. The study owner always has access; a legacy open room (no session
 // id at all) isn't gated — but a scheduled session that failed to load or was
 // deleted fails CLOSED, not open, so a broken lookup can't be used to sneak in.
 const isSessionMember = computed(() => {
-  if (isFacilitator.value) return true
+  if (isStudyOwner.value) return true
   if (!sessionId) return true
   const session = activeSession.value
   if (!session) return false
