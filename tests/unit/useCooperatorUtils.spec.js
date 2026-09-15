@@ -1,4 +1,28 @@
-import { enrichCooperatorInviteEntry } from '@/shared/composables/useCooperatorUtils'
+import {
+  enrichCooperatorInviteEntry,
+  getPredefinedParticipantUserRole,
+} from '@/shared/composables/useCooperatorUtils'
+import { STUDY_ROLE } from '@/shared/utils/studyAccessPolicy'
+
+describe('getPredefinedParticipantUserRole', () => {
+  it('assigns Evaluator to Heuristic, Card Sorting, and Focus Group participants', () => {
+    expect(
+      getPredefinedParticipantUserRole({ testType: 'HEURISTIC' }),
+    ).toBe(STUDY_ROLE.EVALUATOR)
+    expect(
+      getPredefinedParticipantUserRole({ testType: 'CARD_SORTING' }),
+    ).toBe(STUDY_ROLE.EVALUATOR)
+    expect(
+      getPredefinedParticipantUserRole({ testType: 'FOCUS_GROUP' }),
+    ).toBe(STUDY_ROLE.EVALUATOR)
+  })
+
+  it('falls back to User for a plain user study', () => {
+    expect(getPredefinedParticipantUserRole({ testType: 'USER' })).toBe(
+      STUDY_ROLE.USER,
+    )
+  })
+})
 
 describe('enrichCooperatorInviteEntry', () => {
   it('fills the userDocId when the email belongs to a registered user', async () => {
