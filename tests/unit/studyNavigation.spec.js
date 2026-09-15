@@ -82,6 +82,26 @@ describe('study navigation', () => {
     ).toEqual({ name: 'UserUnmoderatedManagerView', params: { id: study.id } })
   })
 
+  it('sends a dashboard-capable Focus Group member to their manager view', () => {
+    const user = { id: 'observer', accessLevel: 1 }
+    const study = studyWith('FOCUS_GROUP', user.id, STUDY_ROLE.OBSERVATOR)
+
+    expect(getCommunityStudyDestination({ study, user })).toEqual({
+      name: 'FocusGroupManagerView',
+      params: { id: study.id },
+    })
+  })
+
+  it('sends a Focus Group participant to the session route, not the dashboard-less TestView', () => {
+    const user = { id: 'participant', accessLevel: 1 }
+    const study = studyWith('FOCUS_GROUP', user.id, STUDY_ROLE.EVALUATOR)
+
+    expect(getCommunityStudyDestination({ study, user })).toEqual({
+      name: 'FocusGroupSessionView',
+      params: { id: study.id },
+    })
+  })
+
   it('sends an accepted Manager invitation to the study dashboard', () => {
     const user = { id: 'manager', accessLevel: 1 }
     const study = {

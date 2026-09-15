@@ -27,9 +27,13 @@ export function getStudyRouteBase(study) {
     return 'userTest/moderated'
   }
   if (studyType === STUDY_TYPES.USER) return 'userTest/unmoderated'
+  if (studyType === STUDY_TYPES.FOCUS_GROUP) return 'focusGroup'
 
   return ''
 }
+
+const isFocusGroupStudy = (study) =>
+  normalizeStudyType(study?.testType) === STUDY_TYPES.FOCUS_GROUP
 
 export function getTestViewAccessRedirect({
   study,
@@ -93,6 +97,9 @@ export function getCommunityStudyDestination({ study, user }) {
     if (study.testType === STUDY_TYPES.HEURISTIC) {
       return { name: 'HeuristicManagerView', params: { id: studyId } }
     }
+    if (study.testType === STUDY_TYPES.FOCUS_GROUP) {
+      return { name: 'FocusGroupManagerView', params: { id: studyId } }
+    }
     if (
       study.testType === STUDY_TYPES.USER &&
       study.subType === USER_STUDY_SUBTYPES.UNMODERATED
@@ -105,6 +112,20 @@ export function getCommunityStudyDestination({ study, user }) {
     ) {
       return { name: 'UserModeratedManagerView', params: { id: studyId } }
     }
+  }
+
+  // A Focus Group participant reaches their actual session through the
+  // session-specific invite link (`notifySessionMembers` sends
+  // `/focusGroup/session/{id}?session={sessionId}` directly) — this generic,
+  // non-session-specific path has no session id to route with. TestView has
+  // no Focus Group rendering at all, so send them to the session route
+  // itself rather than an empty shell; without `?session=` it's the legacy
+  // open room, gated the same way any direct visit to it already is.
+  if (
+    study.testType === STUDY_TYPES.FOCUS_GROUP &&
+    hasStudyCapability(study, user, C.STUDY_ANSWER)
+  ) {
+    return { name: 'FocusGroupSessionView', params: { id: studyId } }
   }
 
   if (study.isPublic || hasStudyCapability(study, user, C.STUDY_ANSWER)) {
@@ -166,6 +187,7 @@ const NAVIGATION_ITEMS = Object.freeze([
     capability: C.STUDY_ANSWER,
     path: ({ id, previewPath }) => previewPath ?? `/testview/${id}`,
     visible: (study) =>
+      !isFocusGroupStudy(study) &&
       !(
         normalizeStudyType(study?.testType) == STUDY_TYPES.USER &&
         study?.subType === USER_STUDY_SUBTYPES.MODERATED
@@ -176,6 +198,8 @@ const NAVIGATION_ITEMS = Object.freeze([
     group: 'evaluation',
     icon: ICONS.BOOK,
     capability: C.REPORTS_VIEW,
+    // No report view exists for Focus Group yet — hide until it does.
+    visible: (study) => !isFocusGroupStudy(study),
     path: ({ type, id }) => `/${type}/report/${id}`,
   },
   {
@@ -183,6 +207,8 @@ const NAVIGATION_ITEMS = Object.freeze([
     group: 'analysis',
     icon: ICONS.ORDER,
     capability: C.ANSWERS_VIEW,
+    // Focus Group analytics ship on a separate branch — hide until merged.
+    visible: (study) => !isFocusGroupStudy(study),
     path: ({ type, id }) => `/${type}/answer/${id}`,
   },
   {
@@ -211,9 +237,13 @@ const NAVIGATION_ITEMS = Object.freeze([
     group: 'people',
     icon: ICONS.MONITOR_DASHBOARD,
     capability: C.SESSIONS_MANAGE,
+    // Moderated user tests pair one facilitator with one participant per
+    // session; Focus Group sessions gather a facilitator with many. Both
+    // define who takes part through the same sessions surface.
     visible: (study) =>
-      normalizeStudyType(study?.testType) === STUDY_TYPES.USER &&
-      study?.subType === USER_STUDY_SUBTYPES.MODERATED,
+      (normalizeStudyType(study?.testType) === STUDY_TYPES.USER &&
+        study?.subType === USER_STUDY_SUBTYPES.MODERATED) ||
+      isFocusGroupStudy(study),
     path: ({ type, id }) => `/${type}/sessions/${id}`,
   },
   {
