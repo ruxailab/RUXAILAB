@@ -1,6 +1,7 @@
 import {
   sortSessionsByStartedAt,
   flattenTopicMessages,
+  groupTopicMessagesByPrompt,
   countMessagesByTopic,
 } from '@/ux/FocusGroup/utils/sessionSummary'
 
@@ -51,6 +52,45 @@ describe('flattenTopicMessages', () => {
     expect(flattenTopicMessages(messages, 'topic-1').map((m) => m.text)).toEqual([
       'first',
       'second',
+    ])
+  })
+})
+
+describe('groupTopicMessagesByPrompt', () => {
+  it('splits a topic into one group per prompt, in first-asked order', () => {
+    const messages = {
+      'topic-1': {
+        m1: { text: 'answer to A', promptText: 'Prompt A', timestamp: 100 },
+        m2: { text: 'answer to B', promptText: 'Prompt B', timestamp: 200 },
+        m3: { text: 'also answers A', promptText: 'Prompt A', timestamp: 300 },
+      },
+    }
+    const groups = groupTopicMessagesByPrompt(messages, 'topic-1')
+    expect(groups.map((g) => g.promptText)).toEqual(['Prompt A', 'Prompt B'])
+    expect(groups[0].messages.map((m) => m.text)).toEqual([
+      'answer to A',
+      'also answers A',
+    ])
+    expect(groups[1].messages.map((m) => m.text)).toEqual(['answer to B'])
+  })
+
+  it('puts unprompted messages in their own group, first', () => {
+    const messages = {
+      'topic-1': {
+        m1: { text: 'answer to A', promptText: 'Prompt A', timestamp: 100 },
+        m2: { text: 'open floor chatter', promptText: null, timestamp: 50 },
+      },
+    }
+    const groups = groupTopicMessagesByPrompt(messages, 'topic-1')
+    expect(groups.map((g) => g.promptText)).toEqual([null, 'Prompt A'])
+    expect(groups[0].messages.map((m) => m.text)).toEqual(['open floor chatter'])
+  })
+
+  it('treats an old message with no promptText field the same as unprompted', () => {
+    const messages = { 'topic-1': { m1: { text: 'legacy message' } } }
+    const groups = groupTopicMessagesByPrompt(messages, 'topic-1')
+    expect(groups).toEqual([
+      { promptText: null, messages: [{ id: 'm1', text: 'legacy message' }] },
     ])
   })
 })
