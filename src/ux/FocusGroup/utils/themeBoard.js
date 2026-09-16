@@ -11,15 +11,22 @@ export function buildResponseKey({ sessionId, topicId, messageId }) {
 }
 
 /**
- * Flattens one session's per-topic messages into a flat, taggable list.
+ * Flattens one session's per-topic messages into a flat, taggable list —
+ * excluding the facilitator's own chat. Theming groups *participant*
+ * responses into patterns; a facilitator's prompts and transitions aren't
+ * response data and would only clutter the board (they still appear, marked,
+ * in the plain topic transcript — just never as draggable theme material).
  *
- * @param {{ sessionId: string, messages: Object }} session
+ * @param {{ sessionId: string, facilitatorId: string, messages: Object }} session
  * @returns {Array} [{ key, sessionId, topicId, messageId, participantId, excerpt }]
  */
 export function flattenSessionResponses(session) {
   const responses = []
   Object.entries(session?.messages ?? {}).forEach(([topicId, byId]) => {
     Object.entries(byId ?? {}).forEach(([messageId, message]) => {
+      if (session?.facilitatorId && message?.userId === session.facilitatorId) {
+        return
+      }
       responses.push({
         key: buildResponseKey({
           sessionId: session.sessionId,

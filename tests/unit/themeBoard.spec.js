@@ -36,6 +36,24 @@ describe('flattenSessionResponses', () => {
     expect(flattenSessionResponses({ sessionId: 's1', messages: {} })).toEqual([])
     expect(flattenSessionResponses({ sessionId: 's1' })).toEqual([])
   })
+
+  it('excludes the facilitator\'s own messages from theme material', () => {
+    const session = {
+      sessionId: 's1',
+      facilitatorId: 'facilitator-1',
+      messages: {
+        t1: {
+          m1: { userId: 'facilitator-1', text: "Let's move on" },
+          m2: { userId: 'participant-1', text: 'a real response' },
+        },
+      },
+    }
+    const responses = flattenSessionResponses(session)
+    expect(responses).toHaveLength(1)
+    expect(responses[0]).toEqual(
+      expect.objectContaining({ excerpt: 'a real response', participantId: 'participant-1' }),
+    )
+  })
 })
 
 describe('partitionResponsesByTheme', () => {
