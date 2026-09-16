@@ -283,13 +283,23 @@ export function useFocusGroupSession(roomId) {
   /**
    * Append a message to the current topic's discussion stream. Append-only, so
    * participants can post multiple times and the feed reads chronologically.
+   *
+   * Tags the message with whichever prompt is currently surfaced for this
+   * topic (if any), read from this same session's live `currentPrompt` —
+   * so a topic with several prompts can later be reviewed prompt-by-prompt
+   * instead of as one undifferentiated list. A message sent between prompts
+   * (or before the facilitator has asked one) is left untagged.
    */
   async function sendMessage({ topicId, userId, name, text }) {
     const listRef = dbRef(database, `${rootPath}/messages/${topicId}`)
+    const activePrompt = currentPrompt.value
+    const promptText =
+      activePrompt?.topicId === topicId ? (activePrompt.text ?? null) : null
     await push(listRef, {
       userId: userId ?? '',
       name: name ?? '',
       text: text ?? '',
+      promptText,
       timestamp: serverTimestamp(),
     })
   }
