@@ -2726,6 +2726,8 @@
       "empty": "Todavía no se ha realizado ninguna sesión.",
       "participantCount": "{count} participantes",
       "observerNotesTitle": "Notas del observador",
+      "openDiscussion": "Discusión abierta",
+      "facilitatorBadge": "Facilitador",
       "recordingsTitle": "Grabaciones",
       "recordingLabel": "{topic} — {kind}",
       "themesTitle": "Temas",

@@ -2818,6 +2818,8 @@
       "empty": "No sessions have been run yet.",
       "participantCount": "{count} participants",
       "observerNotesTitle": "Observer notes",
+      "openDiscussion": "Open discussion",
+      "facilitatorBadge": "Facilitator",
       "recordingsTitle": "Recordings",
       "recordingLabel": "{topic} — {kind}",
       "themesTitle": "Themes",

@@ -71,32 +71,82 @@
               <span>{{ topic.title || $t('focusGroup.modules.untitledTopic') }}</span>
               <v-spacer />
               <v-chip size="small" variant="tonal">
-                {{ flattenTopicMessages(selectedSession.messages, topic.id).length }}
+                {{
+                  topicMessageGroups(topic.id).reduce(
+                    (sum, group) => sum + group.messages.length,
+                    0,
+                  )
+                }}
               </v-chip>
             </v-card-title>
             <v-divider />
             <v-card-text>
               <div
-                v-for="message in flattenTopicMessages(selectedSession.messages, topic.id)"
-                :key="message.id"
-                class="d-flex ga-3 mb-3"
+                v-for="group in topicMessageGroups(topic.id)"
+                :key="group.promptText || 'open-discussion'"
+                class="mb-4"
               >
-                <v-avatar color="primary" variant="tonal" size="32">
-                  <span class="text-caption font-weight-medium">
-                    {{ initial(message.name) }}
+                <!-- A topic can carry several prompts; grouping keeps each
+                     prompt's responses together instead of one flat stream. -->
+                <div class="d-flex align-center ga-2 mb-2">
+                  <v-icon
+                    :icon="
+                      group.promptText
+                        ? 'mdi-help-circle-outline'
+                        : 'mdi-forum-outline'
+                    "
+                    size="16"
+                    :color="group.promptText ? 'primary' : 'medium-emphasis'"
+                  />
+                  <span
+                    class="text-caption font-weight-medium"
+                    :class="group.promptText ? 'text-primary' : 'text-medium-emphasis'"
+                  >
+                    {{ group.promptText || $t('focusGroup.answers.openDiscussion') }}
                   </span>
-                </v-avatar>
-                <div class="flex-grow-1 min-width-0">
-                  <div class="text-caption text-medium-emphasis mb-1">
-                    {{ message.name || $t('focusGroup.session.anonymous') }}
-                  </div>
-                  <div class="px-3 py-2 rounded-lg bg-grey-lighten-4 text-body-2">
-                    {{ message.text }}
+                </div>
+
+                <div
+                  v-for="message in group.messages"
+                  :key="message.id"
+                  class="d-flex ga-3 mb-3"
+                >
+                  <v-avatar
+                    :color="isFacilitatorMessage(message) ? 'secondary' : 'primary'"
+                    variant="tonal"
+                    size="32"
+                  >
+                    <span class="text-caption font-weight-medium">
+                      {{ initial(message.name) }}
+                    </span>
+                  </v-avatar>
+                  <div class="flex-grow-1 min-width-0">
+                    <div class="d-flex align-center ga-2 text-caption text-medium-emphasis mb-1">
+                      <span>{{ message.name || $t('focusGroup.session.anonymous') }}</span>
+                      <v-chip
+                        v-if="isFacilitatorMessage(message)"
+                        size="x-small"
+                        variant="tonal"
+                        color="secondary"
+                      >
+                        {{ $t('focusGroup.answers.facilitatorBadge') }}
+                      </v-chip>
+                    </div>
+                    <div
+                      class="px-3 py-2 rounded-lg text-body-2"
+                      :class="
+                        isFacilitatorMessage(message)
+                          ? 'bg-blue-grey-lighten-5'
+                          : 'bg-grey-lighten-4'
+                      "
+                    >
+                      {{ message.text }}
+                    </div>
                   </div>
                 </div>
               </div>
               <p
-                v-if="!flattenTopicMessages(selectedSession.messages, topic.id).length"
+                v-if="!topicMessageGroups(topic.id).length"
                 class="text-medium-emphasis text-center my-4 mb-0"
               >
                 {{ $t('focusGroup.session.noMessagesYet') }}
@@ -212,7 +262,7 @@ import ThematicEditor from '@/ux/FocusGroup/components/ThematicEditor.vue'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import {
   sortSessionsByStartedAt,
-  flattenTopicMessages,
+  groupTopicMessagesByPrompt,
 } from '@/ux/FocusGroup/utils/sessionSummary'
 
 const store = useStore()
@@ -281,6 +331,17 @@ const formatDate = (timestamp) =>
   timestamp ? new Date(timestamp).toLocaleString() : ''
 
 const initial = (name) => (name ? name.trim().charAt(0).toUpperCase() : '?')
+
+// The facilitator's own chat (prompts, transitions, acknowledgments) stays in
+// the transcript for context, but it isn't participant response data — mark
+// it distinctly rather than blending it in. It's also excluded entirely from
+// the theme board, where it would just be noise (see flattenSessionResponses).
+const isFacilitatorMessage = (message) =>
+  !!selectedSession.value?.facilitatorId &&
+  message?.userId === selectedSession.value.facilitatorId
+
+const topicMessageGroups = (topicId) =>
+  groupTopicMessagesByPrompt(selectedSession.value?.messages, topicId)
 
 // notes: { [userId]: [{ text, timestamp, topicId }] }
 const observerNoteEntries = computed(() =>
