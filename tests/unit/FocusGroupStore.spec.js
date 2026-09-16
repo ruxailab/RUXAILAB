@@ -12,6 +12,33 @@ jest.mock('@/ux/FocusGroup/controllers/FocusGroupController', () => {
   }))
 })
 
+// The store also pulls in AnswerController and studyStorageService, both of
+// which reach the real Firebase plugin — mock it the same way
+// FocusGroupController.spec.js does, so module load doesn't require real
+// VUE_APP_FIREBASE_* env vars.
+jest.mock('@/app/plugins/firebase', () => ({
+  db: {},
+  auth: {},
+  storage: {},
+  database: {},
+  fbFunctions: {},
+}))
+jest.mock('firebase/firestore', () => ({
+  doc: jest.fn(),
+  updateDoc: jest.fn(),
+  getDoc: jest.fn(),
+  addDoc: jest.fn(),
+  query: jest.fn(),
+  where: jest.fn(),
+  getDocs: jest.fn(),
+  deleteDoc: jest.fn(),
+  collection: jest.fn(),
+  orderBy: jest.fn(),
+  limit: jest.fn(),
+  setDoc: jest.fn(),
+  deleteField: jest.fn(),
+}))
+
 const FocusGroupStore = require('@/ux/FocusGroup/store/FocusGroup').default
 
 describe('FocusGroup store', () => {
