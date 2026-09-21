@@ -1,10 +1,9 @@
 /**
  * Create a Template.
- * @param {TemplateBody} body - The TemplateBody value.
+ * @param {Study} body - The Study value.
  * @param {TemplateHeader} header - The TemplateHeader value.
  */
 
-import TemplateBody from './TemplateBody'
 import TemplateHeader from './TemplateHeader'
 
 export default class Template {
@@ -16,14 +15,14 @@ export default class Template {
   static toTemplate(data) {
     return new Template({
       id: data.id ?? null,
-      body: TemplateBody.toTemplateBody(data.body),
+      body: data.body ?? null,
       header: TemplateHeader.toTemplateHeader(data.header),
     })
   }
   toFirestore() {
     return {
       header: this.header.toFirestore(),
-      body: this.body.toFirestore(),
+      body: this.body,
     }
   }
 }
