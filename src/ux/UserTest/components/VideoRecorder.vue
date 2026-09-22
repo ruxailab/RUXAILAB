@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import {
@@ -52,6 +52,11 @@ import {
 import { storage } from '@/app/plugins/firebase'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { showError, showWarning } from '@/shared/utils/toast'
+import {
+  createRecordingAttempt,
+  captureFailure,
+} from '@/ux/UserTest/utils/recordingOutcome'
+import { stopMediaStream } from '@/shared/utils/screenShareCapture'
 
 const props = defineProps({
   testId: {
@@ -65,7 +70,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['showLoading', 'stopShowLoading'])
+const emit = defineEmits(['showLoading', 'stopShowLoading', 'recording-result'])
 
 const store = useStore()
 const { t } = useI18n()
@@ -83,159 +88,127 @@ const resolvedUserDocId = computed(
 )
 
 const recording = ref(false)
-const videoStream = ref(null)
-const recordedChunks = ref([])
 const mediaRecorder = ref(null)
-const recordedVideo = ref('')
-const recordingTaskIndex = ref(null) // Store the task index when recording starts
-const cameraPermissionDenied = ref(false)
-
-async function hasCamera() {
-  try {
-    const devices = await navigator.mediaDevices.enumerateDevices()
-    return devices.some((device) => device.kind === 'videoinput')
-  } catch (err) {
-    console.error('Erro ao verificar dispositivos:', err)
-    return false
-  }
-}
-
-const requestCameraPermission = async () => {
-  try {
-    await navigator.mediaDevices.getUserMedia({ video: true })
-    cameraPermissionDenied.value = false
-    return true
-  } catch {
-    cameraPermissionDenied.value = true
-    return false
-  }
-}
+let abortCurrent = () => {}
+let activeAttempt = null
 
 const startRecording = async () => {
-  if (cameraPermissionDenied.value) {
-    const permissionGranted = await requestCameraPermission()
-    if (!permissionGranted) {
-      showError(t('errors.cameraPermissionDenied'))
-      // Allow the test to continue without webcam recording
-      return true
-    }
-  }
-  try {
-    const cameraAvailable = await hasCamera()
-    if (!cameraAvailable) {
-      showWarning(t('errors.cameraNotAvailable'))
-      return true
-    }
-
-    recording.value = true
-    recordingTaskIndex.value = props.taskIndex // Store the current task index when recording starts
-    videoStream.value = await navigator.mediaDevices.getUserMedia({
-      video: true,
-    })
-
-    recordedChunks.value = []
-    mediaRecorder.value = new MediaRecorder(videoStream.value)
-
-    mediaRecorder.value.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        recordedChunks.value.push(event.data)
+  if (recording.value) return true
+  recording.value = true
+  const taskIndex = props.taskIndex
+  const userId = resolvedUserDocId.value
+  const testId = props.testId
+  const attempt = createRecordingAttempt(taskIndex, 'webcam', emit)
+  activeAttempt = attempt
+  const chunks = []
+  let stream
+  let recorder
+  let stage = 'permission'
+  let abandoned = false
+  let abort = () => {}
+  const cleanup = () => {
+    stopMediaStream(stream)
+    if (recorder && recorder.state !== 'inactive') {
+      try {
+        recorder.stop()
+      } catch {
+        /* Already stopped. */
       }
     }
-  } catch (e) {
+    if (activeAttempt !== attempt) return
+    activeAttempt = null
     recording.value = false
-    if (e.name === 'NotFoundError' || e.name === 'DevicesNotFoundError') {
-      showWarning(t('errors.cameraNotAvailable'))
-      return true
-    }
-    if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
-      cameraPermissionDenied.value = true
-      showError(t('errors.cameraPermissionDenied'))
-      // Allow the test to continue without webcam recording
-      return true
-    }
-    console.error('Unexpected error while starting video recording:', e)
-    showError(t('errors.globalError'))
-    return true
+    if (abortCurrent === abort) abortCurrent = () => {}
   }
-
+  abort = () => {
+    abandoned = true
+    attempt.discard()
+    cleanup()
+  }
+  abortCurrent = abort
   try {
-    if (mediaRecorder.value) {
-      mediaRecorder.value.onstop = async () => {
-        emit('showLoading')
-        try {
-          const videoBlob = new Blob(recordedChunks.value, {
-            type: 'video/webm',
-          })
-          const correctTaskIndex = recordingTaskIndex.value
-          const storageReference = storageRef(
-            storage,
-            `tests/${props.testId}/${resolvedUserDocId.value}/task_${correctTaskIndex}/video/${recordedVideo.value}`,
-          )
-          await uploadBytes(storageReference, videoBlob)
-
-          recordedVideo.value = await getDownloadURL(storageReference)
-
-          await store.dispatch('updateTaskMediaUrl', {
-            taskIndex: correctTaskIndex,
-            mediaType: MEDIA_FIELD_MAP.webcam,
-            url: recordedVideo.value,
-            size: videoBlob.size,
-            userId: resolvedUserDocId.value,
-          })
-
-          // Add safety check before setting the property
-          if (
-            currentUserTestAnswer.value.tasks &&
-            currentUserTestAnswer.value.tasks[correctTaskIndex]
-          ) {
-            currentUserTestAnswer.value.tasks[
-              correctTaskIndex
-            ].webcamRecordURL = recordedVideo.value
-            currentUserTestAnswer.value.tasks[correctTaskIndex].webcamSize =
-              videoBlob.size
-          } else {
-            console.error(
-              'Task not found at index:',
-              correctTaskIndex,
-              'Available tasks:',
-              currentUserTestAnswer.value.tasks?.length,
-            )
-          }
-        } catch (error) {
-          console.error(
-            'Unexpected error while stopping video recording:',
-            error,
-          )
-        } finally {
-          if (videoStream.value) {
-            videoStream.value.getTracks().forEach((track) => track.stop())
-          }
-          recording.value = false
-          emit('stopShowLoading')
+    const devices = await navigator.mediaDevices.enumerateDevices()
+    if (abandoned) {
+      cleanup()
+      return true
+    }
+    if (!devices.some((device) => device.kind === 'videoinput')) {
+      attempt.finish('failed', 'permission', 'deviceUnavailable')
+      showWarning(t('errors.cameraNotAvailable'))
+      cleanup()
+      return true
+    }
+    stream = await navigator.mediaDevices.getUserMedia({ video: true })
+    if (abandoned) {
+      cleanup()
+      return true
+    }
+    stage = 'capture'
+    recorder = new MediaRecorder(stream)
+    mediaRecorder.value = recorder
+    recorder.ondataavailable = ({ data }) => {
+      if (data.size) chunks.push(data)
+    }
+    recorder.onerror = () => {
+      if (attempt.finish('failed', 'capture', 'captureError')) cleanup()
+    }
+    recorder.onstop = async () => {
+      if (!attempt.beginUpload()) return
+      emit('showLoading')
+      try {
+        const blob = new Blob(chunks, { type: 'video/webm' })
+        if (!blob.size) {
+          attempt.finish('failed', 'capture', 'emptyRecording')
+          return
         }
+        const reference = storageRef(
+          storage,
+          `tests/${testId}/${userId}/task_${taskIndex}/video/${Date.now()}.webm`,
+        )
+        await uploadBytes(reference, blob)
+        const url = await getDownloadURL(reference)
+        await store.dispatch('updateTaskMediaUrl', {
+          taskIndex,
+          mediaType: MEDIA_FIELD_MAP.webcam,
+          url,
+          size: blob.size,
+          userId,
+        })
+        attempt.finish('completed', 'upload')
+      } catch {
+        attempt.finish('failed', 'upload', 'uploadError')
+      } finally {
+        cleanup()
+        emit('stopShowLoading')
       }
     }
-
-    if (mediaRecorder.value) {
-      mediaRecorder.value.start()
-      return true
-    }
-    showWarning(t('errors.cameraNotAvailable'))
-    return true
-  } catch (e) {
-    console.error(e)
-    showError(t('errors.globalError'))
-    return true
+    recorder.start()
+  } catch (error) {
+    const failure = captureFailure(error, stage)
+    attempt.finish(...failure)
+    cleanup()
+    if (failure[0] === 'permission_denied')
+      showError(t('errors.cameraPermissionDenied'))
+    else if (failure[2] === 'deviceUnavailable')
+      showWarning(t('errors.cameraNotAvailable'))
+    else showError(t('errors.globalError'))
   }
+  // Camera remains optional; a failure must not prevent starting the task.
+  return true
 }
 
 const stopRecording = () => {
-  if (mediaRecorder.value) {
+  if (mediaRecorder.value && mediaRecorder.value.state !== 'inactive')
     mediaRecorder.value.stop()
-  }
 }
 
-defineExpose({ startRecording, stopRecording })
+onBeforeUnmount(() => abortCurrent())
+
+defineExpose({
+  startRecording,
+  stopRecording,
+  abortCapture: () => abortCurrent(),
+})
 </script>
 
 <style scoped>

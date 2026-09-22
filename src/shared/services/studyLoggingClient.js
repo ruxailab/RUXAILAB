@@ -112,6 +112,37 @@ export const sweepExpiredStudyLogging = async (
 
 const sanitizeDetails = (eventType, details) => {
   if (eventType === 'STUDY_VIEW_OPENED') return {}
+  if (eventType === 'MEDIA_RECORDING_OUTCOME') {
+    if (
+      typeof details?.taskRef !== 'string' ||
+      !/^task:(0|[1-9]\d*)$/.test(details.taskRef) ||
+      !['audio', 'webcam', 'screen'].includes(details?.mediaType) ||
+      !['completed', 'failed', 'permission_denied', 'cancelled'].includes(
+        details?.outcome,
+      ) ||
+      !['permission', 'capture', 'upload'].includes(details?.stage) ||
+      (details?.reason !== undefined &&
+        ![
+          'unsupported',
+          'cancelled',
+          'wrongSurface',
+          'error',
+          'permissionDenied',
+          'deviceUnavailable',
+          'captureError',
+          'emptyRecording',
+          'uploadError',
+        ].includes(details.reason))
+    )
+      return null
+    return {
+      taskRef: details.taskRef,
+      mediaType: details.mediaType,
+      outcome: details.outcome,
+      stage: details.stage,
+      ...(details.reason !== undefined ? { reason: details.reason } : {}),
+    }
+  }
   if (eventType === 'QUESTION_RESPONSE_UPDATED') {
     if (!/^heuristic:\d+:question:\d+$/.test(details?.questionRef)) return null
     return {

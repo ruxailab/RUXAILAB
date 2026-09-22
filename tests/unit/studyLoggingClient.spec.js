@@ -489,3 +489,69 @@ describe('browser study logging client', () => {
     expect(freshSubmit).toHaveBeenCalledTimes(1)
   })
 })
+
+describe('recording queue policy', () => {
+  const details = {
+    taskRef: 'task:2',
+    mediaType: 'screen',
+    outcome: 'failed',
+    stage: 'upload',
+    reason: 'uploadError',
+  }
+  it('projects controlled metadata before storage and retains identity over network retry', async () => {
+    const queueStore = createQueueStore()
+    const mutate = jest.spyOn(queueStore, 'mutate')
+    const submitBatch = jest
+      .fn()
+      .mockRejectedValueOnce(new Error('offline'))
+      .mockResolvedValue({ status: 'accepted', batchId: 'recording-batch' })
+    const logger = createStudyLogger({
+      ownerUid: 'participant',
+      studyId: 'study-1',
+      queueStore,
+      submitBatch,
+      createId: jest
+        .fn()
+        .mockReturnValueOnce('recording-event')
+        .mockReturnValueOnce('recording-batch'),
+    })
+    await logger.record('MEDIA_RECORDING_OUTCOME', {
+      ...details,
+      taskType: 'forged',
+      url: 'private-url',
+      transcript: 'private-text',
+      error: 'private-exception',
+      email: 'private-email',
+    })
+    const stored = await mutate.mock.results[0].value
+    expect(JSON.stringify(stored)).not.toMatch(/private-|forged/)
+    await logger.flush()
+    await logger.flush({ online: true })
+    expect(submitBatch).toHaveBeenCalledTimes(2)
+    expect(submitBatch.mock.calls[1][0]).toEqual(submitBatch.mock.calls[0][0])
+    expect(submitBatch.mock.calls[0][0].events[0]).toMatchObject({
+      eventId: 'recording-event',
+      details,
+    })
+  })
+  it.each([
+    { taskRef: 'task:-1' },
+    { taskRef: ['task:0'] },
+    { mediaType: 'url' },
+    { outcome: 'unknown' },
+    { stage: 'answer' },
+    { reason: 'raw exception' },
+  ])('drops invalid recording fields %j before storage', async (invalid) => {
+    const queueStore = { mutate: jest.fn() }
+    const logger = createStudyLogger({
+      ownerUid: 'participant',
+      studyId: 'study-1',
+      queueStore,
+      submitBatch: jest.fn(),
+    })
+    await expect(
+      logger.record('MEDIA_RECORDING_OUTCOME', { ...details, ...invalid }),
+    ).resolves.toBeNull()
+    expect(queueStore.mutate).not.toHaveBeenCalled()
+  })
+})

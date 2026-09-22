@@ -379,7 +379,7 @@
               :current-task-index="taskIndex"
               :test="test"
               :show-header="false"
-              @save="saveAnswer"
+              @save="saveSessionNotes"
             />
           </VideoToolDrawer>
 
@@ -1140,10 +1140,19 @@ const handleSubmit = async () => {
     void initializeStudyLogging()?.submitted()
     displayVideoCallComponent.value = true
   } catch {
+    localTestAnswer.submitted = false
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSubmitAnswer'),
     })
+  }
+}
+
+const saveSessionNotes = async () => {
+  try {
+    await saveAnswer()
+  } catch {
+    // saveAnswer already reports the failure for this standalone UI action.
   }
 }
 
@@ -1164,11 +1173,12 @@ const saveAnswer = async () => {
       answersDocId: test.value.answersDocId,
       testType: test.value.testType,
     })
-  } catch {
+  } catch (error) {
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSaveAnswer'),
     })
+    throw error
   }
 }
 

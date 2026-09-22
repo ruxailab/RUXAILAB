@@ -376,6 +376,7 @@ export default {
             show: true,
           })
         }
+        throw e
       } finally {
         commit('setLoading', false)
       }

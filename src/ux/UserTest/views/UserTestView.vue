@@ -478,6 +478,7 @@
             :sart-answers="localTestAnswer.tasks[taskIndex].sartAnswers"
             :submitted="localTestAnswer.submitted"
             :done-task-disabled="doneTaskDisabled"
+            @recording-result="handleRecordingResult"
             @update:sus-answers="
               (val) => {
                 localTestAnswer.tasks[taskIndex].susAnswers = Array.isArray(val)
@@ -596,6 +597,7 @@ import { animateStepAnnouncement } from '@/shared/utils/animations'
 import { downloadAnonymousParticipantIdentifier } from '@/shared/utils/anonymousParticipantUtils'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
+import { createRecordingOutcomeTracker } from '@/ux/UserTest/utils/recordingOutcome'
 import { taskDestination } from '@/ux/UserTest/utils/unmoderatedNavigation'
 
 const fullName = ref('')
@@ -659,6 +661,13 @@ const initializeStudyLogging = () => {
   })
   if (localTestAnswer.consentCompleted) void studyLogging.resumeAfterConsent()
   return studyLogging
+}
+const recordingOutcomes = createRecordingOutcomeTracker((details) =>
+  initializeStudyLogging()?.recordingOutcome(details),
+)
+const handleRecordingResult = (details) => {
+  if (user.value?.id && localTestAnswer.consentCompleted)
+    recordingOutcomes.observe(details)
 }
 const handleLoggingFocusin = (event) =>
   initializeStudyLogging()?.editHandlers.focusin(event)
@@ -820,6 +829,13 @@ const handleDownloadAnonymousIdentifier = () => {
   })
 }
 const savePartialAnswer = async () => {
+  attachMediaToTasks(localTestAnswer, mediaUrls.value)
+  const recordingsToSave = recordingOutcomes
+    .beforeSave()
+    .filter(({ taskRef, mediaType }) => {
+      const task = localTestAnswer.tasks?.[Number(taskRef.split(':')[1])]
+      return Boolean(task?.[MEDIA_FIELD_MAP[mediaType]])
+    })
   try {
     calculateProgress(localTestAnswer)
     localTestAnswer.fullName = fullName.value
@@ -851,6 +867,7 @@ const savePartialAnswer = async () => {
         testType: test.value.testType,
       })
     }
+    recordingOutcomes.saved(recordingsToSave)
   } catch (error) {
     // Propagate the error so callers can handle it (e.g., show toasts, prevent navigation).
     throw error
@@ -866,11 +883,12 @@ const saveAnswer = async () => {
     } else {
       router.push('/admin')
     }
-  } catch {
+  } catch (error) {
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSaveAnswer'),
     })
+    throw error
   }
 }
 
@@ -881,10 +899,13 @@ const submitAnswer = async () => {
     await saveAnswer()
     void initializeStudyLogging()?.submitted()
   } catch {
+    localTestAnswer.submitted = false
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSubmitAnswer'),
     })
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -1117,18 +1138,20 @@ async function handleTaskFinish(userCompleted) {
       async (val) => {
         if (!val) {
           unwatch()
-          await completeStep(taskIndex.value, 'tasks', userCompleted)
+          await completeStep(finishedTaskIndex, 'tasks', userCompleted)
           attachMediaToTasks(localTestAnswer, mediaUrls.value)
-          await persistStepProgress()
-          void initializeStudyLogging()?.taskFinished(finishedTaskIndex)
+          if (await persistStepProgress()) {
+            void initializeStudyLogging()?.taskFinished(finishedTaskIndex)
+          }
         }
       },
     )
   } else {
-    await completeStep(taskIndex.value, 'tasks', userCompleted)
+    await completeStep(finishedTaskIndex, 'tasks', userCompleted)
     attachMediaToTasks(localTestAnswer, mediaUrls.value)
-    await persistStepProgress()
-    void initializeStudyLogging()?.taskFinished(finishedTaskIndex)
+    if (await persistStepProgress()) {
+      void initializeStudyLogging()?.taskFinished(finishedTaskIndex)
+    }
   }
 }
 

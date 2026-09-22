@@ -162,6 +162,7 @@ describe('LogsView', () => {
         title: 'Task Attempt Finished',
         value: 'TASK_ATTEMPT_FINISHED',
       },
+      { title: 'Media Recording Outcome', value: 'MEDIA_RECORDING_OUTCOME' },
       { title: 'Study Submitted', value: 'STUDY_SUBMITTED' },
     ])
     wrapper.unmount()
@@ -273,6 +274,8 @@ describe('LogsView', () => {
             taskRef: 'task:0',
             outcome: 'not_completed',
             taskDurationMs: 16000,
+            taskType: 'nasa-tlx',
+            recordingTypes: ['audio', 'screen'],
           },
         },
       ],
@@ -287,6 +290,8 @@ describe('LogsView', () => {
     expect(wrapper.text()).toContain('Not Completed')
     expect(wrapper.text()).toContain('Task duration')
     expect(wrapper.text()).toContain('16 s')
+    expect(wrapper.text()).toContain('NASA-TLX')
+    expect(wrapper.text()).toContain('Audio, Screen')
     expect(wrapper.text()).not.toContain('task:0')
     expect(wrapper.text()).not.toContain('not_completed')
     wrapper.unmount()
@@ -436,6 +441,41 @@ describe('LogsView', () => {
     await flushPromises()
 
     expect(document.activeElement.textContent).toContain('Original first event')
+    wrapper.unmount()
+  })
+  it('displays recording technical severity and readable cancellation details', async () => {
+    getParticipantLabels.mockResolvedValue([])
+    getStudyLogCount.mockResolvedValue(1)
+    getStudyLogPage.mockResolvedValue({
+      ...page,
+      events: [
+        {
+          ...page.events[0],
+          eventType: 'MEDIA_RECORDING_OUTCOME',
+          layer: 'technical',
+          level: 'warning',
+          details: {
+            taskRef: 'task:0',
+            taskType: 'sus',
+            mediaType: 'screen',
+            outcome: 'cancelled',
+            stage: 'permission',
+            reason: 'cancelled',
+          },
+        },
+      ],
+    })
+    const wrapper = mount(LogsView, { props: { id: 'study-1' } })
+    await flushPromises()
+    await wrapper.find('tbody tr').trigger('click')
+    for (const label of [
+      'technical',
+      'SUS',
+      'Screen',
+      'Permission',
+      'Permission denied or capture cancelled',
+    ])
+      expect(wrapper.text()).toContain(label)
     wrapper.unmount()
   })
 })

@@ -1,6 +1,7 @@
 import crypto from 'crypto'
 import { admin, functions } from '../core/firebase/f.firebase.js'
 import logger from '../utils/logger.js'
+import { taskContext, recordingPolicy } from '../shared/logging/taskContext.js'
 
 const MAX_EVENTS_PER_BATCH = 25
 const CLIENT_EVENT_BUDGET = 1000
@@ -10,6 +11,9 @@ const POST_SUBMISSION_RECEIPT_GRACE_MS = 7 * 24 * 60 * 60 * 1000
 const ID_PATTERN = /^[A-Za-z0-9_-]{3,160}$/
 const compareStrings = (left, right) => left.localeCompare(right)
 const CLIENT_EVENT_POLICIES = Object.freeze({
+  MEDIA_RECORDING_OUTCOME: {
+    detailKeys: ['taskRef', 'mediaType', 'outcome', 'stage', 'reason'],
+  },
   STUDY_VIEW_OPENED: {
     message: 'Study view opened',
     detailKeys: [],
@@ -289,8 +293,13 @@ const validateClientBatch = (payload, study) => {
         : new Date(Number.NaN)
     const occurrenceYear = occurredAt.getUTCFullYear()
     const policy = CLIENT_EVENT_POLICIES[event?.eventType]
+    const recording =
+      event?.eventType === 'MEDIA_RECORDING_OUTCOME' && isRecord(event?.details)
+        ? recordingPolicy(study, event.details)
+        : null
     const validDetails =
-      isRecord(event?.details) && policy?.detailKeys.length === 0
+      recording ||
+      (isRecord(event?.details) && policy?.detailKeys.length === 0
         ? Object.keys(event.details).length === 0
         : event?.eventType === 'ANSWER_EDITED' &&
             isRecord(event?.details) &&
@@ -298,7 +307,7 @@ const validateClientBatch = (payload, study) => {
           ? true
           : event?.eventType === 'QUESTION_RESPONSE_UPDATED' &&
             isRecord(event?.details) &&
-            validQuestionResponse(event?.details, study)
+            validQuestionResponse(event?.details, study))
     let reasonCode
     if (seenEventIds.has(eventId)) {
       reasonCode = 'DUPLICATE_EVENT_ID'
@@ -328,8 +337,19 @@ const validateClientBatch = (payload, study) => {
         eventId,
         eventType: event.eventType,
         occurredAt,
-        details: event.details,
-        message: policy.message,
+        layer: recording?.layer || 'methodological',
+        level: recording?.level || 'info',
+        details: recording?.details || {
+          ...event.details,
+          ...(event.eventType === 'ANSWER_EDITED' &&
+          /^task:(0|[1-9]\d*):(answer|comment)$/.test(event.details.fieldRef)
+            ? taskContext(
+                study,
+                event.details.fieldRef.split(':').slice(0, 2).join(':'),
+              )
+            : {}),
+        },
+        message: recording?.message || policy.message,
       })
     }
   }
@@ -490,8 +510,8 @@ async function submitLogEvents(request) {
         participantLabel,
         ...(actorRole ? { actorRole } : {}),
         eventType: event.eventType,
-        layer: 'methodological',
-        level: 'info',
+        layer: event.layer,
+        level: event.level,
         source: 'study-client',
         message: event.message,
         occurredAt: admin.firestore.Timestamp.fromDate(event.occurredAt),
@@ -566,6 +586,7 @@ const verifiedEventFor = ({ requestData, study, participantAnswer }) => {
       message: 'Task attempt finished',
       details: {
         taskRef: requestData.taskRef,
+        ...taskContext(study, requestData.taskRef, true),
         outcome,
         ...(nonNegativeInteger(duration, MAX_TASK_DURATION_MS)
           ? { taskDurationMs: duration }

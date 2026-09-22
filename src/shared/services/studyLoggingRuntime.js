@@ -34,6 +34,7 @@ export const createStudyLoggingRuntime = ({
   const responseTracker = createQuestionResponseTracker({ logger })
   const isHeuristic = String(studyType).toUpperCase() === 'HEURISTIC'
   let consentPending = false
+  let consentRequest = null
   let opened = false
   let activeQuestionRef = null
   let pendingResponseDelivery = Promise.resolve()
@@ -64,16 +65,25 @@ export const createStudyLoggingRuntime = ({
   }
 
   const consentAccepted = async () => {
+    if (consentRequest) return consentRequest
     consentPending = true
-    const acknowledgement = await request('CONSENT_ACCEPTED')
-    if (!['accepted', 'duplicate'].includes(acknowledgement?.status)) {
-      if (acknowledgement?.retryable === false) consentPending = false
-      return null
+    const requestPromise = (async () => {
+      const acknowledgement = await request('CONSENT_ACCEPTED')
+      if (!['accepted', 'duplicate'].includes(acknowledgement?.status)) {
+        if (acknowledgement?.retryable === false) consentPending = false
+        return null
+      }
+      consentPending = false
+      consentRequired = false
+      logger.setEnabled(true)
+      return acknowledgement
+    })()
+    consentRequest = requestPromise
+    try {
+      return await requestPromise
+    } finally {
+      if (consentRequest === requestPromise) consentRequest = null
     }
-    consentPending = false
-    consentRequired = false
-    logger.setEnabled(true)
-    return acknowledgement
   }
 
   const resumeAfterConsent = async () => {
@@ -211,6 +221,19 @@ export const createStudyLoggingRuntime = ({
     },
     consentAccepted,
     resumeAfterConsent,
+    async recordingOutcome(details) {
+      if (!ownerUid || !studyId) return null
+      if (consentRequired) {
+        if (!consentPending || !consentRequest) return null
+        const acknowledgement = await consentRequest
+        if (!acknowledgement || consentRequired) return null
+      }
+      try {
+        return await logger.record('MEDIA_RECORDING_OUTCOME', details)
+      } catch {
+        return null
+      }
+    },
     taskFinished(taskIndex) {
       return finishFlushAndRequest('TASK_ATTEMPT_FINISHED', `task:${taskIndex}`)
     },

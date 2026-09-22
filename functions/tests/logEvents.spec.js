@@ -904,3 +904,285 @@ describe('verified lifecycle events', () => {
     })
   })
 })
+
+describe('unmoderated task and recording metadata', () => {
+  const studyRef = () => admin.firestore().doc('tests/study-1')
+  const logs = async () =>
+    (await studyRef().collection('logs').get()).docs.map((doc) => doc.data())
+  const configure = async (task = {}) => {
+    await useUserStudy({
+      tasks: [{ attempted: true, completed: true, taskTime: 5 }],
+    })
+    await studyRef().update({
+      testStructure: {
+        userTasks: [
+          {
+            taskType: 'sus',
+            hasAudioRecord: true,
+            hasCamRecord: true,
+            hasScreenRecord: true,
+            ...task,
+          },
+        ],
+        preTest: [{}],
+        postTest: [{}],
+      },
+    })
+  }
+  const recording = (details = {}) => ({
+    ...viewBatch(),
+    events: [
+      {
+        ...viewBatch().events[0],
+        eventType: 'MEDIA_RECORDING_OUTCOME',
+        details: {
+          taskRef: 'task:0',
+          mediaType: 'audio',
+          outcome: 'completed',
+          stage: 'upload',
+          ...details,
+        },
+      },
+    ],
+  })
+  it.each([
+    'no-answer',
+    'post-test',
+    'text-area',
+    'post-form',
+    'nasa-tlx',
+    'sus',
+    'tam-1',
+    'tam-2',
+    'tam-3',
+    'sart',
+  ])(
+    'derives %s from configured tasks for all applicable events',
+    async (taskType) => {
+      await configure({ taskType, hasCamRecord: false })
+      await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
+      await requestLogEvent.run(
+        verifiedRequest('TASK_ATTEMPT_FINISHED', 'task:0'),
+      )
+      await logEvents.run(participantRequest(recording()))
+      const edit = answerEdited()
+      edit.details.fieldRef = 'task:0:comment'
+      await logEvents.run(
+        participantRequest({ ...viewBatch('edit-batch'), events: [edit] }),
+      )
+      const events = (await logs()).filter(
+        (event) => event.eventType !== 'CONSENT_ACCEPTED',
+      )
+      expect(events).toHaveLength(3)
+      for (const event of events) expect(event.details.taskType).toBe(taskType)
+      expect(
+        events.find((event) => event.eventType === 'TASK_ATTEMPT_FINISHED')
+          .details.recordingTypes,
+      ).toEqual(['audio', 'screen'])
+    },
+  )
+  it.each([null, 'private unrecognized task title'])(
+    'omits missing or unrecognized types without dropping the event (%s)',
+    async (taskType) => {
+      await configure({ taskType })
+      await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
+      await requestLogEvent.run(
+        verifiedRequest('TASK_ATTEMPT_FINISHED', 'task:0'),
+      )
+      await logEvents.run(participantRequest(recording()))
+      for (const event of await logs())
+        expect(event.details).not.toHaveProperty('taskType')
+    },
+  )
+  it('keeps legacy tasks without a type and does not relabel stored events after configuration changes', async () => {
+    await configure()
+    await studyRef().update({
+      testStructure: { userTasks: [{ hasAudioRecord: true }] },
+    })
+    const batch = recording()
+    await logEvents.run(participantRequest(batch))
+    expect((await logs())[0].details).not.toHaveProperty('taskType')
+    await studyRef().update({
+      testStructure: {
+        userTasks: [{ hasAudioRecord: true, taskType: 'tam-3' }],
+      },
+    })
+    await logEvents.run(participantRequest(batch))
+    expect(await logs()).toHaveLength(1)
+    expect((await logs())[0].details).not.toHaveProperty('taskType')
+  })
+
+  it('does not invent task context for pre/post fields or whole-study events', async () => {
+    await configure()
+    const edits = ['preTest:0:answer', 'postTest:0:answer'].map(
+      (fieldRef, index) => {
+        const event = answerEdited(`edit-${index}`)
+        event.details.fieldRef = fieldRef
+        return event
+      },
+    )
+    await logEvents.run(
+      participantRequest({
+        ...viewBatch(),
+        events: [...viewBatch().events, ...edits],
+      }),
+    )
+    await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
+    for (const event of await logs())
+      expect(event.details).not.toHaveProperty('taskType')
+  })
+  it.each(['audio', 'webcam', 'screen'])(
+    'accepts controlled %s outcomes and derives severity/source/message',
+    async (mediaType) => {
+      await configure()
+      const outcomes = [
+        { outcome: 'completed', stage: 'upload', level: 'info' },
+        {
+          outcome: 'permission_denied',
+          stage: 'permission',
+          reason: 'permissionDenied',
+          level: 'warning',
+        },
+        {
+          outcome: 'cancelled',
+          stage: 'permission',
+          reason: 'cancelled',
+          level: 'warning',
+        },
+        {
+          outcome: 'failed',
+          stage: 'permission',
+          reason: 'deviceUnavailable',
+          level: 'error',
+        },
+        {
+          outcome: 'failed',
+          stage: 'capture',
+          reason: 'captureError',
+          level: 'error',
+        },
+        {
+          outcome: 'failed',
+          stage: 'capture',
+          reason: 'emptyRecording',
+          level: 'error',
+        },
+        {
+          outcome: 'failed',
+          stage: 'upload',
+          reason: 'uploadError',
+          level: 'error',
+        },
+        ...(mediaType === 'screen'
+          ? ['unsupported', 'wrongSurface', 'error'].map((reason) => ({
+              outcome: 'failed',
+              stage: 'permission',
+              reason,
+              level: 'error',
+            }))
+          : []),
+      ]
+      const events = outcomes.map(({ level, ...details }, index) => ({
+        ...recording({ ...details, mediaType }).events[0],
+        eventId: `recording-${index}`,
+      }))
+      const batch = { ...viewBatch(), events }
+      await logEvents.run(participantRequest(batch))
+      await logEvents.run(participantRequest(batch))
+      const stored = await logs()
+      expect(stored).toHaveLength(outcomes.length)
+      for (let index = 0; index < outcomes.length; index++) {
+        expect(
+          stored.find((event) => event.eventId === `recording-${index}`),
+        ).toMatchObject({
+          layer: 'technical',
+          level: outcomes[index].level,
+          source: 'study-client',
+          details: { mediaType, taskType: 'sus' },
+        })
+      }
+      const sessions = await studyRef().collection('studySessions').get()
+      expect(sessions.docs[0].data().clientEventCount).toBe(outcomes.length)
+    },
+  )
+  it.each([
+    { taskType: 'sus' },
+    { url: 'private-url' },
+    { transcript: 'private text' },
+    { error: 'private exception' },
+    { taskRef: 'task:99' },
+    { taskRef: 'task:-1' },
+    { taskRef: ['task:0'] },
+    { mediaType: ['audio'] },
+    { mediaType: 'video' },
+    { outcome: ['completed'] },
+    { stage: ['upload'] },
+    { outcome: 'completed', stage: 'capture' },
+    {
+      outcome: 'permission_denied',
+      stage: 'upload',
+      reason: 'permissionDenied',
+    },
+    { reason: 'uploadError' },
+    { outcome: 'failed', stage: 'capture', reason: 'uploadError' },
+    { outcome: 'failed', stage: 'permission', reason: 'wrongSurface' },
+  ])('rejects malformed/forged metadata atomically: %j', async (details) => {
+    await configure()
+    const batch = recording(details)
+    batch.events.push({ ...viewBatch().events[0], eventId: 'otherwise-valid' })
+    await expect(
+      logEvents.run(participantRequest(batch)),
+    ).rejects.toMatchObject({ code: 'invalid-argument' })
+    expect(await logs()).toHaveLength(0)
+    expect((await studyRef().collection('studySessions').get()).empty).toBe(
+      true,
+    )
+  })
+  it.each([
+    ['audio', 'hasAudioRecord'],
+    ['webcam', 'hasCamRecord'],
+    ['screen', 'hasScreenRecord'],
+  ])('rejects disabled %s recording', async (mediaType, flag) => {
+    await configure({ [flag]: false })
+    await expect(
+      logEvents.run(participantRequest(recording({ mediaType }))),
+    ).rejects.toMatchObject({ code: 'invalid-argument' })
+    expect(await logs()).toHaveLength(0)
+  })
+  it('rejects forged task type on an answer edit', async () => {
+    await configure()
+    const edit = answerEdited()
+    edit.details = {
+      ...edit.details,
+      fieldRef: 'task:0:comment',
+      taskType: 'sus',
+    }
+    await expect(
+      logEvents.run(participantRequest({ ...viewBatch(), events: [edit] })),
+    ).rejects.toMatchObject({ code: 'invalid-argument' })
+  })
+  it('creates no recording event or session before consent or without authentication', async () => {
+    await configure()
+    await admin
+      .firestore()
+      .doc('answers/answer-1')
+      .update({ 'taskAnswers.participant.consentCompleted': false })
+    await expect(
+      logEvents.run(participantRequest(recording())),
+    ).rejects.toMatchObject({ code: 'failed-precondition' })
+    await expect(
+      logEvents.run(participantRequest(recording(), null)),
+    ).rejects.toMatchObject({ code: 'unauthenticated' })
+    expect(await logs()).toHaveLength(0)
+    expect((await studyRef().collection('studySessions').get()).empty).toBe(
+      true,
+    )
+  })
+  it('does not connect recording observations to moderated studies', async () => {
+    await configure()
+    await studyRef().update({ subType: 'USER_MODERATED' })
+    await expect(
+      logEvents.run(participantRequest(recording())),
+    ).rejects.toMatchObject({ code: 'invalid-argument' })
+  })
+})

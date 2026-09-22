@@ -43,7 +43,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
 import {
   ref as storageRef,
@@ -52,6 +52,11 @@ import {
 } from 'firebase/storage'
 import { storage } from '@/app/plugins/firebase'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
+import {
+  createRecordingAttempt,
+  captureFailure,
+} from '@/ux/UserTest/utils/recordingOutcome'
+import { stopMediaStream } from '@/shared/utils/screenShareCapture'
 
 const props = defineProps({
   testId: {
@@ -80,17 +85,20 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['recordingStarted', 'showLoading', 'stopShowLoading'])
+const emit = defineEmits([
+  'recordingStarted',
+  'showLoading',
+  'stopShowLoading',
+  'recording-result',
+])
 
 const store = useStore()
 
-// Reactive state
 const recordingAudio = ref(false)
-const recordedChunks = ref([])
 const mediaRecorder = ref(null)
-const audioStream = ref(null)
-const recordedAudio = ref('')
-const recordingTaskIndex = ref(null) // Store the task index when recording starts
+const moderatorRecorder = ref(null)
+let abortCurrent = () => {}
+let activeAttempt = null
 
 // Computed properties
 const currentUserTestAnswer = computed(
@@ -106,166 +114,161 @@ const resolvedUserDocId = computed(
     currentCardSortingAnswer.value?.userDocId,
 )
 
-async function hasAudio() {
+const startAudioRecording = async () => {
+  if (recordingAudio.value) return
+  recordingAudio.value = true
+  const taskIndex = props.taskIndex
+  const userId = resolvedUserDocId.value
+  const testId = props.testId
+  const attempt = createRecordingAttempt(taskIndex, 'audio', emit)
+  activeAttempt = attempt
+  const chunks = []
+  let stream
+  let recorder
+  let stage = 'permission'
+  let abandoned = false
+  let abort = () => {}
+  const cleanup = () => {
+    stopMediaStream(stream)
+    if (recorder && recorder.state !== 'inactive') {
+      try {
+        recorder.stop()
+      } catch {
+        /* Already stopped. */
+      }
+    }
+    if (activeAttempt !== attempt) return
+    activeAttempt = null
+    recordingAudio.value = false
+    emit('recordingStarted', false)
+    if (abortCurrent === abort) abortCurrent = () => {}
+  }
+  abort = () => {
+    abandoned = true
+    attempt.discard()
+    cleanup()
+  }
+  abortCurrent = abort
   try {
     const devices = await navigator.mediaDevices.enumerateDevices()
-    return devices.some((device) => device.kind === 'audioinput')
-  } catch (err) {
-    console.error('Erro ao verificar dispositivos:', err)
-    return false
-  }
-}
-
-// Methods
-const startAudioRecording = async () => {
-  try {
-    const audioAvailable = await hasAudio()
-    if (!audioAvailable) return
-
-    recordingTaskIndex.value = props.taskIndex // Store the current task index when recording starts
-    recordingAudio.value = true
-    emit('recordingStarted', true)
-
-    audioStream.value = await navigator.mediaDevices.getUserMedia({
-      audio: true,
-    })
-
-    recordedChunks.value = {
-      local: [],
-      remote: [],
+    if (abandoned) {
+      cleanup()
+      return
     }
-    mediaRecorder.value = {}
-
-    audioStream.value = await navigator.mediaDevices.getUserMedia({
-      audio: true,
-    })
-    mediaRecorder.value.local = new MediaRecorder(audioStream.value, {
-      mimeType: 'audio/webm',
-    })
-
-    mediaRecorder.value.local.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        recordedChunks.value.local.push(event.data)
-      }
+    if (!devices.some((device) => device.kind === 'audioinput')) {
+      attempt.finish('failed', 'permission', 'deviceUnavailable')
+      cleanup()
+      return
     }
-
-    mediaRecorder.value.local.onstop = async () => {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    if (abandoned) {
+      cleanup()
+      return
+    }
+    stage = 'capture'
+    recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' })
+    mediaRecorder.value = recorder
+    recorder.ondataavailable = ({ data }) => {
+      if (data.size) chunks.push(data)
+    }
+    recorder.onerror = () => {
+      if (attempt.finish('failed', 'capture', 'captureError')) cleanup()
+    }
+    recorder.onstop = async () => {
+      if (!attempt.beginUpload()) return
       emit('showLoading')
       try {
-        const audioBlob = new Blob(recordedChunks.value.local, {
-          type: 'audio/webm',
-        })
-        const correctTaskIndex = recordingTaskIndex.value
-        const storageReference = storageRef(
+        const blob = new Blob(chunks, { type: 'audio/webm' })
+        if (!blob.size) {
+          attempt.finish('failed', 'capture', 'emptyRecording')
+          return
+        }
+        const reference = storageRef(
           storage,
-          `tests/${props.testId}/${resolvedUserDocId.value}/task_${correctTaskIndex}_evaluator/${Date.now()}.webm`,
+          `tests/${testId}/${userId}/task_${taskIndex}_evaluator/${Date.now()}.webm`,
         )
-        await uploadBytes(storageReference, audioBlob)
-
-        recordedAudio.value = await getDownloadURL(storageReference)
-
+        await uploadBytes(reference, blob)
+        const url = await getDownloadURL(reference)
         await store.dispatch('updateTaskMediaUrl', {
-          taskIndex: correctTaskIndex,
+          taskIndex,
           mediaType: MEDIA_FIELD_MAP.audio,
-          url: recordedAudio.value,
-          size: audioBlob.size,
-          userId: resolvedUserDocId.value,
+          url,
+          size: blob.size,
+          userId,
         })
-
-        // Size
-        if (
-          currentUserTestAnswer.value.tasks &&
-          currentUserTestAnswer.value.tasks[recordingTaskIndex.value]
-        ) {
-          currentUserTestAnswer.value.tasks[
-            recordingTaskIndex.value
-          ].audioSize = new Blob(recordedChunks.value.local).size
-        }
-      } catch (error) {
-        console.error('Error while processing audio recording:', error)
+        attempt.finish('completed', 'upload')
+      } catch {
+        attempt.finish('failed', 'upload', 'uploadError')
       } finally {
-        if (audioStream.value) {
-          audioStream.value.getTracks().forEach((track) => track.stop())
-          audioStream.value = null
-        }
-        emit('recordingStarted', false)
+        cleanup()
         emit('stopShowLoading')
-        recordingAudio.value = false
       }
     }
-
-    mediaRecorder.value.local.start()
-
-    // Remote audio
-    if (props.shouldRecordModerator) {
-      if (props.remoteStream?.getAudioTracks().length) {
-        const remoteAudioStream = new MediaStream(
-          props.remoteStream.getAudioTracks(),
-        )
-
-        mediaRecorder.value.remote = new MediaRecorder(remoteAudioStream, {
-          mimeType: 'audio/webm',
-        })
-        // Remote
-        mediaRecorder.value.remote.ondataavailable = (event) => {
-          if (event.data.size > 0) {
-            recordedChunks.value.remote.push(event.data)
-          }
-        }
-        mediaRecorder.value.remote.onstop = async () => {
-          try {
-            const blob = new Blob(recordedChunks.value.remote, {
-              type: 'audio/webm',
-            })
-            const correctTaskIndex = recordingTaskIndex.value
-            const storageReference = storageRef(
-              storage,
-              `tests/${props.testId}/${resolvedUserDocId.value}/task_${correctTaskIndex}_moderator/${Date.now()}.webm`,
-            )
-            await uploadBytes(storageReference, blob)
-            const downloadURL = await getDownloadURL(storageReference)
-
-            await store.dispatch('updateTaskMediaUrl', {
-              taskIndex: correctTaskIndex,
-              mediaType: MEDIA_FIELD_MAP.moderator,
-              url: downloadURL,
-              size: blob.size,
-              userId: resolvedUserDocId.value,
-            })
-          } catch (error) {
-            console.error(
-              'Error while processing moderator audio recording:',
-              error,
-            )
-          }
-        }
-
-        mediaRecorder.value.remote.start()
-      }
-    }
+    recorder.start()
+    emit('recordingStarted', true)
   } catch (error) {
-    console.error('Error accessing audio stream:', error)
-    recordingAudio.value = false
+    attempt.finish(...captureFailure(error, stage))
+    cleanup()
+    return
+  }
+
+  // Moderator audio retains its existing save flow; it is not a logging producer.
+  if (
+    props.shouldRecordModerator &&
+    props.remoteStream?.getAudioTracks().length
+  ) {
+    try {
+      const remote = new MediaStream(props.remoteStream.getAudioTracks())
+      const chunks = []
+      const recorder = new MediaRecorder(remote, { mimeType: 'audio/webm' })
+      moderatorRecorder.value = recorder
+      recorder.ondataavailable = ({ data }) => {
+        if (data.size) chunks.push(data)
+      }
+      recorder.onstop = async () => {
+        try {
+          const blob = new Blob(chunks, { type: 'audio/webm' })
+          const reference = storageRef(
+            storage,
+            `tests/${testId}/${userId}/task_${taskIndex}_moderator/${Date.now()}.webm`,
+          )
+          await uploadBytes(reference, blob)
+          const url = await getDownloadURL(reference)
+          await store.dispatch('updateTaskMediaUrl', {
+            taskIndex,
+            mediaType: MEDIA_FIELD_MAP.moderator,
+            url,
+            size: blob.size,
+            userId,
+          })
+        } catch {
+          console.error('Could not save moderator audio')
+        }
+      }
+      recorder.start()
+    } catch {
+      console.error('Could not start moderator audio')
+    }
   }
 }
 
 const stopAudioRecording = () => {
-  if (!recordingAudio.value) return
-
-  if (
-    mediaRecorder.value?.local &&
-    mediaRecorder.value.local.state !== 'inactive'
-  ) {
-    mediaRecorder.value.local.stop()
-  }
-
-  if (
-    mediaRecorder.value?.remote &&
-    mediaRecorder.value.remote.state !== 'inactive'
-  ) {
-    mediaRecorder.value.remote.stop()
+  for (const recorder of [mediaRecorder.value, moderatorRecorder.value]) {
+    if (recorder && recorder.state !== 'inactive') recorder.stop()
   }
 }
 
-defineExpose({ startAudioRecording, stopAudioRecording })
+const abortCapture = () => {
+  abortCurrent()
+  const moderator = moderatorRecorder.value
+  if (moderator && moderator.state !== 'inactive') moderator.stop()
+}
+
+onBeforeUnmount(abortCapture)
+
+defineExpose({
+  startAudioRecording,
+  stopAudioRecording,
+  abortCapture,
+})
 </script>

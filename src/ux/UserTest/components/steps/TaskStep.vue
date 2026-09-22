@@ -529,6 +529,7 @@
         :remote-stream="remoteStream"
         :user-doc-id="userDocId"
         :should-record-moderator="shouldRecordModerator"
+        @recording-result="$emit('recording-result', $event)"
         @show-loading="onShowLoading"
         @stop-show-loading="onStopShowLoading"
         @recording-started="$emit('recording-started', $event)"
@@ -540,6 +541,7 @@
         :test-id="testId"
         :task-index="taskIndex"
         :user-doc-id="userDocId"
+        @recording-result="$emit('recording-result', $event)"
         @show-loading="onShowLoading"
         @stop-show-loading="onStopShowLoading"
       />
@@ -550,6 +552,7 @@
         :test-id="testId"
         :user-doc-id="userDocId"
         :task-index="taskIndex"
+        @recording-result="$emit('recording-result', $event)"
         @show-loading="onShowLoading"
         @stop-show-loading="onStopShowLoading"
       />
@@ -610,6 +613,7 @@ const emit = defineEmits([
   'show-loading',
   'stop-show-loading',
   'recording-started',
+  'recording-result',
   'timer-stopped',
   'update:susAnswers',
   'update:nasaTlxAnswers',
@@ -628,7 +632,7 @@ onBeforeUnmount(() => {
     clearTimeout(finishTimeout)
     finishTimeout = null
   }
-  forceStopAllMedia()
+  abortAllMedia()
 
   uploadingCount.value = 0
   isWaitingForUploadToFinish.value = false
@@ -905,6 +909,12 @@ function forceStopAllMedia() {
   screenRecorder.value?.stopRecording?.()
 }
 
+function abortAllMedia() {
+  audioRecorder.value?.abortCapture?.()
+  videoRecorder.value?.abortCapture?.()
+  screenRecorder.value?.abortCapture?.()
+}
+
 function handleShowPostForm(userCompleted) {
   if (isWaitingForUploadToFinish.value) return
 
@@ -996,7 +1006,7 @@ watch(
       clearTimeout(finishTimeout)
       finishTimeout = null
     }
-    forceStopAllMedia()
+    abortAllMedia()
     stage.value = 1
     taskStartTime = null
     elapsedTimeDisplay.value = '0:00'

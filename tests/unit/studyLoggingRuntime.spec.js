@@ -3,6 +3,7 @@ import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime
 const createHarness = ({
   consentRequired = false,
   studyType = 'USER',
+  ownerUid = 'participant',
 } = {}) => {
   const logger = {
     record: jest.fn().mockResolvedValue('event-1'),
@@ -29,7 +30,7 @@ const createHarness = ({
     removeEventListener: jest.fn((name) => visibilityListeners.delete(name)),
   }
   const runtime = createStudyLoggingRuntime({
-    ownerUid: 'participant',
+    ownerUid,
     studyId: 'study-1',
     studyType,
     consentRequired,
@@ -71,6 +72,39 @@ describe('study logging runtime', () => {
     })
     expect(logger.setEnabled).toHaveBeenCalledWith(true)
     expect(logger.record).not.toHaveBeenCalled()
+  })
+
+  it('waits for consent acknowledgement before recording an outcome', async () => {
+    const acknowledgement = (() => {
+      let resolve
+      const promise = new Promise((done) => {
+        resolve = done
+      })
+      return { promise, resolve }
+    })()
+    const { runtime, logger, callFunction } = createHarness({
+      consentRequired: true,
+    })
+    callFunction.mockReturnValue(acknowledgement.promise)
+
+    const consent = runtime.consentAccepted()
+    const outcome = runtime.recordingOutcome({
+      taskRef: 'task:0',
+      mediaType: 'audio',
+      outcome: 'failed',
+      stage: 'permission',
+      reason: 'permissionDenied',
+    })
+
+    await Promise.resolve()
+    expect(logger.record).not.toHaveBeenCalled()
+    acknowledgement.resolve({ data: { status: 'accepted' } })
+    await Promise.all([consent, outcome])
+
+    expect(logger.record).toHaveBeenCalledWith(
+      'MEDIA_RECORDING_OUTCOME',
+      expect.objectContaining({ taskRef: 'task:0' }),
+    )
   })
 
   it('retries an unacknowledged consent gate when connectivity returns', async () => {
@@ -336,5 +370,43 @@ describe('study logging runtime', () => {
       'ANSWER_EDITED',
       expect.anything(),
     )
+  })
+})
+
+describe('recording observations', () => {
+  const details = {
+    taskRef: 'task:0',
+    mediaType: 'audio',
+    outcome: 'completed',
+    stage: 'upload',
+  }
+  it('does not record before committed consent, including a failed acknowledgement', async () => {
+    const { runtime, logger, callFunction } = createHarness({
+      consentRequired: true,
+    })
+    await runtime.recordingOutcome(details)
+    callFunction.mockRejectedValueOnce(new Error('offline'))
+    await runtime.consentAccepted()
+    await runtime.recordingOutcome(details)
+    expect(logger.record).not.toHaveBeenCalled()
+    await runtime.consentAccepted()
+    await runtime.recordingOutcome(details)
+    expect(logger.record).toHaveBeenCalledWith(
+      'MEDIA_RECORDING_OUTCOME',
+      details,
+    )
+    runtime.destroy()
+  })
+  it('does not record without an authenticated owner', async () => {
+    const { runtime, logger } = createHarness({ ownerUid: null })
+    await runtime.recordingOutcome(details)
+    expect(logger.record).not.toHaveBeenCalled()
+    runtime.destroy()
+  })
+  it('contains unavailable queue failures', async () => {
+    const { runtime, logger } = createHarness()
+    logger.record.mockRejectedValueOnce(new Error('queue unavailable'))
+    await expect(runtime.recordingOutcome(details)).resolves.toBeNull()
+    runtime.destroy()
   })
 })

@@ -511,6 +511,7 @@ const EVENT_TYPES_BY_STUDY = Object.freeze({
     'ANSWER_EDITED',
     'CONSENT_ACCEPTED',
     'TASK_ATTEMPT_FINISHED',
+    'MEDIA_RECORDING_OUTCOME',
     'STUDY_SUBMITTED',
   ],
 })
@@ -761,6 +762,11 @@ const deliveryDelay = (event) => {
 }
 const DETAIL_LABELS = Object.freeze({
   taskRef: 'Task',
+  taskType: 'Task / instrument type',
+  recordingTypes: 'Requested recordings',
+  mediaType: 'Recording type',
+  stage: 'Recording stage',
+  reason: 'Recording reason',
   outcome: 'Outcome',
   taskDurationMs: 'Task duration',
   fieldRef: 'Field',
@@ -814,7 +820,37 @@ const formatTaskRef = (value) => {
 }
 const formatDetailValue = (key, value) => {
   if (key === 'taskRef') return formatTaskRef(value)
-  if (key === 'outcome') return formatIdentifier(value)
+  if (key === 'taskType')
+    return (
+      {
+        sus: 'SUS',
+        'nasa-tlx': 'NASA-TLX',
+        sart: 'SART',
+        'tam-1': 'TAM 1',
+        'tam-2': 'TAM 2',
+        'tam-3': 'TAM 3',
+      }[value] || formatIdentifier(value)
+    )
+  if (key === 'recordingTypes')
+    return value.length ? value.map(formatIdentifier).join(', ') : 'None'
+  if (key === 'outcome' && value === 'cancelled')
+    return 'Permission denied or capture cancelled'
+  if (['outcome', 'mediaType', 'stage'].includes(key))
+    return formatIdentifier(value)
+  if (key === 'reason')
+    return (
+      {
+        unsupported: 'Screen capture is unsupported',
+        cancelled: 'Permission denied or capture cancelled',
+        wrongSurface: 'Requested screen surface was not selected',
+        error: 'Screen capture could not start',
+        permissionDenied: 'Permission was not granted',
+        deviceUnavailable: 'Recording device unavailable',
+        captureError: 'Media capture failed',
+        emptyRecording: 'No media was captured',
+        uploadError: 'Media upload failed',
+      }[value] || formatIdentifier(value)
+    )
   if (key === 'taskDurationMs') return formatDuration(value)
   if (key === 'fieldRef') return formatFieldRef(value)
   if (key === 'questionRef') return formatQuestionRef(value)
