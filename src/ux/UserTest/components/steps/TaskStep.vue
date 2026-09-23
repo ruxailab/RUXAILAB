@@ -812,8 +812,6 @@ function goToStartTaskStage() {
 }
 
 async function startTask() {
-  emit('startTask')
-
   if (props.task?.hasScreenRecord) {
     showScreenSharePrompt.value = true
     return
@@ -851,6 +849,7 @@ async function proceedWithTaskStart({ skipScreen = false } = {}) {
 
     stage.value = 3
     taskStartTime = Date.now()
+    emit('startTask')
     timerInterval = setInterval(updateElapsedTime, 1000)
     nextTick(() => {
       setTimeout(() => {
