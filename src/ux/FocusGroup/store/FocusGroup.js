@@ -1,8 +1,10 @@
 import FocusGroupController from '@/ux/FocusGroup/controllers/FocusGroupController'
 import { deleteStudyStorageFile } from '@/shared/services/studyStorageService'
+import AnswerController from '@/shared/controllers/AnswerController'
 import i18n from '@/app/plugins/i18n'
 
 const focusGroupController = new FocusGroupController()
+const answerController = new AnswerController()
 
 export default {
   state: {
@@ -29,6 +31,26 @@ export default {
     async endFocusGroupSession(_, { answersDocId, session }) {
       if (!answersDocId || !session?.sessionId) return
       await focusGroupController.saveSessionAnswer(answersDocId, session)
+    },
+
+    /**
+     * Post-session review: read back every finished session's discussion,
+     * notes, and (if recorded) video, plus the facilitator's theme board —
+     * one read since both live on the same answers document.
+     */
+    async getFocusGroupSessionAnswers(_, answersDocId) {
+      if (!answersDocId) return { sessions: {}, themes: [] }
+      const answer = await answerController.getAnswerById(answersDocId)
+      return { sessions: answer.sessions ?? {}, themes: answer.themes ?? [] }
+    },
+
+    /**
+     * Persist the facilitator's manual theme board immediately (drag-and-drop
+     * is a live edit, not batched behind a Save button).
+     */
+    async saveFocusGroupThemes(_, { answersDocId, themes }) {
+      if (!answersDocId) return
+      await focusGroupController.saveThemes(answersDocId, themes)
     },
 
     /**

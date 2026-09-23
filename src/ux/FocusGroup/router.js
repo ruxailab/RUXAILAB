@@ -1,6 +1,7 @@
 import ManagerView from '@/ux/FocusGroup/views/ManagerView.vue'
 import EditFocusGroupView from '@/ux/FocusGroup/views/EditFocusGroupView.vue'
 import FocusGroupSessionView from '@/ux/FocusGroup/views/FocusGroupSessionView.vue'
+import FocusGroupAnswerView from '@/ux/FocusGroup/views/FocusGroupAnswerView.vue'
 import SettingsView from '@/shared/views/SettingsView.vue'
 import CooperatorsView from '@/shared/views/CooperatorsView.vue'
 import ParticipantsView from '@/shared/views/ParticipantsView.vue'
@@ -36,6 +37,19 @@ const MANAGER_CHILDREN = [
     capability: C.SETTINGS_MANAGE,
   },
   {
+    // Session answers are for the people running or watching the study, not
+    // participants — ANSWERS_VIEW is already granted only to facilitator
+    // (Admin) and observer in the Focus Group policy, matching the redirect
+    // FocusGroupAnswerView.vue does client-side as a second layer. Aliased
+    // to the singular /answer path the shared "Results" nav item expects
+    // (same alias Heuristic's own results/answer route uses).
+    segment: 'answers',
+    alias: 'answer',
+    name: 'FocusGroupAnswerView',
+    component: FocusGroupAnswerView,
+    capability: C.ANSWERS_VIEW,
+  },
+  {
     segment: 'cooperators',
     name: 'FocusGroupCooperatorsView',
     component: CooperatorsView,
@@ -67,8 +81,9 @@ const MANAGER_CHILDREN = [
     component: AuditTrailView,
     ownerOnly: true,
   },
-].map(({ segment, name, component, capability, ownerOnly }) => ({
+].map(({ segment, alias, name, component, capability, ownerOnly }) => ({
   path: `/focusGroup/${segment}/:id`,
+  ...(alias ? { alias: `/focusGroup/${alias}/:id` } : {}),
   name,
   props: true,
   meta: ownerOnly

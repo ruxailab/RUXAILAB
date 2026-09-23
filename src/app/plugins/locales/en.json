@@ -2809,7 +2809,27 @@
       "startSession": "Start session",
       "joinSession": "Join session",
       "reportsTitle": "Results & Reports",
-      "reportsComingSoon": "Session results and analysis will appear here."
+      "reportsDescription": "Review each session's discussion, notes, and recordings after it ends.",
+      "viewAnswers": "View answers"
+    },
+    "answers": {
+      "title": "Session Answers",
+      "subtitle": "Review what was discussed, noted, and (if recorded) captured in each finished session.",
+      "empty": "No sessions have been run yet.",
+      "participantCount": "{count} participants",
+      "observerNotesTitle": "Observer notes",
+      "openDiscussion": "Open discussion",
+      "facilitatorBadge": "Facilitator",
+      "recordingsTitle": "Recordings",
+      "recordingLabel": "{topic} — {kind}",
+      "themesTitle": "Themes",
+      "themesHint": "Drag responses from Unsorted into a theme to group them.",
+      "newThemeLabel": "New theme name",
+      "addTheme": "Add theme",
+      "unsorted": "Unsorted",
+      "removeTheme": "Remove theme",
+      "allSorted": "All responses are sorted into a theme.",
+      "dropHere": "Drop responses here"
     },
     "session": {
       "title": "Live Session",

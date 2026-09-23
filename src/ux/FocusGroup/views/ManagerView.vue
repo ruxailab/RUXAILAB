@@ -187,22 +187,32 @@
           </v-card>
         </v-col>
 
-        <!-- Results & reports (coming soon) -->
+        <!-- Session answers -->
         <v-col cols="12" md="6">
-          <v-card
-            class="h-100 d-flex align-center justify-center"
-            variant="outlined"
-            style="min-height: 200px"
-          >
-            <div class="text-center text-grey-lighten-1 pa-4">
-              <v-icon size="48" class="mb-2">mdi-chart-box-outline</v-icon>
-              <p class="text-subtitle-2 mb-1">
-                {{ t('focusGroup.modules.reportsTitle') }}
+          <v-card class="h-100">
+            <v-card-title>
+              <v-icon start color="primary">mdi-chart-box-outline</v-icon>
+              {{ t('focusGroup.modules.reportsTitle') }}
+            </v-card-title>
+
+            <v-card-text>
+              <p class="text-body-2 text-medium-emphasis mb-0">
+                {{ t('focusGroup.modules.reportsDescription') }}
               </p>
-              <p class="text-body-2 mb-0">
-                {{ t('focusGroup.modules.reportsComingSoon') }}
-              </p>
-            </div>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer />
+              <v-btn
+                variant="text"
+                color="primary"
+                size="small"
+                @click="goToAnswers"
+              >
+                <v-icon start size="16">mdi-history</v-icon>
+                {{ t('focusGroup.modules.viewAnswers') }}
+              </v-btn>
+            </v-card-actions>
           </v-card>
         </v-col>
       </template>
@@ -352,6 +362,9 @@ const goToSettings = () => {
 }
 const goToSession = () => {
   router.push(`/focusGroup/session/${test.value.id}`).catch(() => {})
+}
+const goToAnswers = () => {
+  router.push(`/focusGroup/answers/${test.value.id}`).catch(() => {})
 }
 
 onMounted(async () => {
