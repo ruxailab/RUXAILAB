@@ -44,11 +44,6 @@
 import { ref, computed, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
-import {
-  ref as storageRef,
-  uploadBytes,
-  getDownloadURL,
-} from 'firebase/storage'
 import { storage } from '@/app/plugins/firebase'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { showError, showWarning } from '@/shared/utils/toast'
@@ -56,6 +51,10 @@ import {
   createRecordingAttempt,
   captureFailure,
 } from '@/ux/UserTest/utils/recordingOutcome'
+import {
+  createMediaRecorder,
+  saveRecordedMedia,
+} from '@/ux/UserTest/utils/mediaRecording'
 import { stopMediaStream } from '@/shared/utils/screenShareCapture'
 
 const props = defineProps({
@@ -100,7 +99,6 @@ const startRecording = async () => {
   const testId = props.testId
   const attempt = createRecordingAttempt(taskIndex, 'webcam', emit)
   activeAttempt = attempt
-  const chunks = []
   let stream
   let recorder
   let stage = 'permission'
@@ -144,44 +142,24 @@ const startRecording = async () => {
       return true
     }
     stage = 'capture'
-    recorder = new MediaRecorder(stream)
-    mediaRecorder.value = recorder
-    recorder.ondataavailable = ({ data }) => {
-      if (data.size) chunks.push(data)
-    }
-    recorder.onerror = () => {
-      if (attempt.finish('failed', 'capture', 'captureError')) cleanup()
-    }
-    recorder.onstop = async () => {
-      if (!attempt.beginUpload()) return
-      emit('showLoading')
-      try {
-        const blob = new Blob(chunks, { type: 'video/webm' })
-        if (!blob.size) {
-          attempt.finish('failed', 'capture', 'emptyRecording')
-          return
-        }
-        const reference = storageRef(
+    recorder = createMediaRecorder({
+      stream,
+      blobType: 'video/webm',
+      attempt,
+      emit,
+      cleanup,
+      save: (blob) =>
+        saveRecordedMedia({
+          blob,
           storage,
-          `tests/${testId}/${userId}/task_${taskIndex}/video/${Date.now()}.webm`,
-        )
-        await uploadBytes(reference, blob)
-        const url = await getDownloadURL(reference)
-        await store.dispatch('updateTaskMediaUrl', {
+          storagePath: `tests/${testId}/${userId}/task_${taskIndex}/video/${Date.now()}.webm`,
+          store,
           taskIndex,
           mediaType: MEDIA_FIELD_MAP.webcam,
-          url,
-          size: blob.size,
           userId,
-        })
-        attempt.finish('completed', 'upload')
-      } catch {
-        attempt.finish('failed', 'upload', 'uploadError')
-      } finally {
-        cleanup()
-        emit('stopShowLoading')
-      }
-    }
+        }),
+    })
+    mediaRecorder.value = recorder
     recorder.start()
   } catch (error) {
     const failure = captureFailure(error, stage)

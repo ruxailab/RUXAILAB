@@ -56,6 +56,10 @@ import {
   createRecordingAttempt,
   captureFailure,
 } from '@/ux/UserTest/utils/recordingOutcome'
+import {
+  createMediaRecorder,
+  saveRecordedMedia,
+} from '@/ux/UserTest/utils/mediaRecording'
 import { stopMediaStream } from '@/shared/utils/screenShareCapture'
 
 const props = defineProps({
@@ -122,7 +126,6 @@ const startAudioRecording = async () => {
   const testId = props.testId
   const attempt = createRecordingAttempt(taskIndex, 'audio', emit)
   activeAttempt = attempt
-  const chunks = []
   let stream
   let recorder
   let stage = 'permission'
@@ -166,44 +169,25 @@ const startAudioRecording = async () => {
       return
     }
     stage = 'capture'
-    recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' })
-    mediaRecorder.value = recorder
-    recorder.ondataavailable = ({ data }) => {
-      if (data.size) chunks.push(data)
-    }
-    recorder.onerror = () => {
-      if (attempt.finish('failed', 'capture', 'captureError')) cleanup()
-    }
-    recorder.onstop = async () => {
-      if (!attempt.beginUpload()) return
-      emit('showLoading')
-      try {
-        const blob = new Blob(chunks, { type: 'audio/webm' })
-        if (!blob.size) {
-          attempt.finish('failed', 'capture', 'emptyRecording')
-          return
-        }
-        const reference = storageRef(
+    recorder = createMediaRecorder({
+      stream,
+      mimeType: 'audio/webm',
+      blobType: 'audio/webm',
+      attempt,
+      emit,
+      cleanup,
+      save: (blob) =>
+        saveRecordedMedia({
+          blob,
           storage,
-          `tests/${testId}/${userId}/task_${taskIndex}_evaluator/${Date.now()}.webm`,
-        )
-        await uploadBytes(reference, blob)
-        const url = await getDownloadURL(reference)
-        await store.dispatch('updateTaskMediaUrl', {
+          storagePath: `tests/${testId}/${userId}/task_${taskIndex}_evaluator/${Date.now()}.webm`,
+          store,
           taskIndex,
           mediaType: MEDIA_FIELD_MAP.audio,
-          url,
-          size: blob.size,
           userId,
-        })
-        attempt.finish('completed', 'upload')
-      } catch {
-        attempt.finish('failed', 'upload', 'uploadError')
-      } finally {
-        cleanup()
-        emit('stopShowLoading')
-      }
-    }
+        }),
+    })
+    mediaRecorder.value = recorder
     recorder.start()
     emit('recordingStarted', true)
   } catch (error) {
