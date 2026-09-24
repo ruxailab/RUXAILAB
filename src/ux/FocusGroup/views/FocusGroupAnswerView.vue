@@ -155,7 +155,7 @@
           </v-card>
 
           <v-card
-            v-if="observerNoteEntries.length"
+            v-if="selectedSession"
             variant="outlined"
             rounded="lg"
             class="mb-4"
@@ -170,11 +170,20 @@
             </v-card-title>
             <v-divider />
             <v-card-text>
+              <p
+                v-if="!observerNoteEntries.length"
+                class="text-body-2 text-medium-emphasis mb-0"
+              >
+                {{ $t('focusGroup.answers.noObserverNotes') }}
+              </p>
               <div
                 v-for="entry in observerNoteEntries"
                 :key="entry.userId"
                 class="mb-3"
               >
+                <div class="text-caption text-medium-emphasis mb-1">
+                  {{ entry.displayName }}
+                </div>
                 <div
                   v-for="(note, index) in entry.notes"
                   :key="index"
@@ -186,7 +195,27 @@
                     color="medium-emphasis"
                     class="mt-1"
                   />
-                  <span class="text-body-2">{{ note.text }}</span>
+                  <div>
+                    <div class="text-body-2" style="white-space: pre-wrap">
+                      {{ note.text }}
+                    </div>
+                    <div class="text-caption text-medium-emphasis mt-1">
+                      <span v-if="note.taskName && note.timestamp">
+                        {{
+                          $t('focusGroup.answers.observerNoteMetadata', {
+                            topic: note.taskName,
+                            time: formatNoteTime(note.timestamp),
+                          })
+                        }}
+                      </span>
+                      <span v-else-if="note.taskName">
+                        {{ note.taskName }}
+                      </span>
+                      <span v-else-if="note.timestamp">
+                        {{ formatNoteTime(note.timestamp) }}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </v-card-text>
@@ -264,6 +293,7 @@ import {
   sortSessionsByStartedAt,
   groupTopicMessagesByPrompt,
 } from '@/ux/FocusGroup/utils/sessionSummary'
+import { getObserverNoteEntries } from '@/ux/FocusGroup/utils/observerNotes'
 
 const store = useStore()
 const route = useRoute()
@@ -330,6 +360,13 @@ const participantCount = (session) =>
 const formatDate = (timestamp) =>
   timestamp ? new Date(timestamp).toLocaleString() : ''
 
+const formatNoteTime = (timestamp) =>
+  new Date(timestamp).toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  })
+
 const initial = (name) => (name ? name.trim().charAt(0).toUpperCase() : '?')
 
 // The facilitator's own chat (prompts, transitions, acknowledgments) stays in
@@ -345,9 +382,7 @@ const topicMessageGroups = (topicId) =>
 
 // notes: { [userId]: [{ text, timestamp, topicId }] }
 const observerNoteEntries = computed(() =>
-  Object.entries(selectedSession.value?.notes ?? {})
-    .filter(([, notes]) => Array.isArray(notes) && notes.length)
-    .map(([userId, notes]) => ({ userId, notes })),
+  getObserverNoteEntries(selectedSession.value?.notes),
 )
 
 // recordings: { [userId]: { [topicId]: { url, kind, sizeBytes, recordedAt } } }

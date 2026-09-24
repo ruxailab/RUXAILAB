@@ -2726,6 +2726,8 @@
       "empty": "Todavía no se ha realizado ninguna sesión.",
       "participantCount": "{count} participantes",
       "observerNotesTitle": "Notas del observador",
+      "noObserverNotes": "No se guardaron notas del observador para esta sesión.",
+      "observerNoteMetadata": "{topic} · {time}",
       "openDiscussion": "Discusión abierta",
       "facilitatorBadge": "Facilitador",
       "recordingsTitle": "Grabaciones",
@@ -2777,6 +2779,11 @@
       "roleFacilitator": "Facilitador",
       "roleParticipant": "Participante",
       "roleObserver": "Observador",
+      "elapsed": "Transcurrido",
+      "nicknameTitle": "Elige tu nombre para la sesión",
+      "nicknameHint": "Este nombre se mostrará a todos en la sesión en lugar del correo de tu cuenta.",
+      "nicknameLabel": "Apodo",
+      "continueToSession": "Continuar a la sesión",
       "observerModeHint": "Modo observador: sigues la discusión sin participar.",
       "notAMemberTitle": "No formas parte de esta sesión",
       "notAMemberHint": "Esta sesión se está ejecutando para un grupo específico de personas y tu cuenta no está en su lista. Consulta con el facilitador si crees que es un error.",
@@ -3607,8 +3614,9 @@
     },
     "staff": {
       "title": "Personal",
-      "description": "Selecciona las personas que facilitarán u observarán esta sesión.",
+      "description": "Elige al propietario del estudio o a personas que ya aparezcan en Personal. Añade primero al resto desde el estudio.",
       "selectPlaceholder": "Selecciona miembros del personal",
+      "noAvailable": "No hay personal del estudio coincidente. Añádelo primero desde la página Personal del estudio.",
       "added": "Personal añadido",
       "noSelected": "No hay personal seleccionado",
       "roles": {
@@ -3618,7 +3626,7 @@
     },
     "participants": {
       "title": "Participantes",
-      "description": "Añade los participantes invitados a esta sesión.",
+      "description": "Elige participantes del estudio o escribe abajo el correo de cualquier invitado.",
       "selectPlaceholder": "Selecciona participantes",
       "emailPlaceholder": "Escribe un correo electrónico y pulsa Enter",
       "added": "Participantes añadidos",
@@ -3669,6 +3677,7 @@
     "error": {
       "participantLimitReached": "Se ha alcanzado el límite de participantes para esta sesión.",
       "participantAlreadyAdded": "Este participante ya ha sido añadido.",
+      "memberAlreadyAssigned": "Esta persona no puede ser personal y participante de la sesión a la vez.",
       "createFailed": "No se pudo guardar la sesión.",
       "sendMessageFailed": "No se pudo enviar el mensaje.",
       "errorDelete": "No se pudo eliminar la sesión.",
@@ -3709,6 +3718,7 @@
       "goToSession": "Ir a la sesión",
       "title": "Título",
       "start": "Inicio",
+      "status": "Estado",
       "staff": "Personal",
       "participants": "Participantes",
       "actions": "Acciones"
@@ -3724,6 +3734,12 @@
     "empty": {
       "title": "No se encontraron sesiones",
       "description": "Crea una sesión para comenzar a invitar personal y participantes."
+    },
+    "status": {
+      "upcoming": "Próxima",
+      "today": "Hoy",
+      "completed": "Completada",
+      "unknown": "Desconocido"
     }
   }
 }

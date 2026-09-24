@@ -2818,6 +2818,8 @@
       "empty": "No sessions have been run yet.",
       "participantCount": "{count} participants",
       "observerNotesTitle": "Observer notes",
+      "noObserverNotes": "No observer notes were saved for this session.",
+      "observerNoteMetadata": "{topic} · {time}",
       "openDiscussion": "Open discussion",
       "facilitatorBadge": "Facilitator",
       "recordingsTitle": "Recordings",
@@ -2869,6 +2871,11 @@
       "roleFacilitator": "Facilitator",
       "roleParticipant": "Participant",
       "roleObserver": "Observer",
+      "elapsed": "Elapsed",
+      "nicknameTitle": "Choose your session name",
+      "nicknameHint": "This name is shown to everyone in this session instead of your account email.",
+      "nicknameLabel": "Nickname",
+      "continueToSession": "Continue to session",
       "observerModeHint": "Observer mode — you're following the discussion without taking part.",
       "notAMemberTitle": "You're not part of this session",
       "notAMemberHint": "This session is running for a specific group of people, and your account isn't on its list. Check with the facilitator if you think this is a mistake.",
@@ -3672,8 +3679,9 @@
     },
     "staff": {
       "title": "Staff",
-      "description": "Select the people who will run or observe this session.",
+      "description": "Choose the study owner or people already listed under Staff. Add other staff to the study first.",
       "selectPlaceholder": "Select staff members",
+      "noAvailable": "No matching study staff. Add staff from the study's Staff page first.",
       "added": "Added staff",
       "noSelected": "No staff selected",
       "roles": {
@@ -3683,7 +3691,7 @@
     },
     "participants": {
       "title": "Participants",
-      "description": "Add the participants invited to this session.",
+      "description": "Choose study participants or enter any invitee's email below.",
       "selectPlaceholder": "Select participants",
       "emailPlaceholder": "Type an email address and press Enter",
       "added": "Added participants",
@@ -3734,6 +3742,7 @@
     "error": {
       "participantLimitReached": "The participant limit for this session has been reached.",
       "participantAlreadyAdded": "This participant has already been added.",
+      "memberAlreadyAssigned": "This person cannot be both session staff and a participant.",
       "createFailed": "Failed to save the session.",
       "sendMessageFailed": "Failed to send the message.",
       "errorDelete": "Failed to delete the session.",
@@ -3774,6 +3783,7 @@
       "goToSession": "Go to session",
       "title": "Title",
       "start": "Start",
+      "status": "Status",
       "staff": "Staff",
       "participants": "Participants",
       "actions": "Actions"
@@ -3789,6 +3799,12 @@
     "empty": {
       "title": "No sessions found",
       "description": "Create a session to start inviting staff and participants."
+    },
+    "status": {
+      "upcoming": "Upcoming",
+      "today": "Today",
+      "completed": "Completed",
+      "unknown": "Unknown"
     }
   }
 }

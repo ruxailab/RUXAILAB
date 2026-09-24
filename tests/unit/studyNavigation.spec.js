@@ -3,6 +3,7 @@ import {
   buildStudyNavigator,
   getAcceptedInvitationDestination,
   getCommunityStudyDestination,
+  getInviteAcceptanceDestination,
   getStudyRouteBase,
   getTestViewAccessRedirect,
 } from '@/shared/utils/studyNavigation'
@@ -123,6 +124,32 @@ describe('study navigation', () => {
       name: 'TestView',
       params: { id: study.id, token: user.id },
     })
+  })
+
+  it('routes a Focus Group participant invite acceptance to the session UI', () => {
+    const study = studyWith('FOCUS_GROUP')
+
+    expect(
+      getInviteAcceptanceDestination({
+        study,
+        user: { id: 'participant', accessLevel: 1 },
+        membershipType: 'participant',
+      }),
+    ).toEqual({
+      name: 'FocusGroupSessionView',
+      params: { id: study.id },
+    })
+  })
+
+  it('preserves the generic participant handoff for non-Focus Group studies', () => {
+    const study = studyWith('USER')
+    expect(
+      getInviteAcceptanceDestination({
+        study,
+        user: { id: 'participant', accessLevel: 1 },
+        membershipType: 'participant',
+      }),
+    ).toEqual({ name: 'TestView', params: { id: study.id } })
   })
 
   it('sends accepted viewer roles to their manager dashboards', () => {

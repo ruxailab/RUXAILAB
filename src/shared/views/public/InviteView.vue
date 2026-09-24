@@ -135,6 +135,7 @@ import {
   getMethodManagerView,
   normalizeStudyType,
 } from '@/shared/constants/methodDefinitions'
+import { getInviteAcceptanceDestination } from '@/shared/utils/studyNavigation'
 
 const { t } = useI18n()
 
@@ -182,19 +183,17 @@ const acceptInvite = async () => {
       membershipType: invite.value.membershipType,
     })
 
-    const testId = result.study.id
-
     if (invite.value.membershipType === 'participant') {
-      router.push({
-        name: 'TestView',
-        params: {
-          id: testId,
-        },
+      const destination = getInviteAcceptanceDestination({
+        study: result.study,
+        user: user.value,
+        membershipType: invite.value.membershipType,
       })
-
+      if (destination) router.push(destination)
       return
     }
 
+    const testId = result.study.id
     const normalizedTestType = normalizeStudyType(result.study.testType)
 
     const methodView = getMethodManagerView(

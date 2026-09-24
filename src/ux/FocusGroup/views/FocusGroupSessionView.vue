@@ -35,6 +35,38 @@
     </div>
   </v-container>
 
+  <v-container
+    v-else-if="!nicknameConfirmed"
+    class="d-flex align-center justify-center"
+    style="height: 100vh"
+  >
+    <v-card class="pa-6" max-width="440" width="100%" rounded="lg">
+      <v-icon icon="mdi-account-edit-outline" color="primary" size="32" />
+      <h1 class="text-h6 mt-3">{{ t('focusGroup.session.nicknameTitle') }}</h1>
+      <p class="text-body-2 text-medium-emphasis mt-2">
+        {{ t('focusGroup.session.nicknameHint') }}
+      </p>
+      <v-text-field
+        v-model="sessionNickname"
+        :label="t('focusGroup.session.nicknameLabel')"
+        autocomplete="nickname"
+        maxlength="40"
+        counter="40"
+        autofocus
+        class="mt-4"
+        @keydown.enter.prevent="confirmNickname"
+      />
+      <v-btn
+        color="primary"
+        block
+        :disabled="!sessionNickname.trim()"
+        @click="confirmNickname"
+      >
+        {{ t('focusGroup.session.continueToSession') }}
+      </v-btn>
+    </v-card>
+  </v-container>
+
   <!-- Lobby: branded welcome shown before the session is live and after it ends -->
   <SessionLobby
     v-else-if="!isLive"
@@ -106,6 +138,11 @@
         @pause="onTimerPause"
         @reset="onTimerReset"
       />
+      <div v-if="startedAt" class="fg-session-elapsed me-2">
+        <v-icon size="16">mdi-clock-time-four-outline</v-icon>
+        <span>{{ t('focusGroup.session.elapsed') }}</span>
+        <span>{{ elapsedSessionDisplay }}</span>
+      </div>
       <v-chip
         :color="roleColor"
         variant="tonal"
@@ -568,6 +605,7 @@
             <ObservatorNotes
               v-model="observerNotes"
               :context-label="currentTopic?.title || ''"
+              :context-id="currentTopicId || ''"
               @save="onSaveNotes"
             />
           </div>
@@ -592,7 +630,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter, onBeforeRouteUpdate } from 'vue-router'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
@@ -603,6 +641,13 @@ import { useLiveKitRoom } from '@/shared/components/videoCall/composables/useLiv
 import { useFocusGroupSession } from '@/ux/FocusGroup/composables/useFocusGroupSession'
 import { useSpeakingTime } from '@/ux/FocusGroup/composables/useSpeakingTime'
 import { computeParticipation } from '@/ux/FocusGroup/utils/participation'
+import {
+  canEnterFocusGroupSession,
+  formatElapsedSessionTime,
+  isFocusGroupParticipant,
+  normalizeSessionNickname,
+} from '@/ux/FocusGroup/utils/sessionRoles'
+import { mergeFinalObserverNotes } from '@/ux/FocusGroup/utils/observerNotes'
 import SessionLobby from '@/ux/FocusGroup/components/session/SessionLobby.vue'
 import SessionVideoStage from '@/ux/FocusGroup/components/session/SessionVideoStage.vue'
 import TopicPanel from '@/ux/FocusGroup/components/session/TopicPanel.vue'
@@ -659,6 +704,7 @@ onBeforeRouteUpdate((to) => {
 })
 const {
   status,
+  startedAt,
   currentTopicIndex,
   participants,
   messages,
@@ -683,6 +729,7 @@ const {
   presentStimulus,
   clearStimulus,
   saveNotes,
+  getObserverNotes,
   playTimer,
   pauseTimer,
   resetTimer,
@@ -696,6 +743,16 @@ const {
 } = useFocusGroupSession(roomId)
 
 const user = computed(() => store.getters.user)
+const acceptedStudyParticipant = ref(null)
+const sessionNickname = ref('')
+const nicknameConfirmed = ref(false)
+const confirmNickname = () => {
+  const nickname = normalizeSessionNickname(sessionNickname.value)
+  if (!nickname) return
+  sessionNickname.value = nickname
+  nicknameConfirmed.value = true
+  enterSession()
+}
 const test = computed(() => store.getters.test)
 
 const sending = ref(false)
@@ -768,6 +825,19 @@ const activePromptText = computed(() =>
 const timerFallbackMs = computed(
   () => (currentTopic.value?.durationMinutes || 0) * 60000,
 )
+const clockNow = ref(Date.now())
+let sessionClockInterval = null
+onMounted(() => {
+  sessionClockInterval = setInterval(() => {
+    clockNow.value = Date.now()
+  }, 1000)
+})
+onUnmounted(() => {
+  if (sessionClockInterval) clearInterval(sessionClockInterval)
+})
+const elapsedSessionDisplay = computed(() => {
+  return formatElapsedSessionTime(startedAt.value, clockNow.value)
+})
 // Only use the shared timer when it belongs to the current topic; otherwise the
 // display falls back to the topic's full planned duration (paused).
 const timerForTopic = computed(() =>
@@ -791,6 +861,12 @@ const accessLevel = computed(() => {
   if (currentUser.accessLevel === 0) return ACCESS_LEVEL.ADMIN
   if (currentTest?.testAdmin?.userDocId === currentUser.id)
     return ACCESS_LEVEL.ADMIN
+  // Participant invite links grant study-level membership in the participants
+  // subcollection, not in `cooperators`. Load that accepted record so the
+  // legacy/open Focus Group room doesn't mislabel invitees as observers.
+  if (acceptedStudyParticipant.value) {
+    return acceptedStudyParticipant.value.accessLevel ?? ACCESS_LEVEL.EVALUATOR
+  }
   const coop = currentTest?.cooperators?.find(
     (c) => c.userDocId === currentUser.id,
   )
@@ -829,12 +905,12 @@ onMounted(async () => {
 // email (participantEmails is a plain string array, so it's wrapped first)?
 const namedInRoster = (list) => {
   const uid = user.value?.id || user.value?.uid
-  const email = (user.value?.email || '').toLowerCase()
+  const email = (user.value?.email || '').trim().toLowerCase()
   return (list || []).some((member) => {
     const entry = typeof member === 'string' ? { email: member } : member
     return (
       (entry?.userDocId && entry.userDocId === uid) ||
-      (entry?.email && email && entry.email.toLowerCase() === email)
+      (entry?.email && email && entry.email.trim().toLowerCase() === email)
     )
   })
 }
@@ -855,10 +931,10 @@ const isRosterParticipant = computed(
 const sessionStaffRole = computed(() => {
   const entry = (activeSession.value?.staff || []).find((member) => {
     const uid = user.value?.id || user.value?.uid
-    const email = (user.value?.email || '').toLowerCase()
+    const email = (user.value?.email || '').trim().toLowerCase()
     return (
       (member?.userDocId && member.userDocId === uid) ||
-      (member?.email && email && member.email.toLowerCase() === email)
+      (member?.email && email && member.email.trim().toLowerCase() === email)
     )
   })
   return entry?.role ?? null
@@ -869,10 +945,14 @@ const isFacilitator = computed(
     accessLevel.value === ACCESS_LEVEL.ADMIN ||
     sessionStaffRole.value === 'FACILITATOR',
 )
-const isParticipant = computed(
-  () =>
-    sessionStaffRole.value !== 'OBSERVER' &&
-    (accessLevel.value === ACCESS_LEVEL.EVALUATOR || isRosterParticipant.value),
+const isParticipant = computed(() =>
+  isFocusGroupParticipant({
+    isFacilitator: isFacilitator.value,
+    hasScheduledSession: !!sessionId,
+    isSessionParticipant: isRosterParticipant.value,
+    isAcceptedStudyParticipant: !!acceptedStudyParticipant.value,
+    accessLevel: accessLevel.value,
+  }),
 )
 // Anyone who is neither running the session nor taking part in it observes it:
 // a dedicated OBSERVATOR cooperator, but also any signed-in viewer who opens
@@ -880,6 +960,13 @@ const isParticipant = computed(
 // "Observer" badge and the observer tools (notes pad, observing strip) always
 // agree instead of the badge showing while the tools stay hidden.
 const isObserver = computed(() => !isFacilitator.value && !isParticipant.value)
+// LiveKit media permissions and private backroom rules must follow this
+// session's resolved role, not the user's study-wide cooperator role.
+const sessionAccessLevel = computed(() => {
+  if (isFacilitator.value) return ACCESS_LEVEL.ADMIN
+  if (isParticipant.value) return ACCESS_LEVEL.EVALUATOR
+  return ACCESS_LEVEL.OBSERVATOR
+})
 
 // Only the actual study owner (or a platform super-admin) bypasses the
 // roster unconditionally — the "selected roster only" contract still applies
@@ -1098,8 +1185,8 @@ const {
 } = useLiveKitRoom({
   testId: effectiveRoomId,
   userId: computed(() => user.value?.id),
-  displayName: computed(() => user.value?.name || user.value?.email || ''),
-  accessLevel,
+  displayName: computed(() => sessionNickname.value),
+  accessLevel: sessionAccessLevel,
   cooperators: computed(() => test.value?.cooperators || []),
   // Attendees join a Focus Group session muted/camera-off and opt in,
   // rather than immediately broadcasting to everyone on connect.
@@ -1112,7 +1199,7 @@ const {
 const { speakingMs } = useSpeakingTime(callRoom)
 
 const localVideoState = computed(() => ({
-  name: user.value?.name || user.value?.email?.split('@')[0] || '',
+  name: sessionNickname.value,
   isObservator: isCallObservator.value,
   isCameraEnabled: isCameraEnabled.value,
   isMicrophoneEnabled: isMicrophoneEnabled.value,
@@ -1143,6 +1230,7 @@ const shouldConnectVideo = computed(
   () =>
     videoEnabled.value &&
     isLive.value &&
+    nicknameConfirmed.value &&
     !needsConsent.value &&
     !!user.value?.id &&
     (!sessionId || rosterLoaded.value) &&
@@ -1300,7 +1388,7 @@ const onCallFacilitator = () => {
     groupId: myBreakoutGroupId.value,
     help: {
       requestedBy: user.value?.id ?? '',
-      name: user.value?.name || user.value?.email || '',
+      name: sessionNickname.value,
       at: Date.now(),
     },
   })
@@ -1375,7 +1463,7 @@ const onSendBackroom = async (text) => {
   try {
     await sendBackroomMessage({
       userId: user.value?.id,
-      name: user.value?.name || user.value?.email || '',
+      name: sessionNickname.value,
       text: text.trim(),
     })
   } finally {
@@ -1400,9 +1488,32 @@ const onNext = () => {
     goToTopic(currentTopicIndex.value + 1)
 }
 const onEnd = async () => {
-  await endSession()
-  const record = { ...toSessionRecord(), endedAt: Date.now() }
   try {
+    // Flush the observer's latest local edit before taking the final snapshot;
+    // RTDB's value listener can otherwise lag behind the write by a tick.
+    const userId = user.value?.id
+    if (userId && isObserver.value) {
+      observerNotes.value = observerNotes.value.map((note) => ({
+        ...note,
+        observerName: sessionNickname.value,
+      }))
+      await saveNotes({ userId, notes: observerNotes.value })
+    }
+    await endSession()
+    // Read the notes node from RTDB itself instead of relying on this
+    // facilitator's subscription callback having delivered every observer's
+    // last write before the session is finalized.
+    const persistedNotes = await getObserverNotes().catch(() => ({}))
+    const finalNotes = mergeFinalObserverNotes(notes.value, persistedNotes, {
+      userId,
+      isObserver: isObserver.value,
+      observerNotes: observerNotes.value,
+    })
+    const record = {
+      ...toSessionRecord(),
+      notes: finalNotes,
+      endedAt: Date.now(),
+    }
     await store.dispatch('endFocusGroupSession', {
       answersDocId: test.value?.answersDocId,
       session: record,
@@ -1427,7 +1538,7 @@ const onSend = async (text) => {
     await sendMessage({
       topicId: activeChatTopicId.value,
       userId: user.value?.id,
-      name: user.value?.name || user.value?.email || '',
+      name: sessionNickname.value,
       text: text.trim(),
     })
   } finally {
@@ -1461,9 +1572,21 @@ watch(
   },
   { immediate: true },
 )
-const onSaveNotes = () => {
+const onSaveNotes = async () => {
   if (!user.value?.id) return
-  saveNotes({ userId: user.value.id, notes: observerNotes.value })
+  try {
+    const notesWithNickname = observerNotes.value.map((note) => ({
+      ...note,
+      observerName: sessionNickname.value,
+    }))
+    observerNotes.value = notesWithNickname
+    await saveNotes({ userId: user.value.id, notes: notesWithNickname })
+  } catch {
+    store.commit('SET_TOAST', {
+      message: t('errors.globalError'),
+      type: 'error',
+    })
+  }
 }
 
 const goToDashboard = () => {
@@ -1477,7 +1600,15 @@ const joined = ref(false)
 
 // Idempotent, so presence is only ever claimed once per mount.
 const enterSession = async () => {
-  if (joined.value || !user.value?.id) return
+  if (
+    joined.value ||
+    !nicknameConfirmed.value ||
+    !canEnterFocusGroupSession({
+      userId: user.value?.id,
+      nickname: sessionNickname.value,
+    })
+  )
+    return
   // Wait for a scheduled session's roster to resolve, then only claim presence
   // if this viewer is on it — a blocked participant never appears in the room.
   if (sessionId && !rosterLoaded.value) return
@@ -1485,9 +1616,9 @@ const enterSession = async () => {
   joined.value = true
   await joinPresence({
     userId: user.value?.id,
-    name: user.value?.name || user.value?.email || '',
+    name: sessionNickname.value,
     role: roleLabel.value,
-    accessLevel: accessLevel.value,
+    accessLevel: sessionAccessLevel.value,
   })
 }
 // The roster loads a beat after mount, so the mount-time enterSession() may
@@ -1549,8 +1680,16 @@ watch(
 
 onMounted(async () => {
   await store.dispatch('getStudy', { id: studyId })
+  if (user.value?.id) {
+    acceptedStudyParticipant.value = await store
+      .dispatch('getAcceptedStudyParticipant', {
+        studyId,
+        userId: user.value.id,
+      })
+      .catch(() => null)
+  }
   subscribe()
-  // Presence is claimed on arrival so the lobby can show who is waiting.
+  // Presence is claimed once the attendee has chosen a session nickname.
   await enterSession()
 })
 </script>
@@ -1597,6 +1736,15 @@ onMounted(async () => {
   gap: 6px;
   font-size: 0.8rem;
   color: rgba(var(--v-theme-on-surface), 0.6);
+}
+
+.fg-session-elapsed {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  color: rgba(var(--v-theme-on-surface), 0.72);
 }
 
 .fg-meta-sep {

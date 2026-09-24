@@ -31,24 +31,34 @@ service cloud.firestore {
       return isSuperAdmin() || isOwner(study) || roleFor(study) == 0;
     }
 
-    function isManager(study) {
-      return roleFor(study) == 4;
+    function canReadStudy(study) {
+      let role = roleFor(study);
+      let type = study.get('testType', '');
+      return signedIn() && (study.get('isPublic', false) == true ||
+        isAdmin(study) || role == 4 ||
+        (type == 'USER' && role in [3, 5]) ||
+        (type == 'FOCUS_GROUP' && role in [1, 3]) ||
+        (type in ['HEURISTIC', 'CARD_SORTING'] && role in [1, 2]));
+    }
+
+    function isSessionMember(session) {
+      let email = request.auth.token.get('email', '');
+      return signedIn() && (
+        request.auth.uid in session.get('staffIds', []) ||
+        request.auth.uid in session.get('participantIds', []) ||
+        (email != '' && email in session.get('staffEmails', [])) ||
+        (email != '' && email in session.get('participantEmails', []))
+      );
+    }
+
+    function isStudySessionAdmin(studyId) {
+      return signedIn() && isAdmin(
+        get(/databases/$(database)/documents/tests/$(studyId)).data
+      );
     }
 
     function canViewLogs(study) {
       return isAdmin(study);
-    }
-
-    function managerChangedOnlyStudyContent() {
-      return request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-        'testTitle',
-        'testDescription',
-        'testStructure',
-        'testOptions',
-        'studyConclusion',
-        'evaluatorInfo',
-        'updateDate'
-      ]);
     }
 
     match /users/{userId} {
@@ -72,14 +82,17 @@ service cloud.firestore {
       allow create: if signedIn() &&
         request.resource.data.testAdmin.userDocId == request.auth.uid &&
         request.resource.data.studyRoleMap is map;
-      allow read: if true;
-      allow update: if isAdmin(resource.data) ||
-        (isManager(resource.data) && managerChangedOnlyStudyContent());
+      allow read: if canReadStudy(resource.data);
+      // RBAC changes and study edits go through trusted callable operations.
+      // In particular, a client must not be able to promote itself by editing
+      // studyRoleMap, even if it currently has a Manager/Admin role.
+      allow update: if false;
       allow delete: if isAdmin(resource.data);
 
       match /sessions/{sessionId} {
-        allow write: if signedIn();
-        allow read: if true;
+        allow read: if isStudySessionAdmin(studyId) ||
+          isSessionMember(resource.data);
+        allow create, update, delete: if isStudySessionAdmin(studyId);
       }
 
       match /participants/{participantId} {
@@ -123,20 +136,54 @@ service cloud.firestore {
         ).data;
       }
 
+      function answerRoleCanRead(study) {
+        let role = roleFor(study);
+        let type = study.get('testType', '');
+        return isAdmin(study) || role == 4 ||
+          (type == 'USER' && role == 3) ||
+          (type == 'FOCUS_GROUP' && role == 3) ||
+          (type in ['HEURISTIC', 'CARD_SORTING'] && role in [1, 2]);
+      }
+
+      function participantAnswerChanged(field) {
+        let before = resource.data.get(field, {});
+        let after = request.resource.data.get(field, {});
+        let oldEntry = before.get(request.auth.uid, {});
+        return after is map && before is map &&
+          after.diff(before).affectedKeys().hasOnly([request.auth.uid]) &&
+          oldEntry.get('submitted', false) != true;
+      }
+
+      function canUpdateAnswerData() {
+        let study = answerStudy();
+        let role = roleFor(study);
+        let changed = request.resource.data.diff(resource.data).affectedKeys();
+        return signedIn() && (
+          (changed.hasOnly(['sessions', 'themes']) && isAdmin(study)) ||
+          (changed.hasOnly(['taskAnswers']) &&
+            ((study.get('testType', '') == 'USER' && role == 5 &&
+                participantAnswerChanged('taskAnswers')) ||
+              (study.get('testType', '') == 'USER' &&
+                study.get('subType', '') == 'USER_MODERATED' && role == 3 &&
+                participantAnswerChanged('taskAnswers')))) ||
+          (changed.hasOnly(['heuristicAnswers']) &&
+            (study.get('testType', '') in ['HEURISTIC', 'CARD_SORTING']) &&
+            role == 1 && participantAnswerChanged('heuristicAnswers')) ||
+          (changed.hasOnly(['cardSortingAnswers']) &&
+            study.get('testType', '') == 'CARD_SORTING' && role == 1 &&
+            participantAnswerChanged('cardSortingAnswers')) ||
+          (changed.hasOnly(['studyId']) && resource.data.studyId == null &&
+            request.resource.data.studyId is string &&
+            exists(/databases/$(database)/documents/tests/$(request.resource.data.studyId)) &&
+            isAdmin(get(/databases/$(database)/documents/tests/$(request.resource.data.studyId)).data))
+        );
+      }
+
       allow create: if signedIn() &&
         request.resource.data.createdBy == request.auth.uid &&
         request.resource.data.studyId == null;
-      allow read: if true;
-      allow update: if signedIn() &&
-        request.resource.data.diff(resource.data).affectedKeys()
-          .hasOnly([
-            'taskAnswers',
-            'heuristicAnswers',
-            'cardSortingAnswers',
-            'studyId',
-            'sessions',
-            'themes'
-      		]);
+      allow read: if signedIn() && answerRoleCanRead(answerStudy());
+      allow update: if canUpdateAnswerData();
       allow delete: if (
         signedIn() &&
         resource.data.studyId == null &&
@@ -182,8 +229,8 @@ service cloud.firestore {
       allow read: if signedIn();
     }
     match /{path=**}/sessions/{sessionId} {
-      allow write: if signedIn();
-      allow read: if true;
+      allow read: if isSessionMember(resource.data);
+      allow write: if false;
     }
   }
 }

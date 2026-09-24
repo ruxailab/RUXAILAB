@@ -2,6 +2,7 @@ import { ref, computed, onUnmounted } from 'vue'
 import {
   ref as dbRef,
   onValue,
+  get,
   set,
   update,
   push,
@@ -244,6 +245,12 @@ export function useFocusGroupSession(roomId) {
     await set(notesRef, Array.isArray(noteList) ? noteList : [])
   }
 
+  async function getObserverNotes() {
+    const notesRef = dbRef(database, `${rootPath}/notes`)
+    const snap = await get(notesRef)
+    return snap.val() || {}
+  }
+
   // --- Topic timer (facilitator-controlled countdown) ---
   const timerRef = () => dbRef(database, `${rootPath}/timer`)
 
@@ -403,6 +410,7 @@ export function useFocusGroupSession(roomId) {
     presentStimulus,
     clearStimulus,
     saveNotes,
+    getObserverNotes,
     playTimer,
     pauseTimer,
     resetTimer,
