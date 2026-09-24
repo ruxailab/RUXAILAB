@@ -555,3 +555,53 @@ describe('recording queue policy', () => {
     expect(queueStore.mutate).not.toHaveBeenCalled()
   })
 })
+
+describe('task start observations', () => {
+  it('queues a canonical task reference at its captured occurrence time', async () => {
+    const submitBatch = jest.fn(({ batchId }) => ({ status: 'accepted', batchId }))
+    const ids = ['start-event', 'start-batch']
+    const logger = createStudyLogger({
+      ownerUid: 'participant',
+      studyId: 'study-1',
+      submitBatch,
+      queueStore: createQueueStore(),
+      createId: () => ids.shift(),
+    })
+    const occurredAt = '2026-09-24T10:15:30.000Z'
+
+    await logger.record('TASK_STARTED', { taskRef: 'task:0' }, occurredAt)
+    await logger.flush()
+
+    expect(submitBatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        events: [
+          expect.objectContaining({
+            eventType: 'TASK_STARTED',
+            occurredAt,
+            details: { taskRef: 'task:0' },
+          }),
+        ],
+      }),
+    )
+  })
+
+  it.each([
+    { taskRef: 'task:-1' },
+    { taskRef: 'task:01' },
+    { taskRef: 'task:9007199254740992' },
+    { taskRef: 'task:0', taskType: 'sus' },
+    { taskRef: 'task:0', answer: 'private response value' },
+    {},
+  ])('drops invalid task-start details %j before storage', async (details) => {
+    const queueStore = { mutate: jest.fn() }
+    const logger = createStudyLogger({
+      ownerUid: 'participant',
+      studyId: 'study-1',
+      queueStore,
+      submitBatch: jest.fn(),
+    })
+
+    await expect(logger.record('TASK_STARTED', details)).resolves.toBeNull()
+    expect(queueStore.mutate).not.toHaveBeenCalled()
+  })
+})

@@ -143,6 +143,35 @@ describe('study logging runtime', () => {
     expect(logger.record).toHaveBeenCalledWith('STUDY_VIEW_OPENED', {})
   })
 
+  it('records task entry only after consent using the captured occurrence time', async () => {
+    const { runtime, logger } = createHarness({ consentRequired: true })
+    const occurredAt = '2026-09-24T10:15:30.000Z'
+
+    await runtime.taskStarted(0, occurredAt)
+    expect(logger.record).not.toHaveBeenCalled()
+
+    await runtime.consentAccepted()
+    await runtime.taskStarted(0, occurredAt)
+
+    expect(logger.record).toHaveBeenCalledWith(
+      'TASK_STARTED',
+      { taskRef: 'task:0' },
+      occurredAt,
+    )
+    expect(logger.flush).toHaveBeenCalledWith()
+    runtime.destroy()
+  })
+
+  it('contains task-start queue failures and rejects invalid task indices', async () => {
+    const { runtime, logger } = createHarness()
+    logger.record.mockRejectedValueOnce(new Error('queue unavailable'))
+
+    await expect(runtime.taskStarted(0, '2026-09-24T10:15:30.000Z')).resolves.toBeNull()
+    await expect(runtime.taskStarted(-1, '2026-09-24T10:15:30.000Z')).resolves.toBeNull()
+    expect(logger.record).toHaveBeenCalledTimes(1)
+    runtime.destroy()
+  })
+
   it('respects queued-event backoff during periodic retries', async () => {
     const { logger, runInterval } = createHarness()
 

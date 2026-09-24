@@ -520,6 +520,7 @@
                 }
               }
             "
+            @task-started="handleTaskStarted"
           />
 
           <PostTestStep
@@ -668,6 +669,9 @@ const recordingOutcomes = createRecordingOutcomeTracker((details) =>
 const handleRecordingResult = (details) => {
   if (user.value?.id && localTestAnswer.consentCompleted)
     recordingOutcomes.observe(details)
+}
+const handleTaskStarted = (occurredAt) => {
+  void initializeStudyLogging()?.taskStarted(taskIndex.value, occurredAt)
 }
 const handleLoggingFocusin = (event) =>
   initializeStudyLogging()?.editHandlers.focusin(event)

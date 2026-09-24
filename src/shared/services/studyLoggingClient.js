@@ -112,6 +112,19 @@ export const sweepExpiredStudyLogging = async (
 
 const sanitizeDetails = (eventType, details) => {
   if (eventType === 'STUDY_VIEW_OPENED') return {}
+  if (eventType === 'TASK_STARTED') {
+    const keys = Object.keys(details || {})
+    const match = /^task:(0|[1-9]\d*)$/.exec(details?.taskRef || '')
+    if (
+      keys.length !== 1 ||
+      keys[0] !== 'taskRef' ||
+      !match ||
+      !Number.isSafeInteger(Number(match[1]))
+    ) {
+      return null
+    }
+    return { taskRef: details.taskRef }
+  }
   if (eventType === 'MEDIA_RECORDING_OUTCOME') {
     if (
       typeof details?.taskRef !== 'string' ||

@@ -234,6 +234,38 @@ export const createStudyLoggingRuntime = ({
         return null
       }
     },
+    async taskStarted(taskIndex, occurredAt) {
+      if (
+        !ownerUid ||
+        !studyId ||
+        !Number.isSafeInteger(taskIndex) ||
+        taskIndex < 0
+      ) {
+        return null
+      }
+      if (consentRequired) {
+        if (!consentPending || !consentRequest) return null
+        const acknowledgement = await consentRequest
+        if (!acknowledgement || consentRequired) return null
+      }
+      try {
+        const eventId = await logger.record(
+          'TASK_STARTED',
+          { taskRef: `task:${taskIndex}` },
+          occurredAt,
+        )
+        if (eventId) {
+          try {
+            void Promise.resolve(logger.flush()).catch(() => {})
+          } catch {
+            // Logging remains fail-open for the active task workflow.
+          }
+        }
+        return eventId
+      } catch {
+        return null
+      }
+    },
     taskFinished(taskIndex) {
       return finishFlushAndRequest('TASK_ATTEMPT_FINISHED', `task:${taskIndex}`)
     },

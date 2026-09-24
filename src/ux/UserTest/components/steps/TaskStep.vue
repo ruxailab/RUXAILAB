@@ -620,6 +620,7 @@ const emit = defineEmits([
   'update:tamAnswers',
   'update:sartAnswers',
   'startTask',
+  'taskStarted',
   'tip-pressed',
 ])
 
@@ -853,7 +854,9 @@ async function proceedWithTaskStart({ skipScreen = false } = {}) {
       return
     }
 
+    const enteredActiveStage = stage.value !== 3
     stage.value = 3
+    if (enteredActiveStage) emit('taskStarted', new Date().toISOString())
     taskStartTime = Date.now()
     timerInterval = setInterval(updateElapsedTime, 1000)
     nextTick(() => {

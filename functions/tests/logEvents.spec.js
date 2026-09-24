@@ -945,6 +945,110 @@ describe('unmoderated task and recording metadata', () => {
       },
     ],
   })
+  const taskStartedBatch = (batchId, eventId, details) => ({
+    ...viewBatch(batchId, eventId),
+    events: [
+      {
+        ...viewBatch().events[0],
+        eventId,
+        eventType: 'TASK_STARTED',
+        details,
+      },
+    ],
+  })
+  it('accepts an in-range task start with trusted task type and idempotent replay', async () => {
+    await configure({ taskType: 'nasa-tlx' })
+    await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
+    const batch = taskStartedBatch('start-batch', 'start-event', {
+      taskRef: 'task:0',
+    })
+
+    await expect(
+      logEvents.run(participantRequest(batch)),
+    ).resolves.toEqual({ status: 'accepted', batchId: 'start-batch' })
+    await expect(
+      logEvents.run(participantRequest(batch)),
+    ).resolves.toEqual({ status: 'duplicate', batchId: 'start-batch' })
+
+    const started = (await logs()).find(
+      (event) => event.eventType === 'TASK_STARTED',
+    )
+    expect(started).toMatchObject({
+      eventType: 'TASK_STARTED',
+      source: 'study-client',
+      timeQuality: 'client-unverified',
+      details: { taskRef: 'task:0', taskType: 'nasa-tlx' },
+    })
+    expect(started.details).toEqual({ taskRef: 'task:0', taskType: 'nasa-tlx' })
+    expect((await logs()).filter((event) => event.eventType === 'TASK_STARTED'))
+      .toHaveLength(1)
+  })
+
+  it('rejects malformed, extra, out-of-range, and non-unmoderated task starts', async () => {
+    await configure()
+    await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
+    const invalidStarts = [
+      ['start-out-of-range', 'task:1'],
+      ['start-malformed', 'task:01'],
+    ]
+
+    for (const [eventId, taskRef] of invalidStarts) {
+      await expect(
+        logEvents.run(
+          participantRequest(
+            taskStartedBatch(`batch-${eventId}`, eventId, { taskRef }),
+          ),
+        ),
+      ).rejects.toMatchObject({
+        details: {
+          invalidEvents: [{ eventId, reasonCode: 'INVALID_EVENT_DETAILS' }],
+        },
+      })
+    }
+
+    const extraDetailsEventId = 'start-extra'
+    await expect(
+      logEvents.run(
+        participantRequest(
+          taskStartedBatch(`batch-${extraDetailsEventId}`, extraDetailsEventId, {
+            taskRef: 'task:0',
+            taskType: 'forged',
+          }),
+        ),
+      ),
+    ).rejects.toMatchObject({
+      details: {
+        invalidEvents: [
+          {
+            eventId: extraDetailsEventId,
+            reasonCode: 'INVALID_EVENT_DETAILS',
+          },
+        ],
+      },
+    })
+
+    await studyRef().update({ subType: 'USER_MODERATED' })
+    const wrongStudyEventId = 'start-moderated'
+    await expect(
+      logEvents.run(
+        participantRequest(
+          taskStartedBatch(`batch-${wrongStudyEventId}`, wrongStudyEventId, {
+            taskRef: 'task:0',
+          }),
+        ),
+      ),
+    ).rejects.toMatchObject({
+      details: {
+        invalidEvents: [
+          {
+            eventId: wrongStudyEventId,
+            reasonCode: 'INVALID_EVENT_DETAILS',
+          },
+        ],
+      },
+    })
+  })
+
   it.each([
     'no-answer',
     'post-test',

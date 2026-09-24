@@ -18,6 +18,10 @@ const CLIENT_EVENT_POLICIES = Object.freeze({
     message: 'Study view opened',
     detailKeys: [],
   },
+  TASK_STARTED: {
+    message: 'Task started',
+    detailKeys: ['taskRef'],
+  },
   ANSWER_EDITED: {
     message: 'Answer field edited',
     detailKeys: [
@@ -219,6 +223,24 @@ const validAnswerEdit = (details, study) => {
   )
 }
 
+const validTaskStarted = (details, study) => {
+  const keys = Object.keys(details || {}).sort(compareStrings)
+  const match = /^task:(0|[1-9]\d*)$/.exec(details?.taskRef || '')
+  if (
+    keys.join(',') !== 'taskRef' ||
+    !match ||
+    normalizeStudyType(study.testType) !== 'USER' ||
+    study.subType !== 'USER_UNMODERATED'
+  ) {
+    return false
+  }
+  const taskIndex = Number(match[1])
+  return (
+    Number.isSafeInteger(taskIndex) &&
+    Boolean(study.testStructure?.userTasks?.[taskIndex])
+  )
+}
+
 const RESPONSE_FIELD_COUNTS = Object.freeze({
   frequency: 'frequencyChanges',
   severity: 'severityChanges',
@@ -297,17 +319,23 @@ const validateClientBatch = (payload, study) => {
       event?.eventType === 'MEDIA_RECORDING_OUTCOME' && isRecord(event?.details)
         ? recordingPolicy(study, event.details)
         : null
-    const validDetails =
-      recording ||
-      (isRecord(event?.details) && policy?.detailKeys.length === 0
-        ? Object.keys(event.details).length === 0
-        : event?.eventType === 'ANSWER_EDITED' &&
-            isRecord(event?.details) &&
-            validAnswerEdit(event?.details, study)
-          ? true
-          : event?.eventType === 'QUESTION_RESPONSE_UPDATED' &&
-            isRecord(event?.details) &&
-            validQuestionResponse(event?.details, study))
+    const validDetails = (() => {
+      if (recording) return true
+      if (!isRecord(event?.details)) return false
+      if (policy?.detailKeys.length === 0) {
+        return Object.keys(event.details).length === 0
+      }
+      if (event?.eventType === 'ANSWER_EDITED') {
+        return validAnswerEdit(event.details, study)
+      }
+      if (event?.eventType === 'QUESTION_RESPONSE_UPDATED') {
+        return validQuestionResponse(event.details, study)
+      }
+      if (event?.eventType === 'TASK_STARTED') {
+        return validTaskStarted(event.details, study)
+      }
+      return false
+    })()
     let reasonCode
     if (seenEventIds.has(eventId)) {
       reasonCode = 'DUPLICATE_EVENT_ID'
@@ -341,6 +369,9 @@ const validateClientBatch = (payload, study) => {
         level: recording?.level || 'info',
         details: recording?.details || {
           ...event.details,
+          ...(event.eventType === 'TASK_STARTED'
+            ? taskContext(study, event.details.taskRef)
+            : {}),
           ...(event.eventType === 'ANSWER_EDITED' &&
           /^task:(0|[1-9]\d*):(answer|comment)$/.test(event.details.fieldRef)
             ? taskContext(

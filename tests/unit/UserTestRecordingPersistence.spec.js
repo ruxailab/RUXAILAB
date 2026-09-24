@@ -242,3 +242,64 @@ it('forwards each recorder result through TaskStep without treating spinner comp
     ]),
   )
 })
+
+it('observes each successful active-task entry only after setup succeeds', async () => {
+  wrapper = shallowMount(TaskStep, {
+    props: { task: { taskType: 'no-answer' }, taskIndex: 0 },
+    global: {
+      mocks: { $vuetify: { display: {} } },
+      stubs: { ShowInfo: { template: '<div><slot name="content" /></div>' } },
+    },
+  })
+
+  const taskStep = wrapper.vm.$.setupState
+  await taskStep.startTask()
+
+  const firstObservation = wrapper.emitted('taskStarted')?.[0]?.[0]
+  expect(firstObservation).toEqual(expect.any(String))
+  expect(Number.isNaN(Date.parse(firstObservation))).toBe(false)
+  expect(wrapper.emitted('startTask')).toHaveLength(1)
+
+  // Re-running setup while the task is active is not another entry.
+  await taskStep.startTask()
+  expect(wrapper.emitted('taskStarted')).toHaveLength(1)
+
+  // A later transition back into the active stage is a new observation.
+  taskStep.stage = 2
+  await taskStep.startTask()
+  expect(wrapper.emitted('taskStarted')).toHaveLength(2)
+})
+
+it('does not observe a task when screen-share setup is cancelled or denied', async () => {
+  const captureScreen = jest.fn().mockResolvedValue(false)
+  wrapper = shallowMount(TaskStep, {
+    props: {
+      task: { taskType: 'no-answer', hasScreenRecord: true },
+      taskIndex: 0,
+    },
+    global: {
+      mocks: { $vuetify: { display: {} } },
+      stubs: {
+        ShowInfo: { template: '<div><slot name="content" /></div>' },
+        ScreenRecorder: {
+          template: '<div />',
+          setup() {
+            return { captureScreen }
+          },
+        },
+      },
+    },
+  })
+
+  const taskStep = wrapper.vm.$.setupState
+  await taskStep.startTask()
+  expect(wrapper.emitted('taskStarted')).toBeUndefined()
+  taskStep.cancelScreenSharePrompt()
+  expect(wrapper.emitted('taskStarted')).toBeUndefined()
+
+  // A denied/cancelled browser permission returns false from setup.
+  taskStep.showScreenSharePrompt = true
+  await taskStep.confirmScreenShare()
+  expect(captureScreen).toHaveBeenCalledTimes(1)
+  expect(wrapper.emitted('taskStarted')).toBeUndefined()
+})
