@@ -1,15 +1,20 @@
-import { jest } from '@jest/globals';
+import { jest } from '@jest/globals'
 
 jest.unstable_mockModule('../src/core/firebase/f.firebase.js', () => ({
   admin: {
     auth: jest.fn().mockReturnValue({
-      generatePasswordResetLink: jest.fn().mockResolvedValue('https://reset.link'),
+      generatePasswordResetLink: jest
+        .fn()
+        .mockResolvedValue('https://reset.link'),
+      generateEmailVerificationLink: jest
+        .fn()
+        .mockResolvedValue('https://verify.link'),
     }),
   },
   functions: {
     onCall: jest.fn((opts) => opts?.handler || opts),
   },
-}));
+}))
 
 jest.unstable_mockModule('nodemailer', () => ({
   default: {
@@ -17,28 +22,34 @@ jest.unstable_mockModule('nodemailer', () => ({
       sendMail: jest.fn().mockResolvedValue({ messageId: '123' }),
     }),
   },
-}));
+}))
 
 jest.unstable_mockModule('fs', () => ({
-  readFileSync: jest.fn().mockReturnValue(
-    'Template content resetLink: {{resetLink}}, invitationLink: {{invitationLink}}, message: {{message}}, testTitle: {{testTitle}} adminName: {{adminName}}.'
-  ),
-}));
+  readFileSync: jest
+    .fn()
+    .mockReturnValue(
+      'Template content resetLink: {{resetLink}}, invitationLink: {{invitationLink}}, message: {{message}}, testTitle: {{testTitle}} adminName: {{adminName}}, verificationLink: {{verificationLink}}, userName: {{userName}}.',
+    ),
+}))
 
-const { sendEmail } = await import('../src/https/email.js');
-const nodemailerMock = await import('nodemailer');
+const { sendEmail } = await import('../src/https/email.js')
+const nodemailerMock = await import('nodemailer')
 
 describe('email.js -> sendEmail', () => {
-  const originalEnv = process.env;
+  const originalEnv = process.env
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    process.env = { ...originalEnv, SMTP_HOST: 'smtp.test.com', SITE_URL: 'http://test.com' };
-  });
+    jest.clearAllMocks()
+    process.env = {
+      ...originalEnv,
+      SMTP_HOST: 'smtp.test.com',
+      SITE_URL: 'http://test.com',
+    }
+  })
 
   afterAll(() => {
-    process.env = originalEnv;
-  });
+    process.env = originalEnv
+  })
 
   it('should send an invite email correctly', async () => {
     const data = {
@@ -55,12 +66,12 @@ describe('email.js -> sendEmail', () => {
           invitationLink: 'http://test.com/testview/study-1/invite-token',
         },
       },
-    };
+    }
 
-    const res = await sendEmail(data);
-    expect(res).toBe('Email sent successfully.');
-    expect(nodemailerMock.default.createTransport).toHaveBeenCalled();
-  });
+    const res = await sendEmail(data)
+    expect(res).toBe('Email sent successfully.')
+    expect(nodemailerMock.default.createTransport).toHaveBeenCalled()
+  })
 
   it('uses the study invitation link in invite emails', async () => {
     await sendEmail({
@@ -73,7 +84,7 @@ describe('email.js -> sendEmail', () => {
           invitationLink: 'http://test.com/testview/study-1/invite-token',
         },
       },
-    });
+    })
 
     const transport =
       nodemailerMock.default.createTransport.mock.results[0].value
@@ -84,7 +95,55 @@ describe('email.js -> sendEmail', () => {
         ),
       }),
     )
-  });
+  })
+
+  it('should send an email verification email with the link and username', async () => {
+    const data = {
+      data: {
+        template: 'emailVerification',
+        to: 'user@test.com',
+        subject: 'Verify your email',
+        data: {
+          userName: 'Jane Doe',
+        },
+      },
+    }
+
+    const res = await sendEmail(data)
+    expect(res).toBe('Email sent successfully.')
+
+    const transport =
+      nodemailerMock.default.createTransport.mock.results[0].value
+    expect(transport.sendMail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        html: expect.stringContaining('https://verify.link'),
+      }),
+    )
+    expect(transport.sendMail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        html: expect.stringContaining('Jane Doe'),
+      }),
+    )
+  })
+
+  it('defaults the username to "User" when none is provided for email verification', async () => {
+    await sendEmail({
+      data: {
+        template: 'emailVerification',
+        to: 'user@test.com',
+        subject: 'Verify your email',
+        data: {},
+      },
+    })
+
+    const transport =
+      nodemailerMock.default.createTransport.mock.results[0].value
+    expect(transport.sendMail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        html: expect.stringContaining('userName: User'),
+      }),
+    )
+  })
 
   it('should send a password reset email correctly', async () => {
     const data = {
@@ -93,18 +152,18 @@ describe('email.js -> sendEmail', () => {
         to: 'user@test.com',
         subject: 'Reset Password',
       },
-    };
+    }
 
-    const res = await sendEmail(data);
-    expect(res).toBe('Email sent successfully.');
-    expect(nodemailerMock.default.createTransport).toHaveBeenCalled();
-  });
+    const res = await sendEmail(data)
+    expect(res).toBe('Email sent successfully.')
+    expect(nodemailerMock.default.createTransport).toHaveBeenCalled()
+  })
 
   it('should return error if sendMail fails', async () => {
     nodemailerMock.default.createTransport.mockReturnValueOnce({
       sendMail: jest.fn().mockRejectedValueOnce(new Error('SMTP Error')),
-    });
-      
+    })
+
     const data = {
       data: {
         template: 'invite',
@@ -112,10 +171,10 @@ describe('email.js -> sendEmail', () => {
         subject: 'You are invited',
         data: { message: 'Hello' },
       },
-    };
+    }
 
-    const res = await sendEmail(data);
-    expect(res).toBeInstanceOf(Error);
-    expect(res.message).toBe('SMTP Error');
-  });
-});
+    const res = await sendEmail(data)
+    expect(res).toBeInstanceOf(Error)
+    expect(res.message).toBe('SMTP Error')
+  })
+})
