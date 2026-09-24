@@ -335,6 +335,54 @@ describe('study logging runtime', () => {
     expect(calls).toEqual(['flush', 'request'])
   })
 
+  it('gates structured activity until consent is committed', async () => {
+    const { runtime, logger } = createHarness({ consentRequired: true })
+
+    runtime.seedStructuredScope('task:0', { 'sus:question:0': undefined })
+    runtime.structuredChoiceChanged('task:0', 'sus:question:0', 4)
+    await runtime.checkpointStructuredScope('task:0')
+    expect(logger.record).not.toHaveBeenCalled()
+
+    await runtime.consentAccepted()
+    runtime.structuredChoiceChanged('task:0', 'sus:question:0', 5)
+    await runtime.checkpointStructuredScope('task:0')
+
+    expect(logger.record).toHaveBeenCalledWith(
+      'STRUCTURED_RESPONSE_ACTIVITY',
+      {
+        scopeRef: 'task:0',
+        items: [{ itemRef: 'sus:question:0', changes: 1 }],
+      },
+      expect.any(String),
+    )
+    runtime.destroy()
+  })
+
+  it('flushes structured activity on hidden pages and pagehide only once per change', async () => {
+    const { runtime, logger, visibilityListeners, listeners, visibilityTarget } =
+      createHarness()
+
+    runtime.seedStructuredScope('task:0', { 'sus:question:0': undefined })
+    runtime.structuredChoiceChanged('task:0', 'sus:question:0', 4)
+    await visibilityListeners.get('visibilitychange')()
+
+    expect(logger.record).toHaveBeenCalledWith(
+      'STRUCTURED_RESPONSE_ACTIVITY',
+      expect.objectContaining({ scopeRef: 'task:0' }),
+      expect.any(String),
+    )
+    logger.record.mockClear()
+
+    runtime.structuredChoiceChanged('task:0', 'sus:question:0', 5)
+    await listeners.get('pagehide')()
+    await listeners.get('pagehide')()
+
+    expect(logger.record).toHaveBeenCalledTimes(1)
+    expect(logger.flush).toHaveBeenCalled()
+    visibilityTarget.hidden = false
+    runtime.destroy()
+  })
+
   it('turns delegated text edits into metadata without retaining the value', async () => {
     const { runtime, logger } = createHarness()
     document.body.innerHTML = `

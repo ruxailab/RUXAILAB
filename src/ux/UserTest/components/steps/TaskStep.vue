@@ -429,6 +429,7 @@
               <!-- SUS Form -->
               <div v-if="task?.taskType === 'sus'">
                 <SusForm
+                  @response-changed="onStructuredResponseChanged"
                   v-model="localSusAnswers"
                   :task-index="taskIndex"
                   @update:model-value="(val) => emit('update:susAnswers', val)"
@@ -440,18 +441,32 @@
                 <nasaTlxForm
                   :nasa-tlx="nasaTlxAnswers"
                   @update:nasa-tlx="onUpdateNasaTlx"
+                  @slider-focus="(event) => onStructuredSlider('nasa-tlx', 'focus', event)"
+                  @slider-start="(event) => onStructuredSlider('nasa-tlx', 'start', event)"
+                  @slider-change="(event) => onStructuredSlider('nasa-tlx', 'change', event)"
+                  @slider-end="(event) => onStructuredSlider('nasa-tlx', 'end', event)"
+                  @slider-blur="(event) => onStructuredSlider('nasa-tlx', 'blur', event)"
                 />
               </div>
 
               <!-- SART Form -->
               <div v-else-if="task?.taskType === 'sart'">
-                <sartForm :sart="sartAnswers" @update:sart="onUpdateSart" />
+                <sartForm
+                  :sart="sartAnswers"
+                  @update:sart="onUpdateSart"
+                  @slider-focus="(event) => onStructuredSlider('sart', 'focus', event)"
+                  @slider-start="(event) => onStructuredSlider('sart', 'start', event)"
+                  @slider-change="(event) => onStructuredSlider('sart', 'change', event)"
+                  @slider-end="(event) => onStructuredSlider('sart', 'end', event)"
+                  @slider-blur="(event) => onStructuredSlider('sart', 'blur', event)"
+                />
               </div>
 
               <!-- TAM-1 Form -->
               <div v-else-if="task?.taskType === 'tam-1'">
                 <TamForm1
                   v-model="localTamAnswers"
+                  @response-changed="onStructuredResponseChanged"
                   :task-index="taskIndex"
                   @update:model-value="(val) => emit('update:tamAnswers', val)"
                 />
@@ -461,6 +476,7 @@
               <div v-else-if="task?.taskType === 'tam-2'">
                 <TamForm2
                   v-model="localTamAnswers"
+                  @response-changed="onStructuredResponseChanged"
                   :task-index="taskIndex"
                   @update:model-value="(val) => emit('update:tamAnswers', val)"
                 />
@@ -470,6 +486,7 @@
               <div v-else-if="task?.taskType === 'tam-3'">
                 <TamForm3
                   v-model="localTamAnswers"
+                  @response-changed="onStructuredResponseChanged"
                   :task-index="taskIndex"
                   @update:model-value="(val) => emit('update:tamAnswers', val)"
                 />
@@ -622,6 +639,13 @@ const emit = defineEmits([
   'startTask',
   'taskStarted',
   'tip-pressed',
+  'structured-response-changed',
+  'structured-slider-focus',
+  'structured-slider-start',
+  'structured-slider-change',
+  'structured-slider-end',
+  'structured-slider-blur',
+  'task-questionnaire-entered',
 ])
 
 onBeforeUnmount(() => {
@@ -691,8 +715,27 @@ const getTamInitialStructure = () => {
   return {}
 }
 
+const normalizeTamAnswers = (answers) => {
+  const defaults = getTamInitialStructure()
+  if (!Object.keys(defaults).length) return answers || {}
+
+  const source = answers && typeof answers === 'object' ? answers : {}
+  const normalized = { ...source }
+  for (const [construct, defaultValues] of Object.entries(defaults)) {
+    const current = source[construct]
+    const length = Math.max(
+      defaultValues.length,
+      Array.isArray(current) ? current.length : 0,
+    )
+    normalized[construct] = Array.from({ length }, (_, index) =>
+      Array.isArray(current) ? current[index] : undefined,
+    )
+  }
+  return normalized
+}
+
 const localTamAnswers = computed({
-  get: () => props.tamAnswers || getTamInitialStructure(),
+  get: () => normalizeTamAnswers(props.tamAnswers),
   set: (val) => emit('update:tamAnswers', val),
 })
 
@@ -951,6 +994,7 @@ function handleShowPostForm(userCompleted) {
   // Show post-task form for all validated task types
   if (VALIDATION_REQUIRED_TYPES.has(props.task?.taskType)) {
     stage.value = 4
+    emit('task-questionnaire-entered')
   } else {
     attemptFinish()
   }
@@ -1031,6 +1075,25 @@ function onUpdateTaskObservations(val) {
 }
 function onUpdateNasaTlx(val) {
   emit('update:nasaTlxAnswers', val)
+}
+const structuredTaskScope = () => `task:${props.taskIndex}`
+
+function onStructuredResponseChanged(change) {
+  if (!change?.itemRef) return
+  emit('structured-response-changed', {
+    scopeRef: structuredTaskScope(),
+    itemRef: change.itemRef,
+    value: change.value,
+  })
+}
+
+function onStructuredSlider(instrument, phase, change) {
+  if (!change?.itemRef) return
+  emit(`structured-slider-${phase}`, {
+    scopeRef: structuredTaskScope(),
+    itemRef: `${instrument}:${change.itemRef}`,
+    value: change.value,
+  })
 }
 function onTipPressed() {
   emit('tip-pressed', props.taskIndex)

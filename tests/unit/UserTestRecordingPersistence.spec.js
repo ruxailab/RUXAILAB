@@ -8,6 +8,15 @@ const mockRuntime = {
   resumeAfterConsent: jest.fn(),
   taskFinished: jest.fn(),
   submitted: jest.fn(),
+  seedStructuredScope: jest.fn(),
+  structuredChoiceChanged: jest.fn(),
+  structuredSliderFocus: jest.fn(),
+  structuredSliderPointerStart: jest.fn(),
+  structuredSliderValueChanged: jest.fn(),
+  structuredSliderPointerEnd: jest.fn(),
+  structuredSliderBlur: jest.fn(),
+  checkpointStructuredScope: jest.fn().mockResolvedValue(null),
+  checkpointStructuredScopes: jest.fn().mockResolvedValue([]),
   destroy: jest.fn(),
 }
 jest.mock('@/shared/utils/anonymousParticipantUtils', () => ({
@@ -302,4 +311,52 @@ it('does not observe a task when screen-share setup is cancelled or denied', asy
   await taskStep.confirmScreenShare()
   expect(captureScreen).toHaveBeenCalledTimes(1)
   expect(wrapper.emitted('taskStarted')).toBeUndefined()
+})
+
+it('normalizes fresh and partial TAM answers by configured task type', () => {
+  const cases = [
+    {
+      taskType: 'tam-1',
+      construct: 'perceivedUsefulness',
+      size: 10,
+      tamAnswers: {},
+    },
+    {
+      taskType: 'tam-2',
+      construct: 'resultDemonstrability',
+      size: 4,
+      tamAnswers: { resultDemonstrability: [, , 7] },
+    },
+    {
+      taskType: 'tam-3',
+      construct: 'perceivedEnjoyment',
+      size: 3,
+      tamAnswers: { perceivedEnjoyment: [, , 5] },
+    },
+  ]
+
+  for (const testCase of cases) {
+    wrapper = shallowMount(TaskStep, {
+      props: {
+        task: { taskType: testCase.taskType },
+        taskIndex: 0,
+        tamAnswers: testCase.tamAnswers,
+      },
+      global: {
+        mocks: { $vuetify: { display: {} } },
+        stubs: { ShowInfo: { template: '<div />' } },
+      },
+    })
+
+    const normalized = wrapper.vm.$.setupState.localTamAnswers
+    expect(normalized[testCase.construct]).toHaveLength(testCase.size)
+    if (testCase.tamAnswers[testCase.construct]) {
+      expect(normalized[testCase.construct][2]).toBe(
+        testCase.tamAnswers[testCase.construct][2],
+      )
+    }
+
+    wrapper.unmount()
+    wrapper = undefined
+  }
 })

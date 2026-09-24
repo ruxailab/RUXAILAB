@@ -401,20 +401,54 @@
             </dd>
           </div>
           <div>
-            <dt>Event type</dt>
-            <dd>{{ formatEventType(selectedEvent.eventType) }}</dd>
-          </div>
-          <div>
-            <dt>Occurred</dt>
+            <dt>
+              {{
+                isClientReportedEvent(selectedEvent) ? 'Browser time' : 'Occurred'
+              }}
+            </dt>
             <dd>{{ formatDateTime(selectedEvent.occurredAt) }}</dd>
           </div>
         </dl>
 
-        <p v-if="isClientReportedEvent(selectedEvent)" class="event-time-note">
-          Browser-reported occurrence time is unverified and may be reordered
-          by client-clock error or delayed delivery. Received time records
-          server receipt, not participant action.
+        <p
+          v-if="selectedEvent.eventType === 'TASK_STARTED'"
+          class="event-time-note"
+        >
+          The study client reports when the active task screen opened. This is
+          evidence of task entry, not interaction. Browser clock errors can
+          misorder events, so do not calculate task duration from this time.
         </p>
+        <p
+          v-else-if="isClientReportedEvent(selectedEvent)"
+          class="event-time-note"
+        >
+          This time comes from the participant’s browser and may be inaccurate
+          or out of order. Server receipt time below shows when the event
+          arrived, not when the participant acted.
+        </p>
+
+        <section
+          v-if="selectedEvent.eventType === 'STRUCTURED_RESPONSE_ACTIVITY'"
+          class="drawer-details"
+          aria-labelledby="structured-activity-heading"
+        >
+          <h3 id="structured-activity-heading">
+            Structured response activity
+          </h3>
+          <p>
+            Counts show response changes in this record. Selected answers and
+            slider values remain in Results.
+          </p>
+          <dl class="detail-grid">
+            <template
+              v-for="item in structuredActivityItems(selectedEvent)"
+              :key="item.itemRef"
+            >
+              <dt>{{ item.label }}</dt>
+              <dd>{{ pluralized(item.changes, 'update') }} in this record</dd>
+            </template>
+          </dl>
+        </section>
 
         <section
           v-if="detailEntries.length"
@@ -448,23 +482,14 @@
           </dl>
         </section>
 
-        <details class="delivery-diagnostics">
-          <summary>Delivery diagnostics</summary>
+        <details
+          v-if="selectedEvent.receivedAt"
+          class="delivery-diagnostics"
+        >
+          <summary>Server receipt</summary>
           <dl class="detail-grid">
-            <dt>Received</dt>
+            <dt>Received by server</dt>
             <dd>{{ formatDateTime(selectedEvent.receivedAt) }}</dd>
-            <dt>Delivery delay</dt>
-            <dd>{{ deliveryDelay(selectedEvent) }}</dd>
-            <dt>Time quality</dt>
-            <dd>{{ formatIdentifier(selectedEvent.timeQuality) || 'Unavailable' }}</dd>
-            <dt>Source</dt>
-            <dd>{{ formatIdentifier(selectedEvent.source) || 'Unavailable' }}</dd>
-            <dt>Layer</dt>
-            <dd>{{ formatIdentifier(selectedEvent.layer) || 'Unavailable' }}</dd>
-            <dt>Actor role</dt>
-            <dd>{{ formatIdentifier(selectedEvent.actorRole) || 'Unavailable' }}</dd>
-            <dt>Event type</dt>
-            <dd>{{ formatEventType(selectedEvent.eventType) || 'Unknown event' }}</dd>
           </dl>
         </details>
       </template>
@@ -571,6 +596,7 @@ const EVENT_TYPES_BY_STUDY = Object.freeze({
     'TASK_ATTEMPT_FINISHED',
     'TASK_STARTED',
     'MEDIA_RECORDING_OUTCOME',
+    'STRUCTURED_RESPONSE_ACTIVITY',
     'STUDY_SUBMITTED',
   ],
 })
@@ -634,6 +660,173 @@ const visibleRange = computed(() => {
     ? `${start}–${end} shown`
     : `${start}–${end} of ${totalCount.value.toLocaleString()}`
 })
+const structuredDimensionLabels = Object.freeze({
+  mentalDemand: 'Mental demand',
+  physicalDemand: 'Physical demand',
+  temporalDemand: 'Temporal demand',
+  performance: 'Performance',
+  effort: 'Effort',
+  frustration: 'Frustration',
+  instability: 'Instability',
+  complexity: 'Complexity',
+  variability: 'Variability',
+  arousal: 'Arousal',
+  concentration: 'Concentration',
+  division: 'Division',
+  spareCapacity: 'Spare capacity',
+  informationQuantity: 'Information quantity',
+  informationQuality: 'Information quality',
+  familiarity: 'Familiarity',
+})
+const structuredItemLabel = (itemRef) => {
+  const susMatch = /^sus:question:(\d+)$/.exec(itemRef || '')
+  if (susMatch) return `SUS · Question ${Number(susMatch[1]) + 1}`
+
+  const instrumentMatch = /^(nasa-tlx|sart):([^:]+)$/.exec(itemRef || '')
+  if (instrumentMatch) {
+    const [, instrument, dimension] = instrumentMatch
+    return `${formatTaskType(instrument)} · ${structuredDimensionLabels[dimension] || formatIdentifier(dimension)}`
+  }
+
+  const tamMatch = /^(tam-[123]):([^:]+):(\d+)$/.exec(itemRef || '')
+  if (tamMatch) {
+    const [, instrument, construct, index] = tamMatch
+    return `${TASK_TYPE_LABELS[instrument]} · ${formatIdentifier(construct)} item ${Number(index) + 1}`
+  }
+
+  const stageMatch = /^(preTest|postTest):question:(\d+)$/.exec(itemRef || '')
+  if (stageMatch) {
+    return `${stageMatch[1] === 'preTest' ? 'Pre-test' : 'Post-test'} · Question ${Number(stageMatch[2]) + 1}`
+  }
+
+  return 'Structured response item'
+}
+const structuredInstrumentOrder = Object.freeze([
+  'sus',
+  'nasa-tlx',
+  'sart',
+  'tam-1',
+  'tam-2',
+  'tam-3',
+])
+const structuredDimensionOrder = Object.freeze({
+  'nasa-tlx': [
+    'mentalDemand',
+    'physicalDemand',
+    'temporalDemand',
+    'performance',
+    'effort',
+    'frustration',
+  ],
+  sart: [
+    'instability',
+    'complexity',
+    'variability',
+    'arousal',
+    'concentration',
+    'division',
+    'spareCapacity',
+    'informationQuantity',
+    'informationQuality',
+    'familiarity',
+  ],
+  'tam-1': ['perceivedUsefulness', 'perceivedEaseOfUse'],
+  'tam-2': [
+    'intentionToUse',
+    'perceivedUsefulness',
+    'perceivedEaseOfUse',
+    'subjectiveNorm',
+    'voluntariness',
+    'image',
+    'jobRelevance',
+    'outputQuality',
+    'resultDemonstrability',
+  ],
+  'tam-3': [
+    'perceivedUsefulness',
+    'perceivedEaseOfUse',
+    'subjectiveNorm',
+    'image',
+    'jobRelevance',
+    'outputQuality',
+    'resultDemonstrability',
+    'computerSelfEfficacy',
+    'perceptionsOfExternalControl',
+    'computerAnxiety',
+    'computerPlayfulness',
+    'perceivedEnjoyment',
+    'objectiveUsability',
+    'behavioralIntention',
+    'usePatterns',
+    'experience',
+    'voluntariness',
+  ],
+})
+const structuredItemSortKey = (itemRef) => {
+  const susMatch = /^sus:question:(\d+)$/.exec(itemRef || '')
+  if (susMatch) return [0, 0, Number(susMatch[1])]
+
+  const instrumentMatch = /^(nasa-tlx|sart):([^:]+)$/.exec(itemRef || '')
+  if (instrumentMatch) {
+    const [, instrument, dimension] = instrumentMatch
+    const instrumentIndex = structuredInstrumentOrder.indexOf(instrument)
+    const dimensionIndex =
+      structuredDimensionOrder[instrument]?.indexOf(dimension) ?? -1
+    return [
+      1,
+      instrumentIndex === -1
+        ? structuredInstrumentOrder.length
+        : instrumentIndex,
+      dimensionIndex === -1 ? Number.MAX_SAFE_INTEGER : dimensionIndex,
+    ]
+  }
+
+  const tamMatch = /^(tam-[123]):([^:]+):(\d+)$/.exec(itemRef || '')
+  if (tamMatch) {
+    const [, instrument, construct, index] = tamMatch
+    const instrumentIndex = structuredInstrumentOrder.indexOf(instrument)
+    const constructIndex =
+      structuredDimensionOrder[instrument]?.indexOf(construct) ?? -1
+    return [
+      1,
+      instrumentIndex === -1
+        ? structuredInstrumentOrder.length
+        : instrumentIndex,
+      constructIndex === -1 ? Number.MAX_SAFE_INTEGER : constructIndex,
+      Number(index),
+    ]
+  }
+
+  const stageMatch = /^(preTest|postTest):question:(\d+)$/.exec(itemRef || '')
+  if (stageMatch) {
+    return [2, stageMatch[1] === 'preTest' ? 0 : 1, Number(stageMatch[2])]
+  }
+
+  return [3, 0, itemRef || '']
+}
+const compareStructuredItemRefs = (left, right) => {
+  const leftKey = structuredItemSortKey(left)
+  const rightKey = structuredItemSortKey(right)
+  const length = Math.max(leftKey.length, rightKey.length)
+  for (let index = 0; index < length; index += 1) {
+    if (leftKey[index] === rightKey[index]) continue
+    if (leftKey[index] === undefined) return -1
+    if (rightKey[index] === undefined) return 1
+    return leftKey[index] < rightKey[index] ? -1 : 1
+  }
+  return left.localeCompare(right)
+}
+const structuredActivityItems = (event) =>
+  (Array.isArray(event?.details?.items) ? event.details.items : [])
+    .filter((item) => typeof item?.itemRef === 'string')
+    .map((item) => ({
+      itemRef: item.itemRef,
+      changes: Number.isFinite(Number(item.changes)) ? Number(item.changes) : 0,
+      label: structuredItemLabel(item.itemRef),
+    }))
+    .sort((left, right) => compareStructuredItemRefs(left.itemRef, right.itemRef))
+const structuredActivityCount = (event) =>
+  structuredActivityItems(event).reduce((total, item) => total + item.changes, 0)
 const eventPresentation = (event) => {
   const details = event?.details || {}
   const taskIndex = parseTaskRef(details.taskRef)
@@ -697,6 +890,20 @@ const eventPresentation = (event) => {
       primary = `${taskName(taskIndex)} · ${outcome}`
       secondary = mediaType
     }
+  } else if (event?.eventType === 'STRUCTURED_RESPONSE_ACTIVITY') {
+    primary = 'Structured response activity'
+    const count = structuredActivityCount(event)
+    const scope = /^task:(\d+)$/.exec(details.scopeRef || '')
+    const scopeLabel = scope
+      ? `Task ${Number(scope[1]) + 1}`
+      : details.scopeRef === 'preTest'
+        ? 'Pre-test'
+        : details.scopeRef === 'postTest'
+          ? 'Post-test'
+          : null
+    secondary = [scopeLabel, `${count} ${count === 1 ? 'update' : 'updates'} in this record`]
+      .filter(Boolean)
+      .join(' · ')
   } else if (event?.eventType === 'QUESTION_RESPONSE_UPDATED') {
     primary = 'Question response updated'
     const match = /^heuristic:(\d+):question:(\d+)$/.exec(
@@ -755,6 +962,7 @@ const detailEntries = computed(() => {
   const details = event?.details || {}
   const hasPositiveValue = (value) => Number.isFinite(Number(value)) && Number(value) > 0
   const hasLength = (value) => Number.isFinite(Number(value)) && Number(value) >= 0
+  if (event?.eventType === 'STRUCTURED_RESPONSE_ACTIVITY') return []
   if (event?.eventType === 'ANSWER_EDITED') {
     const field = parseFieldRef(details.fieldRef)
     const entries = []
@@ -984,7 +1192,6 @@ const formatClock = (value) => {
 }
 const formatTime = (value) =>
   new Intl.DateTimeFormat(undefined, { timeStyle: 'short' }).format(value)
-const formatEventType = formatIdentifier
 const levelIcon = (level) =>
   ({
     warning: 'mdi-alert-outline',
@@ -998,15 +1205,6 @@ const formatDuration = (milliseconds) => {
   return `${(value / 1000).toLocaleString(undefined, {
     maximumFractionDigits: 1,
   })} s`
-}
-const deliveryDelay = (event) => {
-  const occurred = toDate(event.occurredAt)
-  const received = toDate(event.receivedAt)
-  if (!occurred || !received) return 'Unavailable'
-  const difference = received - occurred
-  return difference < 0
-    ? `Occurrence is ${formatDuration(-difference)} after receipt`
-    : formatDuration(difference)
 }
 const isClientReportedEvent = (event) =>
   event?.timeQuality === 'client-unverified' || event?.source === 'study-client'

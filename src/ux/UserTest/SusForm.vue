@@ -46,7 +46,8 @@
         <v-divider class="my-2" />
 
         <!-- Aquí sí funciona correctamente -->
-        <v-radio-group v-model="answers[i]" inline>
+        <v-radio-group :model-value="answers[i]" inline
+          @update:model-value="updateAnswer(i, $event)">
           <v-radio
             v-for="n in 5"
             :key="n"
@@ -80,7 +81,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'response-changed'])
 
 const store = useStore()
 const form = ref(null)
@@ -119,6 +120,16 @@ const susQuestions = [
   'I felt very confident using the system.',
   'I needed to learn a lot of things before I could get going with this system.',
 ]
+
+const updateAnswer = (index, value) => {
+  const nextAnswers = [...answers.value]
+  nextAnswers[index] = value
+  emit('update:modelValue', nextAnswers)
+  emit('response-changed', {
+    itemRef: 'sus:question:' + index,
+    value,
+  })
+}
 </script>
 
 <style scoped>

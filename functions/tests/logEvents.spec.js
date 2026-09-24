@@ -956,6 +956,17 @@ describe('unmoderated task and recording metadata', () => {
       },
     ],
   })
+  const structuredActivity = (eventId, details) => ({
+    ...viewBatch(`activity-${eventId}`, eventId),
+    events: [
+      {
+        ...viewBatch().events[0],
+        eventId,
+        eventType: 'STRUCTURED_RESPONSE_ACTIVITY',
+        details,
+      },
+    ],
+  })
   it('accepts an in-range task start with trusted task type and idempotent replay', async () => {
     await configure({ taskType: 'nasa-tlx' })
     await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
@@ -1049,6 +1060,134 @@ describe('unmoderated task and recording metadata', () => {
     })
   })
 
+  it('accepts configured structured activity and enriches only task context', async () => {
+    await configure({ taskType: 'tam-3' })
+    await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
+    const details = {
+      scopeRef: 'task:0',
+      items: [{ itemRef: 'tam-3:perceivedEnjoyment:2', changes: 2 }],
+    }
+    await expect(
+      logEvents.run(
+        participantRequest(structuredActivity('activity-valid', details)),
+      ),
+    ).resolves.toEqual({ status: 'accepted', batchId: 'activity-activity-valid' })
+    const event = (await logs()).find(
+      (item) => item.eventType === 'STRUCTURED_RESPONSE_ACTIVITY',
+    )
+    expect(event).toMatchObject({
+      message: 'Structured response activity recorded',
+      details: { scopeRef: 'task:0', taskType: 'tam-3' },
+    })
+    expect(event.details).not.toHaveProperty('value')
+  })
+
+  it.each([
+    [
+      'wrong-instrument',
+      {
+        scopeRef: 'task:0',
+        items: [{ itemRef: 'sus:question:0', changes: 1 }],
+      },
+    ],
+    [
+      'out-of-range',
+      {
+        scopeRef: 'task:0',
+        items: [{ itemRef: 'tam-3:perceivedEnjoyment:3', changes: 1 }],
+      },
+    ],
+    [
+      'zero-count',
+      {
+        scopeRef: 'task:0',
+        items: [{ itemRef: 'tam-3:perceivedEnjoyment:2', changes: 0 }],
+      },
+    ],
+    [
+      'fractional-count',
+      {
+        scopeRef: 'task:0',
+        items: [{ itemRef: 'tam-3:perceivedEnjoyment:2', changes: 1.5 }],
+      },
+    ],
+    [
+      'duplicate-item',
+      {
+        scopeRef: 'task:0',
+        items: [
+          { itemRef: 'tam-3:perceivedEnjoyment:2', changes: 1 },
+          { itemRef: 'tam-3:perceivedEnjoyment:2', changes: 1 },
+        ],
+      },
+    ],
+    [
+      'extra-value',
+      {
+        scopeRef: 'task:0',
+        items: [{ itemRef: 'tam-3:perceivedEnjoyment:2', changes: 1, value: 5 }],
+      },
+    ],
+    [
+      'non-canonical-scope',
+      {
+        scopeRef: 'task:01',
+        items: [{ itemRef: 'tam-3:perceivedEnjoyment:2', changes: 1 }],
+      },
+    ],
+  ])(
+    'rejects illegal structured activity details: %s',
+    async (eventId, details) => {
+      await configure({ taskType: 'tam-3' })
+      await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
+      await expect(
+        logEvents.run(
+          participantRequest(structuredActivity(eventId, details)),
+        ),
+      ).rejects.toMatchObject({
+        code: 'invalid-argument',
+        details: {
+          invalidEvents: [
+            { eventId, reasonCode: 'INVALID_EVENT_DETAILS' },
+          ],
+        },
+      })
+    },
+  )
+
+  it('accepts configured PreTest selections but rejects text-question activity', async () => {
+    await configure({ taskType: 'sus' })
+    await studyRef().update({
+      testStructure: {
+        userTasks: [{ taskType: 'sus' }],
+        preTest: [{ selectionField: true, selectionFields: ['yes'] }],
+        postTest: [{ textField: true }],
+      },
+    })
+    await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
+
+    await expect(
+      logEvents.run(
+        participantRequest(
+          structuredActivity('pre-selection', {
+            scopeRef: 'preTest',
+            items: [{ itemRef: 'preTest:question:0', changes: 1 }],
+          }),
+        ),
+      ),
+    ).resolves.toEqual({ status: 'accepted', batchId: 'activity-pre-selection' })
+    await expect(
+      logEvents.run(
+        participantRequest(
+          structuredActivity('post-text', {
+            scopeRef: 'postTest',
+            items: [{ itemRef: 'postTest:question:0', changes: 1 }],
+          }),
+        ),
+      ),
+    ).rejects.toMatchObject({ code: 'invalid-argument' })
+    expect(await logs()).toHaveLength(1)
+  })
   it.each([
     'no-answer',
     'post-test',

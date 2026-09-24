@@ -166,6 +166,10 @@ describe('LogsView', () => {
       },
       { title: 'Task Started', value: 'TASK_STARTED' },
       { title: 'Media Recording Outcome', value: 'MEDIA_RECORDING_OUTCOME' },
+      {
+        title: 'Structured Response Activity',
+        value: 'STRUCTURED_RESPONSE_ACTIVITY',
+      },
       { title: 'Study Submitted', value: 'STUDY_SUBMITTED' },
     ])
     wrapper.unmount()
@@ -250,8 +254,8 @@ describe('LogsView', () => {
     expect(wrapper.text()).toContain('6 input events')
     expect(wrapper.text()).toContain('Active edit span')
     expect(wrapper.text()).toContain('1.4 s')
-    expect(wrapper.text()).toContain('Delivery delay')
-    expect(wrapper.text()).toContain('6.2 s')
+    expect(wrapper.text()).toContain('Server receipt')
+    expect(wrapper.text()).not.toContain('Delivery delay')
     expect(wrapper.text()).toContain(
       'Logs capture edit activity, not written answers or selected ratings; review responses and scores in Results.',
     )
@@ -344,6 +348,48 @@ describe('LogsView', () => {
     )
     expect(wrapper.text()).not.toContain('heuristic:1:question:2')
     expect(wrapper.text()).not.toContain('Answer changes')
+    wrapper.unmount()
+  })
+
+  it('presents structured activity as counts without response values', async () => {
+    Object.assign(mockStudy, {
+      testType: 'USER',
+      subType: 'USER_UNMODERATED',
+    })
+    getParticipantLabels.mockResolvedValue([])
+    getStudyLogPage.mockResolvedValue({
+      ...page,
+      events: [
+        {
+          ...page.events[0],
+          eventType: 'STRUCTURED_RESPONSE_ACTIVITY',
+          message: 'Structured response activity recorded',
+          details: {
+            scopeRef: 'task:0',
+            taskType: 'nasa-tlx',
+            items: [
+              { itemRef: 'nasa-tlx:effort', changes: 1 },
+              { itemRef: 'nasa-tlx:mentalDemand', changes: 1 },
+            ],
+          },
+        },
+      ],
+    })
+    getStudyLogCount.mockResolvedValue(1)
+
+    const wrapper = mount(LogsView, { props: { id: 'study-1' } })
+    await flushPromises()
+    await wrapper.find('tbody tr').trigger('click')
+
+    expect(wrapper.text()).toContain('Structured response activity')
+    expect(wrapper.text()).toContain('Task 1 · 2 updates in this record')
+    const text = wrapper.text()
+    expect(text).toContain('NASA-TLX · Effort')
+    expect(text).toContain('1 update in this record')
+    expect(text).not.toContain('nasa-tlx:effort')
+    expect(text.indexOf('NASA-TLX · Mental demand')).toBeLessThan(
+      text.indexOf('NASA-TLX · Effort'),
+    )
     wrapper.unmount()
   })
 
@@ -450,7 +496,7 @@ describe('LogsView', () => {
     expect(document.activeElement.textContent).toContain('Original first event')
     wrapper.unmount()
   })
-  it('displays recording technical severity and readable cancellation details', async () => {
+  it('displays recording severity and readable cancellation details', async () => {
     getParticipantLabels.mockResolvedValue([])
     getStudyLogCount.mockResolvedValue(1)
     getStudyLogPage.mockResolvedValue({
@@ -482,12 +528,13 @@ describe('LogsView', () => {
     )
     await wrapper.find('tbody tr').trigger('click')
     for (const label of [
-      'Technical',
+      'Warning',
       'Screen recording',
       'Permission',
       'Permission denied or capture cancelled',
     ])
       expect(wrapper.text()).toContain(label)
+    expect(wrapper.text()).not.toContain('Technical')
     wrapper.unmount()
   })
 
@@ -681,7 +728,7 @@ describe('LogsView', () => {
     wrapper.unmount()
   })
 
-  it('keeps delivery diagnostics collapsed and labels browser times as unverified', async () => {
+  it('explains browser timing and keeps server receipt details collapsed', async () => {
     getParticipantLabels.mockResolvedValue([])
     getStudyLogCount.mockResolvedValue(1)
     getStudyLogPage.mockResolvedValue({
@@ -723,7 +770,7 @@ describe('LogsView', () => {
       'Task 1 · Answer edited',
     )
     expect(wrapper.find('.event-summary').text()).toContain('Participant')
-    expect(wrapper.find('.event-summary').text()).toContain('Occurred')
+    expect(wrapper.find('.event-summary').text()).toContain('Browser time')
     expect(wrapper.find('.event-summary').text()).not.toContain('Received')
     expect(wrapper.find('.drawer-details').text()).toContain(
       '0 → 5 characters',
@@ -738,18 +785,17 @@ describe('LogsView', () => {
     const diagnostics = wrapper.find('details.delivery-diagnostics')
     expect(diagnostics.exists()).toBe(true)
     expect(diagnostics.element.open).toBe(false)
-    expect(diagnostics.find('summary').text()).toBe('Delivery diagnostics')
-    expect(diagnostics.text()).toContain('Received')
-    expect(diagnostics.text()).toContain('Delivery delay')
-    expect(diagnostics.text()).toContain('Occurrence is 4 s after receipt')
-    expect(diagnostics.text()).toContain('Time quality')
-    expect(diagnostics.text()).toContain('Source')
-    expect(diagnostics.text()).toContain('Layer')
-    expect(diagnostics.text()).toContain('Actor role')
-    expect(diagnostics.text()).toContain('Event type')
-    expect(wrapper.text()).toContain('Browser-reported occurrence time is unverified')
+    expect(diagnostics.find('summary').text()).toBe('Server receipt')
+    expect(diagnostics.text()).toContain('Received by server')
+    expect(diagnostics.text()).not.toContain('Delivery delay')
+    expect(diagnostics.text()).not.toContain('Time quality')
+    expect(diagnostics.text()).not.toContain('Actor role')
+    expect(diagnostics.text()).not.toContain('Unavailable')
     expect(wrapper.text()).toContain(
-      'Received time records server receipt, not participant action.',
+      'This time comes from the participant’s browser and may be inaccurate',
+    )
+    expect(wrapper.text()).toContain(
+      'Server receipt time below shows when the event arrived',
     )
     wrapper.unmount()
   })

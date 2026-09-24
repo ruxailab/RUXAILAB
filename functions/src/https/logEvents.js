@@ -33,6 +33,10 @@ const CLIENT_EVENT_POLICIES = Object.freeze({
       'resultingLength',
     ],
   },
+  STRUCTURED_RESPONSE_ACTIVITY: {
+    message: 'Structured response activity recorded',
+    detailKeys: ['scopeRef', 'items'],
+  },
   QUESTION_RESPONSE_UPDATED: {
     message: 'Question response updated',
     detailKeys: [
@@ -241,6 +245,134 @@ const validTaskStarted = (details, study) => {
   )
 }
 
+const structuredItemRefs = (taskType, constructs) =>
+  constructs.flatMap(([construct, count]) =>
+    Array.from({ length: count }, (_, index) =>
+      `${taskType}:${construct}:${index}`,
+    ),
+  )
+
+const STRUCTURED_TASK_ITEM_REFS = Object.freeze({
+  sus: structuredItemRefs('sus', [['question', 10]]),
+  'nasa-tlx': [
+    'nasa-tlx:mentalDemand',
+    'nasa-tlx:physicalDemand',
+    'nasa-tlx:temporalDemand',
+    'nasa-tlx:performance',
+    'nasa-tlx:effort',
+    'nasa-tlx:frustration',
+  ],
+  sart: [
+    'sart:instability',
+    'sart:complexity',
+    'sart:variability',
+    'sart:arousal',
+    'sart:concentration',
+    'sart:division',
+    'sart:spareCapacity',
+    'sart:informationQuantity',
+    'sart:informationQuality',
+    'sart:familiarity',
+  ],
+  'tam-1': structuredItemRefs('tam-1', [
+    ['perceivedUsefulness', 10],
+    ['perceivedEaseOfUse', 10],
+  ]),
+  'tam-2': structuredItemRefs('tam-2', [
+    ['intentionToUse', 2],
+    ['perceivedUsefulness', 4],
+    ['perceivedEaseOfUse', 4],
+    ['subjectiveNorm', 2],
+    ['voluntariness', 3],
+    ['image', 3],
+    ['jobRelevance', 2],
+    ['outputQuality', 2],
+    ['resultDemonstrability', 4],
+  ]),
+  'tam-3': structuredItemRefs('tam-3', [
+    ['perceivedUsefulness', 3],
+    ['perceivedEaseOfUse', 3],
+    ['subjectiveNorm', 3],
+    ['image', 2],
+    ['jobRelevance', 3],
+    ['outputQuality', 3],
+    ['resultDemonstrability', 2],
+    ['computerSelfEfficacy', 3],
+    ['perceptionsOfExternalControl', 3],
+    ['computerAnxiety', 2],
+    ['computerPlayfulness', 2],
+    ['perceivedEnjoyment', 3],
+    ['objectiveUsability', 2],
+    ['behavioralIntention', 2],
+    ['usePatterns', 2],
+    ['experience', 2],
+    ['voluntariness', 2],
+  ]),
+})
+
+const validStructuredResponse = (details, study) => {
+  const keys = Object.keys(details || {}).sort(compareStrings)
+  if (
+    keys.join(',') !==
+    CLIENT_EVENT_POLICIES.STRUCTURED_RESPONSE_ACTIVITY.detailKeys
+      .slice()
+      .sort(compareStrings)
+      .join(',') ||
+    normalizeStudyType(study.testType) !== 'USER' ||
+    study.subType !== 'USER_UNMODERATED'
+  ) {
+    return false
+  }
+
+  let allowedRefs
+  const taskMatch = /^task:(0|[1-9]\d*)$/.exec(details.scopeRef || '')
+  if (taskMatch) {
+    const taskIndex = Number(taskMatch[1])
+    const task = study.testStructure?.userTasks?.[taskIndex]
+    if (!Number.isSafeInteger(taskIndex) || !task) return false
+    allowedRefs = STRUCTURED_TASK_ITEM_REFS[task.taskType]
+  } else if (['preTest', 'postTest'].includes(details.scopeRef)) {
+    const questions = study.testStructure?.[details.scopeRef]
+    if (!Array.isArray(questions)) return false
+    allowedRefs = questions.flatMap((question, index) =>
+      question?.selectionField === true &&
+      Array.isArray(question.selectionFields) &&
+      question.selectionFields.length > 0
+        ? [`${details.scopeRef}:question:${index}`]
+        : [],
+    )
+  } else {
+    return false
+  }
+
+  if (
+    !Array.isArray(allowedRefs) ||
+    !Array.isArray(details.items) ||
+    details.items.length < 1 ||
+    details.items.length > allowedRefs.length
+  ) {
+    return false
+  }
+
+  const allowed = new Set(allowedRefs)
+  const seen = new Set()
+  return details.items.every((item) => {
+    const itemKeys = Object.keys(item || {}).sort(compareStrings)
+    if (
+      itemKeys.join(',') !== 'changes,itemRef' ||
+      typeof item.itemRef !== 'string' ||
+      !allowed.has(item.itemRef) ||
+      seen.has(item.itemRef) ||
+      !Number.isInteger(item.changes) ||
+      item.changes < 1 ||
+      item.changes > 10000
+    ) {
+      return false
+    }
+    seen.add(item.itemRef)
+    return true
+  })
+}
 const RESPONSE_FIELD_COUNTS = Object.freeze({
   frequency: 'frequencyChanges',
   severity: 'severityChanges',
@@ -334,6 +466,9 @@ const validateClientBatch = (payload, study) => {
       if (event?.eventType === 'TASK_STARTED') {
         return validTaskStarted(event.details, study)
       }
+      if (event?.eventType === 'STRUCTURED_RESPONSE_ACTIVITY') {
+        return validStructuredResponse(event.details, study)
+      }
       return false
     })()
     let reasonCode
@@ -378,6 +513,10 @@ const validateClientBatch = (payload, study) => {
                 study,
                 event.details.fieldRef.split(':').slice(0, 2).join(':'),
               )
+            : {}),
+          ...(event.eventType === 'STRUCTURED_RESPONSE_ACTIVITY' &&
+          /^task:(0|[1-9]\d*)$/.test(event.details.scopeRef)
+            ? taskContext(study, event.details.scopeRef)
             : {}),
         },
         message: recording?.message || policy.message,

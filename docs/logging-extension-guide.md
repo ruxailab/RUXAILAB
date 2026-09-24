@@ -38,7 +38,8 @@ allowlists live in `studyLoggingClient.js`, `logEvents.js`, and
 
 ## Wire a producer
 
-Logging follows a successful primary save and remains fire-and-forget:
+Logging follows a successful primary save and remains fire-and-forget, with one
+client-observed partial-activity exception:
 
 - call `consentAccepted()` after committed consent;
 - call `resumeAfterConsent()` only when entering a route where consent was
@@ -54,6 +55,14 @@ interaction. Call `responseChanged(questionRef, field)` only after a real
 frequency, severity, or configured-option change; delegated comment inputs are
 counted by the runtime. Leaving the question, hiding the page, or submitting
 finishes the group. Never pass selected values or comment text to logging.
+
+Unmoderated structured questionnaires also emit client-observed
+`STRUCTURED_RESPONSE_ACTIVITY` records at form, hidden-page, and submission
+boundaries. These records contain only record-local change counts and canonical
+item references; answers, labels, scores, and question text remain in Results.
+A failed enqueue is retained for the next runtime checkpoint, while logging
+continues to fail open. This activity event is not evidence of answer
+persistence or server delivery.
 
 Do not add telemetry to participant loading state, notifications, or error
 handling. On unmount call `destroy()` to release browser listeners. Verify that
