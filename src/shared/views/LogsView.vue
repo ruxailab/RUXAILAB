@@ -211,7 +211,7 @@
                   role="button"
                   class="log-row"
                   :class="`log-row--${event.level || 'info'}`"
-                  :aria-label="`View details for ${eventPresentation(event).primary}, participant ${event.participantLabel}, ${formatDateTime(event.occurredAt)}`"
+                  :aria-label="eventAriaLabel(event)"
                   @click="selectedEvent = event"
                   @keyup.enter="selectedEvent = event"
                   @keyup.space.prevent="selectedEvent = event"
@@ -737,6 +737,18 @@ const eventPresentation = (event) => {
     secondary = null
   }
   return { primary, secondary: secondary || null }
+}
+const eventAriaLabel = (event) => {
+  const { primary, secondary } = eventPresentation(event)
+  return [
+    `View details for ${primary}`,
+    secondary,
+    `participant ${event.participantLabel}`,
+    formatDateTime(event.occurredAt),
+    `${formatIdentifier(event.level || 'info')} level`,
+  ]
+    .filter(Boolean)
+    .join(', ')
 }
 const detailEntries = computed(() => {
   const event = selectedEvent.value

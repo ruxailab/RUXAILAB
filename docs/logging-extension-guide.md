@@ -124,9 +124,10 @@ the enabled media flags; this describes requested media, not saved artifacts.
 Pre/post-study fields and whole-study events have no invented task context.
 Existing log documents remain immutable when study configuration changes.
 
-The Explorer offers the new USER event type and readable details using the
-existing Event Type/Level filters and layer cell. This extension adds no new
-methodology producers, Overview Dashboard, export, filters, or indexes.
+The Logs explorer offers the new USER event type and readable details using the
+existing Event Type/Level filters. Source and layer remain available in the
+collapsed delivery diagnostics. This extension adds no new methodology
+producers, Overview Dashboard, export, filters, or indexes.
 
 ## Extend the explorer and lifecycle
 

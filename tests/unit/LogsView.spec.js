@@ -474,6 +474,12 @@ describe('LogsView', () => {
     })
     const wrapper = mount(LogsView, { props: { id: 'study-1' } })
     await flushPromises()
+    expect(wrapper.find('tbody tr').attributes('aria-label')).toContain(
+      'Screen recording',
+    )
+    expect(wrapper.find('tbody tr').attributes('aria-label')).toContain(
+      'Warning level',
+    )
     await wrapper.find('tbody tr').trigger('click')
     for (const label of [
       'Technical',
@@ -602,6 +608,9 @@ describe('LogsView', () => {
       'Post-test · Answer editedQuestion 1',
       'Study submitted',
     ])
+    const startedRow = wrapper.find('tbody tr[aria-label*="Task 1 · Started"]')
+    expect(startedRow.attributes('aria-label')).toContain('NASA-TLX')
+    expect(startedRow.attributes('aria-label')).toContain('Info level')
     expect(wrapper.find('thead').text()).not.toContain('Source')
     expect(wrapper.find('thead').text()).not.toContain('Layer')
     expect(wrapper.text()).not.toContain('TASK_STARTED')
@@ -702,6 +711,12 @@ describe('LogsView', () => {
 
     const wrapper = mount(LogsView, { props: { id: 'study-1' } })
     await flushPromises()
+    expect(wrapper.find('tbody tr').attributes('aria-label')).toContain(
+      'SUS · Answer field',
+    )
+    expect(wrapper.find('tbody tr').attributes('aria-label')).toContain(
+      'Info level',
+    )
     await wrapper.find('tbody tr').trigger('click')
 
     expect(wrapper.find('.drawer-heading h2').text()).toBe(
