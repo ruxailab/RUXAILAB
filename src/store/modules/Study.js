@@ -300,5 +300,10 @@ export default {
         commit('setLoading', false)
       }
     },
+
+    async getAcceptedStudyParticipant(_, { studyId, userId }) {
+      if (!studyId || !userId) return null
+      return studyController.getAcceptedParticipant({ studyId, userId })
+    },
   },
 }

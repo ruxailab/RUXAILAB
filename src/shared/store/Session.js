@@ -50,6 +50,17 @@ export default {
       )
     },
 
+    UPSERT_SESSION(state, session) {
+      const index = state.sessions.findIndex((item) => item.id === session.id)
+      if (index === -1) state.sessions.push(session)
+      else {
+        state.sessions.splice(index, 1, {
+          ...state.sessions[index],
+          ...session,
+        })
+      }
+    },
+
     setLoading(state, loading) {
       state.loading = loading
     },
@@ -77,6 +88,7 @@ export default {
         }
 
         const session = result.session
+        commit('UPSERT_SESSION', session)
 
         await dispatch('notifySessionMembers', {
           session,
@@ -164,8 +176,11 @@ export default {
 
         const descriptionChanged =
           (previousSession?.message || '') !== (payload.session?.message || '')
+        const titleChanged =
+          (previousSession?.title || '') !== (payload.session?.title || '')
 
-        const sessionDetailsChanged = scheduleChanged || descriptionChanged
+        const sessionDetailsChanged =
+          scheduleChanged || descriptionChanged || titleChanged
 
         const result = await new SessionController().updateSession({
           ...payload,
@@ -176,9 +191,21 @@ export default {
           throw result.error
         }
 
+        commit('UPSERT_SESSION', {
+          ...enrichSession(payload.session),
+          id: payload.sessionId,
+          startDate: payload.session.scheduledAt,
+        })
+
         const oldMembers = [
-          ...(previousSession?.staff || []),
-          ...(previousSession?.participants || []),
+          ...(previousSession?.staff || []).map((member) => ({
+            ...member,
+            membershipType: 'cooperator',
+          })),
+          ...(previousSession?.participants || []).map((member) => ({
+            ...member,
+            membershipType: 'participant',
+          })),
         ]
 
         const newMembers = [
@@ -193,7 +220,24 @@ export default {
         ]
 
         const addedMembers = newMembers.filter(
-          (member) => !oldMembers.some((old) => old.email === member.email),
+          (member) =>
+            !oldMembers.some(
+              (old) => {
+                const sameUser =
+                  (old.userDocId &&
+                    member.userDocId &&
+                    old.userDocId === member.userDocId) ||
+                  ((old.email || '').trim().toLowerCase() &&
+                    (old.email || '').trim().toLowerCase() ===
+                      (member.email || '').trim().toLowerCase())
+
+                return (
+                  sameUser &&
+                old.membershipType === member.membershipType &&
+                  old.role === member.role
+                )
+              },
+            ),
         )
 
         if (sessionDetailsChanged) {
@@ -507,6 +551,22 @@ export default {
       }
     },
 
+    subscribeUserSessions({ getters, commit }) {
+      const user = getters.user
+      if (!user) return () => {}
+
+      return new SessionController().subscribeInvitedSessions({
+        email: user.email,
+        userId: user.id,
+        onChange: (sessions) => commit('SET_SESSIONS', sessions),
+        onError: (error) =>
+          commit('setError', {
+            errorCode: 'sessionFetchError',
+            message: error,
+          }),
+      })
+    },
+
     async getSession({ commit }, { studyId, sessionId }) {
       commit('setLoading', true)
 
@@ -593,10 +653,26 @@ function enrichSession(session) {
       ),
     ],
 
+    staffEmails: [
+      ...new Set(
+        (session.staff || [])
+          .map((staff) => staff.email?.trim().toLowerCase())
+          .filter(Boolean),
+      ),
+    ],
+
     participantEmails: [
       ...new Set(
         (session.participants || [])
           .map((participant) => participant.email?.trim().toLowerCase())
+          .filter(Boolean),
+      ),
+    ],
+
+    participantIds: [
+      ...new Set(
+        (session.participants || [])
+          .map((participant) => participant.userDocId)
           .filter(Boolean),
       ),
     ],

@@ -165,6 +165,26 @@ export function getAcceptedInvitationDestination({ study, user }) {
   }
 }
 
+export function getInviteAcceptanceDestination({
+  study,
+  user,
+  membershipType = 'cooperator',
+}) {
+  if (membershipType === 'participant') {
+    if (normalizeStudyType(study?.testType) === STUDY_TYPES.FOCUS_GROUP) {
+      return {
+        name: 'FocusGroupSessionView',
+        params: { id: study.testDocId || study.id },
+      }
+    }
+
+    // Preserve the existing participant handoff for other study types.
+    return { name: 'TestView', params: { id: study?.testDocId || study?.id } }
+  }
+
+  return getAcceptedInvitationDestination({ study, user })
+}
+
 const NAVIGATION_ITEMS = Object.freeze([
   {
     title: 'Dashboard',

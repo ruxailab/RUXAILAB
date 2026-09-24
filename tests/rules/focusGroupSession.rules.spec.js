@@ -1,4 +1,5 @@
 import fs from 'fs'
+import fetch from 'node-fetch'
 import {
   assertFails,
   assertSucceeds,
@@ -30,6 +31,7 @@ const seedPresence = async (entries) => {
 }
 
 beforeAll(async () => {
+  global.fetch = fetch
   testEnv = await initializeTestEnvironment({
     projectId,
     database: { rules: fs.readFileSync('database.rules.json', 'utf8') },

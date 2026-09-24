@@ -171,6 +171,10 @@ import { useI18n } from 'vue-i18n'
 import List from '@/shared/components/tables/ListComponent.vue'
 import { getSessionStatus } from '@/shared/utils/sessionsUtils'
 import { matchesSearch } from '@/shared/utils/searchUtils'
+import {
+  STUDY_TYPES,
+  normalizeStudyType,
+} from '@/shared/constants/methodDefinitions'
 
 const { t } = useI18n()
 
@@ -317,6 +321,13 @@ const filteredSessions = computed(() => {
 })
 
 const goTo = (session) => {
+  if (!session?.study?.id || !session?.id) return
+  if (normalizeStudyType(session.study.testType) === STUDY_TYPES.FOCUS_GROUP) {
+    router.push(
+      `/focusGroup/session/${session.study.id}?session=${session.id}`,
+    )
+    return
+  }
   const route = router.resolve(`/testview/${session.study.id}/${session.id}`)
   window.open(route.href, '_blank')
 }

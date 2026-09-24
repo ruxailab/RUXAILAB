@@ -4,7 +4,7 @@ import { getAuth, connectAuthEmulator } from 'firebase/auth'
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions'
 import { getStorage, connectStorageEmulator } from 'firebase/storage'
-import { getDatabase } from 'firebase/database'
+import { getDatabase, connectDatabaseEmulator } from 'firebase/database'
 
 const REQUIRED_ENV_VARS = {
   VUE_APP_FIREBASE_API_KEY: process.env.VUE_APP_FIREBASE_API_KEY,
@@ -44,29 +44,39 @@ const storage = getStorage(firebaseApp, `gs://${firebaseConfig.storageBucket}`)
 const database = getDatabase(firebaseApp, firebaseConfig.databaseURL)
 
 const EMULATOR_HOST = process.env.VUE_APP_FIREBASE_EMULATOR_HOST || 'localhost'
+const USE_FIREBASE_EMULATORS =
+  process.env.VUE_APP_USE_EMULATORS === 'true'
+const useEmulator = (serviceFlag) =>
+  USE_FIREBASE_EMULATORS || process.env[serviceFlag] === 'true'
 
-if (process.env.VUE_APP_USE_AUTH_EMULATOR === 'true') {
+if (useEmulator('VUE_APP_USE_AUTH_EMULATOR')) {
   const AUTH_EMULATOR_PORT =
     Number(process.env.VUE_APP_AUTH_EMULATOR_PORT) || 9099
   connectAuthEmulator(auth, `http://${EMULATOR_HOST}:${AUTH_EMULATOR_PORT}`)
 }
 
-if (process.env.VUE_APP_USE_FIRESTORE_EMULATOR === 'true') {
+if (useEmulator('VUE_APP_USE_FIRESTORE_EMULATOR')) {
   const FIRESTORE_EMULATOR_PORT =
     Number(process.env.VUE_APP_FIRESTORE_EMULATOR_PORT) || 8081
   connectFirestoreEmulator(db, EMULATOR_HOST, FIRESTORE_EMULATOR_PORT)
 }
 
-if (process.env.VUE_APP_USE_FUNCTIONS_EMULATOR === 'true') {
+if (useEmulator('VUE_APP_USE_FUNCTIONS_EMULATOR')) {
   const FUNCTIONS_EMULATOR_PORT =
     Number(process.env.VUE_APP_FUNCTIONS_EMULATOR_PORT) || 5002
   connectFunctionsEmulator(fbFunctions, EMULATOR_HOST, FUNCTIONS_EMULATOR_PORT)
 }
 
-if (process.env.VUE_APP_USE_STORAGE_EMULATOR === 'true') {
+if (useEmulator('VUE_APP_USE_STORAGE_EMULATOR')) {
   const STORAGE_EMULATOR_PORT =
     Number(process.env.VUE_APP_STORAGE_EMULATOR_PORT) || 9199
   connectStorageEmulator(storage, EMULATOR_HOST, STORAGE_EMULATOR_PORT)
+}
+
+if (useEmulator('VUE_APP_USE_DATABASE_EMULATOR')) {
+  const DATABASE_EMULATOR_PORT =
+    Number(process.env.VUE_APP_DATABASE_EMULATOR_PORT) || 9000
+  connectDatabaseEmulator(database, EMULATOR_HOST, DATABASE_EMULATOR_PORT)
 }
 
 export { auth, db, fbFunctions, storage, database }

@@ -72,6 +72,7 @@
                     density="comfortable"
                     prepend-inner-icon="mdi-account-search"
                     :placeholder="$t('Sessions.staff.selectPlaceholder')"
+                    :no-data-text="$t('Sessions.staff.noAvailable')"
                     color="primary"
                     hide-details
                   />
@@ -686,6 +687,9 @@ const availableStaff = computed(() =>
     (candidate) =>
       !sessionStaff.value.some(
         (staff) => staff.userDocId === candidate.userDocId,
+      ) &&
+      !selectedParticipants.value.some((participant) =>
+        sameSessionMember(candidate, participant),
       ),
   ),
 )
@@ -694,10 +698,18 @@ const availableParticipants = computed(() =>
   participants.value.filter(
     (user) =>
       !selectedParticipants.value.some(
-        (participant) => participant.email === user.email,
-      ),
+        (participant) => sameSessionMember(user, participant),
+      ) &&
+      !sessionStaff.value.some((staff) => sameSessionMember(user, staff)),
   ),
 )
+
+function sameSessionMember(a, b) {
+  if (a?.userDocId && b?.userDocId && a.userDocId === b.userDocId) return true
+  const aEmail = (a?.email || '').trim().toLowerCase()
+  const bEmail = (b?.email || '').trim().toLowerCase()
+  return !!aEmail && aEmail === bEmail
+}
 
 const staffRoleOptions = computed(() => [
   {
@@ -772,6 +784,15 @@ function addStaff() {
   )
 
   if (alreadyExists) {
+    return
+  }
+
+  if (
+    selectedParticipants.value.some((participant) =>
+      sameSessionMember(selectedStaffMember.value, participant),
+    )
+  ) {
+    showError(t('Sessions.error.memberAlreadyAssigned'))
     return
   }
 
@@ -853,12 +874,19 @@ function addParticipant(participant) {
   }
 
   const exists = selectedParticipants.value.some(
-    (item) => item.email.toLowerCase() === participant.email.toLowerCase(),
+    (item) => sameSessionMember(item, participant),
   )
 
   if (exists) {
     showError(t('Sessions.error.participantAlreadyAdded'))
 
+    return
+  }
+
+  if (
+    sessionStaff.value.some((staff) => sameSessionMember(staff, participant))
+  ) {
+    showError(t('Sessions.error.memberAlreadyAssigned'))
     return
   }
 
@@ -894,6 +922,17 @@ async function saveSession() {
     // participants than that, so re-check here too before it saves.
     if (participantLimitReached.value) {
       showError(t('Sessions.error.participantLimitReached'))
+      return
+    }
+
+    if (
+      sessionStaff.value.some((staff) =>
+        selectedParticipants.value.some((participant) =>
+          sameSessionMember(staff, participant),
+        ),
+      )
+    ) {
+      showError(t('Sessions.error.memberAlreadyAssigned'))
       return
     }
 

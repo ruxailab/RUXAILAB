@@ -114,6 +114,18 @@
           {{ formatDate(item.startDate) }}
         </template>
 
+        <template #item.status="{ item }">
+          <v-chip
+            size="small"
+            :color="getSessionStatus(item.scheduledAt).variant"
+            variant="tonal"
+          >
+            {{
+              t(`Sessions.status.${getSessionStatus(item.scheduledAt).status}`)
+            }}
+          </v-chip>
+        </template>
+
         <template #item.staff="{ item }">
           <div class="d-flex flex-wrap ga-1">
             <v-chip
@@ -235,6 +247,7 @@ import {
   STUDY_TYPES,
   normalizeStudyType,
 } from '@/shared/constants/methodDefinitions'
+import { getSessionStatus } from '@/shared/utils/sessionsUtils'
 
 const { t, locale } = useI18n()
 
@@ -306,6 +319,11 @@ const headers = computed(() => [
   {
     title: t('Sessions.headers.start'),
     key: 'startDate',
+  },
+  {
+    title: t('Sessions.headers.status'),
+    key: 'status',
+    sortable: false,
   },
 
   {

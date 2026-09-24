@@ -126,6 +126,7 @@ const activeSubSection = ref(null)
 // 🔸 Data
 
 let unsubscribeTests = null // Unsub function for real-time tests
+let unsubscribeUserSessions = null
 
 const sessions = computed(() => store.getters.sessions || [])
 
@@ -222,12 +223,19 @@ const loadSessions = () => store.dispatch('fetchUserSessions')
  * Loads data depending on the current section.
  */
 watch([activeSection, activeSubSection], async ([section, sub]) => {
+  if (section !== 'sessions' && unsubscribeUserSessions) {
+    unsubscribeUserSessions()
+    unsubscribeUserSessions = null
+  }
+
   switch (section) {
     case 'studies':
       await getMyPersonalTests()
       break
     case 'sessions':
       await loadSessions()
+      unsubscribeUserSessions?.()
+      unsubscribeUserSessions = await store.dispatch('subscribeUserSessions')
       break
     case 'templates':
       await getMyTemplates()
@@ -268,6 +276,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   if (unsubscribeTests) unsubscribeTests()
+  if (unsubscribeUserSessions) unsubscribeUserSessions()
   window.removeEventListener('toggle-dashboard-drawer', handleToggleDrawer)
 })
 
