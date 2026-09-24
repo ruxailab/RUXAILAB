@@ -443,6 +443,7 @@
             @done="globalIndex = hasPreTest ? 4 : 5"
             @close-calibration="closeCalibration()"
             @open-calibration="openCalibration()"
+            @mark-completed="handleCalibrationFinished()"
           />
 
           <PreTasksStep
@@ -639,6 +640,7 @@ const isRecording = ref(false)
 const eyeCalibrationStepDone = ref(false)
 const calibrationCompleted = ref(false)
 const calibrationInProgress = ref(false)
+let calibrationPollTimer = null
 
 //  Eye tracking web gazer testing
 
@@ -791,17 +793,74 @@ function handleIrisData(data) {
   localTestAnswer.tasks[taskIndex.value].irisTrackingData.push(data)
 }
 
+const handleCalibrationFinished = () => {
+  calibrationCompleted.value = true
+  stopCalibrationPopupPolling()
+  if (calibrationPopup.value && !calibrationPopup.value.closed) {
+    try {
+      calibrationPopup.value.close()
+    } catch {
+      // ignore cross-origin error if any
+    }
+  }
+}
+
+const checkCalibrationWindowStatus = () => {
+  if (calibrationPopup.value && calibrationPopup.value.closed) {
+    handleCalibrationFinished()
+  }
+}
+
+const handleCalibrationMessage = (event) => {
+  const data = event?.data
+  if (!data) return
+  if (
+    data === 'calibration_finished' ||
+    data === 'calibration_success' ||
+    data?.type === 'CALIBRATION_FINISHED' ||
+    data?.type === 'CALIBRATION_SUCCESS' ||
+    data?.type === 'CALIBRATION_COMPLETED' ||
+    data?.action === 'calibration_finished' ||
+    (data?.status === 'success' && data?.calibration)
+  ) {
+    handleCalibrationFinished()
+  }
+}
+
 const openCalibration = () => {
+  if (!user.value?.id && !anonymousUserDocId.value) {
+    initializeAnonymousUser()
+  }
+  const authId = user.value?.id || anonymousUserDocId.value
   calibrationPopup.value = window.open(
-    `${process.env.VUE_APP_EYE_LAB_FRONTEND_URL}/calibration/camera?auth=${user.value?.id}&test=${test.value.id}`,
+    `${process.env.VUE_APP_EYE_LAB_FRONTEND_URL}/calibration/camera?auth=${authId}&test=${test.value.id}`,
     '_blank',
   )
   calibrationInProgress.value = true
+
+  startCalibrationPopupPolling()
 }
 
 const closeCalibration = () => {
   calibrationInProgress.value = false
+  stopCalibrationPopupPolling()
   completeStep(taskIndex.value, 'eyeCalibration')
+}
+
+const startCalibrationPopupPolling = () => {
+  stopCalibrationPopupPolling()
+  window.addEventListener('message', handleCalibrationMessage)
+  window.addEventListener('focus', checkCalibrationWindowStatus)
+  calibrationPollTimer = setInterval(checkCalibrationWindowStatus, 500)
+}
+
+const stopCalibrationPopupPolling = () => {
+  if (calibrationPollTimer) {
+    clearInterval(calibrationPollTimer)
+    calibrationPollTimer = null
+  }
+  window.removeEventListener('message', handleCalibrationMessage)
+  window.removeEventListener('focus', checkCalibrationWindowStatus)
 }
 
 function toggleTracking(value) {
@@ -1583,16 +1642,14 @@ onMounted(async () => {
     }
 
     if (data.lastCalibrationId) {
-      calibrationCompleted.value = true
-      if (calibrationPopup.value) {
-        calibrationPopup.value.close()
-      }
+      handleCalibrationFinished()
     }
   })
 })
 
 onBeforeUnmount(() => {
   studyLogging?.destroy()
+  stopCalibrationPopupPolling()
   if (
     videoRecorder.value &&
     typeof videoRecorder.value.stopRecording === 'function'

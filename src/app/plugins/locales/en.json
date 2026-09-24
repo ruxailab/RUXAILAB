@@ -1871,6 +1871,7 @@
       "calibrating": "Calibrating, please wait...",
       "notOpened": "The calibration didn't open?",
       "clickHere": "Click here",
+      "alreadyCompleted": "Already finished calibration in the window? Click here to continue",
       "success": "The calibration was successful!",
       "continue": "CONTINUE TO THE TEST!"
     },
