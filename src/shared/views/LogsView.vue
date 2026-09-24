@@ -192,8 +192,6 @@
                 <col class="participant-column" />
                 <col class="event-column" />
                 <col class="level-column" />
-                <col class="source-column" />
-                <col class="layer-column" />
                 <col class="open-column" />
               </colgroup>
               <thead>
@@ -202,8 +200,6 @@
                   <th scope="col">Participant</th>
                   <th scope="col">Event</th>
                   <th scope="col">Level</th>
-                  <th scope="col" class="source-column">Source</th>
-                  <th scope="col" class="layer-column">Layer</th>
                   <th scope="col"><span class="sr-only">Open details</span></th>
                 </tr>
               </thead>
@@ -215,7 +211,7 @@
                   role="button"
                   class="log-row"
                   :class="`log-row--${event.level || 'info'}`"
-                  :aria-label="`View details for ${event.message}, participant ${event.participantLabel}, ${formatDateTime(event.occurredAt)}`"
+                  :aria-label="`View details for ${eventPresentation(event).primary}, participant ${event.participantLabel}, ${formatDateTime(event.occurredAt)}`"
                   @click="selectedEvent = event"
                   @keyup.enter="selectedEvent = event"
                   @keyup.space.prevent="selectedEvent = event"
@@ -241,8 +237,10 @@
                     </span>
                   </td>
                   <td class="message-cell">
-                    <div>{{ event.message }}</div>
-                    <span>{{ formatEventType(event.eventType) }}</span>
+                    <div>{{ eventPresentation(event).primary }}</div>
+                    <span v-if="eventPresentation(event).secondary">
+                      {{ eventPresentation(event).secondary }}
+                    </span>
                   </td>
                   <td>
                     <span
@@ -252,12 +250,6 @@
                       <v-icon size="14">{{ levelIcon(event.level) }}</v-icon>
                       {{ event.level }}
                     </span>
-                  </td>
-                  <td class="source-cell source-column">
-                    {{ formatIdentifier(event.source) || 'Unavailable' }}
-                  </td>
-                  <td class="layer-column">
-                    <span class="layer-label">{{ event.layer }}</span>
                   </td>
                   <td class="open-cell">
                     <v-icon size="19">mdi-chevron-right</v-icon>
@@ -290,9 +282,14 @@
                 </span>
                 <span>{{ formatDateTime(event.occurredAt) }}</span>
               </span>
-              <strong>{{ event.message }}</strong>
+              <strong>{{ eventPresentation(event).primary }}</strong>
+              <span
+                v-if="eventPresentation(event).secondary"
+                class="mobile-event__subtitle"
+              >
+                {{ eventPresentation(event).secondary }}
+              </span>
               <span class="mobile-event__meta">
-                <span>{{ formatEventType(event.eventType) }}</span>
                 <span
                   class="level-indicator"
                   :class="`level-indicator--${event.level || 'info'}`"
@@ -300,10 +297,6 @@
                   <v-icon size="14">{{ levelIcon(event.level) }}</v-icon>
                   {{ event.level }}
                 </span>
-              </span>
-              <span class="mobile-event__context">
-                {{ formatIdentifier(event.source) || 'Unavailable' }} ·
-                {{ event.layer }}
               </span>
             </button>
           </div>
@@ -365,7 +358,10 @@
           </div>
           <div class="drawer-heading__copy">
             <div class="surface-kicker">Event details</div>
-            <h2>{{ selectedEvent.message }}</h2>
+            <h2>{{ eventPresentation(selectedEvent).primary }}</h2>
+            <p v-if="eventPresentation(selectedEvent).secondary">
+              {{ eventPresentation(selectedEvent).secondary }}
+            </p>
           </div>
           <v-btn
             icon="mdi-close"
@@ -376,16 +372,15 @@
           />
         </div>
 
-        <div class="drawer-badges">
+        <div
+          v-if="['warning', 'error'].includes(selectedEvent.level)"
+          class="drawer-badges"
+        >
           <span
             class="level-badge"
             :class="`level-badge--${selectedEvent.level || 'info'}`"
-            >{{ selectedEvent.level }}</span
+            >{{ formatIdentifier(selectedEvent.level) }}</span
           >
-          <span class="layer-badge">{{ selectedEvent.layer }}</span>
-          <span class="drawer-source">
-            {{ formatIdentifier(selectedEvent.source) }}
-          </span>
         </div>
 
         <dl class="event-summary">
@@ -413,48 +408,65 @@
             <dt>Occurred</dt>
             <dd>{{ formatDateTime(selectedEvent.occurredAt) }}</dd>
           </div>
-          <div>
-            <dt>Received</dt>
-            <dd>{{ formatDateTime(selectedEvent.receivedAt) }}</dd>
-          </div>
-          <div>
-            <dt>Delivery delay</dt>
-            <dd>{{ deliveryDelay(selectedEvent) }}</dd>
-          </div>
-          <div v-if="selectedEvent.timeQuality">
-            <dt>Time quality</dt>
-            <dd>{{ selectedEvent.timeQuality }}</dd>
-          </div>
-          <div v-if="selectedEvent.actorRole">
-            <dt>Actor role</dt>
-            <dd>{{ selectedEvent.actorRole }}</dd>
-          </div>
         </dl>
 
+        <p v-if="isClientReportedEvent(selectedEvent)" class="event-time-note">
+          Browser-reported occurrence time is unverified and may be reordered
+          by client-clock error or delayed delivery. Received time records
+          server receipt, not participant action.
+        </p>
+
         <section
+          v-if="detailEntries.length"
           class="drawer-details"
           aria-labelledby="event-specific-heading"
         >
-          <h3 id="event-specific-heading">Event-specific data</h3>
+          <h3 id="event-specific-heading">Event details</h3>
           <p v-if="selectedEvent.eventType === 'ANSWER_EDITED'">
-            Counts summarize browser input activity; response text is never
-            logged. Active input span runs from the first to the last input
-            event, not the total time spent on the question.
+            Logs capture edit activity, not written answers or selected
+            ratings; review responses and scores in Results. Active edit span is
+            browser input time, not total time spent on the question.
           </p>
           <p
             v-else-if="selectedEvent.eventType === 'QUESTION_RESPONSE_UPDATED'"
           >
             One update groups changes made during the same question interaction.
-            Selected ratings and comment text are never logged.
+            Selected ratings, scores, and comment text are never logged; review
+            responses in Results.
           </p>
-          <dl v-if="detailEntries.length" class="detail-grid">
+          <p
+            v-if="detailEntries.some(([key]) => key === 'taskDurationMs')"
+          >
+            Timed task activity can exclude a questionnaire stage, so it is not
+            a full task duration.
+          </p>
+          <dl class="detail-grid">
             <template v-for="[key, value] in detailEntries" :key="key">
               <dt>{{ detailLabel(key) }}</dt>
               <dd>{{ formatDetailValue(key, value) }}</dd>
             </template>
           </dl>
-          <p v-else>No event-specific details.</p>
         </section>
+
+        <details class="delivery-diagnostics">
+          <summary>Delivery diagnostics</summary>
+          <dl class="detail-grid">
+            <dt>Received</dt>
+            <dd>{{ formatDateTime(selectedEvent.receivedAt) }}</dd>
+            <dt>Delivery delay</dt>
+            <dd>{{ deliveryDelay(selectedEvent) }}</dd>
+            <dt>Time quality</dt>
+            <dd>{{ formatIdentifier(selectedEvent.timeQuality) || 'Unavailable' }}</dd>
+            <dt>Source</dt>
+            <dd>{{ formatIdentifier(selectedEvent.source) || 'Unavailable' }}</dd>
+            <dt>Layer</dt>
+            <dd>{{ formatIdentifier(selectedEvent.layer) || 'Unavailable' }}</dd>
+            <dt>Actor role</dt>
+            <dd>{{ formatIdentifier(selectedEvent.actorRole) || 'Unavailable' }}</dd>
+            <dt>Event type</dt>
+            <dd>{{ formatEventType(selectedEvent.eventType) || 'Unknown event' }}</dd>
+          </dl>
+        </details>
       </template>
     </v-navigation-drawer>
   </v-container>
@@ -478,11 +490,57 @@ const { smAndDown, xs } = useDisplay()
 const timezone =
   Intl.DateTimeFormat().resolvedOptions().timeZone || 'local time'
 const formatIdentifier = (value = '') =>
-  value
+  (typeof value === 'string' ? value : '')
     .toLowerCase()
     .split(/[_-]/)
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
+const TASK_TYPE_LABELS = Object.freeze({
+  'no-answer': 'No Answer',
+  'post-test': 'Short Answer',
+  'text-area': 'Paragraph Answer',
+  'post-form': 'Google Forms Link',
+  sus: 'SUS',
+  'nasa-tlx': 'NASA-TLX',
+  sart: 'Situational Awareness Rating Technique (SART)',
+  'tam-1': 'TAM-1',
+  'tam-2': 'TAM-2',
+  'tam-3': 'TAM-3',
+})
+const MEDIA_TYPE_LABELS = Object.freeze({
+  audio: 'Audio recording',
+  webcam: 'Webcam recording',
+  screen: 'Screen recording',
+})
+const formatTaskType = (value) => TASK_TYPE_LABELS[value] || null
+const parseTaskRef = (value) => {
+  const match = /^task:(0|[1-9]\d*)$/.exec(value || '')
+  if (!match) return null
+  const index = Number(match[1])
+  return Number.isSafeInteger(index) ? index : null
+}
+const parseFieldRef = (value) => {
+  const match = /^(preTest|postTest|task):(\d+):(answer|comment)$/.exec(
+    value || '',
+  )
+  if (!match) return null
+  const index = Number(match[2])
+  return Number.isSafeInteger(index)
+    ? { section: match[1], index, field: match[3] }
+    : null
+}
+const parseHeuristicFieldRef = (value) => {
+  const match = /^heuristic:(\d+):question:(\d+):(answer|comment)$/.exec(
+    value || '',
+  )
+  if (!match) return null
+  const heuristicIndex = Number(match[1])
+  const questionIndex = Number(match[2])
+  return Number.isSafeInteger(heuristicIndex) &&
+    Number.isSafeInteger(questionIndex)
+    ? { heuristicIndex, questionIndex, field: match[3] }
+    : null
+}
 const filterOptions = (values) =>
   values.map((value) => ({ title: formatIdentifier(value), value }))
 const participantSequence = (label = '') => /\d+/.exec(label)?.[0]
@@ -511,6 +569,7 @@ const EVENT_TYPES_BY_STUDY = Object.freeze({
     'ANSWER_EDITED',
     'CONSENT_ACCEPTED',
     'TASK_ATTEMPT_FINISHED',
+    'TASK_STARTED',
     'MEDIA_RECORDING_OUTCOME',
     'STUDY_SUBMITTED',
   ],
@@ -575,22 +634,196 @@ const visibleRange = computed(() => {
     ? `${start}–${end} shown`
     : `${start}–${end} of ${totalCount.value.toLocaleString()}`
 })
+const eventPresentation = (event) => {
+  const details = event?.details || {}
+  const taskIndex = parseTaskRef(details.taskRef)
+  const taskName = (index) => `Task ${index + 1}`
+  const instrument = formatTaskType(details.taskType)
+  const field = parseFieldRef(details.fieldRef)
+  const heuristicField = parseHeuristicFieldRef(details.fieldRef)
+  let primary
+  let secondary
+
+  if (event?.eventType === 'STUDY_VIEW_OPENED') primary = 'Study opened'
+  else if (event?.eventType === 'CONSENT_ACCEPTED') primary = 'Consent accepted'
+  else if (event?.eventType === 'STUDY_SUBMITTED') primary = 'Study submitted'
+  else if (event?.eventType === 'ANSWER_EDITED' && field) {
+    const action =
+      field.section === 'task' && field.field === 'comment'
+        ? 'Observation edited'
+        : 'Answer edited'
+    if (field.section === 'preTest' || field.section === 'postTest') {
+      primary = `${field.section === 'preTest' ? 'Pre-test' : 'Post-test'} · Answer edited`
+      secondary = `Question ${field.index + 1}`
+    } else if (field.section === 'task') {
+      primary = `${taskName(field.index)} · ${action}`
+      const fieldLabel = field.field === 'comment' ? 'Observations' : 'Answer field'
+      secondary = [instrument, fieldLabel].filter(Boolean).join(' · ')
+    }
+  } else if (
+    event?.eventType === 'ANSWER_EDITED' &&
+    heuristicField
+  ) {
+    primary = typeof event.message === 'string' && event.message.trim()
+      ? event.message.trim()
+      : 'Answer field edited'
+    secondary = `Heuristic ${heuristicField.heuristicIndex + 1} · Question ${heuristicField.questionIndex + 1} · ${formatIdentifier(heuristicField.field)} field`
+  } else if (event?.eventType === 'TASK_STARTED' && taskIndex !== null) {
+    primary = `${taskName(taskIndex)} · Started`
+    secondary = instrument
+  } else if (event?.eventType === 'TASK_ATTEMPT_FINISHED' && taskIndex !== null) {
+    const outcome =
+      details.outcome === 'completed'
+        ? 'Completed'
+        : details.outcome === 'not_completed'
+          ? 'Could not finish'
+          : null
+    if (outcome) {
+      primary = `${taskName(taskIndex)} · ${outcome}`
+      secondary = instrument
+    }
+  } else if (
+    event?.eventType === 'MEDIA_RECORDING_OUTCOME' &&
+    taskIndex !== null
+  ) {
+    const outcome = {
+      completed: 'Recording saved',
+      failed: 'Recording failed',
+      permission_denied: 'Permission not granted',
+      cancelled: 'Recording cancelled',
+    }[details.outcome]
+    const mediaType = MEDIA_TYPE_LABELS[details.mediaType]
+    if (outcome && mediaType) {
+      primary = `${taskName(taskIndex)} · ${outcome}`
+      secondary = mediaType
+    }
+  } else if (event?.eventType === 'QUESTION_RESPONSE_UPDATED') {
+    primary = 'Question response updated'
+    const match = /^heuristic:(\d+):question:(\d+)$/.exec(
+      details.questionRef || '',
+    )
+    if (match) {
+      const heuristicIndex = Number(match[1])
+      const questionIndex = Number(match[2])
+      if (
+        Number.isSafeInteger(heuristicIndex) &&
+        Number.isSafeInteger(questionIndex)
+      ) {
+        secondary = `Heuristic ${heuristicIndex + 1} · Question ${questionIndex + 1}`
+      }
+    }
+  }
+
+  if (!primary) {
+    const message =
+      typeof event?.message === 'string' ? event.message.trim() : ''
+    primary =
+      message || formatIdentifier(event?.eventType) || 'Unknown event'
+    if (
+      event?.eventType === 'TASK_ATTEMPT_FINISHED' &&
+      taskIndex !== null
+    ) {
+      secondary = taskName(taskIndex)
+    }
+  }
+
+  const typeLabel = formatIdentifier(event?.eventType)
+  if (
+    secondary &&
+    [primary, typeLabel].some(
+      (value) => value && secondary.toLocaleLowerCase() === value.toLocaleLowerCase(),
+    )
+  ) {
+    secondary = null
+  }
+  return { primary, secondary: secondary || null }
+}
 const detailEntries = computed(() => {
   const event = selectedEvent.value
   const details = event?.details || {}
-  if (event?.eventType !== 'QUESTION_RESPONSE_UPDATED') {
-    return Object.entries(details)
+  const hasPositiveValue = (value) => Number.isFinite(Number(value)) && Number(value) > 0
+  const hasLength = (value) => Number.isFinite(Number(value)) && Number(value) >= 0
+  if (event?.eventType === 'ANSWER_EDITED') {
+    const field = parseFieldRef(details.fieldRef)
+    const entries = []
+    if (field && ['preTest', 'postTest'].includes(field.section)) {
+      entries.push(['fieldKind', field.field])
+    }
+    if (
+      hasLength(details.initialLength) &&
+      hasLength(details.resultingLength)
+    ) {
+      entries.push([
+        'characterLengths',
+        [Number(details.initialLength), Number(details.resultingLength)],
+      ])
+    }
+    if (hasPositiveValue(details.editOperations)) {
+      entries.push(['editOperations', Number(details.editOperations)])
+    }
+    if (hasPositiveValue(details.editSpanMs)) {
+      entries.push(['editSpanMs', Number(details.editSpanMs)])
+    }
+    if (hasPositiveValue(details.pasteOperations)) {
+      entries.push(['pasteOperations', Number(details.pasteOperations)])
+    }
+    return entries
   }
-  return [
-    ['questionRef', details.questionRef],
-    ['changedFields', details.changedFields],
-    ['interactionSpanMs', details.interactionSpanMs],
-    ['frequencyChanges', details.frequencyChanges],
-    ['severityChanges', details.severityChanges],
-    ['answerChanges', details.answerChanges],
-    ['commentInputChanges', details.commentInputChanges],
-    ['commentTextLogged', false],
-  ].filter(([key, value]) => !key.endsWith('Changes') || Number(value) > 0)
+  if (event?.eventType === 'TASK_ATTEMPT_FINISHED') {
+    const entries = []
+    if (hasPositiveValue(details.taskDurationMs)) {
+      entries.push(['taskDurationMs', Number(details.taskDurationMs)])
+    }
+    const recordingTypes = Array.isArray(details.recordingTypes)
+      ? details.recordingTypes.filter((type) => MEDIA_TYPE_LABELS[type])
+      : []
+    if (recordingTypes.length) entries.push(['recordingTypes', recordingTypes])
+    return entries
+  }
+  if (event?.eventType === 'MEDIA_RECORDING_OUTCOME') {
+    const entries = []
+    if (['permission', 'capture', 'upload'].includes(details.stage)) {
+      entries.push(['stage', details.stage])
+    }
+    if (
+      [
+        'unsupported',
+        'cancelled',
+        'wrongSurface',
+        'error',
+        'permissionDenied',
+        'deviceUnavailable',
+        'captureError',
+        'emptyRecording',
+        'uploadError',
+      ].includes(details.reason)
+    ) {
+      entries.push(['reason', details.reason])
+    }
+    return entries
+  }
+  if (event?.eventType === 'QUESTION_RESPONSE_UPDATED') {
+    const entries = []
+    const changedFields = Array.isArray(details.changedFields)
+      ? details.changedFields.filter((field) =>
+          ['frequency', 'severity', 'answer', 'comment'].includes(field),
+        )
+      : []
+    if (changedFields.length) entries.push(['changedFields', changedFields])
+    if (hasPositiveValue(details.interactionSpanMs)) {
+      entries.push(['interactionSpanMs', Number(details.interactionSpanMs)])
+    }
+    for (const key of [
+      'frequencyChanges',
+      'severityChanges',
+      'answerChanges',
+      'commentInputChanges',
+    ]) {
+      if (hasPositiveValue(details[key])) entries.push([key, Number(details[key])])
+    }
+    return entries
+  }
+  return []
 })
 
 const filterKey = () =>
@@ -758,85 +991,45 @@ const deliveryDelay = (event) => {
   const occurred = toDate(event.occurredAt)
   const received = toDate(event.receivedAt)
   if (!occurred || !received) return 'Unavailable'
-  return formatDuration(Math.max(0, received - occurred))
+  const difference = received - occurred
+  return difference < 0
+    ? `Occurrence is ${formatDuration(-difference)} after receipt`
+    : formatDuration(difference)
 }
+const isClientReportedEvent = (event) =>
+  event?.timeQuality === 'client-unverified' || event?.source === 'study-client'
 const DETAIL_LABELS = Object.freeze({
-  taskRef: 'Task',
-  taskType: 'Task / instrument type',
+  fieldKind: 'Field',
+  characterLengths: 'Text length',
   recordingTypes: 'Requested recordings',
-  mediaType: 'Recording type',
   stage: 'Recording stage',
-  reason: 'Recording reason',
-  outcome: 'Outcome',
-  taskDurationMs: 'Task duration',
-  fieldRef: 'Field',
-  questionRef: 'Question',
+  reason: 'Reason',
+  taskDurationMs: 'Timed task activity',
   changedFields: 'Changed',
   interactionSpanMs: 'Interaction span',
   frequencyChanges: 'Frequency changes',
   severityChanges: 'Severity changes',
   answerChanges: 'Option changes',
   commentInputChanges: 'Comment input changes',
-  commentTextLogged: 'Comment text',
-  editSpanMs: 'Active input span',
-  editOperations: 'Input changes',
+  editSpanMs: 'Active edit span',
+  editOperations: 'Input activity',
   pasteOperations: 'Paste actions',
-  initialLength: 'Starting length',
-  resultingLength: 'Final length',
 })
 const detailLabel = (key) =>
   DETAIL_LABELS[key] ||
   key.replace(/([A-Z])/g, ' $1').replace(/^./, (value) => value.toUpperCase())
 const pluralized = (value, unit) =>
   `${Number(value).toLocaleString()} ${unit}${Number(value) === 1 ? '' : 's'}`
-const formatQuestionRef = (value) => {
-  const match = /^heuristic:(\d+):question:(\d+)$/.exec(value)
-  return match
-    ? `Heuristic ${Number(match[1]) + 1} · Question ${Number(match[2]) + 1}`
-    : value
-}
-const formatFieldRef = (value) => {
-  const heuristic = /^heuristic:(\d+):question:(\d+):(answer|comment)$/.exec(
-    value,
-  )
-  if (heuristic) {
-    return `Heuristic ${Number(heuristic[1]) + 1} · Question ${Number(heuristic[2]) + 1} · ${formatIdentifier(heuristic[3])} field`
-  }
-
-  const studyField = /^(preTest|postTest|task):(\d+):(answer|comment)$/.exec(
-    value,
-  )
-  if (!studyField) return value
-  const scope = {
-    preTest: 'Pre-test question',
-    postTest: 'Post-test question',
-    task: 'Task',
-  }[studyField[1]]
-  return `${scope} ${Number(studyField[2]) + 1} · ${formatIdentifier(studyField[3])} field`
-}
-const formatTaskRef = (value) => {
-  const match = /^task:(\d+)$/.exec(value)
-  return match ? `Task ${Number(match[1]) + 1}` : value
-}
 const formatDetailValue = (key, value) => {
-  if (key === 'taskRef') return formatTaskRef(value)
-  if (key === 'taskType')
-    return (
-      {
-        sus: 'SUS',
-        'nasa-tlx': 'NASA-TLX',
-        sart: 'SART',
-        'tam-1': 'TAM 1',
-        'tam-2': 'TAM 2',
-        'tam-3': 'TAM 3',
-      }[value] || formatIdentifier(value)
-    )
+  if (key === 'fieldKind')
+    return value === 'comment' ? 'Comment field' : 'Answer field'
+  if (key === 'characterLengths') {
+    if (!Array.isArray(value) || value.length !== 2) return 'Unavailable'
+    return `${value[0].toLocaleString()} → ${value[1].toLocaleString()} characters`
+  }
   if (key === 'recordingTypes')
-    return value.length ? value.map(formatIdentifier).join(', ') : 'None'
-  if (key === 'outcome' && value === 'cancelled')
-    return 'Permission denied or capture cancelled'
-  if (['outcome', 'mediaType', 'stage'].includes(key))
-    return formatIdentifier(value)
+    return value.map((type) => MEDIA_TYPE_LABELS[type]).join(', ')
+  if (key === 'stage') return formatIdentifier(value)
   if (key === 'reason')
     return (
       {
@@ -852,10 +1045,11 @@ const formatDetailValue = (key, value) => {
       }[value] || formatIdentifier(value)
     )
   if (key === 'taskDurationMs') return formatDuration(value)
-  if (key === 'fieldRef') return formatFieldRef(value)
-  if (key === 'questionRef') return formatQuestionRef(value)
   if (key === 'changedFields') {
-    return value.map(formatIdentifier).join(', ')
+    return value
+      .filter((field) => ['frequency', 'severity', 'answer', 'comment'].includes(field))
+      .map(formatIdentifier)
+      .join(', ')
   }
   if (key === 'editSpanMs' || key === 'interactionSpanMs') {
     return formatDuration(value)
@@ -864,13 +1058,9 @@ const formatDetailValue = (key, value) => {
     return pluralized(value, 'change')
   }
   if (key === 'commentInputChanges') return pluralized(value, 'input event')
-  if (key === 'commentTextLogged') return 'Never logged'
   if (key === 'editOperations') return pluralized(value, 'input event')
   if (key === 'pasteOperations') return pluralized(value, 'paste event')
-  if (key === 'initialLength' || key === 'resultingLength') {
-    return pluralized(value, 'character')
-  }
-  return value
+  return formatIdentifier(value)
 }
 
 watch(pageSize, () => replaceFirstPage())
@@ -1112,7 +1302,7 @@ onBeforeUnmount(() => clearTimeout(participantTimer))
 }
 .log-table {
   width: 100%;
-  min-width: 960px;
+  min-width: 780px;
   table-layout: fixed;
   border-collapse: collapse;
 }
@@ -1124,12 +1314,6 @@ onBeforeUnmount(() => clearTimeout(participantTimer))
 }
 .level-column {
   width: 96px;
-}
-.source-column {
-  width: 142px;
-}
-.layer-column {
-  width: 132px;
 }
 .open-column {
   width: 44px;
@@ -1201,9 +1385,7 @@ onBeforeUnmount(() => clearTimeout(participantTimer))
   color: var(--logs-muted);
   font-size: 0.73rem;
 }
-.level-badge,
-.layer-badge,
-.drawer-source {
+.level-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -1225,12 +1407,6 @@ onBeforeUnmount(() => clearTimeout(participantTimer))
 .level-badge--error {
   background: #ffeaed;
   color: #b41f37;
-}
-.layer-badge,
-.drawer-source {
-  padding: 5px 7px;
-  background: #eef0f5;
-  color: #4b5568;
 }
 .participant-token {
   --participant-accent: #315d7f;
@@ -1321,16 +1497,6 @@ onBeforeUnmount(() => clearTimeout(participantTimer))
   background: #ffeaed;
   color: #a91e34;
 }
-.layer-label {
-  color: #536176;
-  font-size: 0.72rem;
-  font-weight: 600;
-}
-.source-cell {
-  color: #536176;
-  font-size: 0.76rem !important;
-  white-space: nowrap;
-}
 .open-cell {
   width: 40px;
   color: var(--logs-muted) !important;
@@ -1385,9 +1551,9 @@ onBeforeUnmount(() => clearTimeout(participantTimer))
   color: var(--logs-muted);
   font-size: 0.72rem;
 }
-.mobile-event__context {
+.mobile-event__subtitle {
   color: var(--logs-muted);
-  font-size: 0.7rem;
+  font-size: 0.76rem;
 }
 .empty-logs {
   display: grid;
@@ -1454,6 +1620,12 @@ onBeforeUnmount(() => clearTimeout(participantTimer))
 .drawer-heading h2 {
   color: #ffffff;
 }
+.drawer-heading .drawer-heading__copy > p {
+  margin: 5px 0 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
 .drawer-heading h2 {
   overflow-wrap: anywhere;
 }
@@ -1470,6 +1642,15 @@ onBeforeUnmount(() => clearTimeout(participantTimer))
 .event-summary {
   margin: 0;
   padding: 6px 20px;
+}
+.event-time-note {
+  margin: 2px 20px 0;
+  padding: 11px 12px;
+  border-left: 3px solid #65809a;
+  background: #f4f7fa;
+  color: #4b5568;
+  font-size: 0.78rem;
+  line-height: 1.5;
 }
 .event-summary > div {
   display: grid;
@@ -1510,6 +1691,25 @@ onBeforeUnmount(() => clearTimeout(participantTimer))
   grid-template-columns: minmax(120px, auto) 1fr;
   gap: 10px 16px;
 }
+.delivery-diagnostics {
+  margin: 0 20px 24px;
+  border: 1px solid var(--logs-border);
+  border-radius: 6px;
+}
+.delivery-diagnostics summary {
+  padding: 12px 14px;
+  color: var(--logs-navy);
+  cursor: pointer;
+  font-size: 0.84rem;
+  font-weight: 650;
+}
+.delivery-diagnostics[open] summary {
+  border-bottom: 1px solid var(--logs-border);
+}
+.delivery-diagnostics .detail-grid {
+  margin: 0;
+  padding: 14px;
+}
 .sr-only {
   position: absolute;
   width: 1px;
@@ -1523,10 +1723,6 @@ onBeforeUnmount(() => clearTimeout(participantTimer))
 @media (min-width: 960px) and (max-width: 1279px) {
   .log-table {
     min-width: 760px;
-  }
-  .source-column,
-  .layer-column {
-    display: none;
   }
 }
 @media (max-width: 959px) {
