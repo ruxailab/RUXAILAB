@@ -10,6 +10,8 @@ const PERMANENT_BATCH_REASONS = new Set([
   'MALFORMED_ENVELOPE',
   'BUDGET_EXHAUSTED',
 ])
+const compareStrings = (left, right) => left.localeCompare(right)
+
 const PERMANENT_EVENT_REASONS = new Set([
   'EVENT_ID_CONFLICT',
   'DUPLICATE_EVENT_ID',
@@ -157,7 +159,7 @@ const sanitizeDetails = (eventType, details) => {
     }
   }
   if (eventType === 'STRUCTURED_RESPONSE_ACTIVITY') {
-    const keys = Object.keys(details || {}).sort()
+    const keys = Object.keys(details || {}).sort(compareStrings)
     const scopeRef = details?.scopeRef
     const scopeMatch = /^task:(0|[1-9]\d*)$/.exec(scopeRef || '')
     const validScope =
@@ -177,7 +179,7 @@ const sanitizeDetails = (eventType, details) => {
     const seen = new Set()
     const items = []
     for (const item of details.items) {
-      const itemKeys = Object.keys(item || {}).sort()
+      const itemKeys = Object.keys(item || {}).sort(compareStrings)
       if (
         itemKeys.join(',') !== 'changes,itemRef' ||
         typeof item.itemRef !== 'string' ||
@@ -192,7 +194,7 @@ const sanitizeDetails = (eventType, details) => {
       seen.add(item.itemRef)
       items.push({ itemRef: item.itemRef, changes: item.changes })
     }
-    items.sort((left, right) => left.itemRef.localeCompare(right.itemRef))
+    items.sort((left, right) => compareStrings(left.itemRef, right.itemRef))
     return { scopeRef, items }
   }
   if (eventType === 'QUESTION_RESPONSE_UPDATED') {
@@ -657,7 +659,7 @@ export const createStructuredResponseTracker = ({
     state.dirtyLastAt = null
     const items = [...snapshot.entries()]
       .map(([itemRef, changes]) => ({ itemRef, changes }))
-      .sort((left, right) => left.itemRef.localeCompare(right.itemRef))
+      .sort((left, right) => compareStrings(left.itemRef, right.itemRef))
     const attempt = Promise.resolve()
       .then(() =>
         logger.record(
