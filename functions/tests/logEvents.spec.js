@@ -39,11 +39,12 @@ const participantRequest = (data, uid = 'participant') => ({
   data,
 })
 
-const verifiedRequest = (eventType, taskRef) =>
+const verifiedRequest = (eventType, taskRef, overrides = {}) =>
   participantRequest({
     studyId: 'study-1',
     eventType,
     ...(taskRef ? { taskRef } : {}),
+    ...overrides,
   })
 
 const useUserStudy = async (answer = {}) => {
@@ -758,7 +759,66 @@ describe('verified lifecycle events', () => {
         taskDurationMs: 4321,
       },
     })
+    expect(logs.docs[0].data().occurredAt).toBeDefined()
+    expect(logs.docs[0].data().receivedAt).toBeDefined()
   })
+
+  it('stores a valid observed finish time separately from server receipt time', async () => {
+    await useUserStudy({
+      tasks: [{ attempted: true, completed: true, taskTime: 1 }],
+    })
+    await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
+    const observedAt = new Date(Date.now() - 60_000).toISOString()
+
+    await expect(
+      requestLogEvent.run(
+        verifiedRequest('TASK_ATTEMPT_FINISHED', 'task:0', {
+          occurredAt: observedAt,
+        }),
+      ),
+    ).resolves.toEqual({ status: 'accepted' })
+
+    const logs = await admin
+      .firestore()
+      .collection('tests/study-1/logs')
+      .where('eventType', '==', 'TASK_ATTEMPT_FINISHED')
+      .get()
+    const event = logs.docs[0].data()
+    expect(event.occurredAt.toMillis()).toBe(Date.parse(observedAt))
+    expect(event.receivedAt.toMillis()).toBeGreaterThan(
+      event.occurredAt.toMillis(),
+    )
+    expect(event.timeQuality).toBe('client-unverified')
+  })
+
+  it.each(['not-a-time', '9999-01-01T00:00:00.000Z'])(
+    'falls back to server time for an invalid observed finish time: %s',
+    async (occurredAt) => {
+      await useUserStudy({
+        tasks: [{ attempted: true, completed: true, taskTime: 1 }],
+      })
+      await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
+
+      await expect(
+        requestLogEvent.run(
+          verifiedRequest('TASK_ATTEMPT_FINISHED', 'task:0', { occurredAt }),
+        ),
+      ).resolves.toEqual({ status: 'accepted' })
+
+      const logs = await admin
+        .firestore()
+        .collection('tests/study-1/logs')
+        .where('eventType', '==', 'TASK_ATTEMPT_FINISHED')
+        .get()
+      const event = logs.docs[0].data()
+      expect(event.timeQuality).toBe('client-unverified')
+      expect(event.occurredAt).toBeDefined()
+      expect(event.receivedAt).toBeDefined()
+      expect(
+        Math.abs(event.occurredAt.toMillis() - event.receivedAt.toMillis()),
+      ).toBeLessThan(5000)
+    },
+  )
 
   it('rejects forged or premature verified transitions without partial state', async () => {
     await useUserStudy()
@@ -1274,6 +1334,48 @@ describe('unmoderated task and recording metadata', () => {
     for (const event of await logs())
       expect(event.details).not.toHaveProperty('taskType')
   })
+  it('keeps task completion occurrence before later post-test activity when verification is later', async () => {
+    await configure()
+    await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
+    const finishObservedAt = new Date(Date.now() - 60_000).toISOString()
+    const postTestObservedAt = new Date(
+      Date.parse(finishObservedAt) + 30_000,
+    ).toISOString()
+    const postTestEdit = answerEdited('post-test-edit', {
+      occurredAt: postTestObservedAt,
+      details: {
+        ...answerEdited().details,
+        fieldRef: 'postTest:0:answer',
+      },
+    })
+    await logEvents.run(
+      participantRequest({
+        ...viewBatch('post-test-batch', 'post-test-edit'),
+        events: [postTestEdit],
+      }),
+    )
+    await requestLogEvent.run(
+      verifiedRequest('TASK_ATTEMPT_FINISHED', 'task:0', {
+        occurredAt: finishObservedAt,
+      }),
+    )
+
+    const stored = await logs()
+    const taskFinished = stored.find(
+      (event) => event.eventType === 'TASK_ATTEMPT_FINISHED',
+    )
+    const postTest = stored.find((event) => event.eventId === 'post-test-edit')
+    expect(taskFinished.occurredAt.toMillis()).toBe(
+      Date.parse(finishObservedAt),
+    )
+    expect(taskFinished.occurredAt.toMillis()).toBeLessThan(
+      postTest.occurredAt.toMillis(),
+    )
+    expect(taskFinished.receivedAt.toMillis()).toBeGreaterThanOrEqual(
+      postTest.receivedAt.toMillis(),
+    )
+  })
+
   it.each(['audio', 'webcam', 'screen'])(
     'accepts controlled %s outcomes and derives severity/source/message',
     async (mediaType) => {
@@ -1286,12 +1388,16 @@ describe('unmoderated task and recording metadata', () => {
           reason: 'permissionDenied',
           level: 'warning',
         },
-        {
-          outcome: 'cancelled',
-          stage: 'permission',
-          reason: 'cancelled',
-          level: 'warning',
-        },
+        ...(mediaType === 'screen'
+          ? [
+              {
+                outcome: 'cancelled',
+                stage: 'permission',
+                reason: 'cancelled',
+                level: 'warning',
+              },
+            ]
+          : []),
         {
           outcome: 'failed',
           stage: 'permission',
@@ -1348,6 +1454,26 @@ describe('unmoderated task and recording metadata', () => {
       expect(sessions.docs[0].data().clientEventCount).toBe(outcomes.length)
     },
   )
+  it.each(['audio', 'webcam'])(
+    'rejects participant cancellation for %s acquisition',
+    async (mediaType) => {
+      await configure()
+      await expect(
+        logEvents.run(
+          participantRequest(
+            recording({
+              mediaType,
+              outcome: 'cancelled',
+              stage: 'permission',
+              reason: 'cancelled',
+            }),
+          ),
+        ),
+      ).rejects.toMatchObject({ code: 'invalid-argument' })
+      expect(await logs()).toHaveLength(0)
+    },
+  )
+
   it.each([
     { taskType: 'sus' },
     { url: 'private-url' },

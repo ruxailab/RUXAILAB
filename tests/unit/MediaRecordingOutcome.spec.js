@@ -239,9 +239,9 @@ describe.each(cases)(
         {
           taskRef: 'task:0',
           mediaType,
-          outcome: 'cancelled',
+          outcome: mediaType === 'screen' ? 'cancelled' : 'failed',
           stage: 'permission',
-          reason: 'cancelled',
+          reason: mediaType === 'screen' ? 'cancelled' : 'captureError',
         },
       ])
     })

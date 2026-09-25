@@ -531,7 +531,7 @@ describe('LogsView', () => {
       'Warning',
       'Screen recording',
       'Permission',
-      'Permission denied or capture cancelled',
+      'Screen sharing was cancelled',
     ])
       expect(wrapper.text()).toContain(label)
     expect(wrapper.text()).not.toContain('Technical')
@@ -849,7 +849,7 @@ describe('LogsView', () => {
       'Task 1 · Recording savedScreen recording',
       'Task 1 · Recording failedWebcam recording',
       'Task 1 · Permission not grantedAudio recording',
-      'Task 1 · Recording cancelledScreen recording',
+      'Task 1 · Screen sharing cancelledScreen recording',
     ])
     expect(rows[4].text()).toContain('Old recording outcome')
     expect(rows[4].text()).not.toContain('Media Recording Outcome')

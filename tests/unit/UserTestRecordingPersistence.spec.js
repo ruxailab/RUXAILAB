@@ -153,9 +153,43 @@ it.each([false, true])(
     await vm.handleTaskFinish(true)
     await flushPromises()
     expect(mockRuntime.recordingOutcome).toHaveBeenCalledTimes(1)
-    expect(mockRuntime.taskFinished).toHaveBeenCalledWith(0)
+    expect(mockRuntime.taskFinished).toHaveBeenCalledWith(0, expect.any(String))
   },
 )
+
+it('captures finish time before persistence and refreshes it on retry', async () => {
+  const vm = await mountView()
+  const first = '2026-09-24T10:15:30.000Z'
+  const second = '2026-09-24T10:16:30.000Z'
+  const timeSpy = jest
+    .spyOn(Date.prototype, 'toISOString')
+    .mockReturnValueOnce(first)
+    .mockReturnValue(second)
+  const save = deferred()
+  mockStore.dispatch.mockImplementation((action) =>
+    action === 'saveTestAnswer' ? save.promise : Promise.resolve(),
+  )
+
+  try {
+    const finishing = vm.handleTaskFinish(true)
+    await flushPromises()
+    expect(mockRuntime.taskFinished).not.toHaveBeenCalled()
+
+    save.resolve()
+    await finishing
+    expect(mockRuntime.taskFinished).toHaveBeenCalledWith(0, first)
+
+    await vm.handleTaskFinish(true)
+    await flushPromises()
+    expect(mockRuntime.taskFinished).toHaveBeenCalledTimes(2)
+    expect(mockRuntime.taskFinished.mock.calls).toEqual([
+      [0, first],
+      [0, second],
+    ])
+  } finally {
+    timeSpy.mockRestore()
+  }
+})
 
 it('does not acknowledge an unattached media result or a result arriving during an earlier save', async () => {
   const vm = await mountView()
@@ -212,7 +246,7 @@ it('keeps task completion working when the logging queue rejects', async () => {
   vm.handleRecordingResult(result)
   await vm.handleTaskFinish(true)
   await flushPromises()
-  expect(mockRuntime.taskFinished).toHaveBeenCalledWith(0)
+  expect(mockRuntime.taskFinished).toHaveBeenCalledWith(0, expect.any(String))
   expect(vm.localTestAnswer.tasks[0].attempted).toBe(true)
 })
 

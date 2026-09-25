@@ -135,6 +135,7 @@ const sanitizeDetails = (eventType, details) => {
       !['completed', 'failed', 'permission_denied', 'cancelled'].includes(
         details?.outcome,
       ) ||
+      (details?.outcome === 'cancelled' && details?.mediaType !== 'screen') ||
       !['permission', 'capture', 'upload'].includes(details?.stage) ||
       (details?.reason !== undefined &&
         ![

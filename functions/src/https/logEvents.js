@@ -6,6 +6,7 @@ import { taskContext, recordingPolicy } from '../shared/logging/taskContext.js'
 const MAX_EVENTS_PER_BATCH = 25
 const CLIENT_EVENT_BUDGET = 1000
 const MAX_TASK_DURATION_MS = 24 * 60 * 60 * 1000
+const MAX_VERIFIED_OCCURRENCE_FUTURE_MS = 5 * 60 * 1000
 const POST_SUBMISSION_OCCURRENCE_GRACE_MS = 5 * 60 * 1000
 const POST_SUBMISSION_RECEIPT_GRACE_MS = 7 * 24 * 60 * 60 * 1000
 const ID_PATTERN = /^[A-Za-z0-9_-]{3,160}$/
@@ -172,6 +173,26 @@ const consentAccepted = async (transaction, db, study, uid) => {
 
 const nonNegativeInteger = (value, maximum) =>
   Number.isInteger(value) && value >= 0 && value <= maximum
+
+const verifiedOccurrenceFor = (value) => {
+  const milliseconds =
+    typeof value === 'number'
+      ? value
+      : typeof value === 'string' && value.trim()
+        ? Date.parse(value)
+        : Number.NaN
+  const occurredAt = new Date(milliseconds)
+  if (
+    !Number.isFinite(milliseconds) ||
+    Number.isNaN(occurredAt.getTime()) ||
+    occurredAt.getUTCFullYear() < 1 ||
+    occurredAt.getUTCFullYear() > 9999 ||
+    occurredAt.getTime() > Date.now() + MAX_VERIFIED_OCCURRENCE_FUTURE_MS
+  ) {
+    return null
+  }
+  return admin.firestore.Timestamp.fromDate(occurredAt)
+}
 
 const fieldExists = (study, fieldRef) => {
   const type = normalizeStudyType(study.testType)
@@ -700,11 +721,18 @@ async function submitLogEvents(request) {
 
 const verifiedEventFor = ({ requestData, study, participantAnswer }) => {
   const keys = Object.keys(requestData).sort(compareStrings)
-  const expectedKeys =
+  const requiredKeys =
     requestData.eventType === 'TASK_ATTEMPT_FINISHED'
       ? ['eventType', 'studyId', 'taskRef']
       : ['eventType', 'studyId']
-  if (keys.join(',') !== expectedKeys.sort(compareStrings).join(',')) {
+  const optionalKeys =
+    requestData.eventType === 'TASK_ATTEMPT_FINISHED' ? ['occurredAt'] : []
+  if (
+    requiredKeys.some((key) => !keys.includes(key)) ||
+    keys.some(
+      (key) => !requiredKeys.includes(key) && !optionalKeys.includes(key),
+    )
+  ) {
     rejectVerified({
       code: 'invalid-argument',
       reasonCode: 'MALFORMED_REQUEST',
@@ -834,6 +862,11 @@ async function submitVerifiedEvent(request) {
       study,
       participantAnswer,
     })
+    const occurredAt =
+      event.eventType === 'TASK_ATTEMPT_FINISHED'
+        ? verifiedOccurrenceFor(requestData.occurredAt)
+        : null
+
     const eventRef = studyRef
       .collection('logs')
       .doc(documentIdFor(sessionId, `verified:${event.eventId}`))
@@ -886,8 +919,11 @@ async function submitVerifiedEvent(request) {
       level: event.level,
       source: 'logging-service',
       message: event.message,
-      occurredAt: now,
+      occurredAt: occurredAt || now,
       receivedAt: now,
+      ...(event.eventType === 'TASK_ATTEMPT_FINISHED'
+        ? { timeQuality: 'client-unverified' }
+        : {}),
       details: event.details,
     })
     return { status: 'accepted' }

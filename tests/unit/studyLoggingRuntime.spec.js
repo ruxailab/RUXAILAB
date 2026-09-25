@@ -318,6 +318,21 @@ describe('study logging runtime', () => {
     expect(clearIntervalFn).toHaveBeenCalledWith(42)
   })
 
+  it('passes an optional observed finish time to the verified request', async () => {
+    const { runtime, callFunction } = createHarness()
+    const occurredAt = '2026-09-24T10:15:30.000Z'
+
+    await runtime.taskFinished(0, occurredAt)
+
+    expect(callFunction).toHaveBeenCalledWith('requestLogEvent', {
+      studyId: 'study-1',
+      eventType: 'TASK_ATTEMPT_FINISHED',
+      taskRef: 'task:0',
+      occurredAt,
+    })
+    runtime.destroy()
+  })
+
   it('initiates submission flushing before requesting the verified event', async () => {
     const { runtime, logger, callFunction } = createHarness()
     const calls = []

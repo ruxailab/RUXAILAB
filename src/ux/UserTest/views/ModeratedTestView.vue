@@ -1905,8 +1905,14 @@ const handleStartTasks = async () => {
 }
 
 async function handleTaskFinish(userCompleted) {
+  const finishedObservedAt = new Date().toISOString()
   // callTimerSave()
-  await completeStep(taskIndex.value, 'tasks', userCompleted)
+  await completeStep(
+    taskIndex.value,
+    'tasks',
+    userCompleted,
+    finishedObservedAt,
+  )
 }
 
 const startTimer = () => {
@@ -1981,7 +1987,12 @@ function markGroupComplete(groupId) {
   }
 }
 
-const completeStep = async (id, type, userCompleted = true) => {
+const completeStep = async (
+  id,
+  type,
+  userCompleted = true,
+  finishedObservedAt,
+) => {
   displayVideoCallComponent.value = true
   try {
     if (type === 'consent') {
@@ -2076,7 +2087,7 @@ const completeStep = async (id, type, userCompleted = true) => {
       void initializeStudyLogging()?.consentAccepted()
     }
     if (type === 'tasks') {
-      void initializeStudyLogging()?.taskFinished(id)
+      void initializeStudyLogging()?.taskFinished(id, finishedObservedAt)
     }
   } catch (error) {
     console.error('Error in completeStep:', error) // eslint-disable-line no-console

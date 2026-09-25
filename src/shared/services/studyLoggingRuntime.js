@@ -44,12 +44,13 @@ export const createStudyLoggingRuntime = ({
   let activeQuestionRef = null
   let pendingResponseDelivery = Promise.resolve()
 
-  const request = async (eventType, taskRef) => {
+  const request = async (eventType, taskRef, occurredAt) => {
     try {
       const response = await callFunction('requestLogEvent', {
         studyId,
         eventType,
         ...(taskRef ? { taskRef } : {}),
+        ...(occurredAt !== undefined ? { occurredAt } : {}),
       })
       return response?.data || response
     } catch (caught) {
@@ -148,7 +149,7 @@ export const createStudyLoggingRuntime = ({
     await structuredTracker.checkpointDirtyScopes()
     return logger.flush()
   }
-  const finishFlushAndRequest = async (eventType, taskRef) => {
+  const finishFlushAndRequest = async (eventType, taskRef, occurredAt) => {
     try {
       await finishActiveEdits()
       await structuredTracker.checkpointDirtyScopes()
@@ -156,7 +157,7 @@ export const createStudyLoggingRuntime = ({
       // Logging remains fail-open for the primary study workflow.
     }
     void logger.flush()
-    return request(eventType, taskRef)
+    return request(eventType, taskRef, occurredAt)
   }
   const onVisibilityChange = () => {
     if (visibilityTarget?.hidden) return finishAndFlush()
@@ -309,8 +310,12 @@ export const createStudyLoggingRuntime = ({
         return null
       }
     },
-    taskFinished(taskIndex) {
-      return finishFlushAndRequest('TASK_ATTEMPT_FINISHED', `task:${taskIndex}`)
+    taskFinished(taskIndex, occurredAt) {
+      return finishFlushAndRequest(
+        'TASK_ATTEMPT_FINISHED',
+        `task:${taskIndex}`,
+        occurredAt,
+      )
     },
     submitted() {
       return finishFlushAndRequest('STUDY_SUBMITTED')

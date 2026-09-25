@@ -717,6 +717,12 @@ describe('recording queue policy', () => {
     { outcome: 'unknown' },
     { stage: 'answer' },
     { reason: 'raw exception' },
+    {
+      mediaType: 'webcam',
+      outcome: 'cancelled',
+      stage: 'permission',
+      reason: 'cancelled',
+    },
   ])('drops invalid recording fields %j before storage', async (invalid) => {
     const queueStore = { mutate: jest.fn() }
     const logger = createStudyLogger({

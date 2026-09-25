@@ -883,7 +883,7 @@ const eventPresentation = (event) => {
       completed: 'Recording saved',
       failed: 'Recording failed',
       permission_denied: 'Permission not granted',
-      cancelled: 'Recording cancelled',
+      cancelled: 'Screen sharing cancelled',
     }[details.outcome]
     const mediaType = MEDIA_TYPE_LABELS[details.mediaType]
     if (outcome && mediaType) {
@@ -1244,7 +1244,7 @@ const formatDetailValue = (key, value) => {
     return (
       {
         unsupported: 'Screen capture is unsupported',
-        cancelled: 'Permission denied or capture cancelled',
+        cancelled: 'Screen sharing was cancelled',
         wrongSurface: 'Requested screen surface was not selected',
         error: 'Screen capture could not start',
         permissionDenied: 'Permission was not granted',

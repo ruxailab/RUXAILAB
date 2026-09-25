@@ -1324,6 +1324,7 @@ const callTimerSave = () => {
 }
 
 async function handleTaskFinish(userCompleted) {
+  const finishedObservedAt = new Date().toISOString()
   const finishedTaskIndex = taskIndex.value
   await initializeStudyLogging()?.checkpointStructuredScope(
     `task:${finishedTaskIndex}`,
@@ -1341,7 +1342,10 @@ async function handleTaskFinish(userCompleted) {
           await completeStep(finishedTaskIndex, 'tasks', userCompleted)
           attachMediaToTasks(localTestAnswer, mediaUrls.value)
           if (await persistStepProgress()) {
-            void initializeStudyLogging()?.taskFinished(finishedTaskIndex)
+            void initializeStudyLogging()?.taskFinished(
+              finishedTaskIndex,
+              finishedObservedAt,
+            )
           }
         }
       },
@@ -1350,7 +1354,10 @@ async function handleTaskFinish(userCompleted) {
     await completeStep(finishedTaskIndex, 'tasks', userCompleted)
     attachMediaToTasks(localTestAnswer, mediaUrls.value)
     if (await persistStepProgress()) {
-      void initializeStudyLogging()?.taskFinished(finishedTaskIndex)
+      void initializeStudyLogging()?.taskFinished(
+        finishedTaskIndex,
+        finishedObservedAt,
+      )
     }
   }
 }

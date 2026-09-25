@@ -59,7 +59,7 @@ export const recordingPolicy = (study, details) => {
   const reasons = {
     'completed:upload': [],
     'permission_denied:permission': ['permissionDenied'],
-    'cancelled:permission': ['cancelled'],
+    'cancelled:permission': mediaType === 'screen' ? ['cancelled'] : null,
     'failed:permission': [
       'deviceUnavailable',
       'captureError',
@@ -76,7 +76,7 @@ export const recordingPolicy = (study, details) => {
     completed: 'Recording captured and saved',
     failed: 'Recording failed',
     permission_denied: 'Recording permission was not granted',
-    cancelled: 'Recording permission denied or capture cancelled',
+    cancelled: 'Screen sharing was cancelled',
   }
   return {
     layer: 'technical',

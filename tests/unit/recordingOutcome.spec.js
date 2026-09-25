@@ -71,7 +71,7 @@ describe('recording outcomes and answer persistence', () => {
   it.each([
     ['NotAllowedError', 'permission_denied', 'permissionDenied'],
     ['PermissionDeniedError', 'permission_denied', 'permissionDenied'],
-    ['AbortError', 'cancelled', 'cancelled'],
+    ['AbortError', 'failed', 'captureError'],
     ['NotFoundError', 'failed', 'deviceUnavailable'],
     ['DevicesNotFoundError', 'failed', 'deviceUnavailable'],
     ['UnknownError', 'failed', 'captureError'],

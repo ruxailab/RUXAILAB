@@ -35,7 +35,7 @@ export const captureFailure = (error, stage) => {
     if (['NotAllowedError', 'PermissionDeniedError'].includes(error?.name)) {
       return ['permission_denied', stage, 'permissionDenied']
     }
-    if (error?.name === 'AbortError') return ['cancelled', stage, 'cancelled']
+    if (error?.name === 'AbortError') return ['failed', stage, 'captureError']
     if (['NotFoundError', 'DevicesNotFoundError'].includes(error?.name)) {
       return ['failed', stage, 'deviceUnavailable']
     }
