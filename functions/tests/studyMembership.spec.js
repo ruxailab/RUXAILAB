@@ -2,9 +2,20 @@ import { jest } from '@jest/globals'
 
 jest.unstable_mockModule('../src/core/firebase/f.firebase.js', () => ({
   admin: {
-    firestore: Object.assign(jest.fn(), {
+    firestore: Object.assign(
+      jest.fn(() => ({
+        collection: () => ({
+          doc: () => ({
+            collection: () => ({
+              get: async () => ({ docs: [] }),
+            }),
+          }),
+        }),
+      })),
+      {
       FieldValue: { delete: jest.fn() },
-    }),
+      },
+    ),
   },
   functions: {
     onCall: jest.fn((options) => options.handler),
@@ -33,7 +44,7 @@ const study = (testType, actorRole) => ({
 })
 
 describe('study membership authorization', () => {
-  it('matches a pending invitation only to the invited account and token', () => {
+  it('matches a pending invitation only to the invited account and token', async () => {
     const invitedStudy = {
       cooperators: [
         {
@@ -45,20 +56,20 @@ describe('study membership authorization', () => {
       ],
     }
 
-    expect(
+    await expect(
       findMatchingPendingInvitation(invitedStudy, {
         uid: 'invitee',
         email: 'invitee@example.com',
         token: 'invite-token',
       }),
-    ).toEqual(expect.objectContaining({ userDocId: 'invitee' }))
-    expect(
+    ).resolves.toEqual(expect.objectContaining({ userDocId: 'invitee' }))
+    await expect(
       findMatchingPendingInvitation(invitedStudy, {
         uid: 'forwarded-user',
         email: 'other@example.com',
         token: 'invite-token',
       }),
-    ).toBeNull()
+    ).resolves.toBeNull()
   })
 
   it('allows a user-study Manager to invite User and Observator only', () => {

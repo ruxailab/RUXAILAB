@@ -28,6 +28,8 @@ import {
   getMethodManagerView,
   normalizeStudyType,
 } from '@/shared/constants/methodDefinitions'
+import { getInviteAcceptanceDestination } from '@/shared/utils/studyNavigation'
+import { showError } from '@/shared/utils/toast'
 
 const router = useRouter()
 const store = useStore()
@@ -46,10 +48,15 @@ const acceptInvite = async () => {
   try {
     loading.value = true
 
+    const notification = store.getters.notifications?.find(
+      (item) => item.inviteToken === token.value && !item.read,
+    )
+
     const result = await store.dispatch('acceptInvite', {
       token: token.value,
       user: user.value,
       studyId: invite.value.studyId,
+      notification,
       membershipType: invite.value.membershipType,
     })
 
@@ -59,12 +66,12 @@ const acceptInvite = async () => {
     const testId = result.study.id
 
     if (invite.value.membershipType === 'participant') {
-      router.push({
-        name: 'TestView',
-        params: {
-          id: testId,
-        },
+      const destination = getInviteAcceptanceDestination({
+        study: result.study,
+        user: user.value,
+        membershipType: 'participant',
       })
+      if (destination) await router.push(destination)
 
       return
     }
@@ -76,12 +83,15 @@ const acceptInvite = async () => {
       result.study.subType,
     )
 
-    router.push({
+    await router.push({
       name: methodView,
       params: {
         id: testId,
       },
     })
+  } catch (error) {
+    // Keep the dialog open so a failed acceptance is visible and retryable.
+    showError(error?.message || 'errors.globalError')
   } finally {
     loading.value = false
   }

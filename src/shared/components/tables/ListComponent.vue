@@ -140,9 +140,9 @@
       <v-chip
         label
         variant="tonal"
-        :color="getSessionStatus(item.scheduledAt).variant"
+        :color="getSessionStatus(item.scheduledAt, item.lifecycleStatus).variant"
       >
-        {{ getSessionStatus(item.scheduledAt).label }}
+        {{ getSessionStatus(item.scheduledAt, item.lifecycleStatus).label }}
       </v-chip>
     </template>
 

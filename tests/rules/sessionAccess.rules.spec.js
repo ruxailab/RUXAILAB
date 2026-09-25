@@ -5,7 +5,17 @@ import {
   assertSucceeds,
   initializeTestEnvironment,
 } from '@firebase/rules-unit-testing'
-import { deleteDoc, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
+import {
+  collectionGroup,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+} from 'firebase/firestore'
 
 const projectId = 'demo-ruxailab-rbac'
 let testEnv
@@ -61,6 +71,28 @@ describe('Firestore scheduled-session access', () => {
         doc(context('observer', 'observer@example.com').firestore(), path),
       ),
     )
+  })
+
+  it('allows session-member collection-group queries without parent-study access', async () => {
+    const participantDb = context('participant').firestore()
+    const participantQuery = query(
+      collectionGroup(participantDb, 'sessions'),
+      where('participantIds', 'array-contains', 'participant'),
+    )
+    const participantSessions = await assertSucceeds(getDocs(participantQuery))
+    expect(participantSessions.docs.map((session) => session.id)).toEqual([
+      'session-1',
+    ])
+
+    const emailDb = context('observer', 'observer@example.com').firestore()
+    const observerQuery = query(
+      collectionGroup(emailDb, 'sessions'),
+      where('staffEmails', 'array-contains', 'observer@example.com'),
+    )
+    const observerSessions = await assertSucceeds(getDocs(observerQuery))
+    expect(observerSessions.docs.map((session) => session.id)).toEqual([
+      'session-1',
+    ])
   })
 
   it('allows only a study admin to create, update, or delete a session', async () => {

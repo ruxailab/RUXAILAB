@@ -70,6 +70,7 @@ describe('Store Modules Error Handling Structure', () => {
       expect(actionStr).toContain('catch (err)')
       expect(actionStr).toContain('setError')
       expect(actionStr).toContain('setLoading')
+      expect(actionStr).toContain('throw err')
     })
   })
 

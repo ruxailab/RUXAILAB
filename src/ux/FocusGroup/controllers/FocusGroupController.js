@@ -1,4 +1,5 @@
 import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import {
   instantiateStudyByType,
   STUDY_TYPES,
@@ -12,6 +13,15 @@ const ANSWERS_COLLECTION = 'answers'
  * and session configuration on the underlying study document.
  */
 export default class FocusGroupController extends Controller {
+  async updateStudyFields(id, fields) {
+    const response =
+      await FirebaseFunctionsController.callHttpsCallableFunction(
+        'updateStudyWithAudit',
+        { studyId: id, study: { ...fields, updateDate: Date.now() } },
+      )
+    return response.data
+  }
+
   async getById(id) {
     const res = await this.readOne(COLLECTION, id)
     return instantiateStudyByType(STUDY_TYPES.FOCUS_GROUP, {
@@ -21,32 +31,29 @@ export default class FocusGroupController extends Controller {
   }
 
   async updateDiscussionGuide(id, discussionGuide) {
-    return this.update(COLLECTION, id, {
+    return this.updateStudyFields(id, {
       discussionGuide: discussionGuide.map((topic) =>
         typeof topic.toFirestore === 'function' ? topic.toFirestore() : topic,
       ),
-      updateDate: Date.now(),
     })
   }
 
   async updateConfig(id, config) {
-    return this.update(COLLECTION, id, {
+    return this.updateStudyFields(id, {
       config:
         typeof config.toFirestore === 'function'
           ? config.toFirestore()
           : config,
-      updateDate: Date.now(),
     })
   }
 
   async updateStimuli(id, stimuli) {
-    return this.update(COLLECTION, id, {
+    return this.updateStudyFields(id, {
       stimuli: stimuli.map((stimulus) =>
         typeof stimulus.toFirestore === 'function'
           ? stimulus.toFirestore()
           : stimulus,
       ),
-      updateDate: Date.now(),
     })
   }
 

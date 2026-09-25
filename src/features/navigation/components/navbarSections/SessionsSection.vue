@@ -233,6 +233,10 @@ const sessionStatusOptions = computed(() => [
     value: 'completed',
     text: t('pages.sessions.filters.completed'),
   },
+  {
+    value: 'ended',
+    text: t('pages.sessions.filters.ended'),
+  },
 ])
 
 const resetSessionFilters = () => {
@@ -286,7 +290,10 @@ const filteredSessions = computed(() => {
       searchSessions.value,
     )
 
-    const status = getSessionStatus(session.scheduledAt).status
+    const status = getSessionStatus(
+      session.scheduledAt,
+      session.lifecycleStatus,
+    ).status
 
     const matchesStatus =
       selectedSessionStatusFilter.value.includes('all') ||

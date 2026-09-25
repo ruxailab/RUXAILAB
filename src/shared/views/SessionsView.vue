@@ -117,11 +117,13 @@
         <template #item.status="{ item }">
           <v-chip
             size="small"
-            :color="getSessionStatus(item.scheduledAt).variant"
+            :color="getSessionStatus(item.scheduledAt, item.lifecycleStatus).variant"
             variant="tonal"
           >
             {{
-              t(`Sessions.status.${getSessionStatus(item.scheduledAt).status}`)
+              t(
+                `Sessions.status.${getSessionStatus(item.scheduledAt, item.lifecycleStatus).status}`,
+              )
             }}
           </v-chip>
         </template>

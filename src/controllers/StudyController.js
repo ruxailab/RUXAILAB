@@ -144,6 +144,16 @@ export default class StudyController extends Controller {
     return instantiateStudyByType(rawData.testType, rawData)
   }
 
+  async getStudyForSession({ studyId, sessionId }) {
+    const response =
+      await FirebaseFunctionsController.callHttpsCallableFunction(
+        'getStudyForSession',
+        { studyId, sessionId },
+      )
+    const study = response.data?.study
+    return study ? instantiateStudyByType(study.testType, study) : null
+  }
+
   async getPublicStudies() {
     const q = {
       field: 'isPublic',

@@ -90,8 +90,11 @@ service cloud.firestore {
       allow delete: if isAdmin(resource.data);
 
       match /sessions/{sessionId} {
-        allow read: if isStudySessionAdmin(studyId) ||
-          isSessionMember(resource.data);
+        // Check the session-scoped grant first. Collection-group queries by
+        // invited attendees must not need a read of the parent study, which
+        // those attendees may intentionally be unable to read directly.
+        allow read: if isSessionMember(resource.data) ||
+          isStudySessionAdmin(studyId);
         allow create, update, delete: if isStudySessionAdmin(studyId);
       }
 

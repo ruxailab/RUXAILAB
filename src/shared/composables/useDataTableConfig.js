@@ -93,7 +93,8 @@ export function useDataTableConfig(type, t, options = {}) {
           title: t('common.table.status'),
           key: 'status',
           sortable: true,
-          value: (item) => getSessionStatus(item.scheduledAt).status,
+          value: (item) =>
+            getSessionStatus(item.scheduledAt, item.lifecycleStatus).status,
         })
 
         baseHeaders.push({

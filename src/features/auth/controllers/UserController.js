@@ -70,7 +70,7 @@ export default class UserController extends Controller {
 
     const [testsDocs, answersDocs] = await Promise.all([
       this._fetchStudiesByIds(myTestsIds),
-      this._fetchStudiesByIds(myAnswersIds),
+      this._fetchAccessibleStudiesByIds(myAnswersIds),
     ])
 
     const myTests = {}
@@ -123,6 +123,32 @@ export default class UserController extends Controller {
     } catch (error) {
       throw error
     }
+  }
+
+  /**
+   * Answer-history entries can point to studies whose access is scoped to a
+   * particular scheduled session. Skip those inaccessible parent documents;
+   * the session list loads their study metadata through the session-member
+   * callable instead. One denied study must not break the whole dashboard.
+   */
+  async _fetchAccessibleStudiesByIds(ids) {
+    if (!Array.isArray(ids) || ids.length === 0) return []
+
+    const results = await Promise.all(
+      ids.map(async (id) => {
+        try {
+          const doc = await super.readOne('tests', id)
+          return doc.exists()
+            ? Object.assign({ id: doc.id }, doc.data())
+            : null
+        } catch (error) {
+          if (error?.code === 'permission-denied') return null
+          throw error
+        }
+      }),
+    )
+
+    return results.filter(Boolean)
   }
 
   async updateProfile(docId, payload) {

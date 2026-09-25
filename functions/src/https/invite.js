@@ -1,11 +1,16 @@
 import { admin, functions } from '../core/firebase/f.firebase.js'
 import InviteUtils from '../utils/inviteUtils.js'
 
+export const isAcceptedInviteRetry = (invite, uid, authenticatedUid) =>
+  !invite.isPublic &&
+  Boolean(invite.acceptedAt) &&
+  Boolean(uid) &&
+  invite.acceptedBy === uid &&
+  authenticatedUid === uid
+
 export const resolveInvite = functions.onCall({
   handler: async (data) => {
     const { token, uid } = data.data || data
-
-    console.log(token, uid)
 
     if (!token) {
       throw new functions.https.HttpsError('invalid-argument', 'Missing token')
@@ -30,15 +35,17 @@ export const resolveInvite = functions.onCall({
 
     const expired = invite.expiresAt?.toMillis?.() < now
 
-    // private invites should be used only once, so if they have been accepted, they are not valid anymore
-    if (!invite.isPublic && invite.acceptedAt) {
+    // The same account may retry if resolving the token succeeded but the
+    // subsequent study-membership update failed. Other accounts cannot reuse it.
+    const acceptedRetry = isAcceptedInviteRetry(invite, uid, data.auth?.uid)
+    if (!invite.isPublic && invite.acceptedAt && !acceptedRetry) {
       throw new functions.https.HttpsError(
         'failed-precondition',
         'Invite already used',
       )
     }
 
-    if (expired) {
+    if (expired && !acceptedRetry) {
       throw new functions.https.HttpsError(
         'failed-precondition',
         'Invite expired',
@@ -70,7 +77,7 @@ export const resolveInvite = functions.onCall({
     }
 
     // if the invite is private save person who accepted it
-    if (!invite.isPublic) {
+    if (!invite.isPublic && !acceptedRetry) {
       await ref.update({
         acceptedAt: admin.firestore.FieldValue.serverTimestamp(),
         acceptedBy: uid,
@@ -131,9 +138,16 @@ export const validateInvite = functions.onCall({
 
       const now = Date.now()
       const expired = dataInvite.expiresAt?.toMillis?.() < now
+      const authenticatedUid = data.auth?.uid
+      const acceptedRetry = isAcceptedInviteRetry(
+        dataInvite,
+        authenticatedUid,
+        authenticatedUid,
+      )
 
-      // private invites should be used only once, so if they have been accepted, they are not valid anymore
-      if (!dataInvite.isPublic && dataInvite.acceptedAt) {
+      // Keep the dialog available to the same account if invite resolution
+      // succeeded but completing study membership failed on the first attempt.
+      if (!dataInvite.isPublic && dataInvite.acceptedAt && !acceptedRetry) {
         return {
           valid: false,
           invite: {
@@ -148,7 +162,7 @@ export const validateInvite = functions.onCall({
         }
       }
 
-      if (expired) {
+      if (expired && !acceptedRetry) {
         return {
           valid: false,
           invite: {

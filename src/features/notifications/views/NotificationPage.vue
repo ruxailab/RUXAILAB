@@ -177,13 +177,17 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import AcceptInvitationDialog from '@/shared/components/dialogs/AcceptInvitationDialog.vue'
 import NotificationItem from '@/features/notifications/components/NotificationItem.vue'
 import { matchesSearch } from '@/shared/utils/searchUtils'
+import { getInviteAcceptanceDestination } from '@/shared/utils/studyNavigation'
+import { showError } from '@/shared/utils/toast'
 import { NOTIFICATION_TYPES } from '../utils/notificationUtils'
 
 const store = useStore()
+const router = useRouter()
 const { t } = useI18n()
 
 // State
@@ -381,7 +385,10 @@ const handleNotificationClick = async (notification) => {
 const goToNotificationRedirect = async (notification) => {
   if (!notification?.redirectsTo) return
 
+  invite.value = null
   let redirectTo = notification.redirectsTo
+  let acceptedInvite = false
+  let acceptedStudy = null
 
   const inviteToken =
     notification.inviteToken ?? localStorage.getItem('pendingInviteToken')
@@ -391,13 +398,20 @@ const goToNotificationRedirect = async (notification) => {
       notification.type === NOTIFICATION_TYPES.PARTICIPANT) &&
     inviteToken
   ) {
-    const result = await store.dispatch('loadInvite', {
-      token: inviteToken,
-    })
-
-    if (result != null) {
-      invite.value = result.invite
+    let result
+    try {
+      result = await store.dispatch('loadInvite', { token: inviteToken })
+    } catch (error) {
+      showError(error?.message || 'errors.globalError')
+      return
     }
+
+    if (!result?.invite || result.unauthorized) {
+      showError('errors.globalError')
+      return
+    }
+
+    invite.value = result.invite
   }
 
   if (
@@ -418,17 +432,40 @@ const goToNotificationRedirect = async (notification) => {
       return
     }
 
-    await store.dispatch('acceptInvite', {
-      token: notification.inviteToken,
-      user: user.value,
-      studyId: notification.testId,
-      notification,
-      membershipType: invite.value.membershipType,
-    })
+    let result
+    try {
+      result = await store.dispatch('acceptInvite', {
+        token: notification.inviteToken,
+        user: user.value,
+        studyId: notification.testId || invite.value.studyId,
+        notification,
+        membershipType: invite.value.membershipType,
+      })
+    } catch (error) {
+      showError(error?.message || 'errors.globalError')
+      return
+    }
+
+    acceptedInvite = true
+    acceptedStudy = result.study
   }
 
   if (!notification.read) {
     await markAsRead(notification)
+  }
+
+  if (acceptedInvite && acceptedStudy) {
+    const destination =
+      invite.value.membershipType === 'participant'
+        ? getInviteAcceptanceDestination({
+            study: acceptedStudy,
+            user: user.value,
+            membershipType: 'participant',
+          })
+        : redirectTo
+
+    if (destination) await router.push(destination)
+    return
   }
 
   let url = redirectTo
@@ -443,7 +480,7 @@ const goToNotificationRedirect = async (notification) => {
   try {
     globalThis.open(url, '_blank')
   } catch {
-    // Ignore browser popup errors
+    // Ignore browser popup errors for ordinary notifications.
   }
 }
 
