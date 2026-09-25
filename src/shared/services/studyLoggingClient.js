@@ -10,6 +10,8 @@ const PERMANENT_BATCH_REASONS = new Set([
   'MALFORMED_ENVELOPE',
   'BUDGET_EXHAUSTED',
 ])
+const compareStrings = (left, right) => left.localeCompare(right)
+
 const PERMANENT_EVENT_REASONS = new Set([
   'EVENT_ID_CONFLICT',
   'DUPLICATE_EVENT_ID',
@@ -112,6 +114,90 @@ export const sweepExpiredStudyLogging = async (
 
 const sanitizeDetails = (eventType, details) => {
   if (eventType === 'STUDY_VIEW_OPENED') return {}
+  if (eventType === 'TASK_STARTED') {
+    const keys = Object.keys(details || {})
+    const match = /^task:(0|[1-9]\d*)$/.exec(details?.taskRef || '')
+    if (
+      keys.length !== 1 ||
+      keys[0] !== 'taskRef' ||
+      !match ||
+      !Number.isSafeInteger(Number(match[1]))
+    ) {
+      return null
+    }
+    return { taskRef: details.taskRef }
+  }
+  if (eventType === 'MEDIA_RECORDING_OUTCOME') {
+    if (
+      typeof details?.taskRef !== 'string' ||
+      !/^task:(0|[1-9]\d*)$/.test(details.taskRef) ||
+      !['audio', 'webcam', 'screen'].includes(details?.mediaType) ||
+      !['completed', 'failed', 'permission_denied', 'cancelled'].includes(
+        details?.outcome,
+      ) ||
+      (details?.outcome === 'cancelled' && details?.mediaType !== 'screen') ||
+      !['permission', 'capture', 'upload'].includes(details?.stage) ||
+      (details?.reason !== undefined &&
+        ![
+          'unsupported',
+          'cancelled',
+          'wrongSurface',
+          'error',
+          'permissionDenied',
+          'deviceUnavailable',
+          'captureError',
+          'emptyRecording',
+          'uploadError',
+        ].includes(details.reason))
+    )
+      return null
+    return {
+      taskRef: details.taskRef,
+      mediaType: details.mediaType,
+      outcome: details.outcome,
+      stage: details.stage,
+      ...(details.reason !== undefined ? { reason: details.reason } : {}),
+    }
+  }
+  if (eventType === 'STRUCTURED_RESPONSE_ACTIVITY') {
+    const keys = Object.keys(details || {}).sort(compareStrings)
+    const scopeRef = details?.scopeRef
+    const scopeMatch = /^task:(0|[1-9]\d*)$/.exec(scopeRef || '')
+    const validScope =
+      (scopeMatch && Number.isSafeInteger(Number(scopeMatch[1]))) ||
+      scopeRef === 'preTest' ||
+      scopeRef === 'postTest'
+    const itemPattern =
+      /^(?:sus:question:[0-9]|nasa-tlx:(?:mentalDemand|physicalDemand|temporalDemand|performance|effort|frustration)|sart:(?:instability|complexity|variability|arousal|concentration|division|spareCapacity|informationQuantity|informationQuality|familiarity)|tam-[123]:[A-Za-z][A-Za-z0-9]*:(0|[1-9]\d*)|(?:preTest|postTest):question:(0|[1-9]\d*))$/
+    if (
+      keys.join(',') !== 'items,scopeRef' ||
+      !validScope ||
+      !Array.isArray(details.items) ||
+      details.items.length < 1
+    ) {
+      return null
+    }
+    const seen = new Set()
+    const items = []
+    for (const item of details.items) {
+      const itemKeys = Object.keys(item || {}).sort(compareStrings)
+      if (
+        itemKeys.join(',') !== 'changes,itemRef' ||
+        typeof item.itemRef !== 'string' ||
+        !itemPattern.test(item.itemRef) ||
+        seen.has(item.itemRef) ||
+        !Number.isInteger(item.changes) ||
+        item.changes < 1 ||
+        item.changes > 10000
+      ) {
+        return null
+      }
+      seen.add(item.itemRef)
+      items.push({ itemRef: item.itemRef, changes: item.changes })
+    }
+    items.sort((left, right) => compareStrings(left.itemRef, right.itemRef))
+    return { scopeRef, items }
+  }
   if (eventType === 'QUESTION_RESPONSE_UPDATED') {
     if (!/^heuristic:\d+:question:\d+$/.test(details?.questionRef)) return null
     return {
@@ -469,6 +555,237 @@ export const createQuestionResponseTracker = ({ logger, now = Date.now }) => {
         },
         new Date(response.lastChangeAt).toISOString(),
       )
+    },
+  }
+}
+
+export const createStructuredResponseTracker = ({
+  logger,
+  now = Date.now,
+  enabled = true,
+} = {}) => {
+  const scopes = new Map()
+  let telemetryEnabled = enabled
+
+  const isEnabled = () =>
+    typeof telemetryEnabled === 'function'
+      ? telemetryEnabled()
+      : telemetryEnabled === true
+  const timestampFor = (value) => {
+    if (Number.isFinite(value)) return value
+    const parsed = Date.parse(value || '')
+    return Number.isFinite(parsed) ? parsed : now()
+  }
+  const stateFor = (scopeRef) => {
+    let state = scopes.get(scopeRef)
+    if (!state) {
+      state = {
+        priorValues: new Map(),
+        dirty: new Map(),
+        dirtyLastAt: null,
+        inFlight: null,
+        needsRetry: false,
+        episodes: new Map(),
+        focused: new Set(),
+      }
+      scopes.set(scopeRef, state)
+    }
+    return state
+  }
+  const valueEntries = (currentValues) =>
+    currentValues instanceof Map
+      ? currentValues.entries()
+      : Object.entries(currentValues || {})
+  const setBaseline = (state, itemRef, value, rebase) => {
+    if (
+      typeof itemRef === 'string' &&
+      (rebase || !state.priorValues.has(itemRef))
+    ) {
+      state.priorValues.set(itemRef, value)
+    }
+  }
+  const markChanged = (state, itemRef, value, at) => {
+    const previous = state.priorValues.get(itemRef)
+    state.priorValues.set(itemRef, value)
+    if (!isEnabled() || Object.is(previous, value)) return false
+    state.dirty.set(itemRef, (state.dirty.get(itemRef) || 0) + 1)
+    state.dirtyLastAt = Math.max(
+      state.dirtyLastAt === null ? 0 : state.dirtyLastAt,
+      timestampFor(at),
+    )
+    return true
+  }
+  const commitEpisode = (state, itemRef, episode) => {
+    if (episode.mode === 'pointer') {
+      state.priorValues.set(itemRef, episode.currentValue)
+      return false
+    }
+    return markChanged(
+      state,
+      itemRef,
+      episode.currentValue,
+      episode.lastChangedAt,
+    )
+  }
+  const finishEpisodes = (state) => {
+    for (const [itemRef, episode] of state.episodes) {
+      commitEpisode(state, itemRef, episode)
+    }
+    state.episodes.clear()
+    state.focused.clear()
+  }
+  const mergeFailedSnapshot = (state, snapshot, occurredAt) => {
+    for (const [itemRef, changes] of snapshot) {
+      state.dirty.set(itemRef, (state.dirty.get(itemRef) || 0) + changes)
+    }
+    const laterAt = state.dirtyLastAt
+    state.dirtyLastAt = Math.max(
+      laterAt === null ? 0 : laterAt,
+      occurredAt === null ? 0 : occurredAt,
+    )
+    state.needsRetry = true
+  }
+  const checkpoint = (scopeRef) => {
+    const state = scopes.get(scopeRef)
+    if (!state) return Promise.resolve(null)
+    finishEpisodes(state)
+    if (state.inFlight) {
+      return state.inFlight.promise.then(() => checkpoint(scopeRef))
+    }
+    if (!state.dirty.size) return Promise.resolve(null)
+
+    const snapshot = new Map(state.dirty)
+    const occurredAt = state.dirtyLastAt
+    state.dirty = new Map()
+    state.dirtyLastAt = null
+    const items = [...snapshot.entries()]
+      .map(([itemRef, changes]) => ({ itemRef, changes }))
+      .sort((left, right) => compareStrings(left.itemRef, right.itemRef))
+    const attempt = Promise.resolve()
+      .then(() =>
+        logger.record(
+          'STRUCTURED_RESPONSE_ACTIVITY',
+          { scopeRef, items },
+          new Date(
+            occurredAt === null ? timestampFor() : occurredAt,
+          ).toISOString(),
+        ),
+      )
+      .then(
+        (eventId) => {
+          if (eventId !== null && eventId !== undefined) {
+            state.needsRetry = false
+            return eventId
+          }
+          mergeFailedSnapshot(state, snapshot, occurredAt)
+          return null
+        },
+        () => {
+          mergeFailedSnapshot(state, snapshot, occurredAt)
+          return null
+        },
+      )
+    const completion = attempt.finally(() => {
+      if (state.inFlight?.promise === completion) state.inFlight = null
+    })
+    state.inFlight = { snapshot, occurredAt, promise: completion }
+    return completion
+  }
+
+  return {
+    seedScope(scopeRef, currentValues, { rebase = false } = {}) {
+      const state = stateFor(scopeRef)
+      for (const [itemRef, value] of valueEntries(currentValues)) {
+        setBaseline(state, itemRef, value, rebase)
+      }
+    },
+    choiceChanged(scopeRef, itemRef, value, at) {
+      if (typeof scopeRef !== 'string' || typeof itemRef !== 'string') return
+      const state = stateFor(scopeRef)
+      markChanged(state, itemRef, value, at)
+    },
+    sliderFocus(scopeRef, itemRef) {
+      const state = stateFor(scopeRef)
+      state.focused.add(itemRef)
+    },
+    sliderPointerStart(scopeRef, itemRef, value, at) {
+      const state = stateFor(scopeRef)
+      state.focused.add(itemRef)
+      state.episodes.set(itemRef, {
+        mode: 'pointer',
+        startValue: value,
+        currentValue: value,
+        lastChangedAt: timestampFor(at),
+      })
+    },
+    sliderValueChanged(scopeRef, itemRef, value, at) {
+      const state = stateFor(scopeRef)
+      const changedAt = timestampFor(at)
+      const episode = state.episodes.get(itemRef)
+      if (episode) {
+        episode.currentValue = value
+        episode.lastChangedAt = changedAt
+        return
+      }
+      if (!state.focused.has(itemRef)) {
+        state.priorValues.set(itemRef, value)
+        return
+      }
+      state.episodes.set(itemRef, {
+        mode: 'keyboard',
+        startValue: state.priorValues.get(itemRef),
+        currentValue: value,
+        lastChangedAt: changedAt,
+      })
+    },
+    sliderPointerEnd(scopeRef, itemRef, value, at) {
+      const state = stateFor(scopeRef)
+      const episode = state.episodes.get(itemRef)
+      if (!episode || episode.mode !== 'pointer') return
+      episode.currentValue = value
+      episode.lastChangedAt = timestampFor(at)
+      if (Object.is(episode.startValue, value)) {
+        state.priorValues.set(itemRef, value)
+      } else {
+        markChanged(state, itemRef, value, episode.lastChangedAt)
+      }
+      state.episodes.delete(itemRef)
+    },
+    sliderBlur(scopeRef, itemRef) {
+      const state = scopes.get(scopeRef)
+      const episode = state?.episodes.get(itemRef)
+      if (!state || !episode || episode.mode !== 'keyboard') {
+        state?.focused.delete(itemRef)
+        return
+      }
+      commitEpisode(state, itemRef, episode)
+      state.episodes.delete(itemRef)
+      state.focused.delete(itemRef)
+    },
+    checkpoint,
+    checkpointDirtyScopes() {
+      return Promise.all(
+        [...scopes.entries()]
+          .filter(([, state]) =>
+            state.dirty.size || state.inFlight || state.episodes.size,
+          )
+          .map(([scopeRef]) => checkpoint(scopeRef)),
+      )
+    },
+    retryFailedCheckpoints() {
+      return Promise.all(
+        [...scopes.entries()]
+          .filter(([, state]) => state.needsRetry && state.dirty.size)
+          .map(([scopeRef]) => checkpoint(scopeRef)),
+      )
+    },
+    hasPending() {
+      return [...scopes.values()].some(
+        (state) => state.dirty.size || state.inFlight || state.episodes.size,
+      )
+    },
+    setEnabled(value) {
+      telemetryEnabled = value
     },
   }
 }

@@ -1,18 +1,27 @@
 import crypto from 'crypto'
 import { admin, functions } from '../core/firebase/f.firebase.js'
 import logger from '../utils/logger.js'
+import { taskContext, recordingPolicy } from '../shared/logging/taskContext.js'
 
 const MAX_EVENTS_PER_BATCH = 25
 const CLIENT_EVENT_BUDGET = 1000
 const MAX_TASK_DURATION_MS = 24 * 60 * 60 * 1000
+const MAX_VERIFIED_OCCURRENCE_FUTURE_MS = 5 * 60 * 1000
 const POST_SUBMISSION_OCCURRENCE_GRACE_MS = 5 * 60 * 1000
 const POST_SUBMISSION_RECEIPT_GRACE_MS = 7 * 24 * 60 * 60 * 1000
 const ID_PATTERN = /^[A-Za-z0-9_-]{3,160}$/
 const compareStrings = (left, right) => left.localeCompare(right)
 const CLIENT_EVENT_POLICIES = Object.freeze({
+  MEDIA_RECORDING_OUTCOME: {
+    detailKeys: ['taskRef', 'mediaType', 'outcome', 'stage', 'reason'],
+  },
   STUDY_VIEW_OPENED: {
     message: 'Study view opened',
     detailKeys: [],
+  },
+  TASK_STARTED: {
+    message: 'Task started',
+    detailKeys: ['taskRef'],
   },
   ANSWER_EDITED: {
     message: 'Answer field edited',
@@ -24,6 +33,10 @@ const CLIENT_EVENT_POLICIES = Object.freeze({
       'initialLength',
       'resultingLength',
     ],
+  },
+  STRUCTURED_RESPONSE_ACTIVITY: {
+    message: 'Structured response activity recorded',
+    detailKeys: ['scopeRef', 'items'],
   },
   QUESTION_RESPONSE_UPDATED: {
     message: 'Question response updated',
@@ -161,6 +174,26 @@ const consentAccepted = async (transaction, db, study, uid) => {
 const nonNegativeInteger = (value, maximum) =>
   Number.isInteger(value) && value >= 0 && value <= maximum
 
+const verifiedOccurrenceFor = (value) => {
+  const milliseconds =
+    typeof value === 'number'
+      ? value
+      : typeof value === 'string' && value.trim()
+        ? Date.parse(value)
+        : Number.NaN
+  const occurredAt = new Date(milliseconds)
+  if (
+    !Number.isFinite(milliseconds) ||
+    Number.isNaN(occurredAt.getTime()) ||
+    occurredAt.getUTCFullYear() < 1 ||
+    occurredAt.getUTCFullYear() > 9999 ||
+    occurredAt.getTime() > Date.now() + MAX_VERIFIED_OCCURRENCE_FUTURE_MS
+  ) {
+    return null
+  }
+  return admin.firestore.Timestamp.fromDate(occurredAt)
+}
+
 const fieldExists = (study, fieldRef) => {
   const type = normalizeStudyType(study.testType)
   const parts = String(fieldRef || '').split(':')
@@ -215,6 +248,152 @@ const validAnswerEdit = (details, study) => {
   )
 }
 
+const validTaskStarted = (details, study) => {
+  const keys = Object.keys(details || {}).sort(compareStrings)
+  const match = /^task:(0|[1-9]\d*)$/.exec(details?.taskRef || '')
+  if (
+    keys.join(',') !== 'taskRef' ||
+    !match ||
+    normalizeStudyType(study.testType) !== 'USER' ||
+    study.subType !== 'USER_UNMODERATED'
+  ) {
+    return false
+  }
+  const taskIndex = Number(match[1])
+  return (
+    Number.isSafeInteger(taskIndex) &&
+    Boolean(study.testStructure?.userTasks?.[taskIndex])
+  )
+}
+
+const structuredItemRefs = (taskType, constructs) =>
+  constructs.flatMap(([construct, count]) =>
+    Array.from({ length: count }, (_, index) =>
+      `${taskType}:${construct}:${index}`,
+    ),
+  )
+
+const STRUCTURED_TASK_ITEM_REFS = Object.freeze({
+  sus: structuredItemRefs('sus', [['question', 10]]),
+  'nasa-tlx': [
+    'nasa-tlx:mentalDemand',
+    'nasa-tlx:physicalDemand',
+    'nasa-tlx:temporalDemand',
+    'nasa-tlx:performance',
+    'nasa-tlx:effort',
+    'nasa-tlx:frustration',
+  ],
+  sart: [
+    'sart:instability',
+    'sart:complexity',
+    'sart:variability',
+    'sart:arousal',
+    'sart:concentration',
+    'sart:division',
+    'sart:spareCapacity',
+    'sart:informationQuantity',
+    'sart:informationQuality',
+    'sart:familiarity',
+  ],
+  'tam-1': structuredItemRefs('tam-1', [
+    ['perceivedUsefulness', 10],
+    ['perceivedEaseOfUse', 10],
+  ]),
+  'tam-2': structuredItemRefs('tam-2', [
+    ['intentionToUse', 2],
+    ['perceivedUsefulness', 4],
+    ['perceivedEaseOfUse', 4],
+    ['subjectiveNorm', 2],
+    ['voluntariness', 3],
+    ['image', 3],
+    ['jobRelevance', 2],
+    ['outputQuality', 2],
+    ['resultDemonstrability', 4],
+  ]),
+  'tam-3': structuredItemRefs('tam-3', [
+    ['perceivedUsefulness', 3],
+    ['perceivedEaseOfUse', 3],
+    ['subjectiveNorm', 3],
+    ['image', 2],
+    ['jobRelevance', 3],
+    ['outputQuality', 3],
+    ['resultDemonstrability', 2],
+    ['computerSelfEfficacy', 3],
+    ['perceptionsOfExternalControl', 3],
+    ['computerAnxiety', 2],
+    ['computerPlayfulness', 2],
+    ['perceivedEnjoyment', 3],
+    ['objectiveUsability', 2],
+    ['behavioralIntention', 2],
+    ['usePatterns', 2],
+    ['experience', 2],
+    ['voluntariness', 2],
+  ]),
+})
+
+const validStructuredResponse = (details, study) => {
+  const keys = Object.keys(details || {}).sort(compareStrings)
+  if (
+    keys.join(',') !==
+    CLIENT_EVENT_POLICIES.STRUCTURED_RESPONSE_ACTIVITY.detailKeys
+      .slice()
+      .sort(compareStrings)
+      .join(',') ||
+    normalizeStudyType(study.testType) !== 'USER' ||
+    study.subType !== 'USER_UNMODERATED'
+  ) {
+    return false
+  }
+
+  let allowedRefs
+  const taskMatch = /^task:(0|[1-9]\d*)$/.exec(details.scopeRef || '')
+  if (taskMatch) {
+    const taskIndex = Number(taskMatch[1])
+    const task = study.testStructure?.userTasks?.[taskIndex]
+    if (!Number.isSafeInteger(taskIndex) || !task) return false
+    allowedRefs = STRUCTURED_TASK_ITEM_REFS[task.taskType]
+  } else if (['preTest', 'postTest'].includes(details.scopeRef)) {
+    const questions = study.testStructure?.[details.scopeRef]
+    if (!Array.isArray(questions)) return false
+    allowedRefs = questions.flatMap((question, index) =>
+      question?.selectionField === true &&
+      Array.isArray(question.selectionFields) &&
+      question.selectionFields.length > 0
+        ? [`${details.scopeRef}:question:${index}`]
+        : [],
+    )
+  } else {
+    return false
+  }
+
+  if (
+    !Array.isArray(allowedRefs) ||
+    !Array.isArray(details.items) ||
+    details.items.length < 1 ||
+    details.items.length > allowedRefs.length
+  ) {
+    return false
+  }
+
+  const allowed = new Set(allowedRefs)
+  const seen = new Set()
+  return details.items.every((item) => {
+    const itemKeys = Object.keys(item || {}).sort(compareStrings)
+    if (
+      itemKeys.join(',') !== 'changes,itemRef' ||
+      typeof item.itemRef !== 'string' ||
+      !allowed.has(item.itemRef) ||
+      seen.has(item.itemRef) ||
+      !Number.isInteger(item.changes) ||
+      item.changes < 1 ||
+      item.changes > 10000
+    ) {
+      return false
+    }
+    seen.add(item.itemRef)
+    return true
+  })
+}
 const RESPONSE_FIELD_COUNTS = Object.freeze({
   frequency: 'frequencyChanges',
   severity: 'severityChanges',
@@ -289,16 +468,30 @@ const validateClientBatch = (payload, study) => {
         : new Date(Number.NaN)
     const occurrenceYear = occurredAt.getUTCFullYear()
     const policy = CLIENT_EVENT_POLICIES[event?.eventType]
-    const validDetails =
-      isRecord(event?.details) && policy?.detailKeys.length === 0
-        ? Object.keys(event.details).length === 0
-        : event?.eventType === 'ANSWER_EDITED' &&
-            isRecord(event?.details) &&
-            validAnswerEdit(event?.details, study)
-          ? true
-          : event?.eventType === 'QUESTION_RESPONSE_UPDATED' &&
-            isRecord(event?.details) &&
-            validQuestionResponse(event?.details, study)
+    const recording =
+      event?.eventType === 'MEDIA_RECORDING_OUTCOME' && isRecord(event?.details)
+        ? recordingPolicy(study, event.details)
+        : null
+    const validDetails = (() => {
+      if (recording) return true
+      if (!isRecord(event?.details)) return false
+      if (policy?.detailKeys.length === 0) {
+        return Object.keys(event.details).length === 0
+      }
+      if (event?.eventType === 'ANSWER_EDITED') {
+        return validAnswerEdit(event.details, study)
+      }
+      if (event?.eventType === 'QUESTION_RESPONSE_UPDATED') {
+        return validQuestionResponse(event.details, study)
+      }
+      if (event?.eventType === 'TASK_STARTED') {
+        return validTaskStarted(event.details, study)
+      }
+      if (event?.eventType === 'STRUCTURED_RESPONSE_ACTIVITY') {
+        return validStructuredResponse(event.details, study)
+      }
+      return false
+    })()
     let reasonCode
     if (seenEventIds.has(eventId)) {
       reasonCode = 'DUPLICATE_EVENT_ID'
@@ -328,8 +521,26 @@ const validateClientBatch = (payload, study) => {
         eventId,
         eventType: event.eventType,
         occurredAt,
-        details: event.details,
-        message: policy.message,
+        layer: recording?.layer || 'methodological',
+        level: recording?.level || 'info',
+        details: recording?.details || {
+          ...event.details,
+          ...(event.eventType === 'TASK_STARTED'
+            ? taskContext(study, event.details.taskRef)
+            : {}),
+          ...(event.eventType === 'ANSWER_EDITED' &&
+          /^task:(0|[1-9]\d*):(answer|comment)$/.test(event.details.fieldRef)
+            ? taskContext(
+                study,
+                event.details.fieldRef.split(':').slice(0, 2).join(':'),
+              )
+            : {}),
+          ...(event.eventType === 'STRUCTURED_RESPONSE_ACTIVITY' &&
+          /^task:(0|[1-9]\d*)$/.test(event.details.scopeRef)
+            ? taskContext(study, event.details.scopeRef)
+            : {}),
+        },
+        message: recording?.message || policy.message,
       })
     }
   }
@@ -490,8 +701,8 @@ async function submitLogEvents(request) {
         participantLabel,
         ...(actorRole ? { actorRole } : {}),
         eventType: event.eventType,
-        layer: 'methodological',
-        level: 'info',
+        layer: event.layer,
+        level: event.level,
         source: 'study-client',
         message: event.message,
         occurredAt: admin.firestore.Timestamp.fromDate(event.occurredAt),
@@ -510,11 +721,18 @@ async function submitLogEvents(request) {
 
 const verifiedEventFor = ({ requestData, study, participantAnswer }) => {
   const keys = Object.keys(requestData).sort(compareStrings)
-  const expectedKeys =
+  const requiredKeys =
     requestData.eventType === 'TASK_ATTEMPT_FINISHED'
       ? ['eventType', 'studyId', 'taskRef']
       : ['eventType', 'studyId']
-  if (keys.join(',') !== expectedKeys.sort(compareStrings).join(',')) {
+  const optionalKeys =
+    requestData.eventType === 'TASK_ATTEMPT_FINISHED' ? ['occurredAt'] : []
+  if (
+    requiredKeys.some((key) => !keys.includes(key)) ||
+    keys.some(
+      (key) => !requiredKeys.includes(key) && !optionalKeys.includes(key),
+    )
+  ) {
     rejectVerified({
       code: 'invalid-argument',
       reasonCode: 'MALFORMED_REQUEST',
@@ -566,6 +784,7 @@ const verifiedEventFor = ({ requestData, study, participantAnswer }) => {
       message: 'Task attempt finished',
       details: {
         taskRef: requestData.taskRef,
+        ...taskContext(study, requestData.taskRef, true),
         outcome,
         ...(nonNegativeInteger(duration, MAX_TASK_DURATION_MS)
           ? { taskDurationMs: duration }
@@ -643,6 +862,11 @@ async function submitVerifiedEvent(request) {
       study,
       participantAnswer,
     })
+    const occurredAt =
+      event.eventType === 'TASK_ATTEMPT_FINISHED'
+        ? verifiedOccurrenceFor(requestData.occurredAt)
+        : null
+
     const eventRef = studyRef
       .collection('logs')
       .doc(documentIdFor(sessionId, `verified:${event.eventId}`))
@@ -695,8 +919,11 @@ async function submitVerifiedEvent(request) {
       level: event.level,
       source: 'logging-service',
       message: event.message,
-      occurredAt: now,
+      occurredAt: occurredAt || now,
       receivedAt: now,
+      ...(event.eventType === 'TASK_ATTEMPT_FINISHED'
+        ? { timeQuality: 'client-unverified' }
+        : {}),
       details: event.details,
     })
     return { status: 'accepted' }

@@ -1,5 +1,6 @@
 import {
   cleanupStudyLoggingForOwner,
+  createStructuredResponseTracker,
   createStudyLogger,
   sweepExpiredStudyLogging,
 } from '@/shared/services/studyLoggingClient'
@@ -43,6 +44,181 @@ const createQueueStore = () => {
 const eventIds = ['event-1', 'event-2', 'batch-1', 'batch-2']
 
 describe('browser study logging client', () => {
+  it('records effective structured choices once per checkpoint without values', async () => {
+    const record = jest.fn().mockResolvedValue('activity-1')
+    const tracker = createStructuredResponseTracker({
+      logger: { record },
+      now: () => Date.parse('2026-09-24T10:00:00.000Z'),
+    })
+
+    tracker.seedScope('task:0', {
+      'sus:question:0': undefined,
+      'sus:question:1': 2,
+    })
+    tracker.choiceChanged('task:0', 'sus:question:0', 3)
+    tracker.choiceChanged('task:0', 'sus:question:0', 3)
+    tracker.choiceChanged('task:0', 'sus:question:0', 4)
+    tracker.choiceChanged('task:0', 'sus:question:1', 2)
+
+    await tracker.checkpoint('task:0')
+
+    expect(record).toHaveBeenCalledWith(
+      'STRUCTURED_RESPONSE_ACTIVITY',
+      {
+        scopeRef: 'task:0',
+        items: [{ itemRef: 'sus:question:0', changes: 2 }],
+      },
+      '2026-09-24T10:00:00.000Z',
+    )
+    expect(record.mock.calls[0][1]).not.toHaveProperty('value')
+  })
+
+  it('rejects structured response values before queueing', async () => {
+    const queueStore = { mutate: jest.fn() }
+    const logger = createStudyLogger({
+      ownerUid: 'participant',
+      studyId: 'study-1',
+      queueStore,
+      submitBatch: jest.fn(),
+    })
+
+    await expect(
+      logger.record('STRUCTURED_RESPONSE_ACTIVITY', {
+        scopeRef: 'task:0',
+        items: [
+          {
+            itemRef: 'nasa-tlx:effort',
+            changes: 1,
+            value: 40,
+          },
+        ],
+      }),
+    ).resolves.toBeNull()
+    expect(queueStore.mutate).not.toHaveBeenCalled()
+  })
+
+  it('retains a failed structured checkpoint for a later retry', async () => {
+    const record = jest
+      .fn()
+      .mockRejectedValueOnce(new Error('offline'))
+      .mockResolvedValueOnce('activity-2')
+    const tracker = createStructuredResponseTracker({
+      logger: { record },
+      now: () => Date.parse('2026-09-24T10:00:00.000Z'),
+    })
+
+    tracker.seedScope('task:0', { 'sus:question:0': undefined })
+    tracker.choiceChanged('task:0', 'sus:question:0', 4)
+
+    await expect(tracker.checkpoint('task:0')).resolves.toBeNull()
+    await tracker.retryFailedCheckpoints()
+
+    expect(record).toHaveBeenCalledTimes(2)
+    expect(record.mock.calls[1][1]).toEqual({
+      scopeRef: 'task:0',
+      items: [{ itemRef: 'sus:question:0', changes: 1 }],
+    })
+  })
+
+  it('serializes a checkpoint while retaining changes made during the write', async () => {
+    let resolveRecord
+    const record = jest
+      .fn()
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            resolveRecord = resolve
+          }),
+      )
+      .mockResolvedValueOnce('activity-2')
+    const tracker = createStructuredResponseTracker({ logger: { record } })
+
+    tracker.seedScope('task:0', { 'sus:question:0': undefined })
+    tracker.choiceChanged('task:0', 'sus:question:0', 3)
+    const firstCheckpoint = tracker.checkpoint('task:0')
+    await new Promise((resolve) => setTimeout(resolve, 0))
+
+    tracker.choiceChanged('task:0', 'sus:question:0', 4)
+    const secondCheckpoint = tracker.checkpoint('task:0')
+    expect(record).toHaveBeenCalledTimes(1)
+
+    resolveRecord('activity-1')
+    await firstCheckpoint
+    await secondCheckpoint
+
+    expect(record).toHaveBeenCalledTimes(2)
+    expect(record.mock.calls[0][1].items).toEqual([
+      { itemRef: 'sus:question:0', changes: 1 },
+    ])
+    expect(record.mock.calls[1][1].items).toEqual([
+      { itemRef: 'sus:question:0', changes: 1 },
+    ])
+  })
+
+  it('groups slider pointer and keyboard episodes without emitting slider values', async () => {
+    const record = jest.fn().mockResolvedValue('activity-3')
+    const tracker = createStructuredResponseTracker({ logger: { record } })
+
+    tracker.seedScope('task:0', {
+      'nasa-tlx:effort': 0,
+      'sart:complexity': 4,
+    })
+    tracker.sliderFocus('task:0', 'nasa-tlx:effort')
+    tracker.sliderPointerStart('task:0', 'nasa-tlx:effort', 0)
+    tracker.sliderValueChanged('task:0', 'nasa-tlx:effort', 20)
+    tracker.sliderValueChanged('task:0', 'nasa-tlx:effort', 40)
+    tracker.sliderPointerEnd('task:0', 'nasa-tlx:effort', 40)
+    tracker.sliderFocus('task:0', 'sart:complexity')
+    tracker.sliderValueChanged('task:0', 'sart:complexity', 5)
+    tracker.sliderBlur('task:0', 'sart:complexity')
+
+    await tracker.checkpoint('task:0')
+
+    expect(record).toHaveBeenCalledWith(
+      'STRUCTURED_RESPONSE_ACTIVITY',
+      {
+        scopeRef: 'task:0',
+        items: [
+          { itemRef: 'nasa-tlx:effort', changes: 1 },
+          { itemRef: 'sart:complexity', changes: 1 },
+        ],
+      },
+      expect.any(String),
+    )
+    expect(record.mock.calls[0][1]).not.toHaveProperty('value')
+  })
+
+  it('rebases non-focused slider synchronization without counting it', async () => {
+    const record = jest.fn().mockResolvedValue('activity-5')
+    const tracker = createStructuredResponseTracker({ logger: { record } })
+
+    tracker.seedScope('task:0', { 'nasa-tlx:effort': 0 })
+    tracker.sliderValueChanged('task:0', 'nasa-tlx:effort', 20)
+    tracker.sliderFocus('task:0', 'nasa-tlx:effort')
+    tracker.sliderValueChanged('task:0', 'nasa-tlx:effort', 40)
+    tracker.sliderBlur('task:0', 'nasa-tlx:effort')
+
+    await tracker.checkpoint('task:0')
+
+    expect(record.mock.calls[0][1].items).toEqual([
+      { itemRef: 'nasa-tlx:effort', changes: 1 },
+    ])
+  })
+
+  it('cancels an interrupted pointer episode at a lifecycle boundary', async () => {
+    const record = jest.fn().mockResolvedValue('activity-4')
+    const tracker = createStructuredResponseTracker({ logger: { record } })
+
+    tracker.seedScope('task:0', { 'nasa-tlx:effort': 0 })
+    tracker.sliderPointerStart('task:0', 'nasa-tlx:effort', 0)
+    tracker.sliderValueChanged('task:0', 'nasa-tlx:effort', 40)
+
+    await tracker.checkpoint('task:0')
+
+    expect(record).not.toHaveBeenCalled()
+    expect(tracker.hasPending()).toBe(false)
+  })
+
   it('queues a structured heuristic question response without answer values', async () => {
     const submitBatch = jest.fn(({ batchId }) => ({
       status: 'accepted',
@@ -487,5 +663,127 @@ describe('browser study logging client', () => {
 
     expect(expiredSubmit).not.toHaveBeenCalled()
     expect(freshSubmit).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('recording queue policy', () => {
+  const details = {
+    taskRef: 'task:2',
+    mediaType: 'screen',
+    outcome: 'failed',
+    stage: 'upload',
+    reason: 'uploadError',
+  }
+  it('projects controlled metadata before storage and retains identity over network retry', async () => {
+    const queueStore = createQueueStore()
+    const mutate = jest.spyOn(queueStore, 'mutate')
+    const submitBatch = jest
+      .fn()
+      .mockRejectedValueOnce(new Error('offline'))
+      .mockResolvedValue({ status: 'accepted', batchId: 'recording-batch' })
+    const logger = createStudyLogger({
+      ownerUid: 'participant',
+      studyId: 'study-1',
+      queueStore,
+      submitBatch,
+      createId: jest
+        .fn()
+        .mockReturnValueOnce('recording-event')
+        .mockReturnValueOnce('recording-batch'),
+    })
+    await logger.record('MEDIA_RECORDING_OUTCOME', {
+      ...details,
+      taskType: 'forged',
+      url: 'private-url',
+      transcript: 'private-text',
+      error: 'private-exception',
+      email: 'private-email',
+    })
+    const stored = await mutate.mock.results[0].value
+    expect(JSON.stringify(stored)).not.toMatch(/private-|forged/)
+    await logger.flush()
+    await logger.flush({ online: true })
+    expect(submitBatch).toHaveBeenCalledTimes(2)
+    expect(submitBatch.mock.calls[1][0]).toEqual(submitBatch.mock.calls[0][0])
+    expect(submitBatch.mock.calls[0][0].events[0]).toMatchObject({
+      eventId: 'recording-event',
+      details,
+    })
+  })
+  it.each([
+    { taskRef: 'task:-1' },
+    { taskRef: ['task:0'] },
+    { mediaType: 'url' },
+    { outcome: 'unknown' },
+    { stage: 'answer' },
+    { reason: 'raw exception' },
+    {
+      mediaType: 'webcam',
+      outcome: 'cancelled',
+      stage: 'permission',
+      reason: 'cancelled',
+    },
+  ])('drops invalid recording fields %j before storage', async (invalid) => {
+    const queueStore = { mutate: jest.fn() }
+    const logger = createStudyLogger({
+      ownerUid: 'participant',
+      studyId: 'study-1',
+      queueStore,
+      submitBatch: jest.fn(),
+    })
+    await expect(
+      logger.record('MEDIA_RECORDING_OUTCOME', { ...details, ...invalid }),
+    ).resolves.toBeNull()
+    expect(queueStore.mutate).not.toHaveBeenCalled()
+  })
+})
+
+describe('task start observations', () => {
+  it('queues a canonical task reference at its captured occurrence time', async () => {
+    const submitBatch = jest.fn(({ batchId }) => ({ status: 'accepted', batchId }))
+    const ids = ['start-event', 'start-batch']
+    const logger = createStudyLogger({
+      ownerUid: 'participant',
+      studyId: 'study-1',
+      submitBatch,
+      queueStore: createQueueStore(),
+      createId: () => ids.shift(),
+    })
+    const occurredAt = '2026-09-24T10:15:30.000Z'
+
+    await logger.record('TASK_STARTED', { taskRef: 'task:0' }, occurredAt)
+    await logger.flush()
+
+    expect(submitBatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        events: [
+          expect.objectContaining({
+            eventType: 'TASK_STARTED',
+            occurredAt,
+            details: { taskRef: 'task:0' },
+          }),
+        ],
+      }),
+    )
+  })
+
+  it.each([
+    { taskRef: 'task:-1' },
+    { taskRef: 'task:01' },
+    { taskRef: 'task:9007199254740992' },
+    { taskRef: 'task:0', taskType: 'sus' },
+    { taskRef: 'task:0', answer: 'private response value' },
+    {},
+  ])('drops invalid task-start details %j before storage', async (details) => {
+    const queueStore = { mutate: jest.fn() }
+    const logger = createStudyLogger({
+      ownerUid: 'participant',
+      studyId: 'study-1',
+      queueStore,
+      submitBatch: jest.fn(),
+    })
+
+    await expect(logger.record('TASK_STARTED', details)).resolves.toBeNull()
+    expect(queueStore.mutate).not.toHaveBeenCalled()
   })
 })

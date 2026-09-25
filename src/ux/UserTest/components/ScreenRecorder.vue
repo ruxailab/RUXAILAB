@@ -3,16 +3,16 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
-import {
-  ref as storageRef,
-  uploadBytes,
-  getDownloadURL,
-} from 'firebase/storage'
 import { storage } from '@/app/plugins/firebase'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { showError } from '@/shared/utils/toast'
+import { createRecordingAttempt } from '@/ux/UserTest/utils/recordingOutcome'
+import {
+  createMediaRecorder,
+  saveRecordedMedia,
+} from '@/ux/UserTest/utils/mediaRecording'
 import {
   startScreenShareStream,
   stopMediaStream,
@@ -27,7 +27,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['showLoading', 'stopShowLoading'])
+const emit = defineEmits(['showLoading', 'stopShowLoading', 'recording-result'])
 
 const store = useStore()
 const currentUserTestAnswer = computed(
@@ -45,132 +45,96 @@ const resolvedUserDocId = computed(
 )
 
 const isCapturing = ref(false)
-const isRecording = ref(false)
-const videoUrl = ref('')
-const videoStream = ref(null)
 const mediaRecorder = ref(null)
-const chunks = ref([])
-const recordingTaskIndex = ref(null)
+let abortCurrent = () => {}
+let activeAttempt = null
 
 const captureScreen = async ({ requireEntireScreen = false } = {}) => {
-  const result = await startScreenShareStream({ requireEntireScreen })
-  if (!result.ok) {
-    showError(`errors.screenShare.${result.reason}`)
-    return false
-  }
-
-  recordingTaskIndex.value = props.taskIndex
-  videoStream.value = result.stream
+  if (isCapturing.value) return true
   isCapturing.value = true
-
-  const [videoTrack] = result.stream.getVideoTracks()
-  if (videoTrack) {
-    videoTrack.onended = () => {
-      if (isRecording.value) stopRecording()
+  const taskIndex = props.taskIndex
+  const userId = resolvedUserDocId.value
+  const testId = props.testId
+  const attempt = createRecordingAttempt(taskIndex, 'screen', emit)
+  activeAttempt = attempt
+  let stream
+  let recorder
+  let aborted = false
+  const cleanup = () => {
+    stopMediaStream(stream)
+    if (recorder && recorder.state !== 'inactive') {
+      try {
+        recorder.stop()
+      } catch {
+        /* Already stopped. */
+      }
     }
+    if (activeAttempt !== attempt) return
+    activeAttempt = null
+    isCapturing.value = false
   }
-
+  abortCurrent = () => {
+    aborted = true
+    attempt.discard()
+    cleanup()
+  }
   try {
-    await recordScreen()
+    const result = await startScreenShareStream({ requireEntireScreen })
+    stream = result.stream
+    if (aborted) {
+      cleanup()
+      return false
+    }
+    if (!result.ok) {
+      attempt.finish(
+        result.reason === 'cancelled' ? 'cancelled' : 'failed',
+        'permission',
+        result.reason,
+      )
+      showError(`errors.screenShare.${result.reason}`)
+      cleanup()
+      return false
+    }
+    recorder = createMediaRecorder({
+      stream,
+      blobType: 'video/webm',
+      attempt,
+      emit,
+      cleanup,
+      save: (blob) =>
+        saveRecordedMedia({
+          blob,
+          storage,
+          storagePath: `tests/${testId}/${userId}/task_${taskIndex}/screen_record/${Date.now()}.webm`,
+          store,
+          taskIndex,
+          mediaType: MEDIA_FIELD_MAP.screen,
+          userId,
+        }),
+    })
+    mediaRecorder.value = recorder
+    const [track] = stream.getVideoTracks()
+    if (track)
+      track.onended = () => {
+        if (recorder.state !== 'inactive') recorder.stop()
+      }
+    recorder.start()
     return true
-  } catch (error) {
-    console.error('Unexpected error while starting screen recording:', error)
-    abortCapture()
+  } catch {
+    attempt.finish('failed', 'capture', 'captureError')
+    cleanup()
     showError('errors.screenShare.error')
     return false
   }
 }
 
-const recordScreen = async () => {
-  if (isRecording.value) {
-    mediaRecorder.value.stop()
-    return
-  }
-
-  chunks.value = []
-  mediaRecorder.value = new MediaRecorder(videoStream.value)
-  mediaRecorder.value.start()
-
-  mediaRecorder.value.ondataavailable = (e) => {
-    chunks.value.push(e.data)
-  }
-
-  mediaRecorder.value.onstop = async () => {
-    emit('showLoading')
-    try {
-      const videoBlob = new Blob(chunks.value, { type: 'video/webm' })
-      const storagePath = `tests/${props.testId}/${resolvedUserDocId.value}/task_${recordingTaskIndex.value}/screen_record/${Date.now()}.webm`
-      const storageReference = storageRef(storage, storagePath)
-
-      await uploadBytes(storageReference, videoBlob)
-      videoUrl.value = await getDownloadURL(storageReference)
-
-      const correctTaskIndex = recordingTaskIndex.value
-
-      await store.dispatch('updateTaskMediaUrl', {
-        taskIndex: correctTaskIndex,
-        mediaType: MEDIA_FIELD_MAP.screen,
-        url: videoUrl.value,
-        size: videoBlob.size,
-        userId: resolvedUserDocId.value,
-      })
-
-      if (
-        currentUserTestAnswer.value.tasks &&
-        currentUserTestAnswer.value.tasks[correctTaskIndex]
-      ) {
-        currentUserTestAnswer.value.tasks[correctTaskIndex].screenRecordURL =
-          videoUrl.value
-        currentUserTestAnswer.value.tasks[correctTaskIndex].screenSize =
-          videoBlob.size
-      } else {
-        console.error(
-          'Task not found at index:',
-          correctTaskIndex,
-          'Available tasks:',
-          currentUserTestAnswer.value.tasks?.length,
-        )
-      }
-    } catch (error) {
-      console.error('Unexpected error while stopping screen recording:', error)
-    } finally {
-      stopMediaStream(videoStream.value)
-      videoStream.value = null
-      isRecording.value = false
-      isCapturing.value = false
-      emit('stopShowLoading')
-    }
-  }
-
-  isRecording.value = true
-}
-
 const stopRecording = () => {
-  if (isRecording.value && mediaRecorder.value?.state !== 'inactive') {
+  if (mediaRecorder.value && mediaRecorder.value.state !== 'inactive')
     mediaRecorder.value.stop()
-  }
 }
+const abortCapture = () => abortCurrent()
 
-const abortCapture = () => {
-  try {
-    if (mediaRecorder.value) {
-      mediaRecorder.value.ondataavailable = null
-      mediaRecorder.value.onstop = () => {}
-      if (mediaRecorder.value.state !== 'inactive') {
-        mediaRecorder.value.stop()
-      }
-    }
-  } catch (error) {
-    console.error('Unexpected error while aborting screen recording:', error)
-  }
-
-  stopMediaStream(videoStream.value)
-  videoStream.value = null
-  mediaRecorder.value = null
-  chunks.value = []
-  isRecording.value = false
-  isCapturing.value = false
-}
+onBeforeUnmount(() => abortCurrent())
 
 defineExpose({ captureScreen, stopRecording, abortCapture })
 </script>

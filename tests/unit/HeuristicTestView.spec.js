@@ -244,146 +244,162 @@ describe('HeuristicTestView', () => {
     expect(wrapper.vm.studyMode).toBe('weights')
   })
 
-  it('waits for answer initialization before starting and auto-saving', async () => {
-    const answerRequest = deferred()
-    const study = {
-      id: 'study-1',
-      answersDocId: 'answers-1',
-      testType: 'HEURISTIC',
-      testTitle: 'Heuristic study',
-      testDescription: 'Study description',
-      testAdmin: { userDocId: 'admin-1' },
-      testOptions: [{ text: 'Yes', value: 1 }],
-      testStructure: [
-        {
-          id: 0,
-          title: 'Visibility of system status',
-          total: 1,
-          questions: [{ id: 0, title: 'Does the system show its status?' }],
-        },
-      ],
-      cooperators: [],
-      evaluatorInfo: { sections: [] },
-      trackTime: false,
-    }
-    const getters = reactive({
-      test: study,
-      user: { id: 'user-1' },
-      heuristics: [],
-      currentUserTestAnswer: new HeuristicAnswer({ userDocId: 'user-1' }),
-    })
-    const store = {
-      getters,
-      state: { Tests: { Test: study } },
-      commit: jest.fn(),
-      dispatch: jest.fn((action) => {
-        if (action === 'getStudy') {
-          getters.test = { ...study }
-          store.state.Tests.Test = getters.test
-          return Promise.resolve(getters.test)
-        }
-        if (action === 'getCurrentTestAnswerDoc') {
-          return answerRequest.promise
-        }
-        return Promise.resolve()
-      }),
-    }
-    useStore.mockReturnValue(store)
-
-    const wrapper = shallowMount(HeuristicTestView, {
-      props: { id: 'study-1', token: '' },
-      global: {
-        mocks: {
-          $t: (key) => key,
-        },
-        stubs: {
-          Snackbar: true,
-          ShowInfo: { template: '<div><slot name="content" /></div>' },
-          TextClamp: true,
-          'v-btn': buttonStub,
-          'v-dialog': { template: '<div><slot /></div>' },
-          'v-card': { template: '<div><slot /></div>' },
-          'v-card-actions': { template: '<div><slot /></div>' },
-          'v-card-text': { template: '<div><slot /></div>' },
-          'v-card-title': { template: '<div><slot /></div>' },
-          'v-container': { template: '<div><slot /></div>' },
-          'v-row': { template: '<div><slot /></div>' },
-          'v-col': { template: '<div><slot /></div>' },
-          'v-list': { template: '<div><slot /></div>' },
-          'v-list-item': {
-            template: '<div><slot name="prepend" /><slot /></div>',
+  it.each([false, true])(
+    'waits for initialization and handles save rejection: %s',
+    async (saveFails) => {
+      const answerRequest = deferred()
+      const study = {
+        id: 'study-1',
+        answersDocId: 'answers-1',
+        testType: 'HEURISTIC',
+        testTitle: 'Heuristic study',
+        testDescription: 'Study description',
+        testAdmin: { userDocId: 'admin-1' },
+        testOptions: [{ text: 'Yes', value: 1 }],
+        testStructure: [
+          {
+            id: 0,
+            title: 'Visibility of system status',
+            total: 1,
+            questions: [{ id: 0, title: 'Does the system show its status?' }],
           },
-          'v-list-item-title': { template: '<div><slot /></div>' },
-          'v-navigation-drawer': {
-            template: '<div><slot /><slot name="append" /></div>',
+        ],
+        cooperators: [],
+        evaluatorInfo: { sections: [] },
+        trackTime: false,
+      }
+      const getters = reactive({
+        test: study,
+        user: { id: 'user-1' },
+        heuristics: [],
+        currentUserTestAnswer: new HeuristicAnswer({ userDocId: 'user-1' }),
+      })
+      const store = {
+        getters,
+        state: { Tests: { Test: study } },
+        commit: jest.fn(),
+        dispatch: jest.fn((action) => {
+          if (action === 'getStudy') {
+            getters.test = { ...study }
+            store.state.Tests.Test = getters.test
+            return Promise.resolve(getters.test)
+          }
+          if (action === 'getCurrentTestAnswerDoc') {
+            return answerRequest.promise
+          }
+          if (action === 'saveTestAnswer' && saveFails)
+            return Promise.reject(new Error('save failed'))
+          return Promise.resolve()
+        }),
+      }
+      useStore.mockReturnValue(store)
+
+      const wrapper = shallowMount(HeuristicTestView, {
+        props: { id: 'study-1', token: '' },
+        global: {
+          mocks: {
+            $t: (key) => key,
           },
-          'v-layout': { template: '<div><slot /></div>' },
-          'v-main': { template: '<main><slot /></main>' },
-          'v-tooltip': {
-            template:
-              '<div><slot name="activator" :props="{}" /><slot /></div>',
+          stubs: {
+            Snackbar: true,
+            ShowInfo: { template: '<div><slot name="content" /></div>' },
+            TextClamp: true,
+            'v-btn': buttonStub,
+            'v-dialog': { template: '<div><slot /></div>' },
+            'v-card': { template: '<div><slot /></div>' },
+            'v-card-actions': { template: '<div><slot /></div>' },
+            'v-card-text': { template: '<div><slot /></div>' },
+            'v-card-title': { template: '<div><slot /></div>' },
+            'v-container': { template: '<div><slot /></div>' },
+            'v-row': { template: '<div><slot /></div>' },
+            'v-col': { template: '<div><slot /></div>' },
+            'v-list': { template: '<div><slot /></div>' },
+            'v-list-item': {
+              template: '<div><slot name="prepend" /><slot /></div>',
+            },
+            'v-list-item-title': { template: '<div><slot /></div>' },
+            'v-navigation-drawer': {
+              template: '<div><slot /><slot name="append" /></div>',
+            },
+            'v-layout': { template: '<div><slot /></div>' },
+            'v-main': { template: '<main><slot /></main>' },
+            'v-tooltip': {
+              template:
+                '<div><slot name="activator" :props="{}" /><slot /></div>',
+            },
+            'v-progress-circular': true,
+            'v-progress-linear': true,
+            'v-progress': true,
+            'v-divider': true,
+            'v-icon': true,
+            'v-img': true,
+            'v-select': true,
+            'v-alert': true,
+            'v-avatar': true,
+            'v-spacer': true,
+            'v-speed-dial': true,
+            'v-stepper': true,
+            'v-stepper-header': true,
+            'v-stepper-item': true,
           },
-          'v-progress-circular': true,
-          'v-progress-linear': true,
-          'v-progress': true,
-          'v-divider': true,
-          'v-icon': true,
-          'v-img': true,
-          'v-select': true,
-          'v-alert': true,
-          'v-avatar': true,
-          'v-spacer': true,
-          'v-speed-dial': true,
-          'v-stepper': true,
-          'v-stepper-header': true,
-          'v-stepper-item': true,
         },
-      },
-    })
+      })
 
-    await flushPromises()
+      await flushPromises()
 
-    const startButton = findButton(
-      wrapper,
-      'HeuristicsTestView.actions.startTest',
-    )
-    expect(startButton).toBeDefined()
-    await expect(startButton.trigger('click')).resolves.toBeUndefined()
-    expect(startButton.attributes('disabled')).toBeDefined()
-    expect(
-      store.dispatch.mock.calls.some(([action]) => action === 'saveTestAnswer'),
-    ).toBe(false)
+      const startButton = findButton(
+        wrapper,
+        'HeuristicsTestView.actions.startTest',
+      )
+      expect(startButton).toBeDefined()
+      await expect(startButton.trigger('click')).resolves.toBeUndefined()
+      expect(startButton.attributes('disabled')).toBeDefined()
+      expect(
+        store.dispatch.mock.calls.some(
+          ([action]) => action === 'saveTestAnswer',
+        ),
+      ).toBe(false)
 
-    answerRequest.resolve()
-    await flushPromises()
+      answerRequest.resolve()
+      await flushPromises()
 
-    const readyStartButton = findButton(
-      wrapper,
-      'HeuristicsTestView.actions.startTest',
-    )
-    expect(readyStartButton.attributes('disabled')).toBeUndefined()
-    await expect(readyStartButton.trigger('click')).resolves.toBeUndefined()
+      const readyStartButton = findButton(
+        wrapper,
+        'HeuristicsTestView.actions.startTest',
+      )
+      expect(readyStartButton.attributes('disabled')).toBeUndefined()
+      await expect(readyStartButton.trigger('click')).resolves.toBeUndefined()
 
-    jest.advanceTimersByTime(1000)
-    await flushPromises()
+      jest.advanceTimersByTime(1000)
+      await flushPromises()
 
-    const instructionsStep = wrapper.findComponent({
-      name: 'HeuristicInstructionsStep',
-    })
-    expect(instructionsStep.exists()).toBe(true)
-    instructionsStep.vm.$emit('start')
-    await flushPromises()
+      const instructionsStep = wrapper.findComponent({
+        name: 'HeuristicInstructionsStep',
+      })
+      expect(instructionsStep.exists()).toBe(true)
+      instructionsStep.vm.$emit('start')
+      await flushPromises()
 
-    jest.advanceTimersByTime(1500)
-    await flushPromises()
+      jest.advanceTimersByTime(1500)
+      await flushPromises()
 
-    const saveCall = store.dispatch.mock.calls.find(
-      ([action]) => action === 'saveTestAnswer',
-    )
-    expect(saveCall).toBeDefined()
-    expect(saveCall[1].data).toBeInstanceOf(HeuristicAnswer)
-    expect(typeof saveCall[1].data.toFirestore).toBe('function')
+      const saveCall = store.dispatch.mock.calls.find(
+        ([action]) => action === 'saveTestAnswer',
+      )
+      expect(saveCall).toBeDefined()
+      expect(saveCall[1].data).toBeInstanceOf(HeuristicAnswer)
+      expect(typeof saveCall[1].data.toFirestore).toBe('function')
+      if (saveFails) {
+        expect(wrapper.vm.saveStatusType).toBe('error')
+        expect(wrapper.vm.autoSaveInProgress).toBe(false)
+        await expect(wrapper.vm.manualSaveAnswer()).resolves.toBeUndefined()
+        expect(wrapper.vm.saveStatusType).toBe('error')
+        await expect(wrapper.vm.submitAnswer()).resolves.toBeUndefined()
+        expect(getters.currentUserTestAnswer.submitted).toBe(false)
+        expect(useRouter().push).not.toHaveBeenCalled()
+      }
 
-    wrapper.unmount()
-  })
+      wrapper.unmount()
+    },
+  )
 })
