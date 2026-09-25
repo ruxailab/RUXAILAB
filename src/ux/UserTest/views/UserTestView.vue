@@ -509,7 +509,12 @@
                 toggleTracking(false)
               }
             "
-            @could-not-finish="() => handleTaskFinish(false)"
+            @could-not-finish="
+              () => {
+                handleTaskFinish(false)
+                toggleTracking(false)
+              }
+            "
             @show-loading="isLoading = true"
             @stop-show-loading="isLoading = false"
             @recording-started="isVisualizerVisible = $event"
