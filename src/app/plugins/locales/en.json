@@ -3292,6 +3292,7 @@
     },
     "definitions": {
       "HEURISTICS": "Heuristic Evaluation",
+      "FOCUS_GROUP": "Focus Group",
       "USER_MODERATED": "Moderated Usability Test",
       "USER_UNMODERATED": "Unmoderated Usability Test",
       "SURVEY": "Survey",

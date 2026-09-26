@@ -220,6 +220,10 @@ describe('study navigation', () => {
     ])
   })
 
+  it('hides Logs for Focus Group studies until that view exists', () => {
+    expect(titlesFor(studyWith('FOCUS_GROUP'), owner)).not.toContain('Logs')
+  })
+
   it('groups study navigation by the user task', () => {
     expect(groupsFor(studyWith('USER'), owner)).toEqual([
       'overview',

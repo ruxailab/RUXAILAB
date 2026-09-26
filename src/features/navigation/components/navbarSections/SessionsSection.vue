@@ -330,13 +330,14 @@ const filteredSessions = computed(() => {
 const goTo = (session) => {
   if (!session?.study?.id || !session?.id) return
   if (normalizeStudyType(session.study.testType) === STUDY_TYPES.FOCUS_GROUP) {
-    router.push(
+    const route = router.resolve(
       `/focusGroup/session/${session.study.id}?session=${session.id}`,
     )
+    window.open(route.href, '_blank', 'noopener,noreferrer')
     return
   }
   const route = router.resolve(`/testview/${session.study.id}/${session.id}`)
-  window.open(route.href, '_blank')
+  window.open(route.href, '_blank', 'noopener,noreferrer')
 }
 </script>
 

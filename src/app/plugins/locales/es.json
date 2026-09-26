@@ -3200,6 +3200,7 @@
     },
     "definitions": {
       "HEURISTICS": "Evaluación Heurística",
+      "FOCUS_GROUP": "Grupo focal",
       "USER_MODERATED": "Prueba de Usabilidad Moderada",
       "USER_UNMODERATED": "Prueba de Usabilidad No Moderada",
       "SURVEY": "Encuesta",

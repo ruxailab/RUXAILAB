@@ -229,6 +229,7 @@
             <div
               v-if="focusGroupStartedAt && stageMode !== 'stimulus'"
               class="fg-presentation-layout"
+              :class="{ 'fg-presentation-layout--video': videoEnabled }"
             >
               <section class="fg-prompt-canvas" aria-live="polite">
                 <v-btn
@@ -240,22 +241,24 @@
                   :title="t('focusGroup.session.clearQuestion')"
                   @click="onClearPrompt"
                 />
-                <div class="fg-prompt-eyebrow">
-                  <v-icon size="18">mdi-comment-question-outline</v-icon>
-                  {{ t('focusGroup.session.currentQuestion') }}
-                </div>
-                <h1 v-if="activePromptText" class="fg-prompt-text">
-                  {{ activePromptText }}
-                </h1>
-                <div v-else class="fg-prompt-waiting">
-                  <v-icon size="40" class="mb-3">mdi-message-question-outline</v-icon>
-                  <p>{{ t('focusGroup.session.waitingForPrompt') }}</p>
-                  <small v-if="isFacilitator">
-                    {{ t('focusGroup.session.askPromptFromGuide') }}
-                  </small>
-                </div>
-                <div v-if="currentTopic" class="fg-prompt-topic">
-                  {{ currentTopic.title || t('focusGroup.session.untitledTopic') }}
+                <div class="fg-prompt-content">
+                  <div class="fg-prompt-eyebrow">
+                    <v-icon size="18">mdi-comment-question-outline</v-icon>
+                    {{ t('focusGroup.session.currentQuestion') }}
+                  </div>
+                  <h1 v-if="activePromptText" class="fg-prompt-text">
+                    {{ activePromptText }}
+                  </h1>
+                  <div v-else class="fg-prompt-waiting">
+                    <v-icon size="40" class="mb-3">mdi-message-question-outline</v-icon>
+                    <p>{{ t('focusGroup.session.waitingForPrompt') }}</p>
+                    <small v-if="isFacilitator">
+                      {{ t('focusGroup.session.askPromptFromGuide') }}
+                    </small>
+                  </div>
+                  <div v-if="currentTopic" class="fg-prompt-topic">
+                    {{ currentTopic.title || t('focusGroup.session.untitledTopic') }}
+                  </div>
                 </div>
               </section>
               <SessionVideoStage
@@ -439,7 +442,6 @@
             <div class="fg-control-divider" />
 
             <v-tooltip
-              v-if="videoEnabled"
               location="top"
               :text="t('focusGroup.session.discussion')"
             >
@@ -1158,9 +1160,9 @@ const effectiveRoomId = computed(() => {
   return groupId ? `${roomId}-breakout-${groupId}` : roomId
 })
 
-// Side-panel tabs, in reading order: the facilitator's guide, the discussion
-// (a tab only when video owns the stage, otherwise the discussion IS the
-// stage), then the people roster.
+// Side-panel tabs, in reading order: the facilitator's guide, the discussion,
+// then the people roster. Discussion remains available after the guided prompt
+// takes over the stage, including sessions without video enabled.
 const panelTabs = computed(() => {
   const tabs = []
   if (isFacilitator.value)
@@ -1183,12 +1185,11 @@ const panelTabs = computed(() => {
       icon: 'mdi-call-split',
       label: 'focusGroup.session.breakout',
     })
-  if (videoEnabled.value)
-    tabs.push({
-      key: 'discussion',
-      icon: 'mdi-message-text-outline',
-      label: 'focusGroup.session.discussion',
-    })
+  tabs.push({
+    key: 'discussion',
+    icon: 'mdi-message-text-outline',
+    label: 'focusGroup.session.discussion',
+  })
   tabs.push({
     key: 'people',
     icon: 'mdi-account-group',
@@ -1899,25 +1900,35 @@ onMounted(async () => {
 
 .fg-presentation-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 28%);
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
   width: 100%;
   min-width: 0;
   min-height: 0;
 }
 
+.fg-presentation-layout--video {
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 28%);
+}
+
 .fg-prompt-canvas {
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   min-width: 0;
   min-height: 0;
-  padding: clamp(24px, 5vw, 72px);
+  overflow: auto;
+  padding: clamp(16px, 3vw, 48px);
   border: 1px solid rgba(var(--v-border-color), 0.15);
   border-radius: 20px;
   background: rgb(var(--v-theme-surface));
   text-align: center;
+}
+
+.fg-prompt-content {
+  flex: 0 0 auto;
+  width: 100%;
+  margin-block: auto;
 }
 
 .fg-prompt-clear {
@@ -1937,7 +1948,7 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-bottom: 24px;
+  margin-bottom: clamp(12px, 2vh, 24px);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -1945,8 +1956,8 @@ onMounted(async () => {
 .fg-prompt-text {
   max-width: 1100px;
   margin: 0 auto;
-  font-size: clamp(1.8rem, 4vw, 4rem);
-  line-height: 1.2;
+  font-size: clamp(1.35rem, min(3.4vw, 5.4vh), 3.5rem);
+  line-height: 1.12;
   font-weight: 600;
   overflow-wrap: anywhere;
 }
@@ -1957,7 +1968,7 @@ onMounted(async () => {
 }
 
 .fg-prompt-topic {
-  margin-top: 32px;
+  margin-top: clamp(16px, 2.5vh, 28px);
 }
 
 .fg-video-rail {
@@ -1965,13 +1976,13 @@ onMounted(async () => {
 }
 
 @media (max-width: 800px) {
-  .fg-presentation-layout {
+  .fg-presentation-layout--video {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: minmax(180px, 1fr) minmax(120px, 28%);
   }
 
   .fg-prompt-canvas {
-    padding: 20px;
+    padding: 16px;
   }
 }
 
