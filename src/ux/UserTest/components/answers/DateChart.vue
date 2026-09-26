@@ -24,6 +24,7 @@ import {
   TimeScale,
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
+import { useDateLocale } from '@/shared/composables/useDateLocale';
 
 ChartJS.register(
   CategoryScale,
@@ -43,6 +44,8 @@ const props = defineProps({
     default: () => [],
   },
 });
+
+const { intlLocale } = useDateLocale();
 
 const chartKey = ref(0);
 const isDataReady = ref(false);
@@ -218,7 +221,7 @@ const processDataForChart = () => {
   // Create labels and data arrays with ONLY dates that have data
   chartData.value.labels = sortedDates.map(date => {
     const d = new Date(date);
-    return d.toLocaleDateString('en-IN', {
+    return d.toLocaleDateString(intlLocale.value, {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
