@@ -1,3 +1,11 @@
+const mockCallHttpsCallableFunction = jest.fn()
+
+jest.mock('@/app/plugins/firebase/FirebaseFunctionsService', () => ({
+  FirebaseFunctionsController: {
+    callHttpsCallableFunction: (...args) => mockCallHttpsCallableFunction(...args),
+  },
+}))
+
 import FocusGroupController from '@/ux/FocusGroup/controllers/FocusGroupController'
 import { createControllerSpies } from './helpers/testUtils'
 
@@ -20,6 +28,7 @@ describe('FocusGroupController', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    mockCallHttpsCallableFunction.mockResolvedValue({ data: { status: 'updated' } })
     controller = new FocusGroupController()
     spies = createControllerSpies(controller)
   })
@@ -51,30 +60,28 @@ describe('FocusGroupController', () => {
   })
 
   describe('updateDiscussionGuide', () => {
-    it('serializes model instances and updates the study doc', async () => {
-      spies.mockUpdate()
+    it('serializes model instances and uses the audited study-update callable', async () => {
       const topics = [{ toFirestore: () => ({ id: 't1', title: 'Topic 1' }) }]
 
       await controller.updateDiscussionGuide('study-1', topics)
 
-      expect(spies.update).toHaveBeenCalledWith(
-        'tests',
-        'study-1',
+      expect(mockCallHttpsCallableFunction).toHaveBeenCalledWith(
+        'updateStudyWithAudit',
         expect.objectContaining({
-          discussionGuide: [{ id: 't1', title: 'Topic 1' }],
+          studyId: 'study-1',
+          study: expect.objectContaining({
+            discussionGuide: [{ id: 't1', title: 'Topic 1' }],
+          }),
         }),
       )
     })
 
-    it('passes plain objects through unchanged', async () => {
-      spies.mockUpdate()
+    it('passes plain topic objects through unchanged', async () => {
       const topics = [{ id: 't1', title: 'Topic 1' }]
 
       await controller.updateDiscussionGuide('study-1', topics)
 
-      expect(spies.update).toHaveBeenCalledWith(
-        'tests',
-        'study-1',
+      expect(mockCallHttpsCallableFunction.mock.calls[0][1].study).toEqual(
         expect.objectContaining({
           discussionGuide: [{ id: 't1', title: 'Topic 1' }],
         }),
@@ -84,27 +91,25 @@ describe('FocusGroupController', () => {
 
   describe('updateConfig', () => {
     it('serializes a config model instance', async () => {
-      spies.mockUpdate()
       const config = { toFirestore: () => ({ maxParticipants: 8 }) }
 
       await controller.updateConfig('study-1', config)
 
-      expect(spies.update).toHaveBeenCalledWith(
-        'tests',
-        'study-1',
-        expect.objectContaining({ config: { maxParticipants: 8 } }),
+      expect(mockCallHttpsCallableFunction).toHaveBeenCalledWith(
+        'updateStudyWithAudit',
+        expect.objectContaining({
+          studyId: 'study-1',
+          study: expect.objectContaining({ config: { maxParticipants: 8 } }),
+        }),
       )
     })
 
     it('passes a plain config object through unchanged', async () => {
-      spies.mockUpdate()
       const config = { maxParticipants: 8 }
 
       await controller.updateConfig('study-1', config)
 
-      expect(spies.update).toHaveBeenCalledWith(
-        'tests',
-        'study-1',
+      expect(mockCallHttpsCallableFunction.mock.calls[0][1].study).toEqual(
         expect.objectContaining({ config: { maxParticipants: 8 } }),
       )
     })

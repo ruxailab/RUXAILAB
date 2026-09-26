@@ -128,6 +128,17 @@
         </span>
       </div>
       <v-spacer />
+      <v-btn
+        v-if="isFacilitator && status === 'live' && !focusGroupStartedAt"
+        color="primary"
+        variant="flat"
+        prepend-icon="mdi-play-circle-outline"
+        class="text-none me-2"
+        :loading="startingFocusGroup"
+        @click="onStartFocusGroup"
+      >
+        {{ t('focusGroup.session.startFocusGroup') }}
+      </v-btn>
       <SessionTimer
         v-if="currentTopic && timerFallbackMs > 0"
         :timer="timerForTopic"
@@ -138,7 +149,7 @@
         @pause="onTimerPause"
         @reset="onTimerReset"
       />
-      <div v-if="startedAt" class="fg-session-elapsed me-2">
+      <div v-if="focusGroupStartedAt" class="fg-session-elapsed me-2">
         <v-icon size="16">mdi-clock-time-four-outline</v-icon>
         <span>{{ t('focusGroup.session.elapsed') }}</span>
         <span>{{ elapsedSessionDisplay }}</span>
@@ -208,14 +219,63 @@
           </div>
 
           <CurrentQuestion
+            v-if="!focusGroupStartedAt || stageMode === 'stimulus'"
             :text="activePromptText"
             :can-clear="isFacilitator"
             @clear="onClearPrompt"
           />
 
           <div class="fg-stage-body">
+            <div
+              v-if="focusGroupStartedAt && stageMode !== 'stimulus'"
+              class="fg-presentation-layout"
+              :class="{ 'fg-presentation-layout--video': videoEnabled }"
+            >
+              <section class="fg-prompt-canvas" aria-live="polite">
+                <v-btn
+                  v-if="isFacilitator && activePromptText"
+                  class="fg-prompt-clear"
+                  icon="mdi-close"
+                  size="small"
+                  variant="text"
+                  :title="t('focusGroup.session.clearQuestion')"
+                  @click="onClearPrompt"
+                />
+                <div class="fg-prompt-content">
+                  <div class="fg-prompt-eyebrow">
+                    <v-icon size="18">mdi-comment-question-outline</v-icon>
+                    {{ t('focusGroup.session.currentQuestion') }}
+                  </div>
+                  <h1 v-if="activePromptText" class="fg-prompt-text">
+                    {{ activePromptText }}
+                  </h1>
+                  <div v-else class="fg-prompt-waiting">
+                    <v-icon size="40" class="mb-3">mdi-message-question-outline</v-icon>
+                    <p>{{ t('focusGroup.session.waitingForPrompt') }}</p>
+                    <small v-if="isFacilitator">
+                      {{ t('focusGroup.session.askPromptFromGuide') }}
+                    </small>
+                  </div>
+                  <div v-if="currentTopic" class="fg-prompt-topic">
+                    {{ currentTopic.title || t('focusGroup.session.untitledTopic') }}
+                  </div>
+                </div>
+              </section>
+              <SessionVideoStage
+                v-if="videoEnabled"
+                class="fg-video-rail"
+                :remote-participants="remoteParticipants"
+                :screen-share-feeds="screenShareFeeds"
+                :local-state="localVideoState"
+                :connection-error="connectionError"
+                :presence-roles="participants"
+                :set-local-video="setLocalVideo"
+                :set-remote-video="setRemoteVideoElement"
+                :set-screen-video="setScreenShareVideoElement"
+              />
+            </div>
             <StimulusStage
-              v-if="stageMode === 'stimulus'"
+              v-else-if="stageMode === 'stimulus'"
               class="fg-fill"
               :stimulus="resolvedStimulus"
               :can-clear="isFacilitator"
@@ -382,7 +442,6 @@
             <div class="fg-control-divider" />
 
             <v-tooltip
-              v-if="videoEnabled"
               location="top"
               :text="t('focusGroup.session.discussion')"
             >
@@ -661,6 +720,7 @@ import BreakoutPanel from '@/ux/FocusGroup/components/session/BreakoutPanel.vue'
 import BreakoutRoomsBar from '@/ux/FocusGroup/components/session/BreakoutRoomsBar.vue'
 import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
 import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue'
+import SessionController from '@/shared/controllers/SessionController'
 import {
   splitIntoGroups,
   reassignParticipant,
@@ -704,7 +764,7 @@ onBeforeRouteUpdate((to) => {
 })
 const {
   status,
-  startedAt,
+  focusGroupStartedAt,
   currentTopicIndex,
   participants,
   messages,
@@ -719,6 +779,7 @@ const {
   isLive,
   isEnded,
   startSession,
+  startFocusGroup,
   goToTopic,
   endSession,
   joinPresence,
@@ -757,6 +818,7 @@ const test = computed(() => store.getters.test)
 
 const sending = ref(false)
 const starting = ref(false)
+const startingFocusGroup = ref(false)
 
 // --- Session configuration selected by the facilitator on the Test screen ---
 const sessionConfig = computed(() => test.value?.config ?? {})
@@ -809,7 +871,13 @@ watch(
   (stimulusId) => {
     if (!stimulusId) return
     const known = stimuli.value.some((item) => item.id === stimulusId)
-    if (!known) store.dispatch('getStudy', { id: studyId })
+    if (!known) {
+      if (sessionId) {
+        store.dispatch('getStudyForSession', { studyId, sessionId })
+      } else {
+        store.dispatch('getStudy', { id: studyId })
+      }
+    }
   },
 )
 
@@ -836,7 +904,8 @@ onUnmounted(() => {
   if (sessionClockInterval) clearInterval(sessionClockInterval)
 })
 const elapsedSessionDisplay = computed(() => {
-  return formatElapsedSessionTime(startedAt.value, clockNow.value)
+  const stopAt = isEnded.value ? (endedAt.value || clockNow.value) : clockNow.value
+  return formatElapsedSessionTime(focusGroupStartedAt.value, stopAt)
 })
 // Only use the shared timer when it belongs to the current topic; otherwise the
 // display falls back to the topic's full planned duration (paused).
@@ -1091,9 +1160,9 @@ const effectiveRoomId = computed(() => {
   return groupId ? `${roomId}-breakout-${groupId}` : roomId
 })
 
-// Side-panel tabs, in reading order: the facilitator's guide, the discussion
-// (a tab only when video owns the stage, otherwise the discussion IS the
-// stage), then the people roster.
+// Side-panel tabs, in reading order: the facilitator's guide, the discussion,
+// then the people roster. Discussion remains available after the guided prompt
+// takes over the stage, including sessions without video enabled.
 const panelTabs = computed(() => {
   const tabs = []
   if (isFacilitator.value)
@@ -1116,12 +1185,11 @@ const panelTabs = computed(() => {
       icon: 'mdi-call-split',
       label: 'focusGroup.session.breakout',
     })
-  if (videoEnabled.value)
-    tabs.push({
-      key: 'discussion',
-      icon: 'mdi-message-text-outline',
-      label: 'focusGroup.session.discussion',
-    })
+  tabs.push({
+    key: 'discussion',
+    icon: 'mdi-message-text-outline',
+    label: 'focusGroup.session.discussion',
+  })
   tabs.push({
     key: 'people',
     icon: 'mdi-account-group',
@@ -1480,6 +1548,14 @@ const onStart = async () => {
     starting.value = false
   }
 }
+const onStartFocusGroup = async () => {
+  startingFocusGroup.value = true
+  try {
+    await startFocusGroup()
+  } finally {
+    startingFocusGroup.value = false
+  }
+}
 const onPrev = () => {
   if (currentTopicIndex.value > 0) goToTopic(currentTopicIndex.value - 1)
 }
@@ -1518,6 +1594,14 @@ const onEnd = async () => {
       answersDocId: test.value?.answersDocId,
       session: record,
     })
+    if (sessionId) {
+      const lifecycleResult =
+        await new SessionController().markFocusGroupSessionEnded({
+          studyId,
+          sessionId,
+        })
+      if (!lifecycleResult.success) throw lifecycleResult.error
+    }
     store.commit('SET_TOAST', {
       message: t('focusGroup.session.sessionSaved'),
       type: 'success',
@@ -1592,7 +1676,10 @@ const onSaveNotes = async () => {
 const goToDashboard = () => {
   disconnectCall()
   leavePresence(user.value?.id)
-  router.push(`/focusGroup/dashboard/${studyId}`).catch(() => {})
+  const destination = isParticipant.value
+    ? { name: 'Admin', query: { section: 'sessions' } }
+    : `/focusGroup/dashboard/${studyId}`
+  router.push(destination).catch(() => {})
 }
 
 // --- Consent handlers ---
@@ -1679,7 +1766,11 @@ watch(
 )
 
 onMounted(async () => {
-  await store.dispatch('getStudy', { id: studyId })
+  if (sessionId) {
+    await store.dispatch('getStudyForSession', { studyId, sessionId })
+  } else {
+    await store.dispatch('getStudy', { id: studyId })
+  }
   if (user.value?.id) {
     acceptedStudyParticipant.value = await store
       .dispatch('getAcceptedStudyParticipant', {
@@ -1805,6 +1896,94 @@ onMounted(async () => {
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
+}
+
+.fg-presentation-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.fg-presentation-layout--video {
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 28%);
+}
+
+.fg-prompt-canvas {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  padding: clamp(16px, 3vw, 48px);
+  border: 1px solid rgba(var(--v-border-color), 0.15);
+  border-radius: 20px;
+  background: rgb(var(--v-theme-surface));
+  text-align: center;
+}
+
+.fg-prompt-content {
+  flex: 0 0 auto;
+  width: 100%;
+  margin-block: auto;
+}
+
+.fg-prompt-clear {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.fg-prompt-eyebrow,
+.fg-prompt-topic {
+  color: rgba(var(--v-theme-on-surface), 0.62);
+  font-weight: 600;
+}
+
+.fg-prompt-eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: clamp(12px, 2vh, 24px);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.fg-prompt-text {
+  max-width: 1100px;
+  margin: 0 auto;
+  font-size: clamp(1.35rem, min(3.4vw, 5.4vh), 3.5rem);
+  line-height: 1.12;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.fg-prompt-waiting {
+  color: rgba(var(--v-theme-on-surface), 0.55);
+  font-size: clamp(1.1rem, 2vw, 1.6rem);
+}
+
+.fg-prompt-topic {
+  margin-top: clamp(16px, 2.5vh, 28px);
+}
+
+.fg-video-rail {
+  overflow: auto;
+}
+
+@media (max-width: 800px) {
+  .fg-presentation-layout--video {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(180px, 1fr) minmax(120px, 28%);
+  }
+
+  .fg-prompt-canvas {
+    padding: 16px;
+  }
 }
 
 .fg-fill {

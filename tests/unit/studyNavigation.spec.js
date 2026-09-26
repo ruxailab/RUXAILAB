@@ -93,13 +93,13 @@ describe('study navigation', () => {
     })
   })
 
-  it('sends a Focus Group participant to the session route, not the dashboard-less TestView', () => {
+  it('sends a Focus Group participant to their scheduled sessions, not an empty legacy room', () => {
     const user = { id: 'participant', accessLevel: 1 }
     const study = studyWith('FOCUS_GROUP', user.id, STUDY_ROLE.EVALUATOR)
 
     expect(getCommunityStudyDestination({ study, user })).toEqual({
-      name: 'FocusGroupSessionView',
-      params: { id: study.id },
+      name: 'Admin',
+      query: { section: 'sessions' },
     })
   })
 
@@ -126,7 +126,7 @@ describe('study navigation', () => {
     })
   })
 
-  it('routes a Focus Group participant invite acceptance to the session UI', () => {
+  it('routes a Focus Group study participant invite to the sessions list', () => {
     const study = studyWith('FOCUS_GROUP')
 
     expect(
@@ -136,8 +136,8 @@ describe('study navigation', () => {
         membershipType: 'participant',
       }),
     ).toEqual({
-      name: 'FocusGroupSessionView',
-      params: { id: study.id },
+      name: 'Admin',
+      query: { section: 'sessions' },
     })
   })
 
@@ -218,6 +218,10 @@ describe('study navigation', () => {
       'Storage',
       'Audit Trail',
     ])
+  })
+
+  it('hides Logs for Focus Group studies until that view exists', () => {
+    expect(titlesFor(studyWith('FOCUS_GROUP'), owner)).not.toContain('Logs')
   })
 
   it('groups study navigation by the user task', () => {

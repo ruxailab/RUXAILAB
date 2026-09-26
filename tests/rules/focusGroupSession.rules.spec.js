@@ -89,6 +89,15 @@ describe('Focus Group session RTDB rules', () => {
     )
   })
 
+  it('lets only the facilitator start the Focus Group discussion timer', async () => {
+    const startAt = (uid) =>
+      ref(context(uid).database(), `focusGroupSessions/${studyId}/focusGroupStartedAt`)
+
+    await assertSucceeds(set(startAt('facilitator'), 1000))
+    await assertFails(set(startAt('participant'), 1000))
+    await assertFails(set(startAt('observer'), 1000))
+  })
+
   it('lets the facilitator and observer read and write the backroom, and denies the participant both ways', async () => {
     const backroom = (uid) =>
       ref(context(uid).database(), `focusGroupBackroom/${studyId}/msg-1`)

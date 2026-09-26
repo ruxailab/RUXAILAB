@@ -1,26 +1,23 @@
 import axios from 'axios'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 
 export default class InviteController {
   static async resolveInvite(token, uid) {
-    const { data } = await axios.post(
-      `${process.env.VUE_APP_CLOUD_FUNCTIONS_URL}/resolveInvite`,
-      {
-        data: { token, uid },
-      },
+    const response = await FirebaseFunctionsController.callHttpsCallableFunction(
+      'resolveInvite',
+      { token, uid },
     )
 
-    return data.result
+    return response.data
   }
 
   static async validateInvite(token) {
-    const { data } = await axios.post(
-      `${process.env.VUE_APP_CLOUD_FUNCTIONS_URL}/validateInvite`,
-      {
-        data: { token },
-      },
+    const response = await FirebaseFunctionsController.callHttpsCallableFunction(
+      'validateInvite',
+      { token },
     )
 
-    return data.result
+    return response.data
   }
 
   static async generateInvitationLink(payload) {

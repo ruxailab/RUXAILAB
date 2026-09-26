@@ -2204,6 +2204,7 @@
         "today": "Today",
         "upcoming": "Upcoming",
         "completed": "Completed",
+        "ended": "Ended",
         "allStudies": "All Studies",
         "myStudies": "My Studies",
         "whereICollaborate": "Where I Collaborate",
@@ -2846,6 +2847,9 @@
       "notStarted": "The session has not started yet.",
       "sessionEnded": "The session has ended.",
       "startSession": "Start session",
+      "startFocusGroup": "Start Focus Group",
+      "waitingForPrompt": "The facilitator will share the first question here.",
+      "askPromptFromGuide": "Choose a prompt from the Guide panel to show it to everyone.",
       "endSession": "End session",
       "previous": "Previous",
       "next": "Next topic",
@@ -3288,6 +3292,7 @@
     },
     "definitions": {
       "HEURISTICS": "Heuristic Evaluation",
+      "FOCUS_GROUP": "Focus Group",
       "USER_MODERATED": "Moderated Usability Test",
       "USER_UNMODERATED": "Unmoderated Usability Test",
       "SURVEY": "Survey",
@@ -3804,6 +3809,7 @@
       "upcoming": "Upcoming",
       "today": "Today",
       "completed": "Completed",
+      "ended": "Ended",
       "unknown": "Unknown"
     }
   }
