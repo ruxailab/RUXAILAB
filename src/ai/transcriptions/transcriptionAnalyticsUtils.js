@@ -13,6 +13,7 @@ export const toTaskAnalyticsKey = (taskId) => `task${String(taskId)}`
  *   speakingTime: number,
  *   speechRate: number,
  *   keywords: Record<string, number>,
+ *   sentiment: { Positive: number, Neutral: number, Negative: number },
  * }}
  */
 export const emptyMetricsBucket = () => ({
@@ -21,6 +22,7 @@ export const emptyMetricsBucket = () => ({
   speakingTime: 0,
   speechRate: 0,
   keywords: {},
+  sentiment: { Positive: 0, Neutral: 0, Negative: 0 },
 })
 
 /**
@@ -62,6 +64,21 @@ export const mergeKeywordMaps = (maps) => {
 }
 
 /**
+ * @param {Array<Record<string, number>|null|undefined>} buckets
+ * @returns {{ Positive: number, Neutral: number, Negative: number }}
+ */
+export const mergeSentimentCounts = (buckets) => {
+  const counts = { Positive: 0, Neutral: 0, Negative: 0 }
+  for (const b of buckets) {
+    if (!b || typeof b !== 'object') continue
+    for (const key of Object.keys(counts)) {
+      counts[key] += Number(b[key]) || 0
+    }
+  }
+  return counts
+}
+
+/**
  * @param {object} bucket
  * @returns {{
  *   sessionDuration: number,
@@ -84,6 +101,7 @@ export const finalizeSpeechRate = (bucket) => {
     speechRate:
       speakingTime > 0 ? Math.round(wordsSpoken / (speakingTime / 60)) : 0,
     keywords: bucket?.keywords || {},
+    sentiment: bucket?.sentiment || { Positive: 0, Neutral: 0, Negative: 0 },
   }
 }
 
@@ -112,6 +130,7 @@ export const aggregateTranscriptionMetrics = (transcriptions = []) => {
     bucket.wordsSpoken += Number(item.wordsSpoken) || 0
     bucket.speakingTime += Number(item.speakingTime) || 0
     bucket.keywords = mergeKeywordMaps([bucket.keywords, item.keywords])
+    bucket.sentiment = mergeSentimentCounts([bucket.sentiment, item.sentiment])
   }
 
   const tasks = {}
@@ -127,6 +146,7 @@ export const aggregateTranscriptionMetrics = (transcriptions = []) => {
     general.wordsSpoken += finalized.wordsSpoken
     general.speakingTime += finalized.speakingTime
     general.keywords = mergeKeywordMaps([general.keywords, finalized.keywords])
+    general.sentiment = mergeSentimentCounts([general.sentiment, finalized.sentiment])
   }
 
   const generalFinalized = finalizeSpeechRate(general)
@@ -189,5 +209,6 @@ export const normalizeMetricsBucket = (data) => {
       !Array.isArray(data.keywords)
         ? { ...data.keywords }
         : {},
+    sentiment: mergeSentimentCounts([data.sentiment]),
   }
 }
