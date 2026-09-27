@@ -20,3 +20,5 @@ export {
 } from '../features/transcription/index.js'
 export { facialSentimentTask } from '../features/facialSentiment/index.js'
 export { textSentimentTask } from '../features/textSentiment/index.js'
+export * from './focusGroupAnalysis.js'
+export * from './focusGroupSynthesis.js'

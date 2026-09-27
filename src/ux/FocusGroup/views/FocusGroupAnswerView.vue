@@ -354,8 +354,16 @@ const topics = computed(() =>
   Array.isArray(test.value?.discussionGuide) ? test.value.discussionGuide : [],
 )
 
+const isParticipantRecord = (person) => {
+  if (person?.accessLevel !== undefined && person?.accessLevel !== null) {
+    return Number(person.accessLevel) === 1
+  }
+  return ['participant', 'participante'].includes(
+    String(person?.role ?? '').trim().toLowerCase(),
+  )
+}
 const participantCount = (session) =>
-  Object.keys(session.participants ?? {}).length
+  Object.values(session?.participants ?? {}).filter(isParticipantRecord).length
 
 const formatDate = (timestamp) =>
   timestamp ? new Date(timestamp).toLocaleString() : ''

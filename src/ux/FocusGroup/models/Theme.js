@@ -1,17 +1,24 @@
 /**
- * A facilitator-defined theme grouping response excerpts pulled from one or
- * more finished sessions. Manual structuring only (WP2) — NLP-suggested
- * theming (WP3) is a separate, later concern and would add a `source` field
- * here when it lands.
+ * A theme grouping response excerpts pulled from one or more finished
+ * sessions — either authored manually by the facilitator, or suggested by
+ * the Tier 1 NLP pipeline (`source: 'nlp'`, from theme clustering). Both
+ * kinds are edited identically in `ThematicEditor.vue`'s drag-and-drop
+ * board; `source` only changes how it's badged.
  *
  * @param {string} label - Theme name (e.g. "Navigation confusion").
  * @param {Array} responseRefs - [{ sessionId, topicId, messageId, participantId, excerpt }]
+ * @param {string[]} [keywords] - Top terms backing an NLP-suggested theme.
+ * @param {number} [frequency] - Distinct participants touching this theme.
+ * @param {'manual'|'nlp'} [source] - Who authored the theme. Defaults to 'manual'.
  */
 export default class Theme {
-  constructor({ id, label, responseRefs } = {}) {
+  constructor({ id, label, responseRefs, keywords, frequency, source } = {}) {
     this.id = id ?? Theme.generateId()
     this.label = label ?? ''
     this.responseRefs = Array.isArray(responseRefs) ? responseRefs : []
+    this.keywords = Array.isArray(keywords) ? keywords : []
+    this.frequency = Number.isFinite(frequency) ? frequency : 0
+    this.source = source === 'nlp' ? 'nlp' : 'manual'
   }
 
   static generateId() {
@@ -32,6 +39,9 @@ export default class Theme {
       id: this.id,
       label: this.label,
       responseRefs: this.responseRefs,
+      keywords: this.keywords,
+      frequency: this.frequency,
+      source: this.source,
     }
   }
 

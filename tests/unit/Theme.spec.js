@@ -6,6 +6,8 @@ describe('Theme', () => {
     expect(theme.id).toMatch(/^theme-/)
     expect(theme.label).toBe('')
     expect(theme.responseRefs).toEqual([])
+    expect(theme.source).toBe('manual')
+    expect(theme.keywords).toEqual([])
   })
 
   it('generates unique ids', () => {
@@ -27,6 +29,9 @@ describe('Theme', () => {
           excerpt: 'I could not find the menu',
         },
       ],
+      source: 'nlp',
+      keywords: ['navigation', 'menu'],
+      frequency: 2,
     })
     const data = theme.toFirestore()
     const restored = Theme.fromFirestore(data)
@@ -35,6 +40,9 @@ describe('Theme', () => {
     expect(restored.label).toBe('Navigation confusion')
     expect(restored.responseRefs).toHaveLength(1)
     expect(restored.responseRefs[0].excerpt).toBe('I could not find the menu')
+    expect(restored.source).toBe('nlp')
+    expect(restored.keywords).toEqual(['navigation', 'menu'])
+    expect(restored.frequency).toBe(2)
   })
 
   it('defaults responseRefs to an empty array when missing', () => {

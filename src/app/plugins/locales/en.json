@@ -2834,6 +2834,29 @@
       "allSorted": "All responses are sorted into a theme.",
       "dropHere": "Drop responses here"
     },
+    "analysis": {
+      "runAnalysis": "Run analysis",
+      "summary": "Summary",
+      "consensusScore": "Consensus",
+      "suggested": "Suggested"
+    },
+    "analytics": {
+      "title": "Analytics",
+      "subtitle": "Themes, consensus, engagement, and an exportable report for each finished session.",
+      "downloadReport": "Download report",
+      "keywordsTitle": "Keywords",
+      "consensusTitle": "Consensus by topic",
+      "engagementTitle": "Participant engagement",
+      "deepAnalysisTitle": "Deep analysis",
+      "reviewThemes": "Review answers & themes",
+      "deepAnalysisHint": "Optional — generate a synthesis with the configured server-side OpenRouter model. No provider key is sent to the browser.",
+      "deepAnalysisGenerate": "Generate",
+      "deepAnalysisSave": "Save to session",
+      "deepAnalysisSuccess": "Synthesis generated",
+      "noKeywordsYet": "Run analysis to see keywords.",
+      "noAnalysisYet": "Run analysis to see this.",
+      "noEngagementYet": "No activity recorded for this session yet."
+    },
     "session": {
       "title": "Live Session",
       "backToDashboard": "Back to dashboard",

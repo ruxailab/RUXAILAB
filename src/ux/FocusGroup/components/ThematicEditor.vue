@@ -65,6 +65,15 @@
           <v-chip size="x-small" variant="flat" color="primary" class="ml-1">
             {{ (buckets[theme.id] || []).length }}
           </v-chip>
+          <v-chip
+            v-if="theme.source === 'nlp'"
+            size="x-small"
+            variant="flat"
+            color="secondary"
+            class="ml-1"
+          >
+            {{ $t('focusGroup.analysis.suggested') }}
+          </v-chip>
           <v-spacer />
           <v-btn
             icon="mdi-delete-outline"
@@ -126,6 +135,10 @@ function rebuildBoard() {
   themes.value = props.modelValue.map((theme) => ({
     id: theme.id,
     label: theme.label,
+    responseRefs: theme.responseRefs ?? [],
+    keywords: theme.keywords ?? [],
+    frequency: theme.frequency ?? 0,
+    source: theme.source ?? 'manual',
   }))
   const responses = flattenSessionResponses(props.session)
   const { unsorted: nextUnsorted, buckets: nextBuckets } =
@@ -146,21 +159,24 @@ watch(() => [props.session, props.modelValue], rebuildBoard, {
 const addTheme = () => {
   const label = newThemeLabel.value.trim()
   if (!label) return
-  const nextThemes = themesFromBuckets(themes.value, buckets)
+  const nextThemes = themesFromBuckets(themes.value, buckets, props.session.sessionId)
   nextThemes.push({ id: `theme-${Date.now()}`, label, responseRefs: [] })
   newThemeLabel.value = ''
   emit('update:modelValue', nextThemes)
 }
 
 const removeTheme = (themeId) => {
-  const nextThemes = themesFromBuckets(themes.value, buckets).filter(
+  const nextThemes = themesFromBuckets(themes.value, buckets, props.session.sessionId).filter(
     (theme) => theme.id !== themeId,
   )
   emit('update:modelValue', nextThemes)
 }
 
 const onChange = () => {
-  emit('update:modelValue', themesFromBuckets(themes.value, buckets))
+  emit(
+    'update:modelValue',
+    themesFromBuckets(themes.value, buckets, props.session.sessionId),
+  )
 }
 </script>
 

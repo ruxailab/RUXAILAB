@@ -229,6 +229,14 @@ const NAVIGATION_ITEMS = Object.freeze([
     path: ({ type, id }) => `/${type}/answer/${id}`,
   },
   {
+    title: 'Analytics',
+    group: 'analysis',
+    icon: 'mdi-chart-box-outline',
+    capability: C.ANSWERS_VIEW,
+    visible: isFocusGroupStudy,
+    path: ({ id }) => `/focusGroup/analytics/${id}`,
+  },
+  {
     title: 'Logs',
     group: 'administration',
     icon: 'mdi-text-box-search-outline',

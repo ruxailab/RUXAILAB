@@ -2742,6 +2742,29 @@
       "allSorted": "Todas las respuestas están clasificadas en un tema.",
       "dropHere": "Suelta respuestas aquí"
     },
+    "analysis": {
+      "runAnalysis": "Ejecutar análisis",
+      "summary": "Resumen",
+      "consensusScore": "Consenso",
+      "suggested": "Sugerido"
+    },
+    "analytics": {
+      "title": "Analítica",
+      "subtitle": "Temas, consenso, participación y un informe exportable para cada sesión finalizada.",
+      "downloadReport": "Descargar informe",
+      "keywordsTitle": "Palabras clave",
+      "consensusTitle": "Consenso por tema",
+      "engagementTitle": "Participación de los asistentes",
+      "deepAnalysisTitle": "Análisis profundo",
+      "reviewThemes": "Revisar respuestas y temas",
+      "deepAnalysisHint": "Opcional: genera una síntesis con el modelo de OpenRouter configurado en el servidor. La clave del proveedor no se envía al navegador.",
+      "deepAnalysisGenerate": "Generar",
+      "deepAnalysisSave": "Guardar en la sesión",
+      "deepAnalysisSuccess": "Síntesis generada",
+      "noKeywordsYet": "Ejecuta el análisis para ver palabras clave.",
+      "noAnalysisYet": "Ejecuta el análisis para ver esto.",
+      "noEngagementYet": "Todavía no hay actividad registrada en esta sesión."
+    },
     "session": {
       "title": "Sesión en Vivo",
       "backToDashboard": "Volver al panel",

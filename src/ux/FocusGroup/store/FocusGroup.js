@@ -1,6 +1,7 @@
 import FocusGroupController from '@/ux/FocusGroup/controllers/FocusGroupController'
 import { deleteStudyStorageFile } from '@/shared/services/studyStorageService'
 import AnswerController from '@/shared/controllers/AnswerController'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import i18n from '@/app/plugins/i18n'
 
 const focusGroupController = new FocusGroupController()
@@ -51,6 +52,56 @@ export default {
     async saveFocusGroupThemes(_, { answersDocId, themes }) {
       if (!answersDocId) return
       await focusGroupController.saveThemes(answersDocId, themes)
+    },
+
+    /**
+     * Tier 1 ($0, always-available) NLP analysis for one finished session:
+     * per-topic keywords/summary/consensus plus NLP-suggested themes merged
+     * into the study's theme board. Runs server-side (facilitator-only,
+     * enforced by the Cloud Function itself) and returns the full result so
+     * the view can render immediately without a second read.
+     */
+    async runFocusGroupAnalysis({ commit }, { studyId, answersDocId, sessionId }) {
+      if (!studyId || !answersDocId || !sessionId) return null
+      try {
+        const response = await FirebaseFunctionsController.callHttpsCallableFunction(
+          'runFocusGroupAnalysis',
+          { studyId, answersDocId, sessionId },
+        )
+        return response.data
+      } catch (err) {
+        commit('SET_TOAST', {
+          message: i18n.global.t('errors.globalError'),
+          type: 'error',
+        })
+        throw err
+      }
+    },
+
+    async synthesizeFocusGroupAnalysis(
+      { commit },
+      { studyId, answersDocId, sessionId },
+    ) {
+      if (!studyId || !answersDocId || !sessionId) return null
+      try {
+        const response = await FirebaseFunctionsController.callHttpsCallableFunction(
+          'synthesizeFocusGroupAnalysis',
+          { studyId, answersDocId, sessionId },
+        )
+        return response.data
+      } catch (err) {
+        commit('SET_TOAST', {
+          message: i18n.global.t('errors.globalError'),
+          type: 'error',
+        })
+        throw err
+      }
+    },
+
+    /** Persist only the generated synthesis text/metadata, never credentials. */
+    async saveFocusGroupDeepAnalysis(_, { answersDocId, sessionId, deepAnalysis }) {
+      if (!answersDocId || !sessionId) return
+      await focusGroupController.saveDeepAnalysis(answersDocId, sessionId, deepAnalysis)
     },
 
     /**
