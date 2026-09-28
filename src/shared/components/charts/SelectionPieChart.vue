@@ -1,5 +1,7 @@
 <template>
-  <v-card class="pa-6 elevation-3 rounded-xl chart-card">
+  <v-card
+    :class="['pa-6', 'elevation-3', 'rounded-xl', 'chart-card', { 'is-disabled': disabled }]"
+  >
     <div class="mb-4">
       <h4 class="text-h6 font-weight-bold mb-2">
         {{ questionTitle }}
@@ -8,10 +10,16 @@
     <div class="chart-container-small mb-4">
       <div
         v-if="isEmpty"
-        class="d-flex align-center justify-center ga-2 text-medium-emphasis h-100"
+        class="empty-chart-placeholder"
       >
-        <v-icon size="18">mdi-database-off-outline</v-icon>
-        <span class="text-caption">{{ emptyLabel }}</span>
+        <div class="empty-chart-ring" />
+        <div
+          v-if="emptyLabel && !disabled"
+          class="d-flex align-center justify-center ga-2 text-medium-emphasis"
+        >
+          <v-icon size="18">mdi-database-off-outline</v-icon>
+          <span class="text-caption">{{ emptyLabel }}</span>
+        </div>
       </div>
       <canvas v-show="!isEmpty" :id="canvasId" width="180" height="180" />
     </div>
@@ -84,6 +92,10 @@ const props = defineProps({
   emptyLabel: {
     type: String,
     default: 'No data',
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
   },
 })
 
@@ -180,5 +192,26 @@ onMounted(drawChart)
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.chart-card.is-disabled {
+  pointer-events: none;
+}
+
+.empty-chart-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 100%;
+}
+
+.empty-chart-ring {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 14px solid #e2e8f0;
+  box-sizing: border-box;
 }
 </style>

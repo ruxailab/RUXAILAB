@@ -2721,6 +2721,7 @@
       "neutral": "Neutral",
       "negative": "Negative",
       "noData": "No data",
+      "emptyTitle": "No sentiment analytics",
       "emptyAnalytics": "No sentiment analytics yet. Run facial or text sentiment analysis on tasks to populate metrics.",
       "emptyNoRecordingTasks": "No tasks with webcam or audio recording enabled in this test.",
       "emptyNoAnalyticsForFilters": "No sentiment analytics available for the selected filters.",

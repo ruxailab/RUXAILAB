@@ -45,14 +45,14 @@
         </p>
       </div>
       <v-chip
-        v-if="comingSoon || disabled"
+        v-if="comingSoon"
         color="warning"
         size="small"
         variant="outlined"
         class="position-absolute coming-soon-chip"
         style="top: 8px; right: 8px; z-index: 1"
       >
-        {{ comingSoon ? comingSoonText : 'Coming Soon' }}
+        {{ comingSoonText }}
       </v-chip>
     </div>
     <p

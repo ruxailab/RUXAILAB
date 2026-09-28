@@ -109,15 +109,20 @@
         </div>
 
         <template v-else>
-          <v-alert
+          <v-card
             v-if="!hasAnalyticsData"
-            type="info"
-            variant="tonal"
-            class="mb-4"
+            class="mb-4 pa-6 text-center analytics-empty-card"
+            variant="outlined"
           >
-            {{ $t('analytics.sentiment.emptyAnalytics') }}
-          </v-alert>
+            <h4 class="text-h6 font-weight-medium mb-2">
+              {{ $t('analytics.sentiment.emptyTitle') }}
+            </h4>
+            <p class="text-body-2 text-medium-emphasis mb-0">
+              {{ emptyDashboardMessage }}
+            </p>
+          </v-card>
 
+          <div :class="{ 'analytics-disabled': !hasAnalyticsData }">
           <v-row dense class="mb-4">
             <v-col
               v-for="card in summaryHighlights"
@@ -133,6 +138,7 @@
                 :icon="card.icon"
                 :description="card.description"
                 :progress="card.progress"
+                :disabled="!hasAnalyticsData"
               >
                 <template #value>
                   <div
@@ -190,6 +196,7 @@
                 :values-are-percentages="true"
                 :is-empty="!hasFacialPieData"
                 :empty-label="$t('analytics.sentiment.noData')"
+                :disabled="!hasAnalyticsData"
               />
             </v-col>
 
@@ -208,6 +215,7 @@
                 :values-are-percentages="true"
                 :is-empty="!hasTextPieData"
                 :empty-label="$t('analytics.sentiment.noData')"
+                :disabled="!hasAnalyticsData"
               />
             </v-col>
           </v-row>
@@ -220,22 +228,20 @@
               </h4>
             </div>
 
-            <v-alert
-              v-if="filteredSentimentByTask.length === 0"
-              type="info"
-              variant="tonal"
-              class="mb-0"
-            >
-              {{ emptyTaskTableMessage }}
-            </v-alert>
-
             <v-data-table
-              v-else
               :headers="visibleTaskSentimentHeaders"
               :items="filteredSentimentByTask"
               :items-per-page="10"
               class="elevation-0"
             >
+              <template #no-data>
+                <div
+                  v-if="hasAnalyticsData"
+                  class="text-medium-emphasis pa-4"
+                >
+                  {{ emptyTaskTableMessage }}
+                </div>
+              </template>
               <template #item.task="{ item }">
                 <div class="font-weight-medium">
                   {{ $t('analytics.sentiment.taskNumber', { number: item.number }) }}
@@ -264,6 +270,7 @@
               </template>
             </v-data-table>
           </v-card>
+          </div>
         </template>
       </div>
     </div>
@@ -708,6 +715,16 @@ const filteredSentimentByTask = computed(() => {
   })
 })
 
+const emptyDashboardMessage = computed(() => {
+  if (recordingTaskRows.value.length === 0) {
+    return t('analytics.sentiment.emptyNoRecordingTasks')
+  }
+  if (hasActiveFilters.value) {
+    return t('analytics.sentiment.emptyNoAnalyticsForFilters')
+  }
+  return t('analytics.sentiment.emptyAnalytics')
+})
+
 const emptyTaskTableMessage = computed(() => {
   if (recordingTaskRows.value.length === 0) {
     return t('analytics.sentiment.emptyNoRecordingTasks')
@@ -918,5 +935,17 @@ onMounted(() => {
   height: 40px;
   font-weight: 600;
   letter-spacing: 0.3px;
+}
+
+.analytics-empty-card {
+  border-radius: 12px;
+  border-style: dashed;
+  background: #f8fafc;
+}
+
+.analytics-disabled {
+  filter: grayscale(0.35);
+  pointer-events: none;
+  user-select: none;
 }
 </style>
