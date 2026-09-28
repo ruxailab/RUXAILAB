@@ -221,21 +221,44 @@
         </v-row>
 
         <v-card elevation="2" style="border-radius: 12px" class="mb-4 pa-6">
-          <div class="mb-4 d-flex justify-space-between align-center">
-            <h4 class="font-weight-bold mb-2">Sentiment by Task</h4>
-            <v-chip color="warning" size="small" variant="outlined">
-              Coming Soon
-            </v-chip>
+          <h4 class="font-weight-bold mb-4">Sentiment by Task</h4>
+
+          <!-- Loading skeleton -->
+          <div v-if="sentimentLoading">
+            <v-skeleton-loader type="table" />
           </div>
 
-          <div class="coming-soon-overlay">
+          <!-- Error state -->
+          <v-alert
+            v-else-if="sentimentLoadError"
+            type="error"
+            variant="tonal"
+            closable
+            class="mb-0"
+            @click:close="sentimentLoadError = null"
+          >
+            {{ sentimentLoadError }}
+          </v-alert>
+
+          <template v-else>
+            <!-- Empty: no recording tasks defined -->
             <v-alert
-              v-if="sentimentByTask.length === 0"
+              v-if="recordingTasks.length === 0"
               type="info"
               variant="tonal"
               class="mb-0"
             >
-              No tasks with webcam or audio recording enabled in this test.
+              {{ $t('analytics.sentimentByTask.noRecordingTasks') }}
+            </v-alert>
+
+            <!-- Empty: tasks exist but no analysis run yet -->
+            <v-alert
+              v-else-if="sentimentByTask.length === 0"
+              type="info"
+              variant="tonal"
+              class="mb-0"
+            >
+              {{ $t('analytics.sentimentByTask.noData') }}
             </v-alert>
 
             <v-data-table
@@ -254,45 +277,57 @@
 
               <template #item.facial="{ item }">
                 <div class="sentiment-table-cell py-2">
-                  <v-progress-linear
-                    :model-value="item.facialPositive"
-                    color="success"
-                    bg-color="error"
-                    bg-opacity="0.2"
-                    height="10"
-                    rounded
-                    class="mb-2"
-                  />
-                  <div
-                    class="d-flex justify-space-between text-caption text-medium-emphasis"
-                  >
-                    <span>Positive {{ item.facialPositive }}%</span>
-                    <span>Negative {{ item.facialNegative }}%</span>
-                  </div>
+                  <span
+                    v-if="item.facialPositive === null"
+                    class="text-medium-emphasis text-caption"
+                  >{{ $t('analytics.sentimentByTask.na') }}</span>
+                  <template v-else>
+                    <v-progress-linear
+                      :model-value="item.facialPositive"
+                      color="success"
+                      bg-color="error"
+                      bg-opacity="0.2"
+                      height="10"
+                      rounded
+                      class="mb-2"
+                    />
+                    <div
+                      class="d-flex justify-space-between text-caption text-medium-emphasis"
+                    >
+                      <span>Positive {{ item.facialPositive }}%</span>
+                      <span>Negative {{ item.facialNegative }}%</span>
+                    </div>
+                  </template>
                 </div>
               </template>
 
               <template #item.text="{ item }">
                 <div class="sentiment-table-cell py-2">
-                  <v-progress-linear
-                    :model-value="item.textPositive"
-                    color="success"
-                    bg-color="error"
-                    bg-opacity="0.2"
-                    height="10"
-                    rounded
-                    class="mb-2"
-                  />
-                  <div
-                    class="d-flex justify-space-between text-caption text-medium-emphasis"
-                  >
-                    <span>Positive {{ item.textPositive }}%</span>
-                    <span>Negative {{ item.textNegative }}%</span>
-                  </div>
+                  <span
+                    v-if="item.textPositive === null"
+                    class="text-medium-emphasis text-caption"
+                  >{{ $t('analytics.sentimentByTask.na') }}</span>
+                  <template v-else>
+                    <v-progress-linear
+                      :model-value="item.textPositive"
+                      color="success"
+                      bg-color="error"
+                      bg-opacity="0.2"
+                      height="10"
+                      rounded
+                      class="mb-2"
+                    />
+                    <div
+                      class="d-flex justify-space-between text-caption text-medium-emphasis"
+                    >
+                      <span>Positive {{ item.textPositive }}%</span>
+                      <span>Negative {{ item.textNegative }}%</span>
+                    </div>
+                  </template>
                 </div>
               </template>
             </v-data-table>
-          </div>
+          </template>
         </v-card>
       </div>
     </div>
@@ -305,12 +340,13 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import UserModeratedSentiment from '@/ux/UserTest/components/sentimentAnalysis/UserModeratedSentiment.vue'
 import UxMetricCard from '@/ux/UserTest/components/answers/UxMetricCard.vue'
 import SelectionPieChart from '@/shared/components/charts/SelectionPieChart.vue'
 import { useI18n } from 'vue-i18n'
+import SentimentAnalyticsController from '@/ai/sentiment/SentimentAnalyticsController'
 import {
   STUDY_TYPES,
   USER_STUDY_SUBTYPES,
@@ -326,12 +362,44 @@ const props = defineProps({
 const store = useStore()
 const { t } = useI18n()
 
+const sentimentController = new SentimentAnalyticsController()
+
 const testDocument = computed(() => store.getters.test)
 const visibleUserAnswers = computed(
   () => store.getters.visibleUserAnswers || {},
 )
 
 const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
+
+const answersDocId = computed(
+  () =>
+    store.getters.test?.answersDocId || testAnswerDocument.value?.id || null,
+)
+
+/** Loaded from answers/{answersDocId}/analytics/sentiment */
+const sentimentAnalytics = ref(null)
+const sentimentLoading = ref(false)
+const sentimentLoadError = ref(null)
+
+const loadSentimentAnalytics = async () => {
+  if (!answersDocId.value) {
+    sentimentAnalytics.value = null
+    return
+  }
+  sentimentLoading.value = true
+  sentimentLoadError.value = null
+  try {
+    sentimentAnalytics.value = await sentimentController.getByAnswersDocId(
+      answersDocId.value,
+    )
+  } catch (error) {
+    sentimentLoadError.value =
+      error?.message || t('analytics.sentimentByTask.loadError')
+    sentimentAnalytics.value = null
+  } finally {
+    sentimentLoading.value = false
+  }
+}
 
 const searchTerm = ref('')
 const showFilters = ref(true)
@@ -443,75 +511,62 @@ const summaryHighlights = computed(() => [
   },
 ])
 
-const fallbackTaskNames = [
-  'Find Product',
-  'View Product',
-  'Add to Cart',
-  'Checkout',
-]
-
 const recordingTasks = computed(() => {
   const tasks = Array.isArray(props.taskDefinitions)
     ? props.taskDefinitions
     : []
 
-  const filteredTasks = tasks
+  return tasks
     .map((task, index) => ({
       ...task,
       originalIndex: index,
     }))
     .filter((task) => Boolean(task?.hasAudioRecord || task?.hasCamRecord))
-
-  if (filteredTasks.length) {
-    return filteredTasks
-  }
-
-  if (tasks.length) {
-    return []
-  }
-
-  return fallbackTaskNames.map((taskName, index) => ({
-    taskName,
-    originalIndex: index,
-    hasAudioRecord: true,
-    hasCamRecord: true,
-  }))
 })
 
-const sentimentByTask = computed(() => {
-  const templates = [
-    {
-      facialPositive: 64,
-      facialNegative: 18,
-      textPositive: 78,
-      textNegative: 10,
-    },
-    {
-      facialPositive: 56,
-      facialNegative: 20,
-      textPositive: 66,
-      textNegative: 14,
-    },
-    {
-      facialPositive: 44,
-      facialNegative: 26,
-      textPositive: 58,
-      textNegative: 18,
-    },
-    {
-      facialPositive: 31,
-      facialNegative: 41,
-      textPositive: 34,
-      textNegative: 37,
-    },
-  ]
+/**
+ * Map a normalized bucket ({ Positive, Negative } | null) into
+ * the positive/negative pair the table expects, or null when no data.
+ *
+ * @param {{ Positive: number, Negative: number }|null} bucket
+ * @returns {{ positive: number, negative: number }|null}
+ */
+const bucketToDisplay = (bucket) => {
+  if (!bucket) return null
+  return {
+    positive: bucket.Positive,
+    negative: bucket.Negative,
+  }
+}
 
-  return recordingTasks.value.map((task, index) => ({
-    number: task.originalIndex + 1,
-    name: task?.taskName || task?.name || `Task ${task.originalIndex + 1}`,
-    task: `Task ${task.originalIndex + 1}`,
-    ...templates[index % templates.length],
-  }))
+/**
+ * Build one row per recording-enabled task that has at least one signal
+ * present in the analytics document. Tasks with no data in the document
+ * are excluded (sentimentByTask length 0 triggers the empty-state alert).
+ */
+const sentimentByTask = computed(() => {
+  const analytics = sentimentAnalytics.value
+  const tasks = analytics?.tasks || null
+
+  return recordingTasks.value
+    .map((task) => {
+      const key = `task${task.originalIndex}`
+      const slice = tasks ? tasks[key] ?? null : null
+      const facial = bucketToDisplay(slice?.facial ?? null)
+      const text = bucketToDisplay(slice?.text ?? null)
+      return {
+        number: task.originalIndex + 1,
+        name: task?.taskName || task?.name || `Task ${task.originalIndex + 1}`,
+        task: `Task ${task.originalIndex + 1}`,
+        facialPositive: facial ? facial.positive : null,
+        facialNegative: facial ? facial.negative : null,
+        textPositive: text ? text.positive : null,
+        textNegative: text ? text.negative : null,
+      }
+    })
+    .filter(
+      (row) => row.facialPositive !== null || row.textPositive !== null,
+    )
 })
 
 const taskFilterOptions = computed(() => [
@@ -561,6 +616,14 @@ const showSingleSignal = computed(
     selectedSignalFilter.value === 'Facial' ||
     selectedSignalFilter.value === 'Text',
 )
+
+watch(answersDocId, () => {
+  loadSentimentAnalytics()
+})
+
+onMounted(() => {
+  loadSentimentAnalytics()
+})
 </script>
 
 <style scoped>

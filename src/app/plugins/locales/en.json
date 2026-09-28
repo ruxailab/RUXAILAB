@@ -2705,7 +2705,13 @@
     "yes": "Yes",
     "invited": "Invited",
     "answers": "Answers",
-    "no": "No"
+    "no": "No",
+    "sentimentByTask": {
+      "noRecordingTasks": "No tasks with webcam or audio recording enabled in this test.",
+      "noData": "No sentiment analysis has been run for this test yet.",
+      "loadError": "Failed to load sentiment analytics.",
+      "na": "N/A"
+    }
   },
   "observatorNotes": {
     "title": "Session Notes",

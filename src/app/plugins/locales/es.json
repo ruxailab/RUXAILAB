@@ -2613,7 +2613,13 @@
     "answers": "Respuestas",
     "overallAnalyticsDescription": "Ver el análisis general de tu estudio",
     "no": "No",
-    "sartAnalytics": "Análisis SART"
+    "sartAnalytics": "Análisis SART",
+    "sentimentByTask": {
+      "noRecordingTasks": "No hay tareas con grabación de cámara web o audio habilitadas en este test.",
+      "noData": "Aún no se ha ejecutado análisis de sentimiento para este test.",
+      "loadError": "Error al cargar el análisis de sentimiento.",
+      "na": "N/D"
+    }
   },
   "observatorNotes": {
     "title": "Notas de la sesión",
