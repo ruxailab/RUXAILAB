@@ -111,6 +111,28 @@ describe('UserController', () => {
     })
   })
 
+  describe('getUserWithStudies', () => {
+    it('skips inaccessible parent studies in answer history', async () => {
+      const readOneSpy = jest
+        .spyOn(
+          Object.getPrototypeOf(Object.getPrototypeOf(userController)),
+          'readOne',
+        )
+        .mockResolvedValueOnce({
+          id: 'user-1',
+          data: () => ({ myTests: {}, myAnswers: { 'session-study': {} } }),
+        })
+        .mockRejectedValueOnce({ code: 'permission-denied' })
+
+      const user = await userController.getUserWithStudies('user-1')
+
+      expect(user.myAnswers).toEqual({})
+      expect(readOneSpy).toHaveBeenNthCalledWith(1, 'users', 'user-1')
+      expect(readOneSpy).toHaveBeenNthCalledWith(2, 'tests', 'session-study')
+      readOneSpy.mockRestore()
+    })
+  })
+
   describe('updateLevel', () => {
     it('should call update with access level', async () => {
       const updateSpy = jest

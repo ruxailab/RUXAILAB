@@ -117,11 +117,13 @@
         <template #item.status="{ item }">
           <v-chip
             size="small"
-            :color="getSessionStatus(item.scheduledAt).variant"
+            :color="getSessionStatus(item.scheduledAt, item.lifecycleStatus).variant"
             variant="tonal"
           >
             {{
-              t(`Sessions.status.${getSessionStatus(item.scheduledAt).status}`)
+              t(
+                `Sessions.status.${getSessionStatus(item.scheduledAt, item.lifecycleStatus).status}`,
+              )
             }}
           </v-chip>
         </template>
@@ -426,11 +428,14 @@ const goToSession = (sessionId) => {
   // Focus Group runs one live room per study; launching a session makes it the
   // active one (the live view reads `?session=` and admits only its members).
   if (isFocusGroup.value) {
-    router.push(`/focusGroup/session/${test.value.id}?session=${sessionId}`)
+    const route = router.resolve(
+      `/focusGroup/session/${test.value.id}?session=${sessionId}`,
+    )
+    window.open(route.href, '_blank', 'noopener,noreferrer')
     return
   }
   const route = router.resolve(`/testview/${test.value.id}/${sessionId}`)
-  window.open(route.href, '_blank')
+  window.open(route.href, '_blank', 'noopener,noreferrer')
 }
 
 const confirmDeleteSession = async () => {

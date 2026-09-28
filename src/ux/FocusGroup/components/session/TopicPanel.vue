@@ -61,6 +61,7 @@
                  show which one is already live. -->
             <v-chip
               v-if="prompt === currentPromptText"
+              class="prompt-row__asked"
               size="small"
               color="success"
               variant="flat"
@@ -210,6 +211,7 @@ const prompts = computed(() =>
 
 .prompt-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
@@ -236,14 +238,22 @@ const prompts = computed(() =>
 }
 
 .prompt-row__text {
-  flex: 1 1 auto;
+  flex: 1 1 12rem;
   min-width: 0;
   font-size: 0.9rem;
   line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.prompt-row__ask,
+.prompt-row__asked {
+  flex: 0 0 auto;
+  max-width: 100%;
+  white-space: nowrap;
+  margin-left: auto;
 }
 
 .prompt-row__ask {
-  flex: 0 0 auto;
   font-weight: 600;
   letter-spacing: 0.02em;
 }

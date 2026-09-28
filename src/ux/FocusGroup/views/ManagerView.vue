@@ -361,7 +361,8 @@ const goToSettings = () => {
   router.push(`/focusGroup/settings/${test.value.id}`).catch(() => {})
 }
 const goToSession = () => {
-  router.push(`/focusGroup/session/${test.value.id}`).catch(() => {})
+  const route = router.resolve(`/focusGroup/session/${test.value.id}`)
+  window.open(route.href, '_blank', 'noopener,noreferrer')
 }
 const goToAnswers = () => {
   router.push(`/focusGroup/answers/${test.value.id}`).catch(() => {})

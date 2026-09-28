@@ -3,9 +3,11 @@ export const SESSION_STATUSES = {
   TODAY: { status: 'today', variant: 'warning', label: 'Today' },
   UPCOMING: { status: 'upcoming', variant: 'info', label: 'Upcoming' },
   COMPLETED: { status: 'completed', variant: 'success', label: 'Completed' },
+  ENDED: { status: 'ended', variant: 'success', label: 'Ended' },
 }
 
-export function getSessionStatus(testDate) {
+export function getSessionStatus(testDate, lifecycleStatus) {
+  if (lifecycleStatus === 'ended') return SESSION_STATUSES.ENDED
   if (!testDate) return SESSION_STATUSES.UNKNOWN
 
   const now = new Date()

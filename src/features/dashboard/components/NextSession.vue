@@ -168,7 +168,10 @@ const truncateDescription = (description) => {
 }
 
 const getStatus = () => {
-  return getSessionStatus(props.nextSession.testDate)
+  return getSessionStatus(
+    props.nextSession.testDate,
+    props.nextSession.lifecycleStatus,
+  )
 }
 
 const formatDate = (dateStr) => {

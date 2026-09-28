@@ -3,6 +3,7 @@ import StudyController from '@/controllers/StudyController'
 import { collectionGroup, onSnapshot, query, where } from 'firebase/firestore'
 import { db } from '@/app/plugins/firebase'
 import { dedupeSessionsByPath } from '@/shared/utils/sessionList'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 
 export default class SessionController extends Controller {
   constructor() {
@@ -119,6 +120,20 @@ export default class SessionController extends Controller {
     }
   }
 
+  /** Persist the ended state for a scheduled Focus Group through a trusted
+   * callable; session attendees must not gain direct Firestore write access. */
+  async markFocusGroupSessionEnded({ studyId, sessionId }) {
+    try {
+      await FirebaseFunctionsController.callHttpsCallableFunction(
+        'markFocusGroupSessionEnded',
+        { studyId, sessionId },
+      )
+      return { success: true }
+    } catch (error) {
+      return { success: false, error }
+    }
+  }
+
   /**
    * Gets every session where the user participates.
    *
@@ -181,17 +196,18 @@ export default class SessionController extends Controller {
         staffEmailSessions,
       )
 
-      const studyIds = [
-        ...new Set(sessions.map((session) => session.parentId).filter(Boolean)),
-      ]
-
       const studies = await Promise.all(
-        studyIds.map((studyId) =>
-          new StudyController().getStudy({ id: studyId }),
+        sessions.map((session) =>
+          new StudyController().getStudyForSession({
+            studyId: session.parentId,
+            sessionId: session.id,
+          }),
         ),
       )
 
-      const studiesById = new Map(studies.map((study) => [study.id, study]))
+      const studiesById = new Map(
+        studies.filter(Boolean).map((study) => [study.id, study]),
+      )
 
       return {
         success: true,
@@ -201,6 +217,8 @@ export default class SessionController extends Controller {
 
           title: session.title || 'Session',
           scheduledAt: session.scheduledAt,
+          lifecycleStatus: session.lifecycleStatus,
+          endedAt: session.endedAt,
 
           staff: session.staff || [],
           participants: session.participants || [],

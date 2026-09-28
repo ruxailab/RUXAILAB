@@ -200,6 +200,9 @@ export default {
           errorCode: 'studyError',
           message: err,
         })
+        // Callers (notably invite acceptance) must be able to distinguish a
+        // completed membership update from a failed callable request.
+        throw err
       } finally {
         commit('setLoading', false)
       }
@@ -216,6 +219,17 @@ export default {
           errorCode: 'studyError',
           message: err,
         })
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+
+    async getStudyForSession({ commit }, payload) {
+      commit('setLoading', true)
+      try {
+        const study = await studyController.getStudyForSession(payload)
+        if (study) commit('SET_TEST', study)
+        return study
       } finally {
         commit('setLoading', false)
       }

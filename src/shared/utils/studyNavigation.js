@@ -114,18 +114,17 @@ export function getCommunityStudyDestination({ study, user }) {
     }
   }
 
-  // A Focus Group participant reaches their actual session through the
-  // session-specific invite link (`notifySessionMembers` sends
-  // `/focusGroup/session/{id}?session={sessionId}` directly) — this generic,
-  // non-session-specific path has no session id to route with. TestView has
-  // no Focus Group rendering at all, so send them to the session route
-  // itself rather than an empty shell; without `?session=` it's the legacy
-  // open room, gated the same way any direct visit to it already is.
+  // A study-level Focus Group participant invite has no session id. Route to
+  // their personal scheduled-session list; actual session invitations already
+  // carry `/focusGroup/session/{id}?session={sessionId}` directly.
   if (
-    study.testType === STUDY_TYPES.FOCUS_GROUP &&
+    isFocusGroupStudy(study) &&
     hasStudyCapability(study, user, C.STUDY_ANSWER)
   ) {
-    return { name: 'FocusGroupSessionView', params: { id: studyId } }
+    // A study-level participant invitation doesn't identify a scheduled
+    // session. Sending the user to the legacy room silently opens an empty
+    // live session; their assigned sessions are available from the dashboard.
+    return { name: 'Admin', query: { section: 'sessions' } }
   }
 
   if (study.isPublic || hasStudyCapability(study, user, C.STUDY_ANSWER)) {
@@ -172,10 +171,10 @@ export function getInviteAcceptanceDestination({
 }) {
   if (membershipType === 'participant') {
     if (normalizeStudyType(study?.testType) === STUDY_TYPES.FOCUS_GROUP) {
-      return {
-        name: 'FocusGroupSessionView',
-        params: { id: study.testDocId || study.id },
-      }
+      // Only session-specific invitation links have a session id. A study
+      // participant invite must land somewhere useful without fabricating a
+      // legacy live-room URL.
+      return { name: 'Admin', query: { section: 'sessions' } }
     }
 
     // Preserve the existing participant handoff for other study types.
@@ -234,6 +233,8 @@ const NAVIGATION_ITEMS = Object.freeze([
     group: 'administration',
     icon: 'mdi-text-box-search-outline',
     capability: C.LOGS_VIEW,
+    // Focus Group does not have a logs view yet.
+    visible: (study) => !isFocusGroupStudy(study),
     path: ({ type, id }) => `/${type}/logs/${id}`,
   },
   {

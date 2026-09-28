@@ -74,7 +74,10 @@ export async function resolveInviteTargetUserId({
   }
 }
 
-const findMatchingPendingInvitation = async (study, { uid, email, token }) => {
+export const findMatchingPendingInvitation = async (
+  study,
+  { uid, email, token },
+) => {
   const matches = (membership) => {
     if (membership?.status === INVITE_STATUS.REJECTED) return false
     if (InviteUtils.isAccepted(membership)) return false
@@ -376,6 +379,23 @@ export const manageStudyMembership = functions.onCall({
         |--------------------------------------------------------------------------
         */
         if (action === 'accept') {
+          const acceptedDoc = participantsSnapshot.docs.find((doc) => {
+            const participant = doc.data()
+
+            return (
+              InviteUtils.isAccepted(participant) &&
+              (participant?.userDocId === actorId ||
+                sameEmail(participant?.email, actorEmail))
+            )
+          })
+
+          if (acceptedDoc) {
+            return {
+              status: 'accepted',
+              participant: { id: acceptedDoc.id, ...acceptedDoc.data() },
+            }
+          }
+
           const targetDoc = participantsSnapshot.docs.find((doc) => {
             const participant = doc.data()
 
@@ -745,6 +765,20 @@ export const manageStudyMembership = functions.onCall({
       |--------------------------------------------------------------------------
       */
       if (action === 'accept') {
+        const acceptedMembership = cooperators.find(
+          (cooperator) =>
+            InviteUtils.isAccepted(cooperator) &&
+            (cooperator?.userDocId === actorId ||
+              sameEmail(cooperator?.email, actorEmail)),
+        )
+
+        if (acceptedMembership) {
+          return {
+            status: 'accepted',
+            cooperator: acceptedMembership,
+          }
+        }
+
         const index = cooperators.findIndex(
           (cooperator) =>
             !InviteUtils.isAccepted(cooperator) &&

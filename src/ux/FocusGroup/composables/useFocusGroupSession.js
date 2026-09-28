@@ -60,6 +60,12 @@ export function useFocusGroupSession(roomId) {
   const facilitatorId = computed(() => snapshot.value?.facilitatorId ?? null)
   const sessionId = computed(() => snapshot.value?.sessionId ?? null)
   const startedAt = computed(() => snapshot.value?.startedAt ?? null)
+  // The lobby/session room can be opened before the moderated discussion
+  // begins. This timestamp is deliberately separate from `startedAt` so the
+  // elapsed discussion clock starts only when the facilitator presses Start.
+  const focusGroupStartedAt = computed(
+    () => snapshot.value?.focusGroupStartedAt ?? null,
+  )
   const endedAt = computed(() => snapshot.value?.endedAt ?? null)
   const participants = computed(() => snapshot.value?.participants ?? {})
   // Per-topic discussion messages: { [topicId]: { [messageId]: { userId, name, text, timestamp } } }
@@ -131,6 +137,14 @@ export function useFocusGroupSession(roomId) {
       sessionId: `session-${Date.now()}`,
       startedAt: serverTimestamp(),
       endedAt: null,
+      lastUpdate: serverTimestamp(),
+    })
+  }
+
+  async function startFocusGroup() {
+    if (focusGroupStartedAt.value) return
+    await update(rootRef, {
+      focusGroupStartedAt: serverTimestamp(),
       lastUpdate: serverTimestamp(),
     })
   }
@@ -360,6 +374,7 @@ export function useFocusGroupSession(roomId) {
       sessionId: sessionId.value,
       facilitatorId: facilitatorId.value,
       startedAt: startedAt.value,
+      focusGroupStartedAt: focusGroupStartedAt.value,
       endedAt: endedAt.value,
       participants: participants.value,
       messages: messages.value,
@@ -380,6 +395,7 @@ export function useFocusGroupSession(roomId) {
     facilitatorId,
     sessionId,
     startedAt,
+    focusGroupStartedAt,
     endedAt,
     participants,
     messages,
@@ -400,6 +416,7 @@ export function useFocusGroupSession(roomId) {
     stopBackroom,
     // actions
     startSession,
+    startFocusGroup,
     goToTopic,
     endSession,
     joinPresence,

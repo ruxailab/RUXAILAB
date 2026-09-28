@@ -441,16 +441,22 @@ export default {
 
         const resolvedStudyId = studyId || result.invite.studyId
 
-        const study = await new StudyController().getStudy({
-          id: resolvedStudyId,
-        })
-
+        // Pending invitees are deliberately not allowed to read the study doc
+        // yet. Complete membership first; the new role grants read access.
         await dispatch('acceptStudyCollaboration', {
-          test: study,
+          studyId: resolvedStudyId,
           cooperator: user,
           membershipType,
           role: result.invite.accessLevel,
         })
+
+        const study = await new StudyController().getStudy({
+          id: resolvedStudyId,
+        })
+
+        if (!study) {
+          throw new Error('Study was not found after accepting the invitation')
+        }
 
         localStorage.removeItem('pendingInviteToken')
 

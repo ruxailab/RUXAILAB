@@ -1,6 +1,7 @@
 import StudyController from '@/controllers/StudyController'
 import { createControllerSpies } from './helpers/testUtils'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
+import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
 
 jest.mock('@/app/plugins/firebase/FirebaseFunctionsService', () => ({
   FirebaseFunctionsController: {
@@ -457,6 +458,47 @@ describe('StudyController', () => {
       const result = await studyController.getStudy(mockParameter)
 
       expect(result).toBeNull()
+    })
+  })
+
+  describe('getStudyForSession', () => {
+    it('loads the study through the session-membership callable', async () => {
+      mockCallHttpsCallableFunction.mockResolvedValueOnce({
+        data: {
+          study: {
+            id: 'study-1',
+            testType: 'FOCUS_GROUP',
+            testTitle: 'Session study',
+          },
+        },
+      })
+      instantiateStudyByType.mockImplementation((type, data) => ({
+        ...data,
+        testType: type,
+      }))
+
+      const result = await studyController.getStudyForSession({
+        studyId: 'study-1',
+        sessionId: 'session-1',
+      })
+
+      expect(mockCallHttpsCallableFunction).toHaveBeenCalledWith(
+        'getStudyForSession',
+        { studyId: 'study-1', sessionId: 'session-1' },
+      )
+      expect(result.testType).toBe('FOCUS_GROUP')
+      expect(result.testTitle).toBe('Session study')
+    })
+
+    it('returns null if the callable has no study payload', async () => {
+      mockCallHttpsCallableFunction.mockResolvedValueOnce({ data: {} })
+
+      await expect(
+        studyController.getStudyForSession({
+          studyId: 'study-1',
+          sessionId: 'session-1',
+        }),
+      ).resolves.toBeNull()
     })
   })
 
