@@ -680,15 +680,37 @@ function onMetadataLoaded(event) {
 }
 
 function onTimeUpdate(event) {
-  videoCurrentTime.value = event.target.currentTime
+  if (!isPlaying.value) {
+    videoCurrentTime.value = event.target.currentTime
+  }
+}
+
+function startVideoSync() {
+  cancelAnimationFrame(rafId)
+  const loop = () => {
+    const video = mainVideo2.value || mainVideo1.value
+    if (video && !video.paused) {
+      videoCurrentTime.value = video.currentTime
+      rafId = requestAnimationFrame(loop)
+    } else {
+      isPlaying.value = false
+    }
+  }
+  rafId = requestAnimationFrame(loop)
+}
+
+function stopVideoSync() {
+  cancelAnimationFrame(rafId)
 }
 
 function onVideoPlay() {
   isPlaying.value = true
+  startVideoSync()
 }
 
 function onVideoPause() {
   isPlaying.value = false
+  stopVideoSync()
 }
 
 const togglePlay = () => {
@@ -710,7 +732,10 @@ const onSeek = (time) => {
   videoCurrentTime.value = time
 }
 
-const close = () => (open.value = false)
+const close = () => {
+  stopVideoSync()
+  open.value = false
+}
 
 const managedListeners = useManagedListeners()
 managedListeners.addCleanup(() => cancelAnimationFrame(rafId))
