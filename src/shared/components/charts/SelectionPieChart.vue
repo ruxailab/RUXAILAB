@@ -6,9 +6,16 @@
       </h4>
     </div>
     <div class="chart-container-small mb-4">
-      <canvas :id="canvasId" width="180" height="180" />
+      <div
+        v-if="isEmpty"
+        class="d-flex align-center justify-center ga-2 text-medium-emphasis h-100"
+      >
+        <v-icon size="18">mdi-database-off-outline</v-icon>
+        <span class="text-caption">{{ emptyLabel }}</span>
+      </div>
+      <canvas v-show="!isEmpty" :id="canvasId" width="180" height="180" />
     </div>
-    <div>
+    <div v-if="!isEmpty">
       <div
         v-for="(option, idx) in options"
         :key="option"
@@ -23,8 +30,11 @@
             marginRight: '8px',
           }"
         />
-        <span>
-          {{ option }} ({{ counts[option] || 0 }})
+        <span v-if="valuesArePercentages">
+          {{ optionLabel(option) }} {{ counts[option] || 0 }}%
+        </span>
+        <span v-else>
+          {{ optionLabel(option) }} ({{ counts[option] || 0 }})
           <template v-if="showPercentages">
             - {{ optionPercent(option) }}%
           </template>
@@ -59,7 +69,25 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  valuesArePercentages: {
+    type: Boolean,
+    default: false,
+  },
+  optionLabels: {
+    type: Object,
+    default: () => ({}),
+  },
+  isEmpty: {
+    type: Boolean,
+    default: false,
+  },
+  emptyLabel: {
+    type: String,
+    default: 'No data',
+  },
 })
+
+const optionLabel = (option) => props.optionLabels?.[option] || option
 
 const getTotal = () =>
   Object.values(props.counts || {}).reduce((a, b) => a + b, 0)
@@ -78,7 +106,9 @@ const drawPercentLabel = (ctx, option, startAngle, endAngle) => {
   const value = props.counts?.[option] || 0
   if (!value) return
 
-  const percentage = (value * 100) / total
+  const percentage = props.valuesArePercentages
+    ? Number(value) || 0
+    : (value * 100) / total
   if (percentage < 6) return
 
   const midAngle = (startAngle + endAngle) / 2
@@ -97,6 +127,7 @@ const drawPercentLabel = (ctx, option, startAngle, endAngle) => {
 
 const drawChart = () => {
   nextTick(() => {
+    if (props.isEmpty) return
     const canvas = document.getElementById(props.canvasId)
     if (!canvas) return
     const ctx = canvas.getContext('2d')
@@ -115,7 +146,7 @@ const drawChart = () => {
       ctx.fillStyle = props.chartColors[idx % props.chartColors.length]
       ctx.fill()
 
-      if (props.showPercentages) {
+      if (props.showPercentages || props.valuesArePercentages) {
         drawPercentLabel(ctx, opt, start, end)
       }
 
@@ -129,7 +160,7 @@ const drawChart = () => {
   })
 }
 
-watch(() => [props.options, props.counts], drawChart, {
+watch(() => [props.options, props.counts, props.isEmpty], drawChart, {
   immediate: true,
   deep: true,
 })
