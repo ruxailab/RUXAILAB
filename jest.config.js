@@ -6,7 +6,7 @@ module.exports = {
   },
   testMatch: ['**/*.spec.js'],
   testPathIgnorePatterns: ['/e2e/', '/functions/', '/tests/rules/'],
-  transformIgnorePatterns: ['/node_modules/(?!axios)'],
+  transformIgnorePatterns: ['/node_modules/(?!axios|date-fns)'],
   moduleNameMapper: {
     '^axios$': '<rootDir>/node_modules/axios/dist/node/axios.cjs',
   },

@@ -258,6 +258,9 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useDateLocale } from '@/shared/composables/useDateLocale'
+
+const { intlLocale } = useDateLocale()
 
 const mockObserverNotes = [
   {
@@ -354,7 +357,7 @@ const sortedNotes = computed(() => {
 
 const formatNoteTime = (timestamp) => {
   const date = new Date(timestamp)
-  return date.toLocaleTimeString('en-US', {
+  return date.toLocaleTimeString(intlLocale.value, {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',

@@ -83,6 +83,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useDateLocale } from '@/shared/composables/useDateLocale'
 
 const props = defineProps({
   test: {
@@ -92,7 +93,8 @@ const props = defineProps({
 })
 
 const router = useRouter()
-const { t, locale } = useI18n()
+const { t } = useI18n()
+const { intlLocale } = useDateLocale()
 
 // Navigate to final report section
 const navigateToReport = () => {
@@ -146,10 +148,10 @@ const reportStatusClass = computed(() => {
 const reportDate = computed(() => {
   if (reportExists.value && props.test?.finalReport?.createdAt) {
     return new Date(props.test.finalReport.createdAt).toLocaleDateString(
-      locale.value,
+      intlLocale.value,
     )
   }
-  return new Date().toLocaleDateString(locale.value) // Fecha de ejemplo
+  return new Date().toLocaleDateString(intlLocale.value)
 })
 </script>
 

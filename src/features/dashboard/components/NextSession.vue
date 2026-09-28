@@ -153,6 +153,7 @@ import {
   getSessionStatus,
   SESSION_STATUSES,
 } from '@/shared/utils/sessionsUtils'
+import { useDateLocale } from '@/shared/composables/useDateLocale'
 
 const props = defineProps({
   nextSession: {
@@ -161,6 +162,7 @@ const props = defineProps({
 })
 
 const router = useRouter()
+const { intlLocale } = useDateLocale()
 
 const truncateDescription = (description) => {
   if (!description || description.length <= 150) return description
@@ -177,7 +179,7 @@ const getStatus = () => {
 const formatDate = (dateStr) => {
   if (!dateStr) return 'N/A'
   const date = new Date(dateStr)
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString(intlLocale.value, {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
@@ -187,7 +189,7 @@ const formatDate = (dateStr) => {
 const formatTime = (dateStr) => {
   if (!dateStr) return 'N/A'
   const date = new Date(dateStr)
-  return date.toLocaleTimeString('en-US', {
+  return date.toLocaleTimeString(intlLocale.value, {
     hour: '2-digit',
     minute: '2-digit',
     hour12: true,
