@@ -67,7 +67,7 @@
     "vuetify": "^3.13.5",
     "vuewordcloud": "^19.0.0",
     "vuex": "^4.0.2",
-    "wavesurfer.js": "^7.12.11"
+    "wavesurfer.js": "^7.12.12"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
