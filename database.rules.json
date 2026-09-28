@@ -9,11 +9,16 @@
         "facilitatorId": { ".write": "auth != null" },
         "sessionId": { ".write": "auth != null" },
         "startedAt": { ".write": "auth != null" },
+        "focusGroupStartedAt": {
+          ".write": "auth != null && root.child('focusGroupSessions/' + $studyId + '/participants/' + auth.uid + '/accessLevel').val() === 0"
+        },
         "endedAt": { ".write": "auth != null" },
         "lastUpdate": { ".write": "auth != null" },
         "currentPrompt": { ".write": "auth != null" },
         "currentStimulus": { ".write": "auth != null" },
         "timer": { ".write": "auth != null" },
+
+        "breakout": { ".write": "auth != null" },
 
         "consents": {
           "$uid": {

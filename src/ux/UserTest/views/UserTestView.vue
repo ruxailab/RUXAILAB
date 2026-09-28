@@ -1,5 +1,11 @@
 <template>
-  <div v-if="test" class="user-test-bg">
+  <div
+    v-if="test"
+    class="user-test-bg"
+    @focusin.capture="handleLoggingFocusin"
+    @input.capture="handleLoggingInput"
+    @focusout.capture="handleLoggingFocusout"
+  >
     <div v-if="showStepAnnouncement" class="step-announcement-container">
       <StepAnnouncementOverlay
         ref="stepAnnouncementOverlay"
@@ -427,7 +433,9 @@
             :pre-test="test.testStructure.preTest"
             :pre-test-answer="localTestAnswer.preTestAnswer"
             :pre-test-completed="localTestAnswer.preTestCompleted"
-            @done="completeStep(taskIndex, 'preTest')"
+            @update:pre-test-answer="(val) => (localTestAnswer.preTestAnswer = val)"
+            @selection-changed="handleStructuredSelectionChanged"
+            @done="handlePreTestDone"
           />
 
           <EyeTrackingCalibrationStep
@@ -472,6 +480,7 @@
             :sart-answers="localTestAnswer.tasks[taskIndex].sartAnswers"
             :submitted="localTestAnswer.submitted"
             :done-task-disabled="doneTaskDisabled"
+            @recording-result="handleRecordingResult"
             @update:sus-answers="
               (val) => {
                 localTestAnswer.tasks[taskIndex].susAnswers = Array.isArray(val)
@@ -513,6 +522,14 @@
                 }
               }
             "
+            @task-started="handleTaskStarted"
+            @structured-response-changed="handleStructuredResponseChanged"
+            @structured-slider-focus="(event) => handleStructuredSliderEvent('focus', event)"
+            @structured-slider-start="(event) => handleStructuredSliderEvent('start', event)"
+            @structured-slider-change="(event) => handleStructuredSliderEvent('change', event)"
+            @structured-slider-end="(event) => handleStructuredSliderEvent('end', event)"
+            @structured-slider-blur="(event) => handleStructuredSliderEvent('blur', event)"
+            @task-questionnaire-entered="handleTaskQuestionnaireEntered"
           />
 
           <PostTestStep
@@ -525,12 +542,9 @@
             :post-test="test.testStructure.postTest"
             :post-test-answer="localTestAnswer.postTestAnswer"
             :post-test-completed="localTestAnswer.postTestCompleted"
-            @done="
-              async () => {
-                await completeStep(taskIndex, 'postTest')
-                taskIndex = 3
-              }
-            "
+            @update:post-test-answer="(val) => (localTestAnswer.postTestAnswer = val)"
+            @selection-changed="handleStructuredSelectionChanged"
+            @done="handlePostTestDone"
           />
 
           <FinishStep
@@ -588,6 +602,10 @@ import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { calculateProgress } from '../utils/testProgress'
 import { animateStepAnnouncement } from '@/shared/utils/animations'
 import { downloadAnonymousParticipantIdentifier } from '@/shared/utils/anonymousParticipantUtils'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
+import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
+import { createRecordingOutcomeTracker } from '@/ux/UserTest/utils/recordingOutcome'
+import { taskDestination } from '@/ux/UserTest/utils/unmoderatedNavigation'
 
 const fullName = ref('')
 const logined = ref(null)
@@ -638,6 +656,35 @@ const localTestAnswer = reactive(new UserStudyEvaluatorAnswer())
 const store = useStore()
 const router = useRouter()
 const { t } = useI18n()
+let studyLogging = null
+
+const initializeStudyLogging = () => {
+  if (studyLogging || !user.value?.id || !test.value?.id) return studyLogging
+  studyLogging = createStudyLoggingRuntime({
+    ownerUid: user.value.id,
+    studyId: test.value.id,
+    consentRequired: true,
+    callFunction: FirebaseFunctionsController.callHttpsCallableFunction,
+  })
+  if (localTestAnswer.consentCompleted) void studyLogging.resumeAfterConsent()
+  return studyLogging
+}
+const recordingOutcomes = createRecordingOutcomeTracker((details) =>
+  initializeStudyLogging()?.recordingOutcome(details),
+)
+const handleRecordingResult = (details) => {
+  if (user.value?.id && localTestAnswer.consentCompleted)
+    recordingOutcomes.observe(details)
+}
+const handleTaskStarted = (occurredAt) => {
+  void initializeStudyLogging()?.taskStarted(taskIndex.value, occurredAt)
+}
+const handleLoggingFocusin = (event) =>
+  initializeStudyLogging()?.editHandlers.focusin(event)
+const handleLoggingInput = (event) =>
+  initializeStudyLogging()?.editHandlers.input(event)
+const handleLoggingFocusout = (event) =>
+  initializeStudyLogging()?.editHandlers.focusout(event)
 
 const mediaUrls = computed(() => store.getters.mediaUrls)
 const test = computed(() => store.getters.test)
@@ -668,6 +715,192 @@ const hasPostTest = computed(() => {
     test.value?.testStructure?.postTest.length > 0
   )
 })
+
+const structuredNasaFields = [
+  'mentalDemand',
+  'physicalDemand',
+  'temporalDemand',
+  'performance',
+  'effort',
+  'frustration',
+]
+const structuredSartFields = [
+  'instability',
+  'complexity',
+  'variability',
+  'arousal',
+  'concentration',
+  'division',
+  'spareCapacity',
+  'informationQuantity',
+  'informationQuality',
+  'familiarity',
+]
+const structuredTamSizes = {
+  'tam-1': {
+    perceivedUsefulness: 10,
+    perceivedEaseOfUse: 10,
+  },
+  'tam-2': {
+    intentionToUse: 2,
+    perceivedUsefulness: 4,
+    perceivedEaseOfUse: 4,
+    subjectiveNorm: 2,
+    voluntariness: 3,
+    image: 3,
+    jobRelevance: 2,
+    outputQuality: 2,
+    resultDemonstrability: 4,
+  },
+  'tam-3': {
+    perceivedUsefulness: 3,
+    perceivedEaseOfUse: 3,
+    behavioralIntention: 2,
+    usePatterns: 2,
+    subjectiveNorm: 3,
+    image: 2,
+    jobRelevance: 3,
+    outputQuality: 3,
+    resultDemonstrability: 2,
+    computerSelfEfficacy: 3,
+    perceptionsOfExternalControl: 3,
+    computerAnxiety: 2,
+    computerPlayfulness: 2,
+    perceivedEnjoyment: 3,
+    objectiveUsability: 2,
+    experience: 2,
+    voluntariness: 2,
+  },
+}
+
+const structuredValuesForTask = (task, taskAnswer) => {
+  const values = {}
+  const taskType = task?.taskType
+
+  if (taskType === 'sus') {
+    for (let index = 0; index < 10; index++) {
+      values[`sus:question:${index}`] = taskAnswer?.susAnswers?.[index]
+    }
+  }
+
+  if (taskType === 'nasa-tlx') {
+    for (const field of structuredNasaFields) {
+      values[`nasa-tlx:${field}`] =
+        taskAnswer?.nasaTlxAnswers?.[field] ?? 0
+    }
+  }
+
+  if (taskType === 'sart') {
+    for (const field of structuredSartFields) {
+      values[`sart:${field}`] = taskAnswer?.sartAnswers?.[field] ?? 4
+    }
+  }
+
+  const tamSizes = structuredTamSizes[taskType]
+  if (tamSizes) {
+    for (const [construct, size] of Object.entries(tamSizes)) {
+      for (let index = 0; index < size; index++) {
+        values[`${taskType}:${construct}:${index}`] =
+          taskAnswer?.tamAnswers?.[construct]?.[index]
+      }
+    }
+  }
+
+  return values
+}
+
+const structuredValuesForStage = (stage) => {
+  const questions = test.value?.testStructure?.[stage] || []
+  const answers = localTestAnswer[`${stage}Answer`] || []
+  const values = {}
+
+  questions.forEach((question, index) => {
+    if (
+      question?.selectionField &&
+      Array.isArray(question.selectionFields) &&
+      question.selectionFields.length
+    ) {
+      values[`${stage}:question:${index}`] = answers[index]?.answer
+    }
+  })
+
+  return values
+}
+
+const seedStructuredScope = (scopeRef, values) => {
+  initializeStudyLogging()?.seedStructuredScope(scopeRef, values)
+}
+
+const handleStructuredResponseChanged = (change) => {
+  if (!change?.scopeRef || !change.itemRef) return
+  initializeStudyLogging()?.structuredChoiceChanged(
+    change.scopeRef,
+    change.itemRef,
+    change.value,
+  )
+}
+
+const handleStructuredSelectionChanged = (change) => {
+  const scopeRef = change?.itemRef?.split(':')[0]
+  if (scopeRef !== 'preTest' && scopeRef !== 'postTest') return
+  initializeStudyLogging()?.structuredChoiceChanged(
+    scopeRef,
+    change.itemRef,
+    change.value,
+  )
+}
+
+const handleStructuredSliderEvent = (phase, change) => {
+  if (!change?.scopeRef || !change.itemRef) return
+  const runtime = initializeStudyLogging()
+  if (!runtime) return
+
+  if (phase === 'focus') {
+    runtime.structuredSliderFocus(change.scopeRef, change.itemRef)
+  } else if (phase === 'start') {
+    runtime.structuredSliderPointerStart(
+      change.scopeRef,
+      change.itemRef,
+      change.value,
+    )
+  } else if (phase === 'change') {
+    runtime.structuredSliderValueChanged(
+      change.scopeRef,
+      change.itemRef,
+      change.value,
+    )
+  } else if (phase === 'end') {
+    runtime.structuredSliderPointerEnd(
+      change.scopeRef,
+      change.itemRef,
+      change.value,
+    )
+  } else if (phase === 'blur') {
+    runtime.structuredSliderBlur(change.scopeRef, change.itemRef)
+  }
+}
+
+const handleTaskQuestionnaireEntered = ({ scopeRef } = {}) => {
+  const taskRef = scopeRef || `task:${taskIndex.value}`
+  seedStructuredScope(
+    taskRef,
+    structuredValuesForTask(
+      test.value?.testStructure?.userTasks?.[taskIndex.value],
+      localTestAnswer.tasks?.[taskIndex.value],
+    ),
+  )
+}
+
+const handlePreTestDone = async () => {
+  await initializeStudyLogging()?.checkpointStructuredScope('preTest')
+  await completeStep(taskIndex.value, 'preTest')
+}
+
+const handlePostTestDone = async () => {
+  await initializeStudyLogging()?.checkpointStructuredScope('postTest')
+  await completeStep(taskIndex.value, 'postTest')
+  taskIndex.value = 3
+}
 
 const isUserTestAdmin = computed(() => {
   return test.value.testAdmin.userDocId === user.value?.id
@@ -792,6 +1025,13 @@ const handleDownloadAnonymousIdentifier = () => {
   })
 }
 const savePartialAnswer = async () => {
+  attachMediaToTasks(localTestAnswer, mediaUrls.value)
+  const recordingsToSave = recordingOutcomes
+    .beforeSave()
+    .filter(({ taskRef, mediaType }) => {
+      const task = localTestAnswer.tasks?.[Number(taskRef.split(':')[1])]
+      return Boolean(task?.[MEDIA_FIELD_MAP[mediaType]])
+    })
   try {
     calculateProgress(localTestAnswer)
     localTestAnswer.fullName = fullName.value
@@ -810,18 +1050,10 @@ const savePartialAnswer = async () => {
         testType: test.value.testType,
       })
     } else {
-      const updatedAnswer = UserStudyEvaluatorAnswer.toModel({
-        ...currentUserTestAnswer.value,
-        fullName: localTestAnswer.fullName,
-        progress: localTestAnswer.progress,
-        submitted: localTestAnswer.submitted,
-        preTestAnswer: localTestAnswer.preTestAnswer,
-        postTestAnswer: localTestAnswer.postTestAnswer,
-        tasks: {
-          ...currentUserTestAnswer.value.tasks,
-          ...localTestAnswer.tasks,
-        },
-      })
+      const updatedAnswer = UserStudyEvaluatorAnswer.mergeProgress(
+        currentUserTestAnswer.value,
+        localTestAnswer,
+      )
 
       Object.assign(currentUserTestAnswer.value, updatedAnswer)
 
@@ -831,6 +1063,7 @@ const savePartialAnswer = async () => {
         testType: test.value.testType,
       })
     }
+    recordingOutcomes.saved(recordingsToSave)
   } catch (error) {
     // Propagate the error so callers can handle it (e.g., show toasts, prevent navigation).
     throw error
@@ -846,11 +1079,12 @@ const saveAnswer = async () => {
     } else {
       router.push('/admin')
     }
-  } catch {
+  } catch (error) {
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSaveAnswer'),
     })
+    throw error
   }
 }
 
@@ -858,12 +1092,17 @@ const submitAnswer = async () => {
   try {
     isLoading.value = true
     localTestAnswer.submitted = true
+    await initializeStudyLogging()?.checkpointStructuredScopes()
     await saveAnswer()
+    void initializeStudyLogging()?.submitted()
   } catch {
+    localTestAnswer.submitted = false
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSubmitAnswer'),
     })
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -1000,11 +1239,13 @@ const safelyShowNextStepAnnouncement = async (
 const persistStepProgress = async () => {
   try {
     await savePartialAnswer()
+    return true
   } catch {
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSaveAnswer'),
     })
+    return false
   }
 }
 
@@ -1083,6 +1324,11 @@ const callTimerSave = () => {
 }
 
 async function handleTaskFinish(userCompleted) {
+  const finishedObservedAt = new Date().toISOString()
+  const finishedTaskIndex = taskIndex.value
+  await initializeStudyLogging()?.checkpointStructuredScope(
+    `task:${finishedTaskIndex}`,
+  )
   callTimerSave()
 
   await nextTick()
@@ -1093,16 +1339,26 @@ async function handleTaskFinish(userCompleted) {
       async (val) => {
         if (!val) {
           unwatch()
-          await completeStep(taskIndex.value, 'tasks', userCompleted)
+          await completeStep(finishedTaskIndex, 'tasks', userCompleted)
           attachMediaToTasks(localTestAnswer, mediaUrls.value)
-          await persistStepProgress()
+          if (await persistStepProgress()) {
+            void initializeStudyLogging()?.taskFinished(
+              finishedTaskIndex,
+              finishedObservedAt,
+            )
+          }
         }
       },
     )
   } else {
-    await completeStep(taskIndex.value, 'tasks', userCompleted)
+    await completeStep(finishedTaskIndex, 'tasks', userCompleted)
     attachMediaToTasks(localTestAnswer, mediaUrls.value)
-    await persistStepProgress()
+    if (await persistStepProgress()) {
+      void initializeStudyLogging()?.taskFinished(
+        finishedTaskIndex,
+        finishedObservedAt,
+      )
+    }
   }
 }
 
@@ -1158,7 +1414,9 @@ const completeStep = async (id, type, userCompleted = true) => {
         globalIndex.value = hasEyeTracking.value ? 3 : 4
         localTestAnswer.preTestCompleted = true
       }
-      await persistStepProgress()
+      const consentSaved = await persistStepProgress()
+      if (!consentSaved) return
+      void initializeStudyLogging()?.consentAccepted()
     }
 
     if (type === 'preTest') {
@@ -1195,20 +1453,32 @@ const completeStep = async (id, type, userCompleted = true) => {
       }
       allTasksCompleted.value = allTasksAttempted
 
-      if (id < localTestAnswer.tasks.length - 1) {
-        await showTaskTitleAnnouncement(id + 1)
-        taskIndex.value = id + 1
+      const destination = taskDestination({
+        taskIndex: id,
+        taskCount: localTestAnswer.tasks.length,
+        hasEyeTracking: hasEyeTracking.value,
+        hasPostTest: hasPostTest.value,
+        postTestCompleted: localTestAnswer.postTestCompleted,
+      })
+
+      if (destination.kind === 'task') {
+        await showTaskTitleAnnouncement(destination.taskIndex)
+        taskIndex.value = destination.taskIndex
       } else {
         taskIndex.value = id
-        const postTasksAnnouncement = getPostTasksAnnouncement()
+        const postTasksAnnouncement =
+          destination.kind === 'postTest'
+            ? getPostTasksAnnouncement()
+            : {
+                title: t('UserTestView.WelcomeStep.steps.submission'),
+                stage: 4,
+              }
         await safelyShowNextStepAnnouncement(
           postTasksAnnouncement.title,
           postTasksAnnouncement.stage,
         )
-        if (hasPostTest.value) {
-          globalIndex.value = hasEyeTracking.value ? 6 : 5 // PostTest
-        } else {
-          globalIndex.value = hasEyeTracking.value ? 7 : 6 // Finish
+        globalIndex.value = destination.globalIndex
+        if (!hasPostTest.value) {
           localTestAnswer.postTestCompleted = true
         }
       }
@@ -1502,10 +1772,68 @@ const scrollToTop = () => {
   }
 }
 
+let activeStructuredScope = null
+
+const structuredScopeForCurrentStage = () => {
+  if (globalIndex.value === 2 && taskIndex.value === 0) {
+    return 'preTest'
+  }
+
+  const taskStage = hasEyeTracking.value ? 5 : 4
+  if (
+    globalIndex.value === taskStage &&
+    test.value?.testStructure?.userTasks?.[taskIndex.value]
+  ) {
+    return `task:${taskIndex.value}`
+  }
+
+  const postTestStage = hasEyeTracking.value ? 6 : 5
+  if (hasPostTest.value && globalIndex.value === postTestStage) {
+    return 'postTest'
+  }
+
+  return null
+}
+
 watch(
   () => [globalIndex.value, taskIndex.value],
   () => {
+    const nextStructuredScope = structuredScopeForCurrentStage()
+    if (
+      activeStructuredScope &&
+      activeStructuredScope !== nextStructuredScope
+    ) {
+      void initializeStudyLogging()?.checkpointStructuredScope(
+        activeStructuredScope,
+      )
+    }
+    activeStructuredScope = nextStructuredScope
+
     scrollToTop()
+
+    if (globalIndex.value === 2 && taskIndex.value === 0) {
+      seedStructuredScope('preTest', structuredValuesForStage('preTest'))
+    }
+
+    if (
+      globalIndex.value === (hasEyeTracking.value ? 5 : 4) &&
+      test.value?.testStructure?.userTasks?.[taskIndex.value]
+    ) {
+      seedStructuredScope(
+        `task:${taskIndex.value}`,
+        structuredValuesForTask(
+          test.value.testStructure.userTasks[taskIndex.value],
+          localTestAnswer.tasks?.[taskIndex.value],
+        ),
+      )
+    }
+
+    if (
+      hasPostTest.value &&
+      globalIndex.value === (hasEyeTracking.value ? 6 : 5)
+    ) {
+      seedStructuredScope('postTest', structuredValuesForStage('postTest'))
+    }
   },
 )
 
@@ -1526,6 +1854,7 @@ onMounted(async () => {
   await setTest()
   await autoComplete()
   calculateProgress(localTestAnswer)
+  initializeStudyLogging()
   if (!user.value?.id) return
 
   let firstSnapshot = true
@@ -1551,6 +1880,7 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
+  studyLogging?.destroy()
   if (
     videoRecorder.value &&
     typeof videoRecorder.value.stopRecording === 'function'
@@ -1586,7 +1916,7 @@ onBeforeUnmount(() => {
   pointer-events: none;
 }
 
-.user-test-bg > * {
+.user-test-bg > :not(.step-announcement-overlay) {
   position: relative;
   z-index: 1;
 }

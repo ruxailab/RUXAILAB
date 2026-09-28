@@ -1,5 +1,97 @@
 {
   "language": "Idioma",
+  "agents": {
+    "list": {
+      "title": "Agentes disponibles",
+      "subtitle": "Tus agentes y los agentes públicos que puedes utilizar.",
+      "empty": "Todavía no hay agentes disponibles"
+    },
+    "actions": {
+      "create": "Crear agente",
+      "edit": "Editar agente",
+      "delete": "Eliminar agente",
+      "cancel": "Cancelar",
+      "save": "Guardar cambios"
+    },
+    "dialog": { "createTitle": "Crear agente", "editTitle": "Editar agente" },
+    "fields": {
+      "name": "Nombre",
+      "model": "Modelo",
+      "description": "Descripción",
+      "instructions": "Instrucciones del agente",
+      "instructionsHint": "Define el perfil, los criterios y la forma de justificar las respuestas.",
+      "visibility": "Visibilidad",
+      "origin": "Origen",
+      "userIds": "IDs de usuarios",
+      "userIdsHint": "Separados por comas"
+    },
+    "owner": { "you": "Creado por ti", "community": "Comunidad" },
+    "visibility": {
+      "private": "Privado",
+      "shared": "Compartido",
+      "public": "Público",
+      "privateOption": "Privado — solo yo",
+      "sharedOption": "Compartido — usuarios concretos",
+      "publicOption": "Público — todos los usuarios"
+    },
+    "models": { "empty": "No se encontraron modelos" },
+    "validation": { "required": "Este campo es obligatorio." },
+    "messages": {
+      "created": "Agente creado correctamente.",
+      "updated": "Agente actualizado correctamente.",
+      "deleted": "Agente eliminado.",
+      "loadError": "No se pudieron cargar los agentes: {error}",
+      "modelsError": "No se pudieron cargar los modelos: {error}",
+      "saveError": "No se pudo guardar el agente: {error}",
+      "deleteError": "No se pudo eliminar el agente: {error}",
+      "confirmDelete": "¿Eliminar el agente “{name}”?"
+    }
+  },
+  "heuristicAgents": {
+    "title": "Análisis con agentes",
+    "subtitle": "Indica una web, selecciona sus páginas y deja que un agente complete la evaluación heurística.",
+    "web": {
+      "title": "Introduce la web",
+      "subtitle": "Buscaremos la página principal y sus enlaces internos.",
+      "url": "URL de la web",
+      "search": "Buscar páginas"
+    },
+    "pages": {
+      "title": "Selecciona las páginas",
+      "selected": "{selected} de {total} seleccionadas",
+      "selectAll": "Seleccionar todas",
+      "deselectAll": "Deseleccionar todas",
+      "empty": "Introduce la URL de una web y busca sus páginas para seleccionarlas aquí."
+    },
+    "run": {
+      "title": "Elige un agente y analiza",
+      "subtitle": "Cada página se guardará como una evaluación independiente.",
+      "agent": "Agente",
+      "noAgents": "No hay agentes disponibles",
+      "agentHint": "Crea o edita agentes desde la sección general Agentes.",
+      "analyze": "Analizar {count} página(s)",
+      "saved": "{count} análisis guardados como evaluadores independientes.",
+      "viewResults": "Ver resultados"
+    },
+    "status": {
+      "completed": "Completado",
+      "error": "Error",
+      "running": "Heurística {current}/{total}",
+      "pending": "Pendiente"
+    },
+    "messages": {
+      "urlsFound": "Se han encontrado {count} URL(s).",
+      "discoverError": "No se pudieron buscar las URLs: {error}",
+      "allSaved": "Todos los análisis seleccionados se han guardado correctamente.",
+      "partiallySaved": "{saved} análisis guardados y {failed} con error. Revisa las páginas marcadas.",
+      "noneSaved": "No se pudo analizar ninguna página. Revisa los errores de las páginas marcadas.",
+      "loadAgentsError": "No se pudieron cargar los agentes: {error}"
+    },
+    "card": {
+      "description": "Utiliza un evaluador de IA para responder este test heurístico.",
+      "open": "Abrir análisis con agentes"
+    }
+  },
   "auth": {
     "signupSuccess": "Registro exitoso",
     "logoutSuccess": "Cierre de sesión exitoso",
@@ -574,9 +666,10 @@
       "Final Report": "Informe final",
       "Answer Test": "Responder prueba",
       "Settings": "Configuración",
-      "AI Agents": "Agentes IA",
       "Storage": "Almacenamiento",
       "Audit Trail": "Registro de auditoría",
+      "AI Agents": "Agentes de IA",
+      "Logs": "Registros",
       "name": "Nombre",
       "studiesCount": "Recuento de Estudios",
       "mediaSize": "Tamaño de Medios",
@@ -826,6 +919,7 @@
     },
     "managerView": {
       "heuristicStudy": "Estudio Heurístico",
+      "aiAgents": "Agentes de IA",
       "freePlan": "Plan Gratuito",
       "generalStatistics": "Estadísticas Generales",
       "modules": "Módulos"
@@ -1233,9 +1327,11 @@
       "evaluator": "Evaluador",
       "last_update": "Última actualización",
       "progress": "Progreso",
+      "total_time": "Tiempo total",
       "status": "Estado",
       "actions": "Comportamiento"
     },
+    "labels": { "ai_agent": "Agente de IA" },
     "messages": {
       "confirm_delete_report": "¿Estás seguro de que deseas eliminar este informe?",
       "reports_loading": "Cargando informes",
@@ -1618,7 +1714,10 @@
       "testConfigErrorMessage": "Esta prueba no tiene tareas configuradas. Por favor, contacta al administrador.",
       "consentDecline": "Prueba finalizada debido al rechazo del consentimiento. Gracias por tu tiempo.",
       "sessionTooFar": "Sesión demasiado lejana",
-      "sessionTooFarMessage": "La sesión programada es en más de 24 horas. Por favor regrese más cerca de la fecha de la sesión."
+      "sessionTooFarMessage": "La sesión programada es en más de 24 horas. Por favor regrese más cerca de la fecha de la sesión.",
+      "moderatorDisconnected": "Moderador Desconectado",
+      "moderatorOfflineWaitOrContact": "El moderador parece estar desconectado. Por favor, espere o contacte con soporte.",
+      "moderatorOfflineWait": "El moderador parece estar desconectado. Por favor espere."
     },
     "stepper": {
       "consent": "Consentimiento",
@@ -1830,7 +1929,32 @@
     "start": "Comenzar calibración",
     "inProgress": "Calibración en progreso...",
     "completed": "¡Calibración completada!",
-    "continue": "Continuar al test"
+    "continue": "Continuar al test",
+    "stats": {
+      "eyeTrackingAnalytics": "Análisis de seguimiento ocular",
+      "gazePrecisionAndPredictionInsights": "Precisión de la mirada e información sobre las predicciones",
+      "analyzing": "Analizando...",
+      "analysisFailed": "Análisis fallido",
+      "analysisCompleted": "Análisis completado",
+      "analyzingGazeData": "Analizando los datos de la mirada...",
+      "analysisMayTakeSeconds": "Esto puede tardar unos segundos",
+      "couldNotProcessGazeData": "No se pudieron procesar los datos de la mirada. Inténtalo de nuevo más tarde.",
+      "predictionOverview": "Resumen de predicciones",
+      "predictionPoints": "Puntos de predicción",
+      "heatmap": "Mapa de calor",
+      "freeEye": "Ojo libre",
+      "keyInsights": "Información clave",
+      "sessionStatistics": "Estadísticas de la sesión",
+      "predictedGazeDataOverview": "Resumen de los datos de mirada predichos",
+      "averageGaze": "Mirada promedio",
+      "horizontalRange": "Rango horizontal",
+      "verticalRange": "Rango vertical",
+      "predictionRate": "Frecuencia de predicción",
+      "calibrationPoints": "Puntos de calibración",
+      "calibrationTargetError": "Error de predicción para cada objetivo de calibración",
+      "point": "Punto {number}",
+      "meanError": "Error medio"
+    }
   },
   "EyeTrackingConfig": {
     "titles": {
@@ -1996,6 +2120,7 @@
         "today": "Hoy",
         "upcoming": "Próximamente",
         "completed": "Completado",
+        "ended": "Finalizada",
         "allStudies": "Todos los estudios",
         "myStudies": "Mis estudios",
         "whereICollaborate": "Donde colaboro",
@@ -2489,7 +2614,46 @@
     "answers": "Respuestas",
     "overallAnalyticsDescription": "Ver el análisis general de tu estudio",
     "no": "No",
-    "sartAnalytics": "Análisis SART"
+    "sartAnalytics": "Análisis SART",
+    "sentiment": {
+      "searchByTask": "Buscar por nombre de tarea",
+      "task": "Tarea",
+      "signal": "Señal",
+      "user": "Usuario",
+      "allTasks": "Todas las tareas",
+      "allSignals": "Todas las señales",
+      "allUsers": "Todos los usuarios",
+      "facial": "Facial",
+      "text": "Texto",
+      "positive": "Positivo",
+      "neutral": "Neutral",
+      "negative": "Negativo",
+      "noData": "Sin datos",
+      "emptyTitle": "No hay analíticas de sentimiento",
+      "emptyAnalytics": "Aún no hay analíticas de sentimiento. Ejecuta el análisis facial o de texto en las tareas para generar métricas.",
+      "emptyNoRecordingTasks": "No hay tareas con webcam o grabación de audio habilitada en este test.",
+      "emptyNoAnalyticsForFilters": "No hay analíticas de sentimiento para los filtros seleccionados.",
+      "emptyNoMatchingTasks": "Ninguna tarea coincide con la búsqueda o los filtros actuales.",
+      "overviewTitle": "Resumen de sentimiento",
+      "overviewSubtitle": "Distribución de sentimiento facial y de transcripción en las tareas grabadas.",
+      "facialSentiment": "Sentimiento facial",
+      "textSentiment": "Sentimiento de texto",
+      "byTask": "Sentimiento por tarea",
+      "overall": "Sentimiento general",
+      "overallDescription": "Sentimiento combinado facial y de transcripción en la sesión.",
+      "overallFacialDescription": "Sentimiento facial en la sesión.",
+      "overallTextDescription": "Sentimiento de transcripción en la sesión.",
+      "facialDescription": "Patrón de expresión facial más común en las tareas grabadas.",
+      "textDescription": "Tendencia de sentimiento de transcripción en los comentarios.",
+      "warning": "Alerta",
+      "warningDescription": "Tarea con la mayor concentración de señales negativas.",
+      "heuristicUnavailable": "El análisis de sentimiento no está disponible para tests heurísticos",
+      "taskNumber": "Tarea {number}",
+      "taskNumberName": "Tarea {number}: {name}",
+      "userFallback": "Usuario",
+      "loadError": "No se pudieron cargar las analíticas de sentimiento.",
+      "loadUserError": "No se pudieron cargar los documentos de sentimiento del usuario."
+    }
   },
   "observatorNotes": {
     "title": "Notas de la sesión",
@@ -2593,7 +2757,29 @@
       "startSession": "Iniciar sesión",
       "joinSession": "Unirse a la sesión",
       "reportsTitle": "Resultados e Informes",
-      "reportsComingSoon": "Los resultados y el análisis de la sesión aparecerán aquí."
+      "reportsDescription": "Revisa la discusión, las notas y las grabaciones de cada sesión finalizada.",
+      "viewAnswers": "Ver respuestas"
+    },
+    "answers": {
+      "title": "Respuestas de la Sesión",
+      "subtitle": "Revisa lo discutido, anotado y (si se grabó) capturado en cada sesión finalizada.",
+      "empty": "Todavía no se ha realizado ninguna sesión.",
+      "participantCount": "{count} participantes",
+      "observerNotesTitle": "Notas del observador",
+      "noObserverNotes": "No se guardaron notas del observador para esta sesión.",
+      "observerNoteMetadata": "{topic} · {time}",
+      "openDiscussion": "Discusión abierta",
+      "facilitatorBadge": "Facilitador",
+      "recordingsTitle": "Grabaciones",
+      "recordingLabel": "{topic} — {kind}",
+      "themesTitle": "Temas",
+      "themesHint": "Arrastra respuestas desde Sin clasificar a un tema para agruparlas.",
+      "newThemeLabel": "Nombre del nuevo tema",
+      "addTheme": "Añadir tema",
+      "unsorted": "Sin clasificar",
+      "removeTheme": "Eliminar tema",
+      "allSorted": "Todas las respuestas están clasificadas en un tema.",
+      "dropHere": "Suelta respuestas aquí"
     },
     "session": {
       "title": "Sesión en Vivo",
@@ -2608,6 +2794,9 @@
       "notStarted": "La sesión aún no ha comenzado.",
       "sessionEnded": "La sesión ha finalizado.",
       "startSession": "Iniciar sesión",
+      "startFocusGroup": "Iniciar grupo focal",
+      "waitingForPrompt": "El facilitador compartirá aquí la primera pregunta.",
+      "askPromptFromGuide": "Elige una pregunta del panel Guía para mostrarla a todos.",
       "endSession": "Finalizar sesión",
       "previous": "Anterior",
       "next": "Siguiente tema",
@@ -2633,7 +2822,14 @@
       "roleFacilitator": "Facilitador",
       "roleParticipant": "Participante",
       "roleObserver": "Observador",
+      "elapsed": "Transcurrido",
+      "nicknameTitle": "Elige tu nombre para la sesión",
+      "nicknameHint": "Este nombre se mostrará a todos en la sesión en lugar del correo de tu cuenta.",
+      "nicknameLabel": "Apodo",
+      "continueToSession": "Continuar a la sesión",
       "observerModeHint": "Modo observador: sigues la discusión sin participar.",
+      "notAMemberTitle": "No formas parte de esta sesión",
+      "notAMemberHint": "Esta sesión se está ejecutando para un grupo específico de personas y tu cuenta no está en su lista. Consulta con el facilitador si crees que es un error.",
       "sessionInfo": "Sesión",
       "showParticipants": "Mostrar participantes",
       "hideParticipants": "Ocultar participantes",
@@ -2646,6 +2842,29 @@
       "shareScreen": "Compartir pantalla",
       "stopSharingScreen": "Dejar de compartir",
       "discussion": "Discusión",
+      "breakout": "Grupos",
+      "breakoutIntro": "Divide a los participantes en grupos más pequeños, cada uno con su propia sala de video y chat.",
+      "breakoutGroupCount": "Número de grupos",
+      "breakoutGroupCountHint": "Cada grupo necesita al menos 2 personas, por lo que el máximo es la mitad del número de participantes.",
+      "breakoutStart": "Iniciar salas de grupos",
+      "breakoutNoParticipants": "Todavía no se ha unido ningún participante.",
+      "breakoutTooFewParticipants": "Se necesitan al menos 4 participantes para dividir en grupos.",
+      "breakoutRecall": "Reunir a todos",
+      "breakoutPeek": "Ver",
+      "breakoutEmptyGroup": "Nadie asignado todavía.",
+      "breakoutBroadcastTitle": "Difundir a todos los grupos",
+      "breakoutBroadcastPlaceholder": "Mensaje para todos",
+      "breakoutBroadcastSend": "Enviar",
+      "breakoutInGroup": "Estás en {name}",
+      "breakoutActiveSummary": "{count} grupos de trabajo están activos.",
+      "breakoutManage": "Gestionar grupos",
+      "backroom": "Sala privada",
+      "backroomHint": "Privado para el facilitador y los observadores: los participantes nunca ven esto.",
+      "breakoutStaffRoomsTitle": "Salas de grupos",
+      "breakoutReturnToMain": "Volver a la sala principal",
+      "breakoutCallFacilitator": "Llamar al facilitador",
+      "breakoutHelpSent": "Facilitador notificado",
+      "breakoutHelpRequested": "{group} está solicitando al facilitador",
       "messagePlaceholder": "Comparte tus ideas...",
       "noMessagesYet": "Aún no hay mensajes. Inicia la discusión.",
       "observerReadonly": "Estás observando esta discusión.",
@@ -3020,6 +3239,7 @@
     },
     "definitions": {
       "HEURISTICS": "Evaluación Heurística",
+      "FOCUS_GROUP": "Grupo focal",
       "USER_MODERATED": "Prueba de Usabilidad Moderada",
       "USER_UNMODERATED": "Prueba de Usabilidad No Moderada",
       "SURVEY": "Encuesta",
@@ -3438,8 +3658,9 @@
     },
     "staff": {
       "title": "Personal",
-      "description": "Selecciona las personas que facilitarán u observarán esta sesión.",
+      "description": "Elige al propietario del estudio o a personas que ya aparezcan en Personal. Añade primero al resto desde el estudio.",
       "selectPlaceholder": "Selecciona miembros del personal",
+      "noAvailable": "No hay personal del estudio coincidente. Añádelo primero desde la página Personal del estudio.",
       "added": "Personal añadido",
       "noSelected": "No hay personal seleccionado",
       "roles": {
@@ -3449,7 +3670,7 @@
     },
     "participants": {
       "title": "Participantes",
-      "description": "Añade los participantes invitados a esta sesión.",
+      "description": "Elige participantes del estudio o escribe abajo el correo de cualquier invitado.",
       "selectPlaceholder": "Selecciona participantes",
       "emailPlaceholder": "Escribe un correo electrónico y pulsa Enter",
       "added": "Participantes añadidos",
@@ -3500,6 +3721,7 @@
     "error": {
       "participantLimitReached": "Se ha alcanzado el límite de participantes para esta sesión.",
       "participantAlreadyAdded": "Este participante ya ha sido añadido.",
+      "memberAlreadyAssigned": "Esta persona no puede ser personal y participante de la sesión a la vez.",
       "createFailed": "No se pudo guardar la sesión.",
       "sendMessageFailed": "No se pudo enviar el mensaje.",
       "errorDelete": "No se pudo eliminar la sesión.",
@@ -3540,6 +3762,7 @@
       "goToSession": "Ir a la sesión",
       "title": "Título",
       "start": "Inicio",
+      "status": "Estado",
       "staff": "Personal",
       "participants": "Participantes",
       "actions": "Acciones"
@@ -3555,6 +3778,13 @@
     "empty": {
       "title": "No se encontraron sesiones",
       "description": "Crea una sesión para comenzar a invitar personal y participantes."
+    },
+    "status": {
+      "upcoming": "Próxima",
+      "today": "Hoy",
+      "completed": "Completada",
+      "ended": "Finalizada",
+      "unknown": "Desconocido"
     }
   }
 }

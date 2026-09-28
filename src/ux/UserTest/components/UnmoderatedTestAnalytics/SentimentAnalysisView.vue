@@ -1,14 +1,14 @@
 <template>
   <div>
     <!-- User Usability Test -->
-    <div v-if="testAnswerDocument.type === STUDY_TYPES.USER">
+    <div v-if="isUserStudy">
       <!-- Moderated Test -->
-      <div v-if="testDocument.subType === USER_STUDY_SUBTYPES.MODERATED">
+      <div v-if="isModeratedUserStudy">
         <UserModeratedSentiment />
       </div>
 
       <!-- Un-moderated Test -->
-      <div v-else class="pa-4">
+      <div v-else class="pa-1">
         <v-card class="mb-4 pa-4 elevation-2 overflow-hidden">
           <div class="d-flex align-center mb-3 flex-wrap button-bar">
             <v-text-field
@@ -17,17 +17,9 @@
               density="compact"
               hide-details
               variant="outlined"
-              placeholder="Search by task name"
+              :placeholder="$t('analytics.sentiment.searchByTask')"
               class="flex-grow-1"
             />
-            <v-btn
-              color="primary"
-              class="search-btn"
-              prepend-icon="mdi-magnify"
-              @click="triggerSearch"
-            >
-              {{ $t('analytics.search') }}
-            </v-btn>
             <v-btn
               color="primary"
               class="search-btn"
@@ -37,86 +29,108 @@
             >
               {{ $t('analytics.reset') }}
             </v-btn>
-
-            <v-btn
-              :color="showFilters ? 'primary' : 'grey'"
-              variant="tonal"
-              icon
-              size="small"
-              :title="
-                showFilters
-                  ? $t('analytics.hideFilters')
-                  : $t('analytics.showFilters')
-              "
-              @click="toggleFilters"
-            >
-              <v-icon>{{
-                showFilters ? 'mdi-filter-off-outline' : 'mdi-filter-variant'
-              }}</v-icon>
-            </v-btn>
           </div>
 
-          <v-expand-transition>
-            <div v-show="showFilters">
-              <v-row dense>
-                <v-col cols="12" sm="6" md="4">
-                  <div class="filter-label truncate-2">Task</div>
-                  <v-select
-                    v-model="selectedTaskFilter"
-                    :items="taskFilterOptions"
-                    density="compact"
-                    variant="outlined"
-                    hide-details
-                    class="filter-field"
-                  />
-                </v-col>
+          <v-row dense class="mt-1">
+            <v-col cols="12" sm="6" md="4">
+              <div class="filter-label truncate-2">
+                {{ $t('analytics.sentiment.task') }}
+              </div>
+              <v-select
+                v-model="selectedTaskFilter"
+                :items="taskFilterOptions"
+                item-title="title"
+                item-value="value"
+                density="compact"
+                variant="outlined"
+                hide-details
+                class="filter-field"
+              />
+            </v-col>
 
-                <v-col cols="12" sm="6" md="4">
-                  <div class="filter-label truncate-2">Signal</div>
-                  <v-select
-                    v-model="selectedSignalFilter"
-                    :items="signalFilterOptions"
-                    density="compact"
-                    variant="outlined"
-                    hide-details
-                    class="filter-field"
-                  />
-                </v-col>
+            <v-col cols="12" sm="6" md="4">
+              <div class="filter-label truncate-2">
+                {{ $t('analytics.sentiment.signal') }}
+              </div>
+              <v-select
+                v-model="selectedSignalFilter"
+                :items="signalFilterOptions"
+                item-title="title"
+                item-value="value"
+                density="compact"
+                variant="outlined"
+                hide-details
+                class="filter-field"
+              />
+            </v-col>
 
-                <v-col cols="12" sm="6" md="4">
-                  <div class="filter-label truncate-2">User</div>
-                  <v-select
-                    v-model="selectedUserFilter"
-                    :items="userFilterOptions"
-                    density="compact"
-                    variant="outlined"
-                    hide-details
-                    class="filter-field"
-                  />
-                </v-col>
-              </v-row>
-            </div>
-          </v-expand-transition>
+            <v-col cols="12" sm="6" md="4">
+              <div class="filter-label truncate-2">
+                {{ $t('analytics.sentiment.user') }}
+              </div>
+              <v-select
+                v-model="selectedUserFilter"
+                :items="userFilterOptions"
+                item-title="title"
+                item-value="value"
+                density="compact"
+                variant="outlined"
+                hide-details
+                class="filter-field"
+              />
+            </v-col>
+          </v-row>
         </v-card>
 
-        <v-row dense class="mb-4">
-          <v-col
-            v-for="card in summaryHighlights"
-            :key="card.title"
-            cols="12"
-            sm="6"
-            md="3"
-            class="coming-soon-wrapper"
-          >
-            <v-chip
-              color="warning"
-              size="small"
-              variant="outlined"
-              class="coming-soon-badge"
+        <v-alert
+          v-if="loadError"
+          type="error"
+          variant="tonal"
+          class="mb-4"
+          closable
+          @click:close="loadError = null"
+        >
+          {{ loadError }}
+        </v-alert>
+
+        <div v-if="loading || userMetricsLoading" class="mb-4">
+          <v-row dense class="mb-4">
+            <v-col
+              v-for="n in 4"
+              :key="`skel-card-${n}`"
+              cols="12"
+              sm="6"
+              md="3"
             >
-              Coming Soon
-            </v-chip>
-            <div class="coming-soon-overlay h-100">
+              <v-skeleton-loader type="card" />
+            </v-col>
+          </v-row>
+          <v-skeleton-loader type="article, table" />
+        </div>
+
+        <template v-else>
+          <v-card
+            v-if="!hasAnalyticsData"
+            class="mb-4 pa-6 text-center analytics-empty-card"
+            variant="outlined"
+          >
+            <h4 class="text-h6 font-weight-medium mb-2">
+              {{ $t('analytics.sentiment.emptyTitle') }}
+            </h4>
+            <p class="text-body-2 text-medium-emphasis mb-0">
+              {{ emptyDashboardMessage }}
+            </p>
+          </v-card>
+
+          <div :class="{ 'analytics-disabled': !hasAnalyticsData }">
+          <v-row dense class="mb-4">
+            <v-col
+              v-for="card in summaryHighlights"
+              :key="card.id"
+              cols="12"
+              sm="6"
+              :md="summaryColMd"
+            >
               <UxMetricCard
                 :value="card.metric"
                 :label="card.title"
@@ -124,6 +138,7 @@
                 :icon="card.icon"
                 :description="card.description"
                 :progress="card.progress"
+                :disabled="!hasAnalyticsData"
               >
                 <template #value>
                   <div
@@ -153,168 +168,147 @@
                   </span>
                 </template>
               </UxMetricCard>
-            </div>
-          </v-col>
-        </v-row>
+            </v-col>
+          </v-row>
 
-        <div class="mb-4 px-2">
-          <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
-            Sentiment Overview
-          </h3>
-          <p class="text-body-1 text-medium-emphasis mb-0">
-            Facial and transcript sentiment distribution across recorded tasks.
-          </p>
-        </div>
+          <div class="mb-4 px-2">
+            <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
+              {{ $t('analytics.sentiment.overviewTitle') }}
+            </h3>
+            <p class="text-body-1 text-medium-emphasis mb-0">
+              {{ $t('analytics.sentiment.overviewSubtitle') }}
+            </p>
+          </div>
 
-        <v-row dense class="mb-4">
-          <v-col
-            v-if="showFacialSignal"
-            cols="12"
-            :md="showSingleSignal ? 12 : 6"
-            class="coming-soon-wrapper"
-          >
-            <v-chip
-              color="warning"
-              size="small"
-              variant="outlined"
-              class="coming-soon-badge"
+          <v-row dense class="mb-4">
+            <v-col
+              v-if="showFacialSignal"
+              cols="12"
+              :md="showSingleSignal ? 12 : 6"
             >
-              Coming Soon
-            </v-chip>
-            <div class="coming-soon-overlay">
               <SelectionPieChart
-                question-title="Facial Sentiment"
+                :question-title="$t('analytics.sentiment.facialSentiment')"
                 :options="sentimentOptions"
+                :option-labels="sentimentOptionLabels"
                 :counts="facialSentimentCounts"
                 canvas-id="facial-sentiment-chart"
                 :chart-colors="sentimentChartColors"
-                :show-percentages="true"
+                :values-are-percentages="true"
+                :is-empty="!hasFacialPieData"
+                :empty-label="$t('analytics.sentiment.noData')"
+                :disabled="!hasAnalyticsData"
               />
-            </div>
-          </v-col>
+            </v-col>
 
-          <v-col
-            v-if="showTextSignal"
-            cols="12"
-            :md="showSingleSignal ? 12 : 6"
-            class="coming-soon-wrapper"
-          >
-            <v-chip
-              color="warning"
-              size="small"
-              variant="outlined"
-              class="coming-soon-badge"
+            <v-col
+              v-if="showTextSignal"
+              cols="12"
+              :md="showSingleSignal ? 12 : 6"
             >
-              Coming Soon
-            </v-chip>
-            <div class="coming-soon-overlay">
               <SelectionPieChart
-                question-title="Text Sentiment"
+                :question-title="$t('analytics.sentiment.textSentiment')"
                 :options="sentimentOptions"
+                :option-labels="sentimentOptionLabels"
                 :counts="textSentimentCounts"
                 canvas-id="text-sentiment-chart"
                 :chart-colors="sentimentChartColors"
-                :show-percentages="true"
+                :values-are-percentages="true"
+                :is-empty="!hasTextPieData"
+                :empty-label="$t('analytics.sentiment.noData')"
+                :disabled="!hasAnalyticsData"
               />
+            </v-col>
+          </v-row>
+
+          <v-card elevation="2" style="border-radius: 12px" class="mb-4 pa-6">
+            <div class="mb-4 d-flex justify-space-between align-center">
+              <h4 class="font-weight-bold mb-2">
+                <v-icon start color="primary">mdi-table</v-icon>
+                {{ $t('analytics.sentiment.byTask') }}
+              </h4>
             </div>
-          </v-col>
-        </v-row>
-
-        <v-card elevation="2" style="border-radius: 12px" class="mb-4 pa-6">
-          <div class="mb-4 d-flex justify-space-between align-center">
-            <h4 class="font-weight-bold mb-2">Sentiment by Task</h4>
-            <v-chip color="warning" size="small" variant="outlined">
-              Coming Soon
-            </v-chip>
-          </div>
-
-          <div class="coming-soon-overlay">
-            <v-alert
-              v-if="sentimentByTask.length === 0"
-              type="info"
-              variant="tonal"
-              class="mb-0"
-            >
-              No tasks with webcam or audio recording enabled in this test.
-            </v-alert>
 
             <v-data-table
-              v-else
               :headers="visibleTaskSentimentHeaders"
               :items="filteredSentimentByTask"
               :items-per-page="10"
               class="elevation-0"
             >
+              <template #no-data>
+                <div
+                  v-if="hasAnalyticsData"
+                  class="text-medium-emphasis pa-4"
+                >
+                  {{ emptyTaskTableMessage }}
+                </div>
+              </template>
               <template #item.task="{ item }">
-                <div class="font-weight-medium">Task {{ item.number }}</div>
+                <div class="font-weight-medium">
+                  {{ $t('analytics.sentiment.taskNumber', { number: item.number }) }}
+                </div>
                 <div class="text-body-2 text-medium-emphasis">
                   {{ item.name }}
                 </div>
               </template>
 
               <template #item.facial="{ item }">
-                <div class="sentiment-table-cell py-2">
-                  <v-progress-linear
-                    :model-value="item.facialPositive"
-                    color="success"
-                    bg-color="error"
-                    bg-opacity="0.2"
-                    height="10"
-                    rounded
-                    class="mb-2"
-                  />
-                  <div
-                    class="d-flex justify-space-between text-caption text-medium-emphasis"
-                  >
-                    <span>Positive {{ item.facialPositive }}%</span>
-                    <span>Negative {{ item.facialNegative }}%</span>
-                  </div>
-                </div>
+                <SentimentStackCell
+                  :has-data="item.hasFacialData"
+                  :positive="item.facialPositive"
+                  :neutral="item.facialNeutral"
+                  :negative="item.facialNegative"
+                />
               </template>
 
               <template #item.text="{ item }">
-                <div class="sentiment-table-cell py-2">
-                  <v-progress-linear
-                    :model-value="item.textPositive"
-                    color="success"
-                    bg-color="error"
-                    bg-opacity="0.2"
-                    height="10"
-                    rounded
-                    class="mb-2"
-                  />
-                  <div
-                    class="d-flex justify-space-between text-caption text-medium-emphasis"
-                  >
-                    <span>Positive {{ item.textPositive }}%</span>
-                    <span>Negative {{ item.textNegative }}%</span>
-                  </div>
-                </div>
+                <SentimentStackCell
+                  :has-data="item.hasTextData"
+                  :positive="item.textPositive"
+                  :neutral="item.textNeutral"
+                  :negative="item.textNegative"
+                />
               </template>
             </v-data-table>
+          </v-card>
           </div>
-        </v-card>
+        </template>
       </div>
     </div>
 
     <!-- Heuristic Test -->
     <div v-else>
-      <h6>Sorry Sentiment Analysis isn't available for Heuristic tests</h6>
+      <h6>{{ $t('analytics.sentiment.heuristicUnavailable') }}</h6>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 import UserModeratedSentiment from '@/ux/UserTest/components/sentimentAnalysis/UserModeratedSentiment.vue'
+import SentimentStackCell from '@/ux/UserTest/components/sentimentAnalysis/SentimentStackCell.vue'
 import UxMetricCard from '@/ux/UserTest/components/answers/UxMetricCard.vue'
 import SelectionPieChart from '@/shared/components/charts/SelectionPieChart.vue'
-import { useI18n } from 'vue-i18n'
+import SentimentAnalyticsController from '@/ai/sentiment/SentimentAnalyticsController'
+import {
+  aggregateSentimentContributions,
+  bucketHasData,
+  bucketToCounts,
+  dominantColor,
+  emptySignalSlice,
+  sliceHasData,
+  toTaskAnalyticsKey,
+} from '@/ai/sentiment/sentimentAnalyticsUtils'
 import {
   STUDY_TYPES,
   USER_STUDY_SUBTYPES,
+  normalizeStudyType,
 } from '@/shared/constants/methodDefinitions'
+
+const ALL_TASKS = 'all'
+const ALL_USERS = 'all'
+const ALL_SIGNALS = 'all'
 
 const props = defineProps({
   taskDefinitions: {
@@ -325,275 +319,564 @@ const props = defineProps({
 
 const store = useStore()
 const { t } = useI18n()
+const analyticsController = new SentimentAnalyticsController()
 
 const testDocument = computed(() => store.getters.test)
 const visibleUserAnswers = computed(
   () => store.getters.visibleUserAnswers || {},
 )
+const testAnswerDocument = computed(
+  () => store.state.Answer.testAnswerDocument || {},
+)
 
-const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
+const isUserStudy = computed(() => {
+  const type =
+    testAnswerDocument.value?.type || testDocument.value?.testType || ''
+  return normalizeStudyType(type) === STUDY_TYPES.USER
+})
+
+const isModeratedUserStudy = computed(
+  () => testDocument.value?.subType === USER_STUDY_SUBTYPES.MODERATED,
+)
+
+const answersDocId = computed(
+  () =>
+    store.getters.test?.answersDocId || testAnswerDocument.value?.id || null,
+)
 
 const searchTerm = ref('')
-const showFilters = ref(true)
-const selectedTaskFilter = ref('All Tasks')
-const selectedSignalFilter = ref('All Signals')
-const selectedUserFilter = ref('All Users')
+const selectedTaskFilter = ref(ALL_TASKS)
+const selectedSignalFilter = ref(ALL_SIGNALS)
+const selectedUserFilter = ref(ALL_USERS)
+
+const loading = ref(false)
+const userMetricsLoading = ref(false)
+const loadError = ref(null)
+const aggregatedAnalytics = ref(null)
+const userSentimentDocs = ref([])
+let userSentimentRequestToken = 0
 
 const hasActiveFilters = computed(() => {
   return (
     !!searchTerm.value.trim() ||
-    selectedTaskFilter.value !== 'All Tasks' ||
-    selectedSignalFilter.value !== 'All Signals' ||
-    selectedUserFilter.value !== 'All Users'
+    selectedTaskFilter.value !== ALL_TASKS ||
+    selectedSignalFilter.value !== ALL_SIGNALS ||
+    selectedUserFilter.value !== ALL_USERS
   )
 })
 
 const resetFilters = () => {
   searchTerm.value = ''
-  selectedTaskFilter.value = 'All Tasks'
-  selectedSignalFilter.value = 'All Signals'
-  selectedUserFilter.value = 'All Users'
-}
-
-const toggleFilters = () => {
-  showFilters.value = !showFilters.value
-}
-
-const triggerSearch = () => {
-  /* no-op: kept for UX consistency with other analytics tabs */
+  selectedTaskFilter.value = ALL_TASKS
+  selectedSignalFilter.value = ALL_SIGNALS
+  selectedUserFilter.value = ALL_USERS
 }
 
 const sentimentOptions = ['Positive', 'Neutral', 'Negative']
-const signalFilterOptions = ['All Signals', 'Facial', 'Text']
-const userFilterOptions = computed(() => {
-  const users = Object.values(visibleUserAnswers.value)
-    .map((session, index) => {
-      const label =
-        session.fullName ||
-        session.email ||
-        session.userDocId ||
-        `User ${index + 1}`
-      return label
-    })
-    .filter(Boolean)
-
-  return ['All Users', ...new Set(users)]
-})
-
-const sentimentChartColors = ['#22C55E', '#0EA5E9', '#EF4444']
-
-const facialSentimentCounts = {
-  Positive: 32,
-  Neutral: 51,
-  Negative: 17,
-}
-
-const textSentimentCounts = {
-  Positive: 58,
-  Neutral: 27,
-  Negative: 15,
-}
-
-const criticalTaskIndex = 3
-
-const summaryHighlights = computed(() => [
-  {
-    title: 'Overall Sentiment',
-    value: 'Positive',
-    metric: '68%',
-    color: 'success',
-    icon: 'mdi-chart-line',
-    progress: 68,
-    valueClass: 'text-success',
-    metricClass: 'text-success',
-    description: 'Combined facial and transcript sentiment across the session.',
-  },
-  {
-    title: 'Facial Sentiment',
-    value: 'Neutral',
-    metric: '52%',
-    color: 'info',
-    icon: 'mdi-emoticon-neutral-outline',
-    progress: 52,
-    valueClass: 'text-info',
-    metricClass: 'text-info',
-    description: 'Most common facial expression pattern across recorded tasks.',
-  },
-  {
-    title: 'Text Sentiment',
-    value: 'Positive',
-    metric: '64%',
-    color: 'success',
-    icon: 'mdi-text-box-check-outline',
-    progress: 64,
-    valueClass: 'text-success',
-    metricClass: 'text-success',
-    description: 'Transcript sentiment trend across participant comments.',
-  },
-  {
-    title: 'Warning',
-    value: `Task ${Math.min(criticalTaskIndex + 1, recordingTasks.value.length || criticalTaskIndex + 1)}`,
-    metric: '41%',
-    color: 'warning',
-    icon: 'mdi-alert-circle-outline',
-    progress: 41,
-    valueClass: 'text-warning-darken-2',
-    metricClass: 'text-error',
-    description: 'Task with the highest concentration of negative signals.',
-  },
+const sentimentOptionLabels = computed(() => ({
+  Positive: t('analytics.sentiment.positive'),
+  Neutral: t('analytics.sentiment.neutral'),
+  Negative: t('analytics.sentiment.negative'),
+}))
+const signalFilterOptions = computed(() => [
+  { title: t('analytics.sentiment.allSignals'), value: ALL_SIGNALS },
+  { title: t('analytics.sentiment.facial'), value: 'facial' },
+  { title: t('analytics.sentiment.text'), value: 'text' },
 ])
+const sentimentChartColors = ['#22C55E', '#94A3B8', '#EF4444']
 
-const fallbackTaskNames = [
-  'Find Product',
-  'View Product',
-  'Add to Cart',
-  'Checkout',
-]
-
-const recordingTasks = computed(() => {
-  const tasks = Array.isArray(props.taskDefinitions)
+const recordingTaskRows = computed(() => {
+  const sourceTasks = Array.isArray(props.taskDefinitions)
     ? props.taskDefinitions
     : []
 
-  const filteredTasks = tasks
-    .map((task, index) => ({
-      ...task,
-      originalIndex: index,
+  return sourceTasks
+    .map((task, index) => ({ task, index }))
+    .filter(({ task }) => Boolean(task?.hasAudioRecord || task?.hasCamRecord))
+    .map(({ task, index }) => ({
+      taskId: String(index),
+      taskNumber: index + 1,
+      taskName:
+        task?.taskName ||
+        task?.name ||
+        t('analytics.sentiment.taskNumber', { number: index + 1 }),
+      analyticsKey: toTaskAnalyticsKey(index),
     }))
-    .filter((task) => Boolean(task?.hasAudioRecord || task?.hasCamRecord))
-
-  if (filteredTasks.length) {
-    return filteredTasks
-  }
-
-  if (tasks.length) {
-    return []
-  }
-
-  return fallbackTaskNames.map((taskName, index) => ({
-    taskName,
-    originalIndex: index,
-    hasAudioRecord: true,
-    hasCamRecord: true,
-  }))
-})
-
-const sentimentByTask = computed(() => {
-  const templates = [
-    {
-      facialPositive: 64,
-      facialNegative: 18,
-      textPositive: 78,
-      textNegative: 10,
-    },
-    {
-      facialPositive: 56,
-      facialNegative: 20,
-      textPositive: 66,
-      textNegative: 14,
-    },
-    {
-      facialPositive: 44,
-      facialNegative: 26,
-      textPositive: 58,
-      textNegative: 18,
-    },
-    {
-      facialPositive: 31,
-      facialNegative: 41,
-      textPositive: 34,
-      textNegative: 37,
-    },
-  ]
-
-  return recordingTasks.value.map((task, index) => ({
-    number: task.originalIndex + 1,
-    name: task?.taskName || task?.name || `Task ${task.originalIndex + 1}`,
-    task: `Task ${task.originalIndex + 1}`,
-    ...templates[index % templates.length],
-  }))
 })
 
 const taskFilterOptions = computed(() => [
-  'All Tasks',
-  ...sentimentByTask.value.map((task) => `Task ${task.number}`),
+  { title: t('analytics.sentiment.allTasks'), value: ALL_TASKS },
+  ...recordingTaskRows.value.map((task) => ({
+    title: t('analytics.sentiment.taskNumberName', {
+      number: task.taskNumber,
+      name: task.taskName,
+    }),
+    value: task.taskId,
+  })),
 ])
+
+const userFilterOptions = computed(() => {
+  const options = [
+    { title: t('analytics.sentiment.allUsers'), value: ALL_USERS },
+  ]
+
+  for (const [userDocId, session] of Object.entries(visibleUserAnswers.value)) {
+    const title =
+      session?.fullName ||
+      session?.email ||
+      session?.userDocId ||
+      userDocId ||
+      t('analytics.sentiment.userFallback')
+    options.push({ title, value: String(userDocId) })
+  }
+
+  return options
+})
+
+const userSentimentPointers = computed(() => {
+  const pointers = []
+
+  for (const [userDocId, session] of Object.entries(visibleUserAnswers.value)) {
+    const sessionTasks = session?.tasks || {}
+
+    for (const [taskId, taskAnswer] of Object.entries(sessionTasks)) {
+      const sentimentDocId = taskAnswer?.sentimentDocId
+      if (!sentimentDocId) continue
+
+      pointers.push({
+        userDocId: String(userDocId),
+        taskId: String(taskId),
+        sentimentDocId: String(sentimentDocId),
+      })
+    }
+  }
+
+  return pointers
+})
+
+const userScopedAnalytics = computed(() => {
+  if (selectedUserFilter.value === ALL_USERS) return null
+  return aggregateSentimentContributions(userSentimentDocs.value)
+})
+
+const soleVisibleUserId = computed(() => {
+  const ids = Object.keys(visibleUserAnswers.value)
+  return ids.length === 1 ? String(ids[0]) : null
+})
+
+const usesAggregatedForSelectedUser = computed(
+  () =>
+    Boolean(soleVisibleUserId.value) &&
+    String(selectedUserFilter.value) === soleVisibleUserId.value,
+)
+
+const activeAnalytics = computed(() => {
+  if (
+    selectedUserFilter.value === ALL_USERS ||
+    usesAggregatedForSelectedUser.value
+  ) {
+    return aggregatedAnalytics.value
+  }
+  return userScopedAnalytics.value
+})
+
+const activeSlice = computed(() => {
+  const analytics = activeAnalytics.value
+  if (!analytics) return emptySignalSlice()
+
+  if (selectedTaskFilter.value !== ALL_TASKS) {
+    const key = toTaskAnalyticsKey(selectedTaskFilter.value)
+    return analytics.tasks?.[key] || emptySignalSlice()
+  }
+
+  return analytics.general || emptySignalSlice()
+})
+
+const overallBucket = computed(() => {
+  if (selectedSignalFilter.value === 'facial') {
+    return activeSlice.value.bySignal.facial
+  }
+  if (selectedSignalFilter.value === 'text') {
+    return activeSlice.value.bySignal.text
+  }
+  return activeSlice.value.combined
+})
+
+const hasAnalyticsData = computed(() => {
+  if (selectedSignalFilter.value === 'facial') {
+    return bucketHasData(activeSlice.value.bySignal.facial)
+  }
+  if (selectedSignalFilter.value === 'text') {
+    return bucketHasData(activeSlice.value.bySignal.text)
+  }
+  return sliceHasData(activeSlice.value)
+})
+
+const formatDominant = (bucket) => {
+  const dominant = bucket?.dominant
+  if (!dominant) return '—'
+  const key = String(dominant).toLowerCase()
+  if (key === 'positive' || key === 'neutral' || key === 'negative') {
+    return t(`analytics.sentiment.${key}`)
+  }
+  return dominant
+}
+
+const formatPercent = (bucket) => {
+  const dominant = bucket?.dominant
+  if (!dominant) return '0%'
+  return `${Number(bucket[dominant]) || 0}%`
+}
+
+const highlightColorClass = (colorName) => {
+  if (colorName === 'success') return 'text-success'
+  if (colorName === 'error') return 'text-error'
+  if (colorName === 'info') return 'text-info'
+  if (colorName === 'warning') return 'text-warning-darken-2'
+  return 'text-medium-emphasis'
+}
+
+const taskBucketSource = computed(() => activeAnalytics.value?.tasks || {})
+
+const warningTask = computed(() => {
+  const buckets = taskBucketSource.value
+  let worst = null
+
+  for (const task of recordingTaskRows.value) {
+    const slice = buckets[task.analyticsKey] || emptySignalSlice()
+    const bucket =
+      selectedSignalFilter.value === 'facial'
+        ? slice.bySignal.facial
+        : selectedSignalFilter.value === 'text'
+          ? slice.bySignal.text
+          : slice.combined
+
+    if (!bucket?.sampleCount) continue
+
+    const negative = Number(bucket.Negative) || 0
+    if (negative <= 0) continue
+    if (!worst || negative > worst.negative) {
+      worst = { task, negative, bucket }
+    }
+  }
+
+  return worst
+})
+
+const overallDescription = computed(() => {
+  if (selectedSignalFilter.value === 'facial') {
+    return t('analytics.sentiment.overallFacialDescription')
+  }
+  if (selectedSignalFilter.value === 'text') {
+    return t('analytics.sentiment.overallTextDescription')
+  }
+  return t('analytics.sentiment.overallDescription')
+})
+
+const summaryHighlights = computed(() => {
+  const overall = overallBucket.value
+  const facial = activeSlice.value.bySignal.facial
+  const text = activeSlice.value.bySignal.text
+  const overallColor = dominantColor(overall.dominant)
+  const facialColor = dominantColor(facial.dominant)
+  const textColor = dominantColor(text.dominant)
+  const warning = warningTask.value
+
+  const cards = [
+    {
+      id: 'overall',
+      title: t('analytics.sentiment.overall'),
+      value: formatDominant(overall),
+      metric: formatPercent(overall),
+      color: overallColor,
+      icon: 'mdi-chart-line',
+      progress: Number(overall[overall.dominant]) || 0,
+      valueClass: highlightColorClass(overallColor),
+      metricClass: highlightColorClass(overallColor),
+      description: overallDescription.value,
+    },
+    {
+      id: 'facial',
+      title: t('analytics.sentiment.facialSentiment'),
+      value: formatDominant(facial),
+      metric: formatPercent(facial),
+      color: facialColor,
+      icon: 'mdi-emoticon-neutral-outline',
+      progress: Number(facial[facial.dominant]) || 0,
+      valueClass: highlightColorClass(facialColor),
+      metricClass: highlightColorClass(facialColor),
+      description: t('analytics.sentiment.facialDescription'),
+    },
+    {
+      id: 'text',
+      title: t('analytics.sentiment.textSentiment'),
+      value: formatDominant(text),
+      metric: formatPercent(text),
+      color: textColor,
+      icon: 'mdi-text-box-check-outline',
+      progress: Number(text[text.dominant]) || 0,
+      valueClass: highlightColorClass(textColor),
+      metricClass: highlightColorClass(textColor),
+      description: t('analytics.sentiment.textDescription'),
+    },
+    {
+      id: 'warning',
+      title: t('analytics.sentiment.warning'),
+      value: warning
+        ? t('analytics.sentiment.taskNumber', {
+            number: warning.task.taskNumber,
+          })
+        : '—',
+      metric: warning ? `${warning.negative}%` : '—',
+      color: warning ? 'warning' : 'grey',
+      icon: 'mdi-alert-circle-outline',
+      progress: warning?.negative || 0,
+      valueClass: warning ? 'text-warning-darken-2' : 'text-medium-emphasis',
+      metricClass: warning ? 'text-error' : 'text-medium-emphasis',
+      description: t('analytics.sentiment.warningDescription'),
+    },
+  ]
+
+  if (selectedSignalFilter.value === 'facial') {
+    return cards.filter((card) => card.id !== 'text')
+  }
+  if (selectedSignalFilter.value === 'text') {
+    return cards.filter((card) => card.id !== 'facial')
+  }
+  return cards
+})
+
+const summaryColMd = computed(() => {
+  const count = summaryHighlights.value.length
+  if (count >= 4) return 3
+  if (count === 3) return 4
+  return 6
+})
+
+const facialSentimentCounts = computed(() =>
+  bucketToCounts(activeSlice.value.bySignal.facial),
+)
+
+const textSentimentCounts = computed(() =>
+  bucketToCounts(activeSlice.value.bySignal.text),
+)
+
+const hasFacialPieData = computed(() =>
+  bucketHasData(activeSlice.value.bySignal.facial),
+)
+
+const hasTextPieData = computed(() =>
+  bucketHasData(activeSlice.value.bySignal.text),
+)
+
+const sentimentByTask = computed(() => {
+  const buckets = taskBucketSource.value
+
+  return recordingTaskRows.value.map((task) => {
+    const slice = buckets[task.analyticsKey] || emptySignalSlice()
+    const facial = slice.bySignal.facial
+    const text = slice.bySignal.text
+
+    return {
+      number: task.taskNumber,
+      name: task.taskName,
+      taskId: task.taskId,
+      task: `Task ${task.taskNumber}`,
+      facialPositive: Number(facial.Positive) || 0,
+      facialNeutral: Number(facial.Neutral) || 0,
+      facialNegative: Number(facial.Negative) || 0,
+      textPositive: Number(text.Positive) || 0,
+      textNeutral: Number(text.Neutral) || 0,
+      textNegative: Number(text.Negative) || 0,
+      hasFacialData: bucketHasData(facial),
+      hasTextData: bucketHasData(text),
+    }
+  })
+})
 
 const filteredSentimentByTask = computed(() => {
   const term = searchTerm.value.trim().toLowerCase()
 
   return sentimentByTask.value.filter((task) => {
-    const matchesSearch =
-      !term ||
-      task.name.toLowerCase().includes(term) ||
-      `task ${task.number}`.toLowerCase().includes(term)
-
     const matchesTask =
-      selectedTaskFilter.value === 'All Tasks' ||
-      selectedTaskFilter.value === `Task ${task.number}`
+      selectedTaskFilter.value === ALL_TASKS ||
+      String(selectedTaskFilter.value) === String(task.taskId)
 
-    return matchesSearch && matchesTask
+    if (!matchesTask) return false
+
+    if (!term) return true
+
+    return (
+      task.name.toLowerCase().includes(term) ||
+      t('analytics.sentiment.taskNumber', { number: task.number })
+        .toLowerCase()
+        .includes(term)
+    )
   })
 })
 
-const taskSentimentHeaders = [
-  { title: 'Task', key: 'task', sortable: false },
-  { title: 'Facial', key: 'facial', sortable: false },
-  { title: 'Text', key: 'text', sortable: false },
-]
-
-const visibleTaskSentimentHeaders = computed(() => {
-  if (selectedSignalFilter.value === 'Facial') {
-    return taskSentimentHeaders.filter((header) => header.key !== 'text')
+const emptyDashboardMessage = computed(() => {
+  if (recordingTaskRows.value.length === 0) {
+    return t('analytics.sentiment.emptyNoRecordingTasks')
   }
-
-  if (selectedSignalFilter.value === 'Text') {
-    return taskSentimentHeaders.filter((header) => header.key !== 'facial')
+  if (hasActiveFilters.value) {
+    return t('analytics.sentiment.emptyNoAnalyticsForFilters')
   }
-
-  return taskSentimentHeaders
+  return t('analytics.sentiment.emptyAnalytics')
 })
 
-const showFacialSignal = computed(() => selectedSignalFilter.value !== 'Text')
-const showTextSignal = computed(() => selectedSignalFilter.value !== 'Facial')
+const emptyTaskTableMessage = computed(() => {
+  if (recordingTaskRows.value.length === 0) {
+    return t('analytics.sentiment.emptyNoRecordingTasks')
+  }
+  if (!hasAnalyticsData.value) {
+    return t('analytics.sentiment.emptyNoAnalyticsForFilters')
+  }
+  return t('analytics.sentiment.emptyNoMatchingTasks')
+})
+
+const taskSentimentHeaders = computed(() => [
+  { title: t('analytics.sentiment.task'), key: 'task', sortable: false },
+  { title: t('analytics.sentiment.facial'), key: 'facial', sortable: false },
+  { title: t('analytics.sentiment.text'), key: 'text', sortable: false },
+])
+
+const visibleTaskSentimentHeaders = computed(() => {
+  if (selectedSignalFilter.value === 'facial') {
+    return taskSentimentHeaders.value.filter((header) => header.key !== 'text')
+  }
+
+  if (selectedSignalFilter.value === 'text') {
+    return taskSentimentHeaders.value.filter(
+      (header) => header.key !== 'facial',
+    )
+  }
+
+  return taskSentimentHeaders.value
+})
+
+const showFacialSignal = computed(
+  () => selectedSignalFilter.value !== 'text',
+)
+const showTextSignal = computed(
+  () => selectedSignalFilter.value !== 'facial',
+)
 const showSingleSignal = computed(
   () =>
-    selectedSignalFilter.value === 'Facial' ||
-    selectedSignalFilter.value === 'Text',
+    selectedSignalFilter.value === 'facial' ||
+    selectedSignalFilter.value === 'text',
 )
+
+const loadAggregatedAnalytics = async () => {
+  if (!answersDocId.value) {
+    aggregatedAnalytics.value = null
+    return
+  }
+
+  loading.value = true
+  loadError.value = null
+
+  try {
+    aggregatedAnalytics.value = await analyticsController.getByAnswersDocId(
+      answersDocId.value,
+    )
+  } catch (error) {
+    console.error('Failed to load sentiment analytics:', error)
+    loadError.value = t('analytics.sentiment.loadError')
+    aggregatedAnalytics.value = null
+  } finally {
+    loading.value = false
+  }
+}
+
+const loadUserSentimentDocs = async (userDocId) => {
+  const requestToken = ++userSentimentRequestToken
+
+  if (!userDocId || userDocId === ALL_USERS) {
+    if (requestToken !== userSentimentRequestToken) return
+    userSentimentDocs.value = []
+    userMetricsLoading.value = false
+    return
+  }
+
+  if (
+    soleVisibleUserId.value &&
+    String(userDocId) === soleVisibleUserId.value
+  ) {
+    if (requestToken !== userSentimentRequestToken) return
+    userSentimentDocs.value = []
+    userMetricsLoading.value = false
+    return
+  }
+
+  const pointers = userSentimentPointers.value.filter(
+    (pointer) => pointer.userDocId === String(userDocId),
+  )
+
+  userMetricsLoading.value = true
+  try {
+    let docs = []
+    if (answersDocId.value) {
+      try {
+        docs = await analyticsController.getByAnswersDocIdAndUser(
+          answersDocId.value,
+          userDocId,
+        )
+      } catch (error) {
+        console.error('Failed to query user sentiment documents:', error)
+      }
+    }
+
+    if (docs.length === 0 && pointers.length > 0) {
+      const fetched = await analyticsController.getByIds(
+        pointers.map((pointer) => pointer.sentimentDocId),
+      )
+      const byId = Object.fromEntries(fetched.map((item) => [item.id, item]))
+      docs = pointers
+        .map((pointer) => {
+          const item = byId[pointer.sentimentDocId]
+          return {
+            id: pointer.sentimentDocId,
+            userDocId: pointer.userDocId,
+            taskId: pointer.taskId,
+            facial: item?.facial ?? null,
+            text: item?.text ?? null,
+          }
+        })
+        .filter((item) => item.facial || item.text)
+    }
+
+    if (requestToken !== userSentimentRequestToken) return
+    userSentimentDocs.value = docs
+  } catch (error) {
+    if (requestToken !== userSentimentRequestToken) return
+    console.error('Failed to load user sentiment documents:', error)
+    loadError.value = t('analytics.sentiment.loadUserError')
+    userSentimentDocs.value = []
+  } finally {
+    if (requestToken === userSentimentRequestToken) {
+      userMetricsLoading.value = false
+    }
+  }
+}
+
+watch(answersDocId, async () => {
+  await loadAggregatedAnalytics()
+  if (selectedUserFilter.value !== ALL_USERS) {
+    await loadUserSentimentDocs(selectedUserFilter.value)
+  }
+})
+
+watch(selectedUserFilter, (userDocId) => {
+  loadUserSentimentDocs(userDocId)
+})
+
+onMounted(() => {
+  loadAggregatedAnalytics()
+})
 </script>
 
 <style scoped>
-.coming-soon-wrapper {
-  position: relative;
-}
-
-.coming-soon-badge {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 2;
-}
-
-.coming-soon-overlay {
-  position: relative;
-  opacity: 0.7;
-  pointer-events: none;
-}
-
-.coming-soon-overlay::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(248, 249, 250, 0.8);
-  backdrop-filter: blur(0.5px);
-  border-radius: 12px;
-  z-index: 1;
-}
-
 .summary-highlight-value {
   font-size: 1.55rem;
   font-weight: 700;
@@ -612,10 +895,6 @@ const showSingleSignal = computed(
   line-clamp: 2;
   -webkit-line-clamp: 2;
   overflow: hidden;
-}
-
-.sentiment-table-cell {
-  min-width: 220px;
 }
 
 .filter-label {
@@ -656,5 +935,17 @@ const showSingleSignal = computed(
   height: 40px;
   font-weight: 600;
   letter-spacing: 0.3px;
+}
+
+.analytics-empty-card {
+  border-radius: 12px;
+  border-style: dashed;
+  background: #f8fafc;
+}
+
+.analytics-disabled {
+  filter: grayscale(0.35);
+  pointer-events: none;
+  user-select: none;
 }
 </style>

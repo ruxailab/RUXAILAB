@@ -2,6 +2,7 @@ import { ref, computed, onUnmounted } from 'vue'
 import {
   ref as dbRef,
   onValue,
+  get,
   set,
   update,
   push,
@@ -19,15 +20,21 @@ export const SESSION_STATUS = {
 /**
  * Live-session state for a Focus Group, synced through Realtime Database.
  *
- * Namespaced under `focusGroupSessions/{studyId}` so it never collides with the
+ * Namespaced under `focusGroupSessions/{roomId}` so it never collides with the
  * `rooms/{studyId}` tree owned by the video-call components. Encapsulates the
  * facilitator controls (start / advance topic / end), participant presence, and
  * per-topic response capture behind a small reactive surface.
  *
- * @param {string} studyId - Study document id, used as the session room id.
+ * @param {string} roomId - The live room id: the study id alone for the legacy
+ *   open room, or `${studyId}-${sessionId}` for a scheduled session's own
+ *   isolated room.
  */
-export function useFocusGroupSession(studyId) {
-  const rootPath = `focusGroupSessions/${studyId}`
+export function useFocusGroupSession(roomId) {
+  // `roomId` isolates the RTDB tree per live room: `${studyId}-${sessionId}` for
+  // a scheduled session (so concurrent sessions of the same study never share
+  // presence, chat, or breakout state) or just the study id for a legacy open
+  // room. It reuses the wildcard security rules, which key off this level.
+  const rootPath = `focusGroupSessions/${roomId}`
   const rootRef = dbRef(database, rootPath)
   // Deliberately its OWN top-level RTDB path, not nested under rootPath.
   // The rest of the session is read through one onValue(rootRef) listener,
@@ -35,7 +42,7 @@ export function useFocusGroupSession(studyId) {
   // .read rule on a nested child can't be more restrictive than its
   // parent's. Keeping the backroom out of that tree entirely is what lets
   // its rules actually deny a participant's read, not just its write.
-  const backroomPath = `focusGroupBackroom/${studyId}`
+  const backroomPath = `focusGroupBackroom/${roomId}`
   const backroomRef = dbRef(database, backroomPath)
 
   const snapshot = ref(null)
@@ -53,6 +60,12 @@ export function useFocusGroupSession(studyId) {
   const facilitatorId = computed(() => snapshot.value?.facilitatorId ?? null)
   const sessionId = computed(() => snapshot.value?.sessionId ?? null)
   const startedAt = computed(() => snapshot.value?.startedAt ?? null)
+  // The lobby/session room can be opened before the moderated discussion
+  // begins. This timestamp is deliberately separate from `startedAt` so the
+  // elapsed discussion clock starts only when the facilitator presses Start.
+  const focusGroupStartedAt = computed(
+    () => snapshot.value?.focusGroupStartedAt ?? null,
+  )
   const endedAt = computed(() => snapshot.value?.endedAt ?? null)
   const participants = computed(() => snapshot.value?.participants ?? {})
   // Per-topic discussion messages: { [topicId]: { [messageId]: { userId, name, text, timestamp } } }
@@ -124,6 +137,14 @@ export function useFocusGroupSession(studyId) {
       sessionId: `session-${Date.now()}`,
       startedAt: serverTimestamp(),
       endedAt: null,
+      lastUpdate: serverTimestamp(),
+    })
+  }
+
+  async function startFocusGroup() {
+    if (focusGroupStartedAt.value) return
+    await update(rootRef, {
+      focusGroupStartedAt: serverTimestamp(),
       lastUpdate: serverTimestamp(),
     })
   }
@@ -238,6 +259,12 @@ export function useFocusGroupSession(studyId) {
     await set(notesRef, Array.isArray(noteList) ? noteList : [])
   }
 
+  async function getObserverNotes() {
+    const notesRef = dbRef(database, `${rootPath}/notes`)
+    const snap = await get(notesRef)
+    return snap.val() || {}
+  }
+
   // --- Topic timer (facilitator-controlled countdown) ---
   const timerRef = () => dbRef(database, `${rootPath}/timer`)
 
@@ -277,13 +304,23 @@ export function useFocusGroupSession(studyId) {
   /**
    * Append a message to the current topic's discussion stream. Append-only, so
    * participants can post multiple times and the feed reads chronologically.
+   *
+   * Tags the message with whichever prompt is currently surfaced for this
+   * topic (if any), read from this same session's live `currentPrompt` —
+   * so a topic with several prompts can later be reviewed prompt-by-prompt
+   * instead of as one undifferentiated list. A message sent between prompts
+   * (or before the facilitator has asked one) is left untagged.
    */
   async function sendMessage({ topicId, userId, name, text }) {
     const listRef = dbRef(database, `${rootPath}/messages/${topicId}`)
+    const activePrompt = currentPrompt.value
+    const promptText =
+      activePrompt?.topicId === topicId ? (activePrompt.text ?? null) : null
     await push(listRef, {
       userId: userId ?? '',
       name: name ?? '',
       text: text ?? '',
+      promptText,
       timestamp: serverTimestamp(),
     })
   }
@@ -316,6 +353,20 @@ export function useFocusGroupSession(studyId) {
   }
 
   /**
+   * Raise or clear a single group's "call the facilitator" flag. Written as a
+   * targeted deep update (not the whole breakout object) so a participant's
+   * call never races the facilitator's group edits, and pass `help: null` to
+   * clear it once a facilitator has responded.
+   */
+  async function setBreakoutHelp({ groupId, help }) {
+    if (!groupId) return
+    await update(rootRef, {
+      [`breakout/groups/${groupId}/help`]: help ?? null,
+      lastUpdate: serverTimestamp(),
+    })
+  }
+
+  /**
    * Snapshot of the finished session, shaped for Firestore persistence.
    */
   function toSessionRecord() {
@@ -323,10 +374,12 @@ export function useFocusGroupSession(studyId) {
       sessionId: sessionId.value,
       facilitatorId: facilitatorId.value,
       startedAt: startedAt.value,
+      focusGroupStartedAt: focusGroupStartedAt.value,
       endedAt: endedAt.value,
       participants: participants.value,
       messages: messages.value,
       consents: consents.value,
+      notes: notes.value,
     }
   }
 
@@ -342,6 +395,7 @@ export function useFocusGroupSession(studyId) {
     facilitatorId,
     sessionId,
     startedAt,
+    focusGroupStartedAt,
     endedAt,
     participants,
     messages,
@@ -362,6 +416,7 @@ export function useFocusGroupSession(studyId) {
     stopBackroom,
     // actions
     startSession,
+    startFocusGroup,
     goToTopic,
     endSession,
     joinPresence,
@@ -372,12 +427,14 @@ export function useFocusGroupSession(studyId) {
     presentStimulus,
     clearStimulus,
     saveNotes,
+    getObserverNotes,
     playTimer,
     pauseTimer,
     resetTimer,
     sendMessage,
     setBreakoutState,
     sendBackroomMessage,
+    setBreakoutHelp,
     toSessionRecord,
   }
 }

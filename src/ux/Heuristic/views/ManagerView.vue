@@ -63,6 +63,10 @@
           <v-col cols="12" md="6">
             <FinalReportStatus :test="test" />
           </v-col>
+
+          <v-col cols="12" md="6">
+            <HeuristicAgentsCard :test="test" />
+          </v-col>
         </template>
       </ManagerDashboardLayout>
     </ManagerView>
@@ -95,6 +99,7 @@ import StorageInfo from '@/ux/Heuristic/components/manager/StorageInfo.vue'
 import UsabilityResults from '@/ux/Heuristic/components/manager/UsabilityResults.vue'
 import FinalReportStatus from '@/ux/Heuristic/components/manager/FinalReportStatus.vue'
 import EvaluatorInfoCard from '@/ux/Heuristic/components/manager/EvaluatorInfoCard.vue'
+import HeuristicAgentsCard from '@/ux/Heuristic/ai-agents/components/HeuristicAgentsCard.vue'
 
 // Stores
 const store = useStore()
@@ -144,11 +149,19 @@ const bottomCards = computed(() => {
 
 const navigator = computed(() => {
   if (!test.value) return []
-  return buildStudyNavigator({
+  const items = buildStudyNavigator({
     study: test.value,
     user: user.value,
     type: 'heuristic',
   })
+
+  items.push({
+    title: 'AI Agents',
+    icon: 'mdi-robot-outline',
+    path: `/heuristic/ai-agents/${test.value.id}`,
+  })
+
+  return items
 })
 
 // Methods para los componentes adicionales

@@ -12,6 +12,7 @@ import {
   hasStudyCapability,
   resolveStudyAccess,
 } from '@/shared/utils/studyAccessPolicy'
+import { buildSignInPath } from '@/shared/utils/authRedirect'
 
 const C = STUDY_CAPABILITY
 
@@ -26,15 +27,20 @@ export function getStudyRouteBase(study) {
     return 'userTest/moderated'
   }
   if (studyType === STUDY_TYPES.USER) return 'userTest/unmoderated'
+  if (studyType === STUDY_TYPES.FOCUS_GROUP) return 'focusGroup'
 
   return ''
 }
+
+const isFocusGroupStudy = (study) =>
+  normalizeStudyType(study?.testType) === STUDY_TYPES.FOCUS_GROUP
 
 export function getTestViewAccessRedirect({
   study,
   user,
   token,
   invitation = null,
+  redirectTo = '',
 }) {
   if (!study) return '/admin'
 
@@ -46,6 +52,16 @@ export function getTestViewAccessRedirect({
 
   const isAnonymousInvitation =
     invitation?.requiredLogin === false && invitation?.studyId == study?.id
+
+  /*
+   * Signing in is what identifies a participant, and a study being public only
+   * says who may answer it, not that answers can be anonymous. An invitation
+   * that waives login is the one way in without an account; everybody else
+   * signs in first and is brought back to the study afterwards.
+   */
+  if (!user && !isAnonymousInvitation) {
+    return buildSignInPath(redirectTo)
+  }
 
   if (isModeratedUserStudy && !token && !study?.isPublic) {
     return getStudyFallbackPath(study, user, routeBase)
@@ -81,6 +97,9 @@ export function getCommunityStudyDestination({ study, user }) {
     if (study.testType === STUDY_TYPES.HEURISTIC) {
       return { name: 'HeuristicManagerView', params: { id: studyId } }
     }
+    if (study.testType === STUDY_TYPES.FOCUS_GROUP) {
+      return { name: 'FocusGroupManagerView', params: { id: studyId } }
+    }
     if (
       study.testType === STUDY_TYPES.USER &&
       study.subType === USER_STUDY_SUBTYPES.UNMODERATED
@@ -93,6 +112,19 @@ export function getCommunityStudyDestination({ study, user }) {
     ) {
       return { name: 'UserModeratedManagerView', params: { id: studyId } }
     }
+  }
+
+  // A study-level Focus Group participant invite has no session id. Route to
+  // their personal scheduled-session list; actual session invitations already
+  // carry `/focusGroup/session/{id}?session={sessionId}` directly.
+  if (
+    isFocusGroupStudy(study) &&
+    hasStudyCapability(study, user, C.STUDY_ANSWER)
+  ) {
+    // A study-level participant invitation doesn't identify a scheduled
+    // session. Sending the user to the legacy room silently opens an empty
+    // live session; their assigned sessions are available from the dashboard.
+    return { name: 'Admin', query: { section: 'sessions' } }
   }
 
   if (study.isPublic || hasStudyCapability(study, user, C.STUDY_ANSWER)) {
@@ -132,6 +164,26 @@ export function getAcceptedInvitationDestination({ study, user }) {
   }
 }
 
+export function getInviteAcceptanceDestination({
+  study,
+  user,
+  membershipType = 'cooperator',
+}) {
+  if (membershipType === 'participant') {
+    if (normalizeStudyType(study?.testType) === STUDY_TYPES.FOCUS_GROUP) {
+      // Only session-specific invitation links have a session id. A study
+      // participant invite must land somewhere useful without fabricating a
+      // legacy live-room URL.
+      return { name: 'Admin', query: { section: 'sessions' } }
+    }
+
+    // Preserve the existing participant handoff for other study types.
+    return { name: 'TestView', params: { id: study?.testDocId || study?.id } }
+  }
+
+  return getAcceptedInvitationDestination({ study, user })
+}
+
 const NAVIGATION_ITEMS = Object.freeze([
   {
     title: 'Dashboard',
@@ -154,6 +206,7 @@ const NAVIGATION_ITEMS = Object.freeze([
     capability: C.STUDY_ANSWER,
     path: ({ id, previewPath }) => previewPath ?? `/testview/${id}`,
     visible: (study) =>
+      !isFocusGroupStudy(study) &&
       !(
         normalizeStudyType(study?.testType) == STUDY_TYPES.USER &&
         study?.subType === USER_STUDY_SUBTYPES.MODERATED
@@ -164,6 +217,8 @@ const NAVIGATION_ITEMS = Object.freeze([
     group: 'evaluation',
     icon: ICONS.BOOK,
     capability: C.REPORTS_VIEW,
+    // No report view exists for Focus Group yet — hide until it does.
+    visible: (study) => !isFocusGroupStudy(study),
     path: ({ type, id }) => `/${type}/report/${id}`,
   },
   {
@@ -172,6 +227,15 @@ const NAVIGATION_ITEMS = Object.freeze([
     icon: ICONS.ORDER,
     capability: C.ANSWERS_VIEW,
     path: ({ type, id }) => `/${type}/answer/${id}`,
+  },
+  {
+    title: 'Logs',
+    group: 'administration',
+    icon: 'mdi-text-box-search-outline',
+    capability: C.LOGS_VIEW,
+    // Focus Group does not have a logs view yet.
+    visible: (study) => !isFocusGroupStudy(study),
+    path: ({ type, id }) => `/${type}/logs/${id}`,
   },
   {
     title: 'Cooperators',
@@ -192,9 +256,13 @@ const NAVIGATION_ITEMS = Object.freeze([
     group: 'people',
     icon: ICONS.MONITOR_DASHBOARD,
     capability: C.SESSIONS_MANAGE,
+    // Moderated user tests pair one facilitator with one participant per
+    // session; Focus Group sessions gather a facilitator with many. Both
+    // define who takes part through the same sessions surface.
     visible: (study) =>
-      normalizeStudyType(study?.testType) === STUDY_TYPES.USER &&
-      study?.subType === USER_STUDY_SUBTYPES.MODERATED,
+      (normalizeStudyType(study?.testType) === STUDY_TYPES.USER &&
+        study?.subType === USER_STUDY_SUBTYPES.MODERATED) ||
+      isFocusGroupStudy(study),
     path: ({ type, id }) => `/${type}/sessions/${id}`,
   },
   {

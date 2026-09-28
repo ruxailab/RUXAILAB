@@ -1,4 +1,5 @@
 import fs from 'fs'
+import fetch from 'node-fetch'
 import {
   assertFails,
   assertSucceeds,
@@ -37,6 +38,7 @@ const study = (overrides = {}) => ({
 const context = (uid) => testEnv.authenticatedContext(uid)
 
 beforeAll(async () => {
+  global.fetch = fetch
   testEnv = await initializeTestEnvironment({
     projectId,
     firestore: { rules: fs.readFileSync('firestore.rules', 'utf8') },

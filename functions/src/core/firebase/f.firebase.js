@@ -54,8 +54,8 @@ function onCall({ handler, options = {}, middlewares = [] }) {
   return firebaseFunctions.https.onCall(runtimeOptions, composed)
 }
 
-function onTrigger({ path, event, handler }) {
-  const options = { region: getRegion() }
+function onTrigger({ path, event, handler, opts = {} }) {
+  const options = { region: getRegion(), ...opts }
 
   const firestoreEvents = {
     created: (p, h) =>

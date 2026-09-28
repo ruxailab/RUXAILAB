@@ -61,6 +61,11 @@
               <!-- Slider with labels -->
               <v-slider
                 v-model="localSart[dimension.key]"
+                @start="emitSlider('start', dimension.key, $event)"
+                @update:model-value="emitSlider('change', dimension.key, $event)"
+                @end="emitSlider('end', dimension.key, $event)"
+                @focus="emitSlider('focus', dimension.key)"
+                @blur="emitSlider('blur', dimension.key)"
                 :min="1"
                 :max="7"
                 :step="1"
@@ -145,6 +150,11 @@
               <!-- Slider with labels -->
               <v-slider
                 v-model="localSart[dimension.key]"
+                @start="emitSlider('start', dimension.key, $event)"
+                @update:model-value="emitSlider('change', dimension.key, $event)"
+                @end="emitSlider('end', dimension.key, $event)"
+                @focus="emitSlider('focus', dimension.key)"
+                @blur="emitSlider('blur', dimension.key)"
                 :min="1"
                 :max="7"
                 :step="1"
@@ -229,6 +239,11 @@
               <!-- Slider with labels -->
               <v-slider
                 v-model="localSart[dimension.key]"
+                @start="emitSlider('start', dimension.key, $event)"
+                @update:model-value="emitSlider('change', dimension.key, $event)"
+                @end="emitSlider('end', dimension.key, $event)"
+                @focus="emitSlider('focus', dimension.key)"
+                @blur="emitSlider('blur', dimension.key)"
                 :min="1"
                 :max="7"
                 :step="1"
@@ -280,7 +295,15 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['update:sart', 'valid']);
+const emit = defineEmits([
+  'update:sart',
+  'valid',
+  'slider-start',
+  'slider-change',
+  'slider-end',
+  'slider-focus',
+  'slider-blur',
+]);
 
 // CORRECT 10D default values
 const defaultSart = {
@@ -386,6 +409,10 @@ const sartDimensions = {
     category: 'understanding'
   }
 };
+const emitSlider = (phase, itemRef, value = localSart[itemRef]) => {
+  emit(`slider-${phase}`, { itemRef, value });
+};
+
 
 // Computed properties for categorizing dimensions
 const demandDimensions = computed(() => {

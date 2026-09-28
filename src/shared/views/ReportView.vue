@@ -103,6 +103,9 @@
             <div>
               <div class="text-subtitle-1 font-weight-bold text-on-surface">
                 {{ item.fullName }}
+                <v-chip v-if="item.isAIAgent" color="primary" size="x-small" variant="tonal" class="ml-2">
+                  {{ $t('HeuristicsReport.labels.ai_agent') }}
+                </v-chip>
               </div>
               <div class="text-body-2 text-medium-emphasis">
                 {{ item.evaluator }}
@@ -224,6 +227,9 @@
                   class="text-subtitle-1 font-weight-bold text-on-surface text-truncate"
                 >
                   {{ item.fullName }}
+                  <v-chip v-if="item.isAIAgent" color="primary" size="x-small" variant="tonal" class="ml-1">
+                    {{ $t('HeuristicsReport.labels.ai_agent') }}
+                  </v-chip>
                 </div>
                 <div class="text-body-2 text-medium-emphasis text-truncate">
                   {{ item.evaluator }}
@@ -321,7 +327,7 @@
                 <div
                   class="text-caption font-weight-bold text-medium-emphasis mb-1"
                 >
-                  Total Time
+                  {{ $t('HeuristicsReport.headers.total_time') }}
                 </div>
                 <div class="d-flex align-center">
                   <v-icon
@@ -457,7 +463,7 @@ const allHeaders = computed(() => [
   { title: t('HeuristicsReport.headers.evaluator'), key: 'evaluator' },
   { title: t('HeuristicsReport.headers.last_update'), key: 'lastUpdate' },
   { title: t('HeuristicsReport.headers.progress'), key: 'progress' },
-  { title: 'Total Time', key: 'totalTime' },
+  { title: t('HeuristicsReport.headers.total_time'), key: 'totalTime' },
   { title: t('HeuristicsReport.headers.status'), key: 'status' },
   { title: t('common.hidden'), key: 'hidden' },
   {
@@ -488,6 +494,9 @@ const checkIfIsSubmitted = (status) =>
 
 const getCooperatorEmail = (userDocId) => {
   if (userDocId === user.value.id) return 'You'
+  if (userDocId?.startsWith('ai-agent:')) {
+    return t('HeuristicsReport.labels.ai_agent')
+  }
   const cooperators = test.value.cooperators || []
   const staffFound = cooperators.find((c) => c?.userDocId === userDocId)
   if (staffFound) return staffFound?.email || 'Unknown'
@@ -521,6 +530,10 @@ const getReportTotalTime = (reportData, type) => {
   if (!reportData) return '00:00'
 
   if (type === STUDY_TYPES.HEURISTIC) {
+    const isAIAgent = reportData.userDocId?.startsWith('ai-agent:') || false
+    if (isAIAgent && reportData.evaluationTimeMs != null) {
+      return formatTimeSpentFromMs(Number(reportData.evaluationTimeMs))
+    }
     const heuristics = reportData.heuristicQuestions || []
     const totalMs = heuristics.reduce(
       (acc, heuristic) => acc + parseTimeSpentToMs(heuristic?.timeSpent),
@@ -559,14 +572,18 @@ const reports = computed(() => {
   const type = doc.type
   const raw = getAnswersByType(doc, type)
   return Object.values(raw).map((r) => {
-    const anonymous = isAnonymousParticipant(r.userDocId)
+    const isAIAgent = r.userDocId?.startsWith('ai-agent:') || false
+    const anonymous = !isAIAgent && isAnonymousParticipant(r.userDocId)
 
     return {
       id: r.userDocId,
-      fullName: anonymous
+      fullName: isAIAgent
+        ? t('HeuristicsReport.labels.ai_agent')
+        : anonymous
         ? t('titles.anonymous')
         : r.fullName || t('HeuristicsReport.headers.evaluator'),
       evaluator: anonymous ? r.userDocId : getCooperatorEmail(r.userDocId),
+      isAIAgent,
       userDocId: r.userDocId,
       progress: parseFloat(r.progress || 0).toFixed(2),
       totalTime: getReportTotalTime(r, type),
