@@ -11,16 +11,25 @@ const ROLE = Object.freeze({
   USER: 5,
 })
 
+// Focus Group uses the Heuristic/CardSorting role shape (EVALUATOR for
+// attendees), not the USER-study one — its participants are invited as
+// EVALUATOR(1), matching the frontend's FOCUS_GROUP_ROLES/FOCUS_GROUP_POLICY
+// in studyAccessPolicy.js. MANAGER is deliberately left out here too: the
+// frontend has no capability policy for a Focus Group manager yet, so
+// advertising it as assignable would let an invite succeed server-side while
+// leaving that person with a dashboard that immediately redirects them away.
 const SUPPORTED_ROLES = Object.freeze({
   USER: [ROLE.ADMIN, ROLE.MANAGER, ROLE.USER, ROLE.OBSERVATOR],
   HEURISTIC: [ROLE.ADMIN, ROLE.MANAGER, ROLE.EVALUATOR, ROLE.GUEST],
   CARD_SORTING: [ROLE.ADMIN, ROLE.MANAGER, ROLE.EVALUATOR, ROLE.GUEST],
+  FOCUS_GROUP: [ROLE.ADMIN, ROLE.EVALUATOR, ROLE.OBSERVATOR],
 })
 
 const MANAGER_ROLES = Object.freeze({
   USER: [ROLE.USER, ROLE.OBSERVATOR],
   HEURISTIC: [ROLE.EVALUATOR, ROLE.GUEST],
   CARD_SORTING: [ROLE.EVALUATOR, ROLE.GUEST],
+  FOCUS_GROUP: [ROLE.EVALUATOR, ROLE.OBSERVATOR],
 })
 
 const normalizeStudyType = (type) => {
@@ -65,7 +74,10 @@ export async function resolveInviteTargetUserId({
   }
 }
 
-const findMatchingPendingInvitation = async (study, { uid, email, token }) => {
+export const findMatchingPendingInvitation = async (
+  study,
+  { uid, email, token },
+) => {
   const matches = (membership) => {
     if (membership?.status === INVITE_STATUS.REJECTED) return false
     if (InviteUtils.isAccepted(membership)) return false
@@ -367,6 +379,23 @@ export const manageStudyMembership = functions.onCall({
         |--------------------------------------------------------------------------
         */
         if (action === 'accept') {
+          const acceptedDoc = participantsSnapshot.docs.find((doc) => {
+            const participant = doc.data()
+
+            return (
+              InviteUtils.isAccepted(participant) &&
+              (participant?.userDocId === actorId ||
+                sameEmail(participant?.email, actorEmail))
+            )
+          })
+
+          if (acceptedDoc) {
+            return {
+              status: 'accepted',
+              participant: { id: acceptedDoc.id, ...acceptedDoc.data() },
+            }
+          }
+
           const targetDoc = participantsSnapshot.docs.find((doc) => {
             const participant = doc.data()
 
@@ -736,6 +765,20 @@ export const manageStudyMembership = functions.onCall({
       |--------------------------------------------------------------------------
       */
       if (action === 'accept') {
+        const acceptedMembership = cooperators.find(
+          (cooperator) =>
+            InviteUtils.isAccepted(cooperator) &&
+            (cooperator?.userDocId === actorId ||
+              sameEmail(cooperator?.email, actorEmail)),
+        )
+
+        if (acceptedMembership) {
+          return {
+            status: 'accepted',
+            cooperator: acceptedMembership,
+          }
+        }
+
         const index = cooperators.findIndex(
           (cooperator) =>
             !InviteUtils.isAccepted(cooperator) &&

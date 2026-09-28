@@ -227,6 +227,10 @@ function attachTileRef(tile, el) {
 }
 
 .fg-video-stage .video-stage {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 12px;
   flex: 1 1 auto;
   min-height: 0;
   max-height: none;
@@ -252,5 +256,89 @@ function attachTileRef(tile, el) {
   width: 100%;
   height: 100%;
   aspect-ratio: auto;
+}
+
+/* Pinned participant/screen share gets the flexible stage; the remaining
+   tiles form a scrollable filmstrip. These explicit flex constraints are
+   important in the fixed-height call shell: without them the video element's
+   intrinsic 4:3 size can overflow instead of shrinking with its container. */
+.fg-video-stage .spotlight-primary {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  align-items: stretch;
+}
+
+.fg-video-stage .spotlight-item,
+.fg-video-stage .spotlight-item .video-container {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  aspect-ratio: auto;
+}
+
+.fg-video-stage .videos-grid.videos-filmstrip {
+  flex: 0 0 clamp(140px, 22%, 240px);
+  width: auto;
+  height: 100%;
+  min-width: 0;
+  overflow: auto;
+  grid-template-columns: minmax(0, 1fr);
+  grid-auto-rows: minmax(96px, 1fr);
+  align-content: start;
+  justify-content: stretch;
+}
+
+.fg-video-stage .videos-filmstrip .video-wrapper {
+  min-width: 0;
+  min-height: 0;
+}
+
+.fg-video-stage .tile-clickable {
+  cursor: pointer;
+}
+
+.fg-video-stage .video-element {
+  object-fit: cover;
+}
+
+/* In prompt-presentation mode the call occupies a narrow right rail. Keep
+   the selected tile dominant within that rail and stack the other attendees
+   below it rather than squeezing a multi-column grid into a narrow width. */
+.fg-video-rail .video-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fg-video-rail .spotlight-primary {
+  flex: 0 0 min(42%, 280px);
+}
+
+.fg-video-rail .videos-grid:not(.videos-filmstrip) {
+  grid-template-columns: minmax(0, 1fr);
+  grid-auto-rows: minmax(100px, 1fr);
+  height: auto;
+  overflow: auto;
+}
+
+.fg-video-rail .videos-grid.videos-filmstrip {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  grid-auto-rows: minmax(96px, 1fr);
+}
+
+@media (max-width: 800px) {
+  .fg-video-stage .videos-grid.videos-filmstrip {
+    flex-basis: clamp(92px, 25vw, 160px);
+    grid-auto-rows: minmax(84px, 1fr);
+  }
+
+  .fg-video-rail .spotlight-primary {
+    flex-basis: 45%;
+  }
 }
 </style>

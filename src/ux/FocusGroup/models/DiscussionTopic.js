@@ -17,9 +17,17 @@ export default class DiscussionTopic {
     if (typeof crypto !== 'undefined' && crypto.randomUUID) {
       return `topic-${crypto.randomUUID()}`
     }
-    const array = new Uint32Array(2)
-    crypto.getRandomValues(array)
-    return `topic-${Date.now()}-${array[0].toString(36)}${array[1].toString(36)}`
+    if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+      const array = new Uint32Array(2)
+      crypto.getRandomValues(array)
+      return `topic-${Date.now()}-${array[0].toString(36)}${array[1].toString(36)}`
+    }
+    // No Web Crypto available (e.g. the Jest test environment). This id is
+    // never security-sensitive, only unique-per-guide, so a counter is a
+    // fine last resort and avoids reaching for a non-cryptographic PRNG.
+    DiscussionTopic.fallbackIdCounter =
+      (DiscussionTopic.fallbackIdCounter ?? 0) + 1
+    return `topic-${Date.now()}-${DiscussionTopic.fallbackIdCounter.toString(36)}`
   }
 
   toFirestore() {

@@ -187,22 +187,32 @@
           </v-card>
         </v-col>
 
-        <!-- Results & reports (coming soon) -->
+        <!-- Session answers -->
         <v-col cols="12" md="6">
-          <v-card
-            class="h-100 d-flex align-center justify-center"
-            variant="outlined"
-            style="min-height: 200px"
-          >
-            <div class="text-center text-grey-lighten-1 pa-4">
-              <v-icon size="48" class="mb-2">mdi-chart-box-outline</v-icon>
-              <p class="text-subtitle-2 mb-1">
-                {{ t('focusGroup.modules.reportsTitle') }}
+          <v-card class="h-100">
+            <v-card-title>
+              <v-icon start color="primary">mdi-chart-box-outline</v-icon>
+              {{ t('focusGroup.modules.reportsTitle') }}
+            </v-card-title>
+
+            <v-card-text>
+              <p class="text-body-2 text-medium-emphasis mb-0">
+                {{ t('focusGroup.modules.reportsDescription') }}
               </p>
-              <p class="text-body-2 mb-0">
-                {{ t('focusGroup.modules.reportsComingSoon') }}
-              </p>
-            </div>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer />
+              <v-btn
+                variant="text"
+                color="primary"
+                size="small"
+                @click="goToAnswers"
+              >
+                <v-icon start size="16">mdi-history</v-icon>
+                {{ t('focusGroup.modules.viewAnswers') }}
+              </v-btn>
+            </v-card-actions>
           </v-card>
         </v-col>
       </template>
@@ -214,7 +224,7 @@
 import ManagerView from '@/shared/views/template/ManagerView.vue'
 import ManagerDashboardLayout from '@/shared/components/manager/ManagerDashboardLayout.vue'
 import StudyOverview from '@/ux/FocusGroup/components/manager/StudyOverview.vue'
-import { ICONS } from '@/shared/constants/theme'
+import { buildStudyNavigator } from '@/shared/utils/studyNavigation'
 import { getStatusIcon } from '@/shared/utils/statusUtils'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import { computed, onMounted, watchEffect } from 'vue'
@@ -323,6 +333,7 @@ watchEffect(() => {
     const hasAccess =
       accessLevel.value === ACCESS_LEVEL.ADMIN ||
       accessLevel.value === ACCESS_LEVEL.EVALUATOR ||
+      accessLevel.value === ACCESS_LEVEL.OBSERVATOR ||
       accessLevel.value === ACCESS_LEVEL.GUEST
 
     if (!hasAccess || accessLevel.value === null) {
@@ -331,37 +342,16 @@ watchEffect(() => {
   }
 })
 
-// Trimmed navigator — only routes that exist in the module today.
-// Reports / Answers links are added as those views are built.
+// Grouped, capability-gated sidebar shared with the other study types, so the
+// facilitator sees Staff / Participants / Storage / Audit and observers see only
+// what their role allows — the items resolve to real Focus Group routes only.
 const navigator = computed(() => {
-  if (!test.value) return []
-  return [
-    {
-      title: 'Dashboard',
-      icon: ICONS.MANAGER,
-      path: `/focusGroup/dashboard/${route.params.id}`,
-    },
-    {
-      title: 'Test',
-      icon: ICONS.DOCUMENT_EDIT,
-      path: `/focusGroup/edit/${test.value.id}`,
-    },
-    {
-      title: 'Session',
-      icon: 'mdi-video-outline',
-      path: `/focusGroup/session/${test.value.id}`,
-    },
-    {
-      title: 'Cooperators',
-      icon: ICONS.ACCOUNT_GROUP,
-      path: `/focusGroup/cooperators/${test.value.id}`,
-    },
-    {
-      title: 'Settings',
-      icon: ICONS.COG,
-      path: `/focusGroup/settings/${test.value.id}`,
-    },
-  ]
+  if (!test.value || !user.value) return []
+  return buildStudyNavigator({
+    study: test.value,
+    user: user.value,
+    type: 'focusGroup',
+  })
 })
 
 const goToEdit = () => {
@@ -371,7 +361,11 @@ const goToSettings = () => {
   router.push(`/focusGroup/settings/${test.value.id}`).catch(() => {})
 }
 const goToSession = () => {
-  router.push(`/focusGroup/session/${test.value.id}`).catch(() => {})
+  const route = router.resolve(`/focusGroup/session/${test.value.id}`)
+  window.open(route.href, '_blank', 'noopener,noreferrer')
+}
+const goToAnswers = () => {
+  router.push(`/focusGroup/answers/${test.value.id}`).catch(() => {})
 }
 
 onMounted(async () => {

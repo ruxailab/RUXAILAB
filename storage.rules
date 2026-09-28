@@ -35,12 +35,34 @@ service firebase.storage {
       return signedIn() && (
         isSuperAdmin() ||
         study(studyId).testAdmin.userDocId == request.auth.uid ||
-        roleFor(studyId) in [0, 4]
+        roleFor(studyId) == 0
       );
     }
 
-    function canAnswerStudy() {
-      return true;
+    function isPublicStudy(studyId) {
+      return study(studyId).get('isPublic', false) == true;
+    }
+
+    function canAnswerStudy(studyId, userId) {
+      let studyData = study(studyId);
+      let role = roleFor(studyId);
+      return signedIn() && userId == request.auth.uid && (
+        isPublicStudy(studyId) ||
+        (studyData.get('testType', '') == 'USER' &&
+          (role == 5 ||
+            (role == 3 && studyData.get('subType', '') == 'USER_MODERATED'))) ||
+        (studyData.get('testType', '') in ['HEURISTIC', 'CARD_SORTING'] &&
+          role == 1) ||
+        (studyData.get('testType', '') == 'FOCUS_GROUP' && role == 1)
+      );
+    }
+
+    function canAnswerModeratedStudy(studyId, userId) {
+      let studyData = study(studyId);
+      return signedIn() && userId == request.auth.uid &&
+        studyData.get('testType', '') == 'USER' &&
+        studyData.get('subType', '') == 'USER_MODERATED' &&
+        roleFor(studyId) == 3;
     }
 
     function canEditStudy(studyId) {
@@ -55,6 +77,12 @@ service firebase.storage {
       return study(studyId).testType == 'FOCUS_GROUP';
     }
 
+    function canEditHeuristicAssets(studyId, userId) {
+      return signedIn() && userId.matches('heuristic_.*') &&
+        study(studyId).get('testType', '') == 'HEURISTIC' &&
+        roleFor(studyId) in [0, 4];
+    }
+
     // Focus Group roles (studyRoleMap scale): 0 facilitator, 1 participant,
     // 3 observer, 4 co-facilitator. All of them may view a presented stimulus.
     function canViewFocusGroupStimulus(studyId) {
@@ -64,15 +92,17 @@ service firebase.storage {
 
     match /tests/{studyId}/{userId}/{allPaths=**} {
       allow read: if canAccessStorage(studyId) ||
-        (userId.matches('heuristic_.*') && canEditStudy(studyId)) ||
+        canEditHeuristicAssets(studyId, userId) ||
         (userId.matches('stimulus_.*') && canViewFocusGroupStimulus(studyId)) ||
-        canAnswerStudy();
+        canAnswerStudy(studyId, userId) ||
+        canAnswerModeratedStudy(studyId, userId);
 
       allow create, update: if
         canAccessStorage(studyId) ||
-        (userId.matches('heuristic_.*') && canEditStudy(studyId)) ||
+        canEditHeuristicAssets(studyId, userId) ||
         (userId.matches('stimulus_.*') && canEditStudy(studyId)) ||
-        canAnswerStudy();
+        canAnswerStudy(studyId, userId) ||
+        canAnswerModeratedStudy(studyId, userId);
       allow delete: if false;
     }
 

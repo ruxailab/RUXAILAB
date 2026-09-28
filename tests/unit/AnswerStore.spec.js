@@ -1,8 +1,10 @@
+const mockSaveTestAnswer = jest.fn()
 const mockGetAnswerById = jest.fn()
 const mockGetMyStudyAnswer = jest.fn()
 
 jest.mock('@/shared/controllers/AnswerController', () => {
   return jest.fn().mockImplementation(() => ({
+    saveTestAnswer: mockSaveTestAnswer,
     getAnswerById: mockGetAnswerById,
     getMyStudyAnswer: mockGetMyStudyAnswer,
   }))
@@ -60,4 +62,29 @@ describe('Answer store', () => {
       expect(showError).not.toHaveBeenCalled()
     })
   })
+  it.each(['USER', 'HEURISTIC', 'CARD_SORTING'])(
+    'propagates %s persistence failure and releases loading state',
+    async (testType) => {
+      const error = new Error('save rejected')
+      mockSaveTestAnswer.mockRejectedValueOnce(error)
+      const commit = jest.fn()
+      await expect(
+        AnswerStore.actions.saveTestAnswer(
+          { commit, state: {}, rootState: {} },
+          {
+            data: {},
+            answersDocId: 'answer-1',
+            testType,
+            errorMessage: 'Save failed',
+          },
+        ),
+      ).rejects.toBe(error)
+      expect(commit).toHaveBeenLastCalledWith('setLoading', false)
+      expect(commit).toHaveBeenCalledWith('SET_TOAST', {
+        type: 'error',
+        message: 'Save failed',
+        show: true,
+      })
+    },
+  )
 })

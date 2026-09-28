@@ -10,6 +10,7 @@ import ParticipantsView from '@/shared/views/ParticipantsView.vue'
 import { STUDY_CAPABILITY as C } from '@/shared/utils/studyAccessPolicy'
 import AuditTrailView from '@/shared/views/AuditTrailView.vue'
 import SessionsView from '../../shared/views/SessionsView.vue'
+import LogsView from '@/shared/views/LogsView.vue'
 
 const studyMeta = (studyCapability, studyRouteBase) => ({
   authorize: [0, 1],
@@ -41,6 +42,13 @@ export default [
         props: true,
         meta: studyMeta(C.ANSWERS_VIEW, 'userTest/unmoderated'),
         component: UserAnswerView,
+      },
+      {
+        path: '/userTest/unmoderated/logs/:id/:token?',
+        name: 'UserUnmoderatedLogsView',
+        props: true,
+        meta: studyMeta(C.LOGS_VIEW, 'userTest/unmoderated'),
+        component: LogsView,
       },
       {
         path: '/userTest/unmoderated/edit/:id/:token?',
@@ -113,6 +121,13 @@ export default [
         props: true,
         meta: studyMeta(C.ANSWERS_VIEW, 'userTest/moderated'),
         component: UserAnswerView,
+      },
+      {
+        path: '/userTest/moderated/logs/:id/:token?',
+        name: 'UserModeratedLogsView',
+        props: true,
+        meta: studyMeta(C.LOGS_VIEW, 'userTest/moderated'),
+        component: LogsView,
       },
       {
         path: '/userTest/moderated/edit/:id/:token?',

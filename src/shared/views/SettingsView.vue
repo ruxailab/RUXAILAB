@@ -379,7 +379,6 @@ import AccessNotAllowed from '@/shared/views/AccessNotAllowed'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import TemplateHeader from '@/shared/models/TemplateHeader'
 import TemplateAuthor from '@/shared/models/TemplateAuthor'
-import TemplateBody from '@/shared/models/TemplateBody'
 import Template from '@/shared/models/Template'
 import { useI18n } from 'vue-i18n'
 import { instantiateStudyByType } from '../constants/methodDefinitions'
@@ -712,7 +711,10 @@ const createTemplate = async () => {
       }),
     })
 
-    const tempBody = new TemplateBody(test.value)
+    const tempBody = instantiateStudyByType(
+      test.value.testType,
+      test.value,
+    ).toFirestore()
     const templateObj = new Template({
       id: null,
       header: tempHeader,

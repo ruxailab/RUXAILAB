@@ -113,14 +113,19 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import GoogleSignInButton from '@/features/auth/components/GoogleSignInButton'
 import { createEmailRules } from '@/shared/utils/validators'
+import { resolvePostSignInPath } from '@/shared/utils/authRedirect'
 
 const { t } = useI18n()
 const store = useStore()
 const router = useRouter()
+const route = useRoute()
+
+// A participant who followed a study link is brought back to it once signed in.
+const postSignInPath = () => resolvePostSignInPath(route.query)
 
 const form = ref(null)
 const showPassword = ref(false)
@@ -151,7 +156,7 @@ const onSignIn = async () => {
       password: password.value,
       rememberMe: rememberMe.value,
     })
-    await router.push('/admin')
+    await router.push(postSignInPath())
   } catch (error) {
     if (error.message === 'EMAIL_NOT_VERIFIED') {
       await router.push('/verify-email')
@@ -183,7 +188,7 @@ const onGoogleSignInStart = () => {
 
 const onGoogleSignInSuccess = async () => {
   try {
-    if (store.getters.user) router.push('/admin')
+    if (store.getters.user) router.push(postSignInPath())
   } catch (error) {
     if (error.message === 'EMAIL_NOT_VERIFIED') {
       await router.push('/verify-email')

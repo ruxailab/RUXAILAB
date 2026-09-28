@@ -98,6 +98,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  contextId: {
+    type: String,
+    default: '',
+  },
   showHeader: {
     type: Boolean,
     default: true,
@@ -163,6 +167,7 @@ const addNote = () => {
     // `undefined` values on write.
     taskIndex: props.currentTaskIndex ?? null,
     taskName: currentTaskName.value,
+    topicId: props.contextId || null,
   }
 
   // Push to local array

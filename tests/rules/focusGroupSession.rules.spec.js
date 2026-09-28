@@ -1,4 +1,5 @@
 import fs from 'fs'
+import fetch from 'node-fetch'
 import {
   assertFails,
   assertSucceeds,
@@ -30,6 +31,7 @@ const seedPresence = async (entries) => {
 }
 
 beforeAll(async () => {
+  global.fetch = fetch
   testEnv = await initializeTestEnvironment({
     projectId,
     database: { rules: fs.readFileSync('database.rules.json', 'utf8') },
@@ -85,6 +87,15 @@ describe('Focus Group session RTDB rules', () => {
         lastUpdate: 0,
       }),
     )
+  })
+
+  it('lets only the facilitator start the Focus Group discussion timer', async () => {
+    const startAt = (uid) =>
+      ref(context(uid).database(), `focusGroupSessions/${studyId}/focusGroupStartedAt`)
+
+    await assertSucceeds(set(startAt('facilitator'), 1000))
+    await assertFails(set(startAt('participant'), 1000))
+    await assertFails(set(startAt('observer'), 1000))
   })
 
   it('lets the facilitator and observer read and write the backroom, and denies the participant both ways', async () => {

@@ -17,7 +17,7 @@
 
       <!-- No topics configured -->
       <v-alert
-        v-if="!hasTopics"
+        v-if="isFacilitator && status === 'idle' && !hasTopics"
         type="error"
         variant="outlined"
         class="mb-4"
@@ -46,7 +46,7 @@
       </template>
 
       <!-- Idle: facilitator can start -->
-      <template v-else-if="isFacilitator">
+      <template v-else-if="isFacilitator && hasTopics">
         <v-btn
           color="white"
           variant="outlined"

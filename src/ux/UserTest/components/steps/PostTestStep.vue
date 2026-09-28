@@ -25,7 +25,10 @@
             class="mb-7"
           />
 
-          <div v-if="!hasQuestions" class="question-shell mx-auto mb-8 text-center">
+          <div
+            v-if="!hasQuestions"
+            class="question-shell mx-auto mb-8 text-center"
+          >
             <p class="text-body-1 text-medium-emphasis">
               No post-test questions configured for this study.
             </p>
@@ -47,6 +50,7 @@
             <div v-if="currentItem.textField" class="answer-field-wrap mx-auto">
               <v-text-field
                 v-model="localAnswers[step].answer"
+                :data-study-field-ref="`postTest:${step}:answer`"
                 :placeholder="'Type your answer here…'"
                 variant="outlined"
                 density="comfortable"
@@ -63,6 +67,7 @@
               <v-radio-group
                 v-model="localAnswers[step].answer"
                 hide-details="auto"
+                class="options-center"
                 @update:model-value="updateAnswer(step, $event)"
               >
                 <v-radio
@@ -128,7 +133,7 @@ const props = defineProps({
   postTestCompleted: Boolean,
 })
 
-const emit = defineEmits(['done', 'update:postTestAnswer'])
+const emit = defineEmits(['done', 'update:postTestAnswer', 'selection-changed'])
 
 const step = ref(0)
 const localAnswers = ref(
@@ -158,6 +163,12 @@ const updateAnswer = (index, value) => {
   if (!localAnswers.value[index]) return
   localAnswers.value[index].answer = value
   emit('update:postTestAnswer', localAnswers.value)
+  if (props.postTest?.[index]?.selectionField) {
+    emit('selection-changed', {
+      itemRef: `postTest:question:${index}`,
+      value,
+    })
+  }
 }
 
 watch(
@@ -193,5 +204,10 @@ watch(
 .answer-input :deep(.v-field__input) {
   font-size: 1.25rem;
   text-align: center;
+}
+
+.options-center :deep(.v-selection-control-group) {
+  width: fit-content;
+  margin-inline: auto;
 }
 </style>

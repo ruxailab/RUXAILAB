@@ -1,5 +1,9 @@
 import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
 import StudyController from '@/controllers/StudyController'
+import { collectionGroup, onSnapshot, query, where } from 'firebase/firestore'
+import { db } from '@/app/plugins/firebase'
+import { dedupeSessionsByPath } from '@/shared/utils/sessionList'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 
 export default class SessionController extends Controller {
   constructor() {
@@ -116,6 +120,20 @@ export default class SessionController extends Controller {
     }
   }
 
+  /** Persist the ended state for a scheduled Focus Group through a trusted
+   * callable; session attendees must not gain direct Firestore write access. */
+  async markFocusGroupSessionEnded({ studyId, sessionId }) {
+    try {
+      await FirebaseFunctionsController.callHttpsCallableFunction(
+        'markFocusGroupSessionEnded',
+        { studyId, sessionId },
+      )
+      return { success: true }
+    } catch (error) {
+      return { success: false, error }
+    }
+  }
+
   /**
    * Gets every session where the user participates.
    *
@@ -125,41 +143,71 @@ export default class SessionController extends Controller {
    */
   async getInvitedSessions({ email, userId }) {
     try {
-      const normalizedEmail = email.toLowerCase()
+      const normalizedEmail = (email || '').trim().toLowerCase()
 
-      const [participantSessions, staffSessions] = await Promise.all([
-        super.readCollectionGroup('sessions', [
-          {
-            field: 'participantEmails',
-            operator: 'array-contains',
-            value: normalizedEmail,
-          },
-        ]),
-        super.readCollectionGroup('sessions', [
-          {
-            field: 'staffIds',
-            operator: 'array-contains',
-            value: userId,
-          },
-        ]),
-      ])
+      const [
+        participantSessions,
+        participantIdSessions,
+        staffSessions,
+        staffEmailSessions,
+      ] = await Promise.all([
+          normalizedEmail
+            ? super.readCollectionGroup('sessions', [
+                {
+                  field: 'participantEmails',
+                  operator: 'array-contains',
+                  value: normalizedEmail,
+                },
+              ])
+            : Promise.resolve([]),
+          userId
+            ? super.readCollectionGroup('sessions', [
+                {
+                  field: 'participantIds',
+                  operator: 'array-contains',
+                  value: userId,
+                },
+              ])
+            : Promise.resolve([]),
+          userId
+            ? super.readCollectionGroup('sessions', [
+                {
+                  field: 'staffIds',
+                  operator: 'array-contains',
+                  value: userId,
+                },
+              ])
+            : Promise.resolve([]),
+          normalizedEmail
+            ? super.readCollectionGroup('sessions', [
+                {
+                  field: 'staffEmails',
+                  operator: 'array-contains',
+                  value: normalizedEmail,
+                },
+              ])
+            : Promise.resolve([]),
+        ])
 
-      const sessions = [...participantSessions, ...staffSessions].filter(
-        (session, index, array) =>
-          array.findIndex((item) => item.path === session.path) === index,
+      const sessions = dedupeSessionsByPath(
+        participantSessions,
+        participantIdSessions,
+        staffSessions,
+        staffEmailSessions,
       )
 
-      const studyIds = [
-        ...new Set(sessions.map((session) => session.parentId).filter(Boolean)),
-      ]
-
       const studies = await Promise.all(
-        studyIds.map((studyId) =>
-          new StudyController().getStudy({ id: studyId }),
+        sessions.map((session) =>
+          new StudyController().getStudyForSession({
+            studyId: session.parentId,
+            sessionId: session.id,
+          }),
         ),
       )
 
-      const studiesById = new Map(studies.map((study) => [study.id, study]))
+      const studiesById = new Map(
+        studies.filter(Boolean).map((study) => [study.id, study]),
+      )
 
       return {
         success: true,
@@ -169,6 +217,8 @@ export default class SessionController extends Controller {
 
           title: session.title || 'Session',
           scheduledAt: session.scheduledAt,
+          lifecycleStatus: session.lifecycleStatus,
+          endedAt: session.endedAt,
 
           staff: session.staff || [],
           participants: session.participants || [],
@@ -189,6 +239,61 @@ export default class SessionController extends Controller {
         error,
       }
     }
+  }
+
+  subscribeInvitedSessions({ email, userId, onChange, onError }) {
+    const normalizedEmail = (email || '').trim().toLowerCase()
+    const queries = []
+    if (normalizedEmail) {
+      queries.push(
+        query(
+          collectionGroup(db, 'sessions'),
+          where('participantEmails', 'array-contains', normalizedEmail),
+        ),
+        query(
+          collectionGroup(db, 'sessions'),
+          where('staffEmails', 'array-contains', normalizedEmail),
+        ),
+      )
+    }
+    if (userId) {
+      queries.push(
+        query(
+          collectionGroup(db, 'sessions'),
+          where('staffIds', 'array-contains', userId),
+        ),
+        query(
+          collectionGroup(db, 'sessions'),
+          where('participantIds', 'array-contains', userId),
+        ),
+      )
+    }
+
+    let refreshRunning = false
+    let refreshQueued = false
+    const refresh = async () => {
+      if (refreshRunning) {
+        refreshQueued = true
+        return
+      }
+      refreshRunning = true
+      do {
+        refreshQueued = false
+        try {
+          const result = await this.getInvitedSessions({ email, userId })
+          if (result.success) onChange?.(result.sessions)
+          else onError?.(result.error)
+        } catch (error) {
+          onError?.(error)
+        }
+      } while (refreshQueued)
+      refreshRunning = false
+    }
+
+    const unsubscribers = queries.map((sessionQuery) =>
+      onSnapshot(sessionQuery, refresh, onError),
+    )
+    return () => unsubscribers.forEach((unsubscribe) => unsubscribe())
   }
 
   async getSession(studyId, sessionId) {

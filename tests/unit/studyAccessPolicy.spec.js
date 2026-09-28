@@ -151,6 +151,18 @@ describe('study access policy', () => {
     expect(
       hasStudyCapability(study, manager, STUDY_CAPABILITY.STORAGE_ACCESS),
     ).toBe(false)
+    expect(hasStudyCapability(study, manager, STUDY_CAPABILITY.LOGS_VIEW)).toBe(
+      false,
+    )
+    expect(
+      hasStudyCapability(study, observator, STUDY_CAPABILITY.LOGS_VIEW),
+    ).toBe(false)
+    expect(
+      hasStudyCapability(study, participant, STUDY_CAPABILITY.LOGS_VIEW),
+    ).toBe(false)
+    expect(hasStudyCapability(study, owner, STUDY_CAPABILITY.LOGS_VIEW)).toBe(
+      true,
+    )
   })
 
   it('lets an Observator answer and view cooperators only for moderated user studies', () => {

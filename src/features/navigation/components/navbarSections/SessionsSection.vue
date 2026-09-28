@@ -171,6 +171,10 @@ import { useI18n } from 'vue-i18n'
 import List from '@/shared/components/tables/ListComponent.vue'
 import { getSessionStatus } from '@/shared/utils/sessionsUtils'
 import { matchesSearch } from '@/shared/utils/searchUtils'
+import {
+  STUDY_TYPES,
+  normalizeStudyType,
+} from '@/shared/constants/methodDefinitions'
 
 const { t } = useI18n()
 
@@ -229,6 +233,10 @@ const sessionStatusOptions = computed(() => [
     value: 'completed',
     text: t('pages.sessions.filters.completed'),
   },
+  {
+    value: 'ended',
+    text: t('pages.sessions.filters.ended'),
+  },
 ])
 
 const resetSessionFilters = () => {
@@ -282,7 +290,10 @@ const filteredSessions = computed(() => {
       searchSessions.value,
     )
 
-    const status = getSessionStatus(session.scheduledAt).status
+    const status = getSessionStatus(
+      session.scheduledAt,
+      session.lifecycleStatus,
+    ).status
 
     const matchesStatus =
       selectedSessionStatusFilter.value.includes('all') ||
@@ -317,8 +328,16 @@ const filteredSessions = computed(() => {
 })
 
 const goTo = (session) => {
+  if (!session?.study?.id || !session?.id) return
+  if (normalizeStudyType(session.study.testType) === STUDY_TYPES.FOCUS_GROUP) {
+    const route = router.resolve(
+      `/focusGroup/session/${session.study.id}?session=${session.id}`,
+    )
+    window.open(route.href, '_blank', 'noopener,noreferrer')
+    return
+  }
   const route = router.resolve(`/testview/${session.study.id}/${session.id}`)
-  window.open(route.href, '_blank')
+  window.open(route.href, '_blank', 'noopener,noreferrer')
 }
 </script>
 

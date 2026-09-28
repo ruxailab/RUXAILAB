@@ -9,6 +9,10 @@ import Notification from '@/shared/models/Notification'
 import { formatDateTime } from '../utils/dateUtils'
 import i18n from '@/app/plugins/i18n'
 import { NOTIFICATION_TYPES } from '../../features/notifications/utils/notificationUtils'
+import {
+  STUDY_TYPES,
+  normalizeStudyType,
+} from '@/shared/constants/methodDefinitions'
 
 const t = i18n.global.t
 
@@ -46,6 +50,17 @@ export default {
       )
     },
 
+    UPSERT_SESSION(state, session) {
+      const index = state.sessions.findIndex((item) => item.id === session.id)
+      if (index === -1) state.sessions.push(session)
+      else {
+        state.sessions.splice(index, 1, {
+          ...state.sessions[index],
+          ...session,
+        })
+      }
+    },
+
     setLoading(state, loading) {
       state.loading = loading
     },
@@ -73,6 +88,7 @@ export default {
         }
 
         const session = result.session
+        commit('UPSERT_SESSION', session)
 
         await dispatch('notifySessionMembers', {
           session,
@@ -160,8 +176,11 @@ export default {
 
         const descriptionChanged =
           (previousSession?.message || '') !== (payload.session?.message || '')
+        const titleChanged =
+          (previousSession?.title || '') !== (payload.session?.title || '')
 
-        const sessionDetailsChanged = scheduleChanged || descriptionChanged
+        const sessionDetailsChanged =
+          scheduleChanged || descriptionChanged || titleChanged
 
         const result = await new SessionController().updateSession({
           ...payload,
@@ -172,9 +191,21 @@ export default {
           throw result.error
         }
 
+        commit('UPSERT_SESSION', {
+          ...enrichSession(payload.session),
+          id: payload.sessionId,
+          startDate: payload.session.scheduledAt,
+        })
+
         const oldMembers = [
-          ...(previousSession?.staff || []),
-          ...(previousSession?.participants || []),
+          ...(previousSession?.staff || []).map((member) => ({
+            ...member,
+            membershipType: 'cooperator',
+          })),
+          ...(previousSession?.participants || []).map((member) => ({
+            ...member,
+            membershipType: 'participant',
+          })),
         ]
 
         const newMembers = [
@@ -189,7 +220,24 @@ export default {
         ]
 
         const addedMembers = newMembers.filter(
-          (member) => !oldMembers.some((old) => old.email === member.email),
+          (member) =>
+            !oldMembers.some(
+              (old) => {
+                const sameUser =
+                  (old.userDocId &&
+                    member.userDocId &&
+                    old.userDocId === member.userDocId) ||
+                  ((old.email || '').trim().toLowerCase() &&
+                    (old.email || '').trim().toLowerCase() ===
+                      (member.email || '').trim().toLowerCase())
+
+                return (
+                  sameUser &&
+                old.membershipType === member.membershipType &&
+                  old.role === member.role
+                )
+              },
+            ),
         )
 
         if (sessionDetailsChanged) {
@@ -396,7 +444,16 @@ export default {
     ) {
       const user = getters.user
       const author = `${user.username || ''} ${user.email}`.trim()
-      const sessionLink = `${window.location.origin}/testview/${studyId}/${session.id}`
+      // A Focus Group session runs in its own live room, joined by its session
+      // id; other study types use the per-participant testview token. Pick the
+      // link that lands the invitee in the right place.
+      const study = getters.test
+      const isFocusGroup =
+        study?.id === studyId &&
+        normalizeStudyType(study?.testType) === STUDY_TYPES.FOCUS_GROUP
+      const sessionLink = isFocusGroup
+        ? `${window.location.origin}/focusGroup/session/${studyId}?session=${session.id}`
+        : `${window.location.origin}/testview/${studyId}/${session.id}`
 
       const emailController = new EmailController()
 
@@ -494,6 +551,22 @@ export default {
       }
     },
 
+    subscribeUserSessions({ getters, commit }) {
+      const user = getters.user
+      if (!user) return () => {}
+
+      return new SessionController().subscribeInvitedSessions({
+        email: user.email,
+        userId: user.id,
+        onChange: (sessions) => commit('SET_SESSIONS', sessions),
+        onError: (error) =>
+          commit('setError', {
+            errorCode: 'sessionFetchError',
+            message: error,
+          }),
+      })
+    },
+
     async getSession({ commit }, { studyId, sessionId }) {
       commit('setLoading', true)
 
@@ -580,10 +653,26 @@ function enrichSession(session) {
       ),
     ],
 
+    staffEmails: [
+      ...new Set(
+        (session.staff || [])
+          .map((staff) => staff.email?.trim().toLowerCase())
+          .filter(Boolean),
+      ),
+    ],
+
     participantEmails: [
       ...new Set(
         (session.participants || [])
           .map((participant) => participant.email?.trim().toLowerCase())
+          .filter(Boolean),
+      ),
+    ],
+
+    participantIds: [
+      ...new Set(
+        (session.participants || [])
+          .map((participant) => participant.userDocId)
           .filter(Boolean),
       ),
     ],
