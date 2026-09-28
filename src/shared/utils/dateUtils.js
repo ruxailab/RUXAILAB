@@ -52,23 +52,6 @@ export const formatDateLong = (date, locale = 'en') => {
 }
 
 /**
- * Format date in short format.
- * @param {string|Date|object} date - Date, string or Firestore timestamp
- * @param {string} locale - Locale for formatting
- * @returns {string} - Formatted date or '-'
- */
-export const formatDateShort = (date, locale = 'en-GB') => {
-  try {
-    const d = parseDateInput(date)
-    if (!d) return INVALID_DATE_FALLBACK
-
-    return d.toLocaleDateString(locale)
-  } catch {
-    return INVALID_DATE_FALLBACK
-  }
-}
-
-/**
  * Format date and time.
  * @param {string|Date|object} date - Date, string or Firestore timestamp
  * @param {string} locale - Locale for formatting
@@ -88,46 +71,6 @@ export const formatDateTime = (date, locale = 'en') => {
     })
   } catch (e) {
     console.error('Error formatting date-time:', e)
-    return INVALID_DATE_FALLBACK
-  }
-}
-
-/**
- * Format relative time with Intl.RelativeTimeFormat.
- * @param {string|Date|object} date - Date, string or Firestore timestamp
- * @param {string} locale - Locale for formatting
- * @returns {string} - Relative time or '-'
- */
-export const formatRelativeTime = (date, locale = 'en') => {
-  try {
-    const d = parseDateInput(date)
-    if (!d) return INVALID_DATE_FALLBACK
-
-    const now = new Date()
-    const diffInSeconds = Math.floor((d.getTime() - now.getTime()) / 1000)
-    const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' })
-
-    const divisions = [
-      { amount: 60, unit: 'second' },
-      { amount: 60, unit: 'minute' },
-      { amount: 24, unit: 'hour' },
-      { amount: 7, unit: 'day' },
-      { amount: 4.34524, unit: 'week' },
-      { amount: 12, unit: 'month' },
-      { amount: Infinity, unit: 'year' },
-    ]
-
-    let duration = diffInSeconds
-
-    for (let i = 0; i < divisions.length; i += 1) {
-      if (Math.abs(duration) < divisions[i].amount) {
-        return rtf.format(Math.round(duration), divisions[i].unit)
-      }
-      duration /= divisions[i].amount
-    }
-
-    return INVALID_DATE_FALLBACK
-  } catch {
     return INVALID_DATE_FALLBACK
   }
 }

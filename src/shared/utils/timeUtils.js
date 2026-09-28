@@ -17,22 +17,11 @@ export const formatTime = (timeInSeconds) => {
 }
 
 /**
- * Format time in milliseconds to MM:SS format
- * @param {number} timeInMs - Time in milliseconds
- * @returns {string} Formatted time string (e.g., "2:30")
- */
-export const formatTimeFromMs = (timeInMs) => {
-  if (!timeInMs || timeInMs < 0) return '0:00'
-  const seconds = Math.floor(timeInMs / 1000)
-  return formatTime(seconds)
-}
-
-/**
  * Format time with detailed breakdown
  * @param {number} timeInSeconds - Time in seconds
  * @returns {object} Object with formatted time and components
  */
-export const formatTimeDetailed = (timeInSeconds) => {
+const formatTimeDetailed = (timeInSeconds) => {
   if (!timeInSeconds || timeInSeconds < 0) {
     return { formatedTime: '0:00', hours: 0, minutes: 0, seconds: 0 }
   }
