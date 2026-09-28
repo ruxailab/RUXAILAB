@@ -2629,6 +2629,7 @@
       "neutral": "Neutral",
       "negative": "Negativo",
       "noData": "Sin datos",
+      "emptyTitle": "No hay analíticas de sentimiento",
       "emptyAnalytics": "Aún no hay analíticas de sentimiento. Ejecuta el análisis facial o de texto en las tareas para generar métricas.",
       "emptyNoRecordingTasks": "No hay tareas con webcam o grabación de audio habilitada en este test.",
       "emptyNoAnalyticsForFilters": "No hay analíticas de sentimiento para los filtros seleccionados.",

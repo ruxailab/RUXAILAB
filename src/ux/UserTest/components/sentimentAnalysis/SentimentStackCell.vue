@@ -24,10 +24,7 @@
         <span>{{ $t('analytics.sentiment.negative') }} {{ negative }}%</span>
       </div>
     </template>
-    <div v-else class="d-flex align-center ga-2 text-medium-emphasis">
-      <v-icon size="18">mdi-database-off-outline</v-icon>
-      <span class="text-caption">{{ $t('analytics.sentiment.noData') }}</span>
-    </div>
+    <div v-else class="sentiment-stack sentiment-stack--empty" />
   </div>
 </template>
 
@@ -80,6 +77,10 @@ defineProps({
 
 .sentiment-stack__negative {
   background: #ef4444;
+}
+
+.sentiment-stack--empty {
+  background: #e2e8f0;
 }
 
 .sentiment-stack-legend {
