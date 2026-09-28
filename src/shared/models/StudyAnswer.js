@@ -4,7 +4,8 @@
  */
 
 export default class StudyAnswer {
-  constructor({ type, studyId = null, createdBy = null } = {}) {
+  constructor({ id = null, type, studyId = null, createdBy = null } = {}) {
+    this.id = id ?? null
     this.type = type
     this.studyId = studyId
     this.createdBy = createdBy
