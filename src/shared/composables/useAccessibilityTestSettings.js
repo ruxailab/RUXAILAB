@@ -19,6 +19,7 @@ import {
   clearPendingLeaveRoute,
   navigateToPendingLeaveRoute,
 } from '../utils/pendingLeaveRoute'
+import { useDateLocale } from '@/shared/composables/useDateLocale'
 
 /**
  * Composable for shared accessibility test settings functionality
@@ -35,6 +36,7 @@ export function useAccessibilityTestSettings(config) {
   const store = useStore()
   const router = useRouter()
   const route = useRoute()
+  const { intlLocale } = useDateLocale()
 
   // Reactive state
   const template = ref({
@@ -135,7 +137,7 @@ export function useAccessibilityTestSettings(config) {
 
     try {
       const date = new Date(dateString)
-      return date.toLocaleDateString('en-US', {
+      return date.toLocaleDateString(intlLocale.value, {
         year: 'numeric',
         month: 'long',
         day: 'numeric',

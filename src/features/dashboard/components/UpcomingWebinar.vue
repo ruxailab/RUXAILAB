@@ -97,8 +97,10 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import officeHoursImage from '@/assets/office_banner_gray.png'
+import { useDateLocale } from '@/shared/composables/useDateLocale'
 
 const { t } = useI18n()
+const { intlLocale } = useDateLocale()
 
 const props = defineProps({
   webinarData: {
@@ -115,12 +117,12 @@ const webinar = computed(() => {
       const dateObj = data.date.toDate()
       data.dateObj = dateObj // Store original date object
       // Format date with day, month, and year
-      data.date = dateObj.toLocaleDateString('en-US', {
+      data.date = dateObj.toLocaleDateString(intlLocale.value, {
         day: 'numeric',
         month: 'short',
       })
       // Format time
-      data.duration = dateObj.toLocaleTimeString('en-US', {
+      data.duration = dateObj.toLocaleTimeString(intlLocale.value, {
         hour: 'numeric',
         minute: '2-digit',
         hour12: true,
