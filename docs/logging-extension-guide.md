@@ -50,6 +50,14 @@ client-observed partial-activity exception:
 - mark text controls with `data-study-field-ref` to opt into metadata-only edit
   aggregation.
 
+Consent-gated methods get the acknowledgement gap handled by the runtime; they
+only need the two consent calls above. Between `consentAccepted()` (or
+`resumeAfterConsent()`) and the server's acknowledgement, observations are held
+in memory only — at most 200, never in IndexedDB — with their original
+occurrence times. An `accepted` or `duplicate` acknowledgement releases them
+into the queue; a permanent rejection or leaving the page discards them.
+Activity before consent is saved is never held.
+
 Heuristic studies use one `QUESTION_RESPONSE_UPDATED` event per question
 interaction. Call `responseChanged(questionRef, field)` only after a real
 frequency, severity, or configured-option change; delegated comment inputs are

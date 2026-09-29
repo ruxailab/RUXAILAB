@@ -7,6 +7,9 @@ import {
 
 const RETRY_POLL_MS = 5000
 const LOGOUT_EVENT = 'study-logging-logout'
+// Observations made after consent is saved but before the server acknowledges
+// it are held in memory only (never IndexedDB) and dropped if it is rejected.
+const MAX_PENDING_CONSENT_OBSERVATIONS = 200
 
 export const requestStudyLoggingLogout = (ownerUid) => {
   if (!ownerUid || typeof window === 'undefined') return
@@ -31,18 +34,47 @@ export const createStudyLoggingRuntime = ({
     enabled: !consentRequired,
     submitBatch: (payload) => callFunction('logEvents', payload),
   })
-  const editTracker = createAnswerEditTracker({ logger })
-  const responseTracker = createQuestionResponseTracker({ logger })
-  const structuredTracker = createStructuredResponseTracker({
-    logger,
-    enabled: () => !consentRequired && Boolean(ownerUid && studyId),
-  })
   const isHeuristic = String(studyType).toUpperCase() === 'HEURISTIC'
   let consentPending = false
   let consentRequest = null
   let opened = false
   let activeQuestionRef = null
   let pendingResponseDelivery = Promise.resolve()
+  let pendingObservations = []
+
+  const record = (...args) => {
+    const [eventType, details, occurredAt] = args
+    if (!consentRequired) return logger.record(...args)
+    if (!consentPending || !ownerUid || !studyId) return Promise.resolve(null)
+    if (pendingObservations.length >= MAX_PENDING_CONSENT_OBSERVATIONS) {
+      return Promise.resolve(null)
+    }
+    pendingObservations.push({
+      eventType,
+      details,
+      occurredAt: occurredAt || new Date().toISOString(),
+    })
+    return Promise.resolve('pending-consent')
+  }
+  const releasePendingObservations = async () => {
+    const observations = pendingObservations
+    pendingObservations = []
+    for (const { eventType, details, occurredAt } of observations) {
+      try {
+        await logger.record(eventType, details, occurredAt)
+      } catch {
+        // Logging remains fail-open for the primary study workflow.
+      }
+    }
+  }
+  const gatedLogger = { record }
+  const editTracker = createAnswerEditTracker({ logger: gatedLogger })
+  const responseTracker = createQuestionResponseTracker({ logger: gatedLogger })
+  const structuredTracker = createStructuredResponseTracker({
+    logger: gatedLogger,
+    enabled: () =>
+      (!consentRequired || consentPending) && Boolean(ownerUid && studyId),
+  })
 
   const request = async (eventType, taskRef, occurredAt) => {
     try {
@@ -62,10 +94,14 @@ export const createStudyLoggingRuntime = ({
     }
   }
 
-  const open = async () => {
+  const open = async (occurredAt) => {
     if (opened || consentRequired) return null
     opened = true
-    const eventId = await logger.record('STUDY_VIEW_OPENED', {})
+    const eventId = await logger.record(
+      'STUDY_VIEW_OPENED',
+      {},
+      ...(occurredAt ? [occurredAt] : []),
+    )
     void logger.flush()
     return eventId
   }
@@ -76,12 +112,17 @@ export const createStudyLoggingRuntime = ({
     const requestPromise = (async () => {
       const acknowledgement = await request('CONSENT_ACCEPTED')
       if (!['accepted', 'duplicate'].includes(acknowledgement?.status)) {
-        if (acknowledgement?.retryable === false) consentPending = false
+        if (acknowledgement?.retryable === false) {
+          consentPending = false
+          pendingObservations = []
+        }
         return null
       }
       consentPending = false
       consentRequired = false
       logger.setEnabled(true)
+      await releasePendingObservations()
+      void Promise.resolve(logger.flush()).catch(() => {})
       return acknowledgement
     })()
     consentRequest = requestPromise
@@ -93,9 +134,10 @@ export const createStudyLoggingRuntime = ({
   }
 
   const resumeAfterConsent = async () => {
+    const enteredAt = new Date().toISOString()
     const acknowledgement = await consentAccepted()
     if (!acknowledgement) return null
-    return open()
+    return open(enteredAt)
   }
 
   const onOnline = async () => {
@@ -267,13 +309,8 @@ export const createStudyLoggingRuntime = ({
     resumeAfterConsent,
     async recordingOutcome(details) {
       if (!ownerUid || !studyId) return null
-      if (consentRequired) {
-        if (!consentPending || !consentRequest) return null
-        const acknowledgement = await consentRequest
-        if (!acknowledgement || consentRequired) return null
-      }
       try {
-        return await logger.record('MEDIA_RECORDING_OUTCOME', details)
+        return await record('MEDIA_RECORDING_OUTCOME', details)
       } catch {
         return null
       }
@@ -287,13 +324,8 @@ export const createStudyLoggingRuntime = ({
       ) {
         return null
       }
-      if (consentRequired) {
-        if (!consentPending || !consentRequest) return null
-        const acknowledgement = await consentRequest
-        if (!acknowledgement || consentRequired) return null
-      }
       try {
-        const eventId = await logger.record(
+        const eventId = await record(
           'TASK_STARTED',
           { taskRef: `task:${taskIndex}` },
           occurredAt,
