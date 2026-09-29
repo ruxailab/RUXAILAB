@@ -174,6 +174,7 @@ export function useCooperatorUtils() {
 
   const getRoleColor = (role) => {
     switch (role?.toLowerCase()) {
+      case 'admin':
       case 'administrator':
         return 'primary'
       case 'evaluator':
@@ -193,6 +194,7 @@ export function useCooperatorUtils() {
 
   const getRoleIcon = (role) => {
     switch (role?.toLowerCase()) {
+      case 'admin':
       case 'administrator':
         return 'mdi-crown'
       case 'evaluator':
