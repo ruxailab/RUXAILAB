@@ -59,28 +59,33 @@
         </div>
 
         <template v-if="selectedSession">
-          <v-card
-            v-for="topic in topics"
-            :key="topic.id"
-            variant="outlined"
-            rounded="lg"
+          <v-expansion-panels
+            v-model="expandedTopicIds"
+            multiple
+            variant="accordion"
             class="mb-4"
           >
-            <v-card-title class="d-flex align-center ga-2">
-              <v-icon icon="mdi-forum-outline" color="primary" size="20" />
-              <span>{{ topic.title || $t('focusGroup.modules.untitledTopic') }}</span>
-              <v-spacer />
-              <v-chip size="small" variant="tonal">
-                {{
-                  topicMessageGroups(topic.id).reduce(
-                    (sum, group) => sum + group.messages.length,
-                    0,
-                  )
-                }}
-              </v-chip>
-            </v-card-title>
-            <v-divider />
-            <v-card-text>
+            <v-expansion-panel
+              v-for="topic in topics"
+              :key="topic.id"
+              :value="topic.id"
+              rounded="lg"
+              class="mb-3"
+            >
+              <v-expansion-panel-title class="py-3">
+                <v-icon icon="mdi-forum-outline" color="primary" size="20" class="me-2" />
+                <span>{{ topic.title || $t('focusGroup.modules.untitledTopic') }}</span>
+                <v-spacer />
+                <v-chip size="small" variant="tonal" class="me-3">
+                  {{
+                    topicMessageGroups(topic.id).reduce(
+                      (sum, group) => sum + group.messages.length,
+                      0,
+                    )
+                  }}
+                </v-chip>
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
               <div
                 v-for="group in topicMessageGroups(topic.id)"
                 :key="group.promptText || 'open-discussion'"
@@ -151,8 +156,9 @@
               >
                 {{ $t('focusGroup.session.noMessagesYet') }}
               </p>
-            </v-card-text>
-          </v-card>
+              </v-expansion-panel-text>
+            </v-expansion-panel>
+          </v-expansion-panels>
 
           <v-card
             v-if="selectedSession"
@@ -344,6 +350,7 @@ const rawSessions = ref({})
 const themes = ref([])
 const loading = ref(true)
 const selectedSessionId = ref(null)
+const expandedTopicIds = ref([])
 let themesLoaded = false
 
 const sessions = computed(() => sortSessionsByStartedAt(rawSessions.value))
@@ -352,6 +359,14 @@ const selectedSession = computed(
 )
 const topics = computed(() =>
   Array.isArray(test.value?.discussionGuide) ? test.value.discussionGuide : [],
+)
+
+watch(
+  [selectedSessionId, topics],
+  () => {
+    expandedTopicIds.value = topics.value.slice(0, 1).map((topic) => topic.id)
+  },
+  { immediate: true },
 )
 
 const participantCount = (session) =>
