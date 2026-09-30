@@ -1519,7 +1519,24 @@ const handleCallEnded = async () => {
   }
 }
 
+// Start joins the call once per page load (a refresh re-joins through the
+// auto-join watcher). A stray Enter on a still-focused Start button must not
+// re-run it mid-session: that re-enters fullscreen and resets the room.
+let testStartState = 'idle'
+
 const startTest = async () => {
+  if (testStartState !== 'idle') return
+  testStartState = 'starting'
+  try {
+    await startTestOnce()
+    testStartState = 'started'
+  } catch (error) {
+    testStartState = 'idle'
+    throw error
+  }
+}
+
+const startTestOnce = async () => {
   // Check if the test has no tasks
   if (
     !test.value.testStructure ||
@@ -1908,6 +1925,7 @@ const startTest = async () => {
 }
 
 const handleWelcomeStart = async () => {
+  if (globalIndex.value !== 0) return
   await requestFullscreenIfAvailable()
   displayVideoCallComponent.value = true
   globalIndex.value = 1

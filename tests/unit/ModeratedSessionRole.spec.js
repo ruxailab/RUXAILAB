@@ -99,3 +99,18 @@ it('recognises a session participant saved without a user ID by email', async ()
   expect(wrapper.vm.isModerator).toBe(false)
   expect(wrapper.vm.currentUserAccessLevel).toBe(5)
 })
+
+it('does not re-run Start once the session has started', async () => {
+  const requestFullscreen = jest.fn(async () => {})
+  document.documentElement.requestFullscreen = requestFullscreen
+  wrapper = await mountWithSession({
+    staff: [{ userDocId: 'owner', role: 'FACILITATOR' }],
+    participants: [{ userDocId: 'participant', role: 5 }],
+  })
+  requestFullscreen.mockClear()
+
+  await wrapper.vm.startTest()
+  await wrapper.vm.startTest()
+
+  expect(requestFullscreen).toHaveBeenCalledTimes(1)
+})
