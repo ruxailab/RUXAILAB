@@ -54,7 +54,7 @@ describe('participant timeline', () => {
     event(10, 'STUDY_SUBMITTED'),
   ]
 
-  it('orders steps by study flow regardless of event order', () => {
+  it('orders steps by when they happened, regardless of event order', () => {
     const timeline = buildParticipantTimeline([...events].reverse())
 
     expect(timeline.steps.map((step) => step.key)).toEqual([
@@ -112,5 +112,38 @@ describe('participant timeline', () => {
       summary: { questions: 2 },
       status: 'done',
     })
+  })
+
+  it('places returns after consent inside the step in progress', () => {
+    const timeline = buildParticipantTimeline([
+      event(1, 'CONSENT_ACCEPTED'),
+      event(2, 'TASK_STARTED', { taskRef: 'task:0' }),
+      event(3, 'STUDY_VIEW_OPENED'),
+      event(4, 'TASK_ATTEMPT_FINISHED', {
+        taskRef: 'task:0',
+        outcome: 'completed',
+      }),
+      event(5, 'TASK_STARTED', { taskRef: 'task:1' }),
+      event(6, 'STUDY_VIEW_OPENED'),
+      event(7, 'STUDY_VIEW_OPENED'),
+      event(8, 'STRUCTURED_RESPONSE_ACTIVITY', {
+        scopeRef: 'preTest',
+        items: [{ itemRef: 'preTest:question:0', changes: 1 }],
+      }),
+    ])
+
+    expect(timeline.steps.map((step) => [step.key, step.returns])).toEqual([
+      ['consent', 0],
+      ['task:0', 1],
+      ['task:1', 2],
+      ['preTest', 0],
+    ])
+    const task = timeline.steps[1]
+    expect(task.events.map((item) => item.eventType)).toEqual([
+      'TASK_STARTED',
+      'STUDY_VIEW_OPENED',
+      'TASK_ATTEMPT_FINISHED',
+    ])
+    expect(timeline.steps[2].endedAt).toBe(at(5).getTime())
   })
 })

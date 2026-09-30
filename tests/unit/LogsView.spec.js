@@ -890,6 +890,7 @@ describe('LogsView', () => {
         stage: 'permission',
       }, 'error'),
       event('start', 4, 'TASK_STARTED', { taskRef: 'task:0', taskType: 'sus' }),
+      event('return', 7, 'STUDY_VIEW_OPENED'),
       event('consent', 1, 'CONSENT_ACCEPTED'),
     ])
 
@@ -912,11 +913,13 @@ describe('LogsView', () => {
     ])
     expect(steps[1].text()).toContain('Could not finish')
     expect(steps[1].text()).toContain('Webcam failed')
+    expect(steps[1].text()).toContain('Returned once')
     expect(wrapper.text()).toContain('Submitted')
 
     await steps[1].find('.timeline-step__summary').trigger('click')
     const rows = steps[1].findAll('.timeline-event')
-    expect(rows).toHaveLength(3)
+    expect(rows).toHaveLength(4)
+    expect(rows.at(-1).text()).toContain('Returned to study')
     await rows[0].trigger('click')
     expect(wrapper.vm.selectedEvent.rowKey).toBe('start')
     wrapper.unmount()

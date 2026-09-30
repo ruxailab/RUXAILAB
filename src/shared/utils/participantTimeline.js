@@ -148,21 +148,60 @@ const summaryFor = (kind, events) => {
   return {}
 }
 
+const isOpen = (event) => event?.eventType === 'STUDY_VIEW_OPENED'
+
+// Steps follow the order they actually happened in (a moderator can jump
+// back); the study flow only breaks ties and orders untimed steps.
+const byFirstActivity = (left, right) => {
+  const leftAt = left.times.length ? Math.min(...left.times) : Infinity
+  const rightAt = right.times.length ? Math.min(...right.times) : Infinity
+  return leftAt - rightAt || orderOf(left.key) - orderOf(right.key)
+}
+
 export const buildParticipantTimeline = (events = []) => {
   const ordered = events
     .map((event) => ({ event, at: toMillis(event.occurredAt) }))
     .sort((left, right) => (left.at ?? 0) - (right.at ?? 0))
   const groups = new Map()
   for (const { event, at } of ordered) {
+    if (isOpen(event)) continue
     const key = stepKeyFor(event)
     if (!groups.has(key)) groups.set(key, { key, events: [], times: [] })
     groups.get(key).events.push(event)
     if (at !== null) groups.get(key).times.push(at)
   }
 
-  const steps = [...groups.values()]
-    .sort((left, right) => orderOf(left.key) - orderOf(right.key))
-    .map(({ key, events: stepEvents, times }) => {
+  // With a consent step, "Study opened" is only logged when the participant
+  // comes back after consenting, so it belongs to the step in progress then.
+  // An open before any other activity (no consent step) stays its own step.
+  const sortedGroups = [...groups.values()].sort(byFirstActivity)
+  for (const { event, at } of ordered) {
+    if (!isOpen(event)) continue
+    const current = sortedGroups
+      .filter(
+        (group) =>
+          group.key !== 'session' &&
+          group.times.length &&
+          at !== null &&
+          Math.min(...group.times) <= at,
+      )
+      .pop()
+    if (current) {
+      current.events.push(event)
+      current.returns = (current.returns || 0) + 1
+      continue
+    }
+    if (!groups.has('session')) {
+      const session = { key: 'session', events: [], times: [] }
+      groups.set('session', session)
+      sortedGroups.unshift(session)
+    }
+    groups.get('session').events.push(event)
+    if (at !== null) groups.get('session').times.push(at)
+  }
+
+  const steps = sortedGroups.map(
+    ({ key, events: stepEvents, times, returns = 0 }) => {
       const kind = kindOf(key)
       const summary = summaryFor(kind, stepEvents)
       const [, index] = key.split(':')
@@ -170,13 +209,19 @@ export const buildParticipantTimeline = (events = []) => {
         key,
         kind,
         index: index === undefined ? null : Number(index),
-        events: stepEvents,
+        returns,
+        events: [...stepEvents].sort(
+          (left, right) =>
+            (toMillis(left.occurredAt) ?? 0) -
+            (toMillis(right.occurredAt) ?? 0),
+        ),
         startedAt: times.length ? Math.min(...times) : null,
         endedAt: times.length ? Math.max(...times) : null,
         summary,
         status: statusOf(kind, stepEvents, summary),
       }
-    })
+    },
+  )
 
   const times = ordered.map(({ at }) => at).filter((at) => at !== null)
   const submitted = ordered.find(

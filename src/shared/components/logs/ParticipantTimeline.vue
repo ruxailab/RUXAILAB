@@ -53,7 +53,7 @@
                 {{ formatClock(event.occurredAt) }}
               </span>
               <span>
-                {{ eventPresentation(event).primary }}
+                {{ rowTitle(step, event) }}
                 <small v-if="eventPresentation(event).secondary">
                   {{ eventPresentation(event).secondary }}
                 </small>
@@ -133,7 +133,19 @@ const RECORDING_MARKS = {
   permission_denied: 'not allowed',
   cancelled: 'cancelled',
 }
-const stepDetails = (step) => {
+// Inside another step, "Study opened" means the participant came back to the
+// study page (refresh, new tab or rejoin) during that step.
+const rowTitle = (step, event) =>
+  event.eventType === 'STUDY_VIEW_OPENED' && step.kind !== 'session'
+    ? 'Returned to study'
+    : props.eventPresentation(event).primary
+const stepDetails = (step) =>
+  [
+    ...summaryDetails(step),
+    step.returns &&
+      `Returned ${step.returns === 1 ? 'once' : `${step.returns} times`}`,
+  ].filter(Boolean)
+const summaryDetails = (step) => {
   const summary = step.summary
   if (step.kind === 'session' && summary.opens > 1)
     return [`Opened ${summary.opens} times`]
