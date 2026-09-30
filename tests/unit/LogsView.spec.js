@@ -351,6 +351,50 @@ describe('LogsView', () => {
     wrapper.unmount()
   })
 
+  it('presents pre- and post-test selections as selected answers', async () => {
+    Object.assign(mockStudy, {
+      testType: 'USER',
+      subType: 'USER_UNMODERATED',
+    })
+    getParticipantLabels.mockResolvedValue([])
+    const selection = (scopeRef, items) => ({
+      ...page.events[0],
+      eventType: 'STRUCTURED_RESPONSE_ACTIVITY',
+      message: 'Structured response activity recorded',
+      details: { scopeRef, items },
+    })
+    getStudyLogPage.mockResolvedValue({
+      ...page,
+      events: [
+        selection('preTest', [{ itemRef: 'preTest:question:2', changes: 1 }]),
+        {
+          ...selection('postTest', [
+            { itemRef: 'postTest:question:1', changes: 1 },
+            { itemRef: 'postTest:question:0', changes: 2 },
+          ]),
+          eventId: 'event-2',
+        },
+      ],
+    })
+    getStudyLogCount.mockResolvedValue(2)
+
+    const wrapper = mount(LogsView, { props: { id: 'study-1' } })
+    await flushPromises()
+
+    const [preTest, postTest] = wrapper.findAll('tbody tr')
+    expect(preTest.text()).toContain('Pre-test · Answer selected')
+    expect(preTest.text()).toContain('Question 3')
+    expect(postTest.text()).toContain('Post-test · Answers selected')
+    expect(postTest.text()).toContain('Questions 1, 2')
+    expect(wrapper.text()).not.toContain('Structured response activity')
+
+    await postTest.trigger('click')
+    expect(wrapper.text()).toContain('Selected answers')
+    expect(wrapper.text()).toContain('Post-test · Question 1')
+    expect(wrapper.text()).toContain('2 updates in this record')
+    wrapper.unmount()
+  })
+
   it('presents structured activity as counts without response values', async () => {
     Object.assign(mockStudy, {
       testType: 'USER',
@@ -381,8 +425,8 @@ describe('LogsView', () => {
     await flushPromises()
     await wrapper.find('tbody tr').trigger('click')
 
-    expect(wrapper.text()).toContain('Structured response activity')
-    expect(wrapper.text()).toContain('Task 1 · 2 updates in this record')
+    expect(wrapper.text()).toContain('Task 1 · Questionnaire activity')
+    expect(wrapper.text()).toContain('NASA-TLX · 2 updates')
     const text = wrapper.text()
     expect(text).toContain('NASA-TLX · Effort')
     expect(text).toContain('1 update in this record')
