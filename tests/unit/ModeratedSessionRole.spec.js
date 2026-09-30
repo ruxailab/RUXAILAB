@@ -9,10 +9,13 @@ jest.mock('vue-router', () => ({
 }))
 jest.mock('vue-i18n', () => ({ useI18n: () => ({ t: (key) => key }) }))
 jest.mock('@/app/plugins/firebase/index', () => ({ database: {} }))
+const mockUpdates = []
 jest.mock('firebase/database', () => ({
-  ref: () => ({}),
+  ref: (_database, path) => ({ path }),
   onValue: () => () => {},
-  update: async () => {},
+  update: async (target, value) => {
+    mockUpdates.push({ path: target?.path, value })
+  },
   get: async () => ({ exists: () => false, val: () => null }),
   remove: async () => {},
 }))
@@ -22,6 +25,7 @@ jest.mock('@/app/plugins/firebase/FirebaseFunctionsService', () => ({
 jest.mock('@/shared/services/studyLoggingRuntime', () => ({
   createStudyLoggingRuntime: () => ({
     resumeAfterConsent: () => {},
+    submitted: () => {},
     destroy: () => {},
   }),
 }))
@@ -50,7 +54,7 @@ global.MediaStream = class {}
 const ModeratedTestView =
   require('@/ux/UserTest/views/ModeratedTestView.vue').default
 
-const mountWithSession = async (session) => {
+const mountWithSession = async (session, extraGetters = {}) => {
   mockStore.dispatch.mockResolvedValue(undefined)
   mockStore.getters = reactive({
     user: { id: 'participant', email: 'Participant@Example.test' },
@@ -64,6 +68,7 @@ const mountWithSession = async (session) => {
       testStructure: { userTasks: [], preTest: [], postTest: [] },
     },
     currentUserTestAnswer: { userDocId: 'participant', tasks: [] },
+    ...extraGetters,
     session,
     mediaUrls: {},
   })
@@ -113,4 +118,34 @@ it('does not re-run Start once the session has started', async () => {
   await wrapper.vm.startTest()
 
   expect(requestFullscreen).toHaveBeenCalledTimes(1)
+})
+
+it('shares finished tasks and submission with the facilitator', async () => {
+  wrapper = await mountWithSession(
+    { participants: [{ userDocId: 'participant', role: 5 }] },
+    {
+      currentUserTestAnswer: {
+        userDocId: 'participant',
+        consentCompleted: true,
+        preTestCompleted: true,
+        postTestCompleted: true,
+        tasks: [
+          { attempted: true, completed: true },
+          { attempted: true, completed: false },
+        ],
+      },
+    },
+  )
+  mockUpdates.length = 0
+
+  expect(wrapper.vm.completedSteps.tasks).toBe(true)
+  await wrapper.vm.handleSubmit()
+  await flushPromises()
+
+  const published = mockUpdates.filter((item) => item.value?.progress).pop()
+  expect(published.path).toBe('calls/study-1/participants/participant')
+  expect(published.value.progress).toMatchObject({
+    tasks: true,
+    completion: true,
+  })
 })

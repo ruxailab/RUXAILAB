@@ -1046,10 +1046,11 @@ const completedSteps = computed(() => {
   return {
     consent: localTestAnswer.consentCompleted === true,
     preTest: localTestAnswer.preTestCompleted === true,
+    // "Could not finish" still finishes the task step.
     tasks:
       Array.isArray(localTestAnswer.tasks) &&
       localTestAnswer.tasks.length > 0 &&
-      localTestAnswer.tasks.every((task) => task?.completed === true),
+      localTestAnswer.tasks.every((task) => task?.attempted === true),
     postTest: localTestAnswer.postTestCompleted === true,
     completion: localTestAnswer.submitted === true,
   }
@@ -1231,12 +1232,23 @@ const handleConsentDecline = async () => {
   }, 2000)
 }
 
+// The facilitator's Test Progress reads this, so publish after every step and
+// after submission. taskIndex is the participant's next task.
+const publishParticipantProgress = async () => {
+  if (isModerator.value || !user.value?.id) return
+  await update(
+    dbRef(database, `calls/${roomId.value}/participants/${user.value.id}`),
+    { taskIndex: taskIndex.value, progress: completedSteps.value },
+  )
+}
+
 const handleSubmit = async () => {
   submitDialog.value = false
   try {
     localTestAnswer.submitted = true
     await saveAnswer()
     void initializeStudyLogging()?.submitted()
+    void publishParticipantProgress().catch(() => {})
     displayVideoCallComponent.value = true
   } catch {
     localTestAnswer.submitted = false
@@ -2183,20 +2195,7 @@ const completeStep = async (
       showVideoCall: true,
     })
 
-    // Update individual participant taskIndex (for tracking)
-    if (!isModerator.value && user.value?.id) {
-      const participantRef = dbRef(
-        database,
-        `calls/${roomId.value}/participants/${user.value.id}`,
-      )
-      // We can just update taskIndex.
-      // Note: 'taskIndex' variable here is the NEXT index (already updated above if type=='tasks')
-      // validation: type === 'tasks' ? id + 1 : taskIndex.value
-      await update(participantRef, {
-        taskIndex: taskIndex.value,
-        progress: completedSteps.value,
-      })
-    }
+    await publishParticipantProgress()
 
     calculateProgress(localTestAnswer)
     await saveAnswer()
