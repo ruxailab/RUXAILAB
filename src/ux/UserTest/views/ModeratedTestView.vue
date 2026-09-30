@@ -475,6 +475,8 @@
               :nasa-tlx-answers="
                 localTestAnswer.tasks[taskIndex].nasaTlxAnswers
               "
+              :tam-answers="localTestAnswer.tasks[taskIndex].tamAnswers"
+              :sart-answers="localTestAnswer.tasks[taskIndex].sartAnswers"
               :submitted="localTestAnswer.submitted"
               :done-task-disabled="doneTaskDisabled"
               :remote-stream="remoteStream"
@@ -491,6 +493,16 @@
               @update:nasa-tlx-answers="
                 (val) => {
                   localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val }
+                }
+              "
+              @update:tam-answers="
+                (val) => {
+                  localTestAnswer.tasks[taskIndex].tamAnswers = { ...val }
+                }
+              "
+              @update:sart-answers="
+                (val) => {
+                  localTestAnswer.tasks[taskIndex].sartAnswers = { ...val }
                 }
               "
               @done="() => handleTaskFinish(true)"
