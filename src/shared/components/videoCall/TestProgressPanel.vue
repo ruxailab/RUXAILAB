@@ -85,6 +85,7 @@
               test?.testStructure?.userTasks
             "
             class="tasks-dropdown mt-3"
+            @click.stop
           >
             <v-select
               :items="taskDropdownItems"

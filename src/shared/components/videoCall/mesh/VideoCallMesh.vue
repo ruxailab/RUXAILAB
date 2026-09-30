@@ -535,7 +535,7 @@ const taskDropdownItems = computed(() => {
   if (!props.test?.testStructure?.userTasks) return []
   return props.test.testStructure.userTasks.map((task, index) => ({
     title: `Task ${index + 1}: ${
-      task.name || task.title || `User Task ${index + 1}`
+      task.taskName || task.name || task.title || `User Task ${index + 1}`
     }`,
     index: index,
     completed: index < (props.currentTaskIndex || 0),
@@ -1491,8 +1491,9 @@ function goToStep(stepType) {
       taskIndex = 0
       break
     case 'tasks':
+      // Resume the participant's current task instead of restarting at task 1.
       globalIndex = 4
-      taskIndex = 0
+      taskIndex = props.currentTaskIndex || 0
       break
     case 'posttest':
       globalIndex = 5

@@ -165,3 +165,32 @@ it('publishes the moderator camera state where other peers read it', async () =>
   expect(status.path).toBe('calls/room-1/staff/moderator')
   expect(status.value.media.cameraEnabled).toBe(false)
 })
+
+it('sends the participant back to their current task, not task 1', async () => {
+  Object.defineProperty(global.navigator, 'mediaDevices', {
+    configurable: true,
+    value: { getUserMedia: async () => stream(track('audio')) },
+  })
+  wrapper = shallowMount(VideoCallMesh, {
+    props: {
+      roomId: 'room-1',
+      isModerator: true,
+      currentGlobalIndex: 4,
+      currentTaskIndex: 3,
+      user: { id: 'moderator', email: 'moderator@example.test' },
+      test: {
+        id: 'study-1',
+        testStructure: { userTasks: [{}, {}, {}, { taskName: 'SUS' }] },
+      },
+    },
+    global: { mocks: { $t: (key) => key } },
+  })
+  await flushPromises()
+
+  wrapper.vm.goToStep('tasks')
+
+  expect(wrapper.emitted('stepSelected').pop()).toEqual([
+    { globalIndex: 4, taskIndex: 3, stepType: 'tasks' },
+  ])
+  expect(wrapper.vm.taskDropdownItems[3].title).toBe('Task 4: SUS')
+})
