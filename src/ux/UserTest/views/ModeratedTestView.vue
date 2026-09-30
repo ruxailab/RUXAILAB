@@ -930,20 +930,27 @@ const sessionParticipantsMembers = computed(() => {
     .filter(Boolean)
 })
 
+const isCurrentUserMember = (member) => {
+  if (member?.userDocId) return member.userDocId === user.value?.id
+  const memberEmail = member?.email?.trim().toLowerCase()
+  return Boolean(
+    memberEmail && memberEmail === user.value?.email?.trim().toLowerCase(),
+  )
+}
+
 const currentUserAccessLevel = computed(() => {
-  const cooperator = session.value?.staff?.find(
-    (c) => c.userDocId === user.value?.id,
-  )
+  const cooperator = session.value?.staff?.find(isCurrentUserMember)
 
-  const participant = session.value?.participants?.find(
-    (p) => p.userDocId === user.value?.id,
-  )
+  const participant = session.value?.participants?.find(isCurrentUserMember)
 
+  // The study role is known before the session loads, so a participant is not
+  // briefly treated as an observer while the session is still being fetched.
   const rawValue =
     cooperator?.accessLevel ??
     cooperator?.role ??
     participant?.accessLevel ??
     participant?.role ??
+    test.value?.studyRoleMap?.[user.value?.id] ??
     (isUserTestAdmin.value ? ACCESS_LEVEL.ADMIN : ACCESS_LEVEL.OBSERVATOR)
 
   return (
