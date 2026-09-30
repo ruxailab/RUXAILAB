@@ -16,9 +16,10 @@ const MEDIA_FLAGS = {
   screen: 'hasScreenRecord',
 }
 
+const isUnmoderated = (study) => study.subType === 'USER_UNMODERATED'
+
 const taskFor = (study, taskRef) => {
-  if (study.testType !== 'USER' || study.subType !== 'USER_UNMODERATED')
-    return null
+  if (study.testType !== 'USER') return null
   const match = /^task:(0|[1-9]\d*)$/.exec(taskRef)
   return match ? study.testStructure?.userTasks?.[Number(match[1])] : null
 }
@@ -28,7 +29,8 @@ export const taskContext = (study, taskRef, includeRecordingTypes = false) => {
   if (!task) return {}
   return {
     ...(TASK_TYPES.has(task.taskType) ? { taskType: task.taskType } : {}),
-    ...(includeRecordingTypes
+    // Moderated sessions record through the video call, not task recorders.
+    ...(includeRecordingTypes && isUnmoderated(study)
       ? {
           recordingTypes: Object.keys(MEDIA_FLAGS).filter(
             (type) => task[MEDIA_FLAGS[type]] === true,
@@ -49,7 +51,7 @@ export const recordingPolicy = (study, details) => {
     )
   )
     return null
-  const task = taskFor(study, taskRef)
+  const task = isUnmoderated(study) ? taskFor(study, taskRef) : null
   if (
     !Object.hasOwn(MEDIA_FLAGS, mediaType) ||
     task?.[MEDIA_FLAGS[mediaType]] !== true

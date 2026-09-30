@@ -448,6 +448,7 @@
               :pre-test="test.testStructure.preTest"
               :pre-test-answer="localTestAnswer.preTestAnswer"
               :pre-test-completed="localTestAnswer.preTestCompleted"
+              @selection-changed="handleStructuredSelectionChanged"
               @done="completeStep(taskIndex, 'preTest')"
             />
 
@@ -499,6 +500,24 @@
               @recording-started="isVisualizerVisible = $event"
               @tip-pressed="handleTipPressed"
               @timer-stopped="handleTimerStopped"
+              @task-started="handleTaskStarted"
+              @structured-response-changed="handleStructuredResponseChanged"
+              @structured-slider-focus="
+                (event) => handleStructuredSliderEvent('focus', event)
+              "
+              @structured-slider-start="
+                (event) => handleStructuredSliderEvent('start', event)
+              "
+              @structured-slider-change="
+                (event) => handleStructuredSliderEvent('change', event)
+              "
+              @structured-slider-end="
+                (event) => handleStructuredSliderEvent('end', event)
+              "
+              @structured-slider-blur="
+                (event) => handleStructuredSliderEvent('blur', event)
+              "
+              @task-questionnaire-entered="handleTaskQuestionnaireEntered"
             />
 
             <PostTestStep
@@ -508,6 +527,7 @@
               :post-test="test.testStructure.postTest"
               :post-test-answer="localTestAnswer.postTestAnswer"
               :post-test-completed="localTestAnswer.postTestCompleted"
+              @selection-changed="handleStructuredSelectionChanged"
               @done="
                 async () => {
                   await completeStep(taskIndex, 'postTest')
@@ -630,6 +650,11 @@ import { calculateProgress } from '../utils/testProgress'
 import { animateStepAnnouncement } from '@/shared/utils/animations'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
+import {
+  createStructuredActivityHandlers,
+  structuredValuesForStage,
+  structuredValuesForTask,
+} from '@/ux/UserTest/utils/structuredActivity'
 import { removeStaffDuplicates } from '@/ux/UserTest/utils/sessionPresence'
 import { moderatedSessionTimingReason } from '@/ux/UserTest/utils/moderatedSessionAvailability'
 
@@ -658,6 +683,45 @@ const handleLoggingInput = (event) =>
   initializeStudyLogging()?.editHandlers.input(event)
 const handleLoggingFocusout = (event) =>
   initializeStudyLogging()?.editHandlers.focusout(event)
+const {
+  seedStructuredScope,
+  handleStructuredResponseChanged,
+  handleStructuredSelectionChanged,
+  handleStructuredSliderEvent,
+} = createStructuredActivityHandlers(initializeStudyLogging)
+const handleTaskStarted = (occurredAt) => {
+  void initializeStudyLogging()?.taskStarted(taskIndex.value, occurredAt)
+}
+const structuredScopeForCurrentStage = () => {
+  if (globalIndex.value === 2 && taskIndex.value === 0) return 'preTest'
+  if (
+    globalIndex.value === 4 &&
+    test.value?.testStructure?.userTasks?.[taskIndex.value]
+  ) {
+    return `task:${taskIndex.value}`
+  }
+  if (globalIndex.value === 5) return 'postTest'
+  return null
+}
+const structuredValuesForScope = (scopeRef) => {
+  if (scopeRef === 'preTest' || scopeRef === 'postTest') {
+    return structuredValuesForStage(
+      scopeRef,
+      test.value?.testStructure?.[scopeRef],
+      localTestAnswer[`${scopeRef}Answer`],
+    )
+  }
+  const index = Number(scopeRef.split(':')[1])
+  return structuredValuesForTask(
+    test.value?.testStructure?.userTasks?.[index],
+    localTestAnswer.tasks?.[index],
+  )
+}
+const handleTaskQuestionnaireEntered = ({ scopeRef } = {}) => {
+  const taskRef = scopeRef || `task:${taskIndex.value}`
+  seedStructuredScope(taskRef, structuredValuesForScope(taskRef))
+}
+let activeStructuredScope = null
 // Data variables
 
 onBeforeUnmount(() => {
@@ -981,6 +1045,22 @@ const scrollToTop = () => {
 }
 
 // Watchers
+watch(
+  () => [globalIndex.value, taskIndex.value],
+  () => {
+    const nextScope = structuredScopeForCurrentStage()
+    if (activeStructuredScope && activeStructuredScope !== nextScope) {
+      void initializeStudyLogging()?.checkpointStructuredScope(
+        activeStructuredScope,
+      )
+    }
+    activeStructuredScope = nextScope
+    if (nextScope) {
+      seedStructuredScope(nextScope, structuredValuesForScope(nextScope))
+    }
+  },
+)
+
 watch(user, async () => {
   if (user.value) {
     if (loggedIn.value) await setTestAnswer()

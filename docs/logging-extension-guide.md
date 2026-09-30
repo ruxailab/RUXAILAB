@@ -56,7 +56,8 @@ frequency, severity, or configured-option change; delegated comment inputs are
 counted by the runtime. Leaving the question, hiding the page, or submitting
 finishes the group. Never pass selected values or comment text to logging.
 
-Unmoderated structured questionnaires also emit client-observed
+User-test structured questionnaires (moderated and unmoderated, via the shared
+`src/ux/UserTest/utils/structuredActivity.js`) also emit client-observed
 `STRUCTURED_RESPONSE_ACTIVITY` records at form, hidden-page, and submission
 boundaries. These records contain only record-local change counts and canonical
 item references; answers, labels, scores, and question text remain in Results.
@@ -125,11 +126,14 @@ participant-facing loading states or notifications. Never send media URLs, blobs
 transcripts, answers, instrument scores, names, emails, or raw exceptions.
 
 The server derives `taskType` from trusted `testStructure.userTasks[index]` for
-unmoderated task-finished events, task-field edits, and recording outcomes. Allowed
+user-test task starts, task-finished events, task-field edits, and task
+questionnaire activity, and for unmoderated recording outcomes. Allowed
 values are `no-answer`, `post-test`, `text-area`, `post-form`, `nasa-tlx`, `sus`,
 `tam-1`, `tam-2`, `tam-3`, and `sart`. Missing/unknown types are omitted without
-dropping the base event. Task-finished events also include `recordingTypes` from
-the enabled media flags; this describes requested media, not saved artifacts.
+dropping the base event. Unmoderated task-finished events also include
+`recordingTypes` from the enabled media flags; this describes requested media,
+not saved artifacts. Moderated sessions record through the video call, so they
+have no `recordingTypes` or `MEDIA_RECORDING_OUTCOME`.
 Pre/post-study fields and whole-study events have no invented task context.
 Existing log documents remain immutable when study configuration changes.
 
