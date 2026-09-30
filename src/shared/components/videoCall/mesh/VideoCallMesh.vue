@@ -1010,6 +1010,7 @@ const createPeerConnection = (targetUserId, isInitiator) => {
     stream: null,
     screenStream: null,
     screenSender: null,
+    cameraSender: null,
     pendingCandidates: [],
     screenShareExpected: false,
     needsNegotiation: false,
@@ -1019,8 +1020,17 @@ const createPeerConnection = (targetUserId, isInitiator) => {
   // Publish local media so staff members can see each other.
   if (localStream.value) {
     localStream.value.getTracks().forEach((track) => {
-      pc.addTrack(track, localStream.value)
+      const sender = pc.addTrack(track, localStream.value)
+      if (track.kind === 'video') peers[targetUserId].cameraSender = sender
     })
+  }
+  // Reserve the camera slot even without a camera, so it can be turned on
+  // later with replaceTrack instead of renegotiating the connection.
+  if (!peers[targetUserId].cameraSender) {
+    peers[targetUserId].cameraSender = pc.addTransceiver('video', {
+      direction: 'sendrecv',
+      streams: localStream.value ? [localStream.value] : [],
+    }).sender
   }
 
   if (screenStream.value) {
@@ -1159,15 +1169,46 @@ const returnToVideoCall = async () => {
   }
 }
 
-function toggleCamera() {
-  if (!localStream.value) return
-  const track = localStream.value.getVideoTracks()[0]
-  if (track) {
-    track.enabled = !track.enabled
-    isCameraEnabled.value = track.enabled
-    // Share camera state with other peers
-    updateParticipantStatus()
+const replaceCameraTrack = (track) =>
+  Promise.all(
+    Object.values(peers).map((peer) =>
+      peer.cameraSender?.replaceTrack(track).catch((error) => {
+        console.error('Camera track replacement failed', error)
+      }),
+    ),
+  )
+
+async function toggleCamera() {
+  const track = localStream.value?.getVideoTracks()[0]
+  if (track && !track.enabled) {
+    // A restored "camera off" state pauses the track instead of releasing it.
+    track.enabled = true
+    isCameraEnabled.value = true
+  } else if (track) {
+    // Release the device like other call apps, so it can be reopened later.
+    track.stop()
+    localStream.value.removeTrack(track)
+    await replaceCameraTrack(null)
+    isCameraEnabled.value = false
+  } else {
+    try {
+      const cameraStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+      })
+      const cameraTrack = cameraStream.getVideoTracks()[0]
+      if (!localStream.value) localStream.value = new MediaStream()
+      localStream.value.addTrack(cameraTrack)
+      if (localVideo.value) localVideo.value.srcObject = localStream.value
+      await replaceCameraTrack(cameraTrack)
+      isCameraEnabled.value = true
+    } catch (error) {
+      console.error('Turning the camera on failed', error)
+      isCameraEnabled.value = false
+      return
+    }
   }
+  // Share camera state with other peers
+  updateParticipantStatus()
 }
 
 function toggleMicrophone() {

@@ -69,3 +69,69 @@ it('keeps the microphone when the camera cannot be opened', async () => {
   wrapper.vm.toggleMicrophone()
   expect(wrapper.vm.isMicrophoneEnabled).toBe(false)
 })
+
+it('turns the camera on after it failed at join, and releases it when off', async () => {
+  let cameraBusy = true
+  const cameraTrack = { ...track('video'), stop: jest.fn() }
+  const getUserMedia = jest.fn(async (constraints) => {
+    if (constraints.video && cameraBusy) {
+      throw Object.assign(new Error('busy'), { name: 'NotReadableError' })
+    }
+    return constraints.video ? stream(cameraTrack) : stream(track('audio'))
+  })
+  Object.defineProperty(global.navigator, 'mediaDevices', {
+    configurable: true,
+    value: { getUserMedia },
+  })
+  jest.spyOn(console, 'error').mockImplementation(() => {})
+  const audioOnly = stream(track('audio'))
+  audioOnly.addTrack = jest.fn((item) => audioOnly.getTracks().push(item))
+  audioOnly.removeTrack = jest.fn((item) =>
+    audioOnly.getTracks().splice(audioOnly.getTracks().indexOf(item), 1),
+  )
+  const replaceTrack = jest.fn(async () => {})
+  const addTransceiver = jest.fn(() => ({ sender: { replaceTrack } }))
+  global.RTCPeerConnection = class {
+    addTrack() {
+      return { replaceTrack: jest.fn() }
+    }
+    addTransceiver(...args) {
+      return addTransceiver(...args)
+    }
+    close() {}
+  }
+  getUserMedia.mockImplementationOnce(async () => {
+    throw Object.assign(new Error('busy'), { name: 'NotReadableError' })
+  })
+  getUserMedia.mockImplementationOnce(async () => audioOnly)
+
+  wrapper = shallowMount(VideoCallMesh, {
+    props: {
+      roomId: 'room-1',
+      isModerator: true,
+      user: { id: 'moderator', email: 'moderator@example.test' },
+      test: { id: 'study-1', testStructure: { userTasks: [] } },
+    },
+    global: { mocks: { $t: (key) => key } },
+  })
+  await flushPromises()
+  expect(wrapper.vm.isCameraEnabled).toBe(false)
+
+  wrapper.vm.createPeerConnection('participant', true)
+  expect(addTransceiver).toHaveBeenCalledWith('video', {
+    direction: 'sendrecv',
+    streams: [audioOnly],
+  })
+
+  cameraBusy = false
+  await wrapper.vm.toggleCamera()
+  expect(getUserMedia).toHaveBeenLastCalledWith({ video: true })
+  expect(audioOnly.addTrack).toHaveBeenCalledWith(cameraTrack)
+  expect(replaceTrack).toHaveBeenLastCalledWith(cameraTrack)
+  expect(wrapper.vm.isCameraEnabled).toBe(true)
+
+  await wrapper.vm.toggleCamera()
+  expect(cameraTrack.stop).toHaveBeenCalled()
+  expect(replaceTrack).toHaveBeenLastCalledWith(null)
+  expect(wrapper.vm.isCameraEnabled).toBe(false)
+})
