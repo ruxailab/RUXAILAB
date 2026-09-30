@@ -132,8 +132,9 @@ values are `no-answer`, `post-test`, `text-area`, `post-form`, `nasa-tlx`, `sus`
 `tam-1`, `tam-2`, `tam-3`, and `sart`. Missing/unknown types are omitted without
 dropping the base event. Unmoderated task-finished events also include
 `recordingTypes` from the enabled media flags; this describes requested media,
-not saved artifacts. Moderated sessions record through the video call, so they
-have no `recordingTypes` or `MEDIA_RECORDING_OUTCOME`.
+not saved artifacts. Moderated tasks use the same recorders, but their
+`recordingTypes` and `MEDIA_RECORDING_OUTCOME` are not wired yet: that needs a
+decision on moderated recording and consent first.
 Pre/post-study fields and whole-study events have no invented task context.
 Existing log documents remain immutable when study configuration changes.
 

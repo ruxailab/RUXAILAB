@@ -29,7 +29,7 @@ export const taskContext = (study, taskRef, includeRecordingTypes = false) => {
   if (!task) return {}
   return {
     ...(TASK_TYPES.has(task.taskType) ? { taskType: task.taskType } : {}),
-    // Moderated sessions record through the video call, not task recorders.
+    // Recording outcomes are not wired for moderated tests yet (pending review).
     ...(includeRecordingTypes && isUnmoderated(study)
       ? {
           recordingTypes: Object.keys(MEDIA_FLAGS).filter(
