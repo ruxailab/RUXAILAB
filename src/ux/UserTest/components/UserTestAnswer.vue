@@ -17,7 +17,9 @@
             <v-tab value="1">
               {{ $t('analytics.individualAnalytics') }}
             </v-tab>
-            <v-tab v-if="showSentiment" value="2"> Sentiment Analysis </v-tab>
+            <v-tab v-if="showSentiment" value="2">
+              {{ $t('analytics.sentimentAnalytics') }}
+            </v-tab>
             <v-tab v-if="showSUS" value="3">
               {{ $t('analytics.susAnalytics') }}
             </v-tab>
