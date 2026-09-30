@@ -1246,7 +1246,11 @@ describe('unmoderated task and recording metadata', () => {
         ),
       ),
     ).rejects.toMatchObject({ code: 'invalid-argument' })
-    expect(await logs()).toHaveLength(1)
+    expect(
+      (await logs()).filter(
+        (event) => event.eventType === 'STRUCTURED_RESPONSE_ACTIVITY',
+      ),
+    ).toHaveLength(1)
   })
   it.each([
     'no-answer',
