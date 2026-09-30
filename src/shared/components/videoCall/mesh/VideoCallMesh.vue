@@ -623,6 +623,10 @@ onBeforeUnmount(() => {
 
 // --- Signaling & Mesh Logic ---
 
+// Where this user joined the call; media status must be written to the same
+// member entry that other peers read (staff for moderators and observers).
+let joinedMemberPath = null
+
 const resolveCurrentMemberKey = async (branch) => {
   const branchRef = dbRef(database, `calls/${props.roomId}/${branch}`)
   const snapshot = await get(branchRef)
@@ -654,10 +658,8 @@ const joinRoom = async () => {
   const memberBranch =
     props.isModerator || isObserverMember ? 'staff' : 'participants'
   const memberKey = await resolveCurrentMemberKey(memberBranch)
-  const myMemberRef = dbRef(
-    database,
-    `calls/${props.roomId}/${memberBranch}/${memberKey}`,
-  )
+  joinedMemberPath = `calls/${props.roomId}/${memberBranch}/${memberKey}`
+  const myMemberRef = dbRef(database, joinedMemberPath)
 
   // Restore media settings from DB if available (persistence)
   const snapshot = await get(myMemberRef)
@@ -1228,7 +1230,8 @@ async function updateParticipantStatus() {
     const memberBranch = isObservator.value ? 'staff' : 'participants'
     const participantRef = dbRef(
       database,
-      `calls/${props.roomId}/${memberBranch}/${props.user.id}`,
+      joinedMemberPath ||
+        `calls/${props.roomId}/${memberBranch}/${props.user.id}`,
     )
     await update(participantRef, {
       media: {
