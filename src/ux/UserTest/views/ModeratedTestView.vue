@@ -513,6 +513,7 @@
               @tip-pressed="handleTipPressed"
               @timer-stopped="handleTimerStopped"
               @task-started="handleTaskStarted"
+              @recording-result="handleRecordingResult"
               @structured-response-changed="handleStructuredResponseChanged"
               @structured-slider-focus="
                 (event) => handleStructuredSliderEvent('focus', event)
@@ -662,6 +663,7 @@ import { calculateProgress } from '../utils/testProgress'
 import { animateStepAnnouncement } from '@/shared/utils/animations'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
+import { createRecordingOutcomeTracker } from '@/ux/UserTest/utils/recordingOutcome'
 import {
   createStructuredActivityHandlers,
   structuredValuesForStage,
@@ -701,6 +703,13 @@ const {
   handleStructuredSelectionChanged,
   handleStructuredSliderEvent,
 } = createStructuredActivityHandlers(initializeStudyLogging)
+const recordingOutcomes = createRecordingOutcomeTracker((details) =>
+  initializeStudyLogging()?.recordingOutcome(details),
+)
+const handleRecordingResult = (details) => {
+  if (user.value?.id && localTestAnswer.consentCompleted)
+    recordingOutcomes.observe(details)
+}
 const handleTaskStarted = (occurredAt) => {
   void initializeStudyLogging()?.taskStarted(taskIndex.value, occurredAt)
 }
@@ -1270,6 +1279,13 @@ const saveSessionNotes = async () => {
 const saveAnswer = async () => {
   try {
     attachMediaToTasks(localTestAnswer, mediaUrls.value)
+    // A completed recording is logged only once its media link is saved.
+    const recordingsToSave = recordingOutcomes
+      .beforeSave()
+      .filter(({ taskRef, mediaType }) => {
+        const task = localTestAnswer.tasks?.[Number(taskRef.split(':')[1])]
+        return Boolean(task?.[MEDIA_FIELD_MAP[mediaType]])
+      })
 
     localTestAnswer.fullName = fullName.value
     if (user.value && user.value?.email) {
@@ -1284,6 +1300,7 @@ const saveAnswer = async () => {
       answersDocId: test.value.answersDocId,
       testType: test.value.testType,
     })
+    recordingOutcomes.saved(recordingsToSave)
   } catch (error) {
     store.commit('SET_TOAST', {
       type: 'error',

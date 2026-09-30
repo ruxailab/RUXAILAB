@@ -9,6 +9,7 @@ const mockRuntime = {
   structuredSliderFocus: jest.fn(),
   checkpointStructuredScope: jest.fn(),
   taskStarted: jest.fn(),
+  recordingOutcome: jest.fn(),
   destroy: jest.fn(),
 }
 const mockCreateRuntime = jest.fn(() => mockRuntime)
@@ -148,7 +149,6 @@ it('logs moderated task entry and questionnaire activity', async () => {
     'task:0',
     'nasa-tlx:effort',
   )
-  expect(task.attributes()).not.toHaveProperty('onrecording-result')
 })
 
 it('never logs activity for the moderator', async () => {
@@ -165,4 +165,35 @@ it('never logs activity for the moderator', async () => {
 
   expect(mockCreateRuntime).not.toHaveBeenCalled()
   expect(mockRuntime.structuredChoiceChanged).not.toHaveBeenCalled()
+})
+
+it('logs moderated recording outcomes once the media link is saved', async () => {
+  wrapper = await mountAs('participant')
+  wrapper.vm.globalIndex = 4
+  wrapper.vm.taskIndex = 0
+  await nextTick()
+  const task = wrapper.findComponent({ name: 'TaskStep' })
+  const failed = {
+    taskRef: 'task:0',
+    mediaType: 'webcam',
+    outcome: 'failed',
+    stage: 'permission',
+    reason: 'deviceUnavailable',
+  }
+  const saved = {
+    taskRef: 'task:0',
+    mediaType: 'audio',
+    outcome: 'completed',
+    stage: 'upload',
+  }
+
+  task.vm.$emit('recording-result', failed)
+  task.vm.$emit('recording-result', saved)
+  expect(mockRuntime.recordingOutcome).toHaveBeenCalledWith(failed)
+  expect(mockRuntime.recordingOutcome).not.toHaveBeenCalledWith(saved)
+
+  mockStore.getters.mediaUrls = { 0: { audio: 'https://example.test/a' } }
+  await wrapper.vm.saveAnswer()
+
+  expect(mockRuntime.recordingOutcome).toHaveBeenCalledWith(saved)
 })

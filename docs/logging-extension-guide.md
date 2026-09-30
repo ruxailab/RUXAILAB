@@ -80,7 +80,7 @@ or stored document contains entered text.
 
 ## Unmoderated task and recording metadata
 
-Only USER_UNMODERATED produces `MEDIA_RECORDING_OUTCOME`. Shared recorders emit
+Moderated and unmoderated user tests produce `MEDIA_RECORDING_OUTCOME`. Shared recorders emit
 `recording-result` to TaskStep; they have no logging dependency. Each capture
 keeps the task index from permission acquisition through upload and emits at most
 one terminal result. A real new capture is a new attempt. Browser delivery retries
@@ -115,7 +115,7 @@ severity: completed is `info`, denial/cancellation is `warning`, failure is
 screen API does not distinguish intent. This is client-observed telemetry, not
 server verification of media integrity.
 
-**An upload result is not a persisted recording.** The unmoderated parent holds
+**An upload result is not a persisted recording.** The participant view holds
 successful results in memory, containing only task/media metadata. Before saving,
 it attaches media references to the answer and snapshots the pending results
 whose references are present. Only a successful `saveTestAnswer` acknowledges
@@ -140,9 +140,8 @@ values are `no-answer`, `post-test`, `text-area`, `post-form`, `nasa-tlx`, `sus`
 `tam-1`, `tam-2`, `tam-3`, and `sart`. Missing/unknown types are omitted without
 dropping the base event. Unmoderated task-finished events also include
 `recordingTypes` from the enabled media flags; this describes requested media,
-not saved artifacts. Moderated tasks use the same recorders, but their
-`recordingTypes` and `MEDIA_RECORDING_OUTCOME` are not wired yet: that needs a
-decision on moderated recording and consent first.
+not saved artifacts. Moderated tests use the same per-task recorders, so they
+get the same `recordingTypes` and `MEDIA_RECORDING_OUTCOME` events.
 Pre/post-study fields and whole-study events have no invented task context.
 Existing log documents remain immutable when study configuration changes.
 

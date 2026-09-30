@@ -1099,7 +1099,7 @@ describe('unmoderated task and recording metadata', () => {
     })
   })
 
-  it('gives moderated studies the same task and questionnaire activity without recordings', async () => {
+  it('gives moderated studies the same task and questionnaire activity', async () => {
     await configure({ taskType: 'nasa-tlx' })
     await studyRef().update({
       subType: 'USER_MODERATED',
@@ -1160,8 +1160,10 @@ describe('unmoderated task and recording metadata', () => {
       ]),
     )
     const finished = byType('TASK_ATTEMPT_FINISHED')[0]
-    expect(finished.details).toMatchObject({ taskType: 'nasa-tlx' })
-    expect(finished.details).not.toHaveProperty('recordingTypes')
+    expect(finished.details).toMatchObject({
+      taskType: 'nasa-tlx',
+      recordingTypes: ['audio', 'webcam', 'screen'],
+    })
   })
 
   it('accepts configured structured activity and enriches only task context', async () => {
@@ -1595,11 +1597,24 @@ describe('unmoderated task and recording metadata', () => {
       true,
     )
   })
-  it('does not connect recording observations to moderated studies', async () => {
+  it('accepts recording outcomes from moderated studies', async () => {
     await configure()
     await studyRef().update({ subType: 'USER_MODERATED' })
+    await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
+    const failure = recording({
+      outcome: 'failed',
+      stage: 'permission',
+      reason: 'deviceUnavailable',
+    })
     await expect(
-      logEvents.run(participantRequest(recording())),
-    ).rejects.toMatchObject({ code: 'invalid-argument' })
+      logEvents.run(participantRequest(failure)),
+    ).resolves.toMatchObject({ status: 'accepted' })
+    const event = (await logs()).find(
+      (item) => item.eventType === 'MEDIA_RECORDING_OUTCOME',
+    )
+    expect(event).toMatchObject({
+      level: 'error',
+      details: { taskRef: 'task:0', mediaType: 'audio', outcome: 'failed' },
+    })
   })
 })
