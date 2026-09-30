@@ -676,9 +676,11 @@ const joinRoom = async () => {
   if (localStream.value) {
     const vTrack = localStream.value.getVideoTracks()[0]
     if (vTrack) vTrack.enabled = isCameraEnabled.value
+    else isCameraEnabled.value = false
 
     const aTrack = localStream.value.getAudioTracks()[0]
     if (aTrack) aTrack.enabled = isMicrophoneEnabled.value
+    else isMicrophoneEnabled.value = false
   }
 
   const presenceNow = Date.now()
@@ -981,6 +983,18 @@ const initLocalMedia = async () => {
   } catch (error) {
     console.error('getUserMedia failed', error)
     isCameraEnabled.value = false
+    // A busy or blocked camera must not also take the microphone away.
+    try {
+      const audioStream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+      })
+      localStream.value = audioStream
+      if (localVideo.value) localVideo.value.srcObject = audioStream
+      isMicrophoneEnabled.value = true
+    } catch (audioError) {
+      console.error('getUserMedia audio fallback failed', audioError)
+      isMicrophoneEnabled.value = false
+    }
   }
 }
 
