@@ -34,7 +34,84 @@
         </span>
       </div>
 
-      <section class="filter-surface" aria-labelledby="log-filter-heading">
+      <div class="view-switch">
+        <v-btn-toggle
+          v-model="viewMode"
+          mandatory
+          density="comfortable"
+          variant="outlined"
+          divided
+          aria-label="Log view"
+        >
+          <v-btn value="events" prepend-icon="mdi-format-list-bulleted">
+            All events
+          </v-btn>
+          <v-btn value="timeline" prepend-icon="mdi-timeline-text-outline">
+            Participant timeline
+          </v-btn>
+        </v-btn-toggle>
+      </div>
+
+      <section
+        v-if="viewMode === 'timeline'"
+        class="events-surface timeline-surface"
+        aria-label="Participant timeline"
+      >
+        <div class="events-toolbar">
+          <v-autocomplete
+            v-model="timelineParticipant"
+            :items="participantLabels"
+            label="Participant"
+            prepend-inner-icon="mdi-account-outline"
+            density="compact"
+            variant="outlined"
+            hide-details
+            class="timeline-participant"
+            @update:search="searchParticipants"
+          />
+          <v-btn
+            prepend-icon="mdi-refresh"
+            variant="outlined"
+            size="small"
+            :loading="timelineLoading"
+            :disabled="!timelineParticipant"
+            @click="loadTimeline"
+          >
+            Refresh
+          </v-btn>
+        </div>
+        <v-progress-linear
+          v-if="timelineLoading"
+          indeterminate
+          color="secondary"
+        />
+        <p v-if="timelineError" class="timeline-error" role="alert">
+          {{ timelineError }}
+        </p>
+        <ParticipantTimeline
+          v-else-if="timeline"
+          :timeline="timeline"
+          :event-presentation="eventPresentation"
+          :format-clock="formatClock"
+          :format-date-time="formatDateTime"
+          :task-type-label="formatTaskType"
+          :media-type-label="mediaTypeShortLabel"
+          @select="selectedEvent = $event"
+        />
+        <div v-else-if="!timelineLoading" class="empty-logs">
+          <div class="empty-logs__icon">
+            <v-icon size="34">mdi-timeline-text-outline</v-icon>
+          </div>
+          <h3>No participant selected</h3>
+          <p>Choose a participant to see their activity step by step.</p>
+        </div>
+      </section>
+
+      <section
+        v-if="viewMode === 'events'"
+        class="filter-surface"
+        aria-labelledby="log-filter-heading"
+      >
         <div class="surface-heading">
           <h2 id="log-filter-heading">Filters</h2>
           <span v-if="activeFilterCount" class="filter-count">
@@ -160,7 +237,11 @@
         {{ errorMessage }}
       </v-alert>
 
-      <section class="events-surface" aria-labelledby="log-events-heading">
+      <section
+        v-if="viewMode === 'events'"
+        class="events-surface"
+        aria-labelledby="log-events-heading"
+      >
         <div class="events-toolbar">
           <div class="events-title-row">
             <h2 id="log-events-heading">Recorded activity</h2>
@@ -503,11 +584,14 @@ import { useStore } from 'vuex'
 import { useDisplay } from 'vuetify'
 import { db } from '@/app/plugins/firebase'
 import {
+  getParticipantEvents,
   getParticipantLabels,
   getStudyLogCount,
   getStudyLogPage,
   localDateRange,
 } from '@/shared/services/studyLogQuery'
+import ParticipantTimeline from '@/shared/components/logs/ParticipantTimeline.vue'
+import { buildParticipantTimeline } from '@/shared/utils/participantTimeline'
 
 const props = defineProps({ id: { type: String, required: true } })
 const store = useStore()
@@ -538,6 +622,8 @@ const MEDIA_TYPE_LABELS = Object.freeze({
   screen: 'Screen recording',
 })
 const formatTaskType = (value) => TASK_TYPE_LABELS[value] || null
+const mediaTypeShortLabel = (value) =>
+  ({ audio: 'Audio', webcam: 'Webcam', screen: 'Screen' })[value] || value
 const parseTaskRef = (value) => {
   const match = /^task:(0|[1-9]\d*)$/.exec(value || '')
   if (!match) return null
@@ -1274,6 +1360,48 @@ const formatDetailValue = (key, value) => {
 }
 
 watch(pageSize, () => replaceFirstPage())
+
+// Participant timeline: one participant's full history, grouped by step.
+// The flat list stays the default until the timeline is reviewed.
+const viewMode = ref('events')
+const timelineParticipant = ref(null)
+const timelineEvents = ref([])
+const timelineLoading = ref(false)
+const timelineError = ref('')
+const timeline = computed(() =>
+  timelineEvents.value.length
+    ? buildParticipantTimeline(timelineEvents.value)
+    : null,
+)
+const loadTimeline = async () => {
+  const participantLabel = timelineParticipant.value
+  if (!participantLabel) {
+    timelineEvents.value = []
+    return
+  }
+  timelineLoading.value = true
+  timelineError.value = ''
+  try {
+    const events = await getParticipantEvents({
+      db,
+      studyId: props.id,
+      participantLabel,
+    })
+    if (timelineParticipant.value === participantLabel) {
+      timelineEvents.value = events
+    }
+  } catch (error) {
+    timelineError.value = queryError(error)
+  } finally {
+    timelineLoading.value = false
+  }
+}
+watch(timelineParticipant, loadTimeline)
+watch(participantLabels, (labels) => {
+  if (!timelineParticipant.value && labels.length) {
+    timelineParticipant.value = labels[0]
+  }
+})
 onMounted(async () => {
   if (xs?.value) filtersExpanded.value = false
   searchParticipants('')
