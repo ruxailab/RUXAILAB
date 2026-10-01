@@ -379,16 +379,16 @@ describe('StudyController', () => {
           membershipType: 'cooperator',
           targetUserId: 'coop-user-123',
           targetEmail: 'coop@test.com',
-          role: 5,
         },
       )
     })
 
-    it('should accept study collaboration with the cooperator membership data', async () => {
+    it('forwards the invitation token and never a role', async () => {
       const mockPayload = {
         studyId: 'study-123',
         membershipType: 'cooperator',
-        role: 5,
+        role: 0,
+        inviteToken: 'link-token',
         cooperator: {
           id: 'coop-user-123',
           email: 'coop@test.com',
@@ -409,7 +409,7 @@ describe('StudyController', () => {
           membershipType: 'cooperator',
           targetUserId: 'coop-user-123',
           targetEmail: 'coop@test.com',
-          role: 5,
+          inviteToken: 'link-token',
         },
       )
     })

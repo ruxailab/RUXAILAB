@@ -443,11 +443,12 @@ export default {
 
         // Pending invitees are deliberately not allowed to read the study doc
         // yet. Complete membership first; the new role grants read access.
+        // The server takes the role from the invitation behind this token.
         await dispatch('acceptStudyCollaboration', {
           studyId: resolvedStudyId,
           cooperator: user,
           membershipType,
-          role: result.invite.accessLevel,
+          inviteToken: token,
         })
 
         const study = await new StudyController().getStudy({
