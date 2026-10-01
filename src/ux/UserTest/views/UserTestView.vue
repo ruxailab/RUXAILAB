@@ -152,6 +152,7 @@
             rounded
             class="mt-4"
             :disabled="isStartTestDisabled"
+            :loading="!answerLoaded"
             @click="startTest"
           >
             {{ $t('UserTestView.actions.startTest') }}
@@ -615,6 +616,9 @@ import { taskDestination } from '@/ux/UserTest/utils/unmoderatedNavigation'
 
 const fullName = ref('')
 const logined = ref(null)
+// Start stays disabled until the saved answer is known, so a submitted study
+// cannot be started again before "already completed" can be shown.
+const answerLoaded = ref(false)
 const fromlink = ref(null)
 const start = ref(true)
 const globalIndex = ref(null)
@@ -929,7 +933,7 @@ const hasTestDashboardAccess = computed(() => {
 })
 
 const isStartTestDisabled = computed(() => {
-  if (!test.value) return true
+  if (!test.value || !answerLoaded.value) return true
 
   // Check if testStructure is empty array or doesn't exist
   const hasValidTasks =
@@ -1231,6 +1235,7 @@ const attachMediaToTasks = (answer, mediaUrls) => {
 }
 
 const startTest = async () => {
+  if (!answerLoaded.value || localTestAnswer.submitted) return
   if (!test.value.testStructure || test.value.testStructure.length === 0) {
     store.commit('SET_TOAST', {
       type: 'info',
@@ -1693,6 +1698,8 @@ const setTest = async () => {
       type: 'error',
       message: 'Failed to load test data. Please try again.',
     })
+  } finally {
+    answerLoaded.value = true
   }
 }
 
