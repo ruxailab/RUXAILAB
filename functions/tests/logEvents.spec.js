@@ -791,6 +791,49 @@ describe('verified lifecycle events', () => {
     expect(event.timeQuality).toBe('client-unverified')
   })
 
+  it('stores the browser time consent was accepted', async () => {
+    await useUserStudy()
+    const acceptedAt = new Date(Date.now() - 30_000).toISOString()
+
+    await expect(
+      requestLogEvent.run(
+        verifiedRequest('CONSENT_ACCEPTED', undefined, {
+          occurredAt: acceptedAt,
+        }),
+      ),
+    ).resolves.toEqual({ status: 'accepted' })
+
+    const logs = await admin
+      .firestore()
+      .collection('tests/study-1/logs')
+      .where('eventType', '==', 'CONSENT_ACCEPTED')
+      .get()
+    const event = logs.docs[0].data()
+    expect(event.occurredAt.toMillis()).toBe(Date.parse(acceptedAt))
+    expect(event.timeQuality).toBe('client-unverified')
+  })
+
+  it('keeps server time for consent sent without a valid time', async () => {
+    await useUserStudy()
+
+    await requestLogEvent.run(
+      verifiedRequest('CONSENT_ACCEPTED', undefined, {
+        occurredAt: '9999-01-01T00:00:00.000Z',
+      }),
+    )
+
+    const logs = await admin
+      .firestore()
+      .collection('tests/study-1/logs')
+      .where('eventType', '==', 'CONSENT_ACCEPTED')
+      .get()
+    const event = logs.docs[0].data()
+    expect(event.timeQuality).toBeUndefined()
+    expect(
+      Math.abs(event.occurredAt.toMillis() - event.receivedAt.toMillis()),
+    ).toBeLessThan(5000)
+  })
+
   it.each(['not-a-time', '9999-01-01T00:00:00.000Z'])(
     'falls back to server time for an invalid observed finish time: %s',
     async (occurredAt) => {

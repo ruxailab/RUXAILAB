@@ -1469,6 +1469,7 @@ const handleTipPressed = (idx) => {
 const completeStep = async (id, type, userCompleted = true) => {
   try {
     if (type === 'consent') {
+      const consentAcceptedAt = new Date().toISOString()
       localTestAnswer.consentCompleted = true
       await safelyShowNextStepAnnouncement(getPostConsentAnnouncementTitle(), 2)
       if (hasPreTest.value) {
@@ -1480,7 +1481,7 @@ const completeStep = async (id, type, userCompleted = true) => {
       }
       const consentSaved = await persistStepProgress()
       if (!consentSaved) return
-      void initializeStudyLogging()?.consentAccepted()
+      void initializeStudyLogging()?.consentAccepted(consentAcceptedAt)
     }
 
     if (type === 'preTest') {
