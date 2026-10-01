@@ -67,7 +67,7 @@
             variant="outlined"
             hide-details
             class="timeline-participant"
-            @update:search="searchParticipants"
+            @update:search="searchTimelineParticipants"
           />
           <v-btn
             prepend-icon="mdi-refresh"
@@ -144,7 +144,7 @@
                 density="compact"
                 variant="outlined"
                 hide-details="auto"
-                @update:search="searchParticipants"
+                @update:search="searchFilterParticipants"
               />
               <v-select
                 v-model="draft.eventType"
@@ -1253,6 +1253,12 @@ const searchParticipants = (prefix) => {
     }
   }, 250)
 }
+// Picking a participant makes the autocomplete search for that label, which
+// would shrink the list to that one participant.
+const searchFilterParticipants = (text) =>
+  searchParticipants(text === draft.participantLabel ? '' : text)
+const searchTimelineParticipants = (text) =>
+  searchParticipants(text === timelineParticipant.value ? '' : text)
 
 const toDate = (value) => value?.toDate?.() || (value ? new Date(value) : null)
 const formatDateTime = (value) => {

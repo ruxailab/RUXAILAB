@@ -924,5 +924,36 @@ describe('LogsView', () => {
     expect(wrapper.vm.selectedEvent.rowKey).toBe('start')
     wrapper.unmount()
   })
+
+  it('keeps every participant listed after one is picked', async () => {
+    getParticipantLabels.mockResolvedValue(['P-001', 'P-002', 'P-003'])
+    getStudyLogPage.mockResolvedValue(page)
+    getStudyLogCount.mockResolvedValue(1)
+    getParticipantEvents.mockResolvedValue([])
+    const wait = () => new Promise((resolve) => setTimeout(resolve, 300))
+
+    const wrapper = mount(LogsView, { props: { id: 'study-1' } })
+    await wait()
+    await flushPromises()
+    wrapper.vm.viewMode = 'timeline'
+    wrapper.vm.timelineParticipant = 'P-002'
+    await flushPromises()
+    getParticipantLabels.mockClear()
+
+    wrapper.vm.searchTimelineParticipants('P-002')
+    await wait()
+    await flushPromises()
+    expect(getParticipantLabels).toHaveBeenLastCalledWith(
+      expect.objectContaining({ prefix: '' }),
+    )
+    expect(wrapper.vm.participantLabels).toEqual(['P-001', 'P-002', 'P-003'])
+
+    wrapper.vm.searchTimelineParticipants('P-00')
+    await wait()
+    expect(getParticipantLabels).toHaveBeenLastCalledWith(
+      expect.objectContaining({ prefix: 'P-00' }),
+    )
+    wrapper.unmount()
+  })
 })
 
