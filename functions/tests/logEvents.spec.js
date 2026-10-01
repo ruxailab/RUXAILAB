@@ -1055,7 +1055,7 @@ describe('unmoderated task and recording metadata', () => {
       .toHaveLength(1)
   })
 
-  it('rejects malformed, extra, out-of-range, and non-unmoderated task starts', async () => {
+  it('rejects malformed, extra, and out-of-range task starts', async () => {
     await configure()
     await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
     const invalidStarts = [
@@ -1097,26 +1097,72 @@ describe('unmoderated task and recording metadata', () => {
         ],
       },
     })
+  })
 
-    await studyRef().update({ subType: 'USER_MODERATED' })
-    const wrongStudyEventId = 'start-moderated'
+  it('gives moderated studies the same task and questionnaire activity', async () => {
+    await configure({ taskType: 'nasa-tlx' })
+    await studyRef().update({
+      subType: 'USER_MODERATED',
+      'testStructure.preTest': [
+        { selectionField: true, selectionFields: ['Yes', 'No'] },
+      ],
+    })
+    await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
+
     await expect(
       logEvents.run(
         participantRequest(
-          taskStartedBatch(`batch-${wrongStudyEventId}`, wrongStudyEventId, {
+          taskStartedBatch('moderated-start', 'moderated-start', {
             taskRef: 'task:0',
           }),
         ),
       ),
-    ).rejects.toMatchObject({
-      details: {
-        invalidEvents: [
-          {
-            eventId: wrongStudyEventId,
-            reasonCode: 'INVALID_EVENT_DETAILS',
-          },
-        ],
-      },
+    ).resolves.toMatchObject({ status: 'accepted' })
+    await expect(
+      logEvents.run(
+        participantRequest(
+          structuredActivity('moderated-pretest', {
+            scopeRef: 'preTest',
+            items: [{ itemRef: 'preTest:question:0', changes: 1 }],
+          }),
+        ),
+      ),
+    ).resolves.toMatchObject({ status: 'accepted' })
+    await expect(
+      logEvents.run(
+        participantRequest(
+          structuredActivity('moderated-task', {
+            scopeRef: 'task:0',
+            items: [{ itemRef: 'nasa-tlx:effort', changes: 2 }],
+          }),
+        ),
+      ),
+    ).resolves.toMatchObject({ status: 'accepted' })
+    await requestLogEvent.run(verifiedRequest('TASK_ATTEMPT_FINISHED', 'task:0'))
+
+    const events = await logs()
+    const byType = (eventType) =>
+      events.filter((event) => event.eventType === eventType)
+    expect(byType('TASK_STARTED')[0].details).toEqual({
+      taskRef: 'task:0',
+      taskType: 'nasa-tlx',
+    })
+    expect(
+      byType('STRUCTURED_RESPONSE_ACTIVITY').map((event) => event.details),
+    ).toEqual(
+      expect.arrayContaining([
+        { scopeRef: 'preTest', items: [{ itemRef: 'preTest:question:0', changes: 1 }] },
+        {
+          scopeRef: 'task:0',
+          taskType: 'nasa-tlx',
+          items: [{ itemRef: 'nasa-tlx:effort', changes: 2 }],
+        },
+      ]),
+    )
+    const finished = byType('TASK_ATTEMPT_FINISHED')[0]
+    expect(finished.details).toMatchObject({
+      taskType: 'nasa-tlx',
+      recordingTypes: ['audio', 'webcam', 'screen'],
     })
   })
 
@@ -1246,7 +1292,11 @@ describe('unmoderated task and recording metadata', () => {
         ),
       ),
     ).rejects.toMatchObject({ code: 'invalid-argument' })
-    expect(await logs()).toHaveLength(1)
+    expect(
+      (await logs()).filter(
+        (event) => event.eventType === 'STRUCTURED_RESPONSE_ACTIVITY',
+      ),
+    ).toHaveLength(1)
   })
   it.each([
     'no-answer',
@@ -1547,11 +1597,24 @@ describe('unmoderated task and recording metadata', () => {
       true,
     )
   })
-  it('does not connect recording observations to moderated studies', async () => {
+  it('accepts recording outcomes from moderated studies', async () => {
     await configure()
     await studyRef().update({ subType: 'USER_MODERATED' })
+    await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
+    const failure = recording({
+      outcome: 'failed',
+      stage: 'permission',
+      reason: 'deviceUnavailable',
+    })
     await expect(
-      logEvents.run(participantRequest(recording())),
-    ).rejects.toMatchObject({ code: 'invalid-argument' })
+      logEvents.run(participantRequest(failure)),
+    ).resolves.toMatchObject({ status: 'accepted' })
+    const event = (await logs()).find(
+      (item) => item.eventType === 'MEDIA_RECORDING_OUTCOME',
+    )
+    expect(event).toMatchObject({
+      level: 'error',
+      details: { taskRef: 'task:0', mediaType: 'audio', outcome: 'failed' },
+    })
   })
 })

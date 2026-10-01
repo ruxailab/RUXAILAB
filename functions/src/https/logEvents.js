@@ -254,8 +254,7 @@ const validTaskStarted = (details, study) => {
   if (
     keys.join(',') !== 'taskRef' ||
     !match ||
-    normalizeStudyType(study.testType) !== 'USER' ||
-    study.subType !== 'USER_UNMODERATED'
+    normalizeStudyType(study.testType) !== 'USER'
   ) {
     return false
   }
@@ -339,8 +338,7 @@ const validStructuredResponse = (details, study) => {
       .slice()
       .sort(compareStrings)
       .join(',') ||
-    normalizeStudyType(study.testType) !== 'USER' ||
-    study.subType !== 'USER_UNMODERATED'
+    normalizeStudyType(study.testType) !== 'USER'
   ) {
     return false
   }
