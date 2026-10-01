@@ -189,6 +189,19 @@ service cloud.firestore {
           (changed.hasOnly(['cardSortingAnswers']) &&
             study.get('testType', '') == 'CARD_SORTING' && role == 1 &&
             participantAnswerChanged('cardSortingAnswers')) ||
+          // Any real account may answer a public study (as storage and
+          // activity logging already allow), saving only its own entry.
+          // Anonymous accounts still need an invitation link.
+          (signedIn() && study.get('isPublic', false) == true && (
+            (changed.hasOnly(['taskAnswers']) &&
+              study.get('testType', '') == 'USER' &&
+              participantAnswerChanged('taskAnswers')) ||
+            (changed.hasOnly(['heuristicAnswers']) &&
+              study.get('testType', '') in ['HEURISTIC', 'CARD_SORTING'] &&
+              participantAnswerChanged('heuristicAnswers')) ||
+            (changed.hasOnly(['cardSortingAnswers']) &&
+              study.get('testType', '') == 'CARD_SORTING' &&
+              participantAnswerChanged('cardSortingAnswers')))) ||
           (changed.hasOnly(['studyId']) && resource.data.studyId == null &&
             request.resource.data.studyId is string &&
             exists(/databases/$(database)/documents/tests/$(request.resource.data.studyId)) &&

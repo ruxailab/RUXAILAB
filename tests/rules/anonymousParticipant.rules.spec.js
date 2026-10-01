@@ -61,6 +61,12 @@ beforeEach(async () => {
         isPublic: true,
         studyRoleMap: {},
       }),
+      setDoc(doc(db, 'answers/public-answers'), {
+        studyId: 'public-study',
+        createdBy: 'owner',
+        type: 'USER',
+        taskAnswers: { finished: { submitted: true } },
+      }),
       setDoc(doc(db, 'answers/answers-1'), {
         studyId: 'study-1',
         createdBy: 'owner',
@@ -142,6 +148,37 @@ describe('invitations and memberships', () => {
         userDocId: 'someone',
         accessLevel: 0,
         status: 'pending',
+      }),
+    )
+  })
+})
+
+describe('public studies', () => {
+  it('let any real account save only its own answer', async () => {
+    await assertSucceeds(
+      updateDoc(doc(account('visitor'), 'answers/public-answers'), {
+        'taskAnswers.visitor': { progress: 10 },
+      }),
+    )
+    await assertFails(
+      updateDoc(doc(account('visitor'), 'answers/public-answers'), {
+        'taskAnswers.someone-else': { progress: 10 },
+      }),
+    )
+  })
+
+  it('do not reopen a submitted answer', async () => {
+    await assertFails(
+      updateDoc(doc(account('finished'), 'answers/public-answers'), {
+        'taskAnswers.finished': { submitted: false },
+      }),
+    )
+  })
+
+  it('still need an invitation for anonymous accounts', async () => {
+    await assertFails(
+      updateDoc(doc(anonymous('anon-other'), 'answers/public-answers'), {
+        'taskAnswers.anon-other': { progress: 10 },
       }),
     )
   })
