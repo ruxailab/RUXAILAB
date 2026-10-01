@@ -65,6 +65,7 @@ import UpcomingWebinar from '@/features/dashboard/components/UpcomingWebinar.vue
 import TopMethods from '@/features/dashboard/components/TopMethods.vue'
 import NextSession from '@/features/dashboard/components/NextSession.vue'
 import { getMethodDefinition } from '@/shared/constants/methodDefinitions'
+import { getNextSession } from '@/shared/utils/sessionsUtils'
 
 const props = defineProps({
   items: {
@@ -152,16 +153,7 @@ watch(
       return
     }
 
-    const now = new Date()
-    const futureSessions = sessions.filter((s) => new Date(s.testDate) > now)
-
-    if (!futureSessions.length) {
-      nextSession.value = null
-      return
-    }
-
-    futureSessions.sort((a, b) => new Date(a.testDate) - new Date(b.testDate))
-    nextSession.value = futureSessions[0]
+    nextSession.value = getNextSession(sessions)
   },
   { immediate: true, deep: true },
 )
