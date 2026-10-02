@@ -2139,6 +2139,8 @@ const completeStep = async (
   userCompleted = true,
   finishedObservedAt,
 ) => {
+  const consentAcceptedAt =
+    type === 'consent' ? new Date().toISOString() : undefined
   displayVideoCallComponent.value = true
   try {
     if (type === 'consent') {
@@ -2217,7 +2219,7 @@ const completeStep = async (
     calculateProgress(localTestAnswer)
     await saveAnswer()
     if (type === 'consent') {
-      void initializeStudyLogging()?.consentAccepted()
+      void initializeStudyLogging()?.consentAccepted(consentAcceptedAt)
     }
     if (type === 'tasks') {
       void initializeStudyLogging()?.taskFinished(id, finishedObservedAt)
