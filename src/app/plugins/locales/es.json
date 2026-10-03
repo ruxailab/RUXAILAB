@@ -1798,6 +1798,7 @@
       "noTasks": "Esta prueba no tiene ninguna tarea.",
       "answerSaved": "Respuesta guardada con éxito.",
       "taskCompletedSuccess": "¡Tarea \"{taskName}\" completada exitosamente!",
+      "studySubmittedSuccess": "Estudio \"{studyName}\" completado. ¡Gracias por participar!",
       "taskNotCompleted": "No se pudo completar la tarea \"{taskName}\".",
       "useSessionLinkModerated": "Usa un enlace de sesión para acceder a tu prueba moderada.",
       "useSessionLink": "Usa un enlace de sesión para acceder a la prueba"

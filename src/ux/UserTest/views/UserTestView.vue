@@ -1169,6 +1169,12 @@ const submitAnswer = async () => {
     await initializeStudyLogging()?.checkpointStructuredScopes()
     await saveAnswer()
     void initializeStudyLogging()?.submitted()
+    store.commit('SET_TOAST', {
+      type: 'success',
+      message: t('UserTestView.messages.studySubmittedSuccess', {
+        studyName: test.value.testTitle,
+      }),
+    })
   } catch {
     localTestAnswer.submitted = false
     store.commit('SET_TOAST', {

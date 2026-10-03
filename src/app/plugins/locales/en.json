@@ -1944,6 +1944,7 @@
       "noTasks": "This test doesn't have any tasks.",
       "answerSaved": "Answer saved successfully.",
       "taskCompletedSuccess": "Task \"{taskName}\" completed successfully!",
+      "studySubmittedSuccess": "Study \"{studyName}\" completed. Thank you for participating!",
       "taskNotCompleted": "Task \"{taskName}\" could not be completed.",
       "useSessionLinkModerated": "Use a session link to access your moderated test!",
       "useSessionLink": "Use a session link to access the test"
