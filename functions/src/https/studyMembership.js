@@ -772,9 +772,14 @@ export const manageStudyMembership = functions.onCall({
           delete studyRoleMap[target.userDocId]
         }
         if (action === 'remove' && target.userDocId) {
-          transaction.update(db.collection('users').doc(target.userDocId), {
-            [`myAnswers.${studyId}`]: admin.firestore.FieldValue.delete(),
-          })
+          // Anonymous participants have no profile listing the study, and
+          // updating a missing document would fail the whole removal.
+          const targetUserRef = db.collection('users').doc(target.userDocId)
+          if ((await transaction.get(targetUserRef)).exists) {
+            transaction.update(targetUserRef, {
+              [`myAnswers.${studyId}`]: admin.firestore.FieldValue.delete(),
+            })
+          }
         }
 
         transaction.update(studyRef, {

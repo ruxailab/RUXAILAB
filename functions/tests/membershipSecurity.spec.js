@@ -232,6 +232,35 @@ describe('anonymous participants', () => {
     expect(participants.empty).toBe(true)
   })
 
+  it('can be removed although they have no profile', async () => {
+    // Joins before anonymous accounts stopped being listed left these rows.
+    await db().doc('tests/study-1/participants/anon-row').set({
+      userDocId: 'anon-1',
+      email: null,
+      accessLevel: 5,
+      accepted: true,
+      status: 'accepted',
+    })
+    await db()
+      .doc('tests/study-1')
+      .update({ 'studyRoleMap.anon-1': 5 })
+
+    await manageStudyMembership.run(
+      as('owner', {
+        studyId: 'study-1',
+        action: 'remove',
+        membershipType: 'participant',
+        targetUserId: 'anon-1',
+        targetEmail: null,
+      }),
+    )
+
+    expect(await studyRoles()).not.toHaveProperty('anon-1')
+    expect(
+      (await db().doc('tests/study-1/participants/anon-row').get()).exists,
+    ).toBe(false)
+  })
+
   it('cannot use a link that requires login', async () => {
     await createInvite('login-link', { requiredLogin: true })
 
