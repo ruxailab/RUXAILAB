@@ -241,7 +241,8 @@ describe.each(cases)(
           mediaType,
           outcome: mediaType === 'screen' ? 'cancelled' : 'failed',
           stage: 'permission',
-          reason: mediaType === 'screen' ? 'cancelled' : 'captureError',
+          // A device that cannot start (AbortError) is reported as unavailable.
+          reason: mediaType === 'screen' ? 'cancelled' : 'deviceUnavailable',
         },
       ])
     })

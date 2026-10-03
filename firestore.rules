@@ -1,8 +1,17 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function signedIn() {
+    // Any login, including the anonymous accounts used to answer a study
+    // from an invitation link that does not require login.
+    function authenticated() {
       return request.auth != null;
+    }
+
+    // A real account. Everything except answering an invited study needs one.
+    function signedIn() {
+      return authenticated() &&
+        request.auth.token.get('firebase', {})
+          .get('sign_in_provider', '') != 'anonymous';
     }
 
     function currentUser() {
@@ -15,7 +24,7 @@ service cloud.firestore {
     }
 
     function roleFor(study) {
-      return signedIn() &&
+      return authenticated() &&
         study.studyRoleMap is map &&
         request.auth.uid in study.studyRoleMap
           ? study.studyRoleMap[request.auth.uid]
@@ -34,11 +43,11 @@ service cloud.firestore {
     function canReadStudy(study) {
       let role = roleFor(study);
       let type = study.get('testType', '');
-      return signedIn() && (study.get('isPublic', false) == true ||
-        isAdmin(study) || role == 4 ||
-        (type == 'USER' && role in [3, 5]) ||
-        (type == 'FOCUS_GROUP' && role in [1, 3]) ||
-        (type in ['HEURISTIC', 'CARD_SORTING'] && role in [1, 2]));
+      return (signedIn() && study.get('isPublic', false) == true) ||
+        (authenticated() && (isAdmin(study) || role == 4 ||
+          (type == 'USER' && role in [3, 5]) ||
+          (type == 'FOCUS_GROUP' && role in [1, 3]) ||
+          (type in ['HEURISTIC', 'CARD_SORTING'] && role in [1, 2])));
     }
 
     function isSessionMember(session) {
@@ -98,8 +107,10 @@ service cloud.firestore {
         allow create, update, delete: if isStudySessionAdmin(studyId);
       }
 
+      // Invitations and memberships are managed only by trusted functions.
       match /participants/{participantId} {
-        allow read, write: if signedIn();
+        allow read: if signedIn();
+        allow write: if false;
       }
 
       match /auditTrail/{eventId} {
@@ -131,9 +142,6 @@ service cloud.firestore {
         allow write: if false;
       }
 
-      match /participants/{participantId} {
-        allow read: if signedIn();
-      }
     }
 
     match /answers/{answerId} {
@@ -165,7 +173,9 @@ service cloud.firestore {
         let study = answerStudy();
         let role = roleFor(study);
         let changed = request.resource.data.diff(resource.data).affectedKeys();
-        return signedIn() && (
+        // Participants save only their own answer (role and key checked
+        // below), which includes anonymous accounts answering an invitation.
+        return authenticated() && (
           (changed.hasOnly(['sessions', 'themes']) && isAdmin(study)) ||
           (changed.hasOnly(['taskAnswers']) &&
             ((study.get('testType', '') == 'USER' && role == 5 &&
@@ -179,6 +189,19 @@ service cloud.firestore {
           (changed.hasOnly(['cardSortingAnswers']) &&
             study.get('testType', '') == 'CARD_SORTING' && role == 1 &&
             participantAnswerChanged('cardSortingAnswers')) ||
+          // Any real account may answer a public study (as storage and
+          // activity logging already allow), saving only its own entry.
+          // Anonymous accounts still need an invitation link.
+          (signedIn() && study.get('isPublic', false) == true && (
+            (changed.hasOnly(['taskAnswers']) &&
+              study.get('testType', '') == 'USER' &&
+              participantAnswerChanged('taskAnswers')) ||
+            (changed.hasOnly(['heuristicAnswers']) &&
+              study.get('testType', '') in ['HEURISTIC', 'CARD_SORTING'] &&
+              participantAnswerChanged('heuristicAnswers')) ||
+            (changed.hasOnly(['cardSortingAnswers']) &&
+              study.get('testType', '') == 'CARD_SORTING' &&
+              participantAnswerChanged('cardSortingAnswers')))) ||
           (changed.hasOnly(['studyId']) && resource.data.studyId == null &&
             request.resource.data.studyId is string &&
             exists(/databases/$(database)/documents/tests/$(request.resource.data.studyId)) &&
@@ -225,9 +248,10 @@ service cloud.firestore {
     match /calibrations/{document=**} {
       allow read, write: if signedIn();
     }
+    // Invitation tokens grant study access, so only trusted functions read
+    // or write them (validateInvite / resolveInvite check a token).
     match /invites/{inviteId} {
-      allow write: if signedIn();
-      allow read: if true;
+      allow read, write: if false;
     }
     match /agents/{agentId} {
       allow read, write: if signedIn();

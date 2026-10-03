@@ -149,6 +149,80 @@ const getAssignableRoles = (study, actorRole) => {
   return []
 }
 
+// The role participants get for each study type.
+export const participantRoleFor = (study) =>
+  normalizeStudyType(study?.testType) === 'USER' ? ROLE.USER : ROLE.EVALUATOR
+
+const timestampMillis = (value) =>
+  value?.toMillis?.() ??
+  (value instanceof Date ? value.getTime() : Number(value))
+
+/**
+ * A study can only be joined without a pending invitation through a public
+ * invitation created by someone allowed to invite. The role always comes from
+ * that invitation, never from the request.
+ */
+export function assertPublicInviteAcceptance({
+  invite,
+  studyId,
+  study,
+  membershipType,
+  isAnonymous = false,
+  now = Date.now(),
+}) {
+  const denied = () => {
+    throw error('permission-denied', 'No valid invitation for this study')
+  }
+  if (!invite || invite.studyId !== studyId || invite.isPublic !== true)
+    denied()
+  if (!(timestampMillis(invite.expiresAt) > now)) denied()
+  if ((invite.membershipType || 'cooperator') !== membershipType) denied()
+  if (isAnonymous && invite.requiredLogin !== false) denied()
+
+  const role = invite.accessLevel
+  if (membershipType === 'participant') {
+    if (role !== participantRoleFor(study)) denied()
+  } else if (
+    !(SUPPORTED_ROLES[normalizeStudyType(study?.testType)] || []).includes(role)
+  ) {
+    denied()
+  }
+  return role
+}
+
+/**
+ * Invitation links grant the role they carry, so creating one needs the same
+ * permission as inviting someone directly.
+ */
+export function assertInviteLinkAllowed({
+  study,
+  actorId,
+  isSuperAdmin = false,
+  accessLevel,
+  membershipType = 'cooperator',
+}) {
+  if (membershipType === 'participant') {
+    const actorRole = getActorRole(study, actorId, isSuperAdmin)
+    if (
+      ![ROLE.ADMIN, ROLE.MANAGER].includes(actorRole) ||
+      accessLevel !== participantRoleFor(study)
+    ) {
+      throw error(
+        'permission-denied',
+        'Participant invitations are not permitted',
+      )
+    }
+    return
+  }
+  assertMembershipMutationAllowed({
+    study,
+    actorId,
+    isSuperAdmin,
+    action: 'invite',
+    role: accessLevel,
+  })
+}
+
 export function assertMembershipMutationAllowed({
   study,
   actorId,
@@ -264,6 +338,23 @@ export const manageStudyMembership = functions.onCall({
 
     const isParticipant = membershipType === 'participant'
     const role = Number.isInteger(data.role) ? data.role : null
+    const inviteToken =
+      typeof data.inviteToken === 'string' && data.inviteToken
+        ? data.inviteToken
+        : null
+    const isAnonymous =
+      request?.auth?.token?.firebase?.sign_in_provider === 'anonymous'
+
+    // Anonymous sign-ins exist only so invited participants can answer.
+    if (
+      isAnonymous &&
+      !(isParticipant && ['accept', 'reject'].includes(action))
+    ) {
+      throw error(
+        'permission-denied',
+        'Not permitted for anonymous participants',
+      )
+    }
 
     const db = admin.firestore()
 
@@ -286,6 +377,13 @@ export const manageStudyMembership = functions.onCall({
       const actorEmail = actor?.email || request?.auth?.token?.email || ''
 
       const isSuperAdmin = actor?.accessLevel === 0
+      const readPublicInvite = async () => {
+        if (!inviteToken) return null
+        const snapshot = await transaction.get(
+          db.collection('invites').where('token', '==', inviteToken).limit(1),
+        )
+        return snapshot.empty ? null : snapshot.docs[0].data()
+      }
       const studyRoleMap = {
         ...(study.studyRoleMap || {}),
       }
@@ -426,29 +524,35 @@ export const manageStudyMembership = functions.onCall({
 
             transaction.update(targetDoc.ref, participant)
           } else {
-            // Public invitation
-            if (!targetUserId) {
-              throw error(
-                'permission-denied',
-                'A user ID is required to accept a public participant invitation',
-              )
-            }
+            // Public invitation: only through a valid invitation link.
+            const acceptedRole = assertPublicInviteAcceptance({
+              invite: await readPublicInvite(),
+              studyId,
+              study,
+              membershipType,
+              isAnonymous,
+            })
 
             participant = {
-              userDocId: targetUserId,
+              userDocId: actorId,
               email: actorEmail || null,
-              accessLevel: role,
+              accessLevel: acceptedRole,
               accepted: true,
               acceptedDate: now,
               updateDate: now,
               status: INVITE_STATUS.ACCEPTED,
             }
 
-            const participantRef = participantsRef.doc()
+            // Anonymous accounts get only the role they need to answer. They
+            // are not listed as participants: staff cannot manage or contact
+            // them, and their answers already show in results and progress.
+            if (!isAnonymous) {
+              const participantRef = participantsRef.doc()
 
-            participantId = participantRef.id
+              participantId = participantRef.id
 
-            transaction.set(participantRef, participant)
+              transaction.set(participantRef, participant)
+            }
           }
 
           studyRoleMap[actorId] = participant.accessLevel
@@ -457,20 +561,23 @@ export const manageStudyMembership = functions.onCall({
             studyRoleMap,
           })
 
-          transaction.update(actorRef, {
-            [`myAnswers.${studyId}`]: {
-              answersDocId: study.answersDocId,
-              accessLevel: participant.accessLevel,
-              progress: 0,
-              testAuthorEmail: study.testAdmin?.email || '',
-              testDocId: studyId,
-              testType: study.testType,
-              subType: study.subType || null,
-              testTitle: study.testTitle || '',
-              total: 0,
-              updateDate: now,
-            },
-          })
+          // Anonymous participants have no profile to list the study on.
+          if (actorSnap.exists) {
+            transaction.update(actorRef, {
+              [`myAnswers.${studyId}`]: {
+                answersDocId: study.answersDocId,
+                accessLevel: participant.accessLevel,
+                progress: 0,
+                testAuthorEmail: study.testAdmin?.email || '',
+                testDocId: studyId,
+                testType: study.testType,
+                subType: study.subType || null,
+                testTitle: study.testTitle || '',
+                total: 0,
+                updateDate: now,
+              },
+            })
+          }
 
           writeAuditEvent(transaction, studyRef, {
             action: 'participant.invitationAccepted',
@@ -803,16 +910,14 @@ export const manageStudyMembership = functions.onCall({
 
           cooperators[index] = membership
         } else {
-          console.log('accepting public invitation', role)
-          // Public invite: create the cooperator membership
-          const accessLevel = role
-
-          if (accessLevel === null) {
-            throw error(
-              'invalid-argument',
-              'A role is required to accept a public invitation',
-            )
-          }
+          // Public invite: only through a valid invitation link.
+          const accessLevel = assertPublicInviteAcceptance({
+            invite: await readPublicInvite(),
+            studyId,
+            study,
+            membershipType,
+            isAnonymous,
+          })
 
           membership = {
             userDocId: actorId,

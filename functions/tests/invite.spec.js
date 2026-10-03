@@ -23,6 +23,7 @@ jest.unstable_mockModule('../src/core/firebase/f.firebase.js', () => ({
 
 jest.unstable_mockModule('../src/utils/inviteUtils.js', () => ({
   default: {},
+  INVITE_STATUS: {},
 }))
 
 const { isAcceptedInviteRetry, validateInvite } = await import(

@@ -73,6 +73,7 @@ import {
 import { getTestViewAccessRedirect } from '@/shared/utils/studyNavigation'
 import { isSignInPath } from '@/shared/utils/authRedirect'
 import { showError } from '@/shared/utils/toast'
+import AuthController from '@/features/auth/controllers/AuthController'
 
 const props = defineProps({
   id: {
@@ -250,6 +251,26 @@ const handleLoadedStudy = async (loadedStudy) => {
 |--------------------------------------------------------------------------
 */
 
+/*
+ * A link that does not require login is answered with an anonymous account.
+ * It joins the study through that invitation first, because only members and
+ * signed-in users may read a study.
+ */
+const joinAnonymously = async () => {
+  try {
+    const participant = await new AuthController().anonymousParticipant()
+    if (!participant) return
+    await store.dispatch('acceptStudyCollaboration', {
+      studyId: props.id,
+      cooperator: { id: participant.uid, email: null },
+      membershipType: 'participant',
+      inviteToken: inviteToken.value,
+    })
+  } catch {
+    // Fall through: the normal access check below explains the denial.
+  }
+}
+
 const loadInvitation = async () => {
   if (!inviteToken.value) {
     return false
@@ -287,6 +308,11 @@ onBeforeMount(async () => {
   invitation.value = null
 
   try {
+    if (inviteToken.value && !store.getters.user) {
+      await loadInvitation()
+      if (isAnonymousInvitation.value) await joinAnonymously()
+    }
+
     const loadedStudy = await loadStudy()
 
     if (!loadedStudy) {
