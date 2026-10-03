@@ -255,7 +255,9 @@ const handleConfirmAction = async () => {
   try {
     await confirmDialog.value.action(confirmDialog.value.data)
 
-    // showSuccess('success')
+    if (confirmDialog.value.successMessage) {
+      showSuccess(confirmDialog.value.successMessage)
+    }
 
     resetConfirmDialog()
   } catch {
@@ -440,6 +442,7 @@ const removeParticipant = (participant) => {
         participant: selectedParticipant,
       })
     },
+    successMessage: 'Participants.messages.participant_removed',
     data: participant,
   }
 }
@@ -465,6 +468,7 @@ const cancelParticipantInvitation = (participant) => {
         participant: selectedParticipant,
       })
     },
+    successMessage: 'Participants.messages.invitation_cancelled',
     data: participant,
   }
 }

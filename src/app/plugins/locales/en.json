@@ -3704,7 +3704,9 @@
       "message_content_hint": "Enter the content of your message",
       "no_users": "No users found",
       "cancel_invitation_confirmation": "Are you sure you want to cancel {email}'s invitation?",
-      "remove_participant_confirmation": "Are you sure you want to remove {email} from this test?"
+      "remove_participant_confirmation": "Are you sure you want to remove {email} from this test?",
+      "participant_removed": "Participant removed",
+      "invitation_cancelled": "Invitation cancelled"
     },
     "filter": {
       "search": "Search participants",
