@@ -210,18 +210,26 @@ describe('anonymous participants', () => {
 
   it('can join through a link that does not require login', async () => {
     await createInvite('open-link', { requiredLogin: false })
+    const join = () =>
+      accept(
+        'anon-1',
+        {
+          membershipType: 'participant',
+          targetUserId: 'anon-1',
+          inviteToken: 'open-link',
+        },
+        anonymous,
+      )
 
-    await accept(
-      'anon-1',
-      {
-        membershipType: 'participant',
-        targetUserId: 'anon-1',
-        inviteToken: 'open-link',
-      },
-      anonymous,
-    )
+    await join()
+    // Joining again (e.g. a reload) keeps the role without listing them.
+    await join()
 
     expect((await studyRoles())['anon-1']).toBe(5)
+    const participants = await db()
+      .collection('tests/study-1/participants')
+      .get()
+    expect(participants.empty).toBe(true)
   })
 
   it('cannot use a link that requires login', async () => {

@@ -543,11 +543,16 @@ export const manageStudyMembership = functions.onCall({
               status: INVITE_STATUS.ACCEPTED,
             }
 
-            const participantRef = participantsRef.doc()
+            // Anonymous accounts get only the role they need to answer. They
+            // are not listed as participants: staff cannot manage or contact
+            // them, and their answers already show in results and progress.
+            if (!isAnonymous) {
+              const participantRef = participantsRef.doc()
 
-            participantId = participantRef.id
+              participantId = participantRef.id
 
-            transaction.set(participantRef, participant)
+              transaction.set(participantRef, participant)
+            }
           }
 
           studyRoleMap[actorId] = participant.accessLevel
