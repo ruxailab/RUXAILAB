@@ -50,13 +50,22 @@ client-observed partial-activity exception:
 - mark text controls with `data-study-field-ref` to opt into metadata-only edit
   aggregation.
 
+Consent-gated methods get the acknowledgement gap handled by the runtime; they
+only need the two consent calls above. Between `consentAccepted()` (or
+`resumeAfterConsent()`) and the server's acknowledgement, observations are held
+in memory only — at most 200, never in IndexedDB — with their original
+occurrence times. An `accepted` or `duplicate` acknowledgement releases them
+into the queue; a permanent rejection or leaving the page discards them.
+Activity before consent is saved is never held.
+
 Heuristic studies use one `QUESTION_RESPONSE_UPDATED` event per question
 interaction. Call `responseChanged(questionRef, field)` only after a real
 frequency, severity, or configured-option change; delegated comment inputs are
 counted by the runtime. Leaving the question, hiding the page, or submitting
 finishes the group. Never pass selected values or comment text to logging.
 
-Unmoderated structured questionnaires also emit client-observed
+User-test structured questionnaires (moderated and unmoderated, via the shared
+`src/ux/UserTest/utils/structuredActivity.js`) also emit client-observed
 `STRUCTURED_RESPONSE_ACTIVITY` records at form, hidden-page, and submission
 boundaries. These records contain only record-local change counts and canonical
 item references; answers, labels, scores, and question text remain in Results.
@@ -71,7 +80,7 @@ or stored document contains entered text.
 
 ## Unmoderated task and recording metadata
 
-Only USER_UNMODERATED produces `MEDIA_RECORDING_OUTCOME`. Shared recorders emit
+Moderated and unmoderated user tests produce `MEDIA_RECORDING_OUTCOME`. Shared recorders emit
 `recording-result` to TaskStep; they have no logging dependency. Each capture
 keeps the task index from permission acquisition through upload and emits at most
 one terminal result. A real new capture is a new attempt. Browser delivery retries
@@ -106,7 +115,7 @@ severity: completed is `info`, denial/cancellation is `warning`, failure is
 screen API does not distinguish intent. This is client-observed telemetry, not
 server verification of media integrity.
 
-**An upload result is not a persisted recording.** The unmoderated parent holds
+**An upload result is not a persisted recording.** The participant view holds
 successful results in memory, containing only task/media metadata. Before saving,
 it attaches media references to the answer and snapshots the pending results
 whose references are present. Only a successful `saveTestAnswer` acknowledges
@@ -125,11 +134,14 @@ participant-facing loading states or notifications. Never send media URLs, blobs
 transcripts, answers, instrument scores, names, emails, or raw exceptions.
 
 The server derives `taskType` from trusted `testStructure.userTasks[index]` for
-unmoderated task-finished events, task-field edits, and recording outcomes. Allowed
+user-test task starts, task-finished events, task-field edits, and task
+questionnaire activity, and for unmoderated recording outcomes. Allowed
 values are `no-answer`, `post-test`, `text-area`, `post-form`, `nasa-tlx`, `sus`,
 `tam-1`, `tam-2`, `tam-3`, and `sart`. Missing/unknown types are omitted without
-dropping the base event. Task-finished events also include `recordingTypes` from
-the enabled media flags; this describes requested media, not saved artifacts.
+dropping the base event. Unmoderated task-finished events also include
+`recordingTypes` from the enabled media flags; this describes requested media,
+not saved artifacts. Moderated tests use the same per-task recorders, so they
+get the same `recordingTypes` and `MEDIA_RECORDING_OUTCOME` events.
 Pre/post-study fields and whole-study events have no invented task context.
 Existing log documents remain immutable when study configuration changes.
 

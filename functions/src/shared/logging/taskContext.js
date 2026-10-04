@@ -17,8 +17,7 @@ const MEDIA_FLAGS = {
 }
 
 const taskFor = (study, taskRef) => {
-  if (study.testType !== 'USER' || study.subType !== 'USER_UNMODERATED')
-    return null
+  if (study.testType !== 'USER') return null
   const match = /^task:(0|[1-9]\d*)$/.exec(taskRef)
   return match ? study.testStructure?.userTasks?.[Number(match[1])] : null
 }
