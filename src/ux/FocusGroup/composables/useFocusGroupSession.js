@@ -175,9 +175,17 @@ export function useFocusGroupSession(roomId) {
       role: role ?? '',
       accessLevel: accessLevel ?? null,
       connected: true,
+      breakoutGroupId: null,
       joinedAt: serverTimestamp(),
     })
-    onDisconnect(presenceRef).update({ connected: false })
+    onDisconnect(presenceRef).update({ connected: false, breakoutGroupId: null })
+  }
+
+  /** Share which breakout room a staff member is currently visiting. */
+  async function setPresenceBreakoutGroup({ userId, groupId }) {
+    if (!userId) return
+    const presenceRef = dbRef(database, `${rootPath}/participants/${userId}`)
+    await update(presenceRef, { breakoutGroupId: groupId ?? null })
   }
 
   async function leavePresence(userId) {
@@ -420,6 +428,7 @@ export function useFocusGroupSession(roomId) {
     goToTopic,
     endSession,
     joinPresence,
+    setPresenceBreakoutGroup,
     leavePresence,
     recordConsent,
     askPrompt,

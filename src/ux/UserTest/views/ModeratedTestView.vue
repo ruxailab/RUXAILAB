@@ -448,6 +448,7 @@
               :pre-test="test.testStructure.preTest"
               :pre-test-answer="localTestAnswer.preTestAnswer"
               :pre-test-completed="localTestAnswer.preTestCompleted"
+              @selection-changed="handleStructuredSelectionChanged"
               @done="completeStep(taskIndex, 'preTest')"
             />
 
@@ -474,6 +475,8 @@
               :nasa-tlx-answers="
                 localTestAnswer.tasks[taskIndex].nasaTlxAnswers
               "
+              :tam-answers="localTestAnswer.tasks[taskIndex].tamAnswers"
+              :sart-answers="localTestAnswer.tasks[taskIndex].sartAnswers"
               :submitted="localTestAnswer.submitted"
               :done-task-disabled="doneTaskDisabled"
               :remote-stream="remoteStream"
@@ -492,6 +495,16 @@
                   localTestAnswer.tasks[taskIndex].nasaTlxAnswers = { ...val }
                 }
               "
+              @update:tam-answers="
+                (val) => {
+                  localTestAnswer.tasks[taskIndex].tamAnswers = { ...val }
+                }
+              "
+              @update:sart-answers="
+                (val) => {
+                  localTestAnswer.tasks[taskIndex].sartAnswers = { ...val }
+                }
+              "
               @done="() => handleTaskFinish(true)"
               @could-not-finish="() => handleTaskFinish(false)"
               @show-loading="isLoading = true"
@@ -499,6 +512,25 @@
               @recording-started="isVisualizerVisible = $event"
               @tip-pressed="handleTipPressed"
               @timer-stopped="handleTimerStopped"
+              @task-started="handleTaskStarted"
+              @recording-result="handleRecordingResult"
+              @structured-response-changed="handleStructuredResponseChanged"
+              @structured-slider-focus="
+                (event) => handleStructuredSliderEvent('focus', event)
+              "
+              @structured-slider-start="
+                (event) => handleStructuredSliderEvent('start', event)
+              "
+              @structured-slider-change="
+                (event) => handleStructuredSliderEvent('change', event)
+              "
+              @structured-slider-end="
+                (event) => handleStructuredSliderEvent('end', event)
+              "
+              @structured-slider-blur="
+                (event) => handleStructuredSliderEvent('blur', event)
+              "
+              @task-questionnaire-entered="handleTaskQuestionnaireEntered"
             />
 
             <PostTestStep
@@ -508,6 +540,7 @@
               :post-test="test.testStructure.postTest"
               :post-test-answer="localTestAnswer.postTestAnswer"
               :post-test-completed="localTestAnswer.postTestCompleted"
+              @selection-changed="handleStructuredSelectionChanged"
               @done="
                 async () => {
                   await completeStep(taskIndex, 'postTest')
@@ -630,6 +663,12 @@ import { calculateProgress } from '../utils/testProgress'
 import { animateStepAnnouncement } from '@/shared/utils/animations'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
+import { createRecordingOutcomeTracker } from '@/ux/UserTest/utils/recordingOutcome'
+import {
+  createStructuredActivityHandlers,
+  structuredValuesForStage,
+  structuredValuesForTask,
+} from '@/ux/UserTest/utils/structuredActivity'
 import { removeStaffDuplicates } from '@/ux/UserTest/utils/sessionPresence'
 import { moderatedSessionTimingReason } from '@/ux/UserTest/utils/moderatedSessionAvailability'
 
@@ -658,6 +697,52 @@ const handleLoggingInput = (event) =>
   initializeStudyLogging()?.editHandlers.input(event)
 const handleLoggingFocusout = (event) =>
   initializeStudyLogging()?.editHandlers.focusout(event)
+const {
+  seedStructuredScope,
+  handleStructuredResponseChanged,
+  handleStructuredSelectionChanged,
+  handleStructuredSliderEvent,
+} = createStructuredActivityHandlers(initializeStudyLogging)
+const recordingOutcomes = createRecordingOutcomeTracker((details) =>
+  initializeStudyLogging()?.recordingOutcome(details),
+)
+const handleRecordingResult = (details) => {
+  if (user.value?.id && localTestAnswer.consentCompleted)
+    recordingOutcomes.observe(details)
+}
+const handleTaskStarted = (occurredAt) => {
+  void initializeStudyLogging()?.taskStarted(taskIndex.value, occurredAt)
+}
+const structuredScopeForCurrentStage = () => {
+  if (globalIndex.value === 2 && taskIndex.value === 0) return 'preTest'
+  if (
+    globalIndex.value === 4 &&
+    test.value?.testStructure?.userTasks?.[taskIndex.value]
+  ) {
+    return `task:${taskIndex.value}`
+  }
+  if (globalIndex.value === 5) return 'postTest'
+  return null
+}
+const structuredValuesForScope = (scopeRef) => {
+  if (scopeRef === 'preTest' || scopeRef === 'postTest') {
+    return structuredValuesForStage(
+      scopeRef,
+      test.value?.testStructure?.[scopeRef],
+      localTestAnswer[`${scopeRef}Answer`],
+    )
+  }
+  const index = Number(scopeRef.split(':')[1])
+  return structuredValuesForTask(
+    test.value?.testStructure?.userTasks?.[index],
+    localTestAnswer.tasks?.[index],
+  )
+}
+const handleTaskQuestionnaireEntered = ({ scopeRef } = {}) => {
+  const taskRef = scopeRef || `task:${taskIndex.value}`
+  seedStructuredScope(taskRef, structuredValuesForScope(taskRef))
+}
+let activeStructuredScope = null
 // Data variables
 
 onBeforeUnmount(() => {
@@ -854,20 +939,27 @@ const sessionParticipantsMembers = computed(() => {
     .filter(Boolean)
 })
 
+const isCurrentUserMember = (member) => {
+  if (member?.userDocId) return member.userDocId === user.value?.id
+  const memberEmail = member?.email?.trim().toLowerCase()
+  return Boolean(
+    memberEmail && memberEmail === user.value?.email?.trim().toLowerCase(),
+  )
+}
+
 const currentUserAccessLevel = computed(() => {
-  const cooperator = session.value?.staff?.find(
-    (c) => c.userDocId === user.value?.id,
-  )
+  const cooperator = session.value?.staff?.find(isCurrentUserMember)
 
-  const participant = session.value?.participants?.find(
-    (p) => p.userDocId === user.value?.id,
-  )
+  const participant = session.value?.participants?.find(isCurrentUserMember)
 
+  // The study role is known before the session loads, so a participant is not
+  // briefly treated as an observer while the session is still being fetched.
   const rawValue =
     cooperator?.accessLevel ??
     cooperator?.role ??
     participant?.accessLevel ??
     participant?.role ??
+    test.value?.studyRoleMap?.[user.value?.id] ??
     (isUserTestAdmin.value ? ACCESS_LEVEL.ADMIN : ACCESS_LEVEL.OBSERVATOR)
 
   return (
@@ -963,10 +1055,11 @@ const completedSteps = computed(() => {
   return {
     consent: localTestAnswer.consentCompleted === true,
     preTest: localTestAnswer.preTestCompleted === true,
+    // "Could not finish" still finishes the task step.
     tasks:
       Array.isArray(localTestAnswer.tasks) &&
       localTestAnswer.tasks.length > 0 &&
-      localTestAnswer.tasks.every((task) => task?.completed === true),
+      localTestAnswer.tasks.every((task) => task?.attempted === true),
     postTest: localTestAnswer.postTestCompleted === true,
     completion: localTestAnswer.submitted === true,
   }
@@ -981,6 +1074,22 @@ const scrollToTop = () => {
 }
 
 // Watchers
+watch(
+  () => [globalIndex.value, taskIndex.value],
+  () => {
+    const nextScope = structuredScopeForCurrentStage()
+    if (activeStructuredScope && activeStructuredScope !== nextScope) {
+      void initializeStudyLogging()?.checkpointStructuredScope(
+        activeStructuredScope,
+      )
+    }
+    activeStructuredScope = nextScope
+    if (nextScope) {
+      seedStructuredScope(nextScope, structuredValuesForScope(nextScope))
+    }
+  },
+)
+
 watch(user, async () => {
   if (user.value) {
     if (loggedIn.value) await setTestAnswer()
@@ -1132,12 +1241,23 @@ const handleConsentDecline = async () => {
   }, 2000)
 }
 
+// The facilitator's Test Progress reads this, so publish after every step and
+// after submission. taskIndex is the participant's next task.
+const publishParticipantProgress = async () => {
+  if (isModerator.value || !user.value?.id) return
+  await update(
+    dbRef(database, `calls/${roomId.value}/participants/${user.value.id}`),
+    { taskIndex: taskIndex.value, progress: completedSteps.value },
+  )
+}
+
 const handleSubmit = async () => {
   submitDialog.value = false
   try {
     localTestAnswer.submitted = true
     await saveAnswer()
     void initializeStudyLogging()?.submitted()
+    void publishParticipantProgress().catch(() => {})
     displayVideoCallComponent.value = true
   } catch {
     localTestAnswer.submitted = false
@@ -1159,6 +1279,13 @@ const saveSessionNotes = async () => {
 const saveAnswer = async () => {
   try {
     attachMediaToTasks(localTestAnswer, mediaUrls.value)
+    // A completed recording is logged only once its media link is saved.
+    const recordingsToSave = recordingOutcomes
+      .beforeSave()
+      .filter(({ taskRef, mediaType }) => {
+        const task = localTestAnswer.tasks?.[Number(taskRef.split(':')[1])]
+        return Boolean(task?.[MEDIA_FIELD_MAP[mediaType]])
+      })
 
     localTestAnswer.fullName = fullName.value
     if (user.value && user.value?.email) {
@@ -1173,6 +1300,7 @@ const saveAnswer = async () => {
       answersDocId: test.value.answersDocId,
       testType: test.value.testType,
     })
+    recordingOutcomes.saved(recordingsToSave)
   } catch (error) {
     store.commit('SET_TOAST', {
       type: 'error',
@@ -1420,7 +1548,24 @@ const handleCallEnded = async () => {
   }
 }
 
+// Start joins the call once per page load (a refresh re-joins through the
+// auto-join watcher). A stray Enter on a still-focused Start button must not
+// re-run it mid-session: that re-enters fullscreen and resets the room.
+let testStartState = 'idle'
+
 const startTest = async () => {
+  if (testStartState !== 'idle') return
+  testStartState = 'starting'
+  try {
+    await startTestOnce()
+    testStartState = 'started'
+  } catch (error) {
+    testStartState = 'idle'
+    throw error
+  }
+}
+
+const startTestOnce = async () => {
   // Check if the test has no tasks
   if (
     !test.value.testStructure ||
@@ -1809,6 +1954,7 @@ const startTest = async () => {
 }
 
 const handleWelcomeStart = async () => {
+  if (globalIndex.value !== 0) return
   await requestFullscreenIfAvailable()
   displayVideoCallComponent.value = true
   globalIndex.value = 1
@@ -2066,20 +2212,7 @@ const completeStep = async (
       showVideoCall: true,
     })
 
-    // Update individual participant taskIndex (for tracking)
-    if (!isModerator.value && user.value?.id) {
-      const participantRef = dbRef(
-        database,
-        `calls/${roomId.value}/participants/${user.value.id}`,
-      )
-      // We can just update taskIndex.
-      // Note: 'taskIndex' variable here is the NEXT index (already updated above if type=='tasks')
-      // validation: type === 'tasks' ? id + 1 : taskIndex.value
-      await update(participantRef, {
-        taskIndex: taskIndex.value,
-        progress: completedSteps.value,
-      })
-    }
+    await publishParticipantProgress()
 
     calculateProgress(localTestAnswer)
     await saveAnswer()

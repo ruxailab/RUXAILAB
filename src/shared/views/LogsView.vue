@@ -433,11 +433,15 @@
           aria-labelledby="structured-activity-heading"
         >
           <h3 id="structured-activity-heading">
-            Structured response activity
+            {{
+              STAGE_LABELS[selectedEvent.details?.scopeRef]
+                ? 'Selected answers'
+                : 'Questionnaire activity'
+            }}
           </h3>
           <p>
-            Counts show response changes in this record. Selected answers and
-            slider values remain in Results.
+            Counts show how often each response changed in this record.
+            Selected answers and slider values remain in Results.
           </p>
           <dl class="detail-grid">
             <template
@@ -825,6 +829,15 @@ const structuredActivityItems = (event) =>
       label: structuredItemLabel(item.itemRef),
     }))
     .sort((left, right) => compareStructuredItemRefs(left.itemRef, right.itemRef))
+const STAGE_LABELS = Object.freeze({
+  preTest: 'Pre-test',
+  postTest: 'Post-test',
+})
+const structuredStageQuestions = (event) =>
+  structuredActivityItems(event)
+    .map((item) => /^(?:preTest|postTest):question:(\d+)$/.exec(item.itemRef))
+    .filter(Boolean)
+    .map((match) => Number(match[1]) + 1)
 const structuredActivityCount = (event) =>
   structuredActivityItems(event).reduce((total, item) => total + item.changes, 0)
 const eventPresentation = (event) => {
@@ -891,19 +904,23 @@ const eventPresentation = (event) => {
       secondary = mediaType
     }
   } else if (event?.eventType === 'STRUCTURED_RESPONSE_ACTIVITY') {
-    primary = 'Structured response activity'
     const count = structuredActivityCount(event)
+    const updates = `${count} ${count === 1 ? 'update' : 'updates'}`
     const scope = /^task:(\d+)$/.exec(details.scopeRef || '')
-    const scopeLabel = scope
-      ? `Task ${Number(scope[1]) + 1}`
-      : details.scopeRef === 'preTest'
-        ? 'Pre-test'
-        : details.scopeRef === 'postTest'
-          ? 'Post-test'
-          : null
-    secondary = [scopeLabel, `${count} ${count === 1 ? 'update' : 'updates'} in this record`]
-      .filter(Boolean)
-      .join(' · ')
+    const stage = STAGE_LABELS[details.scopeRef]
+    if (stage) {
+      const questions = structuredStageQuestions(event)
+      primary = `${stage} · ${questions.length > 1 ? 'Answers selected' : 'Answer selected'}`
+      secondary = questions.length
+        ? `${questions.length > 1 ? 'Questions' : 'Question'} ${questions.join(', ')}`
+        : updates
+    } else if (scope) {
+      primary = `${taskName(Number(scope[1]))} · Questionnaire activity`
+      secondary = [instrument, updates].filter(Boolean).join(' · ')
+    } else {
+      primary = 'Structured response activity'
+      secondary = updates
+    }
   } else if (event?.eventType === 'QUESTION_RESPONSE_UPDATED') {
     primary = 'Question response updated'
     const match = /^heuristic:(\d+):question:(\d+)$/.exec(

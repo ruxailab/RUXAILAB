@@ -104,6 +104,7 @@ describe('study logging runtime', () => {
     expect(logger.record).toHaveBeenCalledWith(
       'MEDIA_RECORDING_OUTCOME',
       expect.objectContaining({ taskRef: 'task:0' }),
+      expect.any(String),
     )
   })
 
@@ -140,7 +141,11 @@ describe('study logging runtime', () => {
 
     await runtime.resumeAfterConsent()
 
-    expect(logger.record).toHaveBeenCalledWith('STUDY_VIEW_OPENED', {})
+    expect(logger.record).toHaveBeenCalledWith(
+      'STUDY_VIEW_OPENED',
+      {},
+      expect.any(String),
+    )
   })
 
   it('records task entry only after consent using the captured occurrence time', async () => {
@@ -472,6 +477,168 @@ describe('recording observations', () => {
     outcome: 'completed',
     stage: 'upload',
   }
+  describe('observations between saved consent and its acknowledgement', () => {
+    const deferred = () => {
+      let resolve
+      const promise = new Promise((done) => {
+        resolve = done
+      })
+      return { promise, resolve }
+    }
+    const textInput = (fieldRef) => ({
+      value: '',
+      closest: () => ({ dataset: { studyFieldRef: fieldRef } }),
+    })
+    const editField = async (runtime, fieldRef) => {
+      const target = textInput(fieldRef)
+      runtime.editHandlers.focusin({ target })
+      target.value = 'typed text'
+      runtime.editHandlers.input({ target, inputType: 'insertText' })
+      await runtime.editHandlers.focusout({ target })
+    }
+
+    it('keeps early pre-test choices and edits and releases them on acknowledgement', async () => {
+      const acknowledgement = deferred()
+      const { runtime, logger, callFunction } = createHarness({
+        consentRequired: true,
+      })
+      callFunction.mockReturnValue(acknowledgement.promise)
+      runtime.seedStructuredScope('preTest', {
+        'preTest:question:0': '',
+        'preTest:question:2': '',
+      })
+
+      const consent = runtime.consentAccepted()
+      runtime.structuredChoiceChanged('preTest', 'preTest:question:0', 'A')
+      await editField(runtime, 'preTest:1:answer')
+      await runtime.checkpointStructuredScope('preTest')
+      expect(logger.record).not.toHaveBeenCalled()
+
+      acknowledgement.resolve({ data: { status: 'accepted' } })
+      await consent
+      runtime.structuredChoiceChanged('preTest', 'preTest:question:2', 'B')
+      await runtime.checkpointStructuredScope('preTest')
+
+      const recorded = logger.record.mock.calls.map(([type, details]) => [
+        type,
+        details.fieldRef || details.items,
+      ])
+      expect(recorded).toEqual([
+        ['ANSWER_EDITED', 'preTest:1:answer'],
+        [
+          'STRUCTURED_RESPONSE_ACTIVITY',
+          [{ itemRef: 'preTest:question:0', changes: 1 }],
+        ],
+        [
+          'STRUCTURED_RESPONSE_ACTIVITY',
+          [{ itemRef: 'preTest:question:2', changes: 1 }],
+        ],
+      ])
+      expect(logger.record.mock.calls[0][2]).toEqual(expect.any(String))
+      runtime.destroy()
+    })
+
+    it('keeps early post-test activity after a resumed session is acknowledged', async () => {
+      const acknowledgement = deferred()
+      const { runtime, logger, callFunction } = createHarness({
+        consentRequired: true,
+      })
+      callFunction.mockReturnValue(acknowledgement.promise)
+
+      const resumed = runtime.resumeAfterConsent()
+      runtime.seedStructuredScope('postTest', { 'postTest:question:0': '' })
+      runtime.structuredChoiceChanged('postTest', 'postTest:question:0', 'Yes')
+      await runtime.checkpointStructuredScope('postTest')
+      acknowledgement.resolve({ data: { status: 'duplicate' } })
+      await resumed
+
+      expect(logger.record.mock.calls.map(([type]) => type)).toEqual([
+        'STRUCTURED_RESPONSE_ACTIVITY',
+        'STUDY_VIEW_OPENED',
+      ])
+      const [, [, , openedAt]] = logger.record.mock.calls
+      expect(Date.parse(openedAt)).toBeLessThanOrEqual(
+        Date.parse(logger.record.mock.calls[0][2]),
+      )
+      runtime.destroy()
+    })
+
+    it('holds activity across a retried acknowledgement', async () => {
+      const { runtime, logger, callFunction, runInterval } = createHarness({
+        consentRequired: true,
+      })
+      callFunction.mockRejectedValueOnce(new Error('cold start timeout'))
+
+      await runtime.consentAccepted()
+      await editField(runtime, 'postTest:0:answer')
+      expect(logger.record).not.toHaveBeenCalled()
+
+      runInterval()
+      await new Promise((resolve) => setTimeout(resolve, 0))
+
+      expect(logger.record).toHaveBeenCalledWith(
+        'ANSWER_EDITED',
+        expect.objectContaining({ fieldRef: 'postTest:0:answer' }),
+        expect.any(String),
+      )
+      runtime.destroy()
+    })
+
+    it('discards held activity when consent is permanently rejected', async () => {
+      const acknowledgement = deferred()
+      const { runtime, logger, callFunction, runInterval } = createHarness({
+        consentRequired: true,
+      })
+      callFunction.mockReturnValueOnce(acknowledgement.promise)
+
+      const consent = runtime.consentAccepted()
+      await editField(runtime, 'preTest:0:answer')
+      acknowledgement.resolve(
+        Promise.reject({
+          details: { retryable: false, reasonCode: 'UNVERIFIED_TRANSITION' },
+        }),
+      )
+      await consent
+      await runtime.consentAccepted()
+      runInterval()
+      await new Promise((resolve) => setTimeout(resolve, 0))
+
+      expect(logger.record).not.toHaveBeenCalled()
+      runtime.destroy()
+    })
+
+    it('never holds activity before consent is saved', async () => {
+      const { runtime, logger } = createHarness({ consentRequired: true })
+
+      runtime.structuredChoiceChanged('preTest', 'preTest:question:0', 'A')
+      await editField(runtime, 'preTest:1:answer')
+      await runtime.checkpointStructuredScope('preTest')
+      await runtime.consentAccepted()
+      await runtime.checkpointStructuredScope('preTest')
+
+      expect(logger.record).not.toHaveBeenCalled()
+      runtime.destroy()
+    })
+
+    it('bounds the in-memory hold', async () => {
+      const acknowledgement = deferred()
+      const { runtime, logger, callFunction } = createHarness({
+        consentRequired: true,
+      })
+      callFunction.mockReturnValue(acknowledgement.promise)
+
+      const consent = runtime.consentAccepted()
+      for (let index = 0; index < 205; index += 1) {
+        await runtime.taskStarted(0)
+      }
+      acknowledgement.resolve({ data: { status: 'accepted' } })
+      await consent
+
+      expect(logger.record).toHaveBeenCalledTimes(200)
+      runtime.destroy()
+    })
+  })
+
   it('does not record before committed consent, including a failed acknowledgement', async () => {
     const { runtime, logger, callFunction } = createHarness({
       consentRequired: true,

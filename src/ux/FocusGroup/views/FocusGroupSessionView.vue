@@ -127,6 +127,45 @@
           </template>
         </span>
       </div>
+      <div v-if="isInBreakout" class="fg-topbar-breakout">
+        <v-chip
+          size="small"
+          color="primary"
+          variant="tonal"
+          prepend-icon="mdi-call-split"
+          class="fg-topbar-breakout-group"
+        >
+          {{
+            t('focusGroup.session.breakoutInGroup', {
+              name: myBreakoutGroupName,
+            })
+          }}
+        </v-chip>
+        <v-btn
+          v-if="!isFacilitatorPresentInMyGroup"
+          size="small"
+          variant="tonal"
+          :color="myGroupHelpPending ? 'success' : 'error'"
+          :prepend-icon="myGroupHelpPending ? 'mdi-check' : 'mdi-hand-back-left'"
+          class="text-none"
+          :disabled="myGroupHelpPending"
+          @click="onCallFacilitator"
+        >
+          {{
+            myGroupHelpPending
+              ? t('focusGroup.session.breakoutHelpSent')
+              : t('focusGroup.session.breakoutCallFacilitator')
+          }}
+        </v-btn>
+      </div>
+      <div
+        v-if="isInBreakout && breakout?.broadcast?.text"
+        class="fg-topbar-broadcast"
+        :title="breakout.broadcast.text"
+      >
+        <v-icon size="16">mdi-bullhorn-outline</v-icon>
+        <span>{{ breakout.broadcast.text }}</span>
+      </div>
       <v-spacer />
       <v-btn
         v-if="isFacilitator && status === 'live' && !focusGroupStartedAt"
@@ -139,21 +178,33 @@
       >
         {{ t('focusGroup.session.startFocusGroup') }}
       </v-btn>
-      <SessionTimer
-        v-if="currentTopic && timerFallbackMs > 0"
-        :timer="timerForTopic"
-        :fallback-ms="timerFallbackMs"
-        :is-facilitator="isFacilitator"
-        class="me-1"
-        @play="onTimerPlay"
-        @pause="onTimerPause"
-        @reset="onTimerReset"
-      />
-      <div v-if="focusGroupStartedAt" class="fg-session-elapsed me-2">
-        <v-icon size="16">mdi-clock-time-four-outline</v-icon>
-        <span>{{ t('focusGroup.session.elapsed') }}</span>
-        <span>{{ elapsedSessionDisplay }}</span>
+      <div class="fg-topbar-time">
+        <SessionTimer
+          v-if="currentTopic && timerFallbackMs > 0"
+          :timer="timerForTopic"
+          :fallback-ms="timerFallbackMs"
+          :is-facilitator="isFacilitator"
+          @play="onTimerPlay"
+          @pause="onTimerPause"
+          @reset="onTimerReset"
+        />
+        <div v-if="focusGroupStartedAt" class="fg-session-elapsed">
+          <v-icon size="16">mdi-clock-time-four-outline</v-icon>
+          <span>{{ t('focusGroup.session.elapsed') }}</span>
+          <span>{{ elapsedSessionDisplay }}</span>
+        </div>
       </div>
+      <v-btn
+        v-if="isFacilitator && activePromptText"
+        size="small"
+        variant="tonal"
+        prepend-icon="mdi-eye-off-outline"
+        class="text-none me-2"
+        :title="t('focusGroup.session.stopShowingQuestion')"
+        @click="onClearPrompt"
+      >
+        {{ t('focusGroup.session.stopShowingQuestion') }}
+      </v-btn>
       <v-chip
         :color="roleColor"
         variant="tonal"
@@ -183,41 +234,6 @@
             @return-to-main="onReturnToMain"
           />
 
-          <div
-            v-if="isInBreakout"
-            class="fg-observer-strip d-flex align-center"
-          >
-            <v-icon size="16" class="me-1">mdi-call-split</v-icon>
-            <span class="flex-grow-1">
-              {{
-                t('focusGroup.session.breakoutInGroup', {
-                  name: myBreakoutGroupName,
-                })
-              }}
-            </span>
-            <v-btn
-              size="x-small"
-              variant="tonal"
-              :color="myGroupHelpPending ? 'success' : 'error'"
-              :prepend-icon="
-                myGroupHelpPending ? 'mdi-check' : 'mdi-hand-back-left'
-              "
-              class="text-none ms-2"
-              :disabled="myGroupHelpPending"
-              @click="onCallFacilitator"
-            >
-              {{
-                myGroupHelpPending
-                  ? t('focusGroup.session.breakoutHelpSent')
-                  : t('focusGroup.session.breakoutCallFacilitator')
-              }}
-            </v-btn>
-          </div>
-          <div v-if="isInBreakout && breakout?.broadcast?.text" class="fg-observer-strip">
-            <v-icon size="16" class="me-1">mdi-bullhorn-outline</v-icon>
-            {{ breakout.broadcast.text }}
-          </div>
-
           <CurrentQuestion
             v-if="!focusGroupStartedAt || stageMode === 'stimulus'"
             :text="activePromptText"
@@ -227,7 +243,7 @@
 
           <div class="fg-stage-body">
             <div
-              v-if="focusGroupStartedAt && stageMode !== 'stimulus'"
+              v-if="focusGroupStartedAt && activePromptText && stageMode !== 'stimulus' && !screenShareFeeds.length"
               class="fg-presentation-layout"
               :class="{ 'fg-presentation-layout--video': videoEnabled }"
             >
@@ -269,6 +285,8 @@
                 :local-state="localVideoState"
                 :connection-error="connectionError"
                 :presence-roles="participants"
+                :recent-speaker-ids="recentSpeakerIds"
+                :page-size="3"
                 :set-local-video="setLocalVideo"
                 :set-remote-video="setRemoteVideoElement"
                 :set-screen-video="setScreenShareVideoElement"
@@ -289,6 +307,7 @@
               :local-state="localVideoState"
               :connection-error="connectionError"
               :presence-roles="participants"
+              :recent-speaker-ids="recentSpeakerIds"
               :set-local-video="setLocalVideo"
               :set-remote-video="setRemoteVideoElement"
               :set-screen-video="setScreenShareVideoElement"
@@ -464,19 +483,16 @@
               <template #activator="{ props: tip }">
                 <v-btn
                   v-bind="tip"
-                  class="fg-round"
+                  class="fg-round fg-participants-button"
                   :class="{
                     'fg-round-active': showPanel && panelTab === 'people',
                   }"
                   @click="togglePanelTab('people')"
                 >
-                  <v-badge
-                    :content="connectedCount"
-                    :model-value="connectedCount > 0"
-                    color="success"
-                  >
-                    <v-icon>mdi-account-group</v-icon>
-                  </v-badge>
+                  <v-icon>mdi-account-group</v-icon>
+                  <span v-if="connectedCount > 0" class="fg-participants-count">
+                    {{ connectedCount }}
+                  </span>
                 </v-btn>
               </template>
             </v-tooltip>
@@ -695,7 +711,7 @@ import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 import { Track } from 'livekit-client'
-import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
+import { ACCESS_LEVEL, normalizeAccessLevel } from '@/shared/utils/accessLevel'
 import { useLiveKitRoom } from '@/shared/components/videoCall/composables/useLiveKitRoom'
 import { useFocusGroupSession } from '@/ux/FocusGroup/composables/useFocusGroupSession'
 import { useSpeakingTime } from '@/ux/FocusGroup/composables/useSpeakingTime'
@@ -783,6 +799,7 @@ const {
   goToTopic,
   endSession,
   joinPresence,
+  setPresenceBreakoutGroup,
   leavePresence,
   recordConsent,
   askPrompt,
@@ -1120,6 +1137,7 @@ const videoEnabled = computed(
 // the same way a screen share would — everyone should be looking at the same
 // thing. Camera tiles simply hide while a stimulus is up (no PiP yet).
 const stageMode = computed(() => {
+  if (screenShareFeeds.value.length) return 'video'
   if (resolvedStimulus.value) return 'stimulus'
   if (videoEnabled.value) return 'video'
   return 'discussion'
@@ -1137,6 +1155,27 @@ const myBreakoutGroupId = computed(() => {
   )
   return entry?.[0] ?? null
 })
+const isFacilitatorPresentInMyGroup = computed(() => {
+  const isFacilitatorPresence = (presence) =>
+    normalizeAccessLevel(presence?.accessLevel) === ACCESS_LEVEL.ADMIN ||
+    presence?.role === t('focusGroup.session.roleFacilitator') ||
+    String(presence?.role ?? '').toUpperCase() === 'FACILITATOR'
+
+  const inSharedPresence = Object.values(participants.value || {}).some(
+    (presence) =>
+      presence?.connected === true &&
+      presence?.breakoutGroupId === myBreakoutGroupId.value &&
+      isFacilitatorPresence(presence),
+  )
+  if (inSharedPresence) return true
+
+  // The LiveKit room itself is a second source of truth. It covers clients
+  // whose presence update is delayed or stale while the facilitator is
+  // already connected to this breakout room.
+  return remoteParticipants.value.some((participant) =>
+    isFacilitatorPresence(participants.value?.[participant.identity]),
+  )
+})
 
 // Staff (facilitator/observer) can drop into any breakout group's room to
 // check in on it; this holds the group they're currently visiting, null when
@@ -1148,7 +1187,12 @@ const visitingGroupId = ref(null)
 watch(
   () => breakout.value?.active,
   (active) => {
-    if (!active) visitingGroupId.value = null
+    if (!active) {
+      visitingGroupId.value = null
+      if (isFacilitator.value) {
+        setPresenceBreakoutGroup({ userId: user.value?.id, groupId: null })
+      }
+    }
   },
 )
 
@@ -1264,9 +1308,10 @@ const {
 // Accumulated LiveKit active-speaker time per identity, feeding the
 // facilitator-only participation indicator alongside message counts — see
 // participationByUser below.
-const { speakingMs } = useSpeakingTime(callRoom)
+const { speakingMs, recentSpeakerIds } = useSpeakingTime(callRoom)
 
 const localVideoState = computed(() => ({
+  identity: user.value?.id ?? '',
   name: sessionNickname.value,
   isObservator: isCallObservator.value,
   isCameraEnabled: isCameraEnabled.value,
@@ -1379,7 +1424,12 @@ const participationByUser = computed(() =>
 // they don't work in groups).
 const eligibleBreakoutParticipants = computed(() =>
   Object.entries(participants.value || {})
-    .filter(([, p]) => p?.role === t('focusGroup.session.roleParticipant'))
+    .filter(
+      ([, p]) =>
+        p?.connected === true &&
+        (p?.accessLevel === ACCESS_LEVEL.EVALUATOR ||
+          p?.role === t('focusGroup.session.roleParticipant')),
+    )
     .map(([id, p]) => ({ id, name: p?.name || '' })),
 )
 // Backs the quick-start menu on the control bar, a shortcut for starting a
@@ -1401,6 +1451,7 @@ const myBreakoutGroupName = computed(
 )
 
 const onStartBreakout = (groupCount) => {
+  if (!canStartBreakout.value) return
   const groups = splitIntoGroups(
     eligibleBreakoutParticipants.value.map((p) => p.id),
     groupCount,
@@ -1435,20 +1486,43 @@ const isStaff = computed(() => isFacilitator.value || isObserver.value)
 
 // A staff member drops into a group's room; the facilitator answering a call
 // also clears that group's raised hand in the same action.
-const onVisitGroup = (groupId) => {
+const onVisitGroup = async (groupId) => {
   visitingGroupId.value = groupId
-  if (isFacilitator.value && breakout.value?.groups?.[groupId]?.help) {
-    setBreakoutHelp({ groupId, help: null })
+  if (isFacilitator.value) {
+    if (breakout.value?.groups?.[groupId]?.help) {
+      await setBreakoutHelp({ groupId, help: null })
+    }
+    await setPresenceBreakoutGroup({ userId: user.value?.id, groupId })
   }
 }
-const onReturnToMain = () => {
+const onReturnToMain = async () => {
+  const previousGroupId = visitingGroupId.value
   visitingGroupId.value = null
+  if (isFacilitator.value) {
+    if (previousGroupId && breakout.value?.groups?.[previousGroupId]?.help) {
+      await setBreakoutHelp({ groupId: previousGroupId, help: null })
+    }
+    await setPresenceBreakoutGroup({ userId: user.value?.id, groupId: null })
+  }
 }
 
 // The current participant's own group has a pending call, so the button can
 // read "notified" instead of letting them stack duplicate requests.
 const myGroupHelpPending = computed(
   () => !!breakout.value?.groups?.[myBreakoutGroupId.value]?.help,
+)
+watch(
+  [isFacilitatorPresentInMyGroup, myGroupHelpPending],
+  ([facilitatorPresent, helpPending]) => {
+    if (
+      isParticipant.value &&
+      facilitatorPresent &&
+      helpPending &&
+      myBreakoutGroupId.value
+    ) {
+      setBreakoutHelp({ groupId: myBreakoutGroupId.value, help: null })
+    }
+  },
 )
 const onCallFacilitator = () => {
   if (!myBreakoutGroupId.value || myGroupHelpPending.value) return
@@ -1809,8 +1883,54 @@ onMounted(async () => {
 .fg-topbar-title {
   display: flex;
   flex-direction: column;
-  min-width: 0;
+  flex: 0 1 auto;
+  min-width: 120px;
   line-height: 1.25;
+}
+
+.fg-topbar-breakout {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+}
+
+.fg-topbar-breakout-group {
+  max-width: 210px;
+}
+
+.fg-topbar-time {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.fg-topbar-breakout-group :deep(.v-chip__content) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fg-topbar-broadcast {
+  display: flex;
+  flex: 0 1 260px;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+  padding: 6px 10px;
+  border: 1px solid rgba(13, 59, 94, 0.15);
+  border-radius: 8px;
+  color: #123d61;
+  background: #eaf3fc;
+  font-size: 0.82rem;
+}
+
+.fg-topbar-broadcast span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .fg-topbar-name {
@@ -1872,6 +1992,7 @@ onMounted(async () => {
 }
 
 .fg-stage-area {
+  position: relative;
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
@@ -1976,6 +2097,30 @@ onMounted(async () => {
 }
 
 @media (max-width: 800px) {
+  .fg-topbar {
+    height: auto;
+    min-height: 60px;
+    flex-wrap: wrap;
+    padding: 8px 12px;
+  }
+
+  .fg-topbar-title {
+    flex: 1 1 35%;
+  }
+
+  .fg-topbar-breakout {
+    order: 2;
+  }
+
+  .fg-topbar-broadcast {
+    order: 3;
+    flex-basis: min(100%, 220px);
+  }
+
+  .fg-topbar > .v-spacer {
+    display: none;
+  }
+
   .fg-presentation-layout--video {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: minmax(180px, 1fr) minmax(120px, 28%);
@@ -2123,6 +2268,33 @@ onMounted(async () => {
   transition:
     background 0.15s ease,
     transform 0.1s ease;
+}
+
+.fg-participants-button {
+  position: relative;
+  flex: 0 0 44px;
+  min-width: 44px !important;
+  max-width: 44px;
+  padding: 0 !important;
+  aspect-ratio: 1;
+}
+
+.fg-participants-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  display: grid;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 4px;
+  place-items: center;
+  border: 2px solid rgb(var(--v-theme-primary));
+  border-radius: 999px;
+  color: #052b47;
+  background: #26c45e;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .fg-round:hover {
