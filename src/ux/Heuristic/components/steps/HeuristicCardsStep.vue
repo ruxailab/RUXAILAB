@@ -4,24 +4,38 @@
       <div class="heuristic-cards-content">
         <div class="heuristic-cards-header">
           <div>
-            <p class="text-overline text-primary mb-1">
-              {{ $t('HeuristicsTestView.flow.reviewHeuristics') }}
-            </p>
             <h1 class="heuristic-cards-title">
-              {{ $t('HeuristicsTestView.cards.title') }}
+              {{
+                evaluationName.trim()
+                  ? $t('HeuristicsTestView.cards.titleWithName', {
+                      name: evaluationName.trim(),
+                    })
+                  : $t('HeuristicsTestView.cards.title')
+              }}
             </h1>
           </div>
-          <v-progress-circular
-            rotate="-90"
-            :model-value="calculatedProgress"
-            :size="58"
-            :width="5"
-            color="primary"
-          >
-            <span class="text-caption font-weight-bold">
-              {{ Math.round(calculatedProgress) }}%
-            </span>
-          </v-progress-circular>
+          <div class="heuristic-cards-actions">
+            <v-progress-circular
+              rotate="-90"
+              :model-value="calculatedProgress"
+              :size="58"
+              :width="5"
+              color="primary"
+            >
+              <span class="text-caption font-weight-bold">
+                {{ Math.round(calculatedProgress) }}%
+              </span>
+            </v-progress-circular>
+            <v-btn
+              color="primary"
+              variant="flat"
+              v-if="calculatedProgress === 100"
+              @click="$emit('finish-evaluation')"
+            >
+              <v-icon start>mdi-send</v-icon>
+              {{ $t('HeuristicsTestView.flow.finishEvaluation') }}
+            </v-btn>
+          </div>
         </div>
 
         <p class="heuristic-cards-description">
@@ -130,17 +144,6 @@
             </v-card>
           </v-col>
         </v-row>
-        <div class="d-flex justify-center mt-6">
-          <v-btn
-            color="primary"
-            variant="flat"
-            :disabled="calculatedProgress < 100"
-            @click="$emit('finish-evaluation')"
-          >
-            <v-icon start>mdi-send</v-icon>
-            {{ $t('HeuristicsTestView.flow.finishEvaluation') }}
-          </v-btn>
-        </div>
       </div>
     </template>
   </ShowInfo>
@@ -150,6 +153,7 @@
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 
 const props = defineProps({
+  evaluationName: { type: String, default: '' },
   heuristics: { type: Array, required: true },
   currentUserTestAnswer: { type: Object, required: true },
   calculatedProgress: { type: Number, required: true },
@@ -193,7 +197,15 @@ const heuristicProgress = (index) =>
   margin-bottom: 0.75rem;
 }
 
+.heuristic-cards-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
 .heuristic-cards-title {
+  overflow-wrap: anywhere;
   color: #00213f;
   font-size: 2.25rem;
   font-weight: 300;

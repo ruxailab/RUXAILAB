@@ -1143,8 +1143,9 @@
       "reviewHeuristics": "Evaluación heurística"
     },
     "cards": {
-      "title": "Selecciona una heurística",
-      "description": "Revisa el progreso de cada heurística y elige una para responder sus preguntas.",
+      "title": "Evaluación heurística",
+      "titleWithName": "Evaluación heurística de {name}",
+      "description": "Explora la página y elige una heurística para evaluar su usabilidad. Responde a las preguntas según lo que observes y repite el proceso con cada heurística. Cuando las hayas completado todas, revisa y envía tu evaluación.",
       "questionsCount": "{count} preguntas",
       "open": "Evaluar heurística",
       "back": "Volver a la selección",
@@ -1152,12 +1153,16 @@
       "noDescription": "Revisa esta heurística y responde sus preguntas según tu evaluación."
     },
     "answer": {
+      "weight": "Peso relativo",
+      "invalidWeight": "Selecciona un número entero del 1 al 10.",
+      "weightHelp": "Selecciona un peso relativo del 1 al 10. Los valores mayores indican más importancia.",
       "currentLocation": "Heurística {heuristic} · Pregunta {current} de {total}",
       "responseType": "Tipo de respuesta",
       "responseTypeHint": "Escoge el formato de respuesta una vez. Se usará en todas las preguntas de esta heurística.",
       "assessment": "Evaluación",
       "assessmentHint": "Selecciona la opción que mejor refleje tu evaluación para esta pregunta.",
       "optionsAnalysis": "Análisis de opciones",
+      "required": "Obligatorio",
       "optionsAnalysisHint": "Evalúa la pregunta usando las opciones configuradas, severidad, frecuencia o ambas.",
       "evidence": "Evidencias y comentarios",
       "evidenceSubtitle": "Escribe el motivo de tu evaluación y añade evidencias si hace falta.",

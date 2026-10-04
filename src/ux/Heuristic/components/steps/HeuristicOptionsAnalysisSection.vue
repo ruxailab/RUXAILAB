@@ -2,18 +2,30 @@
   <section class="answer-field answer-field--options">
     <header class="field-header">
       <div class="field-title">
-        <span class="field-icon">
-          <v-icon size="20">mdi-tune-variant</v-icon>
+        <span class="field-icon" aria-hidden="true">
+          <v-icon size="20">mdi-clipboard-check-outline</v-icon>
         </span>
         <div>
-          <h3>{{ sectionTitle }}</h3>
+          <h3>
+            {{ sectionTitle }}
+            <span class="required-label text-error" aria-hidden="true">*</span>
+            <span class="sr-only">{{
+              $t('HeuristicsTestView.answer.required')
+            }}</span>
+          </h3>
         </div>
       </div>
     </header>
 
     <div class="field-body">
       <p class="field-help">
-        {{ $t('HeuristicsTestView.answer.chooseBestOption') }}
+        {{
+          $t(
+            selectedAnswerMode === 'weight'
+              ? 'HeuristicsTestView.answer.weightHelp'
+              : 'HeuristicsTestView.answer.chooseBestOption',
+          )
+        }}
       </p>
 
       <v-alert
@@ -23,6 +35,13 @@
       >
         {{ $t('HeuristicsTestView.errors.noAnswerOptions') }}
       </v-alert>
+
+      <HeuristicWeightControl
+        v-else-if="selectedAnswerMode === 'weight'"
+        :model-value="answer?.weight ?? null"
+        :disabled="disabled"
+        @update:model-value="$emit('update-metric', 'weight', $event)"
+      />
 
       <div
         v-else-if="selectedAnswerMode === 'frequencySeverity'"
@@ -80,6 +99,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import HeuristicWeightControl from './HeuristicWeightControl.vue'
 import { useI18n } from 'vue-i18n'
 import CustomOptionsControl from '@/ux/Heuristic/components/steps/HeuristicCustomOptionsControl.vue'
 import ResponseControl from '@/ux/Heuristic/components/steps/HeuristicResponseControl.vue'
@@ -100,6 +120,8 @@ defineEmits(['update-metric', 'update-custom-option'])
 const { t } = useI18n()
 
 const sectionTitle = computed(() => {
+  if (props.selectedAnswerMode === 'weight')
+    return t('HeuristicsTestView.answer.weight')
   if (props.selectedAnswerMode === 'frequency') {
     return t('HeuristicsTestView.answer.frequencyOccurrence')
   }
@@ -152,6 +174,25 @@ const sectionTitle = computed(() => {
   color: #151b2a;
   font-size: 1.05rem;
   font-weight: 800;
+}
+
+.required-label {
+  display: inline-block;
+  margin-left: 0.15rem;
+  font-size: inherit;
+  font-weight: 600;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 .field-body {

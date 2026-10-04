@@ -212,6 +212,7 @@ const localUseFrequency = ref(test.value?.useFrequency ?? true)
 const localUseSeverity = ref(test.value?.useSeverity ?? true)
 
 const studyMode = computed(() => {
+  if (test.value?.studyMode) return test.value.studyMode
   const hasWeightsMode = test.value?.useWeights === true
   const hasCustomOptions =
     Array.isArray(test.value?.testOptions) && test.value.testOptions.length > 0
@@ -303,8 +304,8 @@ const changeStudyMode = async (mode) => {
     },
     detailed: {
       useWeights: false,
-      useFrequency: false,
-      useSeverity: false,
+      useFrequency: true,
+      useSeverity: true,
     },
     weights: {
       useWeights: true,
@@ -314,7 +315,7 @@ const changeStudyMode = async (mode) => {
   }
 
   try {
-    const settings = modeSettings[mode]
+    const settings = { ...modeSettings[mode], studyMode: mode }
     store.commit('SET_TEST', { ...test.value, ...settings })
     localUseFrequency.value = settings.useFrequency
     localUseSeverity.value = settings.useSeverity
