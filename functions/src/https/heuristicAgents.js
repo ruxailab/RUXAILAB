@@ -4,6 +4,7 @@ import { existsSync } from 'node:fs'
 import net from 'node:net'
 import puppeteer from 'puppeteer-core'
 import { admin, functions } from '../core/firebase/f.firebase.js'
+import { resolveStudyRole, ROLE } from '../shared/auth/studyAccess.js'
 
 const MAX_HTML_BYTES = 1_000_000
 const MAX_TREE_CHARS = 500_000
@@ -562,12 +563,13 @@ const getAuthorizedTest = async (testId, uid) => {
   const snapshot = await admin.firestore().collection('tests').doc(testId).get()
   if (!snapshot.exists) fail('not-found', 'El test no existe.')
   const test = snapshot.data()
-  const isAdmin = test.testAdmin?.userDocId === uid
-  const isCooperator = (test.cooperators || []).some(
-    (item) => item.userDocId === uid && item.accepted === true,
-  )
-  if (!isAdmin && !isCooperator)
+  const role = resolveStudyRole(test, uid, false)
+  if (
+    role === null ||
+    ![ROLE.ADMIN, ROLE.MANAGER, ROLE.EVALUATOR].includes(role)
+  ) {
     fail('permission-denied', 'No tienes acceso al test.')
+  }
   return test
 }
 
