@@ -12,6 +12,7 @@ export default class HeuristicStudy extends Study {
     this.testType = STUDY_TYPES.HEURISTIC
     this.testWeights = params.testWeights ?? {}
     this.trackTime = params.trackTime ?? true
+    this.studyMode = params.studyMode ?? null
     this.useWeights = params.useWeights ?? false
     this.useFrequency = params.useFrequency ?? true
     this.useSeverity = params.useSeverity ?? true
@@ -27,6 +28,7 @@ export default class HeuristicStudy extends Study {
     return Object.assign(super.toFirestore(), {
       testWeights: this.testWeights,
       trackTime: this.trackTime,
+      studyMode: this.studyMode,
       useWeights: this.useWeights,
       useFrequency: this.useFrequency,
       useSeverity: this.useSeverity,

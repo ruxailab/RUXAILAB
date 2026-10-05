@@ -1,4 +1,28 @@
+export const resolveHeuristicStudyMode = (test) => {
+  if (['traditional', 'detailed', 'weights'].includes(test?.studyMode))
+    return test.studyMode
+  if (test?.useWeights) return 'weights'
+  if (test?.testOptions?.length) return 'detailed'
+  return test?.useFrequency !== false && test?.useSeverity !== false
+    ? 'traditional'
+    : 'detailed'
+}
+
+export const heuristicResponseItems = (test, heuristic) =>
+  resolveHeuristicStudyMode(test) === 'detailed'
+    ? heuristic?.questions || []
+    : [
+        {
+          id: heuristic?.id,
+          title: heuristic?.title,
+          descriptions: [
+            { text: heuristic?.description || heuristic?.text || '' },
+          ],
+        },
+      ]
+
 export const HEURISTIC_ANSWER_MODE = Object.freeze({
+  WEIGHT: 'weight',
   CUSTOM_OPTIONS: 'customOptions',
   FREQUENCY: 'frequency',
   SEVERITY: 'severity',
@@ -6,6 +30,10 @@ export const HEURISTIC_ANSWER_MODE = Object.freeze({
 })
 
 export const resolveHeuristicAnswerMode = (test) => {
+  const studyMode = resolveHeuristicStudyMode(test)
+  if (studyMode === 'weights') return HEURISTIC_ANSWER_MODE.WEIGHT
+  if (studyMode === 'traditional')
+    return HEURISTIC_ANSWER_MODE.FREQUENCY_SEVERITY
   if (Array.isArray(test?.testOptions) && test.testOptions.length) {
     return HEURISTIC_ANSWER_MODE.CUSTOM_OPTIONS
   }
@@ -17,7 +45,8 @@ export const resolveHeuristicAnswerMode = (test) => {
   }
   if (useFrequency) return HEURISTIC_ANSWER_MODE.FREQUENCY
   if (useSeverity) return HEURISTIC_ANSWER_MODE.SEVERITY
-  return null
+  // Detailed studies created with both metrics disabled still need a response scale.
+  return HEURISTIC_ANSWER_MODE.FREQUENCY_SEVERITY
 }
 
 export const buildCanonicalHeuristicAnswer = ({
@@ -25,7 +54,11 @@ export const buildCanonicalHeuristicAnswer = ({
   option,
   frequency,
   severity,
+  weight,
 }) => {
+  if (mode === HEURISTIC_ANSWER_MODE.WEIGHT) {
+    return { mode, weight, text: `Weight: ${weight}`, value: weight }
+  }
   if (mode === HEURISTIC_ANSWER_MODE.CUSTOM_OPTIONS) {
     const custom = option
       ? {

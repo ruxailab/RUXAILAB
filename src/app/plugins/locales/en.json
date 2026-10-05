@@ -1151,8 +1151,9 @@
       "reviewHeuristics": "Heuristic evaluation"
     },
     "cards": {
-      "title": "Select a heuristic",
-      "description": "Review each heuristic's progress and choose one to answer its questions.",
+      "title": "Heuristic Evaluation",
+      "titleWithName": "Heuristic Evaluation of {name}",
+      "description": "Explore the page and choose a heuristic to assess its usability. Answer the questions based on what you observe, and repeat the process for each heuristic. Once you have completed them all, review and submit your evaluation.",
       "questionsCount": "{count} questions",
       "open": "Evaluate heuristic",
       "back": "Back to selection",
@@ -1160,12 +1161,16 @@
       "noDescription": "Review this heuristic and answer its questions based on your evaluation."
     },
     "answer": {
+      "weight": "Relative weight",
+      "invalidWeight": "Choose a whole number from 1 to 10.",
+      "weightHelp": "Choose a relative weight from 1 to 10. Higher values indicate greater importance.",
       "currentLocation": "Heuristic {heuristic} · Question {current} of {total}",
       "responseType": "Response type",
       "responseTypeHint": "Choose the answer format once. It will be used for every question in this heuristic.",
       "assessment": "Assessment",
       "assessmentHint": "Select the option that best reflects your evaluation for this question.",
       "optionsAnalysis": "Options analysis",
+      "required": "Required",
       "optionsAnalysisHint": "Evaluate the question using the configured options, severity, frequency, or both.",
       "evidence": "Evidence and comments",
       "evidenceSubtitle": "Write the reason for your evaluation and attach supporting evidence if needed.",

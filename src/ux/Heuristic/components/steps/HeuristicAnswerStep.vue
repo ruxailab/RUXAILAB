@@ -67,7 +67,13 @@
           </aside>
 
           <div class="answer-content">
-            <section class="question-description-box">
+            <section
+              v-if="
+                !isTraditionalEvaluation ||
+                questionDescription(currentQuestion).trim()
+              "
+              class="question-description-box"
+            >
               <div v-if="!isTraditionalEvaluation" class="description-title">
                 <v-icon size="20">mdi-clipboard-text-outline</v-icon>
                 <strong>{{
@@ -85,6 +91,7 @@
 
             <div class="answer-blocks">
               <HeuristicOptionsAnalysisSection
+                :key="`options-${heurisIndex}-${currentQuestionIndex}`"
                 :data-study-field-ref="`heuristic:${canonicalHeuristicIndex}:question:${currentQuestionIndex}:answer`"
                 :selected-answer-mode="selectedAnswerMode"
                 :answer-mode-label="answerModeLabel(selectedAnswerMode)"
@@ -203,41 +210,13 @@
               aria-label="Heuristic navigation"
             >
               <v-btn
-                variant="outlined"
-                color="primary"
-                prepend-icon="mdi-chevron-left"
-                class="heuristic-nav-command"
-                :disabled="isFirstHeuristic"
-                @click="goToHeuristic(heurisIndex - 1)"
-              >
-                {{ $t('HeuristicsTestView.answer.previousHeuristic') }}
-              </v-btn>
-
-              <v-btn
-                variant="outlined"
-                color="primary"
-                append-icon="mdi-chevron-right"
-                class="heuristic-nav-command"
-                :disabled="isLastHeuristic"
-                @click="goToHeuristic(heurisIndex + 1)"
-              >
-                {{ $t('HeuristicsTestView.answer.nextHeuristic') }}
-              </v-btn>
-
-              <v-btn
                 variant="flat"
                 color="primary"
-                :prepend-icon="
-                  isEvaluationComplete ? 'mdi-send' : 'mdi-view-grid'
-                "
+                prepend-icon="mdi-view-grid"
                 class="heuristic-list-command"
-                @click="handleBottomPrimaryAction"
+                @click="$emit('back')"
               >
-                {{
-                  isEvaluationComplete
-                    ? $t('HeuristicsTestView.flow.finishEvaluation')
-                    : $t('HeuristicsTestView.answer.backToHeuristicList')
-                }}
+                {{ $t('HeuristicsTestView.answer.backToHeuristicList') }}
               </v-btn>
             </nav>
           </div>
@@ -248,9 +227,13 @@
 </template>
 
 <script setup>
-import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { resolveHeuristicAnswerMode } from '@/ux/Heuristic/utils/heuristicAnswerMode'
+import {
+  resolveHeuristicAnswerMode,
+  resolveHeuristicStudyMode,
+  heuristicResponseItems,
+} from '@/ux/Heuristic/utils/heuristicAnswerMode'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import HeuristicCommentEvidenceSection from '@/ux/Heuristic/components/steps/HeuristicCommentEvidenceSection.vue'
 import HeuristicImageEvidenceSection from '@/ux/Heuristic/components/steps/HeuristicImageEvidenceSection.vue'
@@ -277,7 +260,6 @@ const emit = defineEmits([
   'add-image',
   'remove-image',
   'select-heuristic',
-  'finish-evaluation',
   'response-change',
 ])
 
@@ -301,14 +283,8 @@ const customOptions = computed(() =>
 const selectedAnswerMode = computed(() =>
   resolveHeuristicAnswerMode(props.test),
 )
-const useFrequency = computed(() => props.test?.useFrequency !== false)
-const useSeverity = computed(() => props.test?.useSeverity !== false)
 const isTraditionalEvaluation = computed(
-  () =>
-    !props.test?.useWeights &&
-    customOptions.value.length === 0 &&
-    useFrequency.value &&
-    useSeverity.value,
+  () => resolveHeuristicStudyMode(props.test) !== 'detailed',
 )
 
 const hasConfiguredAnswerControl = computed(() =>
@@ -316,18 +292,7 @@ const hasConfiguredAnswerControl = computed(() =>
 )
 
 const questions = computed(() =>
-  Array.isArray(props.heuristic?.questions) && props.heuristic.questions.length
-    ? props.heuristic.questions
-    : [
-        {
-          id: props.heuristic?.id,
-          title:
-            props.heuristic?.title || t('HeuristicsTestView.unknownHeuristic'),
-          descriptions: props.heuristic?.description
-            ? [{ text: props.heuristic.description }]
-            : [],
-        },
-      ],
+  heuristicResponseItems(props.test, props.heuristic),
 )
 
 const currentQuestion = computed(
@@ -342,21 +307,6 @@ const canonicalHeuristicIndex = computed(() => {
   )
   return index >= 0 ? index : props.heurisIndex
 })
-
-const heuristicNavigationItems = computed(() =>
-  props.heuristics.map((heuristic, index) => ({
-    id: heuristic?.id ?? index,
-    title:
-      heuristic?.title ||
-      heuristic?.name ||
-      `${t('HeuristicsTestView.unknownHeuristic')} ${index + 1}`,
-  })),
-)
-
-const isFirstHeuristic = computed(() => props.heurisIndex <= 0)
-const isLastHeuristic = computed(
-  () => props.heurisIndex >= heuristicNavigationItems.value.length - 1,
-)
 
 const answerModes = computed(() =>
   [
@@ -430,6 +380,8 @@ const baseAnswer = (questionIndex, mode) => {
 }
 
 const answerText = (answer) => {
+  if (answer.mode === 'weight')
+    return `${t('HeuristicsTestView.answer.weight')}: ${answer.weight ?? ''}`
   const parts = []
   if (answer.frequency !== undefined) {
     parts.push(
@@ -454,6 +406,7 @@ const answerText = (answer) => {
 }
 
 const answerValue = (answer) => {
+  if (answer.mode === 'weight') return answer.weight ?? null
   if (answer.mode === 'customOptions') return answer.custom?.value ?? null
   if (answer.mode === 'frequency') return answer.frequency ?? null
   if (answer.mode === 'severity') return answer.severity ?? null
@@ -498,6 +451,7 @@ const sanitizeAnswerForMode = (answer, mode) => {
   if (mode !== 'severity' && mode !== 'frequencySeverity') {
     delete nextAnswer.severity
   }
+  if (mode !== 'weight') delete nextAnswer.weight
   if (mode !== 'customOptions') {
     delete nextAnswer.custom
   }
@@ -512,8 +466,7 @@ const initializeSharedAnswerMode = () => {
 const setSharedAnswerMode = (mode) => {
   if (!mode) return
 
-  const questions = props.heuristic?.questions || []
-  questions.forEach((_question, questionIndex) => {
+  questions.value.forEach((_question, questionIndex) => {
     const existingAnswer =
       answerForQuestion(questionIndex)?.heuristicAnswer || {}
     emitAnswer(questionIndex, sanitizeAnswerForMode(existingAnswer, mode))
@@ -523,19 +476,6 @@ const setSharedAnswerMode = (mode) => {
 const goToQuestion = (questionIndex) => {
   if (questionIndex < 0 || questionIndex >= questions.value.length) return
   currentQuestionIndex.value = questionIndex
-}
-
-const goToHeuristic = async (heuristicIndex) => {
-  if (
-    heuristicIndex < 0 ||
-    heuristicIndex >= heuristicNavigationItems.value.length ||
-    heuristicIndex === props.heurisIndex
-  ) {
-    return
-  }
-  emit('select-heuristic', heuristicIndex)
-  await nextTick()
-  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 const responseRef = (questionIndex) =>
@@ -605,28 +545,6 @@ const isQuestionAnswered = (questionIndex) => {
   const questionAnswer = answerForQuestion(questionIndex)
   if (!questionAnswer) return false
   return isAnswerComplete(questionAnswer.heuristicAnswer)
-}
-
-const isEvaluationComplete = computed(() => {
-  const heuristicQuestions = props.currentUserTestAnswer?.heuristicQuestions
-  if (!Array.isArray(heuristicQuestions) || heuristicQuestions.length === 0) {
-    return false
-  }
-  return heuristicQuestions.every((heuristicAnswer) => {
-    if (!Array.isArray(heuristicAnswer?.heuristicQuestions)) return false
-    if (heuristicAnswer.heuristicQuestions.length === 0) return false
-    return heuristicAnswer.heuristicQuestions.every((question) =>
-      isAnswerComplete(question?.heuristicAnswer),
-    )
-  })
-})
-
-const handleBottomPrimaryAction = () => {
-  if (isEvaluationComplete.value) {
-    emit('finish-evaluation')
-    return
-  }
-  emit('back')
 }
 
 const toggleSpeechRecording = (questionIndex) => {
@@ -937,14 +855,13 @@ watch(
 
 .heuristic-bottom-menu {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.8rem;
   align-items: stretch;
   padding: 1rem 0 0;
   border-top: 1px solid rgba(0, 33, 63, 0.12);
 }
 
-.heuristic-nav-command,
 .heuristic-list-command {
   min-height: 42px;
   border-radius: 4px;

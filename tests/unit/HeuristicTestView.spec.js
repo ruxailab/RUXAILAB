@@ -252,10 +252,13 @@ describe('HeuristicTestView', () => {
         id: 'study-1',
         answersDocId: 'answers-1',
         testType: 'HEURISTIC',
+        studyMode: 'detailed',
+        useFrequency: false,
+        useSeverity: false,
         testTitle: 'Heuristic study',
         testDescription: 'Study description',
         testAdmin: { userDocId: 'admin-1' },
-        testOptions: [{ text: 'Yes', value: 1 }],
+        testOptions: [],
         testStructure: [
           {
             id: 0,
@@ -288,7 +291,11 @@ describe('HeuristicTestView', () => {
             return answerRequest.promise
           }
           if (action === 'saveTestAnswer' && saveFails)
-            return Promise.reject(new Error('save failed'))
+            return Promise.reject(
+              Object.assign(new Error('save failed'), {
+                code: 'permission-denied',
+              }),
+            )
           return Promise.resolve()
         }),
       }
@@ -338,9 +345,13 @@ describe('HeuristicTestView', () => {
             'v-avatar': true,
             'v-spacer': true,
             'v-speed-dial': true,
-            'v-stepper': true,
-            'v-stepper-header': true,
-            'v-stepper-item': true,
+            'v-stepper': { template: '<div><slot /></div>' },
+            'v-stepper-header': { template: '<div><slot /></div>' },
+            'v-stepper-item': {
+              props: ['title', 'editable'],
+              emits: ['click'],
+              template: `<button :disabled="!editable" @click="$emit('click')">{{ title }}</button>`,
+            },
           },
         },
       })
@@ -389,7 +400,41 @@ describe('HeuristicTestView', () => {
       expect(saveCall).toBeDefined()
       expect(saveCall[1].data).toBeInstanceOf(HeuristicAnswer)
       expect(typeof saveCall[1].data.toFirestore).toBe('function')
+      const answer = wrapper.vm.currentUserTestAnswer
+      answer.heuristicQuestions[0].heuristicQuestions[0].heuristicComment =
+        'Keep this note'
+      const stepButton = (step) =>
+        findButton(wrapper, `HeuristicsTestView.flow.${step}`)
+      expect(stepButton('finalSubmission').attributes('disabled')).toBeDefined()
+      await stepButton('instructions').trigger('click')
+      expect(
+        wrapper.findComponent({ name: 'HeuristicInstructionsStep' }).exists(),
+      ).toBe(true)
+      expect(wrapper.vm.heuristicStepperValue).toBe(1)
+      await stepButton('heuristicEvaluation').trigger('click')
+      expect(wrapper.vm.showHeuristicCards).toBe(true)
+      expect(wrapper.vm.heuristicStepperValue).toBe(2)
+      expect(
+        answer.heuristicQuestions[0].heuristicQuestions[0].heuristicComment,
+      ).toBe('Keep this note')
+
+      wrapper.vm.calculatedProgress = 100
+      await wrapper.vm.$nextTick()
+      await stepButton('finalSubmission').trigger('click')
+      expect(wrapper.vm.heuristicStepperValue).toBe(3)
+      await stepButton('instructions').trigger('click')
+      wrapper
+        .findComponent({ name: 'HeuristicInstructionsStep' })
+        .vm.$emit('start')
+      await wrapper.vm.$nextTick()
+      expect(wrapper.vm.heuristicStepperValue).toBe(2)
+      expect(wrapper.vm.review).toBe(true)
+
       if (saveFails) {
+        expect(wrapper.vm.saveStatusMessage).toContain('permission-denied')
+        jest.advanceTimersByTime(5000)
+        await flushPromises()
+        expect(wrapper.vm.saveStatusMessage).toContain('permission-denied')
         expect(wrapper.vm.saveStatusType).toBe('error')
         expect(wrapper.vm.autoSaveInProgress).toBe(false)
         await expect(wrapper.vm.manualSaveAnswer()).resolves.toBeUndefined()

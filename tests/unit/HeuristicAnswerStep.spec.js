@@ -58,3 +58,66 @@ describe('HeuristicAnswerStep logging fields', () => {
     ])
   })
 })
+
+describe('evaluation modes', () => {
+  it.each(['traditional', 'weights', 'detailed'])(
+    'renders %s at the correct level',
+    (studyMode) => {
+      const heuristic = {
+        id: 'h',
+        title: 'Heuristic title',
+        description: 'Heuristic description',
+        questions: [
+          { id: 'q1', title: 'Question one' },
+          { id: 'q2', title: 'Question two' },
+        ],
+      }
+      const wrapper = shallowMount(HeuristicAnswerStep, {
+        props: {
+          heuristic,
+          heuristics: [heuristic],
+          heurisIndex: 0,
+          currentUserTestAnswer: {
+            heuristicQuestions: [{ heuristicQuestions: [{}, {}] }],
+          },
+          test: { studyMode, testOptions: [{ text: 'Yes', value: 1 }] },
+        },
+        global: {
+          mocks: { $t: (key) => key },
+          stubs: {
+            ShowInfo: { template: '<div><slot name="content" /></div>' },
+            'v-btn': true,
+            'v-divider': true,
+            'v-icon': true,
+          },
+        },
+      })
+      expect(wrapper.find('.question-side-menu').exists()).toBe(
+        studyMode === 'detailed',
+      )
+      expect(wrapper.emitted('update-answer')).toHaveLength(
+        studyMode === 'detailed' ? 2 : 1,
+      )
+      const options = wrapper.findComponent(HeuristicOptionsAnalysisSection)
+      expect(options.props('selectedAnswerMode')).toBe(
+        {
+          traditional: 'frequencySeverity',
+          weights: 'weight',
+          detailed: 'customOptions',
+        }[studyMode],
+      )
+      if (studyMode !== 'detailed') {
+        expect(wrapper.text()).toContain('Heuristic description')
+        expect(wrapper.text()).not.toContain('Question one')
+      }
+      if (studyMode === 'weights') {
+        options.vm.$emit('update-metric', 'weight', 2.5)
+        expect(wrapper.emitted('update-answer').at(-1)[1]).toMatchObject({
+          mode: 'weight',
+          weight: 2.5,
+          value: 2.5,
+        })
+      }
+    },
+  )
+})
