@@ -13,6 +13,8 @@ const translations = {
     'Changed access from {before} to {after}',
   'auditTrail.descriptions.cooperatorInvited': 'Invited {target} as {role}',
   'auditTrail.descriptions.storageFileDeleted': 'Deleted {target}',
+  'auditTrail.descriptions.reportDownloadRequested':
+    'Requested a report download for {target}',
   'auditTrail.values.public': 'Public',
   'auditTrail.values.private': 'Private',
   'auditTrail.values.empty': 'Empty',
@@ -92,5 +94,18 @@ describe('auditTrailDisplay', () => {
         te,
       ),
     ).toBe('Deleted session.webm')
+  })
+
+  it('describes report download requests', () => {
+    expect(
+      auditDescriptionDisplay(
+        {
+          action: 'report.downloadRequested',
+          targetLabel: 'Checkout usability study',
+        },
+        t,
+        te,
+      ),
+    ).toBe('Requested a report download for Checkout usability study')
   })
 })

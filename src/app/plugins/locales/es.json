@@ -311,7 +311,7 @@
   },
   "auditTrail": {
     "title": "Registro de auditoría",
-    "subtitle": "Cambios sensibles en la configuración, los colaboradores y el almacenamiento del estudio.",
+    "subtitle": "Cambios del estudio, acceso del equipo, actividad de archivos y descargas de informes.",
     "loadError": "No se pudo cargar el registro de auditoría.",
     "noEvents": "Aún no se ha registrado ninguna actividad.",
     "noMatchingEvents": "Ninguna actividad coincide con tus filtros.",
@@ -324,6 +324,7 @@
       "settings": "Cambios de configuración",
       "team": "Acceso del equipo",
       "files": "Cambios en archivos",
+      "reports": "Descargas de informes",
       "anyTime": "Cualquier momento",
       "last7Days": "Últimos 7 días",
       "last30Days": "Últimos 30 días",
@@ -350,6 +351,9 @@
       },
       "storage": {
         "fileDeleted": "Archivo de almacenamiento eliminado"
+      },
+      "report": {
+        "downloadRequested": "Descarga de informe solicitada"
       }
     },
     "descriptions": {
@@ -364,7 +368,8 @@
       "cooperatorRoleChanged": "Se cambió el rol de {target} de {before} a {after}",
       "cooperatorRemoved": "Se eliminó a {target} del estudio",
       "cooperatorInvitationCancelled": "Se canceló la invitación para {target}",
-      "storageFileDeleted": "Se eliminó {target}"
+      "storageFileDeleted": "Se eliminó {target}",
+      "reportDownloadRequested": "Se solicitó descargar un informe de {target}"
     },
     "fields": {
       "testTitle": "título",

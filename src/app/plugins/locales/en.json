@@ -313,7 +313,7 @@
   },
   "auditTrail": {
     "title": "Audit Trail",
-    "subtitle": "Sensitive changes to study settings, cooperators, and storage.",
+    "subtitle": "Study changes, team access, file activity, and report downloads.",
     "loadError": "Unable to load the audit trail.",
     "noEvents": "No activity has been recorded yet.",
     "noMatchingEvents": "No activity matches your filters.",
@@ -326,6 +326,7 @@
       "settings": "Settings changes",
       "team": "Team access",
       "files": "File changes",
+      "reports": "Report downloads",
       "anyTime": "Any time",
       "last7Days": "Last 7 days",
       "last30Days": "Last 30 days",
@@ -352,6 +353,9 @@
       },
       "storage": {
         "fileDeleted": "Storage file deleted"
+      },
+      "report": {
+        "downloadRequested": "Report download requested"
       }
     },
     "descriptions": {
@@ -366,7 +370,8 @@
       "cooperatorRoleChanged": "Changed {target}'s role from {before} to {after}",
       "cooperatorRemoved": "Removed {target} from the study",
       "cooperatorInvitationCancelled": "Cancelled invitation for {target}",
-      "storageFileDeleted": "Deleted {target}"
+      "storageFileDeleted": "Deleted {target}",
+      "reportDownloadRequested": "Requested a report download for {target}"
     },
     "fields": {
       "testTitle": "title",

@@ -166,6 +166,12 @@ export function auditDescriptionDisplay(event, t, te) {
     })
   }
 
+  if (event?.action === 'report.downloadRequested') {
+    return translate(t, 'auditTrail.descriptions.reportDownloadRequested', {
+      target,
+    })
+  }
+
   return target
 }
 
