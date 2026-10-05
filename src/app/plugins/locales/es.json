@@ -49,14 +49,18 @@
   },
   "heuristicAgents": {
     "title": "Análisis con agentes",
-    "subtitle": "Indica una web, selecciona sus páginas y deja que un agente complete la evaluación heurística.",
+    "subtitle": "Elige un agente para evaluar las páginas configuradas en los ajustes del estudio.",
     "web": {
-      "title": "Introduce la web",
-      "subtitle": "Buscaremos la página principal y sus enlaces internos.",
+      "title": "Web a analizar",
+      "subtitle": "Elige las páginas que se analizarán en la evaluación heurística.",
       "url": "URL de la web",
-      "search": "Buscar páginas"
+      "search": "Cargar"
     },
     "pages": {
+      "setupTitle": "Configura las páginas a analizar",
+      "openSettings": "Editar estudio · Ajustes",
+      "configured": "Páginas configuradas",
+      "configureInSettings": "Configura las páginas que se analizarán en los ajustes del estudio.",
       "title": "Selecciona las páginas",
       "selected": "{selected} de {total} seleccionadas",
       "selectAll": "Seleccionar todas",

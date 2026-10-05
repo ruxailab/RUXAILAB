@@ -1,99 +1,140 @@
 <template>
-  <v-container class="pa-6" fluid>
-    <div class="d-flex align-center ga-3 mb-2">
-      <v-icon color="primary" size="34">mdi-robot-outline</v-icon>
-      <h1 class="text-h4 font-weight-bold">{{ $t('heuristicAgents.title') }}</h1>
-    </div>
-    <p class="text-body-1 text-medium-emphasis mb-6">
-      {{ $t('heuristicAgents.subtitle') }}
-    </p>
+  <PageWrapper :title="selectedUrls.length ? $t('heuristicAgents.title') : ''">
+    <template v-if="selectedUrls.length" #subtitle>
+      <p class="text-body-1 text-grey-darken-1">
+        {{ $t('heuristicAgents.subtitle') }}
+      </p>
+    </template>
 
-    <v-alert v-if="message" :type="messageType" closable class="mb-5" @click:close="message = ''">
+    <v-alert
+      v-if="message"
+      :type="messageType"
+      closable
+      class="mb-5"
+      @click:close="message = ''"
+    >
       {{ message }}
     </v-alert>
 
-    <v-card class="pa-6 mb-6" rounded="lg" elevation="2">
-      <div class="d-flex align-center ga-3 mb-3">
-        <v-avatar color="primary" size="32"><span class="text-body-2 font-weight-bold">1</span></v-avatar>
-        <div>
-          <h2 class="text-h5">{{ $t('heuristicAgents.web.title') }}</h2>
-          <p class="text-body-2 text-medium-emphasis mb-0">{{ $t('heuristicAgents.web.subtitle') }}</p>
-        </div>
-      </div>
-      <v-row align="center">
-        <v-col cols="12" md="9">
-          <v-text-field
-            v-model="pageUrl"
-            :label="$t('heuristicAgents.web.url')"
-            placeholder="https://test.com"
-            prepend-inner-icon="mdi-link"
-            :disabled="running"
-            @keyup.enter="discoverPages"
-          />
-        </v-col>
-        <v-col cols="12" md="3">
-          <v-btn block color="primary" prepend-icon="mdi-magnify" :loading="discovering" :disabled="running || !pageUrl" @click="discoverPages">
-            {{ $t('heuristicAgents.web.search') }}
+    <v-card
+      v-if="!selectedUrls.length"
+      class="configuration-banner pa-4 mb-4"
+      rounded="xl"
+      elevation="2"
+    >
+      <div class="configuration-content">
+        <div class="configuration-copy">
+          <h2 class="configuration-title">AI AGENTS</h2>
+          <p class="configuration-description text-white mb-4">
+            {{ $t('heuristicAgents.pages.configureInSettings') }}
+          </p>
+          <v-btn
+            color="white"
+            class="rounded-lg"
+            :to="{
+              name: 'HeuristicEditTest',
+              params: { id: test.id },
+              query: { tab: 'settings' },
+            }"
+          >
+            {{ $t('pages.intros.click') }}
           </v-btn>
-        </v-col>
-      </v-row>
+        </div>
+        <v-img
+          class="configuration-image hidden-sm-and-down"
+          :src="require('@/assets/manager/IntroEdit.svg')"
+          max-width="30%"
+          contain
+        />
+      </div>
     </v-card>
 
-    <v-card class="pa-6 mb-6" rounded="lg" elevation="2">
-      <div class="d-flex flex-wrap align-center justify-space-between ga-3 mb-4">
-        <div class="d-flex align-center ga-3">
-          <v-avatar color="primary" size="32"><span class="text-body-2 font-weight-bold">2</span></v-avatar>
-          <div>
-            <h2 class="text-h5">{{ $t('heuristicAgents.pages.title') }}</h2>
-            <p class="text-body-2 text-medium-emphasis mb-0">{{ $t('heuristicAgents.pages.selected', { selected: selectedUrls.length, total: pages.length }) }}</p>
-          </div>
-        </div>
-        <v-btn size="small" variant="text" :disabled="running || !pages.length" @click="toggleAllPages">
-          {{ allPagesSelected ? $t('heuristicAgents.pages.deselectAll') : $t('heuristicAgents.pages.selectAll') }}
-        </v-btn>
+    <v-card
+      v-if="selectedUrls.length"
+      class="analysis-card pa-6 mb-6"
+      rounded="lg"
+      variant="outlined"
+    >
+      <div class="section-heading mb-5">
+        <v-avatar color="primary" variant="tonal" size="44">
+          <v-icon>mdi-web</v-icon>
+        </v-avatar>
+        <h2 class="text-h6 font-weight-bold">
+          {{ $t('heuristicAgents.pages.configured') }}
+        </h2>
+        <v-chip color="primary" variant="tonal" size="small" class="ml-auto">
+          {{ selectedUrls.length }}
+        </v-chip>
+        <v-btn
+          icon="mdi-pencil-outline"
+          variant="text"
+          size="small"
+          color="primary"
+          :disabled="running"
+          :aria-label="$t('heuristicAgents.pages.openSettings')"
+          :title="$t('heuristicAgents.pages.openSettings')"
+          :to="{
+            name: 'HeuristicEditTest',
+            params: { id: test.id },
+            query: { tab: 'settings' },
+          }"
+        />
       </div>
-      <v-alert
-        v-if="!pages.length"
-        type="info"
-        variant="tonal"
-        icon="mdi-link-variant"
-      >
-        {{ $t('heuristicAgents.pages.empty') }}
-      </v-alert>
-      <v-list v-else class="url-list border rounded-lg">
-        <v-list-item v-for="page in pages" :key="page.url">
+      <v-list class="url-list rounded-lg pa-0">
+        <v-list-item
+          v-for="(url, index) in selectedUrls"
+          :key="url"
+          class="page-row py-3"
+        >
           <template #prepend>
-            <v-checkbox-btn v-model="selectedUrls" :value="page.url" :disabled="running" />
+            <span class="page-number mr-4">{{ index + 1 }}</span>
           </template>
-          <v-list-item-title :class="{ 'pl-5': page.depth > 0 }">
-            <span v-if="page.depth > 0" class="text-medium-emphasis">↳ </span>{{ page.url }}
-          </v-list-item-title>
+          <v-list-item-title class="page-url" :title="url">{{
+            url
+          }}</v-list-item-title>
           <template #append>
-            <v-chip v-if="progress[page.url]" size="small" :color="statusColor(progress[page.url].status)" variant="tonal" :title="progress[page.url].error || ''">
-              {{ progressLabel(progress[page.url]) }}
+            <v-chip
+              v-if="progress[url]"
+              size="small"
+              :color="statusColor(progress[url].status)"
+              variant="tonal"
+              :title="progress[url].error || ''"
+            >
+              {{ progressLabel(progress[url]) }}
             </v-chip>
           </template>
         </v-list-item>
       </v-list>
     </v-card>
 
-    <v-card class="pa-6 mb-6" rounded="lg" elevation="2">
-      <div class="d-flex align-center ga-3 mb-4">
-        <v-avatar color="primary" size="32"><span class="text-body-2 font-weight-bold">3</span></v-avatar>
+    <v-card
+      v-if="selectedUrls.length"
+      class="analysis-card pa-6 mb-6"
+      rounded="lg"
+      variant="outlined"
+    >
+      <div class="section-heading mb-5">
+        <v-avatar color="primary" variant="tonal" size="44"
+          ><v-icon>mdi-robot-outline</v-icon></v-avatar
+        >
         <div>
-          <h2 class="text-h5">{{ $t('heuristicAgents.run.title') }}</h2>
-          <p class="text-body-2 text-medium-emphasis mb-0">{{ $t('heuristicAgents.run.subtitle') }}</p>
+          <h2 class="text-h6 font-weight-bold">
+            {{ $t('heuristicAgents.run.title') }}
+          </h2>
         </div>
       </div>
-      <v-row align="center">
+      <v-row align="start">
         <v-col cols="12" md="8">
           <v-select
             v-model="selectedAgentId"
             :items="agents"
-            item-title="name"
+            :item-title="agentLabel"
             item-value="id"
             :label="$t('heuristicAgents.run.agent')"
             prepend-inner-icon="mdi-robot-outline"
+            variant="outlined"
+            density="comfortable"
+            color="primary"
             :disabled="running"
             :loading="loading"
             :no-data-text="$t('heuristicAgents.run.noAgents')"
@@ -102,24 +143,52 @@
           />
         </v-col>
         <v-col cols="12" md="4">
-          <v-btn block size="large" color="primary" prepend-icon="mdi-play" :loading="running" :disabled="!canRun" @click="runEvaluations">
-            {{ $t('heuristicAgents.run.analyze', { count: selectedUrls.length || 0 }) }}
+          <v-btn
+            class="analyze-button text-none"
+            block
+            size="large"
+            height="56"
+            elevation="0"
+            color="primary"
+            prepend-icon="mdi-play"
+            :loading="running"
+            :disabled="!canRun"
+            @click="runEvaluations"
+          >
+            {{
+              $t('heuristicAgents.run.analyze', {
+                count: selectedUrls.length || 0,
+              })
+            }}
           </v-btn>
         </v-col>
       </v-row>
-      <v-progress-linear v-if="running" :model-value="totalProgress" color="primary" class="mt-4" />
-      <div v-if="results.length" class="d-flex align-center justify-space-between ga-3 mt-5">
+      <v-progress-linear
+        v-if="running"
+        :model-value="totalProgress"
+        color="primary"
+        class="mt-4"
+      />
+      <div
+        v-if="results.length"
+        class="d-flex flex-wrap align-center justify-space-between ga-3 mt-5"
+      >
         <v-alert type="success" variant="tonal" class="flex-grow-1 mb-0">
           {{ $t('heuristicAgents.run.saved', { count: results.length }) }}
         </v-alert>
-        <v-btn color="primary" prepend-icon="mdi-chart-box-outline" @click="viewResults">{{ $t('heuristicAgents.run.viewResults') }}</v-btn>
+        <v-btn
+          color="primary"
+          prepend-icon="mdi-chart-box-outline"
+          @click="viewResults"
+          >{{ $t('heuristicAgents.run.viewResults') }}</v-btn
+        >
       </div>
     </v-card>
-
-  </v-container>
+  </PageWrapper>
 </template>
 
 <script setup>
+import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -139,64 +208,70 @@ const router = useRouter()
 const { t } = useI18n()
 const agents = ref([])
 const loading = ref(true)
-const discovering = ref(false)
 const running = ref(false)
 const message = ref('')
 const messageType = ref('success')
-const pageUrl = ref('')
 const selectedAgentId = ref(null)
-const pages = ref([])
-const selectedUrls = ref([])
+const agentLabel = (agent) => {
+  const description = agent.description?.trim()
+  return description ? `${agent.name} - ${description}` : agent.name
+}
+const selectedUrls = computed(
+  () => test.value?.heuristicAgentWebsites?.selectedUrls || [],
+)
 const results = ref([])
 const progress = reactive({})
 const PAGE_EVALUATION_CONCURRENCY = 2
 const userId = computed(() => store.getters.user?.id || '')
 const test = computed(() => store.getters.test)
-const canRun = computed(() => !running.value && !discovering.value && selectedAgentId.value && selectedUrls.value.length > 0)
-const allPagesSelected = computed(
-  () => pages.value.length > 0 && selectedUrls.value.length === pages.value.length,
+const canRun = computed(
+  () =>
+    !running.value && selectedAgentId.value && selectedUrls.value.length > 0,
 )
-const notify = (text, type = 'success') => { message.value = text; messageType.value = type }
-const statusColor = (status) => ({ completed: 'success', error: 'error', running: 'primary', pending: 'grey' })[status]
+const notify = (text, type = 'success') => {
+  message.value = text
+  messageType.value = type
+}
+const statusColor = (status) =>
+  ({
+    completed: 'success',
+    error: 'error',
+    running: 'primary',
+    pending: 'grey',
+  })[status]
 const progressLabel = (item) => {
   if (item.status === 'completed') return t('heuristicAgents.status.completed')
   if (item.status === 'error') return t('heuristicAgents.status.error')
-  if (item.status === 'running') return t('heuristicAgents.status.running', { current: item.current, total: item.total })
+  if (item.status === 'running')
+    return t('heuristicAgents.status.running', {
+      current: item.current,
+      total: item.total,
+    })
   return t('heuristicAgents.status.pending')
 }
 const totalProgress = computed(() => {
-  const selected = selectedUrls.value.map((url) => progress[url]).filter(Boolean)
+  const selected = selectedUrls.value
+    .map((url) => progress[url])
+    .filter(Boolean)
   if (!selected.length) return 0
-  const value = selected.reduce((sum, item) => sum + (item.total ? item.current / item.total : 0), 0)
+  const value = selected.reduce(
+    (sum, item) => sum + (item.total ? item.current / item.total : 0),
+    0,
+  )
   return Math.round((value / selected.length) * 100)
 })
-const toggleAllPages = () => {
-  selectedUrls.value = allPagesSelected.value
-    ? []
-    : pages.value.map((page) => page.url)
-}
-
-const discoverPages = async () => {
-  discovering.value = true
-  pages.value = []
-  selectedUrls.value = []
-  results.value = []
-  try {
-    pages.value = await pageLoader.discover(pageUrl.value, test.value.id)
-    // Start with the requested page only. Selecting every discovered link can
-    // launch dozens of Chromium instances and exhaust the Functions emulator.
-    selectedUrls.value = pages.value.slice(0, 1).map((page) => page.url)
-    notify(t('heuristicAgents.messages.urlsFound', { count: pages.value.length }))
-  } catch (error) { notify(t('heuristicAgents.messages.discoverError', { error: error.message }), 'error') }
-  finally { discovering.value = false }
-}
-
 const runEvaluations = async () => {
   const agent = agents.value.find((item) => item.id === selectedAgentId.value)
   if (!agent || !test.value) return
   running.value = true
   results.value = []
-  selectedUrls.value.forEach((url) => { progress[url] = { status: 'pending', current: 0, total: test.value.testStructure?.length || 0 } })
+  selectedUrls.value.forEach((url) => {
+    progress[url] = {
+      status: 'pending',
+      current: 0,
+      total: test.value.testStructure?.length || 0,
+    }
+  })
   const urls = [...selectedUrls.value]
   let nextUrlIndex = 0
   const evaluateNextUrl = async () => {
@@ -206,23 +281,42 @@ const runEvaluations = async () => {
       try {
         progress[url].status = 'running'
         const tree = await pageLoader.load(url, test.value.id)
-        const provider = new FirebaseHeuristicAgentProvider({ testId: test.value.id, agentId: agent.id })
+        const provider = new FirebaseHeuristicAgentProvider({
+          testId: test.value.id,
+          agentId: agent.id,
+        })
         const evaluator = new HeuristicAgentEvaluator({
           provider,
-          saveAnswer: (answer) => answerController.saveTestAnswer(answer, test.value.answersDocId, STUDY_TYPES.HEURISTIC),
+          saveAnswer: (answer) =>
+            answerController.saveTestAnswer(
+              answer,
+              test.value.answersDocId,
+              STUDY_TYPES.HEURISTIC,
+            ),
         })
         const urlKey = encodeURIComponent(url).replaceAll('.', '%2E')
         const result = await evaluator.evaluateAndSave({
-          agent, userId: userId.value, test: test.value, webTree: tree,
+          agent,
+          userId: userId.value,
+          test: test.value,
+          webTree: tree,
           answerId: `ai-agent:${encodeURIComponent(agent.id)}:${urlKey}`,
           onProgress: ({ index, total, status }) => {
             progress[url] = { status, current: index, total }
           },
         })
-        progress[url] = { ...progress[url], status: 'completed', current: progress[url].total }
+        progress[url] = {
+          ...progress[url],
+          status: 'completed',
+          current: progress[url].total,
+        }
         results.value.push(result)
       } catch (error) {
-        progress[url] = { ...progress[url], status: 'error', error: error.message }
+        progress[url] = {
+          ...progress[url],
+          status: 'error',
+          error: error.message,
+        }
       }
     }
   }
@@ -236,23 +330,117 @@ const runEvaluations = async () => {
     if (!failed.length) {
       notify(t('heuristicAgents.messages.allSaved'))
     } else if (results.value.length) {
-      notify(t('heuristicAgents.messages.partiallySaved', { saved: results.value.length, failed: failed.length }), 'warning')
+      notify(
+        t('heuristicAgents.messages.partiallySaved', {
+          saved: results.value.length,
+          failed: failed.length,
+        }),
+        'warning',
+      )
     } else {
       notify(t('heuristicAgents.messages.noneSaved'), 'error')
     }
-  } finally { running.value = false }
+  } finally {
+    running.value = false
+  }
 }
 
 const loadAgents = async () => {
   loading.value = true
-  try { agents.value = await controller.listAvailable(userId.value) }
-  catch (error) { notify(t('heuristicAgents.messages.loadAgentsError', { error: error.message }), 'error') }
-  finally { loading.value = false }
+  try {
+    agents.value = await controller.listAvailable(userId.value)
+  } catch (error) {
+    notify(
+      t('heuristicAgents.messages.loadAgentsError', { error: error.message }),
+      'error',
+    )
+  } finally {
+    loading.value = false
+  }
 }
 const viewResults = () => router.push(`/heuristic/results/${test.value.id}`)
 onMounted(loadAgents)
 </script>
 
 <style scoped>
-.url-list { max-height: 420px; overflow-y: auto; }
+.analysis-card {
+  border-color: #dfe5ec;
+  box-shadow: 0 4px 18px rgba(0, 33, 63, 0.04);
+}
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.url-list {
+  max-height: 420px;
+  overflow-y: auto;
+  background: #f7f9fc;
+}
+.page-row + .page-row {
+  border-top: 1px solid #e5eaf0;
+}
+.page-number {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #e8eef5;
+  color: #00213f;
+  font-size: 12px;
+  font-weight: 600;
+}
+.page-url {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.analyze-button {
+  border-radius: 8px;
+  letter-spacing: 0;
+}
+
+.configuration-banner {
+  background-image: radial-gradient(
+    circle at top left,
+    #00213f 60%,
+    #ff3f59 160%
+  );
+  color: aliceblue;
+}
+.configuration-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  height: 50vh;
+}
+.configuration-copy {
+  max-width: 30%;
+}
+.configuration-title {
+  font-family: 'Google Sans', sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 44px;
+  margin: 0 28px 0 0;
+}
+.configuration-description {
+  font-size: 20px;
+}
+.configuration-image {
+  flex: 1;
+}
+@media (max-width: 960px) {
+  .configuration-content {
+    height: auto;
+    padding: 24px 0;
+  }
+  .configuration-copy {
+    max-width: 100%;
+    margin: 0 10px;
+  }
+}
 </style>

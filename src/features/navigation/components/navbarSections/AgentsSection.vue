@@ -22,6 +22,9 @@
         item-value="id"
         :no-data-text="$t('agents.list.empty')"
       >
+        <template #item.description="{ item }">
+          <div class="agent-description">{{ item.description || '—' }}</div>
+        </template>
         <template #item.visibility="{ item }">
           <v-chip :color="visibilityColor(item.visibility)" size="small" variant="tonal">
             {{ visibilityLabel(item.visibility) }}
@@ -151,6 +154,7 @@ const userId = computed(() => store.getters.user?.id || '')
 const required = (value) => Boolean(value?.trim()) || t('agents.validation.required')
 const headers = computed(() => [
   { title: t('agents.fields.name'), key: 'name' },
+  { title: t('agents.fields.description'), key: 'description' },
   { title: t('agents.fields.model'), key: 'model' },
   { title: t('agents.fields.visibility'), key: 'visibility' },
   { title: t('agents.fields.origin'), key: 'owner', sortable: false },
@@ -243,3 +247,13 @@ const removeAgent = async (agent) => {
 
 onMounted(loadAgents)
 </script>
+
+<style scoped>
+.agent-description {
+  min-width: 180px;
+  max-width: 360px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  padding: 8px 0;
+}
+</style>

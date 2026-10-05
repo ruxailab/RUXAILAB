@@ -49,14 +49,18 @@
   },
   "heuristicAgents": {
     "title": "Agent analysis",
-    "subtitle": "Enter a website, select its pages, and let an agent complete the heuristic evaluation.",
+    "subtitle": "Choose an agent to evaluate the pages configured in the study settings.",
     "web": {
-      "title": "Enter the website",
-      "subtitle": "We will find the home page and its internal links.",
+      "title": "Website to analyze",
+      "subtitle": "Choose the pages to be analyzed in the heuristic evaluation.",
       "url": "Website URL",
-      "search": "Find pages"
+      "search": "Load"
     },
     "pages": {
+      "setupTitle": "Configure the pages to analyze",
+      "openSettings": "Edit Study · Settings",
+      "configured": "Configured pages",
+      "configureInSettings": "Configure the pages to analyze in the study settings.",
       "title": "Select pages",
       "selected": "{selected} of {total} selected",
       "selectAll": "Select all",
