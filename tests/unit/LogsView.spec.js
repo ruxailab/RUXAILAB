@@ -2,6 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { useDisplay } from 'vuetify'
 import LogsView from '@/shared/views/LogsView.vue'
 import {
+  getParticipantEvents,
   getParticipantLabels,
   getStudyLogCount,
   getStudyLogPage,
@@ -27,6 +28,7 @@ jest.mock('vuex', () => ({
 jest.mock('@/app/plugins/firebase', () => ({ db: {} }))
 
 jest.mock('@/shared/services/studyLogQuery', () => ({
+  getParticipantEvents: jest.fn(),
   getParticipantLabels: jest.fn(),
   getStudyLogCount: jest.fn(),
   getStudyLogPage: jest.fn(),
@@ -901,4 +903,101 @@ describe('LogsView', () => {
     expect(wrapper.text()).not.toContain('private response value')
     wrapper.unmount()
   })
+
+  it('groups one participant into a step-by-step timeline', async () => {
+    Object.assign(mockStudy, {
+      testType: 'USER',
+      subType: 'USER_MODERATED',
+    })
+    getParticipantLabels.mockResolvedValue([])
+    getStudyLogPage.mockResolvedValue(page)
+    getStudyLogCount.mockResolvedValue(1)
+    const event = (rowKey, minute, eventType, details = {}, level = 'info') => ({
+      rowKey,
+      participantLabel: 'P-001',
+      occurredAt: new Date(Date.UTC(2026, 8, 30, 12, minute)),
+      eventType,
+      details,
+      level,
+    })
+    getParticipantEvents.mockResolvedValue([
+      event('submit', 9, 'STUDY_SUBMITTED'),
+      event('finish', 6, 'TASK_ATTEMPT_FINISHED', {
+        taskRef: 'task:0',
+        taskType: 'sus',
+        outcome: 'not_completed',
+      }, 'warning'),
+      event('record', 5, 'MEDIA_RECORDING_OUTCOME', {
+        taskRef: 'task:0',
+        mediaType: 'webcam',
+        outcome: 'failed',
+        stage: 'permission',
+      }, 'error'),
+      event('start', 4, 'TASK_STARTED', { taskRef: 'task:0', taskType: 'sus' }),
+      event('return', 7, 'STUDY_VIEW_OPENED'),
+      event('consent', 1, 'CONSENT_ACCEPTED'),
+    ])
+
+    const wrapper = mount(LogsView, { props: { id: 'study-1' } })
+    await flushPromises()
+    wrapper.vm.viewMode = 'timeline'
+    wrapper.vm.timelineParticipant = 'P-001'
+    await flushPromises()
+
+    expect(getParticipantEvents).toHaveBeenCalledWith({
+      db: {},
+      studyId: 'study-1',
+      participantLabel: 'P-001',
+    })
+    const steps = wrapper.findAll('.timeline-step')
+    expect(steps.map((step) => step.find('strong').text())).toEqual([
+      'Consent accepted',
+      'Task 1 · SUS',
+      'Study submitted',
+    ])
+    expect(steps[1].text()).toContain('Could not finish')
+    expect(steps[1].text()).toContain('Webcam failed')
+    expect(steps[1].text()).toContain('Returned once')
+    expect(wrapper.text()).toContain('Submitted')
+
+    await steps[1].find('.timeline-step__summary').trigger('click')
+    const rows = steps[1].findAll('.timeline-event')
+    expect(rows).toHaveLength(4)
+    expect(rows.at(-1).text()).toContain('Returned to study')
+    await rows[0].trigger('click')
+    expect(wrapper.vm.selectedEvent.rowKey).toBe('start')
+    wrapper.unmount()
+  })
+
+  it('keeps every participant listed after one is picked', async () => {
+    getParticipantLabels.mockResolvedValue(['P-001', 'P-002', 'P-003'])
+    getStudyLogPage.mockResolvedValue(page)
+    getStudyLogCount.mockResolvedValue(1)
+    getParticipantEvents.mockResolvedValue([])
+    const wait = () => new Promise((resolve) => setTimeout(resolve, 300))
+
+    const wrapper = mount(LogsView, { props: { id: 'study-1' } })
+    await wait()
+    await flushPromises()
+    wrapper.vm.viewMode = 'timeline'
+    wrapper.vm.timelineParticipant = 'P-002'
+    await flushPromises()
+    getParticipantLabels.mockClear()
+
+    wrapper.vm.searchTimelineParticipants('P-002')
+    await wait()
+    await flushPromises()
+    expect(getParticipantLabels).toHaveBeenLastCalledWith(
+      expect.objectContaining({ prefix: '' }),
+    )
+    expect(wrapper.vm.participantLabels).toEqual(['P-001', 'P-002', 'P-003'])
+
+    wrapper.vm.searchTimelineParticipants('P-00')
+    await wait()
+    expect(getParticipantLabels).toHaveBeenLastCalledWith(
+      expect.objectContaining({ prefix: 'P-00' }),
+    )
+    wrapper.unmount()
+  })
 })
+

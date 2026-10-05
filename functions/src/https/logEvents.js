@@ -9,6 +9,7 @@ const MAX_TASK_DURATION_MS = 24 * 60 * 60 * 1000
 const MAX_VERIFIED_OCCURRENCE_FUTURE_MS = 5 * 60 * 1000
 const POST_SUBMISSION_OCCURRENCE_GRACE_MS = 5 * 60 * 1000
 const POST_SUBMISSION_RECEIPT_GRACE_MS = 7 * 24 * 60 * 60 * 1000
+const CLIENT_TIMED_EVENTS = new Set(['CONSENT_ACCEPTED', 'TASK_ATTEMPT_FINISHED'])
 const ID_PATTERN = /^[A-Za-z0-9_-]{3,160}$/
 const compareStrings = (left, right) => left.localeCompare(right)
 const CLIENT_EVENT_POLICIES = Object.freeze({
@@ -723,8 +724,9 @@ const verifiedEventFor = ({ requestData, study, participantAnswer }) => {
     requestData.eventType === 'TASK_ATTEMPT_FINISHED'
       ? ['eventType', 'studyId', 'taskRef']
       : ['eventType', 'studyId']
-  const optionalKeys =
-    requestData.eventType === 'TASK_ATTEMPT_FINISHED' ? ['occurredAt'] : []
+  const optionalKeys = CLIENT_TIMED_EVENTS.has(requestData.eventType)
+    ? ['occurredAt']
+    : []
   if (
     requiredKeys.some((key) => !keys.includes(key)) ||
     keys.some(
@@ -860,10 +862,12 @@ async function submitVerifiedEvent(request) {
       study,
       participantAnswer,
     })
-    const occurredAt =
-      event.eventType === 'TASK_ATTEMPT_FINISHED'
-        ? verifiedOccurrenceFor(requestData.occurredAt)
-        : null
+    // Consent keeps the browser time it was given in, so it orders correctly
+    // against the participant's answers, which use the same clock.
+    const clientTimed = CLIENT_TIMED_EVENTS.has(event.eventType)
+    const occurredAt = clientTimed
+      ? verifiedOccurrenceFor(requestData.occurredAt)
+      : null
 
     const eventRef = studyRef
       .collection('logs')
@@ -919,7 +923,8 @@ async function submitVerifiedEvent(request) {
       message: event.message,
       occurredAt: occurredAt || now,
       receivedAt: now,
-      ...(event.eventType === 'TASK_ATTEMPT_FINISHED'
+      ...(event.eventType === 'TASK_ATTEMPT_FINISHED' ||
+      (clientTimed && occurredAt)
         ? { timeQuality: 'client-unverified' }
         : {}),
       details: event.details,

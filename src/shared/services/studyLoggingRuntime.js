@@ -37,6 +37,7 @@ export const createStudyLoggingRuntime = ({
   const isHeuristic = String(studyType).toUpperCase() === 'HEURISTIC'
   let consentPending = false
   let consentRequest = null
+  let consentOccurredAt
   let opened = false
   let activeQuestionRef = null
   let pendingResponseDelivery = Promise.resolve()
@@ -106,11 +107,17 @@ export const createStudyLoggingRuntime = ({
     return eventId
   }
 
-  const consentAccepted = async () => {
+  // occurredAt is when the participant accepted; retries keep that time.
+  const consentAccepted = async (occurredAt) => {
+    if (occurredAt && !consentOccurredAt) consentOccurredAt = occurredAt
     if (consentRequest) return consentRequest
     consentPending = true
     const requestPromise = (async () => {
-      const acknowledgement = await request('CONSENT_ACCEPTED')
+      const acknowledgement = await request(
+        'CONSENT_ACCEPTED',
+        undefined,
+        consentOccurredAt,
+      )
       if (!['accepted', 'duplicate'].includes(acknowledgement?.status)) {
         if (acknowledgement?.retryable === false) {
           consentPending = false
