@@ -50,9 +50,11 @@ import { showError, showWarning } from '@/shared/utils/toast'
 import {
   createRecordingAttempt,
   captureFailure,
+  isDeviceBusyError,
 } from '@/ux/UserTest/utils/recordingOutcome'
 import {
   createMediaRecorder,
+  openCameraStream,
   saveRecordedMedia,
 } from '@/ux/UserTest/utils/mediaRecording'
 import { stopMediaStream } from '@/shared/utils/screenShareCapture'
@@ -136,7 +138,7 @@ const startRecording = async () => {
       cleanup()
       return true
     }
-    stream = await navigator.mediaDevices.getUserMedia({ video: true })
+    stream = await openCameraStream(navigator.mediaDevices)
     if (abandoned) {
       cleanup()
       return true
@@ -167,6 +169,8 @@ const startRecording = async () => {
     cleanup()
     if (failure[0] === 'permission_denied')
       showError(t('errors.cameraPermissionDenied'))
+    else if (isDeviceBusyError(error))
+      showWarning(t('errors.cameraBusy'))
     else if (failure[2] === 'deviceUnavailable')
       showWarning(t('errors.cameraNotAvailable'))
     else showError(t('errors.globalError'))

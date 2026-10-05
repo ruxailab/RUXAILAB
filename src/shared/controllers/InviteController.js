@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 
 export default class InviteController {
@@ -20,14 +19,14 @@ export default class InviteController {
     return response.data
   }
 
+  // The callable client sends the signed-in user's token, which the server
+  // needs to check that this user may create the invitation.
   static async generateInvitationLink(payload) {
-    const { data } = await axios.post(
-      `${process.env.VUE_APP_CLOUD_FUNCTIONS_URL}/generateInvitationLink`,
-      {
-        data: payload,
-      },
+    const response = await FirebaseFunctionsController.callHttpsCallableFunction(
+      'generateInvitationLink',
+      payload,
     )
 
-    return data.result
+    return response.data
   }
 }

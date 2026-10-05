@@ -152,6 +152,7 @@
             rounded
             class="mt-4"
             :disabled="isStartTestDisabled"
+            :loading="!answerLoaded"
             @click="startTest"
           >
             {{ $t('UserTestView.actions.startTest') }}
@@ -601,7 +602,7 @@ import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import EyeTrackingCalibrationStep from '@/ux/UserTest/components/calibration/EyeTrackingCalibrationStep.vue'
-import { db } from '@/app/plugins/firebase'
+import { auth, db } from '@/app/plugins/firebase'
 import IrisTracker from '../components/IrisTracker.vue'
 import StepAnnouncementOverlay from '@/ux/UserTest/components/StepAnnouncementOverlay.vue'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
@@ -620,6 +621,9 @@ import { taskDestination } from '@/ux/UserTest/utils/unmoderatedNavigation'
 
 const fullName = ref('')
 const logined = ref(null)
+// Start stays disabled until the saved answer is known, so a submitted study
+// cannot be started again before "already completed" can be shown.
+const answerLoaded = ref(false)
 const fromlink = ref(null)
 const start = ref(true)
 const globalIndex = ref(null)
@@ -670,10 +674,16 @@ const router = useRouter()
 const { t } = useI18n()
 let studyLogging = null
 
+// Anonymous participants (links without login) log under their anonymous
+// account, the same ID their answers are saved under.
+const participantUid = () =>
+  user.value?.id ||
+  (auth?.currentUser?.isAnonymous ? auth.currentUser.uid : null)
+
 const initializeStudyLogging = () => {
-  if (studyLogging || !user.value?.id || !test.value?.id) return studyLogging
+  if (studyLogging || !participantUid() || !test.value?.id) return studyLogging
   studyLogging = createStudyLoggingRuntime({
-    ownerUid: user.value.id,
+    ownerUid: participantUid(),
     studyId: test.value.id,
     consentRequired: true,
     callFunction: FirebaseFunctionsController.callHttpsCallableFunction,
@@ -685,7 +695,7 @@ const recordingOutcomes = createRecordingOutcomeTracker((details) =>
   initializeStudyLogging()?.recordingOutcome(details),
 )
 const handleRecordingResult = (details) => {
-  if (user.value?.id && localTestAnswer.consentCompleted)
+  if (participantUid() && localTestAnswer.consentCompleted)
     recordingOutcomes.observe(details)
 }
 const handleTaskStarted = (occurredAt) => {
@@ -778,7 +788,7 @@ const hasTestDashboardAccess = computed(() => {
 })
 
 const isStartTestDisabled = computed(() => {
-  if (!test.value) return true
+  if (!test.value || !answerLoaded.value) return true
 
   // Check if testStructure is empty array or doesn't exist
   const hasValidTasks =
@@ -1014,6 +1024,12 @@ const submitAnswer = async () => {
     await initializeStudyLogging()?.checkpointStructuredScopes()
     await saveAnswer()
     void initializeStudyLogging()?.submitted()
+    store.commit('SET_TOAST', {
+      type: 'success',
+      message: t('UserTestView.messages.studySubmittedSuccess', {
+        studyName: test.value.testTitle,
+      }),
+    })
   } catch {
     localTestAnswer.submitted = false
     store.commit('SET_TOAST', {
@@ -1080,6 +1096,7 @@ const attachMediaToTasks = (answer, mediaUrls) => {
 }
 
 const startTest = async () => {
+  if (!answerLoaded.value || localTestAnswer.submitted) return
   if (!test.value.testStructure || test.value.testStructure.length === 0) {
     store.commit('SET_TOAST', {
       type: 'info',
@@ -1091,7 +1108,13 @@ const startTest = async () => {
 
   await requestFullscreenIfAvailable()
 
-  if (!isUserTestAdmin.value && user.value) {
+  // Only a pending invitation is accepted here; joining without one goes
+  // through an invitation link.
+  const pendingInvitation = test.value?.cooperators?.find(
+    (cooperator) =>
+      cooperator.userDocId === user.value?.id && cooperator.accepted !== true,
+  )
+  if (!isUserTestAdmin.value && user.value && pendingInvitation) {
     await store.dispatch('acceptStudyCollaboration', {
       test: test.value,
       cooperator: user.value,
@@ -1486,7 +1509,10 @@ const autoComplete = async () => {
 
 const initializeAnonymousUser = () => {
   if (!user.value && !anonymousUserDocId.value) {
-    anonymousUserDocId.value = nanoid(16)
+    // Answers must be saved under the anonymous account's ID to be allowed.
+    anonymousUserDocId.value = auth?.currentUser?.isAnonymous
+      ? auth.currentUser.uid
+      : nanoid(16)
   }
 }
 
@@ -1533,6 +1559,8 @@ const setTest = async () => {
       type: 'error',
       message: 'Failed to load test data. Please try again.',
     })
+  } finally {
+    answerLoaded.value = true
   }
 }
 

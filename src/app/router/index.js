@@ -68,8 +68,10 @@ router.beforeEach(async (to, from, next) => {
     user = store.state.Auth.user
 
     // Redirect unverified users to email verification page
+    // Anonymous participants have no email to verify.
     if (
       authUser &&
+      !authUser.isAnonymous &&
       authUser.emailVerified === false &&
       !publicPages.includes(to.path)
     ) {

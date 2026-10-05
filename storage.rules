@@ -11,8 +11,11 @@ service firebase.storage {
       );
     }
 
+    // Anonymous accounts have no users document, and reading a missing one
+    // fails the whole request in production, so never look one up for them.
     function isSuperAdmin() {
       return signedIn() &&
+        request.auth.token.firebase.sign_in_provider != 'anonymous' &&
         currentUser().data != null &&
         currentUser().data.accessLevel == 0;
     }

@@ -37,6 +37,16 @@ jest.mock('@/ux/CardSorting/components/CardSortingTest.vue', () => ({
   template: '<div />',
 }))
 
+const mockAnonymousParticipant = jest.fn()
+jest.mock('@/features/auth/controllers/AuthController', () => ({
+  __esModule: true,
+  default: class {
+    anonymousParticipant(...args) {
+      return mockAnonymousParticipant(...args)
+    }
+  },
+}))
+
 const mountTestView = ({ store, router, route, props = {} }) =>
   shallowMount(TestView, {
     props: {
@@ -118,5 +128,44 @@ describe('TestView', () => {
     expect(wrapper.text()).toContain(
       "You do not have access to the page you're trying to access.",
     )
+  })
+
+  describe('invitation links', () => {
+    const useInvite = (invite) => {
+      store.getters.user = null
+      route.query = { inviteToken: 'open-link' }
+      store.dispatch.mockImplementation(async (action) =>
+        action === 'loadPendingInvite' ? invite : null,
+      )
+    }
+    const actions = () => store.dispatch.mock.calls.map(([action]) => action)
+
+    it('joins anonymously through a link that does not require login before loading the study', async () => {
+      useInvite({ studyId: 'study-1', requiredLogin: false })
+      mockAnonymousParticipant.mockResolvedValue({ uid: 'anon-1' })
+
+      mountTestView({ store, router, route })
+      await flushPromises()
+
+      expect(store.dispatch).toHaveBeenCalledWith('acceptStudyCollaboration', {
+        studyId: 'study-1',
+        cooperator: { id: 'anon-1', email: null },
+        membershipType: 'participant',
+        inviteToken: 'open-link',
+      })
+      expect(actions().indexOf('acceptStudyCollaboration')).toBeLessThan(
+        actions().indexOf('getStudy'),
+      )
+    })
+
+    it('does not sign in anonymously for a link that requires login', async () => {
+      useInvite({ studyId: 'study-1', requiredLogin: true })
+
+      mountTestView({ store, router, route })
+      await flushPromises()
+
+      expect(mockAnonymousParticipant).not.toHaveBeenCalled()
+      expect(actions()).not.toContain('acceptStudyCollaboration')
+    })
   })
 })

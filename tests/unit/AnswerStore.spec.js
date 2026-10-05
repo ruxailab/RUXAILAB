@@ -14,6 +14,8 @@ jest.mock('@/shared/utils/toast', () => ({
   showError: jest.fn(),
 }))
 
+jest.mock('@/app/plugins/firebase', () => ({ auth: { currentUser: null } }))
+
 jest.mock('@/ux/Heuristic/utils/statistics', () => ({
   percentage: jest.fn(),
   formatTimeSpentFromMs: jest.fn(),

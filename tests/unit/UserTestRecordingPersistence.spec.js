@@ -394,3 +394,31 @@ it('normalizes fresh and partial TAM answers by configured task type', () => {
     wrapper = undefined
   }
 })
+
+it('keeps Start disabled until the saved answer shows whether it was submitted', async () => {
+  const requestFullscreen = jest.fn(async () => {})
+  document.documentElement.requestFullscreen = requestFullscreen
+  mockStore.getters.test.status = 'active'
+  let finishLoading
+  mockStore.dispatch.mockImplementation((action) =>
+    action === 'getCurrentTestAnswerDoc'
+      ? new Promise((resolve) => {
+          finishLoading = resolve
+        })
+      : Promise.resolve(),
+  )
+  wrapper = shallowMount(UserTestView, {
+    global: { mocks: { $t: (key) => key, $vuetify: { display: {} } } },
+  })
+  await flushPromises()
+  expect(wrapper.vm.isStartTestDisabled).toBe(true)
+
+  mockStore.getters.currentUserTestAnswer.submitted = true
+  finishLoading()
+  await flushPromises()
+
+  expect(wrapper.vm.isStartTestDisabled).toBe(true)
+  expect(wrapper.vm.testDisabledReason).toBe('already-completed')
+  await wrapper.vm.startTest()
+  expect(requestFullscreen).not.toHaveBeenCalled()
+})

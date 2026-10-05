@@ -30,12 +30,21 @@ export const createRecordingAttempt = (taskIndex, mediaType, emit) => {
   }
 }
 
+// The device exists but cannot start: in use by another app, or a virtual
+// camera that sends no picture ("Timeout starting video source").
+const DEVICE_BUSY_ERRORS = new Set([
+  'NotReadableError',
+  'TrackStartError',
+  'AbortError',
+])
+export const isDeviceBusyError = (error) => DEVICE_BUSY_ERRORS.has(error?.name)
+
 export const captureFailure = (error, stage) => {
   if (stage === 'permission') {
     if (['NotAllowedError', 'PermissionDeniedError'].includes(error?.name)) {
       return ['permission_denied', stage, 'permissionDenied']
     }
-    if (error?.name === 'AbortError') return ['failed', stage, 'captureError']
+    if (isDeviceBusyError(error)) return ['failed', stage, 'deviceUnavailable']
     if (['NotFoundError', 'DevicesNotFoundError'].includes(error?.name)) {
       return ['failed', stage, 'deviceUnavailable']
     }

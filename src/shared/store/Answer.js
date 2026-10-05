@@ -7,6 +7,7 @@ import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAns
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import CardSortingEvaluatorAnswer from '@/ux/CardSorting/models/CardSortingEvaluatorAnswer'
 import { showError } from '@/shared/utils/toast'
+import { auth } from '@/app/plugins/firebase'
 
 const answerController = new AnswerController()
 
@@ -80,14 +81,19 @@ export default {
       if (!rootState.test || !rootState.test.testStructure) {
         return {}
       }
-      if (!rootState.user) {
+      // Anonymous participants have no profile in the store, but their
+      // answer is saved under their anonymous account's id.
+      const userId =
+        rootState.user?.id ??
+        (auth.currentUser?.isAnonymous ? auth.currentUser.uid : null)
+      if (!userId) {
         return {}
       }
 
       if (state.testAnswerDocument.type === STUDY_TYPES.HEURISTIC) {
         const heuristicAnswers = state.testAnswerDocument.heuristicAnswers || {}
 
-        const userAnswer = heuristicAnswers[rootState.user.id]
+        const userAnswer = heuristicAnswers[userId]
         if (userAnswer) {
           const transformedAnswer = HeuristicAnswer.toHeuristicAnswer(
             userAnswer,
@@ -104,7 +110,7 @@ export default {
           return transformedAnswer
         } else {
           return new HeuristicAnswer({
-            userDocId: rootState.user.id,
+            userDocId: userId,
             testStarted: false,
           })
         }
@@ -113,10 +119,10 @@ export default {
       if (state.testAnswerDocument.type === STUDY_TYPES.USER) {
         const taskAnswers = state.testAnswerDocument.taskAnswers || {}
 
-        return taskAnswers[rootState.user.id]
-          ? UserStudyEvaluatorAnswer.toModel(taskAnswers[rootState.user.id])
+        return taskAnswers[userId]
+          ? UserStudyEvaluatorAnswer.toModel(taskAnswers[userId])
           : new UserStudyEvaluatorAnswer({
-              userDocId: rootState.user.id,
+              userDocId: userId,
               preTestAnswer: (() => {
                 const preTestAnswer = []
                 const preTestLength =

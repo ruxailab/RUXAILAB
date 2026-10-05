@@ -5,6 +5,7 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
+  signInAnonymously,
   setPersistence,
   browserLocalPersistence,
   browserSessionPersistence,
@@ -25,6 +26,22 @@ export default class AuthController {
    */
   async signUp(email, password) {
     return createUserWithEmailAndPassword(auth, email, password)
+  }
+
+  /**
+   * Returns the anonymous account used to answer a study from a link that
+   * does not require login, signing in anonymously if needed. Returns null
+   * when a real account is already signed in.
+   * @returns {Promise<import('firebase/auth').User|null>}
+   */
+  async anonymousParticipant() {
+    if (auth.currentUser) {
+      return auth.currentUser.isAnonymous ? auth.currentUser : null
+    }
+    // Per-tab session, like a sign-in without "Remember me".
+    await setPersistence(auth, browserSessionPersistence)
+    const credential = await signInAnonymously(auth)
+    return credential.user
   }
 
   /**
