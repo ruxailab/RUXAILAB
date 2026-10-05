@@ -13,7 +13,7 @@
     <!-- Logo y título -->
     <v-toolbar-title
       style="cursor: pointer"
-      class="d-flex align-center"
+      class="toolbar-brand d-flex align-center"
       @click="goTo('/admin')"
     >
       <img
@@ -31,27 +31,32 @@
       :title="studyContextTitle"
     >
       <template v-if="studyTypeLabel || studySubtypeLabel">
-        <span v-if="studyTypeLabel" class="study-context__method">
+        <span
+          v-if="studyTypeLabel"
+          class="study-context__method study-context__type"
+        >
           {{ studyTypeLabel }}
         </span>
 
         <template v-if="studySubtypeLabel">
-          <span class="study-context__separator">·</span>
+          <span
+            class="study-context__separator study-context__subtype-separator"
+          ></span>
 
-          <span class="study-context__method">
+          <span class="study-context__method study-context__subtype">
             {{ studySubtypeLabel }}
           </span>
         </template>
 
-        <span class="study-context__separator">·</span>
+        <span class="study-context__separator study-context__title-separator">
+        </span>
       </template>
 
       <span class="study-context__title">
         {{ currentStudy.testTitle || $t('navigation.appNavigation') }}
       </span>
     </div>
-
-    <v-spacer />
+    <v-spacer v-else />
 
     <locale-changer />
 
@@ -211,16 +216,22 @@ const toggleDashboardDrawer = () => {
   letter-spacing: normal !important;
 }
 
+.toolbar-brand {
+  flex: 0 0 auto;
+  min-width: max-content;
+}
+
 .study-context {
   display: flex;
   flex: 1 1 auto;
   align-items: center;
   gap: 6px;
   min-width: 0;
-  max-width: 700px;
-  margin-left: 4px;
+  margin-left: clamp(8px, 8vw, 120px);
   overflow: hidden;
   white-space: nowrap;
+  container-name: study-context;
+  container-type: inline-size;
 }
 
 .study-context__title {
@@ -246,16 +257,39 @@ const toggleDashboardDrawer = () => {
   font-size: 0.85rem;
 }
 
+.study-context__separator::before {
+  content: '\00b7';
+}
+
 :deep(.v-toolbar__content) {
   padding-right: 20px;
   padding-left: 10px;
+}
+
+@container study-context (max-width: 480px) {
+  .study-context__subtype,
+  .study-context__subtype-separator {
+    display: none;
+  }
+}
+
+@container study-context (max-width: 320px) {
+  .study-context__title,
+  .study-context__title-separator {
+    display: none;
+  }
+}
+
+@container study-context (max-width: 120px) {
+  .study-context__type {
+    display: none;
+  }
 }
 
 @media (max-width: 600px) {
   .study-context {
     flex: 1 1 0;
     gap: 4px;
-    margin-left: 2px;
   }
 
   .study-context__title {
