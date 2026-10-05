@@ -25,6 +25,32 @@
       />
     </v-toolbar-title>
 
+    <div
+      v-if="isStudyManagerRoute && currentStudy"
+      class="study-context"
+      :title="studyContextTitle"
+    >
+      <template v-if="studyTypeLabel || studySubtypeLabel">
+        <span v-if="studyTypeLabel" class="study-context__method">
+          {{ studyTypeLabel }}
+        </span>
+
+        <template v-if="studySubtypeLabel">
+          <span class="study-context__separator">·</span>
+
+          <span class="study-context__method">
+            {{ studySubtypeLabel }}
+          </span>
+        </template>
+
+        <span class="study-context__separator">·</span>
+      </template>
+
+      <span class="study-context__title">
+        {{ currentStudy.testTitle || $t('navigation.appNavigation') }}
+      </span>
+    </div>
+
     <v-spacer />
 
     <locale-changer />
@@ -81,9 +107,15 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { useDisplay } from 'vuetify'
+import { useI18n } from 'vue-i18n'
+import {
+  getMethodName,
+  normalizeStudyType,
+  STUDY_TYPES,
+} from '@/shared/constants/methodDefinitions'
 import LocaleChanger from '@/features/language/components/LocaleChanger.vue'
 import HelpButton from '@/features/navigation/components/HelpButton.vue'
 import UserMenu from './UserMenu.vue'
@@ -96,12 +128,66 @@ defineEmits(['toggle-mobile-drawer', 'toggle-dashboard-drawer'])
 
 // Composables
 const router = useRouter()
+const route = useRoute()
 const store = useStore()
 const { smAndDown, xs } = useDisplay()
+const { t, locale } = useI18n()
 
 // Computed
 const user = computed(() => store.getters.user)
 const iconSize = computed(() => (smAndDown.value ? '18' : '20'))
+
+const currentStudy = computed(() => store.getters.test)
+
+const isStudyManagerRoute = computed(() =>
+  route.matched.some(
+    ({ name }) => typeof name === 'string' && name.endsWith('ManagerView'),
+  ),
+)
+
+const methodLanguage = computed(() =>
+  locale.value.startsWith('en') ? 'en' : 'es',
+)
+
+const studyTypeLabel = computed(() => {
+  const study = currentStudy.value
+  if (!study?.testType) return ''
+
+  if (normalizeStudyType(study.testType) === STUDY_TYPES.USER) {
+    return t('methods.categories.test')
+  }
+
+  return getMethodName({ ...study, subType: '' }, methodLanguage.value)
+})
+
+const studySubtypeLabel = computed(() => {
+  const study = currentStudy.value
+  const subtype = study?.subType
+  if (!subtype) return ''
+
+  if (normalizeStudyType(study.testType) === STUDY_TYPES.USER) {
+    return getMethodName(study, methodLanguage.value)
+  }
+
+  if (subtype === 'QUALITATIVE' || subtype === 'QUANTITATIVE') {
+    return t(`Dashboard.cards.${subtype.toLowerCase()}`)
+  }
+
+  return subtype
+    .toLowerCase()
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (character) => character.toUpperCase())
+})
+
+const studyContextTitle = computed(() => {
+  const parts = [
+    studyTypeLabel.value,
+    studySubtypeLabel.value,
+    currentStudy.value?.testTitle,
+  ].filter(Boolean)
+
+  return parts.join(' · ')
+})
 
 // Methods
 const goTo = (path) => {
@@ -125,15 +211,65 @@ const toggleDashboardDrawer = () => {
   letter-spacing: normal !important;
 }
 
+.study-context {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  max-width: 700px;
+  margin-left: 4px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.study-context__title {
+  min-width: 0;
+  overflow: hidden;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+}
+
+.study-context__method {
+  flex-shrink: 0;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.85rem;
+  text-overflow: ellipsis;
+}
+
+.study-context__separator {
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.85rem;
+}
+
 :deep(.v-toolbar__content) {
   padding-right: 20px;
   padding-left: 10px;
 }
 
 @media (max-width: 600px) {
+  .study-context {
+    flex: 1 1 0;
+    gap: 4px;
+    margin-left: 2px;
+  }
+
+  .study-context__title {
+    font-size: 0.8rem;
+  }
+
+  .study-context__method,
+  .study-context__separator {
+    font-size: 0.75rem;
+  }
+
   :deep(.v-toolbar__content) {
-    padding-left: 4px;
     padding-right: 4px;
+    padding-left: 4px;
   }
 }
 </style>
