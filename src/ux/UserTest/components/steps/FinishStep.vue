@@ -6,8 +6,8 @@
           {{ finalMessage }}
         </h2>
         <div
+          v-safe-html="congratulations"
           class="split finish-body text-h6 mb-6 text-grey-darken-3"
-          v-html="congratulations"
         ></div>
         <p class="split finish-body text-h6 mb-6 text-grey-darken-3">
           {{ submitMessage }}

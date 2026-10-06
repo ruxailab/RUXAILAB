@@ -22,8 +22,8 @@
                 {{ section.title }}
               </h2>
               <div
+                v-safe-html="section.content"
                 class="text-body-1 mb-4 text-grey-darken-3 ql-content"
-                v-html="section.content"
               />
             </section>
           </div>

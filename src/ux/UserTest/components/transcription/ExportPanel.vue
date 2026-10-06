@@ -222,8 +222,7 @@
                 <strong>User:</strong> {{ pdfMeta.user || '-' }}
               </div>
 
-              <!-- eslint-disable-next-line vue/no-v-html -->
-              <div class="mt-4" v-html="pdfSummaryHtml"></div>
+              <div v-safe-html="pdfSummaryHtml" class="mt-4"></div>
 
               <div v-for="(run, i) in previewRuns" :key="run.id" class="mt-6">
                 <h3 class="text-subtitle-2 m-0">

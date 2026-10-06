@@ -227,8 +227,8 @@
           </h2>
 
           <div
+            v-safe-html="task?.taskDescription || taskDescription"
             class="rich-text text-body-1 task-description task-information-description text-left"
-            v-html="task?.taskDescription || taskDescription"
           />
 
           <v-row justify="center" class="mt-6">
@@ -265,8 +265,8 @@
                       </span>
                     </div>
                     <div
+                      v-safe-html="task?.taskDescription || taskDescription"
                       class="rich-text text-body-1 task-description"
-                      v-html="task?.taskDescription || taskDescription"
                     />
                   </v-card>
                 </v-col>
