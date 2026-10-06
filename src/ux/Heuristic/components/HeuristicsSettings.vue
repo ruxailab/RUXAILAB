@@ -208,8 +208,8 @@ const confirmDialog = ref(false)
 const test = computed(() => store.getters.test)
 
 const localTrackTime = ref(test.value?.trackTime ?? true)
-const localUseFrequency = ref(test.value?.useFrequency ?? true)
-const localUseSeverity = ref(test.value?.useSeverity ?? true)
+const localUseFrequency = ref(test.value?.useFrequency)
+const localUseSeverity = ref(test.value?.useSeverity)
 
 const studyMode = computed(() => {
   const currentTest = test.value
@@ -241,6 +241,7 @@ const studyMode = computed(() => {
 
   return 'traditional'
 })
+
 const studyModes = computed(() => [
   {
     value: 'traditional',

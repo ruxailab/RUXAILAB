@@ -128,27 +128,27 @@ const showWeightsTab = computed(() => test.value?.useWeights ?? false)
 const showOptionsTab = computed(() => {
   const currentTest = test.value
 
-  if (!currentTest || showWeightsTab.value) {
+  if (!currentTest) {
     return false
   }
 
-  const hasExplicitAnswerMode =
-    currentTest.useFrequency !== undefined ||
-    currentTest.useSeverity !== undefined
+  if (currentTest.useWeights === true) {
+    return false
+  }
 
-  if (hasExplicitAnswerMode) {
-    if (currentTest.useFrequency === true && currentTest.useSeverity === true) {
-      return false
-    }
+  if (currentTest.useFrequency === true && currentTest.useSeverity === true) {
+    return false
+  }
 
-    return (
-      Array.isArray(currentTest.testOptions) &&
-      currentTest.testOptions.length > 0
-    )
+  if (currentTest.useFrequency === false && currentTest.useSeverity === false) {
+    return true
   }
 
   return (
-    Array.isArray(currentTest.testOptions) && currentTest.testOptions.length > 0
+    currentTest.useFrequency === undefined &&
+    currentTest.useSeverity === undefined &&
+    Array.isArray(currentTest.testOptions) &&
+    currentTest.testOptions.length > 0
   )
 })
 const optionsTabIndex = computed(() => 1)
