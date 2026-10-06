@@ -72,8 +72,8 @@
                     }}
                   </p>
                   <div
+                    v-safe-html="section.content"
                     class="text-body-2 text-ternary ql-content"
-                    v-html="section.content"
                   />
                 </div>
                 <div class="d-flex gap-1 flex-shrink-0">

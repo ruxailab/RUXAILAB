@@ -2,7 +2,7 @@
   <ShowInfo :title="testTitle + ' - ' + 'Consent'">
     <template #content>
       <div class="test-content pa-md-4 rounded-xl">
-        <div class="rich-text mb-6 pa-md-4" v-html="consentText" />
+        <div v-safe-html="consentText" class="rich-text mb-6 pa-md-4" />
         <v-row justify="center">
           <v-col cols="12" md="6">
             <v-text-field
