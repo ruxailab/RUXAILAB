@@ -16,7 +16,7 @@
             :label="selectLabel || t('cooperators.invite.emailPlaceholder')"
             variant="outlined"
             density="comfortable"
-            placeholder="Type an email address"
+            :placeholder="t('cooperators.invite.emailInputPlaceholder')"
             prepend-inner-icon="mdi-email-outline"
             clearable
             @keydown.enter.prevent="addEmailToSelection"

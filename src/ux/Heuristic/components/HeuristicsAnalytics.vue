@@ -5,7 +5,7 @@
     <ShowInfo v-if="answers != null && !intro && test">
       <template #content>
         <v-card flat rounded="xl">
-          <v-row>
+          <v-row class="ma-0">
             <v-col cols="12" md="4">
               <v-select
                 v-model="heuristicSelect"
@@ -432,7 +432,7 @@ watch(
 )
 
 watch(heuristicSelect, () => {
-  questionSelect.value = isTraditional.value ? 0 : -1
+  questionSelect.value = 0
   ind.value = 'comments'
 })
 

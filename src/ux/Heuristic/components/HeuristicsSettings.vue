@@ -212,27 +212,35 @@ const localUseFrequency = ref(test.value?.useFrequency ?? true)
 const localUseSeverity = ref(test.value?.useSeverity ?? true)
 
 const studyMode = computed(() => {
-  const hasWeightsMode = test.value?.useWeights === true
-  const hasCustomOptions =
-    Array.isArray(test.value?.testOptions) && test.value.testOptions.length > 0
+  const currentTest = test.value
+
+  if (!currentTest) return 'traditional'
+
+  if (currentTest.useWeights === true) {
+    return 'weights'
+  }
+
   const hasExplicitAnswerMode =
-    test.value?.useFrequency !== undefined ||
-    test.value?.useSeverity !== undefined ||
-    localUseFrequency.value !== undefined ||
-    localUseSeverity.value !== undefined
-
-  if (hasWeightsMode) return 'weights'
-
-  if (hasCustomOptions) return 'detailed'
+    currentTest.useFrequency !== undefined ||
+    currentTest.useSeverity !== undefined
 
   if (hasExplicitAnswerMode) {
-    if (localUseFrequency.value && localUseSeverity.value) return 'traditional'
+    if (currentTest.useFrequency === true && currentTest.useSeverity === true) {
+      return 'traditional'
+    }
+
+    return 'detailed'
+  }
+
+  const hasCustomOptions =
+    Array.isArray(currentTest.testOptions) && currentTest.testOptions.length > 0
+
+  if (hasCustomOptions) {
     return 'detailed'
   }
 
   return 'traditional'
 })
-
 const studyModes = computed(() => [
   {
     value: 'traditional',

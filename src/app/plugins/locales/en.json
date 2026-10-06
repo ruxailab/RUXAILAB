@@ -512,6 +512,16 @@
       "emailPlaceholder": "Type cooperator email",
       "emailInputPlaceholder": "Type an email address",
       "role": "Role",
+      "roleHelp": "Role descriptions",
+      "roleDescriptions": {
+        "admin": "Can manage nearly all study settings and collaborators.",
+        "evaluator": "Can evaluate the study and review its results.",
+        "guest": "Can participate in the study with limited access.",
+        "observator": "Can view the study and its answers without participating.",
+        "manager": "Can manage the study and its collaborators, but has limited administrative access.",
+        "user": "Can participate in the study by submitting answers.",
+        "default": "Can access the study according to the permissions assigned to this role."
+      },
       "date": "Date",
       "time": "Time",
       "message": "Invitation Message",
