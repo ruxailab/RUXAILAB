@@ -3,6 +3,9 @@ import HeuristicAnswerStep from '@/ux/Heuristic/components/steps/HeuristicAnswer
 import HeuristicCustomOptionsControl from '@/ux/Heuristic/components/steps/HeuristicCustomOptionsControl.vue'
 import HeuristicOptionsAnalysisSection from '@/ux/Heuristic/components/steps/HeuristicOptionsAnalysisSection.vue'
 import HeuristicResponseControl from '@/ux/Heuristic/components/steps/HeuristicResponseControl.vue'
+import HeuristicAnswer from '@/ux/Heuristic/models/HeuristicAnswer'
+import Heuristic from '@/ux/Heuristic/models/Heuristic'
+import HeuristicQuestionAnswer from '@/ux/Heuristic/models/HeuristicQuestionAnswer'
 
 jest.mock('vue-i18n', () => ({
   useI18n: () => ({ t: (key) => key }),
@@ -103,5 +106,32 @@ describe('heuristic response option order', () => {
     expect(
       wrapper.findAll('.option-number').map((option) => option.text()),
     ).toEqual(['2', '1'])
+  })
+})
+
+describe('HeuristicAnswer Firestore serialization', () => {
+  it('removes undefined fields from nested payload objects', () => {
+    const answer = new HeuristicAnswer({
+      heuristicQuestions: [
+        new Heuristic({
+          heuristicQuestions: [
+            new HeuristicQuestionAnswer({
+              heuristicAnswer: {
+                mode: 'customOptions',
+                custom: { text: 'Yes', value: undefined },
+                metadata: [undefined],
+              },
+            }),
+          ],
+        }),
+      ],
+    })
+
+    const serialized = answer.toFirestore()
+    const question = serialized.heuristicQuestions[0].heuristicQuestions[0]
+
+    expect(question).not.toHaveProperty('heuristicId')
+    expect(question.heuristicAnswer.custom).toEqual({ text: 'Yes' })
+    expect(question.heuristicAnswer.metadata).toEqual([null])
   })
 })
