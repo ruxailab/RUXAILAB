@@ -134,7 +134,6 @@ const stripHtml = (html) => {
     .replace(/<[^>]*>/g, ' ')
     .replace(/\s+/g, ' ')
     .trim()
-    .slice(0, 120)
 }
 
 const navigateToEvaluatorInfo = () => {
@@ -222,8 +221,10 @@ const navigateToEvaluatorInfo = () => {
 }
 
 .content-preview {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  overflow: visible;
+  white-space: normal;
+  text-overflow: unset;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 </style>
