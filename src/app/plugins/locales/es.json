@@ -1592,6 +1592,41 @@
       "externalFormTitle": "Formulario Externo",
       "externalFormDescription": "Los participantes serán redirigidos para completar un formulario externo después de la tarea.",
       "openExternalForm": "Abrir Formulario Externo",
+      "nasaTlx": {
+        "title": "Índice de Carga de Tareas NASA",
+        "range": "Bajo - Alto",
+        "moreDimensions": "+ 4 dimensiones más",
+        "mental": "Demanda Mental",
+        "physical": "Demanda Física"
+      },
+      "sus": {
+        "title": "Escala de Usabilidad del Sistema",
+        "q1": "1. Creo que me gustaría usar este sistema con frecuencia.",
+        "disagree": "Muy en Desacuerdo",
+        "agree": "Muy de Acuerdo",
+        "moreStatements": "+ 9 declaraciones más"
+      },
+      "tam": {
+        "tam1": "TAM-1: Modelo de Aceptación de Tecnología (Básico)",
+        "items2": "10 elementos en 2 dimensiones",
+        "pu": "Utilidad Percibida (5 elementos)",
+        "q1": "1. Usar el sistema mejora mi rendimiento laboral.",
+        "eu": "Facilidad de Uso Percibida (5 elementos)",
+        "q6": "6. El sistema es fácil de usar.",
+        "tam2": "TAM-2: Modelo de Aceptación de Tecnología (Extendido)",
+        "items7": "25 elementos en 7 dimensiones",
+        "likertNote": "Participants rate {count} statements on a 5-point Likert scale (Strongly Disagree - Strongly Agree)"
+      },
+      "sart": {
+        "title": "Técnica de Calificación de Conciencia Situacional",
+        "instability": "Inestabilidad de la Situación",
+        "complexity": "Complejidad de la Situación",
+        "stable": "Muy Estable",
+        "unstable": "Muy Inestable",
+        "simple": "Muy Simple",
+        "complex": "Muy Complejo",
+        "moreDimensions": "+ 8 dimensiones SART adicionales"
+      },
       "nasaTlxTitle": "Índice de Carga de Tareas NASA",
       "mentalDemand": "Demanda Mental",
       "physicalDemand": "Demanda Física",

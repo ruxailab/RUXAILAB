@@ -6,7 +6,7 @@
         <div class="mockup-message">
           <v-icon color="success" class="mr-2"> mdi-check-circle </v-icon>
           <span class="text-body-2">{{
-            $t('CreateTask.answerTypePreview.noAnswer.message')
+            $t('CreateTask.answerTypePreview.taskCompleted')
           }}</span>
         </div>
       </div>
@@ -70,13 +70,13 @@
         <div class="external-form-notice">
           <v-icon color="info" size="32" class="mb-2"> mdi-open-in-new </v-icon>
           <div class="text-subtitle-2 mb-2">
-            {{ $t('CreateTask.answerTypePreview.postForm.title') }}
+            {{ $t('CreateTask.answerTypePreview.externalFormTitle') }}
           </div>
           <div class="text-body-2 text-grey-darken-1 mb-3">
-            {{ $t('CreateTask.answerTypePreview.postForm.notice') }}
+            {{ $t('CreateTask.answerTypePreview.externalFormDescription') }}
           </div>
           <v-btn color="info" variant="outlined" size="small" disabled>
-            {{ $t('CreateTask.answerTypePreview.postForm.button') }}
+            {{ $t('CreateTask.answerTypePreview.openExternalForm') }}
           </v-btn>
         </div>
       </div>
@@ -351,7 +351,7 @@
         <div class="text-center text-grey-darken-1">
           <v-icon size="48" class="mb-2"> mdi-help-circle-outline </v-icon>
           <div class="text-body-2">
-            {{ $t('CreateTask.answerTypePreview.selectionPrompt') }}
+            {{ $t('CreateTask.answerTypePreview.selectType') }}
           </div>
         </div>
       </div>

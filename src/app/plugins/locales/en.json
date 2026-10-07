@@ -1666,6 +1666,44 @@
       "externalFormTitle": "External Form",
       "externalFormDescription": "Participants will be redirected to complete an external form after the task.",
       "openExternalForm": "Open External Form",
+      "nasaTlx": {
+        "title": "NASA Task Load Index",
+        "range": "Low - High",
+        "moreDimensions": "+ 4 more dimensions",
+        "mental": "Mental Demand",
+        "physical": "Physical Demand"
+      },
+
+      "sus": {
+        "title": "System Usability Scale",
+        "q1": "1. I think that I would like to use this system frequently.",
+        "disagree": "Strongly Disagree",
+        "agree": "Strongly Agree",
+        "moreStatements": "+ 9 more statements"
+      },
+
+      "tam": {
+        "tam1": "TAM-1: Technology Acceptance Model (Basic)",
+        "items2": "10 items across 2 dimensions",
+        "pu": "Perceived Usefulness (5 items)",
+        "q1": "1. Using the system improves my job performance.",
+        "eu": "Perceived Ease of Use (5 items)",
+        "q6": "6. The system is easy to use.",
+        "tam2": "TAM-2: Technology Acceptance Model (Extended)",
+        "items7": "25 items across 7 dimensions",
+        "likertNote": "Participants rate {count} statements on a 5-point Likert scale (Strongly Disagree - Strongly Agree)"
+      },
+
+      "sart": {
+        "title": "Situation Awareness Rating Technique",
+        "instability": "Instability of Situation",
+        "complexity": "Complexity of Situation",
+        "stable": "Very Stable",
+        "unstable": "Very Unstable",
+        "simple": "Very Simple",
+        "complex": "Very Complex",
+        "moreDimensions": "+ 8 more SART dimensions"
+      },
       "nasaTlxTitle": "NASA Task Load Index",
       "mentalDemand": "Mental Demand",
       "physicalDemand": "Physical Demand",
