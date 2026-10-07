@@ -433,7 +433,9 @@
             :pre-test="test.testStructure.preTest"
             :pre-test-answer="localTestAnswer.preTestAnswer"
             :pre-test-completed="localTestAnswer.preTestCompleted"
-            @update:pre-test-answer="(val) => (localTestAnswer.preTestAnswer = val)"
+            @update:pre-test-answer="
+              (val) => (localTestAnswer.preTestAnswer = val)
+            "
             @selection-changed="handleStructuredSelectionChanged"
             @done="handlePreTestDone"
           />
@@ -530,11 +532,21 @@
             "
             @task-started="handleTaskStarted"
             @structured-response-changed="handleStructuredResponseChanged"
-            @structured-slider-focus="(event) => handleStructuredSliderEvent('focus', event)"
-            @structured-slider-start="(event) => handleStructuredSliderEvent('start', event)"
-            @structured-slider-change="(event) => handleStructuredSliderEvent('change', event)"
-            @structured-slider-end="(event) => handleStructuredSliderEvent('end', event)"
-            @structured-slider-blur="(event) => handleStructuredSliderEvent('blur', event)"
+            @structured-slider-focus="
+              (event) => handleStructuredSliderEvent('focus', event)
+            "
+            @structured-slider-start="
+              (event) => handleStructuredSliderEvent('start', event)
+            "
+            @structured-slider-change="
+              (event) => handleStructuredSliderEvent('change', event)
+            "
+            @structured-slider-end="
+              (event) => handleStructuredSliderEvent('end', event)
+            "
+            @structured-slider-blur="
+              (event) => handleStructuredSliderEvent('blur', event)
+            "
             @task-questionnaire-entered="handleTaskQuestionnaireEntered"
           />
 
@@ -548,7 +560,9 @@
             :post-test="test.testStructure.postTest"
             :post-test-answer="localTestAnswer.postTestAnswer"
             :post-test-completed="localTestAnswer.postTestCompleted"
-            @update:post-test-answer="(val) => (localTestAnswer.postTestAnswer = val)"
+            @update:post-test-answer="
+              (val) => (localTestAnswer.postTestAnswer = val)
+            "
             @selection-changed="handleStructuredSelectionChanged"
             @done="handlePostTestDone"
           />
@@ -740,7 +754,6 @@ const structuredValuesForStage = (stage) =>
     test.value?.testStructure?.[stage],
     localTestAnswer[`${stage}Answer`],
   )
-
 
 const handleTaskQuestionnaireEntered = ({ scopeRef } = {}) => {
   const taskRef = scopeRef || `task:${taskIndex.value}`
@@ -1090,13 +1103,6 @@ const startTest = async () => {
   }
 
   await requestFullscreenIfAvailable()
-
-  if (!isUserTestAdmin.value && user.value) {
-    await store.dispatch('acceptStudyCollaboration', {
-      test: test.value,
-      cooperator: user.value,
-    })
-  }
 
   // Primero añadimos la clase para la animación de salida
   const startScreen = document.querySelector('.start-screen')

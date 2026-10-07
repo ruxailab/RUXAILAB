@@ -847,18 +847,6 @@ const startTest = async () => {
 
   if (!answerInitialized.value) return
 
-  if (!returningToInstructions.value) {
-    const invitedCooperator = test.value?.cooperators?.find(
-      (cooperator) => cooperator.userDocId === user.value?.id,
-    )
-    if (!isUserTestAdmin.value && invitedCooperator?.accepted !== true) {
-      await store.dispatch('acceptStudyCollaboration', {
-        test: test.value,
-        cooperator: user.value,
-      })
-    }
-  }
-
   start.value = false
   currentPage.value = TEST_PAGES.answers
   if (!returningToInstructions.value) {
