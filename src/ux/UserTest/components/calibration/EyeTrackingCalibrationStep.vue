@@ -4,6 +4,7 @@
     :is-completed="calibrationCompleted"
     @close="emit('closeCalibration')"
     @open-calibration="emit('openCalibration')"
+    @mark-completed="emit('markCompleted')"
   />
   <ShowInfo :title="$t('UserTestView.CalibrationStep.title')">
     <template #content>
@@ -36,7 +37,12 @@ import ShowInfo from '@/shared/components/ShowInfo.vue'
 import CalibrationInProgressModal from '@/ux/UserTest/components/CalibrationInProgressModal.vue'
 import StartCalibrationButton from '@/ux/UserTest/components/StartCalibrationButton.vue'
 
-const emit = defineEmits(['done', 'openCalibration', 'closeCalibration'])
+const emit = defineEmits([
+  'done',
+  'openCalibration',
+  'closeCalibration',
+  'markCompleted',
+])
 
 defineProps({
   calibrationInProgress: {

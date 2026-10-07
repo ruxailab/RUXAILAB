@@ -1,6 +1,9 @@
 <template>
+  <!-- Visibility is controlled by v-if; permanent keeps Vuetify from marking
+       the drawer inert (unclickable) on screens narrower than its breakpoint. -->
   <v-navigation-drawer
     v-if="modelValue"
+    permanent
     location="right"
     width="400"
     elevation="3"

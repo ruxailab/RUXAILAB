@@ -113,6 +113,7 @@ const activityOptions = computed(() => [
   { title: t('auditTrail.filters.settings'), value: 'settings' },
   { title: t('auditTrail.filters.team'), value: 'team' },
   { title: t('auditTrail.filters.files'), value: 'files' },
+  { title: t('auditTrail.filters.reports'), value: 'reports' },
 ])
 
 const timeOptions = computed(() => [

@@ -311,7 +311,7 @@
   },
   "auditTrail": {
     "title": "Registro de auditoría",
-    "subtitle": "Cambios sensibles en la configuración, los colaboradores y el almacenamiento del estudio.",
+    "subtitle": "Cambios del estudio, acceso del equipo, actividad de archivos y descargas de informes.",
     "loadError": "No se pudo cargar el registro de auditoría.",
     "noEvents": "Aún no se ha registrado ninguna actividad.",
     "noMatchingEvents": "Ninguna actividad coincide con tus filtros.",
@@ -324,6 +324,7 @@
       "settings": "Cambios de configuración",
       "team": "Acceso del equipo",
       "files": "Cambios en archivos",
+      "reports": "Descargas de informes",
       "anyTime": "Cualquier momento",
       "last7Days": "Últimos 7 días",
       "last30Days": "Últimos 30 días",
@@ -350,6 +351,9 @@
       },
       "storage": {
         "fileDeleted": "Archivo de almacenamiento eliminado"
+      },
+      "report": {
+        "downloadRequested": "Descarga de informe solicitada"
       }
     },
     "descriptions": {
@@ -364,7 +368,8 @@
       "cooperatorRoleChanged": "Se cambió el rol de {target} de {before} a {after}",
       "cooperatorRemoved": "Se eliminó a {target} del estudio",
       "cooperatorInvitationCancelled": "Se canceló la invitación para {target}",
-      "storageFileDeleted": "Se eliminó {target}"
+      "storageFileDeleted": "Se eliminó {target}",
+      "reportDownloadRequested": "Se solicitó descargar un informe de {target}"
     },
     "fields": {
       "testTitle": "título",
@@ -507,6 +512,16 @@
       "emailPlaceholder": "Correo del colaborador",
       "emailInputPlaceholder": "Escribe un correo electrónico",
       "role": "Rol",
+      "roleHelp": "Descripción de los roles",
+      "roleDescriptions": {
+        "admin": "Puede gestionar casi todos los ajustes del estudio y a sus colaboradores.",
+        "evaluator": "Puede evaluar el estudio y revisar sus resultados.",
+        "guest": "Puede participar en el estudio con acceso limitado.",
+        "observator": "Puede ver el estudio y sus respuestas sin participar.",
+        "manager": "Puede gestionar el estudio y a sus colaboradores, con acceso administrativo limitado.",
+        "user": "Puede participar en el estudio enviando respuestas.",
+        "default": "Puede acceder al estudio según los permisos asignados a este rol."
+      },
       "date": "Fecha",
       "time": "Hora",
       "message": "Mensaje de invitación",
@@ -1819,6 +1834,7 @@
       "calibrating": "Calibrando, por favor espere...",
       "notOpened": "¿No se abrió la calibración?",
       "clickHere": "Haga clic aquí",
+      "alreadyCompleted": "¿Ya completó la calibración en la ventana? Haga clic aquí para continuar",
       "success": "¡La calibración fue exitosa!",
       "continue": "¡CONTINUAR AL TEST!"
     },
@@ -2424,6 +2440,9 @@
       "cameraOff": "La camara esta apagada",
       "yourVideo": "Tu video",
       "yourPreview": "Tu vista previa",
+      "previousPage": "Participantes anteriores",
+      "nextPage": "Participantes siguientes",
+      "pageRange": "{start}–{end} de {total}",
       "observatorMode": "Modo observador",
       "waitingForModeratorToStartSession": "Esperando a que el moderador inicie la sesion...",
       "observeAllFeedsNotice": "Podras observar todas las transmisiones de video sin enviar la tuya.",
@@ -2614,7 +2633,46 @@
     "answers": "Respuestas",
     "overallAnalyticsDescription": "Ver el análisis general de tu estudio",
     "no": "No",
-    "sartAnalytics": "Análisis SART"
+    "sartAnalytics": "Análisis SART",
+    "sentiment": {
+      "searchByTask": "Buscar por nombre de tarea",
+      "task": "Tarea",
+      "signal": "Señal",
+      "user": "Usuario",
+      "allTasks": "Todas las tareas",
+      "allSignals": "Todas las señales",
+      "allUsers": "Todos los usuarios",
+      "facial": "Facial",
+      "text": "Texto",
+      "positive": "Positivo",
+      "neutral": "Neutral",
+      "negative": "Negativo",
+      "noData": "Sin datos",
+      "emptyTitle": "No hay analíticas de sentimiento",
+      "emptyAnalytics": "Aún no hay analíticas de sentimiento. Ejecuta el análisis facial o de texto en las tareas para generar métricas.",
+      "emptyNoRecordingTasks": "No hay tareas con webcam o grabación de audio habilitada en este test.",
+      "emptyNoAnalyticsForFilters": "No hay analíticas de sentimiento para los filtros seleccionados.",
+      "emptyNoMatchingTasks": "Ninguna tarea coincide con la búsqueda o los filtros actuales.",
+      "overviewTitle": "Resumen de sentimiento",
+      "overviewSubtitle": "Distribución de sentimiento facial y de transcripción en las tareas grabadas.",
+      "facialSentiment": "Sentimiento facial",
+      "textSentiment": "Sentimiento de texto",
+      "byTask": "Sentimiento por tarea",
+      "overall": "Sentimiento general",
+      "overallDescription": "Sentimiento combinado facial y de transcripción en la sesión.",
+      "overallFacialDescription": "Sentimiento facial en la sesión.",
+      "overallTextDescription": "Sentimiento de transcripción en la sesión.",
+      "facialDescription": "Patrón de expresión facial más común en las tareas grabadas.",
+      "textDescription": "Tendencia de sentimiento de transcripción en los comentarios.",
+      "warning": "Alerta",
+      "warningDescription": "Tarea con la mayor concentración de señales negativas.",
+      "heuristicUnavailable": "El análisis de sentimiento no está disponible para tests heurísticos",
+      "taskNumber": "Tarea {number}",
+      "taskNumberName": "Tarea {number}: {name}",
+      "userFallback": "Usuario",
+      "loadError": "No se pudieron cargar las analíticas de sentimiento.",
+      "loadUserError": "No se pudieron cargar los documentos de sentimiento del usuario."
+    }
   },
   "observatorNotes": {
     "title": "Notas de la sesión",
@@ -2794,6 +2852,7 @@
       "asked": "Preguntada",
       "currentQuestion": "Pregunta actual",
       "clearQuestion": "Quitar pregunta",
+      "stopShowingQuestion": "Dejar de mostrar la pregunta",
       "guide": "Guía",
       "notes": "Notas",
       "startTimer": "Iniciar temporizador",
@@ -2812,6 +2871,8 @@
       "nicknameLabel": "Apodo",
       "continueToSession": "Continuar a la sesión",
       "observerModeHint": "Modo observador: sigues la discusión sin participar.",
+      "observersWatching": "Observadores viendo: {count}",
+      "respondedInTopic": "Ha enviado un mensaje en este tema",
       "notAMemberTitle": "No formas parte de esta sesión",
       "notAMemberHint": "Esta sesión se está ejecutando para un grupo específico de personas y tu cuenta no está en su lista. Consulta con el facilitador si crees que es un error.",
       "sessionInfo": "Sesión",

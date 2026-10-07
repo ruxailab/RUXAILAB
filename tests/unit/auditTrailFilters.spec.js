@@ -10,10 +10,22 @@ describe('audit trail filters', () => {
       { id: 'settings', action: 'study.settingsChanged' },
       { id: 'team', action: 'cooperator.roleChanged' },
       { id: 'file', action: 'storage.fileDeleted' },
+      { id: 'report', action: 'report.downloadRequested' },
     ]
 
     expect(filterAuditEvents(events, { activity: 'team' })).toEqual([
       { id: 'team', action: 'cooperator.roleChanged' },
+    ])
+  })
+
+  it('filters report download events', () => {
+    const events = [
+      { id: 'report', action: 'report.downloadRequested' },
+      { id: 'study', action: 'study.edited' },
+    ]
+
+    expect(filterAuditEvents(events, { activity: 'reports' })).toEqual([
+      { id: 'report', action: 'report.downloadRequested' },
     ])
   })
 

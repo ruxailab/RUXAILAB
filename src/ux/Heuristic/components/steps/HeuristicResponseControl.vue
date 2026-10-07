@@ -7,7 +7,7 @@
 
     <div :class="['option-scale', `option-scale--${metric}`]">
       <button
-        v-for="option in options"
+        v-for="option in displayOptions"
         :key="option.value"
         type="button"
         :class="[
@@ -40,6 +40,7 @@ const props = defineProps({
   answer: { type: Object, default: null },
   disabled: { type: Boolean, default: false },
   options: { type: Array, required: true },
+  sortOptions: { type: Boolean, default: false },
 })
 
 defineEmits(['change'])
@@ -51,6 +52,12 @@ const selectedValue = computed(() =>
     ? props.answer[props.metric]
     : null,
 )
+
+const displayOptions = computed(() => {
+  if (!props.sortOptions) return props.options
+
+  return [...props.options].sort((a, b) => Number(a.value) - Number(b.value))
+})
 
 const helperText = computed(() =>
   props.metric === 'severity'

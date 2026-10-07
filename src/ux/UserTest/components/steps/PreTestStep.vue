@@ -134,7 +134,7 @@ const props = defineProps({
   preTestCompleted: Boolean,
 })
 
-const emit = defineEmits(['done', 'update:preTestAnswer'])
+const emit = defineEmits(['done', 'update:preTestAnswer', 'selection-changed'])
 
 const step = ref(0)
 const localAnswers = ref(
@@ -164,6 +164,12 @@ const updateAnswer = (index, value) => {
   if (!localAnswers.value[index]) return
   localAnswers.value[index].answer = value
   emit('update:preTestAnswer', localAnswers.value)
+  if (props.preTest?.[index]?.selectionField) {
+    emit('selection-changed', {
+      itemRef: `preTest:question:${index}`,
+      value,
+    })
+  }
 }
 
 watch(

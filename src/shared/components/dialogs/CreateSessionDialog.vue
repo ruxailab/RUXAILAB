@@ -526,8 +526,10 @@ import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import { showError, showSuccess } from '@/shared/utils/toast'
 import { getPredefinedParticipantUserRole } from '../../composables/useCooperatorUtils'
+import { useDateLocale } from '@/shared/composables/useDateLocale'
 
 const { t } = useI18n()
+const { intlLocale } = useDateLocale()
 
 // Props
 const props = defineProps({
@@ -741,7 +743,7 @@ const formattedDateTime = computed(() => {
     return ''
   }
 
-  return sessionDateTime.value.toLocaleString('en-US', {
+  return sessionDateTime.value.toLocaleString(intlLocale.value, {
     weekday: 'long',
     year: 'numeric',
     month: 'long',

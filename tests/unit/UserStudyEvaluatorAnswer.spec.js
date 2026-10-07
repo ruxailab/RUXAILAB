@@ -44,4 +44,29 @@ describe('UserStudyEvaluatorAnswer', () => {
       consentCompleted: true,
     })
   })
+
+  it('preserves sparse TAM positions through task serialization and reload', () => {
+    const answer = new UserStudyEvaluatorAnswer({
+      tasks: {
+        0: {
+          taskId: 'task-1',
+          tamAnswers: {
+            perceivedUsefulness: [, , 7],
+            perceivedEaseOfUse: [null, 5],
+          },
+        },
+      },
+    })
+
+    const saved = answer.toFirestore()
+
+    expect(saved.tasks['0'].tamAnswers).toMatchObject({
+      perceivedUsefulness: [null, null, 7],
+      perceivedEaseOfUse: [null, 5],
+    })
+    expect(
+      UserStudyEvaluatorAnswer.toModel(saved).tasks['0'].tamAnswers
+        .perceivedUsefulness,
+    ).toEqual([null, null, 7])
+  })
 })

@@ -140,7 +140,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'response-changed']);
 
 const form = ref(null);
 const valid = ref(false);
@@ -205,6 +205,9 @@ const updatePUAnswer = (index, value) => {
   newAnswers.perceivedUsefulness = [...newAnswers.perceivedUsefulness];
   newAnswers.perceivedUsefulness[index] = value;
   emit('update:modelValue', newAnswers);
+  emit('response-changed', {
+    itemRef: `tam-1:perceivedUsefulness:${index}`, value,
+  });
 };
 
 const updatePEUAnswer = (index, value) => {
@@ -212,6 +215,9 @@ const updatePEUAnswer = (index, value) => {
   newAnswers.perceivedEaseOfUse = [...newAnswers.perceivedEaseOfUse];
   newAnswers.perceivedEaseOfUse[index] = value;
   emit('update:modelValue', newAnswers);
+  emit('response-changed', {
+    itemRef: `tam-1:perceivedEaseOfUse:${index}`, value,
+  });
 };
 </script>
 

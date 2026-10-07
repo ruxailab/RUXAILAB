@@ -147,14 +147,6 @@ export const getCooperatorInviteValidationError = ({
  * Composable for common cooperator utilities
  */
 export function useCooperatorUtils() {
-  // Role options definition
-  const roleOptions = computed(() => [
-    { title: 'Admin', value: 0 },
-    { title: 'Evaluator', value: 1 },
-    { title: 'Guest', value: 2 },
-    { title: 'Observator', value: 3 },
-  ])
-
   // Status filter options
   const statusFilterOptions = computed(() => [
     {
@@ -182,6 +174,7 @@ export function useCooperatorUtils() {
 
   const getRoleColor = (role) => {
     switch (role?.toLowerCase()) {
+      case 'admin':
       case 'administrator':
         return 'primary'
       case 'evaluator':
@@ -201,6 +194,7 @@ export function useCooperatorUtils() {
 
   const getRoleIcon = (role) => {
     switch (role?.toLowerCase()) {
+      case 'admin':
       case 'administrator':
         return 'mdi-crown'
       case 'evaluator':
@@ -218,14 +212,7 @@ export function useCooperatorUtils() {
     }
   }
 
-  const validateEmail = (email) => {
-    if (!email) return false
-    if (!email.includes('@') || !email.includes('.')) return false
-    return true
-  }
-
   return {
-    roleOptions,
     statusFilterOptions,
     getInitials,
     getRoleColor,
@@ -234,7 +221,5 @@ export function useCooperatorUtils() {
     getStatusText,
     formatDate,
     formatTime,
-    validateEmail,
-    getCooperatorInviteValidationError,
   }
 }

@@ -82,16 +82,20 @@
     </div>
 
     <template v-else>
-      <v-alert
+      <v-card
         v-if="!hasAnalyticsData"
-        type="info"
-        variant="tonal"
-        class="mb-4"
+        class="mb-4 pa-6 text-center analytics-empty-card"
+        variant="outlined"
       >
-        No transcription analytics yet. Run task transcriptions to populate
-        metrics.
-      </v-alert>
+        <h4 class="text-h6 font-weight-medium mb-2">
+          No transcription analytics
+        </h4>
+        <p class="text-body-2 text-medium-emphasis mb-0">
+          {{ emptyDashboardMessage }}
+        </p>
+      </v-card>
 
+      <div :class="{ 'analytics-disabled': !hasAnalyticsData }">
       <v-row dense class="mb-4">
         <v-col
           v-for="card in summaryCards"
@@ -108,6 +112,7 @@
             :description="card.description"
             :progress="card.progress"
             :show-progress="false"
+            :disabled="!hasAnalyticsData"
           />
         </v-col>
       </v-row>
@@ -120,6 +125,9 @@
             :counts="sentimentCounts"
             canvas-id="transcriptions-sentiment-chart"
             :chart-colors="sentimentChartColors"
+            :is-empty="!hasSentimentData"
+            :empty-label="hasAnalyticsData ? 'No sentiment data available yet.' : ''"
+            :disabled="!hasAnalyticsData"
           />
         </v-col>
 
@@ -129,7 +137,16 @@
               <h4 class="font-weight-bold">Top Keywords</h4>
             </div>
             <div v-if="filteredTopKeywords.length === 0" class="mt-4">
-              <v-alert type="info" variant="tonal" density="comfortable">
+              <div
+                v-if="!hasAnalyticsData"
+                class="empty-keywords-placeholder"
+              />
+              <v-alert
+                v-else
+                type="info"
+                variant="tonal"
+                density="comfortable"
+              >
                 No keywords match the current filters.
               </v-alert>
             </div>
@@ -167,22 +184,20 @@
           </h4>
         </div>
         <div>
-          <v-alert
-            v-if="filteredTaskStats.length === 0"
-            type="info"
-            variant="tonal"
-            class="mb-0"
-          >
-            {{ emptyTaskTableMessage }}
-          </v-alert>
-
           <v-data-table
-            v-else
             :headers="taskTableHeaders"
             :items="filteredTaskStats"
             :items-per-page="10"
             class="elevation-0"
           >
+            <template #no-data>
+              <div
+                v-if="hasAnalyticsData"
+                class="text-medium-emphasis pa-4"
+              >
+                {{ emptyTaskTableMessage }}
+              </div>
+            </template>
             <template #item.taskName="{ item }">
               <div class="font-weight-medium">{{ item.taskName }}</div>
             </template>
@@ -328,6 +343,7 @@
           </v-card>
         </v-col>
       </v-row>
+      </div>
     </template>
   </div>
 </template>
@@ -337,7 +353,7 @@ import { computed, ref, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import VueWordCloud from 'vuewordcloud'
 import UxMetricCard from '../answers/UxMetricCard.vue'
-import SelectionPieChart from '../answers/SelectionPieChart.vue'
+import SelectionPieChart from '@/shared/components/charts/SelectionPieChart.vue'
 import TranscriptionAnalyticsController from '@/ai/transcriptions/TranscriptionAnalyticsController'
 import {
   aggregateTranscriptionMetrics,
@@ -413,11 +429,12 @@ const taskTableHeaders = [
 
 const sentimentOptions = ['Positive', 'Neutral', 'Negative']
 
-const sentimentCounts = {
-  Positive: 48,
-  Neutral: 34,
-  Negative: 18,
-}
+const sentimentCounts = computed(
+  () => activeMetrics.value?.sentiment || { Positive: 0, Neutral: 0, Negative: 0 },
+)
+const hasSentimentData = computed(() =>
+  Object.values(sentimentCounts.value).some((v) => v > 0),
+)
 
 const sentimentChartColors = ['#22C55E', '#0EA5E9', '#EF4444']
 
@@ -771,6 +788,16 @@ const filteredTaskStats = computed(() => {
   })
 })
 
+const emptyDashboardMessage = computed(() => {
+  if (audioTaskRows.value.length === 0) {
+    return 'No tasks with audio recording enabled in this test.'
+  }
+  if (hasActiveSearch.value) {
+    return 'No transcription analytics available for the selected filters.'
+  }
+  return 'Run task transcriptions to populate metrics.'
+})
+
 const emptyTaskTableMessage = computed(() => {
   if (audioTaskRows.value.length === 0) {
     return 'No tasks with audio recording enabled in this test.'
@@ -919,5 +946,23 @@ onMounted(() => {
 .chip-responsive {
   font-size: 0.75rem;
   min-width: 95px;
+}
+
+.analytics-empty-card {
+  border-radius: 12px;
+  border-style: dashed;
+  background: #f8fafc;
+}
+
+.analytics-disabled {
+  filter: grayscale(0.35);
+  pointer-events: none;
+  user-select: none;
+}
+
+.empty-keywords-placeholder {
+  height: 180px;
+  border-radius: 12px;
+  background: #f1f5f9;
 }
 </style>

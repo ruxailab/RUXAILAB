@@ -130,6 +130,7 @@ import {
   statistics,
 } from '@/ux/Heuristic/utils/statistics'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
+import { recordReportDownload } from '@/shared/services/auditTrailService'
 
 // Vuex store
 const store = useStore()
@@ -192,6 +193,7 @@ const heuristicsStatistics = computed(() =>
 // Methods
 const submitPdf = async () => {
   isLoading.value = true
+  recordReportDownload(test.value?.id).catch(() => {})
   try {
     // Extract valid emails from cooperators
     const getCooperatorEmails = () => {

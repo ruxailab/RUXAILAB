@@ -230,9 +230,12 @@
                   <v-stepper-item
                     value="1"
                     :title="$t('HeuristicsTestView.flow.instructions')"
+                    :disabled="currentUserTestAnswer?.submitted"
+                    :editable="!currentUserTestAnswer?.submitted"
                     complete
                     color="white"
                     complete-icon="mdi-check"
+                    @click="returnToInstructions"
                   />
                   <v-divider />
                   <v-stepper-item
@@ -490,6 +493,7 @@ const TEST_PAGES = {
 }
 const currentPage = ref(TEST_PAGES.welcome)
 const answerInitialized = ref(false)
+const returningToInstructions = ref(false)
 
 // Auto-save status variables
 const autoSaveInProgress = ref(false)
@@ -818,6 +822,16 @@ const openInstructionsPage = () => {
   }, 1000)
 }
 
+const returnToInstructions = () => {
+  if (currentUserTestAnswer.value?.submitted) return
+
+  pauseTimer(heurisIndex.value)
+  returningToInstructions.value = true
+  start.value = true
+  currentPage.value = TEST_PAGES.instructions
+  debouncedAutoSave()
+}
+
 const startTest = async () => {
   if (heuristics.value.length === 0) {
     store.commit('setError', {
@@ -833,20 +847,25 @@ const startTest = async () => {
 
   if (!answerInitialized.value) return
 
-  const invitedCooperator = test.value?.cooperators?.find(
-    (cooperator) => cooperator.userDocId === user.value?.id,
-  )
-  if (!isUserTestAdmin.value && invitedCooperator?.accepted !== true) {
-    await store.dispatch('acceptStudyCollaboration', {
-      test: test.value,
-      cooperator: user.value,
-    })
+  if (!returningToInstructions.value) {
+    const invitedCooperator = test.value?.cooperators?.find(
+      (cooperator) => cooperator.userDocId === user.value?.id,
+    )
+    if (!isUserTestAdmin.value && invitedCooperator?.accepted !== true) {
+      await store.dispatch('acceptStudyCollaboration', {
+        test: test.value,
+        cooperator: user.value,
+      })
+    }
   }
 
   start.value = false
   currentPage.value = TEST_PAGES.answers
-  showHeuristicCards.value = true
-  index.value = 1
+  if (!returningToInstructions.value) {
+    showHeuristicCards.value = true
+    index.value = 1
+  }
+  returningToInstructions.value = false
 
   // Mark test as started
   if (currentUserTestAnswer.value) {

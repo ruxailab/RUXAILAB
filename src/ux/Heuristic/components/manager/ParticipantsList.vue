@@ -134,7 +134,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { formatDistanceToNow } from 'date-fns'
-import { es } from 'date-fns/locale'
+import { useDateLocale } from '@/shared/composables/useDateLocale'
 
 const props = defineProps({
   test: {
@@ -149,6 +149,8 @@ const emit = defineEmits([
   'send-reminder',
   'remove-participant',
 ])
+
+const { dateFnsLocale } = useDateLocale()
 
 // State
 const selectedFilter = ref('all')
@@ -219,7 +221,7 @@ const getLastActivity = (participant) => {
 
   return formatDistanceToNow(new Date(participant.updateDate), {
     addSuffix: true,
-    locale: es,
+    locale: dateFnsLocale.value,
   })
 }
 

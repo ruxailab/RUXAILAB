@@ -9,6 +9,7 @@ const ACTIVITY_ACTIONS = {
     'cooperator.invitationCancelled',
   ]),
   files: new Set(['storage.fileDeleted']),
+  reports: new Set(['report.downloadRequested']),
 }
 
 const timePeriodStart = (when, now) => {

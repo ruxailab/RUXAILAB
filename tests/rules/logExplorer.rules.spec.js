@@ -37,7 +37,9 @@ beforeAll(async () => {
     projectId,
     firestore: {
       host: '127.0.0.1',
-      port: 8081,
+      port: Number(
+        process.env.FIRESTORE_EMULATOR_HOST?.split(':').pop() || 8081,
+      ),
       rules: fs.readFileSync('firestore.rules', 'utf8'),
     },
   })
@@ -136,7 +138,9 @@ describe('Log Explorer query boundary', () => {
   })
 
   it('does not expose the same query to non-Admin study roles', async () => {
-    const participantDb = testEnv.authenticatedContext('participant').firestore()
+    const participantDb = testEnv
+      .authenticatedContext('participant')
+      .firestore()
     const researcherDb = testEnv.authenticatedContext('researcher').firestore()
 
     await expect(
@@ -161,4 +165,36 @@ describe('Log Explorer query boundary', () => {
       getParticipantLabels({ db, studyId: 'study-1', prefix: 'p-00' }),
     ).resolves.toEqual(['P-001', 'P-002'])
   })
+})
+
+it('filters recording events by existing event-type and severity fields', async () => {
+  await testEnv.withSecurityRulesDisabled(async (context) => {
+    await setDoc(
+      doc(context.firestore(), 'tests/study-1/logs/recording'),
+      event({
+        eventType: 'MEDIA_RECORDING_OUTCOME',
+        layer: 'technical',
+        level: 'error',
+        details: {
+          taskRef: 'task:0',
+          taskType: 'sus',
+          mediaType: 'screen',
+          outcome: 'failed',
+          stage: 'upload',
+          reason: 'uploadError',
+        },
+      }),
+    )
+  })
+  const db = testEnv.authenticatedContext('owner').firestore()
+  const filters = { eventType: 'MEDIA_RECORDING_OUTCOME', level: 'error' }
+  const page = await getStudyLogPage({ db, studyId: 'study-1', filters })
+  expect(page.events).toHaveLength(1)
+  expect(page.events[0]).toMatchObject({
+    layer: 'technical',
+    details: { taskType: 'sus', reason: 'uploadError' },
+  })
+  await expect(
+    getStudyLogCount({ db, studyId: 'study-1', filters }),
+  ).resolves.toBe(1)
 })

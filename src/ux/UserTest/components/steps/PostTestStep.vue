@@ -133,7 +133,7 @@ const props = defineProps({
   postTestCompleted: Boolean,
 })
 
-const emit = defineEmits(['done', 'update:postTestAnswer'])
+const emit = defineEmits(['done', 'update:postTestAnswer', 'selection-changed'])
 
 const step = ref(0)
 const localAnswers = ref(
@@ -163,6 +163,12 @@ const updateAnswer = (index, value) => {
   if (!localAnswers.value[index]) return
   localAnswers.value[index].answer = value
   emit('update:postTestAnswer', localAnswers.value)
+  if (props.postTest?.[index]?.selectionField) {
+    emit('selection-changed', {
+      itemRef: `postTest:question:${index}`,
+      value,
+    })
+  }
 }
 
 watch(

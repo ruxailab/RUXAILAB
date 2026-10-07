@@ -433,7 +433,9 @@
             :pre-test="test.testStructure.preTest"
             :pre-test-answer="localTestAnswer.preTestAnswer"
             :pre-test-completed="localTestAnswer.preTestCompleted"
-            @done="completeStep(taskIndex, 'preTest')"
+            @update:pre-test-answer="(val) => (localTestAnswer.preTestAnswer = val)"
+            @selection-changed="handleStructuredSelectionChanged"
+            @done="handlePreTestDone"
           />
 
           <EyeTrackingCalibrationStep
@@ -443,6 +445,7 @@
             @done="globalIndex = hasPreTest ? 4 : 5"
             @close-calibration="closeCalibration()"
             @open-calibration="openCalibration()"
+            @mark-completed="handleCalibrationFinished()"
           />
 
           <PreTasksStep
@@ -478,6 +481,7 @@
             :sart-answers="localTestAnswer.tasks[taskIndex].sartAnswers"
             :submitted="localTestAnswer.submitted"
             :done-task-disabled="doneTaskDisabled"
+            @recording-result="handleRecordingResult"
             @update:sus-answers="
               (val) => {
                 localTestAnswer.tasks[taskIndex].susAnswers = Array.isArray(val)
@@ -506,7 +510,12 @@
                 toggleTracking(false)
               }
             "
-            @could-not-finish="() => handleTaskFinish(false)"
+            @could-not-finish="
+              () => {
+                handleTaskFinish(false)
+                toggleTracking(false)
+              }
+            "
             @show-loading="isLoading = true"
             @stop-show-loading="isLoading = false"
             @recording-started="isVisualizerVisible = $event"
@@ -519,6 +528,14 @@
                 }
               }
             "
+            @task-started="handleTaskStarted"
+            @structured-response-changed="handleStructuredResponseChanged"
+            @structured-slider-focus="(event) => handleStructuredSliderEvent('focus', event)"
+            @structured-slider-start="(event) => handleStructuredSliderEvent('start', event)"
+            @structured-slider-change="(event) => handleStructuredSliderEvent('change', event)"
+            @structured-slider-end="(event) => handleStructuredSliderEvent('end', event)"
+            @structured-slider-blur="(event) => handleStructuredSliderEvent('blur', event)"
+            @task-questionnaire-entered="handleTaskQuestionnaireEntered"
           />
 
           <PostTestStep
@@ -531,12 +548,9 @@
             :post-test="test.testStructure.postTest"
             :post-test-answer="localTestAnswer.postTestAnswer"
             :post-test-completed="localTestAnswer.postTestCompleted"
-            @done="
-              async () => {
-                await completeStep(taskIndex, 'postTest')
-                taskIndex = 3
-              }
-            "
+            @update:post-test-answer="(val) => (localTestAnswer.postTestAnswer = val)"
+            @selection-changed="handleStructuredSelectionChanged"
+            @done="handlePostTestDone"
           />
 
           <FinishStep
@@ -596,6 +610,12 @@ import { animateStepAnnouncement } from '@/shared/utils/animations'
 import { downloadAnonymousParticipantIdentifier } from '@/shared/utils/anonymousParticipantUtils'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
+import { createRecordingOutcomeTracker } from '@/ux/UserTest/utils/recordingOutcome'
+import {
+  createStructuredActivityHandlers,
+  structuredValuesForStage as structuredValuesForStageOf,
+  structuredValuesForTask,
+} from '@/ux/UserTest/utils/structuredActivity'
 import { taskDestination } from '@/ux/UserTest/utils/unmoderatedNavigation'
 
 const fullName = ref('')
@@ -639,6 +659,7 @@ const isRecording = ref(false)
 const eyeCalibrationStepDone = ref(false)
 const calibrationCompleted = ref(false)
 const calibrationInProgress = ref(false)
+let calibrationPollTimer = null
 
 //  Eye tracking web gazer testing
 
@@ -659,6 +680,16 @@ const initializeStudyLogging = () => {
   })
   if (localTestAnswer.consentCompleted) void studyLogging.resumeAfterConsent()
   return studyLogging
+}
+const recordingOutcomes = createRecordingOutcomeTracker((details) =>
+  initializeStudyLogging()?.recordingOutcome(details),
+)
+const handleRecordingResult = (details) => {
+  if (user.value?.id && localTestAnswer.consentCompleted)
+    recordingOutcomes.observe(details)
+}
+const handleTaskStarted = (occurredAt) => {
+  void initializeStudyLogging()?.taskStarted(taskIndex.value, occurredAt)
 }
 const handleLoggingFocusin = (event) =>
   initializeStudyLogging()?.editHandlers.focusin(event)
@@ -696,6 +727,42 @@ const hasPostTest = computed(() => {
     test.value?.testStructure?.postTest.length > 0
   )
 })
+
+const {
+  seedStructuredScope,
+  handleStructuredResponseChanged,
+  handleStructuredSelectionChanged,
+  handleStructuredSliderEvent,
+} = createStructuredActivityHandlers(initializeStudyLogging)
+const structuredValuesForStage = (stage) =>
+  structuredValuesForStageOf(
+    stage,
+    test.value?.testStructure?.[stage],
+    localTestAnswer[`${stage}Answer`],
+  )
+
+
+const handleTaskQuestionnaireEntered = ({ scopeRef } = {}) => {
+  const taskRef = scopeRef || `task:${taskIndex.value}`
+  seedStructuredScope(
+    taskRef,
+    structuredValuesForTask(
+      test.value?.testStructure?.userTasks?.[taskIndex.value],
+      localTestAnswer.tasks?.[taskIndex.value],
+    ),
+  )
+}
+
+const handlePreTestDone = async () => {
+  await initializeStudyLogging()?.checkpointStructuredScope('preTest')
+  await completeStep(taskIndex.value, 'preTest')
+}
+
+const handlePostTestDone = async () => {
+  await initializeStudyLogging()?.checkpointStructuredScope('postTest')
+  await completeStep(taskIndex.value, 'postTest')
+  taskIndex.value = 3
+}
 
 const isUserTestAdmin = computed(() => {
   return test.value.testAdmin.userDocId === user.value?.id
@@ -791,17 +858,74 @@ function handleIrisData(data) {
   localTestAnswer.tasks[taskIndex.value].irisTrackingData.push(data)
 }
 
+const handleCalibrationFinished = () => {
+  calibrationCompleted.value = true
+  stopCalibrationPopupPolling()
+  if (calibrationPopup.value && !calibrationPopup.value.closed) {
+    try {
+      calibrationPopup.value.close()
+    } catch {
+      // ignore cross-origin error if any
+    }
+  }
+}
+
+const checkCalibrationWindowStatus = () => {
+  if (calibrationPopup.value && calibrationPopup.value.closed) {
+    handleCalibrationFinished()
+  }
+}
+
+const handleCalibrationMessage = (event) => {
+  const data = event?.data
+  if (!data) return
+  if (
+    data === 'calibration_finished' ||
+    data === 'calibration_success' ||
+    data?.type === 'CALIBRATION_FINISHED' ||
+    data?.type === 'CALIBRATION_SUCCESS' ||
+    data?.type === 'CALIBRATION_COMPLETED' ||
+    data?.action === 'calibration_finished' ||
+    (data?.status === 'success' && data?.calibration)
+  ) {
+    handleCalibrationFinished()
+  }
+}
+
 const openCalibration = () => {
+  if (!user.value?.id && !anonymousUserDocId.value) {
+    initializeAnonymousUser()
+  }
+  const authId = user.value?.id || anonymousUserDocId.value
   calibrationPopup.value = window.open(
-    `${process.env.VUE_APP_EYE_LAB_FRONTEND_URL}/calibration/camera?auth=${user.value?.id}&test=${test.value.id}`,
+    `${process.env.VUE_APP_EYE_LAB_FRONTEND_URL}/calibration/camera?auth=${authId}&test=${test.value.id}`,
     '_blank',
   )
   calibrationInProgress.value = true
+
+  startCalibrationPopupPolling()
 }
 
 const closeCalibration = () => {
   calibrationInProgress.value = false
+  stopCalibrationPopupPolling()
   completeStep(taskIndex.value, 'eyeCalibration')
+}
+
+const startCalibrationPopupPolling = () => {
+  stopCalibrationPopupPolling()
+  window.addEventListener('message', handleCalibrationMessage)
+  window.addEventListener('focus', checkCalibrationWindowStatus)
+  calibrationPollTimer = setInterval(checkCalibrationWindowStatus, 500)
+}
+
+const stopCalibrationPopupPolling = () => {
+  if (calibrationPollTimer) {
+    clearInterval(calibrationPollTimer)
+    calibrationPollTimer = null
+  }
+  window.removeEventListener('message', handleCalibrationMessage)
+  window.removeEventListener('focus', checkCalibrationWindowStatus)
 }
 
 function toggleTracking(value) {
@@ -820,6 +944,13 @@ const handleDownloadAnonymousIdentifier = () => {
   })
 }
 const savePartialAnswer = async () => {
+  attachMediaToTasks(localTestAnswer, mediaUrls.value)
+  const recordingsToSave = recordingOutcomes
+    .beforeSave()
+    .filter(({ taskRef, mediaType }) => {
+      const task = localTestAnswer.tasks?.[Number(taskRef.split(':')[1])]
+      return Boolean(task?.[MEDIA_FIELD_MAP[mediaType]])
+    })
   try {
     calculateProgress(localTestAnswer)
     localTestAnswer.fullName = fullName.value
@@ -851,6 +982,7 @@ const savePartialAnswer = async () => {
         testType: test.value.testType,
       })
     }
+    recordingOutcomes.saved(recordingsToSave)
   } catch (error) {
     // Propagate the error so callers can handle it (e.g., show toasts, prevent navigation).
     throw error
@@ -866,11 +998,12 @@ const saveAnswer = async () => {
     } else {
       router.push('/admin')
     }
-  } catch {
+  } catch (error) {
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSaveAnswer'),
     })
+    throw error
   }
 }
 
@@ -878,13 +1011,17 @@ const submitAnswer = async () => {
   try {
     isLoading.value = true
     localTestAnswer.submitted = true
+    await initializeStudyLogging()?.checkpointStructuredScopes()
     await saveAnswer()
     void initializeStudyLogging()?.submitted()
   } catch {
+    localTestAnswer.submitted = false
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSubmitAnswer'),
     })
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -1106,7 +1243,11 @@ const callTimerSave = () => {
 }
 
 async function handleTaskFinish(userCompleted) {
+  const finishedObservedAt = new Date().toISOString()
   const finishedTaskIndex = taskIndex.value
+  await initializeStudyLogging()?.checkpointStructuredScope(
+    `task:${finishedTaskIndex}`,
+  )
   callTimerSave()
 
   await nextTick()
@@ -1117,18 +1258,26 @@ async function handleTaskFinish(userCompleted) {
       async (val) => {
         if (!val) {
           unwatch()
-          await completeStep(taskIndex.value, 'tasks', userCompleted)
+          await completeStep(finishedTaskIndex, 'tasks', userCompleted)
           attachMediaToTasks(localTestAnswer, mediaUrls.value)
-          await persistStepProgress()
-          void initializeStudyLogging()?.taskFinished(finishedTaskIndex)
+          if (await persistStepProgress()) {
+            void initializeStudyLogging()?.taskFinished(
+              finishedTaskIndex,
+              finishedObservedAt,
+            )
+          }
         }
       },
     )
   } else {
-    await completeStep(taskIndex.value, 'tasks', userCompleted)
+    await completeStep(finishedTaskIndex, 'tasks', userCompleted)
     attachMediaToTasks(localTestAnswer, mediaUrls.value)
-    await persistStepProgress()
-    void initializeStudyLogging()?.taskFinished(finishedTaskIndex)
+    if (await persistStepProgress()) {
+      void initializeStudyLogging()?.taskFinished(
+        finishedTaskIndex,
+        finishedObservedAt,
+      )
+    }
   }
 }
 
@@ -1542,10 +1691,68 @@ const scrollToTop = () => {
   }
 }
 
+let activeStructuredScope = null
+
+const structuredScopeForCurrentStage = () => {
+  if (globalIndex.value === 2 && taskIndex.value === 0) {
+    return 'preTest'
+  }
+
+  const taskStage = hasEyeTracking.value ? 5 : 4
+  if (
+    globalIndex.value === taskStage &&
+    test.value?.testStructure?.userTasks?.[taskIndex.value]
+  ) {
+    return `task:${taskIndex.value}`
+  }
+
+  const postTestStage = hasEyeTracking.value ? 6 : 5
+  if (hasPostTest.value && globalIndex.value === postTestStage) {
+    return 'postTest'
+  }
+
+  return null
+}
+
 watch(
   () => [globalIndex.value, taskIndex.value],
   () => {
+    const nextStructuredScope = structuredScopeForCurrentStage()
+    if (
+      activeStructuredScope &&
+      activeStructuredScope !== nextStructuredScope
+    ) {
+      void initializeStudyLogging()?.checkpointStructuredScope(
+        activeStructuredScope,
+      )
+    }
+    activeStructuredScope = nextStructuredScope
+
     scrollToTop()
+
+    if (globalIndex.value === 2 && taskIndex.value === 0) {
+      seedStructuredScope('preTest', structuredValuesForStage('preTest'))
+    }
+
+    if (
+      globalIndex.value === (hasEyeTracking.value ? 5 : 4) &&
+      test.value?.testStructure?.userTasks?.[taskIndex.value]
+    ) {
+      seedStructuredScope(
+        `task:${taskIndex.value}`,
+        structuredValuesForTask(
+          test.value.testStructure.userTasks[taskIndex.value],
+          localTestAnswer.tasks?.[taskIndex.value],
+        ),
+      )
+    }
+
+    if (
+      hasPostTest.value &&
+      globalIndex.value === (hasEyeTracking.value ? 6 : 5)
+    ) {
+      seedStructuredScope('postTest', structuredValuesForStage('postTest'))
+    }
   },
 )
 
@@ -1583,16 +1790,14 @@ onMounted(async () => {
     }
 
     if (data.lastCalibrationId) {
-      calibrationCompleted.value = true
-      if (calibrationPopup.value) {
-        calibrationPopup.value.close()
-      }
+      handleCalibrationFinished()
     }
   })
 })
 
 onBeforeUnmount(() => {
   studyLogging?.destroy()
+  stopCalibrationPopupPolling()
   if (
     videoRecorder.value &&
     typeof videoRecorder.value.stopRecording === 'function'

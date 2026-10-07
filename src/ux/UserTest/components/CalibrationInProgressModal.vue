@@ -34,6 +34,13 @@
           <a class="openCalib" @click="$emit('openCalibration')">{{
             $t('UserTestView.CalibrationInProgressModal.clickHere')
           }}</a>
+          <div class="mt-3">
+            <a class="openCalib text-body-2" @click="$emit('markCompleted')">
+              {{
+                $t('UserTestView.CalibrationInProgressModal.alreadyCompleted')
+              }}
+            </a>
+          </div>
         </div>
 
         <div v-else class="text-subtitle-1 mt-auto">
@@ -62,7 +69,7 @@ const props = defineProps({
   },
 })
 
-defineEmits(['openCalibration', 'close'])
+defineEmits(['openCalibration', 'close', 'markCompleted'])
 
 const dialogVisible = computed({
   get: () => props.isOpen,

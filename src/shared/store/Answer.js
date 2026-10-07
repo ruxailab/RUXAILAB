@@ -2,7 +2,7 @@ import AnswerController from '@/shared/controllers/AnswerController'
 import HeuristicAnswer from '@/ux/Heuristic/models/HeuristicAnswer'
 import { percentage } from '@/ux/Heuristic/utils/statistics'
 import { formatTimeSpentFromMs } from '@/ux/Heuristic/utils/statistics'
-import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
+import { STUDY_TYPES, normalizeStudyType } from '@/shared/constants/methodDefinitions'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import CardSortingEvaluatorAnswer from '@/ux/CardSorting/models/CardSortingEvaluatorAnswer'
@@ -154,7 +154,7 @@ export default {
 
       const doc = state.testAnswerDocument
 
-      if (doc.type === STUDY_TYPES.USER && doc.taskAnswers) {
+      if (normalizeStudyType(doc.type) === STUDY_TYPES.USER && doc.taskAnswers) {
         return Object.fromEntries(
           Object.entries(doc.taskAnswers).filter(
             ([, answer]) => answer.hidden !== true,
@@ -376,6 +376,7 @@ export default {
             show: true,
           })
         }
+        throw e
       } finally {
         commit('setLoading', false)
       }

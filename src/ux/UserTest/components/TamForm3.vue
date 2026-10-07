@@ -11,7 +11,7 @@
           Comprehensive technology acceptance assessment based on TAM-3 (Venkatesh & Bala 2008). Rate each statement on a scale from <strong>Strongly Disagree</strong> to <strong>Strongly Agree</strong>.
         </p>
         <p class="text-body-2 text-grey-darken-3">
-          This advanced assessment measures {{ completedCount }}/38 items across the integrated TAM-3 model.
+          This advanced assessment measures {{ completedCount }}/42 items across the integrated TAM-3 model.
         </p>
       </v-card-text>
     </v-card>
@@ -26,11 +26,11 @@
     <div v-show="activeTab === 'form'">
       <!-- Progress indicator -->
       <div class="d-flex align-center mb-4">
-        <span class="text-subtitle-1">Progress: {{ completedCount }}/38</span>
+        <span class="text-subtitle-1">Progress: {{ completedCount }}/42</span>
         <v-progress-linear
           class="ml-4"
-          :model-value="(completedCount / 38) * 100"
-          :color="completedCount === 38 ? 'success' : 'primary'"
+          :model-value="(completedCount / 42) * 100"
+          :color="completedCount === 42 ? 'success' : 'primary'"
         />
       </div>
 
@@ -344,8 +344,8 @@
           <v-col cols="12" md="6" lg="3">
             <v-card variant="outlined" class="pa-6" style="border-left: 4px solid #2196F3;">
               <div class="text-caption font-weight-bold text-blue">TOTAL RESPONSES</div>
-              <div class="text-h4 font-weight-bold my-2">{{ completedCount }}/38</div>
-              <v-progress-linear :model-value="(completedCount / 38) * 100" color="blue" class="mt-2"></v-progress-linear>
+              <div class="text-h4 font-weight-bold my-2">{{ completedCount }}/42</div>
+              <v-progress-linear :model-value="(completedCount / 42) * 100" color="blue" class="mt-2"></v-progress-linear>
             </v-card>
           </v-col>
           <v-col cols="12" md="6" lg="3">
@@ -364,8 +364,8 @@
           <v-col cols="12" md="6" lg="3">
             <v-card variant="outlined" class="pa-6" style="border-left: 4px solid #2196F3;">
               <div class="text-caption font-weight-bold text-primary">STATUS</div>
-              <div class="text-h6 font-weight-bold my-2" :style="{ color: completedCount === 38 ? '#4CAF50' : '#FF9800' }">
-                {{ completedCount === 38 ? 'COMPLETE' : 'IN PROGRESS' }}
+              <div class="text-h6 font-weight-bold my-2" :style="{ color: completedCount === 42 ? '#4CAF50' : '#FF9800' }">
+                {{ completedCount === 42 ? 'COMPLETE' : 'IN PROGRESS' }}
               </div>
             </v-card>
           </v-col>
@@ -465,7 +465,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'response-changed']);
 const form = ref(null);
 const valid = ref(false);
 
@@ -587,6 +587,9 @@ const updateDimensionAnswer = (dimension, index, value) => {
   newAnswers[dimension] = [...newAnswers[dimension]];
   newAnswers[dimension][index] = value;
   emit('update:modelValue', newAnswers);
+  emit('response-changed', {
+    itemRef: `tam-3:${dimension}:${index}`, value,
+  });
 };
 
 // Dimension sizes mapping
@@ -604,7 +607,7 @@ const dimSizes = {
   perceptionsOfExternalControl: 3,
   computerAnxiety: 2,
   computerPlayfulness: 2,
-  perceivedEnjoyment: 2,
+  perceivedEnjoyment: 3,
   objectiveUsability: 2,
   experience: 2,
   voluntariness: 2

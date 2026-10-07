@@ -384,6 +384,7 @@ import { useI18n } from 'vue-i18n'
 import { instantiateStudyByType } from '../constants/methodDefinitions'
 import StudyAdmin from '@/shared/models/StudyAdmin'
 import { showSuccess, showError, showWarning } from '@/shared/utils/toast'
+import { useDateLocale } from '@/shared/composables/useDateLocale'
 import {
   capturePendingLeaveRoute,
   clearPendingLeaveRoute,
@@ -393,6 +394,7 @@ import {
 const store = useStore()
 const router = useRouter()
 const { t } = useI18n()
+const { intlLocale } = useDateLocale()
 
 const props = defineProps({
   id: {
@@ -473,7 +475,7 @@ const formattedEndDate = computed(() => {
       if (Number.isNaN(date.getTime())) {
         return ''
       }
-      return date.toLocaleDateString()
+      return date.toLocaleDateString(intlLocale.value)
     } catch (error) {
       return error
     }
