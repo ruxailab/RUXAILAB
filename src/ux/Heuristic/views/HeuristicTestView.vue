@@ -91,11 +91,11 @@
       </v-card>
     </v-dialog>
 
-    <EvaluatorInfoDisplay
+    <!-- <EvaluatorInfoDisplay
       v-if="showEvaluatorInfo"
       :sections="evaluatorInfoSections"
       @start="evaluatorInfoAcknowledged = true"
-    />
+    /> -->
 
     <v-container v-if="test && start" fluid class="pa-0">
       <v-row
