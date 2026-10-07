@@ -2409,7 +2409,8 @@
     "audioRecord": "Audio Record",
     "postForm": "Post Form",
     "nasa": "NASA-TLX",
-    "sart": "SART"
+    "sart": "SART",
+    "sus": "SUS"
   },
   "inputs": {
     "consentForm": "Consent Form",
