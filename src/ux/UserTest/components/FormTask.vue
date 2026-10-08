@@ -7,7 +7,7 @@
         value="1"
         editable
         :title="$t('CreateTask.stepper.basicInfo')"
-        @click="valida() ? (step = '1') : null"
+        @click="valida(false) ? (step = '1') : null"
       />
       <v-divider />
       <v-stepper-item
@@ -16,7 +16,7 @@
         value="2"
         editable
         :title="$t('CreateTask.stepper.configuration')"
-        @click="valida() ? (step = '2') : null"
+        @click="valida(false) ? (step = '2') : null"
       />
       <v-divider />
       <v-stepper-item
@@ -25,7 +25,7 @@
         value="3"
         editable
         :title="$t('CreateTask.stepper.advanced')"
-        @click="valida() ? (step = '3') : null"
+        @click="valida(false) ? (step = '3') : null"
       />
       <v-divider />
       <v-stepper-item
@@ -34,7 +34,7 @@
         value="4"
         editable
         :title="$t('CreateTask.stepper.preview')"
-        @click="valida() ? (step = '4') : null"
+        @click="valida(false) ? (step = '4') : null"
       />
     </v-stepper-header>
 
@@ -191,7 +191,7 @@ const goToPreviousStep = () => {
   }
 }
 
-const valida = () => {
+const valida = (shouldEmit = true) => {
   const currentStepNum = Number.parseInt(step.value, 10)
 
   if (currentStepNum === 1) {
@@ -211,7 +211,9 @@ const valida = () => {
   }
 
   if (currentStepNum === 4) {
-    emit('validate', localTask.value)
+    if (shouldEmit) {
+      emit('validate', localTask.value)
+    }
     return true
   }
 
