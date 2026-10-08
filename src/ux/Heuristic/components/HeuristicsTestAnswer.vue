@@ -114,6 +114,7 @@ import {
   weightsStatisticsHeader,
   heuristicsEvaluatorHeader,
 } from '@/ux/Heuristic/utils/headers.js'
+import { findSelectedTestOption } from '@/ux/Heuristic/utils/heuristicOptionMatch'
 
 const store = useStore()
 const router = useRouter()
@@ -549,33 +550,26 @@ const optionResponseTotals = computed(() => {
   const options = Array.isArray(test.value?.testOptions)
     ? test.value.testOptions
     : []
-  const totals = options.map((option) => ({
+  const totals = options.map((option, index) => ({
+    key: option.timestamp ?? `option-${index}`,
     value: option.value,
-    text: option.text || String(option.value),
+    text: option.text || (option.value == null ? '' : String(option.value)),
     total: 0,
   }))
-  const totalsByValue = new Map(
-    totals.map((item) => [String(item.value), item]),
-  )
+  const totalsByKey = new Map(totals.map((item) => [item.key, item]))
 
   answers.value.forEach((evaluator) => {
     evaluator?.heuristicQuestions?.forEach((heuristic) => {
       heuristic?.heuristicQuestions?.forEach((question) => {
-        const answer = question?.heuristicAnswer
-        const value = answer?.custom?.value ?? answer?.value
-        if (value === null || value === undefined || value === '') return
+        const matched = findSelectedTestOption(
+          options,
+          question?.heuristicAnswer,
+        )
+        if (!matched) return
 
-        const key = String(value)
-        if (!totalsByValue.has(key)) {
-          const item = {
-            value,
-            text: answer?.custom?.text || String(value),
-            total: 0,
-          }
-          totals.push(item)
-          totalsByValue.set(key, item)
-        }
-        totalsByValue.get(key).total += 1
+        const key = matched.timestamp ?? `option-${options.indexOf(matched)}`
+        const total = totalsByKey.get(key)
+        if (total) total.total += 1
       })
     })
   })

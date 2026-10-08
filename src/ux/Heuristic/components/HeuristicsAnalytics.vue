@@ -169,6 +169,7 @@ import { useI18n } from 'vue-i18n'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import BarChart from '@/ux/Heuristic/components/charts/BarChart.vue'
 import IntroAnalytics from '@/shared/components/introduction_cards/IntroAnalytics.vue'
+import { findSelectedTestOption } from '@/ux/Heuristic/utils/heuristicOptionMatch'
 
 const store = useStore()
 const route = useRoute()
@@ -380,13 +381,10 @@ const questionGraph = computed(() => {
       const question =
         userAnswer?.heuristicQuestions?.[heuristicSelect.value]
           ?.heuristicQuestions?.[questionSelect.value]
-      if (!question?.heuristicAnswer) return
-
-      const optionSelect = options.find(
-        (op) => op.text === question.heuristicAnswer.text,
+      const optionIndex = options.indexOf(
+        findSelectedTestOption(options, question?.heuristicAnswer),
       )
-      if (optionSelect) {
-        const optionIndex = graph.label.indexOf(optionSelect.text)
+      if (optionIndex >= 0) {
         graph.data[optionIndex] += 1
       }
     })
