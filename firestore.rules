@@ -143,6 +143,17 @@ service cloud.firestore {
         ).data;
       }
 
+      // Nested subcollections (e.g. analytics/{analyticsId}) can't use
+      // answerStudy() because `resource` there refers to the subcollection
+      // document, not the parent answer — so look the parent up by id.
+      function parentAnswerStudy(id) {
+        return get(
+          /databases/$(database)/documents/tests/$(
+            get(/databases/$(database)/documents/answers/$(id)).data.studyId
+          )
+        ).data;
+      }
+
       function answerRoleCanRead(study) {
         let role = roleFor(study);
         let type = study.get('testType', '');
@@ -198,7 +209,8 @@ service cloud.firestore {
       ) || isAdmin(answerStudy());
 
        match /analytics/{analyticsId} {
-          allow read: if true;
+          allow read: if signedIn() &&
+            answerRoleCanRead(parentAnswerStudy(answerId));
         }
     }
 

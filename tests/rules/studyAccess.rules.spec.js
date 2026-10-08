@@ -205,6 +205,37 @@ describe('Firestore study RBAC', () => {
     )
   })
 
+  it('requires the same RBAC as the parent answer to read its analytics subcollection', async () => {
+    await testEnv.withSecurityRulesDisabled((adminContext) =>
+      setDoc(
+        doc(adminContext.firestore(), 'answers/answers-1/analytics/analytics-1'),
+        { speakingTimeSeconds: 42 },
+      ),
+    )
+
+    await assertSucceeds(
+      getDoc(
+        doc(
+          context('observator').firestore(),
+          'answers/answers-1/analytics/analytics-1',
+        ),
+      ),
+    )
+    await assertFails(
+      getDoc(
+        doc(context('user').firestore(), 'answers/answers-1/analytics/analytics-1'),
+      ),
+    )
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv.unauthenticatedContext().firestore(),
+          'answers/answers-1/analytics/analytics-1',
+        ),
+      ),
+    )
+  })
+
   it('allows an Observator to answer only a moderated user study', async () => {
     await testEnv.withSecurityRulesDisabled((adminContext) =>
       updateDoc(doc(adminContext.firestore(), 'tests/study-1'), {
