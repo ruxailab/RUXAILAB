@@ -1143,6 +1143,7 @@
       "failedToSaveAnswer": "Error al guardar la respuesta. Por favor, inténtelo de nuevo.",
       "failedToSubmitAnswer": "Error al enviar la respuesta. Por favor, inténtelo de nuevo."
     },
+    "heuristic": "Heurística:",
     "unknownHeuristic": "Heurística desconocida",
     "unknownQuestion": "Pregunta desconocida",
     "selectAnOption": "Seleccionar una opción",
