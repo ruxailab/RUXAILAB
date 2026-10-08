@@ -85,7 +85,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onBeforeMount } from 'vue'
+import { ref, computed, watch, onBeforeMount } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -724,8 +724,11 @@ const usuability_percentage_array = () => {
 }
 
 const pythonFunction = async () => {
-  const caminhoTestStructure = store.state.Tests.Test.testStructure || []
-  const caminhoTestWeights = store.state.Tests.Test.testWeights || []
+  const currentTest = store.getters.test
+  if (!currentTest) return
+
+  const caminhoTestStructure = currentTest.testStructure || []
+  const caminhoTestWeights = currentTest.testWeights || []
   const caminhoTestScore = store.state.Tests.scoresPercentage || []
 
   try {
@@ -809,12 +812,7 @@ onBeforeMount(async () => {
     await store.dispatch('getStudy', { id: studyId })
   }
   await store.dispatch('getCurrentTestAnswerDoc')
-})
-
-onMounted(() => {
-  pythonFunction()
-
-  // Debug API removed for production
+  await pythonFunction()
 })
 </script>
 

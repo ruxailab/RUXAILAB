@@ -1322,6 +1322,7 @@
       "headers": {
         "heuristicsData": "Datos de heurísticas",
         "answersByEvaluator": "Respuestas por evaluador",
+        "timeByHeuristics": "Tiempo por heurísticas",
         "answersByHeuristics": "Respuestas por heurísticas",
         "graphic": "Gráfico",
         "weights": "Pesos"
