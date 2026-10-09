@@ -259,8 +259,8 @@
           <v-row v-if="globalIndex >= 1" class="stepper-row sticky-stepper">
             <v-col cols="12">
               <v-stepper
-                :model-value="stepperValue + 1"
-                class="main-stepper rounded-xl elevation-3"
+                :model-value="activeMainStep"
+                class="main-stepper test-progress-stepper rounded-xl elevation-3"
                 :class="{
                   'stepper-animate':
                     globalIndex === 4 &&
@@ -272,88 +272,96 @@
                   <v-stepper-item
                     :value="1"
                     :title="$t('UserTestView.stepper.consent')"
-                    :complete="stepperValue >= 1"
-                    color="white"
+                    :complete="stepperValue >= 1 && !isCurrentMainStep(1)"
+                    :icon="isCurrentMainStep(1) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
+                    :class="{ 'stepper-item--current': isCurrentMainStep(1) }"
                   />
                   <v-divider />
                   <template v-if="hasPreTest">
                     <v-stepper-item
                       :value="2"
                       :title="$t('UserTestView.stepper.preTest')"
-                      :complete="stepperValue >= 2"
-                      color="white"
+                      :complete="stepperValue >= 2 && !isCurrentMainStep(2)"
+                      :icon="isCurrentMainStep(2) ? 'mdi-pencil' : undefined"
                       complete-icon="mdi-check"
+                      :class="{ 'stepper-item--current': isCurrentMainStep(2) }"
                     />
                     <v-divider />
                   </template>
 
                   <v-stepper-item
                     v-if="hasEyeTracking"
-                    :value="hasPreTest ? 3 : 2"
+                    :value="calibrationStep"
                     :title="$t('UserTestView.stepper.calibration')"
-                    :complete="stepperValue >= (hasPreTest ? 3 : 2)"
-                    color="white"
+                    :complete="
+                      stepperValue >= (hasPreTest ? 3 : 2) &&
+                      !isCurrentMainStep(calibrationStep)
+                    "
+                    :icon="
+                      isCurrentMainStep(calibrationStep)
+                        ? 'mdi-pencil'
+                        : undefined
+                    "
                     complete-icon="mdi-check"
+                    :class="{
+                      'stepper-item--current':
+                        isCurrentMainStep(calibrationStep),
+                    }"
                   />
                   <v-divider v-if="hasEyeTracking" />
 
                   <v-stepper-item
-                    :value="
-                      hasPreTest
-                        ? hasEyeTracking
-                          ? 4
-                          : 3
-                        : hasEyeTracking
-                          ? 3
-                          : 2
-                    "
+                    :value="tasksStep"
                     :title="$t('UserTestView.stepper.tasks')"
-                    :complete="stepperValue >= (hasEyeTracking ? 4 : 3)"
-                    color="white"
+                    :complete="
+                      stepperValue >= (hasEyeTracking ? 4 : 3) &&
+                      !isCurrentMainStep(tasksStep)
+                    "
+                    :icon="isCurrentMainStep(tasksStep) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
+                    :class="{
+                      'stepper-item--current': isCurrentMainStep(tasksStep),
+                    }"
                   />
                   <v-divider />
                   <template v-if="hasPostTest">
                     <v-stepper-item
-                      :value="
-                        hasPreTest
-                          ? hasEyeTracking
-                            ? 5
-                            : 4
-                          : hasEyeTracking
-                            ? 4
-                            : 3
-                      "
+                      :value="postTestStep"
                       :title="$t('UserTestView.stepper.postTest')"
-                      :complete="stepperValue >= (hasEyeTracking ? 5 : 4)"
-                      color="white"
+                      :complete="
+                        stepperValue >= (hasEyeTracking ? 5 : 4) &&
+                        !isCurrentMainStep(postTestStep)
+                      "
+                      :icon="
+                        isCurrentMainStep(postTestStep)
+                          ? 'mdi-pencil'
+                          : undefined
+                      "
                       complete-icon="mdi-check"
+                      :class="{
+                        'stepper-item--current': isCurrentMainStep(postTestStep),
+                      }"
                     />
                     <v-divider />
                   </template>
                   <v-stepper-item
-                    :value="
-                      hasPostTest
-                        ? hasPreTest
-                          ? hasEyeTracking
-                            ? 6
-                            : 5
-                          : hasEyeTracking
-                            ? 5
-                            : 4
-                        : hasPreTest
-                          ? hasEyeTracking
-                            ? 5
-                            : 4
-                          : hasEyeTracking
-                            ? 4
-                            : 3
-                    "
+                    :value="completionStep"
                     :title="$t('UserTestView.stepper.completion')"
-                    :complete="stepperValue === (hasEyeTracking ? 6 : 5)"
-                    color="white"
+                    :complete="
+                      stepperValue === (hasEyeTracking ? 6 : 5) &&
+                      !isCurrentMainStep(completionStep)
+                    "
+                    :icon="
+                      isCurrentMainStep(completionStep)
+                        ? 'mdi-pencil'
+                        : undefined
+                    "
                     complete-icon="mdi-check"
+                    :class="{
+                      'stepper-item--current':
+                        isCurrentMainStep(completionStep),
+                    }"
                   />
                 </v-stepper-header>
               </v-stepper>
@@ -371,7 +379,7 @@
             <v-col cols="12" md="8" lg="6" class="d-flex justify-center">
               <v-stepper
                 :model-value="taskIndex + 1"
-                class="task-stepper rounded-xl elevation-1 w-100"
+                class="task-stepper test-progress-stepper rounded-xl elevation-1 w-100"
                 style="max-width: 100%"
               >
                 <v-stepper-header>
@@ -385,14 +393,11 @@
                         $t('UserTestView.stepper.taskX', { num: idx + 1 })
                       "
                       :complete="taskIndex > idx"
-                      :color="
-                        taskIndex > idx
-                          ? 'success'
-                          : taskIndex === idx
-                            ? 'primary'
-                            : 'grey'
-                      "
+                      :icon="taskIndex === idx ? 'mdi-pencil' : undefined"
                       complete-icon="mdi-check"
+                      :class="{
+                        'stepper-item--current': taskIndex === idx,
+                      }"
                     />
                     <v-divider
                       v-if="idx < test.testStructure.userTasks.length - 1"
@@ -866,6 +871,45 @@ const stepperValue = computed(() => {
 
   return 0
 })
+
+const calibrationStep = computed(() => (hasPreTest.value ? 3 : 2))
+
+const tasksStep = computed(() => {
+  if (hasPreTest.value) return hasEyeTracking.value ? 4 : 3
+  return hasEyeTracking.value ? 3 : 2
+})
+
+const postTestStep = computed(() => {
+  if (hasPreTest.value) return hasEyeTracking.value ? 5 : 4
+  return hasEyeTracking.value ? 4 : 3
+})
+
+const completionStep = computed(() => {
+  if (hasPostTest.value) {
+    if (hasPreTest.value) return hasEyeTracking.value ? 6 : 5
+    return hasEyeTracking.value ? 5 : 4
+  }
+  if (hasPreTest.value) return hasEyeTracking.value ? 5 : 4
+  return hasEyeTracking.value ? 4 : 3
+})
+
+const activeMainStep = computed(() => {
+  if (globalIndex.value <= 1) return 1
+  if (globalIndex.value === 2) return 2
+  if (hasEyeTracking.value) {
+    if (globalIndex.value === 3) return calibrationStep.value
+    if (globalIndex.value === 4 || globalIndex.value === 5) return tasksStep.value
+    if (globalIndex.value === 6) return hasPostTest.value ? postTestStep.value : completionStep.value
+    return completionStep.value
+  }
+  if (globalIndex.value === 3 || globalIndex.value === 4) return tasksStep.value
+  if (globalIndex.value === 5 && !localTestAnswer.postTestCompleted) {
+    return hasPostTest.value ? postTestStep.value : completionStep.value
+  }
+  return completionStep.value
+})
+
+const isCurrentMainStep = (value) => activeMainStep.value === Number(value)
 
 function handleIrisData(data) {
   localTestAnswer.tasks[taskIndex.value].irisTrackingData.push(data)

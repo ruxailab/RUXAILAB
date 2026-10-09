@@ -223,37 +223,56 @@
             <v-col cols="12">
               <v-stepper
                 :model-value="heuristicStepperValue"
-                class="main-stepper rounded-xl elevation-3"
+                class="main-stepper test-progress-stepper rounded-xl elevation-3"
                 style="visibility: visible"
               >
                 <v-stepper-header>
                   <v-stepper-item
-                    value="1"
+                    :value="1"
                     :title="$t('HeuristicsTestView.flow.instructions')"
                     :disabled="currentUserTestAnswer?.submitted"
                     :editable="!currentUserTestAnswer?.submitted"
-                    complete
-                    color="white"
+                    :complete="!isCurrentHeuristicStep(1)"
+                    :icon="
+                      isCurrentHeuristicStep(1) ? 'mdi-pencil' : undefined
+                    "
                     complete-icon="mdi-check"
+                    :class="{
+                      'stepper-item--current': isCurrentHeuristicStep(1),
+                    }"
                     @click="returnToInstructions"
                   />
                   <v-divider />
                   <v-stepper-item
-                    value="2"
+                    :value="2"
                     :title="$t('HeuristicsTestView.flow.heuristicEvaluation')"
                     :complete="
-                      review == false || currentUserTestAnswer?.submitted
+                      (review == false || currentUserTestAnswer?.submitted) &&
+                      !isCurrentHeuristicStep(2)
                     "
-                    color="white"
+                    :icon="
+                      isCurrentHeuristicStep(2) ? 'mdi-pencil' : undefined
+                    "
                     complete-icon="mdi-check"
+                    :class="{
+                      'stepper-item--current': isCurrentHeuristicStep(2),
+                    }"
                   />
                   <v-divider />
                   <v-stepper-item
-                    value="3"
+                    :value="3"
                     :title="$t('HeuristicsTestView.flow.finalSubmission')"
-                    :complete="currentUserTestAnswer?.submitted"
-                    color="white"
+                    :complete="
+                      !!currentUserTestAnswer?.submitted &&
+                      !isCurrentHeuristicStep(3)
+                    "
+                    :icon="
+                      isCurrentHeuristicStep(3) ? 'mdi-pencil' : undefined
+                    "
                     complete-icon="mdi-check"
+                    :class="{
+                      'stepper-item--current': isCurrentHeuristicStep(3),
+                    }"
                   />
                 </v-stepper-header>
               </v-stepper>
@@ -385,17 +404,18 @@
         </v-tooltip>
         <v-tooltip key="submit-tooltip" location="left">
           <template #activator="{ props }">
-            <v-btn
-              v-bind="props"
-              :disabled="calculatedProgress < 100"
-              class="text-white"
-              icon
-              size="small"
-              color="success"
-              @click="dialog = true"
-            >
-              <v-icon>mdi-file-move</v-icon>
-            </v-btn>
+            <span v-bind="props" class="d-inline-flex">
+              <v-btn
+                :disabled="calculatedProgress < 100"
+                class="text-white"
+                icon
+                size="small"
+                color="success"
+                @click="dialog = true"
+              >
+                <v-icon>mdi-file-move</v-icon>
+              </v-btn>
+            </span>
           </template>
           <div>
             <span>{{ $t('HeuristicsTestView.actions.submit') }}</span>
@@ -719,6 +739,9 @@ const heuristicStepperValue = computed(() => {
   if (currentUserTestAnswer.value?.submitted || review.value === false) return 3
   return 2
 })
+
+const isCurrentHeuristicStep = (value) =>
+  Number(heuristicStepperValue.value) === Number(value)
 
 // Status management functions
 const updateSaveStatus = (message, type = 'default') => {

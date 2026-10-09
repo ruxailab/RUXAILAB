@@ -41,26 +41,28 @@
           <v-row v-if="globalIndex >= 1" class="stepper-row sticky-stepper">
             <v-col cols="12">
               <v-stepper
-                :model-value="stepperValue"
-                class="main-stepper rounded-xl elevation-3"
+                :model-value="activeStepperItem"
+                class="main-stepper test-progress-stepper rounded-xl elevation-3"
               >
                 <v-stepper-header>
                   <v-stepper-item
-                    value="1"
+                    :value="1"
                     :title="$t('UserTestView.stepper.consent')"
-                    :complete="stepperValue >= 1"
-                    color="white"
+                    :complete="stepperValue >= 1 && !isCurrentCardStep(1)"
+                    :icon="isCurrentCardStep(1) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
+                    :class="{ 'stepper-item--current': isCurrentCardStep(1) }"
                   />
                   <v-divider />
 
                   <template v-if="hasPreTest">
                     <v-stepper-item
-                      value="2"
+                      :value="2"
                       :title="$t('UserTestView.stepper.preTest')"
-                      :complete="stepperValue >= 2"
-                      color="white"
+                      :complete="stepperValue >= 2 && !isCurrentCardStep(2)"
+                      :icon="isCurrentCardStep(2) ? 'mdi-pencil' : undefined"
                       complete-icon="mdi-check"
+                      :class="{ 'stepper-item--current': isCurrentCardStep(2) }"
                     />
                     <v-divider />
                   </template>
@@ -68,9 +70,20 @@
                   <v-stepper-item
                     :value="hasPreTest ? 3 : 2"
                     :title="$t('UserTestView.stepper.tasks')"
-                    :complete="stepperValue >= 3"
-                    color="white"
+                    :complete="
+                      stepperValue >= 3 && !isCurrentCardStep(hasPreTest ? 3 : 2)
+                    "
+                    :icon="
+                      isCurrentCardStep(hasPreTest ? 3 : 2)
+                        ? 'mdi-pencil'
+                        : undefined
+                    "
                     complete-icon="mdi-check"
+                    :class="{
+                      'stepper-item--current': isCurrentCardStep(
+                        hasPreTest ? 3 : 2,
+                      ),
+                    }"
                   />
                   <v-divider />
 
@@ -78,21 +91,42 @@
                     <v-stepper-item
                       :value="hasPreTest ? 4 : 3"
                       :title="$t('UserTestView.stepper.postTest')"
-                      :complete="stepperValue >= 4"
-                      color="white"
+                      :complete="
+                        stepperValue >= 4 &&
+                        !isCurrentCardStep(hasPreTest ? 4 : 3)
+                      "
+                      :icon="
+                        isCurrentCardStep(hasPreTest ? 4 : 3)
+                          ? 'mdi-pencil'
+                          : undefined
+                      "
                       complete-icon="mdi-check"
+                      :class="{
+                        'stepper-item--current': isCurrentCardStep(
+                          hasPreTest ? 4 : 3,
+                        ),
+                      }"
                     />
                     <v-divider />
                   </template>
 
                   <v-stepper-item
-                    :value="
-                      hasPostTest ? (hasPreTest ? 5 : 4) : hasPreTest ? 4 : 3
-                    "
+                    :value="completionStepValue"
                     :title="$t('UserTestView.stepper.completion')"
-                    :complete="stepperValue >= 4"
-                    color="white"
+                    :complete="
+                      stepperValue >= 4 && !isCurrentCardStep(completionStepValue)
+                    "
+                    :icon="
+                      isCurrentCardStep(completionStepValue)
+                        ? 'mdi-pencil'
+                        : undefined
+                    "
                     complete-icon="mdi-check"
+                    :class="{
+                      'stepper-item--current': isCurrentCardStep(
+                        completionStepValue,
+                      ),
+                    }"
                   />
                 </v-stepper-header>
               </v-stepper>
@@ -448,6 +482,22 @@ const stepperValue = computed(() => {
   if (globalIndex.value === 6 && localAnswer.postTestCompleted) return 4
   return 0
 })
+
+const completionStepValue = computed(() => {
+  if (hasPostTest.value) return hasPreTest.value ? 5 : 4
+  return hasPreTest.value ? 4 : 3
+})
+
+const activeStepperItem = computed(() => {
+  if (globalIndex.value <= 1) return 1
+  if (globalIndex.value === 2) return 2
+  if (globalIndex.value === 4) return hasPreTest.value ? 3 : 2
+  if (globalIndex.value === 5) return hasPreTest.value ? 4 : 3
+  return completionStepValue.value
+})
+
+const isCurrentCardStep = (value) =>
+  activeStepperItem.value === Number(value)
 
 const progress = computed(() => {
   const steps = [

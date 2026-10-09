@@ -73,6 +73,7 @@ import {
 import { getTestViewAccessRedirect } from '@/shared/utils/studyNavigation'
 import { isSignInPath } from '@/shared/utils/authRedirect'
 import { showError } from '@/shared/utils/toast'
+import '@/shared/styles/testProgressStepper.css'
 
 const props = defineProps({
   id: {

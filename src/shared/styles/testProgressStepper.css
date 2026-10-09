@@ -1,0 +1,34 @@
+.test-progress-stepper .v-stepper-item {
+  opacity: 0.65 !important;
+}
+
+.test-progress-stepper .v-stepper-item.stepper-item--current {
+  opacity: 1 !important;
+}
+
+.test-progress-stepper .v-stepper-item__avatar.v-avatar {
+  background-color: rgba(255, 255, 255, 0.35) !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+.test-progress-stepper .stepper-item--current .v-stepper-item__avatar.v-avatar {
+  background-color: #fff !important;
+  color: #00213f !important;
+}
+
+.test-progress-stepper .stepper-item--current .v-stepper-item__avatar .v-icon {
+  color: #00213f !important;
+  font-size: 1rem !important;
+  width: 1rem !important;
+  height: 1rem !important;
+}
+
+.test-progress-stepper .v-stepper-header .v-stepper-item__title {
+  color: rgba(255, 255, 255, 0.55) !important;
+  font-weight: 400 !important;
+}
+
+.test-progress-stepper .v-stepper-header .stepper-item--current .v-stepper-item__title {
+  color: #fff !important;
+  font-weight: 700 !important;
+}
