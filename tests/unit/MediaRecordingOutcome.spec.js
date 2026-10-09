@@ -31,6 +31,7 @@ const VideoRecorder =
   require('@/ux/UserTest/components/VideoRecorder.vue').default
 const ScreenRecorder =
   require('@/ux/UserTest/components/ScreenRecorder.vue').default
+const { showError, showWarning } = require('@/shared/utils/toast')
 
 const cases = [
   ['audio', AudioRecorder, 'startAudioRecording', 'stopAudioRecording'],
@@ -51,6 +52,7 @@ describe.each(cases)(
   (mediaType, Component, start, stop) => {
     let wrapper, stream, track, recorders
     beforeEach(() => {
+      jest.clearAllMocks()
       track = { stop: jest.fn() }
       stream = { getTracks: () => [track], getVideoTracks: () => [track] }
       Object.defineProperty(navigator, 'mediaDevices', {
@@ -149,6 +151,13 @@ describe.each(cases)(
         },
       ])
       expect(MediaRecorder).not.toHaveBeenCalled()
+      if (mediaType === 'screen') {
+        expect(showWarning).toHaveBeenCalledWith('errors.screenShare.cancelled')
+      } else {
+        expect(showError).toHaveBeenCalledWith(
+          'errors.recordingFailure.permissionDenied',
+        )
+      }
       await wrapper.vm[start]()
       data()
       wrapper.vm[stop]()
@@ -170,6 +179,13 @@ describe.each(cases)(
         stage: 'permission',
         reason: mediaType === 'screen' ? 'unsupported' : 'deviceUnavailable',
       })
+      if (mediaType === 'screen') {
+        expect(showError).toHaveBeenCalledWith('errors.screenShare.unsupported')
+      } else {
+        expect(showWarning).toHaveBeenCalledWith(
+          'errors.recordingFailure.deviceUnavailable',
+        )
+      }
       expect(uploadBytes).not.toHaveBeenCalled()
     })
 
@@ -183,8 +199,28 @@ describe.each(cases)(
         stage: 'capture',
         reason: 'captureError',
       })
+      expect(showError).toHaveBeenCalledWith(
+        'errors.recordingFailure.captureError',
+      )
       expect(track.stop).toHaveBeenCalled()
       expect(uploadBytes).not.toHaveBeenCalled()
+    })
+
+    it('shows a media-specific message when uploading the recording fails', async () => {
+      uploadBytes.mockRejectedValueOnce(new Error('private upload details'))
+      await wrapper.vm[start]()
+      data()
+      wrapper.vm[stop]()
+      await flushPromises()
+
+      expect(showError).toHaveBeenCalledWith(
+        'errors.recordingFailure.uploadError',
+      )
+      expect(results()[0]).toMatchObject({
+        outcome: 'failed',
+        stage: 'upload',
+        reason: 'uploadError',
+      })
     })
 
     it('does not upload or complete after a recorder error, even if stop fires repeatedly', async () => {

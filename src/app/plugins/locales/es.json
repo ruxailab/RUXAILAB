@@ -733,6 +733,18 @@
     "globalError": "Ha ocurrido un error, disculpa las molestias.",
     "cameraNotAvailable": "No se detectó ninguna cámara. La prueba continuará sin grabación de webcam.",
     "cameraPermissionDenied": "Se requiere acceso a la cámara para continuar. Por favor, permita el acceso a la cámara en la configuración de su navegador.",
+    "recordingMedia": {
+      "webcam": "La cámara web",
+      "audio": "El micrófono",
+      "screen": "La pantalla"
+    },
+    "recordingFailure": {
+      "permissionDenied": "No se pudo grabar {media} porque se denegó el permiso. Revisa los permisos del navegador e inténtalo de nuevo.",
+      "deviceUnavailable": "No se pudo iniciar la grabación de {media} porque no se encontró el dispositivo.",
+      "captureError": "Ocurrió un error al capturar {media}. Puedes continuar sin esta grabación.",
+      "emptyRecording": "No se capturaron datos para la grabación de {media}.",
+      "uploadError": "No se pudo guardar la grabación de {media}. Revisa tu conexión e inténtalo de nuevo."
+    },
     "sendError": "No se pudo enviar la invitación. Por favor, intenta de nuevo.",
     "missingVariableTitles": "No se puede guardar: Algunas variables no tienen título",
     "failedToLoadAnswers": "Error al cargar respuestas",
