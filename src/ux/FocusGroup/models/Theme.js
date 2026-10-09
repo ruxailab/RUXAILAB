@@ -2,8 +2,8 @@
  * A theme grouping response excerpts pulled from one or more finished
  * sessions — either authored manually by the facilitator, or suggested by
  * the Tier 1 NLP pipeline (`source: 'nlp'`, from theme clustering). Both
- * kinds are edited identically in `ThematicEditor.vue`'s drag-and-drop
- * board; `source` only changes how it's badged.
+ * manually authored themes are edited in `ThematicEditor.vue`. NLP themes
+ * are suggestions kept separately until a facilitator explicitly adopts one.
  *
  * @param {string} label - Theme name (e.g. "Navigation confusion").
  * @param {Array} responseRefs - [{ sessionId, topicId, messageId, participantId, excerpt }]

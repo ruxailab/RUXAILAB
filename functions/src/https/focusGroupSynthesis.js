@@ -40,7 +40,10 @@ function analysisContext({ study, session }) {
         .slice(0, 8)
         .join(', ')
       const summary = String(analysis?.summary ?? '').slice(0, 800)
-      return `Topic: ${String(guide.get(topicId) ?? topicId).slice(0, 160)}\nKeywords: ${keywords}\nSummary: ${summary}\nConsensus score: ${Number(analysis?.consensus?.score ?? 0).toFixed(2)}`
+      const consensus = Number.isFinite(analysis?.consensus?.score)
+        ? Number(analysis.consensus.score).toFixed(2)
+        : 'not enough participant responses to calculate'
+      return `Topic: ${String(guide.get(topicId) ?? topicId).slice(0, 160)}\nKeywords: ${keywords}\nSummary: ${summary}\nParticipant wording similarity (not agreement): ${consensus}`
     })
     .join('\n\n')
 }
@@ -98,7 +101,7 @@ export const synthesizeFocusGroupAnalysis = functions.onCall({
           {
             role: 'system',
             content:
-              'You help a UX researcher synthesize focus-group findings. Use only the supplied summaries, keywords, and consensus scores. Do not invent participant quotes, demographics, or causes. Give a concise evidence-grounded synthesis with key themes, disagreements, and limitations. Clearly label inferences.',
+              'You help a UX researcher synthesize focus-group findings. Use only the supplied summaries, keywords, and participant wording-similarity scores. Similarity is not agreement: do not infer consensus or disagreement from that score alone. Do not invent participant quotes, demographics, or causes. Give a concise evidence-grounded synthesis with key themes, notable differences explicitly present in the summaries, and limitations. Clearly label inferences.',
           },
           { role: 'user', content: context.slice(0, 12_000) },
         ],

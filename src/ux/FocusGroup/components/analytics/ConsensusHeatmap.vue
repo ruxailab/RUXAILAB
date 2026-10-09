@@ -1,5 +1,5 @@
 <template>
-  <div v-if="topics.length && participants.length" class="consensus-heatmap">
+  <div v-if="topics.length && participants.length >= 2" class="consensus-heatmap">
     <table class="consensus-heatmap__table">
       <thead>
         <tr>
@@ -27,7 +27,13 @@
         </tr>
       </tbody>
     </table>
+    <p class="text-caption text-medium-emphasis mt-2 mb-0">
+      {{ $t('focusGroup.analytics.consensusSimilarityHint') }}
+    </p>
   </div>
+  <p v-else-if="participants.length === 1" class="text-medium-emphasis mb-0">
+    {{ $t('focusGroup.analytics.consensusNeedsParticipants') }}
+  </p>
   <p v-else class="text-medium-emphasis mb-0">
     {{ $t('focusGroup.analytics.noAnalysisYet') }}
   </p>
@@ -55,17 +61,19 @@ function formatScore(score) {
 
 function cellTitle(topicId, participantId) {
   const score = scoreFor(topicId, participantId)
-  return score == null
-    ? t('focusGroup.analytics.noAnalysisYet')
-    : `${formatScore(score)} ${t('focusGroup.analysis.consensusScore').toLowerCase()}`
+  if (score == null) return t('focusGroup.analytics.consensusUnavailableHint')
+  if (score === 0) {
+    return `${formatScore(score)} ${t('focusGroup.analysis.consensusScore').toLowerCase()} — ${t('focusGroup.analytics.consensusZeroHint')}`
+  }
+  return `${formatScore(score)} ${t('focusGroup.analysis.consensusScore').toLowerCase()}`
 }
 
-// Red (low alignment) through amber to green (high alignment), fading to a
-// neutral gray when there's no score yet for that cell.
+// Similarity is lexical evidence, not agreement. Use a neutral surface for
+// zero overlap and a restrained single-hue tint for increasing overlap.
 function colorFor(score) {
-  if (score == null) return 'rgba(var(--v-theme-on-surface), 0.05)'
-  const hue = Math.max(0, Math.min(120, score * 120))
-  return `hsla(${hue}, 65%, 50%, 0.28)`
+  if (score == null || score === 0) return 'rgba(var(--v-theme-on-surface), 0.05)'
+  const opacity = Math.min(0.2, 0.04 + Math.max(0, Math.min(1, score)) * 0.16)
+  return `rgba(var(--v-theme-primary), ${opacity})`
 }
 </script>
 

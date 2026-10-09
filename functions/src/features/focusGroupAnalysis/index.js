@@ -26,7 +26,9 @@ export function runAnalysisPipeline(session) {
   Object.entries(byTopic).forEach(([topicId, responses]) => {
     const topicText = responses.map((r) => r.text).join(' ')
     perTopic[topicId] = {
-      keywords: extractKeywords(topicText),
+      // Keep participant boundaries so phrase support can be counted per
+      // person rather than letting one verbose participant dominate RAKE.
+      keywords: extractKeywords(responses),
       summary: summarize(topicText),
       consensus: computeConsensus(responses),
     }

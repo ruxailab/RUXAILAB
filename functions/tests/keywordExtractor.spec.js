@@ -1,14 +1,46 @@
 import { extractKeywords } from '../src/features/focusGroupAnalysis/keywordExtractor.js'
 
 describe('extractKeywords', () => {
-  it('ranks phrases built from a repeated term above an unrelated single word', () => {
+  it('keeps informative multi-word phrases and drops isolated generic words', () => {
     const text =
       'Navigation confusion is the main issue. Users reported navigation confusion on every page. The layout itself is fine.'
     const keywords = extractKeywords(text, { maxKeywords: 5 })
     expect(keywords).toContain('navigation confusion')
-    expect(keywords.indexOf('navigation confusion')).toBeLessThan(
-      keywords.indexOf('layout'),
+    expect(keywords).not.toContain('layout')
+    expect(keywords).not.toContain('fine')
+  })
+
+  it('filters generic reactions and modifiers while retaining useful UX concepts', () => {
+    const text =
+      'The layout felt clean and easy to scan. I noticed the color contrast right away — nice. Took me a second to find the search bar. The checkout flow had too many steps. I liked the autosave — never lost my progress. The confirmation screen was confusing, unclear what happened next. A summary before the final submit would help.'
+    const keywords = extractKeywords(text, { maxKeywords: 12 })
+
+    expect(keywords).toEqual(
+      expect.arrayContaining([
+        'layout clean',
+        'color contrast',
+        'search bar',
+        'checkout flow',
+        'too many steps',
+        'summary before final submit',
+        'confirmation screen confusing',
+        'autosave never lost progress',
+      ]),
     )
+    expect(keywords).not.toContain('easy')
+    expect(keywords).not.toContain('scan')
+    expect(keywords).not.toContain('many steps')
+    expect(keywords).not.toContain('final submit')
+    expect(keywords).not.toContain('happened next')
+    expect(keywords.every((phrase) => phrase.split(' ').length > 1)).toBe(true)
+    expect(keywords.slice(0, 3)).toEqual(
+      expect.arrayContaining([
+        'too many steps',
+        'summary before final submit',
+        'confirmation screen confusing',
+      ]),
+    )
+    expect(keywords.indexOf('too many steps')).toBeLessThan(keywords.indexOf('checkout flow'))
   })
 
   it('keeps phrase boundaries at sentence punctuation instead of merging across sentences', () => {

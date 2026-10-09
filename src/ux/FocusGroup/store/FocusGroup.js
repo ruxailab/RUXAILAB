@@ -56,8 +56,9 @@ export default {
 
     /**
      * Tier 1 ($0, always-available) NLP analysis for one finished session:
-     * per-topic keywords/summary/consensus plus NLP-suggested themes merged
-     * into the study's theme board. Runs server-side (facilitator-only,
+     * per-topic keywords/summary/consensus plus separate NLP theme
+     * suggestions. Suggestions are not applied to the manual theme board
+     * unless a facilitator explicitly adopts one. Runs server-side (facilitator-only,
      * enforced by the Cloud Function itself) and returns the full result so
      * the view can render immediately without a second read.
      */

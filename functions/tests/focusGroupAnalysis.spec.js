@@ -47,7 +47,7 @@ jest.unstable_mockModule('../src/core/firebase/f.firebase.js', () => ({
   },
 }))
 
-const { runFocusGroupAnalysis, mergeThemes } = await import(
+const { runFocusGroupAnalysis } = await import(
   '../src/https/focusGroupAnalysis.js'
 )
 
@@ -108,7 +108,12 @@ describe('runFocusGroupAnalysis', () => {
 
   it('allows the study owner (testAdmin) and writes the analysis back to the answer doc', async () => {
     mockStudies.set('s1', study())
-    mockAnswers.set('a1', { sessions: { 'session-1': session() } })
+    mockAnswers.set('a1', {
+      themes: [{ id: 'manual-theme', source: 'manual' }],
+      sessions: {
+        'session-1': session({ analysis: { deepAnalysis: { text: 'saved synthesis' } } }),
+      },
+    })
 
     const result = await runFocusGroupAnalysis(
       request('facilitator', { studyId: 's1', answersDocId: 'a1', sessionId: 'session-1' }),
@@ -116,8 +121,45 @@ describe('runFocusGroupAnalysis', () => {
 
     expect(result.perTopic['topic-1'].keywords.length).toBeGreaterThan(0)
     expect(updates).toHaveLength(1)
-    expect(updates[0].data['sessions.session-1.analysis'].perTopic).toEqual(result.perTopic)
-    expect(updates[0].data.themes).toEqual(result.themes)
+    const savedAnalysis = updates[0].data['sessions.session-1.analysis']
+    expect(savedAnalysis.perTopic).toEqual(result.perTopic)
+    expect(savedAnalysis.suggestedThemes).toEqual(result.suggestedThemes)
+    expect(savedAnalysis.deepAnalysis).toEqual({ text: 'saved synthesis' })
+    expect(updates[0].data).not.toHaveProperty('themes')
+    expect(result).not.toHaveProperty('themes')
+  })
+
+  it('keeps each topic in the result and marks topics with one respondent as not comparable', async () => {
+    mockStudies.set('s1', study())
+    mockAnswers.set('a1', {
+      sessions: {
+        'session-1': session({
+          participants: {
+            p1: { accessLevel: 1, role: 'Participant' },
+            p2: { accessLevel: 1, role: 'Participant' },
+          },
+          messages: {
+            'topic-1': {
+              'msg-1': { userId: 'p1', text: 'Navigation is difficult to use.', timestamp: 1 },
+              'msg-2': { userId: 'p2', text: 'Navigation is difficult to understand.', timestamp: 2 },
+            },
+            'topic-2': {
+              'msg-3': { userId: 'p1', text: 'The checkout process was quick.', timestamp: 3 },
+            },
+          },
+        }),
+      },
+    })
+
+    const result = await runFocusGroupAnalysis(
+      request('facilitator', { studyId: 's1', answersDocId: 'a1', sessionId: 'session-1' }),
+    )
+
+    expect(Object.keys(result.perTopic).sort()).toEqual(['topic-1', 'topic-2'])
+    expect(result.perTopic['topic-1'].consensus.respondentCount).toBe(2)
+    expect(result.perTopic['topic-1'].consensus.score).not.toBeNull()
+    expect(result.perTopic['topic-2'].consensus.respondentCount).toBe(1)
+    expect(result.perTopic['topic-2'].consensus.score).toBeNull()
   })
 
   it('rejects an answers document owned by another study before reading or writing it', async () => {
@@ -165,8 +207,10 @@ describe('runFocusGroupAnalysis', () => {
       request('facilitator', { studyId: 's1', answersDocId: 'a1', sessionId: 'session-1' }),
     )
 
-    const refs = result.suggestedThemes.flatMap((theme) => theme.responseRefs)
-    expect(refs.map((ref) => ref.participantId).sort()).toEqual(['p1', 'p2'])
+    // Two participant messages are too few to support a useful theme suggestion.
+    // The analysis should still summarize the eligible participant messages only.
+    expect(result.suggestedThemes).toEqual([])
+    expect(result.perTopic['topic-1'].summary).toContain('Navigation menu')
     expect(result.perTopic['topic-1'].summary).not.toContain('Please discuss')
     expect(result.perTopic['topic-1'].summary).not.toContain('I agree with the prompt')
   })
@@ -178,22 +222,5 @@ describe('runFocusGroupAnalysis', () => {
     await expect(
       runFocusGroupAnalysis(request('caller', { studyId: 's1', answersDocId: 'a1', sessionId: 'session-1' })),
     ).resolves.toBeDefined()
-  })
-})
-
-describe('mergeThemes', () => {
-  it('replaces prior NLP themes from the same session, keeps manual themes untouched', () => {
-    const existingThemes = [
-      { id: 'manual-1', source: 'manual', responseRefs: [{ sessionId: 'session-1' }] },
-      { id: 'nlp-theme-0', source: 'nlp', responseRefs: [{ sessionId: 'session-1' }] },
-      { id: 'nlp-theme-1', source: 'nlp', responseRefs: [{ sessionId: 'session-2' }] },
-    ]
-    const suggestedThemes = [{ id: 'nlp-theme-0', source: 'nlp', responseRefs: [{ sessionId: 'session-1' }] }]
-
-    const merged = mergeThemes({ existingThemes, suggestedThemes, sessionId: 'session-1' })
-
-    expect(merged).toContainEqual(existingThemes[0]) // manual, untouched
-    expect(merged).toContainEqual(existingThemes[2]) // nlp from a different session, untouched
-    expect(merged.filter((t) => t.id === 'nlp-theme-0')).toHaveLength(1) // replaced, not duplicated
   })
 })

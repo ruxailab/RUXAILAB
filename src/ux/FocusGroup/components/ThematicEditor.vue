@@ -1,5 +1,58 @@
 <template>
   <div class="thematic-editor">
+    <section v-if="suggestions.length" class="thematic-editor__suggestions mb-5">
+      <div class="d-flex align-center ga-2 mb-3">
+        <v-icon icon="mdi-lightbulb-on-outline" color="secondary" size="20" />
+        <div>
+          <div class="text-subtitle-1 font-weight-medium">
+            {{ $t('focusGroup.answers.themeSuggestionsTitle') }}
+          </div>
+          <div class="text-caption text-medium-emphasis">
+            {{ $t('focusGroup.answers.themeSuggestionsHint') }}
+          </div>
+        </div>
+      </div>
+      <div class="thematic-editor__suggestion-list">
+        <v-card
+          v-for="suggestion in suggestions"
+          :key="suggestion.id"
+          variant="outlined"
+          rounded="lg"
+          class="pa-3"
+        >
+          <div class="d-flex align-start justify-space-between ga-3">
+            <div class="min-width-0">
+              <div class="text-body-1 font-weight-medium">{{ suggestion.label }}</div>
+              <div class="text-caption text-medium-emphasis mt-1">
+                {{ $t('focusGroup.answers.suggestionResponseCount', { count: suggestion.responseRefs?.length ?? 0 }) }}
+              </div>
+              <div v-if="suggestion.keywords?.length" class="d-flex flex-wrap ga-1 mt-2">
+                <v-chip
+                  v-for="keyword in suggestion.keywords"
+                  :key="keyword"
+                  size="x-small"
+                  variant="tonal"
+                  color="secondary"
+                >
+                  {{ keyword }}
+                </v-chip>
+              </div>
+            </div>
+            <v-btn
+              size="small"
+              variant="tonal"
+              color="primary"
+              class="text-none flex-shrink-0"
+              :disabled="isSuggestionAdded(suggestion)"
+              @click="addSuggestion(suggestion)"
+            >
+              {{ $t(isSuggestionAdded(suggestion) ? 'focusGroup.answers.suggestionAdded' : 'focusGroup.answers.useSuggestion') }}
+            </v-btn>
+          </div>
+        </v-card>
+      </div>
+    </section>
+
     <div class="thematic-editor__toolbar d-flex align-center ga-2 mb-4">
       <v-icon icon="mdi-shape-plus-outline" color="primary" size="20" />
       <v-text-field
@@ -65,15 +118,6 @@
           <v-chip size="x-small" variant="flat" color="primary" class="ml-1">
             {{ (buckets[theme.id] || []).length }}
           </v-chip>
-          <v-chip
-            v-if="theme.source === 'nlp'"
-            size="x-small"
-            variant="flat"
-            color="secondary"
-            class="ml-1"
-          >
-            {{ $t('focusGroup.analysis.suggested') }}
-          </v-chip>
           <v-spacer />
           <v-btn
             icon="mdi-delete-outline"
@@ -122,6 +166,8 @@ const props = defineProps({
   session: { type: Object, required: true },
   // All themes for the study (may include refs from other sessions).
   modelValue: { type: Array, default: () => [] },
+  // NLP suggestions are kept separate until a facilitator explicitly adopts one.
+  suggestions: { type: Array, default: () => [] },
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -165,6 +211,24 @@ const addTheme = () => {
   emit('update:modelValue', nextThemes)
 }
 
+const isSuggestionAdded = (suggestion) =>
+  themes.value.some((theme) => theme.id === suggestion.id)
+
+const addSuggestion = (suggestion) => {
+  if (isSuggestionAdded(suggestion)) return
+  const nextThemes = themesFromBuckets(themes.value, buckets, props.session.sessionId)
+  nextThemes.push({
+    id: suggestion.id,
+    label: suggestion.label,
+    source: 'manual',
+    keywords: suggestion.keywords ?? [],
+    responseRefs: (suggestion.responseRefs ?? []).filter(
+      (ref) => ref.sessionId === props.session.sessionId,
+    ),
+  })
+  emit('update:modelValue', nextThemes)
+}
+
 const removeTheme = (themeId) => {
   const nextThemes = themesFromBuckets(themes.value, buckets, props.session.sessionId).filter(
     (theme) => theme.id !== themeId,
@@ -192,17 +256,23 @@ const onChange = () => {
 }
 
 .thematic-editor__board {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 16px;
-  overflow-x: auto;
   padding-bottom: 8px;
 }
 
 .thematic-editor__column {
-  flex: 0 0 250px;
   display: flex;
   flex-direction: column;
   min-height: 0;
+  min-width: 0;
+}
+
+.thematic-editor__suggestion-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 12px;
 }
 
 .thematic-editor__column-header {

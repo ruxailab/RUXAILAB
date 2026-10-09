@@ -15,19 +15,6 @@ function isFacilitator({ study, uid, isSuperAdmin }) {
   return study?.studyRoleMap?.[uid] === ACCESS_LEVEL_ADMIN
 }
 
-/** Replaces any NLP-suggested themes generated from this session on a prior
- * run, leaves every manually authored theme untouched. */
-export function mergeThemes({ existingThemes, suggestedThemes, sessionId }) {
-  const preserved = (existingThemes ?? []).filter((theme) => {
-    const isNlpFromThisSession =
-      theme.source === 'nlp' &&
-      (theme.responseRefs ?? []).length > 0 &&
-      (theme.responseRefs ?? []).every((ref) => ref.sessionId === sessionId)
-    return !isNlpFromThisSession
-  })
-  return [...preserved, ...suggestedThemes]
-}
-
 export const runFocusGroupAnalysis = functions.onCall({
   handler: async (request) => {
     const uid = request?.auth?.uid
@@ -98,20 +85,15 @@ export const runFocusGroupAnalysis = functions.onCall({
       participantIds,
     })
 
-    const themes = mergeThemes({
-      existingThemes: answer.themes,
-      suggestedThemes,
-      sessionId,
-    })
-
     await answerRef.update({
       [`sessions.${sessionId}.analysis`]: {
+        ...(session.analysis ?? {}),
         perTopic,
+        suggestedThemes,
         generatedAt: admin.firestore.FieldValue.serverTimestamp(),
       },
-      themes,
     })
 
-    return { perTopic, suggestedThemes, themes }
+    return { perTopic, suggestedThemes }
   },
 })

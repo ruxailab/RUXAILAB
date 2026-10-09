@@ -5,7 +5,12 @@
       :key="entry.userId"
       class="participant-engagement__row"
     >
-      <span class="participant-engagement__name text-truncate">{{ entry.name }}</span>
+      <div class="participant-engagement__identity">
+        <span class="participant-engagement__name text-truncate">{{ entry.name }}</span>
+        <span class="participant-engagement__count text-medium-emphasis">
+          {{ $t('focusGroup.analytics.messageCount', { count: entry.messageCount }) }}
+        </span>
+      </div>
       <v-progress-linear
         :model-value="entry.percent"
         color="primary"
@@ -38,8 +43,18 @@ defineProps({
 }
 
 .participant-engagement__name {
-  flex: 0 0 140px;
+  display: block;
   font-size: 0.85rem;
+}
+
+.participant-engagement__identity {
+  flex: 0 0 170px;
+  min-width: 0;
+}
+
+.participant-engagement__count {
+  display: block;
+  font-size: 0.72rem;
 }
 
 .participant-engagement__bar {

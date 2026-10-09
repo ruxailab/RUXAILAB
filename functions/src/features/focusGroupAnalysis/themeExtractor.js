@@ -1,8 +1,14 @@
 import { computeTfIdf, cosineSimilarity, tokenize } from './textVectorize.js'
+import { extractKeywords } from './keywordExtractor.js'
+
+const MIN_MESSAGES_PER_TOPIC = 5
+const MIN_PARTICIPANTS_PER_TOPIC = 3
+const MIN_PARTICIPANTS_PER_SUGGESTION = 2
+const MIN_CLUSTER_SIMILARITY = 0.12
 
 /**
- * TF-IDF + K-means theme clustering, operating at individual-message
- * granularity so each suggested theme's `responseRefs` point at the same
+ * Topic-scoped TF-IDF + K-means candidate grouping, operating at
+ * individual-message granularity so each suggested theme's `responseRefs` point at the same
  * (sessionId, topicId, messageId) triples the manual ThematicEditor board
  * uses — an NLP-suggested theme is just a `Theme` with `source: 'nlp'`,
  * editable/mergeable in the same drag-and-drop UI as a manually authored one.
@@ -15,42 +21,107 @@ export function extractThemes(messages, { k, keywordsPerTheme = 4 } = {}) {
   const nonEmpty = messages.filter((m) => m.text && m.text.trim())
   if (nonEmpty.length === 0) return []
 
-  // Roughly one theme per three messages, bounded to a reviewable range and
-  // never more than there are messages to cluster.
-  const defaultK = Math.round(nonEmpty.length / 3) || 1
-  const chosenK = Math.max(1, Math.min(k ?? defaultK, 5, nonEmpty.length))
-
-  const vectors = computeTfIdf(nonEmpty.map((m) => tokenize(m.text)))
-  const assignments = kmeans(vectors, chosenK)
-
-  const clusters = new Map()
-  assignments.forEach((clusterIndex, i) => {
-    if (!clusters.has(clusterIndex)) clusters.set(clusterIndex, [])
-    clusters.get(clusterIndex).push(i)
+  // Never cluster across discussion topics: shared words across unrelated
+  // prompts otherwise create convincing-looking but meaningless groups.
+  const byTopic = new Map()
+  nonEmpty.forEach((message) => {
+    const topicMessages = byTopic.get(message.topicId) ?? []
+    topicMessages.push(message)
+    byTopic.set(message.topicId, topicMessages)
   })
 
-  return [...clusters.entries()].map(([clusterIndex, indices]) => {
-    const members = indices.map((i) => nonEmpty[i])
-    const memberVectors = indices.map((i) => vectors[i])
-    const keywords = topTerms(memberVectors, keywordsPerTheme)
+  return [...byTopic.entries()].flatMap(([topicId, topicMessages]) => {
+    const participantCount = new Set(topicMessages.map((m) => m.participantId)).size
 
-    return {
-      // Theme IDs live at the study-wide answer-document level; scope them
-      // to this session so cluster 0 from two sessions cannot collide.
-      id: `${String(nonEmpty[0].sessionId).replace(/[^a-zA-Z0-9_-]/g, '-')}-nlp-theme-${clusterIndex}`,
-      label: keywords.slice(0, 2).join(' ') || `Theme ${clusterIndex + 1}`,
-      keywords,
-      responseRefs: members.map((m) => ({
-        sessionId: m.sessionId,
-        topicId: m.topicId,
-        messageId: m.messageId,
-        participantId: m.participantId,
-        excerpt: m.text,
-      })),
-      frequency: new Set(members.map((m) => m.participantId)).size,
-      source: 'nlp',
+    // Small focus-group samples do not provide enough evidence for automatic
+    // clustering. Keep the literal phrase suggestions available elsewhere,
+    // and let the researcher create themes manually in these cases.
+    if (
+      topicMessages.length < MIN_MESSAGES_PER_TOPIC ||
+      participantCount < MIN_PARTICIPANTS_PER_TOPIC
+    ) {
+      return []
     }
+
+    const defaultK = Math.max(2, Math.round(topicMessages.length / 3))
+    const chosenK = Math.max(2, Math.min(k ?? defaultK, 5, topicMessages.length))
+    const vectors = computeTfIdf(topicMessages.map((m) => tokenize(m.text)))
+    const assignments = kmeans(vectors, chosenK)
+
+    const clusters = new Map()
+    assignments.forEach((clusterIndex, i) => {
+      if (!clusters.has(clusterIndex)) clusters.set(clusterIndex, [])
+      clusters.get(clusterIndex).push(i)
+    })
+
+    return [...clusters.entries()].flatMap(([clusterIndex, indices]) => {
+      const members = indices.map((i) => topicMessages[i])
+      const memberVectors = indices.map((i) => vectors[i])
+      const distinctParticipants = new Set(members.map((m) => m.participantId))
+
+      // A suggestion must be supported by more than one person and show at
+      // least modest lexical cohesion. K-means always assigns every item, so
+      // this gate prevents it from presenting every forced cluster as a theme.
+      if (
+        distinctParticipants.size < MIN_PARTICIPANTS_PER_SUGGESTION ||
+        meanPairwiseSimilarity(memberVectors) < MIN_CLUSTER_SIMILARITY
+      ) {
+        return []
+      }
+
+      const keywords = topTerms(memberVectors, keywordsPerTheme)
+      const phrases = extractKeywords(
+        members.map((member) => member.text).join('. '),
+        { maxKeywords: keywordsPerTheme },
+      )
+      const phraseLabel = phrases
+        .map((phrase) => phrase.trim().split(/\s+/))
+        .flatMap((words) => {
+          const windows = []
+          for (let size = words.length; size >= 2; size -= 1) {
+            for (let start = 0; start <= words.length - size; start += 1) {
+              windows.push(words.slice(start, start + size).join(' '))
+            }
+          }
+          return windows
+        })
+        .find((phrase) => members.some((member) =>
+          member.text.toLowerCase().includes(phrase),
+        ))
+      const safeSessionId = String(members[0].sessionId).replace(/[^a-zA-Z0-9_-]/g, '-')
+      const safeTopicId = String(topicId).replace(/[^a-zA-Z0-9_-]/g, '-')
+
+      return [{
+        // Theme IDs live at the study-wide answer-document level; scope them
+        // to both session and topic so independent clusters cannot collide.
+        id: `${safeSessionId}-nlp-${safeTopicId}-theme-${clusterIndex}`,
+        label: phraseLabel || 'Related responses',
+        keywords,
+        responseRefs: members.map((m) => ({
+          sessionId: m.sessionId,
+          topicId: m.topicId,
+          messageId: m.messageId,
+          participantId: m.participantId,
+          excerpt: m.text,
+        })),
+        frequency: distinctParticipants.size,
+        source: 'nlp',
+      }]
+    })
   })
+}
+
+function meanPairwiseSimilarity(vectors) {
+  if (vectors.length < 2) return 0
+  let total = 0
+  let pairs = 0
+  for (let i = 0; i < vectors.length; i += 1) {
+    for (let j = i + 1; j < vectors.length; j += 1) {
+      total += cosineSimilarity(vectors[i], vectors[j])
+      pairs += 1
+    }
+  }
+  return total / pairs
 }
 
 /** Lloyd's K-means over sparse TF-IDF vectors using cosine similarity. */
