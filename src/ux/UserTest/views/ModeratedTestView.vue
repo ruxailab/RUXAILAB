@@ -228,7 +228,7 @@
             <v-col cols="12">
               <v-stepper
                 :model-value="stepperValue"
-                class="main-stepper rounded-xl elevation-3"
+                class="main-stepper test-progress-stepper rounded-xl elevation-3"
                 :class="{
                   'stepper-animate':
                     globalIndex === 4 &&
@@ -240,71 +240,48 @@
                   <v-stepper-item
                     :value="1"
                     :title="$t('UserTestView.stepper.consent')"
-                    :complete="completedSteps.consent"
-                    :color="
-                      completedSteps.consent
-                        ? 'success'
-                        : stepperValue === 1
-                          ? 'warning'
-                          : 'primary'
-                    "
+                    :complete="completedSteps.consent && !isCurrentMainStep(1)"
+                    :icon="isCurrentMainStep(1) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
+                    :class="{ 'stepper-item--current': isCurrentMainStep(1) }"
                   />
                   <v-divider />
                   <v-stepper-item
                     :value="2"
                     :title="$t('UserTestView.stepper.preTest')"
-                    :complete="completedSteps.preTest"
-                    :color="
-                      completedSteps.preTest
-                        ? 'success'
-                        : stepperValue === 2
-                          ? 'warning'
-                          : 'primary'
-                    "
+                    :complete="completedSteps.preTest && !isCurrentMainStep(2)"
+                    :icon="isCurrentMainStep(2) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
+                    :class="{ 'stepper-item--current': isCurrentMainStep(2) }"
                   />
                   <v-divider />
                   <v-stepper-item
                     :value="3"
                     :title="$t('UserTestView.stepper.tasks')"
-                    :complete="completedSteps.tasks"
-                    :color="
-                      completedSteps.tasks
-                        ? 'success'
-                        : stepperValue === 3
-                          ? 'warning'
-                          : 'primary'
-                    "
+                    :complete="completedSteps.tasks && !isCurrentMainStep(3)"
+                    :icon="isCurrentMainStep(3) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
+                    :class="{ 'stepper-item--current': isCurrentMainStep(3) }"
                   />
                   <v-divider />
                   <v-stepper-item
                     :value="4"
                     :title="$t('UserTestView.stepper.postTest')"
-                    :complete="completedSteps.postTest"
-                    :color="
-                      completedSteps.postTest
-                        ? 'success'
-                        : stepperValue === 4
-                          ? 'warning'
-                          : 'primary'
-                    "
+                    :complete="completedSteps.postTest && !isCurrentMainStep(4)"
+                    :icon="isCurrentMainStep(4) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
+                    :class="{ 'stepper-item--current': isCurrentMainStep(4) }"
                   />
                   <v-divider />
                   <v-stepper-item
                     :value="5"
                     :title="$t('UserTestView.stepper.completion')"
-                    :complete="completedSteps.completion"
-                    :color="
-                      completedSteps.completion
-                        ? 'success'
-                        : stepperValue === 5
-                          ? 'warning'
-                          : 'primary'
+                    :complete="
+                      completedSteps.completion && !isCurrentMainStep(5)
                     "
+                    :icon="isCurrentMainStep(5) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
+                    :class="{ 'stepper-item--current': isCurrentMainStep(5) }"
                   />
                 </v-stepper-header>
               </v-stepper>
@@ -324,7 +301,7 @@
             <v-col cols="12" md="8" lg="6" class="d-flex justify-center">
               <v-stepper
                 :model-value="taskIndex + 1"
-                class="task-stepper rounded-xl elevation-2"
+                class="task-stepper test-progress-stepper rounded-xl elevation-2"
                 style="max-width: 100%"
               >
                 <v-stepper-header>
@@ -336,16 +313,14 @@
                       :value="index + 1"
                       :title="task.taskName"
                       :complete="
-                        localTestAnswer.tasks[index]?.completed || false
+                        (localTestAnswer.tasks[index]?.completed || false) &&
+                        taskIndex !== index
                       "
-                      :color="
-                        taskIndex == index
-                          ? 'warning'
-                          : taskIndex < index
-                            ? 'primary'
-                            : 'success'
-                      "
+                      :icon="taskIndex === index ? 'mdi-pencil' : undefined"
                       complete-icon="mdi-check"
+                      :class="{
+                        'stepper-item--current': taskIndex === index,
+                      }"
                     />
                     <v-divider
                       v-if="index < test.testStructure.userTasks.length - 1"
@@ -1032,6 +1007,8 @@ const stepperValue = computed(() => {
   if (globalIndex.value === 6) return 5 // Completion
   return 1 // Default to first step
 })
+
+const isCurrentMainStep = (value) => Number(stepperValue.value) === Number(value)
 
 const completedSteps = computed(() => {
   if (isModerator.value) {
