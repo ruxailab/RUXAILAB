@@ -131,7 +131,7 @@ const form = ref(null)
 const showPassword = ref(false)
 const email = ref('')
 const password = ref('')
-const rememberMe = ref(false)
+const rememberMe = ref(true)
 const loadingType = ref('')
 
 const loading = computed(() => store.getters.loading)

@@ -59,6 +59,7 @@ describe('AuthController', () => {
         'password123',
       )
 
+      expect(setPersistence).toHaveBeenCalledWith(expect.anything(), 'local')
       expect(createUserWithEmailAndPassword).toHaveBeenCalledWith(
         expect.anything(),
         'test@example.com',
@@ -85,7 +86,7 @@ describe('AuthController', () => {
       setPersistence.mockResolvedValue()
       signInWithEmailAndPassword.mockResolvedValue(mockCredential)
 
-      await authController.signIn('test@example.com', 'password123', true)
+      await authController.signIn('test@example.com', 'password123')
 
       expect(setPersistence).toHaveBeenCalledWith(expect.anything(), 'local')
 
@@ -124,7 +125,7 @@ describe('AuthController', () => {
       setPersistence.mockResolvedValue()
       signInWithPopup.mockResolvedValue(mockCredential)
 
-      const result = await authController.signInWithGoogle(true)
+      const result = await authController.signInWithGoogle()
 
       expect(setPersistence).toHaveBeenCalledWith(expect.anything(), 'local')
 

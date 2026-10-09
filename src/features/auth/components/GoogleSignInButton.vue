@@ -26,7 +26,7 @@ export default {
     },
     rememberMe: {
       type: Boolean,
-      default: false,
+      default: true,
     },
   },
   emits: [
