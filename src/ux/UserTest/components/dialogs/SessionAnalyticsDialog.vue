@@ -62,9 +62,11 @@
                   <video
                     ref="mainVideo1"
                     class="video-rect-skeleton"
-                    controls
+                    playsinline
                     @timeupdate="onTimeUpdate"
                     @loadedmetadata="onMetadataLoaded"
+                    @play="onVideoPlay"
+                    @pause="onVideoPause"
                   >
                     <source
                       :src="taskAnswer?.webcamRecordURL"
@@ -86,6 +88,7 @@
                   <video
                     ref="mainVideo2"
                     class="video-rect-skeleton"
+                    playsinline
                     @timeupdate="onTimeUpdate"
                     @loadedmetadata="onMetadataLoaded"
                     @play="onVideoPlay"
@@ -371,7 +374,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onBeforeUnmount, computed } from 'vue'
+import { ref, watch, onBeforeUnmount, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useManagedListeners } from '@/shared/composables/useManagedListeners'
 import AnswerController from '@/shared/controllers/AnswerController'
@@ -671,12 +674,45 @@ const displayTaskName = computed(() => {
 })
 
 const mockEyeTracking = { accuracy: 92, fixations: 34 }
+const DRIFT_SECONDS = 0.35
+
+function mountedVideos() {
+  return [mainVideo1.value, mainVideo2.value].filter(Boolean)
+}
+
+function leadVideo() {
+  const screen = mainVideo2.value
+  const webcam = mainVideo1.value
+  if (screen && !screen.paused && !screen.ended) return screen
+  if (webcam && !webcam.paused && !webcam.ended) return webcam
+  return screen || webcam
+}
+
+function seekVideo(video, time) {
+  if (!video || !Number.isFinite(time)) return
+  const duration = Number.isFinite(video.duration) ? video.duration : time
+  const nextTime = Math.min(Math.max(time, 0), duration)
+  if (Math.abs(video.currentTime - nextTime) <= 0.05) return
+  video.currentTime = nextTime
+}
 
 function onMetadataLoaded(event) {
   const video = event.target
+  const durations = mountedVideos()
+    .map((item) => item.duration)
+    .filter((duration) => Number.isFinite(duration) && duration > 0)
 
-  videoDuration.value = video.duration
+  videoDuration.value = durations.length
+    ? Math.max(...durations)
+    : video.duration
   videoReady.value = true
+
+  if (videoCurrentTime.value > 0) {
+    seekVideo(video, videoCurrentTime.value)
+  }
+  if (isPlaying.value && video.paused) {
+    video.play().catch(() => {})
+  }
 }
 
 function onTimeUpdate(event) {
@@ -688,47 +724,81 @@ function onTimeUpdate(event) {
 function startVideoSync() {
   cancelAnimationFrame(rafId)
   const loop = () => {
-    const video = mainVideo2.value || mainVideo1.value
-    if (video && !video.paused) {
-      videoCurrentTime.value = video.currentTime
-      rafId = requestAnimationFrame(loop)
-    } else {
+    const videos = mountedVideos()
+    const lead = leadVideo()
+    const anyPlaying = videos.some((video) => !video.paused && !video.ended)
+
+    if (!anyPlaying || !lead) {
       isPlaying.value = false
+      return
     }
+
+    videoCurrentTime.value = lead.currentTime
+    videos.forEach((video) => {
+      if (video === lead || video.paused || video.ended) return
+      if (Math.abs(video.currentTime - lead.currentTime) > DRIFT_SECONDS) {
+        seekVideo(video, lead.currentTime)
+      }
+    })
+    rafId = requestAnimationFrame(loop)
   }
   rafId = requestAnimationFrame(loop)
 }
 
 function stopVideoSync() {
   cancelAnimationFrame(rafId)
+  rafId = null
 }
 
 function onVideoPlay() {
+  if (isPlaying.value) return
   isPlaying.value = true
   startVideoSync()
 }
 
 function onVideoPause() {
+  const anyPlaying = mountedVideos().some(
+    (video) => !video.paused && !video.ended,
+  )
+  if (anyPlaying) return
   isPlaying.value = false
   stopVideoSync()
 }
 
-const togglePlay = () => {
-  const video = mainVideo2.value || mainVideo1.value
-  if (!video) return
+const togglePlay = async () => {
+  const videos = mountedVideos()
+  if (!videos.length) return
 
-  if (video.paused) {
-    video.play()
-  } else {
-    video.pause()
+  if (isPlaying.value) {
+    videos.forEach((video) => video.pause())
+    isPlaying.value = false
+    stopVideoSync()
+    return
   }
+
+  const time = videoCurrentTime.value
+  await Promise.all(
+    videos.map(async (video) => {
+      if (video.ended) video.currentTime = 0
+      else seekVideo(video, time)
+      try {
+        await video.play()
+      } catch {
+        // One recording can fail to start without stopping the other.
+      }
+    }),
+  )
+
+  const anyPlaying = mountedVideos().some(
+    (video) => !video.paused && !video.ended,
+  )
+  if (!anyPlaying) return
+  isPlaying.value = true
+  startVideoSync()
 }
 
 const onSeek = (time) => {
-  const video = mainVideo2.value || mainVideo1.value
-  if (!video) return
-
-  video.currentTime = time
+  mountedVideos().forEach((video) => seekVideo(video, time))
   videoCurrentTime.value = time
 }
 
@@ -776,16 +846,6 @@ watch(
   { deep: true },
 )
 
-onMounted(() => {
-  const video = mainVideo2.value
-  if (!video) return
-
-  managedListeners.addListeners([
-    { target: video, event: 'loadedmetadata', handler: onMetadataLoaded },
-    { target: video, event: 'play', handler: onVideoPlay },
-    { target: video, event: 'pause', handler: onVideoPause },
-  ])
-})
 onBeforeUnmount(() => {
   managedListeners.removeListeners()
 })
