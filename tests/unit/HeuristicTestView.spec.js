@@ -26,6 +26,10 @@ jest.mock('@/shared/utils/toast', () => ({
   showError: jest.fn(),
 }))
 
+jest.mock('@/shared/utils/animations', () => ({
+  animateStepAnnouncement: jest.fn(() => Promise.resolve()),
+}))
+
 jest.mock('@/app/plugins/firebase/FirebaseFunctionsService', () => ({
   FirebaseFunctionsController: {
     callHttpsCallableFunction: jest.fn(),
@@ -394,6 +398,7 @@ describe('HeuristicTestView', () => {
       )
       expect(instructionsButton).toBeDefined()
       await instructionsButton.trigger('click')
+      await flushPromises()
 
       expect(wrapper.vm.currentPage).toBe('instructions_page')
       expect(wrapper.vm.start).toBe(true)

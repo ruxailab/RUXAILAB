@@ -1,11 +1,13 @@
 <template>
   <div
     v-if="test"
-    class="user-test-bg"
+    class="session-backdrop"
     @focusin.capture="handleLoggingFocusin"
     @input.capture="handleLoggingInput"
     @focusout.capture="handleLoggingFocusout"
   >
+    <SessionBackdropMark />
+
     <div v-if="showStepAnnouncement" class="step-announcement-container">
       <StepAnnouncementOverlay
         ref="stepAnnouncementOverlay"
@@ -94,12 +96,13 @@
       </v-card>
     </v-dialog>
 
-    <v-container fluid class="pa-0">
+    <v-container fluid class="session-backdrop-content pa-0">
       <v-row
         v-if="test && start"
         class="start-screen background-img pa-0 ma-0"
         align="center"
       >
+        <SessionBackdropMark position="absolute" />
         <v-col md="8" class="ma-5 pa-5">
           <img
             src="../../../assets/logo_full_white.png"
@@ -623,9 +626,10 @@ import EyeTrackingCalibrationStep from '@/ux/UserTest/components/calibration/Eye
 import { db } from '@/app/plugins/firebase'
 import IrisTracker from '../components/IrisTracker.vue'
 import StepAnnouncementOverlay from '@/ux/UserTest/components/StepAnnouncementOverlay.vue'
+import SessionBackdropMark from '@/shared/components/SessionBackdropMark.vue'
+import { useStepAnnouncement } from '@/shared/composables/useStepAnnouncement'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { calculateProgress } from '../utils/testProgress'
-import { animateStepAnnouncement } from '@/shared/utils/animations'
 import { downloadAnonymousParticipantIdentifier } from '@/shared/utils/anonymousParticipantUtils'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
@@ -653,10 +657,16 @@ const isVisualizerVisible = ref(false)
 const doneTaskDisabled = ref(false)
 const anonymousUserDocId = ref(null)
 const calibrationPopup = ref(null)
-const showStepAnnouncement = ref(false)
-const stepAnnouncementOverlay = ref(null)
-const nextStepAnnouncementTitle = ref('')
-const nextStepAnnouncementKicker = ref('')
+const {
+  showStepAnnouncement,
+  stepAnnouncementOverlay,
+  nextStepAnnouncementTitle,
+  nextStepAnnouncementKicker,
+  safelyAnnounce: safelyShowNextStepAnnouncement,
+} = useStepAnnouncement({
+  scroll: true,
+  onScroll: () => scrollToTop(),
+})
 
 const truncateDescription = (description) => {
   if (!description || description.length <= 150) return description
@@ -1158,51 +1168,6 @@ const startTest = async () => {
   setTimeout(() => {
     start.value = false
   }, 1000)
-}
-
-const showNextStepAnnouncement = async (
-  title,
-  stageNumber,
-  kickerOverride = '',
-) => {
-  scrollToTop()
-
-  nextStepAnnouncementKicker.value = kickerOverride || `Stage ${stageNumber}`
-  nextStepAnnouncementTitle.value = title
-
-  showStepAnnouncement.value = true
-
-  const safetyHideTimer = window.setTimeout(() => {
-    showStepAnnouncement.value = false
-  }, 4200)
-
-  try {
-    await nextTick()
-
-    await animateStepAnnouncement(stepAnnouncementOverlay.value, {
-      totalDuration: 3,
-    })
-  } finally {
-    window.clearTimeout(safetyHideTimer)
-    showStepAnnouncement.value = false
-
-    // Garante que, quando o conteúdo voltar,
-    // ele continua no início da página.
-    await nextTick()
-    scrollToTop()
-  }
-}
-
-const safelyShowNextStepAnnouncement = async (
-  title,
-  stageNumber,
-  kickerOverride = '',
-) => {
-  try {
-    await showNextStepAnnouncement(title, stageNumber, kickerOverride)
-  } catch {
-    // Non-critical: users can continue even if announcement animation fails.
-  }
 }
 
 const persistStepProgress = async () => {
@@ -1858,36 +1823,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.user-test-bg {
-  position: relative;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-.user-test-bg::before {
-  content: '';
-  position: fixed;
-  z-index: 0;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 140%;
-  margin-right: -450px;
-  margin-top: 100px;
-  background-image: url(../../../assets/logo_small_red.png);
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: right top;
-  opacity: 0.2;
-  pointer-events: none;
-}
-
-.user-test-bg > :not(.step-announcement-overlay) {
-  position: relative;
-  z-index: 1;
-}
-
 .main-test-interface :deep(.v-card--variant-elevated),
 .main-test-interface :deep(.v-card--variant-flat) {
   background: rgba(var(--v-theme-surface), 0) !important;
@@ -1909,26 +1844,7 @@ onBeforeUnmount(() => {
   transition: opacity 8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.start-screen::before {
-  content: '';
-  position: absolute;
-  z-index: 0;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 140%;
-  margin-right: -450px;
-  margin-top: 100px;
-  background-image: url(../../../assets/logo_small_red.png);
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: right top;
-  opacity: 0.2;
-  pointer-events: none;
-}
-
-.start-screen > * {
+.start-screen > :not(.session-backdrop-mark) {
   position: relative;
   z-index: 1;
 }

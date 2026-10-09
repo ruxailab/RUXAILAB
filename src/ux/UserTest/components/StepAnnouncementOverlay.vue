@@ -1,5 +1,6 @@
 <template>
   <output class="step-announcement-overlay" aria-live="polite">
+    <SessionBackdropMark position="absolute" />
     <div class="step-announcement-layout">
       <img :src="logoSrc" alt="RUXAILAB" class="step-announcement-logo mb-10" />
 
@@ -17,6 +18,7 @@
 
 <script setup>
 import logoSrc from '@/assets/logo_full_white.png'
+import SessionBackdropMark from '@/shared/components/SessionBackdropMark.vue'
 
 defineProps({
   title: {
@@ -49,25 +51,6 @@ defineProps({
     #1a2f4f 35%,
     #303f9f 100%
   );
-}
-
-.step-announcement-overlay::before {
-  content: '';
-  position: absolute;
-  z-index: 0;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 140%;
-  margin-right: -450px;
-  margin-top: 100px;
-  background-image: url(../../../assets/logo_small_red.png);
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: right top;
-  opacity: 0.2;
-  pointer-events: none;
 }
 
 .step-announcement-layout {

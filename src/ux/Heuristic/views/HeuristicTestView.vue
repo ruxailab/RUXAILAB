@@ -1,10 +1,21 @@
 <template>
   <div
+    class="session-backdrop"
     @focusin.capture="handleLoggingFocusin"
     @input.capture="handleLoggingInput"
     @focusout.capture="handleLoggingFocusout"
     @click.capture="handleLoggingClick"
   >
+    <SessionBackdropMark />
+
+    <div v-if="showStepAnnouncement" class="step-announcement-container">
+      <StepAnnouncementOverlay
+        ref="stepAnnouncementOverlay"
+        :kicker="nextStepAnnouncementKicker"
+        :title="nextStepAnnouncementTitle"
+      />
+    </div>
+
     <Snackbar />
     <!-- Submit Alert Dialog -->
     <v-dialog v-model="dialog" width="600" persistent>
@@ -97,7 +108,7 @@
       @start="evaluatorInfoAcknowledged = true"
     /> -->
 
-    <v-container v-if="test && start" fluid class="pa-0">
+    <v-container v-if="test && start" fluid class="session-backdrop-content pa-0">
       <v-row
         :class="[
           currentPage === TEST_PAGES.welcome
@@ -107,6 +118,10 @@
         ]"
         :align="currentPage === TEST_PAGES.welcome ? 'center' : 'start'"
       >
+        <SessionBackdropMark
+          v-if="currentPage === TEST_PAGES.welcome"
+          position="absolute"
+        />
         <v-col
           v-if="currentPage === TEST_PAGES.welcome"
           cols="12"
@@ -216,7 +231,7 @@
       </v-row>
     </v-container>
 
-    <v-container v-else fluid class="pa-0">
+    <v-container v-else fluid class="session-backdrop-content pa-0">
       <v-row class="main-test-interface pa-0 ma-0">
         <v-col ref="rightView" class="right-view pa-6">
           <v-row class="stepper-row sticky-stepper">
@@ -291,7 +306,7 @@
                 :heuristic-description="heuristicDescription"
                 :heuristic-storage="heuristicStorage"
                 @select-heuristic="handleHeurisClick"
-                @finish-evaluation="review = false"
+                @finish-evaluation="finishEvaluation"
               />
 
               <HeuristicAnswerStep
@@ -303,7 +318,7 @@
                 :test="test"
                 @back="showHeuristicCards = true"
                 @select-heuristic="handleHeurisClick"
-                @finish-evaluation="review = false"
+                @finish-evaluation="finishEvaluation"
                 @response-change="handleHeuristicResponseChange"
                 @update-answer="
                   (questionIndex, value) =>
@@ -459,6 +474,9 @@ import {
 } from '@/shared/utils/studyAccessPolicy'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
+import StepAnnouncementOverlay from '@/ux/UserTest/components/StepAnnouncementOverlay.vue'
+import SessionBackdropMark from '@/shared/components/SessionBackdropMark.vue'
+import { useStepAnnouncement } from '@/shared/composables/useStepAnnouncement'
 
 const props = defineProps({
   id: { type: String, default: '' },
@@ -506,6 +524,16 @@ const review = ref(true)
 const rightView = ref(null)
 const displayHeuristics = ref([])
 const showHeuristicCards = ref(true)
+const {
+  showStepAnnouncement,
+  nextStepAnnouncementTitle,
+  nextStepAnnouncementKicker,
+  stepAnnouncementOverlay,
+  safelyAnnounce: safelyShowNextStepAnnouncement,
+} = useStepAnnouncement({
+  scroll: true,
+  scrollTarget: () => rightView.value,
+})
 
 const TEST_PAGES = {
   welcome: 'welcome_page',
@@ -846,10 +874,14 @@ const openInstructionsPage = () => {
   }, 1000)
 }
 
-const returnToInstructions = () => {
+const returnToInstructions = async () => {
   if (currentUserTestAnswer.value?.submitted) return
 
   pauseTimer(heurisIndex.value)
+  await safelyShowNextStepAnnouncement(
+    t('HeuristicsTestView.flow.instructions'),
+    1,
+  )
   returningToInstructions.value = true
   start.value = true
   currentPage.value = TEST_PAGES.instructions
@@ -871,6 +903,10 @@ const startTest = async () => {
 
   if (!answerInitialized.value) return
 
+  await safelyShowNextStepAnnouncement(
+    t('HeuristicsTestView.flow.heuristicEvaluation'),
+    2,
+  )
   start.value = false
   currentPage.value = TEST_PAGES.answers
   if (!returningToInstructions.value) {
@@ -887,6 +923,14 @@ const startTest = async () => {
     // Auto-save when test starts
     debouncedAutoSave()
   }
+}
+
+const finishEvaluation = async () => {
+  await safelyShowNextStepAnnouncement(
+    t('HeuristicsTestView.flow.finalSubmission'),
+    3,
+  )
+  review.value = false
 }
 
 const updateComment = (_comment, _heurisIndex, _answerIndex) => {
@@ -1886,6 +1930,13 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.main-test-interface :deep(.v-card--variant-elevated),
+.main-test-interface :deep(.v-card--variant-flat),
+.instructions-screen :deep(.v-card--variant-elevated),
+.instructions-screen :deep(.v-card--variant-flat) {
+  background: rgba(var(--v-theme-surface), 0) !important;
+}
+
 .start-container {
   background: linear-gradient(134.16deg, #3f51b5 -13.6%, #283593 117.67%);
   height: 100vh;
@@ -1931,32 +1982,14 @@ onUnmounted(() => {
   }
 }
 
-.start-screen::before {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 140%;
-  margin-right: -450px;
-  margin-top: 100px;
-  background-image: url(../../../assets/logo_small_red.png);
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: right top;
-  opacity: 0.2;
-}
-
 .instructions-screen {
   min-height: 100vh;
-  background: #fff;
+  background: transparent;
 }
 
 .main-test-interface {
   min-height: 100vh;
-  background: #fff;
+  background: transparent;
 }
 
 .right-view {
@@ -2006,5 +2039,17 @@ onUnmounted(() => {
 
 .v-stepper-item {
   padding: 1rem;
+}
+
+.step-announcement-container {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #00213f;
 }
 </style>

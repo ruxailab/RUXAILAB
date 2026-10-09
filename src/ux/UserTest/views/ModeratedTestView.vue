@@ -18,6 +18,7 @@
         class="start-screen background-img pa-0 ma-0"
         align="center"
       >
+        <SessionBackdropMark position="absolute" />
         <v-col md="8" class="ma-5 pa-5">
           <img
             src="@/assets/logo_full_white.png"
@@ -604,7 +605,6 @@ import {
   onMounted,
   reactive,
   watchEffect,
-  nextTick,
 } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
@@ -620,6 +620,8 @@ import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue'
 import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue'
 import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue'
 import StepAnnouncementOverlay from '@/ux/UserTest/components/StepAnnouncementOverlay.vue'
+import SessionBackdropMark from '@/shared/components/SessionBackdropMark.vue'
+import { useStepAnnouncement } from '@/shared/composables/useStepAnnouncement'
 import VideoCallFactory from '@/shared/components/videoCall/VideoCallFactory.vue'
 import VideoToolDrawer from '@/shared/components/videoCall/VideoToolDrawer.vue'
 import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
@@ -635,7 +637,6 @@ import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { showError, showInfo, showWarning } from '@/shared/utils/toast'
 import { calculateProgress } from '../utils/testProgress'
-import { animateStepAnnouncement } from '@/shared/utils/animations'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
 import { createRecordingOutcomeTracker } from '@/ux/UserTest/utils/recordingOutcome'
@@ -754,10 +755,13 @@ function closeNotesDrawer() {
 }
 const moderatorInactive = ref(false)
 const moderatorDisconnectTimeout = ref(null)
-const showStepAnnouncement = ref(false)
-const stepAnnouncementOverlay = ref(null)
-const nextStepAnnouncementTitle = ref('')
-const nextStepAnnouncementKicker = ref('')
+const {
+  showStepAnnouncement,
+  stepAnnouncementOverlay,
+  nextStepAnnouncementTitle,
+  nextStepAnnouncementKicker,
+  safelyAnnounce: safelyShowNextStepAnnouncement,
+} = useStepAnnouncement()
 const isProcessingRemoteStepAnnouncement = ref(false)
 const lastAnnouncedRemoteStepKey = ref(null)
 const lastWaitingParticipantsNotificationCount = ref(0)
@@ -1937,42 +1941,6 @@ const handleWelcomeStart = async () => {
   globalIndex.value = 1
 }
 
-const showNextStepAnnouncement = async (
-  title,
-  stageNumber,
-  kickerOverride = '',
-) => {
-  nextStepAnnouncementKicker.value = kickerOverride || `Stage ${stageNumber}`
-  nextStepAnnouncementTitle.value = title
-  showStepAnnouncement.value = true
-
-  const safetyHideTimer = window.setTimeout(() => {
-    showStepAnnouncement.value = false
-  }, 4200)
-
-  try {
-    await nextTick()
-    await animateStepAnnouncement(stepAnnouncementOverlay.value, {
-      totalDuration: 3,
-    })
-  } finally {
-    window.clearTimeout(safetyHideTimer)
-    showStepAnnouncement.value = false
-  }
-}
-
-const safelyShowNextStepAnnouncement = async (
-  title,
-  stageNumber,
-  kickerOverride = '',
-) => {
-  try {
-    await showNextStepAnnouncement(title, stageNumber, kickerOverride)
-  } catch {
-    // Non-critical: users can continue even if announcement animation fails.
-  }
-}
-
 const showTaskTitleAnnouncement = async (idx) => {
   const task = test.value?.testStructure?.userTasks?.[idx]
   if (!task) return
@@ -2478,28 +2446,6 @@ onBeforeUnmount(() => {
   100% {
     background-position: 0% 50%;
   }
-}
-
-.start-screen::before {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 140%;
-  margin-right: -450px;
-  margin-top: 100px;
-  background-image: url(../../../assets/logo_small_red.png);
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: right top;
-  opacity: 0.2;
-}
-
-.start-screen.leaving::before {
-  opacity: 0;
 }
 
 /* Stepper sticky styles */
