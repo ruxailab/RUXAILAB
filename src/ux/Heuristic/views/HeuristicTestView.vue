@@ -396,17 +396,18 @@
         </v-tooltip>
         <v-tooltip key="submit-tooltip" location="left">
           <template #activator="{ props }">
-            <v-btn
-              v-bind="props"
-              :disabled="calculatedProgress < 100"
-              class="text-white"
-              icon
-              size="small"
-              color="success"
-              @click="dialog = true"
-            >
-              <v-icon>mdi-file-move</v-icon>
-            </v-btn>
+            <span v-bind="props" class="d-inline-flex">
+              <v-btn
+                :disabled="calculatedProgress < 100"
+                class="text-white"
+                icon
+                size="small"
+                color="success"
+                @click="dialog = true"
+              >
+                <v-icon>mdi-file-move</v-icon>
+              </v-btn>
+            </span>
           </template>
           <div>
             <span>{{ $t('HeuristicsTestView.actions.submit') }}</span>
