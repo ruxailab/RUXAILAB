@@ -10,12 +10,15 @@ jest.mock('vue-i18n', () => ({ useI18n: () => ({ t: (key) => key }) }))
 jest.mock('@/app/plugins/firebase/index', () => ({ database: {} }))
 const mockUpdates = []
 const mockOnValueListeners = []
+const mockListenerUnsubscribers = []
 jest.mock('firebase/database', () => ({
   ref: (_database, path) => ({ path }),
   set: async () => {},
   onValue: (target, callback) => {
     mockOnValueListeners.push({ path: target?.path, callback })
-    return jest.fn()
+    const unsubscribe = jest.fn()
+    mockListenerUnsubscribers.push(unsubscribe)
+    return unsubscribe
   },
   push: () => ({}),
   get: async () => ({ val: () => null, exists: () => false }),
@@ -28,7 +31,11 @@ jest.mock('firebase/database', () => ({
   update: async (target, value) => {
     mockUpdates.push({ path: target?.path, value })
   },
-  onChildAdded: () => () => {},
+  onChildAdded: () => {
+    const unsubscribe = jest.fn()
+    mockListenerUnsubscribers.push(unsubscribe)
+    return unsubscribe
+  },
 }))
 
 const VideoCallMesh =
@@ -238,6 +245,108 @@ it('updates the facilitator call state when the shared room flag opens', async (
   expect(wrapper.findComponent(VideoCallControlBar).props('callStarted')).toBe(
     true,
   )
+})
+
+it('unsubscribes room, roster, and signaling listeners when leaving the call', async () => {
+  Object.defineProperty(global.navigator, 'mediaDevices', {
+    configurable: true,
+    value: { getUserMedia: async () => stream(track('audio'), track('video')) },
+  })
+  mockListenerUnsubscribers.length = 0
+  mockOnValueListeners.length = 0
+
+  wrapper = shallowMount(VideoCallMesh, {
+    props: {
+      roomId: 'room-1',
+      isModerator: true,
+      user: { id: 'moderator', email: 'moderator@example.test' },
+      test: { id: 'study-1', testStructure: { userTasks: [] } },
+    },
+    global: { mocks: { $t: (key) => key } },
+  })
+  await flushPromises()
+
+  expect(mockListenerUnsubscribers.length).toBeGreaterThanOrEqual(4)
+  await wrapper.vm.leaveRoom()
+
+  expect(
+    mockListenerUnsubscribers.every(
+      (unsubscribe) => unsubscribe.mock.calls.length > 0,
+    ),
+  ).toBe(true)
+})
+
+it('replaces the peer connection when a participant rejoins without changing initiator role', async () => {
+  Object.defineProperty(global.navigator, 'mediaDevices', {
+    configurable: true,
+    value: { getUserMedia: async () => stream(track('audio'), track('video')) },
+  })
+
+  const peerConnections = []
+  global.RTCPeerConnection = jest.fn(() => {
+    const connection = {
+      signalingState: 'stable',
+      currentRemoteDescription: null,
+      addTrack: jest.fn(() => ({ replaceTrack: jest.fn() })),
+      addTransceiver: jest.fn(() => ({ sender: { replaceTrack: jest.fn() } })),
+      close: jest.fn(() => {
+        connection.signalingState = 'closed'
+      }),
+    }
+    peerConnections.push(connection)
+    return connection
+  })
+  mockOnValueListeners.length = 0
+
+  wrapper = shallowMount(VideoCallMesh, {
+    props: {
+      roomId: 'room-1',
+      isModerator: true,
+      user: { id: 'moderator', email: 'moderator@example.test' },
+      test: { id: 'study-1', testStructure: { userTasks: [] } },
+    },
+    global: { mocks: { $t: (key) => key } },
+  })
+  await flushPromises()
+
+  const participantsListener = mockOnValueListeners.find(
+    ({ path }) => path === 'calls/room-1/participants',
+  )
+  const staffListener = mockOnValueListeners.find(
+    ({ path }) => path === 'calls/room-1/staff',
+  )
+  const roomListener = mockOnValueListeners.find(
+    ({ path }) => path === 'rooms/room-1/showVideoCall',
+  )
+  expect(participantsListener).toBeDefined()
+  expect(staffListener).toBeDefined()
+  expect(roomListener).toBeDefined()
+  roomListener.callback({ val: () => true })
+
+  const moderator = {
+    moderator: { userDocId: 'moderator', connected: true, joinedAt: 1000 },
+  }
+  const participantAt = (joinedAt) => ({
+    participant: {
+      userDocId: 'participant',
+      connected: true,
+      joinedAt,
+      role: 'PARTICIPANT',
+    },
+  })
+
+  participantsListener.callback({ val: () => participantAt(2000) })
+  staffListener.callback({ val: () => moderator })
+  await flushPromises()
+
+  expect(peerConnections).toHaveLength(1)
+  expect(peerConnections[0].close).not.toHaveBeenCalled()
+
+  participantsListener.callback({ val: () => participantAt(3000) })
+  await flushPromises()
+
+  expect(peerConnections[0].close).toHaveBeenCalledTimes(1)
+  expect(peerConnections).toHaveLength(2)
 })
 
 it('sends the participant back to their current task, not task 1', async () => {

@@ -360,7 +360,11 @@
           </VideoToolDrawer>
 
           <!-- Video Call Component -->
-          <div v-show="displayVideoCallComponent" v-if="test">
+          <div
+            v-show="displayVideoCallComponent || showParticipantCallPip"
+            v-if="test"
+            :class="{ 'participant-call-pip': showParticipantCallPip }"
+          >
             <VideoCallFactory
               :room-id="roomId"
               :is-moderator="isModerator"
@@ -988,6 +992,13 @@ const isObservator = computed(() => {
 
   return isObserverAccessLevel(currentUserAccessLevel.value)
 })
+const showParticipantCallPip = computed(
+  () =>
+    !isModerator.value &&
+    !isObservator.value &&
+    globalIndex.value >= 1 &&
+    !displayVideoCallComponent.value,
+)
 
 const session = computed(() => store.getters.session)
 const isSessionViewer = computed(() => {
@@ -2539,5 +2550,57 @@ onBeforeUnmount(() => {
 
 .v-stepper-item {
   padding: 1rem;
+}
+
+.participant-call-pip {
+  position: fixed !important;
+  z-index: 1400;
+  right: 20px;
+  bottom: 88px;
+  width: min(380px, calc(100vw - 32px));
+  height: 280px;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+}
+
+.participant-call-pip :deep(.video-call-container) {
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.participant-call-pip :deep(.video-row) {
+  height: calc(100% - 52px) !important;
+}
+
+.participant-call-pip :deep(.video-stage) {
+  height: 100% !important;
+}
+
+.participant-call-pip :deep(.bottom-control-bar) {
+  position: absolute !important;
+  bottom: 4px !important;
+  left: 50% !important;
+  width: calc(100% - 12px) !important;
+  max-width: calc(100% - 12px) !important;
+  min-height: 44px !important;
+  height: 44px !important;
+  max-height: 44px !important;
+  padding: 4px 8px !important;
+  border-radius: 8px !important;
+  transform: translateX(-50%) !important;
+}
+
+@media (max-width: 600px) {
+  .participant-call-pip {
+    right: 12px;
+    bottom: 76px;
+    width: min(300px, calc(100vw - 24px));
+    height: 210px;
+  }
 }
 </style>
