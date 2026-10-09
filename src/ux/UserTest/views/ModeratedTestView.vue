@@ -630,6 +630,7 @@ import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { showError, showInfo, showWarning } from '@/shared/utils/toast'
 import { calculateProgress } from '../utils/testProgress'
+import { accumulateTotalTestTime, hasTestActivity } from '../utils/testDuration'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
 import { createRecordingOutcomeTracker } from '@/ux/UserTest/utils/recordingOutcome'
@@ -728,6 +729,15 @@ const start = ref(true)
 const globalIndex = ref(null)
 const taskIndex = ref(0)
 const localTestAnswer = reactive(new UserStudyEvaluatorAnswer())
+const totalTestTimeStartedAt = ref(null)
+
+const accumulateTestTime = () => {
+  totalTestTimeStartedAt.value = accumulateTotalTestTime(
+    localTestAnswer,
+    totalTestTimeStartedAt.value,
+  )
+}
+
 const rightView = ref(null) // For scroll effect
 const fullName = ref('') // For consent form component
 const items = ref([])
@@ -1236,6 +1246,9 @@ const handleSubmit = async () => {
     displayVideoCallComponent.value = true
   } catch {
     localTestAnswer.submitted = false
+    if (totalTestTimeStartedAt.value === null) {
+      totalTestTimeStartedAt.value = Date.now()
+    }
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSubmitAnswer'),
@@ -1253,6 +1266,7 @@ const saveSessionNotes = async () => {
 
 const saveAnswer = async () => {
   try {
+    accumulateTestTime()
     attachMediaToTasks(localTestAnswer, mediaUrls.value)
     // A completed recording is logged only once its media link is saved.
     const recordingsToSave = recordingOutcomes
@@ -1930,6 +1944,13 @@ const startTestOnce = async () => {
 
 const handleWelcomeStart = async () => {
   if (globalIndex.value !== 0) return
+  if (
+    !isModerator.value &&
+    !localTestAnswer.submitted &&
+    totalTestTimeStartedAt.value === null
+  ) {
+    totalTestTimeStartedAt.value = Date.now()
+  }
   await requestFullscreenIfAvailable()
   displayVideoCallComponent.value = true
   globalIndex.value = 1
@@ -2363,6 +2384,9 @@ onMounted(async () => {
     Object.keys(currentUserTestAnswer.value).length > 0
   ) {
     Object.assign(localTestAnswer, currentUserTestAnswer.value)
+  }
+  if (!isModerator.value && hasTestActivity(localTestAnswer)) {
+    totalTestTimeStartedAt.value = Date.now()
   }
 
   await mappingSteps()

@@ -633,6 +633,7 @@ import SessionBackdropMark from '@/shared/components/SessionBackdropMark.vue'
 import { useStepAnnouncement } from '@/shared/composables/useStepAnnouncement'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { calculateProgress } from '../utils/testProgress'
+import { accumulateTotalTestTime, hasTestActivity } from '../utils/testDuration'
 import { downloadAnonymousParticipantIdentifier } from '@/shared/utils/anonymousParticipantUtils'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
@@ -696,6 +697,14 @@ let calibrationPollTimer = null
 //  Eye tracking web gazer testing
 
 const localTestAnswer = reactive(new UserStudyEvaluatorAnswer())
+const totalTestTimeStartedAt = ref(null)
+
+const accumulateTestTime = () => {
+  totalTestTimeStartedAt.value = accumulateTotalTestTime(
+    localTestAnswer,
+    totalTestTimeStartedAt.value,
+  )
+}
 
 const store = useStore()
 const router = useRouter()
@@ -1024,6 +1033,7 @@ const savePartialAnswer = async () => {
       return Boolean(task?.[MEDIA_FIELD_MAP[mediaType]])
     })
   try {
+    accumulateTestTime()
     calculateProgress(localTestAnswer, test.value?.testStructure)
     localTestAnswer.fullName = fullName.value
 
@@ -1088,6 +1098,9 @@ const submitAnswer = async () => {
     void initializeStudyLogging()?.submitted()
   } catch {
     localTestAnswer.submitted = false
+    if (totalTestTimeStartedAt.value === null) {
+      totalTestTimeStartedAt.value = Date.now()
+    }
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSubmitAnswer'),
@@ -1189,6 +1202,9 @@ const persistStepProgress = async () => {
 }
 
 const handleWelcomeStart = async () => {
+  if (!localTestAnswer.submitted && totalTestTimeStartedAt.value === null) {
+    totalTestTimeStartedAt.value = Date.now()
+  }
   await safelyShowNextStepAnnouncement(t('UserTestView.stepper.consent'), 1)
   globalIndex.value = 1
 }
@@ -1541,8 +1557,12 @@ const setTest = async () => {
       postTestAnswer: currentUserTestAnswer.value.postTestAnswer || [],
       submitted: currentUserTestAnswer.value.submitted || false,
       progress: currentUserTestAnswer.value.progress || 0,
+      totalTestTimeMs: currentUserTestAnswer.value.totalTestTimeMs || 0,
       fullName: currentUserTestAnswer.value.fullName || '',
     })
+    if (hasTestActivity(localTestAnswer)) {
+      totalTestTimeStartedAt.value = Date.now()
+    }
     fullName.value = localTestAnswer.fullName
     await mappingSteps()
     await autoComplete()
