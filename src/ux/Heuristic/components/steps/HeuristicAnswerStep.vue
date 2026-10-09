@@ -5,14 +5,16 @@
         <header v-if="currentQuestion" class="answer-header">
           <div class="answer-heading">
             <h1>
+              {{ $t('HeuristicsTestView.heuristic') }}
               {{
                 heuristic?.title || $t('HeuristicsTestView.unknownHeuristic')
               }}
             </h1>
           </div>
+          <h3 v-if="test.testTitle" class="mr-2 answer-study-name">
+            {{ test.testTitle }}
+          </h3>
         </header>
-
-        <v-divider v-if="currentQuestion" />
 
         <div
           v-if="currentQuestion"
@@ -744,6 +746,14 @@ watch(
   font-size: 1.9rem;
   font-weight: 400;
   line-height: 1.25;
+}
+
+.answer-study-name {
+  margin: 0 0 0.3rem;
+  color: #5b6470;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.35;
 }
 
 .answer-question-card {

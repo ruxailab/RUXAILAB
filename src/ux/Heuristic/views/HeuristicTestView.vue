@@ -284,6 +284,7 @@
               <HeuristicCardsStep
                 v-if="index == 1 && review == true && showHeuristicCards"
                 :heuristics="heuristics"
+                :test="test"
                 :current-user-test-answer="currentUserTestAnswer"
                 :calculated-progress="calculatedProgress"
                 :per-heuristic-progress="perHeuristicProgress"

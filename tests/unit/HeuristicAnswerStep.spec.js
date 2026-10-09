@@ -32,6 +32,7 @@ describe('HeuristicAnswerStep logging fields', () => {
           heuristicQuestions: [{ heuristicQuestions: [{}] }],
         },
         test: {
+          testTitle: 'Study Alpha',
           testStructure: [canonicalFirst, displayedFirst],
           testOptions: [],
         },
@@ -46,6 +47,8 @@ describe('HeuristicAnswerStep logging fields', () => {
         },
       },
     })
+
+    expect(wrapper.find('.answer-study-name').text()).toBe('Study Alpha')
 
     const options = wrapper.findComponent(HeuristicOptionsAnalysisSection)
     expect(options.attributes('data-study-field-ref')).toBe(

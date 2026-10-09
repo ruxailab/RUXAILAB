@@ -1151,6 +1151,7 @@
       "failedToSaveAnswer": "Failed to save answer. Please try again.",
       "failedToSubmitAnswer": "Failed to submit answer. Please try again."
     },
+    "heuristic": "Heuristic:",
     "unknownHeuristic": "Unknown Heuristic",
     "unknownQuestion": "Unknown Question",
     "selectAnOption": "Select an Option",
