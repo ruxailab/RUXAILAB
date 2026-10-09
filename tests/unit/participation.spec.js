@@ -53,6 +53,25 @@ describe('computeParticipation', () => {
       // alice: 3/4 = 75%, bob: 1/4 = 25%
       expect(computeParticipation({ messages })).toEqual({ alice: 75, bob: 25 })
     })
+
+    it('rounds uneven message shares so the displayed percentages total 100', () => {
+      const messages = {
+        'topic-1': {
+          m1: { userId: 'alice' },
+          m2: { userId: 'alice' },
+          m3: { userId: 'alice' },
+          m4: { userId: 'bob' },
+          m5: { userId: 'bob' },
+          m6: { userId: 'carol' },
+          m7: { userId: 'carol' },
+        },
+      }
+
+      const participation = computeParticipation({ messages })
+
+      expect(participation).toEqual({ alice: 43, bob: 29, carol: 28 })
+      expect(Object.values(participation).reduce((sum, percent) => sum + percent, 0)).toBe(100)
+    })
   })
 
   describe('speaking-only (no one has typed yet)', () => {

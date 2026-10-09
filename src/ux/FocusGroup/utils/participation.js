@@ -14,8 +14,8 @@
  * @param {Object} params
  * @param {Object} params.messages - { [topicId]: { [messageId]: { userId, ... } } }
  * @param {Object} [params.speakingMs] - { [userId]: accumulated milliseconds speaking }
- * @returns {Object} { [userId]: percent } — percent is 0-100, rounded to the
- *   nearest whole number. Empty when neither signal has any data yet.
+ * @returns {Object} { [userId]: percent } — whole-number percentages whose
+ *   total is exactly 100. Empty when neither signal has any data yet.
  */
 export function computeParticipation({ messages, speakingMs } = {}) {
   const messageShares = sharesFromCounts(countMessagesByUser(messages))
@@ -30,15 +30,14 @@ export function computeParticipation({ messages, speakingMs } = {}) {
     ...Object.keys(speakingShares),
   ])
 
-  const percentages = {}
+  const blendedShares = {}
   userIds.forEach((userId) => {
-    const blended =
+    blendedShares[userId] =
       hasMessages && hasSpeaking
         ? ((messageShares[userId] ?? 0) + (speakingShares[userId] ?? 0)) / 2
         : (messageShares[userId] ?? speakingShares[userId] ?? 0)
-    percentages[userId] = Math.round(blended)
   })
-  return percentages
+  return roundSharesToPercentages(blendedShares)
 }
 
 /**
@@ -74,4 +73,36 @@ function sharesFromCounts(counts) {
     shares[userId] = (count / total) * 100
   })
   return shares
+}
+
+/**
+ * Round shares with the largest-remainder method so displayed whole numbers
+ * still add up to 100 instead of drifting due to independent rounding.
+ * Ties retain the original participant order for deterministic results.
+ */
+function roundSharesToPercentages(shares) {
+  const entries = Object.entries(shares)
+  const rounded = {}
+  let assigned = 0
+
+  entries.forEach(([userId, share]) => {
+    rounded[userId] = Math.floor(share)
+    assigned += rounded[userId]
+  })
+
+  const remainderOrder = entries
+    .map(([userId, share], index) => ({
+      userId,
+      fraction: share - Math.floor(share),
+      index,
+    }))
+    .sort((a, b) => b.fraction - a.fraction || a.index - b.index)
+
+  for (let i = 0; i < 100 - assigned; i += 1) {
+    const entry = remainderOrder[i]
+    if (!entry) break
+    rounded[entry.userId] += 1
+  }
+
+  return rounded
 }

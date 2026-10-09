@@ -224,6 +224,12 @@ describe('study navigation', () => {
     expect(titlesFor(studyWith('FOCUS_GROUP'), owner)).not.toContain('Logs')
   })
 
+  it('exposes Focus Group analytics to answer-review-capable members only', () => {
+    const study = studyWith('FOCUS_GROUP')
+    expect(titlesFor(study, owner)).toContain('Analytics')
+    expect(titlesFor(study, { id: 'participant', accessLevel: 1 })).not.toContain('Analytics')
+  })
+
   it('groups study navigation by the user task', () => {
     expect(groupsFor(studyWith('USER'), owner)).toEqual([
       'overview',

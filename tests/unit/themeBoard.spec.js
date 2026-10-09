@@ -54,6 +54,30 @@ describe('flattenSessionResponses', () => {
       expect.objectContaining({ excerpt: 'a real response', participantId: 'participant-1' }),
     )
   })
+
+  it('only includes rostered participants when role data is available', () => {
+    const session = {
+      sessionId: 's1',
+      facilitatorId: 'facilitator',
+      participants: {
+        facilitator: { accessLevel: 0, role: 'Facilitator' },
+        participant: { accessLevel: 1, role: 'Participant' },
+        observer: { accessLevel: 3, role: 'Observer' },
+      },
+      messages: {
+        t1: {
+          p: { userId: 'participant', text: 'response' },
+          o: { userId: 'observer', text: 'observer note' },
+          f: { userId: 'facilitator', text: 'prompt' },
+          u: { userId: 'unrostered', text: 'unknown sender' },
+        },
+      },
+    }
+
+    expect(flattenSessionResponses(session).map(({ participantId }) => participantId)).toEqual([
+      'participant',
+    ])
+  })
 })
 
 describe('partitionResponsesByTheme', () => {
@@ -102,7 +126,13 @@ describe('partitionResponsesByTheme', () => {
 
 describe('themesFromBuckets', () => {
   it('rebuilds responseRefs from bucket contents', () => {
-    const themes = [{ id: 'theme-1', label: 'Theme One' }]
+    const themes = [{
+      id: 'theme-1',
+      label: 'Theme One',
+      source: 'nlp',
+      keywords: ['navigation'],
+      frequency: 2,
+    }]
     const buckets = {
       'theme-1': [
         {
@@ -115,11 +145,14 @@ describe('themesFromBuckets', () => {
         },
       ],
     }
-    const result = themesFromBuckets(themes, buckets)
+    const result = themesFromBuckets(themes, buckets, 's1')
     expect(result).toEqual([
       {
         id: 'theme-1',
         label: 'Theme One',
+        source: 'nlp',
+        keywords: ['navigation'],
+        frequency: 2,
         responseRefs: [
           { sessionId: 's1', topicId: 't1', messageId: 'm1', participantId: 'u1', excerpt: 'a' },
         ],
@@ -128,7 +161,27 @@ describe('themesFromBuckets', () => {
   })
 
   it('produces an empty responseRefs array for a theme with an empty bucket', () => {
-    const result = themesFromBuckets([{ id: 'theme-1', label: 'Empty' }], {})
+    const result = themesFromBuckets([{ id: 'theme-1', label: 'Empty' }], {}, 's1')
     expect(result[0].responseRefs).toEqual([])
+  })
+
+  it('keeps themes from other sessions intact when reviewing this session', () => {
+    const response = {
+      key: 's1:t1:m1',
+      sessionId: 's1',
+      topicId: 't1',
+      messageId: 'm1',
+      participantId: 'p1',
+      excerpt: 'menu is hard to find',
+    }
+    const themes = [
+      { id: 's1-theme', label: 'This session', responseRefs: [{ sessionId: 's1', topicId: 't1', messageId: 'm1' }] },
+      { id: 's2-theme', label: 'Other session', responseRefs: [{ sessionId: 's2', topicId: 't1', messageId: 'm2' }] },
+    ]
+    const { buckets } = partitionResponsesByTheme([response], themes)
+    const updated = themesFromBuckets(themes, buckets, 's1')
+
+    expect(updated[0].responseRefs[0].sessionId).toBe('s1')
+    expect(updated[1].responseRefs[0].sessionId).toBe('s2')
   })
 })
