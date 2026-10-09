@@ -25,8 +25,12 @@ describe('session presence helpers', () => {
   })
 
   it('respects the connected boolean when no presenceStatus is persisted yet', () => {
-    expect(normalizePresenceStatus({ connected: true, email: 'p1@test.com' })).toBe('connected')
-    expect(normalizePresenceStatus({ connected: false, email: 'p1@test.com' })).toBe('disconnected')
+    expect(
+      normalizePresenceStatus({ connected: true, email: 'p1@test.com' }),
+    ).toBe('connected')
+    expect(
+      normalizePresenceStatus({ connected: false, email: 'p1@test.com' }),
+    ).toBe('disconnected')
   })
 
   it('keeps the explicit waiting status when a stale connected=false flag is still present', () => {
@@ -92,14 +96,36 @@ describe('session presence helpers', () => {
     })
   })
 
+  it('assigns a participant access level when the session has only the role label', () => {
+    const member = normalizeSessionMember(
+      { userDocId: 'p-1', role: 'PARTICIPANT' },
+      'participant',
+    )
+
+    expect(member).toMatchObject({
+      role: 'participant',
+      accessLevel: 5,
+    })
+  })
+
   it('normalizes facilitator and observer role strings to the canonical UI labels', () => {
-    expect(normalizeSessionMember({ userDocId: 'u-1', role: 'FACILITATOR' }, 'participant')).toMatchObject({
+    expect(
+      normalizeSessionMember(
+        { userDocId: 'u-1', role: 'FACILITATOR' },
+        'participant',
+      ),
+    ).toMatchObject({
       role: 'moderator',
       accessLevel: 'ADMIN',
       isModerator: true,
     })
 
-    expect(normalizeSessionMember({ userDocId: 'u-2', role: 'OBSERVER' }, 'participant')).toMatchObject({
+    expect(
+      normalizeSessionMember(
+        { userDocId: 'u-2', role: 'OBSERVER' },
+        'participant',
+      ),
+    ).toMatchObject({
       role: 'observator',
       accessLevel: 'OBSERVATOR',
       isModerator: false,
@@ -107,13 +133,15 @@ describe('session presence helpers', () => {
   })
 
   it('removes a moderator from participants when the same user already exists in staff', () => {
-    const staff = [{
-      userDocId: 'facilitator-1',
-      email: 'moderator@test.com',
-      role: 'FACILITATOR',
-      presenceStatus: 'connected',
-      connected: true,
-    }]
+    const staff = [
+      {
+        userDocId: 'facilitator-1',
+        email: 'moderator@test.com',
+        role: 'FACILITATOR',
+        presenceStatus: 'connected',
+        connected: true,
+      },
+    ]
 
     const participants = [
       {
@@ -133,7 +161,9 @@ describe('session presence helpers', () => {
     ]
 
     expect(removeStaffDuplicates(participants, staff)).toHaveLength(1)
-    expect(removeStaffDuplicates(participants, staff)[0].email).toBe('p2@test.com')
+    expect(removeStaffDuplicates(participants, staff)[0].email).toBe(
+      'p2@test.com',
+    )
   })
 
   it('matches members by email when the userDocId differs across session records', () => {
@@ -151,7 +181,9 @@ describe('session presence helpers', () => {
       connected: false,
     }
 
-    expect(removeStaffDuplicates([participantMember], [staffMember])).toHaveLength(0)
+    expect(
+      removeStaffDuplicates([participantMember], [staffMember]),
+    ).toHaveLength(0)
     expect(
       getMemberIdentityKeys(staffMember).some((key) =>
         getMemberIdentityKeys(user).includes(key),
@@ -184,8 +216,12 @@ describe('session presence helpers', () => {
     const normalized = normalizeRoomParticipantsMap(roomParticipants)
 
     expect(normalized).toHaveLength(2)
-    expect(normalized.find((member) => member.isModerator)?.email).toBe('marcgc21@gmail.com')
-    expect(normalized.find((member) => !member.isModerator)?.presenceStatus).toBeNull()
+    expect(normalized.find((member) => member.isModerator)?.email).toBe(
+      'marcgc21@gmail.com',
+    )
+    expect(
+      normalized.find((member) => !member.isModerator)?.presenceStatus,
+    ).toBeNull()
     expect(normalized.every((member) => member.connected === true)).toBe(true)
   })
 
@@ -221,7 +257,9 @@ describe('session presence helpers', () => {
     expect(normalized[0].connected).toBe(true)
     expect(normalized[0].presenceStatus).toBe('connected')
     expect(normalized[0].presenceUpdatedAt).toBe(1712345678901)
-    expect(Object.prototype.hasOwnProperty.call(normalized[0], 'status')).toBe(false)
+    expect(Object.prototype.hasOwnProperty.call(normalized[0], 'status')).toBe(
+      false,
+    )
   })
 
   it('does not invent presence fields when the RTDB fields are absent', () => {
@@ -267,14 +305,23 @@ describe('session presence helpers', () => {
 
     const entries = normalizeRoomParticipantsMap(
       Object.fromEntries(
-        staff.map((member) => [member.userDocId, { ...member, joinedAt: Date.now() }]),
+        staff.map((member) => [
+          member.userDocId,
+          { ...member, joinedAt: Date.now() },
+        ]),
       ),
     )
 
     expect(entries).toHaveLength(2)
-    expect(entries.find((member) => member.userDocId === 'staff-1')?.presenceStatus).toBeNull()
-    expect(entries.find((member) => member.userDocId === 'staff-2')?.presenceStatus).toBe('connected')
-    expect(entries.find((member) => member.userDocId === 'staff-1')?.connected).toBeNull()
+    expect(
+      entries.find((member) => member.userDocId === 'staff-1')?.presenceStatus,
+    ).toBeNull()
+    expect(
+      entries.find((member) => member.userDocId === 'staff-2')?.presenceStatus,
+    ).toBe('connected')
+    expect(
+      entries.find((member) => member.userDocId === 'staff-1')?.connected,
+    ).toBeNull()
   })
 
   it('does not copy stale presence fields from staff members into the call seed', () => {

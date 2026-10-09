@@ -430,6 +430,7 @@ let localPresenceDisconnect = null
 let localSignalsDisconnect = null
 let moderatorCallDisconnect = null
 let moderatorRoomDisconnect = null
+let showVideoCallUnsubscribe = null
 
 // Camera and microphone controls
 const isCameraEnabled = ref(true)
@@ -570,8 +571,16 @@ watch([localVideo, localStream], ([videoEl, stream]) => {
 })
 
 onMounted(async () => {
+  const showVideoCallRef = dbRef(
+    database,
+    `rooms/${props.roomId}/showVideoCall`,
+  )
+
   // Moderator preview should appear immediately in the lobby when the test starts.
   if (props.isModerator) {
+    showVideoCallUnsubscribe = onValue(showVideoCallRef, (snapshot) => {
+      roomOpen.value = Boolean(snapshot.val())
+    })
     if (!localStream.value) {
       await initLocalMedia()
     }
@@ -584,11 +593,6 @@ onMounted(async () => {
   if (!localStream.value) {
     await initLocalMedia()
   }
-
-  const showVideoCallRef = dbRef(
-    database,
-    `rooms/${props.roomId}/showVideoCall`,
-  )
 
   // Check initial value first
   const initialSnapshot = await get(showVideoCallRef)
@@ -603,7 +607,7 @@ onMounted(async () => {
   }
 
   // Then listen for changes
-  onValue(showVideoCallRef, (snapshot) => {
+  showVideoCallUnsubscribe = onValue(showVideoCallRef, (snapshot) => {
     const shouldShow = snapshot.val()
     roomOpen.value = Boolean(shouldShow)
     if (shouldShow) {
@@ -616,6 +620,7 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
+  showVideoCallUnsubscribe?.()
   if (!isSessionEnded.value) {
     leaveRoom()
   }

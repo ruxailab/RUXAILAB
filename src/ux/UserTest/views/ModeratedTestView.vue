@@ -639,7 +639,10 @@ import {
   structuredValuesForStage,
   structuredValuesForTask,
 } from '@/ux/UserTest/utils/structuredActivity'
-import { removeStaffDuplicates } from '@/ux/UserTest/utils/sessionPresence'
+import {
+  normalizeSessionMember as normalizePresenceSessionMember,
+  removeStaffDuplicates,
+} from '@/ux/UserTest/utils/sessionPresence'
 import { moderatedSessionTimingReason } from '@/ux/UserTest/utils/moderatedSessionAvailability'
 
 const store = useStore()
@@ -933,14 +936,17 @@ const currentUserAccessLevel = computed(() => {
   const cooperator = session.value?.staff?.find(isCurrentUserMember)
 
   const participant = session.value?.participants?.find(isCurrentUserMember)
+  const normalizedParticipant = normalizePresenceSessionMember(
+    participant,
+    'participant',
+  )
 
   // The study role is known before the session loads, so a participant is not
   // briefly treated as an observer while the session is still being fetched.
   const rawValue =
     cooperator?.accessLevel ??
     cooperator?.role ??
-    participant?.accessLevel ??
-    participant?.role ??
+    normalizedParticipant?.accessLevel ??
     test.value?.studyRoleMap?.[user.value?.id] ??
     (isUserTestAdmin.value ? ACCESS_LEVEL.ADMIN : ACCESS_LEVEL.OBSERVATOR)
 
@@ -1944,6 +1950,11 @@ const startTestOnce = async () => {
 
 const handleWelcomeStart = async () => {
   if (globalIndex.value !== 0) return
+  if (isModerator.value) {
+    await update(dbRef(database, `rooms/${roomId.value}`), {
+      showVideoCall: true,
+    })
+  }
   if (
     !isModerator.value &&
     !localTestAnswer.submitted &&

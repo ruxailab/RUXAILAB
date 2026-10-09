@@ -767,9 +767,7 @@ async function endCall() {
 }
 
 onMounted(async () => {
-  if (props.isModerator) return
-
-  if (!isObservator.value) {
+  if (!props.isModerator && !isObservator.value) {
     await initWaitingPreview()
   }
 
@@ -778,18 +776,18 @@ onMounted(async () => {
     `rooms/${props.roomId}/showVideoCall`,
   )
 
-  const initialSnapshot = await get(showVideoCallRef)
-  if (initialSnapshot.val()) {
-    roomReady.value = true
-    await joinLiveKitRoom()
-  }
-
   onValue(showVideoCallRef, async (snapshot) => {
     if (snapshot.val() && !roomReady.value) {
       roomReady.value = true
       await joinLiveKitRoom()
     }
   })
+
+  const initialSnapshot = await get(showVideoCallRef)
+  if (initialSnapshot.val() && !roomReady.value) {
+    roomReady.value = true
+    await joinLiveKitRoom()
+  }
 })
 
 onBeforeUnmount(async () => {
