@@ -124,6 +124,7 @@ describe('HeuristicAnswer Firestore serialization', () => {
                 custom: { text: 'Yes', value: undefined },
                 metadata: [undefined],
               },
+              heuristicRecommendation: 'Improve the sign-up flow',
             }),
           ],
         }),
@@ -136,5 +137,6 @@ describe('HeuristicAnswer Firestore serialization', () => {
     expect(question).not.toHaveProperty('heuristicId')
     expect(question.heuristicAnswer.custom).toEqual({ text: 'Yes' })
     expect(question.heuristicAnswer.metadata).toEqual([null])
+    expect(question.heuristicRecommendation).toBe('Improve the sign-up flow')
   })
 })

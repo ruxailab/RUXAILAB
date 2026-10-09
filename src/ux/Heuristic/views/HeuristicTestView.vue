@@ -294,6 +294,14 @@
                   (sourceHeurisIndex, questionIndex, comment) =>
                     updateComment(comment, sourceHeurisIndex, questionIndex)
                 "
+                @update-recommendation="
+                  (sourceHeurisIndex, questionIndex, recommendation) =>
+                    updateRecommendation(
+                      recommendation,
+                      sourceHeurisIndex,
+                      questionIndex,
+                    )
+                "
                 @update-image="
                   (sourceHeurisIndex, questionIndex, imageUrl) =>
                     updateImageUrl(imageUrl, sourceHeurisIndex, questionIndex)
@@ -880,6 +888,21 @@ const updateComment = (_comment, _heurisIndex, _answerIndex) => {
   // Show saving status immediately
   updateSaveStatus('Saving changes...', 'saving')
   // Trigger auto-save on comment change
+  debouncedAutoSave()
+}
+
+const updateRecommendation = (_recommendation, _heurisIndex, _answerIndex) => {
+  if (
+    !currentUserTestAnswer.value.heuristicQuestions?.[_heurisIndex]
+      ?.heuristicQuestions?.[_answerIndex]
+  ) {
+    return
+  }
+  const question =
+    currentUserTestAnswer.value.heuristicQuestions[_heurisIndex]
+      .heuristicQuestions[_answerIndex]
+  question.heuristicRecommendation = _recommendation || ''
+  updateSaveStatus('Saving changes...', 'saving')
   debouncedAutoSave()
 }
 
@@ -1519,6 +1542,7 @@ const populateWithHeuristicQuestions = () => {
             heuristicId: h.id,
             heuristicAnswer: null,
             heuristicComment: '',
+            heuristicRecommendation: '',
             answerImageUrl: '',
             comments: [],
             images: [],
@@ -1580,6 +1604,8 @@ const populateWithHeuristicQuestions = () => {
               heuristicId: h.id,
               heuristicAnswer: restoredAnswer,
               heuristicComment: existingQuestion.heuristicComment || '',
+              heuristicRecommendation:
+                existingQuestion.heuristicRecommendation || '',
               answerImageUrl: existingQuestion.answerImageUrl || '',
               comments: Array.isArray(existingQuestion.comments)
                 ? existingQuestion.comments
@@ -1594,6 +1620,7 @@ const populateWithHeuristicQuestions = () => {
               heuristicId: h.id,
               heuristicAnswer: null,
               heuristicComment: '',
+              heuristicRecommendation: '',
               answerImageUrl: '',
               comments: [],
               images: [],
@@ -1638,6 +1665,9 @@ const hasSavedAnswers = () => {
         // Check legacy comment format
         const hasLegacyComment =
           question.heuristicComment && question.heuristicComment.trim() !== ''
+        const hasRecommendation =
+          question.heuristicRecommendation &&
+          question.heuristicRecommendation.trim() !== ''
         // Check new comments array format
         const hasNewComments =
           Array.isArray(question.comments) && question.comments.length > 0
@@ -1651,6 +1681,7 @@ const hasSavedAnswers = () => {
         if (
           hasAnswer ||
           hasLegacyComment ||
+          hasRecommendation ||
           hasNewComments ||
           hasLegacyImage ||
           hasNewImages
