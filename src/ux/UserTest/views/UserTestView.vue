@@ -321,7 +321,9 @@
                       stepperValue >= (hasEyeTracking ? 4 : 3) &&
                       !isCurrentMainStep(tasksStep)
                     "
-                    :icon="isCurrentMainStep(tasksStep) ? 'mdi-pencil' : undefined"
+                    :icon="
+                      isCurrentMainStep(tasksStep) ? 'mdi-pencil' : undefined
+                    "
                     complete-icon="mdi-check"
                     :class="{
                       'stepper-item--current': isCurrentMainStep(tasksStep),
@@ -343,7 +345,8 @@
                       "
                       complete-icon="mdi-check"
                       :class="{
-                        'stepper-item--current': isCurrentMainStep(postTestStep),
+                        'stepper-item--current':
+                          isCurrentMainStep(postTestStep),
                       }"
                     />
                     <v-divider />
@@ -908,8 +911,10 @@ const activeMainStep = computed(() => {
   if (globalIndex.value === 2) return 2
   if (hasEyeTracking.value) {
     if (globalIndex.value === 3) return calibrationStep.value
-    if (globalIndex.value === 4 || globalIndex.value === 5) return tasksStep.value
-    if (globalIndex.value === 6) return hasPostTest.value ? postTestStep.value : completionStep.value
+    if (globalIndex.value === 4 || globalIndex.value === 5)
+      return tasksStep.value
+    if (globalIndex.value === 6)
+      return hasPostTest.value ? postTestStep.value : completionStep.value
     return completionStep.value
   }
   if (globalIndex.value === 3 || globalIndex.value === 4) return tasksStep.value
@@ -1019,7 +1024,7 @@ const savePartialAnswer = async () => {
       return Boolean(task?.[MEDIA_FIELD_MAP[mediaType]])
     })
   try {
-    calculateProgress(localTestAnswer)
+    calculateProgress(localTestAnswer, test.value?.testStructure)
     localTestAnswer.fullName = fullName.value
 
     if (user.value && user.value?.email) {
@@ -1438,7 +1443,7 @@ const completeStep = async (id, type, userCompleted = true) => {
       await persistStepProgress()
     }
 
-    calculateProgress(localTestAnswer)
+    calculateProgress(localTestAnswer, test.value?.testStructure)
   } catch {
     store.commit('SET_TOAST', {
       type: 'error',
@@ -1541,7 +1546,7 @@ const setTest = async () => {
     fullName.value = localTestAnswer.fullName
     await mappingSteps()
     await autoComplete()
-    calculateProgress(localTestAnswer)
+    calculateProgress(localTestAnswer, test.value?.testStructure)
     initializeAnonymousUser()
   } catch {
     store.commit('SET_TOAST', {
@@ -1787,7 +1792,7 @@ onMounted(async () => {
   await nextTick()
   await setTest()
   await autoComplete()
-  calculateProgress(localTestAnswer)
+  calculateProgress(localTestAnswer, test.value?.testStructure)
   initializeStudyLogging()
   if (!user.value?.id) return
 

@@ -598,14 +598,7 @@
 <script setup>
 import { ref as dbRef, onValue, update, get, remove } from 'firebase/database'
 import { database } from '@/app/plugins/firebase/index'
-import {
-  ref,
-  computed,
-  watch,
-  onMounted,
-  reactive,
-  watchEffect,
-} from 'vue'
+import { ref, computed, watch, onMounted, reactive, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -1012,7 +1005,8 @@ const stepperValue = computed(() => {
   return 1 // Default to first step
 })
 
-const isCurrentMainStep = (value) => Number(stepperValue.value) === Number(value)
+const isCurrentMainStep = (value) =>
+  Number(stepperValue.value) === Number(value)
 
 const completedSteps = computed(() => {
   if (isModerator.value) {
@@ -2159,7 +2153,7 @@ const completeStep = async (
 
     await publishParticipantProgress()
 
-    calculateProgress(localTestAnswer)
+    calculateProgress(localTestAnswer, test.value?.testStructure)
     await saveAnswer()
     if (type === 'consent') {
       void initializeStudyLogging()?.consentAccepted()

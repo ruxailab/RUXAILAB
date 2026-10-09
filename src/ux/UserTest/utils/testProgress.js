@@ -2,36 +2,32 @@
  * Utility for calculating test progress
  */
 
-export const calculateProgress = (localTestAnswer) => {
+export const calculateProgress = (localTestAnswer, testStructure = {}) => {
   try {
     if (!localTestAnswer) return 0
-    const totalSteps = 4
-    let completedSteps = 0
 
-    if (localTestAnswer.preTestCompleted) completedSteps++
-    if (localTestAnswer.consentCompleted) completedSteps++
+    const hasPreTest =
+      Array.isArray(testStructure.preTest) && testStructure.preTest.length > 0
+    const hasPostTest =
+      Array.isArray(testStructure.postTest) && testStructure.postTest.length > 0
+    const tasks = Array.isArray(testStructure.userTasks)
+      ? testStructure.userTasks
+      : []
 
-    let tasksCompleted = 0
-    if (
-      Array.isArray(localTestAnswer.tasks) &&
-      localTestAnswer.tasks.length > 0
-    ) {
-      for (let i = 0; i < localTestAnswer.tasks.length; i++) {
-        if (
-          localTestAnswer.tasks[i]?.completed ||
-          localTestAnswer.tasks[i]?.attempted
-        ) {
-          tasksCompleted++
-        }
-      }
-      if (tasksCompleted === localTestAnswer.tasks.length) {
-        completedSteps++
-      }
+    const totalUnits =
+      1 + Number(hasPreTest) + tasks.length + Number(hasPostTest)
+    let completedUnits = Number(localTestAnswer.consentCompleted === true)
+
+    if (hasPreTest && localTestAnswer.preTestCompleted) completedUnits++
+
+    for (let index = 0; index < tasks.length; index++) {
+      const taskAnswer = localTestAnswer.tasks?.[index]
+      if (taskAnswer?.completed || taskAnswer?.attempted) completedUnits++
     }
 
-    if (localTestAnswer.postTestCompleted) completedSteps++
+    if (hasPostTest && localTestAnswer.postTestCompleted) completedUnits++
 
-    const progressPercentage = (completedSteps / totalSteps) * 100
+    const progressPercentage = Math.round((completedUnits / totalUnits) * 100)
     localTestAnswer.progress = progressPercentage
     return progressPercentage
   } catch {
