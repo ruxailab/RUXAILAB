@@ -2808,23 +2808,32 @@
     "analysis": {
       "runAnalysis": "Ejecutar análisis",
       "summary": "Resumen",
-      "consensusScore": "Similitud textual",
       "suggested": "Sugerido"
     },
     "analytics": {
       "title": "Analítica",
-      "subtitle": "Temas, consenso, participación y un informe exportable para cada sesión finalizada.",
+      "subtitle": "Temas, posibles opiniones compartidas o divergentes, actividad del chat e informe exportable por sesión finalizada.",
       "downloadReport": "Descargar informe",
       "keywordsTitle": "Frases extraídas",
       "keywordsHint": "Frases concisas derivadas de las respuestas, eliminando palabras de relleno con poca información. Revísalas como sugerencias, no como temas definitivos.",
       "summariesTitle": "Resúmenes extractivos por tema",
       "summariesHint": "Resúmenes breves creados con frases originales de los participantes; no se añade texto generado.",
       "summaryUnavailable": "No hay un resumen disponible para este tema.",
-      "consensusTitle": "Similitud textual por participante y tema",
-      "consensusHint": "Cada porcentaje compara la redacción de una persona con las respuestas de las demás sobre ese tema. No mide el acuerdo.",
-      "consensusUnavailableHint": "— significa que todavía no hay respuestas de al menos dos participantes para comparar en este tema.",
-      "consensusSimilarityHint": "Las puntuaciones muestran palabras compartidas, no acuerdo. 0 % significa que no hay coincidencia textual significativa; — significa que no hay suficiente texto para comparar.",
-      "consensusZeroHint": "No se encontró coincidencia textual significativa. Esto no significa que los participantes estén en desacuerdo.",
+      "topicParticipationTitle": "Cobertura del chat por tema",
+      "topicParticipationHint": "Consulta cuántas personas dejaron una respuesta registrada en el chat para cada tema. No tener una respuesta en el chat no significa que no hayan participado oralmente.",
+      "chatCoverageCount": "{responded} de {total} participantes respondieron en el chat",
+      "chatCoverageMissing": "Sin respuesta registrada en el chat: {names}",
+      "chatCoverageAllResponded": "Todos los participantes tienen una respuesta registrada en el chat",
+      "noTopicParticipation": "No hay mensajes de participantes disponibles para esta sesión.",
+      "stanceTitle": "Posibles opiniones compartidas y divergentes",
+      "stanceHint": "Las señales de postura son tentativas y solo se agrupan cuando varias personas mencionan un aspecto común. Revisa las citas originales; estas sugerencias no son etiquetas definitivas de sentimiento o acuerdo.",
+      "noStanceFindings": "No se detectaron señales claras de posturas compartidas o divergentes. Esto no significa que los participantes estén de acuerdo o en desacuerdo.",
+      "sharedView": "Posible opinión {stance} compartida sobre «{aspect}»",
+      "divergingViews": "Posibles opiniones divergentes sobre «{aspect}»",
+      "stance": {
+        "positive": "positiva",
+        "negative": "negativa"
+      },
       "engagementTitle": "Proporción de mensajes de participantes",
       "engagementHint": "Proporción de mensajes de chat de participantes en esta sesión; no mide la calidad de las respuestas.",
       "deepAnalysisTitle": "Síntesis de IA · OpenRouter",
@@ -2836,7 +2845,6 @@
       "noKeywordsYet": "Ejecuta el análisis para ver palabras clave.",
       "noAnalysisYet": "Ejecuta el análisis para ver esto.",
       "noEngagementYet": "Todavía no hay actividad registrada en esta sesión.",
-      "consensusNeedsParticipants": "La similitud textual requiere respuestas de al menos dos participantes.",
       "messageCount": "{count} mensajes"
     },
     "session": {

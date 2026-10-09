@@ -10,7 +10,8 @@ import {
 /**
  * Runs the full Tier 1 ($0, always-available) NLP pipeline against one
  * finished Focus Group session: per-topic keywords, an extractive summary,
- * a consensus/divergence score, and cross-topic theme suggestions.
+ * wording similarity, cautious quote-backed stance suggestions, and
+ * cross-topic theme suggestions. Similarity is not treated as agreement.
  *
  * @param {{ sessionId: string, messages: Object, participantIds?: Set<string> }} session - a persisted session record
  * @returns {{

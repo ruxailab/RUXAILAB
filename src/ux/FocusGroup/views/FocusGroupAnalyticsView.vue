@@ -125,23 +125,23 @@
               </v-card>
             </v-col>
 
-            <v-col cols="12" md="7">
+            <v-col cols="12" md="5">
               <v-card variant="outlined" rounded="lg" class="h-100">
-                <v-card-title>{{ $t('focusGroup.analytics.consensusTitle') }}</v-card-title>
+                <v-card-title>{{ $t('focusGroup.analytics.topicParticipationTitle') }}</v-card-title>
                 <v-card-subtitle class="analytics-card-subtitle">
-                  {{ $t('focusGroup.analytics.consensusHint') }}
+                  {{ $t('focusGroup.analytics.topicParticipationHint') }}
                 </v-card-subtitle>
                 <v-card-text>
-                  <ConsensusHeatmap
+                  <ChatCoverage
                     :topics="topics"
                     :participants="participantsForSession"
-                    :matrix="consensusMatrix"
+                    :matrix="topicParticipationMatrix"
                   />
                 </v-card-text>
               </v-card>
             </v-col>
 
-            <v-col cols="12" md="5">
+            <v-col cols="12" md="7">
               <v-card variant="outlined" rounded="lg" class="h-100">
                 <v-card-title>{{ $t('focusGroup.analytics.engagementTitle') }}</v-card-title>
                 <v-card-subtitle class="analytics-card-subtitle">
@@ -149,6 +149,71 @@
                 </v-card-subtitle>
                 <v-card-text>
                   <ParticipantEngagement :entries="engagementEntries" />
+                </v-card-text>
+              </v-card>
+            </v-col>
+
+            <v-col cols="12">
+              <v-card variant="outlined" rounded="lg">
+                <v-card-title>{{ $t('focusGroup.analytics.stanceTitle') }}</v-card-title>
+                <v-card-subtitle class="analytics-card-subtitle">
+                  {{ $t('focusGroup.analytics.stanceHint') }}
+                </v-card-subtitle>
+                <v-card-text>
+                  <p v-if="!hasAnalysis" class="text-medium-emphasis mb-0">
+                    {{ $t('focusGroup.analytics.noAnalysisYet') }}
+                  </p>
+                  <p v-else-if="!hasStanceFindings" class="text-medium-emphasis mb-0">
+                    {{ $t('focusGroup.analytics.noStanceFindings') }}
+                  </p>
+                  <div v-else>
+                    <section
+                      v-for="(topic, index) in topicsWithStanceFindings"
+                      :key="topic.id"
+                      class="analytics-summary"
+                      :class="{ 'analytics-summary--separated': index > 0 }"
+                    >
+                      <h3 class="text-subtitle-1 font-weight-medium mb-3">
+                        {{ topic.title || $t('focusGroup.modules.untitledTopic') }}
+                      </h3>
+                      <div
+                        v-for="finding in perTopicAnalysis[topic.id]?.consensus?.sharedOpinions ?? []"
+                        :key="`shared-${finding.aspect}-${finding.stance}`"
+                        class="mb-3"
+                      >
+                        <div class="text-body-2 font-weight-medium mb-1">
+                          {{ $t('focusGroup.analytics.sharedView', { aspect: finding.aspect, stance: $t(`focusGroup.analytics.stance.${finding.stance}`) }) }}
+                        </div>
+                        <blockquote
+                          v-for="item in finding.evidence"
+                          :key="`shared-${finding.aspect}-${item.participantId}`"
+                          class="stance-evidence text-body-2 mb-1"
+                        >
+                          <span class="font-weight-medium">{{ participantName(item.participantId) }}:</span>
+                          {{ quotedText(item.quote) }}
+                        </blockquote>
+                      </div>
+                      <div
+                        v-for="finding in perTopicAnalysis[topic.id]?.consensus?.divergencePoints ?? []"
+                        :key="`divergence-${finding.aspect}`"
+                        class="mb-3"
+                      >
+                        <div class="text-body-2 font-weight-medium mb-1">
+                          {{ $t('focusGroup.analytics.divergingViews', { aspect: finding.aspect }) }}
+                        </div>
+                        <template v-for="stance in ['positive', 'negative']" :key="stance">
+                          <blockquote
+                            v-for="item in finding.positions?.[stance] ?? []"
+                            :key="`${finding.aspect}-${stance}-${item.participantId}`"
+                            class="stance-evidence text-body-2 mb-1"
+                          >
+                            <span class="font-weight-medium">{{ participantName(item.participantId) }} ({{ $t(`focusGroup.analytics.stance.${stance}`) }}):</span>
+                            {{ quotedText(item.quote) }}
+                          </blockquote>
+                        </template>
+                      </div>
+                    </section>
+                  </div>
                 </v-card-text>
               </v-card>
             </v-col>
@@ -213,7 +278,7 @@ import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import ThemeCloud from '@/ux/FocusGroup/components/analytics/ThemeCloud.vue'
-import ConsensusHeatmap from '@/ux/FocusGroup/components/analytics/ConsensusHeatmap.vue'
+import ChatCoverage from '@/ux/FocusGroup/components/analytics/ChatCoverage.vue'
 import ParticipantEngagement from '@/ux/FocusGroup/components/analytics/ParticipantEngagement.vue'
 import { rankKeywordCloud } from '@/ux/FocusGroup/utils/keywordRanking'
 import { sortSessionsByStartedAt } from '@/ux/FocusGroup/utils/sessionSummary'
@@ -262,6 +327,10 @@ const participantsForSession = computed(() =>
       name: p?.name || t('focusGroup.session.anonymous'),
     })),
 )
+const participantName = (participantId) =>
+  participantsForSession.value.find(({ id }) => id === participantId)?.name
+  || t('focusGroup.session.anonymous')
+const quotedText = (text) => `“${text}”`
 const participantMessages = computed(() => {
   const participantIds = new Set(participantsForSession.value.map(({ id }) => id))
   return Object.fromEntries(
@@ -278,13 +347,35 @@ const participantMessages = computed(() => {
 
 const keywordCloudEntries = computed(() => rankKeywordCloud(perTopicAnalysis.value))
 
-const consensusMatrix = computed(() => {
+const topicParticipationMatrix = computed(() => {
   const matrix = {}
-  Object.entries(perTopicAnalysis.value).forEach(([topicId, topicAnalysis]) => {
-    matrix[topicId] = topicAnalysis?.consensus?.alignment ?? {}
+  const participantIds = participantsForSession.value.map(({ id }) => id)
+  topics.value.forEach(({ id: topicId }) => {
+    const counts = Object.fromEntries(participantIds.map((participantId) => [participantId, 0]))
+    Object.values(participantMessages.value[topicId] ?? {}).forEach((message) => {
+      if (message?.text?.trim() && message.userId in counts) counts[message.userId] += 1
+    })
+    matrix[topicId] = counts
   })
   return matrix
 })
+
+const topicCoverage = computed(() => Object.fromEntries(
+  topics.value.map(({ id: topicId }) => {
+    const counts = topicParticipationMatrix.value[topicId] ?? {}
+    const responded = participantsForSession.value.filter(({ id }) => counts[id] > 0)
+    return [topicId, {
+      responded,
+      missing: participantsForSession.value.filter(({ id }) => counts[id] === 0),
+    }]
+  }),
+))
+
+const topicsWithStanceFindings = computed(() => topics.value.filter((topic) => {
+  const consensus = perTopicAnalysis.value[topic.id]?.consensus
+  return consensus?.sharedOpinions?.length || consensus?.divergencePoints?.length
+}))
+const hasStanceFindings = computed(() => topicsWithStanceFindings.value.length > 0)
 
 const engagementEntries = computed(() => {
   const percentages = computeParticipation({ messages: participantMessages.value })
@@ -421,7 +512,7 @@ const onDownloadReport = () => {
 
   autoTable(doc, {
     startY: y,
-    head: [['Topic', 'Summary', 'Keywords', 'Text similarity']],
+    head: [['Topic', 'Summary', 'Keywords', 'Chat coverage']],
     body: topics.value
       .map((topic) => ({ topic, analysis: perTopicAnalysis.value[topic.id] }))
       .filter(({ analysis }) => analysis)
@@ -429,15 +520,45 @@ const onDownloadReport = () => {
         topic.title || topic.id,
         analysis.summary || '—',
         (analysis.keywords ?? []).join(', '),
-        analysis.consensus?.score == null
-          ? '—'
-          : `${Math.round(analysis.consensus.score * 100)}%`,
+        `${topicCoverage.value[topic.id]?.responded.length ?? 0}/${participantsForSession.value.length} participants responded in chat\n` +
+          `No chat response: ${(topicCoverage.value[topic.id]?.missing ?? []).map(({ name }) => name).join(', ') || 'None'}`,
       ]),
     styles: { fontSize: 8, cellPadding: 5, overflow: 'linebreak' },
-    columnStyles: { 0: { cellWidth: 90 }, 1: { cellWidth: 215 } },
+    columnStyles: { 0: { cellWidth: 78 }, 1: { cellWidth: 170 }, 2: { cellWidth: 115 } },
     margin: { left: M, right: M },
   })
   y = doc.lastAutoTable.finalY + 16
+
+  const stanceRows = topics.value.flatMap((topic) => {
+    const consensus = perTopicAnalysis.value[topic.id]?.consensus
+    const topicName = topic.title || topic.id
+    const shared = (consensus?.sharedOpinions ?? []).map((finding) => [
+      topicName,
+      `Possible shared ${finding.stance} view: ${finding.aspect}`,
+      finding.evidence.map((item) => `${participantName(item.participantId)}: “${item.quote}”`).join('\n'),
+    ])
+    const divergent = (consensus?.divergencePoints ?? []).map((finding) => [
+      topicName,
+      `Possible contrasting views: ${finding.aspect}`,
+      ['positive', 'negative'].flatMap((stance) =>
+        (finding.positions?.[stance] ?? []).map((item) =>
+          `${participantName(item.participantId)} (${stance}): “${item.quote}”`,
+        ),
+      ).join('\n'),
+    ])
+    return [...shared, ...divergent]
+  })
+  if (stanceRows.length) {
+    autoTable(doc, {
+      startY: y,
+      head: [['Topic', 'Possible stance finding', 'Supporting participant quotes']],
+      body: stanceRows,
+      styles: { fontSize: 8, cellPadding: 5, overflow: 'linebreak' },
+      columnStyles: { 0: { cellWidth: 90 }, 1: { cellWidth: 145 } },
+      margin: { left: M, right: M },
+    })
+    y = doc.lastAutoTable.finalY + 16
+  }
 
   autoTable(doc, {
     startY: y,
@@ -499,6 +620,12 @@ onMounted(async () => {
   overflow: visible;
   white-space: normal;
   text-overflow: clip;
+}
+
+.stance-evidence {
+  border-left: 3px solid rgb(var(--v-theme-primary));
+  margin: 0;
+  padding: 0.25rem 0 0.25rem 0.75rem;
 }
 
 .analytics-summary--separated {

@@ -2900,23 +2900,32 @@
     "analysis": {
       "runAnalysis": "Run analysis",
       "summary": "Summary",
-      "consensusScore": "Text similarity",
       "suggested": "Suggested"
     },
     "analytics": {
       "title": "Analytics",
-      "subtitle": "Themes, consensus, engagement, and an exportable report for each finished session.",
+      "subtitle": "Themes, possible shared or contrasting views, chat activity, and an exportable report for each finished session.",
       "downloadReport": "Download report",
       "keywordsTitle": "Extracted phrases",
       "keywordsHint": "Concise phrases derived from participant wording, with low-information filler trimmed. Review them as suggestions, not final themes.",
       "summariesTitle": "Extractive summaries by topic",
       "summariesHint": "Short summaries made from participants' original sentences; no generated wording is added.",
       "summaryUnavailable": "No summary is available for this topic.",
-      "consensusTitle": "Participant text similarity by topic",
-      "consensusHint": "Each percentage compares a participant's wording with other participants' responses to that topic. It is not a measure of agreement.",
-      "consensusUnavailableHint": "— means there are not yet responses from at least two participants to compare for that topic.",
-      "consensusSimilarityHint": "Scores show shared wording, not agreement. 0% means no meaningful wording overlap; — means there is not enough text to compare.",
-      "consensusZeroHint": "No meaningful wording overlap was found. This does not mean participants disagree.",
+      "topicParticipationTitle": "Chat coverage by topic",
+      "topicParticipationHint": "See how many participants left a recorded chat response for each topic. A missing chat response does not mean they did not contribute verbally.",
+      "chatCoverageCount": "{responded} of {total} participants responded in chat",
+      "chatCoverageMissing": "No chat response recorded: {names}",
+      "chatCoverageAllResponded": "Every participant has a recorded chat response",
+      "noTopicParticipation": "No participant chat messages are available for this session.",
+      "stanceTitle": "Possible shared and contrasting views",
+      "stanceHint": "Tentative stance cues are grouped only when participants mention a shared aspect. Review each original quote; these suggestions are not definitive sentiment or agreement labels.",
+      "noStanceFindings": "No clear shared or contrasting stance cues were detected. This does not mean participants agree or disagree.",
+      "sharedView": "Possible shared {stance} view on “{aspect}”",
+      "divergingViews": "Possible contrasting views on “{aspect}”",
+      "stance": {
+        "positive": "positive",
+        "negative": "negative"
+      },
       "engagementTitle": "Participant message share",
       "engagementHint": "Share of participant chat messages in this session; this is not a measure of response quality.",
       "deepAnalysisTitle": "AI synthesis · OpenRouter",
@@ -2928,7 +2937,6 @@
       "noKeywordsYet": "Run analysis to see keywords.",
       "noAnalysisYet": "Run analysis to see this.",
       "noEngagementYet": "No activity recorded for this session yet.",
-      "consensusNeedsParticipants": "Text similarity needs responses from at least two participants.",
       "messageCount": "{count} messages"
     },
     "session": {
