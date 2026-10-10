@@ -103,6 +103,21 @@ describe('Store Modules Error Handling Structure', () => {
       ).toBeLessThan(AuthController.signOut.mock.invocationCallOrder[0])
     })
 
+    it('unsubscribes from notifications before signOut on logout', async () => {
+      const commit = jest.fn()
+      const dispatch = jest.fn().mockResolvedValue()
+
+      await AuthModule.actions.logout(
+        { commit, state: { user: { id: 'participant-1' } }, dispatch },
+        { silent: true },
+      )
+
+      expect(dispatch).toHaveBeenCalledWith('unsubscribeFromNotifications')
+      expect(dispatch.mock.invocationCallOrder[0]).toBeLessThan(
+        AuthController.signOut.mock.invocationCallOrder[0],
+      )
+    })
+
     it('has error handling in autoSignIn action', () => {
       expect(typeof AuthModule.actions.autoSignIn).toBe('function')
 

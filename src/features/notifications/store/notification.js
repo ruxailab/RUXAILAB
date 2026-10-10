@@ -1,6 +1,8 @@
 import NotificationController from '@/features/notifications/controllers/NotificationController'
 const notificationController = new NotificationController()
 
+let unsubscribeNotifications = null
+
 export default {
   state: {
     notifications: [],
@@ -27,13 +29,28 @@ export default {
       }
     },
 
-    subscribeToNotifications({ commit }, userId) {
-      return notificationController.subscribeToNotifications(
-        userId,
-        (notifications) => {
-          commit('setNotifications', notifications)
-        },
-      )
+    async subscribeToNotifications({ commit }, userId) {
+      if (typeof unsubscribeNotifications === 'function') {
+        unsubscribeNotifications()
+        unsubscribeNotifications = null
+      }
+
+      unsubscribeNotifications =
+        await notificationController.subscribeToNotifications(
+          userId,
+          (notifications) => {
+            commit('setNotifications', notifications)
+          },
+        )
+      return unsubscribeNotifications
+    },
+
+    unsubscribeFromNotifications({ commit }) {
+      if (typeof unsubscribeNotifications === 'function') {
+        unsubscribeNotifications()
+        unsubscribeNotifications = null
+      }
+      commit('setNotifications', [])
     },
 
     async markNotificationAsRead({ commit }, payload) {

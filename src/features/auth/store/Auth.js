@@ -190,10 +190,13 @@ export default {
       }
     },
 
-    async logout({ commit, state }, { silent = false } = {}) {
+    async logout({ commit, state, dispatch }, { silent = false } = {}) {
       try {
         const ownerUid = state.user?.id
         requestStudyLoggingLogout(ownerUid)
+        if (dispatch) {
+          await dispatch('unsubscribeFromNotifications')
+        }
         await authController.signOut()
         await cleanupStudyLoggingForOwner(ownerUid)
         commit('SET_USER', null)
