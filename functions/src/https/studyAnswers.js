@@ -1,12 +1,5 @@
 import { admin, functions } from '../core/firebase/f.firebase.js'
-
-const ROLE = Object.freeze({
-  ADMIN: 0,
-  EVALUATOR: 1,
-  OBSERVATOR: 3,
-  MANAGER: 4,
-  USER: 5,
-})
+import { ROLE } from '../shared/auth/studyAccess.js'
 
 const error = (code, message) =>
   new functions.https.HttpsError(code, message)
@@ -33,7 +26,8 @@ const canAnswerStudy = ({ study, uid, isSuperAdmin = false }) => {
     (studyType === 'USER' &&
       (role === ROLE.USER ||
         (role === ROLE.OBSERVATOR && study?.subType === 'USER_MODERATED'))) ||
-    (studyType === 'HEURISTIC' && role === ROLE.EVALUATOR)
+    (studyType === 'HEURISTIC' && role === ROLE.EVALUATOR) ||
+    (studyType === 'CARD_SORTING' && role === ROLE.EVALUATOR)
   )
 }
 
@@ -59,6 +53,14 @@ export const getOwnAnswerPayload = ({ answerId, answer, study, uid }) => {
     return {
       ...base,
       heuristicAnswers: ownAnswer ? { [uid]: ownAnswer } : {},
+    }
+  }
+
+  if (type === 'CARD_SORTING') {
+    const ownAnswer = answer?.cardSortingAnswers?.[uid]
+    return {
+      ...base,
+      cardSortingAnswers: ownAnswer ? { [uid]: ownAnswer } : {},
     }
   }
 
