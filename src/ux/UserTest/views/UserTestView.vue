@@ -711,6 +711,12 @@ const router = useRouter()
 const { t } = useI18n()
 let studyLogging = null
 
+const signOut = async () => {
+  await store.dispatch('logout')
+  router.push('/signin')
+}
+
+
 const initializeStudyLogging = () => {
   if (studyLogging || !user.value?.id || !test.value?.id) return studyLogging
   studyLogging = createStudyLoggingRuntime({
