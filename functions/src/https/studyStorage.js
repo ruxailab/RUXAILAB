@@ -1,5 +1,6 @@
 import { admin, functions } from '../core/firebase/f.firebase.js'
 import { buildAuditEvent } from '../utils/auditTrail.js'
+import { resolveStudyRole, ROLE } from '../shared/auth/studyAccess.js'
 
 const error = (code, message) =>
   new functions.https.HttpsError(code, message)
@@ -9,15 +10,10 @@ export const assertStorageDeletionAllowed = ({
   uid,
   isSuperAdmin = false,
 }) => {
-  const membership = study.cooperators?.find(
-    (cooperator) =>
-      cooperator?.userDocId === uid && cooperator?.accepted === true,
-  )
-  const allowed =
-    isSuperAdmin ||
-    study.testAdmin?.userDocId === uid ||
-    membership?.accessLevel === 0
-  if (!allowed) throw error('permission-denied', 'Storage access is denied')
+  const role = resolveStudyRole(study, uid, isSuperAdmin)
+  if (role !== ROLE.ADMIN) {
+    throw error('permission-denied', 'Storage access is denied')
+  }
 }
 
 export const deleteStudyStorageFile = functions.onCall({

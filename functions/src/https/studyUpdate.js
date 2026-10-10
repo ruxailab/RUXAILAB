@@ -1,7 +1,7 @@
 import { admin, functions } from '../core/firebase/f.firebase.js'
 import { writeAuditEvent } from '../utils/auditTrail.js'
+import { resolveStudyRole, ROLE } from '../shared/auth/studyAccess.js'
 
-const ROLE = { ADMIN: 0, MANAGER: 4 }
 const PROTECTED_FIELDS = new Set([
   'answersDocId',
   'cooperators',
@@ -22,23 +22,13 @@ const MAX_AUDIT_TEXT_LENGTH = 160
 const error = (code, message) =>
   new functions.https.HttpsError(code, message)
 
-const actorRole = (study, uid, superAdmin) => {
-  if (superAdmin || study?.testAdmin?.userDocId === uid) return ROLE.ADMIN
-  return (
-    study?.cooperators?.find(
-      (cooperator) =>
-        cooperator?.userDocId === uid && cooperator?.accepted === true,
-    )?.accessLevel ?? null
-  )
-}
-
 export const authorizeStudyUpdate = ({
   current,
   requestedUpdates,
   uid,
   isSuperAdmin = false,
 }) => {
-  const role = actorRole(current, uid, isSuperAdmin)
+  const role = resolveStudyRole(current, uid, isSuperAdmin)
   if (![ROLE.ADMIN, ROLE.MANAGER].includes(role)) {
     throw error('permission-denied', 'Study editing is not permitted')
   }

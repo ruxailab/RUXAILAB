@@ -26,6 +26,10 @@ const { authorizeStudyUpdate, buildStudyAuditDetails } =
   await import('../src/https/studyUpdate.js')
 const { assertStorageDeletionAllowed } =
   await import('../src/https/studyStorage.js')
+const { assertSummaryExportAllowed } =
+  await import('../src/https/studySummary.js')
+const { resolveStudyRole, ROLE } =
+  await import('../src/shared/auth/studyAccess.js')
 const { buildAuditEvent, writeAuditEvent } =
   await import('../src/utils/auditTrail.js')
 
@@ -35,7 +39,18 @@ const study = {
   cooperators: [
     { userDocId: 'admin', accessLevel: 0, accepted: true },
     { userDocId: 'manager', accessLevel: 4, accepted: true },
+    { userDocId: 'evaluator', accessLevel: 1, accepted: true },
   ],
+}
+
+const modernStudy = {
+  testType: 'USER',
+  testAdmin: { userDocId: 'owner' },
+  studyRoleMap: {
+    admin: 0,
+    manager: 4,
+    evaluator: 1,
+  },
 }
 
 describe('trusted study RBAC operations', () => {
@@ -67,6 +82,55 @@ describe('trusted study RBAC operations', () => {
     expect(() =>
       assertStorageDeletionAllowed({ study, uid: 'manager' }),
     ).toThrow(expect.objectContaining({ code: 'permission-denied' }))
+  })
+
+  it('supports modern studyRoleMap studies for update, storage, and summary export', () => {
+    const updateResult = authorizeStudyUpdate({
+      current: { ...modernStudy, testTitle: 'Old Title', isPublic: false },
+      requestedUpdates: { testTitle: 'Updated Title' },
+      uid: 'manager',
+    })
+    expect(updateResult.updates).toEqual({ testTitle: 'Updated Title' })
+
+    expect(() =>
+      assertStorageDeletionAllowed({ study: modernStudy, uid: 'admin' }),
+    ).not.toThrow()
+    expect(() =>
+      assertStorageDeletionAllowed({ study: modernStudy, uid: 'manager' }),
+    ).toThrow(expect.objectContaining({ code: 'permission-denied' }))
+
+    expect(() =>
+      assertSummaryExportAllowed(modernStudy, 'manager', false),
+    ).not.toThrow()
+    expect(() =>
+      assertSummaryExportAllowed(modernStudy, 'unauthorized', false),
+    ).toThrow(expect.objectContaining({ code: 'permission-denied' }))
+  })
+
+  it('resolves roles equivalently between modern studyRoleMap and legacy cooperators', () => {
+    // SuperAdmin
+    expect(resolveStudyRole(modernStudy, 'any-uid', true)).toBe(ROLE.ADMIN)
+    expect(resolveStudyRole(study, 'any-uid', true)).toBe(ROLE.ADMIN)
+
+    // Owner
+    expect(resolveStudyRole(modernStudy, 'owner', false)).toBe(ROLE.ADMIN)
+    expect(resolveStudyRole(study, 'owner', false)).toBe(ROLE.ADMIN)
+
+    // Admin
+    expect(resolveStudyRole(modernStudy, 'admin', false)).toBe(ROLE.ADMIN)
+    expect(resolveStudyRole(study, 'admin', false)).toBe(ROLE.ADMIN)
+
+    // Manager
+    expect(resolveStudyRole(modernStudy, 'manager', false)).toBe(ROLE.MANAGER)
+    expect(resolveStudyRole(study, 'manager', false)).toBe(ROLE.MANAGER)
+
+    // Evaluator
+    expect(resolveStudyRole(modernStudy, 'evaluator', false)).toBe(ROLE.EVALUATOR)
+    expect(resolveStudyRole(study, 'evaluator', false)).toBe(ROLE.EVALUATOR)
+
+    // Unauthorized
+    expect(resolveStudyRole(modernStudy, 'stranger', false)).toBeNull()
+    expect(resolveStudyRole(study, 'stranger', false)).toBeNull()
   })
 
   it('writes immutable server-timestamped audit data through a transaction', () => {
