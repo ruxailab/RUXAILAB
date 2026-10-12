@@ -8,6 +8,7 @@ import Toast, { useToast } from 'vue-toastification'
 import TextClamp from 'vue3-text-clamp'
 import { quillEditor } from 'vue3-quill'
 import { sweepExpiredStudyLogging } from '@/shared/services/studyLoggingClient'
+import { installFieldLabelAriaCleanup } from '@/shared/utils/fieldLabelAria'
 import 'vue-toastification/dist/index.css'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
@@ -54,6 +55,10 @@ app.config.errorHandler = (err, instance, info) => {
     timestamp: new Date().toISOString(),
   })
 }
+
+// Field labels must not carry the redundant aria-hidden Vuetify renders on
+// them; see src/shared/utils/fieldLabelAria.js.
+installFieldLabelAriaCleanup()
 
 // Mount the app
 app.mount('#app')
