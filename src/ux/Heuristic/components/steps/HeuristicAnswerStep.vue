@@ -5,14 +5,16 @@
         <header v-if="currentQuestion" class="answer-header">
           <div class="answer-heading">
             <h1>
+              {{ $t('HeuristicsTestView.heuristic') }}
               {{
                 heuristic?.title || $t('HeuristicsTestView.unknownHeuristic')
               }}
             </h1>
           </div>
+          <h3 v-if="test.testTitle" class="mr-2 answer-study-name">
+            {{ test.testTitle }}
+          </h3>
         </header>
-
-        <v-divider v-if="currentQuestion" />
 
         <div
           v-if="currentQuestion"
@@ -106,55 +108,78 @@
                 "
               />
 
-              <HeuristicCommentEvidenceSection
-                :key="`comments-${currentQuestionIndex}`"
-                :data-study-field-ref="`heuristic:${canonicalHeuristicIndex}:question:${currentQuestionIndex}:comment`"
-                :heuris-index="heurisIndex"
-                :question-index="currentQuestionIndex"
-                :answer-heu="answerForQuestion(currentQuestionIndex)"
-                :disabled="currentUserTestAnswer?.submitted"
-                :recording="recordingQuestionIndex === currentQuestionIndex"
-                :live-transcript="liveTranscript"
-                :speech-recognition-supported="speechRecognitionSupported"
-                @toggle-recording="toggleSpeechRecording(currentQuestionIndex)"
-                @update-comment="
-                  (comment, sourceHeurisIndex, sourceQuestionIndex) =>
-                    $emit(
-                      'update-comment',
-                      sourceHeurisIndex ?? heurisIndex,
-                      sourceQuestionIndex ?? currentQuestionIndex,
-                      comment,
-                    )
-                "
-                @add-comment="
-                  (comment, sourceHeurisIndex, sourceQuestionIndex) =>
-                    $emit(
-                      'add-comment',
-                      sourceHeurisIndex ?? heurisIndex,
-                      sourceQuestionIndex ?? currentQuestionIndex,
-                      comment,
-                    )
-                "
-                @update-comment-by-id="
-                  (commentId, text, sourceHeurisIndex, sourceQuestionIndex) =>
-                    $emit(
-                      'update-comment-by-id',
-                      sourceHeurisIndex ?? heurisIndex,
-                      sourceQuestionIndex ?? currentQuestionIndex,
-                      commentId,
-                      text,
-                    )
-                "
-                @remove-comment="
-                  (commentId, sourceHeurisIndex, sourceQuestionIndex) =>
-                    $emit(
-                      'remove-comment',
-                      sourceHeurisIndex ?? heurisIndex,
-                      sourceQuestionIndex ?? currentQuestionIndex,
-                      commentId,
-                    )
-                "
-              />
+              <div class="answer-evidence-row">
+                <HeuristicCommentEvidenceSection
+                  :key="`comments-${currentQuestionIndex}`"
+                  :data-study-field-ref="`heuristic:${canonicalHeuristicIndex}:question:${currentQuestionIndex}:comment`"
+                  :heuris-index="heurisIndex"
+                  :question-index="currentQuestionIndex"
+                  :answer-heu="answerForQuestion(currentQuestionIndex)"
+                  :disabled="currentUserTestAnswer?.submitted"
+                  :recording="recordingQuestionIndex === currentQuestionIndex"
+                  :live-transcript="liveTranscript"
+                  :speech-recognition-supported="speechRecognitionSupported"
+                  @toggle-recording="
+                    toggleSpeechRecording(currentQuestionIndex)
+                  "
+                  @update-comment="
+                    (comment, sourceHeurisIndex, sourceQuestionIndex) =>
+                      $emit(
+                        'update-comment',
+                        sourceHeurisIndex ?? heurisIndex,
+                        sourceQuestionIndex ?? currentQuestionIndex,
+                        comment,
+                      )
+                  "
+                  @add-comment="
+                    (comment, sourceHeurisIndex, sourceQuestionIndex) =>
+                      $emit(
+                        'add-comment',
+                        sourceHeurisIndex ?? heurisIndex,
+                        sourceQuestionIndex ?? currentQuestionIndex,
+                        comment,
+                      )
+                  "
+                  @update-comment-by-id="
+                    (commentId, text, sourceHeurisIndex, sourceQuestionIndex) =>
+                      $emit(
+                        'update-comment-by-id',
+                        sourceHeurisIndex ?? heurisIndex,
+                        sourceQuestionIndex ?? currentQuestionIndex,
+                        commentId,
+                        text,
+                      )
+                  "
+                  @remove-comment="
+                    (commentId, sourceHeurisIndex, sourceQuestionIndex) =>
+                      $emit(
+                        'remove-comment',
+                        sourceHeurisIndex ?? heurisIndex,
+                        sourceQuestionIndex ?? currentQuestionIndex,
+                        commentId,
+                      )
+                  "
+                />
+
+                <HeuristicRecommendationSection
+                  :key="`recommendations-${currentQuestionIndex}`"
+                  :data-study-field-ref="`heuristic:${canonicalHeuristicIndex}:question:${currentQuestionIndex}:recommendation`"
+                  :recommendation="
+                    answerForQuestion(currentQuestionIndex)
+                      ?.heuristicRecommendation || ''
+                  "
+                  :disabled="currentUserTestAnswer?.submitted"
+                  @update-recommendation="
+                    (recommendation) =>
+                      $emit(
+                        'update-recommendation',
+                        heurisIndex,
+                        currentQuestionIndex,
+                        recommendation,
+                      )
+                  "
+                />
+              </div>
 
               <HeuristicImageEvidenceSection
                 :key="`images-${currentQuestionIndex}`"
@@ -255,6 +280,7 @@ import ShowInfo from '@/shared/components/ShowInfo.vue'
 import HeuristicCommentEvidenceSection from '@/ux/Heuristic/components/steps/HeuristicCommentEvidenceSection.vue'
 import HeuristicImageEvidenceSection from '@/ux/Heuristic/components/steps/HeuristicImageEvidenceSection.vue'
 import HeuristicOptionsAnalysisSection from '@/ux/Heuristic/components/steps/HeuristicOptionsAnalysisSection.vue'
+import HeuristicRecommendationSection from '@/ux/Heuristic/components/steps/HeuristicRecommendationSection.vue'
 
 const props = defineProps({
   heuristic: { type: Object, default: null },
@@ -270,6 +296,7 @@ const emit = defineEmits([
   'back',
   'update-answer',
   'update-comment',
+  'update-recommendation',
   'update-image',
   'add-comment',
   'update-comment-by-id',
@@ -746,6 +773,14 @@ watch(
   line-height: 1.25;
 }
 
+.answer-study-name {
+  margin: 0 0 0.3rem;
+  color: #5b6470;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
 .answer-question-card {
   display: grid;
   grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
@@ -935,6 +970,13 @@ watch(
   gap: 1.75rem;
 }
 
+.answer-evidence-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 1.25rem;
+}
+
 .heuristic-bottom-menu {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -952,6 +994,12 @@ watch(
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+@media (max-width: 760px) {
+  .answer-evidence-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 960px) {

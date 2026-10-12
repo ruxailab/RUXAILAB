@@ -149,7 +149,7 @@ const { smAndDown } = useDisplay()
 
 .heuristic-instructions-page {
   width: 100%;
-  background: #fff;
+  background: transparent;
 }
 
 .heuristic-instructions-content {

@@ -1,7 +1,7 @@
 <template>
   <div class="analytics-dashboard">
     <!-- Filtros dinámicos Pre-Test -->
-    <v-card class="mb-4 pa-4 elevation-2 overflow-hidden">
+    <v-card class="mb-4 pa-4 elevation-0 overflow-hidden">
       <div class="d-flex align-center mb-3 flex-wrap button-bar">
         <v-text-field
           v-model="searchTerm"
@@ -834,8 +834,7 @@ const getTaskRecordings = (taskAnswer, taskDefinition) => {
 
 const taskSummaryRows = computed(() => {
   const userTasks = testStructure.value?.userTasks || []
-  const liveTasks =
-    answers.value?.[dialogItem.value?.userDocId]?.tasks || null
+  const liveTasks = answers.value?.[dialogItem.value?.userDocId]?.tasks || null
   const sessionTasks = liveTasks || dialogItem.value?.tasks || {}
 
   return userTasks.map((taskDefinition, index) => {
@@ -1025,11 +1024,11 @@ watch(
 <style scoped>
 .analytics-dashboard {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  background: transparent;
 }
 
 .dialog-body {
-  background: #f5f7fa;
+  background: transparent;
 }
 
 .section-col {
@@ -1037,9 +1036,9 @@ watch(
 }
 
 .section-card {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
   padding: 16px 20px;
 }
 
@@ -1107,22 +1106,22 @@ watch(
 }
 
 :deep(.v-data-table) {
-  background: white !important;
-  border-radius: 12px !important;
+  background: transparent !important;
+  border-radius: 0 !important;
 }
 
 :deep(.v-data-table__wrapper) {
-  border-radius: 12px !important;
+  border-radius: 0 !important;
 }
 
 :deep(.v-data-table-header) {
-  background: #f8fafc !important;
+  background: transparent !important;
 }
 
 :deep(.v-data-table-header th) {
   font-weight: 600 !important;
   color: #374151 !important;
-  border-bottom: 1px solid #e5e7eb !important;
+  border-bottom: 0 !important;
   padding: 16px !important;
 }
 
@@ -1131,7 +1130,7 @@ watch(
 }
 
 :deep(.v-data-table__tr) {
-  border-bottom: 1px solid #f1f5f9 !important;
+  border-bottom: 0 !important;
 }
 
 :deep(.v-data-table__td) {

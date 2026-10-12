@@ -5,7 +5,9 @@
         ? t('UserTestView.TaskStep.beforeWeStart')
         : stage === 2
           ? t('UserTestView.TaskStep.taskInformation')
-          : task?.taskName || taskName
+          : stage === 5
+            ? t('UserTestView.TaskStep.observationTitle')
+            : task?.taskName || taskName
     "
   >
     <template #content>
@@ -354,9 +356,11 @@
               />
             </v-col>
           </v-row>
-          <div class="mt-4 task-answer-block">
+          <div
+            v-if="task?.taskType === 'text-area' && !submitted"
+            class="mt-4 task-answer-block"
+          >
             <v-textarea
-              v-if="task?.taskType === 'text-area' && !submitted"
               :id="'id-' + (task?.taskName || taskName)"
               v-model="localTaskAnswer"
               :data-study-field-ref="`task:${taskIndex}:answer`"
@@ -366,18 +370,6 @@
               :label="t('UserTestView.TaskStep.answerLabel')"
               rows="3"
               @update:model-value="onUpdateTaskAnswer"
-            />
-            <v-textarea
-              v-if="!submitted"
-              :id="'id-' + (task?.taskName || taskName) + '-obs'"
-              v-model="localTaskObservations"
-              :data-study-field-ref="`task:${taskIndex}:comment`"
-              class="task-textarea"
-              bg-color="white"
-              variant="outlined"
-              :label="t('UserTestView.TaskStep.observationLabel')"
-              rows="3"
-              @update:model-value="onUpdateTaskObservations"
             />
           </div>
           <v-row justify="space-between">
@@ -519,19 +511,48 @@
                     block
                     variant="flat"
                     class="ml-2"
-                    :disabled="
-                      shouldDisableFinishButton || isWaitingForUploadToFinish
-                    "
-                    @click="attemptFinish()"
+                    :disabled="shouldDisableFinishButton"
+                    @click="goToObservationStep()"
                   >
-                    {{
-                      isWaitingForUploadToFinish
-                        ? t('UserTestView.TaskStep.uploading')
-                        : t('UserTestView.TaskStep.finishTask')
-                    }}
+                    {{ t('UserTestView.TaskStep.continue') }}
                   </v-btn>
                 </v-col>
               </v-row>
+            </v-card-text>
+          </v-card>
+        </template>
+        <!-- STAGE 5: optional observation, after the timer has stopped -->
+        <template v-else-if="stage === 5">
+          <v-card class="mb-4" variant="outlined" bg-color="white">
+            <v-card-text class="pa-4">
+              <p class="text-body-2 text-grey-darken-2 mb-4">
+                {{ t('UserTestView.TaskStep.observationHint') }}
+              </p>
+              <v-textarea
+                v-if="!submitted"
+                :id="'id-' + (task?.taskName || taskName) + '-obs'"
+                v-model="localTaskObservations"
+                :data-study-field-ref="`task:${taskIndex}:comment`"
+                class="task-textarea"
+                bg-color="white"
+                variant="outlined"
+                :label="t('UserTestView.TaskStep.observationLabel')"
+                rows="3"
+                @update:model-value="onUpdateTaskObservations"
+              />
+              <v-btn
+                color="primary"
+                block
+                variant="flat"
+                :disabled="isWaitingForUploadToFinish"
+                @click="attemptFinish()"
+              >
+                {{
+                  isWaitingForUploadToFinish
+                    ? t('UserTestView.TaskStep.uploading')
+                    : t('UserTestView.TaskStep.finishTask')
+                }}
+              </v-btn>
             </v-card-text>
           </v-card>
         </template>
@@ -748,6 +769,10 @@ const VALIDATION_REQUIRED_TYPES = new Set([
   'nasa-tlx',
 ])
 
+const hasPostTaskQuestionnaire = computed(() =>
+  VALIDATION_REQUIRED_TYPES.has(props.task?.taskType),
+)
+
 const shouldDisableFinishButton = computed(() => {
   const taskType = props.task?.taskType
 
@@ -832,8 +857,10 @@ function attemptFinish() {
   if (uploadingCount.value > 0) {
     isWaitingForUploadToFinish.value = true
   } else {
-    // Check for where uploads have not started yet
-    if (stage.value !== 4 && hasAnyRecording.value) {
+    // Tasks without a questionnaire used to finish immediately, before
+    // recorders had time to emit show-loading. The observation step can
+    // still be confirmed right away, so keep that short grace period.
+    if (!hasPostTaskQuestionnaire.value && hasAnyRecording.value) {
       isWaitingForUploadToFinish.value = true
       // Short timeout to alllow recorders to emit show-loading
       finishTimeout = setTimeout(() => {
@@ -990,13 +1017,17 @@ function handleShowPostForm(userCompleted) {
     }
   }
 
-  // Show post-task form for all validated task types
-  if (VALIDATION_REQUIRED_TYPES.has(props.task?.taskType)) {
+  // Questionnaire first, then the optional comment. The timer is already stopped.
+  if (hasPostTaskQuestionnaire.value) {
     stage.value = 4
     emit('task-questionnaire-entered')
   } else {
-    attemptFinish()
+    goToObservationStep()
   }
+}
+
+function goToObservationStep() {
+  stage.value = 5
 }
 
 function emitDoneOrCouldNotFinish(savedTime) {

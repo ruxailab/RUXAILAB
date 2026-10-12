@@ -315,7 +315,7 @@
   },
   "auditTrail": {
     "title": "Registro de auditoría",
-    "subtitle": "Cambios sensibles en la configuración, los colaboradores y el almacenamiento del estudio.",
+    "subtitle": "Cambios del estudio, acceso del equipo, actividad de archivos y descargas de informes.",
     "loadError": "No se pudo cargar el registro de auditoría.",
     "noEvents": "Aún no se ha registrado ninguna actividad.",
     "noMatchingEvents": "Ninguna actividad coincide con tus filtros.",
@@ -328,6 +328,7 @@
       "settings": "Cambios de configuración",
       "team": "Acceso del equipo",
       "files": "Cambios en archivos",
+      "reports": "Descargas de informes",
       "anyTime": "Cualquier momento",
       "last7Days": "Últimos 7 días",
       "last30Days": "Últimos 30 días",
@@ -354,6 +355,9 @@
       },
       "storage": {
         "fileDeleted": "Archivo de almacenamiento eliminado"
+      },
+      "report": {
+        "downloadRequested": "Descarga de informe solicitada"
       }
     },
     "descriptions": {
@@ -368,7 +372,8 @@
       "cooperatorRoleChanged": "Se cambió el rol de {target} de {before} a {after}",
       "cooperatorRemoved": "Se eliminó a {target} del estudio",
       "cooperatorInvitationCancelled": "Se canceló la invitación para {target}",
-      "storageFileDeleted": "Se eliminó {target}"
+      "storageFileDeleted": "Se eliminó {target}",
+      "reportDownloadRequested": "Se solicitó descargar un informe de {target}"
     },
     "fields": {
       "testTitle": "título",
@@ -511,6 +516,16 @@
       "emailPlaceholder": "Correo del colaborador",
       "emailInputPlaceholder": "Escribe un correo electrónico",
       "role": "Rol",
+      "roleHelp": "Descripción de los roles",
+      "roleDescriptions": {
+        "admin": "Puede gestionar casi todos los ajustes del estudio y a sus colaboradores.",
+        "evaluator": "Puede evaluar el estudio y revisar sus resultados.",
+        "guest": "Puede participar en el estudio con acceso limitado.",
+        "observator": "Puede ver el estudio y sus respuestas sin participar.",
+        "manager": "Puede gestionar el estudio y a sus colaboradores, con acceso administrativo limitado.",
+        "user": "Puede participar en el estudio enviando respuestas.",
+        "default": "Puede acceder al estudio según los permisos asignados a este rol."
+      },
       "date": "Fecha",
       "time": "Hora",
       "message": "Mensaje de invitación",
@@ -722,6 +737,18 @@
     "globalError": "Ha ocurrido un error, disculpa las molestias.",
     "cameraNotAvailable": "No se detectó ninguna cámara. La prueba continuará sin grabación de webcam.",
     "cameraPermissionDenied": "Se requiere acceso a la cámara para continuar. Por favor, permita el acceso a la cámara en la configuración de su navegador.",
+    "recordingMedia": {
+      "webcam": "La cámara web",
+      "audio": "El micrófono",
+      "screen": "La pantalla"
+    },
+    "recordingFailure": {
+      "permissionDenied": "No se pudo grabar {media} porque se denegó el permiso. Revisa los permisos del navegador e inténtalo de nuevo.",
+      "deviceUnavailable": "No se pudo iniciar la grabación de {media} porque no se encontró el dispositivo.",
+      "captureError": "Ocurrió un error al capturar {media}. Puedes continuar sin esta grabación.",
+      "emptyRecording": "No se capturaron datos para la grabación de {media}.",
+      "uploadError": "No se pudo guardar la grabación de {media}. Revisa tu conexión e inténtalo de nuevo."
+    },
     "sendError": "No se pudo enviar la invitación. Por favor, intenta de nuevo.",
     "missingVariableTitles": "No se puede guardar: Algunas variables no tienen título",
     "failedToLoadAnswers": "Error al cargar respuestas",
@@ -1031,6 +1058,7 @@
     "heuristicLevelEvidence": "En las evaluaciones tradicionales, la evidencia se agrupa por heurística.",
     "evidenceItems": "elementos de evidencia",
     "noComments": "No hay comentarios para esta selección",
+    "noRecommendations": "No hay recomendaciones para esta selección",
     "noImages": "No hay imágenes para esta selección",
     "evidence": "Evidencia de la heurística",
     "dataTable": "Tabla de datos",
@@ -1132,6 +1160,7 @@
       "failedToSaveAnswer": "Error al guardar la respuesta. Por favor, inténtelo de nuevo.",
       "failedToSubmitAnswer": "Error al enviar la respuesta. Por favor, inténtelo de nuevo."
     },
+    "heuristic": "Heurística:",
     "unknownHeuristic": "Heurística desconocida",
     "unknownQuestion": "Pregunta desconocida",
     "selectAnOption": "Seleccionar una opción",
@@ -1170,6 +1199,9 @@
       "commentEvidenceSubtitle": "Explica qué has observado. Puedes escribir tus notas o grabar audio para crear un comentario.",
       "commentEvidenceHint": "Añade observaciones escritas o usa la transcripción de audio.",
       "commentPrompt": "Opcional: añade cualquier comentario para justificar tu respuesta.",
+      "recommendations": "Recomendaciones",
+      "recommendationPrompt": "Sugiere una forma concreta de mejorar la experiencia.",
+      "recommendationPlaceholder": "¿Qué se debería cambiar o mejorar?",
       "imageEvidence": "Evidencia en imágenes",
       "imageEvidenceSubtitle": "Adjunta capturas o evidencia visual que apoye tu análisis.",
       "imageEvidenceHint": "Sube una o más imágenes para esta pregunta.",
@@ -1311,6 +1343,7 @@
       "headers": {
         "heuristicsData": "Datos de heurísticas",
         "answersByEvaluator": "Respuestas por evaluador",
+        "timeByHeuristics": "Tiempo por heurísticas",
         "answersByHeuristics": "Respuestas por heurísticas",
         "graphic": "Gráfico",
         "weights": "Pesos"
@@ -1332,6 +1365,8 @@
       "last_update": "Última actualización",
       "progress": "Progreso",
       "total_time": "Tiempo total",
+      "total_test_time": "Tiempo total del test",
+      "tasks_total_time": "Tiempo total de tareas",
       "status": "Estado",
       "actions": "Comportamiento"
     },
@@ -1581,6 +1616,41 @@
       "externalFormTitle": "Formulario Externo",
       "externalFormDescription": "Los participantes serán redirigidos para completar un formulario externo después de la tarea.",
       "openExternalForm": "Abrir Formulario Externo",
+      "nasaTlx": {
+        "title": "Índice de Carga de Tareas NASA",
+        "range": "Bajo - Alto",
+        "moreDimensions": "+ 4 dimensiones más",
+        "mental": "Demanda Mental",
+        "physical": "Demanda Física"
+      },
+      "sus": {
+        "title": "Escala de Usabilidad del Sistema",
+        "q1": "1. Creo que me gustaría usar este sistema con frecuencia.",
+        "disagree": "Muy en Desacuerdo",
+        "agree": "Muy de Acuerdo",
+        "moreStatements": "+ 9 declaraciones más"
+      },
+      "tam": {
+        "tam1": "TAM-1: Modelo de Aceptación de Tecnología (Básico)",
+        "items2": "10 elementos en 2 dimensiones",
+        "pu": "Utilidad Percibida (5 elementos)",
+        "q1": "1. Usar el sistema mejora mi rendimiento laboral.",
+        "eu": "Facilidad de Uso Percibida (5 elementos)",
+        "q6": "6. El sistema es fácil de usar.",
+        "tam2": "TAM-2: Modelo de Aceptación de Tecnología (Extendido)",
+        "items7": "25 elementos en 7 dimensiones",
+        "likertNote": "Participants rate {count} statements on a 5-point Likert scale (Strongly Disagree - Strongly Agree)"
+      },
+      "sart": {
+        "title": "Técnica de Calificación de Conciencia Situacional",
+        "instability": "Inestabilidad de la Situación",
+        "complexity": "Complejidad de la Situación",
+        "stable": "Muy Estable",
+        "unstable": "Muy Inestable",
+        "simple": "Muy Simple",
+        "complex": "Muy Complejo",
+        "moreDimensions": "+ 8 dimensiones SART adicionales"
+      },
       "nasaTlxTitle": "Índice de Carga de Tareas NASA",
       "mentalDemand": "Demanda Mental",
       "physicalDemand": "Demanda Física",
@@ -1765,6 +1835,9 @@
       "reopenTool": "Reabrir herramienta",
       "answerLabel": "Respuesta",
       "observationLabel": "Observación (opcional)",
+      "observationTitle": "Comentario opcional",
+      "observationHint": "Puedes dejar un comentario sobre esta tarea. Es opcional y no entra en el tiempo medido.",
+      "continue": "Continuar",
       "cannotFinish": "No puedo finalizar la tarea",
       "completed": "Tarea completada",
       "uploadDialogTitle": "Subiendo sesión de grabación",

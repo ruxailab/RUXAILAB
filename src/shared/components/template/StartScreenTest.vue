@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-row class="start-screen pa-0 ma-0" align="center">
+      <SessionBackdropMark position="absolute" />
       <v-col md="8" class="ma-5 pa-5">
         <img
           src="@/assets/logo_full_white.png"
@@ -43,6 +44,8 @@
 </template>
 
 <script setup>
+import SessionBackdropMark from '@/shared/components/SessionBackdropMark.vue'
+
 // Props
 defineProps({
   test: {
@@ -107,24 +110,6 @@ const startTest = () => emit('start')
   100% {
     background-position: 0% 50%;
   }
-}
-
-.start-screen::before {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 140%;
-  margin-right: -450px;
-  margin-top: 100px;
-  background-image: url(../../../assets/logo_small_red.png);
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: right top;
-  opacity: 0.2;
 }
 
 .start-screen.leaving::before {

@@ -12,6 +12,7 @@ export default class UserStudyEvaluatorAnswer {
     tasks,
     progress,
     total,
+    totalTestTimeMs,
     submitted,
     userDocId,
     lastUpdate,
@@ -29,6 +30,7 @@ export default class UserStudyEvaluatorAnswer {
     this.tasks = tasks ?? {}
     this.progress = progress ?? null
     this.total = total ?? 0
+    this.totalTestTimeMs = totalTestTimeMs ?? 0
     this.submitted = submitted ?? false
     this.userDocId = userDocId ?? null
     this.lastUpdate = lastUpdate ?? null
@@ -59,6 +61,10 @@ export default class UserStudyEvaluatorAnswer {
       postTestAnswer: current.postTestAnswer,
       submitted: current.submitted,
       progress: current.progress,
+      totalTestTimeMs: Math.max(
+        Number(saved.totalTestTimeMs) || 0,
+        Number(current.totalTestTimeMs) || 0,
+      ),
       fullName: current.fullName,
       userDocId: current.userDocId ?? saved.userDocId,
       invited: current.invited || saved.invited,
@@ -81,13 +87,15 @@ export default class UserStudyEvaluatorAnswer {
       tasks: Object.fromEntries(
         Object.entries(this.tasks).map(([key, value]) => [
           key,
-          (
-            value instanceof TaskAnswer ? value : new TaskAnswer(value)
+          (value instanceof TaskAnswer
+            ? value
+            : new TaskAnswer(value)
           ).toFirestore(),
         ]),
       ),
       progress: this.progress,
       total: this.total,
+      totalTestTimeMs: this.totalTestTimeMs,
       submitted: this.submitted,
       userDocId: this.userDocId,
       lastUpdate: this.lastUpdate,

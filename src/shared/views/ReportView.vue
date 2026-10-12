@@ -103,7 +103,13 @@
             <div>
               <div class="text-subtitle-1 font-weight-bold text-on-surface">
                 {{ item.fullName }}
-                <v-chip v-if="item.isAIAgent" color="primary" size="x-small" variant="tonal" class="ml-2">
+                <v-chip
+                  v-if="item.isAIAgent"
+                  color="primary"
+                  size="x-small"
+                  variant="tonal"
+                  class="ml-2"
+                >
                   {{ $t('HeuristicsReport.labels.ai_agent') }}
                 </v-chip>
               </div>
@@ -227,7 +233,13 @@
                   class="text-subtitle-1 font-weight-bold text-on-surface text-truncate"
                 >
                   {{ item.fullName }}
-                  <v-chip v-if="item.isAIAgent" color="primary" size="x-small" variant="tonal" class="ml-1">
+                  <v-chip
+                    v-if="item.isAIAgent"
+                    color="primary"
+                    size="x-small"
+                    variant="tonal"
+                    class="ml-1"
+                  >
                     {{ $t('HeuristicsReport.labels.ai_agent') }}
                   </v-chip>
                 </div>
@@ -434,6 +446,7 @@ import {
   parseTimeSpentToMs,
   formatTimeSpentFromMs,
 } from '@/ux/Heuristic/utils/statistics'
+import { sumTaskTimeMs } from '@/ux/UserTest/utils/testDuration'
 import { showSuccess } from '../utils/toast'
 
 const store = useStore()
@@ -464,6 +477,10 @@ const allHeaders = computed(() => [
   { title: t('HeuristicsReport.headers.last_update'), key: 'lastUpdate' },
   { title: t('HeuristicsReport.headers.progress'), key: 'progress' },
   { title: t('HeuristicsReport.headers.total_time'), key: 'totalTime' },
+  {
+    title: t('HeuristicsReport.headers.tasks_total_time'),
+    key: 'tasksTotalTime',
+  },
   { title: t('HeuristicsReport.headers.status'), key: 'status' },
   { title: t('common.hidden'), key: 'hidden' },
   {
@@ -476,15 +493,24 @@ const allHeaders = computed(() => [
 const answers = computed(() => store.getters.testAnswerDocument)
 const headers = computed(() => {
   const type = answers.value?.type
-  return allHeaders.value.filter((header) => {
-    if (header.key === 'hidden') {
-      return type === STUDY_TYPES.USER
-    }
-    if (header.key === 'totalTime') {
-      return type !== STUDY_TYPES.CARD_SORTING
-    }
-    return true
-  })
+  return allHeaders.value
+    .filter((header) => {
+      if (header.key === 'hidden') {
+        return type === STUDY_TYPES.USER
+      }
+      if (header.key === 'tasksTotalTime') {
+        return type === STUDY_TYPES.USER
+      }
+      if (header.key === 'totalTime') {
+        return type !== STUDY_TYPES.CARD_SORTING
+      }
+      return true
+    })
+    .map((header) =>
+      header.key === 'totalTime' && type === STUDY_TYPES.USER
+        ? { ...header, title: t('HeuristicsReport.headers.total_test_time') }
+        : header,
+    )
 })
 
 const checkIfIsSubmitted = (status) =>
@@ -529,6 +555,11 @@ const formatTimeAgo = (count, unit) => t(`common.timeAgo.${unit}`, { count })
 const getReportTotalTime = (reportData, type) => {
   if (!reportData) return '00:00'
 
+  if (type === STUDY_TYPES.USER) {
+    if (reportData.totalTestTimeMs == null) return '—'
+    return formatTimeSpentFromMs(Number(reportData.totalTestTimeMs))
+  }
+
   if (type === STUDY_TYPES.HEURISTIC) {
     const isAIAgent = reportData.userDocId?.startsWith('ai-agent:') || false
     if (isAIAgent && reportData.evaluationTimeMs != null) {
@@ -555,6 +586,9 @@ const getReportTotalTime = (reportData, type) => {
   return formatTimeSpentFromMs(totalMs)
 }
 
+const getReportTasksTotalTime = (reportData) =>
+  formatTimeSpentFromMs(sumTaskTimeMs(reportData))
+
 const getAnswersByType = (doc, type) => {
   if (type === STUDY_TYPES.USER) return doc.taskAnswers || {}
   if (type === STUDY_TYPES.CARD_SORTING) return doc.cardSortingAnswers || {}
@@ -580,13 +614,15 @@ const reports = computed(() => {
       fullName: isAIAgent
         ? t('HeuristicsReport.labels.ai_agent')
         : anonymous
-        ? t('titles.anonymous')
-        : r.fullName || t('HeuristicsReport.headers.evaluator'),
+          ? t('titles.anonymous')
+          : r.fullName || t('HeuristicsReport.headers.evaluator'),
       evaluator: anonymous ? r.userDocId : getCooperatorEmail(r.userDocId),
       isAIAgent,
       userDocId: r.userDocId,
       progress: parseFloat(r.progress || 0).toFixed(2),
       totalTime: getReportTotalTime(r, type),
+      tasksTotalTime:
+        type === STUDY_TYPES.USER ? getReportTasksTotalTime(r) : null,
       status: checkIfIsSubmitted(r.submitted),
       lastUpdate: formatDate(r.lastUpdate),
       hidden: r.hidden ?? false,

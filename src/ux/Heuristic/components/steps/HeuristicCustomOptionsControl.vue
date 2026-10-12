@@ -19,10 +19,10 @@
 
     <div
       class="option-scale option-scale--custom"
-      :style="{ '--option-count': sortedOptions.length }"
+      :style="{ '--option-count': options.length }"
     >
       <button
-        v-for="option in sortedOptions"
+        v-for="option in options"
         :key="option.timestamp ?? option.value ?? option.text"
         type="button"
         :class="['option-card', { selected: selectedOption === option }]"
@@ -80,25 +80,14 @@ defineEmits(['change'])
 
 const showDescriptions = ref(false)
 
-const sortedOptions = computed(() =>
-  [...props.options].sort((a, b) => {
-    const aValue = Number(a.value)
-    const bValue = Number(b.value)
-    if (!Number.isNaN(aValue) && !Number.isNaN(bValue)) {
-      return aValue - bValue
-    }
-    return String(a.value).localeCompare(String(b.value))
-  }),
-)
-
 const optionsWithDescriptions = computed(() =>
-  sortedOptions.value.filter((option) => option.description?.trim()),
+  props.options.filter((option) => option.description?.trim()),
 )
 
 const selectedOptionData = computed(() => props.answer?.custom || null)
 
 const selectedOption = computed(() =>
-  sortedOptions.value.find((option) => {
+  props.options.find((option) => {
     if (!selectedOptionData.value) return false
 
     const selectedTimestamp = selectedOptionData.value.timestamp

@@ -26,6 +26,10 @@ jest.mock('@/shared/utils/toast', () => ({
   showError: jest.fn(),
 }))
 
+jest.mock('@/shared/utils/animations', () => ({
+  animateStepAnnouncement: jest.fn(() => Promise.resolve()),
+}))
+
 jest.mock('@/app/plugins/firebase/FirebaseFunctionsService', () => ({
   FirebaseFunctionsController: {
     callHttpsCallableFunction: jest.fn(),
@@ -67,6 +71,12 @@ const buttonStub = {
   emits: ['click'],
   template:
     '<button v-bind="$attrs" @click="$emit(\'click\', $event)"><slot /></button>',
+}
+
+const stepperItemStub = {
+  props: ['title'],
+  emits: ['click'],
+  template: '<button @click="$emit(\'click\')">{{ title }}</button>',
 }
 
 const findButton = (wrapper, text) =>
@@ -338,9 +348,9 @@ describe('HeuristicTestView', () => {
             'v-avatar': true,
             'v-spacer': true,
             'v-speed-dial': true,
-            'v-stepper': true,
-            'v-stepper-header': true,
-            'v-stepper-item': true,
+            'v-stepper': { template: '<div><slot /></div>' },
+            'v-stepper-header': { template: '<div><slot /></div>' },
+            'v-stepper-item': stepperItemStub,
           },
         },
       })
@@ -379,6 +389,29 @@ describe('HeuristicTestView', () => {
       expect(instructionsStep.exists()).toBe(true)
       instructionsStep.vm.$emit('start')
       await flushPromises()
+
+      wrapper.vm.showHeuristicCards = false
+      const activeIndex = wrapper.vm.index
+      const instructionsButton = findButton(
+        wrapper,
+        'HeuristicsTestView.flow.instructions',
+      )
+      expect(instructionsButton).toBeDefined()
+      await instructionsButton.trigger('click')
+      await flushPromises()
+
+      expect(wrapper.vm.currentPage).toBe('instructions_page')
+      expect(wrapper.vm.start).toBe(true)
+
+      const reopenedInstructions = wrapper.findComponent({
+        name: 'HeuristicInstructionsStep',
+      })
+      reopenedInstructions.vm.$emit('start')
+      await flushPromises()
+
+      expect(wrapper.vm.start).toBe(false)
+      expect(wrapper.vm.showHeuristicCards).toBe(false)
+      expect(wrapper.vm.index).toBe(activeIndex)
 
       jest.advanceTimersByTime(1500)
       await flushPromises()

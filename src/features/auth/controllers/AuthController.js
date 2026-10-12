@@ -23,7 +23,11 @@ export default class AuthController {
    * @param {string} password - User password
    * @returns {Promise} - Firebase auth user credential
    */
-  async signUp(email, password) {
+  async signUp(email, password, rememberMe = true) {
+    await setPersistence(
+      auth,
+      rememberMe ? browserLocalPersistence : browserSessionPersistence,
+    )
     return createUserWithEmailAndPassword(auth, email, password)
   }
 
@@ -33,7 +37,7 @@ export default class AuthController {
    * @param {string} password - User password
    * @returns {Promise} - Firebase auth user credential
    */
-  async signIn(email, password, rememberMe) {
+  async signIn(email, password, rememberMe = true) {
     await setPersistence(
       auth,
       rememberMe ? browserLocalPersistence : browserSessionPersistence,
@@ -45,7 +49,7 @@ export default class AuthController {
    * Signs in a user with Google
    * @returns {Promise} - Firebase auth user credential
    */
-  async signInWithGoogle(rememberMe) {
+  async signInWithGoogle(rememberMe = true) {
     await setPersistence(
       auth,
       rememberMe ? browserLocalPersistence : browserSessionPersistence,

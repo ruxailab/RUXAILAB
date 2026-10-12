@@ -482,6 +482,7 @@ import { useFilterDefinitions } from './useFilterDefinitions'
 import { exportStudySummary } from '@/shared/utils/studySummaryExport'
 import { showError } from '@/shared/utils/toast'
 import { requestStudySummaryPdf } from '@/shared/services/studySummaryService'
+import { recordReportDownload } from '@/shared/services/auditTrailService'
 
 // Declaraciones reactivas primero para evitar errores de acceso antes de inicialización
 const testTasks = ref([])
@@ -649,6 +650,7 @@ const averageTimePerTask = computed(() => {
 })
 
 const downloadPdfResume = async () => {
+  recordReportDownload(test.value?.id).catch(() => {})
   try {
     await exportStudySummary({
       study: test.value,

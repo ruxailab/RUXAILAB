@@ -18,6 +18,7 @@
         class="start-screen background-img pa-0 ma-0"
         align="center"
       >
+        <SessionBackdropMark position="absolute" />
         <v-col md="8" class="ma-5 pa-5">
           <img
             src="@/assets/logo_full_white.png"
@@ -228,7 +229,7 @@
             <v-col cols="12">
               <v-stepper
                 :model-value="stepperValue"
-                class="main-stepper rounded-xl elevation-3"
+                class="main-stepper test-progress-stepper rounded-xl elevation-3"
                 :class="{
                   'stepper-animate':
                     globalIndex === 4 &&
@@ -240,71 +241,48 @@
                   <v-stepper-item
                     :value="1"
                     :title="$t('UserTestView.stepper.consent')"
-                    :complete="completedSteps.consent"
-                    :color="
-                      completedSteps.consent
-                        ? 'success'
-                        : stepperValue === 1
-                          ? 'warning'
-                          : 'primary'
-                    "
+                    :complete="completedSteps.consent && !isCurrentMainStep(1)"
+                    :icon="isCurrentMainStep(1) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
+                    :class="{ 'stepper-item--current': isCurrentMainStep(1) }"
                   />
                   <v-divider />
                   <v-stepper-item
                     :value="2"
                     :title="$t('UserTestView.stepper.preTest')"
-                    :complete="completedSteps.preTest"
-                    :color="
-                      completedSteps.preTest
-                        ? 'success'
-                        : stepperValue === 2
-                          ? 'warning'
-                          : 'primary'
-                    "
+                    :complete="completedSteps.preTest && !isCurrentMainStep(2)"
+                    :icon="isCurrentMainStep(2) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
+                    :class="{ 'stepper-item--current': isCurrentMainStep(2) }"
                   />
                   <v-divider />
                   <v-stepper-item
                     :value="3"
                     :title="$t('UserTestView.stepper.tasks')"
-                    :complete="completedSteps.tasks"
-                    :color="
-                      completedSteps.tasks
-                        ? 'success'
-                        : stepperValue === 3
-                          ? 'warning'
-                          : 'primary'
-                    "
+                    :complete="completedSteps.tasks && !isCurrentMainStep(3)"
+                    :icon="isCurrentMainStep(3) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
+                    :class="{ 'stepper-item--current': isCurrentMainStep(3) }"
                   />
                   <v-divider />
                   <v-stepper-item
                     :value="4"
                     :title="$t('UserTestView.stepper.postTest')"
-                    :complete="completedSteps.postTest"
-                    :color="
-                      completedSteps.postTest
-                        ? 'success'
-                        : stepperValue === 4
-                          ? 'warning'
-                          : 'primary'
-                    "
+                    :complete="completedSteps.postTest && !isCurrentMainStep(4)"
+                    :icon="isCurrentMainStep(4) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
+                    :class="{ 'stepper-item--current': isCurrentMainStep(4) }"
                   />
                   <v-divider />
                   <v-stepper-item
                     :value="5"
                     :title="$t('UserTestView.stepper.completion')"
-                    :complete="completedSteps.completion"
-                    :color="
-                      completedSteps.completion
-                        ? 'success'
-                        : stepperValue === 5
-                          ? 'warning'
-                          : 'primary'
+                    :complete="
+                      completedSteps.completion && !isCurrentMainStep(5)
                     "
+                    :icon="isCurrentMainStep(5) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
+                    :class="{ 'stepper-item--current': isCurrentMainStep(5) }"
                   />
                 </v-stepper-header>
               </v-stepper>
@@ -324,7 +302,7 @@
             <v-col cols="12" md="8" lg="6" class="d-flex justify-center">
               <v-stepper
                 :model-value="taskIndex + 1"
-                class="task-stepper rounded-xl elevation-2"
+                class="task-stepper test-progress-stepper rounded-xl elevation-2"
                 style="max-width: 100%"
               >
                 <v-stepper-header>
@@ -336,16 +314,14 @@
                       :value="index + 1"
                       :title="task.taskName"
                       :complete="
-                        localTestAnswer.tasks[index]?.completed || false
+                        (localTestAnswer.tasks[index]?.completed || false) &&
+                        taskIndex !== index
                       "
-                      :color="
-                        taskIndex == index
-                          ? 'warning'
-                          : taskIndex < index
-                            ? 'primary'
-                            : 'success'
-                      "
+                      :icon="taskIndex === index ? 'mdi-pencil' : undefined"
                       complete-icon="mdi-check"
+                      :class="{
+                        'stepper-item--current': taskIndex === index,
+                      }"
                     />
                     <v-divider
                       v-if="index < test.testStructure.userTasks.length - 1"
@@ -384,7 +360,11 @@
           </VideoToolDrawer>
 
           <!-- Video Call Component -->
-          <div v-show="displayVideoCallComponent" v-if="test">
+          <div
+            v-show="displayVideoCallComponent || showParticipantCallPip"
+            v-if="test"
+            :class="{ 'participant-call-pip': showParticipantCallPip }"
+          >
             <VideoCallFactory
               :room-id="roomId"
               :is-moderator="isModerator"
@@ -622,15 +602,7 @@
 <script setup>
 import { ref as dbRef, onValue, update, get, remove } from 'firebase/database'
 import { database } from '@/app/plugins/firebase/index'
-import {
-  ref,
-  computed,
-  watch,
-  onMounted,
-  reactive,
-  watchEffect,
-  nextTick,
-} from 'vue'
+import { ref, computed, watch, onMounted, reactive, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -645,6 +617,8 @@ import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue'
 import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue'
 import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue'
 import StepAnnouncementOverlay from '@/ux/UserTest/components/StepAnnouncementOverlay.vue'
+import SessionBackdropMark from '@/shared/components/SessionBackdropMark.vue'
+import { useStepAnnouncement } from '@/shared/composables/useStepAnnouncement'
 import VideoCallFactory from '@/shared/components/videoCall/VideoCallFactory.vue'
 import VideoToolDrawer from '@/shared/components/videoCall/VideoToolDrawer.vue'
 import ObservatorNotes from '@/ux/UserTest/components/ObservatorNotes.vue'
@@ -660,7 +634,7 @@ import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { showError, showInfo, showWarning } from '@/shared/utils/toast'
 import { calculateProgress } from '../utils/testProgress'
-import { animateStepAnnouncement } from '@/shared/utils/animations'
+import { accumulateTotalTestTime, hasTestActivity } from '../utils/testDuration'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
 import { createRecordingOutcomeTracker } from '@/ux/UserTest/utils/recordingOutcome'
@@ -669,7 +643,10 @@ import {
   structuredValuesForStage,
   structuredValuesForTask,
 } from '@/ux/UserTest/utils/structuredActivity'
-import { removeStaffDuplicates } from '@/ux/UserTest/utils/sessionPresence'
+import {
+  normalizeSessionMember as normalizePresenceSessionMember,
+  removeStaffDuplicates,
+} from '@/ux/UserTest/utils/sessionPresence'
 import { moderatedSessionTimingReason } from '@/ux/UserTest/utils/moderatedSessionAvailability'
 
 const store = useStore()
@@ -759,6 +736,15 @@ const start = ref(true)
 const globalIndex = ref(null)
 const taskIndex = ref(0)
 const localTestAnswer = reactive(new UserStudyEvaluatorAnswer())
+const totalTestTimeStartedAt = ref(null)
+
+const accumulateTestTime = () => {
+  totalTestTimeStartedAt.value = accumulateTotalTestTime(
+    localTestAnswer,
+    totalTestTimeStartedAt.value,
+  )
+}
+
 const rightView = ref(null) // For scroll effect
 const fullName = ref('') // For consent form component
 const items = ref([])
@@ -779,10 +765,13 @@ function closeNotesDrawer() {
 }
 const moderatorInactive = ref(false)
 const moderatorDisconnectTimeout = ref(null)
-const showStepAnnouncement = ref(false)
-const stepAnnouncementOverlay = ref(null)
-const nextStepAnnouncementTitle = ref('')
-const nextStepAnnouncementKicker = ref('')
+const {
+  showStepAnnouncement,
+  stepAnnouncementOverlay,
+  nextStepAnnouncementTitle,
+  nextStepAnnouncementKicker,
+  safelyAnnounce: safelyShowNextStepAnnouncement,
+} = useStepAnnouncement()
 const isProcessingRemoteStepAnnouncement = ref(false)
 const lastAnnouncedRemoteStepKey = ref(null)
 const lastWaitingParticipantsNotificationCount = ref(0)
@@ -951,14 +940,17 @@ const currentUserAccessLevel = computed(() => {
   const cooperator = session.value?.staff?.find(isCurrentUserMember)
 
   const participant = session.value?.participants?.find(isCurrentUserMember)
+  const normalizedParticipant = normalizePresenceSessionMember(
+    participant,
+    'participant',
+  )
 
   // The study role is known before the session loads, so a participant is not
   // briefly treated as an observer while the session is still being fetched.
   const rawValue =
     cooperator?.accessLevel ??
     cooperator?.role ??
-    participant?.accessLevel ??
-    participant?.role ??
+    normalizedParticipant?.accessLevel ??
     test.value?.studyRoleMap?.[user.value?.id] ??
     (isUserTestAdmin.value ? ACCESS_LEVEL.ADMIN : ACCESS_LEVEL.OBSERVATOR)
 
@@ -1000,6 +992,13 @@ const isObservator = computed(() => {
 
   return isObserverAccessLevel(currentUserAccessLevel.value)
 })
+const showParticipantCallPip = computed(
+  () =>
+    !isModerator.value &&
+    !isObservator.value &&
+    globalIndex.value >= 1 &&
+    !displayVideoCallComponent.value,
+)
 
 const session = computed(() => store.getters.session)
 const isSessionViewer = computed(() => {
@@ -1032,6 +1031,9 @@ const stepperValue = computed(() => {
   if (globalIndex.value === 6) return 5 // Completion
   return 1 // Default to first step
 })
+
+const isCurrentMainStep = (value) =>
+  Number(stepperValue.value) === Number(value)
 
 const completedSteps = computed(() => {
   if (isModerator.value) {
@@ -1261,6 +1263,9 @@ const handleSubmit = async () => {
     displayVideoCallComponent.value = true
   } catch {
     localTestAnswer.submitted = false
+    if (totalTestTimeStartedAt.value === null) {
+      totalTestTimeStartedAt.value = Date.now()
+    }
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSubmitAnswer'),
@@ -1278,6 +1283,7 @@ const saveSessionNotes = async () => {
 
 const saveAnswer = async () => {
   try {
+    accumulateTestTime()
     attachMediaToTasks(localTestAnswer, mediaUrls.value)
     // A completed recording is logged only once its media link is saved.
     const recordingsToSave = recordingOutcomes
@@ -1955,45 +1961,21 @@ const startTestOnce = async () => {
 
 const handleWelcomeStart = async () => {
   if (globalIndex.value !== 0) return
+  if (isModerator.value) {
+    await update(dbRef(database, `rooms/${roomId.value}`), {
+      showVideoCall: true,
+    })
+  }
+  if (
+    !isModerator.value &&
+    !localTestAnswer.submitted &&
+    totalTestTimeStartedAt.value === null
+  ) {
+    totalTestTimeStartedAt.value = Date.now()
+  }
   await requestFullscreenIfAvailable()
   displayVideoCallComponent.value = true
   globalIndex.value = 1
-}
-
-const showNextStepAnnouncement = async (
-  title,
-  stageNumber,
-  kickerOverride = '',
-) => {
-  nextStepAnnouncementKicker.value = kickerOverride || `Stage ${stageNumber}`
-  nextStepAnnouncementTitle.value = title
-  showStepAnnouncement.value = true
-
-  const safetyHideTimer = window.setTimeout(() => {
-    showStepAnnouncement.value = false
-  }, 4200)
-
-  try {
-    await nextTick()
-    await animateStepAnnouncement(stepAnnouncementOverlay.value, {
-      totalDuration: 3,
-    })
-  } finally {
-    window.clearTimeout(safetyHideTimer)
-    showStepAnnouncement.value = false
-  }
-}
-
-const safelyShowNextStepAnnouncement = async (
-  title,
-  stageNumber,
-  kickerOverride = '',
-) => {
-  try {
-    await showNextStepAnnouncement(title, stageNumber, kickerOverride)
-  } catch {
-    // Non-critical: users can continue even if announcement animation fails.
-  }
 }
 
 const showTaskTitleAnnouncement = async (idx) => {
@@ -2214,7 +2196,7 @@ const completeStep = async (
 
     await publishParticipantProgress()
 
-    calculateProgress(localTestAnswer)
+    calculateProgress(localTestAnswer, test.value?.testStructure)
     await saveAnswer()
     if (type === 'consent') {
       void initializeStudyLogging()?.consentAccepted()
@@ -2425,6 +2407,9 @@ onMounted(async () => {
   ) {
     Object.assign(localTestAnswer, currentUserTestAnswer.value)
   }
+  if (!isModerator.value && hasTestActivity(localTestAnswer)) {
+    totalTestTimeStartedAt.value = Date.now()
+  }
 
   await mappingSteps()
   initializeStudyLogging()
@@ -2503,28 +2488,6 @@ onBeforeUnmount(() => {
   }
 }
 
-.start-screen::before {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 140%;
-  margin-right: -450px;
-  margin-top: 100px;
-  background-image: url(../../../assets/logo_small_red.png);
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: right top;
-  opacity: 0.2;
-}
-
-.start-screen.leaving::before {
-  opacity: 0;
-}
-
 /* Stepper sticky styles */
 .sticky-stepper {
   position: sticky;
@@ -2587,5 +2550,57 @@ onBeforeUnmount(() => {
 
 .v-stepper-item {
   padding: 1rem;
+}
+
+.participant-call-pip {
+  position: fixed !important;
+  z-index: 1400;
+  right: 20px;
+  bottom: 88px;
+  width: min(380px, calc(100vw - 32px));
+  height: 280px;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+}
+
+.participant-call-pip :deep(.video-call-container) {
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.participant-call-pip :deep(.video-row) {
+  height: calc(100% - 52px) !important;
+}
+
+.participant-call-pip :deep(.video-stage) {
+  height: 100% !important;
+}
+
+.participant-call-pip :deep(.bottom-control-bar) {
+  position: absolute !important;
+  bottom: 4px !important;
+  left: 50% !important;
+  width: calc(100% - 12px) !important;
+  max-width: calc(100% - 12px) !important;
+  min-height: 44px !important;
+  height: 44px !important;
+  max-height: 44px !important;
+  padding: 4px 8px !important;
+  border-radius: 8px !important;
+  transform: translateX(-50%) !important;
+}
+
+@media (max-width: 600px) {
+  .participant-call-pip {
+    right: 12px;
+    bottom: 76px;
+    width: min(300px, calc(100vw - 24px));
+    height: 210px;
+  }
 }
 </style>
