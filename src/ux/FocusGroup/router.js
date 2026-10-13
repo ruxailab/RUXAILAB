@@ -2,6 +2,7 @@ import ManagerView from '@/ux/FocusGroup/views/ManagerView.vue'
 import EditFocusGroupView from '@/ux/FocusGroup/views/EditFocusGroupView.vue'
 import FocusGroupSessionView from '@/ux/FocusGroup/views/FocusGroupSessionView.vue'
 import FocusGroupAnswerView from '@/ux/FocusGroup/views/FocusGroupAnswerView.vue'
+import FocusGroupAnalyticsView from '@/ux/FocusGroup/views/FocusGroupAnalyticsView.vue'
 import SettingsView from '@/shared/views/SettingsView.vue'
 import CooperatorsView from '@/shared/views/CooperatorsView.vue'
 import ParticipantsView from '@/shared/views/ParticipantsView.vue'
@@ -47,6 +48,12 @@ const MANAGER_CHILDREN = [
     alias: 'answer',
     name: 'FocusGroupAnswerView',
     component: FocusGroupAnswerView,
+    capability: C.ANSWERS_VIEW,
+  },
+  {
+    segment: 'analytics',
+    name: 'FocusGroupAnalyticsView',
+    component: FocusGroupAnalyticsView,
     capability: C.ANSWERS_VIEW,
   },
   {
