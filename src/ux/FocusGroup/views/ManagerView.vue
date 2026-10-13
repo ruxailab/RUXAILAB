@@ -367,7 +367,6 @@ const goToSession = () => {
 const goToAnswers = () => {
   router.push(`/focusGroup/answers/${test.value.id}`).catch(() => {})
 }
-
 onMounted(async () => {
   await store.dispatch('getStudy', { id: route.params.id })
 })
