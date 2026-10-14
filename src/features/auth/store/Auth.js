@@ -264,20 +264,13 @@ export default {
     },
 
     async deleteAuth({ commit }, payload) {
+      const { user } = payload
       commit('setLoading', true)
       try {
-        try {
-          await authController.deleteUserData(payload)
-        } catch (e) {
-          // Best effort backend cleanup
-          console.warn(
-            'Failed to delete user backend data during deleteAuth',
-            e,
-          )
-        }
-        // State management is handled by the final logout action
-      } catch (err) {
-        throw err
+        // Server-side function deletes Firestore data + Firebase Auth user.
+        // If this throws, do not proceed — state is unchanged.
+        await authController.deleteUserData(user.uid)
+        // State (SET_USER null) is handled by the logout action called after this.
       } finally {
         commit('setLoading', false)
       }
