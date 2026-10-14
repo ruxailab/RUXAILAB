@@ -360,6 +360,35 @@
       </v-col>
     </v-row>
 
+    <v-row class="mb-8">
+      <v-col cols="12" lg="6">
+        <v-card flat class="pa-6 h-100">
+          <h3 class="text-h6 font-weight-bold text-on-surface mb-5">
+            {{ $t('analytics.taskTimeVsEstimate') }}
+          </h3>
+          <div class="analytics-bar-chart">
+            <Bar
+              :data="taskTimeComparisonChartData"
+              :options="taskTimeComparisonChartOptions"
+            />
+          </div>
+        </v-card>
+      </v-col>
+      <v-col cols="12" lg="6">
+        <v-card flat class="pa-6 h-100">
+          <h3 class="text-h6 font-weight-bold text-on-surface mb-5">
+            {{ $t('analytics.taskTimeByUser') }}
+          </h3>
+          <div class="analytics-bar-chart">
+            <Bar
+              :data="timeByUserChartData"
+              :options="timeByUserChartOptions"
+            />
+          </div>
+        </v-card>
+      </v-col>
+    </v-row>
+
     <!-- Mostrar todas las preguntas del pre-form -->
     <v-row class="mb-8">
       <v-col cols="12">
@@ -471,6 +500,16 @@
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+import { Bar } from 'vue-chartjs'
+import {
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  LineElement,
+  LinearScale,
+  PointElement,
+  Tooltip,
+} from 'chart.js'
 import { formatTimeDetailedFromMs } from '@/shared/utils/timeUtils'
 import UxMetricCard from '../answers/UxMetricCard.vue'
 import CommentListCard from '../answers/CommentListCard.vue'
@@ -483,6 +522,15 @@ import { exportStudySummary } from '@/shared/utils/studySummaryExport'
 import { showError } from '@/shared/utils/toast'
 import { requestStudySummaryPdf } from '@/shared/services/studySummaryService'
 import { recordReportDownload } from '@/shared/services/auditTrailService'
+
+ChartJS.register(
+  BarElement,
+  CategoryScale,
+  LineElement,
+  LinearScale,
+  PointElement,
+  Tooltip,
+)
 
 // Declaraciones reactivas primero para evitar errores de acceso antes de inicialización
 const testTasks = ref([])
@@ -576,7 +624,7 @@ function getPreTextAnswers(questionIdx) {
 }
 
 const store = useStore()
-useI18n()
+const { t } = useI18n()
 
 const test = computed(() => store.getters.test)
 const user = computed(() => store.getters.user)
@@ -1084,6 +1132,180 @@ const resolveTaskName = (taskId) => {
   return taskId || 'Task'
 }
 
+const taskDefinitions = computed(() =>
+  Array.isArray(testStructure.value?.userTasks)
+    ? testStructure.value.userTasks
+    : [],
+)
+
+const getSessionTask = (session, task, index) =>
+  session?.tasks?.[index] ??
+  session?.tasks?.[String(index)] ??
+  (task?.taskId != null ? session?.tasks?.[task.taskId] : null)
+
+const getTaskTimeMinutes = (taskAnswer) => {
+  const timeMs = Number(taskAnswer?.taskTime)
+  return Number.isFinite(timeMs) && timeMs > 0 ? timeMs / 60000 : null
+}
+
+const getEstimatedTimeMinutes = (task) => {
+  if (task?.estimatedTime === null || task?.estimatedTime === '') return null
+  const time = Number(task?.estimatedTime)
+  return Number.isFinite(time) && time >= 0 ? time : null
+}
+
+const getUserIdentifier = (session, index) => ({
+  identifier: `U${index + 1}`,
+  name:
+    session.fullName || t('analytics.participantNumber', { number: index + 1 }),
+})
+
+const taskTimeComparisonChartData = computed(() => {
+  const tasks = taskDefinitions.value.map((task, index) => {
+    const recordedTimes = filteredSessions.value
+      .map((session) => getSessionTask(session, task, index))
+      .map(getTaskTimeMinutes)
+      .filter((time) => time !== null)
+
+    return {
+      name: task.taskName || resolveTaskName(String(index)),
+      averageTime:
+        recordedTimes.length > 0
+          ? recordedTimes.reduce((total, time) => total + time, 0) /
+            recordedTimes.length
+          : null,
+      estimatedTime: getEstimatedTimeMinutes(task),
+    }
+  })
+
+  return {
+    labels: tasks.map((_, index) => `T${index + 1}`),
+    datasets: [
+      {
+        type: 'bar',
+        label: t('analytics.averageCompletionTime'),
+        data: tasks.map((task) => task.averageTime),
+        itemNames: tasks.map((task) => task.name),
+        backgroundColor: '#0F766E',
+        borderRadius: 4,
+      },
+      {
+        type: 'line',
+        label: t('analytics.estimatedTime'),
+        data: tasks.map((task) => task.estimatedTime),
+        itemNames: tasks.map((task) => task.name),
+        borderColor: '#D97706',
+        backgroundColor: '#D97706',
+        borderWidth: 2,
+        borderDash: [6, 4],
+        pointRadius: 3,
+        pointHoverRadius: 5,
+        tension: 0,
+        spanGaps: true,
+      },
+    ],
+  }
+})
+
+const timeByUserChartData = computed(() => {
+  const users = filteredSessions.value.map(getUserIdentifier)
+  const datasets = taskDefinitions.value.flatMap((task, taskIndex) => {
+    const taskIdentifier = `T${taskIndex + 1}`
+    const color = chartColors[taskIndex % chartColors.length]
+    const userNames = users.map((user) => user.name)
+    const estimatedTime = getEstimatedTimeMinutes(task)
+
+    return [
+      {
+        type: 'bar',
+        label: taskIdentifier,
+        data: filteredSessions.value.map((session) =>
+          getTaskTimeMinutes(getSessionTask(session, task, taskIndex)),
+        ),
+        itemNames: userNames,
+        backgroundColor: color,
+        borderRadius: 4,
+      },
+      {
+        type: 'line',
+        label: t('analytics.estimatedTimeForTask', { task: taskIdentifier }),
+        data: users.map(() => estimatedTime),
+        itemNames: userNames,
+        borderColor: color,
+        backgroundColor: color,
+        borderWidth: 2,
+        borderDash: [6, 4],
+        pointRadius: 0,
+        tension: 0,
+        spanGaps: true,
+      },
+    ]
+  })
+
+  return {
+    labels: users.map((user) => user.identifier),
+    datasets,
+  }
+})
+
+const sharedTimeScaleMax = computed(() => {
+  const values = [
+    ...taskTimeComparisonChartData.value.datasets.flatMap(
+      (dataset) => dataset.data,
+    ),
+    ...timeByUserChartData.value.datasets.flatMap((dataset) => dataset.data),
+  ].filter((value) => Number.isFinite(value))
+  const maxValue = Math.max(0, ...values)
+
+  return maxValue > 0 ? maxValue * 1.1 : 1
+})
+
+const tooltipTitle = (items) => {
+  const item = items[0]
+  const itemName = item?.dataset?.itemNames?.[item.dataIndex]
+  return itemName ? `${item.label}: ${itemName}` : item.label
+}
+
+const taskTimeComparisonChartOptions = computed(() => ({
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: true, position: 'bottom' },
+    tooltip: { callbacks: { title: tooltipTitle } },
+  },
+  scales: {
+    x: { title: { display: true, text: t('analytics.taskLabel') } },
+    y: {
+      type: 'linear',
+      beginAtZero: true,
+      max: sharedTimeScaleMax.value,
+      title: { display: true, text: t('analytics.timeMinutes') },
+    },
+  },
+}))
+
+const timeByUserChartOptions = computed(() => ({
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: true, position: 'bottom' },
+    tooltip: { callbacks: { title: tooltipTitle } },
+  },
+  scales: {
+    x: {
+      type: 'category',
+      title: { display: true, text: t('analytics.userLabel') },
+      ticks: { autoSkip: true, maxRotation: 0 },
+    },
+    y: {
+      type: 'linear',
+      beginAtZero: true,
+      max: sharedTimeScaleMax.value,
+      title: { display: true, text: t('analytics.timeMinutes') },
+    },
+  },
+}))
+
 const createTaskCharts = async () => {
   await nextTick()
 
@@ -1316,6 +1538,12 @@ const onExportTimeline = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.analytics-bar-chart {
+  position: relative;
+  height: 320px;
+  width: 100%;
 }
 
 .task-chart {
