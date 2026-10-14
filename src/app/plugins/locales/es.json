@@ -48,6 +48,17 @@
     }
   },
   "heuristicAgents": {
+    "design": {
+      "subtitle": "Escoge un agente, revisa las páginas y sigue el avance de cada heurística.",
+      "chooseAgent": "Escoge tu agente IA",
+      "expandHint": "Despliega una web y sus heurísticas para ver el progreso y las respuestas.",
+      "editPages": "Editar páginas",
+      "overallProgress": "Progreso de la evaluación",
+      "heuristicCount": "{count} heurísticas",
+      "pause": "Pausar",
+      "resume": "Reanudar",
+      "questions": "Preguntas a evaluar"
+    },
     "title": "Análisis con agentes",
     "subtitle": "Elige un agente para evaluar las páginas configuradas en los ajustes del estudio.",
     "web": {
@@ -75,13 +86,40 @@
       "agentHint": "Crea o edita agentes desde la sección general Agentes.",
       "analyze": "Analizar {count} página(s)",
       "saved": "{count} análisis guardados como evaluadores independientes.",
-      "viewResults": "Ver resultados"
+      "viewResults": "Ver resultados",
+      "pause": "Pausar heurística (la solicitud actual finalizará)",
+      "resume": "Reanudar heurística",
+      "completedDetail": "{count} respuestas guardadas · {time}",
+      "heuristicProgress": "{completed} / {total} valoraciones de la heurística",
+      "heuristicCompleted": "Heurística evaluada a las {time}",
+      "weightValue": "Peso relativo: {weight} / 9",
+      "retryHeuristic": "Volver a evaluar la heurística",
+      "explanation": "Explicación",
+      "assessment": "Valoración",
+      "setupTitle": "Evaluación con IA",
+      "setupHint": "Elige un agente, revisa las páginas y empieza la evaluación.",
+      "pauseAll": "Pausar evaluación",
+      "resumeAll": "Reanudar evaluación",
+      "pausedTitle": "Evaluación pausada",
+      "runningTitle": "Evaluación en curso",
+      "finishedTitle": "Evaluación finalizada",
+      "pagesProgress": "{completed} de {total} páginas completadas",
+      "pauseHint": "Las peticiones en curso terminarán. Las nuevas esperarán hasta que reanudes la evaluación.",
+      "retryHint": "Hay {count} valoraciones pendientes de revisión. Abre la página y vuelve a intentar la valoración que ha fallado.",
+      "retryQuestion": "Volver a responder",
+      "questionProgress": "{completed} / {total} preguntas evaluadas",
+      "responseDetails": "Ver respuestas y justificación",
+      "evidence": "Ver evidencia",
+      "background": "La evaluación continúa mientras navegas por otras páginas de la aplicación. Vuelve aquí para ver el progreso o pausar heurísticas."
     },
     "status": {
       "completed": "Completado",
       "error": "Error",
       "running": "Heurística {current}/{total}",
-      "pending": "Pendiente"
+      "pending": "Pendiente",
+      "paused": "En pausa",
+      "evaluating": "Evaluando",
+      "blocked": "Bloqueada por un error anterior"
     },
     "messages": {
       "urlsFound": "Se han encontrado {count} URL(s).",
@@ -408,6 +446,14 @@
     }
   },
   "community": {
+    "agents": {
+      "subtitle": "Explora los agentes IA públicos de la comunidad. Puedes seleccionarlos al evaluar un estudio.",
+      "search": "Buscar por nombre, descripción o modelo",
+      "empty": "Todavía no hay agentes públicos.",
+      "noResults": "No hay agentes que coincidan con tu búsqueda.",
+      "details": "Ver agente",
+      "refresh": "Actualizar"
+    },
     "studies": {
       "title": "Estudios comunitarios",
       "searchPlaceholder": "Buscar estudios..."
@@ -546,6 +592,7 @@
     }
   },
   "navigation": {
+    "communityAgents": "Community Agents",
     "dashboard": "Panel",
     "groups": {
       "overview": "Resumen",

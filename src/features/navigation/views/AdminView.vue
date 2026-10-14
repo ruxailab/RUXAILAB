@@ -74,6 +74,15 @@
           <CommunityTemplatesSection />
         </div>
 
+        <div
+          v-if="
+            activeSection === 'community' &&
+            activeSubSection === 'community-agents'
+          "
+        >
+          <CommunityAgentsSection />
+        </div>
+
         <div v-if="activeSection === 'notifications'">
           <NotificationPage />
         </div>
@@ -111,6 +120,7 @@ import CommunityStudies from '../components/navbarSections/CommunityStudiesSecti
 import CommunityTemplatesSection from '../components/navbarSections/CommunityTemplatesSection.vue'
 import StorageSection from '../components/navbarSections/StorageSection.vue'
 import AgentsSection from '../components/navbarSections/AgentsSection.vue'
+import CommunityAgentsSection from '../components/navbarSections/CommunityAgentsSection.vue'
 
 // 🔹 State management
 const store = useStore()
@@ -150,6 +160,8 @@ const currentPageTitle = computed(() => {
     case 'profile':
       return t('pages.navigation.profile')
     case 'community':
+      if (activeSubSection.value === 'community-agents')
+        return t('navigation.communityAgents')
       return activeSubSection.value === 'community-templates'
         ? t('pages.navigation.communityTemplates')
         : t('pages.navigation.communityStudies')
@@ -178,6 +190,8 @@ const currentPageIcon = computed(() => {
     case 'profile':
       return 'mdi-account-circle'
     case 'community':
+      if (activeSubSection.value === 'community-agents')
+        return 'mdi-robot-outline'
       return activeSubSection.value === 'community-templates'
         ? 'mdi-file-document'
         : 'mdi-flask-outline'

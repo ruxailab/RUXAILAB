@@ -333,7 +333,7 @@ const useSeverity = computed(() => props.test?.useSeverity !== false)
 const isTraditionalEvaluation = computed(
   () =>
     !props.test?.useWeights &&
-    customOptions.value.length === 0 &&
+    selectedAnswerMode.value === 'frequencySeverity' &&
     useFrequency.value &&
     useSeverity.value,
 )

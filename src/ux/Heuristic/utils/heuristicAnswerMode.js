@@ -1,14 +1,25 @@
 export const HEURISTIC_ANSWER_MODE = Object.freeze({
   CUSTOM_OPTIONS: 'customOptions',
+  WEIGHT: 'weight',
   FREQUENCY: 'frequency',
   SEVERITY: 'severity',
   FREQUENCY_SEVERITY: 'frequencySeverity',
 })
 
 export const resolveHeuristicAnswerMode = (test) => {
+  // Explicit study settings take precedence over options left by a mode change.
+  if (
+    !test?.useWeights &&
+    test?.useFrequency === true &&
+    test?.useSeverity === true
+  ) {
+    return HEURISTIC_ANSWER_MODE.FREQUENCY_SEVERITY
+  }
   if (Array.isArray(test?.testOptions) && test.testOptions.length) {
     return HEURISTIC_ANSWER_MODE.CUSTOM_OPTIONS
   }
+
+  if (test?.useWeights) return null
 
   const useFrequency = test?.useFrequency !== false
   const useSeverity = test?.useSeverity !== false
@@ -25,7 +36,11 @@ export const buildCanonicalHeuristicAnswer = ({
   option,
   frequency,
   severity,
+  weight,
 }) => {
+  if (mode === HEURISTIC_ANSWER_MODE.WEIGHT) {
+    return { mode, weight, text: String(weight), value: weight }
+  }
   if (mode === HEURISTIC_ANSWER_MODE.CUSTOM_OPTIONS) {
     const custom = option
       ? {
