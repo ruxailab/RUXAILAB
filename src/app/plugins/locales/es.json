@@ -1360,15 +1360,29 @@
       "evaluator": "Evaluador",
       "last_update": "Última actualización",
       "progress": "Progreso",
+      "study_stage": "Etapa",
       "total_time": "Tiempo total",
-      "total_test_time": "Tiempo total del test",
-      "tasks_total_time": "Tiempo total de tareas",
+      "total_test_time": "Tiempo del estudio",
+      "tasks_total_time": "Tiempo de tareas",
       "status": "Estado",
-      "actions": "Comportamiento"
+      "actions": "Acciones"
     },
-    "labels": { "ai_agent": "Agente de IA" },
+    "stages": {
+      "consent": "Consentimiento",
+      "pre_test": "Prueba previa",
+      "task": "Tarea {number}",
+      "post_test": "Prueba posterior",
+      "completed": "Completado"
+    },
+    "labels": {
+      "ai_agent": "Agente de IA",
+      "anonymous": "Anónimo",
+      "not_anonymous": "Participante identificado"
+    },
     "messages": {
       "confirm_delete_report": "¿Estás seguro de que deseas eliminar este informe?",
+      "confirm_hide_response": "¿Ocultar esta respuesta?",
+      "hide_response_confirmation": "Esta respuesta dejará de aparecer en los resultados, no se eliminará y podrás volver a mostrarla cuando quieras.",
       "reports_loading": "Cargando informes",
       "remove_report": "Eliminar informe",
       "sure_to_delete": "¿Estás seguro de que deseas eliminar el informe de {user}? Esta acción no se puede deshacer.",
@@ -1385,7 +1399,8 @@
       "filter_by_status": "Filtrar por estado"
     },
     "actions": {
-      "unhide_report": "Mostrar informe"
+      "hide_response": "Ocultar respuesta",
+      "unhide_response": "Mostrar respuesta"
     }
   },
   "UsabilityCooperators": {

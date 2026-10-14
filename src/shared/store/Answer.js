@@ -2,7 +2,10 @@ import AnswerController from '@/shared/controllers/AnswerController'
 import HeuristicAnswer from '@/ux/Heuristic/models/HeuristicAnswer'
 import { percentage } from '@/ux/Heuristic/utils/statistics'
 import { formatTimeSpentFromMs } from '@/ux/Heuristic/utils/statistics'
-import { STUDY_TYPES, normalizeStudyType } from '@/shared/constants/methodDefinitions'
+import {
+  STUDY_TYPES,
+  normalizeStudyType,
+} from '@/shared/constants/methodDefinitions'
 import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import TaskAnswer from '@/ux/UserTest/models/TaskAnswer'
 import CardSortingEvaluatorAnswer from '@/ux/CardSorting/models/CardSortingEvaluatorAnswer'
@@ -13,6 +16,13 @@ const answerController = new AnswerController()
 const isPermissionDenied = (error) =>
   error?.code === 'permission-denied' ||
   error?.message?.includes('PERMISSION_DENIED')
+
+const getAnswerCollectionKey = (type) => {
+  const normalizedType = normalizeStudyType(type)
+  if (normalizedType === STUDY_TYPES.USER) return 'taskAnswers'
+  if (normalizedType === STUDY_TYPES.CARD_SORTING) return 'cardSortingAnswers'
+  return 'heuristicAnswers'
+}
 
 export default {
   state: {
@@ -26,23 +36,38 @@ export default {
     mediaUrls(state) {
       return state.mediaUrls
     },
+    rawTestAnswerDocument(state) {
+      return state.testAnswerDocument
+    },
     testAnswerDocument(state, rootState) {
       if (!state.testAnswerDocument) {
         return null
       }
 
+      const answerCollectionKey = getAnswerCollectionKey(
+        state.testAnswerDocument.type,
+      )
+      const answerDocument = {
+        ...state.testAnswerDocument,
+        [answerCollectionKey]: Object.fromEntries(
+          Object.entries(
+            state.testAnswerDocument[answerCollectionKey] || {},
+          ).filter(([, answer]) => answer?.hidden !== true),
+        ),
+      }
+
       // Return a transformed copy to avoid mutating state inside getter
-      if (rootState.test && state.testAnswerDocument.heuristicAnswers) {
+      if (rootState.test && answerDocument.heuristicAnswers) {
         const testOptions = rootState.test.testOptions
 
         // Create a shallow copy with transformed heuristicAnswers
         const transformedDoc = {
-          ...state.testAnswerDocument,
+          ...answerDocument,
           heuristicAnswers: {},
         }
 
         for (const [key, value] of Object.entries(
-          state.testAnswerDocument.heuristicAnswers,
+          answerDocument.heuristicAnswers,
         )) {
           transformedDoc.heuristicAnswers[key] = {
             ...value,
@@ -69,7 +94,7 @@ export default {
         return transformedDoc
       }
 
-      return state.testAnswerDocument
+      return answerDocument
     },
     currentUserTestAnswer(state, rootState) {
       if (!state.testAnswerDocument) {
@@ -154,7 +179,10 @@ export default {
 
       const doc = state.testAnswerDocument
 
-      if (normalizeStudyType(doc.type) === STUDY_TYPES.USER && doc.taskAnswers) {
+      if (
+        normalizeStudyType(doc.type) === STUDY_TYPES.USER &&
+        doc.taskAnswers
+      ) {
         return Object.fromEntries(
           Object.entries(doc.taskAnswers).filter(
             ([, answer]) => answer.hidden !== true,

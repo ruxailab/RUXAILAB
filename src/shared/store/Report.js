@@ -11,6 +11,25 @@ export default {
   namespaced: true,
 
   actions: {
+    async setReportHidden({ commit }, payload) {
+      commit('setLoading', true)
+
+      try {
+        const result = await reportController.setReportHidden(payload)
+        if (!result.success) {
+          commit('setError', {
+            errorCode: 'reportError',
+            message: result.error,
+          })
+        }
+        return result
+      } catch (error) {
+        commit('setError', { errorCode: 'reportError', message: error })
+        return { success: false, error }
+      } finally {
+        commit('setLoading', false)
+      }
+    },
     /**
      * Removes an evaluator log from the report.
      *

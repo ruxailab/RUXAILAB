@@ -41,6 +41,7 @@ export default class HeuristicAnswer {
     userDocId,
     lastUpdate,
     evaluationTimeMs,
+    hidden,
   } = {}) {
     this.heuristicQuestions = heuristicQuestions ?? []
     this.progress = progress ?? 0
@@ -49,6 +50,7 @@ export default class HeuristicAnswer {
     this.userDocId = userDocId ?? null
     this.lastUpdate = lastUpdate ?? 0
     this.evaluationTimeMs = evaluationTimeMs ?? null
+    this.hidden = hidden ?? false
   }
   static toHeuristicAnswer(data, testOptions) {
     return new HeuristicAnswer({
@@ -67,6 +69,7 @@ export default class HeuristicAnswer {
       submitted: this.submitted,
       userDocId: this.userDocId,
       lastUpdate: this.lastUpdate,
+      hidden: this.hidden,
       ...(this.evaluationTimeMs != null && {
         evaluationTimeMs: this.evaluationTimeMs,
       }),
