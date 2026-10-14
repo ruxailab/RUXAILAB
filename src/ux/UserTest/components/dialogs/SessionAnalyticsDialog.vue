@@ -76,6 +76,16 @@
                 </div>
               </div>
 
+              <audio
+                v-if="hasTaskAudio"
+                ref="taskAudio"
+                preload="auto"
+                :src="taskAnswer.audioRecordURL"
+                @loadedmetadata="onMetadataLoaded"
+                @play="onVideoPlay"
+                @pause="onVideoPause"
+              />
+
               <div v-if="showScreenZone" class="video-zone">
                 <div class="video-zone-label">
                   <v-icon size="14" class="mr-1">mdi-monitor-screenshot</v-icon>
@@ -412,6 +422,7 @@ const open = ref(props.modelValue)
 const rightTab = ref('eye')
 const mainVideo1 = ref(null)
 const mainVideo2 = ref(null)
+const taskAudio = ref(null)
 const isPlaying = ref(false)
 const videoDuration = ref(0)
 const videoCurrentTime = ref(0)
@@ -675,44 +686,74 @@ const displayTaskName = computed(() => {
 
 const mockEyeTracking = { accuracy: 92, fixations: 34 }
 const DRIFT_SECONDS = 0.35
+const AUDIO_LEAD_SECONDS = 1
+let holdVideosForAudioLead = false
 
-function mountedVideos() {
+function videoElements() {
   return [mainVideo1.value, mainVideo2.value].filter(Boolean)
 }
 
-function leadVideo() {
-  const screen = mainVideo2.value
-  const webcam = mainVideo1.value
-  if (screen && !screen.paused && !screen.ended) return screen
-  if (webcam && !webcam.paused && !webcam.ended) return webcam
-  return screen || webcam
+function mountedMedia() {
+  return [...videoElements(), taskAudio.value].filter(Boolean)
 }
 
-function seekVideo(video, time) {
-  if (!video || !Number.isFinite(time)) return
-  const duration = Number.isFinite(video.duration) ? video.duration : time
+function playbackDuration(media) {
+  if (!Number.isFinite(media.duration) || media.duration <= 0) return 0
+  if (media === taskAudio.value && videoElements().length) {
+    return Math.max(0, media.duration - AUDIO_LEAD_SECONDS)
+  }
+  return media.duration
+}
+
+function seekMedia(media, time) {
+  if (!media || !Number.isFinite(time)) return
+  const duration = Number.isFinite(media.duration) ? media.duration : time
   const nextTime = Math.min(Math.max(time, 0), duration)
-  if (Math.abs(video.currentTime - nextTime) <= 0.05) return
-  video.currentTime = nextTime
+  if (Math.abs(media.currentTime - nextTime) <= 0.05) return
+  media.currentTime = nextTime
+}
+
+function audioTargetFor(videoTime) {
+  return videoTime + AUDIO_LEAD_SECONDS
+}
+
+function audioIsLeading(videoTime) {
+  const audio = taskAudio.value
+  if (!audio) return false
+  const target = audioTargetFor(videoTime)
+  return Math.abs(audio.currentTime - target) <= 0.15
+}
+
+function audioIsInsideLeadIn(videoTime) {
+  const audio = taskAudio.value
+  if (!audio) return false
+  return (
+    audio.currentTime >= videoTime - 0.05 &&
+    audio.currentTime < audioTargetFor(videoTime) - 0.05
+  )
 }
 
 function onMetadataLoaded(event) {
-  const video = event.target
-  const durations = mountedVideos()
-    .map((item) => item.duration)
-    .filter((duration) => Number.isFinite(duration) && duration > 0)
+  const media = event.target
+  const durations = mountedMedia()
+    .map(playbackDuration)
+    .filter((duration) => duration > 0)
 
   videoDuration.value = durations.length
     ? Math.max(...durations)
-    : video.duration
+    : media.duration
   videoReady.value = true
 
   if (videoCurrentTime.value > 0) {
-    seekVideo(video, videoCurrentTime.value)
+    const target =
+      media === taskAudio.value
+        ? audioTargetFor(videoCurrentTime.value)
+        : videoCurrentTime.value
+    seekMedia(media, target)
   }
-  if (isPlaying.value && video.paused) {
-    video.play().catch(() => {})
-  }
+  if (!isPlaying.value || !media.paused) return
+  if (media !== taskAudio.value && holdVideosForAudioLead) return
+  media.play().catch(() => {})
 }
 
 function onTimeUpdate(event) {
@@ -721,25 +762,65 @@ function onTimeUpdate(event) {
   }
 }
 
+function releaseVideos() {
+  const time = videoCurrentTime.value
+  holdVideosForAudioLead = false
+  videoElements().forEach((video) => {
+    if (video.ended) return
+    seekMedia(video, time)
+    video.play().catch(() => {})
+  })
+}
+
 function startVideoSync() {
   cancelAnimationFrame(rafId)
   const loop = () => {
-    const videos = mountedVideos()
-    const lead = leadVideo()
-    const anyPlaying = videos.some((video) => !video.paused && !video.ended)
+    const audio = taskAudio.value
+    const videos = videoElements()
+    const playingVideos = videos.filter((video) => !video.paused && !video.ended)
+    const audioPlaying = Boolean(audio && !audio.paused && !audio.ended)
 
-    if (!anyPlaying || !lead) {
+    if (!playingVideos.length && !audioPlaying) {
       isPlaying.value = false
+      holdVideosForAudioLead = false
       return
     }
 
+    if (!playingVideos.length && audioPlaying) {
+      const videosWaiting = videos.some((video) => video.paused && !video.ended)
+      if (videosWaiting && holdVideosForAudioLead) {
+        const releaseAt = audioTargetFor(videoCurrentTime.value)
+        if (audio.currentTime + 0.05 >= releaseAt || audio.ended) releaseVideos()
+      } else if (!videosWaiting) {
+        videoCurrentTime.value = Math.max(
+          0,
+          audio.currentTime - AUDIO_LEAD_SECONDS,
+        )
+      }
+      rafId = requestAnimationFrame(loop)
+      return
+    }
+
+    const lead = playingVideos.includes(mainVideo2.value)
+      ? mainVideo2.value
+      : playingVideos[0]
     videoCurrentTime.value = lead.currentTime
-    videos.forEach((video) => {
-      if (video === lead || video.paused || video.ended) return
+
+    playingVideos.forEach((video) => {
+      if (video === lead) return
       if (Math.abs(video.currentTime - lead.currentTime) > DRIFT_SECONDS) {
-        seekVideo(video, lead.currentTime)
+        seekMedia(video, lead.currentTime)
       }
     })
+
+    if (audio && !audio.ended) {
+      const target = audioTargetFor(lead.currentTime)
+      if (audio.paused || Math.abs(audio.currentTime - target) > DRIFT_SECONDS) {
+        seekMedia(audio, target)
+        if (audio.paused) audio.play().catch(() => {})
+      }
+    }
+
     rafId = requestAnimationFrame(loop)
   }
   rafId = requestAnimationFrame(loop)
@@ -757,7 +838,7 @@ function onVideoPlay() {
 }
 
 function onVideoPause() {
-  const anyPlaying = mountedVideos().some(
+  const anyPlaying = mountedMedia().some(
     (video) => !video.paused && !video.ended,
   )
   if (anyPlaying) return
@@ -766,40 +847,81 @@ function onVideoPause() {
 }
 
 const togglePlay = async () => {
-  const videos = mountedVideos()
-  if (!videos.length) return
+  const media = mountedMedia()
+  if (!media.length) return
 
   if (isPlaying.value) {
-    videos.forEach((video) => video.pause())
+    holdVideosForAudioLead = false
+    media.forEach((item) => item.pause())
     isPlaying.value = false
     stopVideoSync()
     return
   }
 
   const time = videoCurrentTime.value
-  await Promise.all(
-    videos.map(async (video) => {
-      if (video.ended) video.currentTime = 0
-      else seekVideo(video, time)
-      try {
-        await video.play()
-      } catch {
-        // One recording can fail to start without stopping the other.
-      }
-    }),
-  )
+  const audio = taskAudio.value
+  videoElements().forEach((video) => {
+    if (video.ended) video.currentTime = 0
+    else seekMedia(video, time)
+  })
 
-  const anyPlaying = mountedVideos().some(
-    (video) => !video.paused && !video.ended,
+  const startVideosNow = !audio || audioIsLeading(time)
+  holdVideosForAudioLead = Boolean(audio) && !startVideosNow
+
+  if (audio) {
+    if (audioIsLeading(time)) seekMedia(audio, audioTargetFor(time))
+    else if (!audioIsInsideLeadIn(time)) seekMedia(audio, time)
+    try {
+      await audio.play()
+    } catch {
+      holdVideosForAudioLead = false
+    }
+  }
+
+  if (!holdVideosForAudioLead) {
+    await Promise.all(
+      videoElements().map(async (video) => {
+        try {
+          await video.play()
+        } catch {
+          // One recording can fail to start without stopping the other.
+        }
+      }),
+    )
+  }
+
+  const anyPlaying = mountedMedia().some(
+    (item) => !item.paused && !item.ended,
   )
-  if (!anyPlaying) return
+  if (!anyPlaying) {
+    holdVideosForAudioLead = false
+    return
+  }
   isPlaying.value = true
   startVideoSync()
 }
 
 const onSeek = (time) => {
-  mountedVideos().forEach((video) => seekVideo(video, time))
   videoCurrentTime.value = time
+  videoElements().forEach((video) => seekMedia(video, time))
+
+  const audio = taskAudio.value
+  if (audio) {
+    const restartLeadIn = time <= 0.05
+    seekMedia(audio, restartLeadIn ? 0 : audioTargetFor(time))
+    if (isPlaying.value && restartLeadIn) {
+      holdVideosForAudioLead = true
+      videoElements().forEach((video) => video.pause())
+      audio.play().catch(() => {})
+      return
+    }
+  }
+
+  holdVideosForAudioLead = false
+  if (!isPlaying.value) return
+  videoElements().forEach((video) => {
+    if (!video.ended && video.paused) video.play().catch(() => {})
+  })
 }
 
 const close = () => {
