@@ -380,7 +380,7 @@ const maxValue = computed(() => {
   return parseFloat(maxValue).toFixed(1)
 })
 
-const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
+const testAnswerDocument = computed(() => store.getters.testAnswerDocument)
 
 const trackTime = computed(() => store.getters.test?.trackTime !== false)
 

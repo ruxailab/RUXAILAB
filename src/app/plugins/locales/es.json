@@ -177,12 +177,12 @@
     },
     "completed": "Completado",
     "hidden": "Oculto",
-    "loading": "Cargando prueba",
+    "loading": "Cargando estudio",
     "continueAs": "Continuar como",
     "notUser": "¿No eres {userEmail}?",
     "name": "Nombre",
     "changeAccount": "Cambiar cuenta",
-    "editAndInvite": "Editar e invitar personas a tu prueba",
+    "editAndInvite": "Editar e invitar personas a tu estudio",
     "analyzeProject": "Analizar el proyecto y los evaluadores",
     "comment": "Comentario",
     "comments": "Comentarios",
@@ -380,7 +380,7 @@
       "testDescription": "descripción",
       "isPublic": "acceso público",
       "status": "estado",
-      "testStatus": "estado de la prueba",
+      "testStatus": "estado del estudio",
       "endDate": "fecha de finalización",
       "testStructure": "tareas",
       "testOptions": "opciones",
@@ -580,11 +580,11 @@
     "tagline": "Plataforma de investigación UX",
     "appNavigation": "Navegación de la aplicación",
     "createNewStudy": "Crear nuevo estudio",
-    "exitTest": "Salir de la prueba",
+    "exitTest": "Salir del estudio",
     "signOut": "Cerrar sesión",
     "previousStep": "Paso anterior",
     "nextStep": "Siguiente paso",
-    "finishTest": "Finalizar prueba",
+    "finishTest": "Finalizar estudio",
     "helpButton": "Botón de ayuda"
   },
   "profile": {
@@ -652,7 +652,7 @@
   },
   "titles": {
     "manager": "Gerente",
-    "test": "Prueba",
+    "test": "Estudio",
     "preview": "Vista previa",
     "reports": "Informes",
     "anonymous": "Participante Anónimo",
@@ -683,7 +683,7 @@
       "Cooperators": "Personal",
       "Template": "Plantilla",
       "Final Report": "Informe final",
-      "Answer Test": "Responder prueba",
+      "Answer Test": "Responder estudio",
       "Settings": "Configuración",
       "Storage": "Almacenamiento",
       "Audit Trail": "Registro de auditoría",
@@ -698,17 +698,17 @@
     "heuristic": "Evaluación heurística de usabilidad"
   },
   "descriptions": {
-    "edit": "Comienza a crear y editar tu prueba.",
-    "cooperators": "Invita a personas a ayudarte en tu prueba.",
+    "edit": "Comienza a crear y editar tu estudio.",
+    "cooperators": "Invita a personas a ayudarte en tu estudio.",
     "reports": "Observa cómo están progresando tus evaluadores.",
     "answers": "Ve cómo tus evaluadores están evaluando tu proyecto.",
     "analytics": "Analiza los comentarios y respuestas de tus evaluadores.",
-    "finalReport": "Agrega datos adicionales a tu prueba.",
+    "finalReport": "Agrega datos adicionales a tu estudio.",
     "intro": {
-      "reports": "Sigue el progreso y el estado de las respuestas de tus evaluadores mientras completan tu prueba.",
+      "reports": "Sigue el progreso y el estado de las respuestas de tus evaluadores mientras completan tu estudio.",
       "answers": "Obtén rápidamente retroalimentación sobre tu proyecto analizando los datos de las respuestas de otros usuarios.",
-      "analytics": "Examina en profundidad tu prueba y descubre qué dicen las personas al respecto.",
-      "invite": "¡Invita a evaluadores a responder tu prueba!",
+      "analytics": "Examina en profundidad tu estudio y descubre qué dicen las personas al respecto.",
+      "invite": "¡Invita a evaluadores a responder tu estudio!",
       "cooperators": "Agrega colaboradores que puedan ayudarte a mejorar tu proyecto y recopilar datos para tus estudios.",
       "participants": "Agrega participantes a tu estudio para ayudarte a recopilar datos valiosos y obtener información de usuarios reales.",
       "start": "¡Comienza!",
@@ -716,7 +716,7 @@
       "finalReport": "Prepara el informe final para tu evaluación heurística seleccionando los elementos que deseas incluir.",
       "sessions": "Las sesiones son encuentros programados del estudio en los que el equipo y los participantes se reúnen para realizar y completar el estudio."
     },
-    "overallAnalyticsDescription": "Ver los análisis agregados de su prueba.",
+    "overallAnalyticsDescription": "Ver los análisis agregados de su estudio.",
     "individualAnalytics": "Análisis individual",
     "nasaTlxAnalytics": "Análisis NASA-TLX"
   },
@@ -735,7 +735,7 @@
     "incorrectPassword": "Contraseña incorrecta",
     "incorrectCredential": "Nombre de usuario o contraseña incorrectos.",
     "globalError": "Ha ocurrido un error, disculpa las molestias.",
-    "cameraNotAvailable": "No se detectó ninguna cámara. La prueba continuará sin grabación de webcam.",
+    "cameraNotAvailable": "No se detectó ninguna cámara. El estudio continuará sin grabación de webcam.",
     "cameraPermissionDenied": "Se requiere acceso a la cámara para continuar. Por favor, permita el acceso a la cámara en la configuración de su navegador.",
     "recordingMedia": {
       "webcam": "La cámara web",
@@ -792,20 +792,20 @@
   },
   "Introduction": {
     "title": "UX LAB Remoto",
-    "subtitle": "¿Qué tal realizar pruebas de usabilidad de forma remota?",
+    "subtitle": "¿Qué tal realizar estudios de usabilidad de forma remota?",
     "description": "Únete a nuestro proyecto de código abierto y comienza a crear tu propio laboratorio de usabilidad para compartirlo con amigos. ¡Investigar nunca ha sido tan fácil!",
     "cta": "Comenzar"
   },
   "Dashboard": {
     "welcomeBack": "¡Bienvenido de nuevo, {name}!",
     "subtitle": "Esto es lo que está sucediendo con tus proyectos de investigación hoy",
-    "createNewTest": "Crear nueva prueba",
-    "tests": "Pruebas",
+    "createNewTest": "Crear nuevo estudio",
+    "tests": "Estudios",
     "templates": "Plantillas",
     "search": "Buscar",
-    "myTests": "Mis pruebas",
+    "myTests": "Mis estudios",
     "sharedWithMe": "Compartidas conmigo",
-    "publicTests": "Pruebas públicas",
+    "publicTests": "Estudios públicos",
     "sessions": "Sesiones",
     "personal": "Personal",
     "explore": "Explorar",
@@ -1122,7 +1122,7 @@
       "unknownError": "Se produjo un error desconocido al acceder a la plantilla CSV."
     },
     "placeHolders": {
-      "importCsv": "Importa tu archivo CSV de prueba aquí."
+      "importCsv": "Importa tu archivo CSV de estudio aquí."
     },
     "actions": {
       "downloadCsvTemplate": "Descargar plantilla CSV",
@@ -1147,15 +1147,15 @@
   },
   "HeuristicsTestView": {
     "messages": {
-      "submitTest": "¿Estás seguro de que deseas enviar esta prueba?",
-      "submitOnce": "¿Estás seguro de que deseas enviar tu prueba? Solo puedes enviarla una vez.",
-      "noHeuristics": "Esta prueba no tiene ninguna heurística",
-      "noHeuristicsConfigured": "Error de configuración: esta prueba no tiene heurísticas configuradas. Por favor, agregue heurísticas para continuar.",
+      "submitTest": "¿Estás seguro de que deseas enviar este estudio?",
+      "submitOnce": "¿Estás seguro de que deseas enviar tu estudio? Solo puedes enviarlo una vez.",
+      "noHeuristics": "Este estudio no tiene ninguna heurística",
+      "noHeuristicsConfigured": "Error de configuración: este estudio no tiene heurísticas configuradas. Por favor, agregue heurísticas para continuar.",
       "answerSaved": "Respuesta guardada con éxito"
     },
     "errors": {
       "questionNotLoaded": "No se pudo cargar la pregunta",
-      "noAnswerOptions": "No hay opciones de respuesta configuradas para esta prueba.",
+      "noAnswerOptions": "No hay opciones de respuesta configuradas para este estudio.",
       "noAnswerData": "No se encontraron datos de respuesta",
       "failedToSaveAnswer": "Error al guardar la respuesta. Por favor, inténtelo de nuevo.",
       "failedToSubmitAnswer": "Error al enviar la respuesta. Por favor, inténtelo de nuevo."
@@ -1251,10 +1251,10 @@
       }
     },
     "alerts": {
-      "testAlreadyCompleted": "Prueba ya completada",
-      "testAlreadyCompletedMessage": "Ya has completado y enviado esta prueba. ¡Gracias por tu participación!",
-      "testConfigError": "Error de configuración de la prueba",
-      "noAnswerOptionsConfigured": "Nenhuma opção de resposta foi configurada para este teste."
+      "testAlreadyCompleted": "Estudio ya completado",
+      "testAlreadyCompletedMessage": "Ya has completado y enviado este estudio. ¡Gracias por tu participación!",
+      "testConfigError": "Error de configuración del estudio",
+      "noAnswerOptionsConfigured": "Ninguna opción de respuesta fue configurada para este estudio."
     },
     "actions": {
       "cancel": "Cancelar",
@@ -1263,7 +1263,7 @@
       "continueAs": "Continuar como {userEmail}",
       "notMail": "¿No es {userEmail}?",
       "changeAccount": "Cambiar cuenta",
-      "startTest": "Comenzar evaluación"
+      "startTest": "Comenzar estudio"
     },
     "InstructionsStep": {
       "welcomeTitle": "¡Bienvenido a RUXAILAB!",
@@ -1281,8 +1281,8 @@
     }
   },
   "HeuristicsEditTest": {
-    "pageTitle": "Editar prueba",
-    "pageSubtitle": "Personaliza la configuración y preferencias de tu prueba",
+    "pageTitle": "Editar estudio",
+    "pageSubtitle": "Personaliza la configuración y preferencias de tu estudio",
     "titles": {
       "heuristics": "Heurísticas",
       "options": "Opciones",
@@ -1290,8 +1290,8 @@
       "weights": "Pesos",
       "settings": "Configuración"
     },
-    "previewPageTitle": "Vista previa del test",
-    "previewPageSubtitle": "Revisa la configuraci?n del test en modo de solo lectura"
+    "previewPageTitle": "Vista previa del estudio",
+    "previewPageSubtitle": "Revisa la configuración del estudio en modo de solo lectura"
   },
   "HeuristicsTestAnswer": {
     "titles": {
@@ -1350,7 +1350,7 @@
       },
       "messages": {
         "needMoreThan1Answer": "Esta página necesita más de una respuesta para generarse.",
-        "runWeightFunction": "Esta página requiere que la función de pesos (Python) esté ejecutándose, ya sea en emuladores o en modo desplegado, y que los pesos estén completamente configurados en la página de creación de la prueba."
+        "runWeightFunction": "Esta página requiere que la función de pesos (Python) esté ejecutándose, ya sea en emuladores o en modo desplegado, y que los pesos estén completamente configurados en la página de creación del estudio."
       }
     }
   },
@@ -1364,15 +1364,29 @@
       "evaluator": "Evaluador",
       "last_update": "Última actualización",
       "progress": "Progreso",
+      "study_stage": "Etapa",
       "total_time": "Tiempo total",
-      "total_test_time": "Tiempo total del test",
-      "tasks_total_time": "Tiempo total de tareas",
+      "total_test_time": "Tiempo del estudio",
+      "tasks_total_time": "Tiempo de tareas",
       "status": "Estado",
-      "actions": "Comportamiento"
+      "actions": "Acciones"
     },
-    "labels": { "ai_agent": "Agente de IA" },
+    "stages": {
+      "consent": "Consentimiento",
+      "pre_test": "Prueba previa",
+      "task": "Tarea {number}",
+      "post_test": "Prueba posterior",
+      "completed": "Completado"
+    },
+    "labels": {
+      "ai_agent": "Agente de IA",
+      "anonymous": "Anónimo",
+      "not_anonymous": "Participante identificado"
+    },
     "messages": {
       "confirm_delete_report": "¿Estás seguro de que deseas eliminar este informe?",
+      "confirm_hide_response": "¿Ocultar esta respuesta?",
+      "hide_response_confirmation": "Esta respuesta dejará de aparecer en los resultados, no se eliminará y podrás volver a mostrarla cuando quieras.",
       "reports_loading": "Cargando informes",
       "remove_report": "Eliminar informe",
       "sure_to_delete": "¿Estás seguro de que deseas eliminar el informe de {user}? Esta acción no se puede deshacer.",
@@ -1389,24 +1403,25 @@
       "filter_by_status": "Filtrar por estado"
     },
     "actions": {
-      "unhide_report": "Mostrar informe"
+      "hide_response": "Ocultar respuesta",
+      "unhide_response": "Mostrar respuesta"
     }
   },
   "UsabilityCooperators": {
-    "inviteEvaluator": "Invitar evaluador a la prueba",
+    "inviteEvaluator": "Invitar evaluador al estudio",
     "inviteMessageDescription": "Escribe un mensaje personalizado para incluir en la invitación.",
-    "inviteEvaluatorDescription": "Envía invitaciones de evaluación a los participantes",
+    "inviteEvaluatorDescription": "Envía invitaciones de evaluación del estudio a los participantes",
     "email": "Correo electrónico",
     "scheduledAt": "Programado en",
     "inviteMessage": "Mensaje de invitación",
     "placeholderMessage": "Hola, hagamos una prueba...",
-    "inviteInfo": "La invitación con el enlace de la prueba será enviada al correo del evaluador en el horario programado",
+    "inviteInfo": "La invitación con el enlace del estudio será enviada al correo del evaluador en el horario programado",
     "send": "Enviar",
     "role": "Rol",
     "roleDescription": "Selecciona el rol para este participante.",
     "roles": {
       "evaluator": "Evaluador",
-      "evaluatorDesc": "Participa en la prueba, comparte pantalla/video.",
+      "evaluatorDesc": "Participa en el estudio, comparte pantalla/video.",
       "observator": "Observador",
       "observatorDesc": "Observa la sesión en silencio y toma notas."
     },
@@ -1481,7 +1496,7 @@
       "currentTasks": "Tareas actuales",
       "postForm": "Formulario posterior",
       "writeNewPost": "Escribir una nueva pregunta posterior",
-      "testConfiguration": "Configuración de la Prueba"
+      "testConfiguration": "Configuración del estudio"
     },
     "messages": {
       "noTasks": "No tienes ninguna tarea, crea una para continuar.",
@@ -1706,7 +1721,7 @@
       "privacyNotice": "Aviso de Privacidad",
       "privacyText": "Las funciones de grabación requieren consentimiento explícito de los participantes.",
       "privacyItem1": "Informe claramente a los participantes sobre la recopilación de datos",
-      "privacyItem2": "Obtenga el consentimiento adecuado antes de iniciar la prueba",
+      "privacyItem2": "Obtenga el consentimiento adecuado antes de iniciar el estudio",
       "privacyItem3": "Siga las regulaciones de protección de datos (GDPR, etc.)",
       "privacyItem4": "Almacenamiento y manejo seguro de datos grabados"
     },
@@ -1775,18 +1790,18 @@
       "continueAs": "Continuar como {userEmail}",
       "notYou": "¿No eres tú?",
       "changeAccount": "Cambiar cuenta",
-      "startTest": "Comenzar prueba"
+      "startTest": "Comenzar estudio"
     },
     "alerts": {
-      "testAlreadyCompleted": "Prueba ya completada",
-      "testAlreadyCompletedMessage": "Ya has completado y enviado esta prueba. ¡Gracias por tu participación!",
-      "testExpired": "Prueba expirada",
-      "testExpiredMessage": "Esta prueba ya no está disponible porque ha pasado su fecha de finalización.",
-      "testNotActive": "Prueba no activa",
-      "testNotActiveMessage": "Esta prueba no está activa actualmente. Por favor, contacta al administrador.",
-      "testConfigError": "Error de configuración de la prueba",
-      "testConfigErrorMessage": "Esta prueba no tiene tareas configuradas. Por favor, contacta al administrador.",
-      "consentDecline": "Prueba finalizada debido al rechazo del consentimiento. Gracias por tu tiempo.",
+      "testAlreadyCompleted": "Estudio ya completado",
+      "testAlreadyCompletedMessage": "Ya has completado y enviado este estudio. ¡Gracias por tu participación!",
+      "testExpired": "Estudio expirado",
+      "testExpiredMessage": "Este estudio ya no está disponible porque ha pasado su fecha de finalización.",
+      "testNotActive": "Estudio no activo",
+      "testNotActiveMessage": "Este estudio no está activo actualmente. Por favor, contacta al administrador.",
+      "testConfigError": "Error de configuración del estudio",
+      "testConfigErrorMessage": "Este estudio no tiene tareas configuradas. Por favor, contacta al administrador.",
+      "consentDecline": "Estudio finalizado debido al rechazo del consentimiento. Gracias por tu tiempo.",
       "sessionTooFar": "Sesión demasiado lejana",
       "sessionTooFarMessage": "La sesión programada es en más de 24 horas. Por favor regrese más cerca de la fecha de la sesión.",
       "moderatorDisconnected": "Moderador Desconectado",
@@ -1856,10 +1871,10 @@
       "continue": "Continuar",
       "declinedTitle": "Consentimiento rechazado",
       "declinedMessage1": "Has elegido no aceptar los términos de consentimiento para este estudio.",
-      "declinedMessage2": "Si confirmas esta acción, la prueba se terminará inmediatamente ya que tu participación requiere consentimiento explícito para proceder. Tus datos no serán recopilados ni almacenados.",
-      "declinedConfirm": "¿Estás seguro de que quieres finalizar la prueba sin participar?",
+      "declinedMessage2": "Si confirmas esta acción, el estudio se terminará inmediatamente ya que tu participación requiere consentimiento explícito para proceder. Tus datos no serán recopilados ni almacenados.",
+      "declinedConfirm": "¿Estás seguro de que quieres finalizar el estudio sin participar?",
       "goBack": "Volver",
-      "endTest": "Sí, finalizar prueba"
+      "endTest": "Sí, finalizar estudio"
     },
     "PreTestStep": {
       "title": "Prueba previa"
@@ -1871,24 +1886,24 @@
       "done": "Hecho"
     },
     "messages": {
-      "noTasks": "Esta prueba no tiene ninguna tarea.",
+      "noTasks": "Este estudio no tiene ninguna tarea.",
       "answerSaved": "Respuesta guardada con éxito.",
       "taskCompletedSuccess": "¡Tarea \"{taskName}\" completada exitosamente!",
       "taskNotCompleted": "No se pudo completar la tarea \"{taskName}\".",
-      "useSessionLinkModerated": "Usa un enlace de sesión para acceder a tu prueba moderada.",
-      "useSessionLink": "Usa un enlace de sesión para acceder a la prueba"
+      "useSessionLinkModerated": "Usa un enlace de sesión para acceder a tu estudio moderada.",
+      "useSessionLink": "Usa un enlace de sesión para acceder a tu estudio"
     },
     "errors": {
       "noAnswerData": "No se encontraron datos de respuesta.",
       "failedToSaveAnswer": "Error al guardar la respuesta. Por favor, inténtalo de nuevo.",
       "failedToSubmitAnswer": "Error al enviar la respuesta. Por favor, inténtalo de nuevo.",
-      "noTestData": "Sin datos de prueba",
-      "noTestDataMessage": "No se pudo cargar la información de la prueba. Por favor, inténtalo de nuevo más tarde.",
+      "noTestData": "Sin datos del estudio",
+      "noTestDataMessage": "No se pudo cargar la información del estudio. Por favor, inténtalo de nuevo más tarde.",
       "failedToCompleteStep": "Error al completar el paso. Por favor, inténtalo de nuevo.",
-      "failedToInitializeTestData": "Error al inicializar los datos de la prueba. Por favor, inténtalo de nuevo.",
-      "loginRequired": "Inicia sesión primero en tu cuenta de RUXAILAB para acceder a la prueba.",
-      "timerIndexNotFound": "An error occurred while saving the task time.",
-      "taskNotFound": "Task not found. Please try again."
+      "failedToInitializeTestData": "Error al inicializar los datos del estudio. Por favor, inténtalo de nuevo.",
+      "loginRequired": "Inicia sesión primero en tu cuenta de RUXAILAB para acceder al estudio.",
+      "timerIndexNotFound": "Ocurrió un error al guardar el tiempo de la tarea.",
+      "taskNotFound": "Tarea no encontrada. Por favor, inténtalo de nuevo."
     },
     "CalibrationInProgressModal": {
       "completed": "¡Calibración completada!",
@@ -1902,12 +1917,12 @@
     },
     "ModeratorWelcomeStep": {
       "badge": "Vista del Moderador",
-      "welcome": "Bienvenido a la Sesión de Prueba Moderada",
-      "description": "Como moderador, guiará al participante a través del proceso de prueba mientras observa sus interacciones a través de una videollamada.",
+      "welcome": "Bienvenido a la Sesión de Estudio Moderada",
+      "description": "Como moderador, guiará al participante a través del proceso del estudio mientras observa sus interacciones a través de una videollamada.",
       "instructionsTitle": "Instrucciones para el Moderador",
       "instruction1": "Comience abriendo la sala de videollamada",
       "instruction2": "Observe las interacciones del participante sin interferencias",
-      "instruction3": "Use el navegador de pasos para saltar entre las fases de la prueba",
+      "instruction3": "Use el navegador de pasos para saltar entre las fases del estudio",
       "instruction4": "Brinde orientación solo cuando sea necesario",
       "remember": "Recuerde:",
       "note": "Su función es facilitar y observar. El participante debe completar las tareas de forma independiente a menos que solicite ayuda específicamente.",
@@ -1954,23 +1969,23 @@
     },
     "WelcomeStep": {
       "welcome": "¡Bienvenido a RUXAILAB!",
-      "description": "Vas a participar en una prueba de usuario que tiene como objetivo evaluar la facilidad de uso y comprensión de una aplicación digital. Este tipo de prueba nos ayuda a detectar posibles barreras tecnológicas y mejorar la experiencia para todos.",
-      "howItWorks": "¿Cómo funciona esta prueba?",
-      "phases": "A lo largo de la prueba, te guiaremos por diferentes fases. En cada una, se te indicará claramente qué hacer. No hay respuestas correctas o incorrectas: lo que nos interesa es cómo interactúas con el sistema.",
+      "description": "Vas a participar en un estudio de usuario que tiene como objetivo evaluar la facilidad de uso y comprensión de una aplicación digital. Este tipo de estudio nos ayuda a detectar posibles barreras tecnológicas y mejorar la experiencia para todos.",
+      "howItWorks": "¿Cómo funciona este estudio?",
+      "phases": "A lo largo del estudio, te guiaremos por diferentes fases. En cada una, se te indicará claramente qué hacer. No hay respuestas correctas o incorrectas: lo que nos interesa es cómo interactúas con el sistema.",
       "summary": "Aquí puedes ver un resumen de las fases que seguirás:",
       "steps": {
         "consent": "Consentimiento",
-        "preQuestions": "Preguntas iniciales",
+        "preQuestions": "Preguntas previas",
         "tasks": "Tareas",
         "postQuestions": "Preguntas finales",
         "submission": "Envío final"
       },
       "ready": "Cuando estés listo, haz clic en el botón para comenzar. Puedes avanzar a tu propio ritmo y detenerte en cualquier momento si lo necesitas.",
-      "startTest": "Comenzar la prueba"
+      "startTest": "Comenzar el estudio"
     },
     "PreTasksStep": {
       "title": "Tareas",
-      "heading": "Comencemos con la fase de tareas",
+      "heading": "Comencemos con la fase de tareas del estudio",
       "description": "Vas a completar",
       "tasksSuffix": "tareas relacionadas con el uso de la herramienta. No hay respuestas correctas o incorrectas; lo importante es cómo interactúas.",
       "instruction": "Cuando estés listo, haz clic en el botón para comenzar.",
@@ -2098,7 +2113,7 @@
       "pdf": "Generar PDF",
       "elements": "Elementos",
       "options": {
-        "options": "Opciones de la prueba",
+        "options": "Opciones del estudio",
         "comments": "Comentarios de las respuestas",
         "statistics": "Estadísticas",
         "answersByEvaluator": "Respuestas por evaluador",
@@ -2111,10 +2126,10 @@
     },
     "landing": {
       "feedbackTitle": "Obtén retroalimentación rápida sobre tus proyectos",
-      "feedbackSubtitle1": "UX Remote LAB ha sido creado para proporcionar un conjunto de herramientas para expertos en UX que desean crear sus propias pruebas de usabilidad y realizarlas con usuarios.",
+      "feedbackSubtitle1": "UX Remote LAB ha sido creado para proporcionar un conjunto de herramientas para expertos en UX que desean crear sus propios estudios de usabilidad y realizarlos con usuarios.",
       "feedbackSubtitle2": "El COVID-19 ha demostrado que a veces la presencia física de usuarios reales no es posible, ¡y estamos aquí para solucionar ese problema!",
       "uxTitle": "Inicia tu propio laboratorio de UX",
-      "uxSubtitle1": "Si eres investigador, empresa o profesional que desea realizar pruebas de UX, aquí encontrarás varias herramientas para analizar y seguir tus pruebas utilizando diferentes técnicas de UX.",
+      "uxSubtitle1": "Si eres investigador, empresa o profesional que desea realizar estudios de UX, aquí encontrarás varias herramientas para analizar y seguir tus pruebas utilizando diferentes técnicas de UX.",
       "uxSubtitle2": "¡Ayúdanos a hacer crecer esta comunidad de código abierto y únete a nosotros en GitHub! :)",
       "footer": "Estamos buscando nuevos socios para ayudarnos a hacer crecer el proyecto. ¡No dudes en contactarnos en "
     },
@@ -2124,7 +2139,7 @@
       "progress": "Progreso",
       "updated": "Última actualización",
       "version": "Versión:",
-      "noTests": "No se encontraron pruebas",
+      "noTests": "No se encontraron estudios",
       "noTemplates": "No se encontraron plantillas",
       "noSessions": "No se encontraron sesiones"
     },
@@ -2240,32 +2255,32 @@
       }
     },
     "createTest": {
-      "title": "Crear una nueva prueba",
-      "blankTitle": "Crear una prueba en blanco",
-      "blankSubtitle": "Crea una prueba en blanco para comenzar con una plantilla completamente nueva.",
+      "title": "Crear un nuevo estudio",
+      "blankTitle": "Crear un estudio en blanco",
+      "blankSubtitle": "Crea un estudio en blanco para comenzar con una plantilla completamente nueva.",
       "templateTitle": "Crear a partir de una plantilla",
-      "templateSubtitle": "Crea una prueba basada en una plantilla creada por uno de nuestros usuarios.",
-      "create": "Crear prueba",
+      "templateSubtitle": "Crea un estudio basado en una plantilla creada por uno de nuestros usuarios.",
+      "create": "Crear estudio",
       "templateInfo": "Información de la plantilla",
       "deleteTemplate": "Eliminar plantilla",
       "noDescription": "La plantilla no tiene descripción.",
-      "public": "Hacer la prueba pública para todos los usuarios (solo lectura)"
+      "public": "Hacer el estudio público para todos los usuarios (solo lectura)"
     },
     "settings": {
       "title": "Configuración",
-      "currentTest": "Prueba actual",
+      "currentTest": "Estudio actual",
       "createTemplate": "CREAR PLANTILLA",
-      "deleteTest": "ELIMINAR PRUEBA",
+      "deleteTest": "ELIMINAR ESTUDIO",
       "study_configuration": "Configuración del Estudio",
       "loading_settings": "Cargando Configuraciones",
-      "manage_test_settings": "Gestiona las configuraciones y preferencias de tu prueba con controles avanzados",
+      "manage_test_settings": "Gestiona las configuraciones y preferencias de tu estudio con controles avanzados",
       "basic_information": "Información Básica",
-      "configure_test_details": "Configura los detalles fundamentales de tu prueba",
+      "configure_test_details": "Configura los detalles fundamentales de tu estudio",
       "advanced_settings": "Configuraciones Avanzadas",
-      "fine_tune_configuration": "Ajusta finamente la configuración de tu prueba",
+      "fine_tune_configuration": "Ajusta finamente la configuración de tu estudio",
       "public_access": "Acceso Público",
-      "allow_users_view": "Permitir a los usuarios ver esta prueba",
-      "test_status": "Estado de la Prueba",
+      "allow_users_view": "Permitir a los usuarios ver este estudio",
+      "test_status": "Estado del Estudio",
       "select_status": "Seleccionar Estado",
       "end_date": "Fecha de Finalización",
       "select_end_date": "Seleccionar Fecha de Finalización",
@@ -2277,11 +2292,11 @@
       "confirm_deletion": "Confirmar eliminación"
     },
     "editTest": {
-      "title": "Editar prueba",
-      "description": "Personaliza las configuraciones y preferencias de tu prueba.",
-      "updatedTest": "Prueba actualizada con éxito",
-      "previewTitle": "Vista previa del test",
-      "previewDescription": "Revisa el test en modo de solo lectura."
+      "title": "Editar estudio",
+      "description": "Personaliza las configuraciones y preferencias de tu estudio.",
+      "updatedTest": "Estudio actualizado con éxito",
+      "previewTitle": "Vista previa del estudio",
+      "previewDescription": "Revisa el estudio en modo de solo lectura."
     },
     "cooperators": {
       "invitationSent": "Invitación enviada con éxito"
@@ -2291,7 +2306,7 @@
     "copy": "Copia exitosa",
     "noCopy": "Copia fallida",
     "deleteTemplate": "¿Estás seguro de que deseas eliminar esta plantilla? ¡Esta acción no se puede deshacer!",
-    "deleteTest": "¿Estás seguro de que deseas eliminar esta prueba?",
+    "deleteTest": "¿Estás seguro de que deseas eliminar este estudio?",
     "deleteQuestion": "¿Estás seguro de que deseas eliminar la pregunta: ",
     "deleteDescription": "¿Estás seguro de que deseas eliminar la descripción: ",
     "addDescription": "Por favor, agrega una descripción",
@@ -2328,15 +2343,15 @@
     "help": "Ayuda",
     "delete": "Eliminar",
     "deleteAccount": "Eliminar cuenta",
-    "duplicateTest": "Duplicar prueba",
+    "duplicateTest": "DUPLICAR ESTUDIO",
     "submit": "Enviar",
     "couldNotFinish": "No se pudo completar",
     "addNewTask": "Agregar nueva tarea",
     "saveChanges": "Guardar cambios",
     "createTemplate": "Crear plantilla",
-    "deleteTest": "Eliminar prueba",
+    "deleteTest": "Eliminar estudio",
     "deleteForever": "Eliminar definitivamente",
-    "startTest": "Iniciar prueba"
+    "startTest": "Iniciar estudio"
   },
   "switches": {
     "noAnswer": "Sin respuesta",
@@ -2358,8 +2373,8 @@
     "postForm": "Formulario posterior"
   },
   "Createblank": {
-    "title": "¿Qué tipo de prueba deseas iniciar?",
-    "test": "Prueba",
+    "title": "¿Qué tipo de estudio deseas iniciar?",
+    "test": "Estudio",
     "testType_1": {
       "testTitle": "Heurística de usabilidad",
       "text": [
@@ -2373,17 +2388,17 @@
       "text": [
         "Grabación de cámara web, audio y pantalla",
         "Análisis mejorado de respuestas",
-        "Pruebas moderadas o no moderadas"
+        "Estudios moderados o no moderados"
       ]
     },
     "UsabilityUser": {
       "SelfTest": {
-        "title": "Prueba autónoma",
-        "type": "No moderada",
+        "title": "Estudio autónomo",
+        "type": "No moderado",
         "text": [
           "Responder en tu tiempo libre",
           "Análisis mejorado de respuestas",
-          "Personalización de tareas"
+          "Personalización de tareas del estudio"
         ]
       },
       "LiveTest": {
@@ -2398,11 +2413,11 @@
     }
   },
   "TestDialog": {
-    "heading": "Creación de prueba",
-    "sub-heading": "¡Agrega un nombre a tu prueba!",
-    "test-name": "Nombre de la prueba",
-    "test-description": "Descripción de la prueba",
-    "test-label": "Prueba pública para todos los usuarios",
+    "heading": "Creación de estudio",
+    "sub-heading": "¡Agrega un nombre a tu estudio!",
+    "test-name": "Nombre del estudio",
+    "test-description": "Descripción del estudio",
+    "test-label": "Estudio público para todos los usuarios",
     "template": {
       "title": "Introduce un título para tu plantilla",
       "description": "Proporciona una descripción para tu plantilla",
@@ -2410,34 +2425,34 @@
     }
   },
   "finishTest": {
-    "title": "Finalizar prueba",
+    "title": "Finalizar estudio",
     "finalMessage": "Mensaje final",
-    "congratulations": "¡Felicidades! Has completado la prueba, ahora puedes enviar tus respuestas.",
+    "congratulations": "¡Felicidades! Has completado el estudio, ahora puedes enviar tus respuestas.",
     "submitMessage": "Haz clic aquí para enviar tus respuestas. ¡Después de enviarlas, no podrás cambiarlas!",
     "submitButton": "Enviar"
   },
   "help": {
-    "createtest": "¿Cómo creo una prueba?",
-    "createtestanswer": "Para crear una prueba, comienza haciendo clic en el ícono de más y selecciona Prueba Heurística. Luego, especifica los detalles de tu proyecto. Finalmente, dirígete a la página del administrador dedicada.",
-    "heuristictest": "¿Cómo configuro mi prueba heurística?",
-    "heuristictestanswer": "Para configurar tu prueba heurística, accede a la opción 'Editar Prueba'. Luego, haz clic en el botón de más para agregar un título y la pregunta a tu heurística. A continuación, ve a la sección de opciones para crear las opciones de respuesta y sus respectivos valores. Finalmente, guarda los cambios.",
-    "deletetest": "¿Cómo elimino mi prueba?",
-    "deletetestanswer": "Para eliminar tu prueba, ve a la barra lateral izquierda y haz clic en el botón 'Configuración'. Luego, selecciona el botón 'ELIMINAR PRUEBA'.",
+    "createtest": "¿Cómo creo un estudio?",
+    "createtestanswer": "Para crear un estudio, comienza haciendo clic en el ícono de más y selecciona Prueba Heurística. Luego, especifica los detalles de tu proyecto. Finalmente, dirígete a la página del administrador dedicada.",
+    "heuristictest": "¿Cómo configuro mi estudio heurístico?",
+    "heuristictestanswer": "Para configurar tu estudio heurístico, accede a la opción 'Editar Prueba'. Luego, haz clic en el botón de más para agregar un título y la pregunta a tu heurística. A continuación, ve a la sección de opciones para crear las opciones de respuesta y sus respectivos valores. Finalmente, guarda los cambios.",
+    "deletetest": "¿Cómo elimino mi estudio?",
+    "deletetestanswer": "Para eliminar tu estudio, ve a la barra lateral izquierda y haz clic en el botón 'Configuración'. Luego, selecciona el botón 'ELIMINAR PRUEBA'.",
     "createtemplate": "¿Cómo creo una plantilla?",
-    "createtemplateanswer": "Para crear una plantilla para tu prueba, ve a la barra lateral izquierda y haz clic en el botón 'Configuración'. Luego, selecciona la opción 'CREAR PLANTILLA'.",
+    "createtemplateanswer": "Para crear una plantilla para tu estudio, ve a la barra lateral izquierda y haz clic en el botón 'Configuración'. Luego, selecciona la opción 'CREAR PLANTILLA'.",
     "usetemplate": "¿Cómo uso una plantilla?",
-    "usetemplateanswer": "Para utilizar una plantilla, ve a la página de Pruebas. En la sección de Crear Plantillas, encontrarás tus plantillas personales. Además, puedes explorar plantillas públicas.",
-    "previewtest": "¿Cómo previsualizo mi prueba?",
-    "previewtestanswer": "En la barra lateral izquierda, haz clic en la opción 'Vista previa', luego inicia la prueba respondiendo las preguntas y finalmente haz clic en el botón de la esquina inferior derecha para guardar y enviar la vista previa, que luego podrá ser analizada en la sección 'Respuestas'.",
+    "usetemplateanswer": "Para utilizar una plantilla, ve a la página de Estudios. En la sección de Crear Plantillas, encontrarás tus plantillas personales. Además, puedes explorar plantillas públicas.",
+    "previewtest": "¿Cómo previsualizo mi estudio?",
+    "previewtestanswer": "En la barra lateral izquierda, haz clic en la opción 'Vista previa', luego inicia el estudio respondiendo las preguntas y finalmente haz clic en el botón de la esquina inferior derecha para guardar y enviar la vista previa, que luego podrá ser analizada en la sección 'Respuestas'.",
     "importcsv": "¿Cómo importo mi archivo CSV?",
-    "importcsvanswer": "Para importar tu archivo CSV, ve a la sección 'Editar Prueba' y haz clic en el botón 'ACTUALIZAR'. Luego, selecciona tu archivo CSV que contiene las heurísticas.",
+    "importcsvanswer": "Para importar tu archivo CSV, ve a la sección 'Editar Estudio' y haz clic en el botón 'ACTUALIZAR'. Luego, selecciona tu archivo CSV que contiene las heurísticas.",
     "invitecooperators": "¿Cómo invito a colaboradores?",
-    "invitecooperatorsanswer": "Para invitar a colaboradores, ve a la página de administración de tu prueba. Desde allí, selecciona 'Colaboradores' en la barra lateral izquierda. Haz clic en 'Seleccionar colaborador' e ingresa el correo electrónico de tu colaborador. Elige el rol del colaborador y luego envía la invitación haciendo clic en el botón de la esquina inferior derecha.",
+    "invitecooperatorsanswer": "Para invitar a colaboradores, ve a la página de administración de tu estudio. Desde allí, selecciona 'Colaboradores' en la barra lateral izquierda. Haz clic en 'Seleccionar colaborador' e ingresa el correo electrónico de tu colaborador. Elige el rol del colaborador y luego envía la invitación haciendo clic en el botón de la esquina inferior derecha.",
     "analyseresults": "¿Cómo analizo los resultados?",
-    "analyseresultsanswer": "Para analizar tus resultados, ve a la página de administración de tu prueba. Desde allí, selecciona 'Respuestas' en la barra lateral izquierda. Aquí podrás visualizar estadísticas, evaluadores y heurísticas.",
+    "analyseresultsanswer": "Para analizar tus resultados, ve a la página de administración de tu estudio. Desde allí, selecciona 'Respuestas' en la barra lateral izquierda. Aquí podrás visualizar estadísticas, evaluadores y heurísticas.",
     "sendmessage": "¿Cómo envío un mensaje a mis colaboradores?",
-    "sendmessageanswer": "Para enviar un mensaje, ve a la página de administración de tu prueba. Selecciona 'Colaboradores' en la barra lateral izquierda. Haz clic en el ícono de tres puntos junto al colaborador al que deseas enviar un mensaje. Luego, elige 'Enviar un mensaje' y escribe tu mensaje con un título y contenido.",
-    "testCreation": "Creación de pruebas",
+    "sendmessageanswer": "Para enviar un mensaje, ve a la página de administración de tu estudio. Selecciona 'Colaboradores' en la barra lateral izquierda. Haz clic en el ícono de tres puntos junto al colaborador al que deseas enviar un mensaje. Luego, elige 'Enviar un mensaje' y escribe tu mensaje con un título y contenido.",
+    "testCreation": "Creación de estudios",
     "templates": "Plantillas",
     "cooperators": "Personal",
     "analytics": "Análisis",
@@ -2473,7 +2488,7 @@
     "postForm": "Formulario posterior",
     "postFormDescription": "Este es un cuestionario posterior para recopilar datos de los participantes.",
     "finalMessage": "Mensaje final",
-    "finalMessageDescription": "Este es el mensaje final que dejas para el participante al finalizar la prueba.",
+    "finalMessageDescription": "Este es el mensaje final que dejas para el participante al finalizar la sesión.",
     "finalMessagePlaceholder": "Ingresa el mensaje final",
     "preTestVariables": "Variables de la Prueba Previa",
     "postTestVariables": "Variables de la Prueba Posterior",
@@ -2590,8 +2605,8 @@
     "participantCategory": "Creada por ti",
     "customCategory": "Personalizada",
     "newTask": "Nueva categoría",
-    "customizeSettings": "Personaliza los ajustes y preferencias de tu prueba",
-    "test": "Prueba",
+    "customizeSettings": "Personaliza los ajustes y preferencias de tu estudio",
+    "test": "Estudio",
     "categories": "Categorías",
     "step": "Paso",
     "allocateAll": "Coloca todas las tarjetas (faltan {count})",
@@ -2648,11 +2663,12 @@
     "effectivenessDescription": "Porcentaje de tareas completadas con éxito",
     "efficiency": "Eficiencia",
     "efficiencyDescription": "Tiempo promedio: {avgTime}",
+    "efficiencyScaleHint": "El color compara la eficiencia con la mediana de los usuarios visibles.",
     "satisfaction": "Satisfacción",
     "satisfactionDescription": "Puntuación promedio de satisfacción del usuario",
     "conclusionRate": "Tasa de finalización",
     "perfectCompletionRate": "Tasa de finalización perfecta alcanzada",
-    "testsInProgress": "Pruebas en progreso",
+    "testsInProgress": "Estudios en progreso",
     "totalDuration": "Duración total",
     "avgTimePerTask": "Tiempo promedio por tarea",
     "efficientTaskCompletion": "Tasa de finalización eficiente de tareas",
@@ -2663,7 +2679,15 @@
     "evaluator": "Evaluador",
     "latestUser": "Último usuario",
     "taskPerformance": "Rendimiento de la tarea",
-    "taskPerformanceDescription": "Tasas de éxito y error para cada tarea de la prueba",
+    "taskPerformanceDescription": "Tasas de éxito y error para cada tarea del estudio",
+    "taskTimeVsEstimate": "Tiempo medio por tarea vs. estimado",
+    "taskTimeByUser": "Tiempo por tarea y usuario",
+    "averageCompletionTime": "Tiempo medio de finalización",
+    "estimatedTime": "Tiempo estimado",
+    "estimatedTimeForTask": "{task} estimado",
+    "timeMinutes": "Tiempo (minutos)",
+    "userLabel": "Usuario",
+    "participantNumber": "Participante {number}",
     "success": "Éxito",
     "successCount": "Aciertos",
     "errors": "Errores",
@@ -2687,6 +2711,8 @@
     "actions": "Acciones",
     "completed": "Completado",
     "notCompleted": "Incompleto",
+    "notStarted": "No iniciada",
+    "couldNotFinish": "No pudo terminar",
     "tasks": "tareas",
     "total": "total",
     "timeTaken": "Tiempo empleado",
@@ -3010,7 +3036,7 @@
       "sessionSaved": "Respuestas de la sesión guardadas.",
       "noTopicsWarning": "Agrega temas a tu guía de discusión antes de iniciar una sesión.",
       "stimuli": "Estímulos",
-      "noStimuli": "Aún no hay estímulos en la biblioteca. Agrega algunos desde la pantalla de prueba.",
+      "noStimuli": "Aún no hay estímulos en la biblioteca. Agrega algunos desde la pantalla de estudio.",
       "present": "Presentar",
       "presenting": "Presentando",
       "presentingStimulus": "Presentando:",
@@ -3292,7 +3318,7 @@
     },
     "participants": {
       "title": "Participantes",
-      "subtitle": "Resumen de participación en pruebas",
+      "subtitle": "Resumen de participación en estudios",
       "beta": "Beta",
       "completed": "Completado",
       "notStarted": "No Iniciado",
@@ -3383,14 +3409,14 @@
     }
   },
   "testSettings": {
-    "testInformation": "Información de la prueba",
-    "basicTestSettings": "Configuración básica y descripción de la prueba",
+    "testInformation": "Información del estudio",
+    "basicTestSettings": "Configuración básica y descripción del estudio",
     "advancedSettings": "Configuración avanzada",
     "quickActions": "Acciones rápidas",
     "performCommonTasks": "Realizar tareas comunes al instante"
   },
   "cooperator": {
-    "goToSession": "Go to session"
+    "goToSession": "Ir a la sesión"
   },
   "Accessibility": {
     "access": "Acceso:",
@@ -3456,7 +3482,7 @@
     "loadingAccessibilityReport": "Cargando informe de accesibilidad...",
     "loadingMore": "Cargando más...",
     "loadingReport": "Cargando informe...",
-    "loadingTestData": "Cargando datos de prueba...",
+    "loadingTestData": "Cargando datos del estudio...",
     "loadingUsers": "Cargando usuarios",
     "message": "Mensaje",
     "next": "Siguiente",

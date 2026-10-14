@@ -162,7 +162,7 @@ watch(
   { immediate: true },
 )
 
-const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
+const testAnswerDocument = computed(() => store.getters.testAnswerDocument)
 
 const answers = computed(() => {
   if (testAnswerDocument.value && testAnswerDocument.value.heuristicAnswers) {

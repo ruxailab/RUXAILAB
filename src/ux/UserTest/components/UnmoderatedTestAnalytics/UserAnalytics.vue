@@ -136,35 +136,81 @@
           :key="'col-task-' + i"
           #[`item.task_${i}`]="{ item }"
         >
-          <div class="d-flex flex-column align-center py-2">
+          <div class="task-result-cell d-flex flex-column align-center py-2">
             <v-chip
               size="x-small"
-              :color="item[`task_${i}`]?.completed ? 'success' : 'error'"
+              :color="
+                item[`task_${i}`]?.completed
+                  ? 'success'
+                  : item[`task_${i}`]?.attempted
+                    ? 'error'
+                    : 'grey'
+              "
               variant="tonal"
-              class="mb-2 text-uppercase font-weight-medium"
+              class="task-status-chip text-uppercase font-weight-medium"
               :prepend-icon="
                 item[`task_${i}`]?.completed
                   ? 'mdi-check-circle'
-                  : 'mdi-close-circle'
+                  : item[`task_${i}`]?.attempted
+                    ? 'mdi-progress-close'
+                    : 'mdi-minus-circle-outline'
               "
             >
               {{
                 item[`task_${i}`]?.completed
                   ? $t('analytics.completed')
-                  : $t('analytics.notCompleted')
+                  : item[`task_${i}`]?.attempted
+                    ? $t('analytics.couldNotFinish')
+                    : $t('analytics.notStarted')
               }}
             </v-chip>
-            <span
-              class="text-caption"
-              :class="{ 'text-grey-500': !item[`task_${i}`]?.timeSeconds }"
-            >
-              {{ $t('analytics.timeTaken') }}:
-              {{
-                item[`task_${i}`]?.timeSeconds
-                  ? formatTime(item[`task_${i}`].timeSeconds)
-                  : '-'
-              }}
-            </span>
+            <div class="task-time-cell d-flex flex-column align-center">
+              <div class="task-time-line">
+                <span class="text-caption text-medium-emphasis">
+                  {{ $t('analytics.timeTaken') }}:
+                </span>
+                <span class="text-caption font-weight-medium">
+                  {{
+                    item[`task_${i}`]?.timeSeconds
+                      ? formatTime(item[`task_${i}`].timeSeconds)
+                      : '-'
+                  }}
+                </span>
+              </div>
+              <div class="task-time-line">
+                <span class="text-caption text-medium-emphasis">
+                  {{ $t('analytics.estimatedTime') }}:
+                </span>
+                <span class="text-caption font-weight-medium">
+                  {{
+                    item[`task_${i}`]?.estimatedTimeSeconds != null
+                      ? formatTime(item[`task_${i}`].estimatedTimeSeconds)
+                      : '-'
+                  }}
+                </span>
+              </div>
+              <div class="task-comparison-slot">
+                <v-chip
+                  v-if="item[`task_${i}`]?.timeComparison"
+                  size="x-small"
+                  :color="
+                    item[`task_${i}`].timeComparison === 'over'
+                      ? 'error'
+                      : 'primary'
+                  "
+                  variant="tonal"
+                >
+                  {{
+                    $t(
+                      item[`task_${i}`].timeComparison === 'over'
+                        ? 'analytics.overEstimate'
+                        : 'analytics.withinEstimate',
+                    )
+                  }}
+                </v-chip>
+                <span v-else class="text-caption text-medium-emphasis">-</span>
+              </div>
+            </div>
           </div>
         </template>
 
@@ -174,7 +220,7 @@
               <div class="d-flex align-center mb-1">
                 <v-chip
                   size="x-small"
-                  color="primary"
+                  :color="getEffectivenessColor(item.effectiveness)"
                   variant="tonal"
                   class="mr-2 font-weight-medium"
                 >
@@ -182,7 +228,8 @@
                 </v-chip>
                 <v-chip
                   size="x-small"
-                  color="secondary"
+                  :color="getEfficiencyColor(item.efficiency)"
+                  :title="$t('analytics.efficiencyScaleHint')"
                   variant="tonal"
                   class="font-weight-medium"
                 >
@@ -199,7 +246,7 @@
           </div>
         </template>
 
-        <template #item.invited="{ item }">
+        <!-- <template #item.invited="{ item }">
           <v-chip
             :color="item.invited ? 'success' : 'grey'"
             :prepend-icon="item.invited ? 'mdi-check' : 'mdi-close'"
@@ -208,7 +255,7 @@
           >
             {{ item.invited ? $t('analytics.yes') : $t('analytics.no') }}
           </v-chip>
-        </template>
+        </template> -->
 
         <template #item.actions="{ item }">
           <v-menu location="bottom end" transition="fade-transition">
@@ -412,6 +459,18 @@
                         sortable: false,
                         width: 110,
                       },
+                      {
+                        title: $t('analytics.estimatedTime'),
+                        key: 'estimatedTimeLabel',
+                        sortable: false,
+                        width: 140,
+                      },
+                      {
+                        title: $t('analytics.timeComparison'),
+                        key: 'timeComparisonLabel',
+                        sortable: false,
+                        width: 160,
+                      },
                     ]"
                     :items="taskSummaryRows"
                     :items-per-page="10"
@@ -534,6 +593,26 @@
                       <div class="font-weight-medium text-grey-900">
                         {{ item.timeLabel }}
                       </div>
+                    </template>
+
+                    <template #item.estimatedTimeLabel="{ item }">
+                      <div class="font-weight-medium text-grey-900">
+                        {{ item.estimatedTimeLabel }}
+                      </div>
+                    </template>
+
+                    <template #item.timeComparisonLabel="{ item }">
+                      <v-chip
+                        v-if="item.timeComparison"
+                        size="small"
+                        variant="tonal"
+                        :color="
+                          item.timeComparison === 'over' ? 'error' : 'primary'
+                        "
+                      >
+                        {{ item.timeComparisonLabel }}
+                      </v-chip>
+                      <span v-else class="text-medium-emphasis">-</span>
                     </template>
                   </v-data-table>
 
@@ -843,6 +922,17 @@ const taskSummaryRows = computed(() => {
     const completed = !!taskAnswer?.completed
     const attempted = !!taskAnswer?.attempted
     const taskTimeSeconds = Math.floor((taskAnswer?.taskTime || 0) / 1000)
+    const estimatedMinutes = Number(taskDefinition?.estimatedTime)
+    const estimatedTimeSeconds =
+      Number.isFinite(estimatedMinutes) && estimatedMinutes > 0
+        ? estimatedMinutes * 60
+        : null
+    const timeComparison =
+      taskTimeSeconds > 0 && estimatedTimeSeconds !== null
+        ? taskTimeSeconds > estimatedTimeSeconds
+          ? 'over'
+          : 'within'
+        : null
     const tipPressCount = Number(taskAnswer?.tipPressCount || 0)
     const hasTipAvailable = !!taskDefinition?.taskTip
 
@@ -870,11 +960,20 @@ const taskSummaryRows = computed(() => {
       statusLabel: completed
         ? t('analytics.completed')
         : attempted
-          ? t('analytics.notCompleted')
-          : '-',
+          ? t('analytics.couldNotFinish')
+          : t('analytics.notStarted'),
       statusColor: completed ? 'success' : attempted ? 'warning' : 'grey',
       timeSeconds: taskTimeSeconds,
       timeLabel: formatTime(taskTimeSeconds),
+      estimatedTimeLabel:
+        estimatedTimeSeconds !== null ? formatTime(estimatedTimeSeconds) : '-',
+      timeComparison,
+      timeComparisonLabel:
+        timeComparison === 'over'
+          ? t('analytics.overEstimate')
+          : timeComparison === 'within'
+            ? t('analytics.withinEstimate')
+            : '-',
       rawTaskAnswer: taskAnswer,
     }
   })
@@ -892,12 +991,12 @@ const tableHeaders = computed(() => {
     { title: t('analytics.user'), key: 'user', sortable: false },
     { title: t('analytics.summary'), key: 'tasks', sortable: false },
     ...dynamicTaskHeaders,
-    {
-      title: t('analytics.invite'),
-      key: 'invited',
-      sortable: false,
-      width: 90,
-    },
+    // {
+    //   title: t('analytics.invite'),
+    //   key: 'invited',
+    //   sortable: false,
+    //   width: 90,
+    // },
     {
       title: t('analytics.actions'),
       key: 'actions',
@@ -931,11 +1030,28 @@ const tableData = computed(() => {
         session.tasks?.[userTasks[i]?.taskId] ||
         {}
       const completed = !!task.completed
+      const attempted = !!task.attempted
       const timeMs = task.taskTime || 0
       const timeSeconds = Math.floor(timeMs / 1000)
+      const estimatedMinutes = Number(userTasks[i]?.estimatedTime)
+      const estimatedTimeSeconds =
+        Number.isFinite(estimatedMinutes) && estimatedMinutes > 0
+          ? estimatedMinutes * 60
+          : null
       if (completed) completedCount += 1
       totalTimeSeconds += timeSeconds
-      row[`task_${i}`] = { completed, timeSeconds }
+      row[`task_${i}`] = {
+        completed,
+        attempted,
+        timeSeconds,
+        estimatedTimeSeconds,
+        timeComparison:
+          timeSeconds > 0 && estimatedTimeSeconds !== null
+            ? timeSeconds > estimatedTimeSeconds
+              ? 'over'
+              : 'within'
+            : null,
+      }
     })
 
     const totalTasks = userTasks.length || 0
@@ -957,6 +1073,35 @@ const tableData = computed(() => {
     }
   })
 })
+
+const efficiencyMedian = computed(() => {
+  const values = tableData.value
+    .map((item) => Number(item.efficiency))
+    .filter((value) => Number.isFinite(value) && value > 0)
+    .sort((a, b) => a - b)
+
+  if (!values.length) return 0
+  const middle = Math.floor(values.length / 2)
+  return values.length % 2
+    ? values[middle]
+    : (values[middle - 1] + values[middle]) / 2
+})
+
+const getEffectivenessColor = (effectiveness) => {
+  if (effectiveness >= 80) return 'success'
+  if (effectiveness >= 50) return 'warning'
+  return 'error'
+}
+
+const getEfficiencyColor = (efficiency) => {
+  const value = Number(efficiency)
+  const median = efficiencyMedian.value
+
+  if (!Number.isFinite(value) || value <= 0) return 'error'
+  if (median === 0 || value >= median * 1.25) return 'success'
+  if (value >= median * 0.75) return 'warning'
+  return 'error'
+}
 
 const openSessionAnalyticsDialog = () => {
   showSessionAnalyticsDialog.value = true
@@ -1072,6 +1217,39 @@ watch(
   font-size: 13px;
   color: #111827;
   word-break: break-word;
+}
+
+.task-result-cell {
+  min-width: 128px;
+}
+
+.task-status-chip {
+  width: 120px;
+  min-height: 24px;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.task-time-cell {
+  min-height: 62px;
+  justify-content: flex-start;
+  line-height: 14px;
+}
+
+.task-time-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: 16px;
+  white-space: nowrap;
+}
+
+.task-comparison-slot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 20px;
 }
 
 .task-detail {

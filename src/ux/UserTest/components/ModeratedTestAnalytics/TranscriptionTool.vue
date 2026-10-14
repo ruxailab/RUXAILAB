@@ -198,7 +198,7 @@ const onTranscriptionSaved = (result) => {
 }
 
 const testDocument = computed(() => store.getters.test)
-const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
+const testAnswerDocument = computed(() => store.getters.testAnswerDocument)
 const usersID = computed(() => {
   return Object.values(testAnswerDocument.value.taskAnswers).map(
     (answer) => answer.userDocId,
