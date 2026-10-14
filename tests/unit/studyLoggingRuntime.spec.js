@@ -74,6 +74,24 @@ describe('study logging runtime', () => {
     expect(logger.record).not.toHaveBeenCalled()
   })
 
+  it('sends the time consent was accepted, also when retrying', async () => {
+    const { runtime, callFunction } = createHarness({ consentRequired: true })
+    const acceptedAt = '2026-10-01T11:53:37.000Z'
+    callFunction.mockRejectedValueOnce(new Error('offline'))
+
+    await runtime.consentAccepted(acceptedAt)
+    await runtime.consentAccepted()
+
+    expect(callFunction).toHaveBeenCalledTimes(2)
+    for (const [, payload] of callFunction.mock.calls) {
+      expect(payload).toEqual({
+        studyId: 'study-1',
+        eventType: 'CONSENT_ACCEPTED',
+        occurredAt: acceptedAt,
+      })
+    }
+  })
+
   it('waits for consent acknowledgement before recording an outcome', async () => {
     const acknowledgement = (() => {
       let resolve

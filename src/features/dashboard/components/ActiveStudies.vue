@@ -255,11 +255,14 @@ async function loadAnswers() {
 
 const calculateProgress = (answers) => {
   if (!answers || answers.length === 0) return 0
+
   const sum = answers.reduce(
     (acc, val) => acc + (Number(val?.progress) || 0),
     0,
   )
-  return sum / answers.length
+
+  const average = sum / answers.length
+  return Math.trunc(Math.min(100, Math.max(0, Math.round(average))))
 }
 
 const truncateDescription = (description) => {

@@ -10,6 +10,28 @@
 
 import Heuristic from './Heuristic'
 
+const sanitizeFirestoreValue = (value) => {
+  if (Array.isArray(value)) {
+    return value.map((item) =>
+      item === undefined ? null : sanitizeFirestoreValue(item),
+    )
+  }
+
+  if (
+    value === null ||
+    typeof value !== 'object' ||
+    Object.getPrototypeOf(value) !== Object.prototype
+  ) {
+    return value
+  }
+
+  return Object.fromEntries(
+    Object.entries(value)
+      .filter(([, item]) => item !== undefined)
+      .map(([key, item]) => [key, sanitizeFirestoreValue(item)]),
+  )
+}
+
 export default class HeuristicAnswer {
   constructor({
     heuristicQuestions,
@@ -19,6 +41,7 @@ export default class HeuristicAnswer {
     userDocId,
     lastUpdate,
     evaluationTimeMs,
+    hidden,
   } = {}) {
     this.heuristicQuestions = heuristicQuestions ?? []
     this.progress = progress ?? 0
@@ -27,6 +50,7 @@ export default class HeuristicAnswer {
     this.userDocId = userDocId ?? null
     this.lastUpdate = lastUpdate ?? 0
     this.evaluationTimeMs = evaluationTimeMs ?? null
+    this.hidden = hidden ?? false
   }
   static toHeuristicAnswer(data, testOptions) {
     return new HeuristicAnswer({
@@ -38,16 +62,17 @@ export default class HeuristicAnswer {
   }
 
   toFirestore() {
-    return {
+    return sanitizeFirestoreValue({
       heuristicQuestions: this.heuristicQuestions.map((h) => h.toFirestore()),
       progress: this.progress,
       total: this.total,
       submitted: this.submitted,
       userDocId: this.userDocId,
       lastUpdate: this.lastUpdate,
+      hidden: this.hidden,
       ...(this.evaluationTimeMs != null && {
         evaluationTimeMs: this.evaluationTimeMs,
       }),
-    }
+    })
   }
 }

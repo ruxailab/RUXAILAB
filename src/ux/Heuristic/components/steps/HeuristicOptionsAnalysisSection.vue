@@ -53,6 +53,7 @@
           :answer="answer"
           :disabled="disabled"
           :options="frequencyOptions"
+          :sort-options="selectedAnswerMode === 'frequencySeverity'"
           @change="$emit('update-metric', 'frequency', $event)"
         />
         <ResponseControl
@@ -61,6 +62,7 @@
           :answer="answer"
           :disabled="disabled"
           :options="severityOptions"
+          :sort-options="selectedAnswerMode === 'frequencySeverity'"
           @change="$emit('update-metric', 'severity', $event)"
         />
       </div>

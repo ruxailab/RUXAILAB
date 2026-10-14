@@ -208,26 +208,38 @@ const confirmDialog = ref(false)
 const test = computed(() => store.getters.test)
 
 const localTrackTime = ref(test.value?.trackTime ?? true)
-const localUseFrequency = ref(test.value?.useFrequency ?? true)
-const localUseSeverity = ref(test.value?.useSeverity ?? true)
+const localUseFrequency = ref(test.value?.useFrequency)
+const localUseSeverity = ref(test.value?.useSeverity)
 
 const studyMode = computed(() => {
-  if (test.value?.studyMode) return test.value.studyMode
-  const hasWeightsMode = test.value?.useWeights === true
-  const hasCustomOptions =
-    Array.isArray(test.value?.testOptions) && test.value.testOptions.length > 0
+  const currentTest = test.value
+
+  if (!currentTest) return 'traditional'
+
+  if (['traditional', 'detailed', 'weights'].includes(currentTest.studyMode)) {
+    return currentTest.studyMode
+  }
+
+  if (currentTest.useWeights === true) {
+    return 'weights'
+  }
+
   const hasExplicitAnswerMode =
-    test.value?.useFrequency !== undefined ||
-    test.value?.useSeverity !== undefined ||
-    localUseFrequency.value !== undefined ||
-    localUseSeverity.value !== undefined
-
-  if (hasWeightsMode) return 'weights'
-
-  if (hasCustomOptions) return 'detailed'
+    currentTest.useFrequency !== undefined ||
+    currentTest.useSeverity !== undefined
 
   if (hasExplicitAnswerMode) {
-    if (localUseFrequency.value && localUseSeverity.value) return 'traditional'
+    if (currentTest.useFrequency === true && currentTest.useSeverity === true) {
+      return 'traditional'
+    }
+
+    return 'detailed'
+  }
+
+  const hasCustomOptions =
+    Array.isArray(currentTest.testOptions) && currentTest.testOptions.length > 0
+
+  if (hasCustomOptions) {
     return 'detailed'
   }
 

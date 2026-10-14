@@ -7,8 +7,21 @@
   >
     <v-dialog v-model="dialog" width="600" persistent>
       <v-card>
-        <v-card-title class="text-h5 bg-error text-white" primary-title>
-          {{ $t('HeuristicsReport.messages.confirm_delete_report') }}
+        <v-card-title
+          :class="
+            dialogAction === 'hide'
+              ? 'text-h5 bg-primary text-white'
+              : 'text-h5 bg-error text-white'
+          "
+          primary-title
+        >
+          {{
+            $t(
+              dialogAction === 'hide'
+                ? 'HeuristicsReport.messages.confirm_hide_response'
+                : 'HeuristicsReport.messages.confirm_delete_report',
+            )
+          }}
         </v-card-title>
         <v-card-text>{{ dialogText }}</v-card-text>
         <v-divider />
@@ -22,12 +35,22 @@
             {{ $t('buttons.cancel') }}
           </v-btn>
           <v-btn
-            class="bg-red text-white ml-1"
+            :class="
+              dialogAction === 'hide'
+                ? 'bg-primary text-white ml-1'
+                : 'bg-red text-white ml-1'
+            "
             :loading="loadingBtn"
             variant="text"
-            @click="(removeReport(report), (loadingBtn = true))"
+            @click="confirmReportAction"
           >
-            {{ $t('buttons.delete') }}
+            {{
+              $t(
+                dialogAction === 'hide'
+                  ? 'HeuristicsReport.actions.hide_response'
+                  : 'buttons.delete',
+              )
+            }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -90,26 +113,37 @@
         :no-data-text="$t('HeuristicsReport.messages.no_reports_found')"
       >
         <template #[`item.evaluator`]="{ item }">
-          <div class="d-flex align-center">
-            <v-avatar
-              :color="getAvatarColor(item.evaluator)"
-              size="40"
-              class="mr-3"
-            >
-              <span class="text-white font-weight-medium">
-                {{ getInitials(item.fullName) }}
-              </span>
-            </v-avatar>
-            <div>
-              <div class="text-subtitle-1 font-weight-bold text-on-surface">
+          <div>
+            <div class="d-flex align-center flex-wrap">
+              <span class="text-subtitle-1 font-weight-bold text-on-surface">
                 {{ item.fullName }}
-                <v-chip v-if="item.isAIAgent" color="primary" size="x-small" variant="tonal" class="ml-2">
-                  {{ $t('HeuristicsReport.labels.ai_agent') }}
-                </v-chip>
-              </div>
-              <div class="text-body-2 text-medium-emphasis">
-                {{ item.evaluator }}
-              </div>
+              </span>
+              <v-chip
+                :color="item.isAnonymous ? 'warning' : 'success'"
+                size="x-small"
+                variant="tonal"
+                class="ml-2"
+              >
+                {{
+                  $t(
+                    item.isAnonymous
+                      ? 'HeuristicsReport.labels.anonymous'
+                      : 'HeuristicsReport.labels.not_anonymous',
+                  )
+                }}
+              </v-chip>
+              <v-chip
+                v-if="item.isAIAgent"
+                color="primary"
+                size="x-small"
+                variant="tonal"
+                class="ml-2"
+              >
+                {{ $t('HeuristicsReport.labels.ai_agent') }}
+              </v-chip>
+            </div>
+            <div class="text-body-2 text-medium-emphasis">
+              {{ item.userDocId || '—' }}
             </div>
           </div>
         </template>
@@ -145,6 +179,10 @@
           </div>
         </template>
 
+        <template #[`item.studyStage`]="{ item }">
+          <span class="text-body-1">{{ item.studyStage }}</span>
+        </template>
+
         <template #[`item.totalTime`]="{ item }">
           <div class="d-flex align-center">
             <v-icon
@@ -153,6 +191,17 @@
               class="mr-2 text-medium-emphasis"
             />
             <span class="text-body-1">{{ item.totalTime }}</span>
+          </div>
+        </template>
+
+        <template #[`item.tasksTotalTime`]="{ item }">
+          <div class="d-flex align-center">
+            <v-icon
+              icon="mdi-timer-outline"
+              size="small"
+              class="mr-2 text-medium-emphasis"
+            />
+            <span class="text-body-1">{{ item.tasksTotalTime }}</span>
           </div>
         </template>
 
@@ -194,13 +243,18 @@
                 prepend-icon="mdi-delete"
                 :title="$t('HeuristicsReport.messages.remove_report')"
                 class="text-error"
-                @click=";((dialog = true), (report = item))"
+                @click="requestDeleteConfirmation(item)"
               />
               <v-list-item
-                v-if="item.hidden"
-                prepend-icon="mdi-eye"
-                :title="$t('HeuristicsReport.actions.unhide_report')"
-                @click="unhideReport(item)"
+                :prepend-icon="item.hidden ? 'mdi-eye' : 'mdi-eye-off'"
+                :title="
+                  $t(
+                    item.hidden
+                      ? 'HeuristicsReport.actions.unhide_response'
+                      : 'HeuristicsReport.actions.hide_response',
+                  )
+                "
+                @click="requestReportVisibilityChange(item)"
               />
             </v-list>
           </v-menu>
@@ -212,27 +266,40 @@
       <template v-for="item in filteredReports" :key="item.id">
         <v-card class="mb-4 report-card pa-4" variant="flat" border>
           <div class="d-flex align-center justify-space-between mb-4">
-            <div class="d-flex align-center">
-              <v-avatar
-                :color="getAvatarColor(item.evaluator)"
-                size="40"
-                class="mr-3"
-              >
-                <span class="text-white font-weight-medium">
-                  {{ getInitials(item.fullName) }}
-                </span>
-              </v-avatar>
+            <div class="d-flex align-center" style="min-width: 0">
               <div style="min-width: 0">
-                <div
-                  class="text-subtitle-1 font-weight-bold text-on-surface text-truncate"
-                >
-                  {{ item.fullName }}
-                  <v-chip v-if="item.isAIAgent" color="primary" size="x-small" variant="tonal" class="ml-1">
+                <div class="d-flex align-center flex-wrap">
+                  <span
+                    class="text-subtitle-1 font-weight-bold text-on-surface"
+                  >
+                    {{ item.fullName }}
+                  </span>
+                  <v-chip
+                    :color="item.isAnonymous ? 'warning' : 'success'"
+                    size="x-small"
+                    variant="tonal"
+                    class="ml-2"
+                  >
+                    {{
+                      $t(
+                        item.isAnonymous
+                          ? 'HeuristicsReport.labels.anonymous'
+                          : 'HeuristicsReport.labels.not_anonymous',
+                      )
+                    }}
+                  </v-chip>
+                  <v-chip
+                    v-if="item.isAIAgent"
+                    color="primary"
+                    size="x-small"
+                    variant="tonal"
+                    class="ml-1"
+                  >
                     {{ $t('HeuristicsReport.labels.ai_agent') }}
                   </v-chip>
                 </div>
                 <div class="text-body-2 text-medium-emphasis text-truncate">
-                  {{ item.evaluator }}
+                  {{ item.userDocId || '—' }}
                 </div>
               </div>
             </div>
@@ -251,13 +318,18 @@
                   prepend-icon="mdi-delete"
                   :title="$t('HeuristicsReport.messages.remove_report')"
                   class="text-error"
-                  @click=";((dialog = true), (report = item))"
+                  @click="requestDeleteConfirmation(item)"
                 />
                 <v-list-item
-                  v-if="item.hidden"
-                  prepend-icon="mdi-eye"
-                  :title="$t('HeuristicsReport.actions.unhide_report')"
-                  @click="unhideReport(item)"
+                  :prepend-icon="item.hidden ? 'mdi-eye' : 'mdi-eye-off'"
+                  :title="
+                    $t(
+                      item.hidden
+                        ? 'HeuristicsReport.actions.unhide_response'
+                        : 'HeuristicsReport.actions.hide_response',
+                    )
+                  "
+                  @click="requestReportVisibilityChange(item)"
                 />
               </v-list>
             </v-menu>
@@ -337,6 +409,49 @@
                   />
                   <span class="text-body-2 font-weight-medium">
                     {{ item.totalTime }}
+                  </span>
+                </div>
+              </v-sheet>
+            </v-col>
+
+            <v-col v-if="item.studyStage" cols="12">
+              <v-sheet
+                rounded
+                color="grey-lighten-4"
+                variant="flat"
+                class="pa-3 h-100"
+              >
+                <div
+                  class="text-caption font-weight-bold text-medium-emphasis mb-1"
+                >
+                  {{ $t('HeuristicsReport.headers.study_stage') }}
+                </div>
+                <div class="text-body-2 font-weight-medium">
+                  {{ item.studyStage }}
+                </div>
+              </v-sheet>
+            </v-col>
+
+            <v-col v-if="item.tasksTotalTime != null" cols="12">
+              <v-sheet
+                rounded
+                color="grey-lighten-4"
+                variant="flat"
+                class="pa-3 h-100"
+              >
+                <div
+                  class="text-caption font-weight-bold text-medium-emphasis mb-1"
+                >
+                  {{ $t('HeuristicsReport.headers.tasks_total_time') }}
+                </div>
+                <div class="d-flex align-center">
+                  <v-icon
+                    icon="mdi-timer-outline"
+                    size="small"
+                    class="mr-2 text-medium-emphasis"
+                  />
+                  <span class="text-body-2 font-weight-medium">
+                    {{ item.tasksTotalTime }}
                   </span>
                 </div>
               </v-sheet>
@@ -429,11 +544,11 @@ import {
   USER_STUDY_SUBTYPES,
   normalizeStudyType,
 } from '@/shared/constants/methodDefinitions'
-import UserStudyEvaluatorAnswer from '@/ux/UserTest/models/UserStudyEvaluatorAnswer'
 import {
   parseTimeSpentToMs,
   formatTimeSpentFromMs,
 } from '@/ux/Heuristic/utils/statistics'
+import { sumTaskTimeMs } from '@/ux/UserTest/utils/testDuration'
 import { showSuccess } from '../utils/toast'
 
 const store = useStore()
@@ -443,13 +558,13 @@ const route = useRoute()
 
 const props = defineProps({ id: { type: String, default: '' } })
 const dialog = ref(false)
+const dialogAction = ref('delete')
 const loadingBtn = ref(false)
 const report = ref(null)
 const searchQuery = ref('')
 const statusFilter = ref(null)
 const lastUpdated = ref(new Date())
 
-const user = computed(() => store.getters.user)
 const test = computed(() => store.getters.test)
 const loading = computed(() => store.getters.loading)
 
@@ -461,10 +576,15 @@ const participants = computed(() => store.getters.participants || [])
 
 const allHeaders = computed(() => [
   { title: t('HeuristicsReport.headers.evaluator'), key: 'evaluator' },
-  { title: t('HeuristicsReport.headers.last_update'), key: 'lastUpdate' },
-  { title: t('HeuristicsReport.headers.progress'), key: 'progress' },
-  { title: t('HeuristicsReport.headers.total_time'), key: 'totalTime' },
   { title: t('HeuristicsReport.headers.status'), key: 'status' },
+  { title: t('HeuristicsReport.headers.progress'), key: 'progress' },
+  { title: t('HeuristicsReport.headers.study_stage'), key: 'studyStage' },
+  { title: t('HeuristicsReport.headers.total_time'), key: 'totalTime' },
+  {
+    title: t('HeuristicsReport.headers.tasks_total_time'),
+    key: 'tasksTotalTime',
+  },
+  { title: t('HeuristicsReport.headers.last_update'), key: 'lastUpdate' },
   { title: t('common.hidden'), key: 'hidden' },
   {
     title: t('HeuristicsReport.headers.actions'),
@@ -473,40 +593,33 @@ const allHeaders = computed(() => [
   },
 ])
 
-const answers = computed(() => store.getters.testAnswerDocument)
+const answers = computed(() => store.getters.rawTestAnswerDocument)
 const headers = computed(() => {
   const type = answers.value?.type
-  return allHeaders.value.filter((header) => {
-    if (header.key === 'hidden') {
-      return type === STUDY_TYPES.USER
-    }
-    if (header.key === 'totalTime') {
-      return type !== STUDY_TYPES.CARD_SORTING
-    }
-    return true
-  })
+  return allHeaders.value
+    .filter((header) => {
+      if (header.key === 'tasksTotalTime') {
+        return type === STUDY_TYPES.USER
+      }
+      if (header.key === 'studyStage') {
+        return type === STUDY_TYPES.USER
+      }
+      if (header.key === 'totalTime') {
+        return type !== STUDY_TYPES.CARD_SORTING
+      }
+      return true
+    })
+    .map((header) =>
+      header.key === 'totalTime' && type === STUDY_TYPES.USER
+        ? { ...header, title: t('HeuristicsReport.headers.total_test_time') }
+        : header,
+    )
 })
 
 const checkIfIsSubmitted = (status) =>
   status
     ? t('HeuristicsReport.status.submitted')
     : t('HeuristicsReport.status.in_progress')
-
-const getCooperatorEmail = (userDocId) => {
-  if (userDocId === user.value.id) return 'You'
-  if (userDocId?.startsWith('ai-agent:')) {
-    return t('HeuristicsReport.labels.ai_agent')
-  }
-  const cooperators = test.value.cooperators || []
-  const staffFound = cooperators.find((c) => c?.userDocId === userDocId)
-  if (staffFound) return staffFound?.email || 'Unknown'
-
-  const participantFound = participants.value?.find(
-    (p) => p?.userDocId == userDocId,
-  )
-  if (participantFound) return participantFound?.email || 'Unknown'
-  return 'Unknown'
-}
 
 const formatDate = (timestamp) => {
   const current = new Date()
@@ -528,6 +641,11 @@ const formatTimeAgo = (count, unit) => t(`common.timeAgo.${unit}`, { count })
 
 const getReportTotalTime = (reportData, type) => {
   if (!reportData) return '00:00'
+
+  if (type === STUDY_TYPES.USER) {
+    if (reportData.totalTestTimeMs == null) return '—'
+    return formatTimeSpentFromMs(Number(reportData.totalTestTimeMs))
+  }
 
   if (type === STUDY_TYPES.HEURISTIC) {
     const isAIAgent = reportData.userDocId?.startsWith('ai-agent:') || false
@@ -555,6 +673,43 @@ const getReportTotalTime = (reportData, type) => {
   return formatTimeSpentFromMs(totalMs)
 }
 
+const getReportTasksTotalTime = (reportData) =>
+  formatTimeSpentFromMs(sumTaskTimeMs(reportData))
+
+const getReportStudyStage = (reportData) => {
+  if (reportData.submitted) return t('HeuristicsReport.stages.completed')
+
+  const structure = test.value?.testStructure || {}
+  if (!reportData.consentCompleted) {
+    return t('HeuristicsReport.stages.consent')
+  }
+  if (structure.preTest?.length && !reportData.preTestCompleted) {
+    return t('HeuristicsReport.stages.pre_test')
+  }
+
+  const tasks = Array.isArray(structure.userTasks) ? structure.userTasks : []
+  for (let index = 0; index < tasks.length; index++) {
+    const taskDefinition = tasks[index]
+    const taskAnswer =
+      reportData.tasks?.[index] ??
+      reportData.tasks?.[String(index)] ??
+      reportData.tasks?.[taskDefinition?.taskId]
+
+    if (!taskAnswer?.completed && !taskAnswer?.attempted) {
+      return (
+        taskDefinition?.taskName ||
+        t('HeuristicsReport.stages.task', { number: index + 1 })
+      )
+    }
+  }
+
+  if (structure.postTest?.length && !reportData.postTestCompleted) {
+    return t('HeuristicsReport.stages.post_test')
+  }
+
+  return t('HeuristicsReport.stages.completed')
+}
+
 const getAnswersByType = (doc, type) => {
   if (type === STUDY_TYPES.USER) return doc.taskAnswers || {}
   if (type === STUDY_TYPES.CARD_SORTING) return doc.cardSortingAnswers || {}
@@ -579,14 +734,15 @@ const reports = computed(() => {
       id: r.userDocId,
       fullName: isAIAgent
         ? t('HeuristicsReport.labels.ai_agent')
-        : anonymous
-        ? t('titles.anonymous')
         : r.fullName || t('HeuristicsReport.headers.evaluator'),
-      evaluator: anonymous ? r.userDocId : getCooperatorEmail(r.userDocId),
+      isAnonymous: anonymous,
       isAIAgent,
       userDocId: r.userDocId,
       progress: parseFloat(r.progress || 0).toFixed(2),
+      studyStage: type === STUDY_TYPES.USER ? getReportStudyStage(r) : null,
       totalTime: getReportTotalTime(r, type),
+      tasksTotalTime:
+        type === STUDY_TYPES.USER ? getReportTasksTotalTime(r) : null,
       status: checkIfIsSubmitted(r.submitted),
       lastUpdate: formatDate(r.lastUpdate),
       hidden: r.hidden ?? false,
@@ -612,37 +768,62 @@ const statusOptions = computed(() => [
   t('HeuristicsReport.status.in_progress'),
 ])
 
-const unhideReport = async (item) => {
-  if (answers.value.type !== STUDY_TYPES.USER) return
-  const payload = Object.values(answers.value.taskAnswers).find(
-    (s) => s.userDocId === item.id,
-  )
-
-  if (!payload) {
-    // console.error('Session not found for userDocId:', item.id)
-    return
-  }
+const toggleReportHidden = async (item) => {
+  loadingBtn.value = true
   try {
-    await store.dispatch('updateTaskAnswer', {
-      payload: new UserStudyEvaluatorAnswer({
-        ...payload,
-        hidden: !item.hidden,
-      }),
-      answersDocId: test.value.answersDocId,
+    const result = await store.dispatch('Reports/setReportHidden', {
+      report: item,
+      test: test.value,
+      hidden: !item.hidden,
     })
+    if (!result.success) throw result.error
+
+    await getCurrentAnswer()
+    showSuccess('alerts.genericSuccess')
+    return true
   } catch {
-    // console.error('Error saving answer:', error.message)
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('errors.globalError'),
     })
+    return false
+  } finally {
+    loadingBtn.value = false
   }
 }
 
+const requestDeleteConfirmation = (item) => {
+  report.value = item
+  dialogAction.value = 'delete'
+  dialog.value = true
+}
+
+const requestReportVisibilityChange = (item) => {
+  if (item.hidden) {
+    toggleReportHidden(item)
+    return
+  }
+
+  report.value = item
+  dialogAction.value = 'hide'
+  dialog.value = true
+}
+
+const confirmReportAction = async () => {
+  if (dialogAction.value === 'hide') {
+    if (await toggleReportHidden(report.value)) dialog.value = false
+    return
+  }
+
+  await removeReport(report.value)
+}
+
 const dialogText = computed(() =>
-  t('HeuristicsReport.messages.sure_to_delete', {
-    user: report.value ? report.value.evaluator : '',
-  }),
+  dialogAction.value === 'hide'
+    ? t('HeuristicsReport.messages.hide_response_confirmation')
+    : t('HeuristicsReport.messages.sure_to_delete', {
+        user: report.value?.fullName || '',
+      }),
 )
 
 watch(reports, () => {
@@ -691,8 +872,6 @@ const goToCoops = () => {
   }
 }
 
-const getAvatarColor = (_name) => '#3f51b5'
-const getInitials = (name) => name?.charAt(0)?.toUpperCase() || '?'
 const getProgressColor = (progress) => (progress >= 100 ? 'success' : 'primary')
 const getStatusColor = (status) =>
   status === t('HeuristicsReport.status.submitted') ? 'success' : 'warning'

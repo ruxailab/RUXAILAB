@@ -26,6 +26,10 @@ jest.mock('@/shared/utils/toast', () => ({
   showError: jest.fn(),
 }))
 
+jest.mock('@/shared/utils/animations', () => ({
+  animateStepAnnouncement: jest.fn(() => Promise.resolve()),
+}))
+
 jest.mock('@/app/plugins/firebase/FirebaseFunctionsService', () => ({
   FirebaseFunctionsController: {
     callHttpsCallableFunction: jest.fn(),
@@ -67,6 +71,17 @@ const buttonStub = {
   emits: ['click'],
   template:
     '<button v-bind="$attrs" @click="$emit(\'click\', $event)"><slot /></button>',
+}
+
+const stepperItemStub = {
+  props: {
+    title: String,
+    editable: Boolean,
+    disabled: Boolean,
+  },
+  emits: ['click'],
+  template:
+    '<button :disabled="disabled || !editable" @click="$emit(\'click\')">{{ title }}</button>',
 }
 
 const findButton = (wrapper, text) =>
@@ -242,6 +257,17 @@ describe('HeuristicTestView', () => {
     await wrapper.vm.$nextTick()
 
     expect(wrapper.vm.studyMode).toBe('weights')
+
+    store.getters.test = {
+      ...store.getters.test,
+      studyMode: 'detailed',
+      useWeights: false,
+      useFrequency: true,
+      useSeverity: true,
+    }
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.vm.studyMode).toBe('detailed')
   })
 
   it.each([false, true])(
@@ -347,11 +373,7 @@ describe('HeuristicTestView', () => {
             'v-speed-dial': true,
             'v-stepper': { template: '<div><slot /></div>' },
             'v-stepper-header': { template: '<div><slot /></div>' },
-            'v-stepper-item': {
-              props: ['title', 'editable'],
-              emits: ['click'],
-              template: `<button :disabled="!editable" @click="$emit('click')">{{ title }}</button>`,
-            },
+            'v-stepper-item': stepperItemStub,
           },
         },
       })
@@ -390,6 +412,29 @@ describe('HeuristicTestView', () => {
       expect(instructionsStep.exists()).toBe(true)
       instructionsStep.vm.$emit('start')
       await flushPromises()
+
+      wrapper.vm.showHeuristicCards = false
+      const activeIndex = wrapper.vm.index
+      const instructionsButton = findButton(
+        wrapper,
+        'HeuristicsTestView.flow.instructions',
+      )
+      expect(instructionsButton).toBeDefined()
+      await instructionsButton.trigger('click')
+      await flushPromises()
+
+      expect(wrapper.vm.currentPage).toBe('instructions_page')
+      expect(wrapper.vm.start).toBe(true)
+
+      const reopenedInstructions = wrapper.findComponent({
+        name: 'HeuristicInstructionsStep',
+      })
+      reopenedInstructions.vm.$emit('start')
+      await flushPromises()
+
+      expect(wrapper.vm.start).toBe(false)
+      expect(wrapper.vm.showHeuristicCards).toBe(false)
+      expect(wrapper.vm.index).toBe(activeIndex)
 
       jest.advanceTimersByTime(1500)
       await flushPromises()

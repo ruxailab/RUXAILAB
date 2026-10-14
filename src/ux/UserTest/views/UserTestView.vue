@@ -1,11 +1,13 @@
 <template>
   <div
     v-if="test"
-    class="user-test-bg"
+    class="session-backdrop"
     @focusin.capture="handleLoggingFocusin"
     @input.capture="handleLoggingInput"
     @focusout.capture="handleLoggingFocusout"
   >
+    <SessionBackdropMark />
+
     <div v-if="showStepAnnouncement" class="step-announcement-container">
       <StepAnnouncementOverlay
         ref="stepAnnouncementOverlay"
@@ -94,12 +96,13 @@
       </v-card>
     </v-dialog>
 
-    <v-container fluid class="pa-0">
+    <v-container fluid class="session-backdrop-content pa-0">
       <v-row
         v-if="test && start"
         class="start-screen background-img pa-0 ma-0"
         align="center"
       >
+        <SessionBackdropMark position="absolute" />
         <v-col md="8" class="ma-5 pa-5">
           <img
             src="../../../assets/logo_full_white.png"
@@ -259,8 +262,8 @@
           <v-row v-if="globalIndex >= 1" class="stepper-row sticky-stepper">
             <v-col cols="12">
               <v-stepper
-                :model-value="stepperValue + 1"
-                class="main-stepper rounded-xl elevation-3"
+                :model-value="activeMainStep"
+                class="main-stepper test-progress-stepper rounded-xl elevation-3"
                 :class="{
                   'stepper-animate':
                     globalIndex === 4 &&
@@ -272,88 +275,99 @@
                   <v-stepper-item
                     :value="1"
                     :title="$t('UserTestView.stepper.consent')"
-                    :complete="stepperValue >= 1"
-                    color="white"
+                    :complete="stepperValue >= 1 && !isCurrentMainStep(1)"
+                    :icon="isCurrentMainStep(1) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
+                    :class="{ 'stepper-item--current': isCurrentMainStep(1) }"
                   />
                   <v-divider />
                   <template v-if="hasPreTest">
                     <v-stepper-item
                       :value="2"
                       :title="$t('UserTestView.stepper.preTest')"
-                      :complete="stepperValue >= 2"
-                      color="white"
+                      :complete="stepperValue >= 2 && !isCurrentMainStep(2)"
+                      :icon="isCurrentMainStep(2) ? 'mdi-pencil' : undefined"
                       complete-icon="mdi-check"
+                      :class="{ 'stepper-item--current': isCurrentMainStep(2) }"
                     />
                     <v-divider />
                   </template>
 
                   <v-stepper-item
                     v-if="hasEyeTracking"
-                    :value="hasPreTest ? 3 : 2"
+                    :value="calibrationStep"
                     :title="$t('UserTestView.stepper.calibration')"
-                    :complete="stepperValue >= (hasPreTest ? 3 : 2)"
-                    color="white"
+                    :complete="
+                      stepperValue >= (hasPreTest ? 3 : 2) &&
+                      !isCurrentMainStep(calibrationStep)
+                    "
+                    :icon="
+                      isCurrentMainStep(calibrationStep)
+                        ? 'mdi-pencil'
+                        : undefined
+                    "
                     complete-icon="mdi-check"
+                    :class="{
+                      'stepper-item--current':
+                        isCurrentMainStep(calibrationStep),
+                    }"
                   />
                   <v-divider v-if="hasEyeTracking" />
 
                   <v-stepper-item
-                    :value="
-                      hasPreTest
-                        ? hasEyeTracking
-                          ? 4
-                          : 3
-                        : hasEyeTracking
-                          ? 3
-                          : 2
-                    "
+                    :value="tasksStep"
                     :title="$t('UserTestView.stepper.tasks')"
-                    :complete="stepperValue >= (hasEyeTracking ? 4 : 3)"
-                    color="white"
+                    :complete="
+                      stepperValue >= (hasEyeTracking ? 4 : 3) &&
+                      !isCurrentMainStep(tasksStep)
+                    "
+                    :icon="
+                      isCurrentMainStep(tasksStep) ? 'mdi-pencil' : undefined
+                    "
                     complete-icon="mdi-check"
+                    :class="{
+                      'stepper-item--current': isCurrentMainStep(tasksStep),
+                    }"
                   />
                   <v-divider />
                   <template v-if="hasPostTest">
                     <v-stepper-item
-                      :value="
-                        hasPreTest
-                          ? hasEyeTracking
-                            ? 5
-                            : 4
-                          : hasEyeTracking
-                            ? 4
-                            : 3
-                      "
+                      :value="postTestStep"
                       :title="$t('UserTestView.stepper.postTest')"
-                      :complete="stepperValue >= (hasEyeTracking ? 5 : 4)"
-                      color="white"
+                      :complete="
+                        stepperValue >= (hasEyeTracking ? 5 : 4) &&
+                        !isCurrentMainStep(postTestStep)
+                      "
+                      :icon="
+                        isCurrentMainStep(postTestStep)
+                          ? 'mdi-pencil'
+                          : undefined
+                      "
                       complete-icon="mdi-check"
+                      :class="{
+                        'stepper-item--current':
+                          isCurrentMainStep(postTestStep),
+                      }"
                     />
                     <v-divider />
                   </template>
                   <v-stepper-item
-                    :value="
-                      hasPostTest
-                        ? hasPreTest
-                          ? hasEyeTracking
-                            ? 6
-                            : 5
-                          : hasEyeTracking
-                            ? 5
-                            : 4
-                        : hasPreTest
-                          ? hasEyeTracking
-                            ? 5
-                            : 4
-                          : hasEyeTracking
-                            ? 4
-                            : 3
-                    "
+                    :value="completionStep"
                     :title="$t('UserTestView.stepper.completion')"
-                    :complete="stepperValue === (hasEyeTracking ? 6 : 5)"
-                    color="white"
+                    :complete="
+                      stepperValue === (hasEyeTracking ? 6 : 5) &&
+                      !isCurrentMainStep(completionStep)
+                    "
+                    :icon="
+                      isCurrentMainStep(completionStep)
+                        ? 'mdi-pencil'
+                        : undefined
+                    "
                     complete-icon="mdi-check"
+                    :class="{
+                      'stepper-item--current':
+                        isCurrentMainStep(completionStep),
+                    }"
                   />
                 </v-stepper-header>
               </v-stepper>
@@ -371,7 +385,7 @@
             <v-col cols="12" md="8" lg="6" class="d-flex justify-center">
               <v-stepper
                 :model-value="taskIndex + 1"
-                class="task-stepper rounded-xl elevation-1 w-100"
+                class="task-stepper test-progress-stepper rounded-xl elevation-1 w-100"
                 style="max-width: 100%"
               >
                 <v-stepper-header>
@@ -385,14 +399,11 @@
                         $t('UserTestView.stepper.taskX', { num: idx + 1 })
                       "
                       :complete="taskIndex > idx"
-                      :color="
-                        taskIndex > idx
-                          ? 'success'
-                          : taskIndex === idx
-                            ? 'primary'
-                            : 'grey'
-                      "
+                      :icon="taskIndex === idx ? 'mdi-pencil' : undefined"
                       complete-icon="mdi-check"
+                      :class="{
+                        'stepper-item--current': taskIndex === idx,
+                      }"
                     />
                     <v-divider
                       v-if="idx < test.testStructure.userTasks.length - 1"
@@ -433,7 +444,9 @@
             :pre-test="test.testStructure.preTest"
             :pre-test-answer="localTestAnswer.preTestAnswer"
             :pre-test-completed="localTestAnswer.preTestCompleted"
-            @update:pre-test-answer="(val) => (localTestAnswer.preTestAnswer = val)"
+            @update:pre-test-answer="
+              (val) => (localTestAnswer.preTestAnswer = val)
+            "
             @selection-changed="handleStructuredSelectionChanged"
             @done="handlePreTestDone"
           />
@@ -530,11 +543,21 @@
             "
             @task-started="handleTaskStarted"
             @structured-response-changed="handleStructuredResponseChanged"
-            @structured-slider-focus="(event) => handleStructuredSliderEvent('focus', event)"
-            @structured-slider-start="(event) => handleStructuredSliderEvent('start', event)"
-            @structured-slider-change="(event) => handleStructuredSliderEvent('change', event)"
-            @structured-slider-end="(event) => handleStructuredSliderEvent('end', event)"
-            @structured-slider-blur="(event) => handleStructuredSliderEvent('blur', event)"
+            @structured-slider-focus="
+              (event) => handleStructuredSliderEvent('focus', event)
+            "
+            @structured-slider-start="
+              (event) => handleStructuredSliderEvent('start', event)
+            "
+            @structured-slider-change="
+              (event) => handleStructuredSliderEvent('change', event)
+            "
+            @structured-slider-end="
+              (event) => handleStructuredSliderEvent('end', event)
+            "
+            @structured-slider-blur="
+              (event) => handleStructuredSliderEvent('blur', event)
+            "
             @task-questionnaire-entered="handleTaskQuestionnaireEntered"
           />
 
@@ -548,7 +571,9 @@
             :post-test="test.testStructure.postTest"
             :post-test-answer="localTestAnswer.postTestAnswer"
             :post-test-completed="localTestAnswer.postTestCompleted"
-            @update:post-test-answer="(val) => (localTestAnswer.postTestAnswer = val)"
+            @update:post-test-answer="
+              (val) => (localTestAnswer.postTestAnswer = val)
+            "
             @selection-changed="handleStructuredSelectionChanged"
             @done="handlePostTestDone"
           />
@@ -604,9 +629,11 @@ import EyeTrackingCalibrationStep from '@/ux/UserTest/components/calibration/Eye
 import { db } from '@/app/plugins/firebase'
 import IrisTracker from '../components/IrisTracker.vue'
 import StepAnnouncementOverlay from '@/ux/UserTest/components/StepAnnouncementOverlay.vue'
+import SessionBackdropMark from '@/shared/components/SessionBackdropMark.vue'
+import { useStepAnnouncement } from '@/shared/composables/useStepAnnouncement'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { calculateProgress } from '../utils/testProgress'
-import { animateStepAnnouncement } from '@/shared/utils/animations'
+import { accumulateTotalTestTime, hasTestActivity } from '../utils/testDuration'
 import { downloadAnonymousParticipantIdentifier } from '@/shared/utils/anonymousParticipantUtils'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
@@ -634,10 +661,16 @@ const isVisualizerVisible = ref(false)
 const doneTaskDisabled = ref(false)
 const anonymousUserDocId = ref(null)
 const calibrationPopup = ref(null)
-const showStepAnnouncement = ref(false)
-const stepAnnouncementOverlay = ref(null)
-const nextStepAnnouncementTitle = ref('')
-const nextStepAnnouncementKicker = ref('')
+const {
+  showStepAnnouncement,
+  stepAnnouncementOverlay,
+  nextStepAnnouncementTitle,
+  nextStepAnnouncementKicker,
+  safelyAnnounce: safelyShowNextStepAnnouncement,
+} = useStepAnnouncement({
+  scroll: true,
+  onScroll: () => scrollToTop(),
+})
 
 const truncateDescription = (description) => {
   if (!description || description.length <= 150) return description
@@ -664,6 +697,14 @@ let calibrationPollTimer = null
 //  Eye tracking web gazer testing
 
 const localTestAnswer = reactive(new UserStudyEvaluatorAnswer())
+const totalTestTimeStartedAt = ref(null)
+
+const accumulateTestTime = () => {
+  totalTestTimeStartedAt.value = accumulateTotalTestTime(
+    localTestAnswer,
+    totalTestTimeStartedAt.value,
+  )
+}
 
 const store = useStore()
 const router = useRouter()
@@ -740,7 +781,6 @@ const structuredValuesForStage = (stage) =>
     test.value?.testStructure?.[stage],
     localTestAnswer[`${stage}Answer`],
   )
-
 
 const handleTaskQuestionnaireEntered = ({ scopeRef } = {}) => {
   const taskRef = scopeRef || `task:${taskIndex.value}`
@@ -854,6 +894,47 @@ const stepperValue = computed(() => {
   return 0
 })
 
+const calibrationStep = computed(() => (hasPreTest.value ? 3 : 2))
+
+const tasksStep = computed(() => {
+  if (hasPreTest.value) return hasEyeTracking.value ? 4 : 3
+  return hasEyeTracking.value ? 3 : 2
+})
+
+const postTestStep = computed(() => {
+  if (hasPreTest.value) return hasEyeTracking.value ? 5 : 4
+  return hasEyeTracking.value ? 4 : 3
+})
+
+const completionStep = computed(() => {
+  if (hasPostTest.value) {
+    if (hasPreTest.value) return hasEyeTracking.value ? 6 : 5
+    return hasEyeTracking.value ? 5 : 4
+  }
+  if (hasPreTest.value) return hasEyeTracking.value ? 5 : 4
+  return hasEyeTracking.value ? 4 : 3
+})
+
+const activeMainStep = computed(() => {
+  if (globalIndex.value <= 1) return 1
+  if (globalIndex.value === 2) return 2
+  if (hasEyeTracking.value) {
+    if (globalIndex.value === 3) return calibrationStep.value
+    if (globalIndex.value === 4 || globalIndex.value === 5)
+      return tasksStep.value
+    if (globalIndex.value === 6)
+      return hasPostTest.value ? postTestStep.value : completionStep.value
+    return completionStep.value
+  }
+  if (globalIndex.value === 3 || globalIndex.value === 4) return tasksStep.value
+  if (globalIndex.value === 5 && !localTestAnswer.postTestCompleted) {
+    return hasPostTest.value ? postTestStep.value : completionStep.value
+  }
+  return completionStep.value
+})
+
+const isCurrentMainStep = (value) => activeMainStep.value === Number(value)
+
 function handleIrisData(data) {
   localTestAnswer.tasks[taskIndex.value].irisTrackingData.push(data)
 }
@@ -952,7 +1033,8 @@ const savePartialAnswer = async () => {
       return Boolean(task?.[MEDIA_FIELD_MAP[mediaType]])
     })
   try {
-    calculateProgress(localTestAnswer)
+    accumulateTestTime()
+    calculateProgress(localTestAnswer, test.value?.testStructure)
     localTestAnswer.fullName = fullName.value
 
     if (user.value && user.value?.email) {
@@ -1016,6 +1098,9 @@ const submitAnswer = async () => {
     void initializeStudyLogging()?.submitted()
   } catch {
     localTestAnswer.submitted = false
+    if (totalTestTimeStartedAt.value === null) {
+      totalTestTimeStartedAt.value = Date.now()
+    }
     store.commit('SET_TOAST', {
       type: 'error',
       message: t('UserTestView.errors.failedToSubmitAnswer'),
@@ -1091,13 +1176,6 @@ const startTest = async () => {
 
   await requestFullscreenIfAvailable()
 
-  if (!isUserTestAdmin.value && user.value) {
-    await store.dispatch('acceptStudyCollaboration', {
-      test: test.value,
-      cooperator: user.value,
-    })
-  }
-
   // Primero añadimos la clase para la animación de salida
   const startScreen = document.querySelector('.start-screen')
   if (startScreen) {
@@ -1108,51 +1186,6 @@ const startTest = async () => {
   setTimeout(() => {
     start.value = false
   }, 1000)
-}
-
-const showNextStepAnnouncement = async (
-  title,
-  stageNumber,
-  kickerOverride = '',
-) => {
-  scrollToTop()
-
-  nextStepAnnouncementKicker.value = kickerOverride || `Stage ${stageNumber}`
-  nextStepAnnouncementTitle.value = title
-
-  showStepAnnouncement.value = true
-
-  const safetyHideTimer = window.setTimeout(() => {
-    showStepAnnouncement.value = false
-  }, 4200)
-
-  try {
-    await nextTick()
-
-    await animateStepAnnouncement(stepAnnouncementOverlay.value, {
-      totalDuration: 3,
-    })
-  } finally {
-    window.clearTimeout(safetyHideTimer)
-    showStepAnnouncement.value = false
-
-    // Garante que, quando o conteúdo voltar,
-    // ele continua no início da página.
-    await nextTick()
-    scrollToTop()
-  }
-}
-
-const safelyShowNextStepAnnouncement = async (
-  title,
-  stageNumber,
-  kickerOverride = '',
-) => {
-  try {
-    await showNextStepAnnouncement(title, stageNumber, kickerOverride)
-  } catch {
-    // Non-critical: users can continue even if announcement animation fails.
-  }
 }
 
 const persistStepProgress = async () => {
@@ -1169,6 +1202,9 @@ const persistStepProgress = async () => {
 }
 
 const handleWelcomeStart = async () => {
+  if (!localTestAnswer.submitted && totalTestTimeStartedAt.value === null) {
+    totalTestTimeStartedAt.value = Date.now()
+  }
   await safelyShowNextStepAnnouncement(t('UserTestView.stepper.consent'), 1)
   globalIndex.value = 1
 }
@@ -1324,6 +1360,7 @@ const handleTipPressed = (idx) => {
 const completeStep = async (id, type, userCompleted = true) => {
   try {
     if (type === 'consent') {
+      const consentAcceptedAt = new Date().toISOString()
       localTestAnswer.consentCompleted = true
       await safelyShowNextStepAnnouncement(getPostConsentAnnouncementTitle(), 2)
       if (hasPreTest.value) {
@@ -1335,7 +1372,7 @@ const completeStep = async (id, type, userCompleted = true) => {
       }
       const consentSaved = await persistStepProgress()
       if (!consentSaved) return
-      void initializeStudyLogging()?.consentAccepted()
+      void initializeStudyLogging()?.consentAccepted(consentAcceptedAt)
     }
 
     if (type === 'preTest') {
@@ -1423,7 +1460,7 @@ const completeStep = async (id, type, userCompleted = true) => {
       await persistStepProgress()
     }
 
-    calculateProgress(localTestAnswer)
+    calculateProgress(localTestAnswer, test.value?.testStructure)
   } catch {
     store.commit('SET_TOAST', {
       type: 'error',
@@ -1521,12 +1558,16 @@ const setTest = async () => {
       postTestAnswer: currentUserTestAnswer.value.postTestAnswer || [],
       submitted: currentUserTestAnswer.value.submitted || false,
       progress: currentUserTestAnswer.value.progress || 0,
+      totalTestTimeMs: currentUserTestAnswer.value.totalTestTimeMs || 0,
       fullName: currentUserTestAnswer.value.fullName || '',
     })
+    if (hasTestActivity(localTestAnswer)) {
+      totalTestTimeStartedAt.value = Date.now()
+    }
     fullName.value = localTestAnswer.fullName
     await mappingSteps()
     await autoComplete()
-    calculateProgress(localTestAnswer)
+    calculateProgress(localTestAnswer, test.value?.testStructure)
     initializeAnonymousUser()
   } catch {
     store.commit('SET_TOAST', {
@@ -1772,7 +1813,7 @@ onMounted(async () => {
   await nextTick()
   await setTest()
   await autoComplete()
-  calculateProgress(localTestAnswer)
+  calculateProgress(localTestAnswer, test.value?.testStructure)
   initializeStudyLogging()
   if (!user.value?.id) return
 
@@ -1808,36 +1849,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.user-test-bg {
-  position: relative;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-.user-test-bg::before {
-  content: '';
-  position: fixed;
-  z-index: 0;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 140%;
-  margin-right: -450px;
-  margin-top: 100px;
-  background-image: url(../../../assets/logo_small_red.png);
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: right top;
-  opacity: 0.2;
-  pointer-events: none;
-}
-
-.user-test-bg > :not(.step-announcement-overlay) {
-  position: relative;
-  z-index: 1;
-}
-
 .main-test-interface :deep(.v-card--variant-elevated),
 .main-test-interface :deep(.v-card--variant-flat) {
   background: rgba(var(--v-theme-surface), 0) !important;
@@ -1859,26 +1870,7 @@ onBeforeUnmount(() => {
   transition: opacity 8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.start-screen::before {
-  content: '';
-  position: absolute;
-  z-index: 0;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 140%;
-  margin-right: -450px;
-  margin-top: 100px;
-  background-image: url(../../../assets/logo_small_red.png);
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: right top;
-  opacity: 0.2;
-  pointer-events: none;
-}
-
-.start-screen > * {
+.start-screen > :not(.session-backdrop-mark) {
   position: relative;
   z-index: 1;
 }

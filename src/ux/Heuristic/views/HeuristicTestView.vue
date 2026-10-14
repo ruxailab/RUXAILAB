@@ -1,10 +1,21 @@
 <template>
   <div
+    class="session-backdrop"
     @focusin.capture="handleLoggingFocusin"
     @input.capture="handleLoggingInput"
     @focusout.capture="handleLoggingFocusout"
     @click.capture="handleLoggingClick"
   >
+    <SessionBackdropMark />
+
+    <div v-if="showStepAnnouncement" class="step-announcement-container">
+      <StepAnnouncementOverlay
+        ref="stepAnnouncementOverlay"
+        :kicker="nextStepAnnouncementKicker"
+        :title="nextStepAnnouncementTitle"
+      />
+    </div>
+
     <Snackbar />
     <SubmitDialog
       v-model="dialog"
@@ -68,13 +79,17 @@
       </v-card>
     </v-dialog>
 
-    <EvaluatorInfoDisplay
+    <!-- <EvaluatorInfoDisplay
       v-if="showEvaluatorInfo"
       :sections="evaluatorInfoSections"
       @start="evaluatorInfoAcknowledged = true"
-    />
+    /> -->
 
-    <v-container v-if="test && start" fluid class="pa-0">
+    <v-container
+      v-if="test && start"
+      fluid
+      class="session-backdrop-content pa-0"
+    >
       <v-row
         :class="[
           currentPage === TEST_PAGES.welcome
@@ -84,6 +99,10 @@
         ]"
         :align="currentPage === TEST_PAGES.welcome ? 'center' : 'start'"
       >
+        <SessionBackdropMark
+          v-if="currentPage === TEST_PAGES.welcome"
+          position="absolute"
+        />
         <v-col
           v-if="currentPage === TEST_PAGES.welcome"
           cols="12"
@@ -193,25 +212,29 @@
       </v-row>
     </v-container>
 
-    <v-container v-else fluid class="pa-0">
+    <v-container v-else fluid class="session-backdrop-content pa-0">
       <v-row class="main-test-interface pa-0 ma-0">
         <v-col ref="rightView" class="right-view pa-6">
           <v-row class="stepper-row sticky-stepper">
             <v-col cols="12">
               <v-stepper
                 :model-value="heuristicStepperValue"
-                class="main-stepper rounded-xl elevation-3"
+                class="main-stepper test-progress-stepper rounded-xl elevation-3"
                 style="visibility: visible"
               >
                 <v-stepper-header>
                   <v-stepper-item
                     :value="1"
-                    :editable="!currentUserTestAnswer?.submitted"
-                    @click="navigateToStep(1)"
                     :title="$t('HeuristicsTestView.flow.instructions')"
-                    complete
-                    color="white"
+                    :disabled="currentUserTestAnswer?.submitted"
+                    :editable="!currentUserTestAnswer?.submitted"
+                    :complete="!isCurrentHeuristicStep(1)"
+                    :icon="isCurrentHeuristicStep(1) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
+                    :class="{
+                      'stepper-item--current': isCurrentHeuristicStep(1),
+                    }"
+                    @click="returnToInstructions"
                   />
                   <v-divider />
                   <v-stepper-item
@@ -220,10 +243,14 @@
                     @click="navigateToStep(2)"
                     :title="$t('HeuristicsTestView.flow.heuristicEvaluation')"
                     :complete="
-                      review == false || currentUserTestAnswer?.submitted
+                      (review == false || currentUserTestAnswer?.submitted) &&
+                      !isCurrentHeuristicStep(2)
                     "
-                    color="white"
+                    :icon="isCurrentHeuristicStep(2) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
+                    :class="{
+                      'stepper-item--current': isCurrentHeuristicStep(2),
+                    }"
                   />
                   <v-divider />
                   <v-stepper-item
@@ -234,9 +261,15 @@
                     "
                     @click="navigateToStep(3)"
                     :title="$t('HeuristicsTestView.flow.finalSubmission')"
-                    :complete="currentUserTestAnswer?.submitted"
-                    color="white"
+                    :complete="
+                      !!currentUserTestAnswer?.submitted &&
+                      !isCurrentHeuristicStep(3)
+                    "
+                    :icon="isCurrentHeuristicStep(3) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
+                    :class="{
+                      'stepper-item--current': isCurrentHeuristicStep(3),
+                    }"
                   />
                 </v-stepper-header>
               </v-stepper>
@@ -262,13 +295,14 @@
                 :is-traditional="resolveHeuristicStudyMode(test) !== 'detailed'"
                 :evaluation-name="test.testTitle || ''"
                 :heuristics="heuristics"
+                :test="test"
                 :current-user-test-answer="currentUserTestAnswer"
                 :calculated-progress="calculatedProgress"
                 :per-heuristic-progress="perHeuristicProgress"
                 :heuristic-description="heuristicDescription"
                 :heuristic-storage="heuristicStorage"
                 @select-heuristic="handleHeurisClick"
-                @finish-evaluation="review = false"
+                @finish-evaluation="finishEvaluation"
               />
 
               <HeuristicAnswerStep
@@ -285,6 +319,7 @@
                 :test="test"
                 @back="showHeuristicCards = true"
                 @select-heuristic="handleHeurisClick"
+                @finish-evaluation="finishEvaluation"
                 @response-change="handleHeuristicResponseChange"
                 @update-answer="
                   (questionIndex, value) =>
@@ -293,6 +328,14 @@
                 @update-comment="
                   (sourceHeurisIndex, questionIndex, comment) =>
                     updateComment(comment, sourceHeurisIndex, questionIndex)
+                "
+                @update-recommendation="
+                  (sourceHeurisIndex, questionIndex, recommendation) =>
+                    updateRecommendation(
+                      recommendation,
+                      sourceHeurisIndex,
+                      questionIndex,
+                    )
                 "
                 @update-image="
                   (sourceHeurisIndex, questionIndex, imageUrl) =>
@@ -389,17 +432,18 @@
         </v-tooltip>
         <v-tooltip key="submit-tooltip" location="left">
           <template #activator="{ props }">
-            <v-btn
-              v-bind="props"
-              :disabled="calculatedProgress < 100"
-              class="text-white"
-              icon
-              size="small"
-              color="success"
-              @click="dialog = true"
-            >
-              <v-icon>mdi-file-move</v-icon>
-            </v-btn>
+            <span v-bind="props" class="d-inline-flex">
+              <v-btn
+                :disabled="calculatedProgress < 100"
+                class="text-white"
+                icon
+                size="small"
+                color="success"
+                @click="dialog = true"
+              >
+                <v-icon>mdi-file-move</v-icon>
+              </v-btn>
+            </span>
           </template>
           <div>
             <span>{{ $t('HeuristicsTestView.actions.submit') }}</span>
@@ -456,6 +500,9 @@ import {
 } from '@/shared/utils/studyAccessPolicy'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
+import StepAnnouncementOverlay from '@/ux/UserTest/components/StepAnnouncementOverlay.vue'
+import SessionBackdropMark from '@/shared/components/SessionBackdropMark.vue'
+import { useStepAnnouncement } from '@/shared/composables/useStepAnnouncement'
 
 const props = defineProps({
   id: { type: String, default: '' },
@@ -503,6 +550,16 @@ const review = ref(true)
 const rightView = ref(null)
 const displayHeuristics = ref([])
 const showHeuristicCards = ref(true)
+const {
+  showStepAnnouncement,
+  nextStepAnnouncementTitle,
+  nextStepAnnouncementKicker,
+  stepAnnouncementOverlay,
+  safelyAnnounce: safelyShowNextStepAnnouncement,
+} = useStepAnnouncement({
+  scroll: true,
+  scrollTarget: () => rightView.value,
+})
 
 const TEST_PAGES = {
   welcome: 'welcome_page',
@@ -511,6 +568,7 @@ const TEST_PAGES = {
 }
 const currentPage = ref(TEST_PAGES.welcome)
 const answerInitialized = ref(false)
+const returningToInstructions = ref(false)
 
 // Auto-save status variables
 const autoSaveInProgress = ref(false)
@@ -544,12 +602,19 @@ const evaluatorInfoSections = computed(() => {
 
 const trackTimeEnabled = computed(() => test.value?.trackTime !== false)
 
+const hasConfiguredAnswerOptions = computed(() => {
+  if (resolveHeuristicStudyMode(test.value) === 'detailed') {
+    return Array.isArray(test.value?.testOptions) && test.value.testOptions.length > 0
+  }
+  return Boolean(resolveHeuristicAnswerMode(test.value))
+})
+
 const testDisabledReason = computed(() => {
   if (currentUserTestAnswer.value?.submitted) return 'already-completed'
 
   if (heuristics.value.length === 0) return 'no-heuristics'
 
-  if (!resolveHeuristicAnswerMode(test.value)) {
+  if (!hasConfiguredAnswerOptions.value) {
     return 'no-answer-options'
   }
 
@@ -726,6 +791,9 @@ const heuristicStepperValue = computed(() => {
   return 2
 })
 
+const isCurrentHeuristicStep = (value) =>
+  Number(heuristicStepperValue.value) === Number(value)
+
 // Status management functions
 const updateSaveStatus = (message, type = 'default') => {
   saveStatusMessage.value = message
@@ -828,12 +896,18 @@ const snapshotRunningTimer = (heuristicIndex) => {
 
 const navigateToStep = (step) => {
   if (!answerInitialized.value || currentUserTestAnswer.value?.submitted) return
+  if (step !== 1 && !hasConfiguredAnswerOptions.value) {
+    showError(t('HeuristicsTestView.errors.noAnswerOptions'))
+    return
+  }
   if (step === 3 && calculatedProgress.value !== 100) return
 
   if (trackTimeEnabled.value) pauseTimer(heurisIndex.value)
+  start.value = false
   currentPage.value = step === 1 ? TEST_PAGES.instructions : TEST_PAGES.answers
   review.value = step !== 3
   if (step === 2) {
+    currentUserTestAnswer.value.testStarted = true
     index.value = 1
     showHeuristicCards.value = true
     if (trackTimeEnabled.value) startTimer(heurisIndex.value)
@@ -852,6 +926,20 @@ const openInstructionsPage = () => {
   }, 1000)
 }
 
+const returnToInstructions = async () => {
+  if (currentUserTestAnswer.value?.submitted) return
+
+  pauseTimer(heurisIndex.value)
+  await safelyShowNextStepAnnouncement(
+    t('HeuristicsTestView.flow.instructions'),
+    1,
+  )
+  returningToInstructions.value = true
+  start.value = true
+  currentPage.value = TEST_PAGES.instructions
+  debouncedAutoSave()
+}
+
 const startTest = async () => {
   if (heuristics.value.length === 0) {
     store.commit('setError', {
@@ -860,27 +948,25 @@ const startTest = async () => {
     })
     return
   }
-  if (!answerCompletionMode.value) {
+  if (!hasConfiguredAnswerOptions.value) {
     showError(t('HeuristicsTestView.errors.noAnswerOptions'))
     return
   }
 
   if (!answerInitialized.value) return
 
-  const invitedCooperator = test.value?.cooperators?.find(
-    (cooperator) => cooperator.userDocId === user.value?.id,
+  await safelyShowNextStepAnnouncement(
+    t('HeuristicsTestView.flow.heuristicEvaluation'),
+    2,
   )
-  if (!isUserTestAdmin.value && invitedCooperator?.accepted !== true) {
-    await store.dispatch('acceptStudyCollaboration', {
-      test: test.value,
-      cooperator: user.value,
-    })
-  }
-
   start.value = false
   currentPage.value = TEST_PAGES.answers
-  showHeuristicCards.value = true
-  index.value = 1
+  review.value = true
+  if (!returningToInstructions.value) {
+    showHeuristicCards.value = true
+    index.value = 1
+  }
+  returningToInstructions.value = false
 
   // Mark test as started
   if (currentUserTestAnswer.value) {
@@ -890,6 +976,18 @@ const startTest = async () => {
     // Auto-save when test starts
     debouncedAutoSave()
   }
+}
+
+const finishEvaluation = async () => {
+  if (!answerInitialized.value || currentUserTestAnswer.value?.submitted) return
+  if (calculatedProgress.value !== 100) return
+  if (trackTimeEnabled.value) pauseTimer(heurisIndex.value)
+
+  await safelyShowNextStepAnnouncement(
+    t('HeuristicsTestView.flow.finalSubmission'),
+    3,
+  )
+  review.value = false
 }
 
 const updateComment = (_comment, _heurisIndex, _answerIndex) => {
@@ -906,6 +1004,21 @@ const updateComment = (_comment, _heurisIndex, _answerIndex) => {
   // Show saving status immediately
   updateSaveStatus('Saving changes...', 'saving')
   // Trigger auto-save on comment change
+  debouncedAutoSave()
+}
+
+const updateRecommendation = (_recommendation, _heurisIndex, _answerIndex) => {
+  if (
+    !currentUserTestAnswer.value.heuristicQuestions?.[_heurisIndex]
+      ?.heuristicQuestions?.[_answerIndex]
+  ) {
+    return
+  }
+  const question =
+    currentUserTestAnswer.value.heuristicQuestions[_heurisIndex]
+      .heuristicQuestions[_answerIndex]
+  question.heuristicRecommendation = _recommendation || ''
+  updateSaveStatus('Saving changes...', 'saving')
   debouncedAutoSave()
 }
 
@@ -1560,6 +1673,7 @@ const populateWithHeuristicQuestions = () => {
             heuristicId: h.id,
             heuristicAnswer: null,
             heuristicComment: '',
+            heuristicRecommendation: '',
             answerImageUrl: '',
             comments: [],
             images: [],
@@ -1620,6 +1734,8 @@ const populateWithHeuristicQuestions = () => {
                 heuristicId: h.id,
                 heuristicAnswer: restoredAnswer,
                 heuristicComment: existingQuestion.heuristicComment || '',
+                heuristicRecommendation:
+                  existingQuestion.heuristicRecommendation || '',
                 answerImageUrl: existingQuestion.answerImageUrl || '',
                 comments: Array.isArray(existingQuestion.comments)
                   ? existingQuestion.comments
@@ -1634,6 +1750,7 @@ const populateWithHeuristicQuestions = () => {
                 heuristicId: h.id,
                 heuristicAnswer: null,
                 heuristicComment: '',
+                heuristicRecommendation: '',
                 answerImageUrl: '',
                 comments: [],
                 images: [],
@@ -1641,7 +1758,6 @@ const populateWithHeuristicQuestions = () => {
             }
           },
         )
-
         totalQuestions += questions.length
 
         return new Heuristic({
@@ -1679,6 +1795,9 @@ const hasSavedAnswers = () => {
         // Check legacy comment format
         const hasLegacyComment =
           question.heuristicComment && question.heuristicComment.trim() !== ''
+        const hasRecommendation =
+          question.heuristicRecommendation &&
+          question.heuristicRecommendation.trim() !== ''
         // Check new comments array format
         const hasNewComments =
           Array.isArray(question.comments) && question.comments.length > 0
@@ -1692,6 +1811,7 @@ const hasSavedAnswers = () => {
         if (
           hasAnswer ||
           hasLegacyComment ||
+          hasRecommendation ||
           hasNewComments ||
           hasLegacyImage ||
           hasNewImages
@@ -1751,6 +1871,18 @@ const restoreProgress = () => {
     review.value = true
     calculateProgress()
     updateSaveStatus('All changes saved', 'default')
+    return
+  }
+
+  // Revalidate the current configuration before resuming an older session.
+  if (!hasConfiguredAnswerOptions.value) {
+    pauseTimer(heurisIndex.value)
+    start.value = true
+    currentPage.value = TEST_PAGES.welcome
+    review.value = true
+    showHeuristicCards.value = true
+    index.value = 1
+    calculateProgress()
     return
   }
 
@@ -1904,6 +2036,13 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.main-test-interface :deep(.v-card--variant-elevated),
+.main-test-interface :deep(.v-card--variant-flat),
+.instructions-screen :deep(.v-card--variant-elevated),
+.instructions-screen :deep(.v-card--variant-flat) {
+  background: rgba(var(--v-theme-surface), 0) !important;
+}
+
 .start-container {
   background: linear-gradient(134.16deg, #3f51b5 -13.6%, #283593 117.67%);
   height: 100vh;
@@ -1949,32 +2088,14 @@ onUnmounted(() => {
   }
 }
 
-.start-screen::before {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 140%;
-  margin-right: -450px;
-  margin-top: 100px;
-  background-image: url(../../../assets/logo_small_red.png);
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: right top;
-  opacity: 0.2;
-}
-
 .instructions-screen {
   min-height: 100vh;
-  background: #fff;
+  background: transparent;
 }
 
 .main-test-interface {
   min-height: 100vh;
-  background: #fff;
+  background: transparent;
 }
 
 .right-view {
@@ -2024,5 +2145,17 @@ onUnmounted(() => {
 
 .v-stepper-item {
   padding: 1rem;
+}
+
+.step-announcement-container {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #00213f;
 }
 </style>

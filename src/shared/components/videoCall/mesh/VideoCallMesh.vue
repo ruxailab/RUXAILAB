@@ -430,6 +430,10 @@ let localPresenceDisconnect = null
 let localSignalsDisconnect = null
 let moderatorCallDisconnect = null
 let moderatorRoomDisconnect = null
+let showVideoCallUnsubscribe = null
+let participantMembersUnsubscribe = null
+let staffMembersUnsubscribe = null
+let signalsUnsubscribe = null
 
 // Camera and microphone controls
 const isCameraEnabled = ref(true)
@@ -562,6 +566,17 @@ const roomReady = ref(false)
 const roomOpen = ref(false)
 const roomJoined = ref(false)
 
+const stopRoomListeners = () => {
+  showVideoCallUnsubscribe?.()
+  showVideoCallUnsubscribe = null
+  participantMembersUnsubscribe?.()
+  participantMembersUnsubscribe = null
+  staffMembersUnsubscribe?.()
+  staffMembersUnsubscribe = null
+  signalsUnsubscribe?.()
+  signalsUnsubscribe = null
+}
+
 // Watch for localVideo ref and ensure stream is attached
 watch([localVideo, localStream], ([videoEl, stream]) => {
   if (videoEl && stream) {
@@ -570,8 +585,16 @@ watch([localVideo, localStream], ([videoEl, stream]) => {
 })
 
 onMounted(async () => {
+  const showVideoCallRef = dbRef(
+    database,
+    `rooms/${props.roomId}/showVideoCall`,
+  )
+
   // Moderator preview should appear immediately in the lobby when the test starts.
   if (props.isModerator) {
+    showVideoCallUnsubscribe = onValue(showVideoCallRef, (snapshot) => {
+      roomOpen.value = Boolean(snapshot.val())
+    })
     if (!localStream.value) {
       await initLocalMedia()
     }
@@ -584,11 +607,6 @@ onMounted(async () => {
   if (!localStream.value) {
     await initLocalMedia()
   }
-
-  const showVideoCallRef = dbRef(
-    database,
-    `rooms/${props.roomId}/showVideoCall`,
-  )
 
   // Check initial value first
   const initialSnapshot = await get(showVideoCallRef)
@@ -603,7 +621,7 @@ onMounted(async () => {
   }
 
   // Then listen for changes
-  onValue(showVideoCallRef, (snapshot) => {
+  showVideoCallUnsubscribe = onValue(showVideoCallRef, (snapshot) => {
     const shouldShow = snapshot.val()
     roomOpen.value = Boolean(shouldShow)
     if (shouldShow) {
@@ -616,6 +634,7 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
+  stopRoomListeners()
   if (!isSessionEnded.value) {
     leaveRoom()
   }
@@ -807,12 +826,16 @@ const joinRoom = async () => {
         myJoinedAt > otherJoinedAt ||
         (myJoinedAt === otherJoinedAt && props.user.id > userId)
 
-      if (peers[userId] && peers[userId].isInitiator !== shouldInitiate) {
+      if (
+        peers[userId] &&
+        (peers[userId].isInitiator !== shouldInitiate ||
+          peers[userId].remoteJoinedAt !== otherJoinedAt)
+      ) {
         closePeerConnection(userId)
       }
 
       if (!peers[userId]) {
-        createPeerConnection(userId, shouldInitiate)
+        createPeerConnection(userId, shouldInitiate, otherJoinedAt)
       } else if (
         shouldInitiate &&
         peers[userId].connection.signalingState === 'stable' &&
@@ -830,17 +853,17 @@ const joinRoom = async () => {
     })
   }
 
-  onValue(participantsRef, (snapshot) => {
+  participantMembersUnsubscribe = onValue(participantsRef, (snapshot) => {
     participantMembers = snapshot.val() || {}
     syncMembers()
   })
-  onValue(staffRef, (snapshot) => {
+  staffMembersUnsubscribe = onValue(staffRef, (snapshot) => {
     staffMembers = snapshot.val() || {}
     syncMembers()
   })
 
   // 4. Listen for Signals (Offers/Answers/Candidates) targeted at ME
-  onChildAdded(mySignalsRef, async (snapshot) => {
+  signalsUnsubscribe = onChildAdded(mySignalsRef, async (snapshot) => {
     const signal = snapshot.val()
     // signal structure expected: { senderId: '...', ...payload } from my push logic?
     // Wait, my sendSignal uses `push(..., payload)`.
@@ -932,6 +955,7 @@ const sendSignal = async (targetUserId, payload) => {
 // See `joinRoom` function for corrected logic below (I will use child_added there).
 
 const leaveRoom = async () => {
+  stopRoomListeners()
   if (isSessionEnded.value) return
 
   // Stop media
@@ -1000,7 +1024,11 @@ const initLocalMedia = async () => {
   }
 }
 
-const createPeerConnection = (targetUserId, isInitiator) => {
+const createPeerConnection = (
+  targetUserId,
+  isInitiator,
+  remoteJoinedAt = 0,
+) => {
   if (peers[targetUserId]) return // Already exists
 
   const pc = new RTCPeerConnection({
@@ -1017,6 +1045,7 @@ const createPeerConnection = (targetUserId, isInitiator) => {
     screenShareExpected: false,
     needsNegotiation: false,
     isInitiator,
+    remoteJoinedAt,
   }
 
   // Publish local media so staff members can see each other.

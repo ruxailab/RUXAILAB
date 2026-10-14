@@ -123,153 +123,157 @@
           </v-card>
 
           <div :class="{ 'analytics-disabled': !hasAnalyticsData }">
-          <v-row dense class="mb-4">
-            <v-col
-              v-for="card in summaryHighlights"
-              :key="card.id"
-              cols="12"
-              sm="6"
-              :md="summaryColMd"
-            >
-              <UxMetricCard
-                :value="card.metric"
-                :label="card.title"
-                :color="card.color"
-                :icon="card.icon"
-                :description="card.description"
-                :progress="card.progress"
-                :disabled="!hasAnalyticsData"
+            <v-row dense class="mb-4">
+              <v-col
+                v-for="card in summaryHighlights"
+                :key="card.id"
+                cols="12"
+                sm="6"
+                :md="summaryColMd"
               >
-                <template #value>
-                  <div
-                    class="summary-highlight-value mb-2"
-                    :class="card.valueClass"
-                  >
-                    {{ card.value }}
-                  </div>
-                  <div
-                    class="summary-highlight-metric"
-                    :class="card.metricClass"
-                  >
-                    {{ card.metric }}
-                  </div>
-                </template>
+                <UxMetricCard
+                  :value="card.metric"
+                  :label="card.title"
+                  :color="card.color"
+                  :icon="card.icon"
+                  :description="card.description"
+                  :progress="card.progress"
+                  :disabled="!hasAnalyticsData"
+                >
+                  <template #value>
+                    <div
+                      class="summary-highlight-value mb-2"
+                      :class="card.valueClass"
+                    >
+                      {{ card.value }}
+                    </div>
+                    <div
+                      class="summary-highlight-metric"
+                      :class="card.metricClass"
+                    >
+                      {{ card.metric }}
+                    </div>
+                  </template>
 
-                <template #label>
-                  <span
-                    class="text-overline font-weight-bold text-medium-emphasis"
-                  >
-                    {{ card.title }}
-                  </span>
-                </template>
-                <template #description>
-                  <span class="kpi-description-clamp">
-                    {{ card.description }}
-                  </span>
-                </template>
-              </UxMetricCard>
-            </v-col>
-          </v-row>
+                  <template #label>
+                    <span
+                      class="text-overline font-weight-bold text-medium-emphasis"
+                    >
+                      {{ card.title }}
+                    </span>
+                  </template>
+                  <template #description>
+                    <span class="kpi-description-clamp">
+                      {{ card.description }}
+                    </span>
+                  </template>
+                </UxMetricCard>
+              </v-col>
+            </v-row>
 
-          <div class="mb-4 px-2">
-            <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
-              {{ $t('analytics.sentiment.overviewTitle') }}
-            </h3>
-            <p class="text-body-1 text-medium-emphasis mb-0">
-              {{ $t('analytics.sentiment.overviewSubtitle') }}
-            </p>
-          </div>
-
-          <v-row dense class="mb-4">
-            <v-col
-              v-if="showFacialSignal"
-              cols="12"
-              :md="showSingleSignal ? 12 : 6"
-            >
-              <SelectionPieChart
-                :question-title="$t('analytics.sentiment.facialSentiment')"
-                :options="sentimentOptions"
-                :option-labels="sentimentOptionLabels"
-                :counts="facialSentimentCounts"
-                canvas-id="facial-sentiment-chart"
-                :chart-colors="sentimentChartColors"
-                :values-are-percentages="true"
-                :is-empty="!hasFacialPieData"
-                :empty-label="$t('analytics.sentiment.noData')"
-                :disabled="!hasAnalyticsData"
-              />
-            </v-col>
-
-            <v-col
-              v-if="showTextSignal"
-              cols="12"
-              :md="showSingleSignal ? 12 : 6"
-            >
-              <SelectionPieChart
-                :question-title="$t('analytics.sentiment.textSentiment')"
-                :options="sentimentOptions"
-                :option-labels="sentimentOptionLabels"
-                :counts="textSentimentCounts"
-                canvas-id="text-sentiment-chart"
-                :chart-colors="sentimentChartColors"
-                :values-are-percentages="true"
-                :is-empty="!hasTextPieData"
-                :empty-label="$t('analytics.sentiment.noData')"
-                :disabled="!hasAnalyticsData"
-              />
-            </v-col>
-          </v-row>
-
-          <v-card elevation="2" style="border-radius: 12px" class="mb-4 pa-6">
-            <div class="mb-4 d-flex justify-space-between align-center">
-              <h4 class="font-weight-bold mb-2">
-                <v-icon start color="primary">mdi-table</v-icon>
-                {{ $t('analytics.sentiment.byTask') }}
-              </h4>
+            <div class="mb-4 px-2">
+              <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
+                {{ $t('analytics.sentiment.overviewTitle') }}
+              </h3>
+              <p class="text-body-1 text-medium-emphasis mb-0">
+                {{ $t('analytics.sentiment.overviewSubtitle') }}
+              </p>
             </div>
 
-            <v-data-table
-              :headers="visibleTaskSentimentHeaders"
-              :items="filteredSentimentByTask"
-              :items-per-page="10"
-              class="elevation-0"
-            >
-              <template #no-data>
-                <div
-                  v-if="hasAnalyticsData"
-                  class="text-medium-emphasis pa-4"
-                >
-                  {{ emptyTaskTableMessage }}
-                </div>
-              </template>
-              <template #item.task="{ item }">
-                <div class="font-weight-medium">
-                  {{ $t('analytics.sentiment.taskNumber', { number: item.number }) }}
-                </div>
-                <div class="text-body-2 text-medium-emphasis">
-                  {{ item.name }}
-                </div>
-              </template>
-
-              <template #item.facial="{ item }">
-                <SentimentStackCell
-                  :has-data="item.hasFacialData"
-                  :positive="item.facialPositive"
-                  :neutral="item.facialNeutral"
-                  :negative="item.facialNegative"
+            <v-row dense class="mb-4">
+              <v-col
+                v-if="showFacialSignal"
+                cols="12"
+                :md="showSingleSignal ? 12 : 6"
+              >
+                <SelectionPieChart
+                  :question-title="$t('analytics.sentiment.facialSentiment')"
+                  :options="sentimentOptions"
+                  :option-labels="sentimentOptionLabels"
+                  :counts="facialSentimentCounts"
+                  canvas-id="facial-sentiment-chart"
+                  :chart-colors="sentimentChartColors"
+                  :values-are-percentages="true"
+                  :is-empty="!hasFacialPieData"
+                  :empty-label="$t('analytics.sentiment.noData')"
+                  :disabled="!hasAnalyticsData"
                 />
-              </template>
+              </v-col>
 
-              <template #item.text="{ item }">
-                <SentimentStackCell
-                  :has-data="item.hasTextData"
-                  :positive="item.textPositive"
-                  :neutral="item.textNeutral"
-                  :negative="item.textNegative"
+              <v-col
+                v-if="showTextSignal"
+                cols="12"
+                :md="showSingleSignal ? 12 : 6"
+              >
+                <SelectionPieChart
+                  :question-title="$t('analytics.sentiment.textSentiment')"
+                  :options="sentimentOptions"
+                  :option-labels="sentimentOptionLabels"
+                  :counts="textSentimentCounts"
+                  canvas-id="text-sentiment-chart"
+                  :chart-colors="sentimentChartColors"
+                  :values-are-percentages="true"
+                  :is-empty="!hasTextPieData"
+                  :empty-label="$t('analytics.sentiment.noData')"
+                  :disabled="!hasAnalyticsData"
                 />
-              </template>
-            </v-data-table>
-          </v-card>
+              </v-col>
+            </v-row>
+
+            <v-card elevation="2" style="border-radius: 12px" class="mb-4 pa-6">
+              <div class="mb-4 d-flex justify-space-between align-center">
+                <h4 class="font-weight-bold mb-2">
+                  <v-icon start color="primary">mdi-table</v-icon>
+                  {{ $t('analytics.sentiment.byTask') }}
+                </h4>
+              </div>
+
+              <v-data-table
+                :headers="visibleTaskSentimentHeaders"
+                :items="filteredSentimentByTask"
+                :items-per-page="10"
+                class="elevation-0"
+              >
+                <template #no-data>
+                  <div
+                    v-if="hasAnalyticsData"
+                    class="text-medium-emphasis pa-4"
+                  >
+                    {{ emptyTaskTableMessage }}
+                  </div>
+                </template>
+                <template #item.task="{ item }">
+                  <div class="font-weight-medium">
+                    {{
+                      $t('analytics.sentiment.taskNumber', {
+                        number: item.number,
+                      })
+                    }}
+                  </div>
+                  <div class="text-body-2 text-medium-emphasis">
+                    {{ item.name }}
+                  </div>
+                </template>
+
+                <template #item.facial="{ item }">
+                  <SentimentStackCell
+                    :has-data="item.hasFacialData"
+                    :positive="item.facialPositive"
+                    :neutral="item.facialNeutral"
+                    :negative="item.facialNegative"
+                  />
+                </template>
+
+                <template #item.text="{ item }">
+                  <SentimentStackCell
+                    :has-data="item.hasTextData"
+                    :positive="item.textPositive"
+                    :neutral="item.textNeutral"
+                    :negative="item.textNegative"
+                  />
+                </template>
+              </v-data-table>
+            </v-card>
           </div>
         </template>
       </div>
@@ -326,7 +330,7 @@ const visibleUserAnswers = computed(
   () => store.getters.visibleUserAnswers || {},
 )
 const testAnswerDocument = computed(
-  () => store.state.Answer.testAnswerDocument || {},
+  () => store.getters.testAnswerDocument || {},
 )
 
 const isUserStudy = computed(() => {
@@ -755,12 +759,8 @@ const visibleTaskSentimentHeaders = computed(() => {
   return taskSentimentHeaders.value
 })
 
-const showFacialSignal = computed(
-  () => selectedSignalFilter.value !== 'text',
-)
-const showTextSignal = computed(
-  () => selectedSignalFilter.value !== 'facial',
-)
+const showFacialSignal = computed(() => selectedSignalFilter.value !== 'text')
+const showTextSignal = computed(() => selectedSignalFilter.value !== 'facial')
 const showSingleSignal = computed(
   () =>
     selectedSignalFilter.value === 'facial' ||

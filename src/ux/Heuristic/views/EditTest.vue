@@ -124,12 +124,41 @@ let currentSavePromise = null
 
 const showSettingsTab = computed(() => !props.isTemplate)
 const test = computed(() => store.getters.test)
-const showWeightsTab = computed(() => test.value?.useWeights ?? false)
-const showOptionsTab = computed(
-  () =>
-    !showWeightsTab.value &&
-    !(test.value?.useFrequency !== false && test.value?.useSeverity !== false),
+const showWeightsTab = computed(() =>
+  ['traditional', 'detailed', 'weights'].includes(test.value?.studyMode)
+    ? test.value.studyMode === 'weights'
+    : (test.value?.useWeights ?? false),
 )
+const showOptionsTab = computed(() => {
+  const currentTest = test.value
+
+  if (!currentTest) {
+    return false
+  }
+
+  if (['traditional', 'detailed', 'weights'].includes(currentTest.studyMode)) {
+    return currentTest.studyMode === 'detailed'
+  }
+
+  if (currentTest.useWeights === true) {
+    return false
+  }
+
+  if (currentTest.useFrequency === true && currentTest.useSeverity === true) {
+    return false
+  }
+
+  if (currentTest.useFrequency === false && currentTest.useSeverity === false) {
+    return true
+  }
+
+  return (
+    currentTest.useFrequency === undefined &&
+    currentTest.useSeverity === undefined &&
+    Array.isArray(currentTest.testOptions) &&
+    currentTest.testOptions.length > 0
+  )
+})
 const optionsTabIndex = computed(() => 1)
 const weightsTabIndex = computed(() => (showOptionsTab.value ? 2 : 1))
 const settingsTabIndex = computed(() =>
