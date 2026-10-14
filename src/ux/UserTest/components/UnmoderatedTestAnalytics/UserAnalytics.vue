@@ -246,7 +246,7 @@
           </div>
         </template>
 
-        <template #item.invited="{ item }">
+        <!-- <template #item.invited="{ item }">
           <v-chip
             :color="item.invited ? 'success' : 'grey'"
             :prepend-icon="item.invited ? 'mdi-check' : 'mdi-close'"
@@ -255,7 +255,7 @@
           >
             {{ item.invited ? $t('analytics.yes') : $t('analytics.no') }}
           </v-chip>
-        </template>
+        </template> -->
 
         <template #item.actions="{ item }">
           <v-menu location="bottom end" transition="fade-transition">
@@ -991,12 +991,12 @@ const tableHeaders = computed(() => {
     { title: t('analytics.user'), key: 'user', sortable: false },
     { title: t('analytics.summary'), key: 'tasks', sortable: false },
     ...dynamicTaskHeaders,
-    {
-      title: t('analytics.invite'),
-      key: 'invited',
-      sortable: false,
-      width: 90,
-    },
+    // {
+    //   title: t('analytics.invite'),
+    //   key: 'invited',
+    //   sortable: false,
+    //   width: 90,
+    // },
     {
       title: t('analytics.actions'),
       key: 'actions',
