@@ -294,15 +294,6 @@ const saveAnswerMetrics = async () => {
 
 watch([localUseFrequency, localUseSeverity], saveAnswerMetrics)
 
-const useWeights = computed({
-  get: () => test.value?.useWeights ?? false,
-  set: (value) => {
-    store.commit('SET_TEST', {
-      ...test.value,
-      useWeights: value,
-    })
-  },
-})
 const changeStudyMode = async (mode) => {
   if (!test.value || mode === studyMode.value) return
 

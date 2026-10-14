@@ -22,7 +22,9 @@
     >
       <div class="configuration-content">
         <div class="configuration-copy">
-          <h2 class="configuration-title">AI AGENTS</h2>
+          <h2 class="configuration-title">
+            {{ $t('Dashboard.managerView.aiAgents') }}
+          </h2>
           <p class="configuration-description text-white mb-4">
             {{ $t('heuristicAgents.pages.configureInSettings') }}
           </p>
@@ -42,7 +44,7 @@
           class="configuration-image hidden-sm-and-down"
           :src="require('@/assets/manager/IntroEdit.svg')"
           max-width="30%"
-          contain
+          :cover="false"
         />
       </div>
     </v-card>

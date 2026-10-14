@@ -82,9 +82,13 @@
                 />
               </template>
               <v-list-item-title :class="{ 'pl-5': page.depth > 0 }">
-                <span v-if="page.depth > 0" class="text-medium-emphasis"
-                  >↳ </span
-                >{{ page.url }}
+                <v-icon
+                  v-if="page.depth > 0"
+                  size="small"
+                  class="text-medium-emphasis mr-1"
+                  aria-hidden="true"
+                >mdi-subdirectory-arrow-right</v-icon>
+                {{ page.url }}
               </v-list-item-title>
             </v-list-item>
           </v-list>
