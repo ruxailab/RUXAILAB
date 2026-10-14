@@ -67,7 +67,6 @@ describe('HeuristicAnswerStep logging fields', () => {
   })
 })
 
-<<<<<<< HEAD
 describe('evaluation modes', () => {
   it.each(['traditional', 'weights', 'detailed'])(
     'renders %s at the correct level',
@@ -129,7 +128,8 @@ describe('evaluation modes', () => {
       }
     },
   )
-=======
+})
+
 describe('heuristic response option order', () => {
   const options = [
     { text: 'Second', value: 2 },
@@ -202,5 +202,4 @@ describe('HeuristicAnswer Firestore serialization', () => {
     expect(question.heuristicAnswer.metadata).toEqual([null])
     expect(question.heuristicRecommendation).toBe('Improve the sign-up flow')
   })
->>>>>>> develop
 })

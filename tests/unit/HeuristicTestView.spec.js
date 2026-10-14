@@ -270,9 +270,14 @@ describe('HeuristicTestView', () => {
     expect(wrapper.vm.studyMode).toBe('detailed')
   })
 
-  it.each([false, true])(
-    'waits for initialization and handles save rejection: %s',
-    async (saveFails) => {
+  it.each([
+    { saveFails: false, hasOptions: true, previouslyStarted: false },
+    { saveFails: true, hasOptions: true, previouslyStarted: false },
+    { saveFails: false, hasOptions: false, previouslyStarted: false },
+    { saveFails: false, hasOptions: false, previouslyStarted: true },
+  ])(
+    'validates initialization and resume: options=$hasOptions, started=$previouslyStarted, saveFails=$saveFails',
+    async ({ saveFails, hasOptions, previouslyStarted }) => {
       const answerRequest = deferred()
       const study = {
         id: 'study-1',
@@ -284,7 +289,7 @@ describe('HeuristicTestView', () => {
         testTitle: 'Heuristic study',
         testDescription: 'Study description',
         testAdmin: { userDocId: 'admin-1' },
-        testOptions: [],
+        testOptions: hasOptions ? [{ text: 'Yes', value: 1 }] : [],
         testStructure: [
           {
             id: 0,
@@ -301,7 +306,10 @@ describe('HeuristicTestView', () => {
         test: study,
         user: { id: 'user-1' },
         heuristics: [],
-        currentUserTestAnswer: new HeuristicAnswer({ userDocId: 'user-1' }),
+        currentUserTestAnswer: new HeuristicAnswer({
+          userDocId: 'user-1',
+          testStarted: previouslyStarted,
+        }),
       })
       const store = {
         getters,
@@ -400,6 +408,19 @@ describe('HeuristicTestView', () => {
         wrapper,
         'HeuristicsTestView.actions.startTest',
       )
+      if (!hasOptions) {
+        expect(readyStartButton.attributes('disabled')).toBeDefined()
+        expect(wrapper.vm.testDisabledReason).toBe('no-answer-options')
+        expect(wrapper.vm.currentPage).toBe('welcome_page')
+        await wrapper.vm.startTest()
+        await wrapper.vm.navigateToStep(2)
+        expect(wrapper.vm.start).toBe(true)
+        expect(wrapper.vm.currentPage).toBe('welcome_page')
+        expect(store.dispatch.mock.calls.some(([action]) => action === 'saveTestAnswer')).toBe(false)
+        wrapper.unmount()
+        return
+      }
+
       expect(readyStartButton.attributes('disabled')).toBeUndefined()
       await expect(readyStartButton.trigger('click')).resolves.toBeUndefined()
 
@@ -452,12 +473,14 @@ describe('HeuristicTestView', () => {
         findButton(wrapper, `HeuristicsTestView.flow.${step}`)
       expect(stepButton('finalSubmission').attributes('disabled')).toBeDefined()
       await stepButton('instructions').trigger('click')
+      await flushPromises()
       expect(
         wrapper.findComponent({ name: 'HeuristicInstructionsStep' }).exists(),
       ).toBe(true)
       expect(wrapper.vm.heuristicStepperValue).toBe(1)
-      await stepButton('heuristicEvaluation').trigger('click')
-      expect(wrapper.vm.showHeuristicCards).toBe(true)
+      wrapper.findComponent({ name: 'HeuristicInstructionsStep' }).vm.$emit('start')
+      await flushPromises()
+      expect(wrapper.vm.showHeuristicCards).toBe(false)
       expect(wrapper.vm.heuristicStepperValue).toBe(2)
       expect(
         answer.heuristicQuestions[0].heuristicQuestions[0].heuristicComment,
@@ -468,10 +491,11 @@ describe('HeuristicTestView', () => {
       await stepButton('finalSubmission').trigger('click')
       expect(wrapper.vm.heuristicStepperValue).toBe(3)
       await stepButton('instructions').trigger('click')
+      await flushPromises()
       wrapper
         .findComponent({ name: 'HeuristicInstructionsStep' })
         .vm.$emit('start')
-      await wrapper.vm.$nextTick()
+      await flushPromises()
       expect(wrapper.vm.heuristicStepperValue).toBe(2)
       expect(wrapper.vm.review).toBe(true)
 
