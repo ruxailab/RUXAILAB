@@ -282,13 +282,6 @@
       </v-col>
     </v-row>
 
-    <!-- Chart Section -->
-    <AnswersTimeline
-      :task-answers="filteredSessions"
-      @refresh="onRefreshTimeline"
-      @export="onExportTimeline"
-    />
-
     <!-- Task Performance Charts -->
     <v-row class="mb-8">
       <v-col cols="12">
@@ -464,6 +457,13 @@
         </v-card>
       </v-col>
     </v-row>
+
+    <!-- Chart Section -->
+    <AnswersTimeline
+      :task-answers="filteredSessions"
+      @refresh="onRefreshTimeline"
+      @export="onExportTimeline"
+    />
   </div>
 </template>
 

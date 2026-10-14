@@ -1424,15 +1424,29 @@
       "evaluator": "Evaluator",
       "last_update": "Last Update",
       "progress": "Progress",
+      "study_stage": "Stage",
       "total_time": "Total time",
-      "total_test_time": "Total study time",
-      "tasks_total_time": "Tasks total time",
+      "total_test_time": "Total time",
+      "tasks_total_time": "Tasks time",
       "status": "Status",
       "actions": "Actions"
     },
-    "labels": { "ai_agent": "AI agent" },
+    "stages": {
+      "consent": "Consent",
+      "pre_test": "Pre-test",
+      "task": "Task {number}",
+      "post_test": "Post-test",
+      "completed": "Completed"
+    },
+    "labels": {
+      "ai_agent": "AI agent",
+      "anonymous": "Anonymous",
+      "not_anonymous": "Identified participant"
+    },
     "messages": {
       "confirm_delete_report": "Are you sure you want to delete this report?",
+      "confirm_hide_response": "Hide this response?",
+      "hide_response_confirmation": "This response will be excluded from results, not deleted, and can be shown again at any time.",
       "reports_loading": "Loading Reports",
       "remove_report": "Remove Report",
       "sure_to_delete": "Are you sure you want to delete {user}'s report? This action can't be undone.",
@@ -1449,7 +1463,8 @@
       "filter_by_status": "Filter by status"
     },
     "actions": {
-      "unhide_report": "Unhide Report"
+      "hide_response": "Hide response",
+      "unhide_response": "Show response"
     }
   },
   "UsabilityCooperators": {
