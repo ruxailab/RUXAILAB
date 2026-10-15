@@ -272,7 +272,9 @@
             </template>
             <v-list density="compact" class="py-0">
               <v-list-item prepend-icon="mdi-eye" @click="viewAnswers(item)">
-                <v-list-item-title>Task detail</v-list-item-title>
+                <v-list-item-title>
+                  {{ $t('analytics.testDetails.taskDetail') }}
+                </v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -289,7 +291,7 @@
     >
       <v-card>
         <v-toolbar color="primary" class="pl-3">
-          <span class="text-h5">Test Details</span>
+          <span class="text-h5">{{ $t('analytics.testDetails.title') }}</span>
           <v-spacer />
           <v-btn
             color="white"
@@ -297,7 +299,7 @@
             prepend-icon="mdi-close"
             @click="showDialog = false"
           >
-            Close
+            {{ $t('buttons.close') }}
           </v-btn>
         </v-toolbar>
         <v-card-text class="dialog-body">
@@ -330,7 +332,7 @@
                 class="section-col"
               >
                 <div class="section-card">
-                  <div class="section-title">Pre-Test</div>
+                  <div class="section-title">{{ $t('analytics.preTest') }}</div>
                   <v-divider class="my-2" />
                   <div class="qa-grid">
                     <div
@@ -366,7 +368,9 @@
                 class="section-col"
               >
                 <div class="section-card">
-                  <div class="section-title">Post-Test</div>
+                  <div class="section-title">
+                    {{ $t('analytics.postTest') }}
+                  </div>
                   <v-divider class="my-2" />
                   <div class="qa-grid">
                     <div
@@ -403,7 +407,7 @@
                 <div class="section-card">
                   <div class="section-title d-flex align-center">
                     <span>
-                      Tasks
+                      {{ $t('analytics.tasks') }}
                       <span class="text-caption font-weight-regular ml-2"
                         >({{ testStructure.userTasks.length }})</span
                       >
@@ -418,43 +422,47 @@
                         sortable: false,
                         width: 72,
                       },
-                      { title: 'Task', key: 'taskName', sortable: false },
                       {
-                        title: 'Answer type',
+                        title: $t('analytics.taskLabel'),
+                        key: 'taskName',
+                        sortable: false,
+                      },
+                      {
+                        title: $t('analytics.testDetails.answerType'),
                         key: 'taskTypeLabel',
                         sortable: false,
                         width: 170,
                       },
                       {
-                        title: 'Tip',
+                        title: $t('analytics.testDetails.tip'),
                         key: 'tipUsage',
                         sortable: false,
                         width: 130,
                       },
                       {
-                        title: 'Completion',
+                        title: $t('analytics.testDetails.completion'),
                         key: 'statusLabel',
                         sortable: false,
                         width: 150,
                       },
                       {
-                        title: 'Answer',
+                        title: $t('analytics.testDetails.answer'),
                         key: 'answerPreview',
                         sortable: false,
                       },
                       {
-                        title: 'Observations',
+                        title: $t('analytics.testDetails.observations'),
                         key: 'observationPreview',
                         sortable: false,
                       },
                       {
-                        title: 'Recordings',
+                        title: $t('analytics.testDetails.recordings'),
                         key: 'recordings',
                         sortable: false,
                         width: 180,
                       },
                       {
-                        title: 'Time',
+                        title: $t('analytics.testDetails.time'),
                         key: 'timeLabel',
                         sortable: false,
                         width: 110,
@@ -497,7 +505,7 @@
                           {{ item.taskName }}
                         </div>
                         <div class="text-caption text-grey-600">
-                          {{ item.taskType || 'Task' }}
+                          {{ item.taskType || $t('analytics.taskLabel') }}
                         </div>
                       </button>
                     </template>
@@ -750,7 +758,7 @@ const taskColumns = computed(() => testStructure.value?.userTasks || [])
 
 const getTaskTypeLabel = (taskType) => {
   const labels = {
-    'no-answer': 'No answer',
+    'no-answer': t('analytics.testDetails.noAnswer'),
     'text-area': t('switches.textArea'),
     'post-test': t('switches.postTest'),
     'post-form': t('switches.postForm'),
@@ -880,14 +888,14 @@ const getTaskRecordings = (taskAnswer, taskDefinition) => {
     },
     {
       key: 'screen',
-      label: 'Screen',
+      label: t('analytics.testDetails.screen'),
       icon: 'mdi-monitor-screenshot',
       active:
         !!taskDefinition?.hasScreenRecord || !!taskAnswer?.screenRecordURL,
     },
     {
       key: 'webcam',
-      label: 'Webcam',
+      label: t('analytics.testDetails.webcam'),
       icon: 'mdi-camera',
       active: !!taskDefinition?.hasCamRecord || !!taskAnswer?.webcamRecordURL,
     },
@@ -953,7 +961,7 @@ const taskSummaryRows = computed(() => {
       tipUsage:
         tipPressCount > 0
           ? `${tipPressCount} press${tipPressCount === 1 ? '' : 'es'}`
-          : 'Not used',
+          : t('analytics.testDetails.notUsed'),
       recordings: getTaskRecordings(taskAnswer, taskDefinition),
       completed,
       attempted,

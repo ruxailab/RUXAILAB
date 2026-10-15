@@ -144,7 +144,7 @@
                   Eye Tracker
                 </v-tab>
                 <v-tab v-if="hasSentimentData" value="sentimental">
-                  Sentiment Analysis
+                  {{ $t('analytics.sentimentAnalytics') }}
                 </v-tab>
                 <v-tab v-if="hasTranscriptionData" value="transcript">
                   Transcriptions
