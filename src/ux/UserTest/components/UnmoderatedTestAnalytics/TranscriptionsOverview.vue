@@ -96,253 +96,264 @@
       </v-card>
 
       <div :class="{ 'analytics-disabled': !hasAnalyticsData }">
-      <v-row dense class="mb-4">
-        <v-col
-          v-for="card in summaryCards"
-          :key="card.label"
-          cols="12"
-          sm="6"
-          md="3"
-        >
-          <UxMetricCard
-            :value="card.value"
-            :label="card.label"
-            :color="card.color"
-            :icon="card.icon"
-            :description="card.description"
-            :progress="card.progress"
-            :show-progress="false"
-            :disabled="!hasAnalyticsData"
-          />
-        </v-col>
-      </v-row>
+        <v-row dense class="mb-4">
+          <v-col
+            v-for="card in summaryCards"
+            :key="card.label"
+            cols="12"
+            sm="6"
+            md="3"
+          >
+            <UxMetricCard
+              :value="card.value"
+              :label="card.label"
+              :color="card.color"
+              :icon="card.icon"
+              :description="card.description"
+              :progress="card.progress"
+              :show-progress="false"
+              :disabled="!hasAnalyticsData"
+            />
+          </v-col>
+        </v-row>
 
-      <v-row dense class="mb-4">
-        <v-col cols="12" md="4">
-          <SelectionPieChart
-            question-title="Feedback Tone"
-            :options="sentimentOptions"
-            :counts="sentimentCounts"
-            canvas-id="transcriptions-sentiment-chart"
-            :chart-colors="sentimentChartColors"
-            :is-empty="!hasSentimentData"
-            :empty-label="hasAnalyticsData ? 'No sentiment data available yet.' : ''"
-            :disabled="!hasAnalyticsData"
-          />
-        </v-col>
+        <v-row dense class="mb-4">
+          <v-col cols="12" md="4">
+            <SelectionPieChart
+              question-title="Feedback Tone"
+              :options="sentimentOptions"
+              :counts="sentimentCounts"
+              canvas-id="transcriptions-sentiment-chart"
+              :chart-colors="sentimentChartColors"
+              :is-empty="!hasSentimentData"
+              :empty-label="
+                hasAnalyticsData ? 'No sentiment data available yet.' : ''
+              "
+              :disabled="!hasAnalyticsData"
+            />
+          </v-col>
 
-        <v-col cols="12" md="8">
-          <v-card elevation="2" style="border-radius: 12px" class="h-100 pa-6">
-            <div class="d-flex justify-space-between align-center">
-              <h4 class="font-weight-bold">Top Keywords</h4>
-            </div>
-            <div v-if="filteredTopKeywords.length === 0" class="mt-4">
-              <div
-                v-if="!hasAnalyticsData"
-                class="empty-keywords-placeholder"
-              />
-              <v-alert
-                v-else
-                type="info"
-                variant="tonal"
-                density="comfortable"
-              >
-                No keywords match the current filters.
-              </v-alert>
-            </div>
-            <div v-else>
-              <div class="word-cloud-wrap">
-                <VueWordCloud
-                  :words="filteredKeywordCloudWords"
-                  :color="([, weight]) => getKeywordColor(weight)"
-                  font-family="Roboto"
-                  :font-size-ratio="4"
-                  style="height: 240px; width: 100%"
-                />
+          <v-col cols="12" md="8">
+            <v-card
+              elevation="2"
+              style="border-radius: 12px"
+              class="h-100 pa-6"
+            >
+              <div class="d-flex justify-space-between align-center">
+                <h4 class="font-weight-bold">Top Keywords</h4>
               </div>
-              <div class="d-flex flex-wrap ga-2 mt-3">
-                <v-chip
-                  v-for="keyword in filteredTopKeywords"
-                  :key="keyword.word"
-                  size="x-small"
-                  color="primary"
+              <div v-if="filteredTopKeywords.length === 0" class="mt-4">
+                <div
+                  v-if="!hasAnalyticsData"
+                  class="empty-keywords-placeholder"
+                />
+                <v-alert
+                  v-else
+                  type="info"
                   variant="tonal"
+                  density="comfortable"
                 >
-                  {{ keyword.word }} ({{ keyword.count }})
+                  No keywords match the current filters.
+                </v-alert>
+              </div>
+              <div v-else>
+                <div class="word-cloud-wrap">
+                  <VueWordCloud
+                    :words="filteredKeywordCloudWords"
+                    :color="([, weight]) => getKeywordColor(weight)"
+                    font-family="Roboto"
+                    :font-size-ratio="4"
+                    style="height: 240px; width: 100%"
+                  />
+                </div>
+                <div class="d-flex flex-wrap ga-2 mt-3">
+                  <v-chip
+                    v-for="keyword in filteredTopKeywords"
+                    :key="keyword.word"
+                    size="x-small"
+                    color="primary"
+                    variant="tonal"
+                  >
+                    {{ keyword.word }} ({{ keyword.count }})
+                  </v-chip>
+                </div>
+              </div>
+            </v-card>
+          </v-col>
+        </v-row>
+
+        <v-card elevation="2" style="border-radius: 12px" class="mb-4 pa-6">
+          <div class="mb-4 d-flex justify-space-between align-center">
+            <h4 class="font-weight-bold mb-2">
+              <v-icon start color="primary">mdi-table</v-icon>
+              Task-Level Transcription Analytics
+            </h4>
+          </div>
+          <div>
+            <v-data-table
+              :headers="taskTableHeaders"
+              :items="filteredTaskStats"
+              :items-per-page="10"
+              class="elevation-0"
+            >
+              <template #no-data>
+                <div v-if="hasAnalyticsData" class="text-medium-emphasis pa-4">
+                  {{ emptyTaskTableMessage }}
+                </div>
+              </template>
+              <template #item.taskName="{ item }">
+                <div class="font-weight-medium">{{ item.taskName }}</div>
+              </template>
+
+              <template #item.duration="{ item }">
+                <v-chip size="small" color="primary" variant="tonal">
+                  {{ item.duration }}
+                </v-chip>
+              </template>
+
+              <template #item.words="{ item }">
+                <span class="font-weight-medium">{{ item.words }}</span>
+              </template>
+
+              <template #item.speakingTime="{ item }">
+                <v-chip size="x-small" color="success" variant="tonal">
+                  {{ item.speakingTime }}
+                </v-chip>
+              </template>
+
+              <template #item.speechRate="{ item }">
+                <v-chip size="x-small" color="warning" variant="tonal">
+                  {{ item.speechRate }}
+                </v-chip>
+              </template>
+            </v-data-table>
+          </div>
+        </v-card>
+
+        <v-row dense class="mb-4">
+          <v-col cols="12" md="6">
+            <v-card
+              elevation="2"
+              style="border-radius: 12px"
+              class="h-100 pa-6"
+            >
+              <div class="mb-4 d-flex justify-space-between align-center">
+                <h4 class="font-weight-bold mb-2">UX Signals</h4>
+                <v-chip
+                  color="primary"
+                  size="small"
+                  variant="outlined"
+                  class="chip-responsive mb-2"
+                >
+                  <v-icon
+                    icon="mdi-clock-outline"
+                    size="small"
+                    class="d-none d-sm-inline me-1"
+                  />
+                  Coming Soon
                 </v-chip>
               </div>
-            </div>
-          </v-card>
-        </v-col>
-      </v-row>
-
-      <v-card elevation="2" style="border-radius: 12px" class="mb-4 pa-6">
-        <div class="mb-4 d-flex justify-space-between align-center">
-          <h4 class="font-weight-bold mb-2">
-            <v-icon start color="primary">mdi-table</v-icon>
-            Task-Level Transcription Analytics
-          </h4>
-        </div>
-        <div>
-          <v-data-table
-            :headers="taskTableHeaders"
-            :items="filteredTaskStats"
-            :items-per-page="10"
-            class="elevation-0"
-          >
-            <template #no-data>
-              <div
-                v-if="hasAnalyticsData"
-                class="text-medium-emphasis pa-4"
-              >
-                {{ emptyTaskTableMessage }}
-              </div>
-            </template>
-            <template #item.taskName="{ item }">
-              <div class="font-weight-medium">{{ item.taskName }}</div>
-            </template>
-
-            <template #item.duration="{ item }">
-              <v-chip size="small" color="primary" variant="tonal">
-                {{ item.duration }}
-              </v-chip>
-            </template>
-
-            <template #item.words="{ item }">
-              <span class="font-weight-medium">{{ item.words }}</span>
-            </template>
-
-            <template #item.speakingTime="{ item }">
-              <v-chip size="x-small" color="success" variant="tonal">
-                {{ item.speakingTime }}
-              </v-chip>
-            </template>
-
-            <template #item.speechRate="{ item }">
-              <v-chip size="x-small" color="warning" variant="tonal">
-                {{ item.speechRate }}
-              </v-chip>
-            </template>
-          </v-data-table>
-        </div>
-      </v-card>
-
-      <v-row dense class="mb-4">
-        <v-col cols="12" md="6">
-          <v-card elevation="2" style="border-radius: 12px" class="h-100 pa-6">
-            <div class="mb-4 d-flex justify-space-between align-center">
-              <h4 class="font-weight-bold mb-2">UX Signals</h4>
-              <v-chip
-                color="primary"
-                size="small"
-                variant="outlined"
-                class="chip-responsive mb-2"
-              >
-                <v-icon
-                  icon="mdi-clock-outline"
-                  size="small"
-                  class="d-none d-sm-inline me-1"
-                />
-                Coming Soon
-              </v-chip>
-            </div>
-            <div class="coming-soon-overlay">
-              <v-expansion-panels
-                v-model="openSignalPanels"
-                multiple
-                variant="accordion"
-                elevation="0"
-              >
-                <v-expansion-panel
-                  v-for="(signal, index) in uxSignals"
-                  :key="signal.label"
-                  :value="index"
+              <div class="coming-soon-overlay">
+                <v-expansion-panels
+                  v-model="openSignalPanels"
+                  multiple
+                  variant="accordion"
+                  elevation="0"
                 >
-                  <v-expansion-panel-title>
-                    <div
-                      class="d-flex align-center justify-space-between w-100 pr-2"
-                    >
-                      <div class="d-flex align-center ga-2">
-                        <v-icon :color="signal.color" size="18">{{
-                          signal.icon
-                        }}</v-icon>
-                        <span class="font-weight-medium">{{
-                          signal.label
-                        }}</span>
-                      </div>
-                      <v-chip
-                        size="small"
-                        :color="signal.color"
-                        variant="tonal"
+                  <v-expansion-panel
+                    v-for="(signal, index) in uxSignals"
+                    :key="signal.label"
+                    :value="index"
+                  >
+                    <v-expansion-panel-title>
+                      <div
+                        class="d-flex align-center justify-space-between w-100 pr-2"
                       >
-                        {{ signal.count }}
-                      </v-chip>
-                    </div>
-                  </v-expansion-panel-title>
-
-                  <v-expansion-panel-text>
-                    <div
-                      v-for="item in signal.items"
-                      :key="`${signal.label}-${item.time}-${item.quote}`"
-                      class="signal-item py-2"
-                    >
-                      <div class="d-flex align-center ga-2 mb-1">
-                        <v-chip size="x-small" color="grey" variant="tonal">
-                          {{ item.time }}
+                        <div class="d-flex align-center ga-2">
+                          <v-icon :color="signal.color" size="18">{{
+                            signal.icon
+                          }}</v-icon>
+                          <span class="font-weight-medium">{{
+                            signal.label
+                          }}</span>
+                        </div>
+                        <v-chip
+                          size="small"
+                          :color="signal.color"
+                          variant="tonal"
+                        >
+                          {{ signal.count }}
                         </v-chip>
-                        <span class="text-caption text-medium-emphasis">{{
-                          item.task
-                        }}</span>
                       </div>
-                      <div class="text-body-2 text-grey-darken-2">
-                        "{{ item.quote }}"
-                      </div>
-                    </div>
-                  </v-expansion-panel-text>
-                </v-expansion-panel>
-              </v-expansion-panels>
-            </div>
-          </v-card>
-        </v-col>
+                    </v-expansion-panel-title>
 
-        <v-col cols="12" md="6">
-          <v-card elevation="2" style="border-radius: 12px" class="h-100 pa-6">
-            <div class="mb-4 d-flex justify-space-between align-center">
-              <h4 class="font-weight-bold mb-2">AI Session Summary</h4>
-              <v-chip
-                color="primary"
-                size="small"
-                variant="outlined"
-                class="chip-responsive mb-2"
-              >
-                <v-icon
-                  icon="mdi-clock-outline"
+                    <v-expansion-panel-text>
+                      <div
+                        v-for="item in signal.items"
+                        :key="`${signal.label}-${item.time}-${item.quote}`"
+                        class="signal-item py-2"
+                      >
+                        <div class="d-flex align-center ga-2 mb-1">
+                          <v-chip size="x-small" color="grey" variant="tonal">
+                            {{ item.time }}
+                          </v-chip>
+                          <span class="text-caption text-medium-emphasis">{{
+                            item.task
+                          }}</span>
+                        </div>
+                        <div class="text-body-2 text-grey-darken-2">
+                          "{{ item.quote }}"
+                        </div>
+                      </div>
+                    </v-expansion-panel-text>
+                  </v-expansion-panel>
+                </v-expansion-panels>
+              </div>
+            </v-card>
+          </v-col>
+
+          <v-col cols="12" md="6">
+            <v-card
+              elevation="2"
+              style="border-radius: 12px"
+              class="h-100 pa-6"
+            >
+              <div class="mb-4 d-flex justify-space-between align-center">
+                <h4 class="font-weight-bold mb-2">AI Session Summary</h4>
+                <v-chip
+                  color="primary"
                   size="small"
-                  class="d-none d-sm-inline me-1"
-                />
-                Coming Soon
-              </v-chip>
-            </div>
-            <div class="coming-soon-overlay">
-              <p class="text-body-2 mb-3">
-                The participant completed all tasks with generally
-                neutral-positive sentiment. Most hesitation appeared around
-                navigation and checkout-related wording. Positive feedback
-                concentrated on search and filtering interactions.
-              </p>
-              <v-alert
-                type="info"
-                variant="tonal"
-                density="comfortable"
-                class="text-body-2"
-              >
-                AI-generated analysis: review with video and transcript evidence
-                before final conclusions.
-              </v-alert>
-            </div>
-          </v-card>
-        </v-col>
-      </v-row>
+                  variant="outlined"
+                  class="chip-responsive mb-2"
+                >
+                  <v-icon
+                    icon="mdi-clock-outline"
+                    size="small"
+                    class="d-none d-sm-inline me-1"
+                  />
+                  Coming Soon
+                </v-chip>
+              </div>
+              <div class="coming-soon-overlay">
+                <p class="text-body-2 mb-3">
+                  The participant completed all tasks with generally
+                  neutral-positive sentiment. Most hesitation appeared around
+                  navigation and checkout-related wording. Positive feedback
+                  concentrated on search and filtering interactions.
+                </p>
+                <v-alert
+                  type="info"
+                  variant="tonal"
+                  density="comfortable"
+                  class="text-body-2"
+                >
+                  AI-generated analysis: review with video and transcript
+                  evidence before final conclusions.
+                </v-alert>
+              </div>
+            </v-card>
+          </v-col>
+        </v-row>
       </div>
     </template>
   </div>
@@ -395,7 +406,7 @@ const visibleUserAnswers = computed(
   () => store.getters.visibleUserAnswers || {},
 )
 
-const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
+const testAnswerDocument = computed(() => store.getters.testAnswerDocument)
 
 const answersDocId = computed(
   () =>
@@ -430,7 +441,8 @@ const taskTableHeaders = [
 const sentimentOptions = ['Positive', 'Neutral', 'Negative']
 
 const sentimentCounts = computed(
-  () => activeMetrics.value?.sentiment || { Positive: 0, Neutral: 0, Negative: 0 },
+  () =>
+    activeMetrics.value?.sentiment || { Positive: 0, Neutral: 0, Negative: 0 },
 )
 const hasSentimentData = computed(() =>
   Object.values(sentimentCounts.value).some((v) => v > 0),

@@ -1,19 +1,17 @@
 <template>
   <ShowInfo hide-col>
     <template #content>
-      <div
-        class="heuristic-instructions-page test-content pa-6 rounded-xl text-center fade-in"
-      >
-        <div class="heuristic-instructions-content">
+      <div class="study-welcome test-content pa-6 rounded-xl text-center fade-in">
+        <div class="study-welcome__content">
           <h1 class="text-h5 font-weight-bold mb-4 text-primary">
-            {{ $t('HeuristicsTestView.InstructionsStep.welcomeTitle') }}
+            {{ welcomeTitle }}
           </h1>
 
-          <div v-if="sections.length" class="custom-instructions">
+          <div v-if="sections.length" class="study-welcome__sections">
             <section
               v-for="(section, index) in sections"
               :key="section.id || index"
-              class="custom-instruction-section"
+              class="study-welcome__section"
             >
               <h2
                 v-if="section.title"
@@ -29,19 +27,19 @@
           </div>
 
           <p v-else class="text-body-1 mb-4 text-grey-darken-3">
-            {{ $t('HeuristicsTestView.InstructionsStep.defaultDescription') }}
+            {{ description }}
           </p>
 
           <h2 class="text-h5 font-weight-bold mb-4 text-primary">
-            {{ $t('HeuristicsTestView.InstructionsStep.howItWorks') }}
+            {{ howItWorks }}
           </h2>
 
           <p class="text-body-1 mb-4 text-grey-darken-3">
-            {{ $t('HeuristicsTestView.InstructionsStep.phases') }}
+            {{ phases }}
           </p>
 
           <p class="text-body-1 mb-4 text-grey-darken-3">
-            {{ $t('HeuristicsTestView.InstructionsStep.summary') }}
+            {{ summary }}
           </p>
 
           <v-stepper
@@ -51,42 +49,22 @@
             style="overflow-y: visible; max-height: none"
           >
             <v-stepper-header>
-              <v-stepper-item
-                value="1"
-                :title="
-                  $t('HeuristicsTestView.InstructionsStep.steps.instructions')
-                "
-              />
-              <v-divider />
-              <v-stepper-item
-                value="2"
-                :title="
-                  $t('HeuristicsTestView.InstructionsStep.steps.evaluation')
-                "
-              />
-              <v-divider />
-              <v-stepper-item
-                value="3"
-                :title="
-                  $t('HeuristicsTestView.InstructionsStep.steps.submission')
-                "
-              />
+              <template v-for="(step, index) in steps" :key="`${step}-${index}`">
+                <v-divider v-if="index > 0" />
+                <v-stepper-item :value="index + 1" :title="step" />
+              </template>
             </v-stepper-header>
           </v-stepper>
 
           <v-stepper-vertical
             v-else
-            :items="[
-              $t('HeuristicsTestView.InstructionsStep.steps.instructions'),
-              $t('HeuristicsTestView.InstructionsStep.steps.evaluation'),
-              $t('HeuristicsTestView.InstructionsStep.steps.submission'),
-            ]"
+            :items="steps"
             hide-actions
             class="my-6"
           />
 
           <p class="text-body-1 mb-6 text-grey-darken-3">
-            {{ $t('HeuristicsTestView.InstructionsStep.ready') }}
+            {{ ready }}
           </p>
 
           <v-btn
@@ -96,7 +74,7 @@
             :disabled="disabled"
             @click="$emit('start')"
           >
-            {{ $t('HeuristicsTestView.InstructionsStep.startButton') }}
+            {{ startLabel }}
           </v-btn>
         </div>
       </div>
@@ -117,6 +95,38 @@ defineProps({
   disabled: {
     type: Boolean,
     default: false,
+  },
+  welcomeTitle: {
+    type: String,
+    default: '',
+  },
+  description: {
+    type: String,
+    default: '',
+  },
+  howItWorks: {
+    type: String,
+    default: '',
+  },
+  phases: {
+    type: String,
+    default: '',
+  },
+  summary: {
+    type: String,
+    default: '',
+  },
+  ready: {
+    type: String,
+    default: '',
+  },
+  startLabel: {
+    type: String,
+    default: '',
+  },
+  steps: {
+    type: Array,
+    default: () => [],
   },
 })
 
@@ -147,17 +157,17 @@ const { smAndDown } = useDisplay()
   }
 }
 
-.heuristic-instructions-page {
+.study-welcome {
   width: 100%;
-  background: #fff;
+  background: transparent;
 }
 
-.heuristic-instructions-content {
+.study-welcome__content {
   width: 100%;
   text-align: center;
 }
 
-.custom-instruction-section + .custom-instruction-section {
+.study-welcome__section + .study-welcome__section {
   margin-top: 16px;
 }
 

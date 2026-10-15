@@ -14,14 +14,20 @@ import { applyActiveSpeakersChange } from '@/ux/FocusGroup/utils/speakingTime'
  */
 export function useSpeakingTime(roomRef) {
   const speakingMs = ref({})
+  const recentSpeakerIds = ref([])
   let activeSince = {}
   let attachedRoom = null
 
   function handleActiveSpeakersChanged(speakers) {
+    const activeIds = speakers.map((participant) => participant.identity)
+    recentSpeakerIds.value = [
+      ...activeIds,
+      ...recentSpeakerIds.value.filter((id) => !activeIds.includes(id)),
+    ]
     const result = applyActiveSpeakersChange({
       accumulatedMs: speakingMs.value,
       activeSince,
-      speakingIdentities: speakers.map((participant) => participant.identity),
+      speakingIdentities: activeIds,
       now: Date.now(),
     })
     speakingMs.value = result.accumulatedMs
@@ -52,5 +58,5 @@ export function useSpeakingTime(roomRef) {
 
   onBeforeUnmount(detach)
 
-  return { speakingMs }
+  return { speakingMs, recentSpeakerIds }
 }

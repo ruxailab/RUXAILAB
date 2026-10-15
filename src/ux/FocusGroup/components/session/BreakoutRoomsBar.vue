@@ -20,7 +20,7 @@
         @click="emit('visit', groupId)"
       >
         <v-icon
-          v-if="group.help"
+          v-if="group.help && visitingGroupId !== groupId"
           start
           size="16"
           class="fg-rooms-bar__help-icon"

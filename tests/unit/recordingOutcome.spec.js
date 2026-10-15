@@ -1,6 +1,8 @@
 import {
   createRecordingOutcomeTracker,
   captureFailure,
+  createRecordingAttempt,
+  getRecordingFailureMessage,
 } from '@/ux/UserTest/utils/recordingOutcome'
 const success = (taskRef = 'task:0') => ({
   taskRef,
@@ -10,6 +12,39 @@ const success = (taskRef = 'task:0') => ({
 })
 
 describe('recording outcomes and answer persistence', () => {
+  it('notifies once with the original media and failure details', () => {
+    const emit = jest.fn()
+    const onFailure = jest.fn()
+    const attempt = createRecordingAttempt(2, 'webcam', emit, onFailure)
+
+    attempt.finish('failed', 'upload', 'uploadError')
+    attempt.finish('failed', 'capture', 'captureError')
+
+    expect(emit).toHaveBeenCalledWith('recording-result', {
+      taskRef: 'task:2',
+      mediaType: 'webcam',
+      outcome: 'failed',
+      stage: 'upload',
+      reason: 'uploadError',
+    })
+    expect(onFailure).toHaveBeenCalledTimes(1)
+    expect(onFailure).toHaveBeenCalledWith({
+      key: 'errors.recordingFailure.uploadError',
+      mediaKey: 'errors.recordingMedia.webcam',
+      severity: 'error',
+    })
+  })
+
+  it('uses the specific screen-share cancellation message', () => {
+    expect(
+      getRecordingFailureMessage({
+        mediaType: 'screen',
+        stage: 'permission',
+        reason: 'cancelled',
+      }),
+    ).toEqual({ key: 'errors.screenShare.cancelled', severity: 'warning' })
+  })
+
   it('keeps successful uploads pending across a failed save and emits once after a successful retry', () => {
     const record = jest.fn()
     const tracker = createRecordingOutcomeTracker(record)
@@ -71,7 +106,9 @@ describe('recording outcomes and answer persistence', () => {
   it.each([
     ['NotAllowedError', 'permission_denied', 'permissionDenied'],
     ['PermissionDeniedError', 'permission_denied', 'permissionDenied'],
-    ['AbortError', 'failed', 'captureError'],
+    ['AbortError', 'failed', 'deviceUnavailable'],
+    ['NotReadableError', 'failed', 'deviceUnavailable'],
+    ['TrackStartError', 'failed', 'deviceUnavailable'],
     ['NotFoundError', 'failed', 'deviceUnavailable'],
     ['DevicesNotFoundError', 'failed', 'deviceUnavailable'],
     ['UnknownError', 'failed', 'captureError'],

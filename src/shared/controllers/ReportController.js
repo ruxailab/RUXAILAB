@@ -1,8 +1,28 @@
 import Controller from '@/app/plugins/firebase/FirebaseFirestoreRepository'
-import { STUDY_TYPES } from '../constants/methodDefinitions'
+import { STUDY_TYPES, normalizeStudyType } from '../constants/methodDefinitions'
 import { deleteTranscriptionsByUser } from '@/app/services/transcription/TranscriptionService'
 
 export default class ReportController extends Controller {
+  async setReportHidden({ report, test, hidden }) {
+    const testType = normalizeStudyType(test.testType)
+    const answerCollection =
+      testType === STUDY_TYPES.USER
+        ? 'taskAnswers'
+        : testType === STUDY_TYPES.CARD_SORTING
+          ? 'cardSortingAnswers'
+          : 'heuristicAnswers'
+    const userDocId = report.userDocId || report.id
+
+    try {
+      await this.update('answers', test.answersDocId, {
+        [`${answerCollection}.${userDocId}.hidden`]: hidden === true,
+      })
+      return { success: true }
+    } catch (error) {
+      return { success: false, error }
+    }
+  }
+
   /**
    * Remove o report de um usuário e do documento de respostas.
    * For USER studies, also deletes associated transcription documents.

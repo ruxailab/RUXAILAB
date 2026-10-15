@@ -39,7 +39,7 @@
             v-if="respondedIds.includes(entry.id)"
             color="success"
             size="16"
-            :title="t('focusGroup.session.discussion')"
+            :title="t('focusGroup.session.respondedInTopic')"
           >
             mdi-message-text
           </v-icon>

@@ -38,11 +38,22 @@ describe('UserStudyEvaluatorAnswer', () => {
     })
     const current = new UserStudyEvaluatorAnswer({ consentCompleted: true })
 
-    expect(UserStudyEvaluatorAnswer.mergeProgress(saved, current)).toMatchObject({
+    expect(
+      UserStudyEvaluatorAnswer.mergeProgress(saved, current),
+    ).toMatchObject({
       userDocId: 'participant-1',
       invited: true,
       consentCompleted: true,
     })
+  })
+
+  it('serializes and preserves total test time', () => {
+    const saved = new UserStudyEvaluatorAnswer({ totalTestTimeMs: 5000 })
+    const current = new UserStudyEvaluatorAnswer({ totalTestTimeMs: 7200 })
+    const merged = UserStudyEvaluatorAnswer.mergeProgress(saved, current)
+
+    expect(merged.totalTestTimeMs).toBe(7200)
+    expect(merged.toFirestore().totalTestTimeMs).toBe(7200)
   })
 
   it('preserves sparse TAM positions through task serialization and reload', () => {

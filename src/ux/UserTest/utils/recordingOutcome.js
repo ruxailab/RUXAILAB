@@ -1,5 +1,46 @@
 // One capture attempt owns its original task, even if the view advances during upload.
-export const createRecordingAttempt = (taskIndex, mediaType, emit) => {
+export const getRecordingFailureMessage = ({ mediaType, stage, reason }) => {
+  if (
+    mediaType === 'screen' &&
+    stage === 'permission' &&
+    ['cancelled', 'unsupported', 'wrongSurface', 'error'].includes(reason)
+  ) {
+    return {
+      key: `errors.screenShare.${reason}`,
+      severity: reason === 'cancelled' ? 'warning' : 'error',
+    }
+  }
+
+  const supportedMediaTypes = ['webcam', 'audio', 'screen']
+  const normalizedMediaType = supportedMediaTypes.includes(mediaType)
+    ? mediaType
+    : 'webcam'
+  const supportedReasons = [
+    'permissionDenied',
+    'deviceUnavailable',
+    'captureError',
+    'emptyRecording',
+    'uploadError',
+  ]
+  const normalizedReason = supportedReasons.includes(reason)
+    ? reason
+    : stage === 'upload'
+      ? 'uploadError'
+      : 'captureError'
+
+  return {
+    key: `errors.recordingFailure.${normalizedReason}`,
+    mediaKey: `errors.recordingMedia.${normalizedMediaType}`,
+    severity: normalizedReason === 'deviceUnavailable' ? 'warning' : 'error',
+  }
+}
+
+export const createRecordingAttempt = (
+  taskIndex,
+  mediaType,
+  emit,
+  onFailure,
+) => {
   let finished = false
   let uploading = false
   return {
@@ -15,13 +56,21 @@ export const createRecordingAttempt = (taskIndex, mediaType, emit) => {
       if (finished) return false
       finished = true
       try {
-        emit('recording-result', {
+        const details = {
           taskRef: `task:${taskIndex}`,
           mediaType,
           outcome,
           stage,
           ...(reason ? { reason } : {}),
-        })
+        }
+        emit('recording-result', details)
+        if (
+          outcome === 'failed' ||
+          outcome === 'cancelled' ||
+          outcome === 'permission_denied'
+        ) {
+          onFailure?.(getRecordingFailureMessage(details))
+        }
       } catch {
         // Observing an outcome must never change the recording workflow.
       }
@@ -30,12 +79,21 @@ export const createRecordingAttempt = (taskIndex, mediaType, emit) => {
   }
 }
 
+// The device exists but cannot start: in use by another app, or a virtual
+// camera that sends no picture ("Timeout starting video source").
+const DEVICE_BUSY_ERRORS = new Set([
+  'NotReadableError',
+  'TrackStartError',
+  'AbortError',
+])
+export const isDeviceBusyError = (error) => DEVICE_BUSY_ERRORS.has(error?.name)
+
 export const captureFailure = (error, stage) => {
   if (stage === 'permission') {
     if (['NotAllowedError', 'PermissionDeniedError'].includes(error?.name)) {
       return ['permission_denied', stage, 'permissionDenied']
     }
-    if (error?.name === 'AbortError') return ['failed', stage, 'captureError']
+    if (isDeviceBusyError(error)) return ['failed', stage, 'deviceUnavailable']
     if (['NotFoundError', 'DevicesNotFoundError'].includes(error?.name)) {
       return ['failed', stage, 'deviceUnavailable']
     }

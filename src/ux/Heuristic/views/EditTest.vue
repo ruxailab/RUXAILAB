@@ -86,7 +86,7 @@ import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import AutoSaveStatusBanner from '@/shared/components/AutoSaveStatusBanner.vue'
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useStore } from 'vuex'
-import { onBeforeRouteLeave } from 'vue-router'
+import { onBeforeRouteLeave, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { debounce } from 'lodash'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
@@ -109,6 +109,7 @@ const props = defineProps({
 })
 
 const store = useStore()
+const route = useRoute()
 const { t } = useI18n()
 const studyController = new StudyController()
 
@@ -124,12 +125,41 @@ let currentSavePromise = null
 
 const showSettingsTab = computed(() => !props.isTemplate)
 const test = computed(() => store.getters.test)
-const showWeightsTab = computed(() => test.value?.useWeights ?? false)
-const showOptionsTab = computed(
-  () =>
-    !showWeightsTab.value &&
-    !(test.value?.useFrequency !== false && test.value?.useSeverity !== false),
+const showWeightsTab = computed(() =>
+  ['traditional', 'detailed', 'weights'].includes(test.value?.studyMode)
+    ? test.value.studyMode === 'weights'
+    : (test.value?.useWeights ?? false),
 )
+const showOptionsTab = computed(() => {
+  const currentTest = test.value
+
+  if (!currentTest) {
+    return false
+  }
+
+  if (['traditional', 'detailed', 'weights'].includes(currentTest.studyMode)) {
+    return currentTest.studyMode === 'detailed'
+  }
+
+  if (currentTest.useWeights === true) {
+    return false
+  }
+
+  if (currentTest.useFrequency === true && currentTest.useSeverity === true) {
+    return false
+  }
+
+  if (currentTest.useFrequency === false && currentTest.useSeverity === false) {
+    return true
+  }
+
+  return (
+    currentTest.useFrequency === undefined &&
+    currentTest.useSeverity === undefined &&
+    Array.isArray(currentTest.testOptions) &&
+    currentTest.testOptions.length > 0
+  )
+})
 const optionsTabIndex = computed(() => 1)
 const weightsTabIndex = computed(() => (showOptionsTab.value ? 2 : 1))
 const settingsTabIndex = computed(() =>
@@ -138,6 +168,15 @@ const settingsTabIndex = computed(() =>
     : showOptionsTab.value
       ? 2
       : 1,
+)
+watch(
+  [() => route.query.tab, settingsTabIndex],
+  ([tab]) => {
+    if (tab === 'settings' && showSettingsTab.value) {
+      index.value = settingsTabIndex.value
+    }
+  },
+  { immediate: true },
 )
 const optionsTabTitle = computed(() =>
   showOptionsTab.value

@@ -45,12 +45,14 @@
 <script setup>
 import { ref, computed, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 import {
   ref as storageRef,
   uploadBytes,
   getDownloadURL,
 } from 'firebase/storage'
 import { storage } from '@/app/plugins/firebase'
+import { showError, showWarning } from '@/shared/utils/toast'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import {
   createRecordingAttempt,
@@ -97,6 +99,13 @@ const emit = defineEmits([
 ])
 
 const store = useStore()
+const { t } = useI18n()
+
+const notifyRecordingFailure = ({ key, mediaKey, severity }) => {
+  const message = mediaKey ? t(key, { media: t(mediaKey) }) : t(key)
+  if (severity === 'warning') showWarning(message)
+  else showError(message)
+}
 
 const recordingAudio = ref(false)
 const mediaRecorder = ref(null)
@@ -124,7 +133,12 @@ const startAudioRecording = async () => {
   const taskIndex = props.taskIndex
   const userId = resolvedUserDocId.value
   const testId = props.testId
-  const attempt = createRecordingAttempt(taskIndex, 'audio', emit)
+  const attempt = createRecordingAttempt(
+    taskIndex,
+    'audio',
+    emit,
+    notifyRecordingFailure,
+  )
   activeAttempt = attempt
   let stream
   let recorder

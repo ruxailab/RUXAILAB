@@ -34,7 +34,84 @@
         </span>
       </div>
 
-      <section class="filter-surface" aria-labelledby="log-filter-heading">
+      <div class="view-switch">
+        <v-btn-toggle
+          v-model="viewMode"
+          mandatory
+          density="comfortable"
+          variant="outlined"
+          divided
+          aria-label="Log view"
+        >
+          <v-btn value="events" prepend-icon="mdi-format-list-bulleted">
+            All events
+          </v-btn>
+          <v-btn value="timeline" prepend-icon="mdi-timeline-text-outline">
+            Participant timeline
+          </v-btn>
+        </v-btn-toggle>
+      </div>
+
+      <section
+        v-if="viewMode === 'timeline'"
+        class="events-surface timeline-surface"
+        aria-label="Participant timeline"
+      >
+        <div class="events-toolbar">
+          <v-autocomplete
+            v-model="timelineParticipant"
+            :items="participantLabels"
+            label="Participant"
+            prepend-inner-icon="mdi-account-outline"
+            density="compact"
+            variant="outlined"
+            hide-details
+            class="timeline-participant"
+            @update:search="searchTimelineParticipants"
+          />
+          <v-btn
+            prepend-icon="mdi-refresh"
+            variant="outlined"
+            size="small"
+            :loading="timelineLoading"
+            :disabled="!timelineParticipant"
+            @click="loadTimeline"
+          >
+            Refresh
+          </v-btn>
+        </div>
+        <v-progress-linear
+          v-if="timelineLoading"
+          indeterminate
+          color="secondary"
+        />
+        <p v-if="timelineError" class="timeline-error" role="alert">
+          {{ timelineError }}
+        </p>
+        <ParticipantTimeline
+          v-else-if="timeline"
+          :timeline="timeline"
+          :event-presentation="eventPresentation"
+          :format-clock="formatClock"
+          :format-date-time="formatDateTime"
+          :task-type-label="formatTaskType"
+          :media-type-label="mediaTypeShortLabel"
+          @select="selectedEvent = $event"
+        />
+        <div v-else-if="!timelineLoading" class="empty-logs">
+          <div class="empty-logs__icon">
+            <v-icon size="34">mdi-timeline-text-outline</v-icon>
+          </div>
+          <h3>No participant selected</h3>
+          <p>Choose a participant to see their activity step by step.</p>
+        </div>
+      </section>
+
+      <section
+        v-if="viewMode === 'events'"
+        class="filter-surface"
+        aria-labelledby="log-filter-heading"
+      >
         <div class="surface-heading">
           <h2 id="log-filter-heading">Filters</h2>
           <span v-if="activeFilterCount" class="filter-count">
@@ -67,7 +144,7 @@
                 density="compact"
                 variant="outlined"
                 hide-details="auto"
-                @update:search="searchParticipants"
+                @update:search="searchFilterParticipants"
               />
               <v-select
                 v-model="draft.eventType"
@@ -160,7 +237,11 @@
         {{ errorMessage }}
       </v-alert>
 
-      <section class="events-surface" aria-labelledby="log-events-heading">
+      <section
+        v-if="viewMode === 'events'"
+        class="events-surface"
+        aria-labelledby="log-events-heading"
+      >
         <div class="events-toolbar">
           <div class="events-title-row">
             <h2 id="log-events-heading">Recorded activity</h2>
@@ -433,11 +514,15 @@
           aria-labelledby="structured-activity-heading"
         >
           <h3 id="structured-activity-heading">
-            Structured response activity
+            {{
+              STAGE_LABELS[selectedEvent.details?.scopeRef]
+                ? 'Selected answers'
+                : 'Questionnaire activity'
+            }}
           </h3>
           <p>
-            Counts show response changes in this record. Selected answers and
-            slider values remain in Results.
+            Counts show how often each response changed in this record.
+            Selected answers and slider values remain in Results.
           </p>
           <dl class="detail-grid">
             <template
@@ -503,11 +588,14 @@ import { useStore } from 'vuex'
 import { useDisplay } from 'vuetify'
 import { db } from '@/app/plugins/firebase'
 import {
+  getParticipantEvents,
   getParticipantLabels,
   getStudyLogCount,
   getStudyLogPage,
   localDateRange,
 } from '@/shared/services/studyLogQuery'
+import ParticipantTimeline from '@/shared/components/logs/ParticipantTimeline.vue'
+import { buildParticipantTimeline } from '@/shared/utils/participantTimeline'
 
 const props = defineProps({ id: { type: String, required: true } })
 const store = useStore()
@@ -538,6 +626,8 @@ const MEDIA_TYPE_LABELS = Object.freeze({
   screen: 'Screen recording',
 })
 const formatTaskType = (value) => TASK_TYPE_LABELS[value] || null
+const mediaTypeShortLabel = (value) =>
+  ({ audio: 'Audio', webcam: 'Webcam', screen: 'Screen' })[value] || value
 const parseTaskRef = (value) => {
   const match = /^task:(0|[1-9]\d*)$/.exec(value || '')
   if (!match) return null
@@ -825,6 +915,15 @@ const structuredActivityItems = (event) =>
       label: structuredItemLabel(item.itemRef),
     }))
     .sort((left, right) => compareStructuredItemRefs(left.itemRef, right.itemRef))
+const STAGE_LABELS = Object.freeze({
+  preTest: 'Pre-test',
+  postTest: 'Post-test',
+})
+const structuredStageQuestions = (event) =>
+  structuredActivityItems(event)
+    .map((item) => /^(?:preTest|postTest):question:(\d+)$/.exec(item.itemRef))
+    .filter(Boolean)
+    .map((match) => Number(match[1]) + 1)
 const structuredActivityCount = (event) =>
   structuredActivityItems(event).reduce((total, item) => total + item.changes, 0)
 const eventPresentation = (event) => {
@@ -891,19 +990,23 @@ const eventPresentation = (event) => {
       secondary = mediaType
     }
   } else if (event?.eventType === 'STRUCTURED_RESPONSE_ACTIVITY') {
-    primary = 'Structured response activity'
     const count = structuredActivityCount(event)
+    const updates = `${count} ${count === 1 ? 'update' : 'updates'}`
     const scope = /^task:(\d+)$/.exec(details.scopeRef || '')
-    const scopeLabel = scope
-      ? `Task ${Number(scope[1]) + 1}`
-      : details.scopeRef === 'preTest'
-        ? 'Pre-test'
-        : details.scopeRef === 'postTest'
-          ? 'Post-test'
-          : null
-    secondary = [scopeLabel, `${count} ${count === 1 ? 'update' : 'updates'} in this record`]
-      .filter(Boolean)
-      .join(' · ')
+    const stage = STAGE_LABELS[details.scopeRef]
+    if (stage) {
+      const questions = structuredStageQuestions(event)
+      primary = `${stage} · ${questions.length > 1 ? 'Answers selected' : 'Answer selected'}`
+      secondary = questions.length
+        ? `${questions.length > 1 ? 'Questions' : 'Question'} ${questions.join(', ')}`
+        : updates
+    } else if (scope) {
+      primary = `${taskName(Number(scope[1]))} · Questionnaire activity`
+      secondary = [instrument, updates].filter(Boolean).join(' · ')
+    } else {
+      primary = 'Structured response activity'
+      secondary = updates
+    }
   } else if (event?.eventType === 'QUESTION_RESPONSE_UPDATED') {
     primary = 'Question response updated'
     const match = /^heuristic:(\d+):question:(\d+)$/.exec(
@@ -1167,6 +1270,12 @@ const searchParticipants = (prefix) => {
     }
   }, 250)
 }
+// Picking a participant makes the autocomplete search for that label, which
+// would shrink the list to that one participant.
+const searchFilterParticipants = (text) =>
+  searchParticipants(text === draft.participantLabel ? '' : text)
+const searchTimelineParticipants = (text) =>
+  searchParticipants(text === timelineParticipant.value ? '' : text)
 
 const toDate = (value) => value?.toDate?.() || (value ? new Date(value) : null)
 const formatDateTime = (value) => {
@@ -1274,6 +1383,48 @@ const formatDetailValue = (key, value) => {
 }
 
 watch(pageSize, () => replaceFirstPage())
+
+// Participant timeline: one participant's full history, grouped by step.
+// The flat list stays the default until the timeline is reviewed.
+const viewMode = ref('events')
+const timelineParticipant = ref(null)
+const timelineEvents = ref([])
+const timelineLoading = ref(false)
+const timelineError = ref('')
+const timeline = computed(() =>
+  timelineEvents.value.length
+    ? buildParticipantTimeline(timelineEvents.value)
+    : null,
+)
+const loadTimeline = async () => {
+  const participantLabel = timelineParticipant.value
+  if (!participantLabel) {
+    timelineEvents.value = []
+    return
+  }
+  timelineLoading.value = true
+  timelineError.value = ''
+  try {
+    const events = await getParticipantEvents({
+      db,
+      studyId: props.id,
+      participantLabel,
+    })
+    if (timelineParticipant.value === participantLabel) {
+      timelineEvents.value = events
+    }
+  } catch (error) {
+    timelineError.value = queryError(error)
+  } finally {
+    timelineLoading.value = false
+  }
+}
+watch(timelineParticipant, loadTimeline)
+watch(participantLabels, (labels) => {
+  if (!timelineParticipant.value && labels.length) {
+    timelineParticipant.value = labels[0]
+  }
+})
 onMounted(async () => {
   if (xs?.value) filtersExpanded.value = false
   searchParticipants('')

@@ -11,6 +11,11 @@
       {{ connectionError }}
     </v-alert>
 
+    <div v-if="observerCount" class="fg-observer-indicator">
+      <v-icon size="16">mdi-eye-outline</v-icon>
+      <span>{{ t('focusGroup.session.observersWatching', { count: observerCount }) }}</span>
+    </div>
+
     <div class="video-stage">
       <!-- Spotlight: focused participant or shared screen (click to release) -->
       <div v-if="isFocusMode" class="spotlight-primary">
@@ -59,7 +64,7 @@
         :style="gridStyleVars"
       >
         <div
-          v-for="tile in isFocusMode ? otherTiles : tiles"
+          v-for="tile in visibleGridTiles"
           :key="tile.id"
           class="video-wrapper tile-clickable"
           @click="focusTile(tile.id)"
@@ -105,13 +110,48 @@
           <span>{{ t('videoCall.session.waitingForParticipants') }}</span>
         </div>
       </div>
+
+      <div
+        v-if="pageCount > 1"
+        class="fg-video-pagination"
+        style="position: absolute; right: 20px; bottom: 20px; z-index: 1000; isolation: isolate; color: #052b47; background: #fff; opacity: 1; filter: none;"
+      >
+        <span>
+          {{
+            t('videoCall.session.pageRange', {
+              start: pageStart + 1,
+              end: pageEnd,
+              total: orderedTiles.length,
+            })
+          }}
+        </span>
+        <v-btn
+          icon="mdi-chevron-left"
+          size="x-small"
+          variant="outlined"
+          style="color: #052b47; background-color: #e6f0f8;"
+          :aria-label="t('videoCall.session.previousPage')"
+          :disabled="page === 0"
+          @click="page -= 1"
+        />
+        <v-btn
+          icon="mdi-chevron-right"
+          size="x-small"
+          variant="outlined"
+          style="color: #052b47; background-color: #e6f0f8;"
+          :aria-label="t('videoCall.session.nextPage')"
+          :disabled="page >= pageCount - 1"
+          @click="page += 1"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { isObserverAccessLevel } from '@/shared/utils/accessLevel'
 import { useVideoFocus } from '@/shared/components/videoCall/composables/useVideoFocus'
 
 const { t } = useI18n()
@@ -124,12 +164,25 @@ const props = defineProps({
   // FG presence map (identity -> { role }), used for tile role labels because
   // the facilitator is the testAdmin and so is absent from cooperators.
   presenceRoles: { type: Object, default: () => ({}) },
+  recentSpeakerIds: { type: Array, default: () => [] },
+  pageSize: { type: Number, default: 4 },
   setLocalVideo: { type: Function, required: true },
   setRemoteVideo: { type: Function, required: true },
   setScreenVideo: { type: Function, required: true },
 })
 
 const roleFor = (identity) => props.presenceRoles?.[identity]?.role ?? ''
+const isObserver = (identity) =>
+  isObserverAccessLevel(props.presenceRoles?.[identity]?.accessLevel)
+
+const observerCount = computed(
+  () =>
+    Object.values(props.presenceRoles).filter(
+      (presence) =>
+        presence?.connected === true &&
+        isObserverAccessLevel(presence?.accessLevel),
+    ).length,
+)
 
 // Unified tile list: local camera, remote cameras, then screen shares.
 // Mirrors the moderated VideoCallLiveKit tile model.
@@ -141,6 +194,7 @@ const tiles = computed(() => {
       id: 'local-camera',
       type: 'camera',
       kind: 'local',
+      identity: props.localState.identity,
       label: `${t('videoCall.session.yourVideo')} (${props.localState.name})`,
       hasCamera: props.localState.isCameraEnabled,
       hasMicrophone: props.localState.isMicrophoneEnabled,
@@ -149,6 +203,10 @@ const tiles = computed(() => {
   }
 
   props.remoteParticipants.forEach((participant) => {
+    // Observers are present and visible in the roster, but have no camera or
+    // microphone controls. Showing a permanently muted/off video tile is
+    // confusing, so represent them with the observer indicator above instead.
+    if (isObserver(participant.identity)) return
     const role = roleFor(participant.identity)
     list.push({
       id: `camera:${participant.identity}`,
@@ -172,30 +230,68 @@ const tiles = computed(() => {
     })
   })
 
-  return list
+  const speakerOrder = new Map(
+    props.recentSpeakerIds.map((identity, index) => [identity, index]),
+  )
+  return list.sort((a, b) => {
+    if (a.type === 'screen' || b.type === 'screen') {
+      return a.type === b.type ? 0 : a.type === 'screen' ? -1 : 1
+    }
+    return (
+      (speakerOrder.get(a.identity) ?? Number.MAX_SAFE_INTEGER) -
+      (speakerOrder.get(b.identity) ?? Number.MAX_SAFE_INTEGER)
+    )
+  })
 })
 
-// Spotlight/filmstrip behaviour, shared with the moderated call: click a tile to
-// enlarge it; a new screen share auto-grabs the spotlight (stimulus presentation).
-const { focusedTile, otherTiles, isFocusMode, focusTile, clearFocus } =
-  useVideoFocus(tiles)
+const { focusedTile, isFocusMode, focusTile, clearFocus } = useVideoFocus(tiles)
+
+// Four camera tiles at a time keeps each person legible. Recent speakers are
+// ordered first, and the arrows let the group view everyone else.
+const page = ref(0)
+const pageSize = computed(() => Math.max(1, props.pageSize))
+const orderedTiles = computed(() => tiles.value)
+const pageCount = computed(() =>
+  Math.ceil(orderedTiles.value.length / pageSize.value),
+)
+const pageStart = computed(() => page.value * pageSize.value)
+const pageEnd = computed(() =>
+  Math.min(pageStart.value + pageSize.value, orderedTiles.value.length),
+)
+const pageTiles = computed(() =>
+  orderedTiles.value.slice(pageStart.value, pageEnd.value),
+)
+const visibleGridTiles = computed(() =>
+  isFocusMode.value
+    ? pageTiles.value.filter((tile) => tile.id !== focusedTile.value?.id)
+    : pageTiles.value,
+)
+
+watch(pageCount, (count) => {
+  if (page.value >= count) page.value = Math.max(0, count - 1)
+})
+watch(
+  () => props.screenShareFeeds.length,
+  () => {
+    page.value = 0
+  },
+)
 
 const showWaiting = computed(
   () =>
     !isFocusMode.value &&
-    props.remoteParticipants.length === 0 &&
+    tiles.value.filter((tile) => tile.type === 'camera').length === 0 &&
     props.screenShareFeeds.length === 0,
 )
 
 // Grid columns scale with the number of camera tiles (local + remotes).
 const cameraCount = computed(
-  () =>
-    (props.localState.isObservator ? 0 : 1) + props.remoteParticipants.length,
+  () => visibleGridTiles.value.filter((tile) => tile.type === 'camera').length,
 )
 
 const gridStyleVars = computed(() => {
   const count = cameraCount.value
-  const cols = count <= 1 ? 1 : count <= 4 ? 2 : count <= 9 ? 3 : 4
+  const cols = count <= 1 ? 1 : 2
   return { '--grid-cols': cols }
 })
 
@@ -221,6 +317,7 @@ function attachTileRef(tile, el) {
      of participants) rather than being capped to a fixed height. -->
 <style scoped>
 .fg-video-stage {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -250,6 +347,63 @@ function attachTileRef(tile, el) {
   align-content: stretch;
   justify-content: stretch;
   align-items: stretch;
+}
+
+.fg-video-stage .videos-grid {
+  gap: 12px;
+  padding: 12px !important;
+}
+
+.fg-observer-indicator {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 5px 10px;
+  margin: 8px 12px 0;
+  border-radius: 999px;
+  color: rgba(var(--v-theme-on-surface), 0.72);
+  background: rgba(var(--v-theme-on-surface), 0.06);
+  font-size: 0.78rem;
+}
+
+.fg-video-pagination {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1000;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px 4px 12px;
+  border: 1px solid rgba(5, 43, 71, 0.2);
+  border-radius: 999px;
+  color: #052b47 !important;
+  background: #fff !important;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.3);
+  font-size: 0.78rem;
+}
+
+.fg-video-pagination :deep(.v-btn) {
+  color: #052b47 !important;
+  background: #e6f0f8 !important;
+}
+
+.fg-video-pagination :deep(.v-btn:disabled) {
+  color: #6c7f8f !important;
+  background: #f1f4f6 !important;
+  opacity: 1;
+}
+
+.fg-video-pagination :deep(.v-btn .v-icon) {
+  color: #052b47 !important;
+}
+
+.fg-video-stage :deep(.videos-grid .video-container) {
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .fg-video-stage .videos-grid:not(.videos-single) .video-container {

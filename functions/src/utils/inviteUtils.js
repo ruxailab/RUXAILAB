@@ -33,7 +33,7 @@ export default class InviteUtils {
         acceptedAt: null,
         studyTitle: studyTitle || null,
         isPublic: isPublic || false,
-        accessLevel: accessLevel || null,
+        accessLevel: accessLevel ?? null,
         requiredLogin: requiredLogin ?? true,
         membershipType,
       })

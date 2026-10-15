@@ -430,6 +430,10 @@ let localPresenceDisconnect = null
 let localSignalsDisconnect = null
 let moderatorCallDisconnect = null
 let moderatorRoomDisconnect = null
+let showVideoCallUnsubscribe = null
+let participantMembersUnsubscribe = null
+let staffMembersUnsubscribe = null
+let signalsUnsubscribe = null
 
 // Camera and microphone controls
 const isCameraEnabled = ref(true)
@@ -535,7 +539,7 @@ const taskDropdownItems = computed(() => {
   if (!props.test?.testStructure?.userTasks) return []
   return props.test.testStructure.userTasks.map((task, index) => ({
     title: `Task ${index + 1}: ${
-      task.name || task.title || `User Task ${index + 1}`
+      task.taskName || task.name || task.title || `User Task ${index + 1}`
     }`,
     index: index,
     completed: index < (props.currentTaskIndex || 0),
@@ -562,6 +566,17 @@ const roomReady = ref(false)
 const roomOpen = ref(false)
 const roomJoined = ref(false)
 
+const stopRoomListeners = () => {
+  showVideoCallUnsubscribe?.()
+  showVideoCallUnsubscribe = null
+  participantMembersUnsubscribe?.()
+  participantMembersUnsubscribe = null
+  staffMembersUnsubscribe?.()
+  staffMembersUnsubscribe = null
+  signalsUnsubscribe?.()
+  signalsUnsubscribe = null
+}
+
 // Watch for localVideo ref and ensure stream is attached
 watch([localVideo, localStream], ([videoEl, stream]) => {
   if (videoEl && stream) {
@@ -570,8 +585,16 @@ watch([localVideo, localStream], ([videoEl, stream]) => {
 })
 
 onMounted(async () => {
+  const showVideoCallRef = dbRef(
+    database,
+    `rooms/${props.roomId}/showVideoCall`,
+  )
+
   // Moderator preview should appear immediately in the lobby when the test starts.
   if (props.isModerator) {
+    showVideoCallUnsubscribe = onValue(showVideoCallRef, (snapshot) => {
+      roomOpen.value = Boolean(snapshot.val())
+    })
     if (!localStream.value) {
       await initLocalMedia()
     }
@@ -584,11 +607,6 @@ onMounted(async () => {
   if (!localStream.value) {
     await initLocalMedia()
   }
-
-  const showVideoCallRef = dbRef(
-    database,
-    `rooms/${props.roomId}/showVideoCall`,
-  )
 
   // Check initial value first
   const initialSnapshot = await get(showVideoCallRef)
@@ -603,7 +621,7 @@ onMounted(async () => {
   }
 
   // Then listen for changes
-  onValue(showVideoCallRef, (snapshot) => {
+  showVideoCallUnsubscribe = onValue(showVideoCallRef, (snapshot) => {
     const shouldShow = snapshot.val()
     roomOpen.value = Boolean(shouldShow)
     if (shouldShow) {
@@ -616,12 +634,17 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
+  stopRoomListeners()
   if (!isSessionEnded.value) {
     leaveRoom()
   }
 })
 
 // --- Signaling & Mesh Logic ---
+
+// Where this user joined the call; media status must be written to the same
+// member entry that other peers read (staff for moderators and observers).
+let joinedMemberPath = null
 
 const resolveCurrentMemberKey = async (branch) => {
   const branchRef = dbRef(database, `calls/${props.roomId}/${branch}`)
@@ -654,10 +677,8 @@ const joinRoom = async () => {
   const memberBranch =
     props.isModerator || isObserverMember ? 'staff' : 'participants'
   const memberKey = await resolveCurrentMemberKey(memberBranch)
-  const myMemberRef = dbRef(
-    database,
-    `calls/${props.roomId}/${memberBranch}/${memberKey}`,
-  )
+  joinedMemberPath = `calls/${props.roomId}/${memberBranch}/${memberKey}`
+  const myMemberRef = dbRef(database, joinedMemberPath)
 
   // Restore media settings from DB if available (persistence)
   const snapshot = await get(myMemberRef)
@@ -676,9 +697,11 @@ const joinRoom = async () => {
   if (localStream.value) {
     const vTrack = localStream.value.getVideoTracks()[0]
     if (vTrack) vTrack.enabled = isCameraEnabled.value
+    else isCameraEnabled.value = false
 
     const aTrack = localStream.value.getAudioTracks()[0]
     if (aTrack) aTrack.enabled = isMicrophoneEnabled.value
+    else isMicrophoneEnabled.value = false
   }
 
   const presenceNow = Date.now()
@@ -803,12 +826,16 @@ const joinRoom = async () => {
         myJoinedAt > otherJoinedAt ||
         (myJoinedAt === otherJoinedAt && props.user.id > userId)
 
-      if (peers[userId] && peers[userId].isInitiator !== shouldInitiate) {
+      if (
+        peers[userId] &&
+        (peers[userId].isInitiator !== shouldInitiate ||
+          peers[userId].remoteJoinedAt !== otherJoinedAt)
+      ) {
         closePeerConnection(userId)
       }
 
       if (!peers[userId]) {
-        createPeerConnection(userId, shouldInitiate)
+        createPeerConnection(userId, shouldInitiate, otherJoinedAt)
       } else if (
         shouldInitiate &&
         peers[userId].connection.signalingState === 'stable' &&
@@ -826,17 +853,17 @@ const joinRoom = async () => {
     })
   }
 
-  onValue(participantsRef, (snapshot) => {
+  participantMembersUnsubscribe = onValue(participantsRef, (snapshot) => {
     participantMembers = snapshot.val() || {}
     syncMembers()
   })
-  onValue(staffRef, (snapshot) => {
+  staffMembersUnsubscribe = onValue(staffRef, (snapshot) => {
     staffMembers = snapshot.val() || {}
     syncMembers()
   })
 
   // 4. Listen for Signals (Offers/Answers/Candidates) targeted at ME
-  onChildAdded(mySignalsRef, async (snapshot) => {
+  signalsUnsubscribe = onChildAdded(mySignalsRef, async (snapshot) => {
     const signal = snapshot.val()
     // signal structure expected: { senderId: '...', ...payload } from my push logic?
     // Wait, my sendSignal uses `push(..., payload)`.
@@ -928,6 +955,7 @@ const sendSignal = async (targetUserId, payload) => {
 // See `joinRoom` function for corrected logic below (I will use child_added there).
 
 const leaveRoom = async () => {
+  stopRoomListeners()
   if (isSessionEnded.value) return
 
   // Stop media
@@ -981,10 +1009,26 @@ const initLocalMedia = async () => {
   } catch (error) {
     console.error('getUserMedia failed', error)
     isCameraEnabled.value = false
+    // A busy or blocked camera must not also take the microphone away.
+    try {
+      const audioStream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+      })
+      localStream.value = audioStream
+      if (localVideo.value) localVideo.value.srcObject = audioStream
+      isMicrophoneEnabled.value = true
+    } catch (audioError) {
+      console.error('getUserMedia audio fallback failed', audioError)
+      isMicrophoneEnabled.value = false
+    }
   }
 }
 
-const createPeerConnection = (targetUserId, isInitiator) => {
+const createPeerConnection = (
+  targetUserId,
+  isInitiator,
+  remoteJoinedAt = 0,
+) => {
   if (peers[targetUserId]) return // Already exists
 
   const pc = new RTCPeerConnection({
@@ -996,17 +1040,28 @@ const createPeerConnection = (targetUserId, isInitiator) => {
     stream: null,
     screenStream: null,
     screenSender: null,
+    cameraSender: null,
     pendingCandidates: [],
     screenShareExpected: false,
     needsNegotiation: false,
     isInitiator,
+    remoteJoinedAt,
   }
 
   // Publish local media so staff members can see each other.
   if (localStream.value) {
     localStream.value.getTracks().forEach((track) => {
-      pc.addTrack(track, localStream.value)
+      const sender = pc.addTrack(track, localStream.value)
+      if (track.kind === 'video') peers[targetUserId].cameraSender = sender
     })
+  }
+  // Reserve the camera slot even without a camera, so it can be turned on
+  // later with replaceTrack instead of renegotiating the connection.
+  if (!peers[targetUserId].cameraSender) {
+    peers[targetUserId].cameraSender = pc.addTransceiver('video', {
+      direction: 'sendrecv',
+      streams: localStream.value ? [localStream.value] : [],
+    }).sender
   }
 
   if (screenStream.value) {
@@ -1145,15 +1200,46 @@ const returnToVideoCall = async () => {
   }
 }
 
-function toggleCamera() {
-  if (!localStream.value) return
-  const track = localStream.value.getVideoTracks()[0]
-  if (track) {
-    track.enabled = !track.enabled
-    isCameraEnabled.value = track.enabled
-    // Share camera state with other peers
-    updateParticipantStatus()
+const replaceCameraTrack = (track) =>
+  Promise.all(
+    Object.values(peers).map((peer) =>
+      peer.cameraSender?.replaceTrack(track).catch((error) => {
+        console.error('Camera track replacement failed', error)
+      }),
+    ),
+  )
+
+async function toggleCamera() {
+  const track = localStream.value?.getVideoTracks()[0]
+  if (track && !track.enabled) {
+    // A restored "camera off" state pauses the track instead of releasing it.
+    track.enabled = true
+    isCameraEnabled.value = true
+  } else if (track) {
+    // Release the device like other call apps, so it can be reopened later.
+    track.stop()
+    localStream.value.removeTrack(track)
+    await replaceCameraTrack(null)
+    isCameraEnabled.value = false
+  } else {
+    try {
+      const cameraStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+      })
+      const cameraTrack = cameraStream.getVideoTracks()[0]
+      if (!localStream.value) localStream.value = new MediaStream()
+      localStream.value.addTrack(cameraTrack)
+      if (localVideo.value) localVideo.value.srcObject = localStream.value
+      await replaceCameraTrack(cameraTrack)
+      isCameraEnabled.value = true
+    } catch (error) {
+      console.error('Turning the camera on failed', error)
+      isCameraEnabled.value = false
+      return
+    }
   }
+  // Share camera state with other peers
+  updateParticipantStatus()
 }
 
 function toggleMicrophone() {
@@ -1173,7 +1259,8 @@ async function updateParticipantStatus() {
     const memberBranch = isObservator.value ? 'staff' : 'participants'
     const participantRef = dbRef(
       database,
-      `calls/${props.roomId}/${memberBranch}/${props.user.id}`,
+      joinedMemberPath ||
+        `calls/${props.roomId}/${memberBranch}/${props.user.id}`,
     )
     await update(participantRef, {
       media: {
@@ -1433,8 +1520,9 @@ function goToStep(stepType) {
       taskIndex = 0
       break
     case 'tasks':
+      // Resume the participant's current task instead of restarting at task 1.
       globalIndex = 4
-      taskIndex = 0
+      taskIndex = props.currentTaskIndex || 0
       break
     case 'posttest':
       globalIndex = 5

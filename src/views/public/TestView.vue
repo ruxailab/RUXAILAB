@@ -23,16 +23,7 @@
     </div>
 
     <div v-if="test.testType === STUDY_TYPES.CARD_SORTING">
-      <StartScreenTest
-        v-if="!isCardSortingStarted"
-        :test="test"
-        :disabled="!hasCardSortingContent"
-        :alert-message="
-          hasCardSortingContent ? '' : $t('CardSorting.invalidConfiguration')
-        "
-        @start="isCardSortingStarted = true"
-      />
-      <CardSortingTest v-else :test="test" />
+      <CardSortingTest :test="test" />
     </div>
   </div>
 
@@ -63,7 +54,6 @@ import UserTestView from '@/ux/UserTest/views/UserTestView.vue'
 import ModeratedTestView from '../../ux/UserTest/views/ModeratedTestView.vue'
 import HeuristicTestView from '../../ux/Heuristic/views/HeuristicTestView.vue'
 import CardSortingTest from '@/ux/CardSorting/components/CardSortingTest.vue'
-import StartScreenTest from '@/shared/components/template/StartScreenTest.vue'
 
 import {
   STUDY_TYPES,
@@ -73,6 +63,8 @@ import {
 import { getTestViewAccessRedirect } from '@/shared/utils/studyNavigation'
 import { isSignInPath } from '@/shared/utils/authRedirect'
 import { showError } from '@/shared/utils/toast'
+import AuthController from '@/features/auth/controllers/AuthController'
+import '@/shared/styles/testProgressStepper.css'
 
 const props = defineProps({
   id: {
@@ -106,18 +98,6 @@ const test = computed(() => {
   return null
 })
 
-const hasCardSortingContent = computed(() => {
-  if (test.value?.testType !== STUDY_TYPES.CARD_SORTING) return true
-
-  const cardSorting = test.value.testStructure?.cardSorting
-  return (
-    Array.isArray(cardSorting?.categories) &&
-    cardSorting.categories.length > 0 &&
-    Array.isArray(cardSorting?.cards) &&
-    cardSorting.cards.length > 0
-  )
-})
-
 const user = computed(() => store.getters.user)
 
 const userId = computed(() => user.value?.id ?? user.value?.uid ?? null)
@@ -129,7 +109,6 @@ const userId = computed(() => user.value?.id ?? user.value?.uid ?? null)
 */
 
 const moderatedTestViewRef = ref(null)
-const isCardSortingStarted = ref(false)
 const invitation = ref(null)
 const loading = ref(true)
 const redirecting = ref(false)
@@ -250,6 +229,26 @@ const handleLoadedStudy = async (loadedStudy) => {
 |--------------------------------------------------------------------------
 */
 
+/*
+ * A link that does not require login is answered with an anonymous account.
+ * It joins the study through that invitation first, because only members and
+ * signed-in users may read a study.
+ */
+const joinAnonymously = async () => {
+  try {
+    const participant = await new AuthController().anonymousParticipant()
+    if (!participant) return
+    await store.dispatch('acceptStudyCollaboration', {
+      studyId: props.id,
+      cooperator: { id: participant.uid, email: null },
+      membershipType: 'participant',
+      inviteToken: inviteToken.value,
+    })
+  } catch {
+    // Fall through: the normal access check below explains the denial.
+  }
+}
+
 const loadInvitation = async () => {
   if (!inviteToken.value) {
     return false
@@ -287,6 +286,11 @@ onBeforeMount(async () => {
   invitation.value = null
 
   try {
+    if (inviteToken.value && !store.getters.user) {
+      await loadInvitation()
+      if (isAnonymousInvitation.value) await joinAnonymously()
+    }
+
     const loadedStudy = await loadStudy()
 
     if (!loadedStudy) {

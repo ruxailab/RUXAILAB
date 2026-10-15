@@ -24,7 +24,7 @@ const store = useStore()
 const { t } = useI18n()
 
 const testAnswerDocument = computed(
-  () => store.state.Answer.testAnswerDocument?.heuristicAnswers || {},
+  () => store.getters.testAnswerDocument?.heuristicAnswers || {},
 )
 const hasTestAnswerDocument = computed(() => {
   return (
