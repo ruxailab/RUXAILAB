@@ -44,4 +44,30 @@ describe('InviteController', () => {
       FirebaseFunctionsController.callHttpsCallableFunction,
     ).toHaveBeenCalledWith('validateInvite', { token: 'invite-token' })
   })
+
+  it('generates invitation links through the authenticated Firebase callable client', async () => {
+    const linkResult = {
+      inviteLink: 'https://example.com/invite?token=invite-token',
+      inviteToken: 'invite-token',
+      expirationDate: 123456789,
+    }
+    FirebaseFunctionsController.callHttpsCallableFunction.mockResolvedValue({
+      data: linkResult,
+    })
+
+    const payload = {
+      studyId: 'study-1',
+      accessLevel: 4,
+      isPublic: true,
+      studyTitle: 'Test study',
+    }
+
+    await expect(
+      InviteController.generateInvitationLink(payload),
+    ).resolves.toEqual(linkResult)
+
+    expect(
+      FirebaseFunctionsController.callHttpsCallableFunction,
+    ).toHaveBeenCalledWith('generateInvitationLink', payload)
+  })
 })
