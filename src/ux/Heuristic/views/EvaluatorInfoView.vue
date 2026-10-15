@@ -25,11 +25,14 @@ const route = useRoute()
 const { t } = useI18n()
 
 const save = async () => {
+  const current = store.getters.test
+  if (!current) return
+
   const rawData = {
-    ...store.getters.test,
-    testStructure: store.getters.heuristics,
-    testOptions: store.state.Tests.Test.testOptions,
-    testWeights: store.getters.testWeights,
+    ...current,
+    testStructure: current.testStructure,
+    testOptions: store.state.Tests?.Test?.testOptions ?? current.testOptions,
+    testWeights: current.testWeights,
   }
 
   const study = instantiateStudyByType(rawData.testType, rawData)

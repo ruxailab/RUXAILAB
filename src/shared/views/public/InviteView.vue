@@ -27,7 +27,7 @@
         </div>
 
         <!-- Wrong authenticated account -->
-        <div v-else-if="unauthorized">
+        <div v-else-if="unauthorized && user">
           <h1 class="text-h5 mb-2">{{ $t('invite.title') }}</h1>
 
           <p class="subtitle mb-6">

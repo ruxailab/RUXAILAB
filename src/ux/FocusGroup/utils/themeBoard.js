@@ -10,6 +10,15 @@ export function buildResponseKey({ sessionId, topicId, messageId }) {
   return `${sessionId}:${topicId}:${messageId}`
 }
 
+function hasParticipantRole(person) {
+  if (person?.accessLevel !== undefined && person?.accessLevel !== null) {
+    return Number(person.accessLevel) === 1
+  }
+  return ['participant', 'participante'].includes(
+    String(person?.role ?? '').trim().toLowerCase(),
+  )
+}
+
 /**
  * Flattens one session's per-topic messages into a flat, taggable list —
  * excluding the facilitator's own chat. Theming groups *participant*
@@ -22,11 +31,20 @@ export function buildResponseKey({ sessionId, topicId, messageId }) {
  */
 export function flattenSessionResponses(session) {
   const responses = []
+  const roster = session?.participants ?? {}
+  const hasRoster = Object.keys(roster).length > 0
+  const participantIds = new Set(
+    Object.entries(roster)
+      .filter(([, person]) => hasParticipantRole(person))
+      .map(([userId]) => userId),
+  )
   Object.entries(session?.messages ?? {}).forEach(([topicId, byId]) => {
     Object.entries(byId ?? {}).forEach(([messageId, message]) => {
-      if (session?.facilitatorId && message?.userId === session.facilitatorId) {
+      const userId = message?.userId
+      if (session?.facilitatorId && userId === session.facilitatorId) {
         return
       }
+      if (hasRoster && !participantIds.has(userId)) return
       responses.push({
         key: buildResponseKey({
           sessionId: session.sessionId,
@@ -76,18 +94,24 @@ export function partitionResponsesByTheme(responses, themes) {
 }
 
 /**
- * Rebuilds each theme's `responseRefs` from the current bucket contents,
- * after a drag-and-drop change moved responses between buckets.
+ * Rebuilds each theme's response refs for the currently reviewed session,
+ * preserving references belonging to all other sessions.
  *
  * @param {Array} themes - [{ id, label }]
  * @param {Object} buckets - { [themeId]: Array<response> }
+ * @param {string} sessionId - the session represented by the visible board
  * @returns {Array} [{ id, label, responseRefs }]
  */
-export function themesFromBuckets(themes, buckets) {
+export function themesFromBuckets(themes, buckets, sessionId) {
   return themes.map((theme) => ({
     id: theme.id,
     label: theme.label,
-    responseRefs: (buckets[theme.id] ?? []).map(
+    keywords: theme.keywords ?? [],
+    frequency: theme.frequency ?? 0,
+    source: theme.source ?? 'manual',
+    responseRefs: [
+      ...(theme.responseRefs ?? []).filter((ref) => ref.sessionId !== sessionId),
+      ...(buckets[theme.id] ?? []).map(
       ({ sessionId, topicId, messageId, participantId, excerpt }) => ({
         sessionId,
         topicId,
@@ -95,6 +119,7 @@ export function themesFromBuckets(themes, buckets) {
         participantId,
         excerpt,
       }),
-    ),
+      ),
+    ],
   }))
 }

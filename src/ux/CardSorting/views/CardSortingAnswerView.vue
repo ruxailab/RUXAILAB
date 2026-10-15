@@ -24,7 +24,7 @@ const route = useRoute()
 
 const test = computed(() => store.getters.test)
 const testAnswerDocument = computed(
-  () => store.state.Answer.testAnswerDocument || {},
+  () => store.getters.testAnswerDocument || {},
 )
 
 const hasAnswers = computed(() => {

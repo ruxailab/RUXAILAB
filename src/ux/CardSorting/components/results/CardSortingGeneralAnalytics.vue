@@ -36,17 +36,15 @@
         />
       </v-col>
     </v-row>
-
+    <CardSortingMatrix :test="test" :answers="answers" />
+    <CardSortingSimilarityMatrix :test="test" :answers="answers" />
+    <CardSortingDendrogram :test="test" :answers="answers" />
     <AnswersTimeline
       v-if="answers.length"
       :task-answers="answers"
       :show-export="false"
       @refresh="onRefreshTimeline"
     />
-
-    <CardSortingMatrix :test="test" :answers="answers" />
-    <CardSortingSimilarityMatrix :test="test" :answers="answers" />
-    <CardSortingDendrogram :test="test" :answers="answers" />
   </div>
 </template>
 

@@ -1,5 +1,46 @@
 // One capture attempt owns its original task, even if the view advances during upload.
-export const createRecordingAttempt = (taskIndex, mediaType, emit) => {
+export const getRecordingFailureMessage = ({ mediaType, stage, reason }) => {
+  if (
+    mediaType === 'screen' &&
+    stage === 'permission' &&
+    ['cancelled', 'unsupported', 'wrongSurface', 'error'].includes(reason)
+  ) {
+    return {
+      key: `errors.screenShare.${reason}`,
+      severity: reason === 'cancelled' ? 'warning' : 'error',
+    }
+  }
+
+  const supportedMediaTypes = ['webcam', 'audio', 'screen']
+  const normalizedMediaType = supportedMediaTypes.includes(mediaType)
+    ? mediaType
+    : 'webcam'
+  const supportedReasons = [
+    'permissionDenied',
+    'deviceUnavailable',
+    'captureError',
+    'emptyRecording',
+    'uploadError',
+  ]
+  const normalizedReason = supportedReasons.includes(reason)
+    ? reason
+    : stage === 'upload'
+      ? 'uploadError'
+      : 'captureError'
+
+  return {
+    key: `errors.recordingFailure.${normalizedReason}`,
+    mediaKey: `errors.recordingMedia.${normalizedMediaType}`,
+    severity: normalizedReason === 'deviceUnavailable' ? 'warning' : 'error',
+  }
+}
+
+export const createRecordingAttempt = (
+  taskIndex,
+  mediaType,
+  emit,
+  onFailure,
+) => {
   let finished = false
   let uploading = false
   return {
@@ -15,13 +56,21 @@ export const createRecordingAttempt = (taskIndex, mediaType, emit) => {
       if (finished) return false
       finished = true
       try {
-        emit('recording-result', {
+        const details = {
           taskRef: `task:${taskIndex}`,
           mediaType,
           outcome,
           stage,
           ...(reason ? { reason } : {}),
-        })
+        }
+        emit('recording-result', details)
+        if (
+          outcome === 'failed' ||
+          outcome === 'cancelled' ||
+          outcome === 'permission_denied'
+        ) {
+          onFailure?.(getRecordingFailureMessage(details))
+        }
       } catch {
         // Observing an outcome must never change the recording workflow.
       }

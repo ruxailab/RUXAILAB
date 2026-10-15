@@ -86,76 +86,68 @@
                 </v-chip>
               </v-expansion-panel-title>
               <v-expansion-panel-text>
-              <div
-                v-for="group in topicMessageGroups(topic.id)"
-                :key="group.promptText || 'open-discussion'"
-                class="mb-4"
-              >
-                <!-- A topic can carry several prompts; grouping keeps each
-                     prompt's responses together instead of one flat stream. -->
-                <div class="d-flex align-center ga-2 mb-2">
-                  <v-icon
-                    :icon="
-                      group.promptText
-                        ? 'mdi-help-circle-outline'
-                        : 'mdi-forum-outline'
-                    "
-                    size="16"
-                    :color="group.promptText ? 'primary' : 'medium-emphasis'"
-                  />
-                  <span
-                    class="text-caption font-weight-medium"
-                    :class="group.promptText ? 'text-primary' : 'text-medium-emphasis'"
-                  >
-                    {{ group.promptText || $t('focusGroup.answers.openDiscussion') }}
-                  </span>
-                </div>
-
                 <div
-                  v-for="message in group.messages"
-                  :key="message.id"
-                  class="d-flex ga-3 mb-3"
+                  v-for="group in topicMessageGroups(topic.id)"
+                  :key="group.promptText || 'open-discussion'"
+                  class="mb-4"
                 >
-                  <v-avatar
-                    :color="isFacilitatorMessage(message) ? 'secondary' : 'primary'"
-                    variant="tonal"
-                    size="32"
-                  >
-                    <span class="text-caption font-weight-medium">
-                      {{ initial(message.name) }}
-                    </span>
-                  </v-avatar>
-                  <div class="flex-grow-1 min-width-0">
-                    <div class="d-flex align-center ga-2 text-caption text-medium-emphasis mb-1">
-                      <span>{{ message.name || $t('focusGroup.session.anonymous') }}</span>
-                      <v-chip
-                        v-if="isFacilitatorMessage(message)"
-                        size="x-small"
-                        variant="tonal"
-                        color="secondary"
-                      >
-                        {{ $t('focusGroup.answers.facilitatorBadge') }}
-                      </v-chip>
-                    </div>
-                    <div
-                      class="px-3 py-2 rounded-lg text-body-2"
-                      :class="
-                        isFacilitatorMessage(message)
-                          ? 'bg-blue-grey-lighten-5'
-                          : 'bg-grey-lighten-4'
-                      "
+                  <!-- A topic can carry several prompts; grouping keeps each
+                       prompt's responses together instead of one flat stream. -->
+                  <div class="d-flex align-center ga-2 mb-2">
+                    <v-icon
+                      :icon="group.promptText ? 'mdi-help-circle-outline' : 'mdi-forum-outline'"
+                      size="16"
+                      :color="group.promptText ? 'primary' : 'medium-emphasis'"
+                    />
+                    <span
+                      class="text-caption font-weight-medium"
+                      :class="group.promptText ? 'text-primary' : 'text-medium-emphasis'"
                     >
-                      {{ message.text }}
+                      {{ group.promptText || $t('focusGroup.answers.openDiscussion') }}
+                    </span>
+                  </div>
+
+                  <div
+                    v-for="message in group.messages"
+                    :key="message.id"
+                    class="d-flex ga-3 mb-3"
+                  >
+                    <v-avatar
+                      :color="isFacilitatorMessage(message) ? 'secondary' : 'primary'"
+                      variant="tonal"
+                      size="32"
+                    >
+                      <span class="text-caption font-weight-medium">
+                        {{ initial(message.name) }}
+                      </span>
+                    </v-avatar>
+                    <div class="flex-grow-1 min-width-0">
+                      <div class="d-flex align-center ga-2 text-caption text-medium-emphasis mb-1">
+                        <span>{{ message.name || $t('focusGroup.session.anonymous') }}</span>
+                        <v-chip
+                          v-if="isFacilitatorMessage(message)"
+                          size="x-small"
+                          variant="tonal"
+                          color="secondary"
+                        >
+                          {{ $t('focusGroup.answers.facilitatorBadge') }}
+                        </v-chip>
+                      </div>
+                      <div
+                        class="px-3 py-2 rounded-lg text-body-2"
+                        :class="isFacilitatorMessage(message) ? 'bg-blue-grey-lighten-5' : 'bg-grey-lighten-4'"
+                      >
+                        {{ message.text }}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <p
-                v-if="!topicMessageGroups(topic.id).length"
-                class="text-medium-emphasis text-center my-4 mb-0"
-              >
-                {{ $t('focusGroup.session.noMessagesYet') }}
-              </p>
+                <p
+                  v-if="!topicMessageGroups(topic.id).length"
+                  class="text-medium-emphasis text-center my-4 mb-0"
+                >
+                  {{ $t('focusGroup.session.noMessagesYet') }}
+                </p>
               </v-expansion-panel-text>
             </v-expansion-panel>
           </v-expansion-panels>
@@ -279,7 +271,11 @@
             </v-card-subtitle>
             <v-divider class="mt-2" />
             <v-card-text>
-              <ThematicEditor v-model="themes" :session="selectedSession" />
+              <ThematicEditor
+                v-model="themes"
+                :session="selectedSession"
+                :suggestions="suggestedThemes"
+              />
             </v-card-text>
           </v-card>
         </template>
@@ -289,7 +285,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, watch } from 'vue'
+import { computed, ref, onMounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
@@ -348,6 +344,7 @@ watch(
 )
 const rawSessions = ref({})
 const themes = ref([])
+const legacySuggestedThemes = ref([])
 const loading = ref(true)
 const selectedSessionId = ref(null)
 const expandedTopicIds = ref([])
@@ -357,9 +354,31 @@ const sessions = computed(() => sortSessionsByStartedAt(rawSessions.value))
 const selectedSession = computed(
   () => sessions.value.find((s) => s.sessionId === selectedSessionId.value) ?? null,
 )
+const suggestedThemes = computed(() => {
+  const generated = selectedSession.value?.analysis?.suggestedThemes
+  if (Array.isArray(generated)) return generated
+  return legacySuggestedThemes.value.filter((theme) =>
+    (theme.responseRefs ?? []).some(
+      (ref) => ref.sessionId === selectedSession.value?.sessionId,
+    ),
+  )
+})
 const topics = computed(() =>
   Array.isArray(test.value?.discussionGuide) ? test.value.discussionGuide : [],
 )
+
+watch(selectedSessionId, () => {
+  expandedTopicIds.value = topics.value.slice(0, 1).map((topic) => topic.id)
+})
+
+const isParticipantRecord = (person) => {
+  if (person?.accessLevel !== undefined && person?.accessLevel !== null) {
+    return Number(person.accessLevel) === 1
+  }
+  return ['participant', 'participante'].includes(
+    String(person?.role ?? '').trim().toLowerCase(),
+  )
+}
 
 watch(
   [selectedSessionId, topics],
@@ -370,7 +389,7 @@ watch(
 )
 
 const participantCount = (session) =>
-  Object.keys(session.participants ?? {}).length
+  Object.values(session?.participants ?? {}).filter(isParticipantRecord).length
 
 const formatDate = (timestamp) =>
   timestamp ? new Date(timestamp).toLocaleString() : ''
@@ -423,7 +442,14 @@ watch(themes, (nextThemes) => {
   if (!themesLoaded) return
   store.dispatch('saveFocusGroupThemes', {
     answersDocId: test.value?.answersDocId,
-    themes: nextThemes,
+    // Keep legacy NLP suggestions until a session has the newer dedicated
+    // `analysis.suggestedThemes` field; they're not part of the manual board.
+    themes: [
+      ...nextThemes,
+      ...legacySuggestedThemes.value.filter(
+        (suggestion) => !nextThemes.some((theme) => theme.id === suggestion.id),
+      ),
+    ],
   })
 })
 
@@ -435,7 +461,13 @@ onMounted(async () => {
       test.value?.answersDocId,
     )
     rawSessions.value = answer.sessions
-    themes.value = answer.themes
+    themes.value = (answer.themes ?? []).filter((theme) => theme.source !== 'nlp')
+    legacySuggestedThemes.value = (answer.themes ?? []).filter(
+      (theme) => theme.source === 'nlp',
+    )
+    // Let the watch observe this initial assignment while persistence is
+    // still disabled; loading the page must not save an untouched board.
+    await nextTick()
     themesLoaded = true
     const first = sortSessionsByStartedAt(rawSessions.value)[0]
     selectedSessionId.value = first?.sessionId ?? null
