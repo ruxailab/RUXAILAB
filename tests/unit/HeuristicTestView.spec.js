@@ -36,8 +36,8 @@ jest.mock('@/app/plugins/firebase/FirebaseFunctionsService', () => ({
   },
 }))
 
-jest.mock('@/ux/Heuristic/components/HeuristicInstructionsStep.vue', () => ({
-  name: 'HeuristicInstructionsStep',
+jest.mock('@/shared/components/StudyWelcomeStep.vue', () => ({
+  name: 'StudyWelcomeStep',
   props: ['disabled'],
   emits: ['start'],
   template: '<div />',
@@ -74,9 +74,14 @@ const buttonStub = {
 }
 
 const stepperItemStub = {
-  props: ['title'],
+  props: {
+    title: String,
+    editable: Boolean,
+    disabled: Boolean,
+  },
   emits: ['click'],
-  template: '<button @click="$emit(\'click\')">{{ title }}</button>',
+  template:
+    '<button :disabled="disabled || !editable" @click="$emit(\'click\')">{{ title }}</button>',
 }
 
 const findButton = (wrapper, text) =>
@@ -252,20 +257,39 @@ describe('HeuristicTestView', () => {
     await wrapper.vm.$nextTick()
 
     expect(wrapper.vm.studyMode).toBe('weights')
+
+    store.getters.test = {
+      ...store.getters.test,
+      studyMode: 'detailed',
+      useWeights: false,
+      useFrequency: true,
+      useSeverity: true,
+    }
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.vm.studyMode).toBe('detailed')
   })
 
-  it.each([false, true])(
-    'waits for initialization and handles save rejection: %s',
-    async (saveFails) => {
+  it.each([
+    { saveFails: false, hasOptions: true, previouslyStarted: false },
+    { saveFails: true, hasOptions: true, previouslyStarted: false },
+    { saveFails: false, hasOptions: false, previouslyStarted: false },
+    { saveFails: false, hasOptions: false, previouslyStarted: true },
+  ])(
+    'validates initialization and resume: options=$hasOptions, started=$previouslyStarted, saveFails=$saveFails',
+    async ({ saveFails, hasOptions, previouslyStarted }) => {
       const answerRequest = deferred()
       const study = {
         id: 'study-1',
         answersDocId: 'answers-1',
         testType: 'HEURISTIC',
+        studyMode: 'detailed',
+        useFrequency: false,
+        useSeverity: false,
         testTitle: 'Heuristic study',
         testDescription: 'Study description',
         testAdmin: { userDocId: 'admin-1' },
-        testOptions: [{ text: 'Yes', value: 1 }],
+        testOptions: hasOptions ? [{ text: 'Yes', value: 1 }] : [],
         testStructure: [
           {
             id: 0,
@@ -282,7 +306,10 @@ describe('HeuristicTestView', () => {
         test: study,
         user: { id: 'user-1' },
         heuristics: [],
-        currentUserTestAnswer: new HeuristicAnswer({ userDocId: 'user-1' }),
+        currentUserTestAnswer: new HeuristicAnswer({
+          userDocId: 'user-1',
+          testStarted: previouslyStarted,
+        }),
       })
       const store = {
         getters,
@@ -298,7 +325,11 @@ describe('HeuristicTestView', () => {
             return answerRequest.promise
           }
           if (action === 'saveTestAnswer' && saveFails)
-            return Promise.reject(new Error('save failed'))
+            return Promise.reject(
+              Object.assign(new Error('save failed'), {
+                code: 'permission-denied',
+              }),
+            )
           return Promise.resolve()
         }),
       }
@@ -377,14 +408,29 @@ describe('HeuristicTestView', () => {
         wrapper,
         'HeuristicsTestView.actions.startTest',
       )
+      if (!hasOptions) {
+        expect(wrapper.vm.testDisabledReason).toBe('no-answer-options')
+        expect(wrapper.vm.currentPage).toBe('welcome_page')
+        await wrapper.vm.startTest()
+        await wrapper.vm.navigateToStep(2)
+        expect(wrapper.vm.start).toBe(true)
+        expect(wrapper.vm.currentPage).toBe('welcome_page')
+        expect(
+          store.dispatch.mock.calls.some(
+            ([action]) => action === 'saveTestAnswer',
+          ),
+        ).toBe(false)
+        wrapper.unmount()
+        return
+      }
+
       expect(readyStartButton.attributes('disabled')).toBeUndefined()
       await expect(readyStartButton.trigger('click')).resolves.toBeUndefined()
-
       jest.advanceTimersByTime(1000)
       await flushPromises()
 
       const instructionsStep = wrapper.findComponent({
-        name: 'HeuristicInstructionsStep',
+        name: 'StudyWelcomeStep',
       })
       expect(instructionsStep.exists()).toBe(true)
       instructionsStep.vm.$emit('start')
@@ -404,7 +450,7 @@ describe('HeuristicTestView', () => {
       expect(wrapper.vm.start).toBe(true)
 
       const reopenedInstructions = wrapper.findComponent({
-        name: 'HeuristicInstructionsStep',
+        name: 'StudyWelcomeStep',
       })
       reopenedInstructions.vm.$emit('start')
       await flushPromises()
@@ -422,7 +468,42 @@ describe('HeuristicTestView', () => {
       expect(saveCall).toBeDefined()
       expect(saveCall[1].data).toBeInstanceOf(HeuristicAnswer)
       expect(typeof saveCall[1].data.toFirestore).toBe('function')
+      const answer = wrapper.vm.currentUserTestAnswer
+      answer.heuristicQuestions[0].heuristicQuestions[0].heuristicComment =
+        'Keep this note'
+      const stepButton = (step) =>
+        findButton(wrapper, `HeuristicsTestView.flow.${step}`)
+      expect(stepButton('finalSubmission').attributes('disabled')).toBeDefined()
+      await stepButton('instructions').trigger('click')
+      await flushPromises()
+      expect(wrapper.findComponent({ name: 'StudyWelcomeStep' }).exists()).toBe(
+        true,
+      )
+      expect(wrapper.vm.heuristicStepperValue).toBe(1)
+      wrapper.findComponent({ name: 'StudyWelcomeStep' }).vm.$emit('start')
+      await flushPromises()
+      expect(wrapper.vm.showHeuristicCards).toBe(false)
+      expect(wrapper.vm.heuristicStepperValue).toBe(2)
+      expect(
+        answer.heuristicQuestions[0].heuristicQuestions[0].heuristicComment,
+      ).toBe('Keep this note')
+
+      wrapper.vm.calculatedProgress = 100
+      await wrapper.vm.$nextTick()
+      await stepButton('finalSubmission').trigger('click')
+      expect(wrapper.vm.heuristicStepperValue).toBe(3)
+      await stepButton('instructions').trigger('click')
+      await flushPromises()
+      wrapper.findComponent({ name: 'StudyWelcomeStep' }).vm.$emit('start')
+      await flushPromises()
+      expect(wrapper.vm.heuristicStepperValue).toBe(2)
+      expect(wrapper.vm.review).toBe(true)
+
       if (saveFails) {
+        expect(wrapper.vm.saveStatusMessage).toContain('permission-denied')
+        jest.advanceTimersByTime(5000)
+        await flushPromises()
+        expect(wrapper.vm.saveStatusMessage).toContain('permission-denied')
         expect(wrapper.vm.saveStatusType).toBe('error')
         expect(wrapper.vm.autoSaveInProgress).toBe(false)
         await expect(wrapper.vm.manualSaveAnswer()).resolves.toBeUndefined()

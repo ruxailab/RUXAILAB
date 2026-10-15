@@ -1,5 +1,15 @@
 <template>
-  <div>
+  <div class="session-backdrop">
+    <SessionBackdropMark />
+
+    <div v-if="showStepAnnouncement" class="step-announcement-container">
+      <StepAnnouncementOverlay
+        ref="stepAnnouncementOverlay"
+        :kicker="nextStepAnnouncementKicker"
+        :title="nextStepAnnouncementTitle"
+      />
+    </div>
+
     <v-dialog v-model="showScreenSharePrompt" persistent max-width="640">
       <v-card class="pa-4 pa-sm-6" rounded="xl">
         <ScreenShareInstructions compact />
@@ -35,9 +45,76 @@
       @submit="handleSubmit"
     />
 
-    <v-container fluid class="pa-0">
-      <v-row class="main-test-interface pa-0 ma-0">
-        <v-col class="right-view pa-6">
+    <v-container fluid class="session-backdrop-content pa-0">
+      <v-row
+        v-if="start"
+        class="start-screen pa-0 ma-0"
+        align="center"
+      >
+        <SessionBackdropMark position="absolute" />
+        <v-col md="8" class="ma-5 pa-5">
+          <img
+            src="../../../assets/logo_full_white.png"
+            alt="RUXAILAB"
+            class="mb-10"
+            style="max-width: 300px"
+          />
+          <h1 class="text-h2 font-weight-bold text-white">
+            {{ test.testTitle }}
+          </h1>
+          <p class="text-body mb-5 text-white text-justify">
+            {{ truncateDescription(test.testDescription) }}
+          </p>
+          <v-btn
+            color="white"
+            variant="outlined"
+            rounded
+            class="mt-4"
+            :disabled="!canStartCardSorting"
+            @click="startTest"
+          >
+            {{ $t('UserTestView.actions.startTest') }}
+          </v-btn>
+          <v-alert
+            v-if="!canStartCardSorting"
+            type="error"
+            variant="outlined"
+            class="mt-4"
+            color="white"
+            style="
+              background-color: rgba(255, 255, 255, 0.1);
+              border-color: white;
+            "
+          >
+            <span class="text-white d-block">
+              {{ $t('CardSorting.invalidConfiguration') }}
+            </span>
+            <ul class="start-screen__alert-details">
+              <li
+                v-for="detail in cardSortingConfigurationIssueMessages"
+                :key="detail"
+                class="text-white"
+              >
+                {{ detail }}
+              </li>
+            </ul>
+          </v-alert>
+        </v-col>
+      </v-row>
+
+      <v-row
+        v-else
+        class="main-test-interface pa-0 ma-0"
+        :class="{
+          'welcome-main-centered': globalIndex === 0,
+          'session-transparent':
+            globalIndex === 0 || globalIndex === 1 || globalIndex === 4,
+        }"
+      >
+        <v-col
+          class="right-view pa-6"
+          :class="{ 'welcome-content-centered': globalIndex === 0 }"
+        >
           <v-row v-if="globalIndex >= 1" class="stepper-row sticky-stepper">
             <v-col cols="12">
               <v-stepper
@@ -133,14 +210,18 @@
             </v-col>
           </v-row>
 
-          <WelcomeStep
+          <StudyWelcomeStep
             v-if="globalIndex === 0"
-            :stepper-value="stepperValue"
-            :has-eye-tracking="false"
-            :has-pre-test="hasPreTest"
-            :has-post-test="hasPostTest"
-            :welcome-message="test?.testStructure?.welcomeMessage"
-            @start="globalIndex = 1"
+            :sections="welcomeSections"
+            :welcome-title="$t('CardSorting.welcomeTitle')"
+            :description="$t('CardSorting.welcomeDescription')"
+            :how-it-works="$t('CardSorting.howItWorks')"
+            :phases="$t('CardSorting.welcomePhases')"
+            :summary="$t('CardSorting.welcomeSummary')"
+            :ready="$t('CardSorting.welcomeReady')"
+            :start-label="$t('CardSorting.startStudy')"
+            :steps="welcomeSteps"
+            @start="handleWelcomeStart"
           />
 
           <ConsentStep
@@ -382,7 +463,11 @@ import {
 } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import WelcomeStep from '@/ux/UserTest/components/steps/WelcomeStep.vue'
+import { useI18n } from 'vue-i18n'
+import StudyWelcomeStep from '@/shared/components/StudyWelcomeStep.vue'
+import StepAnnouncementOverlay from '@/shared/components/StepAnnouncementOverlay.vue'
+import SessionBackdropMark from '@/shared/components/SessionBackdropMark.vue'
+import { useStepAnnouncement } from '@/shared/composables/useStepAnnouncement'
 import ConsentStep from '@/ux/UserTest/components/steps/ConsentStep.vue'
 import PreTestStep from '@/ux/UserTest/components/steps/PreTestStep.vue'
 import PostTestStep from '@/ux/UserTest/components/steps/PostTestStep.vue'
@@ -407,6 +492,14 @@ const props = defineProps({
 
 const store = useStore()
 const router = useRouter()
+const { t } = useI18n()
+const {
+  showStepAnnouncement,
+  stepAnnouncementOverlay,
+  nextStepAnnouncementTitle,
+  nextStepAnnouncementKicker,
+  safelyAnnounce,
+} = useStepAnnouncement({ scroll: true })
 
 const user = computed(() => store.getters.user)
 const currentCardSortingAnswer = computed(
@@ -416,6 +509,7 @@ const mediaUrls = computed(() => store.getters.mediaUrls)
 
 const fullName = ref('')
 const globalIndex = ref(0)
+const start = ref(true)
 const pendingCards = ref(0)
 const submitting = ref(false)
 const dialog = ref(false)
@@ -441,6 +535,68 @@ const localAnswer = reactive(
 )
 
 fullName.value = localAnswer.fullName || ''
+if (localAnswer.submitted) start.value = false
+
+const cardSortingConfigurationIssues = computed(() => {
+  const cardSorting = props.test?.testStructure?.cardSorting
+  if (
+    !cardSorting ||
+    typeof cardSorting !== 'object' ||
+    Array.isArray(cardSorting)
+  ) {
+    return ['missingStructure']
+  }
+
+  const issues = []
+  const allowCreateCategories = !!cardSorting.options?.allow_create_categories
+
+  if (!allowCreateCategories) {
+    if (!Array.isArray(cardSorting.categories)) {
+      issues.push('invalidCategories')
+    } else if (cardSorting.categories.length === 0) {
+      issues.push('missingCategories')
+    }
+  }
+
+  if (!Array.isArray(cardSorting.cards)) {
+    issues.push('invalidCards')
+  } else if (cardSorting.cards.length === 0) {
+    issues.push('missingCards')
+  }
+
+  return issues
+})
+
+const canStartCardSorting = computed(
+  () => cardSortingConfigurationIssues.value.length === 0,
+)
+
+const cardSortingConfigurationIssueMessages = computed(() =>
+  cardSortingConfigurationIssues.value.map((issue) =>
+    t(`CardSorting.configurationIssues.${issue}`),
+  ),
+)
+
+const truncateDescription = (description) => {
+  if (!description || description.length <= 150) return description
+  return `${description.slice(0, 147)}...`
+}
+
+const startTest = () => {
+  if (!canStartCardSorting.value) return
+
+  const startScreen = document.querySelector('.start-screen')
+  if (startScreen) startScreen.classList.add('leaving')
+
+  setTimeout(() => {
+    start.value = false
+  }, 1000)
+}
+
+const handleWelcomeStart = async () => {
+  await safelyAnnounce(t('UserTestView.stepper.consent'), 1)
+  globalIndex.value = 1
+}
 
 const recordingFlags = computed(() => {
   const options = props.test?.testStructure?.cardSorting?.options || {}
@@ -470,6 +626,25 @@ const hasPostTest = computed(() => {
     props.test?.testStructure?.postTest != null &&
     props.test?.testStructure?.postTest.length > 0
   )
+})
+
+const welcomeSections = computed(() => {
+  const message = props.test?.testStructure?.welcomeMessage
+  if (!message) return []
+  return [{ id: 'welcome', content: message }]
+})
+
+const welcomeSteps = computed(() => {
+  const steps = [t('CardSorting.welcomeSteps.consent')]
+  if (hasPreTest.value) {
+    steps.push(t('CardSorting.welcomeSteps.preTest'))
+  }
+  steps.push(t('CardSorting.title'))
+  if (hasPostTest.value) {
+    steps.push(t('CardSorting.welcomeSteps.postTest'))
+  }
+  steps.push(t('CardSorting.welcomeSteps.submission'))
+  return steps
 })
 
 // Mirrors UserTestView stepper mapping (no eye tracking / no PreTasks)
@@ -686,8 +861,10 @@ const completeStep = async (type) => {
       localAnswer.consentCompleted = true
       localAnswer.consent = props.test.testStructure.consent || ''
       if (hasPreTest.value) {
+        await safelyAnnounce(t('UserTestView.stepper.preTest'), 2)
         globalIndex.value = 2
       } else {
+        await safelyAnnounce(t('UserTestView.stepper.tasks'), 2)
         localAnswer.preTestCompleted = true
         globalIndex.value = 4
         if (!hasAnyRecording.value) sortingStarted.value = true
@@ -697,6 +874,7 @@ const completeStep = async (type) => {
     }
 
     if (type === 'preTest') {
+      await safelyAnnounce(t('UserTestView.stepper.tasks'), 3)
       localAnswer.preTestCompleted = true
       globalIndex.value = 4
       if (!hasAnyRecording.value) sortingStarted.value = true
@@ -706,8 +884,10 @@ const completeStep = async (type) => {
 
     if (type === 'sorting') {
       if (hasPostTest.value) {
+        await safelyAnnounce(t('UserTestView.stepper.postTest'), 4)
         globalIndex.value = 5
       } else {
+        await safelyAnnounce(t('UserTestView.stepper.completion'), 4)
         localAnswer.postTestCompleted = true
         globalIndex.value = 6
       }
@@ -716,6 +896,7 @@ const completeStep = async (type) => {
     }
 
     if (type === 'postTest') {
+      await safelyAnnounce(t('UserTestView.stepper.completion'), 5)
       localAnswer.postTestCompleted = true
       globalIndex.value = 6
       await savePartial()
@@ -775,6 +956,86 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+.start-screen {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background-size: 200% 200%;
+  animation: subtleGradient 20s ease-in-out infinite;
+  background-image: linear-gradient(
+    160deg,
+    #00213f 0%,
+    #1a2f4f 35%,
+    #303f9f 100%
+  );
+  transition: opacity 8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.start-screen > :not(.session-backdrop-mark) {
+  position: relative;
+  z-index: 1;
+}
+
+.start-screen.leaving,
+.start-screen.leaving > *,
+.start-screen.leaving::before {
+  opacity: 0;
+  transition-duration: 1.2s;
+}
+
+.start-screen__alert-details {
+  margin: 8px 0 0;
+  padding-left: 1.25rem;
+}
+
+@keyframes subtleGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.welcome-main-centered {
+  min-height: 100vh;
+  align-items: center;
+}
+
+.session-transparent {
+  background: transparent;
+}
+
+.session-transparent :deep(.v-card--variant-elevated),
+.session-transparent :deep(.v-card--variant-flat) {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.welcome-content-centered {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.step-announcement-container {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #00213f;
+}
+
 .sticky-stepper {
   position: sticky;
   top: 0;

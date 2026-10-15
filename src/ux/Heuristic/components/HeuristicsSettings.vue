@@ -219,6 +219,10 @@ const studyMode = computed(() => {
 
   if (!currentTest) return 'traditional'
 
+  if (['traditional', 'detailed', 'weights'].includes(currentTest.studyMode)) {
+    return currentTest.studyMode
+  }
+
   if (currentTest.useWeights === true) {
     return 'weights'
   }
@@ -306,8 +310,8 @@ const changeStudyMode = async (mode) => {
     },
     detailed: {
       useWeights: false,
-      useFrequency: false,
-      useSeverity: false,
+      useFrequency: true,
+      useSeverity: true,
     },
     weights: {
       useWeights: true,
@@ -317,7 +321,7 @@ const changeStudyMode = async (mode) => {
   }
 
   try {
-    const settings = modeSettings[mode]
+    const settings = { ...modeSettings[mode], studyMode: mode }
     store.commit('SET_TEST', { ...test.value, ...settings })
     localUseFrequency.value = settings.useFrequency
     localUseSeverity.value = settings.useSeverity

@@ -95,6 +95,7 @@ defineProps({
     width: 100%;
   }
 }
+
 .text-body {
   font-size: 1.625rem;
   font-weight: 300;

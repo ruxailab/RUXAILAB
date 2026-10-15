@@ -1224,6 +1224,7 @@
     },
     "cards": {
       "title": "Selecciona una heurística",
+      "titleWithName": "Evaluación heurística de {name}",
       "description": "Revisa el progreso de cada heurística y elige una para responder sus preguntas.",
       "questionsCount": "{count} preguntas",
       "open": "Evaluar heurística",
@@ -1232,12 +1233,16 @@
       "noDescription": "Revisa esta heurística y responde sus preguntas según tu evaluación."
     },
     "answer": {
+      "weight": "Peso relativo",
+      "invalidWeight": "Selecciona un número entero del 1 al 10.",
+      "weightHelp": "Selecciona un peso relativo del 1 al 10. Los valores mayores indican más importancia.",
       "currentLocation": "Heurística {heuristic} · Pregunta {current} de {total}",
       "responseType": "Tipo de respuesta",
       "responseTypeHint": "Escoge el formato de respuesta una vez. Se usará en todas las preguntas de esta heurística.",
       "assessment": "Evaluación",
       "assessmentHint": "Selecciona la opción que mejor refleje tu evaluación para esta pregunta.",
       "optionsAnalysis": "Análisis de opciones",
+      "required": "Obligatorio",
       "optionsAnalysisHint": "Evalúa la pregunta usando las opciones configuradas, severidad, frecuencia o ambas.",
       "evidence": "Evidencias y comentarios",
       "evidenceSubtitle": "Escribe el motivo de tu evaluación y añade evidencias si hace falta.",
@@ -2605,6 +2610,27 @@
   },
   "CardSorting": {
     "title": "Card Sorting",
+    "invalidConfiguration": "Este estudio de card sorting no se puede iniciar.",
+    "welcomeTitle": "¡Bienvenido a RUXAILAB!",
+    "welcomeDescription": "Vas a participar en un estudio de card sorting. Organizarás tarjetas en categorías para que podamos entender cómo agrupas la información.",
+    "howItWorks": "¿Cómo funciona este estudio?",
+    "welcomePhases": "Ordenarás las tarjetas en las categorías que te parezcan más adecuadas. No hay respuestas correctas o incorrectas: lo que nos interesa es cómo agrupas la información.",
+    "welcomeSummary": "Aquí puedes ver un resumen de las fases que seguirás:",
+    "welcomeReady": "Cuando estés listo, haz clic en el botón para comenzar. Puedes avanzar a tu propio ritmo y detenerte en cualquier momento si lo necesitas.",
+    "startStudy": "Empezar el estudio",
+    "welcomeSteps": {
+      "consent": "Consentimiento",
+      "preTest": "Preguntas iniciales",
+      "postTest": "Preguntas finales",
+      "submission": "Envío final"
+    },
+    "configurationIssues": {
+      "missingStructure": "Falta la estructura de card sorting en el estudio.",
+      "missingCategories": "No hay categorías configuradas.",
+      "missingCards": "No hay tarjetas configuradas.",
+      "invalidCategories": "Las categorías no son una lista válida.",
+      "invalidCards": "Las tarjetas no son una lista válida."
+    },
     "noCategory": "Sin categoría",
     "noCards": "No se encontraron tarjetas",
     "of": "de",
