@@ -223,44 +223,21 @@
                 </v-window-item>
 
                 <v-window-item v-if="hasTranscriptionData" value="transcript">
-                  <v-sheet class="rounded-lg" color="grey-lighten-5">
-                    <v-alert
-                      v-if="!canTranscribe"
-                      type="info"
-                      variant="tonal"
-                      density="comfortable"
-                      class="ma-4 mb-0"
-                    >
-                      {{ transcriptionUnavailableMessage }}
-                    </v-alert>
-
-                    <TimelinePanel
-                      v-if="canTranscribe"
-                      :key="timelinePanelKey"
-                      :answers-doc-id="answersDocId"
-                      :user-doc-id="userId"
-                      :task-id="resolvedTaskId"
-                      :study-id="testAnswer?.studyId || null"
-                      :audio-url-evaluator="taskAnswer?.audioRecordURL"
-                      :audio-url-moderator="taskAnswer?.moderatorAudioURL"
-                      :show-inline-result="true"
-                      :show-inline-empty-state="false"
-                      @saved="onTranscriptionSaved"
-                    />
-
-                    <TranscriptionsPanel
-                      v-if="canLoadTranscriptions"
-                      :key="transcriptionPanelKey"
-                      :answers-doc-id="answersDocId"
-                      :user-doc-id="userId"
-                      :task-id="resolvedTaskId"
-                      :transcription-doc-id="
-                        latestTranscriptionDocId ||
-                        taskAnswer?.transcriptionDocId
-                      "
-                      @deleted="onTranscriptionDeleted"
-                    />
-                  </v-sheet>
+                  <SessionTranscriptionPanel
+                    :key="transcriptionPanelKey"
+                    :answers-doc-id="answersDocId"
+                    :user-doc-id="userId"
+                    :task-id="resolvedTaskId"
+                    :study-id="testAnswer?.studyId || null"
+                    :transcription-doc-id="
+                      latestTranscriptionDocId ||
+                      taskAnswer?.transcriptionDocId
+                    "
+                    :can-transcribe="canTranscribe"
+                    :unavailable-message="transcriptionUnavailableMessage"
+                    @saved="onTranscriptionSaved"
+                    @deleted="onTranscriptionDeleted"
+                  />
                 </v-window-item>
 
                 <v-window-item value="notes">
@@ -395,8 +372,7 @@ import EyeTrackingStats from '../sessions/EyeTrackingStats.vue'
 import FacialSentimentPanel from '../sentimentAnalysis/FacialSentimentPanel.vue'
 import TextSentimentPanel from '../sentimentAnalysis/TextSentimentPanel.vue'
 import EyeTrackingOverlay from '../answers/EyeTrackingOverlay.vue'
-import TimelinePanel from '@/ux/UserTest/components/transcription/TimeLinePanel.vue'
-import TranscriptionsPanel from '@/ux/UserTest/components/transcription/TranscriptionsPanel.vue'
+import SessionTranscriptionPanel from '@/ux/UserTest/components/transcription/SessionTranscriptionPanel.vue'
 
 const answerController = new AnswerController()
 
@@ -634,11 +610,6 @@ const transcriptionUnavailableMessage = computed(() => {
   }
   return 'Missing session identifiers to generate a transcription.'
 })
-
-const timelinePanelKey = computed(
-  () =>
-    `timeline-${props.userId}:${resolvedTaskId.value}:${transcriptionRefreshKey.value}`,
-)
 
 const transcriptionPanelKey = computed(
   () =>
