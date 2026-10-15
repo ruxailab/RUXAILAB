@@ -715,6 +715,11 @@ const router = useRouter()
 const { t } = useI18n()
 let studyLogging = null
 
+const signOut = async () => {
+  await store.dispatch('logout')
+  router.push('/signin')
+}
+
 // Anonymous participants (links without login) log under their anonymous
 // account, the same ID their answers are saved under.
 const participantUid = () =>

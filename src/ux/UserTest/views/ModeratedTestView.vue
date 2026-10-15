@@ -1343,7 +1343,7 @@ const setTestAnswer = async () => {
 }
 
 const signOut = async () => {
-  await store.dispatch('signOut')
+  await store.dispatch('logout')
   router.push('/signin')
 }
 
