@@ -62,9 +62,11 @@
                   <video
                     ref="mainVideo1"
                     class="video-rect-skeleton"
-                    controls
+                    playsinline
                     @timeupdate="onTimeUpdate"
                     @loadedmetadata="onMetadataLoaded"
+                    @play="onVideoPlay"
+                    @pause="onVideoPause"
                   >
                     <source
                       :src="taskAnswer?.webcamRecordURL"
@@ -73,6 +75,16 @@
                   </video>
                 </div>
               </div>
+
+              <audio
+                v-if="hasTaskAudio"
+                ref="taskAudio"
+                preload="auto"
+                :src="taskAnswer.audioRecordURL"
+                @loadedmetadata="onMetadataLoaded"
+                @play="onVideoPlay"
+                @pause="onVideoPause"
+              />
 
               <div v-if="showScreenZone" class="video-zone">
                 <div class="video-zone-label">
@@ -86,6 +98,7 @@
                   <video
                     ref="mainVideo2"
                     class="video-rect-skeleton"
+                    playsinline
                     @timeupdate="onTimeUpdate"
                     @loadedmetadata="onMetadataLoaded"
                     @play="onVideoPlay"
@@ -131,7 +144,7 @@
                   Eye Tracker
                 </v-tab>
                 <v-tab v-if="hasSentimentData" value="sentimental">
-                  Sentiment Analysis
+                  {{ $t('analytics.sentimentAnalytics') }}
                 </v-tab>
                 <v-tab v-if="hasTranscriptionData" value="transcript">
                   Transcriptions
@@ -210,44 +223,21 @@
                 </v-window-item>
 
                 <v-window-item v-if="hasTranscriptionData" value="transcript">
-                  <v-sheet class="rounded-lg" color="grey-lighten-5">
-                    <v-alert
-                      v-if="!canTranscribe"
-                      type="info"
-                      variant="tonal"
-                      density="comfortable"
-                      class="ma-4 mb-0"
-                    >
-                      {{ transcriptionUnavailableMessage }}
-                    </v-alert>
-
-                    <TimelinePanel
-                      v-if="canTranscribe"
-                      :key="timelinePanelKey"
-                      :answers-doc-id="answersDocId"
-                      :user-doc-id="userId"
-                      :task-id="resolvedTaskId"
-                      :study-id="testAnswer?.studyId || null"
-                      :audio-url-evaluator="taskAnswer?.audioRecordURL"
-                      :audio-url-moderator="taskAnswer?.moderatorAudioURL"
-                      :show-inline-result="true"
-                      :show-inline-empty-state="false"
-                      @saved="onTranscriptionSaved"
-                    />
-
-                    <TranscriptionsPanel
-                      v-if="canLoadTranscriptions"
-                      :key="transcriptionPanelKey"
-                      :answers-doc-id="answersDocId"
-                      :user-doc-id="userId"
-                      :task-id="resolvedTaskId"
-                      :transcription-doc-id="
-                        latestTranscriptionDocId ||
-                        taskAnswer?.transcriptionDocId
-                      "
-                      @deleted="onTranscriptionDeleted"
-                    />
-                  </v-sheet>
+                  <SessionTranscriptionPanel
+                    :key="transcriptionPanelKey"
+                    :answers-doc-id="answersDocId"
+                    :user-doc-id="userId"
+                    :task-id="resolvedTaskId"
+                    :study-id="testAnswer?.studyId || null"
+                    :transcription-doc-id="
+                      latestTranscriptionDocId ||
+                      taskAnswer?.transcriptionDocId
+                    "
+                    :can-transcribe="canTranscribe"
+                    :unavailable-message="transcriptionUnavailableMessage"
+                    @saved="onTranscriptionSaved"
+                    @deleted="onTranscriptionDeleted"
+                  />
                 </v-window-item>
 
                 <v-window-item value="notes">
@@ -371,7 +361,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onBeforeUnmount, computed } from 'vue'
+import { ref, watch, onBeforeUnmount, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useManagedListeners } from '@/shared/composables/useManagedListeners'
 import AnswerController from '@/shared/controllers/AnswerController'
@@ -382,8 +372,7 @@ import EyeTrackingStats from '../sessions/EyeTrackingStats.vue'
 import FacialSentimentPanel from '../sentimentAnalysis/FacialSentimentPanel.vue'
 import TextSentimentPanel from '../sentimentAnalysis/TextSentimentPanel.vue'
 import EyeTrackingOverlay from '../answers/EyeTrackingOverlay.vue'
-import TimelinePanel from '@/ux/UserTest/components/transcription/TimeLinePanel.vue'
-import TranscriptionsPanel from '@/ux/UserTest/components/transcription/TranscriptionsPanel.vue'
+import SessionTranscriptionPanel from '@/ux/UserTest/components/transcription/SessionTranscriptionPanel.vue'
 
 const answerController = new AnswerController()
 
@@ -409,6 +398,7 @@ const open = ref(props.modelValue)
 const rightTab = ref('eye')
 const mainVideo1 = ref(null)
 const mainVideo2 = ref(null)
+const taskAudio = ref(null)
 const isPlaying = ref(false)
 const videoDuration = ref(0)
 const videoCurrentTime = ref(0)
@@ -621,11 +611,6 @@ const transcriptionUnavailableMessage = computed(() => {
   return 'Missing session identifiers to generate a transcription.'
 })
 
-const timelinePanelKey = computed(
-  () =>
-    `timeline-${props.userId}:${resolvedTaskId.value}:${transcriptionRefreshKey.value}`,
-)
-
 const transcriptionPanelKey = computed(
   () =>
     `transcriptions-${props.userId}:${resolvedTaskId.value}:${transcriptionRefreshKey.value}`,
@@ -671,12 +656,75 @@ const displayTaskName = computed(() => {
 })
 
 const mockEyeTracking = { accuracy: 92, fixations: 34 }
+const DRIFT_SECONDS = 0.35
+const AUDIO_LEAD_SECONDS = 1
+let holdVideosForAudioLead = false
+
+function videoElements() {
+  return [mainVideo1.value, mainVideo2.value].filter(Boolean)
+}
+
+function mountedMedia() {
+  return [...videoElements(), taskAudio.value].filter(Boolean)
+}
+
+function playbackDuration(media) {
+  if (!Number.isFinite(media.duration) || media.duration <= 0) return 0
+  if (media === taskAudio.value && videoElements().length) {
+    return Math.max(0, media.duration - AUDIO_LEAD_SECONDS)
+  }
+  return media.duration
+}
+
+function seekMedia(media, time) {
+  if (!media || !Number.isFinite(time)) return
+  const duration = Number.isFinite(media.duration) ? media.duration : time
+  const nextTime = Math.min(Math.max(time, 0), duration)
+  if (Math.abs(media.currentTime - nextTime) <= 0.05) return
+  media.currentTime = nextTime
+}
+
+function audioTargetFor(videoTime) {
+  return videoTime + AUDIO_LEAD_SECONDS
+}
+
+function audioIsLeading(videoTime) {
+  const audio = taskAudio.value
+  if (!audio) return false
+  const target = audioTargetFor(videoTime)
+  return Math.abs(audio.currentTime - target) <= 0.15
+}
+
+function audioIsInsideLeadIn(videoTime) {
+  const audio = taskAudio.value
+  if (!audio) return false
+  return (
+    audio.currentTime >= videoTime - 0.05 &&
+    audio.currentTime < audioTargetFor(videoTime) - 0.05
+  )
+}
 
 function onMetadataLoaded(event) {
-  const video = event.target
+  const media = event.target
+  const durations = mountedMedia()
+    .map(playbackDuration)
+    .filter((duration) => duration > 0)
 
-  videoDuration.value = video.duration
+  videoDuration.value = durations.length
+    ? Math.max(...durations)
+    : media.duration
   videoReady.value = true
+
+  if (videoCurrentTime.value > 0) {
+    const target =
+      media === taskAudio.value
+        ? audioTargetFor(videoCurrentTime.value)
+        : videoCurrentTime.value
+    seekMedia(media, target)
+  }
+  if (!isPlaying.value || !media.paused) return
+  if (media !== taskAudio.value && holdVideosForAudioLead) return
+  media.play().catch(() => {})
 }
 
 function onTimeUpdate(event) {
@@ -685,51 +733,166 @@ function onTimeUpdate(event) {
   }
 }
 
+function releaseVideos() {
+  const time = videoCurrentTime.value
+  holdVideosForAudioLead = false
+  videoElements().forEach((video) => {
+    if (video.ended) return
+    seekMedia(video, time)
+    video.play().catch(() => {})
+  })
+}
+
 function startVideoSync() {
   cancelAnimationFrame(rafId)
   const loop = () => {
-    const video = mainVideo2.value || mainVideo1.value
-    if (video && !video.paused) {
-      videoCurrentTime.value = video.currentTime
-      rafId = requestAnimationFrame(loop)
-    } else {
+    const audio = taskAudio.value
+    const videos = videoElements()
+    const playingVideos = videos.filter((video) => !video.paused && !video.ended)
+    const audioPlaying = Boolean(audio && !audio.paused && !audio.ended)
+
+    if (!playingVideos.length && !audioPlaying) {
       isPlaying.value = false
+      holdVideosForAudioLead = false
+      return
     }
+
+    if (!playingVideos.length && audioPlaying) {
+      const videosWaiting = videos.some((video) => video.paused && !video.ended)
+      if (videosWaiting && holdVideosForAudioLead) {
+        const releaseAt = audioTargetFor(videoCurrentTime.value)
+        if (audio.currentTime + 0.05 >= releaseAt || audio.ended) releaseVideos()
+      } else if (!videosWaiting) {
+        videoCurrentTime.value = Math.max(
+          0,
+          audio.currentTime - AUDIO_LEAD_SECONDS,
+        )
+      }
+      rafId = requestAnimationFrame(loop)
+      return
+    }
+
+    const lead = playingVideos.includes(mainVideo2.value)
+      ? mainVideo2.value
+      : playingVideos[0]
+    videoCurrentTime.value = lead.currentTime
+
+    playingVideos.forEach((video) => {
+      if (video === lead) return
+      if (Math.abs(video.currentTime - lead.currentTime) > DRIFT_SECONDS) {
+        seekMedia(video, lead.currentTime)
+      }
+    })
+
+    if (audio && !audio.ended) {
+      const target = audioTargetFor(lead.currentTime)
+      if (audio.paused || Math.abs(audio.currentTime - target) > DRIFT_SECONDS) {
+        seekMedia(audio, target)
+        if (audio.paused) audio.play().catch(() => {})
+      }
+    }
+
+    rafId = requestAnimationFrame(loop)
   }
   rafId = requestAnimationFrame(loop)
 }
 
 function stopVideoSync() {
   cancelAnimationFrame(rafId)
+  rafId = null
 }
 
 function onVideoPlay() {
+  if (isPlaying.value) return
   isPlaying.value = true
   startVideoSync()
 }
 
 function onVideoPause() {
+  const anyPlaying = mountedMedia().some(
+    (video) => !video.paused && !video.ended,
+  )
+  if (anyPlaying) return
   isPlaying.value = false
   stopVideoSync()
 }
 
-const togglePlay = () => {
-  const video = mainVideo2.value || mainVideo1.value
-  if (!video) return
+const togglePlay = async () => {
+  const media = mountedMedia()
+  if (!media.length) return
 
-  if (video.paused) {
-    video.play()
-  } else {
-    video.pause()
+  if (isPlaying.value) {
+    holdVideosForAudioLead = false
+    media.forEach((item) => item.pause())
+    isPlaying.value = false
+    stopVideoSync()
+    return
   }
+
+  const time = videoCurrentTime.value
+  const audio = taskAudio.value
+  videoElements().forEach((video) => {
+    if (video.ended) video.currentTime = 0
+    else seekMedia(video, time)
+  })
+
+  const startVideosNow = !audio || audioIsLeading(time)
+  holdVideosForAudioLead = Boolean(audio) && !startVideosNow
+
+  if (audio) {
+    if (audioIsLeading(time)) seekMedia(audio, audioTargetFor(time))
+    else if (!audioIsInsideLeadIn(time)) seekMedia(audio, time)
+    try {
+      await audio.play()
+    } catch {
+      holdVideosForAudioLead = false
+    }
+  }
+
+  if (!holdVideosForAudioLead) {
+    await Promise.all(
+      videoElements().map(async (video) => {
+        try {
+          await video.play()
+        } catch {
+          // One recording can fail to start without stopping the other.
+        }
+      }),
+    )
+  }
+
+  const anyPlaying = mountedMedia().some(
+    (item) => !item.paused && !item.ended,
+  )
+  if (!anyPlaying) {
+    holdVideosForAudioLead = false
+    return
+  }
+  isPlaying.value = true
+  startVideoSync()
 }
 
 const onSeek = (time) => {
-  const video = mainVideo2.value || mainVideo1.value
-  if (!video) return
-
-  video.currentTime = time
   videoCurrentTime.value = time
+  videoElements().forEach((video) => seekMedia(video, time))
+
+  const audio = taskAudio.value
+  if (audio) {
+    const restartLeadIn = time <= 0.05
+    seekMedia(audio, restartLeadIn ? 0 : audioTargetFor(time))
+    if (isPlaying.value && restartLeadIn) {
+      holdVideosForAudioLead = true
+      videoElements().forEach((video) => video.pause())
+      audio.play().catch(() => {})
+      return
+    }
+  }
+
+  holdVideosForAudioLead = false
+  if (!isPlaying.value) return
+  videoElements().forEach((video) => {
+    if (!video.ended && video.paused) video.play().catch(() => {})
+  })
 }
 
 const close = () => {
@@ -776,16 +939,6 @@ watch(
   { deep: true },
 )
 
-onMounted(() => {
-  const video = mainVideo2.value
-  if (!video) return
-
-  managedListeners.addListeners([
-    { target: video, event: 'loadedmetadata', handler: onMetadataLoaded },
-    { target: video, event: 'play', handler: onVideoPlay },
-    { target: video, event: 'pause', handler: onVideoPause },
-  ])
-})
 onBeforeUnmount(() => {
   managedListeners.removeListeners()
 })

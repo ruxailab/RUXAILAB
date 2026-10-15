@@ -1,5 +1,6 @@
 import { admin, functions } from '../core/firebase/f.firebase.js'
 import InviteUtils from '../utils/inviteUtils.js'
+import { assertInviteLinkAllowed } from './studyMembership.js'
 
 export const isAcceptedInviteRetry = (invite, uid, authenticatedUid) =>
   !invite.isPublic &&
@@ -198,6 +199,7 @@ export const validateInvite = functions.onCall({
 export const generateInvitationLink = functions.onCall({
   handler: async (data) => {
     const content = data.data || data
+    const actorId = data?.auth?.uid
 
     const {
       studyId,
@@ -222,6 +224,33 @@ export const generateInvitationLink = functions.onCall({
         'Missing recipient email',
       )
     }
+
+    // An invitation grants the role it carries, so creating one needs the
+    // same permission as inviting someone directly.
+    if (
+      !actorId ||
+      data?.auth?.token?.firebase?.sign_in_provider === 'anonymous'
+    ) {
+      throw new functions.https.HttpsError(
+        'permission-denied',
+        'Invitations are not permitted',
+      )
+    }
+    const firestore = admin.firestore()
+    const [studySnap, actorSnap] = await Promise.all([
+      firestore.collection('tests').doc(studyId).get(),
+      firestore.collection('users').doc(actorId).get(),
+    ])
+    if (!studySnap.exists) {
+      throw new functions.https.HttpsError('not-found', 'Study not found')
+    }
+    assertInviteLinkAllowed({
+      study: studySnap.data(),
+      actorId,
+      isSuperAdmin: actorSnap.exists && actorSnap.data()?.accessLevel === 0,
+      accessLevel,
+      membershipType: membershipType || 'cooperator',
+    })
 
     const { inviteLink, inviteToken, expirationDate } =
       await InviteUtils.generateInviteLink(

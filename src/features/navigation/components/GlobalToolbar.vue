@@ -170,6 +170,9 @@ const studySubtypeLabel = computed(() => {
   const subtype = study?.subType
   if (!subtype) return ''
 
+  // Card Sorting and similar methods store the type itself as subType.
+  if (subtype.toUpperCase() === normalizeStudyType(study.testType)) return ''
+
   if (normalizeStudyType(study.testType) === STUDY_TYPES.USER) {
     return getMethodName(study, methodLanguage.value)
   }

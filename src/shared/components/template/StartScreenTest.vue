@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-row class="start-screen pa-0 ma-0" align="center">
+      <SessionBackdropMark position="absolute" />
       <v-col md="8" class="ma-5 pa-5">
         <img
           src="@/assets/logo_full_white.png"
@@ -25,7 +26,7 @@
           {{ $t('buttons.startTest') }}
         </v-btn>
         <v-alert
-          v-if="alertMessage"
+          v-if="alertMessage || alertDetails.length"
           type="error"
           variant="outlined"
           class="mt-4"
@@ -35,7 +36,18 @@
             border-color: white;
           "
         >
-          <span class="text-white">{{ alertMessage }}</span>
+          <span v-if="alertMessage" class="text-white d-block">
+            {{ alertMessage }}
+          </span>
+          <ul v-if="alertDetails.length" class="start-screen__alert-details">
+            <li
+              v-for="(detail, index) in alertDetails"
+              :key="index"
+              class="text-white"
+            >
+              {{ detail }}
+            </li>
+          </ul>
         </v-alert>
       </v-col>
     </v-row>
@@ -43,6 +55,8 @@
 </template>
 
 <script setup>
+import SessionBackdropMark from '@/shared/components/SessionBackdropMark.vue'
+
 // Props
 defineProps({
   test: {
@@ -56,6 +70,10 @@ defineProps({
   alertMessage: {
     type: String,
     default: '',
+  },
+  alertDetails: {
+    type: Array,
+    default: () => [],
   },
 })
 
@@ -109,25 +127,12 @@ const startTest = () => emit('start')
   }
 }
 
-.start-screen::before {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 140%;
-  margin-right: -450px;
-  margin-top: 100px;
-  background-image: url(../../../assets/logo_small_red.png);
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: right top;
-  opacity: 0.2;
-}
-
 .start-screen.leaving::before {
   opacity: 0;
+}
+
+.start-screen__alert-details {
+  margin: 8px 0 0;
+  padding-left: 1.25rem;
 }
 </style>

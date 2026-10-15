@@ -32,6 +32,7 @@ describe('HeuristicAnswerStep logging fields', () => {
           heuristicQuestions: [{ heuristicQuestions: [{}] }],
         },
         test: {
+          testTitle: 'Study Alpha',
           testStructure: [canonicalFirst, displayedFirst],
           testOptions: [],
         },
@@ -46,6 +47,8 @@ describe('HeuristicAnswerStep logging fields', () => {
         },
       },
     })
+
+    expect(wrapper.find('.answer-study-name').text()).toBe('Study Alpha')
 
     const options = wrapper.findComponent(HeuristicOptionsAnalysisSection)
     expect(options.attributes('data-study-field-ref')).toBe(
@@ -62,6 +65,69 @@ describe('HeuristicAnswerStep logging fields', () => {
       ['heuristic:1:question:0', 'severity'],
     ])
   })
+})
+
+describe('evaluation modes', () => {
+  it.each(['traditional', 'weights', 'detailed'])(
+    'renders %s at the correct level',
+    (studyMode) => {
+      const heuristic = {
+        id: 'h',
+        title: 'Heuristic title',
+        description: 'Heuristic description',
+        questions: [
+          { id: 'q1', title: 'Question one' },
+          { id: 'q2', title: 'Question two' },
+        ],
+      }
+      const wrapper = shallowMount(HeuristicAnswerStep, {
+        props: {
+          heuristic,
+          heuristics: [heuristic],
+          heurisIndex: 0,
+          currentUserTestAnswer: {
+            heuristicQuestions: [{ heuristicQuestions: [{}, {}] }],
+          },
+          test: { studyMode, testOptions: [{ text: 'Yes', value: 1 }] },
+        },
+        global: {
+          mocks: { $t: (key) => key },
+          stubs: {
+            ShowInfo: { template: '<div><slot name="content" /></div>' },
+            'v-btn': true,
+            'v-divider': true,
+            'v-icon': true,
+          },
+        },
+      })
+      expect(wrapper.find('.question-side-menu').exists()).toBe(
+        studyMode === 'detailed',
+      )
+      expect(wrapper.emitted('update-answer')).toHaveLength(
+        studyMode === 'detailed' ? 2 : 1,
+      )
+      const options = wrapper.findComponent(HeuristicOptionsAnalysisSection)
+      expect(options.props('selectedAnswerMode')).toBe(
+        {
+          traditional: 'frequencySeverity',
+          weights: 'weight',
+          detailed: 'customOptions',
+        }[studyMode],
+      )
+      if (studyMode !== 'detailed') {
+        expect(wrapper.text()).toContain('Heuristic description')
+        expect(wrapper.text()).not.toContain('Question one')
+      }
+      if (studyMode === 'weights') {
+        options.vm.$emit('update-metric', 'weight', 2.5)
+        expect(wrapper.emitted('update-answer').at(-1)[1]).toMatchObject({
+          mode: 'weight',
+          weight: 2.5,
+          value: 2.5,
+        })
+      }
+    },
+  )
 })
 
 describe('heuristic response option order', () => {
@@ -121,6 +187,7 @@ describe('HeuristicAnswer Firestore serialization', () => {
                 custom: { text: 'Yes', value: undefined },
                 metadata: [undefined],
               },
+              heuristicRecommendation: 'Improve the sign-up flow',
             }),
           ],
         }),
@@ -133,5 +200,6 @@ describe('HeuristicAnswer Firestore serialization', () => {
     expect(question).not.toHaveProperty('heuristicId')
     expect(question.heuristicAnswer.custom).toEqual({ text: 'Yes' })
     expect(question.heuristicAnswer.metadata).toEqual([null])
+    expect(question.heuristicRecommendation).toBe('Improve the sign-up flow')
   })
 })

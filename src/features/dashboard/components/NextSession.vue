@@ -17,20 +17,20 @@
     <v-card-text v-if="nextSession" class="pa-6">
       <!-- Session Header -->
       <div class="session-header mb-4 text-center">
-        <h3 class="session-title mb-2">{{ nextSession.testTitle }}</h3>
+        <h3 class="session-title mb-2">{{ sessionTitle }}</h3>
         <p class="session-description text-body-2 text-grey-darken-1 mb-3">
           {{
-            truncateDescription(nextSession.testDescription) ||
+            truncateDescription(sessionDescription) ||
             'No description available'
           }}
         </p>
         <v-chip
-          :color="getStatus(nextSession).variant"
+          :color="getStatus().variant"
           variant="tonal"
           size="small"
           class="status-chip"
         >
-          {{ getStatus(nextSession).label }}
+          {{ getStatus().label }}
         </v-chip>
       </div>
 
@@ -44,7 +44,7 @@
             class="info-icon"
           />
           <div class="info-content">
-            <div class="info-value">{{ getStudyType(nextSession) }}</div>
+            <div class="info-value">{{ getStudyType(study) }}</div>
             <div>{{ $t('Dashboard.studyType') }}</div>
           </div>
         </div>
@@ -57,7 +57,7 @@
           />
           <div class="info-content">
             <div class="info-value">
-              {{ nextSession.testAdmin?.email || 'Unknown' }}
+              {{ study.testAdmin?.email || 'Unknown' }}
             </div>
             <div>{{ $t('common.table.owner') }}</div>
           </div>
@@ -71,7 +71,7 @@
           />
           <div class="info-content">
             <div class="info-value">
-              {{ nextSession.evaluator || 'Unknown' }}
+              {{ participantEmails || 'Unknown' }}
             </div>
             <div>{{ $t('pages.sessions.evaluator') }}</div>
           </div>
@@ -84,7 +84,9 @@
             class="info-icon"
           />
           <div class="info-content">
-            <div class="info-value">{{ formatDate(nextSession.testDate) }}</div>
+            <div class="info-value">
+              {{ formatDate(nextSession.scheduledAt) }}
+            </div>
             <div>{{ $t('Dashboard.date') }}</div>
           </div>
         </div>
@@ -96,7 +98,9 @@
             class="info-icon"
           />
           <div class="info-content">
-            <div class="info-value">{{ formatTime(nextSession.testDate) }}</div>
+            <div class="info-value">
+              {{ formatTime(nextSession.scheduledAt) }}
+            </div>
             <div>{{ $t('Dashboard.time') }}</div>
           </div>
         </div>
@@ -110,12 +114,12 @@
         block
         rounded="lg"
         prepend-icon="mdi-play-circle"
-        :disabled="getStatus(nextSession) === SESSION_STATUSES.COMPLETED"
+        :disabled="getStatus() === SESSION_STATUSES.COMPLETED"
         class="action-button mt-6"
         @click="goto(nextSession)"
       >
         {{
-          getStatus(nextSession) !== SESSION_STATUSES.COMPLETED
+          getStatus() !== SESSION_STATUSES.COMPLETED
             ? $t('Dashboard.webinar.startSession')
             : $t('analytics.completed')
         }}
@@ -148,7 +152,9 @@ import {
   STUDY_TYPES,
   USER_STUDY_SUBTYPES,
 } from '@/shared/constants/methodDefinitions'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import {
   getSessionStatus,
   SESSION_STATUSES,
@@ -162,7 +168,27 @@ const props = defineProps({
 })
 
 const router = useRouter()
+const { locale } = useI18n()
 const { intlLocale } = useDateLocale()
+
+// Sessions come from the Session store: the study lives under `study`,
+// the schedule under `scheduledAt` and people under `participants`.
+const study = computed(() => props.nextSession?.study || {})
+
+const sessionTitle = computed(
+  () => study.value.testTitle || props.nextSession?.title || 'Session',
+)
+
+const sessionDescription = computed(
+  () => study.value.testDescription || props.nextSession?.message || '',
+)
+
+const participantEmails = computed(() =>
+  (props.nextSession?.participants || [])
+    .map((participant) => participant?.email)
+    .filter(Boolean)
+    .join(', '),
+)
 
 const truncateDescription = (description) => {
   if (!description || description.length <= 150) return description
@@ -171,8 +197,8 @@ const truncateDescription = (description) => {
 
 const getStatus = () => {
   return getSessionStatus(
-    props.nextSession.testDate,
-    props.nextSession.lifecycleStatus,
+    props.nextSession?.scheduledAt,
+    props.nextSession?.lifecycleStatus,
   )
 }
 
@@ -197,20 +223,21 @@ const formatTime = (dateStr) => {
 }
 
 function getStudyType(data) {
-  const testType = (data.testType || '').toUpperCase()
-  const subType = (data.subType || '').toUpperCase()
+  const testType = (data?.testType || '').toUpperCase()
+  const subType = (data?.subType || '').toUpperCase()
 
   if (
     testType === STUDY_TYPES.USER &&
     subType === USER_STUDY_SUBTYPES.MODERATED
   ) {
-    return getMethodName(data)
+    return getMethodName(data, locale.value)
   }
   return 'N/A'
 }
 
 const goto = (session) => {
-  const url = `/testview/${session.study.id}/${session.id}`
+  const studyId = session.study?.id ?? session.studyId
+  const url = `/testview/${studyId}/${session.id}`
   router.push(url)
 }
 </script>

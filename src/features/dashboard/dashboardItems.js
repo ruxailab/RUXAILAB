@@ -35,6 +35,11 @@ export const dashboardNavigationItems = [
         title: 'navigation.communityTemplates',
         icon: 'mdi-file-document',
       },
+      {
+        id: 'community-agents',
+        title: 'navigation.communityAgents',
+        icon: 'mdi-robot-outline',
+      },
     ],
   },
 ]

@@ -131,6 +131,38 @@ describe('UserController', () => {
       expect(readOneSpy).toHaveBeenNthCalledWith(2, 'tests', 'session-study')
       readOneSpy.mockRestore()
     })
+
+    it('keeps readable owned studies when one is deleted or denied', async () => {
+      const readOneSpy = jest
+        .spyOn(
+          Object.getPrototypeOf(Object.getPrototypeOf(userController)),
+          'readOne',
+        )
+        .mockImplementation(async (collection, id) => {
+          if (collection === 'users') {
+            return {
+              id,
+              data: () => ({
+                myTests: { kept: {}, deleted: {}, denied: {} },
+                myAnswers: {},
+              }),
+            }
+          }
+          if (id === 'denied') throw { code: 'permission-denied' }
+          return {
+            id,
+            exists: () => id === 'kept',
+            data: () => ({ testTitle: 'Kept study' }),
+          }
+        })
+
+      const user = await userController.getUserWithStudies('user-1')
+
+      expect(user.myTests).toEqual({
+        kept: { id: 'kept', testTitle: 'Kept study' },
+      })
+      readOneSpy.mockRestore()
+    })
   })
 
   describe('updateLevel', () => {
