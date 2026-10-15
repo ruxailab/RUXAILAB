@@ -17,38 +17,15 @@
     </div>
 
     <Snackbar />
-    <!-- Submit Alert Dialog -->
-    <v-dialog v-model="dialog" width="600" persistent>
-      <v-card>
-        <v-card-title class="text-h5 bg-error text-white" primary-title>
-          {{ $t('HeuristicsTestView.messages.submitTest') }}
-        </v-card-title>
-
-        <v-card-text>
-          {{ $t('HeuristicsTestView.messages.submitOnce') }}
-        </v-card-text>
-
-        <v-divider />
-
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            class="bg-grey-lighten-3"
-            variant="text"
-            @click="dialog = false"
-          >
-            {{ $t('HeuristicsTestView.actions.cancel') }}
-          </v-btn>
-          <v-btn
-            class="bg-error text-white ml-1"
-            variant="text"
-            @click="(submitAnswer(), (dialog = false))"
-          >
-            {{ $t('HeuristicsTestView.actions.submit') }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <SubmitDialog
+      v-model="dialog"
+      :title="$t('HeuristicsTestView.messages.submitTest')"
+      :message="$t('HeuristicsTestView.messages.submitOnce')"
+      :cancel-label="$t('buttons.cancel')"
+      :submit-label="$t('buttons.submit')"
+      @cancel="dialog = false"
+      @submit="(submitAnswer(), (dialog = false))"
+    />
 
     <AutoSaveStatusBanner
       v-if="!start && !currentUserTestAnswer?.submitted"
@@ -108,7 +85,11 @@
       @start="evaluatorInfoAcknowledged = true"
     /> -->
 
-    <v-container v-if="test && start" fluid class="session-backdrop-content pa-0">
+    <v-container
+      v-if="test && start"
+      fluid
+      class="session-backdrop-content pa-0"
+    >
       <v-row
         :class="[
           currentPage === TEST_PAGES.welcome
@@ -260,9 +241,7 @@
                     :disabled="currentUserTestAnswer?.submitted"
                     :editable="!currentUserTestAnswer?.submitted"
                     :complete="!isCurrentHeuristicStep(1)"
-                    :icon="
-                      isCurrentHeuristicStep(1) ? 'mdi-pencil' : undefined
-                    "
+                    :icon="isCurrentHeuristicStep(1) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
                     :class="{
                       'stepper-item--current': isCurrentHeuristicStep(1),
@@ -272,14 +251,14 @@
                   <v-divider />
                   <v-stepper-item
                     :value="2"
+                    :editable="!currentUserTestAnswer?.submitted"
+                    @click="navigateToStep(2)"
                     :title="$t('HeuristicsTestView.flow.heuristicEvaluation')"
                     :complete="
                       (review == false || currentUserTestAnswer?.submitted) &&
                       !isCurrentHeuristicStep(2)
                     "
-                    :icon="
-                      isCurrentHeuristicStep(2) ? 'mdi-pencil' : undefined
-                    "
+                    :icon="isCurrentHeuristicStep(2) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
                     :class="{
                       'stepper-item--current': isCurrentHeuristicStep(2),
@@ -288,14 +267,17 @@
                   <v-divider />
                   <v-stepper-item
                     :value="3"
+                    :editable="
+                      calculatedProgress === 100 &&
+                      !currentUserTestAnswer?.submitted
+                    "
+                    @click="navigateToStep(3)"
                     :title="$t('HeuristicsTestView.flow.finalSubmission')"
                     :complete="
                       !!currentUserTestAnswer?.submitted &&
                       !isCurrentHeuristicStep(3)
                     "
-                    :icon="
-                      isCurrentHeuristicStep(3) ? 'mdi-pencil' : undefined
-                    "
+                    :icon="isCurrentHeuristicStep(3) ? 'mdi-pencil' : undefined"
                     complete-icon="mdi-check"
                     :class="{
                       'stepper-item--current': isCurrentHeuristicStep(3),
@@ -308,8 +290,22 @@
 
           <v-row class="justify-center">
             <v-col cols="12" lg="10" xl="9">
+              <HeuristicInstructionsStep
+                v-if="currentPage === TEST_PAGES.instructions"
+                :sections="evaluatorInfoSections"
+                :disabled="isStartTestDisabled"
+                @start="navigateToStep(2)"
+              />
+
               <HeuristicCardsStep
-                v-if="index == 1 && review == true && showHeuristicCards"
+                v-if="
+                  currentPage === TEST_PAGES.answers &&
+                  index == 1 &&
+                  review == true &&
+                  showHeuristicCards
+                "
+                :is-traditional="resolveHeuristicStudyMode(test) !== 'detailed'"
+                :evaluation-name="test.testTitle || ''"
                 :heuristics="heuristics"
                 :test="test"
                 :current-user-test-answer="currentUserTestAnswer"
@@ -322,7 +318,12 @@
               />
 
               <HeuristicAnswerStep
-                v-if="index == 1 && review == true && !showHeuristicCards"
+                v-if="
+                  currentPage === TEST_PAGES.answers &&
+                  index == 1 &&
+                  review == true &&
+                  !showHeuristicCards
+                "
                 :heuristic="heuristics[heurisIndex]"
                 :heuristics="heuristics"
                 :heuris-index="heurisIndex"
@@ -384,8 +385,20 @@
                 "
               />
 
-              <div v-if="calculatedProgress == 100 && review == false">
-                <HeuristicFinishStep @submit="dialog = true" />
+              <div
+                v-if="
+                  currentPage === TEST_PAGES.answers &&
+                  calculatedProgress == 100 &&
+                  review == false
+                "
+              >
+                <FinishStep
+                  :final-message="$t('finishTest.finalMessage')"
+                  :congratulations="$t('finishTest.congratulations')"
+                  :submit-message="$t('finishTest.submitMessage')"
+                  :submit-btn="$t('buttons.submit')"
+                  @submit="dialog = true"
+                />
               </div>
             </v-col>
           </v-row>
@@ -480,9 +493,14 @@ import Snackbar from '@/shared/components/Snackbar'
 import StudyWelcomeStep from '@/shared/components/StudyWelcomeStep.vue'
 import HeuristicAnswerStep from '@/ux/Heuristic/components/steps/HeuristicAnswerStep.vue'
 import HeuristicCardsStep from '@/ux/Heuristic/components/steps/HeuristicCardsStep.vue'
-import HeuristicFinishStep from '@/ux/Heuristic/components/steps/HeuristicFinishStep.vue'
+import FinishStep from '@/ux/UserTest/components/steps/FinishStep.vue'
+import SubmitDialog from '@/ux/UserTest/components/SubmitDialog.vue'
 import HeuristicQuestionAnswer from '@/ux/Heuristic/models/HeuristicQuestionAnswer'
-import { resolveHeuristicAnswerMode } from '@/ux/Heuristic/utils/heuristicAnswerMode'
+import {
+  resolveHeuristicAnswerMode,
+  resolveHeuristicStudyMode,
+  heuristicResponseItems,
+} from '@/ux/Heuristic/utils/heuristicAnswerMode'
 import Heuristic from '@/ux/Heuristic/models/Heuristic'
 import { showSuccess, showError } from '@/shared/utils/toast'
 import { ACCESS_LEVEL } from '@/shared/utils/accessLevel'
@@ -602,18 +620,19 @@ const instructionSteps = computed(() => [
 
 const trackTimeEnabled = computed(() => test.value?.trackTime !== false)
 
+const hasConfiguredAnswerOptions = computed(() => {
+  if (resolveHeuristicStudyMode(test.value) === 'detailed') {
+    return Array.isArray(test.value?.testOptions) && test.value.testOptions.length > 0
+  }
+  return Boolean(resolveHeuristicAnswerMode(test.value))
+})
+
 const testDisabledReason = computed(() => {
   if (currentUserTestAnswer.value?.submitted) return 'already-completed'
 
   if (heuristics.value.length === 0) return 'no-heuristics'
 
-  const hasCustomOptions =
-    Array.isArray(test.value?.testOptions) && test.value.testOptions.length > 0
-
-  const frequencyEnabled = test.value?.useFrequency !== false
-  const severityEnabled = test.value?.useSeverity !== false
-
-  if (!hasCustomOptions && !frequencyEnabled && !severityEnabled) {
+  if (!hasConfiguredAnswerOptions.value) {
     return 'no-answer-options'
   }
 
@@ -630,6 +649,9 @@ const heuristicDescription = (heuristic) => {
   const directDescription =
     heuristic.description || heuristic.text || heuristic.subtitle
   if (directDescription) return directDescription
+  if (resolveHeuristicStudyMode(test.value) !== 'detailed') {
+    return t('HeuristicsTestView.cards.noDescription')
+  }
 
   const questionDescriptions = (
     Array.isArray(heuristic.questions) ? heuristic.questions : []
@@ -782,6 +804,7 @@ const hasTestDashboardAccess = computed(() => {
 })
 
 const heuristicStepperValue = computed(() => {
+  if (currentPage.value === TEST_PAGES.instructions) return 1
   if (currentUserTestAnswer.value?.submitted || review.value === false) return 3
   return 2
 })
@@ -889,6 +912,27 @@ const snapshotRunningTimer = (heuristicIndex) => {
   }
 }
 
+const navigateToStep = (step) => {
+  if (!answerInitialized.value || currentUserTestAnswer.value?.submitted) return
+  if (step !== 1 && !hasConfiguredAnswerOptions.value) {
+    showError(t('HeuristicsTestView.errors.noAnswerOptions'))
+    return
+  }
+  if (step === 3 && calculatedProgress.value !== 100) return
+
+  if (trackTimeEnabled.value) pauseTimer(heurisIndex.value)
+  start.value = false
+  currentPage.value = step === 1 ? TEST_PAGES.instructions : TEST_PAGES.answers
+  review.value = step !== 3
+  if (step === 2) {
+    currentUserTestAnswer.value.testStarted = true
+    index.value = 1
+    showHeuristicCards.value = true
+    if (trackTimeEnabled.value) startTimer(heurisIndex.value)
+  }
+  debouncedAutoSave()
+}
+
 const openInstructionsPage = () => {
   const startScreen = document.querySelector('.start-screen')
   if (startScreen) {
@@ -922,7 +966,7 @@ const startTest = async () => {
     })
     return
   }
-  if (!answerCompletionMode.value) {
+  if (!hasConfiguredAnswerOptions.value) {
     showError(t('HeuristicsTestView.errors.noAnswerOptions'))
     return
   }
@@ -935,6 +979,7 @@ const startTest = async () => {
   )
   start.value = false
   currentPage.value = TEST_PAGES.answers
+  review.value = true
   if (!returningToInstructions.value) {
     showHeuristicCards.value = true
     index.value = 1
@@ -952,6 +997,10 @@ const startTest = async () => {
 }
 
 const finishEvaluation = async () => {
+  if (!answerInitialized.value || currentUserTestAnswer.value?.submitted) return
+  if (calculatedProgress.value !== 100) return
+  if (trackTimeEnabled.value) pauseTimer(heurisIndex.value)
+
   await safelyShowNextStepAnnouncement(
     t('HeuristicsTestView.flow.finalSubmission'),
     3,
@@ -1282,6 +1331,14 @@ const isAnswerEmpty = (answer) => {
     }
 
     if (answer.mode) {
+      if (answer.mode === 'weight') {
+        return (
+          typeof answer.weight !== 'number' ||
+          !Number.isInteger(answer.weight) ||
+          answer.weight < 1 ||
+          answer.weight > 10
+        )
+      }
       if (answer.mode === 'frequency') {
         return answer.frequency === null || answer.frequency === undefined
       }
@@ -1348,6 +1405,15 @@ const isFilledAnswerValue = (value) =>
 const isAnswerCompleteForMode = (answer, mode = answerCompletionMode.value) => {
   if (!mode) return isAnswerValid(answer)
   if (!answer || typeof answer !== 'object') return false
+
+  if (mode === 'weight') {
+    return (
+      typeof answer.weight === 'number' &&
+      Number.isInteger(answer.weight) &&
+      answer.weight >= 1 &&
+      answer.weight <= 10
+    )
+  }
 
   if (mode === 'frequency') {
     return isFilledAnswerValue(answer.frequency ?? answer.value)
@@ -1433,6 +1499,14 @@ const perHeuristicProgress = (item) => {
   return total > 0 ? ((answered * 100) / total).toFixed(1) : 0
 }
 
+const reportSaveFailure = (error) => {
+  const code = typeof error?.code === 'string' ? error.code : ''
+  updateSaveStatus(
+    code ? `Failed to save (${code})` : 'Failed to save',
+    'error',
+  )
+}
+
 const autoSaveAnswer = async () => {
   if (
     !answerInitialized.value ||
@@ -1458,9 +1532,8 @@ const autoSaveAnswer = async () => {
 
   autoSaveInProgress.value = true
 
-  const orderedData = getOrderedHeuristicsForSave()
-
   try {
+    const orderedData = getOrderedHeuristicsForSave()
     await store.dispatch('saveTestAnswer', {
       data: orderedData,
       answersDocId: test.value.answersDocId,
@@ -1469,14 +1542,8 @@ const autoSaveAnswer = async () => {
     })
     lastSaveTime.value = new Date()
     updateSaveStatus('All changes saved', 'success')
-  } catch {
-    updateSaveStatus('Failed to save', 'error')
-    // Revert to default after 5 seconds
-    setTimeout(() => {
-      if (saveStatusType.value === 'error') {
-        updateSaveStatus('All changes saved', 'default')
-      }
-    }, 5000)
+  } catch (error) {
+    reportSaveFailure(error)
   } finally {
     autoSaveInProgress.value = false
   }
@@ -1526,9 +1593,8 @@ const manualSaveAnswer = async () => {
   autoSaveInProgress.value = true
   updateSaveStatus('Saving...', 'saving')
 
-  const orderedData = getOrderedHeuristicsForSave()
-
   try {
+    const orderedData = getOrderedHeuristicsForSave()
     await store.dispatch('saveTestAnswer', {
       data: orderedData,
       answersDocId: test.value.answersDocId,
@@ -1541,8 +1607,8 @@ const manualSaveAnswer = async () => {
 
     // Show manual save success toast
     showSuccess('HeuristicsTestView.messages.answerSaved')
-  } catch {
-    updateSaveStatus('Save failed', 'error')
+  } catch (error) {
+    reportSaveFailure(error)
     showError('HeuristicsTestView.errors.failedToSaveAnswer')
   } finally {
     autoSaveInProgress.value = false
@@ -1619,9 +1685,7 @@ const populateWithHeuristicQuestions = () => {
     // Initialize with empty questions if no data exists
     let totalQuestions = 0
     const heuristicQuestions = heuristics.value.map((heu) => {
-      const questions = (
-        heu.questions?.length ? heu.questions : [{ id: heu.id }]
-      ).map(
+      const questions = heuristicResponseItems(test.value, heu).map(
         (h) =>
           new HeuristicQuestionAnswer({
             heuristicId: h.id,
@@ -1661,58 +1725,57 @@ const populateWithHeuristicQuestions = () => {
         const existingQuestions = existingHeuristic.heuristicQuestions || []
 
         // Create or update questions
-        const questions = (
-          heu.questions?.length ? heu.questions : [{ id: heu.id }]
-        ).map((h, qIndex) => {
-          // Try to find existing answer for this question by heuristicId
-          let existingQuestion = existingQuestions.find(
-            (q) => q.heuristicId === h.id,
-          )
+        const questions = heuristicResponseItems(test.value, heu).map(
+          (h, qIndex) => {
+            // Try to find existing answer for this question by heuristicId
+            let existingQuestion = existingQuestions.find(
+              (q) => q.heuristicId === h.id,
+            )
 
-          // If not found by id, try by index
-          if (!existingQuestion && existingQuestions[qIndex]) {
-            existingQuestion = existingQuestions[qIndex]
-          }
-
-          if (existingQuestion) {
-            // Check if the saved answer is actually empty
-            let restoredAnswer = existingQuestion.heuristicAnswer
-            if (restoredAnswer && isAnswerEmpty(restoredAnswer)) {
-              restoredAnswer = null
-            } else if (restoredAnswer) {
-              // Create a copy to avoid reference issues
-              restoredAnswer = JSON.parse(JSON.stringify(restoredAnswer))
+            // If not found by id, try by index
+            if (!existingQuestion && existingQuestions[qIndex]) {
+              existingQuestion = existingQuestions[qIndex]
             }
 
-            // Return existing question with saved data
-            return new HeuristicQuestionAnswer({
-              heuristicId: h.id,
-              heuristicAnswer: restoredAnswer,
-              heuristicComment: existingQuestion.heuristicComment || '',
-              heuristicRecommendation:
-                existingQuestion.heuristicRecommendation || '',
-              answerImageUrl: existingQuestion.answerImageUrl || '',
-              comments: Array.isArray(existingQuestion.comments)
-                ? existingQuestion.comments
-                : [],
-              images: Array.isArray(existingQuestion.images)
-                ? existingQuestion.images
-                : [],
-            })
-          } else {
-            // Create new question
-            return new HeuristicQuestionAnswer({
-              heuristicId: h.id,
-              heuristicAnswer: null,
-              heuristicComment: '',
-              heuristicRecommendation: '',
-              answerImageUrl: '',
-              comments: [],
-              images: [],
-            })
-          }
-        })
+            if (existingQuestion) {
+              // Check if the saved answer is actually empty
+              let restoredAnswer = existingQuestion.heuristicAnswer
+              if (restoredAnswer && isAnswerEmpty(restoredAnswer)) {
+                restoredAnswer = null
+              } else if (restoredAnswer) {
+                // Create a copy to avoid reference issues
+                restoredAnswer = JSON.parse(JSON.stringify(restoredAnswer))
+              }
 
+              // Return existing question with saved data
+              return new HeuristicQuestionAnswer({
+                heuristicId: h.id,
+                heuristicAnswer: restoredAnswer,
+                heuristicComment: existingQuestion.heuristicComment || '',
+                heuristicRecommendation:
+                  existingQuestion.heuristicRecommendation || '',
+                answerImageUrl: existingQuestion.answerImageUrl || '',
+                comments: Array.isArray(existingQuestion.comments)
+                  ? existingQuestion.comments
+                  : [],
+                images: Array.isArray(existingQuestion.images)
+                  ? existingQuestion.images
+                  : [],
+              })
+            } else {
+              // Create new question
+              return new HeuristicQuestionAnswer({
+                heuristicId: h.id,
+                heuristicAnswer: null,
+                heuristicComment: '',
+                heuristicRecommendation: '',
+                answerImageUrl: '',
+                comments: [],
+                images: [],
+              })
+            }
+          },
+        )
         totalQuestions += questions.length
 
         return new Heuristic({
@@ -1826,6 +1889,18 @@ const restoreProgress = () => {
     review.value = true
     calculateProgress()
     updateSaveStatus('All changes saved', 'default')
+    return
+  }
+
+  // Revalidate the current configuration before resuming an older session.
+  if (!hasConfiguredAnswerOptions.value) {
+    pauseTimer(heurisIndex.value)
+    start.value = true
+    currentPage.value = TEST_PAGES.welcome
+    review.value = true
+    showHeuristicCards.value = true
+    index.value = 1
+    calculateProgress()
     return
   }
 
