@@ -691,11 +691,12 @@ const goToDataHeuristic = (item) => {
       : -1
   if (selectHeuristic >= 0) {
     router
-      .push(`/analyticsview/${props.id}/${selectHeuristic}`)
+      .replace({ query: { ...route.query, heuristic: selectHeuristic } })
       .catch((err) => {
         if (err.name !== 'NavigationDuplicated') {
         }
       })
+    setTab(3)
   }
 }
 
