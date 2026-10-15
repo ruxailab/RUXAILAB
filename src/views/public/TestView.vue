@@ -23,17 +23,7 @@
     </div>
 
     <div v-if="test.testType === STUDY_TYPES.CARD_SORTING">
-      <StartScreenTest
-        v-if="!isCardSortingStarted"
-        :test="test"
-        :disabled="!hasCardSortingContent"
-        :alert-message="
-          hasCardSortingContent ? '' : $t('CardSorting.invalidConfiguration')
-        "
-        :alert-details="cardSortingConfigurationIssueMessages"
-        @start="isCardSortingStarted = true"
-      />
-      <CardSortingTest v-else :test="test" />
+      <CardSortingTest :test="test" />
     </div>
   </div>
 
@@ -59,13 +49,11 @@
 import { ref, computed, onBeforeMount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
-import { useI18n } from 'vue-i18n'
 
 import UserTestView from '@/ux/UserTest/views/UserTestView.vue'
 import ModeratedTestView from '../../ux/UserTest/views/ModeratedTestView.vue'
 import HeuristicTestView from '../../ux/Heuristic/views/HeuristicTestView.vue'
 import CardSortingTest from '@/ux/CardSorting/components/CardSortingTest.vue'
-import StartScreenTest from '@/shared/components/template/StartScreenTest.vue'
 
 import {
   STUDY_TYPES,
@@ -92,7 +80,6 @@ const props = defineProps({
 const store = useStore()
 const router = useRouter()
 const route = useRoute()
-const { t } = useI18n()
 
 /*
 |--------------------------------------------------------------------------
@@ -110,44 +97,6 @@ const test = computed(() => {
   return null
 })
 
-const cardSortingConfigurationIssues = computed(() => {
-  if (test.value?.testType !== STUDY_TYPES.CARD_SORTING) return []
-
-  const cardSorting = test.value.testStructure?.cardSorting
-  if (!cardSorting || typeof cardSorting !== 'object') {
-    return ['missingStructure']
-  }
-
-  const issues = []
-  const allowCreateCategories = !!cardSorting.options?.allow_create_categories
-
-  if (!allowCreateCategories) {
-    if (!Array.isArray(cardSorting.categories)) {
-      issues.push('invalidCategories')
-    } else if (cardSorting.categories.length === 0) {
-      issues.push('missingCategories')
-    }
-  }
-
-  if (!Array.isArray(cardSorting.cards)) {
-    issues.push('invalidCards')
-  } else if (cardSorting.cards.length === 0) {
-    issues.push('missingCards')
-  }
-
-  return issues
-})
-
-const hasCardSortingContent = computed(
-  () => cardSortingConfigurationIssues.value.length === 0,
-)
-
-const cardSortingConfigurationIssueMessages = computed(() =>
-  cardSortingConfigurationIssues.value.map((issue) =>
-    t(`CardSorting.configurationIssues.${issue}`),
-  ),
-)
-
 const user = computed(() => store.getters.user)
 
 const userId = computed(() => user.value?.id ?? user.value?.uid ?? null)
@@ -159,7 +108,6 @@ const userId = computed(() => user.value?.id ?? user.value?.uid ?? null)
 */
 
 const moderatedTestViewRef = ref(null)
-const isCardSortingStarted = ref(false)
 const invitation = ref(null)
 const loading = ref(true)
 const redirecting = ref(false)

@@ -2555,6 +2555,19 @@
   "CardSorting": {
     "title": "Card Sorting",
     "invalidConfiguration": "Este estudio de card sorting no se puede iniciar.",
+    "welcomeTitle": "¡Bienvenido a RUXAILAB!",
+    "welcomeDescription": "Vas a participar en un estudio de card sorting. Organizarás tarjetas en categorías para que podamos entender cómo agrupas la información.",
+    "howItWorks": "¿Cómo funciona este estudio?",
+    "welcomePhases": "Ordenarás las tarjetas en las categorías que te parezcan más adecuadas. No hay respuestas correctas o incorrectas: lo que nos interesa es cómo agrupas la información.",
+    "welcomeSummary": "Aquí puedes ver un resumen de las fases que seguirás:",
+    "welcomeReady": "Cuando estés listo, haz clic en el botón para comenzar. Puedes avanzar a tu propio ritmo y detenerte en cualquier momento si lo necesitas.",
+    "startStudy": "Empezar el estudio",
+    "welcomeSteps": {
+      "consent": "Consentimiento",
+      "preTest": "Preguntas iniciales",
+      "postTest": "Preguntas finales",
+      "submission": "Envío final"
+    },
     "configurationIssues": {
       "missingStructure": "Falta la estructura de card sorting en el estudio.",
       "missingCategories": "No hay categorías configuradas.",

@@ -222,9 +222,21 @@
           </v-alert>
         </v-col>
         <v-col v-else cols="12" class="pa-6">
-          <HeuristicInstructionsStep
+          <StudyWelcomeStep
             :sections="evaluatorInfoSections"
             :disabled="isStartTestDisabled"
+            :welcome-title="
+              $t('HeuristicsTestView.InstructionsStep.welcomeTitle')
+            "
+            :description="
+              $t('HeuristicsTestView.InstructionsStep.defaultDescription')
+            "
+            :how-it-works="$t('HeuristicsTestView.InstructionsStep.howItWorks')"
+            :phases="$t('HeuristicsTestView.InstructionsStep.phases')"
+            :summary="$t('HeuristicsTestView.InstructionsStep.summary')"
+            :ready="$t('HeuristicsTestView.InstructionsStep.ready')"
+            :start-label="$t('HeuristicsTestView.InstructionsStep.startButton')"
+            :steps="instructionSteps"
             @start="startTest"
           />
         </v-col>
@@ -465,7 +477,7 @@ import { useI18n } from 'vue-i18n'
 import { debounce } from 'lodash'
 import AutoSaveStatusBanner from '@/shared/components/AutoSaveStatusBanner.vue'
 import Snackbar from '@/shared/components/Snackbar'
-import HeuristicInstructionsStep from '@/ux/Heuristic/components/HeuristicInstructionsStep.vue'
+import StudyWelcomeStep from '@/shared/components/StudyWelcomeStep.vue'
 import HeuristicAnswerStep from '@/ux/Heuristic/components/steps/HeuristicAnswerStep.vue'
 import HeuristicCardsStep from '@/ux/Heuristic/components/steps/HeuristicCardsStep.vue'
 import HeuristicFinishStep from '@/ux/Heuristic/components/steps/HeuristicFinishStep.vue'
@@ -482,7 +494,7 @@ import {
 } from '@/shared/utils/studyAccessPolicy'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
-import StepAnnouncementOverlay from '@/ux/UserTest/components/StepAnnouncementOverlay.vue'
+import StepAnnouncementOverlay from '@/shared/components/StepAnnouncementOverlay.vue'
 import SessionBackdropMark from '@/shared/components/SessionBackdropMark.vue'
 import { useStepAnnouncement } from '@/shared/composables/useStepAnnouncement'
 
@@ -581,6 +593,12 @@ const evaluatorInfoSections = computed(() => {
   const sections = test.value?.evaluatorInfo?.sections
   return Array.isArray(sections) ? sections : []
 })
+
+const instructionSteps = computed(() => [
+  t('HeuristicsTestView.InstructionsStep.steps.instructions'),
+  t('HeuristicsTestView.InstructionsStep.steps.evaluation'),
+  t('HeuristicsTestView.InstructionsStep.steps.submission'),
+])
 
 const trackTimeEnabled = computed(() => test.value?.trackTime !== false)
 

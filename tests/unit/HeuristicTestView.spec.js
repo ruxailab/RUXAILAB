@@ -36,8 +36,8 @@ jest.mock('@/app/plugins/firebase/FirebaseFunctionsService', () => ({
   },
 }))
 
-jest.mock('@/ux/Heuristic/components/HeuristicInstructionsStep.vue', () => ({
-  name: 'HeuristicInstructionsStep',
+jest.mock('@/shared/components/StudyWelcomeStep.vue', () => ({
+  name: 'StudyWelcomeStep',
   props: ['disabled'],
   emits: ['start'],
   template: '<div />',
@@ -384,7 +384,7 @@ describe('HeuristicTestView', () => {
       await flushPromises()
 
       const instructionsStep = wrapper.findComponent({
-        name: 'HeuristicInstructionsStep',
+        name: 'StudyWelcomeStep',
       })
       expect(instructionsStep.exists()).toBe(true)
       instructionsStep.vm.$emit('start')
@@ -404,7 +404,7 @@ describe('HeuristicTestView', () => {
       expect(wrapper.vm.start).toBe(true)
 
       const reopenedInstructions = wrapper.findComponent({
-        name: 'HeuristicInstructionsStep',
+        name: 'StudyWelcomeStep',
       })
       reopenedInstructions.vm.$emit('start')
       await flushPromises()
