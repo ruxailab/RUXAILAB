@@ -86,7 +86,7 @@ import PageWrapper from '@/shared/views/template/PageWrapper.vue'
 import AutoSaveStatusBanner from '@/shared/components/AutoSaveStatusBanner.vue'
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useStore } from 'vuex'
-import { onBeforeRouteLeave } from 'vue-router'
+import { onBeforeRouteLeave, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { debounce } from 'lodash'
 import { instantiateStudyByType } from '@/shared/constants/methodDefinitions'
@@ -109,6 +109,7 @@ const props = defineProps({
 })
 
 const store = useStore()
+const route = useRoute()
 const { t } = useI18n()
 const studyController = new StudyController()
 
@@ -167,6 +168,15 @@ const settingsTabIndex = computed(() =>
     : showOptionsTab.value
       ? 2
       : 1,
+)
+watch(
+  [() => route.query.tab, settingsTabIndex],
+  ([tab]) => {
+    if (tab === 'settings' && showSettingsTab.value) {
+      index.value = settingsTabIndex.value
+    }
+  },
+  { immediate: true },
 )
 const optionsTabTitle = computed(() =>
   showOptionsTab.value

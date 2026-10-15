@@ -48,15 +48,30 @@
     }
   },
   "heuristicAgents": {
+    "design": {
+      "subtitle": "Choose an agent, review the pages and follow each heuristic.",
+      "chooseAgent": "Choose your AI agent",
+      "expandHint": "Expand a website and its heuristics to see progress and responses.",
+      "editPages": "Edit pages",
+      "overallProgress": "Evaluation progress",
+      "heuristicCount": "{count} heuristics",
+      "pause": "Pause",
+      "resume": "Resume",
+      "questions": "Questions to evaluate"
+    },
     "title": "Agent analysis",
-    "subtitle": "Enter a website, select its pages, and let an agent complete the heuristic evaluation.",
+    "subtitle": "Choose an agent to evaluate the pages configured in the study settings.",
     "web": {
-      "title": "Enter the website",
-      "subtitle": "We will find the home page and its internal links.",
+      "title": "Website to analyze",
+      "subtitle": "Choose the pages to be analyzed in the heuristic evaluation.",
       "url": "Website URL",
-      "search": "Find pages"
+      "search": "Load"
     },
     "pages": {
+      "setupTitle": "Configure the pages to analyze",
+      "openSettings": "Edit Study · Settings",
+      "configured": "Configured pages",
+      "configureInSettings": "Configure the pages to analyze in the study settings.",
       "title": "Select pages",
       "selected": "{selected} of {total} selected",
       "selectAll": "Select all",
@@ -71,13 +86,40 @@
       "agentHint": "Create or edit agents from the main Agents section.",
       "analyze": "Analyze {count} page(s)",
       "saved": "{count} analyses saved as independent evaluators.",
-      "viewResults": "View results"
+      "viewResults": "View results",
+      "pause": "Pause heuristic (the current request will finish)",
+      "resume": "Resume heuristic",
+      "completedDetail": "{count} responses saved · {time}",
+      "heuristicProgress": "{completed} / {total} heuristic assessments",
+      "heuristicCompleted": "Heuristic evaluated at {time}",
+      "weightValue": "Relative weight: {weight} / 9",
+      "retryHeuristic": "Retry heuristic",
+      "explanation": "Explanation",
+      "assessment": "Assessment",
+      "setupTitle": "AI evaluation",
+      "setupHint": "Choose an agent, review the pages below, then start the evaluation.",
+      "pauseAll": "Pause evaluation",
+      "resumeAll": "Resume evaluation",
+      "pausedTitle": "Evaluation paused",
+      "runningTitle": "Evaluation in progress",
+      "finishedTitle": "Evaluation finished",
+      "pagesProgress": "{completed} of {total} pages completed",
+      "pauseHint": "Requests already in progress will finish. New requests will wait until you resume.",
+      "retryHint": "{count} assessments need your attention. Open the page and retry the failed assessment.",
+      "retryQuestion": "Retry question",
+      "questionProgress": "{completed} / {total} questions evaluated",
+      "responseDetails": "View responses and justification",
+      "evidence": "View evidence",
+      "background": "Evaluation continues while you navigate to other pages in the app. Return here to see progress or pause heuristics."
     },
     "status": {
       "completed": "Completed",
       "error": "Error",
       "running": "Heuristic {current}/{total}",
-      "pending": "Pending"
+      "pending": "Pending",
+      "paused": "Paused",
+      "evaluating": "Evaluating",
+      "blocked": "Blocked by a previous error"
     },
     "messages": {
       "urlsFound": "{count} URL(s) found.",
@@ -406,6 +448,14 @@
     }
   },
   "community": {
+    "agents": {
+      "subtitle": "Explore public AI agents shared by the community. You can select them when evaluating a study.",
+      "search": "Search by name, description or model",
+      "empty": "No public agents yet.",
+      "noResults": "No agents match your search.",
+      "details": "View agent",
+      "refresh": "Refresh"
+    },
     "studies": {
       "title": "Community Studies",
       "searchPlaceholder": "Search studies..."
@@ -542,6 +592,7 @@
     }
   },
   "navigation": {
+    "communityAgents": "Community Agents",
     "dashboard": "Dashboard",
     "groups": {
       "overview": "Overview",

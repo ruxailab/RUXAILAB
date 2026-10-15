@@ -21,6 +21,9 @@ export default class HeuristicStudy extends Study {
       sections: [],
     }
     this.heuristicComments = params.heuristicComments ?? {}
+    this.heuristicAgentWebsites = params.heuristicAgentWebsites ?? {
+      url: '', pages: [], selectedUrls: [],
+    }
     this.heuristicAgentIds = params.heuristicAgentIds ?? []
   }
 
@@ -34,6 +37,7 @@ export default class HeuristicStudy extends Study {
       useSeverity: this.useSeverity,
       evaluatorInfo: this.evaluatorInfo,
       heuristicComments: this.heuristicComments,
+      heuristicAgentWebsites: this.heuristicAgentWebsites,
       heuristicAgentIds: this.heuristicAgentIds,
     })
   }

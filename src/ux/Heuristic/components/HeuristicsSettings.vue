@@ -82,6 +82,8 @@
         </v-card-text>
       </v-card>
 
+      <HeuristicAgentWebsitesSettings :is-template="props.isTemplate" />
+
       <v-card variant="outlined">
         <v-card-item>
           <v-card-title class="text-h6">
@@ -178,6 +180,7 @@
 </template>
 
 <script setup>
+import HeuristicAgentWebsitesSettings from '../ai-agents/components/HeuristicAgentWebsitesSettings.vue'
 import { ref, computed, watch, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
@@ -295,15 +298,6 @@ const saveAnswerMetrics = async () => {
 
 watch([localUseFrequency, localUseSeverity], saveAnswerMetrics)
 
-const useWeights = computed({
-  get: () => test.value?.useWeights ?? false,
-  set: (value) => {
-    store.commit('SET_TEST', {
-      ...test.value,
-      useWeights: value,
-    })
-  },
-})
 const changeStudyMode = async (mode) => {
   if (!test.value || mode === studyMode.value) return
 
