@@ -252,7 +252,6 @@
                   <v-stepper-item
                     :value="2"
                     :editable="!currentUserTestAnswer?.submitted"
-                    @click="navigateToStep(2)"
                     :title="$t('HeuristicsTestView.flow.heuristicEvaluation')"
                     :complete="
                       (review == false || currentUserTestAnswer?.submitted) &&
@@ -263,6 +262,7 @@
                     :class="{
                       'stepper-item--current': isCurrentHeuristicStep(2),
                     }"
+                    @click="navigateToStep(2)"
                   />
                   <v-divider />
                   <v-stepper-item
@@ -271,7 +271,6 @@
                       calculatedProgress === 100 &&
                       !currentUserTestAnswer?.submitted
                     "
-                    @click="navigateToStep(3)"
                     :title="$t('HeuristicsTestView.flow.finalSubmission')"
                     :complete="
                       !!currentUserTestAnswer?.submitted &&
@@ -282,6 +281,7 @@
                     :class="{
                       'stepper-item--current': isCurrentHeuristicStep(3),
                     }"
+                    @click="navigateToStep(3)"
                   />
                 </v-stepper-header>
               </v-stepper>
@@ -406,14 +406,13 @@
       </v-row>
     </v-container>
 
-    <v-btn
-      v-if="showSaveBtn && !start"
-      position="fixed"
-      location="bottom right"
-      icon
-      class="mb-10 mr-5"
-    >
-      <v-speed-dial v-model="fab" class="mr-3" open-on-hover>
+    <div v-if="showSaveBtn && !start" class="speed-dial-container">
+      <v-speed-dial
+        v-model="fab"
+        location="top center"
+        transition="slide-y-reverse-transition"
+        open-on-hover
+      >
         <template #activator="{ props }">
           <v-btn
             v-bind="props"
@@ -422,11 +421,12 @@
             icon
             class="btn-fix"
           >
-            <v-icon v-if="fab"> mdi-close </v-icon>
-            <v-icon v-else size="large"> mdi-hammer-screwdriver </v-icon>
+            <v-icon v-if="fab">mdi-close</v-icon>
+            <v-icon v-else size="large">mdi-hammer-screwdriver</v-icon>
           </v-btn>
         </template>
-        <v-tooltip key="save-tooltip" location="left">
+
+        <v-tooltip location="left">
           <template #activator="{ props }">
             <v-btn
               v-bind="props"
@@ -438,11 +438,10 @@
               <v-icon>mdi-content-save</v-icon>
             </v-btn>
           </template>
-          <div>
-            <span>{{ $t('HeuristicsTestView.actions.save') }}</span>
-          </div>
+          <span>{{ $t('HeuristicsTestView.actions.save') }}</span>
         </v-tooltip>
-        <v-tooltip key="submit-tooltip" location="left">
+
+        <v-tooltip location="left">
           <template #activator="{ props }">
             <span v-bind="props" class="d-inline-flex">
               <v-btn
@@ -457,11 +456,10 @@
               </v-btn>
             </span>
           </template>
-          <div>
-            <span>{{ $t('HeuristicsTestView.actions.submit') }}</span>
-          </div>
+          <span>{{ $t('HeuristicsTestView.actions.submit') }}</span>
         </v-tooltip>
-        <v-tooltip key="exit-tooltip" location="left">
+
+        <v-tooltip location="left">
           <template #activator="{ props }">
             <v-btn
               v-bind="props"
@@ -473,12 +471,10 @@
               <v-icon>mdi-exit-to-app</v-icon>
             </v-btn>
           </template>
-          <div>
-            <span>{{ $t('navigation.exitTest') }}</span>
-          </div>
+          <span>{{ $t('navigation.exitTest') }}</span>
         </v-tooltip>
       </v-speed-dial>
-    </v-btn>
+    </div>
   </div>
 </template>
 
@@ -622,7 +618,10 @@ const trackTimeEnabled = computed(() => test.value?.trackTime !== false)
 
 const hasConfiguredAnswerOptions = computed(() => {
   if (resolveHeuristicStudyMode(test.value) === 'detailed') {
-    return Array.isArray(test.value?.testOptions) && test.value.testOptions.length > 0
+    return (
+      Array.isArray(test.value?.testOptions) &&
+      test.value.testOptions.length > 0
+    )
   }
   return Boolean(resolveHeuristicAnswerMode(test.value))
 })
@@ -2175,5 +2174,15 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   background: #00213f;
+}
+.speed-dial-container {
+  position: fixed;
+  right: 20px;
+  bottom: 40px;
+  z-index: 1000;
+}
+
+.btn-fix:focus::before {
+  opacity: 0 !important;
 }
 </style>

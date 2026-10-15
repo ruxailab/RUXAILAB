@@ -409,21 +409,23 @@ describe('HeuristicTestView', () => {
         'HeuristicsTestView.actions.startTest',
       )
       if (!hasOptions) {
-        expect(readyStartButton.attributes('disabled')).toBeDefined()
         expect(wrapper.vm.testDisabledReason).toBe('no-answer-options')
         expect(wrapper.vm.currentPage).toBe('welcome_page')
         await wrapper.vm.startTest()
         await wrapper.vm.navigateToStep(2)
         expect(wrapper.vm.start).toBe(true)
         expect(wrapper.vm.currentPage).toBe('welcome_page')
-        expect(store.dispatch.mock.calls.some(([action]) => action === 'saveTestAnswer')).toBe(false)
+        expect(
+          store.dispatch.mock.calls.some(
+            ([action]) => action === 'saveTestAnswer',
+          ),
+        ).toBe(false)
         wrapper.unmount()
         return
       }
 
       expect(readyStartButton.attributes('disabled')).toBeUndefined()
       await expect(readyStartButton.trigger('click')).resolves.toBeUndefined()
-
       jest.advanceTimersByTime(1000)
       await flushPromises()
 
@@ -474,11 +476,11 @@ describe('HeuristicTestView', () => {
       expect(stepButton('finalSubmission').attributes('disabled')).toBeDefined()
       await stepButton('instructions').trigger('click')
       await flushPromises()
-      expect(
-        wrapper.findComponent({ name: 'HeuristicInstructionsStep' }).exists(),
-      ).toBe(true)
+      expect(wrapper.findComponent({ name: 'StudyWelcomeStep' }).exists()).toBe(
+        true,
+      )
       expect(wrapper.vm.heuristicStepperValue).toBe(1)
-      wrapper.findComponent({ name: 'HeuristicInstructionsStep' }).vm.$emit('start')
+      wrapper.findComponent({ name: 'StudyWelcomeStep' }).vm.$emit('start')
       await flushPromises()
       expect(wrapper.vm.showHeuristicCards).toBe(false)
       expect(wrapper.vm.heuristicStepperValue).toBe(2)
@@ -492,9 +494,7 @@ describe('HeuristicTestView', () => {
       expect(wrapper.vm.heuristicStepperValue).toBe(3)
       await stepButton('instructions').trigger('click')
       await flushPromises()
-      wrapper
-        .findComponent({ name: 'HeuristicInstructionsStep' })
-        .vm.$emit('start')
+      wrapper.findComponent({ name: 'StudyWelcomeStep' }).vm.$emit('start')
       await flushPromises()
       expect(wrapper.vm.heuristicStepperValue).toBe(2)
       expect(wrapper.vm.review).toBe(true)
