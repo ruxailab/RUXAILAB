@@ -1,4 +1,5 @@
 import { admin, functions } from '../core/firebase/f.firebase.js'
+import { resolveStudyRole, ROLE } from '../shared/auth/studyAccess.js'
 
 const error = (code, message) =>
   new functions.https.HttpsError(code, message)
@@ -10,12 +11,8 @@ export const assertSummaryExportAllowed = (study, uid, isSuperAdmin) => {
       'Summary export is available only for user studies',
     )
   }
-  if (isSuperAdmin || study?.testAdmin?.userDocId === uid) return true
-  const membership = study?.cooperators?.find(
-    (cooperator) =>
-      cooperator?.userDocId === uid && cooperator?.accepted === true,
-  )
-  if (membership?.accessLevel !== 0 && membership?.accessLevel !== 4) {
+  const role = resolveStudyRole(study, uid, isSuperAdmin)
+  if (![ROLE.ADMIN, ROLE.MANAGER].includes(role)) {
     throw error('permission-denied', 'Summary export is not permitted')
   }
 }
