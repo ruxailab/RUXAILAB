@@ -1260,6 +1260,12 @@ const handleSubmit = async () => {
     await saveAnswer()
     void initializeStudyLogging()?.submitted()
     void publishParticipantProgress().catch(() => {})
+    store.commit('SET_TOAST', {
+      type: 'success',
+      message: t('UserTestView.messages.studySubmittedSuccess', {
+        studyName: test.value.testTitle,
+      }),
+    })
     displayVideoCallComponent.value = true
   } catch {
     localTestAnswer.submitted = false

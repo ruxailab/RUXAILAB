@@ -782,6 +782,7 @@
     "incorrectPassword": "Contraseña incorrecta",
     "incorrectCredential": "Nombre de usuario o contraseña incorrectos.",
     "globalError": "Ha ocurrido un error, disculpa las molestias.",
+    "cameraBusy": "No se pudo iniciar tu cámara. Cierra otras aplicaciones o pestañas que la estén usando, o elige otra cámara en la configuración de cámara del navegador. La prueba continuará sin grabación de webcam.",
     "cameraNotAvailable": "No se detectó ninguna cámara. El estudio continuará sin grabación de webcam.",
     "cameraPermissionDenied": "Se requiere acceso a la cámara para continuar. Por favor, permita el acceso a la cámara en la configuración de su navegador.",
     "recordingMedia": {
@@ -1941,6 +1942,7 @@
       "noTasks": "Este estudio no tiene ninguna tarea.",
       "answerSaved": "Respuesta guardada con éxito.",
       "taskCompletedSuccess": "¡Tarea \"{taskName}\" completada exitosamente!",
+      "studySubmittedSuccess": "Estudio \"{studyName}\" completado. ¡Gracias por participar!",
       "taskNotCompleted": "No se pudo completar la tarea \"{taskName}\".",
       "useSessionLinkModerated": "Usa un enlace de sesión para acceder a tu estudio moderada.",
       "useSessionLink": "Usa un enlace de sesión para acceder a tu estudio"
@@ -2789,6 +2791,9 @@
     "tasks": "tareas",
     "total": "total",
     "timeTaken": "Tiempo empleado",
+    "withinEstimate": "Dentro del estimado",
+    "overEstimate": "Por encima del estimado",
+    "timeComparison": "Comparación con el estimado",
     "yes": "Sí",
     "invited": "Invitado",
     "answers": "Respuestas",
@@ -3861,7 +3866,9 @@
       "message_content_hint": "Introduce el contenido de tu mensaje",
       "no_users": "No se encontraron usuarios",
       "cancel_invitation_confirmation": "¿Estás seguro de que deseas cancelar la invitación de {email}?",
-      "remove_participant_confirmation": "Are you sure you want to remove {email} from this test? This action cannot be undone."
+      "remove_participant_confirmation": "Are you sure you want to remove {email} from this test? This action cannot be undone.",
+      "participant_removed": "Participante eliminado",
+      "invitation_cancelled": "Invitación cancelada"
     },
     "filter": {
       "search": "Buscar participantes",
