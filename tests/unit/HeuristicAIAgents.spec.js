@@ -345,15 +345,13 @@ describe('Heuristic AI agents', () => {
     async ({ settings, mode, decision, value }) => {
       const options = [{ text: 'Meets criterion', value: 1 }]
       const provider = {
-        evaluate: jest
-          .fn()
-          .mockResolvedValue([
-            {
-              heuristicId: 'h1',
-              questionId: mode === 'customOptions' ? 'q1' : 'h1',
-              ...decision,
-            },
-          ]),
+        evaluate: jest.fn().mockResolvedValue([
+          {
+            heuristicId: 'h1',
+            questionId: mode === 'customOptions' ? 'q1' : 'h1',
+            ...decision,
+          },
+        ]),
       }
       const answer = await new HeuristicAgentEvaluator({ provider }).evaluate({
         agent: new HeuristicAgent({
@@ -414,7 +412,12 @@ describe('Heuristic AI agents', () => {
     expect(
       answer.toFirestore().heuristicQuestions[0].heuristicQuestions[0]
         .heuristicAnswer,
-    ).toEqual({ mode: 'weight', weight: 6, text: '6', value: 6 })
+    ).toEqual({
+      mode: 'weight',
+      weight: 6,
+      text: 'Weight: 6',
+      value: 6,
+    })
   })
 
   it('evaluates traditional heuristics once despite stored detailed questions', async () => {
