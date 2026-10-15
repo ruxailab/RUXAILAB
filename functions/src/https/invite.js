@@ -1,5 +1,10 @@
 import { admin, functions } from '../core/firebase/f.firebase.js'
 import InviteUtils from '../utils/inviteUtils.js'
+import {
+  ROLE,
+  resolveStudyRole,
+  getAssignableRoles,
+} from '../shared/auth/studyAccess.js'
 
 export const isAcceptedInviteRetry = (invite, uid, authenticatedUid) =>
   !invite.isPublic &&
@@ -196,8 +201,17 @@ export const validateInvite = functions.onCall({
 })
 
 export const generateInvitationLink = functions.onCall({
-  handler: async (data) => {
-    const content = data.data || data
+  handler: async (request) => {
+    const uid = request?.auth?.uid
+
+    if (!uid) {
+      throw new functions.https.HttpsError(
+        'unauthenticated',
+        'Authentication is required',
+      )
+    }
+
+    const content = request?.data || request || {}
 
     const {
       studyId,
@@ -223,13 +237,53 @@ export const generateInvitationLink = functions.onCall({
       )
     }
 
+    const db = admin.firestore()
+    const studyRef = db.collection('tests').doc(studyId)
+    const userRef = db.collection('users').doc(uid)
+
+    const [studySnap, userSnap] = await Promise.all([
+      studyRef.get(),
+      userRef.get(),
+    ])
+
+    if (!studySnap.exists) {
+      throw new functions.https.HttpsError('not-found', 'Study not found')
+    }
+
+    const study = { id: studySnap.id, ...studySnap.data() }
+    const isSuperAdmin = userSnap.data()?.accessLevel === 0
+
+    const actorRole = resolveStudyRole(study, uid, isSuperAdmin)
+    if (actorRole !== ROLE.ADMIN && actorRole !== ROLE.MANAGER) {
+      throw new functions.https.HttpsError(
+        'permission-denied',
+        'Study invitation is not permitted',
+      )
+    }
+
+    const targetRole =
+      typeof accessLevel === 'number' && Number.isInteger(accessLevel)
+        ? accessLevel
+        : typeof accessLevel === 'string' && /^-?\d+$/.test(accessLevel.trim())
+          ? parseInt(accessLevel.trim(), 10)
+          : null
+
+    const assignableRoles = getAssignableRoles(study, actorRole)
+
+    if (targetRole === null || !assignableRoles.includes(targetRole)) {
+      throw new functions.https.HttpsError(
+        'permission-denied',
+        'The assigned role is not permitted',
+      )
+    }
+
     const { inviteLink, inviteToken, expirationDate } =
       await InviteUtils.generateInviteLink(
         studyId,
         isPublic ? null : toEmail,
-        studyTitle,
+        studyTitle || study.testTitle || null,
         isPublic,
-        accessLevel,
+        targetRole,
         requiredLogin,
         membershipType,
       )

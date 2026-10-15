@@ -12,6 +12,32 @@ export const ROLE = Object.freeze({
   USER: 5,
 })
 
+export const SUPPORTED_ROLES = Object.freeze({
+  USER: [ROLE.ADMIN, ROLE.MANAGER, ROLE.USER, ROLE.OBSERVATOR],
+  HEURISTIC: [ROLE.ADMIN, ROLE.MANAGER, ROLE.EVALUATOR, ROLE.GUEST],
+  CARD_SORTING: [ROLE.ADMIN, ROLE.MANAGER, ROLE.EVALUATOR, ROLE.GUEST],
+  FOCUS_GROUP: [ROLE.ADMIN, ROLE.EVALUATOR, ROLE.OBSERVATOR],
+})
+
+export const MANAGER_ROLES = Object.freeze({
+  USER: [ROLE.USER, ROLE.OBSERVATOR],
+  HEURISTIC: [ROLE.EVALUATOR, ROLE.GUEST],
+  CARD_SORTING: [ROLE.EVALUATOR, ROLE.GUEST],
+  FOCUS_GROUP: [ROLE.EVALUATOR, ROLE.OBSERVATOR],
+})
+
+export const normalizeStudyType = (type) => {
+  const normalized = String(type || '').toUpperCase()
+  return normalized === 'HEURISTICS' ? 'HEURISTIC' : normalized
+}
+
+export const getAssignableRoles = (study, actorRole) => {
+  const studyType = normalizeStudyType(study?.testType)
+  if (actorRole === ROLE.ADMIN) return SUPPORTED_ROLES[studyType] || []
+  if (actorRole === ROLE.MANAGER) return MANAGER_ROLES[studyType] || []
+  return []
+}
+
 /**
  * Resolve the effective study role for a user.
  * Super-admins and study owners are treated as ADMIN.
@@ -30,7 +56,8 @@ export function resolveStudyRole(study, uid, isSuperAdmin = false) {
 
   const membership = study?.cooperators?.find(
     (cooperator) =>
-      cooperator?.userDocId === uid && cooperator?.accepted === true,
+      cooperator?.userDocId === uid &&
+      (cooperator?.accepted === true || cooperator?.status === 'accepted'),
   )
 
   return membership?.accessLevel ?? null
