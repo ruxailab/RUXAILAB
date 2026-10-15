@@ -2554,6 +2554,14 @@
   },
   "CardSorting": {
     "title": "Card Sorting",
+    "invalidConfiguration": "Este estudio de card sorting no se puede iniciar.",
+    "configurationIssues": {
+      "missingStructure": "Falta la estructura de card sorting en el estudio.",
+      "missingCategories": "No hay categorías configuradas.",
+      "missingCards": "No hay tarjetas configuradas.",
+      "invalidCategories": "Las categorías no son una lista válida.",
+      "invalidCards": "Las tarjetas no son una lista válida."
+    },
     "noCategory": "Sin categoría",
     "noCards": "No se encontraron tarjetas",
     "of": "de",

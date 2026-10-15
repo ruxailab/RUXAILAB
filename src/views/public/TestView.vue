@@ -30,6 +30,7 @@
         :alert-message="
           hasCardSortingContent ? '' : $t('CardSorting.invalidConfiguration')
         "
+        :alert-details="cardSortingConfigurationIssueMessages"
         @start="isCardSortingStarted = true"
       />
       <CardSortingTest v-else :test="test" />
@@ -58,6 +59,7 @@
 import { ref, computed, onBeforeMount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
 import UserTestView from '@/ux/UserTest/views/UserTestView.vue'
 import ModeratedTestView from '../../ux/UserTest/views/ModeratedTestView.vue'
@@ -90,6 +92,7 @@ const props = defineProps({
 const store = useStore()
 const router = useRouter()
 const route = useRoute()
+const { t } = useI18n()
 
 /*
 |--------------------------------------------------------------------------
@@ -107,17 +110,43 @@ const test = computed(() => {
   return null
 })
 
-const hasCardSortingContent = computed(() => {
-  if (test.value?.testType !== STUDY_TYPES.CARD_SORTING) return true
+const cardSortingConfigurationIssues = computed(() => {
+  if (test.value?.testType !== STUDY_TYPES.CARD_SORTING) return []
 
   const cardSorting = test.value.testStructure?.cardSorting
-  return (
-    Array.isArray(cardSorting?.categories) &&
-    cardSorting.categories.length > 0 &&
-    Array.isArray(cardSorting?.cards) &&
-    cardSorting.cards.length > 0
-  )
+  if (!cardSorting || typeof cardSorting !== 'object') {
+    return ['missingStructure']
+  }
+
+  const issues = []
+  const allowCreateCategories = !!cardSorting.options?.allow_create_categories
+
+  if (!allowCreateCategories) {
+    if (!Array.isArray(cardSorting.categories)) {
+      issues.push('invalidCategories')
+    } else if (cardSorting.categories.length === 0) {
+      issues.push('missingCategories')
+    }
+  }
+
+  if (!Array.isArray(cardSorting.cards)) {
+    issues.push('invalidCards')
+  } else if (cardSorting.cards.length === 0) {
+    issues.push('missingCards')
+  }
+
+  return issues
 })
+
+const hasCardSortingContent = computed(
+  () => cardSortingConfigurationIssues.value.length === 0,
+)
+
+const cardSortingConfigurationIssueMessages = computed(() =>
+  cardSortingConfigurationIssues.value.map((issue) =>
+    t(`CardSorting.configurationIssues.${issue}`),
+  ),
+)
 
 const user = computed(() => store.getters.user)
 

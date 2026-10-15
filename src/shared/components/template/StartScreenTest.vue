@@ -26,7 +26,7 @@
           {{ $t('buttons.startTest') }}
         </v-btn>
         <v-alert
-          v-if="alertMessage"
+          v-if="alertMessage || alertDetails.length"
           type="error"
           variant="outlined"
           class="mt-4"
@@ -36,7 +36,18 @@
             border-color: white;
           "
         >
-          <span class="text-white">{{ alertMessage }}</span>
+          <span v-if="alertMessage" class="text-white d-block">
+            {{ alertMessage }}
+          </span>
+          <ul v-if="alertDetails.length" class="start-screen__alert-details">
+            <li
+              v-for="(detail, index) in alertDetails"
+              :key="index"
+              class="text-white"
+            >
+              {{ detail }}
+            </li>
+          </ul>
         </v-alert>
       </v-col>
     </v-row>
@@ -59,6 +70,10 @@ defineProps({
   alertMessage: {
     type: String,
     default: '',
+  },
+  alertDetails: {
+    type: Array,
+    default: () => [],
   },
 })
 
@@ -114,5 +129,10 @@ const startTest = () => emit('start')
 
 .start-screen.leaving::before {
   opacity: 0;
+}
+
+.start-screen__alert-details {
+  margin: 8px 0 0;
+  padding-left: 1.25rem;
 }
 </style>
