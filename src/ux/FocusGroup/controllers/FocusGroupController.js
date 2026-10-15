@@ -79,4 +79,13 @@ export default class FocusGroupController extends Controller {
       ),
     })
   }
+
+  /**
+   * Persist a server-generated analysis synthesis for this session.
+   */
+  async saveDeepAnalysis(answersDocId, sessionId, deepAnalysis) {
+    return this.update(ANSWERS_COLLECTION, answersDocId, {
+      [`sessions.${sessionId}.analysis.deepAnalysis`]: deepAnalysis,
+    })
+  }
 }

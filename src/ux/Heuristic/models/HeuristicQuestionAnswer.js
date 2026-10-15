@@ -3,6 +3,7 @@
  * @param {number} heuristicId - The heuristicId value.
  * @param {number} heuristicAnswer - The heuristicAnswer value.
  * @param {string} heuristicComment - The heuristicComment value (legacy, single comment).
+ * @param {string} heuristicRecommendation - A recommendation for the question.
  * @param {string} answerImageUrl - The image comment url (legacy, single image).
  * @param {Array<{id: string, text: string, createdAt: number}>} comments - Array of comment objects.
  * @param {Array<{id: string, url: string, createdAt: number}>} images - Array of image objects.
@@ -13,6 +14,7 @@ export default class HeuristicQuestionAnswer {
     heuristicId,
     heuristicAnswer,
     heuristicComment,
+    heuristicRecommendation,
     answerImageUrl,
     comments,
     images,
@@ -21,6 +23,7 @@ export default class HeuristicQuestionAnswer {
     this.heuristicAnswer = heuristicAnswer ?? {}
     // Support both legacy single comment/image and new array format
     this.heuristicComment = heuristicComment ?? ''
+    this.heuristicRecommendation = heuristicRecommendation ?? ''
     this.answerImageUrl = answerImageUrl ?? ''
     this.comments = comments ?? []
     this.images = images ?? []
@@ -232,6 +235,7 @@ export default class HeuristicQuestionAnswer {
       heuristicAnswer: this.heuristicAnswer,
       // Keep legacy fields for backward compatibility
       heuristicComment: this.heuristicComment || '',
+      heuristicRecommendation: this.heuristicRecommendation || '',
       answerImageUrl: this.answerImageUrl || '',
       comments: this.comments.map((c) => ({
         id: c.id,

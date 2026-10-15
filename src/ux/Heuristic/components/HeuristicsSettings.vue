@@ -82,6 +82,8 @@
         </v-card-text>
       </v-card>
 
+      <HeuristicAgentWebsitesSettings :is-template="props.isTemplate" />
+
       <v-card variant="outlined">
         <v-card-item>
           <v-card-title class="text-h6">
@@ -178,6 +180,7 @@
 </template>
 
 <script setup>
+import HeuristicAgentWebsitesSettings from '../ai-agents/components/HeuristicAgentWebsitesSettings.vue'
 import { ref, computed, watch, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
@@ -208,25 +211,38 @@ const confirmDialog = ref(false)
 const test = computed(() => store.getters.test)
 
 const localTrackTime = ref(test.value?.trackTime ?? true)
-const localUseFrequency = ref(test.value?.useFrequency ?? true)
-const localUseSeverity = ref(test.value?.useSeverity ?? true)
+const localUseFrequency = ref(test.value?.useFrequency)
+const localUseSeverity = ref(test.value?.useSeverity)
 
 const studyMode = computed(() => {
-  const hasWeightsMode = test.value?.useWeights === true
-  const hasCustomOptions =
-    Array.isArray(test.value?.testOptions) && test.value.testOptions.length > 0
+  const currentTest = test.value
+
+  if (!currentTest) return 'traditional'
+
+  if (['traditional', 'detailed', 'weights'].includes(currentTest.studyMode)) {
+    return currentTest.studyMode
+  }
+
+  if (currentTest.useWeights === true) {
+    return 'weights'
+  }
+
   const hasExplicitAnswerMode =
-    test.value?.useFrequency !== undefined ||
-    test.value?.useSeverity !== undefined ||
-    localUseFrequency.value !== undefined ||
-    localUseSeverity.value !== undefined
-
-  if (hasWeightsMode) return 'weights'
-
-  if (hasCustomOptions) return 'detailed'
+    currentTest.useFrequency !== undefined ||
+    currentTest.useSeverity !== undefined
 
   if (hasExplicitAnswerMode) {
-    if (localUseFrequency.value && localUseSeverity.value) return 'traditional'
+    if (currentTest.useFrequency === true && currentTest.useSeverity === true) {
+      return 'traditional'
+    }
+
+    return 'detailed'
+  }
+
+  const hasCustomOptions =
+    Array.isArray(currentTest.testOptions) && currentTest.testOptions.length > 0
+
+  if (hasCustomOptions) {
     return 'detailed'
   }
 
@@ -282,15 +298,6 @@ const saveAnswerMetrics = async () => {
 
 watch([localUseFrequency, localUseSeverity], saveAnswerMetrics)
 
-const useWeights = computed({
-  get: () => test.value?.useWeights ?? false,
-  set: (value) => {
-    store.commit('SET_TEST', {
-      ...test.value,
-      useWeights: value,
-    })
-  },
-})
 const changeStudyMode = async (mode) => {
   if (!test.value || mode === studyMode.value) return
 
@@ -303,8 +310,8 @@ const changeStudyMode = async (mode) => {
     },
     detailed: {
       useWeights: false,
-      useFrequency: false,
-      useSeverity: false,
+      useFrequency: true,
+      useSeverity: true,
     },
     weights: {
       useWeights: true,
@@ -314,7 +321,7 @@ const changeStudyMode = async (mode) => {
   }
 
   try {
-    const settings = modeSettings[mode]
+    const settings = { ...modeSettings[mode], studyMode: mode }
     store.commit('SET_TEST', { ...test.value, ...settings })
     localUseFrequency.value = settings.useFrequency
     localUseSeverity.value = settings.useSeverity

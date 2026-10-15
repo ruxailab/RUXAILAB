@@ -78,6 +78,31 @@ export const getStudyLogPage = async ({
   }
 }
 
+// A session accepts at most 1,000 client events, so one participant's full
+// history is small enough to load for the timeline.
+const MAX_PARTICIPANT_EVENTS = 1000
+
+export const getParticipantEvents = async ({
+  db,
+  studyId,
+  participantLabel,
+}) => {
+  const events = []
+  let after = null
+  do {
+    const page = await getStudyLogPage({
+      db,
+      studyId,
+      filters: { participantLabel },
+      pageSize: 200,
+      after,
+    })
+    events.push(...page.events)
+    after = page.hasNextPage ? page.lastCursor : null
+  } while (after && events.length < MAX_PARTICIPANT_EVENTS)
+  return events
+}
+
 export const getStudyLogCount = async ({ db, studyId, filters = {} }) => {
   const snapshot = await getCountFromServer(
     query(

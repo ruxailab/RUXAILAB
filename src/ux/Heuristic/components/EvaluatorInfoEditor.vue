@@ -64,19 +64,21 @@
               variant="outlined"
               class="rounded-lg pa-4"
             >
-              <div class="d-flex align-start justify-space-between">
-                <div class="flex-grow-1 mr-2">
+              <div class="section-header-content">
+                <div class="section-text">
                   <p class="text-body-1 font-weight-semibold mb-2">
                     {{
                       section.title || $t('EvaluatorInfoEditor.untitledSection')
                     }}
                   </p>
+
                   <div
-                    class="text-body-2 text-ternary ql-content"
+                    class="text-body-2 text-ternary ql-content section-content"
                     v-html="section.content"
                   />
                 </div>
-                <div class="d-flex gap-1 flex-shrink-0">
+
+                <div class="section-actions">
                   <v-btn
                     icon="mdi-pencil"
                     variant="text"
@@ -436,5 +438,42 @@ const confirmAdd = () => {
   padding: 2px 10px;
   font-size: 0.72rem;
   color: #757575;
+}
+
+.section-header-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.section-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.section-actions {
+  display: flex;
+  gap: 4px;
+  flex: 0 0 auto;
+}
+
+.section-content {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.section-content :deep(p) {
+  margin: 0 0 8px;
+}
+
+.section-content :deep(ul),
+.section-content :deep(ol) {
+  padding-left: 24px;
+  margin-bottom: 8px;
+}
+
+.section-content :deep(li) {
+  margin-bottom: 4px;
 }
 </style>

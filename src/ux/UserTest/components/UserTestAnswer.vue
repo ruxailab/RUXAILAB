@@ -108,7 +108,7 @@ const tab = ref(0)
 const ind = ref(0)
 const intro = ref(null)
 
-const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
+const testAnswerDocument = computed(() => store.getters.testAnswerDocument)
 const study = computed(() => store.getters.test || {})
 const testStructure = computed(() => store.getters.test?.testStructure || {})
 

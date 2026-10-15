@@ -93,13 +93,24 @@ const mediaRecorder = ref(null)
 let abortCurrent = () => {}
 let activeAttempt = null
 
+const notifyRecordingFailure = ({ key, mediaKey, severity }) => {
+  const message = mediaKey ? t(key, { media: t(mediaKey) }) : t(key)
+  if (severity === 'warning') showWarning(message)
+  else showError(message)
+}
+
 const startRecording = async () => {
   if (recording.value) return true
   recording.value = true
   const taskIndex = props.taskIndex
   const userId = resolvedUserDocId.value
   const testId = props.testId
-  const attempt = createRecordingAttempt(taskIndex, 'webcam', emit)
+  const attempt = createRecordingAttempt(
+    taskIndex,
+    'webcam',
+    emit,
+    notifyRecordingFailure,
+  )
   activeAttempt = attempt
   let stream
   let recorder
@@ -134,7 +145,6 @@ const startRecording = async () => {
     }
     if (!devices.some((device) => device.kind === 'videoinput')) {
       attempt.finish('failed', 'permission', 'deviceUnavailable')
-      showWarning(t('errors.cameraNotAvailable'))
       cleanup()
       return true
     }
@@ -169,8 +179,7 @@ const startRecording = async () => {
     cleanup()
     if (failure[0] === 'permission_denied')
       showError(t('errors.cameraPermissionDenied'))
-    else if (isDeviceBusyError(error))
-      showWarning(t('errors.cameraBusy'))
+    else if (isDeviceBusyError(error)) showWarning(t('errors.cameraBusy'))
     else if (failure[2] === 'deviceUnavailable')
       showWarning(t('errors.cameraNotAvailable'))
     else showError(t('errors.globalError'))

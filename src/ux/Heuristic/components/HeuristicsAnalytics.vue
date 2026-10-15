@@ -5,7 +5,7 @@
     <ShowInfo v-if="answers != null && !intro && test">
       <template #content>
         <v-card flat rounded="xl">
-          <v-row>
+          <v-row class="ma-0">
             <v-col cols="12" md="4">
               <v-select
                 v-model="heuristicSelect"
@@ -85,6 +85,10 @@
                     <v-icon start>mdi-comment-text-outline</v-icon>
                     {{ $t('common.comments') }}
                   </v-tab>
+                  <v-tab value="recommendations">
+                    <v-icon start>mdi-lightbulb-on-outline</v-icon>
+                    {{ $t('HeuristicsTestView.answer.recommendations') }}
+                  </v-tab>
                   <v-tab value="images">
                     <v-icon start>mdi-image-multiple-outline</v-icon>
                     {{ $t('common.images') }}
@@ -118,6 +122,31 @@
                       v-else
                       icon="mdi-comment-off-outline"
                       :title="$t('HeuristicsAnalytics.noComments')"
+                    />
+                  </v-window-item>
+                  <v-window-item value="recommendations">
+                    <v-list v-if="recommendationItems.length" lines="three">
+                      <v-list-item
+                        v-for="item in recommendationItems"
+                        :key="item.id"
+                      >
+                        <template #prepend>
+                          <v-avatar color="amber" variant="tonal">
+                            <v-icon>mdi-lightbulb-on-outline</v-icon>
+                          </v-avatar>
+                        </template>
+                        <v-list-item-title>{{
+                          item.evaluator
+                        }}</v-list-item-title>
+                        <v-list-item-subtitle class="text-wrap mt-1">
+                          {{ item.text }}
+                        </v-list-item-subtitle>
+                      </v-list-item>
+                    </v-list>
+                    <v-empty-state
+                      v-else
+                      icon="mdi-lightbulb-off-outline"
+                      :title="$t('HeuristicsAnalytics.noRecommendations')"
                     />
                   </v-window-item>
                   <v-window-item value="images">
@@ -169,6 +198,7 @@ import { useI18n } from 'vue-i18n'
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 import BarChart from '@/ux/Heuristic/components/charts/BarChart.vue'
 import IntroAnalytics from '@/shared/components/introduction_cards/IntroAnalytics.vue'
+import { findSelectedTestOption } from '@/ux/Heuristic/utils/heuristicOptionMatch'
 
 const store = useStore()
 const route = useRoute()
@@ -267,16 +297,27 @@ const processedItemsHeuristic = computed(() => {
   return itemsHeuristic.value.map((result) => {
     const questionAnswers = isTraditional.value
       ? Object.values(result)
-          .filter((value) => value?.heuristicAnswer)
+          .filter(
+            (value) =>
+              value?.heuristicAnswer ||
+              getCommentsFromAnswer(value).length > 0 ||
+              getImagesFromAnswer(value).length > 0 ||
+              getRecommendationsFromAnswer(value).length > 0,
+          )
           .flatMap((value) => [value])
       : [result[questionSelect.value]]
     const comments = questionAnswers.flatMap(getCommentsFromAnswer)
     const images = questionAnswers.flatMap(getImagesFromAnswer)
+    const recommendations = questionAnswers.flatMap(
+      getRecommendationsFromAnswer,
+    )
     return {
       result,
       comments,
       images,
-      hasContent: comments.length > 0 || images.length > 0,
+      recommendations,
+      hasContent:
+        comments.length > 0 || images.length > 0 || recommendations.length > 0,
     }
   })
 })
@@ -302,11 +343,25 @@ const imageItems = computed(() =>
   ),
 )
 
+const recommendationItems = computed(() =>
+  processedItemsHeuristic.value.flatMap((item, evaluatorIndex) =>
+    item.recommendations.map((recommendation, recommendationIndex) => ({
+      id: `${evaluatorIndex}-recommendation-${recommendationIndex}`,
+      evaluator: item.result?.uid?.uid || `Ev${evaluatorIndex + 1}`,
+      text: recommendation,
+    })),
+  ),
+)
+
 const evidenceSummary = computed(() => ({
   comments: commentItems.value.length,
   images: imageItems.value.length,
+  recommendations: recommendationItems.value.length,
   evaluators: processedItemsHeuristic.value.length,
-  evidence: commentItems.value.length + imageItems.value.length,
+  evidence:
+    commentItems.value.length +
+    imageItems.value.length +
+    recommendationItems.value.length,
 }))
 
 const selectedContentTitle = computed(() => {
@@ -365,6 +420,13 @@ const getImagesFromAnswer = (questionAnswer) => {
   return images
 }
 
+const getRecommendationsFromAnswer = (questionAnswer) => {
+  const recommendation = questionAnswer?.heuristicRecommendation
+  return typeof recommendation === 'string' && recommendation.trim()
+    ? [recommendation.trim()]
+    : []
+}
+
 const questionGraph = computed(() => {
   const options = Array.isArray(test.value?.testOptions)
     ? test.value.testOptions
@@ -380,13 +442,10 @@ const questionGraph = computed(() => {
       const question =
         userAnswer?.heuristicQuestions?.[heuristicSelect.value]
           ?.heuristicQuestions?.[questionSelect.value]
-      if (!question?.heuristicAnswer) return
-
-      const optionSelect = options.find(
-        (op) => op.text === question.heuristicAnswer.text,
+      const optionIndex = options.indexOf(
+        findSelectedTestOption(options, question?.heuristicAnswer),
       )
-      if (optionSelect) {
-        const optionIndex = graph.label.indexOf(optionSelect.text)
+      if (optionIndex >= 0) {
         graph.data[optionIndex] += 1
       }
     })
@@ -432,7 +491,7 @@ watch(
 )
 
 watch(heuristicSelect, () => {
-  questionSelect.value = isTraditional.value ? 0 : -1
+  questionSelect.value = 0
   ind.value = 'comments'
 })
 

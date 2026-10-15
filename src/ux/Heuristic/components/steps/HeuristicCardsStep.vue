@@ -2,27 +2,43 @@
   <ShowInfo hide-col class="heuristic-cards-panel">
     <template #content>
       <div class="heuristic-cards-content">
-        <div class="heuristic-cards-header">
-          <div>
-            <p class="text-overline text-primary mb-1">
-              {{ $t('HeuristicsTestView.flow.reviewHeuristics') }}
-            </p>
-            <h1 class="heuristic-cards-title">
-              {{ $t('HeuristicsTestView.cards.title') }}
-            </h1>
+        <v-row class="ma-0" justify="space-between">
+          <div class="heuristic-cards-header">
+            <div>
+              <p class="text-overline text-primary mb-1">
+                {{ $t('HeuristicsTestView.flow.reviewHeuristics') }}
+              </p>
+              <h1 class="heuristic-cards-title">
+                {{ $t('HeuristicsTestView.cards.title') }}
+              </h1>
+            </div>
+            <div class="heuristic-cards-actions">
+              <v-progress-circular
+                rotate="-90"
+                :model-value="calculatedProgress"
+                :size="58"
+                :width="5"
+                color="primary"
+              >
+                <span class="text-caption font-weight-bold">
+                  {{ Math.round(calculatedProgress) }}%
+                </span>
+              </v-progress-circular>
+              <v-btn
+                color="primary"
+                variant="flat"
+                v-if="calculatedProgress === 100"
+                @click="$emit('finish-evaluation')"
+              >
+                <v-icon start>mdi-send</v-icon>
+                {{ $t('HeuristicsTestView.flow.finishEvaluation') }}
+              </v-btn>
+            </div>
           </div>
-          <v-progress-circular
-            rotate="-90"
-            :model-value="calculatedProgress"
-            :size="58"
-            :width="5"
-            color="primary"
-          >
-            <span class="text-caption font-weight-bold">
-              {{ Math.round(calculatedProgress) }}%
-            </span>
-          </v-progress-circular>
-        </div>
+          <h3 v-if="test.testTitle" class="answer-study-name">
+            {{ test.testTitle }}
+          </h3>
+        </v-row>
 
         <p class="heuristic-cards-description">
           {{ $t('HeuristicsTestView.cards.description') }}
@@ -42,6 +58,7 @@
                 'h-100',
                 {
                   'heuristic-card--completed': heuristicProgress(i) >= 100,
+                  'heuristic-card--in-progress': isHeuristicInProgress(i),
                 },
               ]"
               elevation="0"
@@ -73,7 +90,13 @@
                   :model-value="heuristicProgress(i)"
                   :size="52"
                   :width="5"
-                  :color="heuristicProgress(i) >= 100 ? 'success' : 'primary'"
+                  :color="
+                    heuristicProgress(i) >= 100
+                      ? 'success'
+                      : isHeuristicInProgress(i)
+                        ? 'amber'
+                        : 'primary'
+                  "
                   class="heuristic-card-progress"
                 >
                   <span
@@ -130,17 +153,6 @@
             </v-card>
           </v-col>
         </v-row>
-        <div class="d-flex justify-center mt-6">
-          <v-btn
-            color="primary"
-            variant="flat"
-            :disabled="calculatedProgress < 100"
-            @click="$emit('finish-evaluation')"
-          >
-            <v-icon start>mdi-send</v-icon>
-            {{ $t('HeuristicsTestView.flow.finishEvaluation') }}
-          </v-btn>
-        </div>
       </div>
     </template>
   </ShowInfo>
@@ -150,8 +162,10 @@
 import ShowInfo from '@/shared/components/ShowInfo.vue'
 
 const props = defineProps({
+  evaluationName: { type: String, default: '' },
   heuristics: { type: Array, required: true },
   currentUserTestAnswer: { type: Object, required: true },
+  test: { type: Object, required: true },
   calculatedProgress: { type: Number, required: true },
   isTraditional: { type: Boolean, default: false },
   perHeuristicProgress: { type: Function, required: true },
@@ -173,6 +187,11 @@ const heuristicProgress = (index) =>
       ) || 0,
     ),
   )
+
+const isHeuristicInProgress = (index) => {
+  const progress = heuristicProgress(index)
+  return progress > 0 && progress < 100
+}
 </script>
 
 <style scoped>
@@ -193,7 +212,15 @@ const heuristicProgress = (index) =>
   margin-bottom: 0.75rem;
 }
 
+.heuristic-cards-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
 .heuristic-cards-title {
+  overflow-wrap: anywhere;
   color: #00213f;
   font-size: 2.25rem;
   font-weight: 300;
@@ -244,6 +271,10 @@ const heuristicProgress = (index) =>
 
 .heuristic-card--completed .heuristic-card-accent {
   background: linear-gradient(90deg, #43a047, #66bb6a);
+}
+
+.heuristic-card--in-progress .heuristic-card-accent {
+  background: linear-gradient(90deg, #ffb300, #ffd54f);
 }
 
 .heuristic-card-accent {
@@ -353,6 +384,14 @@ const heuristicProgress = (index) =>
 
 .heuristic-card-status {
   font-weight: 700;
+}
+
+.answer-study-name {
+  margin: 0 0 0.3rem;
+  color: #5b6470;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.35;
 }
 
 @media (max-width: 600px) {

@@ -85,7 +85,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onBeforeMount } from 'vue'
+import { ref, computed, watch, onBeforeMount } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -114,6 +114,7 @@ import {
   weightsStatisticsHeader,
   heuristicsEvaluatorHeader,
 } from '@/ux/Heuristic/utils/headers.js'
+import { findSelectedTestOption } from '@/ux/Heuristic/utils/heuristicOptionMatch'
 
 const store = useStore()
 const router = useRouter()
@@ -379,7 +380,7 @@ const maxValue = computed(() => {
   return parseFloat(maxValue).toFixed(1)
 })
 
-const testAnswerDocument = computed(() => store.state.Answer.testAnswerDocument)
+const testAnswerDocument = computed(() => store.getters.testAnswerDocument)
 
 const trackTime = computed(() => store.getters.test?.trackTime !== false)
 
@@ -549,33 +550,26 @@ const optionResponseTotals = computed(() => {
   const options = Array.isArray(test.value?.testOptions)
     ? test.value.testOptions
     : []
-  const totals = options.map((option) => ({
+  const totals = options.map((option, index) => ({
+    key: option.timestamp ?? `option-${index}`,
     value: option.value,
-    text: option.text || String(option.value),
+    text: option.text || (option.value == null ? '' : String(option.value)),
     total: 0,
   }))
-  const totalsByValue = new Map(
-    totals.map((item) => [String(item.value), item]),
-  )
+  const totalsByKey = new Map(totals.map((item) => [item.key, item]))
 
   answers.value.forEach((evaluator) => {
     evaluator?.heuristicQuestions?.forEach((heuristic) => {
       heuristic?.heuristicQuestions?.forEach((question) => {
-        const answer = question?.heuristicAnswer
-        const value = answer?.custom?.value ?? answer?.value
-        if (value === null || value === undefined || value === '') return
+        const matched = findSelectedTestOption(
+          options,
+          question?.heuristicAnswer,
+        )
+        if (!matched) return
 
-        const key = String(value)
-        if (!totalsByValue.has(key)) {
-          const item = {
-            value,
-            text: answer?.custom?.text || String(value),
-            total: 0,
-          }
-          totals.push(item)
-          totalsByValue.set(key, item)
-        }
-        totalsByValue.get(key).total += 1
+        const key = matched.timestamp ?? `option-${options.indexOf(matched)}`
+        const total = totalsByKey.get(key)
+        if (total) total.total += 1
       })
     })
   })
@@ -724,8 +718,11 @@ const usuability_percentage_array = () => {
 }
 
 const pythonFunction = async () => {
-  const caminhoTestStructure = store.state.Tests.Test.testStructure || []
-  const caminhoTestWeights = store.state.Tests.Test.testWeights || []
+  const currentTest = store.getters.test
+  if (!currentTest) return
+
+  const caminhoTestStructure = currentTest.testStructure || []
+  const caminhoTestWeights = currentTest.testWeights || []
   const caminhoTestScore = store.state.Tests.scoresPercentage || []
 
   try {
@@ -809,12 +806,7 @@ onBeforeMount(async () => {
     await store.dispatch('getStudy', { id: studyId })
   }
   await store.dispatch('getCurrentTestAnswerDoc')
-})
-
-onMounted(() => {
-  pythonFunction()
-
-  // Debug API removed for production
+  await pythonFunction()
 })
 </script>
 

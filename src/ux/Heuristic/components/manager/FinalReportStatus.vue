@@ -58,6 +58,7 @@
             color="primary"
             variant="outlined"
             prepend-icon="mdi-download"
+            @click="recordDownloadRequest"
           >
             {{ $t('Dashboard.cards.download') }}
           </v-btn>
@@ -84,6 +85,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useDateLocale } from '@/shared/composables/useDateLocale'
+import { recordReportDownload } from '@/shared/services/auditTrailService'
 
 const props = defineProps({
   test: {
@@ -95,6 +97,10 @@ const props = defineProps({
 const router = useRouter()
 const { t } = useI18n()
 const { intlLocale } = useDateLocale()
+
+const recordDownloadRequest = () => {
+  recordReportDownload(props.test?.id).catch(() => {})
+}
 
 // Navigate to final report section
 const navigateToReport = () => {

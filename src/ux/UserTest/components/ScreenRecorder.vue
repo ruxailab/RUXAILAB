@@ -5,9 +5,10 @@
 <script setup>
 import { ref, computed, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 import { storage } from '@/app/plugins/firebase'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
-import { showError } from '@/shared/utils/toast'
+import { showError, showWarning } from '@/shared/utils/toast'
 import { createRecordingAttempt } from '@/ux/UserTest/utils/recordingOutcome'
 import {
   createMediaRecorder,
@@ -30,6 +31,12 @@ const props = defineProps({
 const emit = defineEmits(['showLoading', 'stopShowLoading', 'recording-result'])
 
 const store = useStore()
+const { t } = useI18n()
+const notifyRecordingFailure = ({ key, mediaKey, severity }) => {
+  const message = mediaKey ? t(key, { media: t(mediaKey) }) : t(key)
+  if (severity === 'warning') showWarning(message)
+  else showError(message)
+}
 const currentUserTestAnswer = computed(
   () => store.getters.currentUserTestAnswer,
 )
@@ -55,7 +62,12 @@ const captureScreen = async ({ requireEntireScreen = false } = {}) => {
   const taskIndex = props.taskIndex
   const userId = resolvedUserDocId.value
   const testId = props.testId
-  const attempt = createRecordingAttempt(taskIndex, 'screen', emit)
+  const attempt = createRecordingAttempt(
+    taskIndex,
+    'screen',
+    emit,
+    notifyRecordingFailure,
+  )
   activeAttempt = attempt
   let stream
   let recorder
@@ -91,7 +103,6 @@ const captureScreen = async ({ requireEntireScreen = false } = {}) => {
         'permission',
         result.reason,
       )
-      showError(`errors.screenShare.${result.reason}`)
       cleanup()
       return false
     }
@@ -123,7 +134,6 @@ const captureScreen = async ({ requireEntireScreen = false } = {}) => {
   } catch {
     attempt.finish('failed', 'capture', 'captureError')
     cleanup()
-    showError('errors.screenShare.error')
     return false
   }
 }

@@ -400,6 +400,7 @@ it('keeps Start disabled until the saved answer shows whether it was submitted',
   document.documentElement.requestFullscreen = requestFullscreen
   mockStore.getters.test.status = 'active'
   let finishLoading
+
   mockStore.dispatch.mockImplementation((action) =>
     action === 'getCurrentTestAnswerDoc'
       ? new Promise((resolve) => {
@@ -407,9 +408,11 @@ it('keeps Start disabled until the saved answer shows whether it was submitted',
         })
       : Promise.resolve(),
   )
+
   wrapper = shallowMount(UserTestView, {
     global: { mocks: { $t: (key) => key, $vuetify: { display: {} } } },
   })
+
   await flushPromises()
   expect(wrapper.vm.isStartTestDisabled).toBe(true)
 
@@ -419,6 +422,69 @@ it('keeps Start disabled until the saved answer shows whether it was submitted',
 
   expect(wrapper.vm.isStartTestDisabled).toBe(true)
   expect(wrapper.vm.testDisabledReason).toBe('already-completed')
+
   await wrapper.vm.startTest()
   expect(requestFullscreen).not.toHaveBeenCalled()
+})
+
+function mountTaskStep(task) {
+  return shallowMount(TaskStep, {
+    props: { task, taskIndex: 0, taskName: 'Find the button' },
+    global: {
+      mocks: { $vuetify: { display: {} } },
+      stubs: { ShowInfo: { template: '<div><slot name="content" /></div>' } },
+    },
+  })
+}
+
+it('asks for an optional comment only after the task timer stops', async () => {
+  wrapper = mountTaskStep({ taskType: 'no-answer' })
+  const taskStep = wrapper.vm.$.setupState
+  await taskStep.startTask()
+
+  expect(taskStep.stage).toBe(3)
+  expect(wrapper.find('[data-study-field-ref="task:0:comment"]').exists()).toBe(
+    false,
+  )
+
+  taskStep.handleShowPostForm(true)
+  await nextTick()
+
+  expect(wrapper.emitted('timer-stopped')).toHaveLength(1)
+  expect(wrapper.emitted('done')).toBeUndefined()
+  expect(taskStep.stage).toBe(5)
+  expect(wrapper.find('[data-study-field-ref="task:0:comment"]').exists()).toBe(
+    true,
+  )
+
+  taskStep.onUpdateTaskObservations('optional note')
+  expect(wrapper.emitted('update:taskObservations')?.at(-1)).toEqual([
+    'optional note',
+  ])
+
+  taskStep.attemptFinish()
+  expect(wrapper.emitted('done')).toHaveLength(1)
+})
+
+it('shows a post-task questionnaire before the optional comment', async () => {
+  wrapper = mountTaskStep({ taskType: 'sus' })
+  const taskStep = wrapper.vm.$.setupState
+  await taskStep.startTask()
+
+  taskStep.handleShowPostForm(false)
+  await nextTick()
+
+  expect(taskStep.stage).toBe(4)
+  expect(wrapper.emitted('task-questionnaire-entered')).toHaveLength(1)
+  expect(wrapper.emitted('couldNotFinish')).toBeUndefined()
+  expect(wrapper.find('[data-study-field-ref="task:0:comment"]').exists()).toBe(
+    false,
+  )
+
+  taskStep.goToObservationStep()
+  await nextTick()
+
+  expect(taskStep.stage).toBe(5)
+  taskStep.attemptFinish()
+  expect(wrapper.emitted('couldNotFinish')).toHaveLength(1)
 })

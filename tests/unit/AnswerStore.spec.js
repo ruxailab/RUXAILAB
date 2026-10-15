@@ -22,6 +22,7 @@ jest.mock('@/ux/Heuristic/utils/statistics', () => ({
 }))
 
 const AnswerStore = require('@/shared/store/Answer').default
+const HeuristicAnswer = require('@/ux/Heuristic/models/HeuristicAnswer').default
 const { showError } = require('@/shared/utils/toast')
 
 describe('Answer store', () => {
@@ -64,6 +65,48 @@ describe('Answer store', () => {
       expect(showError).not.toHaveBeenCalled()
     })
   })
+
+  it.each([
+    ['USER', 'taskAnswers'],
+    ['HEURISTIC', 'heuristicAnswers'],
+    ['CARD_SORTING', 'cardSortingAnswers'],
+  ])('filters hidden %s answers from the results getter', (type, key) => {
+    const answerDocument = {
+      type,
+      [key]: {
+        visible: { userDocId: 'visible' },
+        hidden: { userDocId: 'hidden', hidden: true },
+      },
+    }
+
+    const result = AnswerStore.getters.testAnswerDocument(
+      { testAnswerDocument: answerDocument },
+      {},
+    )
+
+    expect(Object.keys(result[key])).toEqual(['visible'])
+    expect(answerDocument[key].hidden).toEqual({
+      userDocId: 'hidden',
+      hidden: true,
+    })
+  })
+
+  it('exposes the unfiltered answer document for the progress table', () => {
+    const answerDocument = { type: 'USER', taskAnswers: {} }
+
+    expect(
+      AnswerStore.getters.rawTestAnswerDocument({
+        testAnswerDocument: answerDocument,
+      }),
+    ).toBe(answerDocument)
+  })
+
+  it('preserves hidden state when serializing heuristic answers', () => {
+    const answer = new HeuristicAnswer({ hidden: true })
+
+    expect(answer.toFirestore().hidden).toBe(true)
+  })
+
   it.each(['USER', 'HEURISTIC', 'CARD_SORTING'])(
     'propagates %s persistence failure and releases loading state',
     async (testType) => {
