@@ -361,29 +361,46 @@
     </v-row>
 
     <v-row class="mb-8">
-      <v-col cols="12" lg="6">
+      <v-col cols="12">
         <v-card flat class="pa-6 h-100">
           <h3 class="text-h6 font-weight-bold text-on-surface mb-5">
             {{ $t('analytics.taskTimeVsEstimate') }}
           </h3>
-          <div class="analytics-bar-chart">
-            <Bar
-              :data="taskTimeComparisonChartData"
-              :options="taskTimeComparisonChartOptions"
-            />
+          <div class="analytics-bar-chart analytics-bar-chart-scroll">
+            <div
+              class="analytics-bar-chart-content"
+              :style="{
+                '--chart-min-width': `${taskDefinitions.length * 80}px`,
+              }"
+            >
+              <Bar
+                :data="taskTimeComparisonChartData"
+                :options="taskTimeComparisonChartOptions"
+              />
+            </div>
           </div>
         </v-card>
       </v-col>
-      <v-col cols="12" lg="6">
+    </v-row>
+
+    <v-row class="mb-8">
+      <v-col cols="12">
         <v-card flat class="pa-6 h-100">
           <h3 class="text-h6 font-weight-bold text-on-surface mb-5">
             {{ $t('analytics.taskTimeByUser') }}
           </h3>
-          <div class="analytics-bar-chart">
-            <Bar
-              :data="timeByUserChartData"
-              :options="timeByUserChartOptions"
-            />
+          <div class="analytics-bar-chart analytics-bar-chart-scroll">
+            <div
+              class="analytics-bar-chart-content"
+              :style="{
+                '--chart-min-width': `${filteredSessions.length * 80}px`,
+              }"
+            >
+              <Bar
+                :data="timeByUserChartData"
+                :options="timeByUserChartOptions"
+              />
+            </div>
           </div>
         </v-card>
       </v-col>
@@ -1544,6 +1561,16 @@ const onExportTimeline = () => {
   position: relative;
   height: 320px;
   width: 100%;
+}
+
+.analytics-bar-chart-scroll {
+  overflow-x: auto;
+}
+
+.analytics-bar-chart-content {
+  position: relative;
+  height: 100%;
+  width: max(100%, var(--chart-min-width));
 }
 
 .task-chart {
