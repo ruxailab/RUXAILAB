@@ -225,12 +225,17 @@ export const generateInvitationLink = functions.onCall({
       )
     }
 
-    // An invitation grants the role it carries, so creating one needs the
-    // same permission as inviting someone directly.
-    if (
-      !actorId ||
-      data?.auth?.token?.firebase?.sign_in_provider === 'anonymous'
-    ) {
+    // An invitation grants the role it carries, so creating one needs the same
+    // permission as inviting someone directly. Authentication is a separate,
+    // earlier gate so unauthenticated traffic gets "unauthenticated", matching
+    // updateStudyWithAudit and manageStudyMembership.
+    if (!actorId) {
+      throw new functions.https.HttpsError(
+        'unauthenticated',
+        'Authentication is required',
+      )
+    }
+    if (data?.auth?.token?.firebase?.sign_in_provider === 'anonymous') {
       throw new functions.https.HttpsError(
         'permission-denied',
         'Invitations are not permitted',
