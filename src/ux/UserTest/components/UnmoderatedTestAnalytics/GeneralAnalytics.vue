@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-background pa-1">
+  <div class="bg-background pa-2 pa-md-3">
     <!-- Filtros dinámicos -->
     <v-card class="mb-4 pa-4 elevation-2 overflow-hidden">
       <div class="d-flex align-center mb-3 flex-wrap button-bar">
@@ -110,7 +110,7 @@
     </v-card>
 
     <!-- UX Metrics Row (ahora primera fila) -->
-    <v-row class="">
+    <v-row>
       <v-col cols="12" md="4">
         <UxMetricCard
           :value="`${calculateEffectiveness().toFixed(1)}%`"
@@ -123,7 +123,7 @@
       </v-col>
       <v-col cols="12" md="4">
         <UxMetricCard
-          :value="`${calculateEfficiency().tasksPerMinute} t/min`"
+          :value="`${calculateEfficiency().tasksPerMinute} ${$t('analytics.taskRateUnit')}`"
           :label="$t('analytics.efficiency')"
           color="info"
           icon="mdi-speedometer"
@@ -149,7 +149,9 @@
 
     <v-row>
       <v-col cols="12" lg="6">
-        <v-card class="pa-8 elevation-4 rounded-xl h-100 conclusion-card">
+        <v-card
+          class="pa-4 pa-md-6 elevation-4 rounded-xl h-100 conclusion-card"
+        >
           <div class="d-flex justify-space-between align-start mb-6">
             <div>
               <div class="d-flex align-center mb-3">
@@ -283,9 +285,9 @@
     </v-row>
 
     <!-- Task Performance Charts -->
-    <v-row class="mb-8">
+    <v-row class="mb-6">
       <v-col cols="12">
-        <v-card flat class="pa-8">
+        <v-card class="pa-4 pa-md-6 elevation-4 rounded-xl">
           <div class="d-flex justify-space-between align-center mb-6">
             <div>
               <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
@@ -294,112 +296,244 @@
               <p class="text-body-1 text-medium-emphasis">
                 {{ $t('analytics.taskPerformanceDescription') }}
               </p>
+              <p class="text-caption text-medium-emphasis mt-2">
+                {{ $t('analytics.taskPerformanceFormula') }}
+              </p>
             </div>
           </div>
 
           <v-row>
             <v-col
-              v-for="taskStat in getTasksPerformance()"
+              v-for="taskStat in taskPerformanceCards"
               :key="taskStat.taskId"
               cols="12"
               md="6"
               lg="4"
             >
               <v-card
-                class="pa-4 elevation-2 rounded-lg task-chart-card"
-                variant="outlined"
+                class="pa-3 pa-sm-4 elevation-4 rounded-xl task-chart-card"
               >
                 <div class="text-center mb-4">
                   <h4 class="text-h6 font-weight-bold mb-2">
                     {{ taskStat.taskName }}
                   </h4>
-                  <v-chip
-                    :color="
-                      taskStat.successRate >= 70
-                        ? 'success'
-                        : taskStat.successRate >= 50
-                          ? 'warning'
-                          : 'error'
-                    "
-                    variant="tonal"
-                    size="small"
-                  >
-                    {{ taskStat.successRate.toFixed(1) }}%
-                    {{ $t('analytics.success') }}
-                  </v-chip>
                 </div>
 
-                <div class="chart-container-small mb-4">
-                  <canvas
-                    :id="'task-chart-' + taskStat.taskId"
-                    class="task-chart"
-                    width="120"
-                    height="120"
-                  />
-                </div>
-
-                <div class="d-flex justify-space-between text-body-2">
-                  <div class="d-flex align-center">
-                    <div class="legend-dot bg-success mr-2" />
-                    <span
-                      >{{ $t('analytics.successCount') }}:
-                      {{ taskStat.success }}</span
+                <div class="task-donut-row">
+                  <div class="task-donut-item">
+                    <v-chip
+                      :color="
+                        taskStat.successRate >= 70
+                          ? 'success'
+                          : taskStat.successRate >= 50
+                            ? 'warning'
+                            : 'error'
+                      "
+                      variant="tonal"
+                      size="small"
                     >
+                      {{ taskStat.successRate.toFixed(1) }}%
+                      {{ $t('analytics.effectiveness') }}
+                    </v-chip>
+                    <div class="chart-container-small">
+                      <canvas
+                        :id="'task-chart-' + taskStat.taskId"
+                        class="task-chart"
+                        width="120"
+                        height="120"
+                      />
+                    </div>
                   </div>
-                  <div class="d-flex align-center">
-                    <div class="legend-dot bg-error mr-2" />
-                    <span
-                      >{{ $t('analytics.errors') }}: {{ taskStat.errors }}</span
+                  <div class="task-donut-item">
+                    <v-chip
+                      :color="
+                        getEfficiencyPercentageColor(
+                          taskStat.relativeEfficiencyPercentage,
+                        )
+                      "
+                      variant="tonal"
+                      size="small"
                     >
+                      {{
+                        taskStat.relativeEfficiencyPercentage === null
+                          ? $t('analytics.noData')
+                          : `${taskStat.relativeEfficiencyPercentage.toFixed(1)}%`
+                      }}
+                      {{ $t('analytics.relativeEfficiency') }}
+                    </v-chip>
+                    <div class="chart-container-small">
+                      <canvas
+                        :id="'task-efficiency-chart-' + taskStat.taskId"
+                        class="task-chart"
+                        width="120"
+                        height="120"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="task-outcome-summary">
+                  <div class="task-outcome-item">
+                    <div class="d-flex align-center">
+                      <div class="legend-dot bg-success mr-2" />
+                      <span>{{ $t('analytics.successCount') }}</span>
+                    </div>
+                    <strong>{{ taskStat.success }}</strong>
+                  </div>
+                  <div class="task-outcome-item">
+                    <div class="d-flex align-center">
+                      <div class="legend-dot bg-error mr-2" />
+                      <span>{{ $t('analytics.couldNotFinish') }}</span>
+                    </div>
+                    <strong>{{ taskStat.couldNotFinish }}</strong>
+                  </div>
+                  <div class="task-outcome-item">
+                    <div class="d-flex align-center">
+                      <div class="legend-dot bg-grey mr-2" />
+                      <span>{{ $t('analytics.notStarted') }}</span>
+                    </div>
+                    <strong>{{ taskStat.notStarted }}</strong>
+                  </div>
+                </div>
+
+                <div
+                  class="text-caption text-medium-emphasis text-uppercase mt-4"
+                >
+                  {{ $t('analytics.taskTimingMetrics') }}
+                </div>
+                <div class="task-timing-details">
+                  <div class="task-timing-detail">
+                    <span class="task-timing-detail-label text-medium-emphasis">
+                      {{ $t('analytics.taskEfficiency') }}
+                    </span>
+                    <strong class="task-timing-detail-value">
+                      {{
+                        taskStat.efficiency === null
+                          ? $t('analytics.noData')
+                          : taskStat.efficiency.toFixed(4)
+                      }}
+                    </strong>
+                  </div>
+                  <div class="task-timing-detail">
+                    <span class="task-timing-detail-label text-medium-emphasis">
+                      {{ $t('analytics.averageTaskTime') }}
+                    </span>
+                    <strong class="task-timing-detail-value">
+                      {{
+                        taskStat.averageTimeMinutes === null
+                          ? $t('analytics.noData')
+                          : formatTimeDetailedFromMs(
+                              taskStat.averageTimeMinutes * 60000,
+                            ).formatedTime
+                      }}
+                    </strong>
+                  </div>
+                  <div class="task-timing-detail">
+                    <span class="task-timing-detail-label text-medium-emphasis">
+                      {{ $t('analytics.estimatedTime') }}
+                    </span>
+                    <strong class="task-timing-detail-value">
+                      {{
+                        taskStat.estimatedTimeMinutes === null
+                          ? $t('analytics.noEstimate')
+                          : formatTimeDetailedFromMs(
+                              taskStat.estimatedTimeMinutes * 60000,
+                            ).formatedTime
+                      }}
+                    </strong>
+                  </div>
+                  <div class="task-timing-detail">
+                    <span class="task-timing-detail-label text-medium-emphasis">
+                      {{ $t('analytics.timeDifference') }}
+                    </span>
+                    <strong class="task-timing-detail-value">
+                      {{
+                        taskStat.timeDifferenceMinutes === null
+                          ? $t('analytics.noData')
+                          : formatTimeDifference(taskStat.timeDifferenceMinutes)
+                      }}
+                    </strong>
+                  </div>
+                  <div class="task-timing-detail">
+                    <span class="task-timing-detail-label text-medium-emphasis">
+                      {{ $t('analytics.estimateComparison') }}
+                    </span>
+                    <v-chip
+                      size="small"
+                      variant="tonal"
+                      :color="getEstimateStatusColor(taskStat.comparisonStatus)"
+                    >
+                      {{ $t(`analytics.${taskStat.comparisonStatus}`) }}
+                    </v-chip>
                   </div>
                 </div>
               </v-card>
             </v-col>
           </v-row>
-        </v-card>
-      </v-col>
-    </v-row>
 
-    <v-row class="mb-8">
-      <v-col cols="12">
-        <v-card flat class="pa-6 h-100">
-          <h3 class="text-h6 font-weight-bold text-on-surface mb-5">
-            {{ $t('analytics.taskTimeVsEstimate') }}
-          </h3>
-          <div class="analytics-bar-chart analytics-bar-chart-scroll">
-            <div
-              class="analytics-bar-chart-content"
-              :style="{
-                '--chart-min-width': `${taskDefinitions.length * 80}px`,
-              }"
-            >
-              <Bar
-                :data="taskTimeComparisonChartData"
-                :options="taskTimeComparisonChartOptions"
-              />
+          <div class="mt-8">
+            <h4 class="text-h6 font-weight-bold mb-5">
+              {{ $t('analytics.taskEfficiencyChart') }}
+            </h4>
+            <p class="text-caption text-medium-emphasis mb-3">
+              {{ $t('analytics.taskEfficiencyChartFormula') }}
+            </p>
+            <div class="analytics-bar-chart analytics-bar-chart-scroll">
+              <div
+                class="analytics-bar-chart-content"
+                :style="{
+                  '--chart-min-width': `${taskTimingStats.length * 80}px`,
+                }"
+              >
+                <Bar
+                  :data="taskEfficiencyChartData"
+                  :options="taskEfficiencyChartOptions"
+                />
+              </div>
             </div>
           </div>
-        </v-card>
-      </v-col>
-    </v-row>
 
-    <v-row class="mb-8">
-      <v-col cols="12">
-        <v-card flat class="pa-6 h-100">
-          <h3 class="text-h6 font-weight-bold text-on-surface mb-5">
-            {{ $t('analytics.taskTimeByUser') }}
-          </h3>
-          <div class="analytics-bar-chart analytics-bar-chart-scroll">
-            <div
-              class="analytics-bar-chart-content"
-              :style="{
-                '--chart-min-width': `${filteredSessions.length * 80}px`,
-              }"
-            >
-              <Bar
-                :data="timeByUserChartData"
-                :options="timeByUserChartOptions"
-              />
+          <div class="mt-8">
+            <h4 class="text-h6 font-weight-bold mb-5">
+              {{ $t('analytics.taskTimeVsEstimate') }}
+            </h4>
+            <p class="text-caption text-medium-emphasis mb-3">
+              {{ $t('analytics.taskTimeVsEstimateFormula') }}
+            </p>
+            <div class="analytics-bar-chart analytics-bar-chart-scroll">
+              <div
+                class="analytics-bar-chart-content"
+                :style="{
+                  '--chart-min-width': `${taskDefinitions.length * 80}px`,
+                }"
+              >
+                <Bar
+                  :data="taskTimeComparisonChartData"
+                  :options="taskTimeComparisonChartOptions"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8">
+            <h4 class="text-h6 font-weight-bold mb-5">
+              {{ $t('analytics.taskTimeByUser') }}
+            </h4>
+            <p class="text-caption text-medium-emphasis mb-3">
+              {{ $t('analytics.taskTimeByUserFormula') }}
+            </p>
+            <div class="analytics-bar-chart analytics-bar-chart-scroll">
+              <div
+                class="analytics-bar-chart-content"
+                :style="{
+                  '--chart-min-width': `${filteredSessions.length * 80}px`,
+                }"
+              >
+                <Bar
+                  :data="timeByUserChartData"
+                  :options="timeByUserChartOptions"
+                />
+              </div>
             </div>
           </div>
         </v-card>
@@ -407,9 +541,9 @@
     </v-row>
 
     <!-- Mostrar todas las preguntas del pre-form -->
-    <v-row class="mb-8">
+    <v-row class="mb-6">
       <v-col cols="12">
-        <v-card flat class="pa-8">
+        <v-card class="pa-4 pa-md-6 elevation-4 rounded-xl">
           <div class="d-flex justify-space-between align-center mb-6">
             <div>
               <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
@@ -457,9 +591,9 @@
     </v-row>
 
     <!-- Mostrar todas las preguntas del post-form -->
-    <v-row class="mb-8">
+    <v-row class="mb-6">
       <v-col cols="12">
-        <v-card flat class="pa-8">
+        <v-card class="pa-4 pa-md-6 elevation-4 rounded-xl">
           <div class="d-flex justify-space-between align-center mb-6">
             <div>
               <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
@@ -955,12 +1089,13 @@ const calculateEfficiency = () => {
     totalSuccessfulTaskTime / Math.max(1, totalSuccessfulTasks),
   )
 
-  // ISO 9241-11/9241-210 Efficiency Formula:
-  // Efficiency = Number of successfully completed tasks / Time spent on successful tasks
-  // Convert to tasks per minute for better readability
-  const efficiencyRatio =
-    totalSuccessfulTaskTime > 0
-      ? totalSuccessfulTasks / (totalSuccessfulTaskTime / 60000)
+  const taskEfficiencyValues = taskTimingStats.value
+    .map((stats) => stats.efficiency)
+    .filter((efficiency) => efficiency !== null)
+  const efficiencyPerMinute =
+    taskEfficiencyValues.length > 0
+      ? taskEfficiencyValues.reduce((sum, efficiency) => sum + efficiency, 0) /
+        taskEfficiencyValues.length
       : 0
 
   // Dynamic normalization based on actual efficiency ratio
@@ -968,14 +1103,14 @@ const calculateEfficiency = () => {
   // Score = 10 * (1 - e^(-efficiency_ratio * scale_factor))
   const scaleFactor = 2 // Adjustable based on typical task complexity
   const normalizedScore =
-    efficiencyRatio > 0
-      ? Math.min(10, 10 * (1 - Math.exp(-efficiencyRatio * scaleFactor)))
+    efficiencyPerMinute > 0
+      ? Math.min(10, 10 * (1 - Math.exp(-efficiencyPerMinute * scaleFactor)))
       : 0
 
   return {
     score: normalizedScore,
     avgTime: avgTimeFormatted.formatedTime,
-    tasksPerMinute: efficiencyRatio.toFixed(2),
+    tasksPerMinute: efficiencyPerMinute.toFixed(4),
     totalTasks: totalSuccessfulTasks,
     totalSuccessfulTime: formatTimeDetailedFromMs(totalSuccessfulTaskTime)
       .formatedTime,
@@ -1090,7 +1225,6 @@ const getAverageSatisfaction = () => {
 }
 
 const getTasksPerformance = () => {
-  // Recoger todos los taskId únicos presentes en filteredSessions
   const allTaskIds = new Set()
   filteredSessions.value.forEach((answer) => {
     if (answer.tasks) {
@@ -1098,36 +1232,54 @@ const getTasksPerformance = () => {
     }
   })
 
-  // Para cada taskId, calcular los datos reales
-  const result = []
-  allTaskIds.forEach((taskId) => {
+  const tasks = taskDefinitions.value.length
+    ? taskDefinitions.value.map((task, index) => ({
+        task,
+        taskId: task?.taskId ?? String(index),
+        index,
+      }))
+    : [...allTaskIds].map((taskId) => ({
+        task: null,
+        taskId,
+        index: Number(taskId),
+      }))
+
+  return tasks.map(({ task, taskId, index }) => {
     let success = 0
-    let errors = 0
-    let total = 0
-    const taskName = resolveTaskName(taskId)
+    let couldNotFinish = 0
+    let notStarted = 0
 
     filteredSessions.value.forEach((answer) => {
-      if (answer.tasks && answer.tasks[taskId]) {
-        total++
-        const task = answer.tasks[taskId]
-        if (task.completed && task.success !== false) {
-          success++
-        } else {
-          errors++
-        }
+      const taskAnswer = task
+        ? getSessionTask(answer, task, index)
+        : answer.tasks?.[taskId]
+
+      if (taskAnswer?.completed && taskAnswer.success !== false) {
+        success++
+      } else if (
+        taskAnswer?.attempted ||
+        taskAnswer?.completed ||
+        Number(taskAnswer?.taskTime) > 0
+      ) {
+        couldNotFinish++
+      } else {
+        notStarted++
       }
     })
 
-    result.push({
+    const total = filteredSessions.value.length
+
+    return {
       taskId,
-      taskName,
+      taskName: task?.taskName || resolveTaskName(String(taskId)),
       success,
-      errors,
+      couldNotFinish,
+      notStarted,
+      errors: couldNotFinish + notStarted,
       total,
       successRate: total === 0 ? 0 : (success / total) * 100,
-    })
+    }
   })
-  return result
 }
 
 const resolveTaskName = (taskId) => {
@@ -1170,6 +1322,129 @@ const getEstimatedTimeMinutes = (task) => {
   const time = Number(task?.estimatedTime)
   return Number.isFinite(time) && time >= 0 ? time : null
 }
+
+const taskTimingStats = computed(() =>
+  taskDefinitions.value.map((task, index) => {
+    let totalRecordedTimeMs = 0
+    let totalSuccessfulTaskTimeMs = 0
+    let recordedTaskCount = 0
+    let sumIndividualEfficiency = 0
+
+    filteredSessions.value.forEach((session) => {
+      const taskAnswer = getSessionTask(session, task, index)
+      if (!taskAnswer) return
+
+      const taskTimeMs = Number(taskAnswer.taskTime)
+      const hasValidTime = Number.isFinite(taskTimeMs) && taskTimeMs > 0
+
+      if (hasValidTime) {
+        totalRecordedTimeMs += taskTimeMs
+        recordedTaskCount++
+      }
+
+      if (taskAnswer.completed && taskAnswer.success !== false) {
+        if (hasValidTime) {
+          totalSuccessfulTaskTimeMs += taskTimeMs
+          sumIndividualEfficiency += 60000 / taskTimeMs
+        }
+      }
+    })
+
+    const averageTimeMinutes =
+      recordedTaskCount > 0
+        ? totalRecordedTimeMs / recordedTaskCount / 60000
+        : null
+    const estimatedTimeMinutes = getEstimatedTimeMinutes(task)
+    const timeDifferenceMinutes =
+      averageTimeMinutes !== null && estimatedTimeMinutes !== null
+        ? averageTimeMinutes - estimatedTimeMinutes
+        : null
+    let comparisonStatus = 'noData'
+
+    if (averageTimeMinutes !== null && estimatedTimeMinutes === null) {
+      comparisonStatus = 'noEstimate'
+    } else if (timeDifferenceMinutes !== null) {
+      const roundedDifference =
+        Math.round(averageTimeMinutes * 10) -
+        Math.round(estimatedTimeMinutes * 10)
+      comparisonStatus =
+        roundedDifference < 0
+          ? 'underEstimate'
+          : roundedDifference > 0
+            ? 'overEstimate'
+            : 'withinEstimate'
+    }
+
+    return {
+      taskId: task?.taskId ?? String(index),
+      taskName: task?.taskName || resolveTaskName(String(index)),
+      efficiency:
+        recordedTaskCount > 0
+          ? sumIndividualEfficiency / recordedTaskCount
+          : null,
+      relativeEfficiencyPercentage:
+        totalRecordedTimeMs > 0
+          ? (totalSuccessfulTaskTimeMs / totalRecordedTimeMs) * 100
+          : null,
+      averageTimeMinutes,
+      estimatedTimeMinutes,
+      timeDifferenceMinutes,
+      comparisonStatus,
+    }
+  }),
+)
+
+const taskPerformanceCards = computed(() =>
+  getTasksPerformance().map((performance) => {
+    const taskIndex = taskDefinitions.value.findIndex(
+      (task, index) =>
+        (task?.taskId != null &&
+          String(task.taskId) === String(performance.taskId)) ||
+        String(index) === String(performance.taskId),
+    )
+    const timing = taskIndex >= 0 ? taskTimingStats.value[taskIndex] : null
+
+    return {
+      ...performance,
+      efficiency: timing?.efficiency ?? null,
+      relativeEfficiencyPercentage:
+        timing?.relativeEfficiencyPercentage ?? null,
+      averageTimeMinutes: timing?.averageTimeMinutes ?? null,
+      estimatedTimeMinutes: timing?.estimatedTimeMinutes ?? null,
+      timeDifferenceMinutes: timing?.timeDifferenceMinutes ?? null,
+      comparisonStatus: timing?.comparisonStatus ?? 'noData',
+    }
+  }),
+)
+
+const taskEfficiencyChartData = computed(() => ({
+  labels: taskTimingStats.value.map((_, index) => `T${index + 1}`),
+  datasets: [
+    {
+      label: t('analytics.taskEfficiency'),
+      data: taskTimingStats.value.map((stats) => stats.efficiency),
+      backgroundColor: '#2563EB',
+      borderRadius: 4,
+    },
+  ],
+}))
+
+const getEstimateStatusColor = (status) => {
+  if (status === 'underEstimate') return 'info'
+  if (status === 'withinEstimate') return 'success'
+  if (status === 'overEstimate') return 'error'
+  return 'grey'
+}
+
+const getEfficiencyPercentageColor = (relativeEfficiencyPercentage) => {
+  if (relativeEfficiencyPercentage === null) return 'grey'
+  if (relativeEfficiencyPercentage >= 100) return 'success'
+  if (relativeEfficiencyPercentage >= 80) return 'warning'
+  return 'error'
+}
+
+const formatTimeDifference = (minutes) =>
+  `${minutes > 0 ? '+' : ''}${minutes.toFixed(1)} ${t('analytics.minutesShort')}`
 
 const getUserIdentifier = (session, index) => ({
   identifier: `U${index + 1}`,
@@ -1283,6 +1558,22 @@ const tooltipTitle = (items) => {
   return itemName ? `${item.label}: ${itemName}` : item.label
 }
 
+const taskEfficiencyChartOptions = computed(() => ({
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: false },
+    tooltip: { callbacks: { title: tooltipTitle } },
+  },
+  scales: {
+    x: { title: { display: true, text: t('analytics.taskLabel') } },
+    y: {
+      beginAtZero: true,
+      title: { display: true, text: t('analytics.taskEfficiency') },
+    },
+  },
+}))
+
 const taskTimeComparisonChartOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
@@ -1323,12 +1614,59 @@ const timeByUserChartOptions = computed(() => ({
   },
 }))
 
+const drawEfficiencyDonutChart = (task) => {
+  const canvas = document.getElementById(
+    'task-efficiency-chart-' + (task.taskId || ''),
+  )
+  if (!canvas) return
+
+  const context = canvas.getContext('2d')
+  context.clearRect(0, 0, canvas.width, canvas.height)
+
+  const centerX = canvas.width / 2
+  const centerY = canvas.height / 2
+  const radius = Math.min(centerX, centerY) - 10
+  const innerRadius = radius * 0.6
+  const efficiency = task.relativeEfficiencyPercentage
+
+  context.beginPath()
+  context.arc(centerX, centerY, radius, 0, 2 * Math.PI)
+  context.arc(centerX, centerY, innerRadius, 2 * Math.PI, 0, true)
+  context.closePath()
+  context.fillStyle = '#e0e0e0'
+  context.fill()
+
+  if (Number.isFinite(efficiency)) {
+    const progress = Math.min(Math.max(efficiency, 0), 100) / 100
+    const endAngle = -Math.PI / 2 + progress * 2 * Math.PI
+
+    context.beginPath()
+    context.arc(centerX, centerY, radius, -Math.PI / 2, endAngle)
+    context.arc(centerX, centerY, innerRadius, endAngle, -Math.PI / 2, true)
+    context.closePath()
+    context.fillStyle =
+      efficiency >= 100 ? '#4CAF50' : efficiency >= 80 ? '#FFA726' : '#F44336'
+    context.fill()
+  }
+
+  context.fillStyle = Number.isFinite(efficiency) ? '#333' : '#999'
+  context.font = 'bold 14px Arial'
+  context.textAlign = 'center'
+  context.fillText(
+    Number.isFinite(efficiency) ? `${efficiency.toFixed(0)}%` : '--',
+    centerX,
+    centerY + 5,
+  )
+}
+
 const createTaskCharts = async () => {
   await nextTick()
 
-  const tasksData = getTasksPerformance()
+  const tasksData = taskPerformanceCards.value
 
   tasksData.forEach((task) => {
+    drawEfficiencyDonutChart(task)
+
     // Usar el id único basado en el taskId
     const canvasId = 'task-chart-' + (task.taskId || '')
     const canvas = document.getElementById(canvasId)
@@ -1549,12 +1887,52 @@ const onExportTimeline = () => {
 }
 
 .chart-container-small {
-  height: 150px;
-  width: 100%;
+  aspect-ratio: 1;
+  width: min(120px, 100%);
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.task-donut-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-evenly;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.task-donut-item {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+}
+
+.task-donut-item :deep(.v-chip) {
+  max-width: 100%;
+  height: auto;
+  min-height: 24px;
+  white-space: normal;
+  text-align: center;
+}
+
+.task-outcome-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  font-size: 0.75rem;
+}
+
+.task-outcome-item {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
 }
 
 .analytics-bar-chart {
@@ -1573,9 +1951,33 @@ const onExportTimeline = () => {
   width: max(100%, var(--chart-min-width));
 }
 
+.task-timing-details {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+}
+
+.task-timing-detail {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.875rem;
+}
+
+.task-timing-detail-value {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
 .task-chart {
-  max-width: 120px;
-  max-height: 120px;
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .legend-dot {
