@@ -219,4 +219,90 @@ describe('getMyStudyAnswer', () => {
       caller: { userDocId: 'caller', progress: 40 },
     })
   })
+
+  it('allows a card sorting evaluator to read only their own card sorting answer', async () => {
+    mockStudies.set(
+      'study-1',
+      userStudy({
+        testType: 'CARD_SORTING',
+        studyRoleMap: {
+          caller: 1,
+        },
+      }),
+    )
+    mockAnswers.set('answer-1', {
+      type: 'CARD_SORTING',
+      studyId: 'study-1',
+      createdBy: 'owner',
+      cardSortingAnswers: {
+        caller: { userDocId: 'caller', progress: 100 },
+        other: { userDocId: 'other', progress: 100 },
+      },
+    })
+
+    await expect(
+      getMyStudyAnswer(request('caller', { studyId: 'study-1' })),
+    ).resolves.toEqual({
+      id: 'answer-1',
+      type: 'CARD_SORTING',
+      studyId: 'study-1',
+      createdBy: 'owner',
+      cardSortingAnswers: {
+        caller: { userDocId: 'caller', progress: 100 },
+      },
+    })
+  })
+
+  it('returns only the caller card sorting answer for a public study non-member', async () => {
+    mockStudies.set(
+      'study-1',
+      userStudy({
+        testType: 'CARD_SORTING',
+        isPublic: true,
+      }),
+    )
+    mockAnswers.set('answer-1', {
+      type: 'CARD_SORTING',
+      studyId: 'study-1',
+      createdBy: 'owner',
+      cardSortingAnswers: {
+        caller: { userDocId: 'caller', progress: 60 },
+        other: { userDocId: 'other', progress: 100 },
+      },
+    })
+
+    await expect(
+      getMyStudyAnswer(request('caller', { studyId: 'study-1' })),
+    ).resolves.toEqual({
+      id: 'answer-1',
+      type: 'CARD_SORTING',
+      studyId: 'study-1',
+      createdBy: 'owner',
+      cardSortingAnswers: {
+        caller: { userDocId: 'caller', progress: 60 },
+      },
+    })
+  })
+
+  it('denies a card sorting caller with GUEST or no role on a private study', async () => {
+    mockStudies.set(
+      'study-1',
+      userStudy({
+        testType: 'CARD_SORTING',
+        isPublic: false,
+        studyRoleMap: {
+          guestUser: 2,
+        },
+      }),
+    )
+
+    await expect(
+      getMyStudyAnswer(request('guestUser', { studyId: 'study-1' })),
+    ).rejects.toThrow(expect.objectContaining({ code: 'permission-denied' }))
+
+    await expect(
+      getMyStudyAnswer(request('stranger', { studyId: 'study-1' })),
+    ).rejects.toThrow(expect.objectContaining({ code: 'permission-denied' }))
+  })
 })
+
