@@ -1,9 +1,12 @@
+import { buildResponsePresentationInstructions } from '../features/heuristicAgents/service/responsePresentation.js'
+import { resolveHeuristicAnswerConfiguration } from '../shared/models/heuristicAnswerConfiguration.js'
 import dns from 'node:dns/promises'
 import { randomUUID } from 'node:crypto'
 import { existsSync } from 'node:fs'
 import net from 'node:net'
 import puppeteer from 'puppeteer-core'
 import { admin, functions } from '../core/firebase/f.firebase.js'
+import { resolveStudyRole, ROLE } from '../shared/auth/studyAccess.js'
 
 const MAX_HTML_BYTES = 1_000_000
 const MAX_TREE_CHARS = 500_000
@@ -103,6 +106,12 @@ const isValidMetric = (value) =>
 
 const isDecisionAnswerValid = (decision, validAnswers, answerMode) => {
   switch (answerMode) {
+    case 'weight':
+      return (
+        Number.isInteger(decision?.weight) &&
+        decision.weight >= 1 &&
+        decision.weight <= 9
+      )
     case 'customOptions':
       return validAnswers.has(String(decision?.answer))
     case 'frequency':
@@ -111,8 +120,7 @@ const isDecisionAnswerValid = (decision, validAnswers, answerMode) => {
       return isValidMetric(decision?.severity)
     case 'frequencySeverity':
       return (
-        isValidMetric(decision?.frequency) &&
-        isValidMetric(decision?.severity)
+        isValidMetric(decision?.frequency) && isValidMetric(decision?.severity)
       )
     default:
       return false
@@ -199,6 +207,7 @@ const normalizeDecisions = (rawDecisions, questions, options, answerMode) => {
           : '',
     }
 
+    if (answerMode === 'weight') normalized.weight = Number(decision.weight)
     if (answerMode === 'customOptions') {
       const rawValue = nestedAnswer.value ?? decision.answer
       const option = options.find(
@@ -225,6 +234,11 @@ const usesSeverity = (answerMode) =>
   answerMode === 'severity' || answerMode === 'frequencySeverity'
 
 const buildAnswerSchema = (options, answerMode) => {
+  if (answerMode === 'weight')
+    return {
+      properties: { weight: { type: 'integer', minimum: 1, maximum: 9 } },
+      required: ['weight'],
+    }
   const answerValues = options.map((option) => option?.value ?? option)
   if (answerMode === 'customOptions') {
     return {
@@ -307,6 +321,9 @@ const buildOpenRouterRequest = ({
   questions,
   options,
   answerMode,
+  responseLocale,
+  studyMode,
+  heuristics,
 }) => {
   const responseSchema = buildResponseSchema(questions, options, answerMode)
   return {
@@ -323,11 +340,19 @@ const buildOpenRouterRequest = ({
       messages: [
         {
           role: 'system',
-          content: `${agent.systemPrompt || 'Actúa como evaluador experto en usabilidad.'}\nResponde únicamente con el JSON exigido por el esquema. Conserva exactamente los heuristicId y questionId recibidos y crea una sola decisión por pregunta. El modo de respuesta es "${answerMode}". Si es customOptions, usa en answer únicamente uno de los valores proporcionados en options. Para frequency o severity usa una escala entera de 0 a 4 y completa solo los campos exigidos por el esquema. Basa toda afirmación en evidencias del árbol web. Sé conciso: limita comment a dos frases y evidence a un máximo de tres fragmentos breves por pregunta. Usa screenshotSelector solo cuando una captura aporte evidencia visual necesaria para validar el comentario; debe ser un selector CSS específico construible con los atributos del árbol web. En caso contrario devuelve una cadena vacía.`,
+          content: `${agent.systemPrompt || 'Actúa como evaluador experto en usabilidad.'}\nResponde únicamente con el JSON exigido por el esquema. Conserva exactamente los heuristicId y questionId recibidos y crea una sola decisión por pregunta. El modo de respuesta es "${answerMode}". Si es customOptions, usa en answer únicamente uno de los valores proporcionados en options. Para frequency o severity usa una escala entera de 0 a 4 y completa solo los campos exigidos por el esquema. Frecuencia: 0 rara, 1 ocasional, 2 a veces, 3 frecuente, 4 constante. Severidad: 0 cosmética, 1 menor, 2 moderada, 3 grave, 4 catastrófica. En frequencySeverity responde ambas métricas por pregunta. En customOptions respeta el significado de los textos de las opciones; los pesos se aplican en el cálculo de resultados del test, no cambies ni ponderes el valor de la opción seleccionada. Basa toda afirmación en evidencias del árbol web. Sé conciso: limita comment a dos frases.\n${buildResponsePresentationInstructions(responseLocale)}\nStudy mode: ${studyMode}. For traditional studies assess the whole heuristic once, using its title and description, returning frequency and severity rather than answering granular questions. For detailed studies answer each supplied question with a predefined option. For weights studies assign each whole heuristic an importance weight from 1 (lowest) to 9 (highest), relative to the other supplied heuristics and the evaluated site; do not answer granular questions or return frequency, severity or option values.`,
         },
         {
           role: 'user',
-          content: JSON.stringify({ page, questions, options, answerMode }),
+          content: JSON.stringify({
+            page,
+            questions,
+            options,
+            answerMode,
+            responseLocale,
+            studyMode,
+            heuristics,
+          }),
         },
       ],
     }),
@@ -417,6 +442,9 @@ const requestQuestionBatch = async ({
   questions,
   options,
   answerMode,
+  responseLocale,
+  studyMode,
+  heuristics,
 }) => {
   const openRouterRequest = {
     ...buildOpenRouterRequest({
@@ -427,6 +455,9 @@ const requestQuestionBatch = async ({
       questions,
       options,
       answerMode,
+      responseLocale,
+      studyMode,
+      heuristics,
     }),
   }
   const { response, errorPayload } = await requestOpenRouter(openRouterRequest)
@@ -465,7 +496,10 @@ const evaluateSingleQuestion = async (context) => {
       return await requestQuestionBatch(context)
     } catch (error) {
       lastError = error
-      if (!isRecoverableModelError(error) || attempt === SINGLE_QUESTION_RETRIES)
+      if (
+        !isRecoverableModelError(error) ||
+        attempt === SINGLE_QUESTION_RETRIES
+      )
         throw error
       await wait(500 * 2 ** attempt)
     }
@@ -562,12 +596,13 @@ const getAuthorizedTest = async (testId, uid) => {
   const snapshot = await admin.firestore().collection('tests').doc(testId).get()
   if (!snapshot.exists) fail('not-found', 'El test no existe.')
   const test = snapshot.data()
-  const isAdmin = test.testAdmin?.userDocId === uid
-  const isCooperator = (test.cooperators || []).some(
-    (item) => item.userDocId === uid && item.accepted === true,
-  )
-  if (!isAdmin && !isCooperator)
+  const role = resolveStudyRole(test, uid, false)
+  if (
+    role === null ||
+    ![ROLE.ADMIN, ROLE.MANAGER, ROLE.EVALUATOR].includes(role)
+  ) {
     fail('permission-denied', 'No tienes acceso al test.')
+  }
   return test
 }
 
@@ -705,7 +740,7 @@ const uploadEvidenceScreenshot = async ({
   return { url, storagePath, size: buffer.length }
 }
 
-/** Captures only evidence explicitly requested by the model, without failing the evaluation. */
+/** Attaches real visual evidence without failing the evaluation if capture is unavailable. */
 const attachEvidenceScreenshots = async ({
   decisions,
   pageUrl,
@@ -757,7 +792,10 @@ const attachEvidenceScreenshots = async ({
 
     for (const decision of candidates) {
       try {
-        const element = await browserPage.$(decision.screenshotSelector)
+        await browserPage.evaluate(() => window.scrollTo(0, 0))
+        const element = decision.screenshotSelector
+          ? await browserPage.$(decision.screenshotSelector).catch(() => null)
+          : null
         if (!element) continue
         await element.scrollIntoView()
         const buffer = await element.screenshot({ type: 'png' })
@@ -803,21 +841,44 @@ export const evaluateHeuristicPage = functions.onCall({
   options: { timeoutSeconds: 300, memory: '1GiB' },
   handler: async (request) => {
     if (!request.auth) fail('unauthenticated', 'Debes iniciar sesión.')
-    const { agentId, testId, page, questions, options, answerMode } =
-      request.data || {}
+    const {
+      agentId,
+      testId,
+      page,
+      questions,
+      responseLocale,
+      answerMode: requestedAnswerMode,
+    } = request.data || {}
     if (
       !agentId ||
       !testId ||
       !page ||
       !Array.isArray(questions) ||
-      !['customOptions', 'frequency', 'severity', 'frequencySeverity'].includes(
-        answerMode,
-      )
+      ![
+        'customOptions',
+        'frequency',
+        'severity',
+        'frequencySeverity',
+        'weight',
+      ].includes(requestedAnswerMode)
     ) {
       fail('invalid-argument', 'Faltan datos para realizar la evaluación.')
     }
 
     const test = await getAuthorizedTest(testId, request.auth.uid)
+    const { answerMode, options } = resolveHeuristicAnswerConfiguration(test)
+    if (!answerMode) {
+      fail(
+        'failed-precondition',
+        'El test no tiene opciones de respuesta configuradas para este modo.',
+      )
+    }
+    if (requestedAnswerMode !== answerMode) {
+      fail(
+        'failed-precondition',
+        'La configuración del test ha cambiado. Inicia una nueva evaluación con el modo actualizado.',
+      )
+    }
     const agentSnapshot = await admin
       .firestore()
       .collection('agents')
@@ -861,6 +922,18 @@ export const evaluateHeuristicPage = functions.onCall({
           questions: batch,
           options: options || [],
           answerMode,
+          responseLocale,
+          studyMode: test.useWeights
+            ? 'weights'
+            : answerMode === 'customOptions'
+              ? 'detailed'
+              : 'traditional',
+          heuristics: (test.testStructure || []).map((h, i) => ({
+            id: h.id ?? i,
+            title: h.title || h.name || '',
+            description: h.description || '',
+            descriptions: h.descriptions || [],
+          })),
         })),
       )
     }

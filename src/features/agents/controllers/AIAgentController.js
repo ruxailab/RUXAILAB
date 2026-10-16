@@ -25,6 +25,17 @@ export default class AIAgentController extends Controller {
     return agent
   }
 
+  async listPublic() {
+    const snapshot = await super.query(COLLECTION, {
+      field: 'visibility',
+      condition: '==',
+      value: AGENT_VISIBILITY.PUBLIC,
+    })
+    return snapshot.docs.map((document) =>
+      AIAgent.fromFirestore(document.data(), document.id),
+    )
+  }
+
   async listAvailable(userId) {
     if (!userId) return []
     const snapshots = await Promise.all([

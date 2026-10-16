@@ -5,7 +5,6 @@ import {
   reauthenticateWithCredential,
   updatePassword,
 } from 'firebase/auth'
-import { documentId } from 'firebase/firestore'
 const COLLECTION = 'users'
 
 export default class UserController extends Controller {
@@ -69,7 +68,7 @@ export default class UserController extends Controller {
     const myAnswersIds = Object.keys(user.myAnswers || {})
 
     const [testsDocs, answersDocs] = await Promise.all([
-      this._fetchStudiesByIds(myTestsIds),
+      this._fetchAccessibleStudiesByIds(myTestsIds),
       this._fetchAccessibleStudiesByIds(myAnswersIds),
     ])
 
@@ -95,41 +94,12 @@ export default class UserController extends Controller {
     return user
   }
 
-  async _fetchStudiesByIds(ids) {
-    if (!ids || ids.length === 0) return []
-
-    try {
-      // If there are few (<= 10), use "in" query (faster and more direct)
-      if (ids.length <= 10) {
-        const q = {
-          field: documentId(),
-          condition: 'in',
-          value: ids,
-        }
-        const res = await super.query('tests', q)
-        return res.docs.map((doc) => {
-          return Object.assign({ id: doc.id }, doc.data())
-        })
-      }
-
-      // If there are many (>10), parallelize individual gets
-      const promises = ids.map((id) => super.readOne('tests', id))
-      const results = await Promise.all(promises)
-      return results
-        .filter((r) => r.exists())
-        .map((r) => {
-          return Object.assign({ id: r.id }, r.data())
-        })
-    } catch (error) {
-      throw error
-    }
-  }
-
   /**
-   * Answer-history entries can point to studies whose access is scoped to a
-   * particular scheduled session. Skip those inaccessible parent documents;
-   * the session list loads their study metadata through the session-member
-   * callable instead. One denied study must not break the whole dashboard.
+   * A user's study lists can point to studies they can no longer read: a
+   * deleted study left in myTests, or answer-history entries whose access is
+   * scoped to a scheduled session (the session list loads those through the
+   * session-member callable instead). Skip each such study on its own; one
+   * denied study must not break the whole dashboard.
    */
   async _fetchAccessibleStudiesByIds(ids) {
     if (!Array.isArray(ids) || ids.length === 0) return []

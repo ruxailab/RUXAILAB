@@ -31,6 +31,9 @@ jest.mock('@/shared/utils/toast', () => ({
 jest.mock('@/shared/utils/animations', () => ({
   animateStepAnnouncement: jest.fn(),
 }))
+jest.mock('@/shared/components/StudyWelcomeStep.vue', () => ({
+  template: '<div />',
+}))
 jest.mock('@/ux/UserTest/components/steps/WelcomeStep.vue', () => ({
   template: '<div />',
 }))

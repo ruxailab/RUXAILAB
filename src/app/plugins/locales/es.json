@@ -48,15 +48,30 @@
     }
   },
   "heuristicAgents": {
+    "design": {
+      "subtitle": "Escoge un agente, revisa las páginas y sigue el avance de cada heurística.",
+      "chooseAgent": "Escoge tu agente IA",
+      "expandHint": "Despliega una web y sus heurísticas para ver el progreso y las respuestas.",
+      "editPages": "Editar páginas",
+      "overallProgress": "Progreso de la evaluación",
+      "heuristicCount": "{count} heurísticas",
+      "pause": "Pausar",
+      "resume": "Reanudar",
+      "questions": "Preguntas a evaluar"
+    },
     "title": "Análisis con agentes",
-    "subtitle": "Indica una web, selecciona sus páginas y deja que un agente complete la evaluación heurística.",
+    "subtitle": "Elige un agente para evaluar las páginas configuradas en los ajustes del estudio.",
     "web": {
-      "title": "Introduce la web",
-      "subtitle": "Buscaremos la página principal y sus enlaces internos.",
+      "title": "Web a analizar",
+      "subtitle": "Elige las páginas que se analizarán en la evaluación heurística.",
       "url": "URL de la web",
-      "search": "Buscar páginas"
+      "search": "Cargar"
     },
     "pages": {
+      "setupTitle": "Configura las páginas a analizar",
+      "openSettings": "Editar estudio · Ajustes",
+      "configured": "Páginas configuradas",
+      "configureInSettings": "Configura las páginas que se analizarán en los ajustes del estudio.",
       "title": "Selecciona las páginas",
       "selected": "{selected} de {total} seleccionadas",
       "selectAll": "Seleccionar todas",
@@ -71,13 +86,40 @@
       "agentHint": "Crea o edita agentes desde la sección general Agentes.",
       "analyze": "Analizar {count} página(s)",
       "saved": "{count} análisis guardados como evaluadores independientes.",
-      "viewResults": "Ver resultados"
+      "viewResults": "Ver resultados",
+      "pause": "Pausar heurística (la solicitud actual finalizará)",
+      "resume": "Reanudar heurística",
+      "completedDetail": "{count} respuestas guardadas · {time}",
+      "heuristicProgress": "{completed} / {total} valoraciones de la heurística",
+      "heuristicCompleted": "Heurística evaluada a las {time}",
+      "weightValue": "Peso relativo: {weight} / 9",
+      "retryHeuristic": "Volver a evaluar la heurística",
+      "explanation": "Explicación",
+      "assessment": "Valoración",
+      "setupTitle": "Evaluación con IA",
+      "setupHint": "Elige un agente, revisa las páginas y empieza la evaluación.",
+      "pauseAll": "Pausar evaluación",
+      "resumeAll": "Reanudar evaluación",
+      "pausedTitle": "Evaluación pausada",
+      "runningTitle": "Evaluación en curso",
+      "finishedTitle": "Evaluación finalizada",
+      "pagesProgress": "{completed} de {total} páginas completadas",
+      "pauseHint": "Las peticiones en curso terminarán. Las nuevas esperarán hasta que reanudes la evaluación.",
+      "retryHint": "Hay {count} valoraciones pendientes de revisión. Abre la página y vuelve a intentar la valoración que ha fallado.",
+      "retryQuestion": "Volver a responder",
+      "questionProgress": "{completed} / {total} preguntas evaluadas",
+      "responseDetails": "Ver respuestas y justificación",
+      "evidence": "Ver evidencia",
+      "background": "La evaluación continúa mientras navegas por otras páginas de la aplicación. Vuelve aquí para ver el progreso o pausar heurísticas."
     },
     "status": {
       "completed": "Completado",
       "error": "Error",
       "running": "Heurística {current}/{total}",
-      "pending": "Pendiente"
+      "pending": "Pendiente",
+      "paused": "En pausa",
+      "evaluating": "Evaluando",
+      "blocked": "Bloqueada por un error anterior"
     },
     "messages": {
       "urlsFound": "Se han encontrado {count} URL(s).",
@@ -404,6 +446,14 @@
     }
   },
   "community": {
+    "agents": {
+      "subtitle": "Explora los agentes IA públicos de la comunidad. Puedes seleccionarlos al evaluar un estudio.",
+      "search": "Buscar por nombre, descripción o modelo",
+      "empty": "Todavía no hay agentes públicos.",
+      "noResults": "No hay agentes que coincidan con tu búsqueda.",
+      "details": "Ver agente",
+      "refresh": "Actualizar"
+    },
     "studies": {
       "title": "Estudios comunitarios",
       "searchPlaceholder": "Buscar estudios..."
@@ -542,6 +592,7 @@
     }
   },
   "navigation": {
+    "communityAgents": "Community Agents",
     "dashboard": "Panel",
     "groups": {
       "overview": "Resumen",
@@ -731,6 +782,7 @@
     "incorrectPassword": "Contraseña incorrecta",
     "incorrectCredential": "Nombre de usuario o contraseña incorrectos.",
     "globalError": "Ha ocurrido un error, disculpa las molestias.",
+    "cameraBusy": "No se pudo iniciar tu cámara. Cierra otras aplicaciones o pestañas que la estén usando, o elige otra cámara en la configuración de cámara del navegador. La prueba continuará sin grabación de webcam.",
     "cameraNotAvailable": "No se detectó ninguna cámara. El estudio continuará sin grabación de webcam.",
     "cameraPermissionDenied": "Se requiere acceso a la cámara para continuar. Por favor, permita el acceso a la cámara en la configuración de su navegador.",
     "recordingMedia": {
@@ -1173,6 +1225,7 @@
     },
     "cards": {
       "title": "Selecciona una heurística",
+      "titleWithName": "Evaluación heurística de {name}",
       "description": "Revisa el progreso de cada heurística y elige una para responder sus preguntas.",
       "questionsCount": "{count} preguntas",
       "open": "Evaluar heurística",
@@ -1181,12 +1234,16 @@
       "noDescription": "Revisa esta heurística y responde sus preguntas según tu evaluación."
     },
     "answer": {
+      "weight": "Peso relativo",
+      "invalidWeight": "Selecciona un número entero del 1 al 10.",
+      "weightHelp": "Selecciona un peso relativo del 1 al 10. Los valores mayores indican más importancia.",
       "currentLocation": "Heurística {heuristic} · Pregunta {current} de {total}",
       "responseType": "Tipo de respuesta",
       "responseTypeHint": "Escoge el formato de respuesta una vez. Se usará en todas las preguntas de esta heurística.",
       "assessment": "Evaluación",
       "assessmentHint": "Selecciona la opción que mejor refleje tu evaluación para esta pregunta.",
       "optionsAnalysis": "Análisis de opciones",
+      "required": "Obligatorio",
       "optionsAnalysisHint": "Evalúa la pregunta usando las opciones configuradas, severidad, frecuencia o ambas.",
       "evidence": "Evidencias y comentarios",
       "evidenceSubtitle": "Escribe el motivo de tu evaluación y añade evidencias si hace falta.",
@@ -1885,6 +1942,7 @@
       "noTasks": "Este estudio no tiene ninguna tarea.",
       "answerSaved": "Respuesta guardada con éxito.",
       "taskCompletedSuccess": "¡Tarea \"{taskName}\" completada exitosamente!",
+      "studySubmittedSuccess": "Estudio \"{studyName}\" completado. ¡Gracias por participar!",
       "taskNotCompleted": "No se pudo completar la tarea \"{taskName}\".",
       "useSessionLinkModerated": "Usa un enlace de sesión para acceder a tu estudio moderada.",
       "useSessionLink": "Usa un enlace de sesión para acceder a tu estudio"
@@ -2720,6 +2778,7 @@
     "individualAnalytics": "Analíticas Individuales",
     "susAnalytics": "Analíticas SUS",
     "nasaTlxAnalytics": "Analíticas NASA-TLX",
+    "sentimentAnalytics": "Análisis de sentimiento",
     "eyeTrackingAnalytics": "Analíticas de Rastreo Ocular",
     "transcriptions": "Transcripciones",
     "user": "Usuario",
@@ -2733,12 +2792,30 @@
     "tasks": "tareas",
     "total": "total",
     "timeTaken": "Tiempo empleado",
+    "withinEstimate": "Dentro del estimado",
+    "overEstimate": "Por encima del estimado",
+    "timeComparison": "Comparación con el estimado",
     "yes": "Sí",
     "invited": "Invitado",
     "answers": "Respuestas",
     "overallAnalyticsDescription": "Ver el análisis general de tu estudio",
     "no": "No",
     "sartAnalytics": "Análisis SART",
+    "testDetails": {
+      "title": "Detalles del estudio",
+      "answerType": "Tipo de respuesta",
+      "tip": "Consejo",
+      "completion": "Finalización",
+      "answer": "Respuesta",
+      "observations": "Observaciones",
+      "recordings": "Grabaciones",
+      "time": "Tiempo",
+      "noAnswer": "Sin respuesta",
+      "notUsed": "No usado",
+      "screen": "Pantalla",
+      "webcam": "Webcam",
+      "taskDetail": "Detalle de la tarea"
+    },
     "sentiment": {
       "searchByTask": "Buscar por nombre de tarea",
       "task": "Tarea",
@@ -3805,7 +3882,9 @@
       "message_content_hint": "Introduce el contenido de tu mensaje",
       "no_users": "No se encontraron usuarios",
       "cancel_invitation_confirmation": "¿Estás seguro de que deseas cancelar la invitación de {email}?",
-      "remove_participant_confirmation": "Are you sure you want to remove {email} from this test? This action cannot be undone."
+      "remove_participant_confirmation": "Are you sure you want to remove {email} from this test? This action cannot be undone.",
+      "participant_removed": "Participante eliminado",
+      "invitation_cancelled": "Invitación cancelada"
     },
     "filter": {
       "search": "Buscar participantes",

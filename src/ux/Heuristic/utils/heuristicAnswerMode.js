@@ -1,23 +1,94 @@
+export const resolveHeuristicStudyMode = (test) => {
+  if (['traditional', 'detailed', 'weights'].includes(test?.studyMode)) {
+    return test.studyMode
+  }
+
+  if (test?.useWeights) return 'weights'
+
+  const useFrequency = test?.useFrequency !== false
+  const useSeverity = test?.useSeverity !== false
+  const hasExplicitMetricSettings =
+    typeof test?.useFrequency === 'boolean' ||
+    typeof test?.useSeverity === 'boolean'
+
+  // Explicitly enabled metrics take precedence over leftover options.
+  if (hasExplicitMetricSettings && (useFrequency || useSeverity)) {
+    return 'traditional'
+  }
+
+  if (test?.testOptions?.length) return 'detailed'
+
+  return useFrequency && useSeverity ? 'traditional' : 'detailed'
+}
+
+export const heuristicResponseItems = (test, heuristic) =>
+  resolveHeuristicStudyMode(test) === 'detailed'
+    ? heuristic?.questions || []
+    : [
+        {
+          id: heuristic?.id,
+          title: heuristic?.title,
+          descriptions: [
+            { text: heuristic?.description || heuristic?.text || '' },
+          ],
+        },
+      ]
+
 export const HEURISTIC_ANSWER_MODE = Object.freeze({
+  WEIGHT: 'weight',
   CUSTOM_OPTIONS: 'customOptions',
+  WEIGHT: 'weight',
   FREQUENCY: 'frequency',
   SEVERITY: 'severity',
   FREQUENCY_SEVERITY: 'frequencySeverity',
 })
 
 export const resolveHeuristicAnswerMode = (test) => {
-  if (Array.isArray(test?.testOptions) && test.testOptions.length) {
-    return HEURISTIC_ANSWER_MODE.CUSTOM_OPTIONS
+  const studyMode = resolveHeuristicStudyMode(test)
+
+  if (studyMode === 'weights') {
+    return HEURISTIC_ANSWER_MODE.WEIGHT
   }
 
   const useFrequency = test?.useFrequency !== false
   const useSeverity = test?.useSeverity !== false
+
+  if (studyMode === 'traditional') {
+    if (useFrequency && useSeverity) {
+      return HEURISTIC_ANSWER_MODE.FREQUENCY_SEVERITY
+    }
+
+    if (useFrequency) {
+      return HEURISTIC_ANSWER_MODE.FREQUENCY
+    }
+
+    if (useSeverity) {
+      return HEURISTIC_ANSWER_MODE.SEVERITY
+    }
+
+    return HEURISTIC_ANSWER_MODE.FREQUENCY_SEVERITY
+  }
+
+  if (Array.isArray(test?.testOptions) && test.testOptions.length) {
+    return HEURISTIC_ANSWER_MODE.CUSTOM_OPTIONS
+  }
+
+  if (test?.useWeights) return null
+
   if (useFrequency && useSeverity) {
     return HEURISTIC_ANSWER_MODE.FREQUENCY_SEVERITY
   }
-  if (useFrequency) return HEURISTIC_ANSWER_MODE.FREQUENCY
-  if (useSeverity) return HEURISTIC_ANSWER_MODE.SEVERITY
-  return null
+
+  if (useFrequency) {
+    return HEURISTIC_ANSWER_MODE.FREQUENCY
+  }
+
+  if (useSeverity) {
+    return HEURISTIC_ANSWER_MODE.SEVERITY
+  }
+
+  // Detailed studies with both metrics disabled still need a response scale.
+  return HEURISTIC_ANSWER_MODE.FREQUENCY_SEVERITY
 }
 
 export const buildCanonicalHeuristicAnswer = ({
@@ -25,7 +96,11 @@ export const buildCanonicalHeuristicAnswer = ({
   option,
   frequency,
   severity,
+  weight,
 }) => {
+  if (mode === HEURISTIC_ANSWER_MODE.WEIGHT) {
+    return { mode, weight, text: `Weight: ${weight}`, value: weight }
+  }
   if (mode === HEURISTIC_ANSWER_MODE.CUSTOM_OPTIONS) {
     const custom = option
       ? {

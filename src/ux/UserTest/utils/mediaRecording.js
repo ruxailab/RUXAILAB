@@ -3,6 +3,39 @@ import {
   uploadBytes,
   getDownloadURL,
 } from 'firebase/storage'
+import { isDeviceBusyError } from '@/ux/UserTest/utils/recordingOutcome'
+
+const VIRTUAL_CAMERA = /virtual|obs|ndi|snap|xsplit|manycam|droidcam|camo/i
+
+/**
+ * Opens the browser's default camera. If it cannot start (busy, or a virtual
+ * camera with no picture), tries the other cameras, real ones first, and
+ * rethrows the original error when none starts.
+ */
+export const openCameraStream = async (mediaDevices) => {
+  try {
+    return await mediaDevices.getUserMedia({ video: true })
+  } catch (error) {
+    if (!isDeviceBusyError(error)) throw error
+    // Labels are known now that camera permission has been requested.
+    const cameras = (await mediaDevices.enumerateDevices())
+      .filter((device) => device.kind === 'videoinput' && device.deviceId)
+      .sort(
+        (left, right) =>
+          VIRTUAL_CAMERA.test(left.label) - VIRTUAL_CAMERA.test(right.label),
+      )
+    for (const camera of cameras) {
+      try {
+        return await mediaDevices.getUserMedia({
+          video: { deviceId: { exact: camera.deviceId } },
+        })
+      } catch {
+        // Try the next camera.
+      }
+    }
+    throw error
+  }
+}
 
 export const saveRecordedMedia = async ({
   blob,

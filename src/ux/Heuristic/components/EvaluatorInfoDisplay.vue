@@ -40,9 +40,9 @@
                   {{ section.title }}
                 </p>
                 <div
+                  v-safe-html="section.content"
                   class="text-body-2 text-on-surface ql-content mb-0"
                   style="line-height: 1.6"
-                  v-html="section.content"
                 />
               </div>
             </div>

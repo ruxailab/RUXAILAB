@@ -1260,6 +1260,12 @@ const handleSubmit = async () => {
     await saveAnswer()
     void initializeStudyLogging()?.submitted()
     void publishParticipantProgress().catch(() => {})
+    store.commit('SET_TOAST', {
+      type: 'success',
+      message: t('UserTestView.messages.studySubmittedSuccess', {
+        studyName: test.value.testTitle,
+      }),
+    })
     displayVideoCallComponent.value = true
   } catch {
     localTestAnswer.submitted = false
@@ -1337,7 +1343,7 @@ const setTestAnswer = async () => {
 }
 
 const signOut = async () => {
-  await store.dispatch('signOut')
+  await store.dispatch('logout')
   router.push('/signin')
 }
 
