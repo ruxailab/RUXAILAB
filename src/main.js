@@ -7,6 +7,7 @@ import i18n from './app/plugins/i18n'
 import Toast, { useToast } from 'vue-toastification'
 import TextClamp from 'vue3-text-clamp'
 import { quillEditor } from 'vue3-quill'
+import safeHtml from '@/shared/directives/safeHtml'
 import { sweepExpiredStudyLogging } from '@/shared/services/studyLoggingClient'
 import 'vue-toastification/dist/index.css'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
@@ -41,6 +42,7 @@ app.use(i18n)
 app.use(Toast, options)
 app.use(TextClamp)
 app.use(quillEditor)
+app.directive('safe-html', safeHtml)
 
 app.config.globalProperties.$toast = useToast()
 

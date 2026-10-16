@@ -73,8 +73,8 @@
                   </p>
 
                   <div
+                    v-safe-html="section.content"
                     class="text-body-2 text-ternary ql-content section-content"
-                    v-html="section.content"
                   />
                 </div>
 

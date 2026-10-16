@@ -12,8 +12,8 @@
           </h2>
           <div
             v-if="welcomeMessage"
+            v-safe-html="welcomeMessage"
             class="split welcome-body text-h6 mb-6 text-grey-darken-3"
-            v-html="welcomeMessage"
           ></div>
           <p v-else class="split welcome-body text-h6 mb-6 text-grey-darken-3">
             {{ $t('UserTestView.WelcomeStep.description') }}
