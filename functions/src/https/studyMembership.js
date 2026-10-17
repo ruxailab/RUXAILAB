@@ -1,5 +1,6 @@
 import { admin, functions } from '../core/firebase/f.firebase.js'
 import { writeAuditEvent } from '../utils/auditTrail.js'
+import { resolveStudyRole } from '../shared/auth/studyAccess.js'
 import InviteUtils, { INVITE_STATUS } from '../utils/inviteUtils.js'
 
 const ROLE = Object.freeze({
@@ -129,18 +130,8 @@ const findTargetIndex = (cooperators, { targetUserId, targetEmail }) =>
       sameEmail(cooperator?.email, targetEmail),
   )
 
-const getActorRole = (study, actorId, isSuperAdmin) => {
-  if (isSuperAdmin || study?.testAdmin?.userDocId === actorId) {
-    return ROLE.ADMIN
-  }
-
-  return (
-    study?.cooperators?.find(
-      (cooperator) =>
-        cooperator?.userDocId === actorId && InviteUtils.isAccepted(cooperator),
-    )?.accessLevel ?? null
-  )
-}
+const getActorRole = (study, actorId, isSuperAdmin) =>
+  resolveStudyRole(study, actorId, isSuperAdmin)
 
 const getAssignableRoles = (study, actorRole) => {
   const studyType = normalizeStudyType(study?.testType)
