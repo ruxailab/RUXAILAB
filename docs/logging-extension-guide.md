@@ -180,7 +180,14 @@ flags to `TASK_ATTEMPT_FINISHED`.
 
 ## Tests
 
-Functions tests run against the emulators:
+Functions tests run against the emulators, in two files:
+
+- `functions/tests/logEvents.spec.js`: every type in `STUDY_LOGGING` (user
+  tests, heuristic, card sorting). Needs the Firestore emulator.
+- `functions/tests/focusGroupLogging.spec.js`: focus group session events.
+  Also needs the Realtime Database emulator, and uses its own project ID
+  because `logEvents.spec.js` clears the whole Firestore project between
+  tests.
 
 ```bash
 cd functions
