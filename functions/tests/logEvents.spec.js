@@ -1661,3 +1661,238 @@ describe('unmoderated task and recording metadata', () => {
     })
   })
 })
+
+describe('card sorting logging', () => {
+  const FREE_TEXT = ['Billing card', 'My money stuff', 'Ada Lovelace']
+  const studyRef = () => admin.firestore().doc('tests/study-1')
+  const logs = async () =>
+    (await studyRef().collection('logs').get()).docs.map((item) =>
+      item.data(),
+    )
+  const loggingStateIsEmpty = async () => {
+    for (const name of ['studySessions', 'logs', 'logBatches', 'loggingMeta']) {
+      expect((await studyRef().collection(name).get()).empty).toBe(true)
+    }
+  }
+  const useCardSortingStudy = async (answer = {}) => {
+    await studyRef().set({
+      testType: 'CARD_SORTING',
+      answersDocId: 'answer-1',
+      isPublic: false,
+      testAdmin: { userDocId: 'owner' },
+      studyRoleMap: { participant: 1, guest: 2, observer: 3 },
+      testStructure: {
+        cardSorting: {
+          cards: [{ id: 'card-1', title: FREE_TEXT[0] }],
+          categories: [{ id: 'category-1', title: FREE_TEXT[1] }],
+        },
+      },
+    })
+    await admin
+      .firestore()
+      .doc('answers/answer-1')
+      .set({
+        type: 'CARD_SORTING',
+        studyId: 'study-1',
+        cardSortingAnswers: {
+          participant: {
+            fullName: FREE_TEXT[2],
+            consentCompleted: false,
+            submitted: false,
+            sortedCards: { [FREE_TEXT[1]]: [FREE_TEXT[0]] },
+            ...answer,
+          },
+        },
+      })
+  }
+
+  it('lets evaluators log and denies guests, observers and strangers', async () => {
+    await useCardSortingStudy({ consentCompleted: true })
+
+    for (const uid of ['guest', 'observer', 'stranger']) {
+      await expect(
+        logEvents.run(participantRequest(viewBatch(), uid)),
+      ).rejects.toMatchObject({
+        code: 'permission-denied',
+        details: { reasonCode: 'NOT_ELIGIBLE' },
+      })
+      await expect(
+        requestLogEvent.run(
+          participantRequest(
+            { studyId: 'study-1', eventType: 'CONSENT_ACCEPTED' },
+            uid,
+          ),
+        ),
+      ).rejects.toMatchObject({ code: 'permission-denied' })
+    }
+    await loggingStateIsEmpty()
+
+    await expect(
+      requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED')),
+    ).resolves.toEqual({ status: 'accepted' })
+    await expect(
+      logEvents.run(participantRequest(viewBatch())),
+    ).resolves.toMatchObject({ status: 'accepted' })
+    expect((await logs()).map((item) => item.actorRole).sort()).toEqual([
+      'evaluator',
+      'evaluator',
+    ])
+  })
+
+  it('creates no logging state until consent is committed in cardSortingAnswers', async () => {
+    // Consent stored under another methodology's field must not count.
+    await useCardSortingStudy()
+    await admin
+      .firestore()
+      .doc('answers/answer-1')
+      .update({
+        heuristicAnswers: {
+          participant: { consentCompleted: true, submitted: true },
+        },
+        taskAnswers: {
+          participant: { consentCompleted: true, submitted: true },
+        },
+      })
+
+    await expect(
+      logEvents.run(participantRequest(viewBatch())),
+    ).rejects.toMatchObject({
+      code: 'failed-precondition',
+      details: { reasonCode: 'CONSENT_REQUIRED' },
+    })
+    for (const eventType of ['CONSENT_ACCEPTED', 'STUDY_SUBMITTED']) {
+      await expect(
+        requestLogEvent.run(verifiedRequest(eventType)),
+      ).rejects.toMatchObject({
+        code: 'failed-precondition',
+        details: { reasonCode: 'UNVERIFIED_TRANSITION' },
+      })
+    }
+    await loggingStateIsEmpty()
+
+    await admin
+      .firestore()
+      .doc('answers/answer-1')
+      .update({ 'cardSortingAnswers.participant.consentCompleted': true })
+    await expect(
+      requestLogEvent.run(
+        verifiedRequest('CONSENT_ACCEPTED', undefined, {
+          occurredAt: '2026-10-18T09:00:00.000Z',
+        }),
+      ),
+    ).resolves.toEqual({ status: 'accepted' })
+    await expect(
+      requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED')),
+    ).resolves.toEqual({ status: 'duplicate' })
+
+    const [session] = (
+      await studyRef().collection('studySessions').get()
+    ).docs.map((item) => item.data())
+    expect(session).toMatchObject({ participantLabel: 'P-001' })
+    expect(session.consentAcceptedAt).toBeDefined()
+    expect(await logs()).toEqual([
+      expect.objectContaining({
+        eventType: 'CONSENT_ACCEPTED',
+        participantLabel: 'P-001',
+        source: 'logging-service',
+        details: {},
+      }),
+    ])
+  })
+
+  it('verifies submission only from a submitted card sorting answer', async () => {
+    await useCardSortingStudy({ consentCompleted: true })
+    await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
+
+    await expect(
+      requestLogEvent.run(verifiedRequest('STUDY_SUBMITTED')),
+    ).rejects.toMatchObject({
+      details: { reasonCode: 'UNVERIFIED_TRANSITION' },
+    })
+
+    await admin
+      .firestore()
+      .doc('answers/answer-1')
+      .update({ 'cardSortingAnswers.participant.submitted': true })
+    await expect(
+      requestLogEvent.run(verifiedRequest('STUDY_SUBMITTED')),
+    ).resolves.toEqual({ status: 'accepted' })
+
+    const [session] = (
+      await studyRef().collection('studySessions').get()
+    ).docs.map((item) => item.data())
+    expect(session.submittedAt).toBeDefined()
+    expect((await logs()).map((item) => item.eventType).sort()).toEqual([
+      'CONSENT_ACCEPTED',
+      'STUDY_SUBMITTED',
+    ])
+  })
+
+  it('rejects user-test and heuristic activity on a card sorting study', async () => {
+    await useCardSortingStudy({ consentCompleted: true })
+    await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
+
+    await expect(
+      logEvents.run(
+        participantRequest({
+          studyId: 'study-1',
+          batchId: 'batch-2',
+          events: [
+            {
+              eventId: 'task-1',
+              eventType: 'TASK_STARTED',
+              occurredAt: '2026-10-18T09:01:00.000Z',
+              details: { taskRef: 'task:0' },
+            },
+            answerEdited('edit-1', {
+              details: {
+                fieldRef: 'cardSorting:0:answer',
+                editSpanMs: 10,
+                editOperations: 1,
+                pasteOperations: 0,
+                initialLength: 0,
+                resultingLength: 3,
+              },
+            }),
+          ],
+        }),
+      ),
+    ).rejects.toMatchObject({ code: 'invalid-argument' })
+    await expect(
+      requestLogEvent.run(verifiedRequest('TASK_ATTEMPT_FINISHED', 'task:0')),
+    ).rejects.toMatchObject({
+      details: { reasonCode: 'UNVERIFIED_TRANSITION' },
+    })
+  })
+
+  it('never stores card, category or participant text', async () => {
+    await useCardSortingStudy({ consentCompleted: true, submitted: true })
+    await requestLogEvent.run(verifiedRequest('CONSENT_ACCEPTED'))
+    await logEvents.run(participantRequest(viewBatch()))
+    await requestLogEvent.run(verifiedRequest('STUDY_SUBMITTED'))
+
+    const stored = JSON.stringify([
+      ...(await logs()),
+      ...(await studyRef().collection('studySessions').get()).docs.map(
+        (item) => item.data(),
+      ),
+    ])
+    expect(await logs()).toHaveLength(3)
+    for (const text of FREE_TEXT) expect(stored).not.toContain(text)
+    // The uid is only ever stored as a salted hash.
+    expect(stored).not.toContain('"participant"')
+  })
+
+  it('still denies study types without logging configured', async () => {
+    for (const testType of ['ACCESSIBILITY', 'SURVEY', '']) {
+      await studyRef().update({ testType, isPublic: true })
+      await expect(
+        logEvents.run(participantRequest(viewBatch())),
+      ).rejects.toMatchObject({ details: { reasonCode: 'NOT_ELIGIBLE' } })
+      await expect(
+        requestLogEvent.run(verifiedRequest('STUDY_SUBMITTED')),
+      ).rejects.toMatchObject({ details: { reasonCode: 'NOT_ELIGIBLE' } })
+    }
+    await loggingStateIsEmpty()
+  })
+})

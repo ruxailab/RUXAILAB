@@ -8,6 +8,8 @@ import StorageView from '@/shared/views/StorageView.vue'
 import AuditTrailView from '@/shared/views/AuditTrailView.vue'
 import TestView from '@/views/public/TestView.vue'
 import CardSortingAnswerView from '@/ux/CardSorting/views/CardSortingAnswerView.vue'
+import LogsView from '@/shared/views/LogsView.vue'
+import { STUDY_CAPABILITY as C } from '@/shared/utils/studyAccessPolicy'
 
 export default [
   {
@@ -40,6 +42,17 @@ export default [
         props: true,
         meta: { authorize: [0, 1] },
         component: CardSortingAnswerView,
+      },
+      {
+        path: '/cardSorting/logs/:id',
+        name: 'CardSortingLogsView',
+        props: true,
+        meta: {
+          authorize: [0, 1],
+          studyCapability: C.LOGS_VIEW,
+          studyRouteBase: 'cardSorting',
+        },
+        component: LogsView,
       },
       {
         path: '/cardSorting/settings/:id',

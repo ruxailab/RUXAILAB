@@ -139,6 +139,11 @@ const STUDY_LOGGING = Object.freeze({
     consent: false,
     roles: () => [1],
   },
+  CARD_SORTING: {
+    answerField: 'cardSortingAnswers',
+    consent: true,
+    roles: () => [1],
+  },
 })
 
 const loggingFor = (study) =>

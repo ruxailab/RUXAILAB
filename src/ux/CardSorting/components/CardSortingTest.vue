@@ -482,6 +482,8 @@ import CardSortingTask from './CardSortingTask.vue'
 import CardSortingEvaluatorAnswer from '../models/CardSortingEvaluatorAnswer'
 import { MEDIA_FIELD_MAP } from '@/shared/constants/mediasType'
 import { showError, showSuccess, showInfo } from '@/shared/utils/toast'
+import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
+import { createStudyLoggingRuntime } from '@/shared/services/studyLoggingRuntime'
 
 const props = defineProps({
   test: {
@@ -536,6 +538,25 @@ const localAnswer = reactive(
 
 fullName.value = localAnswer.fullName || ''
 if (localAnswer.submitted) start.value = false
+
+// Activity logging records only that the study was opened, consented to and
+// submitted. Card and category names are participant free text and never
+// reach logging.
+let studyLogging = null
+const initializeStudyLogging = () => {
+  if (studyLogging || !user.value?.id || !props.test?.id) return studyLogging
+  studyLogging = createStudyLoggingRuntime({
+    ownerUid: user.value.id,
+    studyId: props.test.id,
+    studyType: 'CARD_SORTING',
+    consentRequired: true,
+    callFunction: FirebaseFunctionsController.callHttpsCallableFunction,
+  })
+  if (localAnswer.consentCompleted && !localAnswer.submitted) {
+    void studyLogging.resumeAfterConsent()
+  }
+  return studyLogging
+}
 
 const cardSortingConfigurationIssues = computed(() => {
   const cardSorting = props.test?.testStructure?.cardSorting
@@ -858,6 +879,7 @@ async function proceedAfterSorting() {
 const completeStep = async (type) => {
   try {
     if (type === 'consent') {
+      const consentAcceptedAt = new Date().toISOString()
       localAnswer.consentCompleted = true
       localAnswer.consent = props.test.testStructure.consent || ''
       if (hasPreTest.value) {
@@ -870,6 +892,9 @@ const completeStep = async (type) => {
         if (!hasAnyRecording.value) sortingStarted.value = true
       }
       await savePartial()
+      if (user.value) {
+        void initializeStudyLogging()?.consentAccepted(consentAcceptedAt)
+      }
       return
     }
 
@@ -924,6 +949,7 @@ const submit = async () => {
     localAnswer.submitted = true
     localAnswer.progress = 100
     await savePartial()
+    void initializeStudyLogging()?.submitted()
     showSuccess('CardSorting.answerSubmitted')
     router.push('/admin')
   } catch {
@@ -935,6 +961,7 @@ const submit = async () => {
 }
 
 onMounted(() => {
+  initializeStudyLogging()
   if (localAnswer.submitted) {
     globalIndex.value = 6
     localAnswer.postTestCompleted = true
@@ -952,6 +979,7 @@ onBeforeUnmount(() => {
   forceStopAllMedia()
   uploadingCount.value = 0
   isWaitingForUploadToFinish.value = false
+  studyLogging?.destroy()
 })
 </script>
 
