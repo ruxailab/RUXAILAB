@@ -19,6 +19,7 @@ export {
   transcriptionDelete,
   transcriptionDeleteByUser,
 } from '../features/transcription/index.js'
+export { exportStudyLogs } from '../features/logExport/index.js'
 export { facialSentimentTask } from '../features/facialSentiment/index.js'
 export { textSentimentTask } from '../features/textSentiment/index.js'
 export * from './focusGroupAnalysis.js'

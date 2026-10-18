@@ -43,6 +43,9 @@
           divided
           aria-label="Log view"
         >
+          <v-btn value="overview" prepend-icon="mdi-view-dashboard-outline">
+            Overview
+          </v-btn>
           <v-btn value="events" prepend-icon="mdi-format-list-bulleted">
             All events
           </v-btn>
@@ -51,6 +54,14 @@
           </v-btn>
         </v-btn-toggle>
       </div>
+
+      <StudyLogOverview
+        v-if="viewMode === 'overview'"
+        :study-id="id"
+        :event-presentation="eventPresentation"
+        @filter="showFilteredEvents"
+        @select="selectedEvent = $event"
+      />
 
       <section
         v-if="viewMode === 'timeline'"
@@ -260,6 +271,11 @@
             >
               Refresh
             </v-btn>
+            <LogExportDialog
+              :study-id="id"
+              :filters="appliedFilters"
+              :filter-count="activeFilterCount"
+            />
           </div>
         </div>
 
@@ -595,6 +611,8 @@ import {
   localDateRange,
 } from '@/shared/services/studyLogQuery'
 import ParticipantTimeline from '@/shared/components/logs/ParticipantTimeline.vue'
+import StudyLogOverview from '@/shared/components/logs/StudyLogOverview.vue'
+import LogExportDialog from '@/shared/components/logs/LogExportDialog.vue'
 import { buildParticipantTimeline } from '@/shared/utils/participantTimeline'
 
 const props = defineProps({ id: { type: String, required: true } })
@@ -1420,6 +1438,13 @@ const loadTimeline = async () => {
   }
 }
 watch(timelineParticipant, loadTimeline)
+
+// Overview cards open the event list with their filter applied.
+const showFilteredEvents = async (filters) => {
+  Object.assign(draft, emptyFilters(), filters)
+  viewMode.value = 'events'
+  await applyFilters()
+}
 watch(participantLabels, (labels) => {
   if (!timelineParticipant.value && labels.length) {
     timelineParticipant.value = labels[0]
@@ -1434,6 +1459,23 @@ onBeforeUnmount(() => clearTimeout(participantTimer))
 </script>
 
 <style scoped>
+@media (max-width: 600px) {
+  .view-switch :deep(.v-btn-toggle) {
+    display: grid;
+    width: 100%;
+    height: auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .view-switch :deep(.v-btn) {
+    height: auto !important;
+    min-height: 48px;
+    padding: 6px 4px;
+    font-size: 0.7rem;
+  }
+  .view-switch :deep(.v-btn__content) {
+    white-space: normal;
+  }
+}
 .logs-page {
   --logs-navy: #00213f;
   --logs-coral: #ff425a;

@@ -71,3 +71,23 @@ export function assertStudyAccess(
 
   return true
 }
+
+/**
+ * Mirrors `canViewLogs` in firestore.rules: owner, super-admin, or a study
+ * role map Admin. Unlike `resolveStudyRole`, it does not fall back to the
+ * legacy cooperators list, so the server never grants log access that the
+ * Firestore rules deny.
+ *
+ * @param {object|null|undefined} study
+ * @param {string} uid
+ * @param {boolean} isSuperAdmin
+ * @returns {boolean}
+ */
+export function canViewStudyLogs(study, uid, isSuperAdmin) {
+  if (!study || !uid) return false
+  return (
+    isSuperAdmin === true ||
+    study?.testAdmin?.userDocId === uid ||
+    study?.studyRoleMap?.[uid] === ROLE.ADMIN
+  )
+}
