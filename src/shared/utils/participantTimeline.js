@@ -35,6 +35,9 @@ export const stepKeyFor = (event) => {
       return 'consent'
     case 'STUDY_SUBMITTED':
       return 'submitted'
+    case 'SESSION_STARTED':
+    case 'SESSION_ENDED':
+      return 'liveSession'
     case 'QUESTION_RESPONSE_UPDATED': {
       const heuristic = heuristicIndexOf(details.questionRef)
       return heuristic === null ? 'other' : `heuristic:${heuristic}`
@@ -66,6 +69,7 @@ const STEP_ORDER = {
   preTest: 2,
   task: 3,
   heuristic: 3,
+  liveSession: 3,
   postTest: 4,
   submitted: 5,
   other: 6,
@@ -131,6 +135,7 @@ const statusOf = (kind, events, summary) => {
   const hasProblem = events.some((event) =>
     ['warning', 'error'].includes(event.level),
   )
+  if (kind === 'liveSession') return summary.ended ? 'done' : 'open'
   if (kind === 'task') {
     if (summary.outcome === 'not_completed') return 'problem'
     if (summary.outcome) return hasProblem ? 'problem' : 'done'
@@ -145,6 +150,10 @@ const summaryFor = (kind, events) => {
     return { questions: questionsTouched(events, kind) }
   if (kind === 'heuristic') return { questions: heuristicQuestions(events) }
   if (kind === 'session') return { opens: events.length }
+  if (kind === 'liveSession')
+    return {
+      ended: events.some((event) => event.eventType === 'SESSION_ENDED'),
+    }
   return {}
 }
 

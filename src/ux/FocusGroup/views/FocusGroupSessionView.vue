@@ -723,6 +723,7 @@ import {
   normalizeSessionNickname,
 } from '@/ux/FocusGroup/utils/sessionRoles'
 import { mergeFinalObserverNotes } from '@/ux/FocusGroup/utils/observerNotes'
+import { logFocusGroupSessionEvent } from '@/ux/FocusGroup/utils/sessionLogging'
 import SessionLobby from '@/ux/FocusGroup/components/session/SessionLobby.vue'
 import SessionVideoStage from '@/ux/FocusGroup/components/session/SessionVideoStage.vue'
 import TopicPanel from '@/ux/FocusGroup/components/session/TopicPanel.vue'
@@ -1618,6 +1619,11 @@ const onStart = async () => {
   starting.value = true
   try {
     await startSession(user.value?.id)
+    void logFocusGroupSessionEvent({
+      studyId,
+      sessionId,
+      eventType: 'SESSION_STARTED',
+    })
   } finally {
     starting.value = false
   }
@@ -1675,6 +1681,11 @@ const onEnd = async () => {
           sessionId,
         })
       if (!lifecycleResult.success) throw lifecycleResult.error
+      void logFocusGroupSessionEvent({
+        studyId,
+        sessionId,
+        eventType: 'SESSION_ENDED',
+      })
     }
     store.commit('SET_TOAST', {
       message: t('focusGroup.session.sessionSaved'),

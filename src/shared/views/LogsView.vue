@@ -690,6 +690,7 @@ const EVENT_TYPES_BY_STUDY = Object.freeze({
     'STUDY_SUBMITTED',
   ],
   CARD_SORTING: ['STUDY_VIEW_OPENED', 'CONSENT_ACCEPTED', 'STUDY_SUBMITTED'],
+  FOCUS_GROUP: ['SESSION_STARTED', 'SESSION_ENDED'],
 })
 const levels = ['info', 'warning', 'error']
 const sources = filterOptions(['study-client', 'logging-service'])
@@ -726,6 +727,7 @@ const studyTitle = computed(
 const studyTypeLabel = computed(() => {
   if (study.value.testType === 'HEURISTIC') return 'Heuristic evaluation'
   if (study.value.testType === 'CARD_SORTING') return 'Card sorting'
+  if (study.value.testType === 'FOCUS_GROUP') return 'Focus group'
   if (study.value.subType === 'USER_MODERATED') return 'Moderated user test'
   if (study.value.testType === 'USER') return 'Unmoderated user test'
   return 'Research study'
@@ -733,6 +735,7 @@ const studyTypeLabel = computed(() => {
 const STUDY_TYPE_ICONS = Object.freeze({
   HEURISTIC: 'mdi-clipboard-search-outline',
   CARD_SORTING: 'mdi-cards-outline',
+  FOCUS_GROUP: 'mdi-account-group-outline',
 })
 const studyTypeIcon = computed(
   () =>
@@ -944,6 +947,8 @@ const eventPresentation = (event) => {
   if (event?.eventType === 'STUDY_VIEW_OPENED') primary = 'Study opened'
   else if (event?.eventType === 'CONSENT_ACCEPTED') primary = 'Consent accepted'
   else if (event?.eventType === 'STUDY_SUBMITTED') primary = 'Study submitted'
+  else if (event?.eventType === 'SESSION_STARTED') primary = 'Session started'
+  else if (event?.eventType === 'SESSION_ENDED') primary = 'Session ended'
   else if (event?.eventType === 'ANSWER_EDITED' && field) {
     const action =
       field.section === 'task' && field.field === 'comment'

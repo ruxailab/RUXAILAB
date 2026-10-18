@@ -13,7 +13,7 @@ const includesMember = (members, uid, email) =>
     )
   })
 
-const isSessionFacilitator = ({ session, uid, email }) =>
+export const isSessionFacilitator = ({ session, uid, email }) =>
   (Array.isArray(session?.staff) ? session.staff : []).some((member) => {
     const entry = typeof member === 'string' ? { email: member } : member
     return (
