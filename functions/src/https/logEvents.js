@@ -123,20 +123,39 @@ const normalizeStudyType = (type) => {
 
 const roleFor = (study, uid) => study?.studyRoleMap?.[uid] ?? null
 
+// One row per study type that may log. A type without a row is denied.
+// answerField: where the participant's committed answer lives (keyed by uid);
+// consent: whether logging waits for committed consent in that answer;
+// roles: study roles, beyond owner/Admin/Manager and public studies, that may
+// take the study and therefore log it.
+const STUDY_LOGGING = Object.freeze({
+  USER: {
+    answerField: 'taskAnswers',
+    consent: true,
+    roles: (study) => (study?.subType === 'USER_MODERATED' ? [5, 3] : [5]),
+  },
+  HEURISTIC: {
+    answerField: 'heuristicAnswers',
+    consent: false,
+    roles: () => [1],
+  },
+})
+
+const loggingFor = (study) =>
+  STUDY_LOGGING[normalizeStudyType(study?.testType)] || null
+
 const canAnswerStudy = ({ study, uid, isSuperAdmin }) => {
-  const type = normalizeStudyType(study?.testType)
+  const logging = loggingFor(study)
   const role = roleFor(study, uid)
 
-  if (!['USER', 'HEURISTIC'].includes(type)) return false
+  if (!logging) return false
   return (
     study?.isPublic === true ||
     isSuperAdmin ||
     study?.testAdmin?.userDocId === uid ||
     role === 0 ||
     role === 4 ||
-    (type === 'USER' &&
-      (role === 5 || (role === 3 && study?.subType === 'USER_MODERATED'))) ||
-    (type === 'HEURISTIC' && role === 1)
+    logging.roles(study).includes(role)
   )
 }
 
@@ -161,14 +180,15 @@ const documentIdFor = (sessionId, requestId) =>
   crypto.createHash('sha256').update(`${sessionId}:${requestId}`).digest('hex')
 
 const consentAccepted = async (transaction, db, study, uid) => {
-  if (normalizeStudyType(study.testType) !== 'USER') return true
+  const logging = loggingFor(study)
+  if (!logging?.consent) return true
   if (!study.answersDocId) return false
   const answer = await transaction.get(
     db.collection('answers').doc(study.answersDocId),
   )
   return (
     answer.exists &&
-    answer.data()?.taskAnswers?.[uid]?.consentCompleted === true
+    answer.data()?.[logging.answerField]?.[uid]?.consentCompleted === true
   )
 }
 
@@ -742,7 +762,7 @@ const verifiedEventFor = ({ requestData, study, participantAnswer }) => {
 
   if (requestData.eventType === 'CONSENT_ACCEPTED') {
     if (
-      normalizeStudyType(study.testType) !== 'USER' ||
+      !loggingFor(study)?.consent ||
       participantAnswer?.consentCompleted !== true
     ) {
       rejectVerified({
@@ -813,10 +833,8 @@ const verifiedEventFor = ({ requestData, study, participantAnswer }) => {
   })
 }
 
-const participantAnswerFor = (answerDocument, studyType, uid) =>
-  studyType === 'USER'
-    ? answerDocument?.taskAnswers?.[uid]
-    : answerDocument?.heuristicAnswers?.[uid]
+const participantAnswerFor = (answerDocument, study, uid) =>
+  answerDocument?.[loggingFor(study).answerField]?.[uid]
 
 async function submitVerifiedEvent(request) {
   const uid = request?.auth?.uid
@@ -846,7 +864,6 @@ async function submitVerifiedEvent(request) {
       reject({ code: 'permission-denied', reasonCode: 'NOT_ELIGIBLE' })
     }
 
-    const studyType = normalizeStudyType(study.testType)
     if (!study.answersDocId) {
       rejectVerified({ reasonCode: 'UNVERIFIED_TRANSITION', studyId })
     }
@@ -854,7 +871,7 @@ async function submitVerifiedEvent(request) {
     const answerSnap = await transaction.get(answerRef)
     const participantAnswer = participantAnswerFor(
       answerSnap.exists ? answerSnap.data() : null,
-      studyType,
+      study,
       uid,
     )
     const event = verifiedEventFor({
@@ -879,7 +896,7 @@ async function submitVerifiedEvent(request) {
     ])
 
     if (
-      studyType === 'USER' &&
+      loggingFor(study).consent &&
       event.eventType !== 'CONSENT_ACCEPTED' &&
       !sessionSnap.data()?.consentAcceptedAt
     ) {
