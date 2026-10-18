@@ -1,96 +1,157 @@
-# Extend study activity logging
+# Study activity logging
 
-Study activity logging is intentionally allowlisted. A new methodology or
-event must use the existing trusted ingestion boundary; participant clients
-must never write the four logging subcollections directly.
+Study activity logging records what happened during a study (opened,
+consented, task finished, submitted) without recording what anyone wrote or
+chose. Answers stay in Results. Logs are read in the Logs view
+(`src/shared/views/LogsView.vue`) by study Admins only (`canViewLogs` in
+`firestore.rules`).
 
-## Add a methodology
+Clients never write logging data directly. Everything goes through two
+callable functions in `functions/src/https/logEvents.js`:
 
-1. Add its answering eligibility to `canAnswerStudy` in
-   `functions/src/https/logEvents.js` and the matching `logs.view` rule in
-   `firestore.rules`. Unknown or incomplete study types must stay denied.
-2. Decide whether the methodology has a consent gate. Gated clients create no
-   logging queue or Study Session until committed consent is acknowledged;
-   ungated clients may open immediately.
-3. Instantiate `createStudyLoggingRuntime` from the participant view with the
-   authenticated user ID, study ID, and existing Firebase callable seam.
-4. Add public-boundary emulator tests for allowed and denied participants and
-   researchers before wiring UI producers.
+| Callable | Used for | Who decides the content |
+| --- | --- | --- |
+| `logEvents` | Browser observations, sent in batches from a queue | Client sends allowlisted details; the server validates every field |
+| `requestLogEvent` | Lifecycle events (consent, task finished, submitted, focus group session start/end) | The server verifies the event against committed data and writes it |
 
-Card Sorting and Accessibility are intentionally not connected by Milestones
-2–4. Adding either requires this authorization and consent review first.
+The server derives the message, layer, level, source, actor role, Study
+Session ID (a salted hash, `LOG_ACTOR_HASH_SALT`) and the participant label.
+All logging data lives under `tests/{studyId}` (`logs`, `studySessions`,
+`logBatches`, `loggingMeta`), so deleting a study removes it.
 
-## Add an event type
+## Study types
 
-Start with a concrete research question and choose one producer boundary:
+Participant study types are configured in one table, `STUDY_LOGGING` in
+`logEvents.js`. A type without a row cannot log.
 
-- A browser observation goes through `createStudyLogger` and `logEvents`. Add
-  an exact details allowlist and validate controlled references server-side.
-- An authoritative lifecycle event goes through `requestLogEvent`. Verify it
-  from the participant's committed answer and use a deterministic event ID.
+| Type | Answer field | Consent gate | Roles that may log* |
+| --- | --- | --- | --- |
+| `USER` (unmoderated) | `taskAnswers` | yes | User (5) |
+| `USER` (moderated) | `taskAnswers` | yes | User (5), Observer (3) |
+| `HEURISTIC` | `heuristicAnswers` | no | Evaluator (1) |
+| `CARD_SORTING` | `cardSortingAnswers` | yes | Evaluator (1) |
 
-Derive the message, layer, level, source, actor role, Session ID, Participant
-Label, and receipt time on the server. Do not accept arbitrary fields, raw
-answers, names, email addresses, or user IDs. Update this guide and the focused
-client/runtime, ingestion, and Explorer tests with the new policy. The executable
-allowlists live in `studyLoggingClient.js`, `logEvents.js`, and
-`functions/src/shared/logging/taskContext.js`.
+\* Plus the owner, Admins (0), Managers (4), super admins and anyone taking a
+public study.
 
-## Wire a producer
+- **Answer field**: where `requestLogEvent` reads the caller's own committed
+  answer (`answers/{answersDocId}.<field>.<uid>`) to verify consent,
+  task and submission events.
+- **Consent gate**: with a gate, `logEvents` rejects batches until
+  `consentCompleted` is true in the participant's answer, and
+  `requestLogEvent` accepts other lifecycle events only after
+  `CONSENT_ACCEPTED` has been recorded.
 
-Logging follows a successful primary save and remains fire-and-forget, with one
-client-observed partial-activity exception:
+Focus groups are not in this table; see [Focus group](#focus-group).
 
-- call `consentAccepted()` after committed consent;
-- call `resumeAfterConsent()` only when entering a route where consent was
-  already committed, so the new route opening is observed without recreating
-  a pre-consent entry;
-- call `taskFinished(index)` after a committed attempted task;
-- call `submitted()` after committed final submission;
-- mark text controls with `data-study-field-ref` to opt into metadata-only edit
-  aggregation.
+Elsewhere, a study type also needs:
 
-Consent-gated methods get the acknowledgement gap handled by the runtime; they
-only need the two consent calls above. Between `consentAccepted()` (or
-`resumeAfterConsent()`) and the server's acknowledgement, observations are held
-in memory only — at most 200, never in IndexedDB — with their original
-occurrence times. An `accepted` or `duplicate` acknowledgement releases them
-into the queue; a permanent rejection or leaving the page discards them.
-Activity before consent is saved is never held.
+- a producer in its participant view (see [Producers](#producers));
+- a `/<type>/logs/:id` route with `studyCapability: LOGS_VIEW`;
+- its event types in `EVENT_TYPES_BY_STUDY` and a label in `studyTypeLabel`
+  in `LogsView.vue`;
+- a step for each new event type in `stepKeyFor`
+  (`src/shared/utils/participantTimeline.js`) and a title in
+  `ParticipantTimeline.vue`. Events with no step land in "Other activity".
 
-Heuristic studies use one `QUESTION_RESPONSE_UPDATED` event per question
-interaction. Call `responseChanged(questionRef, field)` only after a real
-frequency, severity, or configured-option change; delegated comment inputs are
-counted by the runtime. Leaving the question, hiding the page, or submitting
-finishes the group. Never pass selected values or comment text to logging.
+## Events
 
-User-test structured questionnaires (moderated and unmoderated, via the shared
-`src/ux/UserTest/utils/structuredActivity.js`) also emit client-observed
-`STRUCTURED_RESPONSE_ACTIVITY` records at form, hidden-page, and submission
-boundaries. These records contain only record-local change counts and canonical
-item references; answers, labels, scores, and question text remain in Results.
-A failed enqueue is retained for the next runtime checkpoint, while logging
-continues to fail open. This activity event is not evidence of answer
-persistence or server delivery.
+| Event | Callable | Types | Verified from |
+| --- | --- | --- | --- |
+| `STUDY_VIEW_OPENED` | `logEvents` | USER, HEURISTIC, CARD_SORTING | — (observation) |
+| `CONSENT_ACCEPTED` | `requestLogEvent` | USER, CARD_SORTING | `consentCompleted` in the answer |
+| `TASK_STARTED` | `logEvents` | USER | task index exists in the study |
+| `TASK_ATTEMPT_FINISHED` | `requestLogEvent` | USER | `tasks[i].attempted` in the answer |
+| `ANSWER_EDITED` | `logEvents` | USER | field exists in the study |
+| `STRUCTURED_RESPONSE_ACTIVITY` | `logEvents` | USER | questionnaire items exist in the study |
+| `MEDIA_RECORDING_OUTCOME` | `logEvents` | USER | task and media flag exist in the study |
+| `QUESTION_RESPONSE_UPDATED` | `logEvents` | HEURISTIC | question exists in the study |
+| `STUDY_SUBMITTED` | `requestLogEvent` | USER, HEURISTIC, CARD_SORTING | `submitted` in the answer |
+| `SESSION_STARTED` | `requestLogEvent` | FOCUS_GROUP | live room status (see below) |
+| `SESSION_ENDED` | `requestLogEvent` | FOCUS_GROUP | scheduled session `lifecycleStatus` |
 
-Do not add telemetry to participant loading state, notifications, or error
-handling. On unmount call `destroy()` to release browser listeners. Verify that
-logging failures do not alter the primary workflow and that no test assertion
-or stored document contains entered text.
+Lifecycle events have a fixed event ID per Study Session, so a retry returns
+`duplicate` instead of writing twice.
 
-## Unmoderated task and recording metadata
+To add an event type:
 
-Moderated and unmoderated user tests produce `MEDIA_RECORDING_OUTCOME`. Shared recorders emit
-`recording-result` to TaskStep; they have no logging dependency. Each capture
-keeps the task index from permission acquisition through upload and emits at most
-one terminal result. A real new capture is a new attempt. Browser delivery retries
-reuse the existing Event ID and Batch ID.
+- `logEvents`: add a policy to `CLIENT_EVENT_POLICIES` with an exact details
+  allowlist, validate every reference against the study on the server, and
+  mirror the sanitizer in `studyLoggingClient.js`.
+- `requestLogEvent`: verify it in `verifiedEventFor` from committed answer
+  data, with a deterministic event ID.
 
-The runtime's `recordingOutcome(details)` requires an authenticated participant
-and acknowledged, persisted consent. Anonymous invited participation remains
-available without these logs. Client sanitization projects the following fields
-before IndexedDB; ingestion rejects extra fields and validates the configured
-task and its media flag:
+Never accept free text, answer values, names, emails or user IDs. Card sorting
+is a good example: card and category names are participant text, so card
+sorting events carry empty `details`.
+
+## Producers
+
+Participant views create one runtime per page with
+`createStudyLoggingRuntime` (`src/shared/services/studyLoggingRuntime.js`),
+passing the user ID, study ID, study type and `consentRequired`. Logging
+always follows a successful save and never blocks or alters the study flow:
+
+- `open()` when the view opens (ungated types);
+- `consentAccepted(occurredAt)` after the consent save succeeds;
+- `resumeAfterConsent()` on mount when consent was already saved;
+- `taskStarted(i)` / `taskFinished(i)` around a saved task;
+- `submitted()` after the final save succeeds;
+- `destroy()` on unmount.
+
+With a consent gate, nothing is queued before consent. Observations made
+between the consent save and the server's acknowledgement are held in memory
+only (at most 200) and dropped if consent is rejected.
+
+Text fields opt in to edit counts with `data-study-field-ref`. Heuristic
+studies use `responseChanged(questionRef, field)`. User-test questionnaires
+use the structured-response methods through
+`src/ux/UserTest/utils/structuredActivity.js`.
+
+Current producers: `UserTestView.vue`, `ModeratedTestView.vue`,
+`HeuristicTestView.vue`, `CardSortingTest.vue`, and
+`FocusGroupSessionView.vue` (through `src/ux/FocusGroup/utils/sessionLogging.js`).
+
+## Participant labels
+
+Each Study Session gets a label from one counter per study
+(`loggingMeta/state.nextParticipantNumber`). The prefix says whose session it
+is:
+
+- `P-003`: the third participant.
+- `F-004`: the facilitator of the fourth focus group session.
+
+Other roles should follow the same pattern: prefix by role, number from the
+shared counter.
+
+## Focus group
+
+A focus group is run by a facilitator for many attendees at once, so it does
+not use `STUDY_LOGGING` or the runtime. Only scheduled sessions are logged
+(the legacy open room without `?session=` is not), and nothing that attendees
+or observers do is logged.
+
+- **Who may log**: study Admins (owner, role 0, super admin) and staff with
+  role `FACILITATOR` on that scheduled session
+  (`tests/{studyId}/sessions/{sessionId}`). Everyone else is denied.
+- **`SESSION_STARTED`**: the live room `focusGroupSessions/{studyId}-{sessionId}`
+  in Realtime Database must be `live` or `ended`, with `facilitatorId` equal
+  to the caller.
+- **`SESSION_ENDED`**: the scheduled session must have
+  `lifecycleStatus: 'ended'`, which only `markFocusGroupSessionEnded` sets.
+- **Study Session**: one per scheduled session, not per user, so a session
+  started by one Admin and ended by another stays one timeline.
+
+The live room's fields can be written by any signed-in user
+(`database.rules.json`), so the room is only used as evidence of the start;
+who may log always comes from Firestore.
+
+## Recording outcomes
+
+Moderated and unmoderated user tests produce `MEDIA_RECORDING_OUTCOME` through
+`recordingOutcome(details)`. Recorders emit `recording-result` to TaskStep and
+have no logging dependency. A result is acknowledged to logging only after the
+answer holding its media reference is saved.
 
 | Field | Controlled values |
 | --- | --- |
@@ -109,50 +170,24 @@ task and its media flag:
 | failed / capture | `captureError`, `emptyRecording` |
 | failed / upload | `uploadError` |
 
-Ingestion derives source `study-client`, layer `technical`, the message, and
-severity: completed is `info`, denial/cancellation is `warning`, failure is
-`error`. Cancellation means “permission denied or capture cancelled” because the
-screen API does not distinguish intent. This is client-observed telemetry, not
-server verification of media integrity.
+Completed is `info`, denial or cancellation is `warning`, failure is `error`.
+This is client-observed, not proof that the media was stored.
 
-**An upload result is not a persisted recording.** The participant view holds
-successful results in memory, containing only task/media metadata. Before saving,
-it attaches media references to the answer and snapshots the pending results
-whose references are present. Only a successful `saveTestAnswer` acknowledges
-that snapshot to logging. A failed write leaves results pending for the next
-successful save; results arriving during a save wait for a later save. Repeated
-saves do not emit the same result twice. Multiple unsaved replacements of the same
-task/media field retain only the latest result, matching the single persisted
-reference. Leaving the route loses pending telemetry; do not invent an abandonment
-or failure event. Neither `updateTaskMediaUrl` nor `stopShowLoading` proves an
-answer write. Preserve the store's rejected promise on save failure and catch it
-at the primary workflow boundary.
+The server adds `taskType` from `testStructure.userTasks[i]` to task events
+(`no-answer`, `post-test`, `text-area`, `post-form`, `nasa-tlx`, `sus`,
+`tam-1`, `tam-2`, `tam-3`, `sart`), and `recordingTypes` from the task's media
+flags to `TASK_ATTEMPT_FINISHED`.
 
-Failures/denials/cancellations may be queued immediately after consent. Logging
-remains fail-open: queue/network failures must not block task completion or add
-participant-facing loading states or notifications. Never send media URLs, blobs,
-transcripts, answers, instrument scores, names, emails, or raw exceptions.
+## Tests
 
-The server derives `taskType` from trusted `testStructure.userTasks[index]` for
-user-test task starts, task-finished events, task-field edits, and task
-questionnaire activity, and for unmoderated recording outcomes. Allowed
-values are `no-answer`, `post-test`, `text-area`, `post-form`, `nasa-tlx`, `sus`,
-`tam-1`, `tam-2`, `tam-3`, and `sart`. Missing/unknown types are omitted without
-dropping the base event. Unmoderated task-finished events also include
-`recordingTypes` from the enabled media flags; this describes requested media,
-not saved artifacts. Moderated tests use the same per-task recorders, so they
-get the same `recordingTypes` and `MEDIA_RECORDING_OUTCOME` events.
-Pre/post-study fields and whole-study events have no invented task context.
-Existing log documents remain immutable when study configuration changes.
+Functions tests run against the emulators:
 
-The Logs explorer offers the new USER event type and readable details using the
-existing Event Type/Level filters. Source and layer remain available in the
-collapsed delivery diagnostics. This extension adds no new methodology
-producers, Overview Dashboard, export, filters, or indexes.
+```bash
+cd functions
+FIRESTORE_EMULATOR_HOST=127.0.0.1:8081 FIREBASE_DATABASE_EMULATOR_HOST=127.0.0.1:9000 npm test -- logEvents focusGroupLogging
+```
 
-## Extend the explorer and lifecycle
-
-If a new field is filterable, add only the composite indexes required by its
-actual query shapes and test pagination against the Firestore emulator. All
-logging data must remain under `tests/{studyId}` so the trusted study-deletion
-cleanup removes it with the parent lifecycle.
+Frontend: `npx vue-cli-service test:unit` (runtime, client, LogsView,
+participant timeline and the producer views). When you add a type or event,
+test allowed and denied roles, the consent gate, verification, unknown types
+staying denied, and that no stored document contains entered text.
