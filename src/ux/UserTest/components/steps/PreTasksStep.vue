@@ -3,7 +3,7 @@
     <template #content>
       <div
         ref="preTasksContent"
-        class="test-content pa-6 rounded-xl text-center"
+        class="test-content pre-tasks-content pa-6 rounded-xl text-center"
       >
         <template v-if="!showRecordingInfo">
           <p class="split welcome-body text-h6 mb-6 text-grey-darken-3">
@@ -12,7 +12,7 @@
             {{ $t('UserTestView.PreTasksStep.tasksSuffix') }}
           </p>
 
-          <p class="text-body-1 mb-6 text-grey-darken-3">
+          <p class="pre-tasks-instruction mb-6 text-grey-darken-3">
             {{ $t('UserTestView.PreTasksStep.instruction') }}
           </p>
 
@@ -89,7 +89,7 @@
               </v-card-text>
             </v-card>
 
-            <p class="text-body-1 mb-6 text-grey-darken-3">
+            <p class="pre-tasks-instruction mb-6 text-grey-darken-3">
               {{ $t('UserTestView.PreTasksStep.afterRecordingInstruction') }}
             </p>
             <v-btn
@@ -145,14 +145,33 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+.pre-tasks-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: clamp(20rem, 60vh, 40rem);
+  margin-inline: auto;
+}
+
 .split {
   opacity: 0;
   font-weight: 300;
 }
 
 .welcome-body {
-  font-size: clamp(1.2rem, 1.65vw, 1.4rem) !important;
-  line-height: 1.65;
+  width: 100%;
+  max-width: 56rem;
+  font-size: 1.75rem !important;
+  line-height: 1.5;
+}
+
+.pre-tasks-instruction {
+  width: 100%;
+  max-width: 56rem;
+  font-size: 1.25rem;
+  line-height: 1.6;
 }
 
 .recording-info-card {
