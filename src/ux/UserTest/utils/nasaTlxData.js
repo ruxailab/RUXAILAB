@@ -2,14 +2,14 @@ export const ALL_NASA_TLX_TASKS = 'all'
 
 export function getNASATLXTaskDefinitions(userTasks) {
   const tasks = Array.isArray(userTasks)
-    ? userTasks
-    : Object.values(userTasks || {})
+    ? userTasks.map((task, index) => [String(index), task])
+    : Object.entries(userTasks || {})
 
   return tasks
-    .map((task, index) => ({
+    .map(([key, task], index) => ({
       task,
       index,
-      id: String(task?.taskId ?? task?.id ?? index),
+      id: String(task?.taskId ?? task?.id ?? key),
     }))
     .filter(({ task }) => task?.taskType === 'nasa-tlx')
 }
