@@ -198,7 +198,8 @@ service cloud.firestore {
             (study.get('testType', '') in ['HEURISTIC', 'CARD_SORTING']) &&
             role == 1 && participantAnswerChanged('heuristicAnswers')) ||
           (changed.hasOnly(['cardSortingAnswers']) &&
-            study.get('testType', '') == 'CARD_SORTING' && role == 1 &&
+            study.get('testType', '') == 'CARD_SORTING' &&
+            (role == 1 || isAdmin(study)) &&
             participantAnswerChanged('cardSortingAnswers')) ||
           // Any real account may answer a public study (as storage and
           // activity logging already allow), saving only its own entry.
