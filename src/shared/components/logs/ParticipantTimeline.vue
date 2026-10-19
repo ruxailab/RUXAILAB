@@ -113,6 +113,7 @@ const stepTitle = (step) => {
     preTest: 'Pre-test',
     postTest: 'Post-test',
     submitted: 'Study submitted',
+    liveSession: 'Live session',
     other: 'Other activity',
   }
   if (step.kind === 'task') {
@@ -155,6 +156,7 @@ const summaryDetails = (step) => {
       : []
   if (step.kind === 'heuristic')
     return [`${plural(summary.questions, 'question')} updated`]
+  if (step.kind === 'liveSession') return [summary.ended ? 'Ended' : 'Live']
   if (step.kind !== 'task') return []
   return [
     OUTCOMES[summary.outcome] || 'In progress',

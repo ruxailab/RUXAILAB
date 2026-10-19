@@ -146,4 +146,28 @@ describe('participant timeline', () => {
     ])
     expect(timeline.steps[2].endedAt).toBe(at(5).getTime())
   })
+
+  it('groups a focus group session start and end into one live session step', () => {
+    const live = buildParticipantTimeline([
+      { ...event(30, 'SESSION_ENDED'), participantLabel: 'F-001' },
+      { ...event(0, 'SESSION_STARTED'), participantLabel: 'F-001' },
+    ])
+    expect(stepKeyFor(event(0, 'SESSION_STARTED'))).toBe('liveSession')
+    expect(live.participantLabel).toBe('F-001')
+    expect(live.steps).toHaveLength(1)
+    expect(live.steps[0]).toMatchObject({
+      kind: 'liveSession',
+      status: 'done',
+      summary: { ended: true },
+      startedAt: at(0).getTime(),
+      endedAt: at(30).getTime(),
+    })
+
+    const running = buildParticipantTimeline([event(0, 'SESSION_STARTED')])
+    expect(running.steps[0]).toMatchObject({
+      kind: 'liveSession',
+      status: 'open',
+      summary: { ended: false },
+    })
+  })
 })

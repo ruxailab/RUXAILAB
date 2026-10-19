@@ -220,8 +220,15 @@ describe('study navigation', () => {
     ])
   })
 
-  it('hides Logs for Focus Group studies until that view exists', () => {
-    expect(titlesFor(studyWith('FOCUS_GROUP'), owner)).not.toContain('Logs')
+  it('shows Focus Group Logs to the facilitator Admin only', () => {
+    const study = studyWith('FOCUS_GROUP')
+    expect(titlesFor(study, owner)).toContain('Logs')
+    expect(
+      titlesFor(
+        studyWith('FOCUS_GROUP', 'observer', STUDY_ROLE.OBSERVATOR),
+        { id: 'observer', accessLevel: 1 },
+      ),
+    ).not.toContain('Logs')
   })
 
   it('exposes Focus Group analytics to answer-review-capable members only', () => {
