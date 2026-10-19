@@ -9,6 +9,7 @@ import ParticipantsView from '@/shared/views/ParticipantsView.vue'
 import SessionsView from '@/shared/views/SessionsView.vue'
 import StorageView from '@/shared/views/StorageView.vue'
 import AuditTrailView from '@/shared/views/AuditTrailView.vue'
+import LogsView from '@/shared/views/LogsView.vue'
 import { STUDY_CAPABILITY as C } from '@/shared/utils/studyAccessPolicy'
 
 // `authorize` alone only checks the account-wide accessLevel, not this
@@ -55,6 +56,14 @@ const MANAGER_CHILDREN = [
     name: 'FocusGroupAnalyticsView',
     component: FocusGroupAnalyticsView,
     capability: C.ANSWERS_VIEW,
+  },
+  {
+    // Facilitator session start/end only; see submitSessionEvent in
+    // functions/src/https/logEvents.js.
+    segment: 'logs',
+    name: 'FocusGroupLogsView',
+    component: LogsView,
+    capability: C.LOGS_VIEW,
   },
   {
     segment: 'cooperators',

@@ -2,6 +2,7 @@ import crypto from 'crypto'
 import { admin, functions } from '../core/firebase/f.firebase.js'
 import logger from '../utils/logger.js'
 import { taskContext, recordingPolicy } from '../shared/logging/taskContext.js'
+import { isSessionFacilitator } from './sessionStudy.js'
 
 const MAX_EVENTS_PER_BATCH = 25
 const CLIENT_EVENT_BUDGET = 1000
@@ -123,20 +124,60 @@ const normalizeStudyType = (type) => {
 
 const roleFor = (study, uid) => study?.studyRoleMap?.[uid] ?? null
 
+// One row per study type that may log. A type without a row is denied.
+// answerField: where the participant's committed answer lives (keyed by uid);
+// consent: whether logging waits for committed consent in that answer;
+// roles: study roles, beyond owner/Admin/Manager and public studies, that may
+// take the study and therefore log it.
+const STUDY_LOGGING = Object.freeze({
+  USER: {
+    answerField: 'taskAnswers',
+    consent: true,
+    roles: (study) => (study?.subType === 'USER_MODERATED' ? [5, 3] : [5]),
+  },
+  HEURISTIC: {
+    answerField: 'heuristicAnswers',
+    consent: false,
+    roles: () => [1],
+  },
+  CARD_SORTING: {
+    answerField: 'cardSortingAnswers',
+    consent: true,
+    roles: () => [1],
+  },
+})
+
+// Focus groups have no single participant moving through steps, so they are
+// not in STUDY_LOGGING: participants and observers log nothing. Only the
+// facilitator's start and end of a scheduled session is recorded, as one
+// Study Session per scheduled session (see submitSessionEvent).
+const SESSION_EVENTS = Object.freeze({
+  SESSION_STARTED: {
+    message: 'Focus group session started',
+    sessionField: 'startedAt',
+  },
+  SESSION_ENDED: {
+    message: 'Focus group session ended',
+    sessionField: 'endedAt',
+  },
+})
+const LIVE_ROOM_STATUSES = new Set(['live', 'ended'])
+
+const loggingFor = (study) =>
+  STUDY_LOGGING[normalizeStudyType(study?.testType)] || null
+
 const canAnswerStudy = ({ study, uid, isSuperAdmin }) => {
-  const type = normalizeStudyType(study?.testType)
+  const logging = loggingFor(study)
   const role = roleFor(study, uid)
 
-  if (!['USER', 'HEURISTIC'].includes(type)) return false
+  if (!logging) return false
   return (
     study?.isPublic === true ||
     isSuperAdmin ||
     study?.testAdmin?.userDocId === uid ||
     role === 0 ||
     role === 4 ||
-    (type === 'USER' &&
-      (role === 5 || (role === 3 && study?.subType === 'USER_MODERATED'))) ||
-    (type === 'HEURISTIC' && role === 1)
+    logging.roles(study).includes(role)
   )
 }
 
@@ -157,18 +198,48 @@ const sessionIdFor = (studyId, uid) => {
     .digest('hex')
 }
 
+// Opens (or reuses) a Study Session and returns its label. Labels share one
+// counter per study; the prefix names whose session it is (P-003 is the
+// third participant, F-004 the facilitator of the fourth focus group session).
+const labelSession = ({
+  transaction,
+  sessionRef,
+  sessionSnap,
+  metaRef,
+  metaSnap,
+  now,
+  prefix = 'P',
+  sessionField,
+}) => {
+  if (sessionSnap.exists) {
+    if (sessionField) transaction.update(sessionRef, { [sessionField]: now })
+    return sessionSnap.data().participantLabel
+  }
+  const number = metaSnap.exists ? metaSnap.data().nextParticipantNumber : 1
+  const participantLabel = `${prefix}-${String(number).padStart(3, '0')}`
+  transaction.set(metaRef, { nextParticipantNumber: number + 1 })
+  transaction.set(sessionRef, {
+    participantLabel,
+    createdAt: now,
+    clientEventCount: 0,
+    ...(sessionField ? { [sessionField]: now } : {}),
+  })
+  return participantLabel
+}
+
 const documentIdFor = (sessionId, requestId) =>
   crypto.createHash('sha256').update(`${sessionId}:${requestId}`).digest('hex')
 
 const consentAccepted = async (transaction, db, study, uid) => {
-  if (normalizeStudyType(study.testType) !== 'USER') return true
+  const logging = loggingFor(study)
+  if (!logging?.consent) return true
   if (!study.answersDocId) return false
   const answer = await transaction.get(
     db.collection('answers').doc(study.answersDocId),
   )
   return (
     answer.exists &&
-    answer.data()?.taskAnswers?.[uid]?.consentCompleted === true
+    answer.data()?.[logging.answerField]?.[uid]?.consentCompleted === true
   )
 }
 
@@ -742,7 +813,7 @@ const verifiedEventFor = ({ requestData, study, participantAnswer }) => {
 
   if (requestData.eventType === 'CONSENT_ACCEPTED') {
     if (
-      normalizeStudyType(study.testType) !== 'USER' ||
+      !loggingFor(study)?.consent ||
       participantAnswer?.consentCompleted !== true
     ) {
       rejectVerified({
@@ -813,10 +884,8 @@ const verifiedEventFor = ({ requestData, study, participantAnswer }) => {
   })
 }
 
-const participantAnswerFor = (answerDocument, studyType, uid) =>
-  studyType === 'USER'
-    ? answerDocument?.taskAnswers?.[uid]
-    : answerDocument?.heuristicAnswers?.[uid]
+const participantAnswerFor = (answerDocument, study, uid) =>
+  answerDocument?.[loggingFor(study).answerField]?.[uid]
 
 async function submitVerifiedEvent(request) {
   const uid = request?.auth?.uid
@@ -846,7 +915,6 @@ async function submitVerifiedEvent(request) {
       reject({ code: 'permission-denied', reasonCode: 'NOT_ELIGIBLE' })
     }
 
-    const studyType = normalizeStudyType(study.testType)
     if (!study.answersDocId) {
       rejectVerified({ reasonCode: 'UNVERIFIED_TRANSITION', studyId })
     }
@@ -854,7 +922,7 @@ async function submitVerifiedEvent(request) {
     const answerSnap = await transaction.get(answerRef)
     const participantAnswer = participantAnswerFor(
       answerSnap.exists ? answerSnap.data() : null,
-      studyType,
+      study,
       uid,
     )
     const event = verifiedEventFor({
@@ -879,7 +947,7 @@ async function submitVerifiedEvent(request) {
     ])
 
     if (
-      studyType === 'USER' &&
+      loggingFor(study).consent &&
       event.eventType !== 'CONSENT_ACCEPTED' &&
       !sessionSnap.data()?.consentAcceptedAt
     ) {
@@ -888,27 +956,15 @@ async function submitVerifiedEvent(request) {
     if (eventSnap.exists) return { status: 'duplicate' }
 
     const now = admin.firestore.FieldValue.serverTimestamp()
-    let participantLabel
-    if (sessionSnap.exists) {
-      participantLabel = sessionSnap.data().participantLabel
-      if (event.sessionField) {
-        transaction.update(sessionRef, { [event.sessionField]: now })
-      }
-    } else {
-      const participantNumber = metaSnap.exists
-        ? metaSnap.data().nextParticipantNumber
-        : 1
-      participantLabel = `P-${String(participantNumber).padStart(3, '0')}`
-      transaction.set(metaRef, {
-        nextParticipantNumber: participantNumber + 1,
-      })
-      transaction.set(sessionRef, {
-        participantLabel,
-        createdAt: now,
-        clientEventCount: 0,
-        ...(event.sessionField ? { [event.sessionField]: now } : {}),
-      })
-    }
+    const participantLabel = labelSession({
+      transaction,
+      sessionRef,
+      sessionSnap,
+      metaRef,
+      metaSnap,
+      now,
+      sessionField: event.sessionField,
+    })
 
     const actorRole = actorRoleFor({ study, uid, isSuperAdmin })
     transaction.create(eventRef, {
@@ -933,6 +989,128 @@ async function submitVerifiedEvent(request) {
   })
 }
 
+const liveRoomFor = async (studyId, sessionRef) => {
+  const snapshot = await admin
+    .database()
+    .ref(`focusGroupSessions/${studyId}-${sessionRef}`)
+    .get()
+  return snapshot.exists() ? snapshot.val() : null
+}
+
+// Start is checked against the live room (Realtime Database) the facilitator
+// just opened; end against the scheduled session that markFocusGroupSessionEnded
+// closed. Who may log is decided from Firestore roles, never from the room,
+// whose fields any signed-in user can write.
+async function submitSessionEvent(request) {
+  const uid = request?.auth?.uid
+  if (!uid) reject({ code: 'unauthenticated', reasonCode: 'NOT_ELIGIBLE' })
+
+  const requestData = dataFor(request)
+  const studyId = safeId(requestData.studyId)
+  const sessionRef = safeId(requestData.sessionRef)
+  if (!studyId || !sessionRef) {
+    reject({ code: 'permission-denied', reasonCode: 'NOT_ELIGIBLE' })
+  }
+  if (
+    Object.keys(requestData).sort(compareStrings).join(',') !==
+    'eventType,sessionRef,studyId'
+  ) {
+    rejectVerified({
+      code: 'invalid-argument',
+      reasonCode: 'MALFORMED_REQUEST',
+      studyId,
+    })
+  }
+  const policy = SESSION_EVENTS[requestData.eventType]
+
+  const db = admin.firestore()
+  const studyRef = db.collection('tests').doc(studyId)
+  const scheduledRef = studyRef.collection('sessions').doc(sessionRef)
+  const userRef = db.collection('users').doc(uid)
+  const logSessionId = sessionIdFor(studyId, `focus-group-session:${sessionRef}`)
+  const logSessionRef = studyRef.collection('studySessions').doc(logSessionId)
+  const metaRef = studyRef.collection('loggingMeta').doc('state')
+  const eventRef = studyRef
+    .collection('logs')
+    .doc(documentIdFor(logSessionId, `verified:${requestData.eventType}`))
+  const liveRoom =
+    requestData.eventType === 'SESSION_STARTED'
+      ? await liveRoomFor(studyId, sessionRef)
+      : null
+
+  return db.runTransaction(async (transaction) => {
+    const [studySnap, userSnap, scheduledSnap] = await Promise.all([
+      transaction.get(studyRef),
+      transaction.get(userRef),
+      transaction.get(scheduledRef),
+    ])
+    const study = studySnap.exists ? studySnap.data() : null
+    const scheduled = scheduledSnap.exists ? scheduledSnap.data() : null
+    const isAdmin =
+      (userSnap.exists && userSnap.data()?.accessLevel === 0) ||
+      study?.testAdmin?.userDocId === uid ||
+      roleFor(study, uid) === 0
+    const isFacilitator =
+      Boolean(scheduled) &&
+      isSessionFacilitator({
+        session: scheduled,
+        uid,
+        email: request?.auth?.token?.email,
+      })
+    if (
+      !study ||
+      normalizeStudyType(study.testType) !== 'FOCUS_GROUP' ||
+      !scheduled ||
+      !(isAdmin || isFacilitator)
+    ) {
+      reject({ code: 'permission-denied', reasonCode: 'NOT_ELIGIBLE' })
+    }
+
+    const verified =
+      requestData.eventType === 'SESSION_STARTED'
+        ? LIVE_ROOM_STATUSES.has(liveRoom?.status) &&
+          liveRoom?.facilitatorId === uid
+        : scheduled.lifecycleStatus === 'ended'
+    if (!verified) {
+      rejectVerified({ reasonCode: 'UNVERIFIED_TRANSITION', studyId })
+    }
+
+    const [logSessionSnap, metaSnap, eventSnap] = await Promise.all([
+      transaction.get(logSessionRef),
+      transaction.get(metaRef),
+      transaction.get(eventRef),
+    ])
+    if (eventSnap.exists) return { status: 'duplicate' }
+
+    const now = admin.firestore.FieldValue.serverTimestamp()
+    const participantLabel = labelSession({
+      transaction,
+      sessionRef: logSessionRef,
+      sessionSnap: logSessionSnap,
+      metaRef,
+      metaSnap,
+      now,
+      prefix: 'F',
+      sessionField: policy.sessionField,
+    })
+    transaction.create(eventRef, {
+      eventId: requestData.eventType,
+      sessionId: logSessionId,
+      participantLabel,
+      actorRole: isAdmin ? 'admin' : 'facilitator',
+      eventType: requestData.eventType,
+      layer: 'methodological',
+      level: 'info',
+      source: 'logging-service',
+      message: policy.message,
+      occurredAt: now,
+      receivedAt: now,
+      details: {},
+    })
+    return { status: 'accepted' }
+  })
+}
+
 export const logEvents = functions.onCall({
   handler: async (request) => {
     try {
@@ -950,7 +1128,9 @@ export const logEvents = functions.onCall({
 export const requestLogEvent = functions.onCall({
   handler: async (request) => {
     try {
-      return await submitVerifiedEvent(request)
+      return SESSION_EVENTS[dataFor(request).eventType]
+        ? await submitSessionEvent(request)
+        : await submitVerifiedEvent(request)
     } catch (caught) {
       if (caught?.loggingRejection) throw caught
       logger.error('Unexpected verified event failure', {

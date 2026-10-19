@@ -241,8 +241,6 @@ const NAVIGATION_ITEMS = Object.freeze([
     group: 'administration',
     icon: 'mdi-text-box-search-outline',
     capability: C.LOGS_VIEW,
-    // Focus Group does not have a logs view yet.
-    visible: (study) => !isFocusGroupStudy(study),
     path: ({ type, id }) => `/${type}/logs/${id}`,
   },
   {
