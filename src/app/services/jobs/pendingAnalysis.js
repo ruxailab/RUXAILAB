@@ -41,6 +41,18 @@ function matchesScope(row, { userDocId, taskId } = {}) {
   return true
 }
 
+const IN_FLIGHT_STATUSES = new Set(['queued', 'processing'])
+
+function isInFlight(jobs, { type, userDocId, taskId }) {
+  return (jobs || []).some(
+    (job) =>
+      job?.type === type &&
+      String(job.userDocId) === String(userDocId) &&
+      String(job.taskId) === String(taskId) &&
+      IN_FLIGHT_STATUSES.has(job.status),
+  )
+}
+
 function findContribution(coverage, row) {
   if (!coverage) return null
   const keys = [`${row.userDocId}|${row.taskId}`]
@@ -110,12 +122,22 @@ export function hasFacialSentimentResult(task, contribution) {
   ])
 }
 
+function hasStoredTextAnalysis(data) {
+  return Boolean(
+    data &&
+      typeof data === 'object' &&
+      Object.prototype.hasOwnProperty.call(data, 'sampleCount'),
+  )
+}
+
 export function hasTextSentimentResult(task, contribution) {
   const keys = ['Positive', 'Neutral', 'Negative']
+  if (hasStoredTextAnalysis(contribution?.text)) return true
   if (hasNumericSignal(contribution?.text, keys)) return true
   if (Array.isArray(contribution?.text?.regions) && contribution.text.regions.length > 0) {
     return true
   }
+  if (hasStoredTextAnalysis(task?.textSentimentResults)) return true
   if (hasNumericSignal(task?.textSentimentResults, keys)) return true
   return (
     Array.isArray(task?.textSentimentResults?.regions) &&
@@ -129,6 +151,7 @@ export function hasTextSentimentResult(task, contribution) {
  * @param {object} params
  * @param {object} [params.userAnswers]
  * @param {Map<string, { facial?: object|null, text?: object|null }>} [params.coverage]
+ * @param {object[]} [params.jobs] In-flight queue jobs already sent for this study.
  * @param {string} [params.userDocId]
  * @param {string} [params.taskId]
  * @param {'all'|'facial'|'text'} [params.signal]
@@ -138,6 +161,7 @@ export function hasTextSentimentResult(task, contribution) {
 export function listPendingSentiment({
   userAnswers,
   coverage,
+  jobs,
   userDocId,
   taskId,
   signal = 'all',
@@ -152,7 +176,12 @@ export function listPendingSentiment({
     if (
       signal !== 'text' &&
       canRunFacialSentiment(row.task) &&
-      (!onlyMissing || !hasFacialSentimentResult(row.task, contribution))
+      (!onlyMissing || !hasFacialSentimentResult(row.task, contribution)) &&
+      !isInFlight(jobs, {
+        type: 'facial',
+        userDocId: row.userDocId,
+        taskId: row.taskId,
+      })
     ) {
       items.push({
         type: 'facial',
@@ -164,7 +193,12 @@ export function listPendingSentiment({
     if (
       signal !== 'facial' &&
       canRunTextSentiment(row.task) &&
-      (!onlyMissing || !hasTextSentimentResult(row.task, contribution))
+      (!onlyMissing || !hasTextSentimentResult(row.task, contribution)) &&
+      !isInFlight(jobs, {
+        type: 'text',
+        userDocId: row.userDocId,
+        taskId: row.taskId,
+      })
     ) {
       items.push({
         type: 'text',
@@ -195,12 +229,14 @@ export function countPendingSentiment(params = {}) {
  *
  * @param {object} params
  * @param {object} [params.userAnswers]
+ * @param {object[]} [params.jobs] In-flight queue jobs already sent for this study.
  * @param {string} [params.userDocId]
  * @param {string} [params.taskId]
  * @returns {Array<{ userDocId: string, taskId: string }>}
  */
 export function listPendingTranscriptions({
   userAnswers,
+  jobs,
   userDocId,
   taskId,
 } = {}) {
@@ -210,6 +246,15 @@ export function listPendingTranscriptions({
     if (!matchesScope(row, { userDocId, taskId })) continue
     if (!canRunTranscription(row.task)) continue
     if (row.task.transcriptionDocId) continue
+    if (
+      isInFlight(jobs, {
+        type: 'transcription',
+        userDocId: row.userDocId,
+        taskId: row.taskId,
+      })
+    ) {
+      continue
+    }
     items.push({ userDocId: row.userDocId, taskId: row.taskId })
   }
 

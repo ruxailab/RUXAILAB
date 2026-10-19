@@ -93,12 +93,27 @@
           {{ loadError }}
         </v-alert>
 
-        <AnalysisQueueLoading
-          v-if="queueReady && visibleQueuePending"
+        <v-alert
+          v-if="queuedNotice"
+          type="success"
+          variant="tonal"
           class="mb-4"
-        />
+        >
+          <div class="d-flex align-center justify-space-between flex-wrap ga-3">
+            <span>{{ $t('analytics.queuedNotice') }}</span>
+            <v-btn
+              v-if="dashboardTo"
+              color="primary"
+              size="small"
+              variant="text"
+              :to="dashboardTo"
+            >
+              {{ $t('analytics.queuePending.openDashboard') }}
+            </v-btn>
+          </div>
+        </v-alert>
 
-        <div v-else-if="loading || userMetricsLoading || !queueReady" class="mb-4">
+        <div v-if="loading || userMetricsLoading || !queueReady" class="mb-4">
           <v-row dense class="mb-4">
             <v-col
               v-for="n in 4"
@@ -112,6 +127,11 @@
           </v-row>
           <v-skeleton-loader type="article, table" />
         </div>
+
+        <AnalysisQueueLoading
+          v-else-if="visibleQueuePending && pendingSentiment.total === 0"
+          class="mb-4"
+        />
 
         <template v-else>
         <v-alert
@@ -153,7 +173,7 @@
             prepend-icon="mdi-play"
             :loading="runningAll"
             :disabled="runningAll"
-            @click="runAllAnalyses"
+            @click="runAllAnalyses({ onlyMissing: true })"
           >
             {{ $t('analytics.sentiment.runAll') }}
           </v-btn>
@@ -373,9 +393,24 @@ const { t } = useI18n()
 const analyticsController = new SentimentAnalyticsController()
 
 const testDocument = computed(() => store.getters.test)
-const { ready: queueReady, pending: queuePending } = useStudyAnalysisQueue(
-  computed(() => testDocument.value?.id || null),
-)
+const {
+  jobs: queueJobs,
+  ready: queueReady,
+  pending: queuePending,
+} = useStudyAnalysisQueue(computed(() => testDocument.value?.id || null))
+const optimisticJobs = ref([])
+const queuedNotice = ref(false)
+const analysisJobs = computed(() => [
+  ...queueJobs.value,
+  ...optimisticJobs.value,
+])
+const dashboardTo = computed(() => {
+  const test = testDocument.value
+  if (!test?.id) return null
+  const kind =
+    test.subType === USER_STUDY_SUBTYPES.MODERATED ? 'moderated' : 'unmoderated'
+  return `/userTest/${kind}/dashboard/${test.id}`
+})
 const visibleUserAnswers = computed(
   () => store.getters.visibleUserAnswers || {},
 )
@@ -784,6 +819,7 @@ const pendingSentiment = computed(() =>
   countPendingSentiment({
     userAnswers: visibleUserAnswers.value,
     coverage: sentimentCoverage.value,
+    jobs: analysisJobs.value,
     userDocId: selectedUserFilter.value,
     taskId: selectedTaskFilter.value,
     signal: selectedSignalFilter.value,
@@ -856,6 +892,7 @@ const runAllAnalyses = async (options = {}) => {
   const items = listPendingSentiment({
     userAnswers: visibleUserAnswers.value,
     coverage: sentimentCoverage.value,
+    jobs: analysisJobs.value,
     userDocId: selectedUserFilter.value,
     taskId: selectedTaskFilter.value,
     signal: selectedSignalFilter.value,
@@ -871,6 +908,20 @@ const runAllAnalyses = async (options = {}) => {
       studyId: testDocument.value?.id || undefined,
       items,
     })
+    if (result.queued > 0) {
+      queuedNotice.value = true
+      if (result.failed === 0) {
+        optimisticJobs.value = [
+          ...optimisticJobs.value,
+          ...items.map((item) => ({
+            type: item.type,
+            userDocId: item.userDocId,
+            taskId: item.taskId,
+            status: 'queued',
+          })),
+        ]
+      }
+    }
     if (result.failed > 0) {
       const detail = (result.failures || [])
         .map((failure) => failure.message)

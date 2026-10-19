@@ -72,12 +72,27 @@
       {{ loadError }}
     </v-alert>
 
-    <AnalysisQueueLoading
-      v-if="queueReady && queuePending.transcription"
+    <v-alert
+      v-if="queuedNotice"
+      type="success"
+      variant="tonal"
       class="mb-4"
-    />
+    >
+      <div class="d-flex align-center justify-space-between flex-wrap ga-3">
+        <span>{{ $t('analytics.queuedNotice') }}</span>
+        <v-btn
+          v-if="dashboardTo"
+          color="primary"
+          size="small"
+          variant="text"
+          :to="dashboardTo"
+        >
+          {{ $t('analytics.queuePending.openDashboard') }}
+        </v-btn>
+      </div>
+    </v-alert>
 
-    <div v-else-if="loading || userMetricsLoading || !queueReady" class="mb-4">
+    <div v-if="loading || userMetricsLoading || !queueReady" class="mb-4">
       <v-row dense class="mb-4">
         <v-col v-for="n in 4" :key="`skel-card-${n}`" cols="12" sm="6" md="3">
           <v-skeleton-loader type="card" />
@@ -85,6 +100,11 @@
       </v-row>
       <v-skeleton-loader type="article, table" />
     </div>
+
+    <AnalysisQueueLoading
+      v-else-if="queuePending.transcription && pendingTranscriptions === 0"
+      class="mb-4"
+    />
 
     <template v-else>
     <v-alert
@@ -409,6 +429,7 @@ import {
 } from '@/app/services/jobs/pendingAnalysis'
 import { runPendingTranscriptions } from '@/app/services/transcription/runPendingTranscriptions'
 import AnalysisQueueLoading from '@/ux/UserTest/components/manager/AnalysisQueueLoading.vue'
+import { USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions'
 import {
   useReloadWhenQueueSettles,
   useStudyAnalysisQueue,
@@ -437,9 +458,24 @@ const props = defineProps({
 
 const store = useStore()
 const analyticsController = new TranscriptionAnalyticsController()
-const { ready: queueReady, pending: queuePending } = useStudyAnalysisQueue(
-  computed(() => store.getters.test?.id || null),
-)
+const {
+  jobs: queueJobs,
+  ready: queueReady,
+  pending: queuePending,
+} = useStudyAnalysisQueue(computed(() => store.getters.test?.id || null))
+const optimisticJobs = ref([])
+const queuedNotice = ref(false)
+const analysisJobs = computed(() => [
+  ...queueJobs.value,
+  ...optimisticJobs.value,
+])
+const dashboardTo = computed(() => {
+  const test = store.getters.test
+  if (!test?.id) return null
+  const kind =
+    test.subType === USER_STUDY_SUBTYPES.MODERATED ? 'moderated' : 'unmoderated'
+  return `/userTest/${kind}/dashboard/${test.id}`
+})
 
 const openSignalPanels = ref([])
 const searchTerm = ref('')
@@ -854,6 +890,7 @@ const filteredTaskStats = computed(() => {
 const pendingTranscriptions = computed(() =>
   countPendingTranscriptions({
     userAnswers: visibleUserAnswers.value,
+    jobs: analysisJobs.value,
     userDocId: selectedUserFilter.value,
     taskId: selectedTaskFilter.value,
   }),
@@ -891,6 +928,7 @@ const runAllAnalyses = async () => {
   if (runningAll.value || !answersDocId.value) return
   const items = listPendingTranscriptions({
     userAnswers: visibleUserAnswers.value,
+    jobs: analysisJobs.value,
     userDocId: selectedUserFilter.value,
     taskId: selectedTaskFilter.value,
   })
@@ -904,6 +942,20 @@ const runAllAnalyses = async () => {
       studyId: store.getters.test?.id || undefined,
       items,
     })
+    if (result.queued > 0) {
+      queuedNotice.value = true
+      if (result.failed === 0) {
+        optimisticJobs.value = [
+          ...optimisticJobs.value,
+          ...items.map((item) => ({
+            type: 'transcription',
+            userDocId: item.userDocId,
+            taskId: item.taskId,
+            status: 'queued',
+          })),
+        ]
+      }
+    }
     if (result.failed > 0) {
       loadError.value =
         'Some transcriptions could not be started.'

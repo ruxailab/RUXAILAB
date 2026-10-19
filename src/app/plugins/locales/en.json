@@ -2898,6 +2898,7 @@
       "message": "This analysis is still in the queue. You can follow task progress on the dashboard.",
       "openDashboard": "Open dashboard"
     },
+    "queuedNotice": "The tasks were sent to the execution queue and will be processed shortly. To follow them, open the dashboard.",
     "overallAnalyticsDescription": "Overview of the study results and metrics.",
     "user": "User",
     "summary": "Summary",

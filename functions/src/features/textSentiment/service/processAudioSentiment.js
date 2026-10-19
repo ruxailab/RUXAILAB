@@ -50,15 +50,28 @@ export async function processAudioSentiment({
     )
   }
 
-  const utterances =
-    payload?.data?.utterances_sentiment ??
-    payload?.utterances_sentiment ??
-    []
-
-  if (!Array.isArray(utterances) || utterances.length === 0) {
-    fail('internal', 'Text sentiment response did not include utterances.')
-  }
-
+  const utterances = readUtterances(payload)
   const timeOffsetSec = (Number(startTimeMs) || 0) / 1000
   return aggregateUtteranceSentiment(utterances, timeOffsetSec)
+}
+
+/**
+ * A successful response with no speech is an empty list, not a failure.
+ *
+ * @param {object|null|undefined} payload
+ * @returns {Array<object|string>}
+ */
+function readUtterances(payload) {
+  const candidates = [
+    payload?.data?.utterances_sentiment,
+    payload?.utterances_sentiment,
+    payload?.data?.utterances,
+    payload?.utterances,
+  ]
+  const present = candidates.find((value) => value != null)
+  if (present == null) return []
+  if (!Array.isArray(present)) {
+    fail('internal', 'Text sentiment response did not include utterances.')
+  }
+  return present
 }

@@ -369,6 +369,36 @@ describe('textSentimentTask', () => {
     })
   })
 
+  it('stores an empty text result when the audio has no utterances', async () => {
+    global.fetch = jest.fn(async () => ({
+      ok: true,
+      json: async () => ({ status: 'success', data: {} }),
+    }))
+
+    const result = await textSentimentTask(
+      request('owner', {
+        answersDocId: 'answer-1',
+        userDocId: 'evaluator-1',
+        taskId: '0',
+        studyId: 'study-1',
+      }),
+    )
+
+    expect(result.text).toMatchObject({
+      Positive: 0,
+      Neutral: 0,
+      Negative: 0,
+      sampleCount: 0,
+      regions: [],
+    })
+    expect(mockSentimentSet).toHaveBeenCalledWith(
+      'answer-1__evaluator-1__0',
+      expect.objectContaining({
+        text: expect.objectContaining({ sampleCount: 0, regions: [] }),
+      }),
+    )
+  })
+
   it('updates existing sentiment doc on re-analyze without changing pointer', async () => {
     sentimentStore.set('sent-existing', {
       answersDocId: 'answer-1',

@@ -2801,6 +2801,7 @@
       "message": "Este análisis sigue en la cola. Puedes ver el progreso de las tareas en el dashboard.",
       "openDashboard": "Abrir dashboard"
     },
+    "queuedNotice": "Las tareas se enviaron a la cola de ejecución y se procesarán en breve. Para verlas, abre el dashboard.",
     "user": "Usuario",
     "summary": "Resumen",
     "invite": "Invitar",
