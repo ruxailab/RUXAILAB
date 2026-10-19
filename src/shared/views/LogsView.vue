@@ -43,6 +43,9 @@
           divided
           aria-label="Log view"
         >
+          <v-btn value="overview" prepend-icon="mdi-view-dashboard-outline">
+            Overview
+          </v-btn>
           <v-btn value="events" prepend-icon="mdi-format-list-bulleted">
             All events
           </v-btn>
@@ -51,6 +54,14 @@
           </v-btn>
         </v-btn-toggle>
       </div>
+
+      <StudyLogOverview
+        v-if="viewMode === 'overview'"
+        :study-id="id"
+        :event-presentation="eventPresentation"
+        @filter="showFilteredEvents"
+        @select="selectedEvent = $event"
+      />
 
       <section
         v-if="viewMode === 'timeline'"
@@ -260,6 +271,11 @@
             >
               Refresh
             </v-btn>
+            <LogExportDialog
+              :study-id="id"
+              :filters="appliedFilters"
+              :filter-count="activeFilterCount"
+            />
           </div>
         </div>
 
@@ -595,6 +611,8 @@ import {
   localDateRange,
 } from '@/shared/services/studyLogQuery'
 import ParticipantTimeline from '@/shared/components/logs/ParticipantTimeline.vue'
+import StudyLogOverview from '@/shared/components/logs/StudyLogOverview.vue'
+import LogExportDialog from '@/shared/components/logs/LogExportDialog.vue'
 import { buildParticipantTimeline } from '@/shared/utils/participantTimeline'
 
 const props = defineProps({ id: { type: String, required: true } })
@@ -689,6 +707,8 @@ const EVENT_TYPES_BY_STUDY = Object.freeze({
     'STRUCTURED_RESPONSE_ACTIVITY',
     'STUDY_SUBMITTED',
   ],
+  CARD_SORTING: ['STUDY_VIEW_OPENED', 'CONSENT_ACCEPTED', 'STUDY_SUBMITTED'],
+  FOCUS_GROUP: ['SESSION_STARTED', 'SESSION_ENDED'],
 })
 const levels = ['info', 'warning', 'error']
 const sources = filterOptions(['study-client', 'logging-service'])
@@ -724,14 +744,20 @@ const studyTitle = computed(
 )
 const studyTypeLabel = computed(() => {
   if (study.value.testType === 'HEURISTIC') return 'Heuristic evaluation'
+  if (study.value.testType === 'CARD_SORTING') return 'Card sorting'
+  if (study.value.testType === 'FOCUS_GROUP') return 'Focus group'
   if (study.value.subType === 'USER_MODERATED') return 'Moderated user test'
   if (study.value.testType === 'USER') return 'Unmoderated user test'
   return 'Research study'
 })
-const studyTypeIcon = computed(() =>
-  study.value.testType === 'HEURISTIC'
-    ? 'mdi-clipboard-search-outline'
-    : 'mdi-account-check-outline',
+const STUDY_TYPE_ICONS = Object.freeze({
+  HEURISTIC: 'mdi-clipboard-search-outline',
+  CARD_SORTING: 'mdi-cards-outline',
+  FOCUS_GROUP: 'mdi-account-group-outline',
+})
+const studyTypeIcon = computed(
+  () =>
+    STUDY_TYPE_ICONS[study.value.testType] || 'mdi-account-check-outline',
 )
 const hasDraftFilters = computed(() => Object.values(draft).some(Boolean))
 const activeFilterCount = computed(
@@ -939,6 +965,8 @@ const eventPresentation = (event) => {
   if (event?.eventType === 'STUDY_VIEW_OPENED') primary = 'Study opened'
   else if (event?.eventType === 'CONSENT_ACCEPTED') primary = 'Consent accepted'
   else if (event?.eventType === 'STUDY_SUBMITTED') primary = 'Study submitted'
+  else if (event?.eventType === 'SESSION_STARTED') primary = 'Session started'
+  else if (event?.eventType === 'SESSION_ENDED') primary = 'Session ended'
   else if (event?.eventType === 'ANSWER_EDITED' && field) {
     const action =
       field.section === 'task' && field.field === 'comment'
@@ -1420,6 +1448,13 @@ const loadTimeline = async () => {
   }
 }
 watch(timelineParticipant, loadTimeline)
+
+// Overview cards open the event list with their filter applied.
+const showFilteredEvents = async (filters) => {
+  Object.assign(draft, emptyFilters(), filters)
+  viewMode.value = 'events'
+  await applyFilters()
+}
 watch(participantLabels, (labels) => {
   if (!timelineParticipant.value && labels.length) {
     timelineParticipant.value = labels[0]
@@ -1434,6 +1469,23 @@ onBeforeUnmount(() => clearTimeout(participantTimer))
 </script>
 
 <style scoped>
+@media (max-width: 600px) {
+  .view-switch :deep(.v-btn-toggle) {
+    display: grid;
+    width: 100%;
+    height: auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .view-switch :deep(.v-btn) {
+    height: auto !important;
+    min-height: 48px;
+    padding: 6px 4px;
+    font-size: 0.7rem;
+  }
+  .view-switch :deep(.v-btn__content) {
+    white-space: normal;
+  }
+}
 .logs-page {
   --logs-navy: #00213f;
   --logs-coral: #ff425a;

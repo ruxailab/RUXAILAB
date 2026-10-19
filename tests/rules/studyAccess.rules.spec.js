@@ -6,12 +6,7 @@ import {
   initializeTestEnvironment,
 } from '@firebase/rules-unit-testing'
 import { deleteDoc, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
-import {
-  deleteObject,
-  getBytes,
-  ref,
-  uploadBytes,
-} from 'firebase/storage'
+import { deleteObject, getBytes, ref, uploadBytes } from 'firebase/storage'
 
 const projectId = 'demo-ruxailab-rbac'
 let testEnv
@@ -94,7 +89,9 @@ describe('Firestore study RBAC', () => {
       getDoc(doc(context('stranger').firestore(), 'tests/study-1')),
     )
     await assertFails(
-      getDoc(doc(testEnv.unauthenticatedContext().firestore(), 'tests/study-1')),
+      getDoc(
+        doc(testEnv.unauthenticatedContext().firestore(), 'tests/study-1'),
+      ),
     )
   })
 
@@ -170,7 +167,9 @@ describe('Firestore study RBAC', () => {
     await assertSucceeds(
       getDoc(doc(context('observator').firestore(), 'answers/answers-1')),
     )
-    await assertFails(getDoc(doc(context('user').firestore(), 'answers/answers-1')))
+    await assertFails(
+      getDoc(doc(context('user').firestore(), 'answers/answers-1')),
+    )
 
     await assertSucceeds(
       updateDoc(doc(context('user').firestore(), 'answers/answers-1'), {
@@ -205,10 +204,39 @@ describe('Firestore study RBAC', () => {
     )
   })
 
+  it('allows a Card Sorting owner to answer only under their own user ID', async () => {
+    await testEnv.withSecurityRulesDisabled(async (adminContext) => {
+      const db = adminContext.firestore()
+      await Promise.all([
+        updateDoc(doc(db, 'tests/study-1'), { testType: 'CARD_SORTING' }),
+        updateDoc(doc(db, 'answers/answers-1'), {
+          type: 'CARD_SORTING',
+          cardSortingAnswers: {},
+        }),
+      ])
+    })
+
+    const answers = doc(context('owner').firestore(), 'answers/answers-1')
+
+    await assertSucceeds(
+      updateDoc(answers, {
+        'cardSortingAnswers.owner': { progress: 50, submitted: false },
+      }),
+    )
+    await assertFails(
+      updateDoc(answers, {
+        'cardSortingAnswers.user': { progress: 50, submitted: false },
+      }),
+    )
+  })
+
   it('requires the same RBAC as the parent answer to read its analytics subcollection', async () => {
     await testEnv.withSecurityRulesDisabled((adminContext) =>
       setDoc(
-        doc(adminContext.firestore(), 'answers/answers-1/analytics/analytics-1'),
+        doc(
+          adminContext.firestore(),
+          'answers/answers-1/analytics/analytics-1',
+        ),
         { speakingTimeSeconds: 42 },
       ),
     )
@@ -223,7 +251,10 @@ describe('Firestore study RBAC', () => {
     )
     await assertFails(
       getDoc(
-        doc(context('user').firestore(), 'answers/answers-1/analytics/analytics-1'),
+        doc(
+          context('user').firestore(),
+          'answers/answers-1/analytics/analytics-1',
+        ),
       ),
     )
     await assertFails(
@@ -277,7 +308,9 @@ describe('Firestore study RBAC', () => {
     )
 
     await assertFails(
-      deleteDoc(doc(context('stranger').firestore(), 'answers/unlinked-answer')),
+      deleteDoc(
+        doc(context('stranger').firestore(), 'answers/unlinked-answer'),
+      ),
     )
     await assertSucceeds(
       deleteDoc(doc(context('owner').firestore(), 'answers/unlinked-answer')),
@@ -481,7 +514,9 @@ describe('Storage study RBAC', () => {
       context('user').storage(),
       'tests/study-1/user/recording.webm',
     )
-    await assertFails(uploadBytes(unsupportedUserRecording, new Uint8Array([1])))
+    await assertFails(
+      uploadBytes(unsupportedUserRecording, new Uint8Array([1])),
+    )
   })
 
   it('lets a Focus Group facilitator upload a stimulus and every session role read it, but denies writes from non-facilitators', async () => {

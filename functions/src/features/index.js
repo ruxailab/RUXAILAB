@@ -15,3 +15,4 @@ export {
   textSentimentDelete,
 } from '../features/textSentiment/index.js'
 export { cancelQueuedJob } from '../features/jobs/index.js'
+export { exportStudyLogs } from '../features/logExport/index.js'

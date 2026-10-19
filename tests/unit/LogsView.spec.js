@@ -177,6 +177,80 @@ describe('LogsView', () => {
     wrapper.unmount()
   })
 
+  it('labels card sorting studies and offers only their event types', async () => {
+    Object.assign(mockStudy, { testType: 'CARD_SORTING' })
+    getParticipantLabels.mockResolvedValue([])
+    getStudyLogPage.mockResolvedValue(page)
+    getStudyLogCount.mockResolvedValue(1)
+
+    const wrapper = mount(LogsView, {
+      props: { id: 'study-1' },
+      global: {
+        stubs: {
+          VSelect: {
+            name: 'VSelect',
+            props: ['items', 'itemTitle', 'itemValue', 'label'],
+            template: '<div />',
+          },
+        },
+      },
+    })
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('Card sorting')
+    const eventType = wrapper
+      .findAllComponents({ name: 'VSelect' })
+      .find((select) => select.props('label') === 'Event type')
+    expect(eventType.props('items')).toEqual([
+      { title: 'Study View Opened', value: 'STUDY_VIEW_OPENED' },
+      { title: 'Consent Accepted', value: 'CONSENT_ACCEPTED' },
+      { title: 'Study Submitted', value: 'STUDY_SUBMITTED' },
+    ])
+    wrapper.unmount()
+  })
+
+  it('labels focus group studies and offers only session events', async () => {
+    Object.assign(mockStudy, { testType: 'FOCUS_GROUP' })
+    getParticipantLabels.mockResolvedValue([])
+    getStudyLogPage.mockResolvedValue({
+      ...page,
+      events: [
+        {
+          ...page.events[0],
+          eventType: 'SESSION_STARTED',
+          message: 'Focus group session started',
+          participantLabel: 'F-001',
+        },
+      ],
+    })
+    getStudyLogCount.mockResolvedValue(1)
+
+    const wrapper = mount(LogsView, {
+      props: { id: 'study-1' },
+      global: {
+        stubs: {
+          VSelect: {
+            name: 'VSelect',
+            props: ['items', 'itemTitle', 'itemValue', 'label'],
+            template: '<div />',
+          },
+        },
+      },
+    })
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('Focus group')
+    expect(wrapper.text()).toContain('Session started')
+    const eventType = wrapper
+      .findAllComponents({ name: 'VSelect' })
+      .find((select) => select.props('label') === 'Event type')
+    expect(eventType.props('items')).toEqual([
+      { title: 'Session Started', value: 'SESSION_STARTED' },
+      { title: 'Session Ended', value: 'SESSION_ENDED' },
+    ])
+    wrapper.unmount()
+  })
+
   it('falls back to the visible range when a forced count refresh fails', async () => {
     getParticipantLabels.mockResolvedValue([])
     getStudyLogPage.mockResolvedValue(page)
