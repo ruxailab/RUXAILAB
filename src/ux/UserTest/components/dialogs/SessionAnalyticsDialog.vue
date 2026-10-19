@@ -192,34 +192,35 @@
                 </v-window-item>
 
                 <v-window-item v-if="hasSentimentData" value="sentimental">
-                  <FacialSentimentPanel
-                    v-if="hasWebcamMedia"
-                    :key="`facial-${resolvedTaskId}-${taskAnswer?.sentimentDocId || 'new'}`"
-                    :video-element="mainVideo1"
-                    :webcam-video-url="taskAnswer?.webcamRecordURL"
-                    :sentiment-doc-id="taskAnswer?.sentimentDocId"
-                    :legacy-facial-results="taskAnswer?.facialSentimentResults"
-                    :test-answer="testAnswer"
-                    :selected-task="selectedTask"
-                    :answers-doc-id="answersDocId"
-                    :user-doc-id="userId"
-                    :task-id="resolvedTaskId"
-                    :study-id="testAnswer?.studyId || null"
-                    class="mb-4"
-                  />
-                  <TextSentimentPanel
-                    v-if="hasTaskAudio"
-                    :key="`text-${resolvedTaskId}-${taskAnswer?.sentimentDocId || 'new'}`"
-                    :audio-url="taskAnswer?.audioRecordURL"
-                    :sentiment-doc-id="taskAnswer?.sentimentDocId"
-                    :legacy-text-results="taskAnswer?.textSentimentResults"
-                    :test-answer="testAnswer"
-                    :selected-task="selectedTask"
-                    :answers-doc-id="answersDocId"
-                    :user-doc-id="userId"
-                    :task-id="resolvedTaskId"
-                    :study-id="testAnswer?.studyId || null"
-                  />
+                  <div class="d-flex flex-column ga-6">
+                    <FacialSentimentPanel
+                      v-if="hasWebcamMedia"
+                      :key="`facial-${resolvedTaskId}-${taskAnswer?.sentimentDocId || 'new'}`"
+                      :video-element="mainVideo1"
+                      :webcam-video-url="taskAnswer?.webcamRecordURL"
+                      :sentiment-doc-id="taskAnswer?.sentimentDocId"
+                      :legacy-facial-results="taskAnswer?.facialSentimentResults"
+                      :test-answer="testAnswer"
+                      :selected-task="selectedTask"
+                      :answers-doc-id="answersDocId"
+                      :user-doc-id="userId"
+                      :task-id="resolvedTaskId"
+                      :study-id="testAnswer?.studyId || null"
+                    />
+                    <TextSentimentPanel
+                      v-if="hasTaskAudio"
+                      :key="`text-${resolvedTaskId}-${taskAnswer?.sentimentDocId || 'new'}`"
+                      :audio-url="taskAnswer?.audioRecordURL"
+                      :sentiment-doc-id="taskAnswer?.sentimentDocId"
+                      :legacy-text-results="taskAnswer?.textSentimentResults"
+                      :test-answer="testAnswer"
+                      :selected-task="selectedTask"
+                      :answers-doc-id="answersDocId"
+                      :user-doc-id="userId"
+                      :task-id="resolvedTaskId"
+                      :study-id="testAnswer?.studyId || null"
+                    />
+                  </div>
                 </v-window-item>
 
                 <v-window-item v-if="hasTranscriptionData" value="transcript">
