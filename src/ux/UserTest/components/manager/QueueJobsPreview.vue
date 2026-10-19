@@ -190,46 +190,39 @@
       </template>
     </v-card-text>
 
-    <v-dialog v-model="removeDialog" max-width="420">
-      <v-card class="rounded-xl pa-2">
-        <v-card-title class="text-h6">
-          {{ t('manager.queueJobs.removeDialog.title') }}
-        </v-card-title>
-        <v-card-text>
-          {{
-            t('manager.queueJobs.removeDialog.message', {
-              type: pendingJob
-                ? t(`manager.queueJobs.types.${pendingJob.type}`)
-                : '',
-              participant: pendingJob?.participant || pendingJob?.userDocId || '',
-            })
-          }}
-          <v-alert
-            v-if="removeError"
-            type="error"
-            variant="tonal"
-            density="compact"
-            class="mt-3"
-          >
-            {{ removeError }}
-          </v-alert>
-        </v-card-text>
-        <v-card-actions class="px-4 pb-4">
-          <v-spacer />
-          <v-btn variant="text" :disabled="removing" @click="removeDialog = false">
-            {{ t('buttons.cancel') }}
-          </v-btn>
-          <v-btn
-            color="error"
-            variant="flat"
-            :loading="removing"
-            @click="confirmRemove"
-          >
-            {{ t('manager.queueJobs.remove') }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <ConfirmDialog
+      v-model:show="removeDialog"
+      :title="t('manager.queueJobs.removeDialog.title')"
+      :message="
+        t('manager.queueJobs.removeDialog.message', {
+          type: pendingJob
+            ? t(`manager.queueJobs.types.${pendingJob.type}`)
+            : '',
+          participant: pendingJob?.participant || pendingJob?.userDocId || '',
+        })
+      "
+      :confirm-text="t('manager.queueJobs.remove')"
+      :cancel-text="t('buttons.cancel')"
+      confirm-color="error"
+      confirm-icon="mdi-delete"
+      icon="mdi-delete-outline"
+      icon-color="error"
+      type="error"
+      :loading="removing"
+      @confirm="confirmRemove"
+    >
+      <template #content>
+        <v-alert
+          v-if="removeError"
+          type="error"
+          variant="tonal"
+          density="compact"
+          class="mt-3"
+        >
+          {{ removeError }}
+        </v-alert>
+      </template>
+    </ConfirmDialog>
   </v-card>
 </template>
 
@@ -240,6 +233,7 @@ import { useStore } from 'vuex'
 import { buildStudyQueueRows } from '@/app/services/jobs/buildStudyQueueRows'
 import { cancelQueuedJob } from '@/app/services/jobs/cancelQueuedJob'
 import { watchStudyJobs } from '@/app/services/jobs/watchStudyJobs'
+import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 
 const { t, locale } = useI18n()
 const store = useStore()

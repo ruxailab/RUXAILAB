@@ -225,20 +225,20 @@
     </v-row>
   </v-card>
 
-  <v-dialog v-model="confirmOpen" max-width="420" persistent>
-    <v-card rounded="xl">
-      <v-card-title class="text-h6">Delete transcription?</v-card-title>
-      <v-card-text>
-        This action can’t be undone. The run will be removed from this task.
-      </v-card-text>
-      <v-card-actions class="justify-end">
-        <v-btn variant="text" @click="confirmOpen = false">Cancel</v-btn>
-        <v-btn color="error" :loading="deleting" @click.stop="confirmDelete">
-          Delete
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+  <ConfirmDialog
+    v-model:show="confirmOpen"
+    title="Delete transcription?"
+    message="This action can’t be undone. The run will be removed from this task."
+    confirm-text="Delete"
+    cancel-text="Cancel"
+    confirm-color="error"
+    confirm-icon="mdi-delete"
+    icon="mdi-delete-outline"
+    icon-color="error"
+    type="error"
+    :loading="deleting"
+    @confirm="confirmDelete"
+  />
 </template>
 
 <script setup>
@@ -254,6 +254,7 @@ import { watchJobDocument } from '@/app/services/jobs/watchJobDocument'
 import { useFinishedJobWatch } from '@/app/services/jobs/useFinishedJobWatch'
 import { useInFlightTaskJob } from '@/app/services/jobs/useStudyAnalysisQueue'
 import AnalysisProgressState from '@/ux/UserTest/components/manager/AnalysisProgressState.vue'
+import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 
 const props = defineProps({
   answersDocId: { type: String, default: '' },
