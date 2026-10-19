@@ -213,7 +213,14 @@
               <!-- Data Table -->
               <div class="analytics-table-scroll">
                 <v-data-table
-                  :headers="tableHeaders"
+                  :headers="
+                    selectedTaskIndex === ALL_NASA_TLX_TASKS
+                      ? [
+                          { title: 'Task', key: 'taskName', sortable: true },
+                          ...tableHeaders,
+                        ]
+                      : tableHeaders
+                  "
                   :items="analytics.responses"
                   :items-per-page="10"
                   class="elevation-0"
