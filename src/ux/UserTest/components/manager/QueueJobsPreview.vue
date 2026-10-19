@@ -181,6 +181,12 @@
           </tr>
         </tbody>
       </v-table>
+      <p
+        v-if="filteredJobs.length > visibleJobs.length"
+        class="text-caption text-medium-emphasis mt-2 mb-0"
+      >
+        {{ t('manager.queueJobs.latestOnly', { count: visibleJobs.length }) }}
+      </p>
       </template>
     </v-card-text>
 
@@ -313,10 +319,14 @@ const completionRate = computed(() => {
   return Math.round((settledCount.value / jobs.value.length) * 100)
 })
 
-const visibleJobs = computed(() => {
+const LATEST_ROWS = 10
+
+const filteredJobs = computed(() => {
   if (!activeFilter.value) return jobs.value
   return jobs.value.filter((job) => job.status === activeFilter.value)
 })
+
+const visibleJobs = computed(() => filteredJobs.value.slice(0, LATEST_ROWS))
 
 const toggleFilter = (status) => {
   activeFilter.value = activeFilter.value === status ? null : status

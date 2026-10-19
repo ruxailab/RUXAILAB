@@ -3465,6 +3465,7 @@
       "overall": "Trabajos finalizados",
       "settledCount": "{settled} de {total} trabajos finalizados",
       "emptyFilter": "No hay trabajos en este estado",
+      "latestOnly": "Mostrando los {count} más recientes",
       "remove": "Quitar",
       "notApplicable": "—",
       "columns": {

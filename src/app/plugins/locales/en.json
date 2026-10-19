@@ -3565,6 +3565,7 @@
       "overall": "Finished jobs",
       "settledCount": "{settled} of {total} jobs finished",
       "emptyFilter": "No jobs in this status",
+      "latestOnly": "Showing the {count} most recent",
       "remove": "Remove",
       "notApplicable": "—",
       "columns": {
