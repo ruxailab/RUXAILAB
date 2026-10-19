@@ -1,29 +1,36 @@
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 
 /**
- * Orchestrates task-level text/transcription sentiment analysis via Cloud Function.
- * The function resolves the audio recording from the answer task,
- * calls the transcription sentiment API, and stores results on a sentiment
- * document pointed by sentimentDocId on the task under answers/{answersDocId}.
+ * Enqueues task-level text sentiment analysis.
+ * The Cloud Tasks worker persists the result.
  *
  * @param {Object} payload
  * @param {string} payload.answersDocId
  * @param {string} payload.userDocId
  * @param {string|number} payload.taskId
  * @param {string} [payload.studyId]
- * @returns {Promise<{
- *   answersDocId: string,
- *   userDocId: string,
- *   taskId: string,
- *   sentimentDocId: string,
- *   text: { Positive: number, Neutral: number, Negative: number, sampleCount: number },
- * }>}
+ * @returns {Promise<{ status: 'queued', jobId: string, jobDocId: string }>}
  */
 export async function analyzeTextSentimentTask(payload) {
   const response = await FirebaseFunctionsController.callHttpsCallableFunction(
     'textSentimentTask',
     payload,
-    { timeout: 540_000 },
+  )
+  return response?.data ?? response
+}
+
+/**
+ * Clear the text side of a sentiment document and rebuild analytics.
+ *
+ * @param {Object} payload
+ * @param {string} payload.sentimentDocId
+ * @param {string} [payload.studyId]
+ * @returns {Promise<{ sentimentDocId: string|null, side: 'text', removedDocument: boolean }>}
+ */
+export async function deleteTextSentiment(payload) {
+  const response = await FirebaseFunctionsController.callHttpsCallableFunction(
+    'textSentimentDelete',
+    payload,
   )
   return response?.data ?? response
 }

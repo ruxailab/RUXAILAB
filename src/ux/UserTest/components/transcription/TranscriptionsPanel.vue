@@ -12,6 +12,16 @@
 
     <!-- Empty state -->
     <v-alert
+      v-if="deleteError"
+      type="error"
+      variant="tonal"
+      density="comfortable"
+      class="mb-4"
+    >
+      {{ deleteError }}
+    </v-alert>
+
+    <v-alert
       v-if="!loading && !hasRuns"
       type="info"
       variant="tonal"
@@ -83,30 +93,28 @@
     </v-expansion-panels>
 
     <!-- confirm -->
-    <v-dialog v-model="confirmOpen" max-width="420">
-      <v-card>
-        <v-card-title class="text-h6">Delete transcription?</v-card-title>
-        <v-card-text>
-          This action can’t be undone. The run will be removed from this task.
-        </v-card-text>
-        <v-card-actions class="justify-end">
-          <v-btn variant="text" @click="confirmOpen = false">Cancel</v-btn>
-          <v-btn
-            color="error"
-            :loading="deletingId === runToDelete?.id"
-            @click="confirmDelete"
-            >Delete</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <ConfirmDialog
+      v-model:show="confirmOpen"
+      title="Delete transcription?"
+      message="This action can’t be undone. The run will be removed from this task."
+      confirm-text="Delete"
+      cancel-text="Cancel"
+      confirm-color="error"
+      confirm-icon="mdi-delete"
+      icon="mdi-delete-outline"
+      icon-color="error"
+      type="error"
+      :loading="deletingId === runToDelete?.id"
+      @confirm="confirmDelete"
+    />
   </div>
 </template>
 
 <script setup>
-import { watch, ref, computed } from 'vue'
+import { watch, ref, computed, nextTick } from 'vue'
 
 import TranscriptionList from './TranscriptionList.vue'
+import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 
 // JS props (no types)
 const props = defineProps({
@@ -137,6 +145,8 @@ const transcriptionsArray = ref([])
 const confirmOpen = ref(false)
 const runToDelete = ref(null)
 const deletingId = ref(null)
+const deleteError = ref(null)
+let fetchGeneration = 0
 
 const hasRuns = computed(
   () =>
@@ -159,8 +169,10 @@ watch(
 )
 
 async function fetchSelectedTaskTranscriptions() {
+  const generation = ++fetchGeneration
+
   if (!props.answersDocId || !props.userDocId || !props.taskId) {
-    loading.value = false // don't leave the spinner on if we early-return
+    loading.value = false
     return
   }
 
@@ -173,35 +185,50 @@ async function fetchSelectedTaskTranscriptions() {
         props.taskId,
       )
 
+    if (generation !== fetchGeneration) return
     transcriptionsArray.value = Array.isArray(transcriptions)
       ? transcriptions
       : []
-  } catch {
-    transcriptionsArray.value = [] // ✅ fallback
+    deleteError.value = null
+  } catch (err) {
+    if (generation !== fetchGeneration) return
+    transcriptionsArray.value = []
+    deleteError.value =
+      err?.message || 'Failed to load transcriptions for this task.'
   } finally {
-    loading.value = false
+    if (generation === fetchGeneration) loading.value = false
   }
 }
 
 /** UI → click delete */
-function askDelete(run) {
+async function askDelete(run) {
   runToDelete.value = run
+  confirmOpen.value = false
+  await nextTick()
   confirmOpen.value = true
 }
 
 /** Confirm → delete via Cloud Function → refresh list */
 async function confirmDelete() {
-  if (!runToDelete.value) return
-  deletingId.value = runToDelete.value.id
+  const transcriptionId = runToDelete.value?.id
+  if (!transcriptionId) return
+  deletingId.value = transcriptionId
   try {
     const result = await deleteTranscription({
-      transcriptionId: runToDelete.value.id,
+      transcriptionId,
     })
-    await fetchSelectedTaskTranscriptions()
+    fetchGeneration += 1
+    transcriptionsArray.value = transcriptionsArray.value.filter(
+      (run) => run.id !== transcriptionId,
+    )
     emit('deleted', result)
-  } catch {
-  } finally {
     confirmOpen.value = false
+    await fetchSelectedTaskTranscriptions()
+  } catch (err) {
+    deleteError.value =
+      err?.message || 'Failed to delete the transcription.'
+  } finally {
+    if (confirmOpen.value) confirmOpen.value = false
     deletingId.value = null
     runToDelete.value = null
   }

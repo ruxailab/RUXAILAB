@@ -258,6 +258,10 @@ service cloud.firestore {
     match /transcriptions/{document=**} {
       allow read, write: if signedIn();
     }
+    match /jobs/{jobId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
     match /calibrations/{document=**} {
       allow read, write: if signedIn();
     }

@@ -14,11 +14,21 @@
         </div>
       </v-col>
       <v-spacer />
-      <v-col v-if="hasResults" cols="auto">
+      <v-col v-if="hasResults" cols="auto" class="d-flex align-center ga-1">
+        <v-btn
+          icon="mdi-delete-outline"
+          color="error"
+          variant="text"
+          :disabled="isAnalyzing || deleting"
+          :loading="deleting"
+          title="Delete facial sentiment"
+          @click="confirmOpen = true"
+        />
         <v-btn
           variant="outlined"
-          :disabled="isAnalyzing"
-          @click="startAnalysis()"
+          :disabled="isAnalyzing || deleting"
+          :loading="isAnalyzing"
+          @click="reanalyze()"
         >
           <span class="sr-only">Re-analyze Video</span>
           <v-icon>mdi-refresh</v-icon>
@@ -37,7 +47,7 @@
 
     <!-- Idle: wait for user to start -->
     <v-row
-      v-if="!isAnalyzing && !hasResults"
+      v-if="!isAnalyzing && !awaitingQueue && !hasResults"
       justify="center"
       align="center"
       class="my-12"
@@ -80,18 +90,11 @@
       </v-col>
     </v-row>
 
-    <!-- Loading -->
-    <v-row v-else-if="isAnalyzing" justify="center" align="center" class="my-12">
-      <v-col cols="auto" class="text-center">
-        <v-progress-circular indeterminate size="64" color="primary" />
-        <div class="mt-3 text-body-1 font-weight-medium">
-          Analyzing emotions...
-        </div>
-        <div class="mt-1 text-body-2 text-grey-darken-1">
-          This may take 1–2 minutes
-        </div>
-      </v-col>
-    </v-row>
+    <AnalysisProgressState
+      v-else-if="isAnalyzing || awaitingQueue"
+      title="Analyzing emotions..."
+      :show-queue-message="isAnalyzing"
+    />
 
     <!-- Result -->
     <v-row v-else>
@@ -162,6 +165,21 @@
       </v-col>
     </v-row>
   </v-card>
+
+  <ConfirmDialog
+    v-model:show="confirmOpen"
+    title="Delete facial sentiment?"
+    message="This action can’t be undone. Facial sentiment for this task will be removed."
+    confirm-text="Delete"
+    cancel-text="Cancel"
+    confirm-color="error"
+    confirm-icon="mdi-delete"
+    icon="mdi-delete-outline"
+    icon-color="error"
+    type="error"
+    :loading="deleting"
+    @confirm="confirmDelete"
+  />
 </template>
 
 <script setup>
@@ -177,8 +195,17 @@ import {
   LineElement,
 } from 'chart.js'
 import { useStore } from 'vuex'
-import { analyzeFacialSentimentTask } from '@/app/services/facialSentiment/FacialSentimentService'
+import SentimentController from '@/ai/sentiment/SentimentController'
+import {
+  analyzeFacialSentimentTask,
+  deleteFacialSentiment,
+} from '@/app/services/facialSentiment/FacialSentimentService'
 import { useSentimentPanel } from './useSentimentPanel'
+import { watchJobDocument } from '@/app/services/jobs/watchJobDocument'
+import { useFinishedJobWatch } from '@/app/services/jobs/useFinishedJobWatch'
+import { useInFlightTaskJob } from '@/app/services/jobs/useStudyAnalysisQueue'
+import AnalysisProgressState from '@/ux/UserTest/components/manager/AnalysisProgressState.vue'
+import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 
 ChartJS.register(
   Title,
@@ -190,7 +217,8 @@ ChartJS.register(
 )
 
 const store = useStore()
-const emit = defineEmits(['saved'])
+const emit = defineEmits(['saved', 'deleted'])
+const sentimentController = new SentimentController()
 const props = defineProps({
   videoElement: { type: HTMLVideoElement, default: null },
   webcamVideoUrl: { type: String, default: null },
@@ -207,9 +235,56 @@ const props = defineProps({
 const { resolveTaskFromTestAnswer, resolveSentimentDocId, loadSentimentDocument } =
   useSentimentPanel(props)
 
-const isAnalyzing = ref(false)
 const hasResults = ref(false)
+const deleting = ref(false)
+const confirmOpen = ref(false)
 const analysisError = ref(null)
+const {
+  running: isAnalyzing,
+  follow: watchUntilFinished,
+  stop: stopWatchingJob,
+} = useFinishedJobWatch({
+  watchJob: watchJobDocument,
+  onFailed(job) {
+    analysisError.value =
+      job.error || 'Failed to process facial sentiment analysis.'
+  },
+  async onDone(job) {
+    const sentiment = job.sentimentDocId
+      ? await sentimentController.getById(job.sentimentDocId)
+      : null
+    const emotions = sentiment?.facial
+    if (!emotions) {
+      analysisError.value = 'Facial sentiment response did not include emotions.'
+      return
+    }
+
+    updateUI(emotions)
+    hasResults.value = true
+    await store.dispatch('getCurrentTestAnswerDoc')
+    emit('saved', {
+      answersDocId: props.answersDocId,
+      userDocId: props.userDocId,
+      taskId: String(props.taskId),
+      sentimentDocId: job.sentimentDocId,
+      emotions,
+    })
+  },
+  onError(err) {
+    analysisError.value =
+      err?.message || 'Failed to process facial sentiment analysis.'
+  },
+})
+const queue = useInFlightTaskJob(
+  () => ({
+    studyId: props.studyId || store.getters.test?.id,
+    type: 'facial',
+    userDocId: props.userDocId,
+    taskId: props.taskId,
+  }),
+  (job) => followQueuedJob(job),
+)
+const awaitingQueue = queue.awaitingQueue
 const summaryMetrics = ref([])
 const insights = ref([])
 const radarData = ref({
@@ -320,6 +395,7 @@ async function loadExistingResults() {
     try {
       const sentiment = await loadSentimentDocument()
       const existingResults = sentiment?.facial ?? null
+      if (isAnalyzing.value) return
       if (existingResults) {
         updateUI(existingResults)
         hasResults.value = true
@@ -333,6 +409,7 @@ async function loadExistingResults() {
   }
 
   const legacyResults = resolveLegacyFacialResults()
+  if (isAnalyzing.value) return
   if (legacyResults && typeof legacyResults === 'object') {
     updateUI(legacyResults)
     hasResults.value = true
@@ -341,8 +418,72 @@ async function loadExistingResults() {
     return
   }
 
+  if (isAnalyzing.value) return
   resetResultsUi()
-  isAnalyzing.value = false
+}
+
+async function confirmDelete() {
+  const sentimentDocId = resolveSentimentDocId()
+  if (!sentimentDocId) {
+    analysisError.value = 'No facial sentiment document to delete.'
+    confirmOpen.value = false
+    return
+  }
+
+  deleting.value = true
+  try {
+    const result = await deleteFacialSentiment({
+      sentimentDocId,
+      studyId: props.studyId || undefined,
+    })
+    resetResultsUi()
+    confirmOpen.value = false
+    await store.dispatch('getCurrentTestAnswerDoc')
+    emit('deleted', result)
+  } catch (err) {
+    analysisError.value =
+      err?.message || 'Failed to delete facial sentiment analysis.'
+    confirmOpen.value = false
+  } finally {
+    deleting.value = false
+  }
+}
+
+function followQueuedJob(job) {
+  hasResults.value = false
+  analysisError.value = null
+  watchUntilFinished(job.id, job.jobId)
+}
+
+async function reanalyze() {
+  if (!canStartAnalysis.value) {
+    analysisError.value =
+      'Missing session identifiers or webcam recording for this task.'
+    return
+  }
+
+  isAnalyzing.value = true
+  analysisError.value = null
+  stopWatchingJob()
+
+  try {
+    const sentimentDocId = resolveSentimentDocId()
+    if (sentimentDocId) {
+      await deleteFacialSentiment({
+        sentimentDocId,
+        studyId: props.studyId || undefined,
+      })
+      resetResultsUi()
+      await store.dispatch('getCurrentTestAnswerDoc')
+    }
+  } catch (err) {
+    isAnalyzing.value = false
+    analysisError.value =
+      err?.message || 'Failed to delete facial sentiment analysis.'
+    return
+  }
+
+  await startAnalysis()
 }
 
 async function startAnalysis() {
@@ -352,33 +493,25 @@ async function startAnalysis() {
     return
   }
 
-  try {
-    isAnalyzing.value = true
-    analysisError.value = null
+  isAnalyzing.value = true
+  analysisError.value = null
+  stopWatchingJob()
 
-    const result = await analyzeFacialSentimentTask({
+  try {
+    const queued = await analyzeFacialSentimentTask({
       answersDocId: props.answersDocId,
       userDocId: props.userDocId,
       taskId: String(props.taskId),
       studyId: props.studyId || undefined,
     })
 
-    const emotions = result?.emotions
-    if (!emotions) {
-      throw new Error('Facial sentiment response did not include emotions.')
-    }
-
-    updateUI(emotions)
-    hasResults.value = true
-
-    await store.dispatch('getCurrentTestAnswerDoc')
-    emit('saved', result)
+    queue.claim(queued.jobDocId)
+    watchUntilFinished(queued.jobDocId, queued.jobId)
   } catch (err) {
+    isAnalyzing.value = false
     console.error('Facial sentiment analysis failed:', err.message || err)
     analysisError.value =
       err?.message || 'Failed to process facial sentiment analysis.'
-  } finally {
-    isAnalyzing.value = false
   }
 }
 

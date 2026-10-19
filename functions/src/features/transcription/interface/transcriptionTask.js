@@ -5,25 +5,23 @@ import {
   validateRequest,
   mapHttpsError,
 } from '../../../core/firebase/index.js'
+import { taskQueue } from '../../../core/tasks/index.js'
 import {
   FirestoreUserRepository,
   FirestoreAnswerRepository,
   FirestoreStudyRepository,
 } from '../../../shared/repositories/index.js'
 import { FirestoreTranscriptionRepository } from '../repositories/FirestoreTranscriptionRepository.js'
-import { FirestoreTranscriptionAnalyticsRepository } from '../repositories/FirestoreTranscriptionAnalyticsRepository.js'
+import { FirestoreJobRepository } from '../../../core/repositories/FirestoreJobRepository.js'
 import { TranscribeTaskService } from '../service/TranscribeTaskService.js'
-import { UpsertTranscriptionAnalyticsService } from '../service/UpsertTranscriptionAnalyticsService.js'
+import { EnqueueTranscriptionTaskService } from '../service/EnqueueTranscriptionTaskService.js'
 import { transcriptionTaskValidator } from '../validators/transcriptionTaskValidator.js'
 
 /**
- * Callable entry point: authenticates the caller and delegates to TranscribeTaskService.
+ * Callable entry point: authenticates the caller and enqueues transcription.
+ * The Cloud Tasks worker performs the transcription.
  */
 export const transcriptionTask = functions.onCall({
-  options: {
-    timeoutSeconds: 540,
-    memory: '256MiB',
-  },
   middlewares: [
     mapHttpsError(functions, 'Task transcription failed'),
     requireAuth,
@@ -34,27 +32,36 @@ export const transcriptionTask = functions.onCall({
     const FieldValue = admin.firestore.FieldValue
     const input = request.data || {}
 
-    const answerRepository = new FirestoreAnswerRepository(db)
-    const transcriptionRepository = new FirestoreTranscriptionRepository(db)
-
     const service = new TranscribeTaskService({
       userRepository: new FirestoreUserRepository(db),
-      answerRepository,
+      answerRepository: new FirestoreAnswerRepository(db),
       studyRepository: new FirestoreStudyRepository(db),
-      transcriptionRepository,
+      transcriptionRepository: new FirestoreTranscriptionRepository(db),
       FieldValue,
       transcriptionApiBaseUrl: process.env.TRANSCRIPTION_API_BASE_URL,
     })
 
-    const analyticsService = new UpsertTranscriptionAnalyticsService({
-      analyticsRepository: new FirestoreTranscriptionAnalyticsRepository(db, input.answersDocId),
-      transcriptionRepository,
-      answerRepository,
+    const ready = await service.resolveContext({
+      uid: request.auth.uid,
+      input,
+    })
+
+    const enqueueService = new EnqueueTranscriptionTaskService({
+      jobRepository: new FirestoreJobRepository(db),
+      taskQueue: taskQueue('transcriptionTaskWorker'),
       FieldValue,
     })
 
-    const saved = await service.execute({ uid: request.auth.uid, input })
-    await analyticsService.execute({ transcription: saved })
-    return saved
+    return enqueueService.execute({
+      uid: request.auth.uid,
+      input: {
+        answersDocId: ready.answersDocId,
+        userDocId: ready.userDocId,
+        taskId: ready.taskId,
+        provider: ready.provider,
+        model: ready.model,
+        studyId: ready.studyId,
+      },
+    })
   },
 })

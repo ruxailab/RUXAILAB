@@ -2,7 +2,6 @@ import { fail } from '../../../core/errors.js'
 import { processFacialVideo } from './processFacialVideo.js'
 import { extractVideoNameFromUrl } from './extractVideoNameFromUrl.js'
 import { ROLE, assertStudyAccess } from '../../../shared/auth/index.js'
-import { Sentiment } from '../../../shared/models/Sentiment.js'
 
 /**
  * Analyze facial sentiment for a task webcam recording and persist
@@ -35,12 +34,22 @@ export class AnalyzeFacialSentimentTaskService {
   }
 
   /**
+   * Authorize the caller and confirm the task has a webcam recording.
+   *
    * @param {object} params
    * @param {string} params.uid
    * @param {object} params.input
-   * @returns {Promise<object>}
+   * @returns {Promise<{
+   *   answersDocId: string,
+   *   userDocId: string,
+   *   taskId: string,
+   *   studyId: string|null,
+   *   baseUrl: string,
+   *   videoName: string,
+   *   task: object,
+   * }>}
    */
-  async execute({ uid, input }) {
+  async resolveContext({ uid, input }) {
     const {
       answersDocId,
       userDocId,
@@ -92,7 +101,7 @@ export class AnalyzeFacialSentimentTaskService {
       fail('not-found', 'Task not found for the given userDocId/taskId')
     }
 
-    const webcamRecordURL = task.webcamRecordURL || null
+    const webcamRecordURL = task.webcamRecordURL || task.videoRecordURL || null
     if (!webcamRecordURL) {
       fail('failed-precondition', 'No webcam recording available for this task')
     }
@@ -102,6 +111,32 @@ export class AnalyzeFacialSentimentTaskService {
       fail('failed-precondition', 'Could not resolve video path from webcam URL')
     }
 
+    return {
+      answersDocId,
+      userDocId,
+      taskId: normalizedTaskId,
+      studyId: resolvedStudyId,
+      baseUrl,
+      videoName,
+      task,
+    }
+  }
+
+  /**
+   * @param {object} params
+   * @param {string} params.uid
+   * @param {object} params.input
+   * @returns {Promise<object>}
+   */
+  async execute({ uid, input }) {
+    const {
+      answersDocId,
+      userDocId,
+      taskId: normalizedTaskId,
+      baseUrl,
+      videoName,
+    } = await this.resolveContext({ uid, input })
+
     const emotions = await processFacialVideo({
       baseUrl,
       videoName,
@@ -109,40 +144,15 @@ export class AnalyzeFacialSentimentTaskService {
     const emotionsPayload = emotions.toJSON()
 
     const now = this.FieldValue.serverTimestamp()
-    const existingSentimentDocId = task.sentimentDocId || null
-    let existingSentiment = null
-    if (existingSentimentDocId) {
-      existingSentiment = await this.sentimentRepository.get(
-        existingSentimentDocId,
-      )
-    }
-
-    let saved
-    if (existingSentiment) {
-      const updated = existingSentiment.withFacial(emotionsPayload, now)
-      await this.sentimentRepository.set(existingSentimentDocId, updated, {
-        merge: false,
-      })
-      saved = updated.withId(existingSentimentDocId)
-    } else {
-      const draft = Sentiment.create({
-        answersDocId,
-        userDocId,
-        taskId: normalizedTaskId,
-        facial: emotionsPayload,
-        text: null,
-        createdAt: now,
-        updatedAt: now,
-      })
-      const sentimentId = await this.sentimentRepository.create(draft)
-      saved = draft.withId(sentimentId)
-      await this.answerRepository.setSentimentDocId(
-        answersDocId,
-        userDocId,
-        normalizedTaskId,
-        saved.id,
-      )
-    }
+    const saved = await this.sentimentRepository.upsertSide({
+      answerRepository: this.answerRepository,
+      answersDocId,
+      userDocId,
+      taskId: normalizedTaskId,
+      side: 'facial',
+      payload: emotionsPayload,
+      updatedAt: now,
+    })
 
     return {
       answersDocId,

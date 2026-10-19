@@ -192,34 +192,35 @@
                 </v-window-item>
 
                 <v-window-item v-if="hasSentimentData" value="sentimental">
-                  <FacialSentimentPanel
-                    v-if="hasWebcamMedia"
-                    :key="`facial-${resolvedTaskId}-${taskAnswer?.sentimentDocId || 'new'}`"
-                    :video-element="mainVideo1"
-                    :webcam-video-url="taskAnswer?.webcamRecordURL"
-                    :sentiment-doc-id="taskAnswer?.sentimentDocId"
-                    :legacy-facial-results="taskAnswer?.facialSentimentResults"
-                    :test-answer="testAnswer"
-                    :selected-task="selectedTask"
-                    :answers-doc-id="answersDocId"
-                    :user-doc-id="userId"
-                    :task-id="resolvedTaskId"
-                    :study-id="testAnswer?.studyId || null"
-                    class="mb-4"
-                  />
-                  <TextSentimentPanel
-                    v-if="hasTaskAudio"
-                    :key="`text-${resolvedTaskId}-${taskAnswer?.sentimentDocId || 'new'}`"
-                    :audio-url="taskAnswer?.audioRecordURL"
-                    :sentiment-doc-id="taskAnswer?.sentimentDocId"
-                    :legacy-text-results="taskAnswer?.textSentimentResults"
-                    :test-answer="testAnswer"
-                    :selected-task="selectedTask"
-                    :answers-doc-id="answersDocId"
-                    :user-doc-id="userId"
-                    :task-id="resolvedTaskId"
-                    :study-id="testAnswer?.studyId || null"
-                  />
+                  <div class="d-flex flex-column ga-6">
+                    <FacialSentimentPanel
+                      v-if="hasWebcamMedia"
+                      :key="`facial-${resolvedTaskId}-${taskAnswer?.sentimentDocId || 'new'}`"
+                      :video-element="mainVideo1"
+                      :webcam-video-url="taskAnswer?.webcamRecordURL"
+                      :sentiment-doc-id="taskAnswer?.sentimentDocId"
+                      :legacy-facial-results="taskAnswer?.facialSentimentResults"
+                      :test-answer="testAnswer"
+                      :selected-task="selectedTask"
+                      :answers-doc-id="answersDocId"
+                      :user-doc-id="userId"
+                      :task-id="resolvedTaskId"
+                      :study-id="testAnswer?.studyId || null"
+                    />
+                    <TextSentimentPanel
+                      v-if="hasTaskAudio"
+                      :key="`text-${resolvedTaskId}-${taskAnswer?.sentimentDocId || 'new'}`"
+                      :audio-url="taskAnswer?.audioRecordURL"
+                      :sentiment-doc-id="taskAnswer?.sentimentDocId"
+                      :legacy-text-results="taskAnswer?.textSentimentResults"
+                      :test-answer="testAnswer"
+                      :selected-task="selectedTask"
+                      :answers-doc-id="answersDocId"
+                      :user-doc-id="userId"
+                      :task-id="resolvedTaskId"
+                      :study-id="testAnswer?.studyId || null"
+                    />
+                  </div>
                 </v-window-item>
 
                 <v-window-item v-if="hasTranscriptionData" value="transcript">
@@ -229,10 +230,7 @@
                     :user-doc-id="userId"
                     :task-id="resolvedTaskId"
                     :study-id="testAnswer?.studyId || null"
-                    :transcription-doc-id="
-                      latestTranscriptionDocId ||
-                      taskAnswer?.transcriptionDocId
-                    "
+                    :transcription-doc-id="resolvedTranscriptionDocId"
                     :can-transcribe="canTranscribe"
                     :unavailable-message="transcriptionUnavailableMessage"
                     @saved="onTranscriptionSaved"
@@ -407,7 +405,7 @@ const predictedData = ref(null)
 const selectedView = ref('precision')
 const videoReady = ref(false)
 const transcriptionRefreshKey = ref(0)
-const latestTranscriptionDocId = ref(null)
+const latestTranscriptionDocId = ref(undefined)
 const mediaLayout = ref('both')
 const markers = ref(
   Array.isArray(props.taskAnswer?.markers) ? [...props.taskAnswer.markers] : [],
@@ -611,6 +609,13 @@ const transcriptionUnavailableMessage = computed(() => {
   return 'Missing session identifiers to generate a transcription.'
 })
 
+const resolvedTranscriptionDocId = computed(() => {
+  if (latestTranscriptionDocId.value === undefined) {
+    return props.taskAnswer?.transcriptionDocId || null
+  }
+  return latestTranscriptionDocId.value
+})
+
 const transcriptionPanelKey = computed(
   () =>
     `transcriptions-${props.userId}:${resolvedTaskId.value}:${transcriptionRefreshKey.value}`,
@@ -623,7 +628,6 @@ const onTranscriptionSaved = (result) => {
 
 const onTranscriptionDeleted = (result) => {
   latestTranscriptionDocId.value = result?.transcriptionDocId ?? null
-  transcriptionRefreshKey.value += 1
 }
 
 const preferredTab = computed(() => {
@@ -906,7 +910,7 @@ managedListeners.addCleanup(() => cancelAnimationFrame(rafId))
 watch(
   () => [props.userId, resolvedTaskId.value],
   () => {
-    latestTranscriptionDocId.value = null
+    latestTranscriptionDocId.value = undefined
     transcriptionRefreshKey.value = 0
     markers.value = Array.isArray(props.taskAnswer?.markers)
       ? [...props.taskAnswer.markers]

@@ -1,30 +1,36 @@
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 
 /**
- * Orchestrates task-level facial sentiment analysis via Cloud Function.
- * The function resolves the webcam recording from the answer task,
- * calls the facial sentiment API, and stores results on a sentiment document
- * pointed by sentimentDocId on the task under answers/{answersDocId}.
+ * Enqueues task-level facial sentiment analysis.
+ * The Cloud Tasks worker persists the result.
  *
  * @param {Object} payload
  * @param {string} payload.answersDocId
  * @param {string} payload.userDocId
  * @param {string|number} payload.taskId
  * @param {string} [payload.studyId]
- * @returns {Promise<{
- *   answersDocId: string,
- *   userDocId: string,
- *   taskId: string,
- *   sentimentDocId: string,
- *   emotions: Record<string, number>,
- *   videoName: string|null,
- * }>}
+ * @returns {Promise<{ status: 'queued', jobId: string, jobDocId: string }>}
  */
 export async function analyzeFacialSentimentTask(payload) {
   const response = await FirebaseFunctionsController.callHttpsCallableFunction(
     'facialSentimentTask',
     payload,
-    { timeout: 540_000 },
+  )
+  return response?.data ?? response
+}
+
+/**
+ * Clear the facial side of a sentiment document and rebuild analytics.
+ *
+ * @param {Object} payload
+ * @param {string} payload.sentimentDocId
+ * @param {string} [payload.studyId]
+ * @returns {Promise<{ sentimentDocId: string|null, side: 'facial', removedDocument: boolean }>}
+ */
+export async function deleteFacialSentiment(payload) {
+  const response = await FirebaseFunctionsController.callHttpsCallableFunction(
+    'sentimentDelete',
+    { ...payload, side: 'facial' },
   )
   return response?.data ?? response
 }

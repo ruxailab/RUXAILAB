@@ -44,6 +44,20 @@ export class Sentiment {
   }
 
   /**
+   * Stable id for one participant task, shared by facial and text analysis.
+   *
+   * @param {string} answersDocId
+   * @param {string} userDocId
+   * @param {string|number} taskId
+   * @returns {string}
+   */
+  static documentId(answersDocId, userDocId, taskId) {
+    return [answersDocId, userDocId, String(taskId)]
+      .join('__')
+      .replaceAll('/', '_')
+  }
+
+  /**
    * @param {object} data
    * @param {string|null} [id]
    * @returns {Sentiment}

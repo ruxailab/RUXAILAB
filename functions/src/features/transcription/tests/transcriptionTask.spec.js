@@ -1,4 +1,12 @@
 import { jest } from '@jest/globals'
+import { FirestoreUserRepository } from '../../../shared/repositories/FirestoreUserRepository.js'
+import { FirestoreAnswerRepository } from '../../../shared/repositories/FirestoreAnswerRepository.js'
+import { FirestoreStudyRepository } from '../../../shared/repositories/FirestoreStudyRepository.js'
+import { FirestoreTranscriptionRepository } from '../repositories/FirestoreTranscriptionRepository.js'
+import { FirestoreTranscriptionAnalyticsRepository } from '../repositories/FirestoreTranscriptionAnalyticsRepository.js'
+import { ProcessTranscriptionTaskService } from '../service/ProcessTranscriptionTaskService.js'
+import { TranscribeTaskService } from '../service/TranscribeTaskService.js'
+import { UpsertTranscriptionAnalyticsService } from '../service/UpsertTranscriptionAnalyticsService.js'
 
 const mockAnswerGet = jest.fn()
 const mockAnswerUpdate = jest.fn()
@@ -65,54 +73,34 @@ const mockDb = {
   }),
 }
 
-jest.unstable_mockModule('../../../core/firebase/f.firebase.js', () => ({
-  admin: {
-    firestore: Object.assign(jest.fn(() => mockDb), {
-      FieldValue: {
-        serverTimestamp: jest.fn(() => 'mock-server-timestamp'),
-      },
+const FieldValue = {
+  serverTimestamp: () => 'mock-server-timestamp',
+}
+
+const run = (uid, data) => {
+  const answerRepository = new FirestoreAnswerRepository(mockDb)
+  const transcriptionRepository = new FirestoreTranscriptionRepository(mockDb)
+  const service = new ProcessTranscriptionTaskService({
+    transcribeTaskService: new TranscribeTaskService({
+      userRepository: new FirestoreUserRepository(mockDb),
+      answerRepository,
+      studyRepository: new FirestoreStudyRepository(mockDb),
+      transcriptionRepository,
+      FieldValue,
+      transcriptionApiBaseUrl: process.env.TRANSCRIPTION_API_BASE_URL,
     }),
-  },
-  functions: {
-    onCall: jest.fn(({ handler, middlewares = [] }) => {
-      const composed = middlewares.reduceRight(
-        (next, middleware) => (request) =>
-          middleware(request, () => next(request)),
-        handler,
-      )
-      return composed
+    analyticsService: new UpsertTranscriptionAnalyticsService({
+      analyticsRepository: new FirestoreTranscriptionAnalyticsRepository(
+        mockDb,
+        data.answersDocId,
+      ),
+      transcriptionRepository,
+      answerRepository,
+      FieldValue,
     }),
-    https: {
-      HttpsError: class HttpsError extends Error {
-        constructor(code, message) {
-          super(message)
-          this.code = code
-        }
-      },
-    },
-  },
-}))
-
-jest.unstable_mockModule('../../../core/firebase/index.js', async () => {
-  const firebase = await import('../../../core/firebase/f.firebase.js')
-  const middlewares = await import('../../../core/firebase/middlewares.js')
-  return {
-    admin: firebase.admin,
-    functions: firebase.functions,
-    requireAuth: middlewares.requireAuth,
-    validateRequest: middlewares.validateRequest,
-    mapHttpsError: middlewares.mapHttpsError,
-  }
-})
-
-const { transcriptionTask } = await import(
-  '../interface/transcriptionTask.js'
-)
-
-const request = (uid, data) => ({
-  auth: uid ? { uid } : null,
-  data,
-})
+  })
+  return service.execute({ uid, input: data })
+}
 
 const snap = (exists, data, id = null) => ({
   exists,
@@ -120,7 +108,7 @@ const snap = (exists, data, id = null) => ({
   data: () => data,
 })
 
-describe('transcriptionTask', () => {
+describe('ProcessTranscriptionTaskService', () => {
   const originalFetch = global.fetch
   const savedBaseUrl = process.env.TRANSCRIPTION_API_BASE_URL
 
@@ -196,29 +184,14 @@ describe('transcriptionTask', () => {
     process.env.TRANSCRIPTION_API_BASE_URL = savedBaseUrl
   })
 
-  it('requires authentication', async () => {
-    await expect(
-      transcriptionTask(
-        request(null, {
-          answersDocId: 'answer-1',
-          userDocId: 'evaluator-1',
-          taskId: '0',
-          provider: 'whisper',
-        }),
-      ),
-    ).rejects.toMatchObject({ code: 'unauthenticated' })
-  })
-
   it('orchestrates transcription and persists analytics on transcription + aggregate', async () => {
-    const result = await transcriptionTask(
-      request('owner', {
+    const result = await run('owner', {
         answersDocId: 'answer-1',
         userDocId: 'evaluator-1',
         taskId: '0',
         provider: 'whisper',
         studyId: 'study-1',
-      }),
-    )
+      })
 
     expect(global.fetch).toHaveBeenCalledTimes(2)
     expect(mockTranscriptionAdd).toHaveBeenCalledWith(
@@ -300,15 +273,13 @@ describe('transcriptionTask', () => {
       ),
     )
 
-    const result = await transcriptionTask(
-      request('owner', {
+    const result = await run('owner', {
         answersDocId: 'answer-1',
         userDocId: 'evaluator-1',
         taskId: '0',
         provider: 'whisper',
         studyId: 'study-1',
-      }),
-    )
+      })
 
     expect(mockTranscriptionAdd).not.toHaveBeenCalled()
     expect(mockTranscriptionSet).toHaveBeenCalledWith(
@@ -382,15 +353,13 @@ describe('transcriptionTask', () => {
     })
     mockTranscriptionAdd.mockResolvedValue({ id: 'tr-2' })
 
-    const result = await transcriptionTask(
-      request('owner', {
+    const result = await run('owner', {
         answersDocId: 'answer-1',
         userDocId: 'evaluator-1',
         taskId: '0',
         provider: 'whisper',
         studyId: 'study-1',
-      }),
-    )
+      })
 
     expect(mockTranscriptionAdd).toHaveBeenCalled()
     expect(mockAnswerUpdate).toHaveBeenCalledWith({
@@ -464,15 +433,13 @@ describe('transcriptionTask', () => {
       )
     })
 
-    await transcriptionTask(
-      request('owner', {
+    await run('owner', {
         answersDocId: 'answer-1',
         userDocId: 'evaluator-1',
         taskId: '0',
         provider: 'whisper',
         studyId: 'study-1',
-      }),
-    )
+      })
 
     expect(mockAnalyticsSet).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -499,14 +466,12 @@ describe('transcriptionTask', () => {
 
   it('rejects invalid provider', async () => {
     await expect(
-      transcriptionTask(
-        request('owner', {
+      run('owner', {
           answersDocId: 'answer-1',
           userDocId: 'evaluator-1',
           taskId: '0',
           provider: 'other',
         }),
-      ),
     ).rejects.toMatchObject({ code: 'invalid-argument' })
   })
 })

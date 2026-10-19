@@ -13,11 +13,21 @@
         </div>
       </v-col>
       <v-spacer />
-      <v-col v-if="hasResults" cols="auto">
+      <v-col v-if="hasResults" cols="auto" class="d-flex align-center ga-1">
+        <v-btn
+          icon="mdi-delete-outline"
+          color="error"
+          variant="text"
+          :disabled="isTranscribing || deleting"
+          :loading="deleting"
+          title="Delete transcription"
+          @click.stop="openDeleteDialog"
+        />
         <v-btn
           variant="outlined"
-          :disabled="isTranscribing || !canTranscribe"
-          @click="transcribeSession()"
+          :disabled="isTranscribing || !canTranscribe || deleting"
+          :loading="isTranscribing"
+          @click="retranscribe()"
         >
           <span class="sr-only">Re-transcribe audio</span>
           <v-icon>mdi-refresh</v-icon>
@@ -35,7 +45,7 @@
     </v-row>
 
     <v-row
-      v-if="isLoading && !hasResults"
+      v-if="isLoading && !hasResults && !isTranscribing && !awaitingQueue"
       justify="center"
       align="center"
       class="my-12"
@@ -49,7 +59,7 @@
     </v-row>
 
     <v-row
-      v-else-if="!isTranscribing && !hasResults"
+      v-else-if="!isTranscribing && !awaitingQueue && !hasResults"
       justify="center"
       align="center"
       class="my-12"
@@ -105,17 +115,11 @@
       </v-col>
     </v-row>
 
-    <v-row v-else-if="isTranscribing" justify="center" align="center" class="my-12">
-      <v-col cols="auto" class="text-center">
-        <v-progress-circular indeterminate size="64" color="primary" />
-        <div class="mt-3 text-body-1 font-weight-medium">
-          Transcribing audio...
-        </div>
-        <div class="mt-1 text-body-2 text-grey-darken-1">
-          This may take 1–2 minutes
-        </div>
-      </v-col>
-    </v-row>
+    <AnalysisProgressState
+      v-else-if="isTranscribing || awaitingQueue"
+      title="Transcribing audio..."
+      :show-queue-message="isTranscribing"
+    />
 
     <v-row v-else>
       <v-col v-if="transcriptionError" cols="12">
@@ -179,14 +183,6 @@
                 hide-details
                 style="min-width: 180px"
               />
-              <v-btn
-                icon="mdi-delete-outline"
-                color="error"
-                variant="text"
-                :loading="deleting"
-                title="Delete transcription"
-                @click="confirmOpen = true"
-              />
             </div>
           </div>
 
@@ -229,30 +225,36 @@
     </v-row>
   </v-card>
 
-  <v-dialog v-model="confirmOpen" max-width="420">
-    <v-card rounded="xl">
-      <v-card-title class="text-h6">Delete transcription?</v-card-title>
-      <v-card-text>
-        This action can’t be undone. The run will be removed from this task.
-      </v-card-text>
-      <v-card-actions class="justify-end">
-        <v-btn variant="text" @click="confirmOpen = false">Cancel</v-btn>
-        <v-btn color="error" :loading="deleting" @click="confirmDelete">
-          Delete
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+  <ConfirmDialog
+    v-model:show="confirmOpen"
+    title="Delete transcription?"
+    message="This action can’t be undone. The run will be removed from this task."
+    confirm-text="Delete"
+    cancel-text="Cancel"
+    confirm-color="error"
+    confirm-icon="mdi-delete"
+    icon="mdi-delete-outline"
+    icon-color="error"
+    type="error"
+    :loading="deleting"
+    @confirm="confirmDelete"
+  />
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
+import { useStore } from 'vuex'
 import TranscriptionController from '@/ai/transcriptions/TranscriptionController'
 import {
   deleteTranscription,
   transcribeTask,
 } from '@/app/services/transcription/TranscriptionService'
 import { formatTime } from '@/shared/utils/timeUtils'
+import { watchJobDocument } from '@/app/services/jobs/watchJobDocument'
+import { useFinishedJobWatch } from '@/app/services/jobs/useFinishedJobWatch'
+import { useInFlightTaskJob } from '@/app/services/jobs/useStudyAnalysisQueue'
+import AnalysisProgressState from '@/ux/UserTest/components/manager/AnalysisProgressState.vue'
+import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 
 const props = defineProps({
   answersDocId: { type: String, default: '' },
@@ -268,16 +270,45 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['saved', 'deleted'])
+const store = useStore()
 
 const transcriptionController = new TranscriptionController()
 
 const isLoading = ref(true)
-const isTranscribing = ref(false)
 const deleting = ref(false)
 const confirmOpen = ref(false)
 const transcriptionError = ref(null)
+const {
+  running: isTranscribing,
+  follow: watchUntilFinished,
+  stop: stopWatchingJob,
+} = useFinishedJobWatch({
+  watchJob: watchJobDocument,
+  onFailed(job) {
+    transcriptionError.value = job.error || 'Transcription failed'
+  },
+  async onDone(job) {
+    await fetchRuns()
+    if (job.transcriptionId) selectedRunId.value = job.transcriptionId
+    emit('saved', { id: job.transcriptionId })
+  },
+  onError(err) {
+    transcriptionError.value = errorMessage(err)
+  },
+})
+const queue = useInFlightTaskJob(
+  () => ({
+    studyId: props.studyId || store.getters.test?.id,
+    type: 'transcription',
+    userDocId: props.userDocId,
+    taskId: props.taskId,
+  }),
+  (job) => followQueuedJob(job),
+)
+const awaitingQueue = queue.awaitingQueue
 const runs = ref([])
 const selectedRunId = ref(null)
+let fetchGeneration = 0
 const selectedProvider = ref('whisper')
 
 const providers = [
@@ -380,6 +411,8 @@ watch(
 )
 
 async function fetchRuns() {
+  const generation = ++fetchGeneration
+
   if (!props.answersDocId || !props.userDocId || props.taskId == null) {
     runs.value = []
     isLoading.value = false
@@ -395,6 +428,7 @@ async function fetchRuns() {
         props.userDocId,
         String(props.taskId),
       )
+    if (generation !== fetchGeneration || isTranscribing.value) return
     runs.value = Array.isArray(transcriptions) ? transcriptions : []
     selectedRunId.value =
       props.transcriptionDocId &&
@@ -402,11 +436,53 @@ async function fetchRuns() {
         ? props.transcriptionDocId
         : runs.value[0]?.id || null
   } catch (err) {
+    if (generation !== fetchGeneration) return
     runs.value = []
     transcriptionError.value = errorMessage(err)
   } finally {
-    isLoading.value = false
+    if (generation === fetchGeneration && !isTranscribing.value) {
+      isLoading.value = false
+    }
   }
+}
+
+async function openDeleteDialog() {
+  confirmOpen.value = false
+  await nextTick()
+  confirmOpen.value = true
+}
+
+function followQueuedJob(job) {
+  transcriptionError.value = null
+  runs.value = []
+  selectedRunId.value = null
+  isLoading.value = false
+  watchUntilFinished(job.id, job.jobId)
+}
+
+async function retranscribe() {
+  if (!props.canTranscribe || !selectedProvider.value) return
+
+  const transcriptionId = selectedRun.value?.id
+  isTranscribing.value = true
+  transcriptionError.value = null
+  stopWatchingJob()
+
+  try {
+    if (transcriptionId) {
+      await deleteTranscription({ transcriptionId })
+      fetchGeneration += 1
+      runs.value = runs.value.filter((run) => run.id !== transcriptionId)
+      selectedRunId.value = runs.value[0]?.id || null
+      await store.dispatch('getCurrentTestAnswerDoc')
+    }
+  } catch (err) {
+    isTranscribing.value = false
+    transcriptionError.value = errorMessage(err)
+    return
+  }
+
+  await transcribeSession()
 }
 
 async function transcribeSession() {
@@ -414,9 +490,10 @@ async function transcribeSession() {
 
   isTranscribing.value = true
   transcriptionError.value = null
+  stopWatchingJob()
 
   try {
-    const result = await transcribeTask({
+    const queued = await transcribeTask({
       answersDocId: props.answersDocId,
       userDocId: props.userDocId,
       taskId: String(props.taskId),
@@ -424,26 +501,36 @@ async function transcribeSession() {
       provider: selectedProvider.value,
       model: selectedModel.value,
     })
-    emit('saved', result)
-    await fetchRuns()
-    if (result?.id) selectedRunId.value = result.id
+
+    queue.claim(queued.jobDocId)
+    isLoading.value = false
+    watchUntilFinished(queued.jobDocId, queued.jobId)
   } catch (err) {
-    transcriptionError.value = errorMessage(err)
-  } finally {
     isTranscribing.value = false
+    transcriptionError.value = errorMessage(err)
   }
 }
 
 async function confirmDelete() {
-  if (!selectedRun.value) return
+  const transcriptionId = selectedRun.value?.id
+  if (!transcriptionId) return
   deleting.value = true
   try {
     const result = await deleteTranscription({
-      transcriptionId: selectedRun.value.id,
+      transcriptionId,
+      studyId: props.studyId || undefined,
     })
+    fetchGeneration += 1
+    runs.value = runs.value.filter((run) => run.id !== transcriptionId)
+    selectedRunId.value =
+      props.transcriptionDocId &&
+      runs.value.some((run) => run.id === props.transcriptionDocId)
+        ? props.transcriptionDocId
+        : runs.value[0]?.id || null
     emit('deleted', result)
     confirmOpen.value = false
     await fetchRuns()
+    store.dispatch('getCurrentTestAnswerDoc').catch(() => {})
   } catch (err) {
     transcriptionError.value = errorMessage(err)
     confirmOpen.value = false

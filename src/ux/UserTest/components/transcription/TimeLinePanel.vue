@@ -97,7 +97,10 @@
 <script setup>
 import { ref, computed } from 'vue'
 
+import TranscriptionController from '@/ai/transcriptions/TranscriptionController'
 import { transcribeTask } from '@/app/services/transcription/TranscriptionService'
+import { watchJobDocument } from '@/app/services/jobs/watchJobDocument'
+import { useFinishedJobWatch } from '@/app/services/jobs/useFinishedJobWatch'
 import TranscriptionList from '@/ux/UserTest/components/transcription/TranscriptionList.vue'
 
 const props = defineProps({
@@ -114,13 +117,45 @@ const props = defineProps({
 
 const emit = defineEmits(['saved'])
 
-const isTranscribing = ref(false)
+const transcriptionController = new TranscriptionController()
 const transcriptSegments = ref([])
-
 const snackbar = ref({
   visible: false,
   text: '',
   color: '',
+})
+const {
+  running: isTranscribing,
+  follow: watchUntilFinished,
+  stop: stopWatchingJob,
+} = useFinishedJobWatch({
+  watchJob: watchJobDocument,
+  onFailed(job) {
+    snackbar.value = {
+      visible: true,
+      text: job.error || 'Transcription failed',
+      color: 'red',
+    }
+  },
+  async onDone(job) {
+    const saved = job.transcriptionId
+      ? await transcriptionController.getById(job.transcriptionId)
+      : null
+    transcriptSegments.value = mergeSegments(saved?.evaluator, saved?.moderator)
+    snackbar.value = {
+      visible: true,
+      text: 'Transcription saved successfully!',
+      color: 'green',
+    }
+    emit('saved', { id: job.transcriptionId })
+  },
+  onError(err) {
+    snackbar.value = {
+      visible: true,
+      text: errorMessage(err),
+      color: 'red',
+    }
+  },
 })
 
 const selectedProvider = ref('whisper')
@@ -168,15 +203,16 @@ async function transcribeSession() {
 
   isTranscribing.value = true
   transcriptSegments.value = []
+  stopWatchingJob()
 
   snackbar.value = {
     visible: true,
-    text: 'Transcribing session, please wait...',
+    text: 'Transcription queued. This may take a few minutes.',
     color: 'orange',
   }
 
   try {
-    const result = await transcribeTask({
+    const queued = await transcribeTask({
       answersDocId: props.answersDocId,
       userDocId: props.userDocId,
       taskId: String(props.taskId),
@@ -185,23 +221,14 @@ async function transcribeSession() {
       model: selectedModel.value,
     })
 
-    transcriptSegments.value = mergeSegments(result.evaluator, result.moderator)
-
-    snackbar.value = {
-      visible: true,
-      text: 'Transcription saved successfully!',
-      color: 'green',
-    }
-
-    emit('saved', result)
+    watchUntilFinished(queued.jobDocId, queued.jobId)
   } catch (err) {
+    isTranscribing.value = false
     snackbar.value = {
       visible: true,
       text: errorMessage(err),
       color: 'red',
     }
-  } finally {
-    isTranscribing.value = false
   }
 }
 </script>

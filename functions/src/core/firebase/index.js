@@ -1,4 +1,4 @@
-export { admin, functions } from './f.firebase.js'
+export { admin, functions, getRegion } from './f.firebase.js'
 export {
   requireAuth,
   validateRequest,

@@ -13,11 +13,21 @@
         </div>
       </v-col>
       <v-spacer />
-      <v-col v-if="hasResults" cols="auto">
+      <v-col v-if="hasResults" cols="auto" class="d-flex align-center ga-1">
+        <v-btn
+          icon="mdi-delete-outline"
+          color="error"
+          variant="text"
+          :disabled="isAnalyzing || deleting"
+          :loading="deleting"
+          title="Delete text sentiment"
+          @click="confirmOpen = true"
+        />
         <v-btn
           variant="outlined"
-          :disabled="isAnalyzing"
-          @click="startAnalysis()"
+          :disabled="isAnalyzing || deleting"
+          :loading="isAnalyzing"
+          @click="reanalyze()"
         >
           <span class="sr-only">Re-analyze Audio</span>
           <v-icon>mdi-refresh</v-icon>
@@ -35,7 +45,7 @@
     </v-row>
 
     <v-row
-      v-if="!isAnalyzing && !hasResults"
+      v-if="!isAnalyzing && !awaitingQueue && !hasResults"
       justify="center"
       align="center"
       class="my-12"
@@ -78,17 +88,11 @@
       </v-col>
     </v-row>
 
-    <v-row v-else-if="isAnalyzing" justify="center" align="center" class="my-12">
-      <v-col cols="auto" class="text-center">
-        <v-progress-circular indeterminate size="64" color="primary" />
-        <div class="mt-3 text-body-1 font-weight-medium">
-          Analyzing text sentiment...
-        </div>
-        <div class="mt-1 text-body-2 text-grey-darken-1">
-          This may take 1–2 minutes
-        </div>
-      </v-col>
-    </v-row>
+    <AnalysisProgressState
+      v-else-if="isAnalyzing || awaitingQueue"
+      title="Analyzing text sentiment..."
+      :show-queue-message="isAnalyzing"
+    />
 
     <v-row v-else>
       <v-col v-if="analysisError" cols="12">
@@ -200,17 +204,42 @@
       </v-col>
     </v-row>
   </v-card>
+
+  <ConfirmDialog
+    v-model:show="confirmOpen"
+    title="Delete text sentiment?"
+    message="This action can’t be undone. Text sentiment for this task will be removed."
+    confirm-text="Delete"
+    cancel-text="Cancel"
+    confirm-color="error"
+    confirm-icon="mdi-delete"
+    icon="mdi-delete-outline"
+    icon-color="error"
+    type="error"
+    :loading="deleting"
+    @confirm="confirmDelete"
+  />
 </template>
 
 <script setup>
 import { ref, watch, onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
-import { analyzeTextSentimentTask } from '@/app/services/textSentiment/TextSentimentService'
+import SentimentController from '@/ai/sentiment/SentimentController'
+import {
+  analyzeTextSentimentTask,
+  deleteTextSentiment,
+} from '@/app/services/textSentiment/TextSentimentService'
 import { formatTime } from '@/shared/utils/timeUtils'
 import { useSentimentPanel } from './useSentimentPanel'
+import { watchJobDocument } from '@/app/services/jobs/watchJobDocument'
+import { useFinishedJobWatch } from '@/app/services/jobs/useFinishedJobWatch'
+import { useInFlightTaskJob } from '@/app/services/jobs/useStudyAnalysisQueue'
+import AnalysisProgressState from '@/ux/UserTest/components/manager/AnalysisProgressState.vue'
+import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 
 const store = useStore()
-const emit = defineEmits(['saved'])
+const emit = defineEmits(['saved', 'deleted'])
+const sentimentController = new SentimentController()
 const props = defineProps({
   audioUrl: { type: String, default: null },
   sentimentDocId: { type: String, default: null },
@@ -226,9 +255,56 @@ const props = defineProps({
 const { resolveTaskFromTestAnswer, resolveSentimentDocId, loadSentimentDocument } =
   useSentimentPanel(props)
 
-const isAnalyzing = ref(false)
 const hasResults = ref(false)
+const deleting = ref(false)
+const confirmOpen = ref(false)
 const analysisError = ref(null)
+const {
+  running: isAnalyzing,
+  follow: watchUntilFinished,
+  stop: stopWatchingJob,
+} = useFinishedJobWatch({
+  watchJob: watchJobDocument,
+  onFailed(job) {
+    analysisError.value =
+      job.error || 'Failed to process text sentiment analysis.'
+  },
+  async onDone(job) {
+    const sentiment = job.sentimentDocId
+      ? await sentimentController.getById(job.sentimentDocId)
+      : null
+    const text = sentiment?.text
+    if (!text) {
+      analysisError.value = 'Text sentiment response did not include results.'
+      return
+    }
+
+    updateUI(text)
+    hasResults.value = true
+    await store.dispatch('getCurrentTestAnswerDoc')
+    emit('saved', {
+      answersDocId: props.answersDocId,
+      userDocId: props.userDocId,
+      taskId: String(props.taskId),
+      sentimentDocId: job.sentimentDocId,
+      text,
+    })
+  },
+  onError(err) {
+    analysisError.value =
+      err?.message || 'Failed to process text sentiment analysis.'
+  },
+})
+const queue = useInFlightTaskJob(
+  () => ({
+    studyId: props.studyId || store.getters.test?.id,
+    type: 'text',
+    userDocId: props.userDocId,
+    taskId: props.taskId,
+  }),
+  (job) => followQueuedJob(job),
+)
+const awaitingQueue = queue.awaitingQueue
 const summaryMetrics = ref([])
 const insights = ref([])
 const distributionBars = ref([])
@@ -298,6 +374,7 @@ async function loadExistingResults() {
     try {
       const sentiment = await loadSentimentDocument()
       const existingResults = sentiment?.text ?? null
+      if (isAnalyzing.value) return
       if (existingResults && typeof existingResults === 'object') {
         updateUI(existingResults)
         hasResults.value = true
@@ -311,6 +388,7 @@ async function loadExistingResults() {
   }
 
   const legacyResults = resolveLegacyTextResults()
+  if (isAnalyzing.value) return
   if (legacyResults && typeof legacyResults === 'object') {
     updateUI(legacyResults)
     hasResults.value = true
@@ -319,8 +397,72 @@ async function loadExistingResults() {
     return
   }
 
+  if (isAnalyzing.value) return
   resetResultsUi()
-  isAnalyzing.value = false
+}
+
+async function confirmDelete() {
+  const sentimentDocId = resolveSentimentDocId()
+  if (!sentimentDocId) {
+    analysisError.value = 'No text sentiment document to delete.'
+    confirmOpen.value = false
+    return
+  }
+
+  deleting.value = true
+  try {
+    const result = await deleteTextSentiment({
+      sentimentDocId,
+      studyId: props.studyId || undefined,
+    })
+    resetResultsUi()
+    confirmOpen.value = false
+    await store.dispatch('getCurrentTestAnswerDoc')
+    emit('deleted', result)
+  } catch (err) {
+    analysisError.value =
+      err?.message || 'Failed to delete text sentiment analysis.'
+    confirmOpen.value = false
+  } finally {
+    deleting.value = false
+  }
+}
+
+function followQueuedJob(job) {
+  hasResults.value = false
+  analysisError.value = null
+  watchUntilFinished(job.id, job.jobId)
+}
+
+async function reanalyze() {
+  if (!canStartAnalysis.value) {
+    analysisError.value =
+      'Missing session identifiers or audio recording for this task.'
+    return
+  }
+
+  isAnalyzing.value = true
+  analysisError.value = null
+  stopWatchingJob()
+
+  try {
+    const sentimentDocId = resolveSentimentDocId()
+    if (sentimentDocId) {
+      await deleteTextSentiment({
+        sentimentDocId,
+        studyId: props.studyId || undefined,
+      })
+      resetResultsUi()
+      await store.dispatch('getCurrentTestAnswerDoc')
+    }
+  } catch (err) {
+    isAnalyzing.value = false
+    analysisError.value =
+      err?.message || 'Failed to delete text sentiment analysis.'
+    return
+  }
+
+  await startAnalysis()
 }
 
 async function startAnalysis() {
@@ -330,33 +472,25 @@ async function startAnalysis() {
     return
   }
 
-  try {
-    isAnalyzing.value = true
-    analysisError.value = null
+  isAnalyzing.value = true
+  analysisError.value = null
+  stopWatchingJob()
 
-    const result = await analyzeTextSentimentTask({
+  try {
+    const queued = await analyzeTextSentimentTask({
       answersDocId: props.answersDocId,
       userDocId: props.userDocId,
       taskId: String(props.taskId),
       studyId: props.studyId || undefined,
     })
 
-    const text = result?.text
-    if (!text) {
-      throw new Error('Text sentiment response did not include results.')
-    }
-
-    updateUI(text)
-    hasResults.value = true
-
-    await store.dispatch('getCurrentTestAnswerDoc')
-    emit('saved', result)
+    queue.claim(queued.jobDocId)
+    watchUntilFinished(queued.jobDocId, queued.jobId)
   } catch (err) {
+    isAnalyzing.value = false
     console.error('Text sentiment analysis failed:', err.message || err)
     analysisError.value =
       err?.message || 'Failed to process text sentiment analysis.'
-  } finally {
-    isAnalyzing.value = false
   }
 }
 

@@ -1,9 +1,7 @@
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 
 /**
- * Orchestrates task-level transcription via Cloud Function.
- * The function downloads evaluator/moderator audios from the answer task,
- * calls the Whisper API, persists to Firestore, and updates transcriptionDocId.
+ * Enqueues task-level transcription. The Cloud Tasks worker persists the result.
  *
  * @param {Object} payload
  * @param {string} payload.answersDocId
@@ -12,22 +10,12 @@ import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunc
  * @param {'whisper'|'openai'} payload.provider
  * @param {string} [payload.model]
  * @param {string} [payload.studyId]
- * @returns {Promise<{
- *   id: string,
- *   answersDocId: string,
- *   userDocId: string,
- *   taskId: string,
- *   provider: string,
- *   model: string,
- *   evaluator: { language: string|null, transcript: string, segments: Array },
- *   moderator: { language: string|null, transcript: string, segments: Array },
- * }>}
+ * @returns {Promise<{ status: 'queued', jobId: string, jobDocId: string }>}
  */
 export async function transcribeTask(payload) {
   const response = await FirebaseFunctionsController.callHttpsCallableFunction(
     'transcriptionTask',
     payload,
-    { timeout: 540_000 },
   )
   return response?.data ?? response
 }

@@ -37,12 +37,26 @@ export class TranscribeTaskService {
   }
 
   /**
+   * Authorize the caller and confirm the task has audio to transcribe.
+   *
    * @param {object} params
    * @param {string} params.uid
    * @param {object} params.input
-   * @returns {Promise<object>}
+   * @returns {Promise<{
+   *   answersDocId: string,
+   *   userDocId: string,
+   *   taskId: string,
+   *   provider: string,
+   *   model: string,
+   *   studyId: string|null,
+   *   baseUrl: string,
+   *   audioUrlEvaluator: string|null,
+   *   audioUrlModerator: string|null,
+   *   task: object,
+   *   transcriptionProvider: TranscriptionProvider,
+   * }>}
    */
-  async execute({ uid, input }) {
+  async resolveContext({ uid, input }) {
     const {
       answersDocId,
       userDocId,
@@ -94,8 +108,9 @@ export class TranscribeTaskService {
       message: 'Task transcription is not permitted',
     })
 
+    const normalizedTaskId = String(taskId)
     const task =
-      answerData.taskAnswers?.[userDocId]?.tasks?.[String(taskId)] ?? null
+      answerData.taskAnswers?.[userDocId]?.tasks?.[normalizedTaskId] ?? null
     if (!task) {
       fail('not-found', 'Task not found for the given userDocId/taskId')
     }
@@ -105,6 +120,39 @@ export class TranscribeTaskService {
     if (!audioUrlEvaluator && !audioUrlModerator) {
       fail('failed-precondition', 'No audio files available for this task')
     }
+
+    return {
+      answersDocId,
+      userDocId,
+      taskId: normalizedTaskId,
+      provider: transcriptionProvider.name,
+      model: transcriptionProvider.model,
+      studyId: resolvedStudyId,
+      baseUrl,
+      audioUrlEvaluator,
+      audioUrlModerator,
+      task,
+      transcriptionProvider,
+    }
+  }
+
+  /**
+   * @param {object} params
+   * @param {string} params.uid
+   * @param {object} params.input
+   * @returns {Promise<object>}
+   */
+  async execute({ uid, input }) {
+    const {
+      answersDocId,
+      userDocId,
+      taskId,
+      baseUrl,
+      audioUrlEvaluator,
+      audioUrlModerator,
+      task,
+      transcriptionProvider,
+    } = await this.resolveContext({ uid, input })
 
     const [evaluatorRaw, moderatorRaw] = await Promise.all([
       transcribeAudio({

@@ -5,27 +5,23 @@ import {
   validateRequest,
   mapHttpsError,
 } from '../../../core/firebase/index.js'
+import { FirestoreJobRepository } from '../../../core/repositories/FirestoreJobRepository.js'
+import { taskQueue } from '../../../core/tasks/index.js'
 import {
   FirestoreUserRepository,
   FirestoreAnswerRepository,
   FirestoreStudyRepository,
   FirestoreSentimentRepository,
 } from '../../../shared/repositories/index.js'
-import {
-  FirestoreSentimentAnalyticsRepository,
-  UpsertSentimentAnalyticsService,
-} from '../../facialSentiment/index.js'
 import { AnalyzeTextSentimentTaskService } from '../service/AnalyzeTextSentimentTaskService.js'
+import { EnqueueTextSentimentTaskService } from '../service/EnqueueTextSentimentTaskService.js'
 import { textSentimentTaskValidator } from '../validators/textSentimentTaskValidator.js'
 
 /**
- * Callable entry point: authenticates the caller and delegates to AnalyzeTextSentimentTaskService.
+ * Callable entry point: authenticates the caller and enqueues text sentiment.
+ * The Cloud Tasks worker performs the analysis.
  */
 export const textSentimentTask = functions.onCall({
-  options: {
-    timeoutSeconds: 540,
-    memory: '256MiB',
-  },
   middlewares: [
     mapHttpsError(functions, 'Text sentiment analysis failed'),
     requireAuth,
@@ -36,38 +32,34 @@ export const textSentimentTask = functions.onCall({
     const FieldValue = admin.firestore.FieldValue
     const input = request.data || {}
 
-    const answerRepository = new FirestoreAnswerRepository(db)
-    const sentimentRepository = new FirestoreSentimentRepository(db)
-
     const service = new AnalyzeTextSentimentTaskService({
       userRepository: new FirestoreUserRepository(db),
-      answerRepository,
+      answerRepository: new FirestoreAnswerRepository(db),
       studyRepository: new FirestoreStudyRepository(db),
-      sentimentRepository,
+      sentimentRepository: new FirestoreSentimentRepository(db),
       FieldValue,
       textSentimentApiBaseUrl: process.env.TRANSCRIPTION_SENTIMENT_API_BASE_URL,
     })
 
-    const saved = await service.execute({ uid: request.auth.uid, input })
+    const ready = await service.resolveContext({
+      uid: request.auth.uid,
+      input,
+    })
 
-    const analyticsService = new UpsertSentimentAnalyticsService({
-      analyticsRepository: new FirestoreSentimentAnalyticsRepository(
-        db,
-        saved.answersDocId,
-      ),
-      answerRepository,
-      sentimentRepository,
+    const enqueueService = new EnqueueTextSentimentTaskService({
+      jobRepository: new FirestoreJobRepository(db),
+      taskQueue: taskQueue('textSentimentTaskWorker'),
       FieldValue,
     })
 
-    await analyticsService.execute({
-      answersDocId: saved.answersDocId,
-      userDocId: saved.userDocId,
-      taskId: saved.taskId,
-      sentimentDocId: saved.sentimentDocId,
-      text: saved.text,
+    return enqueueService.execute({
+      uid: request.auth.uid,
+      input: {
+        answersDocId: ready.answersDocId,
+        userDocId: ready.userDocId,
+        taskId: ready.taskId,
+        studyId: ready.studyId,
+      },
     })
-
-    return saved
   },
 })

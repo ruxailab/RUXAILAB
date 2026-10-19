@@ -154,6 +154,7 @@ export default class TranscriptionController extends Controller {
     const result = await super.queryWithMultipleConditions(
       COLLECTION,
       conditions,
+      { source: 'server' },
     )
 
     if (result.docs.length === 0) return null

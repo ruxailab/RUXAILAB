@@ -36,12 +36,15 @@
             <TasksInfo :test="test" />
           </v-col>
 
+          <v-col cols="12">
+            <QueueJobsPreview />
+          </v-col>
+
           <!-- Row 2 -->
           <v-col cols="12" md="6">
             <StorageInfo :test="test" />
           </v-col>
           <v-col cols="12" md="6">
-            <!-- Empty slot for future components -->
             <v-card
               class="h-100 d-flex align-center justify-center"
               variant="outlined"
@@ -85,6 +88,7 @@ import StudyOverview from '@/ux/UserTest/components/manager/StudyOverview.vue'
 import ParticipantsInfo from '@/ux/UserTest/components/manager/ParticipantsInfo.vue'
 import TasksInfo from '@/ux/UserTest/components/manager/TasksInfo.vue'
 import StorageInfo from '@/ux/UserTest/components/manager/StorageInfo.vue'
+import QueueJobsPreview from '@/ux/UserTest/components/manager/QueueJobsPreview.vue'
 
 // Stores
 const store = useStore()

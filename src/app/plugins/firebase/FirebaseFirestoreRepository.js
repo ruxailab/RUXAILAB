@@ -7,6 +7,7 @@ import {
   query,
   where,
   getDocs,
+  getDocsFromServer,
   deleteDoc,
   collection,
   orderBy,
@@ -79,6 +80,7 @@ export default class Controller {
    *                                          (e.g., '==', '>=', '<=', '!=', etc.).
    * @param {*} conditions[].value - The value to compare against the specified field.
    *
+   * @param {{ source?: 'default'|'server' }} [options] - `server` skips the local cache.
    * @returns {Promise<QuerySnapshot>} - A Promise that resolves to a QuerySnapshot containing
    *                                     the documents that match all the specified conditions.
    *
@@ -95,14 +97,15 @@ export default class Controller {
    *   console.log(doc.id, " => ", doc.data());
    * });
    */
-  async queryWithMultipleConditions(col, conditions) {
+  async queryWithMultipleConditions(col, conditions, options = {}) {
     const conditionArray = conditions.map((condition) =>
       where(condition.field, condition.condition, condition.value),
     )
 
     const q = query(collection(db, col), ...conditionArray)
+    const read = options.source === 'server' ? getDocsFromServer : getDocs
 
-    return getDocs(q)
+    return read(q)
   }
 
   /**

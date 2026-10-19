@@ -119,6 +119,25 @@ export default class SentimentAnalyticsController {
    * @param {string} userDocId
    * @returns {Promise<Array<ReturnType<typeof toSentimentContribution>>>}
    */
+  /**
+   * Load every sentiment document stored for an answers document.
+   *
+   * @param {string} answersDocId
+   * @returns {Promise<Array<ReturnType<typeof toSentimentContribution>>>}
+   */
+  async listByAnswersDocId(answersDocId) {
+    if (!answersDocId) return []
+
+    const q = query(
+      collection(db, SENTIMENT_COLLECTION),
+      where('answersDocId', '==', String(answersDocId)),
+    )
+    const snap = await getDocs(q)
+    return snap.docs.map((item) =>
+      toSentimentContribution(item.id, item.data()),
+    )
+  }
+
   async getByAnswersDocIdAndUser(answersDocId, userDocId) {
     if (!answersDocId || !userDocId) return []
 

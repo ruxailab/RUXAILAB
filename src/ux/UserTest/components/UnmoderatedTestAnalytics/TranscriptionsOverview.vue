@@ -72,7 +72,27 @@
       {{ loadError }}
     </v-alert>
 
-    <div v-if="loading || userMetricsLoading" class="mb-4">
+    <v-alert
+      v-if="queuedNotice"
+      type="success"
+      variant="tonal"
+      class="mb-4"
+    >
+      <div class="d-flex align-center justify-space-between flex-wrap ga-3">
+        <span>{{ $t('analytics.queuedNotice') }}</span>
+        <v-btn
+          v-if="dashboardTo"
+          color="primary"
+          size="small"
+          variant="text"
+          :to="dashboardTo"
+        >
+          {{ $t('analytics.queuePending.openDashboard') }}
+        </v-btn>
+      </div>
+    </v-alert>
+
+    <div v-if="loading || userMetricsLoading || !queueReady" class="mb-4">
       <v-row dense class="mb-4">
         <v-col v-for="n in 4" :key="`skel-card-${n}`" cols="12" sm="6" md="3">
           <v-skeleton-loader type="card" />
@@ -81,19 +101,56 @@
       <v-skeleton-loader type="article, table" />
     </div>
 
+    <AnalysisQueueLoading
+      v-else-if="queuePending.transcription && pendingTranscriptions === 0"
+      class="mb-4"
+    />
+
     <template v-else>
-      <v-card
-        v-if="!hasAnalyticsData"
-        class="mb-4 pa-6 text-center analytics-empty-card"
-        variant="outlined"
+    <v-alert
+      v-if="showPendingAnalysisNotice"
+      type="info"
+      variant="tonal"
+      class="mb-4"
+    >
+      <div class="d-flex align-center justify-space-between flex-wrap ga-3">
+        <span>There are transcriptions waiting to be processed.</span>
+        <v-btn
+          color="primary"
+          size="small"
+          prepend-icon="mdi-play"
+          :loading="runningAll"
+          :disabled="runningAll"
+          @click="runAllAnalyses"
+        >
+          Run all transcriptions
+        </v-btn>
+      </div>
+    </v-alert>
+
+    <v-card
+      v-if="!hasAnalyticsData"
+      class="mb-4 pa-6 text-center analytics-empty-card"
+      variant="outlined"
+    >
+      <h4 class="text-h6 font-weight-medium mb-2">
+        No transcription analytics
+      </h4>
+      <p class="text-body-2 text-medium-emphasis mb-0">
+        {{ emptyDashboardMessage }}
+      </p>
+      <v-btn
+        v-if="showRunAllAnalysisButton"
+        color="primary"
+        class="mt-4"
+        prepend-icon="mdi-play"
+        :loading="runningAll"
+        :disabled="runningAll"
+        @click="runAllAnalyses"
       >
-        <h4 class="text-h6 font-weight-medium mb-2">
-          No transcription analytics
-        </h4>
-        <p class="text-body-2 text-medium-emphasis mb-0">
-          {{ emptyDashboardMessage }}
-        </p>
-      </v-card>
+        Run all transcriptions
+      </v-btn>
+    </v-card>
 
       <div :class="{ 'analytics-disabled': !hasAnalyticsData }">
         <v-row dense class="mb-4">
@@ -367,6 +424,17 @@ import UxMetricCard from '../answers/UxMetricCard.vue'
 import SelectionPieChart from '@/shared/components/charts/SelectionPieChart.vue'
 import TranscriptionAnalyticsController from '@/ai/transcriptions/TranscriptionAnalyticsController'
 import {
+  countPendingTranscriptions,
+  listPendingTranscriptions,
+} from '@/app/services/jobs/pendingAnalysis'
+import { runPendingTranscriptions } from '@/app/services/transcription/runPendingTranscriptions'
+import AnalysisQueueLoading from '@/ux/UserTest/components/manager/AnalysisQueueLoading.vue'
+import { USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions'
+import {
+  useReloadWhenQueueSettles,
+  useStudyAnalysisQueue,
+} from '@/app/services/jobs/useStudyAnalysisQueue'
+import {
   aggregateTranscriptionMetrics,
   emptyMetricsBucket,
   formatSeconds,
@@ -390,6 +458,24 @@ const props = defineProps({
 
 const store = useStore()
 const analyticsController = new TranscriptionAnalyticsController()
+const {
+  jobs: queueJobs,
+  ready: queueReady,
+  pending: queuePending,
+} = useStudyAnalysisQueue(computed(() => store.getters.test?.id || null))
+const optimisticJobs = ref([])
+const queuedNotice = ref(false)
+const analysisJobs = computed(() => [
+  ...queueJobs.value,
+  ...optimisticJobs.value,
+])
+const dashboardTo = computed(() => {
+  const test = store.getters.test
+  if (!test?.id) return null
+  const kind =
+    test.subType === USER_STUDY_SUBTYPES.MODERATED ? 'moderated' : 'unmoderated'
+  return `/userTest/${kind}/dashboard/${test.id}`
+})
 
 const openSignalPanels = ref([])
 const searchTerm = ref('')
@@ -397,6 +483,7 @@ const selectedTaskFilter = ref(ALL_TASKS)
 const selectedUserFilter = ref(ALL_USERS)
 
 const loading = ref(false)
+const runningAll = ref(false)
 const loadError = ref(null)
 const aggregatedAnalytics = ref(null)
 const userTranscriptionMetrics = ref([])
@@ -800,6 +887,23 @@ const filteredTaskStats = computed(() => {
   })
 })
 
+const pendingTranscriptions = computed(() =>
+  countPendingTranscriptions({
+    userAnswers: visibleUserAnswers.value,
+    jobs: analysisJobs.value,
+    userDocId: selectedUserFilter.value,
+    taskId: selectedTaskFilter.value,
+  }),
+)
+
+const showRunAllAnalysisButton = computed(
+  () => !hasActiveSearch.value && pendingTranscriptions.value > 0,
+)
+
+const showPendingAnalysisNotice = computed(
+  () => hasAnalyticsData.value && pendingTranscriptions.value > 0,
+)
+
 const emptyDashboardMessage = computed(() => {
   if (audioTaskRows.value.length === 0) {
     return 'No tasks with audio recording enabled in this test.'
@@ -819,6 +923,50 @@ const emptyTaskTableMessage = computed(() => {
   }
   return 'No tasks match the current search or filters.'
 })
+
+const runAllAnalyses = async () => {
+  if (runningAll.value || !answersDocId.value) return
+  const items = listPendingTranscriptions({
+    userAnswers: visibleUserAnswers.value,
+    jobs: analysisJobs.value,
+    userDocId: selectedUserFilter.value,
+    taskId: selectedTaskFilter.value,
+  })
+  if (items.length === 0) return
+
+  runningAll.value = true
+  loadError.value = null
+  try {
+    const result = await runPendingTranscriptions({
+      answersDocId: answersDocId.value,
+      studyId: store.getters.test?.id || undefined,
+      items,
+    })
+    if (result.queued > 0) {
+      queuedNotice.value = true
+      if (result.failed === 0) {
+        optimisticJobs.value = [
+          ...optimisticJobs.value,
+          ...items.map((item) => ({
+            type: 'transcription',
+            userDocId: item.userDocId,
+            taskId: item.taskId,
+            status: 'queued',
+          })),
+        ]
+      }
+    }
+    if (result.failed > 0) {
+      loadError.value =
+        'Some transcriptions could not be started.'
+    }
+  } catch (error) {
+    console.error('Failed to enqueue transcriptions:', error)
+    loadError.value = error?.message || 'Failed to start transcriptions.'
+  } finally {
+    runningAll.value = false
+  }
+}
 
 const loadAggregatedAnalytics = async () => {
   if (!answersDocId.value) {
@@ -871,6 +1019,16 @@ const loadUserTranscriptionMetrics = async (userDocId) => {
     userMetricsLoading.value = false
   }
 }
+
+useReloadWhenQueueSettles(
+  () => queuePending.value.transcription,
+  async () => {
+    await loadAggregatedAnalytics()
+    if (selectedUserFilter.value !== ALL_USERS) {
+      await loadUserTranscriptionMetrics(selectedUserFilter.value)
+    }
+  },
+)
 
 watch(answersDocId, async () => {
   await loadAggregatedAnalytics()
