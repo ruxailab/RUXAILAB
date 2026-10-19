@@ -229,7 +229,6 @@
               color="error"
               icon="mdi-timer-alert"
               :description="`${$t('analytics.taskLabel')}: ${findLongestTask().taskName}`"
-              :progress="Math.min(longestTaskProgressValue, 100)"
               :show-progress="false"
             >
               <template #description>

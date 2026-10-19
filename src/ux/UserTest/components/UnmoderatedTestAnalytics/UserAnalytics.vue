@@ -763,7 +763,7 @@ const getTaskTypeLabel = (taskType) => {
     'post-test': t('switches.postTest'),
     'post-form': t('switches.postForm'),
     'nasa-tlx': t('switches.nasa'),
-    sus: t('sus'),
+    'sus': t('switches.sus'),
     'tam-1': 'TAM-1',
     'tam-2': 'TAM-2',
     'tam-3': 'TAM-3',
