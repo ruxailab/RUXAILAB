@@ -72,7 +72,12 @@
       {{ loadError }}
     </v-alert>
 
-    <div v-if="loading || userMetricsLoading" class="mb-4">
+    <AnalysisQueueLoading
+      v-if="queueReady && queuePending.transcription"
+      class="mb-4"
+    />
+
+    <div v-else-if="loading || userMetricsLoading || !queueReady" class="mb-4">
       <v-row dense class="mb-4">
         <v-col v-for="n in 4" :key="`skel-card-${n}`" cols="12" sm="6" md="3">
           <v-skeleton-loader type="card" />
@@ -366,6 +371,11 @@ import VueWordCloud from 'vuewordcloud'
 import UxMetricCard from '../answers/UxMetricCard.vue'
 import SelectionPieChart from '@/shared/components/charts/SelectionPieChart.vue'
 import TranscriptionAnalyticsController from '@/ai/transcriptions/TranscriptionAnalyticsController'
+import AnalysisQueueLoading from '@/ux/UserTest/components/manager/AnalysisQueueLoading.vue'
+import {
+  useReloadWhenQueueSettles,
+  useStudyAnalysisQueue,
+} from '@/app/services/jobs/useStudyAnalysisQueue'
 import {
   aggregateTranscriptionMetrics,
   emptyMetricsBucket,
@@ -390,6 +400,9 @@ const props = defineProps({
 
 const store = useStore()
 const analyticsController = new TranscriptionAnalyticsController()
+const { ready: queueReady, pending: queuePending } = useStudyAnalysisQueue(
+  computed(() => store.getters.test?.id || null),
+)
 
 const openSignalPanels = ref([])
 const searchTerm = ref('')
@@ -871,6 +884,16 @@ const loadUserTranscriptionMetrics = async (userDocId) => {
     userMetricsLoading.value = false
   }
 }
+
+useReloadWhenQueueSettles(
+  () => queuePending.value.transcription,
+  async () => {
+    await loadAggregatedAnalytics()
+    if (selectedUserFilter.value !== ALL_USERS) {
+      await loadUserTranscriptionMetrics(selectedUserFilter.value)
+    }
+  },
+)
 
 watch(answersDocId, async () => {
   await loadAggregatedAnalytics()

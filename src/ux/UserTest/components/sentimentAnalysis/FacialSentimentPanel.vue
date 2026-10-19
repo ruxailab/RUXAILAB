@@ -47,7 +47,7 @@
 
     <!-- Idle: wait for user to start -->
     <v-row
-      v-if="!isAnalyzing && !hasResults"
+      v-if="!isAnalyzing && !awaitingQueue && !hasResults"
       justify="center"
       align="center"
       class="my-12"
@@ -90,18 +90,11 @@
       </v-col>
     </v-row>
 
-    <!-- Loading -->
-    <v-row v-else-if="isAnalyzing" justify="center" align="center" class="my-12">
-      <v-col cols="auto" class="text-center">
-        <v-progress-circular indeterminate size="64" color="primary" />
-        <div class="mt-3 text-body-1 font-weight-medium">
-          Analyzing emotions...
-        </div>
-        <div class="mt-1 text-body-2 text-grey-darken-1">
-          This may take 1–2 minutes
-        </div>
-      </v-col>
-    </v-row>
+    <AnalysisProgressState
+      v-else-if="isAnalyzing || awaitingQueue"
+      title="Analyzing emotions..."
+      :show-queue-message="isAnalyzing"
+    />
 
     <!-- Result -->
     <v-row v-else>
@@ -193,7 +186,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
 import { Radar } from 'vue-chartjs'
 import {
   Chart as ChartJS,
@@ -209,9 +202,12 @@ import SentimentController from '@/ai/sentiment/SentimentController'
 import {
   analyzeFacialSentimentTask,
   deleteFacialSentiment,
-  watchFacialSentimentJob,
 } from '@/app/services/facialSentiment/FacialSentimentService'
 import { useSentimentPanel } from './useSentimentPanel'
+import { watchJobDocument } from '@/app/services/jobs/watchJobDocument'
+import { useFinishedJobWatch } from '@/app/services/jobs/useFinishedJobWatch'
+import { useInFlightTaskJob } from '@/app/services/jobs/useStudyAnalysisQueue'
+import AnalysisProgressState from '@/ux/UserTest/components/manager/AnalysisProgressState.vue'
 
 ChartJS.register(
   Title,
@@ -225,7 +221,6 @@ ChartJS.register(
 const store = useStore()
 const emit = defineEmits(['saved', 'deleted'])
 const sentimentController = new SentimentController()
-let stopJobWatch = null
 const props = defineProps({
   videoElement: { type: HTMLVideoElement, default: null },
   webcamVideoUrl: { type: String, default: null },
@@ -242,11 +237,56 @@ const props = defineProps({
 const { resolveTaskFromTestAnswer, resolveSentimentDocId, loadSentimentDocument } =
   useSentimentPanel(props)
 
-const isAnalyzing = ref(false)
 const hasResults = ref(false)
 const deleting = ref(false)
 const confirmOpen = ref(false)
 const analysisError = ref(null)
+const {
+  running: isAnalyzing,
+  follow: watchUntilFinished,
+  stop: stopWatchingJob,
+} = useFinishedJobWatch({
+  watchJob: watchJobDocument,
+  onFailed(job) {
+    analysisError.value =
+      job.error || 'Failed to process facial sentiment analysis.'
+  },
+  async onDone(job) {
+    const sentiment = job.sentimentDocId
+      ? await sentimentController.getById(job.sentimentDocId)
+      : null
+    const emotions = sentiment?.facial
+    if (!emotions) {
+      analysisError.value = 'Facial sentiment response did not include emotions.'
+      return
+    }
+
+    updateUI(emotions)
+    hasResults.value = true
+    await store.dispatch('getCurrentTestAnswerDoc')
+    emit('saved', {
+      answersDocId: props.answersDocId,
+      userDocId: props.userDocId,
+      taskId: String(props.taskId),
+      sentimentDocId: job.sentimentDocId,
+      emotions,
+    })
+  },
+  onError(err) {
+    analysisError.value =
+      err?.message || 'Failed to process facial sentiment analysis.'
+  },
+})
+const queue = useInFlightTaskJob(
+  () => ({
+    studyId: props.studyId || store.getters.test?.id,
+    type: 'facial',
+    userDocId: props.userDocId,
+    taskId: props.taskId,
+  }),
+  (job) => followQueuedJob(job),
+)
+const awaitingQueue = queue.awaitingQueue
 const summaryMetrics = ref([])
 const insights = ref([])
 const radarData = ref({
@@ -357,6 +397,7 @@ async function loadExistingResults() {
     try {
       const sentiment = await loadSentimentDocument()
       const existingResults = sentiment?.facial ?? null
+      if (isAnalyzing.value) return
       if (existingResults) {
         updateUI(existingResults)
         hasResults.value = true
@@ -370,6 +411,7 @@ async function loadExistingResults() {
   }
 
   const legacyResults = resolveLegacyFacialResults()
+  if (isAnalyzing.value) return
   if (legacyResults && typeof legacyResults === 'object') {
     updateUI(legacyResults)
     hasResults.value = true
@@ -378,8 +420,8 @@ async function loadExistingResults() {
     return
   }
 
+  if (isAnalyzing.value) return
   resetResultsUi()
-  isAnalyzing.value = false
 }
 
 async function confirmDelete() {
@@ -409,14 +451,11 @@ async function confirmDelete() {
   }
 }
 
-function stopWatchingJob() {
-  if (stopJobWatch) {
-    stopJobWatch()
-    stopJobWatch = null
-  }
+function followQueuedJob(job) {
+  hasResults.value = false
+  analysisError.value = null
+  watchUntilFinished(job.id, job.jobId)
 }
-
-onUnmounted(stopWatchingJob)
 
 async function reanalyze() {
   if (!canStartAnalysis.value) {
@@ -468,49 +507,8 @@ async function startAnalysis() {
       studyId: props.studyId || undefined,
     })
 
-    stopJobWatch = watchFacialSentimentJob(
-      queued.jobDocId,
-      async (job) => {
-        if (!job || job.jobId !== queued.jobId) return
-        if (job.status !== 'done' && job.status !== 'failed') return
-
-        stopWatchingJob()
-        isAnalyzing.value = false
-
-        if (job.status === 'failed') {
-          analysisError.value =
-            job.error || 'Failed to process facial sentiment analysis.'
-          return
-        }
-
-        const sentiment = job.sentimentDocId
-          ? await sentimentController.getById(job.sentimentDocId)
-          : null
-        const emotions = sentiment?.facial
-        if (!emotions) {
-          analysisError.value =
-            'Facial sentiment response did not include emotions.'
-          return
-        }
-
-        updateUI(emotions)
-        hasResults.value = true
-        await store.dispatch('getCurrentTestAnswerDoc')
-        emit('saved', {
-          answersDocId: props.answersDocId,
-          userDocId: props.userDocId,
-          taskId: String(props.taskId),
-          sentimentDocId: job.sentimentDocId,
-          emotions,
-        })
-      },
-      (err) => {
-        stopWatchingJob()
-        isAnalyzing.value = false
-        analysisError.value =
-          err?.message || 'Failed to process facial sentiment analysis.'
-      },
-    )
+    queue.claim(queued.jobDocId)
+    watchUntilFinished(queued.jobDocId, queued.jobId)
   } catch (err) {
     isAnalyzing.value = false
     console.error('Facial sentiment analysis failed:', err.message || err)

@@ -1,5 +1,3 @@
-import { doc, onSnapshot } from 'firebase/firestore'
-import { db } from '@/app/plugins/firebase'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 
 /**
@@ -35,22 +33,4 @@ export async function deleteTextSentiment(payload) {
     payload,
   )
   return response?.data ?? response
-}
-
-/**
- * Listen to a queued job until the caller unsubscribes.
- *
- * @param {string} jobDocId
- * @param {(job: object|null) => void} onChange
- * @param {(error: Error) => void} [onError]
- * @returns {() => void}
- */
-export function watchTextSentimentJob(jobDocId, onChange, onError) {
-  return onSnapshot(
-    doc(db, 'jobs', jobDocId),
-    (snap) => {
-      onChange(snap.exists() ? { id: snap.id, ...snap.data() } : null)
-    },
-    onError,
-  )
 }

@@ -45,7 +45,7 @@
     </v-row>
 
     <v-row
-      v-if="isLoading && !hasResults"
+      v-if="isLoading && !hasResults && !isTranscribing && !awaitingQueue"
       justify="center"
       align="center"
       class="my-12"
@@ -59,7 +59,7 @@
     </v-row>
 
     <v-row
-      v-else-if="!isTranscribing && !hasResults"
+      v-else-if="!isTranscribing && !awaitingQueue && !hasResults"
       justify="center"
       align="center"
       class="my-12"
@@ -115,17 +115,11 @@
       </v-col>
     </v-row>
 
-    <v-row v-else-if="isTranscribing" justify="center" align="center" class="my-12">
-      <v-col cols="auto" class="text-center">
-        <v-progress-circular indeterminate size="64" color="primary" />
-        <div class="mt-3 text-body-1 font-weight-medium">
-          Transcribing audio...
-        </div>
-        <div class="mt-1 text-body-2 text-grey-darken-1">
-          This may take 1–2 minutes
-        </div>
-      </v-col>
-    </v-row>
+    <AnalysisProgressState
+      v-else-if="isTranscribing || awaitingQueue"
+      title="Transcribing audio..."
+      :show-queue-message="isTranscribing"
+    />
 
     <v-row v-else>
       <v-col v-if="transcriptionError" cols="12">
@@ -248,15 +242,18 @@
 </template>
 
 <script setup>
-import { computed, onUnmounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import TranscriptionController from '@/ai/transcriptions/TranscriptionController'
 import {
   deleteTranscription,
   transcribeTask,
-  watchTranscriptionJob,
 } from '@/app/services/transcription/TranscriptionService'
 import { formatTime } from '@/shared/utils/timeUtils'
+import { watchJobDocument } from '@/app/services/jobs/watchJobDocument'
+import { useFinishedJobWatch } from '@/app/services/jobs/useFinishedJobWatch'
+import { useInFlightTaskJob } from '@/app/services/jobs/useStudyAnalysisQueue'
+import AnalysisProgressState from '@/ux/UserTest/components/manager/AnalysisProgressState.vue'
 
 const props = defineProps({
   answersDocId: { type: String, default: '' },
@@ -277,10 +274,37 @@ const store = useStore()
 const transcriptionController = new TranscriptionController()
 
 const isLoading = ref(true)
-const isTranscribing = ref(false)
 const deleting = ref(false)
 const confirmOpen = ref(false)
 const transcriptionError = ref(null)
+const {
+  running: isTranscribing,
+  follow: watchUntilFinished,
+  stop: stopWatchingJob,
+} = useFinishedJobWatch({
+  watchJob: watchJobDocument,
+  onFailed(job) {
+    transcriptionError.value = job.error || 'Transcription failed'
+  },
+  async onDone(job) {
+    await fetchRuns()
+    if (job.transcriptionId) selectedRunId.value = job.transcriptionId
+    emit('saved', { id: job.transcriptionId })
+  },
+  onError(err) {
+    transcriptionError.value = errorMessage(err)
+  },
+})
+const queue = useInFlightTaskJob(
+  () => ({
+    studyId: props.studyId || store.getters.test?.id,
+    type: 'transcription',
+    userDocId: props.userDocId,
+    taskId: props.taskId,
+  }),
+  (job) => followQueuedJob(job),
+)
+const awaitingQueue = queue.awaitingQueue
 const runs = ref([])
 const selectedRunId = ref(null)
 const selectedProvider = ref('whisper')
@@ -400,6 +424,7 @@ async function fetchRuns() {
         props.userDocId,
         String(props.taskId),
       )
+    if (isTranscribing.value) return
     runs.value = Array.isArray(transcriptions) ? transcriptions : []
     selectedRunId.value =
       props.transcriptionDocId &&
@@ -410,20 +435,17 @@ async function fetchRuns() {
     runs.value = []
     transcriptionError.value = errorMessage(err)
   } finally {
-    isLoading.value = false
+    if (!isTranscribing.value) isLoading.value = false
   }
 }
 
-let stopJobWatch = null
-
-function stopWatchingJob() {
-  if (stopJobWatch) {
-    stopJobWatch()
-    stopJobWatch = null
-  }
+function followQueuedJob(job) {
+  transcriptionError.value = null
+  runs.value = []
+  selectedRunId.value = null
+  isLoading.value = false
+  watchUntilFinished(job.id, job.jobId)
 }
-
-onUnmounted(stopWatchingJob)
 
 async function retranscribe() {
   if (!props.canTranscribe || !selectedProvider.value) return
@@ -466,30 +488,9 @@ async function transcribeSession() {
       model: selectedModel.value,
     })
 
-    stopJobWatch = watchTranscriptionJob(
-      queued.jobDocId,
-      async (job) => {
-        if (!job || job.jobId !== queued.jobId) return
-        if (job.status !== 'done' && job.status !== 'failed') return
-
-        stopWatchingJob()
-        isTranscribing.value = false
-
-        if (job.status === 'failed') {
-          transcriptionError.value = job.error || 'Transcription failed'
-          return
-        }
-
-        await fetchRuns()
-        if (job.transcriptionId) selectedRunId.value = job.transcriptionId
-        emit('saved', { id: job.transcriptionId })
-      },
-      (err) => {
-        stopWatchingJob()
-        isTranscribing.value = false
-        transcriptionError.value = errorMessage(err)
-      },
-    )
+    queue.claim(queued.jobDocId)
+    isLoading.value = false
+    watchUntilFinished(queued.jobDocId, queued.jobId)
   } catch (err) {
     isTranscribing.value = false
     transcriptionError.value = errorMessage(err)

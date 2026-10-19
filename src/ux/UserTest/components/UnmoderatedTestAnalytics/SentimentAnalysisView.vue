@@ -93,7 +93,12 @@
           {{ loadError }}
         </v-alert>
 
-        <div v-if="loading || userMetricsLoading" class="mb-4">
+        <AnalysisQueueLoading
+          v-if="queueReady && visibleQueuePending"
+          class="mb-4"
+        />
+
+        <div v-else-if="loading || userMetricsLoading || !queueReady" class="mb-4">
           <v-row dense class="mb-4">
             <v-col
               v-for="n in 4"
@@ -295,6 +300,11 @@ import SentimentStackCell from '@/ux/UserTest/components/sentimentAnalysis/Senti
 import UxMetricCard from '@/ux/UserTest/components/answers/UxMetricCard.vue'
 import SelectionPieChart from '@/shared/components/charts/SelectionPieChart.vue'
 import SentimentAnalyticsController from '@/ai/sentiment/SentimentAnalyticsController'
+import AnalysisQueueLoading from '@/ux/UserTest/components/manager/AnalysisQueueLoading.vue'
+import {
+  useReloadWhenQueueSettles,
+  useStudyAnalysisQueue,
+} from '@/app/services/jobs/useStudyAnalysisQueue'
 import {
   aggregateSentimentContributions,
   bucketHasData,
@@ -326,6 +336,9 @@ const { t } = useI18n()
 const analyticsController = new SentimentAnalyticsController()
 
 const testDocument = computed(() => store.getters.test)
+const { ready: queueReady, pending: queuePending } = useStudyAnalysisQueue(
+  computed(() => testDocument.value?.id || null),
+)
 const visibleUserAnswers = computed(
   () => store.getters.visibleUserAnswers || {},
 )
@@ -761,6 +774,11 @@ const visibleTaskSentimentHeaders = computed(() => {
 
 const showFacialSignal = computed(() => selectedSignalFilter.value !== 'text')
 const showTextSignal = computed(() => selectedSignalFilter.value !== 'facial')
+const visibleQueuePending = computed(
+  () =>
+    (showFacialSignal.value && queuePending.value.facial) ||
+    (showTextSignal.value && queuePending.value.text),
+)
 const showSingleSignal = computed(
   () =>
     selectedSignalFilter.value === 'facial' ||
@@ -859,6 +877,13 @@ const loadUserSentimentDocs = async (userDocId) => {
     }
   }
 }
+
+useReloadWhenQueueSettles(visibleQueuePending, async () => {
+  await loadAggregatedAnalytics()
+  if (selectedUserFilter.value !== ALL_USERS) {
+    await loadUserSentimentDocs(selectedUserFilter.value)
+  }
+})
 
 watch(answersDocId, async () => {
   await loadAggregatedAnalytics()
