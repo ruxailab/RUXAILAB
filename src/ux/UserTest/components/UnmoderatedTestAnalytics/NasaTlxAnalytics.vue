@@ -386,14 +386,7 @@
                     cols="12"
                     md="6"
                   >
-                    <div
-                      class="dimension-detail pa-4"
-                      style="
-                        border: 1px solid #e0e0e0;
-                        border-radius: 8px;
-                        background: #fafafa;
-                      "
-                    >
+                    <div class="dimension-detail pa-4">
                       <div
                         class="d-flex justify-space-between align-center mb-2"
                       >
@@ -697,6 +690,8 @@ watchEffect(async () => {
 .dimension-label {
   grid-area: label;
   min-width: 0;
+  font-size: 14px;
+  overflow-wrap: anywhere;
 }
 
 .dimension-progress {
@@ -726,20 +721,9 @@ watchEffect(async () => {
   justify-content: center;
 }
 
-.dimension-label {
-  font-size: 14px;
-  overflow-wrap: anywhere;
-}
-
 .dimension-detail {
-  background: #fafafa !important;
-  border: 1px solid #e0e0e0 !important;
-  transition: all 0.2s ease;
-}
-
-.dimension-detail:hover {
-  background: #f0f0f0 !important;
-  border-color: #d0d0d0 !important;
+  background: #fafafa;
+  border: 1px solid #e0e0e0;
 }
 
 .chart-container {
