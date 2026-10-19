@@ -22,6 +22,12 @@ const mockSentimentAdd = jest.fn()
 const sentimentStore = new Map()
 
 const mockDb = {
+  runTransaction: async (fn) =>
+    fn({
+      get: (ref) => ref.get(),
+      set: (ref, data) => ref.set(data),
+      update: (ref, data) => ref.update(data),
+    }),
   doc: jest.fn((documentPath) => {
     if (/^answers\/[^/]+\/analytics\/[^/]+$/.test(documentPath)) {
       return {
@@ -258,7 +264,9 @@ describe('facialSentimentTask', () => {
         body: JSON.stringify({ video_name: 'tests/vid.webm' }),
       }),
     )
-    expect(mockSentimentAdd).toHaveBeenCalledWith(
+    expect(mockSentimentAdd).not.toHaveBeenCalled()
+    expect(mockSentimentSet).toHaveBeenCalledWith(
+      'answer-1__evaluator-1__0',
       expect.objectContaining({
         answersDocId: 'answer-1',
         userDocId: 'evaluator-1',
@@ -268,7 +276,7 @@ describe('facialSentimentTask', () => {
       }),
     )
     expect(mockAnswerUpdate).toHaveBeenCalledWith({
-      'taskAnswers.evaluator-1.tasks.0.sentimentDocId': 'sent-1',
+      'taskAnswers.evaluator-1.tasks.0.sentimentDocId': 'answer-1__evaluator-1__0',
     })
     expect(mockAnalyticsSet).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -287,7 +295,7 @@ describe('facialSentimentTask', () => {
       answersDocId: 'answer-1',
       userDocId: 'evaluator-1',
       taskId: '0',
-      sentimentDocId: 'sent-1',
+      sentimentDocId: 'answer-1__evaluator-1__0',
       videoName: 'tests/vid.webm',
       emotions: emotionsPayload,
     })

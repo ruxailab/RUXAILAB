@@ -24,9 +24,6 @@
         </template>
 
         <template #modules>
-          <v-col cols="12">
-            <QueueJobsPreview />
-          </v-col>
           <v-col cols="12" md="6">
             <ParticipantsInfo :test="test" />
           </v-col>
@@ -34,12 +31,15 @@
             <TasksInfo :test="test" />
           </v-col>
 
+          <v-col cols="12">
+            <QueueJobsPreview />
+          </v-col>
+
           <!-- Row 2 -->
           <v-col cols="12" md="6">
             <StorageInfo :test="test" />
           </v-col>
           <v-col cols="12" md="6">
-            <!-- Empty slot for future components -->
             <v-card
               class="h-100 d-flex align-center justify-center"
               variant="outlined"

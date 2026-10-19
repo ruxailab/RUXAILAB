@@ -1,7 +1,6 @@
 import { fail } from '../../../core/errors.js'
 import { processAudioSentiment } from './processAudioSentiment.js'
 import { ROLE, assertStudyAccess } from '../../../shared/auth/index.js'
-import { Sentiment } from '../../../shared/models/Sentiment.js'
 
 /**
  * Analyze text/transcription sentiment for a task audio recording and persist
@@ -130,7 +129,6 @@ export class AnalyzeTextSentimentTaskService {
       taskId: normalizedTaskId,
       baseUrl,
       audioRecordURL,
-      task,
     } = await this.resolveContext({ uid, input })
 
     const textResults = await processAudioSentiment({
@@ -140,40 +138,15 @@ export class AnalyzeTextSentimentTaskService {
     const textPayload = textResults.toJSON()
 
     const now = this.FieldValue.serverTimestamp()
-    const existingSentimentDocId = task.sentimentDocId || null
-    let existingSentiment = null
-    if (existingSentimentDocId) {
-      existingSentiment = await this.sentimentRepository.get(
-        existingSentimentDocId,
-      )
-    }
-
-    let saved
-    if (existingSentiment) {
-      const updated = existingSentiment.withText(textPayload, now)
-      await this.sentimentRepository.set(existingSentimentDocId, updated, {
-        merge: false,
-      })
-      saved = updated.withId(existingSentimentDocId)
-    } else {
-      const draft = Sentiment.create({
-        answersDocId,
-        userDocId,
-        taskId: normalizedTaskId,
-        facial: null,
-        text: textPayload,
-        createdAt: now,
-        updatedAt: now,
-      })
-      const sentimentId = await this.sentimentRepository.create(draft)
-      saved = draft.withId(sentimentId)
-      await this.answerRepository.setSentimentDocId(
-        answersDocId,
-        userDocId,
-        normalizedTaskId,
-        saved.id,
-      )
-    }
+    const saved = await this.sentimentRepository.upsertSide({
+      answerRepository: this.answerRepository,
+      answersDocId,
+      userDocId,
+      taskId: normalizedTaskId,
+      side: 'text',
+      payload: textPayload,
+      updatedAt: now,
+    })
 
     return {
       answersDocId,
