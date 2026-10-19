@@ -668,6 +668,10 @@ import SelectionPieChart from '../answers/SelectionPieChart.vue'
 import AnswersTimeline from '../answers/AnswersTimeline.vue'
 import { calculateSUSScore } from '../../utils/susCalculator'
 import { getNASATLXData } from '../../utils/nasaTlxData'
+import {
+  getEstimateComparisonStatus,
+  getTaskAnswerOutcome,
+} from '../../utils/taskAnalytics'
 import { useFilterDefinitions } from './useFilterDefinitions'
 import { exportStudySummary } from '@/shared/utils/studySummaryExport'
 import { showError } from '@/shared/utils/toast'
@@ -1254,13 +1258,10 @@ const getTasksPerformance = () => {
         ? getSessionTask(answer, task, index)
         : answer.tasks?.[taskId]
 
-      if (taskAnswer?.completed && taskAnswer.success !== false) {
+      const outcome = getTaskAnswerOutcome(taskAnswer)
+      if (outcome === 'success') {
         success++
-      } else if (
-        taskAnswer?.attempted ||
-        taskAnswer?.completed ||
-        Number(taskAnswer?.taskTime) > 0
-      ) {
+      } else if (outcome === 'couldNotFinish') {
         couldNotFinish++
       } else {
         notStarted++
@@ -1275,7 +1276,7 @@ const getTasksPerformance = () => {
       success,
       couldNotFinish,
       notStarted,
-      errors: couldNotFinish + notStarted,
+      errors: couldNotFinish,
       total,
       successRate: total === 0 ? 0 : (success / total) * 100,
     }
@@ -1359,21 +1360,10 @@ const taskTimingStats = computed(() =>
       averageTimeMinutes !== null && estimatedTimeMinutes !== null
         ? averageTimeMinutes - estimatedTimeMinutes
         : null
-    let comparisonStatus = 'noData'
-
-    if (averageTimeMinutes !== null && estimatedTimeMinutes === null) {
-      comparisonStatus = 'noEstimate'
-    } else if (timeDifferenceMinutes !== null) {
-      const roundedDifference =
-        Math.round(averageTimeMinutes * 10) -
-        Math.round(estimatedTimeMinutes * 10)
-      comparisonStatus =
-        roundedDifference < 0
-          ? 'underEstimate'
-          : roundedDifference > 0
-            ? 'overEstimate'
-            : 'withinEstimate'
-    }
+    const comparisonStatus = getEstimateComparisonStatus(
+      averageTimeMinutes,
+      estimatedTimeMinutes,
+    )
 
     return {
       taskId: task?.taskId ?? String(index),
@@ -1696,32 +1686,23 @@ const createTaskCharts = async () => {
       return
     }
 
-    // Calculate angles
-    const successAngle = (task.success / task.total) * 2 * Math.PI
-    const errorAngle = (task.errors / task.total) * 2 * Math.PI
+    const segments = [
+      { count: task.success, color: '#4CAF50' },
+      { count: task.couldNotFinish, color: '#F44336' },
+      { count: task.notStarted, color: '#e0e0e0' },
+    ]
+    let startAngle = -Math.PI / 2
 
-    // Draw success arc
-    ctx.beginPath()
-    ctx.arc(centerX, centerY, radius, 0, successAngle)
-    ctx.arc(centerX, centerY, innerRadius, successAngle, 0, true)
-    ctx.closePath()
-    ctx.fillStyle = '#4CAF50'
-    ctx.fill()
-
-    // Draw error arc
-    ctx.beginPath()
-    ctx.arc(centerX, centerY, radius, successAngle, successAngle + errorAngle)
-    ctx.arc(
-      centerX,
-      centerY,
-      innerRadius,
-      successAngle + errorAngle,
-      successAngle,
-      true,
-    )
-    ctx.closePath()
-    ctx.fillStyle = '#F44336'
-    ctx.fill()
+    segments.forEach(({ count, color }) => {
+      const endAngle = startAngle + (count / task.total) * 2 * Math.PI
+      ctx.beginPath()
+      ctx.arc(centerX, centerY, radius, startAngle, endAngle)
+      ctx.arc(centerX, centerY, innerRadius, endAngle, startAngle, true)
+      ctx.closePath()
+      ctx.fillStyle = color
+      ctx.fill()
+      startAngle = endAngle
+    })
 
     // Draw center text
     ctx.fillStyle = '#333'
@@ -1736,10 +1717,14 @@ watch(
   (newAnswers) => {
     if (newAnswers && typeof newAnswers === 'object') {
       taskAnswers.value = Object.values(newAnswers)
-      // Update charts when data changes
-      setTimeout(() => createTaskCharts(), 500)
     }
   },
+  { immediate: true },
+)
+
+watch(
+  () => filteredSessions.value,
+  () => setTimeout(() => createTaskCharts(), 500),
   { immediate: true },
 )
 
