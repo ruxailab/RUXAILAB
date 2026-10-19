@@ -21,7 +21,7 @@
           :disabled="isTranscribing || deleting"
           :loading="deleting"
           title="Delete transcription"
-          @click="confirmOpen = true"
+          @click.stop="openDeleteDialog"
         />
         <v-btn
           variant="outlined"
@@ -225,7 +225,7 @@
     </v-row>
   </v-card>
 
-  <v-dialog v-model="confirmOpen" max-width="420">
+  <v-dialog v-model="confirmOpen" max-width="420" persistent>
     <v-card rounded="xl">
       <v-card-title class="text-h6">Delete transcription?</v-card-title>
       <v-card-text>
@@ -233,7 +233,7 @@
       </v-card-text>
       <v-card-actions class="justify-end">
         <v-btn variant="text" @click="confirmOpen = false">Cancel</v-btn>
-        <v-btn color="error" :loading="deleting" @click="confirmDelete">
+        <v-btn color="error" :loading="deleting" @click.stop="confirmDelete">
           Delete
         </v-btn>
       </v-card-actions>
@@ -242,7 +242,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import TranscriptionController from '@/ai/transcriptions/TranscriptionController'
 import {
@@ -307,6 +307,7 @@ const queue = useInFlightTaskJob(
 const awaitingQueue = queue.awaitingQueue
 const runs = ref([])
 const selectedRunId = ref(null)
+let fetchGeneration = 0
 const selectedProvider = ref('whisper')
 
 const providers = [
@@ -409,6 +410,8 @@ watch(
 )
 
 async function fetchRuns() {
+  const generation = ++fetchGeneration
+
   if (!props.answersDocId || !props.userDocId || props.taskId == null) {
     runs.value = []
     isLoading.value = false
@@ -424,7 +427,7 @@ async function fetchRuns() {
         props.userDocId,
         String(props.taskId),
       )
-    if (isTranscribing.value) return
+    if (generation !== fetchGeneration || isTranscribing.value) return
     runs.value = Array.isArray(transcriptions) ? transcriptions : []
     selectedRunId.value =
       props.transcriptionDocId &&
@@ -432,11 +435,20 @@ async function fetchRuns() {
         ? props.transcriptionDocId
         : runs.value[0]?.id || null
   } catch (err) {
+    if (generation !== fetchGeneration) return
     runs.value = []
     transcriptionError.value = errorMessage(err)
   } finally {
-    if (!isTranscribing.value) isLoading.value = false
+    if (generation === fetchGeneration && !isTranscribing.value) {
+      isLoading.value = false
+    }
   }
+}
+
+async function openDeleteDialog() {
+  confirmOpen.value = false
+  await nextTick()
+  confirmOpen.value = true
 }
 
 function followQueuedJob(job) {
@@ -458,6 +470,7 @@ async function retranscribe() {
   try {
     if (transcriptionId) {
       await deleteTranscription({ transcriptionId })
+      fetchGeneration += 1
       runs.value = runs.value.filter((run) => run.id !== transcriptionId)
       selectedRunId.value = runs.value[0]?.id || null
       await store.dispatch('getCurrentTestAnswerDoc')
@@ -498,15 +511,25 @@ async function transcribeSession() {
 }
 
 async function confirmDelete() {
-  if (!selectedRun.value) return
+  const transcriptionId = selectedRun.value?.id
+  if (!transcriptionId) return
   deleting.value = true
   try {
     const result = await deleteTranscription({
-      transcriptionId: selectedRun.value.id,
+      transcriptionId,
+      studyId: props.studyId || undefined,
     })
+    fetchGeneration += 1
+    runs.value = runs.value.filter((run) => run.id !== transcriptionId)
+    selectedRunId.value =
+      props.transcriptionDocId &&
+      runs.value.some((run) => run.id === props.transcriptionDocId)
+        ? props.transcriptionDocId
+        : runs.value[0]?.id || null
     emit('deleted', result)
     confirmOpen.value = false
     await fetchRuns()
+    store.dispatch('getCurrentTestAnswerDoc').catch(() => {})
   } catch (err) {
     transcriptionError.value = errorMessage(err)
     confirmOpen.value = false

@@ -230,10 +230,7 @@
                     :user-doc-id="userId"
                     :task-id="resolvedTaskId"
                     :study-id="testAnswer?.studyId || null"
-                    :transcription-doc-id="
-                      latestTranscriptionDocId ||
-                      taskAnswer?.transcriptionDocId
-                    "
+                    :transcription-doc-id="resolvedTranscriptionDocId"
                     :can-transcribe="canTranscribe"
                     :unavailable-message="transcriptionUnavailableMessage"
                     @saved="onTranscriptionSaved"
@@ -408,7 +405,7 @@ const predictedData = ref(null)
 const selectedView = ref('precision')
 const videoReady = ref(false)
 const transcriptionRefreshKey = ref(0)
-const latestTranscriptionDocId = ref(null)
+const latestTranscriptionDocId = ref(undefined)
 const mediaLayout = ref('both')
 const markers = ref(
   Array.isArray(props.taskAnswer?.markers) ? [...props.taskAnswer.markers] : [],
@@ -612,6 +609,13 @@ const transcriptionUnavailableMessage = computed(() => {
   return 'Missing session identifiers to generate a transcription.'
 })
 
+const resolvedTranscriptionDocId = computed(() => {
+  if (latestTranscriptionDocId.value === undefined) {
+    return props.taskAnswer?.transcriptionDocId || null
+  }
+  return latestTranscriptionDocId.value
+})
+
 const transcriptionPanelKey = computed(
   () =>
     `transcriptions-${props.userId}:${resolvedTaskId.value}:${transcriptionRefreshKey.value}`,
@@ -624,7 +628,6 @@ const onTranscriptionSaved = (result) => {
 
 const onTranscriptionDeleted = (result) => {
   latestTranscriptionDocId.value = result?.transcriptionDocId ?? null
-  transcriptionRefreshKey.value += 1
 }
 
 const preferredTab = computed(() => {
@@ -907,7 +910,7 @@ managedListeners.addCleanup(() => cancelAnimationFrame(rafId))
 watch(
   () => [props.userId, resolvedTaskId.value],
   () => {
-    latestTranscriptionDocId.value = null
+    latestTranscriptionDocId.value = undefined
     transcriptionRefreshKey.value = 0
     markers.value = Array.isArray(props.taskAnswer?.markers)
       ? [...props.taskAnswer.markers]

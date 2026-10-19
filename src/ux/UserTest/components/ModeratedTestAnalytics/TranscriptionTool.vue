@@ -109,9 +109,8 @@
                   :answers-doc-id="testDocument?.answersDocId"
                   :user-doc-id="selectedUserID"
                   :task-id="selectedTaskId"
-                  :transcription-doc-id="
-                    latestTranscriptionDocId || selectedTask?.transcriptionDocId
-                  "
+                  :transcription-doc-id="resolvedTranscriptionDocId"
+                  @deleted="onTranscriptionDeleted"
                 />
 
                 <ExportPanel
@@ -190,11 +189,22 @@ const selectedUserID = ref(null)
 const selectedTaskId = ref(null)
 const tab = ref('timeline')
 const transcriptionRefreshKey = ref(0)
-const latestTranscriptionDocId = ref(null)
+const latestTranscriptionDocId = ref(undefined)
+
+const resolvedTranscriptionDocId = computed(() => {
+  if (latestTranscriptionDocId.value === undefined) {
+    return selectedTask.value?.transcriptionDocId || null
+  }
+  return latestTranscriptionDocId.value
+})
 
 const onTranscriptionSaved = (result) => {
   latestTranscriptionDocId.value = result?.id ?? null
   transcriptionRefreshKey.value += 1
+}
+
+const onTranscriptionDeleted = (result) => {
+  latestTranscriptionDocId.value = result?.transcriptionDocId ?? null
 }
 
 const testDocument = computed(() => store.getters.test)
@@ -276,7 +286,7 @@ watch(
 watch(
   tasksForSelectedUser,
   (pairs) => {
-    latestTranscriptionDocId.value = null
+    latestTranscriptionDocId.value = undefined
     const has = Array.isArray(pairs) && pairs.length
     if (!has) {
       selectedTaskId.value = null
