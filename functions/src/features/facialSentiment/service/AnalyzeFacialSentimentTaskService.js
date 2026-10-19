@@ -101,7 +101,7 @@ export class AnalyzeFacialSentimentTaskService {
       fail('not-found', 'Task not found for the given userDocId/taskId')
     }
 
-    const webcamRecordURL = task.webcamRecordURL || null
+    const webcamRecordURL = task.webcamRecordURL || task.videoRecordURL || null
     if (!webcamRecordURL) {
       fail('failed-precondition', 'No webcam recording available for this task')
     }

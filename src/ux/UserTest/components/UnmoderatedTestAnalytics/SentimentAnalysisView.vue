@@ -114,18 +114,50 @@
         </div>
 
         <template v-else>
-          <v-card
-            v-if="!hasAnalyticsData"
-            class="mb-4 pa-6 text-center analytics-empty-card"
-            variant="outlined"
+        <v-alert
+          v-if="showPendingAnalysisNotice"
+          type="info"
+          variant="tonal"
+          class="mb-4"
+        >
+          <div class="d-flex align-center justify-space-between flex-wrap ga-3">
+            <span>{{ $t('analytics.sentiment.pendingAnalysis') }}</span>
+            <v-btn
+              color="primary"
+              size="small"
+              prepend-icon="mdi-play"
+              :loading="runningAll"
+              :disabled="runningAll"
+              @click="runAllAnalyses({ onlyMissing: true })"
+            >
+              {{ $t('analytics.sentiment.runAll') }}
+            </v-btn>
+          </div>
+        </v-alert>
+
+        <v-card
+          v-if="!hasAnalyticsData"
+          class="mb-4 pa-6 text-center analytics-empty-card"
+          variant="outlined"
+        >
+          <h4 class="text-h6 font-weight-medium mb-2">
+            {{ $t('analytics.sentiment.emptyTitle') }}
+          </h4>
+          <p class="text-body-2 text-medium-emphasis mb-0">
+            {{ emptyDashboardMessage }}
+          </p>
+          <v-btn
+            v-if="showRunAllAnalysisButton"
+            color="primary"
+            class="mt-4"
+            prepend-icon="mdi-play"
+            :loading="runningAll"
+            :disabled="runningAll"
+            @click="runAllAnalyses"
           >
-            <h4 class="text-h6 font-weight-medium mb-2">
-              {{ $t('analytics.sentiment.emptyTitle') }}
-            </h4>
-            <p class="text-body-2 text-medium-emphasis mb-0">
-              {{ emptyDashboardMessage }}
-            </p>
-          </v-card>
+            {{ $t('analytics.sentiment.runAll') }}
+          </v-btn>
+        </v-card>
 
           <div :class="{ 'analytics-disabled': !hasAnalyticsData }">
             <v-row dense class="mb-4">
@@ -319,6 +351,11 @@ import {
   USER_STUDY_SUBTYPES,
   normalizeStudyType,
 } from '@/shared/constants/methodDefinitions'
+import {
+  countPendingSentiment,
+  listPendingSentiment,
+} from '@/app/services/jobs/pendingAnalysis'
+import { runPendingSentimentAnalyses } from '@/app/services/sentiment/runPendingSentimentAnalyses'
 
 const ALL_TASKS = 'all'
 const ALL_USERS = 'all'
@@ -367,9 +404,11 @@ const selectedSignalFilter = ref(ALL_SIGNALS)
 const selectedUserFilter = ref(ALL_USERS)
 
 const loading = ref(false)
+const runningAll = ref(false)
 const userMetricsLoading = ref(false)
 const loadError = ref(null)
 const aggregatedAnalytics = ref(null)
+const sentimentContributions = ref([])
 const userSentimentDocs = ref([])
 let userSentimentRequestToken = 0
 
@@ -732,6 +771,33 @@ const filteredSentimentByTask = computed(() => {
   })
 })
 
+const sentimentCoverage = computed(() => {
+  const coverage = new Map()
+  for (const item of sentimentContributions.value) {
+    if (!item?.userDocId || item.taskId == null) continue
+    coverage.set(`${item.userDocId}|${item.taskId}`, item)
+  }
+  return coverage
+})
+
+const pendingSentiment = computed(() =>
+  countPendingSentiment({
+    userAnswers: visibleUserAnswers.value,
+    coverage: sentimentCoverage.value,
+    userDocId: selectedUserFilter.value,
+    taskId: selectedTaskFilter.value,
+    signal: selectedSignalFilter.value,
+  }),
+)
+
+const showRunAllAnalysisButton = computed(
+  () => !hasActiveFilters.value && pendingSentiment.value.total > 0,
+)
+
+const showPendingAnalysisNotice = computed(
+  () => hasAnalyticsData.value && pendingSentiment.value.total > 0,
+)
+
 const emptyDashboardMessage = computed(() => {
   if (recordingTaskRows.value.length === 0) {
     return t('analytics.sentiment.emptyNoRecordingTasks')
@@ -785,9 +851,48 @@ const showSingleSignal = computed(
     selectedSignalFilter.value === 'text',
 )
 
+const runAllAnalyses = async (options = {}) => {
+  if (runningAll.value || !answersDocId.value) return
+  const items = listPendingSentiment({
+    userAnswers: visibleUserAnswers.value,
+    coverage: sentimentCoverage.value,
+    userDocId: selectedUserFilter.value,
+    taskId: selectedTaskFilter.value,
+    signal: selectedSignalFilter.value,
+    onlyMissing: options.onlyMissing === true,
+  })
+  if (items.length === 0) return
+
+  runningAll.value = true
+  loadError.value = null
+  try {
+    const result = await runPendingSentimentAnalyses({
+      answersDocId: answersDocId.value,
+      studyId: testDocument.value?.id || undefined,
+      items,
+    })
+    if (result.failed > 0) {
+      const detail = (result.failures || [])
+        .map((failure) => failure.message)
+        .filter(Boolean)
+        .join(' ')
+      loadError.value = detail
+        ? `${t('analytics.sentiment.runAllPartialError')} ${detail}`
+        : t('analytics.sentiment.runAllPartialError')
+    }
+  } catch (error) {
+    console.error('Failed to enqueue sentiment analyses:', error)
+    loadError.value =
+      error?.message || t('analytics.sentiment.runAllError')
+  } finally {
+    runningAll.value = false
+  }
+}
+
 const loadAggregatedAnalytics = async () => {
   if (!answersDocId.value) {
     aggregatedAnalytics.value = null
+    sentimentContributions.value = []
     return
   }
 
@@ -795,13 +900,17 @@ const loadAggregatedAnalytics = async () => {
   loadError.value = null
 
   try {
-    aggregatedAnalytics.value = await analyticsController.getByAnswersDocId(
-      answersDocId.value,
-    )
+    const [analytics, contributions] = await Promise.all([
+      analyticsController.getByAnswersDocId(answersDocId.value),
+      analyticsController.listByAnswersDocId(answersDocId.value),
+    ])
+    aggregatedAnalytics.value = analytics
+    sentimentContributions.value = contributions
   } catch (error) {
     console.error('Failed to load sentiment analytics:', error)
     loadError.value = t('analytics.sentiment.loadError')
     aggregatedAnalytics.value = null
+    sentimentContributions.value = []
   } finally {
     loading.value = false
   }
