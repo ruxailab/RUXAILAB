@@ -29,6 +29,22 @@ export async function analyzeFacialSentimentTask(payload) {
  * @param {(error: Error) => void} [onError]
  * @returns {() => void}
  */
+/**
+ * Clear the facial side of a sentiment document and rebuild analytics.
+ *
+ * @param {Object} payload
+ * @param {string} payload.sentimentDocId
+ * @param {string} [payload.studyId]
+ * @returns {Promise<{ sentimentDocId: string|null, side: 'facial', removedDocument: boolean }>}
+ */
+export async function deleteFacialSentiment(payload) {
+  const response = await FirebaseFunctionsController.callHttpsCallableFunction(
+    'sentimentDelete',
+    { ...payload, side: 'facial' },
+  )
+  return response?.data ?? response
+}
+
 export function watchFacialSentimentJob(jobDocId, onChange, onError) {
   return onSnapshot(
     doc(db, 'jobs', jobDocId),

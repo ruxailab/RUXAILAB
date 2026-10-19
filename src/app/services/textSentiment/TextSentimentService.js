@@ -22,6 +22,22 @@ export async function analyzeTextSentimentTask(payload) {
 }
 
 /**
+ * Clear the text side of a sentiment document and rebuild analytics.
+ *
+ * @param {Object} payload
+ * @param {string} payload.sentimentDocId
+ * @param {string} [payload.studyId]
+ * @returns {Promise<{ sentimentDocId: string|null, side: 'text', removedDocument: boolean }>}
+ */
+export async function deleteTextSentiment(payload) {
+  const response = await FirebaseFunctionsController.callHttpsCallableFunction(
+    'textSentimentDelete',
+    payload,
+  )
+  return response?.data ?? response
+}
+
+/**
  * Listen to a queued job until the caller unsubscribes.
  *
  * @param {string} jobDocId

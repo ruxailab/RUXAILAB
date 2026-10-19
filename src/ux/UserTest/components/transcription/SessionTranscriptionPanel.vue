@@ -13,11 +13,21 @@
         </div>
       </v-col>
       <v-spacer />
-      <v-col v-if="hasResults" cols="auto">
+      <v-col v-if="hasResults" cols="auto" class="d-flex align-center ga-1">
+        <v-btn
+          icon="mdi-delete-outline"
+          color="error"
+          variant="text"
+          :disabled="isTranscribing || deleting"
+          :loading="deleting"
+          title="Delete transcription"
+          @click="confirmOpen = true"
+        />
         <v-btn
           variant="outlined"
-          :disabled="isTranscribing || !canTranscribe"
-          @click="transcribeSession()"
+          :disabled="isTranscribing || !canTranscribe || deleting"
+          :loading="isTranscribing"
+          @click="retranscribe()"
         >
           <span class="sr-only">Re-transcribe audio</span>
           <v-icon>mdi-refresh</v-icon>
@@ -179,14 +189,6 @@
                 hide-details
                 style="min-width: 180px"
               />
-              <v-btn
-                icon="mdi-delete-outline"
-                color="error"
-                variant="text"
-                :loading="deleting"
-                title="Delete transcription"
-                @click="confirmOpen = true"
-              />
             </div>
           </div>
 
@@ -247,6 +249,7 @@
 
 <script setup>
 import { computed, onUnmounted, ref, watch } from 'vue'
+import { useStore } from 'vuex'
 import TranscriptionController from '@/ai/transcriptions/TranscriptionController'
 import {
   deleteTranscription,
@@ -269,6 +272,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['saved', 'deleted'])
+const store = useStore()
 
 const transcriptionController = new TranscriptionController()
 
@@ -420,6 +424,30 @@ function stopWatchingJob() {
 }
 
 onUnmounted(stopWatchingJob)
+
+async function retranscribe() {
+  if (!props.canTranscribe || !selectedProvider.value) return
+
+  const transcriptionId = selectedRun.value?.id
+  isTranscribing.value = true
+  transcriptionError.value = null
+  stopWatchingJob()
+
+  try {
+    if (transcriptionId) {
+      await deleteTranscription({ transcriptionId })
+      runs.value = runs.value.filter((run) => run.id !== transcriptionId)
+      selectedRunId.value = runs.value[0]?.id || null
+      await store.dispatch('getCurrentTestAnswerDoc')
+    }
+  } catch (err) {
+    isTranscribing.value = false
+    transcriptionError.value = errorMessage(err)
+    return
+  }
+
+  await transcribeSession()
+}
 
 async function transcribeSession() {
   if (!props.canTranscribe || !selectedProvider.value) return

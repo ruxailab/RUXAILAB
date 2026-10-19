@@ -13,11 +13,21 @@
         </div>
       </v-col>
       <v-spacer />
-      <v-col v-if="hasResults" cols="auto">
+      <v-col v-if="hasResults" cols="auto" class="d-flex align-center ga-1">
+        <v-btn
+          icon="mdi-delete-outline"
+          color="error"
+          variant="text"
+          :disabled="isAnalyzing || deleting"
+          :loading="deleting"
+          title="Delete text sentiment"
+          @click="confirmOpen = true"
+        />
         <v-btn
           variant="outlined"
-          :disabled="isAnalyzing"
-          @click="startAnalysis()"
+          :disabled="isAnalyzing || deleting"
+          :loading="isAnalyzing"
+          @click="reanalyze()"
         >
           <span class="sr-only">Re-analyze Audio</span>
           <v-icon>mdi-refresh</v-icon>
@@ -200,6 +210,24 @@
       </v-col>
     </v-row>
   </v-card>
+
+  <v-dialog v-model="confirmOpen" max-width="420">
+    <v-card rounded="xl">
+      <v-card-title class="text-h6">Delete text sentiment?</v-card-title>
+      <v-card-text>
+        This action can’t be undone. Text sentiment for this task will be
+        removed.
+      </v-card-text>
+      <v-card-actions class="justify-end">
+        <v-btn variant="text" :disabled="deleting" @click="confirmOpen = false">
+          Cancel
+        </v-btn>
+        <v-btn color="error" :loading="deleting" @click="confirmDelete">
+          Delete
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
@@ -208,13 +236,14 @@ import { useStore } from 'vuex'
 import SentimentController from '@/ai/sentiment/SentimentController'
 import {
   analyzeTextSentimentTask,
+  deleteTextSentiment,
   watchTextSentimentJob,
 } from '@/app/services/textSentiment/TextSentimentService'
 import { formatTime } from '@/shared/utils/timeUtils'
 import { useSentimentPanel } from './useSentimentPanel'
 
 const store = useStore()
-const emit = defineEmits(['saved'])
+const emit = defineEmits(['saved', 'deleted'])
 const sentimentController = new SentimentController()
 let stopJobWatch = null
 const props = defineProps({
@@ -234,6 +263,8 @@ const { resolveTaskFromTestAnswer, resolveSentimentDocId, loadSentimentDocument 
 
 const isAnalyzing = ref(false)
 const hasResults = ref(false)
+const deleting = ref(false)
+const confirmOpen = ref(false)
 const analysisError = ref(null)
 const summaryMetrics = ref([])
 const insights = ref([])
@@ -329,6 +360,33 @@ async function loadExistingResults() {
   isAnalyzing.value = false
 }
 
+async function confirmDelete() {
+  const sentimentDocId = resolveSentimentDocId()
+  if (!sentimentDocId) {
+    analysisError.value = 'No text sentiment document to delete.'
+    confirmOpen.value = false
+    return
+  }
+
+  deleting.value = true
+  try {
+    const result = await deleteTextSentiment({
+      sentimentDocId,
+      studyId: props.studyId || undefined,
+    })
+    resetResultsUi()
+    confirmOpen.value = false
+    await store.dispatch('getCurrentTestAnswerDoc')
+    emit('deleted', result)
+  } catch (err) {
+    analysisError.value =
+      err?.message || 'Failed to delete text sentiment analysis.'
+    confirmOpen.value = false
+  } finally {
+    deleting.value = false
+  }
+}
+
 function stopWatchingJob() {
   if (stopJobWatch) {
     stopJobWatch()
@@ -337,6 +395,37 @@ function stopWatchingJob() {
 }
 
 onUnmounted(stopWatchingJob)
+
+async function reanalyze() {
+  if (!canStartAnalysis.value) {
+    analysisError.value =
+      'Missing session identifiers or audio recording for this task.'
+    return
+  }
+
+  isAnalyzing.value = true
+  analysisError.value = null
+  stopWatchingJob()
+
+  try {
+    const sentimentDocId = resolveSentimentDocId()
+    if (sentimentDocId) {
+      await deleteTextSentiment({
+        sentimentDocId,
+        studyId: props.studyId || undefined,
+      })
+      resetResultsUi()
+      await store.dispatch('getCurrentTestAnswerDoc')
+    }
+  } catch (err) {
+    isAnalyzing.value = false
+    analysisError.value =
+      err?.message || 'Failed to delete text sentiment analysis.'
+    return
+  }
+
+  await startAnalysis()
+}
 
 async function startAnalysis() {
   if (!canStartAnalysis.value) {

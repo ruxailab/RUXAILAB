@@ -7,9 +7,11 @@ export {
 export {
   facialSentimentTask,
   facialSentimentTaskWorker,
+  sentimentDelete,
 } from '../features/facialSentiment/index.js'
 export {
   textSentimentTask,
   textSentimentTaskWorker,
+  textSentimentDelete,
 } from '../features/textSentiment/index.js'
 export { cancelQueuedJob } from '../features/jobs/index.js'
