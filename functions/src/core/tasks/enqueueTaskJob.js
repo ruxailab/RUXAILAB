@@ -30,11 +30,12 @@ export async function enqueueTaskJob({
     status: 'queued',
     progress: 0,
     error: null,
+    cloudTaskId: jobId,
     updatedAt: FieldValue.serverTimestamp(),
   })
 
   try {
-    await taskQueue.enqueue(payload)
+    await taskQueue.enqueue(payload, { id: jobId })
   } catch (err) {
     await repository.update(jobId, {
       status: 'failed',

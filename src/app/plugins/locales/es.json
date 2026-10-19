@@ -3447,6 +3447,50 @@
       "responsesData": "Datos de Respuestas",
       "analyticsData": "Datos de Analítica",
       "manageStorage": "Gestionar Almacenamiento"
+    },
+    "queueJobs": {
+      "title": "Cola de análisis",
+      "subtitle": "Trabajos de transcripción, sentimiento facial y sentimiento de texto",
+      "live": "En vivo",
+      "loadError": "No se pudo cargar la cola de análisis de este estudio.",
+      "empty": "Todavía no hay trabajos de análisis en este estudio.",
+      "unknownParticipant": "Participante desconocido",
+      "unknownTask": "Tarea desconocida",
+      "taskFallback": "Tarea {number}",
+      "overall": "Trabajos finalizados",
+      "settledCount": "{settled} de {total} trabajos finalizados",
+      "emptyFilter": "No hay trabajos en este estado",
+      "remove": "Quitar",
+      "notApplicable": "—",
+      "columns": {
+        "type": "Trabajo",
+        "participant": "Participante",
+        "task": "Tarea",
+        "updated": "Actualizado",
+        "status": "Estado",
+        "progress": "Progreso",
+        "actions": "Acciones"
+      },
+      "types": {
+        "transcription": "Transcripción",
+        "facialSentiment": "Sentimiento facial",
+        "textSentiment": "Sentimiento de texto"
+      },
+      "status": {
+        "queued": "En cola",
+        "processing": "Procesando",
+        "done": "Listo",
+        "failed": "Fallido",
+        "missing": "Faltante"
+      },
+      "errors": {
+        "timeout": "La respuesta del modelo excedió el tiempo"
+      },
+      "removeDialog": {
+        "title": "Quitar trabajo",
+        "message": "¿Quitar el trabajo en cola de {type} de {participant}? No se ejecutará.",
+        "error": "No se pudo quitar este trabajo."
+      }
     }
   },
   "taskCreation": {

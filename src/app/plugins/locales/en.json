@@ -3547,6 +3547,50 @@
       "responsesData": "Responses Data",
       "analyticsData": "Analytics Data",
       "manageStorage": "Manage Storage"
+    },
+    "queueJobs": {
+      "title": "Analysis queue",
+      "subtitle": "Transcription, facial sentiment, and text sentiment jobs",
+      "live": "Live",
+      "loadError": "Could not load the analysis queue for this study.",
+      "empty": "No analysis jobs for this study yet.",
+      "unknownParticipant": "Unknown participant",
+      "unknownTask": "Unknown task",
+      "taskFallback": "Task {number}",
+      "overall": "Finished jobs",
+      "settledCount": "{settled} of {total} jobs finished",
+      "emptyFilter": "No jobs in this status",
+      "remove": "Remove",
+      "notApplicable": "—",
+      "columns": {
+        "type": "Job",
+        "participant": "Participant",
+        "task": "Task",
+        "updated": "Updated",
+        "status": "Status",
+        "progress": "Progress",
+        "actions": "Actions"
+      },
+      "types": {
+        "transcription": "Transcription",
+        "facialSentiment": "Facial sentiment",
+        "textSentiment": "Text sentiment"
+      },
+      "status": {
+        "queued": "Queued",
+        "processing": "Processing",
+        "done": "Done",
+        "failed": "Failed",
+        "missing": "Missing"
+      },
+      "errors": {
+        "timeout": "Model response timed out"
+      },
+      "removeDialog": {
+        "title": "Remove job",
+        "message": "Remove the queued {type} job for {participant}? It will not run.",
+        "error": "Could not remove this job."
+      }
     }
   },
   "dialogs": {

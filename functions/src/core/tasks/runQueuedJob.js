@@ -2,7 +2,7 @@ import { isPermanentTaskError } from './isPermanentTaskError.js'
 
 /**
  * Runs a queued job and records processing, done, or failed.
- * A newer jobId on the same document is left untouched.
+ * A newer jobId, a finished job, or a cancelled job is left untouched.
  * Permanent errors are acknowledged. Other errors are retried until the last attempt.
  *
  * @param {object} params
@@ -28,19 +28,33 @@ export async function runQueuedJob({
   work,
   resultFields,
 }) {
-  const job = await repository.get(jobDocId)
-  if (!job || job.jobId !== jobId || job.status === 'done') return
+  if (typeof repository.claimProcessing === 'function') {
+    const claimed = await repository.claimProcessing(jobDocId, jobId, FieldValue)
+    if (!claimed) return
+  } else {
+    const job = await repository.get(jobDocId)
+    if (
+      !job ||
+      job.jobId !== jobId ||
+      job.status === 'done' ||
+      job.status === 'cancelled'
+    ) {
+      return
+    }
 
-  await repository.update(jobDocId, {
-    status: 'processing',
-    error: null,
-    updatedAt: FieldValue.serverTimestamp(),
-  })
+    await repository.update(jobDocId, {
+      status: 'processing',
+      error: null,
+      updatedAt: FieldValue.serverTimestamp(),
+    })
+  }
 
   try {
     const result = await work()
     const latest = await repository.get(jobDocId)
-    if (!latest || latest.jobId !== jobId) return result
+    if (!latest || latest.jobId !== jobId || latest.status === 'cancelled') {
+      return result
+    }
 
     await repository.update(jobDocId, {
       status: 'done',
@@ -52,7 +66,8 @@ export async function runQueuedJob({
     return result
   } catch (err) {
     const latest = await repository.get(jobDocId)
-    const stillCurrent = latest && latest.jobId === jobId
+    const stillCurrent =
+      latest && latest.jobId === jobId && latest.status !== 'cancelled'
     const lastAttempt = retryCount >= maxAttempts - 1
 
     if (stillCurrent && (isPermanentTaskError(err) || lastAttempt)) {

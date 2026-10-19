@@ -188,6 +188,11 @@ describe('transcriptionTask enqueue', () => {
         model: 'medium',
         jobId: result.jobId,
       }),
+      { id: result.jobId },
+    )
+    expect(mockJobSet).toHaveBeenCalledWith(
+      expect.objectContaining({ cloudTaskId: result.jobId }),
+      { merge: true },
     )
     expect(mockJobDoc).toHaveBeenCalledWith(result.jobId)
     expect(result).toEqual({

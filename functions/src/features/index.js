@@ -12,3 +12,4 @@ export {
   textSentimentTask,
   textSentimentTaskWorker,
 } from '../features/textSentiment/index.js'
+export { cancelQueuedJob } from '../features/jobs/index.js'
