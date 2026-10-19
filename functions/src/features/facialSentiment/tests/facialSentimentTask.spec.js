@@ -1,4 +1,12 @@
 import { jest } from '@jest/globals'
+import { FirestoreUserRepository } from '../../../shared/repositories/FirestoreUserRepository.js'
+import { FirestoreAnswerRepository } from '../../../shared/repositories/FirestoreAnswerRepository.js'
+import { FirestoreStudyRepository } from '../../../shared/repositories/FirestoreStudyRepository.js'
+import { FirestoreSentimentRepository } from '../../../shared/repositories/FirestoreSentimentRepository.js'
+import { FirestoreSentimentAnalyticsRepository } from '../repositories/FirestoreSentimentAnalyticsRepository.js'
+import { AnalyzeFacialSentimentTaskService } from '../service/AnalyzeFacialSentimentTaskService.js'
+import { ProcessFacialSentimentTaskService } from '../service/ProcessFacialSentimentTaskService.js'
+import { UpsertSentimentAnalyticsService } from '../service/UpsertSentimentAnalyticsService.js'
 
 const mockAnswerGet = jest.fn()
 const mockAnswerUpdate = jest.fn()
@@ -81,49 +89,35 @@ const mockDb = {
   }),
 }
 
-jest.unstable_mockModule('../../../core/firebase/f.firebase.js', () => ({
-  admin: {
-    firestore: Object.assign(jest.fn(() => mockDb), {
-      FieldValue: {
-        serverTimestamp: jest.fn(() => 'mock-server-timestamp'),
-      },
-    }),
-  },
-  functions: {
-    onCall: jest.fn(({ handler, middlewares = [] }) => {
-      const composed = middlewares.reduceRight(
-        (next, middleware) => (request) =>
-          middleware(request, () => next(request)),
-        handler,
-      )
-      return composed
-    }),
-    https: {
-      HttpsError: class HttpsError extends Error {
-        constructor(code, message) {
-          super(message)
-          this.code = code
-        }
-      },
-    },
-  },
-}))
+const FieldValue = {
+  serverTimestamp: () => 'mock-server-timestamp',
+}
 
-jest.unstable_mockModule('../../../core/firebase/index.js', async () => {
-  const firebase = await import('../../../core/firebase/f.firebase.js')
-  const middlewares = await import('../../../core/firebase/middlewares.js')
-  return {
-    admin: firebase.admin,
-    functions: firebase.functions,
-    requireAuth: middlewares.requireAuth,
-    validateRequest: middlewares.validateRequest,
-    mapHttpsError: middlewares.mapHttpsError,
-  }
-})
-
-const { facialSentimentTask } = await import(
-  '../interface/facialSentimentTask.js'
-)
+function facialSentimentTask(request) {
+  const input = request.data || {}
+  const answerRepository = new FirestoreAnswerRepository(mockDb)
+  const sentimentRepository = new FirestoreSentimentRepository(mockDb)
+  const service = new ProcessFacialSentimentTaskService({
+    analyzeService: new AnalyzeFacialSentimentTaskService({
+      userRepository: new FirestoreUserRepository(mockDb),
+      answerRepository,
+      studyRepository: new FirestoreStudyRepository(mockDb),
+      sentimentRepository,
+      FieldValue,
+      facialSentimentApiBaseUrl: process.env.FACIAL_SENTIMENT_API_BASE_URL,
+    }),
+    analyticsService: new UpsertSentimentAnalyticsService({
+      analyticsRepository: new FirestoreSentimentAnalyticsRepository(
+        mockDb,
+        input.answersDocId,
+      ),
+      answerRepository,
+      sentimentRepository,
+      FieldValue,
+    }),
+  })
+  return service.execute({ uid: request.auth?.uid, input })
+}
 
 const request = (uid, data) => ({
   auth: uid ? { uid } : null,
@@ -195,18 +189,6 @@ describe('facialSentimentTask', () => {
   afterEach(() => {
     global.fetch = originalFetch
     process.env.FACIAL_SENTIMENT_API_BASE_URL = savedBaseUrl
-  })
-
-  it('requires authentication', async () => {
-    await expect(
-      facialSentimentTask(
-        request(null, {
-          answersDocId: 'answer-1',
-          userDocId: 'evaluator-1',
-          taskId: '0',
-        }),
-      ),
-    ).rejects.toMatchObject({ code: 'unauthenticated' })
   })
 
   it('fails when webcam recording is missing', async () => {

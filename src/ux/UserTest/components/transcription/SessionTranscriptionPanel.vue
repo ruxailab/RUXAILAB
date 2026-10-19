@@ -246,11 +246,12 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, onUnmounted, ref, watch } from 'vue'
 import TranscriptionController from '@/ai/transcriptions/TranscriptionController'
 import {
   deleteTranscription,
   transcribeTask,
+  watchTranscriptionJob,
 } from '@/app/services/transcription/TranscriptionService'
 import { formatTime } from '@/shared/utils/timeUtils'
 
@@ -409,14 +410,26 @@ async function fetchRuns() {
   }
 }
 
+let stopJobWatch = null
+
+function stopWatchingJob() {
+  if (stopJobWatch) {
+    stopJobWatch()
+    stopJobWatch = null
+  }
+}
+
+onUnmounted(stopWatchingJob)
+
 async function transcribeSession() {
   if (!props.canTranscribe || !selectedProvider.value) return
 
   isTranscribing.value = true
   transcriptionError.value = null
+  stopWatchingJob()
 
   try {
-    const result = await transcribeTask({
+    const queued = await transcribeTask({
       answersDocId: props.answersDocId,
       userDocId: props.userDocId,
       taskId: String(props.taskId),
@@ -424,13 +437,34 @@ async function transcribeSession() {
       provider: selectedProvider.value,
       model: selectedModel.value,
     })
-    emit('saved', result)
-    await fetchRuns()
-    if (result?.id) selectedRunId.value = result.id
+
+    stopJobWatch = watchTranscriptionJob(
+      queued.jobDocId,
+      async (job) => {
+        if (!job || job.jobId !== queued.jobId) return
+        if (job.status !== 'done' && job.status !== 'failed') return
+
+        stopWatchingJob()
+        isTranscribing.value = false
+
+        if (job.status === 'failed') {
+          transcriptionError.value = job.error || 'Transcription failed'
+          return
+        }
+
+        await fetchRuns()
+        if (job.transcriptionId) selectedRunId.value = job.transcriptionId
+        emit('saved', { id: job.transcriptionId })
+      },
+      (err) => {
+        stopWatchingJob()
+        isTranscribing.value = false
+        transcriptionError.value = errorMessage(err)
+      },
+    )
   } catch (err) {
-    transcriptionError.value = errorMessage(err)
-  } finally {
     isTranscribing.value = false
+    transcriptionError.value = errorMessage(err)
   }
 }
 

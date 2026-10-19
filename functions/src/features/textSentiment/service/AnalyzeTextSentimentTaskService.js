@@ -34,12 +34,22 @@ export class AnalyzeTextSentimentTaskService {
   }
 
   /**
+   * Authorize the caller and confirm the task has an audio recording.
+   *
    * @param {object} params
    * @param {string} params.uid
    * @param {object} params.input
-   * @returns {Promise<object>}
+   * @returns {Promise<{
+   *   answersDocId: string,
+   *   userDocId: string,
+   *   taskId: string,
+   *   studyId: string|null,
+   *   baseUrl: string,
+   *   audioRecordURL: string,
+   *   task: object,
+   * }>}
    */
-  async execute({ uid, input }) {
+  async resolveContext({ uid, input }) {
     const {
       answersDocId,
       userDocId,
@@ -95,6 +105,33 @@ export class AnalyzeTextSentimentTaskService {
     if (!audioRecordURL) {
       fail('failed-precondition', 'No audio recording available for this task')
     }
+
+    return {
+      answersDocId,
+      userDocId,
+      taskId: normalizedTaskId,
+      studyId: resolvedStudyId,
+      baseUrl,
+      audioRecordURL,
+      task,
+    }
+  }
+
+  /**
+   * @param {object} params
+   * @param {string} params.uid
+   * @param {object} params.input
+   * @returns {Promise<object>}
+   */
+  async execute({ uid, input }) {
+    const {
+      answersDocId,
+      userDocId,
+      taskId: normalizedTaskId,
+      baseUrl,
+      audioRecordURL,
+      task,
+    } = await this.resolveContext({ uid, input })
 
     const textResults = await processAudioSentiment({
       baseUrl,

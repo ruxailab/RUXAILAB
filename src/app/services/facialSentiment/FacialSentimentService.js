@@ -1,30 +1,40 @@
+import { doc, onSnapshot } from 'firebase/firestore'
+import { db } from '@/app/plugins/firebase'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 
 /**
- * Orchestrates task-level facial sentiment analysis via Cloud Function.
- * The function resolves the webcam recording from the answer task,
- * calls the facial sentiment API, and stores results on a sentiment document
- * pointed by sentimentDocId on the task under answers/{answersDocId}.
+ * Enqueues task-level facial sentiment analysis.
+ * The Cloud Tasks worker persists the result.
  *
  * @param {Object} payload
  * @param {string} payload.answersDocId
  * @param {string} payload.userDocId
  * @param {string|number} payload.taskId
  * @param {string} [payload.studyId]
- * @returns {Promise<{
- *   answersDocId: string,
- *   userDocId: string,
- *   taskId: string,
- *   sentimentDocId: string,
- *   emotions: Record<string, number>,
- *   videoName: string|null,
- * }>}
+ * @returns {Promise<{ status: 'queued', jobId: string, jobDocId: string }>}
  */
 export async function analyzeFacialSentimentTask(payload) {
   const response = await FirebaseFunctionsController.callHttpsCallableFunction(
     'facialSentimentTask',
     payload,
-    { timeout: 540_000 },
   )
   return response?.data ?? response
+}
+
+/**
+ * Listen to a queued job until the caller unsubscribes.
+ *
+ * @param {string} jobDocId
+ * @param {(job: object|null) => void} onChange
+ * @param {(error: Error) => void} [onError]
+ * @returns {() => void}
+ */
+export function watchFacialSentimentJob(jobDocId, onChange, onError) {
+  return onSnapshot(
+    doc(db, 'jobs', jobDocId),
+    (snap) => {
+      onChange(snap.exists() ? { id: snap.id, ...snap.data() } : null)
+    },
+    onError,
+  )
 }

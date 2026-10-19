@@ -35,12 +35,22 @@ export class AnalyzeFacialSentimentTaskService {
   }
 
   /**
+   * Authorize the caller and confirm the task has a webcam recording.
+   *
    * @param {object} params
    * @param {string} params.uid
    * @param {object} params.input
-   * @returns {Promise<object>}
+   * @returns {Promise<{
+   *   answersDocId: string,
+   *   userDocId: string,
+   *   taskId: string,
+   *   studyId: string|null,
+   *   baseUrl: string,
+   *   videoName: string,
+   *   task: object,
+   * }>}
    */
-  async execute({ uid, input }) {
+  async resolveContext({ uid, input }) {
     const {
       answersDocId,
       userDocId,
@@ -101,6 +111,33 @@ export class AnalyzeFacialSentimentTaskService {
     if (!videoName) {
       fail('failed-precondition', 'Could not resolve video path from webcam URL')
     }
+
+    return {
+      answersDocId,
+      userDocId,
+      taskId: normalizedTaskId,
+      studyId: resolvedStudyId,
+      baseUrl,
+      videoName,
+      task,
+    }
+  }
+
+  /**
+   * @param {object} params
+   * @param {string} params.uid
+   * @param {object} params.input
+   * @returns {Promise<object>}
+   */
+  async execute({ uid, input }) {
+    const {
+      answersDocId,
+      userDocId,
+      taskId: normalizedTaskId,
+      baseUrl,
+      videoName,
+      task,
+    } = await this.resolveContext({ uid, input })
 
     const emotions = await processFacialVideo({
       baseUrl,

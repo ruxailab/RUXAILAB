@@ -203,14 +203,20 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
 import { useStore } from 'vuex'
-import { analyzeTextSentimentTask } from '@/app/services/textSentiment/TextSentimentService'
+import SentimentController from '@/ai/sentiment/SentimentController'
+import {
+  analyzeTextSentimentTask,
+  watchTextSentimentJob,
+} from '@/app/services/textSentiment/TextSentimentService'
 import { formatTime } from '@/shared/utils/timeUtils'
 import { useSentimentPanel } from './useSentimentPanel'
 
 const store = useStore()
 const emit = defineEmits(['saved'])
+const sentimentController = new SentimentController()
+let stopJobWatch = null
 const props = defineProps({
   audioUrl: { type: String, default: null },
   sentimentDocId: { type: String, default: null },
@@ -323,6 +329,15 @@ async function loadExistingResults() {
   isAnalyzing.value = false
 }
 
+function stopWatchingJob() {
+  if (stopJobWatch) {
+    stopJobWatch()
+    stopJobWatch = null
+  }
+}
+
+onUnmounted(stopWatchingJob)
+
 async function startAnalysis() {
   if (!canStartAnalysis.value) {
     analysisError.value =
@@ -330,33 +345,65 @@ async function startAnalysis() {
     return
   }
 
-  try {
-    isAnalyzing.value = true
-    analysisError.value = null
+  isAnalyzing.value = true
+  analysisError.value = null
+  stopWatchingJob()
 
-    const result = await analyzeTextSentimentTask({
+  try {
+    const queued = await analyzeTextSentimentTask({
       answersDocId: props.answersDocId,
       userDocId: props.userDocId,
       taskId: String(props.taskId),
       studyId: props.studyId || undefined,
     })
 
-    const text = result?.text
-    if (!text) {
-      throw new Error('Text sentiment response did not include results.')
-    }
+    stopJobWatch = watchTextSentimentJob(
+      queued.jobDocId,
+      async (job) => {
+        if (!job || job.jobId !== queued.jobId) return
+        if (job.status !== 'done' && job.status !== 'failed') return
 
-    updateUI(text)
-    hasResults.value = true
+        stopWatchingJob()
+        isAnalyzing.value = false
 
-    await store.dispatch('getCurrentTestAnswerDoc')
-    emit('saved', result)
+        if (job.status === 'failed') {
+          analysisError.value =
+            job.error || 'Failed to process text sentiment analysis.'
+          return
+        }
+
+        const sentiment = job.sentimentDocId
+          ? await sentimentController.getById(job.sentimentDocId)
+          : null
+        const text = sentiment?.text
+        if (!text) {
+          analysisError.value = 'Text sentiment response did not include results.'
+          return
+        }
+
+        updateUI(text)
+        hasResults.value = true
+        await store.dispatch('getCurrentTestAnswerDoc')
+        emit('saved', {
+          answersDocId: props.answersDocId,
+          userDocId: props.userDocId,
+          taskId: String(props.taskId),
+          sentimentDocId: job.sentimentDocId,
+          text,
+        })
+      },
+      (err) => {
+        stopWatchingJob()
+        isAnalyzing.value = false
+        analysisError.value =
+          err?.message || 'Failed to process text sentiment analysis.'
+      },
+    )
   } catch (err) {
+    isAnalyzing.value = false
     console.error('Text sentiment analysis failed:', err.message || err)
     analysisError.value =
       err?.message || 'Failed to process text sentiment analysis.'
-  } finally {
-    isAnalyzing.value = false
   }
 }
 

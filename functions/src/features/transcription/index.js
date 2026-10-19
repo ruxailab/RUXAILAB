@@ -1,4 +1,5 @@
 export { transcriptionTask } from './interface/transcriptionTask.js'
+export { transcriptionTaskWorker } from './interface/transcriptionTaskWorker.js'
 export { transcriptionDelete } from './interface/transcriptionDelete.js'
 export { transcriptionDeleteByUser } from './interface/transcriptionDeleteByUser.js'
 export { Transcription } from './models/Transcription.js'

@@ -54,6 +54,18 @@ function onCall({ handler, options = {}, middlewares = [] }) {
   return firebaseFunctions.https.onCall(runtimeOptions, composed)
 }
 
+/**
+ * Cloud Tasks worker. The queue is created in the same region as the function.
+ *
+ * @param {object} params
+ * @param {(request: object) => Promise<unknown>} params.handler
+ * @param {object} [params.options]
+ */
+function onTaskDispatched({ handler, options = {} }) {
+  const runtimeOptions = { region: getRegion(), ...options }
+  return firebaseFunctions.tasks.onTaskDispatched(runtimeOptions, handler)
+}
+
 function onTrigger({ path, event, handler, opts = {} }) {
   const options = { region: getRegion(), ...opts }
 
@@ -103,9 +115,10 @@ function onStorageTrigger({ event, handler }) {
 const functions = {
   onRequest,
   onCall,
+  onTaskDispatched,
   onTrigger,
   onStorageTrigger,
   ...firebaseFunctions,
 }
 
-export { admin, functions }
+export { admin, functions, getRegion }

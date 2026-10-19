@@ -95,9 +95,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { onUnmounted, ref, computed } from 'vue'
 
-import { transcribeTask } from '@/app/services/transcription/TranscriptionService'
+import TranscriptionController from '@/ai/transcriptions/TranscriptionController'
+import {
+  transcribeTask,
+  watchTranscriptionJob,
+} from '@/app/services/transcription/TranscriptionService'
 import TranscriptionList from '@/ux/UserTest/components/transcription/TranscriptionList.vue'
 
 const props = defineProps({
@@ -114,8 +118,19 @@ const props = defineProps({
 
 const emit = defineEmits(['saved'])
 
+const transcriptionController = new TranscriptionController()
 const isTranscribing = ref(false)
 const transcriptSegments = ref([])
+let stopJobWatch = null
+
+function stopWatchingJob() {
+  if (stopJobWatch) {
+    stopJobWatch()
+    stopJobWatch = null
+  }
+}
+
+onUnmounted(stopWatchingJob)
 
 const snackbar = ref({
   visible: false,
@@ -168,15 +183,16 @@ async function transcribeSession() {
 
   isTranscribing.value = true
   transcriptSegments.value = []
+  stopWatchingJob()
 
   snackbar.value = {
     visible: true,
-    text: 'Transcribing session, please wait...',
+    text: 'Transcription queued. This may take a few minutes.',
     color: 'orange',
   }
 
   try {
-    const result = await transcribeTask({
+    const queued = await transcribeTask({
       answersDocId: props.answersDocId,
       userDocId: props.userDocId,
       taskId: String(props.taskId),
@@ -185,23 +201,55 @@ async function transcribeSession() {
       model: selectedModel.value,
     })
 
-    transcriptSegments.value = mergeSegments(result.evaluator, result.moderator)
+    stopJobWatch = watchTranscriptionJob(
+      queued.jobDocId,
+      async (job) => {
+        if (!job || job.jobId !== queued.jobId) return
+        if (job.status !== 'done' && job.status !== 'failed') return
 
-    snackbar.value = {
-      visible: true,
-      text: 'Transcription saved successfully!',
-      color: 'green',
-    }
+        stopWatchingJob()
+        isTranscribing.value = false
 
-    emit('saved', result)
+        if (job.status === 'failed') {
+          snackbar.value = {
+            visible: true,
+            text: job.error || 'Transcription failed',
+            color: 'red',
+          }
+          return
+        }
+
+        const saved = job.transcriptionId
+          ? await transcriptionController.getById(job.transcriptionId)
+          : null
+        transcriptSegments.value = mergeSegments(
+          saved?.evaluator,
+          saved?.moderator,
+        )
+        snackbar.value = {
+          visible: true,
+          text: 'Transcription saved successfully!',
+          color: 'green',
+        }
+        emit('saved', { id: job.transcriptionId })
+      },
+      (err) => {
+        stopWatchingJob()
+        isTranscribing.value = false
+        snackbar.value = {
+          visible: true,
+          text: errorMessage(err),
+          color: 'red',
+        }
+      },
+    )
   } catch (err) {
+    isTranscribing.value = false
     snackbar.value = {
       visible: true,
       text: errorMessage(err),
       color: 'red',
     }
-  } finally {
-    isTranscribing.value = false
   }
 }
 </script>
