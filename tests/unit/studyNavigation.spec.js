@@ -7,7 +7,11 @@ import {
   getStudyRouteBase,
   getTestViewAccessRedirect,
 } from '@/shared/utils/studyNavigation'
-import { STUDY_ROLE } from '@/shared/utils/studyAccessPolicy'
+import {
+  hasStudyCapability,
+  STUDY_CAPABILITY,
+  STUDY_ROLE,
+} from '@/shared/utils/studyAccessPolicy'
 import { USER_STUDY_SUBTYPES } from '@/shared/constants/methodDefinitions'
 
 const owner = { id: 'owner', accessLevel: 1 }
@@ -81,6 +85,23 @@ describe('study navigation', () => {
         user,
       }),
     ).toEqual({ name: 'UserUnmoderatedManagerView', params: { id: study.id } })
+  })
+
+  it('prioritizes staff dashboard access when the participant role is in studyRoleMap', () => {
+    const user = { id: 'staff-participant', accessLevel: 1 }
+    const study = {
+      ...studyWith('USER', user.id, STUDY_ROLE.MANAGER),
+      subType: USER_STUDY_SUBTYPES.UNMODERATED,
+      studyRoleMap: { [user.id]: STUDY_ROLE.USER },
+    }
+
+    expect(
+      hasStudyCapability(study, user, STUDY_CAPABILITY.DASHBOARD_VIEW),
+    ).toBe(true)
+    expect(getCommunityStudyDestination({ study, user })).toEqual({
+      name: 'UserUnmoderatedManagerView',
+      params: { id: study.id },
+    })
   })
 
   it('sends a dashboard-capable Focus Group member to their manager view', () => {
