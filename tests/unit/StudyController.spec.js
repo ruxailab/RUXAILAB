@@ -354,6 +354,77 @@ describe('StudyController', () => {
       )
     })
 
+    it('rebases a completed patch on a newer subscribed snapshot', async () => {
+      instantiateStudyByType.mockImplementation((type, data) => ({
+        ...data,
+        testType: type,
+      }))
+      const id = 'study-concurrent-snapshot'
+      const original = {
+        testType: 'USER',
+        testTitle: 'Study',
+        testStructure: { userTasks: [] },
+      }
+      spies.readOne.mockResolvedValueOnce({
+        id,
+        exists: () => true,
+        data: () => original,
+      })
+      await studyController.getStudy({ id })
+
+      let onSnapshotCallback
+      const { onSnapshot } = require('firebase/firestore')
+      onSnapshot.mockImplementation((_, callback) => {
+        onSnapshotCallback = callback
+        return jest.fn()
+      })
+      studyController.subscribeToStudy(id, jest.fn())
+
+      let resolveUpdate
+      mockCallHttpsCallableFunction.mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            resolveUpdate = resolve
+          }),
+      )
+      const pendingUpdate = studyController.updateStudy({
+        id,
+        toFirestore: () => ({ ...original, testTitle: 'Local title' }),
+      })
+
+      onSnapshotCallback({
+        exists: () => true,
+        id,
+        data: () => ({ ...original, remoteField: 'Remote value' }),
+      })
+      resolveUpdate({ data: { status: 'ok' } })
+      await pendingUpdate
+
+      await studyController.updateStudy({
+        id,
+        toFirestore: () => ({
+          ...original,
+          testTitle: 'Local title',
+          remoteField: 'Remote value',
+          testOptions: [{ title: 'Later change' }],
+        }),
+      })
+
+      expect(mockCallHttpsCallableFunction).toHaveBeenLastCalledWith(
+        'updateStudyWithAudit',
+        {
+          studyId: id,
+          study: {},
+          studyPatch: [
+            {
+              path: ['testOptions'],
+              value: [{ title: 'Later change' }],
+            },
+          ],
+        },
+      )
+    })
+
     it('treats plain update payloads as partial instead of deleting omitted fields', async () => {
       instantiateStudyByType.mockImplementation((type, data) => ({
         ...data,

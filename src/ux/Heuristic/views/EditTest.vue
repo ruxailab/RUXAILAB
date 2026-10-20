@@ -74,6 +74,7 @@
           <HeuristicsSettings
             v-if="showSettingsTab && index == settingsTabIndex"
             :is-template="isTemplate"
+            :save-changes="saveSettingsChanges"
           />
         </div>
       </div>
@@ -432,14 +433,28 @@ const flushPendingSave = async () => {
   return !hasPendingChanges.value
 }
 
-const handleEditorChange = (field) => {
+const handleEditorChange = (fields) => {
   if (props.isTemplate) return
 
   pendingChangeVersion.value += 1
-  dirtyStudyFields.set(field, pendingChangeVersion.value)
+  for (const field of Array.isArray(fields) ? fields : [fields]) {
+    dirtyStudyFields.set(field, pendingChangeVersion.value)
+  }
   hasPendingChanges.value = true
   updateSaveStatus('Saving changes...', 'saving')
   debouncedAutoSave()
+}
+
+const saveSettingsChanges = async (fields) => {
+  if (props.isTemplate) return true
+
+  pendingChangeVersion.value += 1
+  for (const field of fields) {
+    dirtyStudyFields.set(field, pendingChangeVersion.value)
+  }
+  hasPendingChanges.value = true
+  debouncedAutoSave.cancel()
+  return save()
 }
 
 const subscribeToTest = () => {

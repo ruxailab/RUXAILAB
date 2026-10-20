@@ -155,10 +155,12 @@ describe('study update patches', () => {
   it('applies remote option changes while preserving locally edited heuristics', () => {
     const currentStudy = {
       testStructure: [{ id: 1, title: 'Local unsaved heuristic' }],
+      calibrationConfig: { radius: 24 },
       testOptions: [{ text: 'Old option', value: 1 }],
     }
     const incomingStudy = {
       testStructure: [{ id: 1, title: 'Remote older heuristic' }],
+      calibrationConfig: { radius: 32 },
       testOptions: [
         { text: 'Old option', value: 1 },
         { text: 'New remote option', value: 2 },
@@ -168,9 +170,11 @@ describe('study update patches', () => {
     expect(
       mergeStudySnapshotPreservingRootFields(currentStudy, incomingStudy, [
         'testStructure',
+        'calibrationConfig',
       ]),
     ).toEqual({
       testStructure: [{ id: 1, title: 'Local unsaved heuristic' }],
+      calibrationConfig: { radius: 24 },
       testOptions: [
         { text: 'Old option', value: 1 },
         { text: 'New remote option', value: 2 },

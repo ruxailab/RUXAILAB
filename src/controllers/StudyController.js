@@ -149,8 +149,9 @@ export default class StudyController extends Controller {
         )
 
       if (studyPatch) {
-        studySnapshots.set(id, applyStudyUpdatePatch(previousStudy, studyPatch))
-      }
+          const latestStudy = studySnapshots.get(id) ?? previousStudy
+          studySnapshots.set(id, applyStudyUpdatePatch(latestStudy, studyPatch))
+        }
       return response.data
     } catch (e) {
       throw e

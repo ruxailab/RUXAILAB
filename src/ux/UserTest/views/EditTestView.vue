@@ -142,10 +142,20 @@ const videoCallConfig = ref({ ...DEFAULT_VIDEO_CALL_CONFIG })
 const index = ref(0)
 const route = useRoute()
 let unsubscribe = null
+let unsubscribeStore = null
 const dirtyStudyFields = new Map()
 let fieldChangeVersion = 0
 // Computed
 const test = computed(() => store.getters.test)
+const serializeCalibrationConfig = (config) =>
+  JSON.stringify(
+    typeof config?.toFirestore === 'function'
+      ? config.toFirestore()
+      : (config ?? null),
+  )
+let lastCalibrationConfig = serializeCalibrationConfig(
+  test.value?.calibrationConfig,
+)
 const pageTitle = computed(() =>
   props.isTemplate
     ? t('pages.editTest.previewTitle')
@@ -295,6 +305,9 @@ const subscribeToTest = () => {
         preservedFields,
       )
       store.commit('SET_TEST', updatedStudy)
+      lastCalibrationConfig = serializeCalibrationConfig(
+        updatedStudy.calibrationConfig,
+      )
       if (!dirtyStudyFields.has('welcomeMessage')) getWelcome()
       if (!dirtyStudyFields.has('finalMessage')) getFinalMessage()
       if (!dirtyStudyFields.has('consent')) getConsent()
@@ -318,12 +331,26 @@ onMounted(() => {
     getTasks()
     return
   }
+  unsubscribeStore = store.subscribe(({ type }, state) => {
+    if (type !== 'SET_CALIBRATION_CONFIG') return
+
+    const calibrationConfig = serializeCalibrationConfig(
+      state.Tests.Test?.calibrationConfig,
+    )
+    if (calibrationConfig !== lastCalibrationConfig) {
+      markFieldDirty('calibrationConfig')
+    }
+    lastCalibrationConfig = calibrationConfig
+  })
   subscribeToTest()
 })
 
 onUnmounted(() => {
   if (!props.isTemplate && unsubscribe) {
     unsubscribe()
+  }
+  if (unsubscribeStore) {
+    unsubscribeStore()
   }
 })
 </script>
