@@ -1,41 +1,12 @@
 import { admin, functions } from '../core/firebase/f.firebase.js'
+import {
+  getAssignableRoles,
+  normalizeStudyType,
+  ROLE,
+  SUPPORTED_ROLES,
+} from '../shared/auth/studyAccess.js'
 import { writeAuditEvent } from '../utils/auditTrail.js'
 import InviteUtils, { INVITE_STATUS } from '../utils/inviteUtils.js'
-
-const ROLE = Object.freeze({
-  ADMIN: 0,
-  EVALUATOR: 1,
-  GUEST: 2,
-  OBSERVATOR: 3,
-  MANAGER: 4,
-  USER: 5,
-})
-
-// Focus Group uses the Heuristic/CardSorting role shape (EVALUATOR for
-// attendees), not the USER-study one — its participants are invited as
-// EVALUATOR(1), matching the frontend's FOCUS_GROUP_ROLES/FOCUS_GROUP_POLICY
-// in studyAccessPolicy.js. MANAGER is deliberately left out here too: the
-// frontend has no capability policy for a Focus Group manager yet, so
-// advertising it as assignable would let an invite succeed server-side while
-// leaving that person with a dashboard that immediately redirects them away.
-const SUPPORTED_ROLES = Object.freeze({
-  USER: [ROLE.ADMIN, ROLE.MANAGER, ROLE.USER, ROLE.OBSERVATOR],
-  HEURISTIC: [ROLE.ADMIN, ROLE.MANAGER, ROLE.EVALUATOR, ROLE.GUEST],
-  CARD_SORTING: [ROLE.ADMIN, ROLE.MANAGER, ROLE.EVALUATOR, ROLE.GUEST],
-  FOCUS_GROUP: [ROLE.ADMIN, ROLE.EVALUATOR, ROLE.OBSERVATOR],
-})
-
-const MANAGER_ROLES = Object.freeze({
-  USER: [ROLE.USER, ROLE.OBSERVATOR],
-  HEURISTIC: [ROLE.EVALUATOR, ROLE.GUEST],
-  CARD_SORTING: [ROLE.EVALUATOR, ROLE.GUEST],
-  FOCUS_GROUP: [ROLE.EVALUATOR, ROLE.OBSERVATOR],
-})
-
-const normalizeStudyType = (type) => {
-  const normalized = String(type || '').toUpperCase()
-  return normalized === 'HEURISTICS' ? 'HEURISTIC' : normalized
-}
 
 const error = (code, message) => new functions.https.HttpsError(code, message)
 
@@ -140,13 +111,6 @@ const getActorRole = (study, actorId, isSuperAdmin) => {
         cooperator?.userDocId === actorId && InviteUtils.isAccepted(cooperator),
     )?.accessLevel ?? null
   )
-}
-
-const getAssignableRoles = (study, actorRole) => {
-  const studyType = normalizeStudyType(study?.testType)
-  if (actorRole === ROLE.ADMIN) return SUPPORTED_ROLES[studyType] || []
-  if (actorRole === ROLE.MANAGER) return MANAGER_ROLES[studyType] || []
-  return []
 }
 
 // The role participants get for each study type.

@@ -12,6 +12,9 @@ export const ROLE = Object.freeze({
   USER: 5,
 })
 
+// Focus Group uses the Heuristic/CardSorting role shape (EVALUATOR for
+// attendees), not the USER-study one. MANAGER is intentionally not assignable
+// by Admins because the frontend has no Focus Group manager capability policy.
 export const SUPPORTED_ROLES = Object.freeze({
   USER: [ROLE.ADMIN, ROLE.MANAGER, ROLE.USER, ROLE.OBSERVATOR],
   HEURISTIC: [ROLE.ADMIN, ROLE.MANAGER, ROLE.EVALUATOR, ROLE.GUEST],
