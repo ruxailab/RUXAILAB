@@ -204,5 +204,27 @@ describe('mergeStudyUpdates', () => {
     expect(merged.testStructure.postTest.map((entry) => entry.title)).toEqual([
       'Question from admin2',
     ])
+    })
+
+    it('does not produce an undefined value for a field the study does not carry', () => {
+      // The editor sends every field of the study model, but the stored study
+      // may not have all of them. A field the editor did not change must stay
+      // absent instead of becoming `undefined`, which Firestore refuses in an
+      // update.
+      const base = { calibrationConfig: null }
+      const current = { testTitle: 'A study' }
+      const requested = { testTitle: 'A study', calibrationConfig: null }
+
+      const merged = mergeStudyUpdates({
+        current,
+        requestedUpdates: requested,
+        base,
+      })
+
+      expect(Object.keys(merged)).not.toContain('calibrationConfig')
+      expect(merged.testTitle).toBe('A study')
+      for (const value of Object.values(merged)) {
+        expect(value).not.toBeUndefined()
+      }
+    })
   })
-})

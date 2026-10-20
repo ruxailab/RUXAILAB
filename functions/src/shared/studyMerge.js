@@ -138,7 +138,9 @@ const mergeValue = ({ current, base, requested, field }) => {
   }
 
   if (base !== undefined && isSameValue(requested, base)) {
-    // The editor did not change this field, so the stored value wins.
+    // The editor did not change this field, so the stored value wins. A field
+    // the stored study does not carry at all stays absent: Firestore refuses
+    // an `undefined` value in an update.
     return current
   }
 
@@ -154,12 +156,15 @@ const mergeObject = ({ current, base, requested }) => {
 
   Object.keys(requested).forEach((key) => {
     if (Object.prototype.hasOwnProperty.call(current, key)) {
-      merged[key] = mergeValue({
+      const value = mergeValue({
         current: current[key],
         base: base ? base[key] : undefined,
         requested: requested[key],
         field: key,
       })
+      // A field the stored study does not carry stays absent rather than
+      // becoming `undefined`, which Firestore refuses in an update.
+      if (value !== undefined) merged[key] = value
       return
     }
     merged[key] = requested[key]
@@ -220,12 +225,15 @@ export const mergeStudyUpdates = ({ current, requestedUpdates, base }) => {
       return
     }
 
-    updates[key] = mergeValue({
+    const value = mergeValue({
       current: stored,
       base: baseValue,
       requested,
       field: key,
     })
+    // A field the stored study does not carry stays absent rather than
+    // becoming `undefined`, which Firestore refuses in an update.
+    if (value !== undefined) updates[key] = value
   })
 
   return updates
