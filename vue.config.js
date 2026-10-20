@@ -4,10 +4,7 @@ module.exports = {
   productionSourceMap: false,
   css: { sourceMap: false },
 
-  transpileDependencies: [
-    'vuetify',
-    'resize-detector',
-  ],
+  transpileDependencies: ['vuetify', 'resize-detector'],
 
   pluginOptions: {
     i18n: {
@@ -19,6 +16,7 @@ module.exports = {
   },
 
   devServer: {
+    historyApiFallback: true,
     allowedHosts: 'all',
     client: {
       webSocketURL: 'auto://0.0.0.0:0/ws',
@@ -43,7 +41,7 @@ module.exports = {
       new webpack.DefinePlugin({
         __VUE_OPTIONS_API__: JSON.stringify(true),
         __VUE_PROD_DEVTOOLS__: JSON.stringify(false),
-        __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(false)
+        __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(false),
       }),
     ],
     resolve: {
@@ -52,9 +50,8 @@ module.exports = {
         stream: require.resolve('stream-browserify'),
         buffer: require.resolve('buffer/'),
         process: require.resolve('process'),
-        "vm": false,
-
+        vm: false,
       },
     },
   },
-};
+}
