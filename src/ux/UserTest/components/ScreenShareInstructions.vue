@@ -3,20 +3,27 @@
     class="screen-share-instructions"
     :class="{ 'screen-share-instructions--compact': compact }"
   >
-    <div class="d-flex align-center mb-3">
-      <v-icon color="secondary" size="24" class="mr-2">
-        mdi-monitor-share
-      </v-icon>
-      <h3 class="text-h6 font-weight-bold text-secondary">
-        {{ t('screenShare.howTo') }}
-      </h3>
-    </div>
+    <template v-if="showHeader">
+      <div class="d-flex align-center mb-3">
+        <v-icon color="secondary" size="24" class="mr-2">
+          mdi-monitor-share
+        </v-icon>
+        <h3 class="text-h6 font-weight-bold text-secondary">
+          {{ t('screenShare.howTo') }}
+        </h3>
+      </div>
 
-    <p class="text-body-2 text-grey-darken-3 mb-4 screen-share-lead">
-      {{ t('screenShare.lead') }}
-    </p>
+      <p class="text-body-2 text-grey-darken-3 mb-4 screen-share-lead">
+        {{ t('screenShare.lead') }}
+      </p>
+    </template>
 
-    <div class="picker-demo" role="img" :aria-label="t('screenShare.demoAlt')">
+    <div
+      v-if="showDemo"
+      class="picker-demo"
+      role="img"
+      :aria-label="t('screenShare.demoAlt')"
+    >
       <div class="picker-window">
         <div class="picker-title">
           {{ t('screenShare.pickerTitle') }}
@@ -69,14 +76,18 @@
       </div>
     </div>
 
-    <ol class="screen-share-steps mt-4 mb-0">
+    <ol
+      v-if="showChecklist"
+      class="screen-share-steps mb-0"
+      :class="{ 'mt-4': mode === 'full' }"
+    >
       <li>{{ t('screenShare.step1') }}</li>
       <li>{{ t('screenShare.step2') }}</li>
       <li>{{ t('screenShare.step3') }}</li>
     </ol>
 
     <v-alert
-      v-if="hasExternalLink"
+      v-if="showAlert"
       class="mt-4 mb-0"
       type="warning"
       variant="tonal"
@@ -86,7 +97,10 @@
       {{ t('screenShare.dontShareTab') }}
     </v-alert>
 
-    <p v-if="showMacHint" class="text-caption text-grey-darken-1 mt-3 mb-0">
+    <p
+      v-if="showMacHint && showMacHintText"
+      class="text-caption text-grey-darken-1 mt-3 mb-0"
+    >
       {{ t('screenShare.macHint') }}
     </p>
   </div>
@@ -97,7 +111,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { isMacOS } from '@/shared/utils/screenShareCapture'
 
-defineProps({
+const props = defineProps({
   hasExternalLink: {
     type: Boolean,
     default: false,
@@ -106,10 +120,36 @@ defineProps({
     type: Boolean,
     default: false,
   },
+  /**
+   * full — header, demo, checklist, alerts (dialog default)
+   * demo — header, picker demo, alerts (preview step 2)
+   * checklist — numbered steps only (preview step 3)
+   */
+  mode: {
+    type: String,
+    default: 'full',
+    validator: (value) => ['full', 'demo', 'checklist'].includes(value),
+  },
 })
 
 const { t } = useI18n()
 const showMacHint = computed(() => isMacOS())
+
+const showHeader = computed(
+  () => props.mode === 'full' || props.mode === 'demo',
+)
+const showDemo = computed(() => props.mode === 'full' || props.mode === 'demo')
+const showChecklist = computed(
+  () => props.mode === 'full' || props.mode === 'checklist',
+)
+const showAlert = computed(
+  () =>
+    props.hasExternalLink &&
+    (props.mode === 'full' || props.mode === 'demo'),
+)
+const showMacHintText = computed(
+  () => props.mode === 'full' || props.mode === 'demo',
+)
 </script>
 
 <style scoped>
