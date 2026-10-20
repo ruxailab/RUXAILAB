@@ -184,7 +184,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import FormDialog from './FormDialog.vue'
@@ -195,9 +195,13 @@ const store = useStore()
 const { t } = useI18n()
 
 const dialog = ref(false)
-const allTasks = ref([])
 const editedIndex = ref(-1)
 const task = ref(new Task())
+
+// The task list always comes from the store, so the list the admin sees is
+// the list that is saved. A copy kept here would still hold the tasks of the
+// last loaded study and would overwrite the tasks another admin added.
+const allTasks = computed(() => store.getters['UserStudy/tasks'] || [])
 
 const taskDeleteDialog = ref(false)
 const taskToDelete = ref(null)
@@ -293,8 +297,10 @@ const confirmTaskDeletion = async () => {
   try {
     const index = allTasks.value.indexOf(taskToDelete.value)
     if (index > -1) {
-      allTasks.value.splice(index, 1)
-      await store.dispatch('UserStudy/setTasks', allTasks.value)
+      await store.dispatch(
+        'UserStudy/setTasks',
+        allTasks.value.filter((_, taskIndex) => taskIndex !== index),
+      )
     }
   } catch {
   } finally {
@@ -308,22 +314,22 @@ const addTask = async (newTask) => {
   if (props.isTemplate) return
   try {
     if (editedIndex.value > -1) {
-      Object.assign(allTasks.value[editedIndex.value], newTask.toFirestore())
+      const updated = allTasks.value.map((current, index) =>
+        index === editedIndex.value
+          ? { ...current, ...newTask.toFirestore() }
+          : current,
+      )
       editedIndex.value = -1
+      await store.dispatch('UserStudy/setTasks', updated)
     } else {
-      allTasks.value.push(newTask.toFirestore())
+      await store.dispatch('UserStudy/setTasks', [
+        ...allTasks.value,
+        newTask.toFirestore(),
+      ])
     }
-    await store.dispatch('UserStudy/setTasks', allTasks.value)
     task.value = new Task()
     dialog.value = false
   } catch {}
-}
-
-const setAllTasks = () => {
-  allTasks.value = Object.assign(
-    store.getters['UserStudy/tasks'],
-    store.state.Tests.Test.testStructure.userTasks,
-  )
 }
 
 // Helper functions for task type chips
@@ -374,10 +380,6 @@ const getTaskTypeLabel = (taskType) => {
   }
   return labels[taskType] || 'Unknown'
 }
-
-onMounted(() => {
-  setAllTasks()
-})
 </script>
 
 <style scoped>

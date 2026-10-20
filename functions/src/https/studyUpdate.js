@@ -1,6 +1,7 @@
 import { admin, functions } from '../core/firebase/f.firebase.js'
 import { writeAuditEvent } from '../utils/auditTrail.js'
 import { resolveStudyRole, ROLE } from '../shared/auth/studyAccess.js'
+import { mergeStudyUpdates } from '../shared/studyMerge.js'
 
 const PROTECTED_FIELDS = new Set([
   'answersDocId',
@@ -103,6 +104,11 @@ export const updateStudyWithAudit = functions.onCall({
       throw error('invalid-argument', 'studyId and study are required')
     }
 
+    // The snapshot the editor based its changes on. With it the server can
+    // tell which parts the editor changed and keep the changes another admin
+    // made in the meantime.
+    const base = request?.data?.base ?? null
+
     const db = admin.firestore()
     const studyRef = db.collection('tests').doc(studyId)
     const userRef = db.collection('users').doc(uid)
@@ -117,9 +123,16 @@ export const updateStudyWithAudit = functions.onCall({
       const current = studySnap.data()
       const actorEmail =
         userSnap.data()?.email || request?.auth?.token?.email || ''
-      const { changedFields, updates, settingsChanged } = authorizeStudyUpdate({
+
+      const mergedUpdates = mergeStudyUpdates({
         current,
         requestedUpdates,
+        base,
+      })
+
+      const { changedFields, updates, settingsChanged } = authorizeStudyUpdate({
+        current,
+        requestedUpdates: mergedUpdates,
         uid,
         isSuperAdmin: userSnap.data()?.accessLevel === 0,
       })
@@ -133,7 +146,7 @@ export const updateStudyWithAudit = functions.onCall({
         targetType: 'study',
         details: buildStudyAuditDetails({
           current,
-          requestedUpdates,
+          requestedUpdates: mergedUpdates,
           changedFields,
         }),
       })

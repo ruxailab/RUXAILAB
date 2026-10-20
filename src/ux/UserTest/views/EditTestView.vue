@@ -139,6 +139,10 @@ const videoCallConfig = ref({ ...DEFAULT_VIDEO_CALL_CONFIG })
 const index = ref(0)
 const route = useRoute()
 let unsubscribe = null
+// The study snapshot the editor changes are based on. The server compares it
+// with the stored study so a save never overwrites what another admin changed
+// in the meantime.
+const baseStudy = ref(null)
 // Computed
 const test = computed(() => store.getters.test)
 const pageTitle = computed(() =>
@@ -241,7 +245,7 @@ const save = async () => {
 
     const rawData = { ...test.value, testStructure: testStructure }
     const study = instantiateStudyByType(rawData.testType, rawData)
-    await store.dispatch('updateStudy', study)
+    await store.dispatch('updateStudy', { study, base: baseStudy.value })
     showSuccess('pages.editTest.updatedTest')
   } catch {
     showError('errors.globalError')
@@ -254,6 +258,9 @@ const subscribeToTest = () => {
   if (testId) {
     unsubscribe = studyController.subscribeToStudy(testId, (test) => {
       store.commit('SET_TEST', test)
+      baseStudy.value = structuredClone(
+        typeof test.toFirestore === 'function' ? test.toFirestore() : test,
+      )
       getWelcome()
       getFinalMessage()
       getConsent()

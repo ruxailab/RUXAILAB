@@ -178,8 +178,13 @@ export default {
     async updateStudy({ commit }, payload) {
       commit('setLoading', true)
       try {
-        await studyController.updateStudy(payload)
-        commit('SET_TEST', payload)
+        // A study update may carry the snapshot the editor based its changes
+        // on, so the server can keep the changes another admin made in the
+        // meantime instead of overwriting them.
+        const study = payload?.study ?? payload
+        const base = payload?.study ? payload.base ?? null : null
+        await studyController.updateStudy(study, base)
+        commit('SET_TEST', study)
       } catch (err) {
         commit('setError', {
           errorCode: 'studyError',

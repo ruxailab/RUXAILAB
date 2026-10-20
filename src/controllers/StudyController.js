@@ -101,7 +101,15 @@ export default class StudyController extends Controller {
     }
   }
 
-  async updateStudy(payload) {
+  /**
+   * Persist a study.
+   *
+   * @param {object} payload the study to store
+   * @param {object|null} [base] the study snapshot the editor based its
+   *   changes on. The server uses it to keep the changes another admin made
+   *   in the meantime instead of overwriting them.
+   */
+  async updateStudy(payload, base = null) {
     try {
       const { id, ...partialStudy } = payload
       const study =
@@ -112,7 +120,11 @@ export default class StudyController extends Controller {
       const response =
         await FirebaseFunctionsController.callHttpsCallableFunction(
           'updateStudyWithAudit',
-          { studyId: id, study },
+          {
+            studyId: id,
+            study,
+            ...(base ? { base } : {}),
+          },
         )
       return response.data
     } catch (e) {
