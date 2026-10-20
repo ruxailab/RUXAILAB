@@ -59,21 +59,22 @@
           <HeuristicsTable
             v-if="index == 0"
             :is-template="isTemplate"
-            @change="handleEditorChange"
+            @change="handleEditorChange('testStructure')"
           />
           <OptionsTable
             v-if="showOptionsTab && index == optionsTabIndex"
             :is-template="isTemplate"
-            @change="handleEditorChange"
+            @change="handleEditorChange('testOptions')"
           />
           <WeightTable
             v-if="showWeightsTab && index == weightsTabIndex"
             :is-template="isTemplate"
-            @change="handleEditorChange"
+            @change="handleEditorChange('testWeights')"
           />
           <HeuristicsSettings
             v-if="showSettingsTab && index == settingsTabIndex"
             :is-template="isTemplate"
+            :save-changes="saveSettingsChanges"
           />
         </div>
       </div>
@@ -96,6 +97,8 @@ import HeuristicsTable from '../components/HeuristicsTable.vue'
 import OptionsTable from '../components/OptionsTable.vue'
 import WeightTable from '../components/weights_evaluation/WeightTable.vue'
 import HeuristicsSettings from '../components/HeuristicsSettings.vue'
+import { getHeuristicStateForStudy } from '../store/Heuristic'
+import { mergeStudySnapshotPreservingRootFields } from '@/shared/utils/studyUpdatePatch'
 
 const props = defineProps({
   isTemplate: {
@@ -121,7 +124,9 @@ const lastSaveTime = ref(null)
 const saveStatusMessage = ref('All changes saved')
 const saveStatusType = ref('default')
 const pendingChangeVersion = ref(0)
+const dirtyStudyFields = new Map()
 let currentSavePromise = null
+let unsubscribeStudy = null
 
 const showSettingsTab = computed(() => !props.isTemplate)
 const test = computed(() => store.getters.test)
@@ -279,13 +284,27 @@ const formatLastSaveTime = () => {
 }
 
 const buildStudy = () => {
-  if (!store.getters.test) return null
+  const currentTest = store.getters.test
+  if (!currentTest) return null
+
+  const heuristicState = store.state.Heuristic
+  const currentHeuristics = getHeuristicStateForStudy(
+    currentTest,
+    heuristicState,
+  )
+  if (!currentHeuristics.isCurrentStudy) {
+    store.commit('SET_HEURISTIC_STUDY', {
+      studyId: currentTest.id,
+      heuristics: currentHeuristics.heuristics,
+      testWeights: currentHeuristics.testWeights,
+    })
+  }
 
   const rawData = {
-    ...store.getters.test,
-    testStructure: structuredClone(store.getters.heuristics || []),
+    ...currentTest,
+    testStructure: structuredClone(currentHeuristics.heuristics),
     testOptions: structuredClone(store.state.Tests.Test?.testOptions || []),
-    testWeights: structuredClone(store.getters.testWeights || {}),
+    testWeights: structuredClone(currentHeuristics.testWeights),
     updateDate: Date.now(),
   }
 
@@ -314,8 +333,12 @@ const beginSave = (study) => {
   return savePromise
 }
 
-const handleSuccessfulSave = (study, saveVersion, showToast) => {
-  store.commit('SET_TEST', study)
+const handleSuccessfulSave = (saveVersion, savedDirtyFields, showToast) => {
+  for (const [field, version] of savedDirtyFields) {
+    if (dirtyStudyFields.get(field) === version) {
+      dirtyStudyFields.delete(field)
+    }
+  }
 
   if (saveVersion !== pendingChangeVersion.value) {
     updateSaveStatus('Saving changes...', 'saving')
@@ -366,11 +389,12 @@ const save = async ({ showToast = false } = {}) => {
   if (!study) return false
 
   const saveVersion = pendingChangeVersion.value
+  const savedDirtyFields = new Map(dirtyStudyFields)
   const savePromise = beginSave(study)
 
   try {
     await savePromise
-    handleSuccessfulSave(study, saveVersion, showToast)
+    handleSuccessfulSave(saveVersion, savedDirtyFields, showToast)
     return true
   } catch {
     handleFailedSave(showToast)
@@ -409,13 +433,62 @@ const flushPendingSave = async () => {
   return !hasPendingChanges.value
 }
 
-const handleEditorChange = () => {
+const handleEditorChange = (fields) => {
   if (props.isTemplate) return
 
   pendingChangeVersion.value += 1
+  for (const field of Array.isArray(fields) ? fields : [fields]) {
+    dirtyStudyFields.set(field, pendingChangeVersion.value)
+  }
   hasPendingChanges.value = true
   updateSaveStatus('Saving changes...', 'saving')
   debouncedAutoSave()
+}
+
+const saveSettingsChanges = async (fields) => {
+  if (props.isTemplate) return true
+
+  pendingChangeVersion.value += 1
+  for (const field of fields) {
+    dirtyStudyFields.set(field, pendingChangeVersion.value)
+  }
+  hasPendingChanges.value = true
+  debouncedAutoSave.cancel()
+  return save()
+}
+
+const subscribeToTest = () => {
+  const studyId = route.params.id
+  if (!studyId) return
+
+  unsubscribeStudy = studyController.subscribeToStudy(studyId, (incoming) => {
+    const currentStudy = test.value || {}
+    const currentHeuristicState = getHeuristicStateForStudy(
+      currentStudy,
+      store.state.Heuristic,
+    )
+    const currentStudyData = {
+      ...currentStudy,
+      testStructure: currentHeuristicState.heuristics,
+      testOptions:
+        store.state.Tests.Test?.testOptions ?? currentStudy.testOptions,
+      testWeights: currentHeuristicState.testWeights,
+    }
+    const updatedStudy = mergeStudySnapshotPreservingRootFields(
+      currentStudyData,
+      incoming,
+      [...dirtyStudyFields.keys()],
+    )
+
+    store.commit('SET_TEST', updatedStudy)
+    store.commit('SET_HEURISTIC_STUDY', {
+      studyId: updatedStudy.id ?? null,
+      heuristics: Array.isArray(updatedStudy.testStructure)
+        ? updatedStudy.testStructure
+        : [],
+      testWeights: updatedStudy.testWeights || {},
+    })
+  })
 }
 
 const preventUnload = (event) => {
@@ -429,6 +502,25 @@ const preventUnload = (event) => {
   event.returnValue = ''
 }
 
+watch(
+  test,
+  (currentTest) => {
+    if (!currentTest) return
+
+    const heuristicState = getHeuristicStateForStudy(
+      currentTest,
+      store.state.Heuristic,
+    )
+    if (heuristicState.isCurrentStudy) return
+
+    store.commit('SET_HEURISTIC_STUDY', {
+      studyId: currentTest.id ?? null,
+      heuristics: heuristicState.heuristics,
+      testWeights: heuristicState.testWeights,
+    })
+  },
+  { immediate: true },
+)
 watch(
   test,
   (newTest) => {
@@ -456,6 +548,8 @@ watch(showWeightsTab, (newVal, oldVal) => {
 onMounted(() => {
   if (props.isTemplate && props.templateTest) {
     store.commit('SET_TEST', structuredClone(props.templateTest))
+  } else if (!props.isTemplate) {
+    subscribeToTest()
   }
 
   window.addEventListener('resize', handleResize)
@@ -463,6 +557,10 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  if (unsubscribeStudy) {
+    unsubscribeStudy()
+    unsubscribeStudy = null
+  }
   debouncedAutoSave.flush()
   if (hasPendingChanges.value && !currentSavePromise) {
     void save()

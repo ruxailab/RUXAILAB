@@ -3,10 +3,30 @@
 //  * @module Heuristic
 //  */
 
+export const getHeuristicStateForStudy = (study, state) => {
+  const isCurrentStudy = Boolean(
+    study &&
+    state.heuristicsStudyInitialized &&
+    state.heuristicsStudyId === (study.id ?? null),
+  )
+
+  return {
+    isCurrentStudy,
+    heuristics: isCurrentStudy
+      ? state.heuristics
+      : Array.isArray(study?.testStructure)
+        ? study.testStructure
+        : [],
+    testWeights: isCurrentStudy ? state.testWeights : study?.testWeights || {},
+  }
+}
+
 export default {
   state: {
     heuristicStructure: [],
     heuristics: [],
+    heuristicsStudyId: null,
+    heuristicsStudyInitialized: false,
     testWeights: {},
     scoresPercentage: [],
     currentImageUrl: '',
@@ -23,9 +43,17 @@ export default {
     CLEAR_HEURISTIC_STATE(state) {
       state.heuristicStructure = []
       state.heuristics = []
+      state.heuristicsStudyId = null
+      state.heuristicsStudyInitialized = false
       state.testWeights = {}
       state.scoresPercentage = []
       state.currentImageUrl = ''
+    },
+    SET_HEURISTIC_STUDY(state, { studyId, heuristics, testWeights }) {
+      state.heuristicsStudyId = studyId
+      state.heuristicsStudyInitialized = true
+      state.heuristics = [...heuristics]
+      state.testWeights = { ...testWeights }
     },
     SET_HEURISTICS(state, payload) {
       state.heuristics = [...payload]

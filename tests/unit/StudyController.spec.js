@@ -306,6 +306,170 @@ describe('StudyController', () => {
       )
     })
 
+    it('sends only changed paths after loading a study snapshot', async () => {
+      instantiateStudyByType.mockImplementation((type, data) => ({
+        ...data,
+        testType: type,
+      }))
+      const id = 'study-patch-baseline'
+      const original = {
+        testType: 'USER',
+        testTitle: 'Study',
+        testStructure: {
+          userTasks: [{ taskName: 'Existing task' }],
+          postTest: [],
+        },
+      }
+      spies.readOne.mockResolvedValueOnce({
+        id,
+        exists: () => true,
+        data: () => original,
+      })
+      await studyController.getStudy({ id })
+      expect(spies.readOne).toHaveBeenCalledWith('tests', id)
+
+      await studyController.updateStudy({
+        id,
+        toFirestore: () => ({
+          ...original,
+          testStructure: {
+            ...original.testStructure,
+            postTest: [{ title: 'New question' }],
+          },
+        }),
+      })
+
+      expect(mockCallHttpsCallableFunction).toHaveBeenCalledWith(
+        'updateStudyWithAudit',
+        {
+          studyId: id,
+          study: {},
+          studyPatch: [
+            {
+              path: ['testStructure', 'postTest'],
+              value: [{ title: 'New question' }],
+            },
+          ],
+        },
+      )
+    })
+
+    it('rebases a completed patch on a newer subscribed snapshot', async () => {
+      instantiateStudyByType.mockImplementation((type, data) => ({
+        ...data,
+        testType: type,
+      }))
+      const id = 'study-concurrent-snapshot'
+      const original = {
+        testType: 'USER',
+        testTitle: 'Study',
+        testStructure: { userTasks: [] },
+      }
+      spies.readOne.mockResolvedValueOnce({
+        id,
+        exists: () => true,
+        data: () => original,
+      })
+      await studyController.getStudy({ id })
+
+      let onSnapshotCallback
+      const { onSnapshot } = require('firebase/firestore')
+      onSnapshot.mockImplementation((_, callback) => {
+        onSnapshotCallback = callback
+        return jest.fn()
+      })
+      studyController.subscribeToStudy(id, jest.fn())
+
+      let resolveUpdate
+      mockCallHttpsCallableFunction.mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            resolveUpdate = resolve
+          }),
+      )
+      const pendingUpdate = studyController.updateStudy({
+        id,
+        toFirestore: () => ({ ...original, testTitle: 'Local title' }),
+      })
+
+      onSnapshotCallback({
+        exists: () => true,
+        id,
+        data: () => ({ ...original, remoteField: 'Remote value' }),
+      })
+      resolveUpdate({ data: { status: 'ok' } })
+      const updateResult = await pendingUpdate
+
+      expect(updateResult.rebasedStudy).toEqual(
+        expect.objectContaining({
+          id,
+          testTitle: 'Local title',
+          remoteField: 'Remote value',
+        }),
+      )
+
+      await studyController.updateStudy({
+        id,
+        toFirestore: () => ({
+          ...original,
+          testTitle: 'Local title',
+          remoteField: 'Remote value',
+          testOptions: [{ title: 'Later change' }],
+        }),
+      })
+
+      expect(mockCallHttpsCallableFunction).toHaveBeenLastCalledWith(
+        'updateStudyWithAudit',
+        {
+          studyId: id,
+          study: {},
+          studyPatch: [
+            {
+              path: ['testOptions'],
+              value: [{ title: 'Later change' }],
+            },
+          ],
+        },
+      )
+    })
+
+    it('treats plain update payloads as partial instead of deleting omitted fields', async () => {
+      instantiateStudyByType.mockImplementation((type, data) => ({
+        ...data,
+        testType: type,
+      }))
+      const id = 'study-partial-baseline'
+      spies.readOne.mockResolvedValueOnce({
+        id,
+        exists: () => true,
+        data: () => ({
+          testType: 'USER',
+          testTitle: 'Study',
+          testStructure: {
+            userTasks: [{ taskName: 'Keep this task' }],
+            postTest: [],
+          },
+        }),
+      })
+      await studyController.getStudy({ id })
+
+      await studyController.updateStudy({
+        id,
+        testTitle: 'Updated title',
+      })
+
+      expect(mockCallHttpsCallableFunction).toHaveBeenCalledWith(
+        'updateStudyWithAudit',
+        {
+          studyId: id,
+          study: {},
+          studyPatch: [
+            { path: ['testTitle'], value: 'Updated title' },
+          ],
+        },
+      )
+    })
+
     it('should throw error when update fails', async () => {
       const mockError = new Error('Update failed')
 

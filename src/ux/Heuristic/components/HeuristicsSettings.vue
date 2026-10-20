@@ -186,6 +186,7 @@ import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 import { getStorage, ref as storageRef, getDownloadURL } from 'firebase/storage'
 import { showWarning, showSuccess, showError } from '@/shared/utils/toast'
+import { getHeuristicStateForStudy } from '../store/Heuristic'
 
 const store = useStore()
 const { t } = useI18n()
@@ -193,6 +194,10 @@ const props = defineProps({
   isTemplate: {
     type: Boolean,
     default: false,
+  },
+  saveChanges: {
+    type: Function,
+    default: null,
   },
 })
 
@@ -209,6 +214,15 @@ const errorVisible = ref(false)
 const confirmDialog = ref(false)
 
 const test = computed(() => store.getters.test)
+
+const saveStudyChanges = async (fields) => {
+  if (typeof props.saveChanges !== 'function') {
+    throw new Error('Study save handler is unavailable')
+  }
+  if (!(await props.saveChanges(fields))) {
+    throw new Error('Study update failed')
+  }
+}
 
 const localTrackTime = ref(test.value?.trackTime ?? true)
 const localUseFrequency = ref(test.value?.useFrequency)
@@ -271,7 +285,7 @@ watch(localTrackTime, async (newVal) => {
   loadingTrackTime.value = true
   try {
     store.state.Tests.Test.trackTime = newVal
-    await store.dispatch('updateStudy', test.value)
+    await saveStudyChanges(['trackTime'])
     await nextTick()
     showSuccess(t('HeuristicsSettings.messages.settingsSaved'))
   } catch (error) {
@@ -286,7 +300,7 @@ const saveAnswerMetrics = async () => {
   try {
     store.state.Tests.Test.useFrequency = localUseFrequency.value
     store.state.Tests.Test.useSeverity = localUseSeverity.value
-    await store.dispatch('updateStudy', test.value)
+    await saveStudyChanges(['useFrequency', 'useSeverity'])
     await nextTick()
     showSuccess(t('HeuristicsSettings.messages.settingsSaved'))
   } catch (error) {
@@ -325,7 +339,12 @@ const changeStudyMode = async (mode) => {
     store.commit('SET_TEST', { ...test.value, ...settings })
     localUseFrequency.value = settings.useFrequency
     localUseSeverity.value = settings.useSeverity
-    await store.dispatch('updateStudy', store.getters.test)
+    await saveStudyChanges([
+      'useWeights',
+      'useFrequency',
+      'useSeverity',
+      'studyMode',
+    ])
     showSuccess(t('HeuristicsSettings.messages.settingsSaved'))
   } catch (error) {
     showError(error)
@@ -527,8 +546,16 @@ const confirmUpload = async () => {
           return
         }
 
-        store.state.Tests.Test.testStructure = heuristicTest
-        await store.dispatch('updateStudy', test.value)
+        const heuristicState = getHeuristicStateForStudy(
+          test.value,
+          store.state.Heuristic,
+        )
+        store.commit('SET_HEURISTIC_STUDY', {
+          studyId: test.value.id,
+          heuristics: heuristicTest,
+          testWeights: heuristicState.testWeights,
+        })
+        await saveStudyChanges(['testStructure'])
 
         showSuccess(`${csvFile.value.name} uploaded`)
         csvFile.value = null

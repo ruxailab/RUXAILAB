@@ -179,8 +179,9 @@ export default {
     async updateStudy({ commit }, payload) {
       commit('setLoading', true)
       try {
-        await studyController.updateStudy(payload)
-        commit('SET_TEST', payload)
+        const result = await studyController.updateStudy(payload)
+        commit('SET_TEST', result?.rebasedStudy ?? payload)
+        return result
       } catch (err) {
         commit('setError', {
           errorCode: 'studyError',
@@ -280,10 +281,7 @@ export default {
             // Study Memberships (`myTests`) and participation records
             // (`myAnswers`) are merged per study: a user who is a member and
             // a participant of the same study sees it once.
-            const tests = buildUserStudyList(
-              userDoc.myTests,
-              userDoc.myAnswers,
-            )
+            const tests = buildUserStudyList(userDoc.myTests, userDoc.myAnswers)
             commit('SET_TESTS', tests)
           }
         }

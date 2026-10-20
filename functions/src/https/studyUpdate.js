@@ -18,9 +18,85 @@ const MANAGER_DENIED_FIELDS = new Set([
   'testStatus',
 ])
 const MAX_AUDIT_TEXT_LENGTH = 160
+const MAX_PATCH_ENTRIES = 500
+const MAX_PATCH_DEPTH = 20
 
 const error = (code, message) =>
   new functions.https.HttpsError(code, message)
+
+export const applyStudyPatch = (current, patch) => {
+  if (!Array.isArray(patch) || patch.length > MAX_PATCH_ENTRIES) {
+    throw error('invalid-argument', 'studyPatch must be a valid patch list')
+  }
+
+  const result = { ...current }
+  const deletedRoots = new Set()
+  const rootPaths = new Set()
+
+  for (const change of patch) {
+    if (
+      !Array.isArray(change?.path) ||
+      change.path.length === 0 ||
+      change.path.length > MAX_PATCH_DEPTH ||
+      change.path.some(
+        (segment) =>
+          typeof segment !== 'string' ||
+          !segment ||
+          ['__proto__', 'prototype', 'constructor'].includes(segment),
+      ) ||
+      (change.delete !== true && !Object.hasOwn(change, 'value'))
+    ) {
+      throw error('invalid-argument', 'studyPatch contains an invalid change')
+    }
+
+    const [root, ...nestedPath] = change.path
+    rootPaths.add(root)
+
+    if (nestedPath.length === 0) {
+      if (change.delete) {
+        delete result[root]
+        deletedRoots.add(root)
+      } else {
+        result[root] = change.value
+        deletedRoots.delete(root)
+      }
+      continue
+    }
+
+    let target = result[root]
+    if (Array.isArray(target)) {
+      throw error('invalid-argument', 'studyPatch cannot traverse array values')
+    }
+    if (!target || typeof target !== 'object' || Array.isArray(target)) {
+      target = {}
+    } else {
+      target = { ...target }
+    }
+    result[root] = target
+
+    for (let index = 0; index < nestedPath.length - 1; index += 1) {
+      const segment = nestedPath[index]
+      const child = target[segment]
+      if (Array.isArray(child)) {
+        throw error(
+          'invalid-argument',
+          'studyPatch cannot traverse array values',
+        )
+      }
+      target[segment] =
+        child && typeof child === 'object' && !Array.isArray(child)
+          ? { ...child }
+          : {}
+      target = target[segment]
+    }
+
+    const leaf = nestedPath[nestedPath.length - 1]
+    if (change.delete) delete target[leaf]
+    else target[leaf] = change.value
+  }
+
+  return { result, rootPaths, deletedRoots }
+}
 
 export const authorizeStudyUpdate = ({
   current,
@@ -99,6 +175,7 @@ export const updateStudyWithAudit = functions.onCall({
 
     const studyId = request?.data?.studyId
     const requestedUpdates = request?.data?.study
+    const studyPatch = request?.data?.studyPatch
     if (!studyId || !requestedUpdates || typeof requestedUpdates !== 'object') {
       throw error('invalid-argument', 'studyId and study are required')
     }
@@ -115,14 +192,38 @@ export const updateStudyWithAudit = functions.onCall({
       if (!studySnap.exists) throw error('not-found', 'Study not found')
 
       const current = studySnap.data()
+      const {
+        result: patchedStudy,
+        rootPaths,
+        deletedRoots,
+      } = studyPatch === undefined
+        ? { result: current, rootPaths: new Set(), deletedRoots: new Set() }
+        : applyStudyPatch(current, studyPatch)
+      const effectiveUpdates = { ...requestedUpdates }
+      for (const root of rootPaths) {
+        if (Object.hasOwn(requestedUpdates, root)) continue
+        if (Object.hasOwn(patchedStudy, root)) {
+          effectiveUpdates[root] = patchedStudy[root]
+        } else {
+          effectiveUpdates[root] = undefined
+        }
+      }
       const actorEmail =
         userSnap.data()?.email || request?.auth?.token?.email || ''
       const { changedFields, updates, settingsChanged } = authorizeStudyUpdate({
         current,
-        requestedUpdates,
+        requestedUpdates: effectiveUpdates,
         uid,
         isSuperAdmin: userSnap.data()?.accessLevel === 0,
       })
+      for (const root of deletedRoots) {
+        if (Object.hasOwn(updates, root)) {
+          updates[root] = admin.firestore.FieldValue.delete()
+        }
+      }
+      if (changedFields.length === 0) {
+        return { status: 'unchanged', changedFields }
+      }
       transaction.update(studyRef, updates)
       writeAuditEvent(transaction, studyRef, {
         action: settingsChanged ? 'study.settingsChanged' : 'study.edited',
@@ -133,7 +234,7 @@ export const updateStudyWithAudit = functions.onCall({
         targetType: 'study',
         details: buildStudyAuditDetails({
           current,
-          requestedUpdates,
+          requestedUpdates: effectiveUpdates,
           changedFields,
         }),
       })
