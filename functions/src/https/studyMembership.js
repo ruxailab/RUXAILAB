@@ -561,7 +561,13 @@ export const manageStudyMembership = functions.onCall({
             }
           }
 
-          studyRoleMap[actorId] = participant.accessLevel
+          const acceptedCooperator = (study.cooperators || []).find(
+            (cooperator) =>
+              cooperator?.userDocId === actorId &&
+              InviteUtils.isAccepted(cooperator),
+          )
+          studyRoleMap[actorId] =
+            acceptedCooperator?.accessLevel ?? participant.accessLevel
 
           transaction.update(studyRef, {
             studyRoleMap,
@@ -775,7 +781,18 @@ export const manageStudyMembership = functions.onCall({
         }
 
         if (target.userDocId) {
-          delete studyRoleMap[target.userDocId]
+          const acceptedCooperator = (study.cooperators || []).find(
+            (cooperator) =>
+              cooperator?.userDocId === target.userDocId &&
+              InviteUtils.isAccepted(cooperator),
+          )
+          if (target.userDocId === study.testAdmin?.userDocId) {
+            studyRoleMap[target.userDocId] = ROLE.ADMIN
+          } else if (acceptedCooperator) {
+            studyRoleMap[target.userDocId] = acceptedCooperator.accessLevel
+          } else {
+            delete studyRoleMap[target.userDocId]
+          }
         }
         if (action === 'remove' && target.userDocId) {
           // Anonymous participants have no profile listing the study, and
@@ -1215,7 +1232,7 @@ export const manageStudyMembership = functions.onCall({
       // Reads come first: a Firestore transaction requires every read to
       // happen before its writes.
       let targetUser = null
-      let isStudyParticipant = false
+      let studyParticipant = null
 
       if (action === 'remove' && target.userDocId) {
         const targetRef = db.collection('users').doc(target.userDocId)
@@ -1226,20 +1243,26 @@ export const manageStudyMembership = functions.onCall({
           studyRef.collection('participants'),
         )
 
-        isStudyParticipant = participantsSnapshot.docs.some((doc) => {
-          const participant = doc.data()
-
-          return (
-            participant?.userDocId === target.userDocId &&
-            InviteUtils.isAccepted(participant)
-          )
-        })
+        studyParticipant = participantsSnapshot.docs
+          .map((doc) => doc.data())
+          .find((participant) => {
+            return (
+              participant?.userDocId === target.userDocId &&
+              InviteUtils.isAccepted(participant)
+            )
+          }) || null
       }
 
       cooperators.splice(targetIndex, 1)
 
       if (target.userDocId) {
-        delete studyRoleMap[target.userDocId]
+        if (target.userDocId === study.testAdmin?.userDocId) {
+          studyRoleMap[target.userDocId] = ROLE.ADMIN
+        } else if (studyParticipant) {
+          studyRoleMap[target.userDocId] = studyParticipant.accessLevel
+        } else {
+          delete studyRoleMap[target.userDocId]
+        }
       }
 
       transaction.update(studyRef, {
@@ -1256,7 +1279,7 @@ export const manageStudyMembership = functions.onCall({
             // A member who also takes part in the study keeps that
             // participation record: only the membership is removed.
             legacy:
-              Boolean(targetUser?.myAnswers?.[studyId]) && !isStudyParticipant,
+              Boolean(targetUser?.myAnswers?.[studyId]) && !studyParticipant,
           }),
         )
       }

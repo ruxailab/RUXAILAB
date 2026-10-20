@@ -52,6 +52,16 @@ const remove = (uid, data = {}) =>
     }),
   )
 
+const removeParticipant = (uid, data = {}) =>
+  manageStudyMembership.run(
+    as(uid, {
+      studyId: 'study-1',
+      action: 'remove',
+      membershipType: 'participant',
+      ...data,
+    }),
+  )
+
 const userDoc = async (uid) => (await db().doc(`users/${uid}`).get()).data()
 
 // Accepts the pending invitation of the staff member without going through
@@ -219,5 +229,48 @@ describe('removing a staff membership', () => {
     const staff = await userDoc('staff')
 
     expect(staff.myAnswers['study-1']).toMatchObject({ progress: 40 })
+    const study = (await db().doc('tests/study-1').get()).data()
+    expect(study.studyRoleMap.staff).toBe(5)
+  })
+
+  it('keeps the staff membership and role when removing their participant record', async () => {
+    await accept('staff', { targetEmail: 'staff@example.test' })
+    await db()
+      .doc('tests/study-1/participants/p1')
+      .set({
+        userDocId: 'staff',
+        accessLevel: 5,
+        accepted: true,
+        status: 'accepted',
+      })
+    await db()
+      .doc('users/staff')
+      .set(
+        { myAnswers: { 'study-1': { accessLevel: 5, progress: 40 } } },
+        { merge: true },
+      )
+    await db().doc('tests/study-1').update({
+      'studyRoleMap.staff': 5,
+    })
+
+    await removeParticipant('owner', { targetUserId: 'staff' })
+
+    const [study, staff] = await Promise.all([
+      db().doc('tests/study-1').get(),
+      userDoc('staff'),
+    ])
+
+    expect(study.data().studyRoleMap.staff).toBe(3)
+    expect(study.data().cooperators).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          userDocId: 'staff',
+          accepted: true,
+          accessLevel: 3,
+        }),
+      ]),
+    )
+    expect(staff.myTests['study-1']).toMatchObject({ accessLevel: 3 })
+    expect(staff.myAnswers['study-1']).toBeUndefined()
   })
 })

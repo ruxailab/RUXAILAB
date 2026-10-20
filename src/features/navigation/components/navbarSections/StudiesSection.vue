@@ -201,7 +201,11 @@ import {
   USER_STUDY_SUBTYPES,
 } from '@/shared/constants/methodDefinitions'
 import { matchesSearch } from '@/shared/utils/searchUtils'
-import { STUDY_ROLE } from '@/shared/utils/studyAccessPolicy'
+import {
+  hasStudyCapability,
+  STUDY_CAPABILITY,
+  STUDY_ROLE,
+} from '@/shared/utils/studyAccessPolicy'
 import { showInfo } from '@/shared/utils/toast'
 
 // ===== Setup =====
@@ -386,8 +390,13 @@ const goTo = (test) => {
   const userId = user.value?.id
   const studyId = test.id
   const userRole = test.studyRoleMap?.[userId]
+  const hasStaffDashboard = hasStudyCapability(
+    test,
+    user.value,
+    STUDY_CAPABILITY.DASHBOARD_VIEW,
+  )
 
-  if (userRole === STUDY_ROLE.USER) {
+  if (userRole === STUDY_ROLE.USER && !hasStaffDashboard) {
     if (
       test.testType == STUDY_TYPES.USER &&
       test.subType == USER_STUDY_SUBTYPES.MODERATED
