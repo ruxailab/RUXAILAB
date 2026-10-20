@@ -7,6 +7,7 @@ import StudyController from '@/controllers/StudyController'
 import UserController from '@/features/auth/controllers/UserController'
 import { getAuth } from 'firebase/auth'
 import { STUDY_TYPES } from '@/shared/constants/methodDefinitions'
+import { buildUserStudyList } from '@/shared/utils/userStudyList'
 
 const studyController = new StudyController()
 
@@ -276,10 +277,13 @@ export default {
           const userDoc = await userController.getUserWithStudies(user.uid)
 
           if (userDoc) {
-            const tests = [
-              ...Object.values(userDoc.myTests || {}),
-              ...Object.values(userDoc.myAnswers || {}),
-            ]
+            // Study Memberships (`myTests`) and participation records
+            // (`myAnswers`) are merged per study: a user who is a member and
+            // a participant of the same study sees it once.
+            const tests = buildUserStudyList(
+              userDoc.myTests,
+              userDoc.myAnswers,
+            )
             commit('SET_TESTS', tests)
           }
         }

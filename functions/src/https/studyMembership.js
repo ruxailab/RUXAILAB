@@ -1,5 +1,11 @@
 import { admin, functions } from '../core/firebase/f.firebase.js'
 import { writeAuditEvent } from '../utils/auditTrail.js'
+import {
+  buildStudyMembershipPatch,
+  buildStudyMembershipRecord,
+  buildStudyMembershipRemovalPatch,
+  buildStudyMembershipRolePatch,
+} from '../shared/study/studyMembershipRecord.js'
 import InviteUtils, { INVITE_STATUS } from '../utils/inviteUtils.js'
 
 const ROLE = Object.freeze({
@@ -945,20 +951,22 @@ export const manageStudyMembership = functions.onCall({
           studyRoleMap,
         })
 
-        transaction.update(actorRef, {
-          [`myAnswers.${studyId}`]: {
-            answersDocId: study.answersDocId,
-            accessLevel: membership.accessLevel,
-            progress: 0,
-            testAuthorEmail: study.testAdmin?.email || '',
-            testDocId: studyId,
-            testType: study.testType,
-            subType: study.subType || null,
-            testTitle: study.testTitle || '',
-            total: 0,
-            updateDate: now,
-          },
-        })
+        // Accepting a staff invitation creates a Study Membership: the study
+        // joins the member's study list (`myTests`), the same place the
+        // studies the member owns are listed. `myAnswers` keeps the
+        // participation records and must not carry the membership.
+        transaction.update(
+          actorRef,
+          buildStudyMembershipPatch(
+            studyId,
+            buildStudyMembershipRecord({
+              study,
+              studyId,
+              accessLevel: membership.accessLevel,
+              now,
+            }),
+          ),
+        )
 
         writeAuditEvent(transaction, studyRef, {
           action: 'cooperator.invitationAccepted',
@@ -1143,10 +1151,20 @@ export const manageStudyMembership = functions.onCall({
           studyRoleMap[membership.userDocId] = role
 
           const targetRef = db.collection('users').doc(membership.userDocId)
+          const targetSnap = await transaction.get(targetRef)
+          const targetUser = targetSnap.exists ? targetSnap.data() : null
 
-          transaction.update(targetRef, {
-            [`myAnswers.${studyId}.accessLevel`]: role,
+          // The role of the membership lives in the study role map. The record
+          // on the user document is kept in sync, both where the membership is
+          // stored today and where older releases stored it.
+          const rolePatch = buildStudyMembershipRolePatch(studyId, role, {
+            membership: Boolean(targetUser?.myTests?.[studyId]),
+            legacy: Boolean(targetUser?.myAnswers?.[studyId]),
           })
+
+          if (Object.keys(rolePatch).length > 0) {
+            transaction.update(targetRef, rolePatch)
+          }
         }
 
         transaction.update(studyRef, {
@@ -1194,6 +1212,30 @@ export const manageStudyMembership = functions.onCall({
         )
       }
 
+      // Reads come first: a Firestore transaction requires every read to
+      // happen before its writes.
+      let targetUser = null
+      let isStudyParticipant = false
+
+      if (action === 'remove' && target.userDocId) {
+        const targetRef = db.collection('users').doc(target.userDocId)
+        const targetSnap = await transaction.get(targetRef)
+        targetUser = targetSnap.exists ? targetSnap.data() : null
+
+        const participantsSnapshot = await transaction.get(
+          studyRef.collection('participants'),
+        )
+
+        isStudyParticipant = participantsSnapshot.docs.some((doc) => {
+          const participant = doc.data()
+
+          return (
+            participant?.userDocId === target.userDocId &&
+            InviteUtils.isAccepted(participant)
+          )
+        })
+      }
+
       cooperators.splice(targetIndex, 1)
 
       if (target.userDocId) {
@@ -1205,12 +1247,18 @@ export const manageStudyMembership = functions.onCall({
         studyRoleMap,
       })
 
-      if (action === 'remove' && target.userDocId) {
+      if (action === 'remove' && target.userDocId && targetUser) {
         const targetRef = db.collection('users').doc(target.userDocId)
 
-        transaction.update(targetRef, {
-          [`myAnswers.${studyId}`]: admin.firestore.FieldValue.delete(),
-        })
+        transaction.update(
+          targetRef,
+          buildStudyMembershipRemovalPatch(studyId, {
+            // A member who also takes part in the study keeps that
+            // participation record: only the membership is removed.
+            legacy:
+              Boolean(targetUser?.myAnswers?.[studyId]) && !isStudyParticipant,
+          }),
+        )
       }
 
       writeAuditEvent(transaction, studyRef, {
