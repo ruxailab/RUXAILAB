@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import {
   getAuth,
   reauthenticateWithCredential,
@@ -30,6 +31,7 @@ const EMAIL_ERRORS = {
 
 export function useDeleteAccount() {
   const store = useStore()
+  const router = useRouter()
 
   const isDeleting = ref(false)
   const deleteStep = ref(1)
@@ -61,11 +63,9 @@ export function useDeleteAccount() {
   const signOut = async () => {
     try {
       await store.dispatch('logout', { silent: true })
-      setTimeout(() => {
-        globalThis.location.href = '/signin'
-      }, 500)
+      router.push('/signin')
     } catch (error) {
-      globalThis.location.href = '/signin'
+      router.push('/signin')
       return error
     }
   }
