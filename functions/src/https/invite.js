@@ -198,7 +198,7 @@ export const validateInvite = functions.onCall({
 
 export const generateInvitationLink = functions.onCall({
   handler: async (data) => {
-    const content = data.data || data
+    const content = data?.data || data || {}
     const actorId = data?.auth?.uid
 
     const {
@@ -225,12 +225,14 @@ export const generateInvitationLink = functions.onCall({
       )
     }
 
-    // An invitation grants the role it carries, so creating one needs the
-    // same permission as inviting someone directly.
-    if (
-      !actorId ||
-      data?.auth?.token?.firebase?.sign_in_provider === 'anonymous'
-    ) {
+    if (!actorId) {
+      throw new functions.https.HttpsError(
+        'unauthenticated',
+        'Authentication is required',
+      )
+    }
+
+    if (data?.auth?.token?.firebase?.sign_in_provider === 'anonymous') {
       throw new functions.https.HttpsError(
         'permission-denied',
         'Invitations are not permitted',
@@ -256,7 +258,7 @@ export const generateInvitationLink = functions.onCall({
       await InviteUtils.generateInviteLink(
         studyId,
         isPublic ? null : toEmail,
-        studyTitle,
+        studyTitle || studySnap.data()?.testTitle || null,
         isPublic,
         accessLevel,
         requiredLogin,
