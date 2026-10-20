@@ -1,6 +1,7 @@
 import {
   applyStudyUpdatePatch,
   createStudyUpdatePatch,
+  getStudyStructureFieldsToSync,
   mergeStudySnapshotPreservingFields,
   mergeStudySnapshotPreservingRootFields,
 } from '@/shared/utils/studyUpdatePatch'
@@ -179,6 +180,34 @@ describe('study update patches', () => {
         { text: 'Old option', value: 1 },
         { text: 'New remote option', value: 2 },
       ],
+    })
+  })
+
+  it('syncs rebased pre-test and post-test fields unless edited during save', () => {
+    const rebasedStudy = {
+      testStructure: {
+        preTest: [{ title: 'Saved pre-test question' }],
+        postTest: [{ title: 'Remote post-test question' }],
+      },
+    }
+    const dirtyFieldVersions = new Map([
+      ['preTest', 2],
+      ['postTest', 4],
+    ])
+    const savedFieldVersions = new Map([
+      ['preTest', 1],
+      ['postTest', 4],
+    ])
+
+    expect(
+      getStudyStructureFieldsToSync(
+        rebasedStudy,
+        ['preTest', 'postTest'],
+        dirtyFieldVersions,
+        savedFieldVersions,
+      ),
+    ).toEqual({
+      postTest: [{ title: 'Remote post-test question' }],
     })
   })
 })

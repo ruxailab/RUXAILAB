@@ -148,11 +148,21 @@ export default class StudyController extends Controller {
           },
         )
 
+      let rebasedStudy
       if (studyPatch) {
-          const latestStudy = studySnapshots.get(id) ?? previousStudy
-          studySnapshots.set(id, applyStudyUpdatePatch(latestStudy, studyPatch))
-        }
-      return response.data
+        const latestStudy = studySnapshots.get(id) ?? previousStudy
+        const updatedStudy = applyStudyUpdatePatch(latestStudy, studyPatch)
+        studySnapshots.set(id, updatedStudy)
+        rebasedStudy = instantiateStudyByType(updatedStudy.testType, {
+          ...updatedStudy,
+          id,
+        })
+      }
+
+      return {
+        ...response.data,
+        ...(rebasedStudy ? { rebasedStudy } : {}),
+      }
     } catch (e) {
       throw e
     }

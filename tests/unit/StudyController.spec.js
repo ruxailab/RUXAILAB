@@ -398,7 +398,15 @@ describe('StudyController', () => {
         data: () => ({ ...original, remoteField: 'Remote value' }),
       })
       resolveUpdate({ data: { status: 'ok' } })
-      await pendingUpdate
+      const updateResult = await pendingUpdate
+
+      expect(updateResult.rebasedStudy).toEqual(
+        expect.objectContaining({
+          id,
+          testTitle: 'Local title',
+          remoteField: 'Remote value',
+        }),
+      )
 
       await studyController.updateStudy({
         id,

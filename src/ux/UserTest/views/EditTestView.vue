@@ -113,7 +113,10 @@ import {
 import { DEFAULT_VIDEO_CALL_CONFIG } from '@/shared/constants/videoCallProviders'
 import { useI18n } from 'vue-i18n'
 import { showSuccess, showError } from '@/shared/utils/toast'
-import { mergeStudySnapshotPreservingFields } from '@/shared/utils/studyUpdatePatch'
+import {
+  getStudyStructureFieldsToSync,
+  mergeStudySnapshotPreservingFields,
+} from '@/shared/utils/studyUpdatePatch'
 
 const props = defineProps({
   isTemplate: {
@@ -278,6 +281,25 @@ const save = async () => {
     const savedFieldVersions = new Map(dirtyStudyFields)
     const result = await store.dispatch('updateStudy', study)
     if (!result) throw new Error('Study update failed')
+
+    const updatedQuestionFields = getStudyStructureFieldsToSync(
+      result.rebasedStudy,
+      ['preTest', 'postTest'],
+      dirtyStudyFields,
+      savedFieldVersions,
+    )
+    if (Object.hasOwn(updatedQuestionFields, 'preTest')) {
+      await store.dispatch(
+        'UserStudy/setPreTest',
+        updatedQuestionFields.preTest,
+      )
+    }
+    if (Object.hasOwn(updatedQuestionFields, 'postTest')) {
+      await store.dispatch(
+        'UserStudy/setPostTest',
+        updatedQuestionFields.postTest,
+      )
+    }
 
     for (const [field, version] of savedFieldVersions) {
       if (dirtyStudyFields.get(field) === version) {

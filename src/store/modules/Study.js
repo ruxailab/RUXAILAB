@@ -180,7 +180,7 @@ export default {
       commit('setLoading', true)
       try {
         const result = await studyController.updateStudy(payload)
-        commit('SET_TEST', payload)
+        commit('SET_TEST', result?.rebasedStudy ?? payload)
         return result
       } catch (err) {
         commit('setError', {

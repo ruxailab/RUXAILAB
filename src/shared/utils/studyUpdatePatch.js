@@ -150,3 +150,24 @@ export const mergeStudySnapshotPreservingRootFields = (
 
   return merged
 }
+
+export const getStudyStructureFieldsToSync = (
+  study,
+  fields,
+  dirtyFieldVersions,
+  savedFieldVersions,
+) => {
+  if (!study?.testStructure) return {}
+
+  return Object.fromEntries(
+    fields
+      .filter(
+        (field) =>
+          dirtyFieldVersions.get(field) === savedFieldVersions.get(field),
+      )
+      .map((field) => [
+        field,
+        cloneStudyData(study.testStructure[field] ?? []),
+      ]),
+  )
+}

@@ -60,17 +60,36 @@ describe('Store Modules Error Handling Structure', () => {
       expect(actionStr).toContain('setLoading')
     })
 
-    it('returns the successful update result for other study types', async () => {
-      const result = { status: 'updated', changedFields: ['testStructure'] }
+    it('commits the rebased study returned by the controller', async () => {
+      const payload = { id: 'study-1', testType: 'CARD_SORTING' }
+      const rebasedStudy = {
+        ...payload,
+        testStructure: ['remote change', 'local change'],
+      }
+      const result = {
+        status: 'updated',
+        changedFields: ['testStructure'],
+        rebasedStudy,
+      }
       TestController.instance.updateStudy.mockResolvedValueOnce(result)
       const commit = jest.fn()
-      const payload = { id: 'study-1', testType: 'CARD_SORTING' }
 
       await expect(
         TestModule.actions.updateStudy({ commit }, payload),
       ).resolves.toBe(result)
 
       expect(TestController.instance.updateStudy).toHaveBeenCalledWith(payload)
+      expect(commit).toHaveBeenCalledWith('SET_TEST', rebasedStudy)
+    })
+
+    it('commits the payload when the controller has no patch baseline', async () => {
+      const result = { status: 'updated', changedFields: ['testTitle'] }
+      TestController.instance.updateStudy.mockResolvedValueOnce(result)
+      const commit = jest.fn()
+      const payload = { id: 'study-2', testTitle: 'Updated title' }
+
+      await TestModule.actions.updateStudy({ commit }, payload)
+
       expect(commit).toHaveBeenCalledWith('SET_TEST', payload)
     })
 
