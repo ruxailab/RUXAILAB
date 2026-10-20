@@ -182,7 +182,7 @@ export default {
         // on, so the server can keep the changes another admin made in the
         // meantime instead of overwriting them.
         const study = payload?.study ?? payload
-        const base = payload?.study ? payload.base ?? null : null
+        const base = payload?.study ? (payload.base ?? null) : null
         await studyController.updateStudy(study, base)
         commit('SET_TEST', study)
       } catch (err) {
