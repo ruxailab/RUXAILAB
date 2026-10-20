@@ -661,6 +661,7 @@
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+import { getHeuristicStateForStudy } from '../store/Heuristic'
 import AddDescBtn from '@/ux/Heuristic/components/AddDescBtn.vue'
 import { showError, showWarning } from '@/shared/utils/toast'
 import { matchesSearch } from '@/shared/utils/searchUtils'
@@ -724,9 +725,10 @@ const questionRequired = ref([
 const test = computed(() => store.getters.test)
 
 const heuristics = computed(() => {
-  const source = store.getters.heuristics?.length
-    ? store.getters.heuristics
-    : store.state.Tests?.Test?.testStructure || []
+  const source = getHeuristicStateForStudy(
+    test.value,
+    store.state.Heuristic,
+  ).heuristics
 
   return Array.isArray(source)
     ? source.map((h) => ({
@@ -742,6 +744,26 @@ const heuristics = computed(() => {
       }))
     : []
 })
+
+watch(
+  test,
+  (currentTest) => {
+    if (!currentTest) return
+
+    const heuristicState = getHeuristicStateForStudy(
+      currentTest,
+      store.state.Heuristic,
+    )
+    if (heuristicState.isCurrentStudy) return
+
+    store.commit('SET_HEURISTIC_STUDY', {
+      studyId: currentTest.id ?? null,
+      heuristics: heuristicState.heuristics,
+      testWeights: heuristicState.testWeights,
+    })
+  },
+  { immediate: true },
+)
 
 const filteredHeuristics = computed(() => {
   const searchQuery = search.value

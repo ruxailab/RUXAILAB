@@ -9,10 +9,28 @@ import StudyAnswer from '@/shared/models/StudyAnswer'
 import { getAuth } from 'firebase/auth'
 import { FirebaseFunctionsController } from '@/app/plugins/firebase/FirebaseFunctionsService'
 import Participant from '../shared/models/Participant'
+import {
+  applyStudyUpdatePatch,
+  cloneStudyData,
+  createStudyUpdatePatch,
+} from '@/shared/utils/studyUpdatePatch'
 
 const COLLECTION = 'tests'
 const answerController = new AnswerController()
 const userController = new UserController()
+const studySnapshots = new Map()
+
+const studyData = (study) =>
+  typeof study?.toFirestore === 'function' ? study.toFirestore() : study
+
+const rememberStudy = (study) => {
+  if (study?.id) {
+    const snapshot = cloneStudyData(studyData(study))
+    delete snapshot.id
+    studySnapshots.set(study.id, snapshot)
+  }
+  return study
+}
 
 export default class StudyController extends Controller {
   constructor() {
@@ -96,6 +114,7 @@ export default class StudyController extends Controller {
         payload.id,
       )
       await super.delete(COLLECTION, payload.id)
+      studySnapshots.delete(payload.id)
     } catch (error) {
       throw error
     }
@@ -104,16 +123,34 @@ export default class StudyController extends Controller {
   async updateStudy(payload) {
     try {
       const { id, ...partialStudy } = payload
-      const study =
-        typeof payload.toFirestore === 'function'
-          ? payload.toFirestore()
-          : partialStudy
+      const isFullStudy = typeof payload.toFirestore === 'function'
+      const study = isFullStudy ? payload.toFirestore() : partialStudy
+      const previousStudy = studySnapshots.get(id)
+      const studyPatch = previousStudy
+        ? isFullStudy
+          ? createStudyUpdatePatch(previousStudy, study)
+          : Object.entries(study)
+              .filter(([field]) => field !== 'id')
+              .map(([field, value]) =>
+                value === undefined
+                  ? { path: [field], delete: true }
+                  : { path: [field], value: cloneStudyData(value) },
+              )
+        : null
 
       const response =
         await FirebaseFunctionsController.callHttpsCallableFunction(
           'updateStudyWithAudit',
-          { studyId: id, study },
+          {
+            studyId: id,
+            study: studyPatch ? {} : study,
+            ...(studyPatch ? { studyPatch } : {}),
+          },
         )
+
+      if (studyPatch) {
+        studySnapshots.set(id, applyStudyUpdatePatch(previousStudy, studyPatch))
+      }
       return response.data
     } catch (e) {
       throw e
@@ -141,7 +178,7 @@ export default class StudyController extends Controller {
     if (!res.exists()) return null
 
     const rawData = Object.assign({ id: res.id }, res.data())
-    return instantiateStudyByType(rawData.testType, rawData)
+    return rememberStudy(instantiateStudyByType(rawData.testType, rawData))
   }
 
   async getStudyForSession({ studyId, sessionId }) {
@@ -163,7 +200,7 @@ export default class StudyController extends Controller {
     const res = await super.query(COLLECTION, q)
     return res.docs.map((t) => {
       const rawData = Object.assign({ id: t.id }, t.data())
-      return instantiateStudyByType(rawData.testType, rawData)
+      return rememberStudy(instantiateStudyByType(rawData.testType, rawData))
     })
   }
 
@@ -171,7 +208,7 @@ export default class StudyController extends Controller {
     try {
       const response = await super.readAll('tests')
       const res = response.map((data) => {
-        return instantiateStudyByType(data.testType, data)
+        return rememberStudy(instantiateStudyByType(data.testType, data))
       })
       return res
     } catch (err) {
@@ -213,6 +250,7 @@ export default class StudyController extends Controller {
       if (doc.exists()) {
         const rawData = Object.assign({ id: doc.id }, doc.data())
         const study = instantiateStudyByType(rawData.testType, rawData)
+        rememberStudy(study)
         callback(study)
       }
     })

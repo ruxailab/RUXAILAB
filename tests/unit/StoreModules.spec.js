@@ -1,9 +1,12 @@
 // Mock controllers directly
 jest.mock('@/controllers/StudyController', () => {
-  return jest.fn().mockImplementation(() => ({
+  const instance = {
     updateStudy: jest.fn(),
     acceptStudyCollaboration: jest.fn(),
-  }))
+  }
+  const MockStudyController = jest.fn().mockImplementation(() => instance)
+  MockStudyController.instance = instance
+  return MockStudyController
 })
 
 jest.mock('@/features/auth/controllers/AuthController', () => {
@@ -55,6 +58,20 @@ describe('Store Modules Error Handling Structure', () => {
       expect(actionStr).toContain('catch (err)')
       expect(actionStr).toContain('setError')
       expect(actionStr).toContain('setLoading')
+    })
+
+    it('returns the successful update result for other study types', async () => {
+      const result = { status: 'updated', changedFields: ['testStructure'] }
+      TestController.instance.updateStudy.mockResolvedValueOnce(result)
+      const commit = jest.fn()
+      const payload = { id: 'study-1', testType: 'CARD_SORTING' }
+
+      await expect(
+        TestModule.actions.updateStudy({ commit }, payload),
+      ).resolves.toBe(result)
+
+      expect(TestController.instance.updateStudy).toHaveBeenCalledWith(payload)
+      expect(commit).toHaveBeenCalledWith('SET_TEST', payload)
     })
 
     it('has error handling in acceptStudyCollaboration action', () => {
