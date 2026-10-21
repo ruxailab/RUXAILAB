@@ -29,6 +29,7 @@ export default {
 
       // Check if the user is defined
       if (!user) return 1
+      if (user.isFallback) return null
 
       // If the user is a superadmin
       if (user.accessLevel === 0) return 0
@@ -223,10 +224,10 @@ export default {
       }
     },
 
-    async autoSignIn({ commit, state, dispatch }) {
+    async autoSignIn({ commit, state, dispatch }, { signal } = {}) {
       try {
         const user = await authController.autoSignIn()
-        if (!user) return
+        if (signal?.aborted || !user) return
 
         // Anonymous participants (links without login) have no profile in
         // Firestore. Return the Firebase user so the router guard can
@@ -248,20 +249,29 @@ export default {
         try {
           dbUser = await userController.getById(user.uid)
         } catch (error) {
+          if (signal?.aborted) return null
           if (error?.code === 'permission-denied') {
-            return user
+            commit('SET_USER', null)
+            commit('SET_TOAST', {
+              message: i18n.global.t('errors.globalError'),
+              type: 'error',
+            })
+            await authController.signOut()
+            return null
           }
 
           // One retry: transient network issues (Wi-Fi reconnect after laptop
           // sleep, mobile connectivity blip) resolve within a few seconds.
           try {
             await new Promise((r) => setTimeout(r, 1500))
+            if (signal?.aborted) return null
             dbUser = await userController.getById(user.uid)
           } catch {
+            if (signal?.aborted) return null
             // Still failing — do NOT clear the store.
             // Preserve the existing profile state if already loaded for this user.
-            // Otherwise, commit a minimal fallback user so navigation guards and UI
-            // recognize the user is authenticated rather than redirecting to /signin.
+            // Otherwise, keep the session recognizable but unverified and
+            // unauthorized until the Firestore profile can be loaded.
             if (state?.user?.id !== user.uid) {
               const fallbackUser = new User({
                 id: user.uid,
@@ -276,10 +286,12 @@ export default {
           }
         }
 
+        if (signal?.aborted) return null
         commit('SET_USER', dbUser)
         dispatch('subscribeToNotifications', user.uid)
         return user
       } catch (e) {
+        if (signal?.aborted) return null
         // Only toast if autoSignIn itself fails (e.g., persistent listener
         // unexpected failure). Don't return e: callers must not treat an
         // Error object as a truthy user.

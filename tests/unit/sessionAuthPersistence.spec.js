@@ -69,25 +69,45 @@ describe('Session and Study Authentication Persistence (#2446)', () => {
       expect(result).toEqual(mockFirebaseUser)
     })
 
-    it('does not retry when profile fetch returns permission-denied', async () => {
-      const mockFirebaseUser = {
-        uid: 'user-123',
-        emailVerified: true,
-        isAnonymous: false,
-      }
-      AuthController.prototype.autoSignIn.mockResolvedValue(mockFirebaseUser)
+    it.each([
+      ['no loaded profile', null],
+      [
+        'an existing loaded profile',
+        { id: 'user-123', accessLevel: 0, username: 'Previously loaded' },
+      ],
+    ])(
+      'signs out and clears authorization after permission-denied with %s',
+      async (_, existingProfile) => {
+        const state = { user: existingProfile }
+        const testCommit = jest.fn((type, payload) => {
+          if (type === 'SET_USER') state.user = payload
+        })
+        const mockFirebaseUser = {
+          uid: 'user-123',
+          emailVerified: true,
+          isAnonymous: false,
+        }
+        AuthController.prototype.autoSignIn.mockResolvedValue(mockFirebaseUser)
+        AuthController.prototype.signOut.mockResolvedValue(undefined)
 
-      const permError = new Error('Permission denied')
-      permError.code = 'permission-denied'
-      UserController.prototype.getById.mockRejectedValue(permError)
+        const permError = new Error('Permission denied')
+        permError.code = 'permission-denied'
+        UserController.prototype.getById.mockRejectedValue(permError)
 
-      const result = await AuthModule.actions.autoSignIn({ commit, dispatch })
+        const result = await AuthModule.actions.autoSignIn({
+          commit: testCommit,
+          dispatch,
+          state,
+        })
 
-      // Permanent error must NOT be retried
-      expect(UserController.prototype.getById).toHaveBeenCalledTimes(1)
-      expect(commit).not.toHaveBeenCalledWith('SET_USER', null)
-      expect(result).toEqual(mockFirebaseUser)
-    })
+        // Permanent error must NOT be retried
+        expect(UserController.prototype.getById).toHaveBeenCalledTimes(1)
+        expect(testCommit).toHaveBeenCalledWith('SET_USER', null)
+        expect(state.user).toBeNull()
+        expect(AuthController.prototype.signOut).toHaveBeenCalledTimes(1)
+        expect(result).toBeNull()
+      },
+    )
 
     it('leaves session valid and returns user if profile cannot be loaded after retry', async () => {
       const mockFirebaseUser = {
@@ -106,7 +126,7 @@ describe('Session and Study Authentication Persistence (#2446)', () => {
       expect(UserController.prototype.getById).toHaveBeenCalledTimes(2)
       // Must NOT commit null user: the Firebase session is still valid
       expect(commit).not.toHaveBeenCalledWith('SET_USER', null)
-      // Must commit a fallback user so router guards recognize authenticated session
+      // Keep the Firebase session visible without assigning unverified privileges.
       expect(commit).toHaveBeenCalledWith(
         'SET_USER',
         expect.objectContaining({
@@ -116,6 +136,38 @@ describe('Session and Study Authentication Persistence (#2446)', () => {
         }),
       )
       expect(result).toEqual(mockFirebaseUser)
+    })
+
+    it('marks transient fallback profiles as unverified and unprivileged', async () => {
+      const mockFirebaseUser = {
+        uid: 'user-123',
+        emailVerified: true,
+        isAnonymous: false,
+      }
+      AuthController.prototype.autoSignIn.mockResolvedValue(mockFirebaseUser)
+      UserController.prototype.getById.mockRejectedValue(
+        new Error('Firestore down'),
+      )
+
+      const state = { user: null }
+      await AuthModule.actions.autoSignIn({
+        commit: (type, payload) => {
+          if (type === 'SET_USER') state.user = payload
+        },
+        dispatch,
+        state,
+      })
+
+      expect(state.user).toMatchObject({
+        id: 'user-123',
+        accessLevel: 1,
+        isFallback: true,
+      })
+      expect(
+        AuthModule.getters.getUserAccessLevel(state)({
+          testAdmin: { userDocId: 'user-123' },
+        }),
+      ).toBeNull()
     })
 
     it('preserves existing profile when profile reload fails after retry', async () => {
@@ -224,7 +276,10 @@ describe('Session and Study Authentication Persistence (#2446)', () => {
 
       await beforeEachGuard(to, from, mockNext, mockStore, 500)
 
-      expect(mockStore.dispatch).toHaveBeenCalledWith('autoSignIn')
+      expect(mockStore.dispatch).toHaveBeenCalledWith(
+        'autoSignIn',
+        expect.objectContaining({ signal: expect.any(AbortSignal) }),
+      )
       expect(mockNext).toHaveBeenCalledWith()
     })
 
@@ -241,8 +296,101 @@ describe('Session and Study Authentication Persistence (#2446)', () => {
 
       await beforeEachGuard(to, from, mockNext, mockStore, 50)
 
-      expect(mockStore.dispatch).toHaveBeenCalledWith('autoSignIn')
+      expect(mockStore.dispatch).toHaveBeenCalledWith(
+        'autoSignIn',
+        expect.objectContaining({ signal: expect.any(AbortSignal) }),
+      )
       expect(mockNext).toHaveBeenCalledWith('/signin')
+    })
+
+    it('does not apply late authentication state after timing out', async () => {
+      let resolveProfile
+      AuthController.prototype.autoSignIn.mockResolvedValue({
+        uid: 'late-user',
+        emailVerified: true,
+        isAnonymous: false,
+      })
+      UserController.prototype.getById.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            resolveProfile = resolve
+          }),
+      )
+
+      const mockStore = {
+        state: { Auth: { user: null } },
+        dispatch: jest.fn(),
+      }
+      mockStore.dispatch.mockImplementation((action, payload) =>
+        AuthModule.actions.autoSignIn(
+          {
+            state: mockStore.state.Auth,
+            commit: (type, user) => {
+              if (type === 'SET_USER') mockStore.state.Auth.user = user
+            },
+            dispatch: mockStore.dispatch,
+          },
+          payload,
+        ),
+      )
+
+      await beforeEachGuard(
+        { path: '/admin', meta: { authorize: [1] } },
+        { path: '/' },
+        mockNext,
+        mockStore,
+        25,
+      )
+
+      expect(mockNext).toHaveBeenCalledWith('/signin')
+      expect(UserController.prototype.getById).toHaveBeenCalledTimes(1)
+      resolveProfile({ id: 'late-user', accessLevel: 1 })
+      await new Promise((resolve) => setTimeout(resolve, 0))
+
+      expect(mockStore.state.Auth.user).toBeNull()
+    })
+
+    it('denies protected and study routes to fallback profiles', async () => {
+      const fallbackUser = {
+        id: 'fallback-user',
+        accessLevel: 0,
+        isFallback: true,
+      }
+      const mockStore = {
+        state: { Auth: { user: fallbackUser } },
+        getters: {
+          test: {
+            id: 'study-1',
+            isPublic: true,
+            testType: 'USER',
+            testAdmin: { userDocId: fallbackUser.id },
+          },
+        },
+        dispatch: jest.fn(),
+        commit: jest.fn(),
+      }
+
+      await beforeEachGuard(
+        { path: '/admin', meta: { authorize: [0, 1] } },
+        { path: '/' },
+        mockNext,
+        mockStore,
+      )
+      expect(mockNext).toHaveBeenLastCalledWith('/signin')
+
+      mockNext.mockClear()
+      await beforeEachGuard(
+        {
+          path: '/study/1',
+          params: { id: 'study-1' },
+          meta: { studyCapability: 'study.answer' },
+        },
+        { path: '/' },
+        mockNext,
+        mockStore,
+      )
+      expect(mockNext).toHaveBeenCalledWith('/signin')
+      expect(mockStore.dispatch).not.toHaveBeenCalled()
     })
 
     it('redirects unverified user to /verify-email', async () => {

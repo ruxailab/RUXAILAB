@@ -50,16 +50,25 @@ function captureInviteToken(to) {
 }
 
 async function restoreUserSession(currentStore, timeoutMs) {
+  const controller = new AbortController()
+  let timeoutId
+
   try {
-    const authTimeout = new Promise((resolve) =>
-      setTimeout(() => resolve(null), timeoutMs),
-    )
+    const authTimeout = new Promise((resolve) => {
+      timeoutId = setTimeout(() => {
+        controller.abort()
+        resolve(null)
+      }, timeoutMs)
+    })
+
     return await Promise.race([
-      currentStore.dispatch('autoSignIn'),
+      currentStore.dispatch('autoSignIn', { signal: controller.signal }),
       authTimeout,
     ])
   } catch {
     return null
+  } finally {
+    clearTimeout(timeoutId)
   }
 }
 
@@ -140,7 +149,17 @@ export async function beforeEachGuard(
     return next(redirect(currentStore))
   }
 
-  if (authorize.length && (!user || !authorize.includes(user.accessLevel))) {
+  if (
+    user?.isFallback &&
+    (to.meta?.studyCapability || to.meta?.studyOwnerOnly)
+  ) {
+    return next('/signin')
+  }
+
+  if (
+    authorize.length &&
+    (!user || user.isFallback || !authorize.includes(user.accessLevel))
+  ) {
     return next(redirect(currentStore))
   }
 
@@ -159,7 +178,7 @@ router.beforeEach((to, from, next) => beforeEachGuard(to, from, next))
 export function redirect(currentStore = store) {
   const user = currentStore.state?.Auth?.user
 
-  if (!user) return '/signin'
+  if (!user || user.isFallback) return '/signin'
 
   const level = user.accessLevel
 
