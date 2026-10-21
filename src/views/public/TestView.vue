@@ -61,6 +61,7 @@ import {
 } from '@/shared/constants/methodDefinitions'
 
 import { getTestViewAccessRedirect } from '@/shared/utils/studyNavigation'
+import { usesTestViewToken } from '@/shared/utils/studyAccessPolicy'
 import { isSignInPath } from '@/shared/utils/authRedirect'
 import { showError } from '@/shared/utils/toast'
 import AuthController from '@/features/auth/controllers/AuthController'
@@ -296,6 +297,19 @@ onBeforeMount(async () => {
     if (!loadedStudy) {
       await denyAccess()
       return
+    }
+
+    /*
+     * Unmoderated studies ignore the second URL segment. Drop it from old
+     * links so the participant lands on the clean study URL.
+     */
+    if (props.token && !usesTestViewToken(loadedStudy)) {
+      await router.replace({
+        name: 'TestView',
+        params: { id: props.id },
+        query: route.query,
+        hash: route.hash,
+      })
     }
 
     /*

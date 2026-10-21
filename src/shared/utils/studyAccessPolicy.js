@@ -301,6 +301,23 @@ export function canManageCooperator(
   return false
 }
 
+/*
+ * Unmoderated user tests never read the second /testview segment, so they get
+ * a clean URL. Other methods use it as a session or participant token.
+ */
+export function usesTestViewToken(study) {
+  return !(
+    normalizeStudyType(study?.testType) === STUDY_TYPES.USER &&
+    study?.subType === USER_STUDY_SUBTYPES.UNMODERATED
+  )
+}
+
+export function getTestViewPath(study, studyId, userId) {
+  return userId && usesTestViewToken(study)
+    ? `/testview/${studyId}/${userId}`
+    : `/testview/${studyId}`
+}
+
 export function getStudyFallbackPath(study, user, studyRouteBase = '') {
   if (
     studyRouteBase &&
@@ -310,8 +327,7 @@ export function getStudyFallbackPath(study, user, studyRouteBase = '') {
   }
 
   if (hasStudyCapability(study, user, STUDY_CAPABILITY.STUDY_ANSWER)) {
-    const userId = getUserId(user)
-    return `/testview/${study.id}${userId ? `/${userId}` : ''}`
+    return getTestViewPath(study, study.id, getUserId(user))
   }
 
   return '/admin'
