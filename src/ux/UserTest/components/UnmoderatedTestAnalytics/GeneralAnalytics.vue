@@ -831,10 +831,12 @@ const getParticipantStudyCounts = () => {
     { finished: 0, ongoing: 0, notStarted: 0 },
   )
 
-  const participantTotal = Math.max(
-    studyParticipants.value.length,
-    filteredSessions.value.length,
-  )
+  const participantTotal = hasActiveFilters.value
+    ? filteredSessions.value.length
+    : Math.max(
+        studyParticipants.value.length,
+        filteredSessions.value.length,
+      )
   counts.notStarted += Math.max(
     0,
     participantTotal -
