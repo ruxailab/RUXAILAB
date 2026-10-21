@@ -78,7 +78,7 @@ describe('TestView', () => {
 
   beforeEach(() => {
     store = {
-      dispatch: jest.fn().mockResolvedValue(null),
+      dispatch: jest.fn().mockResolvedValue(undefined),
       getters: {
         test: null,
         user: {
@@ -135,7 +135,7 @@ describe('TestView', () => {
       store.getters.user = null
       route.query = { inviteToken: 'open-link' }
       store.dispatch.mockImplementation(async (action) =>
-        action === 'loadPendingInvite' ? invite : null,
+        action === 'loadPendingInvite' ? invite : undefined,
       )
     }
     const actions = () => store.dispatch.mock.calls.map(([action]) => action)
