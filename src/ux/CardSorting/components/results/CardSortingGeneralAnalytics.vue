@@ -43,7 +43,6 @@
       v-if="answers.length"
       :task-answers="answers"
       :show-export="false"
-      @refresh="onRefreshTimeline"
     />
   </div>
 </template>
@@ -61,10 +60,6 @@ const store = useStore()
 
 const test = computed(() => store.getters.test)
 const answers = computed(() => store.getters.cardSortingAnswersList)
-
-const onRefreshTimeline = async () => {
-  await store.dispatch('getCurrentTestAnswerDoc')
-}
 
 const submittedCount = computed(
   () => answers.value.filter((answer) => answer?.submitted).length,
