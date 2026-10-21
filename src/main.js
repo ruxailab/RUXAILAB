@@ -10,6 +10,7 @@ import { quillEditor } from 'vue3-quill'
 import safeHtml from '@/shared/directives/safeHtml'
 import { sweepExpiredStudyLogging } from '@/shared/services/studyLoggingClient'
 import { installFieldLabelAriaCleanup } from '@/shared/utils/fieldLabelAria'
+import { initAuthListener } from '@/features/auth/services/authStateManager'
 import 'vue-toastification/dist/index.css'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
@@ -23,6 +24,42 @@ window.addEventListener('error', (event) => {
 })
 
 const app = createApp(App)
+
+// Install the single persistent Firebase Auth state listener before the router
+// so navigation guards await initial auth resolution. The callback handles
+// subsequent changes (token refresh, sign-out in another tab, account switch)
+// by syncing the Vuex store reactively.
+let authSequence = 0
+
+initAuthListener(async (firebaseUser) => {
+  const currentSeq = ++authSequence
+
+  if (!firebaseUser) {
+    // Firebase says the user is gone — clear the Vuex profile so the UI
+    // reflects reality instead of showing a stale session.
+    // If a newer auth event arrived while logout was scheduled, skip to avoid
+    // clobbering the newer state.
+    if (store.state.Auth.user && currentSeq === authSequence) {
+      await store.dispatch('logout', { silent: true })
+    }
+  } else if (!firebaseUser.isAnonymous) {
+    const currentUser = store.state.Auth.user
+    const isDifferentUser =
+      !currentUser ||
+      (currentUser.id !== firebaseUser.uid &&
+        currentUser.uid !== firebaseUser.uid)
+
+    if (isDifferentUser && currentSeq === authSequence) {
+      // A valid Firebase user exists but the Vuex store is empty or holds a different user.
+      // This handles cold loads, cross-tab sign-ins, and account switches.
+      try {
+        await store.dispatch('autoSignIn')
+      } catch {
+        // Ignored: transient load errors will be retried on next navigation
+      }
+    }
+  }
+})
 
 void sweepExpiredStudyLogging()
 
@@ -49,6 +86,7 @@ app.config.globalProperties.$toast = useToast()
 
 // Global error handler — catches unhandled errors from any component
 app.config.errorHandler = (err, instance, info) => {
+  // eslint-disable-next-line no-console
   console.error('[Global Error Handler]', {
     message: err.message,
     stack: err.stack,
