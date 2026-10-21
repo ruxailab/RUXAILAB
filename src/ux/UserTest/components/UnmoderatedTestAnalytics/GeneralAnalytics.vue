@@ -158,13 +158,13 @@
                 </h3>
               </div>
               <div class="text-h2 font-weight-bold text-primary mb-2">
-                {{ parseFloat(getConclusionAverage()).toFixed(2) }}%
+                {{ getStudyCompletionRate().toFixed(2) }}%
               </div>
             </div>
           </div>
 
           <v-progress-linear
-            :model-value="getConclusionAverage()"
+            :model-value="getStudyCompletionRate()"
             color="primary"
             height="12"
             rounded
@@ -688,6 +688,13 @@ const { t } = useI18n()
 const test = computed(() => store.getters.test)
 const user = computed(() => store.getters.user)
 const testStructure = computed(() => store.state.Tests.Test.testStructure)
+const studyParticipants = computed(() =>
+  Array.isArray(test.value?.cooperators)
+    ? test.value.cooperators.filter(
+        (cooperator) => cooperator?.accepted === true,
+      )
+    : [],
+)
 const answers = computed(() => {
   if (!store.getters.visibleUserAnswers) return {}
   return store.getters.visibleUserAnswers
@@ -766,15 +773,22 @@ const downloadPdfResume = async () => {
 
 const totalDurationMs = computed(() =>
   filteredSessions.value.reduce(
-    (total, session) =>
-      total +
-      Object.values(session.tasks || {}).reduce((sessionTotal, task) => {
-        const taskTime = Number(task?.taskTime)
-        return (
-          sessionTotal +
-          (Number.isFinite(taskTime) && taskTime > 0 ? taskTime : 0)
-        )
-      }, 0),
+    (total, session) => {
+      const sessionDuration = Number(session.totalTestTimeMs)
+      if (Number.isFinite(sessionDuration) && sessionDuration > 0)
+        return total + sessionDuration
+
+      return (
+        total +
+        Object.values(session.tasks || {}).reduce((sessionTotal, task) => {
+          const taskTime = Number(task?.taskTime)
+          return (
+            sessionTotal +
+            (Number.isFinite(taskTime) && taskTime > 0 ? taskTime : 0)
+          )
+        }, 0)
+      )
+    },
     0,
   ),
 )
@@ -789,20 +803,8 @@ const formatTotalDuration = (durationMs) => {
   return `${minutes}min`
 }
 
-const getConclusionAverage = () => {
-  if (!filteredSessions.value.length) return 0
-
-  let eachConclusion = 0
-  let totalAnswers = 0
-  filteredSessions.value.forEach((answer) => {
-    eachConclusion += answer.progress
-    totalAnswers++
-  })
-  return eachConclusion / totalAnswers
-}
-
 const getParticipantStudyCounts = () => {
-  return filteredSessions.value.reduce(
+  const counts = filteredSessions.value.reduce(
     (counts, answer) => {
       if (answer.submitted === true) {
         counts.finished++
@@ -828,12 +830,32 @@ const getParticipantStudyCounts = () => {
     },
     { finished: 0, ongoing: 0, notStarted: 0 },
   )
+
+  const participantTotal = Math.max(
+    studyParticipants.value.length,
+    filteredSessions.value.length,
+  )
+  counts.notStarted += Math.max(
+    0,
+    participantTotal -
+      counts.finished -
+      counts.ongoing -
+      counts.notStarted,
+  )
+  return counts
 }
 
 const participantStudyCounts = computed(getParticipantStudyCounts)
 
+const getStudyCompletionRate = () => {
+  const { finished, ongoing, notStarted } = participantStudyCounts.value
+  const participantTotal = finished + ongoing + notStarted
+  return participantTotal ? (finished / participantTotal) * 100 : 0
+}
+
 const getParticipantCount = () => {
-  return filteredSessions.value.length
+  const { finished, ongoing, notStarted } = participantStudyCounts.value
+  return finished + ongoing + notStarted
 }
 
 const getParticipantsTodayCount = () => {
