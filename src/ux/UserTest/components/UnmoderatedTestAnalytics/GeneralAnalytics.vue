@@ -140,31 +140,12 @@
         :description="$t('analytics.satisfactionDescription')"
         :progress="getAverageSatisfaction()"
       />
-      <UxMetricCard
-        :value="getParticipantCount()"
-        :label="$t('analytics.participantCount')"
-        color="success"
-        icon="mdi-check-circle"
-        :description="
-          $t('analytics.participantsPerDay', {
-            count: getParticipantsTodayCount(),
-          })
-        "
-        :show-progress="false"
-      />
-      <UxMetricCard
-        :value="formatTotalDuration(totalDurationMs)"
-        :label="$t('analytics.totalDuration')"
-        color="primary"
-        icon="mdi-clock-outline"
-        :show-progress="false"
-      />
     </div>
 
     <v-row class="align-stretch">
-      <v-col cols="12" lg="6">
+      <v-col cols="12" lg="6" class="d-flex">
         <v-card
-          class="pa-4 pa-md-6 elevation-4 rounded-xl h-100 conclusion-card"
+          class="pa-4 pa-md-6 elevation-4 rounded-xl flex-grow-1 conclusion-card"
         >
           <div class="d-flex justify-space-between align-start mb-6">
             <div>
@@ -194,7 +175,7 @@
 
           <div class="d-flex justify-space-between text-center">
             <div class="flex-grow-1">
-              <div class="text-h4 font-weight-bold text-success mb-1">
+              <div class="text-h4 font-weight-bold text-primary mb-1">
                 {{ participantStudyCounts.finished }}
               </div>
               <p class="text-body-2 text-medium-emphasis">
@@ -220,11 +201,40 @@
               </p>
             </div>
           </div>
+
+          <v-divider class="my-4" />
+
+          <div class="conclusion-summary text-center">
+            <div class="conclusion-summary-item participant-summary">
+              <div class="text-h4 font-weight-bold text-primary mb-1">
+                {{ getParticipantCount() }}
+              </div>
+              <p class="text-body-2 text-medium-emphasis mb-0">
+                {{ $t('analytics.participantCount') }}
+              </p>
+              <p class="text-caption text-medium-emphasis mb-0">
+                {{
+                  $t('analytics.participantsPerDay', {
+                    count: getParticipantsTodayCount(),
+                  })
+                }}
+              </p>
+            </div>
+            <div class="conclusion-summary-item">
+              <div class="text-h4 font-weight-bold text-primary mb-1">
+                {{ formatTotalDuration(totalDurationMs) }}
+              </div>
+              <p class="text-body-2 text-medium-emphasis mb-0">
+                {{ $t('analytics.totalDuration') }}
+              </p>
+            </div>
+          </div>
         </v-card>
       </v-col>
-      <v-col cols="12" lg="6">
+      <v-col cols="12" lg="6" class="d-flex">
         <AnswersTimeline
           :task-answers="filteredSessions"
+          fill-height
           @refresh="onRefreshTimeline"
           @export="onExportTimeline"
         />
@@ -1643,7 +1653,7 @@ const onExportTimeline = () => {
 
 .overview-metric-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
   align-items: stretch;
 }
@@ -1659,9 +1669,28 @@ const onExportTimeline = () => {
   min-height: 80px;
 }
 
-.overview-metric-grid :deep(.ux-metric-card > p) {
-  min-height: 3em;
-  margin-bottom: 0;
+.conclusion-summary {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.conclusion-summary-item {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+}
+
+.participant-summary {
+  text-align: left;
+  align-items: flex-start;
+}
+
+.conclusion-summary-item > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 1279px) {
