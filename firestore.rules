@@ -91,7 +91,9 @@ service cloud.firestore {
       allow create: if signedIn() &&
         request.resource.data.testAdmin.userDocId == request.auth.uid &&
         request.resource.data.studyRoleMap is map;
-      allow read: if canReadStudy(resource.data);
+      // A missing study reads as "not found" instead of "permission denied",
+      // so the client can tell a wrong link apart from a study it can't open.
+      allow read: if resource == null || canReadStudy(resource.data);
       // RBAC changes and study edits go through trusted callable operations.
       // In particular, a client must not be able to promote itself by editing
       // studyRoleMap, even if it currently has a Manager/Admin role.
