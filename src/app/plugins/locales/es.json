@@ -2742,7 +2742,7 @@
     "effectiveness": "Efectividad",
     "effectivenessDescription": "Porcentaje de tareas completadas con éxito",
     "efficiency": "Eficiencia",
-    "efficiencyDescription": "Tiempo promedio de finalización: {avgTime} (objetivo: {estimatedTime})",
+    "efficiencyDescription": "Eficiencia de tiempo promedio entre tareas",
     "efficiencyScaleHint": "El color compara la eficiencia con la mediana de los usuarios visibles.",
     "satisfaction": "Satisfacción",
     "satisfactionDescription": "Puntuación promedio de satisfacción del usuario",

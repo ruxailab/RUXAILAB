@@ -44,3 +44,16 @@ export function getAdditionalTimePercentage(averageTime, estimatedTime) {
 
   return ((averageTime - estimatedTime) / estimatedTime) * 100
 }
+
+export function getAverageTaskEfficiencyPercentage(efficiencies) {
+  const measuredEfficiencies = efficiencies.filter((efficiency) =>
+    Number.isFinite(efficiency),
+  )
+
+  if (!measuredEfficiencies.length) return null
+
+  return (
+    measuredEfficiencies.reduce((total, efficiency) => total + efficiency, 0) /
+    measuredEfficiencies.length
+  )
+}

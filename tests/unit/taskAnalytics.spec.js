@@ -1,5 +1,6 @@
 import {
   getAdditionalTimePercentage,
+  getAverageTaskEfficiencyPercentage,
   getEstimateComparisonStatus,
   getTimeEfficiencyPercentage,
   getTaskAnswerOutcome,
@@ -40,5 +41,16 @@ describe('task analytics helpers', () => {
     expect(getTimeEfficiencyPercentage(null, 1)).toBeNull()
     expect(getTimeEfficiencyPercentage(1, 0)).toBeNull()
     expect(getAdditionalTimePercentage(2, 0)).toBeNull()
+  })
+
+  it('averages task efficiency percentages equally and ignores missing estimates', () => {
+    expect(getAverageTaskEfficiencyPercentage([50, 100, null])).toBe(75)
+    expect(
+      getAverageTaskEfficiencyPercentage([
+        getTimeEfficiencyPercentage(176 / 60, 1),
+        100,
+      ]),
+    ).toBeCloseTo(67.05, 2)
+    expect(getAverageTaskEfficiencyPercentage([null, NaN])).toBeNull()
   })
 })

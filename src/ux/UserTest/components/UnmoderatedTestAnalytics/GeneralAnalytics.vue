@@ -192,12 +192,7 @@
               :label="$t('analytics.efficiency')"
               color="info"
               icon="mdi-speedometer"
-              :description="
-                $t('analytics.efficiencyDescription', {
-                  avgTime: calculateEfficiency().avgTime,
-                  estimatedTime: calculateEfficiency().estimatedTime,
-                })
-              "
+              :description="$t('analytics.efficiencyDescription')"
               :progress="
                 Math.min(
                   calculateEfficiency().timeEfficiencyPercentage || 0,
@@ -618,6 +613,7 @@ import { calculateSUSScore } from '../../utils/susCalculator'
 import { getNASATLXData } from '../../utils/nasaTlxData'
 import {
   getAdditionalTimePercentage,
+  getAverageTaskEfficiencyPercentage,
   getEstimateComparisonStatus,
   getTimeEfficiencyPercentage,
   getTaskAnswerOutcome,
@@ -920,46 +916,10 @@ const calculateEffectiveness = () => {
 }
 
 const calculateEfficiency = () => {
-  const measuredTasks = taskTimingStats.value.filter(
-    (stats) => stats.timeEfficiencyPercentage !== null,
-  )
-  const successfulTaskCount = measuredTasks.reduce(
-    (total, stats) => total + stats.successfulTaskCount,
-    0,
-  )
-  const totalSuccessfulTimeMinutes = measuredTasks.reduce(
-    (total, stats) =>
-      total + stats.averageTimeMinutes * stats.successfulTaskCount,
-    0,
-  )
-  const totalEstimatedTimeMinutes = measuredTasks.reduce(
-    (total, stats) =>
-      total + stats.estimatedTimeMinutes * stats.successfulTaskCount,
-    0,
-  )
-  const averageTimeMinutes =
-    successfulTaskCount > 0
-      ? totalSuccessfulTimeMinutes / successfulTaskCount
-      : null
-  const estimatedTimeMinutes =
-    successfulTaskCount > 0
-      ? totalEstimatedTimeMinutes / successfulTaskCount
-      : null
-  const timeEfficiencyPercentage = getTimeEfficiencyPercentage(
-    totalSuccessfulTimeMinutes,
-    totalEstimatedTimeMinutes,
-  )
-
   return {
-    timeEfficiencyPercentage,
-    avgTime:
-      averageTimeMinutes === null
-        ? t('analytics.noData')
-        : formatTimeDetailedFromMs(averageTimeMinutes * 60000).formatedTime,
-    estimatedTime:
-      estimatedTimeMinutes === null
-        ? t('analytics.noEstimate')
-        : formatTimeDetailedFromMs(estimatedTimeMinutes * 60000).formatedTime,
+    timeEfficiencyPercentage: getAverageTaskEfficiencyPercentage(
+      taskTimingStats.value.map((stats) => stats.timeEfficiencyPercentage),
+    ),
   }
 }
 

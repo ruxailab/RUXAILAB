@@ -2838,7 +2838,7 @@
     "effectiveness": "Effectiveness",
     "effectivenessDescription": "Percentage of tasks completed successfully",
     "efficiency": "Efficiency",
-    "efficiencyDescription": "Average completion: {avgTime} (target: {estimatedTime})",
+    "efficiencyDescription": "Average time efficiency across tasks",
     "efficiencyScaleHint": "Color compares efficiency with the median of the visible users.",
     "satisfaction": "Satisfaction",
     "satisfactionDescription": "Average user satisfaction score",
