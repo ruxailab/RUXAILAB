@@ -1,16 +1,12 @@
 <template>
   <div class="chart-wrapper-enhanced">
-    <Line
-      :key="chartKey"
-      :data="chartData"
-      :options="chartOptions"
-    />
+    <Line :key="chartKey" :data="chartData" :options="chartOptions" />
   </div>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
-import { Line } from 'vue-chartjs';
+import { ref, watch } from 'vue'
+import { Line } from 'vue-chartjs'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -22,9 +18,9 @@ import {
   Legend,
   Filler,
   TimeScale,
-} from 'chart.js';
-import 'chartjs-adapter-date-fns';
-import { useDateLocale } from '@/shared/composables/useDateLocale';
+} from 'chart.js'
+import 'chartjs-adapter-date-fns'
+import { useDateLocale } from '@/shared/composables/useDateLocale'
 
 ChartJS.register(
   CategoryScale,
@@ -35,20 +31,20 @@ ChartJS.register(
   Tooltip,
   Legend,
   Filler,
-  TimeScale
-);
+  TimeScale,
+)
 
 const props = defineProps({
   taskAnswers: {
     type: Array,
     default: () => [],
   },
-});
+})
 
-const { intlLocale } = useDateLocale();
+const { intlLocale } = useDateLocale()
 
-const chartKey = ref(0);
-const isDataReady = ref(false);
+const chartKey = ref(0)
+const isDataReady = ref(false)
 
 const chartData = ref({
   labels: [],
@@ -70,7 +66,7 @@ const chartData = ref({
       tension: 0.4,
     },
   ],
-});
+})
 
 const chartOptions = ref({
   responsive: true,
@@ -111,8 +107,8 @@ const chartOptions = ref({
       },
       callbacks: {
         title: (tooltipItems) => {
-          const dateLabel = tooltipItems[0].label;
-          return dateLabel;
+          const dateLabel = tooltipItems[0].label
+          return dateLabel
         },
       },
     },
@@ -169,9 +165,9 @@ const chartOptions = ref({
           weight: '500',
         },
         stepSize: 1,
-        callback: function(value) {
+        callback: function (value) {
           if (Number.isInteger(value)) {
-            return value;
+            return value
           }
         },
         padding: 10,
@@ -184,64 +180,68 @@ const chartOptions = ref({
       borderCapStyle: 'round',
     },
   },
-});
+})
 
 const processDataForChart = () => {
   if (!props.taskAnswers || props.taskAnswers.length === 0) {
-    chartData.value.datasets[0].data = [];
-    chartData.value.labels = [];
-    chartOptions.value.scales.y.suggestedMax = 1;
-    isDataReady.value = false;
-    return;
+    chartData.value.datasets[0].data = []
+    chartData.value.labels = []
+    chartOptions.value.scales.y.suggestedMax = 1
+    isDataReady.value = false
+    return
   }
 
-  const filtered = props.taskAnswers.filter(a => a.lastUpdate && !isNaN(new Date(a.lastUpdate).getTime()));
-  
+  const filtered = props.taskAnswers.filter(
+    (a) => a.lastUpdate && !isNaN(new Date(a.lastUpdate).getTime()),
+  )
+
   if (filtered.length === 0) {
-    chartData.value.datasets[0].data = [];
-    chartData.value.labels = [];
-    chartOptions.value.scales.y.suggestedMax = 1;
-    isDataReady.value = false;
-    return;
+    chartData.value.datasets[0].data = []
+    chartData.value.labels = []
+    chartOptions.value.scales.y.suggestedMax = 1
+    isDataReady.value = false
+    return
   }
 
   // Count answers per day - ONLY for dates that have actual data
-  const testsPerDay = {};
-  filtered.forEach(a => {
-    const dateStr = new Date(a.lastUpdate).toISOString().split('T')[0];
+  const testsPerDay = {}
+  filtered.forEach((a) => {
+    const dateStr = new Date(a.lastUpdate).toISOString().split('T')[0]
     if (!testsPerDay[dateStr]) {
-      testsPerDay[dateStr] = 0;
+      testsPerDay[dateStr] = 0
     }
-    testsPerDay[dateStr]++;
-  });
+    testsPerDay[dateStr]++
+  })
 
   // Sort dates chronologically
-  const sortedDates = Object.keys(testsPerDay).sort();
-  
+  const sortedDates = Object.keys(testsPerDay).sort()
+
   // Create labels and data arrays with ONLY dates that have data
-  chartData.value.labels = sortedDates.map(date => {
-    const d = new Date(date);
+  chartData.value.labels = sortedDates.map((date) => {
+    const d = new Date(date)
     return d.toLocaleDateString(intlLocale.value, {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
-    });
-  });
-  chartData.value.datasets[0].data = sortedDates.map(date => testsPerDay[date]);
+    })
+  })
+  chartData.value.datasets[0].data = sortedDates.map(
+    (date) => testsPerDay[date],
+  )
 
-  const max = Math.max(...Object.values(testsPerDay));
-  chartOptions.value.scales.y.suggestedMax = max + 1;
-  isDataReady.value = true;
-  chartKey.value++;
-};
+  const max = Math.max(...Object.values(testsPerDay))
+  chartOptions.value.scales.y.suggestedMax = max + 1
+  isDataReady.value = true
+  chartKey.value++
+}
 
 watch(
   () => props.taskAnswers,
   () => {
-    processDataForChart();
+    processDataForChart()
   },
-  { immediate: true, deep: true }
-);
+  { immediate: true, deep: true },
+)
 </script>
 
 <style scoped>
@@ -251,6 +251,5 @@ watch(
   position: relative;
   background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
   border-radius: 12px;
-  padding: 1rem;
 }
 </style>

@@ -2830,6 +2830,10 @@
     "recordings": "Recordings"
   },
   "analytics": {
+    "answersTimelineTitle": "Answers Timeline",
+    "answersTimelineDescription": "Track your answer submissions over time",
+    "answersTimelineOptions": "Timeline options",
+    "export": "Export",
     "searchByName": "Search by name",
     "search": "Search",
     "reset": "Reset",

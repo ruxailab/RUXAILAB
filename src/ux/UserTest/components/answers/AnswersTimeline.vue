@@ -1,44 +1,45 @@
 <template>
-  <div :class="fillHeight ? 'h-100 w-100 flex-grow-1' : 'mb-8'">
+  <div :class="fillHeight ? 'h-100 w-100 flex-grow-1' : 'mb-0'">
     <v-card
       :class="[
-        'pa-8',
+        'pa-4',
+        'pa-md-6',
         'elevation-4',
         'rounded-xl',
         'chart-card',
         { 'h-100': fillHeight },
       ]"
     >
-      <div class="d-flex justify-space-between align-center mb-6">
+      <div class="d-flex justify-space-between align-center mb-4">
         <div>
-          <h3 class="text-h4 font-weight-bold text-on-surface mb-2">
-            Answers Timeline
+          <h3 class="text-h5 font-weight-bold text-on-surface">
+            {{ $t('analytics.answersTimelineTitle') }}
           </h3>
-          <p class="text-body-1 text-medium-emphasis">
-            Track your answer submissions over time
+          <p class="text-body-2 text-medium-emphasis mb-0">
+            {{ $t('analytics.answersTimelineDescription') }}
           </p>
         </div>
-        <div class="d-flex ga-2">
-          <v-btn
-            v-if="showExport"
-            variant="outlined"
-            size="small"
-            color="primary"
-            @click="$emit('export')"
-          >
-            <v-icon start> mdi-download </v-icon>
-            Export
-          </v-btn>
-          <v-btn
-            variant="flat"
-            size="small"
-            color="primary"
-            @click="$emit('refresh')"
-          >
-            <v-icon start> mdi-refresh </v-icon>
-            Refresh
-          </v-btn>
-        </div>
+        <v-menu v-if="showExport">
+          <template #activator="{ props: menuProps }">
+            <v-btn
+              icon="mdi-dots-vertical"
+              size="small"
+              variant="text"
+              v-bind="menuProps"
+              :aria-label="$t('analytics.answersTimelineOptions')"
+            />
+          </template>
+          <v-list>
+            <v-list-item @click="$emit('export')">
+              <template #prepend>
+                <v-icon>mdi-download</v-icon>
+              </template>
+              <v-list-item-title>
+                {{ $t('analytics.export') }}
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </div>
       <div class="chart-container-large">
         <DateChart :task-answers="taskAnswers" />
@@ -56,12 +57,12 @@ defineProps({
   fillHeight: { type: Boolean, default: false },
 })
 
-defineEmits(['refresh', 'export'])
+defineEmits(['export'])
 </script>
 
 <style scoped>
 .chart-container-large {
-  height: 400px;
+  height: 300px;
   width: 100%;
   position: relative;
 }

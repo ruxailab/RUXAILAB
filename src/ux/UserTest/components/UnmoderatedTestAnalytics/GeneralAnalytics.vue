@@ -145,9 +145,11 @@
     <v-row class="align-stretch">
       <v-col cols="12" lg="6" class="d-flex">
         <v-card
-          class="pa-4 pa-md-6 elevation-4 rounded-xl flex-grow-1 conclusion-card"
+          class="pa-4 pa-md-6 elevation-4 rounded-xl flex-grow-1 conclusion-card d-flex flex-column"
         >
-          <div class="d-flex justify-space-between align-start mb-6">
+          <div
+            class="d-flex justify-space-between align-start mb-6 conclusion-header"
+          >
             <div>
               <div class="d-flex align-center mb-3">
                 <v-icon color="primary" size="28" class="me-3">
@@ -157,8 +159,16 @@
                   {{ $t('analytics.studyCompletionRate') }}
                 </h3>
               </div>
-              <div class="text-h2 font-weight-bold text-primary mb-2">
+              <div class="text-h2 font-weight-bold text-primary mt-10">
                 {{ getStudyCompletionRate().toFixed(2) }}%
+              </div>
+            </div>
+            <div class="conclusion-duration text-end">
+              <div class="text-h5 font-weight-bold text-primary">
+                {{ formatTotalDuration(totalDurationMs) }}
+              </div>
+              <div class="text-body-2 text-medium-emphasis">
+                {{ $t('analytics.totalDuration') }}
               </div>
             </div>
           </div>
@@ -171,62 +181,34 @@
             class="mb-6 progress-glow"
           />
 
-          <v-divider class="mb-6" />
+          <div class="conclusion-footer">
+            <v-divider class="mb-6" />
 
-          <div class="d-flex justify-space-between text-center">
-            <div class="flex-grow-1">
-              <div class="text-h4 font-weight-bold text-primary mb-1">
-                {{ participantStudyCounts.finished }}
+            <div class="conclusion-counts text-center">
+              <div class="conclusion-count">
+                <div class="text-h4 font-weight-bold text-primary mb-1">
+                  {{ participantStudyCounts.finished }}
+                </div>
+                <p class="text-body-2 text-medium-emphasis mb-0">
+                  {{ $t('analytics.studiesFinished') }}
+                </p>
               </div>
-              <p class="text-body-2 text-medium-emphasis">
-                {{ $t('analytics.studiesFinished') }}
-              </p>
-            </div>
-            <v-divider vertical class="mx-2" />
-            <div class="flex-grow-1">
-              <div class="text-h4 font-weight-bold text-secondary mb-1">
-                {{ participantStudyCounts.ongoing }}
+              <div class="conclusion-count">
+                <div class="text-h4 font-weight-bold text-secondary mb-1">
+                  {{ participantStudyCounts.ongoing }}
+                </div>
+                <p class="text-body-2 text-medium-emphasis mb-0">
+                  {{ $t('analytics.studiesOngoing') }}
+                </p>
               </div>
-              <p class="text-body-2 text-medium-emphasis">
-                {{ $t('analytics.studiesOngoing') }}
-              </p>
-            </div>
-            <v-divider vertical class="mx-2" />
-            <div class="flex-grow-1">
-              <div class="text-h4 font-weight-bold text-medium-emphasis mb-1">
-                {{ participantStudyCounts.notStarted }}
+              <div class="conclusion-count">
+                <div class="text-h4 font-weight-bold text-medium-emphasis mb-1">
+                  {{ participantStudyCounts.notStarted }}
+                </div>
+                <p class="text-body-2 text-medium-emphasis mb-0">
+                  {{ $t('analytics.studiesNotStarted') }}
+                </p>
               </div>
-              <p class="text-body-2 text-medium-emphasis">
-                {{ $t('analytics.studiesNotStarted') }}
-              </p>
-            </div>
-          </div>
-
-          <v-divider class="my-4" />
-
-          <div class="conclusion-summary text-center">
-            <div class="conclusion-summary-item participant-summary">
-              <div class="text-h4 font-weight-bold text-primary mb-1">
-                {{ getParticipantCount() }}
-              </div>
-              <p class="text-body-2 text-medium-emphasis mb-0">
-                {{ $t('analytics.participantCount') }}
-              </p>
-              <p class="text-caption text-medium-emphasis mb-0">
-                {{
-                  $t('analytics.participantsPerDay', {
-                    count: getParticipantsTodayCount(),
-                  })
-                }}
-              </p>
-            </div>
-            <div class="conclusion-summary-item">
-              <div class="text-h4 font-weight-bold text-primary mb-1">
-                {{ formatTotalDuration(totalDurationMs) }}
-              </div>
-              <p class="text-body-2 text-medium-emphasis mb-0">
-                {{ $t('analytics.totalDuration') }}
-              </p>
             </div>
           </div>
         </v-card>
@@ -235,7 +217,6 @@
         <AnswersTimeline
           :task-answers="filteredSessions"
           fill-height
-          @refresh="onRefreshTimeline"
           @export="onExportTimeline"
         />
       </v-col>
@@ -772,25 +753,22 @@ const downloadPdfResume = async () => {
 }
 
 const totalDurationMs = computed(() =>
-  filteredSessions.value.reduce(
-    (total, session) => {
-      const sessionDuration = Number(session.totalTestTimeMs)
-      if (Number.isFinite(sessionDuration) && sessionDuration > 0)
-        return total + sessionDuration
+  filteredSessions.value.reduce((total, session) => {
+    const sessionDuration = Number(session.totalTestTimeMs)
+    if (Number.isFinite(sessionDuration) && sessionDuration > 0)
+      return total + sessionDuration
 
-      return (
-        total +
-        Object.values(session.tasks || {}).reduce((sessionTotal, task) => {
-          const taskTime = Number(task?.taskTime)
-          return (
-            sessionTotal +
-            (Number.isFinite(taskTime) && taskTime > 0 ? taskTime : 0)
-          )
-        }, 0)
-      )
-    },
-    0,
-  ),
+    return (
+      total +
+      Object.values(session.tasks || {}).reduce((sessionTotal, task) => {
+        const taskTime = Number(task?.taskTime)
+        return (
+          sessionTotal +
+          (Number.isFinite(taskTime) && taskTime > 0 ? taskTime : 0)
+        )
+      }, 0)
+    )
+  }, 0),
 )
 
 const formatTotalDuration = (durationMs) => {
@@ -833,16 +811,10 @@ const getParticipantStudyCounts = () => {
 
   const participantTotal = hasActiveFilters.value
     ? filteredSessions.value.length
-    : Math.max(
-        studyParticipants.value.length,
-        filteredSessions.value.length,
-      )
+    : Math.max(studyParticipants.value.length, filteredSessions.value.length)
   counts.notStarted += Math.max(
     0,
-    participantTotal -
-      counts.finished -
-      counts.ongoing -
-      counts.notStarted,
+    participantTotal - counts.finished - counts.ongoing - counts.notStarted,
   )
   return counts
 }
@@ -853,28 +825,6 @@ const getStudyCompletionRate = () => {
   const { finished, ongoing, notStarted } = participantStudyCounts.value
   const participantTotal = finished + ongoing + notStarted
   return participantTotal ? (finished / participantTotal) * 100 : 0
-}
-
-const getParticipantCount = () => {
-  const { finished, ongoing, notStarted } = participantStudyCounts.value
-  return finished + ongoing + notStarted
-}
-
-const getParticipantsTodayCount = () => {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-
-  return filteredSessions.value.filter((session) => {
-    if (!session.lastUpdate) return false
-
-    const updatedAt = new Date(session.lastUpdate)
-    return (
-      !Number.isNaN(updatedAt.getTime()) &&
-      updatedAt.getFullYear() === today.getFullYear() &&
-      updatedAt.getMonth() === today.getMonth() &&
-      updatedAt.getDate() === today.getDate()
-    )
-  }).length
 }
 
 // Filter methods
@@ -1551,48 +1501,6 @@ onMounted(() => {
   setTimeout(() => createTaskCharts(), 1000)
 })
 
-// Refresh timeline data
-const onRefreshTimeline = async () => {
-  try {
-    if (store.dispatch) {
-      const possibleActions = [
-        'getCurrentTestAnswerDoc',
-        'Answer/getCurrentTestAnswerDoc',
-        'Tests/fetchVisibleUserAnswers',
-        'Tests/fetchAnswers',
-        'fetchVisibleUserAnswers',
-        'fetchAnswers',
-      ]
-      let dispatched = false
-      for (const act of possibleActions) {
-        try {
-          await store.dispatch(act)
-          dispatched = true
-          break
-        } catch {
-          // Ignore and try next
-        }
-      }
-      if (dispatched) {
-        await nextTick()
-        // recreate charts
-        setTimeout(() => createTaskCharts(), 300)
-        return
-      }
-    }
-
-    // fallback to rebuild local cache from current store answers and force charts redraw
-    taskAnswers.value =
-      answers.value && typeof answers.value === 'object'
-        ? Object.values(answers.value)
-        : []
-    await nextTick()
-    setTimeout(() => createTaskCharts(), 300)
-  } catch {
-    // Refresh timeline failed
-  }
-}
-
 // Download timeline data as CSV
 const onExportTimeline = () => {
   if (!filteredSessions.value.length) return
@@ -1676,28 +1584,56 @@ const onExportTimeline = () => {
   min-height: 80px;
 }
 
-.conclusion-summary {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+.conclusion-header {
+  flex-wrap: wrap;
   gap: 16px;
 }
 
-.conclusion-summary-item {
-  display: flex;
+.conclusion-header > div:first-child {
+  flex: 1 1 200px;
   min-width: 0;
-  flex-direction: column;
-  align-items: center;
 }
 
-.participant-summary {
-  text-align: left;
-  align-items: flex-start;
+.conclusion-footer {
+  margin-top: auto;
 }
 
-.conclusion-summary-item > div {
+.conclusion-counts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.conclusion-count {
   min-width: 0;
+}
+
+.conclusion-count > div,
+.conclusion-count > p {
   overflow-wrap: anywhere;
+}
+
+.conclusion-duration {
+  flex: 0 1 auto;
+  min-width: 0;
+  padding-top: 4px;
+}
+
+.conclusion-duration > div:first-child {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 600px) {
+  .conclusion-duration {
+    flex-basis: 100%;
+    text-align: left !important;
+  }
+
+  .conclusion-counts {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    text-align: left;
+  }
 }
 
 @media (max-width: 1279px) {

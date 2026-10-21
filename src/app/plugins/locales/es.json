@@ -2734,6 +2734,10 @@
     "recordings": "Grabaciones"
   },
   "analytics": {
+    "answersTimelineTitle": "Cronología de respuestas",
+    "answersTimelineDescription": "Sigue los envíos de respuestas a lo largo del tiempo",
+    "answersTimelineOptions": "Opciones de la cronología",
+    "export": "Exportar",
     "searchByName": "Buscar por nombre",
     "search": "Buscar",
     "reset": "Restablecer",
