@@ -11,6 +11,7 @@ import {
   getStudyFallbackPath,
   hasStudyCapability,
   resolveStudyAccess,
+  usesTestViewToken,
 } from '@/shared/utils/studyAccessPolicy'
 import { buildSignInPath } from '@/shared/utils/authRedirect'
 
@@ -139,9 +140,9 @@ export function getAcceptedInvitationDestination({ study, user }) {
   const studyType = normalizeStudyType(study?.testType)
   const answersByRole =
     studyType === STUDY_TYPES.USER && access.role === STUDY_ROLE.USER
+  const userId = usesTestViewToken(study) ? user?.id || user?.uid : null
 
   if (answersByRole) {
-    const userId = user?.id || user?.uid
     return {
       name: 'TestView',
       params: {
@@ -154,7 +155,6 @@ export function getAcceptedInvitationDestination({ study, user }) {
   const destination = getCommunityStudyDestination({ study, user })
   if (!destination || destination.name !== 'TestView') return destination
 
-  const userId = user?.id || user?.uid
   return {
     ...destination,
     params: {
