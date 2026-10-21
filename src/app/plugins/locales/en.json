@@ -829,15 +829,9 @@
     "macHint": "On Mac, if nothing appears, allow Screen Recording for your browser in System Settings → Privacy & Security.",
     "shareButton": "Share screen",
     "backButton": "Back",
-    "pickerTitle": "Choose what to share",
-    "pickerTab": "Browser tab",
-    "pickerWindow": "Window",
-    "pickerEntireScreen": "Entire screen",
-    "pickerShare": "Share",
-    "pickerCancel": "Cancel",
-    "demoDontPick": "Not this",
-    "demoChooseThis": "Choose this",
-    "demoAlt": "Animation showing how to choose Entire screen in the browser sharing dialog."
+    "videoHint": "Select Entire screen, then click Share.",
+    "videoHintFirefox": "Select Entire screen, then click Allow.",
+    "demoAlt": "Short video showing how to share your entire screen in this browser."
   },
   "Introduction": {
     "title": "UX Remote LAB",

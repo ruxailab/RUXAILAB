@@ -6,7 +6,7 @@
     @update:model-value="$emit('update:show', $event)"
   >
     <v-card class="rounded-xl">
-      <v-card-title class="d-flex align-start ga-4 pa-6 pb-0">
+      <v-card-title class="d-flex align-start ga-4 pa-6 pb-0 dialog-header">
         <div
           :class="[
             'dialog-icon rounded-lg d-flex align-center justify-center',
@@ -15,8 +15,8 @@
         >
           <v-icon :color="iconColor" size="28">{{ icon }}</v-icon>
         </div>
-        <div>
-          <h3 class="text-h5 font-weight-bold text-grey-darken-4 mb-1">
+        <div class="dialog-copy">
+          <h3 class="text-h5 font-weight-bold text-grey-darken-4 mb-1 dialog-title">
             {{ title }}
           </h3>
           <p
@@ -28,13 +28,13 @@
         </div>
       </v-card-title>
       <v-card-text class="py-4 px-6">
-        <p v-if="message" class="text-body-2 text-grey-darken-1">
+        <p v-if="message" class="text-body-2 text-grey-darken-1 dialog-message">
           {{ message }}
         </p>
 
         <slot name="content" />
       </v-card-text>
-      <v-card-actions class="px-6 pb-6 pt-0 d-flex justify-end ga-3">
+      <v-card-actions class="px-6 pb-6 pt-0 d-flex justify-end ga-3 dialog-actions">
         <!-- Optional third action -->
         <v-btn
           v-if="thirdText"
@@ -173,9 +173,28 @@ const handleThird = () => {
   min-width: 48px;
 }
 
-.dialog-subtitle {
+.dialog-header {
+  white-space: normal;
+}
+
+.dialog-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.dialog-title,
+.dialog-subtitle,
+.dialog-message {
   white-space: normal;
   word-break: break-word;
   overflow-wrap: anywhere;
+}
+
+.dialog-title {
+  line-height: 1.3;
+}
+
+.dialog-actions {
+  flex-wrap: wrap;
 }
 </style>

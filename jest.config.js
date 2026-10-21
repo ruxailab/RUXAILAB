@@ -9,6 +9,7 @@ module.exports = {
   transformIgnorePatterns: ['/node_modules/(?!axios|date-fns)'],
   moduleNameMapper: {
     '^axios$': '<rootDir>/node_modules/axios/dist/node/axios.cjs',
+    '\\.(mp4|webm|jpg|jpeg)$': '<rootDir>/tests/mocks/fileMock.js',
   },
   setupFilesAfterEnv: ['./tests/mocks/firebase.js'],
   resetMocks: true,

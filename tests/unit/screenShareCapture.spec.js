@@ -3,9 +3,11 @@ import {
   PREFERRED_DISPLAY_MEDIA_OPTIONS,
   SCREEN_SHARE_REASONS,
   getDisplaySurface,
+  getScreenSharePickerFamily,
   isBrowserTabSurface,
   isMacOS,
   isUserCancellation,
+  resolveScreenShareInstructionFamily,
   startScreenShareStream,
   stopMediaStream,
 } from '@/shared/utils/screenShareCapture'
@@ -56,6 +58,95 @@ describe('screenShareCapture', () => {
       expect(
         isMacOS({ userAgentData: { platform: 'Windows' }, platform: 'Win32' }),
       ).toBe(false)
+    })
+  })
+
+  describe('getScreenSharePickerFamily', () => {
+    it('maps Edge to the Chrome picker video', () => {
+      expect(
+        getScreenSharePickerFamily({
+          userAgent:
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0',
+        }),
+      ).toBe('chrome')
+      expect(
+        getScreenSharePickerFamily({
+          userAgent: 'Mozilla/5.0 Chrome/129.0.0.0 Safari/537.36',
+          userAgentData: {
+            brands: [
+              { brand: 'Chromium', version: '129' },
+              { brand: 'Microsoft Edge', version: '129' },
+            ],
+          },
+        }),
+      ).toBe('chrome')
+    })
+
+    it('detects Firefox from desktop and iOS user agents', () => {
+      expect(
+        getScreenSharePickerFamily({
+          userAgent:
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0',
+        }),
+      ).toBe('firefox')
+      expect(
+        getScreenSharePickerFamily({
+          userAgent:
+            'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) FxiOS/131.0',
+        }),
+      ).toBe('firefox')
+    })
+
+    it('detects Safari without matching Chrome-family browsers', () => {
+      expect(
+        getScreenSharePickerFamily({
+          userAgent:
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15',
+        }),
+      ).toBe('safari')
+    })
+
+    it('maps Chrome, Brave, and Opera to the Chrome picker video', () => {
+      expect(
+        getScreenSharePickerFamily({
+          userAgent:
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36',
+        }),
+      ).toBe('chrome')
+      expect(
+        getScreenSharePickerFamily({
+          userAgent:
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36',
+          userAgentData: {
+            brands: [
+              { brand: 'Not.A/Brand', version: '8' },
+              { brand: 'Chromium', version: '129' },
+              { brand: 'Brave', version: '129' },
+            ],
+          },
+        }),
+      ).toBe('chrome')
+      expect(
+        getScreenSharePickerFamily({
+          userAgent:
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 OPR/114.0.0.0',
+        }),
+      ).toBe('chrome')
+    })
+
+    it('returns unknown when the browser cannot be identified', () => {
+      expect(getScreenSharePickerFamily(null)).toBe('unknown')
+      expect(getScreenSharePickerFamily({ userAgent: '' })).toBe('unknown')
+    })
+  })
+
+  describe('resolveScreenShareInstructionFamily', () => {
+    it('falls back to Chrome for unknown browsers', () => {
+      expect(resolveScreenShareInstructionFamily('unknown')).toBe('chrome')
+      expect(resolveScreenShareInstructionFamily('chrome')).toBe('chrome')
+      expect(resolveScreenShareInstructionFamily('edge')).toBe('chrome')
+      expect(resolveScreenShareInstructionFamily('firefox')).toBe('firefox')
+      expect(resolveScreenShareInstructionFamily('safari')).toBe('safari')
     })
   })
 

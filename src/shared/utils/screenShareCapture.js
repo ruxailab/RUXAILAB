@@ -22,10 +22,74 @@ export const FALLBACK_DISPLAY_MEDIA_OPTIONS = {
   audio: false,
 }
 
+export const SCREEN_SHARE_PICKER_FAMILIES = {
+  CHROME: 'chrome',
+  FIREFOX: 'firefox',
+  SAFARI: 'safari',
+  UNKNOWN: 'unknown',
+}
+
 export function isMacOS(navigatorLike = navigator) {
   const uaDataPlatform = navigatorLike?.userAgentData?.platform || ''
   const platform = navigatorLike?.platform || ''
   return /mac/i.test(uaDataPlatform) || /mac/i.test(platform)
+}
+
+function getUserAgent(navigatorLike) {
+  return String(navigatorLike?.userAgent || '')
+}
+
+function getBrandNames(navigatorLike) {
+  const brands = navigatorLike?.userAgentData?.brands || []
+  return brands.map((entry) => String(entry?.brand || '').toLowerCase())
+}
+
+export function getScreenSharePickerFamily(navigatorLike = navigator) {
+  if (!navigatorLike) {
+    return SCREEN_SHARE_PICKER_FAMILIES.UNKNOWN
+  }
+
+  const ua = getUserAgent(navigatorLike)
+  const brands = getBrandNames(navigatorLike)
+  const brandText = brands.join(' ')
+
+  if (
+    /firefox\//i.test(ua) ||
+    /fxios\//i.test(ua) ||
+    brandText.includes('firefox')
+  ) {
+    return SCREEN_SHARE_PICKER_FAMILIES.FIREFOX
+  }
+
+  const looksLikeSafari =
+    /safari/i.test(ua) &&
+    !/chrome|chromium|crios|android|edg|opr|opt|fxios/i.test(ua)
+  if (looksLikeSafari) {
+    return SCREEN_SHARE_PICKER_FAMILIES.SAFARI
+  }
+
+  if (
+    /chrome|chromium|crios|edg(e|a|ios)?\/|opr\/|opt\//i.test(ua) ||
+    brandText.includes('google chrome') ||
+    brandText.includes('chromium') ||
+    brandText.includes('microsoft edge') ||
+    brandText.includes('brave') ||
+    brandText.includes('opera')
+  ) {
+    return SCREEN_SHARE_PICKER_FAMILIES.CHROME
+  }
+
+  return SCREEN_SHARE_PICKER_FAMILIES.UNKNOWN
+}
+
+export function resolveScreenShareInstructionFamily(family) {
+  if (
+    family === SCREEN_SHARE_PICKER_FAMILIES.FIREFOX ||
+    family === SCREEN_SHARE_PICKER_FAMILIES.SAFARI
+  ) {
+    return family
+  }
+  return SCREEN_SHARE_PICKER_FAMILIES.CHROME
 }
 
 export function getDisplaySurface(stream) {

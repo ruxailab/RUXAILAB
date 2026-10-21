@@ -828,15 +828,9 @@
     "macHint": "En Mac, si no aparece nada, permite Grabación de pantalla para tu navegador en Ajustes del Sistema → Privacidad y seguridad.",
     "shareButton": "Compartir pantalla",
     "backButton": "Volver",
-    "pickerTitle": "Elige qué compartir",
-    "pickerTab": "Pestaña",
-    "pickerWindow": "Ventana",
-    "pickerEntireScreen": "Toda la pantalla",
-    "pickerShare": "Compartir",
-    "pickerCancel": "Cancelar",
-    "demoDontPick": "No esto",
-    "demoChooseThis": "Elige esto",
-    "demoAlt": "Animación que muestra cómo elegir Toda la pantalla en el diálogo de compartir del navegador."
+    "videoHint": "Selecciona Toda la pantalla y luego haz clic en Compartir.",
+    "videoHintFirefox": "Selecciona Toda la pantalla y luego haz clic en Permitir.",
+    "demoAlt": "Vídeo corto que muestra cómo compartir toda la pantalla en este navegador."
   },
   "Introduction": {
     "title": "UX LAB Remoto",
