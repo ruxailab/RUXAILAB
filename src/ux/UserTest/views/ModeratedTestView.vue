@@ -436,6 +436,7 @@
             <PreTasksStep
               v-if="globalIndex === 3 && taskIndex === 0"
               :num-tasks="test?.testStructure?.userTasks?.length || 0"
+              :has-recording="hasRecording"
               @start-tasks="handleStartTasks"
             />
 
@@ -790,6 +791,17 @@ const remoteStream = ref(null)
 // Computed properties
 const mediaUrls = computed(() => store.getters.mediaUrls)
 const test = computed(() => store.getters.test)
+const hasRecording = computed(() =>
+  Boolean(
+    test.value?.testStructure?.userTasks?.some(
+      (task) =>
+        task.hasScreenRecord ||
+        task.hasCamRecord ||
+        task.hasAudioRecord ||
+        task.hasEye,
+    ),
+  ),
+)
 const testId = computed(() => store.getters.test?.id || null)
 const user = computed(() => {
   return store.getters.user

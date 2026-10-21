@@ -469,6 +469,7 @@
               taskIndex === 0
             "
             :num-tasks="test?.testStructure?.userTasks?.length || 0"
+            :has-recording="hasRecording"
             @start-tasks="handleStartTasks"
           />
 
@@ -768,6 +769,18 @@ const currentUserTestAnswer = computed(
 
 const hasEyeTracking = computed(() =>
   test.value?.testStructure?.userTasks?.some((task) => task.hasEye),
+)
+
+const hasRecording = computed(() =>
+  Boolean(
+    test.value?.testStructure?.userTasks?.some(
+      (task) =>
+        task.hasScreenRecord ||
+        task.hasCamRecord ||
+        task.hasAudioRecord ||
+        task.hasEye,
+    ),
+  ),
 )
 
 const hasPreTest = computed(() => {

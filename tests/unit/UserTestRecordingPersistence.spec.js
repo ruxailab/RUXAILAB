@@ -437,6 +437,30 @@ function mountTaskStep(task) {
   })
 }
 
+it('skips the recording intro when the task does not record media', () => {
+  wrapper = mountTaskStep({ taskType: 'no-answer' })
+  const taskStep = wrapper.vm.$.setupState
+  expect(taskStep.previewSteps).toEqual([])
+  expect(taskStep.stage).toBe(2)
+})
+
+it('keeps the recording intro when the task records media', () => {
+  wrapper = mountTaskStep({ taskType: 'no-answer', hasAudioRecord: true })
+  const taskStep = wrapper.vm.$.setupState
+  expect(taskStep.previewSteps).toEqual(['recording'])
+  expect(taskStep.stage).toBe(1)
+})
+
+it('shows only the external-link intro when there is no recording', () => {
+  wrapper = mountTaskStep({
+    taskType: 'no-answer',
+    taskLink: 'https://example.com',
+  })
+  const taskStep = wrapper.vm.$.setupState
+  expect(taskStep.previewSteps).toEqual(['link'])
+  expect(taskStep.stage).toBe(1)
+})
+
 it('asks for an optional comment only after the task timer stops', async () => {
   wrapper = mountTaskStep({ taskType: 'no-answer' })
   const taskStep = wrapper.vm.$.setupState

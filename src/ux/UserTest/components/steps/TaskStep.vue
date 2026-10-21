@@ -104,125 +104,90 @@
                   </h3>
                 </div>
 
-                <template v-if="hasAnyRecording">
-                  <p class="text-body-1 text-left mb-4 text-grey-darken-3">
-                    {{ t('UserTestView.TaskStep.recordingInfo') }}
-                  </p>
+                <p class="text-body-1 text-left mb-4 text-grey-darken-3">
+                  {{ t('UserTestView.TaskStep.recordingInfo') }}
+                </p>
 
-                  <div class="recording-features-grid mb-4">
-                    <div
-                      v-if="task?.hasScreenRecord"
-                      class="recording-feature-card"
-                    >
-                      <div class="feature-icon-container">
-                        <v-icon size="48" color="secondary">
-                          mdi-monitor-screenshot
-                        </v-icon>
-                      </div>
-                      <div class="feature-content">
-                        <h4
-                          class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
-                        >
-                          {{ t('UserTestView.TaskStep.screenRecord') }}
-                        </h4>
-                        <p class="text-body-2 text-grey-darken-3">
-                          {{ t('UserTestView.TaskStep.screenRecordDesc') }}
-                        </p>
-                      </div>
+                <div class="recording-features-grid mb-4">
+                  <div
+                    v-if="task?.hasScreenRecord"
+                    class="recording-feature-card"
+                  >
+                    <div class="feature-icon-container">
+                      <v-icon size="48" color="secondary">
+                        mdi-monitor-screenshot
+                      </v-icon>
                     </div>
-
-                    <div
-                      v-if="task?.hasCamRecord"
-                      class="recording-feature-card"
-                    >
-                      <div class="feature-icon-container">
-                        <v-icon size="48" color="secondary">
-                          mdi-camera
-                        </v-icon>
-                      </div>
-                      <div class="feature-content">
-                        <h4
-                          class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
-                        >
-                          {{ t('UserTestView.TaskStep.camera') }}
-                        </h4>
-                        <p class="text-body-2 text-grey-darken-3">
-                          {{ t('UserTestView.TaskStep.cameraDesc') }}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div
-                      v-if="task?.hasAudioRecord"
-                      class="recording-feature-card"
-                    >
-                      <div class="feature-icon-container">
-                        <v-icon size="48" color="secondary">
-                          mdi-microphone
-                        </v-icon>
-                      </div>
-                      <div class="feature-content">
-                        <h4
-                          class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
-                        >
-                          {{ t('UserTestView.TaskStep.audioRecord') }}
-                        </h4>
-                        <p class="text-body-2 text-grey-darken-3">
-                          {{ t('UserTestView.TaskStep.audioRecordDesc') }}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div v-if="task?.hasEye" class="recording-feature-card">
-                      <div class="feature-icon-container">
-                        <v-icon size="48" color="secondary">mdi-eye</v-icon>
-                      </div>
-                      <div class="feature-content">
-                        <h4
-                          class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
-                        >
-                          {{ t('UserTestView.TaskStep.eyeTracker') }}
-                        </h4>
-                        <p class="text-body-2 text-grey-darken-3">
-                          {{ t('UserTestView.TaskStep.eyeTrackerDesc') }}
-                        </p>
-                      </div>
+                    <div class="feature-content">
+                      <h4
+                        class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
+                      >
+                        {{ t('UserTestView.TaskStep.screenRecord') }}
+                      </h4>
+                      <p class="text-body-2 text-grey-darken-3">
+                        {{ t('UserTestView.TaskStep.screenRecordDesc') }}
+                      </p>
                     </div>
                   </div>
-                </template>
 
-                <template v-else>
-                  <p class="text-body-2 text-grey-darken-1 text-center">
-                    {{ t('UserTestView.TaskStep.internalInterface') }}
-                  </p>
-                </template>
-              </v-card-text>
-            </v-card>
+                  <div
+                    v-if="task?.hasCamRecord"
+                    class="recording-feature-card"
+                  >
+                    <div class="feature-icon-container">
+                      <v-icon size="48" color="secondary">
+                        mdi-camera
+                      </v-icon>
+                    </div>
+                    <div class="feature-content">
+                      <h4
+                        class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
+                      >
+                        {{ t('UserTestView.TaskStep.camera') }}
+                      </h4>
+                      <p class="text-body-2 text-grey-darken-3">
+                        {{ t('UserTestView.TaskStep.cameraDesc') }}
+                      </p>
+                    </div>
+                  </div>
 
-            <!-- No recording + external link: keep both on one screen (no stepper) -->
-            <v-card
-              v-if="!hasAnyRecording && hasExternalLink"
-              variant="outlined"
-              color="secondary"
-              class="my-6 mx-auto preview-info-card"
-              max-width="1000"
-            >
-              <v-card-text :class="$vuetify.display.xs ? 'pa-3' : 'pa-4'">
-                <div class="d-flex align-center mb-3">
-                  <v-icon color="secondary" size="24" class="mr-2">
-                    mdi-open-in-new
-                  </v-icon>
-                  <h3 class="text-h6 font-weight-bold text-secondary">
-                    {{ t('UserTestView.TaskStep.newWindow') }}
-                  </h3>
+                  <div
+                    v-if="task?.hasAudioRecord"
+                    class="recording-feature-card"
+                  >
+                    <div class="feature-icon-container">
+                      <v-icon size="48" color="secondary">
+                        mdi-microphone
+                      </v-icon>
+                    </div>
+                    <div class="feature-content">
+                      <h4
+                        class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
+                      >
+                        {{ t('UserTestView.TaskStep.audioRecord') }}
+                      </h4>
+                      <p class="text-body-2 text-grey-darken-3">
+                        {{ t('UserTestView.TaskStep.audioRecordDesc') }}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div v-if="task?.hasEye" class="recording-feature-card">
+                    <div class="feature-icon-container">
+                      <v-icon size="48" color="secondary">mdi-eye</v-icon>
+                    </div>
+                    <div class="feature-content">
+                      <h4
+                        class="text-h6 font-weight-bold text-grey-darken-3 mb-1"
+                      >
+                        {{ t('UserTestView.TaskStep.eyeTracker') }}
+                      </h4>
+                      <p class="text-body-2 text-grey-darken-3">
+                        {{ t('UserTestView.TaskStep.eyeTrackerDesc') }}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <p class="text-body-1 text-grey-darken-3 mb-4">
-                  {{ t('UserTestView.TaskStep.newWindowDesc') }}
-                </p>
-                <p class="text-body-1 text-grey-darken-3 mb-0">
-                  <strong>{{ t('UserTestView.TaskStep.tip') }}:</strong>
-                  {{ t('UserTestView.TaskStep.tipDesc') }}
-                </p>
               </v-card-text>
             </v-card>
           </template>
@@ -928,11 +893,15 @@ const PREVIEW_STEP_LABEL_KEYS = {
 
 /** Dynamic mini-stepper keys inside stage 1 ("Before we start"). */
 const previewSteps = computed(() => {
-  const steps = ['recording']
+  const steps = []
+
+  if (hasAnyRecording.value) {
+    steps.push('recording')
+  }
 
   if (props.task?.hasScreenRecord) {
     steps.push('share', 'checklist')
-  } else if (hasAnyRecording.value && hasExternalLink.value) {
+  } else if (hasExternalLink.value) {
     steps.push('link')
   }
 
@@ -942,7 +911,7 @@ const previewSteps = computed(() => {
 const previewStepIndex = ref(0)
 
 const currentPreviewStep = computed(
-  () => previewSteps.value[previewStepIndex.value] || 'recording',
+  () => previewSteps.value[previewStepIndex.value] || null,
 )
 
 const showPreviewStepper = computed(() => previewSteps.value.length > 1)
@@ -954,6 +923,15 @@ function previewStepLabel(stepKey) {
 
 function resetPreviewStepper() {
   previewStepIndex.value = 0
+}
+
+function introStage() {
+  return previewSteps.value.length > 0 ? 1 : 2
+}
+
+function resetToTaskIntro() {
+  resetPreviewStepper()
+  stage.value = introStage()
 }
 
 function prevPreviewStep() {
@@ -970,13 +948,17 @@ function nextPreviewStep() {
   goToStartTaskStage()
 }
 
+const stage = ref(introStage())
+
 watch(previewSteps, (steps) => {
   if (previewStepIndex.value > steps.length - 1) {
     previewStepIndex.value = Math.max(0, steps.length - 1)
   }
+  if (steps.length === 0 && stage.value === 1) {
+    stage.value = 2
+  }
 })
 
-const stage = ref(1)
 const hasOpenedTool = ref(false)
 const audioRecorder = ref(null)
 const videoRecorder = ref(null)
@@ -1219,8 +1201,7 @@ function emitDoneOrCouldNotFinish(savedTime) {
 
   // Reset stage after a small delay to allow parent to handle the transition
   nextTick(() => {
-    stage.value = 1
-    resetPreviewStepper()
+    resetToTaskIntro()
   })
 }
 
@@ -1257,8 +1238,7 @@ watch(
       finishTimeout = null
     }
     abortAllMedia()
-    stage.value = 1
-    resetPreviewStepper()
+    resetToTaskIntro()
     taskStartTime = null
     elapsedTimeDisplay.value = '0:00'
     showPostForm.value = { userCompleted: undefined }

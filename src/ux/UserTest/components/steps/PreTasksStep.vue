@@ -21,14 +21,21 @@
             color="primary"
             variant="flat"
             size="large"
-            @click="showRecordingInfo = true"
+            @click="onContinue"
           >
-            {{ $t('UserTestView.PreTasksStep.nextButton') }}
+            {{
+              hasRecording
+                ? $t('UserTestView.PreTasksStep.nextButton')
+                : $t('UserTestView.PreTasksStep.startButton')
+            }}
           </v-btn>
         </template>
 
         <v-expand-transition>
-          <div v-if="showRecordingInfo" class="recording-content">
+          <div
+            v-if="hasRecording && showRecordingInfo"
+            class="recording-content"
+          >
             <!-- Recording Information Card -->
             <v-card
               variant="outlined"
@@ -115,12 +122,24 @@ import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 
 const props = defineProps({
   numTasks: Number,
+  hasRecording: {
+    type: Boolean,
+    default: true,
+  },
 })
 const emit = defineEmits(['startTasks'])
 
 const preTasksContent = ref(null)
 const showRecordingInfo = ref(false)
 let cleanupSplitAnimation = () => {}
+
+function onContinue() {
+  if (props.hasRecording) {
+    showRecordingInfo.value = true
+    return
+  }
+  emit('startTasks')
+}
 
 async function runSplitAnimation() {
   if (typeof cleanupSplitAnimation === 'function') {
