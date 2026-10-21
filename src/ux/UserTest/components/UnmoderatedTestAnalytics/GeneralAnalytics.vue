@@ -530,15 +530,13 @@
             </div>
           </div>
           <v-row>
-            <template
-              v-for="(q, idx) in filteredSessions[0]?.postTestAnswer || []"
-            >
+            <template v-for="(q, idx) in testStructure?.postTest || []">
               <v-col
                 v-if="
                   Array.isArray(q.selectionFields) &&
                   q.selectionFields.length > 0
                 "
-                :key="'sel-' + (q.question || idx)"
+                :key="'post-sel-' + (q.title || q.question || idx)"
                 cols="12"
                 md="6"
                 lg="4"
@@ -551,10 +549,14 @@
                   :chart-colors="chartColors"
                 />
               </v-col>
-              <v-col v-else :key="'com-' + (q.question || idx)" cols="12">
+              <v-col
+                v-else
+                :key="'post-com-' + (q.title || q.question || idx)"
+                cols="12"
+              >
                 <CommentListCard
                   :question-title="q.title || q.question"
-                  :answer="q.answer"
+                  :answer="getPostTextAnswers(idx)"
                 />
               </v-col>
             </template>
@@ -593,6 +595,10 @@ import {
   getTimeEfficiencyPercentage,
   getTaskAnswerOutcome,
 } from '../../utils/taskAnalytics'
+import {
+  getPostTestSelectionCounts,
+  getPostTestTextAnswers,
+} from '../../utils/postTestAnalytics'
 import { useFilterDefinitions } from './useFilterDefinitions'
 import { exportStudySummary } from '@/shared/utils/studySummaryExport'
 import { showError } from '@/shared/utils/toast'
@@ -630,40 +636,17 @@ const chartColors = [
   '#D4E157',
 ]
 
-// Encuentra todas las preguntas de selección
-computed(() => {
-  if (!taskAnswers.value.length || !taskAnswers.value[0].postTestAnswer)
-    return []
-  return taskAnswers.value[0].postTestAnswer.filter(
-    (q) => Array.isArray(q.selectionFields) && q.selectionFields.length > 0,
-  )
-})
-
 // Devuelve los recuentos de respuestas para una pregunta de selección específica (por índice)
 function getSelectionCounts(questionIdx) {
-  const counts = {}
-  const q = filteredSessions.value[0]?.postTestAnswer?.[questionIdx]
-  if (!q) return counts
-  q.selectionFields.forEach((opt) => {
-    counts[opt] = 0
-  })
-  filteredSessions.value.forEach((ans) => {
-    if (
-      ans.postTestAnswer &&
-      ans.postTestAnswer[questionIdx] &&
-      ans.postTestAnswer[questionIdx].answer
-    ) {
-      const answer = ans.postTestAnswer[questionIdx].answer
-      if (Array.isArray(answer)) {
-        answer.forEach((a) => {
-          if (counts[a] !== undefined) counts[a]++
-        })
-      } else if (counts[answer] !== undefined) {
-        counts[answer]++
-      }
-    }
-  })
-  return counts
+  return getPostTestSelectionCounts(
+    questionIdx,
+    testStructure.value?.postTest,
+    filteredSessions.value,
+  )
+}
+
+function getPostTextAnswers(questionIdx) {
+  return getPostTestTextAnswers(questionIdx, filteredSessions.value)
 }
 
 function getPreSelectionCounts(questionIdx) {
