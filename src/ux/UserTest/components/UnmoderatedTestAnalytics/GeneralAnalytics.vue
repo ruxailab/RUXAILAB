@@ -416,28 +416,6 @@
 
           <div class="mt-8">
             <h4 class="text-h6 font-weight-bold mb-5">
-              {{ $t('analytics.taskEfficiencyChart') }}
-            </h4>
-            <p class="text-caption text-medium-emphasis mb-3">
-              {{ $t('analytics.taskEfficiencyChartFormula') }}
-            </p>
-            <div class="analytics-bar-chart analytics-bar-chart-scroll">
-              <div
-                class="analytics-bar-chart-content"
-                :style="{
-                  '--chart-min-width': `${taskTimingStats.length * 80}px`,
-                }"
-              >
-                <Bar
-                  :data="taskEfficiencyChartData"
-                  :options="taskEfficiencyChartOptions"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-8">
-            <h4 class="text-h6 font-weight-bold mb-5">
               {{ $t('analytics.taskTimeVsEstimate') }}
             </h4>
             <p class="text-caption text-medium-emphasis mb-3">
@@ -1197,20 +1175,6 @@ const taskPerformanceCards = computed(() =>
   }),
 )
 
-const taskEfficiencyChartData = computed(() => ({
-  labels: taskTimingStats.value.map((_, index) => `T${index + 1}`),
-  datasets: [
-    {
-      label: t('analytics.taskEfficiency'),
-      data: taskTimingStats.value.map(
-        (stats) => stats.timeEfficiencyPercentage,
-      ),
-      backgroundColor: '#2563EB',
-      borderRadius: 4,
-    },
-  ],
-}))
-
 const getEstimateStatusColor = (status) => {
   if (status === 'underEstimate') return 'info'
   if (status === 'withinEstimate') return 'success'
@@ -1362,22 +1326,6 @@ const tooltipTitle = (items) => {
   const itemName = item?.dataset?.itemNames?.[item.dataIndex]
   return itemName ? `${item.label}: ${itemName}` : item.label
 }
-
-const taskEfficiencyChartOptions = computed(() => ({
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: { display: false },
-    tooltip: { callbacks: { title: tooltipTitle } },
-  },
-  scales: {
-    x: { title: { display: true, text: t('analytics.taskLabel') } },
-    y: {
-      beginAtZero: true,
-      title: { display: true, text: t('analytics.taskEfficiency') },
-    },
-  },
-}))
 
 const taskTimeComparisonChartOptions = computed(() => ({
   responsive: true,

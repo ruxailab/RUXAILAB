@@ -2854,8 +2854,6 @@
     "taskPerformanceDescription": "Success and error rates for each study task",
     "taskPerformanceFormula": "Success rate = successful completions / participants × 100. Time efficiency = estimated task time / average successful completion time × 100.",
     "taskEfficiency": "Time efficiency (%)",
-    "taskEfficiencyChart": "Task efficiency",
-    "taskEfficiencyChartFormula": "Time efficiency = estimated task time / average successful completion time × 100. Higher values mean participants completed tasks closer to or faster than the target.",
     "timeEfficiency": "Time efficiency",
     "taskTimingMetrics": "Timing",
     "averageTaskTime": "Average time",
