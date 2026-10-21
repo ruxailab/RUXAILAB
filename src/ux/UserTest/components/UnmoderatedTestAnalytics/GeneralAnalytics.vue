@@ -109,44 +109,6 @@
       </v-expand-transition>
     </v-card>
 
-    <!-- UX Metrics Row (ahora primera fila) -->
-    <v-row>
-      <v-col cols="12" md="4">
-        <UxMetricCard
-          :value="`${calculateEffectiveness().toFixed(1)}%`"
-          :label="$t('analytics.effectiveness')"
-          color="success"
-          icon="mdi-target-account"
-          :description="$t('analytics.effectivenessDescription')"
-          :progress="calculateEffectiveness()"
-        />
-      </v-col>
-      <v-col cols="12" md="4">
-        <UxMetricCard
-          :value="`${calculateEfficiency().tasksPerMinute} ${$t('analytics.taskRateUnit')}`"
-          :label="$t('analytics.efficiency')"
-          color="info"
-          icon="mdi-speedometer"
-          :description="
-            $t('analytics.efficiencyDescription', {
-              avgTime: calculateEfficiency().avgTime,
-            })
-          "
-          :progress="Math.min(calculateEfficiency().score * 10, 100)"
-        />
-      </v-col>
-      <v-col cols="12" md="4">
-        <UxMetricCard
-          :value="`${getAverageSatisfaction().toFixed(1)}`"
-          :label="$t('analytics.satisfaction')"
-          color="warning"
-          icon="mdi-heart"
-          :description="$t('analytics.satisfactionDescription')"
-          :progress="getAverageSatisfaction()"
-        />
-      </v-col>
-    </v-row>
-
     <v-row>
       <v-col cols="12" lg="6">
         <v-card
@@ -159,23 +121,12 @@
                   mdi-target
                 </v-icon>
                 <h3 class="text-h5 font-weight-medium text-on-surface">
-                  {{ $t('analytics.conclusionRate') }}
+                  {{ $t('analytics.studyCompletionRate') }}
                 </h3>
               </div>
               <div class="text-h2 font-weight-bold text-primary mb-2">
                 {{ parseFloat(getConclusionAverage()).toFixed(2) }}%
               </div>
-            </div>
-            <div class="text-end">
-              <v-chip color="success" variant="flat" size="small" class="mb-2">
-                <v-icon start size="16"> mdi-trending-up </v-icon>
-                Max {{ parseFloat(maxProgressPerTask()).toFixed(2) }}%
-              </v-chip>
-              <br />
-              <v-chip color="error" variant="flat" size="small">
-                <v-icon start size="16"> mdi-trending-down </v-icon>
-                Min {{ parseFloat(minProgressPerTask()).toFixed(2) }}%
-              </v-chip>
             </div>
           </div>
 
@@ -189,93 +140,93 @@
 
           <v-divider class="mb-6" />
 
-          <div class="d-flex justify-space-between">
-            <div class="text-center">
-              <div class="text-h4 font-weight-bold text-secondary mb-1">
-                {{ getTestsInProgress().totalInProgress }}
+          <div class="d-flex justify-space-between text-center">
+            <div class="flex-grow-1">
+              <div class="text-h4 font-weight-bold text-success mb-1">
+                {{ participantStudyCounts.finished }}
               </div>
               <p class="text-body-2 text-medium-emphasis">
-                {{ $t('analytics.testsInProgress') }}
+                {{ $t('analytics.studiesFinished') }}
               </p>
             </div>
-            <v-divider vertical class="mx-4" />
-            <div class="text-center">
-              <div class="text-h4 font-weight-bold text-accent mb-1">16m</div>
+            <v-divider vertical class="mx-2" />
+            <div class="flex-grow-1">
+              <div class="text-h4 font-weight-bold text-secondary mb-1">
+                {{ participantStudyCounts.ongoing }}
+              </div>
               <p class="text-body-2 text-medium-emphasis">
-                {{ $t('analytics.totalDuration') }}
+                {{ $t('analytics.studiesOngoing') }}
+              </p>
+            </div>
+            <v-divider vertical class="mx-2" />
+            <div class="flex-grow-1">
+              <div class="text-h4 font-weight-bold text-medium-emphasis mb-1">
+                {{ participantStudyCounts.notStarted }}
+              </div>
+              <p class="text-body-2 text-medium-emphasis">
+                {{ $t('analytics.studiesNotStarted') }}
               </p>
             </div>
           </div>
         </v-card>
       </v-col>
       <v-col cols="12" lg="6">
-        <v-row class="h-100">
-          <v-col cols="6">
+        <v-row>
+          <v-col cols="12" sm="6">
             <UxMetricCard
-              :value="calculateAverageTime().formatedTime"
-              :label="$t('analytics.avgTimePerTask')"
-              color="primary"
-              icon="mdi-clock-fast"
-              :description="$t('analytics.efficientTaskCompletion')"
-              :progress="Math.min(calculateEfficiency().score * 10, 100)"
-              :show-progress="false"
+              :value="`${calculateEffectiveness().toFixed(1)}%`"
+              :label="$t('analytics.effectiveness')"
+              color="success"
+              icon="mdi-target-account"
+              :description="$t('analytics.effectivenessDescription')"
+              :progress="calculateEffectiveness()"
             />
           </v-col>
-          <v-col cols="6">
+          <v-col cols="12" sm="6">
             <UxMetricCard
-              v-if="testStructure?.userTasks && taskAnswers.length"
-              :value="findLongestTask().averageTime.formatedTime"
-              :label="$t('analytics.longestTask')"
-              color="error"
-              icon="mdi-timer-alert"
-              :description="`${$t('analytics.taskLabel')}: ${findLongestTask().taskName}`"
-              :show-progress="false"
-            >
-              <template #description>
-                <span class="text-caption text-medium-emphasis">
-                  {{ $t('analytics.taskLabel') }}:
-                  <strong>"{{ findLongestTask().taskName }}"</strong>
-                </span>
-              </template>
-            </UxMetricCard>
-          </v-col>
-          <v-col cols="6">
-            <UxMetricCard
-              :value="getTotalAnswers()"
-              :label="$t('analytics.totalAnswers')"
-              color="success"
-              icon="mdi-check-circle"
-              :description="`+${getTasksTodayCount()}/${$t('analytics.day')}`"
+              :value="
+                calculateEfficiency().timeEfficiencyPercentage === null
+                  ? $t('analytics.noData')
+                  : `${calculateEfficiency().timeEfficiencyPercentage.toFixed(1)}%`
+              "
+              :label="$t('analytics.efficiency')"
+              color="info"
+              icon="mdi-speedometer"
+              :description="
+                $t('analytics.efficiencyDescription', {
+                  avgTime: calculateEfficiency().avgTime,
+                  estimatedTime: calculateEfficiency().estimatedTime,
+                })
+              "
               :progress="
                 Math.min(
-                  (getTotalAnswers() /
-                    Math.max(filteredSessions.length || 1, 1)) *
-                    100,
+                  calculateEfficiency().timeEfficiencyPercentage || 0,
                   100,
                 )
               "
-              :show-progress="false"
-            >
-              <template #description>
-                <div class="d-flex align-center text-caption text-success">
-                  <v-icon color="success" size="16" class="me-1">
-                    mdi-trending-up
-                  </v-icon>
-                  <span
-                    >+{{ getTasksTodayCount() }}/{{ $t('analytics.day') }}</span
-                  >
-                </div>
-              </template>
-            </UxMetricCard>
+            />
           </v-col>
-          <v-col cols="6">
+          <v-col cols="12" sm="6">
             <UxMetricCard
-              :value="$t('analytics.evaluator')"
-              :label="$t('analytics.latestUser')"
-              color="accent"
-              icon="mdi-account-circle"
-              :description="getFormattedDate(getLatestResponse().lastUpdate)"
-              :progress="100"
+              :value="`${getAverageSatisfaction().toFixed(1)}`"
+              :label="$t('analytics.satisfaction')"
+              color="warning"
+              icon="mdi-heart"
+              :description="$t('analytics.satisfactionDescription')"
+              :progress="getAverageSatisfaction()"
+            />
+          </v-col>
+          <v-col cols="12" sm="6">
+            <UxMetricCard
+              :value="getParticipantCount()"
+              :label="$t('analytics.participantCount')"
+              color="success"
+              icon="mdi-check-circle"
+              :description="
+                $t('analytics.participantsPerDay', {
+                  count: getParticipantsTodayCount(),
+                })
+              "
               :show-progress="false"
             />
           </v-col>
@@ -347,18 +298,13 @@
                     <v-chip
                       :color="
                         getEfficiencyPercentageColor(
-                          taskStat.relativeEfficiencyPercentage,
+                          taskStat.timeEfficiencyPercentage,
                         )
                       "
                       variant="tonal"
                       size="small"
                     >
-                      {{
-                        taskStat.relativeEfficiencyPercentage === null
-                          ? $t('analytics.noData')
-                          : `${taskStat.relativeEfficiencyPercentage.toFixed(1)}%`
-                      }}
-                      {{ $t('analytics.relativeEfficiency') }}
+                      {{ $t('analytics.timeEfficiency') }}
                     </v-chip>
                     <div class="chart-container-small">
                       <canvas
@@ -407,9 +353,9 @@
                     </span>
                     <strong class="task-timing-detail-value">
                       {{
-                        taskStat.efficiency === null
+                        taskStat.timeEfficiencyPercentage === null
                           ? $t('analytics.noData')
-                          : taskStat.efficiency.toFixed(4)
+                          : `${taskStat.timeEfficiencyPercentage.toFixed(1)}%`
                       }}
                     </strong>
                   </div>
@@ -449,7 +395,10 @@
                       {{
                         taskStat.timeDifferenceMinutes === null
                           ? $t('analytics.noData')
-                          : formatTimeDifference(taskStat.timeDifferenceMinutes)
+                          : formatTimeDifference(
+                              taskStat.timeDifferenceMinutes,
+                              taskStat.estimatedTimeMinutes,
+                            )
                       }}
                     </strong>
                   </div>
@@ -668,7 +617,9 @@ import AnswersTimeline from '../answers/AnswersTimeline.vue'
 import { calculateSUSScore } from '../../utils/susCalculator'
 import { getNASATLXData } from '../../utils/nasaTlxData'
 import {
+  getAdditionalTimePercentage,
   getEstimateComparisonStatus,
+  getTimeEfficiencyPercentage,
   getTaskAnswerOutcome,
 } from '../../utils/taskAnalytics'
 import { useFilterDefinitions } from './useFilterDefinitions'
@@ -835,22 +786,6 @@ const filteredSessions = computed(() => {
     })
   })
 })
-const averageTimePerTask = computed(() => {
-  let totalTasks = 0
-  let totalTaskTime = 0
-
-  if (!filteredSessions.value.length) return 0
-
-  filteredSessions.value.forEach((answer) => {
-    Object.values(answer.tasks || {}).forEach((task) => {
-      totalTaskTime += task.taskTime
-      totalTasks++
-    })
-  })
-
-  return totalTasks === 0 ? 0 : totalTaskTime / totalTasks
-})
-
 const downloadPdfResume = async () => {
   recordReportDownload(test.value?.id).catch(() => {})
   try {
@@ -875,52 +810,6 @@ const downloadPdfResume = async () => {
   }
 }
 
-const findLongestTask = () => {
-  if (!filteredSessions.value.length) {
-    return { taskName: 'Task', averageTime: formatTimeDetailedFromMs(0) }
-  }
-
-  const taskAverages = {}
-
-  filteredSessions.value.forEach((answer) => {
-    if (!answer.tasks) return
-    for (const taskId in answer.tasks) {
-      const taskTime = answer.tasks[taskId]?.taskTime ?? 0
-
-      if (!taskAverages[taskId]) {
-        taskAverages[taskId] = { totalTime: taskTime, count: 1 }
-      } else {
-        taskAverages[taskId].totalTime += taskTime
-        taskAverages[taskId].count++
-      }
-    }
-  })
-
-  for (const taskId in taskAverages) {
-    taskAverages[taskId].averageTime =
-      taskAverages[taskId].totalTime / taskAverages[taskId].count
-  }
-
-  let longestTask = null
-  let longestAverageTime = 0
-
-  for (const taskId in taskAverages) {
-    if (taskAverages[taskId].averageTime > longestAverageTime) {
-      longestAverageTime = taskAverages[taskId].averageTime
-      longestTask = taskId
-    }
-  }
-
-  return {
-    taskName: resolveTaskName(longestTask),
-    averageTime: formatTimeDetailedFromMs(longestAverageTime),
-  }
-}
-
-const calculateAverageTime = () => {
-  return formatTimeDetailedFromMs(averageTimePerTask.value)
-}
-
 const getConclusionAverage = () => {
   if (!filteredSessions.value.length) return 0
 
@@ -933,95 +822,56 @@ const getConclusionAverage = () => {
   return eachConclusion / totalAnswers
 }
 
-const getTestsInProgress = () => {
-  if (!filteredSessions.value.length)
-    return { totalInProgress: 0, totalCompleted: 0 }
+const getParticipantStudyCounts = () => {
+  return filteredSessions.value.reduce(
+    (counts, answer) => {
+      if (answer.submitted === true) {
+        counts.finished++
+        return counts
+      }
 
-  let totalProgress = 0
-  let totalCompleted = 0
-  filteredSessions.value.forEach((answer) => {
-    if (answer.submitted) {
-      totalCompleted++
-    } else {
-      totalProgress++
-    }
-  })
-  return {
-    totalInProgress: totalProgress,
-    totalCompleted: totalCompleted,
-  }
+      const hasStarted =
+        Number(answer.progress) > 0 ||
+        answer.consentCompleted === true ||
+        answer.preTestCompleted === true ||
+        answer.postTestCompleted === true ||
+        Object.values(answer.tasks || {}).some(
+          (task) => task?.attempted === true || task?.completed === true,
+        )
+
+      if (hasStarted) {
+        counts.ongoing++
+      } else {
+        counts.notStarted++
+      }
+
+      return counts
+    },
+    { finished: 0, ongoing: 0, notStarted: 0 },
+  )
 }
 
-const maxProgressPerTask = () => {
-  if (!filteredSessions.value.length) return 0
+const participantStudyCounts = computed(getParticipantStudyCounts)
 
-  const progressArray = filteredSessions.value.map((answer) => answer.progress)
-  return Math.max(...progressArray)
-}
-
-const minProgressPerTask = () => {
-  if (!filteredSessions.value.length) return 0
-
-  const progressArray = filteredSessions.value.map((answer) => answer.progress)
-  return Math.min(...progressArray)
-}
-
-const getTotalAnswers = () => {
+const getParticipantCount = () => {
   return filteredSessions.value.length
 }
 
-const getLatestResponse = () => {
-  if (!filteredSessions.value.length)
-    return { cooperatorEmail: '', lastUpdate: '' }
-
-  let latestResponse = filteredSessions.value[0].userDocId
-  let lastUpdate = filteredSessions.value[0].lastUpdate
-
-  filteredSessions.value.forEach((answer) => {
-    if (answer.lastUpdate > filteredSessions.value[0].lastUpdate) {
-      latestResponse = answer.userDocId
-      lastUpdate = answer.lastUpdate
-    }
-  })
-
-  return {
-    cooperatorEmail: getCooperatorEmail(latestResponse),
-    lastUpdate: lastUpdate,
-  }
-}
-
-const getTasksTodayCount = () => {
+const getParticipantsTodayCount = () => {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
-  let tasksToday = 0
+  return filteredSessions.value.filter((session) => {
+    if (!session.lastUpdate) return false
 
-  filteredSessions.value.forEach((answer) => {
-    const answerDate = new Date(answer.lastUpdate)
-    answerDate.setHours(0, 0, 0, 0)
-
-    if (answerDate.getTime() === today.getTime()) {
-      tasksToday++
-    }
-  })
-
-  return tasksToday
-}
-
-const getCooperatorEmail = (userDocId) => {
-  let cooperatorEmail = ''
-  if (test.value.cooperators && Array.isArray(test.value.cooperators)) {
-    for (const element of test.value.cooperators) {
-      if (element.userDocId === userDocId) {
-        cooperatorEmail = element.email
-      }
-    }
-  }
-  return cooperatorEmail
-}
-
-const getFormattedDate = (date) => {
-  return new Date(date).toLocaleString()
+    const updatedAt = new Date(session.lastUpdate)
+    return (
+      !Number.isNaN(updatedAt.getTime()) &&
+      updatedAt.getFullYear() === today.getFullYear() &&
+      updatedAt.getMonth() === today.getMonth() &&
+      updatedAt.getDate() === today.getDate()
+    )
+  }).length
 }
 
 // Filter methods
@@ -1070,54 +920,46 @@ const calculateEffectiveness = () => {
 }
 
 const calculateEfficiency = () => {
-  if (!filteredSessions.value.length) return { score: 0, avgTime: '0 min 0 s' }
-
-  let totalSuccessfulTasks = 0
-  let totalSuccessfulTaskTime = 0 // in milliseconds - only time from successful tasks
-  let totalTimeSpent = 0 // in milliseconds - time from all tasks (for reference)
-
-  // Calculate total successful tasks and time spent on successful tasks only
-  filteredSessions.value.forEach((answer) => {
-    Object.values(answer.tasks || {}).forEach((task) => {
-      totalTimeSpent += task.taskTime || 0
-      // Count as successful if task is completed and not explicitly marked as failed
-      if (task.completed && task.success !== false) {
-        totalSuccessfulTasks++
-        totalSuccessfulTaskTime += task.taskTime || 0
-      }
-    })
-  })
-
-  const avgTimeFormatted = formatTimeDetailedFromMs(
-    totalSuccessfulTaskTime / Math.max(1, totalSuccessfulTasks),
+  const measuredTasks = taskTimingStats.value.filter(
+    (stats) => stats.timeEfficiencyPercentage !== null,
+  )
+  const successfulTaskCount = measuredTasks.reduce(
+    (total, stats) => total + stats.successfulTaskCount,
+    0,
+  )
+  const totalSuccessfulTimeMinutes = measuredTasks.reduce(
+    (total, stats) =>
+      total + stats.averageTimeMinutes * stats.successfulTaskCount,
+    0,
+  )
+  const totalEstimatedTimeMinutes = measuredTasks.reduce(
+    (total, stats) =>
+      total + stats.estimatedTimeMinutes * stats.successfulTaskCount,
+    0,
+  )
+  const averageTimeMinutes =
+    successfulTaskCount > 0
+      ? totalSuccessfulTimeMinutes / successfulTaskCount
+      : null
+  const estimatedTimeMinutes =
+    successfulTaskCount > 0
+      ? totalEstimatedTimeMinutes / successfulTaskCount
+      : null
+  const timeEfficiencyPercentage = getTimeEfficiencyPercentage(
+    totalSuccessfulTimeMinutes,
+    totalEstimatedTimeMinutes,
   )
 
-  const taskEfficiencyValues = taskTimingStats.value
-    .map((stats) => stats.efficiency)
-    .filter((efficiency) => efficiency !== null)
-  const efficiencyPerMinute =
-    taskEfficiencyValues.length > 0
-      ? taskEfficiencyValues.reduce((sum, efficiency) => sum + efficiency, 0) /
-        taskEfficiencyValues.length
-      : 0
-
-  // Dynamic normalization based on actual efficiency ratio
-  // Use logarithmic scale to better represent efficiency variations
-  // Score = 10 * (1 - e^(-efficiency_ratio * scale_factor))
-  const scaleFactor = 2 // Adjustable based on typical task complexity
-  const normalizedScore =
-    efficiencyPerMinute > 0
-      ? Math.min(10, 10 * (1 - Math.exp(-efficiencyPerMinute * scaleFactor)))
-      : 0
-
   return {
-    score: normalizedScore,
-    avgTime: avgTimeFormatted.formatedTime,
-    tasksPerMinute: efficiencyPerMinute.toFixed(4),
-    totalTasks: totalSuccessfulTasks,
-    totalSuccessfulTime: formatTimeDetailedFromMs(totalSuccessfulTaskTime)
-      .formatedTime,
-    totalTime: formatTimeDetailedFromMs(totalTimeSpent).formatedTime,
+    timeEfficiencyPercentage,
+    avgTime:
+      averageTimeMinutes === null
+        ? t('analytics.noData')
+        : formatTimeDetailedFromMs(averageTimeMinutes * 60000).formatedTime,
+    estimatedTime:
+      estimatedTimeMinutes === null
+        ? t('analytics.noEstimate')
+        : formatTimeDetailedFromMs(estimatedTimeMinutes * 60000).formatedTime,
   }
 }
 
@@ -1320,15 +1162,13 @@ const getTaskTimeMinutes = (taskAnswer) => {
 const getEstimatedTimeMinutes = (task) => {
   if (task?.estimatedTime === null || task?.estimatedTime === '') return null
   const time = Number(task?.estimatedTime)
-  return Number.isFinite(time) && time >= 0 ? time : null
+  return Number.isFinite(time) && time > 0 ? time : null
 }
 
 const taskTimingStats = computed(() =>
   taskDefinitions.value.map((task, index) => {
-    let totalRecordedTimeMs = 0
     let totalSuccessfulTaskTimeMs = 0
-    let recordedTaskCount = 0
-    let sumIndividualEfficiency = 0
+    let successfulTaskCount = 0
 
     filteredSessions.value.forEach((session) => {
       const taskAnswer = getSessionTask(session, task, index)
@@ -1337,24 +1177,23 @@ const taskTimingStats = computed(() =>
       const taskTimeMs = Number(taskAnswer.taskTime)
       const hasValidTime = Number.isFinite(taskTimeMs) && taskTimeMs > 0
 
-      if (hasValidTime) {
-        totalRecordedTimeMs += taskTimeMs
-        recordedTaskCount++
-      }
-
       if (taskAnswer.completed && taskAnswer.success !== false) {
         if (hasValidTime) {
           totalSuccessfulTaskTimeMs += taskTimeMs
-          sumIndividualEfficiency += 60000 / taskTimeMs
+          successfulTaskCount++
         }
       }
     })
 
     const averageTimeMinutes =
-      recordedTaskCount > 0
-        ? totalRecordedTimeMs / recordedTaskCount / 60000
+      successfulTaskCount > 0
+        ? totalSuccessfulTaskTimeMs / successfulTaskCount / 60000
         : null
     const estimatedTimeMinutes = getEstimatedTimeMinutes(task)
+    const timeEfficiencyPercentage = getTimeEfficiencyPercentage(
+      averageTimeMinutes,
+      estimatedTimeMinutes,
+    )
     const timeDifferenceMinutes =
       averageTimeMinutes !== null && estimatedTimeMinutes !== null
         ? averageTimeMinutes - estimatedTimeMinutes
@@ -1367,14 +1206,8 @@ const taskTimingStats = computed(() =>
     return {
       taskId: task?.taskId ?? String(index),
       taskName: task?.taskName || resolveTaskName(String(index)),
-      efficiency:
-        recordedTaskCount > 0
-          ? sumIndividualEfficiency / recordedTaskCount
-          : null,
-      relativeEfficiencyPercentage:
-        totalRecordedTimeMs > 0
-          ? (totalSuccessfulTaskTimeMs / totalRecordedTimeMs) * 100
-          : null,
+      successfulTaskCount,
+      timeEfficiencyPercentage,
       averageTimeMinutes,
       estimatedTimeMinutes,
       timeDifferenceMinutes,
@@ -1395,9 +1228,7 @@ const taskPerformanceCards = computed(() =>
 
     return {
       ...performance,
-      efficiency: timing?.efficiency ?? null,
-      relativeEfficiencyPercentage:
-        timing?.relativeEfficiencyPercentage ?? null,
+      timeEfficiencyPercentage: timing?.timeEfficiencyPercentage ?? null,
       averageTimeMinutes: timing?.averageTimeMinutes ?? null,
       estimatedTimeMinutes: timing?.estimatedTimeMinutes ?? null,
       timeDifferenceMinutes: timing?.timeDifferenceMinutes ?? null,
@@ -1411,7 +1242,9 @@ const taskEfficiencyChartData = computed(() => ({
   datasets: [
     {
       label: t('analytics.taskEfficiency'),
-      data: taskTimingStats.value.map((stats) => stats.efficiency),
+      data: taskTimingStats.value.map(
+        (stats) => stats.timeEfficiencyPercentage,
+      ),
       backgroundColor: '#2563EB',
       borderRadius: 4,
     },
@@ -1425,15 +1258,38 @@ const getEstimateStatusColor = (status) => {
   return 'grey'
 }
 
-const getEfficiencyPercentageColor = (relativeEfficiencyPercentage) => {
-  if (relativeEfficiencyPercentage === null) return 'grey'
-  if (relativeEfficiencyPercentage >= 100) return 'success'
-  if (relativeEfficiencyPercentage >= 80) return 'warning'
+const getEfficiencyPercentageColor = (timeEfficiencyPercentage) => {
+  if (timeEfficiencyPercentage === null) return 'grey'
+  if (timeEfficiencyPercentage >= 100) return 'success'
+  if (timeEfficiencyPercentage >= 80) return 'warning'
   return 'error'
 }
 
-const formatTimeDifference = (minutes) =>
-  `${minutes > 0 ? '+' : ''}${minutes.toFixed(1)} ${t('analytics.minutesShort')}`
+const formatTimeDifference = (differenceMinutes, estimatedTimeMinutes) => {
+  const totalSeconds = Math.round(Math.abs(differenceMinutes) * 60)
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
+  const sign = differenceMinutes > 0 ? '+' : differenceMinutes < 0 ? '-' : ''
+  const time = `${sign}${minutes}m ${seconds}s`
+  const additionalTimePercentage = getAdditionalTimePercentage(
+    differenceMinutes + estimatedTimeMinutes,
+    estimatedTimeMinutes,
+  )
+
+  if (differenceMinutes > 0) {
+    return t('analytics.timeDifferenceAdditional', {
+      time,
+      percentage: additionalTimePercentage.toFixed(1),
+    })
+  }
+  if (differenceMinutes < 0) {
+    return t('analytics.timeDifferenceBelowEstimate', {
+      time,
+      percentage: Math.abs(additionalTimePercentage).toFixed(1),
+    })
+  }
+  return t('analytics.timeDifferenceOnEstimate', { time })
+}
 
 const getUserIdentifier = (session, index) => ({
   identifier: `U${index + 1}`,
@@ -1616,7 +1472,7 @@ const drawEfficiencyDonutChart = (task) => {
   const centerY = canvas.height / 2
   const radius = Math.min(centerX, centerY) - 10
   const innerRadius = radius * 0.6
-  const efficiency = task.relativeEfficiencyPercentage
+  const efficiency = task.timeEfficiencyPercentage
 
   context.beginPath()
   context.arc(centerX, centerY, radius, 0, 2 * Math.PI)

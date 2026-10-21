@@ -1,5 +1,7 @@
 import {
+  getAdditionalTimePercentage,
   getEstimateComparisonStatus,
+  getTimeEfficiencyPercentage,
   getTaskAnswerOutcome,
 } from '@/ux/UserTest/utils/taskAnalytics'
 
@@ -20,5 +22,23 @@ describe('task analytics helpers', () => {
     expect(getEstimateComparisonStatus(1, 1)).toBe('withinEstimate')
     expect(getEstimateComparisonStatus(null, 1)).toBe('noData')
     expect(getEstimateComparisonStatus(1, null)).toBe('noEstimate')
+  })
+
+  it('calculates time efficiency and overrun against the estimate', () => {
+    const averageTimeMinutes = 176 / 60
+    const estimatedTimeMinutes = 1
+
+    expect(
+      getTimeEfficiencyPercentage(averageTimeMinutes, estimatedTimeMinutes),
+    ).toBeCloseTo(34.1, 1)
+    expect(
+      getAdditionalTimePercentage(averageTimeMinutes, estimatedTimeMinutes),
+    ).toBeCloseTo(193.3, 1)
+  })
+
+  it('does not calculate time efficiency when timing or estimate is invalid', () => {
+    expect(getTimeEfficiencyPercentage(null, 1)).toBeNull()
+    expect(getTimeEfficiencyPercentage(1, 0)).toBeNull()
+    expect(getAdditionalTimePercentage(2, 0)).toBeNull()
   })
 })
