@@ -109,7 +109,59 @@
       </v-expand-transition>
     </v-card>
 
-    <v-row>
+    <div class="overview-metric-grid mb-4">
+      <UxMetricCard
+        :value="`${calculateEffectiveness().toFixed(1)}%`"
+        :label="$t('analytics.effectiveness')"
+        color="success"
+        icon="mdi-target-account"
+        :description="$t('analytics.effectivenessDescription')"
+        :progress="calculateEffectiveness()"
+      />
+      <UxMetricCard
+        :value="
+          calculateEfficiency().timeEfficiencyPercentage === null
+            ? $t('analytics.noData')
+            : `${calculateEfficiency().timeEfficiencyPercentage.toFixed(1)}%`
+        "
+        :label="$t('analytics.efficiency')"
+        color="info"
+        icon="mdi-speedometer"
+        :description="$t('analytics.efficiencyDescription')"
+        :progress="
+          Math.min(calculateEfficiency().timeEfficiencyPercentage || 0, 100)
+        "
+      />
+      <UxMetricCard
+        :value="`${getAverageSatisfaction().toFixed(1)}`"
+        :label="$t('analytics.satisfaction')"
+        color="warning"
+        icon="mdi-heart"
+        :description="$t('analytics.satisfactionDescription')"
+        :progress="getAverageSatisfaction()"
+      />
+      <UxMetricCard
+        :value="getParticipantCount()"
+        :label="$t('analytics.participantCount')"
+        color="success"
+        icon="mdi-check-circle"
+        :description="
+          $t('analytics.participantsPerDay', {
+            count: getParticipantsTodayCount(),
+          })
+        "
+        :show-progress="false"
+      />
+      <UxMetricCard
+        :value="formatTotalDuration(totalDurationMs)"
+        :label="$t('analytics.totalDuration')"
+        color="primary"
+        icon="mdi-clock-outline"
+        :show-progress="false"
+      />
+    </div>
+
+    <v-row class="align-stretch">
       <v-col cols="12" lg="6">
         <v-card
           class="pa-4 pa-md-6 elevation-4 rounded-xl h-100 conclusion-card"
@@ -171,61 +223,11 @@
         </v-card>
       </v-col>
       <v-col cols="12" lg="6">
-        <v-row>
-          <v-col cols="12" sm="6">
-            <UxMetricCard
-              :value="`${calculateEffectiveness().toFixed(1)}%`"
-              :label="$t('analytics.effectiveness')"
-              color="success"
-              icon="mdi-target-account"
-              :description="$t('analytics.effectivenessDescription')"
-              :progress="calculateEffectiveness()"
-            />
-          </v-col>
-          <v-col cols="12" sm="6">
-            <UxMetricCard
-              :value="
-                calculateEfficiency().timeEfficiencyPercentage === null
-                  ? $t('analytics.noData')
-                  : `${calculateEfficiency().timeEfficiencyPercentage.toFixed(1)}%`
-              "
-              :label="$t('analytics.efficiency')"
-              color="info"
-              icon="mdi-speedometer"
-              :description="$t('analytics.efficiencyDescription')"
-              :progress="
-                Math.min(
-                  calculateEfficiency().timeEfficiencyPercentage || 0,
-                  100,
-                )
-              "
-            />
-          </v-col>
-          <v-col cols="12" sm="6">
-            <UxMetricCard
-              :value="`${getAverageSatisfaction().toFixed(1)}`"
-              :label="$t('analytics.satisfaction')"
-              color="warning"
-              icon="mdi-heart"
-              :description="$t('analytics.satisfactionDescription')"
-              :progress="getAverageSatisfaction()"
-            />
-          </v-col>
-          <v-col cols="12" sm="6">
-            <UxMetricCard
-              :value="getParticipantCount()"
-              :label="$t('analytics.participantCount')"
-              color="success"
-              icon="mdi-check-circle"
-              :description="
-                $t('analytics.participantsPerDay', {
-                  count: getParticipantsTodayCount(),
-                })
-              "
-              :show-progress="false"
-            />
-          </v-col>
-        </v-row>
+        <AnswersTimeline
+          :task-answers="filteredSessions"
+          @refresh="onRefreshTimeline"
+          @export="onExportTimeline"
+        />
       </v-col>
     </v-row>
 
@@ -249,7 +251,7 @@
 
           <v-row>
             <v-col
-              v-for="taskStat in taskPerformanceCards"
+              v-for="(taskStat, taskIndex) in taskPerformanceCards"
               :key="taskStat.taskId"
               cols="12"
               md="6"
@@ -260,7 +262,12 @@
               >
                 <div class="text-center mb-4">
                   <h4 class="text-h6 font-weight-bold mb-2">
-                    {{ taskStat.taskName }}
+                    {{
+                      $t('analytics.taskNumberedTitle', {
+                        number: taskIndex + 1,
+                        title: taskStat.taskName,
+                      })
+                    }}
                   </h4>
                 </div>
 
@@ -277,7 +284,6 @@
                       variant="tonal"
                       size="small"
                     >
-                      {{ taskStat.successRate.toFixed(1) }}%
                       {{ $t('analytics.effectiveness') }}
                     </v-chip>
                     <div class="chart-container-small">
@@ -342,18 +348,6 @@
                   {{ $t('analytics.taskTimingMetrics') }}
                 </div>
                 <div class="task-timing-details">
-                  <div class="task-timing-detail">
-                    <span class="task-timing-detail-label text-medium-emphasis">
-                      {{ $t('analytics.taskEfficiency') }}
-                    </span>
-                    <strong class="task-timing-detail-value">
-                      {{
-                        taskStat.timeEfficiencyPercentage === null
-                          ? $t('analytics.noData')
-                          : `${taskStat.timeEfficiencyPercentage.toFixed(1)}%`
-                      }}
-                    </strong>
-                  </div>
                   <div class="task-timing-detail">
                     <span class="task-timing-detail-label text-medium-emphasis">
                       {{ $t('analytics.averageTaskTime') }}
@@ -558,13 +552,6 @@
         </v-card>
       </v-col>
     </v-row>
-
-    <!-- Chart Section -->
-    <AnswersTimeline
-      :task-answers="filteredSessions"
-      @refresh="onRefreshTimeline"
-      @export="onExportTimeline"
-    />
   </div>
 </template>
 
@@ -782,6 +769,31 @@ const downloadPdfResume = async () => {
   } catch {
     showError('Unable to generate the summary PDF.')
   }
+}
+
+const totalDurationMs = computed(() =>
+  filteredSessions.value.reduce(
+    (total, session) =>
+      total +
+      Object.values(session.tasks || {}).reduce((sessionTotal, task) => {
+        const taskTime = Number(task?.taskTime)
+        return (
+          sessionTotal +
+          (Number.isFinite(taskTime) && taskTime > 0 ? taskTime : 0)
+        )
+      }, 0),
+    0,
+  ),
+)
+
+const formatTotalDuration = (durationMs) => {
+  const totalMinutes = Math.floor(durationMs / 60000)
+  const hours = Math.floor(totalMinutes / 60)
+  const minutes = totalMinutes % 60
+
+  if (hours && minutes) return `${hours}h ${minutes}min`
+  if (hours) return `${hours}h`
+  return `${minutes}min`
 }
 
 const getConclusionAverage = () => {
@@ -1627,6 +1639,47 @@ const onExportTimeline = () => {
 .ux-metric-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+.overview-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+  align-items: stretch;
+}
+
+.overview-metric-grid :deep(.ux-metric-card) {
+  display: flex;
+  flex-direction: column;
+  padding: 16px !important;
+}
+
+.overview-metric-grid :deep(.ux-metric-card > .d-flex) {
+  align-items: flex-start !important;
+  min-height: 80px;
+}
+
+.overview-metric-grid :deep(.ux-metric-card > p) {
+  min-height: 3em;
+  margin-bottom: 0;
+}
+
+@media (max-width: 1279px) {
+  .overview-metric-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 959px) {
+  .overview-metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 599px) {
+  .overview-metric-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .task-chart-card:hover {
