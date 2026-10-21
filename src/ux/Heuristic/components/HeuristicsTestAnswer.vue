@@ -130,7 +130,7 @@ const props = defineProps({
 
 const emit = defineEmits(['goToCoops'])
 
-const tab = ref(0)
+const tab = ref(route.query.heuristic !== undefined ? 3 : 0)
 const ind = ref(0)
 const resultEvaluator = ref(statistics())
 let intro = ref(null)
@@ -684,18 +684,16 @@ const getColorPorcentage = (value) => {
   else return 'green'
 }
 
-const goToDataHeuristic = (item) => {
-  const selectHeuristic =
-    heuristicsEvaluator.value && heuristicsEvaluator.value.items
-      ? heuristicsEvaluator.value.items.findIndex((h) => h.heuristic === item)
-      : -1
-  if (selectHeuristic >= 0) {
-    router
-      .push(`/analyticsview/${props.id}/${selectHeuristic}`)
-      .catch((err) => {
-        if (err.name !== 'NavigationDuplicated') {
-        }
-      })
+const goToDataHeuristic = async (item) => {
+  const selectHeuristic = (test.value?.testStructure || []).findIndex(
+    (_, index) => `H${index + 1}` === item,
+  )
+  if (selectHeuristic < 0) return
+  const navigationFailure = await router.replace({
+    query: { ...route.query, heuristic: selectHeuristic },
+  })
+  if (!navigationFailure || Number(route.query.heuristic) === selectHeuristic) {
+    setTab(3)
   }
 }
 
