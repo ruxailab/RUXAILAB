@@ -5,56 +5,21 @@
     "
     :side-gap="true"
   >
-    <v-dialog v-model="dialog" width="600" persistent>
-      <v-card>
-        <v-card-title
-          :class="
-            dialogAction === 'hide'
-              ? 'text-h5 bg-primary text-white'
-              : 'text-h5 bg-error text-white'
-          "
-          primary-title
-        >
-          {{
-            $t(
-              dialogAction === 'hide'
-                ? 'HeuristicsReport.messages.confirm_hide_response'
-                : 'HeuristicsReport.messages.confirm_delete_report',
-            )
-          }}
-        </v-card-title>
-        <v-card-text>{{ dialogText }}</v-card-text>
-        <v-divider />
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            class="bg-grey-lighten-3"
-            variant="text"
-            @click="dialog = false"
-          >
-            {{ $t('buttons.cancel') }}
-          </v-btn>
-          <v-btn
-            :class="
-              dialogAction === 'hide'
-                ? 'bg-primary text-white ml-1'
-                : 'bg-red text-white ml-1'
-            "
-            :loading="loadingBtn"
-            variant="text"
-            @click="confirmReportAction"
-          >
-            {{
-              $t(
-                dialogAction === 'hide'
-                  ? 'HeuristicsReport.actions.hide_response'
-                  : 'buttons.delete',
-              )
-            }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <ConfirmDialog
+      v-model:show="dialog"
+      :title="dialogTitle"
+      :message="dialogText"
+      :confirm-text="dialogConfirmText"
+      :cancel-text="$t('common.cancel')"
+      :confirm-color="isHideAction ? 'primary' : 'error'"
+      :confirm-icon="isHideAction ? 'mdi-eye-off' : 'mdi-delete'"
+      :icon="isHideAction ? 'mdi-eye-off-outline' : 'mdi-delete-outline'"
+      :icon-color="isHideAction ? 'primary' : 'error'"
+      :type="isHideAction ? 'info' : 'error'"
+      :loading="loadingBtn"
+      @confirm="confirmReportAction"
+      @cancel="dialog = false"
+    />
     <template v-if="showIntroView" #subtitle>
       <div class="d-flex align-center mb-4">
         <v-icon
@@ -539,6 +504,7 @@ import { useI18n } from 'vue-i18n'
 import { useRouter, useRoute } from 'vue-router'
 import Intro from '@/shared/components/introduction_cards/IntroReports.vue'
 import PageWrapper from '@/shared/views/template/PageWrapper.vue'
+import ConfirmDialog from '@/shared/components/dialogs/ConfirmDialog.vue'
 import {
   STUDY_TYPES,
   USER_STUDY_SUBTYPES,
@@ -561,6 +527,17 @@ const dialog = ref(false)
 const dialogAction = ref('delete')
 const loadingBtn = ref(false)
 const report = ref(null)
+const isHideAction = computed(() => dialogAction.value === 'hide')
+const dialogTitle = computed(() =>
+  isHideAction.value
+    ? t('HeuristicsReport.messages.confirm_hide_response')
+    : t('HeuristicsReport.messages.remove_report'),
+)
+const dialogConfirmText = computed(() =>
+  isHideAction.value
+    ? t('HeuristicsReport.actions.hide_response')
+    : t('common.delete'),
+)
 const searchQuery = ref('')
 const statusFilter = ref(null)
 const lastUpdated = ref(new Date())
