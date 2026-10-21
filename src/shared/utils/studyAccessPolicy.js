@@ -83,10 +83,7 @@ const USER_POLICY = Object.freeze({
     C.COOPERATORS_REMOVE,
   ]),
   [R.USER]: Object.freeze([C.STUDY_ANSWER]),
-  [R.OBSERVATOR]: Object.freeze([
-    C.DASHBOARD_VIEW,
-    C.ANSWERS_VIEW,
-  ]),
+  [R.OBSERVATOR]: Object.freeze([C.DASHBOARD_VIEW, C.ANSWERS_VIEW]),
 })
 
 const HEURISTIC_POLICY = Object.freeze({
@@ -170,6 +167,17 @@ const findAcceptedMembership = (study, userId) =>
   ) ?? null
 
 export function resolveStudyAccess(study, user) {
+  if (user?.isFallback) {
+    return {
+      role: null,
+      isOwner: false,
+      isSuperAdmin: false,
+      isAcceptedMember: false,
+      isPublicParticipant: false,
+      membership: null,
+    }
+  }
+
   const userId = getUserId(user)
   const isOwner = isStudyOwner(study, userId)
   const isSuperAdmin = user?.accessLevel === 0

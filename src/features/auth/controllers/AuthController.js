@@ -2,7 +2,6 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
   signInAnonymously,
@@ -13,6 +12,10 @@ import {
 import { auth } from '@/app/plugins/firebase'
 import axios from 'axios'
 import EmailController from '@/shared/controllers/EmailController'
+import {
+  waitForInitialAuth,
+  getFirebaseUser,
+} from '@/features/auth/services/authStateManager'
 
 /**
  * Controller for authentication operations
@@ -41,6 +44,14 @@ export default class AuthController {
   async anonymousParticipant() {
     if (auth.currentUser) {
       return auth.currentUser.isAnonymous ? auth.currentUser : null
+    }
+
+    const resolved = getFirebaseUser()
+    const currentUser =
+      resolved !== undefined ? resolved : await this.autoSignIn()
+
+    if (currentUser) {
+      return currentUser.isAnonymous ? currentUser : null
     }
     // Per-tab session, like a sign-in without "Remember me".
     await setPersistence(auth, browserSessionPersistence)
@@ -92,23 +103,15 @@ export default class AuthController {
   }
 
   /**
-   * Auto sign in with Firebase observer
-   * @returns {Promise} - Current user or null
+   * Auto sign in with Firebase observer.
+   *
+   * Delegates to the centralised auth-state manager so that the app always
+   * reuses the single persistent auth listener.
+   *
+   * @returns {Promise<import('firebase/auth').User | null>}
    */
   async autoSignIn() {
-    return new Promise((resolve, reject) => {
-      const unsubscribe = onAuthStateChanged(
-        auth,
-        (user) => {
-          unsubscribe()
-          resolve(user)
-        },
-        (error) => {
-          unsubscribe()
-          reject(error)
-        },
-      )
-    })
+    return waitForInitialAuth()
   }
   // Reset Password
   async resetPassword(email) {
