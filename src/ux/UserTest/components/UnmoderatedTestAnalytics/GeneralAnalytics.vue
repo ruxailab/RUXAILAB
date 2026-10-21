@@ -1546,11 +1546,6 @@ const onExportTimeline = () => {
 </script>
 
 <style scoped>
-.stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
-}
-
 .chart-container-large {
   height: 400px;
   width: 100%;
@@ -1559,11 +1554,6 @@ const onExportTimeline = () => {
 
 .progress-glow {
   filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.3));
-}
-
-.ux-metric-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
 }
 
 .overview-metric-grid {
@@ -1652,11 +1642,6 @@ const onExportTimeline = () => {
   .overview-metric-grid {
     grid-template-columns: minmax(0, 1fr);
   }
-}
-
-.task-chart-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1) !important;
 }
 
 .chart-container-small {
