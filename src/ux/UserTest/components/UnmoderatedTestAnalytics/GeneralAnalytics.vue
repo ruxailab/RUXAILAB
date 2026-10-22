@@ -438,6 +438,7 @@
                 <Bar
                   :data="timeByUserChartData"
                   :options="timeByUserChartOptions"
+                  :plugins="[fullWidthEstimatedLines]"
                 />
               </div>
             </div>
@@ -1278,6 +1279,8 @@ const timeByUserChartData = computed(() => {
         pointRadius: 0,
         tension: 0,
         spanGaps: true,
+        showLine: false,     // plugin draws edge-to-edge; suppress Chart.js path
+        estimatedLine: true, // flag for fullWidthEstimatedLines plugin
       },
     ]
   })
@@ -1345,6 +1348,32 @@ const timeByUserChartOptions = computed(() => ({
     },
   },
 }))
+
+// Draws each estimated-time line from chartArea.left to chartArea.right so
+// it spans the full plot width instead of stopping at the outermost tick
+// center. Scoped to the timeByUser <Bar> via the :plugins prop.
+const fullWidthEstimatedLines = {
+  id: 'fullWidthEstimatedLines',
+  afterDraw(chart) {
+    const { ctx, chartArea, scales } = chart
+    if (!chartArea || !scales.y) return
+    chart.data.datasets.forEach((dataset, i) => {
+      if (!dataset.estimatedLine || !chart.isDatasetVisible(i)) return
+      const value = dataset.data.find((v) => Number.isFinite(v))
+      if (value == null) return
+      const y = scales.y.getPixelForValue(value)
+      ctx.save()
+      ctx.beginPath()
+      ctx.moveTo(chartArea.left, y)
+      ctx.lineTo(chartArea.right, y)
+      ctx.strokeStyle = dataset.borderColor
+      ctx.lineWidth = dataset.borderWidth ?? 2
+      ctx.setLineDash(dataset.borderDash ?? [6, 4])
+      ctx.stroke()
+      ctx.restore()
+    })
+  },
+}
 
 const drawEfficiencyDonutChart = (task) => {
   const canvas = document.getElementById(
