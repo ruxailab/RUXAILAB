@@ -18,25 +18,37 @@
       </v-col>
 
       <v-col cols="auto">
-        <v-chip
-          :color="isAnalyzing ? 'grey' : hasError ? 'red-darken-2' : 'primary'"
-          variant="flat"
-          prepend-icon="mdi-eye"
-        >
-          {{
-            isAnalyzing
-              ? $t('eyeTracking.stats.analyzing')
-              : hasError
-                ? $t('eyeTracking.stats.analysisFailed')
-                : $t('eyeTracking.stats.analysisCompleted')
-          }}
-        </v-chip>
+        <div class="d-flex align-center ga-2">
+          <v-btn
+            v-if="hasResults"
+            color="primary"
+            variant="outlined"
+            :disabled="isAnalyzing"
+            :loading="isAnalyzing"
+            @click="analyzeGazeData"
+          >
+            <v-icon start>mdi-refresh</v-icon>
+            {{ $t('eyeTracking.stats.reanalyze') }}
+          </v-btn>
+
+          <v-chip :color="statusColor" variant="flat" prepend-icon="mdi-eye">
+            {{
+              isAnalyzing
+                ? $t('eyeTracking.stats.analyzing')
+                : hasError
+                  ? $t('eyeTracking.stats.analysisFailed')
+                  : hasResults
+                    ? $t('eyeTracking.stats.analysisCompleted')
+                    : $t('eyeTracking.stats.readyToAnalyze')
+            }}
+          </v-chip>
+        </div>
       </v-col>
     </v-row>
 
     <!-- Loading -->
     <v-row
-      v-if="isAnalyzing && !hasError"
+      v-if="isAnalyzing && !hasError && !hasResults"
       justify="center"
       align="center"
       class="my-12"
@@ -55,7 +67,12 @@
     </v-row>
 
     <!-- Error -->
-    <v-row v-else-if="hasError" justify="center" align="center" class="my-12">
+    <v-row
+      v-else-if="hasError && !hasResults"
+      justify="center"
+      align="center"
+      class="my-12"
+    >
       <v-col cols="auto" class="text-center">
         <v-icon size="64" color="red-darken-2">
           mdi-alert-circle-outline
@@ -68,11 +85,27 @@
         <div class="mt-1 text-body-2 text-grey-darken-1">
           {{ $t('eyeTracking.stats.couldNotProcessGazeData') }}
         </div>
+
+        <v-btn
+          color="primary"
+          class="mt-4"
+          :disabled="isAnalyzing"
+          @click="analyzeGazeData"
+        >
+          <v-icon start>mdi-refresh</v-icon>
+          {{ $t('eyeTracking.stats.startAnalysis') }}
+        </v-btn>
       </v-col>
     </v-row>
 
     <!-- Results -->
     <v-row v-else>
+      <v-col v-if="hasError" cols="12">
+        <v-alert type="error" variant="tonal">
+          {{ $t('eyeTracking.stats.couldNotProcessGazeData') }}
+        </v-alert>
+      </v-col>
+
       <!-- Visualization -->
       <v-col cols="12">
         <v-card class="pa-4" elevation="2" rounded="xl">
@@ -410,7 +443,17 @@ const study = computed(() => store.state.Tests.Test)
 const selectedView = ref('precision')
 const predictedData = ref(null)
 const isAnalyzing = ref(true)
+const hasResults = ref(false)
 const hasError = ref(false)
+const statusColor = computed(() =>
+  isAnalyzing.value
+    ? 'grey'
+    : hasError.value
+      ? 'red-darken-2'
+      : hasResults.value
+        ? 'primary'
+        : 'grey',
+)
 
 const totalPredictions = ref(0)
 const insights = ref([])
@@ -427,7 +470,12 @@ const sessionStats = ref({
 
 watch(selectedView, (value) => emit('view-changed', value))
 
-onMounted(async () => {
+onMounted(analyzeGazeData)
+
+async function analyzeGazeData() {
+  isAnalyzing.value = true
+  hasError.value = false
+
   try {
     const data = await new EyeTrackerController().getLastCalibAndPredict(
       props.userId,
@@ -435,18 +483,23 @@ onMounted(async () => {
       props.irisData,
     )
 
+    if (!Array.isArray(data?.predictions) || data.predictions.length === 0) {
+      throw new Error('No gaze predictions were returned')
+    }
+
     predictedData.value = data
-
-    processAnalytics(predictedData.value)
-
-    emit('predictions-ready', predictedData.value.predictions)
+    processAnalytics(data)
+    hasResults.value = true
+    emit('predictions-ready', data.predictions)
   } catch {
-    predictedData.value = null
+    if (!hasResults.value) {
+      predictedData.value = null
+    }
     hasError.value = true
   } finally {
     isAnalyzing.value = false
   }
-})
+}
 
 function averageGazeTarget(x, y) {
   return `${Math.round(x)} x ${Math.round(y)}`
