@@ -13,6 +13,7 @@ import {
 } from '@/shared/composables/useCooperatorUtils'
 import { getMethodManagerView } from '@/shared/constants/methodDefinitions'
 import { getAcceptedInvitationDestination } from '@/shared/utils/studyNavigation'
+import { getTestViewPath } from '@/shared/utils/studyAccessPolicy'
 import { manageStudyMembership } from '@/shared/services/studyMembershipService'
 import i18n from '@/app/plugins/i18n'
 import { NOTIFICATION_TYPES } from '../../features/notifications/utils/notificationUtils'
@@ -540,7 +541,7 @@ export default {
         const redirectsTo =
           invite.accessLevel === 0
             ? managerRoute.href
-            : `/testview/${study.id}/${user.id}`
+            : getTestViewPath(study, study.id, user.id)
 
         const notifications = user?.notifications || []
 

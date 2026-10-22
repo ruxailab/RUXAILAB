@@ -202,6 +202,7 @@ import {
 } from '@/shared/constants/methodDefinitions'
 import { matchesSearch } from '@/shared/utils/searchUtils'
 import {
+  getTestViewPath,
   hasStudyCapability,
   STUDY_CAPABILITY,
   STUDY_ROLE,
@@ -404,7 +405,7 @@ const goTo = (test) => {
       showInfo(t('UserTestView.messages.useSessionLink'))
       return
     } else {
-      router.push(`/testview/${studyId}/${userId}`)
+      router.push(getTestViewPath(test, studyId, userId))
       return
     }
   }

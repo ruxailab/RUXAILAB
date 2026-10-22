@@ -226,14 +226,20 @@
                 >
                   {{ $t('analytics.effectiveness') }}: {{ item.effectiveness }}%
                 </v-chip>
+              </div>
+              <div class="d-flex align-center mb-1">
                 <v-chip
                   size="x-small"
                   :color="getEfficiencyColor(item.efficiency)"
-                  :title="$t('analytics.efficiencyScaleHint')"
                   variant="tonal"
                   class="font-weight-medium"
                 >
-                  {{ $t('analytics.efficiency') }}: {{ item.efficiency }} t/min
+                  {{ $t('analytics.efficiency') }}:
+                  {{
+                    item.efficiency === null
+                      ? $t('analytics.noData')
+                      : `${item.efficiency.toFixed(1)}%`
+                  }}
                 </v-chip>
               </div>
               <div class="text-caption text-grey-600">
@@ -663,6 +669,10 @@ import TaskDetailsModal from './TaskDetailsModal.vue'
 import SessionAnalyticsDialog from '../dialogs/SessionAnalyticsDialog.vue'
 import { useI18n } from 'vue-i18n'
 import { useFilterDefinitions } from './useFilterDefinitions'
+import {
+  getAverageTaskEfficiencyPercentage,
+  getTimeEfficiencyPercentage,
+} from '../../utils/taskAnalytics'
 
 const { t } = useI18n()
 
@@ -763,7 +773,7 @@ const getTaskTypeLabel = (taskType) => {
     'post-test': t('switches.postTest'),
     'post-form': t('switches.postForm'),
     'nasa-tlx': t('switches.nasa'),
-    'sus': t('switches.sus'),
+    sus: t('switches.sus'),
     'tam-1': 'TAM-1',
     'tam-2': 'TAM-2',
     'tam-3': 'TAM-3',
@@ -1019,6 +1029,7 @@ const tableData = computed(() => {
     const userTasks = testStructure.value?.userTasks || []
     let completedCount = 0
     let totalTimeSeconds = 0
+    const taskEfficiencies = []
     const row = {
       identifier: idx + 1,
       fullName: session.fullName || 'Sin nombre',
@@ -1048,6 +1059,17 @@ const tableData = computed(() => {
           : null
       if (completed) completedCount += 1
       totalTimeSeconds += timeSeconds
+      if (
+        completed &&
+        task.success !== false &&
+        estimatedTimeSeconds !== null
+      ) {
+        const taskEfficiency = getTimeEfficiencyPercentage(
+          timeSeconds / 60,
+          estimatedTimeSeconds / 60,
+        )
+        if (taskEfficiency !== null) taskEfficiencies.push(taskEfficiency)
+      }
       row[`task_${i}`] = {
         completed,
         attempted,
@@ -1066,10 +1088,7 @@ const tableData = computed(() => {
     const effectiveness = totalTasks
       ? Math.round((completedCount / totalTasks) * 100)
       : 0
-    const efficiency =
-      totalTimeSeconds > 0
-        ? (completedCount / (totalTimeSeconds / 60)).toFixed(2)
-        : '0.00'
+    const efficiency = getAverageTaskEfficiencyPercentage(taskEfficiencies)
 
     return {
       ...row,
@@ -1082,19 +1101,6 @@ const tableData = computed(() => {
   })
 })
 
-const efficiencyMedian = computed(() => {
-  const values = tableData.value
-    .map((item) => Number(item.efficiency))
-    .filter((value) => Number.isFinite(value) && value > 0)
-    .sort((a, b) => a - b)
-
-  if (!values.length) return 0
-  const middle = Math.floor(values.length / 2)
-  return values.length % 2
-    ? values[middle]
-    : (values[middle - 1] + values[middle]) / 2
-})
-
 const getEffectivenessColor = (effectiveness) => {
   if (effectiveness >= 80) return 'success'
   if (effectiveness >= 50) return 'warning'
@@ -1102,12 +1108,9 @@ const getEffectivenessColor = (effectiveness) => {
 }
 
 const getEfficiencyColor = (efficiency) => {
-  const value = Number(efficiency)
-  const median = efficiencyMedian.value
-
-  if (!Number.isFinite(value) || value <= 0) return 'error'
-  if (median === 0 || value >= median * 1.25) return 'success'
-  if (value >= median * 0.75) return 'warning'
+  if (!Number.isFinite(efficiency)) return 'grey'
+  if (efficiency >= 100) return 'success'
+  if (efficiency >= 80) return 'warning'
   return 'error'
 }
 

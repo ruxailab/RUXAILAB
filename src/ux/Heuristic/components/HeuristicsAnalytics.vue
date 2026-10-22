@@ -499,12 +499,25 @@ watch(questionSelect, () => {
   ind.value = 'comments'
 })
 
+watch(
+  [() => route.query.heuristic, () => test.value?.testStructure?.length],
+  ([value, structureLength]) => {
+    const index = Number(value)
+    if (
+      value !== undefined &&
+      value !== null &&
+      Number.isInteger(index) &&
+      index >= 0 &&
+      index < (structureLength || 0)
+    ) {
+      heuristicSelect.value = index
+    }
+  },
+  { immediate: true },
+)
+
 onMounted(async () => {
   await store.dispatch('getCurrentTestAnswerDoc')
-  // Handle heuristic query param if present
-  if (route.query.heuristic) {
-    heuristicSelect.value = Number(route.query.heuristic)
-  }
 })
 
 const goToCoops = () => {

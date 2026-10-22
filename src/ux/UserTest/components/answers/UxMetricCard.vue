@@ -9,7 +9,7 @@
       { 'disabled-card': disabled },
     ]"
   >
-    <div class="d-flex align-center mb-4 position-relative">
+    <div class="d-flex align-center mb-0 position-relative">
       <v-avatar
         :color="disabled ? 'grey-lighten-1' : color"
         size="56"
