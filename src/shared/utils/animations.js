@@ -72,25 +72,25 @@ export async function animateSplitTextLines(targets, options = {}) {
   const animations = []
 
   for (const el of elements) {
-    let splitAnim = null
     const split = SplitText.create(el, {
       type: 'words,lines',
       linesClass: 'line',
-      autoSplit: true,
       mask: 'lines',
-      onSplit: (self) => {
-        splitAnim = gsap.from(self.lines, {
-          duration,
-          yPercent,
-          opacity,
-          stagger,
-          ease,
-        })
-        animations.push(splitAnim)
-        return splitAnim
-      },
     })
     splits.push(split)
+
+    const lines = split.lines || []
+    if (!lines.length) continue
+
+    animations.push(
+      gsap.from(lines, {
+        duration,
+        yPercent,
+        opacity,
+        stagger,
+        ease,
+      }),
+    )
   }
 
   return () => {
