@@ -32,6 +32,24 @@ export class FirestoreSentimentRepository extends FirestoreCollectionRepository 
   }
 
   /**
+   * List all sentiment documents for a specific answer document and user.
+   *
+   * @param {string} answersDocId
+   * @param {string} userDocId
+   * @returns {Promise<Sentiment[]>}
+   */
+  async listByAnswerUser(answersDocId, userDocId) {
+    const snap = await this.collectionRef
+      .where('answersDocId', '==', answersDocId)
+      .where('userDocId', '==', userDocId)
+      .get()
+
+    return snap.docs.map((docSnap) =>
+      this.fromFirestore(docSnap.data(), docSnap.id),
+    )
+  }
+
+  /**
    * Writes one signal onto the shared sentiment document.
    * Parallel facial and text jobs read the same task before either pointer
    * exists, so the id is deterministic and the write is transactional.

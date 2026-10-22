@@ -1,6 +1,7 @@
 import ReportController from '@/shared/controllers/ReportController'
 import { createControllerSpies, createMockDoc } from './helpers/testUtils'
 import { deleteTranscriptionsByUser } from '@/app/services/transcription/TranscriptionService'
+import { deleteSentimentsByUser } from '@/app/services/facialSentiment/FacialSentimentService'
 
 jest.mock('firebase/firestore', () => ({
   doc: jest.fn(),
@@ -21,11 +22,18 @@ jest.mock('@/shared/constants/methodDefinitions', () => ({
     USER: 'USER',
     CARD_SORTING: 'CARD_SORTING',
   },
-  normalizeStudyType: (type) => (type === 'HEURISTICS' ? 'HEURISTIC' : type),
+  normalizeStudyType: (type) => {
+    const normalized = String(type || '').toUpperCase()
+    return normalized === 'HEURISTICS' ? 'HEURISTIC' : normalized
+  },
 }))
 
 jest.mock('@/app/services/transcription/TranscriptionService', () => ({
   deleteTranscriptionsByUser: jest.fn(),
+}))
+
+jest.mock('@/app/services/facialSentiment/FacialSentimentService', () => ({
+  deleteSentimentsByUser: jest.fn(),
 }))
 
 describe('ReportController', () => {
@@ -51,6 +59,11 @@ describe('ReportController', () => {
     spies = createControllerSpies(reportController)
     consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
     deleteTranscriptionsByUser.mockResolvedValue({
+      deletedCount: 0,
+      answersDocId: 'answer-789',
+      userDocId: 'user-123',
+    })
+    deleteSentimentsByUser.mockResolvedValue({
       deletedCount: 0,
       answersDocId: 'answer-789',
       userDocId: 'user-123',
@@ -114,24 +127,39 @@ describe('ReportController', () => {
         'heuristicAnswers.user-123': 'DELETE_FIELD_SENTINEL',
       })
       expect(deleteTranscriptionsByUser).not.toHaveBeenCalled()
+      expect(deleteSentimentsByUser).not.toHaveBeenCalled()
       expect(result).toEqual({ success: true })
     })
 
-    it('should use taskAnswers for USER test type and cascade transcriptions', async () => {
+    it('cascades from the answers document type when test.testType is missing', async () => {
+      setupMocks()
+      await reportController.removeReport({
+        report: mockReport,
+        test: { id: 'test-456', answersDocId: 'answer-789' },
+        answerType: 'USER',
+      })
+
+      expect(deleteTranscriptionsByUser).toHaveBeenCalled()
+      expect(deleteSentimentsByUser).toHaveBeenCalled()
+    })
+
+    it('should use taskAnswers for USER test type and cascade transcriptions and sentiments', async () => {
       setupMocks()
       const result = await reportController.removeReport({
         report: mockReport,
         test: mockTestUser,
       })
 
-      expect(spies.update).toHaveBeenCalledWith('answers', 'answer-789', {
-        'taskAnswers.user-123': 'DELETE_FIELD_SENTINEL',
-      })
-      expect(deleteTranscriptionsByUser).toHaveBeenCalledWith({
+      const cascadePayload = {
         answersDocId: 'answer-789',
         userDocId: 'user-123',
         studyId: 'test-456',
+      }
+      expect(spies.update).toHaveBeenCalledWith('answers', 'answer-789', {
+        'taskAnswers.user-123': 'DELETE_FIELD_SENTINEL',
       })
+      expect(deleteTranscriptionsByUser).toHaveBeenCalledWith(cascadePayload)
+      expect(deleteSentimentsByUser).toHaveBeenCalledWith(cascadePayload)
       expect(result).toEqual({ success: true })
     })
 
@@ -193,6 +221,19 @@ describe('ReportController', () => {
       setupMocks()
       const mockError = new Error('Cascade failed')
       deleteTranscriptionsByUser.mockRejectedValue(mockError)
+
+      const result = await reportController.removeReport({
+        report: mockReport,
+        test: mockTestUser,
+      })
+
+      expect(result).toEqual({ success: false, error: mockError })
+    })
+
+    it('should return error when sentiment cascade fails for USER study', async () => {
+      setupMocks()
+      const mockError = new Error('Sentiment cascade failed')
+      deleteSentimentsByUser.mockRejectedValue(mockError)
 
       const result = await reportController.removeReport({
         report: mockReport,

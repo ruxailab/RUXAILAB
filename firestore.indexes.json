@@ -47,6 +47,14 @@
         { "fieldPath": "occurredAt", "order": "DESCENDING" },
         { "fieldPath": "__name__", "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "sentiment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "answersDocId", "order": "ASCENDING" },
+        { "fieldPath": "userDocId", "order": "ASCENDING" }
+      ]
     }
   ],
   "fieldOverrides": [

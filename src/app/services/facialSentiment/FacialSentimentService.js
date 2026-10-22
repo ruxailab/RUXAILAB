@@ -34,3 +34,24 @@ export async function deleteFacialSentiment(payload) {
   )
   return response?.data ?? response
 }
+
+/**
+ * Delete all sentiment documents for a user answer and rebuild analytics.
+ *
+ * @param {Object} payload
+ * @param {string} payload.answersDocId
+ * @param {string} payload.userDocId
+ * @param {string} [payload.studyId]
+ * @returns {Promise<{
+ *   deletedCount: number,
+ *   answersDocId: string,
+ *   userDocId: string,
+ * }>}
+ */
+export async function deleteSentimentsByUser(payload) {
+  const response = await FirebaseFunctionsController.callHttpsCallableFunction(
+    'sentimentDeleteByUser',
+    payload,
+  )
+  return response?.data ?? response
+}

@@ -8,6 +8,7 @@ export {
   facialSentimentTask,
   facialSentimentTaskWorker,
   sentimentDelete,
+  sentimentDeleteByUser,
 } from '../features/facialSentiment/index.js'
 export {
   textSentimentTask,

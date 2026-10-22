@@ -769,19 +769,22 @@ const toggleReportHidden = async (item) => {
   }
 }
 
+const toReportItem = (item) => item?.raw ?? item
+
 const requestDeleteConfirmation = (item) => {
-  report.value = item
+  report.value = toReportItem(item)
   dialogAction.value = 'delete'
   dialog.value = true
 }
 
 const requestReportVisibilityChange = (item) => {
-  if (item.hidden) {
-    toggleReportHidden(item)
+  const reportItem = toReportItem(item)
+  if (reportItem.hidden) {
+    toggleReportHidden(reportItem)
     return
   }
 
-  report.value = item
+  report.value = reportItem
   dialogAction.value = 'hide'
   dialog.value = true
 }
@@ -813,14 +816,25 @@ const getCurrentAnswer = async () => {
 
 const removeReport = async (report) => {
   loadingBtn.value = true
+  try {
+    const result = await store.dispatch('Reports/removeReport', {
+      report,
+      test: test.value,
+      answerType: answers.value?.type,
+    })
+    if (!result?.success) throw result?.error
 
-  await store.dispatch('Reports/removeReport', { report, test: test.value })
-
-  await getCurrentAnswer()
-  showSuccess('alerts.genericSuccess')
-
-  loadingBtn.value = false
-  dialog.value = false
+    await getCurrentAnswer()
+    showSuccess('alerts.genericSuccess')
+    dialog.value = false
+  } catch {
+    store.commit('SET_TOAST', {
+      type: 'error',
+      message: t('errors.globalError'),
+    })
+  } finally {
+    loadingBtn.value = false
+  }
 }
 
 const goToCoops = () => {
