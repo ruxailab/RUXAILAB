@@ -2,76 +2,102 @@
   <v-container fluid class="pa-6">
     <!-- Header Section -->
     <div class="mb-8">
-      <h1 class="text-h3 font-weight-bold text-primary">SUS Analytics</h1>
+      <h1 class="text-h3 font-weight-bold text-primary">
+        {{ $t('analytics.sus.title') }}
+      </h1>
       <p class="text-h6 text-grey-darken-1">
-        System Usability Scale feedback from all participants
+        {{ $t('analytics.sus.description') }}
       </p>
     </div>
 
     <!-- Overview Cards -->
     <v-row class="mb-2">
-      <v-col cols="12" md="4">
+      <v-col cols="12" sm="6" md="3" class="d-flex">
         <v-card
-          class="pa-6 text-left"
+          class="pa-6 text-left flex-grow-1"
           elevation="2"
           style="border-radius: 12px"
         >
           <div class="d-flex justify-space-between align-center">
             <div>
               <div class="text-caption text-grey-darken-1 mb-1">
-                Average SUS Score
+                {{ $t('analytics.sus.averageScore') }}
               </div>
               <div class="text-h2 font-weight-bold text-warning mb-1">
                 {{ analytics.averageScore }}
               </div>
-              <div class="text-caption text-grey">out of 100</div>
+              <div class="text-caption text-grey">
+                {{ $t('analytics.sus.outOf100') }}
+              </div>
             </div>
-            <div class="pa-3" style="background: #e3f2fd; border-radius: 8px">
-              <v-icon size="24" color="primary"> mdi-trending-up </v-icon>
+            <div class="pa-3" style="background: #fff3e0; border-radius: 8px">
+              <v-icon size="24" color="warning"> mdi-trending-up </v-icon>
             </div>
           </div>
         </v-card>
       </v-col>
-      <v-col cols="12" md="4">
+      <v-col cols="12" sm="6" md="3" class="d-flex">
         <v-card
-          class="pa-6 text-left"
+          class="pa-6 text-left flex-grow-1"
           elevation="2"
           style="border-radius: 12px"
         >
           <div class="d-flex justify-space-between align-center">
             <div>
               <div class="text-caption text-grey-darken-1 mb-1">
-                Total Respondents
+                {{ $t('analytics.sus.minimumScore') }}
+              </div>
+              <div class="text-h2 font-weight-bold text-blue mb-1">
+                {{ analytics.minScore }}
+              </div>
+            </div>
+            <div class="pa-3" style="background: #e3f2fd; border-radius: 8px">
+              <v-icon size="24" color="blue"> mdi-arrow-down-bold </v-icon>
+            </div>
+          </div>
+        </v-card>
+      </v-col>
+      <v-col cols="12" sm="6" md="3" class="d-flex">
+        <v-card
+          class="pa-6 text-left flex-grow-1"
+          elevation="2"
+          style="border-radius: 12px"
+        >
+          <div class="d-flex justify-space-between align-center">
+            <div>
+              <div class="text-caption text-grey-darken-1 mb-1">
+                {{ $t('analytics.sus.maximumScore') }}
+              </div>
+              <div class="text-h2 font-weight-bold text-purple mb-1">
+                {{ analytics.maxScore }}
+              </div>
+            </div>
+            <div class="pa-3" style="background: #f3e5f5; border-radius: 8px">
+              <v-icon size="24" color="purple"> mdi-arrow-up-bold </v-icon>
+            </div>
+          </div>
+        </v-card>
+      </v-col>
+      <v-col cols="12" sm="6" md="3" class="d-flex">
+        <v-card
+          class="pa-6 text-left flex-grow-1"
+          elevation="2"
+          style="border-radius: 12px"
+        >
+          <div class="d-flex justify-space-between align-center">
+            <div>
+              <div class="text-caption text-grey-darken-1 mb-1">
+                {{ $t('analytics.sus.totalRespondents') }}
               </div>
               <div class="text-h2 font-weight-bold text-green mb-1">
                 {{ analytics.totalRespondents }}
               </div>
-              <div class="text-caption text-grey">participants</div>
+              <div class="text-caption text-grey">
+                {{ $t('analytics.sus.participants') }}
+              </div>
             </div>
             <div class="pa-3" style="background: #e8f5e8; border-radius: 8px">
               <v-icon size="24" color="success"> mdi-account-group </v-icon>
-            </div>
-          </div>
-        </v-card>
-      </v-col>
-      <v-col cols="12" md="4">
-        <v-card
-          class="pa-6 text-left"
-          elevation="2"
-          style="border-radius: 12px"
-        >
-          <div class="d-flex justify-space-between align-center">
-            <div>
-              <div class="text-caption text-grey-darken-1 mb-1">
-                Score Range
-              </div>
-              <div class="text-h2 font-weight-bold text-purple mb-1">
-                {{ analytics.minScore }} - {{ analytics.maxScore }}
-              </div>
-              <div class="text-caption text-grey">min | max</div>
-            </div>
-            <div class="pa-3" style="background: #f3e5f5; border-radius: 8px">
-              <v-icon size="24" color="purple"> mdi-chart-bar </v-icon>
             </div>
           </div>
         </v-card>
@@ -83,7 +109,7 @@
       <v-col cols="12">
         <v-card elevation="2" style="border-radius: 12px">
           <v-card-title class="text-h5 pb-2">
-            SUS Score Distribution
+            {{ $t('analytics.sus.scoreDistribution') }}
           </v-card-title>
           <v-card-text class="pa-6">
             <v-row>
@@ -110,7 +136,7 @@
         <v-card elevation="2" style="border-radius: 12px">
           <v-card-title class="text-h5 pb-2">
             <v-icon start color="primary"> mdi-table </v-icon>
-            Individual Scores
+            {{ $t('analytics.sus.individualScores') }}
           </v-card-title>
 
           <!-- Filter Controls -->
@@ -120,7 +146,7 @@
                 <v-select
                   v-model="selectedRatingFilter"
                   :items="ratingFilterOptions"
-                  label="Filter by Rating"
+                  :label="$t('analytics.sus.filterByRating')"
                   clearable
                   variant="outlined"
                   density="compact"
@@ -136,7 +162,7 @@
                   :min="0"
                   :max="100"
                   :step="5"
-                  label="Score Range"
+                  :label="$t('analytics.sus.scoreRange')"
                   thumb-label="always"
                   class="mt-4"
                 />
@@ -175,7 +201,7 @@
                 variant="tonal"
                 size="small"
               >
-                {{ getSUSRating(item.susScore) }}
+                {{ translateRating(getSUSRating(item.susScore)) }}
               </v-chip>
             </template>
 
@@ -187,7 +213,7 @@
                 @click="openDetailsModal(item)"
               >
                 <v-icon start> mdi-eye </v-icon>
-                View Details
+                {{ $t('analytics.sus.viewDetails') }}
               </v-btn>
             </template>
           </v-data-table>
@@ -202,7 +228,9 @@
           class="d-flex justify-space-between align-center pa-6 pb-4"
         >
           <div>
-            <div class="text-h5 font-weight-bold">SUS Response Details</div>
+            <div class="text-h5 font-weight-bold">
+              {{ $t('analytics.sus.responseDetails') }}
+            </div>
             <div class="text-body-3 text-grey-darken-1">
               {{ selectedResponse.name }}
             </div>
@@ -218,12 +246,16 @@
           <!-- Final SUS Score -->
           <div class="mb-0">
             <div class="d-flex justify-space-between align-center">
-              <div class="text-body-1 text-grey-darken-1">Final SUS Score</div>
+              <div class="text-body-1 text-grey-darken-1">
+                {{ $t('analytics.sus.finalScore') }}
+              </div>
               <div class="d-flex align-center">
                 <span class="text-h4 font-weight-bold text-primary mr-2">
-                  {{ selectedResponse.susScore }}.0
+                  {{ selectedResponse.susScore.toFixed(1) }}
                 </span>
-                <span class="text-h6 text-grey">/ 100</span>
+                <span class="text-h6 text-grey">
+                  {{ $t('analytics.sus.scoreDenominator') }}
+                </span>
                 <v-chip
                   :color="
                     getRatingColor(getSUSRating(selectedResponse.susScore))
@@ -241,11 +273,13 @@
         <v-card-text class="pa-6">
           <!-- Individual Responses -->
           <div>
-            <h3 class="text-h6 mb-4">Individual Responses</h3>
+            <h3 class="text-h6 mb-4">
+              {{ $t('analytics.sus.individualResponses') }}
+            </h3>
             <div class="responses-list">
               <div
                 v-for="(question, index) in susQuestions"
-                :key="index"
+                :key="question"
                 class="response-item mb-2 pa-4"
                 style="
                   border: 1px solid #e0e0e0;
@@ -259,7 +293,14 @@
                   <div
                     class="question-text flex-grow-1 pr-4 d-flex align-center mb-2 mb-sm-0"
                   >
-                    <strong>Q{{ index + 1 }}: </strong> {{ question }}
+                    <strong>
+                      {{
+                        $t('analytics.sus.questionNumber', {
+                          number: index + 1,
+                        })
+                      }}:
+                    </strong>
+                    {{ $t(`analytics.sus.questions.${question}`) }}
                   </div>
                   <div class="response-score d-flex align-center">
                     <span class="text-h5 font-weight-bold mr-2">
@@ -287,6 +328,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import {
   getSUSRating,
   getRatingColor,
@@ -297,6 +339,7 @@ import SusHistogramChart from '@/ux/UserTest/SusHistogramChart.vue'
 import SusRatingChart from '@/ux/UserTest/SusRatingChart.vue'
 
 const store = useStore()
+const { t } = useI18n()
 
 const detailsModal = ref(false)
 const selectedResponse = ref(null)
@@ -304,39 +347,28 @@ const selectedRatingFilter = ref(null)
 const scoreRange = ref([0, 100])
 const dialogMaxWidth = 800
 
-const tableHeaders = [
-  { title: 'User', key: 'user', sortable: true },
-  { title: 'SUS Score', key: 'susScore', sortable: true },
-  { title: 'Rating', key: 'rating', sortable: true },
-  { title: 'Actions', key: 'actions', sortable: false },
-]
+const tableHeaders = computed(() => [
+  { title: t('analytics.sus.user'), key: 'user', sortable: true },
+  { title: t('analytics.sus.score'), key: 'susScore', sortable: true },
+  { title: t('analytics.sus.rating'), key: 'rating', sortable: true },
+  { title: t('analytics.sus.actions'), key: 'actions', sortable: false },
+])
 
-const ratingFilterOptions = [
-  { title: 'All Ratings', value: null },
-  { title: 'Excellent (80+)', value: 'Excellent' },
-  { title: 'Good (68-79)', value: 'Good' },
-  { title: 'OK (51-67)', value: 'OK' },
-  { title: 'Poor (0-50)', value: 'Poor' },
-]
+const ratingFilterOptions = computed(() => [
+  { title: t('analytics.sus.allRatings'), value: null },
+  { title: t('analytics.sus.ratings.excellent'), value: 'Excellent' },
+  { title: t('analytics.sus.ratings.good'), value: 'Good' },
+  { title: t('analytics.sus.ratings.ok'), value: 'OK' },
+  { title: t('analytics.sus.ratings.poor'), value: 'Poor' },
+])
 
-const susQuestions = [
-  'I think that I would like to use this system frequently.',
-  'I found the system unnecessarily complex.',
-  'I thought the system was easy to use.',
-  'I think that I would need the support of a technical person to be able to use this system.',
-  'I found the various functions in this system were well integrated.',
-  'I thought there was too much inconsistency in this system.',
-  'I would imagine that most people would learn to use this system very quickly.',
-  'I found the system very cumbersome to use.',
-  'I felt very confident using the system.',
-  'I needed to learn a lot of things before I could get going with this system.',
-]
+const susQuestions = Array.from({ length: 10 }, (_, index) => index)
 
 const testAnswerDocument = computed(
   () => store.getters.visibleUserAnswers || {},
 )
 const tasksArray = computed(() => {
-  return Object.values(testAnswerDocument.value).flatMap((item, index) => {
+  return Object.values(testAnswerDocument.value).flatMap((item) => {
     return Object.values(item.tasks || {})
       .filter(
         (task) =>
@@ -393,20 +425,25 @@ function getResponseColor(score) {
   return 'error'
 }
 
+function translateRating(rating) {
+  const ratingKey = rating.toLowerCase()
+  return t(`analytics.sus.ratings.${ratingKey}`)
+}
+
 function getResponseLabel(score) {
   switch (score) {
     case 5:
-      return 'Strongly Agree'
+      return t('analytics.sus.responses.stronglyAgree')
     case 4:
-      return 'Agree'
+      return t('analytics.sus.responses.agree')
     case 3:
-      return 'Neutral'
+      return t('analytics.sus.responses.neutral')
     case 2:
-      return 'Disagree'
+      return t('analytics.sus.responses.disagree')
     case 1:
-      return 'Strongly Disagree'
+      return t('analytics.sus.responses.stronglyDisagree')
     default:
-      return 'Unknown'
+      return t('analytics.sus.responses.unknown')
   }
 }
 </script>
