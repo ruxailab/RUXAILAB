@@ -223,7 +223,29 @@ service cloud.firestore {
       allow read, write: if signedIn();
     }
     match /jobs/{jobId} {
-      allow read: if signedIn();
+      // A queued job names the participant, the study and the answers
+      // document it was created for, so it is readable only by the account
+      // that queued it and by study staff who can open the study dashboard.
+      // Scoping this per document is also what stops a bare collection read:
+      // a listing only succeeds when every matched document passes.
+      function jobStudy() {
+        return get(
+          /databases/$(database)/documents/tests/$(resource.data.studyId)
+        ).data;
+      }
+
+      function canReadJobStudy() {
+        return resource.data.get('studyId', null) != null &&
+          exists(
+            /databases/$(database)/documents/tests/$(resource.data.studyId)
+          ) &&
+          (isAdmin(jobStudy()) || roleFor(jobStudy()) in [3, 4]);
+      }
+
+      allow read: if signedIn() && (
+        resource.data.get('uid', '') == request.auth.uid ||
+        canReadJobStudy()
+      );
       allow write: if false;
     }
     match /calibrations/{document=**} {
