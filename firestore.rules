@@ -71,13 +71,24 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
+      // Study staff keep a collaborator's study pointers inside that
+      // collaborator's own user document (invite, role change, participant
+      // removal), so a cross-user update stays possible, but only for those
+      // two membership maps. Profile fields and the storage counter are
+      // owner-only.
+      function onlyStudyMembershipChanged() {
+        return request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['myTests', 'myAnswers']);
+      }
+
       allow create: if signedIn() &&
         request.auth.uid == userId &&
         request.resource.data.accessLevel == 1;
       allow read: if signedIn();
       allow update: if isSuperAdmin() || (
         signedIn() &&
-        request.resource.data.accessLevel == resource.data.accessLevel
+        request.resource.data.accessLevel == resource.data.accessLevel &&
+        (request.auth.uid == userId || onlyStudyMembershipChanged())
       );
       allow delete: if isSuperAdmin() ||
         (signedIn() && request.auth.uid == userId);

@@ -6,6 +6,7 @@ jest.mock('firebase/firestore', () => ({
   getDoc: jest.fn(),
   addDoc: jest.fn(),
   deleteDoc: jest.fn(),
+  deleteField: jest.fn(() => 'DELETE_FIELD'),
 }))
 
 jest.mock('@/app/plugins/firebase', () => ({
@@ -180,8 +181,13 @@ describe('AnswerController', () => {
 
     it('should return null if payload is missing required fields', async () => {
       const result1 = await answerController.updateUserAnswer({})
-      const result2 = await answerController.updateUserAnswer({ cooperatorId: '1' })
-      const result3 = await answerController.updateUserAnswer({ cooperatorId: '1', testDocId: '2' })
+      const result2 = await answerController.updateUserAnswer({
+        cooperatorId: '1',
+      })
+      const result3 = await answerController.updateUserAnswer({
+        cooperatorId: '1',
+        testDocId: '2',
+      })
       expect(result1).toBeNull()
       expect(result2).toBeNull()
       expect(result3).toBeNull()
@@ -210,9 +216,10 @@ describe('AnswerController', () => {
       expect(result).toBeNull()
     })
 
-    it('should merge data correctly and update user when answer metadata exists', async () => {
+    it('should merge data correctly and update only the study membership entry', async () => {
       const mockUserToUpdate = {
         id: 'user-123',
+        email: 'collaborator@example.com',
         myAnswers: {
           'test-123': {
             testDocId: 'test-123',
@@ -233,12 +240,46 @@ describe('AnswerController', () => {
 
       const result = await answerController.updateUserAnswer(payload)
 
-      expect(mockUserToUpdate.myAnswers['test-123']).toEqual({
-        testDocId: 'test-123',
-        accessLevel: 1,
-        progress: 100,
+      expect(mockUpdate).toHaveBeenCalledWith('user-123', {
+        'myAnswers.test-123': {
+          testDocId: 'test-123',
+          accessLevel: 1,
+          progress: 100,
+        },
       })
-      expect(mockUpdate).toHaveBeenCalledWith('user-123', { myAnswers: 'updated' })
+      // The collaborator's profile fields must not ride along on this write.
+      expect(mockUserToUpdate.toFirestore).not.toHaveBeenCalled()
+      expect(result).toBe(true)
+    })
+  })
+
+  describe('removeUserAnswer', () => {
+    beforeEach(() => {
+      mockGetById.mockClear()
+      mockUpdate.mockClear()
+      // jest.config.js sets resetMocks, so re-arm the module mock here.
+      require('firebase/firestore').deleteField.mockReturnValue('DELETE_FIELD')
+    })
+
+    it('should delete only the study membership entry', async () => {
+      const mockUserToUpdate = {
+        id: 'user-123',
+        email: 'collaborator@example.com',
+        myAnswers: { 'test-123': { testDocId: 'test-123' } },
+        toFirestore: jest.fn().mockReturnValue({ myAnswers: 'updated' }),
+      }
+      mockGetById.mockResolvedValue(mockUserToUpdate)
+      mockUpdate.mockResolvedValue(true)
+
+      const result = await answerController.removeUserAnswer({
+        cooperatorId: 'user-123',
+        testDocId: 'test-123',
+      })
+
+      expect(mockUpdate).toHaveBeenCalledWith('user-123', {
+        'myAnswers.test-123': 'DELETE_FIELD',
+      })
+      expect(mockUserToUpdate.toFirestore).not.toHaveBeenCalled()
       expect(result).toBe(true)
     })
   })
