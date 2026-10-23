@@ -2898,6 +2898,88 @@
     "sus": {
       "title": "SUS Analytics",
       "description": "System Usability Scale feedback from all participants",
+      "interpretations": {
+        "title": "Five Ways to Interpret SUS Results",
+        "description": "All five visualizations use the same average SUS score. The highlighted segment shows its classification using published reference bands.",
+        "scoreAxis": "SUS score (0–100)",
+        "percentileAxis": "Percentile in the Sauro–Lewis reference sample",
+        "noData": "No valid SUS responses are available, so interpretations are not shown.",
+        "reference": "Reference: Sauro & Lewis, 5 Ways to Interpret a SUS Score",
+        "exportOptions": "Visualization export options",
+        "downloadSvg": "Download figure as SVG",
+        "exportLatex": "Export as LaTeX",
+        "latexTitle": "LaTeX figure",
+        "latexLabel": "TikZ code",
+        "copyLatex": "Copy LaTeX",
+        "latexCopied": "LaTeX code copied to clipboard.",
+        "latexCopyFailed": "Could not copy automatically. Select and copy the code above.",
+        "close": "Close",
+        "categories": {
+          "percentile0to1": "0–1.9th percentile",
+          "percentile2to14": "2nd–14th percentile",
+          "percentile15to34": "15th–34th percentile",
+          "percentile35to40": "35th–40th percentile",
+          "percentile41to59": "41st–59th percentile",
+          "percentile60to64": "60th–64th percentile",
+          "percentile65to69": "65th–69th percentile",
+          "percentile70to79": "70th–79th percentile",
+          "percentile80to84": "80th–84th percentile",
+          "percentile85to89": "85th–89th percentile",
+          "percentile90to95": "90th–95th percentile",
+          "percentile96to100": "96th–100th percentile",
+          "gradeAPlus": "A+",
+          "gradeA": "A",
+          "gradeAMinus": "A−",
+          "gradeBPlus": "B+",
+          "gradeB": "B",
+          "gradeBMinus": "B−",
+          "gradeCPlus": "C+",
+          "gradeC": "C",
+          "gradeCMinus": "C−",
+          "gradeD": "D",
+          "gradeF": "F",
+          "worstImaginable": "Worst Imaginable",
+          "poorAdjective": "Poor",
+          "okAdjective": "OK",
+          "goodAdjective": "Good",
+          "excellentAdjective": "Excellent",
+          "bestImaginable": "Best Imaginable",
+          "noAdjective": "No adjective assigned in reference",
+          "notAcceptable": "Not Acceptable",
+          "marginal": "Marginal",
+          "acceptable": "Acceptable",
+          "detractor": "Detractor",
+          "passive": "Passive",
+          "promoter": "Promoter"
+        },
+        "methods": {
+          "percentileRank": {
+            "title": "Percentile Rank",
+            "description": "Compares this score with the Sauro–Lewis reference sample. Percentiles are reference-dependent, not universal.",
+            "result": "SUS {score}: {category}"
+          },
+          "curvedGradingScale": {
+            "title": "Curved Grading Scale",
+            "description": "Maps the score to the curved letter-grade bands published by Sauro and Lewis.",
+            "result": "SUS {score}: grade {category}"
+          },
+          "adjectiveRating": {
+            "title": "Adjective Rating",
+            "description": "Uses adjective associations in the reference table. Some score bands have no adjective assigned.",
+            "result": "SUS {score}: {category}"
+          },
+          "acceptabilityRanges": {
+            "title": "Acceptability Ranges",
+            "description": "Groups published score bands as Not Acceptable, Marginal, or Acceptable.",
+            "result": "SUS {score}: {category}"
+          },
+          "npsCategories": {
+            "title": "NPS Categories",
+            "description": "An exploratory category inferred from SUS, not an actual NPS measurement. The source notes these boundaries need further validation.",
+            "result": "SUS {score}: inferred {category}"
+          }
+        }
+      },
       "averageScore": "Average SUS Score",
       "minimumScore": "Minimum SUS Score",
       "maximumScore": "Maximum SUS Score",

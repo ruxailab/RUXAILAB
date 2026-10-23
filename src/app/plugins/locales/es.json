@@ -2801,6 +2801,88 @@
     "sus": {
       "title": "Analíticas SUS",
       "description": "Comentarios de la Escala de Usabilidad del Sistema de todos los participantes",
+      "interpretations": {
+        "title": "Cinco formas de interpretar los resultados SUS",
+        "description": "Las cinco visualizaciones usan la misma puntuación SUS media. El segmento resaltado muestra su clasificación según los rangos de referencia publicados.",
+        "scoreAxis": "Puntuación SUS (0–100)",
+        "percentileAxis": "Percentil en la muestra de referencia de Sauro y Lewis",
+        "noData": "No hay respuestas SUS válidas; por eso no se muestran interpretaciones.",
+        "reference": "Referencia: Sauro y Lewis, 5 Ways to Interpret a SUS Score",
+        "exportOptions": "Opciones de exportación de la visualización",
+        "downloadSvg": "Descargar figura como SVG",
+        "exportLatex": "Exportar como LaTeX",
+        "latexTitle": "Figura LaTeX",
+        "latexLabel": "Código TikZ",
+        "copyLatex": "Copiar LaTeX",
+        "latexCopied": "Código LaTeX copiado al portapapeles.",
+        "latexCopyFailed": "No se pudo copiar automáticamente. Selecciona y copia el código anterior.",
+        "close": "Cerrar",
+        "categories": {
+          "percentile0to1": "Percentil 0–1,9",
+          "percentile2to14": "Percentil 2–14",
+          "percentile15to34": "Percentil 15–34",
+          "percentile35to40": "Percentil 35–40",
+          "percentile41to59": "Percentil 41–59",
+          "percentile60to64": "Percentil 60–64",
+          "percentile65to69": "Percentil 65–69",
+          "percentile70to79": "Percentil 70–79",
+          "percentile80to84": "Percentil 80–84",
+          "percentile85to89": "Percentil 85–89",
+          "percentile90to95": "Percentil 90–95",
+          "percentile96to100": "Percentil 96–100",
+          "gradeAPlus": "A+",
+          "gradeA": "A",
+          "gradeAMinus": "A−",
+          "gradeBPlus": "B+",
+          "gradeB": "B",
+          "gradeBMinus": "B−",
+          "gradeCPlus": "C+",
+          "gradeC": "C",
+          "gradeCMinus": "C−",
+          "gradeD": "D",
+          "gradeF": "F",
+          "worstImaginable": "Peor imaginable",
+          "poorAdjective": "Deficiente",
+          "okAdjective": "Aceptable",
+          "goodAdjective": "Buena",
+          "excellentAdjective": "Excelente",
+          "bestImaginable": "Mejor imaginable",
+          "noAdjective": "La referencia no asigna un adjetivo",
+          "notAcceptable": "No aceptable",
+          "marginal": "Marginal",
+          "acceptable": "Aceptable",
+          "detractor": "Detractor",
+          "passive": "Pasivo",
+          "promoter": "Promotor"
+        },
+        "methods": {
+          "percentileRank": {
+            "title": "Rango percentil",
+            "description": "Compara esta puntuación con la muestra de referencia de Sauro y Lewis. Los percentiles dependen de la referencia y no son universales.",
+            "result": "SUS {score}: {category}"
+          },
+          "curvedGradingScale": {
+            "title": "Escala de calificación",
+            "description": "Asigna la puntuación a los rangos de calificación con letras publicados por Sauro y Lewis.",
+            "result": "SUS {score}: calificación {category}"
+          },
+          "adjectiveRating": {
+            "title": "Valoración descriptiva",
+            "description": "Usa las asociaciones de adjetivos de la tabla de referencia. Algunos rangos no tienen adjetivo asignado.",
+            "result": "SUS {score}: {category}"
+          },
+          "acceptabilityRanges": {
+            "title": "Rangos de aceptabilidad",
+            "description": "Agrupa los rangos publicados en No aceptable, Marginal o Aceptable.",
+            "result": "SUS {score}: {category}"
+          },
+          "npsCategories": {
+            "title": "Categorías NPS",
+            "description": "Categoría exploratoria inferida de SUS, no una medición real de NPS. La fuente indica que estos límites requieren más validación.",
+            "result": "SUS {score}: {category} inferido"
+          }
+        }
+      },
       "averageScore": "Puntuación media SUS",
       "minimumScore": "Puntuación mínima SUS",
       "maximumScore": "Puntuación máxima SUS",
