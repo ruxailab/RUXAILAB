@@ -55,13 +55,15 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
+      # No install lifecycle scripts are needed here: the root package.json
+      # defines none, and the rules suite only needs plain JS dependencies.
       - name: Install Dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       # `npm run test:rules` calls the firebase CLI, which is not a project
-      # dependency.
+      # dependency. Pinned exactly so a CI run cannot pick up a new CLI.
       - name: Install Firebase CLI
-        run: npm install -g firebase-tools@13
+        run: npm install -g firebase-tools@13.35.1 --ignore-scripts
 
       - name: Rules tests
         run: npm run test:rules
