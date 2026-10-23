@@ -703,18 +703,19 @@ const reports = computed(() => {
   if (!doc) return []
   const type = doc.type
   const raw = getAnswersByType(doc, type)
-  return Object.values(raw).map((r) => {
-    const isAIAgent = r.userDocId?.startsWith('ai-agent:') || false
-    const anonymous = !isAIAgent && isAnonymousParticipant(r.userDocId)
+  return Object.entries(raw).map(([key, r]) => {
+    const userDocId = r.userDocId || key
+    const isAIAgent = userDocId?.startsWith('ai-agent:') || false
+    const anonymous = !isAIAgent && isAnonymousParticipant(userDocId)
 
     return {
-      id: r.userDocId,
+      id: userDocId,
       fullName: isAIAgent
         ? t('HeuristicsReport.labels.ai_agent')
         : r.fullName || t('HeuristicsReport.headers.evaluator'),
       isAnonymous: anonymous,
       isAIAgent,
-      userDocId: r.userDocId,
+      userDocId,
       progress: parseFloat(r.progress || 0).toFixed(2),
       studyStage: type === STUDY_TYPES.USER ? getReportStudyStage(r) : null,
       totalTime: getReportTotalTime(r, type),
@@ -752,6 +753,7 @@ const toggleReportHidden = async (item) => {
       report: item,
       test: test.value,
       hidden: !item.hidden,
+      answerType: answers.value?.type,
     })
     if (!result.success) throw result.error
 

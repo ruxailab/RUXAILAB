@@ -458,7 +458,7 @@
                 block
                 variant="outlined"
                 class="mr-2"
-                :disabled="isWaitingForUploadToFinish"
+                :disabled="isWaitingForUploadToFinish || isSubmittingOutcome"
                 :class="{
                   'mb-3': $vuetify.display.xs,
                   'mr-2': $vuetify.display.smAndUp,
@@ -479,7 +479,8 @@
                 block
                 variant="flat"
                 class="ml-2"
-                :disabled="isWaitingForUploadToFinish"
+                :disabled="isWaitingForUploadToFinish || isSubmittingOutcome"
+                :loading="isSubmittingOutcome"
                 :class="{ 'ml-2': $vuetify.display.smAndUp }"
                 @click="handleShowPostForm(true)"
               >
@@ -720,6 +721,11 @@ const props = defineProps({
   videoUrl: String,
   remoteStream: MediaStream, // props that receive the remote video stream in case of moderated test
   shouldRecordModerator: Boolean, // props that indicate whether to record the moderator's video
+  mobileInstructionsEligible: { type: Boolean, default: false },
+  mobileInstructionsEnabled: { type: Boolean, default: false },
+  resumeAtStageThree: { type: Boolean, default: false },
+  activateMobileTask: { type: Function, default: null },
+  submitMobileOutcome: { type: Function, default: null },
 })
 const emit = defineEmits([
   'done',
@@ -746,6 +752,7 @@ const emit = defineEmits([
   'structured-slider-end',
   'structured-slider-blur',
   'task-questionnaire-entered',
+  'mobile-outcome-accepted',
 ])
 
 onBeforeUnmount(() => {
@@ -948,7 +955,7 @@ function nextPreviewStep() {
   goToStartTaskStage()
 }
 
-const stage = ref(introStage())
+const stage = ref(props.resumeAtStageThree ? 3 : introStage())
 
 watch(previewSteps, (steps) => {
   if (previewStepIndex.value > steps.length - 1) {
@@ -959,7 +966,21 @@ watch(previewSteps, (steps) => {
   }
 })
 
+watch(
+  () => props.resumeAtStageThree,
+  (resume) => {
+    if (resume && stage.value < 3 && !postFlowStarted) {
+      stage.value = 3
+    }
+  },
+)
+
 const hasOpenedTool = ref(false)
+const isSubmittingOutcome = ref(false)
+let taskToolWindow = null
+let postFlowStarted = false
+let outcomeRequestStarted = false
+let postFormOpened = false
 const audioRecorder = ref(null)
 const videoRecorder = ref(null)
 const screenRecorder = ref(null)
@@ -1040,12 +1061,65 @@ function goToStartTaskStage() {
   resetPreviewStepper()
 }
 
+function taskLinkUrl() {
+  const link = props.task?.taskLink || props.taskLink
+  if (!link) return ''
+  return link.startsWith('http://') || link.startsWith('https://')
+    ? link
+    : `https://${link}`
+}
+
+function releaseTaskWindow() {
+  const opened = taskToolWindow
+  taskToolWindow = null
+  if (!opened && !props.mobileInstructionsEnabled) return
+  if (opened) {
+    try {
+      opened.close()
+    } catch {
+      // The browser can reject closing a tab. The task still continues.
+    }
+  }
+  try {
+    window.focus()
+  } catch {
+    // Focusing the study tab is best-effort and must not block progress.
+  }
+}
+
+function openTaskLinkForMobile() {
+  if (!props.mobileInstructionsEnabled || !props.mobileInstructionsEligible) {
+    return
+  }
+  const url = taskLinkUrl()
+  if (!url) return
+  const opened = window.open(url, '_blank')
+  taskToolWindow = opened
+  if (opened) hasOpenedTool.value = true
+}
+
+async function notifyMobileActivation() {
+  if (
+    !props.mobileInstructionsEnabled ||
+    !props.mobileInstructionsEligible ||
+    typeof props.activateMobileTask !== 'function'
+  ) {
+    return
+  }
+  try {
+    await props.activateMobileTask()
+  } catch {
+    // The phone is not required. The computer task already started.
+  }
+}
+
 async function startTask() {
   if (props.task?.hasScreenRecord) {
     showScreenSharePrompt.value = true
     return
   }
 
+  openTaskLinkForMobile()
   await proceedWithTaskStart({ skipScreen: true })
 }
 
@@ -1055,11 +1129,15 @@ function cancelScreenSharePrompt() {
 }
 
 async function confirmScreenShare() {
+  openTaskLinkForMobile()
   isRequestingScreenShare.value = true
   try {
     await nextTick()
     const screenStarted = await startMediaRecorders({ screenOnly: true })
-    if (!screenStarted) return
+    if (!screenStarted) {
+      releaseTaskWindow()
+      return
+    }
     showScreenSharePrompt.value = false
     await proceedWithTaskStart({ skipScreen: true })
   } finally {
@@ -1069,6 +1147,7 @@ async function confirmScreenShare() {
 
 async function proceedWithTaskStart({ skipScreen = false } = {}) {
   isPreparingTaskTools.value = true
+  let started = false
   try {
     const mediaStarted = await startMediaRecorders({ skipScreen })
     if (!mediaStarted) {
@@ -1088,21 +1167,35 @@ async function proceedWithTaskStart({ skipScreen = false } = {}) {
         if (timer && timer.startTimer) timer.startTimer()
       }, 100)
     })
+    started = true
   } finally {
     isPreparingTaskTools.value = false
   }
+  if (!started) {
+    releaseTaskWindow()
+    return
+  }
+  await notifyMobileActivation()
+}
+
+function openPostFormIfNeeded() {
+  if (postFormOpened) return
+  if (props.task?.taskType !== 'post-form' || !props.task?.postForm) return
+  const link = props.task.postForm
+  const url =
+    link.startsWith('http://') || link.startsWith('https://')
+      ? link
+      : `https://${link}`
+  postFormOpened = true
+  window.open(url, '_blank')
 }
 
 function openTool() {
-  const link = props.task?.taskLink || props.taskLink
-  if (link) {
-    const url =
-      link.startsWith('http://') || link.startsWith('https://')
-        ? link
-        : `https://${link}`
-    window.open(url, '_blank')
-    hasOpenedTool.value = true
-  }
+  const url = taskLinkUrl()
+  if (!url) return
+  const opened = window.open(url, '_blank')
+  hasOpenedTool.value = true
+  if (props.mobileInstructionsEnabled && opened) taskToolWindow = opened
 }
 
 const showPostForm = ref({ userCompleted: undefined })
@@ -1141,8 +1234,10 @@ function abortAllMedia() {
   screenRecorder.value?.abortCapture?.()
 }
 
-function handleShowPostForm(userCompleted) {
-  if (isWaitingForUploadToFinish.value) return
+function beginPostTaskFlow(userCompleted) {
+  if (postFlowStarted || stage.value > 3) return
+  postFlowStarted = true
+  releaseTaskWindow()
 
   forceStopAllMedia()
 
@@ -1159,17 +1254,7 @@ function handleShowPostForm(userCompleted) {
   }
 
   showPostForm.value.userCompleted = userCompleted
-
-  if (props.task?.taskType === 'post-form' && props.task?.postForm) {
-    const link = props.task?.postForm
-    if (link) {
-      const url =
-        link.startsWith('http://') || link.startsWith('https://')
-          ? link
-          : `https://${link}`
-      window.open(url, '_blank')
-    }
-  }
+  openPostFormIfNeeded()
 
   // Questionnaire first, then the optional comment. The timer is already stopped.
   if (hasPostTaskQuestionnaire.value) {
@@ -1183,6 +1268,43 @@ function handleShowPostForm(userCompleted) {
 function goToObservationStep() {
   stage.value = 5
 }
+
+async function handleShowPostForm(userCompleted) {
+  if (
+    isWaitingForUploadToFinish.value ||
+    postFlowStarted ||
+    outcomeRequestStarted
+  ) {
+    return
+  }
+  outcomeRequestStarted = true
+  isSubmittingOutcome.value = true
+  openPostFormIfNeeded()
+  let resolvedCompleted = userCompleted
+  try {
+    if (
+      props.mobileInstructionsEnabled &&
+      props.mobileInstructionsEligible &&
+      typeof props.submitMobileOutcome === 'function'
+    ) {
+      const pressed = userCompleted ? 'completed' : 'not_completed'
+      const settled = await props.submitMobileOutcome(pressed)
+      if (settled?.success) {
+        resolvedCompleted = settled.completed === true
+        emit('mobile-outcome-accepted', settled)
+      }
+    }
+    beginPostTaskFlow(resolvedCompleted)
+  } finally {
+    isSubmittingOutcome.value = false
+  }
+}
+
+function continueFromAcceptedOutcome(completed) {
+  beginPostTaskFlow(completed === true)
+}
+
+defineExpose({ continueFromAcceptedOutcome })
 
 function emitDoneOrCouldNotFinish(savedTime) {
   if (showPostForm.value.userCompleted) {
@@ -1239,10 +1361,16 @@ watch(
     }
     abortAllMedia()
     resetToTaskIntro()
+    if (props.resumeAtStageThree) stage.value = 3
     taskStartTime = null
     elapsedTimeDisplay.value = '0:00'
     showPostForm.value = { userCompleted: undefined }
     hasOpenedTool.value = false
+    postFlowStarted = false
+    outcomeRequestStarted = false
+    postFormOpened = false
+    isSubmittingOutcome.value = false
+    taskToolWindow = null
     isPreparingTaskTools.value = false
     showScreenSharePrompt.value = false
     isRequestingScreenShare.value = false

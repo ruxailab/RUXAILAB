@@ -456,7 +456,7 @@
             v-if="globalIndex === 3 && hasEyeTracking"
             :calibration-in-progress="calibrationInProgress"
             :calibration-completed="calibrationCompleted"
-            @done="globalIndex = hasPreTest ? 4 : 5"
+            @done="goToPreTasksOrTasks"
             @close-calibration="closeCalibration()"
             @open-calibration="openCalibration()"
             @mark-completed="handleCalibrationFinished()"
@@ -464,12 +464,18 @@
 
           <PreTasksStep
             v-if="
-              hasPreTest &&
+              showPreTasksStep &&
               globalIndex === (hasEyeTracking ? 4 : 3) &&
               taskIndex === 0
             "
             :num-tasks="test?.testStructure?.userTasks?.length || 0"
+            :has-pre-test="hasPreTest"
             :has-recording="hasRecording"
+            :show-mobile-task-instructions="studyAllowsMobileTaskInstructions"
+            :mobile-instructions-busy="mobileInstructionsBusy"
+            :mobile-instructions-error="mobileInstructionsError"
+            :mobile-companion-pairing-path="mobileCompanionPairingPath"
+            :mobile-phone-connected="mobilePhoneConnected"
             @start-tasks="handleStartTasks"
           />
 
@@ -496,6 +502,12 @@
             :sart-answers="localTestAnswer.tasks[taskIndex].sartAnswers"
             :submitted="localTestAnswer.submitted"
             :done-task-disabled="doneTaskDisabled"
+            :mobile-instructions-eligible="mobileInstructionsEligible"
+            :mobile-instructions-enabled="mobileInstructionsEnabled"
+            :resume-at-stage-three="resumeMobileTask"
+            :activate-mobile-task="activateCurrentMobileTask"
+            :submit-mobile-outcome="submitCurrentMobileOutcome"
+            @mobile-outcome-accepted="rememberAcceptedOutcome"
             @recording-result="handleRecordingResult"
             @update:sus-answers="
               (val) => {
@@ -646,6 +658,12 @@ import {
   structuredValuesForTask,
 } from '@/ux/UserTest/utils/structuredActivity'
 import { taskDestination } from '@/ux/UserTest/utils/unmoderatedNavigation'
+import { useMobileTaskCompanion } from '@/ux/UserTest/composables/useMobileTaskCompanion'
+import {
+  applyAcceptedOutcome,
+  isMobileTaskIndexEligible,
+  mobileTaskId,
+} from '@/ux/UserTest/utils/mobileTaskPageState'
 
 const fullName = ref('')
 const logined = ref(null)
@@ -767,8 +785,81 @@ const currentUserTestAnswer = computed(
   () => store.getters.currentUserTestAnswer || {},
 )
 
+const mobileCompanion = useMobileTaskCompanion({
+  getStudyId: () => test.value?.id || null,
+  getAnswerId: () => test.value?.answersDocId || null,
+  getOwnerUid: () => auth.currentUser?.uid || null,
+})
+const {
+  enabled: mobileInstructionsEnabled,
+  busy: mobileInstructionsBusy,
+  error: mobileInstructionsError,
+  pairingPath: mobileCompanionPairingPath,
+  phoneConnected: mobilePhoneConnected,
+} = mobileCompanion
+const acceptedMobileOutcome = ref(null)
+const studyAllowsMobileTaskInstructions = computed(
+  () => test.value?.allowMobileTaskInstructions !== false,
+)
+const mobileInstructionsEligible = computed(() =>
+  isMobileTaskIndexEligible(taskIndex.value),
+)
+const resumeMobileTask = computed(() => {
+  if (
+    !studyAllowsMobileTaskInstructions.value ||
+    !mobileCompanion.enabled.value ||
+    !mobileInstructionsEligible.value
+  ) {
+    return false
+  }
+  const active = mobileCompanion.companion.value?.activeTask
+  if (!active?.attemptId) return false
+  return Number(active.taskIndex) === taskIndex.value
+})
+
+function rememberAcceptedOutcome(outcome) {
+  if (!outcome?.success) return
+  acceptedMobileOutcome.value = outcome
+  const task = localTestAnswer.tasks?.[outcome.taskIndex]
+  if (task) applyAcceptedOutcome(task, outcome)
+}
+
+function continueFromPhoneOutcome(outcome) {
+  const task = localTestAnswer.tasks?.[taskIndex.value]
+  const alreadyAttempted = task?.attempted === true
+  rememberAcceptedOutcome(outcome)
+  if (!alreadyAttempted) {
+    taskStepComponent.value?.continueFromAcceptedOutcome(
+      outcome.completed === true,
+    )
+  }
+}
+
+function activateCurrentMobileTask() {
+  if (!studyAllowsMobileTaskInstructions.value) return null
+  const index = taskIndex.value
+  const task = test.value?.testStructure?.userTasks?.[index]
+  return mobileCompanion.activate({
+    taskIndex: index,
+    taskId: mobileTaskId(task, index),
+  })
+}
+
+function submitCurrentMobileOutcome(outcome) {
+  if (!studyAllowsMobileTaskInstructions.value) {
+    return Promise.resolve(null)
+  }
+  return mobileCompanion.submitOutcome({
+    taskIndex: taskIndex.value,
+    outcome,
+  })
+}
+
 const hasEyeTracking = computed(() =>
   test.value?.testStructure?.userTasks?.some((task) => task.hasEye),
+)
+const isOnTaskStage = computed(
+  () => globalIndex.value === (hasEyeTracking.value ? 5 : 4),
 )
 
 const hasRecording = computed(() =>
@@ -789,6 +880,28 @@ const hasPreTest = computed(() => {
     test.value?.testStructure?.preTest.length > 0
   )
 })
+
+const showPreTasksStep = computed(
+  () =>
+    hasPreTest.value ||
+    studyAllowsMobileTaskInstructions.value ||
+    hasRecording.value,
+)
+
+const isOnPreTasksStage = computed(
+  () =>
+    showPreTasksStep.value &&
+    globalIndex.value === (hasEyeTracking.value ? 4 : 3) &&
+    taskIndex.value === 0,
+)
+
+const goToPreTasksOrTasks = () => {
+  if (showPreTasksStep.value) {
+    globalIndex.value = hasEyeTracking.value ? 4 : 3
+    return
+  }
+  globalIndex.value = hasEyeTracking.value ? 5 : 4
+}
 
 const hasPostTest = computed(() => {
   return (
@@ -1120,6 +1233,7 @@ const saveAnswer = async () => {
 const submitAnswer = async () => {
   try {
     isLoading.value = true
+    await mobileCompanion.endSession()
     localTestAnswer.submitted = true
     await initializeStudyLogging()?.checkpointStructuredScopes()
     await saveAnswer()
@@ -1313,9 +1427,36 @@ const callTimerSave = () => {
   }
 }
 
+function applyMobileOutcomeBeforeSave(finishedTaskIndex) {
+  const outcome = acceptedMobileOutcome.value
+  if (
+    !outcome?.success ||
+    Number(outcome.taskIndex) !== finishedTaskIndex ||
+    !localTestAnswer.tasks?.[finishedTaskIndex]
+  ) {
+    return
+  }
+  applyAcceptedOutcome(localTestAnswer.tasks[finishedTaskIndex], outcome)
+}
+
+async function saveFinishedTask(finishedTaskIndex, completed, occurredAt) {
+  await completeStep(finishedTaskIndex, 'tasks', completed)
+  applyMobileOutcomeBeforeSave(finishedTaskIndex)
+  attachMediaToTasks(localTestAnswer, mediaUrls.value)
+  if (await persistStepProgress()) {
+    acceptedMobileOutcome.value = null
+    void initializeStudyLogging()?.taskFinished(finishedTaskIndex, occurredAt)
+  }
+}
+
 async function handleTaskFinish(userCompleted) {
   const finishedObservedAt = new Date().toISOString()
   const finishedTaskIndex = taskIndex.value
+  const outcome = acceptedMobileOutcome.value
+  const completed =
+    outcome?.success && Number(outcome.taskIndex) === finishedTaskIndex
+      ? outcome.completed === true
+      : userCompleted
   await initializeStudyLogging()?.checkpointStructuredScope(
     `task:${finishedTaskIndex}`,
   )
@@ -1329,26 +1470,16 @@ async function handleTaskFinish(userCompleted) {
       async (val) => {
         if (!val) {
           unwatch()
-          await completeStep(finishedTaskIndex, 'tasks', userCompleted)
-          attachMediaToTasks(localTestAnswer, mediaUrls.value)
-          if (await persistStepProgress()) {
-            void initializeStudyLogging()?.taskFinished(
-              finishedTaskIndex,
-              finishedObservedAt,
-            )
-          }
+          await saveFinishedTask(
+            finishedTaskIndex,
+            completed,
+            finishedObservedAt,
+          )
         }
       },
     )
   } else {
-    await completeStep(finishedTaskIndex, 'tasks', userCompleted)
-    attachMediaToTasks(localTestAnswer, mediaUrls.value)
-    if (await persistStepProgress()) {
-      void initializeStudyLogging()?.taskFinished(
-        finishedTaskIndex,
-        finishedObservedAt,
-      )
-    }
+    await saveFinishedTask(finishedTaskIndex, completed, finishedObservedAt)
   }
 }
 
@@ -1401,9 +1532,12 @@ const completeStep = async (id, type, userCompleted = true) => {
       if (hasPreTest.value) {
         globalIndex.value = 2 // PreTest
       } else {
-        // No pre-test: go to calibration if eye tracking is enabled, otherwise go to tasks
-        globalIndex.value = hasEyeTracking.value ? 3 : 4
         localTestAnswer.preTestCompleted = true
+        if (hasEyeTracking.value) {
+          globalIndex.value = 3
+        } else {
+          goToPreTasksOrTasks()
+        }
       }
       const consentSaved = await persistStepProgress()
       if (!consentSaved) return
@@ -1419,8 +1553,7 @@ const completeStep = async (id, type, userCompleted = true) => {
     }
 
     if (type === 'eyeCalibration') {
-      // After calibration: go to PreTasksStep if there was a pre-test, otherwise go directly to tasks
-      globalIndex.value = hasPreTest.value ? 4 : 5
+      goToPreTasksOrTasks()
       taskIndex.value = 0
       eyeCalibrationStepDone.value = true
     }
@@ -1842,8 +1975,41 @@ watch(
   async () => {
     if (user.value) {
       noExistUser.value = false
-      if (logined.value) await setTest()
+      if (logined.value) {
+        await setTest()
+      }
     }
+  },
+)
+
+watch(
+  () => [
+    studyAllowsMobileTaskInstructions.value,
+    isOnPreTasksStage.value,
+    isOnTaskStage.value,
+    test.value?.id,
+    test.value?.answersDocId,
+    user.value?.id || anonymousUserDocId.value,
+  ],
+  async ([allowed, onPreTasks, onTasks, studyId, answerId, ownerId]) => {
+    if (!allowed || (!onPreTasks && !onTasks) || !studyId || !answerId || !ownerId)
+      return
+    await mobileCompanion.ensureEnabled()
+  },
+)
+
+watch(
+  () => [
+    mobileCompanion.companion.value?.lastOutcome?.attemptId,
+    mobileCompanion.companion.value?.activeTask?.attemptId,
+    taskIndex.value,
+    Boolean(taskStepComponent.value),
+  ],
+  () => {
+    const outcome = mobileCompanion.outcomeMatchingActiveTask(taskIndex.value)
+    if (!outcome?.success || !taskStepComponent.value) return
+    if (acceptedMobileOutcome.value?.attemptId === outcome.attemptId) return
+    continueFromPhoneOutcome(outcome)
   },
 )
 

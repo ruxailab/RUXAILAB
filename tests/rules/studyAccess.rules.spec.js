@@ -5,7 +5,14 @@ import {
   assertSucceeds,
   initializeTestEnvironment,
 } from '@firebase/rules-unit-testing'
-import { deleteDoc, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
+import {
+  deleteDoc,
+  deleteField,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+} from 'firebase/firestore'
 import { deleteObject, getBytes, ref, uploadBytes } from 'firebase/storage'
 
 const projectId = 'demo-ruxailab-rbac'
@@ -200,6 +207,27 @@ describe('Firestore study RBAC', () => {
     await assertFails(
       updateDoc(doc(context('user').firestore(), 'answers/answers-1'), {
         'taskAnswers.user': { progress: 100, submitted: true },
+      }),
+    )
+  })
+
+  it('prevents an admin from deleting or hiding another participant answer from the client', async () => {
+    await testEnv.withSecurityRulesDisabled((adminContext) =>
+      updateDoc(doc(adminContext.firestore(), 'answers/answers-1'), {
+        'taskAnswers.user': { progress: 100, submitted: true },
+      }),
+    )
+
+    const answers = doc(context('owner').firestore(), 'answers/answers-1')
+
+    await assertFails(
+      updateDoc(answers, {
+        'taskAnswers.user': deleteField(),
+      }),
+    )
+    await assertFails(
+      updateDoc(answers, {
+        'taskAnswers.user.hidden': true,
       }),
     )
   })

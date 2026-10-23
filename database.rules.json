@@ -66,6 +66,20 @@
       }
     },
 
+    // Phone presence for unmoderated task instructions. Top-level so a
+    // broad .read elsewhere cannot leak every token. Knowing the token is
+    // the capability. No .read on the parent, so tokens cannot be listed.
+    "mobileTaskPresence": {
+      "$token": {
+        ".read": true,
+        ".write": "$token.matches(/^[a-f0-9]{64}$/)",
+        "connected": {
+          ".validate": "newData.isBoolean()"
+        },
+        "$other": { ".validate": false }
+      }
+    },
+
     "rooms": {
       ".read": true,
       ".write": true

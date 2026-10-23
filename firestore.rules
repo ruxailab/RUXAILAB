@@ -144,6 +144,25 @@ service cloud.firestore {
         allow write: if false;
       }
 
+      // Phone pairing for unmoderated task instructions. Not a study session.
+      // Only the owning participant can read the companion. Nobody writes it
+      // from the client. The document id is the uid.
+      match /mobileTaskCompanions/{companionId} {
+        allow read: if authenticated() &&
+          request.auth.uid == companionId &&
+          (resource == null ||
+            resource.data.participantUid == request.auth.uid);
+        allow write: if false;
+      }
+
+      // Public phone projection. The document id is the pairing token, so
+      // knowing the path is the capability. Clients may get one document;
+      // they must not list the collection or write it.
+      match /mobileTaskViews/{viewId} {
+        allow get: if viewId.matches('^[a-f0-9]{64}$');
+        allow list, write: if false;
+      }
+
     }
 
     match /answers/{answerId} {
@@ -173,13 +192,71 @@ service cloud.firestore {
           (type in ['HEURISTIC', 'CARD_SORTING'] && role in [1, 2]);
       }
 
+      function lockedTaskOutcome(beforeTasks, afterTasks, key) {
+        return beforeTasks.get(key, {}).get('attempted', false) != true || (
+          afterTasks.get(key, {}).get('completed', null) ==
+            beforeTasks.get(key, {}).get('completed', null) &&
+          afterTasks.get(key, {}).get('attempted', null) ==
+            beforeTasks.get(key, {}).get('attempted', null) &&
+          afterTasks.get(key, {}).get('startedAt', null) ==
+            beforeTasks.get(key, {}).get('startedAt', null) &&
+          afterTasks.get(key, {}).get('endedAt', null) ==
+            beforeTasks.get(key, {}).get('endedAt', null) &&
+          afterTasks.get(key, {}).get('participationMode', null) ==
+            beforeTasks.get(key, {}).get('participationMode', null)
+        );
+      }
+
+      function lockedTaskOutcomes0(beforeTasks, afterTasks) {
+        return lockedTaskOutcome(beforeTasks, afterTasks, '0') &&
+          lockedTaskOutcome(beforeTasks, afterTasks, '1') &&
+          lockedTaskOutcome(beforeTasks, afterTasks, '2') &&
+          lockedTaskOutcome(beforeTasks, afterTasks, '3') &&
+          lockedTaskOutcome(beforeTasks, afterTasks, '4') &&
+          lockedTaskOutcome(beforeTasks, afterTasks, '5') &&
+          lockedTaskOutcome(beforeTasks, afterTasks, '6') &&
+          lockedTaskOutcome(beforeTasks, afterTasks, '7');
+      }
+
+      function lockedTaskOutcomes1(beforeTasks, afterTasks) {
+        return lockedTaskOutcome(beforeTasks, afterTasks, '8') &&
+          lockedTaskOutcome(beforeTasks, afterTasks, '9') &&
+          lockedTaskOutcome(beforeTasks, afterTasks, '10') &&
+          lockedTaskOutcome(beforeTasks, afterTasks, '11') &&
+          lockedTaskOutcome(beforeTasks, afterTasks, '12') &&
+          lockedTaskOutcome(beforeTasks, afterTasks, '13') &&
+          lockedTaskOutcome(beforeTasks, afterTasks, '14') &&
+          lockedTaskOutcome(beforeTasks, afterTasks, '15');
+      }
+
+      // Tasks are a map keyed by "0".."15". Once attempted is true, a later
+      // client save cannot change the outcome fields. Observations, media,
+      // taskTime, and questionnaire fields stay writable. Empty task maps
+      // skip the per-index checks so a normal progress save stays cheap.
+      function lockedTaskOutcomesUnchanged(beforeEntry, afterEntry) {
+        let beforeTasks = beforeEntry is map
+          ? beforeEntry.get('tasks', {})
+          : {};
+        let afterTasks = afterEntry is map
+          ? afterEntry.get('tasks', {})
+          : {};
+        return !(beforeTasks is map) ||
+          beforeTasks.size() == 0 ||
+          (afterTasks is map &&
+            lockedTaskOutcomes0(beforeTasks, afterTasks) &&
+            lockedTaskOutcomes1(beforeTasks, afterTasks));
+      }
+
       function participantAnswerChanged(field) {
         let before = resource.data.get(field, {});
         let after = request.resource.data.get(field, {});
         let oldEntry = before.get(request.auth.uid, {});
+        let newEntry = after.get(request.auth.uid, {});
         return after is map && before is map &&
           after.diff(before).affectedKeys().hasOnly([request.auth.uid]) &&
-          oldEntry.get('submitted', false) != true;
+          oldEntry.get('submitted', false) != true &&
+          (field != 'taskAnswers' ||
+            lockedTaskOutcomesUnchanged(oldEntry, newEntry));
       }
 
       function canUpdateAnswerData() {

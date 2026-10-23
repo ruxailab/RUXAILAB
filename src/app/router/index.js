@@ -40,6 +40,10 @@ const publicPages = [
   '/invite',
 ]
 
+function isOpenPath(path) {
+  return publicPages.includes(path) || path.startsWith('/mobile-task/')
+}
+
 function captureInviteToken(to) {
   if (to.path === '/invite') {
     const inviteToken = to.query?.token
@@ -129,7 +133,7 @@ export async function beforeEachGuard(
       authUser &&
       !authUser.isAnonymous &&
       authUser.emailVerified === false &&
-      !publicPages.includes(to.path)
+      !isOpenPath(to.path)
     ) {
       return next('/verify-email')
     }
@@ -141,7 +145,7 @@ export async function beforeEachGuard(
     return next()
   }
 
-  if (publicPages.includes(to.path)) {
+  if (isOpenPath(to.path)) {
     return next()
   }
 
