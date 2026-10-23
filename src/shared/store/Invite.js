@@ -607,7 +607,7 @@ export default {
       let user = rootGetters.user
 
       if (!user) {
-        await dispatch('autoSignIn', null, { root: true })
+        await dispatch('autoSignIn', undefined, { root: true })
         user = rootGetters.user
       }
 
