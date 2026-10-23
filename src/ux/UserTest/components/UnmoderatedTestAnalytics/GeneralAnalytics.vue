@@ -400,12 +400,31 @@
           </v-row>
 
           <div class="mt-8">
-            <h4 class="text-h6 font-weight-bold mb-5">
-              {{ $t('analytics.taskTimeVsEstimate') }}
-            </h4>
-            <p class="text-caption text-medium-emphasis mb-3">
-              {{ $t('analytics.taskTimeVsEstimateFormula') }}
-            </p>
+            <div class="d-flex align-center justify-space-between ga-4 mb-3">
+              <div>
+                <h4 class="text-h6 font-weight-bold mb-2">
+                  {{ $t('analytics.taskTimeVsEstimate') }}
+                </h4>
+                <p class="text-caption text-medium-emphasis mb-0">
+                  {{ $t('analytics.taskTimeVsEstimateFormula') }}
+                </p>
+              </div>
+              <v-tooltip location="top">
+                <template #activator="{ props }">
+                  <v-icon
+                    v-bind="props"
+                    class="flex-shrink-0"
+                    color="primary"
+                    role="img"
+                    tabindex="0"
+                    :aria-label="$t('analytics.chartInteractionHint')"
+                  >
+                    mdi-help-circle-outline
+                  </v-icon>
+                </template>
+                <span>{{ $t('analytics.chartInteractionHint') }}</span>
+              </v-tooltip>
+            </div>
             <div class="analytics-bar-chart analytics-bar-chart-scroll">
               <div
                 class="analytics-bar-chart-content"
@@ -422,12 +441,31 @@
           </div>
 
           <div class="mt-8">
-            <h4 class="text-h6 font-weight-bold mb-5">
-              {{ $t('analytics.taskTimeByUser') }}
-            </h4>
-            <p class="text-caption text-medium-emphasis mb-3">
-              {{ $t('analytics.taskTimeByUserFormula') }}
-            </p>
+            <div class="d-flex align-center justify-space-between ga-4 mb-3">
+              <div>
+                <h4 class="text-h6 font-weight-bold mb-2">
+                  {{ $t('analytics.taskTimeByUser') }}
+                </h4>
+                <p class="text-caption text-medium-emphasis mb-0">
+                  {{ $t('analytics.taskTimeByUserFormula') }}
+                </p>
+              </div>
+              <v-tooltip location="top">
+                <template #activator="{ props }">
+                  <v-icon
+                    v-bind="props"
+                    class="flex-shrink-0"
+                    color="primary"
+                    role="img"
+                    tabindex="0"
+                    :aria-label="$t('analytics.chartInteractionHint')"
+                  >
+                    mdi-help-circle-outline
+                  </v-icon>
+                </template>
+                <span>{{ $t('analytics.chartInteractionHint') }}</span>
+              </v-tooltip>
+            </div>
             <div class="analytics-bar-chart analytics-bar-chart-scroll">
               <div
                 class="analytics-bar-chart-content"
@@ -1279,7 +1317,7 @@ const timeByUserChartData = computed(() => {
         pointRadius: 0,
         tension: 0,
         spanGaps: true,
-        showLine: false,     // plugin draws edge-to-edge; suppress Chart.js path
+        showLine: false, // plugin draws edge-to-edge; suppress Chart.js path
         estimatedLine: true, // flag for fullWidthEstimatedLines plugin
       },
     ]
@@ -1309,11 +1347,34 @@ const tooltipTitle = (items) => {
   return itemName ? `${item.label}: ${itemName}` : item.label
 }
 
+const setChartCursor = (event, cursor) => {
+  const target = event.native?.target
+  if (target instanceof HTMLCanvasElement) target.style.cursor = cursor
+}
+
+const handleChartHover = (event, activeElements) => {
+  setChartCursor(event, activeElements.length ? 'pointer' : 'default')
+}
+
+const handleLegendHover = (event) => {
+  setChartCursor(event, 'pointer')
+}
+
+const handleLegendLeave = (event) => {
+  setChartCursor(event, 'default')
+}
+
 const taskTimeComparisonChartOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
+  onHover: handleChartHover,
   plugins: {
-    legend: { display: true, position: 'bottom' },
+    legend: {
+      display: true,
+      position: 'bottom',
+      onHover: handleLegendHover,
+      onLeave: handleLegendLeave,
+    },
     tooltip: { callbacks: { title: tooltipTitle } },
   },
   scales: {
@@ -1330,8 +1391,14 @@ const taskTimeComparisonChartOptions = computed(() => ({
 const timeByUserChartOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
+  onHover: handleChartHover,
   plugins: {
-    legend: { display: true, position: 'bottom' },
+    legend: {
+      display: true,
+      position: 'bottom',
+      onHover: handleLegendHover,
+      onLeave: handleLegendLeave,
+    },
     tooltip: { callbacks: { title: tooltipTitle } },
   },
   scales: {

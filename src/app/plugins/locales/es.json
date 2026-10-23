@@ -2760,6 +2760,7 @@
     "taskPerformance": "Rendimiento de la tarea",
     "taskPerformanceDescription": "Tasas de éxito y error para cada tarea del estudio",
     "taskPerformanceFormula": "Tasa de éxito = finalizaciones exitosas / participantes × 100. Eficiencia de tiempo = tiempo estimado de la tarea / tiempo promedio de finalización exitosa × 100.",
+    "chartInteractionHint": "Pasa el cursor sobre las barras para ver detalles. Haz clic en las leyendas para mostrar u ocultar series de datos.",
     "taskEfficiency": "Eficiencia (%)",
     "timeEfficiency": "Eficiencia",
     "taskTimingMetrics": "Tiempos",
