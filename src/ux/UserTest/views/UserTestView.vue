@@ -645,7 +645,11 @@ import {
   structuredValuesForStage as structuredValuesForStageOf,
   structuredValuesForTask,
 } from '@/ux/UserTest/utils/structuredActivity'
-import { taskDestination } from '@/ux/UserTest/utils/unmoderatedNavigation'
+import {
+  firstUnattemptedTaskIndex,
+  resumeDestination,
+  taskDestination,
+} from '@/ux/UserTest/utils/unmoderatedNavigation'
 
 const fullName = ref('')
 const logined = ref(null)
@@ -1240,8 +1244,40 @@ const handleWelcomeStart = async () => {
   if (!localTestAnswer.submitted && totalTestTimeStartedAt.value === null) {
     totalTestTimeStartedAt.value = Date.now()
   }
-  await safelyShowNextStepAnnouncement(t('UserTestView.stepper.consent'), 1)
-  globalIndex.value = 1
+  // A returning participant who already consented continues at the first
+  // stage that is not done, instead of being asked for consent again (#2486).
+  const destination = localTestAnswer.submitted
+    ? null
+    : resumeDestination({
+        answer: localTestAnswer,
+        hasPreTest: hasPreTest.value,
+        hasEyeTracking: hasEyeTracking.value,
+        hasPostTest: hasPostTest.value,
+        taskCount: test.value?.testStructure?.userTasks?.length || 0,
+      })
+  if (!destination || destination.kind === 'consent') {
+    await safelyShowNextStepAnnouncement(t('UserTestView.stepper.consent'), 1)
+    globalIndex.value = 1
+    return
+  }
+
+  if (destination.kind === 'task') {
+    await showTaskTitleAnnouncement(destination.taskIndex)
+  } else if (destination.kind === 'postTest' || destination.kind === 'finish') {
+    const announcement = getPostTasksAnnouncement()
+    await safelyShowNextStepAnnouncement(announcement.title, announcement.stage)
+  } else {
+    const title =
+      destination.kind === 'preTest'
+        ? t('UserTestView.stepper.preTest')
+        : t('UserTestView.stepper.calibration')
+    await safelyShowNextStepAnnouncement(title, 2)
+  }
+  if (destination.kind === 'finish' && !hasPostTest.value) {
+    localTestAnswer.postTestCompleted = true
+  }
+  taskIndex.value = destination.taskIndex
+  globalIndex.value = destination.globalIndex
 }
 
 const handleStartTasks = async () => {
@@ -1419,9 +1455,17 @@ const completeStep = async (id, type, userCompleted = true) => {
     }
 
     if (type === 'eyeCalibration') {
-      // After calibration: go to PreTasksStep if there was a pre-test, otherwise go directly to tasks
-      globalIndex.value = hasPreTest.value ? 4 : 5
-      taskIndex.value = 0
+      // After calibration: go to PreTasksStep if there was a pre-test, otherwise go directly to tasks.
+      // A participant who resumes a study continues at the first task not attempted yet.
+      const nextTask = Math.max(
+        firstUnattemptedTaskIndex(
+          localTestAnswer.tasks,
+          test.value?.testStructure?.userTasks?.length || 0,
+        ),
+        0,
+      )
+      globalIndex.value = hasPreTest.value && nextTask === 0 ? 4 : 5
+      taskIndex.value = nextTask
       eyeCalibrationStepDone.value = true
     }
 
