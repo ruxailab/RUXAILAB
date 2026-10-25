@@ -1263,15 +1263,23 @@ const handleWelcomeStart = async () => {
 
   if (destination.kind === 'task') {
     await showTaskTitleAnnouncement(destination.taskIndex)
-  } else if (destination.kind === 'postTest' || destination.kind === 'finish') {
+  } else if (destination.kind === 'postTest') {
     const announcement = getPostTasksAnnouncement()
     await safelyShowNextStepAnnouncement(announcement.title, announcement.stage)
+  } else if (destination.kind === 'finish') {
+    // Same stage numbers as reaching the submission from the post-test or tasks.
+    await safelyShowNextStepAnnouncement(
+      t('UserTestView.WelcomeStep.steps.submission'),
+      hasPostTest.value ? 5 : 4,
+    )
+  } else if (destination.kind === 'preTest') {
+    await safelyShowNextStepAnnouncement(t('UserTestView.stepper.preTest'), 2)
   } else {
-    const title =
-      destination.kind === 'preTest'
-        ? t('UserTestView.stepper.preTest')
-        : t('UserTestView.stepper.calibration')
-    await safelyShowNextStepAnnouncement(title, 2)
+    // Calibration follows the pre-test (stage 3) or, without one, the consent.
+    await safelyShowNextStepAnnouncement(
+      t('UserTestView.stepper.calibration'),
+      hasPreTest.value ? 3 : 2,
+    )
   }
   if (destination.kind === 'finish' && !hasPostTest.value) {
     localTestAnswer.postTestCompleted = true
