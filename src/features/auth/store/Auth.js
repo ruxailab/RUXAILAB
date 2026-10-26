@@ -5,7 +5,6 @@
 
 import AuthController from '@/features/auth/controllers/AuthController.js'
 import UserController from '@/features/auth/controllers/UserController'
-import User from '@/features/auth/models/UserModel'
 import i18n from '@/app/plugins/i18n'
 import { showError } from '@/shared/utils/toast'
 import { cleanupStudyLoggingForOwner } from '@/shared/services/studyLoggingClient'
@@ -29,7 +28,6 @@ export default {
 
       // Check if the user is defined
       if (!user) return 1
-      if (user.isFallback) return null
 
       // If the user is a superadmin
       if (user.accessLevel === 0) return 0
@@ -201,9 +199,7 @@ export default {
         }
         await authController.signOut()
         await cleanupStudyLoggingForOwner(ownerUid)
-        if (!state.user || state.user.id === ownerUid) {
-          commit('SET_USER', null)
-        }
+        commit('SET_USER', null)
 
         if (!silent) {
           commit('SET_TOAST', {
@@ -224,17 +220,10 @@ export default {
       }
     },
 
-    async autoSignIn({ commit, state, dispatch }, { signal } = {}) {
+    async autoSignIn({ commit, dispatch }) {
       try {
         const user = await authController.autoSignIn()
-        if (signal?.aborted || !user) return
-
-        // Anonymous participants (links without login) have no profile in
-        // Firestore. Return the Firebase user so the router guard can
-        // distinguish "anonymous but authenticated" from "not authenticated".
-        if (user.isAnonymous) {
-          return user
-        }
+        if (!user) return
 
         // Check if email is verified
         if (!user.emailVerified) {
@@ -243,63 +232,15 @@ export default {
           return user
         }
 
-        // Fetch the Firestore profile, retrying once on transient failure.
-        // A permission-denied error is permanent and must not be retried.
-        let dbUser = null
-        try {
-          dbUser = await userController.getById(user.uid)
-        } catch (error) {
-          if (signal?.aborted) return null
-          if (error?.code === 'permission-denied') {
-            commit('SET_USER', null)
-            commit('SET_TOAST', {
-              message: i18n.global.t('errors.globalError'),
-              type: 'error',
-            })
-            await authController.signOut()
-            return null
-          }
-
-          // One retry: transient network issues (Wi-Fi reconnect after laptop
-          // sleep, mobile connectivity blip) resolve within a few seconds.
-          try {
-            await new Promise((r) => setTimeout(r, 1500))
-            if (signal?.aborted) return null
-            dbUser = await userController.getById(user.uid)
-          } catch {
-            if (signal?.aborted) return null
-            // Still failing — do NOT clear the store.
-            // Preserve the existing profile state if already loaded for this user.
-            // Otherwise, keep the session recognizable but unverified and
-            // unauthorized until the Firestore profile can be loaded.
-            if (state?.user?.id !== user.uid) {
-              const fallbackUser = new User({
-                id: user.uid,
-                email: user.email,
-                username: user.displayName || '',
-                accessLevel: 1,
-              })
-              fallbackUser.isFallback = true
-              commit('SET_USER', fallbackUser)
-            }
-            return user
-          }
-        }
-
-        if (signal?.aborted) return null
+        const dbUser = await userController.getById(user.uid)
         commit('SET_USER', dbUser)
         dispatch('subscribeToNotifications', user.uid)
-        return user
       } catch (e) {
-        if (signal?.aborted) return null
-        // Only toast if autoSignIn itself fails (e.g., persistent listener
-        // unexpected failure). Don't return e: callers must not treat an
-        // Error object as a truthy user.
         commit('SET_TOAST', {
           message: i18n.global.t('errors.globalError'),
           type: 'error',
         })
-        throw e
+        return e
       }
     },
 

@@ -68,37 +68,6 @@ describe('study access policy', () => {
     expect(resolveStudyAccess(userStudy(), ordinaryAccount).role).toBeNull()
   })
 
-  it('does not authorize fallback profiles from account, study, or public access', () => {
-    const fallbackUser = {
-      id: owner.id,
-      accessLevel: 0,
-      isFallback: true,
-    }
-    const publicStudy = userStudy({ isPublic: true })
-
-    expect(resolveStudyAccess(publicStudy, fallbackUser)).toMatchObject({
-      role: null,
-      isOwner: false,
-      isSuperAdmin: false,
-      isAcceptedMember: false,
-      isPublicParticipant: false,
-    })
-    expect(
-      hasStudyCapability(
-        publicStudy,
-        fallbackUser,
-        STUDY_CAPABILITY.STUDY_ANSWER,
-      ),
-    ).toBe(false)
-    expect(
-      hasStudyCapability(
-        publicStudy,
-        fallbackUser,
-        STUDY_CAPABILITY.STUDY_EDIT,
-      ),
-    ).toBe(false)
-  })
-
   it('allows a signed-in public participant to answer but not view the dashboard', () => {
     const study = userStudy({ isPublic: true })
 

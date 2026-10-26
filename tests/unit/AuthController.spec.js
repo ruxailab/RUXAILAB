@@ -2,11 +2,9 @@ import AuthController from '@/features/auth/controllers/AuthController'
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
-  onIdTokenChanged,
   setPersistence,
   signInWithEmailAndPassword,
   signInWithPopup,
-  signInAnonymously,
   signOut,
 } from 'firebase/auth'
 import { mockUserCredentials } from './helpers/testUtils'
@@ -16,9 +14,7 @@ jest.mock('firebase/auth', () => ({
   signInWithEmailAndPassword: jest.fn(),
   signOut: jest.fn(),
   onAuthStateChanged: jest.fn(),
-  onIdTokenChanged: jest.fn(),
   signInWithPopup: jest.fn(),
-  signInAnonymously: jest.fn(),
   setPersistence: jest.fn(),
   browserLocalPersistence: 'local',
   browserSessionPersistence: 'session',
@@ -45,14 +41,11 @@ jest.mock('axios', () => ({
   post: jest.fn(),
 }))
 
-import { _resetForTesting } from '@/features/auth/services/authStateManager'
-
 describe('AuthController', () => {
   let authController
 
   beforeEach(() => {
     jest.clearAllMocks()
-    _resetForTesting()
     authController = new AuthController()
   })
 
@@ -201,13 +194,13 @@ describe('AuthController', () => {
   })
 
   describe('autoSignIn', () => {
-    it('should call onIdTokenChanged', async () => {
+    it('should call onAuthStateChanged', async () => {
       const mockUser = {
         uid: 'auto-user',
         email: 'auto@example.com',
       }
 
-      onIdTokenChanged.mockImplementation((auth, callback) => {
+      onAuthStateChanged.mockImplementation((auth, callback) => {
         const unsubscribe = jest.fn()
 
         setTimeout(() => callback(mockUser), 0)
@@ -217,7 +210,7 @@ describe('AuthController', () => {
 
       await authController.autoSignIn()
 
-      expect(onIdTokenChanged).toHaveBeenCalled()
+      expect(onAuthStateChanged).toHaveBeenCalled()
     })
   })
 
@@ -289,48 +282,6 @@ describe('AuthController', () => {
       ).rejects.toThrow('Delete failed')
 
       expect(axios.post).not.toHaveBeenCalled()
-    })
-  })
-
-  describe('anonymousParticipant', () => {
-    it('should not call signInAnonymously when a real authenticated user exists', async () => {
-      const { auth } = require('@/app/plugins/firebase')
-      auth.currentUser = { uid: 'real-user-123', isAnonymous: false }
-
-      const result = await authController.anonymousParticipant()
-
-      expect(result).toBeNull()
-      expect(signInAnonymously).not.toHaveBeenCalled()
-    })
-
-    it('should return the anonymous user if currentUser is already anonymous', async () => {
-      const { auth } = require('@/app/plugins/firebase')
-      const anonUser = { uid: 'anon-user-123', isAnonymous: true }
-      auth.currentUser = anonUser
-
-      const result = await authController.anonymousParticipant()
-
-      expect(result).toEqual(anonUser)
-      expect(signInAnonymously).not.toHaveBeenCalled()
-    })
-
-    it('should call signInAnonymously with session persistence when no user is signed in', async () => {
-      const { auth } = require('@/app/plugins/firebase')
-      auth.currentUser = null
-
-      onIdTokenChanged.mockImplementation((_, callback) => {
-        setTimeout(() => callback(null), 0)
-        return jest.fn()
-      })
-
-      const newAnonUser = { uid: 'new-anon-uid', isAnonymous: true }
-      signInAnonymously.mockResolvedValue({ user: newAnonUser })
-
-      const result = await authController.anonymousParticipant()
-
-      expect(setPersistence).toHaveBeenCalledWith(auth, 'session')
-      expect(signInAnonymously).toHaveBeenCalledWith(auth)
-      expect(result).toEqual(newAnonUser)
     })
   })
 })
