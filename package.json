@@ -74,7 +74,7 @@
     "@babel/core": "^7.29.0",
     "@babel/eslint-parser": "^7.29.9",
     "@babel/plugin-proposal-optional-chaining": "^7.21.0",
-    "@firebase/rules-unit-testing": "^5.0.2",
+    "@firebase/rules-unit-testing": "^6.0.0",
     "@intlify/eslint-plugin-vue-i18n": "^4.5.1",
     "@testing-library/cypress": "^10.0.1",
     "@testing-library/jest-dom": "^7.0.1",
