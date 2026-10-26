@@ -20,6 +20,7 @@ export const PUBLIC_COMPANION_STATE = Object.freeze({
   WAITING: 'waiting',
   ACTIVE: 'active',
   ACCEPTED: 'accepted',
+  COMPLETED: 'completed',
   ENDED: 'ended',
 })
 
@@ -54,6 +55,7 @@ export class MobileTaskCompanion {
    * @param {number|null} [params.companionLastSeenAt]
    * @param {object|null} [params.activeTask]
    * @param {object|null} [params.lastOutcome]
+   * @param {boolean} [params.taskPhaseCompleted]
    * @param {number|null} [params.createdAt]
    * @param {number|null} [params.endedAt]
    */
@@ -67,6 +69,7 @@ export class MobileTaskCompanion {
     companionLastSeenAt = null,
     activeTask = null,
     lastOutcome = null,
+    taskPhaseCompleted = false,
     createdAt = null,
     endedAt = null,
   } = {}) {
@@ -79,6 +82,7 @@ export class MobileTaskCompanion {
     this.companionLastSeenAt = companionLastSeenAt ?? null
     this.activeTask = mapActiveTask(activeTask)
     this.lastOutcome = mapLastOutcome(lastOutcome)
+    this.taskPhaseCompleted = taskPhaseCompleted === true
     this.createdAt = createdAt ?? null
     this.endedAt = endedAt ?? null
   }
@@ -111,6 +115,7 @@ export class MobileTaskCompanion {
       companionLastSeenAt: data.companionLastSeenAt ?? null,
       activeTask: data.activeTask ?? null,
       lastOutcome: data.lastOutcome ?? null,
+      taskPhaseCompleted: data.taskPhaseCompleted === true,
       createdAt: data.createdAt ?? null,
       endedAt: data.endedAt ?? null,
     })
@@ -130,6 +135,7 @@ export class MobileTaskCompanion {
       companionLastSeenAt: this.companionLastSeenAt,
       activeTask: this.activeTask,
       lastOutcome: this.lastOutcome,
+      taskPhaseCompleted: this.taskPhaseCompleted,
       createdAt: this.createdAt,
       endedAt: this.endedAt,
     }

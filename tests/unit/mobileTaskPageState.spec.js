@@ -25,10 +25,11 @@ const accepted = {
 }
 
 describe('mobile task page state', () => {
-  it('maps the four server states and keeps sending and disconnected local', () => {
+  it('maps the server states and keeps sending, loading and disconnected local', () => {
     expect(mapMobileTaskUiState({ serverState: 'waiting' })).toBe('waiting')
     expect(mapMobileTaskUiState({ serverState: 'active' })).toBe('active')
     expect(mapMobileTaskUiState({ serverState: 'accepted' })).toBe('accepted')
+    expect(mapMobileTaskUiState({ serverState: 'completed' })).toBe('completed')
     expect(mapMobileTaskUiState({ serverState: 'ended' })).toBe('ended')
     expect(
       mapMobileTaskUiState({ serverState: 'active', submitting: true }),
@@ -36,6 +37,7 @@ describe('mobile task page state', () => {
     expect(
       mapMobileTaskUiState({ serverState: 'sending' }),
     ).toBe('disconnected')
+    expect(mapMobileTaskUiState({ serverState: null })).toBe('loading')
   })
 
   it('shows a connection problem instead of the saved confirmation', () => {
@@ -52,7 +54,41 @@ describe('mobile task page state', () => {
         networkFailure: true,
       }),
     ).toBe('sending')
-    expect(mapMobileTaskUiState({ serverState: null })).toBe('disconnected')
+    expect(
+      mapMobileTaskUiState({ serverState: null, networkFailure: true }),
+    ).toBe('disconnected')
+  })
+
+  it('keeps a short local saved confirmation until waiting, not the next task', () => {
+    expect(
+      mapMobileTaskUiState({
+        serverState: 'waiting',
+        localAccepted: true,
+        localAcceptedAttemptId: 'attempt-1',
+      }),
+    ).toBe('accepted')
+    expect(
+      mapMobileTaskUiState({
+        serverState: 'active',
+        localAccepted: true,
+        localAcceptedAttemptId: 'attempt-1',
+        serverAttemptId: 'attempt-1',
+      }),
+    ).toBe('accepted')
+    expect(
+      mapMobileTaskUiState({
+        serverState: 'active',
+        localAccepted: true,
+        localAcceptedAttemptId: 'attempt-1',
+        serverAttemptId: 'attempt-2',
+      }),
+    ).toBe('active')
+    expect(
+      mapMobileTaskUiState({
+        serverState: 'completed',
+        localAccepted: true,
+      }),
+    ).toBe('completed')
   })
 
   it('treats success as a resolved accept and keeps the server outcome', async () => {

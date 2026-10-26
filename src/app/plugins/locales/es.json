@@ -1,8 +1,8 @@
 {
   "language": "Idioma",
   "MobileTask": {
-    "waitingTitle": "Esperando la tarea",
-    "waitingBody": "Inicia la tarea en la computadora. Las instrucciones aparecerán aquí.",
+    "waitingTitle": "Esperando el inicio de la tarea",
+    "waitingBody": "Continúa en la computadora. Las instrucciones aparecerán aquí.",
     "taskLabel": "Tarea {number}",
     "completed": "Tarea completada",
     "notCompleted": "No pude finalizar la tarea",
@@ -11,6 +11,8 @@
     "completedSaved": "Tarea completada",
     "notCompletedSaved": "Tarea no completada",
     "acceptedBody": "Continúa en RUXAILAB en tu computadora.",
+    "completedTitle": "Gracias por participar",
+    "completedBody": "Puedes continuar en la computadora.",
     "disconnectedTitle": "Problema de conexión",
     "disconnectedBody": "No se pudo conectar con RUXAILAB. Tu respuesta no se guardó. Revisa la conexión e inténtalo de nuevo.",
     "retry": "Intentar de nuevo",

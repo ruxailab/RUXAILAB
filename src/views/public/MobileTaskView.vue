@@ -4,25 +4,36 @@
       <v-col cols="12" sm="8" md="5" lg="4">
         <v-card rounded="xl" class="pa-2">
           <v-card-text class="pa-4 pa-sm-6">
-            <template v-if="uiState === 'waiting'">
-              <h1 class="text-h6 font-weight-bold mb-3">
+            <template v-if="uiState === 'loading'">
+              <div class="d-flex flex-column align-center py-8">
+                <v-progress-circular
+                  indeterminate
+                  color="primary"
+                  size="56"
+                  width="5"
+                />
+              </div>
+            </template>
+
+            <template v-else-if="uiState === 'waiting'">
+              <h1 class="text-h4 font-weight-bold mb-3">
                 {{ t('MobileTask.waitingTitle') }}
               </h1>
-              <p class="text-body-1 mb-0">
+              <p class="text-h6 mb-0">
                 {{ t('MobileTask.waitingBody') }}
               </p>
             </template>
 
             <template v-else-if="uiState === 'active' || uiState === 'sending'">
-              <p class="text-caption text-medium-emphasis mb-1">
+              <p class="text-subtitle-1 text-medium-emphasis mb-1">
                 {{ t('MobileTask.taskLabel', { number: taskView.taskNumber }) }}
               </p>
-              <h1 class="text-h6 font-weight-bold mb-4">
+              <h1 class="text-h4 font-weight-bold mb-4">
                 {{ taskView.title }}
               </h1>
               <div
                 v-safe-html="taskView.description"
-                class="mobile-task__description text-body-1 mb-6"
+                class="mobile-task__description text-h6 mb-6"
               />
               <v-btn
                 color="error"
@@ -53,43 +64,58 @@
             </template>
 
             <template v-else-if="uiState === 'accepted'">
-              <h1 class="text-h6 font-weight-bold mb-3">
+              <h1 class="text-h4 font-weight-bold mb-3">
                 {{ t('MobileTask.acceptedTitle') }}
               </h1>
               <p
                 v-if="displayedOutcome?.outcome === 'completed'"
-                class="text-body-1 mb-2"
+                class="text-h6 mb-2"
               >
                 {{ t('MobileTask.completedSaved') }}
               </p>
               <p
                 v-else-if="displayedOutcome?.outcome === 'not_completed'"
-                class="text-body-1 mb-2"
+                class="text-h6 mb-2"
               >
                 {{ t('MobileTask.notCompletedSaved') }}
               </p>
-              <p class="text-body-1 mb-0">
+              <p class="text-h6 mb-0">
                 {{ t('MobileTask.acceptedBody') }}
               </p>
             </template>
 
+            <template v-else-if="uiState === 'completed'">
+              <h1 class="text-h4 font-weight-bold mb-3">
+                {{ t('MobileTask.completedTitle') }}
+              </h1>
+              <p class="text-h6 mb-0">
+                {{ t('MobileTask.completedBody') }}
+              </p>
+            </template>
+
             <template v-else-if="uiState === 'disconnected'">
-              <h1 class="text-h6 font-weight-bold mb-3">
+              <h1 class="text-h4 font-weight-bold mb-3">
                 {{ t('MobileTask.disconnectedTitle') }}
               </h1>
-              <p class="text-body-1 mb-4">
+              <p class="text-h6 mb-4">
                 {{ t('MobileTask.disconnectedBody') }}
               </p>
-              <v-btn color="primary" variant="flat" block @click="retry">
+              <v-btn
+                color="primary"
+                variant="flat"
+                block
+                min-height="48"
+                @click="retry"
+              >
                 {{ t('MobileTask.retry') }}
               </v-btn>
             </template>
 
             <template v-else>
-              <h1 class="text-h6 font-weight-bold mb-3">
+              <h1 class="text-h4 font-weight-bold mb-3">
                 {{ t('MobileTask.endedTitle') }}
               </h1>
-              <p class="text-body-1 mb-0">
+              <p class="text-h6 mb-0">
                 {{ t('MobileTask.endedBody') }}
               </p>
             </template>
@@ -114,6 +140,7 @@ import { database, db } from '@/app/plugins/firebase'
 import { submitMobileTaskOutcome } from '@/ux/UserTest/services/mobileTaskCompanionClient'
 import {
   mapMobileTaskUiState,
+  MOBILE_TASK_SAVED_CONFIRMATION_MS,
   MOBILE_TASK_TOKEN_PATTERN,
   mobileTaskPresencePath,
   settleMobileTaskSubmit,
@@ -129,6 +156,8 @@ const { t } = useI18n()
 const serverState = ref(null)
 const submitting = ref(false)
 const networkFailure = ref(false)
+const localAccepted = ref(false)
+const localAcceptedAttemptId = ref(null)
 const displayedOutcome = ref(null)
 const pendingOutcome = ref(null)
 const taskView = ref({
@@ -144,12 +173,16 @@ let unsubscribe = null
 let presenceRef = null
 let presenceDisconnect = null
 let sessionEnded = false
+let confirmationTimer = null
 
 const uiState = computed(() =>
   mapMobileTaskUiState({
     serverState: serverState.value,
     submitting: submitting.value,
     networkFailure: networkFailure.value,
+    localAccepted: localAccepted.value,
+    localAcceptedAttemptId: localAcceptedAttemptId.value,
+    serverAttemptId: taskView.value.attemptId,
   }),
 )
 
@@ -165,10 +198,43 @@ function locatorIsValid() {
   )
 }
 
+function clearLocalAccepted() {
+  if (confirmationTimer) {
+    clearTimeout(confirmationTimer)
+    confirmationTimer = null
+  }
+  localAccepted.value = false
+  localAcceptedAttemptId.value = null
+}
+
+function showLocalAccepted(attemptId) {
+  localAccepted.value = true
+  localAcceptedAttemptId.value =
+    typeof attemptId === 'string' && attemptId.length > 0 ? attemptId : null
+  if (confirmationTimer) clearTimeout(confirmationTimer)
+  confirmationTimer = setTimeout(() => {
+    localAccepted.value = false
+    localAcceptedAttemptId.value = null
+    confirmationTimer = null
+  }, MOBILE_TASK_SAVED_CONFIRMATION_MS)
+}
+
 function applyServerPayload(payload) {
   const nextState = payload?.state || null
   serverState.value = nextState
+  if (nextState === 'completed' || nextState === 'ended') {
+    clearLocalAccepted()
+  }
   if (nextState !== 'active') return
+  const nextAttemptId =
+    typeof payload.attemptId === 'string' ? payload.attemptId : null
+  if (
+    localAccepted.value &&
+    nextAttemptId &&
+    nextAttemptId !== localAcceptedAttemptId.value
+  ) {
+    clearLocalAccepted()
+  }
   taskView.value = {
     taskNumber: payload.taskNumber,
     title: typeof payload.title === 'string' ? payload.title : '',
@@ -176,7 +242,7 @@ function applyServerPayload(payload) {
       typeof payload.description === 'string' ? payload.description : '',
     taskIndex: payload.taskIndex,
     taskId: payload.taskId,
-    attemptId: payload.attemptId,
+    attemptId: nextAttemptId,
   }
   displayedOutcome.value = null
   pendingOutcome.value = null
@@ -238,6 +304,7 @@ function markEnded() {
   sessionEnded = true
   serverState.value = 'ended'
   networkFailure.value = false
+  clearLocalAccepted()
   stopListening()
   void stopPresence()
 }
@@ -302,7 +369,7 @@ async function sendOutcome(outcome) {
   networkFailure.value = false
   pendingOutcome.value = null
   displayedOutcome.value = settled
-  serverState.value = 'accepted'
+  showLocalAccepted(settled.attemptId)
 }
 
 function retry() {
@@ -320,12 +387,18 @@ function onVisible() {
   else void startPresence()
 }
 
+if (!locatorIsValid()) {
+  serverState.value = 'ended'
+  sessionEnded = true
+}
+
 onMounted(() => {
   listen()
   document.addEventListener('visibilitychange', onVisible)
 })
 
 onBeforeUnmount(() => {
+  clearLocalAccepted()
   stopListening()
   void stopPresence()
   document.removeEventListener('visibilitychange', onVisible)

@@ -5,6 +5,7 @@ import {
   MAX_TASK_INDEX,
   PARTICIPANT_UID_PATTERN,
   PARTICIPATION_MODE,
+  PUBLIC_COMPANION_STATE,
   TASK_OUTCOME,
 } from '../models/MobileTaskCompanion.js'
 
@@ -218,12 +219,18 @@ export function decideTaskOutcome({ companion, answer, request, now }) {
     String(request.taskId) === String(active.taskId) &&
     request.attemptId === active.attemptId
 
-  if (!sameAttempt) {
-    fail('failed-precondition', 'Task attempt is no longer active')
+  const last = companion.lastOutcome
+  if (
+    last?.attemptId &&
+    last.attemptId === request.attemptId &&
+    Number(request.taskIndex) === Number(last.taskIndex) &&
+    String(request.taskId) === String(last.taskId)
+  ) {
+    return { result: toStoredOutcome(last, true) }
   }
 
-  if (companion.lastOutcome?.attemptId === active.attemptId) {
-    return { result: toStoredOutcome(companion.lastOutcome, true) }
+  if (!sameAttempt) {
+    fail('failed-precondition', 'Task attempt is no longer active')
   }
 
   const startedAt = Number(active.startedAt)
@@ -257,7 +264,7 @@ export function decideTaskOutcome({ companion, answer, request, now }) {
 
   return {
     result: toStoredOutcome(lastOutcome, false),
-    companionUpdate: { lastOutcome },
+    companionUpdate: { lastOutcome, activeTask: null },
     answerUpdate: {
       [`${prefix}.completed`]: completed,
       [`${prefix}.attempted`]: true,
@@ -398,5 +405,41 @@ export function decideEnd({ companion, answer, uid, now }) {
       activeTask: null,
     },
     result: { status: COMPANION_STATUS.ENDED },
+  }
+}
+
+/**
+ * Desktop signals that the participant left the last task for post-test
+ * or finish. The phone shows thank-you. The token and public view stay
+ * so that message is not `ended`. Final submit still calls decideEnd.
+ *
+ * @param {object} params
+ * @param {object|null} params.companion
+ * @param {object|null} params.answer
+ * @param {string} params.uid
+ */
+export function decideTaskPhaseComplete({ companion, answer, uid }) {
+  if (!companion || companion.participantUid !== uid) {
+    fail('not-found', 'Mobile task companion not found')
+  }
+  if (
+    companion.status !== COMPANION_STATUS.PAIRED ||
+    !companion.token
+  ) {
+    fail('failed-precondition', 'Mobile task session has ended')
+  }
+  if (isParticipantAnswerSubmitted(answer, uid)) {
+    fail('failed-precondition', 'Answer is already submitted')
+  }
+  if (companion.taskPhaseCompleted) {
+    return { result: { status: PUBLIC_COMPANION_STATE.COMPLETED } }
+  }
+
+  return {
+    companionUpdate: {
+      taskPhaseCompleted: true,
+      activeTask: null,
+    },
+    result: { status: PUBLIC_COMPANION_STATE.COMPLETED },
   }
 }

@@ -1605,6 +1605,7 @@ const completeStep = async (id, type, userCompleted = true) => {
         if (!hasPostTest.value) {
           localTestAnswer.postTestCompleted = true
         }
+        void mobileCompanion.completeTaskPhase()
       }
       if (userCompleted) {
         store.commit('SET_TOAST', {

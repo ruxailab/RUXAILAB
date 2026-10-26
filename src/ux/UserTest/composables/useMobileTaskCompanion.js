@@ -4,6 +4,7 @@ import { onValue, ref as dbRef } from 'firebase/database'
 import { database, db } from '@/app/plugins/firebase'
 import {
   activateMobileTask,
+  completeMobileTaskPhase,
   createMobileTaskCompanion,
   endMobileTaskCompanion,
   getMobileTaskCompanion,
@@ -186,6 +187,20 @@ export function useMobileTaskCompanion({
     stopListening()
   }
 
+  /**
+   * Thank-you on the phone when the desktop leaves the last task.
+   * Does not end the pairing. A missing session is a no-op.
+   */
+  async function completeTaskPhase() {
+    if (!sessionOpen.value) return
+    try {
+      const { studyId, answerId } = requireContext()
+      await completeMobileTaskPhase({ studyId, answerId })
+    } catch {
+      /* Thank-you is best-effort; the computer flow continues. */
+    }
+  }
+
   async function disable() {
     if (busy.value || !enabled.value) return
     busy.value = true
@@ -280,12 +295,17 @@ export function useMobileTaskCompanion({
    * @param {number} taskIndex
    */
   function outcomeMatchingActiveTask(taskIndex) {
-    const active = companion.value?.activeTask
     const last = companion.value?.lastOutcome
-    if (!active?.attemptId || !last?.attemptId) return null
-    if (last.attemptId !== active.attemptId) return null
+    if (!last?.attemptId) return null
     if (Number(last.taskIndex) !== Number(taskIndex)) return null
-    if (Number(active.taskIndex) !== Number(taskIndex)) return null
+    const active = companion.value?.activeTask
+    if (
+      active?.attemptId &&
+      (last.attemptId !== active.attemptId ||
+        Number(active.taskIndex) !== Number(taskIndex))
+    ) {
+      return null
+    }
     return resolveDisplayedOutcome({
       accepted: true,
       duplicate: false,
@@ -310,6 +330,7 @@ export function useMobileTaskCompanion({
     restore,
     ensureEnabled,
     endSession,
+    completeTaskPhase,
     activate,
     submitOutcome,
     outcomeMatchingActiveTask,

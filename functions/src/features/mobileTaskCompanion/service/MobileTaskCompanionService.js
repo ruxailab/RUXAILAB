@@ -15,6 +15,7 @@ import {
   decideActivation,
   decideEnd,
   decideTaskOutcome,
+  decideTaskPhaseComplete,
   isParticipantAnswerSubmitted,
   resolveStudyTask,
 } from './taskSession.js'
@@ -87,6 +88,7 @@ export class MobileTaskCompanionService {
           companionLastSeenAt: null,
           activeTask: null,
           lastOutcome: null,
+          taskPhaseCompleted: false,
           createdAt: this.now(),
           endedAt: null,
         }),
@@ -256,6 +258,48 @@ export class MobileTaskCompanionService {
     })
     await this.presenceRepository.remove(token)
     return result
+  }
+
+  /**
+   * Desktop calls this when the participant leaves the last task for
+   * post-test or finish. The pairing stays live so the phone can show
+   * thank-you. Final submit still calls `end`.
+   *
+   * @param {object} params
+   * @param {string} params.uid
+   * @param {string|null} params.signInProvider
+   * @param {{ studyId: string, answerId: string }} params.input
+   */
+  async completeTaskPhase({ uid, signInProvider, input }) {
+    const { studyId, answerId } = await this.loadOwnedContext({
+      uid,
+      signInProvider,
+      studyId: input.studyId,
+      answerId: input.answerId,
+    })
+    const existing = await this.companionRepository.findByParticipant(
+      studyId,
+      uid,
+    )
+    if (!existing || existing.answerId !== answerId) {
+      fail('not-found', 'Mobile task companion not found')
+    }
+
+    return this.companionRepository.commitSessionChange({
+      studyId,
+      companionId: existing.id,
+      answerId,
+      decide: ({ companion, answer }) =>
+        this.withPublicView(
+          decideTaskPhaseComplete({
+            companion,
+            answer,
+            uid,
+          }),
+          companion,
+          answer,
+        ),
+    })
   }
 
   /**

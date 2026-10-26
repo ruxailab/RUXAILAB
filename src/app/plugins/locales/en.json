@@ -1,8 +1,8 @@
 {
   "language": "Language",
   "MobileTask": {
-    "waitingTitle": "Waiting for the task",
-    "waitingBody": "Start the task on your computer. The instructions will appear here.",
+    "waitingTitle": "Waiting for the task to start",
+    "waitingBody": "Continue on the computer. The instructions will appear here.",
     "taskLabel": "Task {number}",
     "completed": "Task completed",
     "notCompleted": "I could not finish the task",
@@ -11,6 +11,8 @@
     "completedSaved": "Task completed",
     "notCompletedSaved": "Task not completed",
     "acceptedBody": "Continue in RUXAILAB on your computer.",
+    "completedTitle": "Thank you for participating",
+    "completedBody": "You can continue on the computer.",
     "disconnectedTitle": "Connection problem",
     "disconnectedBody": "RUXAILAB could not be reached. Your answer was not saved. Check the connection and try again.",
     "retry": "Try again",

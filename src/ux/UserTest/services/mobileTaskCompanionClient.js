@@ -53,6 +53,16 @@ export function submitMobileTaskOutcome(data) {
 }
 
 /**
+ * Desktop: the participant left the last task for post-test or finish.
+ * The pairing stays live so the phone can show thank-you.
+ *
+ * @param {{ studyId: string, answerId: string }} data
+ */
+export function completeMobileTaskPhase(data) {
+  return call('completeMobileTaskPhase', data)
+}
+
+/**
  * Ends the pairing. Call when the participant turns the mode off and before
  * the final study submit. Do not call it on page reload.
  *

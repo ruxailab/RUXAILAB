@@ -243,6 +243,7 @@ describe('MobileTaskCompanion', () => {
     expect(stored.token).toBe(companion.token)
     expect(stored.participantUid).toBe(UID)
     expect(stored.activeTask).toBeNull()
+    expect(stored.taskPhaseCompleted).toBe(false)
 
     const loaded = MobileTaskCompanion.fromFirestore(stored, UID, STUDY_ID)
     expect(loaded).toMatchObject({
@@ -341,7 +342,8 @@ describe('MobileTaskCompanionService', () => {
   })
 
   it('does not write the answer again when the same attemptId is retried', async () => {
-    const { service, caller, db, readAnswer, readView, setClock } = harness()
+    const { service, caller, db, readAnswer, readCompanion, readView, setClock } =
+      harness()
     const created = await service.create(caller)
     await service.activate({ ...caller, input: taskInput(0, 'task-a') })
     setClock(5000)
@@ -392,8 +394,10 @@ describe('MobileTaskCompanionService', () => {
     expect(task.taskTime).toBe(4000)
 
     setClock(8000)
+    expect(readCompanion().activeTask).toBeNull()
+    expect(readCompanion().lastOutcome.attemptId).toBe('attempt-1')
     expect(readView(created.companion.token)).toEqual({
-      state: 'accepted',
+      state: 'waiting',
     })
   })
 
@@ -582,7 +586,8 @@ describe('MobileTaskCompanionService', () => {
   })
 
   it('publishes a public view for the phone and deletes it when the session ends', async () => {
-    const { service, caller, readView, presenceRemoved } = harness()
+    const { service, caller, readCompanion, readView, presenceRemoved } =
+      harness()
     const created = await service.create(caller)
     const token = created.companion.token
 
@@ -612,11 +617,94 @@ describe('MobileTaskCompanionService', () => {
         outcome: 'completed',
       },
     })
-    expect(readView(token)).toEqual({ state: 'accepted' })
+    expect(readView(token)).toEqual({ state: 'waiting' })
+    expect(readCompanion().activeTask).toBeNull()
+    expect(readCompanion().lastOutcome.attemptId).toBe('attempt-1')
 
     await service.end(caller)
     expect(readView(token)).toBeUndefined()
     expect(presenceRemoved).toEqual([token])
+  })
+
+  it('returns waiting after an outcome so the phone is not stuck on saved', async () => {
+    const { service, caller, readCompanion, readView } = harness()
+    const created = await service.create(caller)
+    await service.activate({ ...caller, input: taskInput(0, 'task-a') })
+
+    await service.submitOutcome({
+      uid: null,
+      input: {
+        ...phoneLocator(created.companion.token),
+        taskIndex: 0,
+        taskId: 'task-a',
+        attemptId: 'attempt-1',
+        outcome: 'completed',
+      },
+    })
+
+    expect(readCompanion().activeTask).toBeNull()
+    expect(readCompanion().lastOutcome).toMatchObject({
+      attemptId: 'attempt-1',
+      outcome: 'completed',
+    })
+    expect(readView(created.companion.token)).toEqual({ state: 'waiting' })
+
+    const next = await service.activate({
+      ...caller,
+      input: taskInput(1, 'task-b'),
+    })
+    expect(next.attemptId).toBe('attempt-2')
+    expect(readView(created.companion.token)).toEqual({
+      state: 'active',
+      taskNumber: 2,
+      title: 'Checkout',
+      description: 'Pay',
+      taskIndex: 1,
+      taskId: 'task-b',
+      attemptId: 'attempt-2',
+    })
+  })
+
+  it('keeps the public view on thank-you when the desktop leaves the last task', async () => {
+    const { service, caller, readCompanion, readView } = harness()
+    const created = await service.create(caller)
+    const token = created.companion.token
+    await service.activate({ ...caller, input: taskInput(0, 'task-a') })
+    await service.submitOutcome({
+      uid: null,
+      input: {
+        ...phoneLocator(token),
+        taskIndex: 0,
+        taskId: 'task-a',
+        attemptId: 'attempt-1',
+        outcome: 'completed',
+      },
+    })
+    await service.activate({ ...caller, input: taskInput(1, 'task-b') })
+    await service.submitOutcome({
+      uid: null,
+      input: {
+        ...phoneLocator(token),
+        taskIndex: 1,
+        taskId: 'task-b',
+        attemptId: 'attempt-2',
+        outcome: 'not_completed',
+      },
+    })
+
+    const first = await service.completeTaskPhase(caller)
+    const again = await service.completeTaskPhase(caller)
+
+    expect(first).toEqual({ status: 'completed' })
+    expect(again).toEqual({ status: 'completed' })
+    expect(readCompanion().token).toBe(token)
+    expect(readCompanion().status).toBe('paired')
+    expect(readCompanion().taskPhaseCompleted).toBe(true)
+    expect(readCompanion().activeTask).toBeNull()
+    expect(readView(token)).toEqual({ state: 'completed' })
+
+    await service.end(caller)
+    expect(readView(token)).toBeUndefined()
   })
 
   it('does not reset an active public view when create reuses the token', async () => {

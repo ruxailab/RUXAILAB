@@ -22,6 +22,7 @@ export {
   getMobileTaskCompanion,
   activateMobileTask,
   submitMobileTaskOutcome,
+  completeMobileTaskPhase,
   endMobileTaskCompanion,
 } from '../features/mobileTaskCompanion/index.js'
 export {

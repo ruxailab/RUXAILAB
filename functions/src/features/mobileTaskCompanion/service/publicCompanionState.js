@@ -11,15 +11,16 @@ import { isParticipantAnswerSubmitted } from './taskSession.js'
  *
  * The active state also includes taskIndex, taskId, and attemptId. The phone
  * has to send those back to submitMobileTaskOutcome, and the public view is
- * the only channel that can deliver them. Waiting, accepted, and ended stay
- * without task data.
+ * the only channel that can deliver them. Waiting, accepted, completed, and
+ * ended stay without task data.
  *
  * Invalid, ended, and submitted sessions all return the same ended state.
+ * A clean finish of the task phase is `completed`, not `ended`.
  *
  * @param {import('../models/MobileTaskCompanion.js').MobileTaskCompanion|null|undefined} companion
  * @param {object|null|undefined} answer
  * @returns {{
- *   state: 'ended'|'waiting'|'accepted'|'active',
+ *   state: 'ended'|'waiting'|'accepted'|'active'|'completed',
  *   taskNumber?: number,
  *   title?: string,
  *   description?: string,
@@ -36,6 +37,10 @@ export function toPublicCompanionState(companion, answer) {
     isParticipantAnswerSubmitted(answer, companion.participantUid)
   ) {
     return { state: PUBLIC_COMPANION_STATE.ENDED }
+  }
+
+  if (companion.taskPhaseCompleted) {
+    return { state: PUBLIC_COMPANION_STATE.COMPLETED }
   }
 
   const active = companion.activeTask
@@ -67,6 +72,7 @@ export function toPublicCompanionState(companion, answer) {
 /**
  * View write that belongs in the same transaction as the companion change.
  * Ended sessions delete the view so the phone listener sees `exists: false`.
+ * Completed (thank-you) keeps the document so the phone can show the message.
  *
  * @param {object} params
  * @param {import('../models/MobileTaskCompanion.js').MobileTaskCompanion|null|undefined} params.companion

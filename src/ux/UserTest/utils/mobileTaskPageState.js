@@ -5,18 +5,24 @@ export const MAX_MOBILE_TASK_INDEX = 15
 export const MOBILE_TASK_TOKEN_PATTERN = /^[a-f0-9]{64}$/
 
 export const MOBILE_TASK_UI_STATE = Object.freeze({
+  LOADING: 'loading',
   WAITING: 'waiting',
   ACTIVE: 'active',
   SENDING: 'sending',
   ACCEPTED: 'accepted',
+  COMPLETED: 'completed',
   DISCONNECTED: 'disconnected',
   ENDED: 'ended',
 })
+
+/** Local “Saved” flash after an outcome. The server then goes back to waiting. */
+export const MOBILE_TASK_SAVED_CONFIRMATION_MS = 2000
 
 const SERVER_STATES = new Set([
   MOBILE_TASK_UI_STATE.WAITING,
   MOBILE_TASK_UI_STATE.ACTIVE,
   MOBILE_TASK_UI_STATE.ACCEPTED,
+  MOBILE_TASK_UI_STATE.COMPLETED,
   MOBILE_TASK_UI_STATE.ENDED,
 ])
 
@@ -81,19 +87,45 @@ export function isPhoneConnected(connected) {
 }
 
 /**
- * Server state plus the phone's local flags. `sending` exists only on the
- * client. A network failure is never the accepted confirmation.
+ * Server state plus the phone's local flags. `sending` and `loading` exist
+ * only on the client. A network failure is never the accepted confirmation.
+ * `null` before the first snapshot is loading, not disconnected.
  *
- * @param {{ serverState?: string|null, submitting?: boolean, networkFailure?: boolean }} [input]
- * @returns {'waiting'|'active'|'sending'|'accepted'|'disconnected'|'ended'}
+ * @param {{
+ *   serverState?: string|null,
+ *   submitting?: boolean,
+ *   networkFailure?: boolean,
+ *   localAccepted?: boolean,
+ *   localAcceptedAttemptId?: string|null,
+ *   serverAttemptId?: string|null,
+ * }} [input]
+ * @returns {'loading'|'waiting'|'active'|'sending'|'accepted'|'completed'|'disconnected'|'ended'}
  */
 export function mapMobileTaskUiState({
   serverState = null,
   submitting = false,
   networkFailure = false,
+  localAccepted = false,
+  localAcceptedAttemptId = null,
+  serverAttemptId = null,
 } = {}) {
   if (submitting) return MOBILE_TASK_UI_STATE.SENDING
   if (networkFailure) return MOBILE_TASK_UI_STATE.DISCONNECTED
+  if (serverState == null) return MOBILE_TASK_UI_STATE.LOADING
+  if (serverState === MOBILE_TASK_UI_STATE.ENDED) {
+    return MOBILE_TASK_UI_STATE.ENDED
+  }
+  if (serverState === MOBILE_TASK_UI_STATE.COMPLETED) {
+    return MOBILE_TASK_UI_STATE.COMPLETED
+  }
+  if (localAccepted) {
+    const nextTaskStarted =
+      serverState === MOBILE_TASK_UI_STATE.ACTIVE &&
+      typeof serverAttemptId === 'string' &&
+      serverAttemptId.length > 0 &&
+      serverAttemptId !== localAcceptedAttemptId
+    if (!nextTaskStarted) return MOBILE_TASK_UI_STATE.ACCEPTED
+  }
   if (SERVER_STATES.has(serverState)) return serverState
   return MOBILE_TASK_UI_STATE.DISCONNECTED
 }
