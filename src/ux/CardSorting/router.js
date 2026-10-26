@@ -65,7 +65,11 @@ export default [
         path: '/cardSorting/cooperators/:id',
         name: 'CardSortingCooperatorsView',
         props: true,
-        meta: { authorize: [0, 1] },
+        meta: {
+          authorize: [0, 1],
+          studyCapability: C.COOPERATORS_VIEW,
+          studyRouteBase: 'cardSorting',
+        },
         component: CooperatorsView,
       },
       {
