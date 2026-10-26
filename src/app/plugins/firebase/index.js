@@ -1,11 +1,6 @@
 import { initializeApp } from 'firebase/app'
 //import { getAnalytics } from 'firebase/analytics'
-import {
-  getAuth,
-  connectAuthEmulator,
-  browserLocalPersistence,
-  setPersistence,
-} from 'firebase/auth'
+import { getAuth, connectAuthEmulator } from 'firebase/auth'
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions'
 import { getStorage, connectStorageEmulator } from 'firebase/storage'
@@ -49,20 +44,15 @@ const storage = getStorage(firebaseApp, `gs://${firebaseConfig.storageBucket}`)
 const database = getDatabase(firebaseApp, firebaseConfig.databaseURL)
 
 const EMULATOR_HOST = process.env.VUE_APP_FIREBASE_EMULATOR_HOST || 'localhost'
-const USE_FIREBASE_EMULATORS = process.env.VUE_APP_USE_EMULATORS === 'true'
+const USE_FIREBASE_EMULATORS =
+  process.env.VUE_APP_USE_EMULATORS === 'true'
 const useEmulator = (serviceFlag) =>
   USE_FIREBASE_EMULATORS || process.env[serviceFlag] === 'true'
 
 if (useEmulator('VUE_APP_USE_AUTH_EMULATOR')) {
   const AUTH_EMULATOR_PORT =
     Number(process.env.VUE_APP_AUTH_EMULATOR_PORT) || 9099
-  connectAuthEmulator(auth, `http://${EMULATOR_HOST}:${AUTH_EMULATOR_PORT}`, {
-    disableWarnings: false,
-  })
-  // The Auth Emulator defaults to in-memory persistence, which means sessions
-  // are lost on refresh and never visible in DevTools → Local Storage.
-  // Explicitly set Local persistence so emulator behaviour matches production.
-  setPersistence(auth, browserLocalPersistence).catch(() => {})
+  connectAuthEmulator(auth, `http://${EMULATOR_HOST}:${AUTH_EMULATOR_PORT}`)
 }
 
 if (useEmulator('VUE_APP_USE_FIRESTORE_EMULATOR')) {
